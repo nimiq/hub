@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Accounts</title>
+    <style>
+        iframe {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<button onclick="popup.create()">create in own popup</button>
+<button onclick="keyguard.create()">create in keyguard</button>
+<button onclick="keyguard.signTransaction()">sign-transaction</button>
+
+<script src="../../keyguard-next/client/KeyguardClient.js" defer></script>
+<script src="../../keyguard-next/client/RpcClient.js" defer></script>
+<script src="../../keyguard-next/src/lib/EncryptionType.js" defer></script>
+<script src="./lib/PopupClient.js" defer></script>
+<script src="index.js" defer> </script>
+</body>
+</html>
