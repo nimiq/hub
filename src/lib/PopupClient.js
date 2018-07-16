@@ -46,7 +46,7 @@ class PopupClient {
 
         const $popup = window.open(
             requestUrl,
-            'Nimiq Accounts',
+            'NimiqPopup',
             `left=${window.innerWidth / 2 - 250},top=100,width=500,height=820,location=yes,dependent=yes`,
         );
 
