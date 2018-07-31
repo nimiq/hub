@@ -51,7 +51,7 @@ class PopupClient {
         );
 
         if (!$popup) {
-            throw new Error('Keyguard popup could not be opened.');
+            throw new Error('Nimiq Popup could not be opened.');
         }
 
         // Await popup loaded
@@ -78,5 +78,5 @@ class PopupClient {
 }
 
 // TODO make this configurable
-PopupClient.SRC = './popup.html';
+PopupClient.SRC = 'http://localhost/apps/accounts/src/popup.html';
 

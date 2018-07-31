@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>KeyguardClient Demo</title>
+    <style>
+        iframe {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+        <button onclick="keyguard.list()">list</button>
+        <button onclick="keyguard.create()">create</button>
+        <button onclick="keyguard.signTransaction()">sign-transaction</button>
+
+        <script src="../src/lib/EncryptionType.js"></script>
+        <script src="../src/lib/RpcClient.js"></script>
+        <script src="../src/lib/KeyguardClient.js"></script>
+        <script>
+            window.keyguard = new KeyguardClient();
+        </script>
+</body>
+</html>
