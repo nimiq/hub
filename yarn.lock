@@ -4474,6 +4474,10 @@ nice-try@^1.0.4:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/nice-try/-/nice-try-1.0.4.tgz#d93962f6c52f2c1558c0fbda6d512819f1efe1c4"
 
+nimiq-core-types@^0.1.2:
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/nimiq-core-types/-/nimiq-core-types-0.1.2.tgz#a2d75b02a69bf181753d58ed1152b77ffcfe183a"
+
 no-case@^2.2.0:
   version "2.3.2"
   resolved "https://registry.yarnpkg.com/no-case/-/no-case-2.3.2.tgz#60b813396be39b3f1288a4c1ed5d1e7d28b464ac"

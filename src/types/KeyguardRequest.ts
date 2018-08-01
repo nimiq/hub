@@ -1,6 +1,5 @@
 import TransactionType from './TransactionType';
 import EncryptionType from './EncryptionType';
-import Nimiq from '../../Nimiq';
 
 export interface BasicTransactionRequest {
     type: TransactionType.BASIC;
