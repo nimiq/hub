@@ -11,7 +11,7 @@ class KeyStore {
     public static readonly DB_NAME = 'nimiq-keyguard';
     public static readonly DB_KEY_STORE_NAME = 'keys';
 
-    private static storeInstance: KeyStore | null = null;
+    private static instance: KeyStore | null = null;
 
     private static _requestAsPromise(request: IDBRequest): Promise<any> {
         return new Promise((resolve, reject) => {
@@ -38,12 +38,12 @@ class KeyStore {
 
     private dbPromise: Promise<IDBDatabase> | null;
 
-    static get instance(): KeyStore {
-        KeyStore.storeInstance = KeyStore.storeInstance || new KeyStore();
-        return KeyStore.storeInstance;
+    static get Instance(): KeyStore {
+        KeyStore.instance = KeyStore.instance || new KeyStore();
+        return KeyStore.instance;
     }
 
-    constructor() {
+    private constructor() {
         this.dbPromise = null;
     }
 
@@ -52,14 +52,15 @@ class KeyStore {
         const request = db.transaction([KeyStore.DB_KEY_STORE_NAME])
             .objectStore(KeyStore.DB_KEY_STORE_NAME)
             .get(id);
-        return KeyStore._requestAsPromise(request);
+        const result = await KeyStore._requestAsPromise(request);
+        return result ? KeyInfo.fromObject(result) : result;
     }
 
-    public async put(keyMetaData: KeyInfo) {
+    public async put(keyInfo: KeyInfo) {
         const db = await this.connect();
         const request = db.transaction([KeyStore.DB_KEY_STORE_NAME], 'readwrite')
             .objectStore(KeyStore.DB_KEY_STORE_NAME)
-            .put(keyMetaData);
+            .put(keyInfo.toObject());
         return KeyStore._requestAsPromise(request);
     }
 
@@ -77,7 +78,8 @@ class KeyStore {
             .objectStore(KeyStore.DB_KEY_STORE_NAME)
             .openCursor();
 
-        return KeyStore._readAllFromCursor(request);
+        const result = await KeyStore._readAllFromCursor(request);
+        return result.map((info) => KeyInfo.fromObject(info));
     }
 
     public async close() {

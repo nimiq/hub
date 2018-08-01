@@ -235,6 +235,7 @@ declare namespace Nimiq {
         static fromUserFriendlyAddress(str: string): Address
         equals(o: Address): boolean
         serialize(): SerialBuffer
+        static unserialize(buf: SerialBuffer): Address
     }
 
     class Account {
