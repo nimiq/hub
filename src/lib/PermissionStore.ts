@@ -1,19 +1,51 @@
+const Nimiq = require('@nimiq/core'); // tslint:disable-line:no-var-requires
+
+import Config from './Config';
+
 export interface Permission {
     origin: string;
     allowsAll: boolean;
-    addresses: string[];
+    addresses: Nimiq.Address[];
+}
+
+interface PermissionEntry {
+    origin: string;
+    allowsAll: boolean;
+    addresses: Uint8Array[];
 }
 
 export class PermissionStore {
-    public static readonly ALL_ADDRESSES = 'all-addresses';
-
     public static readonly DB_VERSION = 1;
     public static readonly DB_NAME = 'nimiq-permissions';
     public static readonly DB_STORE_NAME = 'permissions';
 
     public static INDEXEDDB_IMPLEMENTATION = window.indexedDB;
 
-    private static instance: PermissionStore;
+    private static instance: PermissionStore | null = null;
+
+    private static _requestAsPromise(request: IDBRequest): Promise<any> {
+        return new Promise((resolve, reject) => {
+            request.onsuccess = () => resolve(request.result);
+            request.onerror = () => reject(request.error);
+        });
+    }
+
+    private static _readAllFromCursor(request: IDBRequest): Promise<any[]> {
+        return new Promise((resolve, reject) => {
+            const results: any[] = [];
+            request.onsuccess = () => {
+                const cursor = request.result;
+                if (cursor) {
+                    results.push(cursor.value);
+                    cursor.continue();
+                } else {
+                    resolve(results);
+                }
+            };
+            request.onerror = () => reject(request.error);
+        });
+    }
+
     private dbPromise: Promise<IDBDatabase>|null;
     private indexedDB: IDBFactory;
 
@@ -27,30 +59,59 @@ export class PermissionStore {
         this.indexedDB = PermissionStore.INDEXEDDB_IMPLEMENTATION;
     }
 
-    public allowByOrigin(origin: string, addresses: string|string[]): Promise<string> {
-        const permission = {
+    public async get(origin: string): Promise<Permission> {
+        const db = await this.connect();
+        const request = db.transaction([PermissionStore.DB_STORE_NAME])
+            .objectStore(PermissionStore.DB_STORE_NAME)
+            .get(origin);
+
+        const result: PermissionEntry = await PermissionStore._requestAsPromise(request);
+        return result ? {
+            ...result,
+            addresses: result.addresses.map((address) => Nimiq.Address.unserialize(new Nimiq.SerialBuffer(address))),
+        } : result;
+    }
+
+    public async put(origin: string, addresses: true|Nimiq.Address[]): Promise<string> {
+        const permissionEntry: PermissionEntry = {
             origin,
-            allowsAll: addresses === PermissionStore.ALL_ADDRESSES,
-            addresses: addresses === PermissionStore.ALL_ADDRESSES
-                ? []
-                : Array.isArray(addresses)
-                    ? addresses
-                    : [addresses],
+            allowsAll: addresses === true,
+            addresses: addresses !== true ? addresses.map((address) => address.serialize()) : [],
         };
 
-        return this._put(permission);
+        const db = await this.connect();
+        const request = db.transaction([PermissionStore.DB_STORE_NAME], 'readwrite')
+            .objectStore(PermissionStore.DB_STORE_NAME)
+            .put(permissionEntry);
+
+        return PermissionStore._requestAsPromise(request);
     }
 
-    public getByOrigin(origin: string): Promise<Permission> {
-        return this._get(origin);
+    /* For semantic convenience */
+    public async allow(origin: string, addresses: true|Nimiq.Address[]): Promise<string> {
+        return this.put(origin, addresses);
     }
 
-    public removeByOrigin(origin: string): Promise<true> {
-        return this._remove(origin);
+    public async remove(origin: string): Promise<undefined> {
+        const db = await this.connect();
+        const request = db.transaction([PermissionStore.DB_STORE_NAME], 'readwrite')
+            .objectStore(PermissionStore.DB_STORE_NAME)
+            .delete(origin);
+
+        return PermissionStore._requestAsPromise(request);
     }
 
-    public list(): Promise<Permission[]> {
-        return this._list();
+    public async list(): Promise<Permission[]> {
+        const db = await this.connect();
+        const request = db.transaction([PermissionStore.DB_STORE_NAME], 'readonly')
+            .objectStore(PermissionStore.DB_STORE_NAME)
+            .openCursor();
+
+        const result: PermissionEntry[] = await PermissionStore._readAllFromCursor(request);
+        return result ? result.map((entry) => ({
+            ...entry,
+            addresses: entry.addresses.map((address) => Nimiq.Address.unserialize(new Nimiq.SerialBuffer(address))),
+        })) : result;
     }
 
     public async close(): Promise<void> {
@@ -77,16 +138,7 @@ export class PermissionStore {
 
                     // Add default permissions
                     store.transaction.oncomplete = () => {
-                        // FIXME Make these origins dependent on the current environment
-                        // (localhost, testing, production)
-                        const nimiqOrigins = [
-                            'https://safe.nimiq-testnet.com',
-                            'https://miner.nimiq-testnet.com',
-                            'https://promo.nimiq-testnet.com',
-                            'https://shop.nimiq-testnet.com',
-                        ];
-
-                        const defaultPermissions = nimiqOrigins.map((origin) => ({
+                        const defaultPermissions = Config.nimiqOrigins.map((origin) => ({
                             origin,
                             allowsAll: true,
                             addresses: [],
@@ -99,67 +151,9 @@ export class PermissionStore {
                         defaultPermissions.forEach((permission) => permissionObjectStore.add(permission));
                     };
                 }
-
-                // if (event.oldVersion < 2) {
-                //     // Version 2 ...
-                // }
             };
         });
 
         return this.dbPromise;
-    }
-
-    private async _put(permission: Permission): Promise<any> {
-        const db = await this.connect();
-        return new Promise((resolve, reject) => {
-            const request = db.transaction([PermissionStore.DB_STORE_NAME], 'readwrite')
-                .objectStore(PermissionStore.DB_STORE_NAME)
-                .put(permission);
-            request.onsuccess = () => resolve(request.result);
-            request.onerror = () => reject(request.error);
-        });
-    }
-
-    private async _get(origin: string): Promise<any> {
-        const db = await this.connect();
-        return new Promise((resolve, reject) => {
-            const request = db.transaction([PermissionStore.DB_STORE_NAME])
-                .objectStore(PermissionStore.DB_STORE_NAME)
-                .get(origin);
-            request.onsuccess = () => resolve(request.result);
-            request.onerror = () => reject(request.error);
-        });
-    }
-
-    private async _list(): Promise<any> {
-        const db = await this.connect();
-        return new Promise((resolve, reject) => {
-            const results: Permission[] = [];
-            const request = db.transaction([PermissionStore.DB_STORE_NAME], 'readonly')
-                .objectStore(PermissionStore.DB_STORE_NAME)
-                .openCursor();
-            request.onsuccess = () => {
-                const cursor = request.result;
-                if (cursor) {
-                    const permission: Permission = cursor.value;
-                    results.push(permission);
-                    cursor.continue();
-                } else {
-                    resolve(results);
-                }
-            };
-            request.onerror = () => reject(request.error);
-        });
-    }
-
-    private async _remove(origin: string): Promise<any> {
-        const db = await this.connect();
-        return new Promise((resolve, reject) => {
-            const request = db.transaction([PermissionStore.DB_STORE_NAME], 'readwrite')
-                .objectStore(PermissionStore.DB_STORE_NAME)
-                .delete(origin);
-            request.onsuccess = () => resolve(true);
-            request.onerror = () => reject(request.error);
-        });
     }
 }
