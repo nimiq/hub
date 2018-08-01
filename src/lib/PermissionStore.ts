@@ -1,18 +1,21 @@
-interface Permission {
+export interface Permission {
     origin: string;
     allowsAll: boolean;
     addresses: string[];
 }
 
-export default class PermissionStore {
+export class PermissionStore {
     public static readonly ALL_ADDRESSES = 'all-addresses';
 
     public static readonly DB_VERSION = 1;
     public static readonly DB_NAME = 'nimiq-permissions';
     public static readonly DB_STORE_NAME = 'permissions';
 
+    public static INDEXEDDB_IMPLEMENTATION = window.indexedDB;
+
     private static instance: PermissionStore;
     private dbPromise: Promise<IDBDatabase>|null;
+    private indexedDB: IDBFactory;
 
     public static get Instance() {
         this.instance = this.instance || new PermissionStore();
@@ -21,6 +24,7 @@ export default class PermissionStore {
 
     private constructor() {
         this.dbPromise = null;
+        this.indexedDB = PermissionStore.INDEXEDDB_IMPLEMENTATION;
     }
 
     public allowByOrigin(origin: string, addresses: string|string[]): Promise<string> {
@@ -61,7 +65,7 @@ export default class PermissionStore {
         if (this.dbPromise) { return this.dbPromise; }
 
         this.dbPromise = new Promise((resolve, reject) => {
-            const request = window.indexedDB.open(PermissionStore.DB_NAME, PermissionStore.DB_VERSION);
+            const request = this.indexedDB.open(PermissionStore.DB_NAME, PermissionStore.DB_VERSION);
             request.onsuccess = () => resolve(request.result);
             request.onerror = () => reject(request.error);
             request.onupgradeneeded = (event) => {
