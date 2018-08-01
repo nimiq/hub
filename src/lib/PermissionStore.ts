@@ -1,6 +1,6 @@
 const Nimiq = require('@nimiq/core'); // tslint:disable-line:no-var-requires
 
-import Config from './Config';
+import Config from '@/lib/Config';
 
 export interface Permission {
     origin: string;
