@@ -16,6 +16,7 @@
     "vuex": "^3.0.1"
   },
   "devDependencies": {
+    "@nimiq/core": "^1.2.0",
     "@types/jest": "^23.1.4",
     "@vue/cli-plugin-typescript": "^3.0.0-rc.4",
     "@vue/cli-plugin-unit-jest": "^3.0.0-rc.4",
