@@ -64,21 +64,21 @@ describe('PermissionStore', () => {
 
     it('can list permissions', async () => {
         const permissions = await PermissionStore.Instance.list();
-        expect(permissions).toEqual(Dummy.permissions);
+        expect([permissions[0], permissions[1]]).toEqual(Dummy.permissions);
     });
 
     it('can remove permissions', async () => {
         let currentPermissions = await PermissionStore.Instance.list();
-        expect(currentPermissions).toEqual(Dummy.permissions);
+        expect([currentPermissions[0], currentPermissions[1]]).toEqual(Dummy.permissions);
 
         await PermissionStore.Instance.removeByOrigin(Dummy.permissions[0].origin);
         currentPermissions = await PermissionStore.Instance.list();
-        expect(currentPermissions.length).toBe(1);
+        expect(currentPermissions.length).toBe(5);
         expect(currentPermissions[0].origin).not.toBe(Dummy.permissions[0].origin);
 
         await PermissionStore.Instance.removeByOrigin(Dummy.permissions[1].origin);
         currentPermissions = await PermissionStore.Instance.list();
-        expect(currentPermissions.length).toBe(0);
+        expect(currentPermissions.length).toBe(4);
 
         // check that we can't get a removed key by address
         const removedKeys = await Promise.all([
@@ -94,16 +94,16 @@ describe('PermissionStore', () => {
         await afterEachCallback();
 
         let currentPermissions = await PermissionStore.Instance.list();
-        expect(currentPermissions.length).toBe(0);
+        expect(currentPermissions.length).toBe(4);
 
         // add permissions
         await PermissionStore.Instance.allowByOrigin(Dummy.permissions[0].origin, Dummy.permissions[0].addresses);
         currentPermissions = await PermissionStore.Instance.list();
-        expect(currentPermissions.length).toBe(1);
+        expect(currentPermissions.length).toBe(5);
 
         await PermissionStore.Instance.allowByOrigin(Dummy.permissions[1].origin, PermissionStore.ALL_ADDRESSES),
         currentPermissions = await PermissionStore.Instance.list();
-        expect(currentPermissions.length).toBe(2);
+        expect(currentPermissions.length).toBe(6);
 
         // check that the permissions have been stored correctly
         const [permission1, permission2] = await Promise.all([

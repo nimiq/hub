@@ -74,6 +74,30 @@ export class PermissionStore {
                 if (event.oldVersion < 1) {
                     // Version 1 is the first version of the database.
                     const store = db.createObjectStore(PermissionStore.DB_STORE_NAME, { keyPath: 'origin' });
+
+                    // Add default permissions
+                    store.transaction.oncomplete = () => {
+                        // FIXME Make these origins dependent on the current environment
+                        // (localhost, testing, production)
+                        const nimiqOrigins = [
+                            'https://safe.nimiq-testnet.com',
+                            'https://miner.nimiq-testnet.com',
+                            'https://promo.nimiq-testnet.com',
+                            'https://shop.nimiq-testnet.com',
+                        ];
+
+                        const defaultPermissions = nimiqOrigins.map((origin) => ({
+                            origin,
+                            allowsAll: true,
+                            addresses: [],
+                        }));
+
+                        // Store values in the newly created objectStore.
+                        const permissionObjectStore = db.transaction([PermissionStore.DB_STORE_NAME], 'readwrite')
+                            .objectStore(PermissionStore.DB_STORE_NAME);
+
+                        defaultPermissions.forEach((permission) => permissionObjectStore.add(permission));
+                    };
                 }
 
                 // if (event.oldVersion < 2) {
