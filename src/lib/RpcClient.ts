@@ -1,37 +1,25 @@
-class RpcClient { // eslint-disable-line no-unused-vars
-    /**
-     * @param {Window} targetWindow
-     * @param {string} targetOrigin
-     * @returns {Promise<RpcClientInstance>}
-     * @throws
-     */
-    static async create(targetWindow, targetOrigin) {
+import CustomError from './CustomError';
+
+export default class RpcClient {
+    public static async create(targetWindow: Window, targetOrigin: string) {
         return new Promise((resolve, reject) => {
             let connected = false;
 
-            /**
-             * @param {MessageEvent} message
-             */
-            const connectedListener = ({ source, origin, data }) => {
+            const connectedListener = ({ source, origin, data }: MessageEvent) => {
                 if (source !== targetWindow
                     || data.status !== 'ok'
                     || data.result !== 'pong'
                     || data.id !== 1
                     || (targetOrigin !== '*' && origin !== targetOrigin)) return;
 
-                // Debugging printouts
-                if (data.result.stack) {
-                    const error = new Error(data.result.message);
-                    error.stack = data.result.stack;
-                    console.error(error);
-                }
-
                 window.removeEventListener('message', connectedListener);
 
                 connected = true;
 
                 console.log('RpcClient: Connection established');
-                resolve(new (RpcClient._generateClientClass(targetWindow, targetOrigin))());
+                const ClientClass = RpcClient._generateClientClass(targetWindow, targetOrigin);
+                const instance = new ClientClass();
+                resolve(instance);
             };
 
             window.addEventListener('message', connectedListener);
@@ -68,30 +56,21 @@ class RpcClient { // eslint-disable-line no-unused-vars
     }
 
 
-    /**
-     * @param {Window} targetWindow
-     * @param {string} targetOrigin
-     * @returns {Newable}
-     * @private
-     */
-    static _generateClientClass(targetWindow, targetOrigin) {
-        /** @type {Map.<number,{resolve: Function, reject: Function}>} */
-        const waitingRequests = new Map();
+    private static _generateClientClass(targetWindow: Window, targetOrigin: string) {
+        interface Request {
+            resolve: (value?: any) => void;
+            reject: (reason?: any) => void;
+        }
 
-        /** @type {Newable} */
-        const Client = class {
+        const waitingRequests = new Map<number, Request>();
+
+        return class {
             constructor() {
-                /** @type {Function} */
                 this._receive = this._receive.bind(this);
                 window.addEventListener('message', this._receive);
             }
 
-            /**
-             * @param {string} command
-             * @param {any[]} [args]
-             * @returns {Promise<any>}
-             */
-            async call(command, args) {
+            public async call(command: string, args: any[]) {
                 return new Promise((resolve, reject) => {
                     const obj = {
                         command,
@@ -108,15 +87,11 @@ class RpcClient { // eslint-disable-line no-unused-vars
                 });
             }
 
-            /** */
-            close() {
+            public close() {
                 window.removeEventListener('message', this._receive);
             }
 
-            /**
-             * @param {MessageEvent} message
-             */
-            _receive({ source, origin, data }) {
+            private _receive({ source, origin, data }: MessageEvent) {
                 // Discard all messages from unwanted sources
                 // or which are not replies
                 // or which are not from the correct origin
@@ -136,7 +111,7 @@ class RpcClient { // eslint-disable-line no-unused-vars
                         callback.resolve(data.result);
                     } else if (data.status === 'error') {
                         const { message, stack, code } = data.result;
-                        const error = /** @type {CustomError} */ (new Error(message));
+                        const error = new Error(message) as CustomError;
                         error.code = code;
                         error.stack = stack;
                         callback.reject(error);
@@ -146,13 +121,11 @@ class RpcClient { // eslint-disable-line no-unused-vars
                 }
             }
 
-            _generateRandomId() {
+            private _generateRandomId() {
                 const array = new Uint32Array(1);
                 crypto.getRandomValues(array);
                 return array[0];
             }
         };
-
-        return Client;
     }
 }

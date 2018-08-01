@@ -1,5 +1,3 @@
-/* global RpcClient */
-
 class PopupClient {
     /**
      * @param {EncryptionType} [type]
