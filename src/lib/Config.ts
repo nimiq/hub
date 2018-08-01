@@ -114,10 +114,10 @@ export default class Config {
     }
 
     private static get _myOrigin() {
-        if (location.origin === "null") {
+        if (location.origin === 'null') {
             // NodeJS environment
             return 'https://accounts.nimiq-testnet.com';
         }
-        return location.origin
+        return location.origin;
     }
 }
