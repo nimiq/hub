@@ -93,9 +93,6 @@ export default class Config {
                 switch (subdomain) {
                     case 'keyguard': path = '/libraries/keyguard/'; break;
                     case 'network': path = '/libraries/network/'; break;
-                    case 'safe': path = '/apps/safe/'; break;
-                    case 'promo': path = '/apps/promo/'; break;
-                    case 'shop': path = '/'; break;
                 }
 
                 if (location.pathname.includes('/dist')) {
