@@ -15,6 +15,11 @@ yarn run serve
 yarn run build
 ```
 
+### Compiles and lints continually for development
+```
+yarn run build --watch
+```
+
 ### Lints and fixes files
 ```
 yarn run lint
