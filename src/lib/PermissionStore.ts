@@ -1,5 +1,3 @@
-const Nimiq = require('@nimiq/core'); // tslint:disable-line:no-var-requires
-
 import Config from '@/lib/Config';
 
 export interface Permission {
@@ -115,15 +113,15 @@ export class PermissionStore {
     }
 
     public async close(): Promise<void> {
-        if (!this.dbPromise) { return; }
+        if (!this.dbPromise) return;
         // If failed to open database (i.e. dbPromise rejects) we don't need to close the db
         const db = await this.dbPromise.catch(() => null);
         this.dbPromise = null;
-        if (db) { db.close(); }
+        if (db) db.close();
     }
 
     private async connect(): Promise<IDBDatabase> {
-        if (this.dbPromise) { return this.dbPromise; }
+        if (this.dbPromise) return this.dbPromise;
 
         this.dbPromise = new Promise((resolve, reject) => {
             const request = this.indexedDB.open(PermissionStore.DB_NAME, PermissionStore.DB_VERSION);
