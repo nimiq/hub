@@ -15,8 +15,8 @@
     "ordered-imports": false,
     "object-literal-sort-keys": false,
     "no-console": false,
-    "max-classes-per-file": [5],
-    "curly": false,
-    "variable-name": false
+    "max-classes-per-file": [3],
+    "curly": [true, "ignore-same-line"],
+    "variable-name": [true, "ban-keywords", "check-format", "allow-leading-underscore"]
   }
 }

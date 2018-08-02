@@ -17,6 +17,7 @@ export default class RpcClient {
                 connected = true;
 
                 console.log('RpcClient: Connection established');
+                // tslint:disable-next-line:variable-name
                 const ClientClass = RpcClient._generateClientClass(targetWindow, targetOrigin);
                 const instance = new ClientClass();
                 resolve(instance);
@@ -54,7 +55,6 @@ export default class RpcClient {
             connectTimer = setTimeout(tryToConnect, 100);
         });
     }
-
 
     private static _generateClientClass(targetWindow: Window, targetOrigin: string) {
         interface Request {
