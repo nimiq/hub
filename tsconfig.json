@@ -28,7 +28,8 @@
     ]
   },
   "include": [
-    "Nimiq.d.ts",
+    "types/Nimiq.d.ts",
+    "types/Keyguard.d.ts",
     "src/**/*.ts",
     "src/**/*.tsx",
     "src/**/*.vue",
