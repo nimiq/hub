@@ -1,5 +1,5 @@
-class AddressInfo {
-    public static fromObject(o: DBAddressInfo): AddressInfo {
+export class AddressInfo {
+    public static fromObject(o: AddressInfoEntry): AddressInfo {
         return new AddressInfo(o.path, o.label, Nimiq.Address.unserialize(new Nimiq.SerialBuffer(o.address)));
     }
 
@@ -9,7 +9,7 @@ class AddressInfo {
         return this.address.toUserFriendlyAddress();
     }
 
-    public toObject(): DBAddressInfo {
+    public toObject(): AddressInfoEntry {
         return {
             path: this.path,
             label: this.label,
@@ -21,9 +21,8 @@ class AddressInfo {
 /*
  * Database Types
  */
-interface DBAddressInfo {
+export interface AddressInfoEntry {
     path: string;
     label: string;
     address: Uint8Array;
 }
-

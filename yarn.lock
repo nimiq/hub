@@ -651,6 +651,10 @@
     call-me-maybe "^1.0.1"
     glob-to-regexp "^0.3.0"
 
+"@nimiq/core-types@^0.1.5":
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/@nimiq/core-types/-/core-types-0.1.5.tgz#fcf45ffdd879cb5a6241870d3dc9700b1db88703"
+
 "@nimiq/core@^1.2.0":
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/@nimiq/core/-/core-1.2.0.tgz#93bc46b662d68f03467a6931c36febb76ff2f797"
@@ -681,6 +685,10 @@
     leveldown "^3.0.0"
     levelup "^2.0.2"
     node-lmdb "0.6.0"
+
+"@nimiq/keyguard-client@^0.0.3":
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/@nimiq/keyguard-client/-/keyguard-client-0.0.3.tgz#474b147e76f2855aff9bca35481764fc4f2191af"
 
 "@nodelib/fs.stat@^1.0.1":
   version "1.1.0"
@@ -5389,14 +5397,6 @@ next-tick@1:
 nice-try@^1.0.4:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/nice-try/-/nice-try-1.0.4.tgz#d93962f6c52f2c1558c0fbda6d512819f1efe1c4"
-
-nimiq-core-types@^0.1.2:
-  version "0.1.4"
-  resolved "https://registry.yarnpkg.com/nimiq-core-types/-/nimiq-core-types-0.1.4.tgz#afead6290ac5bdf542c3ffcd2cc1ae6b946183a3"
-
-nimiq-keyguard-client@^0.0.3:
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/nimiq-keyguard-client/-/nimiq-keyguard-client-0.0.3.tgz#c4a08185ef21c80c89f9049a8ee934ec19cda801"
 
 no-case@^2.2.0:
   version "2.3.2"

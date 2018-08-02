@@ -27,8 +27,8 @@
     "@vue/test-utils": "^1.0.0-beta.20",
     "babel-core": "7.0.0-bridge.0",
     "fake-indexeddb": "^2.0.4",
-    "nimiq-core-types": "^0.1.2",
-    "nimiq-keyguard-client": "^0.0.3",
+    "@nimiq/core-types": "^0.1.5",
+    "@nimiq/keyguard-client": "^0.0.3",
     "ts-jest": "^23.0.1",
     "typescript": "^3.0.1",
     "vue-template-compiler": "^2.5.16"

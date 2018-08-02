@@ -1,15 +1,11 @@
-/**
- * Usage:
- * <script src="lib/key.js"></script>
- * <script src="lib/key-store-indexeddb.js"></script>
- *
- * const keyStore = KeyStore.instance;
- * const accounts = await keyStore.list();
- */
-class KeyStore {
+import {KeyInfo} from '@/lib/KeyInfo';
+
+export class KeyStore {
     public static readonly DB_VERSION = 1;
     public static readonly DB_NAME = 'nimiq-keyguard';
     public static readonly DB_KEY_STORE_NAME = 'keys';
+
+    public static INDEXEDDB_IMPLEMENTATION = window.indexedDB;
 
     private static instance: KeyStore | null = null;
 
@@ -37,6 +33,7 @@ class KeyStore {
     }
 
     private dbPromise: Promise<IDBDatabase> | null;
+    private indexedDB: IDBFactory;
 
     static get Instance(): KeyStore {
         KeyStore.instance = KeyStore.instance || new KeyStore();
@@ -45,6 +42,7 @@ class KeyStore {
 
     private constructor() {
         this.dbPromise = null;
+        this.indexedDB = KeyStore.INDEXEDDB_IMPLEMENTATION;
     }
 
     public async get(id: string): Promise<KeyInfo | null> {
@@ -94,7 +92,7 @@ class KeyStore {
         if (this.dbPromise) { return this.dbPromise; }
 
         this.dbPromise = new Promise((resolve, reject) => {
-            const request = window.indexedDB.open(KeyStore.DB_NAME, KeyStore.DB_VERSION);
+            const request = this.indexedDB.open(KeyStore.DB_NAME, KeyStore.DB_VERSION);
             request.onsuccess = () => resolve(request.result);
             request.onerror = () => reject(request.error);
             request.onupgradeneeded = (event) => {
