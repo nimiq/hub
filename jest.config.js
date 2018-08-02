@@ -1,8 +1,8 @@
 module.exports = {
   moduleFileExtensions: [
-    'ts',
     'js',
     'json',
+    'ts',
     'vue'
   ],
   transform: {
@@ -18,5 +18,6 @@ module.exports = {
   ],
   testMatch: [
     '**/tests/unit/**/*.spec.(js|ts)|**/__tests__/*.(js|ts)'
-  ]
+  ],
+  testURL: 'http://localhost/'
 }
