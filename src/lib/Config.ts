@@ -16,15 +16,18 @@ export default class Config {
         return Config._origin(subdomain, true);
     }
 
-    public static get tld() {
-        const tld = Config._myOrigin.split('.');
-        return [tld[tld.length - 2], tld[tld.length - 1]].join('.');
+    public static get mainDomain() {
+        // NOTE: This only works for single TLDs (like .com or .org),
+        // but not for two-part TLDs (like .co.uk or .com.au).
+        // We are only using it on nimiq.com and nimiq-network.com.
+        const mainDomain = Config._myOrigin.split('.');
+        return [mainDomain[mainDomain.length - 2], mainDomain[mainDomain.length - 1]].join('.');
     }
 
     public static get network() {
-        if (Config.offlinePackaged) { return 'main'; }
+        if (Config.offlinePackaged) return 'main';
 
-        switch (Config.tld) {
+        switch (Config.mainDomain) {
             case 'nimiq.com': return 'main';
             case 'nimiq-testnet.com': return 'test';
             default: return 'test'; // Set this to 'test', 'bounty', or 'dev' for localhost development
@@ -32,9 +35,10 @@ export default class Config {
     }
 
     public static get cdn() {
-        if (Config.offlinePackaged) { return Config.src('keyguard') + '/nimiq.js'; }
+        // FIXME: Correct the path to nimiq.js when the location is known
+        if (Config.offlinePackaged) return './nimiq.js';
 
-        switch (Config.tld) {
+        switch (Config.mainDomain) {
             case 'nimiq.com': return 'https://cdn.nimiq.com/nimiq.js';
             default: return 'https://cdn.nimiq-testnet.com/nimiq.js';
         }
@@ -45,9 +49,9 @@ export default class Config {
     }
 
     public static get devMode() {
-        if (Config.isDevMode) { return Config.isDevMode; }
+        if (Config.isDevMode) return Config.isDevMode;
 
-        switch (Config.tld) {
+        switch (Config.mainDomain) {
             case 'nimiq.com':
             case 'nimiq-testnet.com':
                 return false;
@@ -60,6 +64,10 @@ export default class Config {
         return !Config.offline;
     }
 
+    /**
+     * The PermissionStore is filled on creation
+     * with full permissions for the below origins.
+     */
     public static get nimiqOrigins() {
         return [
             Config.origin('safe'),
@@ -82,28 +90,32 @@ export default class Config {
             return Config._localhost(subdomain, withPath, true);
         }
 
-        return `https://${subdomain}.${Config.tld}${(withPath && '/') || ''}`;
+        return `https://${subdomain}.${Config.mainDomain}${withPath ? '/' : ''}`;
     }
 
     private static _localhost(subdomain: string, withPath?: boolean, ipMode?: boolean) {
-        let path = '';
+        const path = '';
 
-        if (withPath) {
-            if (Config.offlinePackaged) { path = '/' + subdomain + '/'; } else {
-                switch (subdomain) {
-                    case 'keyguard': path = '/libraries/keyguard/'; break;
-                    case 'network': path = '/libraries/network/'; break;
-                }
+        // TODO: Re-evaluate when deployment structure is known
 
-                if (location.pathname.includes('/dist')) {
-                    path += `deployment-${subdomain}/dist/`;
-                } else if (['keyguard', 'network', 'safe'].includes(subdomain)) {
-                    path += 'src/';
-                }
-            }
-        }
+        // if (withPath) {
+        //     if (Config.offlinePackaged) path = `/${subdomain}/`;
+        //     else {
 
-        subdomain = Config.offlinePackaged ? '' : subdomain + '.';
+        //         switch (subdomain) {
+        //             case 'keyguard': path = '/libraries/keyguard/'; break;
+        //             case 'network': path = '/libraries/network/'; break;
+        //         }
+
+        //         if (location.pathname.includes('/dist')) {
+        //             path += `deployment-${subdomain}/dist/`;
+        //         } else if (['keyguard', 'network', 'safe'].indexOf(subdomain) > -1) {
+        //             path += 'src/';
+        //         // }
+        //     }
+        // }
+
+        subdomain = Config.offlinePackaged ? '' : `${subdomain}.`;
 
         const origin = ipMode ? location.hostname : `${subdomain}localhost`;
 

@@ -4719,8 +4719,8 @@ nice-try@^1.0.4:
   resolved "https://registry.yarnpkg.com/nice-try/-/nice-try-1.0.4.tgz#d93962f6c52f2c1558c0fbda6d512819f1efe1c4"
 
 nimiq-core-types@^0.1.2:
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/nimiq-core-types/-/nimiq-core-types-0.1.2.tgz#a2d75b02a69bf181753d58ed1152b77ffcfe183a"
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/nimiq-core-types/-/nimiq-core-types-0.1.4.tgz#afead6290ac5bdf542c3ffcd2cc1ae6b946183a3"
 
 nimiq-keyguard-client@^0.0.3:
   version "0.0.3"
