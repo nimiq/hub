@@ -69,18 +69,20 @@ describe('PermissionStore', () => {
 
     it('can list permissions', async () => {
         const permissions = await PermissionStore.Instance.list();
-        expect([permissions[0], permissions[1]]).toEqual(DUMMY.permissions);
+        expect([permissions[DUMMY.nimiqOriginCount + 0],
+            permissions[DUMMY.nimiqOriginCount + 1]]).toEqual(DUMMY.permissions);
     });
 
     it('can remove permissions', async () => {
         let currentPermissions = await PermissionStore.Instance.list();
         expect(currentPermissions.length).toBe(DUMMY.nimiqOriginCount + 2);
-        expect([currentPermissions[0], currentPermissions[1]]).toEqual(DUMMY.permissions);
+        expect([currentPermissions[DUMMY.nimiqOriginCount + 0],
+            currentPermissions[DUMMY.nimiqOriginCount + 1]]).toEqual(DUMMY.permissions);
 
         await PermissionStore.Instance.remove(DUMMY.permissions[0].origin);
         currentPermissions = await PermissionStore.Instance.list();
         expect(currentPermissions.length).toBe(DUMMY.nimiqOriginCount + 1);
-        expect(currentPermissions[0].origin).not.toBe(DUMMY.permissions[0].origin);
+        expect(currentPermissions[DUMMY.nimiqOriginCount + 0].origin).not.toBe(DUMMY.permissions[0].origin);
 
         await PermissionStore.Instance.remove(DUMMY.permissions[1].origin);
         currentPermissions = await PermissionStore.Instance.list();
