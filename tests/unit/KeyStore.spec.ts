@@ -13,20 +13,20 @@ const DUMMY_ADDRESS = Nimiq.Address.fromUserFriendlyAddress('NQ07 0000 0000 0000
 const DUMMY: KeyInfo[] = [
     new KeyInfo('funny-giraffe', 'Main',
         new Map<string, AddressInfo>([
-            ['m/0', new AddressInfo('m/0', 'MyAccount', DUMMY_ADDRESS)],
+            ['m/0\'', new AddressInfo('m/0\'', 'MyAccount', DUMMY_ADDRESS)],
         ]), [], KeyStorageType.BIP39),
     new KeyInfo('joyful-cat', 'Ledger',
         new Map<string, AddressInfo>([
-            ['m/0', new AddressInfo('m/0', 'MyLedger', DUMMY_ADDRESS)],
+            ['m/0\'', new AddressInfo('m/0\'', 'MyLedger', DUMMY_ADDRESS)],
         ]), [{
             address: DUMMY_ADDRESS,
             label: 'Savings',
-            ownerPath: 'm/0',
+            ownerPath: 'm/0\'',
             type: ContractType.VESTING,
         }], KeyStorageType.LEDGER),
     new KeyInfo('sad-panda', 'Old',
         new Map<string, AddressInfo>([
-            ['m/0', new AddressInfo('m/0', 'OldAccount', DUMMY_ADDRESS)],
+            ['m/0\'', new AddressInfo('m/0\'', 'OldAccount', DUMMY_ADDRESS)],
         ]), [], KeyStorageType.LEGACY),
 ];
 
@@ -109,7 +109,7 @@ describe('KeyStore', () => {
         expect(keyInfo).toEqual(DUMMY[1]);
 
         keyInfo!.contracts.pop();
-        keyInfo!.addresses.set('m/1', new AddressInfo('m/1', 'Test', DUMMY_ADDRESS));
+        keyInfo!.addresses.set('m/1\'', new AddressInfo('m/1\'', 'Test', DUMMY_ADDRESS));
 
         // Update the key
         await KeyStore.Instance.put(keyInfo!);
@@ -119,7 +119,7 @@ describe('KeyStore', () => {
         expect(keyInfo).toBeDefined();
         expect(keyInfo!.contracts.length).toBe(0);
         expect(keyInfo!.addresses.size).toBe(2);
-        expect(keyInfo!.addresses.get('m/1')).toBeDefined();
-        expect(keyInfo!.addresses.get('m/1')!.path).toBe('m/1');
+        expect(keyInfo!.addresses.get('m/1\'')).toBeDefined();
+        expect(keyInfo!.addresses.get('m/1\'')!.path).toBe('m/1\'');
     });
 });
