@@ -17,8 +17,10 @@
     "vuex": "^3.0.1"
   },
   "devDependencies": {
-    "@nimiq/core": "^1.2.0",
     "@babel/core": "^7.0.0-beta.55",
+    "@nimiq/core": "^1.2.0",
+    "@nimiq/core-types": "^0.1.7",
+    "@nimiq/keyguard-client": "^0.0.4",
     "@types/jest": "^23.1.4",
     "@vue/babel-preset-app": "^3.0.0-rc.10",
     "@vue/cli-plugin-typescript": "^3.0.0-rc.10",
@@ -27,8 +29,6 @@
     "@vue/test-utils": "^1.0.0-beta.20",
     "babel-core": "7.0.0-bridge.0",
     "fake-indexeddb": "^2.0.4",
-    "@nimiq/core-types": "^0.1.5",
-    "@nimiq/keyguard-client": "^0.0.3",
     "ts-jest": "^23.0.1",
     "typescript": "^3.0.1",
     "vue-template-compiler": "^2.5.16"

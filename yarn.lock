@@ -651,9 +651,9 @@
     call-me-maybe "^1.0.1"
     glob-to-regexp "^0.3.0"
 
-"@nimiq/core-types@^0.1.5":
-  version "0.1.5"
-  resolved "https://registry.yarnpkg.com/@nimiq/core-types/-/core-types-0.1.5.tgz#fcf45ffdd879cb5a6241870d3dc9700b1db88703"
+"@nimiq/core-types@^0.1.7":
+  version "0.1.7"
+  resolved "https://registry.yarnpkg.com/@nimiq/core-types/-/core-types-0.1.7.tgz#1828fbdacde4b5d11e414568370c82ae640c9eb1"
 
 "@nimiq/core@^1.2.0":
   version "1.2.0"
@@ -686,9 +686,9 @@
     levelup "^2.0.2"
     node-lmdb "0.6.0"
 
-"@nimiq/keyguard-client@^0.0.3":
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/@nimiq/keyguard-client/-/keyguard-client-0.0.3.tgz#474b147e76f2855aff9bca35481764fc4f2191af"
+"@nimiq/keyguard-client@^0.0.4":
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/@nimiq/keyguard-client/-/keyguard-client-0.0.4.tgz#a48a21b43fa3097addee07ac15fb0cd15e87bf67"
 
 "@nodelib/fs.stat@^1.0.1":
   version "1.1.0"
