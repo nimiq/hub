@@ -674,6 +674,10 @@
     bufferutil "^3.0.4"
     utf-8-validate "^4.0.1"
 
+"@nimiq/iqons@https://github.com/nimiq/iqons.git#a3302e06b0a53b6daeb745d13dbfd930b304c791":
+  version "1.0.0"
+  resolved "https://github.com/nimiq/iqons.git#a3302e06b0a53b6daeb745d13dbfd930b304c791"
+
 "@nimiq/jungle-db@^0.9.14":
   version "0.9.17"
   resolved "https://registry.yarnpkg.com/@nimiq/jungle-db/-/jungle-db-0.9.17.tgz#3a8a55f600da8f8b103ad988d177b2785e1bd6cc"
@@ -689,6 +693,20 @@
 "@nimiq/keyguard-client@^0.0.4":
   version "0.0.4"
   resolved "https://registry.yarnpkg.com/@nimiq/keyguard-client/-/keyguard-client-0.0.4.tgz#a48a21b43fa3097addee07ac15fb0cd15e87bf67"
+
+"@nimiq/secure-utils@https://github.com/nimiq/secure-utils.git#3937c23c2703d5359eebe2c3bf7b3c9290b26100":
+  version "0.0.0"
+  resolved "https://github.com/nimiq/secure-utils.git#3937c23c2703d5359eebe2c3bf7b3c9290b26100"
+
+"@nimiq/vue-components@https://github.com/nimiq/vue-components.git#0c76a256c2e4697fbd7c95503b0b2c93adb146d2":
+  version "0.1.0"
+  resolved "https://github.com/nimiq/vue-components.git#0c76a256c2e4697fbd7c95503b0b2c93adb146d2"
+  dependencies:
+    "@nimiq/iqons" "https://github.com/nimiq/iqons.git#a3302e06b0a53b6daeb745d13dbfd930b304c791"
+    "@nimiq/secure-utils" "https://github.com/nimiq/secure-utils.git#3937c23c2703d5359eebe2c3bf7b3c9290b26100"
+    vue "^2.5.16"
+    vue-async-computed "^3.3.1"
+    vue-property-decorator "^7.0.0"
 
 "@nodelib/fs.stat@^1.0.1":
   version "1.1.0"
@@ -7951,6 +7969,10 @@ vm-browserify@0.0.4:
   resolved "https://registry.yarnpkg.com/vm-browserify/-/vm-browserify-0.0.4.tgz#5d7ea45bbef9e4a6ff65f95438e0a87c357d5a73"
   dependencies:
     indexof "0.0.1"
+
+vue-async-computed@^3.3.1:
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/vue-async-computed/-/vue-async-computed-3.4.0.tgz#5b041e7eb74d423e7bf09e113210516b064527a6"
 
 vue-class-component@^6.0.0, vue-class-component@^6.2.0:
   version "6.2.0"

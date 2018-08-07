@@ -1,36 +1,37 @@
 {
-  "name": "accounts",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build --modern",
-    "lint": "vue-cli-service lint",
-    "test:unit": "vue-cli-service test:unit",
-    "test": "yarn test:unit"
-  },
-  "dependencies": {
-    "vue": "^2.5.16",
-    "vue-class-component": "^6.0.0",
-    "vue-property-decorator": "^7.0.0",
-    "vue-router": "^3.0.1",
-    "vuex": "^3.0.1"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.0.0-beta.55",
-    "@nimiq/core": "^1.2.0",
-    "@nimiq/core-types": "^0.1.7",
-    "@nimiq/keyguard-client": "^0.0.4",
-    "@types/jest": "^23.1.4",
-    "@vue/babel-preset-app": "^3.0.0-rc.10",
-    "@vue/cli-plugin-typescript": "^3.0.0-rc.10",
-    "@vue/cli-plugin-unit-jest": "^3.0.0-rc.10",
-    "@vue/cli-service": "^3.0.0-rc.10",
-    "@vue/test-utils": "^1.0.0-beta.20",
-    "babel-core": "7.0.0-bridge.0",
-    "fake-indexeddb": "^2.0.4",
-    "ts-jest": "^23.0.1",
-    "typescript": "^3.0.1",
-    "vue-template-compiler": "^2.5.16"
-  }
+    "name": "accounts",
+    "version": "0.1.0",
+    "private": true,
+    "scripts": {
+        "serve": "vue-cli-service serve",
+        "build": "vue-cli-service build --modern",
+        "lint": "vue-cli-service lint",
+        "test:unit": "vue-cli-service test:unit",
+        "test": "yarn test:unit"
+    },
+    "dependencies": {
+        "@nimiq/vue-components": "https://github.com/nimiq/vue-components.git#0c76a256c2e4697fbd7c95503b0b2c93adb146d2",
+        "vue": "^2.5.16",
+        "vue-class-component": "^6.0.0",
+        "vue-property-decorator": "^7.0.0",
+        "vue-router": "^3.0.1",
+        "vuex": "^3.0.1"
+    },
+    "devDependencies": {
+        "@babel/core": "^7.0.0-beta.55",
+        "@nimiq/core": "^1.2.0",
+        "@nimiq/core-types": "^0.1.7",
+        "@nimiq/keyguard-client": "^0.0.4",
+        "@types/jest": "^23.1.4",
+        "@vue/babel-preset-app": "^3.0.0-rc.10",
+        "@vue/cli-plugin-typescript": "^3.0.0-rc.10",
+        "@vue/cli-plugin-unit-jest": "^3.0.0-rc.10",
+        "@vue/cli-service": "^3.0.0-rc.10",
+        "@vue/test-utils": "^1.0.0-beta.20",
+        "babel-core": "7.0.0-bridge.0",
+        "fake-indexeddb": "^2.0.4",
+        "ts-jest": "^23.0.1",
+        "typescript": "^3.0.1",
+        "vue-template-compiler": "^2.5.16"
+    }
 }
