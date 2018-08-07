@@ -694,6 +694,10 @@
   version "0.0.4"
   resolved "https://registry.yarnpkg.com/@nimiq/keyguard-client/-/keyguard-client-0.0.4.tgz#a48a21b43fa3097addee07ac15fb0cd15e87bf67"
 
+"@nimiq/rpc@^0.0.3":
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/@nimiq/rpc/-/rpc-0.0.3.tgz#8f4f7e3d5ebbbb59a3bc120e37a1ec38b4e62e5a"
+
 "@nimiq/secure-utils@https://github.com/nimiq/secure-utils.git#3937c23c2703d5359eebe2c3bf7b3c9290b26100":
   version "0.0.0"
   resolved "https://github.com/nimiq/secure-utils.git#3937c23c2703d5359eebe2c3bf7b3c9290b26100"

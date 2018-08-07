@@ -10,6 +10,7 @@
         "test": "yarn test:unit"
     },
     "dependencies": {
+        "@nimiq/rpc": "^0.0.3",
         "@nimiq/vue-components": "https://github.com/nimiq/vue-components.git#0c76a256c2e4697fbd7c95503b0b2c93adb146d2",
         "vue": "^2.5.16",
         "vue-class-component": "^6.0.0",

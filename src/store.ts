@@ -1,16 +1,24 @@
 import Vue from 'vue';
-import Vuex from 'vuex';
+import Vuex, { StoreOptions } from 'vuex';
+import {ParsedRpcRequest} from "@/lib/Requests";
+import {KeyInfo} from "@/lib/KeyInfo";
+import {State} from "@nimiq/rpc";
 
 Vue.use(Vuex);
 
-export default new Vuex.Store({
-  state: {
+interface RootState {
+    request?: ParsedRpcRequest;
+    rpcState?: State;
+    keys?: KeyInfo[];
+}
 
-  },
-  mutations: {
+const store: StoreOptions<RootState> = {
+    state: {
+    },
+    mutations: {
+    },
+    actions: {
+    },
+};
 
-  },
-  actions: {
-
-  },
-});
+export default new Vuex.Store<RootState>(store);
