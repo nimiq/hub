@@ -9,6 +9,18 @@
     </div>
 </template>
 
+<script lang="ts">
+    import {Vue} from 'vue-property-decorator';
+    import Component from "vue-class-component";
+
+    @Component({})
+    export default class App extends Vue {
+        created() {
+            this.$store.dispatch('initKeys');
+        }
+    }
+</script>
+
 <style>
     @import '../node_modules/@nimiq/vue-components/dist/vue-components.css';
 

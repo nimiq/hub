@@ -1,27 +1,26 @@
 export enum RequestType {
-    CHECKOUT
+    CHECKOUT = 'checkout'
 }
 
 export interface CheckoutRequest {
-    kind: RequestType.CHECKOUT
-    recipient: Uint8Array
-    recipientType?: Nimiq.Account.Type
-    value: number
-    fee?: number
-    data?: Uint8Array
-    flags?: number
-    networkId?: number
+    recipient: Uint8Array;
+    recipientType?: Nimiq.Account.Type;
+    value: number;
+    fee?: number;
+    data?: Uint8Array;
+    flags?: number;
+    networkId?: number;
 }
 
 export interface ParsedCheckoutRequest {
-    kind: RequestType.CHECKOUT
-    recipient: Nimiq.Address
-    recipientType?: Nimiq.Account.Type
-    value: number
-    fee?: number
-    data?: Uint8Array
-    flags?: number
-    networkId?: number
+    kind: RequestType.CHECKOUT;
+    recipient: Nimiq.Address;
+    recipientType?: Nimiq.Account.Type;
+    value: number;
+    fee?: number;
+    data?: Uint8Array;
+    flags?: number;
+    networkId?: number;
 }
 
 export type CheckoutResult = {

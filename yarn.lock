@@ -651,9 +651,9 @@
     call-me-maybe "^1.0.1"
     glob-to-regexp "^0.3.0"
 
-"@nimiq/core-types@^0.1.7":
-  version "0.1.7"
-  resolved "https://registry.yarnpkg.com/@nimiq/core-types/-/core-types-0.1.7.tgz#1828fbdacde4b5d11e414568370c82ae640c9eb1"
+"@nimiq/core-types@^0.1.8":
+  version "0.1.8"
+  resolved "https://registry.yarnpkg.com/@nimiq/core-types/-/core-types-0.1.8.tgz#f1873df6e28e4eef7f11ef2a05932e324b5c0431"
 
 "@nimiq/core@^1.2.0":
   version "1.2.0"

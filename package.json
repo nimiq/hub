@@ -21,7 +21,7 @@
     "devDependencies": {
         "@babel/core": "^7.0.0-beta.55",
         "@nimiq/core": "^1.2.0",
-        "@nimiq/core-types": "^0.1.7",
+        "@nimiq/core-types": "^0.1.8",
         "@nimiq/keyguard-client": "^0.0.4",
         "@types/jest": "^23.1.4",
         "@vue/babel-preset-app": "^3.0.0-rc.10",
