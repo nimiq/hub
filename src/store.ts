@@ -10,11 +10,12 @@ Vue.use(Vuex);
 export interface RootState {
     request?: ParsedRpcRequest;
     rpcState?: State;
-    keys?: KeyInfo[];
+    keys: KeyInfo[];
 }
 
 const store: StoreOptions<RootState> = {
     state: {
+        keys: [],
     },
     mutations: {
         setIncomingRequest(store, payload) {
@@ -25,9 +26,6 @@ const store: StoreOptions<RootState> = {
             store.keys = keys;
         },
         addKey(store, key) {
-            if (!store.keys) {
-                store.keys = [];
-            }
             store.keys.push(key);
         }
     },
