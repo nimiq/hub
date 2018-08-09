@@ -16,8 +16,11 @@ export class KeyInfo {
         return new KeyInfo(o.id, o.label, addresses, o.contracts, o.type);
     }
 
-    public constructor(public id: string, public label: string, public addresses: Map</*path*/ string, AddressInfo>,
-                       public contracts: ContractInfo[], public type: KeyStorageType) {}
+    public constructor(public id: string,
+                       public label: string,
+                       public addresses: Map</*path*/ string, AddressInfo>,
+                       public contracts: ContractInfo[],
+                       public type: KeyStorageType) {}
 
     public toObject(): KeyInfoEntry {
         const addresses = new Map();

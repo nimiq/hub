@@ -10,15 +10,15 @@
 </template>
 
 <script lang="ts">
-    import {Vue} from 'vue-property-decorator';
-    import Component from "vue-class-component";
+import {Vue} from 'vue-property-decorator';
+import Component from 'vue-class-component';
 
-    @Component({})
-    export default class App extends Vue {
-        created() {
-            this.$store.dispatch('initKeys');
-        }
+@Component({})
+export default class App extends Vue {
+    public created() {
+        this.$store.dispatch('initKeys');
     }
+}
 </script>
 
 <style>
