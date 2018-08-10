@@ -702,14 +702,14 @@
   version "0.0.0"
   resolved "https://github.com/nimiq/secure-utils.git#3937c23c2703d5359eebe2c3bf7b3c9290b26100"
 
-"@nimiq/vue-components@https://github.com/nimiq/vue-components.git#0c76a256c2e4697fbd7c95503b0b2c93adb146d2":
+"@nimiq/vue-components@https://github.com/nimiq/vue-components.git#0238a9662774570c7ef3569cc1949d8b63c7461d":
   version "0.1.0"
-  resolved "https://github.com/nimiq/vue-components.git#0c76a256c2e4697fbd7c95503b0b2c93adb146d2"
+  resolved "https://github.com/nimiq/vue-components.git#0238a9662774570c7ef3569cc1949d8b63c7461d"
   dependencies:
     "@nimiq/iqons" "https://github.com/nimiq/iqons.git#a3302e06b0a53b6daeb745d13dbfd930b304c791"
     "@nimiq/secure-utils" "https://github.com/nimiq/secure-utils.git#3937c23c2703d5359eebe2c3bf7b3c9290b26100"
-    vue "^2.5.16"
-    vue-async-computed "^3.3.1"
+    vue "^2.5.17"
+    vue-async-computed "^3.4.1"
     vue-property-decorator "^7.0.0"
 
 "@nodelib/fs.stat@^1.0.1":
@@ -7974,9 +7974,9 @@ vm-browserify@0.0.4:
   dependencies:
     indexof "0.0.1"
 
-vue-async-computed@^3.3.1:
-  version "3.4.0"
-  resolved "https://registry.yarnpkg.com/vue-async-computed/-/vue-async-computed-3.4.0.tgz#5b041e7eb74d423e7bf09e113210516b064527a6"
+vue-async-computed@^3.4.1:
+  version "3.4.1"
+  resolved "https://registry.yarnpkg.com/vue-async-computed/-/vue-async-computed-3.4.1.tgz#b3923c177b38ab80cb767bbc09cca3dbbb25dd48"
 
 vue-class-component@^6.0.0, vue-class-component@^6.2.0:
   version "6.2.0"
@@ -8045,7 +8045,7 @@ vue-template-es2015-compiler@^1.6.0:
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/vue-template-es2015-compiler/-/vue-template-es2015-compiler-1.6.0.tgz#dc42697133302ce3017524356a6c61b7b69b4a18"
 
-vue@^2.5.16:
+vue@^2.5.16, vue@^2.5.17:
   version "2.5.17"
   resolved "https://registry.yarnpkg.com/vue/-/vue-2.5.17.tgz#0f8789ad718be68ca1872629832ed533589c6ada"
 

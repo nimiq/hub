@@ -11,7 +11,7 @@
     },
     "dependencies": {
         "@nimiq/rpc": "^0.0.3",
-        "@nimiq/vue-components": "https://github.com/nimiq/vue-components.git#0c76a256c2e4697fbd7c95503b0b2c93adb146d2",
+        "@nimiq/vue-components": "https://github.com/nimiq/vue-components.git#0238a9662774570c7ef3569cc1949d8b63c7461d",
         "vue": "^2.5.16",
         "vue-class-component": "^6.0.0",
         "vue-property-decorator": "^7.0.0",
