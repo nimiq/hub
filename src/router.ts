@@ -9,8 +9,8 @@ Vue.use(Router);
 
 export const keyguardResponseRouter: { [index: string]: {resolve: string, reject: string} } = {
     [KeyguardCommand.SIGN_TRANSACTION]: {
-        resolve: 'checkout',
-        reject: 'checkout',
+        resolve: 'meta-about',
+        reject: 'meta-about',
     },
 };
 

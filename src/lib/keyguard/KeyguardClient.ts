@@ -9,7 +9,7 @@ import {
 } from '@/lib/keyguard/RequestTypes';
 
 export class KeyguardClient {
-    private static readonly DEFAULT_ENDPOINT = '../src';
+    private static readonly DEFAULT_ENDPOINT = 'http://localhost:8000/src';
 
     private readonly _endpoint: string;
     private _redirectClient: RedirectRpcClient;
@@ -69,7 +69,13 @@ export class KeyguardClient {
         return this._request(requestBehavior,  KeyguardCommand.SIGN_MESSAGE, [request]);
     }
 
-    public _onReject(error: any, id: number, state: any) {
+    /* PRIVATE METHODS */
+
+    private _request(behavior: RequestBehavior, command: KeyguardCommand, args: any[]): Promise<any> {
+        return behavior.request(this._endpoint, command, args);
+    }
+
+    private _onReject(error: any, id: number, state: any) {
         const command = state.__command;
         if (!command) {
             throw new Error('Invalid state after RPC request');
@@ -77,12 +83,6 @@ export class KeyguardClient {
         delete state.__command;
 
         this._observable.fire(`${command}-reject`, error, state);
-    }
-
-    /* PRIVATE METHODS */
-
-    private _request(behavior: RequestBehavior, command: KeyguardCommand, args: any[]): Promise<any> {
-        return behavior.request(this._endpoint, command, args);
     }
 
     private _onResolve(result: any, id: number, state: any) {

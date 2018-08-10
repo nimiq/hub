@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Checkout</title>
+    <script src="https://cdn.nimiq-network.com/branches/master/web.js"></script>
+    <script src="prebuilt/rpc.umd.js"></script>
+    <script src="prebuilt/RequestTypes.js"></script>
+    <script src="prebuilt/RequestBehavior.js"></script>
+    <script src="prebuilt/AccountsManagerClient.js"></script>
+    <script src="Demo.js"></script>
+</head>
+<body>
+
+<form class="center">
+    <div class="row">
+        <label>Keyguard BaseURL</label>
+        <input value="http://localhost:8000/" disabled readonly>
+    </div>
+
+    <div class="row">
+        <label>Transaction value (satoshi)</label>
+        <input id="value" value="0">
+    </div>
+
+    <div class="row">
+        <label>Transaction fee (satoshi)</label>
+        <input id="fee" value="0">
+    </div>
+
+    <div class="row">
+        <label>Transaction data (ascii)</label>
+        <input id="data" value="">
+    </div>
+
+    <div class="row">
+        <label>Key passphrase</label>
+        <input id="passphrase" value="password123">
+    </div>
+
+
+    <br><button id="redirect" type="button" class="small">Pay with NIM (redirect)</button>
+    <br><button id="popup" type="button" class="small">Pay with NIM (popup)</button>
+
+    <p id="result"></p>
+</form>
+
+<script>
+    (async () => {
+        await Nimiq.WasmHelper.doImportBrowser();
+        Nimiq.GenesisConfig.test();
+    })();
+
+    const demo = new Demo('http://localhost:8000');
+
+    const client = new AccountsManagerClient('http://localhost:8080');
+    client.on(RequestType.CHECKOUT, (result, state) => {
+        console.log('AccountsManager result', result);
+        console.log('State', state);
+
+        document.querySelector('#result').textContent = 'TX signed';
+        demo.tearDown().catch(console.error);
+    }, (error, state) => {
+        console.error('AccountsManager error', error);
+        console.log('State', state);
+
+        document.querySelector('#result').textContent = `Error: ${error.message || error}`;
+        demo.tearDown().catch(console.error);
+    });
+    client.init();
+
+    document.querySelector('button#redirect').addEventListener('click', async () => {
+        checkoutRedirect(await generateRequest(demo));
+    });
+
+    document.querySelector('button#popup').addEventListener('click', async () => {
+        client.createPopup(`left=${window.innerWidth / 2 - 250},top=100,width=500,height=820,location=yes,dependent=yes`);
+        await checkoutPopup(await generateRequest(demo));
+    });
+
+    async function generateRequest(demo) {
+        const value = parseInt(document.querySelector('#value').value) || 1337;
+        const txFee = parseInt(document.querySelector('#fee').value) || 0;
+        const txData = document.querySelector('#data').value || '';
+        const keyPassphrase = document.querySelector('#passphrase').value || '';
+
+        await demo.setUp(keyPassphrase);
+
+        return {
+            recipient: Nimiq.Address.fromUserFriendlyAddress('NQ63 U7XG 1YYE D6FA SXGG 3F5H X403 NBKN JLDU').serialize(),
+            value,
+            fee: txFee,
+            data: Nimiq.BufferUtils.fromAscii(txData)
+        };
+    }
+
+    function checkoutRedirect(txRequest) {
+        return client.checkout(txRequest);
+    }
+
+    async function checkoutPopup(txRequest) {
+        try {
+            const result = await client.checkout(txRequest);
+            console.log('Keyguard result', result);
+            document.querySelector('#result').textContent = 'TX signed';
+        } catch (e) {
+            console.error('Keyguard error', e);
+            document.querySelector('#result').textContent = `Error: ${e.message || e}`;
+        }
+
+        await demo.tearDown();
+    }
+</script>
+
+</body>
+</html>

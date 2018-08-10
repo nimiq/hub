@@ -16,7 +16,7 @@ export class RequestBehavior {
 
     constructor(targetUrl?: string, localState?: any) {
         const location = window.location;
-        this._targetUrl = targetUrl || `${location.protocol}//${location.hostname}${location.pathname}`;
+        this._targetUrl = targetUrl || `${location.protocol}//${location.hostname}:${location.port}${location.pathname}`;
         this._localState = localState || {};
 
         // Reject local state with reserved property.

@@ -32,8 +32,8 @@ export class KeyStore {
         });
     }
 
-    private dbPromise: Promise<IDBDatabase> | null;
-    private indexedDB: IDBFactory;
+    private _dbPromise: Promise<IDBDatabase> | null;
+    private _indexedDB: IDBFactory;
 
     static get Instance(): KeyStore {
         KeyStore.instance = KeyStore.instance || new KeyStore();
@@ -41,8 +41,8 @@ export class KeyStore {
     }
 
     private constructor() {
-        this.dbPromise = null;
-        this.indexedDB = KeyStore.INDEXEDDB_IMPLEMENTATION;
+        this._dbPromise = null;
+        this._indexedDB = KeyStore.INDEXEDDB_IMPLEMENTATION;
     }
 
     public async get(id: string): Promise<KeyInfo | null> {
@@ -81,18 +81,18 @@ export class KeyStore {
     }
 
     public async close() {
-        if (!this.dbPromise) { return; }
+        if (!this._dbPromise) { return; }
         // If failed to open database (i.e. dbPromise rejects) we don't need to close the db
-        const db = await this.dbPromise.catch(() => null);
-        this.dbPromise = null;
+        const db = await this._dbPromise.catch(() => null);
+        this._dbPromise = null;
         if (db) { db.close(); }
     }
 
     private async connect(): Promise<IDBDatabase> {
-        if (this.dbPromise) { return this.dbPromise; }
+        if (this._dbPromise) { return this._dbPromise; }
 
-        this.dbPromise = new Promise((resolve, reject) => {
-            const request = this.indexedDB.open(KeyStore.DB_NAME, KeyStore.DB_VERSION);
+        this._dbPromise = new Promise((resolve, reject) => {
+            const request = this._indexedDB.open(KeyStore.DB_NAME, KeyStore.DB_VERSION);
             request.onsuccess = () => resolve(request.result);
             request.onerror = () => reject(request.error);
             request.onupgradeneeded = (event) => {
@@ -105,7 +105,7 @@ export class KeyStore {
             };
         });
 
-        return this.dbPromise;
+        return this._dbPromise;
     }
 
 }

@@ -31,6 +31,7 @@
     "types/Keyguard.d.ts",
     "types/vue-async-computed.d.ts",
     "src/**/*.ts",
+    "client/**/*.ts",
     "src/**/*.tsx",
     "src/**/*.vue",
     "tests/**/*.ts",
