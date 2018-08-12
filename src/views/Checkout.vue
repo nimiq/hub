@@ -109,7 +109,7 @@ export default class Checkout extends Vue {
 
         client.signTransaction({
             layout: 'checkout',
-            shopOrigin: 'http://localhost:8080',
+            shopOrigin: this.rpcState.origin,
             appName: this.request.appName,
 
             keyId: key.id,
