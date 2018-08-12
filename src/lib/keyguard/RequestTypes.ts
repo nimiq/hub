@@ -10,7 +10,10 @@ export enum KeyguardCommand {
 }
 
 export interface SignTransactionRequest {
+    layout?: 'standard' | 'checkout' | 'cashlink';
+    shopOrigin?: string;
     appName: string;
+
     keyId: string;
     keyPath: string;
     keyLabel?: string;

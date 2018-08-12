@@ -1,7 +1,10 @@
 <template>
     <div>
-        <PaymentInfoLine style="color: white" :amount="199000" :networkFee="1000" :networkFeeEditable="false"
-                         origin="shop.nimiq.com"/>
+        <PaymentInfoLine v-if="rpcState" style="color: white"
+                         :amount="request.value"
+                         :networkFee="request.fee"
+                         :networkFeeEditable="false"
+                         :origin="rpcState.origin"/>
         <small-page>
             <div class="visible-area">
                 <div class="multi-pages" :style="'left: -'+((page-1)*100)+'%'">
@@ -30,6 +33,7 @@ import RpcApi from '../lib/RpcApi';
 @Component({components: {PaymentInfoLine, SmallPage, AccountSelector, LoginSelector}})
 export default class Checkout extends Vue {
     @State('keys') private keys!: KeyInfo[];
+    @State('rpcState') private rpcState!: any;
     @State('request') private request!: ParsedCheckoutRequest;
 
     @Mutation('addKey') private addKey!: (key: KeyInfo) => any;
@@ -104,7 +108,10 @@ export default class Checkout extends Vue {
         }
 
         client.signTransaction({
+            layout: 'checkout',
+            shopOrigin: 'http://localhost:8080',
             appName: this.request.appName,
+
             keyId: key.id,
             keyPath,
             keyLabel: key.label,
