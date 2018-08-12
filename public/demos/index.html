@@ -75,7 +75,7 @@
     });
 
     document.querySelector('button#popup').addEventListener('click', async () => {
-        client.createPopup(`left=${window.innerWidth / 2 - 500},top=100,width=1000,height=820,location=yes,dependent=yes`);
+        client.createPopup(`left=${window.innerWidth / 2 - 500},top=50,width=1000,height=900,location=yes,dependent=yes`);
         await checkoutPopup(await generateRequest(demo));
     });
 
@@ -88,6 +88,7 @@
         await demo.setUp(keyPassphrase);
 
         return {
+            appName: 'Accounts Demos',
             recipient: Nimiq.Address.fromUserFriendlyAddress('NQ63 U7XG 1YYE D6FA SXGG 3F5H X403 NBKN JLDU').serialize(),
             value,
             fee: txFee,

@@ -10,6 +10,7 @@ export enum KeyguardCommand {
 }
 
 export interface SignTransactionRequest {
+    appName: string;
     keyId: string;
     keyPath: string;
     keyLabel?: string;

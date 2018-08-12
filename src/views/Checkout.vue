@@ -104,6 +104,7 @@ export default class Checkout extends Vue {
         }
 
         client.signTransaction({
+            appName: this.request.appName,
             keyId: key.id,
             keyPath,
             keyLabel: key.label,

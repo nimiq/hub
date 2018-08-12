@@ -4,6 +4,7 @@ export enum RequestType {
 
 export interface CheckoutRequest {
     kind?: RequestType.CHECKOUT;
+    appName: string;
     recipient: Uint8Array;
     recipientType?: Nimiq.Account.Type;
     value: number;
@@ -15,6 +16,7 @@ export interface CheckoutRequest {
 
 export interface ParsedCheckoutRequest {
     kind: RequestType.CHECKOUT;
+    appName: string;
     recipient: Nimiq.Address;
     recipientType?: Nimiq.Account.Type;
     value: number;
@@ -53,6 +55,7 @@ export class AccountsRequest {
             case RequestType.CHECKOUT:
                 return {
                     kind: RequestType.CHECKOUT,
+                    appName: request.appName,
                     recipient: new Nimiq.Address(request.recipient),
                     recipientType: request.recipientType,
                     value: request.value,
@@ -71,6 +74,7 @@ export class AccountsRequest {
             case RequestType.CHECKOUT:
                 return {
                     kind: RequestType.CHECKOUT,
+                    appName: request.appName,
                     recipient: request.recipient.serialize(),
                     recipientType: request.recipientType,
                     value: request.value,
