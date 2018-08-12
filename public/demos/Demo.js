@@ -36,7 +36,7 @@ class Demo {
     static _deriveAddressInfo(entropy, path) {
         return {
             path,
-            label: 'AccountLabel',
+            label: 'Standard Account',
             address: Demo._deriveAddress(entropy, path).serialize()
         };
     }
