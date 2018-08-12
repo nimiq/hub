@@ -39,8 +39,8 @@
     </div>
 
 
-    <br><button id="redirect" type="button" class="small">Pay with NIM (redirect)</button>
-    <br><button id="popup" type="button" class="small">Pay with NIM (popup)</button>
+    <br><button id="redirect" type="button" class="small" disabled>Pay with NIM (redirect)</button>
+    <br><button id="popup" type="button" class="small" disabled>Pay with NIM (popup)</button>
 
     <p id="result"></p>
 </form>
@@ -49,6 +49,7 @@
     (async () => {
         await Nimiq.WasmHelper.doImportBrowser();
         Nimiq.GenesisConfig.test();
+        document.querySelectorAll('button').forEach(button => button.disabled = false);
     })();
 
     const demo = new Demo('http://localhost:8000');
