@@ -7,7 +7,7 @@
                          :origin="rpcState.origin"/>
         <small-page>
             <div class="visible-area">
-                <div class="multi-pages" :style="'left: -'+((page-1)*100)+'%'">
+                <div class="multi-pages" :style="'left: -' + ( (page - 1) * 100 ) + '%'">
                     <LoginSelector @login-selected="loginSelected"
                                    @add-login="addLogin"
                                    :logins="logins()"/>
@@ -22,19 +22,22 @@
 </template>
 
 <script lang="ts">
-import {Component, Emit, Prop, Vue} from 'vue-property-decorator';
+import {Component, Emit, Prop, Watch, Vue} from 'vue-property-decorator';
 import {AccountSelector, LoginSelector, PaymentInfoLine, SmallPage} from '@nimiq/vue-components';
 import {AddressInfo} from '../lib/AddressInfo';
 import {KeyInfo, KeyStorageType} from '../lib/KeyInfo';
 import {ParsedCheckoutRequest} from '../lib/RequestTypes';
-import {Mutation, State} from 'vuex-class';
+import {State, Mutation, Getter} from 'vuex-class';
 import RpcApi from '../lib/RpcApi';
+import {SignTransactionResult} from '../lib/keyguard/RequestTypes';
+import {ResponseStatus, State as RpcState} from '@nimiq/rpc';
 
 @Component({components: {PaymentInfoLine, SmallPage, AccountSelector, LoginSelector}})
 export default class Checkout extends Vue {
     @State('keys') private keys!: KeyInfo[];
-    @State('rpcState') private rpcState!: any;
+    @State('rpcState') private rpcState!: RpcState | null;
     @State('request') private request!: ParsedCheckoutRequest;
+    @State('keyguardResult') private keyguardResult!: SignTransactionResult | Error | null;
 
     @Mutation('addKey') private addKey!: (key: KeyInfo) => any;
 
@@ -69,6 +72,20 @@ export default class Checkout extends Vue {
 
     private switchLogin() {
         this.page = 1;
+    }
+
+    @Watch('keyguardResult')
+    private onKeyguardResult() {
+        if (this.keyguardResult instanceof Error) {
+            console.log('Keyguard result:', this.keyguardResult);
+            console.log('Rpc state:', this.rpcState);
+            // TODO Rebuild the UI as it was before submitting to the Keyguard
+        } else if (this.keyguardResult && this.rpcState) {
+            // Forward signing result to original caller window
+            this.rpcState.reply(ResponseStatus.OK, this.keyguardResult);
+
+            // TODO Display success page
+        }
     }
 
     @Emit()
@@ -111,7 +128,7 @@ export default class Checkout extends Vue {
 
         client.signTransaction({
             layout: 'checkout',
-            shopOrigin: this.rpcState.origin,
+            shopOrigin: this.rpcState ? this.rpcState.origin : '',
             appName: this.request.appName,
 
             keyId: key.id,

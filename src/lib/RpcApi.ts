@@ -59,7 +59,8 @@ export default class RpcApi {
         const rpcState = RpcState.fromJSON(state.rpcState);
         const request = AccountsRequest.parse(state.request);
         this._store.commit('setIncomingRequest', {
-            rpcState, request,
+            rpcState,
+            request,
         });
     }
 
