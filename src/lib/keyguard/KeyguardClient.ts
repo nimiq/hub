@@ -60,7 +60,7 @@ export class KeyguardClient {
     }
 
     public async signTransaction(request: SignTransactionRequest,
-                                 requestBehavior = this._defaultBehavior):Promise<SignTransactionResult> {
+                                 requestBehavior = this._defaultBehavior): Promise<SignTransactionResult> {
         return this._request(requestBehavior,  KeyguardCommand.SIGN_TRANSACTION, [request]);
     }
 

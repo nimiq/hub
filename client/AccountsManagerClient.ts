@@ -1,6 +1,6 @@
-import {PopupRequestBehavior, RequestBehavior} from "./RequestBehavior";
-import {RedirectRpcClient} from "@nimiq/rpc";
-import {CheckoutRequest, RequestType} from "@/lib/RequestTypes";
+import {PopupRequestBehavior, RequestBehavior} from './RequestBehavior';
+import {RedirectRpcClient} from '@nimiq/rpc';
+import {CheckoutRequest, RequestType} from '@/lib/RequestTypes';
 
 export class AccountsManagerClient {
     private static readonly DEFAULT_ENDPOINT = '../src';
@@ -20,20 +20,20 @@ export class AccountsManagerClient {
         this._observable = new Nimiq.Observable();
     }
 
-    init() {
+    public init() {
         return this._redirectClient.init();
     }
 
-    on(command: RequestType, resolve: (...args: any[]) => any, reject: (...args: any[]) => any) {
+    public on(command: RequestType, resolve: (...args: any[]) => any, reject: (...args: any[]) => any) {
         this._observable.on(`${command}-resolve`, resolve);
         this._observable.on(`${command}-reject`, reject);
     }
 
-    checkout(request: CheckoutRequest, requestBehavior = this._defaultBehavior) {
+    public checkout(request: CheckoutRequest, requestBehavior = this._defaultBehavior) {
         return this._request(requestBehavior, RequestType.CHECKOUT, [request]);
     }
 
-    createPopup(options: string) {
+    public createPopup(options: string) {
         const behavior = new PopupRequestBehavior(options);
         return behavior.createPopup(this._endpoint);
     }

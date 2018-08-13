@@ -53,10 +53,10 @@ export default class Checkout extends Vue {
 
     private accounts() {
         const login: string = (this.selectedLogin || this.preselectedLogin);
-        const filteredKeys = this.keys.filter((key: KeyInfo) => key.id == login);
-        if (filteredKeys.length !== 1) return [];
+        const key = this.keys.find((k: KeyInfo) => k.id === login);
+        if (!key) return;
         // TODO: Add contract support
-        return Array.from(filteredKeys[0].addresses.values()).map((address: AddressInfo) => ({
+        return Array.from(key.addresses.values()).map((address: AddressInfo) => ({
             address: address.address,
             label: address.label,
         }));
@@ -72,30 +72,32 @@ export default class Checkout extends Vue {
     }
 
     @Emit()
-    // tslint:disable-next-line
     private addLogin() {
         // TODO
         const id: string = Math.round(Math.pow(2, 32) * Math.random()).toString(16);
         const map = new Map<string, AddressInfo>();
-        map.set('a', new AddressInfo('a', 'My Account', Nimiq.Address.fromString('NQ09 VF5Y 1PKV MRM4 5LE1 55KV P6R2 GXYJ XYQF')));
+        map.set('a', new AddressInfo(
+            'a',
+            'My Account',
+            Nimiq.Address.fromString('NQ09 VF5Y 1PKV MRM4 5LE1 55KV P6R2 GXYJ XYQF'),
+        ));
         this.addKey(new KeyInfo(id, id, map, [], KeyStorageType.LEDGER));
     }
 
     @Emit()
-    // tslint:disable-next-line
     private accountSelected(login: string, address: Nimiq.Address) {
         const client = RpcApi.createKeyguardClient(this.$store);
 
-        const filteredKeys = this.keys.filter((key: KeyInfo) => key.id == login);
-        if (filteredKeys.length !== 1) return;
-        const key = filteredKeys[0];
+        const key = this.keys.find((k: KeyInfo) => k.id === login);
+        if (!key) return;
 
         let keyPath: string;
         let sender: Uint8Array;
         let senderType: Nimiq.Account.Type;
         let senderLabel: string;
 
-        const addressInfos: AddressInfo[] = Array.from(key.addresses.values()).filter((addressInfo: AddressInfo) => addressInfo.address.equals(address));
+        const addressInfos: AddressInfo[] = Array.from(key.addresses.values())
+            .filter((addressInfo: AddressInfo) => addressInfo.address.equals(address));
         // Check if address exist or it might be a contract
         if (addressInfos.length === 1) {
             keyPath = addressInfos[0].path;

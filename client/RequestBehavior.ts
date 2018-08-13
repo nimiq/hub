@@ -1,44 +1,45 @@
-import {RequestType} from "../src/lib/RequestTypes";
-import {PostMessageRpcClient, RedirectRpcClient} from "@nimiq/rpc";
+import {RequestType} from '../src/lib/RequestTypes';
+import {PostMessageRpcClient, RedirectRpcClient} from '@nimiq/rpc';
 
 export class RequestBehavior {
+    public static getAllowedOrigin(endpoint: string) {
+        // FIXME derive from endpoint url
+        return '*';
+    }
+
     private readonly _type: BehaviorType;
 
     constructor(type: BehaviorType) {
         this._type = type;
     }
 
-    async request(endpoint: string, command: RequestType, args: any[]): Promise<any> {
+    public async request(endpoint: string, command: RequestType, args: any[]): Promise<any> {
         throw new Error('Not implemented');
     }
 
-    get type() {
+    public get type() {
         return this._type;
-    }
-
-    static getAllowedOrigin(endpoint: string) {
-        // FIXME derive from endpoint url
-        return '*';
     }
 }
 
 enum BehaviorType {
     REDIRECT,
-    POPUP
+    POPUP,
 }
 
 export class RedirectRequestBehavior extends RequestBehavior {
-    private readonly _targetUrl: string;
-    private readonly _localState: any;
-
-    static withLocalState(localState: any) {
+    public static withLocalState(localState: any) {
         return new RedirectRequestBehavior(undefined, localState);
     }
+
+    private readonly _targetUrl: string;
+    private readonly _localState: any;
 
     constructor(targetUrl?: string, localState?: any) {
         super(BehaviorType.REDIRECT);
         const location = window.location;
-        this._targetUrl = targetUrl || `${location.protocol}//${location.hostname}:${location.port}${location.pathname}`;;
+        this._targetUrl = targetUrl
+            || `${location.protocol}//${location.hostname}:${location.port}${location.pathname}`;
         this._localState = localState || {};
 
         // Reject local state with reserved property.
@@ -47,7 +48,7 @@ export class RedirectRequestBehavior extends RequestBehavior {
         }
     }
 
-    async request(endpoint: string, command: RequestType, args: any[]): Promise<any> {
+    public async request(endpoint: string, command: RequestType, args: any[]): Promise<any> {
         const origin = RequestBehavior.getAllowedOrigin(endpoint);
 
         const client = new RedirectRpcClient(endpoint, origin);
@@ -68,7 +69,7 @@ export class PopupRequestBehavior extends RequestBehavior {
         this._options = options;
     }
 
-    async request(endpoint: string, command: RequestType, args: any[]): Promise<any> {
+    public async request(endpoint: string, command: RequestType, args: any[]): Promise<any> {
         const origin = RequestBehavior.getAllowedOrigin(endpoint);
 
         const popup = this.createPopup(endpoint);
@@ -87,7 +88,7 @@ export class PopupRequestBehavior extends RequestBehavior {
         }
     }
 
-    createPopup(url: string) {
+    public createPopup(url: string) {
         const popup = window.open(url, 'NimiqAccounts', this._options);
         if (!popup) {
             throw new Error('Failed to open popup');

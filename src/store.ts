@@ -20,18 +20,18 @@ const store: StoreOptions<RootState> = {
         keys: [],
     },
     mutations: {
-        setIncomingRequest(store, payload) {
-            store.request = payload.request;
-            store.rpcState = payload.rpcState;
+        setIncomingRequest(state, payload) {
+            state.request = payload.request;
+            state.rpcState = payload.rpcState;
         },
-        initKeys(store, keys) {
-            store.keys = keys;
+        initKeys(state, keys) {
+            state.keys = keys;
         },
-        addKey(store, key: KeyInfo) {
-            store.keys.push(key);
+        addKey(state, key: KeyInfo) {
+            state.keys.push(key);
         },
-        setKeyguardResult(store, payload) {
-            store.keyguardResult = payload;
+        setKeyguardResult(state, payload) {
+            state.keyguardResult = payload;
         },
     },
     actions: {
