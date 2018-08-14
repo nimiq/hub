@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="container">
         <PaymentInfoLine v-if="rpcState" style="color: white"
                          :amount="request.value"
                          :networkFee="request.fee"
@@ -7,17 +7,23 @@
                          :origin="rpcState.origin"/>
         <small-page>
             <div class="visible-area">
-                <div class="multi-pages" :style="'left: -' + ( (page - 1) * 100 ) + '%'">
+                <div class="multi-pages" :style="`transform: translate3d(-${(page - 1) * 450}px, 0, 0)`">
                     <LoginSelector @login-selected="loginSelected"
                                    @add-login="addLogin"
-                                   :logins="logins()"/>
+                                   @back="close"
+                                   :logins="keys"/>
                     <AccountSelector
-                            @account-selected="(address) => accountSelected(selectedLogin || preselectedLogin, address)"
+                            @account-selected="(address) => accountSelected(selectedLoginId || preselectedLoginId, address)"
                             @switch-login="switchLogin"
-                            :accounts="accounts()"/>
+                            @back="switchLogin"
+                            :accounts="currentAccounts"
+                            :loginLabel="currentLogin ? currentLogin.label : ''"
+                            :loginType="currentLogin ? currentLogin.type : 0"
+                            :show-switch-login="false"/>
                 </div>
             </div>
         </small-page>
+        <a class="global-close" @click="close">Cancel Payment</a>
     </div>
 </template>
 
@@ -41,32 +47,26 @@ export default class Checkout extends Vue {
 
     @Mutation('addKey') private addKey!: (key: KeyInfo) => any;
 
-    @Prop(String) private preselectedLogin!: string;
+    @Prop(String) private preselectedLoginId!: string;
 
     private page: number = 1;
-    private selectedLogin?: string;
+    private selectedLoginId: string|null = null; // undefined is not reactive
 
-    private logins() {
-        return this.keys.map((key: KeyInfo) => ({
-            id: key.id,
-            label: key.label,
-            userFriendlyId: 'to do',
-        }));
+    private get currentLogin() {
+        const loginId = this.selectedLoginId || this.preselectedLoginId || false;
+        if (!loginId) return undefined;
+
+        return this.keys.find((k) => k.id === loginId);
     }
 
-    private accounts() {
-        const login: string = (this.selectedLogin || this.preselectedLogin);
-        const key = this.keys.find((k: KeyInfo) => k.id === login);
-        if (!key) return;
-        // TODO: Add contract support
-        return Array.from(key.addresses.values()).map((address: AddressInfo) => ({
-            address: address.address,
-            label: address.label,
-        }));
+    private get currentAccounts() {
+        const login = this.currentLogin;
+        if (!login) return [];
+        return Array.from(login.addresses.values());
     }
 
     private loginSelected(login: string) {
-        this.selectedLogin = login;
+        this.selectedLoginId = login;
         this.page = 2;
     }
 
@@ -149,10 +149,19 @@ export default class Checkout extends Vue {
             networkId: this.request.networkId,
         }).catch(console.error); // TODO: proper error handling
     }
+
+    private close() {
+        window.close();
+    }
 }
 </script>
 
 <style scoped>
+    .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
 
     .visible-area {
         overflow: hidden;
@@ -165,12 +174,42 @@ export default class Checkout extends Vue {
         flex: 1;
         display: grid;
         grid-template-columns: 100vw 100vw;
-        transition: all .5s ease-in-out;
+        will-change: transform;
+        transition: all 400ms ease-in-out;
     }
 
-    @media (min-width: 490px) {
+    @media (min-width: 450px) {
         .multi-pages {
-            grid-template-columns: 28em 28em;
+            grid-template-columns: 450px 450px;
         }
+    }
+
+
+    .global-close {
+        display: inline-block;
+        height: 27px;
+        border-radius: 13.5px;
+        background-color: rgba(0, 0, 0, 0.1);
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 27px;
+        color: white;
+        padding: 0 12px;
+        cursor: pointer;
+        margin-top: 64px;
+        margin-bottom: 40px;
+    }
+
+    .global-close::before {
+        content: '';
+        display: inline-block;
+        height: 11px;
+        width: 11px;
+        background-image: url('data:image/svg+xml,<svg height="24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path fill="%23fff" d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>');
+        background-repeat: no-repeat;
+        background-size: 16px;
+        background-position: center;
+        margin-right: 8px;
+        margin-bottom: -1px;
     }
 </style>
