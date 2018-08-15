@@ -35,7 +35,7 @@ import {KeyInfo, KeyStorageType} from '../lib/KeyInfo';
 import {ParsedCheckoutRequest} from '../lib/RequestTypes';
 import {State, Mutation, Getter} from 'vuex-class';
 import RpcApi from '../lib/RpcApi';
-import {SignTransactionResult} from '../lib/keyguard/RequestTypes';
+import {SignTransactionRequest, SignTransactionResult} from '../lib/keyguard/RequestTypes';
 import {ResponseStatus, State as RpcState} from '@nimiq/rpc';
 
 @Component({components: {PaymentInfoLine, SmallPage, AccountSelector, LoginSelector}})
@@ -126,7 +126,7 @@ export default class Checkout extends Vue {
             return;
         }
 
-        client.signTransaction({
+        const request: SignTransactionRequest = {
             layout: 'checkout',
             shopOrigin: this.rpcState ? this.rpcState.origin : '',
             appName: this.request.appName,
@@ -147,7 +147,9 @@ export default class Checkout extends Vue {
             data: this.request.data,
             flags: this.request.flags,
             networkId: this.request.networkId,
-        }).catch(console.error); // TODO: proper error handling
+        };
+
+        client.signTransaction(request).catch(console.error); // TODO: proper error handling
     }
 
     private close() {
