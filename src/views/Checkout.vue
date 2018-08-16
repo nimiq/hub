@@ -126,6 +126,12 @@ export default class Checkout extends Vue {
             return;
         }
 
+        // TODO
+        // window.toggleCloseHandler()?
+        // set state to requesting keyguard and check that in close handler?
+        // when to toggle again / unset state? => keyguard result
+        // Plan: add keyguardState { requestRunning: boolean; result: ... } to store
+
         client.signTransaction({
             layout: 'checkout',
             shopOrigin: this.rpcState ? this.rpcState.origin : '',
