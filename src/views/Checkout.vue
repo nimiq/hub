@@ -8,7 +8,7 @@
         <small-page>
             <router-view/>
         </small-page>
-        <a class="global-close" @click="close">Cancel Payment</a>
+        <a class="global-close" :class="{hidden: $route.name === `checkout-success`}" @click="close">Cancel Payment</a>
     </div>
 </template>
 
@@ -27,16 +27,13 @@ export default class Checkout extends Vue {
     @State private keyguardResult!: SignTransactionResult | Error | null;
     @State private activeAccountPath!: string;
 
-    @Watch('keyguardResult')
+    @Watch('keyguardResult', {immediate: true})
     private onKeyguardResult() {
         if (this.keyguardResult instanceof Error) {
-            console.log('Keyguard result:', this.keyguardResult);
-            console.log('Rpc state:', this.rpcState);
-            // TODO Rebuild the UI as it was before submitting to the Keyguard
+            //
         } else if (this.keyguardResult && this.rpcState) {
             // Forward signing result to original caller window
             this.rpcState.reply(ResponseStatus.OK, this.keyguardResult);
-            this.$router.push({name: `${RequestType.CHECKOUT}-success`});
         }
     }
 
@@ -80,5 +77,10 @@ export default class Checkout extends Vue {
         background-position: center;
         margin-right: 8px;
         margin-bottom: -1px;
+    }
+
+    .global-close.hidden {
+        visibility: hidden;
+        pointer-events: none;
     }
 </style>
