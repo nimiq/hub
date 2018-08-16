@@ -10,7 +10,7 @@ import { AddressInfo } from '@/lib/AddressInfo';
 Vue.use(Vuex);
 
 export interface RootState {
-    request?: ParsedRpcRequest;
+    request: ParsedRpcRequest | null;
     rpcState: RpcState | null;
     keys: KeyInfo[]; // TODO: this is not JSON compatible, is this a problem?
     keyguardResult: KeyguardResult | Error | null;
@@ -35,13 +35,16 @@ const store: StoreOptions<RootState> = {
             }
         }
 
-        return {
+        const state: RootState = {
+            request: null,
             rpcState: null, // undefined is not reactive
             keys: [],
             keyguardResult: null, // undefined is not reactive
             activeLoginId,
             activeAccountPath,
         };
+
+        return state;
     })(),
     mutations: {
         setIncomingRequest(state, payload: {rpcState: RpcState, request: ParsedRpcRequest}) {
