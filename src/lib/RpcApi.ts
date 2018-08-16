@@ -50,7 +50,7 @@ export default class RpcApi {
                     rpcState: state,
                     request: AccountsRequest.parse(arg, request),
                 });
-                this._router.push(request);
+                this._router.push({name: request});
             });
         }
     }
@@ -75,7 +75,7 @@ export default class RpcApi {
                 result.kind = command;
                 this._store.commit('setKeyguardResult', result);
 
-                this._router.push(keyguardResponseRouter[command].resolve);
+                this._router.push({name: keyguardResponseRouter[command].resolve});
             }, (error, state) => {
                 // Recover state
                 this._recoverState(state);
@@ -83,7 +83,7 @@ export default class RpcApi {
                 // Set result
                 this._store.commit('setKeyguardResult', error);
 
-                this._router.push(keyguardResponseRouter[command].reject);
+                this._router.push({name: keyguardResponseRouter[command].reject});
             });
         }
     }

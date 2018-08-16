@@ -12,7 +12,7 @@ Vue.use(Router);
 
 export const keyguardResponseRouter: { [index: string]: {resolve: string, reject: string} } = {
     [KeyguardCommand.SIGN_TRANSACTION]: {
-        resolve: RequestType.CHECKOUT,
+        resolve: `${RequestType.CHECKOUT}-success`,
         reject: RequestType.CHECKOUT,
     },
 };
@@ -23,12 +23,11 @@ export default new Router({
   routes: [
     {
       path: `/${RequestType.CHECKOUT}`,
-      name: RequestType.CHECKOUT,
       component: Checkout,
       children: [
         {
           path: '',
-          name: `${RequestType.CHECKOUT}-overview`,
+          name: RequestType.CHECKOUT,
           component: CheckoutOverview,
         },
         {

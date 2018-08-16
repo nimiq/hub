@@ -99,7 +99,7 @@ export default class Checkout extends Vue {
     }
 
     private backToOverview() {
-        this.$router.push({name: `${RequestType.CHECKOUT}-overview`});
+        this.$router.push({name: RequestType.CHECKOUT});
     }
 }
 </script>
