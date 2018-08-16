@@ -33,7 +33,7 @@ export default class App extends Vue {
     }
 
     html {
-        background: linear-gradient(30deg, #3023AE, #9C58CB);
+        background: linear-gradient(55deg, #2462dc, #a83df6);
         background-size: cover;
         background-attachment: fixed;
     }
@@ -72,7 +72,46 @@ export default class App extends Vue {
         align-items: center;
     }
 
-    @media (max-width: 490px) {
+    /****************
+    ** Nimiq Style **
+    ****************/
 
+    /* buttons */
+
+    button::-moz-focus-inner {
+        border: 0;
+    }
+
+    button,
+    [button] {
+        font-size: 16px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        width: 100%;
+        border-radius: 32px;
+        padding: 22px 48px;
+        vertical-align: middle;
+        display: table-cell;
+        text-align: center;
+        background: white;
+        color: var(--main-button-color);
+        cursor: pointer;
+        user-select: none;
+        box-shadow: 0 10px 14px 0 rgba(0, 0, 0, 0.15);
+        border: none;
+        outline: none;
+        line-height: 1.25;
+        font-family: inherit;
+        box-sizing: border-box;
+    }
+
+    button[disabled],
+    [button][disabled] {
+        background: transparent;
+        box-shadow: none;
+        color: white;
+        border: .125rem solid rgba(255, 255, 255, 0.31);
+        pointer-events: none;
     }
 </style>

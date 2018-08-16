@@ -1,7 +1,8 @@
 <template>
-    <div>
-        <h1>You are sending <Amount :amount="request.value + request.fee"/> to</h1>
+    <div class="checkout-overview">
+        <h1>You're sending <Amount :amount="request.value + request.fee"/> to</h1>
         <Account :address="request.recipient" :label="originDomain"/>
+        <div v-if="plainData" class="data">{{ plainData }}</div>
         <div class="sender-section">
             <div class="sender-nav">
                 <h2>Pay with</h2>
@@ -35,7 +36,17 @@ export default class Checkout extends Vue {
     @Getter private activeAccount!: AddressInfo | undefined;
 
     private get originDomain() {
-        return this.rpcState ? this.rpcState.origin.split('://')[1] : '-unkown-';
+        return this.rpcState.origin.split('://')[1];
+    }
+
+    private get plainData() {
+        if (!this.request.data) return undefined;
+
+        try {
+            return Nimiq.BufferUtils.toAscii(this.request.data);
+        } catch (err) {
+            return undefined;
+        }
     }
 
     @Emit()
@@ -88,6 +99,74 @@ export default class Checkout extends Vue {
 </script>
 
 <style scoped>
+    .checkout-overview {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+    }
+
+    h1 {
+        font-size: 24px;
+        line-height: 29px;
+        font-weight: 300;
+        letter-spacing: 0.5px;
+        margin: 32px 32px 8px 32px;
+    }
+
+    h1 .amount {
+        font-weight: 500;
+    }
+
+    .data {
+        font-size: 16px;
+        line-height: 1.3;
+        opacity: 0.7;
+        padding: 8px 32px;
+    }
+
+    .sender-section {
+        margin-top: 24px;
+        padding-bottom: 16px;
+        border-top: solid 1px #f0f0f0;
+        border-bottom: solid 1px #f0f0f0;
+        background: #fafafa;
+    }
+
+    .sender-nav {
+        padding: 16px 16px 8px 16px;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    .sender-nav h2 {
+        margin: 8px;
+        font-size: 14px;
+        text-transform: uppercase;
+        line-height: 0.86;
+        letter-spacing: 1.5px;
+        font-weight: 400;
+    }
+
+    .sender-nav button {
+        background: #e5e5e5;
+        padding: 8px 14px;
+        width: unset;
+        font-size: 14px;
+        line-height: 0.86;
+        box-shadow: unset;
+        text-transform: unset;
+        letter-spacing: 0;
+    }
+
+    .page-footer {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        align-items: center;
+        padding: 32px 64px;
+        flex-grow: 1;
+    }
 
     .page-footer button {
         background: #724ceb;
