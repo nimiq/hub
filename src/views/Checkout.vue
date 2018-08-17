@@ -46,6 +46,7 @@ export default class Checkout extends Vue {
     @State('keyguardResult') private keyguardResult!: SignTransactionResult | Error | null;
 
     @Mutation('addKey') private addKey!: (key: KeyInfo) => any;
+    @Mutation('waitForKeyguard') private waitForKeyguard!: () => any;
 
     @Prop(String) private preselectedLoginId!: string;
 
@@ -125,6 +126,8 @@ export default class Checkout extends Vue {
             // TODO: Add contract support
             return;
         }
+
+        this.waitForKeyguard();
 
         client.signTransaction({
             layout: 'checkout',

@@ -4,6 +4,7 @@ import router from './router';
 import store from './store';
 import AsyncComputed from 'vue-async-computed';
 import RpcApi from '@/lib/RpcApi';
+import {ResponseStatus} from '@nimiq/rpc';
 
 Vue.config.productionTip = false;
 Vue.use(AsyncComputed);
@@ -16,3 +17,9 @@ new Vue({
 
 // Start RPC Api
 new RpcApi(store, router).start();
+
+window.addEventListener('beforeunload', () => {
+    if (!store.state.waitingForKeyguard) {
+        store!.state!.rpcState!.reply(ResponseStatus.ERROR, new Error('Window was closed'));
+    }
+});
