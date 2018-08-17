@@ -33,7 +33,7 @@ import {AccountSelector, LoginSelector, PaymentInfoLine, SmallPage} from '@nimiq
 import {AddressInfo} from '../lib/AddressInfo';
 import {KeyInfo, KeyStorageType} from '../lib/KeyInfo';
 import {ParsedCheckoutRequest} from '../lib/RequestTypes';
-import {State, Mutation, Getter} from 'vuex-class';
+import {State, Mutation, Action, Getter} from 'vuex-class';
 import RpcApi from '../lib/RpcApi';
 import {SignTransactionResult} from '../lib/keyguard/RequestTypes';
 import {ResponseStatus, State as RpcState} from '@nimiq/rpc';
@@ -46,6 +46,7 @@ export default class Checkout extends Vue {
     @State('keyguardResult') private keyguardResult!: SignTransactionResult | Error | null;
 
     @Mutation('addKey') private addKey!: (key: KeyInfo) => any;
+    @Action('waitForKeyguard') private waitForKeyguard!: () => any; 
 
     @Prop(String) private preselectedLoginId!: string;
 
@@ -126,11 +127,7 @@ export default class Checkout extends Vue {
             return;
         }
 
-        // TODO
-        // window.toggleCloseHandler()?
-        // set state to requesting keyguard and check that in close handler?
-        // when to toggle again / unset state? => keyguard result
-        // Plan: add keyguardState { requestRunning: boolean; result: ... } to store
+        this.waitForKeyguard();
 
         client.signTransaction({
             layout: 'checkout',

@@ -73,7 +73,7 @@ export default class RpcApi {
 
                 // Set result
                 result.kind = command;
-                this._store.commit('setKeyguardResult', result);
+                this._store.dispatch('setKeyguardResult', result);
 
                 this._router.push(keyguardResponseRouter[command].resolve);
             }, (error, state) => {
@@ -81,7 +81,7 @@ export default class RpcApi {
                 this._recoverState(state);
 
                 // Set result
-                this._store.commit('setKeyguardResult', error);
+                this._store.dispatch('setKeyguardResult', error);
 
                 this._router.push(keyguardResponseRouter[command].reject);
             });

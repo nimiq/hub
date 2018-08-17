@@ -13,6 +13,7 @@ export interface RootState {
     rpcState: RpcState | null;
     keys: KeyInfo[]; // TODO: this is not JSON compatible, is this a problem?
     keyguardResult: KeyguardResult | Error | null;
+    waitingForKeyguard: boolean;
 }
 
 const store: StoreOptions<RootState> = {
@@ -20,6 +21,7 @@ const store: StoreOptions<RootState> = {
         rpcState: null, // undefined is not reactive
         keys: [],
         keyguardResult: null, // undefined is not reactive
+        waitingForKeyguard: false,
     },
     mutations: {
         setIncomingRequest(state, payload) {
@@ -35,6 +37,9 @@ const store: StoreOptions<RootState> = {
         setKeyguardResult(state, payload) {
             state.keyguardResult = payload;
         },
+        setWaitingForKeyguard(state, value) {
+            state.waitingForKeyguard = value;
+        },
     },
     actions: {
         initKeys({ commit }) {
@@ -42,6 +47,13 @@ const store: StoreOptions<RootState> = {
             KeyStore.Instance.list().then((keys: KeyInfo[]) => {
                 commit('initKeys', keys);
             });
+        },
+        setKeyguardResult({ commit }, result) {
+            commit('setKeyguardResult', result);
+            commit('setWaitingForKeyguard', false);
+        },
+        waitForKeyguard({ commit }) {
+            commit('setWaitingForKeyguard', true);
         },
     },
 };

@@ -19,5 +19,7 @@ new Vue({
 new RpcApi(store, router).start();
 
 window.addEventListener('beforeunload', () => {
-    store!.state!.rpcState!.reply(ResponseStatus.ERROR, new Error('Window was closed'));
+    if (!store.state.waitingForKeyguard) {
+        store!.state!.rpcState!.reply(ResponseStatus.ERROR, new Error('Window was closed'));
+    }
 });
