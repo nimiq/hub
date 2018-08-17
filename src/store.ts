@@ -37,8 +37,8 @@ const store: StoreOptions<RootState> = {
         setKeyguardResult(state, payload) {
             state.keyguardResult = payload;
         },
-        setWaitingForKeyguard(state, value) {
-            state.waitingForKeyguard = value;
+        waitForKeyguard(state) {
+            state.waitingForKeyguard = true;
         },
     },
     actions: {
@@ -47,13 +47,6 @@ const store: StoreOptions<RootState> = {
             KeyStore.Instance.list().then((keys: KeyInfo[]) => {
                 commit('initKeys', keys);
             });
-        },
-        setKeyguardResult({ commit }, result) {
-            commit('setKeyguardResult', result);
-            commit('setWaitingForKeyguard', false);
-        },
-        waitForKeyguard({ commit }) {
-            commit('setWaitingForKeyguard', true);
         },
     },
 };

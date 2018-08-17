@@ -46,7 +46,7 @@ export default class Checkout extends Vue {
     @State('keyguardResult') private keyguardResult!: SignTransactionResult | Error | null;
 
     @Mutation('addKey') private addKey!: (key: KeyInfo) => any;
-    @Action('waitForKeyguard') private waitForKeyguard!: () => any; 
+    @Mutation('waitForKeyguard') private waitForKeyguard!: () => any;
 
     @Prop(String) private preselectedLoginId!: string;
 
