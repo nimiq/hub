@@ -33,7 +33,7 @@ import {AccountSelector, LoginSelector, PaymentInfoLine, SmallPage} from '@nimiq
 import {AddressInfo} from '../lib/AddressInfo';
 import {KeyInfo, KeyStorageType} from '../lib/KeyInfo';
 import {ParsedCheckoutRequest} from '../lib/RequestTypes';
-import {State, Mutation, Action, Getter} from 'vuex-class';
+import {State, Mutation, Getter} from 'vuex-class';
 import RpcApi from '../lib/RpcApi';
 import {SignTransactionResult} from '../lib/keyguard/RequestTypes';
 import {ResponseStatus, State as RpcState} from '@nimiq/rpc';
