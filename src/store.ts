@@ -19,35 +19,16 @@ export interface RootState {
 }
 
 const store: StoreOptions<RootState> = {
-    state: (() => {
-        // Try loading active
-        let activeLoginId: null|string = null;
-        let activeAccountPath: null|string = null;
-
-        const storedRecentAccount = localStorage.getItem('_recentAccount');
-        if (storedRecentAccount) {
-            try {
-                const activeAccount = JSON.parse(storedRecentAccount);
-                activeLoginId = activeAccount.loginId;
-                activeAccountPath = activeAccount.accountPath;
-            } catch (err) {
-                // Do nothing
-            }
-        }
-
-        const state: RootState = {
-            request: null,
-            rpcState: null, // undefined is not reactive
-            keys: [],
-            keyguardResult: null, // undefined is not reactive
-            activeLoginId,
-            activeAccountPath,
-        };
-
-        return state;
-    })(),
+    state: {
+        request: null,
+        rpcState: null, // undefined is not reactive
+        keys: [],
+        keyguardResult: null, // undefined is not reactive
+        activeLoginId: null,
+        activeAccountPath: null,
+    },
     mutations: {
-        setIncomingRequest(state, payload: {rpcState: RpcState, request: ParsedRpcRequest}) {
+        setIncomingRequest(state, payload: { rpcState: RpcState, request: ParsedRpcRequest }) {
             state.rpcState = payload.rpcState;
             state.request = payload.request;
         },
@@ -60,7 +41,7 @@ const store: StoreOptions<RootState> = {
         setKeyguardResult(state, payload: KeyguardResult | Error) {
             state.keyguardResult = payload;
         },
-        setActiveAccount(state, payload: {loginId: string, accountPath: string}) {
+        setActiveAccount(state, payload: { loginId: string, accountPath: string }) {
             state.activeLoginId = payload.loginId;
             state.activeAccountPath = payload.accountPath;
             // Store as recent account for next requests
@@ -68,37 +49,59 @@ const store: StoreOptions<RootState> = {
         },
     },
     actions: {
-        initKeys({state, commit }) {
+        initKeys({ state, commit }) {
             // Fetch data from store
             KeyStore.Instance.list().then((keys) => {
                 commit('initKeys', keys);
 
-                if (state.activeLoginId && state.activeAccountPath) return;
+                if (keys.length === 0) return;
 
-                // If none found, pre-select the first available
-                const key = state.keys[0];
-                if (!key) return; // No keys stored
-                const account = key.addresses.values().next().value;
-                if (!account) return; // No addresses on this key
+                // Try loading active
+                let activeAccount: KeyInfo | undefined;
+                let activeAccountPath: string | null = null;
+
+                const storedRecentAccount = localStorage.getItem('_recentAccount');
+                if (storedRecentAccount) {
+                    try {
+                        const activeAccountInfo = JSON.parse(storedRecentAccount);
+                        activeAccount = state.keys.find((x) => x.id === activeAccountInfo.loginId);
+                        activeAccountPath = activeAccountInfo.accountPath;
+                    } catch (err) {
+                        // Do nothing
+                    }
+                }
+
+                if (!activeAccount) {
+                    // If none found, pre-select the first available
+                    activeAccount = state.keys[0];
+                }
+
+                if (!activeAccountPath) {
+                    // If none found, pre-select the first available
+                    const account = activeAccount.addresses.values().next().value;
+                    if (!account) return; // No addresses on this key
+                    activeAccountPath = account.path;
+                }
 
                 commit('setActiveAccount', {
-                    loginId: key.id,
-                    accountPath: account.path,
+                    loginId: activeAccount.id,
+                    accountPath: activeAccountPath,
                 });
             });
+
         },
     },
     getters: {
-        findKey: (state) => (id: string): KeyInfo|undefined => {
+        findKey: (state) => (id: string): KeyInfo | undefined => {
             return state.keys.find((key) => key.id === id);
         },
-        activeKey: (state, getters): KeyInfo|undefined => {
+        activeKey: (state, getters): KeyInfo | undefined => {
             if (!state.activeLoginId) return undefined;
             return getters.findKey(state.activeLoginId);
         },
-        activeAccount: (state, getters): AddressInfo|undefined => {
+        activeAccount: (state, getters): AddressInfo | undefined => {
             if (!state.activeAccountPath) return undefined;
-            const key: KeyInfo|undefined = getters.activeKey;
+            const key: KeyInfo | undefined = getters.activeKey;
             if (!key) return undefined;
             return key.addresses.get(state.activeAccountPath);
         },
