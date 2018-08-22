@@ -6,7 +6,7 @@ import CheckoutSelectAccount from './views/CheckoutSelectAccount.vue';
 import CheckoutSuccess from './views/CheckoutSuccess.vue';
 import MetaAbout from './views/MetaAbout.vue';
 import {RequestType} from '@/lib/RequestTypes';
-import {KeyguardCommand} from '@/lib/keyguard/RequestTypes';
+import {KeyguardCommand} from '@nimiq/keyguard-client';
 
 Vue.use(Router);
 

@@ -1,10 +1,10 @@
 import Vue from 'vue';
 import Vuex, { StoreOptions } from 'vuex';
+import {State as RpcState} from '@nimiq/rpc';
+import {RpcResult as KeyguardResult} from '@nimiq/keyguard-client';
 import {ParsedRpcRequest} from '@/lib/RequestTypes';
 import {KeyInfo} from '@/lib/KeyInfo';
-import {State as RpcState, State} from '@nimiq/rpc';
 import {KeyStore} from '@/lib/KeyStore';
-import {RpcResult as KeyguardResult} from '@/lib/keyguard/RequestTypes';
 import { AddressInfo } from '@/lib/AddressInfo';
 
 Vue.use(Vuex);

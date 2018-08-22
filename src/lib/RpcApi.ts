@@ -3,10 +3,8 @@ import {RootState} from '@/store';
 import {Store} from 'vuex';
 import Router from 'vue-router';
 import {AccountsRequest, RequestType, RpcRequest} from '@/lib/RequestTypes';
-import {KeyguardClient} from '@/lib/keyguard/KeyguardClient';
-import {KeyguardCommand} from '@/lib/keyguard/RequestTypes';
+import {KeyguardCommand, RequestBehavior, KeyguardClient} from '@nimiq/keyguard-client';
 import {keyguardResponseRouter} from '@/router';
-import {RequestBehavior} from '@/lib/keyguard/RequestBehavior';
 
 export default class RpcApi {
 

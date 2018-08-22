@@ -10,7 +10,7 @@
         "test": "yarn test:unit"
     },
     "dependencies": {
-        "@nimiq/rpc": "^0.0.3",
+        "@nimiq/rpc": "^0.0.6",
         "@nimiq/vue-components": "https://github.com/nimiq/vue-components.git#master",
         "vue": "^2.5.16",
         "vue-class-component": "^6.0.0",
@@ -23,7 +23,7 @@
         "@babel/core": "^7.0.0-beta.55",
         "@nimiq/core": "^1.2.0",
         "@nimiq/core-types": "^1.0.0",
-        "@nimiq/keyguard-client": "^0.0.4",
+        "@nimiq/keyguard-client": "^0.0.5",
         "@types/jest": "^23.1.4",
         "@vue/babel-preset-app": "^3.0.0-rc.10",
         "@vue/cli-plugin-typescript": "^3.0.0-rc.10",

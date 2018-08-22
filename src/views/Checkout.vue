@@ -13,11 +13,14 @@
 </template>
 
 <script lang="ts">
-import {Component, Emit, Watch, Vue} from 'vue-property-decorator';
-import {PaymentInfoLine, SmallPage} from '@nimiq/vue-components';
+import {Component, Emit, Prop, Watch, Vue} from 'vue-property-decorator';
+import {AccountSelector, LoginSelector, PaymentInfoLine, SmallPage} from '@nimiq/vue-components';
 import {RequestType, ParsedCheckoutRequest} from '../lib/RequestTypes';
-import {State} from 'vuex-class';
-import {SignTransactionResult} from '../lib/keyguard/RequestTypes';
+import {AddressInfo} from '../lib/AddressInfo';
+import {KeyInfo, KeyStorageType} from '../lib/KeyInfo';
+import {State, Mutation, Getter} from 'vuex-class';
+import RpcApi from '../lib/RpcApi';
+import {SignTransactionResult} from '@nimiq/keyguard-client';
 import {ResponseStatus, State as RpcState} from '@nimiq/rpc';
 
 @Component({components: {PaymentInfoLine, SmallPage}})
