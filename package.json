@@ -4,7 +4,7 @@
     "private": true,
     "scripts": {
         "serve": "vue-cli-service serve",
-        "build": "vue-cli-service build --modern",
+        "build": "vue-cli-service build --modern src",
         "lint": "vue-cli-service lint",
         "test:unit": "vue-cli-service test:unit",
         "test": "yarn test:unit"
@@ -12,6 +12,7 @@
     "dependencies": {
         "@nimiq/rpc": "^0.0.7",
         "@nimiq/vue-components": "https://github.com/nimiq/vue-components.git#master",
+        "@nimiq/keyguard-client": "^0.0.5",
         "vue": "^2.5.16",
         "vue-class-component": "^6.0.0",
         "vue-property-decorator": "^7.0.0",
@@ -23,7 +24,6 @@
         "@babel/core": "^7.0.0-beta.55",
         "@nimiq/core": "^1.2.0",
         "@nimiq/core-types": "^1.0.0",
-        "@nimiq/keyguard-client": "^0.0.5",
         "@types/jest": "^23.1.4",
         "@vue/babel-preset-app": "^3.0.0-rc.10",
         "@vue/cli-plugin-typescript": "^3.0.0-rc.10",
