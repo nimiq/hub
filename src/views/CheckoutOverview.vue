@@ -18,14 +18,14 @@
 
 <script lang="ts">
 import {Component, Emit, Vue} from 'vue-property-decorator';
+import {State, Getter} from 'vuex-class';
 import {Amount, Account} from '@nimiq/vue-components';
+import {SignTransactionRequest} from '@nimiq/keyguard-client';
+import {State as RpcState} from '@nimiq/rpc';
 import {AddressInfo} from '../lib/AddressInfo';
 import {KeyInfo} from '../lib/KeyInfo';
 import {RequestType, ParsedCheckoutRequest} from '../lib/RequestTypes';
-import {State, Getter} from 'vuex-class';
 import RpcApi from '../lib/RpcApi';
-import {SignTransactionRequest} from '../lib/keyguard/RequestTypes';
-import {State as RpcState} from '@nimiq/rpc';
 
 @Component({components: {Amount, Account}})
 export default class Checkout extends Vue {
