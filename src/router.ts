@@ -3,7 +3,7 @@ import Router from 'vue-router';
 import Checkout from './views/Checkout.vue';
 import MetaAbout from './views/MetaAbout.vue';
 import {RequestType} from '@/lib/RequestTypes';
-import {KeyguardCommand} from '@/lib/keyguard/RequestTypes';
+import {KeyguardCommand} from '@nimiq/keyguard-client';
 
 Vue.use(Router);
 
