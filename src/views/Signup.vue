@@ -29,14 +29,14 @@
 
 <script lang="ts">
 import {Component, Emit, Prop, Watch, Vue} from 'vue-property-decorator';
+import {State, Mutation, Getter} from 'vuex-class';
 import {AccountSelector, LoginSelector, PaymentInfoLine, SmallPage} from '@nimiq/vue-components';
+import {ResponseStatus, State as RpcState} from '@nimiq/rpc';
+import {SignTransactionResult} from '@nimiq/keyguard-client';
 import {AddressInfo} from '../lib/AddressInfo';
 import {KeyInfo, KeyStorageType} from '../lib/KeyInfo';
 import {ParsedCheckoutRequest} from '../lib/RequestTypes';
-import {State, Mutation, Getter} from 'vuex-class';
 import RpcApi from '../lib/RpcApi';
-import {SignTransactionResult} from '@nimiq/keyguard-client';
-import {ResponseStatus, State as RpcState} from '@nimiq/rpc';
 
 @Component({components: {PaymentInfoLine, SmallPage, AccountSelector, LoginSelector}})
 export default class Checkout extends Vue {

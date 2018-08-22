@@ -13,7 +13,7 @@
     @Component({})
     export default class MetaAbout extends Vue {
         @State('request') private request!: ParsedCheckoutRequest;
-        @State('rpcState') private rpcState?: RpcState;
+        @State('rpcState') private rpcState!: RpcState;
     }
 </script>
 

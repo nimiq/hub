@@ -6,19 +6,48 @@
             </div>
         </header>
         <div style="flex-grow: 1;"></div>
-        <router-view/>
+        <div v-if="!isRequestLoaded" class="loading">
+            <div class="loading-animation"></div>
+            <h2>Loading, hold on</h2>
+        </div>
+        <router-view v-else/>
         <div style="flex-grow: 1;"></div>
     </div>
 </template>
 
 <script lang="ts">
-import {Vue} from 'vue-property-decorator';
-import Component from 'vue-class-component';
+import {Component, Watch, Vue} from 'vue-property-decorator';
+import {State} from 'vuex-class';
+import {State as RpcState} from '@nimiq/rpc';
+import {ParsedCheckoutRequest} from './lib/RequestTypes';
 
-@Component({})
+@Component
 export default class App extends Vue {
+    @State('rpcState') private rpcState!: RpcState;
+    @State('request') private request!: ParsedCheckoutRequest;
+
+    private isRequestLoaded = false;
+
     public created() {
         this.$store.dispatch('initKeys');
+    }
+
+    public mounted() {
+        this.checkLoaded();
+    }
+
+    @Watch('rpcState')
+    private onRpcStateChange() {
+        this.checkLoaded();
+    }
+
+    @Watch('request')
+    private onRequestChange() {
+        this.checkLoaded();
+    }
+
+    private checkLoaded() {
+        this.isRequestLoaded = !!this.rpcState && !!this.request;
     }
 }
 </script>
@@ -33,7 +62,7 @@ export default class App extends Vue {
     }
 
     html {
-        background: linear-gradient(30deg, #3023AE, #9C58CB);
+        background: linear-gradient(55deg, #2462dc, #a83df6);
         background-size: cover;
         background-attachment: fixed;
     }
@@ -72,7 +101,75 @@ export default class App extends Vue {
         align-items: center;
     }
 
-    @media (max-width: 490px) {
+    .loading {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
 
+    .loading-animation {
+        opacity: 1;
+        background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCIgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0Ij48c3R5bGU+QGtleWZyYW1lcyBkYXNoLWFuaW1hdGlvbiB7IHRvIHsgdHJhbnNmb3JtOiByb3RhdGUoMjQwZGVnKSB0cmFuc2xhdGVaKDApOyB9IH0gI2NpcmNsZSB7IGFuaW1hdGlvbjogM3MgZGFzaC1hbmltYXRpb24gaW5maW5pdGUgbGluZWFyOyB0cmFuc2Zvcm06IHJvdGF0ZSgtMTIwZGVnKSB0cmFuc2xhdGVaKDApOyB0cmFuc2Zvcm0tb3JpZ2luOiBjZW50ZXI7IH08L3N0eWxlPjxkZWZzPjxjbGlwUGF0aCBpZD0iaGV4Q2xpcCI+PHBhdGggY2xpcC1ydWxlPSJldmVub2RkIiBkPSJNMTYgNC4yOWgzMkw2NCAzMiA0OCA1OS43MUgxNkwwIDMyem00LjYyIDhoMjIuNzZMNTQuNzYgMzIgNDMuMzggNTEuNzFIMjAuNjJMOS4yNCAzMnoiLz48L2NsaXBQYXRoPjwvZGVmcz48cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xNiA0LjI5aDMyTDY0IDMyIDQ4IDU5LjcxSDE2TDAgMzJ6bTQuNjIgOGgyMi43Nkw1NC43NiAzMiA0My4zOCA1MS43MUgyMC42Mkw5LjI0IDMyeiIgZmlsbD0iI2ZmZiIgb3BhY2l0eT0iLjIiLz48ZyBjbGlwLXBhdGg9InVybCgjaGV4Q2xpcCkiPjxjaXJjbGUgaWQ9ImNpcmNsZSIgY3g9IjMyIiBjeT0iMzIiIHI9IjE2IiBmaWxsPSJub25lIiBzdHJva2Utd2lkdGg9IjMyIiBzdHJva2U9IiNGNkFFMkQiIHN0cm9rZS1kYXNoYXJyYXk9IjE2LjY2NiA4NC42NjYiLz48L2c+PC9zdmc+');
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: 100%;
+        z-index: 1;
+        display: block;
+        height: 80px;
+        width: 80px;
+    }
+
+    .loading-animation + h2 {
+        margin-top: 32px;
+        padding-bottom: 64px;
+        color: white;
+        text-transform: uppercase;
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 0.86;
+        letter-spacing: 2px;
+    }
+
+    /****************
+    ** Nimiq Style **
+    ****************/
+
+    /* buttons */
+
+    button::-moz-focus-inner {
+        border: 0;
+    }
+
+    button,
+    [button] {
+        font-size: 16px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        width: 100%;
+        border-radius: 32px;
+        padding: 22px 48px;
+        vertical-align: middle;
+        display: table-cell;
+        text-align: center;
+        background: white;
+        color: var(--main-button-color);
+        cursor: pointer;
+        user-select: none;
+        box-shadow: 0 10px 14px 0 rgba(0, 0, 0, 0.15);
+        border: none;
+        outline: none;
+        line-height: 1.25;
+        font-family: inherit;
+        box-sizing: border-box;
+    }
+
+    button[disabled],
+    [button][disabled] {
+        background: transparent;
+        box-shadow: none;
+        color: white;
+        border: .125rem solid rgba(255, 255, 255, 0.31);
+        pointer-events: none;
     }
 </style>
