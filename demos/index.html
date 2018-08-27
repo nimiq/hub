@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Checkout</title>
+    <script src="https://cdn.nimiq-network.com/branches/master/web.js"></script>
+</head>
+<body>
+
+<div id="app"></div>
+
+<form class="center">
+    <div class="row">
+        <label>Keyguard BaseURL</label>
+        <input value="http://localhost:8000/" disabled readonly>
+    </div>
+
+    <div class="row">
+        <label>Transaction value (satoshi)</label>
+        <input id="value" value="545000000">
+    </div>
+
+    <div class="row">
+        <label>Transaction fee (satoshi)</label>
+        <input id="fee" value="0">
+    </div>
+
+    <div class="row">
+        <label>Transaction data (ascii)</label>
+        <input id="data" value="Thank you for shopping at shop.nimiq.com (H3XC0D)">
+    </div>
+
+    <div class="row">
+        <label>Key passphrase</label>
+        <input id="passphrase" value="password123">
+    </div>
+
+
+    <br><button id="redirect" type="button" class="small" disabled>Pay with NIM (redirect)</button>
+    <br><button id="popup" type="button" class="small" disabled>Pay with NIM (popup)</button>
+
+    <p id="result"></p>
+</form>
+
+<!-- built files will be auto injected -->
+</body>
+</html>

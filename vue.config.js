@@ -2,10 +2,39 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const WriteFileWebpackPlugin = require('write-file-webpack-plugin');
 
 const configureWebpack = {
-  plugins: [
-    new CopyWebpackPlugin([ {from: 'node_modules/@nimiq/vue-components/dist/img', to: 'img'} ]),
-    new WriteFileWebpackPlugin(),
-  ],
+    plugins: [
+        new CopyWebpackPlugin([{ from: 'node_modules/@nimiq/vue-components/dist/img', to: 'img' }]),
+        new WriteFileWebpackPlugin()
+    ]
 };
 
-module.exports = { configureWebpack };
+module.exports = {
+    pages: {
+        index: {
+            // entry for the page
+            entry: 'src/main.ts',
+            // the source template
+            template: 'public/index.html',
+            // output as dist/index.html
+            filename: 'index.html',
+            // chunks to include on this page, by default includes
+            // extracted common chunks and vendor chunks.
+            chunks: ['chunk-vendors', 'chunk-common', 'index']
+        },
+        demos: {
+            // entry for the page
+            entry: 'demos/Demo.ts',
+            // the source template
+            template: 'demos/index.html',
+            // output as dist/index.html
+            filename: 'demos.html',
+            // chunks to include on this page, by default includes
+            // extracted common chunks and vendor chunks.
+            chunks: ['chunk-vendors', 'chunk-common', 'demos']
+        },
+    },
+    configureWebpack,
+    chainWebpack: config => {
+        config.optimization.delete('splitChunks')
+    }
+}
