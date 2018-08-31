@@ -1,6 +1,8 @@
+/// <reference path="../node_modules/@nimiq/core-types/Nimiq.d.ts" />
+
 import * as Rpc from '@nimiq/rpc';
 import AccountsManagerClient from '../client/AccountsManagerClient';
-import {RequestType} from '../src/lib/RequestTypes';
+import {RequestType, CreateRequest, CreateResult, CheckoutRequest, CheckoutResult} from '../src/lib/RequestTypes';
 
 class Demo {
     public static ENTROPY = 'abb107d2c9adafed0b2ff41c0cfbe4ad4352b11362c5ca83bb4fc7faa7d4cf69';
@@ -17,39 +19,65 @@ class Demo {
         const demo = new Demo('http://localhost:8000');
 
         const client = new AccountsManagerClient('http://localhost:8080');
-        client.on(RequestType.CHECKOUT, (result, state) => {
+        client.on(RequestType.CHECKOUT, (result: CheckoutResult, state: Rpc.State) => {
             console.log('AccountsManager result', result);
             console.log('State', state);
 
             document.querySelector('#result').textContent = 'TX signed';
-            demo.tearDown().catch(console.error);
-        }, (error, state) => {
+            demo.tearDownKey().catch(console.error);
+        }, (error: Error, state: Rpc.State) => {
             console.error('AccountsManager error', error);
             console.log('State', state);
 
             document.querySelector('#result').textContent = `Error: ${error.message || error}`;
-            demo.tearDown().catch(console.error);
+            demo.tearDownKey().catch(console.error);
+        });
+        client.on(RequestType.CREATE, (result: CreateResult, state: Rpc.State) => {
+            alert('Wut?');
+        }, (error: Error, state: Rpc.State) => {
+            alert('Error wut?');
         });
         client.init();
 
-        document.querySelector('button#redirect').addEventListener('click', async () => {
-            checkoutRedirect(await generateRequest(demo));
+        document.querySelector('button#checkout-redirect').addEventListener('click', async () => {
+            checkoutRedirect(await generateCheckoutRequest(demo));
         });
 
-        document.querySelector('button#popup').addEventListener('click', async () => {
+        document.querySelector('button#checkout-popup').addEventListener('click', async () => {
             client.createPopup(
                 `left=${window.innerWidth / 2 - 500},top=50,width=1000,height=900,location=yes,dependent=yes`
             );
-            await checkoutPopup(await generateRequest(demo));
+            await checkoutPopup(await generateCheckoutRequest(demo));
         });
 
-        async function generateRequest(demo) {
-            const value = parseInt(document.querySelector('#value').value) || 1337;
-            const txFee = parseInt(document.querySelector('#fee').value) || 0;
-            const txData = document.querySelector('#data').value || '';
-            const keyPassphrase = document.querySelector('#passphrase').value || '';
+        document.querySelector('button#create').addEventListener('click', async () => {
+            client.createPopup(
+                `left=${window.innerWidth / 2 - 500},top=50,width=1000,height=900,location=yes,dependent=yes`
+            );
 
-            await demo.setUp(keyPassphrase);
+            try {
+                const result = await client.create(generateCreateRequest(demo));
+                console.log('Keyguard result', result);
+                document.querySelector('#result').textContent = 'New key & account created';
+            } catch (e) {
+                console.error('Keyguard error', e);
+                document.querySelector('#result').textContent = `Error: ${e.message || e}`;
+            }
+        });
+
+        function generateCreateRequest(demo) {
+            return {
+                appName: 'Accounts Demos',
+            } as CreateRequest;
+        }
+
+        async function generateCheckoutRequest(demo) {
+            const value = parseInt((document.querySelector('#value') as HTMLInputElement).value) || 1337;
+            const txFee = parseInt((document.querySelector('#fee') as HTMLInputElement).value) || 0;
+            const txData = (document.querySelector('#data') as HTMLInputElement).value || '';
+            const keyPassphrase = (document.querySelector('#passphrase') as HTMLInputElement).value || '';
+
+            await demo.setUpKey(keyPassphrase);
 
             return {
                 appName: 'Accounts Demos',
@@ -57,7 +85,7 @@ class Demo {
                 value,
                 fee: txFee,
                 data: Nimiq.BufferUtils.fromAscii(txData)
-            };
+            } as CheckoutRequest;
         }
 
         function checkoutRedirect(txRequest) {
@@ -74,7 +102,7 @@ class Demo {
                 document.querySelector('#result').textContent = `Error: ${e.message || e}`;
             }
 
-            await demo.tearDown();
+            await demo.tearDownKey();
         }
     }
 
@@ -96,7 +124,7 @@ class Demo {
         return Nimiq.BufferUtils.toHex(Nimiq.Hash.blake2b(entropy.serialize()).subarray(0, 6));
     }
 
-    private static async _createIframe(baseUrl) {
+    private static async _createIframe(baseUrl): Promise<HTMLIFrameElement> {
         return new Promise((resolve, reject) => {
             const $iframe = document.createElement('iframe');
             $iframe.name = 'Nimiq Keyguard Setup IFrame';
@@ -108,7 +136,7 @@ class Demo {
         });
     }
 
-    private _iframeClient: any;
+    private _iframeClient: Rpc.PostMessageRpcClient | null;
     private _keyguardBaseUrl: string;
 
     constructor(keyguardBaseUrl) {
@@ -116,8 +144,8 @@ class Demo {
         this._keyguardBaseUrl = keyguardBaseUrl;
     }
 
-    public async setUp(keyPassphrase) {
-        // Local setUp first
+    public async setUpKey(keyPassphrase) {
+        // Local setUpKey first
         const entropy = new Nimiq.Entropy(Nimiq.BufferUtils.fromHex(Demo.ENTROPY));
 
         const addresses = new Map();
@@ -136,22 +164,22 @@ class Demo {
         await keyStore.put(keyInfo);
         await keyStore.close();
 
-        // Then remote setUp
+        // Then remote setUpKey
         const keyguardSetup = await this.startIframeClient(this._keyguardBaseUrl);
-        await keyguardSetup.call('setUp', keyPassphrase);
+        await keyguardSetup.call('setUpKey', keyPassphrase);
     }
 
-    public async tearDown() {
-        // Local tearDown
+    public async tearDownKey() {
+        // Local tearDownKey
         const entropy = new Nimiq.Entropy(Nimiq.BufferUtils.fromHex(Demo.ENTROPY));
 
         const keyStore = new KeyStore();
         await keyStore.remove(Demo._keyIdFromEntropy(entropy));
         await keyStore.close();
 
-        // Then remote tearDown
+        // Then remote tearDownKey
         const keyguardSetup = await this.startIframeClient(this._keyguardBaseUrl);
-        await keyguardSetup.call('tearDown');
+        await keyguardSetup.call('tearDownKey');
     }
 
     public async startIframeClient(baseUrl) {

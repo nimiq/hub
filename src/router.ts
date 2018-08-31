@@ -4,6 +4,7 @@ import Checkout from './views/Checkout.vue';
 import CheckoutOverview from './views/CheckoutOverview.vue';
 import CheckoutSelectAccount from './views/CheckoutSelectAccount.vue';
 import CheckoutSuccess from './views/CheckoutSuccess.vue';
+import Create from './views/Create.vue';
 import MetaAbout from './views/MetaAbout.vue';
 import {RequestType} from '@/lib/RequestTypes';
 import {KeyguardCommand} from '@nimiq/keyguard-client';
@@ -41,6 +42,28 @@ export default new Router({
           component: CheckoutSuccess,
         },
       ],
+    },
+    {
+      path: `/${RequestType.CREATE}`,
+      component: Create,
+      name: RequestType.CREATE,
+      // children: [
+      //   {
+      //     path: '',
+      //     name: RequestType.CREATE,
+      //     component: CreateTypeSelector,
+      //   },
+      //   {
+      //     path: 'set-label',
+      //     name: `${RequestType.CREATE}-set-label`,
+      //     component: CreateSetLabel,
+      //   },
+      //   {
+      //     path: 'success',
+      //     name: `${RequestType.CREATE}-success`,
+      //     component: CreateSuccess,
+      //   },
+      // ],
     },
     {
       path: '/meta-about',

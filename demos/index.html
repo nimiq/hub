@@ -4,12 +4,19 @@
     <meta charset="UTF-8">
     <title>Checkout</title>
     <script src="https://cdn.nimiq-network.com/branches/master/web.js"></script>
+    <style>
+        .request {
+            padding: 0 1em;
+            float: left;
+        }
+    </style>
 </head>
 <body>
 
 <div id="app"></div>
 
-<form class="center">
+<div class="request">
+    <h2>Checkout</h2>
     <div class="row">
         <label>Keyguard BaseURL</label>
         <input value="http://localhost:8000/" disabled readonly>
@@ -36,11 +43,16 @@
     </div>
 
 
-    <br><button id="redirect" type="button" class="small" disabled>Pay with NIM (redirect)</button>
-    <br><button id="popup" type="button" class="small" disabled>Pay with NIM (popup)</button>
+    <br><button id="checkout-redirect" class="small" disabled>Pay with NIM (redirect)</button>
+    <br><button id="checkout-popup" class="small" disabled>Pay with NIM (popup)</button>
 
     <p id="result"></p>
-</form>
+</div>
+
+<div class="request">
+    <h2>Create</h2>
+    <button id="create" disabled>Create new key & account</button>
+</div>
 
 <!-- built files will be auto injected -->
 </body>
