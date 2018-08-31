@@ -41,8 +41,7 @@ export default class Checkout extends Vue {
             console.error(this.keyguardResult);
         } else if (this.keyguardResult && this.rpcState) {
             // Success
-            // Redirect to /create/set-label
-            console.log(this.keyguardResult, this.rpcState);
+            this.$router.push({name: `${RequestType.CHECKOUT}-set-label`});
         }
     }
 
