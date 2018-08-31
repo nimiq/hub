@@ -1,9 +1,6 @@
 <template>
-        <div class="container">
-        <small-page>
-            <router-view/>
-        </small-page>
-        <a class="global-close" :class="{hidden: $route.name === `checkout-success`}" @click="close">Cancel Account Creation</a>
+    <div>
+        Choose a label
     </div>
 </template>
 
@@ -24,6 +21,29 @@ export default class Checkout extends Vue {
     @State private request!: ParsedCreateRequest;
     @State private keyguardResult!: KCreateResult | Error | null;
     @State private activeAccountPath!: string;
+
+    public created() {
+        const client = RpcApi.createKeyguardClient(this.$store);
+
+        const request: KCreateRequest = {
+            appName: this.request.appName,
+            defaultKeyPath: `m/44'/242'/0'/0'`, // FIXME: not used yet
+        };
+
+        client.create(request).catch(console.error); // TODO: proper error handling
+    }
+
+    @Watch('keyguardResult', {immediate: true})
+    private onKeyguardResult() {
+        if (this.keyguardResult instanceof Error) {
+            // Key/Account was not created
+            console.error(this.keyguardResult);
+        } else if (this.keyguardResult && this.rpcState) {
+            // Success
+            // Redirect to /create/set-label
+            console.log(this.keyguardResult, this.rpcState);
+        }
+    }
 
     @Emit()
     private close() {

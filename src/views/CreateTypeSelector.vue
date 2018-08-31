@@ -1,15 +1,13 @@
 <template>
-        <div class="container">
-        <small-page>
-            <router-view/>
-        </small-page>
-        <a class="global-close" :class="{hidden: $route.name === `checkout-success`}" @click="close">Cancel Account Creation</a>
+    <div>
+        <PageHeader :backArrow="false">Add a Wallet</PageHeader>
+        <button @click="createKeyguard">Keyguard</button>
     </div>
 </template>
 
 <script lang="ts">
 import {Component, Emit, Prop, Watch, Vue} from 'vue-property-decorator';
-import {AccountSelector, LoginSelector, PaymentInfoLine, SmallPage} from '@nimiq/vue-components';
+import {PageHeader} from '@nimiq/vue-components';
 import {RequestType, ParsedCreateRequest} from '../lib/RequestTypes';
 import {AddressInfo} from '../lib/AddressInfo';
 import {KeyInfo, KeyStorageType} from '../lib/KeyInfo';
@@ -18,12 +16,35 @@ import RpcApi from '../lib/RpcApi';
 import {CreateRequest as KCreateRequest, CreateResult as KCreateResult} from '@nimiq/keyguard-client';
 import {ResponseStatus, State as RpcState} from '@nimiq/rpc';
 
-@Component({components: {PaymentInfoLine, SmallPage}})
+@Component({components: {PageHeader}})
 export default class Checkout extends Vue {
     @State private rpcState!: RpcState;
     @State private request!: ParsedCreateRequest;
     @State private keyguardResult!: KCreateResult | Error | null;
     @State private activeAccountPath!: string;
+
+    public createKeyguard() {
+        const client = RpcApi.createKeyguardClient(this.$store);
+
+        const request: KCreateRequest = {
+            appName: this.request.appName,
+            defaultKeyPath: `m/44'/242'/0'/0'`, // FIXME: not used yet
+        };
+
+        client.create(request).catch(console.error); // TODO: proper error handling
+    }
+
+    @Watch('keyguardResult', {immediate: true})
+    private onKeyguardResult() {
+        if (this.keyguardResult instanceof Error) {
+            // Key/Account was not created
+            console.error(this.keyguardResult);
+        } else if (this.keyguardResult && this.rpcState) {
+            // Success
+            // Redirect to /create/set-label
+            console.log(this.keyguardResult, this.rpcState);
+        }
+    }
 
     @Emit()
     private close() {
