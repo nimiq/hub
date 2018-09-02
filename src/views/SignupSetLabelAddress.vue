@@ -1,33 +1,43 @@
 <template>
-        <div class="container">
-        <small-page>
-            <router-view/>
-        </small-page>
-        <a class="global-close" :class="{hidden: $route.name === `checkout-success`}" @click="close">Cancel Account Creation</a>
+    <div>
+        Choose a label for your account:
+        <Account :address="createdAccount.address" />
+        <input type= "text" v-model.lazy="label" />
+        <button @click="submit" :disabled="label === null || label === ''">Ok</button>
     </div>
 </template>
 
 <script lang="ts">
 import {Component, Emit, Prop, Watch, Vue} from 'vue-property-decorator';
-import {AccountSelector, LoginSelector, PaymentInfoLine, SmallPage} from '@nimiq/vue-components';
-import {RequestType, ParsedCreateRequest} from '../lib/RequestTypes';
+import {Account} from '@nimiq/vue-components';
+import {RequestType, ParsedSignupRequest} from '../lib/RequestTypes';
 import {AddressInfo} from '../lib/AddressInfo';
 import {KeyInfo, KeyStorageType} from '../lib/KeyInfo';
+import {KeyStore} from '../lib/KeyStore';
 import {State, Mutation, Getter} from 'vuex-class';
 import RpcApi from '../lib/RpcApi';
 import {CreateRequest as KCreateRequest, CreateResult as KCreateResult} from '@nimiq/keyguard-client';
 import {ResponseStatus, State as RpcState} from '@nimiq/rpc';
 
-@Component({components: {PaymentInfoLine, SmallPage}})
-export default class Checkout extends Vue {
+@Component({components: {Account}})
+export default class extends Vue {
     @State private rpcState!: RpcState;
-    @State private request!: ParsedCreateRequest;
     @State private keyguardResult!: KCreateResult | Error | null;
-    @State private activeAccountPath!: string;
+    @State private chosenLoginLabel!: string;
 
-    @Emit()
-    private close() {
-        window.close();
+    private label: string | null = null;
+
+    private submit() {
+        const keyInfo: KeyInfo = this.keyguardResult;
+
+        keyInfo.label = this.chosenLoginLabel;
+        for (const [index, address] of keyInfo.addresses) {
+            address.label = this.label!;
+        }
+
+        KeyStore.Instance.put(keyInfo);
+
+        this.rpcState.reply(ResponseStatus.OK, keyInfo);
     }
 }
 </script>

@@ -1,6 +1,6 @@
 export enum RequestType {
     CHECKOUT = 'checkout',
-    CREATE = 'create',
+    SIGNUP = 'signup',
 }
 
 export interface CheckoutRequest {
@@ -46,24 +46,24 @@ export interface CheckoutResult {
     };
 }
 
-export interface CreateRequest {
-    kind?: RequestType.CREATE;
+export interface SignupRequest {
+    kind?: RequestType.SIGNUP;
     appName: string;
 }
 
-export interface ParsedCreateRequest {
-    kind: RequestType.CREATE;
+export interface ParsedSignupRequest {
+    kind: RequestType.SIGNUP;
     appName: string;
 }
 
-export interface CreateResult {
+export interface SignupResult {
     address: Uint8Array;
     label: string;
 }
 
 // Discriminated Unions
-export type RpcRequest = CheckoutRequest | CreateRequest;
-export type ParsedRpcRequest = ParsedCheckoutRequest | ParsedCreateRequest;
+export type RpcRequest = CheckoutRequest | SignupRequest;
+export type ParsedRpcRequest = ParsedCheckoutRequest | ParsedSignupRequest;
 
 export class AccountsRequest {
     public static parse(request: RpcRequest, requestType?: RequestType): ParsedRpcRequest | null {
@@ -84,12 +84,12 @@ export class AccountsRequest {
                     flags: request.flags,
                     networkId: request.networkId,
                 } as ParsedCheckoutRequest;
-            case RequestType.CREATE:
-                request = request as CreateRequest;
+            case RequestType.SIGNUP:
+                request = request as SignupRequest;
                 return {
-                    kind: RequestType.CREATE,
+                    kind: RequestType.SIGNUP,
                     appName: request.appName,
-                } as ParsedCreateRequest;
+                } as ParsedSignupRequest;
             default:
                 return null;
         }
@@ -109,11 +109,11 @@ export class AccountsRequest {
                     flags: request.flags,
                     networkId: request.networkId,
                 } as CheckoutRequest;
-            case RequestType.CREATE:
+            case RequestType.SIGNUP:
                 return {
-                    kind: RequestType.CREATE,
+                    kind: RequestType.SIGNUP,
                     appName: request.appName,
-                } as CreateRequest;
+                } as SignupRequest;
             default:
                 return null;
         }

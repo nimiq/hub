@@ -4,10 +4,11 @@ import Checkout from './views/Checkout.vue';
 import CheckoutOverview from './views/CheckoutOverview.vue';
 import CheckoutSelectAccount from './views/CheckoutSelectAccount.vue';
 import CheckoutSuccess from './views/CheckoutSuccess.vue';
-import Create from './views/Create.vue';
-import CreateTypeSelector from './views/CreateTypeSelector.vue';
-import CreateSetLabel from './views/CreateSetLabel.vue';
-import CreateSuccess from './views/CreateSuccess.vue';
+import Signup from './views/Signup.vue';
+import SignupTypeSelector from './views/SignupTypeSelector.vue';
+import SignupSetLabelLogin from './views/SignupSetLabelLogin.vue';
+import SignupSetLabelAddress from './views/SignupSetLabelAddress.vue';
+import SignupSuccess from './views/SignupSuccess.vue';
 import MetaAbout from './views/MetaAbout.vue';
 import {RequestType} from '@/lib/RequestTypes';
 import {KeyguardCommand} from '@nimiq/keyguard-client';
@@ -47,24 +48,28 @@ export default new Router({
       ],
     },
     {
-      path: `/${RequestType.CREATE}`,
-      component: Create,
-      name: RequestType.CREATE,
-        children: [
+      path: `/${RequestType.SIGNUP}`,
+      component: Signup,
+      children: [
             {
                 path: '',
-                name: RequestType.CREATE,
-                component: CreateTypeSelector,
+                name: RequestType.SIGNUP,
+                component: SignupTypeSelector,
             },
             {
-                path: 'set-label',
-                name: `${RequestType.CREATE}-set-label`,
-                component: CreateSetLabel,
+                path: 'set-label-login',
+                name: `${RequestType.SIGNUP}-set-label-login`,
+                component: SignupSetLabelLogin,
+            },
+            {
+                path: 'set-label-address',
+                name: `${RequestType.SIGNUP}-set-label-address`,
+                component: SignupSetLabelAddress,
             },
             {
                 path: 'success',
-                name: `${RequestType.CREATE}-success`,
-                component: CreateSuccess,
+                name: `${RequestType.SIGNUP}-success`,
+                component: SignupSuccess,
             },
        ],
     },
