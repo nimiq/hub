@@ -22,18 +22,19 @@ import {ResponseStatus, State as RpcState} from '@nimiq/rpc';
 @Component({components: {Account}})
 export default class extends Vue {
     @State private rpcState!: RpcState;
-    @State private keyguardResult!: KCreateResult | Error | null;
+    @State private keyguardResult!: KCreateResult;
     @State private chosenLoginLabel!: string;
 
     private label: string | null = null;
 
     private submit() {
-        const keyInfo: KeyInfo = this.keyguardResult;
-
-        keyInfo.label = this.chosenLoginLabel;
-        for (const [index, address] of keyInfo.addresses) {
-            address.label = this.label!;
-        }
+        const keyInfo = new KeyInfo(
+            this.keyguardResult.keyId,
+            this.chosenLoginLabel,
+            new Map().set(this.label, this.keyguardResult.address),
+            [],
+            KeyStorageType.BIP39
+        );
 
         KeyStore.Instance.put(keyInfo);
 

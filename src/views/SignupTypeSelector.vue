@@ -41,17 +41,6 @@ export default class extends Vue {
     public createLedger() {
 
     }
-
-    @Watch('keyguardResult', {immediate: true})
-    private onKeyguardResult() {
-        if (this.keyguardResult instanceof Error) {
-            // Key/Account was not created
-            console.error(this.keyguardResult);
-        } else if (this.keyguardResult) {
-            // Success
-            this.$router.push({name: `${RequestType.SIGNUP}-set-label-login`});
-        }
-    }
 }
 </script>
 
