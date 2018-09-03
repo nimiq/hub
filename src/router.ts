@@ -24,10 +24,6 @@ export const keyguardResponseRouter: { [index: string]: {resolve: string, reject
         resolve: `${RequestType.CHECKOUT}-success`,
         reject: RequestType.CHECKOUT,
     },
-    [KeyguardCommand.CREATE]: {
-        resolve: `${RequestType.SIGNUP}-success`,
-        reject: RequestType.SIGNUP,
-    },
 };
 
 export default new Router({
