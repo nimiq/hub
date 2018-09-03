@@ -27,7 +27,7 @@ export default class extends Vue {
 
         const request: KCreateRequest = {
             appName: this.request.appName,
-            defaultKeyPath: `m/44'/242'/0'/0'`, // FIXME: not used yet
+            defaultKeyPath: `m/44'/242'/0'/0'`,
         };
 
         client.create(request).catch(console.error); // TODO: proper error handling

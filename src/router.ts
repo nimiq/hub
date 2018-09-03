@@ -16,6 +16,10 @@ import {KeyguardCommand} from '@nimiq/keyguard-client';
 Vue.use(Router);
 
 export const keyguardResponseRouter: { [index: string]: {resolve: string, reject: string} } = {
+    [KeyguardCommand.CREATE]: {
+        resolve: `${RequestType.SIGNUP}-success`,
+        reject: RequestType.SIGNUP,
+    },
     [KeyguardCommand.SIGN_TRANSACTION]: {
         resolve: `${RequestType.CHECKOUT}-success`,
         reject: RequestType.CHECKOUT,
