@@ -2,7 +2,7 @@
 
 import * as Rpc from '@nimiq/rpc';
 import AccountsManagerClient from '../client/AccountsManagerClient';
-import {RequestType, CreateRequest, CreateResult, CheckoutRequest, CheckoutResult} from '../src/lib/RequestTypes';
+import {RequestType, CreateRequest, CreateResult, CheckoutRequest, CheckoutResult, LoginRequest, LoginResult} from '../src/lib/RequestTypes';
 import { KeyStore } from '../src/lib/KeyStore';
 import { KeyInfo, KeyStorageType } from '../src/lib/KeyInfo';
 import { AddressInfo } from '../src/lib/AddressInfo';
@@ -69,6 +69,27 @@ class Demo {
         });
 
         function generateCreateRequest(demo: Demo): CreateRequest {
+            return {
+                appName: 'Accounts Demos',
+            }
+        }
+
+        document.querySelector('button#login').addEventListener('click', async () => {
+            client.createPopup(
+                `left=${window.innerWidth / 2 - 500},top=50,width=1000,height=900,location=yes,dependent=yes`
+            );
+
+            try {
+                const result = await client.login(generateLoginRequest(demo));
+                console.log('Keyguard result', result);
+                document.querySelector('#result').textContent = 'Key imported';
+            } catch (e) {
+                console.error('Keyguard error', e);
+                document.querySelector('#result').textContent = `Error: ${e.message || e}`;
+            }
+        });
+
+        function generateLoginRequest(demo: Demo): LoginRequest {
             return {
                 appName: 'Accounts Demos',
             }

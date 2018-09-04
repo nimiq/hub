@@ -1,6 +1,7 @@
 export enum RequestType {
     CHECKOUT = 'checkout',
     CREATE = 'create',
+    LOGIN = 'login',
 }
 
 export interface CheckoutRequest {
@@ -61,9 +62,23 @@ export interface CreateResult {
     label: string;
 }
 
+export interface LoginRequest {
+    kind?: RequestType.LOGIN;
+    appName: string;
+}
+
+export interface ParsedLoginRequest {
+    kind: RequestType.LOGIN;
+    appName: string;
+}
+
+export interface LoginResult {
+    addresses: Array<{address: Uint8Array, label: string}>;
+}
+
 // Discriminated Unions
-export type RpcRequest = CheckoutRequest | CreateRequest;
-export type ParsedRpcRequest = ParsedCheckoutRequest | ParsedCreateRequest;
+export type RpcRequest = CheckoutRequest | CreateRequest | LoginRequest;
+export type ParsedRpcRequest = ParsedCheckoutRequest | ParsedCreateRequest | ParsedLoginRequest;
 
 export class AccountsRequest {
     public static parse(request: RpcRequest, requestType?: RequestType): ParsedRpcRequest | null {
@@ -90,6 +105,12 @@ export class AccountsRequest {
                     kind: RequestType.CREATE,
                     appName: request.appName,
                 } as ParsedCreateRequest;
+            case RequestType.LOGIN:
+                request = request as LoginRequest;
+                return {
+                    kind: RequestType.LOGIN,
+                    appName: request.appName,
+                } as ParsedLoginRequest;
             default:
                 return null;
         }
@@ -114,6 +135,11 @@ export class AccountsRequest {
                     kind: RequestType.CREATE,
                     appName: request.appName,
                 } as CreateRequest;
+            case RequestType.LOGIN:
+                return {
+                    kind: RequestType.LOGIN,
+                    appName: request.appName,
+                } as LoginRequest;
             default:
                 return null;
         }

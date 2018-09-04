@@ -1,6 +1,6 @@
 import {PopupRequestBehavior, RequestBehavior} from './RequestBehavior';
 import {RedirectRpcClient} from '@nimiq/rpc';
-import {CreateRequest, CheckoutRequest, RequestType} from '@/lib/RequestTypes';
+import {CreateRequest, CheckoutRequest, LoginRequest, RequestType} from '@/lib/RequestTypes';
 
 export default class AccountsManagerClient {
     private static readonly DEFAULT_ENDPOINT = '../src';
@@ -29,6 +29,8 @@ export default class AccountsManagerClient {
         this._observable.on(`${command}-reject`, reject);
     }
 
+    // API
+
     public create(request: CreateRequest, requestBehavior = this._defaultBehavior) {
         return this._request(requestBehavior, RequestType.CREATE, [request]);
     }
@@ -36,6 +38,12 @@ export default class AccountsManagerClient {
     public checkout(request: CheckoutRequest, requestBehavior = this._defaultBehavior) {
         return this._request(requestBehavior, RequestType.CHECKOUT, [request]);
     }
+
+    public login(request: LoginRequest, requestBehavior = this._defaultBehavior) {
+        return this._request(requestBehavior, RequestType.LOGIN, [request]);
+    }
+
+    // END API
 
     public createPopup(options: string) {
         const behavior = new PopupRequestBehavior(options);
