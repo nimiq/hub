@@ -9,6 +9,7 @@ import SignupTypeSelector from './views/SignupTypeSelector.vue';
 import SignupSetLabelLogin from './views/SignupSetLabelLogin.vue';
 import SignupSetLabelAddress from './views/SignupSetLabelAddress.vue';
 import SignupSuccess from './views/SignupSuccess.vue';
+import Login from './views/Login.vue';
 import MetaAbout from './views/MetaAbout.vue';
 import {RequestType} from '@/lib/RequestTypes';
 import {KeyguardCommand} from '@nimiq/keyguard-client';
@@ -19,6 +20,10 @@ export const keyguardResponseRouter: { [index: string]: {resolve: string, reject
     [KeyguardCommand.CREATE]: {
         resolve: `${RequestType.SIGNUP}-success`,
         reject: RequestType.SIGNUP,
+    },
+    [KeyguardCommand.IMPORT]: {
+        resolve: `${RequestType.LOGIN}-success`,
+        reject: RequestType.LOGIN,
     },
     [KeyguardCommand.SIGN_TRANSACTION]: {
         resolve: `${RequestType.CHECKOUT}-success`,
@@ -76,6 +81,28 @@ export default new Router({
                 component: SignupSuccess,
             },
        ],
+    },
+    {
+      path: `/${RequestType.LOGIN}`,
+      component: Login,
+      name: RequestType.LOGIN,
+      // children: [
+      //   {
+      //     path: '',
+      //     name: RequestType.CREATE,
+      //     component: CreateTypeSelector,
+      //   },
+      //   {
+      //     path: 'set-label',
+      //     name: `${RequestType.CREATE}-set-label`,
+      //     component: CreateSetLabel,
+      //   },
+      //   {
+      //     path: 'success',
+      //     name: `${RequestType.CREATE}-success`,
+      //     component: CreateSuccess,
+      //   },
+      // ],
     },
     {
       path: '/meta-about',

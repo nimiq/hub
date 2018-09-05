@@ -40,7 +40,7 @@ export class KeyInfo {
 /*
  * Database Types
  */
-interface KeyInfoEntry {
+export interface KeyInfoEntry {
     id: string;
     label: string;
     addresses: Map</*path*/ string, AddressInfoEntry>;

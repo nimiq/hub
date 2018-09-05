@@ -2,7 +2,10 @@
 
 import * as Rpc from '@nimiq/rpc';
 import AccountsManagerClient from '../client/AccountsManagerClient';
-import {RequestType, CreateRequest, CreateResult, CheckoutRequest, CheckoutResult} from '../src/lib/RequestTypes';
+import {RequestType, CreateRequest, CreateResult, CheckoutRequest, CheckoutResult, LoginRequest, LoginResult} from '../src/lib/RequestTypes';
+import { KeyStore } from '../src/lib/KeyStore';
+import { KeyInfo, KeyStorageType } from '../src/lib/KeyInfo';
+import { AddressInfo } from '../src/lib/AddressInfo';
 
 class Demo {
     public static ENTROPY = 'abb107d2c9adafed0b2ff41c0cfbe4ad4352b11362c5ca83bb4fc7faa7d4cf69';
@@ -65,13 +68,34 @@ class Demo {
             }
         });
 
-        function generateCreateRequest(demo) {
+        function generateCreateRequest(demo: Demo): CreateRequest {
             return {
                 appName: 'Accounts Demos',
-            } as CreateRequest;
+            }
         }
 
-        async function generateCheckoutRequest(demo) {
+        document.querySelector('button#login').addEventListener('click', async () => {
+            client.createPopup(
+                `left=${window.innerWidth / 2 - 500},top=50,width=1000,height=900,location=yes,dependent=yes`
+            );
+
+            try {
+                const result = await client.login(generateLoginRequest(demo));
+                console.log('Keyguard result', result);
+                document.querySelector('#result').textContent = 'Key imported';
+            } catch (e) {
+                console.error('Keyguard error', e);
+                document.querySelector('#result').textContent = `Error: ${e.message || e}`;
+            }
+        });
+
+        function generateLoginRequest(demo: Demo): LoginRequest {
+            return {
+                appName: 'Accounts Demos',
+            }
+        }
+
+        async function generateCheckoutRequest(demo: Demo): Promise<CheckoutRequest> {
             const value = parseInt((document.querySelector('#value') as HTMLInputElement).value) || 1337;
             const txFee = parseInt((document.querySelector('#fee') as HTMLInputElement).value) || 0;
             const txData = (document.querySelector('#data') as HTMLInputElement).value || '';
@@ -85,14 +109,14 @@ class Demo {
                 value,
                 fee: txFee,
                 data: Nimiq.BufferUtils.fromAscii(txData)
-            } as CheckoutRequest;
+            };
         }
 
-        function checkoutRedirect(txRequest) {
+        function checkoutRedirect(txRequest: CheckoutRequest) {
             return client.checkout(txRequest);
         }
 
-        async function checkoutPopup(txRequest) {
+        async function checkoutPopup(txRequest: CheckoutRequest) {
             try {
                 const result = await client.checkout(txRequest);
                 console.log('Keyguard result', result);
@@ -104,23 +128,26 @@ class Demo {
 
             await demo.tearDownKey();
         }
-    }
 
-    private static _deriveAddressInfo(entropy, path) {
-        return {
+        document.querySelector('button#list-keyguard-keys').addEventListener('click', () => demo.listKeyguard());
+        document.querySelector('button#list-accounts').addEventListener('click', () => demo.list());
+    } // run
+
+    private static _deriveAddressInfo(entropy: Nimiq.Entropy, path: string): AddressInfo {
+        return new AddressInfo(
             path,
-            label: 'Standard Account',
-            address: Demo._deriveAddress(entropy, path).serialize()
-        };
+            'Standard Account',
+            Demo._deriveAddress(entropy, path),
+        );
     }
 
-    private static _deriveAddress(entropy, path) {
+    private static _deriveAddress(entropy: Nimiq.Entropy, path: string): Nimiq.Address {
         const privKey = entropy.toExtendedPrivateKey().derivePath(path).privateKey;
         const pubKey = Nimiq.PublicKey.derive(privKey);
         return pubKey.toAddress();
     }
 
-    private static _keyIdFromEntropy(entropy) {
+    private static _keyIdFromEntropy(entropy: Nimiq.Entropy): string {
         return Nimiq.BufferUtils.toHex(Nimiq.Hash.blake2b(entropy.serialize()).subarray(0, 6));
     }
 
@@ -139,30 +166,29 @@ class Demo {
     private _iframeClient: Rpc.PostMessageRpcClient | null;
     private _keyguardBaseUrl: string;
 
-    constructor(keyguardBaseUrl) {
+    constructor(keyguardBaseUrl: string) {
         this._iframeClient = null;
         this._keyguardBaseUrl = keyguardBaseUrl;
     }
 
-    public async setUpKey(keyPassphrase) {
+    public async setUpKey(keyPassphrase?: string) {
         // Local setUpKey first
         const entropy = new Nimiq.Entropy(Nimiq.BufferUtils.fromHex(Demo.ENTROPY));
 
-        const addresses = new Map();
+        const addresses: Map<string, AddressInfo> = new Map();
         addresses.set(Demo.DEFAULT_PATH1, Demo._deriveAddressInfo(entropy, Demo.DEFAULT_PATH1));
         addresses.set(Demo.DEFAULT_PATH2, Demo._deriveAddressInfo(entropy, Demo.DEFAULT_PATH2));
 
-        const keyInfo = {
-            id: Demo._keyIdFromEntropy(entropy),
-            label: 'KeyLabel',
+        const keyInfo = new KeyInfo(
+            Demo._keyIdFromEntropy(entropy),
+            'KeyLabel',
             addresses,
-            contracts: [],
-            type: /*BIP39*/ 1,
-        };
+            [],
+            KeyStorageType.BIP39,
+        );
 
-        const keyStore = new KeyStore();
-        await keyStore.put(keyInfo);
-        await keyStore.close();
+        await KeyStore.Instance.put(keyInfo);
+        await KeyStore.Instance.close();
 
         // Then remote setUpKey
         const keyguardSetup = await this.startIframeClient(this._keyguardBaseUrl);
@@ -173,16 +199,15 @@ class Demo {
         // Local tearDownKey
         const entropy = new Nimiq.Entropy(Nimiq.BufferUtils.fromHex(Demo.ENTROPY));
 
-        const keyStore = new KeyStore();
-        await keyStore.remove(Demo._keyIdFromEntropy(entropy));
-        await keyStore.close();
+        await KeyStore.Instance.remove(Demo._keyIdFromEntropy(entropy));
+        await KeyStore.Instance.close();
 
         // Then remote tearDownKey
         const keyguardSetup = await this.startIframeClient(this._keyguardBaseUrl);
         await keyguardSetup.call('tearDownKey');
     }
 
-    public async startIframeClient(baseUrl) {
+    public async startIframeClient(baseUrl: string): Promise<Rpc.PostMessageRpcClient> {
         if (this._iframeClient) return this._iframeClient;
         const $iframe = await Demo._createIframe(baseUrl);
         if (!$iframe.contentWindow) throw new Error(`IFrame contentWindow is ${typeof $iframe.contentWindow}`);
@@ -190,105 +215,17 @@ class Demo {
         await this._iframeClient.init();
         return this._iframeClient;
     }
-}
 
-class KeyStore {
-    public static DB_VERSION = 1;
-    public static DB_NAME = 'nimiq-keyguard';
-    public static DB_KEY_STORE_NAME = 'keys';
-
-    private static _requestAsPromise(request) {
-        return new Promise((resolve, reject) => {
-            request.onsuccess = () => resolve(request.result);
-            request.onerror = () => reject(request.error);
-        });
-    }
-
-    private static _readAllFromCursor(request) {
-        return new Promise((resolve, reject) => {
-            const results = [];
-            request.onsuccess = () => {
-                const cursor = request.result;
-                if (cursor) {
-                    results.push(cursor.value);
-                    cursor.continue();
-                } else {
-                    resolve(results);
-                }
-            };
-            request.onerror = () => reject(request.error);
-        });
-    }
-
-    private _dbPromise: any;
-    private _indexedDB: IDBFactory;
-
-    constructor() {
-        this._dbPromise = null;
-        this._indexedDB = window.indexedDB;
-    }
-
-    public async get(id) {
-        const db = await this.connect();
-        const request = db.transaction([KeyStore.DB_KEY_STORE_NAME])
-            .objectStore(KeyStore.DB_KEY_STORE_NAME)
-            .get(id);
-        const result = await KeyStore._requestAsPromise(request);
-        return result;
-    }
-
-    public async put(keyInfo) {
-        const db = await this.connect();
-        const request = db.transaction([KeyStore.DB_KEY_STORE_NAME], 'readwrite')
-            .objectStore(KeyStore.DB_KEY_STORE_NAME)
-            .put(keyInfo);
-        return KeyStore._requestAsPromise(request);
-    }
-
-    public async remove(id) {
-        const db = await this.connect();
-        const request = db.transaction([KeyStore.DB_KEY_STORE_NAME], 'readwrite')
-            .objectStore(KeyStore.DB_KEY_STORE_NAME)
-            .delete(id);
-        return KeyStore._requestAsPromise(request);
+    public async listKeyguard() {
+        const client = await this.startIframeClient(this._keyguardBaseUrl);
+        const keys = await client.call('list');
+        console.log('Keys in Keyguard:', keys);
     }
 
     public async list() {
-        const db = await this.connect();
-        const request = db.transaction([KeyStore.DB_KEY_STORE_NAME], 'readonly')
-            .objectStore(KeyStore.DB_KEY_STORE_NAME)
-            .openCursor();
-
-        return KeyStore._readAllFromCursor(request);
+        const keys = await KeyStore.Instance.list();
+        console.log('Accounts in Manager:', keys);
     }
-
-    public async close() {
-        if (!this._dbPromise) { return; }
-        // If failed to open database (i.e. dbPromise rejects) we don't need to close the db
-        const db = await this._dbPromise.catch(() => null);
-        this._dbPromise = null;
-        if (db) { db.close(); }
-    }
-
-    public async connect() {
-        if (this._dbPromise) { return this._dbPromise; }
-
-        this._dbPromise = new Promise((resolve, reject) => {
-            const request = this._indexedDB.open(KeyStore.DB_NAME, KeyStore.DB_VERSION);
-            request.onsuccess = () => resolve(request.result);
-            request.onerror = () => reject(request.error);
-            request.onupgradeneeded = (event) => {
-                const db = request.result;
-
-                if (event.oldVersion < 1) {
-                    // Version 1 is the first version of the database.
-                    db.createObjectStore(KeyStore.DB_KEY_STORE_NAME, { keyPath: 'id' });
-                }
-            };
-        });
-
-        return this._dbPromise;
-    }
-}
+} // class Demo
 
 Demo.run();

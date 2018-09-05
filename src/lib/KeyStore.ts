@@ -1,8 +1,8 @@
-import {KeyInfo} from '@/lib/KeyInfo';
+import {KeyInfo, KeyInfoEntry} from '@/lib/KeyInfo';
 
 export class KeyStore {
     public static readonly DB_VERSION = 1;
-    public static readonly DB_NAME = 'nimiq-keyguard';
+    public static readonly DB_NAME = 'nimiq-accountsmanager';
     public static readonly DB_KEY_STORE_NAME = 'keys';
 
     public static INDEXEDDB_IMPLEMENTATION = window.indexedDB;
@@ -76,7 +76,7 @@ export class KeyStore {
             .objectStore(KeyStore.DB_KEY_STORE_NAME)
             .openCursor();
 
-        const result = await KeyStore._readAllFromCursor(request);
+        const result: KeyInfoEntry[] = await KeyStore._readAllFromCursor(request);
         return result.map((info) => KeyInfo.fromObject(info));
     }
 
