@@ -24,10 +24,6 @@ export default class extends Vue {
     @State private activeAccountPath!: string;
 
     public createKeyguard() {
-        // testing, TODO remove
-        this.$router.push({name: `${RequestType.SIGNUP}-set-label-login`});
-
-/*
         const client = RpcApi.createKeyguardClient(this.$store);
 
         const request: KCreateRequest = {
@@ -35,7 +31,9 @@ export default class extends Vue {
             defaultKeyPath: `m/44'/242'/0'/0'`, // FIXME: not used yet
         };
 
-        client.create(request).catch(console.error); // TODO: proper error handling*/
+       client.create(request).catch((error) => {
+           console.log(error); // TODO: proper error handling
+       });
     }
 
     public createLedger() {

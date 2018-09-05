@@ -1,53 +1,88 @@
 <template>
     <div>
-        Success!
+        Success! Created wallet and account.
+        <Account :address="createdAddress" />
+        <div v-if="!noWallets">
+            <input type= "text" v-model.lazy="walletLabel" placeholder="Keyguard Wallet" />
+            <input type= "text" v-model.lazy="addressLabel" placeholder="Standard Account" />
+        </div>
+        <button @click='done'>Done</button>
     </div>
 </template>
 
 <script lang="ts">
 import {Component, Emit, Prop, Watch, Vue} from 'vue-property-decorator';
-import {AccountSelector, LoginSelector, PaymentInfoLine, SmallPage} from '@nimiq/vue-components';
+import {Account} from '@nimiq/vue-components';
 import {RequestType, ParsedSignupRequest} from '../lib/RequestTypes';
 import {AddressInfo} from '../lib/AddressInfo';
-import {KeyInfo, KeyStorageType} from '../lib/KeyInfo';
+import {KeyInfo, KeyStorageType, KeyInfoEntry} from '../lib/KeyInfo';
 import {State, Mutation, Getter} from 'vuex-class';
+import {KeyStore} from '../lib/KeyStore';
 import RpcApi from '../lib/RpcApi';
 import {CreateRequest as KCreateRequest, CreateResult as KCreateResult} from '@nimiq/keyguard-client';
 import {ResponseStatus, State as RpcState} from '@nimiq/rpc';
 
-@Component({components: {PaymentInfoLine, SmallPage}})
+@Component({components: {Account}})
 export default class extends Vue {
     @State private rpcState!: RpcState;
     @State private request!: ParsedSignupRequest;
-    @State private keyguardResult!: KCreateResult | Error | null;
+    @State private keyguardResult!: KCreateResult;
     @State private activeAccountPath!: string;
+    @Getter private noWallets!: boolean;
 
-    public created() {
-        const client = RpcApi.createKeyguardClient(this.$store);
+    private keyInfo: KeyInfo | null = null;
+    private addressLabel: string | null = null;
+    private walletLabel: string | null = null;
+    private createdAddress: Nimiq.Address | null = null;
 
-        const request: KCreateRequest = {
-            appName: this.request.appName,
-            defaultKeyPath: `m/44'/242'/0'/0'`,
-        };
-
-        client.create(request).catch(console.error); // TODO: proper error handling
+    public mounted() {
+        this.createdAddress = new Nimiq.Address(this.keyguardResult.address);
+        this.saveResult('Keyguard Wallet', 'Standard Account');
     }
 
-    @Watch('keyguardResult', {immediate: true})
-    private onKeyguardResult() {
-        if (this.keyguardResult instanceof Error) {
-            // Key/Account was not created
-            console.error(this.keyguardResult);
-        } else if (this.keyguardResult && this.rpcState) {
-            // Success
-            // Redirect to /create/set-label
-            console.log(this.keyguardResult, this.rpcState);
+    public unmounted() {
+        this.done();
+    }
+    
+    public async done() {
+        if (this.walletLabel) {
+            this.keyInfo!.label = this.walletLabel;
         }
+
+        if (this.addressLabel) {
+            const addressInfo = new AddressInfo(
+                this.keyguardResult.keyPath,
+                this.addressLabel,
+                this.createdAddress!
+            );
+
+            this.keyInfo!.addresses.set(this.keyguardResult.keyPath, addressInfo);
+        }
+
+        if (this.walletLabel || this.addressLabel) {
+            await KeyStore.Instance.put(this.keyInfo!);
+        }
+
+        this.rpcState.reply(ResponseStatus.OK, this.keyInfo);
+        window.close();
     }
 
-    @Emit()
-    private close() {
-        window.close();
+    private async saveResult(walletLabel: string, accountLabel: string) {
+        const addressInfo = new AddressInfo(
+            this.keyguardResult.keyPath,
+            accountLabel,
+            this.createdAddress!
+        );
+
+        this.keyInfo = new KeyInfo(
+            this.keyguardResult.keyId,
+            walletLabel,
+            new Map().set(this.keyguardResult.keyPath, addressInfo),
+            [],
+            KeyStorageType.BIP39,
+        );
+
+        await KeyStore.Instance.put(this.keyInfo);
     }
 }
 </script>

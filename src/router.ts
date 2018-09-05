@@ -6,8 +6,6 @@ import CheckoutSelectAccount from './views/CheckoutSelectAccount.vue';
 import CheckoutSuccess from './views/CheckoutSuccess.vue';
 import Signup from './views/Signup.vue';
 import SignupTypeSelector from './views/SignupTypeSelector.vue';
-import SignupSetLabelLogin from './views/SignupSetLabelLogin.vue';
-import SignupSetLabelAddress from './views/SignupSetLabelAddress.vue';
 import SignupSuccess from './views/SignupSuccess.vue';
 import Login from './views/Login.vue';
 import MetaAbout from './views/MetaAbout.vue';
@@ -64,16 +62,6 @@ export default new Router({
                 path: '',
                 name: RequestType.SIGNUP,
                 component: SignupTypeSelector,
-            },
-            {
-                path: 'set-label-login',
-                name: `${RequestType.SIGNUP}-set-label-login`,
-                component: SignupSetLabelLogin,
-            },
-            {
-                path: 'set-label-address',
-                name: `${RequestType.SIGNUP}-set-label-address`,
-                component: SignupSetLabelAddress,
             },
             {
                 path: 'success',
