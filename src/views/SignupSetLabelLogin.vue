@@ -24,7 +24,7 @@ export default class extends Vue {
     @State private activeAccountPath!: string;
 
     @Mutation private setLoginLabel!: (label: string) => any;
-    
+
     private label: string | null = null;
 
     @Emit()

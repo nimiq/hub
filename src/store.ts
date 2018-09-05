@@ -14,7 +14,7 @@ export interface RootState {
     rpcState: RpcState | null;
     keys: KeyInfo[]; // TODO: this is not JSON compatible, is this a problem?
     keyguardResult: KeyguardResult | Error | null;
-    chosenLoginLabel: string | null,
+    chosenLoginLabel: string | null;
     activeLoginId: string | null;
     activeAccountPath: string | null;
 }

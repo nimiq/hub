@@ -33,7 +33,7 @@ export default class extends Vue {
             this.chosenLoginLabel,
             new Map().set(this.label, this.keyguardResult.address),
             [],
-            KeyStorageType.BIP39
+            KeyStorageType.BIP39,
         );
 
         KeyStore.Instance.put(keyInfo);
