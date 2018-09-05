@@ -6,7 +6,6 @@ import CheckoutSelectAccount from './views/CheckoutSelectAccount.vue';
 import CheckoutSuccess from './views/CheckoutSuccess.vue';
 import Create from './views/Create.vue';
 import Login from './views/Login.vue';
-import MetaAbout from './views/MetaAbout.vue';
 import {RequestType} from '@/lib/RequestTypes';
 import {KeyguardCommand} from '@nimiq/keyguard-client';
 
@@ -91,11 +90,6 @@ export default new Router({
       //     component: CreateSuccess,
       //   },
       // ],
-    },
-    {
-      path: '/meta-about',
-      name: 'meta-about',
-      component: MetaAbout,
     },
   ],
 });
