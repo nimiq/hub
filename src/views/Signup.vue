@@ -3,7 +3,7 @@
         <small-page>
             <router-view/>
         </small-page>
-        <a class="global-close" :class="{hidden: $route.name === `signup-success`}" @click="close">Cancel Account Creation</a>
+        <a class="global-close" :class="{hidden: $route.name === `signup-success`}" @click="close">Back to {{request.appName}}</a>
     </div>
 </template>
 
