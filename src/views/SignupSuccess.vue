@@ -43,7 +43,7 @@ export default class extends Vue {
     public unmounted() {
         this.done();
     }
-    
+
     public async done() {
         if (this.walletLabel) {
             this.keyInfo!.label = this.walletLabel;
@@ -53,7 +53,7 @@ export default class extends Vue {
             const addressInfo = new AddressInfo(
                 this.keyguardResult.keyPath,
                 this.addressLabel,
-                this.createdAddress!
+                this.createdAddress!,
             );
 
             this.keyInfo!.addresses.set(this.keyguardResult.keyPath, addressInfo);
@@ -71,7 +71,7 @@ export default class extends Vue {
         const addressInfo = new AddressInfo(
             this.keyguardResult.keyPath,
             accountLabel,
-            this.createdAddress!
+            this.createdAddress!,
         );
 
         this.keyInfo = new KeyInfo(
@@ -88,5 +88,5 @@ export default class extends Vue {
 </script>
 
 <style scoped>
-   
+
 </style>
