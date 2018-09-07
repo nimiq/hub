@@ -110,8 +110,8 @@ const store: StoreOptions<RootState> = {
             if (!key) return undefined;
             return key.addresses.get(state.activeAccountPath);
         },
-        noWallets: (state): boolean => {
-            return state.keys.length === 0;
+        hasWallets: (state): boolean => {
+            return state.keys.length > 0;
         },
     },
 };
