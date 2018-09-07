@@ -2,7 +2,7 @@
 
 import * as Rpc from '@nimiq/rpc';
 import AccountsManagerClient from '../client/AccountsManagerClient';
-import {RequestType, CreateRequest, CreateResult, CheckoutRequest, CheckoutResult, LoginRequest, LoginResult} from '../src/lib/RequestTypes';
+import {RequestType, SignupRequest, SignupResult, CheckoutRequest, CheckoutResult, LoginRequest, LoginResult} from '../src/lib/RequestTypes';
 import { KeyStore } from '../src/lib/KeyStore';
 import { KeyInfo, KeyStorageType } from '../src/lib/KeyInfo';
 import { AddressInfo } from '../src/lib/AddressInfo';
@@ -35,7 +35,7 @@ class Demo {
             document.querySelector('#result').textContent = `Error: ${error.message || error}`;
             demo.tearDownKey().catch(console.error);
         });
-        client.on(RequestType.CREATE, (result: CreateResult, state: Rpc.State) => {
+        client.on(RequestType.SIGNUP, (result: SignupResult, state: Rpc.State) => {
             alert('Wut?');
         }, (error: Error, state: Rpc.State) => {
             alert('Error wut?');
@@ -59,7 +59,7 @@ class Demo {
             );
 
             try {
-                const result = await client.create(generateCreateRequest(demo));
+                const result = await client.signup(generateCreateRequest(demo));
                 console.log('Keyguard result', result);
                 document.querySelector('#result').textContent = 'New key & account created';
             } catch (e) {
@@ -68,7 +68,7 @@ class Demo {
             }
         });
 
-        function generateCreateRequest(demo: Demo): CreateRequest {
+        function generateCreateRequest(demo: Demo): SignupRequest {
             return {
                 appName: 'Accounts Demos',
             }

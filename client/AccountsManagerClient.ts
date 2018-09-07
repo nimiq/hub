@@ -29,7 +29,7 @@ export default class AccountsManagerClient {
         this._observable.on(`${command}-reject`, reject);
     }
 
-    public create(request: SignupRequest, requestBehavior = this._defaultBehavior) {
+    public signup(request: SignupRequest, requestBehavior = this._defaultBehavior) {
         return this._request(requestBehavior, RequestType.SIGNUP, [request]);
     }
 
