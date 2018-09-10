@@ -14,6 +14,7 @@ export interface RootState {
     rpcState: RpcState | null;
     keys: KeyInfo[]; // TODO: this is not JSON compatible, is this a problem?
     keyguardResult: KeyguardResult | Error | null;
+    chosenLoginLabel: string | null;
     activeLoginId: string | null;
     activeAccountPath: string | null;
 }
@@ -24,6 +25,7 @@ const store: StoreOptions<RootState> = {
         rpcState: null, // undefined is not reactive
         keys: [],
         keyguardResult: null, // undefined is not reactive
+        chosenLoginLabel: null,
         activeLoginId: null,
         activeAccountPath: null,
     },
@@ -46,6 +48,9 @@ const store: StoreOptions<RootState> = {
             state.activeAccountPath = payload.accountPath;
             // Store as recent account for next requests
             localStorage.setItem('_recentAccount', JSON.stringify(payload));
+        },
+        setLoginLabel(state, label: string) {
+            state.chosenLoginLabel = label;
         },
     },
     actions: {
@@ -104,6 +109,9 @@ const store: StoreOptions<RootState> = {
             const key: KeyInfo | undefined = getters.activeKey;
             if (!key) return undefined;
             return key.addresses.get(state.activeAccountPath);
+        },
+        hasWallets: (state): boolean => {
+            return state.keys.length > 0;
         },
     },
 };

@@ -4,7 +4,9 @@ import Checkout from './views/Checkout.vue';
 import CheckoutOverview from './views/CheckoutOverview.vue';
 import CheckoutSelectAccount from './views/CheckoutSelectAccount.vue';
 import CheckoutSuccess from './views/CheckoutSuccess.vue';
-import Create from './views/Create.vue';
+import Signup from './views/Signup.vue';
+import SignupTypeSelector from './views/SignupTypeSelector.vue';
+import SignupSuccess from './views/SignupSuccess.vue';
 import Login from './views/Login.vue';
 import {RequestType} from '@/lib/RequestTypes';
 import {KeyguardCommand} from '@nimiq/keyguard-client';
@@ -12,6 +14,10 @@ import {KeyguardCommand} from '@nimiq/keyguard-client';
 Vue.use(Router);
 
 export const keyguardResponseRouter: { [index: string]: {resolve: string, reject: string} } = {
+    [KeyguardCommand.CREATE]: {
+        resolve: `${RequestType.SIGNUP}-success`,
+        reject: RequestType.SIGNUP,
+    },
     [KeyguardCommand.IMPORT]: {
         resolve: `${RequestType.LOGIN}-success`,
         reject: RequestType.LOGIN,
@@ -48,26 +54,20 @@ export default new Router({
       ],
     },
     {
-      path: `/${RequestType.CREATE}`,
-      component: Create,
-      name: RequestType.CREATE,
-      // children: [
-      //   {
-      //     path: '',
-      //     name: RequestType.CREATE,
-      //     component: CreateTypeSelector,
-      //   },
-      //   {
-      //     path: 'set-label',
-      //     name: `${RequestType.CREATE}-set-label`,
-      //     component: CreateSetLabel,
-      //   },
-      //   {
-      //     path: 'success',
-      //     name: `${RequestType.CREATE}-success`,
-      //     component: CreateSuccess,
-      //   },
-      // ],
+      path: `/${RequestType.SIGNUP}`,
+      component: Signup,
+      children: [
+            {
+                path: '',
+                name: RequestType.SIGNUP,
+                component: SignupTypeSelector,
+            },
+            {
+                path: 'success',
+                name: `${RequestType.SIGNUP}-success`,
+                component: SignupSuccess,
+            },
+       ],
     },
     {
       path: `/${RequestType.LOGIN}`,
