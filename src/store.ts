@@ -16,7 +16,7 @@ export interface RootState {
     keyguardResult: KeyguardResult | Error | null;
     chosenLoginLabel: string | null;
     activeLoginId: string | null;
-    activeAccountPath: string | null;
+    activeUserFriendlyAddress: string | null;
 }
 
 const store: StoreOptions<RootState> = {
@@ -27,7 +27,7 @@ const store: StoreOptions<RootState> = {
         keyguardResult: null, // undefined is not reactive
         chosenLoginLabel: null,
         activeLoginId: null,
-        activeAccountPath: null,
+        activeUserFriendlyAddress: null,
     },
     mutations: {
         setIncomingRequest(state, payload: { rpcState: RpcState, request: ParsedRpcRequest }) {
@@ -43,9 +43,9 @@ const store: StoreOptions<RootState> = {
         setKeyguardResult(state, payload: KeyguardResult | Error) {
             state.keyguardResult = payload;
         },
-        setActiveAccount(state, payload: { loginId: string, accountPath: string }) {
+        setActiveAccount(state, payload: { loginId: string, userFriendlyAddress: string }) {
             state.activeLoginId = payload.loginId;
-            state.activeAccountPath = payload.accountPath;
+            state.activeUserFriendlyAddress = payload.userFriendlyAddress;
             // Store as recent account for next requests
             localStorage.setItem('_recentAccount', JSON.stringify(payload));
         },
@@ -62,35 +62,35 @@ const store: StoreOptions<RootState> = {
                 if (keys.length === 0) return;
 
                 // Try loading active
-                let activeAccount: KeyInfo | undefined;
-                let activeAccountPath: string | null = null;
+                let activeKey: KeyInfo | undefined;
+                let activeUserFriendlyAddress: string | null = null;
 
                 const storedRecentAccount = localStorage.getItem('_recentAccount');
                 if (storedRecentAccount) {
                     try {
-                        const activeAccountInfo = JSON.parse(storedRecentAccount);
-                        activeAccount = state.keys.find((x) => x.id === activeAccountInfo.loginId);
-                        activeAccountPath = activeAccountInfo.accountPath;
+                        const recentAccount = JSON.parse(storedRecentAccount);
+                        activeKey = state.keys.find((x) => x.id === recentAccount.loginId);
+                        activeUserFriendlyAddress = recentAccount.userFriendlyAddress;
                     } catch (err) {
                         // Do nothing
                     }
                 }
 
-                if (!activeAccount) {
+                if (!activeKey) {
                     // If none found, pre-select the first available
-                    activeAccount = state.keys[0];
+                    activeKey = state.keys[0];
                 }
 
-                if (!activeAccountPath) {
+                if (!activeUserFriendlyAddress) {
                     // If none found, pre-select the first available
-                    const account = activeAccount.addresses.values().next().value;
+                    const account = activeKey.addresses.values().next().value;
                     if (!account) return; // No addresses on this key
-                    activeAccountPath = account.path;
+                    activeUserFriendlyAddress = account.userFriendlyAddress;
                 }
 
                 commit('setActiveAccount', {
-                    loginId: activeAccount.id,
-                    accountPath: activeAccountPath,
+                    loginId: activeKey.id,
+                    userFriendlyAddress: activeUserFriendlyAddress,
                 });
             });
 
@@ -105,10 +105,10 @@ const store: StoreOptions<RootState> = {
             return getters.findKey(state.activeLoginId);
         },
         activeAccount: (state, getters): AddressInfo | undefined => {
-            if (!state.activeAccountPath) return undefined;
+            if (!state.activeUserFriendlyAddress) return undefined;
             const key: KeyInfo | undefined = getters.activeKey;
             if (!key) return undefined;
-            return key.addresses.get(state.activeAccountPath);
+            return key.addresses.get(state.activeUserFriendlyAddress);
         },
         hasWallets: (state): boolean => {
             return state.keys.length > 0;

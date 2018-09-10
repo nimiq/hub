@@ -72,7 +72,7 @@ export default class Checkout extends Vue {
 
         const id: string = Math.round(Math.pow(2, 32) * Math.random()).toString(16);
         const map = new Map<string, AddressInfo>();
-        map.set('a', new AddressInfo(
+        map.set('NQ09 VF5Y 1PKV MRM4 5LE1 55KV P6R2 GXYJ XYQF', new AddressInfo(
             'a',
             'My Account',
             Nimiq.Address.fromString('NQ09 VF5Y 1PKV MRM4 5LE1 55KV P6R2 GXYJ XYQF'),
@@ -91,7 +91,7 @@ export default class Checkout extends Vue {
 
         this.$store.commit('setActiveAccount', {
             loginId: key.id,
-            accountPath: addressInfo.path,
+            userFriendlyAddress: addressInfo.userFriendlyAddress,
         });
 
         // Return to overview

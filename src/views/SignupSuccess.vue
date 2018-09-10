@@ -43,7 +43,7 @@ export default class extends Vue {
     private createdAddress: Nimiq.Address | null = null;
     private walletIconClass: string = 'keyguard';
 
-    public mounted() {
+    public created() {
         this.createdAddress = new Nimiq.Address(this.keyguardResult.address);
         this.saveResult(this.walletLabel, this.accountLabel);
     }
@@ -64,7 +64,7 @@ export default class extends Vue {
                 this.createdAddress!,
             );
 
-            this.keyInfo!.addresses.set(this.keyguardResult.keyPath, addressInfo);
+            this.keyInfo!.addresses.set(addressInfo.userFriendlyAddress, addressInfo);
         }
 
         if (this.walletLabel || this.accountLabel) {
@@ -85,7 +85,7 @@ export default class extends Vue {
         this.keyInfo = new KeyInfo(
             this.keyguardResult.keyId,
             walletLabel,
-            new Map().set(this.keyguardResult.keyPath, addressInfo),
+            new Map<string, AddressInfo>().set(addressInfo.userFriendlyAddress, addressInfo),
             [],
             KeyStorageType.BIP39,
         );

@@ -10,7 +10,9 @@ import { AddressInfo } from '../src/lib/AddressInfo';
 class Demo {
     public static ENTROPY = 'abb107d2c9adafed0b2ff41c0cfbe4ad4352b11362c5ca83bb4fc7faa7d4cf69';
     public static DEFAULT_PATH1 = 'm/0\'/0\'';
+    public static DEFAULT_ADDRESS1 = 'NQ07 EF7P 70FR VLLX RP3X TN8Y FJ6V 4FF8 4KAE';
     public static DEFAULT_PATH2 = 'm/0\'/1\'';
+    public static DEFAULT_ADDRESS2 = 'NQ21 AFH7 VDUF LSCY AVX4 3RH2 4VCG VXY3 USK0';
 
     public static run() {
         (async () => {
@@ -176,8 +178,8 @@ class Demo {
         const entropy = new Nimiq.Entropy(Nimiq.BufferUtils.fromHex(Demo.ENTROPY));
 
         const addresses: Map<string, AddressInfo> = new Map();
-        addresses.set(Demo.DEFAULT_PATH1, Demo._deriveAddressInfo(entropy, Demo.DEFAULT_PATH1));
-        addresses.set(Demo.DEFAULT_PATH2, Demo._deriveAddressInfo(entropy, Demo.DEFAULT_PATH2));
+        addresses.set(Demo.DEFAULT_ADDRESS1, Demo._deriveAddressInfo(entropy, Demo.DEFAULT_PATH1));
+        addresses.set(Demo.DEFAULT_ADDRESS2, Demo._deriveAddressInfo(entropy, Demo.DEFAULT_PATH2));
 
         const keyInfo = new KeyInfo(
             Demo._keyIdFromEntropy(entropy),
