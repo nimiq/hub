@@ -1,0 +1,31 @@
+{
+  "name": "@nimiq/accounts-manager-client",
+  "version": "0.0.1",
+  "main": "dist/main.js",
+  "repository": "https://github.com/nimiq/accounts",
+  "author": "Nimiq Network Ltd.",
+  "license": "Apache-2.0",
+  "private": false,
+  "devDependencies": {
+    "@nimiq/core-types": "^1.0.0",
+    "ts-loader": "^5.1.0",
+    "typescript": "^3.0.3",
+    "webpack": "^4.17.2",
+    "webpack-cli": "^3.1.0"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "Nimiq",
+    "Accounts",
+    "Account Manager"
+  ],
+  "bugs": {
+    "url": "https://github.com/nimiq/accounts/issues"
+  },
+  "homepage": "https://github.com/nimiq/accounts/client#readme",
+  "scripts": {
+    "build": "webpack"
+  }
+}

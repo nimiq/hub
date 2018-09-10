@@ -1,6 +1,6 @@
 import {PopupRequestBehavior, RequestBehavior} from './RequestBehavior';
 import {RedirectRpcClient} from '@nimiq/rpc';
-import {SignupRequest, CheckoutRequest, LoginRequest, RequestType} from '@/lib/RequestTypes';
+import {SignupRequest, CheckoutRequest, LoginRequest, RequestType} from '../src/lib/RequestTypes';
 
 export default class AccountsManagerClient {
     private static readonly DEFAULT_ENDPOINT = '../src';
