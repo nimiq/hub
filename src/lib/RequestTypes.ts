@@ -1,4 +1,5 @@
 export enum RequestType {
+    LIST = 'list',
     CHECKOUT = 'checkout',
     SIGNUP = 'signup',
     LOGIN = 'login',

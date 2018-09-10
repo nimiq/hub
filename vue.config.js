@@ -21,6 +21,17 @@ module.exports = {
             // extracted common chunks and vendor chunks.
             chunks: ['chunk-vendors', 'chunk-common', 'index']
         },
+        iframe: {
+            // entry for the page
+            entry: 'src/iframe.ts',
+            // the source template
+            template: 'public/iframe.html',
+            // output as dist/iframe.html
+            filename: 'iframe.html',
+            // chunks to include on this page, by default includes
+            // extracted common chunks and vendor chunks.
+            chunks: ['chunk-vendors', 'chunk-common', 'iframe']
+        },
         demos: {
             // entry for the page
             entry: 'demos/Demo.ts',

@@ -56,8 +56,10 @@ const store: StoreOptions<RootState> = {
     actions: {
         initKeys({ state, commit }) {
             // Fetch data from store
-            KeyStore.Instance.list().then((keys) => {
-                commit('initKeys', keys);
+            KeyStore.Instance.list().then((keyInfoEntries) => {
+                const keys = keyInfoEntries.map((keyInfoEntry) => KeyInfo.fromObject(keyInfoEntry));
+
+                commit('initKeys', keys as KeyInfo[]);
 
                 if (keys.length === 0) return;
 
