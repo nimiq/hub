@@ -110,7 +110,11 @@ export interface ParsedLoginRequest {
 }
 
 export interface LoginResult {
-    addresses: Array<{address: Uint8Array, label: string}>;
+    addresses: Array<{
+        address: string,
+        label: string,
+        keyId: string,
+    }>;
 }
 
 // Discriminated Unions

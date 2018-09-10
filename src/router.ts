@@ -10,6 +10,7 @@ import Signup from './views/Signup.vue';
 import SignupTypeSelector from './views/SignupTypeSelector.vue';
 import SignupSuccess from './views/SignupSuccess.vue';
 import Login from './views/Login.vue';
+import LoginSuccess from './views/LoginSuccess.vue';
 import {RequestType} from '@/lib/RequestTypes';
 import {KeyguardCommand} from '@nimiq/keyguard-client';
 
@@ -99,23 +100,13 @@ export default new Router({
       path: `/${RequestType.LOGIN}`,
       component: Login,
       name: RequestType.LOGIN,
-      // children: [
-      //   {
-      //     path: '',
-      //     name: RequestType.CREATE,
-      //     component: CreateTypeSelector,
-      //   },
-      //   {
-      //     path: 'set-label',
-      //     name: `${RequestType.CREATE}-set-label`,
-      //     component: CreateSetLabel,
-      //   },
-      //   {
-      //     path: 'success',
-      //     name: `${RequestType.CREATE}-success`,
-      //     component: CreateSuccess,
-      //   },
-      // ],
+      children: [
+        {
+          path: 'success',
+          name: `${RequestType.LOGIN}-success`,
+          component: LoginSuccess,
+        },
+      ],
     },
   ],
 });

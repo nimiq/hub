@@ -1,9 +1,9 @@
 <template>
     <div class="container">
-        <small-page>
+        <small-page v-if="$route.name === `login-success`">
             <router-view/>
         </small-page>
-        <a class="global-close" :class="{hidden: $route.name === `login-success`}" @click="close">Back to {{ request.appName }}</a>
+        <!-- <a class="global-close" :class="{hidden: $route.name === `login-success`}" @click="close">Back to {{ request.appName }}</a> -->
     </div>
 </template>
 
@@ -25,13 +25,16 @@ export default class Login extends Vue {
     @State private activeAccountPath!: string;
 
     public created() {
+        if (this.$route.name === `login-success`) return;
+
+        const request: ImportRequest = {
+            appName: this.request.appName,
+            defaultKeyPath: `m/44'/242'/0'/0'`,
+            requestedKeyPaths: [0, 1, 2, 3, 4, 5].map((i) => `m/44'/242'/0'/${i}'`),
+        };
+
         const client = RpcApi.createKeyguardClient(this.$store, staticStore);
-
-        // const request: ImportRequest = {
-        //     appName: this.request.appName,
-        // };
-
-        // client.import(request).catch(console.error); // TODO: proper error handling
+        client.import(request).catch(console.error); // TODO: proper error handling
     }
 
     @Watch('keyguardResult', {immediate: true})
@@ -39,9 +42,9 @@ export default class Login extends Vue {
         if (this.keyguardResult instanceof Error) {
             // Key/Account was not imported
             console.error(this.keyguardResult);
+            window.close();
         } else if (this.keyguardResult && this.rpcState) {
             // Success
-            // Redirect to /import/set-label
             console.log(this.keyguardResult, this.rpcState);
         }
     }
