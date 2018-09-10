@@ -162,7 +162,7 @@ class Demo {
             $iframe.src = `${baseUrl}/demos/setup.html`;
             $iframe.onload = () => resolve($iframe);
             $iframe.onerror = reject;
-        });
+        }) as Promise<HTMLIFrameElement>;
     }
 
     private _iframeClient: Rpc.PostMessageRpcClient | null;
