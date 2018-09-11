@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import Router from 'vue-router';
+import SignTransaction from './views/SignTransaction.vue';
 import Checkout from './views/Checkout.vue';
 import CheckoutOverview from './views/CheckoutOverview.vue';
 import CheckoutSelectAccount from './views/CheckoutSelectAccount.vue';
@@ -32,6 +33,18 @@ export default new Router({
   mode: 'history',
   base: process.env.BASE_URL,
   routes: [
+    {
+      path: `/${RequestType.SIGNTRANSACTION}`,
+      name: `${RequestType.SIGNTRANSACTION}`,
+      component: SignTransaction,
+      // children: [
+      //   {
+      //     path: 'success',
+      //     name: `${RequestType.SIGNTRANSACTION}-success`,
+      //     component: CheckoutSuccess,
+      //   },
+      // ],
+    },
     {
       path: `/${RequestType.CHECKOUT}`,
       component: Checkout,

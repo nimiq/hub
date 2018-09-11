@@ -2,7 +2,7 @@
 
 import * as Rpc from '@nimiq/rpc';
 import AccountsManagerClient from '../client/AccountsManagerClient';
-import {RequestType, SignupRequest, SignupResult, CheckoutRequest, CheckoutResult, LoginRequest, LoginResult} from '../src/lib/RequestTypes';
+import {RequestType, SignupRequest, SignupResult, CheckoutRequest, CheckoutResult, LoginRequest, LoginResult, SignTransactionRequest} from '../src/lib/RequestTypes';
 // import { KeyStore } from '../src/lib/KeyStore';
 // import { KeyInfo, KeyStorageType } from '../src/lib/KeyInfo';
 // import { AddressInfo } from '../src/lib/AddressInfo';
@@ -52,6 +52,18 @@ class Demo {
             await checkoutPopup(await generateCheckoutRequest(demo));
         });
 
+        document.querySelector('button#sign-transaction-popup').addEventListener('click', async () => {
+            const txRequest = generateSignTransactionRequest(demo);
+            try {
+                const result = await client.signTransaction(txRequest);
+                console.log('Keyguard result', result);
+                document.querySelector('#result').textContent = 'TX signed';
+            } catch (e) {
+                console.error('Keyguard error', e);
+                document.querySelector('#result').textContent = `Error: ${e.message || e}`;
+            }
+        });
+
         document.querySelector('button#create').addEventListener('click', async () => {
             try {
                 const result = await client.signup(generateCreateRequest(demo));
@@ -84,6 +96,23 @@ class Demo {
             return {
                 appName: 'Accounts Demos',
             }
+        }
+
+        function generateSignTransactionRequest(demo: Demo): SignTransactionRequest {
+            const value = parseInt((document.querySelector('#value') as HTMLInputElement).value) || 1337;
+            const fee = parseInt((document.querySelector('#fee') as HTMLInputElement).value) || 0;
+            const txData = (document.querySelector('#data') as HTMLInputElement).value || '';
+
+            return {
+                appName: 'Accounts Demos',
+                keyId: 'ad6a561d41e3',
+                sender: Nimiq.Address.fromUserFriendlyAddress('NQ70 QCHH B708 XQ1N GRHR U1M3 HBG3 KEPP HDJL').serialize(),
+                recipient: Nimiq.Address.fromUserFriendlyAddress('NQ63 U7XG 1YYE D6FA SXGG 3F5H X403 NBKN JLDU').serialize(),
+                value,
+                fee,
+                data: Nimiq.BufferUtils.fromAscii(txData),
+                validityStartHeight: 1234,
+            };
         }
 
         async function generateCheckoutRequest(demo: Demo): Promise<CheckoutRequest> {
@@ -146,7 +175,7 @@ class Demo {
     // }
 
     private static async _createIframe(baseUrl): Promise<HTMLIFrameElement> {
-        return new Promise((resolve, reject) => {
+        return new Promise<HTMLIFrameElement>((resolve, reject) => {
             const $iframe = document.createElement('iframe');
             $iframe.name = 'Nimiq Keyguard Setup IFrame';
             $iframe.style.display = 'none';
@@ -154,7 +183,7 @@ class Demo {
             $iframe.src = `${baseUrl}/demos/setup.html`;
             $iframe.onload = () => resolve($iframe);
             $iframe.onerror = reject;
-        }) as Promise<HTMLIFrameElement>;
+        });
     }
 
     private _iframeClient: Rpc.PostMessageRpcClient | null;

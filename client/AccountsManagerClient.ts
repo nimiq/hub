@@ -1,6 +1,17 @@
 import {PopupRequestBehavior, IFrameRequestBehavior, RequestBehavior} from './RequestBehavior';
 // import {RedirectRpcClient} from '@nimiq/rpc';
-import {SignupRequest, CheckoutRequest, LoginRequest, RequestType} from '../src/lib/RequestTypes';
+import {
+    RequestType,
+    SignupRequest,
+    SignupResult,
+    CheckoutRequest,
+    CheckoutResult,
+    LoginRequest,
+    LoginResult,
+    SignTransactionRequest,
+    SignTransactionResult,
+    // ListResult,
+} from '../src/lib/RequestTypes';
 
 export default class AccountsManagerClient {
     private static readonly DEFAULT_ENDPOINT = '../src';
@@ -32,19 +43,26 @@ export default class AccountsManagerClient {
     //     this._observable.on(`${command}-reject`, reject);
     // }
 
-    public signup(request: SignupRequest, requestBehavior = this._popupBehavior) {
+    public signup(request: SignupRequest, requestBehavior = this._popupBehavior): Promise<SignupResult> {
         return this._request(requestBehavior, RequestType.SIGNUP, [request]);
     }
 
-    public checkout(request: CheckoutRequest, requestBehavior = this._popupBehavior) {
+    public signTransaction(
+        request: SignTransactionRequest,
+        requestBehavior = this._popupBehavior,
+    ): Promise<SignTransactionResult> {
+        return this._request(requestBehavior, RequestType.SIGNTRANSACTION, [request]);
+    }
+
+    public checkout(request: CheckoutRequest, requestBehavior = this._popupBehavior): Promise<CheckoutResult> {
         return this._request(requestBehavior, RequestType.CHECKOUT, [request]);
     }
 
-    public login(request: LoginRequest, requestBehavior = this._popupBehavior) {
+    public login(request: LoginRequest, requestBehavior = this._popupBehavior): Promise<LoginResult> {
         return this._request(requestBehavior, RequestType.LOGIN, [request]);
     }
 
-    public list(requestBehavior = this._iframeBehavior) {
+    public list(requestBehavior = this._iframeBehavior)/*: Promise<ListResult> */ {
         return this._request(requestBehavior, RequestType.LIST, []);
     }
 
