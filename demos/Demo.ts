@@ -2,10 +2,12 @@
 
 import * as Rpc from '@nimiq/rpc';
 import AccountsManagerClient from '../client/AccountsManagerClient';
-import {RequestType, SignupRequest, SignupResult, CheckoutRequest, CheckoutResult, LoginRequest, LoginResult} from '../src/lib/RequestTypes';
+import {RequestType, SignupRequest, SignupResult, CheckoutRequest, CheckoutResult,
+    LoginRequest, LoginResult} from '../src/lib/RequestTypes';
 import { KeyStore } from '../src/lib/KeyStore';
 import { KeyInfo, KeyStorageType } from '../src/lib/KeyInfo';
 import { AddressInfo } from '../src/lib/AddressInfo';
+import { RedirectRequestBehavior } from '../client/RequestBehavior';
 
 class Demo {
     public static ENTROPY = 'abb107d2c9adafed0b2ff41c0cfbe4ad4352b11362c5ca83bb4fc7faa7d4cf69';
@@ -115,7 +117,7 @@ class Demo {
         }
 
         function checkoutRedirect(txRequest: CheckoutRequest) {
-            return client.checkout(txRequest);
+            return client.checkout(txRequest, new RedirectRequestBehavior());
         }
 
         async function checkoutPopup(txRequest: CheckoutRequest) {
