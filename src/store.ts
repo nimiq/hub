@@ -13,6 +13,7 @@ export interface RootState {
     request: ParsedRpcRequest | null;
     rpcState: RpcState | null;
     keys: KeyInfo[]; // TODO: this is not JSON compatible, is this a problem?
+    keyguardRequest: any;
     keyguardResult: KeyguardResult | Error | null;
     chosenLoginLabel: string | null;
     activeLoginId: string | null;
@@ -24,6 +25,7 @@ const store: StoreOptions<RootState> = {
         request: null,
         rpcState: null, // undefined is not reactive
         keys: [],
+        keyguardRequest: {},
         keyguardResult: null, // undefined is not reactive
         chosenLoginLabel: null,
         activeLoginId: null,
@@ -33,6 +35,9 @@ const store: StoreOptions<RootState> = {
         setIncomingRequest(state, payload: { rpcState: RpcState, request: ParsedRpcRequest }) {
             state.rpcState = payload.rpcState;
             state.request = payload.request;
+        },
+        setKeyguardRequest(state, keyguardRequest: any) {
+            state.keyguardRequest = keyguardRequest;
         },
         initKeys(state, keys: KeyInfo[]) {
             state.keys = keys;

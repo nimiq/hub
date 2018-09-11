@@ -30,8 +30,6 @@ export default class SignTransaction extends Vue {
     public async created() {
         if (this.$route.name === `sign-transaction-success`) return;
 
-        const client = RpcApi.createKeyguardClient(this.$store);
-
         const key = await KeyStore.Instance.get(this.request.keyId);
         if (!key) throw new Error('KeyId not found');
         const account = key.addresses.get(this.request.sender.toUserFriendlyAddress());
@@ -55,11 +53,20 @@ export default class SignTransaction extends Vue {
             value: this.request.value,
             fee: this.request.fee || 0,
             validityStartHeight: this.request.validityStartHeight,
-            data: this.request.data,
+            data: this.request.data || new Uint8Array(0),
             flags: this.request.flags,
             networkId: this.request.networkId,
         };
 
+        const storedRequest = Object.assign({}, request, {
+            sender: Array.from(request.sender),
+            recipient: Array.from(request.recipient),
+            data: Array.from(request.data!),
+        });
+
+        this.$store.commit('setKeyguardRequest', storedRequest);
+
+        const client = RpcApi.createKeyguardClient(this.$store);
         client.signTransaction(request).catch(console.error); // TODO: proper error handling
     }
 

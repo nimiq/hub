@@ -38,21 +38,25 @@ export interface ParsedSignTransactionRequest {
 
 export interface SignTransactionResult {
     serializedTx: Uint8Array;
-    txHash: Uint8Array;
 
-    tx: {
-        sender: Uint8Array
-        senderType: Nimiq.Account.Type
-        recipient: Uint8Array
-        recipientType: Nimiq.Account.Type
-        value: number
-        fee: number
-        validityStartHeight: number
-        data: Uint8Array
-        flags: number
-        networkId: number,
-        proof: Uint8Array,
-    };
+    sender: string;
+    senderType: Nimiq.Account.Type;
+    senderPubKey: Uint8Array;
+
+    recipient: string;
+    recipientType: Nimiq.Account.Type;
+
+    value: number;
+    fee: number;
+    validityStartHeight: number;
+
+    signature: Uint8Array;
+
+    extraData: Uint8Array;
+    flags: number;
+    networkId: number;
+
+    hash: string;
 }
 
 export interface CheckoutRequest {

@@ -15,28 +15,101 @@
 <script lang="ts">
 import {Component, Emit, Prop, Watch, Vue} from 'vue-property-decorator';
 import {AccountSelector, LoginSelector, PaymentInfoLine, SmallPage} from '@nimiq/vue-components';
-import {RequestType, ParsedCheckoutRequest} from '../lib/RequestTypes';
+import {
+    RequestType,
+    ParsedCheckoutRequest,
+    CheckoutResult,
+    ParsedSignTransactionRequest,
+    SignTransactionResult,
+} from '../lib/RequestTypes';
 import {AddressInfo} from '../lib/AddressInfo';
 import {KeyInfo, KeyStorageType} from '../lib/KeyInfo';
 import {State, Mutation, Getter} from 'vuex-class';
 import RpcApi from '../lib/RpcApi';
-import {SignTransactionResult} from '@nimiq/keyguard-client';
+import {SignTransactionResult as KSignTransactionResult} from '@nimiq/keyguard-client';
 import {ResponseStatus, State as RpcState} from '@nimiq/rpc';
 
 @Component({components: {PaymentInfoLine, SmallPage}})
 export default class Checkout extends Vue {
     @State private rpcState!: RpcState;
-    @State private request!: ParsedCheckoutRequest;
-    @State private keyguardResult!: SignTransactionResult | Error | null;
-    @State private activeAccountPath!: string;
+    @State private request!: ParsedSignTransactionRequest;
+    @State private keyguardRequest!: any;
+    @State private keyguardResult!: KSignTransactionResult | Error | null;
 
     @Watch('keyguardResult', {immediate: true})
-    private onKeyguardResult() {
+    private async onKeyguardResult() {
         if (this.keyguardResult instanceof Error) {
             //
         } else if (this.keyguardResult && this.rpcState) {
+            const keyguardRequest = this.keyguardRequest.keyguardRequest;
+
+            console.log(keyguardRequest);
+
+            // Load web assembly encryption library into browser (if supported)
+            await Nimiq.WasmHelper.doImportBrowser();
+            // Configure to use test net for now
+            Nimiq.GenesisConfig.test();
+
+            let tx: Nimiq.Transaction;
+
+            if (
+                keyguardRequest.data.length > 0
+             || keyguardRequest.senderType !== Nimiq.Account.Type.BASIC
+             || keyguardRequest.recipientType !== Nimiq.Account.Type.BASIC
+            ) {
+                tx = new Nimiq.ExtendedTransaction(
+                    new Nimiq.Address(new Nimiq.SerialBuffer(keyguardRequest.sender)),
+                    keyguardRequest.senderType || Nimiq.Account.Type.BASIC,
+                    new Nimiq.Address(new Nimiq.SerialBuffer(keyguardRequest.recipient)),
+                    keyguardRequest.recipientType || Nimiq.Account.Type.BASIC,
+                    keyguardRequest.value,
+                    keyguardRequest.fee,
+                    keyguardRequest.validityStartHeight,
+                    keyguardRequest.flags || 0,
+                    new Uint8Array(keyguardRequest.data),
+                    Nimiq.SignatureProof.singleSig(
+                        new Nimiq.PublicKey(this.keyguardResult.publicKey),
+                        new Nimiq.Signature(this.keyguardResult.signature),
+                    ).serialize(),
+                    keyguardRequest.networkId,
+                );
+            } else {
+                tx = new Nimiq.BasicTransaction(
+                    new Nimiq.PublicKey(this.keyguardResult.publicKey),
+                    new Nimiq.Address(new Nimiq.SerialBuffer(keyguardRequest.recipient)),
+                    keyguardRequest.value,
+                    keyguardRequest.fee,
+                    keyguardRequest.validityStartHeight,
+                    new Nimiq.Signature(this.keyguardResult.signature),
+                    keyguardRequest.networkId,
+                );
+            }
+
+            const result: SignTransactionResult = {
+                serializedTx: tx.serialize(),
+
+                sender: tx.sender.toUserFriendlyAddress(),
+                senderType: tx.senderType,
+                senderPubKey: this.keyguardResult.publicKey,
+
+                recipient: tx.recipient.toUserFriendlyAddress(),
+                recipientType: tx.recipientType,
+
+                value: tx.value,
+                fee: tx.fee,
+                validityStartHeight: tx.validityStartHeight,
+
+                signature: this.keyguardResult.signature,
+
+                extraData: tx.data,
+                flags: tx.flags,
+                networkId: tx.networkId,
+
+                hash: tx.hash().toBase64(),
+            };
+
             // Forward signing result to original caller window
-            this.rpcState.reply(ResponseStatus.OK, this.keyguardResult);
+            this.rpcState.reply(ResponseStatus.OK, result);
         }
     }
 

@@ -57,8 +57,6 @@ export default class Checkout extends Vue {
     // TODO Figure out how this will be called
     @Emit()
     private proceed() {
-        const client = RpcApi.createKeyguardClient(this.$store);
-
         const key = this.activeKey;
         if (!key) {
             return; // TODO: Display error
@@ -88,11 +86,20 @@ export default class Checkout extends Vue {
             value: this.request.value,
             fee: this.request.fee || 0, // TODO: proper fee estimation
             validityStartHeight: 1234, // TODO: get valid start height
-            data: this.request.data,
+            data: this.request.data || new Uint8Array(0),
             flags: this.request.flags,
             networkId: this.request.networkId,
         };
 
+        const storedRequest = Object.assign({}, request, {
+            sender: Array.from(request.sender),
+            recipient: Array.from(request.recipient),
+            data: Array.from(request.data!),
+        });
+
+        this.$store.commit('setKeyguardRequest', storedRequest);
+
+        const client = RpcApi.createKeyguardClient(this.$store);
         client.signTransaction(request).catch(console.error); // TODO: proper error handling
     }
 }
