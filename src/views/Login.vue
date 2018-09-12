@@ -27,11 +27,11 @@ export default class Login extends Vue {
     public created() {
         const client = RpcApi.createKeyguardClient(this.$store, staticStore);
 
-        const request: ImportRequest = {
-            appName: this.request.appName,
-        };
+        // const request: ImportRequest = {
+        //     appName: this.request.appName,
+        // };
 
-        client.import(request).catch(console.error); // TODO: proper error handling
+        // client.import(request).catch(console.error); // TODO: proper error handling
     }
 
     @Watch('keyguardResult', {immediate: true})
