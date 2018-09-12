@@ -5,7 +5,6 @@ import {
     SignupRequest,
     SignupResult,
     CheckoutRequest,
-    CheckoutResult,
     LoginRequest,
     LoginResult,
     SignTransactionRequest,
@@ -54,7 +53,7 @@ export default class AccountsManagerClient {
         return this._request(requestBehavior, RequestType.SIGNTRANSACTION, [request]);
     }
 
-    public checkout(request: CheckoutRequest, requestBehavior = this._popupBehavior): Promise<CheckoutResult> {
+    public checkout(request: CheckoutRequest, requestBehavior = this._popupBehavior): Promise<SignTransactionResult> {
         return this._request(requestBehavior, RequestType.CHECKOUT, [request]);
     }
 

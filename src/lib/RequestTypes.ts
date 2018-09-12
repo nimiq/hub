@@ -62,11 +62,11 @@ export interface SignTransactionResult {
 export interface CheckoutRequest {
     kind?: RequestType.CHECKOUT;
     appName: string;
-    recipient: Uint8Array;
+    recipient: string;
     recipientType?: Nimiq.Account.Type;
     value: number;
     fee?: number;
-    data?: Uint8Array;
+    extraData?: Uint8Array;
     flags?: number;
     networkId?: number;
 }
@@ -81,25 +81,6 @@ export interface ParsedCheckoutRequest {
     data?: Uint8Array;
     flags?: number;
     networkId?: number;
-}
-
-export interface CheckoutResult {
-    serializedTx: Uint8Array;
-    txHash: Uint8Array;
-
-    tx: {
-        sender: Uint8Array
-        senderType: Nimiq.Account.Type
-        recipient: Uint8Array
-        recipientType: Nimiq.Account.Type
-        value: number
-        fee: number
-        validityStartHeight: number
-        data: Uint8Array
-        flags: number
-        networkId: number,
-        proof: Uint8Array,
-    };
 }
 
 export interface SignupRequest {
@@ -171,11 +152,11 @@ export class AccountsRequest {
                 return {
                     kind: RequestType.CHECKOUT,
                     appName: request.appName,
-                    recipient: new Nimiq.Address(request.recipient),
+                    recipient: Nimiq.Address.fromUserFriendlyAddress(request.recipient),
                     recipientType: request.recipientType,
                     value: request.value,
                     fee: request.fee,
-                    data: request.data,
+                    data: request.extraData,
                     flags: request.flags,
                     networkId: request.networkId,
                 } as ParsedCheckoutRequest;
@@ -217,11 +198,11 @@ export class AccountsRequest {
                 return {
                     kind: RequestType.CHECKOUT,
                     appName: request.appName,
-                    recipient: request.recipient.serialize(),
+                    recipient: request.recipient.toUserFriendlyAddress(),
                     recipientType: request.recipientType,
                     value: request.value,
                     fee: request.fee,
-                    data: request.data,
+                    extraData: request.data,
                     flags: request.flags,
                     networkId: request.networkId,
                 } as CheckoutRequest;

@@ -18,7 +18,6 @@ import {AccountSelector, LoginSelector, PaymentInfoLine, SmallPage} from '@nimiq
 import {
     RequestType,
     ParsedCheckoutRequest,
-    CheckoutResult,
     ParsedSignTransactionRequest,
     SignTransactionResult,
 } from '../lib/RequestTypes';
