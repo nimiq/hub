@@ -15,7 +15,7 @@ import {
 export default class AccountsManagerClient {
     private static readonly DEFAULT_ENDPOINT =
     window.location.origin === 'https://safe-next.nimiq.com' ? 'https://accounts.nimiq.com'
-    : window.location.origin === 'https://safe-next.nimiq-network.com' ? 'https://accounts.nimiq-network.com'
+    : window.location.origin === 'https://safe-next.nimiq-testnet.com' ? 'https://accounts.nimiq-testnet.com'
     : 'http://localhost:8080';
 
     private readonly _endpoint: string;
