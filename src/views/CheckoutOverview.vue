@@ -26,11 +26,12 @@ import {AddressInfo} from '../lib/AddressInfo';
 import {KeyInfo} from '../lib/KeyInfo';
 import {RequestType, ParsedCheckoutRequest} from '../lib/RequestTypes';
 import RpcApi from '../lib/RpcApi';
+import staticStore, {Static} from '../lib/StaticStore';
 
 @Component({components: {Amount, Account}})
 export default class Checkout extends Vue {
-    @State('rpcState') private rpcState!: RpcState;
-    @State('request') private request!: ParsedCheckoutRequest;
+    @Static private rpcState!: RpcState;
+    @Static private request!: ParsedCheckoutRequest;
 
     @Getter private activeKey!: KeyInfo | undefined;
     @Getter private activeAccount!: AddressInfo | undefined;
@@ -96,10 +97,9 @@ export default class Checkout extends Vue {
             recipient: Array.from(request.recipient),
             data: Array.from(request.data!),
         });
+        staticStore.keyguardRequest = storedRequest;
 
-        this.$store.commit('setKeyguardRequest', storedRequest);
-
-        const client = RpcApi.createKeyguardClient(this.$store);
+        const client = RpcApi.createKeyguardClient(this.$store, staticStore);
         client.signTransaction(request).catch(console.error); // TODO: proper error handling
     }
 }

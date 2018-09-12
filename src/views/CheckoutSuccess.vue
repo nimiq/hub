@@ -11,10 +11,11 @@
 import {Component, Emit, Vue} from 'vue-property-decorator';
 import {RequestType, ParsedCheckoutRequest} from '../lib/RequestTypes';
 import {State} from 'vuex-class';
+import {Static} from '../lib/StaticStore';
 
 @Component({components: {}})
 export default class Checkout extends Vue {
-    @State('request') private request!: ParsedCheckoutRequest;
+    @Static private request!: ParsedCheckoutRequest;
 
     private get requestKindString() {
         switch (this.request.kind) {

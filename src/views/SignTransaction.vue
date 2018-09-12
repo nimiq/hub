@@ -20,11 +20,12 @@ import {
 import {State as RpcState, ResponseStatus} from '@nimiq/rpc';
 import { KeyStore } from '@/lib/KeyStore';
 import { access } from 'fs';
+import staticStore, {Static} from '../lib/StaticStore';
 
 @Component({components: {SmallPage}})
 export default class SignTransaction extends Vue {
-    @State private rpcState!: RpcState;
-    @State private request!: ParsedSignTransactionRequest;
+    @Static private rpcState!: RpcState;
+    @Static private request!: ParsedSignTransactionRequest;
     @State private keyguardResult!: KSignTransactionRequest | Error | null;
 
     public async created() {
@@ -63,10 +64,9 @@ export default class SignTransaction extends Vue {
             recipient: Array.from(request.recipient),
             data: Array.from(request.data!),
         });
+        staticStore.keyguardRequest = storedRequest;
 
-        this.$store.commit('setKeyguardRequest', storedRequest);
-
-        const client = RpcApi.createKeyguardClient(this.$store);
+        const client = RpcApi.createKeyguardClient(this.$store, staticStore);
         client.signTransaction(request).catch(console.error); // TODO: proper error handling
     }
 

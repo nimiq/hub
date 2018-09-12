@@ -5,30 +5,33 @@ import Router from 'vue-router';
 import {AccountsRequest, RequestType, RpcRequest} from '@/lib/RequestTypes';
 import {KeyguardCommand, RequestBehavior, KeyguardClient} from '@nimiq/keyguard-client';
 import {keyguardResponseRouter} from '@/router';
+import {StaticStore} from '@/lib/StaticStore';
 
 export default class RpcApi {
 
-    public static createKeyguardClient(store: Store<RootState>, endpoint?: string) {
-        const behavior = new RequestBehavior(undefined, RpcApi.exportState(store));
+    public static createKeyguardClient(store: Store<RootState>, staticStore: StaticStore, endpoint?: string) {
+        const behavior = new RequestBehavior(undefined, RpcApi.exportState(store, staticStore));
         const client = new KeyguardClient(endpoint, behavior);
         return client;
     }
 
-    private static exportState(store: Store<RootState>): any {
+    private static exportState(store: Store<RootState>, staticStore: StaticStore): any {
         return {
-            rpcState: store.state.rpcState ? store.state.rpcState.toJSON() : undefined,
-            request: store.state.request ? AccountsRequest.raw(store.state.request) : undefined,
-            keyguardRequest: store.state.keyguardRequest ? JSON.stringify(store.state.keyguardRequest) : undefined,
+            rpcState: staticStore.rpcState ? staticStore.rpcState.toJSON() : undefined,
+            request: staticStore.request ? AccountsRequest.raw(staticStore.request) : undefined,
+            keyguardRequest: staticStore.keyguardRequest ? JSON.stringify(staticStore.keyguardRequest) : undefined,
         };
     }
 
     private _server: RpcServer;
     private _store: Store<RootState>;
+    private _staticStore: StaticStore;
     private _router: Router;
     private _keyguardClient: KeyguardClient;
 
-    constructor(store: Store<RootState>, router: Router) {
+    constructor(store: Store<RootState>, staticStore: StaticStore, router: Router) {
         this._store = store;
+        this._staticStore = staticStore;
         this._router = router;
         this._server = new RpcServer('*');
         this._keyguardClient = new KeyguardClient();
@@ -55,9 +58,12 @@ export default class RpcApi {
         for (const request of requests) {
             // Server listener
             this._server.onRequest(request, async (state, arg: RpcRequest) => {
+                this._staticStore.rpcState = state;
+                this._staticStore.request = AccountsRequest.parse(arg, request) || undefined;
+
                 this._store.commit('setIncomingRequest', {
-                    rpcState: state,
-                    request: AccountsRequest.parse(arg, request),
+                    hasRpcState: !!this._staticStore.rpcState,
+                    hasRequest: !!this._staticStore.request,
                 });
                 this._router.push({name: request});
             });
@@ -68,13 +74,18 @@ export default class RpcApi {
         const rpcState = RpcState.fromJSON(state.rpcState);
         const request = AccountsRequest.parse(state.request);
         const keyguardRequest = JSON.parse(state.keyguardRequest);
+
+        this._staticStore.rpcState = rpcState;
+        this._staticStore.request = request || undefined;
+        this._staticStore.keyguardRequest = keyguardRequest;
+
         this._store.commit('setIncomingRequest', {
-            rpcState,
-            request,
+            hasRpcState: !!this._staticStore.rpcState,
+            hasRequest: !!this._staticStore.request,
         });
-        this._store.commit('setKeyguardRequest', {
-            keyguardRequest,
-        });
+        // this._store.commit('setKeyguardRequest', {
+        //     keyguardRequest: !!this._staticStore.keyguardRequest,
+        // });
     }
 
     private _registerKeyguardApis(commands: KeyguardCommand[]) {

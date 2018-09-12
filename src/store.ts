@@ -1,8 +1,6 @@
 import Vue from 'vue';
 import Vuex, { StoreOptions } from 'vuex';
-import {State as RpcState} from '@nimiq/rpc';
 import {RpcResult as KeyguardResult} from '@nimiq/keyguard-client';
-import {ParsedRpcRequest} from '@/lib/RequestTypes';
 import {KeyInfo} from '@/lib/KeyInfo';
 import {KeyStore} from '@/lib/KeyStore';
 import { AddressInfo } from '@/lib/AddressInfo';
@@ -10,10 +8,9 @@ import { AddressInfo } from '@/lib/AddressInfo';
 Vue.use(Vuex);
 
 export interface RootState {
-    request: ParsedRpcRequest | null;
-    rpcState: RpcState | null;
+    hasRpcState: boolean;
+    hasRequest: boolean;
     keys: KeyInfo[]; // TODO: this is not JSON compatible, is this a problem?
-    keyguardRequest: any;
     keyguardResult: KeyguardResult | Error | null;
     chosenLoginLabel: string | null;
     activeLoginId: string | null;
@@ -22,23 +19,22 @@ export interface RootState {
 
 const store: StoreOptions<RootState> = {
     state: {
-        request: null,
-        rpcState: null, // undefined is not reactive
+        hasRpcState: false,
+        hasRequest: false,
         keys: [],
-        keyguardRequest: {},
         keyguardResult: null, // undefined is not reactive
         chosenLoginLabel: null,
         activeLoginId: null,
         activeUserFriendlyAddress: null,
     },
     mutations: {
-        setIncomingRequest(state, payload: { rpcState: RpcState, request: ParsedRpcRequest }) {
-            state.rpcState = payload.rpcState;
-            state.request = payload.request;
+        setIncomingRequest(state, payload: { hasRpcState: boolean, hasRequest: boolean }) {
+            state.hasRpcState = payload.hasRpcState;
+            state.hasRequest = payload.hasRequest;
         },
-        setKeyguardRequest(state, keyguardRequest: any) {
-            state.keyguardRequest = keyguardRequest;
-        },
+        // setKeyguardRequest(state, keyguardRequest: any) {
+        //     state.keyguardRequest = keyguardRequest;
+        // },
         initKeys(state, keys: KeyInfo[]) {
             state.keys = keys;
         },

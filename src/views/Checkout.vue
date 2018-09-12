@@ -28,20 +28,22 @@ import {State, Mutation, Getter} from 'vuex-class';
 import RpcApi from '../lib/RpcApi';
 import {SignTransactionResult as KSignTransactionResult} from '@nimiq/keyguard-client';
 import {ResponseStatus, State as RpcState} from '@nimiq/rpc';
+import {Static} from '../lib/StaticStore';
 
 @Component({components: {PaymentInfoLine, SmallPage}})
 export default class Checkout extends Vue {
-    @State private rpcState!: RpcState;
-    @State private request!: ParsedSignTransactionRequest;
-    @State private keyguardRequest!: any;
     @State private keyguardResult!: KSignTransactionResult | Error | null;
+
+    @Static private rpcState!: RpcState;
+    @Static private request!: ParsedSignTransactionRequest;
+    @Static private keyguardRequest!: any;
 
     @Watch('keyguardResult', {immediate: true})
     private async onKeyguardResult() {
         if (this.keyguardResult instanceof Error) {
             //
-        } else if (this.keyguardResult && this.rpcState) {
-            const keyguardRequest = this.keyguardRequest.keyguardRequest;
+        } else if (this.keyguardResult) {
+            const keyguardRequest = this.keyguardRequest;
 
             console.log(keyguardRequest);
 
@@ -95,8 +97,8 @@ export default class Checkout extends Vue {
                 recipient: tx.recipient.toUserFriendlyAddress(),
                 recipientType: tx.recipientType,
 
-                value: tx.value,
-                fee: tx.fee,
+                value: tx.value / 1e5,
+                fee: tx.fee / 1e5,
                 validityStartHeight: tx.validityStartHeight,
 
                 signature: this.keyguardResult.signature,

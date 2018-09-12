@@ -28,24 +28,23 @@ import {State, Mutation, Getter} from 'vuex-class';
 import RpcApi from '../lib/RpcApi';
 import {CreateRequest as KCreateRequest, CreateResult as KCreateResult} from '@nimiq/keyguard-client';
 import {ResponseStatus, State as RpcState} from '@nimiq/rpc';
+import staticStore, {Static} from '../lib/StaticStore';
 
 @Component({components: {PageHeader, PageFooter}})
 export default class extends Vue {
-    @State private request!: ParsedSignupRequest;
+    @Static private request!: ParsedSignupRequest;
     @State private keyguardResult!: KCreateResult | Error | null;
     @State private activeAccountPath!: string;
 
     public createKeyguard() {
-        const client = RpcApi.createKeyguardClient(this.$store);
+        const client = RpcApi.createKeyguardClient(this.$store, staticStore);
 
         const request: KCreateRequest = {
             appName: this.request.appName,
-            defaultKeyPath: `m/44'/242'/0'/0'`, // FIXME: not used yet
+            defaultKeyPath: `m/44'/242'/0'/0'`,
         };
 
-        client.create(request).catch((error) => {
-            console.log(error); // TODO: proper error handling
-        });
+        client.create(request).catch(console.log); // TODO: proper error handling
     }
 
     public createLedger() {
