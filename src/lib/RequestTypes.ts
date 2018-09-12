@@ -94,8 +94,9 @@ export interface ParsedSignupRequest {
 }
 
 export interface SignupResult {
-    address: Uint8Array;
+    address: string;
     label: string;
+    keyId: string;
 }
 
 export interface LoginRequest {

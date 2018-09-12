@@ -73,7 +73,7 @@ export default class RpcApi {
     private _recoverState(state: any) {
         const rpcState = RpcState.fromJSON(state.rpcState);
         const request = AccountsRequest.parse(state.request);
-        const keyguardRequest = JSON.parse(state.keyguardRequest);
+        const keyguardRequest = state.keyguardRequest ? JSON.parse(state.keyguardRequest) : undefined;
 
         this._staticStore.rpcState = rpcState;
         this._staticStore.request = request || undefined;

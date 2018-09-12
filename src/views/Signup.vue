@@ -17,11 +17,12 @@ import {State, Mutation, Getter} from 'vuex-class';
 import RpcApi from '../lib/RpcApi';
 import {CreateRequest as KCreateRequest, CreateResult as KCreateResult} from '@nimiq/keyguard-client';
 import {ResponseStatus, State as RpcState} from '@nimiq/rpc';
+import {Static} from '../lib/StaticStore';
 
 @Component({components: {SmallPage}})
 export default class extends Vue {
-    @State private rpcState!: RpcState;
-    @State private request!: ParsedSignupRequest;
+    @Static private rpcState!: RpcState;
+    @Static private request!: ParsedSignupRequest;
     @State private keyguardResult!: KCreateResult | Error | null;
     @State private activeAccountPath!: string;
 
