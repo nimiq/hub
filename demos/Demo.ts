@@ -106,8 +106,8 @@ class Demo {
             return {
                 appName: 'Accounts Demos',
                 keyId: 'ad6a561d41e3',
-                sender: Nimiq.Address.fromUserFriendlyAddress('NQ70 QCHH B708 XQ1N GRHR U1M3 HBG3 KEPP HDJL').serialize(),
-                recipient: Nimiq.Address.fromUserFriendlyAddress('NQ63 U7XG 1YYE D6FA SXGG 3F5H X403 NBKN JLDU').serialize(),
+                sender: 'NQ70 QCHH B708 XQ1N GRHR U1M3 HBG3 KEPP HDJL',
+                recipient: 'NQ63 U7XG 1YYE D6FA SXGG 3F5H X403 NBKN JLDU',
                 value,
                 fee,
                 data: Nimiq.BufferUtils.fromAscii(txData),

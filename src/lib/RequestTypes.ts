@@ -10,12 +10,12 @@ export interface SignTransactionRequest {
     kind?: RequestType.SIGNTRANSACTION;
     appName: string;
     keyId: string;
-    sender: Uint8Array;
-    recipient: Uint8Array;
+    sender: string;
+    recipient: string;
     recipientType?: Nimiq.Account.Type;
     value: number;
     fee?: number;
-    data?: Uint8Array;
+    extraData?: Uint8Array;
     flags?: number;
     networkId?: number;
     validityStartHeight: number; // FIXME To be made optional when accounts manager has its own network
@@ -153,12 +153,12 @@ export class AccountsRequest {
                     kind: RequestType.SIGNTRANSACTION,
                     appName: request.appName,
                     keyId: request.keyId,
-                    sender: new Nimiq.Address(request.sender),
-                    recipient: new Nimiq.Address(request.recipient),
+                    sender: Nimiq.Address.fromUserFriendlyAddress(request.sender),
+                    recipient: Nimiq.Address.fromUserFriendlyAddress(request.recipient),
                     recipientType: request.recipientType,
                     value: request.value,
                     fee: request.fee,
-                    data: request.data,
+                    data: request.extraData,
                     flags: request.flags,
                     networkId: request.networkId,
                     validityStartHeight: request.validityStartHeight,
@@ -203,12 +203,12 @@ export class AccountsRequest {
                     kind: RequestType.SIGNTRANSACTION,
                     appName: request.appName,
                     keyId: request.keyId,
-                    sender: request.sender.serialize(),
-                    recipient: request.recipient.serialize(),
+                    sender: request.sender.toUserFriendlyAddress(),
+                    recipient: request.recipient.toUserFriendlyAddress(),
                     recipientType: request.recipientType,
                     value: request.value,
                     fee: request.fee,
-                    data: request.data,
+                    extraData: request.data,
                     flags: request.flags,
                     networkId: request.networkId,
                     validityStartHeight: request.validityStartHeight,
