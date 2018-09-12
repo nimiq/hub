@@ -13,7 +13,10 @@ import {
 } from '../src/lib/RequestTypes';
 
 export default class AccountsManagerClient {
-    private static readonly DEFAULT_ENDPOINT = '../src';
+    private static readonly DEFAULT_ENDPOINT =
+    window.location.origin === 'https://safe-next.nimiq.com' ? 'https://accounts.nimiq.com'
+    : window.location.origin === 'https://safe-next.nimiq-network.com' ? 'https://accounts.nimiq-network.com'
+    : 'http://localhost:8080';
 
     private readonly _endpoint: string;
     private readonly _popupBehavior: PopupRequestBehavior;
