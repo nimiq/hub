@@ -18,6 +18,7 @@ class Demo {
             await Nimiq.WasmHelper.doImportBrowser();
             Nimiq.GenesisConfig.test();
             document.querySelectorAll('button').forEach(button => button.disabled = false);
+            (document.querySelector('button#list-accounts') as HTMLButtonElement).click();
         })();
 
         const demo = new Demo('http://localhost:8000');
@@ -102,14 +103,21 @@ class Demo {
         }
 
         function generateSignTransactionRequest(demo: Demo): SignTransactionRequest {
+            const $radio = document.querySelector('input[type="radio"]:checked');
+            if (!$radio) {
+                alert('You have no account to send a tx from, create an account first (signup)');
+                throw new Error('No account found');
+            }
+            const sender = $radio.getAttribute('data-address');
+            const keyId = $radio.getAttribute('data-keyid');
             const value = parseInt((document.querySelector('#value') as HTMLInputElement).value) || 1337;
             const fee = parseInt((document.querySelector('#fee') as HTMLInputElement).value) || 0;
             const txData = (document.querySelector('#data') as HTMLInputElement).value || '';
 
             return {
                 appName: 'Accounts Demos',
-                keyId: 'ad6a561d41e3',
-                sender: 'NQ70 QCHH B708 XQ1N GRHR U1M3 HBG3 KEPP HDJL',
+                keyId,
+                sender,
                 recipient: 'NQ63 U7XG 1YYE D6FA SXGG 3F5H X403 NBKN JLDU',
                 value,
                 fee,
@@ -148,7 +156,7 @@ class Demo {
         }
 
         document.querySelector('button#list-keyguard-keys').addEventListener('click', () => demo.listKeyguard());
-        document.querySelector('button#list-accounts').addEventListener('click', () => demo.list());
+        document.querySelector('button#list-accounts').addEventListener('click', async () => demo.updateAccounts());
     } // run
 
     private static async _createIframe(baseUrl): Promise<HTMLIFrameElement> {
@@ -184,11 +192,37 @@ class Demo {
         const client = await this.startIframeClient(this._keyguardBaseUrl);
         const keys = await client.call('list');
         console.log('Keys in Keyguard:', keys);
+        return keys;
     }
 
     public async list() {
-        const keys = await KeyStore.Instance.list();
+        return await KeyStore.Instance.list();
+    }
+
+    public async updateAccounts() {
+        const keys = await this.list();
         console.log('Accounts in Manager:', keys);
+
+        const $ul = document.querySelector('#accounts');
+        let html = '';
+
+        keys.forEach(key => {
+            html += `<li>${key.label}<ul>`;
+            key.addresses.forEach((acc, addr) => {
+                html += `
+                    <li>
+                        <label>
+                            <input type="radio" name="sign-tx-address" data-address="${addr}" data-keyid="${key.id}">
+                            ${acc.label}
+                        </label>
+                    </li>
+                `;
+            });
+            html += '</ul></li>';
+        });
+
+        $ul.innerHTML = html;
+        (document.querySelector('input[type="radio"]') as HTMLInputElement).checked = true;
     }
 } // class Demo
 
