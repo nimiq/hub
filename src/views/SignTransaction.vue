@@ -54,7 +54,7 @@ export default class SignTransaction extends Vue {
             value: this.request.value,
             fee: this.request.fee || 0,
             validityStartHeight: this.request.validityStartHeight,
-            data: this.request.data || new Uint8Array(0),
+            data: this.request.data,
             flags: this.request.flags,
             networkId: this.request.networkId,
         };

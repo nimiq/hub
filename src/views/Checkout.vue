@@ -25,7 +25,10 @@ import {AddressInfo} from '../lib/AddressInfo';
 import {KeyInfo, KeyStorageType} from '../lib/KeyInfo';
 import {State, Mutation, Getter} from 'vuex-class';
 import RpcApi from '../lib/RpcApi';
-import {SignTransactionResult as KSignTransactionResult} from '@nimiq/keyguard-client';
+import {
+    SignTransactionRequest as KSignTransactionRequest,
+    SignTransactionResult as KSignTransactionResult,
+} from '@nimiq/keyguard-client';
 import {ResponseStatus, State as RpcState} from '@nimiq/rpc';
 import {Static} from '../lib/StaticStore';
 
@@ -35,17 +38,13 @@ export default class Checkout extends Vue {
 
     @Static private rpcState!: RpcState;
     @Static private request!: ParsedSignTransactionRequest;
-    @Static private keyguardRequest!: any;
+    @Static private keyguardRequest!: KSignTransactionRequest;
 
     @Watch('keyguardResult', {immediate: true})
     private async onKeyguardResult() {
         if (this.keyguardResult instanceof Error) {
             //
         } else if (this.keyguardResult) {
-            const keyguardRequest = this.keyguardRequest;
-
-            console.log(keyguardRequest);
-
             // Load web assembly encryption library into browser (if supported)
             await Nimiq.WasmHelper.doImportBrowser();
             // Configure to use test net for now
@@ -54,35 +53,35 @@ export default class Checkout extends Vue {
             let tx: Nimiq.Transaction;
 
             if (
-                keyguardRequest.data.length > 0
-             || keyguardRequest.senderType !== Nimiq.Account.Type.BASIC
-             || keyguardRequest.recipientType !== Nimiq.Account.Type.BASIC
+                (this.keyguardRequest.data && this.keyguardRequest.data.length > 0)
+             || this.keyguardRequest.senderType !== Nimiq.Account.Type.BASIC
+             || this.keyguardRequest.recipientType !== Nimiq.Account.Type.BASIC
             ) {
                 tx = new Nimiq.ExtendedTransaction(
-                    new Nimiq.Address(new Nimiq.SerialBuffer(keyguardRequest.sender)),
-                    keyguardRequest.senderType || Nimiq.Account.Type.BASIC,
-                    new Nimiq.Address(new Nimiq.SerialBuffer(keyguardRequest.recipient)),
-                    keyguardRequest.recipientType || Nimiq.Account.Type.BASIC,
-                    keyguardRequest.value,
-                    keyguardRequest.fee,
-                    keyguardRequest.validityStartHeight,
-                    keyguardRequest.flags || 0,
-                    new Uint8Array(keyguardRequest.data),
+                    new Nimiq.Address(new Nimiq.SerialBuffer(this.keyguardRequest.sender)),
+                    this.keyguardRequest.senderType || Nimiq.Account.Type.BASIC,
+                    new Nimiq.Address(new Nimiq.SerialBuffer(this.keyguardRequest.recipient)),
+                    this.keyguardRequest.recipientType || Nimiq.Account.Type.BASIC,
+                    this.keyguardRequest.value,
+                    this.keyguardRequest.fee,
+                    this.keyguardRequest.validityStartHeight,
+                    this.keyguardRequest.flags || 0,
+                    this.keyguardRequest.data || new Uint8Array(0),
                     Nimiq.SignatureProof.singleSig(
                         new Nimiq.PublicKey(this.keyguardResult.publicKey),
                         new Nimiq.Signature(this.keyguardResult.signature),
                     ).serialize(),
-                    keyguardRequest.networkId,
+                    this.keyguardRequest.networkId,
                 );
             } else {
                 tx = new Nimiq.BasicTransaction(
                     new Nimiq.PublicKey(this.keyguardResult.publicKey),
-                    new Nimiq.Address(new Nimiq.SerialBuffer(keyguardRequest.recipient)),
-                    keyguardRequest.value,
-                    keyguardRequest.fee,
-                    keyguardRequest.validityStartHeight,
+                    new Nimiq.Address(new Nimiq.SerialBuffer(this.keyguardRequest.recipient)),
+                    this.keyguardRequest.value,
+                    this.keyguardRequest.fee,
+                    this.keyguardRequest.validityStartHeight,
                     new Nimiq.Signature(this.keyguardResult.signature),
-                    keyguardRequest.networkId,
+                    this.keyguardRequest.networkId,
                 );
             }
 

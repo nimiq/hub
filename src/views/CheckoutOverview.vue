@@ -87,7 +87,7 @@ export default class Checkout extends Vue {
             value: this.request.value,
             fee: this.request.fee || 0, // TODO: proper fee estimation
             validityStartHeight: 1234, // TODO: get valid start height
-            data: this.request.data || new Uint8Array(0),
+            data: this.request.data,
             flags: this.request.flags,
             networkId: this.request.networkId,
         };
