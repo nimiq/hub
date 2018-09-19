@@ -32,9 +32,6 @@ const store: StoreOptions<RootState> = {
             state.hasRpcState = payload.hasRpcState;
             state.hasRequest = payload.hasRequest;
         },
-        // setKeyguardRequest(state, keyguardRequest: any) {
-        //     state.keyguardRequest = keyguardRequest;
-        // },
         initKeys(state, keys: KeyInfo[]) {
             state.keys = keys;
         },
@@ -59,8 +56,7 @@ const store: StoreOptions<RootState> = {
             // Fetch data from store
             KeyStore.Instance.list().then((keyInfoEntries) => {
                 const keys = keyInfoEntries.map((keyInfoEntry) => KeyInfo.fromObject(keyInfoEntry));
-
-                commit('initKeys', keys as KeyInfo[]);
+                commit('initKeys', keys);
 
                 if (keys.length === 0) return;
 

@@ -83,9 +83,6 @@ export default class RpcApi {
             hasRpcState: !!this._staticStore.rpcState,
             hasRequest: !!this._staticStore.request,
         });
-        // this._store.commit('setKeyguardRequest', {
-        //     keyguardRequest: !!this._staticStore.keyguardRequest,
-        // });
     }
 
     private _registerKeyguardApis(commands: KeyguardCommand[]) {
