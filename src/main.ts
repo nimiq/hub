@@ -2,6 +2,7 @@ import Vue from 'vue';
 import App from './App.vue';
 import router from './router';
 import store from './store';
+import staticStore from '@/lib/StaticStore';
 import AsyncComputed from 'vue-async-computed';
 import RpcApi from '@/lib/RpcApi';
 
@@ -15,4 +16,4 @@ new Vue({
 }).$mount('#app');
 
 // Start RPC Api
-new RpcApi(store, router).start();
+new RpcApi(store, staticStore, router).start();

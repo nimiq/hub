@@ -15,22 +15,23 @@ import {State} from 'vuex-class';
 import RpcApi from '../lib/RpcApi';
 import {ImportRequest, ImportResult} from '@nimiq/keyguard-client';
 import {State as RpcState} from '@nimiq/rpc';
+import staticStore, {Static} from '../lib/StaticStore';
 
 @Component({components: {SmallPage}})
 export default class Login extends Vue {
-    @State private rpcState!: RpcState;
-    @State private request!: ParsedLoginRequest;
+    @Static private rpcState!: RpcState;
+    @Static private request!: ParsedLoginRequest;
     @State private keyguardResult!: ImportResult | Error | null;
     @State private activeAccountPath!: string;
 
     public created() {
-        const client = RpcApi.createKeyguardClient(this.$store);
+        const client = RpcApi.createKeyguardClient(this.$store, staticStore);
 
-        const request: ImportRequest = {
-            appName: this.request.appName,
-        };
+        // const request: ImportRequest = {
+        //     appName: this.request.appName,
+        // };
 
-        client.import(request).catch(console.error); // TODO: proper error handling
+        // client.import(request).catch(console.error); // TODO: proper error handling
     }
 
     @Watch('keyguardResult', {immediate: true})

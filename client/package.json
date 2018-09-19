@@ -7,7 +7,6 @@
   "license": "Apache-2.0",
   "private": false,
   "devDependencies": {
-    "@nimiq/core-types": "^1.0.0",
     "ts-loader": "^5.1.0",
     "typescript": "^3.0.3",
     "webpack": "^4.17.2",

@@ -703,9 +703,9 @@
     levelup "^2.0.2"
     node-lmdb "0.6.0"
 
-"@nimiq/keyguard-client@^0.0.8":
-  version "0.0.8"
-  resolved "https://registry.yarnpkg.com/@nimiq/keyguard-client/-/keyguard-client-0.0.8.tgz#45447038b96eaa590ae9990373bdddb26b60ab8b"
+"@nimiq/keyguard-client@^0.0.13":
+  version "0.0.13"
+  resolved "https://registry.yarnpkg.com/@nimiq/keyguard-client/-/keyguard-client-0.0.13.tgz#7dd758d03d6d55505bc707763fea86b1d09a1d18"
 
 "@nimiq/rpc@^0.0.7":
   version "0.0.7"

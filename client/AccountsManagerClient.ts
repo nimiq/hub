@@ -1,19 +1,36 @@
-import {PopupRequestBehavior, RequestBehavior} from './RequestBehavior';
+import {PopupRequestBehavior, IFrameRequestBehavior, RequestBehavior} from './RequestBehavior';
 import {RedirectRpcClient} from '@nimiq/rpc';
-import {SignupRequest, CheckoutRequest, LoginRequest, RequestType} from '../src/lib/RequestTypes';
+import {
+    RequestType,
+    SignupRequest,
+    SignupResult,
+    CheckoutRequest,
+    LoginRequest,
+    LoginResult,
+    SignTransactionRequest,
+    SignTransactionResult,
+    // ListResult,
+} from '../src/lib/RequestTypes';
 
 export default class AccountsManagerClient {
-    private static readonly DEFAULT_ENDPOINT = '../src';
+    private static readonly DEFAULT_ENDPOINT =
+    window.location.origin === 'https://safe-next.nimiq.com' ? 'https://accounts.nimiq.com'
+    : window.location.origin === 'https://safe-next.nimiq-testnet.com' ? 'https://accounts.nimiq-testnet.com'
+    : 'http://localhost:8080';
 
     private readonly _endpoint: string;
-    private readonly  _defaultBehavior: RequestBehavior;
-    private readonly  _redirectClient: RedirectRpcClient;
+    private readonly _defaultBehavior: RequestBehavior;
+    private readonly _iframeBehavior: IFrameRequestBehavior;
+    private readonly _redirectClient: RedirectRpcClient;
     private readonly _observable: Nimiq.Observable;
 
     constructor(endpoint: string = AccountsManagerClient.DEFAULT_ENDPOINT, defaultBehavior?: RequestBehavior) {
         this._endpoint = endpoint;
-        this._defaultBehavior = defaultBehavior || new PopupRequestBehavior();
+        this._defaultBehavior = defaultBehavior || new PopupRequestBehavior(
+            `left=${window.innerWidth / 2 - 500},top=50,width=1000,height=900,location=yes,dependent=yes`);
+        this._iframeBehavior = new IFrameRequestBehavior();
 
+        // Only initiated to check for RPC results in the URL
         this._redirectClient = new RedirectRpcClient('', RequestBehavior.getAllowedOrigin(this._endpoint));
         this._redirectClient.onResponse('request', this._onResolve.bind(this), this._onReject.bind(this));
 
@@ -29,24 +46,30 @@ export default class AccountsManagerClient {
         this._observable.on(`${command}-reject`, reject);
     }
 
-    public signup(request: SignupRequest, requestBehavior = this._defaultBehavior) {
+    public signup(request: SignupRequest, requestBehavior = this._defaultBehavior): Promise<SignupResult> {
         return this._request(requestBehavior, RequestType.SIGNUP, [request]);
     }
 
-    public checkout(request: CheckoutRequest, requestBehavior = this._defaultBehavior) {
+    public signTransaction(
+        request: SignTransactionRequest,
+        requestBehavior = this._defaultBehavior,
+    ): Promise<SignTransactionResult> {
+        return this._request(requestBehavior, RequestType.SIGNTRANSACTION, [request]);
+    }
+
+    public checkout(request: CheckoutRequest, requestBehavior = this._defaultBehavior): Promise<SignTransactionResult> {
         return this._request(requestBehavior, RequestType.CHECKOUT, [request]);
     }
 
-    public login(request: LoginRequest, requestBehavior = this._defaultBehavior) {
+    public login(request: LoginRequest, requestBehavior = this._defaultBehavior): Promise<LoginResult> {
         return this._request(requestBehavior, RequestType.LOGIN, [request]);
     }
 
-    // END API
-
-    public createPopup(options: string) {
-        const behavior = new PopupRequestBehavior(options);
-        return behavior.createPopup(this._endpoint);
+    public list(requestBehavior = this._iframeBehavior)/*: Promise<ListResult> */ {
+        return this._request(requestBehavior, RequestType.LIST, []);
     }
+
+    // END API
 
     /* PRIVATE METHODS */
 

@@ -1,8 +1,6 @@
 import Vue from 'vue';
 import Vuex, { StoreOptions } from 'vuex';
-import {State as RpcState} from '@nimiq/rpc';
 import {RpcResult as KeyguardResult} from '@nimiq/keyguard-client';
-import {ParsedRpcRequest} from '@/lib/RequestTypes';
 import {KeyInfo} from '@/lib/KeyInfo';
 import {KeyStore} from '@/lib/KeyStore';
 import { AddressInfo } from '@/lib/AddressInfo';
@@ -10,8 +8,8 @@ import { AddressInfo } from '@/lib/AddressInfo';
 Vue.use(Vuex);
 
 export interface RootState {
-    request: ParsedRpcRequest | null;
-    rpcState: RpcState | null;
+    hasRpcState: boolean;
+    hasRequest: boolean;
     keys: KeyInfo[]; // TODO: this is not JSON compatible, is this a problem?
     keyguardResult: KeyguardResult | Error | null;
     chosenLoginLabel: string | null;
@@ -21,8 +19,8 @@ export interface RootState {
 
 const store: StoreOptions<RootState> = {
     state: {
-        request: null,
-        rpcState: null, // undefined is not reactive
+        hasRpcState: false,
+        hasRequest: false,
         keys: [],
         keyguardResult: null, // undefined is not reactive
         chosenLoginLabel: null,
@@ -30,9 +28,9 @@ const store: StoreOptions<RootState> = {
         activeUserFriendlyAddress: null,
     },
     mutations: {
-        setIncomingRequest(state, payload: { rpcState: RpcState, request: ParsedRpcRequest }) {
-            state.rpcState = payload.rpcState;
-            state.request = payload.request;
+        setIncomingRequest(state, payload: { hasRpcState: boolean, hasRequest: boolean }) {
+            state.hasRpcState = payload.hasRpcState;
+            state.hasRequest = payload.hasRequest;
         },
         initKeys(state, keys: KeyInfo[]) {
             state.keys = keys;
@@ -56,7 +54,8 @@ const store: StoreOptions<RootState> = {
     actions: {
         initKeys({ state, commit }) {
             // Fetch data from store
-            KeyStore.Instance.list().then((keys) => {
+            KeyStore.Instance.list().then((keyInfoEntries) => {
+                const keys = keyInfoEntries.map((keyInfoEntry) => KeyInfo.fromObject(keyInfoEntry));
                 commit('initKeys', keys);
 
                 if (keys.length === 0) return;

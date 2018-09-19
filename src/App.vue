@@ -18,13 +18,11 @@
 <script lang="ts">
 import {Component, Watch, Vue} from 'vue-property-decorator';
 import {State} from 'vuex-class';
-import {State as RpcState} from '@nimiq/rpc';
-import {ParsedCheckoutRequest} from './lib/RequestTypes';
 
 @Component
 export default class App extends Vue {
-    @State('rpcState') private rpcState!: RpcState;
-    @State('request') private request!: ParsedCheckoutRequest;
+    @State('hasRpcState') private hasRpcState!: boolean;
+    @State('hasRequest') private hasRequest!: boolean;
 
     private isRequestLoaded = false;
 
@@ -36,18 +34,18 @@ export default class App extends Vue {
         this.checkLoaded();
     }
 
-    @Watch('rpcState')
+    @Watch('hasRpcState')
     private onRpcStateChange() {
         this.checkLoaded();
     }
 
-    @Watch('request')
+    @Watch('hasRequest')
     private onRequestChange() {
         this.checkLoaded();
     }
 
     private checkLoaded() {
-        this.isRequestLoaded = !!this.rpcState && !!this.request;
+        this.isRequestLoaded = !!this.hasRpcState && !!this.hasRequest;
     }
 }
 </script>

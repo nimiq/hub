@@ -29,10 +29,12 @@ import {State, Getter} from 'vuex-class';
 import {KeyStore} from '../lib/KeyStore';
 import {CreateResult} from '@nimiq/keyguard-client';
 import {ResponseStatus, State as RpcState} from '@nimiq/rpc';
+import { SignupResult } from '@/lib/RequestTypes';
+import {Static} from '../lib/StaticStore';
 
 @Component({components: {PageHeader, Account}})
 export default class extends Vue {
-    @State private rpcState!: RpcState;
+    @Static private rpcState!: RpcState;
     @State private keyguardResult!: CreateResult;
     @State private activeAccountPath!: string;
     @Getter private hasWallets!: boolean;
@@ -71,7 +73,13 @@ export default class extends Vue {
             await KeyStore.Instance.put(this.keyInfo!);
         }
 
-        this.rpcState.reply(ResponseStatus.OK, this.keyInfo);
+        const result: SignupResult = {
+            address: this.createdAddress!.toUserFriendlyAddress(),
+            label: this.accountLabel,
+            keyId: this.keyInfo!.id,
+        };
+
+        this.rpcState.reply(ResponseStatus.OK, result);
         window.close();
     }
 

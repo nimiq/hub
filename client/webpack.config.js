@@ -16,6 +16,8 @@ module.exports = {
   },
   mode: 'development',
   output: {
-    filename: 'AccountsManager.js',
+    filename: 'AccountsManagerClient.js',
+    library: 'AccountsManagerClient',
+    libraryTarget: 'umd'
   }
 };

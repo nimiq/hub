@@ -2,10 +2,6 @@
 # yarn lockfile v1
 
 
-"@nimiq/core-types@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@nimiq/core-types/-/core-types-1.0.0.tgz#a675cf2c151d9146e79934035e999bbd08a59d42"
-
 "@webassemblyjs/ast@1.5.13":
   version "1.5.13"
   resolved "https://registry.yarnpkg.com/@webassemblyjs/ast/-/ast-1.5.13.tgz#81155a570bd5803a30ec31436bc2c9c0ede38f25"

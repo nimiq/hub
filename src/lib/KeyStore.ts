@@ -70,14 +70,14 @@ export class KeyStore {
         return KeyStore._requestAsPromise(request);
     }
 
-    public async list(): Promise<KeyInfo[]> {
+    public async list(): Promise<KeyInfoEntry[]> {
         const db = await this.connect();
         const request = db.transaction([KeyStore.DB_KEY_STORE_NAME], 'readonly')
             .objectStore(KeyStore.DB_KEY_STORE_NAME)
             .openCursor();
 
         const result: KeyInfoEntry[] = await KeyStore._readAllFromCursor(request);
-        return result.map((info) => KeyInfo.fromObject(info));
+        return result;
     }
 
     public async close() {

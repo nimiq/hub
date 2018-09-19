@@ -15,28 +15,103 @@
 <script lang="ts">
 import {Component, Emit, Prop, Watch, Vue} from 'vue-property-decorator';
 import {AccountSelector, LoginSelector, PaymentInfoLine, SmallPage} from '@nimiq/vue-components';
-import {RequestType, ParsedCheckoutRequest} from '../lib/RequestTypes';
+import {
+    RequestType,
+    ParsedCheckoutRequest,
+    ParsedSignTransactionRequest,
+    SignTransactionResult,
+} from '../lib/RequestTypes';
 import {AddressInfo} from '../lib/AddressInfo';
 import {KeyInfo, KeyStorageType} from '../lib/KeyInfo';
 import {State, Mutation, Getter} from 'vuex-class';
 import RpcApi from '../lib/RpcApi';
-import {SignTransactionResult} from '@nimiq/keyguard-client';
+import {
+    SignTransactionRequest as KSignTransactionRequest,
+    SignTransactionResult as KSignTransactionResult,
+} from '@nimiq/keyguard-client';
 import {ResponseStatus, State as RpcState} from '@nimiq/rpc';
+import {Static} from '../lib/StaticStore';
 
 @Component({components: {PaymentInfoLine, SmallPage}})
 export default class Checkout extends Vue {
-    @State private rpcState!: RpcState;
-    @State private request!: ParsedCheckoutRequest;
-    @State private keyguardResult!: SignTransactionResult | Error | null;
-    @State private activeAccountPath!: string;
+    @State private keyguardResult!: KSignTransactionResult | Error | null;
+
+    @Static private rpcState!: RpcState;
+    @Static private request!: ParsedSignTransactionRequest;
+    @Static private keyguardRequest!: any;
+    // Uint8Arrays cannot be stored in SessionStorage, thus the stored request has arrays instead and is
+    // thus not the type KSignTransactionRequest
 
     @Watch('keyguardResult', {immediate: true})
-    private onKeyguardResult() {
+    private async onKeyguardResult() {
         if (this.keyguardResult instanceof Error) {
             //
-        } else if (this.keyguardResult && this.rpcState) {
+        } else if (this.keyguardResult) {
+            // Load web assembly encryption library into browser (if supported)
+            await Nimiq.WasmHelper.doImportBrowser();
+            // Configure to use test net for now
+            Nimiq.GenesisConfig.test();
+
+            let tx: Nimiq.Transaction;
+
+            if (
+                (this.keyguardRequest.data && this.keyguardRequest.data.length > 0)
+             || this.keyguardRequest.senderType !== Nimiq.Account.Type.BASIC
+             || this.keyguardRequest.recipientType !== Nimiq.Account.Type.BASIC
+            ) {
+                tx = new Nimiq.ExtendedTransaction(
+                    new Nimiq.Address(new Nimiq.SerialBuffer(this.keyguardRequest.sender)),
+                    this.keyguardRequest.senderType || Nimiq.Account.Type.BASIC,
+                    new Nimiq.Address(new Nimiq.SerialBuffer(this.keyguardRequest.recipient)),
+                    this.keyguardRequest.recipientType || Nimiq.Account.Type.BASIC,
+                    this.keyguardRequest.value,
+                    this.keyguardRequest.fee,
+                    this.keyguardRequest.validityStartHeight,
+                    this.keyguardRequest.flags || 0,
+                    new Nimiq.SerialBuffer(this.keyguardRequest.data || 0),
+                    Nimiq.SignatureProof.singleSig(
+                        new Nimiq.PublicKey(this.keyguardResult.publicKey),
+                        new Nimiq.Signature(this.keyguardResult.signature),
+                    ).serialize(),
+                    this.keyguardRequest.networkId,
+                );
+            } else {
+                tx = new Nimiq.BasicTransaction(
+                    new Nimiq.PublicKey(this.keyguardResult.publicKey),
+                    new Nimiq.Address(new Nimiq.SerialBuffer(this.keyguardRequest.recipient)),
+                    this.keyguardRequest.value,
+                    this.keyguardRequest.fee,
+                    this.keyguardRequest.validityStartHeight,
+                    new Nimiq.Signature(this.keyguardResult.signature),
+                    this.keyguardRequest.networkId,
+                );
+            }
+
+            const result: SignTransactionResult = {
+                serializedTx: tx.serialize(),
+
+                sender: tx.sender.toUserFriendlyAddress(),
+                senderType: tx.senderType,
+                senderPubKey: this.keyguardResult.publicKey,
+
+                recipient: tx.recipient.toUserFriendlyAddress(),
+                recipientType: tx.recipientType,
+
+                value: tx.value / 1e5,
+                fee: tx.fee / 1e5,
+                validityStartHeight: tx.validityStartHeight,
+
+                signature: this.keyguardResult.signature,
+
+                extraData: tx.data,
+                flags: tx.flags,
+                networkId: tx.networkId,
+
+                hash: tx.hash().toBase64(),
+            };
+
             // Forward signing result to original caller window
-            this.rpcState.reply(ResponseStatus.OK, this.keyguardResult);
+            this.rpcState.reply(ResponseStatus.OK, result);
         }
     }
 
