@@ -1,5 +1,5 @@
 import {PopupRequestBehavior, IFrameRequestBehavior, RequestBehavior} from './RequestBehavior';
-// import {RedirectRpcClient} from '@nimiq/rpc';
+import {RedirectRpcClient} from '@nimiq/rpc';
 import {
     RequestType,
     SignupRequest,
@@ -19,48 +19,49 @@ export default class AccountsManagerClient {
     : 'http://localhost:8080';
 
     private readonly _endpoint: string;
-    private readonly _popupBehavior: PopupRequestBehavior;
+    private readonly _defaultBehavior: RequestBehavior;
     private readonly _iframeBehavior: IFrameRequestBehavior;
-    // private readonly _redirectClient: RedirectRpcClient;
-    // private readonly _observable: Nimiq.Observable;
+    private readonly _redirectClient: RedirectRpcClient;
+    private readonly _observable: Nimiq.Observable;
 
-    constructor(endpoint: string = AccountsManagerClient.DEFAULT_ENDPOINT) {
+    constructor(endpoint: string = AccountsManagerClient.DEFAULT_ENDPOINT, defaultBehavior?: RequestBehavior) {
         this._endpoint = endpoint;
-        this._popupBehavior = new PopupRequestBehavior(
+        this._defaultBehavior = defaultBehavior || new PopupRequestBehavior(
             `left=${window.innerWidth / 2 - 500},top=50,width=1000,height=900,location=yes,dependent=yes`);
         this._iframeBehavior = new IFrameRequestBehavior();
 
-        // this._redirectClient = new RedirectRpcClient('', RequestBehavior.getAllowedOrigin(this._endpoint));
-        // this._redirectClient.onResponse('request', this._onResolve.bind(this), this._onReject.bind(this));
+        // Only initiated to check for RPC results in the URL
+        this._redirectClient = new RedirectRpcClient('', RequestBehavior.getAllowedOrigin(this._endpoint));
+        this._redirectClient.onResponse('request', this._onResolve.bind(this), this._onReject.bind(this));
 
-        // this._observable = new Nimiq.Observable();
+        this._observable = new Nimiq.Observable();
     }
 
-    // public init() {
-    //     return this._redirectClient.init();
-    // }
+    public init() {
+        return this._redirectClient.init();
+    }
 
-    // public on(command: RequestType, resolve: (...args: any[]) => any, reject: (...args: any[]) => any) {
-    //     this._observable.on(`${command}-resolve`, resolve);
-    //     this._observable.on(`${command}-reject`, reject);
-    // }
+    public on(command: RequestType, resolve: (...args: any[]) => any, reject: (...args: any[]) => any) {
+        this._observable.on(`${command}-resolve`, resolve);
+        this._observable.on(`${command}-reject`, reject);
+    }
 
-    public signup(request: SignupRequest, requestBehavior = this._popupBehavior): Promise<SignupResult> {
+    public signup(request: SignupRequest, requestBehavior = this._defaultBehavior): Promise<SignupResult> {
         return this._request(requestBehavior, RequestType.SIGNUP, [request]);
     }
 
     public signTransaction(
         request: SignTransactionRequest,
-        requestBehavior = this._popupBehavior,
+        requestBehavior = this._defaultBehavior,
     ): Promise<SignTransactionResult> {
         return this._request(requestBehavior, RequestType.SIGNTRANSACTION, [request]);
     }
 
-    public checkout(request: CheckoutRequest, requestBehavior = this._popupBehavior): Promise<SignTransactionResult> {
+    public checkout(request: CheckoutRequest, requestBehavior = this._defaultBehavior): Promise<SignTransactionResult> {
         return this._request(requestBehavior, RequestType.CHECKOUT, [request]);
     }
 
-    public login(request: LoginRequest, requestBehavior = this._popupBehavior): Promise<LoginResult> {
+    public login(request: LoginRequest, requestBehavior = this._defaultBehavior): Promise<LoginResult> {
         return this._request(requestBehavior, RequestType.LOGIN, [request]);
     }
 
@@ -76,23 +77,23 @@ export default class AccountsManagerClient {
         return behavior.request(this._endpoint, command, args);
     }
 
-    // private _onReject(error: any, id: number, state: any) {
-    //     const command = state.__command;
-    //     if (!command) {
-    //         throw new Error('Invalid state after RPC request');
-    //     }
-    //     delete state.__command;
+    private _onReject(error: any, id: number, state: any) {
+        const command = state.__command;
+        if (!command) {
+            throw new Error('Invalid state after RPC request');
+        }
+        delete state.__command;
 
-    //     this._observable.fire(`${command}-reject`, error, state);
-    // }
+        this._observable.fire(`${command}-reject`, error, state);
+    }
 
-    // private _onResolve(result: any, id: number, state: any) {
-    //     const command = state.__command;
-    //     if (!command) {
-    //         throw new Error('Invalid state after RPC request');
-    //     }
-    //     delete state.__command;
+    private _onResolve(result: any, id: number, state: any) {
+        const command = state.__command;
+        if (!command) {
+            throw new Error('Invalid state after RPC request');
+        }
+        delete state.__command;
 
-    //     this._observable.fire(`${command}-resolve`, result, state);
-    // }
+        this._observable.fire(`${command}-resolve`, result, state);
+    }
 }
