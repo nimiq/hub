@@ -3,7 +3,7 @@
         <small-page v-if="$route.name === `sign-transaction-success`">
             <router-view/>
         </small-page>
-        <a class="global-close" :class="{hidden: $route.name === `sign-transaction-success`}" @click="close">Back to {{ request.appName }}</a>
+        <!-- <a class="global-close" :class="{hidden: $route.name === `sign-transaction-success`}" @click="close">Back to {{ request.appName }}</a> -->
     </div>
 </template>
 
