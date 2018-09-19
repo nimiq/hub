@@ -19,7 +19,7 @@ export default class RpcApi {
         return {
             rpcState: staticStore.rpcState ? staticStore.rpcState.toJSON() : undefined,
             request: staticStore.request ? AccountsRequest.raw(staticStore.request) : undefined,
-            keyguardRequest: staticStore.keyguardRequest ? JSON.stringify(staticStore.keyguardRequest) : undefined,
+            keyguardRequest: staticStore.keyguardRequest,
         };
     }
 
@@ -73,7 +73,7 @@ export default class RpcApi {
     private _recoverState(state: any) {
         const rpcState = RpcState.fromJSON(state.rpcState);
         const request = AccountsRequest.parse(state.request);
-        const keyguardRequest = state.keyguardRequest ? JSON.parse(state.keyguardRequest) : undefined;
+        const keyguardRequest = state.keyguardRequest;
 
         this._staticStore.rpcState = rpcState;
         this._staticStore.request = request || undefined;

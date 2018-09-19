@@ -38,7 +38,9 @@ export default class Checkout extends Vue {
 
     @Static private rpcState!: RpcState;
     @Static private request!: ParsedSignTransactionRequest;
-    @Static private keyguardRequest!: KSignTransactionRequest;
+    @Static private keyguardRequest!: any;
+    // Uint8Arrays cannot be stored in SessionStorage, thus the stored request has arrays instead and is
+    // thus not the type KSignTransactionRequest
 
     @Watch('keyguardResult', {immediate: true})
     private async onKeyguardResult() {
@@ -66,7 +68,7 @@ export default class Checkout extends Vue {
                     this.keyguardRequest.fee,
                     this.keyguardRequest.validityStartHeight,
                     this.keyguardRequest.flags || 0,
-                    this.keyguardRequest.data || new Uint8Array(0),
+                    new Nimiq.SerialBuffer(this.keyguardRequest.data || 0),
                     Nimiq.SignatureProof.singleSig(
                         new Nimiq.PublicKey(this.keyguardResult.publicKey),
                         new Nimiq.Signature(this.keyguardResult.signature),

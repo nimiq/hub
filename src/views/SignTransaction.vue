@@ -26,7 +26,7 @@ import staticStore, {Static} from '../lib/StaticStore';
 export default class SignTransaction extends Vue {
     @Static private rpcState!: RpcState;
     @Static private request!: ParsedSignTransactionRequest;
-    @State private keyguardResult!: KSignTransactionRequest | Error | null;
+    @State private keyguardResult!: KSignTransactionResult | Error | null;
 
     public async created() {
         if (this.$route.name === `sign-transaction-success`) return;
@@ -62,7 +62,7 @@ export default class SignTransaction extends Vue {
         const storedRequest = Object.assign({}, request, {
             sender: Array.from(request.sender),
             recipient: Array.from(request.recipient),
-            data: Array.from(request.data!),
+            data: Array.from(request.data || []),
         });
         staticStore.keyguardRequest = storedRequest;
 
