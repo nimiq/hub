@@ -36,7 +36,7 @@ export default class LoginSuccess extends Vue {
                 this.accountLabel,
                 new Nimiq.Address(addressObj.address),
             );
-            addresses.set(addressObj.keyPath, addressInfo);
+            addresses.set(addressInfo.userFriendlyAddress, addressInfo);
         });
 
         this.keyInfo = new KeyInfo(
