@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import SignTransaction from './views/SignTransaction.vue';
+import SignTransactionSuccess from './views/SignTransactionSuccess.vue';
 import Checkout from './views/Checkout.vue';
 import CheckoutOverview from './views/CheckoutOverview.vue';
 import CheckoutSelectAccount from './views/CheckoutSelectAccount.vue';
@@ -14,20 +15,32 @@ import {KeyguardCommand} from '@nimiq/keyguard-client';
 
 Vue.use(Router);
 
-export const keyguardResponseRouter: { [index: string]: {resolve: string, reject: string} } = {
-    [KeyguardCommand.CREATE]: {
+export function keyguardResponseRouter(
+  command: string,
+  originalRequestType: RequestType,
+): {resolve: string, reject: string} {
+  switch (command) {
+    case KeyguardCommand.CREATE:
+      return {
         resolve: `${RequestType.SIGNUP}-success`,
         reject: RequestType.SIGNUP,
-    },
-    [KeyguardCommand.IMPORT]: {
+      };
+    case KeyguardCommand.IMPORT:
+      return {
         resolve: `${RequestType.LOGIN}-success`,
         reject: RequestType.LOGIN,
-    },
-    [KeyguardCommand.SIGN_TRANSACTION]: {
-        resolve: `${RequestType.CHECKOUT}-success`,
-        reject: RequestType.CHECKOUT,
-    },
-};
+      };
+    case KeyguardCommand.SIGN_TRANSACTION:
+      // The SIGN_TRANSACTION Keyguard command is used by Accounts' SIGNTRANSACTION, CHECKOUT and CASHLINK (future)
+      // Thus we return the user to the respective handler component
+      return {
+        resolve: `${originalRequestType}-success`,
+        reject: originalRequestType,
+      };
+    default:
+      throw new Error(`router.keyguardResponseRouter not defined for Keyguard command: ${command}`);
+  }
+}
 
 export default new Router({
   mode: 'history',
@@ -37,13 +50,13 @@ export default new Router({
       path: `/${RequestType.SIGNTRANSACTION}`,
       name: `${RequestType.SIGNTRANSACTION}`,
       component: SignTransaction,
-      // children: [
-      //   {
-      //     path: 'success',
-      //     name: `${RequestType.SIGNTRANSACTION}-success`,
-      //     component: CheckoutSuccess,
-      //   },
-      // ],
+      children: [
+        {
+          path: 'success',
+          name: `${RequestType.SIGNTRANSACTION}-success`,
+          component: SignTransactionSuccess,
+        },
+      ],
     },
     {
       path: `/${RequestType.CHECKOUT}`,
@@ -70,16 +83,16 @@ export default new Router({
       path: `/${RequestType.SIGNUP}`,
       component: Signup,
       children: [
-            {
-                path: '',
-                name: RequestType.SIGNUP,
-                component: SignupTypeSelector,
-            },
-            {
-                path: 'success',
-                name: `${RequestType.SIGNUP}-success`,
-                component: SignupSuccess,
-            },
+          {
+              path: '',
+              name: RequestType.SIGNUP,
+              component: SignupTypeSelector,
+          },
+          {
+              path: 'success',
+              name: `${RequestType.SIGNUP}-success`,
+              component: SignupSuccess,
+          },
        ],
     },
     {

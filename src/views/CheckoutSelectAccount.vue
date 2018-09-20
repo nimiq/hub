@@ -26,7 +26,7 @@ import {RequestType} from '../lib/RequestTypes';
 import {State, Mutation} from 'vuex-class';
 
 @Component({components: {AccountSelector, LoginSelector}})
-export default class Checkout extends Vue {
+export default class CheckoutSelectAccount extends Vue {
     @State('keys') private keys!: KeyInfo[];
 
     @Mutation('addKey') private addKey!: (key: KeyInfo) => any;

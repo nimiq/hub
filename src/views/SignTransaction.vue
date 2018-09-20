@@ -8,7 +8,7 @@
 </template>
 
 <script lang="ts">
-import {Component, Emit, Watch, Vue} from 'vue-property-decorator';
+import {Component, Emit, Vue} from 'vue-property-decorator';
 import {SmallPage} from '@nimiq/vue-components';
 import {ParsedSignTransactionRequest, SignTransactionRequest} from '../lib/RequestTypes';
 import {State} from 'vuex-class';
@@ -29,13 +29,16 @@ export default class SignTransaction extends Vue {
     @State private keyguardResult!: KSignTransactionResult | Error | null;
 
     public async created() {
-        if (this.$route.name === `sign-transaction-success`) return;
+        if (this.keyguardResult instanceof Error) {
+            this.rpcState.reply(ResponseStatus.ERROR, this.keyguardResult);
+        } else if (this.keyguardResult) return; // Keyguard success is handled in SignTransactionSuccess.vue
+
+        // Forward user through AccountsManager to Keyguard
 
         const key = await KeyStore.Instance.get(this.request.keyId);
         if (!key) throw new Error('KeyId not found');
         const account = key.addresses.get(this.request.sender.toUserFriendlyAddress());
-        // TODO Search contracts when address not found
-        if (!account) throw new Error('Sender address not found!');
+        if (!account) throw new Error('Sender address not found!'); // TODO Search contracts when address not found
 
         const request: KSignTransactionRequest = {
             layout: 'standard',
@@ -70,22 +73,10 @@ export default class SignTransaction extends Vue {
         client.signTransaction(request).catch(console.error); // TODO: proper error handling
     }
 
-    @Watch('keyguardResult', {immediate: true})
-    private onKeyguardResult() {
-        if (this.keyguardResult instanceof Error) {
-            // Key/Account was not imported
-            console.error(this.keyguardResult);
-            window.close();
-        } else if (this.keyguardResult && this.rpcState) {
-            // Success
-            console.log(this.keyguardResult, this.rpcState);
-        }
-    }
-
-    @Emit()
-    private close() {
-        window.close();
-    }
+    // @Emit()
+    // private close() {
+    //     window.close();
+    // }
 }
 </script>
 
