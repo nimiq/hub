@@ -18,9 +18,9 @@
 
 <script lang="ts">
 import {Component, Emit, Vue} from 'vue-property-decorator';
-import {State, Getter} from 'vuex-class';
+import {Getter} from 'vuex-class';
 import {Amount, Account} from '@nimiq/vue-components';
-import {SignTransactionRequest} from '@nimiq/keyguard-client';
+import {SignTransactionRequest as KSignTransactionRequest} from '@nimiq/keyguard-client';
 import {State as RpcState} from '@nimiq/rpc';
 import {AddressInfo} from '../lib/AddressInfo';
 import {KeyInfo} from '../lib/KeyInfo';
@@ -29,7 +29,7 @@ import RpcApi from '../lib/RpcApi';
 import staticStore, {Static} from '../lib/StaticStore';
 
 @Component({components: {Amount, Account}})
-export default class Checkout extends Vue {
+export default class CheckoutOverview extends Vue {
     @Static private rpcState!: RpcState;
     @Static private request!: ParsedCheckoutRequest;
 
@@ -69,7 +69,7 @@ export default class Checkout extends Vue {
             return;
         }
 
-        const request: SignTransactionRequest = {
+        const request: KSignTransactionRequest = {
             layout: 'checkout',
             shopOrigin: this.rpcState.origin,
             appName: this.request.appName,

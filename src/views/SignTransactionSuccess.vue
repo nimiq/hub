@@ -1,9 +1,9 @@
 <template>
     <div class="success center">
         <div class="icon-checkmark-circle"></div>
-        <h1>Your payment<br>was successfull!</h1>
+        <h1>Your transaction<br>was successfull!</h1>
         <div style="flex-grow: 1;"></div>
-        <button @click="close" :disabled="!isTxSent">Back to store</button>
+        <button @click="close" :disabled="!isTxSent">Back to {{ request.appName }}</button>
         <TransactionSender ref="txSender"/>
     </div>
 </template>
@@ -11,13 +11,13 @@
 <script lang="ts">
 import {Component, Emit, Vue} from 'vue-property-decorator';
 import TransactionSender from '@/components/TransactionSender.vue';
-// import {RequestType, ParsedCheckoutRequest} from '../lib/RequestTypes';
+import {ParsedSignTransactionRequest} from '../lib/RequestTypes';
 // import {State} from 'vuex-class';
-// import {Static} from '../lib/StaticStore';
+import {Static} from '../lib/StaticStore';
 
 @Component({components: {TransactionSender}})
-export default class CheckoutSuccess extends Vue {
-    // @Static private request!: ParsedCheckoutRequest;
+export default class SignTransactionSuccess extends Vue {
+    @Static private request!: ParsedSignTransactionRequest;
 
     private isTxSent: boolean = false;
 
