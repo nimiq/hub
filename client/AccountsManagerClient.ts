@@ -1,4 +1,5 @@
 import {PopupRequestBehavior, IFrameRequestBehavior, RequestBehavior} from './RequestBehavior';
+import Observable from './Observable';
 import {RedirectRpcClient} from '@nimiq/rpc';
 import {
     RequestType,
@@ -22,7 +23,7 @@ export default class AccountsManagerClient {
     private readonly _defaultBehavior: RequestBehavior;
     private readonly _iframeBehavior: IFrameRequestBehavior;
     private readonly _redirectClient: RedirectRpcClient;
-    private readonly _observable: Nimiq.Observable;
+    private readonly _observable: Observable;
 
     constructor(endpoint: string = AccountsManagerClient.DEFAULT_ENDPOINT, defaultBehavior?: RequestBehavior) {
         this._endpoint = endpoint;
@@ -34,7 +35,7 @@ export default class AccountsManagerClient {
         this._redirectClient = new RedirectRpcClient('', RequestBehavior.getAllowedOrigin(this._endpoint));
         this._redirectClient.onResponse('request', this._onResolve.bind(this), this._onReject.bind(this));
 
-        this._observable = new Nimiq.Observable();
+        this._observable = new Observable();
     }
 
     public init() {
