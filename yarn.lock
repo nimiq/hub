@@ -707,9 +707,9 @@
   version "0.0.13"
   resolved "https://registry.yarnpkg.com/@nimiq/keyguard-client/-/keyguard-client-0.0.13.tgz#7dd758d03d6d55505bc707763fea86b1d09a1d18"
 
-"@nimiq/rpc@^0.0.7":
-  version "0.0.7"
-  resolved "https://registry.yarnpkg.com/@nimiq/rpc/-/rpc-0.0.7.tgz#a8af70e55e4ccdfad79486a613ae3028cf2ba6ee"
+"@nimiq/rpc@^0.0.9":
+  version "0.0.9"
+  resolved "https://registry.yarnpkg.com/@nimiq/rpc/-/rpc-0.0.9.tgz#2740f0e6f0a35da750b08c368009085a2281b925"
 
 "@nimiq/secure-utils@https://github.com/nimiq/secure-utils.git#3937c23c2703d5359eebe2c3bf7b3c9290b26100":
   version "0.0.0"
