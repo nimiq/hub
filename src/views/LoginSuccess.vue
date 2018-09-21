@@ -3,24 +3,25 @@
         <div class="icon-checkmark-circle"></div>
         <h1>Login<br>was successfull!</h1>
         <div style="flex-grow: 1;"></div>
-        <button @click="close">Finished</button>
+        <button @click="close">Back to {{ request.appName }}</button>
     </div>
 </template>
 
 <script lang="ts">
 import {Component, Emit, Vue} from 'vue-property-decorator';
-import {RequestType, ParsedCheckoutRequest, LoginResult} from '../lib/RequestTypes';
+import {ParsedLoginRequest, LoginResult} from '../lib/RequestTypes';
 import {State} from 'vuex-class';
 import {KeyInfo, KeyStorageType} from '../lib/KeyInfo';
 import {ImportResult} from '@nimiq/keyguard-client';
 import {ResponseStatus, State as RpcState} from '@nimiq/rpc';
 import { AddressInfo } from '@/lib/AddressInfo';
 import { KeyStore } from '@/lib/KeyStore';
+import { Static } from '@/lib/StaticStore';
 
 @Component({components: {}})
 export default class LoginSuccess extends Vue {
-    @State('request') private request!: ParsedCheckoutRequest;
-    @State private rpcState!: RpcState;
+    @Static private request!: ParsedLoginRequest;
+    @Static private rpcState!: RpcState;
     @State private keyguardResult!: ImportResult;
 
     private keyInfo: KeyInfo | null = null;
