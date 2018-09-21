@@ -14,7 +14,7 @@ import {ParsedLoginRequest} from '../lib/RequestTypes';
 import {State} from 'vuex-class';
 import RpcApi from '../lib/RpcApi';
 import {ImportRequest, ImportResult} from '@nimiq/keyguard-client';
-import {State as RpcState} from '@nimiq/rpc';
+import {State as RpcState, ResponseStatus} from '@nimiq/rpc';
 import staticStore, {Static} from '../lib/StaticStore';
 
 @Component({components: {SmallPage}})
@@ -25,7 +25,9 @@ export default class Login extends Vue {
     @State private activeAccountPath!: string;
 
     public created() {
-        if (this.$route.name === `login-success`) return;
+        if (this.keyguardResult instanceof Error) {
+            this.rpcState.reply(ResponseStatus.ERROR, this.keyguardResult);
+        } else if (this.keyguardResult) return; // Keyguard success is handled in LoginSuccess.vue
 
         const request: ImportRequest = {
             appName: this.request.appName,
@@ -37,22 +39,10 @@ export default class Login extends Vue {
         client.import(request).catch(console.error); // TODO: proper error handling
     }
 
-    @Watch('keyguardResult', {immediate: true})
-    private onKeyguardResult() {
-        if (this.keyguardResult instanceof Error) {
-            // Key/Account was not imported
-            console.error(this.keyguardResult);
-            window.close();
-        } else if (this.keyguardResult && this.rpcState) {
-            // Success
-            console.log(this.keyguardResult, this.rpcState);
-        }
-    }
-
-    @Emit()
-    private close() {
-        window.close();
-    }
+    // @Emit()
+    // private close() {
+    //     window.close();
+    // }
 }
 </script>
 
