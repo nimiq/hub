@@ -1,4 +1,6 @@
 // rollup.config.js
+import resolve from 'rollup-plugin-node-resolve';
+
 export default [
     {
         input: 'build/client/AccountsManagerClient.js',
@@ -18,6 +20,8 @@ export default [
             name: 'AccountsManagerClient',
             globals: { '@nimiq/rpc': 'rpc' }
         },
-        external: [ '@nimiq/rpc' ]
+        plugins: [
+            resolve()
+        ]
     }
 ];
