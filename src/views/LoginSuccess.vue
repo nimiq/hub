@@ -58,7 +58,7 @@ export default class LoginSuccess extends Vue {
             })),
         };
 
-        // this.rpcState.reply(ResponseStatus.OK, result);
+        this.rpcState.reply(ResponseStatus.OK, result);
     }
 
     @Emit()
