@@ -96,6 +96,10 @@ export default class RpcApi {
                 result.kind = command;
                 this._store.commit('setKeyguardResult', result);
 
+                // To enable the keyguardResponseRouter to decide correctly to which route it should direct
+                // when returning from the Keyguard's sign-transaction request, the original request kind that
+                // was given to the AccountsManager is passed here and the keyguardResponseRouter is turned
+                // from an object into a function instead.
                 this._router.push({name: keyguardResponseRouter(command, this._staticStore.request!.kind).resolve});
             }, (error, state) => {
                 // Recover state
