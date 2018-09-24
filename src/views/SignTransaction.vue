@@ -29,9 +29,16 @@ export default class SignTransaction extends Vue {
     @State private keyguardResult!: KSignTransactionResult | Error | null;
 
     public async created() {
+        // Since the sign-transaction flow does not currently have a landing page in the AccountsManager,
+        // there is also no place to display an error or have the user try again. Thus we forward the error
+        // directly to the caller (the Safe, for example) which automatically closes the window from the
+        // caller side.
+        // The else condition here covers all successful signature cases. If the keyguardResult is successful,
+        // we do not want to restart the Keyguard request. The sending of the tx is handled in the
+        // SignTransactionSuccess component, which is loaded automatically by the router.
         if (this.keyguardResult instanceof Error) {
             this.rpcState.reply(ResponseStatus.ERROR, this.keyguardResult);
-        } else if (this.keyguardResult) return; // Keyguard success is handled in SignTransactionSuccess.vue
+        } else if (this.keyguardResult) return;
 
         // Forward user through AccountsManager to Keyguard
 
