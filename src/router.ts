@@ -11,6 +11,8 @@ import SignupTypeSelector from './views/SignupTypeSelector.vue';
 import SignupSuccess from './views/SignupSuccess.vue';
 import Login from './views/Login.vue';
 import LoginSuccess from './views/LoginSuccess.vue';
+import Logout from './views/Logout.vue';
+import LogoutSuccess from './views/LogoutSuccess.vue';
 import {RequestType} from '@/lib/RequestTypes';
 import {KeyguardCommand} from '@nimiq/keyguard-client';
 
@@ -30,6 +32,11 @@ export function keyguardResponseRouter(
       return {
         resolve: `${RequestType.LOGIN}-success`,
         reject: RequestType.LOGIN,
+      };
+    case KeyguardCommand.REMOVE:
+      return {
+        resolve: `${RequestType.LOGOUT}-success`,
+        reject: RequestType.LOGOUT,
       };
     case KeyguardCommand.SIGN_TRANSACTION:
       // The SIGN_TRANSACTION Keyguard command is used by Accounts' SIGNTRANSACTION, CHECKOUT and CASHLINK (future)
@@ -105,6 +112,18 @@ export default new Router({
           path: 'success',
           name: `${RequestType.LOGIN}-success`,
           component: LoginSuccess,
+        },
+      ],
+    },
+    {
+      path: `/${RequestType.LOGOUT}`,
+      component: Logout,
+      name: RequestType.LOGOUT,
+      children: [
+        {
+          path: 'success',
+          name: `${RequestType.LOGOUT}-success`,
+          component: LogoutSuccess,
         },
       ],
     },
