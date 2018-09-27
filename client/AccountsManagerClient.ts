@@ -8,6 +8,7 @@ import {
     CheckoutRequest,
     LoginRequest,
     LoginResult,
+    LogoutRequest,
     SignTransactionRequest,
     SignTransactionResult,
     // ListResult,
@@ -62,6 +63,10 @@ export default class AccountsManagerClient {
 
     public login(request: LoginRequest, requestBehavior = this._defaultBehavior): Promise<LoginResult> {
         return this._request(requestBehavior, RequestType.LOGIN, [request]);
+    }
+
+    public logout(request: LogoutRequest, requestBehavior = this._defaultBehavior): Promise<boolean> {
+        return this._request(requestBehavior, RequestType.LOGOUT, [request]);
     }
 
     public list(requestBehavior = this._iframeBehavior)/*: Promise<ListResult> */ {

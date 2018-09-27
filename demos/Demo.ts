@@ -7,7 +7,8 @@ import {
     SignupRequest, SignupResult,
     CheckoutRequest,
     LoginRequest, LoginResult,
-    SignTransactionRequest, SignTransactionResult
+    LogoutRequest,
+    SignTransactionRequest, SignTransactionResult,
 } from '../src/lib/RequestTypes';
 import { KeyStore } from '../src/lib/KeyStore';
 import { RedirectRequestBehavior } from '../client/RequestBehavior';
@@ -157,6 +158,7 @@ class Demo {
 
         document.querySelector('button#list-keyguard-keys').addEventListener('click', () => demo.listKeyguard());
         document.querySelector('button#list-accounts').addEventListener('click', async () => demo.updateAccounts());
+        demo._accountsManagerClient = client;
     } // run
 
     private static async _createIframe(baseUrl): Promise<HTMLIFrameElement> {
@@ -173,6 +175,7 @@ class Demo {
 
     private _iframeClient: Rpc.PostMessageRpcClient | null;
     private _keyguardBaseUrl: string;
+    private _accountsManagerClient: AccountsManagerClient;
 
     constructor(keyguardBaseUrl: string) {
         this._iframeClient = null;
@@ -199,6 +202,25 @@ class Demo {
         return await KeyStore.Instance.list();
     }
 
+    public async logout(keyId: string) {
+        try {
+            const result = await this._accountsManagerClient.logout(this._createLogoutRequest(keyId));
+            console.log('Keyguard result', result);
+            document.querySelector('#result').textContent = 'TX signed';
+        } catch (e) {
+            console.error('Keyguard error', e);
+            document.querySelector('#result').textContent = `Error: ${e.message || e}`;
+        }
+        // return await this._accountsManagerClient.logout(keyId);
+    }
+
+    public _createLogoutRequest(keyId: string): LogoutRequest {
+        return {
+            appName: 'Accounts Demos',
+            keyId,
+        } as LogoutRequest;
+    }
+
     public async updateAccounts() {
         const keys = await this.list();
         console.log('Accounts in Manager:', keys);
@@ -207,7 +229,7 @@ class Demo {
         let html = '';
 
         keys.forEach(key => {
-            html += `<li>${key.label}<ul>`;
+            html += `<li>${key.label}<button class="logout" data-keyid="${key.id}">Logout</button><ul>`;
             key.addresses.forEach((acc, addr) => {
                 html += `
                     <li>
@@ -223,6 +245,9 @@ class Demo {
 
         $ul.innerHTML = html;
         (document.querySelector('input[type="radio"]') as HTMLInputElement).checked = true;
+        document.querySelectorAll('button.logout').forEach( (element,key) =>{
+            element.addEventListener('click', async () => this.logout(element.getAttribute('data-keyid')));
+        });
     }
 } // class Demo
 

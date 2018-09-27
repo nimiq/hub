@@ -4,6 +4,7 @@ export enum RequestType {
     SIGNTRANSACTION = 'sign-transaction',
     SIGNUP = 'signup',
     LOGIN = 'login',
+    LOGOUT = 'logout',
 }
 
 export interface SignTransactionRequest {
@@ -117,15 +118,31 @@ export interface LoginResult {
     }>;
 }
 
+export interface LogoutRequest {
+    kind?: RequestType.LOGOUT;
+    appName: string;
+    keyId: string;
+    keyLabel?: string;
+}
+
+export interface ParsedLogoutRequest {
+    kind: RequestType.LOGOUT;
+    appName: string;
+    keyId: string;
+    keyLabel?: string;
+}
+
 // Discriminated Unions
 export type RpcRequest = SignTransactionRequest
                        | CheckoutRequest
                        | SignupRequest
-                       | LoginRequest;
+                       | LoginRequest
+                       | LogoutRequest;
 export type ParsedRpcRequest = ParsedSignTransactionRequest
                              | ParsedCheckoutRequest
                              | ParsedSignupRequest
-                             | ParsedLoginRequest;
+                             | ParsedLoginRequest
+                             | ParsedLogoutRequest;
 
 export class AccountsRequest {
     public static parse(request: RpcRequest, requestType?: RequestType): ParsedRpcRequest | null {
@@ -177,6 +194,13 @@ export class AccountsRequest {
                     kind: RequestType.LOGIN,
                     appName: request.appName,
                 } as ParsedLoginRequest;
+            case RequestType.LOGOUT:
+                request = request as LogoutRequest;
+                return {
+                    kind: RequestType.LOGOUT,
+                    appName: request.appName,
+                    keyId: request.keyId,
+                } as ParsedLogoutRequest;
             default:
                 return null;
         }
@@ -221,6 +245,12 @@ export class AccountsRequest {
                     kind: RequestType.LOGIN,
                     appName: request.appName,
                 } as LoginRequest;
+            case RequestType.LOGOUT:
+            return {
+                kind: RequestType.LOGOUT,
+                appName: request.appName,
+                keyId: request.keyId,
+            } as LogoutRequest;
             default:
                 return null;
         }
