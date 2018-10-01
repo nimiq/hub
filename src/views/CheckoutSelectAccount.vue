@@ -2,14 +2,16 @@
     <div class="visible-area">
         <div class="multi-pages" :style="`transform: translate3d(-${(page - 1) * 450}px, 0, 0)`">
             <LoginSelector @login-selected="loginSelected"
+                            @account-selected="accountSelected"
                             @add-login="addLogin"
                             @back="backToOverview"
                             :logins="keys"/>
             <AccountSelector
-                    @account-selected="(address) => accountSelected(selectedLoginId || preselectedLoginId, address)"
+                    @account-selected="accountSelected"
                     @switch-login="switchLogin"
                     @back="switchLogin"
                     :accounts="currentAccounts"
+                    :loginId="currentLogin ? currentLogin.id : ''"
                     :loginLabel="currentLogin ? currentLogin.label : ''"
                     :loginType="currentLogin ? currentLogin.type : 0"
                     :show-switch-login="!!this.preselectedLoginId"/>
