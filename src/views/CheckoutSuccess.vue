@@ -3,7 +3,7 @@
         <div class="icon-checkmark-circle"></div>
         <h1>Your payment<br>was successfull!</h1>
         <div style="flex-grow: 1;"></div>
-        <button @click="close" :disabled="!isTxSent">Back to store</button>
+        <button @click="done" :disabled="!isTxPrepared">Back to store</button>
         <TransactionSender ref="txSender"/>
     </div>
 </template>
@@ -19,17 +19,16 @@ import TransactionSender from '@/components/TransactionSender.vue';
 export default class CheckoutSuccess extends Vue {
     // @Static private request!: ParsedCheckoutRequest;
 
-    private isTxSent: boolean = false;
+    private isTxPrepared: boolean = false;
 
-    private mounted() {
+    private async mounted() {
+        await (this.$refs.txSender as TransactionSender).prepare();
+        // this.isTxPrepared = true;
         (this.$refs.txSender as TransactionSender).send();
-        (this.$refs.txSender as TransactionSender)
-            .$on(TransactionSender.Events.TRANSACTION_SENT, () => this.isTxSent = true);
     }
 
-    @Emit()
-    private close() {
-        window.close();
+    private done() {
+        // (this.$refs.txSender as TransactionSender).send();
     }
 }
 </script>

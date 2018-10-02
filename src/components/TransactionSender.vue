@@ -16,18 +16,15 @@ import {Static} from '../lib/StaticStore';
 
 @Component({components: {}})
 export default class TransactionSender extends Vue {
-    // tslint:disable-next-line variable-name
-    public static Events = {
-        TRANSACTION_SENT: 'transaction-sent',
-    };
-
     @State private keyguardResult!: KSignTransactionResult;
     @Static private rpcState!: RpcState;
     @Static private keyguardRequest!: any;
     // Uint8Arrays cannot be stored in SessionStorage, thus the stored request has arrays instead and is
     // thus not exactly the type KSignTransactionRequest.
 
-    public async send() {
+    private result?: SignTransactionResult;
+
+    public async prepare() {
         // Load web assembly encryption library into browser (if supported)
         await Nimiq.WasmHelper.doImportBrowser();
 
@@ -69,7 +66,7 @@ export default class TransactionSender extends Vue {
             );
         }
 
-        const result: SignTransactionResult = {
+        this.result = {
             serializedTx: tx.serialize(),
 
             sender: tx.sender.toUserFriendlyAddress(),
@@ -91,11 +88,11 @@ export default class TransactionSender extends Vue {
 
             hash: tx.hash().toBase64(),
         };
+    }
 
-        // Forward signing result to original caller window
-        this.rpcState.reply(ResponseStatus.OK, result);
-
-        this.$emit(TransactionSender.Events.TRANSACTION_SENT);
+    public send() {
+        if (!this.result) throw new Error('Transaction not prepared');
+        this.rpcState.reply(ResponseStatus.OK, this.result);
     }
 }
 </script>

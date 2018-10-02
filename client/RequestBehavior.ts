@@ -80,7 +80,7 @@ export class PopupRequestBehavior extends RequestBehavior {
         try {
             const result = await client.call(command, ...args);
             client.close();
-            // popup.close(); // Do not close to enable the popup displaying the success page
+            popup.close();
             return result;
         } catch (e) {
             client.close();

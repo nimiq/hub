@@ -1,15 +1,15 @@
 <template>
     <div class="success center">
         <div class="icon-checkmark-circle"></div>
-        <h1>Your transaction<br>was successfull!</h1>
+        <h1>Your transaction<br>is ready!</h1>
         <div style="flex-grow: 1;"></div>
-        <button @click="close" :disabled="!isTxSent">Back to {{ request.appName }}</button>
+        <button @click="done" :disabled="!isTxPrepared">Send now</button>
         <TransactionSender ref="txSender"/>
     </div>
 </template>
 
 <script lang="ts">
-import {Component, Emit, Vue} from 'vue-property-decorator';
+import {Component, Vue} from 'vue-property-decorator';
 import TransactionSender from '@/components/TransactionSender.vue';
 import {ParsedSignTransactionRequest} from '../lib/RequestTypes';
 // import {State} from 'vuex-class';
@@ -19,17 +19,15 @@ import {Static} from '../lib/StaticStore';
 export default class SignTransactionSuccess extends Vue {
     @Static private request!: ParsedSignTransactionRequest;
 
-    private isTxSent: boolean = false;
+    private isTxPrepared: boolean = false;
 
-    private mounted() {
-        (this.$refs.txSender as TransactionSender).send();
-        (this.$refs.txSender as TransactionSender)
-            .$on(TransactionSender.Events.TRANSACTION_SENT, () => this.isTxSent = true);
+    private async mounted() {
+        await (this.$refs.txSender as TransactionSender).prepare();
+        this.isTxPrepared = true;
     }
 
-    @Emit()
-    private close() {
-        window.close();
+    private done() {
+        (this.$refs.txSender as TransactionSender).send();
     }
 }
 </script>
