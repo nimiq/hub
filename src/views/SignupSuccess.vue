@@ -8,13 +8,13 @@
                 <p>You can add more accounts to it later.</p>
             </div>
 
-            <div class="login-label"><div class="login-icon" :class="walletIconClass"></div> {{ walletLabel }}</div>
+            <div class="login-label">
+                <div class="login-icon" :class="walletIconClass"></div>
+                <LabelInput :value="walletLabel" @changed="onWalletLabelChange"/>
+            </div>
 
-            <Account :address="createdAddress" :label="accountLabel" />
-            <!-- <div v-if="hasWallets">
-                <input type="text" v-model.lazy="walletLabel" placeholder="Keyguard Wallet" />
-                <input type="text" v-model.lazy="accountLabel" placeholder="Standard Account" />
-            </div> -->
+            <Account :address="createdAddress" :label="accountLabel" :editable="true" @changed="onAccountLabelChange"/>
+
             <button class="submit" @click="done()">Open your wallet</button>
         </div>
     </div>
@@ -22,7 +22,7 @@
 
 <script lang="ts">
 import {Component, Vue} from 'vue-property-decorator';
-import {PageHeader, Account} from '@nimiq/vue-components';
+import {PageHeader, Account, LabelInput} from '@nimiq/vue-components';
 import {AddressInfo} from '../lib/AddressInfo';
 import {KeyInfo, KeyStorageType} from '../lib/KeyInfo';
 import {State, Getter} from 'vuex-class';
@@ -32,55 +32,46 @@ import {ResponseStatus, State as RpcState} from '@nimiq/rpc';
 import { SignupResult } from '@/lib/RequestTypes';
 import {Static} from '../lib/StaticStore';
 
-@Component({components: {PageHeader, Account}})
+@Component({components: {PageHeader, Account, LabelInput}})
 export default class extends Vue {
     @Static private rpcState!: RpcState;
     @State private keyguardResult!: CreateResult;
     @State private activeAccountPath!: string;
     @Getter private hasWallets!: boolean;
 
-    private keyInfo: KeyInfo | null = null;
-    private accountLabel: string = 'Standard Account';
     private walletLabel: string = 'Keyguard Wallet';
+    private accountLabel: string = 'Standard Account';
     private createdAddress: Nimiq.Address | null = null;
-    private walletIconClass: string = 'keyguard';
 
-    public created() {
+    private get walletIconClass(): string {
+        return 'keyguard';
+    }
+
+    private created() {
         this.createdAddress = new Nimiq.Address(this.keyguardResult.address);
         this.saveResult(this.walletLabel, this.accountLabel);
     }
 
-    public unmounted() {
-        this.done();
+    private onWalletLabelChange(label: string) {
+        console.log(label);
+        this.walletLabel = label;
+        this.saveResult(this.walletLabel, this.accountLabel);
     }
 
-    public async done() {
-        if (this.walletLabel) {
-            this.keyInfo!.label = this.walletLabel;
-        }
+    private onAccountLabelChange(label: string) {
+        console.log(label);
+        this.accountLabel = label;
+        this.saveResult(this.walletLabel, this.accountLabel);
+    }
 
-        if (this.accountLabel) {
-            const addressInfo = new AddressInfo(
-                this.keyguardResult.keyPath,
-                this.accountLabel,
-                this.createdAddress!,
-            );
-
-            this.keyInfo!.addresses.set(addressInfo.userFriendlyAddress, addressInfo);
-        }
-
-        if (this.walletLabel || this.accountLabel) {
-            await KeyStore.Instance.put(this.keyInfo!);
-        }
-
+    private async done() {
         const result: SignupResult = {
             address: this.createdAddress!.toUserFriendlyAddress(),
             label: this.accountLabel,
-            keyId: this.keyInfo!.id,
+            keyId: this.keyguardResult.keyId,
         };
 
         this.rpcState.reply(ResponseStatus.OK, result);
-        window.close();
     }
 
     private async saveResult(walletLabel: string, accountLabel: string) {
@@ -90,7 +81,7 @@ export default class extends Vue {
             this.createdAddress!,
         );
 
-        this.keyInfo = new KeyInfo(
+        const keyInfo = new KeyInfo(
             this.keyguardResult.keyId,
             walletLabel,
             new Map<string, AddressInfo>().set(addressInfo.userFriendlyAddress, addressInfo),
@@ -98,7 +89,7 @@ export default class extends Vue {
             KeyStorageType.BIP39,
         );
 
-        await KeyStore.Instance.put(this.keyInfo);
+        await KeyStore.Instance.put(keyInfo);
     }
 }
 </script>
