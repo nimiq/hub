@@ -795,10 +795,10 @@
   resolved "https://registry.yarnpkg.com/@nimiq/keyguard-client/-/keyguard-client-0.0.14.tgz#bd56b87fa660498cad6fe4565f00b0f6b81dbe3f"
   integrity sha512-akg+o/lk3E0y65yFpFOkG8DRSPfUUbW101XII15Ygn60bVpmZv/VRUR2+zsA+m2Ei0r8erAG0BuSdrNx3+j8/g==
 
-"@nimiq/rpc@^0.0.9":
-  version "0.0.9"
-  resolved "https://registry.yarnpkg.com/@nimiq/rpc/-/rpc-0.0.9.tgz#2740f0e6f0a35da750b08c368009085a2281b925"
-  integrity sha512-bghAtx8pEeBl6gpIbmughgskr19LfMfkiAMXKYhSHc12i0cXLVO6ZK1FpYnZhs5/NJ5xAjtfnHqdUcEeF4xvuA==
+"@nimiq/rpc@^0.0.10":
+  version "0.0.10"
+  resolved "https://registry.yarnpkg.com/@nimiq/rpc/-/rpc-0.0.10.tgz#e8d9f7a31fcebe4080d086c8617c1b6115a9b728"
+  integrity sha512-3SdW86kMhASPDuKeFVL2jETxBs4oM0KZHJJ4gvg1KW1ASbu7fG9faCLnqWaKtv5FN5jAg8n6iWPTxZvy74gS5g==
 
 "@nimiq/secure-utils@https://github.com/nimiq/secure-utils.git#3937c23c2703d5359eebe2c3bf7b3c9290b26100":
   version "0.0.0"
