@@ -82,7 +82,7 @@ export default class SignTransaction extends Vue {
 
     // @Emit()
     // private close() {
-    //     window.close();
+    //    this.rpcState.reply(ResponseStatus.ERROR, new Error('CANCEL'));
     // }
 }
 </script>

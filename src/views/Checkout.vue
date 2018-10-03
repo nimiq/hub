@@ -16,7 +16,7 @@
 import {Component, Emit, Vue} from 'vue-property-decorator';
 import {PaymentInfoLine, SmallPage} from '@nimiq/vue-components';
 import {ParsedCheckoutRequest} from '../lib/RequestTypes';
-import {State as RpcState} from '@nimiq/rpc';
+import {State as RpcState, ResponseStatus} from '@nimiq/rpc';
 import {Static} from '../lib/StaticStore';
 
 @Component({components: {PaymentInfoLine, SmallPage}})
@@ -26,7 +26,7 @@ export default class Checkout extends Vue {
 
     @Emit()
     private close() {
-        window.close();
+        this.rpcState.reply(ResponseStatus.ERROR, new Error('CANCEL'));
     }
 }
 </script>

@@ -1,4 +1,4 @@
-import {RpcServer, State as RpcState} from '@nimiq/rpc';
+import {RpcServer, State as RpcState, ResponseStatus} from '@nimiq/rpc';
 import {RootState} from '@/store';
 import {Store} from 'vuex';
 import Router from 'vue-router';
@@ -104,6 +104,11 @@ export default class RpcApi {
             }, (error, state) => {
                 // Recover state
                 this._recoverState(state);
+
+                if (error.message === 'CANCEL') {
+                    this._staticStore.rpcState!.reply(ResponseStatus.ERROR, error);
+                    return;
+                }
 
                 // Set result
                 this._store.commit('setKeyguardResult', error);

@@ -41,7 +41,7 @@ export default class Login extends Vue {
 
     // @Emit()
     // private close() {
-    //     window.close();
+    //    this.rpcState.reply(ResponseStatus.ERROR, new Error('CANCEL'));
     // }
 }
 </script>
