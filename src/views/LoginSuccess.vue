@@ -3,7 +3,7 @@
         <div class="icon-checkmark-circle"></div>
         <h1>Login<br>was successfull!</h1>
         <div style="flex-grow: 1;"></div>
-        <button @click="close">Back to {{ request.appName }}</button>
+        <button @click="done">Back to {{ request.appName }}</button>
     </div>
 </template>
 
@@ -27,6 +27,7 @@ export default class LoginSuccess extends Vue {
     private keyInfo: KeyInfo | null = null;
     private walletLabel: string = 'Keyguard Wallet';
     private accountLabel: string = 'Standard Account';
+    private result?: LoginResult;
 
     public mounted() {
         const addresses: Map<string, AddressInfo> = new Map();
@@ -50,21 +51,19 @@ export default class LoginSuccess extends Vue {
 
         KeyStore.Instance.put(this.keyInfo);
 
-        // TODO Only assemble result and reply after user clicks continue on this success screen
-        const result: LoginResult = {
+        this.result = {
             addresses: Array.from(this.keyInfo.addresses.values()).map((addressInfo) => ({
                 address: addressInfo.userFriendlyAddress,
                 label: addressInfo.label,
                 keyId: this.keyInfo!.id,
             })),
         };
-
-        this.rpcState.reply(ResponseStatus.OK, result);
     }
 
     @Emit()
-    private close() {
-        window.close();
+    private done() {
+        if (!this.result) throw new Error('Result not set');
+        this.rpcState.reply(ResponseStatus.OK, this.result);
     }
 }
 </script>
