@@ -13,7 +13,7 @@ import {SmallPage} from '@nimiq/vue-components';
 import {ParsedLogoutRequest} from '../lib/RequestTypes';
 import {State} from 'vuex-class';
 import RpcApi from '../lib/RpcApi';
-import {ImportRequest} from '@nimiq/keyguard-client'; // TODO
+import {RemoveKeyRequest} from '@nimiq/keyguard-client';
 import {State as RpcState, ResponseStatus} from '@nimiq/rpc';
 import staticStore, {Static} from '../lib/StaticStore';
 
@@ -21,21 +21,21 @@ import staticStore, {Static} from '../lib/StaticStore';
 export default class Logout extends Vue {
     @Static private rpcState!: RpcState;
     @Static private request!: ParsedLogoutRequest;
-    @State private keyguardResult!: boolean | Error | null; // TODO
+    @State private keyguardResult!: boolean | Error | null;
 
     public created() {
         if (this.keyguardResult instanceof Error) {
             this.rpcState.reply(ResponseStatus.ERROR, this.keyguardResult);
         } else if (this.keyguardResult) return; // Keyguard success is handled in LogoutSuccess.vue
 
-        const request: ImportRequest = { // TODO
+        const request: RemoveKeyRequest = {
             appName: this.request.appName,
-            defaultKeyPath: `m/44'/242'/0'/0'`,
-            requestedKeyPaths: [0, 1, 2, 3, 4, 5].map((i) => `m/44'/242'/0'/${i}'`),
+            keyId: this.request.keyId,
+            keyLabel: this.request.keyLabel,
         };
-
+        
         const client = RpcApi.createKeyguardClient(this.$store, staticStore);
-        client.import(request).catch(console.error); // TODO: proper error handling
+        client.remove(request).catch(console.error); // TODO: proper error handling
     }
 
     // @Emit()

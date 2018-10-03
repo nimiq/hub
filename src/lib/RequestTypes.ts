@@ -200,6 +200,7 @@ export class AccountsRequest {
                     kind: RequestType.LOGOUT,
                     appName: request.appName,
                     keyId: request.keyId,
+                    keyLabel : request.keyLabel,
                 } as ParsedLogoutRequest;
             default:
                 return null;
@@ -250,6 +251,7 @@ export class AccountsRequest {
                 kind: RequestType.LOGOUT,
                 appName: request.appName,
                 keyId: request.keyId,
+                keyLabel: request.keyLabel,
             } as LogoutRequest;
             default:
                 return null;
