@@ -9,10 +9,9 @@
 
 <script lang="ts">
 import {Component, Emit, Vue} from 'vue-property-decorator';
-import {ParsedLogoutRequest, LoginResult} from '../lib/RequestTypes'; // TODO
+import {ParsedLogoutRequest} from '../lib/RequestTypes';
 import {State} from 'vuex-class';
 import {KeyInfo, KeyStorageType} from '../lib/KeyInfo';
-import {ImportResult} from '@nimiq/keyguard-client'; // TODO
 import {ResponseStatus, State as RpcState} from '@nimiq/rpc';
 import { AddressInfo } from '@/lib/AddressInfo';
 import { KeyStore } from '@/lib/KeyStore';
@@ -22,14 +21,16 @@ import { Static } from '@/lib/StaticStore';
 export default class LoginSuccess extends Vue {
     @Static private request!: ParsedLogoutRequest;
     @Static private rpcState!: RpcState;
-    @State private keyguardResult!: boolean; // TODO
+    @State private keyguardResult!: boolean;
 
     private keyInfo: KeyInfo | null = null;
     private walletLabel: string = 'Keyguard Wallet';
     private accountLabel: string = 'Standard Account';
 
     public mounted() {
-        KeyStore.Instance.remove(this.request.keyId);
+        if (this.keyguardResult === true) {
+            KeyStore.Instance.remove(this.request.keyId);
+        }
         this.rpcState.reply(ResponseStatus.OK, this.keyguardResult);
     }
 

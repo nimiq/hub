@@ -41,11 +41,13 @@ export default class RpcApi {
             RequestType.CHECKOUT,
             RequestType.SIGNUP,
             RequestType.LOGIN,
+            RequestType.LOGOUT,
         ]);
         this._registerKeyguardApis([
             KeyguardCommand.SIGN_TRANSACTION,
             KeyguardCommand.CREATE,
             KeyguardCommand.IMPORT,
+            KeyguardCommand.REMOVE,
         ]);
     }
 
