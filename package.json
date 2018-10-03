@@ -10,7 +10,7 @@
         "test": "yarn test:unit"
     },
     "dependencies": {
-        "@nimiq/keyguard-client": "^0.0.13",
+        "@nimiq/keyguard-client": "^0.0.14",
         "@nimiq/rpc": "^0.0.9",
         "@nimiq/vue-components": "https://github.com/nimiq/vue-components.git#built",
         "vue": "^2.5.16",
