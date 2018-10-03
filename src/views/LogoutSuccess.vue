@@ -1,7 +1,7 @@
 <template>
     <div class="success center">
         <div class="icon-checkmark-circle"></div>
-        <h1>Key Removal<br>was successfull!</h1>
+        <h1>Logout<br>was successfull!</h1>
         <div style="flex-grow: 1;"></div>
         <button @click="close">Back to {{ request.appName }}</button>
     </div>
@@ -18,14 +18,10 @@ import { KeyStore } from '@/lib/KeyStore';
 import { Static } from '@/lib/StaticStore';
 
 @Component({components: {}})
-export default class LoginSuccess extends Vue {
+export default class LogoutSuccess extends Vue {
     @Static private request!: ParsedLogoutRequest;
     @Static private rpcState!: RpcState;
     @State private keyguardResult!: boolean;
-
-    private keyInfo: KeyInfo | null = null;
-    private walletLabel: string = 'Keyguard Wallet';
-    private accountLabel: string = 'Standard Account';
 
     public mounted() {
         if (this.keyguardResult === true) {

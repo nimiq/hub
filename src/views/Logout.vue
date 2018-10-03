@@ -33,7 +33,7 @@ export default class Logout extends Vue {
             keyId: this.request.keyId,
             keyLabel: this.request.keyLabel,
         };
-        
+
         const client = RpcApi.createKeyguardClient(this.$store, staticStore);
         client.remove(request).catch(console.error); // TODO: proper error handling
     }
