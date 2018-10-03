@@ -31,9 +31,8 @@ export default class AccountsManagerClient {
             `left=${window.innerWidth / 2 - 500},top=50,width=1000,height=900,location=yes,dependent=yes`);
         this._iframeBehavior = new IFrameRequestBehavior();
 
-        // Only initiated to check for RPC results in the URL
+        // Check for RPC results in the URL
         this._redirectClient = new RedirectRpcClient('', RequestBehavior.getAllowedOrigin(this._endpoint));
-        this._redirectClient.onResponse('request', this._onResolve.bind(this), this._onReject.bind(this));
 
         this._observable = new Observable();
     }
@@ -43,8 +42,7 @@ export default class AccountsManagerClient {
     }
 
     public on(command: RequestType, resolve: (...args: any[]) => any, reject: (...args: any[]) => any) {
-        this._observable.on(`${command}-resolve`, resolve);
-        this._observable.on(`${command}-reject`, reject);
+        this._redirectClient.onResponse(command, resolve, reject);
     }
 
     public signup(request: SignupRequest, requestBehavior = this._defaultBehavior): Promise<SignupResult> {
@@ -76,25 +74,5 @@ export default class AccountsManagerClient {
 
     private _request(behavior: RequestBehavior, command: RequestType, args: any[]) {
         return behavior.request(this._endpoint, command, args);
-    }
-
-    private _onReject(error: any, id: number, state: any) {
-        const command = state.__command;
-        if (!command) {
-            throw new Error('Invalid state after RPC request');
-        }
-        delete state.__command;
-
-        this._observable.fire(`${command}-reject`, error, state);
-    }
-
-    private _onResolve(result: any, id: number, state: any) {
-        const command = state.__command;
-        if (!command) {
-            throw new Error('Invalid state after RPC request');
-        }
-        delete state.__command;
-
-        this._observable.fire(`${command}-resolve`, result, state);
     }
 }
