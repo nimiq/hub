@@ -13,6 +13,7 @@ import {ParsedLogoutRequest} from '../lib/RequestTypes';
 import {State} from 'vuex-class';
 import {KeyInfo, KeyStorageType} from '../lib/KeyInfo';
 import {ResponseStatus, State as RpcState} from '@nimiq/rpc';
+import {RemoveKeyResult} from '@nimiq/keyguard-client';
 import { AddressInfo } from '@/lib/AddressInfo';
 import { KeyStore } from '@/lib/KeyStore';
 import { Static } from '@/lib/StaticStore';
@@ -21,10 +22,10 @@ import { Static } from '@/lib/StaticStore';
 export default class LogoutSuccess extends Vue {
     @Static private request!: ParsedLogoutRequest;
     @Static private rpcState!: RpcState;
-    @State private keyguardResult!: boolean;
+    @State private keyguardResult!: RemoveKeyResult;
 
     public mounted() {
-        if (this.keyguardResult === true) {
+        if (this.keyguardResult.success === true) {
             KeyStore.Instance.remove(this.request.keyId);
         }
         this.rpcState.reply(ResponseStatus.OK, this.keyguardResult);
