@@ -206,7 +206,7 @@ class Demo {
         try {
             const result = await this._accountsManagerClient.logout(this._createLogoutRequest(keyId));
             console.log('Keyguard result', result);
-            document.querySelector('#result').textContent = 'TX signed';
+            document.querySelector('#result').textContent = 'Key Removed';
         } catch (e) {
             console.error('Keyguard error', e);
             document.querySelector('#result').textContent = `Error: ${e.message || e}`;

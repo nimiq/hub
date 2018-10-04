@@ -13,7 +13,7 @@ import {SmallPage} from '@nimiq/vue-components';
 import {ParsedLogoutRequest} from '../lib/RequestTypes';
 import {State} from 'vuex-class';
 import RpcApi from '../lib/RpcApi';
-import {RemoveKeyRequest} from '@nimiq/keyguard-client';
+import {RemoveKeyRequest, RemoveKeyResult} from '@nimiq/keyguard-client';
 import {State as RpcState, ResponseStatus} from '@nimiq/rpc';
 import staticStore, {Static} from '../lib/StaticStore';
 
@@ -21,7 +21,7 @@ import staticStore, {Static} from '../lib/StaticStore';
 export default class Logout extends Vue {
     @Static private rpcState!: RpcState;
     @Static private request!: ParsedLogoutRequest;
-    @State private keyguardResult!: boolean | Error | null;
+    @State private keyguardResult!: RemoveKeyResult | Error | null;
 
     public created() {
         if (this.keyguardResult instanceof Error) {
