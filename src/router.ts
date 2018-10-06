@@ -11,6 +11,8 @@ import SignupTypeSelector from './views/SignupTypeSelector.vue';
 import SignupSuccess from './views/SignupSuccess.vue';
 import Login from './views/Login.vue';
 import LoginSuccess from './views/LoginSuccess.vue';
+import ExportFile from './views/ExportFile.vue';
+import ExportWords from './views/ExportWords.vue';
 import Logout from './views/Logout.vue';
 import LogoutSuccess from './views/LogoutSuccess.vue';
 import {RequestType} from '@/lib/RequestTypes';
@@ -114,6 +116,16 @@ export default new Router({
           component: LoginSuccess,
         },
       ],
+    },
+    {
+      path: `/${RequestType.EXPORT_FILE}`,
+      component: ExportFile,
+      name: RequestType.EXPORT_FILE,
+    },
+    {
+      path: `/${RequestType.EXPORT_WORDS}`,
+      component: ExportWords,
+      name: RequestType.EXPORT_WORDS,
     },
     {
       path: `/${RequestType.LOGOUT}`,

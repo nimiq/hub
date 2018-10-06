@@ -6,6 +6,8 @@ export enum RequestType {
     SIGNTRANSACTION = 'sign-transaction',
     SIGNUP = 'signup',
     LOGIN = 'login',
+    EXPORT_WORDS = 'export-words',
+    EXPORT_FILE = 'export_file',
     LOGOUT = 'logout',
 }
 
@@ -126,6 +128,42 @@ export interface LoginResult {
     }>;
 }
 
+export interface ExportWordsRequest {
+    kind?: RequestType.EXPORT_WORDS;
+    appName: string;
+    keyId: string;
+    keyLabel?: string;
+}
+
+export interface ParsedExportWordsRequest {
+    kind: RequestType.EXPORT_WORDS;
+    appName: string;
+    keyId: string;
+    keyLabel?: string;
+}
+
+export interface ExportWordsResult {
+    success: boolean;
+}
+
+export interface ExportFileRequest {
+    kind?: RequestType.EXPORT_FILE;
+    appName: string;
+    keyId: string;
+    keyLabel?: string;
+}
+
+export interface ParsedExportFileRequest {
+    kind: RequestType.EXPORT_FILE;
+    appName: string;
+    keyId: string;
+    keyLabel?: string;
+}
+
+export interface ExportFileResult {
+    success: boolean;
+}
+
 export interface LogoutRequest {
     kind?: RequestType.LOGOUT;
     appName: string;
@@ -147,11 +185,15 @@ export type RpcRequest = SignTransactionRequest
                        | CheckoutRequest
                        | SignupRequest
                        | LoginRequest
+                       | ExportFileRequest
+                       | ExportWordsRequest
                        | LogoutRequest;
 export type ParsedRpcRequest = ParsedSignTransactionRequest
                              | ParsedCheckoutRequest
                              | ParsedSignupRequest
                              | ParsedLoginRequest
+                             | ParsedExportFileRequest
+                             | ParsedExportWordsRequest
                              | ParsedLogoutRequest;
 
 export class AccountsRequest {
@@ -204,6 +246,22 @@ export class AccountsRequest {
                     kind: RequestType.LOGIN,
                     appName: request.appName,
                 } as ParsedLoginRequest;
+            case RequestType.EXPORT_FILE:
+                request = request as ExportFileRequest;
+                return {
+                    kind: RequestType.EXPORT_FILE,
+                    appName: request.appName,
+                    keyId: request.keyId,
+                    keyLabel: request.keyLabel,
+                } as ParsedExportFileRequest;
+            case RequestType.EXPORT_WORDS:
+                request = request as ExportWordsRequest;
+                return {
+                    kind: RequestType.EXPORT_WORDS,
+                    appName: request.appName,
+                    keyId: request.keyId,
+                    keyLabel: request.keyLabel,
+                } as ParsedExportWordsRequest;
             case RequestType.LOGOUT:
                 request = request as LogoutRequest;
                 return {
@@ -255,6 +313,20 @@ export class AccountsRequest {
                     kind: RequestType.LOGIN,
                     appName: request.appName,
                 } as LoginRequest;
+            case RequestType.EXPORT_FILE:
+                return {
+                    kind: RequestType.EXPORT_FILE,
+                    appName: request.appName,
+                    keyId: request.keyId,
+                    keyLabel: request.keyLabel,
+                } as ExportFileRequest;
+            case RequestType.EXPORT_WORDS:
+                return {
+                    kind: RequestType.EXPORT_WORDS,
+                    appName: request.appName,
+                    keyId: request.keyId,
+                    keyLabel: request.keyLabel,
+                } as ExportWordsRequest;
             case RequestType.LOGOUT:
                 return request as LogoutRequest;
             default:

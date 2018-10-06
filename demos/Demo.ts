@@ -9,6 +9,8 @@ import {
     LoginRequest, LoginResult,
     LogoutRequest, LogoutResult,
     SignTransactionRequest, SignTransactionResult,
+    ExportWordsRequest, ExportWordsResult,
+    ExportFileRequest, ExportFileResult,
 } from '../src/lib/RequestTypes';
 import { KeyStore } from '../src/lib/KeyStore';
 import { RedirectRequestBehavior } from '../client/RequestBehavior';
@@ -222,6 +224,44 @@ class Demo {
         } as LogoutRequest;
     }
 
+    public async exportWords(keyId: string) {
+        try {
+            const result = await this._accountsManagerClient.exportWords(this._createExportWordsRequest(keyId));
+            console.log('Keyguard result', result);
+            document.querySelector('#result').textContent = 'TX signed';
+        } catch (e) {
+            console.error('Keyguard error', e);
+            document.querySelector('#result').textContent = `Error: ${e.message || e}`;
+        }
+        // return await this._accountsManagerClient.logout(keyId);
+    }
+
+    public _createExportWordsRequest(keyId: string): ExportWordsRequest {
+        return {
+            appName: 'Accounts Demos',
+            keyId,
+        } as ExportWordsRequest;
+    }
+
+    public async exportFile(keyId: string) {
+        try {
+            const result = await this._accountsManagerClient.exportFile(this._createExportFileRequest(keyId));
+            console.log('Keyguard result', result);
+            document.querySelector('#result').textContent = 'TX signed';
+        } catch (e) {
+            console.error('Keyguard error', e);
+            document.querySelector('#result').textContent = `Error: ${e.message || e}`;
+        }
+        // return await this._accountsManagerClient.logout(keyId);
+    }
+
+    public _createExportFileRequest(keyId: string): ExportFileRequest {
+        return {
+            appName: 'Accounts Demos',
+            keyId,
+        } as ExportFileRequest;
+    }
+
     public async updateAccounts() {
         const keys = await this.list();
         console.log('Accounts in Manager:', keys);
@@ -230,15 +270,19 @@ class Demo {
         let html = '';
 
         keys.forEach(key => {
-            html += `<li>${key.label} <button class="logout" data-keyid="${key.id}">Logout</button><ul>`;
+            html += `<li>${key.label}
+                        <button class="export-words" data-keyid="${key.id}">Export Words</button>
+                        <button class="export-file" data-keyid="${key.id}">Export File</button>
+                        <button class="logout" data-keyid="${key.id}">Logout</button>
+                        <ul>`;
             key.addresses.forEach((acc, addr) => {
                 html += `
-                    <li>
-                        <label>
-                            <input type="radio" name="sign-tx-address" data-address="${addr}" data-keyid="${key.id}">
-                            ${acc.label}
-                        </label>
-                    </li>
+                            <li>
+                                <label>
+                                    <input type="radio" name="sign-tx-address" data-address="${addr}" data-keyid="${key.id}">
+                                    ${acc.label}
+                                </label>
+                            </li>
                 `;
             });
             html += '</ul></li>';
@@ -246,6 +290,12 @@ class Demo {
 
         $ul.innerHTML = html;
         (document.querySelector('input[type="radio"]') as HTMLInputElement).checked = true;
+        document.querySelectorAll('button.export-words').forEach( (element, key) => {
+            element.addEventListener('click', async () => this.exportWords(element.getAttribute('data-keyid')));
+        });
+        document.querySelectorAll('button.export-file').forEach( (element, key) => {
+            element.addEventListener('click', async () => this.exportFile(element.getAttribute('data-keyid')));
+        });
         document.querySelectorAll('button.logout').forEach( (element,key) =>{
             element.addEventListener('click', async () => this.logout(element.getAttribute('data-keyid')));
         });
