@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "paths": {
+      "config": [
+        "config.development.ts"
+      ]
+    }
+  }
+}

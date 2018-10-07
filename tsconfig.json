@@ -17,6 +17,9 @@
     "paths": {
       "@/*": [
         "src/*"
+      ],
+      "config": [
+        "config.development.ts"
       ]
     },
     "lib": [

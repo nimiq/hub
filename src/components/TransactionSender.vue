@@ -13,6 +13,7 @@ import {
 import {State as RpcState, ResponseStatus} from '@nimiq/rpc';
 import {State} from 'vuex-class';
 import {Static} from '../lib/StaticStore';
+import Config from 'config';
 
 @Component({components: {}})
 export default class TransactionSender extends Vue {
@@ -28,8 +29,14 @@ export default class TransactionSender extends Vue {
         // Load web assembly encryption library into browser (if supported)
         await Nimiq.WasmHelper.doImportBrowser();
 
-        // Configure to use test net for now
-        Nimiq.GenesisConfig.test();
+        switch (Config.network) {
+            case 'test':
+                Nimiq.GenesisConfig.test();
+            case 'main':
+                Nimiq.GenesisConfig.main();
+            default:
+                throw new Error('No network specified. Please check your config');
+        }
 
         let tx: Nimiq.Transaction;
 
