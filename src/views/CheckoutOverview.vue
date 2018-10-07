@@ -27,6 +27,7 @@ import {KeyInfo} from '../lib/KeyInfo';
 import {RequestType, ParsedCheckoutRequest} from '../lib/RequestTypes';
 import RpcApi from '../lib/RpcApi';
 import staticStore, {Static} from '../lib/StaticStore';
+import Config from 'config';
 
 @Component({components: {Amount, Account}})
 export default class CheckoutOverview extends Vue {
@@ -99,7 +100,7 @@ export default class CheckoutOverview extends Vue {
         });
         staticStore.keyguardRequest = storedRequest;
 
-        const client = RpcApi.createKeyguardClient(this.$store, staticStore);
+        const client = RpcApi.createKeyguardClient(this.$store, staticStore, Config.keyguardEndpoint);
         client.signTransaction(request).catch(console.error); // TODO: proper error handling
     }
 }

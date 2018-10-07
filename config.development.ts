@@ -1,4 +1,4 @@
 export default {
-    keyguardPath: 'localhost/src',
+    keyguardEndpoint: 'http://localhost:8000/src',
     network: 'test',
 };

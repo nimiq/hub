@@ -16,6 +16,7 @@ import RpcApi from '../lib/RpcApi';
 import {ImportRequest, ImportResult} from '@nimiq/keyguard-client';
 import {State as RpcState, ResponseStatus} from '@nimiq/rpc';
 import staticStore, {Static} from '../lib/StaticStore';
+import Config from 'config';
 
 @Component({components: {SmallPage}})
 export default class Login extends Vue {
@@ -35,7 +36,7 @@ export default class Login extends Vue {
             requestedKeyPaths: [0, 1, 2, 3, 4, 5].map((i) => `m/44'/242'/0'/${i}'`),
         };
 
-        const client = RpcApi.createKeyguardClient(this.$store, staticStore);
+        const client = RpcApi.createKeyguardClient(this.$store, staticStore, Config.keyguardEndpoint);
         client.import(request).catch(console.error); // TODO: proper error handling
     }
 

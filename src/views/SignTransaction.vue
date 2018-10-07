@@ -21,6 +21,7 @@ import {State as RpcState, ResponseStatus} from '@nimiq/rpc';
 import { KeyStore } from '@/lib/KeyStore';
 import { access } from 'fs';
 import staticStore, {Static} from '../lib/StaticStore';
+import Config from 'config';
 
 @Component({components: {SmallPage}})
 export default class SignTransaction extends Vue {
@@ -76,7 +77,7 @@ export default class SignTransaction extends Vue {
         });
         staticStore.keyguardRequest = storedRequest;
 
-        const client = RpcApi.createKeyguardClient(this.$store, staticStore);
+        const client = RpcApi.createKeyguardClient(this.$store, staticStore, Config.keyguardEndpoint);
         client.signTransaction(request).catch(console.error); // TODO: proper error handling
     }
 

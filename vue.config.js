@@ -15,7 +15,6 @@ const configureWebpack = {
           config: path.join(__dirname, `config.${buildName}.ts`)
         }
     },
-    
 };
 
 module.exports = {

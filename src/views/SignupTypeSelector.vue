@@ -29,6 +29,7 @@ import RpcApi from '../lib/RpcApi';
 import {CreateRequest as KCreateRequest, CreateResult as KCreateResult} from '@nimiq/keyguard-client';
 import {ResponseStatus, State as RpcState} from '@nimiq/rpc';
 import staticStore, {Static} from '../lib/StaticStore';
+import Config from 'config';
 
 @Component({components: {PageHeader, PageFooter}})
 export default class extends Vue {
@@ -37,7 +38,7 @@ export default class extends Vue {
     @State private activeAccountPath!: string;
 
     public createKeyguard() {
-        const client = RpcApi.createKeyguardClient(this.$store, staticStore);
+        const client = RpcApi.createKeyguardClient(this.$store, staticStore, Config.keyguardEndpoint);
 
         const request: KCreateRequest = {
             appName: this.request.appName,
