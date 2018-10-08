@@ -41,30 +41,30 @@ export default class Checkout extends Vue {
 
     .global-close {
         display: inline-block;
-        height: 27px;
-        border-radius: 13.5px;
+        height: 3.375rem;
+        border-radius: 50%;
         background-color: rgba(0, 0, 0, 0.1);
-        font-size: 14px;
+        font-size: 1.75rem;
         font-weight: 600;
-        line-height: 27px;
+        line-height: 3.375rem;
         color: white;
-        padding: 0 12px;
+        padding: 0 1.5rem;
         cursor: pointer;
-        margin-top: 64px;
-        margin-bottom: 40px;
+        margin-top: 8rem;
+        margin-bottom: 5rem;
     }
 
     .global-close::before {
         content: '';
         display: inline-block;
-        height: 11px;
-        width: 11px;
+        height: 1.375rem;
+        width: 1.375rem;
         background-image: url('data:image/svg+xml,<svg height="24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path fill="%23fff" d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>');
         background-repeat: no-repeat;
-        background-size: 16px;
+        background-size: 2rem;
         background-position: center;
-        margin-right: 8px;
-        margin-bottom: -1px;
+        margin-right: 1rem;
+        margin-bottom: -0.125rem;
     }
 
     .global-close.hidden {
