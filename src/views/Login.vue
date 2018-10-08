@@ -51,6 +51,7 @@ export default class Login extends Vue {
         display: flex;
         flex-direction: column;
         align-items: center;
+        width: 100%;
     }
 
     .global-close {
