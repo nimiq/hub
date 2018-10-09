@@ -132,6 +132,10 @@ export interface ParsedLogoutRequest {
     keyLabel?: string;
 }
 
+export interface LogoutResult {
+    success: boolean;
+}
+
 // Discriminated Unions
 export type RpcRequest = SignTransactionRequest
                        | CheckoutRequest

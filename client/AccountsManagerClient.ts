@@ -9,6 +9,7 @@ import {
     LoginRequest,
     LoginResult,
     LogoutRequest,
+    LogoutResult,
     SignTransactionRequest,
     SignTransactionResult,
     // ListResult,
@@ -65,7 +66,7 @@ export default class AccountsManagerClient {
         return this._request(requestBehavior, RequestType.LOGIN, [request]);
     }
 
-    public logout(request: LogoutRequest, requestBehavior = this._defaultBehavior): Promise<boolean> {
+    public logout(request: LogoutRequest, requestBehavior = this._defaultBehavior): Promise<LogoutResult> {
         return this._request(requestBehavior, RequestType.LOGOUT, [request]);
     }
 
