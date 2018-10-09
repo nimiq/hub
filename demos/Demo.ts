@@ -228,7 +228,7 @@ class Demo {
         try {
             const result = await this._accountsManagerClient.exportWords(this._createExportWordsRequest(keyId));
             console.log('Keyguard result', result);
-            document.querySelector('#result').textContent = 'TX signed';
+            document.querySelector('#result').textContent = 'Words exported';
         } catch (e) {
             console.error('Keyguard error', e);
             document.querySelector('#result').textContent = `Error: ${e.message || e}`;
@@ -247,7 +247,7 @@ class Demo {
         try {
             const result = await this._accountsManagerClient.exportFile(this._createExportFileRequest(keyId));
             console.log('Keyguard result', result);
-            document.querySelector('#result').textContent = 'TX signed';
+            document.querySelector('#result').textContent = 'File exported';
         } catch (e) {
             console.error('Keyguard error', e);
             document.querySelector('#result').textContent = `Error: ${e.message || e}`;
