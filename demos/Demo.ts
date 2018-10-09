@@ -7,7 +7,7 @@ import {
     SignupRequest, SignupResult,
     CheckoutRequest,
     LoginRequest, LoginResult,
-    LogoutRequest,
+    LogoutRequest, LogoutResult,
     SignTransactionRequest, SignTransactionResult,
 } from '../src/lib/RequestTypes';
 import { KeyStore } from '../src/lib/KeyStore';
@@ -202,16 +202,16 @@ class Demo {
         return await KeyStore.Instance.list();
     }
 
-    public async logout(keyId: string) {
+    public async logout(keyId: string): Promise<LogoutResult> {
         try {
             const result = await this._accountsManagerClient.logout(this._createLogoutRequest(keyId));
             console.log('Keyguard result', result);
             document.querySelector('#result').textContent = 'Key Removed';
+            return result;
         } catch (e) {
             console.error('Keyguard error', e);
             document.querySelector('#result').textContent = `Error: ${e.message || e}`;
         }
-        // return await this._accountsManagerClient.logout(keyId);
     }
 
     public _createLogoutRequest(keyId: string): LogoutRequest {
