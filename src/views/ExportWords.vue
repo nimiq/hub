@@ -13,7 +13,7 @@ import {SmallPage} from '@nimiq/vue-components';
 import {ParsedExportWordsRequest, ExportWordsResult} from '../lib/RequestTypes';
 import {State} from 'vuex-class';
 import RpcApi from '../lib/RpcApi';
-import {ExportWordsRequest, ExportWordsResult as KExportFileResult} from '@nimiq/keyguard-client';
+import {ExportWordsRequest, ExportWordsResult as KExportWordsResult} from '@nimiq/keyguard-client';
 import {State as RpcState, ResponseStatus} from '@nimiq/rpc';
 import staticStore, {Static} from '../lib/StaticStore';
 
