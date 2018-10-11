@@ -75,7 +75,7 @@ export default class extends Vue {
         padding: 2rem;
         border-radius: 0.5rem;
 
-        margin: 4rem 2rem;
+        margin: 0 4rem 2rem;
         border: solid 2px #e5e5e5;
         box-shadow: unset;
         width: auto;
