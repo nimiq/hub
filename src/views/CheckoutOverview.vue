@@ -113,11 +113,11 @@ export default class CheckoutOverview extends Vue {
     }
 
     h1 {
-        font-size: 24px;
-        line-height: 29px;
+        font-size: 3rem;
+        line-height: 3.625rem;
         font-weight: 300;
-        letter-spacing: 0.5px;
-        margin: 32px 32px 8px 32px;
+        letter-spacing: 0.021em;
+        margin: 4rem 4rem 1rem 4rem;
     }
 
     h1 .amount {
@@ -125,41 +125,41 @@ export default class CheckoutOverview extends Vue {
     }
 
     .data {
-        font-size: 16px;
+        font-size: 2rem;
         line-height: 1.3;
         opacity: 0.7;
-        padding: 8px 32px;
+        padding: 1rem 4rem;
     }
 
     .sender-section {
-        margin-top: 24px;
-        padding-bottom: 16px;
+        margin-top: 3rem;
+        padding-bottom: 2rem;
         border-top: solid 1px #f0f0f0;
         border-bottom: solid 1px #f0f0f0;
         background: #fafafa;
     }
 
     .sender-nav {
-        padding: 16px 16px 8px 16px;
+        padding: 2rem 2rem 1rem 2rem;
         display: flex;
         flex-direction: row;
         justify-content: space-between;
     }
 
     .sender-nav h2 {
-        margin: 8px;
-        font-size: 14px;
+        margin: 1rem;
+        font-size: 1.75rem;
         text-transform: uppercase;
         line-height: 0.86;
-        letter-spacing: 1.5px;
+        letter-spacing: 0.107;
         font-weight: 400;
     }
 
     .sender-nav button {
         background: #e5e5e5;
-        padding: 8px 14px;
+        padding: 1rem 1.75rem;
         width: unset;
-        font-size: 14px;
+        font-size: 1.75rem;
         line-height: 0.86;
         box-shadow: unset;
         text-transform: unset;
@@ -171,7 +171,7 @@ export default class CheckoutOverview extends Vue {
         flex-direction: column;
         justify-content: flex-end;
         align-items: center;
-        padding: 32px 64px;
+        padding: 4rem 8rem;
         flex-grow: 1;
     }
 
