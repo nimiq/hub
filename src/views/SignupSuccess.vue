@@ -115,7 +115,7 @@ export default class extends Vue {
         margin: 3rem;
         margin-bottom: 2rem;
         font-size: 3rem;
-        letter-spacing: 0.021;
+        letter-spacing: 0.021em;
         font-weight: 500;
     }
 

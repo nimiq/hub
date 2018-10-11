@@ -151,7 +151,7 @@ export default class CheckoutOverview extends Vue {
         font-size: 1.75rem;
         text-transform: uppercase;
         line-height: 0.86;
-        letter-spacing: 0.107;
+        letter-spacing: 0.143em;
         font-weight: 400;
     }
 
@@ -163,7 +163,7 @@ export default class CheckoutOverview extends Vue {
         line-height: 0.86;
         box-shadow: unset;
         text-transform: unset;
-        letter-spacing: 0;
+        letter-spacing: normal;
     }
 
     .page-footer {
