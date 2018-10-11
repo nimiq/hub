@@ -71,7 +71,7 @@ export default class extends Vue {
         font-weight: normal;
         text-transform: none;
         text-align: left;
-        letter-spacing: 0;
+        letter-spacing: normal;
         padding: 2rem;
         border-radius: 0.5rem;
 
