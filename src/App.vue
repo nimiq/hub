@@ -64,11 +64,13 @@ export default class App extends Vue {
         background-size: cover;
         background-attachment: fixed;
         font-size: 8px;
+        --nimiq-size: 8px; /* For @nimiq/vue-components */
     }
 
     @media (max-width: 450px) {
         html {
             font-size: 7px;
+            --nimiq-size: 7px; /* For @nimiq/vue-components */
         }
     }
 
