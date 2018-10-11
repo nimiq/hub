@@ -65,7 +65,7 @@ export default class App extends Vue {
         background-attachment: fixed;
         font-size: 8px;
     }
-    
+
     @media (max-width: 450px) {
         html {
             font-size: 7px;
@@ -149,8 +149,8 @@ export default class App extends Vue {
 
     .global-close {
         display: inline-block;
-        height: 3.375rem;
-        border-radius: 50%;
+        height: 3.5rem;
+        border-radius: 1.75rem;
         background-color: rgba(0, 0, 0, 0.1);
         font-size: 1.75rem;
         font-weight: 600;
