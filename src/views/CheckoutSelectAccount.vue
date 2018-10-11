@@ -1,6 +1,6 @@
 <template>
     <div class="visible-area">
-        <div class="multi-pages" :style="`transform: translate3d(-${(page - 1) * 450}px, 0, 0)`">
+        <div class="multi-pages" :style="`transform: translate3d(-${(page - 1) * 100}%, 0, 0)`">
             <LoginSelector @login-selected="loginSelected"
                             @account-selected="accountSelected"
                             @add-login="addLogin"
@@ -117,14 +117,8 @@ export default class CheckoutSelectAccount extends Vue {
         position: relative;
         flex: 1;
         display: grid;
-        grid-template-columns: 100vw 100vw;
+        grid-template-columns: 100% 100%;
         will-change: transform;
         transition: all 400ms ease-in-out;
-    }
-
-    @media (min-width: 450px) {
-        .multi-pages {
-            grid-template-columns: 450px 450px;
-        }
     }
 </style>
