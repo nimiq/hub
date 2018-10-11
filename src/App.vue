@@ -65,6 +65,12 @@ export default class App extends Vue {
         background-attachment: fixed;
         font-size: 8px;
     }
+    
+    @media (max-width: 450px) {
+        html {
+            font-size: 7px;
+        }
+    }
 
     body {
         font-size: 2.25rem;
