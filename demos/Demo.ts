@@ -233,7 +233,6 @@ class Demo {
             console.error('Keyguard error', e);
             document.querySelector('#result').textContent = `Error: ${e.message || e}`;
         }
-        // return await this._accountsManagerClient.logout(keyId);
     }
 
     public _createExportWordsRequest(keyId: string): ExportWordsRequest {
@@ -252,7 +251,6 @@ class Demo {
             console.error('Keyguard error', e);
             document.querySelector('#result').textContent = `Error: ${e.message || e}`;
         }
-        // return await this._accountsManagerClient.logout(keyId);
     }
 
     public _createExportFileRequest(keyId: string): ExportFileRequest {
