@@ -29,17 +29,13 @@ export default class Logout extends Vue {
             this.rpcState.reply(ResponseStatus.ERROR, this.keyguardResult);
         } else if (this.keyguardResult) return; // Keyguard success is handled in LogoutSuccess.vue
 
-        var label = this.request.keyLabel;
-        if (!this.request.keyLabel) {
-            const key = await KeyStore.Instance.get(this.request.keyId);
-            if (!key) throw new Error('KeyId not found');
-            label = key.label;
-        }
+        const key = await KeyStore.Instance.get(this.request.keyId);
+        if (!key) throw new Error('KeyId not found');
 
         const request: RemoveKeyRequest = {
             appName: this.request.appName,
             keyId: this.request.keyId,
-            keyLabel: label,
+            keyLabel: key.label,
         };
 
         const client = RpcApi.createKeyguardClient(this.$store, staticStore);

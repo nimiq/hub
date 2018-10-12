@@ -28,11 +28,11 @@ export default class LogoutSuccess extends Vue {
         if (this.keyguardResult.success === true) {
             KeyStore.Instance.remove(this.request.keyId);
         }
-        this.rpcState.reply(ResponseStatus.OK, this.keyguardResult);
     }
 
     @Emit()
     private close() {
+        this.rpcState.reply(ResponseStatus.OK, this.keyguardResult);
         window.close();
     }
 }

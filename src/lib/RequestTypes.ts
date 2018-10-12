@@ -122,14 +122,12 @@ export interface LogoutRequest {
     kind?: RequestType.LOGOUT;
     appName: string;
     keyId: string;
-    keyLabel?: string;
 }
 
 export interface ParsedLogoutRequest {
     kind: RequestType.LOGOUT;
     appName: string;
     keyId: string;
-    keyLabel?: string;
 }
 
 export interface LogoutResult {
@@ -204,7 +202,6 @@ export class AccountsRequest {
                     kind: RequestType.LOGOUT,
                     appName: request.appName,
                     keyId: request.keyId,
-                    keyLabel : request.keyLabel,
                 } as ParsedLogoutRequest;
             default:
                 return null;
@@ -251,12 +248,7 @@ export class AccountsRequest {
                     appName: request.appName,
                 } as LoginRequest;
             case RequestType.LOGOUT:
-            return {
-                kind: RequestType.LOGOUT,
-                appName: request.appName,
-                keyId: request.keyId,
-                keyLabel: request.keyLabel,
-            } as LogoutRequest;
+                return request as LogoutRequest;
             default:
                 return null;
         }
