@@ -7,7 +7,7 @@ export enum RequestType {
     SIGNUP = 'signup',
     LOGIN = 'login',
     EXPORT_WORDS = 'export-words',
-    EXPORT_FILE = 'export_file',
+    EXPORT_FILE = 'export-file',
     LOGOUT = 'logout',
 }
 
@@ -132,14 +132,12 @@ export interface ExportWordsRequest {
     kind?: RequestType.EXPORT_WORDS;
     appName: string;
     keyId: string;
-    keyLabel?: string;
 }
 
 export interface ParsedExportWordsRequest {
     kind: RequestType.EXPORT_WORDS;
     appName: string;
     keyId: string;
-    keyLabel?: string;
 }
 
 export interface ExportWordsResult {
@@ -150,14 +148,12 @@ export interface ExportFileRequest {
     kind?: RequestType.EXPORT_FILE;
     appName: string;
     keyId: string;
-    keyLabel?: string;
 }
 
 export interface ParsedExportFileRequest {
     kind: RequestType.EXPORT_FILE;
     appName: string;
     keyId: string;
-    keyLabel?: string;
 }
 
 export interface ExportFileResult {
@@ -252,7 +248,6 @@ export class AccountsRequest {
                     kind: RequestType.EXPORT_FILE,
                     appName: request.appName,
                     keyId: request.keyId,
-                    keyLabel: request.keyLabel,
                 } as ParsedExportFileRequest;
             case RequestType.EXPORT_WORDS:
                 request = request as ExportWordsRequest;
@@ -260,7 +255,6 @@ export class AccountsRequest {
                     kind: RequestType.EXPORT_WORDS,
                     appName: request.appName,
                     keyId: request.keyId,
-                    keyLabel: request.keyLabel,
                 } as ParsedExportWordsRequest;
             case RequestType.LOGOUT:
                 request = request as LogoutRequest;
@@ -314,19 +308,9 @@ export class AccountsRequest {
                     appName: request.appName,
                 } as LoginRequest;
             case RequestType.EXPORT_FILE:
-                return {
-                    kind: RequestType.EXPORT_FILE,
-                    appName: request.appName,
-                    keyId: request.keyId,
-                    keyLabel: request.keyLabel,
-                } as ExportFileRequest;
+                return request as ExportFileRequest;
             case RequestType.EXPORT_WORDS:
-                return {
-                    kind: RequestType.EXPORT_WORDS,
-                    appName: request.appName,
-                    keyId: request.keyId,
-                    keyLabel: request.keyLabel,
-                } as ExportWordsRequest;
+                return request as ExportWordsRequest;
             case RequestType.LOGOUT:
                 return request as LogoutRequest;
             default:
