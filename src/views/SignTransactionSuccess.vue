@@ -4,30 +4,40 @@
         <h1>Your transaction<br>is ready!</h1>
         <div style="flex-grow: 1;"></div>
         <button @click="done" :disabled="!isTxPrepared">Send now</button>
-        <TransactionSender ref="txSender"/>
+        <Network ref="network"/>
     </div>
 </template>
 
 <script lang="ts">
 import {Component, Vue} from 'vue-property-decorator';
-import TransactionSender from '@/components/TransactionSender.vue';
-import {ParsedSignTransactionRequest} from '../lib/RequestTypes';
-// import {State} from 'vuex-class';
+import Network from '@/components/Network.vue';
+import {ParsedSignTransactionRequest, SignTransactionResult} from '../lib/RequestTypes';
+import {State as RpcState, ResponseStatus} from '@nimiq/rpc';
+import {
+    SignTransactionRequest as KSignTransactionRequest,
+    SignTransactionResult as KSignTransactionResult,
+} from '@nimiq/keyguard-client';
+import {State} from 'vuex-class';
 import {Static} from '../lib/StaticStore';
 
-@Component({components: {TransactionSender}})
+@Component({components: {Network}})
 export default class SignTransactionSuccess extends Vue {
     @Static private request!: ParsedSignTransactionRequest;
+    @Static private rpcState!: RpcState;
+    @Static private keyguardRequest!: KSignTransactionRequest;
+    @State private keyguardResult!: KSignTransactionResult;
 
+    private result?: SignTransactionResult;
     private isTxPrepared: boolean = false;
 
     private async mounted() {
-        await (this.$refs.txSender as TransactionSender).prepare();
+        const tx = await (this.$refs.network as Network).prepareTx(this.keyguardRequest, this.keyguardResult);
+        this.result = (this.$refs.network as Network).makeSignTransactionResult(tx);
         this.isTxPrepared = true;
     }
 
     private done() {
-        (this.$refs.txSender as TransactionSender).send();
+        this.rpcState.reply(ResponseStatus.OK, this.result);
     }
 }
 </script>

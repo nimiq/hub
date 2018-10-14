@@ -1,34 +1,44 @@
 <template>
     <div class="success center">
         <div class="icon-checkmark-circle"></div>
-        <h1>Your payment<br>was successfull!</h1>
+        <h1>Your payment<br>is beeing sent.<br>Please wait...</h1>
         <div style="flex-grow: 1;"></div>
-        <button @click="done" :disabled="!isTxPrepared">Back to store</button>
-        <TransactionSender ref="txSender"/>
+        <button @click="done" :disabled="!isTxSent">Back to store</button>
+        <Network ref="network"/>
     </div>
 </template>
 
 <script lang="ts">
 import {Component, Emit, Vue} from 'vue-property-decorator';
-import TransactionSender from '@/components/TransactionSender.vue';
+import Network from '@/components/Network.vue';
 // import {RequestType, ParsedCheckoutRequest} from '../lib/RequestTypes';
-// import {State} from 'vuex-class';
-// import {Static} from '../lib/StaticStore';
+import { SignTransactionResult } from '@/lib/RequestTypes';
+import {State as RpcState, ResponseStatus} from '@nimiq/rpc';
+import {
+    SignTransactionRequest as KSignTransactionRequest,
+    SignTransactionResult as KSignTransactionResult,
+} from '@nimiq/keyguard-client';
+import {State} from 'vuex-class';
+import {Static} from '../lib/StaticStore';
 
-@Component({components: {TransactionSender}})
+@Component({components: {Network}})
 export default class CheckoutSuccess extends Vue {
     // @Static private request!: ParsedCheckoutRequest;
+    @Static private rpcState!: RpcState;
+    @Static private keyguardRequest!: KSignTransactionRequest;
+    @State private keyguardResult!: KSignTransactionResult;
 
-    private isTxPrepared: boolean = false;
+    private result?: SignTransactionResult;
+    private isTxSent: boolean = false;
 
     private async mounted() {
-        await (this.$refs.txSender as TransactionSender).prepare();
-        // this.isTxPrepared = true;
-        (this.$refs.txSender as TransactionSender).send();
+        const tx = await (this.$refs.network as Network).prepareTx(this.keyguardRequest, this.keyguardResult);
+        this.result = await (this.$refs.network as Network).sendToNetwork(tx);
+        this.isTxSent = true;
     }
 
     private done() {
-        // (this.$refs.txSender as TransactionSender).send();
+        this.rpcState.reply(ResponseStatus.OK, this.result);
     }
 }
 </script>
