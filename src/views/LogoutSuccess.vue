@@ -33,7 +33,6 @@ export default class LogoutSuccess extends Vue {
     @Emit()
     private close() {
         this.rpcState.reply(ResponseStatus.OK, this.keyguardResult);
-        window.close();
     }
 }
 </script>
