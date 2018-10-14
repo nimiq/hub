@@ -114,6 +114,7 @@ class Demo {
             const value = parseInt((document.querySelector('#value') as HTMLInputElement).value) || 1337;
             const fee = parseInt((document.querySelector('#fee') as HTMLInputElement).value) || 0;
             const txData = (document.querySelector('#data') as HTMLInputElement).value || '';
+            const validityStartHeight = (document.querySelector('#validitystartheight') as HTMLInputElement).value || '1234';
 
             return {
                 appName: 'Accounts Demos',
@@ -123,7 +124,7 @@ class Demo {
                 value,
                 fee,
                 extraData: Nimiq.BufferUtils.fromAscii(txData),
-                validityStartHeight: 1234,
+                validityStartHeight: parseInt(validityStartHeight),
             };
         }
 
@@ -229,7 +230,7 @@ class Demo {
         let html = '';
 
         keys.forEach(key => {
-            html += `<li>${key.label}<button class="logout" data-keyid="${key.id}">Logout</button><ul>`;
+            html += `<li>${key.label} <button class="logout" data-keyid="${key.id}">Logout</button><ul>`;
             key.addresses.forEach((acc, addr) => {
                 html += `
                     <li>
