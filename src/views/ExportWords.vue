@@ -1,9 +1,9 @@
 <template>
     <div class="container">
-        <small-page v-if="$route.name === `export-file-success`">
+        <small-page v-if="$route.name === `export-words-success`">
             <router-view/>
         </small-page>
-        <!-- <a class="global-close" :class="{hidden: $route.name === `export-file-success`}" @click="close">Back to {{ request.appName }}</a> -->
+        <!-- <a class="global-close" :class="{hidden: $route.name === `export-words-success`}" @click="close">Back to {{ request.appName }}</a> -->
     </div>
 </template>
 
@@ -27,12 +27,7 @@ export default class ExportWords extends Vue {
     public async created() {
         if (this.keyguardResult instanceof Error) {
             this.rpcState.reply(ResponseStatus.ERROR, this.keyguardResult);
-        } else if (this.keyguardResult) {
-            const result = {
-                success: this.keyguardResult.success,
-            } as ExportWordsResult;
-            this.rpcState.reply(ResponseStatus.OK, result);
-        }
+        } else if (this.keyguardResult) return;
 
         const key = await KeyStore.Instance.get(this.request.keyId);
         if (!key) throw new Error('KeyId not found');
@@ -46,11 +41,6 @@ export default class ExportWords extends Vue {
         const client = RpcApi.createKeyguardClient(this.$store, staticStore);
         client.exportWords(request).catch(console.error); // TODO: proper error handling
     }
-
-    // @Emit()
-    // private close() {
-    //    this.rpcState.reply(ResponseStatus.ERROR, new Error('CANCEL'));
-    // }
 }
 </script>
 
