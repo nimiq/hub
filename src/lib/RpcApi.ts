@@ -3,14 +3,14 @@ import {RootState} from '@/store';
 import {Store} from 'vuex';
 import Router from 'vue-router';
 import {AccountsRequest, RequestType, RpcRequest} from '@/lib/RequestTypes';
-import {KeyguardCommand, RequestBehavior, KeyguardClient} from '@nimiq/keyguard-client';
+import {KeyguardCommand, RedirectRequestBehavior, KeyguardClient} from '@nimiq/keyguard-client';
 import {keyguardResponseRouter} from '@/router';
 import {StaticStore} from '@/lib/StaticStore';
 
 export default class RpcApi {
 
     public static createKeyguardClient(store: Store<RootState>, staticStore: StaticStore, endpoint?: string) {
-        const behavior = new RequestBehavior(undefined, RpcApi.exportState(store, staticStore));
+        const behavior = new RedirectRequestBehavior(undefined, RpcApi.exportState(store, staticStore));
         const client = new KeyguardClient(endpoint, behavior);
         return client;
     }

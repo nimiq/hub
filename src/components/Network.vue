@@ -1,5 +1,8 @@
 <template>
-    <div></div>
+    <div class="network loading" :class="!visible || consensusEstablished ? 'hidden' : ''">
+        <div class="loading-animation"></div>
+        <div class="loading-status">{{ status }}</div>
+    </div>
 </template>
 
 <script lang="ts">
@@ -13,7 +16,16 @@ import {NetworkClient, PlainTransaction} from '@nimiq/network-client';
 
 @Component({components: {}})
 export default class Network extends Vue {
+    @Prop(Boolean) private visible?: boolean;
+    @Prop(String) private message?: string;
+
     private _networkClient!: NetworkClient;
+    private consensusEstablished: boolean = false;
+
+    public async connect() {
+        // Load network iframe and autoconnect
+        await this._getNetworkClient();
+    }
 
     // Uint8Arrays cannot be stored in SessionStorage, thus the stored request has arrays instead and is
     // thus not exactly the type KSignTransactionRequest.
@@ -108,6 +120,11 @@ export default class Network extends Vue {
         return client.getBalance(addresses);
     }
 
+    private created() {
+        this.$on('consensus-established', () => this.consensusEstablished = true);
+        this.$on('consensus-lost', () => this.consensusEstablished = false);
+    }
+
     private async _getNetworkClient(): Promise<NetworkClient> {
         if (this._networkClient) return this._networkClient;
 
@@ -143,5 +160,48 @@ export default class Network extends Vue {
             console.error(e);
         }
     }
+
+    private get status(): string {
+        return this.message || 'Establishing consensus';
+    }
 }
 </script>
+
+<style scoped>
+    .network {
+        width: 100%;
+        height: 20rem;
+        background: #724ceb;
+        color: white;
+        border-radius: 0.5rem;
+        flex-shrink: 0;
+        padding: 3rem;
+        box-sizing: border-box;
+    }
+
+    .network.hidden {
+        display: none;
+    }
+
+    .loading {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .loading-status {
+        margin-top: 2rem;
+    }
+
+    .loading-animation {
+        opacity: 1;
+        background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCIgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0Ij48c3R5bGU+QGtleWZyYW1lcyBkYXNoLWFuaW1hdGlvbiB7IHRvIHsgdHJhbnNmb3JtOiByb3RhdGUoMjQwZGVnKSB0cmFuc2xhdGVaKDApOyB9IH0gI2NpcmNsZSB7IGFuaW1hdGlvbjogM3MgZGFzaC1hbmltYXRpb24gaW5maW5pdGUgbGluZWFyOyB0cmFuc2Zvcm06IHJvdGF0ZSgtMTIwZGVnKSB0cmFuc2xhdGVaKDApOyB0cmFuc2Zvcm0tb3JpZ2luOiBjZW50ZXI7IH08L3N0eWxlPjxkZWZzPjxjbGlwUGF0aCBpZD0iaGV4Q2xpcCI+PHBhdGggY2xpcC1ydWxlPSJldmVub2RkIiBkPSJNMTYgNC4yOWgzMkw2NCAzMiA0OCA1OS43MUgxNkwwIDMyem00LjYyIDhoMjIuNzZMNTQuNzYgMzIgNDMuMzggNTEuNzFIMjAuNjJMOS4yNCAzMnoiLz48L2NsaXBQYXRoPjwvZGVmcz48cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xNiA0LjI5aDMyTDY0IDMyIDQ4IDU5LjcxSDE2TDAgMzJ6bTQuNjIgOGgyMi43Nkw1NC43NiAzMiA0My4zOCA1MS43MUgyMC42Mkw5LjI0IDMyeiIgZmlsbD0iI2ZmZiIgb3BhY2l0eT0iLjIiLz48ZyBjbGlwLXBhdGg9InVybCgjaGV4Q2xpcCkiPjxjaXJjbGUgaWQ9ImNpcmNsZSIgY3g9IjMyIiBjeT0iMzIiIHI9IjE2IiBmaWxsPSJub25lIiBzdHJva2Utd2lkdGg9IjMyIiBzdHJva2U9IiNGNkFFMkQiIHN0cm9rZS1kYXNoYXJyYXk9IjE2LjY2NiA4NC42NjYiLz48L2c+PC9zdmc+');
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: 100%;
+        z-index: 1;
+        display: block;
+        height: 10rem;
+        width: 10rem;
+    }
+</style>

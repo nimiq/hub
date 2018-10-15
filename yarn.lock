@@ -790,10 +790,10 @@
     levelup "^2.0.2"
     node-lmdb "0.6.0"
 
-"@nimiq/keyguard-client@^0.0.17":
-  version "0.0.17"
-  resolved "https://registry.yarnpkg.com/@nimiq/keyguard-client/-/keyguard-client-0.0.17.tgz#1126472dd3300186a1943895e35a6b9914ddab95"
-  integrity sha512-Cv/46mkQfpyiQc5tnKUY1T4WZIYkyIauTY1xoTJXqoA2KbahkRNmUb5CRzIw2AqYc3U9HjAdKF043hRP/XgAZg==
+"@nimiq/keyguard-client@^0.0.18":
+  version "0.0.18"
+  resolved "https://registry.yarnpkg.com/@nimiq/keyguard-client/-/keyguard-client-0.0.18.tgz#5cc157b091fb818d3a97d120b1df403a8aa86f1f"
+  integrity sha512-nf7/oIO0KI3+mb4/jAW9eSfgujwBpaO4RVfLcy+aF3ODS2zwAUiy+Pzn1hVrmgh0zsJtb6/MAm46n3+I36rdKw==
   dependencies:
     "@nimiq/rpc" "^0.0.10"
 
@@ -827,7 +827,7 @@
 
 "@nimiq/vue-components@https://github.com/nimiq/vue-components.git#built":
   version "0.1.0"
-  resolved "https://github.com/nimiq/vue-components.git#aa9897b276b27d7fafb061b030cf6ca614e60f88"
+  resolved "https://github.com/nimiq/vue-components.git#b04d8b1f92e5047eadaedd88c37537b28489100b"
   dependencies:
     "@nimiq/iqons" "https://github.com/nimiq/iqons.git#a3302e06b0a53b6daeb745d13dbfd930b304c791"
     "@nimiq/secure-utils" "https://github.com/nimiq/secure-utils.git#3937c23c2703d5359eebe2c3bf7b3c9290b26100"
