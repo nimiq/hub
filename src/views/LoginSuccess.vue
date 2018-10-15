@@ -45,6 +45,14 @@ export default class LoginSuccess extends Vue {
     private walletLabel: string = 'Keyguard Wallet';
     private defaultAccountLabel: string = 'Standard Account';
 
+    /**
+     * Maps are not supported by Vue's reactivity system, thus updates to a Map do not trigger
+     * an update of the DOM. To work around that, a second reactive attribute is added (a plain
+     * number) which is incremented each time the Map is updated. The DOM is then fed not by the
+     * Map itself, but by a computed property (`this.accounts` in this case), which uses both the
+     * non-reactive Map and the reactive partner-attribute. The partner-attribute change triggers
+     * the recomputation, which in turn updates the DOM.
+     */
     private addresses: Map<string, AddressInfo> = new Map();
     private addressesUpdateCount: number = 0;
 
@@ -54,6 +62,9 @@ export default class LoginSuccess extends Vue {
     private result?: LoginResult;
 
     private async mounted() {
+        // The Keyguard always returns (at least) one derived Address,
+        // thus we can already create a complete KeyInfo object that
+        // can be displayed while waiting for the network.
         this.keyguardResult.addresses.forEach((addressObj) => {
             const address = new Nimiq.Address(addressObj.address);
             const addressInfo = new AddressInfo(
@@ -62,7 +73,7 @@ export default class LoginSuccess extends Vue {
                 address,
             );
             this.addresses.set(addressInfo.userFriendlyAddress, addressInfo);
-            this.addressesUpdateCount += 1;
+            this.addressesUpdateCount += 1; // Trigger DOM update via computed property `this.accounts`
         });
 
         this.storeAndUpdateResult();
@@ -100,24 +111,35 @@ export default class LoginSuccess extends Vue {
         // The standard dictates that account detection terminates
         // when 20 consecutive unused addresses have been found.
         if (this.lastDerivedIndex >= this.lastActiveIndex + 20) {
-            // this.finished();
+            // End condition
             return;
         }
 
+        // 1. Generate paths to derive
+
+        // To be able to use the lastDerivedIndex as the index for the pathsToDerive array,
+        // we need to fill it up until (and including) the lastDerivedIndex with `empty` values.
         const pathsToDerive: string[] = new Array(this.lastDerivedIndex + 1);
 
+        // We can then push the paths of the relevant addresses onto the end of the array
         for (let i = this.lastDerivedIndex + 1; i <= this.lastActiveIndex + 20; i++) {
             pathsToDerive.push(`m/44'/242'/0'/${i}'`);
         }
 
+        // 2. Derive addresses from paths
+
         // FIXME: Use LedgerClient here for LEDGER keys
         const rawAddresses = await this.keyguard.deriveAddresses(
             this.keyguardResult.keyId,
-            pathsToDerive.slice(this.lastDerivedIndex + 1),
+            pathsToDerive.slice(this.lastDerivedIndex + 1), // We don't want to send `empty` paths into the Keyguard
         );
         const userFriendlyAddresses = rawAddresses.map((rawAddr) => new Nimiq.Address(rawAddr).toUserFriendlyAddress());
 
+        // 3. Get balances for the derived addresses
+
         const balances = await this.network.getBalances(userFriendlyAddresses);
+
+        // 4. Find addresses with a non-zero balance and add them to the wallet
 
         balances.forEach((balance: number, userFriendlyAddress: string) => {
             this.lastDerivedIndex += 1;
@@ -127,6 +149,9 @@ export default class LoginSuccess extends Vue {
             this.lastActiveIndex = this.lastDerivedIndex;
 
             this.addresses.set(userFriendlyAddress, new AddressInfo(
+                // This is where the pre-filled pathsToDerive array from above becomes usefull.
+                // It relieves us from having to calulate the correct array index with an
+                // unrelated counter variable.
                 pathsToDerive[this.lastDerivedIndex],
                 this.defaultAccountLabel,
                 Nimiq.Address.fromUserFriendlyAddress(userFriendlyAddress),
@@ -136,6 +161,9 @@ export default class LoginSuccess extends Vue {
         });
 
         this.storeAndUpdateResult();
+
+        // 5. Continue search (the end condition is checked at the beginning of the next iteration)
+
         this.findAccounts();
     }
 

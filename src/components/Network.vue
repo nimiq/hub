@@ -28,7 +28,8 @@ export default class Network extends Vue {
     }
 
     // Uint8Arrays cannot be stored in SessionStorage, thus the stored request has arrays instead and is
-    // thus not exactly the type KSignTransactionRequest.
+    // thus not exactly the type KSignTransactionRequest. Thus all potential Uint8Arrays are converted
+    // into Nimiq.SerialBuffers (sender, recipient, data).
     public async prepareTx(
         keyguardRequest: KSignTransactionRequest,
         keyguardResult: KSignTransactionResult,
@@ -73,7 +74,11 @@ export default class Network extends Vue {
         return tx;
     }
 
-    public makeSignTransactionResult(tx: Nimiq.Transaction) {
+    /**
+     * The result of this method can also be used as a PlainTransaction
+     * for all relevant nano-api methods.
+     */
+    public makeSignTransactionResult(tx: Nimiq.Transaction): SignTransactionResult {
         const proof = Nimiq.SignatureProof.unserialize(new Nimiq.SerialBuffer(tx.proof));
 
         const result: SignTransactionResult = {
@@ -102,7 +107,11 @@ export default class Network extends Vue {
         return result;
     }
 
-    public async sendToNetwork(tx: Nimiq.Transaction) {
+    /**
+     * Relays the transaction to the network and only returns when the network
+     * fires its 'transaction-relayed' event for that transaction.
+     */
+    public async sendToNetwork(tx: Nimiq.Transaction): Promise<SignTransactionResult> {
         const txObj = this.makeSignTransactionResult(tx);
         const client = await this._getNetworkClient();
 
@@ -115,7 +124,7 @@ export default class Network extends Vue {
         });
     }
 
-    public async getBalances(addresses: string[]) {
+    public async getBalances(addresses: string[]): Promise<Map<string, number>> {
         const client = await this._getNetworkClient();
         return client.getBalance(addresses);
     }
