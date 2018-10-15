@@ -27,12 +27,7 @@ export default class ExportFile extends Vue {
     public async created() {
         if (this.keyguardResult instanceof Error) {
             this.rpcState.reply(ResponseStatus.ERROR, this.keyguardResult);
-        } else if (this.keyguardResult) {
-            const result = {
-                success: this.keyguardResult.success,
-            } as ExportFileResult;
-            this.rpcState.reply(ResponseStatus.OK, result);
-        }
+        } else if (this.keyguardResult) return;
 
         const key = await KeyStore.Instance.get(this.request.keyId);
         if (!key) throw new Error('KeyId not found');
@@ -46,11 +41,6 @@ export default class ExportFile extends Vue {
         const client = RpcApi.createKeyguardClient(this.$store, staticStore);
         client.exportFile(request).catch(console.error); // TODO: proper error handling
     }
-
-    // @Emit()
-    // private close() {
-    //    this.rpcState.reply(ResponseStatus.ERROR, new Error('CANCEL'));
-    // }
 }
 </script>
 
