@@ -94,12 +94,17 @@ export default class LoginSuccess extends Vue {
             this.network = this.$refs.network as Network;
             await this.network.connect();
 
-            // Get balance of first account (which was already returned from the Keyguard)
-            const addressInfo = this.addresses.values().next().value;
-            const userFriendlyAddress = addressInfo.userFriendlyAddress;
-            const balance = await this.network.getBalances([userFriendlyAddress]);
-            addressInfo.balance = Nimiq.Policy.coinsToSatoshis(balance.get(userFriendlyAddress) || 0);
-            this.addresses.set(userFriendlyAddress, addressInfo);
+            // Get balance of all accounts which were already returned from the Keyguard.
+            // FIXME: Maybe this can be included in the first iteration of `this.findAccounts()`,
+            //        but take care that at least one account is still added to the wallet,
+            //        even when all first 20 accounts have a balance of zero.
+            const userFriendlyAddresses = Array.from(this.addresses.keys());
+            const balances = await this.network.getBalances(userFriendlyAddresses);
+            userFriendlyAddresses.forEach((addr) => {
+                const addressInfo = this.addresses.get(addr);
+                addressInfo!.balance = balances.get(addr);
+                this.addresses.set(addr, addressInfo!);
+            });
             this.addressesUpdateCount += 1;
 
             // Kick off account detection
