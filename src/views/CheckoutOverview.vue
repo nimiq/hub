@@ -164,6 +164,7 @@ export default class CheckoutOverview extends Vue {
         box-shadow: unset;
         text-transform: unset;
         letter-spacing: normal;
+        height: auto;
     }
 
     .page-footer {
