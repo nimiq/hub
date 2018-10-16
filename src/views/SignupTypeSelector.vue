@@ -81,6 +81,9 @@ export default class extends Vue {
         width: auto;
         background: transparent;
         position: relative;
+
+        max-width: unset;
+        height: auto;
     }
 
     button h2 {
