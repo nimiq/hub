@@ -22,8 +22,8 @@ class IFrameApi {
 
     private static get allowedOrigin(): string {
         switch (window.location.origin) {
-            case 'https://accounts-next.nimiq.com': return 'https://safe-next.nimiq.com';
-            case 'https://accounts-next.nimiq-network.com': return 'https://safe-next.nimiq-network.com';
+            case 'https://accounts.nimiq.com': return 'https://safe-next.nimiq.com';
+            case 'https://accounts.nimiq-testnet.com': return 'https://safe-next.nimiq-testnet.com';
             default: return '*';
         }
     }
