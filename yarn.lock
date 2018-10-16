@@ -797,29 +797,29 @@
   dependencies:
     "@nimiq/rpc" "^0.0.10"
 
-"@nimiq/network-client@^0.0.4":
-  version "0.0.4"
-  resolved "https://registry.yarnpkg.com/@nimiq/network-client/-/network-client-0.0.4.tgz#dbb358e03d1758d2575a57e98763a1f3f1695a97"
-  integrity sha512-rBfBTG/i1dDQzpGebiLwNqrAK0TB39B63pcedlcHhgDy2klCXgVVrM/Kmouzj37HsmgBxkf/TVEUkZokex8qDA==
+"@nimiq/network-client@^0.0.5":
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/@nimiq/network-client/-/network-client-0.0.5.tgz#a0f032c934af37586edda3e0b70a6618ab2da6e0"
+  integrity sha512-X9/cosLu2AnJzNi78enrLsD0sjF1HzYNoq06ComZNmOI7XrOzsoSfdnSSq4m7cGnr+q8eiGrDRx1PXAuNG4OoA==
   dependencies:
-    "@nimiq/rpc-events" "^0.0.4"
+    "@nimiq/rpc-events" "^0.0.5"
 
-"@nimiq/rpc-events@^0.0.4":
-  version "0.0.4"
-  resolved "https://registry.yarnpkg.com/@nimiq/rpc-events/-/rpc-events-0.0.4.tgz#b1bea730af8200bc57ec2140a48b23de3c7b421a"
-  integrity sha512-nSGI7nMxudr1+C2S/QCRSm2+5cIV/qd44HwWWbQq87hP7j/VrevGKjgbl3z+k3OfHafdVUJoiD6FqTuxgLNJxQ==
+"@nimiq/rpc-events@^0.0.5":
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/@nimiq/rpc-events/-/rpc-events-0.0.5.tgz#7face10c875956aeee8f9b44e2184bcde5b6b203"
+  integrity sha512-eXZjpUgcJf6M4QBQ3ZcIpw5ZOcbVxdalmR0Q9UuWXXHlDSDrfrLcioNWCOm0FKD71mfluoR9SeLZoC72JBxNQw==
   dependencies:
-    "@nimiq/rpc" "^0.0.8"
+    "@nimiq/rpc" "^0.0.11"
 
 "@nimiq/rpc@^0.0.10":
   version "0.0.10"
   resolved "https://registry.yarnpkg.com/@nimiq/rpc/-/rpc-0.0.10.tgz#e8d9f7a31fcebe4080d086c8617c1b6115a9b728"
   integrity sha512-3SdW86kMhASPDuKeFVL2jETxBs4oM0KZHJJ4gvg1KW1ASbu7fG9faCLnqWaKtv5FN5jAg8n6iWPTxZvy74gS5g==
 
-"@nimiq/rpc@^0.0.8":
-  version "0.0.8"
-  resolved "https://registry.yarnpkg.com/@nimiq/rpc/-/rpc-0.0.8.tgz#699c9593bf3e9ed10e53555dfae533e1f188c3e0"
-  integrity sha512-EywZIZ8vIxwY1iWit//IruCVSeCWwSsxG52oYLIURXfPCR9L/Bb4dh1khTJRFPZqCD5kFs7XJNv0manS2yoNoQ==
+"@nimiq/rpc@^0.0.11":
+  version "0.0.11"
+  resolved "https://registry.yarnpkg.com/@nimiq/rpc/-/rpc-0.0.11.tgz#7230365640663827fb115e0d6456222de3b1c5e3"
+  integrity sha512-aSTQwsTeSH46ubRDHqB7x82Alq5a9PlMYJUgDVd/4ET1dMTLm+4sjaFiWho3+SjG2n5/v09XKlDUBFDaENYT6w==
 
 "@nimiq/secure-utils@https://github.com/nimiq/secure-utils.git#3937c23c2703d5359eebe2c3bf7b3c9290b26100":
   version "0.0.0"
