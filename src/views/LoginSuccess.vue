@@ -117,6 +117,7 @@ export default class LoginSuccess extends Vue {
         // when 20 consecutive unused addresses have been found.
         if (this.lastDerivedIndex >= this.lastActiveIndex + 20) {
             // End condition
+            this.keyguard.releaseKey(this.keyguardResult.keyId);
             return;
         }
 
