@@ -137,7 +137,7 @@ export default class Network extends Vue {
     private async _getNetworkClient(): Promise<NetworkClient> {
         if (this._networkClient) return this._networkClient;
 
-        this._networkClient = new NetworkClient('http://localhost:5000');
+        this._networkClient = new NetworkClient();
         await this._networkClient.init();
 
         this._networkClient.on('nimiq-api-ready', () => this.$emit('api-ready'));
