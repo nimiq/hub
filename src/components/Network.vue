@@ -108,7 +108,7 @@ export default class Network extends Vue {
     }
 
     /**
-     * Relays the transaction to the network and only returns when the network
+     * Relays the transaction to the network and only resolves when the network
      * fires its 'transaction-relayed' event for that transaction.
      */
     public async sendToNetwork(tx: Nimiq.Transaction): Promise<SignTransactionResult> {
