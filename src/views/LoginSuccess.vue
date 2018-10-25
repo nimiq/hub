@@ -199,10 +199,12 @@ export default class LoginSuccess extends Vue {
         KeyStore.Instance.put(this.keyInfo);
 
         this.result = {
+            keyId: this.keyInfo!.id,
+            label: this.keyInfo.label,
+            type: this.keyInfo.type,
             addresses: Array.from(this.addresses.values()).map((addressInfo) => ({
                 address: addressInfo.userFriendlyAddress,
                 label: addressInfo.label,
-                keyId: this.keyInfo!.id,
             })),
         };
     }

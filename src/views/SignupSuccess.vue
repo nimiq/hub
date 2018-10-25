@@ -66,9 +66,13 @@ export default class extends Vue {
 
     private async done() {
         const result: SignupResult = {
-            address: this.createdAddress!.toUserFriendlyAddress(),
-            label: this.accountLabel,
             keyId: this.keyguardResult.keyId,
+            label: this.walletLabel,
+            type: KeyStorageType.BIP39, // FIXME: Adapt when adding Ledger
+            address: {
+                address: this.createdAddress!.toUserFriendlyAddress(),
+                label: this.accountLabel,
+            },
         };
 
         this.rpcState.reply(ResponseStatus.OK, result);

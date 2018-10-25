@@ -1,3 +1,5 @@
+import { KeyStorageType } from './KeyInfo';
+
 export enum RequestType {
     LIST = 'list',
     CHECKOUT = 'checkout',
@@ -95,9 +97,13 @@ export interface ParsedSignupRequest {
 }
 
 export interface SignupResult {
-    address: string;
-    label: string;
     keyId: string;
+    label: string;
+    type: KeyStorageType;
+    address: {
+        address: string;
+        label: string;
+    };
 }
 
 export interface LoginRequest {
@@ -111,10 +117,12 @@ export interface ParsedLoginRequest {
 }
 
 export interface LoginResult {
+    keyId: string;
+    label: string;
+    type: KeyStorageType;
     addresses: Array<{
-        address: string,
-        label: string,
-        keyId: string,
+        address: string;
+        label: string;
     }>;
 }
 
