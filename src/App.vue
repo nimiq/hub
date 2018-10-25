@@ -199,8 +199,10 @@ export default class App extends Vue {
         text-transform: uppercase;
         letter-spacing: 0.094em;
         width: 100%;
+        height: 8rem;
+        max-width: 41rem;
         border-radius: 4rem;
-        padding: 2.75rem 6rem;
+        padding: 0 4rem;
         vertical-align: middle;
         display: table-cell;
         text-align: center;

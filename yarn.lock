@@ -790,14 +790,36 @@
     levelup "^2.0.2"
     node-lmdb "0.6.0"
 
-"@nimiq/keyguard-client@^0.0.16":
-  version "0.0.16"
-  resolved "https://registry.yarnpkg.com/@nimiq/keyguard-client/-/keyguard-client-0.0.16.tgz#fd4e7410465a98d2e08d0ce0c5083e07c4c124a4"
+"@nimiq/keyguard-client@^0.0.18":
+  version "0.0.18"
+  resolved "https://registry.yarnpkg.com/@nimiq/keyguard-client/-/keyguard-client-0.0.18.tgz#5cc157b091fb818d3a97d120b1df403a8aa86f1f"
+  integrity sha512-nf7/oIO0KI3+mb4/jAW9eSfgujwBpaO4RVfLcy+aF3ODS2zwAUiy+Pzn1hVrmgh0zsJtb6/MAm46n3+I36rdKw==
+  dependencies:
+    "@nimiq/rpc" "^0.0.10"
+
+"@nimiq/network-client@^0.0.6":
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/@nimiq/network-client/-/network-client-0.0.6.tgz#6a55505c193ea05303e87b280bab3a021a041478"
+  integrity sha512-TBh/1V736/uT7JPVnBZBTvt6Ue2wagMggdO6IQg4Wiukv2vtnwfScpjfYnZS1Ze2cBFIzYLV+SN/qsVoX+2zKQ==
+  dependencies:
+    "@nimiq/rpc-events" "^0.0.5"
+
+"@nimiq/rpc-events@^0.0.5":
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/@nimiq/rpc-events/-/rpc-events-0.0.5.tgz#7face10c875956aeee8f9b44e2184bcde5b6b203"
+  integrity sha512-eXZjpUgcJf6M4QBQ3ZcIpw5ZOcbVxdalmR0Q9UuWXXHlDSDrfrLcioNWCOm0FKD71mfluoR9SeLZoC72JBxNQw==
+  dependencies:
+    "@nimiq/rpc" "^0.0.11"
 
 "@nimiq/rpc@^0.0.10":
   version "0.0.10"
   resolved "https://registry.yarnpkg.com/@nimiq/rpc/-/rpc-0.0.10.tgz#e8d9f7a31fcebe4080d086c8617c1b6115a9b728"
   integrity sha512-3SdW86kMhASPDuKeFVL2jETxBs4oM0KZHJJ4gvg1KW1ASbu7fG9faCLnqWaKtv5FN5jAg8n6iWPTxZvy74gS5g==
+
+"@nimiq/rpc@^0.0.11":
+  version "0.0.11"
+  resolved "https://registry.yarnpkg.com/@nimiq/rpc/-/rpc-0.0.11.tgz#7230365640663827fb115e0d6456222de3b1c5e3"
+  integrity sha512-aSTQwsTeSH46ubRDHqB7x82Alq5a9PlMYJUgDVd/4ET1dMTLm+4sjaFiWho3+SjG2n5/v09XKlDUBFDaENYT6w==
 
 "@nimiq/secure-utils@https://github.com/nimiq/secure-utils.git#3937c23c2703d5359eebe2c3bf7b3c9290b26100":
   version "0.0.0"
@@ -805,7 +827,7 @@
 
 "@nimiq/vue-components@https://github.com/nimiq/vue-components.git#built":
   version "0.1.0"
-  resolved "https://github.com/nimiq/vue-components.git#aa9897b276b27d7fafb061b030cf6ca614e60f88"
+  resolved "https://github.com/nimiq/vue-components.git#b04d8b1f92e5047eadaedd88c37537b28489100b"
   dependencies:
     "@nimiq/iqons" "https://github.com/nimiq/iqons.git#a3302e06b0a53b6daeb745d13dbfd930b304c791"
     "@nimiq/secure-utils" "https://github.com/nimiq/secure-utils.git#3937c23c2703d5359eebe2c3bf7b3c9290b26100"

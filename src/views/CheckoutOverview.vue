@@ -86,7 +86,7 @@ export default class CheckoutOverview extends Vue {
             recipientLabel: undefined, // TODO: recipient label
             value: this.request.value,
             fee: this.request.fee || 0, // TODO: proper fee estimation
-            validityStartHeight: 1234, // TODO: get valid start height
+            validityStartHeight: 176450, // TODO: get valid start height
             data: this.request.data,
             flags: this.request.flags,
             networkId: this.request.networkId,
@@ -164,6 +164,7 @@ export default class CheckoutOverview extends Vue {
         box-shadow: unset;
         text-transform: unset;
         letter-spacing: normal;
+        height: auto;
     }
 
     .page-footer {

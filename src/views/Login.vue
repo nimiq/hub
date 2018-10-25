@@ -32,7 +32,7 @@ export default class Login extends Vue {
         const request: ImportRequest = {
             appName: this.request.appName,
             defaultKeyPath: `m/44'/242'/0'/0'`,
-            requestedKeyPaths: [0, 1, 2, 3, 4, 5].map((i) => `m/44'/242'/0'/${i}'`),
+            requestedKeyPaths: [`m/44'/242'/0'/0'`],
         };
 
         const client = RpcApi.createKeyguardClient(this.$store, staticStore);

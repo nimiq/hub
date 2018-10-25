@@ -3,8 +3,8 @@ import {PostMessageRpcClient, RedirectRpcClient} from '@nimiq/rpc';
 
 export class RequestBehavior {
     public static getAllowedOrigin(endpoint: string) {
-        // FIXME derive from endpoint url
-        return '*';
+        const url = new URL(endpoint);
+        return url.origin;
     }
 
     private readonly _type: BehaviorType;
@@ -99,6 +99,8 @@ export class PopupRequestBehavior extends RequestBehavior {
 }
 
 export class IFrameRequestBehavior extends RequestBehavior {
+    private static IFRAME_PATH_SUFFIX = '/iframe.html';
+
     private _iframe: HTMLIFrameElement | null;
     private _client: PostMessageRpcClient | null;
 
@@ -109,7 +111,7 @@ export class IFrameRequestBehavior extends RequestBehavior {
     }
 
     public async request(endpoint: string, command: RequestType, args: any[]): Promise<any> {
-        if (this._iframe && this._iframe.src !== `${endpoint}/iframe.html`) {
+        if (this._iframe && this._iframe.src !== `${endpoint}${IFrameRequestBehavior.IFRAME_PATH_SUFFIX}`) {
             throw new Error('Accounts Manager iframe is already opened with another endpoint');
         }
 
@@ -136,7 +138,7 @@ export class IFrameRequestBehavior extends RequestBehavior {
             $iframe.name = 'NimiqAccountsIFrame';
             $iframe.style.display = 'none';
             document.body.appendChild($iframe);
-            $iframe.src = `${endpoint}/iframe.html`;
+            $iframe.src = `${endpoint}${IFrameRequestBehavior.IFRAME_PATH_SUFFIX}`;
             $iframe.onload = () => resolve($iframe);
             $iframe.onerror = reject;
         }) as Promise<HTMLIFrameElement>;
