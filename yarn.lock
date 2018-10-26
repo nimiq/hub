@@ -827,7 +827,7 @@
 
 "@nimiq/vue-components@https://github.com/nimiq/vue-components.git#built":
   version "0.1.0"
-  resolved "https://github.com/nimiq/vue-components.git#b04d8b1f92e5047eadaedd88c37537b28489100b"
+  resolved "https://github.com/nimiq/vue-components.git#e5e41ebd527f68d2d53a45d5b8a043fe3358ac55"
   dependencies:
     "@nimiq/iqons" "https://github.com/nimiq/iqons.git#a3302e06b0a53b6daeb745d13dbfd930b304c791"
     "@nimiq/secure-utils" "https://github.com/nimiq/secure-utils.git#3937c23c2703d5359eebe2c3bf7b3c9290b26100"
