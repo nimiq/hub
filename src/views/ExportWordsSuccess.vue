@@ -22,10 +22,7 @@ export default class ExportWordsSuccess extends Vue {
 
     @Emit()
     private close() {
-        const result = {
-            success: this.keyguardResult.success,
-        } as ExportWordsResult;
-        this.rpcState.reply(ResponseStatus.OK, result);
+        this.rpcState.reply(ResponseStatus.OK, this.keyguardResult);
     }
 }
 </script>
