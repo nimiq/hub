@@ -22,10 +22,7 @@ export default class ExportFileSuccess extends Vue {
 
     @Emit()
     private close() {
-        const result = {
-            success: this.keyguardResult.success,
-        } as ExportFileResult;
-        this.rpcState.reply(ResponseStatus.OK, result);
+        this.rpcState.reply(ResponseStatus.OK, this.keyguardResult);
     }
 }
 </script>
