@@ -1,35 +1,70 @@
 <template>
-    <div class="success center">
-        <div class="icon-checkmark-circle"></div>
-        <h1>Your payment<br>is beeing sent.<br>Please wait...</h1>
-        <div style="flex-grow: 1;"></div>
-        <button @click="done" :disabled="!isTxSent">Back to store</button>
+    <div class="checkout-success">
         <Network ref="network"/>
+        <div class="overview" v-if="!isTxSent">
+            <h1>You're sending <Amount :amount="request.value + request.fee"/> to</h1>
+            <Account :address="request.recipient" :label="originDomain"/>
+            <div v-if="plainData" class="data">{{ plainData }}</div>
+            <div class="sender-section">
+                <div class="sender-nav">
+                    <h2>Pay with</h2>
+                </div>
+                <Account v-if="activeAccount" :address="activeAccount.address" :label="activeAccount.label" :balance="activeAccount.balance"/>
+            </div>
+            <div class="loading">
+                <div class="loading-spinner" />
+            </div>
+        </div>
+        <div class="success center" v-if="isTxSent">
+            <div class="icon-checkmark-circle"></div>
+            <h1>Your payment<br>is beeing sent.<br>Please wait...</h1>
+            <div style="flex-grow: 1;"></div>
+            <button @click="done" :disabled="!isTxSent">Back to store</button>
+        </div>
     </div>
 </template>
 
 <script lang="ts">
 import {Component, Emit, Vue} from 'vue-property-decorator';
 import Network from '@/components/Network.vue';
+import {Amount, Account} from '@nimiq/vue-components';
 // import {RequestType, ParsedCheckoutRequest} from '../lib/RequestTypes';
-import { SignTransactionResult } from '@/lib/RequestTypes';
+import { SignTransactionResult, ParsedCheckoutRequest } from '@/lib/RequestTypes';
 import {State as RpcState, ResponseStatus} from '@nimiq/rpc';
 import {
     SignTransactionRequest as KSignTransactionRequest,
     SignTransactionResult as KSignTransactionResult,
 } from '@nimiq/keyguard-client';
-import {State} from 'vuex-class';
+import {State, Getter} from 'vuex-class';
 import {Static} from '../lib/StaticStore';
+import {AddressInfo} from '../lib/AddressInfo';
 
-@Component({components: {Network}})
+@Component({components: {Network, Amount, Account}})
 export default class CheckoutSuccess extends Vue {
     // @Static private request!: ParsedCheckoutRequest;
     @Static private rpcState!: RpcState;
     @Static private keyguardRequest!: KSignTransactionRequest;
+    @Static private request!: ParsedCheckoutRequest;
     @State private keyguardResult!: KSignTransactionResult;
+
+    @Getter private activeAccount!: AddressInfo | undefined;
 
     private result?: SignTransactionResult;
     private isTxSent: boolean = false;
+
+    private get originDomain() {
+        return this.rpcState.origin.split('://')[1];
+    }
+
+    private get plainData() {
+        if (!this.request.data) return undefined;
+
+        try {
+            return Nimiq.BufferUtils.toAscii(this.request.data);
+        } catch (err) {
+            return undefined;
+        }
+    }
 
     private async mounted() {
         const tx = await (this.$refs.network as Network).prepareTx(this.keyguardRequest, this.keyguardResult);
@@ -44,6 +79,90 @@ export default class CheckoutSuccess extends Vue {
 </script>
 
 <style scoped>
+    .overview {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+    }
+
+    .overview h1 {
+        font-size: 3rem;
+        line-height: 3.625rem;
+        font-weight: 300;
+        letter-spacing: 0.021em;
+        margin: 4rem 4rem 1rem 4rem;
+    }
+
+    .overview h1 .amount {
+        font-weight: 500;
+    }
+
+    .data {
+        font-size: 2rem;
+        line-height: 1.3;
+        opacity: 0.7;
+        padding: 1rem 4rem;
+    }
+
+    .sender-section {
+        margin-top: 3rem;
+        padding-bottom: 2rem;
+        border-top: solid 1px #f0f0f0;
+        border-bottom: solid 1px #f0f0f0;
+        background: #fafafa;
+    }
+
+    .sender-nav {
+        padding: 2rem 2rem 1rem 2rem;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    .sender-nav h2 {
+        margin: 1rem;
+        font-size: 1.75rem;
+        text-transform: uppercase;
+        line-height: 0.86;
+        letter-spacing: 0.143em;
+        font-weight: 400;
+    }
+
+    .sender-nav button {
+        background: #e5e5e5;
+        padding: 1rem 1.75rem;
+        width: unset;
+        font-size: 1.75rem;
+        line-height: 0.86;
+        box-shadow: unset;
+        text-transform: unset;
+        letter-spacing: normal;
+        height: auto;
+    }
+
+    .loading {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        flex-grow: 1;
+        margin: 1rem;
+        height: 150px;
+        border-radius: 4px;
+        background-color: #6843df;
+    }
+
+    .loading-spinner {
+        width: 42px;
+        height: 49px;
+        transform: rotate(-90deg);
+        border-radius: 4px;
+        border-style: solid;
+        border-width: 3px;
+        border-image-source: conic-gradient(#1de9b6, rgba(41, 226, 174, 0) 19%, #f5af2d, rgba(247, 107, 28, 0) 100%, #1de9b6 19%, #1de9b6);
+        border-image-slice: 1;
+    }
+
     .success {
         display: flex;
         flex-direction: column;
@@ -65,7 +184,7 @@ export default class CheckoutSuccess extends Vue {
         background-size: 100%;
     }
 
-    h1 {
+    .success h1 {
         font-size: 3.75rem;
         font-weight: 300;
         line-height: 1.3;
@@ -73,7 +192,7 @@ export default class CheckoutSuccess extends Vue {
         text-align: center;
     }
 
-    button {
+    .success button {
         color: #2a60dd;
         margin: 3rem 0;
     }
