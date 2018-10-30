@@ -4,21 +4,19 @@
         <transition name='fade-out'>
             <div class="overview" v-if="!isTxSent">
                 <h1>You're sending <Amount :amount="request.value + request.fee"/> to</h1>
-                    <Account :address="request.recipient" :label="originDomain"/>
-                    <div v-if="plainData" class="data">{{ plainData }}</div>
-                    <div class="sender-section">
-                        <div class="sender-nav">
-                            <h2>Pay with</h2>
-                        </div>
-                        <Account v-if="activeAccount" :address="activeAccount.address" :label="activeAccount.label" :balance="activeAccount.balance"/>
+                <Account :address="request.recipient" :label="originDomain"/>
+                <div v-if="plainData" class="data">{{ plainData }}</div>
+                <div class="sender-section">
+                    <div class="sender-nav">
+                        <h2>Pay with</h2>
                     </div>
+                    <Account v-if="activeAccount" :address="activeAccount.address" :label="activeAccount.label" :balance="activeAccount.balance"/>
                 </div>
-        </transition>
-        <transition name='fade-out-2'>
-            <div class="transmission" v-if="!isTxSent">
-                <div class="loading-spinner" />
             </div>
         </transition>
+        <div class="transmission" v-if="!isTxSent">
+                <div class="loading-spinner" />
+        </div>
         <transition name='fade-in'>
             <div class="success center" v-if="isTxSent">
                 <div class="icon-checkmark-circle"></div>
@@ -157,12 +155,7 @@ export default class CheckoutSuccess extends Vue {
         margin: 1rem;
         height: 150px;
         border-radius: 4px;
-    }
-
-    .waiting {
         background: #6843df;
-        width: 100%;
-        height: 100%;
     }
 
     .loading-spinner {
@@ -181,11 +174,13 @@ export default class CheckoutSuccess extends Vue {
         flex-direction: column;
         justify-content: flex-start;
         align-items: center;
+        align-self: flex-end;
         flex-grow: 1;
         margin: 1rem;
         color: white;
         padding: 0 6.75rem;
         background: #24bdb6;
+        overflow: hidden;
     }
 
     .icon-checkmark-circle {
@@ -198,29 +193,36 @@ export default class CheckoutSuccess extends Vue {
     }
 
     .fade-in-enter-active {
-      animation: enter 1s;
+        animation: enter 1s;
     }
 
     @keyframes enter {
-      0% {
-        background: #6843df;
-      }
-      100% {
-        background: #24bdb6;
-      }
+        0% {
+            background: #6843df;
+            height: fit-content;
+            max-height: 150px;
+        }
+
+        100% {
+            background: #24bdb6;
+            max-height: 450px;
+        }
     }
 
     .fade-out-leave-active {
-      animation: leave 0.5s;
+        animation: leave 0.8s;
     }
 
     @keyframes leave {
-      0% {
-        height: initial;
-      }
-      100% {
-        height: 0; 
-      }
+        0% {
+            max-height: 500px;
+            opacity: 1;
+        }
+
+        100% {
+            max-height: 0; 
+            opacity: 0;
+        }
     }
 
     .success h1 {
