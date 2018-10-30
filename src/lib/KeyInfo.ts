@@ -1,5 +1,5 @@
-import {AddressInfo, AddressInfoEntry} from '@/lib/AddressInfo';
-import {ContractInfo} from '@/lib/ContractInfo';
+import {AddressInfo, AddressInfoEntry} from './AddressInfo';
+import {ContractInfo} from './ContractInfo';
 
 export enum KeyStorageType {
     LEGACY,
