@@ -1,26 +1,32 @@
 <template>
     <div class="checkout-success">
         <Network ref="network"/>
-        <div class="overview" v-if="!isTxSent">
-            <h1>You're sending <Amount :amount="request.value + request.fee"/> to</h1>
-            <Account :address="request.recipient" :label="originDomain"/>
-            <div v-if="plainData" class="data">{{ plainData }}</div>
-            <div class="sender-section">
-                <div class="sender-nav">
-                    <h2>Pay with</h2>
+        <transition name='fade-out'>
+            <div class="overview" v-if="!isTxSent">
+                <h1>You're sending <Amount :amount="request.value + request.fee"/> to</h1>
+                    <Account :address="request.recipient" :label="originDomain"/>
+                    <div v-if="plainData" class="data">{{ plainData }}</div>
+                    <div class="sender-section">
+                        <div class="sender-nav">
+                            <h2>Pay with</h2>
+                        </div>
+                        <Account v-if="activeAccount" :address="activeAccount.address" :label="activeAccount.label" :balance="activeAccount.balance"/>
+                    </div>
                 </div>
-                <Account v-if="activeAccount" :address="activeAccount.address" :label="activeAccount.label" :balance="activeAccount.balance"/>
-            </div>
-            <div class="loading">
+        </transition>
+        <transition name='fade-out-2'>
+            <div class="transmission" v-if="!isTxSent">
                 <div class="loading-spinner" />
             </div>
-        </div>
-        <div class="success center" v-if="isTxSent">
-            <div class="icon-checkmark-circle"></div>
-            <h1>Your payment<br>is beeing sent.<br>Please wait...</h1>
-            <div style="flex-grow: 1;"></div>
-            <button @click="done" :disabled="!isTxSent">Back to store</button>
-        </div>
+        </transition>
+        <transition name='fade-in'>
+            <div class="success center" v-if="isTxSent">
+                <div class="icon-checkmark-circle"></div>
+                <h1>Your payment was successful!</h1>
+                <div style="flex-grow: 1;"></div>
+                <button @click="done">Back to store</button>
+            </div>
+        </transition>
     </div>
 </template>
 
@@ -67,6 +73,8 @@ export default class CheckoutSuccess extends Vue {
     }
 
     private async mounted() {
+        // TODO remove
+        window.setTimeout(() => { this.isTxSent = true; }, 500);
         const tx = await (this.$refs.network as Network).prepareTx(this.keyguardRequest, this.keyguardResult);
         this.result = await (this.$refs.network as Network).sendToNetwork(tx);
         this.isTxSent = true;
@@ -79,13 +87,13 @@ export default class CheckoutSuccess extends Vue {
 </script>
 
 <style scoped>
-    .overview {
+    .checkout-success {
         display: flex;
         flex-direction: column;
         flex-grow: 1;
     }
 
-    .overview h1 {
+    h1 {
         font-size: 3rem;
         line-height: 3.625rem;
         font-weight: 300;
@@ -93,7 +101,7 @@ export default class CheckoutSuccess extends Vue {
         margin: 4rem 4rem 1rem 4rem;
     }
 
-    .overview h1 .amount {
+    h1 .amount {
         font-weight: 500;
     }
 
@@ -140,7 +148,7 @@ export default class CheckoutSuccess extends Vue {
         height: auto;
     }
 
-    .loading {
+    .transmission {
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -149,7 +157,12 @@ export default class CheckoutSuccess extends Vue {
         margin: 1rem;
         height: 150px;
         border-radius: 4px;
-        background-color: #6843df;
+    }
+
+    .waiting {
+        background: #6843df;
+        width: 100%;
+        height: 100%;
     }
 
     .loading-spinner {
@@ -170,9 +183,9 @@ export default class CheckoutSuccess extends Vue {
         align-items: center;
         flex-grow: 1;
         margin: 1rem;
-        background: #24bdb6;
         color: white;
         padding: 0 6.75rem;
+        background: #24bdb6;
     }
 
     .icon-checkmark-circle {
@@ -182,6 +195,32 @@ export default class CheckoutSuccess extends Vue {
         background-image: url('data:image/svg+xml,<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100;" xml:space="preserve"><path d="M50,95C25.19,95,5,74.81,5,50S25.19,5,50,5s45,20.19,45,45S74.81,95,50,95z M50,0C22.43,0,0,22.43,0,50 s22.43,50,50,50s50-22.43,50-50S77.57,0,50,0z M81.41,29.11c-1.01-0.95-2.59-0.9-3.53,0.1L41.2,68.12L19.57,50.56 c-1.07-0.87-2.65-0.71-3.52,0.36c-0.87,1.07-0.71,2.65,0.36,3.52l23.44,19.02c0.46,0.38,1.02,0.56,1.58,0.56 c0.67,0,1.33-0.26,1.82-0.78l38.27-40.59C82.47,31.64,82.42,30.06,81.41,29.11z" fill="%23fff"/></svg>');
         background-repeat: no-repeat;
         background-size: 100%;
+    }
+
+    .fade-in-enter-active {
+      animation: enter 1s;
+    }
+
+    @keyframes enter {
+      0% {
+        background: #6843df;
+      }
+      100% {
+        background: #24bdb6;
+      }
+    }
+
+    .fade-out-leave-active {
+      animation: leave 0.5s;
+    }
+
+    @keyframes leave {
+      0% {
+        height: initial;
+      }
+      100% {
+        height: 0; 
+      }
     }
 
     .success h1 {
