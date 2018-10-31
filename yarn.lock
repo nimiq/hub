@@ -825,14 +825,13 @@
   version "0.0.0"
   resolved "https://github.com/nimiq/secure-utils.git#3937c23c2703d5359eebe2c3bf7b3c9290b26100"
 
-"@nimiq/vue-components@https://github.com/nimiq/vue-components.git#built":
+"@nimiq/vue-components@https://github.com/nimiq/vue-components.git#build/master":
   version "0.1.0"
-  resolved "https://github.com/nimiq/vue-components.git#b04d8b1f92e5047eadaedd88c37537b28489100b"
+  resolved "https://github.com/nimiq/vue-components.git#922ddd91eb47fee25e3deb8804492e906341593c"
   dependencies:
     "@nimiq/iqons" "https://github.com/nimiq/iqons.git#a3302e06b0a53b6daeb745d13dbfd930b304c791"
     "@nimiq/secure-utils" "https://github.com/nimiq/secure-utils.git#3937c23c2703d5359eebe2c3bf7b3c9290b26100"
     vue "^2.5.17"
-    vue-async-computed "^3.4.1"
     vue-property-decorator "^7.0.0"
 
 "@nodelib/fs.stat@^1.0.1":
@@ -9253,11 +9252,6 @@ vm-browserify@0.0.4:
   integrity sha1-XX6kW7755Kb/ZflUOOCofDV9WnM=
   dependencies:
     indexof "0.0.1"
-
-vue-async-computed@^3.4.1:
-  version "3.4.1"
-  resolved "https://registry.yarnpkg.com/vue-async-computed/-/vue-async-computed-3.4.1.tgz#b3923c177b38ab80cb767bbc09cca3dbbb25dd48"
-  integrity sha512-+nuT0vUGjMwpDf50/3E29gIcJEgAk3i7cP03CCjffptb7FsXjzVyJfLd5yqjMhmma4ovW5Wkh3blNRpWUG/amg==
 
 vue-class-component@^6.0.0, vue-class-component@^6.2.0:
   version "6.2.0"

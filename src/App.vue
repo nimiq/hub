@@ -51,7 +51,7 @@ export default class App extends Vue {
 </script>
 
 <style>
-    @import '../node_modules/@nimiq/vue-components/dist/vue-components.css';
+    @import '../node_modules/@nimiq/vue-components/dist/NimiqVueComponents.css';
 
     html, body {
         margin: 0;

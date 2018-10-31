@@ -38,7 +38,6 @@ export default class CheckoutSelectAccount extends Vue {
     private preselectedLoginId: string|null = null;
 
     private created() {
-        console.log('Keys:', this.keys);
         if (this.keys.length === 1) {
             this.preselectedLoginId = this.keys[0].id;
             this.page = 2;
@@ -83,13 +82,19 @@ export default class CheckoutSelectAccount extends Vue {
     }
 
     @Emit()
-    private accountSelected(loginId: string, address: Nimiq.Address) {
+    private accountSelected(loginId: string, address: string) {
         const key = this.keys.find((k: KeyInfo) => k.id === loginId);
-        if (!key) return;
+        if (!key) {
+            console.error('Selected Key not found:', loginId);
+            return;
+        }
 
         const addressInfo = Array.from(key.addresses.values())
-            .find((ai: AddressInfo) => ai.address.equals(address));
-        if (!addressInfo) return;
+            .find((ai: AddressInfo) => ai.userFriendlyAddress === address);
+        if (!addressInfo) {
+            console.error('Selected AddressInfo not found:', address);
+            return;
+        }
 
         this.$store.commit('setActiveAccount', {
             loginId: key.id,

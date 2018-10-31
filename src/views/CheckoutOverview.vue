@@ -1,14 +1,14 @@
 <template>
     <div class="checkout-overview">
         <h1>You're sending <Amount :amount="request.value + request.fee"/> to</h1>
-        <Account :address="request.recipient" :label="originDomain"/>
+        <Account :address="request.recipient.toUserFriendlyAddress()" :label="originDomain"/>
         <div v-if="plainData" class="data">{{ plainData }}</div>
         <div class="sender-section">
             <div class="sender-nav">
                 <h2>Pay with</h2>
                 <button @click="changeAccount">Change</button>
             </div>
-            <Account v-if="activeAccount" :address="activeAccount.address" :label="activeAccount.label" :balance="activeAccount.balance"/>
+            <Account v-if="activeAccount" :address="activeAccount.userFriendlyAddress" :label="activeAccount.label" :balance="activeAccount.balance"/>
         </div>
         <div class="page-footer">
             <button @click="proceed">Pay <Amount :amount="request.value + request.fee"/></button>
