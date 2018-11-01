@@ -5,7 +5,7 @@ import SignTransactionSuccess from './views/SignTransactionSuccess.vue';
 import Checkout from './views/Checkout.vue';
 import CheckoutOverview from './views/CheckoutOverview.vue';
 import CheckoutSelectAccount from './views/CheckoutSelectAccount.vue';
-import CheckoutSuccess from './views/CheckoutSuccess.vue';
+import CheckoutTransmission from './views/CheckoutTransmission.vue';
 import Signup from './views/Signup.vue';
 import SignupTypeSelector from './views/SignupTypeSelector.vue';
 import SignupSuccess from './views/SignupSuccess.vue';
@@ -97,7 +97,7 @@ export default new Router({
         {
           path: 'success',
           name: `${RequestType.CHECKOUT}-success`,
-          component: CheckoutSuccess,
+          component: CheckoutTransmission,
         },
       ],
     },
