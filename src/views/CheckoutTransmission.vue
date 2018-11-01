@@ -47,8 +47,6 @@ export default class CheckoutTransmission extends Vue {
     private isTxSent: boolean = false;
 
     private async mounted() {
-        // TODO remove
-        window.setTimeout(() => { this.isTxSent = true; }, 20000);
         const tx = await (this.$refs.network as Network).prepareTx(this.keyguardRequest, this.keyguardResult);
         this.result = await (this.$refs.network as Network).sendToNetwork(tx);
         this.isTxSent = true;
