@@ -73,10 +73,6 @@ export default class AccountsManagerClient {
         return this._request(requestBehavior, RequestType.LOGOUT, [request]);
     }
 
-    public list(requestBehavior = this._iframeBehavior)/*: Promise<ListResult> */ {
-        return this._request(requestBehavior, RequestType.LIST, []);
-    }
-
     public exportFile(
         request: ExportFileRequest,
         requestBehavior = this._defaultBehavior,
@@ -91,6 +87,13 @@ export default class AccountsManagerClient {
         return this._request(requestBehavior, RequestType.EXPORT_WORDS, [request]);
     }
 
+    /**
+     * Only accessible in iframe from Nimiq domains.
+     */
+    public list(requestBehavior = this._iframeBehavior)/*: Promise<ListResult> */ {
+        return this._request(requestBehavior, RequestType.LIST, []);
+    }
+
     // END API
 
     /* PRIVATE METHODS */
@@ -99,3 +102,5 @@ export default class AccountsManagerClient {
         return behavior.request(this._endpoint, command, args);
     }
 }
+
+export { RedirectRequestBehavior } from './RequestBehavior';

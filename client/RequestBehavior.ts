@@ -39,8 +39,7 @@ export class RedirectRequestBehavior extends RequestBehavior {
     constructor(returnUrl?: string, localState?: any) {
         super(BehaviorType.REDIRECT);
         const location = window.location;
-        this._returnUrl = returnUrl
-            || `${location.protocol}//${location.hostname}:${location.port}${location.pathname}`;
+        this._returnUrl = returnUrl || `${location.origin}${location.pathname}`;
         this._localState = localState || {};
 
         // Reject local state with reserved property.
