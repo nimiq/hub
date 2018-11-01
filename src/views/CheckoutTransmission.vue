@@ -23,7 +23,7 @@ import {Component, Emit, Vue} from 'vue-property-decorator';
 import Network from '@/components/Network.vue';
 import { SignTransactionResult, ParsedCheckoutRequest } from '@/lib/RequestTypes';
 import CheckoutDetails from '../components/CheckoutDetails.vue';
-import LoadingSpinner from '../components/LoadingSpinner.vue';
+import {LoadingSpinner} from '@nimiq/vue-components';
 import {State as RpcState, ResponseStatus} from '@nimiq/rpc';
 import {
     SignTransactionRequest as KSignTransactionRequest,
