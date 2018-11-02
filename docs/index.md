@@ -12,10 +12,10 @@ to interact with their users' Nimiq accounts.
   - [API Methods](#api-methods)
     - [Checkout](#checkout)
     - [Sign Transaction](#sign-transaction)
-  - [Sign Up](#sign-up)
-  - [Login](#login)
-  - [Logout](#logout)
-  - [Export](#export)
+    - [Sign Up](#sign-up)
+    - [Login](#login)
+    - [Logout](#logout)
+    - [Export](#export)
   - [Listening for redirect responses](#listening-for-redirect-responses)
 - [Running your own Accounts Manager](#running-your-own-accounts-manager)
 
@@ -215,7 +215,7 @@ const signTxResult = await accountsClient.signTransaction(requestOptions);
 ```
 The `signTransaction()` method returns the same `SignTransactionResult` type as the `checkout()` method.
 
-### Sign Up
+#### Sign Up
 The `signup()` method creates a new wallet in the user's **Keyguard** and **Accounts Manager**.
 ```javascript
 // Create the request options object
@@ -241,7 +241,7 @@ interface SignupResult {
 }
 ```
 
-### Login
+#### Login
 The `login()` method allows the user to add an existing wallet or legacy account to the **Accounts Manager** by
 importing their *Key File*, *Recovery Words* or legacy *Account Access File*. After a wallet has been imported, the
 **Accounts Manager** automatically detects active addresses following the
@@ -270,7 +270,7 @@ interface LoginResult {
 }
 ```
 
-### Logout
+#### Logout
 The `logout()` method enables a user to remove a wallet or legacy account from the **Keyguard** and
 **Accounts Manager**. During the logout process, the user is able to retrieve the wallet's *Key File* or
 *Recovery Words* before the key is deleted.
@@ -294,7 +294,7 @@ The `logout()` method returns a promise which resolves to a simple object contai
 }
 ```
 
-### Export
+#### Export
 The `export()` method enables a user to retrieve the *Key File* or *Recovery Words* of a wallet or legacy account.
 ```javascript
 // Create the request options object
