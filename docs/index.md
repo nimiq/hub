@@ -1,7 +1,8 @@
 # Nimiq Accounts
 
 Nimiq Accounts provides a unified interface for all Nimiq wallets, accounts and contracts. It is the primary interface
-via which users manage their wallets and which provides websites with a consise API to interact with Nimiq accounts.
+via which users manage their wallets and which provides websites and apps with a consise API to interact with their
+users' Nimiq accounts.
 
 ## The Accounts Client library
 
@@ -37,7 +38,10 @@ const accountsClient = new AccountsManagerClient('https://accounts.nimiq-testnet
 #### Using top-level redirects
 If you would rather use top-level redirects instead of popups, you can pass a second parameter to the initialization:
 ```javascript
-import { default as AccountsManagerClient, RedirectRequestBehavior } from '@nimiq/accounts-manager-client';
+import {
+    default as AccountsManagerClient,
+    RedirectRequestBehavior
+} from '@nimiq/accounts-manager-client';
 
 const redirectBehavior = new RedirectRequestBehavior();
 const accountsClient = new AccountsManagerClient('https://accounts.nimiq-testnet.com', redirectBehavior);
@@ -61,8 +65,131 @@ To find out how to react to redirect responses and retrieve the stored state, go
 
 ### API Methods
 
-TODO
+* [Checkout](#checkout)
+* [Sign Transaction](#sign-transaction)
+
+#### Checkout
+The `checkout()` method allows your site to request a transaction from the user, in which the user selects the sending
+account. The transaction is sent to the network during the checkout process in the Accounts Manager, but also returned
+from the client (for processing in your site, storage on your server or re-submittal by you).
+```javascript
+// Create the request options object
+const requestOptions = {
+    // The name of your app, should be as short as possible.
+    appName: 'Nimiq Shop',
+
+    // Userfriendly address of the recipient (your address).
+    recipient: 'NQ07 0000 0000 0000 0000 0000 0000 0000 0000',
+
+    // [optional] Nimiq.Account.Type of the recipient.
+    // Only required if the recipient is a vesting (1) or HTLC (2) contract.
+    // Default: 0 (BASIC)
+    //recipientType: 0,
+
+    // Value of the transaction, in LUNA (nimtoshis).
+    value: 100 * 1e5, // 100 NIM
+
+    // [optional] Transaction fee in LUNA (nimtoshis).
+    // Default: 0
+    //fee: 138,
+
+    // [optional] Extra data that should be sent with the transaction.
+    // Type: Uint8Array | Nimiq.SerialBuffer
+    // Default: new Uint8Array(0)
+    //extraData: Nimiq.BufferUtils.fromAscii('Hello world!'),
+
+    // [optional] Nimiq.Transaction.Flag, only required if the transaction is a contract creation.
+    // Default: 0
+    //flags: 0b1,
+
+    // [optional] Network ID of the Nimiq network that the transaction should be valid in.
+    // Defaults to the network that the Keyguard is configured for.
+    // Default: 1 for *.nimiq-testnet.com domains, 42 for *.nimiq.com domains.
+    //networkId: 42,
+};
+
+// All client requests are async and return a promise
+const checkoutResult = await accountsClient.checkout(requestOptions);
+```
+The `checkout()` method returns a promise which resolves to a `SignTransactionResult`:
+```javascript
+interface SignTransactionResult {
+    serializedTx: Uint8Array;
+    sender: string; // Userfriendly sender address
+    senderType: Nimiq.Account.Type;
+    senderPubKey: Uint8Array; // Serialized sender public key
+    recipient: string; // Userfriendly recipient address
+    recipientType: Nimiq.Account.Type;
+    value: number; // LUNA (nimtoshis)
+    fee: number; // LUNA (nimtoshis)
+    validityStartHeight: number;
+    signature: Uint8Array; // Serialized signature of the sender
+    extraData: Uint8Array;
+    flags: number;
+    networkId: number;
+    hash: string; // Transaction hash in base64
+}
+```
+
+#### Sign Transaction
+The `signTransaction()` method differs from the checkout in that it requires the request to already include the
+sender's `keyId`, `sender` address and the transaction's `validityStartHeight`. The transaction is also not
+automatically sent to the network during the process, but only returned to the caller.
+```javascript
+// Create the request options object
+const requestOptions = {
+    // The name of your app, should be as short as possible.
+    appName: 'Nimiq Shop',
+
+    // The keyId of the wallet that the user's account belongs to
+    keyId: 'xxxxxxxxx',
+
+    // Userfriendly address of the sender
+    sender: 'NQxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx',
+
+    // Userfriendly address of the recipient (your address).
+    recipient: 'NQxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx',
+
+    // [optional] Nimiq.Account.Type of the recipient.
+    // Only required, if the recipient above is a vesting (1) or HTLC (2) contract.
+    // Default: 0 (BASIC)
+    //recipientType: 0,
+
+    // Value of the transaction, in LUNA (nimtoshis).
+    value: 100 * 1e5, // 100 NIM
+
+    // [optional] Transaction fee in LUNA (nimtoshis).
+    // Default: 0
+    //fee: 138,
+
+    // [optional] Extra data that should be sent with the transaction.
+    // Type: Uint8Array | Nimiq.SerialBuffer
+    // Default: new Uint8Array(0)
+    //extraData: Nimiq.BufferUtils.fromAscii('Hello world!'),
+
+    // [optional] Nimiq.Transaction.Flag, only required if the transaction is a contract creation.
+    // Default: 0
+    //flags: 0b1,
+
+    // [optional] Network ID of the Nimiq network that the transaction should be valid in.
+    // Defaults to the network that the Keyguard is configured for.
+    // Default: 1 for *.nimiq-testnet.com domains, 42 for *.nimiq.com domains.
+    //networkId: 42,
+
+    // The transaction's validity start height.
+    // A transaction is only valid for 120 blocks after its validityStartHeight.
+    // Transactions with a validityStartHeight higher than (current network block height + 1) are rejected and need to
+    // be sent again later during their validity window.
+    validityStartHeight: 123456,
+};
+
+// All client requests are async and return a promise
+const signTxResult = await accountsClient.signTransaction(requestOptions);
+```
+The `signTransaction()` method returns the same `SignTransactionResult` type as the `checkout()` method.
 
 ### Listening for redirect responses
+TODO
 
+## Running your own Accounts Manager
 TODO
