@@ -142,19 +142,19 @@ The `checkout()` method returns a promise which resolves to a `SignTransactionRe
 ```javascript
 interface SignTransactionResult {
     serializedTx: Uint8Array;
-    sender: string; // Userfriendly sender address
+    sender: string;                     // Userfriendly sender address
     senderType: Nimiq.Account.Type;
-    senderPubKey: Uint8Array; // Serialized sender public key
-    recipient: string; // Userfriendly recipient address
+    senderPubKey: Uint8Array;           // Serialized sender public key
+    recipient: string;                  // Userfriendly recipient address
     recipientType: Nimiq.Account.Type;
-    value: number; // LUNA (nimtoshis)
-    fee: number; // LUNA (nimtoshis)
+    value: number;                      // LUNA (nimtoshis)
+    fee: number;                        // LUNA (nimtoshis)
     validityStartHeight: number;
-    signature: Uint8Array; // Serialized signature of the sender
+    signature: Uint8Array;              // Serialized signature of the sender
     extraData: Uint8Array;
     flags: number;
     networkId: number;
-    hash: string; // Transaction hash in base64
+    hash: string;                       // Transaction hash in base64
 }
 ```
 
