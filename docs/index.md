@@ -12,6 +12,10 @@ to interact with their users' Nimiq accounts.
   - [API Methods](#api-methods)
     - [Checkout](#checkout)
     - [Sign Transaction](#sign-transaction)
+  - [Sign Up](#sign-up)
+  - [Login](#login)
+  - [Logout](#logout)
+  - [Export](#export)
   - [Listening for redirect responses](#listening-for-redirect-responses)
 - [Running your own Accounts Manager](#running-your-own-accounts-manager)
 
