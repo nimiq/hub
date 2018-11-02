@@ -4,6 +4,17 @@ Nimiq Accounts provides a unified interface for all Nimiq wallets, accounts and 
 via which users manage their wallets and which provides websites and apps with a consise API to interact with their
 users' Nimiq accounts.
 
+<!-- TOC generated with https://magnetikonline.github.io/markdown-toc-generate/ -->
+- [The Accounts Client library](#the-accounts-client-library)
+  - [Installation](#installation)
+  - [Initialization](#initialization)
+    - [Using top-level redirects](#using-top-level-redirects)
+  - [API Methods](#api-methods)
+    - [Checkout](#checkout)
+    - [Sign Transaction](#sign-transaction)
+  - [Listening for redirect responses](#listening-for-redirect-responses)
+- [Running your own Accounts Manager](#running-your-own-accounts-manager)
+
 ## The Accounts Client library
 
 ### Installation
