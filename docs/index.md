@@ -1,8 +1,8 @@
 # Nimiq Accounts
 
-Nimiq Accounts provides a unified interface for all Nimiq wallets, accounts and contracts. It is the primary interface
-via which users manage their wallets and which provides websites and apps with a consise API to interact with their
-users' Nimiq accounts.
+**Nimiq Accounts** (or **Accounts Manager**) provides a unified interface for all Nimiq wallets, accounts and contracts.
+It is the primary interface via which users manage their wallets and which provides websites and apps with a consise API
+to interact with their users' Nimiq accounts.
 
 <!-- TOC generated with https://magnetikonline.github.io/markdown-toc-generate/ -->
 - [The Accounts Client library](#the-accounts-client-library)
@@ -38,7 +38,7 @@ or include it as a script tag in your page:
 ```
 
 ### Initialization
-To start the client, just instantiate the class by passing it the URL of the Accounts Manager to connect to:
+To start the client, just instantiate the class by passing it the URL of the **Accounts Manager** to connect to:
 ```javascript
 const accountsClient = new AccountsManagerClient('https://accounts.nimiq-testnet.com');
 ```
@@ -71,6 +71,9 @@ The second optional parameter is an object representing local state to be stored
 const redirectBehavior = new RedirectRequestBehavior(null, { foo: 'I am stored' });
 ```
 
+> **Note:**
+> Please note that the local state object will be stringified into JSON for storage.
+
 To find out how to react to redirect responses and retrieve the stored state, go to
 [Listening for redirect responses](#listening-for-redirect-responses).
 
@@ -78,10 +81,19 @@ To find out how to react to redirect responses and retrieve the stored state, go
 
 * [Checkout](#checkout)
 * [Sign Transaction](#sign-transaction)
+* [Sign Up](#sign-up)
+* [Login](#login)
+* [Logout](#logout)
+* [Export](#export)
+
+> **Note:**
+> All API methods' returned promises can also be rejected with `Error`s for various reasons, e.g. if the user cancels
+> the request by closing the popup window or clicking on a cancel button. An error can also occur when the request
+> options object contains invalid parameters.
 
 #### Checkout
 The `checkout()` method allows your site to request a transaction from the user, in which the user selects the sending
-account. The transaction is sent to the network during the checkout process in the Accounts Manager, but also returned
+account. The transaction is sent to the network during the checkout process in the **Accounts Manager**, but also returned
 from the client (for processing in your site, storage on your server or re-submittal by you).
 ```javascript
 // Create the request options object
@@ -150,10 +162,10 @@ automatically sent to the network during the process, but only returned to the c
 // Create the request options object
 const requestOptions = {
     // The name of your app, should be as short as possible.
-    appName: 'Nimiq Shop',
+    appName: 'Nimiq Safe',
 
     // The keyId of the wallet that the user's account belongs to
-    keyId: 'xxxxxxxxx',
+    keyId: 'xxxxxxxx',
 
     // Userfriendly address of the sender
     sender: 'NQxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx',
@@ -198,6 +210,107 @@ const requestOptions = {
 const signTxResult = await accountsClient.signTransaction(requestOptions);
 ```
 The `signTransaction()` method returns the same `SignTransactionResult` type as the `checkout()` method.
+
+### Sign Up
+The `signup()` method creates a new wallet in the user's **Keyguard** and **Accounts Manager**.
+```javascript
+// Create the request options object
+const requestOptions = {
+    // The name of your app, should be as short as possible.
+    appName: 'Nimiq Safe',
+};
+
+// All client requests are async and return a promise
+const newWallet = await accountsClient.signup(requestOptions);
+```
+The `signup()` method returns a promise which resolves to a `SignupResult`:
+```javascript
+interface SignupResult {
+    keyId: string;          // Automatically generated wallet ID
+    label: string;          // The label/name given to the wallet by the user
+    type: KeyStorageType;   // 1 for BIP39 Keyguard wallets, 2 for Ledger wallets
+
+    address: {              // During the signup, only the first address is derived
+        address: string;    // Userfriendly address
+        label: string;      // The label/name given to the address by the user
+    };
+}
+```
+
+### Login
+The `login()` method allows the user to add an existing wallet or legacy account to the **Accounts Manager** by
+importing their *Key File*, *Recovery Words* or legacy *Account Access File*. After a wallet has been imported, the
+**Accounts Manager** automatically detects active addresses following the
+[BIP44](https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki#account-discovery) method.
+```javascript
+// Create the request options object
+const requestOptions = {
+    // The name of your app, should be as short as possible.
+    appName: 'Nimiq Safe',
+};
+
+// All client requests are async and return a promise
+const newWallet = await accountsClient.login(requestOptions);
+```
+The `login()` method returns a promise which resolves to a `LoginResult`:
+```javascript
+interface LoginResult {
+    keyId: string;          // Automatically generated wallet ID
+    label: string;          // The label/name given to the wallet by the user
+    type: KeyStorageType;   // 1 for BIP39 Keyguard wallets, 2 for Ledger wallets
+
+    addresses: Array<{      // Array of active addresses detected during login
+        address: string;    // Userfriendly address
+        label: string;      // The label/name given to the address by the user
+    }>;
+}
+```
+
+### Logout
+The `logout()` method enables a user to remove a wallet or legacy account from the **Keyguard** and
+**Accounts Manager**. During the logout process, the user is able to retrieve the wallet's *Key File* or
+*Recovery Words* before the key is deleted.
+```javascript
+// Create the request options object
+const requestOptions = {
+    // The name of your app, should be as short as possible.
+    appName: 'Nimiq Safe',
+
+    // The keyId of the wallet that should be removed
+    keyId: 'xxxxxxxx',
+};
+
+// All client requests are async and return a promise
+const logoutResult = await accountsClient.logout(requestOptions);
+```
+The `logout()` method returns a promise which resolves to a simple object containing the `success` property:
+```javascript
+{
+    success: true
+}
+```
+
+### Export
+The `export()` method enables a user to retrieve the *Key File* or *Recovery Words* of a wallet or legacy account.
+```javascript
+// Create the request options object
+const requestOptions = {
+    // The name of your app, should be as short as possible.
+    appName: 'Nimiq Safe',
+
+    // The keyId of the wallet that the user's account belongs to
+    keyId: 'xxxxxxxx',
+};
+
+// All client requests are async and return a promise
+const exportResult = await accountsClient.export(requestOptions);
+```
+The `export()` method returns a promise which resolves to a simple object containing the `success` property:
+```javascript
+{
+    success: true
+}
+```
 
 ### Listening for redirect responses
 TODO
