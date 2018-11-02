@@ -359,12 +359,12 @@ accountsClient.init();
 The available `RequestType`s, corresponding to the methods, are:
 ```javascript
 enum RequestType {
-    CHECKOUT,
-    SIGNTRANSACTION,
-    SIGNUP,
-    LOGIN,
-    LOGOUT,
-    EXPORT,
+    CHECKOUT = 'checkout',
+    SIGNTRANSACTION = 'sign-transaction',
+    SIGNUP = 'signup',
+    LOGIN = 'login',
+    LOGOUT = 'logout',
+    EXPORT = 'export',
 }
 ```
 
