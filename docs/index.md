@@ -313,7 +313,52 @@ The `export()` method returns a promise which resolves to a simple object contai
 ```
 
 ### Listening for redirect responses
-TODO
+If you expect redirect responses from the **Accounts Manager**, you need to listen for them specifically by passing the
+`RequestType` to listen for and your handler functions to the client's `on()` method. The handler functions are called
+with three parameters: the result object, the RPC call ID, and the stored local state (as JSON string) that was passed
+to the `RedirectRequestBehavior` [during initialization](#using-top-level-redirects).
+```javascript
+import {
+    default as AccountsManagerClient,
+    RequestType
+} from '@nimiq/accounts-manager-client';
+
+// 1. Initialize an Accounts Manager client instance
+const accountsClient = new AccountsManagerClient('<URL>');
+
+
+// 2. Define your handler functions
+const onSuccess = function(result, id, state) {
+    console.log("Got result from Accounts Manager:", result);
+    console.log("Request RPC ID:", id);
+    console.log("Retrieved stored state:": state); // As JSON string
+}
+
+const onError = function(error, id, state) {
+    console.log("Got error from Accounts Manager:", error);
+    console.log("Request RPC ID:", id);
+    console.log("Retrieved stored state:": state); // As JSON string
+}
+
+// 3. Listen for the redirect request responses you expect
+accountsClient.on(RequestType.CHECKOUT, onSuccess, onError);
+accountsClient.on(RequestType.SIGNTRANSACTION, onSuccess, onError);
+accountsClient.on(RequestType.LOGIN, onSuccess, onError);
+
+// 4. Trigger a check for redirect response data in the URL
+accountsClient.init();
+```
+The available `RequestType`s, corresponding to the methods, are:
+```javascript
+enum RequestType {
+    CHECKOUT,
+    SIGNTRANSACTION,
+    SIGNUP,
+    LOGIN,
+    LOGOUT,
+    EXPORT,
+}
+```
 
 ## Running your own Accounts Manager
 TODO
