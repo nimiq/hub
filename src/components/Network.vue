@@ -91,8 +91,8 @@ export default class Network extends Vue {
             recipient: tx.recipient.toUserFriendlyAddress(),
             recipientType: tx.recipientType,
 
-            value: Nimiq.Policy.satoshisToCoins(tx.value),
-            fee: Nimiq.Policy.satoshisToCoins(tx.fee),
+            value: tx.value,
+            fee: tx.fee,
             validityStartHeight: tx.validityStartHeight,
 
             signature: proof.signature.serialize(),
@@ -115,7 +115,11 @@ export default class Network extends Vue {
         const txObj = this.makeSignTransactionResult(tx);
         const client = await this._getNetworkClient();
 
-        client.relayTransaction(txObj);
+        const txObjToSend = Object.assign({}, txObj, {
+            value: Nimiq.Policy.satoshisToCoins(txObj.value),
+            fee: Nimiq.Policy.satoshisToCoins(txObj.fee),
+        });
+        client.relayTransaction(txObjToSend);
 
         return new Promise<SignTransactionResult>((resolve, reject) => {
             this.$once('transaction-relayed', (txInfo: any) => {

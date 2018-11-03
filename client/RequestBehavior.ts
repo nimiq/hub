@@ -33,13 +33,13 @@ export class RedirectRequestBehavior extends RequestBehavior {
         return new RedirectRequestBehavior(undefined, localState);
     }
 
-    private readonly _targetUrl: string;
+    private readonly _returnUrl: string;
     private readonly _localState: any;
 
-    constructor(targetUrl?: string, localState?: any) {
+    constructor(returnUrl?: string, localState?: any) {
         super(BehaviorType.REDIRECT);
         const location = window.location;
-        this._targetUrl = targetUrl
+        this._returnUrl = returnUrl
             || `${location.protocol}//${location.hostname}:${location.port}${location.pathname}`;
         this._localState = localState || {};
 
@@ -55,9 +55,9 @@ export class RedirectRequestBehavior extends RequestBehavior {
         const client = new RedirectRpcClient(endpoint, origin);
         await client.init();
 
-        const state = Object.assign({ __command: command }, this._localState);
+        const state: object = Object.assign({ __command: command }, this._localState);
         console.log('state', state);
-        client.callAndSaveLocalState(this._targetUrl, state, command, ...args);
+        client.callAndSaveLocalState(this._returnUrl, JSON.stringify(state), command, ...args);
     }
 }
 
