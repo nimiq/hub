@@ -1,14 +1,15 @@
 <template>
     <div class="checkout-overview">
         <CheckoutDetails :accountChangeable="true"/>
-        <div class="page-footer">
-            <button @click="proceed">Pay <Amount :amount="request.value + request.fee"/></button>
+        <div class="page-footer" :class="height === 0 ? 'shows-network' : ''">
+            <Network ref="network" :visible="height === 0" message="Fetching network status" @head-change="_onHeadChange"/>
+            <button v-if="height > 0" @click="proceed">Pay <Amount :amount="request.value + request.fee"/></button>
         </div>
     </div>
 </template>
 
 <script lang="ts">
-import {Component, Emit, Vue} from 'vue-property-decorator';
+import {Component, Emit, Watch, Vue} from 'vue-property-decorator';
 import {Getter} from 'vuex-class';
 import {Amount} from '@nimiq/vue-components';
 import {SignTransactionRequest as KSignTransactionRequest} from '@nimiq/keyguard-client';
@@ -19,8 +20,9 @@ import {KeyInfo} from '../lib/KeyInfo';
 import {RequestType, ParsedCheckoutRequest} from '../lib/RequestTypes';
 import RpcApi from '../lib/RpcApi';
 import staticStore, {Static} from '../lib/StaticStore';
+import Network from '../components/Network.vue';
 
-@Component({components: {Amount, CheckoutDetails}})
+@Component({components: {Amount, CheckoutDetails, Network}})
 export default class CheckoutOverview extends Vue {
     @Static private rpcState!: RpcState;
     @Static private request!: ParsedCheckoutRequest;
@@ -28,7 +30,12 @@ export default class CheckoutOverview extends Vue {
     @Getter private activeKey!: KeyInfo | undefined;
     @Getter private activeAccount!: AddressInfo | undefined;
 
-    // TODO Figure out how this will be called
+    private height: number = 0;
+
+    private mounted() {
+        this.setHeight();
+    }
+
     @Emit()
     private proceed() {
         const key = this.activeKey;
@@ -59,7 +66,7 @@ export default class CheckoutOverview extends Vue {
             recipientLabel: undefined, // TODO: recipient label
             value: this.request.value,
             fee: this.request.fee || 0, // TODO: proper fee estimation
-            validityStartHeight: 286890, // TODO: get valid start height
+            validityStartHeight: this.height,
             data: this.request.data,
             flags: this.request.flags,
             networkId: this.request.networkId,
@@ -74,6 +81,34 @@ export default class CheckoutOverview extends Vue {
 
         const client = RpcApi.createKeyguardClient(this.$store, staticStore);
         client.signTransaction(request).catch(console.error); // TODO: proper error handling
+    }
+
+    private async setHeight() {
+        try {
+            await this._setHeightFromApi();
+        } catch (e) {
+            console.error(e);
+            await this._connectNetwork();
+        }
+    }
+
+    @Watch('height')
+    private logHeightChange(height: number, oldHeight: number) {
+        console.log(`Height changed from ${oldHeight} to ${height}`);
+    }
+
+    private async _setHeightFromApi() {
+        const raw = await fetch('https://test-api.nimiq.watch/latest/1');
+        const result = await raw.json();
+        this.height = result[0].height;
+    }
+
+    private async _connectNetwork() {
+        await (this.$refs.network as Network).connect();
+    }
+
+    private _onHeadChange(head: Nimiq.BlockHeader) {
+        this.height = head.height;
     }
 }
 </script>
@@ -92,6 +127,10 @@ export default class CheckoutOverview extends Vue {
         align-items: center;
         padding: 4rem 8rem;
         flex-grow: 1;
+    }
+
+    .page-footer.shows-network {
+        padding: 1rem;
     }
 
     .page-footer button {
