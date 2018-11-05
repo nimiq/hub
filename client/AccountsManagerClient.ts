@@ -102,5 +102,3 @@ export default class AccountsManagerClient {
         return behavior.request(this._endpoint, command, args);
     }
 }
-
-export { RedirectRequestBehavior } from './RequestBehavior';
