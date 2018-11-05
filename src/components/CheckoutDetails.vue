@@ -6,7 +6,7 @@
         <div class="sender-section">
             <div class="sender-nav">
                 <h2>Pay with</h2>
-                <button @click="changeAccount">Change</button>
+                <button v-if="accountChangeable" @click="changeAccount">Change</button>
             </div>
             <Account v-if="activeAccount" :address="activeAccount.userFriendlyAddress" :label="activeAccount.label" :balance="activeAccount.balance"/>
         </div>
