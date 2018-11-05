@@ -5,7 +5,7 @@
             <CheckoutDetails v-if="!isTxSent" :accountChangeable="false"/>
         </transition>
         <div class="loading-container" v-if="!isTxSent">
-                <LoadingSpinner />
+            <LoadingSpinner />
         </div>
         <transition name='fade-in'>
             <div class="success center" v-if="isTxSent">
@@ -35,10 +35,8 @@ import {AddressInfo} from '../lib/AddressInfo';
 
 @Component({components: {Network, CheckoutDetails, LoadingSpinner}})
 export default class CheckoutTransmission extends Vue {
-    // @Static private request!: ParsedCheckoutRequest;
     @Static private rpcState!: RpcState;
     @Static private keyguardRequest!: KSignTransactionRequest;
-    @Static private request!: ParsedCheckoutRequest;
     @State private keyguardResult!: KSignTransactionResult;
 
     @Getter private activeAccount!: AddressInfo | undefined;
@@ -128,7 +126,7 @@ export default class CheckoutTransmission extends Vue {
         }
 
         100% {
-            max-height: 0; 
+            max-height: 0;
             opacity: 0;
         }
     }
