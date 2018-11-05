@@ -29,7 +29,7 @@ import {
     SignTransactionRequest as KSignTransactionRequest,
     SignTransactionResult as KSignTransactionResult,
 } from '@nimiq/keyguard-client';
-import {State, Getter} from 'vuex-class';
+import {State} from 'vuex-class';
 import {Static} from '../lib/StaticStore';
 import {AddressInfo} from '../lib/AddressInfo';
 
@@ -38,8 +38,6 @@ export default class CheckoutTransmission extends Vue {
     @Static private rpcState!: RpcState;
     @Static private keyguardRequest!: KSignTransactionRequest;
     @State private keyguardResult!: KSignTransactionResult;
-
-    @Getter private activeAccount!: AddressInfo | undefined;
 
     private result?: SignTransactionResult;
     private isTxSent: boolean = false;
