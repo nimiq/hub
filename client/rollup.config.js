@@ -20,8 +20,26 @@ export default [
             name: 'AccountsManagerClient',
             globals: { '@nimiq/rpc': 'rpc' }
         },
-        plugins: [
-            resolve()
-        ]
+        external: [ '@nimiq/rpc' ]
+    },
+    {
+        input: 'build/client/AccountsManagerClient.js',
+        output: {
+            file: 'dist/standalone/AccountsManagerClient.umd.js',
+            format: 'umd',
+            name: 'AccountsManagerClient',
+            globals: { '@nimiq/rpc': 'rpc' }
+        },
+        plugins: [ resolve() ]
+    },
+    {
+        input: 'build/client/AccountsManagerClient.js',
+        output: {
+            file: 'dist/standalone/AccountsManagerClient.es.js',
+            format: 'es',
+            name: 'AccountsManagerClient',
+            globals: { '@nimiq/rpc': 'rpc' }
+        },
+        plugins: [ resolve() ]
     }
 ];

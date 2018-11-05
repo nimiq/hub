@@ -7,6 +7,9 @@
   "author": "Nimiq Network Ltd.",
   "license": "Apache-2.0",
   "private": false,
+  "dependencies": {
+    "@nimiq/rpc": "^0.0.11"
+  },
   "devDependencies": {
     "rollup": "^0.66.1",
     "rollup-plugin-node-resolve": "^3.4.0",
