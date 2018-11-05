@@ -27,7 +27,8 @@ npm install @nimiq/accounts-manager-client
 # or with yarn
 yarn add @nimiq/accounts-manager-client
 ```
-or downloaded from the [client/dist/standalone](https://github.com/nimiq/accounts/tree/master/client) directory.
+or downloaded from the [client/dist/standalone](https://github.com/nimiq/accounts/tree/master/client/dist/standalone)
+directory.
 
 To use it, require or import it:
 ```javascript
