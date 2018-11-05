@@ -17,6 +17,7 @@ import ExportWords from './views/ExportWords.vue';
 import ExportWordsSuccess from './views/ExportWordsSuccess.vue';
 import Logout from './views/Logout.vue';
 import LogoutSuccess from './views/LogoutSuccess.vue';
+import Success from './views/Success.vue';
 import {RequestType} from '@/lib/RequestTypes';
 import {KeyguardCommand} from '@nimiq/keyguard-client';
 
@@ -137,7 +138,10 @@ export default new Router({
         {
           path: 'success',
           name: `${RequestType.EXPORT_FILE}-success`,
-          component: ExportFileSuccess,
+          component: Success,
+          props: {
+            requestName: 'Key File export',
+          },
         },
       ],
     },
@@ -149,7 +153,10 @@ export default new Router({
         {
           path: 'success',
           name: `${RequestType.EXPORT_WORDS}-success`,
-          component: ExportWordsSuccess,
+          component: Success,
+          props: {
+            requestName: 'Recovery Words export',
+          },
         },
       ],
     },

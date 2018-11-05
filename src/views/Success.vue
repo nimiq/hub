@@ -1,7 +1,7 @@
 <template>
     <div class="success center">
         <div class="icon-checkmark-circle"></div>
-        <h1>Recovery Words export<br>was successfull!</h1>
+        <h1>Your {{ requestName }}<br>was successfull!</h1>
         <div style="flex-grow: 1;"></div>
         <button @click="close">Back to {{ request.appName }}</button>
     </div>
@@ -9,16 +9,16 @@
 
 <script lang="ts">
 import {Component, Emit, Vue} from 'vue-property-decorator';
-import {ParsedExportWordsRequest} from '../lib/RequestTypes';
+import {RpcRequest} from '../lib/RequestTypes';
 import {State} from 'vuex-class';
 import {ResponseStatus, State as RpcState} from '@nimiq/rpc';
-import {ExportWordsResult} from '@nimiq/keyguard-client';
+import {RpcResult} from '@nimiq/keyguard-client';
 import { Static } from '@/lib/StaticStore';
-@Component({components: {}})
-export default class ExportWordsSuccess extends Vue {
-    @Static private request!: ParsedExportWordsRequest;
+@Component({components: {}, props: ['requestName']})
+export default class Success extends Vue {
+    @Static private request!: RpcRequest;
     @Static private rpcState!: RpcState;
-    @State private keyguardResult!: ExportWordsResult;
+    @State private keyguardResult!: RpcResult;
 
     @Emit()
     private close() {
