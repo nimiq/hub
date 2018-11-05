@@ -1,4 +1,4 @@
-import {PopupRequestBehavior, IFrameRequestBehavior, RequestBehavior} from './RequestBehavior';
+import {PopupRequestBehavior, IFrameRequestBehavior, RequestBehavior, RedirectRequestBehavior} from './RequestBehavior';
 import {RedirectRpcClient} from '@nimiq/rpc';
 import {
     RequestType,
@@ -23,6 +23,9 @@ export default class AccountsManagerClient {
     window.location.origin === 'https://safe-next.nimiq.com' ? 'https://accounts.nimiq.com'
     : window.location.origin === 'https://safe-next.nimiq-testnet.com' ? 'https://accounts.nimiq-testnet.com'
     : 'http://localhost:8080';
+
+    public static readonly RequestType: typeof RequestType = RequestType;
+    public static readonly RedirectRequestBehavior: typeof RedirectRequestBehavior = RedirectRequestBehavior;
 
     private readonly _endpoint: string;
     private readonly _defaultBehavior: RequestBehavior;
