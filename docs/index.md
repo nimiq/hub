@@ -53,12 +53,9 @@ const accountsClient = new AccountsManagerClient('https://accounts.nimiq-testnet
 #### Using top-level redirects
 If you would rather use top-level redirects instead of popups, you can pass a second parameter to the initialization:
 ```javascript
-import {
-    default as AccountsManagerClient,
-    RedirectRequestBehavior
-} from '@nimiq/accounts-manager-client';
+import AccountsManagerClient from '@nimiq/accounts-manager-client';
 
-const redirectBehavior = new RedirectRequestBehavior();
+const redirectBehavior = new AccountsManagerClient.RedirectRequestBehavior();
 const accountsClient = new AccountsManagerClient('https://accounts.nimiq-testnet.com', redirectBehavior);
 ```
 
@@ -326,14 +323,10 @@ If you expect redirect responses from the **Accounts Manager**, you need to list
 with three parameters: the result object, the RPC call ID, and the stored local state (as JSON string) that was passed
 to the `RedirectRequestBehavior` [during initialization](#using-top-level-redirects).
 ```javascript
-import {
-    default as AccountsManagerClient,
-    RequestType
-} from '@nimiq/accounts-manager-client';
+import AccountsManagerClient from '@nimiq/accounts-manager-client';
 
 // 1. Initialize an Accounts Manager client instance
 const accountsClient = new AccountsManagerClient('<URL>');
-
 
 // 2. Define your handler functions
 const onSuccess = function(result, id, state) {
@@ -349,6 +342,8 @@ const onError = function(error, id, state) {
 }
 
 // 3. Listen for the redirect request responses you expect
+const RequestType = AccountsManagerClient.RequestType;
+
 accountsClient.on(RequestType.CHECKOUT, onSuccess, onError);
 accountsClient.on(RequestType.SIGNTRANSACTION, onSuccess, onError);
 accountsClient.on(RequestType.LOGIN, onSuccess, onError);
@@ -358,7 +353,7 @@ accountsClient.init();
 ```
 The available `RequestType`s, corresponding to the methods, are:
 ```javascript
-enum RequestType {
+enum AccountsManagerClient.RequestType {
     CHECKOUT = 'checkout',
     SIGNTRANSACTION = 'sign-transaction',
     SIGNUP = 'signup',
