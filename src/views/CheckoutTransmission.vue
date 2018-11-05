@@ -1,12 +1,7 @@
 <template>
     <div class="checkout-transmission">
-        <Network ref="network"/>
-        <transition name='fade-out'>
-            <CheckoutDetails v-if="!isTxSent" :accountChangeable="false"/>
-        </transition>
-        <div class="loading-container" v-if="!isTxSent">
-            <LoadingSpinner />
-        </div>
+        <CheckoutDetails :accountChangeable="false"/>
+        <Network ref="network" :alwaysVisible="true" message="Sending transaction"/>
         <transition name='fade-in'>
             <div class="success center" v-if="isTxSent">
                 <div class="icon-checkmark-circle"></div>
@@ -59,21 +54,19 @@ export default class CheckoutTransmission extends Vue {
         display: flex;
         flex-direction: column;
         flex-grow: 1;
+        position: relative;
     }
 
-    .loading-container {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        flex-grow: 1;
+    .network {
+        width: calc(100% - 2rem);
         margin: 1rem;
-        height: 150px;
-        border-radius: 4px;
-        background: #6843df;
     }
 
     .success {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        height: calc(100% - 2rem);
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
@@ -85,6 +78,7 @@ export default class CheckoutTransmission extends Vue {
         padding: 0 6.75rem;
         background: #24bdb6;
         overflow: hidden;
+        z-index: 1000;
     }
 
     .icon-checkmark-circle {
@@ -103,29 +97,12 @@ export default class CheckoutTransmission extends Vue {
     @keyframes enter {
         0% {
             background: #6843df;
-            height: fit-content;
-            max-height: 150px;
+            max-height: 160px;
         }
 
         100% {
             background: #24bdb6;
-            max-height: 450px;
-        }
-    }
-
-    .fade-out-leave-active {
-        animation: leave 0.8s;
-    }
-
-    @keyframes leave {
-        0% {
-            max-height: 500px;
-            opacity: 1;
-        }
-
-        100% {
-            max-height: 0;
-            opacity: 0;
+            max-height: 100%;
         }
     }
 

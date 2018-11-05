@@ -5,7 +5,7 @@
                          :networkFee="request.fee"
                          :networkFeeEditable="false"
                          :origin="rpcState.origin"/>
-        <small-page class="fit-content">
+        <small-page>
             <router-view/>
         </small-page>
         <a class="global-close" :class="{hidden: $route.name === `checkout-success`}" @click="close">Cancel Payment</a>
@@ -30,9 +30,3 @@ export default class Checkout extends Vue {
     }
 }
 </script>
-
-<style scoped>
-    .fit-content {
-        min-height: fit-content;
-    }
-</style>
