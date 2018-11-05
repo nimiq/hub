@@ -1,5 +1,6 @@
 // rollup.config.js
 import resolve from 'rollup-plugin-node-resolve';
+import { terser } from "rollup-plugin-terser";
 
 export default [
     {
@@ -30,7 +31,7 @@ export default [
             name: 'AccountsManagerClient',
             globals: { '@nimiq/rpc': 'rpc' }
         },
-        plugins: [ resolve() ]
+        plugins: [ resolve(), terser() ]
     },
     {
         input: 'build/client/AccountsManagerClient.js',
@@ -40,6 +41,6 @@ export default [
             name: 'AccountsManagerClient',
             globals: { '@nimiq/rpc': 'rpc' }
         },
-        plugins: [ resolve() ]
+        plugins: [ resolve(), terser() ]
     }
 ];
