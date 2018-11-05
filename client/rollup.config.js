@@ -26,7 +26,7 @@ export default [
     {
         input: 'build/client/AccountsManagerClient.js',
         output: {
-            file: 'dist/standalone/AccountsManagerClient.umd.js',
+            file: 'dist/standalone/AccountsManagerClient.standalone.umd.js',
             format: 'umd',
             name: 'AccountsManagerClient',
             globals: { '@nimiq/rpc': 'rpc' }
@@ -36,7 +36,7 @@ export default [
     {
         input: 'build/client/AccountsManagerClient.js',
         output: {
-            file: 'dist/standalone/AccountsManagerClient.es.js',
+            file: 'dist/standalone/AccountsManagerClient.standalone.es.js',
             format: 'es',
             name: 'AccountsManagerClient',
             globals: { '@nimiq/rpc': 'rpc' }
