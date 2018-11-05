@@ -30,7 +30,6 @@ export default class CheckoutDetails extends Vue {
     @Static private rpcState!: RpcState;
     @Static private request!: ParsedCheckoutRequest;
 
-    @Getter private activeKey!: KeyInfo | undefined;
     @Getter private activeAccount!: AddressInfo | undefined;
 
     private get originDomain() {

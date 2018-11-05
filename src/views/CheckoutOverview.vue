@@ -1,6 +1,6 @@
 <template>
     <div class="checkout-overview">
-        <CheckoutDetails :accountChangeable="true" />
+        <CheckoutDetails :accountChangeable="true"/>
         <div class="page-footer">
             <button @click="proceed">Pay <Amount :amount="request.value + request.fee"/></button>
         </div>
