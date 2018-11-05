@@ -11,7 +11,7 @@
     },
     "dependencies": {
         "@nimiq/keyguard-client": "^0.0.18",
-        "@nimiq/network-client": "^0.0.6",
+        "@nimiq/network-client": "^0.0.9",
         "@nimiq/rpc": "^0.0.11",
         "@nimiq/vue-components": "https://github.com/nimiq/vue-components.git#build/master",
         "vue": "^2.5.16",

@@ -797,10 +797,10 @@
   dependencies:
     "@nimiq/rpc" "^0.0.10"
 
-"@nimiq/network-client@^0.0.6":
-  version "0.0.6"
-  resolved "https://registry.yarnpkg.com/@nimiq/network-client/-/network-client-0.0.6.tgz#6a55505c193ea05303e87b280bab3a021a041478"
-  integrity sha512-TBh/1V736/uT7JPVnBZBTvt6Ue2wagMggdO6IQg4Wiukv2vtnwfScpjfYnZS1Ze2cBFIzYLV+SN/qsVoX+2zKQ==
+"@nimiq/network-client@^0.0.9":
+  version "0.0.9"
+  resolved "https://registry.yarnpkg.com/@nimiq/network-client/-/network-client-0.0.9.tgz#d319fcc8711f8bd2da2b2040135dc24c31f657bc"
+  integrity sha512-z9C1mxe49kvEqbdQpxyk9OVE++W8rt/4AU5+klC2e/byC8OpPS30aIb4syqHMqlnmUPIBxT7xXm3QXEfSk8njw==
   dependencies:
     "@nimiq/rpc-events" "^0.0.5"
 
