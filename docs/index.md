@@ -7,6 +7,7 @@ to interact with their users' Nimiq accounts.
 - [The Accounts Client library](#the-accounts-client-library)
     - [Installation](#installation)
     - [Initialization](#initialization)
+    - [Usage](#usage)
         - [Using top-level redirects](#using-top-level-redirects)
     - [API Methods](#api-methods)
         - [Checkout](#checkout)
@@ -92,7 +93,7 @@ see [Listening for redirect responses](#listening-for-redirect-responses).
 ### API Methods
 
 * [Checkout](#checkout)
-* [Sign Transaction](#sign-transaction)
+* [Sign transaction](#sign-transaction)
 * [Signup](#signup)
 * [Login](#login)
 * [Logout](#logout)
@@ -259,8 +260,8 @@ interface LoginResult {
                             // 2 for Ledger hardware wallets
 
     accounts: Array<{       // Array of active accounts detected during login
-        address: string;    // Userfriendly address
-        label: string;      // The label/name given to the address by the user
+        address: string;    // Human-readable address
+        label: string;      // Label/name given by the user
     }>;
 }
 ```
