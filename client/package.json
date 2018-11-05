@@ -1,9 +1,9 @@
 {
-  "name": "@nimiq/accounts-manager-client",
+  "name": "@nimiq/accounts-client",
   "version": "0.0.1",
-  "main": "dist/AccountsManagerClient.umd.js",
-  "module": "dist/AccountsManagerClient.es.js",
-  "repository": "https://github.com/nimiq/accounts",
+  "main": "dist/AccountsClient.umd.js",
+  "module": "dist/AccountsClient.es.js",
+  "repository": "https://github.com/nimiq/accounts/tree/master/client",
   "author": "Nimiq Network Ltd.",
   "license": "Apache-2.0",
   "private": false,
