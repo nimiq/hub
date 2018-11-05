@@ -1,6 +1,6 @@
 <template>
     <div class="checkout-overview">
-        <CheckoutDetails :accountChangeable="true" /> 
+        <CheckoutDetails :accountChangeable="true" />
         <div class="page-footer">
             <button @click="proceed">Pay <Amount :amount="request.value + request.fee"/></button>
         </div>
@@ -10,6 +10,7 @@
 <script lang="ts">
 import {Component, Emit, Vue} from 'vue-property-decorator';
 import {Getter} from 'vuex-class';
+import {Amount} from '@nimiq/vue-components';
 import {SignTransactionRequest as KSignTransactionRequest} from '@nimiq/keyguard-client';
 import {State as RpcState} from '@nimiq/rpc';
 import CheckoutDetails from '../components/CheckoutDetails.vue';
@@ -19,7 +20,7 @@ import {RequestType, ParsedCheckoutRequest} from '../lib/RequestTypes';
 import RpcApi from '../lib/RpcApi';
 import staticStore, {Static} from '../lib/StaticStore';
 
-@Component({components: {CheckoutDetails}})
+@Component({components: {Amount, CheckoutDetails}})
 export default class CheckoutOverview extends Vue {
     @Static private rpcState!: RpcState;
     @Static private request!: ParsedCheckoutRequest;
