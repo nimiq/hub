@@ -57,7 +57,7 @@ export default class CheckoutDetails extends Vue {
     .checkout-details {
         display: flex;
         flex-direction: column;
-        flex-grow: 1;
+        flex-shrink: 0;
     }
 
     h1 {

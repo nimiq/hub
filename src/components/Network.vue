@@ -1,5 +1,5 @@
 <template>
-    <div class="network loading" :class="!visible || consensusEstablished ? 'hidden' : ''">
+    <div class="network loading" :class="alwaysVisible || (visible && !consensusEstablished) ? '' : 'hidden'">
         <div class="loading-animation"></div>
         <div class="loading-status">{{ status }}</div>
     </div>
@@ -17,6 +17,7 @@ import {NetworkClient, PlainTransaction} from '@nimiq/network-client';
 @Component({components: {}})
 export default class Network extends Vue {
     @Prop(Boolean) private visible?: boolean;
+    @Prop(Boolean) private alwaysVisible?: boolean;
     @Prop(String) private message?: string;
 
     private _networkClient!: NetworkClient;
