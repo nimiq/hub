@@ -1,5 +1,4 @@
 import {PopupRequestBehavior, IFrameRequestBehavior, RequestBehavior} from './RequestBehavior';
-import Observable from './Observable';
 import {RedirectRpcClient} from '@nimiq/rpc';
 import {
     RequestType,
@@ -29,7 +28,6 @@ export default class AccountsManagerClient {
     private readonly _defaultBehavior: RequestBehavior;
     private readonly _iframeBehavior: IFrameRequestBehavior;
     private readonly _redirectClient: RedirectRpcClient;
-    private readonly _observable: Observable;
 
     constructor(endpoint: string = AccountsManagerClient.DEFAULT_ENDPOINT, defaultBehavior?: RequestBehavior) {
         this._endpoint = endpoint;
@@ -39,8 +37,6 @@ export default class AccountsManagerClient {
 
         // Check for RPC results in the URL
         this._redirectClient = new RedirectRpcClient('', RequestBehavior.getAllowedOrigin(this._endpoint));
-
-        this._observable = new Observable();
     }
 
     public init() {
