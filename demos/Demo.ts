@@ -145,7 +145,7 @@ class Demo {
         }
 
         function checkoutRedirect(txRequest: CheckoutRequest) {
-            return client.checkout(txRequest, new RedirectRequestBehavior(null, {storedGreeting: 'Hello Nimiq!'}));
+            return client.checkout(txRequest, new RedirectRequestBehavior(null, { storedGreeting: 'Hello Nimiq!' }));
         }
 
         async function checkoutPopup(txRequest: CheckoutRequest) {
