@@ -1,7 +1,7 @@
-import {WalletInfo, WalletType} from '@/lib/WalletInfo';
-import {WalletStore} from '@/lib/WalletStore';
-import {AccountInfo} from '@/lib/AccountInfo';
-import {ContractType} from '@/lib/ContractInfo';
+import { WalletInfo, WalletType } from '@/lib/WalletInfo';
+import { WalletStore } from '@/lib/WalletStore';
+import { AccountInfo } from '@/lib/AccountInfo';
+import { ContractType } from '@/lib/ContractInfo';
 
 const Nimiq = require('@nimiq/core'); // tslint:disable-line:no-var-requires variable-name
 // @ts-ignore

@@ -8,15 +8,15 @@
 </template>
 
 <script lang="ts">
-import {Component, Emit, Watch, Vue} from 'vue-property-decorator';
-import {SmallPage} from '@nimiq/vue-components';
-import {ParsedLogoutRequest} from '../lib/RequestTypes';
-import {State} from 'vuex-class';
+import { Component, Emit, Watch, Vue } from 'vue-property-decorator';
+import { SmallPage } from '@nimiq/vue-components';
+import { ParsedLogoutRequest } from '../lib/RequestTypes';
+import { State } from 'vuex-class';
 import RpcApi from '../lib/RpcApi';
-import {RemoveKeyRequest, RemoveKeyResult} from '@nimiq/keyguard-client';
-import {State as RpcState, ResponseStatus} from '@nimiq/rpc';
+import { RemoveKeyRequest, RemoveKeyResult } from '@nimiq/keyguard-client';
+import { State as RpcState, ResponseStatus } from '@nimiq/rpc';
 import { WalletStore } from '@/lib/WalletStore';
-import staticStore, {Static} from '../lib/StaticStore';
+import staticStore, { Static } from '../lib/StaticStore';
 
 @Component({components: {SmallPage}})
 export default class Logout extends Vue {

@@ -1,11 +1,11 @@
-import {RpcServer, State as RpcState, ResponseStatus} from '@nimiq/rpc';
-import {RootState} from '@/store';
-import {Store} from 'vuex';
+import { RpcServer, State as RpcState, ResponseStatus } from '@nimiq/rpc';
+import { RootState } from '@/store';
+import { Store } from 'vuex';
 import Router from 'vue-router';
-import {AccountsRequest, RequestType, RpcRequest} from '@/lib/RequestTypes';
-import {KeyguardCommand, RedirectRequestBehavior, KeyguardClient} from '@nimiq/keyguard-client';
-import {keyguardResponseRouter} from '@/router';
-import {StaticStore} from '@/lib/StaticStore';
+import { AccountsRequest, RequestType, RpcRequest } from '@/lib/RequestTypes';
+import { KeyguardCommand, RedirectRequestBehavior, KeyguardClient } from '@nimiq/keyguard-client';
+import { keyguardResponseRouter } from '@/router';
+import { StaticStore } from '@/lib/StaticStore';
 
 export default class RpcApi {
 

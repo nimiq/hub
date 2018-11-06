@@ -1,4 +1,4 @@
-import {WalletInfo, WalletInfoEntry} from '@/lib/WalletInfo';
+import { WalletInfo, WalletInfoEntry } from '@/lib/WalletInfo';
 
 export class WalletStore {
     public static readonly DB_VERSION = 1;

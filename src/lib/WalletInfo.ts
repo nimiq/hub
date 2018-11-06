@@ -1,5 +1,5 @@
-import {AccountInfo, AccountInfoEntry} from './AccountInfo';
-import {ContractInfo} from './ContractInfo';
+import { AccountInfo, AccountInfoEntry } from './AccountInfo';
+import { ContractInfo } from './ContractInfo';
 
 export enum WalletType {
     LEGACY,

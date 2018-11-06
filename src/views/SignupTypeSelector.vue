@@ -19,13 +19,13 @@
 </template>
 
 <script lang="ts">
-import {Component, Vue} from 'vue-property-decorator';
-import {PageHeader, PageFooter} from '@nimiq/vue-components';
-import {ParsedSignupRequest} from '../lib/RequestTypes';
-import {State} from 'vuex-class';
+import { Component, Vue } from 'vue-property-decorator';
+import { PageHeader, PageFooter } from '@nimiq/vue-components';
+import { ParsedSignupRequest } from '../lib/RequestTypes';
+import { State } from 'vuex-class';
 import RpcApi from '../lib/RpcApi';
-import {CreateRequest as KCreateRequest, CreateResult as KCreateResult} from '@nimiq/keyguard-client';
-import staticStore, {Static} from '../lib/StaticStore';
+import { CreateRequest as KCreateRequest, CreateResult as KCreateResult } from '@nimiq/keyguard-client';
+import staticStore, { Static } from '../lib/StaticStore';
 
 @Component({components: {PageHeader, PageFooter}})
 export default class SignupTypeSelector extends Vue {

@@ -17,8 +17,8 @@ import ExportWords from './views/ExportWords.vue';
 import ExportWordsSuccess from './views/ExportWordsSuccess.vue';
 import Logout from './views/Logout.vue';
 import LogoutSuccess from './views/LogoutSuccess.vue';
-import {RequestType} from '@/lib/RequestTypes';
-import {KeyguardCommand} from '@nimiq/keyguard-client';
+import { RequestType } from '@/lib/RequestTypes';
+import { KeyguardCommand } from '@nimiq/keyguard-client';
 
 Vue.use(Router);
 

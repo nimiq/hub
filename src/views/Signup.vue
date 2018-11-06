@@ -8,13 +8,13 @@
 </template>
 
 <script lang="ts">
-import {Component, Emit, Vue} from 'vue-property-decorator';
-import {SmallPage} from '@nimiq/vue-components';
-import {ParsedSignupRequest} from '../lib/RequestTypes';
-import {State} from 'vuex-class';
-import {CreateResult as KCreateResult} from '@nimiq/keyguard-client';
-import {ResponseStatus, State as RpcState} from '@nimiq/rpc';
-import {Static} from '../lib/StaticStore';
+import { Component, Emit, Vue } from 'vue-property-decorator';
+import { SmallPage } from '@nimiq/vue-components';
+import { ParsedSignupRequest } from '../lib/RequestTypes';
+import { State } from 'vuex-class';
+import { CreateResult as KCreateResult } from '@nimiq/keyguard-client';
+import { ResponseStatus, State as RpcState } from '@nimiq/rpc';
+import { Static } from '../lib/StaticStore';
 
 @Component({components: {SmallPage}})
 export default class Signup extends Vue {
