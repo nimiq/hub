@@ -43,7 +43,7 @@ export default class AccountsManagerClient {
         this._redirectClient = new RedirectRpcClient('', RequestBehavior.getAllowedOrigin(this._endpoint));
     }
 
-    public init() {
+    public checkRedirectResponse() {
         return this._redirectClient.init();
     }
 
