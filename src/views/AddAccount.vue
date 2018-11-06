@@ -1,0 +1,62 @@
+<template>
+    <div class="container">
+        <small-page v-if="$route.name === `add-account-success`">
+            <router-view/>
+        </small-page>
+        <!-- <a class="global-close" :class="{hidden: $route.name === `login-success`}" @click="close">Back to {{ request.appName }}</a> -->
+    </div>
+</template>
+
+<script lang="ts">
+import {Component, Emit, Watch, Vue} from 'vue-property-decorator';
+import {SmallPage} from '@nimiq/vue-components';
+import {ParsedLoginRequest, ParsedAddAccountRequest} from '../lib/RequestTypes';
+import {State} from 'vuex-class';
+import RpcApi from '../lib/RpcApi';
+import {DeriveAddressRequest, DeriveAddressResult} from '@nimiq/keyguard-client';
+import {State as RpcState, ResponseStatus} from '@nimiq/rpc';
+import staticStore, {Static} from '../lib/StaticStore';
+
+@Component({components: {SmallPage}})
+export default class AddAccount extends Vue {
+    @Static private rpcState!: RpcState;
+    @Static private request!: ParsedAddAccountRequest;
+    @State private keyguardResult!: DeriveAddressResult | Error | null;
+
+    public created() {
+        if (this.keyguardResult instanceof Error) {
+            this.rpcState.reply(ResponseStatus.ERROR, this.keyguardResult);
+        } else if (this.keyguardResult) return; // Keyguard success is handled in AddAccountSuccess.vue
+
+        const request: DeriveAddressRequest = {
+            appName: this.request.appName,
+            keyId: this.request.walletId,
+            baseKeyPath: `m/44'/242'/0'`,
+            indicesToDerive: [
+                '1\'',
+                '2\'',
+                '3\'',
+                '4\'',
+                '5\'',
+                '6\'',
+                '7\'',
+                '8\'',
+                '9\'',
+                '10\'',
+                '11\'',
+                '12\'',
+                '13\'',
+                '14\'',
+            ],
+        };
+
+        const client = RpcApi.createKeyguardClient(this.$store, staticStore);
+        client.deriveAddress(request).catch(console.error); // TODO: proper error handling
+    }
+
+    // @Emit()
+    // private close() {
+    //    this.rpcState.reply(ResponseStatus.ERROR, new Error('CANCEL'));
+    // }
+}
+</script>

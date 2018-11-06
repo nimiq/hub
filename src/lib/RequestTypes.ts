@@ -9,6 +9,7 @@ export enum RequestType {
     EXPORT_WORDS = 'export-words',
     EXPORT_FILE = 'export-file',
     LOGOUT = 'logout',
+    ADD_ACCOUNT = 'add-account',
 }
 
 export interface SignTransactionRequest {
@@ -176,6 +177,26 @@ export interface LogoutResult {
     success: boolean;
 }
 
+export interface AddAccountRequest {
+    kind?: RequestType.ADD_ACCOUNT;
+    appName: string;
+    walletId: string;
+}
+
+export interface ParsedAddAccountRequest {
+    kind: RequestType.ADD_ACCOUNT;
+    appName: string;
+    walletId: string;
+}
+
+export interface AddAccountResult {
+    walletId: string;
+    account: {
+        address: string;
+        label: string;
+    };
+}
+
 // Discriminated Unions
 export type RpcRequest = SignTransactionRequest
                        | CheckoutRequest
@@ -183,14 +204,16 @@ export type RpcRequest = SignTransactionRequest
                        | LoginRequest
                        | ExportFileRequest
                        | ExportWordsRequest
-                       | LogoutRequest;
+                       | LogoutRequest
+                       | AddAccountRequest;
 export type ParsedRpcRequest = ParsedSignTransactionRequest
                              | ParsedCheckoutRequest
                              | ParsedSignupRequest
                              | ParsedLoginRequest
                              | ParsedExportFileRequest
                              | ParsedExportWordsRequest
-                             | ParsedLogoutRequest;
+                             | ParsedLogoutRequest
+                             | ParsedAddAccountRequest;
 
 export class AccountsRequest {
     public static parse(request: RpcRequest, requestType?: RequestType): ParsedRpcRequest | null {
@@ -263,6 +286,13 @@ export class AccountsRequest {
                     appName: request.appName,
                     keyId: request.keyId,
                 } as ParsedLogoutRequest;
+            case RequestType.ADD_ACCOUNT:
+                request = request as AddAccountRequest;
+                return {
+                    kind: RequestType.ADD_ACCOUNT,
+                    appName: request.appName,
+                    walletId: request.walletId,
+                } as ParsedAddAccountRequest;
             default:
                 return null;
         }
@@ -313,6 +343,8 @@ export class AccountsRequest {
                 return request as ExportWordsRequest;
             case RequestType.LOGOUT:
                 return request as LogoutRequest;
+            case RequestType.ADD_ACCOUNT:
+                return request as AddAccountRequest;
             default:
                 return null;
         }

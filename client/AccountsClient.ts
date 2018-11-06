@@ -15,6 +15,8 @@ import {
     ExportFileResult,
     ExportWordsRequest,
     ExportWordsResult,
+    AddAccountRequest,
+    AddAccountResult,
     // ListResult,
 } from '../src/lib/RequestTypes';
 
@@ -89,6 +91,10 @@ export default class AccountsClient {
         requestBehavior = this._defaultBehavior,
     ): Promise<ExportWordsResult> {
         return this._request(requestBehavior, RequestType.EXPORT_WORDS, [request]);
+    }
+
+    public addAccount(request: AddAccountRequest, requestBehavior = this._defaultBehavior): Promise<AddAccountResult> {
+        return this._request(requestBehavior, RequestType.ADD_ACCOUNT, [request]);
     }
 
     // END API

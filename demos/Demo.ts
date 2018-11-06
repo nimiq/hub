@@ -10,7 +10,7 @@ import {
     LogoutRequest, LogoutResult,
     SignTransactionRequest, SignTransactionResult,
     ExportWordsRequest, ExportWordsResult,
-    ExportFileRequest, ExportFileResult,
+    ExportFileRequest, ExportFileResult, AddAccountRequest,
 } from '../src/lib/RequestTypes';
 import { KeyStore } from '../src/lib/KeyStore';
 import { RedirectRequestBehavior } from '../client/RequestBehavior';
@@ -260,6 +260,24 @@ class Demo {
         } as ExportFileRequest;
     }
 
+    public async addAccount(keyId: string) {
+        try {
+            const result = await this._accountsClient.addAccount(this._createAddAccountRequest(keyId));
+            console.log('Keyguard result', result);
+            document.querySelector('#result').textContent = 'Account added';
+        } catch (e) {
+            console.error('Keyguard error', e);
+            document.querySelector('#result').textContent = `Error: ${e.message || e}`;
+        }
+    }
+
+    public _createAddAccountRequest(walletId: string): AddAccountRequest {
+        return {
+            appName: 'Accounts Demos',
+            walletId,
+        };
+    }
+
     public async updateAccounts() {
         const keys = await this.list();
         console.log('Accounts in Manager:', keys);
@@ -269,8 +287,9 @@ class Demo {
 
         keys.forEach(key => {
             html += `<li>${key.label}
-                        <button class="export-words" data-keyid="${key.id}">Export Words</button>
-                        <button class="export-file" data-keyid="${key.id}">Export File</button>
+                        <button class="export-words" data-keyid="${key.id}">Words</button>
+                        <button class="export-file" data-keyid="${key.id}">File</button>
+                        <button class="add-account" data-keyid="${key.id}">+ Acc</button>
                         <button class="logout" data-keyid="${key.id}">Logout</button>
                         <ul>`;
             key.addresses.forEach((acc, addr) => {
@@ -293,6 +312,9 @@ class Demo {
         });
         document.querySelectorAll('button.export-file').forEach( (element, key) => {
             element.addEventListener('click', async () => this.exportFile(element.getAttribute('data-keyid')));
+        });
+        document.querySelectorAll('button.add-account').forEach( (element, key) => {
+            element.addEventListener('click', async () => this.addAccount(element.getAttribute('data-keyid')));
         });
         document.querySelectorAll('button.logout').forEach( (element,key) =>{
             element.addEventListener('click', async () => this.logout(element.getAttribute('data-keyid')));
