@@ -16,6 +16,7 @@ import {
     ExportWordsRequest,
     ExportWordsResult,
     // ListResult,
+    RpcResult,
 } from '../src/lib/RequestTypes';
 
 export default class AccountsManagerClient {
@@ -46,8 +47,16 @@ export default class AccountsManagerClient {
         return this._redirectClient.init();
     }
 
-    public on(command: RequestType, resolve: (...args: any[]) => any, reject: (...args: any[]) => any) {
-        this._redirectClient.onResponse(command, resolve, reject);
+    public on(
+        command: RequestType,
+        resolve: (result: RpcResult, state: any) => any,
+        reject?: (error: Error, state: any) => any
+    ) {
+        this._redirectClient.onResponse(command,
+            // State is always an object containing at least the __command property
+            (result: RpcResult, rpcId, state) => resolve(result, JSON.parse(state!)),
+            (error: Error, rpcId, state) => reject && reject(error, JSON.parse(state!)),
+        );
     }
 
     public signup(request: SignupRequest, requestBehavior = this._defaultBehavior): Promise<SignupResult> {

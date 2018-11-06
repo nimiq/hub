@@ -54,7 +54,7 @@ export class RedirectRequestBehavior extends RequestBehavior {
         const client = new RedirectRpcClient(endpoint, origin);
         await client.init();
 
-        const state: object = Object.assign({ __command: command }, this._localState);
+        const state: object = Object.assign({}, this._localState, { __command: command });
         console.log('state', state);
         client.callAndSaveLocalState(this._returnUrl, JSON.stringify(state), command, ...args);
     }

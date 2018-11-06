@@ -191,6 +191,12 @@ export type ParsedRpcRequest = ParsedSignTransactionRequest
                              | ParsedExportFileRequest
                              | ParsedExportWordsRequest
                              | ParsedLogoutRequest;
+export type RpcResult = SignTransactionResult
+                      | SignupResult
+                      | LoginResult
+                      | ExportWordsResult
+                      | ExportFileResult
+                      | LogoutResult;
 
 export class AccountsRequest {
     public static parse(request: RpcRequest, requestType?: RequestType): ParsedRpcRequest | null {
