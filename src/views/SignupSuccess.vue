@@ -23,10 +23,10 @@
 <script lang="ts">
 import {Component, Vue} from 'vue-property-decorator';
 import {PageHeader, Account, LabelInput} from '@nimiq/vue-components';
-import {AddressInfo} from '../lib/AddressInfo';
-import {KeyInfo, KeyStorageType} from '../lib/KeyInfo';
+import {AccountInfo} from '../lib/AccountInfo';
+import {WalletInfo, WalletType} from '../lib/WalletInfo';
 import {State, Getter} from 'vuex-class';
-import {KeyStore} from '../lib/KeyStore';
+import {WalletStore} from '../lib/WalletStore';
 import {CreateResult} from '@nimiq/keyguard-client';
 import {ResponseStatus, State as RpcState} from '@nimiq/rpc';
 import { SignupResult } from '@/lib/RequestTypes';
@@ -66,10 +66,10 @@ export default class SignupSuccess extends Vue {
 
     private async done() {
         const result: SignupResult = {
-            keyId: this.keyguardResult.keyId,
+            walletId: this.keyguardResult.keyId,
             label: this.walletLabel,
-            type: KeyStorageType.BIP39, // FIXME: Adapt when adding Ledger
-            address: {
+            type: WalletType.BIP39, // FIXME: Adapt when adding Ledger
+            account: {
                 address: this.createdAddress!.toUserFriendlyAddress(),
                 label: this.accountLabel,
             },
@@ -79,21 +79,21 @@ export default class SignupSuccess extends Vue {
     }
 
     private async saveResult(walletLabel: string, accountLabel: string) {
-        const addressInfo = new AddressInfo(
+        const addressInfo = new AccountInfo(
             this.keyguardResult.keyPath,
             accountLabel,
             this.createdAddress!,
         );
 
-        const keyInfo = new KeyInfo(
+        const keyInfo = new WalletInfo(
             this.keyguardResult.keyId,
             walletLabel,
-            new Map<string, AddressInfo>().set(addressInfo.userFriendlyAddress, addressInfo),
+            new Map<string, AccountInfo>().set(addressInfo.userFriendlyAddress, addressInfo),
             [],
-            KeyStorageType.BIP39,
+            WalletType.BIP39,
         );
 
-        await KeyStore.Instance.put(keyInfo);
+        await WalletStore.Instance.put(keyInfo);
     }
 }
 </script>

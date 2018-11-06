@@ -13,9 +13,9 @@ import {SmallPage} from '@nimiq/vue-components';
 import {ParsedExportFileRequest, ExportFileResult} from '../lib/RequestTypes';
 import {State} from 'vuex-class';
 import RpcApi from '../lib/RpcApi';
-import {ExportFileRequest, ExportFileResult as KExportFileResult} from '@nimiq/keyguard-client';
+import {ExportFileRequest as KExportFileRequest, ExportFileResult as KExportFileResult} from '@nimiq/keyguard-client';
 import {State as RpcState, ResponseStatus} from '@nimiq/rpc';
-import { KeyStore } from '@/lib/KeyStore';
+import { WalletStore } from '@/lib/WalletStore';
 import staticStore, {Static} from '../lib/StaticStore';
 
 @Component({components: {SmallPage}})
@@ -29,12 +29,12 @@ export default class ExportFile extends Vue {
             this.rpcState.reply(ResponseStatus.ERROR, this.keyguardResult);
         } else if (this.keyguardResult) return;
 
-        const key = await KeyStore.Instance.get(this.request.keyId);
-        if (!key) throw new Error('KeyId not found');
+        const key = await WalletStore.Instance.get(this.request.walletId);
+        if (!key) throw new Error('Wallet ID not found');
 
-        const request: ExportFileRequest = {
+        const request: KExportFileRequest = {
             appName: this.request.appName,
-            keyId: this.request.keyId,
+            keyId: this.request.walletId,
             keyLabel: key.label,
         };
 

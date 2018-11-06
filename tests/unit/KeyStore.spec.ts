@@ -1,6 +1,6 @@
-import {KeyInfo, KeyStorageType} from '@/lib/KeyInfo';
-import {KeyStore} from '@/lib/KeyStore';
-import {AddressInfo} from '@/lib/AddressInfo';
+import {WalletInfo, WalletType} from '@/lib/WalletInfo';
+import {WalletStore} from '@/lib/WalletStore';
+import {AccountInfo} from '@/lib/AccountInfo';
 import {ContractType} from '@/lib/ContractInfo';
 
 const Nimiq = require('@nimiq/core'); // tslint:disable-line:no-var-requires variable-name
@@ -10,36 +10,36 @@ global.Nimiq = Nimiq;
 const indexedDB: IDBFactory = require('fake-indexeddb'); // tslint:disable-line:no-var-requires
 
 const DUMMY_ADDRESS = Nimiq.Address.fromUserFriendlyAddress('NQ07 0000 0000 0000 0000 0000 0000 0000 0000');
-const DUMMY: KeyInfo[] = [
-    new KeyInfo('funny-giraffe', 'Main',
-        new Map<string, AddressInfo>([
-            ['m/0\'', new AddressInfo('m/0\'', 'MyAccount', DUMMY_ADDRESS)],
-        ]), [], KeyStorageType.BIP39),
-    new KeyInfo('joyful-cat', 'Ledger',
-        new Map<string, AddressInfo>([
-            ['m/0\'', new AddressInfo('m/0\'', 'MyLedger', DUMMY_ADDRESS)],
+const DUMMY: WalletInfo[] = [
+    new WalletInfo('funny-giraffe', 'Main',
+        new Map<string, AccountInfo>([
+            ['NQ07 0000 0000 0000 0000 0000 0000 0000 0000', new AccountInfo('m/0\'', 'MyAccount', DUMMY_ADDRESS)],
+        ]), [], WalletType.BIP39),
+    new WalletInfo('joyful-cat', 'Ledger',
+        new Map<string, AccountInfo>([
+            ['NQ07 0000 0000 0000 0000 0000 0000 0000 0000', new AccountInfo('m/0\'', 'MyLedger', DUMMY_ADDRESS)],
         ]), [{
             address: DUMMY_ADDRESS,
             label: 'Savings',
             ownerPath: 'm/0\'',
             type: ContractType.VESTING,
-        }], KeyStorageType.LEDGER),
-    new KeyInfo('sad-panda', 'Old',
-        new Map<string, AddressInfo>([
-            ['m/0\'', new AddressInfo('m/0\'', 'OldAccount', DUMMY_ADDRESS)],
-        ]), [], KeyStorageType.LEGACY),
+        }], WalletType.LEDGER),
+    new WalletInfo('sad-panda', 'Old',
+        new Map<string, AccountInfo>([
+            ['NQ07 0000 0000 0000 0000 0000 0000 0000 0000', new AccountInfo('m/0\'', 'OldAccount', DUMMY_ADDRESS)],
+        ]), [], WalletType.LEGACY),
 ];
 
 const beforeEachCallback = async () => {
-    KeyStore.INDEXEDDB_IMPLEMENTATION = indexedDB;
-    await Promise.all(DUMMY.map(KeyStore.Instance.put.bind(KeyStore.Instance)));
-    await KeyStore.Instance.close();
+    WalletStore.INDEXEDDB_IMPLEMENTATION = indexedDB;
+    await Promise.all(DUMMY.map(WalletStore.Instance.put.bind(WalletStore.Instance)));
+    await WalletStore.Instance.close();
 };
 
 const afterEachCallback = async () => {
-    await KeyStore.Instance.close();
+    await WalletStore.Instance.close();
     await new Promise((resolve, reject) => {
-        const request = indexedDB.deleteDatabase(KeyStore.DB_NAME);
+        const request = indexedDB.deleteDatabase(WalletStore.DB_NAME);
         request.onerror = () => reject(request.error);
         request.onsuccess = () => resolve(true);
         request.onblocked = () => {
@@ -47,26 +47,26 @@ const afterEachCallback = async () => {
             setTimeout(() => reject(new Error('Can\'t delete database, there is still an open connection.')), 1000);
         };
     });
-    // delete KeyStore.instance;
+    // delete WalletStore.instance;
 };
 
-describe('KeyStore', () => {
+describe('WalletStore', () => {
 
     beforeEach(beforeEachCallback);
 
     afterEach(afterEachCallback);
 
     it('is a singleton', () => {
-        const instance1 = KeyStore.Instance;
-        const instance2 = KeyStore.Instance;
+        const instance1 = WalletStore.Instance;
+        const instance2 = WalletStore.Instance;
         expect(instance1).toBe(instance2);
     });
 
-    it('can get plain key infos', async () => {
+    it('can get plain account infos', async () => {
         const [key1, key2, key3] = await Promise.all([
-            KeyStore.Instance.get(DUMMY[0].id),
-            KeyStore.Instance.get(DUMMY[1].id),
-            KeyStore.Instance.get(DUMMY[2].id),
+            WalletStore.Instance.get(DUMMY[0].id),
+            WalletStore.Instance.get(DUMMY[1].id),
+            WalletStore.Instance.get(DUMMY[2].id),
         ]);
         expect(key1).toEqual(DUMMY[0]);
         expect(key2).toEqual(DUMMY[1]);
@@ -74,21 +74,21 @@ describe('KeyStore', () => {
     });
 
     it('can list keys', async () => {
-        const keys = await KeyStore.Instance.list();
+        const keys = await WalletStore.Instance.list();
         expect(keys).toEqual(DUMMY);
     });
 
     it('can remove keys', async () => {
-        let currentKeys = await KeyStore.Instance.list();
+        let currentKeys = await WalletStore.Instance.list();
         expect(currentKeys.length).toBe(3);
 
-        await KeyStore.Instance.remove(DUMMY[1].id);
-        currentKeys = await KeyStore.Instance.list();
+        await WalletStore.Instance.remove(DUMMY[1].id);
+        currentKeys = await WalletStore.Instance.list();
         expect(currentKeys.length).toBe(2);
         expect(currentKeys[1].id).not.toBe(DUMMY[1].id);
 
         // check that we can't get a removed key by id
-        const removedKey = await KeyStore.Instance.get(DUMMY[1].id);
+        const removedKey = await WalletStore.Instance.get(DUMMY[1].id);
         expect(removedKey).toBeUndefined();
     });
 
@@ -96,30 +96,30 @@ describe('KeyStore', () => {
         // first clear database
         await afterEachCallback();
 
-        let currentPermissions = await KeyStore.Instance.list();
+        let currentPermissions = await WalletStore.Instance.list();
         expect(currentPermissions.length).toBe(0);
 
         // add permissions
-        await KeyStore.Instance.put(DUMMY[1]);
-        currentPermissions = await KeyStore.Instance.list();
+        await WalletStore.Instance.put(DUMMY[1]);
+        currentPermissions = await WalletStore.Instance.list();
         expect(currentPermissions.length).toBe(1);
 
         // check that the key info has been stored correctly
-        let keyInfo = await KeyStore.Instance.get(DUMMY[1].id);
+        let keyInfo = await WalletStore.Instance.get(DUMMY[1].id);
         expect(keyInfo).toEqual(DUMMY[1]);
 
         keyInfo!.contracts.pop();
-        keyInfo!.addresses.set('m/1\'', new AddressInfo('m/1\'', 'Test', DUMMY_ADDRESS));
+        keyInfo!.accounts.set('m/1\'', new AccountInfo('m/1\'', 'Test', DUMMY_ADDRESS));
 
         // Update the key
-        await KeyStore.Instance.put(keyInfo!);
+        await WalletStore.Instance.put(keyInfo!);
 
         // Check that the info have been updated correctly
-        keyInfo = await KeyStore.Instance.get(DUMMY[1].id);
+        keyInfo = await WalletStore.Instance.get(DUMMY[1].id);
         expect(keyInfo).toBeDefined();
         expect(keyInfo!.contracts.length).toBe(0);
-        expect(keyInfo!.addresses.size).toBe(2);
-        expect(keyInfo!.addresses.get('m/1\'')).toBeDefined();
-        expect(keyInfo!.addresses.get('m/1\'')!.path).toBe('m/1\'');
+        expect(keyInfo!.accounts.size).toBe(2);
+        expect(keyInfo!.accounts.get('m/1\'')).toBeDefined();
+        expect(keyInfo!.accounts.get('m/1\'')!.path).toBe('m/1\'');
     });
 });

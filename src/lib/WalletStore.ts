@@ -1,13 +1,13 @@
-import {KeyInfo, KeyInfoEntry} from '@/lib/KeyInfo';
+import {WalletInfo, WalletInfoEntry} from '@/lib/WalletInfo';
 
-export class KeyStore {
+export class WalletStore {
     public static readonly DB_VERSION = 1;
-    public static readonly DB_NAME = 'nimiq-accountsmanager';
-    public static readonly DB_KEY_STORE_NAME = 'keys';
+    public static readonly DB_NAME = 'nimiq-accounts';
+    public static readonly DB_KEY_STORE_NAME = 'wallets';
 
     public static INDEXEDDB_IMPLEMENTATION = window.indexedDB;
 
-    private static instance: KeyStore | null = null;
+    private static instance: WalletStore | null = null;
 
     private static _requestAsPromise(request: IDBRequest): Promise<any> {
         return new Promise((resolve, reject) => {
@@ -35,48 +35,48 @@ export class KeyStore {
     private _dbPromise: Promise<IDBDatabase> | null;
     private _indexedDB: IDBFactory;
 
-    static get Instance(): KeyStore {
-        KeyStore.instance = KeyStore.instance || new KeyStore();
-        return KeyStore.instance;
+    static get Instance(): WalletStore {
+        WalletStore.instance = WalletStore.instance || new WalletStore();
+        return WalletStore.instance;
     }
 
     private constructor() {
         this._dbPromise = null;
-        this._indexedDB = KeyStore.INDEXEDDB_IMPLEMENTATION;
+        this._indexedDB = WalletStore.INDEXEDDB_IMPLEMENTATION;
     }
 
-    public async get(id: string): Promise<KeyInfo | null> {
+    public async get(id: string): Promise<WalletInfo | null> {
         const db = await this.connect();
-        const request = db.transaction([KeyStore.DB_KEY_STORE_NAME])
-            .objectStore(KeyStore.DB_KEY_STORE_NAME)
+        const request = db.transaction([WalletStore.DB_KEY_STORE_NAME])
+            .objectStore(WalletStore.DB_KEY_STORE_NAME)
             .get(id);
-        const result = await KeyStore._requestAsPromise(request);
-        return result ? KeyInfo.fromObject(result) : result;
+        const result = await WalletStore._requestAsPromise(request);
+        return result ? WalletInfo.fromObject(result) : result;
     }
 
-    public async put(keyInfo: KeyInfo) {
+    public async put(walletInfo: WalletInfo) {
         const db = await this.connect();
-        const request = db.transaction([KeyStore.DB_KEY_STORE_NAME], 'readwrite')
-            .objectStore(KeyStore.DB_KEY_STORE_NAME)
-            .put(keyInfo.toObject());
-        return KeyStore._requestAsPromise(request);
+        const request = db.transaction([WalletStore.DB_KEY_STORE_NAME], 'readwrite')
+            .objectStore(WalletStore.DB_KEY_STORE_NAME)
+            .put(walletInfo.toObject());
+        return WalletStore._requestAsPromise(request);
     }
 
     public async remove(id: string) {
         const db = await this.connect();
-        const request = db.transaction([KeyStore.DB_KEY_STORE_NAME], 'readwrite')
-            .objectStore(KeyStore.DB_KEY_STORE_NAME)
+        const request = db.transaction([WalletStore.DB_KEY_STORE_NAME], 'readwrite')
+            .objectStore(WalletStore.DB_KEY_STORE_NAME)
             .delete(id);
-        return KeyStore._requestAsPromise(request);
+        return WalletStore._requestAsPromise(request);
     }
 
-    public async list(): Promise<KeyInfoEntry[]> {
+    public async list(): Promise<WalletInfoEntry[]> {
         const db = await this.connect();
-        const request = db.transaction([KeyStore.DB_KEY_STORE_NAME], 'readonly')
-            .objectStore(KeyStore.DB_KEY_STORE_NAME)
+        const request = db.transaction([WalletStore.DB_KEY_STORE_NAME], 'readonly')
+            .objectStore(WalletStore.DB_KEY_STORE_NAME)
             .openCursor();
 
-        const result: KeyInfoEntry[] = await KeyStore._readAllFromCursor(request);
+        const result: WalletInfoEntry[] = await WalletStore._readAllFromCursor(request);
         return result;
     }
 
@@ -92,7 +92,7 @@ export class KeyStore {
         if (this._dbPromise) { return this._dbPromise; }
 
         this._dbPromise = new Promise((resolve, reject) => {
-            const request = this._indexedDB.open(KeyStore.DB_NAME, KeyStore.DB_VERSION);
+            const request = this._indexedDB.open(WalletStore.DB_NAME, WalletStore.DB_VERSION);
             request.onsuccess = () => resolve(request.result);
             request.onerror = () => reject(request.error);
             request.onupgradeneeded = (event) => {
@@ -100,7 +100,7 @@ export class KeyStore {
 
                 if (event.oldVersion < 1) {
                     // Version 1 is the first version of the database.
-                    db.createObjectStore(KeyStore.DB_KEY_STORE_NAME, { keyPath: 'id' });
+                    db.createObjectStore(WalletStore.DB_KEY_STORE_NAME, { keyPath: 'id' });
                 }
             };
         });

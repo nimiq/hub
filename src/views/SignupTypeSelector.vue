@@ -19,15 +19,12 @@
 </template>
 
 <script lang="ts">
-import {Component, Emit, Prop, Watch, Vue} from 'vue-property-decorator';
+import {Component, Vue} from 'vue-property-decorator';
 import {PageHeader, PageFooter} from '@nimiq/vue-components';
-import {RequestType, ParsedSignupRequest} from '../lib/RequestTypes';
-import {AddressInfo} from '../lib/AddressInfo';
-import {KeyInfo, KeyStorageType} from '../lib/KeyInfo';
-import {State, Mutation, Getter} from 'vuex-class';
+import {ParsedSignupRequest} from '../lib/RequestTypes';
+import {State} from 'vuex-class';
 import RpcApi from '../lib/RpcApi';
 import {CreateRequest as KCreateRequest, CreateResult as KCreateResult} from '@nimiq/keyguard-client';
-import {ResponseStatus, State as RpcState} from '@nimiq/rpc';
 import staticStore, {Static} from '../lib/StaticStore';
 
 @Component({components: {PageHeader, PageFooter}})
