@@ -152,13 +152,11 @@ export default new Router({
       path: `/${RequestType.LOGOUT}`,
       component: Logout,
       name: RequestType.LOGOUT,
-      children: [
-        {
-          path: 'success',
-          name: `${RequestType.LOGOUT}-success`,
-          component: LogoutSuccess,
-        },
-      ],
+    },
+    {
+      path: 'success',
+      name: `${RequestType.LOGOUT}-success`,
+      component: LogoutSuccess,
     },
   ],
 });
