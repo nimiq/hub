@@ -3,66 +3,81 @@
 **Nimiq Accounts** (or **Accounts Manager**) provides a unified interface for all Nimiq wallets, accounts, and contracts.
 It is the primary UI for Nimiq users to manage their wallets and provides websites and apps with a concise API
 to interact with their users' Nimiq accounts.
-<!-- VSC markdownlinter keeps the TOC up-to-date automatically -->
-- [The Accounts Client library](#the-accounts-client-library)
-    - [Installation](#installation)
-    - [Initialization](#initialization)
-    - [Usage](#usage)
-        - [Using top-level redirects](#using-top-level-redirects)
-    - [API Methods](#api-methods)
-        - [Checkout](#checkout)
-        - [Sign transaction](#sign-transaction)
-        - [Signup](#signup)
-        - [Login](#login)
-        - [Logout](#logout)
-        - [Export](#export)
-    - [Listening for redirect responses](#listening-for-redirect-responses)
-- [Running your own Accounts Manager](#running-your-own-accounts-manager)
+<!-- Adding a few spaces keeps markuplinter of VSC from messing with the TOC -->
+
+   - [The Accounts Client library](#the-accounts-client-library)
+       - [Installation](#installation)
+       - [Initialization](#initialization)
+       - [Usage](#usage)
+           - [Using top-level redirects](#using-top-level-redirects)
+       - [API Methods](#api-methods)
+           - [Checkout](#checkout)
+           - [Sign transaction](#sign-transaction)
+           - [Signup](#signup)
+           - [Login](#login)
+           - [Logout](#logout)
+           - [Export](#export)
+       - [Listening for redirect responses](#listening-for-redirect-responses)
+   - [Running your own Accounts Manager](#running-your-own-accounts-manager)
 
 ## The Accounts Client library
 
 ### Installation
 The JavaScript client library can either be installed from NPM:
+
 ```bash
 npm install @nimiq/accounts-manager-client
 # or with yarn
 yarn add @nimiq/accounts-manager-client
 ```
+
 or downloaded from the [client/dist/standalone](https://github.com/nimiq/accounts/tree/master/client/dist/standalone)
 directory.
 
 To use it, require or import it:
+
 ```javascript
 const AccountsManagerClient = require('@nimiq/accounts-manager-client');
 // or
 import AccountsManagerClient from '@nimiq/accounts-manager-client';
 ```
+
 or include it as a script tag in your page:
 ```html
 <script src="AccountsManagerClient.standalone.umd.js"></script>
 ```
 
+<!-- IDEA provide a full URL via a CDN? -->
+
 ### Initialization
 To start the client, just instantiate the class by passing it the URL of the **Accounts Manager** to connect to:
+
 ```javascript
+// connect to testnet
 const accountsClient = new AccountsManagerClient('https://accounts.nimiq-testnet.com');
+
+// or mainnet
+const accountsClient = new AccountsManagerClient('https://accounts.nimiq.com');
 ```
 
 ### Usage
-By default, the client opens a popup window for user interactions. On mobile devices, a new tab will be opened instead
-(for simplicity, we will always refer to a popup throughout this documentation.)
+By default, the client opens a popup window for user interactions. On mobile devices, a new tab will be opened instead.
+For simplicity, we will always refer to popup throughout this documentation.
 
 Popups will be blocked if not opened within the context of an active user action. Thus, it is required that API methods
 are called synchronously within the context of a user action, such as a click. See example below.
+
 ```javascript
 document.getElementById('#checkoutButton').addEventListener('click', function(event){
     accountsClient.checkout(/* see details below */);
 });
 ```
+
 For more details about avoiding popup blocking refer to https://javascript.info/popup-windows#popup-blocking.
 
 #### Using top-level redirects
 If you prefer top-level redirects instead of popups, you can pass a second parameter to the initialization:
+
 ```javascript
 import AccountsManagerClient from '@nimiq/accounts-manager-client';
 
@@ -70,22 +85,22 @@ const redirectBehavior = new AccountsManagerClient.RedirectRequestBehavior();
 const accountsClient = new AccountsManagerClient('https://accounts.nimiq-testnet.com', redirectBehavior);
 ```
 
-The `RedirectRequestBehavior` can take two optional parameters:
+The `RedirectRequestBehavior` accepts two optional parameters:
 
 The first is the return URL:
+
 ```javascript
 const redirectBehavior = new RedirectRequestBehavior('https://url.to/return?to');
 ```
+
 If no return URL is specified, the current URL without parameters will be used.
 
-The second optional parameter is an object representing local state to be stored until the request returns:
-```javascript
-const redirectBehavior = new RedirectRequestBehavior(null, { foo: 'I am stored' });
-```
+The second optional parameter is a string you can use to store the app's state until the request returns. To store an object combine it with `JSON.stringify()`:
 
-> **Note:**
->
-> The state object will be serialized to JSON for storage.
+```javascript
+const state = { foo: 'I am the state' };
+const redirectBehavior = new RedirectRequestBehavior(null, JSON.stringify(state));
+```
 
 For details on how to listen for redirect responses and retrieve the stored state,
 see [Listening for redirect responses](#listening-for-redirect-responses).
@@ -111,6 +126,7 @@ The `checkout()` method allows your site to request a transaction from the user.
 select the account to send from &mdash; or cancel the request. During the payment process, the signed transaction is
 sent (relayed) to the network but also returned to the caller, e.g. for processing in your site, storage on your server
 or re-submittal.
+
 ```javascript
 const requestOptions = {
     // The name of your app, should be as short as possible.
@@ -141,15 +157,18 @@ const requestOptions = {
     //flags: Nimiq.Transaction.Flag.CONTRACT_CREATION,
 
     // [optional] Network ID of the Nimiq network that the transaction should be valid in.
-    // Defaults to the network that the Accounts Manager is configured for.
-    // Default: Nimiq.GenesisConfig.CONFIGS['test'].NETWORK_ID (1)
+    // Defaults depend on which Accounts Manager the client is is connected to.
+    // accounts.nimiq-testnet.com: Nimiq.GenesisConfig.CONFIGS['test'].NETWORK_ID (1)
+    // accounts.nimiq.com: Nimiq.GenesisConfig.CONFIGS['main'].NETWORK_ID (42)
     //networkId: Nimiq.GenesisConfig.CONFIGS['main'].NETWORK_ID,
 };
 
 // All client requests are async and return a promise
 const checkoutResult = await accountsClient.checkout(requestOptions);
 ```
+
 The `checkout()` method returns a promise which resolves to a `SignTransactionResult`:
+
 ```javascript
 interface SignTransactionResult {
     serializedTx: Uint8Array;           // The signed, serialized transaction
@@ -175,7 +194,8 @@ The `signTransaction()` method is similar to checkout, but provides a different 
 `sender` respectively, as well as the transaction's `validityStartHeight`. The created transaction will only be returned
 to the caller, not sent to the network automatically.
 
-Most duplicate parameter explanations are omitted here, please refer to [Checkout](#checkout) for details.
+For brevity, most duplicate parameter explanations are omitted here, please refer to [Checkout](#checkout) for more details.
+
 ```javascript
 const requestOptions = {
     appName: 'Nimiq Safe',
@@ -205,11 +225,13 @@ const requestOptions = {
 // All client requests are async and return a promise
 const signTxResult = await accountsClient.signTransaction(requestOptions);
 ```
+
 The `signTransaction()` method returns a `SignTransactionResult` as well. See [Checkout](#checkout) for details.
 
 #### Signup
 The `signup()` method creates a new wallet in the **Accounts Manager**. The user will chose an Identicon, backup the
 wallet (optional), and set a label (optional).
+
 ```javascript
 const requestOptions = {
     // The name of your app, should be as short as possible.
@@ -219,13 +241,15 @@ const requestOptions = {
 // All client requests are async and return a promise
 const newWallet = await accountsClient.signup(requestOptions);
 ```
+
 The `signup()` method returns a promise which resolves to a `SignupResult`:
+
 ```javascript
 interface SignupResult {
     walletId: string;       // Automatically generated wallet ID
     label: string;          // The label/name given to the wallet by the user
 
-    type: WalletType;       // 1 for in-browser multi-address wallets,
+    type: WalletType;       // 1 for in-browser multi-account wallets,
                             // 2 for Ledger hardware wallets
 
     account: {              // During signup, only one account is added to the wallet
@@ -240,6 +264,7 @@ The `login()` method allows the user to add an existing wallet to the **Accounts
 importing their *Wallet File*, *Recovery Words* or *Account Access File*.
 After a wallet has been imported, the **Accounts Manager** automatically detects active accounts following the
 [BIP44](https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki#account-discovery) method.
+
 ```javascript
 const requestOptions = {
     // The name of your app, should be as short as possible.
@@ -249,14 +274,16 @@ const requestOptions = {
 // All client requests are async and return a promise
 const newWallet = await accountsClient.login(requestOptions);
 ```
+
 The `login()` method returns a promise which resolves to a `LoginResult`:
+
 ```javascript
 interface LoginResult {
     walletId: string;       // Automatically generated wallet ID
     label: string;          // The label/name given to the wallet by the user
 
-    type: WalletType;       // 0 for in-browser single-address (legacy) wallets,
-                            // 1 for in-browser multi-address wallets,
+    type: WalletType;       // 0 for in-browser single-account (legacy) wallets,
+                            // 1 for in-browser multi-account wallets,
                             // 2 for Ledger hardware wallets
 
     accounts: Array<{       // Array of active accounts detected during login
@@ -266,9 +293,13 @@ interface LoginResult {
 }
 ```
 
+<!-- IDEA should we use std JS Array notation in the doc?
+     Or do we officially switch to TS? Then that's another section of the general doc to add on this IMO. -->
+
 #### Logout
 The `logout()` method removes a wallet from the **Accounts Manager**. During the logout process, the user can retrieve
-the wallet's *Wallet File* or *Recovery Words* before the wallet is deleted.
+the *Wallet File* or *Recovery Words* before the wallet is deleted.
+
 ```javascript
 const requestOptions = {
     // The name of your app, should be as short as possible.
@@ -281,16 +312,21 @@ const requestOptions = {
 // All client requests are async and return a promise
 const logoutResult = await accountsClient.logout(requestOptions);
 ```
+
 The `logout()` method returns a promise which resolves to a simple object containing the `success` property, which is
 always true:
+
 ```javascript
 {
     success: true
 }
 ```
 
+<!-- TODO awaiting final decision on "simple return type" for API methods that don't really return anything -->
+
 #### Export
-Using the `export()` method, a user can retrieve (export) the *Wallet File* or *Recovery Words* of a wallet.
+Using the `export()` method, a user can retrieve the *Wallet File* or *Recovery Words* of a wallet.
+
 ```javascript
 const requestOptions = {
     // The name of your app, should be as short as possible.
@@ -303,13 +339,17 @@ const requestOptions = {
 // All client requests are async and return a promise
 const exportResult = await accountsClient.export(requestOptions);
 ```
+
 The `export()` method returns a promise which resolves to a simple object containing the `success` property, which is
 always true:
+
 ```javascript
 {
     success: true
 }
 ```
+
+<!-- TODO awaiting final decision on "simple return type" for API methods that don't really return anything -->
 
 ### Listening for redirect responses
 <!-- CHECK updated below, redirect is expected when configured to use redirects instead of popup. -->
@@ -318,10 +358,9 @@ you need to follow the four steps below to specifically listen for the redirects
 your site using the `on()` method.
 
 Your handler functions will be called with three parameters: the result object, the RPC call ID, and the stored local
-state object (as JSON string) as it was passed to the `RedirectRequestBehavior`
+state string as it was passed to the `RedirectRequestBehavior`
 [during initialization](#using-top-level-redirects).
-<!-- FIXME I think it's inconsistent to return a JSON string instead of the objected passed in.
-     Even if it was serialized in between. -->
+
 ```javascript
 // 1. Initialize an Accounts Manager client instance
 const accountsClient = new AccountsManagerClient(/* ... */);
@@ -330,16 +369,18 @@ const accountsClient = new AccountsManagerClient(/* ... */);
 const onSuccess = function(result, id, state) {
     console.log("Got result from Accounts Manager:", result);
     console.log("Request RPC ID:", id);
-    console.log("Retrieved stored state:": state); // As JSON string
+    console.log("Retrieved stored state:": state); // A string
 }
 
 const onError = function(error, id, state) {
     console.log("Got error from Accounts Manager:", error);
     console.log("Request RPC ID:", id);
-    console.log("Retrieved stored state:": state); // As JSON string
+    console.log("Retrieved stored state:": state);
+    // or if you used JSON.stringify(state) before
+    console.log("Retrieved stored state:": JSON.parse(state));
 }
 
-// 3. Listen for the redirect request responses you expect
+// 3. Listen for the redirect responses you expect
 const RequestType = AccountsManagerClient.RequestType;
 
 accountsClient.on(RequestType.CHECKOUT, onSuccess, onError);
@@ -349,11 +390,13 @@ accountsClient.on(RequestType.LOGIN, onSuccess, onError);
 // 4. After setup is complete, start the Accounts Manager client
 accountsClient.init();
 ```
+
 <!-- QUESTION/IDEA The RPC ID should be explained.
      Can the dev retrieve the ID before triggering the API method so that later on request and result can be aligned?
      If not, what's the potential use of the ID?
-     I suggestion to make the ID third and thus optional. -->
+     I suggestion to remove it, or at least make the ID third and thus optional. -->
 The available `RequestType`s, corresponding to the API methods, are:
+
 ```javascript
 enum AccountsManagerClient.RequestType {
     CHECKOUT = 'checkout',
@@ -364,6 +407,7 @@ enum AccountsManagerClient.RequestType {
     EXPORT = 'export',
 }
 ```
+
 <!-- FIXME change SIGNTRANSACTION to SIGN_TRANSACTION and adjust above. -->
 
 ## Running your own Accounts Manager
