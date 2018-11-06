@@ -1,20 +1,20 @@
 <template>
     <div class="visible-area">
         <div class="multi-pages" :style="`transform: translate3d(-${(page - 1) * 100}%, 0, 0)`">
-            <LoginSelector @wallet-selected="loginSelected"
+            <LoginSelector @login-selected="loginSelected"
                             @account-selected="accountSelected"
-                            @add-wallet="addLogin"
+                            @add-login="addLogin"
                             @back="backToOverview"
                             :logins="wallets"/>
             <AccountSelector
                     @account-selected="accountSelected"
-                    @switch-wallet="switchLogin"
+                    @switch-login="switchLogin"
                     @back="switchLogin"
                     :accounts="currentAccounts"
-                    :walletId="currentWallet ? currentWallet.id : ''"
+                    :loginId="currentWallet ? currentWallet.id : ''"
                     :loginLabel="currentWallet ? currentWallet.label : ''"
                     :loginType="currentWallet ? currentWallet.type : 0"
-                    :show-switch-wallet="!!this.preselectedWalletId"/>
+                    :show-switch-login="!!this.preselectedWalletId"/>
         </div>
     </div>
 </template>
