@@ -8,19 +8,19 @@
 </template>
 
 <script lang="ts">
-import {Component, Emit, Vue} from 'vue-property-decorator';
-import {SmallPage} from '@nimiq/vue-components';
-import {ParsedSignTransactionRequest, SignTransactionRequest} from '../lib/RequestTypes';
-import {State} from 'vuex-class';
+import { Component, Emit, Vue } from 'vue-property-decorator';
+import { SmallPage } from '@nimiq/vue-components';
+import { ParsedSignTransactionRequest, SignTransactionRequest } from '../lib/RequestTypes';
+import { State } from 'vuex-class';
 import RpcApi from '../lib/RpcApi';
 import {
     SignTransactionRequest as KSignTransactionRequest,
     SignTransactionResult as KSignTransactionResult,
 } from '@nimiq/keyguard-client';
-import {State as RpcState, ResponseStatus} from '@nimiq/rpc';
+import { State as RpcState, ResponseStatus } from '@nimiq/rpc';
 import { WalletStore } from '@/lib/WalletStore';
 import { access } from 'fs';
-import staticStore, {Static} from '../lib/StaticStore';
+import staticStore, { Static } from '../lib/StaticStore';
 
 @Component({components: {SmallPage}})
 export default class SignTransaction extends Vue {

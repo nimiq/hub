@@ -21,16 +21,16 @@
 </template>
 
 <script lang="ts">
-import {Component, Vue} from 'vue-property-decorator';
-import {PageHeader, Account, LabelInput} from '@nimiq/vue-components';
-import {AccountInfo} from '../lib/AccountInfo';
-import {WalletInfo, WalletType} from '../lib/WalletInfo';
-import {State, Getter} from 'vuex-class';
-import {WalletStore} from '../lib/WalletStore';
-import {CreateResult} from '@nimiq/keyguard-client';
-import {ResponseStatus, State as RpcState} from '@nimiq/rpc';
+import { Component, Vue } from 'vue-property-decorator';
+import { PageHeader, Account, LabelInput } from '@nimiq/vue-components';
+import { AccountInfo } from '../lib/AccountInfo';
+import { WalletInfo, WalletType } from '../lib/WalletInfo';
+import { State, Getter } from 'vuex-class';
+import { WalletStore } from '../lib/WalletStore';
+import { CreateResult } from '@nimiq/keyguard-client';
+import { ResponseStatus, State as RpcState } from '@nimiq/rpc';
 import { SignupResult } from '@/lib/RequestTypes';
-import {Static} from '../lib/StaticStore';
+import { Static } from '../lib/StaticStore';
 
 @Component({components: {PageHeader, Account, LabelInput}})
 export default class SignupSuccess extends Vue {

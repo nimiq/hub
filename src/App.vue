@@ -16,8 +16,8 @@
 </template>
 
 <script lang="ts">
-import {Component, Watch, Vue} from 'vue-property-decorator';
-import {State} from 'vuex-class';
+import { Component, Watch, Vue } from 'vue-property-decorator';
+import { State } from 'vuex-class';
 
 @Component
 export default class App extends Vue {

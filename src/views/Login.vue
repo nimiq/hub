@@ -8,14 +8,14 @@
 </template>
 
 <script lang="ts">
-import {Component, Emit, Watch, Vue} from 'vue-property-decorator';
-import {SmallPage} from '@nimiq/vue-components';
-import {ParsedLoginRequest} from '../lib/RequestTypes';
-import {State} from 'vuex-class';
+import { Component, Emit, Watch, Vue } from 'vue-property-decorator';
+import { SmallPage } from '@nimiq/vue-components';
+import { ParsedLoginRequest } from '../lib/RequestTypes';
+import { State } from 'vuex-class';
 import RpcApi from '../lib/RpcApi';
-import {ImportRequest, ImportResult} from '@nimiq/keyguard-client';
-import {State as RpcState, ResponseStatus} from '@nimiq/rpc';
-import staticStore, {Static} from '../lib/StaticStore';
+import { ImportRequest, ImportResult } from '@nimiq/keyguard-client';
+import { State as RpcState, ResponseStatus } from '@nimiq/rpc';
+import staticStore, { Static } from '../lib/StaticStore';
 
 @Component({components: {SmallPage}})
 export default class Login extends Vue {

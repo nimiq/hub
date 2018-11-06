@@ -8,18 +8,18 @@
 </template>
 
 <script lang="ts">
-import {Component, Emit, Watch, Vue} from 'vue-property-decorator';
-import {SmallPage} from '@nimiq/vue-components';
-import {ParsedExportWordsRequest, ExportWordsResult} from '../lib/RequestTypes';
-import {State} from 'vuex-class';
+import { Component, Emit, Watch, Vue } from 'vue-property-decorator';
+import { SmallPage } from '@nimiq/vue-components';
+import { ParsedExportWordsRequest, ExportWordsResult } from '../lib/RequestTypes';
+import { State } from 'vuex-class';
 import RpcApi from '../lib/RpcApi';
 import {
     ExportWordsRequest as KExportWordsRequest,
     ExportWordsResult as KExportWordsResult,
 } from '@nimiq/keyguard-client';
-import {State as RpcState, ResponseStatus} from '@nimiq/rpc';
+import { State as RpcState, ResponseStatus } from '@nimiq/rpc';
 import { WalletStore } from '@/lib/WalletStore';
-import staticStore, {Static} from '../lib/StaticStore';
+import staticStore, { Static } from '../lib/StaticStore';
 
 @Component({components: {SmallPage}})
 export default class ExportWords extends Vue {

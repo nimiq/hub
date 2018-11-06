@@ -8,11 +8,11 @@
 </template>
 
 <script lang="ts">
-import {Component, Emit, Vue} from 'vue-property-decorator';
-import {ParsedLogoutRequest} from '../lib/RequestTypes';
-import {State} from 'vuex-class';
-import {ResponseStatus, State as RpcState} from '@nimiq/rpc';
-import {RemoveKeyResult} from '@nimiq/keyguard-client';
+import { Component, Emit, Vue } from 'vue-property-decorator';
+import { ParsedLogoutRequest } from '../lib/RequestTypes';
+import { State } from 'vuex-class';
+import { ResponseStatus, State as RpcState } from '@nimiq/rpc';
+import { RemoveKeyResult } from '@nimiq/keyguard-client';
 import { WalletStore } from '@/lib/WalletStore';
 import { Static } from '@/lib/StaticStore';
 

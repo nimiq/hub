@@ -20,12 +20,12 @@
 </template>
 
 <script lang="ts">
-import {Component, Emit, Vue} from 'vue-property-decorator';
-import {AccountSelector, LoginSelector} from '@nimiq/vue-components';
-import {AccountInfo} from '../lib/AccountInfo';
-import {WalletInfo, WalletType} from '../lib/WalletInfo';
-import {RequestType} from '../lib/RequestTypes';
-import {State, Mutation} from 'vuex-class';
+import { Component, Emit, Vue } from 'vue-property-decorator';
+import { AccountSelector, LoginSelector } from '@nimiq/vue-components';
+import { AccountInfo } from '../lib/AccountInfo';
+import { WalletInfo, WalletType } from '../lib/WalletInfo';
+import { RequestType } from '../lib/RequestTypes';
+import { State, Mutation } from 'vuex-class';
 
 @Component({components: {AccountSelector, LoginSelector}})
 export default class CheckoutSelectAccount extends Vue {
@@ -34,8 +34,8 @@ export default class CheckoutSelectAccount extends Vue {
     @Mutation('addKey') private addKey!: (key: WalletInfo) => any;
 
     private page: number = 1;
-    private selectedWalletId: string|null = null;
-    private preselectedWalletId: string|null = null;
+    private selectedWalletId: string | null = null;
+    private preselectedWalletId: string | null = null;
 
     private created() {
         if (this.wallets.length === 1) {

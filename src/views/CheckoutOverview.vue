@@ -9,17 +9,17 @@
 </template>
 
 <script lang="ts">
-import {Component, Emit, Watch, Vue} from 'vue-property-decorator';
-import {Getter} from 'vuex-class';
-import {Amount} from '@nimiq/vue-components';
-import {SignTransactionRequest as KSignTransactionRequest} from '@nimiq/keyguard-client';
-import {State as RpcState} from '@nimiq/rpc';
+import { Component, Emit, Watch, Vue } from 'vue-property-decorator';
+import { Getter } from 'vuex-class';
+import { Amount } from '@nimiq/vue-components';
+import { SignTransactionRequest as KSignTransactionRequest } from '@nimiq/keyguard-client';
+import { State as RpcState } from '@nimiq/rpc';
 import CheckoutDetails from '../components/CheckoutDetails.vue';
-import {AccountInfo} from '../lib/AccountInfo';
-import {WalletInfo} from '../lib/WalletInfo';
-import {RequestType, ParsedCheckoutRequest} from '../lib/RequestTypes';
+import { AccountInfo } from '../lib/AccountInfo';
+import { WalletInfo } from '../lib/WalletInfo';
+import { RequestType, ParsedCheckoutRequest } from '../lib/RequestTypes';
 import RpcApi from '../lib/RpcApi';
-import staticStore, {Static} from '../lib/StaticStore';
+import staticStore, { Static } from '../lib/StaticStore';
 import Network from '../components/Network.vue';
 
 @Component({components: {Amount, CheckoutDetails, Network}})

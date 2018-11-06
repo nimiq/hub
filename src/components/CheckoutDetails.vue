@@ -14,13 +14,13 @@
 </template>
 
 <script lang="ts">
-import {Component, Emit, Vue, Prop} from 'vue-property-decorator';
-import {Getter} from 'vuex-class';
-import {Amount, Account} from '@nimiq/vue-components';
-import {State as RpcState} from '@nimiq/rpc';
-import {AccountInfo} from '../lib/AccountInfo';
-import {RequestType, ParsedCheckoutRequest} from '../lib/RequestTypes';
-import staticStore, {Static} from '../lib/StaticStore';
+import { Component, Emit, Vue, Prop } from 'vue-property-decorator';
+import { Getter } from 'vuex-class';
+import { Amount, Account } from '@nimiq/vue-components';
+import { State as RpcState } from '@nimiq/rpc';
+import { AccountInfo } from '../lib/AccountInfo';
+import { RequestType, ParsedCheckoutRequest } from '../lib/RequestTypes';
+import staticStore, { Static } from '../lib/StaticStore';
 
 @Component({components: {Amount, Account}})
 export default class CheckoutDetails extends Vue {
