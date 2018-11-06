@@ -113,7 +113,7 @@ class Demo {
                 throw new Error('No account found');
             }
             const sender = $radio.getAttribute('data-address');
-            const walletId = $radio.getAttribute('data-walletid');
+            const walletId = $radio.getAttribute('data-wallet-id');
             const value = parseInt((document.querySelector('#value') as HTMLInputElement).value) || 1337;
             const fee = parseInt((document.querySelector('#fee') as HTMLInputElement).value) || 0;
             const txData = (document.querySelector('#data') as HTMLInputElement).value || '';
@@ -270,15 +270,15 @@ class Demo {
 
         wallets.forEach(wallet => {
             html += `<li>${wallet.label}
-                        <button class="export-words" data-walletid="${wallet.id}">Export Words</button>
-                        <button class="export-file" data-walletid="${wallet.id}">Export File</button>
-                        <button class="logout" data-walletid="${wallet.id}">Logout</button>
+                        <button class="export-words" data-wallet-id="${wallet.id}">Export Words</button>
+                        <button class="export-file" data-wallet-id="${wallet.id}">Export File</button>
+                        <button class="logout" data-wallet-id="${wallet.id}">Logout</button>
                         <ul>`;
             wallet.accounts.forEach((acc, addr) => {
                 html += `
                             <li>
                                 <label>
-                                    <input type="radio" name="sign-tx-address" data-address="${addr}" data-walletid="${wallet.id}">
+                                    <input type="radio" name="sign-tx-address" data-address="${addr}" data-wallet-id="${wallet.id}">
                                     ${acc.label}
                                 </label>
                             </li>
@@ -290,13 +290,13 @@ class Demo {
         $ul.innerHTML = html;
         (document.querySelector('input[type="radio"]') as HTMLInputElement).checked = true;
         document.querySelectorAll('button.export-words').forEach(element => {
-            element.addEventListener('click', async () => this.exportWords(element.getAttribute('data-walletid')));
+            element.addEventListener('click', async () => this.exportWords(element.getAttribute('data-wallet-id')));
         });
         document.querySelectorAll('button.export-file').forEach(element => {
-            element.addEventListener('click', async () => this.exportFile(element.getAttribute('data-walletid')));
+            element.addEventListener('click', async () => this.exportFile(element.getAttribute('data-wallet-id')));
         });
         document.querySelectorAll('button.logout').forEach(element =>{
-            element.addEventListener('click', async () => this.logout(element.getAttribute('data-walletid')));
+            element.addEventListener('click', async () => this.logout(element.getAttribute('data-wallet-id')));
         });
     }
 } // class Demo
