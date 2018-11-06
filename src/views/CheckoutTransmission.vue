@@ -3,7 +3,10 @@
         <CheckoutDetails :accountChangeable="false"/>
         <Network ref="network" :alwaysVisible="true" message="Sending transaction"/>
         <transition name='fade-in'>
-            <Success v-if="isTxSent" requestName="payment" />
+            <Success v-if="isTxSent"
+                requestName="payment"
+                v-bind:appName="this.keyguardRequest.appName"
+                v-bind:close="this.done" />
         </transition>
     </div>
 </template>
@@ -22,7 +25,7 @@ import {
 import {State} from 'vuex-class';
 import {Static} from '../lib/StaticStore';
 import {AddressInfo} from '../lib/AddressInfo';
-import Success from '../views/Success.vue';
+import Success from '../components/Success.vue';
 
 @Component({components: {Network, CheckoutDetails, LoadingSpinner, Success}})
 export default class CheckoutTransmission extends Vue {
