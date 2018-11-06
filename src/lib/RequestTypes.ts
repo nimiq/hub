@@ -3,7 +3,7 @@ import { WalletType } from './WalletInfo';
 export enum RequestType {
     LIST = 'list',
     CHECKOUT = 'checkout',
-    SIGNTRANSACTION = 'sign-transaction',
+    SIGN_TRANSACTION = 'sign-transaction',
     SIGNUP = 'signup',
     LOGIN = 'login',
     EXPORT_WORDS = 'export-words',
@@ -12,7 +12,7 @@ export enum RequestType {
 }
 
 export interface SignTransactionRequest {
-    kind?: RequestType.SIGNTRANSACTION;
+    kind?: RequestType.SIGN_TRANSACTION;
     appName: string;
     walletId: string;
     sender: string;
@@ -27,7 +27,7 @@ export interface SignTransactionRequest {
 }
 
 export interface ParsedSignTransactionRequest {
-    kind: RequestType.SIGNTRANSACTION;
+    kind: RequestType.SIGN_TRANSACTION;
     appName: string;
     walletId: string;
     sender: Nimiq.Address;
@@ -201,13 +201,13 @@ export type RpcResult = SignTransactionResult
 export class AccountsRequest {
     public static parse(request: RpcRequest, requestType?: RequestType): ParsedRpcRequest | null {
         switch (request.kind || requestType) {
-            case RequestType.SIGNTRANSACTION:
+            case RequestType.SIGN_TRANSACTION:
                 // Because the switch statement is not definitely using 'request.kind' as the condition,
                 // Typescript cannot infer what type the request variable is from the control flow,
                 // thus we need to force-cast it here:
                 request = request as SignTransactionRequest;
                 return {
-                    kind: RequestType.SIGNTRANSACTION,
+                    kind: RequestType.SIGN_TRANSACTION,
                     appName: request.appName,
                     walletId: request.walletId,
                     sender: Nimiq.Address.fromUserFriendlyAddress(request.sender),
@@ -276,9 +276,9 @@ export class AccountsRequest {
 
     public static raw(request: ParsedRpcRequest): RpcRequest | null {
         switch (request.kind) {
-            case RequestType.SIGNTRANSACTION:
+            case RequestType.SIGN_TRANSACTION:
                 return {
-                    kind: RequestType.SIGNTRANSACTION,
+                    kind: RequestType.SIGN_TRANSACTION,
                     appName: request.appName,
                     walletId: request.walletId,
                     sender: request.sender.toUserFriendlyAddress(),

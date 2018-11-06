@@ -37,7 +37,7 @@ export default class RpcApi {
         this._keyguardClient = new KeyguardClient();
 
         this._registerAccountsApis([
-            RequestType.SIGNTRANSACTION,
+            RequestType.SIGN_TRANSACTION,
             RequestType.CHECKOUT,
             RequestType.SIGNUP,
             RequestType.LOGIN,
