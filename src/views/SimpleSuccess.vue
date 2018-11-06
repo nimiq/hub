@@ -37,7 +37,7 @@ export default class SimpleSuccess extends Vue {
             case 'change-passphrase-success':
                 return 'passphrase change'
             default:
-                return '';
+                throw new Error('No matching route');
         }
     }
 
