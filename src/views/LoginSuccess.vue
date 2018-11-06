@@ -22,11 +22,11 @@
 import { Component, Emit, Vue } from 'vue-property-decorator';
 import { ParsedLoginRequest, LoginResult } from '../lib/RequestTypes';
 import { State } from 'vuex-class';
-import { KeyInfo, KeyStorageType } from '../lib/KeyInfo';
+import { WalletInfo, WalletType } from '../lib/WalletInfo';
 import { ImportResult, KeyguardClient } from '@nimiq/keyguard-client';
 import { ResponseStatus, State as RpcState } from '@nimiq/rpc';
-import { AddressInfo } from '@/lib/AddressInfo';
-import { KeyStore } from '@/lib/KeyStore';
+import { AccountInfo } from '@/lib/AccountInfo';
+import { WalletStore } from '@/lib/WalletStore';
 import { Static } from '@/lib/StaticStore';
 import { PageHeader, LabelInput, AccountList, PageFooter } from '@nimiq/vue-components';
 import Network from '@/components/Network.vue';
@@ -40,7 +40,7 @@ export default class LoginSuccess extends Vue {
     private keyguard!: KeyguardClient;
     private network!: Network;
 
-    private keyInfo: KeyInfo | null = null;
+    private walletInfo: WalletInfo | null = null;
 
     private walletLabel: string = 'Keyguard Wallet';
     private defaultAccountLabel: string = 'Standard Account';
@@ -53,7 +53,7 @@ export default class LoginSuccess extends Vue {
      * non-reactive Map and the reactive partner-attribute. The partner-attribute change triggers
      * the recomputation, which in turn updates the DOM.
      */
-    private addresses: Map<string, AddressInfo> = new Map();
+    private addresses: Map<string, AccountInfo> = new Map();
     private addressesUpdateCount: number = 0;
 
     private lastDerivedIndex: number = 0;
@@ -63,11 +63,11 @@ export default class LoginSuccess extends Vue {
 
     private async mounted() {
         // The Keyguard always returns (at least) one derived Address,
-        // thus we can already create a complete KeyInfo object that
+        // thus we can already create a complete WalletInfo object that
         // can be displayed while waiting for the network.
         this.keyguardResult.addresses.forEach((addressObj) => {
             const address = new Nimiq.Address(addressObj.address);
-            const addressInfo = new AddressInfo(
+            const addressInfo = new AccountInfo(
                 addressObj.keyPath,
                 this.defaultAccountLabel,
                 address,
@@ -78,18 +78,18 @@ export default class LoginSuccess extends Vue {
 
         this.storeAndUpdateResult();
 
-        if (this.keyguardResult.keyType === KeyStorageType.BIP39) {
+        if (this.keyguardResult.keyType === WalletType.BIP39) {
             // Init Keyguard iframe to derive addresses
             this.keyguard = new KeyguardClient();
         }
 
-        if (this.keyguardResult.keyType === KeyStorageType.LEDGER) {
-            if (this.keyguardResult.keyType === KeyStorageType.LEDGER) this.walletLabel = 'Ledger Wallet';
+        if (this.keyguardResult.keyType === WalletType.LEDGER) {
+            if (this.keyguardResult.keyType === WalletType.LEDGER) this.walletLabel = 'Ledger Wallet';
             // TODO: Init Ledger client to derive addresses
         }
 
-        if (this.keyguardResult.keyType === KeyStorageType.BIP39
-         || this.keyguardResult.keyType === KeyStorageType.LEDGER) {
+        if (this.keyguardResult.keyType === WalletType.BIP39
+         || this.keyguardResult.keyType === WalletType.LEDGER) {
             // Init Network to check balances
             this.network = this.$refs.network as Network;
             await this.network.connect();
@@ -154,7 +154,7 @@ export default class LoginSuccess extends Vue {
 
             this.lastActiveIndex = this.lastDerivedIndex;
 
-            this.addresses.set(userFriendlyAddress, new AddressInfo(
+            this.addresses.set(userFriendlyAddress, new AccountInfo(
                 // This is where the pre-filled pathsToDerive array from above becomes usefull.
                 // It relieves us from having to calulate the correct array index with an
                 // unrelated counter variable.
@@ -188,7 +188,7 @@ export default class LoginSuccess extends Vue {
     }
 
     private storeAndUpdateResult() {
-        this.keyInfo = new KeyInfo(
+        this.walletInfo = new WalletInfo(
             this.keyguardResult.keyId,
             this.walletLabel,
             this.addresses,
@@ -196,13 +196,13 @@ export default class LoginSuccess extends Vue {
             this.keyguardResult.keyType,
         );
 
-        KeyStore.Instance.put(this.keyInfo);
+        WalletStore.Instance.put(this.walletInfo);
 
         this.result = {
-            keyId: this.keyInfo!.id,
-            label: this.keyInfo.label,
-            type: this.keyInfo.type,
-            addresses: Array.from(this.addresses.values()).map((addressInfo) => ({
+            walletId: this.walletInfo!.id,
+            label: this.walletInfo.label,
+            type: this.walletInfo.type,
+            accounts: Array.from(this.addresses.values()).map((addressInfo) => ({
                 address: addressInfo.userFriendlyAddress,
                 label: addressInfo.label,
             })),
@@ -216,7 +216,7 @@ export default class LoginSuccess extends Vue {
     }
 
     private get walletIconClass(): string {
-        return this.keyguardResult.keyType === KeyStorageType.LEDGER ? 'ledger' : 'keyguard';
+        return this.keyguardResult.keyType === WalletType.LEDGER ? 'ledger' : 'keyguard';
     }
 
     private get accounts(): Array<{ label: string, address: Nimiq.Address, balance?: number }> {

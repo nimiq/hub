@@ -26,7 +26,7 @@ import {
 } from '@nimiq/keyguard-client';
 import {State} from 'vuex-class';
 import {Static} from '../lib/StaticStore';
-import {AddressInfo} from '../lib/AddressInfo';
+import {AccountInfo} from '../lib/AccountInfo';
 
 @Component({components: {Network, CheckoutDetails, LoadingSpinner}})
 export default class CheckoutTransmission extends Vue {

@@ -12,7 +12,8 @@ import {
     ExportWordsRequest, ExportWordsResult,
     ExportFileRequest, ExportFileResult,
 } from '../src/lib/RequestTypes';
-import { KeyStore } from '../src/lib/KeyStore';
+import { WalletStore } from '../src/lib/WalletStore';
+import { WalletInfoEntry } from '../src/lib/WalletInfo';
 import { RedirectRequestBehavior } from '../client/RequestBehavior';
 
 class Demo {
@@ -75,7 +76,7 @@ class Demo {
             try {
                 const result = await client.signup(generateCreateRequest(demo));
                 console.log('Keyguard result', result);
-                document.querySelector('#result').textContent = 'New key & account created';
+                document.querySelector('#result').textContent = 'New wallet & account created';
             } catch (e) {
                 console.error('Keyguard error', e);
                 document.querySelector('#result').textContent = `Error: ${e.message || e}`;
@@ -92,7 +93,7 @@ class Demo {
             try {
                 const result = await client.login(generateLoginRequest(demo));
                 console.log('Keyguard result', result);
-                document.querySelector('#result').textContent = 'Key imported';
+                document.querySelector('#result').textContent = 'Wallet imported';
             } catch (e) {
                 console.error('Keyguard error', e);
                 document.querySelector('#result').textContent = `Error: ${e.message || e}`;
@@ -112,7 +113,7 @@ class Demo {
                 throw new Error('No account found');
             }
             const sender = $radio.getAttribute('data-address');
-            const keyId = $radio.getAttribute('data-keyid');
+            const walletId = $radio.getAttribute('data-walletid');
             const value = parseInt((document.querySelector('#value') as HTMLInputElement).value) || 1337;
             const fee = parseInt((document.querySelector('#fee') as HTMLInputElement).value) || 0;
             const txData = (document.querySelector('#data') as HTMLInputElement).value || '';
@@ -120,7 +121,7 @@ class Demo {
 
             return {
                 appName: 'Accounts Demos',
-                keyId,
+                walletId,
                 sender,
                 recipient: 'NQ63 U7XG 1YYE D6FA SXGG 3F5H X403 NBKN JLDU',
                 value,
@@ -159,7 +160,7 @@ class Demo {
             }
         }
 
-        document.querySelector('button#list-keyguard-keys').addEventListener('click', () => demo.listKeyguard());
+        document.querySelector('button#list-keyguard-wallets').addEventListener('click', () => demo.listKeyguard());
         document.querySelector('button#list-accounts').addEventListener('click', async () => demo.updateAccounts());
         demo._accountsClient = client;
     } // run
@@ -196,20 +197,20 @@ class Demo {
 
     public async listKeyguard() {
         const client = await this.startIframeClient(this._keyguardBaseUrl);
-        const keys = await client.call('list');
-        console.log('Keys in Keyguard:', keys);
-        return keys;
+        const wallets = await client.call('list');
+        console.log('Keys in Keyguard:', wallets);
+        return wallets;
     }
 
-    public async list() {
-        return await KeyStore.Instance.list();
+    public async list(): Promise<WalletInfoEntry[]> {
+        return await WalletStore.Instance.list();
     }
 
-    public async logout(keyId: string): Promise<LogoutResult> {
+    public async logout(walletId: string): Promise<LogoutResult> {
         try {
             const result = await this._accountsClient.logout(this._createLogoutRequest(keyId));
             console.log('Keyguard result', result);
-            document.querySelector('#result').textContent = 'Key Removed';
+            document.querySelector('#result').textContent = 'Wallet Removed';
             return result;
         } catch (e) {
             console.error('Keyguard error', e);
@@ -217,14 +218,14 @@ class Demo {
         }
     }
 
-    public _createLogoutRequest(keyId: string): LogoutRequest {
+    public _createLogoutRequest(walletId: string): LogoutRequest {
         return {
             appName: 'Accounts Demos',
-            keyId,
+            walletId,
         } as LogoutRequest;
     }
 
-    public async exportWords(keyId: string) {
+    public async exportWords(walletId: string) {
         try {
             const result = await this._accountsClient.exportWords(this._createExportWordsRequest(keyId));
             console.log('Keyguard result', result);
@@ -235,14 +236,14 @@ class Demo {
         }
     }
 
-    public _createExportWordsRequest(keyId: string): ExportWordsRequest {
+    public _createExportWordsRequest(walletId: string): ExportWordsRequest {
         return {
             appName: 'Accounts Demos',
-            keyId,
+            walletId,
         } as ExportWordsRequest;
     }
 
-    public async exportFile(keyId: string) {
+    public async exportFile(walletId: string) {
         try {
             const result = await this._accountsClient.exportFile(this._createExportFileRequest(keyId));
             console.log('Keyguard result', result);
@@ -253,31 +254,31 @@ class Demo {
         }
     }
 
-    public _createExportFileRequest(keyId: string): ExportFileRequest {
+    public _createExportFileRequest(walletId: string): ExportFileRequest {
         return {
             appName: 'Accounts Demos',
-            keyId,
+            walletId,
         } as ExportFileRequest;
     }
 
     public async updateAccounts() {
-        const keys = await this.list();
-        console.log('Accounts in Manager:', keys);
+        const wallets = await this.list();
+        console.log('Accounts in Manager:', wallets);
 
         const $ul = document.querySelector('#accounts');
         let html = '';
 
-        keys.forEach(key => {
-            html += `<li>${key.label}
-                        <button class="export-words" data-keyid="${key.id}">Export Words</button>
-                        <button class="export-file" data-keyid="${key.id}">Export File</button>
-                        <button class="logout" data-keyid="${key.id}">Logout</button>
+        wallets.forEach(wallet => {
+            html += `<li>${wallet.label}
+                        <button class="export-words" data-walletid="${wallet.id}">Export Words</button>
+                        <button class="export-file" data-walletid="${wallet.id}">Export File</button>
+                        <button class="logout" data-walletid="${wallet.id}">Logout</button>
                         <ul>`;
-            key.addresses.forEach((acc, addr) => {
+            wallet.accounts.forEach((acc, addr) => {
                 html += `
                             <li>
                                 <label>
-                                    <input type="radio" name="sign-tx-address" data-address="${addr}" data-keyid="${key.id}">
+                                    <input type="radio" name="sign-tx-address" data-address="${addr}" data-walletid="${wallet.id}">
                                     ${acc.label}
                                 </label>
                             </li>
@@ -288,14 +289,14 @@ class Demo {
 
         $ul.innerHTML = html;
         (document.querySelector('input[type="radio"]') as HTMLInputElement).checked = true;
-        document.querySelectorAll('button.export-words').forEach( (element, key) => {
-            element.addEventListener('click', async () => this.exportWords(element.getAttribute('data-keyid')));
+        document.querySelectorAll('button.export-words').forEach(element => {
+            element.addEventListener('click', async () => this.exportWords(element.getAttribute('data-walletid')));
         });
-        document.querySelectorAll('button.export-file').forEach( (element, key) => {
-            element.addEventListener('click', async () => this.exportFile(element.getAttribute('data-keyid')));
+        document.querySelectorAll('button.export-file').forEach(element => {
+            element.addEventListener('click', async () => this.exportFile(element.getAttribute('data-walletid')));
         });
-        document.querySelectorAll('button.logout').forEach( (element,key) =>{
-            element.addEventListener('click', async () => this.logout(element.getAttribute('data-keyid')));
+        document.querySelectorAll('button.logout').forEach(element =>{
+            element.addEventListener('click', async () => this.logout(element.getAttribute('data-walletid')));
         });
     }
 } // class Demo

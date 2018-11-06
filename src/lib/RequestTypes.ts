@@ -1,4 +1,4 @@
-import { KeyStorageType } from './KeyInfo';
+import { WalletType } from './WalletInfo';
 
 export enum RequestType {
     LIST = 'list',
@@ -14,7 +14,7 @@ export enum RequestType {
 export interface SignTransactionRequest {
     kind?: RequestType.SIGNTRANSACTION;
     appName: string;
-    keyId: string;
+    walletId: string;
     sender: string;
     recipient: string;
     recipientType?: Nimiq.Account.Type;
@@ -29,7 +29,7 @@ export interface SignTransactionRequest {
 export interface ParsedSignTransactionRequest {
     kind: RequestType.SIGNTRANSACTION;
     appName: string;
-    keyId: string;
+    walletId: string;
     sender: Nimiq.Address;
     recipient: Nimiq.Address;
     recipientType?: Nimiq.Account.Type;
@@ -99,10 +99,10 @@ export interface ParsedSignupRequest {
 }
 
 export interface SignupResult {
-    keyId: string;
+    walletId: string;
     label: string;
-    type: KeyStorageType;
-    address: {
+    type: WalletType;
+    account: {
         address: string;
         label: string;
     };
@@ -119,10 +119,10 @@ export interface ParsedLoginRequest {
 }
 
 export interface LoginResult {
-    keyId: string;
+    walletId: string;
     label: string;
-    type: KeyStorageType;
-    addresses: Array<{
+    type: WalletType;
+    accounts: Array<{
         address: string;
         label: string;
     }>;
@@ -131,13 +131,13 @@ export interface LoginResult {
 export interface ExportWordsRequest {
     kind?: RequestType.EXPORT_WORDS;
     appName: string;
-    keyId: string;
+    walletId: string;
 }
 
 export interface ParsedExportWordsRequest {
     kind: RequestType.EXPORT_WORDS;
     appName: string;
-    keyId: string;
+    walletId: string;
 }
 
 export interface ExportWordsResult {
@@ -147,13 +147,13 @@ export interface ExportWordsResult {
 export interface ExportFileRequest {
     kind?: RequestType.EXPORT_FILE;
     appName: string;
-    keyId: string;
+    walletId: string;
 }
 
 export interface ParsedExportFileRequest {
     kind: RequestType.EXPORT_FILE;
     appName: string;
-    keyId: string;
+    walletId: string;
 }
 
 export interface ExportFileResult {
@@ -163,13 +163,13 @@ export interface ExportFileResult {
 export interface LogoutRequest {
     kind?: RequestType.LOGOUT;
     appName: string;
-    keyId: string;
+    walletId: string;
 }
 
 export interface ParsedLogoutRequest {
     kind: RequestType.LOGOUT;
     appName: string;
-    keyId: string;
+    walletId: string;
 }
 
 export interface LogoutResult {
@@ -209,7 +209,7 @@ export class AccountsRequest {
                 return {
                     kind: RequestType.SIGNTRANSACTION,
                     appName: request.appName,
-                    keyId: request.keyId,
+                    walletId: request.walletId,
                     sender: Nimiq.Address.fromUserFriendlyAddress(request.sender),
                     recipient: Nimiq.Address.fromUserFriendlyAddress(request.recipient),
                     recipientType: request.recipientType,
@@ -253,21 +253,21 @@ export class AccountsRequest {
                 return {
                     kind: RequestType.EXPORT_FILE,
                     appName: request.appName,
-                    keyId: request.keyId,
+                    walletId: request.walletId,
                 } as ParsedExportFileRequest;
             case RequestType.EXPORT_WORDS:
                 request = request as ExportWordsRequest;
                 return {
                     kind: RequestType.EXPORT_WORDS,
                     appName: request.appName,
-                    keyId: request.keyId,
+                    walletId: request.walletId,
                 } as ParsedExportWordsRequest;
             case RequestType.LOGOUT:
                 request = request as LogoutRequest;
                 return {
                     kind: RequestType.LOGOUT,
                     appName: request.appName,
-                    keyId: request.keyId,
+                    walletId: request.walletId,
                 } as ParsedLogoutRequest;
             default:
                 return null;
@@ -280,7 +280,7 @@ export class AccountsRequest {
                 return {
                     kind: RequestType.SIGNTRANSACTION,
                     appName: request.appName,
-                    keyId: request.keyId,
+                    walletId: request.walletId,
                     sender: request.sender.toUserFriendlyAddress(),
                     recipient: request.recipient.toUserFriendlyAddress(),
                     recipientType: request.recipientType,

@@ -18,7 +18,7 @@ import {
     SignTransactionResult as KSignTransactionResult,
 } from '@nimiq/keyguard-client';
 import {State as RpcState, ResponseStatus} from '@nimiq/rpc';
-import { KeyStore } from '@/lib/KeyStore';
+import { WalletStore } from '@/lib/WalletStore';
 import { access } from 'fs';
 import staticStore, {Static} from '../lib/StaticStore';
 
@@ -42,18 +42,18 @@ export default class SignTransaction extends Vue {
 
         // Forward user through AccountsManager to Keyguard
 
-        const key = await KeyStore.Instance.get(this.request.keyId);
-        if (!key) throw new Error('KeyId not found');
-        const account = key.addresses.get(this.request.sender.toUserFriendlyAddress());
+        const wallet = await WalletStore.Instance.get(this.request.walletId);
+        if (!wallet) throw new Error('Wallet ID not found');
+        const account = wallet.accounts.get(this.request.sender.toUserFriendlyAddress());
         if (!account) throw new Error('Sender address not found!'); // TODO Search contracts when address not found
 
         const request: KSignTransactionRequest = {
             layout: 'standard',
             appName: this.request.appName,
 
-            keyId: key.id,
+            keyId: wallet.id,
             keyPath: account.path,
-            keyLabel: key.label,
+            keyLabel: wallet.label,
 
             sender: this.request.sender.serialize(),
             senderType: Nimiq.Account.Type.BASIC, // FIXME Detect appropriate type here

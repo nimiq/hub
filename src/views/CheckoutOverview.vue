@@ -15,8 +15,8 @@ import {Amount} from '@nimiq/vue-components';
 import {SignTransactionRequest as KSignTransactionRequest} from '@nimiq/keyguard-client';
 import {State as RpcState} from '@nimiq/rpc';
 import CheckoutDetails from '../components/CheckoutDetails.vue';
-import {AddressInfo} from '../lib/AddressInfo';
-import {KeyInfo} from '../lib/KeyInfo';
+import {AccountInfo} from '../lib/AccountInfo';
+import {WalletInfo} from '../lib/WalletInfo';
 import {RequestType, ParsedCheckoutRequest} from '../lib/RequestTypes';
 import RpcApi from '../lib/RpcApi';
 import staticStore, {Static} from '../lib/StaticStore';
@@ -27,8 +27,8 @@ export default class CheckoutOverview extends Vue {
     @Static private rpcState!: RpcState;
     @Static private request!: ParsedCheckoutRequest;
 
-    @Getter private activeKey!: KeyInfo | undefined;
-    @Getter private activeAccount!: AddressInfo | undefined;
+    @Getter private activeWallet!: WalletInfo | undefined;
+    @Getter private activeAccount!: AccountInfo | undefined;
 
     private height: number = 0;
 
@@ -38,8 +38,8 @@ export default class CheckoutOverview extends Vue {
 
     @Emit()
     private proceed() {
-        const key = this.activeKey;
-        if (!key) {
+        const wallet = this.activeWallet;
+        if (!wallet) {
             return; // TODO: Display error
         }
 
@@ -54,9 +54,9 @@ export default class CheckoutOverview extends Vue {
             shopOrigin: this.rpcState.origin,
             appName: this.request.appName,
 
-            keyId: key.id,
+            keyId: wallet.id,
             keyPath: addressInfo.path,
-            keyLabel: key.label,
+            keyLabel: wallet.label,
 
             sender: addressInfo.address.serialize(),
             senderType: Nimiq.Account.Type.BASIC,

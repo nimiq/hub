@@ -15,7 +15,7 @@ import {State} from 'vuex-class';
 import RpcApi from '../lib/RpcApi';
 import {RemoveKeyRequest, RemoveKeyResult} from '@nimiq/keyguard-client';
 import {State as RpcState, ResponseStatus} from '@nimiq/rpc';
-import { KeyStore } from '@/lib/KeyStore';
+import { WalletStore } from '@/lib/WalletStore';
 import staticStore, {Static} from '../lib/StaticStore';
 
 @Component({components: {SmallPage}})
@@ -29,12 +29,12 @@ export default class Logout extends Vue {
             this.rpcState.reply(ResponseStatus.ERROR, this.keyguardResult);
         } else if (this.keyguardResult) return; // Keyguard success is handled in LogoutSuccess.vue
 
-        const key = await KeyStore.Instance.get(this.request.keyId);
-        if (!key) throw new Error('KeyId not found');
+        const key = await WalletStore.Instance.get(this.request.walletId);
+        if (!key) throw new Error('Wallet ID not found');
 
         const request: RemoveKeyRequest = {
             appName: this.request.appName,
-            keyId: this.request.keyId,
+            keyId: this.request.walletId,
             keyLabel: key.label,
         };
 

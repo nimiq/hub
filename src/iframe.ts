@@ -1,6 +1,6 @@
 import { RpcServer } from '@nimiq/rpc';
-import { KeyStore } from '@/lib/KeyStore';
-import { KeyInfoEntry, KeyInfo } from '@/lib/KeyInfo';
+import { WalletStore } from '@/lib/WalletStore';
+import { WalletInfoEntry } from '@/lib/WalletInfo';
 
 class IFrameApi {
     public static run() {
@@ -12,12 +12,12 @@ class IFrameApi {
         rpcServer.init();
     }
 
-    public static async list(): Promise<KeyInfoEntry[]> {
+    public static async list(): Promise<WalletInfoEntry[]> {
         // if (BrowserDetection.isIos() || BrowserDetection.isSafari()) {
         //     return CookieJar.eat(listFromLegacyStore);
         // }
 
-        return await KeyStore.Instance.list();
+        return await WalletStore.Instance.list();
     }
 
     private static get allowedOrigin(): string {

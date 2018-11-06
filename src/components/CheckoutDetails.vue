@@ -18,8 +18,7 @@ import {Component, Emit, Vue, Prop} from 'vue-property-decorator';
 import {Getter} from 'vuex-class';
 import {Amount, Account} from '@nimiq/vue-components';
 import {State as RpcState} from '@nimiq/rpc';
-import {AddressInfo} from '../lib/AddressInfo';
-import {KeyInfo} from '../lib/KeyInfo';
+import {AccountInfo} from '../lib/AccountInfo';
 import {RequestType, ParsedCheckoutRequest} from '../lib/RequestTypes';
 import staticStore, {Static} from '../lib/StaticStore';
 
@@ -30,7 +29,7 @@ export default class CheckoutDetails extends Vue {
     @Static private rpcState!: RpcState;
     @Static private request!: ParsedCheckoutRequest;
 
-    @Getter private activeAccount!: AddressInfo | undefined;
+    @Getter private activeAccount!: AccountInfo | undefined;
 
     private get originDomain() {
         return this.rpcState.origin.split('://')[1];
