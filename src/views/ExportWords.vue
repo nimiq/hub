@@ -1,34 +1,18 @@
-<template>
-    <div class="container">
-        <small-page v-if="$route.name === `export-words-success`">
-            <router-view/>
-        </small-page>
-        <!-- <a class="global-close" :class="{hidden: $route.name === `export-words-success`}" @click="close">Back to {{ request.appName }}</a> -->
-    </div>
-</template>
-
 <script lang="ts">
-import {Component, Emit, Watch, Vue} from 'vue-property-decorator';
-import {SmallPage} from '@nimiq/vue-components';
-import {ParsedExportWordsRequest, ExportWordsResult} from '../lib/RequestTypes';
-import {State} from 'vuex-class';
+import { Component, Emit, Vue } from 'vue-property-decorator';
+import { ParsedExportWordsRequest } from '../lib/RequestTypes';
+import { State } from 'vuex-class';
 import RpcApi from '../lib/RpcApi';
-import {ExportWordsRequest, ExportWordsResult as KExportWordsResult} from '@nimiq/keyguard-client';
-import {State as RpcState, ResponseStatus} from '@nimiq/rpc';
+import { ExportWordsRequest } from '@nimiq/keyguard-client';
+import { State as RpcState, ResponseStatus } from '@nimiq/rpc';
 import { KeyStore } from '@/lib/KeyStore';
-import staticStore, {Static} from '../lib/StaticStore';
+import staticStore, { Static } from '../lib/StaticStore';
 
-@Component({components: {SmallPage}})
+@Component({components: {}})
 export default class ExportWords extends Vue {
-    @Static private rpcState!: RpcState;
     @Static private request!: ParsedExportWordsRequest;
-    @State private keyguardResult!: KExportWordsResult | Error | null;
 
     public async created() {
-        if (this.keyguardResult instanceof Error) {
-            this.rpcState.reply(ResponseStatus.ERROR, this.keyguardResult);
-        } else if (this.keyguardResult) return;
-
         const key = await KeyStore.Instance.get(this.request.keyId);
         if (!key) throw new Error('KeyId not found');
 

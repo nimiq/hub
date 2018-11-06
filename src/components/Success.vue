@@ -3,27 +3,17 @@
         <div class="icon-checkmark-circle"></div>
         <h1>Your {{ requestName }}<br>was successfull!</h1>
         <div style="flex-grow: 1;"></div>
-        <button @click="close">Back to {{ request.appName }}</button>
+        <button @click="close">Back to {{ appName }}</button>
     </div>
 </template>
 
 <script lang="ts">
-import {Component, Emit, Vue} from 'vue-property-decorator';
-import {RpcRequest} from '../lib/RequestTypes';
-import {State} from 'vuex-class';
-import {ResponseStatus, State as RpcState} from '@nimiq/rpc';
-import {RpcResult} from '@nimiq/keyguard-client';
-import { Static } from '@/lib/StaticStore';
-@Component({components: {}, props: ['requestName']})
+import {Component, Vue, Prop} from 'vue-property-decorator';
+@Component({components: {}})
 export default class Success extends Vue {
-    @Static private request!: RpcRequest;
-    @Static private rpcState!: RpcState;
-    @State private keyguardResult!: RpcResult;
-
-    @Emit()
-    private close() {
-        this.rpcState.reply(ResponseStatus.OK, this.keyguardResult);
-    }
+    @Prop(String) private requestName?: string;
+    @Prop(String) private appName?: string;
+    @Prop(Function) private close?: () => void;
 }
 </script>
 

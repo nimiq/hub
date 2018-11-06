@@ -12,12 +12,10 @@ import SignupSuccess from './views/SignupSuccess.vue';
 import Login from './views/Login.vue';
 import LoginSuccess from './views/LoginSuccess.vue';
 import ExportFile from './views/ExportFile.vue';
-import ExportFileSuccess from './views/ExportFileSuccess.vue';
 import ExportWords from './views/ExportWords.vue';
-import ExportWordsSuccess from './views/ExportWordsSuccess.vue';
 import Logout from './views/Logout.vue';
 import LogoutSuccess from './views/LogoutSuccess.vue';
-import Success from './views/Success.vue';
+import SimpleSuccess from './views/SimpleSuccess.vue';
 import {RequestType} from '@/lib/RequestTypes';
 import {KeyguardCommand} from '@nimiq/keyguard-client';
 
@@ -134,31 +132,21 @@ export default new Router({
       path: `/${RequestType.EXPORT_FILE}`,
       component: ExportFile,
       name: RequestType.EXPORT_FILE,
-      children: [
-        {
-          path: 'success',
-          name: `${RequestType.EXPORT_FILE}-success`,
-          component: Success,
-          props: {
-            requestName: 'Key File export',
-          },
-        },
-      ],
+    },
+    {
+      path: `${RequestType.EXPORT_FILE}/success`,
+      component: SimpleSuccess,
+      name: `${RequestType.EXPORT_FILE}-success`,
     },
     {
       path: `/${RequestType.EXPORT_WORDS}`,
       component: ExportWords,
       name: RequestType.EXPORT_WORDS,
-      children: [
-        {
-          path: 'success',
-          name: `${RequestType.EXPORT_WORDS}-success`,
-          component: Success,
-          props: {
-            requestName: 'Recovery Words export',
-          },
-        },
-      ],
+    },
+    {
+      path: `/${RequestType.EXPORT_WORDS}/success`,
+      component: SimpleSuccess,
+      name: `${RequestType.EXPORT_WORDS}-success`,
     },
     {
       path: `/${RequestType.LOGOUT}`,
