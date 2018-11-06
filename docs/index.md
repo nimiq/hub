@@ -86,38 +86,39 @@ For more details about avoiding popup blocking refer to
 
 #### Using top-level redirects
 
-If you prefer top-level redirects instead of popups, you can pass a second
-parameter to the initialization:
+If you prefer top-level redirects instead of popups, you can pass an
+instance of `RedirectRequestBehavior` as a second parameter to either the
+AccountsManagerClient initialization or to any API method:
 
 ```javascript
-import AccountsManagerClient from '@nimiq/accounts-manager-client';
-
 const redirectBehavior = new AccountsManagerClient.RedirectRequestBehavior();
+
+// Pass the behavior as a second parameter to the AccountsManagerClient
 const accountsClient = new AccountsManagerClient(<url>, redirectBehavior);
+
+// Or pass it as a second parameter to any API method
+const result = accountsClient.checkout(<requestOptions>, redirectBehavior);
 ```
 
 The `RedirectRequestBehavior` accepts two optional parameters:
 
-The first is the return URL:
+The first is the return URL. If no return URL is specified, the current URL
+without parameters will be used.
 
 ```javascript
 const redirectBehavior = new RedirectRequestBehavior('https://url.to/return?to');
 ```
 
-If no return URL is specified, the current URL without parameters will be used.
-
-The second optional parameter is a string you can use to store the app's state
-until the request returns. To store an object combine it with
-`JSON.stringify()`:
+The second optional parameter is a plain object you can use to store data until
+the request returns:
 
 ```javascript
-const state = { foo: 'I am the state' };
-const redirectBehavior = new RedirectRequestBehavior(null, JSON.stringify(state));
+const storedData = { foo: 'I am the state' };
+const redirectBehavior = new RedirectRequestBehavior(null, storedData);
 ```
 
 For details on how to listen for redirect responses and retrieve the stored
-state, see
-[Listening for redirect responses](#listening-for-redirect-responses).
+data, see [Listening for redirect responses](#listening-for-redirect-responses).
 
 ### API Methods
 
@@ -394,15 +395,13 @@ containing the `success` property, which is always true:
 
 ### Listening for redirect responses
 
-<!-- CHECK updated below, redirect is expected when configured to use redirects
-     instead of popup. -->
 If you configured the AccountsManagerClient to use
 [top-level redirects](#using-top-level-redirects) instead of popups, you need to
 follow the four steps below to specifically listen for the redirects from the
 **Accounts Manager** back to your site using the `on()` method.
 
-Your handler functions will be called with three parameters: the result object,
-the RPC call ID, and the stored local state string as it was passed to the
+Your handler functions will be called with two parameters: the result object and
+the stored data object as it was passed to the
 `RedirectRequestBehavior` [during initialization](#using-top-level-redirects).
 
 ```javascript
@@ -410,18 +409,14 @@ the RPC call ID, and the stored local state string as it was passed to the
 const accountsClient = new AccountsManagerClient(/* ... */);
 
 // 2. Define your handler functions
-const onSuccess = function(result, id, state) {
+const onSuccess = function(result, storedData) {
     console.log("Got result from Accounts Manager:", result);
-    console.log("Request RPC ID:", id);
-    console.log("Retrieved stored state:": state); // A string
+    console.log("Retrieved stored data:": storedData);
 }
 
-const onError = function(error, id, state) {
+const onError = function(error, storedData) {
     console.log("Got error from Accounts Manager:", error);
-    console.log("Request RPC ID:", id);
-    console.log("Retrieved stored state:": state);
-    // or if you used JSON.stringify(state) before
-    console.log("Retrieved stored state:": JSON.parse(state));
+    console.log("Retrieved stored data:": storedData);
 }
 
 // 3. Listen for the redirect responses you expect
@@ -431,8 +426,8 @@ accountsClient.on(RequestType.CHECKOUT, onSuccess, onError);
 accountsClient.on(RequestType.SIGNTRANSACTION, onSuccess, onError);
 accountsClient.on(RequestType.LOGIN, onSuccess, onError);
 
-// 4. After setup is complete, start the Accounts Manager client
-accountsClient.init();
+// 4. After setup is complete, check for a redirect response
+accountsClient.checkRedirectResponse();
 ```
 
 <!-- QUESTION/IDEA The RPC ID should be explained.
