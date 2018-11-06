@@ -1,7 +1,7 @@
 /// <reference path="../node_modules/@nimiq/core-types/Nimiq.d.ts" />
 
 import * as Rpc from '@nimiq/rpc';
-import AccountsManagerClient from '../client/AccountsManagerClient';
+import AccountsClient from '../client/AccountsClient';
 import {
     RequestType,
     SignupRequest, SignupResult,
@@ -26,7 +26,7 @@ class Demo {
 
         const demo = new Demo('http://localhost:8000');
 
-        const client = new AccountsManagerClient('http://localhost:8080');
+        const client = new AccountsClient('http://localhost:8080');
         client.on(RequestType.CHECKOUT, (result: SignTransactionResult, state: Rpc.State) => {
             console.log('AccountsManager result', result);
             console.log('State', state);
