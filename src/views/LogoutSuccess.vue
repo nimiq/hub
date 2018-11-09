@@ -1,6 +1,6 @@
 <template>
     <Success
-        requestName="Logout"
+        successText="Your Logout was successful"
         v-bind:appName="this.request.appName"
         v-bind:close="this.done"
         />

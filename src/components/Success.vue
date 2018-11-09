@@ -1,7 +1,7 @@
 <template>
     <div class="success center">
         <div class="icon-checkmark-circle"></div>
-        <h1>Your {{ requestName }}<br>was successfull!</h1>
+        <h1>{{ successText }}</h1>
         <div style="flex-grow: 1;"></div>
         <button @click="close">Back to {{ appName }}</button>
     </div>
@@ -11,7 +11,7 @@
 import {Component, Vue, Prop} from 'vue-property-decorator';
 @Component({components: {}})
 export default class Success extends Vue {
-    @Prop(String) private requestName?: string;
+    @Prop(String) private successText?: string;
     @Prop(String) private appName?: string;
     @Prop(Function) private close?: () => void;
 }

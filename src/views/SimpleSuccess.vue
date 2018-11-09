@@ -2,7 +2,7 @@
     <div class="container">
         <small-page>
             <Success
-                v-bind:requestName="requestName"
+                v-bind:successText="successText"
                 v-bind:appName="this.request.appName"
                 v-bind:close="this.done"
                 />
@@ -28,14 +28,14 @@ export default class SimpleSuccess extends Vue {
     @Static private rpcState!: RpcState;
     @State private keyguardResult!: RpcResult;
 
-    get requestName() {
+    get successText() {
         switch (this.$route.name) {
             case 'export-file-success':
-                return 'Wallet File export';
+                return 'Your Wallet File export was successful';
             case 'export-words-success':
-                return 'Recovery Words export';
+                return 'Your Recovery Words export was successful';
             case 'change-passphrase-success':
-                return 'passphrase change'
+                return 'You successfully changed your passphrase '
             default:
                 throw new Error('No matching route');
         }

@@ -4,7 +4,7 @@
         <Network ref="network" :alwaysVisible="true" message="Sending transaction"/>
         <transition name='fade-in'>
             <Success v-if="isTxSent"
-                requestName="payment"
+                successText="Your payment was successful"
                 v-bind:appName="this.keyguardRequest.appName"
                 v-bind:close="this.done" />
         </transition>
