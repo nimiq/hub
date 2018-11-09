@@ -34,7 +34,7 @@ import { ResponseStatus, State as RpcState } from '@nimiq/rpc';
 import staticStore, {Static} from '../lib/StaticStore';
 
 @Component({components: {PageHeader, PageFooter, SmallPage}})
-export default class extends Vue {
+export default class SignupTypeSelector extends Vue {
     @Static private rpcState!: RpcState;
     @Static private request!: ParsedSignupRequest;
 
