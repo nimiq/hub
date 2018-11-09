@@ -100,19 +100,13 @@ export default new Router({
     },
     {
       path: `/${RequestType.SIGNUP}`,
-      component: Signup,
-      children: [
-          {
-              path: '',
-              name: RequestType.SIGNUP,
-              component: SignupTypeSelector,
-          },
-          {
-              path: 'success',
-              name: `${RequestType.SIGNUP}-success`,
-              component: SignupSuccess,
-          },
-       ],
+      component: SignupTypeSelector,
+      name: `${RequestType.SIGNUP}`,
+    },
+    {
+      path: `/${RequestType.SIGNUP}/success`,
+      component: SignupSuccess,
+      name: `${RequestType.SIGNUP}-success`,
     },
     {
       path: `/${RequestType.LOGIN}`,

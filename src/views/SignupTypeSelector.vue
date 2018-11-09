@@ -1,45 +1,47 @@
 <template>
-    <div>
-        <PageHeader :progressIndicator="true" :numberSteps="6" :step="1">Add a Wallet</PageHeader>
-        <div class="page-body">
-            <p>A Wallet is like a login and can contain one or more accounts, which you can use to send or receive Nimiq, pay online and create Cashlinks.</p>
-            <button @click="createKeyguard" class="purple-background keyguard-icon">
-                <h2>Create Wallet</h2>
-                <p>Create a Wallet in our secure Nimiq Keyguard. This is the most convenient option.</p>
-            </button>
-            <button @click="createLedger" class="ledger-icon">
-                <h2>Connect Hardware Wallet</h2>
-                <p>Connect a Hardware Wallet like Ledger. This option requires a physical device. It is the most secure option.</p>
-            </button>
-        </div>
-        <PageFooter>
-            <a onclick="alert('Not yet implemented')">Already have a wallet?</a>
-        </PageFooter>
+    <div class="container">
+        <small-page>
+            <div>
+                <PageHeader :progressIndicator="true" :numberSteps="6" :step="1">Add a Wallet</PageHeader>
+                <div class="page-body">
+                    <p>A Wallet is like a login and can contain one or more accounts, which you can use to send or receive Nimiq, pay online and create Cashlinks.</p>
+                    <button @click="createKeyguard" class="purple-background keyguard-icon">
+                        <h2>Create Wallet</h2>
+                        <p>Create a Wallet in our secure Nimiq Keyguard. This is the most convenient option.</p>
+                    </button>
+                    <button @click="createLedger" class="ledger-icon">
+                        <h2>Connect Hardware Wallet</h2>
+                        <p>Connect a Hardware Wallet like Ledger. This option requires a physical device. It is the most secure option.</p>
+                    </button>
+                </div>
+                <PageFooter>
+                    <a onclick="alert('Not yet implemented')">Already have a wallet?</a>
+                </PageFooter>
+            </div>
+        </small-page>
+        <a class="global-close" @click="close">Back to {{request.appName}}</a>
     </div>
 </template>
 
 <script lang="ts">
-import {Component, Emit, Prop, Watch, Vue} from 'vue-property-decorator';
-import {PageHeader, PageFooter} from '@nimiq/vue-components';
-import {RequestType, ParsedSignupRequest} from '../lib/RequestTypes';
-import {AddressInfo} from '../lib/AddressInfo';
-import {KeyInfo, KeyStorageType} from '../lib/KeyInfo';
-import {State, Mutation, Getter} from 'vuex-class';
+import { Component, Emit, Vue } from 'vue-property-decorator';
+import { PageHeader, PageFooter, SmallPage } from '@nimiq/vue-components';
+import { ParsedSignupRequest } from '../lib/RequestTypes';
+import { AddressInfo } from '../lib/AddressInfo';
 import RpcApi from '../lib/RpcApi';
-import {CreateRequest as KCreateRequest, CreateResult as KCreateResult} from '@nimiq/keyguard-client';
-import {ResponseStatus, State as RpcState} from '@nimiq/rpc';
+import { CreateRequest as CreateRequest } from '@nimiq/keyguard-client';
+import { ResponseStatus, State as RpcState } from '@nimiq/rpc';
 import staticStore, {Static} from '../lib/StaticStore';
 
-@Component({components: {PageHeader, PageFooter}})
+@Component({components: {PageHeader, PageFooter, SmallPage}})
 export default class extends Vue {
+    @Static private rpcState!: RpcState;
     @Static private request!: ParsedSignupRequest;
-    @State private keyguardResult!: KCreateResult | Error | null;
-    @State private activeAccountPath!: string;
 
     public createKeyguard() {
         const client = RpcApi.createKeyguardClient(this.$store, staticStore);
 
-        const request: KCreateRequest = {
+        const request: CreateRequest = {
             appName: this.request.appName,
             defaultKeyPath: `m/44'/242'/0'/0'`,
         };
@@ -49,6 +51,11 @@ export default class extends Vue {
 
     public createLedger() {
         alert('Ledger-adding not yet implemented');
+    }
+
+    @Emit()
+    private close() {
+        this.rpcState.reply(ResponseStatus.ERROR, new Error('CANCEL'));
     }
 }
 </script>
