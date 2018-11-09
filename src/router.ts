@@ -112,13 +112,11 @@ export default new Router({
       path: `/${RequestType.LOGIN}`,
       component: Login,
       name: RequestType.LOGIN,
-      children: [
-        {
-          path: 'success',
-          name: `${RequestType.LOGIN}-success`,
-          component: LoginSuccess,
-        },
-      ],
+    },
+    {
+      path: `/${RequestType.LOGIN}/success`,
+      component: LoginSuccess,
+      name: `${RequestType.LOGIN}-success`,
     },
     {
       path: `/${RequestType.EXPORT_FILE}`,

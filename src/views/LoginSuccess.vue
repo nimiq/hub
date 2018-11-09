@@ -1,20 +1,24 @@
 <template>
-    <div class="login-success">
-        <PageHeader>Your wallet is ready</PageHeader>
+    <div class="container">
+        <small-page>
+            <div class="login-success">
+                <PageHeader>Your wallet is ready</PageHeader>
 
-        <div class="page-body">
-            <div class="login-label" v-if="keyguardResult.keyType !== 0 /* LEGACY */">
-                <div class="login-icon" :class="walletIconClass"></div>
-                <LabelInput :value="walletLabel" @changed="onWalletLabelChange"/>
+                <div class="page-body">
+                    <div class="login-label" v-if="keyguardResult.keyType !== 0 /* LEGACY */">
+                        <div class="login-icon" :class="walletIconClass"></div>
+                        <LabelInput :value="walletLabel" @changed="onWalletLabelChange"/>
+                    </div>
+
+                    <AccountList :accounts="accounts" :editable="true" @account-changed="onAccountLabelChanged"/>
+                </div>
+
+                <PageFooter>
+                    <Network :visible="keyguardResult.keyType !== 0 /* LEGACY */" :message="'Detecting your accounts'" ref="network"/>
+                    <button @click="done">Back to {{ request.appName }}</button>
+                </PageFooter>
             </div>
-
-            <AccountList :accounts="accounts" :editable="true" @account-changed="onAccountLabelChanged"/>
-        </div>
-
-        <PageFooter>
-            <Network :visible="keyguardResult.keyType !== 0 /* LEGACY */" :message="'Detecting your accounts'" ref="network"/>
-            <button @click="done">Back to {{ request.appName }}</button>
-        </PageFooter>
+        </small-page>
     </div>
 </template>
 
@@ -28,10 +32,10 @@ import { ResponseStatus, State as RpcState } from '@nimiq/rpc';
 import { AddressInfo } from '@/lib/AddressInfo';
 import { KeyStore } from '@/lib/KeyStore';
 import { Static } from '@/lib/StaticStore';
-import { PageHeader, LabelInput, AccountList, PageFooter } from '@nimiq/vue-components';
+import { PageHeader, LabelInput, AccountList, PageFooter, SmallPage } from '@nimiq/vue-components';
 import Network from '@/components/Network.vue';
 
-@Component({components: {PageHeader, LabelInput, AccountList, Network, PageFooter}})
+@Component({components: {PageHeader, LabelInput, AccountList, Network, PageFooter, SmallPage}})
 export default class LoginSuccess extends Vue {
     @Static private request!: ParsedLoginRequest;
     @Static private rpcState!: RpcState;
@@ -62,6 +66,10 @@ export default class LoginSuccess extends Vue {
     private result?: LoginResult;
 
     private async mounted() {
+        if (this.keyguardResult instanceof Error) {
+            this.rpcState.reply(ResponseStatus.ERROR, this.keyguardResult);
+        }
+
         // The Keyguard always returns (at least) one derived Address,
         // thus we can already create a complete KeyInfo object that
         // can be displayed while waiting for the network.
