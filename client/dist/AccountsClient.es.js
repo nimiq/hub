@@ -116,7 +116,7 @@ var RequestType;
 (function (RequestType) {
     RequestType["LIST"] = "list";
     RequestType["CHECKOUT"] = "checkout";
-    RequestType["SIGNTRANSACTION"] = "sign-transaction";
+    RequestType["SIGN_TRANSACTION"] = "sign-transaction";
     RequestType["SIGNUP"] = "signup";
     RequestType["LOGIN"] = "login";
     RequestType["EXPORT_WORDS"] = "export-words";
@@ -144,7 +144,7 @@ class AccountsClient {
         return this._request(requestBehavior, RequestType.SIGNUP, [request]);
     }
     signTransaction(request, requestBehavior = this._defaultBehavior) {
-        return this._request(requestBehavior, RequestType.SIGNTRANSACTION, [request]);
+        return this._request(requestBehavior, RequestType.SIGN_TRANSACTION, [request]);
     }
     checkout(request, requestBehavior = this._defaultBehavior) {
         return this._request(requestBehavior, RequestType.CHECKOUT, [request]);

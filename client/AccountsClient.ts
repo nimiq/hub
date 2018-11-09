@@ -67,7 +67,7 @@ export default class AccountsClient {
         request: SignTransactionRequest,
         requestBehavior = this._defaultBehavior,
     ): Promise<SignTransactionResult> {
-        return this._request(requestBehavior, RequestType.SIGNTRANSACTION, [request]);
+        return this._request(requestBehavior, RequestType.SIGN_TRANSACTION, [request]);
     }
 
     public checkout(request: CheckoutRequest, requestBehavior = this._defaultBehavior): Promise<SignTransactionResult> {
