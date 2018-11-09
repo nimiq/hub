@@ -1,9 +1,13 @@
 <template>
-    <Success
-        successText="Your Logout was successful"
-        v-bind:appName="this.request.appName"
-        v-bind:close="this.done"
-        />
+    <div class="container">
+        <small-page>
+            <Success
+                successText="Your Logout was successful"
+                v-bind:appName="this.request.appName"
+                v-bind:close="this.done"
+                />
+        </small-page>
+    </div>
 </template>
 
 <script lang="ts">
@@ -12,13 +16,14 @@ import { ParsedLogoutRequest } from '../lib/RequestTypes';
 import { State } from 'vuex-class';
 import { KeyInfo, KeyStorageType } from '../lib/KeyInfo';
 import { ResponseStatus, State as RpcState } from '@nimiq/rpc';
+import { SmallPage } from '@nimiq/vue-components';
 import { RemoveKeyResult } from '@nimiq/keyguard-client';
 import { AddressInfo } from '@/lib/AddressInfo';
 import { KeyStore } from '@/lib/KeyStore';
 import { Static } from '@/lib/StaticStore';
 import Success from '../components/Success.vue';
 
-@Component({components: {Success}})
+@Component({components: {Success, SmallPage}})
 export default class LogoutSuccess extends Vue {
     @Static private request!: ParsedLogoutRequest;
     @Static private rpcState!: RpcState;
