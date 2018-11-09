@@ -4,41 +4,41 @@ import { terser } from "rollup-plugin-terser";
 
 export default [
     {
-        input: 'build/client/AccountsManagerClient.js',
+        input: 'build/client/AccountsClient.js',
         output: {
-            file: 'dist/AccountsManagerClient.umd.js',
+            file: 'dist/AccountsClient.umd.js',
             format: 'umd',
-            name: 'AccountsManagerClient',
+            name: 'AccountsClient',
             globals: { '@nimiq/rpc': 'rpc' }
         },
         external: [ '@nimiq/rpc' ]
     },
     {
-        input: 'build/client/AccountsManagerClient.js',
+        input: 'build/client/AccountsClient.js',
         output: {
-            file: 'dist/AccountsManagerClient.es.js',
+            file: 'dist/AccountsClient.es.js',
             format: 'es',
-            name: 'AccountsManagerClient',
+            name: 'AccountsClient',
             globals: { '@nimiq/rpc': 'rpc' }
         },
         external: [ '@nimiq/rpc' ]
     },
     {
-        input: 'build/client/AccountsManagerClient.js',
+        input: 'build/client/AccountsClient.js',
         output: {
-            file: 'dist/standalone/AccountsManagerClient.standalone.umd.js',
+            file: 'dist/standalone/AccountsClient.umd.js',
             format: 'umd',
-            name: 'AccountsManagerClient',
+            name: 'AccountsClient',
             globals: { '@nimiq/rpc': 'rpc' }
         },
         plugins: [ resolve(), terser() ]
     },
     {
-        input: 'build/client/AccountsManagerClient.js',
+        input: 'build/client/AccountsClient.js',
         output: {
-            file: 'dist/standalone/AccountsManagerClient.standalone.es.js',
+            file: 'dist/standalone/AccountsClient.es.js',
             format: 'es',
-            name: 'AccountsManagerClient',
+            name: 'AccountsClient',
             globals: { '@nimiq/rpc': 'rpc' }
         },
         plugins: [ resolve(), terser() ]

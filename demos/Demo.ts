@@ -1,7 +1,7 @@
 /// <reference path="../node_modules/@nimiq/core-types/Nimiq.d.ts" />
 
 import * as Rpc from '@nimiq/rpc';
-import AccountsManagerClient from '../client/AccountsManagerClient';
+import AccountsClient from '../client/AccountsClient';
 import {
     RequestType,
     SignupRequest, SignupResult,
@@ -26,7 +26,7 @@ class Demo {
 
         const demo = new Demo('http://localhost:8000');
 
-        const client = new AccountsManagerClient('http://localhost:8080');
+        const client = new AccountsClient('http://localhost:8080');
         client.on(RequestType.CHECKOUT, (result: SignTransactionResult, state: Rpc.State) => {
             console.log('AccountsManager result', result);
             console.log('State', state);
@@ -161,7 +161,7 @@ class Demo {
 
         document.querySelector('button#list-keyguard-keys').addEventListener('click', () => demo.listKeyguard());
         document.querySelector('button#list-accounts').addEventListener('click', async () => demo.updateAccounts());
-        demo._accountsManagerClient = client;
+        demo._accountsClient = client;
     } // run
 
     private static async _createIframe(baseUrl): Promise<HTMLIFrameElement> {
@@ -178,7 +178,7 @@ class Demo {
 
     private _iframeClient: Rpc.PostMessageRpcClient | null;
     private _keyguardBaseUrl: string;
-    private _accountsManagerClient: AccountsManagerClient;
+    private _accountsClient: AccountsClient;
 
     constructor(keyguardBaseUrl: string) {
         this._iframeClient = null;
@@ -207,7 +207,7 @@ class Demo {
 
     public async logout(keyId: string): Promise<LogoutResult> {
         try {
-            const result = await this._accountsManagerClient.logout(this._createLogoutRequest(keyId));
+            const result = await this._accountsClient.logout(this._createLogoutRequest(keyId));
             console.log('Keyguard result', result);
             document.querySelector('#result').textContent = 'Key Removed';
             return result;
@@ -226,7 +226,7 @@ class Demo {
 
     public async exportWords(keyId: string) {
         try {
-            const result = await this._accountsManagerClient.exportWords(this._createExportWordsRequest(keyId));
+            const result = await this._accountsClient.exportWords(this._createExportWordsRequest(keyId));
             console.log('Keyguard result', result);
             document.querySelector('#result').textContent = 'Words exported';
         } catch (e) {
@@ -244,7 +244,7 @@ class Demo {
 
     public async exportFile(keyId: string) {
         try {
-            const result = await this._accountsManagerClient.exportFile(this._createExportFileRequest(keyId));
+            const result = await this._accountsClient.exportFile(this._createExportFileRequest(keyId));
             console.log('Keyguard result', result);
             document.querySelector('#result').textContent = 'File exported';
         } catch (e) {

@@ -19,7 +19,7 @@ import {
     RpcResult,
 } from '../src/lib/RequestTypes';
 
-export default class AccountsManagerClient {
+export default class AccountsClient {
     private static readonly DEFAULT_ENDPOINT =
     window.location.origin === 'https://safe-next.nimiq.com' ? 'https://accounts.nimiq.com'
     : window.location.origin === 'https://safe-next.nimiq-testnet.com' ? 'https://accounts.nimiq-testnet.com'
@@ -33,7 +33,7 @@ export default class AccountsManagerClient {
     private readonly _iframeBehavior: IFrameRequestBehavior;
     private readonly _redirectClient: RedirectRpcClient;
 
-    constructor(endpoint: string = AccountsManagerClient.DEFAULT_ENDPOINT, defaultBehavior?: RequestBehavior) {
+    constructor(endpoint: string = AccountsClient.DEFAULT_ENDPOINT, defaultBehavior?: RequestBehavior) {
         this._endpoint = endpoint;
         this._defaultBehavior = defaultBehavior || new PopupRequestBehavior(
             `left=${window.innerWidth / 2 - 500},top=50,width=1000,height=900,location=yes,dependent=yes`);

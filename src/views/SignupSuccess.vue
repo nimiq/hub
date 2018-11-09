@@ -13,7 +13,7 @@
                 <LabelInput :value="walletLabel" @changed="onWalletLabelChange"/>
             </div>
 
-            <Account :address="createdAddress" :label="accountLabel" :editable="true" @changed="onAccountLabelChange"/>
+            <Account :address="createdAddress.toUserFriendlyAddress()" :label="accountLabel" :editable="true" @changed="onAccountLabelChange"/>
 
             <button class="submit" @click="done()">Open your wallet</button>
         </div>
@@ -33,7 +33,7 @@ import { SignupResult } from '@/lib/RequestTypes';
 import {Static} from '../lib/StaticStore';
 
 @Component({components: {PageHeader, Account, LabelInput}})
-export default class extends Vue {
+export default class SignupSuccess extends Vue {
     @Static private rpcState!: RpcState;
     @State private keyguardResult!: CreateResult;
     @State private activeAccountPath!: string;
