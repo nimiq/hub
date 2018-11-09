@@ -31,6 +31,7 @@
   "homepage": "https://github.com/nimiq/accounts/client#readme",
   "scripts": {
     "build": "rm -rf dist && tsc && rollup -c",
-    "lint": "tslint --project tsconfig.json --fix"
+    "lint": "tslint --project tsconfig.json",
+    "lintfix": "yarn lint --fix"
   }
 }

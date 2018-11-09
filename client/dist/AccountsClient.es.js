@@ -173,10 +173,10 @@ class AccountsClient {
         return behavior.request(this._endpoint, command, args);
     }
 }
+AccountsClient.RequestType = RequestType;
+AccountsClient.RedirectRequestBehavior = RedirectRequestBehavior;
 AccountsClient.DEFAULT_ENDPOINT = window.location.origin === 'https://safe-next.nimiq.com' ? 'https://accounts.nimiq.com'
     : window.location.origin === 'https://safe-next.nimiq-testnet.com' ? 'https://accounts.nimiq-testnet.com'
         : 'http://localhost:8080';
-AccountsClient.RequestType = RequestType;
-AccountsClient.RedirectRequestBehavior = RedirectRequestBehavior;
 
 export default AccountsClient;
