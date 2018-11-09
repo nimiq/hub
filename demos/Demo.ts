@@ -160,7 +160,7 @@ class Demo {
             }
         }
 
-        document.querySelector('button#list-keyguard-wallets').addEventListener('click', () => demo.listKeyguard());
+        document.querySelector('button#list-keyguard-keys').addEventListener('click', () => demo.listKeyguard());
         document.querySelector('button#list-accounts').addEventListener('click', async () => demo.updateAccounts());
         demo._accountsClient = client;
     } // run
@@ -197,9 +197,9 @@ class Demo {
 
     public async listKeyguard() {
         const client = await this.startIframeClient(this._keyguardBaseUrl);
-        const wallets = await client.call('list');
-        console.log('Keys in Keyguard:', wallets);
-        return wallets;
+        const keys = await client.call('list');
+        console.log('Keys in Keyguard:', keys);
+        return keys;
     }
 
     public async list(): Promise<WalletInfoEntry[]> {
@@ -288,7 +288,9 @@ class Demo {
         });
 
         $ul.innerHTML = html;
-        (document.querySelector('input[type="radio"]') as HTMLInputElement).checked = true;
+        if (document.querySelector('input[type="radio"]')) {
+            (document.querySelector('input[type="radio"]') as HTMLInputElement).checked = true;
+        }
         document.querySelectorAll('button.export-words').forEach(element => {
             element.addEventListener('click', async () => this.exportWords(element.getAttribute('data-wallet-id')));
         });

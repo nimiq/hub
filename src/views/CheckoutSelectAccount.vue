@@ -31,7 +31,7 @@ import { State, Mutation } from 'vuex-class';
 export default class CheckoutSelectAccount extends Vue {
     @State('wallets') private wallets!: WalletInfo[];
 
-    @Mutation('addKey') private addKey!: (key: WalletInfo) => any;
+    @Mutation('addWallet') private $addWallet!: (walletInfo: WalletInfo) => any;
 
     private page: number = 1;
     private selectedWalletId: string | null = null;
@@ -78,18 +78,18 @@ export default class CheckoutSelectAccount extends Vue {
             'My Account',
             Nimiq.Address.fromString('NQ09 VF5Y 1PKV MRM4 5LE1 55KV P6R2 GXYJ XYQF'),
         ));
-        this.addKey(new WalletInfo(id, id, map, [], WalletType.LEDGER));
+        this.$addWallet(new WalletInfo(id, id, map, [], WalletType.LEDGER));
     }
 
     @Emit()
     private accountSelected(walletId: string, address: string) {
-        const key = this.wallets.find((k: WalletInfo) => k.id === walletId);
-        if (!key) {
+        const wallet = this.wallets.find((k: WalletInfo) => k.id === walletId);
+        if (!wallet) {
             console.error('Selected Key not found:', walletId);
             return;
         }
 
-        const addressInfo = Array.from(key.accounts.values())
+        const addressInfo = Array.from(wallet.accounts.values())
             .find((ai: AccountInfo) => ai.userFriendlyAddress === address);
         if (!addressInfo) {
             console.error('Selected AccountInfo not found:', address);
@@ -97,7 +97,7 @@ export default class CheckoutSelectAccount extends Vue {
         }
 
         this.$store.commit('setActiveAccount', {
-            walletId: key.id,
+            walletId: wallet.id,
             userFriendlyAddress: addressInfo.userFriendlyAddress,
         });
 
