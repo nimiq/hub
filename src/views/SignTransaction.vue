@@ -17,10 +17,6 @@ export default class SignTransaction extends Vue {
         // there is also no place to display an error or have the user try again. Thus we forward the error
         // directly to the caller (the Safe, for example) which automatically closes the window from the
         // caller side.
-        // The else condition here covers all successful signature cases. If the keyguardResult is successful,
-        // we do not want to restart the Keyguard request. The sending of the tx is handled in the
-        // SignTransactionSuccess component, which is loaded automatically by the router.
-
 
         // Forward user through AccountsManager to Keyguard
 
