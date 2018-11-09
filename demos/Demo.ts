@@ -49,7 +49,7 @@ class Demo {
 
             document.querySelector('#result').textContent = `Error: ${error.message || error}`;
         });
-        client.init();
+        client.checkRedirectResponse();
 
         document.querySelector('button#checkout-redirect').addEventListener('click', async () => {
             checkoutRedirect(await generateCheckoutRequest(demo));

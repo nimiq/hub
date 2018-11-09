@@ -29,6 +29,6 @@
   },
   "homepage": "https://github.com/nimiq/accounts/client#readme",
   "scripts": {
-    "build": "tsc && rollup -c"
+    "build": "rm -rf dist && tsc && rollup -c"
   }
 }

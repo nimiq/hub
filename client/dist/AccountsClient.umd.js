@@ -1,7 +1,7 @@
 (function (global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('@nimiq/rpc')) :
     typeof define === 'function' && define.amd ? define(['@nimiq/rpc'], factory) :
-    (global.AccountsManagerClient = factory(global.rpc));
+    (global.AccountsClient = factory(global.rpc));
 }(this, (function (rpc) { 'use strict';
 
     class RequestBehavior {
@@ -43,7 +43,7 @@
             const origin = RequestBehavior.getAllowedOrigin(endpoint);
             const client = new rpc.RedirectRpcClient(endpoint, origin);
             await client.init();
-            const state = Object.assign({ __command: command }, this._localState);
+            const state = Object.assign({}, this._localState, { __command: command });
             console.log('state', state);
             client.callAndSaveLocalState(this._returnUrl, JSON.stringify(state), command, ...args);
         }
@@ -128,19 +128,21 @@
         RequestType["LOGOUT"] = "logout";
     })(RequestType || (RequestType = {}));
 
-    class AccountsManagerClient {
-        constructor(endpoint = AccountsManagerClient.DEFAULT_ENDPOINT, defaultBehavior) {
+    class AccountsClient {
+        constructor(endpoint = AccountsClient.DEFAULT_ENDPOINT, defaultBehavior) {
             this._endpoint = endpoint;
             this._defaultBehavior = defaultBehavior || new PopupRequestBehavior(`left=${window.innerWidth / 2 - 500},top=50,width=1000,height=900,location=yes,dependent=yes`);
             this._iframeBehavior = new IFrameRequestBehavior();
             // Check for RPC results in the URL
             this._redirectClient = new rpc.RedirectRpcClient('', RequestBehavior.getAllowedOrigin(this._endpoint));
         }
-        init() {
+        checkRedirectResponse() {
             return this._redirectClient.init();
         }
         on(command, resolve, reject) {
-            this._redirectClient.onResponse(command, resolve, reject);
+            this._redirectClient.onResponse(command, 
+            // State is always an object containing at least the __command property
+            (result, rpcId, state) => resolve(result, JSON.parse(state)), (error, rpcId, state) => reject && reject(error, JSON.parse(state)));
         }
         signup(request, requestBehavior = this._defaultBehavior) {
             return this._request(requestBehavior, RequestType.SIGNUP, [request]);
@@ -175,12 +177,12 @@
             return behavior.request(this._endpoint, command, args);
         }
     }
-    AccountsManagerClient.DEFAULT_ENDPOINT = window.location.origin === 'https://safe-next.nimiq.com' ? 'https://accounts.nimiq.com'
+    AccountsClient.DEFAULT_ENDPOINT = window.location.origin === 'https://safe-next.nimiq.com' ? 'https://accounts.nimiq.com'
         : window.location.origin === 'https://safe-next.nimiq-testnet.com' ? 'https://accounts.nimiq-testnet.com'
             : 'http://localhost:8080';
-    AccountsManagerClient.RequestType = RequestType;
-    AccountsManagerClient.RedirectRequestBehavior = RedirectRequestBehavior;
+    AccountsClient.RequestType = RequestType;
+    AccountsClient.RedirectRequestBehavior = RedirectRequestBehavior;
 
-    return AccountsManagerClient;
+    return AccountsClient;
 
 })));
