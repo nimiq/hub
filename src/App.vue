@@ -27,7 +27,7 @@ export default class App extends Vue {
     private isRequestLoaded = false;
 
     public created() {
-        this.$store.dispatch('initKeys');
+        this.$store.dispatch('initWallets');
     }
 
     public mounted() {
