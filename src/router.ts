@@ -69,15 +69,13 @@ export default new Router({
   routes: [
     {
       path: `/${RequestType.SIGNTRANSACTION}`,
-      name: `${RequestType.SIGNTRANSACTION}`,
       component: SignTransaction,
-      children: [
-        {
-          path: 'success',
-          name: `${RequestType.SIGNTRANSACTION}-success`,
-          component: SignTransactionSuccess,
-        },
-      ],
+      name: `${RequestType.SIGNTRANSACTION}`,
+    },
+    {
+      path: `/${RequestType.SIGNTRANSACTION}/success`,
+      component: SignTransactionSuccess,
+      name: `${RequestType.SIGNTRANSACTION}-success`,
     },
     {
       path: `/${RequestType.CHECKOUT}`,
