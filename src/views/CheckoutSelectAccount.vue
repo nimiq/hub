@@ -1,33 +1,33 @@
 <template>
     <div class="visible-area">
         <div class="multi-pages" :style="`transform: translate3d(-${(page - 1) * 100}%, 0, 0)`">
-            <LoginSelector @login-selected="loginSelected"
+            <WalletSelector @wallet-selected="walletSelected"
                             @account-selected="accountSelected"
-                            @add-login="addLogin"
+                            @add-wallet="addWallet"
                             @back="backToOverview"
-                            :logins="wallets"/>
+                            :wallets="wallets"/>
             <AccountSelector
                     @account-selected="accountSelected"
-                    @switch-login="switchLogin"
-                    @back="switchLogin"
+                    @switch-wallet="switchWallet"
+                    @back="switchWallet"
                     :accounts="currentAccounts"
-                    :loginId="currentWallet ? currentWallet.id : ''"
-                    :loginLabel="currentWallet ? currentWallet.label : ''"
-                    :loginType="currentWallet ? currentWallet.type : 0"
-                    :show-switch-login="!!this.preselectedWalletId"/>
+                    :walletId="currentWallet ? currentWallet.id : ''"
+                    :walletLabel="currentWallet ? currentWallet.label : ''"
+                    :walletType="currentWallet ? currentWallet.type : 0"
+                    :show-switch-wallet="!!this.preselectedWalletId"/>
         </div>
     </div>
 </template>
 
 <script lang="ts">
 import { Component, Emit, Vue } from 'vue-property-decorator';
-import { AccountSelector, LoginSelector } from '@nimiq/vue-components';
+import { AccountSelector, WalletSelector } from '@nimiq/vue-components';
 import { AccountInfo } from '../lib/AccountInfo';
 import { WalletInfo, WalletType } from '../lib/WalletInfo';
 import { RequestType } from '../lib/RequestTypes';
 import { State, Mutation } from 'vuex-class';
 
-@Component({components: {AccountSelector, LoginSelector}})
+@Component({components: {AccountSelector, WalletSelector}})
 export default class CheckoutSelectAccount extends Vue {
     @State('wallets') private wallets!: WalletInfo[];
 
@@ -56,19 +56,19 @@ export default class CheckoutSelectAccount extends Vue {
         return Array.from(wallet.accounts.values());
     }
 
-    private loginSelected(walletId: string) {
+    private walletSelected(walletId: string) {
         this.selectedWalletId = walletId;
         this.page = 2;
     }
 
-    private switchLogin() {
-        // TODO Redirect to import/create just like addLogin()
+    private switchWallet() {
+        // TODO Redirect to import/create just like addWallet()
 
         this.page = 1;
     }
 
     @Emit()
-    private addLogin() {
+    private addWallet() {
         // TODO Redirect to import/create
 
         const id: string = Math.round(Math.pow(2, 32) * Math.random()).toString(16);

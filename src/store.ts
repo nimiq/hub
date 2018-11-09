@@ -12,8 +12,8 @@ export interface RootState {
     hasRequest: boolean;
     wallets: WalletInfo[]; // TODO: this is not JSON compatible, is this a problem?
     keyguardResult: KeyguardResult | Error | null;
-    chosenLoginLabel: string | null;
-    activeLoginId: string | null;
+    chosenWalletLabel: string | null;
+    activeWalletId: string | null;
     activeUserFriendlyAddress: string | null;
 }
 
@@ -23,8 +23,8 @@ const store: StoreOptions<RootState> = {
         hasRequest: false,
         wallets: [],
         keyguardResult: null, // undefined is not reactive
-        chosenLoginLabel: null,
-        activeLoginId: null,
+        chosenWalletLabel: null,
+        activeWalletId: null,
         activeUserFriendlyAddress: null,
     },
     mutations: {
@@ -41,14 +41,14 @@ const store: StoreOptions<RootState> = {
         setKeyguardResult(state, payload: KeyguardResult | Error) {
             state.keyguardResult = payload;
         },
-        setActiveAccount(state, payload: { loginId: string, userFriendlyAddress: string }) {
-            state.activeLoginId = payload.loginId;
+        setActiveAccount(state, payload: { walletId: string, userFriendlyAddress: string }) {
+            state.activeWalletId = payload.walletId;
             state.activeUserFriendlyAddress = payload.userFriendlyAddress;
             // Store as recent account for next requests
             localStorage.setItem('_recentAccount', JSON.stringify(payload));
         },
-        setLoginLabel(state, label: string) {
-            state.chosenLoginLabel = label;
+        setWalletLabel(state, label: string) {
+            state.chosenWalletLabel = label;
         },
     },
     actions: {
@@ -68,7 +68,7 @@ const store: StoreOptions<RootState> = {
                 if (storedRecentAccount) {
                     try {
                         const recentAccount = JSON.parse(storedRecentAccount);
-                        activeWallet = state.wallets.find((x) => x.id === recentAccount.loginId);
+                        activeWallet = state.wallets.find((x) => x.id === recentAccount.walletId);
                         activeUserFriendlyAddress = recentAccount.userFriendlyAddress;
                     } catch (err) {
                         // Do nothing
@@ -88,7 +88,7 @@ const store: StoreOptions<RootState> = {
                 }
 
                 commit('setActiveAccount', {
-                    loginId: activeWallet.id,
+                    walletId: activeWallet.id,
                     userFriendlyAddress: activeUserFriendlyAddress,
                 });
             });
@@ -100,8 +100,8 @@ const store: StoreOptions<RootState> = {
             return state.wallets.find((wallet) => wallet.id === id);
         },
         activeWallet: (state, getters): WalletInfo | undefined => {
-            if (!state.activeLoginId) return undefined;
-            return getters.findWallet(state.activeLoginId);
+            if (!state.activeWalletId) return undefined;
+            return getters.findWallet(state.activeWalletId);
         },
         activeAccount: (state, getters): AccountInfo | undefined => {
             if (!state.activeUserFriendlyAddress) return undefined;
