@@ -178,11 +178,11 @@ export default class LoginSuccess extends Vue {
         this.storeAndUpdateResult();
     }
 
-    private onAccountLabelChanged(address: Nimiq.Address, label: string) {
-        const addressInfo = this.addresses.get(address.toUserFriendlyAddress());
+    private onAccountLabelChanged(address: string, label: string) {
+        const addressInfo = this.addresses.get(address);
         if (!addressInfo) throw new Error('UNEXPECTED: Address that was changed does not exist');
         addressInfo.label = label;
-        this.addresses.set(address.toUserFriendlyAddress(), addressInfo);
+        this.addresses.set(address, addressInfo);
         this.addressesUpdateCount += 1;
         this.storeAndUpdateResult();
     }
