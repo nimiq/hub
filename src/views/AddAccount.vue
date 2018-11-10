@@ -23,31 +23,35 @@ export default class AddAccount extends Vue {
     @Static private request!: ParsedAddAccountRequest;
     @State private keyguardResult!: DeriveAddressResult | Error | null;
 
-    public created() {
+    public async created() {
         if (this.keyguardResult instanceof Error) {
             this.rpcState.reply(ResponseStatus.ERROR, this.keyguardResult);
-        } else if (this.keyguardResult) return; // Keyguard success is handled in AddAccountSuccess.vue
+            return;
+        }
+
+        const wallet = await KeyStore.Instance.get(this.request.walletId);
+        if (!wallet) {
+            this.rpcState.reply(ResponseStatus.ERROR, 'Wallet not found');
+            return;
+        }
+        if (wallet.type === KeyStorageType.LEGACY) {
+            this.rpcState.reply(ResponseStatus.ERROR, 'Cannot add account to single-account wallet');
+            return;
+        }
+
+        let firstIndexToDerive = 0;
+
+        const latestAccount = Array.from(wallet.addresses.values()).pop();
+        if (latestAccount) {
+            const pathArray = latestAccount.path.split('/');
+            firstIndexToDerive = parseInt(pathArray[pathArray.length - 1], 10) + 1;
+        }
 
         const request: DeriveAddressRequest = {
             appName: this.request.appName,
             keyId: this.request.walletId,
             baseKeyPath: `m/44'/242'/0'`,
-            indicesToDerive: [
-                '1\'',
-                '2\'',
-                '3\'',
-                '4\'',
-                '5\'',
-                '6\'',
-                '7\'',
-                '8\'',
-                '9\'',
-                '10\'',
-                '11\'',
-                '12\'',
-                '13\'',
-                '14\'',
-            ],
+            indicesToDerive: new Array(14).fill(null).map((_: any, i: number) => `${firstIndexToDerive + i}'`),
         };
 
         const client = RpcApi.createKeyguardClient(this.$store, staticStore);
