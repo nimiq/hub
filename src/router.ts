@@ -176,13 +176,11 @@ export default new Router({
       path: `/${RequestType.ADD_ACCOUNT}`,
       component: AddAccount,
       name: RequestType.ADD_ACCOUNT,
-      children: [
-        {
-          path: 'success',
-          name: `${RequestType.ADD_ACCOUNT}-success`,
-          component: AddAccountSuccess,
-        },
-      ],
+    },
+    {
+      path: `/${RequestType.ADD_ACCOUNT}/success`,
+      component: AddAccountSuccess,
+      name: `${RequestType.ADD_ACCOUNT}-success`,
     },
   ],
 });

@@ -1,23 +1,15 @@
-<template>
-    <div class="container">
-        <small-page v-if="$route.name === `add-account-success`">
-            <router-view/>
-        </small-page>
-        <!-- <a class="global-close" :class="{hidden: $route.name === `login-success`}" @click="close">Back to {{ request.appName }}</a> -->
-    </div>
-</template>
-
 <script lang="ts">
-import {Component, Emit, Watch, Vue} from 'vue-property-decorator';
-import {SmallPage} from '@nimiq/vue-components';
-import {ParsedLoginRequest, ParsedAddAccountRequest} from '../lib/RequestTypes';
+import {Component, Vue} from 'vue-property-decorator';
+import {ParsedAddAccountRequest} from '../lib/RequestTypes';
 import {State} from 'vuex-class';
 import RpcApi from '../lib/RpcApi';
 import {DeriveAddressRequest, DeriveAddressResult} from '@nimiq/keyguard-client';
 import {State as RpcState, ResponseStatus} from '@nimiq/rpc';
 import staticStore, {Static} from '../lib/StaticStore';
+import { KeyStore } from '@/lib/KeyStore';
+import { KeyStorageType } from '@/lib/KeyInfo';
 
-@Component({components: {SmallPage}})
+@Component({})
 export default class AddAccount extends Vue {
     @Static private rpcState!: RpcState;
     @Static private request!: ParsedAddAccountRequest;
@@ -57,10 +49,5 @@ export default class AddAccount extends Vue {
         const client = RpcApi.createKeyguardClient(this.$store, staticStore);
         client.deriveAddress(request).catch(console.error); // TODO: proper error handling
     }
-
-    // @Emit()
-    // private close() {
-    //    this.rpcState.reply(ResponseStatus.ERROR, new Error('CANCEL'));
-    // }
 }
 </script>
