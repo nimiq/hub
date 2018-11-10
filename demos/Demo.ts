@@ -289,7 +289,7 @@ class Demo {
             html += `<li>${key.label}
                         <button class="export-words" data-keyid="${key.id}">Words</button>
                         <button class="export-file" data-keyid="${key.id}">File</button>
-                        <button class="add-account" data-keyid="${key.id}">+ Acc</button>
+                        ${key.type !== 0 ? `<button class="add-account" data-keyid="${key.id}">+ Acc</button>` : ''}
                         <button class="logout" data-keyid="${key.id}">Logout</button>
                         <ul>`;
             key.addresses.forEach((acc, addr) => {
