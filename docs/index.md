@@ -317,7 +317,7 @@ interface LoginResult {
     walletId: string;       // Automatically generated wallet ID
     label: string;          // The label/name given to the wallet by the user
 
-    type: WalletType;       // 0 for in-browser single-account (legacy) wallets,
+    type: WalletType;       // 0 for in-browser single-account wallets,
                             // 1 for in-browser multi-account wallets,
                             // 2 for Ledger hardware wallets
 
