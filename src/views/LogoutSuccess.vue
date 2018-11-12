@@ -2,9 +2,9 @@
     <div class="container">
         <small-page>
             <Success
-                successText="Your Logout was successful"
-                v-bind:appName="this.request.appName"
-                v-bind:close="this.done"
+                text="Your Logout was successful"
+                :appName="request.appName"
+                @continue="done"
                 />
         </small-page>
     </div>

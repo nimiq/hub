@@ -2,9 +2,9 @@
     <div class="container">
         <small-page>
             <Success
-                v-bind:successText="successText"
-                v-bind:appName="this.request.appName"
-                v-bind:close="this.done"
+                :text="text"
+                :appName="request.appName"
+                @close="done"
                 />
         </small-page>
     </div>
@@ -23,12 +23,11 @@ import Success from '../components/Success.vue';
 
 @Component({components: {SmallPage, Success}})
 export default class SimpleSuccess extends Vue {
-
     @Static private request!: RpcRequest;
     @Static private rpcState!: RpcState;
     @State private keyguardResult!: RpcResult;
 
-    get successText() {
+    get text() {
         switch (this.$route.name) {
             case 'export-file-success':
                 return 'Your Wallet File export was successful';

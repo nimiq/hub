@@ -1,19 +1,18 @@
 <template>
     <div class="success center">
         <div class="icon-checkmark-circle"></div>
-        <h1>{{ successText }}</h1>
+        <h1>{{ text }}</h1>
         <div style="flex-grow: 1;"></div>
-        <button @click="close">Back to {{ appName }}</button>
+        <button @click="$emit('continue')">Back to {{ appName }}</button>
     </div>
 </template>
 
 <script lang="ts">
-import {Component, Vue, Prop} from 'vue-property-decorator';
+import {Component, Vue, Prop, Emit} from 'vue-property-decorator';
 @Component({components: {}})
 export default class Success extends Vue {
-    @Prop(String) private successText?: string;
+    @Prop(String) private text?: string;
     @Prop(String) private appName?: string;
-    @Prop(Function) private close?: () => void;
 }
 </script>
 
