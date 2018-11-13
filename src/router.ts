@@ -17,6 +17,8 @@ import ExportWords from './views/ExportWords.vue';
 import ExportWordsSuccess from './views/ExportWordsSuccess.vue';
 import Logout from './views/Logout.vue';
 import LogoutSuccess from './views/LogoutSuccess.vue';
+import AddAccount from './views/AddAccount.vue';
+import AddAccountSuccess from './views/AddAccountSuccess.vue';
 import { RequestType } from '@/lib/RequestTypes';
 import { KeyguardCommand } from '@nimiq/keyguard-client';
 
@@ -58,6 +60,11 @@ export function keyguardResponseRouter(
       return {
         resolve: `${RequestType.EXPORT_WORDS}-success`,
         reject: RequestType.EXPORT_WORDS,
+      };
+    case KeyguardCommand.DERIVE_ADDRESS:
+      return {
+        resolve: `${RequestType.ADD_ACCOUNT}-success`,
+        reject: RequestType.ADD_ACCOUNT,
       };
     default:
       throw new Error(`router.keyguardResponseRouter not defined for Keyguard command: ${command}`);
@@ -164,6 +171,16 @@ export default new Router({
           component: LogoutSuccess,
         },
       ],
+    },
+    {
+      path: `/${RequestType.ADD_ACCOUNT}`,
+      component: AddAccount,
+      name: RequestType.ADD_ACCOUNT,
+    },
+    {
+      path: `/${RequestType.ADD_ACCOUNT}/success`,
+      component: AddAccountSuccess,
+      name: `${RequestType.ADD_ACCOUNT}-success`,
     },
   ],
 });

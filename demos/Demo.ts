@@ -10,7 +10,7 @@ import {
     LogoutRequest, LogoutResult,
     SignTransactionRequest, SignTransactionResult,
     ExportWordsRequest, ExportWordsResult,
-    ExportFileRequest, ExportFileResult,
+    ExportFileRequest, ExportFileResult, AddAccountRequest,
 } from '../src/lib/RequestTypes';
 import { WalletStore } from '../src/lib/WalletStore';
 import { WalletInfoEntry } from '../src/lib/WalletInfo';
@@ -261,6 +261,24 @@ class Demo {
         } as ExportFileRequest;
     }
 
+    public async addAccount(keyId: string) {
+        try {
+            const result = await this._accountsClient.addAccount(this._createAddAccountRequest(keyId));
+            console.log('Keyguard result', result);
+            document.querySelector('#result').textContent = 'Account added';
+        } catch (e) {
+            console.error('Keyguard error', e);
+            document.querySelector('#result').textContent = `Error: ${e.message || e}`;
+        }
+    }
+
+    public _createAddAccountRequest(walletId: string): AddAccountRequest {
+        return {
+            appName: 'Accounts Demos',
+            walletId,
+        };
+    }
+
     public async updateAccounts() {
         const wallets = await this.list();
         console.log('Accounts in Manager:', wallets);
@@ -270,8 +288,9 @@ class Demo {
 
         wallets.forEach(wallet => {
             html += `<li>${wallet.label}
-                        <button class="export-words" data-wallet-id="${wallet.id}">Export Words</button>
-                        <button class="export-file" data-wallet-id="${wallet.id}">Export File</button>
+                        <button class="export-words" data-wallet-id="${wallet.id}">Words</button>
+                        <button class="export-file" data-wallet-id="${wallet.id}">File</button>
+                        ${wallet.type !== 0 ? `<button class="add-account" data-wallet-id="${wallet.id}">+ Acc</button>` : ''}
                         <button class="logout" data-wallet-id="${wallet.id}">Logout</button>
                         <ul>`;
             wallet.accounts.forEach((acc, addr) => {
@@ -297,7 +316,10 @@ class Demo {
         document.querySelectorAll('button.export-file').forEach(element => {
             element.addEventListener('click', async () => this.exportFile(element.getAttribute('data-wallet-id')));
         });
-        document.querySelectorAll('button.logout').forEach(element =>{
+        document.querySelectorAll('button.add-account').forEach( (element, key) => {
+            element.addEventListener('click', async () => this.addAccount(element.getAttribute('data-wallet-id')));
+        });
+        document.querySelectorAll('button.logout').forEach( (element,key) =>{
             element.addEventListener('click', async () => this.logout(element.getAttribute('data-wallet-id')));
         });
     }

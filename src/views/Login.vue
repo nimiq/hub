@@ -22,7 +22,6 @@ export default class Login extends Vue {
     @Static private rpcState!: RpcState;
     @Static private request!: ParsedLoginRequest;
     @State private keyguardResult!: ImportResult | Error | null;
-    @State private activeAccountPath!: string;
 
     public created() {
         if (this.keyguardResult instanceof Error) {
