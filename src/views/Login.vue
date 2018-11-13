@@ -1,4 +1,4 @@
-<<script lang="ts">
+<script lang="ts">
 import { Component, Emit, Vue } from 'vue-property-decorator';
 import { ParsedLoginRequest } from '../lib/RequestTypes';
 import { State } from 'vuex-class';
