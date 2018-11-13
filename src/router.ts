@@ -6,7 +6,6 @@ import Checkout from './views/Checkout.vue';
 import CheckoutOverview from './views/CheckoutOverview.vue';
 import CheckoutSelectAccount from './views/CheckoutSelectAccount.vue';
 import CheckoutTransmission from './views/CheckoutTransmission.vue';
-import Signup from './views/Signup.vue';
 import SignupTypeSelector from './views/SignupTypeSelector.vue';
 import SignupSuccess from './views/SignupSuccess.vue';
 import Login from './views/Login.vue';
@@ -16,6 +15,7 @@ import ExportWords from './views/ExportWords.vue';
 import Logout from './views/Logout.vue';
 import LogoutSuccess from './views/LogoutSuccess.vue';
 import SimpleSuccess from './views/SimpleSuccess.vue';
+import ErrorHandler from './views/ErrorHandler.vue';
 import {RequestType} from '@/lib/RequestTypes';
 import {KeyguardCommand} from '@nimiq/keyguard-client';
 
@@ -51,12 +51,12 @@ export function keyguardResponseRouter(
     case KeyguardCommand.EXPORT_FILE:
       return {
         resolve: `${RequestType.EXPORT_FILE}-success`,
-        reject: RequestType.EXPORT_FILE,
+        reject: `${RequestType.EXPORT_FILE}-error`,
       };
     case KeyguardCommand.EXPORT_WORDS:
       return {
         resolve: `${RequestType.EXPORT_WORDS}-success`,
-        reject: RequestType.EXPORT_WORDS,
+        reject: `${RequestType.EXPORT_WORDS}-error`,
       };
     default:
       throw new Error(`router.keyguardResponseRouter not defined for Keyguard command: ${command}`);
@@ -129,6 +129,11 @@ export default new Router({
       name: `${RequestType.EXPORT_FILE}-success`,
     },
     {
+      path: `${RequestType.EXPORT_FILE}/error`,
+      component: ErrorHandler,
+      name: `${RequestType.EXPORT_FILE}-error`,
+    },
+    {
       path: `/${RequestType.EXPORT_WORDS}`,
       component: ExportWords,
       name: RequestType.EXPORT_WORDS,
@@ -137,6 +142,11 @@ export default new Router({
       path: `/${RequestType.EXPORT_WORDS}/success`,
       component: SimpleSuccess,
       name: `${RequestType.EXPORT_WORDS}-success`,
+    },
+    {
+      path: `${RequestType.EXPORT_WORDS}/error`,
+      component: ErrorHandler,
+      name: `${RequestType.EXPORT_WORDS}-error`,
     },
     {
       path: `/${RequestType.LOGOUT}`,

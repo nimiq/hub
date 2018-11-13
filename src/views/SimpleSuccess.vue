@@ -4,7 +4,7 @@
             <Success
                 :text="text"
                 :appName="request.appName"
-                @close="done"
+                @continue="done"
                 />
         </small-page>
     </div>
@@ -30,20 +30,13 @@ export default class SimpleSuccess extends Vue {
     get text() {
         switch (this.$route.name) {
             case 'export-file-success':
-                return 'Your Wallet File export was successful';
+                return 'Your Wallet File export[br]was successful';
             case 'export-words-success':
-                return 'Your Recovery Words export was successful';
+                return 'Your Recovery Words export[br]was successful';
             case 'change-passphrase-success':
                 return 'You successfully changed your passphrase ';
             default:
                 throw new Error('No matching route');
-        }
-    }
-
-    public async created() {
-        // TODO maybe don't just return to caller, but instead show some error page?
-        if (this.keyguardResult instanceof Error) {
-            this.rpcState.reply(ResponseStatus.ERROR, this.keyguardResult);
         }
     }
 

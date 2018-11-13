@@ -1,7 +1,7 @@
 <template>
     <div class="success center">
         <div class="icon-checkmark-circle"></div>
-        <h1>{{ text }}</h1>
+        <h1 v-html="parsedText"></h1>
         <div style="flex-grow: 1;"></div>
         <button @click="$emit('continue')">Back to {{ appName }}</button>
     </div>
@@ -13,6 +13,10 @@ import {Component, Vue, Prop, Emit} from 'vue-property-decorator';
 export default class Success extends Vue {
     @Prop(String) private text?: string;
     @Prop(String) private appName?: string;
+
+    get parsedText() {
+        return this.text.replace(/<(.|\n)*?>/g, '').replace(/\[br\]/g,'<br/>');
+    }
 }
 </script>
 

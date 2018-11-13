@@ -2,7 +2,7 @@
     <div class="container">
         <small-page>
             <Success
-                text="Your Logout was successful"
+                text="Your Logout[br]was successful"
                 :appName="request.appName"
                 @continue="done"
                 />
