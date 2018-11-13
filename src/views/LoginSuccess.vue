@@ -102,7 +102,7 @@ export default class LoginSuccess extends Vue {
             const balances = await this.network.getBalances(userFriendlyAddresses);
             userFriendlyAddresses.forEach((addr) => {
                 const addressInfo = this.accounts.get(addr);
-                addressInfo!.balance = balances.get(addr);
+                addressInfo!.balance = Nimiq.Policy.coinsToSatoshis(balances.get(addr) || 0);
                 this.accounts.set(addr, addressInfo!);
             });
             this.accountsUpdateCount += 1;
