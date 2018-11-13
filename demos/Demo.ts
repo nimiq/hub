@@ -208,7 +208,7 @@ class Demo {
 
     public async logout(walletId: string): Promise<LogoutResult> {
         try {
-            const result = await this._accountsClient.logout(this._createLogoutRequest(keyId));
+            const result = await this._accountsClient.logout(this._createLogoutRequest(walletId));
             console.log('Keyguard result', result);
             document.querySelector('#result').textContent = 'Wallet Removed';
             return result;
@@ -227,7 +227,7 @@ class Demo {
 
     public async exportWords(walletId: string) {
         try {
-            const result = await this._accountsClient.exportWords(this._createExportWordsRequest(keyId));
+            const result = await this._accountsClient.exportWords(this._createExportWordsRequest(walletId));
             console.log('Keyguard result', result);
             document.querySelector('#result').textContent = 'Words exported';
         } catch (e) {
@@ -245,7 +245,7 @@ class Demo {
 
     public async exportFile(walletId: string) {
         try {
-            const result = await this._accountsClient.exportFile(this._createExportFileRequest(keyId));
+            const result = await this._accountsClient.exportFile(this._createExportFileRequest(walletId));
             console.log('Keyguard result', result);
             document.querySelector('#result').textContent = 'File exported';
         } catch (e) {
@@ -261,9 +261,9 @@ class Demo {
         } as ExportFileRequest;
     }
 
-    public async addAccount(keyId: string) {
+    public async addAccount(walletId: string) {
         try {
-            const result = await this._accountsClient.addAccount(this._createAddAccountRequest(keyId));
+            const result = await this._accountsClient.addAccount(this._createAddAccountRequest(walletId));
             console.log('Keyguard result', result);
             document.querySelector('#result').textContent = 'Account added';
         } catch (e) {
@@ -316,10 +316,10 @@ class Demo {
         document.querySelectorAll('button.export-file').forEach(element => {
             element.addEventListener('click', async () => this.exportFile(element.getAttribute('data-wallet-id')));
         });
-        document.querySelectorAll('button.add-account').forEach( (element, key) => {
+        document.querySelectorAll('button.add-account').forEach(element => {
             element.addEventListener('click', async () => this.addAccount(element.getAttribute('data-wallet-id')));
         });
-        document.querySelectorAll('button.logout').forEach( (element,key) =>{
+        document.querySelectorAll('button.logout').forEach(element => {
             element.addEventListener('click', async () => this.logout(element.getAttribute('data-wallet-id')));
         });
     }
