@@ -44,7 +44,7 @@ export class PermissionStore {
         });
     }
 
-    private dbPromise: Promise<IDBDatabase>|null;
+    private dbPromise: Promise<IDBDatabase> | null;
     private indexedDB: IDBFactory;
 
     public static get Instance() {
@@ -70,7 +70,7 @@ export class PermissionStore {
         } : result;
     }
 
-    public async put(origin: string, addresses: true|Nimiq.Address[]): Promise<string> {
+    public async put(origin: string, addresses: true | Nimiq.Address[]): Promise<string> {
         const permissionEntry: PermissionEntry = {
             origin,
             allowsAll: addresses === true,
@@ -86,7 +86,7 @@ export class PermissionStore {
     }
 
     /* For semantic convenience */
-    public async allow(origin: string, addresses: true|Nimiq.Address[]): Promise<string> {
+    public async allow(origin: string, addresses: true | Nimiq.Address[]): Promise<string> {
         return this.put(origin, addresses);
     }
 

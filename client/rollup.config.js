@@ -26,7 +26,7 @@ export default [
     {
         input: 'build/client/AccountsClient.js',
         output: {
-            file: 'dist/standalone/AccountsClient.umd.js',
+            file: 'dist/standalone/AccountsClient.standalone.umd.js',
             format: 'umd',
             name: 'AccountsClient',
             globals: { '@nimiq/rpc': 'rpc' }
@@ -36,7 +36,7 @@ export default [
     {
         input: 'build/client/AccountsClient.js',
         output: {
-            file: 'dist/standalone/AccountsClient.es.js',
+            file: 'dist/standalone/AccountsClient.standalone.es.js',
             format: 'es',
             name: 'AccountsClient',
             globals: { '@nimiq/rpc': 'rpc' }

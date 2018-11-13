@@ -1,9 +1,9 @@
-import { KeyStorageType } from './KeyInfo';
+import { WalletType } from './WalletInfo';
 
 export enum RequestType {
     LIST = 'list',
     CHECKOUT = 'checkout',
-    SIGNTRANSACTION = 'sign-transaction',
+    SIGN_TRANSACTION = 'sign-transaction',
     SIGNUP = 'signup',
     LOGIN = 'login',
     EXPORT_WORDS = 'export-words',
@@ -12,9 +12,9 @@ export enum RequestType {
 }
 
 export interface SignTransactionRequest {
-    kind?: RequestType.SIGNTRANSACTION;
+    kind?: RequestType.SIGN_TRANSACTION;
     appName: string;
-    keyId: string;
+    walletId: string;
     sender: string;
     recipient: string;
     recipientType?: Nimiq.Account.Type;
@@ -27,9 +27,9 @@ export interface SignTransactionRequest {
 }
 
 export interface ParsedSignTransactionRequest {
-    kind: RequestType.SIGNTRANSACTION;
+    kind: RequestType.SIGN_TRANSACTION;
     appName: string;
-    keyId: string;
+    walletId: string;
     sender: Nimiq.Address;
     recipient: Nimiq.Address;
     recipientType?: Nimiq.Account.Type;
@@ -99,10 +99,10 @@ export interface ParsedSignupRequest {
 }
 
 export interface SignupResult {
-    keyId: string;
+    walletId: string;
     label: string;
-    type: KeyStorageType;
-    address: {
+    type: WalletType;
+    account: {
         address: string;
         label: string;
     };
@@ -119,10 +119,10 @@ export interface ParsedLoginRequest {
 }
 
 export interface LoginResult {
-    keyId: string;
+    walletId: string;
     label: string;
-    type: KeyStorageType;
-    addresses: Array<{
+    type: WalletType;
+    accounts: Array<{
         address: string;
         label: string;
     }>;
@@ -131,13 +131,13 @@ export interface LoginResult {
 export interface ExportWordsRequest {
     kind?: RequestType.EXPORT_WORDS;
     appName: string;
-    keyId: string;
+    walletId: string;
 }
 
 export interface ParsedExportWordsRequest {
     kind: RequestType.EXPORT_WORDS;
     appName: string;
-    keyId: string;
+    walletId: string;
 }
 
 export interface ExportWordsResult {
@@ -147,13 +147,13 @@ export interface ExportWordsResult {
 export interface ExportFileRequest {
     kind?: RequestType.EXPORT_FILE;
     appName: string;
-    keyId: string;
+    walletId: string;
 }
 
 export interface ParsedExportFileRequest {
     kind: RequestType.EXPORT_FILE;
     appName: string;
-    keyId: string;
+    walletId: string;
 }
 
 export interface ExportFileResult {
@@ -163,13 +163,13 @@ export interface ExportFileResult {
 export interface LogoutRequest {
     kind?: RequestType.LOGOUT;
     appName: string;
-    keyId: string;
+    walletId: string;
 }
 
 export interface ParsedLogoutRequest {
     kind: RequestType.LOGOUT;
     appName: string;
-    keyId: string;
+    walletId: string;
 }
 
 export interface LogoutResult {
@@ -191,19 +191,25 @@ export type ParsedRpcRequest = ParsedSignTransactionRequest
                              | ParsedExportFileRequest
                              | ParsedExportWordsRequest
                              | ParsedLogoutRequest;
+export type RpcResult = SignTransactionResult
+                      | SignupResult
+                      | LoginResult
+                      | ExportWordsResult
+                      | ExportFileResult
+                      | LogoutResult;
 
 export class AccountsRequest {
     public static parse(request: RpcRequest, requestType?: RequestType): ParsedRpcRequest | null {
         switch (request.kind || requestType) {
-            case RequestType.SIGNTRANSACTION:
+            case RequestType.SIGN_TRANSACTION:
                 // Because the switch statement is not definitely using 'request.kind' as the condition,
                 // Typescript cannot infer what type the request variable is from the control flow,
                 // thus we need to force-cast it here:
                 request = request as SignTransactionRequest;
                 return {
-                    kind: RequestType.SIGNTRANSACTION,
+                    kind: RequestType.SIGN_TRANSACTION,
                     appName: request.appName,
-                    keyId: request.keyId,
+                    walletId: request.walletId,
                     sender: Nimiq.Address.fromUserFriendlyAddress(request.sender),
                     recipient: Nimiq.Address.fromUserFriendlyAddress(request.recipient),
                     recipientType: request.recipientType,
@@ -247,21 +253,21 @@ export class AccountsRequest {
                 return {
                     kind: RequestType.EXPORT_FILE,
                     appName: request.appName,
-                    keyId: request.keyId,
+                    walletId: request.walletId,
                 } as ParsedExportFileRequest;
             case RequestType.EXPORT_WORDS:
                 request = request as ExportWordsRequest;
                 return {
                     kind: RequestType.EXPORT_WORDS,
                     appName: request.appName,
-                    keyId: request.keyId,
+                    walletId: request.walletId,
                 } as ParsedExportWordsRequest;
             case RequestType.LOGOUT:
                 request = request as LogoutRequest;
                 return {
                     kind: RequestType.LOGOUT,
                     appName: request.appName,
-                    keyId: request.keyId,
+                    walletId: request.walletId,
                 } as ParsedLogoutRequest;
             default:
                 return null;
@@ -270,11 +276,11 @@ export class AccountsRequest {
 
     public static raw(request: ParsedRpcRequest): RpcRequest | null {
         switch (request.kind) {
-            case RequestType.SIGNTRANSACTION:
+            case RequestType.SIGN_TRANSACTION:
                 return {
-                    kind: RequestType.SIGNTRANSACTION,
+                    kind: RequestType.SIGN_TRANSACTION,
                     appName: request.appName,
-                    keyId: request.keyId,
+                    walletId: request.walletId,
                     sender: request.sender.toUserFriendlyAddress(),
                     recipient: request.recipient.toUserFriendlyAddress(),
                     recipientType: request.recipientType,
