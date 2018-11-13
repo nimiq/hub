@@ -29,24 +29,24 @@ export function keyguardResponseRouter(
     case KeyguardCommand.CREATE:
       return {
         resolve: `${RequestType.SIGNUP}-success`,
-        reject: RequestType.SIGNUP,
+        reject: `${RequestType.SIGNUP}-error`,
       };
     case KeyguardCommand.IMPORT:
       return {
         resolve: `${RequestType.LOGIN}-success`,
-        reject: RequestType.LOGIN,
+        reject: `${RequestType.LOGIN}-error`,
       };
     case KeyguardCommand.REMOVE:
       return {
         resolve: `${RequestType.LOGOUT}-success`,
-        reject: RequestType.LOGOUT,
+        reject: `${RequestType.LOGOUT}-error`,
       };
     case KeyguardCommand.SIGN_TRANSACTION:
       // The SIGN_TRANSACTION Keyguard command is used by Accounts' SIGNTRANSACTION, CHECKOUT and CASHLINK (future)
       // Thus we return the user to the respective handler component
       return {
         resolve: `${originalRequestType}-success`,
-        reject: originalRequestType,
+        reject: `${originalRequestType}-error`,
       };
     case KeyguardCommand.EXPORT_FILE:
       return {
@@ -78,23 +78,33 @@ export default new Router({
       name: `${RequestType.SIGNTRANSACTION}-success`,
     },
     {
+      path: `/${RequestType.SIGNTRANSACTION}/error`,
+      component: ErrorHandler,
+      name: `${RequestType.SIGNTRANSACTION}-error`,
+    },
+    {
       path: `/${RequestType.CHECKOUT}`,
       component: Checkout,
       children: [
         {
           path: '',
-          name: RequestType.CHECKOUT,
           component: CheckoutOverview,
+          name: RequestType.CHECKOUT,
         },
         {
           path: 'change-account',
-          name: `${RequestType.CHECKOUT}-change-account`,
           component: CheckoutSelectAccount,
+          name: `${RequestType.CHECKOUT}-change-account`,
         },
         {
           path: 'success',
-          name: `${RequestType.CHECKOUT}-success`,
           component: CheckoutTransmission,
+          name: `${RequestType.CHECKOUT}-success`,
+        },
+        {
+          path: 'error',
+          component: ErrorHandler,
+          name: `${RequestType.CHECKOUT}-error`,
         },
       ],
     },
@@ -109,6 +119,11 @@ export default new Router({
       name: `${RequestType.SIGNUP}-success`,
     },
     {
+      path: `/${RequestType.SIGNUP}/error`,
+      component: ErrorHandler,
+      name: `${RequestType.SIGNUP}-error`,
+    },
+    {
       path: `/${RequestType.LOGIN}`,
       component: Login,
       name: RequestType.LOGIN,
@@ -117,6 +132,11 @@ export default new Router({
       path: `/${RequestType.LOGIN}/success`,
       component: LoginSuccess,
       name: `${RequestType.LOGIN}-success`,
+    },
+    {
+      path: `/${RequestType.LOGIN}/error`,
+      component: ErrorHandler,
+      name: `${RequestType.LOGIN}-error`,
     },
     {
       path: `/${RequestType.EXPORT_FILE}`,
@@ -157,6 +177,11 @@ export default new Router({
       path: `/${RequestType.LOGOUT}/success`,
       component: LogoutSuccess,
       name: `${RequestType.LOGOUT}-success`,
+    },
+    {
+      path: `/${RequestType.LOGOUT}/error`,
+      component: ErrorHandler,
+      name: `${RequestType.LOGOUT}-error`,
     },
   ],
 });
