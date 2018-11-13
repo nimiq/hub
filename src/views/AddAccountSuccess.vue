@@ -111,6 +111,7 @@ export default class AddAccountSuccess extends Vue {
 
     .success-box p {
         width: 25rem;
+        opacity: 1;
     }
 
     .success-box p + p {

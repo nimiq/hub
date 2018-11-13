@@ -147,7 +147,6 @@ export default class App extends Vue {
     }
 
     .global-close .arrow-left {
-        height: 2rem;
         vertical-align: top;
         margin-right: 0.25rem;
     }
