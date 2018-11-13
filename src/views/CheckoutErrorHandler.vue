@@ -1,10 +1,8 @@
 <template></template>
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { State } from 'vuex-class';
 import { ResponseStatus, State as RpcState } from '@nimiq/rpc';
 import { RpcResult } from '@nimiq/keyguard-client';
-import staticStore, { Static } from '@/lib/StaticStore';
 import ErrorHandler from './ErrorHandler.vue';
 
 @Component({})
