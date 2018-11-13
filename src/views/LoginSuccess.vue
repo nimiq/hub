@@ -8,7 +8,7 @@
                 <LabelInput :value="walletLabel" @changed="onWalletLabelChange"/>
             </div>
 
-            <AccountList :accounts="accounts" :editable="true" @account-changed="onAccountLabelChanged"/>
+            <AccountList :accounts="accountsArray" :editable="true" @account-changed="onAccountLabelChanged"/>
         </div>
 
         <PageFooter>
@@ -49,12 +49,12 @@ export default class LoginSuccess extends Vue {
      * Maps are not supported by Vue's reactivity system, thus updates to a Map do not trigger
      * an update of the DOM. To work around that, a second reactive attribute is added (a plain
      * number) which is incremented each time the Map is updated. The DOM is then fed not by the
-     * Map itself, but by a computed property (`this.accounts` in this case), which uses both the
-     * non-reactive Map and the reactive partner-attribute. The partner-attribute change triggers
-     * the recomputation, which in turn updates the DOM.
+     * Map itself, but by a computed property (`this.accountsArray` in this case), which uses
+     * both the non-reactive Map and the reactive partner-attribute. The partner-attribute change
+     * triggers the recomputation, which in turn updates the DOM.
      */
-    private addresses: Map<string, AccountInfo> = new Map();
-    private addressesUpdateCount: number = 0;
+    private accounts: Map<string, AccountInfo> = new Map();
+    private accountsUpdateCount: number = 0;
 
     private lastDerivedIndex: number = 0;
     private lastActiveIndex: number = 0;
@@ -72,20 +72,20 @@ export default class LoginSuccess extends Vue {
                 this.defaultAccountLabel,
                 address,
             );
-            this.addresses.set(addressInfo.userFriendlyAddress, addressInfo);
-            this.addressesUpdateCount += 1; // Trigger DOM update via computed property `this.accounts`
+            this.accounts.set(addressInfo.userFriendlyAddress, addressInfo);
+            this.accountsUpdateCount += 1; // Trigger DOM update via computed property `this.accountsArray`
         });
 
         this.storeAndUpdateResult();
 
         if (this.keyguardResult.keyType === WalletType.BIP39) {
-            // Init Keyguard iframe to derive addresses
+            // Init Keyguard iframe to derive accounts
             this.keyguard = new KeyguardClient();
         }
 
         if (this.keyguardResult.keyType === WalletType.LEDGER) {
             if (this.keyguardResult.keyType === WalletType.LEDGER) this.walletLabel = 'Ledger Wallet';
-            // TODO: Init Ledger client to derive addresses
+            // TODO: Init Ledger client to derive accounts
         }
 
         if (this.keyguardResult.keyType === WalletType.BIP39
@@ -98,14 +98,14 @@ export default class LoginSuccess extends Vue {
             // FIXME: Maybe this can be included in the first iteration of `this.findAccounts()`,
             //        but take care that at least one account is still added to the wallet,
             //        even when all first 20 accounts have a balance of zero.
-            const userFriendlyAddresses = Array.from(this.addresses.keys());
+            const userFriendlyAddresses = Array.from(this.accounts.keys());
             const balances = await this.network.getBalances(userFriendlyAddresses);
             userFriendlyAddresses.forEach((addr) => {
-                const addressInfo = this.addresses.get(addr);
+                const addressInfo = this.accounts.get(addr);
                 addressInfo!.balance = balances.get(addr);
-                this.addresses.set(addr, addressInfo!);
+                this.accounts.set(addr, addressInfo!);
             });
-            this.addressesUpdateCount += 1;
+            this.accountsUpdateCount += 1;
 
             // Kick off account detection
             this.findAccounts();
@@ -114,7 +114,7 @@ export default class LoginSuccess extends Vue {
 
     private async findAccounts() {
         // The standard dictates that account detection terminates
-        // when 20 consecutive unused addresses have been found.
+        // when 20 consecutive unused accounts have been found.
         if (this.lastDerivedIndex >= this.lastActiveIndex + 20) {
             // End condition
             this.keyguard.releaseKey(this.keyguardResult.keyId);
@@ -127,25 +127,26 @@ export default class LoginSuccess extends Vue {
         // we need to fill it up until (and including) the lastDerivedIndex with `empty` values.
         const pathsToDerive: string[] = new Array(this.lastDerivedIndex + 1);
 
-        // We can then push the paths of the relevant addresses onto the end of the array
+        // We can then push the paths of the relevant accounts onto the end of the array
         for (let i = this.lastDerivedIndex + 1; i <= this.lastActiveIndex + 20; i++) {
             pathsToDerive.push(`m/44'/242'/0'/${i}'`);
         }
 
-        // 2. Derive addresses from paths
+        // 2. Derive accounts from paths
 
         // FIXME: Use LedgerClient here for LEDGER keys
-        const rawAddresses = await this.keyguard.deriveAddresses(
+        const serializedAddresses = await this.keyguard.deriveAddresses(
             this.keyguardResult.keyId,
             pathsToDerive.slice(this.lastDerivedIndex + 1), // We don't want to send `empty` paths into the Keyguard
         );
-        const userFriendlyAddresses = rawAddresses.map((rawAddr) => new Nimiq.Address(rawAddr).toUserFriendlyAddress());
+        const userFriendlyAddresses = serializedAddresses
+            .map((rawAddr) => new Nimiq.Address(rawAddr).toUserFriendlyAddress());
 
-        // 3. Get balances for the derived addresses
+        // 3. Get balances for the derived accounts
 
         const balances = await this.network.getBalances(userFriendlyAddresses);
 
-        // 4. Find addresses with a non-zero balance and add them to the wallet
+        // 4. Find accounts with a non-zero balance and add them to the wallet
 
         balances.forEach((balance: number, userFriendlyAddress: string) => {
             this.lastDerivedIndex += 1;
@@ -154,7 +155,7 @@ export default class LoginSuccess extends Vue {
 
             this.lastActiveIndex = this.lastDerivedIndex;
 
-            this.addresses.set(userFriendlyAddress, new AccountInfo(
+            this.accounts.set(userFriendlyAddress, new AccountInfo(
                 // This is where the pre-filled pathsToDerive array from above becomes usefull.
                 // It relieves us from having to calulate the correct array index with an
                 // unrelated counter variable.
@@ -163,7 +164,7 @@ export default class LoginSuccess extends Vue {
                 Nimiq.Address.fromUserFriendlyAddress(userFriendlyAddress),
                 Nimiq.Policy.coinsToSatoshis(balance),
             ));
-            this.addressesUpdateCount += 1;
+            this.accountsUpdateCount += 1;
         });
 
         this.storeAndUpdateResult();
@@ -179,11 +180,11 @@ export default class LoginSuccess extends Vue {
     }
 
     private onAccountLabelChanged(address: string, label: string) {
-        const addressInfo = this.addresses.get(address);
+        const addressInfo = this.accounts.get(address);
         if (!addressInfo) throw new Error('UNEXPECTED: Address that was changed does not exist');
         addressInfo.label = label;
-        this.addresses.set(address, addressInfo);
-        this.addressesUpdateCount += 1;
+        this.accounts.set(address, addressInfo);
+        this.accountsUpdateCount += 1;
         this.storeAndUpdateResult();
     }
 
@@ -191,7 +192,7 @@ export default class LoginSuccess extends Vue {
         this.walletInfo = new WalletInfo(
             this.keyguardResult.keyId,
             this.walletLabel,
-            this.addresses,
+            this.accounts,
             [],
             this.keyguardResult.keyType,
         );
@@ -202,7 +203,7 @@ export default class LoginSuccess extends Vue {
             walletId: this.walletInfo!.id,
             label: this.walletInfo.label,
             type: this.walletInfo.type,
-            accounts: Array.from(this.addresses.values()).map((addressInfo) => ({
+            accounts: Array.from(this.accounts.values()).map((addressInfo) => ({
                 address: addressInfo.userFriendlyAddress,
                 label: addressInfo.label,
             })),
@@ -219,8 +220,8 @@ export default class LoginSuccess extends Vue {
         return this.keyguardResult.keyType === WalletType.LEDGER ? 'ledger' : 'keyguard';
     }
 
-    private get accounts(): Array<{ label: string, address: Nimiq.Address, balance?: number }> {
-        if (this.addressesUpdateCount) return Array.from(this.addresses.values());
+    private get accountsArray(): Array<{ label: string, address: Nimiq.Address, balance?: number }> {
+        if (this.accountsUpdateCount) return Array.from(this.accounts.values());
         return [];
     }
 }
