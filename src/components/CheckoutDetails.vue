@@ -1,12 +1,14 @@
 <template>
     <div class="checkout-details">
-        <h1>You're sending <Amount :amount="request.value + request.fee"/> to</h1>
-        <Account :address="request.recipient.toUserFriendlyAddress()" :label="originDomain"/>
-        <div v-if="plainData" class="data">{{ plainData }}</div>
+        <div class="transaction-section">
+            <h1>You're sending <Amount :amount="request.value + request.fee"/> to</h1>
+            <Account :address="request.recipient.toUserFriendlyAddress()" :label="originDomain"/>
+            <p v-if="plainData" class="nq-text data">{{ plainData }}</p>
+        </div>
         <div class="sender-section">
             <div class="sender-nav">
-                <h2>Pay with</h2>
-                <button v-if="accountChangeable" @click="changeAccount">Change</button>
+                <span class="nq-label">Pay with</span>
+                <button class="nq-button-s" v-if="accountChangeable" @click="changeAccount">Change</button>
             </div>
             <Account v-if="activeAccount" :address="activeAccount.userFriendlyAddress" :label="activeAccount.label" :balance="activeAccount.balance"/>
         </div>
@@ -62,27 +64,30 @@ export default class CheckoutDetails extends Vue {
     h1 {
         font-size: 3rem;
         line-height: 3.625rem;
-        font-weight: 300;
+        font-weight: normal;
         letter-spacing: 0.021em;
         margin: 4rem 4rem 1rem 4rem;
     }
 
     h1 .amount {
-        font-weight: 500;
+        font-weight: bold;
     }
 
     .data {
-        font-size: 2rem;
-        line-height: 1.3;
-        opacity: 0.7;
-        padding: 1rem 4rem;
+        margin: 1rem 4rem;
+    }
+
+    .transaction-section {
+        background: white;
+        padding-bottom: 3rem;
+        border-top-left-radius: 1rem;
+        border-top-right-radius: 1rem;
+        flex-grow: 1;
     }
 
     .sender-section {
-        margin-top: 3rem;
         padding-bottom: 2rem;
         border-top: solid 1px #f0f0f0;
-        border-bottom: solid 1px #f0f0f0;
         background: #fafafa;
     }
 
@@ -93,24 +98,7 @@ export default class CheckoutDetails extends Vue {
         justify-content: space-between;
     }
 
-    .sender-nav h2 {
+    .sender-nav .nq-label {
         margin: 1rem;
-        font-size: 1.75rem;
-        text-transform: uppercase;
-        line-height: 0.86;
-        letter-spacing: 0.143em;
-        font-weight: 400;
-    }
-
-    .sender-nav button {
-        background: #e5e5e5;
-        padding: 1rem 1.75rem;
-        width: unset;
-        font-size: 1.75rem;
-        line-height: 0.86;
-        box-shadow: unset;
-        text-transform: unset;
-        letter-spacing: normal;
-        height: auto;
     }
 </style>

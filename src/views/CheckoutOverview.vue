@@ -1,17 +1,17 @@
 <template>
     <div class="checkout-overview">
         <CheckoutDetails :accountChangeable="true"/>
-        <div class="page-footer" :class="height === 0 ? 'shows-network' : ''">
+        <PageFooter :class="height === 0 ? 'shows-network' : ''">
             <Network ref="network" :visible="height === 0" message="Fetching network status" @head-change="_onHeadChange"/>
-            <button v-if="height > 0" @click="proceed">Pay <Amount :amount="request.value + request.fee"/></button>
-        </div>
+            <button class="nq-button" v-if="height > 0" @click="proceed">Pay <Amount :amount="request.value + request.fee"/></button>
+        </PageFooter>
     </div>
 </template>
 
 <script lang="ts">
 import { Component, Emit, Watch, Vue } from 'vue-property-decorator';
 import { Getter } from 'vuex-class';
-import { Amount } from '@nimiq/vue-components';
+import { Amount, PageFooter } from '@nimiq/vue-components';
 import { SignTransactionRequest as KSignTransactionRequest } from '@nimiq/keyguard-client';
 import { State as RpcState } from '@nimiq/rpc';
 import CheckoutDetails from '../components/CheckoutDetails.vue';
@@ -22,7 +22,7 @@ import RpcApi from '../lib/RpcApi';
 import staticStore, { Static } from '../lib/StaticStore';
 import Network from '../components/Network.vue';
 
-@Component({components: {Amount, CheckoutDetails, Network}})
+@Component({components: {Amount, PageFooter, CheckoutDetails, Network}})
 export default class CheckoutOverview extends Vue {
     @Static private rpcState!: RpcState;
     @Static private request!: ParsedCheckoutRequest;
@@ -120,21 +120,11 @@ export default class CheckoutOverview extends Vue {
         flex-grow: 1;
     }
 
-    .page-footer {
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-end;
-        align-items: center;
-        padding: 4rem 8rem;
-        flex-grow: 1;
-    }
-
     .page-footer.shows-network {
         padding: 1rem;
     }
 
-    .page-footer button {
-        background: #724ceb;
-        color: white;
+    .page-footer .nq-button {
+        margin: 0 auto;
     }
 </style>
