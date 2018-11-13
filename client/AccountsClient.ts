@@ -1,5 +1,10 @@
-import {PopupRequestBehavior, IFrameRequestBehavior, RequestBehavior, RedirectRequestBehavior} from './RequestBehavior';
-import {RedirectRpcClient} from '@nimiq/rpc';
+import {
+    PopupRequestBehavior,
+    IFrameRequestBehavior,
+    RequestBehavior,
+    RedirectRequestBehavior,
+} from './RequestBehavior';
+import { RedirectRpcClient } from '@nimiq/rpc';
 import {
     RequestType,
     SignupRequest,
@@ -18,16 +23,17 @@ import {
     AddAccountRequest,
     AddAccountResult,
     // ListResult,
+    RpcResult,
 } from '../src/lib/RequestTypes';
 
 export default class AccountsClient {
+    public static readonly RequestType: typeof RequestType = RequestType;
+    public static readonly RedirectRequestBehavior: typeof RedirectRequestBehavior = RedirectRequestBehavior;
+
     private static readonly DEFAULT_ENDPOINT =
     window.location.origin === 'https://safe-next.nimiq.com' ? 'https://accounts.nimiq.com'
     : window.location.origin === 'https://safe-next.nimiq-testnet.com' ? 'https://accounts.nimiq-testnet.com'
     : 'http://localhost:8080';
-
-    public static readonly RequestType: typeof RequestType = RequestType;
-    public static readonly RedirectRequestBehavior: typeof RedirectRequestBehavior = RedirectRequestBehavior;
 
     private readonly _endpoint: string;
     private readonly _defaultBehavior: RequestBehavior;
@@ -44,12 +50,20 @@ export default class AccountsClient {
         this._redirectClient = new RedirectRpcClient('', RequestBehavior.getAllowedOrigin(this._endpoint));
     }
 
-    public init() {
+    public checkRedirectResponse() {
         return this._redirectClient.init();
     }
 
-    public on(command: RequestType, resolve: (...args: any[]) => any, reject: (...args: any[]) => any) {
-        this._redirectClient.onResponse(command, resolve, reject);
+    public on(
+        command: RequestType,
+        resolve: (result: RpcResult, state: any) => any,
+        reject?: (error: Error, state: any) => any,
+    ) {
+        this._redirectClient.onResponse(command,
+            // State is always an object containing at least the __command property
+            (result: RpcResult, rpcId, state) => resolve(result, JSON.parse(state!)),
+            (error: Error, rpcId, state) => reject && reject(error, JSON.parse(state!)),
+        );
     }
 
     public signup(request: SignupRequest, requestBehavior = this._defaultBehavior): Promise<SignupResult> {
@@ -60,7 +74,7 @@ export default class AccountsClient {
         request: SignTransactionRequest,
         requestBehavior = this._defaultBehavior,
     ): Promise<SignTransactionResult> {
-        return this._request(requestBehavior, RequestType.SIGNTRANSACTION, [request]);
+        return this._request(requestBehavior, RequestType.SIGN_TRANSACTION, [request]);
     }
 
     public checkout(request: CheckoutRequest, requestBehavior = this._defaultBehavior): Promise<SignTransactionResult> {
@@ -73,10 +87,6 @@ export default class AccountsClient {
 
     public logout(request: LogoutRequest, requestBehavior = this._defaultBehavior): Promise<LogoutResult> {
         return this._request(requestBehavior, RequestType.LOGOUT, [request]);
-    }
-
-    public list(requestBehavior = this._iframeBehavior)/*: Promise<ListResult> */ {
-        return this._request(requestBehavior, RequestType.LIST, []);
     }
 
     public exportFile(
@@ -95,6 +105,13 @@ export default class AccountsClient {
 
     public addAccount(request: AddAccountRequest, requestBehavior = this._defaultBehavior): Promise<AddAccountResult> {
         return this._request(requestBehavior, RequestType.ADD_ACCOUNT, [request]);
+    }
+
+    /**
+     * Only accessible in iframe from Nimiq domains.
+     */
+    public list(requestBehavior = this._iframeBehavior) /*: Promise<ListResult> */ {
+        return this._request(requestBehavior, RequestType.LIST, []);
     }
 
     // END API

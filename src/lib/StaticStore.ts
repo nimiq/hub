@@ -1,7 +1,7 @@
 import Vue from 'vue';
-import {createDecorator} from 'vue-class-component';
-import {ParsedRpcRequest} from '@/lib/RequestTypes';
-import {State as RpcState} from '@nimiq/rpc';
+import { createDecorator } from 'vue-class-component';
+import { ParsedRpcRequest } from '@/lib/RequestTypes';
+import { State as RpcState } from '@nimiq/rpc';
 
 export class StaticStore {
     private static instance: StaticStore;

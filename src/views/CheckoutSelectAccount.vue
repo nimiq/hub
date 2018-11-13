@@ -1,103 +1,103 @@
 <template>
     <div class="visible-area">
         <div class="multi-pages" :style="`transform: translate3d(-${(page - 1) * 100}%, 0, 0)`">
-            <LoginSelector @login-selected="loginSelected"
+            <WalletSelector @wallet-selected="walletSelected"
                             @account-selected="accountSelected"
-                            @add-login="addLogin"
+                            @add-wallet="addWallet"
                             @back="backToOverview"
-                            :logins="keys"/>
+                            :wallets="wallets"/>
             <AccountSelector
                     @account-selected="accountSelected"
-                    @switch-login="switchLogin"
-                    @back="switchLogin"
+                    @switch-wallet="switchWallet"
+                    @back="switchWallet"
                     :accounts="currentAccounts"
-                    :loginId="currentLogin ? currentLogin.id : ''"
-                    :loginLabel="currentLogin ? currentLogin.label : ''"
-                    :loginType="currentLogin ? currentLogin.type : 0"
-                    :show-switch-login="!!this.preselectedLoginId"/>
+                    :walletId="currentWallet ? currentWallet.id : ''"
+                    :walletLabel="currentWallet ? currentWallet.label : ''"
+                    :walletType="currentWallet ? currentWallet.type : 0"
+                    :show-switch-wallet="!!this.preselectedWalletId"/>
         </div>
     </div>
 </template>
 
 <script lang="ts">
-import {Component, Emit, Vue} from 'vue-property-decorator';
-import {AccountSelector, LoginSelector} from '@nimiq/vue-components';
-import {AddressInfo} from '../lib/AddressInfo';
-import {KeyInfo, KeyStorageType} from '../lib/KeyInfo';
-import {RequestType} from '../lib/RequestTypes';
-import {State, Mutation} from 'vuex-class';
+import { Component, Emit, Vue } from 'vue-property-decorator';
+import { AccountSelector, WalletSelector } from '@nimiq/vue-components';
+import { AccountInfo } from '../lib/AccountInfo';
+import { WalletInfo, WalletType } from '../lib/WalletInfo';
+import { RequestType } from '../lib/RequestTypes';
+import { State, Mutation } from 'vuex-class';
 
-@Component({components: {AccountSelector, LoginSelector}})
+@Component({components: {AccountSelector, WalletSelector}})
 export default class CheckoutSelectAccount extends Vue {
-    @State('keys') private keys!: KeyInfo[];
+    @State('wallets') private wallets!: WalletInfo[];
 
-    @Mutation('addKey') private addKey!: (key: KeyInfo) => any;
+    @Mutation('addWallet') private $addWallet!: (walletInfo: WalletInfo) => any;
 
     private page: number = 1;
-    private selectedLoginId: string|null = null;
-    private preselectedLoginId: string|null = null;
+    private selectedWalletId: string | null = null;
+    private preselectedWalletId: string | null = null;
 
     private created() {
-        if (this.keys.length === 1) {
-            this.preselectedLoginId = this.keys[0].id;
+        if (this.wallets.length === 1) {
+            this.preselectedWalletId = this.wallets[0].id;
             this.page = 2;
         }
     }
 
-    private get currentLogin() {
-        const loginId = this.selectedLoginId || this.preselectedLoginId || false;
-        if (!loginId) return undefined;
-        return this.keys.find((k) => k.id === loginId);
+    private get currentWallet() {
+        const walletId = this.selectedWalletId || this.preselectedWalletId || false;
+        if (!walletId) return undefined;
+        return this.wallets.find((k) => k.id === walletId);
     }
 
     private get currentAccounts() {
-        const login = this.currentLogin;
-        if (!login) return [];
-        return Array.from(login.addresses.values());
+        const wallet = this.currentWallet;
+        if (!wallet) return [];
+        return Array.from(wallet.accounts.values());
     }
 
-    private loginSelected(loginId: string) {
-        this.selectedLoginId = loginId;
+    private walletSelected(walletId: string) {
+        this.selectedWalletId = walletId;
         this.page = 2;
     }
 
-    private switchLogin() {
-        // TODO Redirect to import/create just like addLogin()
+    private switchWallet() {
+        // TODO Redirect to import/create just like addWallet()
 
         this.page = 1;
     }
 
     @Emit()
-    private addLogin() {
+    private addWallet() {
         // TODO Redirect to import/create
 
         const id: string = Math.round(Math.pow(2, 32) * Math.random()).toString(16);
-        const map = new Map<string, AddressInfo>();
-        map.set('NQ09 VF5Y 1PKV MRM4 5LE1 55KV P6R2 GXYJ XYQF', new AddressInfo(
+        const map = new Map<string, AccountInfo>();
+        map.set('NQ09 VF5Y 1PKV MRM4 5LE1 55KV P6R2 GXYJ XYQF', new AccountInfo(
             'a',
             'My Account',
             Nimiq.Address.fromString('NQ09 VF5Y 1PKV MRM4 5LE1 55KV P6R2 GXYJ XYQF'),
         ));
-        this.addKey(new KeyInfo(id, id, map, [], KeyStorageType.LEDGER));
+        this.$addWallet(new WalletInfo(id, id, map, [], WalletType.LEDGER));
     }
 
     @Emit()
-    private accountSelected(loginId: string, address: string) {
-        const key = this.keys.find((k: KeyInfo) => k.id === loginId);
-        if (!key) {
-            console.error('Selected Key not found:', loginId);
+    private accountSelected(walletId: string, address: string) {
+        const wallet = this.wallets.find((k: WalletInfo) => k.id === walletId);
+        if (!wallet) {
+            console.error('Selected Key not found:', walletId);
             return;
         }
 
-        const addressInfo = Array.from(key.addresses.values())
-            .find((ai: AddressInfo) => ai.userFriendlyAddress === address);
+        const addressInfo = Array.from(wallet.accounts.values())
+            .find((ai: AccountInfo) => ai.userFriendlyAddress === address);
         if (!addressInfo) {
-            console.error('Selected AddressInfo not found:', address);
+            console.error('Selected AccountInfo not found:', address);
             return;
         }
 
         this.$store.commit('setActiveAccount', {
-            loginId: key.id,
+            walletId: wallet.id,
             userFriendlyAddress: addressInfo.userFriendlyAddress,
         });
 

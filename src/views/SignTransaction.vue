@@ -8,19 +8,19 @@
 </template>
 
 <script lang="ts">
-import {Component, Emit, Vue} from 'vue-property-decorator';
-import {SmallPage} from '@nimiq/vue-components';
-import {ParsedSignTransactionRequest, SignTransactionRequest} from '../lib/RequestTypes';
-import {State} from 'vuex-class';
+import { Component, Emit, Vue } from 'vue-property-decorator';
+import { SmallPage } from '@nimiq/vue-components';
+import { ParsedSignTransactionRequest, SignTransactionRequest } from '../lib/RequestTypes';
+import { State } from 'vuex-class';
 import RpcApi from '../lib/RpcApi';
 import {
     SignTransactionRequest as KSignTransactionRequest,
     SignTransactionResult as KSignTransactionResult,
 } from '@nimiq/keyguard-client';
-import {State as RpcState, ResponseStatus} from '@nimiq/rpc';
-import { KeyStore } from '@/lib/KeyStore';
+import { State as RpcState, ResponseStatus } from '@nimiq/rpc';
+import { WalletStore } from '@/lib/WalletStore';
 import { access } from 'fs';
-import staticStore, {Static} from '../lib/StaticStore';
+import staticStore, { Static } from '../lib/StaticStore';
 
 @Component({components: {SmallPage}})
 export default class SignTransaction extends Vue {
@@ -42,18 +42,18 @@ export default class SignTransaction extends Vue {
 
         // Forward user through AccountsManager to Keyguard
 
-        const key = await KeyStore.Instance.get(this.request.keyId);
-        if (!key) throw new Error('KeyId not found');
-        const account = key.addresses.get(this.request.sender.toUserFriendlyAddress());
+        const wallet = await WalletStore.Instance.get(this.request.walletId);
+        if (!wallet) throw new Error('Wallet ID not found');
+        const account = wallet.accounts.get(this.request.sender.toUserFriendlyAddress());
         if (!account) throw new Error('Sender address not found!'); // TODO Search contracts when address not found
 
         const request: KSignTransactionRequest = {
             layout: 'standard',
             appName: this.request.appName,
 
-            keyId: key.id,
+            keyId: wallet.id,
             keyPath: account.path,
-            keyLabel: key.label,
+            keyLabel: wallet.label,
 
             sender: this.request.sender.serialize(),
             senderType: Nimiq.Account.Type.BASIC, // FIXME Detect appropriate type here
