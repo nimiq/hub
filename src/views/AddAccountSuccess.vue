@@ -22,16 +22,16 @@
 </template>
 
 <script lang="ts">
-import {Component, Vue} from 'vue-property-decorator';
-import {PageHeader, Account, LabelInput, SmallPage} from '@nimiq/vue-components';
-import {AddressInfo} from '../lib/AddressInfo';
-import {KeyInfo, KeyStorageType} from '../lib/KeyInfo';
-import {State, Getter} from 'vuex-class';
-import {KeyStore} from '../lib/KeyStore';
-import {DeriveAddressResult, DeriveAddressRequest} from '@nimiq/keyguard-client';
-import {ResponseStatus, State as RpcState} from '@nimiq/rpc';
+import { Component, Vue } from 'vue-property-decorator';
+import { PageHeader, Account, LabelInput, SmallPage } from '@nimiq/vue-components';
+import { AccountInfo } from '../lib/AccountInfo';
+import { WalletInfo, WalletType } from '../lib/WalletInfo';
+import { State, Getter } from 'vuex-class';
+import { WalletStore } from '../lib/WalletStore';
+import { DeriveAddressResult, DeriveAddressRequest } from '@nimiq/keyguard-client';
+import { ResponseStatus, State as RpcState } from '@nimiq/rpc';
 import { AddAccountRequest, AddAccountResult } from '@/lib/RequestTypes';
-import {Static} from '../lib/StaticStore';
+import { Static } from '../lib/StaticStore';
 
 @Component({components: {PageHeader, Account, LabelInput, SmallPage}})
 export default class AddAccountSuccess extends Vue {
@@ -71,20 +71,20 @@ export default class AddAccountSuccess extends Vue {
     }
 
     private async saveResult(accountLabel: string) {
-        const wallet = await KeyStore.Instance.get(this.request.walletId);
+        const wallet = await WalletStore.Instance.get(this.request.walletId);
         if (!wallet) throw new Error('Wallet ID not found');
 
         this.walletLabel = wallet.label;
 
-        const newAccount = new AddressInfo(
+        const newAccount = new AccountInfo(
             this.keyguardResult.keyPath,
             accountLabel,
             this.createdAddress!,
         );
 
-        wallet.addresses.set(this.createdAddress!.toUserFriendlyAddress(), newAccount);
+        wallet.accounts.set(this.createdAddress!.toUserFriendlyAddress(), newAccount);
 
-        await KeyStore.Instance.put(wallet);
+        await WalletStore.Instance.put(wallet);
     }
 }
 </script>

@@ -1,13 +1,13 @@
 <script lang="ts">
-import {Component, Vue} from 'vue-property-decorator';
-import {ParsedAddAccountRequest} from '../lib/RequestTypes';
-import {State} from 'vuex-class';
+import { Component, Vue } from 'vue-property-decorator';
+import { ParsedAddAccountRequest } from '../lib/RequestTypes';
+import { State } from 'vuex-class';
 import RpcApi from '../lib/RpcApi';
-import {DeriveAddressRequest, DeriveAddressResult} from '@nimiq/keyguard-client';
-import {State as RpcState, ResponseStatus} from '@nimiq/rpc';
-import staticStore, {Static} from '../lib/StaticStore';
-import { KeyStore } from '@/lib/KeyStore';
-import { KeyStorageType } from '@/lib/KeyInfo';
+import { DeriveAddressRequest, DeriveAddressResult } from '@nimiq/keyguard-client';
+import { State as RpcState, ResponseStatus } from '@nimiq/rpc';
+import staticStore, { Static } from '../lib/StaticStore';
+import { WalletStore } from '@/lib/WalletStore';
+import { WalletType } from '@/lib/WalletInfo';
 
 @Component({})
 export default class AddAccount extends Vue {
@@ -21,19 +21,19 @@ export default class AddAccount extends Vue {
             return;
         }
 
-        const wallet = await KeyStore.Instance.get(this.request.walletId);
+        const wallet = await WalletStore.Instance.get(this.request.walletId);
         if (!wallet) {
             this.rpcState.reply(ResponseStatus.ERROR, 'Wallet not found');
             return;
         }
-        if (wallet.type === KeyStorageType.LEGACY) {
+        if (wallet.type === WalletType.LEGACY) {
             this.rpcState.reply(ResponseStatus.ERROR, 'Cannot add account to single-account wallet');
             return;
         }
 
         let firstIndexToDerive = 0;
 
-        const latestAccount = Array.from(wallet.addresses.values()).pop();
+        const latestAccount = Array.from(wallet.accounts.values()).pop();
         if (latestAccount) {
             const pathArray = latestAccount.path.split('/');
             firstIndexToDerive = parseInt(pathArray[pathArray.length - 1], 10) + 1;
