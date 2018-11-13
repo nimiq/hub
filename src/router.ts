@@ -16,6 +16,7 @@ import Logout from './views/Logout.vue';
 import LogoutSuccess from './views/LogoutSuccess.vue';
 import SimpleSuccess from './views/SimpleSuccess.vue';
 import ErrorHandler from './views/ErrorHandler.vue';
+import CheckoutErrorHandler from './views/CheckoutErrorHandler.vue';
 import {RequestType} from '@/lib/RequestTypes';
 import {KeyguardCommand} from '@nimiq/keyguard-client';
 
@@ -103,7 +104,7 @@ export default new Router({
         },
         {
           path: 'error',
-          component: ErrorHandler,
+          component: CheckoutErrorHandler,
           name: `${RequestType.CHECKOUT}-error`,
         },
       ],

@@ -15,7 +15,8 @@ export default class Success extends Vue {
     @Prop(String) private appName?: string;
 
     get parsedText() {
-        return this.text.replace(/<(.|\n)*?>/g, '').replace(/\[br\]/g,'<br/>');
+        if (!this.text) return '';
+        return this.text.replace(/<(.|\n)*?>/g, '').replace(/\[br\]/g, '<br/>');
     }
 }
 </script>

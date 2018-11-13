@@ -12,18 +12,19 @@ export default class ErrorHandler extends Vue {
 
     public async created() {
         if (this.keyguardResult instanceof Error) {
-            this.requestSpecificErrors();
-            // TODO proper Error Handling
-            console.log(this.keyguardResult);
-            this.rpcState.reply(ResponseStatus.ERROR, this.keyguardResult);
+            if (!this.requestSpecificErrors()) {
+                // TODO proper Error Handling
+                console.log(this.keyguardResult);
+                this.rpcState.reply(ResponseStatus.ERROR, this.keyguardResult);
+            }
         }
     }
 
     /**
      * use this in derived classes in case a specific error needs special handling.
      */
-    protected requestSpecificErrors() {
-        return;
+    protected requestSpecificErrors(): boolean {
+        return false;
     }
 }
 </script>
