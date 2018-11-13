@@ -1,3 +1,4 @@
+<template></template>
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { State } from 'vuex-class';
@@ -8,9 +9,6 @@ import ErrorHandler from './ErrorHandler.vue';
 
 @Component({})
 export default class CheckoutErrorHandler extends ErrorHandler {
-    @Static protected rpcState!: RpcState;
-    @State protected keyguardResult!: RpcResult;
-
     protected requestSpecificErrors(): boolean {
         if (this.keyguardResult instanceof Error
             && this.keyguardResult.message === 'Request aborted') {
