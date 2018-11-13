@@ -7,7 +7,7 @@ import { RemoveKeyRequest } from '@nimiq/keyguard-client';
 import { KeyStore } from '@/lib/KeyStore';
 import staticStore, {Static} from '../lib/StaticStore';
 
-@Component({components: {}})
+@Component({})
 export default class Logout extends Vue {
     @Static private request!: ParsedLogoutRequest;
 

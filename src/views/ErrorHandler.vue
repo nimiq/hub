@@ -5,7 +5,7 @@ import { ResponseStatus, State as RpcState } from '@nimiq/rpc';
 import { RpcResult } from '@nimiq/keyguard-client';
 import staticStore, { Static } from '@/lib/StaticStore';
 
-@Component({components: {}})
+@Component({})
 export default class ErrorHandler extends Vue {
     @Static protected rpcState!: RpcState;
     @State protected keyguardResult!: RpcResult;

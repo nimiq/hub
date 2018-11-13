@@ -8,7 +8,7 @@ import { KeyStore } from '@/lib/KeyStore';
 import { access } from 'fs'; // what is this?
 import staticStore, { Static } from '../lib/StaticStore';
 
-@Component({components: {}})
+@Component({})
 export default class SignTransaction extends Vue {
     @Static private request!: ParsedSignTransactionRequest;
 

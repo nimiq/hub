@@ -8,7 +8,7 @@ import { State as RpcState, ResponseStatus } from '@nimiq/rpc';
 import { KeyStore } from '@/lib/KeyStore';
 import staticStore, { Static } from '../lib/StaticStore';
 
-@Component({components: {}})
+@Component({})
 export default class ExportWords extends Vue {
     @Static private request!: ParsedExportWordsRequest;
 

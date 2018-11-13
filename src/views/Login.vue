@@ -6,7 +6,7 @@ import RpcApi from '../lib/RpcApi';
 import { ImportRequest } from '@nimiq/keyguard-client';
 import staticStore, { Static } from '../lib/StaticStore';
 
-@Component({components: {}})
+@Component({})
 export default class Login extends Vue {
     @Static private request!: ParsedLoginRequest;
 
