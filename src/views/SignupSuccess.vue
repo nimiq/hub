@@ -1,28 +1,33 @@
 <template>
-    <div>
-        <PageHeader :progressIndicator="true" :numberSteps="6" :step="6">Your wallet is ready</PageHeader>
-        <div class="page-body">
-            <div class="success-box">
-                <h2>Awesome!</h2>
-                <p>Your Keyguard Wallet is set up. It already contains your newly created account.</p>
-                <p>You can add more accounts to it later.</p>
+    <div class="container">
+        <small-page>
+            <div>
+                <PageHeader :progressIndicator="true" :numberSteps="6" :step="6">Your wallet is ready</PageHeader>
+                <div class="page-body">
+                    <div class="success-box">
+                        <h2>Awesome!</h2>
+                        <p>Your Keyguard Wallet is set up. It already contains your newly created account.</p>
+                        <p>You can add more accounts to it later.</p>
+                    </div>
+
+                    <div class="wallet-label">
+                        <div class="wallet-icon" :class="walletIconClass"></div>
+                        <LabelInput :value="walletLabel" @changed="onWalletLabelChange"/>
+                    </div>
+
+                    <Account :address="createdAddress.toUserFriendlyAddress()" :label="accountLabel" :editable="true" @changed="onAccountLabelChange"/>
+
+                    <button class="submit" @click="done()">Open your wallet</button>
+                </div>
             </div>
-
-            <div class="wallet-label">
-                <div class="wallet-icon" :class="walletIconClass"></div>
-                <LabelInput :value="walletLabel" @changed="onWalletLabelChange"/>
-            </div>
-
-            <Account :address="createdAddress.toUserFriendlyAddress()" :label="accountLabel" :editable="true" @changed="onAccountLabelChange"/>
-
-            <button class="submit" @click="done()">Open your wallet</button>
-        </div>
+        </small-page>
     </div>
+
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { PageHeader, Account, LabelInput } from '@nimiq/vue-components';
+import { PageHeader, Account, LabelInput, SmallPage } from '@nimiq/vue-components';
 import { AccountInfo } from '../lib/AccountInfo';
 import { WalletInfo, WalletType } from '../lib/WalletInfo';
 import { State, Getter } from 'vuex-class';
@@ -32,7 +37,7 @@ import { ResponseStatus, State as RpcState } from '@nimiq/rpc';
 import { SignupResult } from '@/lib/RequestTypes';
 import { Static } from '../lib/StaticStore';
 
-@Component({components: {PageHeader, Account, LabelInput}})
+@Component({components: {PageHeader, Account, LabelInput, SmallPage}})
 export default class SignupSuccess extends Vue {
     @Static private rpcState!: RpcState;
     @State private keyguardResult!: CreateResult;
@@ -79,21 +84,21 @@ export default class SignupSuccess extends Vue {
     }
 
     private async saveResult(walletLabel: string, accountLabel: string) {
-        const addressInfo = new AccountInfo(
+        const accountInfo = new AccountInfo(
             this.keyguardResult.keyPath,
             accountLabel,
             this.createdAddress!,
         );
 
-        const keyInfo = new WalletInfo(
+        const walletInfo = new WalletInfo(
             this.keyguardResult.keyId,
             walletLabel,
-            new Map<string, AccountInfo>().set(addressInfo.userFriendlyAddress, addressInfo),
+            new Map<string, AccountInfo>().set(accountInfo.userFriendlyAddress, accountInfo),
             [],
             WalletType.BIP39,
         );
 
-        await WalletStore.Instance.put(keyInfo);
+        await WalletStore.Instance.put(walletInfo);
     }
 }
 </script>

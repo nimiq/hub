@@ -1,44 +1,21 @@
-<template>
-    <div class="container">
-        <small-page v-if="$route.name === `sign-transaction-success`">
-            <router-view/>
-        </small-page>
-        <!-- <a class="global-close" :class="{hidden: $route.name === `sign-transaction-success`}" @click="close">Back to {{ request.appName }}</a> -->
-    </div>
-</template>
-
 <script lang="ts">
 import { Component, Emit, Vue } from 'vue-property-decorator';
-import { SmallPage } from '@nimiq/vue-components';
-import { ParsedSignTransactionRequest, SignTransactionRequest } from '../lib/RequestTypes';
+import { ParsedSignTransactionRequest } from '../lib/RequestTypes';
 import { State } from 'vuex-class';
 import RpcApi from '../lib/RpcApi';
-import {
-    SignTransactionRequest as KSignTransactionRequest,
-    SignTransactionResult as KSignTransactionResult,
-} from '@nimiq/keyguard-client';
-import { State as RpcState, ResponseStatus } from '@nimiq/rpc';
+import { SignTransactionRequest } from '@nimiq/keyguard-client';
 import { WalletStore } from '@/lib/WalletStore';
-import { access } from 'fs';
 import staticStore, { Static } from '../lib/StaticStore';
 
-@Component({components: {SmallPage}})
+@Component({})
 export default class SignTransaction extends Vue {
-    @Static private rpcState!: RpcState;
     @Static private request!: ParsedSignTransactionRequest;
-    @State private keyguardResult!: KSignTransactionResult | Error | null;
 
     public async created() {
         // Since the sign-transaction flow does not currently have a landing page in the AccountsManager,
         // there is also no place to display an error or have the user try again. Thus we forward the error
         // directly to the caller (the Safe, for example) which automatically closes the window from the
         // caller side.
-        // The else condition here covers all successful signature cases. If the keyguardResult is successful,
-        // we do not want to restart the Keyguard request. The sending of the tx is handled in the
-        // SignTransactionSuccess component, which is loaded automatically by the router.
-        if (this.keyguardResult instanceof Error) {
-            this.rpcState.reply(ResponseStatus.ERROR, this.keyguardResult);
-        } else if (this.keyguardResult) return;
 
         // Forward user through AccountsManager to Keyguard
 
@@ -47,7 +24,7 @@ export default class SignTransaction extends Vue {
         const account = wallet.accounts.get(this.request.sender.toUserFriendlyAddress());
         if (!account) throw new Error('Sender address not found!'); // TODO Search contracts when address not found
 
-        const request: KSignTransactionRequest = {
+        const request: SignTransactionRequest = {
             layout: 'standard',
             appName: this.request.appName,
 
@@ -79,10 +56,5 @@ export default class SignTransaction extends Vue {
         const client = RpcApi.createKeyguardClient(this.$store, staticStore);
         client.signTransaction(request).catch(console.error); // TODO: proper error handling
     }
-
-    // @Emit()
-    // private close() {
-    //    this.rpcState.reply(ResponseStatus.ERROR, new Error('CANCEL'));
-    // }
 }
 </script>

@@ -1,16 +1,21 @@
 <template>
-    <div class="success center">
-        <div class="icon-checkmark-circle"></div>
-        <h1>Your transaction<br>is ready!</h1>
-        <div style="flex-grow: 1;"></div>
-        <button @click="done" :disabled="!isTxPrepared">Send now</button>
-        <Network ref="network"/>
+    <div class="container">
+        <small-page>
+            <div class="success center">
+                <div class="icon-checkmark-circle"></div>
+                <h1>Your transaction<br>is ready!</h1>
+                <div style="flex-grow: 1;"></div>
+                <button @click="done" :disabled="!isTxPrepared">Send now</button>
+                <Network ref="network"/>
+            </div>
+        </small-page>
     </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import Network from '@/components/Network.vue';
+import { SmallPage } from '@nimiq/vue-components';
 import { ParsedSignTransactionRequest, SignTransactionResult } from '../lib/RequestTypes';
 import { State as RpcState, ResponseStatus } from '@nimiq/rpc';
 import {
@@ -20,7 +25,7 @@ import {
 import { State } from 'vuex-class';
 import { Static } from '../lib/StaticStore';
 
-@Component({components: {Network}})
+@Component({components: {Network, SmallPage}})
 export default class SignTransactionSuccess extends Vue {
     @Static private request!: ParsedSignTransactionRequest;
     @Static private rpcState!: RpcState;

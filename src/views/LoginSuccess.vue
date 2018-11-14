@@ -1,6 +1,8 @@
 <template>
-    <div class="login-success">
-        <PageHeader>Your wallet is ready</PageHeader>
+    <div class="container">
+        <small-page>
+            <div class="login-success">
+                <PageHeader>Your wallet is ready</PageHeader>
 
         <div class="page-body">
             <div class="wallet-label" v-if="keyguardResult.keyType !== 0 /* LEGACY */">
@@ -11,10 +13,12 @@
             <AccountList :accounts="accountsArray" :editable="true" @account-changed="onAccountLabelChanged"/>
         </div>
 
-        <PageFooter>
-            <Network :visible="keyguardResult.keyType !== 0 /* LEGACY */" :message="'Detecting your accounts'" ref="network"/>
-            <button @click="done">Back to {{ request.appName }}</button>
-        </PageFooter>
+                <PageFooter>
+                    <Network :visible="keyguardResult.keyType !== 0 /* LEGACY */" :message="'Detecting your accounts'" ref="network"/>
+                    <button @click="done">Back to {{ request.appName }}</button>
+                </PageFooter>
+            </div>
+        </small-page>
     </div>
 </template>
 
@@ -28,10 +32,10 @@ import { ResponseStatus, State as RpcState } from '@nimiq/rpc';
 import { AccountInfo } from '@/lib/AccountInfo';
 import { WalletStore } from '@/lib/WalletStore';
 import { Static } from '@/lib/StaticStore';
-import { PageHeader, LabelInput, AccountList, PageFooter } from '@nimiq/vue-components';
+import { PageHeader, LabelInput, AccountList, PageFooter, SmallPage } from '@nimiq/vue-components';
 import Network from '@/components/Network.vue';
 
-@Component({components: {PageHeader, LabelInput, AccountList, Network, PageFooter}})
+@Component({components: {PageHeader, LabelInput, AccountList, Network, PageFooter, SmallPage}})
 export default class LoginSuccess extends Vue {
     @Static private request!: ParsedLoginRequest;
     @Static private rpcState!: RpcState;

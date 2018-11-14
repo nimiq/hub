@@ -1,28 +1,23 @@
 <template>
     <div class="success center">
         <div class="icon-checkmark-circle"></div>
-        <h1>Recovery Words export<br>was successfull!</h1>
+        <h1 v-html="parsedText"></h1>
         <div style="flex-grow: 1;"></div>
-        <button @click="close">Back to {{ request.appName }}</button>
+        <button @click="$emit('continue')">Back to {{ appName }}</button>
     </div>
 </template>
 
 <script lang="ts">
-import { Component, Emit, Vue } from 'vue-property-decorator';
-import { ParsedExportWordsRequest } from '../lib/RequestTypes';
-import { State } from 'vuex-class';
-import { ResponseStatus, State as RpcState } from '@nimiq/rpc';
-import { ExportWordsResult } from '@nimiq/keyguard-client';
-import { Static } from '@/lib/StaticStore';
-@Component({components: {}})
-export default class ExportWordsSuccess extends Vue {
-    @Static private request!: ParsedExportWordsRequest;
-    @Static private rpcState!: RpcState;
-    @State private keyguardResult!: ExportWordsResult;
+import { Component, Vue, Prop, Emit } from 'vue-property-decorator';
 
-    @Emit()
-    private close() {
-        this.rpcState.reply(ResponseStatus.OK, this.keyguardResult);
+@Component({})
+export default class Success extends Vue {
+    @Prop(String) private text?: string;
+    @Prop(String) private appName?: string;
+
+    get parsedText() {
+        if (!this.text) return '';
+        return this.text.replace(/<(.|\n)*?>/g, '').replace(/\[br\]/g, '<br/>');
     }
 }
 </script>

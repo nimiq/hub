@@ -3,12 +3,10 @@
         <CheckoutDetails :accountChangeable="false"/>
         <Network ref="network" :alwaysVisible="true" message="Sending transaction"/>
         <transition name='fade-in'>
-            <div class="success center" v-if="isTxSent">
-                <div class="icon-checkmark-circle"></div>
-                <h1>Your payment was successful!</h1>
-                <div style="flex-grow: 1;"></div>
-                <button @click="done">Back to store</button>
-            </div>
+            <Success v-if="isTxSent"
+                text="Your payment[br]was successful"
+                :appName="keyguardRequest.appName"
+                @continue="done" />
         </transition>
     </div>
 </template>
@@ -26,8 +24,9 @@ import {
 import { State } from 'vuex-class';
 import { Static } from '../lib/StaticStore';
 import { AccountInfo } from '../lib/AccountInfo';
+import Success from '../components/Success.vue';
 
-@Component({components: {Network, CheckoutDetails}})
+@Component({components: {Network, CheckoutDetails, Success}})
 export default class CheckoutTransmission extends Vue {
     @Static private rpcState!: RpcState;
     @Static private keyguardRequest!: KSignTransactionRequest;
