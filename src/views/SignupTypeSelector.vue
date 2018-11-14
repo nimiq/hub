@@ -1,25 +1,27 @@
 <template>
     <div class="container">
-        <small-page>
-    <div>
-        <PageHeader :progressIndicator="true" :numberSteps="6" :step="1">Add a Wallet</PageHeader>
-        <PageBody>
-            <p class="nq-text">A Wallet is like a login and can contain one or more accounts, which you can use to send or receive Nimiq, pay online and create Cashlinks.</p>
-            <button @click="createKeyguard" class="keyguard-button nq-bg-blue">
-                <h2 class="nq-h2">Create Wallet</h2>
-                <p class="nq-text">Create a Wallet in our secure Nimiq Keyguard. This is the most convenient option.</p>
-            </button>
-            <button @click="createLedger" class="ledger-button">
-                <h2 class="nq-h2">Connect Hardware Wallet</h2>
-                <p class="nq-text">Connect a Hardware Wallet like Ledger. This option requires a physical device. It is the most secure option.</p>
-            </button>
-        </PageBody>
-        <PageFooter>
-            <a class="nq-link" onclick="alert('Not yet implemented')" href="javascript:void(0);">Already have a wallet?</a>
-        </PageFooter>
-            </div>
-        </small-page>
-        <a class="global-close" @click="close">Back to {{request.appName}}</a>
+        <SmallPage>
+            <PageHeader :progressIndicator="true" :numberSteps="6" :step="1">Add a Wallet</PageHeader>
+            <PageBody>
+                <p class="nq-text">A Wallet is like a login and can contain one or more accounts, which you can use to send or receive Nimiq, pay online and create Cashlinks.</p>
+                <button @click="createKeyguard" class="keyguard-button nq-bg-blue">
+                    <h2 class="nq-h2">Create Wallet</h2>
+                    <p class="nq-text">Create a Wallet in our secure Nimiq Keyguard. This is the most convenient option.</p>
+                </button>
+                <button @click="createLedger" class="ledger-button">
+                    <h2 class="nq-h2">Connect Hardware Wallet</h2>
+                    <p class="nq-text">Connect a Hardware Wallet like Ledger. This option requires a physical device. It is the most secure option.</p>
+                </button>
+            </PageBody>
+            <PageFooter>
+                <a class="nq-link" onclick="alert('Not yet implemented')" href="javascript:void(0);">Already have a wallet?</a>
+            </PageFooter>
+        </SmallPage>
+
+        <button class="global-close nq-button-s" @click="close">
+            <span class="nq-icon arrow-left"></span>
+            Back to {{request.appName}}
+        </button>
     </div>
 </template>
 

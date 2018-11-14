@@ -1,28 +1,25 @@
 <template>
     <div class="container">
-        <small-page>
-    <div>
-        <PageHeader :progressIndicator="true" :numberSteps="6" :step="6">Your wallet is ready</PageHeader>
-        <PageBody>
-            <div class="success-box nq-icon trumpet nq-bg-green">
-                <h2 class="nq-h2">Awesome!</h2>
-                <p class="nq-text">Your Keyguard Wallet is set up. It already contains your newly created account.</p>
-                <p class="nq-text">You can add more accounts to it later.</p>
-            </div>
+        <SmallPage>
+            <PageHeader :progressIndicator="true" :numberSteps="6" :step="6">Your wallet is ready</PageHeader>
+            <PageBody>
+                <div class="success-box nq-icon trumpet nq-bg-green">
+                    <h2 class="nq-h2">Awesome!</h2>
+                    <p class="nq-text">Your Keyguard Wallet is set up. It already contains your newly created account.</p>
+                    <p class="nq-text">You can add more accounts to it later.</p>
+                </div>
 
-            <div class="wallet-label">
-                <div class="wallet-icon nq-icon" :class="walletIconClass"></div>
-                <LabelInput :value="walletLabel" @changed="onWalletLabelChange"/>
-            </div>
+                <div class="wallet-label">
+                    <div class="wallet-icon nq-icon" :class="walletIconClass"></div>
+                    <LabelInput :value="walletLabel" @changed="onWalletLabelChange"/>
+                </div>
 
-                    <Account :address="createdAddress.toUserFriendlyAddress()" :label="accountLabel" :editable="true" @changed="onAccountLabelChange"/>
+                <Account :address="createdAddress.toUserFriendlyAddress()" :label="accountLabel" :editable="true" @changed="onAccountLabelChange"/>
 
-            <button class="nq-button green submit" @click="done()">Open your wallet</button>
-        </PageBody>
-            </div>
-        </small-page>
+                <button class="nq-button green submit" @click="done()">Open your wallet</button>
+            </PageBody>
+        </SmallPage>
     </div>
-
 </template>
 
 <script lang="ts">

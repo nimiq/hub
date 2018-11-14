@@ -1,22 +1,24 @@
 <template>
     <div class="container">
-        <small-page>
+        <SmallPage>
             <div class="login-success">
                 <PageHeader>Your wallet is ready</PageHeader>
 
-        <PageBody>
-            <div class="wallet-label" v-if="keyguardResult.keyType !== 0 /* LEGACY */">
-                <div class="wallet-icon nq-icon" :class="walletIconClass"></div>
-                <LabelInput :value="walletLabel" @changed="onWalletLabelChange"/>
+                <PageBody>
+                    <div class="wallet-label" v-if="keyguardResult.keyType !== 0 /* LEGACY */">
+                        <div class="wallet-icon nq-icon" :class="walletIconClass"></div>
+                        <LabelInput :value="walletLabel" @changed="onWalletLabelChange"/>
+                    </div>
+
+                    <AccountList :accounts="accountsArray" :editable="true" @account-changed="onAccountLabelChanged"/>
+                </PageBody>
+
+                <PageFooter>
+                    <Network :visible="keyguardResult.keyType !== 0 /* LEGACY */" :message="'Detecting your accounts'" ref="network"/>
+                    <button class="nq-button" @click="done">Back to {{ request.appName }}</button>
+                </PageFooter>
             </div>
-
-            <AccountList :accounts="accountsArray" :editable="true" @account-changed="onAccountLabelChanged"/>
-        </PageBody>
-
-        <PageFooter>
-            <Network :visible="keyguardResult.keyType !== 0 /* LEGACY */" :message="'Detecting your accounts'" ref="network"/>
-            <button class="nq-button" @click="done">Back to {{ request.appName }}</button>
-        </PageFooter>
+        </SmallPage>
     </div>
 </template>
 
