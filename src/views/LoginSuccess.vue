@@ -66,10 +66,6 @@ export default class LoginSuccess extends Vue {
     private result?: LoginResult;
 
     private async mounted() {
-        if (this.keyguardResult instanceof Error) {
-            this.rpcState.reply(ResponseStatus.ERROR, this.keyguardResult);
-        }
-
         // The Keyguard always returns (at least) one derived Address,
         // thus we can already create a complete KeyInfo object that
         // can be displayed while waiting for the network.

@@ -30,7 +30,7 @@ export default class LogoutSuccess extends Vue {
     @State private keyguardResult!: RemoveKeyResult;
 
     public mounted() {
-        if (this.keyguardResult instanceof Error || this.keyguardResult.success !== true) {
+        if (this.keyguardResult.success !== true) {
             this.rpcState.reply(ResponseStatus.ERROR, this.keyguardResult);
         }
         KeyStore.Instance.remove(this.request.keyId);

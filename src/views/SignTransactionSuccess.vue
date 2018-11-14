@@ -36,10 +36,6 @@ export default class SignTransactionSuccess extends Vue {
     private isTxPrepared: boolean = false;
 
     private async mounted() {
-        if (this.keyguardResult instanceof Error) {
-            this.rpcState.reply(ResponseStatus.ERROR, this.keyguardResult);
-        }
-
         const tx = await (this.$refs.network as Network).prepareTx(this.keyguardRequest, this.keyguardResult);
         this.result = (this.$refs.network as Network).makeSignTransactionResult(tx);
         this.isTxPrepared = true;
