@@ -30,34 +30,34 @@ export function keyguardResponseRouter(
     case KeyguardCommand.CREATE:
       return {
         resolve: `${RequestType.SIGNUP}-success`,
-        reject: `${RequestType.SIGNUP}-error`,
+        reject: 'default-error',
       };
     case KeyguardCommand.IMPORT:
       return {
         resolve: `${RequestType.LOGIN}-success`,
-        reject: `${RequestType.LOGIN}-error`,
+        reject: 'default-error',
       };
     case KeyguardCommand.REMOVE:
       return {
         resolve: `${RequestType.LOGOUT}-success`,
-        reject: `${RequestType.LOGOUT}-error`,
+        reject: 'default-error',
       };
     case KeyguardCommand.SIGN_TRANSACTION:
       // The SIGN_TRANSACTION Keyguard command is used by Accounts' SIGNTRANSACTION, CHECKOUT and CASHLINK (future)
       // Thus we return the user to the respective handler component
       return {
         resolve: `${originalRequestType}-success`,
-        reject: `${originalRequestType}-error`,
+        reject: `${ (originalRequestType === RequestType.CHECKOUT) ? originalRequestType : 'default' }-error`,
       };
     case KeyguardCommand.EXPORT_FILE:
       return {
         resolve: `${RequestType.EXPORT_FILE}-success`,
-        reject: `${RequestType.EXPORT_FILE}-error`,
+        reject: 'default-error',
       };
     case KeyguardCommand.EXPORT_WORDS:
       return {
         resolve: `${RequestType.EXPORT_WORDS}-success`,
-        reject: `${RequestType.EXPORT_WORDS}-error`,
+        reject: 'default-error',
       };
     default:
       throw new Error(`router.keyguardResponseRouter not defined for Keyguard command: ${command}`);
@@ -69,6 +69,11 @@ export default new Router({
   base: process.env.BASE_URL,
   routes: [
     {
+      path: '/error',
+      component: ErrorHandler,
+      name: 'default-error',
+    },
+    {
       path: `/${RequestType.SIGNTRANSACTION}`,
       component: SignTransaction,
       name: `${RequestType.SIGNTRANSACTION}`,
@@ -79,9 +84,9 @@ export default new Router({
       name: `${RequestType.SIGNTRANSACTION}-success`,
     },
     {
-      path: `/${RequestType.SIGNTRANSACTION}/error`,
-      component: ErrorHandler,
-      name: `${RequestType.SIGNTRANSACTION}-error`,
+      path: `/${RequestType.SIGNTRANSACTION}/success`,
+      component: SignTransactionSuccess,
+      name: `${RequestType.SIGNTRANSACTION}-success`,
     },
     {
       path: `/${RequestType.CHECKOUT}`,
@@ -120,11 +125,6 @@ export default new Router({
       name: `${RequestType.SIGNUP}-success`,
     },
     {
-      path: `/${RequestType.SIGNUP}/error`,
-      component: ErrorHandler,
-      name: `${RequestType.SIGNUP}-error`,
-    },
-    {
       path: `/${RequestType.LOGIN}`,
       component: Login,
       name: RequestType.LOGIN,
@@ -133,11 +133,6 @@ export default new Router({
       path: `/${RequestType.LOGIN}/success`,
       component: LoginSuccess,
       name: `${RequestType.LOGIN}-success`,
-    },
-    {
-      path: `/${RequestType.LOGIN}/error`,
-      component: ErrorHandler,
-      name: `${RequestType.LOGIN}-error`,
     },
     {
       path: `/${RequestType.EXPORT_FILE}`,
@@ -150,11 +145,6 @@ export default new Router({
       name: `${RequestType.EXPORT_FILE}-success`,
     },
     {
-      path: `${RequestType.EXPORT_FILE}/error`,
-      component: ErrorHandler,
-      name: `${RequestType.EXPORT_FILE}-error`,
-    },
-    {
       path: `/${RequestType.EXPORT_WORDS}`,
       component: ExportWords,
       name: RequestType.EXPORT_WORDS,
@@ -165,11 +155,6 @@ export default new Router({
       name: `${RequestType.EXPORT_WORDS}-success`,
     },
     {
-      path: `${RequestType.EXPORT_WORDS}/error`,
-      component: ErrorHandler,
-      name: `${RequestType.EXPORT_WORDS}-error`,
-    },
-    {
       path: `/${RequestType.LOGOUT}`,
       component: Logout,
       name: RequestType.LOGOUT,
@@ -178,11 +163,6 @@ export default new Router({
       path: `/${RequestType.LOGOUT}/success`,
       component: LogoutSuccess,
       name: `${RequestType.LOGOUT}-success`,
-    },
-    {
-      path: `/${RequestType.LOGOUT}/error`,
-      component: ErrorHandler,
-      name: `${RequestType.LOGOUT}-error`,
     },
   ],
 });
