@@ -14,11 +14,13 @@ import ExportFile from './views/ExportFile.vue';
 import ExportWords from './views/ExportWords.vue';
 import Logout from './views/Logout.vue';
 import LogoutSuccess from './views/LogoutSuccess.vue';
+import AddAccount from './views/AddAccount.vue';
+import AddAccountSuccess from './views/AddAccountSuccess.vue';
 import SimpleSuccess from './views/SimpleSuccess.vue';
 import ErrorHandler from './views/ErrorHandler.vue';
 import CheckoutErrorHandler from './views/CheckoutErrorHandler.vue';
-import {RequestType} from '@/lib/RequestTypes';
-import {KeyguardCommand} from '@nimiq/keyguard-client';
+import { RequestType } from '@/lib/RequestTypes';
+import { KeyguardCommand } from '@nimiq/keyguard-client';
 
 Vue.use(Router);
 
@@ -43,7 +45,7 @@ export function keyguardResponseRouter(
         reject: `${RequestType.LOGOUT}-error`,
       };
     case KeyguardCommand.SIGN_TRANSACTION:
-      // The SIGN_TRANSACTION Keyguard command is used by Accounts' SIGNTRANSACTION, CHECKOUT and CASHLINK (future)
+      // The SIGN_TRANSACTION Keyguard command is used by Accounts' SIGN_TRANSACTION, CHECKOUT and CASHLINK (future)
       // Thus we return the user to the respective handler component
       return {
         resolve: `${originalRequestType}-success`,
@@ -59,6 +61,11 @@ export function keyguardResponseRouter(
         resolve: `${RequestType.EXPORT_WORDS}-success`,
         reject: `${RequestType.EXPORT_WORDS}-error`,
       };
+    case KeyguardCommand.DERIVE_ADDRESS:
+      return {
+        resolve: `${RequestType.ADD_ACCOUNT}-success`,
+        reject: RequestType.ADD_ACCOUNT,
+      };
     default:
       throw new Error(`router.keyguardResponseRouter not defined for Keyguard command: ${command}`);
   }
@@ -69,19 +76,19 @@ export default new Router({
   base: process.env.BASE_URL,
   routes: [
     {
-      path: `/${RequestType.SIGNTRANSACTION}`,
+      path: `/${RequestType.SIGN_TRANSACTION}`,
       component: SignTransaction,
-      name: `${RequestType.SIGNTRANSACTION}`,
+      name: `${RequestType.SIGN_TRANSACTION}`,
     },
     {
-      path: `/${RequestType.SIGNTRANSACTION}/success`,
+      path: `/${RequestType.SIGN_TRANSACTION}/success`,
       component: SignTransactionSuccess,
-      name: `${RequestType.SIGNTRANSACTION}-success`,
+      name: `${RequestType.SIGN_TRANSACTION}-success`,
     },
     {
-      path: `/${RequestType.SIGNTRANSACTION}/error`,
+      path: `/${RequestType.SIGN_TRANSACTION}/error`,
       component: ErrorHandler,
-      name: `${RequestType.SIGNTRANSACTION}-error`,
+      name: `${RequestType.SIGN_TRANSACTION}-error`,
     },
     {
       path: `/${RequestType.CHECKOUT}`,
@@ -183,6 +190,16 @@ export default new Router({
       path: `/${RequestType.LOGOUT}/error`,
       component: ErrorHandler,
       name: `${RequestType.LOGOUT}-error`,
+    },
+    {
+      path: `/${RequestType.ADD_ACCOUNT}`,
+      component: AddAccount,
+      name: RequestType.ADD_ACCOUNT,
+    },
+    {
+      path: `/${RequestType.ADD_ACCOUNT}/success`,
+      component: AddAccountSuccess,
+      name: `${RequestType.ADD_ACCOUNT}-success`,
     },
   ],
 });

@@ -1,5 +1,5 @@
-import {RequestType} from '../src/lib/RequestTypes';
-import {PostMessageRpcClient, RedirectRpcClient} from '@nimiq/rpc';
+import { RequestType } from '../src/lib/RequestTypes';
+import { PostMessageRpcClient, RedirectRpcClient } from '@nimiq/rpc';
 
 export class RequestBehavior {
     public static getAllowedOrigin(endpoint: string) {
@@ -39,8 +39,7 @@ export class RedirectRequestBehavior extends RequestBehavior {
     constructor(returnUrl?: string, localState?: any) {
         super(BehaviorType.REDIRECT);
         const location = window.location;
-        this._returnUrl = returnUrl
-            || `${location.protocol}//${location.hostname}:${location.port}${location.pathname}`;
+        this._returnUrl = returnUrl || `${location.origin}${location.pathname}`;
         this._localState = localState || {};
 
         // Reject local state with reserved property.
@@ -55,7 +54,7 @@ export class RedirectRequestBehavior extends RequestBehavior {
         const client = new RedirectRpcClient(endpoint, origin);
         await client.init();
 
-        const state: object = Object.assign({ __command: command }, this._localState);
+        const state: object = Object.assign({}, this._localState, { __command: command });
         console.log('state', state);
         client.callAndSaveLocalState(this._returnUrl, JSON.stringify(state), command, ...args);
     }

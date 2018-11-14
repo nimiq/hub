@@ -14,12 +14,10 @@
 import { Component, Emit, Vue } from 'vue-property-decorator';
 import { ParsedLogoutRequest } from '../lib/RequestTypes';
 import { State } from 'vuex-class';
-import { KeyInfo, KeyStorageType } from '../lib/KeyInfo';
 import { ResponseStatus, State as RpcState } from '@nimiq/rpc';
 import { SmallPage } from '@nimiq/vue-components';
 import { RemoveKeyResult } from '@nimiq/keyguard-client';
-import { AddressInfo } from '@/lib/AddressInfo';
-import { KeyStore } from '@/lib/KeyStore';
+import { WalletStore } from '@/lib/WalletStore';
 import { Static } from '@/lib/StaticStore';
 import Success from '../components/Success.vue';
 
@@ -33,7 +31,7 @@ export default class LogoutSuccess extends Vue {
         if (this.keyguardResult.success !== true) {
             this.rpcState.reply(ResponseStatus.ERROR, this.keyguardResult);
         }
-        KeyStore.Instance.remove(this.request.keyId);
+        WalletStore.Instance.remove(this.request.walletId);
     }
 
     @Emit()

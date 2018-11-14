@@ -27,11 +27,10 @@
 import { Component, Emit, Vue } from 'vue-property-decorator';
 import { PageHeader, PageFooter, SmallPage } from '@nimiq/vue-components';
 import { ParsedSignupRequest } from '../lib/RequestTypes';
-import { AddressInfo } from '../lib/AddressInfo';
 import RpcApi from '../lib/RpcApi';
 import { CreateRequest as CreateRequest } from '@nimiq/keyguard-client';
 import { ResponseStatus, State as RpcState } from '@nimiq/rpc';
-import staticStore, {Static} from '../lib/StaticStore';
+import staticStore, { Static } from '../lib/StaticStore';
 
 @Component({components: {PageHeader, PageFooter, SmallPage}})
 export default class SignupTypeSelector extends Vue {

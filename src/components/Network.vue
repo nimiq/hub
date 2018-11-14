@@ -6,13 +6,13 @@
 </template>
 
 <script lang="ts">
-import {Component, Emit, Prop, Watch, Vue} from 'vue-property-decorator';
-import {SignTransactionResult, SignTransactionRequest} from '../lib/RequestTypes';
+import { Component, Emit, Prop, Watch, Vue } from 'vue-property-decorator';
+import { SignTransactionResult, SignTransactionRequest } from '../lib/RequestTypes';
 import {
     SignTransactionRequest as KSignTransactionRequest,
     SignTransactionResult as KSignTransactionResult,
 } from '@nimiq/keyguard-client';
-import {NetworkClient, PlainTransaction} from '@nimiq/network-client';
+import { NetworkClient, PlainTransaction } from '@nimiq/network-client';
 
 @Component({})
 export default class Network extends Vue {

@@ -1,6 +1,6 @@
-export class AddressInfo {
-    public static fromObject(o: AddressInfoEntry): AddressInfo {
-        return new AddressInfo(
+export class AccountInfo {
+    public static fromObject(o: AccountInfoEntry): AccountInfo {
+        return new AccountInfo(
             o.path,
             o.label,
             new Nimiq.Address(new Nimiq.SerialBuffer(o.address)),
@@ -19,11 +19,12 @@ export class AddressInfo {
         return this.address.toUserFriendlyAddress();
     }
 
-    public toObject(): AddressInfoEntry {
+    public toObject(): AccountInfoEntry {
         return {
             path: this.path,
             label: this.label,
             address: this.address.serialize(),
+            balance: this.balance,
         };
     }
 }
@@ -31,7 +32,7 @@ export class AddressInfo {
 /*
  * Database Types
  */
-export interface AddressInfoEntry {
+export interface AccountInfoEntry {
     path: string;
     label: string;
     address: Uint8Array;

@@ -5,7 +5,7 @@ import { State } from 'vuex-class';
 import RpcApi from '../lib/RpcApi';
 import { ExportWordsRequest } from '@nimiq/keyguard-client';
 import { State as RpcState, ResponseStatus } from '@nimiq/rpc';
-import { KeyStore } from '@/lib/KeyStore';
+import { WalletStore } from '@/lib/WalletStore';
 import staticStore, { Static } from '../lib/StaticStore';
 
 @Component({})
@@ -13,13 +13,13 @@ export default class ExportWords extends Vue {
     @Static private request!: ParsedExportWordsRequest;
 
     public async created() {
-        const key = await KeyStore.Instance.get(this.request.keyId);
-        if (!key) throw new Error('KeyId not found');
+        const wallet = await WalletStore.Instance.get(this.request.walletId);
+        if (!wallet) throw new Error('Wallet ID not found');
 
         const request: ExportWordsRequest = {
             appName: this.request.appName,
-            keyId: this.request.keyId,
-            keyLabel: key.label,
+            keyId: this.request.walletId,
+            keyLabel: wallet.label,
         };
 
         const client = RpcApi.createKeyguardClient(this.$store, staticStore);

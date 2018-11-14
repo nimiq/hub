@@ -12,22 +12,21 @@
 </template>
 
 <script lang="ts">
-import {Component, Emit, Vue} from 'vue-property-decorator';
+import { Component, Emit, Vue } from 'vue-property-decorator';
 import Network from '@/components/Network.vue';
 import { SignTransactionResult, ParsedCheckoutRequest } from '@/lib/RequestTypes';
 import CheckoutDetails from '../components/CheckoutDetails.vue';
-import {LoadingSpinner} from '@nimiq/vue-components';
-import {State as RpcState, ResponseStatus} from '@nimiq/rpc';
+import { State as RpcState, ResponseStatus } from '@nimiq/rpc';
 import {
     SignTransactionRequest as KSignTransactionRequest,
     SignTransactionResult as KSignTransactionResult,
 } from '@nimiq/keyguard-client';
-import {State} from 'vuex-class';
-import {Static} from '../lib/StaticStore';
-import {AddressInfo} from '../lib/AddressInfo';
+import { State } from 'vuex-class';
+import { Static } from '../lib/StaticStore';
+import { AccountInfo } from '../lib/AccountInfo';
 import Success from '../components/Success.vue';
 
-@Component({components: {Network, CheckoutDetails, LoadingSpinner, Success}})
+@Component({components: {Network, CheckoutDetails, Success}})
 export default class CheckoutTransmission extends Vue {
     @Static private rpcState!: RpcState;
     @Static private keyguardRequest!: KSignTransactionRequest;

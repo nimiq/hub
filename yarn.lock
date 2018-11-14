@@ -773,10 +773,6 @@
     bufferutil "^3.0.4"
     utf-8-validate "^4.0.1"
 
-"@nimiq/iqons@https://github.com/nimiq/iqons.git#a3302e06b0a53b6daeb745d13dbfd930b304c791":
-  version "1.0.0"
-  resolved "https://github.com/nimiq/iqons.git#a3302e06b0a53b6daeb745d13dbfd930b304c791"
-
 "@nimiq/jungle-db@^0.9.14":
   version "0.9.17"
   resolved "https://registry.yarnpkg.com/@nimiq/jungle-db/-/jungle-db-0.9.17.tgz#3a8a55f600da8f8b103ad988d177b2785e1bd6cc"
@@ -790,10 +786,10 @@
     levelup "^2.0.2"
     node-lmdb "0.6.0"
 
-"@nimiq/keyguard-client@^0.0.18":
-  version "0.0.18"
-  resolved "https://registry.yarnpkg.com/@nimiq/keyguard-client/-/keyguard-client-0.0.18.tgz#5cc157b091fb818d3a97d120b1df403a8aa86f1f"
-  integrity sha512-nf7/oIO0KI3+mb4/jAW9eSfgujwBpaO4RVfLcy+aF3ODS2zwAUiy+Pzn1hVrmgh0zsJtb6/MAm46n3+I36rdKw==
+"@nimiq/keyguard-client@^0.0.19":
+  version "0.0.19"
+  resolved "https://registry.yarnpkg.com/@nimiq/keyguard-client/-/keyguard-client-0.0.19.tgz#04f15f9e9ad2e379692c6314a4ab11463c2d4f91"
+  integrity sha512-Zd4SQS97/GZ9MIS+7xZ1AVa0LioPB8H2YhECubQe0qRuBmTkTxLPDGDc8X4mrQ+TP1PG7Zt7/4tFscn7wt8Ipw==
   dependencies:
     "@nimiq/rpc" "^0.0.10"
 
@@ -821,16 +817,10 @@
   resolved "https://registry.yarnpkg.com/@nimiq/rpc/-/rpc-0.0.11.tgz#7230365640663827fb115e0d6456222de3b1c5e3"
   integrity sha512-aSTQwsTeSH46ubRDHqB7x82Alq5a9PlMYJUgDVd/4ET1dMTLm+4sjaFiWho3+SjG2n5/v09XKlDUBFDaENYT6w==
 
-"@nimiq/secure-utils@https://github.com/nimiq/secure-utils.git#3937c23c2703d5359eebe2c3bf7b3c9290b26100":
-  version "0.0.0"
-  resolved "https://github.com/nimiq/secure-utils.git#3937c23c2703d5359eebe2c3bf7b3c9290b26100"
-
-"@nimiq/vue-components@https://github.com/nimiq/vue-components.git#build/master":
+"@nimiq/vue-components@https://github.com/nimiq/vue-components.git#build/accounts":
   version "0.1.0"
-  resolved "https://github.com/nimiq/vue-components.git#45e091ca1040c2b23c8fd4a0d61210fa69506b65"
+  resolved "https://github.com/nimiq/vue-components.git#42073b5bc43daad6ee358734774f826f507d33e6"
   dependencies:
-    "@nimiq/iqons" "https://github.com/nimiq/iqons.git#a3302e06b0a53b6daeb745d13dbfd930b304c791"
-    "@nimiq/secure-utils" "https://github.com/nimiq/secure-utils.git#3937c23c2703d5359eebe2c3bf7b3c9290b26100"
     vue "^2.5.17"
     vue-property-decorator "^7.0.0"
 

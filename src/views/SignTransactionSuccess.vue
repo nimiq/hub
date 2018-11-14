@@ -13,17 +13,17 @@
 </template>
 
 <script lang="ts">
-import {Component, Vue} from 'vue-property-decorator';
+import { Component, Vue } from 'vue-property-decorator';
 import Network from '@/components/Network.vue';
 import { SmallPage } from '@nimiq/vue-components';
-import {ParsedSignTransactionRequest, SignTransactionResult} from '../lib/RequestTypes';
-import {State as RpcState, ResponseStatus} from '@nimiq/rpc';
+import { ParsedSignTransactionRequest, SignTransactionResult } from '../lib/RequestTypes';
+import { State as RpcState, ResponseStatus } from '@nimiq/rpc';
 import {
     SignTransactionRequest as KSignTransactionRequest,
     SignTransactionResult as KSignTransactionResult,
 } from '@nimiq/keyguard-client';
-import {State} from 'vuex-class';
-import {Static} from '../lib/StaticStore';
+import { State } from 'vuex-class';
+import { Static } from '../lib/StaticStore';
 
 @Component({components: {Network, SmallPage}})
 export default class SignTransactionSuccess extends Vue {

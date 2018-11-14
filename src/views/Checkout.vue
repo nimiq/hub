@@ -13,11 +13,11 @@
 </template>
 
 <script lang="ts">
-import {Component, Emit, Vue} from 'vue-property-decorator';
-import {PaymentInfoLine, SmallPage} from '@nimiq/vue-components';
-import {ParsedCheckoutRequest} from '../lib/RequestTypes';
-import {State as RpcState, ResponseStatus} from '@nimiq/rpc';
-import {Static} from '../lib/StaticStore';
+import { Component, Emit, Vue } from 'vue-property-decorator';
+import { PaymentInfoLine, SmallPage } from '@nimiq/vue-components';
+import { ParsedCheckoutRequest } from '../lib/RequestTypes';
+import { State as RpcState, ResponseStatus } from '@nimiq/rpc';
+import { Static } from '../lib/StaticStore';
 
 @Component({components: {PaymentInfoLine, SmallPage}})
 export default class Checkout extends Vue {
