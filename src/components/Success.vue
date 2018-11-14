@@ -9,6 +9,7 @@
 
 <script lang="ts">
 import { Component, Vue, Prop, Emit } from 'vue-property-decorator';
+
 @Component({})
 export default class Success extends Vue {
     @Prop(String) private text?: string;

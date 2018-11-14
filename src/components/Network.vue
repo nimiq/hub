@@ -184,10 +184,11 @@ export default class Network extends Vue {
 <style scoped>
     .network {
         width: 100%;
+        height: 20rem;
         background: #724ceb;
         color: white;
         border-radius: 0.5rem;
-        flex-shrink: 1;
+        flex-shrink: 0;
         padding: 3rem;
         box-sizing: border-box;
     }
