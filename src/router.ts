@@ -64,7 +64,7 @@ export function keyguardResponseRouter(
     case KeyguardCommand.DERIVE_ADDRESS:
       return {
         resolve: `${RequestType.ADD_ACCOUNT}-success`,
-        reject: RequestType.ADD_ACCOUNT,
+        reject: 'default-error',
       };
     default:
       throw new Error(`router.keyguardResponseRouter not defined for Keyguard command: ${command}`);
