@@ -76,7 +76,6 @@ export default class App extends Vue {
     .logo {
         height: 3.625rem;
         box-sizing: border-box;
-        /* padding-left: 6rem; */
         font-size: 2.125rem;
         font-weight: 600;
         text-transform: uppercase;

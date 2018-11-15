@@ -78,7 +78,7 @@ export default class SignupTypeSelector extends Vue {
     }
 
     .ledger-button {
-        border: solid 2px #e5e5e5;
+        border: solid 0.25rem #e5e5e5;
         background: none;
         color: inherit;
     }

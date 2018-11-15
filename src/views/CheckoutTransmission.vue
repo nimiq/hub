@@ -78,7 +78,7 @@ export default class CheckoutTransmission extends Vue {
         0% {
             background: var(--nimiq-blue);
             background-image: var(--nimiq-blue-bg);
-            max-height: 160px;
+            max-height: 20rem;
         }
 
         100% {
