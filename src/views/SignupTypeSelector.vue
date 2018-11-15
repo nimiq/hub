@@ -87,7 +87,7 @@ export default class SignupTypeSelector extends Vue {
     button.ledger-button::after {
         content: '';
         display: block;
-        background: #fafafa;
+        background: var(--nimiq-card-bg);
         height: 5rem;
         width: 5rem;
         border-radius: 50%;

@@ -78,7 +78,8 @@ export default class CheckoutDetails extends Vue {
     }
 
     .transaction-section {
-        background: white;
+        background: var(--nimiq-card-header-bg);
+        border-bottom: 1px solid var(--nimiq-card-border-color);
         padding-bottom: 3rem;
         border-top-left-radius: 1rem;
         border-top-right-radius: 1rem;
@@ -87,8 +88,7 @@ export default class CheckoutDetails extends Vue {
 
     .sender-section {
         padding-bottom: 2rem;
-        border-top: solid 1px #f0f0f0;
-        background: #fafafa;
+        background: var(--nimiq-card-bg);
     }
 
     .sender-nav {

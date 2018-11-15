@@ -124,7 +124,7 @@ export default class AddAccountSuccess extends Vue {
         font-weight: 500;
         margin: 2rem 3rem 0;
         padding: 2rem 1rem;
-        border-bottom: solid 1px rgba(0, 0, 0, 0.1);
+        border-bottom: solid 1px var(--nimiq-card-border-color);
     }
 
     .login-icon {
