@@ -62,13 +62,14 @@ export default class SignupTypeSelector extends Vue {
 </script>
 
 <style scoped>
-    button {
+    .keyguard-button,
+    .ledger-button {
         display: block;
         text-align: left;
         padding: 2rem;
         border-radius: 0.5rem;
 
-        margin: 3rem 0;
+        margin: 2.75rem 0;
         border: none;
         position: relative;
         font-family: inherit;
