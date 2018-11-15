@@ -69,7 +69,7 @@ export default class App extends Vue {
 
     .logo-container {
         width: 100%;
-        padding: 4rem;
+        padding: 4rem 3rem;
         box-sizing: border-box;
     }
 
@@ -126,7 +126,6 @@ export default class App extends Vue {
     .loading-animation + h2 {
         margin-top: 4rem;
         padding-bottom: 8rem;
-        color: white;
         text-transform: uppercase;
         font-size: 1.75rem;
         font-weight: 600;
@@ -139,6 +138,11 @@ export default class App extends Vue {
         flex-direction: column;
         align-items: center;
         width: 100%;
+        flex-shrink: 0;
+    }
+
+    .container.pad-bottom {
+        margin-bottom: 12.5rem; /* Same height as the header (~100px) */
     }
 
     .global-close {

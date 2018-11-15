@@ -8,7 +8,7 @@
         <SmallPage>
             <router-view/>
         </SmallPage>
-        <button class="global-close nq-button-s" :class="{hidden: $route.name === `checkout-success`}" @click="close">
+        <button class="global-close nq-button-s" :class="{'hidden': $route.name === 'checkout-success'}" @click="close">
             <span class="nq-icon arrow-left"></span>
             Cancel Payment
         </button>

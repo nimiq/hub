@@ -817,10 +817,10 @@
   resolved "https://registry.yarnpkg.com/@nimiq/rpc/-/rpc-0.0.11.tgz#7230365640663827fb115e0d6456222de3b1c5e3"
   integrity sha512-aSTQwsTeSH46ubRDHqB7x82Alq5a9PlMYJUgDVd/4ET1dMTLm+4sjaFiWho3+SjG2n5/v09XKlDUBFDaENYT6w==
 
-"@nimiq/style@^0.2.1":
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/@nimiq/style/-/style-0.2.1.tgz#158e83481de867cbcccd7b4106aa0f1794354d3c"
-  integrity sha512-vmzEqsKPFG+5M7GIACpCwUztAGCW+Z0L0pfSy7buxh+RhdfzPCnTS+kIiZAtXDx2iEGwAzgY/LSzeOeAtrnzmQ==
+"@nimiq/style@^0.3.2":
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/@nimiq/style/-/style-0.3.2.tgz#252d47a83d15ff3073f44343e7818970aafc3a00"
+  integrity sha512-mJSmqELaq3NsmNWoxQJWr/AWCV1vjxy/XqSle0q9wN0UH0u2OXyo3FAJuY0uCGH8FovUoTr89dELguzHBRZmVQ==
 
 "@nimiq/vue-components@https://github.com/nimiq/vue-components.git#build/accounts":
   version "0.1.0"

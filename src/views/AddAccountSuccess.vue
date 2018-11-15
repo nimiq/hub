@@ -1,5 +1,5 @@
 <template>
-    <div class="container">
+    <div class="container pad-bottom">
         <SmallPage>
             <PageHeader>Your account is ready</PageHeader>
             <PageBody>
@@ -89,10 +89,6 @@ export default class AddAccountSuccess extends Vue {
 </script>
 
 <style scoped>
-    .small-page {
-        margin-bottom: 15rem;
-    }
-
     .page-body {
         padding: 1rem 0 4rem 0;
     }
