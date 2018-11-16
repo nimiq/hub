@@ -4,8 +4,7 @@
         <h1 v-html="parsedText" class="nq-h1"></h1>
         <div style="flex-grow: 1;"></div>
 
-        <button v-if="buttonText" @click="$emit('continue')" class="nq-button green inverse" :disabled="disabled">{{ buttonText }}</button>
-        <button v-else @click="$emit('continue')" class="nq-button green inverse" :disabled="disabled">Back to {{ appName }}</button>
+        <button @click="$emit('continue')" class="nq-button green inverse" :disabled="disabled">{{ getButtonText }}</button>
     </div>
 </template>
 
@@ -25,6 +24,12 @@ export default class Success extends Vue {
         return this.text
             .replace(/<(.|\n)*?>/g, '')
             .replace(/\[br\]/g, '<br/>');
+    }
+
+    private get getButtonText(): string {
+        if (this.buttonText) return this.buttonText;
+        if (this.appName) return 'Back to ' + this.appName;
+        return 'Continue';
     }
 }
 </script>
