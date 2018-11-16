@@ -239,7 +239,7 @@ export default class LoginSuccess extends Vue {
     }
 
     .page-body {
-        padding: 2rem 0;
+        padding: 0;
     }
 
     .wallet-label {
@@ -250,8 +250,8 @@ export default class LoginSuccess extends Vue {
         font-size: 2.25rem;
         line-height: 2.5rem;
         font-weight: 500;
-        margin: 2rem 3rem 0;
-        padding: 2rem 1rem;
+        margin: 0 3rem;
+        padding: 2rem 1rem 1.5rem;
         border-bottom: solid 1px var(--nimiq-card-border-color);
     }
 
