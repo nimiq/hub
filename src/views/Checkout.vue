@@ -1,14 +1,17 @@
 <template>
     <div class="container">
-        <PaymentInfoLine v-if="rpcState" style="color: white"
+        <PaymentInfoLine v-if="rpcState"
                          :amount="request.value"
                          :networkFee="request.fee"
                          :networkFeeEditable="false"
                          :origin="rpcState.origin"/>
-        <small-page>
+        <SmallPage>
             <router-view/>
-        </small-page>
-        <a class="global-close" :class="{hidden: $route.name === `checkout-success`}" @click="close">Cancel Payment</a>
+        </SmallPage>
+        <button class="global-close nq-button-s" :class="{'hidden': $route.name === 'checkout-success'}" @click="close">
+            <span class="nq-icon arrow-left"></span>
+            Cancel Payment
+        </button>
     </div>
 </template>
 

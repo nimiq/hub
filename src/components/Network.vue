@@ -1,7 +1,7 @@
 <template>
-    <div class="network loading" :class="alwaysVisible || (visible && !consensusEstablished) ? '' : 'hidden'">
+    <div class="network loading nq-bg-blue" :class="alwaysVisible || (visible && !consensusEstablished) ? '' : 'hidden'">
         <div class="loading-animation"></div>
-        <div class="loading-status">{{ status }}</div>
+        <div class="loading-status nq-text-s">{{ status }}</div>
     </div>
 </template>
 
@@ -185,8 +185,6 @@ export default class Network extends Vue {
     .network {
         width: 100%;
         height: 20rem;
-        background: #724ceb;
-        color: white;
         border-radius: 0.5rem;
         flex-shrink: 0;
         padding: 3rem;
@@ -205,6 +203,7 @@ export default class Network extends Vue {
 
     .loading-status {
         margin-top: 2rem;
+        opacity: 0.7;
     }
 
     .loading-animation {

@@ -817,9 +817,14 @@
   resolved "https://registry.yarnpkg.com/@nimiq/rpc/-/rpc-0.0.11.tgz#7230365640663827fb115e0d6456222de3b1c5e3"
   integrity sha512-aSTQwsTeSH46ubRDHqB7x82Alq5a9PlMYJUgDVd/4ET1dMTLm+4sjaFiWho3+SjG2n5/v09XKlDUBFDaENYT6w==
 
+"@nimiq/style@^0.3.4":
+  version "0.3.4"
+  resolved "https://registry.yarnpkg.com/@nimiq/style/-/style-0.3.4.tgz#dec68f59ba280830b39b1616653f04411905d14f"
+  integrity sha512-Xvxs/T8JiVTCXRnkuWE1a2b+fiQpdBypVtcQPUx6DJQx/SXSuNzhpszY/qugC2jRE4s5uYE9aU5+2kaxLcu5Jw==
+
 "@nimiq/vue-components@https://github.com/nimiq/vue-components.git#build/accounts":
   version "0.1.0"
-  resolved "https://github.com/nimiq/vue-components.git#42073b5bc43daad6ee358734774f826f507d33e6"
+  resolved "https://github.com/nimiq/vue-components.git#f20f3c04e64a154d1a9530a02916e761bd7ceaf3"
   dependencies:
     vue "^2.5.17"
     vue-property-decorator "^7.0.0"
