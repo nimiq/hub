@@ -1,3 +1,5 @@
+<template></template>
+
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { ParsedAddAccountRequest } from '../lib/RequestTypes';
