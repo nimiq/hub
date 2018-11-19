@@ -12,6 +12,7 @@ import Login from './views/Login.vue';
 import LoginSuccess from './views/LoginSuccess.vue';
 import ExportFile from './views/ExportFile.vue';
 import ExportWords from './views/ExportWords.vue';
+import Export from './views/Export.vue';
 import Logout from './views/Logout.vue';
 import LogoutSuccess from './views/LogoutSuccess.vue';
 import AddAccount from './views/AddAccount.vue';
@@ -64,6 +65,11 @@ export function keyguardResponseRouter(
     case KeyguardCommand.DERIVE_ADDRESS:
       return {
         resolve: `${RequestType.ADD_ACCOUNT}-success`,
+        reject: 'default-error',
+      };
+    case KeyguardCommand.EXPORT:
+      return {
+        resolve: `${RequestType.EXPORT}-success`,
         reject: 'default-error',
       };
     default:
@@ -155,6 +161,16 @@ export default new Router({
       path: `/${RequestType.EXPORT_WORDS}/success`,
       component: SimpleSuccess,
       name: `${RequestType.EXPORT_WORDS}-success`,
+    },
+    {
+      path: `/${RequestType.EXPORT}`,
+      component: Export,
+      name: RequestType.EXPORT,
+    },
+    {
+      path: `/${RequestType.EXPORT}/success`,
+      component: SimpleSuccess,
+      name: `${RequestType.EXPORT}-success`,
     },
     {
       path: `/${RequestType.LOGOUT}`,

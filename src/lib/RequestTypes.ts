@@ -8,6 +8,7 @@ export enum RequestType {
     LOGIN = 'login',
     EXPORT_WORDS = 'export-words',
     EXPORT_FILE = 'export-file',
+    EXPORT = 'export',
     LOGOUT = 'logout',
     ADD_ACCOUNT = 'add-account',
 }
@@ -161,6 +162,22 @@ export interface ExportFileResult {
     success: boolean;
 }
 
+export interface ExportRequest {
+    kind?: RequestType.EXPORT;
+    appName: string;
+    walletId: string;
+}
+
+export interface ParsedExportRequest {
+    kind: RequestType.EXPORT;
+    appName: string;
+    walletId: string;
+}
+
+export interface ExportResult {
+    success: boolean;
+}
+
 export interface LogoutRequest {
     kind?: RequestType.LOGOUT;
     appName: string;
@@ -204,6 +221,7 @@ export type RpcRequest = SignTransactionRequest
                        | LoginRequest
                        | ExportFileRequest
                        | ExportWordsRequest
+                       | ExportRequest
                        | LogoutRequest
                        | AddAccountRequest;
 export type ParsedRpcRequest = ParsedSignTransactionRequest
@@ -212,6 +230,7 @@ export type ParsedRpcRequest = ParsedSignTransactionRequest
                              | ParsedLoginRequest
                              | ParsedExportFileRequest
                              | ParsedExportWordsRequest
+                             | ParsedExportRequest
                              | ParsedLogoutRequest
                              | ParsedAddAccountRequest;
 export type RpcResult = SignTransactionResult
@@ -219,6 +238,7 @@ export type RpcResult = SignTransactionResult
                       | LoginResult
                       | ExportWordsResult
                       | ExportFileResult
+                      | ExportResult
                       | LogoutResult
                       | AddAccountResult;
 
@@ -286,6 +306,13 @@ export class AccountsRequest {
                     appName: request.appName,
                     walletId: request.walletId,
                 } as ParsedExportWordsRequest;
+            case RequestType.EXPORT:
+                request = request as ExportRequest;
+                return {
+                    kind: RequestType.EXPORT,
+                    appName: request.appName,
+                    walletId: request.walletId,
+                } as ParsedExportRequest;
             case RequestType.LOGOUT:
                 request = request as LogoutRequest;
                 return {
@@ -348,6 +375,8 @@ export class AccountsRequest {
                 return request as ExportFileRequest;
             case RequestType.EXPORT_WORDS:
                 return request as ExportWordsRequest;
+            case RequestType.EXPORT:
+                return request as ExportRequest;
             case RequestType.LOGOUT:
                 return request as LogoutRequest;
             case RequestType.ADD_ACCOUNT:

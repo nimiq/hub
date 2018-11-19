@@ -43,6 +43,7 @@ export default class RpcApi {
             RequestType.LOGIN,
             RequestType.EXPORT_FILE,
             RequestType.EXPORT_WORDS,
+            RequestType.EXPORT,
             RequestType.LOGOUT,
             RequestType.ADD_ACCOUNT,
         ]);
@@ -52,6 +53,7 @@ export default class RpcApi {
             KeyguardCommand.IMPORT,
             KeyguardCommand.EXPORT_FILE,
             KeyguardCommand.EXPORT_WORDS,
+            KeyguardCommand.EXPORT,
             KeyguardCommand.REMOVE,
             KeyguardCommand.DERIVE_ADDRESS,
         ]);

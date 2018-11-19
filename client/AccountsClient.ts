@@ -20,6 +20,8 @@ import {
     ExportFileResult,
     ExportWordsRequest,
     ExportWordsResult,
+    ExportRequest,
+    ExportResult,
     AddAccountRequest,
     AddAccountResult,
     // ListResult,
@@ -101,6 +103,13 @@ export default class AccountsClient {
         requestBehavior = this._defaultBehavior,
     ): Promise<ExportWordsResult> {
         return this._request(requestBehavior, RequestType.EXPORT_WORDS, [request]);
+    }
+
+    public export(
+        request: ExportRequest,
+        requestBehavior = this._defaultBehavior,
+    ): Promise<ExportResult> {
+        return this._request(requestBehavior, RequestType.EXPORT, [request]);
     }
 
     public addAccount(request: AddAccountRequest, requestBehavior = this._defaultBehavior): Promise<AddAccountResult> {
