@@ -31,9 +31,9 @@ interact with their users' Nimiq accounts.
 The JavaScript client library can either be installed from NPM:
 
 ```bash
-npm install @nimiq/accounts-manager-client
+npm install @nimiq/accounts-client
 # or with yarn
-yarn add @nimiq/accounts-manager-client
+yarn add @nimiq/accounts-client
 ```
 
 or downloaded from the [client/dist/standalone](https://github.com/nimiq/accounts/tree/master/client/dist/standalone)
@@ -42,18 +42,18 @@ directory.
 To use it, require or import it:
 
 ```javascript
-const AccountsManagerClient = require('@nimiq/accounts-manager-client');
+const AccountsClient = require('@nimiq/accounts-client');
 // or
-import AccountsManagerClient from '@nimiq/accounts-manager-client';
+import AccountsClient from '@nimiq/accounts-client';
 ```
 
 or include it as a script tag in your page:
 
 ```html
-<script src="AccountsManagerClient.standalone.umd.js"></script>
+<script src="AccountsClient.standalone.umd.js"></script>
 
 <!-- or from CDN -->
-<script scr="https://cdn.jsdelivr.net/npm/@nimiq/accounts-manager-client/dist/standalone/AccountsManagerClient.standalone.umd.js"></script>
+<script scr="https://cdn.jsdelivr.net/npm/@nimiq/accounts-client/dist/standalone/AccountsClient.standalone.umd.js"></script>
 ```
 
 ### Initialization
@@ -62,11 +62,11 @@ To start the client, just instantiate the class by passing it the URL of the
 **Accounts Manager** to connect to:
 
 ```javascript
-// connect to testnet
-const accountsClient = new AccountsManagerClient('https://accounts.nimiq-testnet.com');
+// Connect to testnet
+const accountsClient = new AccountsClient('https://accounts.nimiq-testnet.com');
 
-// or mainnet
-const accountsClient = new AccountsManagerClient('https://accounts.nimiq.com');
+// Connect to mainnet
+const accountsClient = new AccountsClient('https://accounts.nimiq.com');
 ```
 
 ### Usage
@@ -92,13 +92,13 @@ For more details about avoiding popup blocking refer to
 
 If you prefer top-level redirects instead of popups, you can pass an
 instance of `RedirectRequestBehavior` as a second parameter to either the
-AccountsManagerClient initialization or to any API method:
+AccountsClient initialization or to any API method:
 
 ```javascript
-const redirectBehavior = new AccountsManagerClient.RedirectRequestBehavior();
+const redirectBehavior = new AccountsClient.RedirectRequestBehavior();
 
-// Pass the behavior as a second parameter to the AccountsManagerClient
-const accountsClient = new AccountsManagerClient(<url>, redirectBehavior);
+// Pass the behavior as a second parameter to the AccountsClient
+const accountsClient = new AccountsClient(<url>, redirectBehavior);
 
 // Or pass it as a second parameter to any API method
 const result = accountsClient.checkout(<requestOptions>, redirectBehavior);
@@ -399,7 +399,7 @@ containing the `success` property, which is always true:
 
 ### Listening for redirect responses
 
-If you configured the AccountsManagerClient to use
+If you configured the AccountsClient to use
 [top-level redirects](#using-top-level-redirects) instead of popups, you need to
 follow the four steps below to specifically listen for the redirects from the
 **Accounts Manager** back to your site using the `on()` method.
@@ -410,7 +410,7 @@ the stored data object as it was passed to the
 
 ```javascript
 // 1. Initialize an Accounts Manager client instance
-const accountsClient = new AccountsManagerClient(/* ... */);
+const accountsClient = new AccountsClient(/* ... */);
 
 // 2. Define your handler functions
 const onSuccess = function(result, storedData) {
@@ -424,7 +424,7 @@ const onError = function(error, storedData) {
 }
 
 // 3. Listen for the redirect responses you expect
-const RequestType = AccountsManagerClient.RequestType;
+const RequestType = AccountsClient.RequestType;
 
 accountsClient.on(RequestType.CHECKOUT, onSuccess, onError);
 accountsClient.on(RequestType.SIGNTRANSACTION, onSuccess, onError);
@@ -443,7 +443,7 @@ accountsClient.checkRedirectResponse();
 The available `RequestType`s, corresponding to the API methods, are:
 
 ```javascript
-enum AccountsManagerClient.RequestType {
+enum AccountsClient.RequestType {
     CHECKOUT = 'checkout',
     SIGNTRANSACTION = 'sign-transaction',
     SIGNUP = 'signup',
