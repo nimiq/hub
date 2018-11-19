@@ -33,6 +33,8 @@ export default class SimpleSuccess extends Vue {
                 return 'Your Wallet File export[br]was successful';
             case 'export-words-success':
                 return 'Your Recovery Words export[br]was successful';
+            case 'export-success':
+                return 'Your export[br]was successful';
             case 'change-passphrase-success':
                 return 'You successfully changed your passphrase ';
             default:

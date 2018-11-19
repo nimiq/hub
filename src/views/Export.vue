@@ -1,3 +1,5 @@
+<template></template>
+
 <script lang="ts">
 import { Component, Emit, Vue } from 'vue-property-decorator';
 import { ParsedExportRequest } from '../lib/RequestTypes';
