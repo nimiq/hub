@@ -22,6 +22,8 @@ import {
     ExportWordsResult,
     ExportRequest,
     ExportResult,
+    ChangePassphraseRequest,
+    ChangePassphraseResult,
     AddAccountRequest,
     AddAccountResult,
     // ListResult,
@@ -110,6 +112,13 @@ export default class AccountsClient {
         requestBehavior = this._defaultBehavior,
     ): Promise<ExportResult> {
         return this._request(requestBehavior, RequestType.EXPORT, [request]);
+    }
+
+    public changePassphrase(
+        request: ChangePassphraseRequest,
+        requestBehavior = this._defaultBehavior,
+    ): Promise<ChangePassphraseResult> {
+        return this._request(requestBehavior, RequestType.CHANGE_PASSPHRASE, [request]);
     }
 
     public addAccount(request: AddAccountRequest, requestBehavior = this._defaultBehavior): Promise<AddAccountResult> {

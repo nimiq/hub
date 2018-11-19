@@ -9,6 +9,7 @@ export enum RequestType {
     EXPORT_WORDS = 'export-words',
     EXPORT_FILE = 'export-file',
     EXPORT = 'export',
+    CHANGE_PASSPHRASE = 'change-passphrase',
     LOGOUT = 'logout',
     ADD_ACCOUNT = 'add-account',
 }
@@ -178,6 +179,22 @@ export interface ExportResult {
     success: boolean;
 }
 
+export interface ChangePassphraseRequest {
+    kind?: RequestType.CHANGE_PASSPHRASE;
+    appName: string;
+    walletId: string;
+}
+
+export interface ParsedChangePassphraseRequest {
+    kind: RequestType.CHANGE_PASSPHRASE;
+    appName: string;
+    walletId: string;
+}
+
+export interface ChangePassphraseResult {
+    success: boolean;
+}
+
 export interface LogoutRequest {
     kind?: RequestType.LOGOUT;
     appName: string;
@@ -222,6 +239,7 @@ export type RpcRequest = SignTransactionRequest
                        | ExportFileRequest
                        | ExportWordsRequest
                        | ExportRequest
+                       | ChangePassphraseRequest
                        | LogoutRequest
                        | AddAccountRequest;
 export type ParsedRpcRequest = ParsedSignTransactionRequest
@@ -231,6 +249,7 @@ export type ParsedRpcRequest = ParsedSignTransactionRequest
                              | ParsedExportFileRequest
                              | ParsedExportWordsRequest
                              | ParsedExportRequest
+                             | ParsedChangePassphraseRequest
                              | ParsedLogoutRequest
                              | ParsedAddAccountRequest;
 export type RpcResult = SignTransactionResult
@@ -239,6 +258,7 @@ export type RpcResult = SignTransactionResult
                       | ExportWordsResult
                       | ExportFileResult
                       | ExportResult
+                      | ChangePassphraseResult
                       | LogoutResult
                       | AddAccountResult;
 
@@ -313,6 +333,13 @@ export class AccountsRequest {
                     appName: request.appName,
                     walletId: request.walletId,
                 } as ParsedExportRequest;
+            case RequestType.CHANGE_PASSPHRASE:
+                request = request as ChangePassphraseRequest;
+                return {
+                    kind: RequestType.CHANGE_PASSPHRASE,
+                    appName: request.appName,
+                    walletId: request.walletId,
+                } as ParsedChangePassphraseRequest;
             case RequestType.LOGOUT:
                 request = request as LogoutRequest;
                 return {
@@ -377,6 +404,8 @@ export class AccountsRequest {
                 return request as ExportWordsRequest;
             case RequestType.EXPORT:
                 return request as ExportRequest;
+            case RequestType.CHANGE_PASSPHRASE:
+                return request as ChangePassphraseRequest;
             case RequestType.LOGOUT:
                 return request as LogoutRequest;
             case RequestType.ADD_ACCOUNT:
