@@ -32,7 +32,7 @@ export function keyguardResponseRouter(
     case KeyguardCommand.CREATE:
       return {
         resolve: `${RequestType.SIGNUP}-success`,
-        reject: 'default-error',
+        reject: RequestType.SIGNUP,
       };
     case KeyguardCommand.IMPORT:
       return {
