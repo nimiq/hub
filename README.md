@@ -468,12 +468,12 @@ To get started with working on the source code, pull the code and install the de
 ```bash
 git clone git@github.com:nimiq/accounts.git
 cd accounts
-yarn install
+yarn
 ```
 
 ### Run
 
-Compile and hot-reload in the background for development:
+Compile and serve with hot-reload in the background for development:
 
 ```bash
 yarn run serve
