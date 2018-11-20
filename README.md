@@ -1,6 +1,6 @@
-# Accounts Manager <!-- omit in toc -->
+# Nimiq Accounts Manager <!-- omit in toc -->
 
-**Accounts Manager** (or **Nimiq Accounts**) provides a unified interface for
+The **Accounts Manager** (or **Nimiq Accounts**) provides a unified interface for
 all Nimiq wallets, accounts, and contracts. It is the primary UI for Nimiq users
 to manage their wallets and provides websites and apps with a concise API to
 interact with their users' Nimiq accounts.
