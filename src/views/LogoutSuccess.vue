@@ -1,12 +1,12 @@
 <template>
-    <div class="container">
-        <small-page>
+    <div class="container pad-bottom">
+        <SmallPage>
             <Success
                 text="Your Logout[br]was successful"
                 :appName="request.appName"
                 @continue="done"
                 />
-        </small-page>
+        </SmallPage>
     </div>
 </template>
 

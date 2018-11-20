@@ -1,5 +1,5 @@
 <template>
-    <div class="container">
+    <div class="container pad-bottom">
         <SmallPage>
             <Success
                 text="Your transaction[br]is ready!"
