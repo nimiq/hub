@@ -1,5 +1,5 @@
 <template>
-    <div class="container">
+    <div class="container pad-bottom">
         <SmallPage>
             <PageHeader :progressIndicator="true" :numberSteps="6" :step="6">Your wallet is ready</PageHeader>
             <PageBody>

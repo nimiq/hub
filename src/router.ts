@@ -34,7 +34,7 @@ export function keyguardResponseRouter(
     case KeyguardCommand.CREATE:
       return {
         resolve: `${RequestType.SIGNUP}-success`,
-        reject: 'default-error',
+        reject: RequestType.SIGNUP,
       };
     case KeyguardCommand.IMPORT:
       return {
@@ -51,7 +51,7 @@ export function keyguardResponseRouter(
       // Thus we return the user to the respective handler component
       return {
         resolve: `${originalRequestType}-success`,
-        reject: `${ (originalRequestType === RequestType.CHECKOUT) ? originalRequestType : 'default' }-error`,
+        reject: `${originalRequestType === RequestType.CHECKOUT ? originalRequestType : 'default'}-error`,
       };
     case KeyguardCommand.EXPORT_FILE:
       return {

@@ -1,5 +1,5 @@
 <template>
-    <div class="container">
+    <div class="container pad-bottom">
         <SmallPage>
             <div class="login-success">
                 <PageHeader>Your wallet is ready</PageHeader>
