@@ -5,7 +5,7 @@ import { Component, Emit, Vue } from 'vue-property-decorator';
 import { ParsedExportWordsRequest } from '../lib/RequestTypes';
 import { State } from 'vuex-class';
 import RpcApi from '../lib/RpcApi';
-import { ExportWordsRequest } from '@nimiq/keyguard-client';
+import { SimpleRequest } from '@nimiq/keyguard-client';
 import { State as RpcState, ResponseStatus } from '@nimiq/rpc';
 import { WalletStore } from '@/lib/WalletStore';
 import staticStore, { Static } from '../lib/StaticStore';
@@ -18,7 +18,7 @@ export default class ExportWords extends Vue {
         const wallet = await WalletStore.Instance.get(this.request.walletId);
         if (!wallet) throw new Error('Wallet ID not found');
 
-        const request: ExportWordsRequest = {
+        const request: SimpleRequest = {
             appName: this.request.appName,
             keyId: this.request.walletId,
             keyLabel: wallet.label,

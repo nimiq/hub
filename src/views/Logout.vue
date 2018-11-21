@@ -5,7 +5,7 @@ import { Component, Emit, Vue } from 'vue-property-decorator';
 import { ParsedLogoutRequest } from '../lib/RequestTypes';
 import { State } from 'vuex-class';
 import RpcApi from '../lib/RpcApi';
-import { RemoveKeyRequest } from '@nimiq/keyguard-client';
+import { SimpleRequest } from '@nimiq/keyguard-client';
 import { WalletStore } from '@/lib/WalletStore';
 import staticStore, { Static } from '../lib/StaticStore';
 
@@ -17,7 +17,7 @@ export default class Logout extends Vue {
         const wallet = await WalletStore.Instance.get(this.request.walletId);
         if (!wallet) throw new Error('Wallet ID not found');
 
-        const request: RemoveKeyRequest = {
+        const request: SimpleRequest = {
             appName: this.request.appName,
             keyId: this.request.walletId,
             keyLabel: wallet.label,

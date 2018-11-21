@@ -121,6 +121,8 @@ var RequestType;
     RequestType["LOGIN"] = "login";
     RequestType["EXPORT_WORDS"] = "export-words";
     RequestType["EXPORT_FILE"] = "export-file";
+    RequestType["EXPORT"] = "export";
+    RequestType["CHANGE_PASSPHRASE"] = "change-passphrase";
     RequestType["LOGOUT"] = "logout";
     RequestType["ADD_ACCOUNT"] = "add-account";
 })(RequestType || (RequestType = {}));
@@ -161,6 +163,12 @@ class AccountsClient {
     }
     exportWords(request, requestBehavior = this._defaultBehavior) {
         return this._request(requestBehavior, RequestType.EXPORT_WORDS, [request]);
+    }
+    export(request, requestBehavior = this._defaultBehavior) {
+        return this._request(requestBehavior, RequestType.EXPORT, [request]);
+    }
+    changePassphrase(request, requestBehavior = this._defaultBehavior) {
+        return this._request(requestBehavior, RequestType.CHANGE_PASSPHRASE, [request]);
     }
     addAccount(request, requestBehavior = this._defaultBehavior) {
         return this._request(requestBehavior, RequestType.ADD_ACCOUNT, [request]);

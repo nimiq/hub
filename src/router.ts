@@ -12,6 +12,8 @@ import Login from './views/Login.vue';
 import LoginSuccess from './views/LoginSuccess.vue';
 import ExportFile from './views/ExportFile.vue';
 import ExportWords from './views/ExportWords.vue';
+import Export from './views/Export.vue';
+import ChangePassphrase from './views/ChangePassphrase.vue';
 import Logout from './views/Logout.vue';
 import LogoutSuccess from './views/LogoutSuccess.vue';
 import AddAccount from './views/AddAccount.vue';
@@ -61,6 +63,16 @@ export function keyguardResponseRouter(
         resolve: `${RequestType.EXPORT_WORDS}-success`,
         reject: 'default-error',
       };
+    case KeyguardCommand.EXPORT:
+        return {
+          resolve: `${RequestType.EXPORT}-success`,
+          reject: 'default-error',
+        };
+    case KeyguardCommand.CHANGE_PASSPHRASE:
+        return {
+          resolve: `${RequestType.CHANGE_PASSPHRASE}-success`,
+          reject: 'default-error',
+        };
     case KeyguardCommand.DERIVE_ADDRESS:
       return {
         resolve: `${RequestType.ADD_ACCOUNT}-success`,
@@ -155,6 +167,26 @@ export default new Router({
       path: `/${RequestType.EXPORT_WORDS}/success`,
       component: SimpleSuccess,
       name: `${RequestType.EXPORT_WORDS}-success`,
+    },
+    {
+      path: `/${RequestType.EXPORT}`,
+      component: Export,
+      name: RequestType.EXPORT,
+    },
+    {
+      path: `/${RequestType.EXPORT}/success`,
+      component: SimpleSuccess,
+      name: `${RequestType.EXPORT}-success`,
+    },
+    {
+      path: `/${RequestType.CHANGE_PASSPHRASE}`,
+      component: ChangePassphrase,
+      name: RequestType.CHANGE_PASSPHRASE,
+    },
+    {
+      path: `/${RequestType.CHANGE_PASSPHRASE}/success`,
+      component: SimpleSuccess,
+      name: `${RequestType.CHANGE_PASSPHRASE}-success`,
     },
     {
       path: `/${RequestType.LOGOUT}`,
