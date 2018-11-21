@@ -126,6 +126,7 @@
         RequestType["EXPORT_WORDS"] = "export-words";
         RequestType["EXPORT_FILE"] = "export-file";
         RequestType["LOGOUT"] = "logout";
+        RequestType["ADD_ACCOUNT"] = "add-account";
     })(RequestType || (RequestType = {}));
 
     class AccountsClient {
@@ -164,6 +165,9 @@
         }
         exportWords(request, requestBehavior = this._defaultBehavior) {
             return this._request(requestBehavior, RequestType.EXPORT_WORDS, [request]);
+        }
+        addAccount(request, requestBehavior = this._defaultBehavior) {
+            return this._request(requestBehavior, RequestType.ADD_ACCOUNT, [request]);
         }
         /**
          * Only accessible in iframe from Nimiq domains.
