@@ -25,7 +25,6 @@ export default class ChangePassphrase extends Vue {
         };
 
         const client = RpcApi.createKeyguardClient(this.$store, staticStore);
-        console.log(client);
         client.changePassphrase(request).catch(console.error); // TODO: proper error handling
     }
 }

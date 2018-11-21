@@ -25,7 +25,6 @@ export default class Export extends Vue {
         };
 
         const client = RpcApi.createKeyguardClient(this.$store, staticStore);
-        console.log(client);
         client.export(request).catch(console.error); // TODO: proper error handling
     }
 }
