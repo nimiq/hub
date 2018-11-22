@@ -733,7 +733,7 @@
 
 "@nimiq/vue-components@https://github.com/nimiq/vue-components.git#build/accounts":
   version "0.1.0"
-  resolved "https://github.com/nimiq/vue-components.git#3c878fd6f23f6e1a4e4c19c34228049a76b52fea"
+  resolved "https://github.com/nimiq/vue-components.git#869ff6f5f87054a5b91b3bafc791e8cb47e81a1e"
   dependencies:
     vue "^2.5.17"
     vue-property-decorator "^7.0.0"
