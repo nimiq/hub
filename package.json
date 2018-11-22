@@ -10,7 +10,7 @@
         "test": "yarn test:unit"
     },
     "dependencies": {
-        "@nimiq/keyguard-client": "^0.0.20",
+        "@nimiq/keyguard-client": "^0.0.21",
         "@nimiq/network-client": "^0.0.9",
         "@nimiq/rpc": "^0.0.11",
         "@nimiq/style": "^0.3.4",
