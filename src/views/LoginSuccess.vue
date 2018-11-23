@@ -11,10 +11,13 @@
                     </div>
 
                     <AccountList :accounts="accountsArray" :editable="true" @account-changed="onAccountLabelChanged"/>
+
+                    <div class="network-wrapper">
+                        <Network :visible="keyguardResult.keyType !== 0 /* LEGACY */" :message="'Detecting your accounts'" ref="network"/>
+                    </div>
                 </PageBody>
 
                 <PageFooter>
-                    <Network :visible="keyguardResult.keyType !== 0 /* LEGACY */" :message="'Detecting your accounts'" ref="network"/>
                     <button class="nq-button" @click="done">Back to {{ request.appName }}</button>
                 </PageFooter>
             </div>
@@ -262,7 +265,11 @@ export default class LoginSuccess extends Vue {
         margin-right: 1rem;
     }
 
-    .page-footer .nq-button {
-        margin: 0 auto;
+    .network-wrapper {
+        padding: 1rem;
+    }
+
+    .page-footer {
+        padding: 1rem;
     }
 </style>
