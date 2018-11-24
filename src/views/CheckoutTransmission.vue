@@ -32,6 +32,7 @@ import { PageFooter } from '@nimiq/vue-components';
 @Component({components: {PageFooter, Network, CheckoutDetails, Success}})
 export default class CheckoutTransmission extends Vue {
     @Static private rpcState!: RpcState;
+    // The stored keyguardRequest does not have Uint8Array, only regular arrays
     @Static private keyguardRequest!: KSignTransactionRequest;
     @State private keyguardResult!: KSignTransactionResult;
 

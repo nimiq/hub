@@ -30,6 +30,7 @@ import Success from '../components/Success.vue';
 export default class SignTransactionSuccess extends Vue {
     @Static private request!: ParsedSignTransactionRequest;
     @Static private rpcState!: RpcState;
+    // The stored keyguardRequest does not have Uint8Array, only regular arrays
     @Static private keyguardRequest!: KSignTransactionRequest;
     @State private keyguardResult!: KSignTransactionResult;
 
