@@ -4,7 +4,7 @@
             <WalletSelector @wallet-selected="walletSelected"
                             @account-selected="accountSelected"
                             @add-wallet="addWallet"
-                            @back="backToOverview"
+                            @back="backToPrevious"
                             :wallets="wallets"/>
             <AccountSelector
                     @account-selected="accountSelected"
@@ -28,7 +28,7 @@ import { RequestType } from '../lib/RequestTypes';
 import { State, Mutation } from 'vuex-class';
 
 @Component({components: {AccountSelector, WalletSelector}})
-export default class CheckoutSelectAccount extends Vue {
+export default class ActiveAccountSelector extends Vue {
     @State('wallets') private wallets!: WalletInfo[];
 
     @Mutation('addWallet') private $addWallet!: (walletInfo: WalletInfo) => any;
@@ -102,11 +102,11 @@ export default class CheckoutSelectAccount extends Vue {
         });
 
         // Return to overview
-        this.backToOverview();
+        this.backToPrevious();
     }
 
-    private backToOverview() {
-        this.$router.push({name: RequestType.CHECKOUT});
+    private backToPrevious() {
+        this.$router.go(-1);
     }
 }
 </script>

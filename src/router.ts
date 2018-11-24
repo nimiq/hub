@@ -2,9 +2,9 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import SignTransaction from './views/SignTransaction.vue';
 import SignTransactionSuccess from './views/SignTransactionSuccess.vue';
+import ActiveAccountSelector from './views/ActiveAccountSelector.vue';
 import Checkout from './views/Checkout.vue';
 import CheckoutOverview from './views/CheckoutOverview.vue';
-import CheckoutSelectAccount from './views/CheckoutSelectAccount.vue';
 import CheckoutTransmission from './views/CheckoutTransmission.vue';
 import SignupTypeSelector from './views/SignupTypeSelector.vue';
 import SignupSuccess from './views/SignupSuccess.vue';
@@ -113,7 +113,7 @@ export default new Router({
         },
         {
           path: 'change-account',
-          component: CheckoutSelectAccount,
+          component: ActiveAccountSelector,
           name: `${RequestType.CHECKOUT}-change-account`,
         },
         {
