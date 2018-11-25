@@ -139,6 +139,19 @@ export default class Rename extends Vue {
     .rename {
         position: relative;
     }
+
+    .wallet-label {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+        font-size: 2.25rem;
+        line-height: 2.5rem;
+        font-weight: 500;
+        margin: 2rem 3rem 0;
+        padding: 2rem 1rem;
+    }
+
     .success {
         position: absolute;
         bottom: 0;
