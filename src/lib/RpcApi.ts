@@ -47,6 +47,7 @@ export default class RpcApi {
             RequestType.CHANGE_PASSPHRASE,
             RequestType.LOGOUT,
             RequestType.ADD_ACCOUNT,
+            RequestType.RENAME,
             RequestType.SIGN_MESSAGE,
         ]);
         this._registerKeyguardApis([

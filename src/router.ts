@@ -18,6 +18,7 @@ import Logout from './views/Logout.vue';
 import LogoutSuccess from './views/LogoutSuccess.vue';
 import AddAccount from './views/AddAccount.vue';
 import AddAccountSuccess from './views/AddAccountSuccess.vue';
+import Rename from './views/Rename.vue';
 import SignMessage from './views/SignMessage.vue';
 import SignMessageOverview from './views/SignMessageOverview.vue';
 import SignMessageSuccess from './views/SignMessageSuccess.vue';
@@ -216,6 +217,11 @@ export default new Router({
       path: `/${RequestType.ADD_ACCOUNT}/success`,
       component: AddAccountSuccess,
       name: `${RequestType.ADD_ACCOUNT}-success`,
+    },
+    {
+      path: `/${RequestType.RENAME}`,
+      component: Rename,
+      name: RequestType.RENAME,
     },
     {
       path: `/${RequestType.SIGN_MESSAGE}`,

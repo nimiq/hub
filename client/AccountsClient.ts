@@ -17,17 +17,16 @@ import {
     SignTransactionRequest,
     SignTransactionResult,
     ExportFileRequest,
-    ExportFileResult,
     ExportWordsRequest,
-    ExportWordsResult,
     ExportRequest,
-    ExportResult,
     ChangePassphraseRequest,
-    ChangePassphraseResult,
     AddAccountRequest,
     AddAccountResult,
+    RenameRequest,
+    RenameResult,
     SignMessageRequest,
     SignMessageResult,
+    SimpleResult,
     // ListResult,
     RpcResult,
 } from '../src/lib/RequestTypes';
@@ -98,33 +97,37 @@ export default class AccountsClient {
     public exportFile(
         request: ExportFileRequest,
         requestBehavior = this._defaultBehavior,
-    ): Promise<ExportFileResult> {
+    ): Promise<SimpleResult> {
         return this._request(requestBehavior, RequestType.EXPORT_FILE, [request]);
     }
 
     public exportWords(
         request: ExportWordsRequest,
         requestBehavior = this._defaultBehavior,
-    ): Promise<ExportWordsResult> {
+    ): Promise<SimpleResult> {
         return this._request(requestBehavior, RequestType.EXPORT_WORDS, [request]);
     }
 
     public export(
         request: ExportRequest,
         requestBehavior = this._defaultBehavior,
-    ): Promise<ExportResult> {
+    ): Promise<SimpleResult> {
         return this._request(requestBehavior, RequestType.EXPORT, [request]);
     }
 
     public changePassphrase(
         request: ChangePassphraseRequest,
         requestBehavior = this._defaultBehavior,
-    ): Promise<ChangePassphraseResult> {
+    ): Promise<SimpleResult> {
         return this._request(requestBehavior, RequestType.CHANGE_PASSPHRASE, [request]);
     }
 
     public addAccount(request: AddAccountRequest, requestBehavior = this._defaultBehavior): Promise<AddAccountResult> {
         return this._request(requestBehavior, RequestType.ADD_ACCOUNT, [request]);
+    }
+
+    public rename(request: RenameRequest, requestBehavior = this._defaultBehavior): Promise<RenameResult> {
+        return this._request(requestBehavior, RequestType.RENAME, [request]);
     }
 
     public signMessage(

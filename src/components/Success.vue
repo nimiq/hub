@@ -11,7 +11,7 @@
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator';
 
-@Component({})
+@Component
 export default class Success extends Vue {
     @Prop(String) private text?: string;
     @Prop(String) private appName?: string;

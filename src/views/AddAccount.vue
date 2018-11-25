@@ -3,7 +3,6 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { ParsedAddAccountRequest } from '../lib/RequestTypes';
-import { State } from 'vuex-class';
 import RpcApi from '../lib/RpcApi';
 import { DeriveAddressRequest } from '@nimiq/keyguard-client';
 import { State as RpcState, ResponseStatus } from '@nimiq/rpc';
@@ -11,7 +10,7 @@ import staticStore, { Static } from '../lib/StaticStore';
 import { WalletStore } from '@/lib/WalletStore';
 import { WalletType } from '@/lib/WalletInfo';
 
-@Component({})
+@Component
 export default class AddAccount extends Vue {
     @Static private rpcState!: RpcState;
     @Static private request!: ParsedAddAccountRequest;
