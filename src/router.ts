@@ -18,6 +18,10 @@ import Logout from './views/Logout.vue';
 import LogoutSuccess from './views/LogoutSuccess.vue';
 import AddAccount from './views/AddAccount.vue';
 import AddAccountSuccess from './views/AddAccountSuccess.vue';
+import SignMessage from './views/SignMessage.vue';
+import SignMessageOverview from './views/SignMessageOverview.vue';
+import SignMessageSuccess from './views/SignMessageSuccess.vue';
+import SignMessageErrorHandler from './views/SignMessageErrorHandler.vue';
 import SimpleSuccess from './views/SimpleSuccess.vue';
 import ErrorHandler from './views/ErrorHandler.vue';
 import CheckoutErrorHandler from './views/CheckoutErrorHandler.vue';
@@ -77,6 +81,11 @@ export function keyguardResponseRouter(
       return {
         resolve: `${RequestType.ADD_ACCOUNT}-success`,
         reject: 'default-error',
+      };
+    case KeyguardCommand.SIGN_MESSAGE:
+      return {
+        resolve: `${originalRequestType}-success`,
+        reject: `${originalRequestType}-error`,
       };
     default:
       throw new Error(`router.keyguardResponseRouter not defined for Keyguard command: ${command}`);
@@ -207,6 +216,33 @@ export default new Router({
       path: `/${RequestType.ADD_ACCOUNT}/success`,
       component: AddAccountSuccess,
       name: `${RequestType.ADD_ACCOUNT}-success`,
+    },
+    {
+      path: `/${RequestType.SIGN_MESSAGE}`,
+      component: SignMessage,
+      name: RequestType.SIGN_MESSAGE,
+      children: [
+        {
+          path: 'overview',
+          component: SignMessageOverview,
+          name: `${RequestType.SIGN_MESSAGE}-overview`,
+        },
+        {
+          path: 'change-account',
+          component: ActiveAccountSelector,
+          name: `${RequestType.SIGN_MESSAGE}-change-account`,
+        },
+        {
+          path: 'success',
+          component: SignMessageSuccess,
+          name: `${RequestType.SIGN_MESSAGE}-success`,
+        },
+      ],
+    },
+    {
+      path: `/${RequestType.SIGN_MESSAGE}/error`,
+      component: SignMessageErrorHandler,
+      name: `${RequestType.SIGN_MESSAGE}-error`,
     },
   ],
 });
