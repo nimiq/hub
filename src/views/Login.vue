@@ -3,9 +3,8 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { ParsedLoginRequest } from '../lib/RequestTypes';
-import RpcApi from '../lib/RpcApi';
 import { ImportRequest } from '@nimiq/keyguard-client';
-import staticStore, { Static } from '../lib/StaticStore';
+import { Static } from '../lib/StaticStore';
 
 @Component
 export default class Login extends Vue {
@@ -18,7 +17,7 @@ export default class Login extends Vue {
             requestedKeyPaths: [`m/44'/242'/0'/0'`],
         };
 
-        const client = RpcApi.createKeyguardClient(this.$store, staticStore);
+        const client = this.$rpc.createKeyguardClient();
         client.import(request).catch(console.error); // TODO: proper error handling
     }
 }

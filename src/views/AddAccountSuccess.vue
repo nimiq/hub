@@ -28,13 +28,11 @@ import { AccountInfo } from '../lib/AccountInfo';
 import { State } from 'vuex-class';
 import { WalletStore } from '../lib/WalletStore';
 import { DeriveAddressResult } from '@nimiq/keyguard-client';
-import { ResponseStatus, State as RpcState } from '@nimiq/rpc';
 import { AddAccountRequest, AddAccountResult } from '@/lib/RequestTypes';
 import { Static } from '../lib/StaticStore';
 
 @Component({components: {PageHeader, PageBody, Account, SmallPage}})
 export default class AddAccountSuccess extends Vue {
-    @Static private rpcState!: RpcState;
     @Static private request!: AddAccountRequest;
     @State private keyguardResult!: DeriveAddressResult;
 
@@ -65,7 +63,7 @@ export default class AddAccountSuccess extends Vue {
             },
         };
 
-        this.rpcState.reply(ResponseStatus.OK, result);
+        this.$rpc.resolve(result);
     }
 
     private async saveResult(accountLabel: string) {

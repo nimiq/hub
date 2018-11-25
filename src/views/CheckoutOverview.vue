@@ -18,7 +18,6 @@ import CheckoutDetails from '../components/CheckoutDetails.vue';
 import { AccountInfo } from '../lib/AccountInfo';
 import { WalletInfo } from '../lib/WalletInfo';
 import { RequestType, ParsedCheckoutRequest } from '../lib/RequestTypes';
-import RpcApi from '../lib/RpcApi';
 import staticStore, { Static } from '../lib/StaticStore';
 import Network from '../components/Network.vue';
 
@@ -79,7 +78,7 @@ export default class CheckoutOverview extends Vue {
         });
         staticStore.keyguardRequest = storedRequest;
 
-        const client = RpcApi.createKeyguardClient(this.$store, staticStore);
+        const client = this.$rpc.createKeyguardClient();
         client.signTransaction(request).catch(console.error); // TODO: proper error handling
     }
 

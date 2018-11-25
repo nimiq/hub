@@ -3,10 +3,9 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { ParsedChangePassphraseRequest } from '../lib/RequestTypes';
-import RpcApi from '../lib/RpcApi';
 import { SimpleRequest } from '@nimiq/keyguard-client';
 import { WalletStore } from '@/lib/WalletStore';
-import staticStore, { Static } from '../lib/StaticStore';
+import { Static } from '../lib/StaticStore';
 
 @Component
 export default class ChangePassphrase extends Vue {
@@ -22,7 +21,7 @@ export default class ChangePassphrase extends Vue {
             keyLabel: wallet.label,
         };
 
-        const client = RpcApi.createKeyguardClient(this.$store, staticStore);
+        const client = this.$rpc.createKeyguardClient();
         client.changePassphrase(request).catch(console.error); // TODO: proper error handling
     }
 }

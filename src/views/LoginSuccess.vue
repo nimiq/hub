@@ -31,7 +31,6 @@ import { ParsedLoginRequest, LoginResult } from '../lib/RequestTypes';
 import { State } from 'vuex-class';
 import { WalletInfo, WalletType } from '../lib/WalletInfo';
 import { ImportResult, KeyguardClient } from '@nimiq/keyguard-client';
-import { ResponseStatus, State as RpcState } from '@nimiq/rpc';
 import { AccountInfo } from '@/lib/AccountInfo';
 import { WalletStore } from '@/lib/WalletStore';
 import { Static } from '@/lib/StaticStore';
@@ -41,7 +40,6 @@ import Network from '@/components/Network.vue';
 @Component({components: {PageHeader, PageBody, LabelInput, AccountList, Network, PageFooter, SmallPage}})
 export default class LoginSuccess extends Vue {
     @Static private request!: ParsedLoginRequest;
-    @Static private rpcState!: RpcState;
     @State private keyguardResult!: ImportResult;
 
     private keyguard!: KeyguardClient;
@@ -220,7 +218,7 @@ export default class LoginSuccess extends Vue {
     @Emit()
     private done() {
         if (!this.result) throw new Error('Result not set');
-        this.rpcState.reply(ResponseStatus.OK, this.result);
+        this.$rpc.resolve(this.result);
     }
 
     private get walletIconClass(): string {
