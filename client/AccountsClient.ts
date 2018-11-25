@@ -24,6 +24,8 @@ import {
     AddAccountResult,
     RenameRequest,
     RenameResult,
+    SignMessageRequest,
+    SignMessageResult,
     SimpleResult,
     // ListResult,
     RpcResult,
@@ -126,6 +128,13 @@ export default class AccountsClient {
 
     public rename(request: RenameRequest, requestBehavior = this._defaultBehavior): Promise<RenameResult> {
         return this._request(requestBehavior, RequestType.RENAME, [request]);
+    }
+
+    public signMessage(
+        request: SignMessageRequest,
+        requestBehavior = this._defaultBehavior,
+    ): Promise<SignMessageResult> {
+        return this._request(requestBehavior, RequestType.SIGN_MESSAGE, [request]);
     }
 
     /**

@@ -596,9 +596,10 @@
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@nimiq/core-types/-/core-types-1.0.0.tgz#a675cf2c151d9146e79934035e999bbd08a59d42"
 
-"@nimiq/keyguard-client@^0.0.21":
-  version "0.0.21"
-  resolved "https://registry.yarnpkg.com/@nimiq/keyguard-client/-/keyguard-client-0.0.21.tgz#9a0d0a338394c7e4df039b7e39004331455d6695"
+"@nimiq/keyguard-client@^0.0.23":
+  version "0.0.23"
+  resolved "https://registry.yarnpkg.com/@nimiq/keyguard-client/-/keyguard-client-0.0.23.tgz#50c0809346783e80b0fe3c905437a8e6e6f48ebb"
+  integrity sha512-Y0fA3UUE70Yqxj5qpPhDKZOhzAGQrh9O/N9oGkkqGuyr6imko7+0vubDGYlWgDTGkTm5GBVlndDMEA79l17DbQ==
   dependencies:
     "@nimiq/rpc" "^0.0.10"
 

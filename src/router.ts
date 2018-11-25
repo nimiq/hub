@@ -2,9 +2,9 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import SignTransaction from './views/SignTransaction.vue';
 import SignTransactionSuccess from './views/SignTransactionSuccess.vue';
+import ActiveAccountSelector from './views/ActiveAccountSelector.vue';
 import Checkout from './views/Checkout.vue';
 import CheckoutOverview from './views/CheckoutOverview.vue';
-import CheckoutSelectAccount from './views/CheckoutSelectAccount.vue';
 import CheckoutTransmission from './views/CheckoutTransmission.vue';
 import SignupTypeSelector from './views/SignupTypeSelector.vue';
 import SignupSuccess from './views/SignupSuccess.vue';
@@ -19,6 +19,10 @@ import LogoutSuccess from './views/LogoutSuccess.vue';
 import AddAccount from './views/AddAccount.vue';
 import AddAccountSuccess from './views/AddAccountSuccess.vue';
 import Rename from './views/Rename.vue';
+import SignMessage from './views/SignMessage.vue';
+import SignMessageOverview from './views/SignMessageOverview.vue';
+import SignMessageSuccess from './views/SignMessageSuccess.vue';
+import SignMessageErrorHandler from './views/SignMessageErrorHandler.vue';
 import SimpleSuccess from './views/SimpleSuccess.vue';
 import ErrorHandler from './views/ErrorHandler.vue';
 import CheckoutErrorHandler from './views/CheckoutErrorHandler.vue';
@@ -79,6 +83,11 @@ export function keyguardResponseRouter(
         resolve: `${RequestType.ADD_ACCOUNT}-success`,
         reject: 'default-error',
       };
+    case KeyguardCommand.SIGN_MESSAGE:
+      return {
+        resolve: `${originalRequestType}-success`,
+        reject: `${originalRequestType}-error`,
+      };
     default:
       throw new Error(`router.keyguardResponseRouter not defined for Keyguard command: ${command}`);
   }
@@ -114,7 +123,7 @@ export default new Router({
         },
         {
           path: 'change-account',
-          component: CheckoutSelectAccount,
+          component: ActiveAccountSelector,
           name: `${RequestType.CHECKOUT}-change-account`,
         },
         {
@@ -213,6 +222,33 @@ export default new Router({
       path: `/${RequestType.RENAME}`,
       component: Rename,
       name: RequestType.RENAME,
+    },
+    {
+      path: `/${RequestType.SIGN_MESSAGE}`,
+      component: SignMessage,
+      name: RequestType.SIGN_MESSAGE,
+      children: [
+        {
+          path: 'overview',
+          component: SignMessageOverview,
+          name: `${RequestType.SIGN_MESSAGE}-overview`,
+        },
+        {
+          path: 'change-account',
+          component: ActiveAccountSelector,
+          name: `${RequestType.SIGN_MESSAGE}-change-account`,
+        },
+        {
+          path: 'success',
+          component: SignMessageSuccess,
+          name: `${RequestType.SIGN_MESSAGE}-success`,
+        },
+      ],
+    },
+    {
+      path: `/${RequestType.SIGN_MESSAGE}/error`,
+      component: SignMessageErrorHandler,
+      name: `${RequestType.SIGN_MESSAGE}-error`,
     },
   ],
 });

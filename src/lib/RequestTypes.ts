@@ -3,6 +3,7 @@ import { WalletType } from './WalletInfo';
 export enum RequestType {
     LIST = 'list',
     CHECKOUT = 'checkout',
+    SIGN_MESSAGE = 'sign-message',
     SIGN_TRANSACTION = 'sign-transaction',
     SIGNUP = 'signup',
     LOGIN = 'login',
@@ -94,6 +95,29 @@ export interface ParsedCheckoutRequest {
     data?: Uint8Array;
     flags?: number;
     networkId?: number;
+}
+
+export interface SignMessageRequest {
+    kind?: RequestType.SIGN_MESSAGE;
+    appName: string;
+    walletId?: string;
+    signer?: string;
+    message: string | Uint8Array;
+}
+
+export interface ParsedSignMessageRequest {
+    kind: RequestType.SIGN_MESSAGE;
+    appName: string;
+    walletId?: string;
+    signer?: Nimiq.Address;
+    message: string | Uint8Array;
+}
+
+export interface SignMessageResult {
+    signer: string;
+    signerPubKey: Uint8Array;
+    signature: Uint8Array;
+    data: Uint8Array;
 }
 
 export interface SignupRequest {
@@ -254,7 +278,8 @@ export type RpcRequest = SignTransactionRequest
                        | ChangePassphraseRequest
                        | LogoutRequest
                        | AddAccountRequest
-                       | RenameRequest;
+                       | RenameRequest
+                       | SignMessageRequest;
 export type ParsedRpcRequest = ParsedSignTransactionRequest
                              | ParsedCheckoutRequest
                              | ParsedSignupRequest
@@ -265,14 +290,16 @@ export type ParsedRpcRequest = ParsedSignTransactionRequest
                              | ParsedChangePassphraseRequest
                              | ParsedLogoutRequest
                              | ParsedAddAccountRequest
-                             | ParsedRenameRequest;
+                             | ParsedRenameRequest
+                             | ParsedSignMessageRequest;
 export type RpcResult = SignTransactionResult
                       | SignupResult
                       | LoginResult
                       | SimpleResult
                       | LogoutResult
                       | AddAccountResult
-                      | RenameResult;
+                      | RenameResult
+                      | SignMessageResult;
 
 export class AccountsRequest {
     public static parse(request: RpcRequest, requestType?: RequestType): ParsedRpcRequest | null {
@@ -374,6 +401,15 @@ export class AccountsRequest {
                     walletId: request.walletId,
                     address: request.address,
                 } as ParsedRenameRequest;
+            case RequestType.SIGN_MESSAGE:
+                request = request as SignMessageRequest;
+                return {
+                    kind: RequestType.SIGN_MESSAGE,
+                    appName: request.appName,
+                    walletId: request.walletId,
+                    signer: request.signer ? Nimiq.Address.fromUserFriendlyAddress(request.signer) : undefined,
+                    message: request.message,
+                } as ParsedSignMessageRequest;
             default:
                 return null;
         }
@@ -432,6 +468,14 @@ export class AccountsRequest {
                 return request as AddAccountRequest;
             case RequestType.RENAME:
                 return request as RenameRequest;
+            case RequestType.SIGN_MESSAGE:
+                return {
+                    kind: RequestType.SIGN_MESSAGE,
+                    appName: request.appName,
+                    walletId: request.walletId,
+                    signer: request.signer ? request.signer.toUserFriendlyAddress() : undefined,
+                    message: request.message,
+                } as SignMessageRequest;
             default:
                 return null;
         }

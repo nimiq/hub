@@ -48,6 +48,7 @@ export default class RpcApi {
             RequestType.LOGOUT,
             RequestType.ADD_ACCOUNT,
             RequestType.RENAME,
+            RequestType.SIGN_MESSAGE,
         ]);
         this._registerKeyguardApis([
             KeyguardCommand.SIGN_TRANSACTION,
@@ -59,6 +60,7 @@ export default class RpcApi {
             KeyguardCommand.CHANGE_PASSPHRASE,
             KeyguardCommand.REMOVE,
             KeyguardCommand.DERIVE_ADDRESS,
+            KeyguardCommand.SIGN_MESSAGE,
         ]);
     }
 
