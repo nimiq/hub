@@ -120,6 +120,7 @@
     (function (RequestType) {
         RequestType["LIST"] = "list";
         RequestType["CHECKOUT"] = "checkout";
+        RequestType["SIGN_MESSAGE"] = "sign-message";
         RequestType["SIGN_TRANSACTION"] = "sign-transaction";
         RequestType["SIGNUP"] = "signup";
         RequestType["LOGIN"] = "login";
@@ -176,6 +177,9 @@
         }
         addAccount(request, requestBehavior = this._defaultBehavior) {
             return this._request(requestBehavior, RequestType.ADD_ACCOUNT, [request]);
+        }
+        signMessage(request, requestBehavior = this._defaultBehavior) {
+            return this._request(requestBehavior, RequestType.SIGN_MESSAGE, [request]);
         }
         /**
          * Only accessible in iframe from Nimiq domains.

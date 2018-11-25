@@ -26,6 +26,8 @@ import {
     ChangePassphraseResult,
     AddAccountRequest,
     AddAccountResult,
+    SignMessageRequest,
+    SignMessageResult,
     // ListResult,
     RpcResult,
 } from '../src/lib/RequestTypes';
@@ -123,6 +125,13 @@ export default class AccountsClient {
 
     public addAccount(request: AddAccountRequest, requestBehavior = this._defaultBehavior): Promise<AddAccountResult> {
         return this._request(requestBehavior, RequestType.ADD_ACCOUNT, [request]);
+    }
+
+    public signMessage(
+        request: SignMessageRequest,
+        requestBehavior = this._defaultBehavior,
+    ): Promise<SignMessageResult> {
+        return this._request(requestBehavior, RequestType.SIGN_MESSAGE, [request]);
     }
 
     /**
