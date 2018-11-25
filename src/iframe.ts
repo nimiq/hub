@@ -1,4 +1,5 @@
 import { RpcServer } from '@nimiq/rpc';
+import { BrowserDetection } from '@nimiq/utils';
 import { WalletStore } from '@/lib/WalletStore';
 import { WalletInfoEntry } from '@/lib/WalletInfo';
 
@@ -13,9 +14,11 @@ class IFrameApi {
     }
 
     public static async list(): Promise<WalletInfoEntry[]> {
-        // if (BrowserDetection.isIos() || BrowserDetection.isSafari()) {
-        //     return CookieJar.eat(listFromLegacyStore);
-        // }
+        if (BrowserDetection.isIos() || BrowserDetection.isSafari()) {
+            // case 1: cookie exists
+            return CookieJar.eat();
+            // case 2: no cookie yet, because we have to migrate first?
+        }
 
         return await WalletStore.Instance.list();
     }
