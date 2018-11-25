@@ -24,7 +24,6 @@ import { Component, Emit, Vue } from 'vue-property-decorator';
 import { AccountSelector, WalletSelector } from '@nimiq/vue-components';
 import { AccountInfo } from '../lib/AccountInfo';
 import { WalletInfo, WalletType } from '../lib/WalletInfo';
-import { RequestType } from '../lib/RequestTypes';
 import { State, Mutation } from 'vuex-class';
 
 @Component({components: {AccountSelector, WalletSelector}})
