@@ -3,7 +3,7 @@
         <SmallPage class="rename">
             <PageHeader>Rename your Wallet</PageHeader>
             <PageBody v-if="wallet">
-                <div class="wallet-label" v-if="wallet.type !== 0">
+                <div class="wallet-label" v-if="wallet.type !== 0 /* LEGACY */">
                     <div class="wallet-icon nq-icon" :class="walletIconClass"></div>
                     <LabelInput :value="wallet.label" @changed="onWalletLabelChange" ref="wallet"/>
                 </div>
@@ -38,7 +38,7 @@ import { AccountList, LabelInput, SmallPage, PageHeader, PageBody, PageFooter } 
 import { ParsedRenameRequest, RenameResult } from '../lib/RequestTypes';
 import Success from '../components/Success.vue';
 import { ResponseStatus, State as RpcState } from '@nimiq/rpc';
-import { WalletInfo } from '../lib/WalletInfo';
+import { WalletInfo, WalletType } from '../lib/WalletInfo';
 import { WalletStore } from '@/lib/WalletStore';
 import { Static } from '../lib/StaticStore';
 
@@ -75,9 +75,9 @@ export default class Rename extends Vue {
     private get walletIconClass() {
         if (!this.wallet) return '';
         switch (this.wallet.type) {
-            case 0: return 'keyguard'; // Legacy
-            case 1: return 'keyguard';
-            case 2: return 'ledger';
+            case WalletType.LEGACY: return 'keyguard';
+            case WalletType.BIP39: return 'keyguard';
+            case WalletType.LEDGER: return 'ledger';
         }
     }
 
@@ -96,7 +96,7 @@ export default class Rename extends Vue {
             const el = (this.$refs.accountList as AccountList);
             el.focus(this.request.address);
         } else { // A wallet was selected
-            if (this.wallet!.type !== 0) {
+            if (this.wallet!.type !== WalletType.LEGACY) {
                 const el = (this.$refs.wallet as LabelInput);
                 el.focus();
             }
