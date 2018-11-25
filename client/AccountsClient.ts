@@ -22,6 +22,8 @@ import {
     ChangePassphraseRequest,
     AddAccountRequest,
     AddAccountResult,
+    RenameRequest,
+    RenameResult,
     SimpleResult,
     // ListResult,
     RpcResult,
@@ -120,6 +122,10 @@ export default class AccountsClient {
 
     public addAccount(request: AddAccountRequest, requestBehavior = this._defaultBehavior): Promise<AddAccountResult> {
         return this._request(requestBehavior, RequestType.ADD_ACCOUNT, [request]);
+    }
+
+    public rename(request: RenameRequest, requestBehavior = this._defaultBehavior): Promise<RenameResult> {
+        return this._request(requestBehavior, RequestType.RENAME, [request]);
     }
 
     /**
