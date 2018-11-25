@@ -20,7 +20,10 @@ import staticStore, { Static } from '../lib/StaticStore';
 import { WalletStore } from '@/lib/WalletStore';
 import { AccountInfo } from '@/lib/AccountInfo';
 import { WalletInfo } from '@/lib/WalletInfo';
-import { SignMessageRequest as KSignMessageRequest } from '@nimiq/keyguard-client';
+import {
+    SignMessageRequest as KSignMessageRequest,
+    SignMessageResult as KSignMessageResult,
+} from '@nimiq/keyguard-client';
 import RpcApi from '../lib/RpcApi';
 import Utf8Tools from '../lib/Utf8Tools';
 
@@ -28,7 +31,7 @@ import Utf8Tools from '../lib/Utf8Tools';
 export default class SignMessage extends Vue {
     @Static protected rpcState!: RpcState;
     @Static protected request!: ParsedSignMessageRequest;
-    @State private keyguardResult!: Error;
+    @State private keyguardResult!: KSignMessageResult;
 
     protected sendKeyguardRequest(walletInfo: WalletInfo, accountInfo: AccountInfo) {
         const request: KSignMessageRequest = {
