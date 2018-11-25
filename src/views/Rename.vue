@@ -1,6 +1,6 @@
 <template>
     <div class="container pad-bottom">
-        <SmallPage>
+        <SmallPage class="rename">
             <PageHeader>Rename your Wallet</PageHeader>
             <PageBody v-if="wallet">
                 <div class="wallet-label">
@@ -15,16 +15,27 @@
                     @account-changed="accountChanged"/>
             </PageBody>
             <PageFooter>
-                <button class="nq-button" @click="done">Done</button>
+                <button class="nq-button" @click="storeLabels">Save</button>
             </PageFooter>
+            <transition name='fade-in'>
+                <Success v-if="labelsStored"
+                    text="Your labels[br]were successfully saved"
+                    :appName="request.appName"
+                    @continue="done" />
+            </transition>
         </SmallPage>
+        <button class="global-close nq-button-s" :class="{'hidden': labelsStored}" @click="close">
+            <span class="nq-icon arrow-left"></span>
+            Cancel Renaming
+        </button>
     </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Vue, Emit } from 'vue-property-decorator';
 import { AccountList, LabelInput, SmallPage, PageHeader, PageBody, PageFooter } from '@nimiq/vue-components';
 import { ParsedRenameRequest, RenameResult } from '../lib/RequestTypes';
+import Success from '../components/Success.vue';
 import { ResponseStatus, State as RpcState } from '@nimiq/rpc';
 import { WalletInfo } from '../lib/WalletInfo';
 import { WalletStore } from '@/lib/WalletStore';
@@ -33,9 +44,10 @@ import staticStore, { Static } from '../lib/StaticStore';
 /*
     In Case some sort auf Authentication with the wallet is desireable, there are 2 options:
         1.  is to have the user enter the password at the very beginning. This would require the Accountsmanager to
-            first redirect to the Keyguard. after eturning and validateing (Sign Message?) this Component would come into view.
-        2.  is to have the user enter his Password as confirmation of the changes. That would move the done function into a
-            RenameSuccess Component where the store and return happens.
+            first redirect to the Keyguard. After returning and validating (Sign Message?) this Component would come
+            into view.
+        2.  is to have the user enter his Password as confirmation of the changes. That would move the storeLabels
+            function into a RenameSuccess Component where the store and return happens.
 */
 
 @Component({components: {
@@ -45,12 +57,14 @@ import staticStore, { Static } from '../lib/StaticStore';
     PageFooter,
     AccountList,
     LabelInput,
+    Success,
 }})
 export default class Rename extends Vue {
     @Static private request!: ParsedRenameRequest;
     @Static private rpcState!: RpcState;
 
     private wallet: WalletInfo | null = null;
+    private labelsStored: boolean = false;
 
     private get accounts() {
         if (!this.wallet) return [];
@@ -86,28 +100,25 @@ export default class Rename extends Vue {
     }
 
     private accountChanged(address: string, label: string) {
-        if (!this.wallet) throw new Error('Wallet ID not found');
-
-        const addressInfo = this.wallet.accounts.get(address);
+        const addressInfo = this.wallet!.accounts.get(address);
         if (!addressInfo) throw new Error('UNEXPECTED: Address that was changed does not exist');
         addressInfo.label = label;
-        this.wallet.accounts.set(address, addressInfo);
+        this.wallet!.accounts.set(address, addressInfo);
     }
 
     private onWalletLabelChange(label: string) {
-        if (!this.wallet) throw new Error('Wallet ID not found');
+        this.wallet!.label = label;
+    }
 
-        this.wallet.label = label;
+    private storeLabels() {
+        WalletStore.Instance.put(this.wallet!);
+        this.labelsStored = true;
     }
 
     private done() {
-        if (!this.wallet) throw new Error('Wallet ID not found');
-
-        WalletStore.Instance.put(this.wallet);
-
         const result = {
-            walletId: this.wallet.id,
-            label: this.wallet.label,
+            walletId: this.wallet!.id,
+            label: this.wallet!.label,
             accounts: Array.from(this.accounts.values()).map((addressInfo) => ({
                 address: addressInfo.userFriendlyAddress,
                 label: addressInfo.label,
@@ -116,5 +127,57 @@ export default class Rename extends Vue {
 
         this.rpcState.reply(ResponseStatus.OK, result);
     }
+
+    @Emit()
+    private close() {
+        this.rpcState.reply(ResponseStatus.ERROR, new Error('CANCEL'));
+    }
 }
 </script>
+
+<style scoped>
+    .rename {
+        position: relative;
+    }
+    .success {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        height: calc(100% - 2rem);
+        width: calc(100% - 2rem);
+        overflow: hidden;
+        white-space: nowrap;
+    }
+
+    .fade-in-enter-active {
+        animation: color-shift .5s;
+    }
+
+    @keyframes color-shift {
+        0% {
+            background: var(--nimiq-blue);
+            background-image: var(--nimiq-blue-bg);
+            max-height: 8rem;
+            max-width: 8rem;
+            border-radius: 4rem;
+            bottom: 6rem;
+            left: calc(50% - 4rem);
+        }
+
+        25% {
+            max-width: calc(100% - 2rem);
+            left: 0;
+        }
+
+        50% {
+            bottom: 0;
+        }
+
+        100% {
+            background: var(--nimiq-green);
+            background-image: var(--nimiq-green-bg);
+            max-height: calc(100% - 2rem);
+            border-radius: 0.5rem;
+        }
+    }
+</style>
