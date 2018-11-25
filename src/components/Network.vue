@@ -14,7 +14,7 @@ import {
 } from '@nimiq/keyguard-client';
 import { NetworkClient, PlainTransaction } from '@nimiq/network-client';
 
-@Component({})
+@Component
 export default class Network extends Vue {
     @Prop(Boolean) private visible?: boolean;
     @Prop(Boolean) private alwaysVisible?: boolean;

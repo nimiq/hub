@@ -23,17 +23,16 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { PageHeader, PageBody, Account, LabelInput, SmallPage } from '@nimiq/vue-components';
+import { PageHeader, PageBody, Account, SmallPage } from '@nimiq/vue-components';
 import { AccountInfo } from '../lib/AccountInfo';
-import { WalletInfo, WalletType } from '../lib/WalletInfo';
-import { State, Getter } from 'vuex-class';
+import { State } from 'vuex-class';
 import { WalletStore } from '../lib/WalletStore';
-import { DeriveAddressResult, DeriveAddressRequest } from '@nimiq/keyguard-client';
+import { DeriveAddressResult } from '@nimiq/keyguard-client';
 import { ResponseStatus, State as RpcState } from '@nimiq/rpc';
 import { AddAccountRequest, AddAccountResult } from '@/lib/RequestTypes';
 import { Static } from '../lib/StaticStore';
 
-@Component({components: {PageHeader, PageBody, Account, LabelInput, SmallPage}})
+@Component({components: {PageHeader, PageBody, Account, SmallPage}})
 export default class AddAccountSuccess extends Vue {
     @Static private rpcState!: RpcState;
     @Static private request!: AddAccountRequest;

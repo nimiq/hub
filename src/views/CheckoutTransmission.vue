@@ -14,9 +14,9 @@
 </template>
 
 <script lang="ts">
-import { Component, Emit, Vue } from 'vue-property-decorator';
+import { Component, Vue } from 'vue-property-decorator';
 import Network from '@/components/Network.vue';
-import { SignTransactionResult, ParsedCheckoutRequest } from '@/lib/RequestTypes';
+import { SignTransactionResult } from '@/lib/RequestTypes';
 import CheckoutDetails from '../components/CheckoutDetails.vue';
 import { State as RpcState, ResponseStatus } from '@nimiq/rpc';
 import {
@@ -25,13 +25,13 @@ import {
 } from '@nimiq/keyguard-client';
 import { State } from 'vuex-class';
 import { Static } from '../lib/StaticStore';
-import { AccountInfo } from '../lib/AccountInfo';
 import Success from '../components/Success.vue';
 import { PageFooter } from '@nimiq/vue-components';
 
 @Component({components: {PageFooter, Network, CheckoutDetails, Success}})
 export default class CheckoutTransmission extends Vue {
     @Static private rpcState!: RpcState;
+    // The stored keyguardRequest does not have Uint8Array, only regular arrays
     @Static private keyguardRequest!: KSignTransactionRequest;
     @State private keyguardResult!: KSignTransactionResult;
 

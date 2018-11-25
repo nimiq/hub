@@ -15,6 +15,10 @@ export enum RequestType {
     RENAME = 'rename',
 }
 
+export interface SimpleResult {
+    success: true;
+}
+
 export interface SignTransactionRequest {
     kind?: RequestType.SIGN_TRANSACTION;
     appName: string;
@@ -144,10 +148,6 @@ export interface ParsedExportWordsRequest {
     walletId: string;
 }
 
-export interface ExportWordsResult {
-    success: boolean;
-}
-
 export interface ExportFileRequest {
     kind?: RequestType.EXPORT_FILE;
     appName: string;
@@ -158,10 +158,6 @@ export interface ParsedExportFileRequest {
     kind: RequestType.EXPORT_FILE;
     appName: string;
     walletId: string;
-}
-
-export interface ExportFileResult {
-    success: boolean;
 }
 
 export interface ExportRequest {
@@ -176,10 +172,6 @@ export interface ParsedExportRequest {
     walletId: string;
 }
 
-export interface ExportResult {
-    success: boolean;
-}
-
 export interface ChangePassphraseRequest {
     kind?: RequestType.CHANGE_PASSPHRASE;
     appName: string;
@@ -190,10 +182,6 @@ export interface ParsedChangePassphraseRequest {
     kind: RequestType.CHANGE_PASSPHRASE;
     appName: string;
     walletId: string;
-}
-
-export interface ChangePassphraseResult {
-    success: boolean;
 }
 
 export interface LogoutRequest {
@@ -281,10 +269,7 @@ export type ParsedRpcRequest = ParsedSignTransactionRequest
 export type RpcResult = SignTransactionResult
                       | SignupResult
                       | LoginResult
-                      | ExportWordsResult
-                      | ExportFileResult
-                      | ExportResult
-                      | ChangePassphraseResult
+                      | SimpleResult
                       | LogoutResult
                       | AddAccountResult
                       | RenameResult;

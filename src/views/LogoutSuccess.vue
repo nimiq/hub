@@ -28,9 +28,6 @@ export default class LogoutSuccess extends Vue {
     @State private keyguardResult!: SimpleResult;
 
     public mounted() {
-        if (this.keyguardResult.success !== true) {
-            this.rpcState.reply(ResponseStatus.ERROR, this.keyguardResult);
-        }
         WalletStore.Instance.remove(this.request.walletId);
     }
 
