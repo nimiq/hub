@@ -37,6 +37,12 @@ export default class App extends Vue {
 
     public mounted() {
         this.checkLoaded();
+        // exist accounts?
+        // yes => done
+        // no =>
+        // load keyguard iframe
+        // legacy-list: list(true)
+        // 
     }
 
     @Watch('hasRpcState')
