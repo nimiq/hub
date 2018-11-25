@@ -4,7 +4,6 @@
 import { Component, Vue } from 'vue-property-decorator';
 import { ParsedSignTransactionRequest } from '../lib/RequestTypes';
 import { SignTransactionRequest as KSignTransactionRequest } from '@nimiq/keyguard-client';
-import RpcApi from '../lib/RpcApi';
 import { WalletStore } from '@/lib/WalletStore';
 import staticStore, { Static } from '../lib/StaticStore';
 
@@ -54,7 +53,7 @@ export default class SignTransaction extends Vue {
         });
         staticStore.keyguardRequest = storedRequest;
 
-        const client = RpcApi.createKeyguardClient(this.$store, staticStore);
+        const client = this.$rpc.createKeyguardClient();
         client.signTransaction(request).catch(console.error); // TODO: proper error handling
     }
 }

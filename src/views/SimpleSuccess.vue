@@ -14,17 +14,15 @@
 import { Component, Emit, Vue } from 'vue-property-decorator';
 import { SmallPage } from '@nimiq/vue-components';
 import { State } from 'vuex-class';
-import { ResponseStatus, State as RpcState } from '@nimiq/rpc';
-import { RpcRequest } from '../lib/RequestTypes';
-import { RpcResult } from '@nimiq/keyguard-client';
-import staticStore, { Static } from '@/lib/StaticStore';
+import { RpcRequest, SimpleResult } from '../lib/RequestTypes';
+import { SimpleResult as KSimpleResult } from '@nimiq/keyguard-client';
+import { Static } from '@/lib/StaticStore';
 import Success from '../components/Success.vue';
 
 @Component({components: {SmallPage, Success}})
 export default class SimpleSuccess extends Vue {
     @Static private request!: RpcRequest;
-    @Static private rpcState!: RpcState;
-    @State private keyguardResult!: RpcResult;
+    @State private keyguardResult!: KSimpleResult;
 
     get text() {
         switch (this.$route.name) {
@@ -43,7 +41,7 @@ export default class SimpleSuccess extends Vue {
 
     @Emit()
     private done() {
-        this.rpcState.reply(ResponseStatus.OK, this.keyguardResult);
+        this.$rpc.resolve(this.keyguardResult as SimpleResult);
     }
 }
 </script>

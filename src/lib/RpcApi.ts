@@ -2,20 +2,37 @@ import { RpcServer, State as RpcState, ResponseStatus } from '@nimiq/rpc';
 import { RootState } from '@/store';
 import { Store } from 'vuex';
 import Router from 'vue-router';
-import { AccountsRequest, RequestType, RpcRequest } from '@/lib/RequestTypes';
+import { AccountsRequest, RequestType, RpcRequest, RpcResult } from '@/lib/RequestTypes';
 import { KeyguardCommand, RedirectRequestBehavior, KeyguardClient } from '@nimiq/keyguard-client';
 import { keyguardResponseRouter } from '@/router';
 import { StaticStore } from '@/lib/StaticStore';
 
 export default class RpcApi {
 
-    public static createKeyguardClient(store: Store<RootState>, staticStore: StaticStore, endpoint?: string) {
-        const behavior = new RedirectRequestBehavior(undefined, RpcApi.exportState(store, staticStore));
+    public static createKeyguardClient(endpoint?: string) {
+        const behavior = new RedirectRequestBehavior(undefined, RpcApi.exportState());
         const client = new KeyguardClient(endpoint, behavior);
         return client;
     }
 
-    private static exportState(store: Store<RootState>, staticStore: StaticStore): any {
+    public static resolve(result: RpcResult) {
+        RpcApi.reply(ResponseStatus.OK, result);
+    }
+
+    public static reject(error: Error) {
+        RpcApi.reply(ResponseStatus.ERROR, error);
+    }
+
+    private static reply(status: ResponseStatus, result: RpcResult | Error) {
+        // TODO: Update cookies for iOS
+
+        // TODO: Check for originalRequestRoute in StaticStore and route there
+
+        StaticStore.Instance.rpcState!.reply(status, result);
+    }
+
+    private static exportState(): any {
+        const staticStore = StaticStore.Instance;
         return {
             rpcState: staticStore.rpcState ? staticStore.rpcState.toJSON() : undefined,
             request: staticStore.request ? AccountsRequest.raw(staticStore.request) : undefined,

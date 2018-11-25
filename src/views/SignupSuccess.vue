@@ -30,13 +30,10 @@ import { WalletInfo, WalletType } from '../lib/WalletInfo';
 import { State, Getter } from 'vuex-class';
 import { WalletStore } from '../lib/WalletStore';
 import { CreateResult } from '@nimiq/keyguard-client';
-import { ResponseStatus, State as RpcState } from '@nimiq/rpc';
 import { SignupResult } from '@/lib/RequestTypes';
-import { Static } from '../lib/StaticStore';
 
 @Component({components: {PageHeader, PageBody, Account, LabelInput, SmallPage}})
 export default class SignupSuccess extends Vue {
-    @Static private rpcState!: RpcState;
     @State private keyguardResult!: CreateResult;
     @State private activeAccountPath!: string;
     @Getter private hasWallets!: boolean;
@@ -77,7 +74,7 @@ export default class SignupSuccess extends Vue {
             },
         };
 
-        this.rpcState.reply(ResponseStatus.OK, result);
+        this.$rpc.resolve(result);
     }
 
     private async saveResult(walletLabel: string, accountLabel: string) {
