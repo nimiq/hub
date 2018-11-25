@@ -24,6 +24,7 @@
                     @continue="done" />
             </transition>
         </SmallPage>
+
         <button class="global-close nq-button-s" :class="{'hidden': labelsStored}" @click="close">
             <span class="nq-icon arrow-left"></span>
             Cancel Renaming
@@ -39,15 +40,15 @@ import Success from '../components/Success.vue';
 import { ResponseStatus, State as RpcState } from '@nimiq/rpc';
 import { WalletInfo } from '../lib/WalletInfo';
 import { WalletStore } from '@/lib/WalletStore';
-import staticStore, { Static } from '../lib/StaticStore';
+import { Static } from '../lib/StaticStore';
 
 /*
     In Case some sort auf Authentication with the wallet is desireable, there are 2 options:
-        1.  is to have the user enter the password at the very beginning. This would require the Accountsmanager to
-            first redirect to the Keyguard. After returning and validating (Sign Message?) this Component would come
+        1.  is to have the user enter the password at the very beginning. This would require the AccountsManager to
+            first redirect to the Keyguard. After returning and validating (sign message) this component would come
             into view.
-        2.  is to have the user enter his Password as confirmation of the changes. That would move the storeLabels
-            function into a RenameSuccess Component where the store and return happens.
+        2.  is to have the user enter his Password as confirmation of the changes (sign message and validate). That
+            would move the storeLabels function into a RenameSuccess Component where the store and return happens.
 */
 
 @Component({components: {
@@ -80,20 +81,21 @@ export default class Rename extends Vue {
         }
     }
 
-    public async mounted() {
+    private async mounted() {
         const wallet = await WalletStore.Instance.get(this.request.walletId);
         if (!wallet) throw new Error('Wallet ID not found');
 
         this.wallet = wallet;
-        // wait for the next tick to update the dom, after that focus the correct label
+        // Wait for the next tick to update the DOM, then focus the correct label
         Vue.nextTick(this.focusElement);
 
     }
-    public focusElement() {
-        if (this.request.address) { // account with address this.request.address was selected
+
+    private focusElement() {
+        if (this.request.address) { // Account with address this.request.address was selected
             const el = (this.$refs.accountList as AccountList);
             el.focus(this.request.address);
-        } else { // wallet was selected
+        } else { // A wallet was selected
             const el = (this.$refs.wallet as LabelInput);
             el.focus();
         }
