@@ -1,5 +1,5 @@
 <template>
-    <div class="container pad-bottom">
+    <div class="container">
         <SmallPage class="rename">
             <PageHeader>Rename your Wallet</PageHeader>
             <PageBody v-if="wallet">
@@ -140,6 +140,18 @@ export default class Rename extends Vue {
 <style scoped>
     .rename {
         position: relative;
+    }
+
+    .page-body {
+        padding: 0;
+    }
+
+    .page-footer {
+        padding: 1rem;
+    }
+
+    .wallet-icon {
+        margin-right: 1rem;
     }
 
     .wallet-label {
