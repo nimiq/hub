@@ -151,6 +151,8 @@ export default class Rename extends Vue {
     }
 
     .wallet-icon {
+        width: 3rem;
+        height: 3rem;
         margin-right: 1rem;
     }
 
