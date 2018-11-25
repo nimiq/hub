@@ -1,15 +1,14 @@
 <template></template>
 
 <script lang="ts">
-import { Component, Emit, Vue } from 'vue-property-decorator';
+import { Component, Vue } from 'vue-property-decorator';
 import { ParsedLogoutRequest } from '../lib/RequestTypes';
-import { State } from 'vuex-class';
 import RpcApi from '../lib/RpcApi';
 import { SimpleRequest } from '@nimiq/keyguard-client';
 import { WalletStore } from '@/lib/WalletStore';
 import staticStore, { Static } from '../lib/StaticStore';
 
-@Component({})
+@Component
 export default class Logout extends Vue {
     @Static private request!: ParsedLogoutRequest;
 

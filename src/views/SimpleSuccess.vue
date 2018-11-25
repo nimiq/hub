@@ -13,7 +13,6 @@
 <script lang="ts">
 import { Component, Emit, Vue } from 'vue-property-decorator';
 import { SmallPage } from '@nimiq/vue-components';
-import { Route } from 'vue-router';
 import { State } from 'vuex-class';
 import { ResponseStatus, State as RpcState } from '@nimiq/rpc';
 import { RpcRequest } from '../lib/RequestTypes';

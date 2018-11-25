@@ -1,15 +1,14 @@
 <template></template>
 
 <script lang="ts">
-import { Component, Emit, Vue } from 'vue-property-decorator';
+import { Component, Vue } from 'vue-property-decorator';
 import { ParsedSignTransactionRequest } from '../lib/RequestTypes';
-import { State } from 'vuex-class';
+import { SignTransactionRequest as KSignTransactionRequest } from '@nimiq/keyguard-client';
 import RpcApi from '../lib/RpcApi';
-import { SignTransactionRequest } from '@nimiq/keyguard-client';
 import { WalletStore } from '@/lib/WalletStore';
 import staticStore, { Static } from '../lib/StaticStore';
 
-@Component({})
+@Component
 export default class SignTransaction extends Vue {
     @Static private request!: ParsedSignTransactionRequest;
 
@@ -26,7 +25,7 @@ export default class SignTransaction extends Vue {
         const account = wallet.accounts.get(this.request.sender.toUserFriendlyAddress());
         if (!account) throw new Error('Sender address not found!'); // TODO Search contracts when address not found
 
-        const request: SignTransactionRequest = {
+        const request: KSignTransactionRequest = {
             layout: 'standard',
             appName: this.request.appName,
 
