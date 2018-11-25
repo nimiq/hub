@@ -12,6 +12,7 @@ export enum RequestType {
     CHANGE_PASSPHRASE = 'change-passphrase',
     LOGOUT = 'logout',
     ADD_ACCOUNT = 'add-account',
+    RENAME = 'rename',
 }
 
 export interface SignTransactionRequest {
@@ -231,6 +232,29 @@ export interface AddAccountResult {
     };
 }
 
+export interface RenameRequest {
+    kind?: RequestType.RENAME;
+    appName: string;
+    walletId: string;
+    address?: string;
+}
+
+export interface ParsedRenameRequest {
+    kind: RequestType.RENAME;
+    appName: string;
+    walletId: string;
+    address?: string;
+}
+
+export interface RenameResult {
+    walletId: string;
+    label: string;
+    accounts: [{
+        address: string;
+        label: string;
+    }];
+}
+
 // Discriminated Unions
 export type RpcRequest = SignTransactionRequest
                        | CheckoutRequest
@@ -241,7 +265,8 @@ export type RpcRequest = SignTransactionRequest
                        | ExportRequest
                        | ChangePassphraseRequest
                        | LogoutRequest
-                       | AddAccountRequest;
+                       | AddAccountRequest
+                       | RenameRequest;
 export type ParsedRpcRequest = ParsedSignTransactionRequest
                              | ParsedCheckoutRequest
                              | ParsedSignupRequest
@@ -251,7 +276,8 @@ export type ParsedRpcRequest = ParsedSignTransactionRequest
                              | ParsedExportRequest
                              | ParsedChangePassphraseRequest
                              | ParsedLogoutRequest
-                             | ParsedAddAccountRequest;
+                             | ParsedAddAccountRequest
+                             | ParsedRenameRequest;
 export type RpcResult = SignTransactionResult
                       | SignupResult
                       | LoginResult
@@ -260,7 +286,8 @@ export type RpcResult = SignTransactionResult
                       | ExportResult
                       | ChangePassphraseResult
                       | LogoutResult
-                      | AddAccountResult;
+                      | AddAccountResult
+                      | RenameResult;
 
 export class AccountsRequest {
     public static parse(request: RpcRequest, requestType?: RequestType): ParsedRpcRequest | null {
@@ -354,6 +381,14 @@ export class AccountsRequest {
                     appName: request.appName,
                     walletId: request.walletId,
                 } as ParsedAddAccountRequest;
+            case RequestType.RENAME:
+                request = request as RenameRequest;
+                return {
+                    kind: RequestType.RENAME,
+                    appName: request.appName,
+                    walletId: request.walletId,
+                    address: request.address,
+                } as ParsedRenameRequest;
             default:
                 return null;
         }
@@ -410,6 +445,8 @@ export class AccountsRequest {
                 return request as LogoutRequest;
             case RequestType.ADD_ACCOUNT:
                 return request as AddAccountRequest;
+            case RequestType.RENAME:
+                return request as RenameRequest;
             default:
                 return null;
         }

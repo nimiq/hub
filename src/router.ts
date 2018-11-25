@@ -18,6 +18,7 @@ import Logout from './views/Logout.vue';
 import LogoutSuccess from './views/LogoutSuccess.vue';
 import AddAccount from './views/AddAccount.vue';
 import AddAccountSuccess from './views/AddAccountSuccess.vue';
+import Rename from './views/Rename.vue';
 import SimpleSuccess from './views/SimpleSuccess.vue';
 import ErrorHandler from './views/ErrorHandler.vue';
 import CheckoutErrorHandler from './views/CheckoutErrorHandler.vue';
@@ -207,6 +208,11 @@ export default new Router({
       path: `/${RequestType.ADD_ACCOUNT}/success`,
       component: AddAccountSuccess,
       name: `${RequestType.ADD_ACCOUNT}-success`,
+    },
+    {
+      path: `/${RequestType.RENAME}`,
+      component: Rename,
+      name: RequestType.RENAME,
     },
   ],
 });
