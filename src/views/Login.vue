@@ -1,14 +1,13 @@
 <template></template>
 
 <script lang="ts">
-import { Component, Emit, Vue } from 'vue-property-decorator';
+import { Component, Vue } from 'vue-property-decorator';
 import { ParsedLoginRequest } from '../lib/RequestTypes';
-import { State } from 'vuex-class';
 import RpcApi from '../lib/RpcApi';
 import { ImportRequest } from '@nimiq/keyguard-client';
 import staticStore, { Static } from '../lib/StaticStore';
 
-@Component({})
+@Component
 export default class Login extends Vue {
     @Static private request!: ParsedLoginRequest;
 
