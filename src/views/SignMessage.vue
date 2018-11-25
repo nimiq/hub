@@ -15,7 +15,6 @@ import { Component, Emit, Vue } from 'vue-property-decorator';
 import { State } from 'vuex-class';
 import { SmallPage } from '@nimiq/vue-components';
 import { RequestType, ParsedSignMessageRequest } from '../lib/RequestTypes';
-import { State as RpcState, ResponseStatus } from '@nimiq/rpc';
 import staticStore, { Static } from '../lib/StaticStore';
 import { WalletStore } from '@/lib/WalletStore';
 import { AccountInfo } from '@/lib/AccountInfo';
@@ -24,12 +23,10 @@ import {
     SignMessageRequest as KSignMessageRequest,
     SignMessageResult as KSignMessageResult,
 } from '@nimiq/keyguard-client';
-import RpcApi from '../lib/RpcApi';
 import Utf8Tools from '../lib/Utf8Tools';
 
 @Component({components: {SmallPage}})
 export default class SignMessage extends Vue {
-    @Static protected rpcState!: RpcState;
     @Static protected request!: ParsedSignMessageRequest;
     @State private keyguardResult!: KSignMessageResult;
 
@@ -52,7 +49,7 @@ export default class SignMessage extends Vue {
         });
         staticStore.keyguardRequest = storedRequest;
 
-        const client = RpcApi.createKeyguardClient(this.$store, staticStore);
+        const client = this.$rpc.createKeyguardClient();
         client.signMessage(request).catch(console.error); // TODO: proper error handling
     }
 
@@ -75,12 +72,12 @@ export default class SignMessage extends Vue {
                 // or would it enable malicous sites to query for stored walletIds and addresses?
                 // We can also quietly ignore any unavailable pre-set walletId and address and give
                 // the user the option to chose as if it was not pre-set.
-                this.rpcState.reply(ResponseStatus.ERROR, new Error('WalletId not found'));
+                this.$rpc.reject(new Error('WalletId not found'));
                 return;
             }
             accountInfo = walletInfo.accounts.get(this.request.signer.toUserFriendlyAddress()) || null;
             if (!accountInfo) {
-                this.rpcState.reply(ResponseStatus.ERROR, new Error('Signer account not found'));
+                this.$rpc.reject(new Error('Signer account not found'));
                 return;
             }
         }
@@ -103,7 +100,7 @@ export default class SignMessage extends Vue {
 
     @Emit()
     private close() {
-        this.rpcState.reply(ResponseStatus.ERROR, new Error('CANCEL'));
+        this.$rpc.reject(new Error('CANCEL'));
     }
 }
 </script>

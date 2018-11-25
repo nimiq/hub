@@ -37,7 +37,6 @@ import { Component, Vue, Emit } from 'vue-property-decorator';
 import { AccountList, LabelInput, SmallPage, PageHeader, PageBody, PageFooter } from '@nimiq/vue-components';
 import { ParsedRenameRequest, RenameResult } from '../lib/RequestTypes';
 import Success from '../components/Success.vue';
-import { ResponseStatus, State as RpcState } from '@nimiq/rpc';
 import { WalletInfo, WalletType } from '../lib/WalletInfo';
 import { WalletStore } from '@/lib/WalletStore';
 import { Static } from '../lib/StaticStore';
@@ -62,7 +61,6 @@ import { Static } from '../lib/StaticStore';
 }})
 export default class Rename extends Vue {
     @Static private request!: ParsedRenameRequest;
-    @Static private rpcState!: RpcState;
 
     private wallet: WalletInfo | null = null;
     private labelsStored: boolean = false;
@@ -129,12 +127,12 @@ export default class Rename extends Vue {
             })),
         } as RenameResult;
 
-        this.rpcState.reply(ResponseStatus.OK, result);
+        this.$rpc.resolve(result);
     }
 
     @Emit()
     private close() {
-        this.rpcState.reply(ResponseStatus.ERROR, new Error('CANCEL'));
+        this.$rpc.reject(new Error('CANCEL'));
     }
 }
 </script>

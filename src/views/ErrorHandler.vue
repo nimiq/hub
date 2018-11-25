@@ -12,7 +12,7 @@ export default class ErrorHandler extends Vue {
         if (this.keyguardResult instanceof Error) {
             if (!this.requestSpecificErrors()) {
                 // TODO proper Error Handling
-                console.log(this.keyguardResult);
+                // console.log(this.keyguardResult);
                 this.$rpc.reject(this.keyguardResult);
             }
         }

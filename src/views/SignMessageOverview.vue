@@ -23,15 +23,14 @@
 <script lang="ts">
 import { Component, Emit } from 'vue-property-decorator';
 import { Getter } from 'vuex-class';
-import { Amount, Account, PageHeader, PageBody, PageFooter } from '@nimiq/vue-components';
-import { ResponseStatus } from '@nimiq/rpc';
+import { Account, PageHeader, PageBody, PageFooter } from '@nimiq/vue-components';
 import { AccountInfo } from '../lib/AccountInfo';
 import { WalletInfo } from '../lib/WalletInfo';
 import { RequestType } from '../lib/RequestTypes';
 import Utf8Tools from '../lib/Utf8Tools';
 import SignMessage from '@/views/SignMessage.vue';
 
-@Component({components: {Amount, Account, PageHeader, PageBody, PageFooter}})
+@Component({components: {Account, PageHeader, PageBody, PageFooter}})
 export default class SignMessageOverview extends SignMessage {
     @Getter private activeWallet!: WalletInfo | undefined;
     @Getter private activeAccount!: AccountInfo | undefined;

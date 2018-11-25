@@ -8,9 +8,7 @@
 
 <script lang="ts">
 import { Component, Emit, Vue } from 'vue-property-decorator';
-import { SmallPage } from '@nimiq/vue-components';
 import { State } from 'vuex-class';
-import { ResponseStatus, State as RpcState } from '@nimiq/rpc';
 import { SignMessageResult, SignMessageRequest } from '../lib/RequestTypes';
 import {
     SignMessageRequest as KSignMessageRequest,
@@ -18,12 +16,10 @@ import {
 } from '@nimiq/keyguard-client';
 import { Static } from '@/lib/StaticStore';
 import Success from '../components/Success.vue';
-import Utf8Tools from '../lib/Utf8Tools';
 
-@Component({components: {SmallPage, Success}})
+@Component({components: {Success}})
 export default class SimpleSuccess extends Vue {
     @Static private request!: SignMessageRequest;
-    @Static private rpcState!: RpcState;
     // The stored keyguardRequest does not have Uint8Array, only regular arrays
     @Static private keyguardRequest!: KSignMessageRequest;
     @State private keyguardResult!: KSignMessageResult;
@@ -37,7 +33,7 @@ export default class SimpleSuccess extends Vue {
             data: this.keyguardResult.data,
         };
 
-        this.rpcState.reply(ResponseStatus.OK, result);
+        this.$rpc.resolve(result);
     }
 }
 </script>
