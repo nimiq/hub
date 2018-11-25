@@ -3,7 +3,7 @@
         <SmallPage class="rename">
             <PageHeader>Rename your Wallet</PageHeader>
             <PageBody v-if="wallet">
-                <div class="wallet-label">
+                <div class="wallet-label" v-if="wallet.type !== 0">
                     <div class="wallet-icon nq-icon" :class="walletIconClass"></div>
                     <LabelInput :value="wallet.label" @changed="onWalletLabelChange" ref="wallet"/>
                 </div>
@@ -96,8 +96,10 @@ export default class Rename extends Vue {
             const el = (this.$refs.accountList as AccountList);
             el.focus(this.request.address);
         } else { // A wallet was selected
-            const el = (this.$refs.wallet as LabelInput);
-            el.focus();
+            if (this.wallet!.type !== 0) {
+                const el = (this.$refs.wallet as LabelInput);
+                el.focus();
+            }
         }
     }
 
