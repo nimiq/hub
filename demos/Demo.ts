@@ -12,7 +12,9 @@ import {
     ExportWordsRequest, ExportWordsResult,
     ExportRequest,
     ChangePassphraseRequest,
-    ExportFileRequest, ExportFileResult, AddAccountRequest,
+    ExportFileRequest, ExportFileResult,
+    AddAccountRequest,
+    SignMessageRequest,
 } from '../src/lib/RequestTypes';
 import { WalletStore } from '../src/lib/WalletStore';
 import { WalletInfoEntry } from '../src/lib/WalletInfo';
@@ -160,6 +162,59 @@ class Demo {
                 console.error('Keyguard error', e);
                 document.querySelector('#result').textContent = `Error: ${e.message || e}`;
             }
+        }
+
+        document.querySelector('button#sign-message').addEventListener('click', async () => {
+            const request = await generateSignMessageRequest(demo);
+            try {
+                const result = await client.signMessage(request);
+                console.log('Keyguard result', result);
+                document.querySelector('#result').textContent = 'MSG signed';
+            } catch (e) {
+                console.error('Keyguard error', e);
+                document.querySelector('#result').textContent = `Error: ${e.message || e}`;
+            }
+        });
+
+        async function generateSignMessageRequest(demo: Demo): Promise<SignMessageRequest> {
+            const message = (document.querySelector('#message') as HTMLInputElement).value || undefined;
+
+            return {
+                appName: 'Accounts Demos',
+                // signer: 'NQ63 U7XG 1YYE D6FA SXGG 3F5H X403 NBKN JLDU',
+                message,
+            };
+        }
+
+        document.querySelector('button#sign-message-with-account').addEventListener('click', async () => {
+            const request = await generateSignMessageWithAccountRequest(demo);
+            try {
+                const result = await client.signMessage(request);
+                console.log('Keyguard result', result);
+                document.querySelector('#result').textContent = 'MSG signed';
+            } catch (e) {
+                console.error('Keyguard error', e);
+                document.querySelector('#result').textContent = `Error: ${e.message || e}`;
+            }
+        });
+
+        async function generateSignMessageWithAccountRequest(demo: Demo): Promise<SignMessageRequest> {
+            const message = (document.querySelector('#message') as HTMLInputElement).value || undefined;
+
+            const $radio = document.querySelector('input[type="radio"]:checked');
+            if (!$radio) {
+                alert('You have no account to send a tx from, create an account first (signup)');
+                throw new Error('No account found');
+            }
+            const signer = $radio.getAttribute('data-address');
+            const walletId = $radio.getAttribute('data-wallet-id');
+
+            return {
+                appName: 'Accounts Demos',
+                walletId,
+                signer,
+                message,
+            };
         }
 
         document.querySelector('button#list-keyguard-keys').addEventListener('click', () => demo.listKeyguard());
