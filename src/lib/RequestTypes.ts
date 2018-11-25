@@ -112,7 +112,7 @@ export interface SignMessageResult {
     signer: string;
     signerPubKey: Uint8Array;
     signature: Uint8Array;
-    message: string | Uint8Array;
+    data: Uint8Array;
 }
 
 export interface SignupRequest {

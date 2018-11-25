@@ -672,10 +672,10 @@
   resolved "https://registry.yarnpkg.com/@nimiq/core-types/-/core-types-1.0.0.tgz#a675cf2c151d9146e79934035e999bbd08a59d42"
   integrity sha512-OUDYAsEjuCmZewMZz8otPE6GMtvfxqbwtsa6oQ5okzRRQqNXkKTkR1/wM+DY1RcyiF141Fd9J7TnU4sJwzH94w==
 
-"@nimiq/keyguard-client@^0.0.22":
-  version "0.0.22"
-  resolved "https://registry.yarnpkg.com/@nimiq/keyguard-client/-/keyguard-client-0.0.22.tgz#bf0f4c4aacc65a871a3ffb41a5f4139741cb41d7"
-  integrity sha512-Q/fkFrmK+p5Uc8G7ncOzcgX9IFRwekXoeCb7Aka0kTm3jXMHWO8ox/vBirYazdNWwcoZgXJDD9KvEe5AuZvwIQ==
+"@nimiq/keyguard-client@^0.0.23":
+  version "0.0.23"
+  resolved "https://registry.yarnpkg.com/@nimiq/keyguard-client/-/keyguard-client-0.0.23.tgz#50c0809346783e80b0fe3c905437a8e6e6f48ebb"
+  integrity sha512-Y0fA3UUE70Yqxj5qpPhDKZOhzAGQrh9O/N9oGkkqGuyr6imko7+0vubDGYlWgDTGkTm5GBVlndDMEA79l17DbQ==
   dependencies:
     "@nimiq/rpc" "^0.0.10"
 

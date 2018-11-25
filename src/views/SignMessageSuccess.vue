@@ -30,17 +30,11 @@ export default class SimpleSuccess extends Vue {
 
     @Emit()
     private done() {
-        const sentMessage = new Uint8Array(this.keyguardRequest.message);
-
-        const message = Utf8Tools.isValidUtf8(sentMessage)
-            ? Utf8Tools.utf8ByteArrayToString(sentMessage)
-            : sentMessage;
-
         const result: SignMessageResult = {
             signer: new Nimiq.Address(new Uint8Array(this.keyguardRequest.signer)).toUserFriendlyAddress(),
             signerPubKey: this.keyguardResult.publicKey,
             signature: this.keyguardResult.signature,
-            message,
+            data: this.keyguardResult.data,
         };
 
         this.rpcState.reply(ResponseStatus.OK, result);
