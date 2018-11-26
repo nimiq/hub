@@ -71,11 +71,11 @@ export default class RpcApi {
     private _reply(status: ResponseStatus, result: RpcResult | Error) {
         // TODO: Update cookies for iOS
 
-        // Check for originalRequestType in StaticStore and route there
-        if (this._staticStore.originalRequestType) {
+        // Check for originalRouteName in StaticStore and route there
+        if (this._staticStore.originalRouteName) {
             this._staticStore.sideResult = result;
-            this._router.push({ name: this._staticStore.originalRequestType });
-            delete this._staticStore.originalRequestType;
+            this._router.push({ name: this._staticStore.originalRouteName });
+            delete this._staticStore.originalRouteName;
             return;
         }
 
@@ -87,7 +87,7 @@ export default class RpcApi {
             rpcState: this._staticStore.rpcState ? this._staticStore.rpcState.toJSON() : undefined,
             request: this._staticStore.request ? AccountsRequest.raw(this._staticStore.request) : undefined,
             keyguardRequest: this._staticStore.keyguardRequest,
-            originalRequestType: this._staticStore.originalRequestType,
+            originalRouteName: this._staticStore.originalRouteName,
         };
     }
 
@@ -111,12 +111,12 @@ export default class RpcApi {
         const rpcState = RpcState.fromJSON(state.rpcState);
         const request = AccountsRequest.parse(state.request);
         const keyguardRequest = state.keyguardRequest;
-        const originalRequestType = state.originalRequestType;
+        const originalRouteName = state.originalRouteName;
 
         this._staticStore.rpcState = rpcState;
         this._staticStore.request = request || undefined;
         this._staticStore.keyguardRequest = keyguardRequest;
-        this._staticStore.originalRequestType = originalRequestType;
+        this._staticStore.originalRouteName = originalRouteName;
 
         this._store.commit('setIncomingRequest', {
             hasRpcState: !!this._staticStore.rpcState,

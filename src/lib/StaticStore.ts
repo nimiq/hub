@@ -15,7 +15,7 @@ export class StaticStore {
     public request?: ParsedRpcRequest;
     public rpcState?: RpcState;
     public keyguardRequest?: any;
-    public originalRequestType?: string;
+    public originalRouteName?: string;
     public sideResult?: RpcResult | Error;
 }
 

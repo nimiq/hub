@@ -45,7 +45,7 @@ export default class Checkout extends Vue {
             requestedKeyPaths: [`m/44'/242'/0'/0'`],
         };
 
-        staticStore.originalRequestType = RequestType.CHECKOUT;
+        staticStore.originalRouteName = RequestType.CHECKOUT;
 
         const client = this.$rpc.createKeyguardClient();
         client.import(request).catch(console.error); // TODO: proper error handling

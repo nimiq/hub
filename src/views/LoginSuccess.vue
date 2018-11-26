@@ -232,8 +232,8 @@ export default class LoginSuccess extends Vue {
 
     private get appName() {
         console.log(staticStore);
-        if (staticStore.originalRequestType) {
-            return staticStore.originalRequestType;
+        if (staticStore.originalRouteName) {
+            return staticStore.originalRouteName;
         }
         return this.request.appName;
     }
