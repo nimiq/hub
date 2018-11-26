@@ -8,6 +8,7 @@ import CheckoutOverview from './views/CheckoutOverview.vue';
 import CheckoutTransmission from './views/CheckoutTransmission.vue';
 import SignupTypeSelector from './views/SignupTypeSelector.vue';
 import SignupSuccess from './views/SignupSuccess.vue';
+import SignupErrorHandler from './views/SignupErrorHandler.vue';
 import Login from './views/Login.vue';
 import LoginSuccess from './views/LoginSuccess.vue';
 import ExportFile from './views/ExportFile.vue';
@@ -39,7 +40,7 @@ export function keyguardResponseRouter(
     case KeyguardCommand.CREATE:
       return {
         resolve: `${RequestType.SIGNUP}-success`,
-        reject: RequestType.SIGNUP,
+        reject: `${RequestType.SIGNUP}-error`,
       };
     case KeyguardCommand.IMPORT:
       return {
@@ -147,6 +148,11 @@ export default new Router({
       path: `/${RequestType.SIGNUP}/success`,
       component: SignupSuccess,
       name: `${RequestType.SIGNUP}-success`,
+    },
+    {
+      path: `/${RequestType.SIGNUP}/error`,
+      component: SignupErrorHandler,
+      name: `${RequestType.SIGNUP}-error`,
     },
     {
       path: `/${RequestType.LOGIN}`,
