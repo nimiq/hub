@@ -18,7 +18,7 @@
                 </PageBody>
 
                 <PageFooter>
-                    <button class="nq-button" @click="done">Back to {{ request.appName }}</button>
+                    <button class="nq-button" @click="done">Back to {{ appName }}</button>
                 </PageFooter>
             </div>
         </SmallPage>
@@ -33,7 +33,7 @@ import { WalletInfo, WalletType } from '../lib/WalletInfo';
 import { ImportResult, KeyguardClient } from '@nimiq/keyguard-client';
 import { AccountInfo } from '@/lib/AccountInfo';
 import { WalletStore } from '@/lib/WalletStore';
-import { Static } from '@/lib/StaticStore';
+import staticStore, { Static } from '@/lib/StaticStore';
 import { PageHeader, PageBody, LabelInput, AccountList, PageFooter, SmallPage } from '@nimiq/vue-components';
 import Network from '@/components/Network.vue';
 
@@ -228,6 +228,14 @@ export default class LoginSuccess extends Vue {
     private get accountsArray(): Array<{ label: string, address: Nimiq.Address, balance?: number }> {
         if (this.accountsUpdateCount) return Array.from(this.accounts.values());
         return [];
+    }
+
+    private get appName() {
+        console.log(staticStore);
+        if (staticStore.originalRequestType) {
+            return staticStore.originalRequestType;
+        }
+        return this.request.appName;
     }
 }
 </script>

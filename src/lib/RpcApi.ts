@@ -8,38 +8,6 @@ import { keyguardResponseRouter } from '@/router';
 import { StaticStore } from '@/lib/StaticStore';
 
 export default class RpcApi {
-
-    public static createKeyguardClient(endpoint?: string) {
-        const behavior = new RedirectRequestBehavior(undefined, RpcApi.exportState());
-        const client = new KeyguardClient(endpoint, behavior);
-        return client;
-    }
-
-    public static resolve(result: RpcResult) {
-        RpcApi.reply(ResponseStatus.OK, result);
-    }
-
-    public static reject(error: Error) {
-        RpcApi.reply(ResponseStatus.ERROR, error);
-    }
-
-    private static reply(status: ResponseStatus, result: RpcResult | Error) {
-        // TODO: Update cookies for iOS
-
-        // TODO: Check for originalRequestRoute in StaticStore and route there
-
-        StaticStore.Instance.rpcState!.reply(status, result);
-    }
-
-    private static exportState(): any {
-        const staticStore = StaticStore.Instance;
-        return {
-            rpcState: staticStore.rpcState ? staticStore.rpcState.toJSON() : undefined,
-            request: staticStore.request ? AccountsRequest.raw(staticStore.request) : undefined,
-            keyguardRequest: staticStore.keyguardRequest,
-        };
-    }
-
     private _server: RpcServer;
     private _store: Store<RootState>;
     private _staticStore: StaticStore;
@@ -86,6 +54,43 @@ export default class RpcApi {
         this._keyguardClient.init().catch(console.error); // TODO: Provide better error handling here
     }
 
+    public createKeyguardClient(endpoint?: string) {
+        const behavior = new RedirectRequestBehavior(undefined, this._exportState());
+        const client = new KeyguardClient(endpoint, behavior);
+        return client;
+    }
+
+    public resolve(result: RpcResult) {
+        this._reply(ResponseStatus.OK, result);
+    }
+
+    public reject(error: Error) {
+        this._reply(ResponseStatus.ERROR, error);
+    }
+
+    private _reply(status: ResponseStatus, result: RpcResult | Error) {
+        // TODO: Update cookies for iOS
+
+        // Check for originalRequestType in StaticStore and route there
+        if (this._staticStore.originalRequestType) {
+            this._staticStore.sideResult = result;
+            this._router.push({ name: this._staticStore.originalRequestType });
+            delete this._staticStore.originalRequestType;
+            return;
+        }
+
+        this._staticStore.rpcState!.reply(status, result);
+    }
+
+    private _exportState(): any {
+        return {
+            rpcState: this._staticStore.rpcState ? this._staticStore.rpcState.toJSON() : undefined,
+            request: this._staticStore.request ? AccountsRequest.raw(this._staticStore.request) : undefined,
+            keyguardRequest: this._staticStore.keyguardRequest,
+            originalRequestType: this._staticStore.originalRequestType,
+        };
+    }
+
     private _registerAccountsApis(requests: RequestType[]) {
         for (const request of requests) {
             // Server listener
@@ -106,10 +111,12 @@ export default class RpcApi {
         const rpcState = RpcState.fromJSON(state.rpcState);
         const request = AccountsRequest.parse(state.request);
         const keyguardRequest = state.keyguardRequest;
+        const originalRequestType = state.originalRequestType;
 
         this._staticStore.rpcState = rpcState;
         this._staticStore.request = request || undefined;
         this._staticStore.keyguardRequest = keyguardRequest;
+        this._staticStore.originalRequestType = originalRequestType;
 
         this._store.commit('setIncomingRequest', {
             hasRpcState: !!this._staticStore.rpcState,

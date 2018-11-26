@@ -7,10 +7,12 @@ import RpcApi from '@/lib/RpcApi';
 
 Vue.config.productionTip = false;
 
-Vue.prototype.$rpc = RpcApi;
+const rpcApi = new RpcApi(store, staticStore, router);
+
+Vue.prototype.$rpc = rpcApi;
 declare module 'vue/types/vue' {
   interface Vue {
-    $rpc: typeof RpcApi;
+    $rpc: RpcApi;
   }
 }
 
@@ -21,4 +23,4 @@ new Vue({
 }).$mount('#app');
 
 // Start RPC Api
-new RpcApi(store, staticStore, router).start();
+rpcApi.start();
