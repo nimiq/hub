@@ -27,7 +27,7 @@
 
 <script lang="ts">
 import { Component, Emit, Vue } from 'vue-property-decorator';
-import { ParsedLoginRequest, LoginResult } from '../lib/RequestTypes';
+import { ParsedLoginRequest, LoginResult, RequestType } from '../lib/RequestTypes';
 import { State } from 'vuex-class';
 import { WalletInfo, WalletType } from '../lib/WalletInfo';
 import { ImportResult, KeyguardClient } from '@nimiq/keyguard-client';
@@ -231,7 +231,6 @@ export default class LoginSuccess extends Vue {
     }
 
     private get appName() {
-        console.log(staticStore);
         if (staticStore.originalRouteName) {
             return staticStore.originalRouteName;
         }

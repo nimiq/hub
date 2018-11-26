@@ -59,8 +59,6 @@ export default class ActiveAccountSelector extends Vue {
     }
 
     private switchWallet() {
-        // TODO Redirect to import/create just like addWallet()?
-
         this.page = 1;
     }
 
