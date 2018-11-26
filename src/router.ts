@@ -132,12 +132,12 @@ export default new Router({
           component: CheckoutTransmission,
           name: `${RequestType.CHECKOUT}-success`,
         },
-        {
-          path: 'error',
-          component: CheckoutErrorHandler,
-          name: `${RequestType.CHECKOUT}-error`,
-        },
       ],
+    },
+    {
+      path: `/${RequestType.CHECKOUT}-error`,
+      component: CheckoutErrorHandler,
+      name: `${RequestType.CHECKOUT}-error`,
     },
     {
       path: `/${RequestType.SIGNUP}`,
