@@ -4,6 +4,7 @@ import router from './router';
 import store from './store';
 import staticStore from '@/lib/StaticStore';
 import RpcApi from '@/lib/RpcApi';
+import * as Sentry from '@sentry/browser';
 
 Vue.config.productionTip = false;
 
@@ -13,6 +14,11 @@ declare module 'vue/types/vue' {
     $rpc: typeof RpcApi;
   }
 }
+
+Sentry.init({
+  dsn: 'https://92f2289fc2ac4c809dfa685911f865c2@sentry.io/1330855',
+  integrations: [new Sentry.Integrations.Vue({ Vue })],
+});
 
 new Vue({
   router,
