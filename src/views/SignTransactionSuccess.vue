@@ -16,8 +16,7 @@
 import { Component, Vue } from 'vue-property-decorator';
 import Network from '@/components/Network.vue';
 import { SmallPage } from '@nimiq/vue-components';
-import { ParsedSignTransactionRequest, SignTransactionResult } from '../lib/RequestTypes';
-import { State as RpcState, ResponseStatus } from '@nimiq/rpc';
+import { SignTransactionResult } from '../lib/RequestTypes';
 import {
     SignTransactionRequest as KSignTransactionRequest,
     SignTransactionResult as KSignTransactionResult,
@@ -28,8 +27,7 @@ import Success from '../components/Success.vue';
 
 @Component({components: {Network, SmallPage, Success}})
 export default class SignTransactionSuccess extends Vue {
-    @Static private request!: ParsedSignTransactionRequest;
-    @Static private rpcState!: RpcState;
+    // The stored keyguardRequest does not have Uint8Array, only regular arrays
     @Static private keyguardRequest!: KSignTransactionRequest;
     @State private keyguardResult!: KSignTransactionResult;
 
@@ -43,7 +41,7 @@ export default class SignTransactionSuccess extends Vue {
     }
 
     private done() {
-        this.rpcState.reply(ResponseStatus.OK, this.result);
+        this.$rpc.resolve(this.result!);
     }
 }
 </script>

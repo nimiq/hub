@@ -31,7 +31,7 @@
 </div>
 
 <div class="request">
-    <h2>Checkout</h2>
+    <h2>Transactions</h2>
     <div class="row">
         <label>Keyguard BaseURL</label>
         <input value="http://localhost:8000/" disabled readonly>
@@ -61,7 +61,21 @@
     <br><button id="checkout-redirect" class="small" disabled>Checkout (redirect)</button>
     <br><button id="checkout-popup" class="small" disabled>Checkout (popup)</button>
     <br><button id="sign-transaction-popup" class="small" disabled>Sign Transaction</button>
+</div>
 
+<div class="request">
+    <h2>Sign Message</h2>
+    <div class="row">
+        <label>Message</label>
+        <input id="message" value="Sign me, baby!">
+    </div>
+
+    <br><button id="sign-message" class="small" disabled>Sign Message</button>
+    <br><button id="sign-message-with-account" class="small" disabled>Sign Message with selected Account</button>
+</div>
+
+<div class="request">
+    <h2>Result</h2>
     <p id="result"></p>
 </div>
 

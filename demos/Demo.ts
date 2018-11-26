@@ -11,8 +11,11 @@ import {
     SignTransactionRequest, SignTransactionResult,
     ExportWordsRequest, ExportWordsResult,
     ExportRequest,
+    RenameRequest,
     ChangePassphraseRequest,
-    ExportFileRequest, ExportFileResult, AddAccountRequest,
+    ExportFileRequest, ExportFileResult,
+    AddAccountRequest,
+    SignMessageRequest,
 } from '../src/lib/RequestTypes';
 import { WalletStore } from '../src/lib/WalletStore';
 import { WalletInfoEntry } from '../src/lib/WalletInfo';
@@ -160,6 +163,59 @@ class Demo {
                 console.error('Keyguard error', e);
                 document.querySelector('#result').textContent = `Error: ${e.message || e}`;
             }
+        }
+
+        document.querySelector('button#sign-message').addEventListener('click', async () => {
+            const request = await generateSignMessageRequest(demo);
+            try {
+                const result = await client.signMessage(request);
+                console.log('Keyguard result', result);
+                document.querySelector('#result').textContent = 'MSG signed';
+            } catch (e) {
+                console.error('Keyguard error', e);
+                document.querySelector('#result').textContent = `Error: ${e.message || e}`;
+            }
+        });
+
+        async function generateSignMessageRequest(demo: Demo): Promise<SignMessageRequest> {
+            const message = (document.querySelector('#message') as HTMLInputElement).value || undefined;
+
+            return {
+                appName: 'Accounts Demos',
+                // signer: 'NQ63 U7XG 1YYE D6FA SXGG 3F5H X403 NBKN JLDU',
+                message,
+            };
+        }
+
+        document.querySelector('button#sign-message-with-account').addEventListener('click', async () => {
+            const request = await generateSignMessageWithAccountRequest(demo);
+            try {
+                const result = await client.signMessage(request);
+                console.log('Keyguard result', result);
+                document.querySelector('#result').textContent = 'MSG signed';
+            } catch (e) {
+                console.error('Keyguard error', e);
+                document.querySelector('#result').textContent = `Error: ${e.message || e}`;
+            }
+        });
+
+        async function generateSignMessageWithAccountRequest(demo: Demo): Promise<SignMessageRequest> {
+            const message = (document.querySelector('#message') as HTMLInputElement).value || undefined;
+
+            const $radio = document.querySelector('input[type="radio"]:checked');
+            if (!$radio) {
+                alert('You have no account to send a tx from, create an account first (signup)');
+                throw new Error('No account found');
+            }
+            const signer = $radio.getAttribute('data-address');
+            const walletId = $radio.getAttribute('data-wallet-id');
+
+            return {
+                appName: 'Accounts Demos',
+                walletId,
+                signer,
+                message,
+            };
         }
 
         document.querySelector('button#list-keyguard-keys').addEventListener('click', () => demo.listKeyguard());
@@ -317,6 +373,27 @@ class Demo {
         };
     }
 
+
+
+    public async rename(walletId: string, account: string) {
+        try {
+            const result = await this._accountsClient.rename(this._createRenameRequest(walletId, account));
+            console.log('Keyguard result', result);
+            document.querySelector('#result').textContent = 'Done renaming wallet';
+        } catch (e) {
+            console.error('Keyguard error', e);
+            document.querySelector('#result').textContent = `Error: ${e.message || e}`;
+        }
+    }
+
+    public _createRenameRequest(walletId: string, address: string ): RenameRequest {
+        return {
+            appName: 'Accounts Demos',
+            walletId,
+            address,
+        };
+    }
+
     public async updateAccounts() {
         const wallets = await this.list();
         console.log('Accounts in Manager:', wallets);
@@ -326,11 +403,12 @@ class Demo {
 
         wallets.forEach(wallet => {
             html += `<li>${wallet.label}
-                        <button class="export-words" data-wallet-id="${wallet.id}">Words</button>
-                        <button class="export-file" data-wallet-id="${wallet.id}">File</button>
+                        <!--button class="export-words" data-wallet-id="${wallet.id}">Words</button>
+                        <button class="export-file" data-wallet-id="${wallet.id}">File</button-->
                         <button class="export" data-wallet-id="${wallet.id}">Export</button>
                         <button class="change-passphrase" data-wallet-id="${wallet.id}">Ch. Pass.</button>
                         ${wallet.type !== 0 ? `<button class="add-account" data-wallet-id="${wallet.id}">+ Acc</button>` : ''}
+                        <button class="rename" data-wallet-id="${wallet.id}">Rename</button>
                         <button class="logout" data-wallet-id="${wallet.id}">Logout</button>
                         <ul>`;
             wallet.accounts.forEach((acc, addr) => {
@@ -339,6 +417,7 @@ class Demo {
                                 <label>
                                     <input type="radio" name="sign-tx-address" data-address="${addr}" data-wallet-id="${wallet.id}">
                                     ${acc.label}
+                                    <button class="rename" data-wallet-id="${wallet.id}" data-address="${addr}">Rename</button>
                                 </label>
                             </li>
                 `;
@@ -350,17 +429,21 @@ class Demo {
         if (document.querySelector('input[type="radio"]')) {
             (document.querySelector('input[type="radio"]') as HTMLInputElement).checked = true;
         }
+        /* removed to shorten the list
         document.querySelectorAll('button.export-words').forEach(element => {
             element.addEventListener('click', async () => this.exportWords(element.getAttribute('data-wallet-id')));
         });
         document.querySelectorAll('button.export-file').forEach(element => {
             element.addEventListener('click', async () => this.exportFile(element.getAttribute('data-wallet-id')));
-        });
+        });*/
         document.querySelectorAll('button.export').forEach(element => {
             element.addEventListener('click', async () => this.export(element.getAttribute('data-wallet-id')));
         });
         document.querySelectorAll('button.change-passphrase').forEach(element => {
             element.addEventListener('click', async () => this.changePassphrase(element.getAttribute('data-wallet-id')));
+        });
+        document.querySelectorAll('button.rename').forEach(element => {
+            element.addEventListener('click', async () => this.rename(element.getAttribute('data-wallet-id'), element.getAttribute('data-address')));
         });
         document.querySelectorAll('button.add-account').forEach(element => {
             element.addEventListener('click', async () => this.addAccount(element.getAttribute('data-wallet-id')));

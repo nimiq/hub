@@ -3,6 +3,7 @@ import { WalletType } from './WalletInfo';
 export enum RequestType {
     LIST = 'list',
     CHECKOUT = 'checkout',
+    SIGN_MESSAGE = 'sign-message',
     SIGN_TRANSACTION = 'sign-transaction',
     SIGNUP = 'signup',
     LOGIN = 'login',
@@ -12,6 +13,11 @@ export enum RequestType {
     CHANGE_PASSPHRASE = 'change-passphrase',
     LOGOUT = 'logout',
     ADD_ACCOUNT = 'add-account',
+    RENAME = 'rename',
+}
+
+export interface SimpleResult {
+    success: true;
 }
 
 export interface SignTransactionRequest {
@@ -91,6 +97,29 @@ export interface ParsedCheckoutRequest {
     networkId?: number;
 }
 
+export interface SignMessageRequest {
+    kind?: RequestType.SIGN_MESSAGE;
+    appName: string;
+    walletId?: string;
+    signer?: string;
+    message: string | Uint8Array;
+}
+
+export interface ParsedSignMessageRequest {
+    kind: RequestType.SIGN_MESSAGE;
+    appName: string;
+    walletId?: string;
+    signer?: Nimiq.Address;
+    message: string | Uint8Array;
+}
+
+export interface SignMessageResult {
+    signer: string;
+    signerPubKey: Uint8Array;
+    signature: Uint8Array;
+    data: Uint8Array;
+}
+
 export interface SignupRequest {
     kind?: RequestType.SIGNUP;
     appName: string;
@@ -143,10 +172,6 @@ export interface ParsedExportWordsRequest {
     walletId: string;
 }
 
-export interface ExportWordsResult {
-    success: boolean;
-}
-
 export interface ExportFileRequest {
     kind?: RequestType.EXPORT_FILE;
     appName: string;
@@ -157,10 +182,6 @@ export interface ParsedExportFileRequest {
     kind: RequestType.EXPORT_FILE;
     appName: string;
     walletId: string;
-}
-
-export interface ExportFileResult {
-    success: boolean;
 }
 
 export interface ExportRequest {
@@ -175,10 +196,6 @@ export interface ParsedExportRequest {
     walletId: string;
 }
 
-export interface ExportResult {
-    success: boolean;
-}
-
 export interface ChangePassphraseRequest {
     kind?: RequestType.CHANGE_PASSPHRASE;
     appName: string;
@@ -189,10 +206,6 @@ export interface ParsedChangePassphraseRequest {
     kind: RequestType.CHANGE_PASSPHRASE;
     appName: string;
     walletId: string;
-}
-
-export interface ChangePassphraseResult {
-    success: boolean;
 }
 
 export interface LogoutRequest {
@@ -231,6 +244,29 @@ export interface AddAccountResult {
     };
 }
 
+export interface RenameRequest {
+    kind?: RequestType.RENAME;
+    appName: string;
+    walletId: string;
+    address?: string;
+}
+
+export interface ParsedRenameRequest {
+    kind: RequestType.RENAME;
+    appName: string;
+    walletId: string;
+    address?: string;
+}
+
+export interface RenameResult {
+    walletId: string;
+    label: string;
+    accounts: [{
+        address: string;
+        label: string;
+    }];
+}
+
 // Discriminated Unions
 export type RpcRequest = SignTransactionRequest
                        | CheckoutRequest
@@ -241,7 +277,9 @@ export type RpcRequest = SignTransactionRequest
                        | ExportRequest
                        | ChangePassphraseRequest
                        | LogoutRequest
-                       | AddAccountRequest;
+                       | AddAccountRequest
+                       | RenameRequest
+                       | SignMessageRequest;
 export type ParsedRpcRequest = ParsedSignTransactionRequest
                              | ParsedCheckoutRequest
                              | ParsedSignupRequest
@@ -251,16 +289,17 @@ export type ParsedRpcRequest = ParsedSignTransactionRequest
                              | ParsedExportRequest
                              | ParsedChangePassphraseRequest
                              | ParsedLogoutRequest
-                             | ParsedAddAccountRequest;
+                             | ParsedAddAccountRequest
+                             | ParsedRenameRequest
+                             | ParsedSignMessageRequest;
 export type RpcResult = SignTransactionResult
                       | SignupResult
                       | LoginResult
-                      | ExportWordsResult
-                      | ExportFileResult
-                      | ExportResult
-                      | ChangePassphraseResult
+                      | SimpleResult
                       | LogoutResult
-                      | AddAccountResult;
+                      | AddAccountResult
+                      | RenameResult
+                      | SignMessageResult;
 
 export class AccountsRequest {
     public static parse(request: RpcRequest, requestType?: RequestType): ParsedRpcRequest | null {
@@ -354,6 +393,23 @@ export class AccountsRequest {
                     appName: request.appName,
                     walletId: request.walletId,
                 } as ParsedAddAccountRequest;
+            case RequestType.RENAME:
+                request = request as RenameRequest;
+                return {
+                    kind: RequestType.RENAME,
+                    appName: request.appName,
+                    walletId: request.walletId,
+                    address: request.address,
+                } as ParsedRenameRequest;
+            case RequestType.SIGN_MESSAGE:
+                request = request as SignMessageRequest;
+                return {
+                    kind: RequestType.SIGN_MESSAGE,
+                    appName: request.appName,
+                    walletId: request.walletId,
+                    signer: request.signer ? Nimiq.Address.fromUserFriendlyAddress(request.signer) : undefined,
+                    message: request.message,
+                } as ParsedSignMessageRequest;
             default:
                 return null;
         }
@@ -410,6 +466,16 @@ export class AccountsRequest {
                 return request as LogoutRequest;
             case RequestType.ADD_ACCOUNT:
                 return request as AddAccountRequest;
+            case RequestType.RENAME:
+                return request as RenameRequest;
+            case RequestType.SIGN_MESSAGE:
+                return {
+                    kind: RequestType.SIGN_MESSAGE,
+                    appName: request.appName,
+                    walletId: request.walletId,
+                    signer: request.signer ? request.signer.toUserFriendlyAddress() : undefined,
+                    message: request.message,
+                } as SignMessageRequest;
             default:
                 return null;
         }

@@ -7,6 +7,13 @@ import RpcApi from '@/lib/RpcApi';
 
 Vue.config.productionTip = false;
 
+Vue.prototype.$rpc = RpcApi;
+declare module 'vue/types/vue' {
+  interface Vue {
+    $rpc: typeof RpcApi;
+  }
+}
+
 new Vue({
   router,
   store,

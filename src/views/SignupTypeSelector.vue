@@ -29,18 +29,15 @@
 import { Component, Emit, Vue } from 'vue-property-decorator';
 import { PageHeader, PageBody, PageFooter, SmallPage } from '@nimiq/vue-components';
 import { ParsedSignupRequest } from '../lib/RequestTypes';
-import RpcApi from '../lib/RpcApi';
 import { CreateRequest as CreateRequest } from '@nimiq/keyguard-client';
-import { ResponseStatus, State as RpcState } from '@nimiq/rpc';
-import staticStore, { Static } from '../lib/StaticStore';
+import { Static } from '../lib/StaticStore';
 
 @Component({components: {PageHeader, PageBody, PageFooter, SmallPage}})
 export default class SignupTypeSelector extends Vue {
-    @Static private rpcState!: RpcState;
     @Static private request!: ParsedSignupRequest;
 
     public createKeyguard() {
-        const client = RpcApi.createKeyguardClient(this.$store, staticStore);
+        const client = this.$rpc.createKeyguardClient();
 
         const request: CreateRequest = {
             appName: this.request.appName,
@@ -56,7 +53,7 @@ export default class SignupTypeSelector extends Vue {
 
     @Emit()
     private close() {
-        this.rpcState.reply(ResponseStatus.ERROR, new Error('CANCEL'));
+        this.$rpc.reject(new Error('CANCEL'));
     }
 }
 </script>

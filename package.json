@@ -10,7 +10,7 @@
         "test": "yarn test:unit"
     },
     "dependencies": {
-        "@nimiq/keyguard-client": "^0.0.21",
+        "@nimiq/keyguard-client": "^0.0.23",
         "@nimiq/network-client": "^0.0.9",
         "@nimiq/rpc": "^0.0.11",
         "@nimiq/style": "^0.3.4",
@@ -25,7 +25,6 @@
     },
     "devDependencies": {
         "@babel/core": "^7.0.0",
-        "@nimiq/core": "^1.2.0",
         "@nimiq/core-types": "^1.0.0",
         "@types/jest": "^23.1.4",
         "@vue/babel-preset-app": "^3.0.1",
