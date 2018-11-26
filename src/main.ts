@@ -9,9 +9,12 @@ import * as Sentry from '@sentry/browser';
 Vue.config.productionTip = false;
 
 Vue.prototype.$rpc = RpcApi;
+Vue.prototype.$captureException = (error: Error) => Sentry.captureException(error);
+
 declare module 'vue/types/vue' {
   interface Vue {
     $rpc: typeof RpcApi;
+    $captureException: (error: Error) => string;
   }
 }
 
