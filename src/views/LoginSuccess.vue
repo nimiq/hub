@@ -232,7 +232,10 @@ export default class LoginSuccess extends Vue {
 
     private get appName() {
         if (staticStore.originalRouteName) {
-            return staticStore.originalRouteName;
+            switch (staticStore.originalRouteName) {
+                case RequestType.CHECKOUT: return 'Checkout';
+                default: throw new Error('Unhandled originalRouteName');
+            }
         }
         return this.request.appName;
     }
