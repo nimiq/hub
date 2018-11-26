@@ -6,6 +6,7 @@ import { AccountsRequest, RequestType, RpcRequest, RpcResult } from '@/lib/Reque
 import { KeyguardCommand, RedirectRequestBehavior, KeyguardClient } from '@nimiq/keyguard-client';
 import { keyguardResponseRouter } from '@/router';
 import { StaticStore } from '@/lib/StaticStore';
+import * as Sentry from '@sentry/browser';
 
 export default class RpcApi {
 
@@ -20,6 +21,11 @@ export default class RpcApi {
     }
 
     public static reject(error: Error) {
+        const ignoredErrors = [ 'CANCEL', 'Request aborted' ];
+        if (ignoredErrors.indexOf(error.message) < 0) {
+            Sentry.captureException(error);
+        }
+
         RpcApi.reply(ResponseStatus.ERROR, error);
     }
 
