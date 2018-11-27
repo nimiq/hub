@@ -8,6 +8,11 @@ import VueRaven from 'vue-raven'; // Sentry.io SDK
 
 Vue.config.productionTip = false;
 
+// Set up Identicon SVG file path
+// FIXME Need to find a better method to automatically detect this
+// @ts-ignore
+self.NIMIQ_IQONS_SVG_PATH = '/img/iqons.min.cc877caa.svg';
+
 const rpcApi = new RpcApi(store, staticStore, router);
 Vue.prototype.$rpc = rpcApi;
 
