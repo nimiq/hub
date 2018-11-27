@@ -4,23 +4,14 @@ import router from './router';
 import store from './store';
 import staticStore from '@/lib/StaticStore';
 import RpcApi from '@/lib/RpcApi';
-import * as Sentry from '@sentry/browser';
+import VueRaven from 'vue-raven'; // Sentry.io SDK
 
 Vue.config.productionTip = false;
 
 Vue.prototype.$rpc = RpcApi;
-Vue.prototype.$captureException = (error: Error) => Sentry.captureException(error);
 
-declare module 'vue/types/vue' {
-  interface Vue {
-    $rpc: typeof RpcApi;
-    $captureException: (error: Error) => string;
-  }
-}
-
-Sentry.init({
+Vue.use(VueRaven, {
   dsn: 'https://92f2289fc2ac4c809dfa685911f865c2@sentry.io/1330855',
-  integrations: [new Sentry.Integrations.Vue({ Vue })],
 });
 
 new Vue({
@@ -31,3 +22,10 @@ new Vue({
 
 // Start RPC Api
 new RpcApi(store, staticStore, router).start();
+
+// Types
+declare module 'vue/types/vue' {
+  interface Vue {
+    $rpc: typeof RpcApi;
+  }
+}
