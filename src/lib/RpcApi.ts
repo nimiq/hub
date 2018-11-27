@@ -6,6 +6,8 @@ import { AccountsRequest, RequestType, RpcRequest, RpcResult } from '@/lib/Reque
 import { KeyguardCommand, RedirectRequestBehavior, KeyguardClient } from '@nimiq/keyguard-client';
 import { keyguardResponseRouter } from '@/router';
 import { StaticStore } from '@/lib/StaticStore';
+// @ts-ignore
+import { Raven } from 'vue-raven'; // Sentry.io SDK
 
 export default class RpcApi {
     private _server: RpcServer;
@@ -65,6 +67,11 @@ export default class RpcApi {
     }
 
     public reject(error: Error) {
+        const ignoredErrors = [ 'CANCEL', 'Request aborted' ];
+        if (ignoredErrors.indexOf(error.message) < 0) {
+            Raven.captureException(error);
+        }
+
         this._reply(ResponseStatus.ERROR, error);
     }
 

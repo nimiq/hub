@@ -1,31 +1,47 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import SignTransaction from './views/SignTransaction.vue';
-import SignTransactionSuccess from './views/SignTransactionSuccess.vue';
-import ActiveAccountSelector from './views/ActiveAccountSelector.vue';
-import Checkout from './views/Checkout.vue';
-import CheckoutOverview from './views/CheckoutOverview.vue';
-import CheckoutTransmission from './views/CheckoutTransmission.vue';
-import SignupTypeSelector from './views/SignupTypeSelector.vue';
-import SignupSuccess from './views/SignupSuccess.vue';
-import Login from './views/Login.vue';
-import LoginSuccess from './views/LoginSuccess.vue';
-import ExportFile from './views/ExportFile.vue';
-import ExportWords from './views/ExportWords.vue';
-import Export from './views/Export.vue';
-import ChangePassphrase from './views/ChangePassphrase.vue';
-import Logout from './views/Logout.vue';
-import LogoutSuccess from './views/LogoutSuccess.vue';
-import AddAccount from './views/AddAccount.vue';
-import AddAccountSuccess from './views/AddAccountSuccess.vue';
-import Rename from './views/Rename.vue';
-import SignMessage from './views/SignMessage.vue';
-import SignMessageOverview from './views/SignMessageOverview.vue';
-import SignMessageSuccess from './views/SignMessageSuccess.vue';
-import SignMessageErrorHandler from './views/SignMessageErrorHandler.vue';
-import SimpleSuccess from './views/SimpleSuccess.vue';
-import ErrorHandler from './views/ErrorHandler.vue';
-import CheckoutErrorHandler from './views/CheckoutErrorHandler.vue';
+
+const SignTransaction         = () => import(/* webpackChunkName: "sign-transaction" */ './views/SignTransaction.vue');
+const SignTransactionSuccess  = () => import(/* webpackChunkName: "sign-transaction" */
+  './views/SignTransactionSuccess.vue');
+
+const Checkout                = () => import(/* webpackChunkName: "checkout" */ './views/Checkout.vue');
+const CheckoutOverview        = () => import(/* webpackChunkName: "checkout" */ './views/CheckoutOverview.vue');
+const CheckoutTransmission    = () => import(/* webpackChunkName: "checkout" */ './views/CheckoutTransmission.vue');
+const CheckoutErrorHandler    = () => import(/* webpackChunkName: "checkout" */ './views/CheckoutErrorHandler.vue');
+
+const SignupTypeSelector      = () => import(/* webpackChunkName: "signup" */ './views/SignupTypeSelector.vue');
+const SignupSuccess           = () => import(/* webpackChunkName: "signup" */ './views/SignupSuccess.vue');
+const SignupErrorHandler      = () => import(/* webpackChunkName: "signup" */ './views/SignupErrorHandler.vue');
+
+const Login                   = () => import(/* webpackChunkName: "login" */ './views/Login.vue');
+const LoginSuccess            = () => import(/* webpackChunkName: "login" */ './views/LoginSuccess.vue');
+
+// const ExportFile              = () => import(/* webpackChunkName: "export" */ './views/ExportFile.vue');
+// const ExportWords             = () => import(/* webpackChunkName: "export" */ './views/ExportWords.vue');
+const Export                  = () => import(/* webpackChunkName: "export" */ './views/Export.vue');
+
+const ChangePassphrase        = () => import(/* webpackChunkName: "change-passphrase" */
+  './views/ChangePassphrase.vue');
+
+const Logout                  = () => import(/* webpackChunkName: "logout" */ './views/Logout.vue');
+const LogoutSuccess           = () => import(/* webpackChunkName: "logout" */ './views/LogoutSuccess.vue');
+
+const AddAccount              = () => import(/* webpackChunkName: "add-account" */ './views/AddAccount.vue');
+const AddAccountSuccess       = () => import(/* webpackChunkName: "add-account" */ './views/AddAccountSuccess.vue');
+
+const Rename                  = () => import(/* webpackChunkName: "rename" */ './views/Rename.vue');
+
+const SignMessage             = () => import(/* webpackChunkName: "sign-message" */ './views/SignMessage.vue');
+const SignMessageOverview     = () => import(/* webpackChunkName: "sign-message" */ './views/SignMessageOverview.vue');
+const SignMessageSuccess      = () => import(/* webpackChunkName: "sign-message" */ './views/SignMessageSuccess.vue');
+const SignMessageErrorHandler = () => import(/* webpackChunkName: "sign-message" */
+  './views/SignMessageErrorHandler.vue');
+
+const ActiveAccountSelector   = () => import(/* webpackChunkName: "common" */ './views/ActiveAccountSelector.vue');
+const SimpleSuccess           = () => import(/* webpackChunkName: "common" */ './views/SimpleSuccess.vue');
+const ErrorHandler            = () => import(/* webpackChunkName: "common" */ './views/ErrorHandler.vue');
+
 import { RequestType } from '@/lib/RequestTypes';
 import { KeyguardCommand } from '@nimiq/keyguard-client';
 
@@ -39,7 +55,7 @@ export function keyguardResponseRouter(
     case KeyguardCommand.CREATE:
       return {
         resolve: `${RequestType.SIGNUP}-success`,
-        reject: RequestType.SIGNUP,
+        reject: `${RequestType.SIGNUP}-error`,
       };
     case KeyguardCommand.IMPORT:
       return {
@@ -131,12 +147,12 @@ export default new Router({
           component: CheckoutTransmission,
           name: `${RequestType.CHECKOUT}-success`,
         },
-        {
-          path: 'error',
-          component: CheckoutErrorHandler,
-          name: `${RequestType.CHECKOUT}-error`,
-        },
       ],
+    },
+    {
+      path: `/${RequestType.CHECKOUT}-error`,
+      component: CheckoutErrorHandler,
+      name: `${RequestType.CHECKOUT}-error`,
     },
     {
       path: `/${RequestType.SIGNUP}`,
@@ -149,6 +165,11 @@ export default new Router({
       name: `${RequestType.SIGNUP}-success`,
     },
     {
+      path: `/${RequestType.SIGNUP}/error`,
+      component: SignupErrorHandler,
+      name: `${RequestType.SIGNUP}-error`,
+    },
+    {
       path: `/${RequestType.LOGIN}`,
       component: Login,
       name: RequestType.LOGIN,
@@ -158,26 +179,26 @@ export default new Router({
       component: LoginSuccess,
       name: `${RequestType.LOGIN}-success`,
     },
-    {
-      path: `/${RequestType.EXPORT_FILE}`,
-      component: ExportFile,
-      name: RequestType.EXPORT_FILE,
-    },
-    {
-      path: `${RequestType.EXPORT_FILE}/success`,
-      component: SimpleSuccess,
-      name: `${RequestType.EXPORT_FILE}-success`,
-    },
-    {
-      path: `/${RequestType.EXPORT_WORDS}`,
-      component: ExportWords,
-      name: RequestType.EXPORT_WORDS,
-    },
-    {
-      path: `/${RequestType.EXPORT_WORDS}/success`,
-      component: SimpleSuccess,
-      name: `${RequestType.EXPORT_WORDS}-success`,
-    },
+    // {
+    //   path: `/${RequestType.EXPORT_FILE}`,
+    //   component: ExportFile,
+    //   name: RequestType.EXPORT_FILE,
+    // },
+    // {
+    //   path: `${RequestType.EXPORT_FILE}/success`,
+    //   component: SimpleSuccess,
+    //   name: `${RequestType.EXPORT_FILE}-success`,
+    // },
+    // {
+    //   path: `/${RequestType.EXPORT_WORDS}`,
+    //   component: ExportWords,
+    //   name: RequestType.EXPORT_WORDS,
+    // },
+    // {
+    //   path: `/${RequestType.EXPORT_WORDS}/success`,
+    //   component: SimpleSuccess,
+    //   name: `${RequestType.EXPORT_WORDS}-success`,
+    // },
     {
       path: `/${RequestType.EXPORT}`,
       component: Export,
