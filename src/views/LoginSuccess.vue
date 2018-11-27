@@ -18,7 +18,7 @@
                 </PageBody>
 
                 <PageFooter>
-                    <button class="nq-button" @click="done">Back to {{ request.appName }}</button>
+                    <button class="nq-button" @click="done">Back to {{ appName }}</button>
                 </PageFooter>
             </div>
         </SmallPage>
@@ -27,13 +27,13 @@
 
 <script lang="ts">
 import { Component, Emit, Vue } from 'vue-property-decorator';
-import { ParsedLoginRequest, LoginResult } from '../lib/RequestTypes';
+import { ParsedLoginRequest, LoginResult, RequestType } from '../lib/RequestTypes';
 import { State } from 'vuex-class';
 import { WalletInfo, WalletType } from '../lib/WalletInfo';
 import { ImportResult, KeyguardClient } from '@nimiq/keyguard-client';
 import { AccountInfo } from '@/lib/AccountInfo';
 import { WalletStore } from '@/lib/WalletStore';
-import { Static } from '@/lib/StaticStore';
+import staticStore, { Static } from '@/lib/StaticStore';
 import { PageHeader, PageBody, LabelInput, AccountList, PageFooter, SmallPage } from '@nimiq/vue-components';
 import Network from '@/components/Network.vue';
 
@@ -228,6 +228,16 @@ export default class LoginSuccess extends Vue {
     private get accountsArray(): Array<{ label: string, address: Nimiq.Address, balance?: number }> {
         if (this.accountsUpdateCount) return Array.from(this.accounts.values());
         return [];
+    }
+
+    private get appName() {
+        if (staticStore.originalRouteName) {
+            switch (staticStore.originalRouteName) {
+                case RequestType.CHECKOUT: return 'Checkout';
+                default: throw new Error('Unhandled originalRouteName');
+            }
+        }
+        return this.request.appName;
     }
 }
 </script>

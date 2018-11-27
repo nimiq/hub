@@ -8,7 +8,8 @@ import VueRaven from 'vue-raven'; // Sentry.io SDK
 
 Vue.config.productionTip = false;
 
-Vue.prototype.$rpc = RpcApi;
+const rpcApi = new RpcApi(store, staticStore, router);
+Vue.prototype.$rpc = rpcApi;
 
 Vue.use(VueRaven, {
   dsn: 'https://92f2289fc2ac4c809dfa685911f865c2@sentry.io/1330855',
@@ -21,11 +22,11 @@ new Vue({
 }).$mount('#app');
 
 // Start RPC Api
-new RpcApi(store, staticStore, router).start();
+rpcApi.start();
 
 // Types
 declare module 'vue/types/vue' {
   interface Vue {
-    $rpc: typeof RpcApi;
+    $rpc: RpcApi;
   }
 }
