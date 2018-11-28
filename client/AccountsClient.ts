@@ -16,8 +16,6 @@ import {
     LogoutResult,
     SignTransactionRequest,
     SignTransactionResult,
-    ExportFileRequest,
-    ExportWordsRequest,
     ExportRequest,
     ChangePassphraseRequest,
     AddAccountRequest,
