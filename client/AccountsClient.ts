@@ -94,20 +94,6 @@ export default class AccountsClient {
         return this._request(requestBehavior, RequestType.LOGOUT, [request]);
     }
 
-    // public exportFile(
-    //     request: ExportFileRequest,
-    //     requestBehavior = this._defaultBehavior,
-    // ): Promise<SimpleResult> {
-    //     return this._request(requestBehavior, RequestType.EXPORT_FILE, [request]);
-    // }
-
-    // public exportWords(
-    //     request: ExportWordsRequest,
-    //     requestBehavior = this._defaultBehavior,
-    // ): Promise<SimpleResult> {
-    //     return this._request(requestBehavior, RequestType.EXPORT_WORDS, [request]);
-    // }
-
     public export(
         request: ExportRequest,
         requestBehavior = this._defaultBehavior,
