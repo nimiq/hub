@@ -9,7 +9,7 @@ import { RequestType } from '@/lib/RequestTypes';
 export default class LoginErrorHandler extends ErrorHandler {
     protected requestSpecificErrors(): boolean {
         if (this.keyguardResult instanceof Error
-            && this.keyguardResult.message === 'GO_CREATE') {
+            && this.keyguardResult.message === 'GOTO_CREATE') {
             this.$router.push({name: RequestType.SIGNUP});
             return true;
         }

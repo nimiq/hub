@@ -29,7 +29,7 @@
 import { Component, Emit, Vue } from 'vue-property-decorator';
 import { PageHeader, PageBody, PageFooter, SmallPage } from '@nimiq/vue-components';
 import { ParsedSignupRequest } from '../lib/RequestTypes';
-import { CreateRequest as CreateRequest, ImportRequest as ImportRequest } from '@nimiq/keyguard-client';
+import { CreateRequest, ImportRequest } from '@nimiq/keyguard-client';
 import { Static } from '../lib/StaticStore';
 
 @Component({components: {PageHeader, PageBody, PageFooter, SmallPage}})

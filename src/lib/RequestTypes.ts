@@ -134,7 +134,7 @@ export interface SignupResult {
     walletId: string;
     label: string;
     type: WalletType;
-    account: Array<{
+    accounts: Array<{
         address: string;
         label: string;
     }>;
