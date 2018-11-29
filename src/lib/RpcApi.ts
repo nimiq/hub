@@ -1,4 +1,5 @@
 import { RpcServer, State as RpcState, ResponseStatus } from '@nimiq/rpc';
+import { BrowserDetection } from '@nimiq/utils';
 import { RootState } from '@/store';
 import { Store } from 'vuex';
 import Router from 'vue-router';
@@ -6,6 +7,8 @@ import { AccountsRequest, RequestType, RpcRequest, RpcResult } from '@/lib/Reque
 import { KeyguardCommand, RedirectRequestBehavior, KeyguardClient } from '@nimiq/keyguard-client';
 import { keyguardResponseRouter } from '@/router';
 import { StaticStore } from '@/lib/StaticStore';
+import { WalletStore } from './WalletStore';
+import CookieJar from '@/lib/CookieJar';
 
 export default class RpcApi {
 
@@ -23,8 +26,12 @@ export default class RpcApi {
         RpcApi.reply(ResponseStatus.ERROR, error);
     }
 
-    private static reply(status: ResponseStatus, result: RpcResult | Error) {
-        // TODO: Update cookies for iOS
+    private static async reply(status: ResponseStatus, result: RpcResult | Error) {
+        // Update cookies for iOS / Safari
+        if (BrowserDetection.isIOS() || BrowserDetection.isSafari()) {
+            const wallets = await WalletStore.Instance.list();
+            CookieJar.fill(wallets);
+        }
 
         // TODO: Check for originalRequestRoute in StaticStore and route there
 

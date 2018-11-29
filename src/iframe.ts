@@ -2,6 +2,7 @@ import { RpcServer } from '@nimiq/rpc';
 import { BrowserDetection } from '@nimiq/utils';
 import { WalletStore } from '@/lib/WalletStore';
 import { WalletInfoEntry } from '@/lib/WalletInfo';
+import CookieJar from '@/lib/CookieJar';
 
 class IFrameApi {
     public static run() {
@@ -14,7 +15,7 @@ class IFrameApi {
     }
 
     public static async list(): Promise<WalletInfoEntry[]> {
-        if (BrowserDetection.isIos() || BrowserDetection.isSafari()) {
+        if (BrowserDetection.isIOS() || BrowserDetection.isSafari()) {
             // case 1: cookie exists
             return CookieJar.eat();
             // case 2: no cookie yet, because we have to migrate first?
