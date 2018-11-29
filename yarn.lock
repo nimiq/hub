@@ -627,6 +627,11 @@
   version "0.3.4"
   resolved "https://registry.yarnpkg.com/@nimiq/style/-/style-0.3.4.tgz#dec68f59ba280830b39b1616653f04411905d14f"
 
+"@nimiq/utils@^0.0.5":
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/@nimiq/utils/-/utils-0.0.5.tgz#ce1b111003f4212f9dcd212902d61586af0662b8"
+  integrity sha512-Je2ch3VQAgqGifU48foi8VaFaSD7PJireQgSHyZT0EFfoBvGZFMLGKBcXaYo7aF59tSsq5gS8Zp+xZaKmskbaw==
+
 "@nimiq/vue-components@https://github.com/nimiq/vue-components.git#build/accounts":
   version "0.1.0"
   resolved "https://github.com/nimiq/vue-components.git#7b9217daa1aa53e6c4dd1d68bd01cca36b8cfccf"
