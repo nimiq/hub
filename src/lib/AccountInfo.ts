@@ -23,7 +23,7 @@ export class AccountInfo {
         return {
             path: this.path,
             label: this.label,
-            address: this.address.serialize(),
+            address: new Uint8Array(this.address.serialize()),
             balance: this.balance,
         };
     }
