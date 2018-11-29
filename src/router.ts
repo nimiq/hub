@@ -75,16 +75,6 @@ export function keyguardResponseRouter(
         resolve: `${originalRequestType}-success`,
         reject: `${originalRequestType === RequestType.CHECKOUT ? originalRequestType : 'default'}-error`,
       };
-    case KeyguardCommand.EXPORT_FILE:
-      return {
-        resolve: `${RequestType.EXPORT_FILE}-success`,
-        reject: 'default-error',
-      };
-    case KeyguardCommand.EXPORT_WORDS:
-      return {
-        resolve: `${RequestType.EXPORT_WORDS}-success`,
-        reject: 'default-error',
-      };
     case KeyguardCommand.EXPORT:
         return {
           resolve: `${RequestType.EXPORT}-success`,
@@ -185,26 +175,6 @@ export default new Router({
       component: LoginErrorHandler,
       name: `${RequestType.LOGIN}-error`,
     },
-    // {
-    //   path: `/${RequestType.EXPORT_FILE}`,
-    //   component: ExportFile,
-    //   name: RequestType.EXPORT_FILE,
-    // },
-    // {
-    //   path: `${RequestType.EXPORT_FILE}/success`,
-    //   component: SimpleSuccess,
-    //   name: `${RequestType.EXPORT_FILE}-success`,
-    // },
-    // {
-    //   path: `/${RequestType.EXPORT_WORDS}`,
-    //   component: ExportWords,
-    //   name: RequestType.EXPORT_WORDS,
-    // },
-    // {
-    //   path: `/${RequestType.EXPORT_WORDS}/success`,
-    //   component: SimpleSuccess,
-    //   name: `${RequestType.EXPORT_WORDS}-success`,
-    // },
     {
       path: `/${RequestType.EXPORT}`,
       component: Export,
