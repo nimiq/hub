@@ -14,6 +14,7 @@
         "@nimiq/network-client": "^0.0.9",
         "@nimiq/rpc": "^0.0.11",
         "@nimiq/style": "^0.3.4",
+        "@nimiq/utils": "^0.0.5",
         "@nimiq/vue-components": "https://github.com/nimiq/vue-components.git#build/accounts",
         "vue": "^2.5.16",
         "vue-class-component": "^6.0.0",
