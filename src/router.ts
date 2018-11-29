@@ -16,6 +16,7 @@ const SignupErrorHandler      = () => import(/* webpackChunkName: "signup" */ '.
 
 const Login                   = () => import(/* webpackChunkName: "login" */ './views/Login.vue');
 const LoginSuccess            = () => import(/* webpackChunkName: "login" */ './views/LoginSuccess.vue');
+const LoginErrorHandler       = () => import(/* webpackChunkName: "login" */ './views/LoginErrorHandler.vue');
 
 // const ExportFile              = () => import(/* webpackChunkName: "export" */ './views/ExportFile.vue');
 // const ExportWords             = () => import(/* webpackChunkName: "export" */ './views/ExportWords.vue');
@@ -60,7 +61,7 @@ export function keyguardResponseRouter(
     case KeyguardCommand.IMPORT:
       return {
         resolve: `${RequestType.LOGIN}-success`,
-        reject: 'default-error',
+        reject: `${RequestType.LOGIN}-error`,
       };
     case KeyguardCommand.REMOVE:
       return {
@@ -168,6 +169,11 @@ export default new Router({
       path: `/${RequestType.LOGIN}/success`,
       component: LoginSuccess,
       name: `${RequestType.LOGIN}-success`,
+    },
+    {
+      path: `/${RequestType.LOGIN}/error`,
+      component: LoginErrorHandler,
+      name: `${RequestType.LOGIN}-error`,
     },
     {
       path: `/${RequestType.EXPORT}`,
