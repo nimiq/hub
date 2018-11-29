@@ -14,7 +14,7 @@
                 </button>
             </PageBody>
             <PageFooter>
-                <a class="nq-link" onclick="alert('Not yet implemented')" href="javascript:void(0);">Already have a wallet?</a>
+                <a class="nq-link" @click="login" href="javascript:void(0);">Already have a wallet?</a>
             </PageFooter>
         </SmallPage>
 
@@ -29,7 +29,7 @@
 import { Component, Emit, Vue } from 'vue-property-decorator';
 import { PageHeader, PageBody, PageFooter, SmallPage } from '@nimiq/vue-components';
 import { ParsedSignupRequest } from '../lib/RequestTypes';
-import { CreateRequest as CreateRequest } from '@nimiq/keyguard-client';
+import { CreateRequest, ImportRequest } from '@nimiq/keyguard-client';
 import { Static } from '../lib/StaticStore';
 
 @Component({components: {PageHeader, PageBody, PageFooter, SmallPage}})
@@ -49,6 +49,18 @@ export default class SignupTypeSelector extends Vue {
 
     public createLedger() {
         alert('Ledger-adding not yet implemented');
+    }
+
+    public login() {
+        const client = this.$rpc.createKeyguardClient();
+
+        const request: ImportRequest = {
+            appName: this.request.appName,
+            defaultKeyPath: `m/44'/242'/0'/0'`,
+            requestedKeyPaths: [`m/44'/242'/0'/0'`],
+        };
+
+        client.import(request).catch(console.log); // TODO: proper error handling
     }
 
     @Emit()

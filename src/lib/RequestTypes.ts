@@ -134,10 +134,10 @@ export interface SignupResult {
     walletId: string;
     label: string;
     type: WalletType;
-    account: {
+    accounts: Array<{
         address: string;
         label: string;
-    };
+    }>;
 }
 
 export interface LoginRequest {
