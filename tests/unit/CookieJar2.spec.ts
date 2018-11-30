@@ -1,11 +1,12 @@
+/// <reference path="../../types/Nimiq.d.ts" />
 import { WalletInfo, WalletType } from '@/lib/WalletInfo';
 import { AccountInfo } from '@/lib/AccountInfo';
 import { ContractType } from '@/lib/ContractInfo';
 import { CookieJar } from '@/lib/CookieJar2';
 
-const Nimiq = require('@nimiq/core'); // tslint:disable-line:no-var-requires variable-name
+//const Nimiq = require('@nimiq/core'); // tslint:disable-line:no-var-requires variable-name
 // @ts-ignore
-global.Nimiq = Nimiq;
+// global.Nimiq = Nimiq;
 
 const DUMMY_ADDRESS_HR = 'NQ86 6D3H 6MVD 2JV4 N77V FNA5 M9BL 2QSP 1P64';
 const BURN_ADDRESS_HR  = 'NQ07 0000 0000 0000 0000 0000 0000 0000 0000';
@@ -139,7 +140,7 @@ describe('CookieJar', () => {
     it('Encode and decode reproduce source', () => {
         const encoded = CookieJar.encodeWallets(DUMMIES);
         // https://stackoverflow.com/questions/2219526/how-many-bytes-in-a-javascript-string
-        console.log(`Serialized size: ${ encodeURI(encoded).split(/%(?:u[0-9A-F]{2})?[0-9A-F]{2}|./).length -1 }`)
+        console.log(`Serialized size: ${ encoded.length }`)
         // 215 for CookieJar 1
         console.log(encoded);
         expect(encoded.length).toBeGreaterThan(100);
