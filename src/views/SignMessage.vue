@@ -23,7 +23,7 @@ import {
     SignMessageRequest as KSignMessageRequest,
     SignMessageResult as KSignMessageResult,
 } from '@nimiq/keyguard-client';
-import Utf8Tools from '../lib/Utf8Tools';
+import { Utf8Tools } from '@nimiq/utils';
 
 @Component({components: {SmallPage}})
 export default class SignMessage extends Vue {

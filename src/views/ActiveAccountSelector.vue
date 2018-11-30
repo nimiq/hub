@@ -24,13 +24,11 @@ import { Component, Emit, Vue } from 'vue-property-decorator';
 import { AccountSelector, WalletSelector } from '@nimiq/vue-components';
 import { AccountInfo } from '../lib/AccountInfo';
 import { WalletInfo, WalletType } from '../lib/WalletInfo';
-import { State, Mutation } from 'vuex-class';
+import { State } from 'vuex-class';
 
 @Component({components: {AccountSelector, WalletSelector}})
 export default class ActiveAccountSelector extends Vue {
-    @State('wallets') private wallets!: WalletInfo[];
-
-    @Mutation('addWallet') private $addWallet!: (walletInfo: WalletInfo) => any;
+    @State private wallets!: WalletInfo[];
 
     private page: number = 1;
     private selectedWalletId: string | null = null;
@@ -61,24 +59,12 @@ export default class ActiveAccountSelector extends Vue {
     }
 
     private switchWallet() {
-        // TODO Redirect to import/create just like addWallet()
-
         this.page = 1;
     }
 
     @Emit()
-    private addWallet() {
-        // TODO Redirect to import/create
-
-        const id: string = Math.round(Math.pow(2, 32) * Math.random()).toString(16);
-        const map = new Map<string, AccountInfo>();
-        map.set('NQ09 VF5Y 1PKV MRM4 5LE1 55KV P6R2 GXYJ XYQF', new AccountInfo(
-            'a',
-            'My Account',
-            Nimiq.Address.fromString('NQ09 VF5Y 1PKV MRM4 5LE1 55KV P6R2 GXYJ XYQF'),
-        ));
-        this.$addWallet(new WalletInfo(id, id, map, [], WalletType.LEDGER));
-    }
+    // tslint:disable-next-line no-empty
+    private addWallet() {}
 
     @Emit()
     private accountSelected(walletId: string, address: string) {

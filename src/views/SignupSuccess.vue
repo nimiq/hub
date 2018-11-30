@@ -68,10 +68,10 @@ export default class SignupSuccess extends Vue {
             walletId: this.keyguardResult.keyId,
             label: this.walletLabel,
             type: WalletType.BIP39, // FIXME: Adapt when adding Ledger
-            account: {
+            accounts: [{
                 address: this.createdAddress!.toUserFriendlyAddress(),
                 label: this.accountLabel,
-            },
+            }],
         };
 
         this.$rpc.resolve(result);

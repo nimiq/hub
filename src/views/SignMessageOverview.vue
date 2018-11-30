@@ -27,7 +27,7 @@ import { Account, PageHeader, PageBody, PageFooter } from '@nimiq/vue-components
 import { AccountInfo } from '../lib/AccountInfo';
 import { WalletInfo } from '../lib/WalletInfo';
 import { RequestType } from '../lib/RequestTypes';
-import Utf8Tools from '../lib/Utf8Tools';
+import { Utf8Tools } from '@nimiq/utils';
 import SignMessage from '@/views/SignMessage.vue';
 
 @Component({components: {Account, PageHeader, PageBody, PageFooter}})

@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import { createDecorator } from 'vue-class-component';
-import { ParsedRpcRequest } from '@/lib/RequestTypes';
+import { ParsedRpcRequest, RpcResult } from '@/lib/RequestTypes';
 import { State as RpcState } from '@nimiq/rpc';
 
 export class StaticStore {
@@ -15,6 +15,8 @@ export class StaticStore {
     public request?: ParsedRpcRequest;
     public rpcState?: RpcState;
     public keyguardRequest?: any;
+    public originalRouteName?: string;
+    public sideResult?: RpcResult | Error;
 }
 
 // Decorator is capitalized to be consistent with vuex decorators
