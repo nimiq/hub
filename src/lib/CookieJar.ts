@@ -1,6 +1,6 @@
 import { WalletInfo, WalletInfoEntry, WalletType } from '@/lib/WalletInfo';
 import { AccountInfoEntry } from '@/lib/AccountInfo';
-import { ContractInfo } from '@/lib/ContractInfo';
+import { ContractType, ContractInfo } from '@/lib/ContractInfo';
 
 enum Separator {
     ACCOUNT_ELEMENT = '_',

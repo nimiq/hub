@@ -2,11 +2,7 @@
 import { WalletInfo, WalletInfoEntry, WalletType } from '@/lib/WalletInfo';
 import { AccountInfoEntry } from '@/lib/AccountInfo';
 import { ContractInfo, ContractType } from '@/lib/ContractInfo';
-import Utf8Tools from '@/lib/Utf8Tools';
-
-const Nimiq = require('@nimiq/core'); // tslint:disable-line:no-var-requires variable-name
-// @ts-ignore
-global.Nimiq = Nimiq;
+import { Utf8Tools } from '@nimiq/utils';
 
 //              0       8       16      24      32      40      48      56     63
 const BASE64 = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+-";

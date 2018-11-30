@@ -592,25 +592,26 @@
     call-me-maybe "^1.0.1"
     glob-to-regexp "^0.3.0"
 
-"@nimiq/core-types@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@nimiq/core-types/-/core-types-1.0.0.tgz#a675cf2c151d9146e79934035e999bbd08a59d42"
+"@nimiq/core-types@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@nimiq/core-types/-/core-types-1.0.1.tgz#344cfff6071bf12cfb557f82d586d42cae779797"
+  integrity sha512-Td6rAFhMRJKYqlSmTGw7vInz3j2+MMWvCeCjK8ABUqdYzi9ArE7RBpaeAu4XUQkZpWjFx0DBYWZMxtinwXGQjA==
 
-"@nimiq/core@^1.4.0":
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/@nimiq/core/-/core-1.4.0.tgz#678bf8123d3b943babadc98311cc7f1f3910fb2c"
-  integrity sha512-XCfpKeZzGkMH89W5t9T7itfyJz1fYM4OjPVKhYzkWQ3+XG24CVjVHojSHdPP9Cy5W2EkS1G57DrC7bk4pdTU3w==
+"@nimiq/core@1.3.1":
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/@nimiq/core/-/core-1.3.1.tgz#87611b6d0208f510eb07173de0c7ce603c13445d"
+  integrity sha512-eso/o1mEJKD5GHAPQgtTz8mlEjDA7AO+vuU3beTC6IrT/6nw2aBkEAueIuanTUP2QdRi+ngaElh2EXsbcY7zWA==
   dependencies:
     "@nimiq/jungle-db" "^0.9.17"
     atob "^2.0.3"
     bindings "^1.3.0"
     btoa "^1.1.2"
     chalk "^2.3.2"
-    cpuid-git "^0.3.0"
     json5 "^1.0.1"
     lodash.merge "^4.6.1"
     minimist "^1.2.0"
     nan "^2.10.0"
+    uws "^10.148.0"
     ws "^5.2.0"
   optionalDependencies:
     bufferutil "^3.0.4"
@@ -660,10 +661,10 @@
   version "0.3.4"
   resolved "https://registry.yarnpkg.com/@nimiq/style/-/style-0.3.4.tgz#dec68f59ba280830b39b1616653f04411905d14f"
 
-"@nimiq/utils@^0.0.5":
-  version "0.0.5"
-  resolved "https://registry.yarnpkg.com/@nimiq/utils/-/utils-0.0.5.tgz#ce1b111003f4212f9dcd212902d61586af0662b8"
-  integrity sha512-Je2ch3VQAgqGifU48foi8VaFaSD7PJireQgSHyZT0EFfoBvGZFMLGKBcXaYo7aF59tSsq5gS8Zp+xZaKmskbaw==
+"@nimiq/utils@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@nimiq/utils/-/utils-0.1.0.tgz#4586f2fad3909311484513c9e23dceae838c6dda"
+  integrity sha512-oN0AyYPkSowaAlgA1MjdbWjWzVHdd20cVH8uY9jpD+MulAl5s1yHxgNQKjgJjMZQFQMMOJjYHEPnf850t8V21g==
 
 "@nimiq/vue-components@https://github.com/nimiq/vue-components.git#build/accounts":
   version "0.1.0"
@@ -2201,13 +2202,6 @@ cosmiconfig@^5.0.0:
     is-directory "^0.3.1"
     js-yaml "^3.9.0"
     parse-json "^4.0.0"
-
-cpuid-git@^0.3.0:
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/cpuid-git/-/cpuid-git-0.3.0.tgz#69bdf60e7aab8e1043b9e77c728af9cf16291f88"
-  integrity sha512-7fyi5uEJ2Fx8A/d+O4pXXnd3F7wJfcuURmQNuheWelmVvzboAUXfyHx5OBFE/1Zg/o+EXCgvn4aXQLQ9nctqRQ==
-  dependencies:
-    nan "^2.10.0"
 
 create-ecdh@^4.0.0:
   version "4.0.3"
@@ -7850,6 +7844,11 @@ uuid@3.2.1:
 uuid@^3.0.1, uuid@^3.3.2:
   version "3.3.2"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.3.2.tgz#1b4af4955eb3077c501c23872fc6513811587131"
+
+uws@^10.148.0:
+  version "10.148.2"
+  resolved "https://registry.yarnpkg.com/uws/-/uws-10.148.2.tgz#f01652a0b4bb941cb18bb7a6248d780fd0150245"
+  integrity sha1-8BZSoLS7lByxi7emJI14D9AVAkU=
 
 validate-npm-package-license@^3.0.1:
   version "3.0.4"
