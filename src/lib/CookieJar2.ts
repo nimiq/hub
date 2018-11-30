@@ -11,6 +11,8 @@ BASE64.split('').forEach((character, value) => BASE64_LOOKUP.set(character, valu
 
 export class CookieJar {
 
+    public static readonly COOKIE_SIZE = 4000;
+
     static encodeString(string: string, buffer: Nimiq.SerialBuffer) {
         const bytes = Utf8Tools.stringToUtf8ByteArray(string);
         buffer.writeVarUint(bytes.length);
@@ -60,7 +62,7 @@ export class CookieJar {
         // TODO could be base 64, not much saving though
         // return number.toString(36);
         const isNumber = number !== undefined && Number.isInteger(number);
-        buffer.writeUint8(isNumber ? 0 : 1);
+        buffer.writeUint8(isNumber ? 1 : 0);
         if (isNumber) {
             buffer.writeVarUint(number || 0);
         }
@@ -147,6 +149,7 @@ export class CookieJar {
         this.encodeAddress(contract.address, buffer);
         this.encodeContractType(contract.type, buffer);
         this.encodeString(contract.label, buffer);
+        this.encodePath(contract.ownerPath, buffer);
     }
 
     static decodeContract(buffer: Nimiq.SerialBuffer): ContractInfo {
@@ -193,26 +196,63 @@ export class CookieJar {
         }
     }
 
-    public static encodeWallets(wallets: WalletInfoEntry[]): Uint8Array  {
-        const buffer = new Nimiq.SerialBuffer(3.5*1024); // 4 kB max
+    static encodeWallets(wallets: WalletInfoEntry[]): Uint8Array  {
+        const buffer = new Nimiq.SerialBuffer(this.COOKIE_SIZE);
         buffer.writeUint8(wallets.length);
         wallets.forEach(wallet => this.encodeWallet(wallet, buffer))
         return Uint8Array.from(buffer.subarray(0, buffer.writePos));
     }
 
-    public static decodeWallets(data: Uint8Array): WalletInfoEntry[] {
+    static decodeWallets(data: Uint8Array): WalletInfoEntry[] {
         const buffer = new Nimiq.SerialBuffer(data);
         return this.decodeElements(buffer).map(x => this.decodeWallet(buffer));
     }
 
-    public static fill(wallets: WalletInfoEntry[]) {
+    static encode(wallets: WalletInfoEntry[]) {
         const buffer = this.encodeWallets(wallets);
-        document.cookie = this.base64Encode(buffer);
+        return this.base64Encode(buffer);
+    }
+
+    static decode(data: string): WalletInfoEntry[] {
+        if (data.trim().length < 1) return [];
+        const buffer = this.base64Decode(data);
+        return this.decodeWallets(buffer);
+    }
+
+    public static fill(wallets: WalletInfoEntry[]) {
+        document.cookie = this.encode(wallets);
     }
 
     public static eat(): WalletInfoEntry[] {
-        const buffer = this.base64Decode(document.cookie);
-        return this.decodeWallets(buffer);
+        return this.decode(document.cookie);
     }
+
+    static requiredBytes(wallets: WalletInfoEntry[]) {
+        const buffer = this.encode(wallets);
+        return Utf8Tools.stringToUtf8ByteArray(buffer).length;
+    }
+
+    public static willFit(wallets: WalletInfoEntry[]) {
+        try {
+            return this.requiredBytes(wallets) < this.COOKIE_SIZE;
+        }
+        catch(e){
+            // console.log(typeof e);
+            // console.log(e instanceof RangeError);
+            return false;
+        }
+    }
+
+    public static willFitOneMore(wallets: WalletInfoEntry[]) {
+        try {
+            const bytes = this.requiredBytes(wallets);
+            // console.log(bytes / wallets.length * (wallets.length + 2));
+            return (bytes / wallets.length * (wallets.length + 2)) < this.COOKIE_SIZE;
+        }
+        catch(e){
+            return false;
+        }
+    }
+
 
 }
