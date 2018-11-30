@@ -1,6 +1,6 @@
-import { WalletInfo, WalletInfoEntry, WalletType } '@/lib/WalletInfo';
+import { WalletInfo, WalletInfoEntry, WalletType } from '@/lib/WalletInfo';
 import { AccountInfoEntry } from '@/lib/AccountInfo';
-import { ContractInfo } from '/ContractInfo';
+import { ContractInfo } from '@/lib/ContractInfo';
 
 enum Separator {
     ACCOUNT_ELEMENT = '_',
@@ -223,6 +223,10 @@ export class CookieJar {
 
     public static fill(wallets: WalletInfoEntry[]) {
         document.cookie = this.encodeWallets(wallets);
+    }
+
+    public static eat(): WalletInfoEntry[] {
+        return this.decodeWallets(document.cookie);
     }
 
 }
