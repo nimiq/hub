@@ -3,7 +3,7 @@ export class AccountInfo {
         return new AccountInfo(
             o.path,
             o.label,
-            new Nimiq.Address(new Nimiq.SerialBuffer(o.address)),
+            new Nimiq.Address(o.address),
             o.balance,
         );
     }
