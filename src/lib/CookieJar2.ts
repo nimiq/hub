@@ -11,7 +11,18 @@ BASE64.split('').forEach((character, value) => BASE64_LOOKUP.set(character, valu
 
 export class CookieJar {
 
-    public static readonly COOKIE_SIZE = 4000;
+    // cookie storage:                   4096 byte
+    // buffer for tracking cookies:    -   96 byte
+    // cookie boilerplate:             -   11 byte
+    // expiry date:                    -    8 byte
+    //--------------------------------------------
+    // remaining:                        3981 byte
+    //
+    // Since the cookie is encoded in base64,
+    // the available size is only 3/4:
+    //
+    // available in buffer: 3981 * 3/4 = 2985 byte
+    public static readonly COOKIE_SIZE = 2985;
 
     static encodeString(string: string, buffer: Nimiq.SerialBuffer) {
         const bytes = Utf8Tools.stringToUtf8ByteArray(string);
@@ -26,20 +37,6 @@ export class CookieJar {
 
     static decodeElements(buffer: Nimiq.SerialBuffer) {
         return new Array(buffer.readUint8()).fill(undefined);
-    }
-
-    static base64Encode(buffer: Uint8Array): string {
-        const chunks: number[] = [];
-        for (let index = 0; index < buffer.length; index += 3) {
-            // extract 4x 6 bit chunks from 3 bytes of data
-            const data = [ buffer[index], buffer[index + 1] || 0, buffer[index + 2] || 0 ];
-            chunks.push(...
-                [(data[0] & 0xfc) >> 2,
-                ((data[0] & 0x03) << 4) | ((data[1] & 0xf0) >> 4),
-                ((data[1] & 0x0f) << 2) | ((data[2] & 0xc0) >> 6),
-                (data[2] & 0x3f)]);
-        }
-        return chunks.map(bitChunk => BASE64[bitChunk]).join('');
     }
 
     static base64Decode(data: string, pad = 0): Uint8Array {
@@ -59,8 +56,6 @@ export class CookieJar {
     }
 
     static encodeNumber(number: number | undefined, buffer: Nimiq.SerialBuffer) {
-        // TODO could be base 64, not much saving though
-        // return number.toString(36);
         const isNumber = number !== undefined && Number.isInteger(number);
         buffer.writeUint8(isNumber ? 1 : 0);
         if (isNumber) {
@@ -69,13 +64,10 @@ export class CookieJar {
     }
 
     static decodeNumber(buffer: Nimiq.SerialBuffer): number | undefined {
-        // try { return parseInt(number, 36) } catch (e) { return 0 };
-        // return parseInt(number, 36);
         return (buffer.readUint8() == 1) ? buffer.readVarUint() : undefined;
     }
 
     static encodeAddress(address: Uint8Array, buffer: Nimiq.SerialBuffer) {
-        //return this.base64Encode(address, true);
         buffer.write(address);
     }
 
@@ -210,7 +202,7 @@ export class CookieJar {
 
     static encode(wallets: WalletInfoEntry[]) {
         const buffer = this.encodeWallets(wallets);
-        return this.base64Encode(buffer);
+        return Nimiq.BufferUtils.toBase64(buffer);
     }
 
     static decode(data: string): WalletInfoEntry[] {
@@ -220,7 +212,9 @@ export class CookieJar {
     }
 
     public static fill(wallets: WalletInfoEntry[]) {
-        document.cookie = this.encode(wallets);
+        const maxAge = 60 * 60 * 24 * 365;
+        const encodedWallets = this.encode(wallets);
+        document.cookie = `k=${encodedWallets};max-age=${maxAge.toString()}`;
     }
 
     public static eat(): WalletInfoEntry[] {
@@ -236,10 +230,9 @@ export class CookieJar {
         try {
             return this.requiredBytes(wallets) < this.COOKIE_SIZE;
         }
-        catch(e){
-            // console.log(typeof e);
-            // console.log(e instanceof RangeError);
-            return false;
+        catch (e) {
+            if (e.name === 'RangeError') return false;
+            throw e;
         }
     }
 
