@@ -1,4 +1,4 @@
-import { WalletType } from './WalletInfo';
+import { WalletType, WalletInfoEntry } from './WalletInfo';
 
 export enum RequestType {
     LIST = 'list',
@@ -241,6 +241,8 @@ export interface RenameResult {
     }];
 }
 
+export type ListResult = WalletInfoEntry[];
+
 // Discriminated Unions
 export type RpcRequest = SignTransactionRequest
                        | CheckoutRequest
@@ -269,7 +271,8 @@ export type RpcResult = SignTransactionResult
                       | LogoutResult
                       | AddAccountResult
                       | RenameResult
-                      | SignMessageResult;
+                      | SignMessageResult
+                      | ListResult;
 
 export class AccountsRequest {
     public static parse(request: RpcRequest, requestType?: RequestType): ParsedRpcRequest | null {
