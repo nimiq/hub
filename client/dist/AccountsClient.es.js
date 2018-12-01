@@ -115,13 +115,12 @@ IFrameRequestBehavior.IFRAME_PATH_SUFFIX = '/iframe.html';
 var RequestType;
 (function (RequestType) {
     RequestType["LIST"] = "list";
+    RequestType["MIGRATE"] = "migrate";
     RequestType["CHECKOUT"] = "checkout";
     RequestType["SIGN_MESSAGE"] = "sign-message";
     RequestType["SIGN_TRANSACTION"] = "sign-transaction";
     RequestType["SIGNUP"] = "signup";
     RequestType["LOGIN"] = "login";
-    RequestType["EXPORT_WORDS"] = "export-words";
-    RequestType["EXPORT_FILE"] = "export-file";
     RequestType["EXPORT"] = "export";
     RequestType["CHANGE_PASSPHRASE"] = "change-passphrase";
     RequestType["LOGOUT"] = "logout";
@@ -160,12 +159,6 @@ class AccountsClient {
     logout(request, requestBehavior = this._defaultBehavior) {
         return this._request(requestBehavior, RequestType.LOGOUT, [request]);
     }
-    exportFile(request, requestBehavior = this._defaultBehavior) {
-        return this._request(requestBehavior, RequestType.EXPORT_FILE, [request]);
-    }
-    exportWords(request, requestBehavior = this._defaultBehavior) {
-        return this._request(requestBehavior, RequestType.EXPORT_WORDS, [request]);
-    }
     export(request, requestBehavior = this._defaultBehavior) {
         return this._request(requestBehavior, RequestType.EXPORT, [request]);
     }
@@ -180,6 +173,9 @@ class AccountsClient {
     }
     signMessage(request, requestBehavior = this._defaultBehavior) {
         return this._request(requestBehavior, RequestType.SIGN_MESSAGE, [request]);
+    }
+    migrate(requestBehavior = this._defaultBehavior) {
+        return this._request(requestBehavior, RequestType.MIGRATE, []);
     }
     /**
      * Only accessible in iframe from Nimiq domains.

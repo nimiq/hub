@@ -33,10 +33,10 @@ export default class Migrate extends Vue {
         }
 
         this.status = 'Converting your legacy accounts...';
-        const walletInfos = legacyKeys.map(key => {
-            const address = new Nimiq.Address(key.legacyAccount.address);
+        const walletInfos = legacyKeys.map((key) => {
+            const address = new Nimiq.Address(key.legacyAccount!.address);
             const accounts = new Map<string, AccountInfo>([
-                [address.toUserFriendlyAddress(), new AccountInfo('m/0\'', key.legacyAccount.label, address)],
+                [address.toUserFriendlyAddress(), new AccountInfo('m/0\'', key.legacyAccount!.label, address)],
             ]);
 
             return new WalletInfo(
@@ -44,19 +44,19 @@ export default class Migrate extends Vue {
                 'Legacy Wallet',
                 accounts,
                 [], // Contracts
-                WalletType.LEGACY
+                WalletType.LEGACY,
             );
         });
 
         this.status = 'Storing your new wallets...';
-        const storagePromises = walletInfos.map(walletInfo => WalletStore.Instance.put(walletInfo));
+        const storagePromises = walletInfos.map((walletInfo) => WalletStore.Instance.put(walletInfo));
         await Promise.all(storagePromises);
 
         this.status = 'Migrating Keyguard...';
         await client.migrateAccountsToKeys();
 
         this.status = 'Done.';
-        const walletInfoEntries = walletInfos.map(walletInfo => walletInfo.toObject());
+        const walletInfoEntries = walletInfos.map((walletInfo) => walletInfo.toObject());
         this.$rpc.resolve(walletInfoEntries);
     }
 }
