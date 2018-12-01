@@ -2,6 +2,7 @@ import { WalletType, WalletInfoEntry } from './WalletInfo';
 
 export enum RequestType {
     LIST = 'list',
+    MIGRATE = 'migrate',
     CHECKOUT = 'checkout',
     SIGN_MESSAGE = 'sign-message',
     SIGN_TRANSACTION = 'sign-transaction',

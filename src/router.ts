@@ -33,6 +33,8 @@ const AddAccountSuccess       = () => import(/* webpackChunkName: "add-account" 
 
 const Rename                  = () => import(/* webpackChunkName: "rename" */ './views/Rename.vue');
 
+const Migrate                  = () => import(/* webpackChunkName: "migrate" */ './views/Migrate.vue');
+
 const SignMessage             = () => import(/* webpackChunkName: "sign-message" */ './views/SignMessage.vue');
 const SignMessageOverview     = () => import(/* webpackChunkName: "sign-message" */ './views/SignMessageOverview.vue');
 const SignMessageSuccess      = () => import(/* webpackChunkName: "sign-message" */ './views/SignMessageSuccess.vue');
@@ -219,6 +221,11 @@ export default new Router({
       path: `/${RequestType.RENAME}`,
       component: Rename,
       name: RequestType.RENAME,
+    },
+    {
+      path: `/${RequestType.MIGRATE}`,
+      component: Migrate,
+      name: RequestType.MIGRATE,
     },
     {
       path: `/${RequestType.SIGN_MESSAGE}`,

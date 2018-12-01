@@ -121,6 +121,10 @@ export default class AccountsClient {
         return this._request(requestBehavior, RequestType.SIGN_MESSAGE, [request]);
     }
 
+    public migrate(requestBehavior = this._defaultBehavior): Promise<ListResult> {
+        return this._request(requestBehavior, RequestType.MIGRATE, []);
+    }
+
     /**
      * Only accessible in iframe from Nimiq domains.
      */
