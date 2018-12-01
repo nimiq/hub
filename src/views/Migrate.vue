@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="container pad-bottom">
         {{ status }}
     </div>
 </template>
@@ -20,7 +20,7 @@ export default class Migrate extends Vue {
 
         if (!hasLegacyKeys) {
             this.status = 'Nothing to migrate.';
-            this.$rpc.resolve([]);
+            setTimeout(() => this.$rpc.resolve([]), 1000);
             return;
         }
 

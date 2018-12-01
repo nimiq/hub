@@ -122,7 +122,7 @@ export default class AccountsClient {
     }
 
     public migrate(requestBehavior = this._defaultBehavior): Promise<ListResult> {
-        return this._request(requestBehavior, RequestType.MIGRATE, []);
+        return this._request(requestBehavior, RequestType.MIGRATE, [{}]);
     }
 
     /**

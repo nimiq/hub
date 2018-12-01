@@ -215,6 +215,17 @@ class Demo {
             };
         }
 
+        document.querySelector('button#migrate').addEventListener('click', async () => {
+            try {
+                const result = await client.migrate();
+                console.log('Keyguard result', result);
+                document.querySelector('#result').textContent = 'Migrated';
+            } catch (e) {
+                console.error('Keyguard error', e);
+                document.querySelector('#result').textContent = `Error: ${e.message || e}`;
+            }
+        });
+
         document.querySelector('button#list-keyguard-keys').addEventListener('click', () => demo.listKeyguard());
         document.querySelector('button#list-accounts').addEventListener('click', async () => demo.updateAccounts());
         demo._accountsClient = client;
