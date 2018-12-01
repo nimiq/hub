@@ -8,7 +8,7 @@ import { KeyguardCommand, RedirectRequestBehavior, KeyguardClient } from '@nimiq
 import { keyguardResponseRouter } from '@/router';
 import { StaticStore } from '@/lib/StaticStore';
 import { WalletStore } from './WalletStore';
-import CookieJar from '@/lib/CookieJar';
+import { CookieJar } from '@/lib/CookieJar2';
 // @ts-ignore
 import { Raven } from 'vue-raven'; // Sentry.io SDK
 

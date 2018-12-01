@@ -2,7 +2,8 @@ import { RpcServer } from '@nimiq/rpc';
 import { BrowserDetection } from '@nimiq/utils';
 import { WalletStore } from '@/lib/WalletStore';
 import { WalletInfoEntry } from '@/lib/WalletInfo';
-import CookieJar from '@/lib/CookieJar';
+import { CookieJar } from '@/lib/CookieJar';
+import { KeyguardClient } from '@nimiq/keyguard-client';
 
 class IFrameApi {
     public static run() {
@@ -15,11 +16,28 @@ class IFrameApi {
     }
 
     public static async list(): Promise<WalletInfoEntry[]> {
+        let wallets: WalletInfoEntry[];
         if (BrowserDetection.isIOS() || BrowserDetection.isSafari()) {
-            return CookieJar.eat();
+            wallets = CookieJar.eat();
+        } else {
+            wallets = await WalletStore.Instance.list();
         }
 
-        return await WalletStore.Instance.list();
+        // If no wallets exist, see if the Keyguard has keys
+        if (wallets.length === 0) {
+            let keys: KeyguardRequest.KeyInfoObject[];
+            const client = new KeyguardClient();
+            keys = await client.list();
+
+            // If no keys exist, check legacy accounts and migrate
+            if (keys.length === 0) {
+                keys = await client.list(true);
+            }
+
+            // TODO Store wallets and trigger migration in Keyguard
+        }
+
+        return wallets;
     }
 
     private static get allowedOrigin(): string {
