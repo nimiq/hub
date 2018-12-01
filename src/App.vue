@@ -42,7 +42,7 @@ export default class App extends Vue {
         // no =>
         // load keyguard iframe
         // legacy-list: list(true)
-        // 
+        //
     }
 
     @Watch('hasRpcState')

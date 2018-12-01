@@ -18,7 +18,7 @@ const DUMMY: WalletInfo[] = [
             ['NQ07 0000 0000 0000 0000 0000 0000 0000 0000', new AccountInfo('m/0\'', 'MyAccount', DUMMY_ADDRESS)],
         ]),
         [], // Contracts
-        WalletType.BIP39
+        WalletType.BIP39,
     ),
 
     new WalletInfo(
@@ -33,7 +33,7 @@ const DUMMY: WalletInfo[] = [
             ownerPath: 'm/0\'',
             type: ContractType.VESTING,
         }],
-        WalletType.LEDGER
+        WalletType.LEDGER,
     ),
     new WalletInfo(
         'sad-panda',
@@ -42,7 +42,7 @@ const DUMMY: WalletInfo[] = [
             ['NQ07 0000 0000 0000 0000 0000 0000 0000 0000', new AccountInfo('m/0\'', 'OldAccount', DUMMY_ADDRESS)],
         ]),
         [], // Contracts
-        WalletType.LEGACY
+        WalletType.LEGACY,
     ),
 ];
 
@@ -93,8 +93,8 @@ describe('WalletStore', () => {
         const keys = await WalletStore.Instance.list();
 
         // Test both conversions
-        expect(keys).toEqual(DUMMY.map(wi => wi.toObject()));
-        expect(keys.map(wie => WalletInfo.fromObject(wie))).toEqual(DUMMY);
+        expect(keys).toEqual(DUMMY.map((wi) => wi.toObject()));
+        expect(keys.map((wie) => WalletInfo.fromObject(wie))).toEqual(DUMMY);
     });
 
     it('can remove keys', async () => {

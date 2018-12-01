@@ -31,7 +31,7 @@ const RAW_WALLETS: WalletInfo[] = [
                 new AccountInfo(
                     'm/0\'',
                     'MyLedger',
-                    BURN_ADDRESS)], ]),
+                    BURN_ADDRESS)] ]),
         [{ // ContractInfo
             address: DUMMY_ADDRESS_S,
             label: 'Savings',
@@ -52,7 +52,7 @@ const RAW_WALLETS: WalletInfo[] = [
         WalletType.LEGACY),
 ];
 
-const DUMMIES = RAW_WALLETS.map(wallet => wallet.toObject());
+const DUMMIES = RAW_WALLETS.map((wallet) => wallet.toObject());
 const DUMMY = DUMMIES[0];
 
 const beforeEachCallback = async () => {
@@ -71,7 +71,7 @@ describe('CookieJar', () => {
         CookieJar.fill(DUMMIES);
         const cookie = document.cookie;
         expect(cookie).not.toBeNull();
-        expect(cookie.length).toBeGreaterThan(DUMMIES.length*50);
+        expect(cookie.length).toBeGreaterThan(DUMMIES.length * 50);
         expect(cookie).toBe(CookieJar.encodeWallets(DUMMIES));
         console.log(cookie);
     });
@@ -86,7 +86,7 @@ describe('CookieJar', () => {
     });
 
     it('encode and decode base 64', () => {
-        const test = Uint8Array.from(<number[]> 'tes'.split('').map(character => character.codePointAt(0)));
+        const test = Uint8Array.from('tes'.split('').map((character) => character.codePointAt(0)) as number[]);
         const encoded = CookieJar.base64Encode(test);
         const decoded = CookieJar.base64Decode(encoded);
         expect(decoded).toEqual(test);
@@ -94,12 +94,12 @@ describe('CookieJar', () => {
 
     it('encode and decode address', () => {
         const address = DUMMY.accounts.values().next().value.address;
-        console.log(Array.from(address.values()).map(b => b.toString(2)).join(','));
+        console.log(Array.from(address.values()).map((b) => b.toString(2)).join(','));
         const encoded = CookieJar.encodeAddress(address);
         console.log(encoded);
-        expect(encoded.length).toBeLessThanOrEqual(21*4/3);
+        expect(encoded.length).toBeLessThanOrEqual(21 * 4 / 3);
         const decoded = CookieJar.decodeAddress(encoded);
-        console.log(Array.from(decoded.values()).map(b => b.toString(2)).join(','));
+        console.log(Array.from(decoded.values()).map((b) => b.toString(2)).join(','));
         expect(decoded).toEqual(address);
     });
 
@@ -118,10 +118,10 @@ describe('CookieJar', () => {
         const encoded = CookieJar.encodeWallets(DUMMIES);
         const wallets = encoded.split(CookieJar.Separator.WALLET);
         // https://stackoverflow.com/questions/2219526/how-many-bytes-in-a-javascript-string
-        console.log(`Serialized size: ${ encodeURI(encoded).split(/%(?:u[0-9A-F]{2})?[0-9A-F]{2}|./).length -1   }`)
+        console.log(`Serialized size: ${ encodeURI(encoded).split(/%(?:u[0-9A-F]{2})?[0-9A-F]{2}|./).length - 1   }`);
         // 215 for CookieJar 1
         console.log(wallets.length);
-        console.log(wallets.join("\n---\n"));
+        console.log(wallets.join('\n---\n'));
         expect(encoded.length).toBeGreaterThan(100);
         expect(CookieJar.decodeWallets(encoded)).toEqual(DUMMIES);
     });

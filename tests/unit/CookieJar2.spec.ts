@@ -31,7 +31,7 @@ const RAW_WALLETS: WalletInfo[] = [
                 new AccountInfo(
                     'm/0\'',
                     'MyLedger',
-                    BURN_ADDRESS)], ]),
+                    BURN_ADDRESS)] ]),
         [{ // ContractInfo
             address: DUMMY_ADDRESS_S,
             label: 'Savings',
@@ -52,7 +52,7 @@ const RAW_WALLETS: WalletInfo[] = [
         WalletType.LEGACY),
 ];
 
-const DUMMIES = RAW_WALLETS.map(wallet => wallet.toObject());
+const DUMMIES = RAW_WALLETS.map((wallet) => wallet.toObject());
 const DUMMY = DUMMIES[0];
 const DUMMY_ACCOUNT = DUMMIES[0].accounts.values().next().value;
 const DUMMY_CONTRACT = DUMMIES[1].contracts[0];
@@ -71,7 +71,7 @@ describe('CookieJar', () => {
 
     it('test base64 in and out', () => {
         const data = '我asdf';
-        let inBuffer = new Nimiq.SerialBuffer(Utf8Tools.stringToUtf8ByteArray(data));
+        const inBuffer = new Nimiq.SerialBuffer(Utf8Tools.stringToUtf8ByteArray(data));
         const base64 = CookieJar.base64Encode(inBuffer);
         const outBuffer = new Nimiq.SerialBuffer(CookieJar.base64Decode(base64));
         const result = Utf8Tools.utf8ByteArrayToString(outBuffer.read(inBuffer.length));
@@ -146,7 +146,7 @@ describe('CookieJar', () => {
 
     it('Encode and decode reproduce source', () => {
         const encoded = CookieJar.encodeWallets(DUMMIES);
-        console.log(`Serialized size: ${ encoded.length }`)
+        console.log(`Serialized size: ${ encoded.length }`);
         // 215 for CookieJar 1
         // 195 for CookieJar 2 :)
         expect(encoded.length).toBeGreaterThan(100);
