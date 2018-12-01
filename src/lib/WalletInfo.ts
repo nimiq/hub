@@ -23,14 +23,14 @@ export class WalletInfo {
                        public type: WalletType) {}
 
     public toObject(): WalletInfoEntry {
-        const accounts = new Map();
-        this.accounts.forEach((addressInfo, userFriendlyAddress) => {
-            accounts.set(userFriendlyAddress, addressInfo.toObject());
+        const accountEntries = new Map<string, AccountInfoEntry>();
+        this.accounts.forEach((accountInfo, userFriendlyAddress) => {
+            accountEntries.set(userFriendlyAddress, accountInfo.toObject());
         });
         return {
             id: this.id,
             label: this.label,
-            accounts,
+            accounts: accountEntries,
             contracts: this.contracts,
             type: this.type,
         };
