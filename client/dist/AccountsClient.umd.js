@@ -179,7 +179,7 @@
             return this._request(requestBehavior, RequestType.SIGN_MESSAGE, [request]);
         }
         migrate(requestBehavior = this._defaultBehavior) {
-            return this._request(requestBehavior, RequestType.MIGRATE, []);
+            return this._request(requestBehavior, RequestType.MIGRATE, [{}]);
         }
         /**
          * Only accessible in iframe from Nimiq domains.
