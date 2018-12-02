@@ -15,7 +15,6 @@ import {
     AddAccountRequest,
     SignMessageRequest,
 } from '../src/lib/RequestTypes';
-import { WalletStore } from '../src/lib/WalletStore';
 import { WalletInfoEntry } from '../src/lib/WalletInfo';
 import { RedirectRequestBehavior } from '../client/RequestBehavior';
 
@@ -28,9 +27,9 @@ class Demo {
             (document.querySelector('button#list-accounts') as HTMLButtonElement).click();
         })();
 
-        const demo = new Demo('http://localhost:8000');
+        const demo = new Demo(`${location.protocol}//${location.hostname}:8000`);
 
-        const client = new AccountsClient('http://localhost:8080');
+        const client = new AccountsClient(`${location.protocol}//${location.host}`);
         client.on(RequestType.CHECKOUT, (result: SignTransactionResult, state: Rpc.State) => {
             console.log('AccountsManager result', result);
             console.log('State', state);
@@ -259,7 +258,7 @@ class Demo {
     }
 
     public async list(): Promise<WalletInfoEntry[]> {
-        return await WalletStore.Instance.list();
+        return await this._accountsClient.list();
     }
 
     public async logout(walletId: string): Promise<LogoutResult> {
