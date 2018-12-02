@@ -35,7 +35,7 @@ export class CookieDecoder {
 
         // Wallet type and label length
         const typeAndLabelLength = bytes.shift()!;
-        const type = typeAndLabelLength & 0b00000011;
+        const type = typeAndLabelLength & 0b11;
         const labelLength = typeAndLabelLength >> 2;
 
         // Handle LEGACY wallet

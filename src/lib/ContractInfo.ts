@@ -4,7 +4,7 @@ export enum ContractType {
 }
 
 export interface ContractInfo {
-    address: Uint8Array;
+    address: Nimiq.Address;
     label: string;
     ownerPath: string;
     type: ContractType;

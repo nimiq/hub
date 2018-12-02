@@ -16,9 +16,7 @@ class IFrameApi {
 
     public static async list(): Promise<WalletInfoEntry[]> {
         if (BrowserDetection.isIOS() || BrowserDetection.isSafari()) {
-            // case 1: cookie exists
             return CookieJar.eat();
-            // case 2: no cookie yet, because we have to migrate first?
         }
 
         return await WalletStore.Instance.list();

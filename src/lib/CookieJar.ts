@@ -17,7 +17,6 @@ export default class CookieJar {
         if (match && match[1]) {
             return this.decodeCookie(match[1]);
         }
-
         return [];
     }
 

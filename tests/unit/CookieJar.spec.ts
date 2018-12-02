@@ -55,7 +55,7 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
             ],
         ]),
         contracts: [{
-            address: DUMMY_ADDRESS_S1,
+            address: DUMMY_ADDRESS1,
             label: 'Savings',
             ownerPath: 'm/0\'',
             type: ContractType.VESTING,
@@ -179,19 +179,12 @@ const BYTES = [
 const BASE64 = Nimiq.BufferUtils.toBase64(new Uint8Array(BYTES));
 const COOKIE = `w=${BASE64}`;
 
-const beforeEachCallback = async () => {
-    document.cookie = 'w=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-};
-
-const afterEachCallback = async () => {
-    document.cookie = 'w=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-};
-
 describe('CookieJar', () => {
 
-    beforeEach(beforeEachCallback);
-
-    afterEach(afterEachCallback);
+    // Clear cookie before and after each test
+    const clearCookie = () => document.cookie = 'w=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+    beforeEach(clearCookie);
+    afterEach(clearCookie);
 
     it('can fill a cookie', () => {
         CookieJar.fill(DUMMY_WALLET_OBJECTS);

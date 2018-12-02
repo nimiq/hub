@@ -10,40 +10,23 @@ const indexedDB: IDBFactory = require('fake-indexeddb'); // tslint:disable-line:
 
 const DUMMY_ADDRESS = Nimiq.Address.fromUserFriendlyAddress('NQ07 0000 0000 0000 0000 0000 0000 0000 0000');
 const DUMMY: WalletInfo[] = [
-
-    new WalletInfo(
-        'funny-giraffe',
-        'Main',
+    new WalletInfo('funny-giraffe', 'Main',
         new Map<string, AccountInfo>([
             ['NQ07 0000 0000 0000 0000 0000 0000 0000 0000', new AccountInfo('m/0\'', 'MyAccount', DUMMY_ADDRESS)],
-        ]),
-        [], // Contracts
-        WalletType.BIP39,
-    ),
-
-    new WalletInfo(
-        'joyful-cat',
-        'Ledger',
+        ]), [], WalletType.BIP39),
+    new WalletInfo('joyful-cat', 'Ledger',
         new Map<string, AccountInfo>([
             ['NQ07 0000 0000 0000 0000 0000 0000 0000 0000', new AccountInfo('m/0\'', 'MyLedger', DUMMY_ADDRESS)],
-        ]),
-        [{ // Contract
-            address: new Uint8Array(DUMMY_ADDRESS.serialize()),
+        ]), [{
+            address: DUMMY_ADDRESS,
             label: 'Savings',
             ownerPath: 'm/0\'',
             type: ContractType.VESTING,
-        }],
-        WalletType.LEDGER,
-    ),
-    new WalletInfo(
-        'sad-panda',
-        'Old',
+        }], WalletType.LEDGER),
+    new WalletInfo('sad-panda', 'Old',
         new Map<string, AccountInfo>([
             ['NQ07 0000 0000 0000 0000 0000 0000 0000 0000', new AccountInfo('m/0\'', 'OldAccount', DUMMY_ADDRESS)],
-        ]),
-        [], // Contracts
-        WalletType.LEGACY,
-    ),
+        ]), [], WalletType.LEGACY),
 ];
 
 const beforeEachCallback = async () => {
@@ -91,10 +74,7 @@ describe('WalletStore', () => {
 
     it('can list keys', async () => {
         const keys = await WalletStore.Instance.list();
-
-        // Test both conversions
         expect(keys).toEqual(DUMMY.map((wi) => wi.toObject()));
-        expect(keys.map((wie) => WalletInfo.fromObject(wie))).toEqual(DUMMY);
     });
 
     it('can remove keys', async () => {
@@ -115,13 +95,13 @@ describe('WalletStore', () => {
         // first clear database
         await afterEachCallback();
 
-        let currentWallets = await WalletStore.Instance.list();
-        expect(currentWallets.length).toBe(0);
+        let currentPermissions = await WalletStore.Instance.list();
+        expect(currentPermissions.length).toBe(0);
 
-        // add wallets
+        // add permissions
         await WalletStore.Instance.put(DUMMY[1]);
-        currentWallets = await WalletStore.Instance.list();
-        expect(currentWallets.length).toBe(1);
+        currentPermissions = await WalletStore.Instance.list();
+        expect(currentPermissions.length).toBe(1);
 
         // check that the key info has been stored correctly
         let keyInfo = await WalletStore.Instance.get(DUMMY[1].id);
