@@ -1,4 +1,3 @@
-// tslint:disable
 import { setup } from './_setup';
 import { WalletType, WalletInfoEntry } from '@/lib/WalletInfo';
 import { AccountInfoEntry } from '@/lib/AccountInfo';

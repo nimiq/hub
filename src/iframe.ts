@@ -1,8 +1,8 @@
 import { RpcServer } from '@nimiq/rpc';
 import { BrowserDetection } from '@nimiq/utils';
 import { WalletStore } from '@/lib/WalletStore';
-import { WalletInfoEntry, WalletInfo } from '@/lib/WalletInfo';
-import { CookieJar } from '@/lib/CookieJar';
+import { WalletInfoEntry } from '@/lib/WalletInfo';
+import CookieJar from '@/lib/CookieJar';
 import { KeyguardClient } from '@nimiq/keyguard-client';
 
 class IFrameApi {
@@ -18,7 +18,7 @@ class IFrameApi {
     public static async list(): Promise<WalletInfoEntry[]> {
         let wallets: WalletInfoEntry[];
         if (BrowserDetection.isIOS() || BrowserDetection.isSafari()) {
-            wallets = CookieJar.eat();
+            wallets = await CookieJar.eat();
         } else {
             wallets = await WalletStore.Instance.list();
         }
@@ -33,7 +33,7 @@ class IFrameApi {
             throw new Error('WALLETS_LOST');
         }
 
-        // If no keys exist, check legacy accounts
+        // If no keys exist, check for legacy accounts
         const hasLegacyKeys = await client.hasKeys(true);
         if (hasLegacyKeys) {
             throw new Error('MIGRATION_REQUIRED');

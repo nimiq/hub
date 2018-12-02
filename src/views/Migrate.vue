@@ -1,5 +1,6 @@
 <template>
     <div class="container pad-bottom">
+        <!-- TODO: New loading screen design -->
         {{ status }}
     </div>
 </template>

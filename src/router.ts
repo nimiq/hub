@@ -33,7 +33,7 @@ const AddAccountSuccess       = () => import(/* webpackChunkName: "add-account" 
 
 const Rename                  = () => import(/* webpackChunkName: "rename" */ './views/Rename.vue');
 
-const Migrate                  = () => import(/* webpackChunkName: "migrate" */ './views/Migrate.vue');
+const Migrate                 = () => import(/* webpackChunkName: "migrate" */ './views/Migrate.vue');
 
 const SignMessage             = () => import(/* webpackChunkName: "sign-message" */ './views/SignMessage.vue');
 const SignMessageOverview     = () => import(/* webpackChunkName: "sign-message" */ './views/SignMessageOverview.vue');
