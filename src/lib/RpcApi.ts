@@ -74,7 +74,7 @@ export default class RpcApi {
         this._reply(ResponseStatus.ERROR, error);
     }
 
-    private _reply(status: ResponseStatus, result: RpcResult | Error) {
+    private async _reply(status: ResponseStatus, result: RpcResult | Error) {
         // Update cookies for iOS
         if (BrowserDetection.isIOS() || BrowserDetection.isSafari()) {
             const wallets = await WalletStore.Instance.list();

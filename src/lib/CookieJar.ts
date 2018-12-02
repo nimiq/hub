@@ -1,230 +1,88 @@
-import { WalletInfo, WalletInfoEntry, WalletType } from '@/lib/WalletInfo';
-import { AccountInfoEntry } from '@/lib/AccountInfo';
-import { ContractType, ContractInfo } from '@/lib/ContractInfo';
+// tslint:disable no-bitwise no-shadowed-variable
 
-enum Separator {
-    ACCOUNT_ELEMENT = '_',
-    ACCOUNT = '\\',
-    WALLET_ELEMENT = '~',
-    WALLET = '^',
-}
+import { WalletInfoEntry, WalletType } from './WalletInfo';
+import { Utf8Tools } from '@nimiq/utils';
 
-const BASE64 =
-    //   0       8       16      24      32      40      48      56     63
-    '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+-';
-const BASE64_LOOKUP = new Map<string, number>();
-BASE64.split('').forEach((character, value) => BASE64_LOOKUP.set(character, value));
-
-export class CookieJar {
-
-    public static Separator = Separator;
-
-    public static sanitizeString(string: string): string {
-        for (const separator in Separator) {
-            string = string.replace(separator, '');
-        }
-        return string;
-    }
-
-    public static base64Encode(data: Uint8Array, pad = false): string {
-        if (!pad && data.length % 3 != 0) throw new Error(`Data is ${data.length} bytes. Can only compress multiples of 3 (Base 64 > 6 bits > chunks of 24bit = 3 bytes)`);
-        const chunks: number[] = [];
-        for (let index = 0; index < data.length; index += 3) {
-            // extract 4x 6 bit chunks from 3 bytes of data
-            chunks.push(...[(data[index] & 0xfc) >> 2,
-                ((data[index] & 0x03) << 4) | ((data[index + 1] & 0xf0) >> 4),
-                ((data[index + 1] & 0x0f) << 2) | ((data[index + 2] & 0xc0) >> 6),
-                (data[index + 2] & 0x3f)]);
-        }
-        return chunks.map((bitChunk) => BASE64[bitChunk]).join('');
-    }
-
-    public static base64Decode(data: string, pad = 0): Uint8Array {
-        if (data.length % 4 != 0) throw new Error(`Data is ${data.length} bytes. Can only compress multiples of 4 (Base 64 > 6 bits > chunks of 24bit = 4 characters for 3 bytes)`);
-        const bytes: number[] = [];
-        const values = data.split('').map((character) => BASE64_LOOKUP.get(character)) as number[];
-        for (let index = 0; index < values.length; index += 4) {
-            // extract 4x 6 bit chunks from 3 bytes of data
-            // base64       AAAAAA BBBBBB CCCCCC DDDDDD
-            // bits of byte 111111 112222 222233 333333
-            bytes.push(...[(values[index] << 2) | ((values[index + 1] & 0x30) >> 4),
-                ((values[index + 1] & 0x0f) << 4) | ((values[index + 2] & 0x3c) >> 2),
-                ((values[index + 2] & 0x03) << 6) | values[index + 3]]);
-        }
-        return new Uint8Array(pad ? bytes.slice(0, pad) : bytes);
-    }
-
-    public static encodeNumber(number: number): string {
-        // TODO could be base 64, not much saving though
-        return number.toString(36);
-    }
-
-    public static decodeNumber(number: string): number {
-        // try { return parseInt(number, 36) } catch (e) { return 0 };
-        return parseInt(number, 36);
-    }
-
-    public static encodeAddress(address: Uint8Array): string {
-        return this.base64Encode(address, true);
-    }
-
-    public static decodeAddress(address: string): Uint8Array {
-        return this.base64Decode(address, 20);
-    }
-
-    public static encodePath(path: string): string {
-        // "m/44'/242'/0'/0'" > var length, restricted character set
-        // TODO m/ == constant?
-        // > path.split("'/") > 4xFF
-        return path;
-    }
-
-    public static decodePath(path: string): string {
-        // TODO
-        return path;
-    }
-
-    public static encodeId(hex: string): string {
-        // example "1ee3d926a49c"
-        if (hex.length != 12) throw new Error(`not a valid ID ${hex}`);
-        const bytes = hex.split(/(.{2})/).filter((e) => e != '').map((e) => parseInt(e, 16));
-        return this.base64Encode(Uint8Array.from(bytes));
-    }
-    public static decodeId(code: string): string {
-        const hex = Array.from(this.base64Decode(code)).map((n) => n.toString(16)).join('');
-        if (hex.length != 12) throw new Error(`not a valid ID ${hex}`);
-        return hex;
-    }
-
-    public static encodeAccount(account: AccountInfoEntry): string {
-        const data = [
-            [
-                this.encodeAddress(account.address),
-                this.encodePath(account.path),
-            ].join(''),
-            this.sanitizeString(account.label),
-        ];
-        if (account.balance) {
-            data.push(this.encodeNumber(account.balance));
-        }
-        return data.join(Separator.ACCOUNT_ELEMENT);
-    }
-
-    public static decodeAccount(accountData: string): AccountInfoEntry {
-        const elements = accountData.split(Separator.ACCOUNT_ELEMENT);
-        return {
-            address: this.decodeAddress(elements[0].substr(0, 28)),
-            path: this.decodePath(elements[0].substr(28)),
-            label: elements[1],
-            balance: (elements.length > 2) ? this.decodeNumber(elements[2]) : undefined,
-        };
-    }
-
-    public static compressAccounts(accountsMap: Map</*address*/ string, AccountInfoEntry>): string {
-        return Array.from(accountsMap.values())
-            .map((account) => this.encodeAccount(account))
-            .join(Separator.ACCOUNT);
-    }
-
-    public static decodeAccounts(accounts: string): Map</*address*/ string, AccountInfoEntry> {
-        const accountsMap = new Map</*address*/ string, AccountInfoEntry>();
-        accounts
-            .split(Separator.ACCOUNT)
-            .forEach((encoded) => {
-                const account = this.decodeAccount(encoded);
-                const address = new Nimiq.Address(account.address).toUserFriendlyAddress();
-                accountsMap.set(address, account);
-            });
-
-        return accountsMap;
-    }
-
-    public static encodeContractType(type: ContractType): string {
-        return type.valueOf().toString(36);
-    }
-
-    public static decodeContractType(type: string): ContractType {
-        return parseInt(type, 36) as ContractType;
-    }
-
-    public static encodeContract(contract: ContractInfo): string {
-        return [
-            `${this.encodeAddress(contract.address)}${this.encodeContractType(contract.type)}${this.sanitizeString(contract.label)}`,
-            this.encodePath(contract.ownerPath),
-        ].join(Separator.ACCOUNT_ELEMENT);
-    }
-
-    public static decodeContract(contract: string): ContractInfo {
-        const elements = contract.split(Separator.ACCOUNT_ELEMENT);
-        return {
-            address: this.decodeAddress(elements[0].substr(0, 28)),
-            type: this.decodeContractType(elements[0].substr(28, 1)),
-            label: this.sanitizeString(elements[0].substr(29)),
-            ownerPath: this.decodePath(elements[1]),
-        };
-    }
-
-    public static encodeContracts(contracts: ContractInfo[]): string {
-        return contracts
-            .map((contract) => this.encodeContract(contract))
-            .join(Separator.ACCOUNT);
-    }
-
-    public static decodeContracts(contracts: string): ContractInfo[] {
-        return contracts
-            .split(Separator.ACCOUNT)
-            .filter((s) => s.trim() != '')
-            .map((contract) => this.decodeContract(contract));
-    }
-
-    public static encodeType(type: WalletType): string {
-        return type.valueOf().toString(36);
-    }
-
-    public static decodeType(type: string): WalletType {
-        return parseInt(type, 36) as WalletType;
-    }
-
-    public static encodeWallet(wallet: WalletInfoEntry): string {
-        return [
-            [
-                this.encodeId(wallet.id),         // 8 characters
-                this.encodeType(wallet.type),      // 1
-                this.sanitizeString(wallet.label), // variable
-            ].join(''),
-            this.compressAccounts(wallet.accounts),
-            this.encodeContracts(wallet.contracts),
-        ].join(Separator.WALLET_ELEMENT);
-    }
-
-    public static decodeWallet(wallet: string): WalletInfoEntry {
-        const elements = wallet.split(Separator.WALLET_ELEMENT);
-        return {
-            id: this.decodeId(elements[0].substr(0, 8)),
-            type: this.decodeType(elements[0].substr(8, 1)),
-            label: elements[0].substr(9),
-            accounts: this.decodeAccounts(elements[1]),
-            contracts: this.decodeContracts(elements[2]),
-        };
-    }
-
-    public static encodeWallets(wallets: WalletInfoEntry[]): string {
-        return wallets
-            .map((wallet) => this.encodeWallet(wallet))
-            .join(Separator.WALLET);
-    }
-
-    public static decodeWallets(wallets: string): WalletInfoEntry[] {
-        return wallets.split(Separator.WALLET)
-            .map((wallet) => this.decodeWallet(wallet));
-    }
+export default class CookieJar {
+    public static readonly VERSION = 1;
 
     public static fill(wallets: WalletInfoEntry[]) {
-        document.cookie = this.encodeWallets(wallets);
+        const maxAge = 60 * 60 * 24 * 365;
+        const encodedWallets = this.encodeCookie(wallets);
+        document.cookie = `w=${encodedWallets};max-age=${maxAge.toString()}`;
     }
 
-    public static eat(): WalletInfoEntry[] {
-        return this.decodeWallets(document.cookie);
+    public static async eat(): Promise<WalletInfoEntry[]> {
+        const match = document.cookie.match(new RegExp('w=([^;]+)'));
+        if (match && match[1]) {
+            return this.decodeCookie(match[1]);
+        }
+
+        return [];
     }
 
+    public static encodeCookie(wallets: WalletInfoEntry[]) {
+        const bytes: number[] = [];
+
+        // Cookie version
+        bytes.push(CookieJar.VERSION);
+
+        for (const wallet of wallets) {
+            // Wallet ID
+            const walletIdChunks = wallet.id.match(/.{2}/g);
+            for (const chunk of walletIdChunks!) bytes.push(parseInt(chunk, 16));
+
+            // Handle LEGACY wallet
+            if (wallet.type === WalletType.LEGACY) {
+                const account = wallet.accounts.values().next().value;
+
+                const labelBytes = Utf8Tools.stringToUtf8ByteArray(account.label);
+
+                // Combined account label length & wallet type
+                bytes.push(labelBytes.length << 2); // type is LEGACY = 0, thus 0b00 anyway;
+
+                // Account label
+                if (labelBytes.length > 0) bytes.push.apply(bytes, Array.from(labelBytes));
+
+                // Account address
+                bytes.push.apply(bytes, Array.from(account.address));
+                continue;
+            }
+
+            // Handle regular wallet
+
+            const labelBytes = Utf8Tools.stringToUtf8ByteArray(wallet.label);
+
+            // Combined wallet label length & wallet type
+            bytes.push( (labelBytes.length << 2) | wallet.type);
+
+            // Wallet label
+            if (labelBytes.length > 0) bytes.push.apply(bytes, Array.from(labelBytes));
+
+            // Wallet number of accounts
+            bytes.push(wallet.accounts.size);
+
+            // Wallet accounts
+            const accounts = Array.from(wallet.accounts.values());
+            for (const account of accounts) {
+                const labelBytes = Utf8Tools.stringToUtf8ByteArray(account.label);
+
+                // Account label length
+                bytes.push(labelBytes.length);
+
+                // Account label
+                if (labelBytes.length > 0) bytes.push.apply(bytes, Array.from(labelBytes));
+
+                // Account address
+                bytes.push.apply(bytes, Array.from(account.address));
+            }
+        }
+
+        return Nimiq.BufferUtils.toBase64(new Uint8Array(bytes));
+    }
+
+    public static async decodeCookie(str: string): Promise<WalletInfoEntry[]> {
+        const module = await import(/* webpackChunkName: "cookie-decoder" */ './CookieDecoder');
+        return module.CookieDecoder.decode(str);
+    }
 }
