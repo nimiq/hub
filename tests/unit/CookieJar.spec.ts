@@ -3,6 +3,7 @@ import { WalletType, WalletInfoEntry } from '@/lib/WalletInfo';
 import { AccountInfoEntry } from '@/lib/AccountInfo';
 import { ContractType } from '@/lib/ContractInfo';
 import CookieJar from '@/lib/CookieJar';
+import { Utf8Tools } from '@nimiq/utils';
 
 setup();
 
@@ -200,10 +201,27 @@ describe('CookieJar', () => {
         expect(wallets).toEqual(OUT_DUMMY_WALLET_OBJECTS);
     });
 
-    it('Encode and decode to reproduce source object', async () => {
+    it('can encode and decode to reproduce source object', async () => {
         const encoded = CookieJar.encodeCookie(DUMMY_WALLET_OBJECTS);
         const decoded = await CookieJar.decodeCookie(encoded);
 
         expect(decoded).toEqual(OUT_DUMMY_WALLET_OBJECTS);
+    });
+
+    it('can correctly cut overlong labels', () => {
+        const LABEL_1 = 'Standard Account'; // 16 chars, 16 byte
+        const LABEL_2 = 'Very very very very very very very very very very very long ASCII label'; // 71 chars, 71 byte
+        const LABEL_3 = 'Label ❤ with ❤ multi 🙉 byte 🙉 characters that is very long indeed'; // 67 chars, 75 byte
+        const LABEL_4 = 'Label with a multibyte character at the max length position: 🙉'; // 63 chars, 65 byte
+
+        const CUT_LABEL_1 = 'Standard Account'; // 16 byte
+        const CUT_LABEL_2 = 'Very very very very very very very very very very very long ASC'; // 63 byte
+        const CUT_LABEL_3 = 'Label ❤ with ❤ multi 🙉 byte 🙉 characters that is very'; // 63 byte
+        const CUT_LABEL_4 = 'Label with a multibyte character at the max length position: '; // 61 byte
+
+        expect(Utf8Tools.utf8ByteArrayToString(CookieJar.cutLabel(LABEL_1))).toEqual(CUT_LABEL_1);
+        expect(Utf8Tools.utf8ByteArrayToString(CookieJar.cutLabel(LABEL_2))).toEqual(CUT_LABEL_2);
+        expect(Utf8Tools.utf8ByteArrayToString(CookieJar.cutLabel(LABEL_3))).toEqual(CUT_LABEL_3);
+        expect(Utf8Tools.utf8ByteArrayToString(CookieJar.cutLabel(LABEL_4))).toEqual(CUT_LABEL_4);
     });
 });

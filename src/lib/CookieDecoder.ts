@@ -13,7 +13,7 @@ export class CookieDecoder {
         const bytes: number[] = Array.from(this._base64Decode(str));
 
         // Cookie version
-        const version = bytes.shift()!;
+        const version = this.readByte(bytes);
 
         if (version !== CookieJar.VERSION) return this._legacyCookie(version, bytes);
 
@@ -28,15 +28,29 @@ export class CookieDecoder {
     private static CCODE = 'NQ';
     private static BASE32_ALPHABET_NIMIQ = '0123456789ABCDEFGHJKLMNPQRSTUVXY';
 
+    private static readByte(bytes: number[]): number {
+        const byte = bytes.shift();
+        if (typeof byte === 'undefined') throw new Error('Malformed Cookie');
+        return byte;
+    }
+
+    private static readBytes(bytes: number[], length: number): number[] {
+        const result: number[] = [];
+        for (let i = 0; i < length; i++) {
+            result.push(this.readByte(bytes));
+        }
+        return result;
+    }
+
     private static _decodeWallet(bytes: number[]): WalletInfoEntry {
         // Wallet ID
         let id: string = '';
-        for (let i = 0; i < 6; i++) id += bytes.shift()!.toString(16);
+        for (let i = 0; i < 6; i++) id += this.readByte(bytes).toString(16);
 
         // Wallet type and label length
-        const typeAndLabelLength = bytes.shift()!;
+        const typeAndLabelLength = this.readByte(bytes);
         const type = typeAndLabelLength & 0b11;
-        const labelLength = typeAndLabelLength >> 2;
+        const labelLength = typeAndLabelLength >> 2; // Can only be < 64 because it's only 6 bit
 
         // Handle LEGACY wallet
         if (type === WalletType.LEGACY) {
@@ -58,8 +72,7 @@ export class CookieDecoder {
         // Handle regular wallet
 
         // Wallet label
-        const walletLabelBytes: number[] = [];
-        for (let i = 0; i < labelLength; i++) walletLabelBytes.push(bytes.shift()!);
+        const walletLabelBytes = this.readBytes(bytes, labelLength);
 
         let walletLabel: string;
         if (walletLabelBytes.length === 0) {
@@ -83,7 +96,7 @@ export class CookieDecoder {
 
     private static _decodeAccounts(bytes: number[], labelLength?: number): Map<string, AccountInfoEntry> {
         let numberAccounts = 1;
-        if (typeof labelLength === 'undefined') numberAccounts = bytes.shift()!;
+        if (typeof labelLength === 'undefined') numberAccounts = this.readByte(bytes);
 
         const accounts: AccountInfoEntry[] = [];
         for (let i = 0; i < numberAccounts; i++) {
@@ -101,19 +114,19 @@ export class CookieDecoder {
     }
 
     private static _decodeAccount(bytes: number[], labelLength?: number): AccountInfoEntry {
-        if (typeof labelLength === 'undefined') labelLength = bytes.shift()!;
+        if (typeof labelLength === 'undefined') labelLength = this.readByte(bytes);
+
+        if (labelLength > CookieJar.MAX_LABEL_LENGTH) throw new Error('Malformed Cookie, label too long');
 
         // Account label
-        const labelBytes: number[] = [];
-        for (let i = 0; i < labelLength!; i++) labelBytes.push(bytes.shift()!);
+        const labelBytes = this.readBytes(bytes, labelLength);
 
         let accountLabel: string;
         if (labelBytes.length === 0) accountLabel = 'Standard Account';
         else accountLabel = Utf8Tools.utf8ByteArrayToString(new Uint8Array(labelBytes));
 
         // Account address
-        const addressBytes: number[] = [];
-        for (let i = 0; i < 20 /* Nimiq.Address.SERIALIZED_SIZE */; i++) addressBytes.push(bytes.shift()!);
+        const addressBytes = this.readBytes(bytes, 20 /* Nimiq.Address.SERIALIZED_SIZE */);
 
         const accountInfoEntry: AccountInfoEntry = {
             path: 'not public',
