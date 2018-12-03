@@ -9,11 +9,10 @@ import { Static } from '../lib/StaticStore';
 
 @Component
 export default class SignMessageErrorHandler extends ErrorHandler {
-    @Static private request!: ParsedSignMessageRequest;
-
     protected requestSpecificErrors(): boolean {
         if (this.keyguardResult instanceof Error && this.keyguardResult.message === 'Request aborted') {
-            if (this.request.walletId && this.request.signer) {
+            if ((this.request as ParsedSignMessageRequest).walletId
+             && (this.request as ParsedSignMessageRequest).signer) {
                 // This was a hand-through request, let it be a hand-through result
                 return false;
             }
