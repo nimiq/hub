@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import { RequestType } from '@/lib/RequestTypes';
-import { KeyguardCommand } from '@nimiq/keyguard-client';
+import { KeyguardCommand, CreateResult } from '@nimiq/keyguard-client';
 
 const SignTransaction         = () => import(/*webpackChunkName: "sign-transaction"*/ './views/SignTransaction.vue');
 const SignTransactionSuccess  = () => import(/*webpackChunkName: "sign-transaction"*/
@@ -13,6 +13,8 @@ const CheckoutTransmission    = () => import(/*webpackChunkName: "checkout"*/ '.
 const CheckoutErrorHandler    = () => import(/*webpackChunkName: "checkout"*/ './views/CheckoutErrorHandler.vue');
 
 const SignupTypeSelector      = () => import(/*webpackChunkName: "signup"*/ './views/SignupTypeSelector.vue');
+// TODO move to own package
+const SignupLedger            = () => import(/*webpackChunkName: "signup"*/ './views/SignupLedger.vue');
 const SignupSuccess           = () => import(/*webpackChunkName: "signup"*/ './views/SignupSuccess.vue');
 const SignupErrorHandler      = () => import(/*webpackChunkName: "signup"*/ './views/SignupErrorHandler.vue');
 
@@ -22,7 +24,8 @@ const LoginErrorHandler       = () => import(/*webpackChunkName: "login"*/ './vi
 
 const Export                  = () => import(/*webpackChunkName: "export"*/ './views/Export.vue');
 
-const ChangePassphrase        = () => import(/*webpackChunkName: "change-passphrase"*/ './views/ChangePassphrase.vue');
+const ChangePassphrase        = () => import(/*webpackChunkName: "change-passphrase"*/
+    './views/ChangePassphrase.vue');
 
 const Logout                  = () => import(/*webpackChunkName: "logout"*/ './views/Logout.vue');
 const LogoutSuccess           = () => import(/*webpackChunkName: "logout"*/ './views/LogoutSuccess.vue');
@@ -98,6 +101,26 @@ export function keyguardResponseRouter(
     }
 }
 
+export class RouterQueryEncoder {
+    public static encodeCreateResult(createResult: CreateResult): string {
+        return JSON.stringify({
+            keyId: createResult.keyId,
+            keyPath: createResult.keyPath,
+            address: Array.from(createResult.address), // convert to array for stringify
+        });
+    }
+
+    public static decodeCreateResult(query: string): CreateResult | null {
+        if (!query) return null;
+        const parsed = JSON.parse(query);
+        return {
+            keyId: parsed.keyId,
+            keyPath: parsed.keyPath,
+            address: Uint8Array.from(parsed.address),
+        };
+    }
+}
+
 export default new Router({
     mode: 'history',
     base: process.env.BASE_URL,
@@ -149,9 +172,17 @@ export default new Router({
             name: `${RequestType.SIGNUP}`,
         },
         {
+            path: `/${RequestType.SIGNUP}/ledger`,
+            component: SignupLedger,
+            name: `${RequestType.SIGNUP}-ledger`,
+        },
+        {
             path: `/${RequestType.SIGNUP}/success`,
             component: SignupSuccess,
             name: `${RequestType.SIGNUP}-success`,
+            props: (route) => ({
+                createResult: RouterQueryEncoder.decodeCreateResult(route.query.createResult as string),
+            }),
         },
         {
             path: `/${RequestType.SIGNUP}/error`,
