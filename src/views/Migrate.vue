@@ -18,31 +18,31 @@ export default class Migrate extends Vue {
 
     public async mounted() {
         const client = this.$rpc.createKeyguardClient();
-        const hasLegacyKeys = await client.hasKeys(true).catch(console.error); // TODO: proper error handling
+        const hasLegacyAccounts = await client.hasLegacyAccounts().catch(console.error); // TODO: proper error handling
 
-        if (!hasLegacyKeys) {
+        if (!hasLegacyAccounts) {
             this.status = 'Nothing to migrate.';
             setTimeout(() => this.$rpc.resolve([]), this.waitUntilReturn);
             return;
         }
 
         this.status = 'Retrieving your legacy accounts...';
-        const legacyKeys = await client.list(true).catch(console.error); // TODO: proper error handling
-        if (!legacyKeys) {
+        const legacyAccounts = await client.listLegacyAccounts().catch(console.error); // TODO: proper error handling
+        if (!legacyAccounts) {
             this.status = 'Could not get legacy accounts.';
-            this.$rpc.reject(new Error('Cannot get legacy keys from Keyguard'));
+            this.$rpc.reject(new Error('Could not get legacy accounts from Keyguard'));
             return;
         }
 
         this.status = 'Converting your legacy accounts...';
-        const walletInfos = legacyKeys.map((key) => {
-            const address = new Nimiq.Address(key.legacyAccount!.address);
+        const walletInfos = legacyAccounts.map((account) => {
+            const address = new Nimiq.Address(account.legacyAccount!.address);
             const accounts = new Map<string, AccountInfo>([
-                [address.toUserFriendlyAddress(), new AccountInfo('m/0\'', key.legacyAccount!.label, address)],
+                [address.toUserFriendlyAddress(), new AccountInfo('m/0\'', account.legacyAccount!.label, address)],
             ]);
 
             return new WalletInfo(
-                key.id,
+                account.id,
                 'Legacy Wallet',
                 accounts,
                 [], // Contracts
