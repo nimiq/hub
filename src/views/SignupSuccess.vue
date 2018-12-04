@@ -1,7 +1,9 @@
 <template>
     <div class="container pad-bottom">
         <SmallPage>
-            <PageHeader :progressIndicator="true" :numberSteps="6" :step="6">Your wallet is ready</PageHeader>
+            <PageHeader :progressIndicator="true" :numberSteps="numberSteps" :step="numberSteps">
+                Your wallet is ready
+            </PageHeader>
             <PageBody>
                 <div class="success-box nq-icon trumpet nq-bg-green">
                     <h2 class="nq-h2">Awesome!</h2>
@@ -14,7 +16,8 @@
                     <LabelInput :value="walletLabel" @changed="onWalletLabelChange"/>
                 </div>
 
-                <Account :address="createdAddress.toUserFriendlyAddress()" :label="accountLabel" :editable="true" @changed="onAccountLabelChange"/>
+                <Account :address="createdAddress.toUserFriendlyAddress()" :label="accountLabel" :editable="true"
+                         @changed="onAccountLabelChange" v-if="!!createdAddress"/>
 
                 <button class="nq-button green submit" @click="done()">Open your wallet</button>
             </PageBody>
@@ -23,31 +26,54 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
-import { PageHeader, PageBody, Account, LabelInput, SmallPage } from '@nimiq/vue-components';
+import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Account, LabelInput, PageBody, PageHeader, SmallPage } from '@nimiq/vue-components';
 import { AccountInfo } from '../lib/AccountInfo';
 import { WalletInfo, WalletType } from '../lib/WalletInfo';
-import { State, Getter } from 'vuex-class';
+import { State } from 'vuex-class';
 import { WalletStore } from '../lib/WalletStore';
 import { CreateResult } from '@nimiq/keyguard-client';
 import { SignupResult } from '@/lib/RequestTypes';
 
 @Component({components: {PageHeader, PageBody, Account, LabelInput, SmallPage}})
 export default class SignupSuccess extends Vue {
-    @State private keyguardResult!: CreateResult;
-    @State private activeAccountPath!: string;
-    @Getter private hasWallets!: boolean;
+    private static readonly STEPS_KEYGUARD_SIGNUP = 6;
+    private static readonly STEPS_LEDGER_SIGNUP = 3;
+    private static readonly DEFAULT_KEYGUARD_WALLET_LABEL = 'Keyguard Wallet';
+    private static readonly DEFAULT_LEDGER_WALLET_LABEL = 'Ledger Wallet';
+    private static readonly DEFAULT_KEYGUARD_ACCOUNT_LABEL = 'Standart Account';
+    private static readonly DEFAULT_LEDGER_ACCOUNT_LABEL = 'Ledger Account';
 
-    private walletLabel: string = 'Keyguard Wallet';
-    private accountLabel: string = 'Standard Account';
+    @Prop({ default: null })
+    public createResult!: CreateResult;
+
+    @State private keyguardResult?: CreateResult;
+
+    private numberSteps!: number;
+    private walletType!: WalletType;
+    private walletLabel!: string;
+    private accountLabel!: string;
     private createdAddress: Nimiq.Address | null = null;
 
     private get walletIconClass(): string {
-        return 'keyguard';
+        return this.walletType === WalletType.BIP39 ? 'keyguard' : 'ledger';
     }
 
     private created() {
-        this.createdAddress = new Nimiq.Address(this.keyguardResult.address);
+        if (this.keyguardResult) {
+            this.createResult = this.keyguardResult;
+            this.walletType = WalletType.BIP39;
+            this.numberSteps = SignupSuccess.STEPS_KEYGUARD_SIGNUP;
+            this.walletLabel = SignupSuccess.DEFAULT_KEYGUARD_WALLET_LABEL;
+            this.accountLabel = SignupSuccess.DEFAULT_KEYGUARD_ACCOUNT_LABEL;
+        } else {
+            if (!this.createResult) throw new Error('SignupSuccess shown without createResult');
+            this.walletType = WalletType.LEDGER;
+            this.numberSteps = SignupSuccess.STEPS_LEDGER_SIGNUP;
+            this.walletLabel = SignupSuccess.DEFAULT_LEDGER_WALLET_LABEL;
+            this.accountLabel = SignupSuccess.DEFAULT_LEDGER_ACCOUNT_LABEL;
+        }
+        this.createdAddress = new Nimiq.Address(this.createResult.address);
         this.saveResult(this.walletLabel, this.accountLabel);
     }
 
@@ -65,9 +91,9 @@ export default class SignupSuccess extends Vue {
 
     private async done() {
         const result: SignupResult = {
-            walletId: this.keyguardResult.keyId,
+            walletId: this.createResult.keyId,
             label: this.walletLabel,
-            type: WalletType.BIP39, // FIXME: Adapt when adding Ledger
+            type: this.walletType,
             accounts: [{
                 address: this.createdAddress!.toUserFriendlyAddress(),
                 label: this.accountLabel,
@@ -79,17 +105,17 @@ export default class SignupSuccess extends Vue {
 
     private async saveResult(walletLabel: string, accountLabel: string) {
         const accountInfo = new AccountInfo(
-            this.keyguardResult.keyPath,
+            this.createResult.keyPath,
             accountLabel,
             this.createdAddress!,
         );
 
         const walletInfo = new WalletInfo(
-            this.keyguardResult.keyId,
+            this.createResult.keyId,
             walletLabel,
             new Map<string, AccountInfo>().set(accountInfo.userFriendlyAddress, accountInfo),
             [],
-            WalletType.BIP39,
+            this.walletType,
         );
 
         await WalletStore.Instance.put(walletInfo);

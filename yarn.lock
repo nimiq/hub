@@ -647,6 +647,10 @@
   dependencies:
     "@nimiq/rpc" "^0.0.11"
 
+"@nimiq/ledgerjs@https://github.com/nimiq/ledger-api.git":
+  version "0.0.0"
+  resolved "https://github.com/nimiq/ledger-api.git#a7d86a47b46d21ec2afea94086b2942ea1adb575"
+
 "@nimiq/rpc@^0.0.10":
   version "0.0.10"
   resolved "https://registry.yarnpkg.com/@nimiq/rpc/-/rpc-0.0.10.tgz#e8d9f7a31fcebe4080d086c8617c1b6115a9b728"

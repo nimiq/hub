@@ -28,7 +28,7 @@
 <script lang="ts">
 import { Component, Emit, Vue } from 'vue-property-decorator';
 import { PageHeader, PageBody, PageFooter, SmallPage } from '@nimiq/vue-components';
-import { ParsedSignupRequest } from '../lib/RequestTypes';
+import { ParsedSignupRequest, RequestType } from '../lib/RequestTypes';
 import { CreateRequest, ImportRequest } from '@nimiq/keyguard-client';
 import { Static } from '../lib/StaticStore';
 
@@ -48,7 +48,7 @@ export default class SignupTypeSelector extends Vue {
     }
 
     public createLedger() {
-        alert('Ledger-adding not yet implemented');
+        this.$router.push(`${RequestType.SIGNUP}/ledger`);
     }
 
     public login() {
