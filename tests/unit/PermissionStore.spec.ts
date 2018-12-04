@@ -1,11 +1,10 @@
-const Nimiq = require('@nimiq/core'); // tslint:disable-line:no-var-requires variable-name
-// @ts-ignore
-global.Nimiq = Nimiq;
-
-const indexedDB: IDBFactory = require('fake-indexeddb'); // tslint:disable-line:no-var-requires
-
+import { setup } from './_setup';
 import { Permission, PermissionStore } from '@/lib/PermissionStore';
 import Config from '@/lib/Config';
+
+setup();
+
+const indexedDB: IDBFactory = require('fake-indexeddb'); // tslint:disable-line:no-var-requires
 
 const DUMMY: { permissions: Permission[], nimiqOriginCount: number } = {
     permissions: [

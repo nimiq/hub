@@ -1,11 +1,10 @@
+import { setup } from './_setup';
 import { WalletInfo, WalletType } from '@/lib/WalletInfo';
 import { WalletStore } from '@/lib/WalletStore';
 import { AccountInfo } from '@/lib/AccountInfo';
 import { ContractType } from '@/lib/ContractInfo';
 
-const Nimiq = require('@nimiq/core'); // tslint:disable-line:no-var-requires variable-name
-// @ts-ignore
-global.Nimiq = Nimiq;
+setup();
 
 const indexedDB: IDBFactory = require('fake-indexeddb'); // tslint:disable-line:no-var-requires
 
@@ -75,7 +74,7 @@ describe('WalletStore', () => {
 
     it('can list keys', async () => {
         const keys = await WalletStore.Instance.list();
-        expect(keys).toEqual(DUMMY);
+        expect(keys).toEqual(DUMMY.map((wi) => wi.toObject()));
     });
 
     it('can remove keys', async () => {
