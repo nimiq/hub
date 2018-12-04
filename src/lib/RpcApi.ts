@@ -68,7 +68,9 @@ export default class RpcApi {
     public reject(error: Error) {
         const ignoredErrors = [ 'CANCEL', 'Request aborted' ];
         if (ignoredErrors.indexOf(error.message) < 0) {
-            Raven.captureException(error);
+            if (window.location.origin === 'https://accounts.nimiq-testnet.com') {
+                Raven.captureException(error);
+            }
         }
 
         this._reply(ResponseStatus.ERROR, error);
