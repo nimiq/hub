@@ -597,7 +597,7 @@
   resolved "https://registry.yarnpkg.com/@nimiq/core-types/-/core-types-1.0.1.tgz#344cfff6071bf12cfb557f82d586d42cae779797"
   integrity sha512-Td6rAFhMRJKYqlSmTGw7vInz3j2+MMWvCeCjK8ABUqdYzi9ArE7RBpaeAu4XUQkZpWjFx0DBYWZMxtinwXGQjA==
 
-"@nimiq/core@1.4.1":
+"@nimiq/core@^1.4.1":
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/@nimiq/core/-/core-1.4.1.tgz#8558dd0dc8d34ffd866ea0a35f1fcb2ec4dc5d24"
   integrity sha512-F/0Ermkr8oCpvxhvXzrQTbKUc/fMy+d1ah1umnj2lhB69dKFvw2Fc8/FW6TxWxRrOWnZ3Rv78HpYF6ExjjxjbQ==
