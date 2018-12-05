@@ -64,6 +64,7 @@ export class CookieDecoder {
                 label: walletLabel,
                 accounts,
                 contracts: [],
+                deleted: false,
             };
 
             return walletInfoEntry;
@@ -89,6 +90,7 @@ export class CookieDecoder {
             label: walletLabel,
             accounts,
             contracts: [],
+            deleted: false,
         };
 
         return walletInfoEntry;
