@@ -14,7 +14,7 @@
         "@nimiq/network-client": "^0.0.9",
         "@nimiq/rpc": "^0.0.11",
         "@nimiq/style": "^0.3.4",
-        "@nimiq/utils": "^0.0.5",
+        "@nimiq/utils": "^0.1.0",
         "@nimiq/vue-components": "https://github.com/nimiq/vue-components.git#build/accounts",
         "vue": "^2.5.16",
         "vue-class-component": "^6.0.0",
@@ -26,7 +26,8 @@
     },
     "devDependencies": {
         "@babel/core": "^7.0.0",
-        "@nimiq/core-types": "^1.0.0",
+        "@nimiq/core": "1.3.1",
+        "@nimiq/core-types": "^1.0.1",
         "@types/jest": "^23.1.4",
         "@vue/babel-preset-app": "^3.0.1",
         "@vue/cli-plugin-typescript": "^3.0.1",
