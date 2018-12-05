@@ -41,6 +41,7 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         ]),
         contracts: [],
         type: WalletType.BIP39,
+        deleted: false,
     },
     {
         id: '1ee3d926a49d',
@@ -62,6 +63,7 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
             type: ContractType.VESTING,
         }],
         type: WalletType.LEDGER,
+        deleted: false,
     },
     {
         id: '1ee3d926a49e',
@@ -78,6 +80,7 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         ]),
         contracts: [],
         type: WalletType.LEGACY,
+        deleted: false,
     },
 ];
 
@@ -105,6 +108,7 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         ]),
         contracts: [],
         type: WalletType.BIP39,
+        deleted: false,
     },
     {
         id: '1ee3d926a49d',
@@ -121,6 +125,7 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         ]),
         contracts: [],
         type: WalletType.LEDGER,
+        deleted: false,
     },
     {
         id: '1ee3d926a49e',
@@ -137,6 +142,7 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         ]),
         contracts: [],
         type: WalletType.LEGACY,
+        deleted: false,
     },
 ];
 
