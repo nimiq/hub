@@ -19,15 +19,12 @@ export default class ErrorHandler extends Vue {
         if (this.requestSpecificErrors()) return;
         if (this.keyguardResult.message === Errors.Messages.KEY_NOT_FOUND) {
             let walletId;
-            // ParsedExportRequest is just one Rrequest that has walletId any of those would do.
-            if ((this.request as ParsedExportRequest).walletId !== undefined) {
+            // ParsedExportRequest is just one Rrequest that has walletId. Any of those would do.
+            if ((this.request as ParsedExportRequest).walletId) {
                 // walletId is already in the AccountsManagerRequest
                 walletId = (this.request as ParsedExportRequest).walletId;
             } else if (this.request.kind === RequestType.CHECKOUT
-                    && this.keyguardRequest as KeyguardRequest.SignTransactionRequest
-                    && (this.keyguardRequest as KeyguardRequest.SignTransactionRequest).layout === 'checkout' || (
-                        this.request.kind === RequestType.SIGN_MESSAGE
-                        && this.keyguardRequest as KeyguardRequest.SignTransactionRequest)) {
+                    || this.request.kind === RequestType.SIGN_MESSAGE) {
                 // Accounts Request was Checkout/SignMessage.
                 // The keyId is in the KeyguardRequest after choosing the account
                 walletId = (this.keyguardRequest as KeyguardRequest.SignTransactionRequest).keyId;
@@ -42,7 +39,7 @@ export default class ErrorHandler extends Vue {
                 walletInfo.deleted = true;
                 await WalletStore.Instance.put(walletInfo);
             }
-            // no error screen for now.
+            // TODO visuals
             this.$rpc.reject(this.keyguardResult); // return it to caller
             return;
         }

@@ -96,7 +96,7 @@ export default class LoginSuccess extends Vue {
             }
         });
         this.accountsUpdateCount += 1; // Trigger DOM update via computed property `this.accountsArray`
-        this.render = true; // only trigger rendering now, when variables are set up correctly.
+        this.render = true; // trigger rendering now, when variables are set up correctly.
         this.storeAndUpdateResult();
 
         if (this.keyguardResult.keyType === WalletType.BIP39) {
@@ -126,7 +126,7 @@ export default class LoginSuccess extends Vue {
                 addressInfo!.balance = Nimiq.Policy.coinsToSatoshis(balances.get(addr) || 0);
                 this.accounts.set(addr, addressInfo!);
             });
-            // this.accountsUpdateCount += 1;
+            this.accountsUpdateCount += 1;
 
             // Kick off account detection
             this.findAccounts();
@@ -139,6 +139,7 @@ export default class LoginSuccess extends Vue {
         if (this.lastDerivedIndex >= this.lastActiveIndex + 20) {
             // End condition
             this.keyguard.releaseKey(this.keyguardResult.keyId);
+            // TODO network visuals with longer than 1 list of accounts during retrieval
             this.retrievalComplete = true;
             return;
         }
