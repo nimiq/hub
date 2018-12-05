@@ -5,7 +5,7 @@ import { Component, Vue } from 'vue-property-decorator';
 import { State } from 'vuex-class';
 import { Static } from '../lib/StaticStore';
 import { ParsedRpcRequest, ParsedExportRequest, RequestType } from '../lib/RequestTypes';
-import { Errors, SignTransactionRequest } from '@nimiq/keyguard-client';
+import { Errors } from '@nimiq/keyguard-client';
 import { WalletStore } from '../lib/WalletStore';
 
 @Component
@@ -17,8 +17,9 @@ export default class ErrorHandler extends Vue {
     public async created() {
         if (!(this.keyguardResult instanceof Error)) return;
         if (this.requestSpecificErrors()) return;
-        if (this.keyguardResult.message === Errors.Messages.KEY_ID_NOT_FOUND) {
+        if (this.keyguardResult.message === Errors.Messages.KEY_NOT_FOUND) {
             let walletId;
+            // ParsedExportRequest is just one Rrequest that has walletId any of those would do.
             if ((this.request as ParsedExportRequest).walletId !== undefined) {
                 // walletId is already in the AccountsManagerRequest
                 walletId = (this.request as ParsedExportRequest).walletId;
@@ -27,17 +28,21 @@ export default class ErrorHandler extends Vue {
                     && (this.keyguardRequest as KeyguardRequest.SignTransactionRequest).layout === 'checkout' || (
                         this.request.kind === RequestType.SIGN_MESSAGE
                         && this.keyguardRequest as KeyguardRequest.SignTransactionRequest)) {
-                // Accounts Request was Checkout/SignMessage. The keyId i in thse KeyguardRequest after the account was choosen
+                // Accounts Request was Checkout/SignMessage.
+                // The keyId is in the KeyguardRequest after choosing the account
                 walletId = (this.keyguardRequest as KeyguardRequest.SignTransactionRequest).keyId;
             } else {
                 // this really should not happen
-                // Executing this code would mean a CreateRequest (which does not fire KEY_ID_NOT_FOUND) did fire it anyways
+                // Executing this code would mean a CreateRequest did fire KEY_ID_NOT_FOUND which it does not throw
                 this.$rpc.reject(this.keyguardResult);
                 return;
             }
             const walletInfo = await WalletStore.Instance.get(walletId);
-            walletInfo.deleted = true;
-            await WalletStore.Instance.put(walletInfo);
+            if (walletInfo) {
+                walletInfo.deleted = true;
+                await WalletStore.Instance.put(walletInfo);
+            }
+            // no error screen for now.
             this.$rpc.reject(this.keyguardResult); // return it to caller
             return;
         }

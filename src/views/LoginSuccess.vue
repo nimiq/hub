@@ -5,15 +5,15 @@
                 <PageHeader>Your wallet is ready</PageHeader>
 
                 <PageBody>
-                    <div class="wallet-label" v-if="keyguardResult.keyType !== 0 /* LEGACY */">
+                    <div class="wallet-label" v-if="keyguardResult.keyType !== 0 /* LEGACY */ && render">
                         <div class="wallet-icon nq-icon" :class="walletIconClass"></div>
                         <LabelInput :value="walletLabel" @changed="onWalletLabelChange"/>
                     </div>
 
-                    <AccountList :accounts="accountsArray" :editable="true" @account-changed="onAccountLabelChanged"/>
+                    <AccountList v-if="render" :accounts="accountsArray" :editable="true" @account-changed="onAccountLabelChanged"/>
 
                     <div class="network-wrapper">
-                        <Network :visible="keyguardResult.keyType !== 0 /* LEGACY */" :message="'Detecting your accounts'" ref="network"/>
+                        <Network :alwaysVisible="keyguardResult.keyType !== 0 /* LEGACY */ && !retrievalComplete" :message="'Detecting your accounts'" ref="network"/>
                     </div>
                 </PageBody>
 
@@ -66,21 +66,37 @@ export default class LoginSuccess extends Vue {
 
     private result?: LoginResult;
 
+    private render: boolean = false;
+    private retrievalComplete: boolean = false;
+
     private async mounted() {
+        const currentWalletInfo = await WalletStore.Instance.get(this.keyguardResult.keyId);
+
+        // if there is a WalletInfo for the id already, use it
+        if (currentWalletInfo && currentWalletInfo.label) {
+            this.walletLabel = currentWalletInfo.label;
+            if (currentWalletInfo.accounts) {
+                this.accounts = currentWalletInfo.accounts;
+            }
+        }
+
         // The Keyguard always returns (at least) one derived Address,
         // thus we can already create a complete WalletInfo object that
         // can be displayed while waiting for the network.
+        // before adding, make sure it is not set already
         this.keyguardResult.addresses.forEach((addressObj) => {
             const address = new Nimiq.Address(addressObj.address);
-            const addressInfo = new AccountInfo(
-                addressObj.keyPath,
-                this.defaultAccountLabel,
-                address,
-            );
-            this.accounts.set(addressInfo.userFriendlyAddress, addressInfo);
-            this.accountsUpdateCount += 1; // Trigger DOM update via computed property `this.accountsArray`
+            if (!this.accounts.has(address.toUserFriendlyAddress())) {
+                const addressInfo = new AccountInfo(
+                    addressObj.keyPath,
+                    this.defaultAccountLabel,
+                    address,
+                );
+                this.accounts.set(addressInfo.userFriendlyAddress, addressInfo);
+            }
         });
-
+        this.accountsUpdateCount += 1; // Trigger DOM update via computed property `this.accountsArray`
+        this.render = true; // only trigger rendering now, when variables are set up correctly.
         this.storeAndUpdateResult();
 
         if (this.keyguardResult.keyType === WalletType.BIP39) {
@@ -110,7 +126,7 @@ export default class LoginSuccess extends Vue {
                 addressInfo!.balance = Nimiq.Policy.coinsToSatoshis(balances.get(addr) || 0);
                 this.accounts.set(addr, addressInfo!);
             });
-            this.accountsUpdateCount += 1;
+            // this.accountsUpdateCount += 1;
 
             // Kick off account detection
             this.findAccounts();
@@ -123,6 +139,7 @@ export default class LoginSuccess extends Vue {
         if (this.lastDerivedIndex >= this.lastActiveIndex + 20) {
             // End condition
             this.keyguard.releaseKey(this.keyguardResult.keyId);
+            this.retrievalComplete = true;
             return;
         }
 
@@ -165,7 +182,9 @@ export default class LoginSuccess extends Vue {
                 // It relieves us from having to calulate the correct array index with an
                 // unrelated counter variable.
                 pathsToDerive[this.lastDerivedIndex],
-                this.defaultAccountLabel,
+                (this.accounts.has(userFriendlyAddress))
+                    ? this.accounts.get(userFriendlyAddress)!.label
+                    : this.defaultAccountLabel,
                 Nimiq.Address.fromUserFriendlyAddress(userFriendlyAddress),
                 Nimiq.Policy.coinsToSatoshis(balance),
             ));
