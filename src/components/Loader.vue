@@ -1,6 +1,6 @@
 <template>
     <div class="loader" :class="showLoadingBackground && (lightBlue ? 'nq-bg-light-blue' : 'nq-bg-blue')">
-        <transition name="fade-out">
+        <transition name="fade-loading">
             <div class="wrapper" v-if="state === 'loading'">
                 <h1 class="title nq-h1">{{ loadingTitle }}</h1>
 
@@ -15,7 +15,7 @@
             </div>
         </transition>
 
-        <transition name="fade-in">
+        <transition name="fade-result">
             <div class="wrapper success nq-bg-green" v-if="state === 'success'">
                 <div class="icon-row">
                     <div class="success nq-icon"></div>
@@ -26,7 +26,7 @@
             </div>
         </transition>
 
-        <transition name="fade-in">
+        <transition name="fade-result">
             <div class="wrapper warning nq-bg-orange" v-if="state === 'warning'">
                 <div class="top-spacer" :class="{'with-main-action': !!mainAction, 'with-alternative-action': !!alternativeAction}"></div>
 
@@ -44,7 +44,7 @@
             </div>
         </transition>
 
-        <transition name="fade-in">
+        <transition name="fade-result">
             <div class="wrapper error nq-bg-red" v-if="state === 'error'">
                 <div class="top-spacer" :class="{'with-main-action': !!mainAction, 'with-alternative-action': !!alternativeAction}"></div>
 
@@ -150,6 +150,10 @@ export default class Loader extends Vue {
         // When the state changes later and animates
         if (oldState && (newState !== Loader.Status.LOADING)) {
             setTimeout(() => this.showLoadingBackground = false, 1000);
+        }
+
+        if (newState === Loader.Status.LOADING) {
+            this.showLoadingBackground = true;
         }
     }
 
@@ -315,19 +319,20 @@ export default class Loader extends Vue {
 
     /* FADE transitions */
 
-    .fade-out-leave-active {
+    .fade-loading-leave-active,
+    .fade-result-leave-active {
         transition: opacity 300ms;
     }
 
-    .fade-out-leave-to {
-        opacity: 0;
-    }
-
-    .fade-in-enter-active {
+    .fade-loading-enter-active,
+    .fade-result-enter-active {
         transition: opacity 700ms 300ms;
     }
 
-    .fade-in-enter {
+    .fade-loading-enter,
+    .fade-loading-leave-to,
+    .fade-result-enter,
+    .fade-result-leave-to {
         opacity: 0;
     }
 </style>
