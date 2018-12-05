@@ -92,17 +92,27 @@ import { Component, Prop, Watch, Emit, Vue } from 'vue-property-decorator';
  *
  * **@alternative-action**
  *
- * The `state` is also available as Loader.LOADING, Loader.SUCCESS, Loader.WARNING and Loader.ERROR.
+ * The `state` is available as `Loader.Status.LOADING`, `Loader.Status.SUCCESS`,
+ * `Loader.Status.WARNING` and `Loader.Status.ERROR`.
+ *
+ * The events are available as `Loader.Events.MAIN_ACTION` and `Loader.Events.ALTERNATIVE_ACTION`.
  */
 @Component
 export default class Loader extends Vue {
-    private static LOADING = 'loading';
-    private static SUCCESS = 'success';
-    private static WARNING = 'warning';
-    private static ERROR   = 'error';
+    public static readonly Status = {
+        LOADING: 'loading',
+        SUCCESS: 'success',
+        WARNING: 'warning',
+        ERROR: 'error',
+    };
+
+    public static readonly Events = {
+        MAIN_ACTION: 'main-action',
+        ALTERNATIVE_ACTION: 'alternative-action',
+    };
 
     @Prop({type: String, default: 'Improving the world'}) private title!: string;
-    @Prop({type: String, default: Loader.LOADING}) private state!: string;
+    @Prop({type: String, default: Loader.Status.LOADING}) private state!: string;
     @Prop(Boolean) private lightBlue?: boolean;
     @Prop(String) private status?: string;
     @Prop(String) private message?: string;
@@ -133,12 +143,12 @@ export default class Loader extends Vue {
     @Watch('state', {immediate: true})
     private updateState(newState: string, oldState: string) {
         // When the component is initialized with a state other than LOADING
-        if (!oldState && (newState !== Loader.LOADING)) {
+        if (!oldState && (newState !== Loader.Status.LOADING)) {
             this.showLoadingBackground = false;
         }
 
         // When the state changes later and animates
-        if (oldState && (newState !== Loader.LOADING)) {
+        if (oldState && (newState !== Loader.Status.LOADING)) {
             setTimeout(() => this.showLoadingBackground = false, 1000);
         }
     }
@@ -155,11 +165,11 @@ export default class Loader extends Vue {
     }
 
     private onMainAction() {
-        this.$emit('main-action');
+        this.$emit(Loader.Events.MAIN_ACTION);
     }
 
     private onAlternativeAction() {
-        this.$emit('alternative-action');
+        this.$emit(Loader.Events.ALTERNATIVE_ACTION);
     }
 }
 </script>
