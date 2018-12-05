@@ -1,22 +1,3 @@
-<!--
-Usage:
-
-<Loader
-    :title="isLoading ? 'Loading things' : 'Things done'"
-    :status="'[optional] Currently doing this'"
-    :state="[optional, default 'loading'] isLoading ? 'loading' : 'success'"
-    :lightBlue="[optional, default false] true"
-    :message="'[optional] This message is displayed for warning and error states.'"
-    :mainAction="'[optional] Try again'"
-    :alternativeAction="'[optional] No, go back'"
-    @main-action = "onMainAction"
-    @alternative-action = "onAlternativeAction"
-/>
-
-The `state` can be any of ['loading', 'success', 'warning', 'error'], alternatively
-available as Loader.LOADING, Loader.SUCCESS, Loader.WARNING and Loader.ERROR.
--->
-
 <template>
     <div class="loader" :class="showLoadingBackground && (lightBlue ? 'nq-bg-light-blue' : 'nq-bg-blue')">
         <transition name="fade-out">
@@ -64,7 +45,7 @@ available as Loader.LOADING, Loader.SUCCESS, Loader.WARNING and Loader.ERROR.
         </transition>
 
         <transition name="fade-in">
-            <div class="wrapper warning nq-bg-red" v-if="state === 'error'">
+            <div class="wrapper error nq-bg-red" v-if="state === 'error'">
                 <div class="top-spacer" :class="{'with-main-action': !!mainAction, 'with-alternative-action': !!alternativeAction}"></div>
 
                 <div class="icon-row">
@@ -86,6 +67,33 @@ available as Loader.LOADING, Loader.SUCCESS, Loader.WARNING and Loader.ERROR.
 <script lang="ts">
 import { Component, Prop, Watch, Emit, Vue } from 'vue-property-decorator';
 
+/**
+ * **Nimiq Loader Component**
+ *
+ * Props:
+ *
+ * **title** {string} The current title, dynamic for both loading and result states
+ *
+ * **status** {string} [optional] Currently doing this
+ *
+ * **state** {'loading'|'success'|'warning'|'error'} [optional, default 'loading']
+ *
+ * **lightBlue** {boolean} [optional, default false] Show light blue loading screen
+ *
+ * **message** {string} [optional] Message displayed for warning and error states
+ *
+ * **mainAction** {string} [optional] Text of main action button (button is hidden otherwise)
+ *
+ * **alternativeAction** {string} [optional] Text of alternative action link (link is hidden otherwise)
+ *
+ * Events:
+ *
+ * **@main-action**
+ *
+ * **@alternative-action**
+ *
+ * The `state` is also available as Loader.LOADING, Loader.SUCCESS, Loader.WARNING and Loader.ERROR.
+ */
 @Component
 export default class Loader extends Vue {
     private static LOADING = 'loading';
