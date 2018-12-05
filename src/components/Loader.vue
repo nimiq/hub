@@ -6,7 +6,7 @@ Usage:
     :status="'[optional] Currently doing this'"
     :state="[optional, default 'loading'] isLoading ? 'loading' : 'success'"
     :lightBlue="[optional, default false] true"
-    :message="'[optional] But you can safely try again.'"
+    :message="'[optional] This message is displayed for warning and error states.'"
     :mainAction="'[optional] Try again'"
     :alternativeAction="'[optional] No, go back'"
     @main-action = "onMainAction"
@@ -18,7 +18,7 @@ available as Loader.LOADING, Loader.SUCCESS, Loader.WARNING and Loader.ERROR.
 -->
 
 <template>
-    <div class="loader" :class="showLoadingBg && (lightBlue ? 'nq-bg-light-blue' : 'nq-bg-blue')">
+    <div class="loader" :class="showLoadingBackground && (lightBlue ? 'nq-bg-light-blue' : 'nq-bg-blue')">
         <transition name="fade-out">
             <div class="wrapper" v-if="state === 'loading'">
                 <h1 class="title nq-h1">{{ loadingTitle }}</h1>
@@ -105,7 +105,16 @@ export default class Loader extends Vue {
     private nextStatus: string = '';
     private isStatusTransitioning: boolean = false;
 
-    private showLoadingBg: boolean = true;
+    /**
+     * To enable a smooth transition of the non-transitionable background-image
+     * property, we instead place the new background above the old one and
+     * animate the top element's opacity. But because the color area has rounded
+     * corners, and the browser creates transparent pixels in the corner
+     * because of anti-aliasing, the blue background partly shines through the
+     * transparent corner pixels of the foreground. Thus we remove the background
+     * color after the transition is complete.
+     */
+    private showLoadingBackground: boolean = true;
 
     private _loadingTitle?: string;
 
@@ -115,15 +124,14 @@ export default class Loader extends Vue {
 
     @Watch('state', {immediate: true})
     private updateState(newState: string, oldState: string) {
-        console.log(oldState, newState);
         // When the component is initialized with a state other than LOADING
         if (!oldState && (newState !== Loader.LOADING)) {
-            this.showLoadingBg = false;
+            this.showLoadingBackground = false;
         }
 
         // When the state changes later and animates
         if (oldState && (newState !== Loader.LOADING)) {
-            setTimeout(() => this.showLoadingBg = false, 1000);
+            setTimeout(() => this.showLoadingBackground = false, 1000);
         }
     }
 
