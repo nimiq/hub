@@ -634,9 +634,10 @@
   dependencies:
     "@nimiq/rpc" "^0.0.10"
 
-"@nimiq/network-client@^0.0.9":
-  version "0.0.9"
-  resolved "https://registry.yarnpkg.com/@nimiq/network-client/-/network-client-0.0.9.tgz#d319fcc8711f8bd2da2b2040135dc24c31f657bc"
+"@nimiq/network-client@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@nimiq/network-client/-/network-client-0.1.0.tgz#80344ab0b601a312e7869dafdf1103cd719a38ff"
+  integrity sha512-uu6F1dfDmdCSADU9Y3gbGAyKaGsduHmTnT1cn4crHHRT0rMzfqTdZASyxy/DsMGqb3hQRPxLq0VOfiLJH7hvLQ==
   dependencies:
     "@nimiq/rpc-events" "^0.0.5"
 
