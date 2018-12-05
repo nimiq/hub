@@ -2,6 +2,7 @@ module.exports = {
   moduleFileExtensions: [
     'js',
     'json',
+    'node',
     'ts',
     'vue'
   ],
