@@ -596,10 +596,9 @@
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@nimiq/core-types/-/core-types-1.0.0.tgz#a675cf2c151d9146e79934035e999bbd08a59d42"
 
-"@nimiq/keyguard-client@^0.0.23":
-  version "0.0.23"
-  resolved "https://registry.yarnpkg.com/@nimiq/keyguard-client/-/keyguard-client-0.0.23.tgz#50c0809346783e80b0fe3c905437a8e6e6f48ebb"
-  integrity sha512-Y0fA3UUE70Yqxj5qpPhDKZOhzAGQrh9O/N9oGkkqGuyr6imko7+0vubDGYlWgDTGkTm5GBVlndDMEA79l17DbQ==
+"@nimiq/keyguard-client@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@nimiq/keyguard-client/-/keyguard-client-0.1.0.tgz#678b775b160a127d84b990fadad84d08f18d50f3"
   dependencies:
     "@nimiq/rpc" "^0.0.10"
 
@@ -630,7 +629,6 @@
 "@nimiq/utils@^0.0.5":
   version "0.0.5"
   resolved "https://registry.yarnpkg.com/@nimiq/utils/-/utils-0.0.5.tgz#ce1b111003f4212f9dcd212902d61586af0662b8"
-  integrity sha512-Je2ch3VQAgqGifU48foi8VaFaSD7PJireQgSHyZT0EFfoBvGZFMLGKBcXaYo7aF59tSsq5gS8Zp+xZaKmskbaw==
 
 "@nimiq/vue-components@https://github.com/nimiq/vue-components.git#build/accounts":
   version "0.1.0"
@@ -6110,7 +6108,6 @@ range-parser@^1.0.3, range-parser@~1.2.0:
 raven-js@^3.22.3:
   version "3.27.0"
   resolved "https://registry.yarnpkg.com/raven-js/-/raven-js-3.27.0.tgz#9f47c03e17933ce756e189f3669d49c441c1ba6e"
-  integrity sha512-vChdOL+yzecfnGA+B5EhEZkJ3kY3KlMzxEhShKh6Vdtooyl0yZfYNFQfYzgMf2v4pyQa+OTZ5esTxxgOOZDHqw==
 
 raw-body@2.3.3:
   version "2.3.3"
@@ -7459,7 +7456,6 @@ vue-property-decorator@^7.0.0:
 vue-raven@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/vue-raven/-/vue-raven-1.0.0.tgz#d05e332a25a96fb3662fbc4979d93aa7c3fa6550"
-  integrity sha512-d6qsCQc15ZSnBvCEZ65JwW6b/t8oxqowL3GgwzZb/hKujA1vff9L2UZFPQiqFD8EUSMGxwA9fHouepfA02+CJg==
   dependencies:
     raven-js "^3.22.3"
 
