@@ -19,18 +19,18 @@ export default class ErrorHandler extends Vue {
         if (this.requestSpecificErrors()) return;
         if (this.keyguardResult.message === Errors.Messages.KEY_NOT_FOUND) {
             let walletId;
-            // ParsedExportRequest is just one Rrequest that has walletId. Any of those would do.
+            // ParsedExportRequest is just one request that has a walletId. Any of those would do.
             if ((this.request as ParsedExportRequest).walletId) {
-                // walletId is already in the AccountsManagerRequest
+                // The walletId is already in the Accounts request
                 walletId = (this.request as ParsedExportRequest).walletId;
             } else if (this.request.kind === RequestType.CHECKOUT
                     || this.request.kind === RequestType.SIGN_MESSAGE) {
-                // Accounts Request was Checkout/SignMessage.
-                // The keyId is in the KeyguardRequest after choosing the account
+                // Accounts request was Checkout/SignMessage.
+                // The walletId (keyId in the Keyguard environment) is in the keyguardRequest after picking the account
                 walletId = (this.keyguardRequest as KeyguardRequest.SignTransactionRequest).keyId;
             } else {
-                // this really should not happen
-                // Executing this code would mean a CreateRequest did fire KEY_ID_NOT_FOUND which it does not throw
+                // This really should not happen.
+                // Executing this code would mean i.e. a CreateRequest fired KEY_ID_NOT_FOUND which it does not throw
                 this.$rpc.reject(this.keyguardResult);
                 return;
             }
@@ -46,7 +46,6 @@ export default class ErrorHandler extends Vue {
         // TODO more Error Handling
 
         this.$rpc.reject(this.keyguardResult);
-        return;
     }
 
     /**
