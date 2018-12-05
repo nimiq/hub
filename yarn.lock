@@ -597,25 +597,22 @@
   resolved "https://registry.yarnpkg.com/@nimiq/core-types/-/core-types-1.0.1.tgz#344cfff6071bf12cfb557f82d586d42cae779797"
   integrity sha512-Td6rAFhMRJKYqlSmTGw7vInz3j2+MMWvCeCjK8ABUqdYzi9ArE7RBpaeAu4XUQkZpWjFx0DBYWZMxtinwXGQjA==
 
-"@nimiq/core@1.3.1":
-  version "1.3.1"
-  resolved "https://registry.yarnpkg.com/@nimiq/core/-/core-1.3.1.tgz#87611b6d0208f510eb07173de0c7ce603c13445d"
-  integrity sha512-eso/o1mEJKD5GHAPQgtTz8mlEjDA7AO+vuU3beTC6IrT/6nw2aBkEAueIuanTUP2QdRi+ngaElh2EXsbcY7zWA==
+"@nimiq/core@1.4.1":
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/@nimiq/core/-/core-1.4.1.tgz#8558dd0dc8d34ffd866ea0a35f1fcb2ec4dc5d24"
+  integrity sha512-F/0Ermkr8oCpvxhvXzrQTbKUc/fMy+d1ah1umnj2lhB69dKFvw2Fc8/FW6TxWxRrOWnZ3Rv78HpYF6ExjjxjbQ==
   dependencies:
     "@nimiq/jungle-db" "^0.9.17"
     atob "^2.0.3"
     bindings "^1.3.0"
     btoa "^1.1.2"
     chalk "^2.3.2"
+    cpuid-git "^0.3.0"
     json5 "^1.0.1"
     lodash.merge "^4.6.1"
     minimist "^1.2.0"
     nan "^2.10.0"
-    uws "^10.148.0"
     ws "^5.2.0"
-  optionalDependencies:
-    bufferutil "^3.0.4"
-    utf-8-validate "^4.0.1"
 
 "@nimiq/jungle-db@^0.9.17":
   version "0.9.17"
@@ -1718,15 +1715,6 @@ buffer@^4.3.0:
     ieee754 "^1.1.4"
     isarray "^1.0.0"
 
-bufferutil@^3.0.4:
-  version "3.0.5"
-  resolved "https://registry.yarnpkg.com/bufferutil/-/bufferutil-3.0.5.tgz#8abfc3b6da7aca6a13268b3f2482f0c7aa05fffb"
-  integrity sha512-0fUEthLqfCkYspEuP0vmiAe+PsXslE+AlILb2rmS9I4tAdm3SmpCI69M66zQL20GQEszdbXyVN6q+cpG/yhYlg==
-  dependencies:
-    bindings "~1.3.0"
-    nan "~2.10.0"
-    prebuild-install "~4.0.0"
-
 builtin-modules@^1.0.0, builtin-modules@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/builtin-modules/-/builtin-modules-1.1.1.tgz#270f076c5a72c02f5b65a47df94c5fe3a278892f"
@@ -2202,6 +2190,13 @@ cosmiconfig@^5.0.0:
     is-directory "^0.3.1"
     js-yaml "^3.9.0"
     parse-json "^4.0.0"
+
+cpuid-git@^0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/cpuid-git/-/cpuid-git-0.3.0.tgz#69bdf60e7aab8e1043b9e77c728af9cf16291f88"
+  integrity sha512-7fyi5uEJ2Fx8A/d+O4pXXnd3F7wJfcuURmQNuheWelmVvzboAUXfyHx5OBFE/1Zg/o+EXCgvn4aXQLQ9nctqRQ==
+  dependencies:
+    nan "^2.10.0"
 
 create-ecdh@^4.0.0:
   version "4.0.3"
@@ -6231,7 +6226,7 @@ postcss@^7.0.0, postcss@^7.0.1, postcss@^7.0.5:
     source-map "^0.6.1"
     supports-color "^5.5.0"
 
-prebuild-install@^4.0.0, prebuild-install@~4.0.0:
+prebuild-install@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/prebuild-install/-/prebuild-install-4.0.0.tgz#206ce8106ce5efa4b6cf062fc8a0a7d93c17f3a8"
   integrity sha512-7tayxeYboJX0RbVzdnKyGl2vhQRWr6qfClEXDhOkXjuaOKCw2q8aiuFhONRYVsG/czia7KhpykIlI2S2VaPunA==
@@ -7797,15 +7792,6 @@ use@^3.1.0:
   version "3.1.1"
   resolved "https://registry.yarnpkg.com/use/-/use-3.1.1.tgz#d50c8cac79a19fbc20f2911f56eb973f4e10070f"
 
-utf-8-validate@^4.0.1:
-  version "4.0.2"
-  resolved "https://registry.yarnpkg.com/utf-8-validate/-/utf-8-validate-4.0.2.tgz#deadcedfbf5ec535e3c72874e9ddc0663c139691"
-  integrity sha512-CS63Ssp6zynBQ4IxVzgjP5Abdo6LuJ87HFIcgIiVUeY96+MTHkqKtrUhphbwQ6jX8aSGZv8zX6l1DCPpfcAnxA==
-  dependencies:
-    bindings "~1.3.0"
-    nan "~2.10.0"
-    prebuild-install "~4.0.0"
-
 util-deprecate@~1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/util-deprecate/-/util-deprecate-1.0.2.tgz#450d4dc9fa70de732762fbd2d4a28981419a0ccf"
@@ -7844,11 +7830,6 @@ uuid@3.2.1:
 uuid@^3.0.1, uuid@^3.3.2:
   version "3.3.2"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.3.2.tgz#1b4af4955eb3077c501c23872fc6513811587131"
-
-uws@^10.148.0:
-  version "10.148.2"
-  resolved "https://registry.yarnpkg.com/uws/-/uws-10.148.2.tgz#f01652a0b4bb941cb18bb7a6248d780fd0150245"
-  integrity sha1-8BZSoLS7lByxi7emJI14D9AVAkU=
 
 validate-npm-package-license@^3.0.1:
   version "3.0.4"
