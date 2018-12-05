@@ -98,19 +98,7 @@ import { Component, Prop, Watch, Emit, Vue } from 'vue-property-decorator';
  * The events are available as `Loader.Events.MAIN_ACTION` and `Loader.Events.ALTERNATIVE_ACTION`.
  */
 @Component
-export default class Loader extends Vue {
-    public static readonly Status = {
-        LOADING: 'loading',
-        SUCCESS: 'success',
-        WARNING: 'warning',
-        ERROR: 'error',
-    };
-
-    public static readonly Events = {
-        MAIN_ACTION: 'main-action',
-        ALTERNATIVE_ACTION: 'alternative-action',
-    };
-
+class Loader extends Vue {
     @Prop({type: String, default: 'Improving the world'}) private title!: string;
     @Prop({type: String, default: Loader.Status.LOADING}) private state!: string;
     @Prop(Boolean) private lightBlue?: boolean;
@@ -176,6 +164,22 @@ export default class Loader extends Vue {
         this.$emit(Loader.Events.ALTERNATIVE_ACTION);
     }
 }
+
+namespace Loader { // tslint:disable-line no-namespace
+    export enum Status {
+        LOADING = 'loading',
+        SUCCESS = 'success',
+        WARNING = 'warning',
+        ERROR = 'error',
+    }
+
+    export enum Events {
+        MAIN_ACTION = 'main-action',
+        ALTERNATIVE_ACTION = 'alternative-action',
+    }
+}
+
+export default Loader;
 </script>
 
 <style scoped>
