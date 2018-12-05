@@ -49,7 +49,7 @@ export class CookieDecoder {
 
         // Status byte
         const statusByte = this.readByte(bytes);
-        const keyMissing = (statusByte & 1) === 1;
+        const keyMissing = (statusByte & CookieJar.StatusFlags.KEY_MISSING) === CookieJar.StatusFlags.KEY_MISSING;
 
         // Wallet type and label length
         const typeAndLabelLength = this.readByte(bytes);
@@ -94,7 +94,7 @@ export class CookieDecoder {
             label: walletLabel,
             accounts,
             contracts: [],
-            keyMissing: false,
+            keyMissing,
         };
 
         return walletInfoEntry;

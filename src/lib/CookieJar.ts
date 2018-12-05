@@ -3,7 +3,7 @@
 import { WalletInfoEntry, WalletType } from './WalletInfo';
 import { Utf8Tools } from '@nimiq/utils';
 
-export default class CookieJar {
+class CookieJar {
     public static readonly VERSION = 1;
     public static readonly MAX_COOKIE_SIZE = 2500; // byte (3000 would propable be safe, but we'll be safer for now)
     public static readonly MAX_LABEL_LENGTH = 63;
@@ -44,9 +44,9 @@ export default class CookieJar {
             const walletIdChunks = wallet.id.match(/.{2}/g);
             for (const chunk of walletIdChunks!) bytes.push(parseInt(chunk, 16));
 
-            // status
+            // Status
             let statusByte: number = 0;
-            statusByte = statusByte | (wallet.keyMissing ? 1 : 0);
+            statusByte = statusByte | (wallet.keyMissing ? CookieJar.StatusFlags.KEY_MISSING : 0);
             bytes.push(statusByte);
 
             // Handle LEGACY wallet
@@ -136,3 +136,12 @@ export default class CookieJar {
         return Nimiq.BufferUtils.fromBase64(encodedWallets).length;
     }
 }
+
+namespace CookieJar { // tslint:disable-line no-namespace
+    export enum StatusFlags {
+        KEY_MISSING = 1,
+        // HAS_PIN = 1 << 1,
+    }
+}
+
+export default CookieJar;
