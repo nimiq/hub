@@ -47,6 +47,10 @@ export class CookieDecoder {
         let id: string = '';
         for (let i = 0; i < 6; i++) id += this.readByte(bytes).toString(16);
 
+        // Status byte
+        const statusByte = this.readByte(bytes);
+        const keyMissing = (statusByte & 1) === 1;
+
         // Wallet type and label length
         const typeAndLabelLength = this.readByte(bytes);
         const type = typeAndLabelLength & 0b11;
@@ -64,7 +68,7 @@ export class CookieDecoder {
                 label: walletLabel,
                 accounts,
                 contracts: [],
-                deleted: false,
+                keyMissing,
             };
 
             return walletInfoEntry;
@@ -90,7 +94,7 @@ export class CookieDecoder {
             label: walletLabel,
             accounts,
             contracts: [],
-            deleted: false,
+            keyMissing: false,
         };
 
         return walletInfoEntry;

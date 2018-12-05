@@ -15,6 +15,7 @@ export default class CookieJar {
     ;
     public static readonly ENCODED_WALLET_SIZE =
            6 // wallet ID
+        +  1 // status byte (currently holds 'deleted' flag in the least significant bit)
         +  1 // wallet type and label length
         + 63 // wallet label
         +  1 // number of accounts
@@ -42,6 +43,11 @@ export default class CookieJar {
             // Wallet ID
             const walletIdChunks = wallet.id.match(/.{2}/g);
             for (const chunk of walletIdChunks!) bytes.push(parseInt(chunk, 16));
+
+            // status
+            let statusByte: number = 0;
+            statusByte = statusByte | (wallet.keyMissing ? 1 : 0);
+            bytes.push(statusByte);
 
             // Handle LEGACY wallet
             if (wallet.type === WalletType.LEGACY) {

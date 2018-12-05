@@ -41,7 +41,7 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         ]),
         contracts: [],
         type: WalletType.BIP39,
-        deleted: false,
+        keyMissing: false,
     },
     {
         id: '1ee3d926a49d',
@@ -63,7 +63,7 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
             type: ContractType.VESTING,
         }],
         type: WalletType.LEDGER,
-        deleted: false,
+        keyMissing: false,
     },
     {
         id: '1ee3d926a49e',
@@ -80,7 +80,7 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         ]),
         contracts: [],
         type: WalletType.LEGACY,
-        deleted: false,
+        keyMissing: true,
     },
 ];
 
@@ -108,7 +108,7 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         ]),
         contracts: [],
         type: WalletType.BIP39,
-        deleted: false,
+        keyMissing: false,
     },
     {
         id: '1ee3d926a49d',
@@ -125,7 +125,7 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         ]),
         contracts: [],
         type: WalletType.LEDGER,
-        deleted: false,
+        keyMissing: false,
     },
     {
         id: '1ee3d926a49e',
@@ -142,7 +142,7 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         ]),
         contracts: [],
         type: WalletType.LEGACY,
-        deleted: false,
+        keyMissing: true,
     },
 ];
 
@@ -151,6 +151,7 @@ const BYTES = [
 
     // wallet 1 (BIP39)
     30, 227, 217, 38, 164, 156, // wallet id
+    0, // keyDeleted = false
     37, // wallet label length (9), wallet type (1)
     77, 97, 105, 110, 32, 240, 159, 153, 137, // wallet label
     2, // number of accounts
@@ -166,6 +167,7 @@ const BYTES = [
 
     // wallet 2 (LEDGER)
     30, 227, 217, 38, 164, 157, // wallet id
+    0, // keyDeleted = false
     2, // wallet label length (0), wallet type (2)
     1, // number of accounts
 
@@ -176,6 +178,7 @@ const BYTES = [
 
     // wallet 3 (LEGACY)
     30, 227, 217, 38, 164, 158, // wallet id
+    1, // keyDeleted = true
     40, // account label length (10), wallet type (0)
 
         // account

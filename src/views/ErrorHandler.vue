@@ -36,7 +36,7 @@ export default class ErrorHandler extends Vue {
             }
             const walletInfo = await WalletStore.Instance.get(walletId);
             if (walletInfo) {
-                walletInfo.deleted = true;
+                walletInfo.keyMissing = true;
                 await WalletStore.Instance.put(walletInfo);
             }
             // TODO visuals
