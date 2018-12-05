@@ -151,7 +151,7 @@ const BYTES = [
 
     // wallet 1 (BIP39)
     30, 227, 217, 38, 164, 156, // wallet id
-    0, // keyDeleted = false
+    0, // keyMissing = false
     37, // wallet label length (9), wallet type (1)
     77, 97, 105, 110, 32, 240, 159, 153, 137, // wallet label
     2, // number of accounts
@@ -167,7 +167,7 @@ const BYTES = [
 
     // wallet 2 (LEDGER)
     30, 227, 217, 38, 164, 157, // wallet id
-    0, // keyDeleted = false
+    0, // keyMissing = false
     2, // wallet label length (0), wallet type (2)
     1, // number of accounts
 
@@ -178,7 +178,7 @@ const BYTES = [
 
     // wallet 3 (LEGACY)
     30, 227, 217, 38, 164, 158, // wallet id
-    1, // keyDeleted = true
+    1, // keyMissing = true
     40, // account label length (10), wallet type (0)
 
         // account
