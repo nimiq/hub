@@ -128,6 +128,9 @@ class Loader extends Vue {
         return this._loadingTitle || (this._loadingTitle = this.title);
     }
 
+    // In a browser, setTimout returns a number, but Typescript thinks it should be a NodeJS.Timeout
+    private stateUpdateTimeout: any = null;
+
     @Watch('state', {immediate: true})
     private updateState(newState: string, oldState: string) {
         // When the component is initialized with a state other than LOADING
@@ -137,10 +140,14 @@ class Loader extends Vue {
 
         // When the state changes later and animates
         if (oldState && (newState !== Loader.Status.LOADING)) {
-            setTimeout(() => this.showLoadingBackground = false, 1000);
+            this.stateUpdateTimeout = setTimeout(() => this.showLoadingBackground = false, 1000);
         }
 
         if (newState === Loader.Status.LOADING) {
+            if (this.stateUpdateTimeout) {
+                clearTimeout(this.stateUpdateTimeout);
+                this.stateUpdateTimeout = null;
+            }
             this.showLoadingBackground = true;
         }
     }
