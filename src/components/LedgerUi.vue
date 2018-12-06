@@ -102,7 +102,7 @@ class LedgerUi extends Vue {
             case LedgerApi.RequestType.GET_ADDRESS:
                 // no UI needed as not interactive
                 break;
-            case LedgerApi.RequestType.LIST_ACCOUNTS:
+            case LedgerApi.RequestType.DERIVE_ACCOUNTS:
                 // not interactive, but takes ~6 seconds
                 this._showInstructions('Fetching Accounts...');
                 break;
@@ -209,7 +209,7 @@ class LedgerUi extends Vue {
         switch (requestType) {
             case LedgerApi.RequestType.GET_ADDRESS:
             case LedgerApi.RequestType.GET_PUBLIC_KEY:
-            case LedgerApi.RequestType.LIST_ACCOUNTS:
+            case LedgerApi.RequestType.DERIVE_ACCOUNTS:
                 return 'loading';
             case LedgerApi.RequestType.CONFIRM_ADDRESS:
                 return 'confirm-address';
