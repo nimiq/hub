@@ -381,7 +381,7 @@ class Demo {
         let html = '';
 
         wallets.forEach(wallet => {
-            html += `<li>${wallet.label}
+            html += `<li${wallet.keyMissing ? ' style="color:red;"' : ''}>${wallet.label}
                         <button class="export" data-wallet-id="${wallet.id}">Export</button>
                         <button class="change-passphrase" data-wallet-id="${wallet.id}">Ch. Pass.</button>
                         ${wallet.type !== 0 ? `<button class="add-account" data-wallet-id="${wallet.id}">+ Acc</button>` : ''}

@@ -627,10 +627,9 @@
     levelup "^2.0.2"
     node-lmdb "0.6.0"
 
-"@nimiq/keyguard-client@^0.0.26":
-  version "0.0.26"
-  resolved "https://registry.yarnpkg.com/@nimiq/keyguard-client/-/keyguard-client-0.0.26.tgz#49f02fcce40b5fa13f65c01deb9021e06c6c1a0f"
-  integrity sha512-RiaUhgm1w4R6cS8iq2HYCQZJA0LgZmcbO3G9N+aaIRhzlDMaT8F6jSIPR1mmB0py5WQ4x1xN+lFv6ugTk5zKGA==
+"@nimiq/keyguard-client@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@nimiq/keyguard-client/-/keyguard-client-0.1.0.tgz#678b775b160a127d84b990fadad84d08f18d50f3"
   dependencies:
     "@nimiq/rpc" "^0.0.10"
 
@@ -6482,7 +6481,6 @@ range-parser@^1.0.3, range-parser@~1.2.0:
 raven-js@^3.22.3:
   version "3.27.0"
   resolved "https://registry.yarnpkg.com/raven-js/-/raven-js-3.27.0.tgz#9f47c03e17933ce756e189f3669d49c441c1ba6e"
-  integrity sha512-vChdOL+yzecfnGA+B5EhEZkJ3kY3KlMzxEhShKh6Vdtooyl0yZfYNFQfYzgMf2v4pyQa+OTZ5esTxxgOOZDHqw==
 
 raw-body@2.3.3:
   version "2.3.3"
@@ -7903,7 +7901,6 @@ vue-property-decorator@^7.0.0:
 vue-raven@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/vue-raven/-/vue-raven-1.0.0.tgz#d05e332a25a96fb3662fbc4979d93aa7c3fa6550"
-  integrity sha512-d6qsCQc15ZSnBvCEZ65JwW6b/t8oxqowL3GgwzZb/hKujA1vff9L2UZFPQiqFD8EUSMGxwA9fHouepfA02+CJg==
   dependencies:
     raven-js "^3.22.3"
 

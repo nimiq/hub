@@ -41,6 +41,7 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         ]),
         contracts: [],
         type: WalletType.BIP39,
+        keyMissing: true,
     },
     {
         id: '1ee3d926a49d',
@@ -62,6 +63,7 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
             type: ContractType.VESTING,
         }],
         type: WalletType.LEDGER,
+        keyMissing: true,
     },
     {
         id: '1ee3d926a49e',
@@ -78,6 +80,71 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         ]),
         contracts: [],
         type: WalletType.LEGACY,
+        keyMissing: true,
+    },
+    {
+        id: '1ee3d926a49f',
+        label: 'Main 🙉',
+        accounts: new Map<string, AccountInfoEntry>([
+            [
+                DUMMY_ADDRESS_HR1,
+                {
+                    path: 'm/0\'',
+                    label: 'MyAccount1',
+                    address: DUMMY_ADDRESS_S1,
+                },
+            ],
+            [
+                DUMMY_ADDRESS_HR2,
+                {
+                    path: 'm/0\'',
+                    label: '',
+                    address: DUMMY_ADDRESS_S2,
+                },
+            ],
+        ]),
+        contracts: [],
+        type: WalletType.BIP39,
+        keyMissing: false,
+    },
+    {
+        id: '1ee3d926a4a0',
+        label: '',
+        accounts: new Map<string, AccountInfoEntry>([
+            [
+                BURN_ADDRESS_HR,
+                {
+                    path: 'm/0\'',
+                    label: 'Daniel\'s Ledger ❤',
+                    address: BURN_ADDRESS_S,
+                },
+            ],
+        ]),
+        contracts: [{
+            address: DUMMY_ADDRESS1,
+            label: 'Savings',
+            ownerPath: 'm/0\'',
+            type: ContractType.VESTING,
+        }],
+        type: WalletType.LEDGER,
+        keyMissing: false,
+    },
+    {
+        id: '1ee3d926a4a1',
+        label: 'My old wallet',
+        accounts: new Map<string, AccountInfoEntry>([
+            [
+                DUMMY_ADDRESS_HR2,
+                {
+                    path: 'm/0\'',
+                    label: 'OldAccount',
+                    address: DUMMY_ADDRESS_S2,
+                },
+            ],
+        ]),
+        contracts: [],
+        type: WalletType.LEGACY,
+        keyMissing: false,
     },
 ];
 
@@ -105,6 +172,7 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         ]),
         contracts: [],
         type: WalletType.BIP39,
+        keyMissing: true,
     },
     {
         id: '1ee3d926a49d',
@@ -121,6 +189,7 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         ]),
         contracts: [],
         type: WalletType.LEDGER,
+        keyMissing: true,
     },
     {
         id: '1ee3d926a49e',
@@ -137,6 +206,66 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         ]),
         contracts: [],
         type: WalletType.LEGACY,
+        keyMissing: true,
+    },
+    {
+        id: '1ee3d926a49f',
+        label: 'Main 🙉',
+        accounts: new Map<string, AccountInfoEntry>([
+            [
+                DUMMY_ADDRESS_HR1,
+                {
+                    path: 'not public',
+                    label: 'MyAccount1',
+                    address: DUMMY_ADDRESS_S1,
+                },
+            ],
+            [
+                DUMMY_ADDRESS_HR2,
+                {
+                    path: 'not public',
+                    label: 'Standard Account',
+                    address: DUMMY_ADDRESS_S2,
+                },
+            ],
+        ]),
+        contracts: [],
+        type: WalletType.BIP39,
+        keyMissing: false,
+    },
+    {
+        id: '1ee3d926a4a0',
+        label: 'Ledger Wallet',
+        accounts: new Map<string, AccountInfoEntry>([
+            [
+                BURN_ADDRESS_HR,
+                {
+                    path: 'not public',
+                    label: 'Daniel\'s Ledger ❤',
+                    address: BURN_ADDRESS_S,
+                },
+            ],
+        ]),
+        contracts: [],
+        type: WalletType.LEDGER,
+        keyMissing: false,
+    },
+    {
+        id: '1ee3d926a4a1',
+        label: 'Legacy Wallet',
+        accounts: new Map<string, AccountInfoEntry>([
+            [
+                DUMMY_ADDRESS_HR2,
+                {
+                    path: 'not public',
+                    label: 'OldAccount',
+                    address: DUMMY_ADDRESS_S2,
+                },
+            ],
+        ]),
+        contracts: [],
+        type: WalletType.LEGACY,
+        keyMissing: false,
     },
 ];
 
@@ -145,6 +274,7 @@ const BYTES = [
 
     // wallet 1 (BIP39)
     30, 227, 217, 38, 164, 156, // wallet id
+    1, // keyMissing = true
     37, // wallet label length (9), wallet type (1)
     77, 97, 105, 110, 32, 240, 159, 153, 137, // wallet label
     2, // number of accounts
@@ -160,6 +290,7 @@ const BYTES = [
 
     // wallet 2 (LEDGER)
     30, 227, 217, 38, 164, 157, // wallet id
+    1, // keyMissing = true
     2, // wallet label length (0), wallet type (2)
     1, // number of accounts
 
@@ -170,6 +301,43 @@ const BYTES = [
 
     // wallet 3 (LEGACY)
     30, 227, 217, 38, 164, 158, // wallet id
+    1, // keyMissing = true
+    40, // account label length (10), wallet type (0)
+
+        // account
+        79, 108, 100, 65, 99, 99, 111, 117, 110, 116, // account label
+        101, 254, 174, 109, 147, 234, 215, 10, 22, 16, 67, 70, 109, 90, 53, 154, 43, 22, 180, 254, // account address
+
+    // wallet 4 (BIP39)
+    30, 227, 217, 38, 164, 159, // wallet id
+    0, // keyMissing = false
+    37, // wallet label length (9), wallet type (1)
+    77, 97, 105, 110, 32, 240, 159, 153, 137, // wallet label
+    2, // number of accounts
+
+        // account 1
+        10, // account label length
+        77, 121, 65, 99, 99, 111, 117, 110, 116, 49, // account label
+        51, 71, 19, 87, 173, 20, 186, 75, 28, 253, 125, 148, 90, 165, 116, 22, 53, 112, 220, 196, // account address
+
+        // account 2
+        0, // account label length
+        101, 254, 174, 109, 147, 234, 215, 10, 22, 16, 67, 70, 109, 90, 53, 154, 43, 22, 180, 254, // account address
+
+    // wallet 2 (LEDGER)
+    30, 227, 217, 38, 164, 160, // wallet id
+    0, // keyMissing = false
+    2, // wallet label length (0), wallet type (2)
+    1, // number of accounts
+
+        // account 1
+        19, // account label length
+        68, 97, 110, 105, 101, 108, 39, 115, 32, 76, 101, 100, 103, 101, 114, 32, 226, 157, 164, // account label
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // account address
+
+    // wallet 3 (LEGACY)
+    30, 227, 217, 38, 164, 161, // wallet id
+    0, // keyMissing = false
     40, // account label length (10), wallet type (0)
 
         // account
