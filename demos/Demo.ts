@@ -215,7 +215,19 @@ class Demo {
             };
         }
 
+        document.querySelector('button#migrate').addEventListener('click', async () => {
+            try {
+                const result = await client.migrate();
+                console.log('Keyguard result', result);
+                document.querySelector('#result').textContent = 'Migrated';
+            } catch (e) {
+                console.error('Keyguard error', e);
+                document.querySelector('#result').textContent = `Error: ${e.message || e}`;
+            }
+        });
+
         document.querySelector('button#list-keyguard-keys').addEventListener('click', () => demo.listKeyguard());
+        document.querySelector('button#setup-legacy-accounts').addEventListener('click', () => demo.setupLegacyAccounts());
         document.querySelector('button#list-accounts').addEventListener('click', async () => demo.updateAccounts());
         demo._accountsClient = client;
     } // run
@@ -255,6 +267,12 @@ class Demo {
         const keys = await client.call('list');
         console.log('Keys in Keyguard:', keys);
         return keys;
+    }
+
+    public async setupLegacyAccounts() {
+        const client = await this.startIframeClient(this._keyguardBaseUrl);
+        const result = await client.call('setUpLegacyAccounts');
+        console.log('Legacy Account setup:', result);
     }
 
     public async list(): Promise<WalletInfoEntry[]> {

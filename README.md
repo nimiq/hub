@@ -28,7 +28,16 @@ interact with their users' Nimiq accounts.
 
 ### Installation
 
-The JavaScript client library can either be installed from NPM:
+Include the `AccountsClient` JS library as a script tag in your page:
+
+```html
+<!-- From CDN -->
+<script src="https://unpkg.com/@nimiq/accounts-client@v1/dist/standalone/AccountsClient.standalone.umd.js"></script>
+<!-- or -->
+<script src="https://cdn.jsdelivr.net/npm/@nimiq/accounts-client@v1/dist/standalone/AccountsClient.standalone.umd.js"></script>
+```
+
+It can also be installed from NPM:
 
 ```bash
 npm install @nimiq/accounts-client
@@ -36,24 +45,12 @@ npm install @nimiq/accounts-client
 yarn add @nimiq/accounts-client
 ```
 
-or downloaded from the [client/dist/standalone](https://github.com/nimiq/accounts/tree/master/client/dist/standalone)
-directory.
-
-To use it, require or import it:
+Then import or require it in your module:
 
 ```javascript
-const AccountsClient = require('@nimiq/accounts-client');
-// or
 import AccountsClient from '@nimiq/accounts-client';
-```
-
-or include it as a script tag in your page:
-
-```html
-<script src="AccountsClient.standalone.umd.js"></script>
-
-<!-- or from CDN -->
-<script scr="https://cdn.jsdelivr.net/npm/@nimiq/accounts-client/dist/standalone/AccountsClient.standalone.umd.js"></script>
+// or
+const AccountsClient = require('@nimiq/accounts-client');
 ```
 
 ### Initialization

@@ -25,7 +25,7 @@ import {
     SignMessageRequest,
     SignMessageResult,
     SimpleResult,
-    // ListResult,
+    ListResult,
     RpcResult,
 } from '../src/lib/RequestTypes';
 
@@ -121,10 +121,14 @@ export default class AccountsClient {
         return this._request(requestBehavior, RequestType.SIGN_MESSAGE, [request]);
     }
 
+    public migrate(requestBehavior = this._defaultBehavior): Promise<ListResult> {
+        return this._request(requestBehavior, RequestType.MIGRATE, [{}]);
+    }
+
     /**
      * Only accessible in iframe from Nimiq domains.
      */
-    public list(requestBehavior = this._iframeBehavior) /*: Promise<ListResult> */ {
+    public list(requestBehavior = this._iframeBehavior): Promise<ListResult> {
         return this._request(requestBehavior, RequestType.LIST, []);
     }
 

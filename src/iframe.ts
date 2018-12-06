@@ -15,11 +15,30 @@ class IFrameApi {
     }
 
     public static async list(): Promise<WalletInfoEntry[]> {
+        let wallets: WalletInfoEntry[];
         if (BrowserDetection.isIOS() || BrowserDetection.isSafari()) {
-            return CookieJar.eat();
+            wallets = await CookieJar.eat();
+        } else {
+            wallets = await WalletStore.Instance.list();
+        }
+        if (wallets.length > 0) {
+            return wallets;
         }
 
-        return await WalletStore.Instance.list();
+        // If no wallets exist, see if the Keyguard has keys
+        const client = new (await import('@nimiq/keyguard-client')).KeyguardClient();
+        const hasKeys = await client.hasKeys();
+        if (hasKeys) {
+            throw new Error('WALLETS_LOST');
+        }
+
+        // If no keys exist, check for legacy accounts
+        const hasLegacyAccounts = await client.hasLegacyAccounts();
+        if (hasLegacyAccounts) {
+            throw new Error('MIGRATION_REQUIRED');
+        }
+
+        return [];
     }
 
     private static get allowedOrigin(): string {

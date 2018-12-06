@@ -6,22 +6,22 @@
 </template>
 
 <script lang="ts">
-import { Component, Emit, Prop, Watch, Vue } from 'vue-property-decorator';
-import { SignTransactionResult, SignTransactionRequest } from '../lib/RequestTypes';
+import { Component, Prop, Vue } from 'vue-property-decorator';
+import { SignTransactionResult } from '../lib/RequestTypes';
 import {
     SignTransactionRequest as KSignTransactionRequest,
     SignTransactionResult as KSignTransactionResult,
 } from '@nimiq/keyguard-client';
-import { NetworkClient, PlainTransaction } from '@nimiq/network-client';
+import { NetworkClient, DetailedPlainTransaction } from '@nimiq/network-client';
 
 @Component
-export default class Network extends Vue {
+class Network extends Vue {
     @Prop(Boolean) private visible?: boolean;
     @Prop(Boolean) private alwaysVisible?: boolean;
     @Prop(String) private message?: string;
 
-    private _networkClient!: NetworkClient;
     private consensusEstablished: boolean = false;
+    private boundListeners: Array<[NetworkClient.Events, (...args: any[]) => void]> = [];
 
     public async connect() {
         // Load network iframe and autoconnect
@@ -139,29 +139,78 @@ export default class Network extends Vue {
         this.$on('consensus-lost', () => this.consensusEstablished = false);
     }
 
+    private destroyed() {
+        if (!NetworkClient.hasInstance()) return;
+        for (const [event, listener] of this.boundListeners) {
+            NetworkClient.Instance.off(event, listener);
+        }
+    }
+
     private async _getNetworkClient(): Promise<NetworkClient> {
-        if (this._networkClient) return this._networkClient;
+        if (!NetworkClient.hasInstance()) {
+            const networkClient = NetworkClient.createInstance();
+            await networkClient.init();
+        }
 
-        this._networkClient = new NetworkClient();
-        await this._networkClient.init();
+        if (this.boundListeners.length === 0) {
+            this._registerNetworkListener(NetworkClient.Events.API_READY,
+                () => this.$emit(Network.Events.API_READY));
+            this._registerNetworkListener(NetworkClient.Events.API_FAIL,
+                (e: Error) => this.$emit(Network.Events.API_FAIL, e));
+            this._registerNetworkListener(NetworkClient.Events.CONSENSUS_SYNCING,
+                () => this.$emit(Network.Events.CONSENSUS_SYNCING));
+            this._registerNetworkListener(NetworkClient.Events.CONSENSUS_ESTABLISHED,
+                () => this.$emit(Network.Events.CONSENSUS_ESTABLISHED));
+            this._registerNetworkListener(NetworkClient.Events.CONSENSUS_LOST,
+                () => this.$emit(Network.Events.CONSENSUS_LOST));
+            this._registerNetworkListener(NetworkClient.Events.PEERS_CHANGED,
+                (count: number) => this.$emit(Network.Events.PEERS_CHANGED, count));
+            this._registerNetworkListener(NetworkClient.Events.BALANCES_CHANGED,
+                (balances: Map<string, number>) => this.$emit(Network.Events.BALANCES_CHANGED, balances));
+            this._registerNetworkListener(NetworkClient.Events.TRANSACTION_PENDING,
+                (txInfo: Partial<DetailedPlainTransaction>) => this.$emit(Network.Events.TRANSACTION_PENDING, txInfo));
+            this._registerNetworkListener(NetworkClient.Events.TRANSACTION_EXPIRED,
+                (hash: string) => this.$emit(Network.Events.TRANSACTION_EXPIRED, hash));
+            this._registerNetworkListener(NetworkClient.Events.TRANSACTION_MINED,
+                (txInfo: DetailedPlainTransaction) => this.$emit(Network.Events.TRANSACTION_MINED, txInfo));
+            this._registerNetworkListener(NetworkClient.Events.TRANSACTION_RELAYED,
+                (txInfo: Partial<DetailedPlainTransaction>) => this.$emit(Network.Events.TRANSACTION_RELAYED, txInfo));
+            this._registerNetworkListener(NetworkClient.Events.HEAD_CHANGE,
+                (headInfo: {height: number, globalHashrate: number}) =>
+                    this.$emit(Network.Events.HEAD_CHANGE, headInfo));
 
-        this._networkClient.on('nimiq-api-ready', () => this.$emit('api-ready'));
-        this._networkClient.on('nimiq-consensus-syncing', () => this.$emit('consensus-syncing'));
-        this._networkClient.on('nimiq-consensus-established', () => this.$emit('consensus-established'));
-        this._networkClient.on('nimiq-consensus-lost', () => this.$emit('consensus-lost'));
-        this._networkClient.on('nimiq-balances', (balances: Map<string, number>) => this.$emit('balances', balances));
-        this._networkClient.on('nimiq-transaction-pending',
-            (txInfo: any) => this.$emit('transaction-pending', txInfo));
-        this._networkClient.on('nimiq-transaction-expired', (hash: string) => this.$emit('transaction-expired', hash));
-        this._networkClient.on('nimiq-transaction-mined', (txInfo: any) => this.$emit('transaction-mined', txInfo));
-        this._networkClient.on('nimiq-transaction-relayed', (txInfo: any) => this.$emit('transaction-relayed', txInfo));
-        this._networkClient.on('nimiq-different-tab-error', (e: Error) => this.$emit('different-tab-error', e));
-        this._networkClient.on('nimiq-api-fail', (e: Error) => this.$emit('api-fail', e));
-        this._networkClient.on('nimiq-head-change',
-            (headInfo: {height: number, globalHashrate: number}) => this.$emit('head-change', headInfo));
-        this._networkClient.on('nimiq-peer-count', (count: number) => this.$emit('peer-count', count));
+            this._fireInitialEvents();
+        }
 
-        return this._networkClient;
+        return NetworkClient.Instance;
+    }
+
+    private _registerNetworkListener(event: NetworkClient.Events, listener: (...args: any[]) => void) {
+        if (!NetworkClient.hasInstance()) console.warn('Using default instance with default endpoint.');
+        NetworkClient.Instance.on(event, listener);
+        this.boundListeners.push([event, listener]);
+    }
+
+    private _fireInitialEvents() {
+        if (!NetworkClient.hasInstance()) return;
+        const networkClient = NetworkClient.Instance;
+        if (networkClient.apiLoadingState === 'ready') this.$emit(Network.Events.API_READY);
+        else if (networkClient.apiLoadingState === 'failed') this.$emit(Network.Events.API_FAIL);
+
+        if (networkClient.consensusState === 'syncing') this.$emit(Network.Events.CONSENSUS_SYNCING);
+        else if (networkClient.consensusState === 'established') this.$emit(Network.Events.CONSENSUS_ESTABLISHED);
+        else if (networkClient.consensusState === 'lost') this.$emit(Network.Events.CONSENSUS_LOST);
+
+        if (networkClient.peerCount !== 0) this.$emit(Network.Events.PEERS_CHANGED, networkClient.peerCount);
+
+        if (networkClient.balances.size !== 0) this.$emit(Network.Events.BALANCES_CHANGED, networkClient.balances);
+
+        for (const tx of networkClient.pendingTransactions) this.$emit(Network.Events.TRANSACTION_PENDING, tx);
+        for (const txHash of networkClient.expiredTransactions) this.$emit(Network.Events.TRANSACTION_EXPIRED, txHash);
+        for (const tx of networkClient.minedTransactions) this.$emit(Network.Events.TRANSACTION_MINED, tx);
+        for (const tx of networkClient.relayedTransactions) this.$emit(Network.Events.TRANSACTION_RELAYED, tx);
+
+        if (networkClient.headInfo.height !== 0) this.$emit(Network.Events.HEAD_CHANGE, networkClient.headInfo);
     }
 
     private async _loadNimiq() {
@@ -179,6 +228,25 @@ export default class Network extends Vue {
         return this.message || 'Establishing consensus';
     }
 }
+
+namespace Network { // tslint:disable-line:no-namespace
+    export const enum Events {
+        API_READY = 'api-ready',
+        API_FAIL = 'api-fail',
+        CONSENSUS_SYNCING = 'consensus-syncing',
+        CONSENSUS_ESTABLISHED = 'consensus-established',
+        CONSENSUS_LOST = 'consensus-lost',
+        PEERS_CHANGED = 'peer-count',
+        BALANCES_CHANGED = 'balances',
+        TRANSACTION_PENDING = 'transaction-pending',
+        TRANSACTION_EXPIRED = 'transaction-expired',
+        TRANSACTION_MINED = 'transaction-mined',
+        TRANSACTION_RELAYED = 'transaction-relayed',
+        HEAD_CHANGE = 'head-change',
+    }
+}
+
+export default Network;
 </script>
 
 <style scoped>
