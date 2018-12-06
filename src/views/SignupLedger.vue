@@ -75,7 +75,7 @@ export default class SignupLedger extends Vue {
     private destroyed() {
         LedgerApi.off(LedgerApi.EventType.REQUEST_CANCELLED, this.close);
         const currentRequest = LedgerApi.currentRequest;
-        if (currentRequest && currentRequest.type === LedgerApi.RequestType.LIST_ACCOUNTS) {
+        if (currentRequest && currentRequest.type === LedgerApi.RequestType.DERIVE_ACCOUNTS) {
             currentRequest.cancel();
         }
         this.cancelled = true;
@@ -88,7 +88,11 @@ export default class SignupLedger extends Vue {
     private async _run() {
         if (this.state !== SignupLedger.State.IDLE) return;
         // triggers loading and connecting states in LedgerUi if applicable
-        this.accounts = (await LedgerApi.listAccounts(0, SignupLedger.COUNT_ACCOUNTS_TO_DERIVE)).map((account) =>
+        const accountsToDerive = [];
+        for (let keyId = 0; keyId < SignupLedger.COUNT_ACCOUNTS_TO_DERIVE; ++keyId) {
+            accountsToDerive.push(LedgerApi.getBip32PathForKeyId(keyId));
+        }
+        this.accounts = (await LedgerApi.deriveAccounts(accountsToDerive)).map((account) =>
             new AccountInfo(account.keyPath, 'Ledger Account', Nimiq.Address.fromUserFriendlyAddress(account.address)));
 
         if (this.cancelled) return;
@@ -106,7 +110,7 @@ export default class SignupLedger extends Vue {
     private _showLedger() {
         const currentRequest = LedgerApi.currentRequest;
         if (currentRequest
-            && (currentRequest.type !== LedgerApi.RequestType.LIST_ACCOUNTS || currentRequest.cancelled)) return;
+            && (currentRequest.type !== LedgerApi.RequestType.DERIVE_ACCOUNTS || currentRequest.cancelled)) return;
         this.state = SignupLedger.State.LEDGER_CALL;
     }
 

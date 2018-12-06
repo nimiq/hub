@@ -124,6 +124,7 @@ class LedgerApiRequest<T> extends Observable {
 class LedgerApi {
     // public fields and methods
     public static readonly BIP32_BASE_PATH = `44'/242'/0'/`;
+    public static readonly BIP32_PATH_REGEX = new RegExp(`^${LedgerApi.BIP32_BASE_PATH}(\\d+)'$`);
     public static readonly MIN_REQUIRED_APP_VERSION = [1, 3, 1];
     public static readonly WAIT_TIME_AFTER_TIMEOUT = 1500;
     public static readonly WAIT_TIME_AFTER_ERROR = 500;
@@ -156,13 +157,16 @@ class LedgerApi {
         listenersForEvent.splice(index, 1);
     }
 
-    public static async listAccounts(startKeyId: number = 0, count: number = 20)
+    public static getBip32PathForKeyId(keyId: number): string {
+        return `${LedgerApi.BIP32_BASE_PATH}${keyId}'`;
+    }
+
+    public static async deriveAccounts(pathsToDerive: Iterable<string>)
         : Promise<Array<{ address: string, keyPath: string }>> {
-        const request = new LedgerApiRequest(LedgerApi.RequestType.LIST_ACCOUNTS,
+        const request = new LedgerApiRequest(LedgerApi.RequestType.DERIVE_ACCOUNTS,
             async (api, params): Promise<Array<{ address: string, keyPath: string }>> => {
                 const result = [];
-                for (let keyId = startKeyId; keyId < startKeyId + params.accountsToListCount!; ++keyId) {
-                    const keyPath = LedgerApi._getBip32PathForKey(keyId);
+                for (const keyPath of params.pathsToDerive!) {
                     result.push({
                         address: (await api.getAddress(keyPath, /*validate*/ true, /*display*/ false)).address,
                         keyPath,
@@ -171,50 +175,63 @@ class LedgerApi {
                 return result;
             },
             {
-                keyPath: LedgerApi._getBip32PathForKey(startKeyId),
-                accountsToListCount: count,
+                pathsToDerive,
             },
         );
+        // check paths outside of request to avoid endless loop in _callLedger if we'd throw for an invalid keyPath
+        for (const keyPath of pathsToDerive) {
+            if (LedgerApi.BIP32_PATH_REGEX.test(keyPath)) continue;
+            this._throwError(LedgerApi.ErrorType.REQUEST_ASSERTION_FAILED, `Invalid keyPath ${keyPath}`, request);
+        }
         return LedgerApi._callLedger(request);
     }
 
-    public static async getPublicKey(keyId: number): Promise<Uint8Array> {
+    public static async getPublicKey(keyPath: string): Promise<Uint8Array> {
         const request = new LedgerApiRequest(LedgerApi.RequestType.GET_PUBLIC_KEY,
             async (api, params): Promise<Uint8Array> => {
                 const result = await api.getPublicKey(params.keyPath, /*validate*/ true, /*display*/ false);
                 return result.publicKey;
             },
             {
-                keyPath: LedgerApi._getBip32PathForKey(keyId),
+                keyPath,
             },
         );
+        if (!LedgerApi.BIP32_PATH_REGEX.test(keyPath)) {
+            this._throwError(LedgerApi.ErrorType.REQUEST_ASSERTION_FAILED, `Invalid keyPath ${keyPath}`, request);
+        }
         return LedgerApi._callLedger(request);
     }
 
-    public static async getAddress(keyId: number): Promise<string> {
+    public static async getAddress(keyPath: string): Promise<string> {
         const request = new LedgerApiRequest(LedgerApi.RequestType.GET_ADDRESS,
             async (api, params): Promise<string> => {
                 const result = await api.getAddress(params.keyPath, /*validate*/ true, /*display*/ false);
                 return result.address;
             },
             {
-                keyPath: LedgerApi._getBip32PathForKey(keyId),
+                keyPath,
             },
         );
+        if (!LedgerApi.BIP32_PATH_REGEX.test(keyPath)) {
+            this._throwError(LedgerApi.ErrorType.REQUEST_ASSERTION_FAILED, `Invalid keyPath ${keyPath}`, request);
+        }
         return LedgerApi._callLedger(request);
     }
 
-    public static async confirmAddress(userFriendlyAddress: string, keyId: number): Promise<string> {
+    public static async confirmAddress(userFriendlyAddress: string, keyPath: string): Promise<string> {
         const request = new LedgerApiRequest(LedgerApi.RequestType.CONFIRM_ADDRESS,
             async (api, params): Promise<string> => {
                 const result = await api.getAddress(params.keyPath, /*validate*/ true, /*display*/ true);
                 return result.address;
             },
             {
-                keyPath: LedgerApi._getBip32PathForKey(keyId),
+                keyPath,
                 addressToConfirm: userFriendlyAddress,
             },
         );
+        if (!LedgerApi.BIP32_PATH_REGEX.test(keyPath)) {
+            this._throwError(LedgerApi.ErrorType.REQUEST_ASSERTION_FAILED, `Invalid keyPath ${keyPath}`, request);
+        }
         const confirmedAddress: string = await LedgerApi._callLedger(request);
         if (userFriendlyAddress.replace(/ /g, '')
             !== confirmedAddress.replace(/ /g, '')) {
@@ -223,15 +240,15 @@ class LedgerApi {
         return confirmedAddress;
     }
 
-    public static async getConfirmedAddress(keyId: number): Promise<string> {
-        const address = await LedgerApi.getAddress(keyId);
-        return await this.confirmAddress(address, keyId);
+    public static async getConfirmedAddress(keyPath: string): Promise<string> {
+        const address = await LedgerApi.getAddress(keyPath);
+        return await this.confirmAddress(address, keyPath);
     }
 
-    public static async signTransaction(transaction: TransactionInfo, keyId: number): Promise<SignedTransaction> {
+    public static async signTransaction(transaction: TransactionInfo, keyPath: string): Promise<SignedTransaction> {
         let nimiqTx: Nimiq.Transaction;
         const requestParams: LedgerApi.RequestParams = {
-            keyPath: LedgerApi._getBip32PathForKey(keyId),
+            keyPath,
         };
         const request = new LedgerApiRequest(LedgerApi.RequestType.SIGN_TRANSACTION,
             async (api, params): Promise<Uint8Array> => {
@@ -241,8 +258,12 @@ class LedgerApi {
             requestParams,
         );
 
+        if (!LedgerApi.BIP32_PATH_REGEX.test(keyPath)) {
+            this._throwError(LedgerApi.ErrorType.REQUEST_ASSERTION_FAILED, `Invalid keyPath ${keyPath}`, request);
+        }
+
         // prepare tx outside of request to avoid that an error would result in an endless loop in _callLedger
-        const senderPubKeyBytes = await LedgerApi.getPublicKey(keyId);
+        const senderPubKeyBytes = await LedgerApi.getPublicKey(keyPath);
         const senderPubKey = Nimiq.PublicKey.unserialize(new Nimiq.SerialBuffer(senderPubKeyBytes));
         const senderAddress = senderPubKey.toAddress().toUserFriendlyAddress();
         if (transaction.sender.replace(/ /g, '')
@@ -369,7 +390,7 @@ class LedgerApi {
             // To check whether the connection to Nimiq app is established. This can also unfreeze the ledger app, see
             // notes at top. Using getPublicKey and not getAppConfiguration, as other apps also respond to
             // getAppConfiguration. Set validate to false as otherwise the call is much slower.
-            await api.getPublicKey(LedgerApi._getBip32PathForKey(0), /*validate*/ false, /*display*/ false);
+            await api.getPublicKey(LedgerApi.getBip32PathForKeyId(0), /*validate*/ false, /*display*/ false);
             const version = (await api.getAppConfiguration()).version;
             if (!LedgerApi._isAppVersionSupported(version)) throw new Error('Ledger Nimiq App is outdated.');
             return api;
@@ -404,10 +425,6 @@ class LedgerApi {
                 throw e;
             });
         return LedgerApi._apiPromise;
-    }
-
-    private static _getBip32PathForKey(keyId: number): string {
-        return `${LedgerApi.BIP32_BASE_PATH}${keyId}'`;
     }
 
     private static _isAppVersionSupported(versionString: string): boolean {
@@ -483,7 +500,7 @@ namespace LedgerApi { // tslint:disable-line:no-namespace
     }
 
     export const enum RequestType {
-        LIST_ACCOUNTS = 'list-accounts',
+        DERIVE_ACCOUNTS = 'derive-accounts',
         GET_PUBLIC_KEY = 'get-public-key',
         GET_ADDRESS = 'get-address',
         CONFIRM_ADDRESS = 'confirm-address',
@@ -508,8 +525,8 @@ namespace LedgerApi { // tslint:disable-line:no-namespace
     }
 
     export interface RequestParams {
-        keyPath: string;
-        accountsToListCount?: number; // for LIST_ACCOUNTS
+        keyPath?: string; // for everything besides DERIVE_ACCOUNTS
+        pathsToDerive?: Iterable<string>; // for DERIVE_ACCOUNTS
         addressToConfirm?: string; // for CONFIRM_TRANSACTION
         transactionToSign?: Nimiq.Transaction; // for SIGN_TRANSACTION
     }
