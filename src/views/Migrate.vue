@@ -14,7 +14,9 @@ import { WalletInfo, WalletType } from '@/lib/WalletInfo';
 @Component
 export default class Migrate extends Vue {
     private status: string = 'Connecting to Keyguard...';
-    private waitUntilReturn: number = 1000;
+
+    // TODO: Move to CONSTANTS
+    private static readonly RETURN_WAIT_TIME: number = 2000;
 
     public async mounted() {
         const client = this.$rpc.createKeyguardClient();
@@ -22,7 +24,7 @@ export default class Migrate extends Vue {
 
         if (!hasLegacyAccounts) {
             this.status = 'Nothing to migrate.';
-            setTimeout(() => this.$rpc.resolve([]), this.waitUntilReturn);
+            setTimeout(() => this.$rpc.resolve([]), Migrate.RETURN_WAIT_TIME);
             return;
         }
 
@@ -59,7 +61,7 @@ export default class Migrate extends Vue {
 
         this.status = 'Done.';
         const walletInfoEntries = walletInfos.map((walletInfo) => walletInfo.toObject());
-        setTimeout(() => this.$rpc.resolve(walletInfoEntries), this.waitUntilReturn);
+        setTimeout(() => this.$rpc.resolve(walletInfoEntries), Migrate.RETURN_WAIT_TIME);
     }
 }
 </script>
