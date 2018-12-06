@@ -5,7 +5,7 @@
     "scripts": {
         "serve": "vue-cli-service serve",
         "build": "vue-cli-service build --modern App",
-        "lint": "vue-cli-service lint",
+        "lint": "vue-cli-service lint --no-fix",
         "test:unit": "vue-cli-service test:unit",
         "test": "yarn test:unit",
         "pr": "yarn lint && yarn build && yarn test && cd client && yarn lint && yarn build"
