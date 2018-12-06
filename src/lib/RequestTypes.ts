@@ -1,7 +1,8 @@
-import { WalletType } from './WalletInfo';
+import { WalletType, WalletInfoEntry } from './WalletInfo';
 
 export enum RequestType {
     LIST = 'list',
+    MIGRATE = 'migrate',
     CHECKOUT = 'checkout',
     SIGN_MESSAGE = 'sign-message',
     SIGN_TRANSACTION = 'sign-transaction',
@@ -241,6 +242,15 @@ export interface RenameResult {
     }];
 }
 
+export interface MigrateRequest {
+    kind?: RequestType.MIGRATE;
+}
+export interface ParsedMigrateRequest {
+    kind: RequestType.MIGRATE;
+}
+
+export type ListResult = WalletInfoEntry[];
+
 // Discriminated Unions
 export type RpcRequest = SignTransactionRequest
                        | CheckoutRequest
@@ -251,7 +261,8 @@ export type RpcRequest = SignTransactionRequest
                        | LogoutRequest
                        | AddAccountRequest
                        | RenameRequest
-                       | SignMessageRequest;
+                       | SignMessageRequest
+                       | MigrateRequest;
 export type ParsedRpcRequest = ParsedSignTransactionRequest
                              | ParsedCheckoutRequest
                              | ParsedSignupRequest
@@ -261,7 +272,8 @@ export type ParsedRpcRequest = ParsedSignTransactionRequest
                              | ParsedLogoutRequest
                              | ParsedAddAccountRequest
                              | ParsedRenameRequest
-                             | ParsedSignMessageRequest;
+                             | ParsedSignMessageRequest
+                             | ParsedMigrateRequest;
 export type RpcResult = SignTransactionResult
                       | SignupResult
                       | LoginResult
@@ -269,7 +281,8 @@ export type RpcResult = SignTransactionResult
                       | LogoutResult
                       | AddAccountResult
                       | RenameResult
-                      | SignMessageResult;
+                      | SignMessageResult
+                      | ListResult;
 
 export class AccountsRequest {
     public static parse(request: RpcRequest, requestType?: RequestType): ParsedRpcRequest | null {
@@ -366,6 +379,11 @@ export class AccountsRequest {
                     signer: request.signer ? Nimiq.Address.fromUserFriendlyAddress(request.signer) : undefined,
                     message: request.message,
                 } as ParsedSignMessageRequest;
+            case RequestType.MIGRATE:
+                request = request as MigrateRequest;
+                return {
+                    kind: RequestType.MIGRATE,
+                } as ParsedMigrateRequest;
             default:
                 return null;
         }
@@ -428,6 +446,8 @@ export class AccountsRequest {
                     signer: request.signer ? request.signer.toUserFriendlyAddress() : undefined,
                     message: request.message,
                 } as SignMessageRequest;
+            case RequestType.MIGRATE:
+                return request as MigrateRequest;
             default:
                 return null;
         }
