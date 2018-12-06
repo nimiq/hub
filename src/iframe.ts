@@ -3,7 +3,6 @@ import { BrowserDetection } from '@nimiq/utils';
 import { WalletStore } from '@/lib/WalletStore';
 import { WalletInfoEntry } from '@/lib/WalletInfo';
 import CookieJar from '@/lib/CookieJar';
-import { KeyguardClient } from '@nimiq/keyguard-client';
 
 class IFrameApi {
     public static run() {
@@ -27,7 +26,7 @@ class IFrameApi {
         }
 
         // If no wallets exist, see if the Keyguard has keys
-        const client = new KeyguardClient();
+        const client = new (await import('@nimiq/keyguard-client')).KeyguardClient();
         const hasKeys = await client.hasKeys();
         if (hasKeys) {
             throw new Error('WALLETS_LOST');
