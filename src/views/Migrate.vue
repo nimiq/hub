@@ -13,10 +13,10 @@ import { WalletInfo, WalletType } from '@/lib/WalletInfo';
 
 @Component
 export default class Migrate extends Vue {
-    private status: string = 'Connecting to Keyguard...';
 
     // TODO: Move to CONSTANTS
     private static readonly RETURN_WAIT_TIME: number = 2000;
+    private status: string = 'Connecting to Keyguard...';
 
     public async mounted() {
         const client = this.$rpc.createKeyguardClient();
