@@ -154,7 +154,7 @@ class Loader extends Vue {
         if (oldState && (newState !== Loader.State.LOADING)) {
             this.stateUpdateTimeout = setTimeout(() => {
                 this.showLoadingBackground = false;
-                this.strokeDashoffset = 0
+                this.strokeDashoffset = 0;
             }, 1000);
         }
 
