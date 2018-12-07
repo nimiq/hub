@@ -108,7 +108,7 @@ import { Component, Prop, Watch, Emit, Vue } from 'vue-property-decorator';
 @Component
 class Loader extends Vue {
     // TODO: Move to CONSTANTS
-    public static readonly RETURN_WAIT_TIME: number = 2000; // 1s of transition + 1s of display
+    public static readonly SUCCESS_REDIRECT_DELAY: number = 2000; // 1s of transition + 1s of display
 
     @Prop({type: String, default: 'Improving the world'}) private title!: string;
     @Prop({type: String, default: 'loading'}) private state!: string;

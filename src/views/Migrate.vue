@@ -51,7 +51,7 @@ export default class Migrate extends Vue {
         if (!hasLegacyAccounts) {
             this.title = 'Nothing to migrate.';
             this.state = Loader.State.SUCCESS;
-            setTimeout(() => this.$rpc.resolve([]), Loader.RETURN_WAIT_TIME);
+            setTimeout(() => this.$rpc.resolve([]), Loader.SUCCESS_REDIRECT_DELAY);
             return;
         }
 
@@ -87,7 +87,7 @@ export default class Migrate extends Vue {
         this.title = 'Migration completed.';
         this.state = Loader.State.SUCCESS;
         const walletInfoEntries = walletInfos.map((walletInfo) => walletInfo.toObject());
-        setTimeout(() => this.$rpc.resolve(walletInfoEntries), Loader.RETURN_WAIT_TIME);
+        setTimeout(() => this.$rpc.resolve(walletInfoEntries), Loader.SUCCESS_REDIRECT_DELAY);
     }
 
     private onError(error: Error) {
