@@ -21,11 +21,6 @@ import { Utf8Tools } from '@nimiq/utils';
 
 class Demo {
     public static run() {
-        (async () => {
-            document.querySelectorAll('button').forEach(button => button.disabled = false);
-            (document.querySelector('button#list-accounts') as HTMLButtonElement).click();
-        })();
-
         const demo = new Demo(`${location.protocol}//${location.hostname}:8000`);
 
         const client = new AccountsClient(`${location.protocol}//${location.host}`);
@@ -230,6 +225,9 @@ class Demo {
         document.querySelector('button#setup-legacy-accounts').addEventListener('click', () => demo.setupLegacyAccounts());
         document.querySelector('button#list-accounts').addEventListener('click', async () => demo.updateAccounts());
         demo._accountsClient = client;
+
+        document.querySelectorAll('button').forEach(button => button.disabled = false);
+        (document.querySelector('button#list-accounts') as HTMLButtonElement).click();
     } // run
 
     private static async _createIframe(baseUrl): Promise<HTMLIFrameElement> {
@@ -381,7 +379,7 @@ class Demo {
         let html = '';
 
         wallets.forEach(wallet => {
-            html += `<li${wallet.keyMissing ? ' style="color:red;"' : ''}>${wallet.label}
+            html += `<li${wallet.keyMissing ? ' style="color:red;"' : ''}>${wallet.label}<br>
                         <button class="export" data-wallet-id="${wallet.id}">Export</button>
                         <button class="change-passphrase" data-wallet-id="${wallet.id}">Ch. Pass.</button>
                         ${wallet.type !== 0 ? `<button class="add-account" data-wallet-id="${wallet.id}">+ Acc</button>` : ''}
