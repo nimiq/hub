@@ -121,7 +121,10 @@ class Loader extends Vue {
     private currentStatus: string = '';
     private nextStatus: string = '';
     private isStatusTransitioning: boolean = false;
-    private strokeDashoffset: number = 14 * 2 * Math.PI;
+
+    // Stroke offset used to animate SVG redirect indicator from full-offset to no-offset
+    private STROKE_DASHOFFSET: number = 14 * 2 * Math.PI;
+    private strokeDashoffset: number = this.STROKE_DASHOFFSET;
 
     /**
      * To enable a smooth transition of the non-transitionable background-image
@@ -142,6 +145,7 @@ class Loader extends Vue {
 
     // In a browser, setTimout returns a number, but Typescript thinks it should be a NodeJS.Timeout
     private stateUpdateTimeout: any = null;
+    private indicatorDisplayTimeout: any = null;
 
     @Watch('state', {immediate: true})
     private updateState(newState: string, oldState: string) {
@@ -154,17 +158,22 @@ class Loader extends Vue {
         if (oldState && (newState !== Loader.State.LOADING)) {
             this.stateUpdateTimeout = setTimeout(() => {
                 this.showLoadingBackground = false;
-                this.strokeDashoffset = 0;
             }, 1000);
+
+            this.indicatorDisplayTimeout = setTimeout(() => {
+                this.strokeDashoffset = 0;
+            }, 500);
         }
 
         if (newState === Loader.State.LOADING) {
             if (this.stateUpdateTimeout) {
                 clearTimeout(this.stateUpdateTimeout);
+                clearTimeout(this.indicatorDisplayTimeout);
                 this.stateUpdateTimeout = null;
+                this.indicatorDisplayTimeout = null;
             }
             this.showLoadingBackground = true;
-            this.strokeDashoffset = 14 * 2 * Math.PI;
+            this.strokeDashoffset = this.STROKE_DASHOFFSET;
         }
     }
 
@@ -370,7 +379,7 @@ export default Loader;
     }
 
     .success svg circle {
-        transition: stroke-dashoffset 1s linear; /* Add 200ms to mask RPC reply execution time */
+        transition: stroke-dashoffset 1.5s;
         transform: rotate(-90deg);
         transform-origin: center;
         opacity: 0.85;
