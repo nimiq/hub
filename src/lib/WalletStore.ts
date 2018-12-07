@@ -9,11 +9,21 @@ export class WalletStore {
 
     private static instance: WalletStore | null = null;
 
-    private static _requestAsPromise(request: IDBRequest): Promise<any> {
-        return new Promise((resolve, reject) => {
-            request.onsuccess = () => resolve(request.result);
-            request.onerror = () => reject(request.error);
-        });
+    private static async _requestAsPromise(request: IDBRequest, transaction: IDBTransaction): Promise<any> {
+        return Promise.all([
+            new Promise((resolve, reject) => {
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            }),
+            new Promise((resolve, reject) => {
+                transaction.oncomplete = () => resolve();
+                transaction.onabort = () => reject(transaction.error);
+                transaction.onerror = () => reject(transaction.error);
+            }),
+        ])
+        // Promise.all returns an array of resolved promises, but we are only
+        // interested in the request.result, which is the first item.
+        .then((result) => result[0]);
     }
 
     private static _readAllFromCursor(request: IDBRequest): Promise<any[]> {
@@ -47,27 +57,24 @@ export class WalletStore {
 
     public async get(id: string): Promise<WalletInfo | null> {
         const db = await this.connect();
-        const request = db.transaction([WalletStore.DB_KEY_STORE_NAME])
-            .objectStore(WalletStore.DB_KEY_STORE_NAME)
-            .get(id);
-        const result = await WalletStore._requestAsPromise(request);
+        const transaction = db.transaction([WalletStore.DB_KEY_STORE_NAME]);
+        const request = transaction.objectStore(WalletStore.DB_KEY_STORE_NAME).get(id);
+        const result = await WalletStore._requestAsPromise(request, transaction);
         return result ? WalletInfo.fromObject(result) : result;
     }
 
     public async put(walletInfo: WalletInfo) {
         const db = await this.connect();
-        const request = db.transaction([WalletStore.DB_KEY_STORE_NAME], 'readwrite')
-            .objectStore(WalletStore.DB_KEY_STORE_NAME)
-            .put(walletInfo.toObject());
-        return WalletStore._requestAsPromise(request);
+        const transaction = db.transaction([WalletStore.DB_KEY_STORE_NAME], 'readwrite');
+        const request = transaction.objectStore(WalletStore.DB_KEY_STORE_NAME).put(walletInfo.toObject());
+        return WalletStore._requestAsPromise(request, transaction);
     }
 
     public async remove(id: string) {
         const db = await this.connect();
-        const request = db.transaction([WalletStore.DB_KEY_STORE_NAME], 'readwrite')
-            .objectStore(WalletStore.DB_KEY_STORE_NAME)
-            .delete(id);
-        return WalletStore._requestAsPromise(request);
+        const transaction = db.transaction([WalletStore.DB_KEY_STORE_NAME], 'readwrite');
+        const request = transaction.objectStore(WalletStore.DB_KEY_STORE_NAME).delete(id);
+        return WalletStore._requestAsPromise(request, transaction);
     }
 
     public async list(): Promise<WalletInfoEntry[]> {
