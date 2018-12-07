@@ -33,7 +33,12 @@ export default class Migrate extends Vue {
 
     public mounted() {
         this.static.keyguardClient = this.$rpc.createKeyguardClient();
+
+        // Need to freeze the object to prevent Vue's reactivity system
+        // from accessing properties of the cross-origin `window.opener`,
+        // which throws security errors in browsers.
         Object.freeze(this.static);
+
         this.run();
     }
 

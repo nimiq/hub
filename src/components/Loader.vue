@@ -111,6 +111,7 @@ class Loader extends Vue {
     public static readonly SUCCESS_REDIRECT_DELAY: number = 2000; // 1s of transition + 1s of display
 
     @Prop({type: String, default: 'Improving the world'}) private title!: string;
+    // Using Loader.State.LOADING here results in runtime error: 'Cannot read property 'LOADING' of undefined'
     @Prop({type: String, default: 'loading'}) private state!: string;
     @Prop(Boolean) private lightBlue?: boolean;
     @Prop(String) private status?: string;
