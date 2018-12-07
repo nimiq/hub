@@ -17,12 +17,20 @@
 
         <transition name="fade-result">
             <div class="wrapper success nq-bg-green" v-if="state === 'success'">
+                <div class="top-spacer"></div>
+
                 <div class="icon-row">
                     <div class="success nq-icon"></div>
 
                     <h1 class="title nq-h1">{{ title }}</h1>
                 </div>
 
+                <svg height="32" width="32" class="loading-circle">
+                    <circle stroke="white" stroke-width="4" fill="transparent" r="14" cx="16" cy="16" stroke-linecap="round"
+                        :stroke-dasharray="14 * 2 * Math.PI + ' ' + 14 * 2 * Math.PI"
+                        :style="{ strokeDashoffset: strokeDashoffset }"
+                    />
+                </svg>
             </div>
         </transition>
 
@@ -99,6 +107,9 @@ import { Component, Prop, Watch, Emit, Vue } from 'vue-property-decorator';
  */
 @Component
 class Loader extends Vue {
+    // TODO: Move to CONSTANTS
+    public static readonly RETURN_WAIT_TIME: number = 2000; // 1s of transition + 1s of display
+
     @Prop({type: String, default: 'Improving the world'}) private title!: string;
     @Prop({type: String, default: 'loading'}) private state!: string;
     @Prop(Boolean) private lightBlue?: boolean;
@@ -110,6 +121,7 @@ class Loader extends Vue {
     private currentStatus: string = '';
     private nextStatus: string = '';
     private isStatusTransitioning: boolean = false;
+    private strokeDashoffset: number = 14 * 2 * Math.PI;
 
     /**
      * To enable a smooth transition of the non-transitionable background-image
@@ -140,7 +152,10 @@ class Loader extends Vue {
 
         // When the state changes later and animates
         if (oldState && (newState !== Loader.State.LOADING)) {
-            this.stateUpdateTimeout = setTimeout(() => this.showLoadingBackground = false, 1000);
+            this.stateUpdateTimeout = setTimeout(() => {
+                this.showLoadingBackground = false;
+                this.strokeDashoffset = 0
+            }, 1000);
         }
 
         if (newState === Loader.State.LOADING) {
@@ -149,6 +164,7 @@ class Loader extends Vue {
                 this.stateUpdateTimeout = null;
             }
             this.showLoadingBackground = true;
+            this.strokeDashoffset = 14 * 2 * Math.PI;
         }
     }
 
@@ -212,10 +228,6 @@ export default Loader;
         top: 0;
         width: 100%;
         height: 100%;
-    }
-
-    .wrapper.success {
-        justify-content: center;
     }
 
     .title {
@@ -300,6 +312,10 @@ export default Loader;
         padding-top: 2rem;
     }
 
+    .success .top-spacer {
+        padding-top: 6rem;
+    }
+
     .top-spacer.with-main-action {
         padding-bottom: 8rem;
     }
@@ -345,5 +361,18 @@ export default Loader;
     .fade-result-enter,
     .fade-result-leave-to {
         opacity: 0;
+    }
+
+    /* SVG loading animation */
+
+    .success svg {
+        margin-bottom: 2rem;
+    }
+
+    .success svg circle {
+        transition: stroke-dashoffset 1s linear; /* Add 200ms to mask RPC reply execution time */
+        transform: rotate(-90deg);
+        transform-origin: center;
+        opacity: 0.85;
     }
 </style>
