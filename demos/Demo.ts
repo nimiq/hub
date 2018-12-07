@@ -1,6 +1,6 @@
 /// <reference path="../node_modules/@nimiq/core-types/Nimiq.d.ts" />
 
-import * as Rpc from '@nimiq/rpc';
+import { State, PostMessageRpcClient } from '@nimiq/rpc';
 import AccountsClient from '../client/AccountsClient';
 import {
     RequestType,
@@ -17,12 +17,11 @@ import {
 } from '../src/lib/RequestTypes';
 import { WalletInfoEntry } from '../src/lib/WalletInfo';
 import { RedirectRequestBehavior } from '../client/RequestBehavior';
+import { Utf8Tools } from '@nimiq/utils';
 
 class Demo {
     public static run() {
         (async () => {
-            await Nimiq.WasmHelper.doImportBrowser();
-            Nimiq.GenesisConfig.test();
             document.querySelectorAll('button').forEach(button => button.disabled = false);
             (document.querySelector('button#list-accounts') as HTMLButtonElement).click();
         })();
@@ -30,23 +29,24 @@ class Demo {
         const demo = new Demo(`${location.protocol}//${location.hostname}:8000`);
 
         const client = new AccountsClient(`${location.protocol}//${location.host}`);
-        client.on(RequestType.CHECKOUT, (result: SignTransactionResult, state: Rpc.State) => {
+
+        client.on(RequestType.CHECKOUT, (result: SignTransactionResult, state: State) => {
             console.log('AccountsManager result', result);
             console.log('State', state);
 
             document.querySelector('#result').textContent = 'TX signed';
-        }, (error: Error, state: Rpc.State) => {
+        }, (error: Error, state: State) => {
             console.error('AccountsManager error', error);
             console.log('State', state);
 
             document.querySelector('#result').textContent = `Error: ${error.message || error}`;
         });
-        client.on(RequestType.SIGNUP, (result: SignupResult, state: Rpc.State) => {
+        client.on(RequestType.SIGNUP, (result: SignupResult, state: State) => {
             console.log('AccountsManager result', result);
             console.log('State', state);
 
             document.querySelector('#result').textContent = 'SignUp completed';
-        }, (error: Error, state: Rpc.State) => {
+        }, (error: Error, state: State) => {
             console.error('AccountsManager error', error);
             console.log('State', state);
 
@@ -128,7 +128,7 @@ class Demo {
                 recipient: 'NQ63 U7XG 1YYE D6FA SXGG 3F5H X403 NBKN JLDU',
                 value,
                 fee,
-                extraData: Nimiq.BufferUtils.fromAscii(txData),
+                extraData: Utf8Tools.stringToUtf8ByteArray(txData),
                 validityStartHeight: parseInt(validityStartHeight),
             };
         }
@@ -143,7 +143,7 @@ class Demo {
                 recipient: 'NQ63 U7XG 1YYE D6FA SXGG 3F5H X403 NBKN JLDU',
                 value,
                 fee: txFee,
-                extraData: Nimiq.BufferUtils.fromAscii(txData)
+                extraData: Utf8Tools.stringToUtf8ByteArray(txData)
             };
         }
 
@@ -244,7 +244,7 @@ class Demo {
         });
     }
 
-    private _iframeClient: Rpc.PostMessageRpcClient | null;
+    private _iframeClient: PostMessageRpcClient | null;
     private _keyguardBaseUrl: string;
     private _accountsClient: AccountsClient;
 
@@ -253,11 +253,11 @@ class Demo {
         this._keyguardBaseUrl = keyguardBaseUrl;
     }
 
-    public async startIframeClient(baseUrl: string): Promise<Rpc.PostMessageRpcClient> {
+    public async startIframeClient(baseUrl: string): Promise<PostMessageRpcClient> {
         if (this._iframeClient) return this._iframeClient;
         const $iframe = await Demo._createIframe(baseUrl);
         if (!$iframe.contentWindow) throw new Error(`IFrame contentWindow is ${typeof $iframe.contentWindow}`);
-        this._iframeClient = new Rpc.PostMessageRpcClient($iframe.contentWindow, '*');
+        this._iframeClient = new PostMessageRpcClient($iframe.contentWindow, '*');
         await this._iframeClient.init();
         return this._iframeClient;
     }
