@@ -29,16 +29,10 @@ export default class Migrate extends Vue {
     private state: Loader.State = Loader.State.LOADING;
     private message: string = '';
 
-    private static: {keyguardClient?: KeyguardClient} = {};
+    private keyguardClient?: KeyguardClient;
 
     public mounted() {
-        this.static.keyguardClient = this.$rpc.createKeyguardClient();
-
-        // Need to freeze the object to prevent Vue's reactivity system
-        // from accessing properties of the cross-origin `window.opener`,
-        // which throws security errors in browsers.
-        Object.freeze(this.static);
-
+        this.keyguardClient = this.$rpc.createKeyguardClient();
         this.run();
     }
 
@@ -51,7 +45,7 @@ export default class Migrate extends Vue {
     }
 
     private async doMigration() {
-        const hasLegacyAccounts = await this.static.keyguardClient!.hasLegacyAccounts();
+        const hasLegacyAccounts = await this.keyguardClient!.hasLegacyAccounts();
 
         if (!hasLegacyAccounts) {
             this.title = 'Nothing to migrate.';
@@ -61,7 +55,7 @@ export default class Migrate extends Vue {
         }
 
         this.status = 'Retrieving your legacy accounts...';
-        const legacyAccounts = await this.static.keyguardClient!.listLegacyAccounts();
+        const legacyAccounts = await this.keyguardClient!.listLegacyAccounts();
 
         if (!legacyAccounts) {
             throw new Error('Could not get legacy accounts from Keyguard');
@@ -87,7 +81,7 @@ export default class Migrate extends Vue {
         await Promise.all(storagePromises);
 
         this.status = 'Migrating Keyguard...';
-        await this.static.keyguardClient!.migrateAccountsToKeys();
+        await this.keyguardClient!.migrateAccountsToKeys();
 
         this.title = 'Migration completed.';
         this.state = Loader.State.SUCCESS;
