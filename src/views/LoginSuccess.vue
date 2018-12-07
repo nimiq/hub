@@ -36,9 +36,12 @@ import { WalletStore } from '@/lib/WalletStore';
 import staticStore, { Static } from '@/lib/StaticStore';
 import { PageHeader, PageBody, LabelInput, AccountList, PageFooter, SmallPage } from '@nimiq/vue-components';
 import Network from '@/components/Network.vue';
+import AccountFinder from '../lib/AccountFinder';
 
 @Component({components: {PageHeader, PageBody, LabelInput, AccountList, Network, PageFooter, SmallPage}})
 export default class LoginSuccess extends Vue {
+    private static readonly DEFAULT_ACCOUNT_LABEL: string = 'Standard Account';
+
     @Static private request!: ParsedLoginRequest;
     @State private keyguardResult!: ImportResult;
 
@@ -48,7 +51,6 @@ export default class LoginSuccess extends Vue {
     private walletInfo: WalletInfo | null = null;
 
     private walletLabel: string = 'Keyguard Wallet';
-    private defaultAccountLabel: string = 'Standard Account';
 
     /**
      * Maps are not supported by Vue's reactivity system, thus updates to a Map do not trigger
@@ -61,142 +63,116 @@ export default class LoginSuccess extends Vue {
     private accounts: Map<string, AccountInfo> = new Map();
     private accountsUpdateCount: number = 0;
 
-    private lastDerivedIndex: number = 0;
-    private lastActiveIndex: number = 0;
-
     private result?: LoginResult;
 
     private contentReady: boolean = false;
     private retrievalComplete: boolean = false;
 
     private async mounted() {
-        const currentWalletInfo = await WalletStore.Instance.get(this.keyguardResult.keyId);
+        if (this.keyguardResult.keyType === WalletType.BIP39 || this.keyguardResult.keyType === WalletType.LEGACY) {
+            this.keyguard = new KeyguardClient();
+        }
+        this.walletLabel = this.keyguardResult.keyType === WalletType.LEGACY ? 'Legacy Wallet'
+            : this.keyguardResult.keyType === WalletType.BIP39 ? 'Keyguard Wallet' : 'Ledger Wallet';
 
-        // if there is a WalletInfo for the returned keyId already, use it
-        if (currentWalletInfo && currentWalletInfo.label) {
-            this.walletLabel = currentWalletInfo.label;
+        await this._setInitialAccounts();
+        this.contentReady = true; // The variables are set up correctly so trigger rendering the components.
+
+        // kick off balance update in background
+        this.network = this.$refs.network as Network;
+        await this.network.connect(); // await to avoid network initialization race condition with AccountFinder
+        this._updateAccountBalances();
+
+        if (this.keyguardResult.keyType === WalletType.BIP39
+            || this.keyguardResult.keyType === WalletType.LEDGER) {
+            // read accounts from network
+            const foundAccounts = await AccountFinder.findAccounts(
+                this._deriveKeyguardAccounts.bind(this),
+                () => Promise.resolve(this.keyguardResult.keyId),
+                LoginSuccess.DEFAULT_ACCOUNT_LABEL,
+                this._addAccounts.bind(this),
+            );
+            this._addAccounts(foundAccounts);
+        }
+
+        if (this.keyguard) {
+            this.keyguard.releaseKey(this.keyguardResult.keyId);
+        }
+        // TODO network visuals with longer than 1 list of accounts during retrieval
+        this.retrievalComplete = true;
+    }
+
+    private async _setInitialAccounts() {
+        // read potentially existing wallet and accounts from WalletStore
+        const currentWalletInfo = await WalletStore.Instance.get(this.keyguardResult.keyId);
+        if (currentWalletInfo) {
+            this.walletLabel = currentWalletInfo.label || this.walletLabel;
             if (currentWalletInfo.accounts) {
                 this.accounts = currentWalletInfo.accounts;
             }
         }
 
         // The Keyguard always returns (at least) one derived Address,
-        // thus we can already create a complete WalletInfo object that
-        // can be displayed while waiting for the network.
-        // Before adding the WalletInfo object, make sure it is not set already.
-        this.keyguardResult.addresses.forEach((addressObj) => {
-            const address = new Nimiq.Address(addressObj.address);
-            if (!this.accounts.has(address.toUserFriendlyAddress())) {
-                const addressInfo = new AccountInfo(
-                    addressObj.keyPath,
-                    this.defaultAccountLabel,
-                    address,
-                );
-                this.accounts.set(addressInfo.userFriendlyAddress, addressInfo);
-            }
-        });
-        this.accountsUpdateCount += 1; // Trigger DOM update via computed property `this.accountsArray`
-        this.contentReady = true; // The variables are set up correctly so trigger rendering the components.
-        this.storeAndUpdateResult();
-
-        if (this.keyguardResult.keyType === WalletType.BIP39) {
-            // Init Keyguard iframe to derive accounts
-            this.keyguard = new KeyguardClient();
-        }
-
-        if (this.keyguardResult.keyType === WalletType.LEDGER) {
-            if (this.keyguardResult.keyType === WalletType.LEDGER) this.walletLabel = 'Ledger Wallet';
-            // TODO: Init Ledger client to derive accounts
-        }
-
-        if (this.keyguardResult.keyType === WalletType.BIP39
-         || this.keyguardResult.keyType === WalletType.LEDGER) {
-            // Init Network to check balances
-            this.network = this.$refs.network as Network;
-            await this.network.connect();
-
-            // Get balance of all accounts which were already returned from the Keyguard.
-            // FIXME: Maybe this can be included in the first iteration of `this.findAccounts()`,
-            //        but take care that at least one account is still added to the wallet,
-            //        even when all first 20 accounts have a balance of zero.
-            const userFriendlyAddresses = Array.from(this.accounts.keys());
-            const balances = await this.network.getBalances(userFriendlyAddresses);
-            userFriendlyAddresses.forEach((addr) => {
-                const addressInfo = this.accounts.get(addr);
-                addressInfo!.balance = Nimiq.Policy.coinsToSatoshis(balances.get(addr) || 0);
-                this.accounts.set(addr, addressInfo!);
-            });
-            this.accountsUpdateCount += 1;
-
-            // Kick off account detection
-            this.findAccounts();
-        }
+        // which we'll also already add and display
+        const keyguardResultAccounts = this.keyguardResult.addresses.map((addressObj) => ({
+            address: new Nimiq.Address(addressObj.address).toUserFriendlyAddress(),
+            keyPath: addressObj.keyPath,
+        }));
+        this._addAccounts(keyguardResultAccounts);
     }
 
-    private async findAccounts() {
-        // The standard dictates that account detection terminates
-        // when 20 consecutive unused accounts have been found.
-        if (this.lastDerivedIndex >= this.lastActiveIndex + 20) {
-            // End condition
-            this.keyguard.releaseKey(this.keyguardResult.keyId);
-            // TODO network visuals with longer than 1 list of accounts during retrieval
-            this.retrievalComplete = true;
-            return;
+    private _addAccounts(accounts: Array<{ address: string, keyPath: string, balance?: number} | AccountInfo>) {
+        for (const account of accounts) {
+            let userFriendlyAddress;
+            let keyPath;
+            if (account instanceof AccountInfo) {
+                userFriendlyAddress = account.address.toUserFriendlyAddress();
+                keyPath = account.path;
+            } else {
+                userFriendlyAddress = account.address;
+                keyPath = account.keyPath;
+            }
+
+            const updatedAccountInfo = this.accounts.get(userFriendlyAddress)
+                || new AccountInfo(keyPath, LoginSuccess.DEFAULT_ACCOUNT_LABEL,
+                    Nimiq.Address.fromUserFriendlyAddress(userFriendlyAddress));
+            if (account.balance !== undefined) updatedAccountInfo.balance = account.balance;
+            this.accounts.set(userFriendlyAddress, updatedAccountInfo);
         }
-
-        // 1. Generate paths to derive
-
-        // To be able to use the lastDerivedIndex as the index for the pathsToDerive array,
-        // we need to fill it up until (and including) the lastDerivedIndex with `empty` values.
-        const pathsToDerive: string[] = new Array(this.lastDerivedIndex + 1);
-
-        // We can then push the paths of the relevant accounts onto the end of the array
-        for (let i = this.lastDerivedIndex + 1; i <= this.lastActiveIndex + 20; i++) {
-            pathsToDerive.push(`m/44'/242'/0'/${i}'`);
-        }
-
-        // 2. Derive accounts from paths
-
-        // FIXME: Use LedgerClient here for LEDGER keys
-        const serializedAddresses = await this.keyguard.deriveAddresses(
-            this.keyguardResult.keyId,
-            pathsToDerive.slice(this.lastDerivedIndex + 1), // We don't want to send `empty` paths into the Keyguard
-        );
-        const userFriendlyAddresses = serializedAddresses
-            .map((rawAddr) => new Nimiq.Address(rawAddr).toUserFriendlyAddress());
-
-        // 3. Get balances for the derived accounts
-
-        const balances = await this.network.getBalances(userFriendlyAddresses);
-
-        // 4. Find accounts with a non-zero balance and add them to the wallet
-
-        balances.forEach((balance: number, userFriendlyAddress: string) => {
-            this.lastDerivedIndex += 1;
-
-            if (balance === 0) return;
-
-            this.lastActiveIndex = this.lastDerivedIndex;
-
-            this.accounts.set(userFriendlyAddress, new AccountInfo(
-                // This is where the pre-filled pathsToDerive array from above becomes usefull.
-                // It relieves us from having to calulate the correct array index with an
-                // unrelated counter variable.
-                pathsToDerive[this.lastDerivedIndex],
-                (this.accounts.has(userFriendlyAddress))
-                    ? this.accounts.get(userFriendlyAddress)!.label
-                    : this.defaultAccountLabel,
-                Nimiq.Address.fromUserFriendlyAddress(userFriendlyAddress),
-                Nimiq.Policy.coinsToSatoshis(balance),
-            ));
-            this.accountsUpdateCount += 1;
-        });
-
+        this.accountsUpdateCount += 1; // Trigger DOM update via computed property `this.accountsArray`
         this.storeAndUpdateResult();
+    }
 
-        // 5. Continue search (the end condition is checked at the beginning of the next iteration)
+    private async _updateAccountBalances() {
+        // update balances of already known accounts for display in UI
+        const userFriendlyAddresses = Array.from(this.accounts.keys());
+        const balances = await this.network.getBalances(userFriendlyAddresses);
+        userFriendlyAddresses.forEach((addr) => {
+            const addressInfo = this.accounts.get(addr);
+            addressInfo!.balance = Nimiq.Policy.coinsToSatoshis(balances.get(addr) || 0);
+            this.accounts.set(addr, addressInfo!);
+        });
+        this.accountsUpdateCount += 1;
+        this.storeAndUpdateResult();
+    }
 
-        this.findAccounts();
+    private async _deriveKeyguardAccounts(startIndex: number, count: number) {
+        const KEYGUARD_BIP39_BASE_PATH = `m/44'/242'/0'/`;
+        const pathsToDerive = [];
+        for (let keyId = startIndex; keyId < startIndex + count; ++keyId) {
+            pathsToDerive.push(`${KEYGUARD_BIP39_BASE_PATH}${keyId}'`);
+        }
+        const serializedAddresses = await this.keyguard.deriveAddresses(this.keyguardResult.keyId, pathsToDerive);
+        const userFriendlyAddresses = serializedAddresses.map((serializedAddress) =>
+            new Nimiq.Address(serializedAddress).toUserFriendlyAddress());
+        const accounts = [];
+        for (let i = 0; i < pathsToDerive.length; ++i) {
+            accounts.push({
+                keyPath: pathsToDerive[i],
+                address: userFriendlyAddresses[i],
+            });
+        }
+        return accounts;
     }
 
     private onWalletLabelChange(label: string) {
