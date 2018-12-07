@@ -110,9 +110,11 @@ class Loader extends Vue {
     // TODO: Move to CONSTANTS
     public static readonly SUCCESS_REDIRECT_DELAY: number = 2000; // 1s of transition + 1s of display
 
+    private static readonly STROKE_DASHOFFSET: number = 14 * 2 * Math.PI;
+
     @Prop({type: String, default: 'Improving the world'}) private title!: string;
     // Using Loader.State.LOADING here results in runtime error: 'Cannot read property 'LOADING' of undefined'
-    @Prop({type: String, default: 'loading'}) private state!: string;
+    @Prop({default: 'loading' as Loader.State}) private state!: Loader.State;
     @Prop(Boolean) private lightBlue?: boolean;
     @Prop(String) private status?: string;
     @Prop(String) private message?: string;
@@ -124,8 +126,7 @@ class Loader extends Vue {
     private isStatusTransitioning: boolean = false;
 
     // Stroke offset used to animate SVG redirect indicator from full-offset to no-offset
-    private STROKE_DASHOFFSET: number = 14 * 2 * Math.PI;
-    private strokeDashoffset: number = this.STROKE_DASHOFFSET;
+    private strokeDashoffset: number = Loader.STROKE_DASHOFFSET;
 
     /**
      * To enable a smooth transition of the non-transitionable background-image
@@ -174,7 +175,7 @@ class Loader extends Vue {
                 this.indicatorDisplayTimeout = null;
             }
             this.showLoadingBackground = true;
-            this.strokeDashoffset = this.STROKE_DASHOFFSET;
+            this.strokeDashoffset = Loader.STROKE_DASHOFFSET;
         }
     }
 
