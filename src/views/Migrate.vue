@@ -90,7 +90,7 @@ export default class Migrate extends Vue {
     }
 
     private onError(error: Error) {
-        this.title = 'Ups, something went wrong';
+        this.title = 'Whoops, something went wrong';
         this.message = `${error.name}: ${error.message}`;
         this.state = Loader.State.ERROR;
         throw error; // Notify sentry
