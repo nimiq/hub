@@ -100,7 +100,7 @@ import { Component, Prop, Watch, Emit, Vue } from 'vue-property-decorator';
 @Component
 class Loader extends Vue {
     @Prop({type: String, default: 'Improving the world'}) private title!: string;
-    @Prop({type: String, default: Loader.Status.LOADING}) private state!: string;
+    @Prop({type: String, default: 'loading'}) private state!: string;
     @Prop(Boolean) private lightBlue?: boolean;
     @Prop(String) private status?: string;
     @Prop(String) private message?: string;
@@ -134,16 +134,16 @@ class Loader extends Vue {
     @Watch('state', {immediate: true})
     private updateState(newState: string, oldState: string) {
         // When the component is initialized with a state other than LOADING
-        if (!oldState && (newState !== Loader.Status.LOADING)) {
+        if (!oldState && (newState !== Loader.State.LOADING)) {
             this.showLoadingBackground = false;
         }
 
         // When the state changes later and animates
-        if (oldState && (newState !== Loader.Status.LOADING)) {
+        if (oldState && (newState !== Loader.State.LOADING)) {
             this.stateUpdateTimeout = setTimeout(() => this.showLoadingBackground = false, 1000);
         }
 
-        if (newState === Loader.Status.LOADING) {
+        if (newState === Loader.State.LOADING) {
             if (this.stateUpdateTimeout) {
                 clearTimeout(this.stateUpdateTimeout);
                 this.stateUpdateTimeout = null;
@@ -173,7 +173,7 @@ class Loader extends Vue {
 }
 
 namespace Loader { // tslint:disable-line no-namespace
-    export enum Status {
+    export enum State {
         LOADING = 'loading',
         SUCCESS = 'success',
         WARNING = 'warning',
