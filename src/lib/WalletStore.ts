@@ -10,7 +10,7 @@ export class WalletStore {
     private static instance: WalletStore | null = null;
 
     private static async _requestAsPromise(request: IDBRequest, transaction: IDBTransaction): Promise<any> {
-        const done = await Promise.all([
+        return Promise.all([
             new Promise((resolve, reject) => {
                 request.onsuccess = () => resolve(request.result);
                 request.onerror = () => reject(request.error);
@@ -20,15 +20,10 @@ export class WalletStore {
                 transaction.onabort = () => reject(transaction.error);
                 transaction.onerror = () => reject(transaction.error);
             }),
-        ]);
-
-        // In case of rejection of any one of the above promises,
-        // the 'await' keyword makes sure that the error is thrown
-        // and this async function is itself rejected.
-
+        ])
         // Promise.all returns an array of resolved promises, but we are only
         // interested in the request.result, which is the first item.
-        return done[0];
+        .then((result) => result[0]);
     }
 
     private static _readAllFromCursor(request: IDBRequest): Promise<any[]> {
