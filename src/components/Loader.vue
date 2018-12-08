@@ -17,12 +17,20 @@
 
         <transition name="fade-result">
             <div class="wrapper success nq-bg-green" v-if="state === 'success'">
+                <div class="top-spacer"></div>
+
                 <div class="icon-row">
                     <div class="success nq-icon"></div>
 
                     <h1 class="title nq-h1">{{ title }}</h1>
                 </div>
 
+                <svg height="32" width="32" class="loading-circle">
+                    <circle stroke="white" stroke-width="4" fill="transparent" r="14" cx="16" cy="16" stroke-linecap="round"
+                        :stroke-dasharray="14 * 2 * Math.PI + ' ' + 14 * 2 * Math.PI"
+                        :style="{ strokeDashoffset: strokeDashoffset }"
+                    />
+                </svg>
             </div>
         </transition>
 
@@ -99,8 +107,14 @@ import { Component, Prop, Watch, Emit, Vue } from 'vue-property-decorator';
  */
 @Component
 class Loader extends Vue {
+    // TODO: Move to CONSTANTS
+    public static readonly SUCCESS_REDIRECT_DELAY: number = 2000; // 1s of transition + 1s of display
+
+    private static readonly STROKE_DASHOFFSET: number = 14 * 2 * Math.PI;
+
     @Prop({type: String, default: 'Improving the world'}) private title!: string;
-    @Prop({type: String, default: Loader.Status.LOADING}) private state!: string;
+    // Using Loader.State.LOADING here results in runtime error: 'Cannot read property 'LOADING' of undefined'
+    @Prop({default: 'loading' as Loader.State}) private state!: Loader.State;
     @Prop(Boolean) private lightBlue?: boolean;
     @Prop(String) private status?: string;
     @Prop(String) private message?: string;
@@ -110,6 +124,9 @@ class Loader extends Vue {
     private currentStatus: string = '';
     private nextStatus: string = '';
     private isStatusTransitioning: boolean = false;
+
+    // Stroke offset used to animate SVG redirect indicator from full-offset to no-offset
+    private strokeDashoffset: number = Loader.STROKE_DASHOFFSET;
 
     /**
      * To enable a smooth transition of the non-transitionable background-image
@@ -128,27 +145,38 @@ class Loader extends Vue {
         return this._loadingTitle || (this._loadingTitle = this.title);
     }
 
-    // In a browser, setTimout returns a number, but Typescript thinks it should be a NodeJS.Timeout
-    private stateUpdateTimeout: any = null;
+    private stateUpdateTimeout?: number;
+    private indicatorDisplayTimeout?: number;
 
     @Watch('state', {immediate: true})
     private updateState(newState: string, oldState: string) {
         // When the component is initialized with a state other than LOADING
-        if (!oldState && (newState !== Loader.Status.LOADING)) {
+        if (!oldState && (newState !== Loader.State.LOADING)) {
             this.showLoadingBackground = false;
         }
 
         // When the state changes later and animates
-        if (oldState && (newState !== Loader.Status.LOADING)) {
-            this.stateUpdateTimeout = setTimeout(() => this.showLoadingBackground = false, 1000);
+        if (oldState && (newState !== Loader.State.LOADING)) {
+            this.stateUpdateTimeout = window.setTimeout(() => {
+                this.showLoadingBackground = false;
+            }, 1000);
+
+            this.indicatorDisplayTimeout = window.setTimeout(() => {
+                this.strokeDashoffset = 0;
+            }, 500);
         }
 
-        if (newState === Loader.Status.LOADING) {
+        if (newState === Loader.State.LOADING) {
             if (this.stateUpdateTimeout) {
                 clearTimeout(this.stateUpdateTimeout);
-                this.stateUpdateTimeout = null;
+                delete this.stateUpdateTimeout;
+            }
+            if (this.indicatorDisplayTimeout) {
+                clearTimeout(this.indicatorDisplayTimeout);
+                delete this.indicatorDisplayTimeout;
             }
             this.showLoadingBackground = true;
+            this.strokeDashoffset = Loader.STROKE_DASHOFFSET;
         }
     }
 
@@ -173,7 +201,7 @@ class Loader extends Vue {
 }
 
 namespace Loader { // tslint:disable-line no-namespace
-    export enum Status {
+    export enum State {
         LOADING = 'loading',
         SUCCESS = 'success',
         WARNING = 'warning',
@@ -212,10 +240,6 @@ export default Loader;
         top: 0;
         width: 100%;
         height: 100%;
-    }
-
-    .wrapper.success {
-        justify-content: center;
     }
 
     .title {
@@ -300,6 +324,10 @@ export default Loader;
         padding-top: 2rem;
     }
 
+    .success .top-spacer {
+        padding-top: 6rem;
+    }
+
     .top-spacer.with-main-action {
         padding-bottom: 8rem;
     }
@@ -345,5 +373,18 @@ export default Loader;
     .fade-result-enter,
     .fade-result-leave-to {
         opacity: 0;
+    }
+
+    /* SVG loading animation */
+
+    .success svg {
+        margin-bottom: 2rem;
+    }
+
+    .success svg circle {
+        transition: stroke-dashoffset 1.5s;
+        transform: rotate(-90deg);
+        transform-origin: center;
+        opacity: 0.85;
     }
 </style>
