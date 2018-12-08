@@ -5,10 +5,12 @@
                 <h1 class="title nq-h1">{{ loadingTitle }}</h1>
 
                 <div class="icon-row">
-                    <div class="nq-icon loading"></div>
+                    <slot name="loading">
+                        <div class="nq-icon loading"></div>
+                    </slot>
                 </div>
 
-                <div class="status-row" :class="{'transition': isStatusTransitioning}">
+                <div class="status-row" ref="loadingStatusRow">
                     <div class="status current nq-h2">{{ currentStatus }}</div>
                     <div class="status next nq-h2">{{ nextStatus }}</div>
                 </div>
@@ -20,9 +22,10 @@
                 <div class="top-spacer"></div>
 
                 <div class="icon-row">
-                    <div class="success nq-icon"></div>
-
-                    <h1 class="title nq-h1">{{ title }}</h1>
+                    <slot name="success">
+                        <div class="success nq-icon"></div>
+                        <h1 class="title nq-h1">{{ title }}</h1>
+                    </slot>
                 </div>
 
                 <svg height="32" width="32" class="loading-circle">
@@ -39,10 +42,12 @@
                 <div class="top-spacer" :class="{'with-main-action': !!mainAction, 'with-alternative-action': !!alternativeAction}"></div>
 
                 <div class="icon-row">
-                    <div class="warning nq-icon"></div>
+                    <slot name="warning">
+                        <div class="warning nq-icon"></div>
 
-                    <h1 class="title nq-h1">{{ title }}</h1>
-                    <p v-if="message" class="message nq-text">{{ message }}</p>
+                        <h1 class="title nq-h1">{{ title }}</h1>
+                        <p v-if="message" class="message nq-text">{{ message }}</p>
+                    </slot>
                 </div>
 
                 <div class="action-row">
@@ -57,10 +62,12 @@
                 <div class="top-spacer" :class="{'with-main-action': !!mainAction, 'with-alternative-action': !!alternativeAction}"></div>
 
                 <div class="icon-row">
-                    <div class="error nq-icon"></div>
+                    <slot name="error">
+                        <div class="error nq-icon"></div>
 
-                    <h1 class="title nq-h1">{{ title }}</h1>
-                    <p v-if="message" class="message nq-text">{{ message }}</p>
+                        <h1 class="title nq-h1">{{ title }}</h1>
+                        <p v-if="message" class="message nq-text">{{ message }}</p>
+                    </slot>
                 </div>
 
                 <div class="action-row">
@@ -73,7 +80,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Watch, Emit, Vue } from 'vue-property-decorator';
+import { Component, Prop, Watch, Vue } from 'vue-property-decorator';
 
 /**
  * **Nimiq Loader Component**
@@ -100,8 +107,8 @@ import { Component, Prop, Watch, Emit, Vue } from 'vue-property-decorator';
  *
  * **@alternative-action**
  *
- * The `state` is available as `Loader.Status.LOADING`, `Loader.Status.SUCCESS`,
- * `Loader.Status.WARNING` and `Loader.Status.ERROR`.
+ * The `state` is available as `Loader.State.LOADING`, `Loader.State.SUCCESS`,
+ * `Loader.State.WARNING` and `Loader.State.ERROR`.
  *
  * The events are available as `Loader.Events.MAIN_ACTION` and `Loader.Events.ALTERNATIVE_ACTION`.
  */
@@ -112,7 +119,7 @@ class Loader extends Vue {
 
     private static readonly STROKE_DASHOFFSET: number = 14 * 2 * Math.PI;
 
-    @Prop({type: String, default: 'Improving the world'}) private title!: string;
+    @Prop({type: String, default: ''}) private title!: string;
     // Using Loader.State.LOADING here results in runtime error: 'Cannot read property 'LOADING' of undefined'
     @Prop({default: 'loading' as Loader.State}) private state!: Loader.State;
     @Prop(Boolean) private lightBlue?: boolean;
@@ -123,7 +130,6 @@ class Loader extends Vue {
 
     private currentStatus: string = '';
     private nextStatus: string = '';
-    private isStatusTransitioning: boolean = false;
 
     // Stroke offset used to animate SVG redirect indicator from full-offset to no-offset
     private strokeDashoffset: number = Loader.STROKE_DASHOFFSET;
@@ -139,14 +145,22 @@ class Loader extends Vue {
      */
     private showLoadingBackground: boolean = true;
 
-    private _loadingTitle?: string;
+    private loadingTitle?: string = '';
 
-    private get loadingTitle() {
-        return this._loadingTitle || (this._loadingTitle = this.title);
+    private stateUpdateTimeout: number = -1;
+    private indicatorDisplayTimeout: number = -1;
+    private statusUpdateTimeout: number = -1;
+
+    @Watch('title', {immediate: true})
+    private updateLoadingsTitle(newTitle: string) {
+        // only change the _loadingTitle, if we're still in the loading state (and not changing the state right after
+        // setting the title) to avoid it being changed on the loading screen when we actually want to set it for the
+        // success/error/warning screen.
+        this.$nextTick(() => {
+            if (this.state !== Loader.State.LOADING) return;
+            this.loadingTitle = newTitle;
+        });
     }
-
-    private stateUpdateTimeout?: number;
-    private indicatorDisplayTimeout?: number;
 
     @Watch('state', {immediate: true})
     private updateState(newState: string, oldState: string) {
@@ -167,13 +181,13 @@ class Loader extends Vue {
         }
 
         if (newState === Loader.State.LOADING) {
-            if (this.stateUpdateTimeout) {
+            if (this.stateUpdateTimeout !== -1) {
                 clearTimeout(this.stateUpdateTimeout);
-                delete this.stateUpdateTimeout;
+                this.stateUpdateTimeout = -1;
             }
-            if (this.indicatorDisplayTimeout) {
+            if (this.indicatorDisplayTimeout !== -1) {
                 clearTimeout(this.indicatorDisplayTimeout);
-                delete this.indicatorDisplayTimeout;
+                this.indicatorDisplayTimeout = -1;
             }
             this.showLoadingBackground = true;
             this.strokeDashoffset = Loader.STROKE_DASHOFFSET;
@@ -181,13 +195,23 @@ class Loader extends Vue {
     }
 
     @Watch('status', {immediate: true})
-    private updateStatus(newStatus: string, oldStatus: string) {
-        this.nextStatus = newStatus;
-        this.isStatusTransitioning = true;
+    private async updateStatus(newStatus: string) {
+        const loadingStatusRow = this.$refs.loadingStatusRow as HTMLElement;
+        if (this.statusUpdateTimeout !== -1) {
+            // reset transitioning state for new change
+            loadingStatusRow.classList.remove('transition');
+            loadingStatusRow.offsetWidth; // tslint:disable-line:no-unused-expression
+            clearTimeout(this.statusUpdateTimeout);
+            this.currentStatus = this.nextStatus;
+        }
 
-        setTimeout(() => {
+        this.nextStatus = newStatus;
+        loadingStatusRow.classList.add('transition');
+
+        this.statusUpdateTimeout = window.setTimeout(() => {
+            this.statusUpdateTimeout = -1;
             this.currentStatus = newStatus;
-            this.isStatusTransitioning = false;
+            loadingStatusRow.classList.remove('transition');
         }, 500);
     }
 
