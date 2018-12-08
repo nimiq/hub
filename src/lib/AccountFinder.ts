@@ -5,15 +5,22 @@ import { WalletStore } from '@/lib/WalletStore';
 export default class AccountFinder {
     public static async findAccounts(
         deriveAccounts: (startIndex: number, count: number) => Promise<Array<{ address: string, keyPath: string }>>,
-        deriveWalletId: (accounts: Array<{ address: string, keyPath: string, balance: number }>) => Promise<string>,
-        defaultLabel: string = 'Standard Account', // TODO move contant to a Constants class / file
-        onIntermediateResult?: (accounts: Array<{ address: string, keyPath: string, balance: number }>) => void,
+        deriveWalletId: (firstAccount: { address: string, keyPath: string }) => Promise<string>,
+        defaultLabel: string = 'Standard Account', // TODO move constant to a Constants class / file
+        onIntermediateResult?: (accounts: AccountInfo[]) => void,
     ): Promise<AccountInfo[]> {
         await NetworkClient.Instance.init(); // initialize NetworkClient if not initialized yet
-        const foundAccounts: Array<{ address: string, keyPath: string, balance: number }> = [];
+        const foundAccounts: AccountInfo[] = [];
         let nextStartIndex = 0;
         let derivedAccountsPromise = deriveAccounts(nextStartIndex, AccountFinder.MAX_ALLOWED_GAP);
         nextStartIndex += AccountFinder.MAX_ALLOWED_GAP;
+
+        // calculate walletId (potentially using the first account) and read existing accounts
+        const existingAccountsPromise = derivedAccountsPromise
+            .then((derivedAccounts) => deriveWalletId(derivedAccounts[0]))
+            .then((walletId) => WalletStore.Instance.get(walletId))
+            .then((walletInfo) => walletInfo ? walletInfo.accounts : new Map<string, AccountInfo>());
+
         let didFindAccounts;
         do {
             const derivedAccounts = await derivedAccountsPromise;
@@ -35,23 +42,19 @@ export default class AccountFinder {
             for (const account of derivedAccounts) {
                 const balance = balances.get(account.address);
                 if (balance === undefined || balance === 0) continue;
-                foundAccounts.push(Object.assign({}, account, { balance }));
+                const accountInfo = (await existingAccountsPromise).get(account.address) || new AccountInfo(
+                    account.keyPath,
+                    defaultLabel,
+                    Nimiq.Address.fromUserFriendlyAddress(account.address),
+                );
+                accountInfo.balance = Nimiq.Policy.coinsToSatoshis(balance);
+                foundAccounts.push(accountInfo);
                 didFindAccounts = true;
             }
 
             if (didFindAccounts && onIntermediateResult) onIntermediateResult(foundAccounts);
         } while (didFindAccounts);
-
-        // check for existing labels
-        const walletId = await deriveWalletId(foundAccounts);
-        const walletInfo = await WalletStore.Instance.get(walletId);
-        const existingAccounts: Map<string, AccountInfo> = walletInfo ? walletInfo.accounts : new Map();
-        return foundAccounts.map((account) => new AccountInfo(
-            account.keyPath,
-            existingAccounts.has(account.address) ? existingAccounts.get(account.address)!.label : defaultLabel,
-            Nimiq.Address.fromUserFriendlyAddress(account.address),
-            Nimiq.Policy.coinsToSatoshis(account.balance),
-        ));
+        return foundAccounts;
     }
 
     private static readonly MAX_ALLOWED_GAP = 20;
