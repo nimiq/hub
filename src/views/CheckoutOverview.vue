@@ -20,11 +20,10 @@ import { WalletInfo } from '../lib/WalletInfo';
 import { RequestType, ParsedCheckoutRequest } from '../lib/RequestTypes';
 import staticStore, { Static } from '../lib/StaticStore';
 import Network from '../components/Network.vue';
+import { TX_VALIDITY_WINDOW } from '@/lib/Constants';
 
 @Component({components: {Amount, PageFooter, CheckoutDetails, Network}})
 export default class CheckoutOverview extends Vue {
-    private static readonly TX_VALIDITY_WINDOW: number = 120;
-
     @Static private rpcState!: RpcState;
     @Static private request!: ParsedCheckoutRequest;
 
@@ -52,7 +51,7 @@ export default class CheckoutOverview extends Vue {
 
         const validityStartHeight = this.height
             + 1
-            - CheckoutOverview.TX_VALIDITY_WINDOW
+            - TX_VALIDITY_WINDOW
             + this.request.validityDuration;
 
         const request: KSignTransactionRequest = {
