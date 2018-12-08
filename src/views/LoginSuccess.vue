@@ -36,7 +36,7 @@ import { WalletStore } from '@/lib/WalletStore';
 import staticStore, { Static } from '@/lib/StaticStore';
 import { PageHeader, PageBody, LabelInput, AccountList, PageFooter, SmallPage } from '@nimiq/vue-components';
 import Network from '@/components/Network.vue';
-import AccountFinder from '../lib/AccountFinder';
+import AccountFinder from '@/lib/AccountFinder';
 
 @Component({components: {PageHeader, PageBody, LabelInput, AccountList, Network, PageFooter, SmallPage}})
 export default class LoginSuccess extends Vue {
@@ -90,10 +90,10 @@ export default class LoginSuccess extends Vue {
             || this.keyguardResult.keyType === WalletType.LEDGER) {
             // read accounts from network
             const foundAccounts = await AccountFinder.findAccounts(
-                this._deriveKeyguardAccounts.bind(this),
+                (startIndex, count) => this._deriveKeyguardAccounts(startIndex, count),
                 () => Promise.resolve(this.keyguardResult.keyId),
                 LoginSuccess.DEFAULT_ACCOUNT_LABEL,
-                this._addAccounts.bind(this),
+                (accounts) => this._addAccounts(accounts),
             );
             this._addAccounts(foundAccounts);
         }
@@ -119,28 +119,28 @@ export default class LoginSuccess extends Vue {
         // which we'll also already add and display
         const keyguardResultAccounts = this.keyguardResult.addresses.map((addressObj) => ({
             address: new Nimiq.Address(addressObj.address).toUserFriendlyAddress(),
-            keyPath: addressObj.keyPath,
+            path: addressObj.keyPath,
         }));
         this._addAccounts(keyguardResultAccounts);
     }
 
-    private _addAccounts(accounts: Array<{ address: string, keyPath: string, balance?: number} | AccountInfo>) {
+    private _addAccounts(accounts: Array<{ address: string, path: string, balance?: number} | AccountInfo>) {
         for (const account of accounts) {
             let userFriendlyAddress;
-            let keyPath;
+            let path;
             if (account instanceof AccountInfo) {
                 userFriendlyAddress = account.address.toUserFriendlyAddress();
-                keyPath = account.path;
+                path = account.path;
             } else {
                 userFriendlyAddress = account.address;
-                keyPath = account.keyPath;
+                path = account.path;
             }
 
             const existingAccountInfo = this.accounts.get(userFriendlyAddress);
             if (existingAccountInfo && account.balance === undefined) continue; // nothing to add or update
             const updatedAccountInfo = existingAccountInfo
                 || new AccountInfo(
-                    keyPath,
+                    path,
                     LoginSuccess.DEFAULT_ACCOUNT_LABEL,
                     Nimiq.Address.fromUserFriendlyAddress(userFriendlyAddress),
                 );
@@ -176,7 +176,7 @@ export default class LoginSuccess extends Vue {
         const accounts = [];
         for (let i = 0; i < pathsToDerive.length; ++i) {
             accounts.push({
-                keyPath: pathsToDerive[i],
+                path: pathsToDerive[i],
                 address: userFriendlyAddresses[i],
             });
         }

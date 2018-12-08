@@ -4,8 +4,8 @@ import { WalletStore } from '@/lib/WalletStore';
 
 export default class AccountFinder {
     public static async findAccounts(
-        deriveAccounts: (startIndex: number, count: number) => Promise<Array<{ address: string, keyPath: string }>>,
-        deriveWalletId: (firstAccount: { address: string, keyPath: string }) => Promise<string>,
+        deriveAccounts: (startIndex: number, count: number) => Promise<Array<{ address: string, path: string }>>,
+        deriveWalletId: (firstAccount: { address: string, path: string }) => Promise<string>,
         defaultLabel: string = 'Standard Account', // TODO move constant to a Constants class / file
         onIntermediateResult?: (accounts: AccountInfo[]) => void,
     ): Promise<AccountInfo[]> {
@@ -31,19 +31,24 @@ export default class AccountFinder {
             // already start deriving next accounts
             derivedAccountsPromise = deriveAccounts(nextStartIndex, AccountFinder.MAX_ALLOWED_GAP);
             nextStartIndex += derivedAccounts.length; // by always advancing in blocks of MAX_ALLOWED_GAP it can happen
-            // that we include accounts that are more than MAX_ALLOWED_GAP apart (e.g. one towards the beginning of
-            // the first block, the other one towards the end of the second block). But that's actually not bad.
+            // that we include accounts that are more than MAX_ALLOWED_GAP apart (e.g. one account at index 0, the other
+            // one at index 39). But while this does not exactly follow the specification, it's actually good for the
+            // user, as we'll potentially find more of the user's accounts. For example, if the user adds the accounts
+            // derived with indices 0, 19, 39 to his wallet but then only ends up using accounts 0 and 39, the account
+            // at index 19 will not be found anymore on reimport. With the current implementation however, at least the
+            // account 39 would be found, while an implementation strictly following the specification would stop the
+            // search at index 20.
 
             // find accounts with a balance > 0
             didFindAccounts = false;
             // TODO should use transaction receipts
-            const userFriendlyAddresses = derivedAccounts.map(({ address }) => address);
+            const userFriendlyAddresses = derivedAccounts.map((account) => account.address);
             const balances = await NetworkClient.Instance.getBalance(userFriendlyAddresses);
             for (const account of derivedAccounts) {
                 const balance = balances.get(account.address);
                 if (balance === undefined || balance === 0) continue;
                 const accountInfo = (await existingAccountsPromise).get(account.address) || new AccountInfo(
-                    account.keyPath,
+                    account.path,
                     defaultLabel,
                     Nimiq.Address.fromUserFriendlyAddress(account.address),
                 );
