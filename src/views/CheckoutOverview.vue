@@ -49,8 +49,8 @@ export default class CheckoutOverview extends Vue {
             return;
         }
 
-        const validityStartHeight = this.height
-            + 1
+        // The next block is the earliest for which tx are accepted by standard miners
+        const validityStartHeight = this.height + 1
             - TX_VALIDITY_WINDOW
             + this.request.validityDuration;
 
