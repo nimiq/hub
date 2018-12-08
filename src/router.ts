@@ -3,48 +3,46 @@ import Router from 'vue-router';
 import { RequestType } from '@/lib/RequestTypes';
 import { KeyguardCommand } from '@nimiq/keyguard-client';
 
-const SignTransaction         = () => import(/* webpackChunkName: "sign-transaction" */ './views/SignTransaction.vue');
-const SignTransactionSuccess  = () => import(/* webpackChunkName: "sign-transaction" */
+const SignTransaction         = () => import(/*webpackChunkName: "sign-transaction"*/ './views/SignTransaction.vue');
+const SignTransactionSuccess  = () => import(/*webpackChunkName: "sign-transaction"*/
     './views/SignTransactionSuccess.vue');
 
-const Checkout                = () => import(/* webpackChunkName: "checkout" */ './views/Checkout.vue');
-const CheckoutOverview        = () => import(/* webpackChunkName: "checkout" */ './views/CheckoutOverview.vue');
-const CheckoutTransmission    = () => import(/* webpackChunkName: "checkout" */ './views/CheckoutTransmission.vue');
-const CheckoutErrorHandler    = () => import(/* webpackChunkName: "checkout" */ './views/CheckoutErrorHandler.vue');
+const Checkout                = () => import(/*webpackChunkName: "checkout"*/ './views/Checkout.vue');
+const CheckoutOverview        = () => import(/*webpackChunkName: "checkout"*/ './views/CheckoutOverview.vue');
+const CheckoutTransmission    = () => import(/*webpackChunkName: "checkout"*/ './views/CheckoutTransmission.vue');
+const CheckoutErrorHandler    = () => import(/*webpackChunkName: "checkout"*/ './views/CheckoutErrorHandler.vue');
 
-const SignupTypeSelector      = () => import(/* webpackChunkName: "signup" */ './views/SignupTypeSelector.vue');
-const SignupSuccess           = () => import(/* webpackChunkName: "signup" */ './views/SignupSuccess.vue');
-const SignupErrorHandler      = () => import(/* webpackChunkName: "signup" */ './views/SignupErrorHandler.vue');
+const SignupTypeSelector      = () => import(/*webpackChunkName: "signup"*/ './views/SignupTypeSelector.vue');
+const SignupSuccess           = () => import(/*webpackChunkName: "signup"*/ './views/SignupSuccess.vue');
+const SignupErrorHandler      = () => import(/*webpackChunkName: "signup"*/ './views/SignupErrorHandler.vue');
 
-const Login                   = () => import(/* webpackChunkName: "login" */ './views/Login.vue');
-const LoginSuccess            = () => import(/* webpackChunkName: "login" */ './views/LoginSuccess.vue');
-const LoginErrorHandler       = () => import(/* webpackChunkName: "login" */ './views/LoginErrorHandler.vue');
+const Login                   = () => import(/*webpackChunkName: "login"*/ './views/Login.vue');
+const LoginSuccess            = () => import(/*webpackChunkName: "login"*/ './views/LoginSuccess.vue');
+const LoginErrorHandler       = () => import(/*webpackChunkName: "login"*/ './views/LoginErrorHandler.vue');
 
-// const ExportFile           = () => import(/* webpackChunkName: "export" */ './views/ExportFile.vue');
-// const ExportWords          = () => import(/* webpackChunkName: "export" */ './views/ExportWords.vue');
-const Export                  = () => import(/* webpackChunkName: "export" */ './views/Export.vue');
+const Export                  = () => import(/*webpackChunkName: "export"*/ './views/Export.vue');
 
-const ChangePassphrase        = () => import(/* webpackChunkName: "change-passphrase" */'./views/ChangePassphrase.vue');
+const ChangePassphrase        = () => import(/*webpackChunkName: "change-passphrase"*/ './views/ChangePassphrase.vue');
 
-const Logout                  = () => import(/* webpackChunkName: "logout" */ './views/Logout.vue');
-const LogoutSuccess           = () => import(/* webpackChunkName: "logout" */ './views/LogoutSuccess.vue');
+const Logout                  = () => import(/*webpackChunkName: "logout"*/ './views/Logout.vue');
+const LogoutSuccess           = () => import(/*webpackChunkName: "logout"*/ './views/LogoutSuccess.vue');
 
-const AddAccount              = () => import(/* webpackChunkName: "add-account" */ './views/AddAccount.vue');
-const AddAccountSuccess       = () => import(/* webpackChunkName: "add-account" */ './views/AddAccountSuccess.vue');
+const AddAccount              = () => import(/*webpackChunkName: "add-account"*/ './views/AddAccount.vue');
+const AddAccountSuccess       = () => import(/*webpackChunkName: "add-account"*/ './views/AddAccountSuccess.vue');
 
-const Rename                  = () => import(/* webpackChunkName: "rename" */ './views/Rename.vue');
+const Rename                  = () => import(/*webpackChunkName: "rename"*/ './views/Rename.vue');
 
-const Migrate                 = () => import(/* webpackChunkName: "migrate" */ './views/Migrate.vue');
+const Migrate                 = () => import(/*webpackChunkName: "migrate"*/ './views/Migrate.vue');
 
-const SignMessage             = () => import(/* webpackChunkName: "sign-message" */ './views/SignMessage.vue');
-const SignMessageOverview     = () => import(/* webpackChunkName: "sign-message" */ './views/SignMessageOverview.vue');
-const SignMessageSuccess      = () => import(/* webpackChunkName: "sign-message" */ './views/SignMessageSuccess.vue');
-const SignMessageErrorHandler = () => import(/* webpackChunkName: "sign-message" */
+const SignMessage             = () => import(/*webpackChunkName: "sign-message"*/ './views/SignMessage.vue');
+const SignMessageOverview     = () => import(/*webpackChunkName: "sign-message"*/ './views/SignMessageOverview.vue');
+const SignMessageSuccess      = () => import(/*webpackChunkName: "sign-message"*/ './views/SignMessageSuccess.vue');
+const SignMessageErrorHandler = () => import(/*webpackChunkName: "sign-message"*/
     './views/SignMessageErrorHandler.vue');
 
-const ActiveAccountSelector   = () => import(/* webpackChunkName: "common" */ './views/ActiveAccountSelector.vue');
-const SimpleSuccess           = () => import(/* webpackChunkName: "common" */ './views/SimpleSuccess.vue');
-const ErrorHandler            = () => import(/* webpackChunkName: "common" */ './views/ErrorHandler.vue');
+const ActiveAccountSelector   = () => import(/*webpackChunkName: "common"*/ './views/ActiveAccountSelector.vue');
+const SimpleSuccess           = () => import(/*webpackChunkName: "common"*/ './views/SimpleSuccess.vue');
+const ErrorHandler            = () => import(/*webpackChunkName: "common"*/ './views/ErrorHandler.vue');
 
 Vue.use(Router);
 

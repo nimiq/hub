@@ -6,7 +6,7 @@ export default class AccountFinder {
     public static async findAccounts(
         deriveAccounts: (startIndex: number, count: number) => Promise<Array<{ address: string, keyPath: string }>>,
         deriveWalletId: (accounts: Array<{ address: string, keyPath: string, balance: number }>) => Promise<string>,
-        defaultLabel: string = 'Standard Account',
+        defaultLabel: string = 'Standard Account', // TODO move contant to a Constants class / file
         onIntermediateResult?: (accounts: Array<{ address: string, keyPath: string, balance: number }>) => void,
     ): Promise<AccountInfo[]> {
         await NetworkClient.Instance.init(); // initialize NetworkClient if not initialized yet
@@ -14,7 +14,8 @@ export default class AccountFinder {
         let nextStartIndex = 0;
         let derivedAccountsPromise = deriveAccounts(nextStartIndex, AccountFinder.MAX_ALLOWED_GAP);
         nextStartIndex += AccountFinder.MAX_ALLOWED_GAP;
-        while (true) {
+        let didFindAccounts;
+        do {
             const derivedAccounts = await derivedAccountsPromise;
             if (derivedAccounts.length !== AccountFinder.MAX_ALLOWED_GAP) {
                 throw new Error('\'deriveAccounts\' returned wrong number of accounts');
@@ -27,8 +28,8 @@ export default class AccountFinder {
             // the first block, the other one towards the end of the second block). But that's actually not bad.
 
             // find accounts with a balance > 0
-            // TODO should use transaction receipts combined with balance
-            let didFindAccounts = false;
+            didFindAccounts = false;
+            // TODO should use transaction receipts
             const userFriendlyAddresses = derivedAccounts.map(({ address }) => address);
             const balances = await NetworkClient.Instance.getBalance(userFriendlyAddresses);
             for (const account of derivedAccounts) {
@@ -38,9 +39,8 @@ export default class AccountFinder {
                 didFindAccounts = true;
             }
 
-            if (!didFindAccounts) break;
-            if (onIntermediateResult) onIntermediateResult(foundAccounts);
-        }
+            if (didFindAccounts && onIntermediateResult) onIntermediateResult(foundAccounts);
+        } while (didFindAccounts);
 
         // check for existing labels
         const walletId = await deriveWalletId(foundAccounts);

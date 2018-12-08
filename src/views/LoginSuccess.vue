@@ -72,8 +72,11 @@ export default class LoginSuccess extends Vue {
         if (this.keyguardResult.keyType === WalletType.BIP39 || this.keyguardResult.keyType === WalletType.LEGACY) {
             this.keyguard = new KeyguardClient();
         }
-        this.walletLabel = this.keyguardResult.keyType === WalletType.LEGACY ? 'Legacy Wallet'
-            : this.keyguardResult.keyType === WalletType.BIP39 ? 'Keyguard Wallet' : 'Ledger Wallet';
+        this.walletLabel = this.keyguardResult.keyType === WalletType.LEGACY
+            ? 'Legacy Wallet'
+            : this.keyguardResult.keyType === WalletType.BIP39
+                ? 'Keyguard Wallet'
+                : 'Ledger Wallet'; // TODO move these constants to a Constants class / file
 
         await this._setInitialAccounts();
         this.contentReady = true; // The variables are set up correctly so trigger rendering the components.
@@ -133,9 +136,14 @@ export default class LoginSuccess extends Vue {
                 keyPath = account.keyPath;
             }
 
-            const updatedAccountInfo = this.accounts.get(userFriendlyAddress)
-                || new AccountInfo(keyPath, LoginSuccess.DEFAULT_ACCOUNT_LABEL,
-                    Nimiq.Address.fromUserFriendlyAddress(userFriendlyAddress));
+            const existingAccountInfo = this.accounts.get(userFriendlyAddress);
+            if (existingAccountInfo && account.balance === undefined) continue; // nothing to add or update
+            const updatedAccountInfo = existingAccountInfo
+                || new AccountInfo(
+                    keyPath,
+                    LoginSuccess.DEFAULT_ACCOUNT_LABEL,
+                    Nimiq.Address.fromUserFriendlyAddress(userFriendlyAddress),
+                );
             if (account.balance !== undefined) updatedAccountInfo.balance = account.balance;
             this.accounts.set(userFriendlyAddress, updatedAccountInfo);
         }
