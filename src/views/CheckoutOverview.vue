@@ -23,6 +23,8 @@ import Network from '../components/Network.vue';
 
 @Component({components: {Amount, PageFooter, CheckoutDetails, Network}})
 export default class CheckoutOverview extends Vue {
+    private static readonly TX_VALIDITY_WINDOW: number = 120;
+
     @Static private rpcState!: RpcState;
     @Static private request!: ParsedCheckoutRequest;
 
@@ -48,6 +50,11 @@ export default class CheckoutOverview extends Vue {
             return;
         }
 
+        const validityStartHeight = this.height
+            + 1
+            - CheckoutOverview.TX_VALIDITY_WINDOW
+            + this.request.validityDuration;
+
         const request: KSignTransactionRequest = {
             layout: 'checkout',
             shopOrigin: this.rpcState.origin,
@@ -65,7 +72,7 @@ export default class CheckoutOverview extends Vue {
             recipientLabel: undefined, // TODO: recipient label
             value: this.request.value,
             fee: this.request.fee || 0, // TODO: proper fee estimation
-            validityStartHeight: this.height,
+            validityStartHeight,
             data: this.request.data,
             flags: this.request.flags,
             networkId: this.request.networkId,
@@ -93,7 +100,7 @@ export default class CheckoutOverview extends Vue {
 
     @Watch('height')
     private logHeightChange(height: number, oldHeight: number) {
-        console.log(`Height changed from ${oldHeight} to ${height}`);
+        console.debug(`Got height: ${height} (was ${oldHeight})`);
     }
 
     private async _setHeightFromApi() {
