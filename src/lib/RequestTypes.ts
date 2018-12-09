@@ -75,6 +75,7 @@ export interface SignTransactionResult {
 export interface CheckoutRequest {
     kind?: RequestType.CHECKOUT;
     appName: string;
+    shopLogoUrl?: string;
     recipient: string;
     recipientType?: Nimiq.Account.Type;
     value: number;
@@ -87,6 +88,7 @@ export interface CheckoutRequest {
 export interface ParsedCheckoutRequest {
     kind: RequestType.CHECKOUT;
     appName: string;
+    shopLogoUrl?: string;
     recipient: Nimiq.Address;
     recipientType?: Nimiq.Account.Type;
     value: number;
@@ -314,6 +316,7 @@ export class AccountsRequest {
                 return {
                     kind: RequestType.CHECKOUT,
                     appName: request.appName,
+                    shopLogoUrl: request.shopLogoUrl,
                     recipient: Nimiq.Address.fromUserFriendlyAddress(request.recipient),
                     recipientType: request.recipientType,
                     value: request.value,
@@ -410,6 +413,7 @@ export class AccountsRequest {
                 return {
                     kind: RequestType.CHECKOUT,
                     appName: request.appName,
+                    shopLogoUrl: request.shopLogoUrl,
                     recipient: request.recipient.toUserFriendlyAddress(),
                     recipientType: request.recipientType,
                     value: request.value,

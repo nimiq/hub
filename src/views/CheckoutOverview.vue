@@ -51,6 +51,7 @@ export default class CheckoutOverview extends Vue {
         const request: KSignTransactionRequest = {
             layout: 'checkout',
             shopOrigin: this.rpcState.origin,
+            shopLogoUrl: this.request.shopLogoUrl,
             appName: this.request.appName,
 
             keyId: wallet.id,
