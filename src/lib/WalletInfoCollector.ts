@@ -14,7 +14,7 @@ export default class WalletInfoCollector {
         walletType: WalletType,
         walletId?: string,
         initialAccounts?: BasicAccountInfo[],
-        onIntermediateResult?: (walletInfo: WalletInfo) => void,
+        onUpdate?: (walletInfo: WalletInfo) => void,
     ): Promise<WalletInfo> {
         // Kick off loading dependencies
         WalletInfoCollector._initializeDependencies(walletType);
@@ -42,10 +42,10 @@ export default class WalletInfoCollector {
         // Add initial accounts to the walletInfo
         let initialAccountsPromise;
         if (initialAccounts) {
-            WalletInfoCollector._addAccounts(walletInfo, initialAccounts, undefined, onIntermediateResult);
+            WalletInfoCollector._addAccounts(walletInfo, initialAccounts, undefined, onUpdate);
             // after fetching balances, update again
             initialAccountsPromise = WalletInfoCollector._getBalances(initialAccounts).then((balances) =>
-                WalletInfoCollector._addAccounts(walletInfo, initialAccounts, balances, onIntermediateResult));
+                WalletInfoCollector._addAccounts(walletInfo, initialAccounts, balances, onUpdate));
         } else {
             initialAccountsPromise = Promise.resolve();
         }
@@ -56,7 +56,7 @@ export default class WalletInfoCollector {
             return walletInfo;
         }
 
-        let didFindAccounts;
+        let foundAccounts: BasicAccountInfo[];
         do {
             const derivedAccounts = await derivedAccountsPromise;
 
@@ -77,20 +77,18 @@ export default class WalletInfoCollector {
                 WalletInfoCollector.MAX_ALLOWED_GAP, walletType, walletId);
 
             // find accounts with a balance > 0
-            didFindAccounts = false;
             // TODO should use transaction receipts
+            foundAccounts = [];
             const balances = await WalletInfoCollector._getBalances(derivedAccounts!);
-            const usedAccounts: BasicAccountInfo[] = [];
             for (const account of derivedAccounts!) {
                 const balance = balances.get(account.address);
                 if (balance === undefined || balance === 0) continue;
-                usedAccounts.push(account);
-                didFindAccounts = true;
+                foundAccounts.push(account);
             }
-            if (didFindAccounts) {
-                WalletInfoCollector._addAccounts(walletInfo, usedAccounts, balances, onIntermediateResult);
+            if (foundAccounts.length > 0) {
+                WalletInfoCollector._addAccounts(walletInfo, foundAccounts, balances, onUpdate);
             }
-        } while (didFindAccounts);
+        } while (foundAccounts.length > 0);
 
         if (walletType === WalletType.BIP39 && WalletInfoCollector._keyguardClient) {
             WalletInfoCollector._keyguardClient.releaseKey(walletId);
@@ -112,7 +110,7 @@ export default class WalletInfoCollector {
     private static _networkInitializationPromise?: Promise<void>;
     private static _wasmInitializationPromise?: Promise<void>;
 
-    private static _initializeDependencies(walletType: WalletType) {
+    private static _initializeDependencies(walletType: WalletType): void {
         WalletInfoCollector._networkInitializationPromise =
             WalletInfoCollector._networkInitializationPromise || NetworkClient.Instance.init();
         WalletInfoCollector._networkInitializationPromise
@@ -127,7 +125,7 @@ export default class WalletInfoCollector {
         }
     }
 
-    private static async _getWalletInfoInstance(walletId: string, walletType: WalletType) {
+    private static async _getWalletInfoInstance(walletId: string, walletType: WalletType): Promise<WalletInfo> {
         const existingWalletInfo = await WalletStore.Instance.get(walletId);
         if (existingWalletInfo) return existingWalletInfo;
         const label = walletType === WalletType.LEGACY
@@ -145,20 +143,23 @@ export default class WalletInfoCollector {
         );
     }
 
-    private static async _deriveAccounts(startIndex: number, count: number, walletType: WalletType, walletId?: string) {
-        if (walletType === WalletType.LEGACY) {
-            throw new Error('Legacy Wallets can not derive accounts.');
-        } else if (walletType === WalletType.BIP39) {
-            if (!walletId) throw new Error('walletId needed for Keyguard account derivation.');
-            return WalletInfoCollector._deriveKeyguardAccounts(startIndex, count, walletId);
-        } else if (walletType === WalletType.LEDGER) {
-            throw new Error('Ledger account derivation not implemented yet.');
-        } else {
-            throw new Error('Unsupported walletType.');
+    private static async _deriveAccounts(startIndex: number, count: number, walletType: WalletType, walletId?: string)
+        : Promise<BasicAccountInfo[]> {
+        switch (walletType) {
+            case WalletType.LEGACY:
+                throw new Error('Legacy Wallets can not derive accounts.');
+            case WalletType.BIP39:
+                if (!walletId) throw new Error('walletId needed for Keyguard account derivation.');
+                return WalletInfoCollector._deriveKeyguardAccounts(startIndex, count, walletId);
+            case WalletType.LEDGER:
+                throw new Error('Ledger account derivation not implemented yet.');
+            default:
+                throw new Error('Unsupported walletType.');
         }
     }
 
-    private static async _deriveKeyguardAccounts(startIndex: number, count: number, walletId: string) {
+    private static async _deriveKeyguardAccounts(startIndex: number, count: number, walletId: string)
+        : Promise<BasicAccountInfo[]> {
         const pathsToDerive = [];
         for (let keyId = startIndex; keyId < startIndex + count; ++keyId) {
             pathsToDerive.push(`${WalletInfoCollector.KEYGUARD_SLIP0010_BASE_PATH}${keyId}'`);
@@ -176,14 +177,14 @@ export default class WalletInfoCollector {
         return accounts;
     }
 
-    private static async _computeLedgerWalletId(firstAccountAddress: string) {
+    private static async _computeLedgerWalletId(firstAccountAddress: string): Promise<string> {
         // calculate wallet id deterministically from first account similarly to legacy wallets in Key.js in Keyguard
         await WalletInfoCollector._wasmInitializationPromise;
         const input = Nimiq.Address.fromUserFriendlyAddress(firstAccountAddress).serialize();
         return Nimiq.BufferUtils.toHex(Nimiq.Hash.blake2b(input).subarray(0, 6));
     }
 
-    private static async _getBalances(accounts: BasicAccountInfo[]) {
+    private static async _getBalances(accounts: BasicAccountInfo[]): Promise<Map<string, number>> {
         const userFriendlyAddresses = accounts.map((account) => account.address);
         await WalletInfoCollector._networkInitializationPromise;
         const balances = await NetworkClient.Instance.getBalance(userFriendlyAddresses);
@@ -197,8 +198,8 @@ export default class WalletInfoCollector {
         walletInfo: WalletInfo,
         newAccounts: BasicAccountInfo[],
         balances?: Map<string, number>,
-        onIntermediateResult?: (walletInfo: WalletInfo) => void,
-    ) {
+        onUpdate?: (walletInfo: WalletInfo) => void,
+    ): void {
         for (const newAccount of newAccounts) {
             const existingAccountInfo = walletInfo.accounts.get(newAccount.address);
             const balance = balances ? balances.get(newAccount.address) : undefined;
@@ -212,6 +213,6 @@ export default class WalletInfoCollector {
             if (balance !== undefined) accountInfo.balance = balance;
             walletInfo.accounts.set(newAccount.address, accountInfo);
         }
-        if (onIntermediateResult) onIntermediateResult(walletInfo);
+        if (onUpdate) onUpdate(walletInfo);
     }
 }
