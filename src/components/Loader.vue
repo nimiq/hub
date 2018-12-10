@@ -111,6 +111,9 @@ import { Component, Prop, Watch, Vue } from 'vue-property-decorator';
  * `Loader.State.WARNING` and `Loader.State.ERROR`.
  *
  * The events are available as `Loader.Events.MAIN_ACTION` and `Loader.Events.ALTERNATIVE_ACTION`.
+ *
+ * Layout:
+ * The Layout can be toggled to a smaller Layout by adding the `small` css class.
  */
 @Component
 class Loader extends Vue {
@@ -273,6 +276,10 @@ export default Loader;
         white-space: pre;
     }
 
+    .loader.small .title {
+        margin-top: 3rem;
+    }
+
     .icon-row,
     .status-row,
     .action-row {
@@ -315,6 +322,10 @@ export default Loader;
     .status-row {
         margin-top: 2rem; /* Same as title margin-bottom, to equalize spacing to center icon */
         margin-bottom: 5rem;
+    }
+
+    .loader.small .status-row {
+        margin-bottom: 3rem;
     }
 
     .status {
