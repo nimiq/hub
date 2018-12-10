@@ -34,7 +34,8 @@
 
 <script lang="ts">
 import { Component, Vue, Emit } from 'vue-property-decorator';
-import { AccountList, LabelInput, SmallPage, PageHeader, PageBody, PageFooter } from '@nimiq/vue-components';
+import { AccountList, SmallPage, PageHeader, PageBody, PageFooter } from '@nimiq/vue-components';
+import LabelInput from '@/components/LabelInput.vue';
 import { ParsedRenameRequest, RenameResult } from '../lib/RequestTypes';
 import Success from '../components/Success.vue';
 import { WalletInfo, WalletType } from '../lib/WalletInfo';
