@@ -151,7 +151,7 @@ class Loader extends Vue {
 
     private loadingTitle: string = '';
 
-    private stateUpdateTimeout: number = -1;
+    private hideLoadingBackgroundTimeout: number = -1;
     private indicatorDisplayTimeout: number = -1;
     private statusUpdateTimeout: number = -1;
 
@@ -168,32 +168,41 @@ class Loader extends Vue {
 
     @Watch('state', {immediate: true})
     private updateState(newState: string, oldState: string) {
-        // When the component is initialized with a state other than LOADING
-        if (!oldState && (newState !== Loader.State.LOADING)) {
-            this.showLoadingBackground = false;
-        }
-
-        // When the state changes later and animates
-        if (oldState && (newState !== Loader.State.LOADING)) {
-            this.stateUpdateTimeout = window.setTimeout(() => {
-                this.showLoadingBackground = false;
-            }, 1000);
-
-            this.indicatorDisplayTimeout = window.setTimeout(() => {
-                this.strokeDashoffset = 0;
-            }, 500);
-        }
-
         if (newState === Loader.State.LOADING) {
-            if (this.stateUpdateTimeout !== -1) {
-                clearTimeout(this.stateUpdateTimeout);
-                this.stateUpdateTimeout = -1;
+            // Starting in or changing to LOADING
+            if (this.hideLoadingBackgroundTimeout !== -1) {
+                clearTimeout(this.hideLoadingBackgroundTimeout);
+                this.hideLoadingBackgroundTimeout = -1;
             }
+            this.showLoadingBackground = true;
+        } else {
+            // other state than LOADING
+            if (oldState === Loader.State.LOADING) {
+                if (this.hideLoadingBackgroundTimeout === -1) {
+                    this.hideLoadingBackgroundTimeout = window.setTimeout(() => {
+                        this.showLoadingBackground = false;
+                        this.hideLoadingBackgroundTimeout = -1;
+                    }, 1000);
+                }
+            } else {
+                this.showLoadingBackground = false;
+            }
+        }
+
+        if (newState === Loader.State.SUCCESS) {
+            // if we start in or change to SUCCESS state
+            if (this.indicatorDisplayTimeout === -1) {
+                this.indicatorDisplayTimeout = window.setTimeout(() => {
+                    this.strokeDashoffset = 0;
+                    this.indicatorDisplayTimeout = -1;
+                }, 500);
+            }
+        } else {
+            // other states than SUCCESS
             if (this.indicatorDisplayTimeout !== -1) {
                 clearTimeout(this.indicatorDisplayTimeout);
                 this.indicatorDisplayTimeout = -1;
             }
-            this.showLoadingBackground = true;
             this.strokeDashoffset = Loader.STROKE_DASHOFFSET;
         }
     }
@@ -273,7 +282,6 @@ export default Loader;
     .title {
         line-height: 1;
         margin-top: 4rem;
-        white-space: pre;
     }
 
     .loader.small .title {
