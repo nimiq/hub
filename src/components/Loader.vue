@@ -10,7 +10,7 @@
                     </slot>
                 </div>
 
-                <div class="status-row" ref="loadingStatusRow">
+                <div class="status-row" :class="{ transition: isTransitioningStatus }">
                     <div class="status current nq-h2">{{ currentStatus }}</div>
                     <div class="status next nq-h2">{{ nextStatus }}</div>
                 </div>
@@ -119,7 +119,7 @@ class Loader extends Vue {
 
     private static readonly STROKE_DASHOFFSET: number = 14 * 2 * Math.PI;
 
-    @Prop({type: String, default: ''}) private title!: string;
+    @Prop({type: String}) private title?: string;
     // Using Loader.State.LOADING here results in runtime error: 'Cannot read property 'LOADING' of undefined'
     @Prop({default: 'loading' as Loader.State}) private state!: Loader.State;
     @Prop(Boolean) private lightBlue?: boolean;
@@ -130,6 +130,7 @@ class Loader extends Vue {
 
     private currentStatus: string = '';
     private nextStatus: string = '';
+    private isTransitioningStatus = false;
 
     // Stroke offset used to animate SVG redirect indicator from full-offset to no-offset
     private strokeDashoffset: number = Loader.STROKE_DASHOFFSET;
@@ -145,14 +146,14 @@ class Loader extends Vue {
      */
     private showLoadingBackground: boolean = true;
 
-    private loadingTitle?: string = '';
+    private loadingTitle: string = '';
 
     private stateUpdateTimeout: number = -1;
     private indicatorDisplayTimeout: number = -1;
     private statusUpdateTimeout: number = -1;
 
     @Watch('title', {immediate: true})
-    private updateLoadingsTitle(newTitle: string) {
+    private updateLoadingTitle(newTitle: string) {
         // only change the _loadingTitle, if we're still in the loading state (and not changing the state right after
         // setting the title) to avoid it being changed on the loading screen when we actually want to set it for the
         // success/error/warning screen.
@@ -196,22 +197,22 @@ class Loader extends Vue {
 
     @Watch('status', {immediate: true})
     private async updateStatus(newStatus: string) {
-        const loadingStatusRow = this.$refs.loadingStatusRow as HTMLElement;
         if (this.statusUpdateTimeout !== -1) {
-            // reset transitioning state for new change
-            loadingStatusRow.classList.remove('transition');
-            loadingStatusRow.offsetWidth; // tslint:disable-line:no-unused-expression
             clearTimeout(this.statusUpdateTimeout);
+            // reset transitioning state for new change
+            this.isTransitioningStatus = false;
+            await this.$nextTick();
+            await new Promise((resolve) => requestAnimationFrame(resolve)); // await style update
             this.currentStatus = this.nextStatus;
         }
 
         this.nextStatus = newStatus;
-        loadingStatusRow.classList.add('transition');
+        this.isTransitioningStatus = true;
 
         this.statusUpdateTimeout = window.setTimeout(() => {
             this.statusUpdateTimeout = -1;
             this.currentStatus = newStatus;
-            loadingStatusRow.classList.remove('transition');
+            this.isTransitioningStatus = false;
         }, 500);
     }
 
