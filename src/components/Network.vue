@@ -13,7 +13,7 @@ import {
     SignTransactionResult as KSignTransactionResult,
 } from '@nimiq/keyguard-client';
 import { NetworkClient, DetailedPlainTransaction } from '@nimiq/network-client';
-import Config from "../lib/Config";
+import Config from '../lib/Config';
 
 @Component
 class Network extends Vue {

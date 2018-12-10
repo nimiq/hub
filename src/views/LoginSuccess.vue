@@ -61,19 +61,18 @@ export default class LoginSuccess extends Vue {
         let tryCount = 0;
         while (true) {
             try {
-                ++tryCount;
-                const walletInfo = await WalletInfoCollector.collectWalletInfo(
+                tryCount += 1;
+                await WalletInfoCollector.collectWalletInfo(
                     this.keyguardResult.keyType,
                     this.keyguardResult.keyId,
                     keyguardResultAccounts,
                     (updatedWalletInfo) => this._onWalletInfoUpdate(updatedWalletInfo),
                 );
-                this._onWalletInfoUpdate(walletInfo);
                 this.retrievalFailed = false;
                 break;
             } catch (e) {
                 this.retrievalFailed = true;
-                if (tryCount === 5) throw e;
+                if (tryCount >= 5) throw e;
             }
         }
 
@@ -164,7 +163,7 @@ export default class LoginSuccess extends Vue {
         font-weight: 500;
         margin: 0 3rem;
         padding: 2rem 1rem 1.5rem;
-        border-bottom: solid 1px var(--nimiq-card-border-color);
+        border-bottom: solid .125rem var(--nimiq-card-border-color);
     }
 
     .wallet-icon {
@@ -175,7 +174,7 @@ export default class LoginSuccess extends Vue {
     }
 
     .loader {
-        min-height: 168px;
+        min-height: 21rem;
     }
 
     .page-footer {
