@@ -3,7 +3,6 @@ import { KeyguardClient } from '@nimiq/keyguard-client';
 import { AccountInfo } from '@/lib/AccountInfo';
 import { WalletStore } from '@/lib/WalletStore';
 import { WalletInfo, WalletType } from '@/lib/WalletInfo';
-import LazyLoading from '@/lib/LazyLoading';
 
 type BasicAccountInfo = { // tslint:disable-line:interface-over-type-literal
     address: string,
@@ -116,11 +115,15 @@ export default class WalletInfoCollector {
     private static _initializeDependencies(walletType: WalletType) {
         WalletInfoCollector._networkInitializationPromise =
             WalletInfoCollector._networkInitializationPromise || NetworkClient.Instance.init();
+        WalletInfoCollector._networkInitializationPromise
+            .catch(() => delete WalletInfoCollector._networkInitializationPromise);
         if (walletType === WalletType.BIP39) {
             WalletInfoCollector._keyguardClient = WalletInfoCollector._keyguardClient || new KeyguardClient();
         } else if (walletType === WalletType.LEDGER) {
             WalletInfoCollector._wasmInitializationPromise =
-                WalletInfoCollector._wasmInitializationPromise || LazyLoading.loadNimiq(true);
+                WalletInfoCollector._wasmInitializationPromise || Nimiq.WasmHelper.doImportBrowser();
+            WalletInfoCollector._wasmInitializationPromise
+                .catch(() => delete WalletInfoCollector._wasmInitializationPromise);
         }
     }
 

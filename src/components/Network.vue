@@ -13,6 +13,7 @@ import {
     SignTransactionResult as KSignTransactionResult,
 } from '@nimiq/keyguard-client';
 import { NetworkClient, DetailedPlainTransaction } from '@nimiq/network-client';
+import Config from "../lib/Config";
 
 @Component
 class Network extends Vue {
@@ -214,13 +215,15 @@ class Network extends Vue {
     }
 
     private async _loadNimiq() {
+        await Nimiq.WasmHelper.doImportBrowser();
+        let genesisConfigInitialized = true;
         try {
-            // Load web assembly encryption library into browser (if supported)
-            await Nimiq.WasmHelper.doImportBrowser();
-            // Configure to use test net for now
-            Nimiq.GenesisConfig.test();
+            Nimiq.GenesisConfig.NETWORK_ID; // tslint:disable-line:no-unused-expression
         } catch (e) {
-            console.error(e);
+            genesisConfigInitialized = false;
+        }
+        if (!genesisConfigInitialized) {
+            Nimiq.GenesisConfig[Config.network]();
         }
     }
 
