@@ -1,5 +1,6 @@
 <template>
     <div class="identicon-selector" :class="{ selected: !!selectedAccount }">
+        <h1 class="nq-h1">Choose an Avatar</h1>
         <div class="identicons">
             <div class="center" v-if="displayedAccounts.length === 0">
                 <div class="loading-animation"></div>
@@ -12,7 +13,7 @@
             </div>
         </div>
         <button @click="page += 1" v-if="displayedAccounts.length > 0" class="generate-more nq-button-s">
-            Show more
+            More Avatars
         </button>
 
         <div @click="selectedAccount = null" class="backdrop">
@@ -86,6 +87,11 @@
         overflow: hidden;
     }
 
+    .identicon-selector .nq-h1 {
+        margin-top: 0;
+        margin-bottom: 6rem;
+    }
+
     .identicon-selector .loading-animation {
         margin: auto;
     }
@@ -157,7 +163,7 @@
 
 
     .identicon-selector .generate-more {
-        margin-top: 3rem;
+        margin-top: 6rem;
     }
 
     .identicon-selector .backdrop {

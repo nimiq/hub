@@ -1,41 +1,45 @@
 <template>
-    <div class="ledger-ui" :illustration="illustration" :class="backgroundColor">
-        <div class="ledger-device-container">
-            <div class="ledger-cable"></div>
-            <div class="ledger-device"></div>
-            <div class="ledger-screen-loading ledger-screen"></div>
-            <div class="ledger-screen-pin ledger-screen">
-                <div class="ledger-pin-dot"></div>
-                <div class="ledger-pin-dot"></div>
-                <div class="ledger-pin-dot"></div>
-                <div class="ledger-pin-dot"></div>
-                <div class="ledger-pin-dot"></div>
-                <div class="ledger-pin-dot"></div>
-                <div class="ledger-pin-dot"></div>
-                <div class="ledger-pin-dot"></div>
-            </div>
-            <div class="ledger-screen-home ledger-screen"></div>
-            <div class="ledger-screen-app ledger-screen"></div>
-            <div class="ledger-screen-confirm-address ledger-screen"></div>
-            <div class="ledger-screen-confirm-transaction ledger-screen"></div>
-        </div>
-        <h3 class="instructions-title">{{instructionsTitle}}</h3>
-        <h4 class="instructions-text">
-            <span v-for="line in instructionsText">{{line}}</span>
-        </h4>
+    <div class="ledger-ui" :illustration="illustration">
+        <Loader :state="'loading'" :title="instructionsTitle" :status="instructionsText">
+            <template slot="loading">
+                <div class="ledger-device-container">
+                    <div class="ledger-cable"></div>
+                    <div class="ledger-device"></div>
+                    <div class="ledger-screen-loading ledger-screen"></div>
+                    <div class="ledger-screen-pin ledger-screen">
+                        <div class="ledger-pin-dot"></div>
+                        <div class="ledger-pin-dot"></div>
+                        <div class="ledger-pin-dot"></div>
+                        <div class="ledger-pin-dot"></div>
+                        <div class="ledger-pin-dot"></div>
+                        <div class="ledger-pin-dot"></div>
+                        <div class="ledger-pin-dot"></div>
+                        <div class="ledger-pin-dot"></div>
+                    </div>
+                    <div class="ledger-screen-home ledger-screen"></div>
+                    <div class="ledger-screen-app ledger-screen"></div>
+                    <div class="ledger-screen-confirm-address ledger-screen"></div>
+                    <div class="ledger-screen-confirm-transaction ledger-screen"></div>
+                </div>
+            </template>
+        </Loader>
     </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import LedgerApi from '../lib/LedgerApi';
+import Loader from '../components/Loader.vue';
 
-@Component
+@Component({ components: { Loader } })
 class LedgerUi extends Vue {
+    private static CONNECT_ANIMATION_STEP_DURATION = 8000 / 3;
+
     private state: LedgerApi.State = LedgerApi.currentState;
     private instructionsTitle: string = '';
-    private instructionsText: string[] = [];
-    private connectInstructionsTimer: number = -1;
+    private instructionsText: string = '';
+    private connectTimer: number = -1;
+    private connectInstructionsTextInterval: number = -1;
     private loadingFailed: boolean = false;
 
     private created() {
@@ -54,8 +58,10 @@ class LedgerUi extends Vue {
             this._onStateConnecting();
             return;
         }
-        clearTimeout(this.connectInstructionsTimer);
-        this.connectInstructionsTimer = -1;
+        clearTimeout(this.connectTimer);
+        clearInterval(this.connectInstructionsTextInterval);
+        this.connectTimer = -1;
+        this.connectInstructionsTextInterval = -1;
 
         this.state = state;
         switch (state.type) {
@@ -69,7 +75,7 @@ class LedgerUi extends Vue {
                 this._onRequest(state);
                 break;
             case LedgerApi.StateType.REQUEST_CANCELLING:
-                this._showInstructions('Please cancel the call on your Ledger');
+                this._showInstructions('', 'Please cancel the call on your Ledger');
                 break;
             case LedgerApi.StateType.ERROR:
                 this._onError(state);
@@ -84,14 +90,16 @@ class LedgerUi extends Vue {
 
     private _onStateConnecting() {
         this.loadingFailed = false;
-        // if ledger is already is already connected via USB and unlocked, establishing the API connection
+        // if ledger is already connected via USB and unlocked, establishing the API connection
         // usually takes < 250ms. Only if connecting takes longer, we show the connect instructions
-        if (this.connectInstructionsTimer !== -1) return;
-        this.connectInstructionsTimer = window.setTimeout(() => {
-            this.connectInstructionsTimer = -1;
+        if (this.connectTimer !== -1) return;
+        this.connectTimer = window.setTimeout(() => {
+            this.connectTimer = -1;
             if (LedgerApi.currentState.type !== LedgerApi.StateType.CONNECTING) return;
             this.state = LedgerApi.currentState;
-            this._showInstructions(null); // instructions shown via css
+            this._cycleConnectInstructions();
+            this.connectInstructionsTextInterval =
+                window.setInterval(() => this._cycleConnectInstructions(), LedgerUi.CONNECT_ANIMATION_STEP_DURATION);
         }, 300);
     }
 
@@ -104,34 +112,15 @@ class LedgerUi extends Vue {
                 break;
             case LedgerApi.RequestType.DERIVE_ACCOUNTS:
                 // not interactive, but takes ~6 seconds
-                this._showInstructions('Fetching Accounts...');
+                this._showInstructions('Fetching Accounts');
                 break;
             case LedgerApi.RequestType.CONFIRM_ADDRESS:
-                this._showInstructions('Confirm Address', [
-                    'Confirm that the address on your Ledger matches',
-                    request.params.addressToConfirm!,
-                ]);
+                this._showInstructions('Confirm Address',
+                    `Confirm that the address on your Ledger matches ${request.params.addressToConfirm!}`);
                 break;
             case LedgerApi.RequestType.SIGN_TRANSACTION:
-                const transaction: Nimiq.Transaction = request.params.transactionToSign!;
-                const instructions = [];
-                // TODO support cashlink creation and extra data
-                const isCashlinkCreation = false;
-                if (isCashlinkCreation) {
-                    instructions.push('Confirm on your Ledger if you want to create the following Cashlink:');
-                } else {
-                    instructions.push('Confirm on your Ledger if you want to send the following transaction:');
-                }
-                instructions.push(`From: ${transaction.sender.toUserFriendlyAddress()}`);
-                if (!isCashlinkCreation) {
-                    instructions.push(`To: ${transaction.recipient.toUserFriendlyAddress()}`);
-                    // if (transaction.data && transaction.data.length !== 0) {
-                    //     instructions.push(`Data: ${UTF8Tools.utf8ByteArrayToString(transaction.extraData)}`);
-                    // }
-                }
-                instructions.push(`Value: ${Nimiq.Policy.satoshisToCoins(transaction.value)}`);
-                instructions.push(`Fee: ${Nimiq.Policy.satoshisToCoins(transaction.fee)}`);
-                this._showInstructions('Confirm Transaction', instructions);
+                this._showInstructions('Confirm Transaction',
+                    'Check and confirm on your Ledger whether you want to send this transaction');
                 break;
             default:
                 throw new Error(`Unhandled request: ${request.type}`);
@@ -142,17 +131,17 @@ class LedgerUi extends Vue {
         const error = state.error!;
         switch (error.type) {
             case LedgerApi.ErrorType.LEDGER_BUSY:
-                this._showInstructions('Please cancel the previous request on your Ledger.');
+                this._showInstructions('', 'Please cancel the previous request on your Ledger.');
                 break;
             case LedgerApi.ErrorType.FAILED_LOADING_DEPENDENCIES:
                 this.loadingFailed = true;
                 this._onStateLoading(); // show as still loading / retrying
                 break;
             case LedgerApi.ErrorType.NO_BROWSER_SUPPORT:
-                this._showInstructions('Ledger not supported by browser or support not enabled.');
+                this._showInstructions('', 'Ledger not supported by browser or support not enabled.');
                 break;
             case LedgerApi.ErrorType.APP_OUTDATED:
-                this._showInstructions('Your Nimiq App is outdated', 'Please update using Ledger Live.');
+                this._showInstructions('', 'Your Nimiq App is outdated. Please update using Ledger Live.');
                 break;
             case LedgerApi.ErrorType.REQUEST_ASSERTION_FAILED:
                 this._showInstructions('Request failed', error.message);
@@ -162,21 +151,21 @@ class LedgerUi extends Vue {
         }
     }
 
-    private _showInstructions(title: string | null, text?: string | string[]): void {
-        this.$emit(!title && !text && this.illustration === 'idle'
-            ? LedgerUi.Events.NO_INFORMATION_SHOWN : LedgerUi.Events.INFORMATION_SHOWN);
-        if (!title) {
-            this.instructionsTitle = '';
-        } else {
-            this.instructionsTitle = title;
-        }
-        if (!text) {
-            this.instructionsText = [];
-        } else if (Array.isArray(text)) {
-            this.instructionsText = text;
-        } else {
-            this.instructionsText = [text];
-        }
+    private _cycleConnectInstructions() {
+        const instructions = [
+            '1. Connect your Ledger Device',
+            '2. Enter your Pin',
+            '3. Open the Nimiq App',
+        ];
+        const currentInstructionsIndex = instructions.indexOf(this.instructionsText);
+        const nextInstructionsIndex = (currentInstructionsIndex + 1) % instructions.length;
+        this._showInstructions('Connect Ledger', instructions[nextInstructionsIndex]);
+    }
+
+    private _showInstructions(title: string | null, text?: string): void {
+        this.$emit(!title && !text ? LedgerUi.Events.NO_INFORMATION_SHOWN : LedgerUi.Events.INFORMATION_SHOWN);
+        this.instructionsTitle = title || '';
+        this.instructionsText = text || '';
     }
 
     private get illustration() {
@@ -217,20 +206,6 @@ class LedgerUi extends Vue {
                 return 'confirm-transaction';
         }
     }
-
-    private get backgroundColor() {
-        if (this.state.type !== LedgerApi.StateType.ERROR) {
-            return 'nq-bg-light-blue';
-        } else if (this.state.error
-            && (this.state.error.type === LedgerApi.ErrorType.REQUEST_ASSERTION_FAILED
-                || this.state.error.type === LedgerApi.ErrorType.NO_BROWSER_SUPPORT)) {
-            // more serious errors (either a request failed unexpectedly or browser not supported (an error from which
-            // we can't recover))
-            return 'nq-bg-red';
-        } else {
-            return 'nq-bg-orange';
-        }
-    }
 }
 
 namespace LedgerUi { // tslint:disable-line:no-namespace
@@ -246,28 +221,20 @@ export default LedgerUi;
 <style scoped>
     .ledger-ui {
         width: 100%;
-        overflow: hidden;
         text-align: center;
-        padding: 3rem 0;
         display: flex;
         flex-direction: column;
 
         --ledger-connect-animation-duration: 8s;
     }
 
-    .ledger-ui .instructions-title {
-        margin-left: 3rem;
-        margin-right: 3rem;
-    }
-
-    .ledger-ui .instructions-text {
-        opacity: .9;
-        margin: 0;
-        line-height: 1.4;
+    .ledger-ui .loader {
+        flex-grow: 1;
+        overflow: hidden;
     }
 
     .ledger-ui .ledger-device-container {
-        width: 50%;
+        width: 60%;
         margin: auto;
         position: relative;
     }
@@ -374,11 +341,6 @@ export default LedgerUi;
         animation: ledger-show-screen-app var(--ledger-connect-animation-duration) both infinite;
         display: flex;
     }
-    .ledger-ui[illustration="connecting"] .instructions-text::after {
-        content: "";
-        text-align: center;
-        animation: ledger-connect-instructions-text var(--ledger-connect-animation-duration) both infinite linear;
-    }
 
     @keyframes ledger-connect-cable {
         0% {
@@ -421,26 +383,6 @@ export default LedgerUi;
             opacity: 0;
         }
         87%, 98% {
-            opacity: 1;
-        }
-    }
-
-    @keyframes ledger-connect-instructions-text {
-        0%, 33% {
-            content: "1. Connect your Ledger Device.";
-        }
-        34%, 66% {
-            content: "2. Enter your Pin.";
-        }
-        67%, 100% {
-            content: "3. Open the Nimiq App.";
-        }
-
-        0%, 33.5%, 66.5%, 100% {
-            opacity: 0;
-        }
-
-        1%, 32%, 35%, 65%, 68%, 99% {
             opacity: 1;
         }
     }
