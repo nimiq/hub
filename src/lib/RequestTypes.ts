@@ -1,5 +1,6 @@
 import { WalletType, WalletInfoEntry } from './WalletInfo';
 import { TX_VALIDITY_WINDOW, TX_MIN_VALIDITY_DURATION } from './Constants';
+import { State } from '@nimiq/rpc';
 
 export enum RequestType {
     LIST = 'list',
@@ -286,7 +287,7 @@ export type RpcResult = SignTransactionResult
                       | ListResult;
 
 export class AccountsRequest {
-    public static parse(request: RpcRequest, requestType?: RequestType): ParsedRpcRequest | null {
+    public static parse(request: RpcRequest, state: State, requestType?: RequestType): ParsedRpcRequest | null {
         switch (request.kind || requestType) {
             case RequestType.SIGN_TRANSACTION:
                 // Because the switch statement is not definitely using 'request.kind' as the condition,
@@ -311,6 +312,9 @@ export class AccountsRequest {
                 // Typescript cannot infer what type the request variable is from the control flow,
                 // thus we need to force-cast it here:
                 request = request as CheckoutRequest;
+                if (request.shopLogoUrl && new URL(request.shopLogoUrl).origin !== state.origin) {
+                    throw new Error('shopLogoUrl must have same origin as caller website');
+                }
                 return {
                     kind: RequestType.CHECKOUT,
                     appName: request.appName,

@@ -68,7 +68,6 @@ export default class Checkout extends Vue {
     private hasBalances: boolean = false;
 
     private mounted() {
-        console.log(this.request);
         this.getHeight();
         this.getBalances();
     }

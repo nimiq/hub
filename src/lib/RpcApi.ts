@@ -109,7 +109,12 @@ export default class RpcApi {
             // Server listener
             this._server.onRequest(requestType, async (state, arg: RpcRequest) => {
                 this._staticStore.rpcState = state;
-                this._staticStore.request = AccountsRequest.parse(arg, requestType) || undefined;
+                try {
+                    this._staticStore.request = AccountsRequest.parse(arg, state, requestType) || undefined;
+                } catch (error) {
+                    state.reply(ResponseStatus.ERROR, error);
+                    return;
+                }
 
                 this._store.commit('setIncomingRequest', {
                     hasRpcState: !!this._staticStore.rpcState,
@@ -122,7 +127,7 @@ export default class RpcApi {
 
     private _recoverState(state: any) {
         const rpcState = RpcState.fromJSON(state.rpcState);
-        const request = AccountsRequest.parse(state.request);
+        const request = AccountsRequest.parse(state.request, state);
         const keyguardRequest = state.keyguardRequest;
         const originalRouteName = state.originalRouteName;
 
