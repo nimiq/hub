@@ -104,18 +104,18 @@ export default class RpcApi {
         };
     }
 
-    private _registerAccountsApis(requests: RequestType[]) {
-        for (const request of requests) {
+    private _registerAccountsApis(requestTypes: RequestType[]) {
+        for (const requestType of requestTypes) {
             // Server listener
-            this._server.onRequest(request, async (state, arg: RpcRequest) => {
+            this._server.onRequest(requestType, async (state, arg: RpcRequest) => {
                 this._staticStore.rpcState = state;
-                this._staticStore.request = AccountsRequest.parse(arg, request) || undefined;
+                this._staticStore.request = AccountsRequest.parse(arg, requestType) || undefined;
 
                 this._store.commit('setIncomingRequest', {
                     hasRpcState: !!this._staticStore.rpcState,
                     hasRequest: !!this._staticStore.request,
                 });
-                this._router.push({name: request});
+                this._router.push({name: requestType});
             });
         }
     }
