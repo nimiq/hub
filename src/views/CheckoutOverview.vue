@@ -20,6 +20,7 @@ import { WalletInfo } from '../lib/WalletInfo';
 import { RequestType, ParsedCheckoutRequest } from '../lib/RequestTypes';
 import staticStore, { Static } from '../lib/StaticStore';
 import Network from '../components/Network.vue';
+import { TX_VALIDITY_WINDOW } from '@/lib/Constants';
 
 @Component({components: {Amount, PageFooter, CheckoutDetails, Network}})
 export default class CheckoutOverview extends Vue {
@@ -48,6 +49,11 @@ export default class CheckoutOverview extends Vue {
             return;
         }
 
+        // The next block is the earliest for which tx are accepted by standard miners
+        const validityStartHeight = this.height + 1
+            - TX_VALIDITY_WINDOW
+            + this.request.validityDuration;
+
         const request: KSignTransactionRequest = {
             layout: 'checkout',
             shopOrigin: this.rpcState.origin,
@@ -65,7 +71,7 @@ export default class CheckoutOverview extends Vue {
             recipientLabel: undefined, // TODO: recipient label
             value: this.request.value,
             fee: this.request.fee || 0, // TODO: proper fee estimation
-            validityStartHeight: this.height,
+            validityStartHeight,
             data: this.request.data,
             flags: this.request.flags,
             networkId: this.request.networkId,
@@ -93,7 +99,7 @@ export default class CheckoutOverview extends Vue {
 
     @Watch('height')
     private logHeightChange(height: number, oldHeight: number) {
-        console.log(`Height changed from ${oldHeight} to ${height}`);
+        console.debug(`Got height: ${height} (was ${oldHeight})`);
     }
 
     private async _setHeightFromApi() {

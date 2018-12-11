@@ -1,4 +1,5 @@
 import { WalletType, WalletInfoEntry } from './WalletInfo';
+import { TX_VALIDITY_WINDOW, TX_MIN_VALIDITY_DURATION } from './Constants';
 
 export enum RequestType {
     LIST = 'list',
@@ -82,6 +83,7 @@ export interface CheckoutRequest {
     extraData?: Uint8Array;
     flags?: number;
     networkId?: number;
+    validityDuration?: number;
 }
 
 export interface ParsedCheckoutRequest {
@@ -94,6 +96,7 @@ export interface ParsedCheckoutRequest {
     data?: Uint8Array;
     flags?: number;
     networkId?: number;
+    validityDuration: number;
 }
 
 export interface SignMessageRequest {
@@ -321,6 +324,13 @@ export class AccountsRequest {
                     data: request.extraData,
                     flags: request.flags,
                     networkId: request.networkId,
+                    validityDuration: !request.validityDuration ? TX_VALIDITY_WINDOW : Math.min(
+                        TX_VALIDITY_WINDOW,
+                        Math.max(
+                            TX_MIN_VALIDITY_DURATION,
+                            request.validityDuration,
+                        ),
+                    ),
                 } as ParsedCheckoutRequest;
             case RequestType.SIGNUP:
                 request = request as SignupRequest;
@@ -417,6 +427,7 @@ export class AccountsRequest {
                     extraData: request.data,
                     flags: request.flags,
                     networkId: request.networkId,
+                    validityDuration: request.validityDuration,
                 } as CheckoutRequest;
             case RequestType.SIGNUP:
                 return {
