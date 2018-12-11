@@ -1,6 +1,10 @@
 <template>
     <div class="container">
-        <SmallPage>
+        <SmallPage v-if="height === 0 || !hasBalances">
+            <Loader title="Updating your balances" status="Connecting to Nimiq..."/>
+        </SmallPage>
+
+        <SmallPage v-else>
             <PaymentInfoLine v-if="rpcState"
                 :amount="request.value"
                 :fee="request.fee"
@@ -17,8 +21,6 @@
                 :minBalance="request.value + request.fee"
                 @account-selected="accountSelected"
                 @login="login"/>
-
-            <Loader class="small" v-if="height === 0 || !hasBalances" status="Updating your balances..."/>
 
             <AccountInfoScreen :class="{'active': showMerchantInfo}"
                 :address="request.recipient.toUserFriendlyAddress()"
@@ -234,16 +236,16 @@ export default class Checkout extends Vue {
         height: 70rem;
     }
 
+    .loader {
+        position: absolute;
+        left: 0;
+        top: 0;
+    }
+
     .nq-h1 {
         margin-bottom: 1rem;
         line-height: 1;
         text-align: center;
-    }
-
-    .loader {
-        height: 21rem;
-        z-index: unset;
-        flex-shrink: 0;
     }
 
     .account-info {

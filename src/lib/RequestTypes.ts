@@ -312,8 +312,12 @@ export class AccountsRequest {
                 // Typescript cannot infer what type the request variable is from the control flow,
                 // thus we need to force-cast it here:
                 request = request as CheckoutRequest;
-                if (request.shopLogoUrl && new URL(request.shopLogoUrl).origin !== state.origin) {
-                    throw new Error('shopLogoUrl must have same origin as caller website');
+                if (request.shopLogoUrl && state.origin && new URL(request.shopLogoUrl).origin !== state.origin) {
+                    throw new Error(
+                        'shopLogoUrl must have same origin as caller website. Image at ' +
+                        request.shopLogoUrl +
+                        ' is not on caller origin ' +
+                        state.origin);
                 }
                 return {
                     kind: RequestType.CHECKOUT,
