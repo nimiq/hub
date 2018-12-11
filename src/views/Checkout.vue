@@ -20,7 +20,7 @@
 
             <Loader v-if="height === 0 || !hasBalances" status="Updating your balances..."/>
 
-            <AccountInfoScreen v-if="showMerchantInfo"
+            <AccountInfoScreen :class="{'active': showMerchantInfo}"
                 :address="request.recipient.toUserFriendlyAddress()"
                 :origin="rpcState.origin"
                 :shopLogoUrl="request.shopLogoUrl"
@@ -251,5 +251,13 @@ export default class Checkout extends Vue {
         position: absolute;
         left: 0;
         top: 0;
+        opacity: 0;
+        z-index: -1;
+        transition: opacity 300ms, z-index 300ms;
+    }
+
+    .account-info.active {
+        z-index: 29;
+        opacity: 1;
     }
 </style>
