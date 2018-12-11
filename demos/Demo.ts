@@ -135,6 +135,7 @@ class Demo {
 
             return {
                 appName: 'Accounts Demos',
+                shopLogoUrl: 'http://localhost:8080/nimiq.png',
                 recipient: 'NQ63 U7XG 1YYE D6FA SXGG 3F5H X403 NBKN JLDU',
                 value,
                 fee: txFee,
