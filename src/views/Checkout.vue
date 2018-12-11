@@ -18,7 +18,7 @@
                 @account-selected="accountSelected"
                 @login="login"/>
 
-            <Loader v-if="height === 0 || !hasBalances" status="Updating your balances..."/>
+            <Loader class="small" v-if="height === 0 || !hasBalances" status="Updating your balances..."/>
 
             <AccountInfoScreen :class="{'active': showMerchantInfo}"
                 :address="request.recipient.toUserFriendlyAddress()"
@@ -242,7 +242,7 @@ export default class Checkout extends Vue {
     }
 
     .loader {
-        height: 25rem;
+        height: 21rem;
         z-index: unset;
         flex-shrink: 0;
     }
