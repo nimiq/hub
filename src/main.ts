@@ -11,7 +11,7 @@ Vue.config.productionTip = false;
 // Set up Identicon SVG file path
 // FIXME Need to find a better method to automatically detect this
 // @ts-ignore
-self.NIMIQ_IQONS_SVG_PATH = '/img/iqons.min.cc877caa.svg';
+self.NIMIQ_IQONS_SVG_PATH = '/img/iqons.min.72f3b689.svg';
 
 const rpcApi = new RpcApi(store, staticStore, router);
 Vue.prototype.$rpc = rpcApi;

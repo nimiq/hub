@@ -1,11 +1,11 @@
 <template>
     <div class="visible-area">
         <div class="multi-pages" :style="`transform: translate3d(-${(page - 1) * 100}%, 0, 0)`">
-            <WalletSelector @wallet-selected="walletSelected"
+            <!-- <WalletSelector @wallet-selected="walletSelected"
                             @account-selected="accountSelected"
                             @add-wallet="addWallet"
                             @back="backToPrevious"
-                            :wallets="wallets"/>
+                            :wallets="wallets"/> -->
             <AccountSelector
                     @account-selected="accountSelected"
                     @switch-wallet="switchWallet"
@@ -21,12 +21,12 @@
 
 <script lang="ts">
 import { Component, Emit, Vue } from 'vue-property-decorator';
-import { AccountSelector, WalletSelector } from '@nimiq/vue-components';
+import { AccountSelector /*, WalletSelector*/ } from '@nimiq/vue-components';
 import { AccountInfo } from '../lib/AccountInfo';
 import { WalletInfo, WalletType } from '../lib/WalletInfo';
 import { State } from 'vuex-class';
 
-@Component({components: {AccountSelector, WalletSelector}})
+@Component({components: {AccountSelector/*, WalletSelector*/}})
 export default class ActiveAccountSelector extends Vue {
     @State private wallets!: WalletInfo[];
 

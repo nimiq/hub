@@ -31,7 +31,6 @@ export interface SignTransactionRequest {
     fee?: number;
     extraData?: Uint8Array;
     flags?: number;
-    networkId?: number;
     validityStartHeight: number; // FIXME To be made optional when accounts manager has its own network
 }
 
@@ -46,7 +45,6 @@ export interface ParsedSignTransactionRequest {
     fee?: number;
     data?: Uint8Array;
     flags?: number;
-    networkId?: number;
     validityStartHeight: number; // FIXME To be made optional when accounts manager has its own network
 }
 
@@ -83,7 +81,6 @@ export interface CheckoutRequest {
     fee?: number;
     extraData?: Uint8Array;
     flags?: number;
-    networkId?: number;
     validityDuration?: number;
 }
 
@@ -97,7 +94,6 @@ export interface ParsedCheckoutRequest {
     fee?: number;
     data?: Uint8Array;
     flags?: number;
-    networkId?: number;
     validityDuration: number;
 }
 
@@ -308,7 +304,6 @@ export class AccountsRequest {
                     fee: request.fee,
                     data: request.extraData,
                     flags: request.flags,
-                    networkId: request.networkId,
                     validityStartHeight: request.validityStartHeight,
                 } as ParsedSignTransactionRequest;
             case RequestType.CHECKOUT:
@@ -326,7 +321,6 @@ export class AccountsRequest {
                     fee: request.fee,
                     data: request.extraData,
                     flags: request.flags,
-                    networkId: request.networkId,
                     validityDuration: !request.validityDuration ? TX_VALIDITY_WINDOW : Math.min(
                         TX_VALIDITY_WINDOW,
                         Math.max(
@@ -416,7 +410,6 @@ export class AccountsRequest {
                     fee: request.fee,
                     extraData: request.data,
                     flags: request.flags,
-                    networkId: request.networkId,
                     validityStartHeight: request.validityStartHeight,
                 } as SignTransactionRequest;
             case RequestType.CHECKOUT:
@@ -430,7 +423,6 @@ export class AccountsRequest {
                     fee: request.fee,
                     extraData: request.data,
                     flags: request.flags,
-                    networkId: request.networkId,
                     validityDuration: request.validityDuration,
                 } as CheckoutRequest;
             case RequestType.SIGNUP:

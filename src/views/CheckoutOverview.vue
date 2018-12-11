@@ -75,7 +75,6 @@ export default class CheckoutOverview extends Vue {
             validityStartHeight,
             data: this.request.data,
             flags: this.request.flags,
-            networkId: this.request.networkId,
         };
 
         const storedRequest = Object.assign({}, request, {

@@ -655,18 +655,19 @@
   version "0.0.11"
   resolved "https://registry.yarnpkg.com/@nimiq/rpc/-/rpc-0.0.11.tgz#7230365640663827fb115e0d6456222de3b1c5e3"
 
-"@nimiq/style@^0.3.4":
-  version "0.3.4"
-  resolved "https://registry.yarnpkg.com/@nimiq/style/-/style-0.3.4.tgz#dec68f59ba280830b39b1616653f04411905d14f"
+"@nimiq/style@^0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@nimiq/style/-/style-0.4.0.tgz#a12307ec1a487d61996dc1867a16a950181768a7"
+  integrity sha512-7QqwW6KIUWxh6yqQlyVx/r3SxKk2pOqQN4rpDADPLXeoBYf/dXj6v6PFAkEln4lsX5xs9QlsdMR4v8Dymz1eMg==
 
 "@nimiq/utils@^0.1.0":
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/@nimiq/utils/-/utils-0.1.0.tgz#4586f2fad3909311484513c9e23dceae838c6dda"
   integrity sha512-oN0AyYPkSowaAlgA1MjdbWjWzVHdd20cVH8uY9jpD+MulAl5s1yHxgNQKjgJjMZQFQMMOJjYHEPnf850t8V21g==
 
-"@nimiq/vue-components@https://github.com/nimiq/vue-components.git#build/accounts":
+"@nimiq/vue-components@https://github.com/nimiq/vue-components.git#build/accounts-new":
   version "0.1.0"
-  resolved "https://github.com/nimiq/vue-components.git#7b9217daa1aa53e6c4dd1d68bd01cca36b8cfccf"
+  resolved "https://github.com/nimiq/vue-components.git#8622ad0868329df604676306402cd34291458dc8"
   dependencies:
     vue "^2.5.17"
     vue-property-decorator "^7.0.0"

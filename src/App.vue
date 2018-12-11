@@ -132,7 +132,7 @@ export default class App extends Vue {
         letter-spacing: 0.143em;
     }
 
-    .container {
+    #app > .container {
         display: flex;
         flex-direction: column;
         align-items: center;

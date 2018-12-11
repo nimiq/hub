@@ -7,7 +7,7 @@
                 <PageBody>
                     <div class="wallet-label" v-if="walletInfo && keyguardResult.keyType !== 0 /* LEGACY */">
                         <div class="wallet-icon nq-icon" :class="walletIconClass"></div>
-                        <LabelInput :value="walletInfo.label" @changed="onWalletLabelChange"/>
+                        <Input :value="walletInfo.label" @changed="onWalletLabelChange"/>
                     </div>
 
                     <AccountList v-if="walletInfo" :accounts="accountsArray"
@@ -35,9 +35,9 @@ import staticStore, { Static } from '@/lib/StaticStore';
 import { PageHeader, PageBody, AccountList, PageFooter, SmallPage } from '@nimiq/vue-components';
 import Loader from '@/components/Loader.vue';
 import WalletInfoCollector from '@/lib/WalletInfoCollector';
-import LabelInput from '@/components/LabelInput.vue';
+import Input from '@/components/Input.vue';
 
-@Component({components: {PageHeader, PageBody, LabelInput, AccountList, Loader, PageFooter, SmallPage}})
+@Component({components: {PageHeader, PageBody, Input, AccountList, Loader, PageFooter, SmallPage}})
 export default class LoginSuccess extends Vue {
     @Static private request!: ParsedLoginRequest;
     @State private keyguardResult!: ImportResult;
