@@ -2,11 +2,11 @@
 
 import { WalletInfoEntry, WalletType } from './WalletInfo';
 import { Utf8Tools } from '@nimiq/utils';
+import { LABEL_MAX_LENGTH } from '@/lib/Constants';
 
 class CookieJar {
     public static readonly VERSION = 1;
     public static readonly MAX_COOKIE_SIZE = 2500; // byte (3000 would propable be safe, but we'll be safer for now)
-    public static readonly MAX_LABEL_LENGTH = 63;
 
     public static readonly ENCODED_ACCOUNT_SIZE =
            1 // account label length
@@ -114,12 +114,12 @@ class CookieJar {
     public static cutLabel(label: string): Uint8Array {
         let labelBytes =  Utf8Tools.stringToUtf8ByteArray(label);
 
-        if (labelBytes.length <= this.MAX_LABEL_LENGTH) return labelBytes;
+        if (labelBytes.length <= LABEL_MAX_LENGTH) return labelBytes;
 
         // Don't output warning in NodeJS environment (when running tests)
         if (typeof global === 'undefined') console.warn('Label will be shortened for cookie:', label);
 
-        labelBytes = labelBytes.slice(0, this.MAX_LABEL_LENGTH);
+        labelBytes = labelBytes.slice(0, LABEL_MAX_LENGTH);
 
         // Cut off last byte until byte array is valid utf-8
         while (!Utf8Tools.isValidUtf8(labelBytes)) labelBytes = labelBytes.slice(0, labelBytes.length - 1);

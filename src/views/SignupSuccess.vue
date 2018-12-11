@@ -24,13 +24,14 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { PageHeader, PageBody, Account, LabelInput, SmallPage } from '@nimiq/vue-components';
+import { PageHeader, PageBody, Account, SmallPage } from '@nimiq/vue-components';
 import { AccountInfo } from '../lib/AccountInfo';
 import { WalletInfo, WalletType } from '../lib/WalletInfo';
 import { State, Getter } from 'vuex-class';
 import { WalletStore } from '../lib/WalletStore';
 import { CreateResult } from '@nimiq/keyguard-client';
 import { SignupResult } from '@/lib/RequestTypes';
+import LabelInput from '@/components/LabelInput.vue';
 
 @Component({components: {PageHeader, PageBody, Account, LabelInput, SmallPage}})
 export default class SignupSuccess extends Vue {

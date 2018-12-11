@@ -32,9 +32,10 @@ import { WalletInfo, WalletType } from '../lib/WalletInfo';
 import { ImportResult } from '@nimiq/keyguard-client';
 import { WalletStore } from '@/lib/WalletStore';
 import staticStore, { Static } from '@/lib/StaticStore';
-import { PageHeader, PageBody, LabelInput, AccountList, PageFooter, SmallPage } from '@nimiq/vue-components';
+import { PageHeader, PageBody, AccountList, PageFooter, SmallPage } from '@nimiq/vue-components';
 import Loader from '@/components/Loader.vue';
 import WalletInfoCollector from '@/lib/WalletInfoCollector';
+import LabelInput from '@/components/LabelInput.vue';
 
 @Component({components: {PageHeader, PageBody, LabelInput, AccountList, Loader, PageFooter, SmallPage}})
 export default class LoginSuccess extends Vue {
