@@ -16,7 +16,7 @@ export default class SignMessageErrorHandler extends ErrorHandler {
                 // This was a hand-through request, let it be a hand-through result
                 return false;
             }
-            this.$router.push({name: `${RequestType.SIGN_MESSAGE}-overview`});
+            this.$rpc.routerReplace(`${RequestType.SIGN_MESSAGE}-overview`);
             return true;
         }
         return false;
