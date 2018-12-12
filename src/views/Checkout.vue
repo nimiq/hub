@@ -70,37 +70,35 @@ export default class Checkout extends Vue {
     private hasBalances: boolean = false;
 
     private mounted() {
-        this.getHeight();
         this.getBalances();
-    }
-
-    private async getHeight() {
-        try {
-            await this.setHeightFromApi();
-        } catch (e) {
-            console.error(e);
-        }
     }
 
     private async getBalances() {
         const network = (this.$refs.network as Network);
-        await network.connect();
 
-        const balancePromises: Array<Promise<WalletInfo>> = this.wallets.map((wallet: WalletInfo) => {
-            const addresses = Array.from(wallet.accounts.keys());
-
-            return network.getBalances(addresses).then((balances: Map<string, number>) => {
-                for (const address of addresses) {
-                    const accountInfo = wallet.accounts.get(address)!;
-                    accountInfo.balance = Nimiq.Policy.coinsToSatoshis(balances.get(address)!);
-                    wallet.accounts.set(address, accountInfo);
-                }
-                return wallet;
-            });
+        // Build mapping from accounts to the index of their respective wallet in the wallets array
+        const accountsToWallets: Map<string, number> = new Map();
+        this.wallets.forEach((wallet: WalletInfo, index: number) => {
+            for (const address of Array.from(wallet.accounts.keys())) {
+                accountsToWallets.set(address, index);
+            }
         });
 
-        const wallets = await Promise.all(balancePromises);
+        // Get balances through pico consensus, also triggers head-change event
+        const balances: Map<string, number> = await network.connectPico(Array.from(accountsToWallets.keys()));
 
+        // Copy wallets to be able to write to them
+        const wallets = this.wallets.slice(0);
+
+        // Add received account balances to correct AccountInfos in correct wallets
+        for (const [address, balance] of balances) {
+            const index = accountsToWallets.get(address)!;
+            const accountInfo = wallets[index].accounts.get(address)!;
+            accountInfo.balance = Nimiq.Policy.coinsToSatoshis(balance);
+            wallets[index].accounts.set(address, accountInfo);
+        }
+
+        // Store new balances
         for (const wallet of wallets) {
             // Update IndexedDB
             await WalletStore.Instance.put(wallet);
@@ -108,6 +106,8 @@ export default class Checkout extends Vue {
             // Update Vuex
             this.$addWallet(wallet);
         }
+
+        // Remove loader
         this.hasBalances = true;
     }
 
@@ -116,18 +116,12 @@ export default class Checkout extends Vue {
         console.debug(`Got height: ${height} (was ${oldHeight})`);
     }
 
-    private async setHeightFromApi() {
-        const raw = await fetch('https://test-api.nimiq.watch/latest/1');
-        const result = await raw.json();
-        this.height = result[0].height;
-    }
-
     private onHeadChange(head: Nimiq.BlockHeader) {
         this.height = head.height;
     }
 
     private accountSelected(walletId: string, address: string) {
-        if (!this.height) return; // TODO: Make it impossible for user to click when height is not ready
+        if (!this.height) return; // TODO: Make it impossible for users to click when height is not ready
 
         const walletInfo = this.wallets.find((wallet: WalletInfo) => wallet.id === walletId);
         if (!walletInfo) {
@@ -235,6 +229,7 @@ export default class Checkout extends Vue {
             if (wallet.type !== WalletType.LEGACY) return true;
 
             const accountArray = Array.from(wallet.accounts.entries())[0];
+            accountArray[1].walletId = wallet.id;
             singleAccounts.set(accountArray[0], accountArray[1]);
             return false;
         });

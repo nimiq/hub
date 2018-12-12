@@ -8,6 +8,8 @@ export class AccountInfo {
         );
     }
 
+    public walletId?: string;
+
     public constructor(
         public path: string,
         public label: string,

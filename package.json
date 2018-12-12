@@ -13,7 +13,7 @@
     },
     "dependencies": {
         "@nimiq/keyguard-client": "^0.1.2",
-        "@nimiq/network-client": "^0.1.0",
+        "@nimiq/network-client": "^0.1.3",
         "@nimiq/rpc": "^0.0.11",
         "@nimiq/style": "^0.4.0",
         "@nimiq/utils": "^0.1.0",
