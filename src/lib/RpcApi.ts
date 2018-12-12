@@ -61,6 +61,11 @@ export default class RpcApi {
         return client;
     }
 
+    public routerReplace(routeName: string) {
+        const query = this._parseUrlParams(window.location.search);
+        this._router.replace({name: routeName, query});
+    }
+
     public resolve(result: RpcResult) {
         this._reply(ResponseStatus.OK, result);
     }
@@ -114,9 +119,24 @@ export default class RpcApi {
                     hasRpcState: !!this._staticStore.rpcState,
                     hasRequest: !!this._staticStore.request,
                 });
-                this._router.push({name: request});
+
+                this.routerReplace(request);
             });
         }
+    }
+
+    private _parseUrlParams(query: string) {
+        const params: {[key: string]: string} = {};
+        if (!query) return params;
+        const keyValues = query.substr(1).split('&')
+            .map((keyValueString) => keyValueString.split('='));
+
+        for (const keyValue of keyValues) {
+            // @ts-ignore
+            params[keyValue[0]] = window.decodeURIComponent(keyValue[1]);
+        }
+
+        return params;
     }
 
     private _recoverState(state: any) {
@@ -151,7 +171,7 @@ export default class RpcApi {
                 // when returning from the Keyguard's sign-transaction request, the original request kind that
                 // was given to the AccountsManager is passed here and the keyguardResponseRouter is turned
                 // from an object into a function instead.
-                this._router.push({name: keyguardResponseRouter(command, this._staticStore.request!.kind).resolve});
+                this.routerReplace(keyguardResponseRouter(command, this._staticStore.request!.kind).resolve);
             }, (error, state) => {
                 // Recover state
                 this._recoverState(state);
@@ -164,7 +184,7 @@ export default class RpcApi {
                 // Set result
                 this._store.commit('setKeyguardResult', error);
 
-                this._router.push({name: keyguardResponseRouter(command, this._staticStore.request!.kind).reject});
+                this.routerReplace(keyguardResponseRouter(command, this._staticStore.request!.kind).reject);
             });
         }
     }

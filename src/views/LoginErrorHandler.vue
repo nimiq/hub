@@ -11,7 +11,7 @@ export default class LoginErrorHandler extends ErrorHandler {
     protected requestSpecificErrors(): boolean {
         if (this.keyguardResult instanceof Error
             && this.keyguardResult.message === Errors.Messages.GOTO_CREATE) {
-            this.$router.push({name: RequestType.SIGNUP});
+            this.$rpc.routerReplace(RequestType.SIGNUP);
             return true;
         }
         return false;
