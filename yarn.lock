@@ -667,7 +667,7 @@
 
 "@nimiq/vue-components@https://github.com/nimiq/vue-components.git#build/accounts-new":
   version "0.1.0"
-  resolved "https://github.com/nimiq/vue-components.git#8622ad0868329df604676306402cd34291458dc8"
+  resolved "https://github.com/nimiq/vue-components.git#6db0e4f0b9aa03cead985d05c301ca0dcfb9be20"
   dependencies:
     vue "^2.5.17"
     vue-property-decorator "^7.0.0"
@@ -7928,9 +7928,14 @@ vue-template-es2015-compiler@^1.6.0:
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/vue-template-es2015-compiler/-/vue-template-es2015-compiler-1.6.0.tgz#dc42697133302ce3017524356a6c61b7b69b4a18"
 
-vue@^2.5.16, vue@^2.5.17:
+vue@^2.5.16:
   version "2.5.17"
   resolved "https://registry.yarnpkg.com/vue/-/vue-2.5.17.tgz#0f8789ad718be68ca1872629832ed533589c6ada"
+
+vue@^2.5.17:
+  version "2.5.20"
+  resolved "https://registry.yarnpkg.com/vue/-/vue-2.5.20.tgz#79fff9ccaa10cc37e7a7239b4c7adfac94df81ba"
+  integrity sha512-kVLZi8RWOk8qwAt+a0bVDy9VV5Zzcnj0fLCMyKLx1dmEBjqmYJYRWHvPwiypiJBtJkdmROy5NP5hyDqTdfBcvQ==
 
 vuex-class@^0.3.1:
   version "0.3.1"

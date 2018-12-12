@@ -17,7 +17,7 @@
             <h1 class="nq-h1">Choose an account to pay</h1>
 
             <AccountSelector
-                :wallets="wallets"
+                :wallets="processedWallets"
                 :minBalance="request.value + request.fee"
                 @account-selected="accountSelected"
                 @login="login"/>
@@ -47,7 +47,7 @@ import { State as RpcState } from '@nimiq/rpc';
 import staticStore, { Static } from '@/lib/StaticStore';
 import { WalletStore } from '@/lib/WalletStore';
 import { AccountInfo } from '@/lib/AccountInfo';
-import { WalletInfo } from '@/lib/WalletInfo';
+import { WalletInfo, WalletType } from '@/lib/WalletInfo';
 import { State, Mutation } from 'vuex-class';
 import { TX_VALIDITY_WINDOW } from '@/lib/Constants';
 import Network from '@/components/Network.vue';
@@ -226,6 +226,28 @@ export default class Checkout extends Vue {
     @Emit()
     private close() {
         this.$rpc.reject(new Error('CANCEL'));
+    }
+
+    private get processedWallets(): WalletInfo[] {
+        const singleAccounts = new Map<string, AccountInfo>();
+
+        const filteredWallets = this.wallets.filter((wallet) => {
+            if (wallet.type !== WalletType.LEGACY) return true;
+
+            const accountArray = Array.from(wallet.accounts.entries())[0];
+            singleAccounts.set(accountArray[0], accountArray[1]);
+            return false;
+        });
+
+        filteredWallets.push(new WalletInfo(
+            'LEGACY',
+            'Single Accounts',
+            singleAccounts,
+            [],
+            WalletType.LEGACY,
+        ));
+
+        return filteredWallets;
     }
 }
 </script>
