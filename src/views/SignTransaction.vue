@@ -43,7 +43,6 @@ export default class SignTransaction extends Vue {
             validityStartHeight: this.request.validityStartHeight,
             data: this.request.data,
             flags: this.request.flags,
-            networkId: this.request.networkId,
         };
 
         const storedRequest = Object.assign({}, request, {

@@ -57,7 +57,7 @@ export default class CheckoutOverview extends Vue {
         const request: KSignTransactionRequest = {
             layout: 'checkout',
             shopOrigin: this.rpcState.origin,
-            shopLogoUrl: this.request.shopLogoUrl,
+            // shopLogoUrl: this.request.shopLogoUrl,
             appName: this.request.appName,
 
             keyId: wallet.id,
@@ -75,7 +75,6 @@ export default class CheckoutOverview extends Vue {
             validityStartHeight,
             data: this.request.data,
             flags: this.request.flags,
-            networkId: this.request.networkId,
         };
 
         const storedRequest = Object.assign({}, request, {

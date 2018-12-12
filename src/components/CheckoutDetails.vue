@@ -49,7 +49,7 @@ export default class CheckoutDetails extends Vue {
 
     @Emit()
     private changeAccount() {
-        this.$router.push({name: `${RequestType.CHECKOUT}-change-account`});
+        this.$rpc.routerPush(`${RequestType.CHECKOUT}-change-account`);
     }
 }
 </script>
