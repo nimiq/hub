@@ -141,6 +141,46 @@ class LedgerApi {
         return !!LedgerApi._currentRequest;
     }
 
+    /**
+     * Get the walletId of the currently connected ledger.
+     * If no ledger is connected, it waits for one to be connected.
+     * Throws, if the request is cancelled.
+     *
+     * If currently a request to the ledger is in process, this call does not require an additional
+     * request to the Ledger. Thus, if you want to know the walletId in conjunction with another
+     * request, try to call this method (after initiating the other request but before it finishes).
+     */
+    public static async getWalletId(): Promise<string> {
+        if (LedgerApi._currentlyConnectedWalletId) return LedgerApi._currentlyConnectedWalletId;
+        // we have to wait for connection of ongoing request or initiate a call ourselves
+        if (LedgerApi.isBusy) {
+            // already a request going on. Just wait for it to connect.
+            return new Promise<string>((resolve, reject) => {
+                const onConnect = (walletId: string) => {
+                    LedgerApi.off(LedgerApi.EventType.CONNECTED, onConnect);
+                    LedgerApi.off(LedgerApi.EventType.REQUEST_CANCELLED, onCancel);
+                    resolve(walletId);
+                };
+                const onCancel = () => {
+                    LedgerApi.off(LedgerApi.EventType.CONNECTED, onConnect);
+                    LedgerApi.off(LedgerApi.EventType.REQUEST_CANCELLED, onCancel);
+                    reject();
+                };
+                LedgerApi.on(LedgerApi.EventType.CONNECTED, onConnect);
+                LedgerApi.on(LedgerApi.EventType.REQUEST_CANCELLED, onCancel);
+            });
+        } else {
+            const request = new LedgerApiRequest(LedgerApi.RequestType.GET_WALLET_ID,
+                (): Promise<string> => {
+                    // we're connected when the request get's executed
+                    return Promise.resolve(LedgerApi._currentlyConnectedWalletId!);
+                },
+                {},
+            );
+            return LedgerApi._callLedger(request);
+        }
+    }
+
     public static on(eventType: LedgerApi.EventType, listener: LedgerApiListener): void {
         if (!LedgerApi._listeners.has(eventType)) {
             LedgerApi._listeners.set(eventType, [listener]);
@@ -157,24 +197,33 @@ class LedgerApi {
         listenersForEvent.splice(index, 1);
     }
 
+    public static once(eventType: LedgerApi.EventType, listener: LedgerApiListener): void {
+        const onceListener: LedgerApiListener = ((...args: any[]) => {
+            LedgerApi.off(eventType, onceListener);
+            listener(...args);
+        });
+        LedgerApi.on(eventType, onceListener);
+    }
+
     public static getBip32PathForKeyId(keyId: number): string {
         return `${LedgerApi.BIP32_BASE_PATH}${keyId}'`;
     }
 
-    public static async deriveAccounts(pathsToDerive: Iterable<string>)
+    public static async deriveAccounts(pathsToDerive: Iterable<string>, walletId?: string)
         : Promise<Array<{ address: string, keyPath: string }>> {
         const request = new LedgerApiRequest(LedgerApi.RequestType.DERIVE_ACCOUNTS,
             async (api, params): Promise<Array<{ address: string, keyPath: string }>> => {
-                const result = [];
+                const accounts = [];
                 for (const keyPath of params.pathsToDerive!) {
-                    result.push({
+                    accounts.push({
                         address: (await api.getAddress(keyPath, /*validate*/ true, /*display*/ false)).address,
                         keyPath,
                     });
                 }
-                return result;
+                return accounts;
             },
             {
+                walletId,
                 pathsToDerive,
             },
         );
@@ -186,13 +235,14 @@ class LedgerApi {
         return LedgerApi._callLedger(request);
     }
 
-    public static async getPublicKey(keyPath: string): Promise<Uint8Array> {
+    public static async getPublicKey(keyPath: string, walletId?: string): Promise<Uint8Array> {
         const request = new LedgerApiRequest(LedgerApi.RequestType.GET_PUBLIC_KEY,
             async (api, params): Promise<Uint8Array> => {
                 const result = await api.getPublicKey(params.keyPath, /*validate*/ true, /*display*/ false);
                 return result.publicKey;
             },
             {
+                walletId,
                 keyPath,
             },
         );
@@ -202,13 +252,14 @@ class LedgerApi {
         return LedgerApi._callLedger(request);
     }
 
-    public static async getAddress(keyPath: string): Promise<string> {
+    public static async getAddress(keyPath: string, walletId?: string): Promise<string> {
         const request = new LedgerApiRequest(LedgerApi.RequestType.GET_ADDRESS,
             async (api, params): Promise<string> => {
                 const result = await api.getAddress(params.keyPath, /*validate*/ true, /*display*/ false);
                 return result.address;
             },
             {
+                walletId,
                 keyPath,
             },
         );
@@ -218,13 +269,15 @@ class LedgerApi {
         return LedgerApi._callLedger(request);
     }
 
-    public static async confirmAddress(userFriendlyAddress: string, keyPath: string): Promise<string> {
+    public static async confirmAddress(userFriendlyAddress: string, keyPath: string, walletId?: string)
+        : Promise<string> {
         const request = new LedgerApiRequest(LedgerApi.RequestType.CONFIRM_ADDRESS,
             async (api, params): Promise<string> => {
                 const result = await api.getAddress(params.keyPath, /*validate*/ true, /*display*/ true);
                 return result.address;
             },
             {
+                walletId,
                 keyPath,
                 addressToConfirm: userFriendlyAddress,
             },
@@ -240,14 +293,16 @@ class LedgerApi {
         return confirmedAddress;
     }
 
-    public static async getConfirmedAddress(keyPath: string): Promise<string> {
-        const address = await LedgerApi.getAddress(keyPath);
-        return await this.confirmAddress(address, keyPath);
+    public static async getConfirmedAddress(keyPath: string, walletId?: string): Promise<string> {
+        const address = await LedgerApi.getAddress(keyPath, walletId);
+        return await this.confirmAddress(address, keyPath, walletId);
     }
 
-    public static async signTransaction(transaction: TransactionInfo, keyPath: string): Promise<SignedTransaction> {
+    public static async signTransaction(transaction: TransactionInfo, keyPath: string, walletId?: string)
+        : Promise<SignedTransaction> {
         let nimiqTx: Nimiq.Transaction;
         const requestParams: LedgerApi.RequestParams = {
+            walletId,
             keyPath,
         };
         const request = new LedgerApiRequest(LedgerApi.RequestType.SIGN_TRANSACTION,
@@ -302,6 +357,7 @@ class LedgerApi {
     private static _apiPromise: Promise<LedgerJs> | null = null;
     private static _currentState: LedgerApi.State = { type: 'idle' as LedgerApi.StateType };
     private static _currentRequest: LedgerApiRequest<any> | null = null;
+    private static _currentlyConnectedWalletId: string | null = null;
     private static _listeners = new Map<LedgerApi.EventType, LedgerApiListener[]>();
 
     private static async _callLedger<T>(request: LedgerApiRequest<T>): Promise<T> {
@@ -326,7 +382,7 @@ class LedgerApi {
                 while (!request.cancelled
                     || wasLocked) { // when locked continue even when cancelled to replace call, see notes
                     try {
-                        const api = await LedgerApi._connect();
+                        const api = await LedgerApi._connect(request.params.walletId);
                         isConnected = true;
                         if (request.cancelled && !wasLocked) break; // don't break on wasLocked to replace the call
                         if (!request.cancelled) {
@@ -355,7 +411,7 @@ class LedgerApi {
                         // On other errors try again
                         if (message.indexOf('timeout') === -1 && message.indexOf('locked') === -1
                             && message.indexOf('busy') === -1 && message.indexOf('outdated') === -1
-                            && message.indexOf('dependencies') === -1) {
+                            && message.indexOf('dependencies') === -1 && message.indexOf('wrong ledger') === -1) {
                             console.warn('Unknown Ledger Error', e);
                         }
                         // Wait a little when replacing a previous request (see notes at top).
@@ -373,6 +429,7 @@ class LedgerApi {
             });
         } finally {
             LedgerApi._currentRequest = null;
+            LedgerApi._currentlyConnectedWalletId = null; // reset as we don't note when Ledger gets disconnected
             // NO_BROWSER_SUPPORT is the only error we can't recover from. For others, we reset the state to IDLE.
             if (!LedgerApi.currentState.error
                 || LedgerApi.currentState.error.type !== LedgerApi.ErrorType.NO_BROWSER_SUPPORT) {
@@ -381,21 +438,36 @@ class LedgerApi {
         }
     }
 
-    private static async _connect(): Promise<LedgerJs> {
+    private static async _connect(walletId?: string): Promise<LedgerJs> {
         // Resolves when connected to unlocked ledger with open Nimiq app otherwise throws an exception after timeout.
         // If the Ledger is already connected and the library already loaded, the call typically takes < 250ms.
         try {
             const api = await LedgerApi._getApi();
             LedgerApi._setState(LedgerApi.StateType.CONNECTING);
-            // To check whether the connection to Nimiq app is established. This can also unfreeze the ledger app, see
-            // notes at top. Using getPublicKey and not getAppConfiguration, as other apps also respond to
-            // getAppConfiguration. Set validate to false as otherwise the call is much slower.
-            await api.getPublicKey(LedgerApi.getBip32PathForKeyId(0), /*validate*/ false, /*display*/ false);
+            // To check whether the connection to Nimiq app is established and to calculate the walletId. This can also
+            // unfreeze the ledger app, see notes at top. Using getPublicKey and not getAppConfiguration, as other apps
+            // also respond to getAppConfiguration. Set validate to false as otherwise the call is much slower.
+            const { publicKey: firstAccountPubKeyBytes } =
+                await api.getPublicKey(LedgerApi.getBip32PathForKeyId(0), /*validate*/ false, /*display*/ false);
             const version = (await api.getAppConfiguration()).version;
             if (!LedgerApi._isAppVersionSupported(version)) throw new Error('Ledger Nimiq App is outdated.');
+            // TODO might want to hash the walletId. However this requires loading the Nimiq wasm for the hash
+            // computation. For sign transaction that doesn't matter as this call requires the wasm anyways but the
+            // other calls don't need it currently. However the verification and address computation in ledgerjs should
+            // be done by Nimiq's crypto methods anyways instead of loading tweetnacl and blakejs. Then, all calls
+            // would need the Nimiq wasm and we could enable walletId hashing here.
+            LedgerApi._currentlyConnectedWalletId = Nimiq.BufferUtils.toHex(firstAccountPubKeyBytes.subarray(0, 6));
+            if (walletId !== undefined && LedgerApi._currentlyConnectedWalletId !== walletId) {
+                throw new Error('Wrong Ledger connected');
+            }
+            this._fire(LedgerApi.EventType.CONNECTED, LedgerApi._currentlyConnectedWalletId);
             return api;
         } catch (e) {
             const message = (e.message || e || '').toLowerCase();
+            if (message.indexOf('wrong ledger') !== -1) {
+                LedgerApi._throwError(LedgerApi.ErrorType.WRONG_LEDGER, e);
+            }
+            LedgerApi._currentlyConnectedWalletId = null;
             if (message.indexOf('dependencies') !== -1) {
                 LedgerApi._throwError(LedgerApi.ErrorType.FAILED_LOADING_DEPENDENCIES, e);
             } else if (message.indexOf('browser support') !== -1 || message.indexOf('u2f device_ineligible') !== -1
@@ -488,6 +560,7 @@ namespace LedgerApi { // tslint:disable-line:no-namespace
         STATE_CHANGE = 'state-change',
         REQUEST_SUCCESSFUL = 'request-successful',
         REQUEST_CANCELLED = 'request-cancelled',
+        CONNECTED = 'connected',
     }
 
     export const enum StateType {
@@ -500,6 +573,7 @@ namespace LedgerApi { // tslint:disable-line:no-namespace
     }
 
     export const enum RequestType {
+        GET_WALLET_ID = 'get-wallet-id',
         DERIVE_ACCOUNTS = 'derive-accounts',
         GET_PUBLIC_KEY = 'get-public-key',
         GET_ADDRESS = 'get-address',
@@ -512,6 +586,7 @@ namespace LedgerApi { // tslint:disable-line:no-namespace
         FAILED_LOADING_DEPENDENCIES = 'failed-loading-dependencies',
         NO_BROWSER_SUPPORT = 'no-browser-support',
         APP_OUTDATED = 'app-outdated',
+        WRONG_LEDGER = 'wrong-ledger',
         REQUEST_ASSERTION_FAILED = 'request-specific-error',
     }
 
@@ -525,6 +600,7 @@ namespace LedgerApi { // tslint:disable-line:no-namespace
     }
 
     export interface RequestParams {
+        walletId?: string; // optional for all calls
         keyPath?: string; // for everything besides DERIVE_ACCOUNTS
         pathsToDerive?: Iterable<string>; // for DERIVE_ACCOUNTS
         addressToConfirm?: string; // for CONFIRM_TRANSACTION
