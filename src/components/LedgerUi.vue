@@ -106,9 +106,10 @@ class LedgerUi extends Vue {
     private _onRequest(state: LedgerApi.State) {
         const request = state.request!;
         switch (request.type) {
+            case LedgerApi.RequestType.GET_WALLET_ID:
             case LedgerApi.RequestType.GET_PUBLIC_KEY:
             case LedgerApi.RequestType.GET_ADDRESS:
-                // no UI needed as not interactive
+                // no instructions needed as not interactive
                 break;
             case LedgerApi.RequestType.DERIVE_ACCOUNTS:
                 // not interactive, but takes ~6 seconds
@@ -142,6 +143,9 @@ class LedgerUi extends Vue {
                 break;
             case LedgerApi.ErrorType.APP_OUTDATED:
                 this._showInstructions('', 'Your Nimiq App is outdated. Please update using Ledger Live.');
+                break;
+            case LedgerApi.ErrorType.WRONG_LEDGER:
+                this._showInstructions('', 'The connected Ledger is not the correct one.');
                 break;
             case LedgerApi.ErrorType.REQUEST_ASSERTION_FAILED:
                 this._showInstructions('Request failed', error.message);
@@ -189,6 +193,7 @@ class LedgerUi extends Vue {
                         return this._computeIllustrationForRequestType(LedgerApi.currentRequest!.type);
                     case LedgerApi.ErrorType.NO_BROWSER_SUPPORT:
                     case LedgerApi.ErrorType.APP_OUTDATED:
+                    case LedgerApi.ErrorType.WRONG_LEDGER:
                         return 'idle';
                 }
         }
@@ -196,6 +201,7 @@ class LedgerUi extends Vue {
 
     private _computeIllustrationForRequestType(requestType: LedgerApi.RequestType): string {
         switch (requestType) {
+            case LedgerApi.RequestType.GET_WALLET_ID:
             case LedgerApi.RequestType.GET_ADDRESS:
             case LedgerApi.RequestType.GET_PUBLIC_KEY:
             case LedgerApi.RequestType.DERIVE_ACCOUNTS:
