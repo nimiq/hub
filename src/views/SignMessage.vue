@@ -84,7 +84,7 @@ export default class SignMessage extends Vue {
 
         if (!accountInfo) {
             // Display interface for the user to select signer account
-            this.$router.push({name: `${RequestType.SIGN_MESSAGE}-overview`});
+            this.$rpc.routerPush(`${RequestType.SIGN_MESSAGE}-overview`);
             return;
         }
 
