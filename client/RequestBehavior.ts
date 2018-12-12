@@ -1,5 +1,5 @@
 import { RequestType } from '../src/lib/RequestTypes';
-import { PostMessageRpcClient, RedirectRpcClient } from '@nimiq/rpc';
+import * as Rpc from '@nimiq/rpc';
 
 export class RequestBehavior {
     public static getAllowedOrigin(endpoint: string) {
@@ -51,7 +51,7 @@ export class RedirectRequestBehavior extends RequestBehavior {
     public async request(endpoint: string, command: RequestType, args: any[]): Promise<any> {
         const origin = RequestBehavior.getAllowedOrigin(endpoint);
 
-        const client = new RedirectRpcClient(endpoint, origin);
+        const client = new Rpc.RedirectRpcClient(endpoint, origin);
         await client.init();
 
         const state: object = Object.assign({}, this._localState, { __command: command });
@@ -73,7 +73,7 @@ export class PopupRequestBehavior extends RequestBehavior {
         const origin = RequestBehavior.getAllowedOrigin(endpoint);
 
         const popup = this.createPopup(endpoint);
-        const client = new PostMessageRpcClient(popup, origin);
+        const client = new Rpc.PostMessageRpcClient(popup, origin);
         await client.init();
 
         try {
@@ -97,11 +97,51 @@ export class PopupRequestBehavior extends RequestBehavior {
     }
 }
 
+export class UrlEncodedPopupBehavior extends RequestBehavior {
+    private static DEFAULT_OPTIONS: string = '';
+    private _options: string;
+
+    constructor(options = UrlEncodedPopupBehavior.DEFAULT_OPTIONS) {
+        super(BehaviorType.POPUP);
+        this._options = options;
+    }
+
+    public async request(endpoint: string, command: RequestType, args: any[]): Promise<any> {
+        const origin = RequestBehavior.getAllowedOrigin(endpoint);
+
+        const id = Rpc.RandomUtils.generateRandomId();
+        const url = Rpc.UrlRpcEncoder.prepareRedirectInvocation(endpoint, id, '<postMessage>', command, args);
+
+        const popup = this.createPopup(url);
+        const client = new Rpc.ReceiveOnlyPostMessageRpcClient(popup, origin, id);
+        await client.init();
+
+        try {
+            const result = await client.listenFor(command);
+            client.close();
+            popup.close();
+            return result;
+        } catch (e) {
+            client.close();
+            popup.close();
+            throw e;
+        }
+    }
+
+    public createPopup(url: string) {
+        const popup = window.open(url, 'NimiqAccounts', this._options);
+        if (!popup) {
+            throw new Error('Failed to open popup');
+        }
+        return popup;
+    }
+}
+
 export class IFrameRequestBehavior extends RequestBehavior {
     private static IFRAME_PATH_SUFFIX = '/iframe.html';
 
     private _iframe: HTMLIFrameElement | null;
-    private _client: PostMessageRpcClient | null;
+    private _client: Rpc.PostMessageRpcClient | null;
 
     constructor() {
         super(BehaviorType.IFRAME);
@@ -124,7 +164,7 @@ export class IFrameRequestBehavior extends RequestBehavior {
         }
 
         if (!this._client) {
-            this._client = new PostMessageRpcClient(this._iframe.contentWindow, origin);
+            this._client = new Rpc.PostMessageRpcClient(this._iframe.contentWindow, origin);
             await this._client.init();
         }
 
