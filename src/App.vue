@@ -62,29 +62,6 @@ export default class App extends Vue {
         }
     }
 
-    .logo-container {
-        width: 100%;
-        padding: 4rem 3rem;
-        box-sizing: border-box;
-    }
-
-    .logo {
-        height: 3.625rem;
-        box-sizing: border-box;
-        font-size: 2.125rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.077em;
-        display: inline-flex;
-        align-items: center;
-        color: var(--nimiq-blue);
-        z-index: 1;
-        text-decoration: none;
-        user-select: none;
-        -webkit-tap-highlight-color: transparent;
-        outline: none !important;
-    }
-
     .container {
         display: flex;
         flex-direction: column;
