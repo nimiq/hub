@@ -2,8 +2,8 @@
     <div class="container">
         <SmallPage>
             <LedgerUi v-show="state === 'ledger-interaction'" @information-shown="_showLedger"></LedgerUi>
-            <IdenticonSelector :accounts="accounts" v-if="state === 'identicon-selection'"
-                                @identicon-selected="_onAccountsImported">
+            <IdenticonSelector :accounts="accountsToSelectFrom" v-if="state === 'identicon-selection'"
+                                @identicon-selected="_onAccountSelected">
             </IdenticonSelector>
             <Loader v-else-if="state === 'fetching-accounts' || state === 'finished'"
                     :state="loaderState" :title="loaderTitle" :status="loaderStatus">
@@ -20,19 +20,21 @@
 <script lang="ts">
 import { Component, Emit, Vue } from 'vue-property-decorator';
 import { PageBody, SmallPage } from '@nimiq/vue-components';
-import { ParsedSignupRequest } from '../lib/RequestTypes';
+import { ParsedSignupRequest, SignupResult } from '../lib/RequestTypes';
 import { ResponseStatus, State as RpcState } from '@nimiq/rpc';
 import { Static } from '../lib/StaticStore';
 import LedgerApi from '../lib/LedgerApi';
 import LedgerUi from '../components/LedgerUi.vue';
 import IdenticonSelector from '../components/IdenticonSelector.vue';
 import Loader from '../components/Loader.vue';
+import WalletInfoCollector from '../lib/WalletInfoCollector';
+import { WalletInfo, WalletType } from '../lib/WalletInfo';
 import { AccountInfo } from '../lib/AccountInfo';
+import { WalletStore } from '../lib/WalletStore';
 
 @Component({components: {PageBody, SmallPage, LedgerUi, IdenticonSelector, Loader}})
 export default class SignupLedger extends Vue {
-    private static readonly DEFAULT_ACCOUNT_LABEL = 'Ledger Account';
-    private static readonly COUNT_ACCOUNTS_TO_DERIVE = 20;
+    private static readonly DEFAULT_LABEL_LEDGER_ACCOUNT = 'Ledger Account';
     private static readonly State = {
         IDLE: 'idle',
         LEDGER_INTERACTION: 'ledger-interaction', // can be instructions to connect or also display of an error
@@ -45,12 +47,11 @@ export default class SignupLedger extends Vue {
     @Static private request!: ParsedSignupRequest;
 
     private state: string = SignupLedger.State.IDLE;
-    private accounts: AccountInfo[] = [];
-    private cancelled: boolean = false;
+    private walletInfo: WalletInfo | null = null;
+    private accountsToSelectFrom: AccountInfo[] = [];
     private hadAccounts: boolean = false;
+    private cancelled: boolean = false;
     private failedFetchingAccounts: boolean = false;
-
-    private wasmPromise!: Promise<void>;
 
     private get loaderState() {
         return this.state === SignupLedger.State.FINISHED ? Loader.State.SUCCESS : Loader.State.LOADING;
@@ -65,21 +66,22 @@ export default class SignupLedger extends Vue {
     }
 
     private get loaderStatus() {
-        return this.state === SignupLedger.State.FETCHING_ACCOUNTS && this.failedFetchingAccounts
-            ? 'Failed to fetch accounts. Retrying...'
-            : '';
+        if (this.state !== SignupLedger.State.FETCHING_ACCOUNTS) return '';
+        else if (this.failedFetchingAccounts) return 'Failed to fetch accounts. Retrying...';
+        else {
+            const count = !this.walletInfo ? 0 : this.walletInfo.accounts.size;
+            return count > 0
+                ? `Imported ${count} account${count > 1 ? 's' : ''} so far.`
+                : '';
+        }
     }
 
     private created() {
         // called everytime the router shows this page
-        this.close = this.close.bind(this);
-        LedgerApi.on(LedgerApi.EventType.REQUEST_CANCELLED, this.close);
         this._run();
-        this.wasmPromise = Nimiq.WasmHelper.doImportBrowser(); // kick off wasm import to be ready in _calculateWalletId
     }
 
     private destroyed() {
-        LedgerApi.off(LedgerApi.EventType.REQUEST_CANCELLED, this.close);
         const currentRequest = LedgerApi.currentRequest;
         if (currentRequest && currentRequest.type === LedgerApi.RequestType.DERIVE_ACCOUNTS) {
             currentRequest.cancel();
@@ -89,28 +91,81 @@ export default class SignupLedger extends Vue {
 
     private async _run() {
         if (this.state !== SignupLedger.State.IDLE) return;
-        // triggers loading and connecting states in LedgerUi if applicable
-        const pathsToDerive = [];
-        for (let keyId = 0; keyId < SignupLedger.COUNT_ACCOUNTS_TO_DERIVE; ++keyId) {
-            pathsToDerive.push(LedgerApi.getBip32PathForKeyId(keyId));
+
+        let tryCount = 0;
+        while (!this.cancelled) {
+            try {
+                tryCount += 1;
+                // triggers loading and connecting states in LedgerUi if applicable
+                await WalletInfoCollector.collectWalletInfo(
+                    WalletType.LEDGER,
+                    /* walletId */ undefined,
+                    /* initialAccounts */ [],
+                    (walletInfo, currentlyCheckedAccounts) =>
+                        this._onWalletInfoUpdate(walletInfo, currentlyCheckedAccounts),
+                );
+                this.failedFetchingAccounts = false;
+                break;
+            } catch (e) {
+                this.failedFetchingAccounts = true;
+                if (tryCount >= 5) throw e;
+            }
         }
-        this.accounts = (await LedgerApi.deriveAccounts(pathsToDerive)).map((account) =>
-            new AccountInfo(account.keyPath, SignupLedger.DEFAULT_ACCOUNT_LABEL,
-                Nimiq.Address.fromUserFriendlyAddress(account.address)));
 
         if (this.cancelled) return;
-        // TODO actually fetch accounts
-        this.state = SignupLedger.State.FETCHING_ACCOUNTS;
-        await new Promise((resolve) => setTimeout(resolve, 3000));
+        if (this.walletInfo!.accounts.size > 0) {
+            this.hadAccounts = true;
+            this.done();
+        } else {
+            // Let user select an account
+            this.state = SignupLedger.State.IDENTICON_SELECTION;
+        }
+    }
 
-        if (this.cancelled) return;
-        this.hadAccounts = false;
+    private async _onAccountSelected(selectedAccount: AccountInfo) {
+        this.walletInfo!.accounts.set(selectedAccount.address.toUserFriendlyAddress(), selectedAccount);
+        await this._onWalletInfoUpdate(this.walletInfo!);
+        this.done();
+    }
 
-        // Let user select an account
-        this.state = SignupLedger.State.IDENTICON_SELECTION;
+    private async _onWalletInfoUpdate(
+        walletInfo: WalletInfo,
+        currentlyCheckedAccounts?: Array<{ address: string, path: string }>,
+    ) {
+        this.walletInfo = walletInfo;
+        await WalletStore.Instance.put(walletInfo);
+        if (currentlyCheckedAccounts && this.accountsToSelectFrom.length === 0) {
+            // set the first set of checked accounts as the one the user can select one from, in case he doesn't have
+            // an account already
+            this.accountsToSelectFrom = currentlyCheckedAccounts.map((account) => new AccountInfo(
+                account.path,
+                SignupLedger.DEFAULT_LABEL_LEDGER_ACCOUNT,
+                Nimiq.Address.fromUserFriendlyAddress(account.address),
+                0, // balance 0 because if user has to select an account, it's gonna be an unused one
+            ));
+        }
+        this.$forceUpdate(); // because vue does not recognize changes in waletInfo.accounts map // TODO verify
+    }
+
+    @Emit()
+    private async done() {
+        this.state = SignupLedger.State.FINISHED;
+        setTimeout(() => {
+            const result: SignupResult = {
+                walletId: this.walletInfo!.id,
+                label: this.walletInfo!.label,
+                type: this.walletInfo!.type,
+                accounts: Array.from(this.walletInfo!.accounts.values()).map((accountInfo) => ({
+                    address: accountInfo.userFriendlyAddress,
+                    label: accountInfo.label,
+                })),
+            };
+            this.$rpc.resolve(result);
+        }, Loader.SUCCESS_REDIRECT_DELAY);
     }
 
     private _showLedger() {
+        if (this.state === SignupLedger.State.FINISHED) return;
         const currentRequest = LedgerApi.currentRequest;
         if (!currentRequest) {
             // This should never happen. But in case it does, just show the Ledger as there might be an error shown.
@@ -118,7 +173,8 @@ export default class SignupLedger extends Vue {
             return;
         }
         if (currentRequest.type !== LedgerApi.RequestType.DERIVE_ACCOUNTS || currentRequest.cancelled) return;
-        if (LedgerApi.currentState.type === LedgerApi.StateType.REQUEST_PROCESSING) {
+        if (LedgerApi.currentState.type === LedgerApi.StateType.REQUEST_PROCESSING
+            || LedgerApi.currentState.type === LedgerApi.StateType.REQUEST_CANCELLING) {
             // When we actually fetch the accounts from the device, we already wanna show our own Loader instead of the
             // LedgerUi processing screen to avoid switching back and forth between LedgerUi and Loader during account
             // finding.
@@ -126,22 +182,6 @@ export default class SignupLedger extends Vue {
         } else {
             this.state = SignupLedger.State.LEDGER_INTERACTION;
         }
-    }
-
-    private async _onAccountsImported(importedAccounts: AccountInfo | AccountInfo[]) {
-        if (!Array.isArray(importedAccounts)) {
-            importedAccounts = [importedAccounts];
-        }
-        // TODO store accounts
-        this.state = SignupLedger.State.FINISHED;
-    }
-
-    private async _calculateWalletId(): Promise<string> {
-        if (this.accounts.length === 0) throw new Error('No ledger accounts retrieved yet.');
-        // calculate wallet id deterministically from first account similarly to legacy wallets in Key.js in Keyguard
-        await this.wasmPromise; // load wasm to be able to compute hash
-        const input = this.accounts[0].address.serialize();
-        return Nimiq.BufferUtils.toHex(Nimiq.Hash.blake2b(input).subarray(0, 6));
     }
 
     @Emit()
