@@ -215,6 +215,7 @@ class LedgerApi {
             async (api, params): Promise<Array<{ address: string, keyPath: string }>> => {
                 const accounts = [];
                 for (const keyPath of params.pathsToDerive!) {
+                    if (request.cancelled) return accounts;
                     accounts.push({
                         address: (await api.getAddress(keyPath, /*validate*/ true, /*display*/ false)).address,
                         keyPath,
