@@ -210,7 +210,7 @@ export default class Checkout extends Vue {
 
     @Emit()
     private close() {
-        this.$rpc.reject(new Error('CANCEL'));
+        this.$rpc.reject(new Error('CANCELED'));
     }
 
     private get processedWallets(): WalletInfo[] {
