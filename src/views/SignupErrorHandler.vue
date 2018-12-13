@@ -10,7 +10,7 @@ export default class SignupErrorHandler extends ErrorHandler {
     protected requestSpecificErrors(): boolean {
         if (this.keyguardResult instanceof Error
             && this.keyguardResult.message === 'Request aborted') {
-            this.$router.push({name: RequestType.SIGNUP});
+            this.$router.push({name: RequestType.ONBOARD});
             return true;
         }
         return false;

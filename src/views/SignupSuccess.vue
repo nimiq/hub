@@ -30,7 +30,7 @@ import { WalletInfo, WalletType } from '../lib/WalletInfo';
 import { State, Getter } from 'vuex-class';
 import { WalletStore } from '../lib/WalletStore';
 import { CreateResult } from '@nimiq/keyguard-client';
-import { SignupResult } from '@/lib/RequestTypes';
+import { OnboardingResult } from '@/lib/RequestTypes';
 import Input from '@/components/Input.vue';
 
 @Component({components: {PageHeader, PageBody, Account, Input, SmallPage}})
@@ -65,7 +65,7 @@ export default class SignupSuccess extends Vue {
     }
 
     private async done() {
-        const result: SignupResult = {
+        const result: OnboardingResult = {
             walletId: this.keyguardResult.keyId,
             label: this.walletLabel,
             type: WalletType.BIP39, // FIXME: Adapt when adding Ledger

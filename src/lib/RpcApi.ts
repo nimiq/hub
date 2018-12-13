@@ -29,6 +29,7 @@ export default class RpcApi {
         this._registerAccountsApis([
             RequestType.SIGN_TRANSACTION,
             RequestType.CHECKOUT,
+            RequestType.ONBOARD,
             RequestType.SIGNUP,
             RequestType.LOGIN,
             RequestType.EXPORT,

@@ -7,11 +7,9 @@ import {
 import { RedirectRpcClient } from '@nimiq/rpc';
 import {
     RequestType,
-    SignupRequest,
-    SignupResult,
+    SimpleRequest,
+    OnboardingResult,
     CheckoutRequest,
-    LoginRequest,
-    LoginResult,
     LogoutRequest,
     LogoutResult,
     SignTransactionRequest,
@@ -69,8 +67,16 @@ export default class AccountsClient {
         );
     }
 
-    public signup(request: SignupRequest, requestBehavior = this._defaultBehavior): Promise<SignupResult> {
+    public onboard(request: SimpleRequest, requestBehavior = this._defaultBehavior): Promise<OnboardingResult> {
+        return this._request(requestBehavior, RequestType.ONBOARD, [request]);
+    }
+
+    public signup(request: SimpleRequest, requestBehavior = this._defaultBehavior): Promise<OnboardingResult> {
         return this._request(requestBehavior, RequestType.SIGNUP, [request]);
+    }
+
+    public login(request: SimpleRequest, requestBehavior = this._defaultBehavior): Promise<OnboardingResult> {
+        return this._request(requestBehavior, RequestType.LOGIN, [request]);
     }
 
     public signTransaction(
@@ -82,10 +88,6 @@ export default class AccountsClient {
 
     public checkout(request: CheckoutRequest, requestBehavior = this._defaultBehavior): Promise<SignTransactionResult> {
         return this._request(requestBehavior, RequestType.CHECKOUT, [request]);
-    }
-
-    public login(request: LoginRequest, requestBehavior = this._defaultBehavior): Promise<LoginResult> {
-        return this._request(requestBehavior, RequestType.LOGIN, [request]);
     }
 
     public logout(request: LogoutRequest, requestBehavior = this._defaultBehavior): Promise<LogoutResult> {

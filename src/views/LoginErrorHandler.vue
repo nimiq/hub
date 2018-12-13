@@ -14,6 +14,11 @@ export default class LoginErrorHandler extends ErrorHandler {
             this.$router.push({name: RequestType.SIGNUP});
             return true;
         }
+        if (this.keyguardResult instanceof Error
+            && this.keyguardResult.message === 'Request aborted') {
+            this.$router.push({name: RequestType.ONBOARD});
+            return true;
+        }
         return false;
     }
 }
