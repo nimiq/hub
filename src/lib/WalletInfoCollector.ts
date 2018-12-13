@@ -3,6 +3,15 @@ import { KeyguardClient } from '@nimiq/keyguard-client';
 import { AccountInfo } from '@/lib/AccountInfo';
 import { WalletStore } from '@/lib/WalletStore';
 import { WalletInfo, WalletType } from '@/lib/WalletInfo';
+import {
+    KEYGUARD_SLIP0010_BASE_PATH,
+    MAX_ALLOWED_GAP,
+    DEFAULT_LABEL_LEGACY_WALLET,
+    DEFAULT_LABEL_KEYGUARD_WALLET,
+    DEFAULT_LABEL_LEDGER_WALLET,
+    DEFAULT_LABEL_KEYGUARD_ACCOUNT,
+    DEFAULT_LABEL_LEDGER_ACCOUNT,
+} from '../lib/Constants';
 
 type BasicAccountInfo = { // tslint:disable-line:interface-over-type-literal
     address: string,
@@ -24,7 +33,7 @@ export default class WalletInfoCollector {
         let derivedAccountsPromise;
         if (walletType !== WalletType.LEGACY) {
             derivedAccountsPromise = WalletInfoCollector._deriveAccounts(startIndex,
-                WalletInfoCollector.MAX_ALLOWED_GAP, walletType, walletId);
+                MAX_ALLOWED_GAP, walletType, walletId);
 
             // For Ledger wallet compute the wallet id from first derived account
             if (walletType === WalletType.LEDGER) {
@@ -72,9 +81,9 @@ export default class WalletInfoCollector {
             // ends up using accounts 0 and 39, the account at index 19 will not be found anymore on reimport. With the
             // current implementation however, at least the account 39 would be found, while an implementation strictly
             // following the specification would stop the search at index 20.
-            startIndex += WalletInfoCollector.MAX_ALLOWED_GAP;
+            startIndex += MAX_ALLOWED_GAP;
             derivedAccountsPromise = WalletInfoCollector._deriveAccounts(startIndex,
-                WalletInfoCollector.MAX_ALLOWED_GAP, walletType, walletId);
+                MAX_ALLOWED_GAP, walletType, walletId);
 
             // find accounts with a balance > 0
             // TODO should use transaction receipts
@@ -98,14 +107,6 @@ export default class WalletInfoCollector {
         return walletInfo;
     }
 
-    // TODO move to constants
-    private static readonly MAX_ALLOWED_GAP = 20;
-    private static readonly KEYGUARD_SLIP0010_BASE_PATH = `m/44'/242'/0'/`;
-    private static readonly DEFAULT_LABEL_LEGACY_WALLET = 'Legacy Wallet';
-    private static readonly DEFAULT_LABEL_KEYGUARD_WALLET = 'Keyguard Wallet';
-    private static readonly DEFAULT_LABEL_LEDGER_WALLET = 'Ledger Wallet';
-    private static readonly DEFAULT_LABEL_KEYGUARD_ACCOUNT = 'Standard Account';
-    private static readonly DEFAULT_LABEL_LEDGER_ACCOUNT = 'Ledger Account';
     private static _keyguardClient?: KeyguardClient; // TODO avoid the need to create another KeyguardClient here
     private static _networkInitializationPromise?: Promise<void>;
     private static _wasmInitializationPromise?: Promise<void>;
@@ -129,10 +130,10 @@ export default class WalletInfoCollector {
         const existingWalletInfo = await WalletStore.Instance.get(walletId);
         if (existingWalletInfo) return existingWalletInfo;
         const label = walletType === WalletType.LEGACY
-            ? WalletInfoCollector.DEFAULT_LABEL_LEGACY_WALLET
+            ? DEFAULT_LABEL_LEGACY_WALLET
             : walletType === WalletType.BIP39
-                ? WalletInfoCollector.DEFAULT_LABEL_KEYGUARD_WALLET
-                : WalletInfoCollector.DEFAULT_LABEL_LEDGER_WALLET;
+                ? DEFAULT_LABEL_KEYGUARD_WALLET
+                : DEFAULT_LABEL_LEDGER_WALLET;
         return new WalletInfo(
             walletId,
             label,
@@ -162,7 +163,7 @@ export default class WalletInfoCollector {
         : Promise<BasicAccountInfo[]> {
         const pathsToDerive = [];
         for (let keyId = startIndex; keyId < startIndex + count; ++keyId) {
-            pathsToDerive.push(`${WalletInfoCollector.KEYGUARD_SLIP0010_BASE_PATH}${keyId}'`);
+            pathsToDerive.push(`${KEYGUARD_SLIP0010_BASE_PATH}/${keyId}'`);
         }
         const serializedAddresses = await WalletInfoCollector._keyguardClient!.deriveAddresses(walletId, pathsToDerive);
         const userFriendlyAddresses = serializedAddresses.map((serializedAddress) =>
@@ -206,8 +207,8 @@ export default class WalletInfoCollector {
             const accountInfo = existingAccountInfo || new AccountInfo(
                 newAccount.path,
                 walletInfo.type === WalletType.LEDGER
-                    ? WalletInfoCollector.DEFAULT_LABEL_LEDGER_ACCOUNT
-                    : WalletInfoCollector.DEFAULT_LABEL_KEYGUARD_ACCOUNT,
+                    ? DEFAULT_LABEL_LEDGER_ACCOUNT
+                    : DEFAULT_LABEL_KEYGUARD_ACCOUNT,
                 Nimiq.Address.fromUserFriendlyAddress(newAccount.address),
             );
             if (balance !== undefined) accountInfo.balance = balance;
