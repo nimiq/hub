@@ -73,6 +73,11 @@ export default class Checkout extends Vue {
     private sideResultAddedWallet: boolean = false;
 
     private async created() {
+        const span = document.createElement('span');
+        span.setAttribute('id', 'logo-checkout');
+        span.textContent = 'Checkout';
+        document.querySelector('.logo')!.appendChild(span);
+
         await this.handleOnboardingResult();
         this.getBalances();
     }
@@ -311,5 +316,11 @@ export default class Checkout extends Vue {
     .account-info.active {
         z-index: 29;
         opacity: 1;
+    }
+</style>
+
+<style>
+    #logo-checkout {
+        margin-left: 0.75rem;
     }
 </style>

@@ -24,6 +24,13 @@ export default class CheckoutTransmission extends Vue {
 
     private isTxSent: boolean = false;
 
+    private created() {
+        const span = document.createElement('span');
+        span.setAttribute('id', 'logo-checkout');
+        span.textContent = 'Checkout';
+        document.querySelector('.logo')!.appendChild(span);
+    }
+
     private async mounted() {
         const tx = await (this.$refs.network as Network).prepareTx(this.keyguardRequest, this.keyguardResult);
         const result: SignTransactionResult = await (this.$refs.network as Network).sendToNetwork(tx);
@@ -49,5 +56,11 @@ export default class CheckoutTransmission extends Vue {
 <style scoped>
     .small-page {
         height: 70rem;
+    }
+</style>
+
+<style>
+    #logo-checkout {
+        margin-left: 0.75rem;
     }
 </style>
