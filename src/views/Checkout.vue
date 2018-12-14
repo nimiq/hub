@@ -80,7 +80,7 @@ export default class Checkout extends Vue {
 
         await this.handleOnboardingResult();
 
-        if (this.wallets.length === 0) this.goToOnboarding();
+        if (this.wallets.length === 0) this.goToOnboarding(true);
         else this.getBalances();
     }
 
@@ -204,9 +204,10 @@ export default class Checkout extends Vue {
         client.signTransaction(request).catch(console.error); // TODO: proper error handling
     }
 
-    private goToOnboarding() {
+    private goToOnboarding(useReplace?: boolean) {
         // Redirect to onboarding
         staticStore.originalRouteName = RequestType.CHECKOUT;
+        if (useReplace) this.$router.replace({name: RequestType.ONBOARD});
         this.$router.push({name: RequestType.ONBOARD});
     }
 
