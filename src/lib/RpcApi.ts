@@ -85,7 +85,7 @@ export default class RpcApi {
         }
 
         // Check for originalRouteName in StaticStore and route there
-        if (this._staticStore.originalRouteName) {
+        if (this._staticStore.originalRouteName && (!(result instanceof Error) || result.message !== 'CANCELED')) {
             this._staticStore.sideResult = result;
             this._router.push({ name: this._staticStore.originalRouteName });
             delete this._staticStore.originalRouteName;
