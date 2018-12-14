@@ -69,7 +69,8 @@ export default class Checkout extends Vue {
     private height: number = 0;
     private hasBalances: boolean = false;
 
-    private mounted() {
+    private async created() {
+        await this.handleOnboardingResult();
         this.getBalances();
     }
 
@@ -197,26 +198,6 @@ export default class Checkout extends Vue {
         client.import(request).catch(console.error); // TODO: proper error handling
     }
 
-    private async created() {
-        // Check if we are returning from the login request
-        if (staticStore.sideResult && !(staticStore.sideResult instanceof Error)) {
-            const sideResult = staticStore.sideResult as LoginResult;
-            // Add imported wallet to store and pre-select wallet (if regular wallet)
-            // or stay on first page for imported legacy wallet
-
-            const walletInfo = await WalletStore.Instance.get(sideResult.walletId);
-            if (!walletInfo) return;
-            this.$addWallet(walletInfo);
-
-            // Set as activeWallet and activeAccount
-            this.$setActiveAccount({
-                walletId: walletInfo.id,
-                userFriendlyAddress: walletInfo.accounts.values().next().value.userFriendlyAddress,
-            });
-        }
-        delete staticStore.sideResult;
-    }
-
     @Emit()
     private close() {
         this.$rpc.reject(new Error('CANCEL'));
@@ -245,6 +226,26 @@ export default class Checkout extends Vue {
         }
 
         return filteredWallets;
+    }
+
+    private async handleOnboardingResult() {
+        // Check if we are returning from an onboarding request
+        if (staticStore.sideResult && !(staticStore.sideResult instanceof Error)) {
+            const sideResult = staticStore.sideResult as LoginResult;
+
+            // Add imported wallet to Vuex store
+            const walletInfo = await WalletStore.Instance.get(sideResult.walletId);
+            if (walletInfo) {
+                this.$addWallet(walletInfo);
+
+                // Set as activeWallet and activeAccount
+                this.$setActiveAccount({
+                    walletId: walletInfo.id,
+                    userFriendlyAddress: walletInfo.accounts.values().next().value.userFriendlyAddress,
+                });
+            }
+        }
+        delete staticStore.sideResult;
     }
 }
 </script>
