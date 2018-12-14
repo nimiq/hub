@@ -96,7 +96,7 @@ export default class RpcApi {
         }
 
         // Check for originalRouteName in StaticStore and route there
-        if (this._staticStore.originalRouteName) {
+        if (this._staticStore.originalRouteName && (!(result instanceof Error) || result.message !== 'CANCELED')) {
             this._staticStore.sideResult = result;
 
             // Recreate original URL with original query parameters
