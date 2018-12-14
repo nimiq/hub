@@ -3,7 +3,7 @@
         <header class="logo-container">
             <div class="logo icon-logo">
                 <span class="nq-icon nimiq-logo"></span>
-                Nimiq
+                <strong>Nimiq</strong>
             </div>
         </header>
         <div v-if="!isRequestLoaded" class="loading">
@@ -54,7 +54,13 @@ export default class App extends Vue {
 </script>
 
 <style>
-    .container {
+  @media (max-width: 450px) {
+        html {
+            --nimiq-size: 7px; /* For @nimiq/vue-components */
+        }
+    }
+
+    #app > .container {
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -62,7 +68,7 @@ export default class App extends Vue {
         flex-shrink: 0;
     }
 
-    .container.pad-bottom {
+    #app > .container.pad-bottom {
         margin-bottom: 12.5rem; /* Same height as the header (~100px) */
     }
 
