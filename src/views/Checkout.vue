@@ -79,7 +79,9 @@ export default class Checkout extends Vue {
         document.querySelector('.logo')!.appendChild(span);
 
         await this.handleOnboardingResult();
-        this.getBalances();
+
+        if (this.wallets.length === 0) this.goToOnboarding();
+        else this.getBalances();
     }
 
     private async getBalances() {
