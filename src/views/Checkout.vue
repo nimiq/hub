@@ -85,7 +85,9 @@ export default class Checkout extends Vue {
     }
 
     private async getBalances() {
-        if (!this.sideResultAddedWallet && this.getCache() && document.referrer !== window.location.href) {
+        const isRefresh = !window.performance || performance.navigation.type === 1;
+
+        if (!this.sideResultAddedWallet && this.getCache() && !isRefresh) {
             this.onHeadChange(this.getCache());
         } else {
             // Build mapping from accounts to the index of their respective wallet in the wallets array
