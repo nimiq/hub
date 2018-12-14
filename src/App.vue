@@ -66,6 +66,8 @@ export default class App extends Vue {
         align-items: center;
         width: 100%;
         flex-shrink: 0;
+        justify-content: center;
+        flex-grow: 1;
     }
 
     .container.pad-bottom {
