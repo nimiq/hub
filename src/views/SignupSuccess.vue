@@ -3,7 +3,7 @@
         <SmallPage>
             <PageHeader :progressIndicator="true" :numberSteps="6" :step="6">Your wallet is ready</PageHeader>
             <PageBody>
-                <div class="success-box nq-icon trumpet nq-bg-green">
+                <div class="success-box nq-icon trumpet nq-green-bg">
                     <h2 class="nq-h2">Awesome!</h2>
                     <p class="nq-text">Your Keyguard Wallet is set up. It already contains your newly created account.</p>
                     <p class="nq-text">You can add more accounts to it later.</p>
