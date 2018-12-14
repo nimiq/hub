@@ -9,7 +9,6 @@ import { keyguardResponseRouter } from '@/router';
 import { StaticStore } from '@/lib/StaticStore';
 import { WalletStore } from './WalletStore';
 import CookieJar from '@/lib/CookieJar';
-// @ts-ignore
 import { Raven } from 'vue-raven'; // Sentry.io SDK
 
 export default class RpcApi {
