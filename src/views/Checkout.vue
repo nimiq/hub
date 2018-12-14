@@ -49,7 +49,7 @@ import { WalletStore } from '@/lib/WalletStore';
 import { AccountInfo } from '@/lib/AccountInfo';
 import { WalletInfo, WalletType } from '@/lib/WalletInfo';
 import { State, Mutation } from 'vuex-class';
-import { TX_VALIDITY_WINDOW } from '@/lib/Constants';
+import { TX_VALIDITY_WINDOW, LEGACY_GROUPING_WALLET_ID, LEGACY_GROUPING_WALLET_LABEL } from '@/lib/Constants';
 import Network from '@/components/Network.vue';
 import Loader from '@/components/Loader.vue';
 
@@ -234,13 +234,15 @@ export default class Checkout extends Vue {
             return false;
         });
 
-        filteredWallets.push(new WalletInfo(
-            'LEGACY',
-            'Single Accounts',
-            singleAccounts,
-            [],
-            WalletType.LEGACY,
-        ));
+        if (singleAccounts.size > 0) {
+            filteredWallets.push(new WalletInfo(
+                LEGACY_GROUPING_WALLET_ID,
+                LEGACY_GROUPING_WALLET_LABEL,
+                singleAccounts,
+                [],
+                WalletType.LEGACY,
+            ));
+        }
 
         return filteredWallets;
     }
