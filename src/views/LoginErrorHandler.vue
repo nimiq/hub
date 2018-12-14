@@ -16,7 +16,7 @@ export default class LoginErrorHandler extends ErrorHandler {
         }
         if (this.keyguardResult instanceof Error
             && this.keyguardResult.message === 'Request aborted') {
-            this.$router.push({name: RequestType.ONBOARD});
+            this.$rpc.routerPush(RequestType.ONBOARD);
             return true;
         }
         return false;
