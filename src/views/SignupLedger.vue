@@ -31,10 +31,10 @@ import WalletInfoCollector from '../lib/WalletInfoCollector';
 import { WalletInfo, WalletType } from '../lib/WalletInfo';
 import { AccountInfo } from '../lib/AccountInfo';
 import { WalletStore } from '../lib/WalletStore';
+import { ACCOUNT_DEFAULT_LABEL_LEDGER } from '../lib/Constants';
 
 @Component({components: {PageBody, SmallPage, LedgerUi, IdenticonSelector, Loader}})
 export default class SignupLedger extends Vue {
-    private static readonly DEFAULT_LABEL_LEDGER_ACCOUNT = 'Ledger Account';
     private static readonly State = {
         IDLE: 'idle',
         LEDGER_INTERACTION: 'ledger-interaction', // can be instructions to connect or also display of an error
@@ -139,7 +139,7 @@ export default class SignupLedger extends Vue {
             // an account already
             this.accountsToSelectFrom = currentlyCheckedAccounts.map((account) => new AccountInfo(
                 account.path,
-                SignupLedger.DEFAULT_LABEL_LEDGER_ACCOUNT,
+                ACCOUNT_DEFAULT_LABEL_LEDGER,
                 Nimiq.Address.fromUserFriendlyAddress(account.address),
                 0, // balance 0 because if user has to select an account, it's gonna be an unused one
             ));
