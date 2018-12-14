@@ -126,19 +126,24 @@ export default class RpcApi {
         };
     }
 
-    private _registerAccountsApis(requests: RequestType[]) {
-        for (const request of requests) {
+    private _registerAccountsApis(requestTypes: RequestType[]) {
+        for (const requestType of requestTypes) {
             // Server listener
-            this._server.onRequest(request, async (state, arg: RpcRequest) => {
+            this._server.onRequest(requestType, async (state, arg: RpcRequest) => {
                 this._staticStore.rpcState = state;
-                this._staticStore.request = AccountsRequest.parse(arg, request) || undefined;
+                try {
+                    this._staticStore.request = AccountsRequest.parse(arg, state, requestType) || undefined;
+                } catch (error) {
+                    state.reply(ResponseStatus.ERROR, error);
+                    return;
+                }
 
                 this._store.commit('setIncomingRequest', {
                     hasRpcState: !!this._staticStore.rpcState,
                     hasRequest: !!this._staticStore.request,
                 });
 
-                this.routerReplace(request);
+                this.routerReplace(requestType);
             });
         }
     }
@@ -159,7 +164,7 @@ export default class RpcApi {
 
     private _recoverState(state: any) {
         const rpcState = RpcState.fromJSON(state.rpcState);
-        const request = AccountsRequest.parse(state.request);
+        const request = AccountsRequest.parse(state.request, state);
         const keyguardRequest = state.keyguardRequest;
         const originalRouteName = state.originalRouteName;
 

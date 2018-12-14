@@ -1,88 +1,66 @@
 <template>
-    <div class="checkout-transmission">
-        <CheckoutDetails :accountChangeable="false"/>
-        <PageFooter>
-            <Network ref="network" :alwaysVisible="true" message="Sending transaction"/>
-        </PageFooter>
-        <transition name='fade-in'>
-            <Success v-if="isTxSent"
-                text="Your payment[br]was successful"
-                :appName="keyguardRequest.appName"
-                @continue="done" />
-        </transition>
+    <div class="container pad-bottom">
+        <SmallPage>
+            <Loader :title="title" :status="status" :state="state" :lightBlue="true"/>
+            <Network :visible="false" ref="network"/>
+        </SmallPage>
     </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import Network from '@/components/Network.vue';
 import { SignTransactionResult } from '@/lib/RequestTypes';
-import CheckoutDetails from '../components/CheckoutDetails.vue';
-import {
-    SignTransactionRequest as KSignTransactionRequest,
-    SignTransactionResult as KSignTransactionResult,
-} from '@nimiq/keyguard-client';
-import { State } from 'vuex-class';
 import { Static } from '../lib/StaticStore';
-import Success from '../components/Success.vue';
-import { PageFooter } from '@nimiq/vue-components';
+import { State } from 'vuex-class';
+import { SmallPage } from '@nimiq/vue-components';
+import Network from '@/components/Network.vue';
+import Loader from '../components/Loader.vue';
 
-@Component({components: {PageFooter, Network, CheckoutDetails, Success}})
+@Component({components: {Loader, Network, SmallPage}})
 export default class CheckoutTransmission extends Vue {
-    // The stored keyguardRequest does not have Uint8Array, only regular arrays
-    @Static private keyguardRequest!: KSignTransactionRequest;
-    @State private keyguardResult!: KSignTransactionResult;
+    // The stored keyguardRequest does not have Uint8Arrays, only regular arrays
+    @Static private keyguardRequest!: KeyguardRequest.SignTransactionRequest;
+    @State private keyguardResult!: KeyguardRequest.SignTransactionResult;
 
-    private result?: SignTransactionResult;
     private isTxSent: boolean = false;
+
+    private created() {
+        const span = document.createElement('span');
+        span.setAttribute('id', 'logo-checkout');
+        span.textContent = 'Checkout';
+        document.querySelector('.logo')!.appendChild(span);
+    }
 
     private async mounted() {
         const tx = await (this.$refs.network as Network).prepareTx(this.keyguardRequest, this.keyguardResult);
-        this.result = await (this.$refs.network as Network).sendToNetwork(tx);
+        const result: SignTransactionResult = await (this.$refs.network as Network).sendToNetwork(tx);
         this.isTxSent = true;
+
+        setTimeout(() => this.$rpc.resolve(result), Loader.SUCCESS_REDIRECT_DELAY);
     }
 
-    private done() {
-        this.$rpc.resolve(this.result!);
+    private get status(): string {
+        return 'Connecting to Nimiq...';
+    }
+
+    private get state(): Loader.State {
+        return !this.isTxSent ? Loader.State.LOADING : Loader.State.SUCCESS;
+    }
+
+    private get title(): string {
+        return !this.isTxSent ? 'Processing your payment' : 'Payment successful.';
     }
 }
 </script>
 
 <style scoped>
-    .checkout-transmission {
-        display: flex;
-        flex-direction: column;
-        flex-grow: 1;
-        position: relative;
+    .small-page {
+        height: 70rem;
     }
+</style>
 
-    .page-footer {
-        padding: 1rem;
-    }
-
-    .success {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        height: calc(100% - 2rem);
-        width: calc(100% - 2rem);
-    }
-
-    .fade-in-enter-active {
-        animation: color-shift 1s;
-    }
-
-    @keyframes color-shift {
-        0% {
-            background: var(--nimiq-blue);
-            background-image: var(--nimiq-blue-bg);
-            max-height: 20rem;
-        }
-
-        100% {
-            background: var(--nimiq-green);
-            background-image: var(--nimiq-green-bg);
-            max-height: 100%;
-        }
+<style>
+    #logo-checkout {
+        margin-left: 0.75rem;
     }
 </style>

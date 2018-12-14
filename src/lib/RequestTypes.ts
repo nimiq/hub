@@ -1,5 +1,6 @@
 import { WalletType, WalletInfoEntry } from './WalletInfo';
 import { TX_VALIDITY_WINDOW, TX_MIN_VALIDITY_DURATION } from './Constants';
+import { State } from '@nimiq/rpc';
 
 export enum RequestType {
     LIST = 'list',
@@ -31,7 +32,6 @@ export interface SignTransactionRequest {
     fee?: number;
     extraData?: Uint8Array;
     flags?: number;
-    networkId?: number;
     validityStartHeight: number; // FIXME To be made optional when accounts manager has its own network
 }
 
@@ -46,7 +46,6 @@ export interface ParsedSignTransactionRequest {
     fee?: number;
     data?: Uint8Array;
     flags?: number;
-    networkId?: number;
     validityStartHeight: number; // FIXME To be made optional when accounts manager has its own network
 }
 
@@ -83,7 +82,6 @@ export interface CheckoutRequest {
     fee?: number;
     extraData?: Uint8Array;
     flags?: number;
-    networkId?: number;
     validityDuration?: number;
 }
 
@@ -97,7 +95,6 @@ export interface ParsedCheckoutRequest {
     fee?: number;
     data?: Uint8Array;
     flags?: number;
-    networkId?: number;
     validityDuration: number;
 }
 
@@ -290,7 +287,7 @@ export type RpcResult = SignTransactionResult
                       | ListResult;
 
 export class AccountsRequest {
-    public static parse(request: RpcRequest, requestType?: RequestType): ParsedRpcRequest | null {
+    public static parse(request: RpcRequest, state: State, requestType?: RequestType): ParsedRpcRequest | null {
         switch (request.kind || requestType) {
             case RequestType.SIGN_TRANSACTION:
                 // Because the switch statement is not definitely using 'request.kind' as the condition,
@@ -308,7 +305,6 @@ export class AccountsRequest {
                     fee: request.fee,
                     data: request.extraData,
                     flags: request.flags,
-                    networkId: request.networkId,
                     validityStartHeight: request.validityStartHeight,
                 } as ParsedSignTransactionRequest;
             case RequestType.CHECKOUT:
@@ -316,6 +312,13 @@ export class AccountsRequest {
                 // Typescript cannot infer what type the request variable is from the control flow,
                 // thus we need to force-cast it here:
                 request = request as CheckoutRequest;
+                if (request.shopLogoUrl && state.origin && new URL(request.shopLogoUrl).origin !== state.origin) {
+                    throw new Error(
+                        'shopLogoUrl must have same origin as caller website. Image at ' +
+                        request.shopLogoUrl +
+                        ' is not on caller origin ' +
+                        state.origin);
+                }
                 return {
                     kind: RequestType.CHECKOUT,
                     appName: request.appName,
@@ -326,7 +329,6 @@ export class AccountsRequest {
                     fee: request.fee,
                     data: request.extraData,
                     flags: request.flags,
-                    networkId: request.networkId,
                     validityDuration: !request.validityDuration ? TX_VALIDITY_WINDOW : Math.min(
                         TX_VALIDITY_WINDOW,
                         Math.max(
@@ -416,7 +418,6 @@ export class AccountsRequest {
                     fee: request.fee,
                     extraData: request.data,
                     flags: request.flags,
-                    networkId: request.networkId,
                     validityStartHeight: request.validityStartHeight,
                 } as SignTransactionRequest;
             case RequestType.CHECKOUT:
@@ -430,7 +431,6 @@ export class AccountsRequest {
                     fee: request.fee,
                     extraData: request.data,
                     flags: request.flags,
-                    networkId: request.networkId,
                     validityDuration: request.validityDuration,
                 } as CheckoutRequest;
             case RequestType.SIGNUP:

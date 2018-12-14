@@ -8,7 +8,6 @@ const SignTransactionSuccess  = () => import(/*webpackChunkName: "sign-transacti
     './views/SignTransactionSuccess.vue');
 
 const Checkout                = () => import(/*webpackChunkName: "checkout"*/ './views/Checkout.vue');
-const CheckoutOverview        = () => import(/*webpackChunkName: "checkout"*/ './views/CheckoutOverview.vue');
 const CheckoutTransmission    = () => import(/*webpackChunkName: "checkout"*/ './views/CheckoutTransmission.vue');
 const CheckoutErrorHandler    = () => import(/*webpackChunkName: "checkout"*/ './views/CheckoutErrorHandler.vue');
 
@@ -120,26 +119,15 @@ export default new Router({
         {
             path: `/${RequestType.CHECKOUT}`,
             component: Checkout,
-            children: [
-                {
-                    path: '',
-                    component: CheckoutOverview,
-                    name: RequestType.CHECKOUT,
-                },
-                {
-                    path: 'change-account',
-                    component: ActiveAccountSelector,
-                    name: `${RequestType.CHECKOUT}-change-account`,
-                },
-                {
-                    path: 'success',
-                    component: CheckoutTransmission,
-                    name: `${RequestType.CHECKOUT}-success`,
-                },
-            ],
+            name: RequestType.CHECKOUT,
         },
         {
-            path: `/${RequestType.CHECKOUT}-error`,
+            path: `/${RequestType.CHECKOUT}/success`,
+            component: CheckoutTransmission,
+            name: `${RequestType.CHECKOUT}-success`,
+        },
+        {
+            path: `/${RequestType.CHECKOUT}/error`,
             component: CheckoutErrorHandler,
             name: `${RequestType.CHECKOUT}-error`,
         },

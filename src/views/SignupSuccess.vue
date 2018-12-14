@@ -11,7 +11,7 @@
 
                 <div class="wallet-label">
                     <div class="wallet-icon nq-icon" :class="walletIconClass"></div>
-                    <LabelInput :value="walletLabel" @changed="onWalletLabelChange"/>
+                    <Input :value="walletLabel" @changed="onWalletLabelChange"/>
                 </div>
 
                 <Account :address="createdAddress.toUserFriendlyAddress()" :label="accountLabel" :editable="true" @changed="onAccountLabelChange"/>
@@ -24,15 +24,16 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { PageHeader, PageBody, Account, LabelInput, SmallPage } from '@nimiq/vue-components';
+import { PageHeader, PageBody, Account, SmallPage } from '@nimiq/vue-components';
 import { AccountInfo } from '../lib/AccountInfo';
 import { WalletInfo, WalletType } from '../lib/WalletInfo';
 import { State, Getter } from 'vuex-class';
 import { WalletStore } from '../lib/WalletStore';
 import { CreateResult } from '@nimiq/keyguard-client';
 import { SignupResult } from '@/lib/RequestTypes';
+import Input from '@/components/Input.vue';
 
-@Component({components: {PageHeader, PageBody, Account, LabelInput, SmallPage}})
+@Component({components: {PageHeader, PageBody, Account, Input, SmallPage}})
 export default class SignupSuccess extends Vue {
     @State private keyguardResult!: CreateResult;
     @State private activeAccountPath!: string;

@@ -1,5 +1,5 @@
 <template>
-    <div class="loader" :class="showLoadingBackground && (lightBlue ? 'nq-bg-light-blue' : 'nq-bg-blue')">
+    <div class="loader" :class="showLoadingBackground && (lightBlue ? 'nq-light-blue-bg' : 'nq-blue-bg')">
         <transition name="fade-loading">
             <div class="wrapper" v-if="state === 'loading'">
                 <h1 class="title nq-h1">{{ loadingTitle }}</h1>
@@ -18,7 +18,7 @@
         </transition>
 
         <transition name="fade-result">
-            <div class="wrapper success nq-bg-green" v-if="state === 'success'">
+            <div class="wrapper success nq-green-bg" v-if="state === 'success'">
                 <div class="top-spacer"></div>
 
                 <div class="icon-row">
@@ -38,7 +38,7 @@
         </transition>
 
         <transition name="fade-result">
-            <div class="wrapper warning nq-bg-orange" v-if="state === 'warning'">
+            <div class="wrapper warning nq-orange-bg" v-if="state === 'warning'">
                 <div class="top-spacer" :class="{'with-main-action': !!mainAction, 'with-alternative-action': !!alternativeAction}"></div>
 
                 <div class="icon-row">
@@ -58,7 +58,7 @@
         </transition>
 
         <transition name="fade-result">
-            <div class="wrapper error nq-bg-red" v-if="state === 'error'">
+            <div class="wrapper error nq-red-bg" v-if="state === 'error'">
                 <div class="top-spacer" :class="{'with-main-action': !!mainAction, 'with-alternative-action': !!alternativeAction}"></div>
 
                 <div class="icon-row">
@@ -250,7 +250,8 @@ export default Loader;
         display: flex;
         flex-direction: column;
         border-radius: 0.5rem;
-        height: 100%;
+        width: calc(100% - 1.5rem);
+        height: calc(100% - 1.5rem);
         margin: 0.75rem;
         z-index: 1000;
         position: relative;

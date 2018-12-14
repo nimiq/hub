@@ -5,7 +5,7 @@
             <PageBody v-if="wallet">
                 <div class="wallet-label" v-if="wallet.type !== 0 /* LEGACY */">
                     <div class="wallet-icon nq-icon" :class="walletIconClass"></div>
-                    <LabelInput :value="wallet.label" @changed="onWalletLabelChange" ref="wallet"/>
+                    <Input :value="wallet.label" @changed="onWalletLabelChange" ref="wallet"/>
                 </div>
 
                 <AccountList ref="accountList"
@@ -34,7 +34,8 @@
 
 <script lang="ts">
 import { Component, Vue, Emit } from 'vue-property-decorator';
-import { AccountList, LabelInput, SmallPage, PageHeader, PageBody, PageFooter } from '@nimiq/vue-components';
+import { AccountList, SmallPage, PageHeader, PageBody, PageFooter } from '@nimiq/vue-components';
+import Input from '@/components/Input.vue';
 import { ParsedRenameRequest, RenameResult } from '../lib/RequestTypes';
 import Success from '../components/Success.vue';
 import { WalletInfo, WalletType } from '../lib/WalletInfo';
@@ -56,7 +57,7 @@ import { Static } from '../lib/StaticStore';
     PageBody,
     PageFooter,
     AccountList,
-    LabelInput,
+    Input,
     Success,
 }})
 export default class Rename extends Vue {
@@ -95,7 +96,7 @@ export default class Rename extends Vue {
             el.focus(this.request.address);
         } else { // A wallet was selected
             if (this.wallet!.type !== WalletType.LEGACY) {
-                const el = (this.$refs.wallet as LabelInput);
+                const el = (this.$refs.wallet as Input);
                 el.focus();
             }
         }
