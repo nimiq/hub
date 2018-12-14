@@ -29,8 +29,9 @@ export default class App extends Vue {
 
     private isRequestLoaded = false;
 
-    public created() {
-        this.$store.dispatch('initWallets');
+    public async created() {
+        await this.$store.dispatch('initWallets');
+        this.$rpc.start();
     }
 
     public mounted() {
