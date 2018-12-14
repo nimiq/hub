@@ -6,13 +6,11 @@
                 Nimiq
             </div>
         </header>
-        <div style="flex-grow: 1;"></div>
         <div v-if="!isRequestLoaded" class="loading">
             <div class="loading-animation"></div>
             <h2>Loading, hold on</h2>
         </div>
         <router-view v-else/>
-        <div style="flex-grow: 1;"></div>
     </div>
 </template>
 
