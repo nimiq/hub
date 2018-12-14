@@ -3,7 +3,7 @@
         <header class="logo-container">
             <div class="logo icon-logo">
                 <span class="nq-icon nimiq-logo"></span>
-                Nimiq
+                <strong>Nimiq</strong>
             </div>
         </header>
         <div style="flex-grow: 1;"></div>
@@ -76,10 +76,7 @@ export default class App extends Vue {
     .logo {
         height: 3.625rem;
         box-sizing: border-box;
-        font-size: 2.125rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.077em;
+        font-size: 2.5rem;
         display: inline-flex;
         align-items: center;
         color: var(--nimiq-blue);
@@ -88,6 +85,11 @@ export default class App extends Vue {
         user-select: none;
         -webkit-tap-highlight-color: transparent;
         outline: none !important;
+    }
+
+    .logo strong {
+        text-transform: uppercase;
+        letter-spacing: 0.077em;
     }
 
     .logo .nimiq-logo {
