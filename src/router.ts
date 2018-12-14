@@ -11,13 +11,15 @@ const Checkout                = () => import(/*webpackChunkName: "checkout"*/ '.
 const CheckoutTransmission    = () => import(/*webpackChunkName: "checkout"*/ './views/CheckoutTransmission.vue');
 const CheckoutErrorHandler    = () => import(/*webpackChunkName: "checkout"*/ './views/CheckoutErrorHandler.vue');
 
-const SignupTypeSelector      = () => import(/*webpackChunkName: "signup"*/ './views/SignupTypeSelector.vue');
-const SignupSuccess           = () => import(/*webpackChunkName: "signup"*/ './views/SignupSuccess.vue');
-const SignupErrorHandler      = () => import(/*webpackChunkName: "signup"*/ './views/SignupErrorHandler.vue');
+const OnboardingSelector      = () => import(/*webpackChunkName: "onboarding"*/ './views/OnboardingSelector.vue');
 
-const Login                   = () => import(/*webpackChunkName: "login"*/ './views/Login.vue');
-const LoginSuccess            = () => import(/*webpackChunkName: "login"*/ './views/LoginSuccess.vue');
-const LoginErrorHandler       = () => import(/*webpackChunkName: "login"*/ './views/LoginErrorHandler.vue');
+const Signup                  = () => import(/*webpackChunkName: "onboarding"*/ './views/Signup.vue');
+const SignupSuccess           = () => import(/*webpackChunkName: "onboarding"*/ './views/SignupSuccess.vue');
+const SignupErrorHandler      = () => import(/*webpackChunkName: "onboarding"*/ './views/SignupErrorHandler.vue');
+
+const Login                   = () => import(/*webpackChunkName: "onboarding"*/ './views/Login.vue');
+const LoginSuccess            = () => import(/*webpackChunkName: "onboarding"*/ './views/LoginSuccess.vue');
+const LoginErrorHandler       = () => import(/*webpackChunkName: "onboarding"*/ './views/LoginErrorHandler.vue');
 
 const Export                  = () => import(/*webpackChunkName: "export"*/ './views/Export.vue');
 
@@ -132,8 +134,13 @@ export default new Router({
             name: `${RequestType.CHECKOUT}-error`,
         },
         {
+            path: `/${RequestType.ONBOARD}`,
+            component: OnboardingSelector,
+            name: `${RequestType.ONBOARD}`,
+        },
+        {
             path: `/${RequestType.SIGNUP}`,
-            component: SignupTypeSelector,
+            component: Signup,
             name: `${RequestType.SIGNUP}`,
         },
         {

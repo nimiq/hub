@@ -26,7 +26,7 @@
 
 <script lang="ts">
 import { Component, Emit, Vue } from 'vue-property-decorator';
-import { ParsedLoginRequest, LoginResult, RequestType } from '../lib/RequestTypes';
+import { ParsedLoginRequest, OnboardingResult, RequestType } from '../lib/RequestTypes';
 import { State } from 'vuex-class';
 import { WalletInfo, WalletType } from '../lib/WalletInfo';
 import { ImportResult } from '@nimiq/keyguard-client';
@@ -106,7 +106,7 @@ export default class LoginSuccess extends Vue {
     @Emit()
     private done() {
         if (!this.walletInfo) throw new Error('WalletInfo not ready.');
-        const result: LoginResult = {
+        const result: OnboardingResult = {
             walletId: this.walletInfo.id,
             label: this.walletInfo.label,
             type: this.walletInfo.type,

@@ -10,7 +10,7 @@ export default class SignupErrorHandler extends ErrorHandler {
     protected requestSpecificErrors(): boolean {
         if (this.keyguardResult instanceof Error
             && this.keyguardResult.message === 'Request aborted') {
-            this.$rpc.routerReplace(RequestType.SIGNUP);
+            this.$rpc.routerReplace(RequestType.ONBOARD);
             return true;
         }
         return false;

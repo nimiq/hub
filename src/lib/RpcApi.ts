@@ -29,6 +29,7 @@ export default class RpcApi {
         this._registerAccountsApis([
             RequestType.SIGN_TRANSACTION,
             RequestType.CHECKOUT,
+            RequestType.ONBOARD,
             RequestType.SIGNUP,
             RequestType.LOGIN,
             RequestType.EXPORT,
@@ -77,7 +78,7 @@ export default class RpcApi {
     }
 
     public reject(error: Error) {
-        const ignoredErrors = [ 'CANCEL', 'Request aborted' ];
+        const ignoredErrors = [ 'CANCELED', 'Request aborted' ];
         if (ignoredErrors.indexOf(error.message) < 0) {
             if (window.location.origin === 'https://accounts.nimiq-testnet.com') {
                 Raven.captureException(error);
@@ -199,7 +200,7 @@ export default class RpcApi {
                 // Recover state
                 this._recoverState(state);
 
-                if (error.message === 'CANCEL') {
+                if (error.message === 'CANCELED') {
                     this._staticStore.rpcState!.reply(ResponseStatus.ERROR, error);
                     return;
                 }

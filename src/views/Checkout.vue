@@ -20,7 +20,7 @@
                 :wallets="processedWallets"
                 :minBalance="request.value + request.fee"
                 @account-selected="accountSelected"
-                @login="login"/>
+                @login="goToOnboarding"/>
 
             <AccountInfoScreen :class="{'active': showMerchantInfo}"
                 :address="request.recipient.toUserFriendlyAddress()"
@@ -30,7 +30,7 @@
             />
         </SmallPage>
 
-        <button class="global-close nq-button-s" :class="{'hidden': $route.name === 'checkout-success'}" @click="close">
+        <button class="global-close nq-button-s" @click="close">
             <span class="nq-icon arrow-left"></span>
             Cancel Payment
         </button>
@@ -42,7 +42,7 @@
 <script lang="ts">
 import { Component, Emit, Watch, Vue } from 'vue-property-decorator';
 import { PaymentInfoLine, AccountSelector, AccountInfo as AccountInfoScreen, SmallPage } from '@nimiq/vue-components';
-import { ParsedCheckoutRequest, RequestType, LoginResult } from '@/lib/RequestTypes';
+import { ParsedCheckoutRequest, RequestType, OnboardingResult } from '@/lib/RequestTypes';
 import { State as RpcState } from '@nimiq/rpc';
 import staticStore, { Static } from '@/lib/StaticStore';
 import { WalletStore } from '@/lib/WalletStore';
@@ -79,7 +79,9 @@ export default class Checkout extends Vue {
         document.querySelector('.logo')!.appendChild(span);
 
         await this.handleOnboardingResult();
-        this.getBalances();
+
+        if (this.wallets.length === 0) this.goToOnboarding(true);
+        else this.getBalances();
     }
 
     private async getBalances() {
@@ -202,23 +204,16 @@ export default class Checkout extends Vue {
         client.signTransaction(request).catch(console.error); // TODO: proper error handling
     }
 
-    private login() {
-        // Redirect to import
-        const request: KeyguardRequest.ImportRequest = {
-            appName: this.request.appName,
-            defaultKeyPath: `m/44'/242'/0'/0'`,
-            requestedKeyPaths: [`m/44'/242'/0'/0'`],
-        };
-
+    private goToOnboarding(useReplace?: boolean) {
+        // Redirect to onboarding
         staticStore.originalRouteName = RequestType.CHECKOUT;
-
-        const client = this.$rpc.createKeyguardClient();
-        client.import(request).catch(console.error); // TODO: proper error handling
+        if (useReplace) this.$router.replace({name: RequestType.ONBOARD});
+        this.$router.push({name: RequestType.ONBOARD});
     }
 
     @Emit()
     private close() {
-        this.$rpc.reject(new Error('CANCEL'));
+        this.$rpc.reject(new Error('CANCELED'));
     }
 
     private get processedWallets(): WalletInfo[] {
@@ -249,7 +244,7 @@ export default class Checkout extends Vue {
     private async handleOnboardingResult() {
         // Check if we are returning from an onboarding request
         if (staticStore.sideResult && !(staticStore.sideResult instanceof Error)) {
-            const sideResult = staticStore.sideResult as LoginResult;
+            const sideResult = staticStore.sideResult as OnboardingResult;
 
             // Add imported wallet to Vuex store
             const walletInfo = await WalletStore.Instance.get(sideResult.walletId);
