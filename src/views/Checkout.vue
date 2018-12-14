@@ -55,6 +55,8 @@ import Loader from '@/components/Loader.vue';
 
 @Component({components: {PaymentInfoLine, AccountSelector, AccountInfoScreen, SmallPage, Network, Loader}})
 export default class Checkout extends Vue {
+    private static readonly CACHE_STORAGE_KEY = 'nimiq_checkout_cache';
+
     @Static private rpcState!: RpcState;
     @Static private request!: ParsedCheckoutRequest;
     @State private wallets!: WalletInfo[];
@@ -68,6 +70,7 @@ export default class Checkout extends Vue {
     private showMerchantInfo: boolean = false;
     private height: number = 0;
     private hasBalances: boolean = false;
+    private sideResultAddedWallet: boolean = false;
 
     private async created() {
         await this.handleOnboardingResult();
@@ -75,37 +78,47 @@ export default class Checkout extends Vue {
     }
 
     private async getBalances() {
-        const network = (this.$refs.network as Network);
+        if (!this.sideResultAddedWallet && this.getCache() && document.referrer !== window.location.href) {
+            this.onHeadChange(this.getCache());
+        } else {
+            // Build mapping from accounts to the index of their respective wallet in the wallets array
+            const accountsToWallets: Map<string, number> = new Map();
+            this.wallets.forEach((wallet: WalletInfo, index: number) => {
+                for (const address of Array.from(wallet.accounts.keys())) {
+                    accountsToWallets.set(address, index);
+                }
+            });
 
-        // Build mapping from accounts to the index of their respective wallet in the wallets array
-        const accountsToWallets: Map<string, number> = new Map();
-        this.wallets.forEach((wallet: WalletInfo, index: number) => {
-            for (const address of Array.from(wallet.accounts.keys())) {
-                accountsToWallets.set(address, index);
+            // Get balances through pico consensus, also triggers head-change event
+            const network = (this.$refs.network as Network);
+            const balances: Map<string, number> = await network.connectPico(Array.from(accountsToWallets.keys()));
+
+            // Copy wallets to be able to write to them
+            const wallets = this.wallets.slice(0);
+
+            // Add received account balances to correct AccountInfos in correct wallets
+            for (const [address, balance] of balances) {
+                const index = accountsToWallets.get(address)!;
+                const accountInfo = wallets[index].accounts.get(address)!;
+                accountInfo.balance = Nimiq.Policy.coinsToSatoshis(balance);
+                wallets[index].accounts.set(address, accountInfo);
             }
-        });
 
-        // Get balances through pico consensus, also triggers head-change event
-        const balances: Map<string, number> = await network.connectPico(Array.from(accountsToWallets.keys()));
+            // Store new balances
+            for (const wallet of wallets) {
+                // Update IndexedDB
+                await WalletStore.Instance.put(wallet);
 
-        // Copy wallets to be able to write to them
-        const wallets = this.wallets.slice(0);
+                // Update Vuex
+                this.$addWallet(wallet);
+            }
 
-        // Add received account balances to correct AccountInfos in correct wallets
-        for (const [address, balance] of balances) {
-            const index = accountsToWallets.get(address)!;
-            const accountInfo = wallets[index].accounts.get(address)!;
-            accountInfo.balance = Nimiq.Policy.coinsToSatoshis(balance);
-            wallets[index].accounts.set(address, accountInfo);
-        }
-
-        // Store new balances
-        for (const wallet of wallets) {
-            // Update IndexedDB
-            await WalletStore.Instance.put(wallet);
-
-            // Update Vuex
-            this.$addWallet(wallet);
+            // Cache height (balances are stored in IndexedDB)
+            const cacheInput = {
+                timestamp: Date.now(),
+                height: this.height,
+            };
+            window.sessionStorage.setItem(Checkout.CACHE_STORAGE_KEY, JSON.stringify(cacheInput));
         }
 
         // Remove loader
@@ -117,7 +130,7 @@ export default class Checkout extends Vue {
         console.debug(`Got height: ${height} (was ${oldHeight})`);
     }
 
-    private onHeadChange(head: Nimiq.BlockHeader) {
+    private onHeadChange(head: Nimiq.BlockHeader | {height: number}) {
         this.height = head.height;
     }
 
@@ -237,6 +250,7 @@ export default class Checkout extends Vue {
             const walletInfo = await WalletStore.Instance.get(sideResult.walletId);
             if (walletInfo) {
                 this.$addWallet(walletInfo);
+                this.sideResultAddedWallet = true;
 
                 // Set as activeWallet and activeAccount
                 this.$setActiveAccount({
@@ -246,6 +260,23 @@ export default class Checkout extends Vue {
             }
         }
         delete staticStore.sideResult;
+    }
+
+    private getCache() {
+        const rawCache = window.sessionStorage.getItem(Checkout.CACHE_STORAGE_KEY);
+        if (!rawCache) return null;
+
+        try {
+            const cache = JSON.parse(rawCache);
+
+            // Check if expired or doesn't have a height
+            if (cache.timestamp < Date.now() - 5 * 60 * 1000 || cache.height === 0) throw new Error();
+
+            return cache;
+        } catch (e) {
+            window.sessionStorage.removeItem(Checkout.CACHE_STORAGE_KEY);
+            return null;
+        }
     }
 }
 </script>
