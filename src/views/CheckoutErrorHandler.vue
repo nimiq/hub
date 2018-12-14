@@ -11,7 +11,7 @@ export default class CheckoutErrorHandler extends ErrorHandler {
         if (this.keyguardResult instanceof Error
             && this.keyguardResult.message === 'Request aborted') {
             // this Error should be more specific. history.back does not work incredibly well
-            this.$router.push({name: RequestType.CHECKOUT});
+            this.$rpc.routerReplace(RequestType.CHECKOUT);
             return true;
         }
         return false;
