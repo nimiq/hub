@@ -3,7 +3,7 @@
         <SmallPage>
             <PageHeader>Your account is ready</PageHeader>
             <PageBody>
-                <div class="success-box nq-icon trumpet nq-bg-green">
+                <div class="success-box nq-icon trumpet nq-green-bg">
                     <h2 class="nq-h2">Awesome!</h2>
                     <p class="nq-text">Your new account has been added to your wallet.</p>
                 </div>

@@ -1,5 +1,5 @@
 <template>
-    <div class="network loading nq-bg-blue" :class="alwaysVisible || (visible && !consensusEstablished) ? '' : 'hidden'">
+    <div class="network loading nq-blue-bg" :class="alwaysVisible || (visible && !consensusEstablished) ? '' : 'hidden'">
         <div class="loading-animation"></div>
         <div class="loading-status nq-text-s">{{ status }}</div>
     </div>
