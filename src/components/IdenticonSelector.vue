@@ -6,7 +6,7 @@
                 <div class="loading-animation"></div>
                 <h2>Mixing colors</h2>
             </div>
-            <div class="wrapper" @click="selectedAccount = account"
+            <div class="wrapper" @click="_selectAccount(account)"
                  :class="{ selected: selectedAccount === account }" v-for="account in displayedAccounts">
                 <Identicon :address="account.userFriendlyAddress"></Identicon>
                 <div class="address">{{ account.userFriendlyAddress }}</div>
@@ -16,7 +16,7 @@
             More Avatars
         </button>
 
-        <div @click="selectedAccount = null" class="backdrop">
+        <div @click="_selectAccount(null)" class="backdrop">
             <button @click="_onSelectionConfirmed" class="nq-button inverse">Select</button>
             <a tabindex="0" class="nq-text-s nq-link">Back</a>
         </div>
@@ -34,6 +34,9 @@
 
         @Prop({ default: () => [], type: Array })
         public accounts!: AccountInfo[];
+
+        @Prop({ default: true, type: Boolean })
+        public confirmAccountSelection!: boolean;
 
         private page: number = 0;
         private selectedAccount: AccountInfo | null = null;
@@ -62,6 +65,12 @@
             identicons.forEach((identicon: Element) => (identicon as HTMLElement).style.animationName = 'non-existent');
             this.$el.offsetWidth; // tslint:disable-line:no-unused-expression
             identicons.forEach((identicon: Element) => (identicon as HTMLElement).style.animationName = null); // reset
+        }
+
+        private _selectAccount(account: AccountInfo | null) {
+            this.selectedAccount = account;
+            if (!account || this.confirmAccountSelection) return;
+            this.$emit(IdenticonSelector.Events.IDENTICON_SELECTED, this.selectedAccount);
         }
 
         private _onSelectionConfirmed() {
