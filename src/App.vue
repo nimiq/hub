@@ -54,12 +54,6 @@ export default class App extends Vue {
 </script>
 
 <style>
-    @media (max-width: 450px) {
-        html {
-            --nimiq-size: 7px; /* For @nimiq/vue-components */
-        }
-    }
-
     .container {
         display: flex;
         flex-direction: column;
