@@ -2,12 +2,19 @@
     <div class="container">
         <SmallPage>
             <LedgerUi v-show="state === 'ledger-interaction'" @information-shown="_showLedger"></LedgerUi>
-            <IdenticonSelector :accounts="accountsToSelectFrom" v-if="state === 'identicon-selection'"
-                                @identicon-selected="_onAccountSelected">
-            </IdenticonSelector>
-            <Loader v-else-if="state === 'fetching-accounts' || state === 'finished'"
+            <Loader v-if="state === 'fetching-accounts' || state === 'finished'"
                     :state="loaderState" :title="loaderTitle" :status="loaderStatus">
             </Loader>
+            <IdenticonSelector :accounts="accountsToSelectFrom" :confirmAccountSelection="false"
+                               v-else-if="state === 'identicon-selection'" @identicon-selected="_onAccountSelected">
+            </IdenticonSelector>
+            <div class="wallet-summary" v-else-if="state === 'wallet-summary'">
+                <h1 class="nq-h1">Wallet Created</h1>
+                <WalletIdentifier :accounts="Array.from(walletInfo.accounts.values())"
+                                  :animate="true"></WalletIdentifier>
+                <div class="message nq-text">This is your wallet with your first account in it.</div>
+                <button class="nq-button" @click="done">Finish</button>
+            </div>
         </SmallPage>
 
         <button class="global-close nq-button-s" @click="close">
@@ -25,21 +32,23 @@ import { ResponseStatus, State as RpcState } from '@nimiq/rpc';
 import { Static } from '../lib/StaticStore';
 import LedgerApi from '../lib/LedgerApi';
 import LedgerUi from '../components/LedgerUi.vue';
-import IdenticonSelector from '../components/IdenticonSelector.vue';
 import Loader from '../components/Loader.vue';
+import IdenticonSelector from '../components/IdenticonSelector.vue';
+import WalletIdentifier from '../components/WalletIdentifier.vue';
 import WalletInfoCollector from '../lib/WalletInfoCollector';
 import { WalletInfo, WalletType } from '../lib/WalletInfo';
 import { AccountInfo } from '../lib/AccountInfo';
 import { WalletStore } from '../lib/WalletStore';
 import { ACCOUNT_DEFAULT_LABEL_LEDGER } from '../lib/Constants';
 
-@Component({components: {PageBody, SmallPage, LedgerUi, IdenticonSelector, Loader}})
+@Component({components: {PageBody, SmallPage, LedgerUi, Loader, IdenticonSelector, WalletIdentifier}})
 export default class SignupLedger extends Vue {
     private static readonly State = {
         IDLE: 'idle',
         LEDGER_INTERACTION: 'ledger-interaction', // can be instructions to connect or also display of an error
         FETCHING_ACCOUNTS: 'fetching-accounts',
         IDENTICON_SELECTION: 'identicon-selection',
+        WALLET_SUMMARY: 'wallet-summary',
         FINISHED: 'finished',
     };
 
@@ -125,7 +134,7 @@ export default class SignupLedger extends Vue {
     private async _onAccountSelected(selectedAccount: AccountInfo) {
         this.walletInfo!.accounts.set(selectedAccount.address.toUserFriendlyAddress(), selectedAccount);
         await this._onWalletInfoUpdate(this.walletInfo!);
-        this.done();
+        this.state = SignupLedger.State.WALLET_SUMMARY;
     }
 
     private async _onWalletInfoUpdate(
@@ -133,7 +142,9 @@ export default class SignupLedger extends Vue {
         currentlyCheckedAccounts?: Array<{ address: string, path: string }>,
     ) {
         this.walletInfo = walletInfo;
-        await WalletStore.Instance.put(walletInfo);
+        if (walletInfo.accounts.size > 0) {
+            await WalletStore.Instance.put(walletInfo);
+        }
         if (currentlyCheckedAccounts && this.accountsToSelectFrom.length === 0) {
             // set the first set of checked accounts as the one the user can select one from, in case he doesn't have
             // an account already
@@ -196,19 +207,29 @@ export default class SignupLedger extends Vue {
         overflow: hidden;
     }
 
-    .page-body {
-        padding: 0;
+    .small-page > * {
+        flex-grow: 1;
+    }
+
+    .wallet-summary {
         display: flex;
         flex-direction: column;
-        justify-content: center;
+        justify-content: space-between;
         align-items: center;
+        padding: 4rem;
     }
 
-    .ledger-ui {
-        flex-grow: 1;
+    .wallet-summary h1 {
+        margin-top: 0;
     }
 
-    .loader {
-        flex-grow: 1;
+    .wallet-summary .wallet-identifier {
+        margin: 4.25rem;
+    }
+
+    .wallet-summary .message {
+        font-size: 2.5rem;
+        text-align: center;
+        max-width: 35rem;
     }
 </style>
