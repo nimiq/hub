@@ -18,10 +18,9 @@
                 <button class="nq-button" @click="storeLabels">Save</button>
             </PageFooter>
             <transition name='fade-in'>
-                <Success v-if="labelsStored"
-                    text="Your labels[br]were successfully saved"
-                    :appName="request.appName"
-                    @continue="done" />
+                <Loader v-if="labelsStored"
+                    state="success"
+                    title="All labels saved."/>
             </transition>
         </SmallPage>
 
@@ -37,7 +36,7 @@ import { Component, Vue, Emit } from 'vue-property-decorator';
 import { AccountList, SmallPage, PageHeader, PageBody, PageFooter } from '@nimiq/vue-components';
 import Input from '@/components/Input.vue';
 import { ParsedRenameRequest, RenameResult } from '../lib/RequestTypes';
-import Success from '../components/Success.vue';
+import Loader from '../components/Loader.vue';
 import { WalletInfo, WalletType } from '../lib/WalletInfo';
 import { WalletStore } from '@/lib/WalletStore';
 import { Static } from '../lib/StaticStore';
@@ -58,7 +57,7 @@ import { Static } from '../lib/StaticStore';
     PageFooter,
     AccountList,
     Input,
-    Success,
+    Loader,
 }})
 export default class Rename extends Vue {
     @Static private request!: ParsedRenameRequest;
@@ -116,6 +115,8 @@ export default class Rename extends Vue {
     private storeLabels() {
         WalletStore.Instance.put(this.wallet!);
         this.labelsStored = true;
+
+        setTimeout(() => this.done(), Loader.SUCCESS_REDIRECT_DELAY);
     }
 
     private done() {
@@ -169,24 +170,22 @@ export default class Rename extends Vue {
         padding: 2rem 1rem;
     }
 
-    .success {
+    .loader {
         position: absolute;
         bottom: 0;
         left: 0;
-        height: calc(100% - 2rem);
-        width: calc(100% - 2rem);
+        height: calc(100% - 1.5rem);
+        width: calc(100% - 1.5rem);
         overflow: hidden;
         white-space: nowrap;
     }
 
     .fade-in-enter-active {
-        animation: color-shift .5s;
+        animation: grow-from-button .5s;
     }
 
-    @keyframes color-shift {
+    @keyframes grow-from-button {
         0% {
-            background: var(--nimiq-blue);
-            background-image: var(--nimiq-blue-bg);
             max-height: 8rem;
             max-width: 8rem;
             border-radius: 4rem;
@@ -195,7 +194,7 @@ export default class Rename extends Vue {
         }
 
         25% {
-            max-width: calc(100% - 2rem);
+            max-width: calc(100% - 1.5rem);
             left: 0;
         }
 
@@ -204,9 +203,7 @@ export default class Rename extends Vue {
         }
 
         100% {
-            background: var(--nimiq-green);
-            background-image: var(--nimiq-green-bg);
-            max-height: calc(100% - 2rem);
+            max-height: calc(100% - 1.5rem);
             border-radius: 0.5rem;
         }
     }
