@@ -661,10 +661,9 @@
   resolved "https://registry.yarnpkg.com/@nimiq/rpc/-/rpc-0.1.0-beta.4.tgz#e05c9abb13f2f44b6056903fe9754e6cb9e2fb8f"
   integrity sha512-mp511v+htlo9yVB1PcvDtECqFZ9evBNBgML6ATZk3ZV/J0+qdsZfs75cwSVve1PxCrt6sTbhhesl8yIPbDaz2g==
 
-"@nimiq/style@^0.4.0":
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/@nimiq/style/-/style-0.4.0.tgz#a12307ec1a487d61996dc1867a16a950181768a7"
-  integrity sha512-7QqwW6KIUWxh6yqQlyVx/r3SxKk2pOqQN4rpDADPLXeoBYf/dXj6v6PFAkEln4lsX5xs9QlsdMR4v8Dymz1eMg==
+"@nimiq/style@https://github.com/nimiq/nimiq-style.git#julian/hover-states":
+  version "0.4.1"
+  resolved "https://github.com/nimiq/nimiq-style.git#d34d2a8ddbedb3ea66096143ce01690c2f811563"
 
 "@nimiq/utils@^0.1.0":
   version "0.1.0"
