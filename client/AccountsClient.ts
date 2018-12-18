@@ -1,11 +1,10 @@
-import {
+export {
     UrlEncodedPopupBehavior,
     IFrameRequestBehavior,
     RequestBehavior,
     RedirectRequestBehavior,
 } from './RequestBehavior';
-import { RedirectRpcClient } from '@nimiq/rpc';
-import {
+export {
     RequestType,
     SimpleRequest,
     OnboardingResult,
@@ -27,7 +26,36 @@ import {
     RpcResult,
 } from '../src/lib/RequestTypes';
 
-export default class AccountsClient {
+import {
+    UrlEncodedPopupBehavior,
+    IFrameRequestBehavior,
+    RequestBehavior,
+    RedirectRequestBehavior,
+} from './RequestBehavior';
+import {
+    RequestType,
+    SimpleRequest,
+    OnboardingResult,
+    CheckoutRequest,
+    LogoutRequest,
+    LogoutResult,
+    SignTransactionRequest,
+    SignTransactionResult,
+    ExportRequest,
+    ChangePassphraseRequest,
+    AddAccountRequest,
+    AddAccountResult,
+    RenameRequest,
+    RenameResult,
+    SignMessageRequest,
+    SignMessageResult,
+    SimpleResult,
+    ListResult,
+    RpcResult,
+} from '../src/lib/RequestTypes';
+import { RedirectRpcClient } from '@nimiq/rpc';
+
+export class AccountsClient {
     public static readonly RequestType: typeof RequestType = RequestType;
     public static readonly RedirectRequestBehavior: typeof RedirectRequestBehavior = RedirectRequestBehavior;
 
