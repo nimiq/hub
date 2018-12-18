@@ -165,7 +165,7 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
                 DUMMY_ADDRESS_HR2,
                 {
                     path: 'not public',
-                    label: 'Standard Account',
+                    label: 'Standard Address',
                     address: DUMMY_ADDRESS_S2,
                 },
             ],
@@ -224,7 +224,7 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
                 DUMMY_ADDRESS_HR2,
                 {
                     path: 'not public',
-                    label: 'Standard Account',
+                    label: 'Standard Address',
                     address: DUMMY_ADDRESS_S2,
                 },
             ],
@@ -377,12 +377,12 @@ describe('CookieJar', () => {
     });
 
     it('can correctly cut overlong labels', () => {
-        const LABEL_1 = 'Standard Account'; // 16 chars, 16 byte
+        const LABEL_1 = 'Standard Address'; // 16 chars, 16 byte
         const LABEL_2 = 'Very very very very very very very very very very very long ASCII label'; // 71 chars, 71 byte
         const LABEL_3 = 'Label ❤ with ❤ multi 🙉 byte 🙉 characters that is very long indeed'; // 67 chars, 75 byte
         const LABEL_4 = 'Label with a multibyte character at the max length position: 🙉'; // 63 chars, 65 byte
 
-        const CUT_LABEL_1 = 'Standard Account'; // 16 byte
+        const CUT_LABEL_1 = 'Standard Address'; // 16 byte
         const CUT_LABEL_2 = 'Very very very very very very very very very very very long ASC'; // 63 byte
         const CUT_LABEL_3 = 'Label ❤ with ❤ multi 🙉 byte 🙉 characters that is very'; // 63 byte
         const CUT_LABEL_4 = 'Label with a multibyte character at the max length position: '; // 61 byte

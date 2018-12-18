@@ -26,7 +26,7 @@ import { DEFAULT_LABEL_KEYGUARD_ACCOUNT, DEFAULT_LABEL_KEYGUARD_WALLET } from '@
 export default class SignupSuccess extends Vue {
     @State private keyguardResult!: KeyguardRequest.CreateResult;
 
-    private title: string = 'Storing your wallet';
+    private title: string = 'Storing your account';
     private state: Loader.State = Loader.State.LOADING;
 
     private async mounted() {

@@ -13,11 +13,11 @@ export const TX_VALIDITY_WINDOW = 120;
 
 // Labels
 export const LABEL_MAX_LENGTH = 63; // in bytes
-export const DEFAULT_LABEL_LEGACY_WALLET = 'Legacy Wallet';
-export const DEFAULT_LABEL_KEYGUARD_WALLET = 'Keyguard Wallet';
-export const DEFAULT_LABEL_LEDGER_WALLET = 'Ledger Wallet';
-export const DEFAULT_LABEL_KEYGUARD_ACCOUNT = 'Standard Account';
-export const DEFAULT_LABEL_LEDGER_ACCOUNT = 'Ledger Account';
+export const DEFAULT_LABEL_LEGACY_WALLET = 'Legacy Account';
+export const DEFAULT_LABEL_KEYGUARD_WALLET = 'Keyguard Account';
+export const DEFAULT_LABEL_LEDGER_WALLET = 'Ledger Account';
+export const DEFAULT_LABEL_KEYGUARD_ACCOUNT = 'Standard Address';
+export const DEFAULT_LABEL_LEDGER_ACCOUNT = 'Ledger Address';
 
 // Compatibility
 export const LEGACY_GROUPING_WALLET_ID = 'LEGACY';
