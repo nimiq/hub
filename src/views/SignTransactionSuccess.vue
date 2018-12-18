@@ -1,12 +1,12 @@
 <template>
     <div class="container pad-bottom">
         <SmallPage>
-            <Success
-                text="Your transaction[br]is ready!"
-                buttonText="Send now"
-                :disabled="!isTxPrepared"
-                @continue="done"
-            />
+            <Loader state="success">
+                <template slot="success">
+                    <div class="success nq-icon"></div>
+                    <h1 class="title nq-h1">Sending your<br>transaction now.</h1>
+                </template>
+            </Loader>
             <Network ref="network"/>
         </SmallPage>
     </div>
@@ -17,31 +17,28 @@ import { Component, Vue } from 'vue-property-decorator';
 import Network from '@/components/Network.vue';
 import { SmallPage } from '@nimiq/vue-components';
 import { SignTransactionResult } from '../lib/RequestTypes';
-import {
-    SignTransactionRequest as KSignTransactionRequest,
-    SignTransactionResult as KSignTransactionResult,
-} from '@nimiq/keyguard-client';
 import { State } from 'vuex-class';
 import { Static } from '../lib/StaticStore';
-import Success from '../components/Success.vue';
+import Loader from '../components/Loader.vue';
 
-@Component({components: {Network, SmallPage, Success}})
+@Component({components: {Network, SmallPage, Loader}})
 export default class SignTransactionSuccess extends Vue {
     // The stored keyguardRequest does not have Uint8Array, only regular arrays
-    @Static private keyguardRequest!: KSignTransactionRequest;
-    @State private keyguardResult!: KSignTransactionResult;
-
-    private result?: SignTransactionResult;
-    private isTxPrepared: boolean = false;
+    @Static private keyguardRequest!: KeyguardRequest.SignTransactionRequest;
+    @State private keyguardResult!: KeyguardRequest.SignTransactionResult;
 
     private async mounted() {
+        console.log("SignTransactionSuccess running");
         const tx = await (this.$refs.network as Network).prepareTx(this.keyguardRequest, this.keyguardResult);
-        this.result = (this.$refs.network as Network).makeSignTransactionResult(tx);
-        this.isTxPrepared = true;
-    }
+        const result = (this.$refs.network as Network).makeSignTransactionResult(tx);
 
-    private done() {
-        this.$rpc.resolve(this.result!);
+        setTimeout(() => this.$rpc.resolve(result), Loader.SUCCESS_REDIRECT_DELAY);
     }
 }
 </script>
+
+<style scope>
+    .small-page {
+        height: 70rem;
+    }
+</style>
