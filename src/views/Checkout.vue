@@ -4,7 +4,7 @@
             <Loader title="Updating your balances" status="Connecting to Nimiq..."/>
         </SmallPage>
 
-        <SmallPage v-else>
+        <SmallPage v-else :class="{ 'merchant-info-shown': showMerchantInfo }">
             <PaymentInfoLine v-if="rpcState"
                 :amount="request.value"
                 :fee="request.fee"
@@ -27,7 +27,7 @@
                 @account-selected="accountSelected"
                 @login="login"/>
 
-            <AccountInfoScreen :class="{'active': showMerchantInfo}"
+            <AccountInfoScreen
                 :address="request.recipient.toUserFriendlyAddress()"
                 :origin="rpcState.origin"
                 :shopLogoUrl="request.shopLogoUrl"
@@ -330,7 +330,11 @@ export default class Checkout extends Vue {
         transition: opacity 300ms, z-index 300ms;
     }
 
-    .account-info.active {
+    .merchant-info-shown > :not(.account-info) {
+        filter: blur(.75rem);
+    }
+
+    .merchant-info-shown > .account-info {
         z-index: 29;
         opacity: 1;
     }
