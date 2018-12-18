@@ -1,11 +1,11 @@
 /// <reference path="../node_modules/@nimiq/core-types/Nimiq.d.ts" />
 
 import { State, PostMessageRpcClient } from '@nimiq/rpc';
-import { AccountsClient } from '../client/AccountsClient';
+import AccountsClient from '../client/AccountsClient';
 import {
     RequestType,
     SimpleRequest,
-
+    OnboardingResult,
     CheckoutRequest,
     LogoutRequest, LogoutResult,
     SignTransactionRequest, SignTransactionResult,
@@ -14,10 +14,9 @@ import {
     ChangePassphraseRequest,
     AddAccountRequest,
     SignMessageRequest,
-    OnboardingResult,
 } from '../src/lib/RequestTypes';
 import { WalletInfoEntry } from '../src/lib/WalletInfo';
-import { RedirectRequestBehavior } from '../client/AccountsClient';
+import { RedirectRequestBehavior } from '../client/RequestBehavior';
 import { Utf8Tools } from '@nimiq/utils';
 
 class Demo {
@@ -42,17 +41,6 @@ class Demo {
             console.log('State', state);
 
             document.querySelector('#result').textContent = 'SignUp completed';
-        }, (error: Error, state: State) => {
-            console.error('AccountsManager error', error);
-            console.log('State', state);
-
-            document.querySelector('#result').textContent = `Error: ${error.message || error}`;
-        });
-        client.on(RequestType.ONBOARD, (result: OnboardingResult, state: State) => {
-            console.log('AccountsManager result', result);
-            console.log('State', state);
-
-            document.querySelector('#result').textContent = 'Onboarding completed';
         }, (error: Error, state: State) => {
             console.error('AccountsManager error', error);
             console.log('State', state);
@@ -84,17 +72,6 @@ class Demo {
         document.querySelector('button#onboard').addEventListener('click', async () => {
             try {
                 const result = await client.onboard({ appName: 'Accounts Demos' });
-                console.log('Keyguard result', result);
-                document.querySelector('#result').textContent = 'Onboarding completed!';
-            } catch (e) {
-                console.error('Keyguard error', e);
-                document.querySelector('#result').textContent = `Error: ${e.message || e}`;
-            }
-        });
-
-        document.querySelector('button#onboard-redirect').addEventListener('click', async () => {
-            try {
-                const result = client.onboard({ appName: 'Accounts Demos' }, new RedirectRequestBehavior());
                 console.log('Keyguard result', result);
                 document.querySelector('#result').textContent = 'Onboarding completed!';
             } catch (e) {
@@ -372,6 +349,8 @@ class Demo {
             walletId,
         };
     }
+
+
 
     public async rename(walletId: string, account: string) {
         try {
