@@ -1,10 +1,10 @@
 html, body {
-    height: 100%;
+    min-height: 100%;
 }
 
 html {
     font-size: 8px;
-    --nimiq-size: 8px;
+    --nimiq-size: 1rem;
     font-family: Muli, system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
