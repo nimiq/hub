@@ -93,7 +93,7 @@ export default class App extends Vue {
     .logo .nimiq-logo {
         height: 4rem;
         width: 4rem;
-        margin-right: 2rem;
+        margin-right: 1rem;
     }
 
     #app {
