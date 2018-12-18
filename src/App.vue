@@ -3,7 +3,7 @@
         <header class="logo-container">
             <div class="logo icon-logo">
                 <span class="nq-icon nimiq-logo"></span>
-                Nimiq
+                <strong>Nimiq</strong>
             </div>
         </header>
         <div style="flex-grow: 1;"></div>
