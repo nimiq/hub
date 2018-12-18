@@ -5,7 +5,7 @@
             <PageBody>
                 <div class="success-box nq-icon trumpet nq-green-bg">
                     <h2 class="nq-h2">Awesome!</h2>
-                    <p class="nq-text">Your new account has been added to your wallet.</p>
+                    <p class="nq-text">Your new Address has been added to your Account.</p>
                 </div>
 
                 <div class="login-label">
@@ -37,7 +37,7 @@ export default class AddAccountSuccess extends Vue {
     @State private keyguardResult!: DeriveAddressResult;
 
     private walletLabel: string = '';
-    private accountLabel: string = 'Standard Account';
+    private accountLabel: string = 'Standard Address';
     private createdAddress: Nimiq.Address | null = null;
 
     private get walletIconClass(): string {

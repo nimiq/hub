@@ -129,7 +129,7 @@ export class CookieDecoder {
         const labelBytes = this.readBytes(bytes, labelLength);
 
         let accountLabel: string;
-        if (labelBytes.length === 0) accountLabel = 'Standard Account';
+        if (labelBytes.length === 0) accountLabel = 'Standard Address';
         else accountLabel = Utf8Tools.utf8ByteArrayToString(new Uint8Array(labelBytes));
 
         // Account address

@@ -2,7 +2,7 @@
     <div class="container pad-bottom">
         <SmallPage>
             <div class="login-success">
-                <PageHeader>Your wallet is ready</PageHeader>
+                <PageHeader>Your account is ready</PageHeader>
 
                 <PageBody>
                     <div class="wallet-label" v-if="walletInfo && keyguardResult.keyType !== 1 /* LEGACY */">
