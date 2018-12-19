@@ -28,7 +28,7 @@ export default class SignTransactionSuccess extends Vue {
     @State private keyguardResult!: KeyguardRequest.SignTransactionResult;
 
     private async mounted() {
-        console.log("SignTransactionSuccess running");
+        console.log('SignTransactionSuccess running');
         const tx = await (this.$refs.network as Network).prepareTx(this.keyguardRequest, this.keyguardResult);
         const result = (this.$refs.network as Network).makeSignTransactionResult(tx);
 

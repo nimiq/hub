@@ -14,7 +14,7 @@ export default class SignTransaction extends Vue {
     @State private keyguardResult?: KeyguardRequest.SignTransactionResult;
 
     public async mounted() {
-        console.log("SignTransaction running");
+        console.log('SignTransaction running');
         // Success and error cases are handled by other components
         if (this.keyguardResult) return;
 
