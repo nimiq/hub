@@ -16,10 +16,11 @@ export enum RequestType {
     LOGOUT = 'logout',
     ADD_ACCOUNT = 'add-account',
     RENAME = 'rename',
+    CHOOSE_ADDRESS = 'choose-address',
 }
 
 export interface SimpleRequest {
-    kind?: RequestType.ONBOARD | RequestType.SIGNUP | RequestType.LOGIN;
+    kind?: RequestType.ONBOARD | RequestType.SIGNUP | RequestType.LOGIN | RequestType.CHOOSE_ADDRESS;
     appName: string;
 }
 
@@ -150,6 +151,10 @@ export interface OnboardingResult {
         address: string;
         label: string;
     }>;
+}
+
+export interface ChooseAddressResult {
+    address: string;
 }
 
 export interface ExportRequest {

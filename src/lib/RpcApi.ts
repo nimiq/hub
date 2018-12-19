@@ -38,6 +38,7 @@ export default class RpcApi {
             RequestType.RENAME,
             RequestType.SIGN_MESSAGE,
             RequestType.MIGRATE,
+            RequestType.CHOOSE_ADDRESS,
         ]);
         this._registerKeyguardApis([
             KeyguardCommand.SIGN_TRANSACTION,
