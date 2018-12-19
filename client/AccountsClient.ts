@@ -25,6 +25,7 @@ import {
     SimpleResult,
     ListResult,
     RpcResult,
+    ChooseAddressResult,
 } from '../src/lib/RequestTypes';
 
 export default class AccountsClient {
@@ -87,6 +88,11 @@ export default class AccountsClient {
 
     public login(request: SimpleRequest, requestBehavior = this._defaultBehavior): Promise<OnboardingResult> {
         return this._request(requestBehavior, RequestType.LOGIN, [request]);
+    }
+
+    public chooseAddress(request: SimpleRequest, requestBehavior = this._defaultBehavior)
+        : Promise<ChooseAddressResult> {
+        return this._request(requestBehavior, RequestType.CHOOSE_ADDRESS, [request]);
     }
 
     public signTransaction(
