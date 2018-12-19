@@ -1,5 +1,5 @@
 <template>
-    <div class="loader" :class="showLoadingBackground && (lightBlue ? 'nq-light-blue-bg' : 'nq-blue-bg')">
+    <div class="loader" :class="[showLoadingBackground && (lightBlue ? 'nq-light-blue-bg' : 'nq-blue-bg'), state === 'success' && 'exit-transition']">
         <transition name="fade-loading">
             <div class="wrapper" v-if="state === 'loading'">
                 <h1 class="title nq-h1">{{ loadingTitle }}</h1>
@@ -394,5 +394,24 @@ export default Loader;
     .loader .message {
         max-width: 70%;
         opacity: 1;
+    }
+
+    .loader.exit-transition {
+        /* animation: exit-transition 600ms 1s; */
+    }
+
+    @keyframes exit-transition {
+        from { transform: scale(1); opacity: 1; }
+        80%  { opacity: 0; }
+        to   { transform: scale(0); opacity: 0; }
+    }
+
+    .loader.exit-transition .success .icon-row {
+        animation: success-title-slide 1s;
+    }
+
+    @keyframes success-title-slide {
+        from { transform: translateY(8rem); }
+        to   { transform: translateY(0); }
     }
 </style>
