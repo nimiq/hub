@@ -1,11 +1,11 @@
 <template>
     <div class="container pad-bottom">
         <SmallPage>
-            <PageHeader>Your account is ready</PageHeader>
+            <PageHeader>Your address is ready</PageHeader>
             <PageBody>
                 <div class="success-box nq-icon trumpet nq-green-bg">
                     <h2 class="nq-h2">Awesome!</h2>
-                    <p class="nq-text">Your new Address has been added to your Account.</p>
+                    <p class="nq-text">Your new address has been added to your account.</p>
                 </div>
 
                 <div class="login-label">
@@ -15,7 +15,7 @@
 
                 <Account :address="createdAddress.toUserFriendlyAddress()" :label="accountLabel" :editable="true" @changed="onAccountLabelChange"/>
 
-                <button class="nq-button green submit" @click="done()">Open your account</button>
+                <button class="nq-button green submit" @click="done()">Back to your account</button>
             </PageBody>
         </SmallPage>
     </div>
