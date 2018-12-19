@@ -21,8 +21,9 @@
 import { Component, Vue, Emit } from 'vue-property-decorator';
 import { State, Mutation } from 'vuex-class';
 import { SmallPage, AccountSelector } from '@nimiq/vue-components';
-import { RequestType, SimpleRequest } from '../lib/RequestTypes';
+import { RequestType, SimpleRequest, OnboardingResult } from '../lib/RequestTypes';
 import staticStore, { Static } from '@/lib/StaticStore';
+import { WalletStore } from '@/lib/WalletStore';
 import { WalletInfo, WalletType } from '../lib/WalletInfo';
 import { AccountInfo } from '../lib/AccountInfo';
 import { TX_VALIDITY_WINDOW, LEGACY_GROUPING_WALLET_ID, LEGACY_GROUPING_WALLET_LABEL } from '../lib/Constants';
@@ -32,9 +33,14 @@ export default class ChooseAddress extends Vue {
     @Static private request!: SimpleRequest;
     @State private wallets!: WalletInfo[];
 
-    public created() {
-        // we could need this
-        // await this.handleOnboardingResult();
+    @Mutation('addWallet') private $addWallet!: (walletInfo: WalletInfo) => any;
+    @Mutation('setActiveAccount') private $setActiveAccount!: (payload: {
+        walletId: string,
+        userFriendlyAddress: string,
+    }) => any;
+
+    public async created() {
+        await this.handleOnboardingResult();
 
         if (this.wallets.length === 0) {
             this.goToOnboarding(true);
@@ -62,18 +68,48 @@ export default class ChooseAddress extends Vue {
         const result = {
             address: accountInfo.userFriendlyAddress,
             label: accountInfo.label,
-        }
+        };
 
         this.$rpc.resolve(result);
     }
 
     private goToOnboarding(useReplace?: boolean) {
         // Redirect to onboarding
-        staticStore.originalRouteName = RequestType.CHECKOUT;
+        staticStore.originalRouteName = RequestType.CHOOSE_ADDRESS;
         if (useReplace) {
             this.$rpc.routerReplace(RequestType.ONBOARD);
         }
         this.$rpc.routerPush(RequestType.ONBOARD);
+    }
+
+     private async handleOnboardingResult() {
+        // Check if we are returning from an onboarding request
+        if (staticStore.sideResult && !(staticStore.sideResult instanceof Error)) {
+            const sideResult = staticStore.sideResult as OnboardingResult;
+
+            // Add imported wallet to Vuex store
+            const walletInfo = await WalletStore.Instance.get(sideResult.walletId);
+            if (walletInfo) {
+                this.$addWallet(walletInfo);
+
+                // Set as activeWallet and activeAccount
+                const activeAccount = walletInfo.accounts.values().next().value;
+
+                this.$setActiveAccount({
+                    walletId: walletInfo.id,
+                    userFriendlyAddress: activeAccount.userFriendlyAddress,
+                });
+
+                // Return the generated address
+                const result = {
+                    address: activeAccount.userFriendlyAddress,
+                    label: activeAccount.label,
+                };
+
+                this.$rpc.resolve(result);
+            }
+        }
+        delete staticStore.sideResult;
     }
 
     @Emit()
