@@ -15,6 +15,5 @@ script:
   - yarn build
   - yarn test
   - cd client
-  - yarn
   - yarn lint
   - yarn build
