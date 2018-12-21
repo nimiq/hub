@@ -157,7 +157,11 @@ const requestOptions = {
     // The name of your app, should be as short as possible.
     appName: 'Nimiq Shop',
 
-    // The human-readable address of the recipient.
+    // [optional] The path to an image on the same origin as the request is sent
+    // from, must be square and will be displayed with up to 146px width and hight.
+    shopLogoUrl: 'https://your.domain.com/path/to/an/image.jpg',
+
+    // The human-readable address of the recipient (your shop/app).
     recipient: 'NQ07 0000 0000 0000 0000 0000 0000 0000 0000',
 
     // [optional] Nimiq.Account.Type of the recipient.
@@ -181,13 +185,6 @@ const requestOptions = {
     // creates a contract.
     // Default: Nimiq.Transaction.Flag.NONE (0)
     //flags: Nimiq.Transaction.Flag.CONTRACT_CREATION,
-
-    // [optional] Network ID of the Nimiq network that the transaction should be
-    // valid in.
-    // Default depends on which Accounts Manager the client is connected to:
-    // accounts.nimiq-testnet.com: Nimiq.GenesisConfig.CONFIGS['test'].NETWORK_ID
-    // accounts.nimiq.com: Nimiq.GenesisConfig.CONFIGS['main'].NETWORK_ID
-    //networkId: Nimiq.GenesisConfig.CONFIGS['main'].NETWORK_ID,
 };
 
 // All client requests are async and return a promise
@@ -277,12 +274,11 @@ const requestOptions = {
     //fee: 0,
     //extraData: new Uint8Array(0),
     //flags: Nimiq.Transaction.Flag.NONE,
-    //networkId: Nimiq.GenesisConfig.CONFIGS['test'].NETWORK_ID,
 
     // The transaction's validity start height.
     // A transaction is only valid for 120 blocks after its validityStartHeight.
-    // Transactions with a validityStartHeight higher than (current network
-    // block height + 1) are rejected and need to be sent again later during
+    // Transactions with a validityStartHeight higher than <current network
+    // block height + 1> are rejected and need to be sent again later during
     // their validity window.
     validityStartHeight: 123456,
 };
@@ -458,7 +454,7 @@ const onError = function(error, storedData) {
 const RequestType = AccountsClient.RequestType;
 
 accountsClient.on(RequestType.CHECKOUT, onSuccess, onError);
-accountsClient.on(RequestType.SIGNTRANSACTION, onSuccess, onError);
+accountsClient.on(RequestType.SIGN_TRANSACTION, onSuccess, onError);
 accountsClient.on(RequestType.LOGIN, onSuccess, onError);
 
 // 4. After setup is complete, check for a redirect response
@@ -476,15 +472,14 @@ The available `RequestType`s, corresponding to the API methods, are:
 ```javascript
 enum AccountsClient.RequestType {
     CHECKOUT = 'checkout',
-    SIGNTRANSACTION = 'sign-transaction',
+    CHOOSE_ADDRESS = 'choose-address',
+    SIGN_TRANSACTION = 'sign-transaction',
     SIGNUP = 'signup',
     LOGIN = 'login',
     LOGOUT = 'logout',
     EXPORT = 'export',
 }
 ```
-
-<!-- FIXME change SIGNTRANSACTION to SIGN_TRANSACTION and adjust above. -->
 
 ## Running your own Accounts Manager
 
