@@ -3,10 +3,10 @@
        <SmallPage>
             <h1 class="nq-h1">Choose an address</h1>
 
-            <div class="request-info">
-                {{ request.appName }} is asking you for an address which it can use. 
+            <div class="request-info nq-text">
+                {{ request.appName }} is asking for an address to use.
             </div>
-            
+
             <AccountSelector
                 :wallets="processedWallets"
                 @account-selected="accountSelected"
@@ -172,11 +172,8 @@ export default class ChooseAddress extends Vue {
 
     .request-info {
         text-align: center;
-        margin-top: 0.5rem;
-        margin-bottom: 0.5rem;
-        z-index: 10;
-        -ms-flex-negative: 0;
+        margin-left: 2rem;
+        margin-right: 2rem;
         flex-shrink: 0;
-        font-weight: 600;
     }
 </style>
