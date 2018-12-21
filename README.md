@@ -6,23 +6,24 @@ to manage their wallets and provides websites and apps with a concise API to
 interact with their users' Nimiq accounts.
 
 - [The Accounts Client library](#the-accounts-client-library)
-    - [Installation](#installation)
-    - [Initialization](#initialization)
-    - [Usage](#usage)
-        - [Using top-level redirects](#using-top-level-redirects)
-    - [API Methods](#api-methods)
-        - [Checkout](#checkout)
-        - [Sign transaction](#sign-transaction)
-        - [Signup](#signup)
-        - [Login](#login)
-        - [Logout](#logout)
-        - [Export](#export)
-    - [Listening for redirect responses](#listening-for-redirect-responses)
+  - [Installation](#installation)
+  - [Initialization](#initialization)
+  - [Usage](#usage)
+    - [Using top-level redirects](#using-top-level-redirects)
+  - [API Methods](#api-methods)
+    - [Checkout](#checkout)
+    - [Choose Address](#choose-address)
+    - [Sign transaction](#sign-transaction)
+    - [Signup](#signup)
+    - [Login](#login)
+    - [Logout](#logout)
+    - [Export](#export)
+  - [Listening for redirect responses](#listening-for-redirect-responses)
 - [Running your own Accounts Manager](#running-your-own-accounts-manager)
 - [Contribute](#contribute)
-    - [Setup](#setup)
-    - [Run](#run)
-    - [Build](#build)
+  - [Setup](#setup)
+  - [Run](#run)
+  - [Build](#build)
 
 ## The Accounts Client library
 
@@ -32,9 +33,9 @@ Include the `AccountsClient` JS library as a script tag in your page:
 
 ```html
 <!-- From CDN -->
-<script src="https://unpkg.com/@nimiq/accounts-client@v1/dist/standalone/AccountsClient.standalone.umd.js"></script>
+<script src="https://unpkg.com/@nimiq/accounts-client@v0.1/dist/standalone/AccountsClient.standalone.umd.js"></script>
 <!-- or -->
-<script src="https://cdn.jsdelivr.net/npm/@nimiq/accounts-client@v1/dist/standalone/AccountsClient.standalone.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@nimiq/accounts-client@v0.1/dist/standalone/AccountsClient.standalone.umd.js"></script>
 ```
 
 It can also be installed from NPM:
@@ -124,11 +125,14 @@ data, see [Listening for redirect responses](#listening-for-redirect-responses).
 ### API Methods
 
 - [Checkout](#checkout)
+- [Choose Address](#choose-address)
 - [Sign transaction](#sign-transaction)
 - [Signup](#signup)
 - [Login](#login)
 - [Logout](#logout)
 - [Export](#export)
+
+[//] TODO: Add methods 'onboard', 'changePassphrase', 'addAccount', 'rename', 'signMessage'
 
 > **Note:**
 >
@@ -210,6 +214,37 @@ interface SignTransactionResult {
     flags: number;
     networkId: number;
     hash: string;                       // Base64 transaction hash
+}
+```
+
+#### Choose Address
+
+By using the `chooseAddress()` method, you are asking the user to select one of
+their addresses to provide to your website. This can be used for example to find
+out, which address your app should send funds to.
+
+**Note:** This method should not yet be used as a login or authentication mechanism,
+as it does not provide any security that the user actually owns the provided address!
+
+The method takes a simple request object as its only argument, which must only contain
+the `appName` property:
+
+```javascript
+const requestOptions = {
+    // The name of your app, should be as short as possible.
+    appName: 'Nimiq Safe',
+};
+
+// All client requests are async and return a promise
+const providedAddress = await accountsClient.chooseAddress(requestOptions);
+```
+
+The request's result contains a userfriendly address string as `address` and a `label`:
+
+```javascript
+providedAddress = {
+    address: 'NQ07 0000 0000 0000 0000 0000 0000 0000 0000',
+    label: 'Burner Address',
 }
 ```
 
