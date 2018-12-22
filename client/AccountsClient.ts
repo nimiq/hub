@@ -33,10 +33,20 @@ export default class AccountsClient {
     public static readonly RequestType: typeof RequestType = RequestType;
     public static readonly RedirectRequestBehavior: typeof RedirectRequestBehavior = RedirectRequestBehavior;
 
-    private static readonly DEFAULT_ENDPOINT =
-    window.location.origin === 'https://safe-next.nimiq.com' ? 'https://accounts.nimiq.com'
-    : window.location.origin === 'https://safe-next.nimiq-testnet.com' ? 'https://accounts.nimiq-testnet.com'
-    : 'http://localhost:8080';
+    private static get DEFAULT_ENDPOINT() {
+        const originArray = location.origin.split('.');
+        originArray.shift();
+        const tld = originArray.join('.');
+
+        switch (tld) {
+            case 'nimiq.com':
+                return 'https://accounts.nimiq.com';
+            case 'nimiq-testnet.com':
+                return 'https://accounts.nimiq-testnet.com'
+            default:
+                return 'http://localhost:8080';
+        }
+    }
 
     private readonly _endpoint: string;
     private readonly _defaultBehavior: RequestBehavior;
