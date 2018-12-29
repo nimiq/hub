@@ -11,6 +11,7 @@ html {
     text-rendering: optimizeLegibility;
     --nimiq-gray: #F4F4F5;
     --nimiq-gray-bg: radial-gradient(circle at bottom right, #F4F4F4, var(--nimiq-gray));
+    --nimiq-blue: #1F2348;
 }
 
 body {
@@ -45,7 +46,7 @@ body {
     width: 10rem;
 }
 
-.loading-animation+h2 {
+.loading-animation + h2 {
     margin-top: 4rem;
     padding-bottom: 8rem;
     text-transform: uppercase;
