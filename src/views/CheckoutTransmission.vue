@@ -59,10 +59,3 @@ export default class CheckoutTransmission extends Vue {
     }
 </style>
 
-<style>
-    #logo-checkout {
-        margin-left: 0.75rem;
-        text-transform: none;
-        letter-spacing: initial;
-    }
-</style>

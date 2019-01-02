@@ -1,10 +1,8 @@
 <template>
     <div id="app">
-        <header class="logo-container">
-            <div class="logo icon-logo">
-                <span class="nq-icon nimiq-logo"></span>
-                <strong>Nimiq</strong>
-            </div>
+        <header class="logo icon-logo">
+            <span class="nq-icon nimiq-logo"></span>
+            <strong>Nimiq</strong>
         </header>
         <div style="flex-grow: 1;"></div>
         <div v-if="!isRequestLoaded" class="loading">
@@ -67,20 +65,15 @@ export default class App extends Vue {
         }
     }
 
-    .logo-container {
-        width: 100%;
-        padding: 4rem 3rem;
-        box-sizing: border-box;
-    }
-
     .logo {
         height: 3.625rem;
         box-sizing: border-box;
-        font-size: 2.125rem;
+        flex-shrink: 0;
+        font-size: 3rem;
         font-weight: 600;
         text-transform: uppercase;
-        letter-spacing: 0.077em;
-        display: inline-flex;
+        letter-spacing: 0.08em;
+        display: flex;
         align-items: center;
         color: var(--nimiq-blue);
         z-index: 1;
@@ -93,7 +86,29 @@ export default class App extends Vue {
     .logo .nimiq-logo {
         height: 4rem;
         width: 4rem;
-        margin-right: 1rem;
+        margin-right: calc(.382 * 4rem); /* 0.382 times the signet width following the style guide */
+    }
+
+    .logo :not(.nimiq-logo) {
+        margin-top: -.2rem; /* perfectly center text, accounting for spacing present in font */
+    }
+
+    .logo strong {
+        margin-left: -.25rem; /* subtract small margin before letter N present in font */
+    }
+
+    /* Subtitle (e.g. NIMIQ Checkout) */
+    .logo :not(.nimiq-logo):not(strong) {
+        font-weight: 100;
+        text-transform: none;
+        letter-spacing: initial;
+        margin-left: 1.15rem;
+    }
+
+    #app > header {
+        box-sizing: content-box;
+        width: calc(100% - 2 * 3rem); /* minus padding */
+        padding: 4rem 3rem;
     }
 
     #app {

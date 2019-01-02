@@ -655,10 +655,10 @@
   version "0.0.11"
   resolved "https://registry.yarnpkg.com/@nimiq/rpc/-/rpc-0.0.11.tgz#7230365640663827fb115e0d6456222de3b1c5e3"
 
-"@nimiq/style@^0.4.0":
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/@nimiq/style/-/style-0.4.0.tgz#a12307ec1a487d61996dc1867a16a950181768a7"
-  integrity sha512-7QqwW6KIUWxh6yqQlyVx/r3SxKk2pOqQN4rpDADPLXeoBYf/dXj6v6PFAkEln4lsX5xs9QlsdMR4v8Dymz1eMg==
+"@nimiq/style@^0.4.1":
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/@nimiq/style/-/style-0.4.1.tgz#42b6e3a8ba4a0c7dbd71893b4149094466b48c49"
+  integrity sha512-OLWRXTgtxOv0R5cOMZ3M2WCoardx6thGbZbxbpnWdhZkqoYnWqGp0oV5X5ic6Vde4mt403ogXwbfGtzwJknvrQ==
 
 "@nimiq/utils@^0.1.0":
   version "0.1.0"
