@@ -103,3 +103,102 @@ body {
         font-size: 7px;
     }
 }
+
+/*
+ * Style copied from https://fonts.googleapis.com/css?family=Muli:400,600,700
+ * But manually added woff fallback files.
+ */
+
+/* vietnamese */
+@font-face {
+    font-family: 'Muli';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Muli Regular'), local('Muli-Regular'), url(https://fonts.gstatic.com/s/muli/v12/7Auwp_0qiz-afT3GLRrX.woff2) format('woff2'),
+        url(https://fonts.gstatic.com/s/muli/v12/7Auwp_0qiz-afTLGKw.woff) format('woff');
+    unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+    font-family: 'Muli';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Muli Regular'), local('Muli-Regular'), url(https://fonts.gstatic.com/s/muli/v12/7Auwp_0qiz-afTzGLRrX.woff2) format('woff2'),
+        url(https://fonts.gstatic.com/s/muli/v12/7Auwp_0qiz-afTLGKw.woff) format('woff');
+    unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+    font-family: 'Muli';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Muli Regular'), local('Muli-Regular'), url(https://fonts.gstatic.com/s/muli/v12/7Auwp_0qiz-afTLGLQ.woff2) format('woff2'),
+        url(https://fonts.gstatic.com/s/muli/v12/7Auwp_0qiz-afTLGKw.woff) format('woff');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+    font-family: 'Muli';
+    font-style: normal;
+    font-weight: 600;
+    src: local('Muli SemiBold'), local('Muli-SemiBold'), url(https://fonts.gstatic.com/s/muli/v12/7Au_p_0qiz-ade3iOCr2z3wM.woff2) format('woff2'),
+        url(https://fonts.gstatic.com/s/muli/v12/7Au_p_0qiz-ade3iOCX2yQ.woff) format('woff');
+    unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+    font-family: 'Muli';
+    font-style: normal;
+    font-weight: 600;
+    src: local('Muli SemiBold'), local('Muli-SemiBold'), url(https://fonts.gstatic.com/s/muli/v12/7Au_p_0qiz-ade3iOCv2z3wM.woff2) format('woff2'),
+        url(https://fonts.gstatic.com/s/muli/v12/7Au_p_0qiz-ade3iOCX2yQ.woff) format('woff');
+    unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+    font-family: 'Muli';
+    font-style: normal;
+    font-weight: 600;
+    src: local('Muli SemiBold'), local('Muli-SemiBold'), url(https://fonts.gstatic.com/s/muli/v12/7Au_p_0qiz-ade3iOCX2zw.woff2) format('woff2'),
+        url(https://fonts.gstatic.com/s/muli/v12/7Au_p_0qiz-ade3iOCX2yQ.woff) format('woff');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+    font-family: 'Muli';
+    font-style: normal;
+    font-weight: 700;
+    src: local('Muli Bold'), local('Muli-Bold'), url(https://fonts.gstatic.com/s/muli/v12/7Au_p_0qiz-adYnjOCr2z3wM.woff2) format('woff2'),
+        url(https://fonts.gstatic.com/s/muli/v12/7Au_p_0qiz-adYnjOCX2yQ.woff) format('woff');
+    unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+    font-family: 'Muli';
+    font-style: normal;
+    font-weight: 700;
+    src: local('Muli Bold'), local('Muli-Bold'), url(https://fonts.gstatic.com/s/muli/v12/7Au_p_0qiz-adYnjOCv2z3wM.woff2) format('woff2'),
+        url(https://fonts.gstatic.com/s/muli/v12/7Au_p_0qiz-adYnjOCX2yQ.woff) format('woff');
+    unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+    font-family: 'Muli';
+    font-style: normal;
+    font-weight: 700;
+    src: local('Muli Bold'), local('Muli-Bold'), url(https://fonts.gstatic.com/s/muli/v12/7Au_p_0qiz-adYnjOCX2zw.woff2) format('woff2'),
+        url(https://fonts.gstatic.com/s/muli/v12/7Au_p_0qiz-adYnjOCX2yQ.woff) format('woff');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/*
+ * Style copied from https://fonts.googleapis.com/css?family=Fira+Mono&text=0123456789ABCDEFGHJKLMNPQRSTUVXY
+ * Manually added woff fallback.
+ */
+@font-face {
+    font-family: 'Fira Mono';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Fira Mono Regular'), local('FiraMono-Regular'), url(https://fonts.gstatic.com/l/font?kit=N0bX2SlFPv1weGeLZDtQJOz3qebjUqV8Mgu8fs9pJrQFa-Y9gflcyByir1eEVUHu28s&skey=bb26c8d476ab3f05&v=v6) format('woff2'),
+        url(https://fonts.gstatic.com/l/font?kit=N0bX2SlFPv1weGeLZDtQIuz3qebjUqV8Mgu8fs9pJrQFa-Y9gflcyByir1eEVUHu28s&skey=bb26c8d476ab3f05&v=v6) format('woff');
+}
