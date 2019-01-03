@@ -18,10 +18,10 @@
     esutils "^2.0.2"
     js-tokens "^4.0.0"
 
-"@nimiq/rpc@^0.1.0-beta.5":
-  version "0.1.0-beta.5"
-  resolved "https://registry.yarnpkg.com/@nimiq/rpc/-/rpc-0.1.0-beta.5.tgz#a116c2ca7350dc3d01d7897bd6ead2ceb023f063"
-  integrity sha512-ortBLEVkAhouZBilom39bSSC1ZVQkpVSP6tsJHBtSB0QNjq0qCdjyDv+uefFEJ4o3XBBCIY4onjaj68HPvUltQ==
+"@nimiq/rpc@^0.1.0-beta.6":
+  version "0.1.0-beta.6"
+  resolved "https://registry.yarnpkg.com/@nimiq/rpc/-/rpc-0.1.0-beta.6.tgz#aeec8c55548fd2166a33f97b5838cb51a8caeb6d"
+  integrity sha512-69BCfjlaJEuY9AF9NKDjgUVrHs8gPEV4h9Tq7LkYLEPpvZVcOd1fmXeWSsvECqpjtGYtWGXcAjZ3QMQy9wy8lQ==
 
 "@types/estree@0.0.39":
   version "0.0.39"

@@ -1,4 +1,4 @@
-import { RpcServer, State as RpcState, ResponseStatus, UrlRpcEncoder } from '@nimiq/rpc';
+import { RpcServer, State as RpcState, ResponseStatus } from '@nimiq/rpc';
 import { BrowserDetection } from '@nimiq/utils';
 import { RootState } from '@/store';
 import { Store } from 'vuex';
@@ -99,13 +99,7 @@ export default class RpcApi {
 
             // Recreate original URL with original query parameters
             const rpcState = this._staticStore.rpcState!;
-            const redirectUrl = UrlRpcEncoder.prepareRedirectInvocation(
-                '',
-                rpcState.data.id,
-                this._staticStore.rpcState!.returnURL || '<postMessage>',
-                rpcState.data.command,
-                rpcState.data.args,
-            ).replace(/\+/g, ' ');
+            const redirectUrl = rpcState.toRequestUrl().replace(/\+/g, ' ');
 
             const query = this._parseUrlParams(redirectUrl);
             this._router.push({ name: this._staticStore.originalRouteName, query });
@@ -136,7 +130,6 @@ export default class RpcApi {
                     hasRpcState: !!this._staticStore.rpcState,
                     hasRequest: !!this._staticStore.request,
                 });
-
                 this.routerReplace(request);
             });
         }
@@ -149,7 +142,7 @@ export default class RpcApi {
             .map((keyValueString) => keyValueString.split('='));
 
         for (const keyValue of keyValues) {
-            // @ts-ignore
+            // @ts-ignore Property 'decodeURIComponent' does not exist on type 'Window'
             params[keyValue[0]] = window.decodeURIComponent(keyValue[1]);
         }
 
