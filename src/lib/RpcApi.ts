@@ -99,7 +99,7 @@ export default class RpcApi {
 
             // Recreate original URL with original query parameters
             const rpcState = this._staticStore.rpcState!;
-            const redirectUrl = rpcState.toRequestUrl().replace(/\+/g, ' ');
+            const redirectUrl = rpcState.toRequestUrl();
 
             const query = this._parseUrlParams(redirectUrl);
             this._router.push({ name: this._staticStore.originalRouteName, query });
@@ -138,7 +138,7 @@ export default class RpcApi {
     private _parseUrlParams(query: string) {
         const params: {[key: string]: string} = {};
         if (!query) return params;
-        const keyValues = query.substr(1).split('&')
+        const keyValues = query.substr(1).replace(/\+/g, ' ').split('&')
             .map((keyValueString) => keyValueString.split('='));
 
         for (const keyValue of keyValues) {
