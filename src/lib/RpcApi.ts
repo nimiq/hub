@@ -23,7 +23,7 @@ export default class RpcApi {
         this._staticStore = staticStore;
         this._router = router;
         this._server = new RpcServer('*');
-        this._keyguardClient = new KeyguardClient();
+        this._keyguardClient = new KeyguardClient( undefined, undefined, undefined, true);
 
         this._registerAccountsApis([
             RequestType.SIGN_TRANSACTION,
