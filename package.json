@@ -13,9 +13,9 @@
         "postinstall": "cd client && yarn"
     },
     "dependencies": {
-        "@nimiq/keyguard-client": "^0.1.5",
+        "@nimiq/keyguard-client": "^0.1.6-beta.3",
         "@nimiq/network-client": "^0.1.0",
-        "@nimiq/rpc": "^0.1.0-beta.4",
+        "@nimiq/rpc": "^0.1.0-beta.6",
         "@nimiq/style": "^0.3.4",
         "@nimiq/utils": "^0.1.0",
         "@nimiq/vue-components": "https://github.com/nimiq/vue-components.git#build/accounts",
