@@ -4,8 +4,8 @@
     "private": true,
     "scripts": {
         "serve": "vue-cli-service serve",
-        "build": "vue-cli-service build --modern App",
-        "build:ci" : "vue-cli-service build",
+        "build": "vue-cli-service build --modern App && ./defer.sh",
+        "build:ci": "vue-cli-service build",
         "lint": "vue-cli-service lint --no-fix",
         "test:unit": "vue-cli-service test:unit",
         "test": "yarn test:unit",
