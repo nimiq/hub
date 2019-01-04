@@ -78,10 +78,8 @@ export default class Checkout extends Vue {
     private sideResultAddedWallet: boolean = false;
 
     private async created() {
-        const span = document.createElement('span');
-        span.setAttribute('id', 'logo-checkout');
-        span.textContent = 'Checkout';
-        document.querySelector('.logo')!.appendChild(span);
+        const $subtitle = document.querySelector('.logo .logo-subtitle')!;
+        $subtitle.textContent = 'Checkout';
 
         await this.handleOnboardingResult();
         this.getBalances();

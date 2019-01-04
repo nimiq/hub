@@ -25,10 +25,8 @@ export default class CheckoutTransmission extends Vue {
     private isTxSent: boolean = false;
 
     private created() {
-        const span = document.createElement('span');
-        span.setAttribute('id', 'logo-checkout');
-        span.textContent = 'Checkout';
-        document.querySelector('.logo')!.appendChild(span);
+        const $subtitle = document.querySelector('.logo .logo-subtitle')!;
+        $subtitle.textContent = 'Checkout';
     }
 
     private async mounted() {
