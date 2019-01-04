@@ -9,7 +9,6 @@ import { keyguardResponseRouter } from '@/router';
 import { StaticStore } from '@/lib/StaticStore';
 import { WalletStore } from './WalletStore';
 import CookieJar from '@/lib/CookieJar';
-// @ts-ignore
 import { Raven } from 'vue-raven'; // Sentry.io SDK
 
 export default class RpcApi {
@@ -85,7 +84,7 @@ export default class RpcApi {
         }
 
         // Check for originalRouteName in StaticStore and route there
-        if (this._staticStore.originalRouteName) {
+        if (this._staticStore.originalRouteName && (!(result instanceof Error) || result.message !== 'CANCELED')) {
             this._staticStore.sideResult = result;
             this._router.push({ name: this._staticStore.originalRouteName });
             delete this._staticStore.originalRouteName;

@@ -4,7 +4,7 @@
     "private": true,
     "scripts": {
         "serve": "vue-cli-service serve",
-        "build": "vue-cli-service build --modern App",
+        "build": "vue-cli-service build --modern App && ./defer.sh",
         "build:ci": "vue-cli-service build",
         "lint": "vue-cli-service lint --no-fix",
         "test:unit": "vue-cli-service test:unit",
@@ -21,7 +21,7 @@
         "vue": "^2.5.16",
         "vue-class-component": "^6.0.0",
         "vue-property-decorator": "^7.0.0",
-        "vue-raven": "^1.0.0",
+        "vue-raven": "^1.0.3",
         "vue-router": "^3.0.1",
         "vuex": "^3.0.1",
         "vuex-class": "^0.3.1"

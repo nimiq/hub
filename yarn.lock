@@ -7900,9 +7900,10 @@ vue-property-decorator@^7.0.0:
   dependencies:
     vue-class-component "^6.2.0"
 
-vue-raven@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/vue-raven/-/vue-raven-1.0.0.tgz#d05e332a25a96fb3662fbc4979d93aa7c3fa6550"
+vue-raven@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/vue-raven/-/vue-raven-1.0.3.tgz#cce941a9255e9694a5793c384fd8ab2e576ce764"
+  integrity sha512-GF5ZB8ouZQy7bgFzGzjMwbHLeNeCI/V+vSFba/av0vPNUH6obFZK/l9pmLCKJRD+Hyh+6OnVjAAAAGwwqHQS4A==
   dependencies:
     raven-js "^3.22.3"
 
