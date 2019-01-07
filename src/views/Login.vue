@@ -26,6 +26,7 @@ export default class Login extends Vue {
     @State private activeAccountPath!: string;
 
     public created() {
+        console.log(CONFIG.CDN);
         if (this.keyguardResult instanceof Error) {
             this.rpcState.reply(ResponseStatus.ERROR, this.keyguardResult);
         } else if (this.keyguardResult) return; // Keyguard success is handled in LoginSuccess.vue
