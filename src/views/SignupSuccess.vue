@@ -31,18 +31,16 @@ import { Account, LabelInput, PageBody, PageHeader, SmallPage } from '@nimiq/vue
 import { AccountInfo } from '../lib/AccountInfo';
 import { WalletInfo, WalletType } from '../lib/WalletInfo';
 import { State } from 'vuex-class';
-import { WalletStore } from '../lib/WalletStore';
+import { WalletStore } from '@/lib/WalletStore';
 import { CreateResult } from '@nimiq/keyguard-client';
 import { SignupResult } from '@/lib/RequestTypes';
+import { WALLET_DEFAULT_LABEL_KEYGUARD, WALLET_DEFAULT_LABEL_LEDGER, ACCOUNT_DEFAULT_LABEL_KEYGUARD,
+    ACCOUNT_DEFAULT_LABEL_LEDGER } from '@/lib/Constants';
 
 @Component({components: {PageHeader, PageBody, Account, LabelInput, SmallPage}})
 export default class SignupSuccess extends Vue {
     private static readonly STEPS_KEYGUARD_SIGNUP = 6;
     private static readonly STEPS_LEDGER_SIGNUP = 3;
-    private static readonly DEFAULT_KEYGUARD_WALLET_LABEL = 'Keyguard Wallet';
-    private static readonly DEFAULT_LEDGER_WALLET_LABEL = 'Ledger Wallet';
-    private static readonly DEFAULT_KEYGUARD_ACCOUNT_LABEL = 'Standart Account';
-    private static readonly DEFAULT_LEDGER_ACCOUNT_LABEL = 'Ledger Account';
 
     @Prop({ default: null })
     public createResult!: CreateResult;
@@ -64,14 +62,14 @@ export default class SignupSuccess extends Vue {
             this.createResult = this.keyguardResult;
             this.walletType = WalletType.BIP39;
             this.numberSteps = SignupSuccess.STEPS_KEYGUARD_SIGNUP;
-            this.walletLabel = SignupSuccess.DEFAULT_KEYGUARD_WALLET_LABEL;
-            this.accountLabel = SignupSuccess.DEFAULT_KEYGUARD_ACCOUNT_LABEL;
+            this.walletLabel = WALLET_DEFAULT_LABEL_KEYGUARD;
+            this.accountLabel = ACCOUNT_DEFAULT_LABEL_KEYGUARD;
         } else {
             if (!this.createResult) throw new Error('SignupSuccess shown without createResult');
             this.walletType = WalletType.LEDGER;
             this.numberSteps = SignupSuccess.STEPS_LEDGER_SIGNUP;
-            this.walletLabel = SignupSuccess.DEFAULT_LEDGER_WALLET_LABEL;
-            this.accountLabel = SignupSuccess.DEFAULT_LEDGER_ACCOUNT_LABEL;
+            this.walletLabel = WALLET_DEFAULT_LABEL_LEDGER;
+            this.accountLabel = ACCOUNT_DEFAULT_LABEL_LEDGER;
         }
         this.createdAddress = new Nimiq.Address(this.createResult.address);
         this.saveResult(this.walletLabel, this.accountLabel);

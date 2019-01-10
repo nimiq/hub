@@ -5,14 +5,14 @@
             <Loader v-if="state === 'fetching-accounts' || state === 'finished'"
                     :state="loaderState" :title="loaderTitle" :status="loaderStatus">
             </Loader>
-            <IdenticonSelector :accounts="accountsToSelectFrom" :confirmAccountSelection="false"
-                               v-else-if="state === 'identicon-selection'" @identicon-selected="_onAccountSelected">
+            <IdenticonSelector v-else-if="state === 'identicon-selection'" :accounts="accountsToSelectFrom"
+                               :confirmAccountSelection="false" @identicon-selected="_onAccountSelected">
             </IdenticonSelector>
-            <div class="wallet-summary" v-else-if="state === 'wallet-summary'">
-                <h1 class="nq-h1">Wallet Created</h1>
+            <div v-else-if="state === 'wallet-summary'" class="wallet-summary">
+                <h1 class="nq-h1">Account Created</h1>
                 <WalletIdentifier :accounts="Array.from(walletInfo.accounts.values())"
                                   :animate="true"></WalletIdentifier>
-                <div class="message nq-text">This is your wallet with your first account in it.</div>
+                <div class="message nq-text">This is your account with your first address in it.</div>
                 <button class="nq-button" @click="done">Finish</button>
             </div>
         </SmallPage>
@@ -76,11 +76,11 @@ export default class SignupLedger extends Vue {
 
     private get loaderStatus() {
         if (this.state !== SignupLedger.State.FETCHING_ACCOUNTS) return '';
-        else if (this.failedFetchingAccounts) return 'Failed to fetch accounts. Retrying...';
+        else if (this.failedFetchingAccounts) return 'Failed to fetch account. Retrying...';
         else {
             const count = !this.walletInfo ? 0 : this.walletInfo.accounts.size;
             return count > 0
-                ? `Imported ${count} account${count > 1 ? 's' : ''} so far.`
+                ? `Imported ${count} address${count !== 1 ? 'es' : ''} so far.`
                 : '';
         }
     }
@@ -186,9 +186,9 @@ export default class SignupLedger extends Vue {
         if (currentRequest.type !== LedgerApi.RequestType.DERIVE_ACCOUNTS || currentRequest.cancelled) return;
         if (LedgerApi.currentState.type === LedgerApi.StateType.REQUEST_PROCESSING
             || LedgerApi.currentState.type === LedgerApi.StateType.REQUEST_CANCELLING) {
-            // When we actually fetch the accounts from the device, we already wanna show our own Loader instead of the
-            // LedgerUi processing screen to avoid switching back and forth between LedgerUi and Loader during account
-            // finding.
+            // When we actually fetch the accounts from the device, we already want to show our own Loader instead of
+            // the LedgerUi processing screen to avoid switching back and forth between LedgerUi and Loader during
+            // account finding.
             this.state = SignupLedger.State.FETCHING_ACCOUNTS;
         } else {
             this.state = SignupLedger.State.LEDGER_INTERACTION;

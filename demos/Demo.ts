@@ -6,7 +6,7 @@ import {
     RequestType,
     SignupRequest, SignupResult,
     CheckoutRequest,
-    LoginRequest, LoginResult,
+    LoginRequest,
     LogoutRequest, LogoutResult,
     SignTransactionRequest, SignTransactionResult,
     ExportRequest,
