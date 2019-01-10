@@ -6,8 +6,8 @@
                 <div class="loading-animation"></div>
                 <h2>Mixing colors</h2>
             </div>
-            <div class="wrapper" @click="_selectAccount(account)"
-                 :class="{ selected: selectedAccount === account }" v-for="account in displayedAccounts">
+            <div class="wrapper" v-for="account in displayedAccounts" :key="account.userFriendlyAddress"
+                @click="_selectAccount(account)" :class="{ selected: selectedAccount === account }">
                 <Identicon :address="account.userFriendlyAddress"></Identicon>
                 <div class="address">{{ account.userFriendlyAddress }}</div>
             </div>
@@ -26,7 +26,7 @@
 <script lang="ts">
     import { Component, Prop, Watch, Vue } from 'vue-property-decorator';
     import { Identicon } from '@nimiq/vue-components';
-    import { AccountInfo } from '../lib/AccountInfo';
+    import { AccountInfo } from '@/lib/AccountInfo';
 
     @Component({components: { Identicon }})
     class IdenticonSelector extends Vue {
@@ -58,19 +58,10 @@
             this.page = 0;
         }
 
-        @Watch('displayedAccounts')
-        private _onDisplayedAccountsChanged() {
-            // retrigger pop-in animation
-            const identicons  = this.$el.querySelectorAll('.identicon');
-            identicons.forEach((identicon: Element) => (identicon as HTMLElement).style.animationName = 'non-existent');
-            this.$el.offsetWidth; // tslint:disable-line:no-unused-expression
-            identicons.forEach((identicon: Element) => (identicon as HTMLElement).style.animationName = null); // reset
-        }
-
         private _selectAccount(account: AccountInfo | null) {
             this.selectedAccount = account;
             if (!account || this.confirmAccountSelection) return;
-            this.$emit(IdenticonSelector.Events.IDENTICON_SELECTED, this.selectedAccount);
+            this._onSelectionConfirmed();
         }
 
         private _onSelectionConfirmed() {
@@ -96,16 +87,16 @@
         overflow: hidden;
     }
 
-    .identicon-selector .nq-h1 {
+    .nq-h1 {
         margin-top: 0;
         margin-bottom: 6rem;
     }
 
-    .identicon-selector .loading-animation {
+    .loading-animation {
         margin: auto;
     }
 
-    .identicon-selector .wrapper {
+    .wrapper {
         width: 14.25rem;
         height: 14.25rem;
         position: absolute;
@@ -118,14 +109,14 @@
         cursor: pointer;
     }
 
-    .identicon-selector .wrapper .identicon {
+    .wrapper .identicon {
         width: 100%;
         height: 100%;
         animation: pop-in 500ms ease;
         animation-fill-mode: backwards;
     }
 
-    .identicon-selector .wrapper .address {
+    .wrapper .address {
         visibility: hidden;
         text-align: center;
         font-size: 1.75rem;
@@ -139,12 +130,12 @@
         to   { transform: scale(1); }
     }
 
-    .identicon-selector .wrapper .identicon img,
-    .identicon-selector .wrapper .address {
+    .wrapper .identicon img,
+    .wrapper .address {
         transition: transform 500ms;
     }
 
-    .identicon-selector .identicons {
+    .identicons {
         display: flex;
         flex-grow: 1;
         justify-content: center;
@@ -154,28 +145,28 @@
         position: relative;
     }
 
-    .identicon-selector .wrapper:nth-child(1) { transform: translate(  0.0rem, -14.25rem); }
-    .identicon-selector .wrapper:nth-child(2) { transform: translate(-12.5rem,  -7.25rem); }
-    .identicon-selector .wrapper:nth-child(3) { transform: translate( 12.5rem,  -7.25rem); }
-    .identicon-selector .wrapper:nth-child(4) { transform: translate(  0.0rem,   0.00rem); }
-    .identicon-selector .wrapper:nth-child(5) { transform: translate(-12.5rem,   7.25rem); }
-    .identicon-selector .wrapper:nth-child(6) { transform: translate( 12.5rem,   7.25rem); }
-    .identicon-selector .wrapper:nth-child(7) { transform: translate(  0.0rem,  14.25rem); }
+    .wrapper:nth-child(1) { transform: translate(  0.0rem, -14.25rem); }
+    .wrapper:nth-child(2) { transform: translate(-12.5rem,  -7.25rem); }
+    .wrapper:nth-child(3) { transform: translate( 12.5rem,  -7.25rem); }
+    .wrapper:nth-child(4) { transform: translate(  0.0rem,   0.00rem); }
+    .wrapper:nth-child(5) { transform: translate(-12.5rem,   7.25rem); }
+    .wrapper:nth-child(6) { transform: translate( 12.5rem,   7.25rem); }
+    .wrapper:nth-child(7) { transform: translate(  0.0rem,  14.25rem); }
 
-    .identicon-selector .wrapper:nth-child(1) .identicon { animation-delay: 100ms; }
-    .identicon-selector .wrapper:nth-child(2) .identicon { animation-delay: 150ms; }
-    .identicon-selector .wrapper:nth-child(3) .identicon { animation-delay: 150ms; }
-    .identicon-selector .wrapper:nth-child(4) .identicon { animation-delay: 200ms; }
-    .identicon-selector .wrapper:nth-child(5) .identicon { animation-delay: 250ms; }
-    .identicon-selector .wrapper:nth-child(6) .identicon { animation-delay: 250ms; }
-    .identicon-selector .wrapper:nth-child(7) .identicon { animation-delay: 300ms; }
+    .wrapper:nth-child(1) .identicon { animation-delay: 100ms; }
+    .wrapper:nth-child(2) .identicon { animation-delay: 150ms; }
+    .wrapper:nth-child(3) .identicon { animation-delay: 150ms; }
+    .wrapper:nth-child(4) .identicon { animation-delay: 200ms; }
+    .wrapper:nth-child(5) .identicon { animation-delay: 250ms; }
+    .wrapper:nth-child(6) .identicon { animation-delay: 250ms; }
+    .wrapper:nth-child(7) .identicon { animation-delay: 300ms; }
 
 
-    .identicon-selector .generate-more {
+    .generate-more {
         margin-top: 6rem;
     }
 
-    .identicon-selector .backdrop {
+    .backdrop {
         position: absolute;
         top: 0;
         left: 0;
@@ -192,7 +183,7 @@
         align-items: center;
     }
 
-    .identicon-selector .backdrop button {
+    .backdrop button {
         opacity: 0;
         position: absolute;
         bottom: 6rem;
@@ -200,7 +191,7 @@
         margin: 0;
     }
 
-    .identicon-selector .backdrop .nq-link {
+    .backdrop .nq-link {
         color: white;
         position: absolute;
         margin-bottom: 2rem;
@@ -214,7 +205,7 @@
         pointer-events: all;
     }
 
-    .identicon-selector .wrapper.selected {
+    .wrapper.selected {
         z-index: 2;
         transform: translateY(-5rem);
         transition-delay: 0s;
@@ -222,11 +213,11 @@
         pointer-events: none;
     }
 
-    .identicon-selector .wrapper.selected img {
+    .wrapper.selected img {
         transform: scale(1.5);
     }
 
-    .identicon-selector .wrapper.selected .address {
+    .wrapper.selected .address {
         visibility: visible;
         transform: scale(1);
     }

@@ -24,8 +24,7 @@ const LoginErrorHandler       = () => import(/*webpackChunkName: "login"*/ './vi
 
 const Export                  = () => import(/*webpackChunkName: "export"*/ './views/Export.vue');
 
-const ChangePassphrase        = () => import(/*webpackChunkName: "change-passphrase"*/
-    './views/ChangePassphrase.vue');
+const ChangePassphrase        = () => import(/*webpackChunkName: "change-passphrase"*/ './views/ChangePassphrase.vue');
 
 const Logout                  = () => import(/*webpackChunkName: "logout"*/ './views/Logout.vue');
 const LogoutSuccess           = () => import(/*webpackChunkName: "logout"*/ './views/LogoutSuccess.vue');

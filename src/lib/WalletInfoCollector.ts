@@ -18,7 +18,8 @@ export default class WalletInfoCollector {
         walletType: WalletType,
         walletId?: string,
         initialAccounts?: BasicAccountInfo[],
-        onUpdate?: (walletInfo: WalletInfo, currentlyCheckedAccounts: BasicAccountInfo[]) => void,
+        // tslint:disable-next-line:no-empty
+        onUpdate: (walletInfo: WalletInfo, currentlyCheckedAccounts: BasicAccountInfo[]) => void = () => {},
     ): Promise<WalletInfo> {
         // Kick off loading dependencies
         WalletInfoCollector._initializeDependencies(walletType);
@@ -51,12 +52,12 @@ export default class WalletInfoCollector {
             // fetch balances and update again
             initialAccountsPromise = WalletInfoCollector._getBalances(initialAccounts).then(async (balances) => {
                 WalletInfoCollector._addAccounts(walletInfo, initialAccounts, balances);
-                if (onUpdate) onUpdate(walletInfo, await derivedAccountsPromise);
+                onUpdate(walletInfo, await derivedAccountsPromise);
             });
         } else {
             initialAccountsPromise = Promise.resolve();
         }
-        if (onUpdate) onUpdate(walletInfo, await derivedAccountsPromise);
+        onUpdate(walletInfo, await derivedAccountsPromise);
 
         if (walletType === WalletType.LEGACY) {
             // legacy wallets have no derived accounts
@@ -95,7 +96,7 @@ export default class WalletInfoCollector {
             }
             if (foundAccounts.length > 0) {
                 WalletInfoCollector._addAccounts(walletInfo, foundAccounts, balances);
-                if (onUpdate) onUpdate(walletInfo, derivedAccounts);
+                onUpdate(walletInfo, derivedAccounts);
             }
         } while (foundAccounts.length > 0);
 
