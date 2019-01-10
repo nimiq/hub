@@ -42,7 +42,7 @@ export default class AccountsClient {
             case 'nimiq.com':
                 return 'https://accounts.nimiq.com';
             case 'nimiq-testnet.com':
-                return 'https://accounts.nimiq-testnet.com'
+                return 'https://accounts.nimiq-testnet.com';
             default:
                 return 'http://localhost:8080';
         }
