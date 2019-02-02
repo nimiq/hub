@@ -92,6 +92,7 @@ export default class Checkout extends Vue {
     private sideResultAddedWallet: boolean = false;
     private isProduction: boolean = window.location.origin.indexOf('nimiq.com') !== -1;
     private isTappingFaucet: boolean = false;
+    private _firstAddress: any;
 
     private async created() {
         const $subtitle = document.querySelector('.logo .logo-subtitle')!;
@@ -152,10 +153,16 @@ export default class Checkout extends Vue {
 
         // Remove loader
         this.hasBalances = true;
+
+        // FIXME if we want to keep this, only do it in testnet
+        /*if (!this.hasSufficientBalanceAccount) {
+            // proactively connect and subscribe, anticipating faucet tapping
+            const network = (this.$refs.network as Network);
+            console.log('connect to network');
+            await network.connect();
+        }*/
     }
 
-<<<<<<< HEAD
-=======
     @Watch('height')
     private logHeightChange(height: number, oldHeight: number) {
         console.debug(`Got height: ${height} (was ${oldHeight})`);
@@ -163,16 +170,26 @@ export default class Checkout extends Vue {
 
     private async tapFaucet() {
         const amount = await Faucet.getDispenseAmount();
-        const firstAddress = [ ...this.wallets[0].accounts.values() ][0].userFriendlyAddress;
-        console.log(`tap faucet for ${firstAddress}`);
+        console.log(`tap faucet for ${this.firstAddress.userFriendlyAddress}`);
+        const network = (this.$refs.network as Network);
         try {
-            await Faucet.tap(firstAddress, null); // currently no captcha required in testnet
+            await Faucet.tap(this.firstAddress.userFriendlyAddress, null); // currently no captcha required in testnet
             this.isTappingFaucet = true;
-            const network = (this.$refs.network as Network);
-            console.log('connect to network');
-            await network.connect();
+
             // wait for updated balance
-            await network.subscribe(firstAddress);
+            const checkForArrivedBalance = async () => {
+                this.getBalances(true);
+                const balances: Map<string, number> = await network.getBalances(this.firstAddress.userFriendlyAddress);
+                const newBalance = [ ...balances.values() ][0];
+                console.log('check balance');
+                if (newBalance > this.firstAddress.balance) {
+                    // TODO improve performance by doing exactly what is needed instead;
+                    await this.getBalances(true);
+                    this.isTappingFaucet = false;
+                }
+                setTimeout(checkForArrivedBalance, 1000);
+            };
+            setTimeout(checkForArrivedBalance, 1000);
         } catch (e) {
             const errorMessage = e.msg // faucet specific error message
                 || e.message // message of Error constructor
@@ -182,18 +199,18 @@ export default class Checkout extends Vue {
     }
 
     private async onBalanceChange(balances: Map<string, number>) {
+        if (!this.isTappingFaucet) return;
+
         // we only subscribed to one address
         const balance = [ ...balances.values() ][0];
 
-        // FIXME only show faucet if balance is 0?
-        if (balance > 0) {
+        if (balance > this.firstAddress.balance) {
             // TODO improve performance by doing exactly what is needed instead
             await this.getBalances(true);
             this.isTappingFaucet = false;
         }
     }
 
->>>>>>> 77f9948... add faucet functionality with basic UI to checkout
     private onHeadChange(head: Nimiq.BlockHeader | {height: number}) {
         this.height = head.height;
     }
@@ -298,6 +315,15 @@ export default class Checkout extends Vue {
                 return !!account.balance && account.balance >= minBalance;
             });
         });
+    }
+
+    // FIXME should be of type AccountInfo, but ts complains
+    private get firstAddress(): any {
+        if (!this._firstAddress) {
+            this._firstAddress = this._firstAddress || [ ...this.wallets[0].accounts.values() ][0];
+        }
+
+        return this._firstAddress;
     }
 
     private async handleOnboardingResult() {

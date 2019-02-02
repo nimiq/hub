@@ -33,7 +33,7 @@ class Network extends Vue {
     public async connectPico(addresses: string[]): Promise<Map<string, number>> {
         // Load network iframe
         const client = await this._getNetworkClient();
-        client.disconnect();
+        await client.disconnect();
 
         // Connect
         return client.connectPico(addresses);
