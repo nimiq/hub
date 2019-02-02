@@ -117,6 +117,11 @@ class Network extends Vue {
         return result;
     }
 
+    public async subscribe(address: string) {
+        const client = await this._getNetworkClient();
+        return client.subscribe(address);
+    }
+
     /**
      * Relays the transaction to the network and only resolves when the network
      * fires its 'transaction-relayed' event for that transaction.

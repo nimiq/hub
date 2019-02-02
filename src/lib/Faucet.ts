@@ -1,19 +1,19 @@
-export class Faucet {
+export default class Faucet {
     public static FAUCET_BACKEND = window.location.origin.indexOf('nimiq.com') !== -1
         ? 'https://faucet.nimiq-network.com/' : 'https://faucet.nimiq-testnet.com/';
     public static FAUCET_ENDPOINT_TAP = 'tapit';
     public static FAUCET_ENDPOINT_INFO = 'info';
 
-    public static async tap(recipientAddress: string, captchaToken: string) {
+    public static async tap(recipientAddress: string, captchaToken: string | null) {
         const response = await fetch(`${Faucet.FAUCET_BACKEND}${Faucet.FAUCET_ENDPOINT_TAP}`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
             },
             body: JSON.stringify({
                 'address': recipientAddress,
                 'g-recaptcha-response': captchaToken,
-            })
+            }),
         }).then((finalResponse) => finalResponse.json());
         if (!response.success) {
             // FIXME

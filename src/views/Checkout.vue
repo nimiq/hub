@@ -17,10 +17,16 @@
             <h1 class="nq-h1">Choose an account to pay</h1>
 
             <div v-if="!hasSufficientBalanceAccount" class="non-sufficient-balance">
-                <p class="nq-text nq-orange">None of your accounts has sufficient balance.</p>
-                <a href="https://changelly.com/exchange/btc/nim?ref_id=v06xmpbqj5lpftuj" target="_blank">
-                    <button class="nq-button-s nq-light-blue-bg"><i class="nq-icon exchange"></i> Get NIM&nbsp;</button>
+                <p class="nq-text nq-orange">None of your addresses has sufficient balance.</p>
+                <a v-if="isProduction" href="https://changelly.com/exchange/BTC/NIM?ref_id=v06xmpbqj5lpftuj" target="_blank">
+                    <button class="nq-button-s nq-light-blue-bg">
+                        <i class="nq-icon exchange"></i>Get NIM&nbsp;
+                    </button>
                 </a>
+                <button v-if="!isProduction && !isTappingFaucet" class="nq-button-s blue" @click="tapFaucet">
+                    <i class="nq-icon exchange"></i> Get NIM&nbsp;
+                </button>
+                <Loader v-if="isTappingFaucet" title="Free NIM requested" status="Awaiting transaction..."/>
             </div>
 
             <AccountSelector
@@ -42,7 +48,7 @@
             Cancel Payment
         </button>
 
-        <Network ref="network" :visible="false" @head-change="onHeadChange"/>
+        <Network ref="network" :visible="false" @head-change="onHeadChange" @balances="onBalanceChange" />
     </div>
 </template>
 
@@ -64,6 +70,7 @@ import {
 } from '@/lib/Constants';
 import Network from '@/components/Network.vue';
 import Loader from '@/components/Loader.vue';
+import Faucet from '@/lib/Faucet';
 
 @Component({components: {PaymentInfoLine, AccountSelector, AccountInfoScreen, SmallPage, Network, Loader}})
 export default class Checkout extends Vue {
@@ -83,6 +90,8 @@ export default class Checkout extends Vue {
     private height: number = 0;
     private hasBalances: boolean = false;
     private sideResultAddedWallet: boolean = false;
+    private isProduction: boolean = window.location.origin.indexOf('nimiq.com') !== -1;
+    private isTappingFaucet: boolean = false;
 
     private async created() {
         const $subtitle = document.querySelector('.logo .logo-subtitle')!;
@@ -94,8 +103,8 @@ export default class Checkout extends Vue {
         else this.getBalances();
     }
 
-    private async getBalances() {
-        const isRefresh = !window.performance || performance.navigation.type === 1;
+    private async getBalances(forceRefresh = false) {
+        const isRefresh = forceRefresh || !window.performance || performance.navigation.type === 1;
 
         if (!this.sideResultAddedWallet && this.getLastBalanceUpdateHeight() && !isRefresh) {
             this.onHeadChange(this.getLastBalanceUpdateHeight()!);
@@ -145,6 +154,46 @@ export default class Checkout extends Vue {
         this.hasBalances = true;
     }
 
+<<<<<<< HEAD
+=======
+    @Watch('height')
+    private logHeightChange(height: number, oldHeight: number) {
+        console.debug(`Got height: ${height} (was ${oldHeight})`);
+    }
+
+    private async tapFaucet() {
+        const amount = await Faucet.getDispenseAmount();
+        const firstAddress = [ ...this.wallets[0].accounts.values() ][0].userFriendlyAddress;
+        console.log(`tap faucet for ${firstAddress}`);
+        try {
+            await Faucet.tap(firstAddress, null); // currently no captcha required in testnet
+            this.isTappingFaucet = true;
+            const network = (this.$refs.network as Network);
+            console.log('connect to network');
+            await network.connect();
+            // wait for updated balance
+            await network.subscribe(firstAddress);
+        } catch (e) {
+            const errorMessage = e.msg // faucet specific error message
+                || e.message // message of Error constructor
+                || 'Failed to claim funds.';
+            console.error(errorMessage);
+        }
+    }
+
+    private async onBalanceChange(balances: Map<string, number>) {
+        // we only subscribed to one address
+        const balance = [ ...balances.values() ][0];
+
+        // FIXME only show faucet if balance is 0?
+        if (balance > 0) {
+            // TODO improve performance by doing exactly what is needed instead
+            await this.getBalances(true);
+            this.isTappingFaucet = false;
+        }
+    }
+
+>>>>>>> 77f9948... add faucet functionality with basic UI to checkout
     private onHeadChange(head: Nimiq.BlockHeader | {height: number}) {
         this.height = head.height;
     }
