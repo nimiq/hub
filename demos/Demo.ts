@@ -21,7 +21,10 @@ import { Utf8Tools } from '@nimiq/utils';
 
 class Demo {
     public static run() {
-        const demo = new Demo(`${location.protocol}//${location.hostname}:8000`);
+        const keyguardOrigin = location.origin === 'https://accounts.nimiq-testnet.com'
+            ? 'https://keyguard.nimiq-testnet.com'
+            : `${location.protocol}//${location.hostname}:8000`;
+        const demo = new Demo(keyguardOrigin);
 
         const client = new AccountsClient(location.origin);
 
@@ -145,7 +148,7 @@ class Demo {
 
             return {
                 appName: 'Accounts Demos',
-                shopLogoUrl: 'http://localhost:8080/nimiq.png',
+                shopLogoUrl: location.origin + '/nimiq.png',
                 recipient: 'NQ63 U7XG 1YYE D6FA SXGG 3F5H X403 NBKN JLDU',
                 value,
                 fee: txFee,
