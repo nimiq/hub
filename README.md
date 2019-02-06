@@ -46,6 +46,10 @@ npm install @nimiq/accounts-client
 yarn add @nimiq/accounts-client
 ```
 
+> **Note**: To use the code below from your app, it needs to be served through HTTPS.
+> See [this guide](https://letsencrypt.org/getting-started/)
+> on how to create a certificate and enable HTTPS on your server.
+
 Then import or require it in your module:
 
 ```javascript
