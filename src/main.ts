@@ -14,8 +14,7 @@ Vue.config.productionTip = false;
 self.NIMIQ_IQONS_SVG_PATH = '/img/iqons.min.cc877caa.svg';
 
 const rpcApi = new RpcApi(store, staticStore, router);
-Vue.prototype.$rpc = rpcApi;
-// rpcApi ist started in App.vue->created()
+Vue.prototype.$rpc = rpcApi; // rpcApi is started in App.vue->created()
 
 if (window.location.origin === 'https://accounts.nimiq-testnet.com') {
   Vue.use(VueRaven, {
