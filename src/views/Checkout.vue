@@ -91,30 +91,31 @@ export default class Checkout extends Vue {
         if (!this.sideResultAddedWallet && this.getCache() && !isRefresh) {
             this.onHeadChange(this.getCache());
         } else {
-            // Build mapping from accounts to the index of their respective wallet in the wallets array
-            const accountsToWallets: Map<string, number> = new Map();
-            this.wallets.forEach((wallet: WalletInfo, index: number) => {
-                for (const address of Array.from(wallet.accounts.keys())) {
-                    accountsToWallets.set(address, index);
-                }
-            });
+            // Copy wallets to be able to manipulate them
+            const wallets = this.wallets.slice(0);
+
+            // Generate a new array with references to the respective wallets' accounts
+            const accounts = wallets.reduce((accs, wallet) => {
+                accs.push(...wallet.accounts.values());
+                return accs;
+            }, [] as AccountInfo[]);
+
+            // Reduce userfriendly addresses from that
+            const addresses = accounts.map(account => account.userFriendlyAddress);
 
             // Get balances through pico consensus, also triggers head-change event
             const network = (this.$refs.network as Network);
-            const balances: Map<string, number> = await network.connectPico(Array.from(accountsToWallets.keys()));
+            const balances: Map<string, number> = await network.connectPico(addresses);
 
-            // Copy wallets to be able to write to them
-            const wallets = this.wallets.slice(0);
-
-            // Add received account balances to correct AccountInfos in correct wallets
-            for (const [address, balance] of balances) {
-                const index = accountsToWallets.get(address)!;
-                const accountInfo = wallets[index].accounts.get(address)!;
-                accountInfo.balance = Nimiq.Policy.coinsToSatoshis(balance);
-                wallets[index].accounts.set(address, accountInfo);
+            // Update accounts with their balances
+            // (The accounts are still references to themselves in the wallets' accounts maps)
+            for (const account of accounts) {
+                const balance = balances.get(account.userFriendlyAddress);
+                if (balance === undefined) continue;
+                account.balance = Nimiq.Policy.coinsToSatoshis(balance);
             }
 
-            // Store new balances
+            // Store updated wallets
             for (const wallet of wallets) {
                 // Update IndexedDB
                 await WalletStore.Instance.put(wallet);
