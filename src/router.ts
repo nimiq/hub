@@ -15,6 +15,8 @@ const SignupTypeSelector      = () => import(/*webpackChunkName: "signup"*/ './v
 const SignupSuccess           = () => import(/*webpackChunkName: "signup"*/ './views/SignupSuccess.vue');
 const SignupErrorHandler      = () => import(/*webpackChunkName: "signup"*/ './views/SignupErrorHandler.vue');
 
+const SignupLedger            = () => import(/*webpackChunkName: "signup-ledger"*/ './views/SignupLedger.vue');
+
 const Login                   = () => import(/*webpackChunkName: "login"*/ './views/Login.vue');
 const LoginSuccess            = () => import(/*webpackChunkName: "login"*/ './views/LoginSuccess.vue');
 const LoginErrorHandler       = () => import(/*webpackChunkName: "login"*/ './views/LoginErrorHandler.vue');
@@ -135,6 +137,11 @@ export default new Router({
             path: `/${RequestType.SIGNUP}`,
             component: SignupTypeSelector,
             name: `${RequestType.SIGNUP}`,
+        },
+        {
+            path: `/${RequestType.SIGNUP}/ledger`,
+            component: SignupLedger,
+            name: `${RequestType.SIGNUP}-ledger`,
         },
         {
             path: `/${RequestType.SIGNUP}/success`,

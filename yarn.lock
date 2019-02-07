@@ -638,6 +638,10 @@
   version "0.1.3"
   resolved "https://registry.yarnpkg.com/@nimiq/network-client/-/network-client-0.1.3.tgz#9ad0289b26aa3439a62151586660bb8e170ffe3c"
   integrity sha512-Pky0h00F8PTL1ymqyksRWZW1Tm/mjV3SUf5zuQ7+7x9WnYHpg+/oKpTWrKIO8WsdJUtGuxQtx2prNvI5qh10Nw==
+  
+"@nimiq/ledgerjs@https://github.com/nimiq/ledger-api.git":
+  version "0.0.0"
+  resolved "https://github.com/nimiq/ledger-api.git#a7d86a47b46d21ec2afea94086b2942ea1adb575"
   dependencies:
     "@nimiq/rpc-events" "^0.0.5"
 
