@@ -264,6 +264,7 @@ export default Loader;
         margin: 0.75rem;
         z-index: 1000;
         position: relative;
+        flex-grow: 1;
     }
 
     .wrapper {
