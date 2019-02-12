@@ -35,9 +35,3 @@ export default class SignTransactionSuccess extends Vue {
     }
 }
 </script>
-
-<style scope>
-    .small-page {
-        height: 70rem;
-    }
-</style>
