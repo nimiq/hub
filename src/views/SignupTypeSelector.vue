@@ -48,7 +48,7 @@ export default class SignupTypeSelector extends Vue {
     }
 
     public createLedger() {
-        this.$router.push(`${RequestType.SIGNUP}/ledger`);
+        this.$rpc.routerPush(`${RequestType.SIGNUP}/ledger`);
     }
 
     public login() {
