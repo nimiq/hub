@@ -77,14 +77,12 @@ export class PopupRequestBehavior extends RequestBehavior {
         await client.init();
 
         try {
-            const result = await client.call(command, ...args);
-            client.close();
-            popup.close();
-            return result;
+            return await client.callAndPersist(command, ...args);
         } catch (e) {
+            throw e;
+        } finally {
             client.close();
             popup.close();
-            throw e;
         }
     }
 

@@ -14,7 +14,7 @@ Vue.config.productionTip = false;
 self.NIMIQ_IQONS_SVG_PATH = '/img/iqons.min.72f3b689.svg';
 
 const rpcApi = new RpcApi(store, staticStore, router);
-Vue.prototype.$rpc = rpcApi;
+Vue.prototype.$rpc = rpcApi; // rpcApi is started in App.vue->created()
 
 if (window.location.origin === 'https://accounts.nimiq-testnet.com') {
   Vue.use(VueRaven, {
@@ -27,9 +27,6 @@ new Vue({
   store,
   render: (h) => h(App),
 }).$mount('#app');
-
-// Start RPC Api
-rpcApi.start();
 
 // Types
 declare module 'vue/types/vue' {

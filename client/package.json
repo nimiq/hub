@@ -8,7 +8,7 @@
   "license": "Apache-2.0",
   "private": false,
   "dependencies": {
-    "@nimiq/rpc": "^0.0.11"
+    "@nimiq/rpc": "^0.1.1"
   },
   "devDependencies": {
     "rollup": "^0.66.1",

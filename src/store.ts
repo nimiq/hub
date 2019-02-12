@@ -61,7 +61,7 @@ const store: StoreOptions<RootState> = {
     actions: {
         initWallets({ state, commit }) {
             // Fetch data from store
-            WalletStore.Instance.list().then((walletInfoEntries) => {
+            return WalletStore.Instance.list().then((walletInfoEntries) => {
                 const wallets = walletInfoEntries.map((walletInfoEntry) => WalletInfo.fromObject(walletInfoEntry));
                 commit('initWallets', wallets);
 
@@ -99,7 +99,6 @@ const store: StoreOptions<RootState> = {
                     userFriendlyAddress: activeUserFriendlyAddress,
                 });
             });
-
         },
     },
     getters: {

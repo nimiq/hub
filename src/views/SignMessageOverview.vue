@@ -45,7 +45,7 @@ export default class SignMessageOverview extends SignMessage {
 
     @Emit()
     private changeAccount() {
-        this.$router.push({name: `${RequestType.SIGN_MESSAGE}-change-account`});
+        this.$rpc.routerPush(`${RequestType.SIGN_MESSAGE}-change-account`);
     }
 
     @Emit()

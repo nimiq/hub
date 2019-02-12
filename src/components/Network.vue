@@ -68,7 +68,6 @@ class Network extends Vue {
                     new Nimiq.PublicKey(keyguardResult.publicKey),
                     new Nimiq.Signature(keyguardResult.signature),
                 ).serialize(),
-                keyguardRequest.networkId,
             );
         } else {
             tx = new Nimiq.BasicTransaction(
@@ -78,7 +77,6 @@ class Network extends Vue {
                 keyguardRequest.fee,
                 keyguardRequest.validityStartHeight,
                 new Nimiq.Signature(keyguardResult.signature),
-                keyguardRequest.networkId,
             );
         }
 
