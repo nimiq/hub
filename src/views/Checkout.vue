@@ -62,7 +62,7 @@ import Loader from '@/components/Loader.vue';
 
 @Component({components: {PaymentInfoLine, AccountSelector, AccountInfoScreen, SmallPage, Network, Loader}})
 export default class Checkout extends Vue {
-    private static readonly CACHE_STORAGE_KEY = 'nimiq_checkout_cache';
+    private static readonly BALANCE_CHECK_STORAGE_KEY = 'nimiq_checkout_last_balance_check';
 
     @Static private rpcState!: RpcState;
     @Static private request!: ParsedCheckoutRequest;
@@ -90,8 +90,8 @@ export default class Checkout extends Vue {
     private async getBalances() {
         const isRefresh = !window.performance || performance.navigation.type === 1;
 
-        if (!this.sideResultAddedWallet && this.getCache() && !isRefresh) {
-            this.onHeadChange(this.getCache()!);
+        if (!this.sideResultAddedWallet && this.getLastBalanceUpdateHeight() && !isRefresh) {
+            this.onHeadChange(this.getLastBalanceUpdateHeight()!);
         } else {
             // Copy wallets to be able to manipulate them
             const wallets = this.wallets.slice(0);
@@ -131,7 +131,7 @@ export default class Checkout extends Vue {
                 timestamp: Date.now(),
                 height: this.height,
             };
-            window.sessionStorage.setItem(Checkout.CACHE_STORAGE_KEY, JSON.stringify(cacheInput));
+            window.sessionStorage.setItem(Checkout.BALANCE_CHECK_STORAGE_KEY, JSON.stringify(cacheInput));
         }
 
         // Remove loader
@@ -273,8 +273,8 @@ export default class Checkout extends Vue {
         delete staticStore.sideResult;
     }
 
-    private getCache(): {timestamp: number, height: number} | null {
-        const rawCache = window.sessionStorage.getItem(Checkout.CACHE_STORAGE_KEY);
+    private getLastBalanceUpdateHeight(): {timestamp: number, height: number} | null {
+        const rawCache = window.sessionStorage.getItem(Checkout.BALANCE_CHECK_STORAGE_KEY);
         if (!rawCache) return null;
 
         try {
@@ -285,7 +285,7 @@ export default class Checkout extends Vue {
 
             return cache;
         } catch (e) {
-            window.sessionStorage.removeItem(Checkout.CACHE_STORAGE_KEY);
+            window.sessionStorage.removeItem(Checkout.BALANCE_CHECK_STORAGE_KEY);
             return null;
         }
     }
