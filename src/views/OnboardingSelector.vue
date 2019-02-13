@@ -12,7 +12,7 @@
 <script lang="ts">
 import { Component, Emit, Vue } from 'vue-property-decorator';
 import { OnboardingMenu } from '@nimiq/vue-components';
-import { ParsedOnboardingRequest } from '@/lib/RequestTypes';
+import { ParsedOnboardingRequest, RequestType } from '@/lib/RequestTypes';
 import { Static } from '@/lib/StaticStore';
 import { DEFAULT_KEY_PATH } from '@/lib/Constants';
 
@@ -40,7 +40,7 @@ export default class OnboardingSelector extends Vue {
     }
 
     private ledger() {
-        alert('Ledger coming soon!');
+        this.$rpc.routerPush(`${RequestType.SIGNUP}-ledger`);
     }
 
     @Emit()
