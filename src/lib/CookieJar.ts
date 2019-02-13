@@ -56,7 +56,7 @@ class CookieJar {
                 const labelBytes = this.cutLabel(account.label);
 
                 // Combined account label length & wallet type
-                bytes.push(labelBytes.length << 2); // type is LEGACY = 0, thus 0b00 anyway;
+                bytes.push(labelBytes.length << 2 | wallet.type);
 
                 // Account label
                 if (labelBytes.length > 0) bytes.push.apply(bytes, Array.from(labelBytes));

@@ -275,7 +275,7 @@ const BYTES = [
     // wallet 1 (BIP39)
     30, 227, 217, 38, 164, 156, // wallet id
     1, // keyMissing = true
-    37, // wallet label length (9), wallet type (1)
+    38, // wallet label length (9), wallet type (2)
     77, 97, 105, 110, 32, 240, 159, 153, 137, // wallet label
     2, // number of accounts
 
@@ -291,7 +291,7 @@ const BYTES = [
     // wallet 2 (LEDGER)
     30, 227, 217, 38, 164, 157, // wallet id
     1, // keyMissing = true
-    2, // wallet label length (0), wallet type (2)
+    3, // wallet label length (0), wallet type (3)
     1, // number of accounts
 
         // account 1
@@ -302,7 +302,7 @@ const BYTES = [
     // wallet 3 (LEGACY)
     30, 227, 217, 38, 164, 158, // wallet id
     1, // keyMissing = true
-    40, // account label length (10), wallet type (0)
+    41, // account label length (10), wallet type (1)
 
         // account
         79, 108, 100, 65, 99, 99, 111, 117, 110, 116, // account label
@@ -311,7 +311,7 @@ const BYTES = [
     // wallet 4 (BIP39)
     30, 227, 217, 38, 164, 159, // wallet id
     0, // keyMissing = false
-    37, // wallet label length (9), wallet type (1)
+    38, // wallet label length (9), wallet type (2)
     77, 97, 105, 110, 32, 240, 159, 153, 137, // wallet label
     2, // number of accounts
 
@@ -327,7 +327,7 @@ const BYTES = [
     // wallet 2 (LEDGER)
     30, 227, 217, 38, 164, 160, // wallet id
     0, // keyMissing = false
-    2, // wallet label length (0), wallet type (2)
+    3, // wallet label length (0), wallet type (3)
     1, // number of accounts
 
         // account 1
@@ -338,7 +338,7 @@ const BYTES = [
     // wallet 3 (LEGACY)
     30, 227, 217, 38, 164, 161, // wallet id
     0, // keyMissing = false
-    40, // account label length (10), wallet type (0)
+    41, // account label length (10), wallet type (1)
 
         // account
         79, 108, 100, 65, 99, 99, 111, 117, 110, 116, // account label
