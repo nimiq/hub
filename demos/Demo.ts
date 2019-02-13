@@ -4,9 +4,9 @@ import { State, PostMessageRpcClient } from '@nimiq/rpc';
 import AccountsClient from '../client/AccountsClient';
 import {
     RequestType,
-    SignupRequest, SignupResult,
+    SimpleRequest,
+    OnboardingResult,
     CheckoutRequest,
-    LoginRequest,
     LogoutRequest, LogoutResult,
     SignTransactionRequest, SignTransactionResult,
     ExportRequest,
@@ -36,7 +36,7 @@ class Demo {
 
             document.querySelector('#result').textContent = `Error: ${error.message || error}`;
         });
-        client.on(RequestType.SIGNUP, (result: SignupResult, state: State) => {
+        client.on(RequestType.SIGNUP, (result: OnboardingResult, state: State) => {
             console.log('AccountsManager result', result);
             console.log('State', state);
 
@@ -69,9 +69,20 @@ class Demo {
             }
         });
 
+        document.querySelector('button#onboard').addEventListener('click', async () => {
+            try {
+                const result = await client.onboard({ appName: 'Accounts Demos' });
+                console.log('Keyguard result', result);
+                document.querySelector('#result').textContent = 'Onboarding completed!';
+            } catch (e) {
+                console.error('Keyguard error', e);
+                document.querySelector('#result').textContent = `Error: ${e.message || e}`;
+            }
+        });
+
         document.querySelector('button#create').addEventListener('click', async () => {
             try {
-                const result = await client.signup(generateCreateRequest(demo));
+                const result = await client.signup({ appName: 'Accounts Demos' });
                 console.log('Keyguard result', result);
                 document.querySelector('#result').textContent = 'New wallet & account created';
             } catch (e) {
@@ -80,15 +91,9 @@ class Demo {
             }
         });
 
-        function generateCreateRequest(demo: Demo): SignupRequest {
-            return {
-                appName: 'Accounts Demos',
-            }
-        }
-
         document.querySelector('button#login').addEventListener('click', async () => {
             try {
-                const result = await client.login(generateLoginRequest(demo));
+                const result = await client.login({ appName: 'Accounts Demos' });
                 console.log('Keyguard result', result);
                 document.querySelector('#result').textContent = 'Wallet imported';
             } catch (e) {
@@ -96,12 +101,6 @@ class Demo {
                 document.querySelector('#result').textContent = `Error: ${e.message || e}`;
             }
         });
-
-        function generateLoginRequest(demo: Demo): LoginRequest {
-            return {
-                appName: 'Accounts Demos',
-            }
-        }
 
         function generateSignTransactionRequest(demo: Demo): SignTransactionRequest {
             const $radio = document.querySelector('input[type="radio"]:checked');

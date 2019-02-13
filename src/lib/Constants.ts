@@ -5,6 +5,7 @@
 // Accounts
 export const ACCOUNT_DEFAULT_LABEL_KEYGUARD = 'Standard Account';
 export const ACCOUNT_DEFAULT_LABEL_LEDGER = 'Ledger Account';
+export const DEFAULT_KEY_PATH = `m/44'/242'/0'/0'`;
 
 // Transactions
 export const TX_MIN_VALIDITY_DURATION = 10;

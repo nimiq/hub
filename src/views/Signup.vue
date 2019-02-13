@@ -1,71 +1,22 @@
-<template>
-    <div class="container">
-        <SmallPage>
-            <PageHeader :progressIndicator="true" :numberSteps="6" :step="1">Add a Wallet</PageHeader>
-            <PageBody>
-                <p class="nq-text">A Wallet is like a login and can contain one or more accounts, which you can use to send or receive Nimiq, pay online and create Cashlinks.</p>
-                <button @click="createKeyguard" class="keyguard-button nq-blue-bg">
-                    <h2 class="nq-h2">Create Wallet</h2>
-                    <p class="nq-text">Create a Wallet in our secure Nimiq Keyguard. This is the most convenient option.</p>
-                </button>
-                <button @click="createLedger" class="ledger-button">
-                    <h2 class="nq-h2">Connect Hardware Wallet</h2>
-                    <p class="nq-text">Connect a Hardware Wallet like Ledger. This option requires a physical device. It is the most secure option.</p>
-                </button>
-            </PageBody>
-            <PageFooter>
-                <a class="nq-link" @click="login" href="javascript:void(0);">Already have a wallet?</a>
-            </PageFooter>
-        </SmallPage>
-
-        <button class="global-close nq-button-s" @click="close">
-            <span class="nq-icon arrow-left"></span>
-            Back to {{request.appName}}
-        </button>
-    </div>
-</template>
+<template></template>
 
 <script lang="ts">
-import { Component, Emit, Vue } from 'vue-property-decorator';
-import { PageHeader, PageBody, PageFooter, SmallPage } from '@nimiq/vue-components';
-import { ParsedSignupRequest, RequestType } from '../lib/RequestTypes';
-import { CreateRequest, ImportRequest } from '@nimiq/keyguard-client';
+import { Component, Vue } from 'vue-property-decorator';
+import { ParsedSignupRequest } from '../lib/RequestTypes';
 import { Static } from '../lib/StaticStore';
+import { DEFAULT_KEY_PATH } from '@/lib/Constants';
 
-@Component({components: {PageHeader, PageBody, PageFooter, SmallPage}})
-export default class SignupTypeSelector extends Vue {
+@Component
+export default class Signup extends Vue {
     @Static private request!: ParsedSignupRequest;
 
-    public createKeyguard() {
-        const client = this.$rpc.createKeyguardClient();
-
-        const request: CreateRequest = {
+    public mounted() {
+        const request: KeyguardRequest.CreateRequest = {
             appName: this.request.appName,
-            defaultKeyPath: `m/44'/242'/0'/0'`,
+            defaultKeyPath: DEFAULT_KEY_PATH,
         };
-
+        const client = this.$rpc.createKeyguardClient();
         client.create(request).catch(console.log); // TODO: proper error handling
-    }
-
-    public createLedger() {
-        this.$rpc.routerPush(`${RequestType.SIGNUP}/ledger`);
-    }
-
-    public login() {
-        const client = this.$rpc.createKeyguardClient();
-
-        const request: ImportRequest = {
-            appName: this.request.appName,
-            defaultKeyPath: `m/44'/242'/0'/0'`,
-            requestedKeyPaths: [`m/44'/242'/0'/0'`],
-        };
-
-        client.import(request).catch(console.log); // TODO: proper error handling
-    }
-
-    @Emit()
-    private close() {
-        this.$rpc.reject(new Error('CANCEL'));
     }
 }
 </script>

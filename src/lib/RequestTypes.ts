@@ -8,6 +8,7 @@ export enum RequestType {
     CHECKOUT = 'checkout',
     SIGN_MESSAGE = 'sign-message',
     SIGN_TRANSACTION = 'sign-transaction',
+    ONBOARD = 'onboard',
     SIGNUP = 'signup',
     LOGIN = 'login',
     EXPORT = 'export',
@@ -15,6 +16,11 @@ export enum RequestType {
     LOGOUT = 'logout',
     ADD_ACCOUNT = 'add-account',
     RENAME = 'rename',
+}
+
+export interface SimpleRequest {
+    kind?: RequestType.ONBOARD | RequestType.SIGNUP | RequestType.LOGIN;
+    appName: string;
 }
 
 export interface SimpleResult {
@@ -121,8 +127,8 @@ export interface SignMessageResult {
     data: Uint8Array;
 }
 
-export interface SignupRequest {
-    kind?: RequestType.SIGNUP;
+export interface ParsedOnboardRequest {
+    kind: RequestType.ONBOARD;
     appName: string;
 }
 
@@ -131,27 +137,12 @@ export interface ParsedSignupRequest {
     appName: string;
 }
 
-export interface SignupResult {
-    walletId: string;
-    label: string;
-    type: WalletType;
-    accounts: Array<{
-        address: string;
-        label: string;
-    }>;
-}
-
-export interface LoginRequest {
-    kind?: RequestType.LOGIN;
-    appName: string;
-}
-
 export interface ParsedLoginRequest {
     kind: RequestType.LOGIN;
     appName: string;
 }
 
-export interface LoginResult {
+export interface OnboardingResult {
     walletId: string;
     label: string;
     type: WalletType;
@@ -256,8 +247,7 @@ export type ListResult = WalletInfoEntry[];
 // Discriminated Unions
 export type RpcRequest = SignTransactionRequest
                        | CheckoutRequest
-                       | SignupRequest
-                       | LoginRequest
+                       | SimpleRequest
                        | ExportRequest
                        | ChangePassphraseRequest
                        | LogoutRequest
@@ -267,6 +257,7 @@ export type RpcRequest = SignTransactionRequest
                        | MigrateRequest;
 export type ParsedRpcRequest = ParsedSignTransactionRequest
                              | ParsedCheckoutRequest
+                             | ParsedOnboardRequest
                              | ParsedSignupRequest
                              | ParsedLoginRequest
                              | ParsedExportRequest
@@ -277,8 +268,7 @@ export type ParsedRpcRequest = ParsedSignTransactionRequest
                              | ParsedSignMessageRequest
                              | ParsedMigrateRequest;
 export type RpcResult = SignTransactionResult
-                      | SignupResult
-                      | LoginResult
+                      | OnboardingResult
                       | SimpleResult
                       | LogoutResult
                       | AddAccountResult
@@ -337,14 +327,20 @@ export class AccountsRequest {
                         ),
                     ),
                 } as ParsedCheckoutRequest;
+            case RequestType.ONBOARD:
+                request = request as SimpleRequest;
+                return {
+                    kind: RequestType.ONBOARD,
+                    appName: request.appName,
+                } as ParsedOnboardRequest;
             case RequestType.SIGNUP:
-                request = request as SignupRequest;
+                request = request as SimpleRequest;
                 return {
                     kind: RequestType.SIGNUP,
                     appName: request.appName,
                 } as ParsedSignupRequest;
             case RequestType.LOGIN:
-                request = request as LoginRequest;
+                request = request as SimpleRequest;
                 return {
                     kind: RequestType.LOGIN,
                     appName: request.appName,
@@ -433,16 +429,21 @@ export class AccountsRequest {
                     flags: request.flags,
                     validityDuration: request.validityDuration,
                 } as CheckoutRequest;
+            case RequestType.ONBOARD:
+                return {
+                    kind: RequestType.ONBOARD,
+                    appName: request.appName,
+                } as SimpleRequest;
             case RequestType.SIGNUP:
                 return {
                     kind: RequestType.SIGNUP,
                     appName: request.appName,
-                } as SignupRequest;
+                } as SimpleRequest;
             case RequestType.LOGIN:
                 return {
                     kind: RequestType.LOGIN,
                     appName: request.appName,
-                } as LoginRequest;
+                } as SimpleRequest;
             case RequestType.EXPORT:
                 return request as ExportRequest;
             case RequestType.CHANGE_PASSPHRASE:

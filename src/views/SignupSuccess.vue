@@ -33,7 +33,7 @@ import { WalletInfo, WalletType } from '../lib/WalletInfo';
 import { State } from 'vuex-class';
 import { WalletStore } from '@/lib/WalletStore';
 import { CreateResult } from '@nimiq/keyguard-client';
-import { SignupResult } from '@/lib/RequestTypes';
+import { OnboardingResult } from '@/lib/RequestTypes';
 import Input from '@/components/Input.vue';
 import { WALLET_DEFAULT_LABEL_KEYGUARD, WALLET_DEFAULT_LABEL_LEDGER, ACCOUNT_DEFAULT_LABEL_KEYGUARD,
     ACCOUNT_DEFAULT_LABEL_LEDGER } from '@/lib/Constants';
@@ -89,7 +89,7 @@ export default class SignupSuccess extends Vue {
     }
 
     private async done() {
-        const result: SignupResult = {
+        const result: OnboardingResult = {
             walletId: this.createResult.keyId,
             label: this.walletLabel,
             type: this.walletType,
