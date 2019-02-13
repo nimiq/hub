@@ -1,112 +1,65 @@
 <template>
     <div class="container pad-bottom">
         <SmallPage>
-            <PageHeader :progressIndicator="true" :numberSteps="numberSteps" :step="numberSteps">
-                Your wallet is ready
-            </PageHeader>
-            <PageBody>
-                <div class="success-box nq-icon trumpet nq-green-bg">
-                    <h2 class="nq-h2">Awesome!</h2>
-                    <p class="nq-text">Your Keyguard Wallet is set up. It already contains your newly created account.</p>
-                    <p class="nq-text">You can add more accounts to it later.</p>
-                </div>
-
-                <div class="wallet-label">
-                    <div class="wallet-icon nq-icon" :class="walletIconClass"></div>
-                    <Input :value="walletLabel" @changed="onWalletLabelChange"/>
-                </div>
-
-                <Account :address="createdAddress.toUserFriendlyAddress()" :label="accountLabel" :editable="true"
-                         @changed="onAccountLabelChange" v-if="!!createdAddress"/>
-
-                <button class="nq-button green submit" @click="done()">Open your wallet</button>
-            </PageBody>
+            <Loader :title="title" :state="state" :lightBlue="true">
+                <template slot="success">
+                    <div class="success nq-icon"></div>
+                    <h1 class="title nq-h1">Welcome to the<br>Nimiq Blockchain.</h1>
+                </template>
+            </Loader>
         </SmallPage>
     </div>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import { PageHeader, PageBody, Account, SmallPage } from '@nimiq/vue-components';
+import { SmallPage } from '@nimiq/vue-components';
 import { AccountInfo } from '../lib/AccountInfo';
 import { WalletInfo, WalletType } from '../lib/WalletInfo';
 import { State } from 'vuex-class';
 import { WalletStore } from '@/lib/WalletStore';
-import { CreateResult } from '@nimiq/keyguard-client';
 import { OnboardingResult } from '@/lib/RequestTypes';
-import Input from '@/components/Input.vue';
-import { WALLET_DEFAULT_LABEL_KEYGUARD, WALLET_DEFAULT_LABEL_LEDGER, ACCOUNT_DEFAULT_LABEL_KEYGUARD,
-    ACCOUNT_DEFAULT_LABEL_LEDGER } from '@/lib/Constants';
+import Loader from '@/components/Loader.vue';
+import {
+    WALLET_DEFAULT_LABEL_KEYGUARD,
+    WALLET_DEFAULT_LABEL_LEDGER,
+    ACCOUNT_DEFAULT_LABEL_KEYGUARD,
+    ACCOUNT_DEFAULT_LABEL_LEDGER
+} from '@/lib/Constants';
 
-@Component({components: {PageHeader, PageBody, Account, Input, SmallPage}})
+@Component({components: {SmallPage}})
 export default class SignupSuccess extends Vue {
-    private static readonly STEPS_KEYGUARD_SIGNUP = 6;
-    private static readonly STEPS_LEDGER_SIGNUP = 3;
-
     @Prop({ default: null })
-    public createResult!: CreateResult;
+    public createResult!: KeyguardRequest.CreateResult;
 
-    @State private keyguardResult?: CreateResult;
+    @State private keyguardResult?: KeyguardRequest.CreateResult;
 
-    private numberSteps!: number;
-    private walletType!: WalletType;
-    private walletLabel!: string;
-    private accountLabel!: string;
-    private createdAddress: Nimiq.Address | null = null;
+    private title: string = 'Storing your wallet';
+    private state: Loader.State = Loader.State.LOADING;
 
-    private get walletIconClass(): string {
-        return this.walletType === WalletType.BIP39 ? 'keyguard' : 'ledger';
-    }
+    private async mounted() {
+        let walletType: WalletType;
+        let walletLabel: string;
+        let accountLabel: string;
 
-    private created() {
         if (this.keyguardResult) {
             this.createResult = this.keyguardResult;
-            this.walletType = WalletType.BIP39;
-            this.numberSteps = SignupSuccess.STEPS_KEYGUARD_SIGNUP;
-            this.walletLabel = WALLET_DEFAULT_LABEL_KEYGUARD;
-            this.accountLabel = ACCOUNT_DEFAULT_LABEL_KEYGUARD;
+            walletType = WalletType.BIP39;
+            walletLabel = WALLET_DEFAULT_LABEL_KEYGUARD;
+            accountLabel = ACCOUNT_DEFAULT_LABEL_KEYGUARD;
         } else {
             if (!this.createResult) throw new Error('SignupSuccess shown without createResult');
-            this.walletType = WalletType.LEDGER;
-            this.numberSteps = SignupSuccess.STEPS_LEDGER_SIGNUP;
-            this.walletLabel = WALLET_DEFAULT_LABEL_LEDGER;
-            this.accountLabel = ACCOUNT_DEFAULT_LABEL_LEDGER;
+            walletType = WalletType.LEDGER;
+            walletLabel = WALLET_DEFAULT_LABEL_LEDGER;
+            accountLabel = ACCOUNT_DEFAULT_LABEL_LEDGER;
         }
-        this.createdAddress = new Nimiq.Address(this.createResult.address);
-        this.saveResult(this.walletLabel, this.accountLabel);
-    }
 
-    private onWalletLabelChange(label: string) {
-        console.log(label);
-        this.walletLabel = label;
-        this.saveResult(this.walletLabel, this.accountLabel);
-    }
+        const createdAddress = new Nimiq.Address(this.createResult.address);
 
-    private onAccountLabelChange(label: string) {
-        console.log(label);
-        this.accountLabel = label;
-        this.saveResult(this.walletLabel, this.accountLabel);
-    }
-
-    private async done() {
-        const result: OnboardingResult = {
-            walletId: this.createResult.keyId,
-            label: this.walletLabel,
-            type: this.walletType,
-            accounts: [{
-                address: this.createdAddress!.toUserFriendlyAddress(),
-                label: this.accountLabel,
-            }],
-        };
-
-        this.$rpc.resolve(result);
-    }
-
-    private async saveResult(walletLabel: string, accountLabel: string) {
         const accountInfo = new AccountInfo(
             this.createResult.keyPath,
             accountLabel,
-            this.createdAddress!,
+            createdAddress!,
         );
 
         const walletInfo = new WalletInfo(
@@ -114,57 +67,27 @@ export default class SignupSuccess extends Vue {
             walletLabel,
             new Map<string, AccountInfo>().set(accountInfo.userFriendlyAddress, accountInfo),
             [],
-            this.walletType,
+            walletType,
         );
 
         await WalletStore.Instance.put(walletInfo);
+
+        // Artificially delay, to display loading status
+        await new Promise((res) => setTimeout(res, 2000));
+
+        this.state = Loader.State.SUCCESS;
+
+        const result: OnboardingResult = {
+            walletId: walletInfo.id,
+            label: walletInfo.label,
+            type: walletInfo.type,
+            accounts: [{
+                address: accountInfo.userFriendlyAddress,
+                label: accountInfo.label,
+            }],
+        };
+
+        setTimeout(() => this.$rpc.resolve(result), Loader.SUCCESS_REDIRECT_DELAY);
     }
 }
 </script>
-
-<style scoped>
-    .page-body {
-        padding: 1rem 0 4rem;
-    }
-
-    .success-box {
-        padding: 3rem 4rem;
-        overflow: auto;
-        margin: 0 1rem;
-        border-radius: 0.5rem;
-        background-position: calc(100% - 2rem) center;
-        background-size: auto 21.125rem;
-        display: block;
-        width: unset;
-        height: unset;
-    }
-
-    .success-box p {
-        width: 28rem;
-        opacity: 1;
-    }
-
-    .success-box p + p {
-        width: 24rem;
-    }
-
-    .wallet-label {
-        display: flex;
-        flex-direction: row;
-        justify-content: flex-start;
-        align-items: center;
-        font-size: 2.25rem;
-        line-height: 2.5rem;
-        font-weight: 500;
-        margin: 2rem 3rem 0;
-        padding: 2rem 1rem;
-        border-bottom: solid 1px var(--nimiq-card-border-color);
-    }
-
-    .wallet-icon {
-        height: 3rem;
-        width: 3rem;
-        flex-shrink: 0;
-        margin-right: 1rem;
-    }
-</style>
