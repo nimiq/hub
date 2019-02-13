@@ -19,7 +19,7 @@
 
         <transition name="fade-result">
             <div class="wrapper success nq-green-bg" v-if="state === 'success'">
-                <div class="top-spacer"></div>
+                <div class="spacer"></div>
 
                 <div class="icon-row">
                     <slot name="success">
@@ -28,18 +28,13 @@
                     </slot>
                 </div>
 
-                <svg height="32" width="32" class="loading-circle">
-                    <circle stroke="white" stroke-width="4" fill="transparent" r="14" cx="16" cy="16" stroke-linecap="round"
-                        :stroke-dasharray="14 * 2 * Math.PI + ' ' + 14 * 2 * Math.PI"
-                        :style="{ strokeDashoffset: strokeDashoffset }"
-                    />
-                </svg>
+                <div class="spacer"></div>
             </div>
         </transition>
 
         <transition name="fade-result">
             <div class="wrapper warning nq-orange-bg" v-if="state === 'warning'">
-                <div class="top-spacer" :class="{'with-main-action': !!mainAction, 'with-alternative-action': !!alternativeAction}"></div>
+                <div class="spacer" :class="{'with-main-action': !!mainAction, 'with-alternative-action': !!alternativeAction}"></div>
 
                 <div class="icon-row">
                     <slot name="warning">
@@ -59,7 +54,7 @@
 
         <transition name="fade-result">
             <div class="wrapper error nq-red-bg" v-if="state === 'error'">
-                <div class="top-spacer" :class="{'with-main-action': !!mainAction, 'with-alternative-action': !!alternativeAction}"></div>
+                <div class="spacer" :class="{'with-main-action': !!mainAction, 'with-alternative-action': !!alternativeAction}"></div>
 
                 <div class="icon-row">
                     <slot name="error">
@@ -120,8 +115,6 @@ class Loader extends Vue {
     // TODO: Move to CONSTANTS
     public static readonly SUCCESS_REDIRECT_DELAY: number = 2000; // 1s of transition + 1s of display
 
-    private static readonly STROKE_DASHOFFSET: number = 14 * 2 * Math.PI;
-
     @Prop({type: String}) private title?: string;
     // Using Loader.State.LOADING here results in runtime error: 'Cannot read property 'LOADING' of undefined'
     @Prop({default: 'loading' as Loader.State}) private state!: Loader.State;
@@ -134,9 +127,6 @@ class Loader extends Vue {
     private currentStatus: string = '';
     private nextStatus: string = '';
     private isTransitioningStatus = false;
-
-    // Stroke offset used to animate SVG redirect indicator from full-offset to no-offset
-    private strokeDashoffset: number = Loader.STROKE_DASHOFFSET;
 
     /**
      * To enable a smooth transition of the non-transitionable background-image
@@ -152,7 +142,6 @@ class Loader extends Vue {
     private loadingTitle: string = '';
 
     private hideLoadingBackgroundTimeout: number = -1;
-    private indicatorDisplayTimeout: number = -1;
     private statusUpdateTimeout: number = -1;
 
     @Watch('title', {immediate: true})
@@ -187,23 +176,6 @@ class Loader extends Vue {
             } else {
                 this.showLoadingBackground = false;
             }
-        }
-
-        if (newState === Loader.State.SUCCESS) {
-            // if we start in or change to SUCCESS state
-            if (this.indicatorDisplayTimeout === -1) {
-                this.indicatorDisplayTimeout = window.setTimeout(() => {
-                    this.strokeDashoffset = 0;
-                    this.indicatorDisplayTimeout = -1;
-                }, 500);
-            }
-        } else {
-            // other states than SUCCESS
-            if (this.indicatorDisplayTimeout !== -1) {
-                clearTimeout(this.indicatorDisplayTimeout);
-                this.indicatorDisplayTimeout = -1;
-            }
-            this.strokeDashoffset = Loader.STROKE_DASHOFFSET;
         }
     }
 
@@ -328,19 +300,19 @@ export default Loader;
         opacity: 1;
     }
 
-    .top-spacer {
+    .spacer {
         padding-top: 2rem;
     }
 
-    .success .top-spacer {
+    .success .spacer {
         padding-top: 6rem;
     }
 
-    .top-spacer.with-main-action {
+    .spacer.with-main-action {
         padding-bottom: 8rem;
     }
 
-    .top-spacer.with-alternative-action {
+    .spacer.with-alternative-action {
         margin-bottom: 2rem;
     }
 
@@ -365,19 +337,6 @@ export default Loader;
     .fade-result-enter,
     .fade-result-leave-to {
         opacity: 0;
-    }
-
-    /* SVG loading animation */
-
-    .success svg {
-        margin-bottom: 2rem;
-    }
-
-    .success svg circle {
-        transition: stroke-dashoffset 1.5s;
-        transform: rotate(-90deg);
-        transform-origin: center;
-        opacity: 0.85;
     }
 </style>
 
