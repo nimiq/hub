@@ -27,7 +27,7 @@
 <script lang="ts">
 import { Component, Emit, Vue } from 'vue-property-decorator';
 import { PageBody, SmallPage } from '@nimiq/vue-components';
-import { ParsedSignupRequest, SignupResult } from '../lib/RequestTypes';
+import { ParsedSignupRequest, OnboardingResult } from '../lib/RequestTypes';
 import { ResponseStatus, State as RpcState } from '@nimiq/rpc';
 import { Static } from '../lib/StaticStore';
 import LedgerApi from '../lib/LedgerApi';
@@ -162,7 +162,7 @@ export default class SignupLedger extends Vue {
     private async done() {
         this.state = SignupLedger.State.FINISHED;
         setTimeout(() => {
-            const result: SignupResult = {
+            const result: OnboardingResult = {
                 walletId: this.walletInfo!.id,
                 label: this.walletInfo!.label,
                 type: this.walletInfo!.type,

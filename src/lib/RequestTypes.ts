@@ -127,7 +127,7 @@ export interface SignMessageResult {
     data: Uint8Array;
 }
 
-export interface ParsedOnboardRequest {
+export interface ParsedOnboardingRequest {
     kind: RequestType.ONBOARD;
     appName: string;
 }
@@ -257,7 +257,7 @@ export type RpcRequest = SignTransactionRequest
                        | MigrateRequest;
 export type ParsedRpcRequest = ParsedSignTransactionRequest
                              | ParsedCheckoutRequest
-                             | ParsedOnboardRequest
+                             | ParsedOnboardingRequest
                              | ParsedSignupRequest
                              | ParsedLoginRequest
                              | ParsedExportRequest
@@ -332,7 +332,7 @@ export class AccountsRequest {
                 return {
                     kind: RequestType.ONBOARD,
                     appName: request.appName,
-                } as ParsedOnboardRequest;
+                } as ParsedOnboardingRequest;
             case RequestType.SIGNUP:
                 request = request as SimpleRequest;
                 return {
