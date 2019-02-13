@@ -3,7 +3,7 @@
         <SmallPage class="rename">
             <PageHeader>Rename your Wallet</PageHeader>
             <PageBody v-if="wallet">
-                <div class="wallet-label" v-if="wallet.type !== 0 /* LEGACY */">
+                <div class="wallet-label" v-if="wallet.type !== 1 /* LEGACY */">
                     <div class="wallet-icon nq-icon" :class="walletIconClass"></div>
                     <LabelInput :value="wallet.label" @changed="onWalletLabelChange" ref="wallet"/>
                 </div>

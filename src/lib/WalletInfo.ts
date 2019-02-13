@@ -2,9 +2,9 @@ import { AccountInfo, AccountInfoEntry } from './AccountInfo';
 import { ContractInfo } from './ContractInfo';
 
 export enum WalletType {
-    LEGACY,
-    BIP39,
-    LEDGER,
+    LEGACY = 1,
+    BIP39 = 2,
+    LEDGER = 3,
 }
 
 export class WalletInfo {

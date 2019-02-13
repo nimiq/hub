@@ -5,7 +5,7 @@
                 <PageHeader>Your wallet is ready</PageHeader>
 
                 <PageBody>
-                    <div class="wallet-label" v-if="walletInfo && keyguardResult.keyType !== 0 /* LEGACY */">
+                    <div class="wallet-label" v-if="walletInfo && keyguardResult.keyType !== 1 /* LEGACY */">
                         <div class="wallet-icon nq-icon" :class="walletIconClass"></div>
                         <LabelInput :value="walletInfo.label" @changed="onWalletLabelChange"/>
                     </div>
