@@ -202,8 +202,8 @@ export default class Checkout extends Vue {
     private goToOnboarding(useReplace?: boolean) {
         // Redirect to onboarding
         staticStore.originalRouteName = RequestType.CHECKOUT;
-        if (useReplace) this.$router.replace({name: RequestType.ONBOARD});
-        else this.$router.push({name: RequestType.ONBOARD});
+        if (useReplace) this.$rpc.routerReplace(RequestType.ONBOARD);
+        else this.$rpc.routerPush(RequestType.ONBOARD);
     }
 
     @Emit()
