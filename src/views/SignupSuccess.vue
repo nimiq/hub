@@ -5,7 +5,7 @@
                 Your wallet is ready
             </PageHeader>
             <PageBody>
-                <div class="success-box nq-icon trumpet nq-bg-green">
+                <div class="success-box nq-icon trumpet nq-green-bg">
                     <h2 class="nq-h2">Awesome!</h2>
                     <p class="nq-text">Your Keyguard Wallet is set up. It already contains your newly created account.</p>
                     <p class="nq-text">You can add more accounts to it later.</p>
@@ -13,7 +13,7 @@
 
                 <div class="wallet-label">
                     <div class="wallet-icon nq-icon" :class="walletIconClass"></div>
-                    <LabelInput :value="walletLabel" @changed="onWalletLabelChange"/>
+                    <Input :value="walletLabel" @changed="onWalletLabelChange"/>
                 </div>
 
                 <Account :address="createdAddress.toUserFriendlyAddress()" :label="accountLabel" :editable="true"
@@ -27,17 +27,18 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import { Account, LabelInput, PageBody, PageHeader, SmallPage } from '@nimiq/vue-components';
+import { PageHeader, PageBody, Account, SmallPage } from '@nimiq/vue-components';
 import { AccountInfo } from '../lib/AccountInfo';
 import { WalletInfo, WalletType } from '../lib/WalletInfo';
 import { State } from 'vuex-class';
 import { WalletStore } from '@/lib/WalletStore';
 import { CreateResult } from '@nimiq/keyguard-client';
 import { SignupResult } from '@/lib/RequestTypes';
+import Input from '@/components/Input.vue';
 import { WALLET_DEFAULT_LABEL_KEYGUARD, WALLET_DEFAULT_LABEL_LEDGER, ACCOUNT_DEFAULT_LABEL_KEYGUARD,
     ACCOUNT_DEFAULT_LABEL_LEDGER } from '@/lib/Constants';
 
-@Component({components: {PageHeader, PageBody, Account, LabelInput, SmallPage}})
+@Component({components: {PageHeader, PageBody, Account, Input, SmallPage}})
 export default class SignupSuccess extends Vue {
     private static readonly STEPS_KEYGUARD_SIGNUP = 6;
     private static readonly STEPS_LEDGER_SIGNUP = 3;

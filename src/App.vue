@@ -1,10 +1,9 @@
 <template>
     <div id="app">
-        <header class="logo-container">
-            <div class="logo icon-logo">
-                <span class="nq-icon nimiq-logo"></span>
-                <strong>Nimiq</strong>
-            </div>
+        <header class="logo">
+            <span class="nq-icon nimiq-logo"></span>
+            <span class="logo-wordmark">Nimiq</span>
+            <span class="logo-subtitle"></span>
         </header>
         <div v-if="!isRequestLoaded" class="loading">
             <div class="loading-animation"></div>
@@ -72,7 +71,7 @@ export default class App extends Vue {
     }
 
     #app > .container.pad-bottom {
-        margin-bottom: 12.5rem; /* Same height as the header (~100px) */
+        margin-bottom: 9.5rem; /* Same height as the header (2 * 3rem + 3.5rem) */
     }
 
     .global-close {

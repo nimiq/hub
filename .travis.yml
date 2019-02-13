@@ -12,7 +12,7 @@ cache:
 
 script:
   - yarn lint
-  - yarn build
+  - yarn build:ci
   - yarn test
   - cd client
   - yarn lint

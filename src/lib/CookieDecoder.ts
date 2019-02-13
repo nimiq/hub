@@ -4,6 +4,7 @@ import { WalletInfoEntry, WalletType } from './WalletInfo';
 import { Utf8Tools } from '@nimiq/utils';
 import { AccountInfoEntry } from './AccountInfo';
 import CookieJar from './CookieJar';
+import { LABEL_MAX_LENGTH } from '@/lib/Constants';
 
 export class CookieDecoder {
     public static decode(str: string): WalletInfoEntry[] {
@@ -122,7 +123,7 @@ export class CookieDecoder {
     private static _decodeAccount(bytes: number[], labelLength?: number): AccountInfoEntry {
         if (typeof labelLength === 'undefined') labelLength = this.readByte(bytes);
 
-        if (labelLength > CookieJar.MAX_LABEL_LENGTH) throw new Error('Malformed Cookie, label too long');
+        if (labelLength > LABEL_MAX_LENGTH) throw new Error('Malformed Cookie, label too long');
 
         // Account label
         const labelBytes = this.readBytes(bytes, labelLength);

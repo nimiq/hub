@@ -36,7 +36,14 @@ const store: StoreOptions<RootState> = {
             state.wallets = wallets;
         },
         addWallet(state, walletInfo: WalletInfo) {
-            state.wallets.push(walletInfo);
+            const existingWallet = state.wallets.find((wallet) => wallet.id === walletInfo.id);
+            if (!existingWallet) {
+                state.wallets.push(walletInfo);
+                return;
+            }
+
+            const index = state.wallets.indexOf(existingWallet);
+            state.wallets.splice(index, 1, walletInfo);
         },
         setKeyguardResult(state, payload: KeyguardResult | Error) {
             state.keyguardResult = payload;

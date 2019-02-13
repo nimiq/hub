@@ -57,31 +57,11 @@ body {
     letter-spacing: 0.143em;
 }
 
-.logo-container {
-    width: 100%;
-    padding: 4rem 3rem;
-    box-sizing: border-box;
-}
-
-.logo {
-    height: 3.625rem;
-    box-sizing: border-box;
-    font-size: 2.5rem;
-    display: inline-flex;
-    align-items: center;
-    color: var(--nimiq-blue);
-}
-
-.logo strong {
-    font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 0.077em;
-}
-
-.logo .nimiq-logo {
-    height: 4rem;
-    width: 4rem;
-    margin-right: 2rem;
+#app > header {
+    box-sizing: content-box;
+    width: calc(100% - 2 * 2rem); /* minus padding */
+    padding: 3rem 2rem;
+    flex-shrink: 0;
 }
 
 .nq-icon {
@@ -96,6 +76,33 @@ body {
 
 .nq-icon.nimiq-logo {
     background-image: url('data:image/svg+xml,<svg width="27" height="24" viewBox="0 0 27 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M26.6991 10.875L21.0741 1.125C20.6691 0.4275 19.9266 0 19.1241 0H7.87414C7.07164 0 6.32914 0.4275 5.92789 1.125L0.302891 10.875C-0.0983594 11.5725 -0.0983594 12.4275 0.302891 13.125L5.92789 22.875C6.32914 23.5725 7.07164 24 7.87414 24H19.1241C19.9266 24 20.6691 23.5725 21.0704 22.875L26.6954 13.125C27.1004 12.4275 27.1004 11.5725 26.6991 10.875Z" fill="url(%23paint0_radial)"/><defs><radialGradient id="paint0_radial" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(26.9996 24) rotate(-180) scale(26.9977 24)"><stop stop-color="%23EC991C"/><stop offset="1" stop-color="%23E9B213"/></radialGradient></defs></svg>');
+}
+
+.logo {
+    height: 3.5rem;
+    box-sizing: border-box;
+    font-size: 2.54rem;
+    display: flex;
+    align-items: center;
+    color: var(--nimiq-blue);
+}
+
+.logo .nimiq-logo {
+    height: 3.5rem;
+    width: 3.5rem;
+    margin-right: calc(.382 * 3.5rem); /* 0.382 times the signet width following the style guide */
+}
+
+.logo .logo-wordmark {
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-left: -.15rem; /* subtract small margin before letter N present in font */
+}
+
+/* Subtitle (e.g. NIMIQ Checkout) */
+.logo .logo-subtitle {
+    margin-left: 0.875rem;
 }
 
 @media (max-width: 450px) {

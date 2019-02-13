@@ -4,7 +4,7 @@
             <PageHeader :progressIndicator="true" :numberSteps="6" :step="1">Add a Wallet</PageHeader>
             <PageBody>
                 <p class="nq-text">A Wallet is like a login and can contain one or more accounts, which you can use to send or receive Nimiq, pay online and create Cashlinks.</p>
-                <button @click="createKeyguard" class="keyguard-button nq-bg-blue">
+                <button @click="createKeyguard" class="keyguard-button nq-blue-bg">
                     <h2 class="nq-h2">Create Wallet</h2>
                     <p class="nq-text">Create a Wallet in our secure Nimiq Keyguard. This is the most convenient option.</p>
                 </button>
@@ -48,7 +48,7 @@ export default class SignupTypeSelector extends Vue {
     }
 
     public createLedger() {
-        this.$router.push(`${RequestType.SIGNUP}/ledger`);
+        this.$rpc.routerPush(`${RequestType.SIGNUP}/ledger`);
     }
 
     public login() {

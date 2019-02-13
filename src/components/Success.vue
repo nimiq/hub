@@ -1,5 +1,5 @@
 <template>
-    <div class="success nq-bg-green">
+    <div class="success nq-green-bg">
         <div class="nq-icon checkmark-circle"></div>
         <h1 v-html="parsedText" class="nq-h1"></h1>
         <div style="flex-grow: 1;"></div>
