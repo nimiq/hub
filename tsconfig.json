@@ -19,7 +19,7 @@
         "src/*"
       ],
       "config": [
-        "config.development.ts"
+        "config.local.ts"
       ]
     },
     "lib": [

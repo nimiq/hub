@@ -3,18 +3,12 @@ const WriteFileWebpackPlugin = require('write-file-webpack-plugin');
 const webpack = require('webpack');
 const path = require('path');
 
-const buildName = !process.env.build ? 'development' : process.env.build
+const buildName = !process.env.build ? 'local' : process.env.build
 
 const configureWebpack = {
     plugins: [
         new CopyWebpackPlugin([{ from: 'node_modules/@nimiq/vue-components/dist/img', to: 'img' }]),
-        new WriteFileWebpackPlugin(),
-        new webpack.DefinePlugin({
-            CONFIG: {
-                CDN: JSON.stringify('https://www.google.de'),
-                NETWORK: JSON.stringify('test')
-            }
-        })
+        new WriteFileWebpackPlugin()
     ],
     // Resolve config for yarn build
     resolve: {

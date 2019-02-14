@@ -23,3 +23,11 @@ export const WALLET_MAX_ALLOWED_ACCOUNT_GAP = 20;
 // Compatibility
 export const LEGACY_GROUPING_WALLET_ID = 'LEGACY';
 export const LEGACY_GROUPING_WALLET_LABEL = 'Single Accounts';
+
+// Networks
+export const NETWORK_TEST = 'test';
+export const NETWORK_MAIN = 'main';
+export const NETWORK_DEV = 'dev';
+
+// Errors
+export const ERROR_INVALID_NETWORK = 'Invalid network name';

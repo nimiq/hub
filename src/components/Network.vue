@@ -14,6 +14,7 @@ import {
 } from '@nimiq/keyguard-client';
 import { NetworkClient, DetailedPlainTransaction } from '@nimiq/network-client';
 import Config from 'config';
+import * as Constants from '../lib/Constants';
 
 @Component
 class Network extends Vue {
@@ -230,7 +231,19 @@ class Network extends Vue {
             genesisConfigInitialized = false;
         }
         if (!genesisConfigInitialized) {
-            Nimiq.GenesisConfig[Config.network]();
+            switch (Config.network) {
+                case Constants.NETWORK_TEST:
+                    Nimiq.GenesisConfig.test();
+                    break;
+                case Constants.NETWORK_MAIN:
+                    Nimiq.GenesisConfig.main();
+                    break;
+                case Constants.NETWORK_DEV:
+                    Nimiq.GenesisConfig.dev();
+                    break;
+                default:
+                    throw new Error(Constants.ERROR_INVALID_NETWORK);
+            }
         }
     }
 
