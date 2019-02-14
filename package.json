@@ -14,7 +14,7 @@
     },
     "dependencies": {
         "@nimiq/network-client": "^0.1.5-beta2",
-        "@nimiq/keyguard-client": "0.1.6-beta.11",
+        "@nimiq/keyguard-client": "0.1.6-beta.13",
         "@nimiq/ledgerjs": "https://github.com/nimiq/ledger-api.git",
         "@nimiq/core-web": "^1.4.2",
         "@nimiq/rpc": "^0.1.1",
