@@ -32,7 +32,6 @@ import { AccountInfo } from '../lib/AccountInfo';
 import { WalletInfo, WalletType } from '../lib/WalletInfo';
 import { State } from 'vuex-class';
 import { WalletStore } from '@/lib/WalletStore';
-import { CreateResult } from '@nimiq/keyguard-client';
 import { SignupResult } from '@/lib/RequestTypes';
 import Input from '@/components/Input.vue';
 import { WALLET_DEFAULT_LABEL_KEYGUARD, WALLET_DEFAULT_LABEL_LEDGER, ACCOUNT_DEFAULT_LABEL_KEYGUARD,
@@ -44,9 +43,9 @@ export default class SignupSuccess extends Vue {
     private static readonly STEPS_LEDGER_SIGNUP = 3;
 
     @Prop({ default: null })
-    public createResult!: CreateResult;
+    public createResult!: KeyguardRequest.KeyResult[];
 
-    @State private keyguardResult?: CreateResult;
+    @State private keyguardResult?: KeyguardRequest.KeyResult[];
 
     private numberSteps!: number;
     private walletType!: WalletType;
@@ -72,7 +71,8 @@ export default class SignupSuccess extends Vue {
             this.walletLabel = WALLET_DEFAULT_LABEL_LEDGER;
             this.accountLabel = ACCOUNT_DEFAULT_LABEL_LEDGER;
         }
-        this.createdAddress = new Nimiq.Address(this.createResult.address);
+        // Using [0] is a quick fix, will be fixed in SignUp-PR
+        this.createdAddress = new Nimiq.Address(this.createResult[0].addresses[0].address);
         this.saveResult(this.walletLabel, this.accountLabel);
     }
 
@@ -90,7 +90,7 @@ export default class SignupSuccess extends Vue {
 
     private async done() {
         const result: SignupResult = {
-            walletId: this.createResult.keyId,
+            walletId: this.createResult[0].keyId,
             label: this.walletLabel,
             type: this.walletType,
             accounts: [{
@@ -104,13 +104,13 @@ export default class SignupSuccess extends Vue {
 
     private async saveResult(walletLabel: string, accountLabel: string) {
         const accountInfo = new AccountInfo(
-            this.createResult.keyPath,
+            this.createResult[0].addresses[0].keyPath,
             accountLabel,
             this.createdAddress!,
         );
 
         const walletInfo = new WalletInfo(
-            this.createResult.keyId,
+            this.createResult[0].keyId,
             walletLabel,
             new Map<string, AccountInfo>().set(accountInfo.userFriendlyAddress, accountInfo),
             [],
