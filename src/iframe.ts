@@ -1,6 +1,8 @@
 import { RpcServer } from '@nimiq/rpc';
-import { KeyStore } from '@/lib/KeyStore';
-import { KeyInfoEntry, KeyInfo } from '@/lib/KeyInfo';
+import { BrowserDetection } from '@nimiq/utils';
+import { WalletStore } from '@/lib/WalletStore';
+import { WalletInfoEntry } from '@/lib/WalletInfo';
+import CookieJar from '@/lib/CookieJar';
 
 class IFrameApi {
     public static run() {
@@ -12,18 +14,37 @@ class IFrameApi {
         rpcServer.init();
     }
 
-    public static async list(): Promise<KeyInfoEntry[]> {
-        // if (BrowserDetection.isIos() || BrowserDetection.isSafari()) {
-        //     return CookieJar.eat(listFromLegacyStore);
-        // }
+    public static async list(): Promise<WalletInfoEntry[]> {
+        let wallets: WalletInfoEntry[];
+        if (BrowserDetection.isIOS() || BrowserDetection.isSafari()) {
+            wallets = await CookieJar.eat();
+        } else {
+            wallets = await WalletStore.Instance.list();
+        }
+        if (wallets.length > 0) {
+            return wallets;
+        }
 
-        return await KeyStore.Instance.list();
+        // If no wallets exist, see if the Keyguard has keys
+        const client = new (await import('@nimiq/keyguard-client')).KeyguardClient();
+        const hasKeys = await client.hasKeys();
+        if (hasKeys) {
+            throw new Error('WALLETS_LOST');
+        }
+
+        // If no keys exist, check for legacy accounts
+        const hasLegacyAccounts = await client.hasLegacyAccounts();
+        if (hasLegacyAccounts) {
+            throw new Error('MIGRATION_REQUIRED');
+        }
+
+        return [];
     }
 
     private static get allowedOrigin(): string {
         switch (window.location.origin) {
-            case 'https://accounts-next.nimiq.com': return 'https://safe-next.nimiq.com';
-            case 'https://accounts-next.nimiq-network.com': return 'https://safe-next.nimiq-network.com';
+            case 'https://accounts.nimiq.com': return 'https://safe-next.nimiq.com';
+            case 'https://accounts.nimiq-testnet.com': return 'https://safe-next.nimiq-testnet.com';
             default: return '*';
         }
     }

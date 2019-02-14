@@ -1,19 +1,19 @@
 import Vue from 'vue';
 import Vuex, { StoreOptions } from 'vuex';
-import {RpcResult as KeyguardResult} from '@nimiq/keyguard-client';
-import {KeyInfo} from '@/lib/KeyInfo';
-import {KeyStore} from '@/lib/KeyStore';
-import { AddressInfo } from '@/lib/AddressInfo';
+import { RpcResult as KeyguardResult } from '@nimiq/keyguard-client';
+import { WalletInfo } from '@/lib/WalletInfo';
+import { WalletStore } from '@/lib/WalletStore';
+import { AccountInfo } from '@/lib/AccountInfo';
 
 Vue.use(Vuex);
 
 export interface RootState {
     hasRpcState: boolean;
     hasRequest: boolean;
-    keys: KeyInfo[]; // TODO: this is not JSON compatible, is this a problem?
+    wallets: WalletInfo[]; // TODO: this is not JSON compatible, is this a problem?
     keyguardResult: KeyguardResult | Error | null;
-    chosenLoginLabel: string | null;
-    activeLoginId: string | null;
+    chosenWalletLabel: string | null;
+    activeWalletId: string | null;
     activeUserFriendlyAddress: string | null;
 }
 
@@ -21,10 +21,10 @@ const store: StoreOptions<RootState> = {
     state: {
         hasRpcState: false,
         hasRequest: false,
-        keys: [],
+        wallets: [],
         keyguardResult: null, // undefined is not reactive
-        chosenLoginLabel: null,
-        activeLoginId: null,
+        chosenWalletLabel: null,
+        activeWalletId: null,
         activeUserFriendlyAddress: null,
     },
     mutations: {
@@ -32,85 +32,91 @@ const store: StoreOptions<RootState> = {
             state.hasRpcState = payload.hasRpcState;
             state.hasRequest = payload.hasRequest;
         },
-        initKeys(state, keys: KeyInfo[]) {
-            state.keys = keys;
+        initWallets(state, wallets: WalletInfo[]) {
+            state.wallets = wallets;
         },
-        addKey(state, key: KeyInfo) {
-            state.keys.push(key);
+        addWallet(state, walletInfo: WalletInfo) {
+            const existingWallet = state.wallets.find((wallet) => wallet.id === walletInfo.id);
+            if (!existingWallet) {
+                state.wallets.push(walletInfo);
+                return;
+            }
+
+            const index = state.wallets.indexOf(existingWallet);
+            state.wallets.splice(index, 1, walletInfo);
         },
         setKeyguardResult(state, payload: KeyguardResult | Error) {
             state.keyguardResult = payload;
         },
-        setActiveAccount(state, payload: { loginId: string, userFriendlyAddress: string }) {
-            state.activeLoginId = payload.loginId;
+        setActiveAccount(state, payload: { walletId: string, userFriendlyAddress: string }) {
+            state.activeWalletId = payload.walletId;
             state.activeUserFriendlyAddress = payload.userFriendlyAddress;
             // Store as recent account for next requests
             localStorage.setItem('_recentAccount', JSON.stringify(payload));
         },
-        setLoginLabel(state, label: string) {
-            state.chosenLoginLabel = label;
+        setWalletLabel(state, label: string) {
+            state.chosenWalletLabel = label;
         },
     },
     actions: {
-        initKeys({ state, commit }) {
+        initWallets({ state, commit }) {
             // Fetch data from store
-            KeyStore.Instance.list().then((keyInfoEntries) => {
-                const keys = keyInfoEntries.map((keyInfoEntry) => KeyInfo.fromObject(keyInfoEntry));
-                commit('initKeys', keys);
+            return WalletStore.Instance.list().then((walletInfoEntries) => {
+                const wallets = walletInfoEntries.map((walletInfoEntry) => WalletInfo.fromObject(walletInfoEntry));
+                commit('initWallets', wallets);
 
-                if (keys.length === 0) return;
+                if (wallets.length === 0) return;
 
                 // Try loading active
-                let activeKey: KeyInfo | undefined;
+                let activeWallet: WalletInfo | undefined;
                 let activeUserFriendlyAddress: string | null = null;
 
                 const storedRecentAccount = localStorage.getItem('_recentAccount');
                 if (storedRecentAccount) {
                     try {
                         const recentAccount = JSON.parse(storedRecentAccount);
-                        activeKey = state.keys.find((x) => x.id === recentAccount.loginId);
+                        activeWallet = state.wallets.find((x) => x.id === recentAccount.walletId);
                         activeUserFriendlyAddress = recentAccount.userFriendlyAddress;
                     } catch (err) {
                         // Do nothing
                     }
                 }
 
-                if (!activeKey) {
+                if (!activeWallet) {
                     // If none found, pre-select the first available
-                    activeKey = state.keys[0];
+                    activeWallet = state.wallets[0];
                 }
 
                 if (!activeUserFriendlyAddress) {
                     // If none found, pre-select the first available
-                    const account = activeKey.addresses.values().next().value;
-                    if (!account) return; // No addresses on this key
+                    const account = activeWallet.accounts.values().next().value;
+                    if (!account) return; // No addresses on this wallet
                     activeUserFriendlyAddress = account.userFriendlyAddress;
                 }
 
                 commit('setActiveAccount', {
-                    loginId: activeKey.id,
+                    walletId: activeWallet.id,
                     userFriendlyAddress: activeUserFriendlyAddress,
                 });
             });
-
         },
     },
     getters: {
-        findKey: (state) => (id: string): KeyInfo | undefined => {
-            return state.keys.find((key) => key.id === id);
+        findWallet: (state) => (id: string): WalletInfo | undefined => {
+            return state.wallets.find((wallet) => wallet.id === id);
         },
-        activeKey: (state, getters): KeyInfo | undefined => {
-            if (!state.activeLoginId) return undefined;
-            return getters.findKey(state.activeLoginId);
+        activeWallet: (state, getters): WalletInfo | undefined => {
+            if (!state.activeWalletId) return undefined;
+            return getters.findWallet(state.activeWalletId);
         },
-        activeAccount: (state, getters): AddressInfo | undefined => {
+        activeAccount: (state, getters): AccountInfo | undefined => {
             if (!state.activeUserFriendlyAddress) return undefined;
-            const key: KeyInfo | undefined = getters.activeKey;
-            if (!key) return undefined;
-            return key.addresses.get(state.activeUserFriendlyAddress);
+            const wallet: WalletInfo | undefined = getters.activeWallet;
+            if (!wallet) return undefined;
+            return wallet.accounts.get(state.activeUserFriendlyAddress);
         },
         hasWallets: (state): boolean => {
-            return state.keys.length > 0;
+            return state.wallets.length > 0;
         },
     },
 };

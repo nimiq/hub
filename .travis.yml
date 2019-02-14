@@ -1,0 +1,19 @@
+dist: xenial
+
+language: node_js
+
+node_js:
+  - "9"
+
+cache:
+  directories:
+  - node_modules
+  - client/node_modules
+
+script:
+  - yarn lint
+  - yarn build:ci
+  - yarn test
+  - cd client
+  - yarn lint
+  - yarn build

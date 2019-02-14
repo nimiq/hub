@@ -1,105 +1,184 @@
 <template>
-    <div class="success center">
-        <div class="icon-checkmark-circle"></div>
-        <h1>Login<br>was successfull!</h1>
-        <div style="flex-grow: 1;"></div>
-        <button @click="done">Back to {{ request.appName }}</button>
+    <div class="container pad-bottom">
+        <SmallPage>
+            <div class="login-success">
+                <PageHeader>Your wallet is ready</PageHeader>
+
+                <PageBody>
+                    <div class="wallet-label" v-if="walletInfo && keyguardResult.keyType !== 1 /* LEGACY */">
+                        <div class="wallet-icon nq-icon" :class="walletIconClass"></div>
+                        <Input :value="walletInfo.label" @changed="onWalletLabelChange"/>
+                    </div>
+
+                    <AccountList v-if="walletInfo" :accounts="accountsArray"
+                                 :editable="true" @account-changed="onAccountLabelChanged"/>
+
+                    <Loader class="small" :title="''" :status="statusMessage" v-if="!retrievalComplete"></Loader>
+                </PageBody>
+
+                <PageFooter>
+                    <button class="nq-button" @click="done">Back to {{ appName }}</button>
+                </PageFooter>
+            </div>
+        </SmallPage>
     </div>
 </template>
 
 <script lang="ts">
-import {Component, Emit, Vue} from 'vue-property-decorator';
-import {ParsedLoginRequest, LoginResult} from '../lib/RequestTypes';
-import {State} from 'vuex-class';
-import {KeyInfo, KeyStorageType} from '../lib/KeyInfo';
-import {ImportResult} from '@nimiq/keyguard-client';
-import {ResponseStatus, State as RpcState} from '@nimiq/rpc';
-import { AddressInfo } from '@/lib/AddressInfo';
-import { KeyStore } from '@/lib/KeyStore';
-import { Static } from '@/lib/StaticStore';
+import { Component, Emit, Vue } from 'vue-property-decorator';
+import { ParsedLoginRequest, LoginResult, RequestType } from '../lib/RequestTypes';
+import { State } from 'vuex-class';
+import { WalletInfo, WalletType } from '../lib/WalletInfo';
+import { ImportResult } from '@nimiq/keyguard-client';
+import { WalletStore } from '@/lib/WalletStore';
+import staticStore, { Static } from '@/lib/StaticStore';
+import { PageHeader, PageBody, AccountList, PageFooter, SmallPage } from '@nimiq/vue-components';
+import Loader from '@/components/Loader.vue';
+import WalletInfoCollector from '@/lib/WalletInfoCollector';
+import Input from '@/components/Input.vue';
 
-@Component({components: {}})
+@Component({components: {PageHeader, PageBody, Input, AccountList, Loader, PageFooter, SmallPage}})
 export default class LoginSuccess extends Vue {
     @Static private request!: ParsedLoginRequest;
-    @Static private rpcState!: RpcState;
     @State private keyguardResult!: ImportResult;
 
-    private keyInfo: KeyInfo | null = null;
-    private walletLabel: string = 'Keyguard Wallet';
-    private accountLabel: string = 'Standard Account';
-    private result?: LoginResult;
+    private walletInfo: WalletInfo | null = null;
 
-    public mounted() {
-        const addresses: Map<string, AddressInfo> = new Map();
+    /**
+     * Used to invalidate the cached value for getter `accountsArray`.
+     */
+    private updateCount: number = 0;
 
-        this.keyguardResult.addresses.forEach((addressObj) => {
-            const addressInfo = new AddressInfo(
-                addressObj.keyPath,
-                this.accountLabel,
-                new Nimiq.Address(addressObj.address),
-            );
-            addresses.set(addressInfo.userFriendlyAddress, addressInfo);
-        });
+    private retrievalFailed: boolean = false;
+    private retrievalComplete: boolean = false;
 
-        this.keyInfo = new KeyInfo(
-            this.keyguardResult.keyId,
-            this.walletLabel,
-            addresses,
-            [],
-            this.keyguardResult.keyType,
-        );
+    private async mounted() {
+        // The Keyguard always returns (at least) one derived Address,
+        const keyguardResultAccounts = this.keyguardResult.addresses.map((addressObj) => ({
+            address: new Nimiq.Address(addressObj.address).toUserFriendlyAddress(),
+            path: addressObj.keyPath,
+        }));
 
-        KeyStore.Instance.put(this.keyInfo);
+        let tryCount = 0;
+        while (true) {
+            try {
+                tryCount += 1;
+                await WalletInfoCollector.collectWalletInfo(
+                    this.keyguardResult.keyType,
+                    this.keyguardResult.keyId,
+                    keyguardResultAccounts,
+                    (updatedWalletInfo) => this._onWalletInfoUpdate(updatedWalletInfo),
+                );
+                this.retrievalFailed = false;
+                break;
+            } catch (e) {
+                this.retrievalFailed = true;
+                if (tryCount >= 5) throw e;
+            }
+        }
 
-        this.result = {
-            addresses: Array.from(this.keyInfo.addresses.values()).map((addressInfo) => ({
-                address: addressInfo.userFriendlyAddress,
-                label: addressInfo.label,
-                keyId: this.keyInfo!.id,
-            })),
-        };
+        // TODO network visuals with longer than 1 list of accounts during retrieval
+        this.retrievalComplete = true;
+    }
+
+    private _onWalletInfoUpdate(walletInfo: WalletInfo) {
+        this.walletInfo = walletInfo;
+        this.storeAndRender();
+    }
+
+    private onWalletLabelChange(label: string) {
+        this.walletInfo!.label = label;
+        this.storeAndRender();
+    }
+
+    private onAccountLabelChanged(address: string, label: string) {
+        const addressInfo = this.walletInfo!.accounts.get(address);
+        if (!addressInfo) throw new Error('UNEXPECTED: Address that was changed does not exist');
+        addressInfo.label = label;
+        this.storeAndRender();
+    }
+
+    private storeAndRender() {
+        WalletStore.Instance.put(this.walletInfo!);
+        this.updateCount += 1; // Trigger DOM update via computed property `this.accountsArray`
     }
 
     @Emit()
     private done() {
-        if (!this.result) throw new Error('Result not set');
-        this.rpcState.reply(ResponseStatus.OK, this.result);
+        if (!this.walletInfo) throw new Error('WalletInfo not ready.');
+        const result: LoginResult = {
+            walletId: this.walletInfo.id,
+            label: this.walletInfo.label,
+            type: this.walletInfo.type,
+            accounts: Array.from(this.walletInfo.accounts.values()).map((addressInfo) => ({
+                address: addressInfo.userFriendlyAddress,
+                label: addressInfo.label,
+            })),
+        };
+        this.$rpc.resolve(result);
+    }
+
+    private get walletIconClass(): string {
+        return this.keyguardResult.keyType === WalletType.LEDGER ? 'ledger' : 'keyguard';
+    }
+
+    private get accountsArray(): Array<{ label: string, address: Nimiq.Address, balance?: number }> {
+        if (this.updateCount && this.walletInfo) return Array.from(this.walletInfo.accounts.values());
+        return [];
+    }
+
+    private get statusMessage() {
+        return !this.retrievalFailed ? 'Detecting your Accounts' : 'Account retrieval failed. Retrying...';
+    }
+
+    private get appName() {
+        if (staticStore.originalRouteName) {
+            switch (staticStore.originalRouteName) {
+                case RequestType.CHECKOUT: return 'Checkout';
+                default: throw new Error('Unhandled originalRouteName');
+            }
+        }
+        return this.request.appName;
     }
 }
 </script>
 
 <style scoped>
-    .success {
+    .login-success {
         display: flex;
         flex-direction: column;
+        flex-grow: 1;
+    }
+
+    .page-body {
+        padding: 0;
+    }
+
+    .wallet-label {
+        display: flex;
+        flex-direction: row;
         justify-content: flex-start;
         align-items: center;
-        flex-grow: 1;
-        margin: 8px;
-        background: #24bdb6;
-        color: white;
-        padding: 0 54px;
+        font-size: 2.25rem;
+        line-height: 2.5rem;
+        font-weight: 500;
+        margin: 0 3rem;
+        padding: 2rem 1rem 1.5rem;
+        border-bottom: solid .125rem var(--nimiq-card-border-color);
     }
 
-    .icon-checkmark-circle {
-        width: 99px;
-        height: 99px;
-        margin-top: 96px;
-        background-image: url('data:image/svg+xml,<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100;" xml:space="preserve"><path d="M50,95C25.19,95,5,74.81,5,50S25.19,5,50,5s45,20.19,45,45S74.81,95,50,95z M50,0C22.43,0,0,22.43,0,50 s22.43,50,50,50s50-22.43,50-50S77.57,0,50,0z M81.41,29.11c-1.01-0.95-2.59-0.9-3.53,0.1L41.2,68.12L19.57,50.56 c-1.07-0.87-2.65-0.71-3.52,0.36c-0.87,1.07-0.71,2.65,0.36,3.52l23.44,19.02c0.46,0.38,1.02,0.56,1.58,0.56 c0.67,0,1.33-0.26,1.82-0.78l38.27-40.59C82.47,31.64,82.42,30.06,81.41,29.11z" fill="%23fff"/></svg>');
-        background-repeat: no-repeat;
-        background-size: 100%;
+    .wallet-icon {
+        height: 3rem;
+        width: 3rem;
+        flex-shrink: 0;
+        margin-right: 1rem;
     }
 
-    h1 {
-        font-size: 30px;
-        font-weight: 300;
-        line-height: 1.3;
-        letter-spacing: 0.5px;
-        text-align: center;
+    .loader {
+        min-height: 21rem;
     }
 
-    button {
-        color: #2a60dd;
-        margin: 24px 0;
+    .page-footer {
+        padding: 1rem;
     }
 </style>

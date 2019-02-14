@@ -1,18 +1,33 @@
 <!DOCTYPE html>
 <html>
-  <head>
+
+<head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <script src="https://cdn.nimiq-network.com/branches/master/web-offline.js"></script>
-    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
+    <script src="https://cdn.nimiq-testnet.com/web-offline.js"></script>
     <title>Nimiq Accounts Manager</title>
-  </head>
-  <body>
+    <link href="blocking.css" rel="stylesheet">
+    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
+</head>
+
+<body>
     <noscript>
-      <strong>We're sorry but accounts doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+        <strong>We're sorry but accounts doesn't work properly without JavaScript enabled. Please enable it to
+            continue.</strong>
     </noscript>
-    <div id="app"></div>
+    <div id="app">
+        <header class="logo">
+            <span class="nq-icon nimiq-logo"></span>
+            <span class="logo-wordmark">Nimiq</span>
+            <span class="logo-subtitle"></span>
+        </header>
+        <div class="loading">
+            <div class="loading-animation"></div>
+            <h2>Loading, hold on</h2>
+        </div>
+    </div>
     <!-- built files will be auto injected -->
-  </body>
+</body>
+
 </html>

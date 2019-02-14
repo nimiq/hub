@@ -1,28 +1,17 @@
-import {RpcServer, State as RpcState, ResponseStatus} from '@nimiq/rpc';
-import {RootState} from '@/store';
-import {Store} from 'vuex';
+import { RpcServer, State as RpcState, ResponseStatus } from '@nimiq/rpc';
+import { BrowserDetection } from '@nimiq/utils';
+import { RootState } from '@/store';
+import { Store } from 'vuex';
 import Router from 'vue-router';
-import {AccountsRequest, RequestType, RpcRequest} from '@/lib/RequestTypes';
-import {KeyguardCommand, RequestBehavior, KeyguardClient} from '@nimiq/keyguard-client';
-import {keyguardResponseRouter} from '@/router';
-import {StaticStore} from '@/lib/StaticStore';
+import { AccountsRequest, RequestType, RpcRequest, RpcResult } from '@/lib/RequestTypes';
+import { KeyguardCommand, RedirectRequestBehavior, KeyguardClient } from '@nimiq/keyguard-client';
+import { keyguardResponseRouter } from '@/router';
+import { StaticStore } from '@/lib/StaticStore';
+import { WalletStore } from './WalletStore';
+import CookieJar from '@/lib/CookieJar';
+import { Raven } from 'vue-raven'; // Sentry.io SDK
 
 export default class RpcApi {
-
-    public static createKeyguardClient(store: Store<RootState>, staticStore: StaticStore, endpoint?: string) {
-        const behavior = new RequestBehavior(undefined, RpcApi.exportState(store, staticStore));
-        const client = new KeyguardClient(endpoint, behavior);
-        return client;
-    }
-
-    private static exportState(store: Store<RootState>, staticStore: StaticStore): any {
-        return {
-            rpcState: staticStore.rpcState ? staticStore.rpcState.toJSON() : undefined,
-            request: staticStore.request ? AccountsRequest.raw(staticStore.request) : undefined,
-            keyguardRequest: staticStore.keyguardRequest,
-        };
-    }
-
     private _server: RpcServer;
     private _store: Store<RootState>;
     private _staticStore: StaticStore;
@@ -37,15 +26,27 @@ export default class RpcApi {
         this._keyguardClient = new KeyguardClient();
 
         this._registerAccountsApis([
-            RequestType.SIGNTRANSACTION,
+            RequestType.SIGN_TRANSACTION,
             RequestType.CHECKOUT,
             RequestType.SIGNUP,
             RequestType.LOGIN,
+            RequestType.EXPORT,
+            RequestType.CHANGE_PASSPHRASE,
+            RequestType.LOGOUT,
+            RequestType.ADD_ACCOUNT,
+            RequestType.RENAME,
+            RequestType.SIGN_MESSAGE,
+            RequestType.MIGRATE,
         ]);
         this._registerKeyguardApis([
             KeyguardCommand.SIGN_TRANSACTION,
             KeyguardCommand.CREATE,
             KeyguardCommand.IMPORT,
+            KeyguardCommand.EXPORT,
+            KeyguardCommand.CHANGE_PASSPHRASE,
+            KeyguardCommand.REMOVE,
+            KeyguardCommand.DERIVE_ADDRESS,
+            KeyguardCommand.SIGN_MESSAGE,
         ]);
     }
 
@@ -54,30 +55,115 @@ export default class RpcApi {
         this._keyguardClient.init().catch(console.error); // TODO: Provide better error handling here
     }
 
-    private _registerAccountsApis(requests: RequestType[]) {
-        for (const request of requests) {
+    public createKeyguardClient(endpoint?: string) {
+        const behavior = new RedirectRequestBehavior(undefined, this._exportState());
+        const client = new KeyguardClient(endpoint, behavior);
+        return client;
+    }
+
+    public routerPush(routeName: string) {
+        const query = this._parseUrlParams(window.location.search);
+        this._router.push({name: routeName, query});
+    }
+
+    public routerReplace(routeName: string) {
+        const query = this._parseUrlParams(window.location.search);
+        this._router.replace({name: routeName, query});
+    }
+
+    public resolve(result: RpcResult) {
+        this._reply(ResponseStatus.OK, result);
+    }
+
+    public reject(error: Error) {
+        const ignoredErrors = [ 'CANCEL', 'Request aborted' ];
+        if (ignoredErrors.indexOf(error.message) < 0) {
+            if (window.location.origin === 'https://accounts.nimiq-testnet.com') {
+                Raven.captureException(error);
+            }
+        }
+
+        this._reply(ResponseStatus.ERROR, error);
+    }
+
+    private async _reply(status: ResponseStatus, result: RpcResult | Error) {
+        // Update cookies for iOS
+        if (BrowserDetection.isIOS() || BrowserDetection.isSafari()) {
+            const wallets = await WalletStore.Instance.list();
+            CookieJar.fill(wallets);
+        }
+
+        // Check for originalRouteName in StaticStore and route there
+        if (this._staticStore.originalRouteName && (!(result instanceof Error) || result.message !== 'CANCELED')) {
+            this._staticStore.sideResult = result;
+
+            // Recreate original URL with original query parameters
+            const rpcState = this._staticStore.rpcState!;
+            const redirectUrl = rpcState.toRequestUrl();
+
+            const query = this._parseUrlParams(redirectUrl);
+            this._router.push({ name: this._staticStore.originalRouteName, query });
+            delete this._staticStore.originalRouteName;
+            return;
+        }
+
+        this._staticStore.rpcState!.reply(status, result);
+    }
+
+    private _exportState(): any {
+        return {
+            rpcState: this._staticStore.rpcState ? this._staticStore.rpcState.toJSON() : undefined,
+            request: this._staticStore.request ? AccountsRequest.raw(this._staticStore.request) : undefined,
+            keyguardRequest: this._staticStore.keyguardRequest,
+            originalRouteName: this._staticStore.originalRouteName,
+        };
+    }
+
+    private _registerAccountsApis(requestTypes: RequestType[]) {
+        for (const requestType of requestTypes) {
             // Server listener
-            this._server.onRequest(request, async (state, arg: RpcRequest) => {
+            this._server.onRequest(requestType, async (state, arg: RpcRequest) => {
                 this._staticStore.rpcState = state;
-                this._staticStore.request = AccountsRequest.parse(arg, request) || undefined;
+                try {
+                    this._staticStore.request = AccountsRequest.parse(arg, state, requestType) || undefined;
+                } catch (error) {
+                    state.reply(ResponseStatus.ERROR, error);
+                    return;
+                }
 
                 this._store.commit('setIncomingRequest', {
                     hasRpcState: !!this._staticStore.rpcState,
                     hasRequest: !!this._staticStore.request,
                 });
-                this._router.push({name: request});
+                this.routerReplace(requestType);
             });
         }
     }
 
+    private _parseUrlParams(query: string) {
+        const params: {[key: string]: string} = {};
+        if (!query) return params;
+        const keyValues = query.substr(1).replace(/\+/g, ' ').split('&')
+            .map((keyValueString) => keyValueString.split('='));
+
+        for (const keyValue of keyValues) {
+            // @ts-ignore Property 'decodeURIComponent' does not exist on type 'Window'
+            params[keyValue[0]] = window.decodeURIComponent(keyValue[1]);
+        }
+
+        return params;
+    }
+
     private _recoverState(state: any) {
         const rpcState = RpcState.fromJSON(state.rpcState);
-        const request = AccountsRequest.parse(state.request);
+        const request = AccountsRequest.parse(state.request, state);
         const keyguardRequest = state.keyguardRequest;
+        const originalRouteName = state.originalRouteName;
 
         this._staticStore.rpcState = rpcState;
         this._staticStore.request = request || undefined;
         this._staticStore.keyguardRequest = keyguardRequest;
+        this._staticStore.originalRouteName = originalRouteName;
 
         this._store.commit('setIncomingRequest', {
             hasRpcState: !!this._staticStore.rpcState,
@@ -100,7 +186,7 @@ export default class RpcApi {
                 // when returning from the Keyguard's sign-transaction request, the original request kind that
                 // was given to the AccountsManager is passed here and the keyguardResponseRouter is turned
                 // from an object into a function instead.
-                this._router.push({name: keyguardResponseRouter(command, this._staticStore.request!.kind).resolve});
+                this.routerReplace(keyguardResponseRouter(command, this._staticStore.request!.kind).resolve);
             }, (error, state) => {
                 // Recover state
                 this._recoverState(state);
@@ -113,7 +199,7 @@ export default class RpcApi {
                 // Set result
                 this._store.commit('setKeyguardResult', error);
 
-                this._router.push({name: keyguardResponseRouter(command, this._staticStore.request!.kind).reject});
+                this.routerReplace(keyguardResponseRouter(command, this._staticStore.request!.kind).reject);
             });
         }
     }

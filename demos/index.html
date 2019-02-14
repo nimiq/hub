@@ -3,13 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <title>Checkout</title>
-    <script src="https://cdn.nimiq-network.com/branches/master/web.js"></script>
     <style>
+        body {
+            font-family: 'Muli', system-ui, sans-serif;
+        }
+
         .request {
             padding: 0 1em;
             float: left;
         }
+
+        button,
+        input {
+            font-family: inherit;
+            padding: 4px 8px;
+            margin: 4px 0;
+        }
+
+        button {
+            cursor: pointer;
+        }
     </style>
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Muli:400,600,700">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Mono&text=0123456789ABCDEFGHJKLMNPQRSTUVXY">
 </head>
 <body>
 
@@ -17,21 +34,21 @@
 
 <div class="request">
     <h2>Stored accounts</h2>
-    <button id="list-keyguard-keys" disabled>List Keyguard keys in console</button><br>
-    <button id="list-accounts" disabled>Update Accounts list</button>
+    <br><button id="list-keyguard-keys" disabled>List Keyguard keys in console</button>
+    <br><button id="list-accounts" disabled>Update Accounts list</button>
     <ul id="accounts"></ul>
 </div>
 
 <div class="request">
     <h2>Create</h2>
-    <button id="create" disabled>Create new key & account</button>
+    <button id="create" disabled>Create new wallet & account</button>
 
     <h2>Login (Import)</h2>
     <button id="login" disabled>Login</button>
 </div>
 
 <div class="request">
-    <h2>Checkout</h2>
+    <h2>Transactions</h2>
     <div class="row">
         <label>Keyguard BaseURL</label>
         <input value="http://localhost:8000/" disabled readonly>
@@ -39,7 +56,7 @@
 
     <div class="row">
         <label>Transaction value (satoshi)</label>
-        <input id="value" value="545000000">
+        <input id="value" value="545000">
     </div>
 
     <div class="row">
@@ -53,15 +70,34 @@
     </div>
 
     <div class="row">
-        <label>Key passphrase</label>
-        <input id="passphrase" value="password123">
+        <label>Validity start hight</label>
+        <input id="validitystartheight" type="number" value="176450">
     </div>
 
+    <br><button id="checkout-redirect" disabled>Checkout (redirect)</button>
+    <br><button id="checkout-popup" disabled>Checkout (popup)</button>
+    <br><button id="sign-transaction-popup" disabled>Sign Transaction</button>
+</div>
 
-    <br><button id="checkout-redirect" class="small" disabled>Checkout (redirect)</button>
-    <br><button id="checkout-popup" class="small" disabled>Checkout (popup)</button>
-    <br><button id="sign-transaction-popup" class="small" disabled>Sign Transaction</button>
+<div class="request">
+    <h2>Sign Message</h2>
+    <div class="row">
+        <label>Message</label>
+        <input id="message" value="Sign me, baby!">
+    </div>
 
+    <br><button id="sign-message" disabled>Sign Message</button>
+    <br><button id="sign-message-with-account" disabled>Sign Message with selected Account</button>
+</div>
+
+<div class="request">
+    <h2>Migrate</h2>
+    <br><button id="setup-legacy-accounts" disabled>Setup Legacy Accounts</button>
+    <br><button id="migrate" disabled>Migrate Legacy Accounts</button>
+</div>
+
+<div class="request">
+    <h2>Result</h2>
     <p id="result"></p>
 </div>
 

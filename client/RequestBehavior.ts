@@ -1,10 +1,10 @@
-import {RequestType} from '../src/lib/RequestTypes';
-import {PostMessageRpcClient, RedirectRpcClient} from '@nimiq/rpc';
+import { RequestType } from '../src/lib/RequestTypes';
+import { PostMessageRpcClient, RedirectRpcClient } from '@nimiq/rpc';
 
 export class RequestBehavior {
     public static getAllowedOrigin(endpoint: string) {
-        // FIXME derive from endpoint url
-        return '*';
+        const url = new URL(endpoint);
+        return url.origin;
     }
 
     private readonly _type: BehaviorType;
@@ -33,14 +33,13 @@ export class RedirectRequestBehavior extends RequestBehavior {
         return new RedirectRequestBehavior(undefined, localState);
     }
 
-    private readonly _targetUrl: string;
+    private readonly _returnUrl: string;
     private readonly _localState: any;
 
-    constructor(targetUrl?: string, localState?: any) {
+    constructor(returnUrl?: string, localState?: any) {
         super(BehaviorType.REDIRECT);
         const location = window.location;
-        this._targetUrl = targetUrl
-            || `${location.protocol}//${location.hostname}:${location.port}${location.pathname}`;
+        this._returnUrl = returnUrl || `${location.origin}${location.pathname}`;
         this._localState = localState || {};
 
         // Reject local state with reserved property.
@@ -55,9 +54,9 @@ export class RedirectRequestBehavior extends RequestBehavior {
         const client = new RedirectRpcClient(endpoint, origin);
         await client.init();
 
-        const state = Object.assign({ __command: command }, this._localState);
+        const state: object = Object.assign({}, this._localState, { __command: command });
         console.log('state', state);
-        client.callAndSaveLocalState(this._targetUrl, state, command, ...args);
+        client.callAndSaveLocalState(this._returnUrl, JSON.stringify(state), command, ...args);
     }
 }
 
@@ -78,14 +77,12 @@ export class PopupRequestBehavior extends RequestBehavior {
         await client.init();
 
         try {
-            const result = await client.call(command, ...args);
-            client.close();
-            popup.close();
-            return result;
+            return await client.callAndPersist(command, ...args);
         } catch (e) {
+            throw e;
+        } finally {
             client.close();
             popup.close();
-            throw e;
         }
     }
 
@@ -99,6 +96,8 @@ export class PopupRequestBehavior extends RequestBehavior {
 }
 
 export class IFrameRequestBehavior extends RequestBehavior {
+    private static IFRAME_PATH_SUFFIX = '/iframe.html';
+
     private _iframe: HTMLIFrameElement | null;
     private _client: PostMessageRpcClient | null;
 
@@ -109,7 +108,7 @@ export class IFrameRequestBehavior extends RequestBehavior {
     }
 
     public async request(endpoint: string, command: RequestType, args: any[]): Promise<any> {
-        if (this._iframe && this._iframe.src !== `${endpoint}/iframe.html`) {
+        if (this._iframe && this._iframe.src !== `${endpoint}${IFrameRequestBehavior.IFRAME_PATH_SUFFIX}`) {
             throw new Error('Accounts Manager iframe is already opened with another endpoint');
         }
 
@@ -136,7 +135,7 @@ export class IFrameRequestBehavior extends RequestBehavior {
             $iframe.name = 'NimiqAccountsIFrame';
             $iframe.style.display = 'none';
             document.body.appendChild($iframe);
-            $iframe.src = `${endpoint}/iframe.html`;
+            $iframe.src = `${endpoint}${IFrameRequestBehavior.IFRAME_PATH_SUFFIX}`;
             $iframe.onload = () => resolve($iframe);
             $iframe.onerror = reject;
         }) as Promise<HTMLIFrameElement>;
