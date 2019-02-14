@@ -39,16 +39,16 @@ export default class SignupSuccess extends Vue {
         const walletLabel = WALLET_DEFAULT_LABEL_KEYGUARD;
         const accountLabel = ACCOUNT_DEFAULT_LABEL_KEYGUARD;
 
-        const createdAddress = new Nimiq.Address(this.keyguardResult.address);
+        const createdAddress = new Nimiq.Address(this.keyguardResult[0].addresses[0].address);
 
         const accountInfo = new AccountInfo(
-            this.keyguardResult.keyPath,
+            this.keyguardResult[0].addresses[0].keyPath,
             accountLabel,
             createdAddress!,
         );
 
         const walletInfo = new WalletInfo(
-            this.keyguardResult.keyId,
+            this.keyguardResult[0].keyId,
             walletLabel,
             new Map<string, AccountInfo>().set(accountInfo.userFriendlyAddress, accountInfo),
             [],
