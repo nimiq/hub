@@ -29,7 +29,6 @@ import { Component, Emit, Vue } from 'vue-property-decorator';
 import { ParsedLoginRequest, LoginResult, RequestType } from '../lib/RequestTypes';
 import { State } from 'vuex-class';
 import { WalletInfo, WalletType } from '../lib/WalletInfo';
-import { ImportResult } from '@nimiq/keyguard-client';
 import { WalletStore } from '@/lib/WalletStore';
 import staticStore, { Static } from '@/lib/StaticStore';
 import { PageHeader, PageBody, AccountList, PageFooter, SmallPage } from '@nimiq/vue-components';
@@ -40,7 +39,7 @@ import Input from '@/components/Input.vue';
 @Component({components: {PageHeader, PageBody, Input, AccountList, Loader, PageFooter, SmallPage}})
 export default class LoginSuccess extends Vue {
     @Static private request!: ParsedLoginRequest;
-    @State private keyguardResult!: ImportResult;
+    @State private keyguardResult!: KeyguardRequest.KeyResult[];
 
     private walletInfo: WalletInfo | null = null;
 
@@ -53,29 +52,31 @@ export default class LoginSuccess extends Vue {
     private retrievalComplete: boolean = false;
 
     private async mounted() {
-        // The Keyguard always returns (at least) one derived Address,
-        const keyguardResultAccounts = this.keyguardResult.addresses.map((addressObj) => ({
-            address: new Nimiq.Address(addressObj.address).toUserFriendlyAddress(),
-            path: addressObj.keyPath,
-        }));
+        this.keyguardResult.map(async (keyResult) => {
+            // The Keyguard always returns (at least) one derived Address,
+            const keyguardResultAccounts = keyResult.addresses.map((addressObj) => ({
+                address: new Nimiq.Address(addressObj.address).toUserFriendlyAddress(),
+                path: addressObj.keyPath,
+            }));
 
-        let tryCount = 0;
-        while (true) {
-            try {
-                tryCount += 1;
-                await WalletInfoCollector.collectWalletInfo(
-                    this.keyguardResult.keyType,
-                    this.keyguardResult.keyId,
-                    keyguardResultAccounts,
-                    (updatedWalletInfo) => this._onWalletInfoUpdate(updatedWalletInfo),
-                );
-                this.retrievalFailed = false;
-                break;
-            } catch (e) {
-                this.retrievalFailed = true;
-                if (tryCount >= 5) throw e;
+            let tryCount = 0;
+            while (true) {
+                try {
+                    tryCount += 1;
+                    await WalletInfoCollector.collectWalletInfo(
+                        keyResult.keyType,
+                        keyResult.keyId,
+                        keyguardResultAccounts,
+                        (updatedWalletInfo) => this._onWalletInfoUpdate(updatedWalletInfo),
+                    );
+                    this.retrievalFailed = false;
+                    break;
+                } catch (e) {
+                    this.retrievalFailed = true;
+                    if (tryCount >= 5) throw e;
+                }
             }
-        }
+        });
 
         // TODO network visuals with longer than 1 list of accounts during retrieval
         this.retrievalComplete = true;
@@ -119,7 +120,8 @@ export default class LoginSuccess extends Vue {
     }
 
     private get walletIconClass(): string {
-        return this.keyguardResult.keyType === WalletType.LEDGER ? 'ledger' : 'keyguard';
+        // Using [0] is a quick fix, fill be fixed in LoginFlow-PR
+        return this.keyguardResult[0].keyType === WalletType.LEDGER ? 'ledger' : 'keyguard';
     }
 
     private get accountsArray(): Array<{ label: string, address: Nimiq.Address, balance?: number }> {

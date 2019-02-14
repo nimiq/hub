@@ -10,7 +10,7 @@ import { State } from 'vuex-class';
 @Component
 export default class Login extends Vue {
     @Static private request!: ParsedLoginRequest;
-    @State private keyguardResult?: KeyguardRequest.ImportResult;
+    @State private keyguardResult?: KeyguardRequest.KeyResult[];
 
     public created() {
         if (this.keyguardResult) return;
