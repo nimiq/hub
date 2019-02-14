@@ -29,7 +29,7 @@ import {
 
 @Component({components: {SmallPage}})
 export default class SignupSuccess extends Vue {
-    @State private keyguardResult!: KeyguardRequest.CreateResult;
+    @State private keyguardResult!: KeyguardRequest.KeyResult[];
 
     private title: string = 'Storing your wallet';
     private state: Loader.State = Loader.State.LOADING;
