@@ -155,7 +155,7 @@ export default class SignupLedger extends Vue {
                 0, // balance 0 because if user has to select an account, it's gonna be an unused one
             ));
         }
-        this.$forceUpdate(); // because vue does not recognize changes in waletInfo.accounts map // TODO verify
+        this.$forceUpdate(); // because vue does not recognize changes in walletInfo.accounts map // TODO verify
     }
 
     @Emit()

@@ -29,41 +29,26 @@ import {
 
 @Component({components: {SmallPage}})
 export default class SignupSuccess extends Vue {
-    @Prop({ default: null })
-    public createResult!: KeyguardRequest.CreateResult;
-
-    @State private keyguardResult?: KeyguardRequest.CreateResult;
+    @State private keyguardResult!: KeyguardRequest.CreateResult;
 
     private title: string = 'Storing your wallet';
     private state: Loader.State = Loader.State.LOADING;
 
     private async mounted() {
-        let walletType: WalletType;
-        let walletLabel: string;
-        let accountLabel: string;
+        const walletType = WalletType.BIP39;
+        const walletLabel = WALLET_DEFAULT_LABEL_KEYGUARD;
+        const accountLabel = ACCOUNT_DEFAULT_LABEL_KEYGUARD;
 
-        if (this.keyguardResult) {
-            this.createResult = this.keyguardResult;
-            walletType = WalletType.BIP39;
-            walletLabel = WALLET_DEFAULT_LABEL_KEYGUARD;
-            accountLabel = ACCOUNT_DEFAULT_LABEL_KEYGUARD;
-        } else {
-            if (!this.createResult) throw new Error('SignupSuccess shown without createResult');
-            walletType = WalletType.LEDGER;
-            walletLabel = WALLET_DEFAULT_LABEL_LEDGER;
-            accountLabel = ACCOUNT_DEFAULT_LABEL_LEDGER;
-        }
-
-        const createdAddress = new Nimiq.Address(this.createResult.address);
+        const createdAddress = new Nimiq.Address(this.keyguardResult.address);
 
         const accountInfo = new AccountInfo(
-            this.createResult.keyPath,
+            this.keyguardResult.keyPath,
             accountLabel,
             createdAddress!,
         );
 
         const walletInfo = new WalletInfo(
-            this.createResult.keyId,
+            this.keyguardResult.keyId,
             walletLabel,
             new Map<string, AccountInfo>().set(accountInfo.userFriendlyAddress, accountInfo),
             [],
