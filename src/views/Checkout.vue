@@ -47,6 +47,8 @@
 </template>
 
 <script lang="ts">
+import Nimiq from '@nimiq/core-web';
+import KeyguardClient from '@nimiq/keyguard-client';
 import { Component, Emit, Watch, Vue } from 'vue-property-decorator';
 import { PaymentInfoLine, AccountSelector, AccountInfo as AccountInfoScreen, SmallPage } from '@nimiq/vue-components';
 import { ParsedCheckoutRequest, RequestType, LoginResult } from '@/lib/RequestTypes';
@@ -163,7 +165,7 @@ export default class Checkout extends Vue {
             - TX_VALIDITY_WINDOW
             + this.request.validityDuration;
 
-        const request: KeyguardRequest.SignTransactionRequest = {
+        const request: KeyguardClient.SignTransactionRequest = {
             layout: 'checkout',
             shopOrigin: this.rpcState.origin,
             appName: this.request.appName,
@@ -199,7 +201,7 @@ export default class Checkout extends Vue {
 
     private login() {
         // Redirect to import
-        const request: KeyguardRequest.ImportRequest = {
+        const request: KeyguardClient.ImportRequest = {
             appName: this.request.appName,
             defaultKeyPath: `m/44'/242'/0'/0'`,
             requestedKeyPaths: [`m/44'/242'/0'/0'`],

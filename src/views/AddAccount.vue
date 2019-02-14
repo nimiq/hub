@@ -3,7 +3,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { ParsedAddAccountRequest } from '../lib/RequestTypes';
-import { DeriveAddressRequest } from '@nimiq/keyguard-client';
+import KeyguardClient from '@nimiq/keyguard-client';
 import { Static } from '../lib/StaticStore';
 import { WalletStore } from '@/lib/WalletStore';
 import { WalletType } from '@/lib/WalletInfo';
@@ -12,7 +12,7 @@ import { State } from 'vuex-class';
 @Component
 export default class AddAccount extends Vue {
     @Static private request!: ParsedAddAccountRequest;
-    @State private keyguardResult?: KeyguardRequest.DeriveAddressResult;
+    @State private keyguardResult?: KeyguardClient.DeriveAddressResult;
 
     public async created() {
         if (this.keyguardResult) return;
@@ -35,7 +35,7 @@ export default class AddAccount extends Vue {
             firstIndexToDerive = parseInt(pathArray[pathArray.length - 1], 10) + 1;
         }
 
-        const request: DeriveAddressRequest = {
+        const request: KeyguardClient.DeriveAddressRequest = {
             appName: this.request.appName,
             keyId: this.request.walletId,
             baseKeyPath: `m/44'/242'/0'`,

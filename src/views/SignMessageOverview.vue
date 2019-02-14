@@ -21,6 +21,7 @@
 </template>
 
 <script lang="ts">
+import Nimiq from '@nimiq/core-web';
 import { Component, Emit } from 'vue-property-decorator';
 import { Getter } from 'vuex-class';
 import { Account, PageHeader, PageBody, PageFooter } from '@nimiq/vue-components';

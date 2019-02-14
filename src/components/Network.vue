@@ -6,12 +6,10 @@
 </template>
 
 <script lang="ts">
+import Nimiq from '@nimiq/core-web';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { SignTransactionResult } from '../lib/RequestTypes';
-import {
-    SignTransactionRequest as KSignTransactionRequest,
-    SignTransactionResult as KSignTransactionResult,
-} from '@nimiq/keyguard-client';
+import KeyguardClient from '@nimiq/keyguard-client';
 import { NetworkClient, DetailedPlainTransaction } from '@nimiq/network-client';
 import Config from '../lib/Config';
 
@@ -42,8 +40,8 @@ class Network extends Vue {
     // thus not exactly the type KSignTransactionRequest. Thus all potential Uint8Arrays are converted
     // into Nimiq.SerialBuffers (sender, recipient, data).
     public async prepareTx(
-        keyguardRequest: KSignTransactionRequest,
-        keyguardResult: KSignTransactionResult,
+        keyguardRequest: KeyguardClient.SignTransactionRequest,
+        keyguardResult: KeyguardClient.SignTransactionResult,
     ): Promise<Nimiq.Transaction> {
         await this._loadNimiq();
 
@@ -222,7 +220,7 @@ class Network extends Vue {
     }
 
     private async _loadNimiq() {
-        await Nimiq.WasmHelper.doImportBrowser();
+        await Nimiq.WasmHelper.doImport();
         let genesisConfigInitialized = true;
         try {
             Nimiq.GenesisConfig.NETWORK_ID; // tslint:disable-line:no-unused-expression

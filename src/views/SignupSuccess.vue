@@ -26,13 +26,14 @@
 </template>
 
 <script lang="ts">
+import Nimiq from '@nimiq/core-web';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { PageHeader, PageBody, Account, SmallPage } from '@nimiq/vue-components';
 import { AccountInfo } from '../lib/AccountInfo';
 import { WalletInfo, WalletType } from '../lib/WalletInfo';
 import { State } from 'vuex-class';
 import { WalletStore } from '@/lib/WalletStore';
-import { CreateResult } from '@nimiq/keyguard-client';
+import KeyguardClient from '@nimiq/keyguard-client';
 import { SignupResult } from '@/lib/RequestTypes';
 import Input from '@/components/Input.vue';
 import { WALLET_DEFAULT_LABEL_KEYGUARD, WALLET_DEFAULT_LABEL_LEDGER, ACCOUNT_DEFAULT_LABEL_KEYGUARD,
@@ -44,9 +45,9 @@ export default class SignupSuccess extends Vue {
     private static readonly STEPS_LEDGER_SIGNUP = 3;
 
     @Prop({ default: null })
-    public createResult!: CreateResult;
+    public createResult!: KeyguardClient.CreateResult;
 
-    @State private keyguardResult?: CreateResult;
+    @State private keyguardResult?: KeyguardClient.CreateResult;
 
     private numberSteps!: number;
     private walletType!: WalletType;

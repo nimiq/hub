@@ -1,3 +1,4 @@
+import Nimiq from '@nimiq/core-web';
 import { NetworkClient } from '@nimiq/network-client';
 import { KeyguardClient } from '@nimiq/keyguard-client';
 import { AccountInfo } from '@/lib/AccountInfo';
@@ -128,7 +129,7 @@ export default class WalletInfoCollector {
             WalletInfoCollector._keyguardClient = WalletInfoCollector._keyguardClient || new KeyguardClient();
         } else if (walletType === WalletType.LEDGER) {
             WalletInfoCollector._wasmInitializationPromise =
-                WalletInfoCollector._wasmInitializationPromise || Nimiq.WasmHelper.doImportBrowser();
+                WalletInfoCollector._wasmInitializationPromise || Nimiq.WasmHelper.doImport();
             WalletInfoCollector._wasmInitializationPromise
                 .catch(() => delete WalletInfoCollector._wasmInitializationPromise);
         }

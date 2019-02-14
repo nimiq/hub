@@ -1,10 +1,8 @@
-import { setup } from './_setup';
+import Nimiq from '@nimiq/core';
 import { WalletInfo, WalletType } from '@/lib/WalletInfo';
 import { WalletStore } from '@/lib/WalletStore';
 import { AccountInfo } from '@/lib/AccountInfo';
 import { ContractType } from '@/lib/ContractInfo';
-
-setup();
 
 const indexedDB: IDBFactory = require('fake-indexeddb'); // tslint:disable-line:no-var-requires
 

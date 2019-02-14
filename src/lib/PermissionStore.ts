@@ -1,3 +1,4 @@
+import Nimiq from '@nimiq/core-web';
 import Config from '@/lib/Config';
 
 export interface Permission {

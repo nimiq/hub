@@ -25,11 +25,12 @@
 </template>
 
 <script lang="ts">
+import Nimiq from '@nimiq/core-web';
 import { Component, Emit, Vue } from 'vue-property-decorator';
 import { ParsedLoginRequest, LoginResult, RequestType } from '../lib/RequestTypes';
 import { State } from 'vuex-class';
 import { WalletInfo, WalletType } from '../lib/WalletInfo';
-import { ImportResult } from '@nimiq/keyguard-client';
+import KeyguardClient from '@nimiq/keyguard-client';
 import { WalletStore } from '@/lib/WalletStore';
 import staticStore, { Static } from '@/lib/StaticStore';
 import { PageHeader, PageBody, AccountList, PageFooter, SmallPage } from '@nimiq/vue-components';
@@ -40,7 +41,7 @@ import Input from '@/components/Input.vue';
 @Component({components: {PageHeader, PageBody, Input, AccountList, Loader, PageFooter, SmallPage}})
 export default class LoginSuccess extends Vue {
     @Static private request!: ParsedLoginRequest;
-    @State private keyguardResult!: ImportResult;
+    @State private keyguardResult!: KeyguardClient.ImportResult;
 
     private walletInfo: WalletInfo | null = null;
 
@@ -67,7 +68,7 @@ export default class LoginSuccess extends Vue {
                     this.keyguardResult.keyType,
                     this.keyguardResult.keyId,
                     keyguardResultAccounts,
-                    (updatedWalletInfo) => this._onWalletInfoUpdate(updatedWalletInfo),
+                    (updatedWalletInfo: WalletInfo) => this._onWalletInfoUpdate(updatedWalletInfo),
                 );
                 this.retrievalFailed = false;
                 break;

@@ -56,6 +56,7 @@
 
 // tslint:disable-next-line:max-line-length
 // TODO: change implementation to be flow typed, integrate into ledger-api repository and bundle with ledger provided flow libraries directly. LedgerJs:any type is just a temporary workaround
+import Nimiq from '@nimiq/core-web';
 import Observable = Nimiq.Observable;
 
 type LedgerJs = any;

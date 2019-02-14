@@ -17,10 +17,7 @@ import { Component, Vue } from 'vue-property-decorator';
 import Network from '@/components/Network.vue';
 import { SmallPage } from '@nimiq/vue-components';
 import { SignTransactionResult } from '../lib/RequestTypes';
-import {
-    SignTransactionRequest as KSignTransactionRequest,
-    SignTransactionResult as KSignTransactionResult,
-} from '@nimiq/keyguard-client';
+import KeyguardClient from '@nimiq/keyguard-client';
 import { State } from 'vuex-class';
 import { Static } from '../lib/StaticStore';
 import Success from '../components/Success.vue';
@@ -28,8 +25,8 @@ import Success from '../components/Success.vue';
 @Component({components: {Network, SmallPage, Success}})
 export default class SignTransactionSuccess extends Vue {
     // The stored keyguardRequest does not have Uint8Array, only regular arrays
-    @Static private keyguardRequest!: KSignTransactionRequest;
-    @State private keyguardResult!: KSignTransactionResult;
+    @Static private keyguardRequest!: KeyguardClient.SignTransactionRequest;
+    @State private keyguardResult!: KeyguardClient.SignTransactionResult;
 
     private result?: SignTransactionResult;
     private isTxPrepared: boolean = false;

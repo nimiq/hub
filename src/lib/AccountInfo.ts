@@ -1,3 +1,5 @@
+import Nimiq from '@nimiq/core-web';
+
 export class AccountInfo {
     public static fromObject(o: AccountInfoEntry): AccountInfo {
         return new AccountInfo(

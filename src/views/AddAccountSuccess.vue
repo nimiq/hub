@@ -22,19 +22,20 @@
 </template>
 
 <script lang="ts">
+import Nimiq from '@nimiq/core-web';
 import { Component, Vue } from 'vue-property-decorator';
 import { PageHeader, PageBody, Account, SmallPage } from '@nimiq/vue-components';
 import { AccountInfo } from '../lib/AccountInfo';
 import { State } from 'vuex-class';
 import { WalletStore } from '../lib/WalletStore';
-import { DeriveAddressResult } from '@nimiq/keyguard-client';
+import KeyguardClient from '@nimiq/keyguard-client';
 import { AddAccountRequest, AddAccountResult } from '@/lib/RequestTypes';
 import { Static } from '../lib/StaticStore';
 
 @Component({components: {PageHeader, PageBody, Account, SmallPage}})
 export default class AddAccountSuccess extends Vue {
     @Static private request!: AddAccountRequest;
-    @State private keyguardResult!: DeriveAddressResult;
+    @State private keyguardResult!: KeyguardClient.DeriveAddressResult;
 
     private walletLabel: string = '';
     private accountLabel: string = 'Standard Account';

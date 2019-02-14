@@ -19,19 +19,16 @@ import staticStore, { Static } from '../lib/StaticStore';
 import { WalletStore } from '@/lib/WalletStore';
 import { AccountInfo } from '@/lib/AccountInfo';
 import { WalletInfo } from '@/lib/WalletInfo';
-import {
-    SignMessageRequest as KSignMessageRequest,
-    SignMessageResult as KSignMessageResult,
-} from '@nimiq/keyguard-client';
+import KeyguardClient from '@nimiq/keyguard-client';
 import { Utf8Tools } from '@nimiq/utils';
 
 @Component({components: {SmallPage}})
 export default class SignMessage extends Vue {
     @Static protected request!: ParsedSignMessageRequest;
-    @State private keyguardResult!: KSignMessageResult;
+    @State private keyguardResult!: KeyguardClient.SignMessageResult;
 
     protected sendKeyguardRequest(walletInfo: WalletInfo, accountInfo: AccountInfo) {
-        const request: KSignMessageRequest = {
+        const request: KeyguardClient.SignMessageRequest = {
             appName: this.request.appName,
 
             keyId: walletInfo.id,

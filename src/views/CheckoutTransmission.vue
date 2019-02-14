@@ -13,14 +13,15 @@ import { SignTransactionResult } from '@/lib/RequestTypes';
 import { Static } from '../lib/StaticStore';
 import { State } from 'vuex-class';
 import { SmallPage } from '@nimiq/vue-components';
+import KeyguardClient from '@nimiq/keyguard-client';
 import Network from '@/components/Network.vue';
 import Loader from '../components/Loader.vue';
 
 @Component({components: {Loader, Network, SmallPage}})
 export default class CheckoutTransmission extends Vue {
     // The stored keyguardRequest does not have Uint8Arrays, only regular arrays
-    @Static private keyguardRequest!: KeyguardRequest.SignTransactionRequest;
-    @State private keyguardResult!: KeyguardRequest.SignTransactionResult;
+    @Static private keyguardRequest!: KeyguardClient.SignTransactionRequest;
+    @State private keyguardResult!: KeyguardClient.SignTransactionResult;
 
     private isTxSent: boolean = false;
 

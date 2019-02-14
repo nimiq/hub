@@ -16,6 +16,7 @@
 <script lang="ts">
 import { Component, Watch, Vue } from 'vue-property-decorator';
 import { State } from 'vuex-class';
+import * as KClient from '@nimiq/keyguard-client';
 
 import '@nimiq/style/nimiq-style.min.css';
 import '@nimiq/style/nimiq-style-icons.min.css';

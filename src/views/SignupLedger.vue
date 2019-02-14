@@ -25,6 +25,7 @@
 </template>
 
 <script lang="ts">
+import Nimiq from '@nimiq/core-web';
 import { Component, Emit, Vue } from 'vue-property-decorator';
 import { PageBody, SmallPage } from '@nimiq/vue-components';
 import { ParsedSignupRequest, SignupResult } from '../lib/RequestTypes';

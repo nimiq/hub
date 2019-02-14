@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Vuex, { StoreOptions } from 'vuex';
-import { RpcResult as KeyguardResult } from '@nimiq/keyguard-client';
+import KeyguardClient from '@nimiq/keyguard-client';
 import { WalletInfo } from '@/lib/WalletInfo';
 import { WalletStore } from '@/lib/WalletStore';
 import { AccountInfo } from '@/lib/AccountInfo';
@@ -11,7 +11,7 @@ export interface RootState {
     hasRpcState: boolean;
     hasRequest: boolean;
     wallets: WalletInfo[]; // TODO: this is not JSON compatible, is this a problem?
-    keyguardResult: KeyguardResult | Error | null;
+    keyguardResult: KeyguardClient.RpcResult | Error | null;
     chosenWalletLabel: string | null;
     activeWalletId: string | null;
     activeUserFriendlyAddress: string | null;
@@ -45,7 +45,7 @@ const store: StoreOptions<RootState> = {
             const index = state.wallets.indexOf(existingWallet);
             state.wallets.splice(index, 1, walletInfo);
         },
-        setKeyguardResult(state, payload: KeyguardResult | Error) {
+        setKeyguardResult(state, payload: KeyguardClient.RpcResult | Error) {
             state.keyguardResult = payload;
         },
         setActiveAccount(state, payload: { walletId: string, userFriendlyAddress: string }) {

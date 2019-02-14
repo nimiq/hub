@@ -15,14 +15,14 @@ import { Component, Emit, Vue } from 'vue-property-decorator';
 import { SmallPage } from '@nimiq/vue-components';
 import { State } from 'vuex-class';
 import { RpcRequest, SimpleResult } from '../lib/RequestTypes';
-import { SimpleResult as KSimpleResult } from '@nimiq/keyguard-client';
+import KeyguardClient from '@nimiq/keyguard-client';
 import { Static } from '@/lib/StaticStore';
 import Success from '../components/Success.vue';
 
 @Component({components: {SmallPage, Success}})
 export default class SimpleSuccess extends Vue {
     @Static private request!: RpcRequest;
-    @State private keyguardResult!: KSimpleResult;
+    @State private keyguardResult!: KeyguardClient.SimpleResult;
 
     get text() {
         switch (this.$route.name) {

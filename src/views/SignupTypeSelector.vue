@@ -29,7 +29,7 @@
 import { Component, Emit, Vue } from 'vue-property-decorator';
 import { PageHeader, PageBody, PageFooter, SmallPage } from '@nimiq/vue-components';
 import { ParsedSignupRequest, RequestType } from '../lib/RequestTypes';
-import { CreateRequest, ImportRequest } from '@nimiq/keyguard-client';
+import KeyguardClient from '@nimiq/keyguard-client';
 import { Static } from '../lib/StaticStore';
 
 @Component({components: {PageHeader, PageBody, PageFooter, SmallPage}})
@@ -39,7 +39,7 @@ export default class SignupTypeSelector extends Vue {
     public createKeyguard() {
         const client = this.$rpc.createKeyguardClient();
 
-        const request: CreateRequest = {
+        const request: KeyguardClient.CreateRequest = {
             appName: this.request.appName,
             defaultKeyPath: `m/44'/242'/0'/0'`,
         };
@@ -54,7 +54,7 @@ export default class SignupTypeSelector extends Vue {
     public login() {
         const client = this.$rpc.createKeyguardClient();
 
-        const request: ImportRequest = {
+        const request: KeyguardClient.ImportRequest = {
             appName: this.request.appName,
             defaultKeyPath: `m/44'/242'/0'/0'`,
             requestedKeyPaths: [`m/44'/242'/0'/0'`],

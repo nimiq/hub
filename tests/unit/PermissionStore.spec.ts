@@ -1,8 +1,7 @@
-import { setup } from './_setup';
+import Nimiq from '@nimiq/core';
 import { Permission, PermissionStore } from '@/lib/PermissionStore';
 import Config from '@/lib/Config';
-
-setup();
+import Nimiq from '@nimiq/core';
 
 const indexedDB: IDBFactory = require('fake-indexeddb'); // tslint:disable-line:no-var-requires
 

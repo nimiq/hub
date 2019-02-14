@@ -1,3 +1,5 @@
+import Nimiq from '@nimiq/core-web';
+
 export enum ContractType {
     VESTING,
     HTLC,

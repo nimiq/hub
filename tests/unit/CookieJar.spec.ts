@@ -1,11 +1,9 @@
-import { setup } from './_setup';
+import Nimiq from '@nimiq/core';
 import { WalletType, WalletInfoEntry } from '@/lib/WalletInfo';
 import { AccountInfoEntry } from '@/lib/AccountInfo';
 import { ContractType } from '@/lib/ContractInfo';
 import CookieJar from '@/lib/CookieJar';
 import { Utf8Tools } from '@nimiq/utils';
-
-setup();
 
 const DUMMY_ADDRESS_HR1 = 'NQ86 6D3H 6MVD 2JV4 N77V FNA5 M9BL 2QSP 1P64';
 const DUMMY_ADDRESS_HR2 = 'NQ36 CPYA UTCK VBBG L5GG 8D36 SNHM K8MH DD7X';

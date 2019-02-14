@@ -7,13 +7,11 @@
 </template>
 
 <script lang="ts">
+import Nimiq from '@nimiq/core-web';
 import { Component, Emit, Vue } from 'vue-property-decorator';
 import { State } from 'vuex-class';
 import { SignMessageResult, SignMessageRequest } from '../lib/RequestTypes';
-import {
-    SignMessageRequest as KSignMessageRequest,
-    SignMessageResult as KSignMessageResult,
-} from '@nimiq/keyguard-client';
+import KeyguardClient from '@nimiq/keyguard-client';
 import { Static } from '@/lib/StaticStore';
 import Success from '../components/Success.vue';
 
@@ -21,8 +19,8 @@ import Success from '../components/Success.vue';
 export default class SimpleSuccess extends Vue {
     @Static private request!: SignMessageRequest;
     // The stored keyguardRequest does not have Uint8Array, only regular arrays
-    @Static private keyguardRequest!: KSignMessageRequest;
-    @State private keyguardResult!: KSignMessageResult;
+    @Static private keyguardRequest!: KeyguardClient.SignMessageRequest;
+    @State private keyguardResult!: KeyguardClient.SignMessageResult;
 
     @Emit()
     private done() {

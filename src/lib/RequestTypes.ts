@@ -1,3 +1,4 @@
+import Nimiq from '@nimiq/core-web';
 import { WalletType, WalletInfoEntry } from './WalletInfo';
 import { TX_VALIDITY_WINDOW, TX_MIN_VALIDITY_DURATION } from './Constants';
 import { State } from '@nimiq/rpc';
