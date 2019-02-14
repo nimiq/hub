@@ -1,7 +1,6 @@
 <template></template>
 
 <script lang="ts">
-
 import { Component, Vue } from 'vue-property-decorator';
 import { ParsedLoginRequest } from '../lib/RequestTypes';
 import { ImportRequest } from '@nimiq/keyguard-client';
