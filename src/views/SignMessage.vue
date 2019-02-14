@@ -24,6 +24,7 @@ import {
     SignMessageResult as KSignMessageResult,
 } from '@nimiq/keyguard-client';
 import { Utf8Tools } from '@nimiq/utils';
+import { ERROR_CANCELED } from '@/lib/Constants';
 
 @Component({components: {SmallPage}})
 export default class SignMessage extends Vue {
@@ -100,7 +101,7 @@ export default class SignMessage extends Vue {
 
     @Emit()
     private close() {
-        this.$rpc.reject(new Error('CANCELED'));
+        this.$rpc.reject(new Error(ERROR_CANCELED));
     }
 }
 </script>

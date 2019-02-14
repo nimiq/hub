@@ -24,3 +24,6 @@ export const WALLET_MAX_ALLOWED_ACCOUNT_GAP = 20;
 // Compatibility
 export const LEGACY_GROUPING_WALLET_ID = 'LEGACY';
 export const LEGACY_GROUPING_WALLET_LABEL = 'Single Accounts';
+
+// Errors
+export const ERROR_CANCELED = 'CANCELED';

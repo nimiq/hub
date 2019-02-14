@@ -14,7 +14,7 @@ import { Component, Emit, Vue } from 'vue-property-decorator';
 import { OnboardingMenu } from '@nimiq/vue-components';
 import { ParsedOnboardingRequest, RequestType } from '@/lib/RequestTypes';
 import { Static } from '@/lib/StaticStore';
-import { DEFAULT_KEY_PATH } from '@/lib/Constants';
+import { DEFAULT_KEY_PATH, ERROR_CANCELED } from '@/lib/Constants';
 
 @Component({components: {OnboardingMenu}})
 export default class OnboardingSelector extends Vue {
@@ -45,7 +45,7 @@ export default class OnboardingSelector extends Vue {
 
     @Emit()
     private close() {
-        this.$rpc.reject(new Error('CANCELED'));
+        this.$rpc.reject(new Error(ERROR_CANCELED));
     }
 }
 </script>

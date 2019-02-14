@@ -41,6 +41,7 @@ import Success from '../components/Success.vue';
 import { WalletInfo, WalletType } from '../lib/WalletInfo';
 import { WalletStore } from '@/lib/WalletStore';
 import { Static } from '../lib/StaticStore';
+import { ERROR_CANCELED } from '@/lib/Constants';
 
 /*
     In Case some sort auf Authentication with the wallet is desireable, there are 2 options:
@@ -133,7 +134,7 @@ export default class Rename extends Vue {
 
     @Emit()
     private close() {
-        this.$rpc.reject(new Error('CANCELED'));
+        this.$rpc.reject(new Error(ERROR_CANCELED));
     }
 }
 </script>

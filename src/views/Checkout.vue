@@ -56,7 +56,12 @@ import { WalletStore } from '@/lib/WalletStore';
 import { AccountInfo } from '@/lib/AccountInfo';
 import { WalletInfo, WalletType } from '@/lib/WalletInfo';
 import { State, Mutation } from 'vuex-class';
-import { TX_VALIDITY_WINDOW, LEGACY_GROUPING_WALLET_ID, LEGACY_GROUPING_WALLET_LABEL } from '@/lib/Constants';
+import {
+    TX_VALIDITY_WINDOW,
+    LEGACY_GROUPING_WALLET_ID,
+    LEGACY_GROUPING_WALLET_LABEL,
+    ERROR_CANCELED,
+} from '@/lib/Constants';
 import Network from '@/components/Network.vue';
 import Loader from '@/components/Loader.vue';
 
@@ -208,7 +213,7 @@ export default class Checkout extends Vue {
 
     @Emit()
     private close() {
-        this.$rpc.reject(new Error('CANCELED'));
+        this.$rpc.reject(new Error(ERROR_CANCELED));
     }
 
     private get processedWallets(): WalletInfo[] {
