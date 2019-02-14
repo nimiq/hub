@@ -14,7 +14,7 @@
     },
     "dependencies": {
         "@nimiq/keyguard-client": "0.1.6",
-        "@nimiq/network-client": "^0.1.3",
+        "@nimiq/network-client": "^0.1.5-beta2",
         "@nimiq/rpc": "^0.1.1",
         "@nimiq/style": "^0.4.1",
         "@nimiq/utils": "^0.1.0",
