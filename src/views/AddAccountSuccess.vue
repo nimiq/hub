@@ -15,7 +15,7 @@
 
                 <Account :address="createdAddress.toUserFriendlyAddress()" :label="accountLabel" :editable="true" @changed="onAccountLabelChange"/>
 
-                <button class="nq-button green submit" @click="done()">Back to your account</button>
+                <button class="nq-button green submit" @click="done()">Open your account</button>
             </PageBody>
         </SmallPage>
     </div>
