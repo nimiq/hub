@@ -6,7 +6,6 @@ import { ParsedLoginRequest } from '../lib/RequestTypes';
 import { ImportRequest } from '@nimiq/keyguard-client';
 import { Static } from '../lib/StaticStore';
 import { State } from 'vuex-class';
-import Config from 'config';
 
 @Component
 export default class Login extends Vue {

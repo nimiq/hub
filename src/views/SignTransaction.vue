@@ -7,7 +7,6 @@ import { SignTransactionRequest as KSignTransactionRequest } from '@nimiq/keygua
 import { WalletStore } from '@/lib/WalletStore';
 import staticStore, { Static } from '../lib/StaticStore';
 import { State } from 'vuex-class';
-import Config from 'config';
 
 @Component
 export default class SignTransaction extends Vue {

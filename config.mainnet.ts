@@ -1,4 +1,4 @@
 export default {
-    keyguardEndpoint: 'https://keyguard-next.nimiq.com',
+    keyguardEndpoint: 'https://keyguard.nimiq.com',
     network: 'main',
 };

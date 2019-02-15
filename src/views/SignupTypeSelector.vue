@@ -31,7 +31,6 @@ import { PageHeader, PageBody, PageFooter, SmallPage } from '@nimiq/vue-componen
 import { ParsedSignupRequest, RequestType } from '../lib/RequestTypes';
 import { CreateRequest, ImportRequest } from '@nimiq/keyguard-client';
 import { Static } from '../lib/StaticStore';
-import Config from 'config';
 
 @Component({components: {PageHeader, PageBody, PageFooter, SmallPage}})
 export default class SignupTypeSelector extends Vue {

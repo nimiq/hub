@@ -1,6 +1,5 @@
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const WriteFileWebpackPlugin = require('write-file-webpack-plugin');
-const webpack = require('webpack');
 const path = require('path');
 
 const buildName = !process.env.build ? 'local' : process.env.build
