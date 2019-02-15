@@ -2,13 +2,13 @@
     <div class="container pad-bottom">
         <SmallPage>
             <PageHeader :progressIndicator="true" :numberSteps="numberSteps" :step="numberSteps">
-                Your wallet is ready
+                Your account is ready
             </PageHeader>
             <PageBody>
                 <div class="success-box nq-icon trumpet nq-green-bg">
                     <h2 class="nq-h2">Awesome!</h2>
-                    <p class="nq-text">Your Keyguard Wallet is set up. It already contains your newly created account.</p>
-                    <p class="nq-text">You can add more accounts to it later.</p>
+                    <p class="nq-text">Your Keyguard account is set up. It already contains your newly created address.</p>
+                    <p class="nq-text">You can add more addresses to it later.</p>
                 </div>
 
                 <div class="wallet-label">
@@ -19,7 +19,7 @@
                 <Account :address="createdAddress.toUserFriendlyAddress()" :label="accountLabel" :editable="true"
                          @changed="onAccountLabelChange" v-if="!!createdAddress"/>
 
-                <button class="nq-button green submit" @click="done()">Open your wallet</button>
+                <button class="nq-button green submit" @click="done()">Open your account</button>
             </PageBody>
         </SmallPage>
     </div>
