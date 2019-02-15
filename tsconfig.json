@@ -31,7 +31,6 @@
   },
   "include": [
     "types/Nimiq.d.ts",
-    "types/vue-async-computed.d.ts",
     "types/KeyguardRequest.d.ts",
     "config.d.ts",
     "src/**/*.ts",

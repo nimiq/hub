@@ -10,6 +10,7 @@ import { StaticStore } from '@/lib/StaticStore';
 import { WalletStore } from './WalletStore';
 import CookieJar from '@/lib/CookieJar';
 import { Raven } from 'vue-raven'; // Sentry.io SDK
+import Config from 'config';
 
 export default class RpcApi {
     private _server: RpcServer;
@@ -23,7 +24,7 @@ export default class RpcApi {
         this._staticStore = staticStore;
         this._router = router;
         this._server = new RpcServer('*');
-        this._keyguardClient = new KeyguardClient();
+        this._keyguardClient = new KeyguardClient(Config.keyguardEndpoint);
 
         this._registerAccountsApis([
             RequestType.SIGN_TRANSACTION,
@@ -55,9 +56,9 @@ export default class RpcApi {
         this._keyguardClient.init().catch(console.error); // TODO: Provide better error handling here
     }
 
-    public createKeyguardClient(endpoint?: string) {
+    public createKeyguardClient() {
         const behavior = new RedirectRequestBehavior(undefined, this._exportState());
-        const client = new KeyguardClient(endpoint, behavior);
+        const client = new KeyguardClient(Config.keyguardEndpoint, behavior);
         return client;
     }
 

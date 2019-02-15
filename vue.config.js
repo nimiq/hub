@@ -13,7 +13,7 @@ const configureWebpack = {
     // Resolve config for yarn build
     resolve: {
         alias: {
-          config: path.join(__dirname, `config.${buildName}.ts`)
+            config: path.join(__dirname, `config.${buildName}.ts`)
         }
     },
 };
@@ -58,20 +58,12 @@ module.exports = {
     chainWebpack: config => {
         config.optimization.delete('splitChunks'),
         config.module
-        .rule('ts')
-        .use('ts-loader')
-          .loader('ts-loader')
-          .tap(options => {
-            options.configFile = `tsconfig.${buildName}.json`
-            return options
-          }),
-        config.module
-          .rule('tsx')
-          .use('ts-loader')
+            .rule('ts')
+            .use('ts-loader')
             .loader('ts-loader')
             .tap(options => {
-              options.configFile = `tsconfig.${buildName}.json`
-              return options
-            })
+                options.configFile = `tsconfig.${buildName}.json`
+                return options
+        })
     }
 }

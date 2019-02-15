@@ -38,7 +38,7 @@ export default class SignupTypeSelector extends Vue {
     @Static private request!: ParsedSignupRequest;
 
     public createKeyguard() {
-        const client = this.$rpc.createKeyguardClient(Config.keyguardEndpoint);
+        const client = this.$rpc.createKeyguardClient();
 
         const request: CreateRequest = {
             appName: this.request.appName,

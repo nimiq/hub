@@ -22,7 +22,7 @@ export default class Login extends Vue {
             requestedKeyPaths: [`m/44'/242'/0'/0'`],
         };
 
-        const client = this.$rpc.createKeyguardClient(Config.keyguardEndpoint);
+        const client = this.$rpc.createKeyguardClient();
         client.import(request).catch(console.error); // TODO: proper error handling
     }
 }

@@ -9,6 +9,7 @@ import staticStore, { Static } from '../lib/StaticStore';
 import { State } from 'vuex-class';
 import Config from 'config';
 
+@Component
 export default class SignTransaction extends Vue {
     @Static private request!: ParsedSignTransactionRequest;
     @State private keyguardResult?: KeyguardRequest.SignTransactionResult;
@@ -50,7 +51,7 @@ export default class SignTransaction extends Vue {
         });
         staticStore.keyguardRequest = storedRequest;
 
-        const client = this.$rpc.createKeyguardClient(Config.keyguardEndpoint);
+        const client = this.$rpc.createKeyguardClient();
         client.signTransaction(request).catch(console.error); // TODO: proper error handling
     }
 }
