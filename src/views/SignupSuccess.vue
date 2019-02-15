@@ -27,7 +27,7 @@ import {
     ACCOUNT_DEFAULT_LABEL_LEDGER,
 } from '@/lib/Constants';
 
-@Component({components: {SmallPage}})
+@Component({components: {SmallPage, Loader}})
 export default class SignupSuccess extends Vue {
     @State private keyguardResult!: KeyguardRequest.KeyResult[];
 
