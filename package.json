@@ -13,10 +13,10 @@
         "postinstall": "cd client && yarn"
     },
     "dependencies": {
+        "@nimiq/core-web": "1.4.3",
         "@nimiq/keyguard-client": "0.2.0",
         "@nimiq/network-client": "^0.1.5",
         "@nimiq/ledgerjs": "https://github.com/nimiq/ledger-api.git",
-        "@nimiq/core-web": "1.4.3",
         "@nimiq/rpc": "^0.1.1",
         "@nimiq/style": "^0.4.1",
         "@nimiq/utils": "^0.1.0",
