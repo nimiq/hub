@@ -597,10 +597,10 @@
   resolved "https://registry.yarnpkg.com/@nimiq/core-web/-/core-web-1.4.2.tgz#c6b58ffd802ecbf868538bba4aaf0349c3c60d43"
   integrity sha512-TK1xCwG6hHir/Z4uHrAWX+fwFeJUKOjya84XAM5Tg0qT+paqfG0PHZ6/IAJBe7cSOc9OcwREaqWzWZWvS3y1dQ==
 
-"@nimiq/core@^1.4.2":
-  version "1.4.2"
-  resolved "https://registry.yarnpkg.com/@nimiq/core/-/core-1.4.2.tgz#ee5aaaa5b3f7213b766d91afd45d8b5d59158a64"
-  integrity sha512-nO1nby09dg1ZHGnCUfvjnYiTaOp0mtgQzAlUgmA76ASq0Z5daoifxxWHnaB0mMwfHLmEXF9VBPjzvlSkTA1kng==
+"@nimiq/core@^1.4.3":
+  version "1.4.3"
+  resolved "https://registry.yarnpkg.com/@nimiq/core/-/core-1.4.3.tgz#aac9256fddcac5fe7fd622ec871d2982602ce946"
+  integrity sha512-Pn9zCgGKpeON6HoM8QA3ngo5FSqVhFhDOiuTFPFWTU99NvVO+CWX5VNj3dTUirUgNsjbzuS3+W35c48BZoBwfw==
   dependencies:
     "@nimiq/jungle-db" "^0.9.17"
     atob "^2.0.3"
