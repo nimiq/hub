@@ -25,7 +25,7 @@
 </template>
 
 <script lang="ts">
-import Nimiq,{ Wallet } from '@nimiq/core-web';
+import Nimiq from '@nimiq/core-web';
 import { Component, Emit, Vue } from 'vue-property-decorator';
 import { ParsedLoginRequest, LoginResult, RequestType } from '../lib/RequestTypes';
 import { State } from 'vuex-class';

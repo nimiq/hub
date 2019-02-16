@@ -1,4 +1,5 @@
 // tslint:disable no-bitwise no-shadowed-variable
+
 import Nimiq from '@nimiq/core-web';
 import { WalletInfoEntry, WalletType } from './WalletInfo';
 import { Utf8Tools } from '@nimiq/utils';
