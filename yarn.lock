@@ -597,11 +597,6 @@
   resolved "https://registry.yarnpkg.com/@nimiq/core-web/-/core-web-1.4.3.tgz#190d7390324623672fafbbc93841bcf215d2af01"
   integrity sha512-47JMAx8bFcr2uev+QgX4saBUvRQo/8akQdpvf0z1F5N3I8FPyIfEWRjPW2Xu28C+MOdIZ/VkHL/YmMiGBBtEMA==
 
-"@nimiq/core-web@^1.4.2":
-  version "1.4.2"
-  resolved "https://registry.yarnpkg.com/@nimiq/core-web/-/core-web-1.4.2.tgz#c6b58ffd802ecbf868538bba4aaf0349c3c60d43"
-  integrity sha512-TK1xCwG6hHir/Z4uHrAWX+fwFeJUKOjya84XAM5Tg0qT+paqfG0PHZ6/IAJBe7cSOc9OcwREaqWzWZWvS3y1dQ==
-
 "@nimiq/core@1.4.3":
   version "1.4.3"
   resolved "https://registry.yarnpkg.com/@nimiq/core/-/core-1.4.3.tgz#aac9256fddcac5fe7fd622ec871d2982602ce946"
@@ -632,10 +627,10 @@
     levelup "^2.0.2"
     node-lmdb "0.6.0"
 
-"@nimiq/keyguard-client@0.1.6-beta.13":
-  version "0.1.6-beta.13"
-  resolved "https://registry.yarnpkg.com/@nimiq/keyguard-client/-/keyguard-client-0.1.6-beta.13.tgz#f910b530584f6d1300ef50b92793b6b2e6a64958"
-  integrity sha512-n2Ry2f0k5aihq/XUr8sw1TQ9cnxnbPRdstUq3KwEO8aRbO7+MpbXgHjKXwlsvyF6ee68O+3rU2FFb8kvj1OZxQ==
+"@nimiq/keyguard-client@0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@nimiq/keyguard-client/-/keyguard-client-0.2.0.tgz#83cb50912741fe7c7cab06a7306e69525adf830c"
+  integrity sha512-0o8Ljjm2QFdv+CvOb1RmflIDaKvVQx6nIkjnTMSLUo3oWPGDxpSepYRe3K+pTZHRb1XEb5rkYQzQJ6QttI/09g==
   dependencies:
     "@nimiq/rpc" "^0.1.1"
 
@@ -643,12 +638,12 @@
   version "0.0.0"
   resolved "https://github.com/nimiq/ledger-api.git#a7d86a47b46d21ec2afea94086b2942ea1adb575"
 
-"@nimiq/network-client@^0.1.5-beta2":
-  version "0.1.5-beta2"
-  resolved "https://registry.yarnpkg.com/@nimiq/network-client/-/network-client-0.1.5-beta2.tgz#205999715800b178a14ea40be26a787fb453a045"
-  integrity sha512-jGz4x9x13ZyjR5HR7VNtAbmvo2lFm1oS/2jFxOAJ+t019YpdhfnNVoTXYWFU4y04XKy1gC/JMV2xmSnEEGoThQ==
+"@nimiq/network-client@^0.1.5":
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/@nimiq/network-client/-/network-client-0.1.5.tgz#18420de8c8c342a4762bf533ffc358c96cc8adca"
+  integrity sha512-PFZhCTbh50g91T1Dnq4dFhfQRjTvch267JYbobcgdtAjq/EGxnXhs6BG/O2G/4jS7MaApIw6eRnU4FODXeQQlg==
   dependencies:
-    "@nimiq/core-web" "^1.4.2"
+    "@nimiq/core-web" "1.4.3"
     "@nimiq/rpc-events" "^0.0.5"
 
 "@nimiq/rpc-events@^0.0.5":
