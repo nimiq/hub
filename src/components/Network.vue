@@ -222,7 +222,7 @@ class Network extends Vue {
     }
 
     private async _loadNimiq() {
-        await Nimiq.WasmHelper.doImportBrowser();
+        await Nimiq.WasmHelper.doImport();
         let genesisConfigInitialized = true;
         try {
             Nimiq.GenesisConfig.NETWORK_ID; // tslint:disable-line:no-unused-expression

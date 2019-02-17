@@ -128,7 +128,7 @@ export default class WalletInfoCollector {
             WalletInfoCollector._keyguardClient = WalletInfoCollector._keyguardClient || new KeyguardClient();
         } else if (walletType === WalletType.LEDGER) {
             WalletInfoCollector._wasmInitializationPromise =
-                WalletInfoCollector._wasmInitializationPromise || Nimiq.WasmHelper.doImportBrowser();
+                WalletInfoCollector._wasmInitializationPromise || Nimiq.WasmHelper.doImport();
             WalletInfoCollector._wasmInitializationPromise
                 .catch(() => delete WalletInfoCollector._wasmInitializationPromise);
         }

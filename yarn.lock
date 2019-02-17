@@ -592,10 +592,10 @@
     call-me-maybe "^1.0.1"
     glob-to-regexp "^0.3.0"
 
-"@nimiq/core-types@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@nimiq/core-types/-/core-types-1.0.1.tgz#344cfff6071bf12cfb557f82d586d42cae779797"
-  integrity sha512-Td6rAFhMRJKYqlSmTGw7vInz3j2+MMWvCeCjK8ABUqdYzi9ArE7RBpaeAu4XUQkZpWjFx0DBYWZMxtinwXGQjA==
+"@nimiq/core-web@1.4.3":
+  version "1.4.3"
+  resolved "https://registry.yarnpkg.com/@nimiq/core-web/-/core-web-1.4.3.tgz#190d7390324623672fafbbc93841bcf215d2af01"
+  integrity sha512-47JMAx8bFcr2uev+QgX4saBUvRQo/8akQdpvf0z1F5N3I8FPyIfEWRjPW2Xu28C+MOdIZ/VkHL/YmMiGBBtEMA==
 
 "@nimiq/core@^1.4.1":
   version "1.4.1"

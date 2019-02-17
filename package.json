@@ -31,7 +31,7 @@
     "devDependencies": {
         "@babel/core": "^7.0.0",
         "@nimiq/core": "^1.4.1",
-        "@nimiq/core-types": "^1.0.1",
+        "@nimiq/core-web": "1.4.3",
         "@types/jest": "^23.1.4",
         "@vue/babel-preset-app": "^3.0.1",
         "@vue/cli-plugin-typescript": "^3.0.1",

@@ -56,7 +56,6 @@
 
 // tslint:disable-next-line:max-line-length
 // TODO: change implementation to be flow typed, integrate into ledger-api repository and bundle with ledger provided flow libraries directly. LedgerJs:any type is just a temporary workaround
-import Observable = Nimiq.Observable;
 
 type LedgerJs = any;
 // tslint:disable-next-line:variable-name no-var-requires
@@ -80,7 +79,7 @@ type SignedTransaction = TransactionInfo & {
     hash: string, // Base64
 };
 
-class LedgerApiRequest<T> extends Observable {
+class LedgerApiRequest<T> extends Nimiq.Observable {
     public static readonly EVENT_CANCEL = 'cancel';
     public readonly type: LedgerApi.RequestType;
     public readonly params: LedgerApi.RequestParams;
