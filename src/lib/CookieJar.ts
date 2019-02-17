@@ -25,7 +25,7 @@ class CookieJar {
     public static fill(wallets: WalletInfoEntry[]) {
         const maxAge = 60 * 60 * 24 * 365; // 1 year
         const encodedWallets = this.encodeCookie(wallets);
-        document.cookie = `w=${encodedWallets};max-age=${maxAge.toString()}`;
+        document.cookie = `w=${encodedWallets};max-age=${maxAge.toString()};Secure;SameSite=strict`;
     }
 
     public static async eat(): Promise<WalletInfoEntry[]> {
