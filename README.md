@@ -485,7 +485,7 @@ enum AccountsClient.RequestType {
 
 TODO
 
-If you want to run your own instance of Accounts Manager, you also need to run an instance of (Keyguard)[https://github.com/nimiq/keyguard-next/].
+If you want to run your own instance of Accounts Manager, you also need to run an instance of [keyguard](https://github.com/nimiq/keyguard-next/).
 
 ## Contribute
 
