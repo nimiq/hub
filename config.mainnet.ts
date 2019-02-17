@@ -1,4 +1,6 @@
+import { NETWORK_MAIN } from './src/lib/Constants';
+
 export default {
     keyguardEndpoint: 'https://keyguard.nimiq.com',
-    network: 'main',
+    network: NETWORK_MAIN,
 };
