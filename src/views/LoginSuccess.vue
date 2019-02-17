@@ -23,12 +23,13 @@ export default class LoginSuccess extends Vue {
     @Static private request!: ParsedLoginRequest;
     @State private keyguardResult!: KeyguardRequest.KeyResult[];
 
-    private walletInfo: WalletInfo | null = null;
+    private walletInfos: WalletInfo[] = [];
     private retrievalFailed: boolean = false;
     private state: Loader.State = Loader.State.LOADING;
     private title: string = 'Collecting your addresses';
 
     private async mounted() {
+        // TODO: Handle import of both a legacy and bip39 key!
         this.keyguardResult.map(async (keyResult) => {
             // The Keyguard always returns (at least) one derived Address,
             const keyguardResultAccounts = keyResult.addresses.map((addressObj) => ({
@@ -40,12 +41,13 @@ export default class LoginSuccess extends Vue {
             while (true) {
                 try {
                     tryCount += 1;
-                    this.walletInfo = await WalletInfoCollector.collectWalletInfo(
+                    const walletInfo = await WalletInfoCollector.collectWalletInfo(
                         keyResult.keyType,
                         keyResult.keyId,
                         keyguardResultAccounts,
                     );
-                    await WalletStore.Instance.put(this.walletInfo!);
+                    await WalletStore.Instance.put(walletInfo);
+                    this.walletInfos.push(walletInfo);
                     this.retrievalFailed = false;
                     this.done();
                     break;
@@ -54,17 +56,17 @@ export default class LoginSuccess extends Vue {
                     if (tryCount >= 5) throw e;
                 }
             }
-        }
+        });
     }
 
     @Emit()
     private done() {
-        if (!this.walletInfo) throw new Error('WalletInfo not ready.');
+        if (!this.walletInfos.length) throw new Error('WalletInfo not ready.');
         const result: LoginResult = {
-            walletId: this.walletInfo.id,
-            label: this.walletInfo.label,
-            type: this.walletInfo.type,
-            accounts: Array.from(this.walletInfo.accounts.values()).map((addressInfo) => ({
+            walletId: this.walletInfos[0].id,
+            label: this.walletInfos[0].label,
+            type: this.walletInfos[0].type,
+            accounts: Array.from(this.walletInfos[0].accounts.values()).map((addressInfo) => ({
                 address: addressInfo.userFriendlyAddress,
                 label: addressInfo.label,
             })),
