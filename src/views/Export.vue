@@ -7,11 +7,12 @@ import { SimpleRequest } from '@nimiq/keyguard-client';
 import { State } from 'vuex-class';
 import { WalletStore } from '@/lib/WalletStore';
 import { Static } from '../lib/StaticStore';
+import KeyguardClient from '@nimiq/keyguard-client';
 
 @Component
 export default class Export extends Vue {
     @Static private request!: ParsedExportRequest;
-    @State private keyguardResult!: KeyguardRequest.SimpleResult;
+    @State private keyguardResult!: KeyguardClient.SimpleResult;
 
     public async created() {
         if (this.keyguardResult) return;

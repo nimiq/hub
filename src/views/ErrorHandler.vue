@@ -7,11 +7,12 @@ import { Static } from '../lib/StaticStore';
 import { ParsedRpcRequest, ParsedExportRequest, RequestType } from '../lib/RequestTypes';
 import { Errors } from '@nimiq/keyguard-client';
 import { WalletStore } from '../lib/WalletStore';
+import KeyguardClient from '@nimiq/keyguard-client';
 
 @Component
 export default class ErrorHandler extends Vue {
     @Static protected request!: ParsedRpcRequest;
-    @Static protected keyguardRequest?: KeyguardRequest.KeyguardRequest;
+    @Static protected keyguardRequest?: KeyguardClient.Request;
     @State protected keyguardResult!: Error;
 
     public async created() {
@@ -27,7 +28,7 @@ export default class ErrorHandler extends Vue {
                     || this.request.kind === RequestType.SIGN_MESSAGE) {
                 // Accounts request was Checkout/SignMessage.
                 // The walletId (keyId in the Keyguard environment) is in the keyguardRequest after picking the account
-                walletId = (this.keyguardRequest as KeyguardRequest.SignTransactionRequest).keyId;
+                walletId = (this.keyguardRequest as KeyguardClient.SignTransactionRequest).keyId;
             } else {
                 // This really should not happen.
                 // Executing this code would mean i.e. a CreateRequest fired KEY_ID_NOT_FOUND which it does not throw

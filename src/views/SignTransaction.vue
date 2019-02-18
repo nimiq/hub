@@ -3,7 +3,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { ParsedSignTransactionRequest } from '../lib/RequestTypes';
-import { SignTransactionRequest as KSignTransactionRequest } from '@nimiq/keyguard-client';
+import KeyguardClient from '@nimiq/keyguard-client';
 import { WalletStore } from '@/lib/WalletStore';
 import staticStore, { Static } from '../lib/StaticStore';
 import { State } from 'vuex-class';
@@ -11,7 +11,7 @@ import { State } from 'vuex-class';
 @Component
 export default class SignTransaction extends Vue {
     @Static private request!: ParsedSignTransactionRequest;
-    @State private keyguardResult?: KeyguardRequest.SignTransactionResult;
+    @State private keyguardResult?: KeyguardClient.SignTransactionResult;
 
     public async created() {
         if (this.keyguardResult) return;
@@ -22,7 +22,7 @@ export default class SignTransaction extends Vue {
         const account = wallet.accounts.get(this.request.sender.toUserFriendlyAddress());
         if (!account) throw new Error('Sender address not found!'); // TODO Search contracts when address not found
 
-        const request: KSignTransactionRequest = {
+        const request: KeyguardClient.SignTransactionRequest = {
             layout: 'standard',
             appName: this.request.appName,
 

@@ -36,6 +36,7 @@ import { SignupResult } from '@/lib/RequestTypes';
 import Input from '@/components/Input.vue';
 import { WALLET_DEFAULT_LABEL_KEYGUARD, WALLET_DEFAULT_LABEL_LEDGER, ACCOUNT_DEFAULT_LABEL_KEYGUARD,
     ACCOUNT_DEFAULT_LABEL_LEDGER } from '@/lib/Constants';
+import KeyguardClient from '@nimiq/keyguard-client';
 
 @Component({components: {PageHeader, PageBody, Account, Input, SmallPage}})
 export default class SignupSuccess extends Vue {
@@ -43,9 +44,9 @@ export default class SignupSuccess extends Vue {
     private static readonly STEPS_LEDGER_SIGNUP = 3;
 
     @Prop({ default: null })
-    public createResult!: KeyguardRequest.KeyResult[];
+    public createResult!: KeyguardClient.KeyResult;
 
-    @State private keyguardResult?: KeyguardRequest.KeyResult[];
+    @State private keyguardResult?: KeyguardClient.KeyResult;
 
     private numberSteps!: number;
     private walletType!: WalletType;

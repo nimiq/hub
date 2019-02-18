@@ -35,11 +35,12 @@ import { PageHeader, PageBody, AccountList, PageFooter, SmallPage } from '@nimiq
 import Loader from '@/components/Loader.vue';
 import WalletInfoCollector from '@/lib/WalletInfoCollector';
 import Input from '@/components/Input.vue';
+import KeyguardClient from '@nimiq/keyguard-client';
 
 @Component({components: {PageHeader, PageBody, Input, AccountList, Loader, PageFooter, SmallPage}})
 export default class LoginSuccess extends Vue {
     @Static private request!: ParsedLoginRequest;
-    @State private keyguardResult!: KeyguardRequest.KeyResult[];
+    @State private keyguardResult!: KeyguardClient.KeyResult;
 
     private walletInfo: WalletInfo | null = null;
 

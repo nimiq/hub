@@ -8,11 +8,12 @@ import { Static } from '../lib/StaticStore';
 import { WalletStore } from '@/lib/WalletStore';
 import { WalletType } from '@/lib/WalletInfo';
 import { State } from 'vuex-class';
+import KeyguardClient from '@nimiq/keyguard-client';
 
 @Component
 export default class AddAccount extends Vue {
     @Static private request!: ParsedAddAccountRequest;
-    @State private keyguardResult?: KeyguardRequest.DeriveAddressResult;
+    @State private keyguardResult?: KeyguardClient.DeriveAddressResult;
 
     public async created() {
         if (this.keyguardResult) return;

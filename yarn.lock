@@ -597,6 +597,11 @@
   resolved "https://registry.yarnpkg.com/@nimiq/core-types/-/core-types-1.0.1.tgz#344cfff6071bf12cfb557f82d586d42cae779797"
   integrity sha512-Td6rAFhMRJKYqlSmTGw7vInz3j2+MMWvCeCjK8ABUqdYzi9ArE7RBpaeAu4XUQkZpWjFx0DBYWZMxtinwXGQjA==
 
+"@nimiq/core-web@1.4.3":
+  version "1.4.3"
+  resolved "https://registry.yarnpkg.com/@nimiq/core-web/-/core-web-1.4.3.tgz#190d7390324623672fafbbc93841bcf215d2af01"
+  integrity sha512-47JMAx8bFcr2uev+QgX4saBUvRQo/8akQdpvf0z1F5N3I8FPyIfEWRjPW2Xu28C+MOdIZ/VkHL/YmMiGBBtEMA==
+
 "@nimiq/core@^1.4.1":
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/@nimiq/core/-/core-1.4.1.tgz#8558dd0dc8d34ffd866ea0a35f1fcb2ec4dc5d24"
@@ -627,10 +632,10 @@
     levelup "^2.0.2"
     node-lmdb "0.6.0"
 
-"@nimiq/keyguard-client@^0.1.7":
-  version "0.1.7"
-  resolved "https://registry.yarnpkg.com/@nimiq/keyguard-client/-/keyguard-client-0.1.7.tgz#f6133f53e2bbc5cdb965683e208d375c18e20aa9"
-  integrity sha512-nV1fXOZ1NVqgVvXcsUTwe3dbC6nODUC826+krDGGLzZFxdfgfR0gH1dk6rENFLQHNNZhtKqzAaaoxl0w6mDj1A==
+"@nimiq/keyguard-client@^0.2.1-beta1":
+  version "0.2.1-beta1"
+  resolved "https://registry.yarnpkg.com/@nimiq/keyguard-client/-/keyguard-client-0.2.1-beta1.tgz#6f27b81a40365b5b628be8d87dc90a9263e6fd9a"
+  integrity sha512-bU+LuWR8PpdxY6+MXESYUvb36idgCAbvA2/vR34o79DNL51LLL3pMlz4FzFO7TEK9iB3ew6qtEEwM8rCnAFx9g==
   dependencies:
     "@nimiq/rpc" "^0.1.1"
 
@@ -638,11 +643,12 @@
   version "0.0.0"
   resolved "https://github.com/nimiq/ledger-api.git#a7d86a47b46d21ec2afea94086b2942ea1adb575"
 
-"@nimiq/network-client@^0.1.3":
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/@nimiq/network-client/-/network-client-0.1.3.tgz#9ad0289b26aa3439a62151586660bb8e170ffe3c"
-  integrity sha512-Pky0h00F8PTL1ymqyksRWZW1Tm/mjV3SUf5zuQ7+7x9WnYHpg+/oKpTWrKIO8WsdJUtGuxQtx2prNvI5qh10Nw==
+"@nimiq/network-client@^0.1.5":
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/@nimiq/network-client/-/network-client-0.1.5.tgz#18420de8c8c342a4762bf533ffc358c96cc8adca"
+  integrity sha512-PFZhCTbh50g91T1Dnq4dFhfQRjTvch267JYbobcgdtAjq/EGxnXhs6BG/O2G/4jS7MaApIw6eRnU4FODXeQQlg==
   dependencies:
+    "@nimiq/core-web" "1.4.3"
     "@nimiq/rpc-events" "^0.0.5"
 
 "@nimiq/rpc-events@^0.0.5":
