@@ -27,7 +27,7 @@
 <script lang="ts">
 import { Component, Emit, Vue } from 'vue-property-decorator';
 import { PageBody, SmallPage } from '@nimiq/vue-components';
-import { ParsedSignupRequest, SignupResult } from '../lib/RequestTypes';
+import { ParsedSignupRequest, OnboardingResult } from '../lib/RequestTypes';
 import { ResponseStatus, State as RpcState } from '@nimiq/rpc';
 import { Static } from '../lib/StaticStore';
 import LedgerApi from '../lib/LedgerApi';
@@ -155,14 +155,14 @@ export default class SignupLedger extends Vue {
                 0, // balance 0 because if user has to select an account, it's gonna be an unused one
             ));
         }
-        this.$forceUpdate(); // because vue does not recognize changes in waletInfo.accounts map // TODO verify
+        this.$forceUpdate(); // because vue does not recognize changes in walletInfo.accounts map // TODO verify
     }
 
     @Emit()
     private async done() {
         this.state = SignupLedger.State.FINISHED;
         setTimeout(() => {
-            const result: SignupResult = {
+            const result: OnboardingResult = {
                 walletId: this.walletInfo!.id,
                 label: this.walletInfo!.label,
                 type: this.walletInfo!.type,

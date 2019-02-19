@@ -10,6 +10,7 @@ import { StaticStore } from '@/lib/StaticStore';
 import { WalletStore } from './WalletStore';
 import CookieJar from '@/lib/CookieJar';
 import { Raven } from 'vue-raven'; // Sentry.io SDK
+import { ERROR_CANCELED } from './Constants';
 import Config from 'config';
 
 export default class RpcApi {
@@ -29,6 +30,7 @@ export default class RpcApi {
         this._registerAccountsApis([
             RequestType.SIGN_TRANSACTION,
             RequestType.CHECKOUT,
+            RequestType.ONBOARD,
             RequestType.SIGNUP,
             RequestType.LOGIN,
             RequestType.EXPORT,
@@ -77,7 +79,7 @@ export default class RpcApi {
     }
 
     public reject(error: Error) {
-        const ignoredErrors = [ 'CANCEL', 'Request aborted' ];
+        const ignoredErrors = [ ERROR_CANCELED, 'Request aborted' ];
         if (ignoredErrors.indexOf(error.message) < 0) {
             if (window.location.origin === 'https://accounts.nimiq-testnet.com') {
                 Raven.captureException(error);
@@ -95,7 +97,7 @@ export default class RpcApi {
         }
 
         // Check for originalRouteName in StaticStore and route there
-        if (this._staticStore.originalRouteName && (!(result instanceof Error) || result.message !== 'CANCELED')) {
+        if (this._staticStore.originalRouteName && (!(result instanceof Error) || result.message !== ERROR_CANCELED)) {
             this._staticStore.sideResult = result;
 
             // Recreate original URL with original query parameters
@@ -192,7 +194,7 @@ export default class RpcApi {
                 // Recover state
                 this._recoverState(state);
 
-                if (error.message === 'CANCEL') {
+                if (error.message === ERROR_CANCELED) {
                     this._staticStore.rpcState!.reply(ResponseStatus.ERROR, error);
                     return;
                 }
