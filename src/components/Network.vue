@@ -13,7 +13,8 @@ import {
     SignTransactionResult as KSignTransactionResult,
 } from '@nimiq/keyguard-client';
 import { NetworkClient, DetailedPlainTransaction } from '@nimiq/network-client';
-import Config from '../lib/Config';
+import Config from 'config';
+import { NETWORK_TEST, NETWORK_DEV, NETWORK_MAIN, ERROR_INVALID_NETWORK } from '../lib/Constants';
 
 @Component
 class Network extends Vue {
@@ -230,7 +231,19 @@ class Network extends Vue {
             genesisConfigInitialized = false;
         }
         if (!genesisConfigInitialized) {
-            Nimiq.GenesisConfig[Config.network]();
+            switch (Config.network) {
+                case NETWORK_TEST:
+                    Nimiq.GenesisConfig.test();
+                    break;
+                case NETWORK_MAIN:
+                    Nimiq.GenesisConfig.main();
+                    break;
+                case NETWORK_DEV:
+                    Nimiq.GenesisConfig.dev();
+                    break;
+                default:
+                    throw new Error(ERROR_INVALID_NETWORK);
+            }
         }
     }
 
