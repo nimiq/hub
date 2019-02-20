@@ -14,11 +14,12 @@ import { SmallPage } from '@nimiq/vue-components';
 import { WalletStore } from '@/lib/WalletStore';
 import { Static } from '@/lib/StaticStore';
 import Loader from '../components/Loader.vue';
+import KeyguardClient from '@nimiq/keyguard-client';
 
 @Component({components: {Loader, SmallPage}})
 export default class LogoutSuccess extends Vue {
     @Static private request!: ParsedLogoutRequest;
-    @State private keyguardResult!: KeyguardRequest.SimpleResult;
+    @State private keyguardResult!: KeyguardClient.SimpleResult;
 
     public mounted() {
         WalletStore.Instance.remove(this.request.walletId);
