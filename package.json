@@ -42,7 +42,7 @@
         "copy-webpack-plugin": "^4.5.2",
         "fake-indexeddb": "^2.0.4",
         "ts-jest": "^23.0.1",
-        "typescript": "^3.0.1",
+        "typescript": "^3.3.3",
         "vue-template-compiler": "^2.5.16",
         "write-file-webpack-plugin": "^4.3.2"
     }
