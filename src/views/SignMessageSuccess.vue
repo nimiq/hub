@@ -11,8 +11,8 @@ import { Component, Emit, Vue } from 'vue-property-decorator';
 import { State } from 'vuex-class';
 import { SignMessageResult, SignMessageRequest } from '../lib/RequestTypes';
 import {
-    // @ts-ignore
-    SignMessageRequest as KSignMessageRequest, SignMessageResult as KSignMessageResult,
+    SignMessageRequest as KSignMessageRequest,
+    SignMessageResult as KSignMessageResult,
 } from '@nimiq/keyguard-client';
 import { Static } from '@/lib/StaticStore';
 import Success from '../components/Success.vue';
