@@ -38,7 +38,6 @@ const Rename                  = () => import(/*webpackChunkName: "rename"*/ './v
 const Migrate                 = () => import(/*webpackChunkName: "migrate"*/ './views/Migrate.vue');
 
 const SignMessage             = () => import(/*webpackChunkName: "sign-message"*/ './views/SignMessage.vue');
-const SignMessageOverview     = () => import(/*webpackChunkName: "sign-message"*/ './views/SignMessageOverview.vue');
 const SignMessageSuccess      = () => import(/*webpackChunkName: "sign-message"*/ './views/SignMessageSuccess.vue');
 const SignMessageErrorHandler = () => import(/*webpackChunkName: "sign-message"*/
     './views/SignMessageErrorHandler.vue');
@@ -229,23 +228,11 @@ export default new Router({
             path: `/${RequestType.SIGN_MESSAGE}`,
             component: SignMessage,
             name: RequestType.SIGN_MESSAGE,
-            children: [
-                {
-                    path: 'overview',
-                    component: SignMessageOverview,
-                    name: `${RequestType.SIGN_MESSAGE}-overview`,
-                },
-                {
-                    path: 'change-account',
-                    component: ActiveAccountSelector,
-                    name: `${RequestType.SIGN_MESSAGE}-change-account`,
-                },
-                {
-                    path: 'success',
-                    component: SignMessageSuccess,
-                    name: `${RequestType.SIGN_MESSAGE}-success`,
-                },
-            ],
+        },
+        {
+            path: `/${RequestType.SIGN_MESSAGE}/success`,
+            component: SignMessageSuccess,
+            name: `${RequestType.SIGN_MESSAGE}-success`,
         },
         {
             path: `/${RequestType.SIGN_MESSAGE}/error`,
