@@ -37,11 +37,11 @@ const Rename                  = () => import(/*webpackChunkName: "rename"*/ './v
 
 const Migrate                 = () => import(/*webpackChunkName: "migrate"*/ './views/Migrate.vue');
 
-const SignMessage             = () => import(/*webpackChunkName: "sign-message"*/ './views/SignMessage.vue');
-const SignMessageOverview     = () => import(/*webpackChunkName: "sign-message"*/ './views/SignMessageOverview.vue');
-const SignMessageSuccess      = () => import(/*webpackChunkName: "sign-message"*/ './views/SignMessageSuccess.vue');
-const SignMessageErrorHandler = () => import(/*webpackChunkName: "sign-message"*/
-    './views/SignMessageErrorHandler.vue');
+// const SignMessage             = () => import(/*webpackChunkName: "sign-message"*/ './views/SignMessage.vue');
+// const SignMessageOverview     = () => import(/*webpackChunkName: "sign-message"*/ './views/SignMessageOverview.vue');
+// const SignMessageSuccess      = () => import(/*webpackChunkName: "sign-message"*/ './views/SignMessageSuccess.vue');
+// const SignMessageErrorHandler = () => import(/*webpackChunkName: "sign-message"*/
+//     './views/SignMessageErrorHandler.vue');
 
 const ActiveAccountSelector   = () => import(/*webpackChunkName: "common"*/ './views/ActiveAccountSelector.vue');
 const SimpleSuccess           = () => import(/*webpackChunkName: "common"*/ './views/SimpleSuccess.vue');
@@ -91,11 +91,11 @@ export function keyguardResponseRouter(
                 resolve: `${RequestType.ADD_ACCOUNT}-success`,
                 reject: 'default-error',
             };
-        case KeyguardCommand.SIGN_MESSAGE:
-            return {
-                resolve: `${originalRequestType}-success`,
-                reject: `${originalRequestType}-error`,
-            };
+        // case KeyguardCommand.SIGN_MESSAGE:
+        //     return {
+        //         resolve: `${originalRequestType}-success`,
+        //         reject: `${originalRequestType}-error`,
+        //     };
         default:
             throw new Error(`router.keyguardResponseRouter not defined for Keyguard command: ${command}`);
     }
@@ -225,32 +225,32 @@ export default new Router({
             component: Migrate,
             name: RequestType.MIGRATE,
         },
-        {
-            path: `/${RequestType.SIGN_MESSAGE}`,
-            component: SignMessage,
-            name: RequestType.SIGN_MESSAGE,
-            children: [
-                {
-                    path: 'overview',
-                    component: SignMessageOverview,
-                    name: `${RequestType.SIGN_MESSAGE}-overview`,
-                },
-                {
-                    path: 'change-account',
-                    component: ActiveAccountSelector,
-                    name: `${RequestType.SIGN_MESSAGE}-change-account`,
-                },
-                {
-                    path: 'success',
-                    component: SignMessageSuccess,
-                    name: `${RequestType.SIGN_MESSAGE}-success`,
-                },
-            ],
-        },
-        {
-            path: `/${RequestType.SIGN_MESSAGE}/error`,
-            component: SignMessageErrorHandler,
-            name: `${RequestType.SIGN_MESSAGE}-error`,
-        },
+        // {
+        //     path: `/${RequestType.SIGN_MESSAGE}`,
+        //     component: SignMessage,
+        //     name: RequestType.SIGN_MESSAGE,
+        //     children: [
+        //         {
+        //             path: 'overview',
+        //             component: SignMessageOverview,
+        //             name: `${RequestType.SIGN_MESSAGE}-overview`,
+        //         },
+        //         {
+        //             path: 'change-account',
+        //             component: ActiveAccountSelector,
+        //             name: `${RequestType.SIGN_MESSAGE}-change-account`,
+        //         },
+        //         {
+        //             path: 'success',
+        //             component: SignMessageSuccess,
+        //             name: `${RequestType.SIGN_MESSAGE}-success`,
+        //         },
+        //     ],
+        // },
+        // {
+        //     path: `/${RequestType.SIGN_MESSAGE}/error`,
+        //     component: SignMessageErrorHandler,
+        //     name: `${RequestType.SIGN_MESSAGE}-error`,
+        // },
     ],
 });
