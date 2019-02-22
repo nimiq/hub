@@ -34,7 +34,7 @@ class IFrameApi {
 
         // If no keys exist, check for legacy accounts
         const hasLegacyAccounts = await client.hasLegacyAccounts();
-        if (hasLegacyAccounts) {
+        if (hasLegacyAccounts.success) {
             throw new Error('MIGRATION_REQUIRED');
         }
 
