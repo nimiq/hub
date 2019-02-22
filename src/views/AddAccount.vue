@@ -44,7 +44,7 @@ export default class AddAccount extends Vue {
         };
 
         const client = this.$rpc.createKeyguardClient();
-        client.deriveAddress(request).catch(console.error); // TODO: proper error handling
+        client.deriveAddress(request);
     }
 }
 </script>

@@ -27,7 +27,7 @@ export default class OnboardingSelector extends Vue {
             defaultKeyPath: DEFAULT_KEY_PATH,
         };
         const client = this.$rpc.createKeyguardClient();
-        client.create(request).catch(console.error); // TODO: proper error handling
+        client.create(request);
     }
 
     private login() {
@@ -37,7 +37,7 @@ export default class OnboardingSelector extends Vue {
             requestedKeyPaths: [DEFAULT_KEY_PATH],
         };
         const client = this.$rpc.createKeyguardClient();
-        client.import(request).catch(console.error); // TODO: proper error handling
+        client.import(request);
     }
 
     private ledger() {

@@ -23,7 +23,7 @@ export default class Login extends Vue {
         };
 
         const client = this.$rpc.createKeyguardClient();
-        client.import(request).catch(console.error); // TODO: proper error handling
+        client.import(request);
     }
 }
 </script>

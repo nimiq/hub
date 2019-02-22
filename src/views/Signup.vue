@@ -21,7 +21,7 @@ export default class Signup extends Vue {
             defaultKeyPath: DEFAULT_KEY_PATH,
         };
         const client = this.$rpc.createKeyguardClient();
-        client.create(request).catch(console.log); // TODO: proper error handling
+        client.create(request);
     }
 }
 </script>

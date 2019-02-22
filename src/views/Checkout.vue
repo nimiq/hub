@@ -202,7 +202,7 @@ export default class Checkout extends Vue {
         staticStore.keyguardRequest = storedRequest;
 
         const client = this.$rpc.createKeyguardClient();
-        client.signTransaction(request).catch(console.error); // TODO: proper error handling
+        client.signTransaction(request);
     }
 
     private goToOnboarding(useReplace?: boolean) {

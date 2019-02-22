@@ -52,7 +52,7 @@ export default class SignMessage extends Vue {
 
         const client = this.$rpc.createKeyguardClient();
         // @ts-ignore
-        client.signMessage(request).catch(console.error); // TODO: proper error handling
+        client.signMessage(request);
     }
 
     protected get messageBytes(): Uint8Array {

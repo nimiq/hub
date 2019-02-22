@@ -26,7 +26,7 @@ export default class Export extends Vue {
         };
 
         const client = this.$rpc.createKeyguardClient();
-        client.export(request).catch(console.error); // TODO: proper error handling
+        client.export(request);
     }
 }
 </script>

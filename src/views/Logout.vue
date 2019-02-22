@@ -26,7 +26,7 @@ export default class Logout extends Vue {
         };
 
         const client = this.$rpc.createKeyguardClient();
-        client.remove(request).catch(console.error); // TODO: proper error handling
+        client.remove(request);
     }
 }
 </script>
