@@ -4,7 +4,7 @@ import { RootState } from '@/store';
 import { Store } from 'vuex';
 import Router from 'vue-router';
 import { AccountsRequest, RequestType, RpcRequest, RpcResult } from '@/lib/RequestTypes';
-import { KeyguardCommand, RedirectRequestBehavior, KeyguardClient } from '@nimiq/keyguard-client';
+import { KeyguardCommand, KeyguardClient } from '@nimiq/keyguard-client';
 import { keyguardResponseRouter } from '@/router';
 import { StaticStore } from '@/lib/StaticStore';
 import { WalletStore } from './WalletStore';
@@ -38,7 +38,7 @@ export default class RpcApi {
             RequestType.LOGOUT,
             RequestType.ADD_ACCOUNT,
             RequestType.RENAME,
-            RequestType.SIGN_MESSAGE,
+            // RequestType.SIGN_MESSAGE, // Disabled until re-added in Keyguard
             RequestType.MIGRATE,
         ]);
         this._registerKeyguardApis([
@@ -49,7 +49,7 @@ export default class RpcApi {
             KeyguardCommand.CHANGE_PASSPHRASE,
             KeyguardCommand.REMOVE,
             KeyguardCommand.DERIVE_ADDRESS,
-            KeyguardCommand.SIGN_MESSAGE,
+            // KeyguardCommand.SIGN_MESSAGE, // Currently not available in Keyguard
         ]);
     }
 
@@ -59,8 +59,8 @@ export default class RpcApi {
     }
 
     public createKeyguardClient() {
-        const behavior = new RedirectRequestBehavior(undefined, this._exportState());
-        const client = new KeyguardClient(Config.keyguardEndpoint, behavior);
+        const localState = this._exportState();
+        const client = new KeyguardClient(Config.keyguardEndpoint, localState);
         return client;
     }
 
@@ -182,7 +182,6 @@ export default class RpcApi {
                 this._recoverState(state);
 
                 // Set result
-                result.kind = command;
                 this._store.commit('setKeyguardResult', result);
 
                 // To enable the keyguardResponseRouter to decide correctly to which route it should direct
@@ -190,7 +189,7 @@ export default class RpcApi {
                 // was given to the AccountsManager is passed here and the keyguardResponseRouter is turned
                 // from an object into a function instead.
                 this.routerReplace(keyguardResponseRouter(command, this._staticStore.request!.kind).resolve);
-            }, (error, state) => {
+            }, (error, state?: any) => {
                 // Recover state
                 this._recoverState(state);
 

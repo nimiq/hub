@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Vuex, { StoreOptions } from 'vuex';
-import { RpcResult as KeyguardResult } from '@nimiq/keyguard-client';
+import { Result as KeyguardResult } from '@nimiq/keyguard-client';
 import { WalletInfo } from '@/lib/WalletInfo';
 import { WalletStore } from '@/lib/WalletStore';
 import { AccountInfo } from '@/lib/AccountInfo';

@@ -64,6 +64,7 @@ import {
 } from '@/lib/Constants';
 import Network from '@/components/Network.vue';
 import Loader from '@/components/Loader.vue';
+import KeyguardClient from '@nimiq/keyguard-client';
 
 @Component({components: {PaymentInfoLine, AccountSelector, AccountInfoScreen, SmallPage, Network, Loader}})
 export default class Checkout extends Vue {
@@ -170,7 +171,7 @@ export default class Checkout extends Vue {
             - TX_VALIDITY_WINDOW
             + this.request.validityDuration;
 
-        const request: KeyguardRequest.SignTransactionRequest = {
+        const request: KeyguardClient.SignTransactionRequest = {
             layout: 'checkout',
             shopOrigin: this.rpcState.origin,
             appName: this.request.appName,
@@ -201,7 +202,7 @@ export default class Checkout extends Vue {
         staticStore.keyguardRequest = storedRequest;
 
         const client = this.$rpc.createKeyguardClient();
-        client.signTransaction(request).catch(console.error); // TODO: proper error handling
+        client.signTransaction(request);
     }
 
     private goToOnboarding(useReplace?: boolean) {

@@ -20,12 +20,13 @@ import { SignTransactionResult } from '../lib/RequestTypes';
 import { State } from 'vuex-class';
 import { Static } from '../lib/StaticStore';
 import Loader from '../components/Loader.vue';
+import KeyguardClient from '@nimiq/keyguard-client';
 
 @Component({components: {Network, SmallPage, Loader}})
 export default class SignTransactionSuccess extends Vue {
     // The stored keyguardRequest does not have Uint8Array, only regular arrays
-    @Static private keyguardRequest!: KeyguardRequest.SignTransactionRequest;
-    @State private keyguardResult!: KeyguardRequest.SignTransactionResult;
+    @Static private keyguardRequest!: KeyguardClient.SignTransactionRequest;
+    @State private keyguardResult!: KeyguardClient.SignTransactionResult;
 
     private async mounted() {
         const tx = await (this.$refs.network as Network).prepareTx(this.keyguardRequest, this.keyguardResult);
