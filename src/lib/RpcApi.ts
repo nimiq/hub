@@ -182,7 +182,6 @@ export default class RpcApi {
                 this._recoverState(state);
 
                 // Set result
-                result.kind = command;
                 this._store.commit('setKeyguardResult', result);
 
                 // To enable the keyguardResponseRouter to decide correctly to which route it should direct
@@ -190,7 +189,7 @@ export default class RpcApi {
                 // was given to the AccountsManager is passed here and the keyguardResponseRouter is turned
                 // from an object into a function instead.
                 this.routerReplace(keyguardResponseRouter(command, this._staticStore.request!.kind).resolve);
-            }, (error, state) => {
+            }, (error, state?: any) => {
                 // Recover state
                 this._recoverState(state);
 
