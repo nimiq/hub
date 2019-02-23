@@ -325,7 +325,7 @@ class Demo {
         } as ExportRequest;
     }
 
-    public async changePassphrase(walletId: string) {
+    public async changePassword(walletId: string) {
         try {
             const result = await this._accountsClient.changePassword(this._createChangePasswordRequest(walletId));
             console.log('Keyguard result', result);
@@ -392,7 +392,7 @@ class Demo {
         wallets.forEach(wallet => {
             html += `<li${wallet.keyMissing ? ' style="color:red;"' : ''}>${wallet.label}<br>
                         <button class="export" data-wallet-id="${wallet.id}">Export</button>
-                        <button class="change-passphrase" data-wallet-id="${wallet.id}">Ch. Pass.</button>
+                        <button class="change-password" data-wallet-id="${wallet.id}">Ch. Pass.</button>
                         ${wallet.type !== 0 ? `<button class="add-account" data-wallet-id="${wallet.id}">+ Acc</button>` : ''}
                         <button class="rename" data-wallet-id="${wallet.id}">Rename</button>
                         <button class="logout" data-wallet-id="${wallet.id}">Logout</button>
@@ -418,8 +418,8 @@ class Demo {
         document.querySelectorAll('button.export').forEach(element => {
             element.addEventListener('click', async () => this.export(element.getAttribute('data-wallet-id')));
         });
-        document.querySelectorAll('button.change-passphrase').forEach(element => {
-            element.addEventListener('click', async () => this.changePassphrase(element.getAttribute('data-wallet-id')));
+        document.querySelectorAll('button.change-password').forEach(element => {
+            element.addEventListener('click', async () => this.changePassword(element.getAttribute('data-wallet-id')));
         });
         document.querySelectorAll('button.rename').forEach(element => {
             element.addEventListener('click', async () => this.rename(element.getAttribute('data-wallet-id'), element.getAttribute('data-address')));

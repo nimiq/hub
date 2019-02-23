@@ -132,7 +132,7 @@ data, see [Listening for redirect responses](#listening-for-redirect-responses).
 - [Logout](#logout)
 - [Export](#export)
 
-[//] TODO: Add methods 'onboard', 'changePassphrase', 'addAccount', 'rename', 'signMessage'
+[//] TODO: Add methods 'onboard', 'changePassword', 'addAccount', 'rename', 'signMessage'
 
 > **Note:**
 >
