@@ -42,7 +42,6 @@ const SignMessageSuccess      = () => import(/*webpackChunkName: "sign-message"*
 const SignMessageErrorHandler = () => import(/*webpackChunkName: "sign-message"*/
     './views/SignMessageErrorHandler.vue');
 
-const ActiveAccountSelector   = () => import(/*webpackChunkName: "common"*/ './views/ActiveAccountSelector.vue');
 const SimpleSuccess           = () => import(/*webpackChunkName: "common"*/ './views/SimpleSuccess.vue');
 const ErrorHandler            = () => import(/*webpackChunkName: "common"*/ './views/ErrorHandler.vue');
 
