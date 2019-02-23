@@ -15,28 +15,29 @@ import { OnboardingMenu } from '@nimiq/vue-components';
 import { ParsedOnboardingRequest, RequestType } from '@/lib/RequestTypes';
 import { Static } from '@/lib/StaticStore';
 import { DEFAULT_KEY_PATH, ERROR_CANCELED } from '@/lib/Constants';
+import KeyguardClient from '@nimiq/keyguard-client';
 
 @Component({components: {OnboardingMenu}})
 export default class OnboardingSelector extends Vue {
     @Static private request!: ParsedOnboardingRequest;
 
     private signup() {
-        const request: KeyguardRequest.CreateRequest = {
+        const request: KeyguardClient.CreateRequest = {
             appName: this.request.appName,
             defaultKeyPath: DEFAULT_KEY_PATH,
         };
         const client = this.$rpc.createKeyguardClient();
-        client.create(request).catch(console.error); // TODO: proper error handling
+        client.create(request);
     }
 
     private login() {
-        const request: KeyguardRequest.ImportRequest = {
+        const request: KeyguardClient.ImportRequest = {
             appName: this.request.appName,
             defaultKeyPath: DEFAULT_KEY_PATH,
             requestedKeyPaths: [DEFAULT_KEY_PATH],
         };
         const client = this.$rpc.createKeyguardClient();
-        client.import(request).catch(console.error); // TODO: proper error handling
+        client.import(request);
     }
 
     private ledger() {

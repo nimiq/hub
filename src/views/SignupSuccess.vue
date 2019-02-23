@@ -26,10 +26,11 @@ import {
     ACCOUNT_DEFAULT_LABEL_KEYGUARD,
     ACCOUNT_DEFAULT_LABEL_LEDGER,
 } from '@/lib/Constants';
+import KeyguardClient from '@nimiq/keyguard-client';
 
 @Component({components: {SmallPage, Loader}})
 export default class SignupSuccess extends Vue {
-    @State private keyguardResult!: KeyguardRequest.KeyResult[];
+    @State private keyguardResult!: KeyguardClient.KeyResult;
 
     private title: string = 'Storing your wallet';
     private state: Loader.State = Loader.State.LOADING;

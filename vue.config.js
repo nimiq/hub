@@ -1,11 +1,20 @@
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const WriteFileWebpackPlugin = require('write-file-webpack-plugin');
+const path = require('path');
+
+const buildName = !process.env.build ? 'local' : process.env.build
 
 const configureWebpack = {
     plugins: [
         new CopyWebpackPlugin([{ from: 'node_modules/@nimiq/vue-components/dist/img', to: 'img' }]),
         new WriteFileWebpackPlugin()
-    ]
+    ],
+    // Resolve config for yarn build
+    resolve: {
+        alias: {
+            config: path.join(__dirname, `config.${buildName}.ts`)
+        }
+    },
 };
 
 module.exports = {
@@ -46,6 +55,14 @@ module.exports = {
     },
     configureWebpack,
     chainWebpack: config => {
-        config.optimization.delete('splitChunks')
+        config.optimization.delete('splitChunks'),
+        config.module
+            .rule('ts')
+            .use('ts-loader')
+            .loader('ts-loader')
+            .tap(options => {
+                options.configFile = `tsconfig.${buildName}.json`
+                return options
+        })
     }
 }

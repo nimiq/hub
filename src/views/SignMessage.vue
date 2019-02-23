@@ -20,8 +20,8 @@ import { WalletStore } from '@/lib/WalletStore';
 import { AccountInfo } from '@/lib/AccountInfo';
 import { WalletInfo } from '@/lib/WalletInfo';
 import {
-    SignMessageRequest as KSignMessageRequest,
-    SignMessageResult as KSignMessageResult,
+    // @ts-ignore
+    SignMessageRequest as KSignMessageRequest, SignMessageResult as KSignMessageResult,
 } from '@nimiq/keyguard-client';
 import { Utf8Tools } from '@nimiq/utils';
 import { ERROR_CANCELED } from '@/lib/Constants';
@@ -51,7 +51,8 @@ export default class SignMessage extends Vue {
         staticStore.keyguardRequest = storedRequest;
 
         const client = this.$rpc.createKeyguardClient();
-        client.signMessage(request).catch(console.error); // TODO: proper error handling
+        // @ts-ignore
+        client.signMessage(request);
     }
 
     protected get messageBytes(): Uint8Array {

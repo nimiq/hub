@@ -485,6 +485,8 @@ enum AccountsClient.RequestType {
 
 TODO
 
+If you want to run your own instance of Accounts Manager, you also need to run an instance of [keyguard](https://github.com/nimiq/keyguard-next/).
+
 ## Contribute
 
 To get started with working on the source code, pull the code and install the dependencies:
@@ -520,7 +522,7 @@ yarn run lint
 Run unit tests:
 
 ```bash
-yarn run test:unit
+yarn run test
 ```
 
 ### Build
@@ -530,3 +532,12 @@ Compile and minify for production:
 ```bash
 yarn run build
 ```
+
+### Configuration
+
+The following values can be changed via configuration files:
+* keyguardEndpoint: The location of your keyguard instance
+* network: The network you want to use. Possible values are 'main', 'test' and 'dev'. You can use the constants (see default configs).
+
+Default config file is `config.local.ts`. To use a different file (especially useful for deployment), set an environment variable 
+`build`. E.g. `export build='testnet'` to use `config.testnet.ts`. To set environment variables permanently, please refer to your server's documentation, e.g. [https://httpd.apache.org/docs/2.4/env.html] for Apache.

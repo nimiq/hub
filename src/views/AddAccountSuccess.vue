@@ -1,60 +1,60 @@
 <template>
     <div class="container pad-bottom">
         <SmallPage>
-            <PageHeader>Your account is ready</PageHeader>
-            <PageBody>
-                <div class="success-box nq-icon trumpet nq-green-bg">
-                    <h2 class="nq-h2">Awesome!</h2>
-                    <p class="nq-text">Your new account has been added to your wallet.</p>
-                </div>
-
-                <div class="login-label">
-                    <div class="login-icon nq-icon" :class="walletIconClass"></div>
-                    {{ walletLabel }}
-                </div>
-
-                <Account :address="createdAddress.toUserFriendlyAddress()" :label="accountLabel" :editable="true" @changed="onAccountLabelChange"/>
-
-                <button class="nq-button green submit" @click="done()">Open your account</button>
-            </PageBody>
+            <Loader :title="title" :state="state" :lightBlue="true">
+                <template slot="success">
+                    <div class="success nq-icon"></div>
+                    <h1 class="title nq-h1">Awesome!<br>Your new address has<br/>been added to your account.</h1>
+                </template>
+            </Loader>
         </SmallPage>
     </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { PageHeader, PageBody, Account, SmallPage } from '@nimiq/vue-components';
+import { SmallPage } from '@nimiq/vue-components';
 import { AccountInfo } from '../lib/AccountInfo';
 import { State } from 'vuex-class';
 import { WalletStore } from '../lib/WalletStore';
 import { DeriveAddressResult } from '@nimiq/keyguard-client';
 import { AddAccountRequest, AddAccountResult } from '@/lib/RequestTypes';
+import Loader from '@/components/Loader.vue';
 import { Static } from '../lib/StaticStore';
 
-@Component({components: {PageHeader, PageBody, Account, SmallPage}})
+@Component({components: {Loader, SmallPage}})
 export default class AddAccountSuccess extends Vue {
     @Static private request!: AddAccountRequest;
     @State private keyguardResult!: DeriveAddressResult;
 
     private walletLabel: string = '';
-    private accountLabel: string = 'Standard Account';
+    private state: Loader.State = Loader.State.LOADING;
+    private title: string = 'Storing your account';
+    private accountLabel: string = 'Standard Address';
     private createdAddress: Nimiq.Address | null = null;
 
-    private get walletIconClass(): string {
-        return 'keyguard';
-    }
-
-    private created() {
+    private async mounted() {
         this.createdAddress = new Nimiq.Address(this.keyguardResult.address);
-        this.saveResult(this.accountLabel);
-    }
 
-    private onAccountLabelChange(label: string) {
-        this.accountLabel = label;
-        this.saveResult(this.accountLabel);
-    }
+        const wallet = await WalletStore.Instance.get(this.request.walletId);
+        if (!wallet) throw new Error('Wallet ID not found');
 
-    private async done() {
+        this.walletLabel = wallet.label;
+
+        const newAccount = new AccountInfo(
+            this.keyguardResult.keyPath,
+            this.accountLabel,
+            this.createdAddress!,
+        );
+
+        wallet.accounts.set(this.createdAddress!.toUserFriendlyAddress(), newAccount);
+
+        await WalletStore.Instance.put(wallet);
+        // Artificially delay, to display loading status
+        await new Promise((res) => setTimeout(res, 2000));
+
+        this.state = Loader.State.SUCCESS;
+
         const result: AddAccountResult = {
             walletId: this.request.walletId,
             account: {
@@ -63,24 +63,7 @@ export default class AddAccountSuccess extends Vue {
             },
         };
 
-        this.$rpc.resolve(result);
-    }
-
-    private async saveResult(accountLabel: string) {
-        const wallet = await WalletStore.Instance.get(this.request.walletId);
-        if (!wallet) throw new Error('Wallet ID not found');
-
-        this.walletLabel = wallet.label;
-
-        const newAccount = new AccountInfo(
-            this.keyguardResult.keyPath,
-            accountLabel,
-            this.createdAddress!,
-        );
-
-        wallet.accounts.set(this.createdAddress!.toUserFriendlyAddress(), newAccount);
-
-        await WalletStore.Instance.put(wallet);
+        setTimeout(() => this.$rpc.resolve(result), Loader.SUCCESS_REDIRECT_DELAY);
     }
 }
 </script>

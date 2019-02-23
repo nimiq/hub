@@ -1,7 +1,7 @@
 import { WalletInfo, WalletInfoEntry } from '@/lib/WalletInfo';
 
 export class WalletStore {
-    public static readonly DB_VERSION = 1;
+    public static readonly DB_VERSION = 2;
     public static readonly DB_NAME = 'nimiq-accounts';
     public static readonly DB_KEY_STORE_NAME = 'wallets';
 
@@ -107,6 +107,12 @@ export class WalletStore {
 
                 if (event.oldVersion < 1) {
                     // Version 1 is the first version of the database.
+                    db.createObjectStore(WalletStore.DB_KEY_STORE_NAME, { keyPath: 'id' });
+                }
+
+                if (event.oldVersion < 2) {
+                    // Change to version 2 just to delete former testnet databases, because we do the same in keyguard.
+                    db.deleteObjectStore(WalletStore.DB_KEY_STORE_NAME);
                     db.createObjectStore(WalletStore.DB_KEY_STORE_NAME, { keyPath: 'id' });
                 }
             };

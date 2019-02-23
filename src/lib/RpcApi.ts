@@ -4,13 +4,14 @@ import { RootState } from '@/store';
 import { Store } from 'vuex';
 import Router from 'vue-router';
 import { AccountsRequest, RequestType, RpcRequest, RpcResult } from '@/lib/RequestTypes';
-import { KeyguardCommand, RedirectRequestBehavior, KeyguardClient } from '@nimiq/keyguard-client';
+import { KeyguardCommand, KeyguardClient } from '@nimiq/keyguard-client';
 import { keyguardResponseRouter } from '@/router';
 import { StaticStore } from '@/lib/StaticStore';
 import { WalletStore } from './WalletStore';
 import CookieJar from '@/lib/CookieJar';
 import { Raven } from 'vue-raven'; // Sentry.io SDK
 import { ERROR_CANCELED } from './Constants';
+import Config from 'config';
 
 export default class RpcApi {
     private _server: RpcServer;
@@ -24,7 +25,7 @@ export default class RpcApi {
         this._staticStore = staticStore;
         this._router = router;
         this._server = new RpcServer('*');
-        this._keyguardClient = new KeyguardClient();
+        this._keyguardClient = new KeyguardClient(Config.keyguardEndpoint);
 
         this._registerAccountsApis([
             RequestType.SIGN_TRANSACTION,
@@ -37,7 +38,7 @@ export default class RpcApi {
             RequestType.LOGOUT,
             RequestType.ADD_ACCOUNT,
             RequestType.RENAME,
-            RequestType.SIGN_MESSAGE,
+            // RequestType.SIGN_MESSAGE, // Disabled until re-added in Keyguard
             RequestType.MIGRATE,
             RequestType.CHOOSE_ADDRESS,
         ]);
@@ -49,7 +50,7 @@ export default class RpcApi {
             KeyguardCommand.CHANGE_PASSPHRASE,
             KeyguardCommand.REMOVE,
             KeyguardCommand.DERIVE_ADDRESS,
-            KeyguardCommand.SIGN_MESSAGE,
+            // KeyguardCommand.SIGN_MESSAGE, // Currently not available in Keyguard
         ]);
     }
 
@@ -58,9 +59,9 @@ export default class RpcApi {
         this._keyguardClient.init().catch(console.error); // TODO: Provide better error handling here
     }
 
-    public createKeyguardClient(endpoint?: string) {
-        const behavior = new RedirectRequestBehavior(undefined, this._exportState());
-        const client = new KeyguardClient(endpoint, behavior);
+    public createKeyguardClient() {
+        const localState = this._exportState();
+        const client = new KeyguardClient(Config.keyguardEndpoint, localState);
         return client;
     }
 
@@ -182,7 +183,6 @@ export default class RpcApi {
                 this._recoverState(state);
 
                 // Set result
-                result.kind = command;
                 this._store.commit('setKeyguardResult', result);
 
                 // To enable the keyguardResponseRouter to decide correctly to which route it should direct
@@ -190,7 +190,7 @@ export default class RpcApi {
                 // was given to the AccountsManager is passed here and the keyguardResponseRouter is turned
                 // from an object into a function instead.
                 this.routerReplace(keyguardResponseRouter(command, this._staticStore.request!.kind).resolve);
-            }, (error, state) => {
+            }, (error, state?: any) => {
                 // Recover state
                 this._recoverState(state);
 
