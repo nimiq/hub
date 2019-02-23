@@ -128,9 +128,10 @@ export default class ChooseAddress extends Vue {
         const filteredWallets = this.wallets.filter((wallet) => {
             if (wallet.type !== WalletType.LEGACY) return true;
 
-            const accountArray = Array.from(wallet.accounts.entries())[0];
-            accountArray[1].walletId = wallet.id;
-            singleAccounts.set(accountArray[0], accountArray[1]);
+            const [singleAccountAddress, singleAccountInfo] = Array.from(wallet.accounts.entries())[0];
+            singleAccountInfo.walletId = wallet.id;
+            singleAccounts.set(singleAccountAddress, singleAccountInfo);
+
             return false;
         });
 
