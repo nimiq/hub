@@ -31,6 +31,7 @@ import { WalletStore } from '@/lib/WalletStore';
 import { WalletInfo, WalletType } from '../lib/WalletInfo';
 import { AccountInfo } from '../lib/AccountInfo';
 import { TX_VALIDITY_WINDOW, LEGACY_GROUPING_WALLET_ID, LEGACY_GROUPING_WALLET_LABEL } from '../lib/Constants';
+import { ERROR_CANCELED } from '../lib/Constants';
 
 @Component({components: { AccountSelector, SmallPage }})
 export default class ChooseAddress extends Vue {
@@ -118,7 +119,7 @@ export default class ChooseAddress extends Vue {
 
     @Emit()
     private close() {
-        this.$rpc.reject(new Error('CANCELED'));
+        this.$rpc.reject(new Error(ERROR_CANCELED));
     }
 
     private get processedWallets(): WalletInfo[] {
