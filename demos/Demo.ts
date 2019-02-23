@@ -11,7 +11,7 @@ import {
     SignTransactionRequest, SignTransactionResult,
     ExportRequest,
     RenameRequest,
-    ChangePassphraseRequest,
+    ChangePasswordRequest,
     AddAccountRequest,
     SignMessageRequest,
 } from '../src/lib/RequestTypes';
@@ -327,7 +327,7 @@ class Demo {
 
     public async changePassphrase(walletId: string) {
         try {
-            const result = await this._accountsClient.changePassphrase(this._createChangePassphraseRequest(walletId));
+            const result = await this._accountsClient.changePassword(this._createChangePasswordRequest(walletId));
             console.log('Keyguard result', result);
             document.querySelector('#result').textContent = 'Export sucessful';
         } catch (e) {
@@ -336,11 +336,11 @@ class Demo {
         }
     }
 
-    public _createChangePassphraseRequest(walletId: string): ChangePassphraseRequest {
+    public _createChangePasswordRequest(walletId: string): ChangePasswordRequest {
         return {
             appName: 'Accounts Demos',
             walletId,
-        } as ChangePassphraseRequest;
+        } as ChangePasswordRequest;
     }
 
     public async addAccount(walletId: string) {

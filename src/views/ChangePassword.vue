@@ -2,15 +2,15 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { ParsedChangePassphraseRequest } from '../lib/RequestTypes';
+import { ParsedChangePasswordRequest } from '../lib/RequestTypes';
 import { WalletStore } from '@/lib/WalletStore';
 import { Static } from '../lib/StaticStore';
 import { State } from 'vuex-class';
 import KeyguardClient from '@nimiq/keyguard-client';
 
 @Component
-export default class ChangePassphrase extends Vue {
-    @Static private request!: ParsedChangePassphraseRequest;
+export default class ChangePassword extends Vue {
+    @Static private request!: ParsedChangePasswordRequest;
     @State private keyguardResult?: KeyguardClient.SimpleResult;
 
     public async created() {
@@ -26,7 +26,7 @@ export default class ChangePassphrase extends Vue {
         };
 
         const client = this.$rpc.createKeyguardClient();
-        client.changePassphrase(request);
+        client.changePassword(request);
     }
 }
 </script>

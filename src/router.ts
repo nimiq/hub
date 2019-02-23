@@ -27,7 +27,7 @@ const LoginErrorHandler       = () => import(/*webpackChunkName: "onboarding"*/ 
 
 const Export                  = () => import(/*webpackChunkName: "export"*/ './views/Export.vue');
 
-const ChangePassphrase        = () => import(/*webpackChunkName: "change-passphrase"*/ './views/ChangePassphrase.vue');
+const ChangePassword        = () => import(/*webpackChunkName: "change-password"*/ './views/ChangePassword.vue');
 
 const Logout                  = () => import(/*webpackChunkName: "logout"*/ './views/Logout.vue');
 const LogoutSuccess           = () => import(/*webpackChunkName: "logout"*/ './views/LogoutSuccess.vue');
@@ -81,9 +81,9 @@ export function keyguardResponseRouter(
                 resolve: `${RequestType.EXPORT}-success`,
                 reject: 'default-error',
             };
-        case KeyguardCommand.CHANGE_PASSPHRASE:
+        case KeyguardCommand.CHANGE_PASSWORD:
             return {
-                resolve: `${RequestType.CHANGE_PASSPHRASE}-success`,
+                resolve: `${RequestType.CHANGE_PASSWORD}-success`,
                 reject: 'default-error',
             };
         case KeyguardCommand.DERIVE_ADDRESS:
@@ -186,14 +186,14 @@ export default new Router({
             name: `${RequestType.EXPORT}-success`,
         },
         {
-            path: `/${RequestType.CHANGE_PASSPHRASE}`,
-            component: ChangePassphrase,
-            name: RequestType.CHANGE_PASSPHRASE,
+            path: `/${RequestType.CHANGE_PASSWORD}`,
+            component: ChangePassword,
+            name: RequestType.CHANGE_PASSWORD,
         },
         {
-            path: `/${RequestType.CHANGE_PASSPHRASE}/success`,
+            path: `/${RequestType.CHANGE_PASSWORD}/success`,
             component: SimpleSuccess,
-            name: `${RequestType.CHANGE_PASSPHRASE}-success`,
+            name: `${RequestType.CHANGE_PASSWORD}-success`,
         },
         {
             path: `/${RequestType.LOGOUT}`,
