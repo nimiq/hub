@@ -350,8 +350,6 @@ class Demo {
         };
     }
 
-
-
     public async rename(walletId: string, account: string) {
         try {
             const result = await this._accountsClient.rename(this._createRenameRequest(walletId, account));

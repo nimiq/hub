@@ -19,12 +19,18 @@ export enum RequestType {
 }
 
 export interface SimpleRequest {
-    kind?: RequestType.ONBOARD | RequestType.SIGNUP | RequestType.LOGIN;
+    kind?: RequestType.SIGNUP | RequestType.LOGIN;
     appName: string;
 }
 
 export interface SimpleResult {
     success: true;
+}
+
+export interface OnboardingRequest {
+    kind?: RequestType.ONBOARD;
+    appName: string;
+    hideBack?: boolean;
 }
 
 export interface SignTransactionRequest {
@@ -130,6 +136,7 @@ export interface SignMessageResult {
 export interface ParsedOnboardingRequest {
     kind: RequestType.ONBOARD;
     appName: string;
+    hideBack: boolean;
 }
 
 export interface ParsedSignupRequest {
@@ -254,7 +261,9 @@ export type RpcRequest = SignTransactionRequest
                        | AddAccountRequest
                        | RenameRequest
                        | SignMessageRequest
-                       | MigrateRequest;
+                       | MigrateRequest
+                       | OnboardingRequest;
+
 export type ParsedRpcRequest = ParsedSignTransactionRequest
                              | ParsedCheckoutRequest
                              | ParsedOnboardingRequest
@@ -267,6 +276,7 @@ export type ParsedRpcRequest = ParsedSignTransactionRequest
                              | ParsedRenameRequest
                              | ParsedSignMessageRequest
                              | ParsedMigrateRequest;
+
 export type RpcResult = SignTransactionResult
                       | OnboardingResult
                       | SimpleResult
@@ -328,10 +338,11 @@ export class AccountsRequest {
                     ),
                 } as ParsedCheckoutRequest;
             case RequestType.ONBOARD:
-                request = request as SimpleRequest;
+                request = request as OnboardingRequest;
                 return {
                     kind: RequestType.ONBOARD,
                     appName: request.appName,
+                    hideBack: request.hideBack === true,
                 } as ParsedOnboardingRequest;
             case RequestType.SIGNUP:
                 request = request as SimpleRequest;
@@ -433,7 +444,8 @@ export class AccountsRequest {
                 return {
                     kind: RequestType.ONBOARD,
                     appName: request.appName,
-                } as SimpleRequest;
+                    hideBack: request.hideBack,
+                } as OnboardingRequest;
             case RequestType.SIGNUP:
                 return {
                     kind: RequestType.SIGNUP,

@@ -2,7 +2,7 @@
     <div class="container">
         <OnboardingMenu @signup="signup" @login="login" @ledger="ledger"/>
 
-        <button class="global-close nq-button-s" @click="close">
+        <button v-if="!request.hideBack" class="global-close nq-button-s" @click="close">
             <span class="nq-icon arrow-left"></span>
             Back to {{request.appName}}
         </button>

@@ -8,6 +8,7 @@ import { RedirectRpcClient } from '@nimiq/rpc';
 import {
     RequestType,
     SimpleRequest,
+    OnboardingRequest,
     OnboardingResult,
     CheckoutRequest,
     LogoutRequest,
@@ -77,7 +78,7 @@ export default class AccountsClient {
         );
     }
 
-    public onboard(request: SimpleRequest, requestBehavior = this._defaultBehavior): Promise<OnboardingResult> {
+    public onboard(request: OnboardingRequest, requestBehavior = this._defaultBehavior): Promise<OnboardingResult> {
         return this._request(requestBehavior, RequestType.ONBOARD, [request]);
     }
 
