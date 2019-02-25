@@ -13,7 +13,7 @@
 
             <AccountSelector
                 :wallets="processedWallets"
-                @account-selected="accountSelected"
+                @account-selected="setAccount"
                 @login="goToOnboarding"/>
         </SmallPage>
 
@@ -52,14 +52,14 @@ export default class SignMessage extends Vue {
         if (this.keyguardResult) return;
 
         if (this.request.walletId && this.request.signer) {
-            this.accountSelected(this.request.walletId, this.request.signer.toUserFriendlyAddress(), true);
+            this.setAccount(this.request.walletId, this.request.signer.toUserFriendlyAddress(), true);
             return;
         }
 
         this.showAccountSelector = true;
     }
 
-    private async accountSelected(walletId: string, address: string, isFromRequest = false) {
+    private async setAccount(walletId: string, address: string, isFromRequest = false) {
         const walletInfo = this.findWallet(walletId);
         if (!walletInfo) {
             // We can also return an error here and when checking the address below,
