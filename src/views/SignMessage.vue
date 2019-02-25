@@ -63,21 +63,21 @@ export default class SignMessage extends Vue {
     private async accountSelected(walletId: string, address: string) {
         const walletInfo = this.findWallet(walletId);
         if (!walletInfo) {
-            // XXX Should we really return an error here and when checking the address below,
-            // or would it enable malicous sites to query for stored walletIds and addresses?
-            // We could also quietly ignore any unavailable pre-set walletId and address and give
+            // We can also return an error here and when checking the address below,
+            // but it would enable malicous sites to query for stored walletIds and addresses.
+            // Instead we quietly ignore any unavailable pre-set walletId and address and give
             // the user the option to chose as if it was not pre-set.
-            this.$rpc.reject(new Error('WalletId not found'));
+            this.showAccountSelector = true;
             return;
         }
 
         const accountInfo = walletInfo.accounts.get(address) || null;
         if (!accountInfo) {
-            this.$rpc.reject(new Error('Signer account not found'));
+            this.showAccountSelector = true;
             return;
         }
 
-        // Forward directly to Keyguard
+        // Forward to Keyguard
         const request: KeyguardClient.SignMessageRequest = {
             appName: this.request.appName,
 
