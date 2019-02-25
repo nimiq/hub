@@ -52,15 +52,14 @@ export default class SignMessage extends Vue {
         if (this.keyguardResult) return;
 
         if (this.request.walletId && this.request.signer) {
-            this.accountSelected(this.request.walletId, this.request.signer.toUserFriendlyAddress());
+            this.accountSelected(this.request.walletId, this.request.signer.toUserFriendlyAddress(), true);
             return;
         }
 
         this.showAccountSelector = true;
-
     }
 
-    private async accountSelected(walletId: string, address: string) {
+    private async accountSelected(walletId: string, address: string, isFromRequest = false) {
         const walletInfo = this.findWallet(walletId);
         if (!walletInfo) {
             // We can also return an error here and when checking the address below,
@@ -68,12 +67,14 @@ export default class SignMessage extends Vue {
             // Instead we quietly ignore any unavailable pre-set walletId and address and give
             // the user the option to chose as if it was not pre-set.
             this.showAccountSelector = true;
+            if (!isFromRequest) throw new Error(`UNEXPECTED: Selected walletId was not found: ${walletId}`);
             return;
         }
 
-        const accountInfo = walletInfo.accounts.get(address) || null;
+        const accountInfo = walletInfo.accounts.get(address);
         if (!accountInfo) {
             this.showAccountSelector = true;
+            if (!isFromRequest) throw new Error(`UNEXPECTED: Selected account was not found: ${address}`);
             return;
         }
 
