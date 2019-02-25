@@ -108,8 +108,11 @@ export default class SignMessage extends Vue {
     private goToOnboarding(useReplace?: boolean) {
         // Redirect to onboarding
         staticStore.originalRouteName = RequestType.SIGN_MESSAGE;
-        if (useReplace) this.$rpc.routerReplace(RequestType.ONBOARD);
-        else this.$rpc.routerPush(RequestType.ONBOARD);
+        if (useReplace) {
+            this.$rpc.routerReplace(RequestType.ONBOARD);
+        } else {
+            this.$rpc.routerPush(RequestType.ONBOARD);
+        }
     }
 
     @Emit()
