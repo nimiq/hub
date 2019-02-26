@@ -57,6 +57,17 @@ class Demo {
             await checkoutPopup(await generateCheckoutRequest(demo));
         });
 
+        document.querySelector('button#choose-address').addEventListener('click', async () => {
+            try {
+                const result = await client.chooseAddress({ appName: 'Accounts Demos' });
+                console.log('Result', result);
+                document.querySelector('#result').textContent = 'Address was chosen';
+            } catch (e) {
+                console.error('Result error', e);
+                document.querySelector('#result').textContent = `Error: ${e.message || e}`;
+            }
+        });
+
         document.querySelector('button#sign-transaction-popup').addEventListener('click', async () => {
             const txRequest = generateSignTransactionRequest(demo);
             try {
@@ -162,7 +173,7 @@ class Demo {
             try {
                 const result = await client.signMessage(request);
                 console.log('Keyguard result', result);
-                document.querySelector('#result').textContent = 'MSG signed';
+                document.querySelector('#result').textContent = 'MSG signed: ' + Utf8Tools.utf8ByteArrayToString(result.data);
             } catch (e) {
                 console.error('Keyguard error', e);
                 document.querySelector('#result').textContent = `Error: ${e.message || e}`;
@@ -184,7 +195,7 @@ class Demo {
             try {
                 const result = await client.signMessage(request);
                 console.log('Keyguard result', result);
-                document.querySelector('#result').textContent = 'MSG signed';
+                document.querySelector('#result').textContent = 'MSG signed: ' + Utf8Tools.utf8ByteArrayToString(result.data);
             } catch (e) {
                 console.error('Keyguard error', e);
                 document.querySelector('#result').textContent = `Error: ${e.message || e}`;

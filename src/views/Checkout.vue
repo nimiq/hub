@@ -55,7 +55,7 @@ import staticStore, { Static } from '@/lib/StaticStore';
 import { WalletStore } from '@/lib/WalletStore';
 import { AccountInfo } from '@/lib/AccountInfo';
 import { WalletInfo, WalletType } from '@/lib/WalletInfo';
-import { State, Mutation } from 'vuex-class';
+import { State, Mutation, Getter } from 'vuex-class';
 import {
     TX_VALIDITY_WINDOW,
     LEGACY_GROUPING_WALLET_ID,
@@ -73,6 +73,7 @@ export default class Checkout extends Vue {
     @Static private rpcState!: RpcState;
     @Static private request!: ParsedCheckoutRequest;
     @State private wallets!: WalletInfo[];
+    @Getter private processedWallets!: WalletInfo[];
 
     @Mutation('addWallet') private $addWallet!: (walletInfo: WalletInfo) => any;
     @Mutation('setActiveAccount') private $setActiveAccount!: (payload: {
@@ -208,39 +209,16 @@ export default class Checkout extends Vue {
     private goToOnboarding(useReplace?: boolean) {
         // Redirect to onboarding
         staticStore.originalRouteName = RequestType.CHECKOUT;
-        if (useReplace) this.$rpc.routerReplace(RequestType.ONBOARD);
-        else this.$rpc.routerPush(RequestType.ONBOARD);
+        if (useReplace) {
+            this.$rpc.routerReplace(RequestType.ONBOARD);
+        } else {
+            this.$rpc.routerPush(RequestType.ONBOARD);
+        }
     }
 
     @Emit()
     private close() {
         this.$rpc.reject(new Error(ERROR_CANCELED));
-    }
-
-    private get processedWallets(): WalletInfo[] {
-        const singleAccounts = new Map<string, AccountInfo>();
-
-        const filteredWallets = this.wallets.filter((wallet) => {
-            if (wallet.type !== WalletType.LEGACY) return true;
-
-            const [singleAccountAddress, singleAccountInfo] = Array.from(wallet.accounts.entries())[0];
-            singleAccountInfo.walletId = wallet.id;
-            singleAccounts.set(singleAccountAddress, singleAccountInfo);
-
-            return false;
-        });
-
-        if (singleAccounts.size > 0) {
-            filteredWallets.push(new WalletInfo(
-                LEGACY_GROUPING_WALLET_ID,
-                LEGACY_GROUPING_WALLET_LABEL,
-                singleAccounts,
-                [],
-                WalletType.LEGACY,
-            ));
-        }
-
-        return filteredWallets;
     }
 
     private get hasSufficientBalanceAccount(): boolean {
@@ -265,9 +243,11 @@ export default class Checkout extends Vue {
 
                 // Set as activeWallet and activeAccount
                 // FIXME: Currently unused, but should be reactivated
+                const activeAccount = walletInfo.accounts.values().next().value;
+
                 this.$setActiveAccount({
                     walletId: walletInfo.id,
-                    userFriendlyAddress: walletInfo.accounts.values().next().value.userFriendlyAddress,
+                    userFriendlyAddress: activeAccount.userFriendlyAddress,
                 });
             }
         }
