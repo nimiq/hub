@@ -243,9 +243,11 @@ export default class Checkout extends Vue {
 
                 // Set as activeWallet and activeAccount
                 // FIXME: Currently unused, but should be reactivated
+                const activeAccount = walletInfo.accounts.values().next().value;
+
                 this.$setActiveAccount({
                     walletId: walletInfo.id,
-                    userFriendlyAddress: walletInfo.accounts.values().next().value.userFriendlyAddress,
+                    userFriendlyAddress: activeAccount.userFriendlyAddress,
                 });
             }
         }

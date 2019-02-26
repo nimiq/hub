@@ -26,9 +26,9 @@
 
 <script lang="ts">
 import { Component, Emit, Vue } from 'vue-property-decorator';
-import { State, Getter } from 'vuex-class';
+import { State, Getter, Mutation } from 'vuex-class';
 import { SmallPage, AccountSelector } from '@nimiq/vue-components';
-import { RequestType, ParsedSignMessageRequest } from '../lib/RequestTypes';
+import { RequestType, ParsedSignMessageRequest, OnboardingResult } from '../lib/RequestTypes';
 import staticStore, { Static } from '../lib/StaticStore';
 import { WalletStore } from '@/lib/WalletStore';
 import { AccountInfo } from '@/lib/AccountInfo';
@@ -43,13 +43,22 @@ export default class SignMessage extends Vue {
     @Static protected request!: ParsedSignMessageRequest;
     @Static private rpcState!: RpcState;
     @State private keyguardResult!: KeyguardClient.SignMessageResult;
+
     @Getter private processedWallets!: WalletInfo[];
     @Getter private findWallet!: (id: string) => WalletInfo | undefined;
+
+    @Mutation('addWallet') private $addWallet!: (walletInfo: WalletInfo) => any;
+    @Mutation('setActiveAccount') private $setActiveAccount!: (payload: {
+        walletId: string,
+        userFriendlyAddress: string,
+    }) => any;
 
     private showAccountSelector = false;
 
     private async created() {
         if (this.keyguardResult) return;
+
+        await this.handleOnboardingResult();
 
         if (this.request.walletId && this.request.signer) {
             this.setAccount(this.request.walletId, this.request.signer.toUserFriendlyAddress(), true);
@@ -114,6 +123,29 @@ export default class SignMessage extends Vue {
         } else {
             this.$rpc.routerPush(RequestType.ONBOARD);
         }
+    }
+
+    private async handleOnboardingResult() {
+        // Check if we are returning from an onboarding request
+        if (staticStore.sideResult && !(staticStore.sideResult instanceof Error)) {
+            const sideResult = staticStore.sideResult as OnboardingResult;
+
+            // Add imported wallet to Vuex store
+            const walletInfo = await WalletStore.Instance.get(sideResult.walletId);
+            if (walletInfo) {
+                this.$addWallet(walletInfo);
+
+                // Set as activeWallet and activeAccount
+                // FIXME: Currently unused, but should be reactivated
+                const activeAccount = walletInfo.accounts.values().next().value;
+
+                this.$setActiveAccount({
+                    walletId: walletInfo.id,
+                    userFriendlyAddress: activeAccount.userFriendlyAddress,
+                });
+            }
+        }
+        delete staticStore.sideResult;
     }
 
     @Emit()
