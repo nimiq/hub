@@ -1,9 +1,13 @@
 import Vue from 'vue';
 import Vuex, { StoreOptions } from 'vuex';
 import { Result as KeyguardResult } from '@nimiq/keyguard-client';
-import { WalletInfo } from '@/lib/WalletInfo';
+import { WalletInfo, WalletType } from '@/lib/WalletInfo';
 import { WalletStore } from '@/lib/WalletStore';
 import { AccountInfo } from '@/lib/AccountInfo';
+import {
+    LEGACY_GROUPING_WALLET_ID,
+    LEGACY_GROUPING_WALLET_LABEL,
+} from '@/lib/Constants';
 
 Vue.use(Vuex);
 
@@ -117,6 +121,31 @@ const store: StoreOptions<RootState> = {
         },
         hasWallets: (state): boolean => {
             return state.wallets.length > 0;
+        },
+        processedWallets: (state) => {
+            const singleAccounts = new Map<string, AccountInfo>();
+
+            const processedWallets = state.wallets.filter((wallet) => {
+                if (wallet.type !== WalletType.LEGACY) return true;
+
+                const [singleAccountAddress, singleAccountInfo] = Array.from(wallet.accounts.entries())[0];
+                singleAccountInfo.walletId = wallet.id;
+                singleAccounts.set(singleAccountAddress, singleAccountInfo);
+
+                return false;
+            });
+
+            if (singleAccounts.size > 0) {
+                processedWallets.push(new WalletInfo(
+                    LEGACY_GROUPING_WALLET_ID,
+                    LEGACY_GROUPING_WALLET_LABEL,
+                    singleAccounts,
+                    [],
+                    WalletType.LEGACY,
+                ));
+            }
+
+            return processedWallets;
         },
     },
 };

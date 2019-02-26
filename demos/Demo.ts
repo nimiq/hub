@@ -173,7 +173,7 @@ class Demo {
             try {
                 const result = await client.signMessage(request);
                 console.log('Keyguard result', result);
-                document.querySelector('#result').textContent = 'MSG signed';
+                document.querySelector('#result').textContent = 'MSG signed: ' + Utf8Tools.utf8ByteArrayToString(result.data);
             } catch (e) {
                 console.error('Keyguard error', e);
                 document.querySelector('#result').textContent = `Error: ${e.message || e}`;
@@ -195,7 +195,7 @@ class Demo {
             try {
                 const result = await client.signMessage(request);
                 console.log('Keyguard result', result);
-                document.querySelector('#result').textContent = 'MSG signed';
+                document.querySelector('#result').textContent = 'MSG signed: ' + Utf8Tools.utf8ByteArrayToString(result.data);
             } catch (e) {
                 console.error('Keyguard error', e);
                 document.querySelector('#result').textContent = `Error: ${e.message || e}`;

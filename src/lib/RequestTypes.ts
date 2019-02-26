@@ -402,6 +402,9 @@ export class AccountsRequest {
                 } as ParsedRenameRequest;
             case RequestType.SIGN_MESSAGE:
                 request = request as SignMessageRequest;
+                if (typeof request.message !== 'string' && !(request.message instanceof Uint8Array)) {
+                    throw new Error('message must be a string or Uint8Array');
+                }
                 return {
                     kind: RequestType.SIGN_MESSAGE,
                     appName: request.appName,
