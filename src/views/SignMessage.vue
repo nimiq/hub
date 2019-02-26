@@ -111,8 +111,10 @@ export default class SignMessage extends Vue {
     }
 
     private messageBytes(): Uint8Array {
-        if (this.request.message instanceof Uint8Array) return this.request.message;
-        return Utf8Tools.stringToUtf8ByteArray(this.request.message);
+        if (typeof this.request.message === 'string') {
+            return Utf8Tools.stringToUtf8ByteArray(this.request.message);
+        }
+        return new Uint8Array(this.request.message);
     }
 
     private goToOnboarding(useReplace?: boolean) {
