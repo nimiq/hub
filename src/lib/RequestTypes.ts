@@ -160,7 +160,6 @@ export interface OnboardingResult {
 
 export interface ChooseAddressResult {
     address: string;
-    label: string;
 }
 
 export interface ExportRequest {

@@ -23,20 +23,20 @@
 
 <script lang="ts">
 import { Component, Vue, Emit } from 'vue-property-decorator';
-import { State, Mutation } from 'vuex-class';
+import { Getter, Mutation } from 'vuex-class';
 import { SmallPage, AccountSelector } from '@nimiq/vue-components';
-import { RequestType, SimpleRequest, OnboardingResult } from '../lib/RequestTypes';
+import { RequestType, SimpleRequest, OnboardingResult, ChooseAddressResult } from '../lib/RequestTypes';
 import staticStore, { Static } from '@/lib/StaticStore';
 import { WalletStore } from '@/lib/WalletStore';
-import { WalletInfo, WalletType } from '../lib/WalletInfo';
-import { AccountInfo } from '../lib/AccountInfo';
-import { TX_VALIDITY_WINDOW, LEGACY_GROUPING_WALLET_ID, LEGACY_GROUPING_WALLET_LABEL } from '../lib/Constants';
+import { WalletInfo } from '../lib/WalletInfo';
 import { ERROR_CANCELED } from '../lib/Constants';
 
 @Component({components: { AccountSelector, SmallPage }})
 export default class ChooseAddress extends Vue {
     @Static private request!: SimpleRequest;
-    @State private wallets!: WalletInfo[];
+
+    @Getter private findWallet!: (id: string) => WalletInfo | undefined;
+    @Getter private processedWallets!: WalletInfo[];
 
     @Mutation('addWallet') private $addWallet!: (walletInfo: WalletInfo) => any;
     @Mutation('setActiveAccount') private $setActiveAccount!: (payload: {
@@ -47,13 +47,13 @@ export default class ChooseAddress extends Vue {
     public async created() {
         await this.handleOnboardingResult();
 
-        if (this.wallets.length === 0) {
+        if (this.processedWallets.length === 0) {
             this.goToOnboarding(true);
         }
     }
 
     private accountSelected(walletId: string, address: string) {
-        const walletInfo = this.wallets.find((wallet: WalletInfo) => wallet.id === walletId);
+        const walletInfo = this.findWallet(walletId);
         if (!walletInfo) {
             console.error('Selected Wallet not found:', walletId);
             return;
@@ -70,9 +70,8 @@ export default class ChooseAddress extends Vue {
             userFriendlyAddress: accountInfo.userFriendlyAddress,
         });
 
-        const result = {
+        const result: ChooseAddressResult = {
             address: accountInfo.userFriendlyAddress,
-            label: accountInfo.label,
         };
 
         this.$rpc.resolve(result);
@@ -87,7 +86,7 @@ export default class ChooseAddress extends Vue {
         this.$rpc.routerPush(RequestType.ONBOARD);
     }
 
-     private async handleOnboardingResult() {
+    private async handleOnboardingResult() {
         // Check if we are returning from an onboarding request
         if (staticStore.sideResult && !(staticStore.sideResult instanceof Error)) {
             const sideResult = staticStore.sideResult as OnboardingResult;
@@ -98,20 +97,13 @@ export default class ChooseAddress extends Vue {
                 this.$addWallet(walletInfo);
 
                 // Set as activeWallet and activeAccount
+                // FIXME: Currently unused, but should be reactivated
                 const activeAccount = walletInfo.accounts.values().next().value;
 
                 this.$setActiveAccount({
                     walletId: walletInfo.id,
                     userFriendlyAddress: activeAccount.userFriendlyAddress,
                 });
-
-                // Return the generated address
-                const result = {
-                    address: activeAccount.userFriendlyAddress,
-                    label: activeAccount.label,
-                };
-
-                this.$rpc.resolve(result);
             }
         }
         delete staticStore.sideResult;
@@ -120,32 +112,6 @@ export default class ChooseAddress extends Vue {
     @Emit()
     private close() {
         this.$rpc.reject(new Error(ERROR_CANCELED));
-    }
-
-    private get processedWallets(): WalletInfo[] {
-        const singleAccounts = new Map<string, AccountInfo>();
-
-        const filteredWallets = this.wallets.filter((wallet) => {
-            if (wallet.type !== WalletType.LEGACY) return true;
-
-            const [singleAccountAddress, singleAccountInfo] = Array.from(wallet.accounts.entries())[0];
-            singleAccountInfo.walletId = wallet.id;
-            singleAccounts.set(singleAccountAddress, singleAccountInfo);
-
-            return false;
-        });
-
-        if (singleAccounts.size > 0) {
-            filteredWallets.push(new WalletInfo(
-                LEGACY_GROUPING_WALLET_ID,
-                LEGACY_GROUPING_WALLET_LABEL,
-                singleAccounts,
-                [],
-                WalletType.LEGACY,
-            ));
-        }
-
-        return filteredWallets;
     }
 }
 </script>
