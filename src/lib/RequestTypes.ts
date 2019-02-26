@@ -30,7 +30,7 @@ export interface SimpleResult {
 export interface OnboardingRequest {
     kind?: RequestType.ONBOARD;
     appName: string;
-    hideBack?: boolean;
+    disableBack?: boolean;
 }
 
 export interface SignTransactionRequest {
@@ -136,7 +136,7 @@ export interface SignMessageResult {
 export interface ParsedOnboardingRequest {
     kind: RequestType.ONBOARD;
     appName: string;
-    hideBack: boolean;
+    disableBack: boolean;
 }
 
 export interface ParsedSignupRequest {
@@ -342,7 +342,7 @@ export class AccountsRequest {
                 return {
                     kind: RequestType.ONBOARD,
                     appName: request.appName,
-                    hideBack: request.hideBack === true,
+                    disableBack: request.disableBack === true,
                 } as ParsedOnboardingRequest;
             case RequestType.SIGNUP:
                 request = request as SimpleRequest;
@@ -444,7 +444,7 @@ export class AccountsRequest {
                 return {
                     kind: RequestType.ONBOARD,
                     appName: request.appName,
-                    hideBack: request.hideBack,
+                    disableBack: request.disableBack,
                 } as OnboardingRequest;
             case RequestType.SIGNUP:
                 return {
