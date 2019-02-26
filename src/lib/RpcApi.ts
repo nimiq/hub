@@ -38,7 +38,7 @@ export default class RpcApi {
             RequestType.LOGOUT,
             RequestType.ADD_ACCOUNT,
             RequestType.RENAME,
-            // RequestType.SIGN_MESSAGE, // Disabled until re-added in Keyguard
+            RequestType.SIGN_MESSAGE,
             RequestType.MIGRATE,
         ]);
         this._registerKeyguardApis([
@@ -49,7 +49,7 @@ export default class RpcApi {
             KeyguardCommand.CHANGE_PASSPHRASE,
             KeyguardCommand.REMOVE,
             KeyguardCommand.DERIVE_ADDRESS,
-            // KeyguardCommand.SIGN_MESSAGE, // Currently not available in Keyguard
+            KeyguardCommand.SIGN_MESSAGE,
         ]);
     }
 
@@ -99,12 +99,13 @@ export default class RpcApi {
         // Check for originalRouteName in StaticStore and route there
         if (this._staticStore.originalRouteName && (!(result instanceof Error) || result.message !== ERROR_CANCELED)) {
             this._staticStore.sideResult = result;
+            this._store.commit('setKeyguardResult', null);
 
             // Recreate original URL with original query parameters
             const rpcState = this._staticStore.rpcState!;
-            const redirectUrl = rpcState.toRequestUrl();
+            const redirectUrlParams = rpcState.toRequestUrl('rpc://').substring('rpc://'.length);
 
-            const query = this._parseUrlParams(redirectUrl);
+            const query = this._parseUrlParams(redirectUrlParams);
             this._router.push({ name: this._staticStore.originalRouteName, query });
             delete this._staticStore.originalRouteName;
             return;
