@@ -19,7 +19,7 @@
         "@nimiq/rpc": "^0.1.1",
         "@nimiq/style": "^0.4.1",
         "@nimiq/utils": "^0.1.0",
-        "@nimiq/vue-components": "https://github.com/nimiq/vue-components.git#build/accounts-new",
+        "@nimiq/vue-components": "https://github.com/nimiq/vue-components.git#build/accounts",
         "vue": "^2.6.6",
         "vue-class-component": "^6.0.0",
         "vue-property-decorator": "^7.0.0",

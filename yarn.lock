@@ -764,9 +764,9 @@
   resolved "https://registry.yarnpkg.com/@nimiq/utils/-/utils-0.1.0.tgz#4586f2fad3909311484513c9e23dceae838c6dda"
   integrity sha512-oN0AyYPkSowaAlgA1MjdbWjWzVHdd20cVH8uY9jpD+MulAl5s1yHxgNQKjgJjMZQFQMMOJjYHEPnf850t8V21g==
 
-"@nimiq/vue-components@https://github.com/nimiq/vue-components.git#build/accounts-new":
+"@nimiq/vue-components@https://github.com/nimiq/vue-components.git#build/accounts":
   version "0.1.0"
-  resolved "https://github.com/nimiq/vue-components.git#8ecc95252e030358dfa1fbd69f80bf0bc5d1e4dd"
+  resolved "https://github.com/nimiq/vue-components.git#2b27d3a9557b7b8643a08699866d77a4ca080f1a"
   dependencies:
     vue "^2.5.17"
     vue-property-decorator "^7.0.0"
@@ -9199,9 +9199,9 @@ vue-template-es2015-compiler@^1.8.2:
   integrity sha512-cliV19VHLJqFUYbz/XeWXe5CO6guzwd0yrrqqp0bmjlMP3ZZULY7fu8RTC4+3lmHwo6ESVDHFDsvjB15hcR5IA==
 
 vue@^2.5.17:
-  version "2.5.21"
-  resolved "https://registry.yarnpkg.com/vue/-/vue-2.5.21.tgz#3d33dcd03bb813912ce894a8303ab553699c4a85"
-  integrity sha512-Aejvyyfhn0zjVeLvXd70h4hrE4zZDx1wfZqia6ekkobLmUZ+vNFQer53B4fu0EjWBSiqApxPejzkO1Znt3joxQ==
+  version "2.6.7"
+  resolved "https://registry.yarnpkg.com/vue/-/vue-2.6.7.tgz#254f188e7621d2d19ee28d0c0442c6d21b53ae2d"
+  integrity sha512-g7ADfQ82QU+j6F/bVDioVQf2ccIMYLuR4E8ev+RsDBlmwRkhGO3HhgF4PF9vpwjdPpxyb1zzLur2nQ2oIMAMEg==
 
 vue@^2.6.6:
   version "2.6.6"
