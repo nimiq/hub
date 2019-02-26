@@ -13,6 +13,8 @@ const CheckoutErrorHandler    = () => import(/*webpackChunkName: "checkout"*/ '.
 
 const OnboardingSelector      = () => import(/*webpackChunkName: "onboarding"*/ './views/OnboardingSelector.vue');
 
+const ChooseAddress           = () => import(/*webpackChunkName: "choose-address"*/ './views/ChooseAddress.vue');
+
 const Signup                  = () => import(/*webpackChunkName: "onboarding"*/ './views/Signup.vue');
 const SignupSuccess           = () => import(/*webpackChunkName: "onboarding"*/ './views/SignupSuccess.vue');
 const SignupErrorHandler      = () => import(/*webpackChunkName: "onboarding"*/ './views/SignupErrorHandler.vue');
@@ -222,6 +224,11 @@ export default new Router({
             path: `/${RequestType.MIGRATE}`,
             component: Migrate,
             name: RequestType.MIGRATE,
+        },
+        {
+            path: `/${RequestType.CHOOSE_ADDRESS}`,
+            component: ChooseAddress,
+            name: RequestType.CHOOSE_ADDRESS,
         },
         {
             path: `/${RequestType.SIGN_MESSAGE}`,

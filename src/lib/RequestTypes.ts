@@ -16,10 +16,11 @@ export enum RequestType {
     LOGOUT = 'logout',
     ADD_ACCOUNT = 'add-account',
     RENAME = 'rename',
+    CHOOSE_ADDRESS = 'choose-address',
 }
 
 export interface SimpleRequest {
-    kind?: RequestType.ONBOARD | RequestType.SIGNUP | RequestType.LOGIN;
+    kind?: RequestType.ONBOARD | RequestType.SIGNUP | RequestType.LOGIN | RequestType.CHOOSE_ADDRESS;
     appName: string;
 }
 
@@ -132,6 +133,11 @@ export interface ParsedOnboardingRequest {
     appName: string;
 }
 
+export interface ParsedChooseAddressRequest {
+    kind: RequestType.CHOOSE_ADDRESS;
+    appName: string;
+}
+
 export interface ParsedSignupRequest {
     kind: RequestType.SIGNUP;
     appName: string;
@@ -150,6 +156,10 @@ export interface OnboardingResult {
         address: string;
         label: string;
     }>;
+}
+
+export interface ChooseAddressResult {
+    address: string;
 }
 
 export interface ExportRequest {
@@ -258,6 +268,7 @@ export type RpcRequest = SignTransactionRequest
 export type ParsedRpcRequest = ParsedSignTransactionRequest
                              | ParsedCheckoutRequest
                              | ParsedOnboardingRequest
+                             | ParsedChooseAddressRequest
                              | ParsedSignupRequest
                              | ParsedLoginRequest
                              | ParsedExportRequest
@@ -274,6 +285,7 @@ export type RpcResult = SignTransactionResult
                       | AddAccountResult
                       | RenameResult
                       | SignMessageResult
+                      | ChooseAddressResult
                       | ListResult;
 
 export class AccountsRequest {
@@ -339,6 +351,12 @@ export class AccountsRequest {
                     kind: RequestType.SIGNUP,
                     appName: request.appName,
                 } as ParsedSignupRequest;
+            case RequestType.CHOOSE_ADDRESS:
+                request = request as SimpleRequest;
+                return {
+                    kind: RequestType.CHOOSE_ADDRESS,
+                    appName: request.appName,
+                } as ParsedChooseAddressRequest;
             case RequestType.LOGIN:
                 request = request as SimpleRequest;
                 return {
@@ -440,6 +458,11 @@ export class AccountsRequest {
             case RequestType.SIGNUP:
                 return {
                     kind: RequestType.SIGNUP,
+                    appName: request.appName,
+                } as SimpleRequest;
+            case RequestType.CHOOSE_ADDRESS:
+                return {
+                    kind: RequestType.CHOOSE_ADDRESS,
                     appName: request.appName,
                 } as SimpleRequest;
             case RequestType.LOGIN:

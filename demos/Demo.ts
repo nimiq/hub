@@ -57,6 +57,17 @@ class Demo {
             await checkoutPopup(await generateCheckoutRequest(demo));
         });
 
+        document.querySelector('button#choose-address').addEventListener('click', async () => {
+            try {
+                const result = await client.chooseAddress({ appName: 'Accounts Demos' });
+                console.log('Result', result);
+                document.querySelector('#result').textContent = 'Address was chosen';
+            } catch (e) {
+                console.error('Result error', e);
+                document.querySelector('#result').textContent = `Error: ${e.message || e}`;
+            }
+        });
+
         document.querySelector('button#sign-transaction-popup').addEventListener('click', async () => {
             const txRequest = generateSignTransactionRequest(demo);
             try {
