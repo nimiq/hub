@@ -20,12 +20,18 @@ export enum RequestType {
 }
 
 export interface SimpleRequest {
-    kind?: RequestType.ONBOARD | RequestType.SIGNUP | RequestType.LOGIN | RequestType.CHOOSE_ADDRESS;
+    kind?: RequestType.SIGNUP | RequestType.LOGIN | RequestType.CHOOSE_ADDRESS;
     appName: string;
 }
 
 export interface SimpleResult {
     success: true;
+}
+
+export interface OnboardingRequest {
+    kind?: RequestType.ONBOARD;
+    appName: string;
+    disableBack?: boolean;
 }
 
 export interface SignTransactionRequest {
@@ -131,6 +137,7 @@ export interface SignMessageResult {
 export interface ParsedOnboardingRequest {
     kind: RequestType.ONBOARD;
     appName: string;
+    disableBack: boolean;
 }
 
 export interface ParsedChooseAddressRequest {
@@ -264,7 +271,9 @@ export type RpcRequest = SignTransactionRequest
                        | AddAccountRequest
                        | RenameRequest
                        | SignMessageRequest
-                       | MigrateRequest;
+                       | MigrateRequest
+                       | OnboardingRequest;
+
 export type ParsedRpcRequest = ParsedSignTransactionRequest
                              | ParsedCheckoutRequest
                              | ParsedOnboardingRequest
@@ -278,6 +287,7 @@ export type ParsedRpcRequest = ParsedSignTransactionRequest
                              | ParsedRenameRequest
                              | ParsedSignMessageRequest
                              | ParsedMigrateRequest;
+
 export type RpcResult = SignTransactionResult
                       | OnboardingResult
                       | SimpleResult
@@ -340,10 +350,11 @@ export class AccountsRequest {
                     ),
                 } as ParsedCheckoutRequest;
             case RequestType.ONBOARD:
-                request = request as SimpleRequest;
+                request = request as OnboardingRequest;
                 return {
                     kind: RequestType.ONBOARD,
                     appName: request.appName,
+                    disableBack: request.disableBack === true,
                 } as ParsedOnboardingRequest;
             case RequestType.SIGNUP:
                 request = request as SimpleRequest;
@@ -454,7 +465,8 @@ export class AccountsRequest {
                 return {
                     kind: RequestType.ONBOARD,
                     appName: request.appName,
-                } as SimpleRequest;
+                    disableBack: request.disableBack,
+                } as OnboardingRequest;
             case RequestType.SIGNUP:
                 return {
                     kind: RequestType.SIGNUP,
