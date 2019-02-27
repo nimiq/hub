@@ -61,7 +61,7 @@ export default class RpcApi {
 
     public createKeyguardClient() {
         const localState = this._exportState();
-        const client = new KeyguardClient(Config.keyguardEndpoint, localState);
+        const client = new KeyguardClient(Config.keyguardEndpoint, window.location.origin, localState);
         return client;
     }
 
