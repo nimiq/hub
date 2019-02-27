@@ -159,11 +159,11 @@ export default class RpcApi {
         return params;
     }
 
-    private _recoverState(state: any) {
-        const rpcState = RpcState.fromJSON(state.rpcState);
-        const request = AccountsRequest.parse(state.request, state);
-        const keyguardRequest = state.keyguardRequest;
-        const originalRouteName = state.originalRouteName;
+    private _recoverState(storedState: any) {
+        const rpcState = RpcState.fromJSON(storedState.rpcState);
+        const request = AccountsRequest.parse(storedState.request, rpcState);
+        const keyguardRequest = storedState.keyguardRequest;
+        const originalRouteName = storedState.originalRouteName;
 
         this._staticStore.rpcState = rpcState;
         this._staticStore.request = request || undefined;
