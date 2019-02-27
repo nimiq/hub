@@ -26,7 +26,7 @@
 
 <script lang="ts">
 import { Component, Emit, Vue } from 'vue-property-decorator';
-import { State, Getter, Mutation } from 'vuex-class';
+import { Getter, Mutation } from 'vuex-class';
 import { SmallPage, AccountSelector } from '@nimiq/vue-components';
 import { RequestType, ParsedSignMessageRequest, OnboardingResult } from '../lib/RequestTypes';
 import staticStore, { Static } from '../lib/StaticStore';
@@ -42,7 +42,6 @@ import { State as RpcState } from '@nimiq/rpc';
 export default class SignMessage extends Vue {
     @Static protected request!: ParsedSignMessageRequest;
     @Static private rpcState!: RpcState;
-    @State private keyguardResult!: KeyguardClient.SignMessageResult;
 
     @Getter private processedWallets!: WalletInfo[];
     @Getter private findWallet!: (id: string) => WalletInfo | undefined;
@@ -56,8 +55,6 @@ export default class SignMessage extends Vue {
     private showAccountSelector = false;
 
     private async created() {
-        if (this.keyguardResult) return;
-
         await this.handleOnboardingResult();
 
         if (this.request.walletId && this.request.signer) {
