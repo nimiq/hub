@@ -27,7 +27,7 @@ const LoginErrorHandler       = () => import(/*webpackChunkName: "onboarding"*/ 
 
 const Export                  = () => import(/*webpackChunkName: "export"*/ './views/Export.vue');
 
-const ChangePassword        = () => import(/*webpackChunkName: "change-password"*/ './views/ChangePassword.vue');
+const ChangePassword          = () => import(/*webpackChunkName: "change-password"*/ './views/ChangePassword.vue');
 
 const Logout                  = () => import(/*webpackChunkName: "logout"*/ './views/Logout.vue');
 const LogoutSuccess           = () => import(/*webpackChunkName: "logout"*/ './views/LogoutSuccess.vue');
@@ -113,7 +113,7 @@ export default new Router({
         {
             path: `/${RequestType.SIGN_TRANSACTION}`,
             component: SignTransaction,
-            name: `${RequestType.SIGN_TRANSACTION}`,
+            name: RequestType.SIGN_TRANSACTION,
         },
         {
             path: `/${RequestType.SIGN_TRANSACTION}/success`,
@@ -138,12 +138,12 @@ export default new Router({
         {
             path: `/${RequestType.ONBOARD}`,
             component: OnboardingSelector,
-            name: `${RequestType.ONBOARD}`,
+            name: RequestType.ONBOARD,
         },
         {
             path: `/${RequestType.SIGNUP}`,
             component: Signup,
-            name: `${RequestType.SIGNUP}`,
+            name: RequestType.SIGNUP,
         },
         {
             path: `/${RequestType.SIGNUP}/ledger`,
