@@ -52,9 +52,3 @@ export default class CheckoutTransmission extends Vue {
 }
 </script>
 
-<style scoped>
-    .small-page {
-        height: 70rem;
-    }
-</style>
-
