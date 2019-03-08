@@ -159,6 +159,8 @@ export interface OnboardingResult {
     walletId: string;
     label: string;
     type: WalletType;
+    hasFile: boolean;
+    hasWords: boolean;
     accounts: Array<{
         address: string;
         label: string;

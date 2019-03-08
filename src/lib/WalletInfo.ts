@@ -13,7 +13,7 @@ export class WalletInfo {
         o.accounts.forEach((accountInfoEntry, userFriendlyAddress) => {
             accounts.set(userFriendlyAddress, AccountInfo.fromObject(accountInfoEntry));
         });
-        return new WalletInfo(o.id, o.label, accounts, o.contracts, o.type, o.keyMissing);
+        return new WalletInfo(o.id, o.label, accounts, o.contracts, o.type, o.keyMissing, o.hasFile, o.hasWords);
     }
 
     public constructor(public id: string,
@@ -21,7 +21,9 @@ export class WalletInfo {
                        public accounts: Map</*address*/ string, AccountInfo>,
                        public contracts: ContractInfo[],
                        public type: WalletType,
-                       public keyMissing: boolean = false) {}
+                       public keyMissing: boolean = false,
+                       public hasFile: boolean = false,
+                       public hasWords: boolean = false) {}
 
     public toObject(): WalletInfoEntry {
         const accountEntries = new Map<string, AccountInfoEntry>();
@@ -35,6 +37,8 @@ export class WalletInfo {
             contracts: this.contracts,
             type: this.type,
             keyMissing: this.keyMissing,
+            hasFile: this.hasFile,
+            hasWords: this.hasWords,
         };
     }
 }
@@ -49,4 +53,6 @@ export interface WalletInfoEntry {
     contracts: ContractInfo[];
     type: WalletType;
     keyMissing: boolean;
+    hasFile: boolean;
+    hasWords: boolean;
 }

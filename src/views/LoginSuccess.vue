@@ -47,8 +47,13 @@ export default class LoginSuccess extends Vue {
                         keyResult.keyId,
                         keyguardResultAccounts,
                     );
+
+                    walletInfo.hasFile = keyResult.importedByFile;
+                    walletInfo.hasWords = keyResult.importedByWords;
+
                     await WalletStore.Instance.put(walletInfo);
                     this.walletInfos.push(walletInfo);
+
                     this.retrievalFailed = false;
                     this.done();
                     break;
@@ -67,6 +72,8 @@ export default class LoginSuccess extends Vue {
             walletId: this.walletInfos[0].id,
             label: this.walletInfos[0].label,
             type: this.walletInfos[0].type,
+            hasFile: this.walletInfos[0].hasFile,
+            hasWords: this.walletInfos[0].hasWords,
             accounts: Array.from(this.walletInfos[0].accounts.values()).map((addressInfo) => ({
                 address: addressInfo.userFriendlyAddress,
                 label: addressInfo.label,
