@@ -26,6 +26,7 @@ const LoginSuccess            = () => import(/*webpackChunkName: "onboarding"*/ 
 const LoginErrorHandler       = () => import(/*webpackChunkName: "onboarding"*/ './views/LoginErrorHandler.vue');
 
 const Export                  = () => import(/*webpackChunkName: "export"*/ './views/Export.vue');
+const ExportSuccess           = () => import(/*webpackChunkName: "export"*/ './views/ExportSuccess.vue');
 
 const ChangePassword        = () => import(/*webpackChunkName: "change-password"*/ './views/ChangePassword.vue');
 
@@ -182,7 +183,7 @@ export default new Router({
         },
         {
             path: `/${RequestType.EXPORT}/success`,
-            component: SimpleSuccess,
+            component: ExportSuccess,
             name: `${RequestType.EXPORT}-success`,
         },
         {

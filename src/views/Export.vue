@@ -6,7 +6,7 @@ import { ParsedExportRequest } from '../lib/RequestTypes';
 import { SimpleRequest } from '@nimiq/keyguard-client';
 import { State } from 'vuex-class';
 import { WalletStore } from '@/lib/WalletStore';
-import { Static } from '../lib/StaticStore';
+import staticStore, { Static } from '../lib/StaticStore';
 import KeyguardClient from '@nimiq/keyguard-client';
 
 @Component
@@ -24,6 +24,7 @@ export default class Export extends Vue {
             keyId: this.request.walletId,
             keyLabel: wallet.label,
         };
+        staticStore.keyguardRequest = request;
 
         const client = this.$rpc.createKeyguardClient();
         client.export(request);
