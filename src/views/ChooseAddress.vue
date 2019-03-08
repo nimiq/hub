@@ -119,7 +119,6 @@ export default class ChooseAddress extends Vue {
 <style scoped>
     .small-page {
         position: relative;
-        height: 70rem;
     }
 
     .account-info {

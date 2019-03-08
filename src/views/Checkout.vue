@@ -276,7 +276,6 @@ export default class Checkout extends Vue {
 <style scoped>
     .small-page {
         position: relative;
-        height: 70rem;
     }
 
     .loader {
