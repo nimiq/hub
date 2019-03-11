@@ -97,7 +97,7 @@ export default class Checkout extends Vue {
     private isProduction: boolean = window.location.origin.indexOf('nimiq.com') !== -1;
     private isTappingFaucet: boolean = false;
     private faucetError: string | null = null;
-    private _firstAddress: any;
+    private _firstAddress: AccountInfo | null = null;
 
     private async created() {
         const $subtitle = document.querySelector('.logo .logo-subtitle')!;
@@ -177,12 +177,18 @@ export default class Checkout extends Vue {
             // wait for updated balance
             const checkForArrivedBalance = async () => {
                 this.getBalances(true);
-                const balances: Map<string, number> = await network.getBalances(this.firstAddress.userFriendlyAddress);
+                const balances: Map<string, number> = await network.getBalances(
+                    [this.firstAddress.userFriendlyAddress],
+                );
                 const newBalance = [ ...balances.values() ][0];
                 console.log('check balance');
-                if (newBalance > this.firstAddress.balance) {
-                    // TODO improve performance by doing exactly what is needed instead;
-                    await this.getBalances(true);
+                if (this.firstAddress.balance && newBalance > this.firstAddress.balance) {
+                    this.firstAddress.balance = newBalance; // still referenced in wallet's accounts map
+                    const updatedWallet = this.wallets[0];
+                    // Update IndexedDB
+                    await WalletStore.Instance.put(updatedWallet);
+                    // Update Vuex
+                    this.$addWallet(updatedWallet);
                     this.isTappingFaucet = false;
                 }
                 setTimeout(checkForArrivedBalance, 1000);
@@ -201,17 +207,24 @@ export default class Checkout extends Vue {
         this.faucetError = null;
     }
 
+    // Doesn't work with preliminary pico-consensus script
     private async onBalanceChange(balances: Map<string, number>) {
+        /*
         if (!this.isTappingFaucet) return;
 
         // we only subscribed to one address
         const balance = [ ...balances.values() ][0];
 
-        if (balance > this.firstAddress.balance) {
-            // TODO improve performance by doing exactly what is needed instead
-            await this.getBalances(true);
+         if (this.firstAddress.balance && newBalance > this.firstAddress.balance) {
+            this.firstAddress.balance = newBalance; // still referenced in wallet's accounts map
+            const updatedWallet = this.wallets[0];
+            // Update IndexedDB
+            await WalletStore.Instance.put(updatedWallet);
+            // Update Vuex
+            this.$addWallet(updatedWallet);
             this.isTappingFaucet = false;
         }
+        */
     }
 
     private onHeadChange(head: Nimiq.BlockHeader | {height: number}) {
@@ -297,8 +310,7 @@ export default class Checkout extends Vue {
         });
     }
 
-    // FIXME should be of type AccountInfo, but ts complains
-    private get firstAddress(): any {
+    private get firstAddress(): AccountInfo {
         if (!this._firstAddress) {
             this._firstAddress = this._firstAddress || [ ...this.wallets[0].accounts.values() ][0];
         }
