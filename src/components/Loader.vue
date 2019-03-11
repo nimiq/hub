@@ -115,6 +115,7 @@ import { LoadingSpinner } from '@nimiq/vue-components';
 class Loader extends Vue {
     // TODO: Move to CONSTANTS
     public static readonly SUCCESS_REDIRECT_DELAY: number = 2000; // 1s of transition + 1s of display
+    public static readonly ERROR_REDIRECT_DELAY: number = 2000; // 2s of display
 
     @Prop({type: String}) private title?: string;
     // Using Loader.State.LOADING here results in runtime error: 'Cannot read property 'LOADING' of undefined'

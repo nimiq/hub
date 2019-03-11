@@ -23,10 +23,12 @@
                         <i class="nq-icon exchange"></i>Get NIM&nbsp;
                     </button>
                 </a>
-                <button v-if="!isProduction && !isTappingFaucet" class="nq-button-s blue" @click="tapFaucet">
+                <button v-if="!isProduction && !isTappingFaucet" class="nq-button-s nq-light-blue-bg" @click="tapFaucet">
                     <i class="nq-icon exchange"></i> Get NIM&nbsp;
                 </button>
                 <Loader v-if="isTappingFaucet" title="Free NIM requested" status="Awaiting transaction..."/>
+                <Loader v-if="faucetError" state="error" title="Faucet could not be tapped" :message="faucetError"
+                        mainAction="OK" @main-action="resetFaucetState"/>
             </div>
 
             <AccountSelector
@@ -94,6 +96,7 @@ export default class Checkout extends Vue {
     private sideResultAddedWallet: boolean = false;
     private isProduction: boolean = window.location.origin.indexOf('nimiq.com') !== -1;
     private isTappingFaucet: boolean = false;
+    private faucetError: string | null = null;
     private _firstAddress: any;
 
     private async created() {
@@ -155,14 +158,6 @@ export default class Checkout extends Vue {
 
         // Remove loader
         this.hasBalances = true;
-
-        // FIXME if we want to keep this, only do it in testnet
-        /*if (!this.hasSufficientBalanceAccount) {
-            // proactively connect and subscribe, anticipating faucet tapping
-            const network = (this.$refs.network as Network);
-            console.log('connect to network');
-            await network.connect();
-        }*/
     }
 
     @Watch('height')
@@ -176,6 +171,7 @@ export default class Checkout extends Vue {
         const network = (this.$refs.network as Network);
         try {
             await Faucet.tap(this.firstAddress.userFriendlyAddress, null); // currently no captcha required in testnet
+
             this.isTappingFaucet = true;
 
             // wait for updated balance
@@ -196,8 +192,13 @@ export default class Checkout extends Vue {
             const errorMessage = e.msg // faucet specific error message
                 || e.message // message of Error constructor
                 || 'Failed to claim funds.';
-            console.error(errorMessage);
+            this.faucetError = errorMessage;
         }
+    }
+
+    private resetFaucetState() {
+        this.isTappingFaucet = false;
+        this.faucetError = null;
     }
 
     private async onBalanceChange(balances: Map<string, number>) {
