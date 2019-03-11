@@ -19,7 +19,7 @@ const BURN_ADDRESS_S = new Uint8Array(BURN_ADDRESS.serialize());
 
 const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
     {
-        id: '1ee3d926a49c',
+        id: 'K23',
         label: 'Main 🙉',
         accounts: new Map<string, AccountInfoEntry>([
             [
@@ -66,7 +66,7 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         keyMissing: true,
     },
     {
-        id: '1ee3d926a49e',
+        id: 'K5',
         label: 'My old wallet',
         accounts: new Map<string, AccountInfoEntry>([
             [
@@ -83,7 +83,7 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         keyMissing: true,
     },
     {
-        id: '1ee3d926a49f',
+        id: 'K7',
         label: 'Main 🙉',
         accounts: new Map<string, AccountInfoEntry>([
             [
@@ -130,7 +130,7 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         keyMissing: false,
     },
     {
-        id: '1ee3d926a4a1',
+        id: 'K9000000',
         label: 'My old wallet',
         accounts: new Map<string, AccountInfoEntry>([
             [
@@ -150,7 +150,7 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
 
 const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
     {
-        id: '1ee3d926a49c',
+        id: 'K23',
         label: 'Main 🙉',
         accounts: new Map<string, AccountInfoEntry>([
             [
@@ -192,7 +192,7 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         keyMissing: true,
     },
     {
-        id: '1ee3d926a49e',
+        id: 'K5',
         label: 'Legacy Wallet',
         accounts: new Map<string, AccountInfoEntry>([
             [
@@ -209,7 +209,7 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         keyMissing: true,
     },
     {
-        id: '1ee3d926a49f',
+        id: 'K7',
         label: 'Main 🙉',
         accounts: new Map<string, AccountInfoEntry>([
             [
@@ -251,7 +251,7 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         keyMissing: false,
     },
     {
-        id: '1ee3d926a4a1',
+        id: 'K9000000',
         label: 'Legacy Wallet',
         accounts: new Map<string, AccountInfoEntry>([
             [
@@ -273,9 +273,9 @@ const BYTES = [
     1, // cookie version
 
     // wallet 1 (BIP39)
-    30, 227, 217, 38, 164, 156, // wallet id
-    1, // keyMissing = true
     38, // wallet label length (9), wallet type (2)
+    1, // keyMissing = true
+    1, 23, // wallet id
     77, 97, 105, 110, 32, 240, 159, 153, 137, // wallet label
     2, // number of accounts
 
@@ -289,9 +289,9 @@ const BYTES = [
         101, 254, 174, 109, 147, 234, 215, 10, 22, 16, 67, 70, 109, 90, 53, 154, 43, 22, 180, 254, // account address
 
     // wallet 2 (LEDGER)
-    30, 227, 217, 38, 164, 157, // wallet id
-    1, // keyMissing = true
     3, // wallet label length (0), wallet type (3)
+    1, // keyMissing = true
+    30, 227, 217, 38, 164, 157, // wallet id
     1, // number of accounts
 
         // account 1
@@ -300,18 +300,18 @@ const BYTES = [
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // account address
 
     // wallet 3 (LEGACY)
-    30, 227, 217, 38, 164, 158, // wallet id
-    1, // keyMissing = true
     41, // account label length (10), wallet type (1)
+    1, // keyMissing = true
+    1, 5, // wallet id
 
         // account
         79, 108, 100, 65, 99, 99, 111, 117, 110, 116, // account label
         101, 254, 174, 109, 147, 234, 215, 10, 22, 16, 67, 70, 109, 90, 53, 154, 43, 22, 180, 254, // account address
 
     // wallet 4 (BIP39)
-    30, 227, 217, 38, 164, 159, // wallet id
-    0, // keyMissing = false
     38, // wallet label length (9), wallet type (2)
+    0, // keyMissing = false
+    1, 7, // wallet id
     77, 97, 105, 110, 32, 240, 159, 153, 137, // wallet label
     2, // number of accounts
 
@@ -325,9 +325,9 @@ const BYTES = [
         101, 254, 174, 109, 147, 234, 215, 10, 22, 16, 67, 70, 109, 90, 53, 154, 43, 22, 180, 254, // account address
 
     // wallet 2 (LEDGER)
-    30, 227, 217, 38, 164, 160, // wallet id
-    0, // keyMissing = false
     3, // wallet label length (0), wallet type (3)
+    0, // keyMissing = false
+    30, 227, 217, 38, 164, 160, // wallet id
     1, // number of accounts
 
         // account 1
@@ -336,9 +336,9 @@ const BYTES = [
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // account address
 
     // wallet 3 (LEGACY)
-    30, 227, 217, 38, 164, 161, // wallet id
-    0, // keyMissing = false
     41, // account label length (10), wallet type (1)
+    0, // keyMissing = false
+    3, 137, 84, 64, // wallet id
 
         // account
         79, 108, 100, 65, 99, 99, 111, 117, 110, 116, // account label

@@ -17,11 +17,12 @@ import { SmallPage } from '@nimiq/vue-components';
 import Loader from '@/components/Loader.vue';
 import WalletInfoCollector from '@/lib/WalletInfoCollector';
 import Input from '@/components/Input.vue';
+import KeyguardClient from '@nimiq/keyguard-client';
 
 @Component({components: {Loader, SmallPage}})
 export default class LoginSuccess extends Vue {
     @Static private request!: ParsedLoginRequest;
-    @State private keyguardResult!: KeyguardRequest.KeyResult[];
+    @State private keyguardResult!: KeyguardClient.KeyResult;
 
     private walletInfos: WalletInfo[] = [];
     private retrievalFailed: boolean = false;

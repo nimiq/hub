@@ -1,6 +1,6 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import { Input as StandardInput } from '@nimiq/vue-components';
+import { LabelInput as StandardInput } from '@nimiq/vue-components';
 import { LABEL_MAX_LENGTH } from '@/lib/Constants';
 
 @Component

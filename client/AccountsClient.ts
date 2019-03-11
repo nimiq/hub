@@ -8,6 +8,7 @@ import { RedirectRpcClient } from '@nimiq/rpc';
 import {
     RequestType,
     SimpleRequest,
+    OnboardingRequest,
     OnboardingResult,
     CheckoutRequest,
     LogoutRequest,
@@ -15,7 +16,7 @@ import {
     SignTransactionRequest,
     SignTransactionResult,
     ExportRequest,
-    ChangePassphraseRequest,
+    ChangePasswordRequest,
     AddAccountRequest,
     AddAccountResult,
     RenameRequest,
@@ -25,6 +26,7 @@ import {
     SimpleResult,
     ListResult,
     RpcResult,
+    ChooseAddressResult,
 } from '../src/lib/RequestTypes';
 
 export default class AccountsClient {
@@ -54,7 +56,7 @@ export default class AccountsClient {
     constructor(endpoint: string = AccountsClient.DEFAULT_ENDPOINT, defaultBehavior?: RequestBehavior) {
         this._endpoint = endpoint;
         this._defaultBehavior = defaultBehavior || new PopupRequestBehavior(
-            `left=${window.innerWidth / 2 - 500},top=50,width=1000,height=900,location=yes,dependent=yes`);
+            `left=${window.innerWidth / 2 - 400},top=75,width=800,height=850,location=yes,dependent=yes`);
         this._iframeBehavior = new IFrameRequestBehavior();
 
         // Check for RPC results in the URL
@@ -77,7 +79,7 @@ export default class AccountsClient {
         );
     }
 
-    public onboard(request: SimpleRequest, requestBehavior = this._defaultBehavior): Promise<OnboardingResult> {
+    public onboard(request: OnboardingRequest, requestBehavior = this._defaultBehavior): Promise<OnboardingResult> {
         return this._request(requestBehavior, RequestType.ONBOARD, [request]);
     }
 
@@ -87,6 +89,11 @@ export default class AccountsClient {
 
     public login(request: SimpleRequest, requestBehavior = this._defaultBehavior): Promise<OnboardingResult> {
         return this._request(requestBehavior, RequestType.LOGIN, [request]);
+    }
+
+    public chooseAddress(request: SimpleRequest, requestBehavior = this._defaultBehavior)
+        : Promise<ChooseAddressResult> {
+        return this._request(requestBehavior, RequestType.CHOOSE_ADDRESS, [request]);
     }
 
     public signTransaction(
@@ -111,11 +118,11 @@ export default class AccountsClient {
         return this._request(requestBehavior, RequestType.EXPORT, [request]);
     }
 
-    public changePassphrase(
-        request: ChangePassphraseRequest,
+    public changePassword(
+        request: ChangePasswordRequest,
         requestBehavior = this._defaultBehavior,
     ): Promise<SimpleResult> {
-        return this._request(requestBehavior, RequestType.CHANGE_PASSPHRASE, [request]);
+        return this._request(requestBehavior, RequestType.CHANGE_PASSWORD, [request]);
     }
 
     public addAccount(request: AddAccountRequest, requestBehavior = this._defaultBehavior): Promise<AddAccountResult> {

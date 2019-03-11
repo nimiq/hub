@@ -13,6 +13,8 @@ const CheckoutErrorHandler    = () => import(/*webpackChunkName: "checkout"*/ '.
 
 const OnboardingSelector      = () => import(/*webpackChunkName: "onboarding"*/ './views/OnboardingSelector.vue');
 
+const ChooseAddress           = () => import(/*webpackChunkName: "choose-address"*/ './views/ChooseAddress.vue');
+
 const Signup                  = () => import(/*webpackChunkName: "onboarding"*/ './views/Signup.vue');
 const SignupSuccess           = () => import(/*webpackChunkName: "onboarding"*/ './views/SignupSuccess.vue');
 const SignupErrorHandler      = () => import(/*webpackChunkName: "onboarding"*/ './views/SignupErrorHandler.vue');
@@ -25,7 +27,7 @@ const LoginErrorHandler       = () => import(/*webpackChunkName: "onboarding"*/ 
 
 const Export                  = () => import(/*webpackChunkName: "export"*/ './views/Export.vue');
 
-const ChangePassphrase        = () => import(/*webpackChunkName: "change-passphrase"*/ './views/ChangePassphrase.vue');
+const ChangePassword        = () => import(/*webpackChunkName: "change-password"*/ './views/ChangePassword.vue');
 
 const Logout                  = () => import(/*webpackChunkName: "logout"*/ './views/Logout.vue');
 const LogoutSuccess           = () => import(/*webpackChunkName: "logout"*/ './views/LogoutSuccess.vue');
@@ -38,12 +40,10 @@ const Rename                  = () => import(/*webpackChunkName: "rename"*/ './v
 const Migrate                 = () => import(/*webpackChunkName: "migrate"*/ './views/Migrate.vue');
 
 const SignMessage             = () => import(/*webpackChunkName: "sign-message"*/ './views/SignMessage.vue');
-const SignMessageOverview     = () => import(/*webpackChunkName: "sign-message"*/ './views/SignMessageOverview.vue');
 const SignMessageSuccess      = () => import(/*webpackChunkName: "sign-message"*/ './views/SignMessageSuccess.vue');
 const SignMessageErrorHandler = () => import(/*webpackChunkName: "sign-message"*/
     './views/SignMessageErrorHandler.vue');
 
-const ActiveAccountSelector   = () => import(/*webpackChunkName: "common"*/ './views/ActiveAccountSelector.vue');
 const SimpleSuccess           = () => import(/*webpackChunkName: "common"*/ './views/SimpleSuccess.vue');
 const ErrorHandler            = () => import(/*webpackChunkName: "common"*/ './views/ErrorHandler.vue');
 
@@ -81,9 +81,9 @@ export function keyguardResponseRouter(
                 resolve: `${RequestType.EXPORT}-success`,
                 reject: 'default-error',
             };
-        case KeyguardCommand.CHANGE_PASSPHRASE:
+        case KeyguardCommand.CHANGE_PASSWORD:
             return {
-                resolve: `${RequestType.CHANGE_PASSPHRASE}-success`,
+                resolve: `${RequestType.CHANGE_PASSWORD}-success`,
                 reject: 'default-error',
             };
         case KeyguardCommand.DERIVE_ADDRESS:
@@ -186,14 +186,14 @@ export default new Router({
             name: `${RequestType.EXPORT}-success`,
         },
         {
-            path: `/${RequestType.CHANGE_PASSPHRASE}`,
-            component: ChangePassphrase,
-            name: RequestType.CHANGE_PASSPHRASE,
+            path: `/${RequestType.CHANGE_PASSWORD}`,
+            component: ChangePassword,
+            name: RequestType.CHANGE_PASSWORD,
         },
         {
-            path: `/${RequestType.CHANGE_PASSPHRASE}/success`,
+            path: `/${RequestType.CHANGE_PASSWORD}/success`,
             component: SimpleSuccess,
-            name: `${RequestType.CHANGE_PASSPHRASE}-success`,
+            name: `${RequestType.CHANGE_PASSWORD}-success`,
         },
         {
             path: `/${RequestType.LOGOUT}`,
@@ -226,26 +226,19 @@ export default new Router({
             name: RequestType.MIGRATE,
         },
         {
+            path: `/${RequestType.CHOOSE_ADDRESS}`,
+            component: ChooseAddress,
+            name: RequestType.CHOOSE_ADDRESS,
+        },
+        {
             path: `/${RequestType.SIGN_MESSAGE}`,
             component: SignMessage,
             name: RequestType.SIGN_MESSAGE,
-            children: [
-                {
-                    path: 'overview',
-                    component: SignMessageOverview,
-                    name: `${RequestType.SIGN_MESSAGE}-overview`,
-                },
-                {
-                    path: 'change-account',
-                    component: ActiveAccountSelector,
-                    name: `${RequestType.SIGN_MESSAGE}-change-account`,
-                },
-                {
-                    path: 'success',
-                    component: SignMessageSuccess,
-                    name: `${RequestType.SIGN_MESSAGE}-success`,
-                },
-            ],
+        },
+        {
+            path: `/${RequestType.SIGN_MESSAGE}/success`,
+            component: SignMessageSuccess,
+            name: `${RequestType.SIGN_MESSAGE}-success`,
         },
         {
             path: `/${RequestType.SIGN_MESSAGE}/error`,

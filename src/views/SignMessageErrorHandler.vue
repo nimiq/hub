@@ -5,7 +5,6 @@ import { Component } from 'vue-property-decorator';
 import ErrorHandler from './ErrorHandler.vue';
 import { RequestType } from '@/lib/RequestTypes';
 import { ParsedSignMessageRequest } from '../lib/RequestTypes';
-import { Static } from '../lib/StaticStore';
 
 @Component
 export default class SignMessageErrorHandler extends ErrorHandler {
@@ -16,7 +15,7 @@ export default class SignMessageErrorHandler extends ErrorHandler {
                 // This was a hand-through request, let it be a hand-through result
                 return false;
             }
-            this.$rpc.routerReplace(`${RequestType.SIGN_MESSAGE}-overview`);
+            this.$rpc.routerReplace(RequestType.SIGN_MESSAGE);
             return true;
         }
         return false;
