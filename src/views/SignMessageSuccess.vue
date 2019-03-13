@@ -14,25 +14,29 @@
 <script lang="ts">
 import { Component, Emit, Vue } from 'vue-property-decorator';
 import { State } from 'vuex-class';
-import { SignMessageResult } from '../lib/RequestTypes';
+import { ParsedSignMessageRequest, SignedMessage } from '../lib/RequestTypes';
 import KeyguardClient from '@nimiq/keyguard-client';
 import { Static } from '@/lib/StaticStore';
 import Loader from '../components/Loader.vue';
 import { SmallPage } from '@nimiq/vue-components';
+import { Utf8Tools } from '@nimiq/utils';
 
 @Component({components: {Loader, SmallPage}})
-export default class SimpleSuccess extends Vue {
+export default class SignMessageSuccess extends Vue {
+    @Static private request!: ParsedSignMessageRequest;
     // The stored keyguardRequest does not have Uint8Array, only regular arrays
     @Static private keyguardRequest!: KeyguardClient.SignMessageRequest;
     @State private keyguardResult!: KeyguardClient.SignMessageResult;
 
     @Emit()
     private mounted() {
-        const result: SignMessageResult = {
+        const result: SignedMessage = {
             signer: new Nimiq.Address(new Uint8Array(this.keyguardRequest.signer)).toUserFriendlyAddress(),
             signerPubKey: this.keyguardResult.publicKey,
             signature: this.keyguardResult.signature,
-            data: this.keyguardResult.data,
+            message: typeof this.request.message === 'string'
+                ? Utf8Tools.utf8ByteArrayToString(this.keyguardResult.data)
+                : this.keyguardResult.data,
         };
 
         setTimeout(() => this.$rpc.resolve(result), Loader.SUCCESS_REDIRECT_DELAY);

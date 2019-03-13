@@ -8,7 +8,7 @@
 
 <script lang="ts">
 import { Component, Emit, Vue } from 'vue-property-decorator';
-import { ParsedLoginRequest, OnboardingResult, RequestType } from '../lib/RequestTypes';
+import { ParsedLoginRequest, Account, RequestType } from '../lib/RequestTypes';
 import { State } from 'vuex-class';
 import { WalletInfo, WalletType } from '../lib/WalletInfo';
 import { WalletStore } from '@/lib/WalletStore';
@@ -63,11 +63,11 @@ export default class LoginSuccess extends Vue {
     @Emit()
     private done() {
         if (!this.walletInfos.length) throw new Error('WalletInfo not ready.');
-        const result: OnboardingResult = {
-            walletId: this.walletInfos[0].id,
+        const result: Account = {
+            accountId: this.walletInfos[0].id,
             label: this.walletInfos[0].label,
             type: this.walletInfos[0].type,
-            accounts: Array.from(this.walletInfos[0].accounts.values()).map((addressInfo) => ({
+            addresses: Array.from(this.walletInfos[0].accounts.values()).map((addressInfo) => ({
                 address: addressInfo.userFriendlyAddress,
                 label: addressInfo.label,
             })),

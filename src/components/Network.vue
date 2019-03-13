@@ -7,12 +7,9 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import { SignTransactionResult } from '../lib/RequestTypes';
-import {
-    SignTransactionRequest as KSignTransactionRequest,
-    SignTransactionResult as KSignTransactionResult,
-} from '@nimiq/keyguard-client';
-import { NetworkClient, DetailedPlainTransaction } from '@nimiq/network-client';
+import { SignedTransaction } from '../lib/RequestTypes';
+import KeyguardClient from '@nimiq/keyguard-client';
+import { NetworkClient, PlainTransaction, DetailedPlainTransaction } from '@nimiq/network-client';
 import Config from 'config';
 import { NETWORK_TEST, NETWORK_DEV, NETWORK_MAIN, ERROR_INVALID_NETWORK } from '../lib/Constants';
 
@@ -43,8 +40,8 @@ class Network extends Vue {
     // thus not exactly the type KSignTransactionRequest. Thus all potential Uint8Arrays are converted
     // into Nimiq.SerialBuffers (sender, recipient, data).
     public async prepareTx(
-        keyguardRequest: KSignTransactionRequest,
-        keyguardResult: KSignTransactionResult,
+        keyguardRequest: KeyguardClient.SignTransactionRequest,
+        keyguardResult: KeyguardClient.SignTransactionResult,
     ): Promise<Nimiq.Transaction> {
         await this._loadNimiq();
 
@@ -84,34 +81,31 @@ class Network extends Vue {
         return tx;
     }
 
-    /**
-     * The result of this method can also be used as a PlainTransaction
-     * for all relevant nano-api methods.
-     */
-    public makeSignTransactionResult(tx: Nimiq.Transaction): SignTransactionResult {
+    public makeSignTransactionResult(tx: Nimiq.Transaction): SignedTransaction {
         const proof = Nimiq.SignatureProof.unserialize(new Nimiq.SerialBuffer(tx.proof));
 
-        const result: SignTransactionResult = {
-            serializedTx: tx.serialize(),
-
-            sender: tx.sender.toUserFriendlyAddress(),
-            senderType: tx.senderType,
-            senderPubKey: proof.publicKey.serialize(),
-
-            recipient: tx.recipient.toUserFriendlyAddress(),
-            recipientType: tx.recipientType,
-
-            value: tx.value,
-            fee: tx.fee,
-            validityStartHeight: tx.validityStartHeight,
-
-            signature: proof.signature.serialize(),
-
-            extraData: tx.data,
-            flags: tx.flags,
-            networkId: tx.networkId,
-
+        const result: SignedTransaction = {
+            serializedTx: Nimiq.BufferUtils.toHex(tx.serialize()),
             hash: tx.hash().toBase64(),
+
+            raw: {
+                signerPublicKey: proof.publicKey.serialize(),
+                signature: proof.signature.serialize(),
+
+                sender: tx.sender.toUserFriendlyAddress(),
+                senderType: tx.senderType,
+
+                recipient: tx.recipient.toUserFriendlyAddress(),
+                recipientType: tx.recipientType,
+
+                value: tx.value,
+                fee: tx.fee,
+                validityStartHeight: tx.validityStartHeight,
+
+                extraData: tx.data,
+                flags: tx.flags,
+                networkId: tx.networkId,
+            },
         };
 
         return result;
@@ -121,19 +115,20 @@ class Network extends Vue {
      * Relays the transaction to the network and only resolves when the network
      * fires its 'transaction-relayed' event for that transaction.
      */
-    public async sendToNetwork(tx: Nimiq.Transaction): Promise<SignTransactionResult> {
-        const txObj = this.makeSignTransactionResult(tx);
+    public async sendToNetwork(tx: Nimiq.Transaction): Promise<SignedTransaction> {
+        const signedTx = this.makeSignTransactionResult(tx);
         const client = await this._getNetworkClient();
 
-        const txObjToSend = Object.assign({}, txObj, {
-            value: Nimiq.Policy.satoshisToCoins(txObj.value),
-            fee: Nimiq.Policy.satoshisToCoins(txObj.fee),
+        const txObjToSend = Object.assign({}, signedTx.raw, {
+            senderPubKey: signedTx.raw.signerPublicKey,
+            value: Nimiq.Policy.satoshisToCoins(signedTx.raw.value),
+            fee: Nimiq.Policy.satoshisToCoins(signedTx.raw.fee),
         });
         client.relayTransaction(txObjToSend);
 
-        return new Promise<SignTransactionResult>((resolve, reject) => {
+        return new Promise<SignedTransaction>((resolve, reject) => {
             this.$once('transaction-relayed', (txInfo: any) => {
-                if (txInfo.hash === txObj.hash) resolve(txObj);
+                if (txInfo.hash === signedTx.hash) resolve(signedTx);
             });
         });
     }
