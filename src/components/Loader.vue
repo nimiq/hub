@@ -1,5 +1,5 @@
 <template>
-    <div class="loader" :class="[showLoadingBackground && (lightBlue ? 'nq-light-blue-bg' : 'nq-blue-bg'), state === 'success' && 'exit-transition']">
+    <div class="loader" :class="{ 'nq-blue-bq': showLoadingBackground && !lightBlue, 'nq-light-blue-bg': showLoadingBackground && lightBlue, 'exit-transition': state === 'success' }">
         <transition name="fade-loading">
             <div class="wrapper" v-if="state === 'loading'">
                 <h1 class="title nq-h1">{{ loadingTitle }}</h1>
