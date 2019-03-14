@@ -55,8 +55,8 @@ export default class SignupSuccess extends Vue {
             [],
             walletType,
             false, // keyMissing
-            false, // hasFile
-            false, // hasWords
+            this.keyguardResult[0].file, // hasFile
+            this.keyguardResult[0].words, // hasWords
         );
 
         await WalletStore.Instance.put(walletInfo);

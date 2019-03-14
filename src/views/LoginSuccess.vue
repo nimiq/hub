@@ -48,8 +48,8 @@ export default class LoginSuccess extends Vue {
                         keyguardResultAccounts,
                     );
 
-                    walletInfo.hasFile = keyResult.file;
-                    walletInfo.hasWords = keyResult.words;
+                    walletInfo.hasFile = walletInfo.hasFile || keyResult.file;
+                    walletInfo.hasWords = walletInfo.hasWords || keyResult.words;
 
                     await WalletStore.Instance.put(walletInfo);
                     this.walletInfos.push(walletInfo);
