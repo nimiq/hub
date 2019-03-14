@@ -22,3 +22,4 @@ package-lock.json
 *.sw*
 
 deployment-accounts
+client/README.md
