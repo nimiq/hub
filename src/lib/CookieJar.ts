@@ -53,7 +53,7 @@ class CookieJar {
         return (this.MAX_COOKIE_SIZE - this.getCookieSize()) >= this.encodeWallet(wallet).length;
     }
 
-    public static cutLabel(label: string): Uint8Array {
+    public static encodeAndcutLabel(label: string): Uint8Array {
         let labelBytes =  Utf8Tools.stringToUtf8ByteArray(label);
 
         if (labelBytes.length <= LABEL_MAX_LENGTH) return labelBytes;
@@ -73,7 +73,7 @@ class CookieJar {
         const label = wallet.type === WalletType.LEGACY
             ? wallet.accounts.values().next().value.label // label of the single account
             : wallet.label;
-        const labelBytes = this.cutLabel(label);
+        const labelBytes = this.encodeAndcutLabel(label);
 
         // Combined label length & wallet type
         bytes.push((labelBytes.length << 2) | wallet.type);
@@ -119,7 +119,7 @@ class CookieJar {
         // Wallet accounts
         const accounts = Array.from(wallet.accounts.values());
         for (const account of accounts) {
-            const labelBytes = this.cutLabel(account.label);
+            const labelBytes = this.encodeAndcutLabel(account.label);
 
             // Account label length
             bytes.push(labelBytes.length);

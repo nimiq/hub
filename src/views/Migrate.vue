@@ -21,6 +21,7 @@ import { WalletInfo, WalletType } from '@/lib/WalletInfo';
 import { SmallPage } from '@nimiq/vue-components';
 import Loader from '@/components/Loader.vue';
 import { KeyguardClient } from '@nimiq/keyguard-client';
+import { ACCOUNT_DEFAULT_LABEL_LEGACY } from '../lib/Constants';
 
 @Component({components: {SmallPage, Loader}})
 export default class Migrate extends Vue {
@@ -70,7 +71,7 @@ export default class Migrate extends Vue {
 
             return new WalletInfo(
                 account.id,
-                'Legacy Wallet',
+                ACCOUNT_DEFAULT_LABEL_LEGACY,
                 accounts,
                 [], // Contracts
                 WalletType.LEGACY,
