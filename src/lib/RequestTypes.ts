@@ -159,8 +159,8 @@ export interface OnboardingResult {
     walletId: string;
     label: string;
     type: WalletType;
-    hasFile: boolean;
-    hasWords: boolean;
+    fileExported: boolean;
+    wordsExported: boolean;
     accounts: Array<{
         address: string;
         label: string;
@@ -263,8 +263,8 @@ export interface ParsedMigrateRequest {
 
 export interface ExportResult {
     success: true;
-    hasFile: boolean;
-    hasWords: boolean;
+    fileExported: boolean;
+    wordsExported: boolean;
 }
 
 export type ListResult = WalletInfoEntry[];

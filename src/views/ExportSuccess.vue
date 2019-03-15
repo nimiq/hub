@@ -36,15 +36,15 @@ export default class ExportSuccess extends Vue {
             return;
         }
 
-        wallet.hasFile = wallet.hasFile || this.keyguardResult.file;
-        wallet.hasWords = wallet.hasWords || this.keyguardResult.words;
+        wallet.fileExported = wallet.fileExported || this.keyguardResult.file;
+        wallet.wordsExported = wallet.wordsExported || this.keyguardResult.words;
 
         await WalletStore.Instance.put(wallet);
 
         const result: ExportResult = {
             success: true,
-            hasFile: wallet.hasFile,
-            hasWords: wallet.hasWords,
+            fileExported: wallet.fileExported,
+            wordsExported: wallet.wordsExported,
         };
 
         setTimeout(() => this.$rpc.resolve(result), Loader.SUCCESS_REDIRECT_DELAY);

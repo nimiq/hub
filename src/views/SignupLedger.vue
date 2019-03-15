@@ -142,8 +142,8 @@ export default class SignupLedger extends Vue {
         currentlyCheckedAccounts?: Array<{ address: string, path: string }>,
     ) {
         this.walletInfo = walletInfo;
-        this.walletInfo.hasFile = true;
-        this.walletInfo.hasWords = true;
+        this.walletInfo.fileExported = true;
+        this.walletInfo.wordsExported = true;
         if (walletInfo.accounts.size > 0) {
             await WalletStore.Instance.put(walletInfo);
         }
@@ -168,8 +168,8 @@ export default class SignupLedger extends Vue {
                 walletId: this.walletInfo!.id,
                 label: this.walletInfo!.label,
                 type: this.walletInfo!.type,
-                hasFile: this.walletInfo!.hasFile,
-                hasWords: this.walletInfo!.hasWords,
+                fileExported: this.walletInfo!.fileExported,
+                wordsExported: this.walletInfo!.wordsExported,
                 accounts: Array.from(this.walletInfo!.accounts.values()).map((accountInfo) => ({
                     address: accountInfo.userFriendlyAddress,
                     label: accountInfo.label,

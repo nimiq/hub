@@ -42,8 +42,8 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         contracts: [],
         type: WalletType.BIP39,
         keyMissing: true,
-        hasFile: false,
-        hasWords: false,
+        fileExported: false,
+        wordsExported: false,
     },
     {
         id: '1ee3d926a49d',
@@ -66,8 +66,8 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         }],
         type: WalletType.LEDGER,
         keyMissing: true,
-        hasFile: true,
-        hasWords: false,
+        fileExported: true,
+        wordsExported: false,
     },
     {
         id: 'K5',
@@ -85,8 +85,8 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         contracts: [],
         type: WalletType.LEGACY,
         keyMissing: true,
-        hasFile: false,
-        hasWords: true,
+        fileExported: false,
+        wordsExported: true,
     },
     {
         id: 'K7',
@@ -112,8 +112,8 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         contracts: [],
         type: WalletType.BIP39,
         keyMissing: false,
-        hasFile: true,
-        hasWords: true,
+        fileExported: true,
+        wordsExported: true,
     },
     {
         id: '1ee3d926a4a0',
@@ -136,8 +136,8 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         }],
         type: WalletType.LEDGER,
         keyMissing: false,
-        hasFile: false,
-        hasWords: false,
+        fileExported: false,
+        wordsExported: false,
     },
     {
         id: 'K9000000',
@@ -155,8 +155,8 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         contracts: [],
         type: WalletType.LEGACY,
         keyMissing: false,
-        hasFile: true,
-        hasWords: false,
+        fileExported: true,
+        wordsExported: false,
     },
 ];
 
@@ -185,8 +185,8 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         contracts: [],
         type: WalletType.BIP39,
         keyMissing: true,
-        hasFile: false,
-        hasWords: false,
+        fileExported: false,
+        wordsExported: false,
     },
     {
         id: '1ee3d926a49d',
@@ -204,8 +204,8 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         contracts: [],
         type: WalletType.LEDGER,
         keyMissing: true,
-        hasFile: true,
-        hasWords: false,
+        fileExported: true,
+        wordsExported: false,
     },
     {
         id: 'K5',
@@ -223,8 +223,8 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         contracts: [],
         type: WalletType.LEGACY,
         keyMissing: true,
-        hasFile: false,
-        hasWords: true,
+        fileExported: false,
+        wordsExported: true,
     },
     {
         id: 'K7',
@@ -250,8 +250,8 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         contracts: [],
         type: WalletType.BIP39,
         keyMissing: false,
-        hasFile: true,
-        hasWords: true,
+        fileExported: true,
+        wordsExported: true,
     },
     {
         id: '1ee3d926a4a0',
@@ -269,8 +269,8 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         contracts: [],
         type: WalletType.LEDGER,
         keyMissing: false,
-        hasFile: false,
-        hasWords: false,
+        fileExported: false,
+        wordsExported: false,
     },
     {
         id: 'K9000000',
@@ -288,8 +288,8 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         contracts: [],
         type: WalletType.LEGACY,
         keyMissing: false,
-        hasFile: true,
-        hasWords: false,
+        fileExported: true,
+        wordsExported: false,
     },
 ];
 
@@ -298,7 +298,7 @@ const BYTES = [
 
     // wallet 1 (BIP39)
     38, // wallet label length (9), wallet type (2)
-    1, // keyMissing = true, hasFile = false, hasWords = false
+    1, // keyMissing = true, fileExported = false, wordsExported = false
     1, 23, // wallet id
     77, 97, 105, 110, 32, 240, 159, 153, 137, // wallet label
     2, // number of accounts
@@ -314,7 +314,7 @@ const BYTES = [
 
     // wallet 2 (LEDGER)
     3, // wallet label length (0), wallet type (3)
-    3, // keyMissing = true, hasFile = true, hasWords = false
+    3, // keyMissing = true, fileExported = true, wordsExported = false
     30, 227, 217, 38, 164, 157, // wallet id
     1, // number of accounts
 
@@ -325,7 +325,7 @@ const BYTES = [
 
     // wallet 3 (LEGACY)
     41, // account label length (10), wallet type (1)
-    5, // keyMissing = true, hasFile = false, hasWords = true
+    5, // keyMissing = true, fileExported = false, wordsExported = true
     1, 5, // wallet id
 
         // account
@@ -334,7 +334,7 @@ const BYTES = [
 
     // wallet 4 (BIP39)
     38, // wallet label length (9), wallet type (2)
-    6, // keyMissing = false, hasFile = true, hasWords = true
+    6, // keyMissing = false, fileExported = true, wordsExported = true
     1, 7, // wallet id
     77, 97, 105, 110, 32, 240, 159, 153, 137, // wallet label
     2, // number of accounts
@@ -350,7 +350,7 @@ const BYTES = [
 
     // wallet 2 (LEDGER)
     3, // wallet label length (0), wallet type (3)
-    0, // keyMissing = false, hasFile = false, hasWords = false
+    0, // keyMissing = false, fileExported = false, wordsExported = false
     30, 227, 217, 38, 164, 160, // wallet id
     1, // number of accounts
 
@@ -361,7 +361,7 @@ const BYTES = [
 
     // wallet 3 (LEGACY)
     41, // account label length (10), wallet type (1)
-    2, // keyMissing = false, hasFile = true, hasWords = false
+    2, // keyMissing = false, fileExported = true, wordsExported = false
     3, 137, 84, 64, // wallet id
 
         // account

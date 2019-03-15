@@ -80,8 +80,8 @@ class CookieJar {
         let statusByte: number = 0;
         statusByte = statusByte
                 | (wallet.keyMissing ? CookieJar.StatusFlags.KEY_MISSING : 0)
-                | (wallet.hasFile ? CookieJar.StatusFlags.HAS_FILE : 0)
-                | (wallet.hasWords ? CookieJar.StatusFlags.HAS_WORDS : 0);
+                | (wallet.fileExported ? CookieJar.StatusFlags.FILE_EXPORTED : 0)
+                | (wallet.wordsExported ? CookieJar.StatusFlags.WORDS_EXPORTED : 0);
         bytes.push(statusByte);
 
         // Wallet ID
@@ -165,8 +165,8 @@ class CookieJar {
 namespace CookieJar { // tslint:disable-line no-namespace
     export enum StatusFlags {
         KEY_MISSING = 1 << 0,
-        HAS_FILE    = 1 << 1,
-        HAS_WORDS   = 1 << 2,
+        FILE_EXPORTED    = 1 << 1,
+        WORDS_EXPORTED   = 1 << 2,
     }
 }
 
