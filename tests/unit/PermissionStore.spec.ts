@@ -1,12 +1,12 @@
 import { setup } from './_setup';
 import { Permission, PermissionStore } from '@/lib/PermissionStore';
-import Config from '@/lib/Config';
+import Config from 'config';
 
 setup();
 
 const indexedDB: IDBFactory = require('fake-indexeddb'); // tslint:disable-line:no-var-requires
 
-const DUMMY: { permissions: Permission[], nimiqOriginCount: number } = {
+const DUMMY: { permissions: Permission[], privilegedOriginCount: number } = {
     permissions: [
         {
             origin: 'https://example1.com',
@@ -19,7 +19,7 @@ const DUMMY: { permissions: Permission[], nimiqOriginCount: number } = {
             addresses: [],
         },
     ],
-    nimiqOriginCount: Config.nimiqOrigins.length,
+    privilegedOriginCount: Config.privilegedOrigins.length,
 };
 
 const beforeEachCallback = async () => {
@@ -68,24 +68,24 @@ describe('PermissionStore', () => {
 
     xit('can list permissions', async () => {
         const permissions = await PermissionStore.Instance.list();
-        expect([permissions[DUMMY.nimiqOriginCount + 0],
-            permissions[DUMMY.nimiqOriginCount + 1]]).toEqual(DUMMY.permissions);
+        expect([permissions[DUMMY.privilegedOriginCount + 0],
+            permissions[DUMMY.privilegedOriginCount + 1]]).toEqual(DUMMY.permissions);
     });
 
     xit('can remove permissions', async () => {
         let currentPermissions = await PermissionStore.Instance.list();
-        expect(currentPermissions.length).toBe(DUMMY.nimiqOriginCount + 2);
-        expect([currentPermissions[DUMMY.nimiqOriginCount + 0],
-            currentPermissions[DUMMY.nimiqOriginCount + 1]]).toEqual(DUMMY.permissions);
+        expect(currentPermissions.length).toBe(DUMMY.privilegedOriginCount + 2);
+        expect([currentPermissions[DUMMY.privilegedOriginCount + 0],
+            currentPermissions[DUMMY.privilegedOriginCount + 1]]).toEqual(DUMMY.permissions);
 
         await PermissionStore.Instance.remove(DUMMY.permissions[0].origin);
         currentPermissions = await PermissionStore.Instance.list();
-        expect(currentPermissions.length).toBe(DUMMY.nimiqOriginCount + 1);
-        expect(currentPermissions[DUMMY.nimiqOriginCount + 0].origin).not.toBe(DUMMY.permissions[0].origin);
+        expect(currentPermissions.length).toBe(DUMMY.privilegedOriginCount + 1);
+        expect(currentPermissions[DUMMY.privilegedOriginCount + 0].origin).not.toBe(DUMMY.permissions[0].origin);
 
         await PermissionStore.Instance.remove(DUMMY.permissions[1].origin);
         currentPermissions = await PermissionStore.Instance.list();
-        expect(currentPermissions.length).toBe(DUMMY.nimiqOriginCount);
+        expect(currentPermissions.length).toBe(DUMMY.privilegedOriginCount);
 
         // check that we can't get a removed key by address
         const removedKeys = await Promise.all([
@@ -101,16 +101,16 @@ describe('PermissionStore', () => {
         await afterEachCallback();
 
         let currentPermissions = await PermissionStore.Instance.list();
-        expect(currentPermissions.length).toBe(DUMMY.nimiqOriginCount);
+        expect(currentPermissions.length).toBe(DUMMY.privilegedOriginCount);
 
         // add permissions
         await PermissionStore.Instance.allow(DUMMY.permissions[0].origin, DUMMY.permissions[0].addresses);
         currentPermissions = await PermissionStore.Instance.list();
-        expect(currentPermissions.length).toBe(DUMMY.nimiqOriginCount + 1);
+        expect(currentPermissions.length).toBe(DUMMY.privilegedOriginCount + 1);
 
         await PermissionStore.Instance.allow(DUMMY.permissions[1].origin, true),
         currentPermissions = await PermissionStore.Instance.list();
-        expect(currentPermissions.length).toBe(DUMMY.nimiqOriginCount + 2);
+        expect(currentPermissions.length).toBe(DUMMY.privilegedOriginCount + 2);
 
         // check that the permissions have been stored correctly
         const [permission1, permission2] = await Promise.all([
