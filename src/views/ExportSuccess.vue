@@ -36,8 +36,8 @@ export default class ExportSuccess extends Vue {
             return;
         }
 
-        wallet.fileExported = wallet.fileExported || this.keyguardResult.file;
-        wallet.wordsExported = wallet.wordsExported || this.keyguardResult.words;
+        wallet.fileExported = wallet.fileExported || this.keyguardResult.fileExported;
+        wallet.wordsExported = wallet.wordsExported || this.keyguardResult.wordsExported;
 
         await WalletStore.Instance.put(wallet);
 
