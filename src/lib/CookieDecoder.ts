@@ -4,7 +4,7 @@ import { WalletInfoEntry, WalletType } from './WalletInfo';
 import { Utf8Tools } from '@nimiq/utils';
 import { AccountInfoEntry } from './AccountInfo';
 import CookieJar from './CookieJar';
-import { LABEL_MAX_LENGTH } from '@/lib/Constants';
+import { LABEL_MAX_LENGTH, ADDRESS_DEFAULT_LABEL_KEYGUARD } from '@/lib/Constants';
 
 export class CookieDecoder {
     public static decode(str: string): WalletInfoEntry[] {
@@ -143,7 +143,7 @@ export class CookieDecoder {
         const labelBytes = this.readBytes(bytes, labelLength);
 
         let accountLabel: string;
-        if (labelBytes.length === 0) accountLabel = 'Standard Address';
+        if (labelBytes.length === 0) accountLabel = ADDRESS_DEFAULT_LABEL_KEYGUARD;
         else accountLabel = Utf8Tools.utf8ByteArrayToString(new Uint8Array(labelBytes));
 
         // Account address

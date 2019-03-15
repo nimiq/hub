@@ -58,8 +58,8 @@ import { WalletInfo, WalletType } from '@/lib/WalletInfo';
 import { State, Mutation, Getter } from 'vuex-class';
 import {
     TX_VALIDITY_WINDOW,
-    LEGACY_GROUPING_WALLET_ID,
-    LEGACY_GROUPING_WALLET_LABEL,
+    LEGACY_GROUPING_ACCOUNT_ID,
+    LEGACY_GROUPING_ACCOUNT_LABEL,
     ERROR_CANCELED,
 } from '@/lib/Constants';
 import Network from '@/components/Network.vue';
