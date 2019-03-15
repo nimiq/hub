@@ -148,7 +148,7 @@ class Demo {
 
             return {
                 appName: 'Accounts Demos',
-                shopLogoUrl: location.origin + '/nimiq.png',
+                shopLogoUrl: `${location.origin}/nimiq.png`,
                 recipient: 'NQ63 U7XG 1YYE D6FA SXGG 3F5H X403 NBKN JLDU',
                 value,
                 fee: txFee,
@@ -256,13 +256,6 @@ class Demo {
         });
     }
 
-    private static async _createPopup(baseUrl): Promise<Window> {
-        return new Promise<Window>((resolve, reject) => {
-            const $popup = window.open(`${baseUrl}/demos/setup.html`, 'Nimiq Keyguard Setup Popup');
-            resolve($popup);
-        });
-    }
-
     private _iframeClient: PostMessageRpcClient | null;
     private _keyguardBaseUrl: string;
     private _accountsClient: AccountsClient;
@@ -281,8 +274,8 @@ class Demo {
         return this._iframeClient;
     }
 
-    public async startPopupClient(baseUrl: string): Promise<PostMessageRpcClient> {
-        const $popup = await Demo._createPopup(baseUrl);
+    public async startPopupClient(url: string, windowName: string): Promise<PostMessageRpcClient> {
+        const $popup = window.open(url, windowName);
         const popupClient = new PostMessageRpcClient($popup, '*');
         await popupClient.init();
         return popupClient;
@@ -297,7 +290,7 @@ class Demo {
     }
 
     public async setupLegacyAccounts() {
-        const client = await this.startPopupClient(this._keyguardBaseUrl);
+        const client = await this.startPopupClient(`${this._keyguardBaseUrl}/demos/setup.html`, 'Nimiq Keyguard Setup Popup');
         const result = await client.call('setUpLegacyAccounts');
         client.close();
         // @ts-ignore Property '_target' is private and only accessible within class 'PostMessageRpcClient'.
