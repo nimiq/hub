@@ -21,7 +21,10 @@ import { Utf8Tools } from '@nimiq/utils';
 
 class Demo {
     public static run() {
-        const demo = new Demo(`${location.protocol}//${location.hostname}:8000`);
+        const keyguardOrigin = location.origin === 'https://accounts.nimiq-testnet.com'
+            ? 'https://keyguard.nimiq-testnet.com'
+            : `${location.protocol}//${location.hostname}:8000`;
+        const demo = new Demo(keyguardOrigin);
 
         const client = new AccountsClient(location.origin);
 
@@ -145,7 +148,7 @@ class Demo {
 
             return {
                 appName: 'Accounts Demos',
-                shopLogoUrl: 'http://localhost:8080/nimiq.png',
+                shopLogoUrl: `${location.origin}/nimiq.png`,
                 recipient: 'NQ63 U7XG 1YYE D6FA SXGG 3F5H X403 NBKN JLDU',
                 value,
                 fee: txFee,
@@ -271,17 +274,29 @@ class Demo {
         return this._iframeClient;
     }
 
+    public async startPopupClient(url: string, windowName: string): Promise<PostMessageRpcClient> {
+        const $popup = window.open(url, windowName);
+        const popupClient = new PostMessageRpcClient($popup, '*');
+        await popupClient.init();
+        return popupClient;
+    }
+
     public async listKeyguard() {
         const client = await this.startIframeClient(this._keyguardBaseUrl);
         const keys = await client.call('list');
         console.log('Keys in Keyguard:', keys);
+        document.querySelector('#result').textContent = 'Keys listed in console';
         return keys;
     }
 
     public async setupLegacyAccounts() {
-        const client = await this.startIframeClient(this._keyguardBaseUrl);
+        const client = await this.startPopupClient(`${this._keyguardBaseUrl}/demos/setup.html`, 'Nimiq Keyguard Setup Popup');
         const result = await client.call('setUpLegacyAccounts');
+        client.close();
+        // @ts-ignore Property '_target' is private and only accessible within class 'PostMessageRpcClient'.
+        client._target.close();
         console.log('Legacy Account setup:', result);
+        document.querySelector('#result').textContent = 'Legacy Account stored';
     }
 
     public async list(): Promise<WalletInfoEntry[]> {
