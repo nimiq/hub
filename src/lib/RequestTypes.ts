@@ -194,16 +194,6 @@ export interface ParsedLogoutRequest {
     walletId: string;
 }
 
-export type Logout = {
-    loggedOut: true;
-} | {
-    loggedOut: false;
-    exported: {
-        file: boolean;
-        words: boolean;
-    };
-};
-
 export interface AddAddressRequest {
     kind?: RequestType.ADD_ADDRESS;
     appName: string;
@@ -268,7 +258,6 @@ export type ParsedRpcRequest = ParsedSignTransactionRequest
 export type RpcResult = SignedTransaction
                       | Account
                       | SimpleResult
-                      | Logout
                       | Address
                       | SignedMessage
                       | ListResult;

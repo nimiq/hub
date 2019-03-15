@@ -8,7 +8,7 @@
 
 <script lang="ts">
 import { Component, Emit, Vue } from 'vue-property-decorator';
-import { ParsedLogoutRequest, Logout } from '../lib/RequestTypes';
+import { ParsedLogoutRequest, SimpleResult } from '../lib/RequestTypes';
 import { State } from 'vuex-class';
 import { SmallPage } from '@nimiq/vue-components';
 import { WalletStore } from '@/lib/WalletStore';
@@ -19,27 +19,18 @@ import KeyguardClient from '@nimiq/keyguard-client';
 @Component({components: {Loader, SmallPage}})
 export default class LogoutSuccess extends Vue {
     @Static private request!: ParsedLogoutRequest;
-    @State private keyguardResult!: KeyguardClient.RemoveKeyResult;
+    @State private keyguardResult!: KeyguardClient.SimpleResult;
 
-    public mounted() {
-        WalletStore.Instance.remove(this.request.walletId);
+    public async mounted() {
+        const start = Date.now();
 
-        let result: Logout;
-        if (this.keyguardResult.success === true) {
-            result = {
-                loggedOut: true,
-            };
-        } else {
-            result = {
-                loggedOut: false,
-                exported: {
-                    file: this.keyguardResult.file,
-                    words: this.keyguardResult.words,
-                },
-            };
-        }
+        // If we at some point notice that the removal takes longer than SUCCESS_REDIRECT_DELAY
+        // (currently 2s), we need to add a loading state before the success state.
+        await WalletStore.Instance.remove(this.request.walletId);
 
-        setTimeout(() => this.$rpc.resolve(result), Loader.SUCCESS_REDIRECT_DELAY);
+        const remainingTimeout = Loader.SUCCESS_REDIRECT_DELAY - (Date.now() - start);
+
+        setTimeout(() => this.$rpc.resolve(this.keyguardResult as SimpleResult), remainingTimeout);
     }
 }
 </script>

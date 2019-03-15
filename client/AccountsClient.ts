@@ -11,7 +11,6 @@ import {
     Account,
     CheckoutRequest,
     LogoutRequest,
-    Logout,
     SignTransactionRequest,
     SignedTransaction,
     ExportRequest,
@@ -104,7 +103,7 @@ export default class AccountsClient {
         return this._request(requestBehavior, RequestType.CHECKOUT, [request]);
     }
 
-    public logout(request: LogoutRequest, requestBehavior = this._defaultBehavior): Promise<Logout> {
+    public logout(request: LogoutRequest, requestBehavior = this._defaultBehavior): Promise<SimpleResult> {
         return this._request(requestBehavior, RequestType.LOGOUT, [request]);
     }
 
