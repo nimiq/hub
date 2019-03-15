@@ -123,7 +123,7 @@ export default class AccountsClient {
     }
 
     public addAddress(request: AddAddressRequest, requestBehavior = this._defaultBehavior): Promise<Address> {
-        return this._request(requestBehavior, RequestType.ADD_ACCOUNT, [request]);
+        return this._request(requestBehavior, RequestType.ADD_ADDRESS, [request]);
     }
 
     public rename(request: RenameRequest, requestBehavior = this._defaultBehavior): Promise<Account> {

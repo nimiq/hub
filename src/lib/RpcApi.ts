@@ -36,7 +36,7 @@ export default class RpcApi {
             RequestType.EXPORT,
             RequestType.CHANGE_PASSWORD,
             RequestType.LOGOUT,
-            RequestType.ADD_ACCOUNT,
+            RequestType.ADD_ADDRESS,
             RequestType.RENAME,
             RequestType.SIGN_MESSAGE,
             RequestType.MIGRATE,

@@ -14,7 +14,7 @@ export enum RequestType {
     EXPORT = 'export',
     CHANGE_PASSWORD = 'change-password',
     LOGOUT = 'logout',
-    ADD_ACCOUNT = 'add-account',
+    ADD_ADDRESS = 'add-address',
     RENAME = 'rename',
     CHOOSE_ADDRESS = 'choose-address',
 }
@@ -205,13 +205,13 @@ export type Logout = {
 };
 
 export interface AddAddressRequest {
-    kind?: RequestType.ADD_ACCOUNT;
+    kind?: RequestType.ADD_ADDRESS;
     appName: string;
     accountId: string;
 }
 
 export interface ParsedAddAccountRequest {
-    kind: RequestType.ADD_ACCOUNT;
+    kind: RequestType.ADD_ADDRESS;
     appName: string;
     walletId: string;
 }
@@ -369,10 +369,10 @@ export class AccountsRequest {
                     appName: request.appName,
                     walletId: request.accountId,
                 } as ParsedLogoutRequest;
-            case RequestType.ADD_ACCOUNT:
+            case RequestType.ADD_ADDRESS:
                 request = request as AddAddressRequest;
                 return {
-                    kind: RequestType.ADD_ACCOUNT,
+                    kind: RequestType.ADD_ADDRESS,
                     appName: request.appName,
                     walletId: request.accountId,
                 } as ParsedAddAccountRequest;
@@ -458,7 +458,7 @@ export class AccountsRequest {
             case RequestType.EXPORT:
             case RequestType.CHANGE_PASSWORD:
             case RequestType.LOGOUT:
-            case RequestType.ADD_ACCOUNT:
+            case RequestType.ADD_ADDRESS:
                 return {
                     appName: request.appName,
                     accountId: request.walletId,
