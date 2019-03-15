@@ -11,15 +11,17 @@ export class CookieDecoder {
         if (!str) return [];
 
         // Convert base64 str into byte array
-        const bytes: number[] = Array.from(this._base64Decode(str));
+        const bytes: number[] = Array.from(this.base64Decode(str));
 
         // Cookie version
         const version = this.readByte(bytes);
 
-        if (version !== CookieJar.VERSION) return this._legacyCookie(version, bytes);
+        if (version !== CookieJar.VERSION) return this.legacyCookie(version, bytes);
 
         const wallets: WalletInfoEntry[] = [];
-        while (bytes.length > 0) wallets.push(this._decodeWallet(bytes));
+        while (bytes.length > 0) {
+            wallets.push(this.decodeWallet(bytes));
+        }
 
         return wallets;
     }
@@ -43,25 +45,37 @@ export class CookieDecoder {
         return result;
     }
 
-    private static _decodeWallet(bytes: number[]): WalletInfoEntry {
-        // Wallet ID
-        let id: string = '';
-        for (let i = 0; i < 6; i++) id += this.readByte(bytes).toString(16);
-
-        // Status byte
-        const statusByte = this.readByte(bytes);
-        const keyMissing = (statusByte & CookieJar.StatusFlags.KEY_MISSING) === CookieJar.StatusFlags.KEY_MISSING;
-
+    private static decodeWallet(bytes: number[]): WalletInfoEntry {
         // Wallet type and label length
         const typeAndLabelLength = this.readByte(bytes);
         const type = typeAndLabelLength & 0b11;
         const labelLength = typeAndLabelLength >> 2; // Can only be < 64 because it's only 6 bit
 
+        // Status byte
+        const statusByte = this.readByte(bytes);
+        const keyMissing = (statusByte & CookieJar.StatusFlags.KEY_MISSING) === CookieJar.StatusFlags.KEY_MISSING;
+
+        // Wallet ID
+        let id: string = '';
+        if (type === WalletType.LEDGER) {
+            for (let i = 0; i < 6; i++) {
+                id += this.readByte(bytes).toString(16);
+            }
+        } else {
+            const idLength = this.readByte(bytes);
+            const idBytes = [];
+            for (let i = 0; i < idLength; i++) {
+                idBytes.push(this.readByte(bytes));
+            }
+            const numericalId = this.fromBase256(idBytes);
+            id = `K${numericalId}`;
+        }
+
         // Handle LEGACY wallet
         if (type === WalletType.LEGACY) {
             const walletLabel = 'Legacy Wallet';
 
-            const accounts = this._decodeAccounts(bytes, labelLength);
+            const accounts = this.decodeAccounts(bytes, labelLength);
 
             const walletInfoEntry: WalletInfoEntry = {
                 id,
@@ -87,7 +101,7 @@ export class CookieDecoder {
                 : 'Ledger Wallet';
         } else walletLabel = Utf8Tools.utf8ByteArrayToString(new Uint8Array(walletLabelBytes));
 
-        const accounts = this._decodeAccounts(bytes);
+        const accounts = this.decodeAccounts(bytes);
 
         const walletInfoEntry: WalletInfoEntry = {
             id,
@@ -101,13 +115,13 @@ export class CookieDecoder {
         return walletInfoEntry;
     }
 
-    private static _decodeAccounts(bytes: number[], labelLength?: number): Map<string, AccountInfoEntry> {
+    private static decodeAccounts(bytes: number[], labelLength?: number): Map<string, AccountInfoEntry> {
         let numberAccounts = 1;
         if (typeof labelLength === 'undefined') numberAccounts = this.readByte(bytes);
 
         const accounts: AccountInfoEntry[] = [];
         for (let i = 0; i < numberAccounts; i++) {
-            accounts.push(this._decodeAccount(bytes, labelLength));
+            accounts.push(this.decodeAccount(bytes, labelLength));
         }
 
         const accountsMapArray: Array<[string, AccountInfoEntry]> = accounts.map((account) => {
@@ -120,7 +134,7 @@ export class CookieDecoder {
         return new Map(accountsMapArray);
     }
 
-    private static _decodeAccount(bytes: number[], labelLength?: number): AccountInfoEntry {
+    private static decodeAccount(bytes: number[], labelLength?: number): AccountInfoEntry {
         if (typeof labelLength === 'undefined') labelLength = this.readByte(bytes);
 
         if (labelLength > LABEL_MAX_LENGTH) throw new Error('Malformed Cookie, label too long');
@@ -144,13 +158,19 @@ export class CookieDecoder {
         return accountInfoEntry;
     }
 
-    private static _legacyCookie(version: number, bytes: number[]) {
+    private static legacyCookie(version: number, bytes: number[]) {
         switch (version) {
             default: return [];
         }
     }
 
-    private static _base64Decode(base64: string): Uint8Array {
+    private static fromBase256(numbers: number[]) {
+        const base2bytes = numbers.map((value) => value.toString(2).padStart(8, '0'));
+
+        return parseInt(base2bytes.join(''), 2);
+    }
+
+    private static base64Decode(base64: string): Uint8Array {
         /*
         Source: https://github.com/danguer/blog-examples/blob/master/js/base64-binary.js
 

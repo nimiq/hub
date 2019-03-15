@@ -17,10 +17,13 @@
     "paths": {
       "@/*": [
         "src/*"
+      ],
+      "config": [
+        "config.local.ts"
       ]
     },
     "lib": [
-      "es2015",
+      "es2017",
       "dom",
       "dom.iterable",
       "scripthost"
@@ -29,6 +32,7 @@
   "include": [
     "types/Nimiq.d.ts",
     "types/KeyguardRequest.d.ts",
+    "config.d.ts",
     "src/**/*.ts",
     "src/**/*.tsx",
     "src/**/*.vue",

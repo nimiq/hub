@@ -4,12 +4,14 @@ import { RootState } from '@/store';
 import { Store } from 'vuex';
 import Router from 'vue-router';
 import { AccountsRequest, RequestType, RpcRequest, RpcResult } from '@/lib/RequestTypes';
-import { KeyguardCommand, RedirectRequestBehavior, KeyguardClient } from '@nimiq/keyguard-client';
+import { KeyguardCommand, KeyguardClient } from '@nimiq/keyguard-client';
 import { keyguardResponseRouter } from '@/router';
 import { StaticStore } from '@/lib/StaticStore';
 import { WalletStore } from './WalletStore';
 import CookieJar from '@/lib/CookieJar';
 import { Raven } from 'vue-raven'; // Sentry.io SDK
+import { ERROR_CANCELED } from './Constants';
+import Config from 'config';
 
 export default class RpcApi {
     private _server: RpcServer;
@@ -23,27 +25,29 @@ export default class RpcApi {
         this._staticStore = staticStore;
         this._router = router;
         this._server = new RpcServer('*');
-        this._keyguardClient = new KeyguardClient();
+        this._keyguardClient = new KeyguardClient(Config.keyguardEndpoint);
 
         this._registerAccountsApis([
             RequestType.SIGN_TRANSACTION,
             RequestType.CHECKOUT,
+            RequestType.ONBOARD,
             RequestType.SIGNUP,
             RequestType.LOGIN,
             RequestType.EXPORT,
-            RequestType.CHANGE_PASSPHRASE,
+            RequestType.CHANGE_PASSWORD,
             RequestType.LOGOUT,
             RequestType.ADD_ACCOUNT,
             RequestType.RENAME,
             RequestType.SIGN_MESSAGE,
             RequestType.MIGRATE,
+            RequestType.CHOOSE_ADDRESS,
         ]);
         this._registerKeyguardApis([
             KeyguardCommand.SIGN_TRANSACTION,
             KeyguardCommand.CREATE,
             KeyguardCommand.IMPORT,
             KeyguardCommand.EXPORT,
-            KeyguardCommand.CHANGE_PASSPHRASE,
+            KeyguardCommand.CHANGE_PASSWORD,
             KeyguardCommand.REMOVE,
             KeyguardCommand.DERIVE_ADDRESS,
             KeyguardCommand.SIGN_MESSAGE,
@@ -55,9 +59,9 @@ export default class RpcApi {
         this._keyguardClient.init().catch(console.error); // TODO: Provide better error handling here
     }
 
-    public createKeyguardClient(endpoint?: string) {
-        const behavior = new RedirectRequestBehavior(undefined, this._exportState());
-        const client = new KeyguardClient(endpoint, behavior);
+    public createKeyguardClient() {
+        const localState = this._exportState();
+        const client = new KeyguardClient(Config.keyguardEndpoint, localState);
         return client;
     }
 
@@ -76,7 +80,7 @@ export default class RpcApi {
     }
 
     public reject(error: Error) {
-        const ignoredErrors = [ 'CANCEL', 'Request aborted' ];
+        const ignoredErrors = [ ERROR_CANCELED, 'Request aborted' ];
         if (ignoredErrors.indexOf(error.message) < 0) {
             if (window.location.origin === 'https://accounts.nimiq-testnet.com') {
                 Raven.captureException(error);
@@ -94,14 +98,15 @@ export default class RpcApi {
         }
 
         // Check for originalRouteName in StaticStore and route there
-        if (this._staticStore.originalRouteName && (!(result instanceof Error) || result.message !== 'CANCELED')) {
+        if (this._staticStore.originalRouteName && (!(result instanceof Error) || result.message !== ERROR_CANCELED)) {
             this._staticStore.sideResult = result;
+            this._store.commit('setKeyguardResult', null);
 
             // Recreate original URL with original query parameters
             const rpcState = this._staticStore.rpcState!;
-            const redirectUrl = rpcState.toRequestUrl();
+            const redirectUrlParams = rpcState.toRequestUrl('rpc://').substring('rpc://'.length);
 
-            const query = this._parseUrlParams(redirectUrl);
+            const query = this._parseUrlParams(redirectUrlParams);
             this._router.push({ name: this._staticStore.originalRouteName, query });
             delete this._staticStore.originalRouteName;
             return;
@@ -154,11 +159,11 @@ export default class RpcApi {
         return params;
     }
 
-    private _recoverState(state: any) {
-        const rpcState = RpcState.fromJSON(state.rpcState);
-        const request = AccountsRequest.parse(state.request, state);
-        const keyguardRequest = state.keyguardRequest;
-        const originalRouteName = state.originalRouteName;
+    private _recoverState(storedState: any) {
+        const rpcState = RpcState.fromJSON(storedState.rpcState);
+        const request = AccountsRequest.parse(storedState.request, rpcState);
+        const keyguardRequest = storedState.keyguardRequest;
+        const originalRouteName = storedState.originalRouteName;
 
         this._staticStore.rpcState = rpcState;
         this._staticStore.request = request || undefined;
@@ -179,7 +184,6 @@ export default class RpcApi {
                 this._recoverState(state);
 
                 // Set result
-                result.kind = command;
                 this._store.commit('setKeyguardResult', result);
 
                 // To enable the keyguardResponseRouter to decide correctly to which route it should direct
@@ -187,11 +191,11 @@ export default class RpcApi {
                 // was given to the AccountsManager is passed here and the keyguardResponseRouter is turned
                 // from an object into a function instead.
                 this.routerReplace(keyguardResponseRouter(command, this._staticStore.request!.kind).resolve);
-            }, (error, state) => {
+            }, (error, state?: any) => {
                 // Recover state
                 this._recoverState(state);
 
-                if (error.message === 'CANCEL') {
+                if (error.message === ERROR_CANCELED) {
                     this._staticStore.rpcState!.reply(ResponseStatus.ERROR, error);
                     return;
                 }

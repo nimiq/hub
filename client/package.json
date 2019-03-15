@@ -1,6 +1,6 @@
 {
   "name": "@nimiq/accounts-client",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "main": "dist/AccountsClient.umd.js",
   "module": "dist/AccountsClient.es.js",
   "repository": "https://github.com/nimiq/accounts/tree/master/client",
@@ -30,7 +30,7 @@
   },
   "homepage": "https://github.com/nimiq/accounts/client#readme",
   "scripts": {
-    "build": "rm -rf dist && tsc && rollup -c",
+    "build": "cp ../README.md . && rm -rf dist && tsc && rollup -c",
     "lint": "tslint --project tsconfig.json",
     "lintfix": "yarn lint --fix"
   }

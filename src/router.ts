@@ -11,19 +11,23 @@ const Checkout                = () => import(/*webpackChunkName: "checkout"*/ '.
 const CheckoutTransmission    = () => import(/*webpackChunkName: "checkout"*/ './views/CheckoutTransmission.vue');
 const CheckoutErrorHandler    = () => import(/*webpackChunkName: "checkout"*/ './views/CheckoutErrorHandler.vue');
 
-const SignupTypeSelector      = () => import(/*webpackChunkName: "signup"*/ './views/SignupTypeSelector.vue');
-const SignupSuccess           = () => import(/*webpackChunkName: "signup"*/ './views/SignupSuccess.vue');
-const SignupErrorHandler      = () => import(/*webpackChunkName: "signup"*/ './views/SignupErrorHandler.vue');
+const OnboardingSelector      = () => import(/*webpackChunkName: "onboarding"*/ './views/OnboardingSelector.vue');
+
+const ChooseAddress           = () => import(/*webpackChunkName: "choose-address"*/ './views/ChooseAddress.vue');
+
+const Signup                  = () => import(/*webpackChunkName: "onboarding"*/ './views/Signup.vue');
+const SignupSuccess           = () => import(/*webpackChunkName: "onboarding"*/ './views/SignupSuccess.vue');
+const SignupErrorHandler      = () => import(/*webpackChunkName: "onboarding"*/ './views/SignupErrorHandler.vue');
 
 const SignupLedger            = () => import(/*webpackChunkName: "signup-ledger"*/ './views/SignupLedger.vue');
 
-const Login                   = () => import(/*webpackChunkName: "login"*/ './views/Login.vue');
-const LoginSuccess            = () => import(/*webpackChunkName: "login"*/ './views/LoginSuccess.vue');
-const LoginErrorHandler       = () => import(/*webpackChunkName: "login"*/ './views/LoginErrorHandler.vue');
+const Login                   = () => import(/*webpackChunkName: "onboarding"*/ './views/Login.vue');
+const LoginSuccess            = () => import(/*webpackChunkName: "onboarding"*/ './views/LoginSuccess.vue');
+const LoginErrorHandler       = () => import(/*webpackChunkName: "onboarding"*/ './views/LoginErrorHandler.vue');
 
 const Export                  = () => import(/*webpackChunkName: "export"*/ './views/Export.vue');
 
-const ChangePassphrase        = () => import(/*webpackChunkName: "change-passphrase"*/ './views/ChangePassphrase.vue');
+const ChangePassword          = () => import(/*webpackChunkName: "change-password"*/ './views/ChangePassword.vue');
 
 const Logout                  = () => import(/*webpackChunkName: "logout"*/ './views/Logout.vue');
 const LogoutSuccess           = () => import(/*webpackChunkName: "logout"*/ './views/LogoutSuccess.vue');
@@ -36,12 +40,10 @@ const Rename                  = () => import(/*webpackChunkName: "rename"*/ './v
 const Migrate                 = () => import(/*webpackChunkName: "migrate"*/ './views/Migrate.vue');
 
 const SignMessage             = () => import(/*webpackChunkName: "sign-message"*/ './views/SignMessage.vue');
-const SignMessageOverview     = () => import(/*webpackChunkName: "sign-message"*/ './views/SignMessageOverview.vue');
 const SignMessageSuccess      = () => import(/*webpackChunkName: "sign-message"*/ './views/SignMessageSuccess.vue');
 const SignMessageErrorHandler = () => import(/*webpackChunkName: "sign-message"*/
     './views/SignMessageErrorHandler.vue');
 
-const ActiveAccountSelector   = () => import(/*webpackChunkName: "common"*/ './views/ActiveAccountSelector.vue');
 const SimpleSuccess           = () => import(/*webpackChunkName: "common"*/ './views/SimpleSuccess.vue');
 const ErrorHandler            = () => import(/*webpackChunkName: "common"*/ './views/ErrorHandler.vue');
 
@@ -79,9 +81,9 @@ export function keyguardResponseRouter(
                 resolve: `${RequestType.EXPORT}-success`,
                 reject: 'default-error',
             };
-        case KeyguardCommand.CHANGE_PASSPHRASE:
+        case KeyguardCommand.CHANGE_PASSWORD:
             return {
-                resolve: `${RequestType.CHANGE_PASSPHRASE}-success`,
+                resolve: `${RequestType.CHANGE_PASSWORD}-success`,
                 reject: 'default-error',
             };
         case KeyguardCommand.DERIVE_ADDRESS:
@@ -111,7 +113,7 @@ export default new Router({
         {
             path: `/${RequestType.SIGN_TRANSACTION}`,
             component: SignTransaction,
-            name: `${RequestType.SIGN_TRANSACTION}`,
+            name: RequestType.SIGN_TRANSACTION,
         },
         {
             path: `/${RequestType.SIGN_TRANSACTION}/success`,
@@ -134,9 +136,14 @@ export default new Router({
             name: `${RequestType.CHECKOUT}-error`,
         },
         {
+            path: `/${RequestType.ONBOARD}`,
+            component: OnboardingSelector,
+            name: RequestType.ONBOARD,
+        },
+        {
             path: `/${RequestType.SIGNUP}`,
-            component: SignupTypeSelector,
-            name: `${RequestType.SIGNUP}`,
+            component: Signup,
+            name: RequestType.SIGNUP,
         },
         {
             path: `/${RequestType.SIGNUP}/ledger`,
@@ -179,14 +186,14 @@ export default new Router({
             name: `${RequestType.EXPORT}-success`,
         },
         {
-            path: `/${RequestType.CHANGE_PASSPHRASE}`,
-            component: ChangePassphrase,
-            name: RequestType.CHANGE_PASSPHRASE,
+            path: `/${RequestType.CHANGE_PASSWORD}`,
+            component: ChangePassword,
+            name: RequestType.CHANGE_PASSWORD,
         },
         {
-            path: `/${RequestType.CHANGE_PASSPHRASE}/success`,
+            path: `/${RequestType.CHANGE_PASSWORD}/success`,
             component: SimpleSuccess,
-            name: `${RequestType.CHANGE_PASSPHRASE}-success`,
+            name: `${RequestType.CHANGE_PASSWORD}-success`,
         },
         {
             path: `/${RequestType.LOGOUT}`,
@@ -219,26 +226,19 @@ export default new Router({
             name: RequestType.MIGRATE,
         },
         {
+            path: `/${RequestType.CHOOSE_ADDRESS}`,
+            component: ChooseAddress,
+            name: RequestType.CHOOSE_ADDRESS,
+        },
+        {
             path: `/${RequestType.SIGN_MESSAGE}`,
             component: SignMessage,
             name: RequestType.SIGN_MESSAGE,
-            children: [
-                {
-                    path: 'overview',
-                    component: SignMessageOverview,
-                    name: `${RequestType.SIGN_MESSAGE}-overview`,
-                },
-                {
-                    path: 'change-account',
-                    component: ActiveAccountSelector,
-                    name: `${RequestType.SIGN_MESSAGE}-change-account`,
-                },
-                {
-                    path: 'success',
-                    component: SignMessageSuccess,
-                    name: `${RequestType.SIGN_MESSAGE}-success`,
-                },
-            ],
+        },
+        {
+            path: `/${RequestType.SIGN_MESSAGE}/success`,
+            component: SignMessageSuccess,
+            name: `${RequestType.SIGN_MESSAGE}-success`,
         },
         {
             path: `/${RequestType.SIGN_MESSAGE}/error`,

@@ -7,6 +7,7 @@ import LedgerApi from '@/lib/LedgerApi'; // TODO import LedgerApi only when need
 import { ACCOUNT_DEFAULT_LABEL_KEYGUARD, ACCOUNT_DEFAULT_LABEL_LEDGER, WALLET_DEFAULT_LABEL_KEYGUARD,
     WALLET_DEFAULT_LABEL_LEDGER, WALLET_DEFAULT_LABEL_LEGACY, WALLET_MAX_ALLOWED_ACCOUNT_GAP,
     WALLET_BIP32_BASE_PATH_KEYGUARD } from '@/lib/Constants';
+import Config from 'config';
 
 type BasicAccountInfo = { // tslint:disable-line:interface-over-type-literal
     address: string,
@@ -125,7 +126,8 @@ export default class WalletInfoCollector {
         WalletInfoCollector._networkInitializationPromise
             .catch(() => delete WalletInfoCollector._networkInitializationPromise);
         if (walletType === WalletType.BIP39) {
-            WalletInfoCollector._keyguardClient = WalletInfoCollector._keyguardClient || new KeyguardClient();
+            WalletInfoCollector._keyguardClient = WalletInfoCollector._keyguardClient
+                || new KeyguardClient(Config.keyguardEndpoint);
         } else if (walletType === WalletType.LEDGER) {
             WalletInfoCollector._wasmInitializationPromise =
                 WalletInfoCollector._wasmInitializationPromise || Nimiq.WasmHelper.doImportBrowser();

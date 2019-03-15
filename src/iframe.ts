@@ -28,13 +28,13 @@ class IFrameApi {
         // If no wallets exist, see if the Keyguard has keys
         const client = new (await import('@nimiq/keyguard-client')).KeyguardClient();
         const hasKeys = await client.hasKeys();
-        if (hasKeys) {
+        if (hasKeys.success) {
             throw new Error('WALLETS_LOST');
         }
 
         // If no keys exist, check for legacy accounts
         const hasLegacyAccounts = await client.hasLegacyAccounts();
-        if (hasLegacyAccounts) {
+        if (hasLegacyAccounts.success) {
             throw new Error('MIGRATION_REQUIRED');
         }
 

@@ -27,7 +27,7 @@
                 :wallets="processedWallets"
                 :minBalance="request.value + request.fee"
                 @account-selected="accountSelected"
-                @login="login"/>
+                @login="goToOnboarding"/>
 
             <AccountInfoScreen
                 :address="request.recipient.toUserFriendlyAddress()"
@@ -37,7 +37,7 @@
             />
         </SmallPage>
 
-        <button class="global-close nq-button-s" :class="{'hidden': $route.name === 'checkout-success'}" @click="close">
+        <button class="global-close nq-button-s" @click="close">
             <span class="nq-icon arrow-left"></span>
             Cancel Payment
         </button>
@@ -49,16 +49,22 @@
 <script lang="ts">
 import { Component, Emit, Watch, Vue } from 'vue-property-decorator';
 import { PaymentInfoLine, AccountSelector, AccountInfo as AccountInfoScreen, SmallPage } from '@nimiq/vue-components';
-import { ParsedCheckoutRequest, RequestType, LoginResult } from '@/lib/RequestTypes';
+import { ParsedCheckoutRequest, RequestType, OnboardingResult } from '@/lib/RequestTypes';
 import { State as RpcState } from '@nimiq/rpc';
 import staticStore, { Static } from '@/lib/StaticStore';
 import { WalletStore } from '@/lib/WalletStore';
 import { AccountInfo } from '@/lib/AccountInfo';
 import { WalletInfo, WalletType } from '@/lib/WalletInfo';
-import { State, Mutation } from 'vuex-class';
-import { TX_VALIDITY_WINDOW, LEGACY_GROUPING_WALLET_ID, LEGACY_GROUPING_WALLET_LABEL } from '@/lib/Constants';
+import { State, Mutation, Getter } from 'vuex-class';
+import {
+    TX_VALIDITY_WINDOW,
+    LEGACY_GROUPING_WALLET_ID,
+    LEGACY_GROUPING_WALLET_LABEL,
+    ERROR_CANCELED,
+} from '@/lib/Constants';
 import Network from '@/components/Network.vue';
 import Loader from '@/components/Loader.vue';
+import KeyguardClient from '@nimiq/keyguard-client';
 
 @Component({components: {PaymentInfoLine, AccountSelector, AccountInfoScreen, SmallPage, Network, Loader}})
 export default class Checkout extends Vue {
@@ -67,6 +73,7 @@ export default class Checkout extends Vue {
     @Static private rpcState!: RpcState;
     @Static private request!: ParsedCheckoutRequest;
     @State private wallets!: WalletInfo[];
+    @Getter private processedWallets!: WalletInfo[];
 
     @Mutation('addWallet') private $addWallet!: (walletInfo: WalletInfo) => any;
     @Mutation('setActiveAccount') private $setActiveAccount!: (payload: {
@@ -84,7 +91,9 @@ export default class Checkout extends Vue {
         $subtitle.textContent = 'Checkout';
 
         await this.handleOnboardingResult();
-        this.getBalances();
+
+        if (this.wallets.length === 0) this.goToOnboarding(true);
+        else this.getBalances();
     }
 
     private async getBalances() {
@@ -163,7 +172,7 @@ export default class Checkout extends Vue {
             - TX_VALIDITY_WINDOW
             + this.request.validityDuration;
 
-        const request: KeyguardRequest.SignTransactionRequest = {
+        const request: KeyguardClient.SignTransactionRequest = {
             layout: 'checkout',
             shopOrigin: this.rpcState.origin,
             appName: this.request.appName,
@@ -194,52 +203,22 @@ export default class Checkout extends Vue {
         staticStore.keyguardRequest = storedRequest;
 
         const client = this.$rpc.createKeyguardClient();
-        client.signTransaction(request).catch(console.error); // TODO: proper error handling
+        client.signTransaction(request);
     }
 
-    private login() {
-        // Redirect to import
-        const request: KeyguardRequest.ImportRequest = {
-            appName: this.request.appName,
-            defaultKeyPath: `m/44'/242'/0'/0'`,
-            requestedKeyPaths: [`m/44'/242'/0'/0'`],
-        };
-
+    private goToOnboarding(useReplace?: boolean) {
+        // Redirect to onboarding
         staticStore.originalRouteName = RequestType.CHECKOUT;
-
-        const client = this.$rpc.createKeyguardClient();
-        client.import(request).catch(console.error); // TODO: proper error handling
+        if (useReplace) {
+            this.$rpc.routerReplace(RequestType.ONBOARD);
+        } else {
+            this.$rpc.routerPush(RequestType.ONBOARD);
+        }
     }
 
     @Emit()
     private close() {
-        this.$rpc.reject(new Error('CANCEL'));
-    }
-
-    private get processedWallets(): WalletInfo[] {
-        const singleAccounts = new Map<string, AccountInfo>();
-
-        const filteredWallets = this.wallets.filter((wallet) => {
-            if (wallet.type !== WalletType.LEGACY) return true;
-
-            const [singleAccountAddress, singleAccountInfo] = Array.from(wallet.accounts.entries())[0];
-            singleAccountInfo.walletId = wallet.id;
-            singleAccounts.set(singleAccountAddress, singleAccountInfo);
-
-            return false;
-        });
-
-        if (singleAccounts.size > 0) {
-            filteredWallets.push(new WalletInfo(
-                LEGACY_GROUPING_WALLET_ID,
-                LEGACY_GROUPING_WALLET_LABEL,
-                singleAccounts,
-                [],
-                WalletType.LEGACY,
-            ));
-        }
-
-        return filteredWallets;
+        this.$rpc.reject(new Error(ERROR_CANCELED));
     }
 
     private get hasSufficientBalanceAccount(): boolean {
@@ -254,7 +233,7 @@ export default class Checkout extends Vue {
     private async handleOnboardingResult() {
         // Check if we are returning from an onboarding request
         if (staticStore.sideResult && !(staticStore.sideResult instanceof Error)) {
-            const sideResult = staticStore.sideResult as LoginResult;
+            const sideResult = staticStore.sideResult as OnboardingResult;
 
             // Add imported wallet to Vuex store
             const walletInfo = await WalletStore.Instance.get(sideResult.walletId);
@@ -264,9 +243,11 @@ export default class Checkout extends Vue {
 
                 // Set as activeWallet and activeAccount
                 // FIXME: Currently unused, but should be reactivated
+                const activeAccount = walletInfo.accounts.values().next().value;
+
                 this.$setActiveAccount({
                     walletId: walletInfo.id,
-                    userFriendlyAddress: walletInfo.accounts.values().next().value.userFriendlyAddress,
+                    userFriendlyAddress: activeAccount.userFriendlyAddress,
                 });
             }
         }
@@ -295,7 +276,6 @@ export default class Checkout extends Vue {
 <style scoped>
     .small-page {
         position: relative;
-        height: 70rem;
     }
 
     .loader {

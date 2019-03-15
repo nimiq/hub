@@ -4,14 +4,14 @@ import { State, PostMessageRpcClient } from '@nimiq/rpc';
 import AccountsClient from '../client/AccountsClient';
 import {
     RequestType,
-    SignupRequest, SignupResult,
+    SimpleRequest,
+    OnboardingResult,
     CheckoutRequest,
-    LoginRequest,
     LogoutRequest, LogoutResult,
     SignTransactionRequest, SignTransactionResult,
     ExportRequest,
     RenameRequest,
-    ChangePassphraseRequest,
+    ChangePasswordRequest,
     AddAccountRequest,
     SignMessageRequest,
 } from '../src/lib/RequestTypes';
@@ -21,7 +21,10 @@ import { Utf8Tools } from '@nimiq/utils';
 
 class Demo {
     public static run() {
-        const demo = new Demo(`${location.protocol}//${location.hostname}:8000`);
+        const keyguardOrigin = location.origin === 'https://accounts.nimiq-testnet.com'
+            ? 'https://keyguard.nimiq-testnet.com'
+            : `${location.protocol}//${location.hostname}:8000`;
+        const demo = new Demo(keyguardOrigin);
 
         const client = new AccountsClient(location.origin);
 
@@ -36,7 +39,7 @@ class Demo {
 
             document.querySelector('#result').textContent = `Error: ${error.message || error}`;
         });
-        client.on(RequestType.SIGNUP, (result: SignupResult, state: State) => {
+        client.on(RequestType.SIGNUP, (result: OnboardingResult, state: State) => {
             console.log('AccountsManager result', result);
             console.log('State', state);
 
@@ -57,6 +60,17 @@ class Demo {
             await checkoutPopup(await generateCheckoutRequest(demo));
         });
 
+        document.querySelector('button#choose-address').addEventListener('click', async () => {
+            try {
+                const result = await client.chooseAddress({ appName: 'Accounts Demos' });
+                console.log('Result', result);
+                document.querySelector('#result').textContent = 'Address was chosen';
+            } catch (e) {
+                console.error('Result error', e);
+                document.querySelector('#result').textContent = `Error: ${e.message || e}`;
+            }
+        });
+
         document.querySelector('button#sign-transaction-popup').addEventListener('click', async () => {
             const txRequest = generateSignTransactionRequest(demo);
             try {
@@ -69,9 +83,20 @@ class Demo {
             }
         });
 
+        document.querySelector('button#onboard').addEventListener('click', async () => {
+            try {
+                const result = await client.onboard({ appName: 'Accounts Demos' });
+                console.log('Keyguard result', result);
+                document.querySelector('#result').textContent = 'Onboarding completed!';
+            } catch (e) {
+                console.error('Keyguard error', e);
+                document.querySelector('#result').textContent = `Error: ${e.message || e}`;
+            }
+        });
+
         document.querySelector('button#create').addEventListener('click', async () => {
             try {
-                const result = await client.signup(generateCreateRequest(demo));
+                const result = await client.signup({ appName: 'Accounts Demos' });
                 console.log('Keyguard result', result);
                 document.querySelector('#result').textContent = 'New wallet & account created';
             } catch (e) {
@@ -80,15 +105,9 @@ class Demo {
             }
         });
 
-        function generateCreateRequest(demo: Demo): SignupRequest {
-            return {
-                appName: 'Accounts Demos',
-            }
-        }
-
         document.querySelector('button#login').addEventListener('click', async () => {
             try {
-                const result = await client.login(generateLoginRequest(demo));
+                const result = await client.login({ appName: 'Accounts Demos' });
                 console.log('Keyguard result', result);
                 document.querySelector('#result').textContent = 'Wallet imported';
             } catch (e) {
@@ -96,12 +115,6 @@ class Demo {
                 document.querySelector('#result').textContent = `Error: ${e.message || e}`;
             }
         });
-
-        function generateLoginRequest(demo: Demo): LoginRequest {
-            return {
-                appName: 'Accounts Demos',
-            }
-        }
 
         function generateSignTransactionRequest(demo: Demo): SignTransactionRequest {
             const $radio = document.querySelector('input[type="radio"]:checked');
@@ -135,7 +148,7 @@ class Demo {
 
             return {
                 appName: 'Accounts Demos',
-                shopLogoUrl: 'http://localhost:8080/nimiq.png',
+                shopLogoUrl: `${location.origin}/nimiq.png`,
                 recipient: 'NQ63 U7XG 1YYE D6FA SXGG 3F5H X403 NBKN JLDU',
                 value,
                 fee: txFee,
@@ -163,7 +176,7 @@ class Demo {
             try {
                 const result = await client.signMessage(request);
                 console.log('Keyguard result', result);
-                document.querySelector('#result').textContent = 'MSG signed';
+                document.querySelector('#result').textContent = 'MSG signed: ' + Utf8Tools.utf8ByteArrayToString(result.data);
             } catch (e) {
                 console.error('Keyguard error', e);
                 document.querySelector('#result').textContent = `Error: ${e.message || e}`;
@@ -185,7 +198,7 @@ class Demo {
             try {
                 const result = await client.signMessage(request);
                 console.log('Keyguard result', result);
-                document.querySelector('#result').textContent = 'MSG signed';
+                document.querySelector('#result').textContent = 'MSG signed: ' + Utf8Tools.utf8ByteArrayToString(result.data);
             } catch (e) {
                 console.error('Keyguard error', e);
                 document.querySelector('#result').textContent = `Error: ${e.message || e}`;
@@ -261,17 +274,29 @@ class Demo {
         return this._iframeClient;
     }
 
+    public async startPopupClient(url: string, windowName: string): Promise<PostMessageRpcClient> {
+        const $popup = window.open(url, windowName);
+        const popupClient = new PostMessageRpcClient($popup, '*');
+        await popupClient.init();
+        return popupClient;
+    }
+
     public async listKeyguard() {
         const client = await this.startIframeClient(this._keyguardBaseUrl);
         const keys = await client.call('list');
         console.log('Keys in Keyguard:', keys);
+        document.querySelector('#result').textContent = 'Keys listed in console';
         return keys;
     }
 
     public async setupLegacyAccounts() {
-        const client = await this.startIframeClient(this._keyguardBaseUrl);
+        const client = await this.startPopupClient(`${this._keyguardBaseUrl}/demos/setup.html`, 'Nimiq Keyguard Setup Popup');
         const result = await client.call('setUpLegacyAccounts');
+        client.close();
+        // @ts-ignore Property '_target' is private and only accessible within class 'PostMessageRpcClient'.
+        client._target.close();
         console.log('Legacy Account setup:', result);
+        document.querySelector('#result').textContent = 'Legacy Account stored';
     }
 
     public async list(): Promise<WalletInfoEntry[]> {
@@ -315,9 +340,9 @@ class Demo {
         } as ExportRequest;
     }
 
-    public async changePassphrase(walletId: string) {
+    public async changePassword(walletId: string) {
         try {
-            const result = await this._accountsClient.changePassphrase(this._createChangePassphraseRequest(walletId));
+            const result = await this._accountsClient.changePassword(this._createChangePasswordRequest(walletId));
             console.log('Keyguard result', result);
             document.querySelector('#result').textContent = 'Export sucessful';
         } catch (e) {
@@ -326,11 +351,11 @@ class Demo {
         }
     }
 
-    public _createChangePassphraseRequest(walletId: string): ChangePassphraseRequest {
+    public _createChangePasswordRequest(walletId: string): ChangePasswordRequest {
         return {
             appName: 'Accounts Demos',
             walletId,
-        } as ChangePassphraseRequest;
+        } as ChangePasswordRequest;
     }
 
     public async addAccount(walletId: string) {
@@ -350,8 +375,6 @@ class Demo {
             walletId,
         };
     }
-
-
 
     public async rename(walletId: string, account: string) {
         try {
@@ -382,7 +405,7 @@ class Demo {
         wallets.forEach(wallet => {
             html += `<li${wallet.keyMissing ? ' style="color:red;"' : ''}>${wallet.label}<br>
                         <button class="export" data-wallet-id="${wallet.id}">Export</button>
-                        <button class="change-passphrase" data-wallet-id="${wallet.id}">Ch. Pass.</button>
+                        <button class="change-password" data-wallet-id="${wallet.id}">Ch. Pass.</button>
                         ${wallet.type !== 0 ? `<button class="add-account" data-wallet-id="${wallet.id}">+ Acc</button>` : ''}
                         <button class="rename" data-wallet-id="${wallet.id}">Rename</button>
                         <button class="logout" data-wallet-id="${wallet.id}">Logout</button>
@@ -408,8 +431,8 @@ class Demo {
         document.querySelectorAll('button.export').forEach(element => {
             element.addEventListener('click', async () => this.export(element.getAttribute('data-wallet-id')));
         });
-        document.querySelectorAll('button.change-passphrase').forEach(element => {
-            element.addEventListener('click', async () => this.changePassphrase(element.getAttribute('data-wallet-id')));
+        document.querySelectorAll('button.change-password').forEach(element => {
+            element.addEventListener('click', async () => this.changePassword(element.getAttribute('data-wallet-id')));
         });
         document.querySelectorAll('button.rename').forEach(element => {
             element.addEventListener('click', async () => this.rename(element.getAttribute('data-wallet-id'), element.getAttribute('data-address')));
