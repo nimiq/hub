@@ -4,5 +4,5 @@ export default {
     keyguardEndpoint: 'https://keyguard.nimiq-testnet.com',
     network: NETWORK_TEST,
     networkEndpoint: 'https://network.nimiq-testnet.com',
-    privilegedOrigins: [ 'safe.nimiq-testnet.com' ],
+    privilegedOrigins: [ 'https://safe.nimiq-testnet.com' ],
 };

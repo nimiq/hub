@@ -13,7 +13,7 @@ module.exports = {
   },
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
-    "config": "<rootDir>/config.local.ts",
+    'config': '<rootDir>/config.local.ts',
   },
   snapshotSerializers: [
     'jest-serializer-vue'
