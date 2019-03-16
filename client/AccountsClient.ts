@@ -8,25 +8,21 @@ import { RedirectRpcClient } from '@nimiq/rpc';
 import {
     RequestType,
     SimpleRequest,
-    OnboardingRequest,
-    OnboardingResult,
+    Account,
     CheckoutRequest,
     LogoutRequest,
-    LogoutResult,
     SignTransactionRequest,
-    SignTransactionResult,
+    SignedTransaction,
     ExportRequest,
     ChangePasswordRequest,
-    AddAccountRequest,
-    AddAccountResult,
+    AddAddressRequest,
+    Address,
     RenameRequest,
-    RenameResult,
     SignMessageRequest,
-    SignMessageResult,
+    SignedMessage,
     SimpleResult,
     ListResult,
     RpcResult,
-    ChooseAddressResult,
 } from '../src/lib/RequestTypes';
 
 export default class AccountsClient {
@@ -79,35 +75,35 @@ export default class AccountsClient {
         );
     }
 
-    public onboard(request: OnboardingRequest, requestBehavior = this._defaultBehavior): Promise<OnboardingResult> {
+    public onboard(request: SimpleRequest, requestBehavior = this._defaultBehavior): Promise<Account> {
         return this._request(requestBehavior, RequestType.ONBOARD, [request]);
     }
 
-    public signup(request: SimpleRequest, requestBehavior = this._defaultBehavior): Promise<OnboardingResult> {
+    public signup(request: SimpleRequest, requestBehavior = this._defaultBehavior): Promise<Account> {
         return this._request(requestBehavior, RequestType.SIGNUP, [request]);
     }
 
-    public login(request: SimpleRequest, requestBehavior = this._defaultBehavior): Promise<OnboardingResult> {
+    public login(request: SimpleRequest, requestBehavior = this._defaultBehavior): Promise<Account> {
         return this._request(requestBehavior, RequestType.LOGIN, [request]);
     }
 
     public chooseAddress(request: SimpleRequest, requestBehavior = this._defaultBehavior)
-        : Promise<ChooseAddressResult> {
+        : Promise<Address> {
         return this._request(requestBehavior, RequestType.CHOOSE_ADDRESS, [request]);
     }
 
     public signTransaction(
         request: SignTransactionRequest,
         requestBehavior = this._defaultBehavior,
-    ): Promise<SignTransactionResult> {
+    ): Promise<SignedTransaction> {
         return this._request(requestBehavior, RequestType.SIGN_TRANSACTION, [request]);
     }
 
-    public checkout(request: CheckoutRequest, requestBehavior = this._defaultBehavior): Promise<SignTransactionResult> {
+    public checkout(request: CheckoutRequest, requestBehavior = this._defaultBehavior): Promise<SignedTransaction> {
         return this._request(requestBehavior, RequestType.CHECKOUT, [request]);
     }
 
-    public logout(request: LogoutRequest, requestBehavior = this._defaultBehavior): Promise<LogoutResult> {
+    public logout(request: LogoutRequest, requestBehavior = this._defaultBehavior): Promise<SimpleResult> {
         return this._request(requestBehavior, RequestType.LOGOUT, [request]);
     }
 
@@ -125,18 +121,18 @@ export default class AccountsClient {
         return this._request(requestBehavior, RequestType.CHANGE_PASSWORD, [request]);
     }
 
-    public addAccount(request: AddAccountRequest, requestBehavior = this._defaultBehavior): Promise<AddAccountResult> {
-        return this._request(requestBehavior, RequestType.ADD_ACCOUNT, [request]);
+    public addAddress(request: AddAddressRequest, requestBehavior = this._defaultBehavior): Promise<Address> {
+        return this._request(requestBehavior, RequestType.ADD_ADDRESS, [request]);
     }
 
-    public rename(request: RenameRequest, requestBehavior = this._defaultBehavior): Promise<RenameResult> {
+    public rename(request: RenameRequest, requestBehavior = this._defaultBehavior): Promise<Account> {
         return this._request(requestBehavior, RequestType.RENAME, [request]);
     }
 
     public signMessage(
         request: SignMessageRequest,
         requestBehavior = this._defaultBehavior,
-    ): Promise<SignMessageResult> {
+    ): Promise<SignedMessage> {
         return this._request(requestBehavior, RequestType.SIGN_MESSAGE, [request]);
     }
 

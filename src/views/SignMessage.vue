@@ -28,7 +28,7 @@
 import { Component, Emit, Vue } from 'vue-property-decorator';
 import { Getter, Mutation } from 'vuex-class';
 import { SmallPage, AccountSelector } from '@nimiq/vue-components';
-import { RequestType, ParsedSignMessageRequest, OnboardingResult } from '../lib/RequestTypes';
+import { RequestType, ParsedSignMessageRequest, Account } from '../lib/RequestTypes';
 import staticStore, { Static } from '../lib/StaticStore';
 import { WalletStore } from '@/lib/WalletStore';
 import { AccountInfo } from '@/lib/AccountInfo';
@@ -99,7 +99,7 @@ export default class SignMessage extends Vue {
 
         const storedRequest = Object.assign({}, request, {
             signer: Array.from(request.signer),
-            message: request.message instanceof Uint8Array ? Array.from(request.message) : request.message,
+            message: Array.from(request.message as Uint8Array),
         });
         staticStore.keyguardRequest = storedRequest;
 
@@ -127,10 +127,10 @@ export default class SignMessage extends Vue {
     private async handleOnboardingResult() {
         // Check if we are returning from an onboarding request
         if (staticStore.sideResult && !(staticStore.sideResult instanceof Error)) {
-            const sideResult = staticStore.sideResult as OnboardingResult;
+            const sideResult = staticStore.sideResult as Account;
 
             // Add imported wallet to Vuex store
-            const walletInfo = await WalletStore.Instance.get(sideResult.walletId);
+            const walletInfo = await WalletStore.Instance.get(sideResult.accountId);
             if (walletInfo) {
                 this.$addWallet(walletInfo);
 

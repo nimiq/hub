@@ -88,7 +88,7 @@ export function keyguardResponseRouter(
             };
         case KeyguardCommand.DERIVE_ADDRESS:
             return {
-                resolve: `${RequestType.ADD_ACCOUNT}-success`,
+                resolve: `${RequestType.ADD_ADDRESS}-success`,
                 reject: 'default-error',
             };
         case KeyguardCommand.SIGN_MESSAGE:
@@ -206,14 +206,14 @@ export default new Router({
             name: `${RequestType.LOGOUT}-success`,
         },
         {
-            path: `/${RequestType.ADD_ACCOUNT}`,
+            path: `/${RequestType.ADD_ADDRESS}`,
             component: AddAccount,
-            name: RequestType.ADD_ACCOUNT,
+            name: RequestType.ADD_ADDRESS,
         },
         {
-            path: `/${RequestType.ADD_ACCOUNT}/success`,
+            path: `/${RequestType.ADD_ADDRESS}/success`,
             component: AddAccountSuccess,
-            name: `${RequestType.ADD_ACCOUNT}-success`,
+            name: `${RequestType.ADD_ADDRESS}-success`,
         },
         {
             path: `/${RequestType.RENAME}`,
