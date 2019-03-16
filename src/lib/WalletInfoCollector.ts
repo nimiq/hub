@@ -4,9 +4,15 @@ import { AccountInfo } from '@/lib/AccountInfo';
 import { WalletStore } from '@/lib/WalletStore';
 import { WalletInfo, WalletType } from '@/lib/WalletInfo';
 import LedgerApi from '@/lib/LedgerApi'; // TODO import LedgerApi only when needed
-import { ADDRESS_DEFAULT_LABEL_KEYGUARD, ACCOUNT_DEFAULT_LABEL_LEGACY,
-    ADDRESS_DEFAULT_LABEL_LEDGER, ACCOUNT_MAX_ALLOWED_ACCOUNT_GAP,
-    ACCOUNT_BIP32_BASE_PATH_KEYGUARD } from '@/lib/Constants';
+import {
+    ACCOUNT_DEFAULT_LABEL_LEGACY,
+    ACCOUNT_DEFAULT_LABEL_KEYGUARD,
+    ACCOUNT_DEFAULT_LABEL_LEDGER,
+    ADDRESS_DEFAULT_LABEL_KEYGUARD,
+    ADDRESS_DEFAULT_LABEL_LEDGER,
+    ACCOUNT_MAX_ALLOWED_ADDRESS_GAP,
+    ACCOUNT_BIP32_BASE_PATH_KEYGUARD,
+} from '@/lib/Constants';
 import Config from 'config';
 
 type BasicAccountInfo = { // tslint:disable-line:interface-over-type-literal
@@ -32,7 +38,7 @@ export default class WalletInfoCollector {
             derivedAccountsPromise = Promise.resolve([]);
         } else {
             derivedAccountsPromise = WalletInfoCollector._deriveAccounts(startIndex,
-                ACCOUNT_MAX_ALLOWED_ACCOUNT_GAP, walletType, walletId);
+                ACCOUNT_MAX_ALLOWED_ADDRESS_GAP, walletType, walletId);
 
             // for ledger, we retrieve the walletId from the currently connected ledger
             if (walletType === WalletType.LEDGER && !walletId) {
@@ -82,9 +88,9 @@ export default class WalletInfoCollector {
             // ends up using accounts 0 and 39, the account at index 19 will not be found anymore on reimport. With the
             // current implementation however, at least the account 39 would be found, while an implementation strictly
             // following the specification would stop the search at index 20.
-            startIndex += ACCOUNT_MAX_ALLOWED_ACCOUNT_GAP;
+            startIndex += ACCOUNT_MAX_ALLOWED_ADDRESS_GAP;
             derivedAccountsPromise = WalletInfoCollector._deriveAccounts(startIndex,
-                ACCOUNT_MAX_ALLOWED_ACCOUNT_GAP, walletType, walletId);
+                ACCOUNT_MAX_ALLOWED_ADDRESS_GAP, walletType, walletId);
 
             // find accounts with a balance > 0
             // TODO should use transaction receipts
@@ -142,8 +148,8 @@ export default class WalletInfoCollector {
         const label = walletType === WalletType.LEGACY
             ? ACCOUNT_DEFAULT_LABEL_LEGACY
             : walletType === WalletType.BIP39
-                ? ADDRESS_DEFAULT_LABEL_KEYGUARD
-                : ADDRESS_DEFAULT_LABEL_LEDGER;
+                ? ACCOUNT_DEFAULT_LABEL_KEYGUARD
+                : ACCOUNT_DEFAULT_LABEL_LEDGER;
         return new WalletInfo(
             walletId,
             label,

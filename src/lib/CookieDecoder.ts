@@ -5,12 +5,12 @@ import { Utf8Tools } from '@nimiq/utils';
 import { AccountInfoEntry } from './AccountInfo';
 import CookieJar from './CookieJar';
 import {
+    ACCOUNT_DEFAULT_LABEL_LEGACY,
     ACCOUNT_DEFAULT_LABEL_KEYGUARD,
     ACCOUNT_DEFAULT_LABEL_LEDGER,
-    ADDRESS_DEFAULT_LABEL_KEYGUARD,
     LABEL_MAX_LENGTH,
+    ADDRESS_DEFAULT_LABEL_KEYGUARD,
     ADDRESS_DEFAULT_LABEL_LEDGER,
-    ACCOUNT_DEFAULT_LABEL_LEGACY,
 } from '@/lib/Constants';
 
 export class CookieDecoder {
@@ -163,7 +163,8 @@ export class CookieDecoder {
             : Utf8Tools.utf8ByteArrayToString(new Uint8Array(labelBytes));
 
         // Account address
-        const addressBytes = this.readBytes(bytes, Nimiq.Address.SERIALIZED_SIZE);
+        // (iframe does not have Nimiq lib)
+        const addressBytes = this.readBytes(bytes, 20 /* Nimiq.Address.SERIALIZED_SIZE */);
 
         const accountInfoEntry: AccountInfoEntry = {
             path: 'not public',

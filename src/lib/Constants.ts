@@ -19,7 +19,7 @@ export const ACCOUNT_BIP32_BASE_PATH_KEYGUARD = `m/44'/242'/0'/`;
 export const ACCOUNT_DEFAULT_LABEL_KEYGUARD = 'Keyguard Account';
 export const ACCOUNT_DEFAULT_LABEL_LEDGER = 'Ledger Account';
 export const ACCOUNT_DEFAULT_LABEL_LEGACY = 'Legacy Account';
-export const ACCOUNT_MAX_ALLOWED_ACCOUNT_GAP = 20;
+export const ACCOUNT_MAX_ALLOWED_ADDRESS_GAP = 20;
 
 // Compatibility
 export const LEGACY_GROUPING_ACCOUNT_ID = 'LEGACY';
