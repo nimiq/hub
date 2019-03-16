@@ -28,7 +28,7 @@ export default class LogoutSuccess extends Vue {
         // (currently 2s), we need to add a loading state before the success state.
         await WalletStore.Instance.remove(this.request.walletId);
 
-        const remainingTimeout = Loader.SUCCESS_REDIRECT_DELAY - (Date.now() - start);
+        const remainingTimeout = Math.max(0, Loader.SUCCESS_REDIRECT_DELAY - (Date.now() - start));
 
         setTimeout(() => this.$rpc.resolve(this.keyguardResult as SimpleResult), remainingTimeout);
     }
