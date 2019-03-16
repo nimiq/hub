@@ -98,7 +98,7 @@ class Demo {
             try {
                 const result = await client.signup({ appName: 'Accounts Demos' });
                 console.log('Keyguard result', result);
-                document.querySelector('#result').textContent = 'New wallet & account created';
+                document.querySelector('#result').textContent = 'New account & address created';
             } catch (e) {
                 console.error('Keyguard error', e);
                 document.querySelector('#result').textContent = `Error: ${e.message || e}`;
@@ -109,7 +109,7 @@ class Demo {
             try {
                 const result = await client.login({ appName: 'Accounts Demos' });
                 console.log('Keyguard result', result);
-                document.querySelector('#result').textContent = 'Wallet imported';
+                document.querySelector('#result').textContent = 'Account imported';
             } catch (e) {
                 console.error('Keyguard error', e);
                 document.querySelector('#result').textContent = `Error: ${e.message || e}`;
@@ -307,7 +307,7 @@ class Demo {
         try {
             const result = await this._accountsClient.logout(this._createLogoutRequest(walletId));
             console.log('Keyguard result', result);
-            document.querySelector('#result').textContent = 'Wallet Removed';
+            document.querySelector('#result').textContent = 'Account removed';
             return result;
         } catch (e) {
             console.error('Keyguard error', e);
@@ -380,7 +380,7 @@ class Demo {
         try {
             const result = await this._accountsClient.rename(this._createRenameRequest(walletId, account));
             console.log('Keyguard result', result);
-            document.querySelector('#result').textContent = 'Done renaming wallet';
+            document.querySelector('#result').textContent = 'Done renaming account';
         } catch (e) {
             console.error('Keyguard error', e);
             document.querySelector('#result').textContent = `Error: ${e.message || e}`;

@@ -21,10 +21,10 @@ import { WalletStore } from '@/lib/WalletStore';
 import { Account } from '@/lib/RequestTypes';
 import Loader from '@/components/Loader.vue';
 import {
-    WALLET_DEFAULT_LABEL_KEYGUARD,
-    WALLET_DEFAULT_LABEL_LEDGER,
     ACCOUNT_DEFAULT_LABEL_KEYGUARD,
     ACCOUNT_DEFAULT_LABEL_LEDGER,
+    ADDRESS_DEFAULT_LABEL_KEYGUARD,
+    ADDRESS_DEFAULT_LABEL_LEDGER,
 } from '@/lib/Constants';
 import KeyguardClient from '@nimiq/keyguard-client';
 
@@ -37,8 +37,8 @@ export default class SignupSuccess extends Vue {
 
     private async mounted() {
         const walletType = WalletType.BIP39;
-        const walletLabel = WALLET_DEFAULT_LABEL_KEYGUARD;
-        const accountLabel = ACCOUNT_DEFAULT_LABEL_KEYGUARD;
+        const walletLabel = ACCOUNT_DEFAULT_LABEL_KEYGUARD;
+        const accountLabel = ADDRESS_DEFAULT_LABEL_KEYGUARD;
 
         const createdAddress = new Nimiq.Address(this.keyguardResult[0].addresses[0].address);
 

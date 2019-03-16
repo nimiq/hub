@@ -14,10 +14,10 @@
                 @merchant-info-clicked="showMerchantInfo = true"
             />
 
-            <h1 class="nq-h1">Choose an account to pay</h1>
+            <h1 class="nq-h1">Choose an address to pay</h1>
 
             <div v-if="!hasSufficientBalanceAccount" class="non-sufficient-balance">
-                <p class="nq-text nq-orange">None of your accounts has sufficient balance.</p>
+                <p class="nq-text nq-orange">None of your addresses has sufficient balance.</p>
                 <a href="https://changelly.com/exchange/btc/nim?ref_id=v06xmpbqj5lpftuj" target="_blank">
                     <button class="nq-button-s nq-light-blue-bg"><i class="nq-icon exchange"></i> Get NIM&nbsp;</button>
                 </a>
@@ -58,8 +58,8 @@ import { WalletInfo, WalletType } from '@/lib/WalletInfo';
 import { State, Mutation, Getter } from 'vuex-class';
 import {
     TX_VALIDITY_WINDOW,
-    LEGACY_GROUPING_WALLET_ID,
-    LEGACY_GROUPING_WALLET_LABEL,
+    LEGACY_GROUPING_ACCOUNT_ID,
+    LEGACY_GROUPING_ACCOUNT_LABEL,
     ERROR_CANCELED,
 } from '@/lib/Constants';
 import Network from '@/components/Network.vue';

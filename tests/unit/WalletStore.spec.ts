@@ -25,7 +25,7 @@ const DUMMY: WalletInfo[] = [
         }], WalletType.LEDGER),
     new WalletInfo('sad-panda', 'Old',
         new Map<string, AccountInfo>([
-            ['NQ07 0000 0000 0000 0000 0000 0000 0000 0000', new AccountInfo('m/0\'', 'OldAccount', DUMMY_ADDRESS)],
+            ['NQ07 0000 0000 0000 0000 0000 0000 0000 0000', new AccountInfo('m/0\'', 'OldAddress', DUMMY_ADDRESS)],
         ]), [], WalletType.LEGACY),
 ];
 

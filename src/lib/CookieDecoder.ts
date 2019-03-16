@@ -4,7 +4,14 @@ import { WalletInfoEntry, WalletType } from './WalletInfo';
 import { Utf8Tools } from '@nimiq/utils';
 import { AccountInfoEntry } from './AccountInfo';
 import CookieJar from './CookieJar';
-import { LABEL_MAX_LENGTH } from '@/lib/Constants';
+import {
+    ACCOUNT_DEFAULT_LABEL_LEGACY,
+    ACCOUNT_DEFAULT_LABEL_KEYGUARD,
+    ACCOUNT_DEFAULT_LABEL_LEDGER,
+    LABEL_MAX_LENGTH,
+    ADDRESS_DEFAULT_LABEL_KEYGUARD,
+    ADDRESS_DEFAULT_LABEL_LEDGER,
+} from '@/lib/Constants';
 
 export class CookieDecoder {
     public static decode(str: string): WalletInfoEntry[] {
@@ -73,9 +80,9 @@ export class CookieDecoder {
 
         // Handle LEGACY wallet
         if (type === WalletType.LEGACY) {
-            const walletLabel = 'Legacy Wallet';
+            const walletLabel = ACCOUNT_DEFAULT_LABEL_LEGACY;
 
-            const accounts = this.decodeAccounts(bytes, labelLength);
+            const accounts = this.decodeAccounts(bytes, type, labelLength);
 
             const walletInfoEntry: WalletInfoEntry = {
                 id,
@@ -94,14 +101,13 @@ export class CookieDecoder {
         // Wallet label
         const walletLabelBytes = this.readBytes(bytes, labelLength);
 
-        let walletLabel: string;
-        if (walletLabelBytes.length === 0) {
-            walletLabel = type === WalletType.BIP39
-                ? 'Keyguard Wallet'
-                : 'Ledger Wallet';
-        } else walletLabel = Utf8Tools.utf8ByteArrayToString(new Uint8Array(walletLabelBytes));
+        const walletLabel = walletLabelBytes.length === 0
+            ? type === WalletType.BIP39
+                ? ACCOUNT_DEFAULT_LABEL_KEYGUARD
+                : ACCOUNT_DEFAULT_LABEL_LEDGER
+            : Utf8Tools.utf8ByteArrayToString(new Uint8Array(walletLabelBytes));
 
-        const accounts = this.decodeAccounts(bytes);
+        const accounts = this.decodeAccounts(bytes, type);
 
         const walletInfoEntry: WalletInfoEntry = {
             id,
@@ -115,13 +121,17 @@ export class CookieDecoder {
         return walletInfoEntry;
     }
 
-    private static decodeAccounts(bytes: number[], labelLength?: number): Map<string, AccountInfoEntry> {
+    private static decodeAccounts(
+        bytes: number[],
+        type: WalletType,
+        labelLength?: number,
+    ): Map<string, AccountInfoEntry> {
         let numberAccounts = 1;
         if (typeof labelLength === 'undefined') numberAccounts = this.readByte(bytes);
 
         const accounts: AccountInfoEntry[] = [];
         for (let i = 0; i < numberAccounts; i++) {
-            accounts.push(this.decodeAccount(bytes, labelLength));
+            accounts.push(this.decodeAccount(bytes, type, labelLength));
         }
 
         const accountsMapArray: Array<[string, AccountInfoEntry]> = accounts.map((account) => {
@@ -134,19 +144,26 @@ export class CookieDecoder {
         return new Map(accountsMapArray);
     }
 
-    private static decodeAccount(bytes: number[], labelLength?: number): AccountInfoEntry {
-        if (typeof labelLength === 'undefined') labelLength = this.readByte(bytes);
+    private static decodeAccount(bytes: number[], type: WalletType, labelLength?: number): AccountInfoEntry {
+        if (typeof labelLength === 'undefined') {
+            labelLength = this.readByte(bytes);
+        }
 
-        if (labelLength > LABEL_MAX_LENGTH) throw new Error('Malformed Cookie, label too long');
+        if (labelLength > LABEL_MAX_LENGTH) {
+            throw new Error('Malformed Cookie, label too long');
+        }
 
         // Account label
         const labelBytes = this.readBytes(bytes, labelLength);
 
-        let accountLabel: string;
-        if (labelBytes.length === 0) accountLabel = 'Standard Account';
-        else accountLabel = Utf8Tools.utf8ByteArrayToString(new Uint8Array(labelBytes));
+        const accountLabel = labelBytes.length === 0
+            ? type === WalletType.BIP39
+                ? ADDRESS_DEFAULT_LABEL_KEYGUARD
+                : ADDRESS_DEFAULT_LABEL_LEDGER
+            : Utf8Tools.utf8ByteArrayToString(new Uint8Array(labelBytes));
 
         // Account address
+        // (iframe does not have Nimiq lib)
         const addressBytes = this.readBytes(bytes, 20 /* Nimiq.Address.SERIALIZED_SIZE */);
 
         const accountInfoEntry: AccountInfoEntry = {

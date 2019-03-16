@@ -5,8 +5,8 @@ import { WalletInfo, WalletType } from '@/lib/WalletInfo';
 import { WalletStore } from '@/lib/WalletStore';
 import { AccountInfo } from '@/lib/AccountInfo';
 import {
-    LEGACY_GROUPING_WALLET_ID,
-    LEGACY_GROUPING_WALLET_LABEL,
+    LEGACY_GROUPING_ACCOUNT_ID,
+    LEGACY_GROUPING_ACCOUNT_LABEL,
 } from '@/lib/Constants';
 
 Vue.use(Vuex);
@@ -137,8 +137,8 @@ const store: StoreOptions<RootState> = {
 
             if (singleAccounts.size > 0) {
                 processedWallets.push(new WalletInfo(
-                    LEGACY_GROUPING_WALLET_ID,
-                    LEGACY_GROUPING_WALLET_LABEL,
+                    LEGACY_GROUPING_ACCOUNT_ID,
+                    LEGACY_GROUPING_ACCOUNT_LABEL,
                     singleAccounts,
                     [],
                     WalletType.LEGACY,

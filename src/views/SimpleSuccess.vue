@@ -33,7 +33,7 @@ export default class SimpleSuccess extends Vue {
     get text() {
         switch (this.$route.name) {
             case 'export-file-success':
-                return 'Your LoginFile export<br/>was successful';
+                return 'Your Login File export<br/>was successful';
             case 'export-words-success':
                 return 'Your Recovery Words export<br/>was successful';
             case 'export-success':
