@@ -36,7 +36,7 @@ export default class RpcApi {
             RequestType.EXPORT,
             RequestType.CHANGE_PASSWORD,
             RequestType.LOGOUT,
-            RequestType.ADD_ACCOUNT,
+            RequestType.ADD_ADDRESS,
             RequestType.RENAME,
             RequestType.SIGN_MESSAGE,
             RequestType.MIGRATE,
@@ -61,7 +61,7 @@ export default class RpcApi {
 
     public createKeyguardClient() {
         const localState = this._exportState();
-        const client = new KeyguardClient(Config.keyguardEndpoint, localState);
+        const client = new KeyguardClient(Config.keyguardEndpoint, window.location.origin, localState);
         return client;
     }
 

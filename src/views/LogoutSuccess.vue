@@ -8,7 +8,7 @@
 
 <script lang="ts">
 import { Component, Emit, Vue } from 'vue-property-decorator';
-import { ParsedLogoutRequest } from '../lib/RequestTypes';
+import { ParsedLogoutRequest, SimpleResult } from '../lib/RequestTypes';
 import { State } from 'vuex-class';
 import { SmallPage } from '@nimiq/vue-components';
 import { WalletStore } from '@/lib/WalletStore';
@@ -21,10 +21,16 @@ export default class LogoutSuccess extends Vue {
     @Static private request!: ParsedLogoutRequest;
     @State private keyguardResult!: KeyguardClient.SimpleResult;
 
-    public mounted() {
-        WalletStore.Instance.remove(this.request.walletId);
+    public async mounted() {
+        const start = Date.now();
 
-        setTimeout(() => this.$rpc.resolve(this.keyguardResult), Loader.SUCCESS_REDIRECT_DELAY);
+        // If we at some point notice that the removal takes longer than SUCCESS_REDIRECT_DELAY
+        // (currently 2s), we need to add a loading state before the success state.
+        await WalletStore.Instance.remove(this.request.walletId);
+
+        const remainingTimeout = Math.max(0, Loader.SUCCESS_REDIRECT_DELAY - (Date.now() - start));
+
+        setTimeout(() => this.$rpc.resolve(this.keyguardResult as SimpleResult), remainingTimeout);
     }
 }
 </script>

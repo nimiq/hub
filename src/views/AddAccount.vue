@@ -7,17 +7,12 @@ import { DeriveAddressRequest } from '@nimiq/keyguard-client';
 import { Static } from '../lib/StaticStore';
 import { WalletStore } from '@/lib/WalletStore';
 import { WalletType } from '@/lib/WalletInfo';
-import { State } from 'vuex-class';
-import KeyguardClient from '@nimiq/keyguard-client';
 
 @Component
 export default class AddAccount extends Vue {
     @Static private request!: ParsedAddAccountRequest;
-    @State private keyguardResult?: KeyguardClient.DeriveAddressResult;
 
     public async created() {
-        if (this.keyguardResult) return;
-
         const wallet = await WalletStore.Instance.get(this.request.walletId);
         if (!wallet) {
             this.$rpc.reject(new Error('Wallet not found'));

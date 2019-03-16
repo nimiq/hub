@@ -18,7 +18,7 @@ import { AccountInfo } from '../lib/AccountInfo';
 import { WalletInfo, WalletType } from '../lib/WalletInfo';
 import { State } from 'vuex-class';
 import { WalletStore } from '@/lib/WalletStore';
-import { OnboardingResult } from '@/lib/RequestTypes';
+import { Account } from '@/lib/RequestTypes';
 import Loader from '@/components/Loader.vue';
 import {
     WALLET_DEFAULT_LABEL_KEYGUARD,
@@ -66,13 +66,13 @@ export default class SignupSuccess extends Vue {
 
         this.state = Loader.State.SUCCESS;
 
-        const result: OnboardingResult = {
-            walletId: walletInfo.id,
+        const result: Account = {
+            accountId: walletInfo.id,
             label: walletInfo.label,
             type: walletInfo.type,
             fileExported: walletInfo.fileExported,
             wordsExported: walletInfo.wordsExported,
-            accounts: [{
+            addresses: [{
                 address: accountInfo.userFriendlyAddress,
                 label: accountInfo.label,
             }],

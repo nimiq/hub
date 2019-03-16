@@ -9,7 +9,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { SignTransactionResult } from '@/lib/RequestTypes';
+import { SignedTransaction } from '@/lib/RequestTypes';
 import { Static } from '../lib/StaticStore';
 import { State } from 'vuex-class';
 import { SmallPage } from '@nimiq/vue-components';
@@ -32,7 +32,7 @@ export default class CheckoutTransmission extends Vue {
 
     private async mounted() {
         const tx = await (this.$refs.network as Network).prepareTx(this.keyguardRequest, this.keyguardResult);
-        const result: SignTransactionResult = await (this.$refs.network as Network).sendToNetwork(tx);
+        const result = await (this.$refs.network as Network).sendToNetwork(tx);
         this.isTxSent = true;
 
         setTimeout(() => this.$rpc.resolve(result), Loader.SUCCESS_REDIRECT_DELAY);
@@ -51,10 +51,4 @@ export default class CheckoutTransmission extends Vue {
     }
 }
 </script>
-
-<style scoped>
-    .small-page {
-        height: 70rem;
-    }
-</style>
 

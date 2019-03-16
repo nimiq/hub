@@ -6,16 +6,12 @@ import { ParsedSignTransactionRequest } from '../lib/RequestTypes';
 import KeyguardClient from '@nimiq/keyguard-client';
 import { WalletStore } from '@/lib/WalletStore';
 import staticStore, { Static } from '../lib/StaticStore';
-import { State } from 'vuex-class';
 
 @Component
 export default class SignTransaction extends Vue {
     @Static private request!: ParsedSignTransactionRequest;
-    @State private keyguardResult?: KeyguardClient.SignTransactionResult;
 
     public async created() {
-        if (this.keyguardResult) return;
-
         // Forward user through AccountsManager to Keyguard
         const wallet = await WalletStore.Instance.get(this.request.walletId);
         if (!wallet) throw new Error('Wallet ID not found');

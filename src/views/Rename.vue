@@ -35,7 +35,7 @@
 import { Component, Vue, Emit } from 'vue-property-decorator';
 import { AccountList, SmallPage, PageHeader, PageBody, PageFooter } from '@nimiq/vue-components';
 import Input from '@/components/Input.vue';
-import { ParsedRenameRequest, RenameResult } from '../lib/RequestTypes';
+import { ParsedRenameRequest, Account } from '../lib/RequestTypes';
 import Loader from '../components/Loader.vue';
 import { WalletInfo, WalletType } from '../lib/WalletInfo';
 import { WalletStore } from '@/lib/WalletStore';
@@ -121,14 +121,17 @@ export default class Rename extends Vue {
     }
 
     private done() {
-        const result = {
-            walletId: this.wallet!.id,
+        const result: Account = {
+            accountId: this.wallet!.id,
             label: this.wallet!.label,
-            accounts: Array.from(this.accounts.values()).map((addressInfo) => ({
+            type: this.wallet!.type,
+            fileExported: this.wallet!.fileExported,
+            wordsExported: this.wallet!.wordsExported,
+            addresses: Array.from(this.accounts.values()).map((addressInfo) => ({
                 address: addressInfo.userFriendlyAddress,
                 label: addressInfo.label,
             })),
-        } as RenameResult;
+        };
 
         this.$rpc.resolve(result);
     }

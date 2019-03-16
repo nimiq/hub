@@ -49,7 +49,7 @@
 <script lang="ts">
 import { Component, Emit, Watch, Vue } from 'vue-property-decorator';
 import { PaymentInfoLine, AccountSelector, AccountInfo as AccountInfoScreen, SmallPage } from '@nimiq/vue-components';
-import { ParsedCheckoutRequest, RequestType, OnboardingResult } from '@/lib/RequestTypes';
+import { ParsedCheckoutRequest, RequestType, Account } from '@/lib/RequestTypes';
 import { State as RpcState } from '@nimiq/rpc';
 import staticStore, { Static } from '@/lib/StaticStore';
 import { WalletStore } from '@/lib/WalletStore';
@@ -233,10 +233,10 @@ export default class Checkout extends Vue {
     private async handleOnboardingResult() {
         // Check if we are returning from an onboarding request
         if (staticStore.sideResult && !(staticStore.sideResult instanceof Error)) {
-            const sideResult = staticStore.sideResult as OnboardingResult;
+            const sideResult = staticStore.sideResult as Account;
 
             // Add imported wallet to Vuex store
-            const walletInfo = await WalletStore.Instance.get(sideResult.walletId);
+            const walletInfo = await WalletStore.Instance.get(sideResult.accountId);
             if (walletInfo) {
                 this.$addWallet(walletInfo);
                 this.sideResultAddedWallet = true;
@@ -276,7 +276,6 @@ export default class Checkout extends Vue {
 <style scoped>
     .small-page {
         position: relative;
-        height: 70rem;
     }
 
     .loader {

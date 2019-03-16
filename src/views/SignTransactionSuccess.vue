@@ -16,7 +16,7 @@
 import { Component, Vue } from 'vue-property-decorator';
 import Network from '@/components/Network.vue';
 import { SmallPage } from '@nimiq/vue-components';
-import { SignTransactionResult } from '../lib/RequestTypes';
+import { SignedTransaction } from '../lib/RequestTypes';
 import { State } from 'vuex-class';
 import { Static } from '../lib/StaticStore';
 import Loader from '../components/Loader.vue';
@@ -30,7 +30,7 @@ export default class SignTransactionSuccess extends Vue {
 
     private async mounted() {
         const tx = await (this.$refs.network as Network).prepareTx(this.keyguardRequest, this.keyguardResult);
-        const result = (this.$refs.network as Network).makeSignTransactionResult(tx);
+        const result: SignedTransaction = (this.$refs.network as Network).makeSignTransactionResult(tx);
 
         setTimeout(() => this.$rpc.resolve(result), Loader.SUCCESS_REDIRECT_DELAY);
     }

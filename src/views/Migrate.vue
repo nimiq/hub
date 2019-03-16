@@ -109,9 +109,3 @@ export default class Migrate extends Vue {
     }
 }
 </script>
-
-<style scoped>
-    .small-page {
-        height: 70rem;
-    }
-</style>

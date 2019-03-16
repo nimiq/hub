@@ -28,7 +28,7 @@ const LoginErrorHandler       = () => import(/*webpackChunkName: "onboarding"*/ 
 const Export                  = () => import(/*webpackChunkName: "export"*/ './views/Export.vue');
 const ExportSuccess           = () => import(/*webpackChunkName: "export"*/ './views/ExportSuccess.vue');
 
-const ChangePassword        = () => import(/*webpackChunkName: "change-password"*/ './views/ChangePassword.vue');
+const ChangePassword          = () => import(/*webpackChunkName: "change-password"*/ './views/ChangePassword.vue');
 
 const Logout                  = () => import(/*webpackChunkName: "logout"*/ './views/Logout.vue');
 const LogoutSuccess           = () => import(/*webpackChunkName: "logout"*/ './views/LogoutSuccess.vue');
@@ -89,7 +89,7 @@ export function keyguardResponseRouter(
             };
         case KeyguardCommand.DERIVE_ADDRESS:
             return {
-                resolve: `${RequestType.ADD_ACCOUNT}-success`,
+                resolve: `${RequestType.ADD_ADDRESS}-success`,
                 reject: 'default-error',
             };
         case KeyguardCommand.SIGN_MESSAGE:
@@ -114,7 +114,7 @@ export default new Router({
         {
             path: `/${RequestType.SIGN_TRANSACTION}`,
             component: SignTransaction,
-            name: `${RequestType.SIGN_TRANSACTION}`,
+            name: RequestType.SIGN_TRANSACTION,
         },
         {
             path: `/${RequestType.SIGN_TRANSACTION}/success`,
@@ -139,12 +139,12 @@ export default new Router({
         {
             path: `/${RequestType.ONBOARD}`,
             component: OnboardingSelector,
-            name: `${RequestType.ONBOARD}`,
+            name: RequestType.ONBOARD,
         },
         {
             path: `/${RequestType.SIGNUP}`,
             component: Signup,
-            name: `${RequestType.SIGNUP}`,
+            name: RequestType.SIGNUP,
         },
         {
             path: `/${RequestType.SIGNUP}/ledger`,
@@ -207,14 +207,14 @@ export default new Router({
             name: `${RequestType.LOGOUT}-success`,
         },
         {
-            path: `/${RequestType.ADD_ACCOUNT}`,
+            path: `/${RequestType.ADD_ADDRESS}`,
             component: AddAccount,
-            name: RequestType.ADD_ACCOUNT,
+            name: RequestType.ADD_ADDRESS,
         },
         {
-            path: `/${RequestType.ADD_ACCOUNT}/success`,
+            path: `/${RequestType.ADD_ADDRESS}/success`,
             component: AddAccountSuccess,
-            name: `${RequestType.ADD_ACCOUNT}-success`,
+            name: `${RequestType.ADD_ADDRESS}-success`,
         },
         {
             path: `/${RequestType.RENAME}`,

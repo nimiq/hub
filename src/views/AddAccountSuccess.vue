@@ -18,13 +18,13 @@ import { AccountInfo } from '../lib/AccountInfo';
 import { State } from 'vuex-class';
 import { WalletStore } from '../lib/WalletStore';
 import { DeriveAddressResult } from '@nimiq/keyguard-client';
-import { AddAccountRequest, AddAccountResult } from '@/lib/RequestTypes';
+import { ParsedAddAccountRequest, Address } from '@/lib/RequestTypes';
 import Loader from '@/components/Loader.vue';
 import { Static } from '../lib/StaticStore';
 
 @Component({components: {Loader, SmallPage}})
 export default class AddAccountSuccess extends Vue {
-    @Static private request!: AddAccountRequest;
+    @Static private request!: ParsedAddAccountRequest;
     @State private keyguardResult!: DeriveAddressResult;
 
     private walletLabel: string = '';
@@ -55,12 +55,9 @@ export default class AddAccountSuccess extends Vue {
 
         this.state = Loader.State.SUCCESS;
 
-        const result: AddAccountResult = {
-            walletId: this.request.walletId,
-            account: {
-                address: this.createdAddress!.toUserFriendlyAddress(),
-                label: this.accountLabel,
-            },
+        const result: Address = {
+            address: this.createdAddress!.toUserFriendlyAddress(),
+            label: this.accountLabel,
         };
 
         setTimeout(() => this.$rpc.resolve(result), Loader.SUCCESS_REDIRECT_DELAY);
