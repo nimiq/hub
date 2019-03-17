@@ -1,4 +1,4 @@
-import Config from '@/lib/Config';
+import Config from 'config';
 
 export interface Permission {
     origin: string;
@@ -136,7 +136,7 @@ export class PermissionStore {
 
                     // Add default permissions
                     store.transaction.oncomplete = () => {
-                        const defaultPermissions = Config.nimiqOrigins.map((origin) => ({
+                        const defaultPermissions = Config.privilegedOrigins.map((origin) => ({
                             origin,
                             allowsAll: true,
                             addresses: [],
