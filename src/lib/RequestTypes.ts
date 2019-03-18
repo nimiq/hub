@@ -230,7 +230,6 @@ export interface ParsedMigrateRequest {
 }
 
 export interface ExportResult {
-    success: true;
     fileExported: boolean;
     wordsExported: boolean;
 }

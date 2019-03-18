@@ -42,7 +42,6 @@ export default class ExportSuccess extends Vue {
         await WalletStore.Instance.put(wallet);
 
         const result: ExportResult = {
-            success: true,
             fileExported: wallet.fileExported,
             wordsExported: wallet.wordsExported,
         };
