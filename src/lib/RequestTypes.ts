@@ -448,12 +448,15 @@ export class AccountsRequest {
             case RequestType.CHANGE_PASSWORD:
             case RequestType.LOGOUT:
             case RequestType.ADD_ADDRESS:
+                // @ts-ignore
                 return {
+                    kind: request.kind,
                     appName: request.appName,
                     accountId: request.walletId,
                 }; // TODO `as SimpleRequest` after refactor into Basic- and SimpleRequests
             case RequestType.RENAME:
                 return {
+                    kind: RequestType.RENAME,
                     appName: request.appName,
                     accountId: request.walletId,
                     address: request.address,
