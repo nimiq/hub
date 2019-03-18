@@ -201,127 +201,125 @@ export class AccountsRequest {
                 // Because the switch statement is not definitely using 'request.kind' as the condition,
                 // Typescript cannot infer what type the request variable is from the control flow,
                 // thus we need to force-cast it here:
-                request = request as SignTransactionRequest;
+                const signTransactionRequest = request as SignTransactionRequest;
                 return {
                     kind: RequestType.SIGN_TRANSACTION,
-                    appName: request.appName,
-                    walletId: request.accountId,
-                    sender: Nimiq.Address.fromUserFriendlyAddress(request.sender),
-                    recipient: Nimiq.Address.fromUserFriendlyAddress(request.recipient),
-                    recipientType: request.recipientType,
-                    value: request.value,
-                    fee: request.fee,
-                    data: request.extraData,
-                    flags: request.flags,
-                    validityStartHeight: request.validityStartHeight,
+                    appName: signTransactionRequest.appName,
+                    walletId: signTransactionRequest.accountId,
+                    sender: Nimiq.Address.fromUserFriendlyAddress(signTransactionRequest.sender),
+                    recipient: Nimiq.Address.fromUserFriendlyAddress(signTransactionRequest.recipient),
+                    recipientType: signTransactionRequest.recipientType,
+                    value: signTransactionRequest.value,
+                    fee: signTransactionRequest.fee,
+                    data: signTransactionRequest.extraData,
+                    flags: signTransactionRequest.flags,
+                    validityStartHeight: signTransactionRequest.validityStartHeight,
                 } as ParsedSignTransactionRequest;
             case RequestType.CHECKOUT:
                 // Because the switch statement is not definitely using 'request.kind' as the condition,
                 // Typescript cannot infer what type the request variable is from the control flow,
                 // thus we need to force-cast it here:
-                request = request as CheckoutRequest;
-                if (request.shopLogoUrl && new URL(request.shopLogoUrl).origin !== state.origin) {
+                const checkoutRequest = request as CheckoutRequest;
+                if (checkoutRequest.shopLogoUrl && new URL(checkoutRequest.shopLogoUrl).origin !== state.origin) {
                     throw new Error(
                         'shopLogoUrl must have same origin as caller website. Image at ' +
-                        request.shopLogoUrl +
+                        checkoutRequest.shopLogoUrl +
                         ' is not on caller origin ' +
                         state.origin);
                 }
                 return {
                     kind: RequestType.CHECKOUT,
-                    appName: request.appName,
-                    shopLogoUrl: request.shopLogoUrl,
-                    recipient: Nimiq.Address.fromUserFriendlyAddress(request.recipient),
-                    recipientType: request.recipientType,
-                    value: request.value,
-                    fee: request.fee,
-                    data: request.extraData,
-                    flags: request.flags,
-                    validityDuration: !request.validityDuration ? TX_VALIDITY_WINDOW : Math.min(
+                    appName: checkoutRequest.appName,
+                    shopLogoUrl: checkoutRequest.shopLogoUrl,
+                    recipient: Nimiq.Address.fromUserFriendlyAddress(checkoutRequest.recipient),
+                    recipientType: checkoutRequest.recipientType,
+                    value: checkoutRequest.value,
+                    fee: checkoutRequest.fee,
+                    data: checkoutRequest.extraData,
+                    flags: checkoutRequest.flags,
+                    validityDuration: !checkoutRequest.validityDuration ? TX_VALIDITY_WINDOW : Math.min(
                         TX_VALIDITY_WINDOW,
                         Math.max(
                             TX_MIN_VALIDITY_DURATION,
-                            request.validityDuration,
+                            checkoutRequest.validityDuration,
                         ),
                     ),
                 } as ParsedCheckoutRequest;
             case RequestType.ONBOARD:
-                request = request as BasicRequest;
                 return {
                     kind: RequestType.ONBOARD,
                     appName: request.appName,
                 } as ParsedBasicRequest<RequestType.ONBOARD>;
             case RequestType.SIGNUP:
-                request = request as BasicRequest;
                 return {
                     kind: RequestType.SIGNUP,
                     appName: request.appName,
                 } as ParsedBasicRequest<RequestType.SIGNUP>;
             case RequestType.CHOOSE_ADDRESS:
-                request = request as BasicRequest;
                 return {
                     kind: RequestType.CHOOSE_ADDRESS,
                     appName: request.appName,
                 } as ParsedBasicRequest<RequestType.CHOOSE_ADDRESS>;
             case RequestType.LOGIN:
-                request = request as BasicRequest;
                 return {
                     kind: RequestType.LOGIN,
                     appName: request.appName,
                 } as ParsedBasicRequest<RequestType.LOGIN>;
             case RequestType.MIGRATE:
-                request = request as BasicRequest;
                 return {
                     kind: RequestType.MIGRATE,
                     appName: request.appName,
                 } as ParsedBasicRequest<RequestType.MIGRATE>;
             case RequestType.EXPORT:
-                request = request as SimpleRequest;
+                const exportRequest = request as SimpleRequest;
                 return {
                     kind: RequestType.EXPORT,
-                    appName: request.appName,
-                    walletId: request.accountId,
+                    appName: exportRequest.appName,
+                    walletId: exportRequest.accountId,
                 } as ParsedSimpleRequest<RequestType.EXPORT>;
             case RequestType.CHANGE_PASSWORD:
-                request = request as SimpleRequest;
+                const changePasswordRequest = request as SimpleRequest;
                 return {
                     kind: RequestType.CHANGE_PASSWORD,
-                    appName: request.appName,
-                    walletId: request.accountId,
+                    appName: changePasswordRequest.appName,
+                    walletId: changePasswordRequest.accountId,
                 } as ParsedSimpleRequest<RequestType.CHANGE_PASSWORD>;
             case RequestType.LOGOUT:
-                request = request as SimpleRequest;
+                const logoutRequest = request as SimpleRequest;
                 return {
                     kind: RequestType.LOGOUT,
-                    appName: request.appName,
-                    walletId: request.accountId,
+                    appName: logoutRequest.appName,
+                    walletId: logoutRequest.accountId,
                 } as ParsedSimpleRequest<RequestType.LOGOUT>;
             case RequestType.ADD_ADDRESS:
-                request = request as SimpleRequest;
+                const addAddressRequest = request as SimpleRequest;
                 return {
                     kind: RequestType.ADD_ADDRESS,
-                    appName: request.appName,
-                    walletId: request.accountId,
+                    appName: addAddressRequest.appName,
+                    walletId: addAddressRequest.accountId,
                 } as ParsedSimpleRequest<RequestType.ADD_ADDRESS>;
             case RequestType.RENAME:
-                request = request as RenameRequest;
+                const renameRequest = request as RenameRequest;
                 return {
                     kind: RequestType.RENAME,
-                    appName: request.appName,
-                    walletId: request.accountId,
-                    address: request.address,
+                    appName: renameRequest.appName,
+                    walletId: renameRequest.accountId,
+                    address: renameRequest.address,
                 } as ParsedRenameRequest;
             case RequestType.SIGN_MESSAGE:
-                request = request as SignMessageRequest;
-                if (typeof request.message !== 'string' && !(request.message instanceof Uint8Array)) {
+                const signMessageRequest = request as SignMessageRequest;
+                if (typeof signMessageRequest.message !== 'string'
+                    && !(signMessageRequest.message instanceof Uint8Array)) {
                     throw new Error('message must be a string or Uint8Array');
                 }
                 return {
                     kind: RequestType.SIGN_MESSAGE,
-                    appName: request.appName,
-                    walletId: request.accountId,
-                    signer: request.signer ? Nimiq.Address.fromUserFriendlyAddress(request.signer) : undefined,
-                    message: request.message,
+                    appName: signMessageRequest.appName,
+                    walletId: signMessageRequest.accountId,
+                    signer: signMessageRequest.signer
+                            ? Nimiq.Address.fromUserFriendlyAddress(signMessageRequest.signer)
+                            : undefined,
+                    message: signMessageRequest.message,
                 } as ParsedSignMessageRequest;
             default:
                 return null;
