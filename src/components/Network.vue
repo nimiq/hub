@@ -152,7 +152,7 @@ class Network extends Vue {
 
     private async _getNetworkClient(): Promise<NetworkClient> {
         if (!NetworkClient.hasInstance()) {
-            const networkClient = NetworkClient.createInstance();
+            const networkClient = NetworkClient.createInstance(Config.networkEndpoint);
             await networkClient.init();
         }
 

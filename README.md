@@ -536,8 +536,10 @@ yarn run build
 ### Configuration
 
 The following values can be changed via configuration files:
-* keyguardEndpoint: The location of your keyguard instance
+* keyguardEndpoint: The location of your keyguard instance.
 * network: The network you want to use. Possible values are 'main', 'test' and 'dev'. You can use the constants (see default configs).
+* networkEndpoint: The location of the network iframe instance you want to use.
+* privilegedOrigins: An array of origins with special access rights, nameley permission to use iframe methods like `list()`.
 
 Default config file is `config.local.ts`. To use a different file (especially useful for deployment), set an environment variable 
 `build`. E.g. `export build='testnet'` to use `config.testnet.ts`. To set environment variables permanently, please refer to your server's documentation, e.g. [https://httpd.apache.org/docs/2.4/env.html] for Apache.

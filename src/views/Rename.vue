@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <SmallPage class="rename">
-            <PageHeader>Rename your Wallet</PageHeader>
+            <PageHeader>Rename your Account</PageHeader>
             <PageBody v-if="wallet">
                 <div class="wallet-label" v-if="wallet.type !== 1 /* LEGACY */">
                     <div class="wallet-icon nq-icon" :class="walletIconClass"></div>
@@ -82,7 +82,7 @@ export default class Rename extends Vue {
 
     private async mounted() {
         const wallet = await WalletStore.Instance.get(this.request.walletId);
-        if (!wallet) throw new Error('Wallet ID not found');
+        if (!wallet) throw new Error('Account ID not found');
 
         this.wallet = wallet;
         // Wait for the next tick to update the DOM, then focus the correct label

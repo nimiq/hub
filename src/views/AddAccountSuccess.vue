@@ -21,6 +21,7 @@ import { DeriveAddressResult } from '@nimiq/keyguard-client';
 import { ParsedAddAccountRequest, Address } from '@/lib/RequestTypes';
 import Loader from '@/components/Loader.vue';
 import { Static } from '../lib/StaticStore';
+import { ADDRESS_DEFAULT_LABEL_KEYGUARD } from '../lib/Constants';
 
 @Component({components: {Loader, SmallPage}})
 export default class AddAccountSuccess extends Vue {
@@ -29,15 +30,15 @@ export default class AddAccountSuccess extends Vue {
 
     private walletLabel: string = '';
     private state: Loader.State = Loader.State.LOADING;
-    private title: string = 'Storing your account';
-    private accountLabel: string = 'Standard Address';
+    private title: string = 'Storing your address';
+    private accountLabel: string = ADDRESS_DEFAULT_LABEL_KEYGUARD;
     private createdAddress: Nimiq.Address | null = null;
 
     private async mounted() {
         this.createdAddress = new Nimiq.Address(this.keyguardResult.address);
 
         const wallet = await WalletStore.Instance.get(this.request.walletId);
-        if (!wallet) throw new Error('Wallet ID not found');
+        if (!wallet) throw new Error('Account ID not found');
 
         this.walletLabel = wallet.label;
 
