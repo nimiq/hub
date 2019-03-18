@@ -5,14 +5,14 @@ import AccountsClient from '../client/AccountsClient';
 import {
     RequestType,
     SimpleRequest,
-    OnboardingResult,
+    Account,
     CheckoutRequest,
-    LogoutRequest, LogoutResult,
-    SignTransactionRequest, SignTransactionResult,
+    LogoutRequest, SimpleResult,
+    SignTransactionRequest, SignedTransaction,
     ExportRequest,
     RenameRequest,
     ChangePasswordRequest,
-    AddAccountRequest,
+    AddAddressRequest,
     SignMessageRequest,
 } from '../src/lib/RequestTypes';
 import { WalletInfoEntry } from '../src/lib/WalletInfo';
@@ -28,7 +28,7 @@ class Demo {
 
         const client = new AccountsClient(location.origin);
 
-        client.on(RequestType.CHECKOUT, (result: SignTransactionResult, state: State) => {
+        client.on(RequestType.CHECKOUT, (result: SignedTransaction, state: State) => {
             console.log('AccountsManager result', result);
             console.log('State', state);
 
@@ -39,7 +39,7 @@ class Demo {
 
             document.querySelector('#result').textContent = `Error: ${error.message || error}`;
         });
-        client.on(RequestType.SIGNUP, (result: OnboardingResult, state: State) => {
+        client.on(RequestType.SIGNUP, (result: Account, state: State) => {
             console.log('AccountsManager result', result);
             console.log('State', state);
 
@@ -123,7 +123,7 @@ class Demo {
                 throw new Error('No account found');
             }
             const sender = $radio.getAttribute('data-address');
-            const walletId = $radio.getAttribute('data-wallet-id');
+            const accountId = $radio.getAttribute('data-wallet-id');
             const value = parseInt((document.querySelector('#value') as HTMLInputElement).value) || 1337;
             const fee = parseInt((document.querySelector('#fee') as HTMLInputElement).value) || 0;
             const txData = (document.querySelector('#data') as HTMLInputElement).value || '';
@@ -131,7 +131,7 @@ class Demo {
 
             return {
                 appName: 'Accounts Demos',
-                walletId,
+                accountId,
                 sender,
                 recipient: 'NQ63 U7XG 1YYE D6FA SXGG 3F5H X403 NBKN JLDU',
                 value,
@@ -176,7 +176,7 @@ class Demo {
             try {
                 const result = await client.signMessage(request);
                 console.log('Keyguard result', result);
-                document.querySelector('#result').textContent = 'MSG signed: ' + Utf8Tools.utf8ByteArrayToString(result.data);
+                document.querySelector('#result').textContent = 'MSG signed: ' + result.message;
             } catch (e) {
                 console.error('Keyguard error', e);
                 document.querySelector('#result').textContent = `Error: ${e.message || e}`;
@@ -198,7 +198,7 @@ class Demo {
             try {
                 const result = await client.signMessage(request);
                 console.log('Keyguard result', result);
-                document.querySelector('#result').textContent = 'MSG signed: ' + Utf8Tools.utf8ByteArrayToString(result.data);
+                document.querySelector('#result').textContent = 'MSG signed: ' + result.message;
             } catch (e) {
                 console.error('Keyguard error', e);
                 document.querySelector('#result').textContent = `Error: ${e.message || e}`;
@@ -214,11 +214,11 @@ class Demo {
                 throw new Error('No account found');
             }
             const signer = $radio.getAttribute('data-address');
-            const walletId = $radio.getAttribute('data-wallet-id');
+            const accountId = $radio.getAttribute('data-wallet-id');
 
             return {
                 appName: 'Accounts Demos',
-                walletId,
+                accountId,
                 signer,
                 message,
             };
@@ -303,9 +303,9 @@ class Demo {
         return await this._accountsClient.list();
     }
 
-    public async logout(walletId: string): Promise<LogoutResult> {
+    public async logout(accountId: string): Promise<SimpleResult> {
         try {
-            const result = await this._accountsClient.logout(this._createLogoutRequest(walletId));
+            const result = await this._accountsClient.logout(this._createLogoutRequest(accountId));
             console.log('Keyguard result', result);
             document.querySelector('#result').textContent = 'Account removed';
             return result;
@@ -315,16 +315,16 @@ class Demo {
         }
     }
 
-    public _createLogoutRequest(walletId: string): LogoutRequest {
+    public _createLogoutRequest(accountId: string): LogoutRequest {
         return {
             appName: 'Accounts Demos',
-            walletId,
+            accountId,
         } as LogoutRequest;
     }
 
-    public async export(walletId: string) {
+    public async export(accountId: string) {
         try {
-            const result = await this._accountsClient.export(this._createExportRequest(walletId));
+            const result = await this._accountsClient.export(this._createExportRequest(accountId));
             console.log('Keyguard result', result);
             document.querySelector('#result').textContent = 'Export sucessful';
         } catch (e) {
@@ -333,16 +333,16 @@ class Demo {
         }
     }
 
-    public _createExportRequest(walletId: string): ExportRequest {
+    public _createExportRequest(accountId: string): ExportRequest {
         return {
             appName: 'Accounts Demos',
-            walletId,
+            accountId,
         } as ExportRequest;
     }
 
-    public async changePassword(walletId: string) {
+    public async changePassword(accountId: string) {
         try {
-            const result = await this._accountsClient.changePassword(this._createChangePasswordRequest(walletId));
+            const result = await this._accountsClient.changePassword(this._createChangePasswordRequest(accountId));
             console.log('Keyguard result', result);
             document.querySelector('#result').textContent = 'Export sucessful';
         } catch (e) {
@@ -351,16 +351,16 @@ class Demo {
         }
     }
 
-    public _createChangePasswordRequest(walletId: string): ChangePasswordRequest {
+    public _createChangePasswordRequest(accountId: string): ChangePasswordRequest {
         return {
             appName: 'Accounts Demos',
-            walletId,
+            accountId,
         } as ChangePasswordRequest;
     }
 
-    public async addAccount(walletId: string) {
+    public async addAccount(accountId: string) {
         try {
-            const result = await this._accountsClient.addAccount(this._createAddAccountRequest(walletId));
+            const result = await this._accountsClient.addAddress(this._createAddAccountRequest(accountId));
             console.log('Keyguard result', result);
             document.querySelector('#result').textContent = 'Account added';
         } catch (e) {
@@ -369,16 +369,16 @@ class Demo {
         }
     }
 
-    public _createAddAccountRequest(walletId: string): AddAccountRequest {
+    public _createAddAccountRequest(accountId: string): AddAddressRequest {
         return {
             appName: 'Accounts Demos',
-            walletId,
+            accountId,
         };
     }
 
-    public async rename(walletId: string, account: string) {
+    public async rename(accountId: string, account: string) {
         try {
-            const result = await this._accountsClient.rename(this._createRenameRequest(walletId, account));
+            const result = await this._accountsClient.rename(this._createRenameRequest(accountId, account));
             console.log('Keyguard result', result);
             document.querySelector('#result').textContent = 'Done renaming account';
         } catch (e) {
@@ -387,10 +387,10 @@ class Demo {
         }
     }
 
-    public _createRenameRequest(walletId: string, address: string ): RenameRequest {
+    public _createRenameRequest(accountId: string, address: string ): RenameRequest {
         return {
             appName: 'Accounts Demos',
-            walletId,
+            accountId,
             address,
         };
     }
