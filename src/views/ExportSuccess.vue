@@ -14,7 +14,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { SmallPage } from '@nimiq/vue-components';
-import { ExportResult } from '@/lib/RequestTypes';
+import { ParsedExportRequest, ExportResult } from '@/lib/RequestTypes';
 import { State, Getter } from 'vuex-class';
 import { Static } from '@/lib/StaticStore';
 import Loader from '@/components/Loader.vue';
@@ -24,13 +24,13 @@ import KeyguardClient from '@nimiq/keyguard-client';
 
 @Component({components: {SmallPage, Loader}})
 export default class ExportSuccess extends Vue {
-    @Static private keyguardRequest!: KeyguardClient.SimpleRequest;
+    @Static private request!: ParsedExportRequest;
     @State private keyguardResult!: KeyguardClient.ExportResult;
 
     @Getter private findWallet!: (id: string) => WalletInfo | undefined;
 
     private async mounted() {
-        const wallet = this.findWallet(this.keyguardRequest.keyId);
+        const wallet = this.findWallet(this.request.walletId);
         if (!wallet) {
             this.$rpc.reject(new Error('walletId not found'));
             return;

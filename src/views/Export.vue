@@ -5,7 +5,7 @@ import { Component, Vue } from 'vue-property-decorator';
 import { ParsedExportRequest } from '../lib/RequestTypes';
 import { SimpleRequest } from '@nimiq/keyguard-client';
 import { WalletStore } from '@/lib/WalletStore';
-import staticStore, { Static } from '../lib/StaticStore';
+import { Static } from '../lib/StaticStore';
 
 @Component
 export default class Export extends Vue {
@@ -20,7 +20,6 @@ export default class Export extends Vue {
             keyId: this.request.walletId,
             keyLabel: wallet.label,
         };
-        staticStore.keyguardRequest = request;
 
         const client = this.$rpc.createKeyguardClient();
         client.export(request);
