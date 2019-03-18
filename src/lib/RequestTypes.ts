@@ -19,19 +19,28 @@ export enum RequestType {
     CHOOSE_ADDRESS = 'choose-address',
 }
 
-export interface SimpleRequest {
-    kind?: RequestType.ONBOARD | RequestType.SIGNUP | RequestType.LOGIN | RequestType.CHOOSE_ADDRESS;
+export interface BasicRequest {
     appName: string;
+}
+
+export interface ParsedBasicRequest<T extends RequestType> {
+    kind: T;
+    appName: string;
+}
+
+export interface SimpleRequest extends BasicRequest {
+    accountId: string;
+}
+
+export interface ParsedSimpleRequest<T extends RequestType> extends ParsedBasicRequest<T> {
+    walletId: string;
 }
 
 export interface SimpleResult {
     success: true;
 }
 
-export interface SignTransactionRequest {
-    kind?: RequestType.SIGN_TRANSACTION;
-    appName: string;
-    accountId: string;
+export interface SignTransactionRequest extends SimpleRequest {
     sender: string;
     recipient: string;
     recipientType?: Nimiq.Account.Type;
@@ -42,9 +51,7 @@ export interface SignTransactionRequest {
     validityStartHeight: number; // FIXME To be made optional when accounts manager has its own network
 }
 
-export interface ParsedSignTransactionRequest {
-    kind: RequestType.SIGN_TRANSACTION;
-    appName: string;
+export interface ParsedSignTransactionRequest extends ParsedSimpleRequest<RequestType.SIGN_TRANSACTION> {
     walletId: string;
     sender: Nimiq.Address;
     recipient: Nimiq.Address;
@@ -77,9 +84,7 @@ export interface SignedTransaction {
     };
 }
 
-export interface CheckoutRequest {
-    kind?: RequestType.CHECKOUT;
-    appName: string;
+export interface CheckoutRequest extends BasicRequest {
     shopLogoUrl?: string;
     recipient: string;
     recipientType?: Nimiq.Account.Type;
@@ -90,9 +95,7 @@ export interface CheckoutRequest {
     validityDuration?: number;
 }
 
-export interface ParsedCheckoutRequest {
-    kind: RequestType.CHECKOUT;
-    appName: string;
+export interface ParsedCheckoutRequest extends ParsedBasicRequest<RequestType.CHECKOUT> {
     shopLogoUrl?: string;
     recipient: Nimiq.Address;
     recipientType?: Nimiq.Account.Type;
@@ -103,17 +106,13 @@ export interface ParsedCheckoutRequest {
     validityDuration: number;
 }
 
-export interface SignMessageRequest {
-    kind?: RequestType.SIGN_MESSAGE;
-    appName: string;
+export interface SignMessageRequest extends BasicRequest {
     accountId?: string;
     signer?: string;
     message: string | Uint8Array;
 }
 
-export interface ParsedSignMessageRequest {
-    kind: RequestType.SIGN_MESSAGE;
-    appName: string;
+export interface ParsedSignMessageRequest extends ParsedBasicRequest<RequestType.SIGN_MESSAGE> {
     walletId?: string;
     signer?: Nimiq.Address;
     message: string | Uint8Array;
@@ -126,25 +125,13 @@ export interface SignedMessage {
     message: string | Uint8Array;
 }
 
-export interface ParsedOnboardingRequest {
-    kind: RequestType.ONBOARD;
-    appName: string;
-}
+export interface ParsedOnboardingRequest extends ParsedBasicRequest<RequestType.ONBOARD> { }
 
-export interface ParsedChooseAddressRequest {
-    kind: RequestType.CHOOSE_ADDRESS;
-    appName: string;
-}
+export interface ParsedChooseAddressRequest extends ParsedBasicRequest<RequestType.CHOOSE_ADDRESS> { }
 
-export interface ParsedSignupRequest {
-    kind: RequestType.SIGNUP;
-    appName: string;
-}
+export interface ParsedSignupRequest extends ParsedBasicRequest<RequestType.SIGNUP> { }
 
-export interface ParsedLoginRequest {
-    kind: RequestType.LOGIN;
-    appName: string;
-}
+export interface ParsedLoginRequest extends ParsedBasicRequest<RequestType.LOGIN> { }
 
 export interface Address {
     address: string; // Userfriendly address
@@ -158,88 +145,33 @@ export interface Account {
     addresses: Address[];
 }
 
-export interface ExportRequest {
-    kind?: RequestType.EXPORT;
-    appName: string;
-    accountId: string;
-}
+export interface ParsedExportRequest extends ParsedSimpleRequest<RequestType.EXPORT> { }
 
-export interface ParsedExportRequest {
-    kind: RequestType.EXPORT;
-    appName: string;
-    walletId: string;
-}
+export interface ParsedChangePasswordRequest extends ParsedSimpleRequest<RequestType.CHANGE_PASSWORD> { }
 
-export interface ChangePasswordRequest {
-    kind?: RequestType.CHANGE_PASSWORD;
-    appName: string;
-    accountId: string;
-}
+export interface ParsedLogoutRequest extends ParsedSimpleRequest<RequestType.LOGOUT> { }
 
-export interface ParsedChangePasswordRequest {
-    kind: RequestType.CHANGE_PASSWORD;
-    appName: string;
-    walletId: string;
-}
+export interface ParsedAddAccountRequest extends ParsedSimpleRequest<RequestType.ADD_ADDRESS> { }
 
-export interface LogoutRequest {
-    kind?: RequestType.LOGOUT;
-    appName: string;
-    accountId: string;
-}
-
-export interface ParsedLogoutRequest {
-    kind: RequestType.LOGOUT;
-    appName: string;
-    walletId: string;
-}
-
-export interface AddAddressRequest {
-    kind?: RequestType.ADD_ADDRESS;
-    appName: string;
-    accountId: string;
-}
-
-export interface ParsedAddAccountRequest {
-    kind: RequestType.ADD_ADDRESS;
-    appName: string;
-    walletId: string;
-}
-
-export interface RenameRequest {
-    kind?: RequestType.RENAME;
-    appName: string;
-    accountId: string;
+export interface RenameRequest extends SimpleRequest {
     address?: string;
 }
 
-export interface ParsedRenameRequest {
-    kind: RequestType.RENAME;
-    appName: string;
-    walletId: string;
+export interface ParsedRenameRequest extends ParsedSimpleRequest<RequestType.RENAME> {
     address?: string;
 }
 
-export interface MigrateRequest {
-    kind?: RequestType.MIGRATE;
-}
-export interface ParsedMigrateRequest {
-    kind: RequestType.MIGRATE;
-}
+export interface ParsedMigrateRequest extends ParsedBasicRequest<RequestType.MIGRATE> { }
 
 export type ListResult = WalletInfoEntry[];
 
 // Discriminated Unions
 export type RpcRequest = SignTransactionRequest
                        | CheckoutRequest
+                       | BasicRequest
                        | SimpleRequest
-                       | ExportRequest
-                       | ChangePasswordRequest
-                       | LogoutRequest
-                       | AddAddressRequest
                        | RenameRequest
-                       | SignMessageRequest
-                       | MigrateRequest;
+                       | SignMessageRequest;
 
 export type ParsedRpcRequest = ParsedSignTransactionRequest
                              | ParsedCheckoutRequest
@@ -264,7 +196,7 @@ export type RpcResult = SignedTransaction
 
 export class AccountsRequest {
     public static parse(request: RpcRequest, state: State, requestType?: RequestType): ParsedRpcRequest | null {
-        switch (request.kind || requestType) {
+        switch (requestType) {
             case RequestType.SIGN_TRANSACTION:
                 // Because the switch statement is not definitely using 'request.kind' as the condition,
                 // Typescript cannot infer what type the request variable is from the control flow,
@@ -314,57 +246,63 @@ export class AccountsRequest {
                     ),
                 } as ParsedCheckoutRequest;
             case RequestType.ONBOARD:
-                request = request as SimpleRequest;
+                request = request as BasicRequest;
                 return {
                     kind: RequestType.ONBOARD,
                     appName: request.appName,
-                } as ParsedOnboardingRequest;
+                } as ParsedBasicRequest<RequestType.ONBOARD>;
             case RequestType.SIGNUP:
-                request = request as SimpleRequest;
+                request = request as BasicRequest;
                 return {
                     kind: RequestType.SIGNUP,
                     appName: request.appName,
-                } as ParsedSignupRequest;
+                } as ParsedBasicRequest<RequestType.SIGNUP>;
             case RequestType.CHOOSE_ADDRESS:
-                request = request as SimpleRequest;
+                request = request as BasicRequest;
                 return {
                     kind: RequestType.CHOOSE_ADDRESS,
                     appName: request.appName,
-                } as ParsedChooseAddressRequest;
+                } as ParsedBasicRequest<RequestType.CHOOSE_ADDRESS>;
             case RequestType.LOGIN:
-                request = request as SimpleRequest;
+                request = request as BasicRequest;
                 return {
                     kind: RequestType.LOGIN,
                     appName: request.appName,
-                } as ParsedLoginRequest;
+                } as ParsedBasicRequest<RequestType.LOGIN>;
+            case RequestType.MIGRATE:
+                request = request as BasicRequest;
+                return {
+                    kind: RequestType.MIGRATE,
+                    appName: request.appName,
+                } as ParsedBasicRequest<RequestType.MIGRATE>;
             case RequestType.EXPORT:
-                request = request as ExportRequest;
+                request = request as SimpleRequest;
                 return {
                     kind: RequestType.EXPORT,
                     appName: request.appName,
                     walletId: request.accountId,
-                } as ParsedExportRequest;
+                } as ParsedSimpleRequest<RequestType.EXPORT>;
             case RequestType.CHANGE_PASSWORD:
-                request = request as ChangePasswordRequest;
+                request = request as SimpleRequest;
                 return {
                     kind: RequestType.CHANGE_PASSWORD,
                     appName: request.appName,
                     walletId: request.accountId,
-                } as ParsedChangePasswordRequest;
+                } as ParsedSimpleRequest<RequestType.CHANGE_PASSWORD>;
             case RequestType.LOGOUT:
-                request = request as LogoutRequest;
+                request = request as SimpleRequest;
                 return {
                     kind: RequestType.LOGOUT,
                     appName: request.appName,
                     walletId: request.accountId,
-                } as ParsedLogoutRequest;
+                } as ParsedSimpleRequest<RequestType.LOGOUT>;
             case RequestType.ADD_ADDRESS:
-                request = request as AddAddressRequest;
+                request = request as SimpleRequest;
                 return {
                     kind: RequestType.ADD_ADDRESS,
                     appName: request.appName,
                     walletId: request.accountId,
-                } as ParsedAddAccountRequest;
+                } as ParsedSimpleRequest<RequestType.ADD_ADDRESS>;
             case RequestType.RENAME:
                 request = request as RenameRequest;
                 return {
@@ -385,11 +323,6 @@ export class AccountsRequest {
                     signer: request.signer ? Nimiq.Address.fromUserFriendlyAddress(request.signer) : undefined,
                     message: request.message,
                 } as ParsedSignMessageRequest;
-            case RequestType.MIGRATE:
-                request = request as MigrateRequest;
-                return {
-                    kind: RequestType.MIGRATE,
-                } as ParsedMigrateRequest;
             default:
                 return null;
         }
@@ -424,26 +357,12 @@ export class AccountsRequest {
                     flags: request.flags,
                     validityDuration: request.validityDuration,
                 } as CheckoutRequest;
+            case RequestType.MIGRATE:
             case RequestType.ONBOARD:
-                return {
-                    kind: RequestType.ONBOARD,
-                    appName: request.appName,
-                } as SimpleRequest;
             case RequestType.SIGNUP:
-                return {
-                    kind: RequestType.SIGNUP,
-                    appName: request.appName,
-                } as SimpleRequest;
             case RequestType.CHOOSE_ADDRESS:
-                return {
-                    kind: RequestType.CHOOSE_ADDRESS,
-                    appName: request.appName,
-                } as SimpleRequest;
             case RequestType.LOGIN:
-                return {
-                    kind: RequestType.LOGIN,
-                    appName: request.appName,
-                } as SimpleRequest;
+                return request as BasicRequest;
             case RequestType.EXPORT:
             case RequestType.CHANGE_PASSWORD:
             case RequestType.LOGOUT:
@@ -453,7 +372,7 @@ export class AccountsRequest {
                     kind: request.kind,
                     appName: request.appName,
                     accountId: request.walletId,
-                }; // TODO `as SimpleRequest` after refactor into Basic- and SimpleRequests
+                } as SimpleRequest;
             case RequestType.RENAME:
                 return {
                     kind: RequestType.RENAME,
@@ -469,8 +388,6 @@ export class AccountsRequest {
                     signer: request.signer ? request.signer.toUserFriendlyAddress() : undefined,
                     message: request.message,
                 } as SignMessageRequest;
-            case RequestType.MIGRATE:
-                return request as MigrateRequest;
             default:
                 return null;
         }
