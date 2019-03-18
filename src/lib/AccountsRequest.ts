@@ -71,7 +71,7 @@ export class AccountsRequest {
             case RequestType.LOGIN:
             case RequestType.MIGRATE:
                 return {
-                    kind: RequestType.MIGRATE,
+                    kind: requestType,
                     appName: request.appName,
                 } as ParsedBasicRequest;
             case RequestType.EXPORT:
@@ -80,7 +80,7 @@ export class AccountsRequest {
             case RequestType.ADD_ADDRESS:
                 const simpleRequest = request as SimpleRequest;
                 return {
-                    kind: RequestType.ADD_ADDRESS,
+                    kind: requestType,
                     appName: simpleRequest.appName,
                     walletId: simpleRequest.accountId,
                 } as ParsedSimpleRequest;
