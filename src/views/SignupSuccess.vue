@@ -18,7 +18,7 @@ import { AccountInfo } from '../lib/AccountInfo';
 import { WalletInfo, WalletType } from '../lib/WalletInfo';
 import { State } from 'vuex-class';
 import { WalletStore } from '@/lib/WalletStore';
-import { Account } from '@/lib/RequestTypes';
+import { Account } from '../lib/PublicRequestTypes';
 import Loader from '@/components/Loader.vue';
 import {
     ACCOUNT_DEFAULT_LABEL_KEYGUARD,

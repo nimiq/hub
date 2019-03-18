@@ -2,14 +2,14 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { ParsedLogoutRequest } from '../lib/RequestTypes';
+import { ParsedSimpleRequest } from '../lib/RequestTypes';
 import { WalletStore } from '@/lib/WalletStore';
 import { Static } from '../lib/StaticStore';
 import KeyguardClient from '@nimiq/keyguard-client';
 
 @Component
 export default class Logout extends Vue {
-    @Static private request!: ParsedLogoutRequest;
+    @Static private request!: ParsedSimpleRequest;
 
     public async created() {
         const wallet = await WalletStore.Instance.get(this.request.walletId);

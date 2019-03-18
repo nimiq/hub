@@ -8,7 +8,8 @@
 
 <script lang="ts">
 import { Component, Emit, Vue } from 'vue-property-decorator';
-import { ParsedLogoutRequest, SimpleResult } from '../lib/RequestTypes';
+import { ParsedSimpleRequest } from '../lib/RequestTypes';
+import { SimpleResult } from '../lib/PublicRequestTypes';
 import { State } from 'vuex-class';
 import { SmallPage } from '@nimiq/vue-components';
 import { WalletStore } from '@/lib/WalletStore';
@@ -18,7 +19,7 @@ import KeyguardClient from '@nimiq/keyguard-client';
 
 @Component({components: {Loader, SmallPage}})
 export default class LogoutSuccess extends Vue {
-    @Static private request!: ParsedLogoutRequest;
+    @Static private request!: ParsedSimpleRequest;
     @State private keyguardResult!: KeyguardClient.SimpleResult;
 
     public async mounted() {

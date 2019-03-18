@@ -12,14 +12,14 @@
 <script lang="ts">
 import { Component, Emit, Vue } from 'vue-property-decorator';
 import { OnboardingMenu } from '@nimiq/vue-components';
-import { ParsedOnboardingRequest, RequestType } from '@/lib/RequestTypes';
+import { ParsedBasicRequest, RequestType } from '@/lib/RequestTypes';
 import { Static } from '@/lib/StaticStore';
 import { DEFAULT_KEY_PATH, ERROR_CANCELED } from '@/lib/Constants';
 import KeyguardClient from '@nimiq/keyguard-client';
 
 @Component({components: {OnboardingMenu}})
 export default class OnboardingSelector extends Vue {
-    @Static private request!: ParsedOnboardingRequest;
+    @Static private request!: ParsedBasicRequest;
 
     private signup() {
         const request: KeyguardClient.CreateRequest = {

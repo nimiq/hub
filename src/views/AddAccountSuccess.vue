@@ -18,14 +18,15 @@ import { AccountInfo } from '../lib/AccountInfo';
 import { State } from 'vuex-class';
 import { WalletStore } from '../lib/WalletStore';
 import { DeriveAddressResult } from '@nimiq/keyguard-client';
-import { ParsedAddAccountRequest, Address } from '@/lib/RequestTypes';
+import { ParsedSimpleRequest } from '../lib/RequestTypes';
+import { Address } from '../lib/PublicRequestTypes';
 import Loader from '@/components/Loader.vue';
 import { Static } from '../lib/StaticStore';
 import { ADDRESS_DEFAULT_LABEL_KEYGUARD } from '../lib/Constants';
 
 @Component({components: {Loader, SmallPage}})
 export default class AddAccountSuccess extends Vue {
-    @Static private request!: ParsedAddAccountRequest;
+    @Static private request!: ParsedSimpleRequest;
     @State private keyguardResult!: DeriveAddressResult;
 
     private walletLabel: string = '';

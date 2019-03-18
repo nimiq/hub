@@ -49,7 +49,8 @@
 <script lang="ts">
 import { Component, Emit, Watch, Vue } from 'vue-property-decorator';
 import { PaymentInfoLine, AccountSelector, AccountInfo as AccountInfoScreen, SmallPage } from '@nimiq/vue-components';
-import { ParsedCheckoutRequest, RequestType, Account } from '@/lib/RequestTypes';
+import { ParsedCheckoutRequest, RequestType } from '../lib/RequestTypes';
+import { Account } from '../lib/PublicRequestTypes';
 import { State as RpcState } from '@nimiq/rpc';
 import staticStore, { Static } from '@/lib/StaticStore';
 import { WalletStore } from '@/lib/WalletStore';

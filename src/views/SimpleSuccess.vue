@@ -15,7 +15,7 @@
 import { Component, Emit, Vue } from 'vue-property-decorator';
 import { SmallPage } from '@nimiq/vue-components';
 import { State } from 'vuex-class';
-import { RpcRequest, SimpleResult } from '../lib/RequestTypes';
+import { RpcRequest, SimpleResult } from '../lib/PublicRequestTypes';
 import { SimpleResult as KSimpleResult } from '@nimiq/keyguard-client';
 import { Static } from '@/lib/StaticStore';
 import Loader from '../components/Loader.vue';

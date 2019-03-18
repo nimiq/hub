@@ -35,7 +35,8 @@
 import { Component, Vue, Emit } from 'vue-property-decorator';
 import { AccountList, SmallPage, PageHeader, PageBody, PageFooter } from '@nimiq/vue-components';
 import Input from '@/components/Input.vue';
-import { ParsedRenameRequest, Account } from '../lib/RequestTypes';
+import { ParsedRenameRequest } from '../lib/RequestTypes';
+import { Account } from '../lib/PublicRequestTypes';
 import Loader from '../components/Loader.vue';
 import { WalletInfo, WalletType } from '../lib/WalletInfo';
 import { WalletStore } from '@/lib/WalletStore';

@@ -8,7 +8,8 @@
 
 <script lang="ts">
 import { Component, Emit, Vue } from 'vue-property-decorator';
-import { ParsedLoginRequest, Account, RequestType } from '../lib/RequestTypes';
+import { ParsedBasicRequest, RequestType } from '../lib/RequestTypes';
+import { Account } from '../lib/PublicRequestTypes';
 import { State } from 'vuex-class';
 import { WalletInfo, WalletType } from '../lib/WalletInfo';
 import { WalletStore } from '@/lib/WalletStore';
@@ -21,7 +22,7 @@ import KeyguardClient from '@nimiq/keyguard-client';
 
 @Component({components: {Loader, SmallPage}})
 export default class LoginSuccess extends Vue {
-    @Static private request!: ParsedLoginRequest;
+    @Static private request!: ParsedBasicRequest;
     @State private keyguardResult!: KeyguardClient.KeyResult;
 
     private walletInfos: WalletInfo[] = [];

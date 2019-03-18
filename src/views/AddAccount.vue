@@ -2,7 +2,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { ParsedAddAccountRequest } from '../lib/RequestTypes';
+import { ParsedSimpleRequest } from '../lib/RequestTypes';
 import { DeriveAddressRequest } from '@nimiq/keyguard-client';
 import { Static } from '../lib/StaticStore';
 import { WalletStore } from '@/lib/WalletStore';
@@ -10,7 +10,7 @@ import { WalletType } from '@/lib/WalletInfo';
 
 @Component
 export default class AddAccount extends Vue {
-    @Static private request!: ParsedAddAccountRequest;
+    @Static private request!: ParsedSimpleRequest;
 
     public async created() {
         const wallet = await WalletStore.Instance.get(this.request.walletId);

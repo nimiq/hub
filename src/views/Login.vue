@@ -2,14 +2,14 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { ParsedLoginRequest } from '../lib/RequestTypes';
+import { ParsedBasicRequest } from '../lib/RequestTypes';
 import { Static } from '../lib/StaticStore';
 import { DEFAULT_KEY_PATH } from '@/lib/Constants';
 import KeyguardClient from '@nimiq/keyguard-client';
 
 @Component
 export default class Login extends Vue {
-    @Static private request!: ParsedLoginRequest;
+    @Static private request!: ParsedBasicRequest;
 
     public created() {
         const request: KeyguardClient.ImportRequest = {
