@@ -198,9 +198,6 @@ export class AccountsRequest {
     public static parse(request: RpcRequest, state: State, requestType?: RequestType): ParsedRpcRequest | null {
         switch (requestType) {
             case RequestType.SIGN_TRANSACTION:
-                // Because the switch statement is not definitely using 'request.kind' as the condition,
-                // Typescript cannot infer what type the request variable is from the control flow,
-                // thus we need to force-cast it here:
                 const signTransactionRequest = request as SignTransactionRequest;
                 return {
                     kind: RequestType.SIGN_TRANSACTION,
@@ -216,9 +213,6 @@ export class AccountsRequest {
                     validityStartHeight: signTransactionRequest.validityStartHeight,
                 } as ParsedSignTransactionRequest;
             case RequestType.CHECKOUT:
-                // Because the switch statement is not definitely using 'request.kind' as the condition,
-                // Typescript cannot infer what type the request variable is from the control flow,
-                // thus we need to force-cast it here:
                 const checkoutRequest = request as CheckoutRequest;
                 if (checkoutRequest.shopLogoUrl && new URL(checkoutRequest.shopLogoUrl).origin !== state.origin) {
                     throw new Error(
@@ -330,7 +324,6 @@ export class AccountsRequest {
         switch (request.kind) {
             case RequestType.SIGN_TRANSACTION:
                 return {
-                    kind: RequestType.SIGN_TRANSACTION,
                     appName: request.appName,
                     accountId: request.walletId,
                     sender: request.sender.toUserFriendlyAddress(),
@@ -344,7 +337,6 @@ export class AccountsRequest {
                 } as SignTransactionRequest;
             case RequestType.CHECKOUT:
                 return {
-                    kind: RequestType.CHECKOUT,
                     appName: request.appName,
                     shopLogoUrl: request.shopLogoUrl,
                     recipient: request.recipient.toUserFriendlyAddress(),
@@ -360,27 +352,25 @@ export class AccountsRequest {
             case RequestType.SIGNUP:
             case RequestType.CHOOSE_ADDRESS:
             case RequestType.LOGIN:
-                return request as BasicRequest;
+                return {
+                    appName: request.appName,
+                } as BasicRequest;
             case RequestType.EXPORT:
             case RequestType.CHANGE_PASSWORD:
             case RequestType.LOGOUT:
             case RequestType.ADD_ADDRESS:
-                // @ts-ignore
                 return {
-                    kind: request.kind,
                     appName: request.appName,
                     accountId: request.walletId,
                 } as SimpleRequest;
             case RequestType.RENAME:
                 return {
-                    kind: RequestType.RENAME,
                     appName: request.appName,
                     accountId: request.walletId,
                     address: request.address,
                 } as RenameRequest;
             case RequestType.SIGN_MESSAGE:
                 return {
-                    kind: RequestType.SIGN_MESSAGE,
                     appName: request.appName,
                     accountId: request.walletId,
                     signer: request.signer ? request.signer.toUserFriendlyAddress() : undefined,
