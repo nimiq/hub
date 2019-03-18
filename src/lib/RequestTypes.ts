@@ -23,8 +23,8 @@ export interface BasicRequest {
     appName: string;
 }
 
-export interface ParsedBasicRequest<T extends RequestType> {
-    kind: T;
+export interface ParsedBasicRequest {
+    kind: RequestType;
     appName: string;
 }
 
@@ -32,7 +32,7 @@ export interface SimpleRequest extends BasicRequest {
     accountId: string;
 }
 
-export interface ParsedSimpleRequest<T extends RequestType> extends ParsedBasicRequest<T> {
+export interface ParsedSimpleRequest extends ParsedBasicRequest {
     walletId: string;
 }
 
@@ -51,7 +51,7 @@ export interface SignTransactionRequest extends SimpleRequest {
     validityStartHeight: number; // FIXME To be made optional when accounts manager has its own network
 }
 
-export interface ParsedSignTransactionRequest extends ParsedSimpleRequest<RequestType.SIGN_TRANSACTION> {
+export interface ParsedSignTransactionRequest extends ParsedSimpleRequest {
     walletId: string;
     sender: Nimiq.Address;
     recipient: Nimiq.Address;
@@ -95,7 +95,7 @@ export interface CheckoutRequest extends BasicRequest {
     validityDuration?: number;
 }
 
-export interface ParsedCheckoutRequest extends ParsedBasicRequest<RequestType.CHECKOUT> {
+export interface ParsedCheckoutRequest extends ParsedBasicRequest {
     shopLogoUrl?: string;
     recipient: Nimiq.Address;
     recipientType?: Nimiq.Account.Type;
@@ -112,7 +112,7 @@ export interface SignMessageRequest extends BasicRequest {
     message: string | Uint8Array;
 }
 
-export interface ParsedSignMessageRequest extends ParsedBasicRequest<RequestType.SIGN_MESSAGE> {
+export interface ParsedSignMessageRequest extends ParsedBasicRequest {
     walletId?: string;
     signer?: Nimiq.Address;
     message: string | Uint8Array;
@@ -124,14 +124,6 @@ export interface SignedMessage {
     signature: Uint8Array;
     message: string | Uint8Array;
 }
-
-export interface ParsedOnboardingRequest extends ParsedBasicRequest<RequestType.ONBOARD> { }
-
-export interface ParsedChooseAddressRequest extends ParsedBasicRequest<RequestType.CHOOSE_ADDRESS> { }
-
-export interface ParsedSignupRequest extends ParsedBasicRequest<RequestType.SIGNUP> { }
-
-export interface ParsedLoginRequest extends ParsedBasicRequest<RequestType.LOGIN> { }
 
 export interface Address {
     address: string; // Userfriendly address
@@ -145,23 +137,13 @@ export interface Account {
     addresses: Address[];
 }
 
-export interface ParsedExportRequest extends ParsedSimpleRequest<RequestType.EXPORT> { }
-
-export interface ParsedChangePasswordRequest extends ParsedSimpleRequest<RequestType.CHANGE_PASSWORD> { }
-
-export interface ParsedLogoutRequest extends ParsedSimpleRequest<RequestType.LOGOUT> { }
-
-export interface ParsedAddAccountRequest extends ParsedSimpleRequest<RequestType.ADD_ADDRESS> { }
-
 export interface RenameRequest extends SimpleRequest {
     address?: string;
 }
 
-export interface ParsedRenameRequest extends ParsedSimpleRequest<RequestType.RENAME> {
+export interface ParsedRenameRequest extends ParsedSimpleRequest {
     address?: string;
 }
-
-export interface ParsedMigrateRequest extends ParsedBasicRequest<RequestType.MIGRATE> { }
 
 export type ListResult = WalletInfoEntry[];
 
@@ -175,17 +157,10 @@ export type RpcRequest = SignTransactionRequest
 
 export type ParsedRpcRequest = ParsedSignTransactionRequest
                              | ParsedCheckoutRequest
-                             | ParsedOnboardingRequest
-                             | ParsedChooseAddressRequest
-                             | ParsedSignupRequest
-                             | ParsedLoginRequest
-                             | ParsedExportRequest
-                             | ParsedChangePasswordRequest
-                             | ParsedLogoutRequest
-                             | ParsedAddAccountRequest
+                             | ParsedBasicRequest
+                             | ParsedSimpleRequest
                              | ParsedRenameRequest
-                             | ParsedSignMessageRequest
-                             | ParsedMigrateRequest;
+                             | ParsedSignMessageRequest;
 
 export type RpcResult = SignedTransaction
                       | Account
@@ -240,58 +215,24 @@ export class AccountsRequest {
                     ),
                 } as ParsedCheckoutRequest;
             case RequestType.ONBOARD:
-                return {
-                    kind: RequestType.ONBOARD,
-                    appName: request.appName,
-                } as ParsedBasicRequest<RequestType.ONBOARD>;
             case RequestType.SIGNUP:
-                return {
-                    kind: RequestType.SIGNUP,
-                    appName: request.appName,
-                } as ParsedBasicRequest<RequestType.SIGNUP>;
             case RequestType.CHOOSE_ADDRESS:
-                return {
-                    kind: RequestType.CHOOSE_ADDRESS,
-                    appName: request.appName,
-                } as ParsedBasicRequest<RequestType.CHOOSE_ADDRESS>;
             case RequestType.LOGIN:
-                return {
-                    kind: RequestType.LOGIN,
-                    appName: request.appName,
-                } as ParsedBasicRequest<RequestType.LOGIN>;
             case RequestType.MIGRATE:
                 return {
                     kind: RequestType.MIGRATE,
                     appName: request.appName,
-                } as ParsedBasicRequest<RequestType.MIGRATE>;
+                } as ParsedBasicRequest;
             case RequestType.EXPORT:
-                const exportRequest = request as SimpleRequest;
-                return {
-                    kind: RequestType.EXPORT,
-                    appName: exportRequest.appName,
-                    walletId: exportRequest.accountId,
-                } as ParsedSimpleRequest<RequestType.EXPORT>;
             case RequestType.CHANGE_PASSWORD:
-                const changePasswordRequest = request as SimpleRequest;
-                return {
-                    kind: RequestType.CHANGE_PASSWORD,
-                    appName: changePasswordRequest.appName,
-                    walletId: changePasswordRequest.accountId,
-                } as ParsedSimpleRequest<RequestType.CHANGE_PASSWORD>;
             case RequestType.LOGOUT:
-                const logoutRequest = request as SimpleRequest;
-                return {
-                    kind: RequestType.LOGOUT,
-                    appName: logoutRequest.appName,
-                    walletId: logoutRequest.accountId,
-                } as ParsedSimpleRequest<RequestType.LOGOUT>;
             case RequestType.ADD_ADDRESS:
-                const addAddressRequest = request as SimpleRequest;
+                const simpleRequest = request as SimpleRequest;
                 return {
                     kind: RequestType.ADD_ADDRESS,
-                    appName: addAddressRequest.appName,
-                    walletId: addAddressRequest.accountId,
-                } as ParsedSimpleRequest<RequestType.ADD_ADDRESS>;
+                    appName: simpleRequest.appName,
+                    walletId: simpleRequest.accountId,
+                } as ParsedSimpleRequest;
             case RequestType.RENAME:
                 const renameRequest = request as RenameRequest;
                 return {
@@ -323,29 +264,31 @@ export class AccountsRequest {
     public static raw(request: ParsedRpcRequest): RpcRequest | null {
         switch (request.kind) {
             case RequestType.SIGN_TRANSACTION:
+                const signTransactionRequest = request as ParsedSignTransactionRequest;
                 return {
-                    appName: request.appName,
-                    accountId: request.walletId,
-                    sender: request.sender.toUserFriendlyAddress(),
-                    recipient: request.recipient.toUserFriendlyAddress(),
-                    recipientType: request.recipientType,
-                    value: request.value,
-                    fee: request.fee,
-                    extraData: request.data,
-                    flags: request.flags,
-                    validityStartHeight: request.validityStartHeight,
+                    appName: signTransactionRequest.appName,
+                    accountId: signTransactionRequest.walletId,
+                    sender: signTransactionRequest.sender.toUserFriendlyAddress(),
+                    recipient: signTransactionRequest.recipient.toUserFriendlyAddress(),
+                    recipientType: signTransactionRequest.recipientType,
+                    value: signTransactionRequest.value,
+                    fee: signTransactionRequest.fee,
+                    extraData: signTransactionRequest.data,
+                    flags: signTransactionRequest.flags,
+                    validityStartHeight: signTransactionRequest.validityStartHeight,
                 } as SignTransactionRequest;
             case RequestType.CHECKOUT:
+                const checkoutRequest = request as ParsedCheckoutRequest;
                 return {
-                    appName: request.appName,
-                    shopLogoUrl: request.shopLogoUrl,
-                    recipient: request.recipient.toUserFriendlyAddress(),
-                    recipientType: request.recipientType,
-                    value: request.value,
-                    fee: request.fee,
-                    extraData: request.data,
-                    flags: request.flags,
-                    validityDuration: request.validityDuration,
+                    appName: checkoutRequest.appName,
+                    shopLogoUrl: checkoutRequest.shopLogoUrl,
+                    recipient: checkoutRequest.recipient.toUserFriendlyAddress(),
+                    recipientType: checkoutRequest.recipientType,
+                    value: checkoutRequest.value,
+                    fee: checkoutRequest.fee,
+                    extraData: checkoutRequest.data,
+                    flags: checkoutRequest.flags,
+                    validityDuration: checkoutRequest.validityDuration,
                 } as CheckoutRequest;
             case RequestType.MIGRATE:
             case RequestType.ONBOARD:
@@ -359,22 +302,25 @@ export class AccountsRequest {
             case RequestType.CHANGE_PASSWORD:
             case RequestType.LOGOUT:
             case RequestType.ADD_ADDRESS:
+                const simpleRequest = request as ParsedSimpleRequest;
                 return {
-                    appName: request.appName,
-                    accountId: request.walletId,
+                    appName: simpleRequest.appName,
+                    accountId: simpleRequest.walletId,
                 } as SimpleRequest;
             case RequestType.RENAME:
+                const renameRequest = request as ParsedRenameRequest;
                 return {
-                    appName: request.appName,
-                    accountId: request.walletId,
-                    address: request.address,
+                    appName: renameRequest.appName,
+                    accountId: renameRequest.walletId,
+                    address: renameRequest.address,
                 } as RenameRequest;
             case RequestType.SIGN_MESSAGE:
+                const signMessageRequest = request as ParsedSignMessageRequest;
                 return {
-                    appName: request.appName,
-                    accountId: request.walletId,
-                    signer: request.signer ? request.signer.toUserFriendlyAddress() : undefined,
-                    message: request.message,
+                    appName: signMessageRequest.appName,
+                    accountId: signMessageRequest.walletId,
+                    signer: signMessageRequest.signer ? signMessageRequest.signer.toUserFriendlyAddress() : undefined,
+                    message: signMessageRequest.message,
                 } as SignMessageRequest;
             default:
                 return null;
