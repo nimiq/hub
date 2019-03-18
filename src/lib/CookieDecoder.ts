@@ -61,6 +61,10 @@ export class CookieDecoder {
         // Status byte
         const statusByte = this.readByte(bytes);
         const keyMissing = (statusByte & CookieJar.StatusFlags.KEY_MISSING) === CookieJar.StatusFlags.KEY_MISSING;
+        const fileExported =
+            (statusByte & CookieJar.StatusFlags.FILE_EXPORTED) === CookieJar.StatusFlags.FILE_EXPORTED;
+        const wordsExported =
+            (statusByte & CookieJar.StatusFlags.WORDS_EXPORTED) === CookieJar.StatusFlags.WORDS_EXPORTED;
 
         // Wallet ID
         let id: string = '';
@@ -91,6 +95,8 @@ export class CookieDecoder {
                 accounts,
                 contracts: [],
                 keyMissing,
+                fileExported,
+                wordsExported,
             };
 
             return walletInfoEntry;
@@ -116,6 +122,8 @@ export class CookieDecoder {
             accounts,
             contracts: [],
             keyMissing,
+            fileExported,
+            wordsExported,
         };
 
         return walletInfoEntry;

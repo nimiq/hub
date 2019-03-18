@@ -155,6 +155,8 @@ export interface Account {
     accountId: string;
     label: string;
     type: WalletType;
+    fileExported: boolean;
+    wordsExported: boolean;
     addresses: Address[];
 }
 
@@ -227,6 +229,11 @@ export interface ParsedMigrateRequest {
     kind: RequestType.MIGRATE;
 }
 
+export interface ExportResult {
+    fileExported: boolean;
+    wordsExported: boolean;
+}
+
 export type ListResult = WalletInfoEntry[];
 
 // Discriminated Unions
@@ -260,6 +267,7 @@ export type RpcResult = SignedTransaction
                       | SimpleResult
                       | Address
                       | SignedMessage
+                      | ExportResult
                       | ListResult;
 
 export class AccountsRequest {

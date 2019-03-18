@@ -21,6 +21,7 @@ import {
     SignMessageRequest,
     SignedMessage,
     SimpleResult,
+    ExportResult,
     ListResult,
     RpcResult,
 } from '../src/lib/RequestTypes';
@@ -110,7 +111,7 @@ export default class AccountsClient {
     public export(
         request: ExportRequest,
         requestBehavior = this._defaultBehavior,
-    ): Promise<SimpleResult> {
+    ): Promise<ExportResult> {
         return this._request(requestBehavior, RequestType.EXPORT, [request]);
     }
 

@@ -720,11 +720,12 @@
     levelup "^2.0.2"
     node-lmdb "0.6.0"
 
-"@nimiq/keyguard-client@^0.2.4-beta.0":
-  version "0.2.4-beta.0"
-  resolved "https://registry.yarnpkg.com/@nimiq/keyguard-client/-/keyguard-client-0.2.4-beta.0.tgz#29ff5fed2e92e6e0575423d45ad3095e62fdd8c1"
-  integrity sha512-FIzv+qEpzwiN92sQ74DdQIa6SfsPm+aIoU8UUUesA+vgMHZrpE8QcxwKFNtSLqK6zjg5hxf+zAAgDaxB0DUG8w==
+"@nimiq/keyguard-client@^0.2.6-beta.3":
+  version "0.2.6-beta.3"
+  resolved "https://registry.yarnpkg.com/@nimiq/keyguard-client/-/keyguard-client-0.2.6-beta.3.tgz#415f3447f242fd9485b08b1f814940f2a666884d"
+  integrity sha512-hcVt504s1o0GeQegtJKKMY26bN0kqqUWQYPeVyOtR3VPyrC0lleVMUVWf9DEojGdodyRQ16ImX+1sY8WeBlfww==
   dependencies:
+    "@nimiq/core-web" "1.4.3"
     "@nimiq/rpc" "^0.1.1"
 
 "@nimiq/ledgerjs@https://github.com/nimiq/ledger-api.git":

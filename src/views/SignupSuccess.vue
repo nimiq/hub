@@ -54,6 +54,9 @@ export default class SignupSuccess extends Vue {
             new Map<string, AccountInfo>().set(accountInfo.userFriendlyAddress, accountInfo),
             [],
             walletType,
+            false, // keyMissing
+            this.keyguardResult[0].fileExported,
+            this.keyguardResult[0].wordsExported,
         );
 
         await WalletStore.Instance.put(walletInfo);
@@ -67,6 +70,8 @@ export default class SignupSuccess extends Vue {
             accountId: walletInfo.id,
             label: walletInfo.label,
             type: walletInfo.type,
+            fileExported: walletInfo.fileExported,
+            wordsExported: walletInfo.wordsExported,
             addresses: [{
                 address: accountInfo.userFriendlyAddress,
                 label: accountInfo.label,
