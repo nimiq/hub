@@ -79,7 +79,14 @@ export interface Account {
     accountId: string;
     label: string;
     type: WalletType;
+    fileExported: boolean;
+    wordsExported: boolean;
     addresses: Address[];
+}
+
+export interface ExportResult {
+    fileExported: boolean;
+    wordsExported: boolean;
 }
 
 export interface RenameRequest extends SimpleRequest {
@@ -98,4 +105,5 @@ export type RpcResult = SignedTransaction
                       | SimpleResult
                       | Address
                       | SignedMessage
-                      | ListResult;
+                      | ListResult
+                      | ExportResult;
