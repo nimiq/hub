@@ -3,10 +3,11 @@ import { BrowserDetection } from '@nimiq/utils';
 import { WalletStore } from '@/lib/WalletStore';
 import { WalletInfoEntry } from '@/lib/WalletInfo';
 import CookieJar from '@/lib/CookieJar';
+import Config from 'config';
 
 class IFrameApi {
     public static run() {
-        const rpcServer = new RpcServer(IFrameApi.allowedOrigin);
+        const rpcServer = new RpcServer(Config.privilegedOrigins[0]);
 
         // Register handlers
         rpcServer.onRequest('list', IFrameApi.list);
@@ -39,14 +40,6 @@ class IFrameApi {
         }
 
         return [];
-    }
-
-    private static get allowedOrigin(): string {
-        switch (window.location.origin) {
-            case 'https://accounts.nimiq.com': return 'https://safe-next.nimiq.com';
-            case 'https://accounts.nimiq-testnet.com': return 'https://safe-next.nimiq-testnet.com';
-            default: return '*';
-        }
     }
 }
 
