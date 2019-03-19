@@ -2,7 +2,13 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const WriteFileWebpackPlugin = require('write-file-webpack-plugin');
 const path = require('path');
 
-const buildName = !process.env.build ? 'local' : process.env.build
+const buildName = process.env.build
+    ? process.env.build
+    : process.env.NODE_ENV === 'production'
+        ? 'testnet'
+        : 'local';
+
+console.log('Building for:', buildName);
 
 const configureWebpack = {
     plugins: [
