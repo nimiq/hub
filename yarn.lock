@@ -755,6 +755,11 @@
   resolved "https://registry.yarnpkg.com/@nimiq/rpc/-/rpc-0.1.1.tgz#7f9b10faab6cc589691db562047d136f0513bf98"
   integrity sha512-AwZ0JNf5ZZmOJtsjt6EGBZp6R3MyM7JJmbikj0uaSQWmxr9iThNW0Hql8YlAwirNThn0V7ry67j/I3ZtSCafkg==
 
+"@nimiq/rpc@^0.1.3":
+  version "0.1.3"
+  resolved "https://registry.yarnpkg.com/@nimiq/rpc/-/rpc-0.1.3.tgz#4687f0d67e7964df09066bc54d8e088b43a5c91b"
+  integrity sha512-mHRDpqGe2Rm0YRn9aFkg5LscAk6SPSdCEUZ/emMdwVaJZ//NUjPhRQ+wfu4TP9gDunxhUqYitIeVxugubFVv5g==
+
 "@nimiq/style@^0.4.1":
   version "0.4.1"
   resolved "https://registry.yarnpkg.com/@nimiq/style/-/style-0.4.1.tgz#42b6e3a8ba4a0c7dbd71893b4149094466b48c49"
