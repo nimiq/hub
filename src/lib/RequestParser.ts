@@ -20,8 +20,8 @@ import {
     ParsedRpcRequest,
 } from './RequestTypes';
 
-export class AccountsRequest {
-    public static parse(request: RpcRequest, state: State, requestType?: RequestType): ParsedRpcRequest | null {
+export class RequestParser {
+    public static parse(request: RpcRequest, state: State, requestType: RequestType): ParsedRpcRequest | null {
         switch (requestType) {
             case RequestType.SIGN_TRANSACTION:
                 const signTransactionRequest = request as SignTransactionRequest;

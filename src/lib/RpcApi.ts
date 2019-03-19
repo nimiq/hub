@@ -4,7 +4,7 @@ import { RootState } from '@/store';
 import { Store } from 'vuex';
 import Router from 'vue-router';
 import { RequestType } from './RequestTypes';
-import { AccountsRequest } from './AccountsRequest';
+import { RequestParser } from './RequestParser';
 import { RpcRequest, RpcResult } from './PublicRequestTypes';
 import { KeyguardCommand, KeyguardClient } from '@nimiq/keyguard-client';
 import { keyguardResponseRouter } from '@/router';
@@ -120,7 +120,7 @@ export default class RpcApi {
     private _exportState(): any {
         return {
             rpcState: this._staticStore.rpcState ? this._staticStore.rpcState.toJSON() : undefined,
-            request: this._staticStore.request ? AccountsRequest.raw(this._staticStore.request) : undefined,
+            request: this._staticStore.request ? RequestParser.raw(this._staticStore.request) : undefined,
             kind: this._staticStore.request ? this._staticStore.request.kind : undefined,
             keyguardRequest: this._staticStore.keyguardRequest,
             originalRouteName: this._staticStore.originalRouteName,
@@ -133,7 +133,7 @@ export default class RpcApi {
             this._server.onRequest(requestType, async (state, arg: RpcRequest) => {
                 this._staticStore.rpcState = state;
                 try {
-                    this._staticStore.request = AccountsRequest.parse(arg, state, requestType) || undefined;
+                    this._staticStore.request = RequestParser.parse(arg, state, requestType) || undefined;
                 } catch (error) {
                     state.reply(ResponseStatus.ERROR, error);
                     return;
@@ -164,7 +164,7 @@ export default class RpcApi {
 
     private _recoverState(storedState: any) {
         const rpcState = RpcState.fromJSON(storedState.rpcState);
-        const request = AccountsRequest.parse(storedState.request, rpcState, storedState.kind);
+        const request = RequestParser.parse(storedState.request, rpcState, storedState.kind);
         const keyguardRequest = storedState.keyguardRequest;
         const originalRouteName = storedState.originalRouteName;
 
