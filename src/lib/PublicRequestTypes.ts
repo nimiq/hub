@@ -65,7 +65,7 @@ export interface SignMessageRequest extends BasicRequest {
 
 export interface SignedMessage {
     signer: string; // Userfriendly address
-    signerPubKey: Uint8Array;
+    signerPublicKey: Uint8Array;
     signature: Uint8Array;
     message: string | Uint8Array;
 }
@@ -90,7 +90,7 @@ export interface ExportResult {
 }
 
 export interface RenameRequest extends SimpleRequest {
-    address?: string;
+    address?: string; // Userfriendly address
 }
 
 export type RpcRequest = SignTransactionRequest
