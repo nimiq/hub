@@ -86,7 +86,7 @@ class Network extends Vue {
 
         const result: SignedTransaction = {
             serializedTx: Nimiq.BufferUtils.toHex(tx.serialize()),
-            hash: tx.hash().toBase64(),
+            hash: tx.hash().toHex(),
 
             raw: {
                 signerPublicKey: proof.publicKey.serialize(),

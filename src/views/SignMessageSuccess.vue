@@ -33,7 +33,7 @@ export default class SignMessageSuccess extends Vue {
     private mounted() {
         const result: SignedMessage = {
             signer: new Nimiq.Address(new Uint8Array(this.keyguardRequest.signer)).toUserFriendlyAddress(),
-            signerPubKey: this.keyguardResult.publicKey,
+            signerPublicKey: this.keyguardResult.publicKey,
             signature: this.keyguardResult.signature,
             message: typeof this.request.message === 'string'
                 ? Utf8Tools.utf8ByteArrayToString(this.keyguardResult.data)

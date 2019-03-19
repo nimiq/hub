@@ -6,24 +6,30 @@ to manage their accounts and provides websites and apps with a concise API to
 interact with their users' Nimiq addresses.
 
 - [The Accounts Client library](#the-accounts-client-library)
-  - [Installation](#installation)
-  - [Initialization](#initialization)
-  - [Usage](#usage)
-    - [Using top-level redirects](#using-top-level-redirects)
-  - [API Methods](#api-methods)
-    - [Checkout](#checkout)
-    - [Choose Address](#choose-address)
-    - [Sign transaction](#sign-transaction)
-    - [Signup](#signup)
-    - [Login](#login)
-    - [Logout](#logout)
-    - [Export](#export)
-  - [Listening for redirect responses](#listening-for-redirect-responses)
+    - [Installation](#installation)
+    - [Initialization](#initialization)
+    - [Usage](#usage)
+        - [Using top-level redirects](#using-top-level-redirects)
+    - [API Methods](#api-methods)
+        - [Checkout](#checkout)
+        - [Choose Address](#choose-address)
+        - [Sign Transaction](#sign-transaction)
+        - [Signup](#signup)
+        - [Login](#login)
+        - [Onboard](#onboard)
+        - [Logout](#logout)
+        - [Export](#export)
+        - [Change Password](#change-password)
+        - [Add Address](#add-address)
+        - [Rename](#rename)
+        - [Sign Message](#sign-message)
+    - [Listening for redirect responses](#listening-for-redirect-responses)
 - [Running your own Accounts Manager](#running-your-own-accounts-manager)
 - [Contribute](#contribute)
-  - [Setup](#setup)
-  - [Run](#run)
-  - [Build](#build)
+    - [Setup](#setup)
+    - [Run](#run)
+    - [Build](#build)
+    - [Configuration](#configuration)
 
 ## The Accounts Client library
 
@@ -33,9 +39,9 @@ Include the `AccountsClient` JS library as a script tag in your page:
 
 ```html
 <!-- From CDN -->
-<script src="https://unpkg.com/@nimiq/accounts-client@v0.1/dist/standalone/AccountsClient.standalone.umd.js"></script>
+<script src="https://unpkg.com/@nimiq/accounts-client@v0.2/dist/standalone/AccountsClient.standalone.umd.js"></script>
 <!-- or -->
-<script src="https://cdn.jsdelivr.net/npm/@nimiq/accounts-client@v0.1/dist/standalone/AccountsClient.standalone.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@nimiq/accounts-client@v0.2/dist/standalone/AccountsClient.standalone.umd.js"></script>
 ```
 
 It can also be installed from NPM:
@@ -88,9 +94,15 @@ For more details about avoiding popup blocking refer to
 
 #### Using top-level redirects
 
+> **Note:** To use redirects instead of popups, your app must run under a
+> HTTPS domain!
+
 If you prefer top-level redirects instead of popups, you can pass an
 instance of `RedirectRequestBehavior` as a second parameter to either the
 AccountsClient initialization or to any API method:
+
+> **Note:** The way to configure top-level redirects will change in an upcoming
+> version of the Accounts Client!
 
 ```javascript
 const redirectBehavior = new AccountsClient.RedirectRequestBehavior();
@@ -126,23 +138,26 @@ data, see [Listening for redirect responses](#listening-for-redirect-responses).
 
 - [Checkout](#checkout)
 - [Choose Address](#choose-address)
-- [Sign transaction](#sign-transaction)
+- [Sign Transaction](#sign-transaction)
 - [Signup](#signup)
 - [Login](#login)
+- [Onboard](#onboard)
 - [Logout](#logout)
 - [Export](#export)
-
-[//] TODO: Add methods 'onboard', 'changePassword', 'addAccount', 'rename', 'signMessage'
+- [Change Password](#change-password)
+- [Add Address](#add-address)
+- [Rename](#rename)
+- [Sign Message](#sign-message)
 
 > **Note:**
 >
 > All API methods run asynchronously and thus return promises. Please keep in
-> mind that promises can also be rejected for various reasons, e.g. if the user
+> mind that promises can also be rejected for various reasons, e.g. when the user
 > cancels the request by closing the popup window or clicking on a cancel
 > button.
 >
-> An error can also occur when the request contains invalid parameters. The
-> `Error` object will be passed on to the `reject` handler.
+> An error can also occur when the request contains invalid parameters. The request
+> promise will be rejected with an `Error` object.
 
 #### Checkout
 
@@ -185,45 +200,59 @@ const requestOptions = {
     // creates a contract.
     // Default: Nimiq.Transaction.Flag.NONE (0)
     //flags: Nimiq.Transaction.Flag.CONTRACT_CREATION,
+
+    // [optional] The duration (in number of blocks) that the signed transaction
+    // should be valid for. The maximum is 120.
+    // Default: 120
+    //validityDuration?: number;
 };
 
 // All client requests are async and return a promise
-const checkoutResult = await accountsClient.checkout(requestOptions);
+const signedTransaction = await accountsClient.checkout(requestOptions);
 ```
 
 The `checkout()` method returns a promise which resolves to a
-`SignTransactionResult`:
+`SignedTransaction`:
 
 ```javascript
-interface SignTransactionResult {
-    serializedTx: Uint8Array;           // The signed, serialized transaction
-    sender: string;                     // Human-readable address of sender
-    senderType: Nimiq.Account.Type;     // 0, 1, 2 - see recipientType above
-    senderPubKey: Uint8Array;           // Serialized public key of the sender
-    recipient: string;                  // Human-readable address of recipient
-    recipientType: Nimiq.Account.Type;  // 0, 1, 2 - see above
-    value: number;
-    fee: number;
-    validityStartHeight: number;        // Automatically determined validity
-                                        // start height of the transaction
-    signature: Uint8Array;              // Serialized signature of the sender
-    extraData: Uint8Array;
-    flags: number;
-    networkId: number;
-    hash: string;                       // Base64 transaction hash
+interface SignedTransaction {
+    serializedTx: string;                  // HEX signed and serialized transaction
+    hash: string;                          // HEX transaction hash
+
+    raw: {
+        signerPublicKey: Uint8Array;       // Serialized public key of the signer
+        signature: Uint8Array;             // Serialized signature of the signer
+
+        sender: string;                    // Human-readable address of sender
+        senderType: Nimiq.Account.Type;    // 0, 1, 2 - see recipientType above
+
+        recipient: string;                 // Human-readable address of recipient
+        recipientType: Nimiq.Account.Type; // 0, 1, 2 - see above
+
+        value: number;
+        fee: number;
+        validityStartHeight: number;       // Automatically determined validity
+                                           // start height of the transaction
+        extraData: Uint8Array;
+        flags: number;
+        networkId: number;
+    }
 }
 ```
+
+The `serializedTx` can be handed to a Nimiq JSON-RPC's `sendRawTransaction` method.
+The `raw` object can be handed to the NanoApi's `relayTransaction` method.
 
 #### Choose Address
 
 By using the `chooseAddress()` method, you are asking the user to select one of
 their addresses to provide to your website. This can be used for example to find
-out, which address your app should send funds to.
+out which address your app should send funds to.
 
-**Note:** This method should not yet be used as a login or authentication mechanism,
+**Note:** This method should not be used as a login or authentication mechanism,
 as it does not provide any security that the user actually owns the provided address!
 
-The method takes a simple request object as its only argument, which must only contain
+The method takes a basic request object as its only argument, which must only contain
 the `appName` property:
 
 ```javascript
@@ -233,23 +262,23 @@ const requestOptions = {
 };
 
 // All client requests are async and return a promise
-const providedAddress = await accountsClient.chooseAddress(requestOptions);
+const address = await accountsClient.chooseAddress(requestOptions);
 ```
 
-The request's result contains a userfriendly address string as `address` and a `label`:
+The request's result contains an address string as `address` and a `label`:
 
 ```javascript
-providedAddress = {
-    address: 'NQ07 0000 0000 0000 0000 0000 0000 0000 0000',
-    label: 'Burner Address',
+interface Address {
+    address: string;  // Human-readable address
+    label: string;    // The address's label (name)
 }
 ```
 
-#### Sign transaction
+#### Sign Transaction
 
 The `signTransaction()` method is similar to checkout, but provides a different
 UI to the user. The main difference to `checkout()` is that it requires the
-request to already include the sender's account (wallet) ID and address as `walletId` and
+request to already include the sender's account ID and address as `accountId` and
 `sender` respectively, as well as the transaction's `validityStartHeight`. The
 created transaction will only be returned to the caller, not sent to the network
 automatically.
@@ -262,7 +291,7 @@ const requestOptions = {
     appName: 'Nimiq Safe',
 
     // Sender information
-    walletId: 'xxxxxxxx',
+    accountId: 'xxxxxxxx',
     sender: 'NQxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx',
 
     recipient: 'NQxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx',
@@ -284,10 +313,10 @@ const requestOptions = {
 };
 
 // All client requests are async and return a promise
-const signTxResult = await accountsClient.signTransaction(requestOptions);
+const signedTransaction = await accountsClient.signTransaction(requestOptions);
 ```
 
-The `signTransaction()` method returns a `SignTransactionResult` as well. See
+The `signTransaction()` method returns a `SignedTransaction`. See
 [Checkout](#checkout) for details.
 
 #### Signup
@@ -302,22 +331,25 @@ const requestOptions = {
 };
 
 // All client requests are async and return a promise
-const newAccount = await accountsClient.signup(requestOptions);
+const account = await accountsClient.signup(requestOptions);
 ```
 
-The `signup()` method returns a promise which resolves to a `SignupResult`:
+The `signup()` method returns a promise which resolves to an `Account`:
 
 ```javascript
-interface SignupResult {
-    walletId: string;       // Automatically generated account (wallet) ID
-    label: string;          // The label/name given to the account by the user
+interface Account {
+    accountId: string;      // Automatically generated account ID
+    label: string;          // The label (name) generated for the account
 
     type: WalletType;       // 1 for in-browser multi-address accounts,
                             // 2 for Ledger hardware accounts
 
-    accounts: Array<{       // During signup, only one address is added to the account
+    fileExported: boolean;  // These two flags signal if the user already
+    wordsExported: boolean; // has the Login File or the recovery words
+
+    addresses: Array<{      // During signup, only one address is added to the account
         address: string;    // Human-readable address
-        label: string;      // The label/name given to the address by the user
+        label: string;      // The label (name) of the address
     }>;
 }
 ```
@@ -326,7 +358,7 @@ interface SignupResult {
 
 The `login()` method allows the user to add an existing account to the
 **Accounts Manager** by importing their *Login File*, *Recovery Words* or
-*Account Access File*. After an account has been imported, the
+old *Account Access File*. After an account has been imported, the
 **Accounts Manager** automatically detects active addresses following the
 [BIP44](https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki#account-discovery)
 method.
@@ -338,44 +370,44 @@ const requestOptions = {
 };
 
 // All client requests are async and return a promise
-const newAccount = await accountsClient.login(requestOptions);
+const account = await accountsClient.login(requestOptions);
 ```
 
-The `login()` method returns a promise which resolves to a `LoginResult`:
+The `login()` method returns a promise which resolves to an `Account`. Please see
+the result type for [`signup()`](#signup) for details.
+
+#### Onboard
+
+The `onboard()` method presents a choice menu between _Signup_, _Login_, and
+_Connect Ledger_ to the user and is thus a general purpose onboarding method.
+Just like the direct methods, it only requires a simple request object:
 
 ```javascript
-interface LoginResult {
-    walletId: string;       // Automatically generated account (wallet) ID
-    label: string;          // The label/name given to the account by the user
+const requestOptions = {
+    // The name of your app, should be as short as possible.
+    appName: 'Nimiq Safe',
+};
 
-    type: WalletType;       // 0 for in-browser single-address accounts,
-                            // 1 for in-browser multi-address accounts,
-                            // 2 for Ledger hardware accounts
-
-    accounts: Array<{       // Array of active addresses detected during login
-        address: string;    // Human-readable address
-        label: string;      // Label/name given by the user
-    }>;
-}
+// All client requests are async and return a promise
+const account = await accountsClient.onboard(requestOptions);
 ```
 
-<!-- IDEA should we use std JS Array notation in the doc?
-     Or do we officially switch to TS? Then that's another section of the
-     general doc to add on this IMO. -->
+Since `onboard()` is a wrapper around Signup, Login and Ledger, it also returns an
+`Account` result type. Please see the result type for [`signup()`](#signup) for details.
 
 #### Logout
 
 The `logout()` method removes an account from the **Accounts Manager**. During the
-logout process, the user can retrieve the *Login File* or *Recovery Words*
-before the account is deleted.
+logout process, the user can export the *Login File* or *Recovery Words* before
+the account is deleted.
 
 ```javascript
 const requestOptions = {
     // The name of your app, should be as short as possible.
     appName: 'Nimiq Safe',
 
-    // The ID of the account (wallet) that should be removed
-    walletId: 'xxxxxxxx',
+    // The ID of the account that should be removed
+    accountId: 'xxxxxxxx',
 };
 
 // All client requests are async and return a promise
@@ -386,13 +418,8 @@ The `logout()` method returns a promise which resolves to a simple object
 containing the `success` property, which is always true:
 
 ```javascript
-{
-    success: true
-}
+{ success: true }
 ```
-
-<!-- TODO awaiting final decision on "simple return type" for API methods that
-     don't really return anything -->
 
 #### Export
 
@@ -404,32 +431,174 @@ const requestOptions = {
     // The name of your app, should be as short as possible.
     appName: 'Nimiq Safe',
 
-    // The ID of the account (wallet) to export
-    walletId: 'xxxxxxxx',
+    // The ID of the account to export
+    accountId: 'xxxxxxxx',
 };
 
 // All client requests are async and return a promise
 const exportResult = await accountsClient.export(requestOptions);
 ```
 
-The `export()` method returns a promise which resolves to a simple object
-containing the `success` property, which is always true:
+The `export()` method returns a promise which resolves to an object that
+contains flags for each export type:
 
 ```javascript
-{
-    success: true
+interface ExportResult {
+    fileExported: boolean;
+    wordsExported: boolean;
 }
 ```
 
-<!-- TODO awaiting final decision on "simple return type" for API methods that
-     don't really return anything -->
+#### Change Password
+
+With the `changePassword()` method, a user can change the password of an account:
+
+```javascript
+const requestOptions = {
+    // The name of your app, should be as short as possible.
+    appName: 'Nimiq Safe',
+
+    // The ID of the account whose password should be changed
+    accountId: 'xxxxxxxx',
+};
+
+// All client requests are async and return a promise
+const result = await accountsClient.changePassword(requestOptions);
+```
+
+The `changePassword()` method returns a promise which resolves to a simple object
+containing the `success` property, which is always true:
+
+```javascript
+{ success: true }
+```
+
+#### Add Address
+
+By using the `addAddress()` method, the user is able to derive and add an additional
+address to their account. The method returns the added address and its label.
+
+The method takes a simple request object as its argument:
+
+```javascript
+const requestOptions = {
+    // The name of your app, should be as short as possible.
+    appName: 'Nimiq Safe',
+
+    // The ID of the account to which an address should be added
+    accountId: 'xxxxxxxx',
+};
+
+// All client requests are async and return a promise
+const address = await accountsClient.addAddress(requestOptions);
+```
+
+The request's result contains an address string as `address` and a `label`:
+
+```javascript
+interface Address {
+    address: string;  // Human-readable address
+    label: string;    // The address's label (name)
+}
+```
+
+#### Rename
+
+To rename a user's account or addresses, you can call the `rename()` method. The
+UI for the rename action always presents the given account and all its addresses
+to the user. By sending an optional address with the request, that address's label
+will be already pre-selected for the user.
+
+This method takes the following request object as its only argument:
+
+```javascript
+const requestOptions = {
+    // The name of your app, should be as short as possible.
+    appName: 'Nimiq Safe',
+
+    // The ID of the account which should be renamed, or to which the
+    // address, which should be renamed, belongs
+    accountId: 'xxxxxxxx',
+
+    // [optional] The human-readable address which should be pre-selected
+    // for the user to be renamed
+    address: 'NQxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx';
+};
+
+// All client requests are async and return a promise
+const account = await accountsClient.rename(requestOptions);
+```
+
+Since more than one label can be renamed during the rename request, the result
+contains the whole account, including all visible addresses. Please see the
+result type for [`signup()`](#signup) for details about the `Account` object.
+
+#### Sign Message
+
+To let the user sign an arbitrary message with any of their addresses, you can
+call `signMessage()` with the following request object. If you do not include
+_both_ the `accountId` _and_ `signer` properties, the user will be prompted to
+select an address from their available accounts. The message can be either a
+string or a Uint8Array byte array.
+
+```javascript
+const requestOptions = {
+    // The name of your app, should be as short as possible.
+    appName: 'Nimiq Safe',
+
+    // The message to sign. Can either be string of valid UTF-8 or a
+    // byte array to sign arbitrary data
+    message: 'String to sign' || new Uint8Array([...]),
+
+    // [optional] The ID of the account with which to sign
+    accountId: 'xxxxxxxx',
+
+    // [optional] The human-readable address with which to sign
+    signer: 'NQxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx';
+};
+
+// All client requests are async and return a promise
+const signedMessage = await accountsClient.signMessage(requestOptions);
+```
+
+The method returns a `SignedMessage` object containing the following properties:
+
+```javascript
+interface SignedMessage {
+    signer: string;               // Userfriendly address
+    signerPublicKey: Uint8Array;  // The public key of the signer
+    signature: Uint8Array;        // Signature for the message
+    message: string | Uint8Array; // The signed message (as the same type as it
+                                  // was handed in)
+}
+```
+
+**Note:** To prevent users from signing valid transactions or other
+blockchain-related proofs which could be used to impersonate them, the Nimiq
+Keyguard prefixes the string `'Nimiq Signed Message: '` (22 one-byte-characters)
+to the input message. The signature is then created over the combined message.
+The prefix is already included in the result's `message` property.
+
+Verifying a signed message could go like this:
+
+```javascript
+const signature = new Nimiq.Signature(signedMessage.signature);
+const publicKey = new Nimiq.PublicKey(signedMessage.signerPublicKey);
+
+const message = typeof signedMessage.message === 'string'
+    ? Nimiq.BufferUtils.fromUtf8(signedMessage.message))
+    : signedMessage.message;
+
+// Check signature against the message
+const isValid = signature.verify(publicKey, message);
+```
 
 ### Listening for redirect responses
 
 If you configured the AccountsClient to use
 [top-level redirects](#using-top-level-redirects) instead of popups, you need to
 follow the four steps below to specifically listen for the redirects from the
-**Accounts Manager** back to your site using the `on()` method.
+**Accounts Manager** back to your site, using the `on()` method.
 
 Your handler functions will be called with two parameters: the result object and
 the stored data object as it was passed to the
@@ -451,11 +620,9 @@ const onError = function(error, storedData) {
 }
 
 // 3. Listen for the redirect responses you expect
-const RequestType = AccountsClient.RequestType;
-
-accountsClient.on(RequestType.CHECKOUT, onSuccess, onError);
-accountsClient.on(RequestType.SIGN_TRANSACTION, onSuccess, onError);
-accountsClient.on(RequestType.LOGIN, onSuccess, onError);
+accountsClient.on(AccountsClient.RequestType.CHECKOUT, onSuccess, onError);
+accountsClient.on(AccountsClient.RequestType.SIGN_TRANSACTION, onSuccess, onError);
+accountsClient.on(AccountsClient.RequestType.LOGIN, onSuccess, onError);
 
 // 4. After setup is complete, check for a redirect response
 accountsClient.checkRedirectResponse();
@@ -476,8 +643,13 @@ enum AccountsClient.RequestType {
     SIGN_TRANSACTION = 'sign-transaction',
     SIGNUP = 'signup',
     LOGIN = 'login',
+    ONBOARD = 'onboard',
     LOGOUT = 'logout',
     EXPORT = 'export',
+    CHANGE_PASSWORD = 'change-password',
+    ADD_ADDRESS = 'add-address',
+    RENAME = 'rename',
+    SIGN_MESSAGE = 'sign-message',
 }
 ```
 
@@ -485,7 +657,8 @@ enum AccountsClient.RequestType {
 
 TODO
 
-If you want to run your own instance of Accounts Manager, you also need to run an instance of [keyguard](https://github.com/nimiq/keyguard-next/).
+If you want to run your own instance of Accounts Manager, you also need to run
+an instance of the [Keyguard](https://github.com/nimiq/keyguard-next/).
 
 ## Contribute
 
@@ -536,10 +709,16 @@ yarn run build
 ### Configuration
 
 The following values can be changed via configuration files:
-* keyguardEndpoint: The location of your keyguard instance.
-* network: The network you want to use. Possible values are 'main', 'test' and 'dev'. You can use the constants (see default configs).
-* networkEndpoint: The location of the network iframe instance you want to use.
-* privilegedOrigins: An array of origins with special access rights, nameley permission to use iframe methods like `list()`.
 
-Default config file is `config.local.ts`. To use a different file (especially useful for deployment), set an environment variable 
-`build`. E.g. `export build='testnet'` to use `config.testnet.ts`. To set environment variables permanently, please refer to your server's documentation, e.g. [https://httpd.apache.org/docs/2.4/env.html] for Apache.
+- keyguardEndpoint: The location of your keyguard instance.
+- network: The network you want to use. Possible values are 'main', 'test' and
+  'dev'. You can use the constants (see default configs).
+- networkEndpoint: The location of the network iframe instance you want to use.
+- privilegedOrigins: An array of origins with special access rights, nameley
+  permission to use iframe methods like `list()`.
+
+The default config file is `config.local.ts`. To use a different file
+(especially useful for deployment), set an environment variable
+`build`. E.g. `export build='testnet'` to use `config.testnet.ts`. To set
+environment variables permanently, please refer to your server's documentation,
+e.g. [for Apache](https://httpd.apache.org/docs/2.4/env.html).
