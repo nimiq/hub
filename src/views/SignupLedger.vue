@@ -27,7 +27,8 @@
 <script lang="ts">
 import { Component, Emit, Vue } from 'vue-property-decorator';
 import { PageBody, SmallPage } from '@nimiq/vue-components';
-import { ParsedSignupRequest, Account } from '../lib/RequestTypes';
+import { ParsedBasicRequest } from '../lib/RequestTypes';
+import { Account } from '../lib/PublicRequestTypes';
 import { ResponseStatus, State as RpcState } from '@nimiq/rpc';
 import { Static } from '../lib/StaticStore';
 import LedgerApi from '../lib/LedgerApi';
@@ -53,7 +54,7 @@ export default class SignupLedger extends Vue {
     };
 
     @Static private rpcState!: RpcState;
-    @Static private request!: ParsedSignupRequest;
+    @Static private request!: ParsedBasicRequest;
 
     private state: string = SignupLedger.State.IDLE;
     private walletInfo: WalletInfo | null = null;

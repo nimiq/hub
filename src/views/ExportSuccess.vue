@@ -14,7 +14,8 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { SmallPage } from '@nimiq/vue-components';
-import { ParsedExportRequest, ExportResult } from '@/lib/RequestTypes';
+import { ParsedSimpleRequest } from '../lib/RequestTypes';
+import { ExportResult } from '../lib/PublicRequestTypes';
 import { State, Getter } from 'vuex-class';
 import { Static } from '@/lib/StaticStore';
 import Loader from '@/components/Loader.vue';
@@ -24,7 +25,7 @@ import KeyguardClient from '@nimiq/keyguard-client';
 
 @Component({components: {SmallPage, Loader}})
 export default class ExportSuccess extends Vue {
-    @Static private request!: ParsedExportRequest;
+    @Static private request!: ParsedSimpleRequest;
     @State private keyguardResult!: KeyguardClient.ExportResult;
 
     @Getter private findWallet!: (id: string) => WalletInfo | undefined;

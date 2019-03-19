@@ -28,7 +28,8 @@
 import { Component, Emit, Vue } from 'vue-property-decorator';
 import { Getter, Mutation } from 'vuex-class';
 import { SmallPage, AccountSelector } from '@nimiq/vue-components';
-import { RequestType, ParsedSignMessageRequest, Account } from '../lib/RequestTypes';
+import { RequestType, ParsedSignMessageRequest } from '../lib/RequestTypes';
+import { Account } from '../lib/PublicRequestTypes';
 import staticStore, { Static } from '../lib/StaticStore';
 import { WalletStore } from '@/lib/WalletStore';
 import { AccountInfo } from '@/lib/AccountInfo';

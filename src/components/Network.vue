@@ -7,7 +7,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import { SignedTransaction } from '../lib/RequestTypes';
+import { SignedTransaction } from '../lib/PublicRequestTypes';
 import KeyguardClient from '@nimiq/keyguard-client';
 import { NetworkClient, PlainTransaction, DetailedPlainTransaction } from '@nimiq/network-client';
 import Config from 'config';

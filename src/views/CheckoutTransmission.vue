@@ -9,7 +9,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { SignedTransaction } from '@/lib/RequestTypes';
+import { SignedTransaction } from '../lib/PublicRequestTypes';
 import { Static } from '../lib/StaticStore';
 import { State } from 'vuex-class';
 import { SmallPage } from '@nimiq/vue-components';

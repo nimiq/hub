@@ -5,17 +5,14 @@ import {
     RedirectRequestBehavior,
 } from './RequestBehavior';
 import { RedirectRpcClient } from '@nimiq/rpc';
+import { RequestType } from '../src/lib/RequestTypes';
 import {
-    RequestType,
+    BasicRequest,
     SimpleRequest,
     Account,
     CheckoutRequest,
-    LogoutRequest,
     SignTransactionRequest,
     SignedTransaction,
-    ExportRequest,
-    ChangePasswordRequest,
-    AddAddressRequest,
     Address,
     RenameRequest,
     SignMessageRequest,
@@ -24,7 +21,7 @@ import {
     ExportResult,
     ListResult,
     RpcResult,
-} from '../src/lib/RequestTypes';
+} from '../src/lib/PublicRequestTypes';
 
 export default class AccountsClient {
     public static readonly RequestType: typeof RequestType = RequestType;
@@ -76,19 +73,19 @@ export default class AccountsClient {
         );
     }
 
-    public onboard(request: SimpleRequest, requestBehavior = this._defaultBehavior): Promise<Account> {
+    public onboard(request: BasicRequest, requestBehavior = this._defaultBehavior): Promise<Account> {
         return this._request(requestBehavior, RequestType.ONBOARD, [request]);
     }
 
-    public signup(request: SimpleRequest, requestBehavior = this._defaultBehavior): Promise<Account> {
+    public signup(request: BasicRequest, requestBehavior = this._defaultBehavior): Promise<Account> {
         return this._request(requestBehavior, RequestType.SIGNUP, [request]);
     }
 
-    public login(request: SimpleRequest, requestBehavior = this._defaultBehavior): Promise<Account> {
+    public login(request: BasicRequest, requestBehavior = this._defaultBehavior): Promise<Account> {
         return this._request(requestBehavior, RequestType.LOGIN, [request]);
     }
 
-    public chooseAddress(request: SimpleRequest, requestBehavior = this._defaultBehavior)
+    public chooseAddress(request: BasicRequest, requestBehavior = this._defaultBehavior)
         : Promise<Address> {
         return this._request(requestBehavior, RequestType.CHOOSE_ADDRESS, [request]);
     }
@@ -104,25 +101,25 @@ export default class AccountsClient {
         return this._request(requestBehavior, RequestType.CHECKOUT, [request]);
     }
 
-    public logout(request: LogoutRequest, requestBehavior = this._defaultBehavior): Promise<SimpleResult> {
+    public logout(request: SimpleRequest, requestBehavior = this._defaultBehavior): Promise<SimpleResult> {
         return this._request(requestBehavior, RequestType.LOGOUT, [request]);
     }
 
     public export(
-        request: ExportRequest,
+        request: SimpleRequest,
         requestBehavior = this._defaultBehavior,
     ): Promise<ExportResult> {
         return this._request(requestBehavior, RequestType.EXPORT, [request]);
     }
 
     public changePassword(
-        request: ChangePasswordRequest,
+        request: SimpleRequest,
         requestBehavior = this._defaultBehavior,
     ): Promise<SimpleResult> {
         return this._request(requestBehavior, RequestType.CHANGE_PASSWORD, [request]);
     }
 
-    public addAddress(request: AddAddressRequest, requestBehavior = this._defaultBehavior): Promise<Address> {
+    public addAddress(request: SimpleRequest, requestBehavior = this._defaultBehavior): Promise<Address> {
         return this._request(requestBehavior, RequestType.ADD_ADDRESS, [request]);
     }
 
@@ -138,7 +135,7 @@ export default class AccountsClient {
     }
 
     public migrate(requestBehavior = this._defaultBehavior): Promise<ListResult> {
-        return this._request(requestBehavior, RequestType.MIGRATE, [{}]);
+        return this._request(requestBehavior, RequestType.MIGRATE, [{ appName: 'Accounts Client' }]);
     }
 
     /**

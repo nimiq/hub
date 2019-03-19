@@ -2,14 +2,14 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { ParsedChangePasswordRequest } from '../lib/RequestTypes';
+import { ParsedSimpleRequest } from '../lib/RequestTypes';
 import { WalletStore } from '@/lib/WalletStore';
 import { Static } from '../lib/StaticStore';
 import KeyguardClient from '@nimiq/keyguard-client';
 
 @Component
 export default class ChangePassword extends Vue {
-    @Static private request!: ParsedChangePasswordRequest;
+    @Static private request!: ParsedSimpleRequest;
 
     public async created() {
         const wallet = await WalletStore.Instance.get(this.request.walletId);

@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import { createDecorator } from 'vue-class-component';
-import { ParsedRpcRequest, RpcResult } from '@/lib/RequestTypes';
+import { ParsedRpcRequest, RequestType } from './RequestTypes';
+import { RpcResult } from './PublicRequestTypes';
 import { State as RpcState } from '@nimiq/rpc';
 
 export class StaticStore {
@@ -13,6 +14,7 @@ export class StaticStore {
 
     // To assist TypeScript, we define possible properties here
     public request?: ParsedRpcRequest;
+    public kind?: RequestType;
     public rpcState?: RpcState;
     public keyguardRequest?: any;
     public originalRouteName?: string;

@@ -4,7 +4,7 @@
 import { Component, Vue } from 'vue-property-decorator';
 import { State } from 'vuex-class';
 import { Static } from '../lib/StaticStore';
-import { ParsedRpcRequest, ParsedExportRequest, RequestType } from '../lib/RequestTypes';
+import { ParsedRpcRequest, ParsedSimpleRequest, RequestType } from '../lib/RequestTypes';
 import { Errors } from '@nimiq/keyguard-client';
 import { WalletStore } from '../lib/WalletStore';
 import KeyguardClient from '@nimiq/keyguard-client';
@@ -20,10 +20,9 @@ export default class ErrorHandler extends Vue {
         if (this.requestSpecificErrors()) return;
         if (this.keyguardResult.message === Errors.Messages.KEY_NOT_FOUND) {
             let walletId;
-            // ParsedExportRequest is just one request that has a walletId. Any of those would do.
-            if ((this.request as ParsedExportRequest).walletId) {
+            if ((this.request as ParsedSimpleRequest).walletId) {
                 // The walletId is already in the Accounts request
-                walletId = (this.request as ParsedExportRequest).walletId;
+                walletId = (this.request as ParsedSimpleRequest).walletId;
             } else if (this.request.kind === RequestType.CHECKOUT
                     || this.request.kind === RequestType.SIGN_MESSAGE) {
                 // Accounts request was Checkout/SignMessage.

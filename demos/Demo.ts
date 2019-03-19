@@ -2,19 +2,17 @@
 
 import { State, PostMessageRpcClient } from '@nimiq/rpc';
 import AccountsClient from '../client/AccountsClient';
+import { RequestType } from '../src/lib/RequestTypes';
 import {
-    RequestType,
+    BasicRequest,
     SimpleRequest,
     Account,
     CheckoutRequest,
-    LogoutRequest, SimpleResult,
+    SimpleResult,
     SignTransactionRequest, SignedTransaction,
-    ExportRequest,
     RenameRequest,
-    ChangePasswordRequest,
-    AddAddressRequest,
     SignMessageRequest,
-} from '../src/lib/RequestTypes';
+} from '../src/lib/PublicRequestTypes';
 import { WalletInfoEntry } from '../src/lib/WalletInfo';
 import { RedirectRequestBehavior } from '../client/RequestBehavior';
 import { Utf8Tools } from '@nimiq/utils';
@@ -315,11 +313,11 @@ class Demo {
         }
     }
 
-    public _createLogoutRequest(accountId: string): LogoutRequest {
+    public _createLogoutRequest(accountId: string): SimpleRequest {
         return {
             appName: 'Accounts Demos',
             accountId,
-        } as LogoutRequest;
+        } as SimpleRequest;
     }
 
     public async export(accountId: string) {
@@ -333,11 +331,11 @@ class Demo {
         }
     }
 
-    public _createExportRequest(accountId: string): ExportRequest {
+    public _createExportRequest(accountId: string): SimpleRequest {
         return {
             appName: 'Accounts Demos',
             accountId,
-        } as ExportRequest;
+        } as SimpleRequest;
     }
 
     public async changePassword(accountId: string) {
@@ -351,11 +349,11 @@ class Demo {
         }
     }
 
-    public _createChangePasswordRequest(accountId: string): ChangePasswordRequest {
+    public _createChangePasswordRequest(accountId: string): SimpleRequest {
         return {
             appName: 'Accounts Demos',
             accountId,
-        } as ChangePasswordRequest;
+        } as SimpleRequest;
     }
 
     public async addAccount(accountId: string) {
@@ -369,11 +367,11 @@ class Demo {
         }
     }
 
-    public _createAddAccountRequest(accountId: string): AddAddressRequest {
+    public _createAddAccountRequest(accountId: string): SimpleRequest {
         return {
             appName: 'Accounts Demos',
             accountId,
-        };
+        } as SimpleRequest;
     }
 
     public async rename(accountId: string, account: string) {
