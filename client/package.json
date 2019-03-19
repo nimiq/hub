@@ -15,7 +15,7 @@
     "rollup-plugin-node-resolve": "^3.4.0",
     "rollup-plugin-terser": "^3.0.0",
     "tslint": "^5.11.0",
-    "typescript": "^3.0.3"
+    "typescript": "^3.3.3333"
   },
   "files": [
     "dist"
