@@ -55,8 +55,7 @@ export class RedirectRequestBehavior extends RequestBehavior {
         await client.init();
 
         const state: object = Object.assign({}, this._localState, { __command: command });
-        console.log('state', state);
-        client.callAndSaveLocalState(this._returnUrl, JSON.stringify(state), command, ...args);
+        client.callAndSaveLocalState(this._returnUrl, state, command, ...args);
     }
 }
 

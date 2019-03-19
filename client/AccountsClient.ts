@@ -68,8 +68,8 @@ export default class AccountsClient {
     ) {
         this._redirectClient.onResponse(command,
             // State is always an object containing at least the __command property
-            (result: RpcResult, rpcId, state) => resolve(result, JSON.parse(state!)),
-            (error: Error, rpcId, state) => reject && reject(error, JSON.parse(state!)),
+            (result: RpcResult, rpcId, state) => resolve(result, state),
+            (error: Error, rpcId, state) => reject && reject(error, state),
         );
     }
 
