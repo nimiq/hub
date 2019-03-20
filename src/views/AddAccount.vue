@@ -15,7 +15,7 @@ export default class AddAccount extends Vue {
     public async created() {
         const wallet = await WalletStore.Instance.get(this.request.walletId);
         if (!wallet) {
-            this.$rpc.reject(new Error('Account not found'));
+            this.$rpc.reject(new Error('Account ID not found'));
             return;
         }
         if (wallet.type === WalletType.LEGACY) {

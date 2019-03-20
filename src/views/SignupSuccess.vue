@@ -32,7 +32,7 @@ import KeyguardClient from '@nimiq/keyguard-client';
 export default class SignupSuccess extends Vue {
     @State private keyguardResult!: KeyguardClient.KeyResult;
 
-    private title: string = 'Storing your wallet';
+    private title: string = 'Storing your account';
     private state: Loader.State = Loader.State.LOADING;
 
     private async mounted() {

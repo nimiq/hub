@@ -88,7 +88,7 @@ export default class LoginSuccess extends Vue {
     }
 
     private get status() {
-        return !this.retrievalFailed ? 'Connecting to Nimiq...' : 'Account retrieval failed. Retrying...';
+        return !this.retrievalFailed ? 'Connecting to Nimiq...' : 'Address retrieval failed. Retrying...';
     }
 }
 </script>

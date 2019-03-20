@@ -4,7 +4,7 @@
             <Loader :title="title" :state="state" :lightBlue="true">
                 <template slot="success">
                     <div class="success nq-icon"></div>
-                    <h1 class="title nq-h1">Awesome!<br>Your new address has<br/>been added to your account.</h1>
+                    <h1 class="title nq-h1">New address added<br>to your account.</h1>
                 </template>
             </Loader>
         </SmallPage>
