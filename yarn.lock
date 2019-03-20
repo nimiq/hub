@@ -707,6 +707,13 @@
     nan "^2.10.0"
     ws "^5.2.0"
 
+"@nimiq/iqons@^1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@nimiq/iqons/-/iqons-1.3.0.tgz#7a570d082e72c70b7ce7f5da252c9f0109e28cc5"
+  integrity sha512-zyRM7wkMyE+oc3pVEfUAMETrjcPWiqQom+hI9oEBXWJmx/qgqU/RmNa8HbeLmL1DGIVevSw6dqDSlaPCJNgDRw==
+  dependencies:
+    dom-parser "^0.1.5"
+
 "@nimiq/jungle-db@^0.9.17":
   version "0.9.17"
   resolved "https://registry.yarnpkg.com/@nimiq/jungle-db/-/jungle-db-0.9.17.tgz#3a8a55f600da8f8b103ad988d177b2785e1bd6cc"
@@ -3045,6 +3052,11 @@ dom-event-types@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/dom-event-types/-/dom-event-types-1.0.0.tgz#5830a0a29e1bf837fe50a70cd80a597232813cae"
   integrity sha512-2G2Vwi2zXTHBGqXHsJ4+ak/iP0N8Ar+G8a7LiD2oup5o4sQWytwqqrZu/O6hIMV0KMID2PL69OhpshLO0n7UJQ==
+
+dom-parser@^0.1.5:
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/dom-parser/-/dom-parser-0.1.5.tgz#a4f6019f9a315b75d7428aaa7ccbf5bd859e16fb"
+  integrity sha1-pPYBn5oxW3XXQoqqfMv1vYWeFvs=
 
 dom-serializer@0:
   version "0.1.0"

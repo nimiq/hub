@@ -3,8 +3,6 @@
  */
 
 // Addresses
-export const ADDRESS_DEFAULT_LABEL_KEYGUARD = 'Standard Address';
-export const ADDRESS_DEFAULT_LABEL_LEDGER = 'Ledger Address';
 export const DEFAULT_KEY_PATH = `m/44'/242'/0'/0'`;
 
 // Transactions

@@ -9,8 +9,6 @@ import {
     ACCOUNT_DEFAULT_LABEL_KEYGUARD,
     ACCOUNT_DEFAULT_LABEL_LEDGER,
     LABEL_MAX_LENGTH,
-    ADDRESS_DEFAULT_LABEL_KEYGUARD,
-    ADDRESS_DEFAULT_LABEL_LEDGER,
 } from '@/lib/Constants';
 
 export class CookieDecoder {
@@ -109,7 +107,7 @@ export class CookieDecoder {
 
         const walletLabel = walletLabelBytes.length === 0
             ? type === WalletType.BIP39
-                ? ACCOUNT_DEFAULT_LABEL_KEYGUARD
+                ? 'unkown'
                 : ACCOUNT_DEFAULT_LABEL_LEDGER
             : Utf8Tools.utf8ByteArrayToString(new Uint8Array(walletLabelBytes));
 
@@ -166,8 +164,8 @@ export class CookieDecoder {
 
         const accountLabel = labelBytes.length === 0
             ? type === WalletType.BIP39
-                ? ADDRESS_DEFAULT_LABEL_KEYGUARD
-                : ADDRESS_DEFAULT_LABEL_LEDGER
+                ? 'unkown'
+                : 'unkown'
             : Utf8Tools.utf8ByteArrayToString(new Uint8Array(labelBytes));
 
         // Account address
