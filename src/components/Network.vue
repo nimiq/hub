@@ -127,8 +127,9 @@ class Network extends Vue {
         client.relayTransaction(txObjToSend);
 
         return new Promise<SignedTransaction>((resolve, reject) => {
+            const base64Hash = Nimiq.BufferUtils.toBase64(Nimiq.BufferUtils.fromHex(signedTx.hash));
             this.$once('transaction-relayed', (txInfo: any) => {
-                if (txInfo.hash === signedTx.hash) resolve(signedTx);
+                if (txInfo.hash === base64Hash) resolve(signedTx);
             });
         });
     }
