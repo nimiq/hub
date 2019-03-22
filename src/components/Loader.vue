@@ -266,8 +266,11 @@ export default Loader;
     }
 
     .status-row {
+        --status-font-size: 2.5rem;
         margin-top: 2rem; /* Same as title margin-bottom, to equalize spacing to center icon */
         margin-bottom: 5rem;
+        height: var(--status-font-size); /* 1 line of status text. For multiple lines, the text overflows to the top */
+        position: relative;
     }
 
     .loader.small .status-row {
@@ -275,16 +278,18 @@ export default Loader;
     }
 
     .status {
-        line-height: 1;
+        position: absolute;
+        bottom: 0;
+        width: 100%;
         margin: 0;
+        padding: 0 2rem;
         font-weight: normal;
-        height: 2.5rem;
+        line-height: 1.2;
         opacity: 1;
     }
 
     .status.next {
-        margin-top: -2.5rem;
-        transform: translateY(2.5rem);
+        transform: translateY(var(--status-font-size));
         opacity: 0;
     }
 
@@ -293,7 +298,7 @@ export default Loader;
     }
 
     .status-row.transition .status.current {
-        transform: translateY(-2.5rem);
+        transform: translateY(calc(-1 * var(--status-font-size)));
         opacity: 0;
     }
 
