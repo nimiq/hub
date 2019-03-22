@@ -13,7 +13,10 @@ export default class Logout extends Vue {
 
     public async created() {
         const wallet = await WalletStore.Instance.get(this.request.walletId);
-        if (!wallet) throw new Error('Account ID not found');
+        if (!wallet) {
+            this.$rpc.reject(new Error('Account ID not found'));
+            return;
+        }
 
         const request: KeyguardClient.RemoveKeyRequest = {
             appName: this.request.appName,

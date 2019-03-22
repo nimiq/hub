@@ -14,9 +14,16 @@ export default class SignTransaction extends Vue {
     public async created() {
         // Forward user through AccountsManager to Keyguard
         const wallet = await WalletStore.Instance.get(this.request.walletId);
-        if (!wallet) throw new Error('Account ID not found');
+        if (!wallet) {
+            this.$rpc.reject(new Error('Account ID not found'));
+            return;
+        }
         const account = wallet.accounts.get(this.request.sender.toUserFriendlyAddress());
-        if (!account) throw new Error('Sender address not found!'); // TODO Search contracts when address not found
+        if (!account) {
+            // TODO Search contracts when address not found
+            this.$rpc.reject(new Error('Address not found'));
+            return;
+        }
 
         const request: KeyguardClient.SignTransactionRequest = {
             layout: 'standard',
