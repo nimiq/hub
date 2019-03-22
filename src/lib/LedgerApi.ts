@@ -57,6 +57,7 @@
 // tslint:disable-next-line:max-line-length
 // TODO: change implementation to be flow typed, integrate into ledger-api repository and bundle with ledger provided flow libraries directly. LedgerJs:any type is just a temporary workaround
 import Observable = Nimiq.Observable;
+import { BrowserDetection } from '@nimiq/utils';
 
 type LedgerJs = any;
 // tslint:disable-next-line:variable-name no-var-requires
@@ -431,15 +432,22 @@ class LedgerApi {
         } finally {
             LedgerApi._currentRequest = null;
             LedgerApi._currentlyConnectedWalletId = null; // reset as we don't note when Ledger gets disconnected
-            // NO_BROWSER_SUPPORT is the only error we can't recover from. For others, we reset the state to IDLE.
-            if (!LedgerApi.currentState.error
-                || LedgerApi.currentState.error.type !== LedgerApi.ErrorType.NO_BROWSER_SUPPORT) {
+            // For errors we can recover from reset the state to IDLE.
+            const errorType = LedgerApi.currentState.error ? LedgerApi.currentState.error.type : null;
+            if (errorType !== LedgerApi.ErrorType.NO_BROWSER_SUPPORT
+                && errorType !== LedgerApi.ErrorType.INCOMPATIBLE_CHROME_VERSION) {
                 LedgerApi._setState(LedgerApi.StateType.IDLE);
             }
         }
     }
 
     private static async _connect(walletId?: string): Promise<LedgerJs> {
+        const browserInfo = BrowserDetection.getBrowserInfo();
+        if (browserInfo.browser === BrowserDetection.Browser.CHROME
+            && browserInfo.version && browserInfo.version.major >= 72) {
+            this._throwError(LedgerApi.ErrorType.INCOMPATIBLE_CHROME_VERSION,
+                new Error('Ledger currently not supported by Chrome 72+'));
+        }
         // Resolves when connected to unlocked ledger with open Nimiq app otherwise throws an exception after timeout.
         // If the Ledger is already connected and the library already loaded, the call typically takes < 250ms.
         try {
@@ -585,6 +593,7 @@ namespace LedgerApi { // tslint:disable-line:no-namespace
     export const enum ErrorType {
         LEDGER_BUSY = 'ledger-busy',
         FAILED_LOADING_DEPENDENCIES = 'failed-loading-dependencies',
+        INCOMPATIBLE_CHROME_VERSION = 'incompatible-chrome-version', // TODO remove this error when not relevant anymore
         NO_BROWSER_SUPPORT = 'no-browser-support',
         APP_OUTDATED = 'app-outdated',
         WRONG_LEDGER = 'wrong-ledger',

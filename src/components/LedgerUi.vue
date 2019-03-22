@@ -143,6 +143,10 @@ class LedgerUi extends Vue {
             case LedgerApi.ErrorType.NO_BROWSER_SUPPORT:
                 this._showInstructions('', 'Ledger not supported by browser or support not enabled.');
                 break;
+            case LedgerApi.ErrorType.INCOMPATIBLE_CHROME_VERSION:
+                this._showInstructions('',
+                    'Ledger currently not compatible with Chrome 72+. Please use Opera or Brave.');
+                break;
             case LedgerApi.ErrorType.APP_OUTDATED:
                 this._showInstructions('', 'Your Nimiq App is outdated. Please update using Ledger Live.');
                 break;
@@ -246,7 +250,6 @@ export default LedgerUi;
     }
 
     .loader {
-        flex-grow: 1;
         overflow: hidden;
     }
 
