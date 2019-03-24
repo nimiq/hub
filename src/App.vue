@@ -29,6 +29,15 @@ export default class App extends Vue {
     private isRequestLoaded = false;
 
     public async created() {
+        // Register service worker if necessary (and possible).
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./ServiceWorker.js', {
+                scope: './',
+            }).then((reg) => {
+                console.debug(`Service worker has been registered for scope: ${reg.scope}`);
+            });
+        }
+
         await this.$store.dispatch('initWallets');
         this.$rpc.start();
     }
