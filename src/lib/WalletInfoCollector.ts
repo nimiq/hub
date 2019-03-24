@@ -92,14 +92,16 @@ export default class WalletInfoCollector {
             derivedAccountsPromise = WalletInfoCollector._deriveAccounts(startIndex,
                 ACCOUNT_MAX_ALLOWED_ADDRESS_GAP, walletType, walletId);
 
-            // find accounts with a balance > 0
-            // TODO should use transaction receipts
+            // find accounts with a balance > 0 and/or transaction receipts
             foundAccounts = [];
             const balances = await WalletInfoCollector._getBalances(derivedAccounts!);
             for (const account of derivedAccounts!) {
                 const balance = balances.get(account.address);
-                if (balance === undefined || balance === 0) continue;
-                foundAccounts.push(account);
+                const hasBalance = balance !== undefined && balance !== 0;
+                const receipts = await NetworkClient.Instance.requestTransactionReceipts(account.address);
+                if (hasBalance || receipts.length > 0) {
+                    foundAccounts.push(account);
+                }
             }
             if (foundAccounts.length > 0) {
                 WalletInfoCollector._addAccounts(walletInfo, foundAccounts, balances);
@@ -128,7 +130,8 @@ export default class WalletInfoCollector {
 
     private static _initializeDependencies(walletType: WalletType): void {
         WalletInfoCollector._networkInitializationPromise =
-            WalletInfoCollector._networkInitializationPromise || NetworkClient.Instance.init();
+            WalletInfoCollector._networkInitializationPromise
+                || (NetworkClient.createInstance(Config.networkEndpoint)).init();
         WalletInfoCollector._networkInitializationPromise
             .catch(() => delete WalletInfoCollector._networkInitializationPromise);
         if (walletType === WalletType.BIP39) {

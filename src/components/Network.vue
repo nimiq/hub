@@ -139,6 +139,11 @@ class Network extends Vue {
         return client.getBalance(addresses);
     }
 
+    public async requestTransactionReceipts(address: string): Promise<Nimiq.TransactionReceipt[]> {
+        const client = await this._getNetworkClient();
+        return client.requestTransactionReceipts(address);
+    }
+
     private created() {
         this.$on('consensus-established', () => this.consensusEstablished = true);
         this.$on('consensus-lost', () => this.consensusEstablished = false);
