@@ -97,9 +97,12 @@ export default class WalletInfoCollector {
             const balances = await WalletInfoCollector._getBalances(derivedAccounts!);
             for (const account of derivedAccounts!) {
                 const balance = balances.get(account.address);
-                const hasBalance = balance !== undefined && balance !== 0;
+                if (balance !== undefined && balance !== 0) {
+                    foundAccounts.push(account);
+                    continue;
+                }
                 const receipts = await NetworkClient.Instance.requestTransactionReceipts(account.address);
-                if (hasBalance || receipts.length > 0) {
+                if (receipts.length > 0) {
                     foundAccounts.push(account);
                 }
             }
