@@ -104,11 +104,7 @@ export class CookieDecoder {
         // Wallet label
         const walletLabelBytes = this.readBytes(bytes, labelLength);
 
-        const walletLabel = walletLabelBytes.length === 0
-            ? type === WalletType.BIP39
-                ? 'unkown'
-                : ACCOUNT_DEFAULT_LABEL_LEDGER
-            : Utf8Tools.utf8ByteArrayToString(new Uint8Array(walletLabelBytes));
+        const walletLabel = Utf8Tools.utf8ByteArrayToString(new Uint8Array(walletLabelBytes));
 
         const accounts = this.decodeAccounts(bytes, type);
 
@@ -161,11 +157,7 @@ export class CookieDecoder {
         // Account label
         const labelBytes = this.readBytes(bytes, labelLength);
 
-        const accountLabel = labelBytes.length === 0
-            ? type === WalletType.BIP39
-                ? 'unkown'
-                : 'unkown'
-            : Utf8Tools.utf8ByteArrayToString(new Uint8Array(labelBytes));
+        const accountLabel = Utf8Tools.utf8ByteArrayToString(new Uint8Array(labelBytes));
 
         // Account address
         // (iframe does not have Nimiq lib)
