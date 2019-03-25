@@ -34,7 +34,7 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
                 DUMMY_ADDRESS_HR2,
                 {
                     path: 'm/0\'',
-                    label: '',
+                    label: 'Divine Jinxing Budgie',
                     address: DUMMY_ADDRESS_S2,
                 },
             ],
@@ -47,7 +47,7 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
     },
     {
         id: '1ee3d926a49d',
-        label: '',
+        label: 'Ledger Account',
         accounts: new Map<string, AccountInfoEntry>([
             [
                 BURN_ADDRESS_HR,
@@ -104,7 +104,7 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
                 DUMMY_ADDRESS_HR2,
                 {
                     path: 'm/0\'',
-                    label: '',
+                    label: 'Divine Jinxing Budgie',
                     address: DUMMY_ADDRESS_S2,
                 },
             ],
@@ -117,7 +117,7 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
     },
     {
         id: '1ee3d926a4a0',
-        label: '',
+        label: 'Ledger Account',
         accounts: new Map<string, AccountInfoEntry>([
             [
                 BURN_ADDRESS_HR,
@@ -177,7 +177,7 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
                 DUMMY_ADDRESS_HR2,
                 {
                     path: 'not public',
-                    label: '',
+                    label: 'Divine Jinxing Budgie',
                     address: DUMMY_ADDRESS_S2,
                 },
             ],
@@ -190,7 +190,7 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
     },
     {
         id: '1ee3d926a49d',
-        label: '',
+        label: 'Ledger Account',
         accounts: new Map<string, AccountInfoEntry>([
             [
                 BURN_ADDRESS_HR,
@@ -242,7 +242,7 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
                 DUMMY_ADDRESS_HR2,
                 {
                     path: 'not public',
-                    label: '',
+                    label: 'Divine Jinxing Budgie',
                     address: DUMMY_ADDRESS_S2,
                 },
             ],
@@ -255,7 +255,7 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
     },
     {
         id: '1ee3d926a4a0',
-        label: '',
+        label: 'Ledger Account',
         accounts: new Map<string, AccountInfoEntry>([
             [
                 BURN_ADDRESS_HR,
