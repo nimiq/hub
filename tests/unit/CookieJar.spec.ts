@@ -316,6 +316,7 @@ const BYTES = [
     3, // wallet label length (0), wallet type (3)
     3, // keyMissing = true, fileExported = true, wordsExported = false
     30, 227, 217, 38, 164, 157, // wallet id
+    // wallet label (omitted)
     1, // number of accounts
 
         // account 1
@@ -352,6 +353,7 @@ const BYTES = [
     3, // wallet label length (0), wallet type (3)
     0, // keyMissing = false, fileExported = false, wordsExported = false
     30, 227, 217, 38, 164, 160, // wallet id
+    // wallet label (omitted)
     1, // number of accounts
 
         // account 1

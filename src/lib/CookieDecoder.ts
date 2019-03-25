@@ -107,11 +107,12 @@ export class CookieDecoder {
 
         const accounts = this.decodeAccounts(bytes, type);
 
+        const firstAccount = accounts.values().next().value;
         const walletLabel = walletLabelBytes.length > 0
             ? Utf8Tools.utf8ByteArrayToString(new Uint8Array(walletLabelBytes))
             : type === WalletType.LEDGER
                 ? ACCOUNT_DEFAULT_LABEL_LEDGER
-                : LabelingMachine.labelAccount(this._toUserFriendlyAddress(accounts.values().next().value.address));
+                : LabelingMachine.labelAccount(this._toUserFriendlyAddress(firstAccount.address));
 
         const walletInfoEntry: WalletInfoEntry = {
             id,
@@ -161,7 +162,6 @@ export class CookieDecoder {
 
         // Account label
         const labelBytes = this.readBytes(bytes, labelLength);
-
 
         // Account address
         // (iframe does not have Nimiq lib)

@@ -153,7 +153,7 @@ class CookieJar {
         // Wallet accounts
         const accounts = Array.from(wallet.accounts.values());
         for (const account of accounts) {
-            const label = this.checkAccountDefaultLabel(account.address, account.label)
+            const label = this.checkAccountDefaultLabel(account.address, account.label);
             const labelBytes = this.encodeAndcutLabel(label);
 
             // Account label length
