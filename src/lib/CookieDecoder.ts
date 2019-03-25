@@ -6,11 +6,8 @@ import { AccountInfoEntry } from './AccountInfo';
 import CookieJar from './CookieJar';
 import {
     ACCOUNT_DEFAULT_LABEL_LEGACY,
-    ACCOUNT_DEFAULT_LABEL_KEYGUARD,
     ACCOUNT_DEFAULT_LABEL_LEDGER,
     LABEL_MAX_LENGTH,
-    ADDRESS_DEFAULT_LABEL_KEYGUARD,
-    ADDRESS_DEFAULT_LABEL_LEDGER,
 } from '@/lib/Constants';
 
 export class CookieDecoder {
@@ -107,11 +104,7 @@ export class CookieDecoder {
         // Wallet label
         const walletLabelBytes = this.readBytes(bytes, labelLength);
 
-        const walletLabel = walletLabelBytes.length === 0
-            ? type === WalletType.BIP39
-                ? ACCOUNT_DEFAULT_LABEL_KEYGUARD
-                : ACCOUNT_DEFAULT_LABEL_LEDGER
-            : Utf8Tools.utf8ByteArrayToString(new Uint8Array(walletLabelBytes));
+        const walletLabel = Utf8Tools.utf8ByteArrayToString(new Uint8Array(walletLabelBytes));
 
         const accounts = this.decodeAccounts(bytes, type);
 
@@ -164,11 +157,7 @@ export class CookieDecoder {
         // Account label
         const labelBytes = this.readBytes(bytes, labelLength);
 
-        const accountLabel = labelBytes.length === 0
-            ? type === WalletType.BIP39
-                ? ADDRESS_DEFAULT_LABEL_KEYGUARD
-                : ADDRESS_DEFAULT_LABEL_LEDGER
-            : Utf8Tools.utf8ByteArrayToString(new Uint8Array(labelBytes));
+        const accountLabel = Utf8Tools.utf8ByteArrayToString(new Uint8Array(labelBytes));
 
         // Account address
         // (iframe does not have Nimiq lib)

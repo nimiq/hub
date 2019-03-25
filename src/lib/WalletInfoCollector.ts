@@ -6,14 +6,13 @@ import { WalletInfo, WalletType } from '@/lib/WalletInfo';
 import LedgerApi from '@/lib/LedgerApi'; // TODO import LedgerApi only when needed
 import {
     ACCOUNT_DEFAULT_LABEL_LEGACY,
-    ACCOUNT_DEFAULT_LABEL_KEYGUARD,
     ACCOUNT_DEFAULT_LABEL_LEDGER,
-    ADDRESS_DEFAULT_LABEL_KEYGUARD,
-    ADDRESS_DEFAULT_LABEL_LEDGER,
+    ACCOUNT_TEMPORARY_LABEL_KEYGUARD,
     ACCOUNT_MAX_ALLOWED_ADDRESS_GAP,
     ACCOUNT_BIP32_BASE_PATH_KEYGUARD,
 } from '@/lib/Constants';
 import Config from 'config';
+import LabelingMachine from './LabelingMachine';
 
 type BasicAccountInfo = { // tslint:disable-line:interface-over-type-literal
     address: string,
@@ -70,6 +69,11 @@ export default class WalletInfoCollector {
             // legacy wallets have no derived accounts
             await initialAccountsPromise;
             return walletInfo;
+        }
+
+        // Label Keyguard accounts according to their first identicon background color
+        if (walletType === WalletType.BIP39 && walletInfo.label === ACCOUNT_TEMPORARY_LABEL_KEYGUARD) {
+            walletInfo.label = LabelingMachine.labelAccount((await derivedAccountsPromise)[0].address);
         }
 
         let foundAccounts: BasicAccountInfo[];
@@ -148,7 +152,7 @@ export default class WalletInfoCollector {
         const label = walletType === WalletType.LEGACY
             ? ACCOUNT_DEFAULT_LABEL_LEGACY
             : walletType === WalletType.BIP39
-                ? ACCOUNT_DEFAULT_LABEL_KEYGUARD
+                ? ACCOUNT_TEMPORARY_LABEL_KEYGUARD
                 : ACCOUNT_DEFAULT_LABEL_LEDGER;
         return new WalletInfo(
             walletId,
@@ -225,9 +229,7 @@ export default class WalletInfoCollector {
             const balance = balances ? balances.get(newAccount.address) : undefined;
             const accountInfo = existingAccountInfo || new AccountInfo(
                 newAccount.path,
-                walletInfo.type === WalletType.LEDGER
-                    ? ADDRESS_DEFAULT_LABEL_LEDGER
-                    : ADDRESS_DEFAULT_LABEL_KEYGUARD,
+                LabelingMachine.labelAddress(newAccount.address),
                 Nimiq.Address.fromUserFriendlyAddress(newAccount.address),
             );
             if (balance !== undefined) accountInfo.balance = balance;

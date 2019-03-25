@@ -3,8 +3,6 @@
  */
 
 // Addresses
-export const ADDRESS_DEFAULT_LABEL_KEYGUARD = 'Standard Address';
-export const ADDRESS_DEFAULT_LABEL_LEDGER = 'Ledger Address';
 export const DEFAULT_KEY_PATH = `m/44'/242'/0'/0'`;
 
 // Transactions
@@ -16,9 +14,9 @@ export const LABEL_MAX_LENGTH = 63; // in bytes
 
 // Accounts
 export const ACCOUNT_BIP32_BASE_PATH_KEYGUARD = `m/44'/242'/0'/`;
-export const ACCOUNT_DEFAULT_LABEL_KEYGUARD = 'Keyguard Account';
 export const ACCOUNT_DEFAULT_LABEL_LEDGER = 'Ledger Account';
 export const ACCOUNT_DEFAULT_LABEL_LEGACY = 'Legacy Account';
+export const ACCOUNT_TEMPORARY_LABEL_KEYGUARD = '~~TEMP~~';
 export const ACCOUNT_MAX_ALLOWED_ADDRESS_GAP = 20;
 
 // Compatibility
