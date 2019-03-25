@@ -35,8 +35,9 @@ export default class SignupSuccess extends Vue {
 
         const createdAddress = new Nimiq.Address(this.keyguardResult[0].addresses[0].address);
 
-        const walletLabel = LabelingMachine.labelAccount(createdAddress.toUserFriendlyAddress());
-        const accountLabel = LabelingMachine.labelAddress(createdAddress.toUserFriendlyAddress());
+        const userFriendlyAddress = createdAddress.toUserFriendlyAddress();
+        const walletLabel = LabelingMachine.labelAccount(userFriendlyAddress);
+        const accountLabel = LabelingMachine.labelAddress(userFriendlyAddress);
 
         const accountInfo = new AccountInfo(
             this.keyguardResult[0].addresses[0].keyPath,
@@ -47,7 +48,7 @@ export default class SignupSuccess extends Vue {
         const walletInfo = new WalletInfo(
             this.keyguardResult[0].keyId,
             walletLabel,
-            new Map<string, AccountInfo>().set(accountInfo.userFriendlyAddress, accountInfo),
+            new Map<string, AccountInfo>().set(userFriendlyAddress, accountInfo),
             [],
             walletType,
             false, // keyMissing
@@ -69,7 +70,7 @@ export default class SignupSuccess extends Vue {
             fileExported: walletInfo.fileExported,
             wordsExported: walletInfo.wordsExported,
             addresses: [{
-                address: accountInfo.userFriendlyAddress,
+                address: userFriendlyAddress,
                 label: accountInfo.label,
             }],
         };
