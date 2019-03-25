@@ -6,8 +6,8 @@ import { WalletInfo, WalletType } from '@/lib/WalletInfo';
 import LedgerApi from '@/lib/LedgerApi'; // TODO import LedgerApi only when needed
 import {
     ACCOUNT_DEFAULT_LABEL_LEGACY,
-    ACCOUNT_DEFAULT_LABEL_KEYGUARD,
     ACCOUNT_DEFAULT_LABEL_LEDGER,
+    ACCOUNT_TEMPORARY_LABEL_KEYGUARD,
     ACCOUNT_MAX_ALLOWED_ADDRESS_GAP,
     ACCOUNT_BIP32_BASE_PATH_KEYGUARD,
 } from '@/lib/Constants';
@@ -72,7 +72,7 @@ export default class WalletInfoCollector {
         }
 
         // Label Keyguard accounts according to their first identicon background color
-        if (walletType === WalletType.BIP39 && walletInfo.label === ACCOUNT_DEFAULT_LABEL_KEYGUARD) {
+        if (walletType === WalletType.BIP39 && walletInfo.label === ACCOUNT_TEMPORARY_LABEL_KEYGUARD) {
             walletInfo.label = LabelingMachine.labelAccount((await derivedAccountsPromise)[0].address);
         }
 
@@ -152,7 +152,7 @@ export default class WalletInfoCollector {
         const label = walletType === WalletType.LEGACY
             ? ACCOUNT_DEFAULT_LABEL_LEGACY
             : walletType === WalletType.BIP39
-                ? ACCOUNT_DEFAULT_LABEL_KEYGUARD
+                ? ACCOUNT_TEMPORARY_LABEL_KEYGUARD
                 : ACCOUNT_DEFAULT_LABEL_LEDGER;
         return new WalletInfo(
             walletId,

@@ -6,7 +6,6 @@ import { AccountInfoEntry } from './AccountInfo';
 import CookieJar from './CookieJar';
 import {
     ACCOUNT_DEFAULT_LABEL_LEGACY,
-    ACCOUNT_DEFAULT_LABEL_KEYGUARD,
     ACCOUNT_DEFAULT_LABEL_LEDGER,
     LABEL_MAX_LENGTH,
 } from '@/lib/Constants';
