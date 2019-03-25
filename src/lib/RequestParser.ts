@@ -7,6 +7,7 @@ import {
     CheckoutRequest,
     SignMessageRequest,
     RenameRequest,
+    ExportRequest,
     RpcRequest,
 } from './PublicRequestTypes';
 import {
@@ -17,6 +18,7 @@ import {
     ParsedCheckoutRequest,
     ParsedSignMessageRequest,
     ParsedRenameRequest,
+    ParsedExportRequest,
     ParsedRpcRequest,
 } from './RequestTypes';
 import { Utf8Tools } from '@nimiq/utils';
@@ -86,7 +88,6 @@ export class RequestParser {
                     kind: requestType,
                     appName: request.appName,
                 } as ParsedBasicRequest;
-            case RequestType.EXPORT:
             case RequestType.CHANGE_PASSWORD:
             case RequestType.LOGOUT:
             case RequestType.ADD_ADDRESS:
@@ -99,6 +100,16 @@ export class RequestParser {
                     appName: simpleRequest.appName,
                     walletId: simpleRequest.accountId,
                 } as ParsedSimpleRequest;
+
+            case RequestType.EXPORT:
+                const exportRequest = request as ExportRequest;
+                return {
+                    kind: RequestType.EXPORT,
+                    appName: exportRequest.appName,
+                    walletId: exportRequest.accountId,
+                    fileOnly: exportRequest.fileOnly,
+                    wordsOnly: exportRequest.wordsOnly,
+                } as ParsedExportRequest;
             case RequestType.RENAME:
                 const renameRequest = request as RenameRequest;
 
@@ -165,7 +176,6 @@ export class RequestParser {
                 return {
                     appName: request.appName,
                 } as BasicRequest;
-            case RequestType.EXPORT:
             case RequestType.CHANGE_PASSWORD:
             case RequestType.LOGOUT:
             case RequestType.ADD_ADDRESS:
@@ -174,6 +184,14 @@ export class RequestParser {
                     appName: simpleRequest.appName,
                     accountId: simpleRequest.walletId,
                 } as SimpleRequest;
+            case RequestType.EXPORT:
+                const exportRequest = request as ParsedExportRequest;
+                return {
+                    appName: exportRequest.appName,
+                    accountId: exportRequest.walletId,
+                    fileOnly: exportRequest.fileOnly,
+                    wordsOnly: exportRequest.wordsOnly,
+                } as ExportRequest;
             case RequestType.RENAME:
                 const renameRequest = request as ParsedRenameRequest;
                 return {

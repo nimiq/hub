@@ -316,7 +316,10 @@ class Demo {
 
     public async export(accountId: string) {
         try {
-            const result = await this._accountsClient.export(this._createExportRequest(accountId));
+            const result = await this._accountsClient.export({
+                appName: 'Accounts Demos',
+                accountId,
+            });
             console.log('Keyguard result', result);
             document.querySelector('#result').textContent = 'Export sucessful';
         } catch (e) {
@@ -325,11 +328,34 @@ class Demo {
         }
     }
 
-    public _createExportRequest(accountId: string): SimpleRequest {
-        return {
-            appName: 'Accounts Demos',
-            accountId,
-        } as SimpleRequest;
+    public async exportFile(accountId: string) {
+        try {
+            const result = await this._accountsClient.export({
+                appName: 'Accounts Demos',
+                accountId,
+                fileOnly: true,
+            });
+            console.log('Keyguard result', result);
+            document.querySelector('#result').textContent = 'Export sucessful';
+        } catch (e) {
+            console.error('Keyguard error', e);
+            document.querySelector('#result').textContent = `Error: ${e.message || e}`;
+        }
+    }
+
+    public async exportWords(accountId: string) {
+        try {
+            const result = await this._accountsClient.export({
+                appName: 'Accounts Demos',
+                accountId,
+                wordsOnly: true,
+            });
+            console.log('Keyguard result', result);
+            document.querySelector('#result').textContent = 'Export sucessful';
+        } catch (e) {
+            console.error('Keyguard error', e);
+            document.querySelector('#result').textContent = `Error: ${e.message || e}`;
+        }
     }
 
     public async changePassword(accountId: string) {
@@ -397,6 +423,8 @@ class Demo {
         wallets.forEach(wallet => {
             html += `<li>${wallet.label}<br>
                         <button class="export" data-wallet-id="${wallet.accountId}">Export</button>
+                        <button class="export-file" data-wallet-id="${wallet.accountId}">File</button>
+                        <button class="export-words" data-wallet-id="${wallet.accountId}">Words</button>
                         <button class="change-password" data-wallet-id="${wallet.accountId}">Ch. Pass.</button>
                         ${wallet.type !== 0 ? `<button class="add-account" data-wallet-id="${wallet.accountId}">+ Acc</button>` : ''}
                         <button class="rename" data-wallet-id="${wallet.accountId}">Rename</button>
@@ -433,6 +461,12 @@ class Demo {
         }
         document.querySelectorAll('button.export').forEach(element => {
             element.addEventListener('click', async () => this.export(element.getAttribute('data-wallet-id')));
+        });
+        document.querySelectorAll('button.export-file').forEach(element => {
+            element.addEventListener('click', async () => this.exportFile(element.getAttribute('data-wallet-id')));
+        });
+        document.querySelectorAll('button.export-words').forEach(element => {
+            element.addEventListener('click', async () => this.exportWords(element.getAttribute('data-wallet-id')));
         });
         document.querySelectorAll('button.change-password').forEach(element => {
             element.addEventListener('click', async () => this.changePassword(element.getAttribute('data-wallet-id')));
