@@ -2,7 +2,8 @@
 
 import { WalletInfoEntry, WalletType } from './WalletInfo';
 import { Utf8Tools } from '@nimiq/utils';
-import { LABEL_MAX_LENGTH } from '@/lib/Constants';
+import { LABEL_MAX_LENGTH, ACCOUNT_DEFAULT_LABEL_LEDGER } from '@/lib/Constants';
+import LabelingMachine from './LabelingMachine';
 
 class CookieJar {
     public static readonly VERSION = 1;
@@ -54,7 +55,7 @@ class CookieJar {
     }
 
     public static encodeAndcutLabel(label: string): Uint8Array {
-        let labelBytes =  Utf8Tools.stringToUtf8ByteArray(label);
+        let labelBytes = Utf8Tools.stringToUtf8ByteArray(label);
 
         if (labelBytes.length <= LABEL_MAX_LENGTH) return labelBytes;
 
@@ -68,11 +69,41 @@ class CookieJar {
         return labelBytes;
     }
 
+    private static checkWalletDefaultLabel(firstAddress: Uint8Array, label: string, type: WalletType): string {
+        if (type === WalletType.LEDGER) {
+            if (label === ACCOUNT_DEFAULT_LABEL_LEDGER) return '';
+            return label;
+        }
+
+        const userFriendlyAddress = new Nimiq.Address(firstAddress).toUserFriendlyAddress();
+        const defaultLabel = LabelingMachine.labelAccount(userFriendlyAddress);
+        if (label === defaultLabel) return '';
+        return label;
+    }
+
+    private static checkAccountDefaultLabel(address: Uint8Array, label: string) {
+        const userFriendlyAddress = new Nimiq.Address(address).toUserFriendlyAddress();
+        const defaultLabel = LabelingMachine.labelAddress(userFriendlyAddress);
+        if (label === defaultLabel) return '';
+        return label;
+    }
+
     private static encodeWallet(wallet: WalletInfoEntry) {
         const bytes: number[] = [];
+
+        // The check<Account|Wallet>DefaultLabel functions omit the label when it's the default label
+        const firstAccount = wallet.accounts.values().next().value;
         const label = wallet.type === WalletType.LEGACY
-            ? wallet.accounts.values().next().value.label // label of the single account
-            : wallet.label;
+            ? this.checkAccountDefaultLabel(
+                firstAccount.address,
+                firstAccount.label,
+            )
+            : this.checkWalletDefaultLabel(
+                firstAccount.address,
+                wallet.label,
+                wallet.type,
+            );
+
         const labelBytes = this.encodeAndcutLabel(label);
 
         // Combined label length & wallet type
@@ -122,7 +153,8 @@ class CookieJar {
         // Wallet accounts
         const accounts = Array.from(wallet.accounts.values());
         for (const account of accounts) {
-            const labelBytes = this.encodeAndcutLabel(account.label);
+            const label = this.checkAccountDefaultLabel(account.address, account.label)
+            const labelBytes = this.encodeAndcutLabel(label);
 
             // Account label length
             bytes.push(labelBytes.length);
