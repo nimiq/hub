@@ -32,7 +32,7 @@ export default class App extends Vue {
         // Register service worker if necessary (and possible).
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('./ServiceWorker.js', {
-                scope: './',
+                scope: '/',
             }).then((reg) => {
                 console.debug(`Service worker has been registered for scope: ${reg.scope}`);
             });
