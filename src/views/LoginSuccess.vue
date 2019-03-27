@@ -29,6 +29,7 @@ export default class LoginSuccess extends Vue {
     private retrievalFailed: boolean = false;
     private state: Loader.State = Loader.State.LOADING;
     private title: string = 'Collecting your addresses';
+    private gotError: boolean = false;
 
     private async mounted() {
         // TODO: Handle import of both a legacy and bip39 key!
@@ -47,6 +48,8 @@ export default class LoginSuccess extends Vue {
                         keyResult.keyType,
                         keyResult.keyId,
                         keyguardResultAccounts,
+                        undefined,
+                        this._onCollectAddressesError.bind(this),
                     );
 
                     walletInfo.fileExported = walletInfo.fileExported || keyResult.fileExported;
@@ -66,6 +69,12 @@ export default class LoginSuccess extends Vue {
         });
     }
 
+    private _onCollectAddressesError(error: Error) {
+        this.gotError = true;
+        // FIXME this.$raven is undefined
+        // this.$raven.captureException(error);
+    }
+
     @Emit()
     private done() {
         if (!this.walletInfos.length) throw new Error('WalletInfo not ready.');
@@ -81,8 +90,14 @@ export default class LoginSuccess extends Vue {
             })),
         };
 
-        this.title = 'Your account is ready.';
-        this.state = Loader.State.SUCCESS;
+        if (this.gotError) {
+            this.state = Loader.State.WARNING;
+            this.title = `Your addresses may be
+incomplete.`;
+        } else {
+            this.title = 'Your account is ready.';
+            this.state = Loader.State.SUCCESS;
+        }
 
         setTimeout(() => this.$rpc.resolve(result), Loader.SUCCESS_REDIRECT_DELAY);
     }

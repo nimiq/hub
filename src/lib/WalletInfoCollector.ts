@@ -27,6 +27,8 @@ export default class WalletInfoCollector {
         initialAccounts?: BasicAccountInfo[],
         // tslint:disable-next-line:no-empty
         onUpdate: (walletInfo: WalletInfo, currentlyCheckedAccounts: BasicAccountInfo[]) => void = () => {},
+        // tslint:disable-next-line:no-empty
+        onError: (error: Error) => void = () => {},
     ): Promise<WalletInfo> {
         // Kick off loading dependencies
         WalletInfoCollector._initializeDependencies(walletType);
@@ -92,20 +94,39 @@ export default class WalletInfoCollector {
             derivedAccountsPromise = WalletInfoCollector._deriveAccounts(startIndex,
                 ACCOUNT_MAX_ALLOWED_ADDRESS_GAP, walletType, walletId);
 
-            // find accounts with a balance > 0 and/or transaction receipts
-            foundAccounts = [];
+            // find accounts with a balance > 0
+            const foundAddresses: string[] = [];
             const balances = await WalletInfoCollector._getBalances(derivedAccounts!);
             for (const account of derivedAccounts!) {
                 const balance = balances.get(account.address);
                 if (balance !== undefined && balance !== 0) {
-                    foundAccounts.push(account);
-                    continue;
-                }
-                const receipts = await NetworkClient.Instance.requestTransactionReceipts(account.address);
-                if (receipts.length > 0) {
-                    foundAccounts.push(account);
+                    foundAddresses.push(account.address);
                 }
             }
+
+            // for accounts with balance 0 check if there are transactions
+            const addressesToCheck = derivedAccounts.map((account) => account.address)
+                                                    .filter((address) => foundAddresses.indexOf(address) === -1);
+            let gotError = false;
+            await Promise.all(
+                addressesToCheck.map(async (address) => {
+                    try {
+                        const receipts = await NetworkClient.Instance.requestTransactionReceipts(address);
+                        if (receipts.length > 0) {
+                            foundAddresses.push(address);
+                        }
+                    } catch (error) {
+                        gotError = true;
+                    }
+                }),
+            );
+
+            if (gotError) {
+                onError(new Error('Transaction receipts could not be retrieved'));
+            }
+
+            foundAccounts = derivedAccounts.filter((account) => foundAddresses.indexOf(account.address) !== -1);
+
             if (foundAccounts.length > 0) {
                 WalletInfoCollector._addAccounts(walletInfo, foundAccounts, balances);
                 onUpdate(walletInfo, derivedAccounts);
