@@ -50,7 +50,7 @@ export default class WalletIdentifier extends Vue {
     }
 
     .pop-in {
-        animation: pop-in 0.5s cubic-bezier(.73,2.08,.48,1) backwards;
+        animation: pop-in 0.5s cubic-bezier(.73,2.08,.48,1) both;
     }
 
     @keyframes pop-in {

@@ -3,13 +3,14 @@ import { BrowserDetection } from '@nimiq/utils';
 import { RootState } from '@/store';
 import { Store } from 'vuex';
 import Router from 'vue-router';
-import { RequestType } from './RequestTypes';
+import { ParsedSimpleRequest, RequestType } from './RequestTypes';
 import { RequestParser } from './RequestParser';
 import { RpcRequest, RpcResult } from './PublicRequestTypes';
 import { KeyguardCommand, KeyguardClient } from '@nimiq/keyguard-client';
 import { keyguardResponseRouter } from '@/router';
 import { StaticStore } from '@/lib/StaticStore';
 import { WalletStore } from './WalletStore';
+import { WalletType } from '@/lib/WalletInfo';
 import CookieJar from '@/lib/CookieJar';
 import { Raven } from 'vue-raven'; // Sentry.io SDK
 import { ERROR_CANCELED } from './Constants';
@@ -131,9 +132,11 @@ export default class RpcApi {
         for (const requestType of requestTypes) {
             // Server listener
             this._server.onRequest(requestType, async (state, arg: RpcRequest) => {
+                let request;
                 this._staticStore.rpcState = state;
                 try {
-                    this._staticStore.request = RequestParser.parse(arg, state, requestType) || undefined;
+                    request = RequestParser.parse(arg, state, requestType) || undefined;
+                    this._staticStore.request = request;
                 } catch (error) {
                     state.reply(ResponseStatus.ERROR, error);
                     return;
@@ -143,7 +146,18 @@ export default class RpcApi {
                     hasRpcState: !!this._staticStore.rpcState,
                     hasRequest: !!this._staticStore.request,
                 });
-                this.routerReplace(requestType);
+
+                let account;
+                if (request && 'walletId' in request) {
+                    account = await WalletStore.Instance.get((request as ParsedSimpleRequest).walletId);
+                }
+
+                if (account && account.type === WalletType.LEDGER
+                    && this._router.getMatchedComponents({ name: `${requestType}-ledger` }).length > 0) {
+                    this.routerReplace(`${requestType}-ledger`);
+                } else {
+                    this.routerReplace(requestType);
+                }
             });
         }
     }

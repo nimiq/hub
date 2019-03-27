@@ -351,7 +351,7 @@ export default Loader;
     .loader .title {
         line-height: 1;
         margin-top: 4rem;
-        white-space: pre;
+        white-space: pre-line;
     }
 
     .loader .loader.small .title {

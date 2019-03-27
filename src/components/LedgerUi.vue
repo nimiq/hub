@@ -115,7 +115,7 @@ class LedgerUi extends Vue {
                 break;
             case LedgerApi.RequestType.DERIVE_ACCOUNTS:
                 // not interactive, but takes ~6 seconds
-                this._showInstructions('Fetching Accounts');
+                this._showInstructions('Fetching Addresses');
                 break;
             case LedgerApi.RequestType.CONFIRM_ADDRESS:
                 this._showInstructions('Confirm Address',
