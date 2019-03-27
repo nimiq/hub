@@ -29,7 +29,6 @@ import { Component, Emit, Vue } from 'vue-property-decorator';
 import { PageBody, SmallPage } from '@nimiq/vue-components';
 import { ParsedBasicRequest } from '../lib/RequestTypes';
 import { Account } from '../lib/PublicRequestTypes';
-import { ResponseStatus, State as RpcState } from '@nimiq/rpc';
 import { Static } from '../lib/StaticStore';
 import LedgerApi from '../lib/LedgerApi';
 import LedgerUi from '../components/LedgerUi.vue';
@@ -40,6 +39,7 @@ import WalletInfoCollector from '../lib/WalletInfoCollector';
 import { WalletInfo, WalletType } from '../lib/WalletInfo';
 import { AccountInfo } from '../lib/AccountInfo';
 import { WalletStore } from '../lib/WalletStore';
+import { ERROR_CANCELED } from '../lib/Constants';
 import LabelingMachine from '@/lib/LabelingMachine';
 
 @Component({components: {PageBody, SmallPage, LedgerUi, Loader, IdenticonSelector, WalletIdentifier}})
@@ -53,7 +53,6 @@ export default class SignupLedger extends Vue {
         FINISHED: 'finished',
     };
 
-    @Static private rpcState!: RpcState;
     @Static private request!: ParsedBasicRequest;
 
     private state: string = SignupLedger.State.IDLE;
@@ -69,7 +68,7 @@ export default class SignupLedger extends Vue {
 
     private get loaderTitle() {
         return this.state !== SignupLedger.State.FINISHED
-            ? 'Fetching Accounts'
+            ? 'Fetching Account'
             : this.hadAccounts
                 ? 'You\'re logged in!'
                 : 'Welcome to the Nimiq Blockchain.';
@@ -86,23 +85,9 @@ export default class SignupLedger extends Vue {
         }
     }
 
-    private created() {
-        // called everytime the router shows this page
-        this._run();
-    }
-
-    private destroyed() {
-        const currentRequest = LedgerApi.currentRequest;
-        if (currentRequest && currentRequest.type === LedgerApi.RequestType.DERIVE_ACCOUNTS) {
-            currentRequest.cancel();
-        }
-        this.cancelled = true;
-    }
-
-    private async _run() {
-        if (this.state !== SignupLedger.State.IDLE) return;
-
-        let tryCount = 0;
+    private async created() {
+        // called every time the router shows this page
+        let tryCount = 0; // trying multiple times in case of errors due to weak network connection
         while (!this.cancelled) {
             try {
                 tryCount += 1;
@@ -130,6 +115,14 @@ export default class SignupLedger extends Vue {
             // Let user select an account
             this.state = SignupLedger.State.IDENTICON_SELECTION;
         }
+    }
+
+    private destroyed() {
+        const currentRequest = LedgerApi.currentRequest;
+        if (currentRequest && currentRequest.type === LedgerApi.RequestType.DERIVE_ACCOUNTS) {
+            currentRequest.cancel();
+        }
+        this.cancelled = true;
     }
 
     private async _onAccountSelected(selectedAccount: AccountInfo) {
@@ -202,7 +195,7 @@ export default class SignupLedger extends Vue {
 
     @Emit()
     private close() {
-        this.rpcState.reply(ResponseStatus.ERROR, new Error('CANCEL'));
+        this.$rpc.reject(new Error(ERROR_CANCELED));
     }
 }
 </script>

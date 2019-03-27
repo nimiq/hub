@@ -210,6 +210,12 @@ class LedgerApi {
         return `${LedgerApi.BIP32_BASE_PATH}${keyId}'`;
     }
 
+    public static getKeyIdForBip32Path(path: string): number | null {
+        const pathMatch = LedgerApi.BIP32_PATH_REGEX.exec(path);
+        if (!pathMatch) return null;
+        return parseInt(pathMatch[pathMatch.length - 1], 10);
+    }
+
     public static async deriveAccounts(pathsToDerive: Iterable<string>, walletId?: string)
         : Promise<Array<{ address: string, keyPath: string }>> {
         const request = new LedgerApiRequest(LedgerApi.RequestType.DERIVE_ACCOUNTS,
