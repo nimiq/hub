@@ -147,17 +147,22 @@ export default class RpcApi {
                     hasRequest: !!this._staticStore.request,
                 });
 
-                if (location.pathname !== '/') {
-                    // Don't jump back to request's initial view on reload when navigated to a subsequent view.
-                    // E.g. if the user switches from Checkout to Import, don't jump back to Checkout on reload.
-                    return;
-                }
-
                 let account;
                 // Simply testing if the property exists (with `'walletId' in request`) is not enough,
                 // as `undefined` also counts as existing.
                 if (request && (request as ParsedSimpleRequest).walletId) {
                     account = await WalletStore.Instance.get((request as ParsedSimpleRequest).walletId);
+                    if (!account) {
+                        // no account found although it's required
+                        state.reply(ResponseStatus.ERROR, new Error('Account ID not found'));
+                        return;
+                    }
+                }
+
+                if (location.pathname !== '/') {
+                    // Don't jump back to request's initial view on reload when navigated to a subsequent view.
+                    // E.g. if the user switches from Checkout to Import, don't jump back to Checkout on reload.
+                    return;
                 }
 
                 if (account && account.type === WalletType.LEDGER
