@@ -152,7 +152,7 @@ export default class RpcApi {
                 // as `undefined` also counts as existing.
                 if (request && (request as ParsedSimpleRequest).walletId) {
                     account = await WalletStore.Instance.get((request as ParsedSimpleRequest).walletId);
-                    if (!account) {
+                    if (!account && requestType !== RequestType.LOGOUT) {
                         // no account found although it's required
                         state.reply(ResponseStatus.ERROR, new Error('Account ID not found'));
                         return;
