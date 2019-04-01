@@ -1,7 +1,6 @@
 import { AccountInfo, AccountInfoEntry } from './AccountInfo';
 import {
     ContractInfo,
-    ContractType,
     VestingContractInfo,
     HashedTimeLockedContractInfo,
     ContractInfoEntry,
@@ -40,8 +39,8 @@ export class WalletInfo {
     public findContractsByOwner(address: Nimiq.Address): ContractInfo[] {
         return this.contracts.filter((contract) => {
             switch (contract.type) {
-                case ContractType.VESTING: return (contract as VestingContractInfo).owner.equals(address);
-                case ContractType.HTLC:
+                case Nimiq.Account.Type.VESTING: return (contract as VestingContractInfo).owner.equals(address);
+                case Nimiq.Account.Type.HTLC:
                     return (contract as HashedTimeLockedContractInfo).sender.equals(address)
                         || (contract as HashedTimeLockedContractInfo).recipient.equals(address);
                 default: return false;

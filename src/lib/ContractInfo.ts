@@ -1,23 +1,18 @@
 import { VestingContract, HashedTimeLockedContract, Contract } from './PublicRequestTypes';
 
-export enum ContractType {
-    VESTING,
-    HTLC,
-}
-
 export abstract class ContractInfo {
     public static fromObject(o: ContractInfoEntry): VestingContractInfo | HashedTimeLockedContractInfo {
         switch (o.type) {
-            case ContractType.VESTING:
+            case Nimiq.Account.Type.VESTING:
                 return VestingContractInfo.fromObject(o as VestingContractInfoEntry);
-            case ContractType.HTLC:
+            case Nimiq.Account.Type.HTLC:
                 return HashedTimeLockedContractInfo.fromObject(o as HashedTimeLockedContractInfoEntry);
             default: throw new Error('Unknown contract type: ' + o.type);
         }
     }
 
     constructor(
-        public type: ContractType,
+        public type: Nimiq.Account.Type,
         public label: string,
         public address: Nimiq.Address,
     ) {}
@@ -55,7 +50,7 @@ export class VestingContractInfo extends ContractInfo {
         public totalAmount: number,
         public balance?: number,
     ) {
-        super(ContractType.VESTING, label, address);
+        super(Nimiq.Account.Type.VESTING, label, address);
     }
 
     public toObject(): VestingContractInfoEntry {
@@ -74,7 +69,7 @@ export class VestingContractInfo extends ContractInfo {
 
     public toContractType(): VestingContract {
         return {
-            type: ContractType.VESTING,
+            type: Nimiq.Account.Type.VESTING,
             label: this.label,
             address: this.userFriendlyAddress,
             owner: this.owner.toUserFriendlyAddress(),
@@ -112,7 +107,7 @@ export class HashedTimeLockedContractInfo extends ContractInfo {
         public totalAmount: number,
         public balance?: number,
     ) {
-        super(ContractType.HTLC, label, address);
+        super(Nimiq.Account.Type.HTLC, label, address);
     }
 
     public toObject(): HashedTimeLockedContractInfoEntry {
@@ -132,7 +127,7 @@ export class HashedTimeLockedContractInfo extends ContractInfo {
 
     public toContractType(): HashedTimeLockedContract {
         return {
-            type: ContractType.VESTING,
+            type: Nimiq.Account.Type.VESTING,
             label: this.label,
             address: this.userFriendlyAddress,
             sender: this.sender.toUserFriendlyAddress(),
@@ -149,7 +144,7 @@ export class HashedTimeLockedContractInfo extends ContractInfo {
  * Database Types
  */
 export interface VestingContractInfoEntry {
-    type: ContractType;
+    type: Nimiq.Account.Type;
     label: string;
     address: Uint8Array;
     owner: Uint8Array;
@@ -161,7 +156,7 @@ export interface VestingContractInfoEntry {
 }
 
 export interface HashedTimeLockedContractInfoEntry {
-    type: ContractType;
+    type: Nimiq.Account.Type;
     label: string;
     address: Uint8Array;
     sender: Uint8Array;

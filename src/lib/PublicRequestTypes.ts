@@ -1,5 +1,4 @@
 import { WalletType, WalletInfoEntry } from './WalletInfo';
-import { ContractType } from './ContractInfo';
 
 export interface BasicRequest {
     appName: string;
@@ -77,7 +76,7 @@ export interface Address {
 }
 
 export interface VestingContract {
-    type: ContractType;
+    type: Nimiq.Account.Type;
     address: string; // Userfriendly address
     label: string;
 
@@ -89,7 +88,7 @@ export interface VestingContract {
 }
 
 export interface HashedTimeLockedContract {
-    type: ContractType;
+    type: Nimiq.Account.Type;
     address: string; // Userfriendly address
     label: string;
 

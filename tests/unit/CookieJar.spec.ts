@@ -1,7 +1,6 @@
 import { setup } from './_setup';
 import { WalletType, WalletInfoEntry } from '@/lib/WalletInfo';
 import { AccountInfoEntry } from '@/lib/AccountInfo';
-import { ContractType } from '@/lib/ContractInfo';
 import CookieJar from '@/lib/CookieJar';
 import { Utf8Tools } from '@nimiq/utils';
 
