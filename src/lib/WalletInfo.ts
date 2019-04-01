@@ -1,5 +1,5 @@
 import { AccountInfo, AccountInfoEntry } from './AccountInfo';
-import { ContractInfo } from './ContractInfo';
+import { ContractInfo, ContractType, VestingContractInfo, HashedTimeLockedContractInfo } from './ContractInfo';
 
 export enum WalletType {
     LEGACY = 1,
@@ -25,6 +25,22 @@ export class WalletInfo {
                        public keyMissing: boolean = false,
                        public fileExported: boolean = false,
                        public wordsExported: boolean = false) {}
+
+    public findContractByAddress(address: Nimiq.Address): ContractInfo | undefined {
+        return this.contracts.find((contract) => contract.address.equals(address));
+    }
+
+    public findContractsByOwner(address: Nimiq.Address): ContractInfo[] {
+        return this.contracts.filter((contract) => {
+            switch (contract.type) {
+                case ContractType.VESTING: return (contract as VestingContractInfo).owner.equals(address);
+                case ContractType.HTLC:
+                    return (contract as HashedTimeLockedContractInfo).sender.equals(address)
+                        || (contract as HashedTimeLockedContractInfo).recipient.equals(address);
+                default: return false;
+            }
+        });
+    }
 
     public toObject(): WalletInfoEntry {
         const accountEntries = new Map<string, AccountInfoEntry>();

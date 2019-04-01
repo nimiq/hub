@@ -131,10 +131,8 @@ export default class Rename extends Vue {
             type: this.wallet!.type,
             fileExported: this.wallet!.fileExported,
             wordsExported: this.wallet!.wordsExported,
-            addresses: Array.from(this.accounts.values()).map((addressInfo) => ({
-                address: addressInfo.userFriendlyAddress,
-                label: addressInfo.label,
-            })),
+            addresses: Array.from(this.accounts.values()).map((addressInfo) => addressInfo.toAddressType()),
+            contracts: this.wallet!.contracts.map((contract) => contract.toContractType()),
         };
 
         this.$rpc.resolve(result);

@@ -73,6 +73,7 @@ export default class SignupSuccess extends Vue {
                 address: userFriendlyAddress,
                 label: accountInfo.label,
             }],
+            contracts: [], // A newly created account cannot have any contracts
         };
 
         setTimeout(() => this.$rpc.resolve(result), Loader.SUCCESS_REDIRECT_DELAY);

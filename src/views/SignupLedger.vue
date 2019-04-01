@@ -171,10 +171,9 @@ export default class SignupLedger extends Vue {
                 type: this.walletInfo!.type,
                 fileExported: this.walletInfo!.fileExported,
                 wordsExported: this.walletInfo!.wordsExported,
-                addresses: Array.from(this.walletInfo!.accounts.values()).map((accountInfo) => ({
-                    address: accountInfo.userFriendlyAddress,
-                    label: accountInfo.label,
-                })),
+                addresses: Array.from(this.walletInfo!.accounts.values())
+                    .map((accountInfo) => accountInfo.toAddressType()),
+                contracts: this.walletInfo!.contracts.map((contract) => contract.toContractType()),
             };
             this.$rpc.resolve(result);
         }, Loader.SUCCESS_REDIRECT_DELAY);
