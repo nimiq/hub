@@ -9,6 +9,7 @@ import {
     ACCOUNT_DEFAULT_LABEL_LEDGER,
     LABEL_MAX_LENGTH,
 } from '@/lib/Constants';
+import LabelingMachine from './LabelingMachine';
 
 export class CookieDecoder {
     public static decode(str: string): WalletInfoEntry[] {
@@ -104,9 +105,14 @@ export class CookieDecoder {
         // Wallet label
         const walletLabelBytes = this.readBytes(bytes, labelLength);
 
-        const walletLabel = Utf8Tools.utf8ByteArrayToString(new Uint8Array(walletLabelBytes));
-
         const accounts = this.decodeAccounts(bytes, type);
+
+        const firstAccount = accounts.values().next().value;
+        const walletLabel = walletLabelBytes.length > 0
+            ? Utf8Tools.utf8ByteArrayToString(new Uint8Array(walletLabelBytes))
+            : type === WalletType.LEDGER
+                ? ACCOUNT_DEFAULT_LABEL_LEDGER
+                : LabelingMachine.labelAccount(this._toUserFriendlyAddress(firstAccount.address));
 
         const walletInfoEntry: WalletInfoEntry = {
             id,
@@ -157,11 +163,13 @@ export class CookieDecoder {
         // Account label
         const labelBytes = this.readBytes(bytes, labelLength);
 
-        const accountLabel = Utf8Tools.utf8ByteArrayToString(new Uint8Array(labelBytes));
-
         // Account address
         // (iframe does not have Nimiq lib)
         const addressBytes = this.readBytes(bytes, 20 /* Nimiq.Address.SERIALIZED_SIZE */);
+
+        const accountLabel = labelBytes.length > 0
+            ? Utf8Tools.utf8ByteArrayToString(new Uint8Array(labelBytes))
+            : LabelingMachine.labelAddress(this._toUserFriendlyAddress(new Uint8Array(addressBytes)));
 
         const accountInfoEntry: AccountInfoEntry = {
             path: 'not public',

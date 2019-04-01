@@ -20,12 +20,12 @@ const BURN_ADDRESS_S = new Uint8Array(BURN_ADDRESS.serialize());
 const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
     {
         id: 'K23',
-        label: 'Main 🙉',
+        label: 'Green Account',
         accounts: new Map<string, AccountInfoEntry>([
             [
                 DUMMY_ADDRESS_HR1,
                 {
-                    path: 'm/0\'',
+                    path: 'm/44\'/242\'/0\'/0\'',
                     label: 'MyAddress1',
                     address: DUMMY_ADDRESS_S1,
                 },
@@ -33,8 +33,8 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
             [
                 DUMMY_ADDRESS_HR2,
                 {
-                    path: 'm/0\'',
-                    label: '',
+                    path: 'm/44\'/242\'/0\'/5\'',
+                    label: 'Divine Jinxing Budgie',
                     address: DUMMY_ADDRESS_S2,
                 },
             ],
@@ -47,12 +47,12 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
     },
     {
         id: '1ee3d926a49d',
-        label: '',
+        label: 'Monkey Family 🙉',
         accounts: new Map<string, AccountInfoEntry>([
             [
                 BURN_ADDRESS_HR,
                 {
-                    path: 'm/0\'',
+                    path: 'm/44\'/242\'/0\'/0\'',
                     label: 'Daniel\'s Ledger ❤',
                     address: BURN_ADDRESS_S,
                 },
@@ -61,7 +61,7 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         contracts: [{
             address: DUMMY_ADDRESS1,
             label: 'Savings',
-            ownerPath: 'm/0\'',
+            ownerPath: 'm/44\'/242\'/0\'/0\'',
             type: ContractType.VESTING,
         }],
         type: WalletType.LEDGER,
@@ -95,16 +95,16 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
             [
                 DUMMY_ADDRESS_HR1,
                 {
-                    path: 'm/0\'',
-                    label: 'MyAddress1',
+                    path: 'm/44\'/242\'/0\'/0\'',
+                    label: 'Fishy Chirping Fly',
                     address: DUMMY_ADDRESS_S1,
                 },
             ],
             [
                 DUMMY_ADDRESS_HR2,
                 {
-                    path: 'm/0\'',
-                    label: '',
+                    path: 'm/44\'/242\'/0\'/5\'',
+                    label: 'MyAddress2',
                     address: DUMMY_ADDRESS_S2,
                 },
             ],
@@ -117,21 +117,21 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
     },
     {
         id: '1ee3d926a4a0',
-        label: '',
+        label: 'Ledger Account',
         accounts: new Map<string, AccountInfoEntry>([
             [
                 BURN_ADDRESS_HR,
                 {
-                    path: 'm/0\'',
-                    label: 'Daniel\'s Ledger ❤',
+                    path: 'm/44\'/242\'/0\'/0\'',
+                    label: 'Childish Scoring Warlock',
                     address: BURN_ADDRESS_S,
                 },
             ],
         ]),
         contracts: [{
             address: DUMMY_ADDRESS1,
-            label: 'Savings',
-            ownerPath: 'm/0\'',
+            label: 'Vesting Contract',
+            ownerPath: 'm/44\'/242\'/0\'/0\'',
             type: ContractType.VESTING,
         }],
         type: WalletType.LEDGER,
@@ -163,7 +163,7 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
 const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
     {
         id: 'K23',
-        label: 'Main 🙉',
+        label: 'Green Account',
         accounts: new Map<string, AccountInfoEntry>([
             [
                 DUMMY_ADDRESS_HR1,
@@ -177,7 +177,7 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
                 DUMMY_ADDRESS_HR2,
                 {
                     path: 'not public',
-                    label: '',
+                    label: 'Divine Jinxing Budgie',
                     address: DUMMY_ADDRESS_S2,
                 },
             ],
@@ -190,7 +190,7 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
     },
     {
         id: '1ee3d926a49d',
-        label: '',
+        label: 'Monkey Family 🙉',
         accounts: new Map<string, AccountInfoEntry>([
             [
                 BURN_ADDRESS_HR,
@@ -234,7 +234,7 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
                 DUMMY_ADDRESS_HR1,
                 {
                     path: 'not public',
-                    label: 'MyAddress1',
+                    label: 'Fishy Chirping Fly',
                     address: DUMMY_ADDRESS_S1,
                 },
             ],
@@ -242,7 +242,7 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
                 DUMMY_ADDRESS_HR2,
                 {
                     path: 'not public',
-                    label: '',
+                    label: 'MyAddress2',
                     address: DUMMY_ADDRESS_S2,
                 },
             ],
@@ -255,13 +255,13 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
     },
     {
         id: '1ee3d926a4a0',
-        label: '',
+        label: 'Ledger Account',
         accounts: new Map<string, AccountInfoEntry>([
             [
                 BURN_ADDRESS_HR,
                 {
                     path: 'not public',
-                    label: 'Daniel\'s Ledger ❤',
+                    label: 'Childish Scoring Warlock',
                     address: BURN_ADDRESS_S,
                 },
             ],
@@ -297,10 +297,10 @@ const BYTES = [
     1, // cookie version
 
     // wallet 1 (BIP39)
-    38, // wallet label length (9), wallet type (2)
+    2, // wallet label length (0), wallet type (2)
     1, // keyMissing = true, fileExported = false, wordsExported = false
     1, 23, // wallet id
-    77, 97, 105, 110, 32, 240, 159, 153, 137, // wallet label
+    // wallet label (omitted)
     2, // number of accounts
 
         // account 1
@@ -310,12 +310,14 @@ const BYTES = [
 
         // account 2
         0, // account label length
+        // account label (omitted)
         101, 254, 174, 109, 147, 234, 215, 10, 22, 16, 67, 70, 109, 90, 53, 154, 43, 22, 180, 254, // account address
 
     // wallet 2 (LEDGER)
-    3, // wallet label length (0), wallet type (3)
+    75, // wallet label length (18), wallet type (3)
     3, // keyMissing = true, fileExported = true, wordsExported = false
     30, 227, 217, 38, 164, 157, // wallet id
+    77, 111, 110, 107, 101, 121, 32, 70, 97, 109, 105, 108, 121, 32, 240, 159, 153, 137, // wallet label
     1, // number of accounts
 
         // account 1
@@ -340,26 +342,28 @@ const BYTES = [
     2, // number of accounts
 
         // account 1
-        10, // account label length
-        77, 121, 65, 100, 100, 114, 101, 115, 115, 49, // account label
+        0, // account label length
+        // account label (omitted)
         51, 71, 19, 87, 173, 20, 186, 75, 28, 253, 125, 148, 90, 165, 116, 22, 53, 112, 220, 196, // account address
 
         // account 2
-        0, // account label length
+        10, // account label length
+        77, 121, 65, 100, 100, 114, 101, 115, 115, 50, // account label
         101, 254, 174, 109, 147, 234, 215, 10, 22, 16, 67, 70, 109, 90, 53, 154, 43, 22, 180, 254, // account address
 
-    // wallet 2 (LEDGER)
+    // wallet 5 (LEDGER)
     3, // wallet label length (0), wallet type (3)
     0, // keyMissing = false, fileExported = false, wordsExported = false
     30, 227, 217, 38, 164, 160, // wallet id
+    // wallet label (omitted)
     1, // number of accounts
 
         // account 1
-        19, // account label length
-        68, 97, 110, 105, 101, 108, 39, 115, 32, 76, 101, 100, 103, 101, 114, 32, 226, 157, 164, // account label
+        0, // account label length
+        // account label (omitted)
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // account address
 
-    // wallet 3 (LEGACY)
+    // wallet 6 (LEGACY)
     41, // account label length (10), wallet type (1)
     2, // keyMissing = false, fileExported = true, wordsExported = false
     3, 137, 84, 64, // wallet id
