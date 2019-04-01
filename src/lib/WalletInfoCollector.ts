@@ -52,7 +52,7 @@ export default class WalletInfoCollector {
         const walletInfo = await WalletInfoCollector._getWalletInfoInstance(walletId, walletType);
 
         // Add initial accounts to the walletInfo
-        let initialAccountsPromise;
+        let initialAccountsPromise = Promise.resolve();
         if (initialAccounts && initialAccounts.length > 0) {
             WalletInfoCollector._addAccounts(walletInfo, initialAccounts, undefined);
 
@@ -63,8 +63,6 @@ export default class WalletInfoCollector {
                     onUpdate(walletInfo, await derivedAccountsPromise);
                 });
             }
-        } else {
-            initialAccountsPromise = Promise.resolve();
         }
         onUpdate(walletInfo, await derivedAccountsPromise);
 
