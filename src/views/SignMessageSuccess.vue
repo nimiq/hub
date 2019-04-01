@@ -25,13 +25,12 @@ import { Utf8Tools } from '@nimiq/utils';
 @Component({components: {Loader, SmallPage}})
 export default class SignMessageSuccess extends Vue {
     @Static private request!: ParsedSignMessageRequest;
-    // The stored keyguardRequest does not have Uint8Array, only regular arrays
     @Static private keyguardRequest!: KeyguardClient.SignMessageRequest;
     @State private keyguardResult!: KeyguardClient.SignMessageResult;
 
     private mounted() {
         const result: SignedMessage = {
-            signer: new Nimiq.Address(new Uint8Array(this.keyguardRequest.signer)).toUserFriendlyAddress(),
+            signer: new Nimiq.Address(this.keyguardRequest.signer).toUserFriendlyAddress(),
             signerPublicKey: this.keyguardResult.publicKey,
             signature: this.keyguardResult.signature,
             message: typeof this.request.message === 'string'

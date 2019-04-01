@@ -195,6 +195,7 @@ export default class Checkout extends Vue {
             data: this.request.data,
             flags: this.request.flags,
         };
+
         staticStore.keyguardRequest = request;
 
         const client = this.$rpc.createKeyguardClient();

@@ -36,9 +36,6 @@ class Network extends Vue {
         return client.connectPico(addresses);
     }
 
-    // Uint8Arrays cannot be stored in SessionStorage, thus the stored request has arrays instead and is
-    // thus not exactly the type KSignTransactionRequest. Thus all potential Uint8Arrays are converted
-    // into Nimiq.SerialBuffers (sender, recipient, data).
     public async prepareTx(
         keyguardRequest: KeyguardClient.SignTransactionRequest,
         keyguardResult: KeyguardClient.SignTransactionResult,
@@ -53,15 +50,15 @@ class Network extends Vue {
             || keyguardRequest.recipientType !== Nimiq.Account.Type.BASIC
         ) {
             tx = new Nimiq.ExtendedTransaction(
-                new Nimiq.Address(new Nimiq.SerialBuffer(keyguardRequest.sender)),
+                new Nimiq.Address(keyguardRequest.sender),
                 keyguardRequest.senderType || Nimiq.Account.Type.BASIC,
-                new Nimiq.Address(new Nimiq.SerialBuffer(keyguardRequest.recipient)),
+                new Nimiq.Address(keyguardRequest.recipient),
                 keyguardRequest.recipientType || Nimiq.Account.Type.BASIC,
                 keyguardRequest.value,
                 keyguardRequest.fee,
                 keyguardRequest.validityStartHeight,
                 keyguardRequest.flags || 0,
-                new Nimiq.SerialBuffer(keyguardRequest.data || 0),
+                keyguardRequest.data || new Uint8Array(0),
                 Nimiq.SignatureProof.singleSig(
                     new Nimiq.PublicKey(keyguardResult.publicKey),
                     new Nimiq.Signature(keyguardResult.signature),
@@ -70,7 +67,7 @@ class Network extends Vue {
         } else {
             tx = new Nimiq.BasicTransaction(
                 new Nimiq.PublicKey(keyguardResult.publicKey),
-                new Nimiq.Address(new Nimiq.SerialBuffer(keyguardRequest.recipient)),
+                new Nimiq.Address(keyguardRequest.recipient),
                 keyguardRequest.value,
                 keyguardRequest.fee,
                 keyguardRequest.validityStartHeight,
