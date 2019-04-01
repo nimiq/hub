@@ -3,6 +3,7 @@ import { createDecorator } from 'vue-class-component';
 import { ParsedRpcRequest, RequestType } from './RequestTypes';
 import { RpcResult } from './PublicRequestTypes';
 import { State as RpcState } from '@nimiq/rpc';
+import { Request as KeyguardRequest } from '@nimiq/keyguard-client';
 
 export class StaticStore {
     private static instance: StaticStore;
@@ -16,7 +17,7 @@ export class StaticStore {
     public request?: ParsedRpcRequest;
     public kind?: RequestType;
     public rpcState?: RpcState;
-    public keyguardRequest?: any;
+    public keyguardRequest?: KeyguardRequest;
     public originalRouteName?: string;
     public sideResult?: RpcResult | Error;
 }

@@ -46,12 +46,7 @@ export default class SignTransaction extends Vue {
             flags: this.request.flags,
         };
 
-        const storedRequest = Object.assign({}, request, {
-            sender: Array.from(request.sender),
-            recipient: Array.from(request.recipient),
-            data: Array.from(request.data || []),
-        });
-        staticStore.keyguardRequest = storedRequest;
+        staticStore.keyguardRequest = request;
 
         const client = this.$rpc.createKeyguardClient();
         client.signTransaction(request);
