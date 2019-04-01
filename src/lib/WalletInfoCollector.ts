@@ -56,7 +56,7 @@ export default class WalletInfoCollector {
         if (initialAccounts && initialAccounts.length > 0) {
             WalletInfoCollector._addAccounts(walletInfo, initialAccounts, undefined);
 
-            if (walletInfo.type !== WalletType.LEGACY) {
+            if (walletType !== WalletType.LEGACY) {
                 // fetch balances and update again
                 initialAccountsPromise = WalletInfoCollector._getBalances(initialAccounts).then(async (balances) => {
                     WalletInfoCollector._addAccounts(walletInfo, initialAccounts, balances);
