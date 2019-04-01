@@ -52,16 +52,17 @@ export default class WalletInfoCollector {
         const walletInfo = await WalletInfoCollector._getWalletInfoInstance(walletId, walletType);
 
         // Add initial accounts to the walletInfo
-        let initialAccountsPromise;
+        let initialAccountsPromise = Promise.resolve();
         if (initialAccounts && initialAccounts.length > 0) {
             WalletInfoCollector._addAccounts(walletInfo, initialAccounts, undefined);
-            // fetch balances and update again
-            initialAccountsPromise = WalletInfoCollector._getBalances(initialAccounts).then(async (balances) => {
-                WalletInfoCollector._addAccounts(walletInfo, initialAccounts, balances);
-                onUpdate(walletInfo, await derivedAccountsPromise);
-            });
-        } else {
-            initialAccountsPromise = Promise.resolve();
+
+            if (walletType !== WalletType.LEGACY) {
+                // fetch balances and update again
+                initialAccountsPromise = WalletInfoCollector._getBalances(initialAccounts).then(async (balances) => {
+                    WalletInfoCollector._addAccounts(walletInfo, initialAccounts, balances);
+                    onUpdate(walletInfo, await derivedAccountsPromise);
+                });
+            }
         }
         onUpdate(walletInfo, await derivedAccountsPromise);
 
