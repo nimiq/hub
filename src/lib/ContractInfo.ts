@@ -11,10 +11,13 @@ export abstract class ContractInfo {
         }
     }
 
+    public walletId?: string;
+
     constructor(
         public type: Nimiq.Account.Type,
         public label: string,
         public address: Nimiq.Address,
+        public balance?: number,
     ) {}
 
     public get userFriendlyAddress(): string {
@@ -50,7 +53,7 @@ export class VestingContractInfo extends ContractInfo {
         public totalAmount: number,
         public balance?: number,
     ) {
-        super(Nimiq.Account.Type.VESTING, label, address);
+        super(Nimiq.Account.Type.VESTING, label, address, balance);
     }
 
     public toObject(): VestingContractInfoEntry {
@@ -78,6 +81,14 @@ export class VestingContractInfo extends ContractInfo {
             stepBlocks: this.stepBlocks,
             totalAmount: this.totalAmount,
         };
+    }
+
+    public calculateAvailableAmount(height: number, currentBalance = this.totalAmount) {
+        return (currentBalance - this.totalAmount)
+        + Math.min(
+            this.totalAmount,
+            Math.max(0, Math.floor((height - this.start) / this.stepBlocks)) * this.stepAmount,
+        );
     }
 }
 
@@ -107,7 +118,7 @@ export class HashedTimeLockedContractInfo extends ContractInfo {
         public totalAmount: number,
         public balance?: number,
     ) {
-        super(Nimiq.Account.Type.HTLC, label, address);
+        super(Nimiq.Account.Type.HTLC, label, address, balance);
     }
 
     public toObject(): HashedTimeLockedContractInfoEntry {

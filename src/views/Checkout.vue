@@ -66,6 +66,7 @@ import {
 import Network from '@/components/Network.vue';
 import Loader from '@/components/Loader.vue';
 import KeyguardClient from '@nimiq/keyguard-client';
+import { ContractInfo, VestingContractInfo } from '@/lib/ContractInfo';
 
 @Component({components: {PaymentInfoLine, AccountSelector, AccountInfoScreen, SmallPage, Network, Loader}})
 export default class Checkout extends Vue {
@@ -107,24 +108,33 @@ export default class Checkout extends Vue {
             const wallets = this.wallets.slice(0);
 
             // Generate a new array with references to the respective wallets' accounts
-            const accounts = wallets.reduce((accs, wallet) => {
-                accs.push(...wallet.accounts.values());
-                return accs;
-            }, [] as AccountInfo[]);
+            const accountsAndContracts = wallets.reduce((acc, wallet) => {
+                acc.push(...wallet.accounts.values());
+                acc.push(...wallet.contracts);
+                return acc;
+            }, [] as Array<AccountInfo | ContractInfo>);
 
             // Reduce userfriendly addresses from that
-            const addresses = accounts.map((account) => account.userFriendlyAddress);
+            const addresses = accountsAndContracts.map((accountOrContract) => accountOrContract.userFriendlyAddress);
 
             // Get balances through pico consensus, also triggers head-change event
             const network = (this.$refs.network as Network);
             const balances: Map<string, number> = await network.connectPico(addresses);
 
-            // Update accounts with their balances
+            // Update accounts/contracts with their balances
             // (The accounts are still references to themselves in the wallets' accounts maps)
-            for (const account of accounts) {
-                const balance = balances.get(account.userFriendlyAddress);
+            for (const accountOrContract of accountsAndContracts) {
+                const balance = balances.get(accountOrContract.userFriendlyAddress);
                 if (balance === undefined) continue;
-                account.balance = Nimiq.Policy.coinsToSatoshis(balance);
+
+                if ('type' in accountOrContract && accountOrContract.type === Nimiq.Account.Type.VESTING) {
+                    // Calculate available amount for vesting contract
+                    accountOrContract.balance =
+                        (accountOrContract as VestingContractInfo).calculateAvailableAmount(this.height, balance);
+                    continue;
+                }
+
+                accountOrContract.balance = Nimiq.Policy.coinsToSatoshis(balance);
             }
 
             // Store updated wallets
@@ -156,18 +166,28 @@ export default class Checkout extends Vue {
         if (!this.height) return; // TODO: Make it impossible for users to click when height is not ready
 
         const walletInfo = this.wallets.find((wallet: WalletInfo) => wallet.id === walletId)!;
-        const accountInfo = walletInfo.accounts.get(address)!;
+        let accountInfo = walletInfo.accounts.get(address);
+        let contractInfo: ContractInfo | undefined;
+        if (!accountInfo) {
+            // Search contracts
+            contractInfo = walletInfo.findContractByAddress(Nimiq.Address.fromUserFriendlyAddress(address));
+            if (contractInfo!.type === Nimiq.Account.Type.HTLC) {
+                alert('HTLC contracts are not yet supported for checkout');
+                return;
+            }
+            accountInfo = walletInfo.accounts.get((contractInfo as VestingContractInfo).owner.toUserFriendlyAddress());
+        }
 
         // FIXME: Currently unused, but should be reactivated
         this.$store.commit('setActiveAccount', {
             walletId: walletInfo.id,
-            userFriendlyAddress: accountInfo.userFriendlyAddress,
+            userFriendlyAddress: accountInfo!.userFriendlyAddress,
         });
 
-        this.proceedToKeyguard(walletInfo, accountInfo);
+        this.proceedToKeyguard(walletInfo, accountInfo!, contractInfo);
     }
 
-    private proceedToKeyguard(walletInfo: WalletInfo, accountInfo: AccountInfo) {
+    private proceedToKeyguard(walletInfo: WalletInfo, accountInfo: AccountInfo, contractInfo?: ContractInfo) {
         // The next block is the earliest for which tx are accepted by standard miners
         const validityStartHeight = this.height + 1
             - TX_VALIDITY_WINDOW
@@ -183,9 +203,9 @@ export default class Checkout extends Vue {
             keyPath: accountInfo.path,
             keyLabel: walletInfo.label,
 
-            sender: accountInfo.address.serialize(),
-            senderType: Nimiq.Account.Type.BASIC,
-            senderLabel: accountInfo.label,
+            sender: (contractInfo || accountInfo).address.serialize(),
+            senderType: contractInfo ? contractInfo.type : Nimiq.Account.Type.BASIC,
+            senderLabel: (contractInfo || accountInfo).label,
             recipient: this.request.recipient.serialize(),
             recipientType: this.request.recipientType,
             // recipientLabel: '', // Checkout is using the shopOrigin instead
