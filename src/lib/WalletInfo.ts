@@ -1,5 +1,11 @@
 import { AccountInfo, AccountInfoEntry } from './AccountInfo';
-import { ContractInfo, ContractType, VestingContractInfo, HashedTimeLockedContractInfo } from './ContractInfo';
+import {
+    ContractInfo,
+    ContractType,
+    VestingContractInfo,
+    HashedTimeLockedContractInfo,
+    ContractInfoEntry,
+} from './ContractInfo';
 
 export enum WalletType {
     LEGACY = 1,
@@ -13,7 +19,8 @@ export class WalletInfo {
         o.accounts.forEach((accountInfoEntry, userFriendlyAddress) => {
             accounts.set(userFriendlyAddress, AccountInfo.fromObject(accountInfoEntry));
         });
-        return new WalletInfo(o.id, o.label, accounts, o.contracts, o.type,
+        const contracts = o.contracts.map((contract) => ContractInfo.fromObject(contract));
+        return new WalletInfo(o.id, o.label, accounts, contracts, o.type,
             o.keyMissing, o.fileExported, o.wordsExported);
     }
 
@@ -47,11 +54,12 @@ export class WalletInfo {
         this.accounts.forEach((accountInfo, userFriendlyAddress) => {
             accountEntries.set(userFriendlyAddress, accountInfo.toObject());
         });
+        const contractEntries = this.contracts.map((contract) => contract.toObject());
         return {
             id: this.id,
             label: this.label,
             accounts: accountEntries,
-            contracts: this.contracts,
+            contracts: contractEntries,
             type: this.type,
             keyMissing: this.keyMissing,
             fileExported: this.fileExported,
@@ -67,7 +75,7 @@ export interface WalletInfoEntry {
     id: string;
     label: string;
     accounts: Map</*address*/ string, AccountInfoEntry>;
-    contracts: ContractInfo[];
+    contracts: ContractInfoEntry[];
     type: WalletType;
     keyMissing: boolean;
     fileExported: boolean;

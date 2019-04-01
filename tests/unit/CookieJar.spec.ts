@@ -58,12 +58,7 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
                 },
             ],
         ]),
-        contracts: [{
-            address: DUMMY_ADDRESS1,
-            label: 'Savings',
-            ownerPath: 'm/44\'/242\'/0\'/0\'',
-            type: ContractType.VESTING,
-        }],
+        contracts: [], // TODO Add cookie contract encoding
         type: WalletType.LEDGER,
         keyMissing: true,
         fileExported: true,
@@ -128,12 +123,7 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
                 },
             ],
         ]),
-        contracts: [{
-            address: DUMMY_ADDRESS1,
-            label: 'Vesting Contract',
-            ownerPath: 'm/44\'/242\'/0\'/0\'',
-            type: ContractType.VESTING,
-        }],
+        contracts: [], // TODO Add cookie contract encoding
         type: WalletType.LEDGER,
         keyMissing: false,
         fileExported: false,

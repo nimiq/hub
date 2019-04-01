@@ -2,31 +2,38 @@ import { setup } from './_setup';
 import { WalletInfo, WalletType } from '@/lib/WalletInfo';
 import { WalletStore } from '@/lib/WalletStore';
 import { AccountInfo } from '@/lib/AccountInfo';
-import { ContractType } from '@/lib/ContractInfo';
+import { VestingContractInfo, HashedTimeLockedContractInfo } from '@/lib/ContractInfo';
 
 setup();
 
 const indexedDB: IDBFactory = require('fake-indexeddb'); // tslint:disable-line:no-var-requires
 
 const DUMMY_ADDRESS = Nimiq.Address.fromUserFriendlyAddress('NQ07 0000 0000 0000 0000 0000 0000 0000 0000');
-const DUMMY: WalletInfo[] = [
-    new WalletInfo('funny-giraffe', 'Main',
+const DUMMY: WalletInfo[] = [ // IDs must be alphabetically ordered, as the WalletStore uses the id as the primary index
+    new WalletInfo('K1', 'Old',
+        new Map<string, AccountInfo>([
+            ['NQ07 0000 0000 0000 0000 0000 0000 0000 0000', new AccountInfo('m/0\'', 'OldAddress', DUMMY_ADDRESS)],
+        ]), [new VestingContractInfo(
+            'Savings',
+            Nimiq.Address.fromUserFriendlyAddress('NQ07 0000 0000 0000 0000 0000 0000 0000 0000'),
+            Nimiq.Address.fromUserFriendlyAddress('NQ07 0000 0000 0000 0000 0000 0000 0000 0000'),
+            0, 1500000, 120000, 3000000,
+        )], WalletType.LEGACY),
+    new WalletInfo('K2', 'Main',
         new Map<string, AccountInfo>([
             ['NQ07 0000 0000 0000 0000 0000 0000 0000 0000', new AccountInfo('m/0\'', 'MyAccount', DUMMY_ADDRESS)],
         ]), [], WalletType.BIP39),
-    new WalletInfo('joyful-cat', 'Ledger',
+    new WalletInfo('L1', 'Ledger',
         new Map<string, AccountInfo>([
             ['NQ07 0000 0000 0000 0000 0000 0000 0000 0000', new AccountInfo('m/0\'', 'MyLedger', DUMMY_ADDRESS)],
-        ]), [{
-            address: DUMMY_ADDRESS,
-            label: 'Savings',
-            ownerPath: 'm/0\'',
-            type: ContractType.VESTING,
-        }], WalletType.LEDGER),
-    new WalletInfo('sad-panda', 'Old',
-        new Map<string, AccountInfo>([
-            ['NQ07 0000 0000 0000 0000 0000 0000 0000 0000', new AccountInfo('m/0\'', 'OldAddress', DUMMY_ADDRESS)],
-        ]), [], WalletType.LEGACY),
+        ]), [new HashedTimeLockedContractInfo(
+            'Agora.Trade HTLC',
+            Nimiq.Address.fromUserFriendlyAddress('NQ07 0000 0000 0000 0000 0000 0000 0000 0000'),
+            Nimiq.Address.fromUserFriendlyAddress('NQ07 0000 0000 0000 0000 0000 0000 0000 0000'),
+            Nimiq.Address.fromUserFriendlyAddress('NQ07 0000 0000 0000 0000 0000 0000 0000 0000'),
+            Nimiq.Hash.fromHex('ABC'),
+            1, 120, 3000e5,
+        )], WalletType.LEDGER),
 ];
 
 const beforeEachCallback = async () => {
@@ -62,14 +69,14 @@ describe('WalletStore', () => {
     });
 
     it('can get plain account infos', async () => {
-        const [key1, key2, key3] = await Promise.all([
+        const [key0, key1, key2] = await Promise.all([
             WalletStore.Instance.get(DUMMY[0].id),
             WalletStore.Instance.get(DUMMY[1].id),
             WalletStore.Instance.get(DUMMY[2].id),
         ]);
-        expect(key1).toEqual(DUMMY[0]);
-        expect(key2).toEqual(DUMMY[1]);
-        expect(key3).toEqual(DUMMY[2]);
+        expect(key0).toEqual(DUMMY[0]);
+        expect(key1).toEqual(DUMMY[1]);
+        expect(key2).toEqual(DUMMY[2]);
     });
 
     it('can list keys', async () => {
