@@ -98,11 +98,7 @@ export default class SignMessage extends Vue {
             signerLabel: accountInfo.label,
         };
 
-        const storedRequest = Object.assign({}, request, {
-            signer: Array.from(request.signer),
-            message: Array.from(request.message as Uint8Array),
-        });
-        staticStore.keyguardRequest = storedRequest;
+        staticStore.keyguardRequest = request;
 
         const client = this.$rpc.createKeyguardClient();
         client.signMessage(request);
