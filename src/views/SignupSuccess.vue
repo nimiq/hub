@@ -12,7 +12,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Component, Vue } from 'vue-property-decorator';
 import { SmallPage } from '@nimiq/vue-components';
 import { AccountInfo } from '../lib/AccountInfo';
 import { WalletInfo, WalletType } from '../lib/WalletInfo';

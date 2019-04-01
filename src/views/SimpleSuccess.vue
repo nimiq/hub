@@ -12,7 +12,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Emit, Vue } from 'vue-property-decorator';
+import { Component, Vue } from 'vue-property-decorator';
 import { SmallPage } from '@nimiq/vue-components';
 import { State } from 'vuex-class';
 import { RpcRequest, SimpleResult } from '../lib/PublicRequestTypes';

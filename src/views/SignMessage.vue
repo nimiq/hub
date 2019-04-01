@@ -25,7 +25,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Emit, Vue } from 'vue-property-decorator';
+import { Component, Vue } from 'vue-property-decorator';
 import { Getter, Mutation } from 'vuex-class';
 import { SmallPage, AccountSelector } from '@nimiq/vue-components';
 import { RequestType, ParsedSignMessageRequest } from '../lib/RequestTypes';
@@ -148,7 +148,6 @@ export default class SignMessage extends Vue {
         delete staticStore.sideResult;
     }
 
-    @Emit()
     private close() {
         this.$rpc.reject(new Error(ERROR_CANCELED));
     }

@@ -47,7 +47,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Emit, Watch, Vue } from 'vue-property-decorator';
+import { Component, Vue } from 'vue-property-decorator';
 import { PaymentInfoLine, AccountSelector, AccountInfo as AccountInfoScreen, SmallPage } from '@nimiq/vue-components';
 import { ParsedCheckoutRequest, RequestType } from '../lib/RequestTypes';
 import { Account } from '../lib/PublicRequestTypes';
@@ -217,7 +217,6 @@ export default class Checkout extends Vue {
         }
     }
 
-    @Emit()
     private close() {
         this.$rpc.reject(new Error(ERROR_CANCELED));
     }

@@ -32,7 +32,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Emit } from 'vue-property-decorator';
+import { Component, Vue } from 'vue-property-decorator';
 import { AccountList, SmallPage, PageHeader, PageBody, PageFooter } from '@nimiq/vue-components';
 import Input from '@/components/Input.vue';
 import { ParsedRenameRequest } from '../lib/RequestTypes';
@@ -140,7 +140,6 @@ export default class Rename extends Vue {
         this.$rpc.resolve(result);
     }
 
-    @Emit()
     private close() {
         this.$rpc.reject(new Error(ERROR_CANCELED));
     }
