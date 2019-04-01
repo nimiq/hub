@@ -16,7 +16,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Emit, Vue } from 'vue-property-decorator';
+import { Component, Vue } from 'vue-property-decorator';
 import { PageBody, SmallPage } from '@nimiq/vue-components';
 import LedgerUi from '../components/LedgerUi.vue';
 import Loader from '../components/Loader.vue';
@@ -95,10 +95,8 @@ export default class AddAddressLedger extends Vue {
             label: selectedAccount.label,
         };
         this.$rpc.resolve(result);
-        this.$emit('done');
     }
 
-    @Emit()
     private close() {
         this.$rpc.reject(new Error(ERROR_CANCELED));
     }

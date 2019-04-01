@@ -12,7 +12,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Emit, Vue } from 'vue-property-decorator';
+import { Component, Vue } from 'vue-property-decorator';
 import { State } from 'vuex-class';
 import { ParsedSignMessageRequest } from '../lib/RequestTypes';
 import { SignedMessage } from '../lib/PublicRequestTypes';
@@ -29,7 +29,6 @@ export default class SignMessageSuccess extends Vue {
     @Static private keyguardRequest!: KeyguardClient.SignMessageRequest;
     @State private keyguardResult!: KeyguardClient.SignMessageResult;
 
-    @Emit()
     private mounted() {
         const result: SignedMessage = {
             signer: new Nimiq.Address(new Uint8Array(this.keyguardRequest.signer)).toUserFriendlyAddress(),

@@ -7,17 +7,16 @@
 </template>
 
 <script lang="ts">
-import { Component, Emit, Vue } from 'vue-property-decorator';
-import { ParsedBasicRequest, RequestType } from '../lib/RequestTypes';
+import { Component, Vue } from 'vue-property-decorator';
+import { ParsedBasicRequest } from '../lib/RequestTypes';
 import { Account } from '../lib/PublicRequestTypes';
 import { State } from 'vuex-class';
-import { WalletInfo, WalletType } from '../lib/WalletInfo';
+import { WalletInfo } from '../lib/WalletInfo';
 import { WalletStore } from '@/lib/WalletStore';
 import { Static } from '@/lib/StaticStore';
 import { SmallPage } from '@nimiq/vue-components';
 import Loader from '@/components/Loader.vue';
 import WalletInfoCollector from '@/lib/WalletInfoCollector';
-import Input from '@/components/Input.vue';
 import KeyguardClient from '@nimiq/keyguard-client';
 
 @Component({components: {Loader, SmallPage}})
@@ -66,7 +65,6 @@ export default class LoginSuccess extends Vue {
         });
     }
 
-    @Emit()
     private done() {
         if (!this.walletInfos.length) throw new Error('WalletInfo not ready.');
         const result: Account = {

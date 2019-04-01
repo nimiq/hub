@@ -25,7 +25,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Emit, Vue } from 'vue-property-decorator';
+import { Component, Vue } from 'vue-property-decorator';
 import { PageBody, SmallPage } from '@nimiq/vue-components';
 import { ParsedBasicRequest } from '../lib/RequestTypes';
 import { Account } from '../lib/PublicRequestTypes';
@@ -154,7 +154,6 @@ export default class SignupLedger extends Vue {
         this.$forceUpdate(); // because vue does not recognize changes in walletInfo.accounts map // TODO verify
     }
 
-    @Emit()
     private async done() {
         this.state = SignupLedger.State.FINISHED;
         setTimeout(() => {
@@ -193,7 +192,6 @@ export default class SignupLedger extends Vue {
         }
     }
 
-    @Emit()
     private close() {
         this.$rpc.reject(new Error(ERROR_CANCELED));
     }
