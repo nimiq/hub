@@ -18,7 +18,6 @@ import KeyguardClient from '@nimiq/keyguard-client';
 
 @Component({components: {Loader, Network, SmallPage}})
 export default class CheckoutTransmission extends Vue {
-    // The stored keyguardRequest does not have Uint8Arrays, only regular arrays
     @Static private keyguardRequest!: KeyguardClient.SignTransactionRequest;
     @State private keyguardResult!: KeyguardClient.SignTransactionResult;
 

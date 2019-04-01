@@ -327,7 +327,7 @@ class LedgerApi {
 
         // prepare tx outside of request to avoid that an error would result in an endless loop in _callLedger
         const senderPubKeyBytes = await LedgerApi.getPublicKey(keyPath);
-        const senderPubKey = Nimiq.PublicKey.unserialize(new Nimiq.SerialBuffer(senderPubKeyBytes));
+        const senderPubKey = new Nimiq.PublicKey(senderPubKeyBytes);
         const senderAddress = senderPubKey.toAddress().toUserFriendlyAddress();
         if (transaction.sender.replace(/ /g, '')
             !== senderAddress.replace(/ /g, '')) {
@@ -350,7 +350,7 @@ class LedgerApi {
         requestParams.transactionToSign = nimiqTx;
 
         const signatureBytes = await LedgerApi._callLedger(request);
-        const signature = Nimiq.Signature.unserialize(new Nimiq.SerialBuffer(signatureBytes));
+        const signature = new Nimiq.Signature(signatureBytes);
         const proof = Nimiq.SignatureProof.singleSig(senderPubKey, signature);
         return {
             ...transaction,
