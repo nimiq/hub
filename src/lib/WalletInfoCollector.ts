@@ -55,11 +55,14 @@ export default class WalletInfoCollector {
         let initialAccountsPromise;
         if (initialAccounts && initialAccounts.length > 0) {
             WalletInfoCollector._addAccounts(walletInfo, initialAccounts, undefined);
-            // fetch balances and update again
-            initialAccountsPromise = WalletInfoCollector._getBalances(initialAccounts).then(async (balances) => {
-                WalletInfoCollector._addAccounts(walletInfo, initialAccounts, balances);
-                onUpdate(walletInfo, await derivedAccountsPromise);
-            });
+
+            if (walletInfo.type !== WalletType.LEGACY) {
+                // fetch balances and update again
+                initialAccountsPromise = WalletInfoCollector._getBalances(initialAccounts).then(async (balances) => {
+                    WalletInfoCollector._addAccounts(walletInfo, initialAccounts, balances);
+                    onUpdate(walletInfo, await derivedAccountsPromise);
+                });
+            }
         } else {
             initialAccountsPromise = Promise.resolve();
         }
