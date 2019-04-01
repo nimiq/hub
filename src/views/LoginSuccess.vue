@@ -1,7 +1,14 @@
 <template>
     <div class="container pad-bottom">
         <SmallPage>
-            <Loader :title="title" :state="state" :status="status" :lightBlue="true"/>
+            <Loader
+                :title="title"
+                :state="state"
+                :status="status"
+                :lightBlue="true"
+                :mainAction="action"
+                @main-action="resolveResult"
+                :message="message" />
         </SmallPage>
     </div>
 </template>
@@ -29,7 +36,8 @@ export default class LoginSuccess extends Vue {
     private retrievalFailed: boolean = false;
     private state: Loader.State = Loader.State.LOADING;
     private title: string = 'Collecting your addresses';
-    private gotError: boolean = false;
+    private receiptsError: Error | null = null;
+    private result: Account | null = null;
 
     private async mounted() {
         // TODO: Handle import of both a legacy and bip39 key!
@@ -44,13 +52,15 @@ export default class LoginSuccess extends Vue {
             while (true) {
                 try {
                     tryCount += 1;
-                    const walletInfo = await WalletInfoCollector.collectWalletInfo(
+                    const { walletInfo, receiptsError } = await WalletInfoCollector.collectWalletInfo(
                         keyResult.keyType,
                         keyResult.keyId,
                         keyguardResultAccounts,
-                        undefined,
-                        this._onCollectAddressesError.bind(this),
                     );
+
+                    if (receiptsError) {
+                        this.receiptsError = receiptsError;
+                    }
 
                     walletInfo.fileExported = walletInfo.fileExported || keyResult.fileExported;
                     walletInfo.wordsExported = walletInfo.wordsExported || keyResult.wordsExported;
@@ -69,16 +79,10 @@ export default class LoginSuccess extends Vue {
         });
     }
 
-    private _onCollectAddressesError(error: Error) {
-        this.gotError = true;
-        // FIXME this.$raven is undefined
-        // this.$raven.captureException(error);
-    }
-
     @Emit()
     private done() {
         if (!this.walletInfos.length) throw new Error('WalletInfo not ready.');
-        const result: Account = {
+        this.result = {
             accountId: this.walletInfos[0].id,
             label: this.walletInfos[0].label,
             type: this.walletInfos[0].type,
@@ -90,20 +94,31 @@ export default class LoginSuccess extends Vue {
             })),
         };
 
-        if (this.gotError) {
+        if (this.receiptsError) {
+            this.title = 'Your addresses may be\nincomplete.';
             this.state = Loader.State.WARNING;
-            this.title = `Your addresses may be
-incomplete.`;
         } else {
             this.title = 'Your account is ready.';
             this.state = Loader.State.SUCCESS;
+            setTimeout(this.resolveResult.bind(this), Loader.SUCCESS_REDIRECT_DELAY);
         }
-
-        setTimeout(() => this.$rpc.resolve(result), Loader.SUCCESS_REDIRECT_DELAY);
     }
 
     private get status() {
         return !this.retrievalFailed ? 'Connecting to Nimiq...' : 'Address retrieval failed. Retrying...';
+    }
+
+    private get message() {
+        return this.receiptsError && 'We might have missed used addresses that have no balance.';
+    }
+
+    private get action() {
+        return this.receiptsError && 'Check account';
+    }
+
+    private resolveResult() {
+        if (!this.result) return;
+        this.$rpc.resolve(this.result);
     }
 }
 </script>

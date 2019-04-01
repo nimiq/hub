@@ -14,10 +14,16 @@ import {
     ACCOUNT_BIP32_BASE_PATH_KEYGUARD,
 } from '@/lib/Constants';
 import Config from 'config';
+import { ERROR_TRANSACTION_RECEIPTS } from '../lib/Constants';
 
-type BasicAccountInfo = { // tslint:disable-line:interface-over-type-literal
+type BasicAccountInfo = {
     address: string,
     path: string,
+};
+
+export type WalletCollectionResult = {
+    walletInfo: WalletInfo,
+    receiptsError?: Error, // if there is an incomplete result due to failed requestTxReceipts requests
 };
 
 export default class WalletInfoCollector {
@@ -27,9 +33,7 @@ export default class WalletInfoCollector {
         initialAccounts?: BasicAccountInfo[],
         // tslint:disable-next-line:no-empty
         onUpdate: (walletInfo: WalletInfo, currentlyCheckedAccounts: BasicAccountInfo[]) => void = () => {},
-        // tslint:disable-next-line:no-empty
-        onError: (error: Error) => void = () => {},
-    ): Promise<WalletInfo> {
+    ): Promise<WalletCollectionResult> {
         // Kick off loading dependencies
         WalletInfoCollector._initializeDependencies(walletType);
 
@@ -71,10 +75,11 @@ export default class WalletInfoCollector {
         if (walletType === WalletType.LEGACY) {
             // legacy wallets have no derived accounts
             await initialAccountsPromise;
-            return walletInfo;
+            return { walletInfo };
         }
 
         let foundAccounts: BasicAccountInfo[];
+        let receiptsError;
         do {
             const derivedAccounts = await derivedAccountsPromise;
 
@@ -107,7 +112,6 @@ export default class WalletInfoCollector {
             // for accounts with balance 0 check if there are transactions
             const addressesToCheck = derivedAccounts.map((account) => account.address)
                                                     .filter((address) => foundAddresses.indexOf(address) === -1);
-            let gotError = false;
             await Promise.all(
                 addressesToCheck.map(async (address) => {
                     try {
@@ -116,14 +120,14 @@ export default class WalletInfoCollector {
                             foundAddresses.push(address);
                         }
                     } catch (error) {
-                        gotError = true;
+                        if (!error.message.startsWith(ERROR_TRANSACTION_RECEIPTS)) {
+                            throw error;
+                        }
+                        receiptsError = error;
+                        console.debug(error);
                     }
                 }),
             );
-
-            if (gotError) {
-                onError(new Error('Transaction receipts could not be retrieved'));
-            }
 
             foundAccounts = derivedAccounts.filter((account) => foundAddresses.indexOf(account.address) !== -1);
 
@@ -145,7 +149,10 @@ export default class WalletInfoCollector {
         }
 
         await initialAccountsPromise; // make sure initial accounts balances are updated
-        return walletInfo;
+        return {
+            walletInfo,
+            receiptsError,
+        };
     }
 
     private static _keyguardClient?: KeyguardClient; // TODO avoid the need to create another KeyguardClient here
