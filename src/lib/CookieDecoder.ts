@@ -31,6 +31,16 @@ export class CookieDecoder {
         return wallets;
     }
 
+    // This method is taken from @nimiq/core's Nimiq.Address
+    public static toUserFriendlyAddress(serializedAddress: Uint8Array, withSpaces = true): string {
+        const base32 = this._toBase32(serializedAddress);
+        // tslint:disable-next-line prefer-template
+        const check = ('00' + (98 - this._ibanCheck(base32 + this.CCODE + '00'))).slice(-2);
+        let res = this.CCODE + check + base32;
+        if (withSpaces) res = res.replace(/.{4}/g, '$& ').trim();
+        return res;
+    }
+
     // The following constants are taken from @nimiq/core source,
     // namely Nimiq.Address and Nimiq.BufferUtils.
     private static CCODE = 'NQ';
@@ -112,7 +122,7 @@ export class CookieDecoder {
             ? Utf8Tools.utf8ByteArrayToString(new Uint8Array(walletLabelBytes))
             : type === WalletType.LEDGER
                 ? ACCOUNT_DEFAULT_LABEL_LEDGER
-                : LabelingMachine.labelAccount(this._toUserFriendlyAddress(firstAccount.address));
+                : LabelingMachine.labelAccount(this.toUserFriendlyAddress(firstAccount.address));
 
         const walletInfoEntry: WalletInfoEntry = {
             id,
@@ -143,7 +153,7 @@ export class CookieDecoder {
 
         const accountsMapArray: Array<[string, AccountInfoEntry]> = accounts.map((account) => {
             // Deserialize Nimiq.Address
-            const userFriendlyAddress = this._toUserFriendlyAddress(account.address);
+            const userFriendlyAddress = this.toUserFriendlyAddress(account.address);
 
             return [userFriendlyAddress, account] as [string, AccountInfoEntry];
         });
@@ -169,7 +179,7 @@ export class CookieDecoder {
 
         const accountLabel = labelBytes.length > 0
             ? Utf8Tools.utf8ByteArrayToString(new Uint8Array(labelBytes))
-            : LabelingMachine.labelAddress(this._toUserFriendlyAddress(new Uint8Array(addressBytes)));
+            : LabelingMachine.labelAddress(this.toUserFriendlyAddress(new Uint8Array(addressBytes)));
 
         const accountInfoEntry: AccountInfoEntry = {
             path: 'not public',
@@ -259,15 +269,6 @@ export class CookieDecoder {
 
     // The following methods are taken from @nimiq/core source,
     // namely Nimiq.Address and Nimiq.BufferUtils.
-
-    private static _toUserFriendlyAddress(serializedAddress: Uint8Array, withSpaces = true): string {
-        const base32 = this._toBase32(serializedAddress);
-        // tslint:disable-next-line prefer-template
-        const check = ('00' + (98 - this._ibanCheck(base32 + this.CCODE + '00'))).slice(-2);
-        let res = this.CCODE + check + base32;
-        if (withSpaces) res = res.replace(/.{4}/g, '$& ').trim();
-        return res;
-    }
 
     private static _ibanCheck(str: string): number {
         const num = str.split('').map((c) => {

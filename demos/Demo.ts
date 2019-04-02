@@ -4,7 +4,6 @@ import { State, PostMessageRpcClient } from '@nimiq/rpc';
 import AccountsClient from '../client/AccountsClient';
 import { RequestType } from '../src/lib/RequestTypes';
 import {
-    BasicRequest,
     SimpleRequest,
     Account,
     CheckoutRequest,
@@ -16,6 +15,7 @@ import {
 import { WalletInfoEntry } from '../src/lib/WalletInfo';
 import { RedirectRequestBehavior } from '../client/RequestBehavior';
 import { Utf8Tools } from '@nimiq/utils';
+import { CookieDecoder } from '../src/lib/CookieDecoder';
 
 class Demo {
     public static run() {
@@ -414,6 +414,18 @@ class Demo {
                                 <label>
                                     <input type="radio" name="sign-tx-address" data-address="${addr}" data-wallet-id="${wallet.id}">
                                     ${acc.label}
+                                    <button class="rename" data-wallet-id="${wallet.id}" data-address="${addr}">Rename</button>
+                                </label>
+                            </li>
+                `;
+            });
+            wallet.contracts.forEach((con) => {
+                const addr = CookieDecoder.toUserFriendlyAddress(con.address);
+                html += `
+                            <li>
+                                <label>
+                                    <input type="radio" name="sign-tx-address" data-address="${addr}" data-wallet-id="${wallet.id}">
+                                    <strong>Contract</strong> ${con.label}
                                     <button class="rename" data-wallet-id="${wallet.id}" data-address="${addr}">Rename</button>
                                 </label>
                             </li>
