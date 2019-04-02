@@ -162,7 +162,7 @@ export default class WalletInfoCollector {
     private static _initializeDependencies(walletType: WalletType): void {
         WalletInfoCollector._networkInitializationPromise =
             WalletInfoCollector._networkInitializationPromise
-                || (NetworkClient.createInstance(Config.networkEndpoint)).init();
+                || NetworkClient.createInstance(Config.networkEndpoint).init();
         WalletInfoCollector._networkInitializationPromise
             .catch(() => delete WalletInfoCollector._networkInitializationPromise);
         if (walletType === WalletType.BIP39) {
