@@ -142,7 +142,8 @@ export default class WalletInfoCollector {
 
     private static _initializeDependencies(walletType: WalletType): void {
         WalletInfoCollector._networkInitializationPromise =
-            WalletInfoCollector._networkInitializationPromise || NetworkClient.Instance.init();
+            WalletInfoCollector._networkInitializationPromise
+            || NetworkClient.createInstance(Config.networkEndpoint).init();
         WalletInfoCollector._networkInitializationPromise
             .catch(() => delete WalletInfoCollector._networkInitializationPromise);
         if (walletType === WalletType.BIP39) {
@@ -265,6 +266,7 @@ export default class WalletInfoCollector {
     }
 
     private static async _getGenesisVestingContracts(): Promise<VestingContractInfo[]> {
+        await WalletInfoCollector._networkInitializationPromise;
         const contracts = await NetworkClient.Instance.getGenesisVestingContracts();
 
         return contracts.map((contract) => new VestingContractInfo(
