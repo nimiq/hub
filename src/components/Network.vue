@@ -49,8 +49,8 @@ class Network extends Vue {
 
         if (
             (keyguardRequest.data && keyguardRequest.data.length > 0)
-            || keyguardRequest.senderType !== Nimiq.Account.Type.BASIC
-            || keyguardRequest.recipientType !== Nimiq.Account.Type.BASIC
+            || keyguardRequest.senderType // this condition is truthy when type is 1 or 2
+            || keyguardRequest.recipientType // this condition is truthy when type is 1 or 2
         ) {
             tx = new Nimiq.ExtendedTransaction(
                 new Nimiq.Address(new Nimiq.SerialBuffer(keyguardRequest.sender)),
