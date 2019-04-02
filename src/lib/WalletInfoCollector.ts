@@ -7,6 +7,7 @@ import LedgerApi from '@/lib/LedgerApi'; // TODO import LedgerApi only when need
 import {
     ACCOUNT_DEFAULT_LABEL_LEGACY,
     ACCOUNT_DEFAULT_LABEL_LEDGER,
+    CONTRACT_DEFAULT_LABEL_VESTING,
     ACCOUNT_TEMPORARY_LABEL_KEYGUARD,
     ACCOUNT_MAX_ALLOWED_ADDRESS_GAP,
     ACCOUNT_BIP32_BASE_PATH_KEYGUARD,
@@ -270,7 +271,7 @@ export default class WalletInfoCollector {
         const contracts = await NetworkClient.Instance.getGenesisVestingContracts();
 
         return contracts.map((contract) => new VestingContractInfo(
-            'Vesting Contract',
+            CONTRACT_DEFAULT_LABEL_VESTING,
             Nimiq.Address.fromUserFriendlyAddress(contract.address),
             Nimiq.Address.fromUserFriendlyAddress(contract.owner),
             contract.start,

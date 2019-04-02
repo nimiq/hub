@@ -19,6 +19,10 @@ export const ACCOUNT_DEFAULT_LABEL_LEGACY = 'Legacy Account';
 export const ACCOUNT_TEMPORARY_LABEL_KEYGUARD = '~~TEMP~~';
 export const ACCOUNT_MAX_ALLOWED_ADDRESS_GAP = 20;
 
+// Contracts
+export const CONTRACT_DEFAULT_LABEL_VESTING = 'Vesting Contract';
+export const CONTRACT_DEFAULT_LABEL_HTLC = 'HTLC';
+
 // Compatibility
 export const LEGACY_GROUPING_ACCOUNT_ID = 'LEGACY';
 export const LEGACY_GROUPING_ACCOUNT_LABEL = 'Single Accounts';
