@@ -48,6 +48,17 @@ export class WalletInfo {
         });
     }
 
+    public setContract(updatedContract: ContractInfo) {
+        const index = this.contracts.findIndex((contract) => contract.address.equals(updatedContract.address));
+        if (index < 0) {
+            // Is new contract
+            this.contracts.push(updatedContract);
+            return;
+        }
+
+        this.contracts.splice(index, 1, updatedContract);
+    }
+
     public toObject(): WalletInfoEntry {
         const accountEntries = new Map<string, AccountInfoEntry>();
         this.accounts.forEach((accountInfo, userFriendlyAddress) => {
