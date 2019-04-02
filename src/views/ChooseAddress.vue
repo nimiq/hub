@@ -31,6 +31,8 @@ import staticStore, { Static } from '@/lib/StaticStore';
 import { WalletStore } from '@/lib/WalletStore';
 import { WalletInfo } from '../lib/WalletInfo';
 import { ERROR_CANCELED } from '../lib/Constants';
+import { AccountInfo } from '../lib/AccountInfo';
+import { ContractInfo } from '../lib/ContractInfo';
 
 @Component({components: { AccountSelector, SmallPage }})
 export default class ChooseAddress extends Vue {
@@ -60,10 +62,15 @@ export default class ChooseAddress extends Vue {
             return;
         }
 
-        const accountInfo = walletInfo.accounts.get(address);
+        let accountInfo: AccountInfo | ContractInfo | undefined = walletInfo.accounts.get(address);
         if (!accountInfo) {
-            console.error('Selected address not found:', address);
-            return;
+            // Search contracts
+            accountInfo = walletInfo.findContractByAddress(Nimiq.Address.fromUserFriendlyAddress(address));
+
+            if (!accountInfo) {
+                console.error('Selected address not found:', address);
+                return;
+            }
         }
 
         this.$store.commit('setActiveAccount', {
