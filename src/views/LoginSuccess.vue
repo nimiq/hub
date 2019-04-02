@@ -113,7 +113,7 @@ export default class LoginSuccess extends Vue {
     }
 
     private get action() {
-        return this.receiptsError && 'Check account';
+        return this.receiptsError && 'Go to account';
     }
 
     private resolveResult() {
