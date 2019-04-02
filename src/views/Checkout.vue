@@ -129,8 +129,8 @@ export default class Checkout extends Vue {
 
                 if ('type' in accountOrContract && accountOrContract.type === Nimiq.Account.Type.VESTING) {
                     // Calculate available amount for vesting contract
-                    accountOrContract.balance =
-                        (accountOrContract as VestingContractInfo).calculateAvailableAmount(this.height, balance);
+                    accountOrContract.balance = (accountOrContract as VestingContractInfo)
+                        .calculateAvailableAmount(this.height, Nimiq.Policy.coinsToSatoshis(balance));
                     continue;
                 }
 
