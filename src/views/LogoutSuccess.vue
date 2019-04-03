@@ -7,7 +7,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Emit, Vue } from 'vue-property-decorator';
+import { Component, Vue } from 'vue-property-decorator';
 import { ParsedSimpleRequest } from '../lib/RequestTypes';
 import { SimpleResult } from '../lib/PublicRequestTypes';
 import { State } from 'vuex-class';

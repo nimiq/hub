@@ -25,7 +25,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Emit, Vue } from 'vue-property-decorator';
+import { Component, Vue } from 'vue-property-decorator';
 import { Getter, Mutation } from 'vuex-class';
 import { SmallPage, AccountSelector } from '@nimiq/vue-components';
 import { RequestType, ParsedSignMessageRequest } from '../lib/RequestTypes';
@@ -98,11 +98,7 @@ export default class SignMessage extends Vue {
             signerLabel: accountInfo.label,
         };
 
-        const storedRequest = Object.assign({}, request, {
-            signer: Array.from(request.signer),
-            message: Array.from(request.message as Uint8Array),
-        });
-        staticStore.keyguardRequest = storedRequest;
+        staticStore.keyguardRequest = request;
 
         const client = this.$rpc.createKeyguardClient();
         client.signMessage(request);
@@ -148,7 +144,6 @@ export default class SignMessage extends Vue {
         delete staticStore.sideResult;
     }
 
-    @Emit()
     private close() {
         this.$rpc.reject(new Error(ERROR_CANCELED));
     }
