@@ -8,8 +8,10 @@ import {
     ACCOUNT_DEFAULT_LABEL_LEGACY,
     ACCOUNT_DEFAULT_LABEL_LEDGER,
     LABEL_MAX_LENGTH,
+    CONTRACT_DEFAULT_LABEL_VESTING,
 } from '@/lib/Constants';
 import LabelingMachine from './LabelingMachine';
+import { ContractInfoEntry, VestingContractInfoEntry } from './ContractInfo';
 
 export class CookieDecoder {
     public static decode(str: string): WalletInfoEntry[] {
@@ -68,11 +70,14 @@ export class CookieDecoder {
 
         // Status byte
         const statusByte = this.readByte(bytes);
-        const keyMissing = (statusByte & CookieJar.StatusFlags.KEY_MISSING) === CookieJar.StatusFlags.KEY_MISSING;
+        const keyMissing =
+            (statusByte & CookieJar.StatusFlags.KEY_MISSING) === CookieJar.StatusFlags.KEY_MISSING;
         const fileExported =
             (statusByte & CookieJar.StatusFlags.FILE_EXPORTED) === CookieJar.StatusFlags.FILE_EXPORTED;
         const wordsExported =
             (statusByte & CookieJar.StatusFlags.WORDS_EXPORTED) === CookieJar.StatusFlags.WORDS_EXPORTED;
+        const hasContracts =
+            (statusByte & CookieJar.StatusFlags.HAS_CONTRACTS) === CookieJar.StatusFlags.HAS_CONTRACTS;
 
         // Wallet ID
         let id: string = '';
@@ -94,14 +99,16 @@ export class CookieDecoder {
         if (type === WalletType.LEGACY) {
             const walletLabel = ACCOUNT_DEFAULT_LABEL_LEGACY;
 
-            const accounts = this.decodeAccounts(bytes, type, labelLength);
+            const accounts = this.decodeAccounts(bytes, labelLength);
+
+            const contracts = hasContracts ? this.decodeContracts(bytes) : [];
 
             const walletInfoEntry: WalletInfoEntry = {
                 id,
                 type,
                 label: walletLabel,
                 accounts,
-                contracts: [],
+                contracts,
                 keyMissing,
                 fileExported,
                 wordsExported,
@@ -115,7 +122,9 @@ export class CookieDecoder {
         // Wallet label
         const walletLabelBytes = this.readBytes(bytes, labelLength);
 
-        const accounts = this.decodeAccounts(bytes, type);
+        const accounts = this.decodeAccounts(bytes);
+
+        const contracts = hasContracts ? this.decodeContracts(bytes) : [];
 
         const firstAccount = accounts.values().next().value;
         const walletLabel = walletLabelBytes.length > 0
@@ -129,7 +138,7 @@ export class CookieDecoder {
             type,
             label: walletLabel,
             accounts,
-            contracts: [],
+            contracts,
             keyMissing,
             fileExported,
             wordsExported,
@@ -138,17 +147,17 @@ export class CookieDecoder {
         return walletInfoEntry;
     }
 
-    private static decodeAccounts(
-        bytes: number[],
-        type: WalletType,
-        labelLength?: number,
-    ): Map<string, AccountInfoEntry> {
+    private static decodeAccounts(bytes: number[], labelLength?: number): Map<string, AccountInfoEntry> {
         let numberAccounts = 1;
-        if (typeof labelLength === 'undefined') numberAccounts = this.readByte(bytes);
+        if (typeof labelLength === 'undefined') {
+            // When the labelLength is not passed, it means it is not a LEGACY wallet
+            // and the number of accounts is encoded before the list
+            numberAccounts = this.readByte(bytes);
+        }
 
         const accounts: AccountInfoEntry[] = [];
         for (let i = 0; i < numberAccounts; i++) {
-            accounts.push(this.decodeAccount(bytes, type, labelLength));
+            accounts.push(this.decodeAccount(bytes, labelLength));
         }
 
         const accountsMapArray: Array<[string, AccountInfoEntry]> = accounts.map((account) => {
@@ -161,7 +170,7 @@ export class CookieDecoder {
         return new Map(accountsMapArray);
     }
 
-    private static decodeAccount(bytes: number[], type: WalletType, labelLength?: number): AccountInfoEntry {
+    private static decodeAccount(bytes: number[], labelLength?: number): AccountInfoEntry {
         if (typeof labelLength === 'undefined') {
             labelLength = this.readByte(bytes);
         }
@@ -188,6 +197,55 @@ export class CookieDecoder {
         };
 
         return accountInfoEntry;
+    }
+
+    private static decodeContracts(bytes: number[]): ContractInfoEntry[] {
+        const numberContracts = this.readByte(bytes);
+
+        const contracts: ContractInfoEntry[] = [];
+        for (let i = 0; i < numberContracts; i++) {
+            contracts.push(this.decodeContract(bytes));
+        }
+
+        return contracts;
+    }
+
+    private static decodeContract(bytes: number[]): ContractInfoEntry {
+        // Contract type and label length
+        const typeAndLabelLength = this.readByte(bytes);
+        const type = typeAndLabelLength & 0b11;
+        const labelLength = typeAndLabelLength >> 2;
+
+        const labelBytes = this.readBytes(bytes, labelLength);
+
+        // Contract address
+        const addressBytes = this.readBytes(bytes, Nimiq.Address.SERIALIZED_SIZE);
+
+        switch (type) {
+            case Nimiq.Account.Type.VESTING:
+                const label = labelBytes.length > 0
+                    ? Utf8Tools.utf8ByteArrayToString(new Uint8Array(labelBytes))
+                    : CONTRACT_DEFAULT_LABEL_VESTING;
+                const ownerBytes = this.readBytes(bytes, Nimiq.Address.SERIALIZED_SIZE);
+                const start = this.fromBase256(this.readBytes(bytes, 4)); // Uint32
+                const stepAmount = this.fromBase256(this.readBytes(bytes, 8)); // Uint64
+                const stepBlocks = this.fromBase256(this.readBytes(bytes, 4)); // Uint32
+                const totalAmount = this.fromBase256(this.readBytes(bytes, 8)); // Uint64
+                return {
+                    type,
+                    label,
+                    address: new Uint8Array(addressBytes),
+                    owner: new Uint8Array(ownerBytes),
+                    start,
+                    stepAmount,
+                    stepBlocks,
+                    totalAmount,
+                } as VestingContractInfoEntry;
+            case Nimiq.Account.Type.HTLC:
+                throw new Error('HTLC decoding is not yet implemented');
+            default:
+                throw new Error('Unknown contract type: ' + type);
+        }
     }
 
     private static legacyCookie(version: number, bytes: number[]) {
