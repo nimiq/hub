@@ -9,6 +9,7 @@
                 mainAction="Try again"
                 @main-action="tryAgain"
             />
+            <Network ref="network" :visible="false"/>
         </SmallPage>
     </div>
 </template>
@@ -21,9 +22,11 @@ import { WalletInfo, WalletType } from '@/lib/WalletInfo';
 import { SmallPage } from '@nimiq/vue-components';
 import Loader from '@/components/Loader.vue';
 import { KeyguardClient } from '@nimiq/keyguard-client';
-import { ACCOUNT_DEFAULT_LABEL_LEGACY } from '../lib/Constants';
+import { ACCOUNT_DEFAULT_LABEL_LEGACY } from '@/lib/Constants';
+import Network from '@/components/Network.vue';
+import { ContractInfo } from '@/lib/ContractInfo';
 
-@Component({components: {SmallPage, Loader}})
+@Component({components: {SmallPage, Loader, Network}})
 export default class Migrate extends Vue {
     private title: string = 'Migrating your accounts';
     private status: string = 'Connecting to Keyguard...';
@@ -62,18 +65,24 @@ export default class Migrate extends Vue {
             throw new Error('Could not get legacy accounts from Keyguard');
         }
 
-        this.status = 'Storing your new wallets...';
+        this.status = 'Detecting vesting contracts...';
+        const genesisVestingContracts = await (this.$refs.network as Network).getGenesisVestingContracts();
+        (this.$refs.network as Network).disconnect(); // Prevent syncing consensus
+
+        this.status = 'Storing your new accounts...';
         const walletInfos = legacyAccounts.map((account) => {
             const address = new Nimiq.Address(account.legacyAccount!.address);
             const accounts = new Map<string, AccountInfo>([
                 [address.toUserFriendlyAddress(), new AccountInfo('m/0\'', account.legacyAccount!.label, address)],
             ]);
 
+            const contracts = genesisVestingContracts.filter((contract) => contract.owner.equals(address));
+
             return new WalletInfo(
                 account.id,
                 ACCOUNT_DEFAULT_LABEL_LEGACY,
                 accounts,
-                [], // Contracts
+                contracts,
                 WalletType.LEGACY,
             );
         });

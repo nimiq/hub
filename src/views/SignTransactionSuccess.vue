@@ -7,7 +7,7 @@
                     <h1 class="title nq-h1">Sending your<br>transaction now.</h1>
                 </template>
             </Loader>
-            <Network ref="network"/>
+            <Network ref="network" :visible="false"/>
         </SmallPage>
     </div>
 </template>

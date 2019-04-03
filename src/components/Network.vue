@@ -11,7 +11,14 @@ import { SignedTransaction } from '../lib/PublicRequestTypes';
 import KeyguardClient from '@nimiq/keyguard-client';
 import { NetworkClient, PlainTransaction, DetailedPlainTransaction } from '@nimiq/network-client';
 import Config from 'config';
-import { NETWORK_TEST, NETWORK_DEV, NETWORK_MAIN, ERROR_INVALID_NETWORK } from '../lib/Constants';
+import {
+    NETWORK_TEST,
+    NETWORK_DEV,
+    NETWORK_MAIN,
+    ERROR_INVALID_NETWORK,
+    CONTRACT_DEFAULT_LABEL_VESTING,
+} from '../lib/Constants';
+import { VestingContractInfo } from '../lib/ContractInfo';
 
 @Component
 class Network extends Vue {
@@ -34,6 +41,11 @@ class Network extends Vue {
 
         // Connect
         return client.connectPico(addresses);
+    }
+
+    public async disconnect() {
+        if (!NetworkClient.hasInstance()) return;
+        return NetworkClient.Instance.disconnect();
     }
 
     // Uint8Arrays cannot be stored in SessionStorage, thus the stored request has arrays instead and is
@@ -137,6 +149,21 @@ class Network extends Vue {
     public async getBalances(addresses: string[]): Promise<Map<string, number>> {
         const client = await this._getNetworkClient();
         return client.getBalance(addresses);
+    }
+
+    public async getGenesisVestingContracts(): Promise<VestingContractInfo[]> {
+        const client = await this._getNetworkClient();
+        const contracts = await client.getGenesisVestingContracts();
+
+        return contracts.map((contract) => new VestingContractInfo(
+            CONTRACT_DEFAULT_LABEL_VESTING,
+            Nimiq.Address.fromUserFriendlyAddress(contract.address),
+            Nimiq.Address.fromUserFriendlyAddress(contract.owner),
+            contract.start,
+            contract.stepAmount,
+            contract.stepBlocks,
+            contract.totalAmount,
+        ));
     }
 
     private created() {
