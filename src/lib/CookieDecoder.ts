@@ -169,8 +169,7 @@ export class CookieDecoder {
         const labelBytes = this.readBytes(bytes, labelLength);
 
         // Account address
-        // (iframe does not have Nimiq lib)
-        const addressBytes = this.readBytes(bytes, 20 /* Nimiq.Address.SERIALIZED_SIZE */);
+        const addressBytes = this.readBytes(bytes, Nimiq.Address.SERIALIZED_SIZE);
 
         const accountLabel = labelBytes.length > 0
             ? Utf8Tools.utf8ByteArrayToString(new Uint8Array(labelBytes))

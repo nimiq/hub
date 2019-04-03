@@ -12,7 +12,7 @@ export interface SimpleResult {
     success: true;
 }
 
-export type ListResult = WalletInfoEntry[];
+export type ListResult = Account[];
 
 export interface SignTransactionRequest extends SimpleRequest {
     sender: string;

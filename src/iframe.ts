@@ -1,9 +1,10 @@
 import { RpcServer } from '@nimiq/rpc';
 import { BrowserDetection } from '@nimiq/utils';
 import { WalletStore } from '@/lib/WalletStore';
-import { WalletInfoEntry } from '@/lib/WalletInfo';
+import { WalletInfoEntry, WalletInfo } from '@/lib/WalletInfo';
 import CookieJar from '@/lib/CookieJar';
 import Config from 'config';
+import { ListResult } from './lib/PublicRequestTypes';
 
 class IFrameApi {
     public static run() {
@@ -15,7 +16,7 @@ class IFrameApi {
         rpcServer.init();
     }
 
-    public static async list(): Promise<WalletInfoEntry[]> {
+    public static async list(): Promise<ListResult> {
         let wallets: WalletInfoEntry[];
         if (BrowserDetection.isIOS() || BrowserDetection.isSafari()) {
             wallets = await CookieJar.eat();
@@ -23,7 +24,7 @@ class IFrameApi {
             wallets = await WalletStore.Instance.list();
         }
         if (wallets.length > 0) {
-            return wallets;
+            return wallets.map((wallet) => WalletInfo.fromObject(wallet).toAccountType());
         }
 
         // If no wallets exist, see if the Keyguard has keys
