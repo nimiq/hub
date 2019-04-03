@@ -157,9 +157,9 @@ class Network extends Vue {
             Nimiq.Address.fromUserFriendlyAddress(contract.address),
             Nimiq.Address.fromUserFriendlyAddress(contract.owner),
             contract.start,
-            contract.stepAmount,
+            Nimiq.Policy.coinsToSatoshis(contract.stepAmount),
             contract.stepBlocks,
-            contract.totalAmount,
+            Nimiq.Policy.coinsToSatoshis(contract.totalAmount),
         ));
     }
 
