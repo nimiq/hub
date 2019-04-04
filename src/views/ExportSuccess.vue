@@ -28,14 +28,8 @@ export default class ExportSuccess extends Vue {
     @Static private request!: ParsedSimpleRequest;
     @State private keyguardResult!: KeyguardClient.ExportResult;
 
-    @Getter private findWallet!: (id: string) => WalletInfo | undefined;
-
     private async mounted() {
-        const wallet = this.findWallet(this.request.walletId);
-        if (!wallet) {
-            this.$rpc.reject(new Error('walletId not found'));
-            return;
-        }
+        const wallet = (await WalletStore.Instance.get(this.request.walletId))!;
 
         wallet.fileExported = wallet.fileExported || this.keyguardResult.fileExported;
         wallet.wordsExported = wallet.wordsExported || this.keyguardResult.wordsExported;

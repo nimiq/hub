@@ -85,13 +85,8 @@ export default class Rename extends Vue {
     }
 
     private async mounted() {
-        const wallet = await WalletStore.Instance.get(this.request.walletId);
-        if (!wallet) {
-            this.$rpc.reject(new Error('Account ID not found'));
-            return;
-        }
+        this.wallet = (await WalletStore.Instance.get(this.request.walletId))!;
 
-        this.wallet = wallet;
         // Wait for the next tick to update the DOM, then focus the correct label
         Vue.nextTick(this.focusElement);
 
