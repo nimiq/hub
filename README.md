@@ -84,7 +84,7 @@ action. Thus, it is required that API methods are called synchronously within
 the context of a user action, such as a click. See example below.
 
 ```javascript
-document.getElementById('#checkoutButton').addEventListener('click', function(event){
+document.getElementById('checkoutButton').addEventListener('click', function(event){
     accountsClient.checkout(/* see details below */);
 });
 ```
