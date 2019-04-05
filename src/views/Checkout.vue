@@ -26,7 +26,7 @@
             <AccountSelector
                 :wallets="processedWallets"
                 :minBalance="request.value + request.fee"
-                @account-selected="accountSelected"
+                @account-selected="accountOrContractSelected"
                 @login="goToOnboarding"/>
 
             <AccountInfoScreen
@@ -131,10 +131,9 @@ export default class Checkout extends Vue {
                     // Calculate available amount for vesting contract
                     accountOrContract.balance = accountOrContract
                         .calculateAvailableAmount(this.height, Nimiq.Policy.coinsToSatoshis(balance));
-                    continue;
+                } else {
+                    accountOrContract.balance = Nimiq.Policy.coinsToSatoshis(balance);
                 }
-
-                accountOrContract.balance = Nimiq.Policy.coinsToSatoshis(balance);
             }
 
             // Store updated wallets
@@ -162,7 +161,7 @@ export default class Checkout extends Vue {
         this.height = head.height;
     }
 
-    private accountSelected(walletId: string, address: string) {
+    private accountOrContractSelected(walletId: string, address: string) {
         if (!this.height) return; // TODO: Make it impossible for users to click when height is not ready
 
         const walletInfo = this.wallets.find((wallet: WalletInfo) => wallet.id === walletId)!;

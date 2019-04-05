@@ -62,25 +62,17 @@ export default class ChooseAddress extends Vue {
             return;
         }
 
-        let accountInfo: AccountInfo | ContractInfo | undefined = walletInfo.accounts.get(address);
-        if (!accountInfo) {
-            // Search contracts
-            accountInfo = walletInfo.findContractByAddress(Nimiq.Address.fromUserFriendlyAddress(address));
-
-            if (!accountInfo) {
-                console.error('Selected address not found:', address);
-                return;
-            }
-        }
+        let accountOrContractInfo: AccountInfo | ContractInfo = walletInfo.accounts.get(address) ||
+            walletInfo.findContractByAddress(Nimiq.Address.fromUserFriendlyAddress(address))!;
 
         this.$store.commit('setActiveAccount', {
             walletId: walletInfo.id,
-            userFriendlyAddress: accountInfo.userFriendlyAddress,
+            userFriendlyAddress: accountOrContractInfo.userFriendlyAddress,
         });
 
         const result: Address = {
-            address: accountInfo.userFriendlyAddress,
-            label: accountInfo.label,
+            address: accountOrContractInfo.userFriendlyAddress,
+            label: accountOrContractInfo.label,
         };
 
         this.$rpc.resolve(result);
