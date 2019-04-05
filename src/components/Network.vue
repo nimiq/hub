@@ -8,7 +8,6 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { SignedTransaction } from '../lib/PublicRequestTypes';
-import KeyguardClient from '@nimiq/keyguard-client';
 import { NetworkClient, DetailedPlainTransaction } from '@nimiq/network-client';
 import Config from 'config';
 import {
@@ -50,46 +49,66 @@ class Network extends Vue {
         return NetworkClient.Instance.disconnect();
     }
 
-    public async prepareTx(
-        keyguardRequest: KeyguardClient.SignTransactionRequest,
-        keyguardResult: KeyguardClient.SignTransactionResult,
-    ): Promise<Nimiq.Transaction> {
+    public async createTx({
+        sender,
+        senderType = Nimiq.Account.Type.BASIC,
+        recipient,
+        recipientType = Nimiq.Account.Type.BASIC,
+        value,
+        fee = 0,
+        validityStartHeight,
+        flags = Nimiq.Transaction.Flag.NONE,
+        data,
+        signerPubKey,
+        signature,
+    }: {
+        sender: Nimiq.Address | Uint8Array,
+        senderType?: Nimiq.Account.Type,
+        recipient: Nimiq.Address | Uint8Array,
+        recipientType?: Nimiq.Account.Type,
+        value: number,
+        fee?: number,
+        validityStartHeight: number,
+        flags?: number,
+        data?: Uint8Array,
+        signerPubKey: Nimiq.PublicKey | Uint8Array,
+        signature?: Nimiq.Signature | Uint8Array,
+    }): Promise<Nimiq.Transaction> {
+        if (!(sender instanceof Nimiq.Address)) sender = new Nimiq.Address(sender);
+        if (!(recipient instanceof Nimiq.Address)) recipient = new Nimiq.Address(recipient);
+        if (!(signerPubKey instanceof Nimiq.PublicKey)) signerPubKey = new Nimiq.PublicKey(signerPubKey);
+        if (signature && !(signature instanceof Nimiq.Signature)) signature = new Nimiq.Signature(signature);
+
         await this._loadNimiq();
 
-        let tx: Nimiq.Transaction;
-
         if (
-            (keyguardRequest.data && keyguardRequest.data.length > 0)
-            || keyguardRequest.senderType // this condition is truthy when type is 1 or 2
-            || keyguardRequest.recipientType // this condition is truthy when type is 1 or 2
+            (data && data.length > 0)
+            || senderType !== Nimiq.Account.Type.BASIC
+            || recipientType !== Nimiq.Account.Type.BASIC
+            || flags !== Nimiq.Transaction.Flag.NONE
         ) {
-            tx = new Nimiq.ExtendedTransaction(
-                new Nimiq.Address(keyguardRequest.sender),
-                keyguardRequest.senderType || Nimiq.Account.Type.BASIC,
-                new Nimiq.Address(keyguardRequest.recipient),
-                keyguardRequest.recipientType || Nimiq.Account.Type.BASIC,
-                keyguardRequest.value,
-                keyguardRequest.fee,
-                keyguardRequest.validityStartHeight,
-                keyguardRequest.flags || 0,
-                keyguardRequest.data || new Uint8Array(0),
-                Nimiq.SignatureProof.singleSig(
-                    new Nimiq.PublicKey(keyguardResult.publicKey),
-                    new Nimiq.Signature(keyguardResult.signature),
-                ).serialize(),
+            return new Nimiq.ExtendedTransaction(
+                sender,
+                senderType,
+                recipient,
+                recipientType,
+                value,
+                fee,
+                validityStartHeight,
+                flags,
+                data || new Uint8Array(0),
+                signature ? Nimiq.SignatureProof.singleSig(signerPubKey, signature).serialize() : undefined,
             );
         } else {
-            tx = new Nimiq.BasicTransaction(
-                new Nimiq.PublicKey(keyguardResult.publicKey),
-                new Nimiq.Address(keyguardRequest.recipient),
-                keyguardRequest.value,
-                keyguardRequest.fee,
-                keyguardRequest.validityStartHeight,
-                new Nimiq.Signature(keyguardResult.signature),
+            return new Nimiq.BasicTransaction(
+                signerPubKey,
+                recipient,
+                value,
+                fee,
+                validityStartHeight,
+                signature,
             );
         }
-
-        return tx;
     }
 
     public makeSignTransactionResult(tx: Nimiq.Transaction): SignedTransaction {

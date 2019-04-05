@@ -29,7 +29,9 @@ export default class CheckoutTransmission extends Vue {
     }
 
     private async mounted() {
-        const tx = await (this.$refs.network as Network).prepareTx(this.keyguardRequest, this.keyguardResult);
+        const tx = await (this.$refs.network as Network).createTx(Object.assign({
+            signerPubKey: this.keyguardResult.publicKey,
+        }, this.keyguardResult, this.keyguardRequest));
         const result = await (this.$refs.network as Network).sendToNetwork(tx);
         this.isTxSent = true;
 
