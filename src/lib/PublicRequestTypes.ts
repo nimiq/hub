@@ -76,7 +76,7 @@ export interface Address {
 }
 
 export interface VestingContract {
-    type: Nimiq.Account.Type;
+    type: Nimiq.Account.Type.VESTING;
     address: string; // Userfriendly address
     label: string;
 
@@ -88,7 +88,7 @@ export interface VestingContract {
 }
 
 export interface HashedTimeLockedContract {
-    type: Nimiq.Account.Type;
+    type: Nimiq.Account.Type.HTLC;
     address: string; // Userfriendly address
     label: string;
 

@@ -129,7 +129,7 @@ export default class Checkout extends Vue {
 
                 if ('type' in accountOrContract && accountOrContract.type === Nimiq.Account.Type.VESTING) {
                     // Calculate available amount for vesting contract
-                    accountOrContract.balance = (accountOrContract as VestingContractInfo)
+                    accountOrContract.balance = accountOrContract
                         .calculateAvailableAmount(this.height, Nimiq.Policy.coinsToSatoshis(balance));
                     continue;
                 }
@@ -170,12 +170,12 @@ export default class Checkout extends Vue {
         let contractInfo: ContractInfo | undefined;
         if (!accountInfo) {
             // Search contracts
-            contractInfo = walletInfo.findContractByAddress(Nimiq.Address.fromUserFriendlyAddress(address));
-            if (contractInfo!.type === Nimiq.Account.Type.HTLC) {
+            contractInfo = walletInfo.findContractByAddress(Nimiq.Address.fromUserFriendlyAddress(address))!;
+            if (contractInfo.type === Nimiq.Account.Type.HTLC) {
                 alert('HTLC contracts are not yet supported for checkout');
                 return;
             }
-            accountInfo = walletInfo.accounts.get((contractInfo as VestingContractInfo).owner.toUserFriendlyAddress());
+            accountInfo = walletInfo.accounts.get(contractInfo.owner.toUserFriendlyAddress());
         }
 
         // FIXME: Currently unused, but should be reactivated

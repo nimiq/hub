@@ -1,9 +1,8 @@
 import { AccountInfo, AccountInfoEntry } from './AccountInfo';
 import {
     ContractInfo,
-    VestingContractInfo,
-    HashedTimeLockedContractInfo,
     ContractInfoEntry,
+    ContractInfoHelper,
 } from './ContractInfo';
 
 export enum WalletType {
@@ -18,7 +17,7 @@ export class WalletInfo {
         o.accounts.forEach((accountInfoEntry, userFriendlyAddress) => {
             accounts.set(userFriendlyAddress, AccountInfo.fromObject(accountInfoEntry));
         });
-        const contracts = o.contracts.map((contract) => ContractInfo.fromObject(contract));
+        const contracts = o.contracts.map((contract) => ContractInfoHelper.fromObject(contract));
         return new WalletInfo(o.id, o.label, accounts, contracts, o.type,
             o.keyMissing, o.fileExported, o.wordsExported);
     }
@@ -39,10 +38,10 @@ export class WalletInfo {
     public findContractsByOwner(address: Nimiq.Address): ContractInfo[] {
         return this.contracts.filter((contract) => {
             switch (contract.type) {
-                case Nimiq.Account.Type.VESTING: return (contract as VestingContractInfo).owner.equals(address);
+                case Nimiq.Account.Type.VESTING: return contract.owner.equals(address);
                 case Nimiq.Account.Type.HTLC:
-                    return (contract as HashedTimeLockedContractInfo).sender.equals(address)
-                        || (contract as HashedTimeLockedContractInfo).recipient.equals(address);
+                    return contract.sender.equals(address)
+                        || contract.recipient.equals(address);
                 default: return false;
             }
         });
