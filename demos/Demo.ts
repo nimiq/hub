@@ -15,7 +15,7 @@ import {
 import { WalletInfoEntry } from '../src/lib/WalletInfo';
 import { RedirectRequestBehavior } from '../client/RequestBehavior';
 import { Utf8Tools } from '@nimiq/utils';
-import { CookieDecoder } from '../src/lib/CookieDecoder';
+import AddressUtils from '../src/lib/AddressUtils';
 
 class Demo {
     public static run() {
@@ -420,7 +420,7 @@ class Demo {
                 `;
             });
             wallet.contracts.forEach((con) => {
-                const addr = CookieDecoder.toUserFriendlyAddress(con.address);
+                const addr = AddressUtils.toUserFriendlyAddress(con.address);
                 html += `
                             <li>
                                 <label>

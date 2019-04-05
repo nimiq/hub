@@ -12,6 +12,7 @@ import {
 } from '@/lib/Constants';
 import LabelingMachine from './LabelingMachine';
 import { ContractInfoEntry, VestingContractInfoEntry } from './ContractInfo';
+import AddressUtils from './AddressUtils';
 
 export class CookieDecoder {
     public static decode(str: string): WalletInfoEntry[] {
@@ -32,21 +33,6 @@ export class CookieDecoder {
 
         return wallets;
     }
-
-    // This method is taken from @nimiq/core's Nimiq.Address
-    public static toUserFriendlyAddress(serializedAddress: Uint8Array, withSpaces = true): string {
-        const base32 = this._toBase32(serializedAddress);
-        // tslint:disable-next-line prefer-template
-        const check = ('00' + (98 - this._ibanCheck(base32 + this.CCODE + '00'))).slice(-2);
-        let res = this.CCODE + check + base32;
-        if (withSpaces) res = res.replace(/.{4}/g, '$& ').trim();
-        return res;
-    }
-
-    // The following constants are taken from @nimiq/core source,
-    // namely Nimiq.Address and Nimiq.BufferUtils.
-    private static CCODE = 'NQ';
-    private static BASE32_ALPHABET_NIMIQ = '0123456789ABCDEFGHJKLMNPQRSTUVXY';
 
     private static readByte(bytes: number[]): number {
         const byte = bytes.shift();
@@ -131,7 +117,7 @@ export class CookieDecoder {
             ? Utf8Tools.utf8ByteArrayToString(new Uint8Array(walletLabelBytes))
             : type === WalletType.LEDGER
                 ? ACCOUNT_DEFAULT_LABEL_LEDGER
-                : LabelingMachine.labelAccount(this.toUserFriendlyAddress(firstAccount.address));
+                : LabelingMachine.labelAccount(AddressUtils.toUserFriendlyAddress(firstAccount.address));
 
         const walletInfoEntry: WalletInfoEntry = {
             id,
@@ -162,7 +148,7 @@ export class CookieDecoder {
 
         const accountsMapArray: Array<[string, AccountInfoEntry]> = accounts.map((account) => {
             // Deserialize Nimiq.Address
-            const userFriendlyAddress = this.toUserFriendlyAddress(account.address);
+            const userFriendlyAddress = AddressUtils.toUserFriendlyAddress(account.address);
 
             return [userFriendlyAddress, account] as [string, AccountInfoEntry];
         });
@@ -188,7 +174,7 @@ export class CookieDecoder {
 
         const accountLabel = labelBytes.length > 0
             ? Utf8Tools.utf8ByteArrayToString(new Uint8Array(labelBytes))
-            : LabelingMachine.labelAddress(this.toUserFriendlyAddress(new Uint8Array(addressBytes)));
+            : LabelingMachine.labelAddress(AddressUtils.toUserFriendlyAddress(new Uint8Array(addressBytes)));
 
         const accountInfoEntry: AccountInfoEntry = {
             path: 'not public',
@@ -323,54 +309,5 @@ export class CookieDecoder {
         }
 
         return bytes;
-    }
-
-    // The following methods are taken from @nimiq/core source,
-    // namely Nimiq.Address and Nimiq.BufferUtils.
-
-    private static _ibanCheck(str: string): number {
-        const num = str.split('').map((c) => {
-            const code = c.toUpperCase().charCodeAt(0);
-            return code >= 48 && code <= 57 ? c : (code - 55).toString();
-        }).join('');
-        let tmp = '';
-
-        for (let i = 0; i < Math.ceil(num.length / 6); i++) {
-            tmp = (parseInt(tmp + num.substr(i * 6, 6), 10) % 97).toString();
-        }
-
-        return parseInt(tmp, 10);
-    }
-
-    private static _toBase32(buf: Uint8Array, alphabet = CookieDecoder.BASE32_ALPHABET_NIMIQ): string {
-        let shift = 3;
-        let carry = 0;
-        let symbol: number;
-        let res = '';
-
-        for (const byte of buf) {
-            symbol = carry | (byte >> shift);
-            res += alphabet[symbol & 0x1f];
-
-            if (shift > 5) {
-                shift -= 5;
-                symbol = byte >> shift;
-                res += alphabet[symbol & 0x1f];
-            }
-
-            shift = 5 - shift;
-            carry = byte << shift;
-            shift = 8 - shift;
-        }
-
-        if (shift !== 3) {
-            res += alphabet[carry & 0x1f];
-        }
-
-        while (res.length % 8 !== 0 && alphabet.length === 33) {
-            res += alphabet[32];
-        }
-
-        return res;
     }
 }
