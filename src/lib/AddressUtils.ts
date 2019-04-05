@@ -1,3 +1,5 @@
+// tslint:disable no-bitwise
+
 export default class AddressUtils {
     // The following methods are taken from @nimiq/core source,
     // namely Nimiq.Address and Nimiq.BufferUtils.

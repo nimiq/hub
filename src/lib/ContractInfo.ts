@@ -7,7 +7,7 @@ export class ContractInfoHelper {
                 return VestingContractInfo.fromObject(o);
             case Nimiq.Account.Type.HTLC:
                 return HashedTimeLockedContractInfo.fromObject(o);
-            // @ts-ignore Property 'type' does not exist on type 'never'
+            // @ts-ignore Property 'type' does not exist on type 'never'.
             default: throw new Error('Unknown contract type: ' + o.type);
         }
     }

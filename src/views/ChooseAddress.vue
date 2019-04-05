@@ -62,7 +62,7 @@ export default class ChooseAddress extends Vue {
             return;
         }
 
-        let accountOrContractInfo: AccountInfo | ContractInfo = walletInfo.accounts.get(address) ||
+        const accountOrContractInfo: AccountInfo | ContractInfo = walletInfo.accounts.get(address) ||
             walletInfo.findContractByAddress(Nimiq.Address.fromUserFriendlyAddress(address))!;
 
         this.$store.commit('setActiveAccount', {

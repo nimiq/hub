@@ -218,6 +218,7 @@ class CookieJar {
                 case Nimiq.Account.Type.HTLC:
                     throw new Error('HTLC encoding is not yet implemented');
                 default:
+                    // @ts-ignore Property 'type' does not exist on type 'never'.
                     throw new Error('Unknown contract type: ' + contract.type);
             }
         }
