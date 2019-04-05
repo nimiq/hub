@@ -109,6 +109,9 @@ const store: StoreOptions<RootState> = {
         findWallet: (state) => (id: string): WalletInfo | undefined => {
             return state.wallets.find((wallet) => wallet.id === id);
         },
+        findWalletByAddress: (state) => (address: string): WalletInfo | undefined => {
+            return state.wallets.find((wallet) => wallet.accounts.has(address));
+        },
         activeWallet: (state, getters): WalletInfo | undefined => {
             if (!state.activeWalletId) return undefined;
             return getters.findWallet(state.activeWalletId);

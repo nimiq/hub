@@ -24,8 +24,8 @@ export interface ParsedSimpleRequest extends ParsedBasicRequest {
     walletId: string;
 }
 
-export interface ParsedSignTransactionRequest extends ParsedSimpleRequest {
-    walletId: string;
+export interface ParsedSignTransactionRequest extends ParsedBasicRequest {
+    walletId?: string;
     sender: Nimiq.Address;
     recipient: Nimiq.Address;
     recipientType?: Nimiq.Account.Type;

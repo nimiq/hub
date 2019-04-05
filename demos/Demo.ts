@@ -129,7 +129,7 @@ class Demo {
 
             return {
                 appName: 'Accounts Demos',
-                accountId,
+                // accountId,
                 sender,
                 recipient: 'NQ63 U7XG 1YYE D6FA SXGG 3F5H X403 NBKN JLDU',
                 value,
@@ -216,7 +216,7 @@ class Demo {
 
             return {
                 appName: 'Accounts Demos',
-                accountId,
+                // accountId,
                 signer,
                 message,
             };

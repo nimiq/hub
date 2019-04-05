@@ -46,6 +46,7 @@ export default class SignMessage extends Vue {
 
     @Getter private processedWallets!: WalletInfo[];
     @Getter private findWallet!: (id: string) => WalletInfo | undefined;
+    @Getter private findWalletByAddress!: (address: string) => WalletInfo | undefined;
 
     @Mutation('addWallet') private $addWallet!: (walletInfo: WalletInfo) => any;
     @Mutation('setActiveAccount') private $setActiveAccount!: (payload: {
@@ -61,6 +62,12 @@ export default class SignMessage extends Vue {
         if (this.request.walletId && this.request.signer) {
             this.setAccount(this.request.walletId, this.request.signer.toUserFriendlyAddress(), true);
             return;
+        } else if (this.request.signer) {
+            const wallet = this.findWalletByAddress(this.request.signer.toUserFriendlyAddress());
+            if (wallet) {
+                this.setAccount(wallet.id, this.request.signer.toUserFriendlyAddress(), true);
+                return;
+            }
         }
 
         this.showAccountSelector = true;
