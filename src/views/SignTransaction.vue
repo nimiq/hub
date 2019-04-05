@@ -40,7 +40,7 @@ export default class SignTransaction extends Vue {
             recipientType: this.request.recipientType,
             recipientLabel: undefined, // XXX Should we accept a recipient label from outside?
             value: this.request.value,
-            fee: this.request.fee || 0,
+            fee: this.request.fee,
             validityStartHeight: this.request.validityStartHeight,
             data: this.request.data,
             flags: this.request.flags,

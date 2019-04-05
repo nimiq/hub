@@ -190,7 +190,7 @@ export default class Checkout extends Vue {
             recipientType: this.request.recipientType,
             // recipientLabel: '', // Checkout is using the shopOrigin instead
             value: this.request.value,
-            fee: this.request.fee || 0,
+            fee: this.request.fee,
             validityStartHeight,
             data: this.request.data,
             flags: this.request.flags,
@@ -217,7 +217,7 @@ export default class Checkout extends Vue {
     }
 
     private get hasSufficientBalanceAccount(): boolean {
-        const minBalance = this.request.value + (this.request.fee || 0);
+        const minBalance = this.request.value + this.request.fee;
         return this.wallets.some((wallet: WalletInfo) => {
             return Array.from(wallet.accounts.values()).some((account: AccountInfo) => {
                 return !!account.balance && account.balance >= minBalance;

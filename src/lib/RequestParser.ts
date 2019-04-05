@@ -31,11 +31,11 @@ export class RequestParser {
                     walletId: signTransactionRequest.accountId,
                     sender: Nimiq.Address.fromUserFriendlyAddress(signTransactionRequest.sender),
                     recipient: Nimiq.Address.fromUserFriendlyAddress(signTransactionRequest.recipient),
-                    recipientType: signTransactionRequest.recipientType,
+                    recipientType: signTransactionRequest.recipientType || Nimiq.Account.Type.BASIC,
                     value: signTransactionRequest.value,
-                    fee: signTransactionRequest.fee,
-                    data: signTransactionRequest.extraData,
-                    flags: signTransactionRequest.flags,
+                    fee: signTransactionRequest.fee || 0,
+                    data: signTransactionRequest.extraData || new Uint8Array(0),
+                    flags: signTransactionRequest.flags || Nimiq.Transaction.Flag.NONE,
                     validityStartHeight: signTransactionRequest.validityStartHeight,
                 } as ParsedSignTransactionRequest;
             case RequestType.CHECKOUT:
@@ -52,11 +52,11 @@ export class RequestParser {
                     appName: checkoutRequest.appName,
                     shopLogoUrl: checkoutRequest.shopLogoUrl,
                     recipient: Nimiq.Address.fromUserFriendlyAddress(checkoutRequest.recipient),
-                    recipientType: checkoutRequest.recipientType,
+                    recipientType: checkoutRequest.recipientType || Nimiq.Account.Type.BASIC,
                     value: checkoutRequest.value,
-                    fee: checkoutRequest.fee,
-                    data: checkoutRequest.extraData,
-                    flags: checkoutRequest.flags,
+                    fee: checkoutRequest.fee || 0,
+                    data: checkoutRequest.extraData || new Uint8Array(0),
+                    flags: checkoutRequest.flags || Nimiq.Transaction.Flag.NONE,
                     validityDuration: !checkoutRequest.validityDuration ? TX_VALIDITY_WINDOW : Math.min(
                         TX_VALIDITY_WINDOW,
                         Math.max(
