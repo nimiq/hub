@@ -25,6 +25,10 @@ export class RequestParser {
         switch (requestType) {
             case RequestType.SIGN_TRANSACTION:
                 const signTransactionRequest = request as SignTransactionRequest;
+
+                if (!signTransactionRequest.value) throw new Error ('value is required');
+                if (!signTransactionRequest.validityStartHeight) throw new Error('validityStartHeight is required');
+
                 return {
                     kind: RequestType.SIGN_TRANSACTION,
                     appName: signTransactionRequest.appName,
@@ -40,6 +44,8 @@ export class RequestParser {
                 } as ParsedSignTransactionRequest;
             case RequestType.CHECKOUT:
                 const checkoutRequest = request as CheckoutRequest;
+
+                if (!checkoutRequest.value) throw new Error ('value is required');
                 if (checkoutRequest.shopLogoUrl && new URL(checkoutRequest.shopLogoUrl).origin !== state.origin) {
                     throw new Error(
                         'shopLogoUrl must have same origin as caller website. Image at ' +
@@ -79,6 +85,9 @@ export class RequestParser {
             case RequestType.LOGOUT:
             case RequestType.ADD_ADDRESS:
                 const simpleRequest = request as SimpleRequest;
+
+                if (!simpleRequest.accountId) throw new Error('accountId is required');
+
                 return {
                     kind: requestType,
                     appName: simpleRequest.appName,
@@ -86,6 +95,9 @@ export class RequestParser {
                 } as ParsedSimpleRequest;
             case RequestType.RENAME:
                 const renameRequest = request as RenameRequest;
+
+                if (!renameRequest.accountId) throw new Error('accountId is required');
+
                 return {
                     kind: RequestType.RENAME,
                     appName: renameRequest.appName,
