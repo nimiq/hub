@@ -72,12 +72,43 @@ export class VestingContractInfo {
         };
     }
 
+    /**
+     * Calculates the available amount of a vesting contract for a given blockchain height
+     *
+     * First, an explanation of the parameters of a vesting contract:
+     * totalAmount: The total value of a vesting contract (fixed during creation, cannot be changed).
+     * stepAmount: How much value is released at every vesting step. The total amount does not have
+     *             to devide evenly through this amount. The last vesting step amount can be smaller
+     *             then the previous steps.
+     * stepBlocks: The number of blocks between step amount releases.
+     * start: The block height at which the first step starts to count.
+     *
+     * To calculate the amount available, we start by dividing the number of blocks passed since
+     * the contract's start height through its stepBlocks, to determine how many vesting steps have
+     * passed. The floored number of steps gets muliplied by the stepAmount to calculate all so far
+     * released value:
+     *      Math.floor((height - this.start) / this.stepBlocks)) * this.stepAmount
+     *
+     * Because the vested amount cannot be negative (in case start block height is higher than the
+     * blockchain height), the above calculation is set to at least 0:
+     *      Math.max(0, <previous result>)
+     *
+     * Because the last step of a vesting contract is always the remainder and can be smaller than
+     * stepAmount, we safeguard the maximum possible released value by taking the smaller of
+     * the above calculated released amount and the contract's totalAmount:
+     *      Math.min(this.totalAmount, <previous result>)
+     *
+     * Finally, the available amount needs to account for already withrawn funds. (The balance
+     * reported by the network represents the balance of the contract, including not-yet-released
+     * funds.) The amount already withdrawn is the difference between the totalAmount (inital balance)
+     * and currentBalance. The withdrawn amount is simply subtracted from the released amount:
+     *      <previous result> - (this.totalAmount - currentBalance)
+     */
     public calculateAvailableAmount(height: number, currentBalance = this.totalAmount) {
-        return (currentBalance - this.totalAmount)
-        + Math.min(
+        return Math.min(
             this.totalAmount,
             Math.max(0, Math.floor((height - this.start) / this.stepBlocks)) * this.stepAmount,
-        );
+        ) - (this.totalAmount - currentBalance);
     }
 }
 
