@@ -19,6 +19,7 @@ import {
     ParsedRenameRequest,
     ParsedRpcRequest,
 } from './RequestTypes';
+import { Utf8Tools } from '@nimiq/utils';
 
 export class RequestParser {
     public static parse(request: RpcRequest, state: State, requestType: RequestType): ParsedRpcRequest | null {
@@ -38,7 +39,9 @@ export class RequestParser {
                     recipientType: signTransactionRequest.recipientType || Nimiq.Account.Type.BASIC,
                     value: signTransactionRequest.value,
                     fee: signTransactionRequest.fee || 0,
-                    data: signTransactionRequest.extraData || new Uint8Array(0),
+                    data: typeof signTransactionRequest.extraData === 'string'
+                        ? Utf8Tools.stringToUtf8ByteArray(signTransactionRequest.extraData)
+                        : signTransactionRequest.extraData || new Uint8Array(0),
                     flags: signTransactionRequest.flags || Nimiq.Transaction.Flag.NONE,
                     validityStartHeight: signTransactionRequest.validityStartHeight,
                 } as ParsedSignTransactionRequest;
@@ -61,7 +64,9 @@ export class RequestParser {
                     recipientType: checkoutRequest.recipientType || Nimiq.Account.Type.BASIC,
                     value: checkoutRequest.value,
                     fee: checkoutRequest.fee || 0,
-                    data: checkoutRequest.extraData || new Uint8Array(0),
+                    data: typeof checkoutRequest.extraData === 'string'
+                        ? Utf8Tools.stringToUtf8ByteArray(checkoutRequest.extraData)
+                        : checkoutRequest.extraData || new Uint8Array(0),
                     flags: checkoutRequest.flags || Nimiq.Transaction.Flag.NONE,
                     validityDuration: !checkoutRequest.validityDuration ? TX_VALIDITY_WINDOW : Math.min(
                         TX_VALIDITY_WINDOW,

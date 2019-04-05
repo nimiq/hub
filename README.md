@@ -192,9 +192,9 @@ const requestOptions = {
     //fee: 138,
 
     // [optional] Extra data that should be sent with the transaction.
-    // Type: Uint8Array | Nimiq.SerialBuffer
+    // Type: string | Uint8Array | Nimiq.SerialBuffer
     // Default: new Uint8Array(0)
-    //extraData: Nimiq.BufferUtils.fromAscii('Hello Nimiq!'),
+    //extraData: 'Hello Nimiq!',
 
     // [optional] Nimiq.Transaction.Flag, only required if the transaction
     // creates a contract.

@@ -20,7 +20,7 @@ export interface SignTransactionRequest extends SimpleRequest {
     recipientType?: Nimiq.Account.Type;
     value: number;
     fee?: number;
-    extraData?: Uint8Array;
+    extraData?: Uint8Array | string;
     flags?: number;
     validityStartHeight: number; // FIXME To be made optional when accounts manager has its own network
 }
@@ -31,7 +31,7 @@ export interface CheckoutRequest extends BasicRequest {
     recipientType?: Nimiq.Account.Type;
     value: number;
     fee?: number;
-    extraData?: Uint8Array;
+    extraData?: Uint8Array | string;
     flags?: number;
     validityDuration?: number;
 }
