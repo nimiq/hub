@@ -75,6 +75,33 @@ export interface Address {
     label: string;
 }
 
+export interface VestingContract {
+    type: Nimiq.Account.Type.VESTING;
+    address: string; // Userfriendly address
+    label: string;
+
+    owner: string; // Userfriendly address
+    start: number;
+    stepAmount: number;
+    stepBlocks: number;
+    totalAmount: number;
+}
+
+export interface HashedTimeLockedContract {
+    type: Nimiq.Account.Type.HTLC;
+    address: string; // Userfriendly address
+    label: string;
+
+    sender: string;  // Userfriendly address
+    recipient: string;  // Userfriendly address
+    hashRoot: string; // HEX
+    hashCount: number;
+    timeout: number;
+    totalAmount: number;
+}
+
+export type Contract = VestingContract | HashedTimeLockedContract;
+
 export interface Account {
     accountId: string;
     label: string;
@@ -82,6 +109,7 @@ export interface Account {
     fileExported: boolean;
     wordsExported: boolean;
     addresses: Address[];
+    contracts: Contract[];
 }
 
 export interface ExportResult {

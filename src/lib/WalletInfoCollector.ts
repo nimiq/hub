@@ -7,12 +7,14 @@ import LedgerApi from '@/lib/LedgerApi'; // TODO import LedgerApi only when need
 import {
     ACCOUNT_DEFAULT_LABEL_LEGACY,
     ACCOUNT_DEFAULT_LABEL_LEDGER,
+    CONTRACT_DEFAULT_LABEL_VESTING,
     ACCOUNT_TEMPORARY_LABEL_KEYGUARD,
     ACCOUNT_MAX_ALLOWED_ADDRESS_GAP,
     ACCOUNT_BIP32_BASE_PATH_KEYGUARD,
 } from '@/lib/Constants';
 import Config from 'config';
 import LabelingMachine from './LabelingMachine';
+import { ContractInfo, VestingContractInfo } from './ContractInfo';
 
 type BasicAccountInfo = { // tslint:disable-line:interface-over-type-literal
     address: string,
@@ -65,6 +67,14 @@ export default class WalletInfoCollector {
             }
         }
         onUpdate(walletInfo, await derivedAccountsPromise);
+
+        // Search for genesis vesting contracts
+        // (only legacy or a first ledger addresses can be owners of genesis vesting contracts)
+        if (walletType === WalletType.LEGACY || walletType === WalletType.LEDGER) {
+            const contracts = await WalletInfoCollector._getGenesisVestingContractsForAddress(
+                walletInfo.accounts.values().next().value.address);
+            WalletInfoCollector._addContracts(walletInfo, contracts);
+        }
 
         if (walletType === WalletType.LEGACY) {
             // legacy wallets have no derived accounts
@@ -133,7 +143,8 @@ export default class WalletInfoCollector {
 
     private static _initializeDependencies(walletType: WalletType): void {
         WalletInfoCollector._networkInitializationPromise =
-            WalletInfoCollector._networkInitializationPromise || NetworkClient.Instance.init();
+            WalletInfoCollector._networkInitializationPromise
+            || NetworkClient.createInstance(Config.networkEndpoint).init();
         WalletInfoCollector._networkInitializationPromise
             .catch(() => delete WalletInfoCollector._networkInitializationPromise);
         if (walletType === WalletType.BIP39) {
@@ -236,5 +247,37 @@ export default class WalletInfoCollector {
             if (balance !== undefined) accountInfo.balance = balance;
             walletInfo.accounts.set(newAccount.address, accountInfo);
         }
+    }
+
+    private static _addContracts(
+        walletInfo: WalletInfo,
+        newContracts: ContractInfo[],
+    ): void {
+        for (const newContract of newContracts) {
+            const existingContract = walletInfo.findContractByAddress(newContract.address);
+            if (!existingContract) {
+                walletInfo.contracts.push(newContract);
+            }
+        }
+    }
+
+    private static async _getGenesisVestingContractsForAddress(address: Nimiq.Address): Promise<VestingContractInfo[]> {
+        const genesisVestingContracts = await WalletInfoCollector._getGenesisVestingContracts();
+        return genesisVestingContracts.filter((contract) => contract.owner.equals(address));
+    }
+
+    private static async _getGenesisVestingContracts(): Promise<VestingContractInfo[]> {
+        await WalletInfoCollector._networkInitializationPromise;
+        const contracts = await NetworkClient.Instance.getGenesisVestingContracts();
+
+        return contracts.map((contract) => new VestingContractInfo(
+            CONTRACT_DEFAULT_LABEL_VESTING,
+            Nimiq.Address.fromUserFriendlyAddress(contract.address),
+            Nimiq.Address.fromUserFriendlyAddress(contract.owner),
+            contract.start,
+            Nimiq.Policy.coinsToSatoshis(contract.stepAmount),
+            contract.stepBlocks,
+            Nimiq.Policy.coinsToSatoshis(contract.totalAmount),
+        ));
     }
 }

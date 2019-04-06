@@ -1,7 +1,6 @@
 import { setup } from './_setup';
 import { WalletType, WalletInfoEntry } from '@/lib/WalletInfo';
 import { AccountInfoEntry } from '@/lib/AccountInfo';
-import { ContractType } from '@/lib/ContractInfo';
 import CookieJar from '@/lib/CookieJar';
 import { Utf8Tools } from '@nimiq/utils';
 
@@ -9,10 +8,13 @@ setup();
 
 const DUMMY_ADDRESS_HR1 = 'NQ86 6D3H 6MVD 2JV4 N77V FNA5 M9BL 2QSP 1P64';
 const DUMMY_ADDRESS_HR2 = 'NQ36 CPYA UTCK VBBG L5GG 8D36 SNHM K8MH DD7X';
+const DUMMY_ADDRESS_HRV = 'NQ76 E5NX K4S8 9RS9 65FC DQ8C H5ML SCYG 81XJ'; // Vesting contract address
 const DUMMY_ADDRESS1: Nimiq.Address = Nimiq.Address.fromUserFriendlyAddress(DUMMY_ADDRESS_HR1);
 const DUMMY_ADDRESS2: Nimiq.Address = Nimiq.Address.fromUserFriendlyAddress(DUMMY_ADDRESS_HR2);
+const DUMMY_ADDRESSV: Nimiq.Address = Nimiq.Address.fromUserFriendlyAddress(DUMMY_ADDRESS_HRV);
 const DUMMY_ADDRESS_S1 = new Uint8Array(DUMMY_ADDRESS1.serialize());
 const DUMMY_ADDRESS_S2 = new Uint8Array(DUMMY_ADDRESS2.serialize());
+const DUMMY_ADDRESS_SV = new Uint8Array(DUMMY_ADDRESSV.serialize());
 const BURN_ADDRESS_HR  = 'NQ07 0000 0000 0000 0000 0000 0000 0000 0000';
 const BURN_ADDRESS  = Nimiq.Address.fromUserFriendlyAddress(BURN_ADDRESS_HR);
 const BURN_ADDRESS_S = new Uint8Array(BURN_ADDRESS.serialize());
@@ -59,10 +61,14 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
             ],
         ]),
         contracts: [{
-            address: DUMMY_ADDRESS1,
-            label: 'Savings',
-            ownerPath: 'm/44\'/242\'/0\'/0\'',
-            type: ContractType.VESTING,
+            type: Nimiq.Account.Type.VESTING,
+            label: 'Vesting Contract',
+            address: DUMMY_ADDRESS_SV,
+            owner: BURN_ADDRESS_S,
+            start: 0,
+            stepAmount: 419229878121,
+            stepBlocks: 2880,
+            totalAmount: 2515379268724,
         }],
         type: WalletType.LEDGER,
         keyMissing: true,
@@ -128,12 +134,7 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
                 },
             ],
         ]),
-        contracts: [{
-            address: DUMMY_ADDRESS1,
-            label: 'Vesting Contract',
-            ownerPath: 'm/44\'/242\'/0\'/0\'',
-            type: ContractType.VESTING,
-        }],
+        contracts: [],
         type: WalletType.LEDGER,
         keyMissing: false,
         fileExported: false,
@@ -152,7 +153,16 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
                 },
             ],
         ]),
-        contracts: [],
+        contracts: [{
+            type: Nimiq.Account.Type.VESTING,
+            label: 'Custom Label',
+            address: DUMMY_ADDRESS_SV,
+            owner: DUMMY_ADDRESS_S2,
+            start: 400000,
+            stepAmount: 419229878121,
+            stepBlocks: 28800,
+            totalAmount: 2515379268724,
+        }],
         type: WalletType.LEGACY,
         keyMissing: false,
         fileExported: true,
@@ -201,7 +211,16 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
                 },
             ],
         ]),
-        contracts: [],
+        contracts: [{
+            type: Nimiq.Account.Type.VESTING,
+            label: 'Vesting Contract',
+            address: DUMMY_ADDRESS_SV,
+            owner: BURN_ADDRESS_S,
+            start: 0,
+            stepAmount: 419229878121,
+            stepBlocks: 2880,
+            totalAmount: 2515379268724,
+        }],
         type: WalletType.LEDGER,
         keyMissing: true,
         fileExported: true,
@@ -285,7 +304,16 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
                 },
             ],
         ]),
-        contracts: [],
+        contracts: [{
+            type: Nimiq.Account.Type.VESTING,
+            label: 'Custom Label',
+            address: DUMMY_ADDRESS_SV,
+            owner: DUMMY_ADDRESS_S2,
+            start: 400000,
+            stepAmount: 419229878121,
+            stepBlocks: 28800,
+            totalAmount: 2515379268724,
+        }],
         type: WalletType.LEGACY,
         keyMissing: false,
         fileExported: true,
@@ -298,7 +326,7 @@ const BYTES = [
 
     // wallet 1 (BIP39)
     2, // wallet label length (0), wallet type (2)
-    1, // keyMissing = true, fileExported = false, wordsExported = false
+    0b00000001, // Status byte: keyMissing = true, fileExported = false, wordsExported = false, hasContracts = false
     1, 23, // wallet id
     // wallet label (omitted)
     2, // number of accounts
@@ -315,7 +343,7 @@ const BYTES = [
 
     // wallet 2 (LEDGER)
     75, // wallet label length (18), wallet type (3)
-    3, // keyMissing = true, fileExported = true, wordsExported = false
+    0b00001011, // Status byte: keyMissing = true, fileExported = true, wordsExported = false, hasContracts = true
     30, 227, 217, 38, 164, 157, // wallet id
     77, 111, 110, 107, 101, 121, 32, 70, 97, 109, 105, 108, 121, 32, 240, 159, 153, 137, // wallet label
     1, // number of accounts
@@ -325,9 +353,22 @@ const BYTES = [
         68, 97, 110, 105, 101, 108, 39, 115, 32, 76, 101, 100, 103, 101, 114, 32, 226, 157, 164, // account label
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // account address
 
+    // number of contracts
+    1,
+
+        // contract 1
+        1, // contract label length (0), contract type (1)
+        // contract label (omitted)
+        113, 109, 233, 147, 72, 78, 116, 147, 21, 236, 110, 16, 200, 150, 180, 211, 63, 4, 7, 210, // contract address
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // owner address
+        0, 0, 0, 0, // start
+        0, 0, 0, 97, 156, 12, 71, 105, // step amount
+        0, 0, 11, 64, // step blocks
+        0, 0, 2, 73, 168, 73, 172, 116, // total amount
+
     // wallet 3 (LEGACY)
     41, // account label length (10), wallet type (1)
-    5, // keyMissing = true, fileExported = false, wordsExported = true
+    0b00000101, // Status byte: keyMissing = true, fileExported = false, wordsExported = true, hasContracts = false
     1, 5, // wallet id
 
         // account
@@ -336,7 +377,7 @@ const BYTES = [
 
     // wallet 4 (BIP39)
     38, // wallet label length (9), wallet type (2)
-    6, // keyMissing = false, fileExported = true, wordsExported = true
+    0b00000110, // Status byte: keyMissing = false, fileExported = true, wordsExported = true, hasContracts = false
     1, 7, // wallet id
     77, 97, 105, 110, 32, 240, 159, 153, 137, // wallet label
     2, // number of accounts
@@ -353,7 +394,7 @@ const BYTES = [
 
     // wallet 5 (LEDGER)
     3, // wallet label length (0), wallet type (3)
-    0, // keyMissing = false, fileExported = false, wordsExported = false
+    0b00000000, // Status byte: keyMissing = false, fileExported = false, wordsExported = false, hasContracts = false
     30, 227, 217, 38, 164, 160, // wallet id
     // wallet label (omitted)
     1, // number of accounts
@@ -365,12 +406,25 @@ const BYTES = [
 
     // wallet 6 (LEGACY)
     41, // account label length (10), wallet type (1)
-    2, // keyMissing = false, fileExported = true, wordsExported = false
+    0b00001010, // Status byte: keyMissing = false, fileExported = true, wordsExported = false, hasContracts = true
     3, 137, 84, 64, // wallet id
 
         // account
         79, 108, 100, 65, 100, 100, 114, 101, 115, 115, // account label
         101, 254, 174, 109, 147, 234, 215, 10, 22, 16, 67, 70, 109, 90, 53, 154, 43, 22, 180, 254, // account address
+
+    // number of contracts
+    1,
+
+        // contract 1
+        49, // contract label length (12), contract type (1)
+        67, 117, 115, 116, 111, 109, 32, 76, 97, 98, 101, 108, // contract label
+        113, 109, 233, 147, 72, 78, 116, 147, 21, 236, 110, 16, 200, 150, 180, 211, 63, 4, 7, 210, // contract address
+        101, 254, 174, 109, 147, 234, 215, 10, 22, 16, 67, 70, 109, 90, 53, 154, 43, 22, 180, 254, // owner address
+        0, 6, 26, 128, // start
+        0, 0, 0, 97, 156, 12, 71, 105, // step amount
+        0, 0, 112, 128, // step blocks
+        0, 0, 2, 73, 168, 73, 172, 116, // total amount
 ];
 
 const BASE64 = Nimiq.BufferUtils.toBase64(new Uint8Array(BYTES));

@@ -11,7 +11,14 @@ import { SignedTransaction } from '../lib/PublicRequestTypes';
 import KeyguardClient from '@nimiq/keyguard-client';
 import { NetworkClient, PlainTransaction, DetailedPlainTransaction } from '@nimiq/network-client';
 import Config from 'config';
-import { NETWORK_TEST, NETWORK_DEV, NETWORK_MAIN, ERROR_INVALID_NETWORK } from '../lib/Constants';
+import {
+    NETWORK_TEST,
+    NETWORK_DEV,
+    NETWORK_MAIN,
+    ERROR_INVALID_NETWORK,
+    CONTRACT_DEFAULT_LABEL_VESTING,
+} from '../lib/Constants';
+import { VestingContractInfo } from '../lib/ContractInfo';
 
 @Component
 class Network extends Vue {
@@ -36,6 +43,11 @@ class Network extends Vue {
         return client.connectPico(addresses);
     }
 
+    public async disconnect() {
+        if (!NetworkClient.hasInstance()) return;
+        return NetworkClient.Instance.disconnect();
+    }
+
     public async prepareTx(
         keyguardRequest: KeyguardClient.SignTransactionRequest,
         keyguardResult: KeyguardClient.SignTransactionResult,
@@ -46,8 +58,8 @@ class Network extends Vue {
 
         if (
             (keyguardRequest.data && keyguardRequest.data.length > 0)
-            || keyguardRequest.senderType !== Nimiq.Account.Type.BASIC
-            || keyguardRequest.recipientType !== Nimiq.Account.Type.BASIC
+            || keyguardRequest.senderType // this condition is truthy when type is 1 or 2
+            || keyguardRequest.recipientType // this condition is truthy when type is 1 or 2
         ) {
             tx = new Nimiq.ExtendedTransaction(
                 new Nimiq.Address(keyguardRequest.sender),
@@ -134,6 +146,21 @@ class Network extends Vue {
     public async getBalances(addresses: string[]): Promise<Map<string, number>> {
         const client = await this._getNetworkClient();
         return client.getBalance(addresses);
+    }
+
+    public async getGenesisVestingContracts(): Promise<VestingContractInfo[]> {
+        const client = await this._getNetworkClient();
+        const contracts = await client.getGenesisVestingContracts();
+
+        return contracts.map((contract) => new VestingContractInfo(
+            CONTRACT_DEFAULT_LABEL_VESTING,
+            Nimiq.Address.fromUserFriendlyAddress(contract.address),
+            Nimiq.Address.fromUserFriendlyAddress(contract.owner),
+            contract.start,
+            Nimiq.Policy.coinsToSatoshis(contract.stepAmount),
+            contract.stepBlocks,
+            Nimiq.Policy.coinsToSatoshis(contract.totalAmount),
+        ));
     }
 
     private created() {
