@@ -59,10 +59,7 @@ export default class SignMessage extends Vue {
     private async created() {
         await this.handleOnboardingResult();
 
-        if (this.request.walletId && this.request.signer) {
-            this.setAccount(this.request.walletId, this.request.signer.toUserFriendlyAddress(), true);
-            return;
-        } else if (this.request.signer) {
+        if (this.request.signer) {
             const wallet = this.findWalletByAddress(this.request.signer.toUserFriendlyAddress());
             if (wallet) {
                 this.setAccount(wallet.id, this.request.signer.toUserFriendlyAddress(), true);
