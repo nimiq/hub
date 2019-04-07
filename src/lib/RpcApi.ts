@@ -138,7 +138,7 @@ export default class RpcApi {
                     request = RequestParser.parse(arg, state, requestType) || undefined;
                     this._staticStore.request = request;
                 } catch (error) {
-                    state.reply(ResponseStatus.ERROR, error);
+                    this.reject(error);
                     return;
                 }
 
@@ -154,7 +154,7 @@ export default class RpcApi {
                     account = await WalletStore.Instance.get((request as ParsedSimpleRequest).walletId);
                     if (!account && requestType !== RequestType.LOGOUT) {
                         // no account found although it's required
-                        state.reply(ResponseStatus.ERROR, new Error('Account ID not found'));
+                        this.reject(new Error('Account ID not found'));
                         return;
                     }
                 }
@@ -226,7 +226,7 @@ export default class RpcApi {
                 this._recoverState(state);
 
                 if (error.message === ERROR_CANCELED) {
-                    this._staticStore.rpcState!.reply(ResponseStatus.ERROR, error);
+                    this.reject(error);
                     return;
                 }
 
