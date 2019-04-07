@@ -23,6 +23,18 @@ export class WalletInfo {
             o.keyMissing, o.fileExported, o.wordsExported);
     }
 
+    public static objectToAccountType(o: WalletInfoEntry): Account {
+        return {
+            accountId: o.id,
+            label: o.label,
+            type: o.type,
+            fileExported: o.fileExported,
+            wordsExported: o.wordsExported,
+            addresses: Array.from(o.accounts.values()).map((address) => AccountInfo.objectToAddressType(address)),
+            contracts: o.contracts.map((contract) => ContractInfoHelper.objectToContractType(contract)),
+        };
+    }
+
     public constructor(public id: string,
                        public label: string,
                        public accounts: Map</*address*/ string, AccountInfo>,

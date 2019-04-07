@@ -24,7 +24,7 @@ class IFrameApi {
             wallets = await WalletStore.Instance.list();
         }
         if (wallets.length > 0) {
-            return wallets.map((wallet) => WalletInfo.fromObject(wallet).toAccountType());
+            return wallets.map((wallet) => WalletInfo.objectToAccountType(wallet));
         }
 
         // If no wallets exist, see if the Keyguard has keys
