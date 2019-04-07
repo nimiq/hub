@@ -10,8 +10,7 @@ import { ParsedSignMessageRequest } from '../lib/RequestTypes';
 export default class SignMessageErrorHandler extends ErrorHandler {
     protected requestSpecificErrors(): boolean {
         if (this.keyguardResult instanceof Error && this.keyguardResult.message === 'Request aborted') {
-            if ((this.request as ParsedSignMessageRequest).walletId
-             && (this.request as ParsedSignMessageRequest).signer) {
+            if ((this.request as ParsedSignMessageRequest).signer) {
                 // This was a hand-through request, let it be a hand-through result
                 return false;
             }

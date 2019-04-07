@@ -28,7 +28,6 @@ export class RequestParser {
                 return {
                     kind: RequestType.SIGN_TRANSACTION,
                     appName: signTransactionRequest.appName,
-                    walletId: signTransactionRequest.accountId,
                     sender: Nimiq.Address.fromUserFriendlyAddress(signTransactionRequest.sender),
                     recipient: Nimiq.Address.fromUserFriendlyAddress(signTransactionRequest.recipient),
                     recipientType: signTransactionRequest.recipientType,
@@ -101,7 +100,6 @@ export class RequestParser {
                 return {
                     kind: RequestType.SIGN_MESSAGE,
                     appName: signMessageRequest.appName,
-                    walletId: signMessageRequest.accountId,
                     signer: signMessageRequest.signer
                             ? Nimiq.Address.fromUserFriendlyAddress(signMessageRequest.signer)
                             : undefined,
@@ -118,7 +116,6 @@ export class RequestParser {
                 const signTransactionRequest = request as ParsedSignTransactionRequest;
                 return {
                     appName: signTransactionRequest.appName,
-                    accountId: signTransactionRequest.walletId,
                     sender: signTransactionRequest.sender.toUserFriendlyAddress(),
                     recipient: signTransactionRequest.recipient.toUserFriendlyAddress(),
                     recipientType: signTransactionRequest.recipientType,
@@ -169,7 +166,6 @@ export class RequestParser {
                 const signMessageRequest = request as ParsedSignMessageRequest;
                 return {
                     appName: signMessageRequest.appName,
-                    accountId: signMessageRequest.walletId,
                     signer: signMessageRequest.signer ? signMessageRequest.signer.toUserFriendlyAddress() : undefined,
                     message: signMessageRequest.message,
                 } as SignMessageRequest;
