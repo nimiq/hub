@@ -73,10 +73,9 @@ export default class LoginSuccess extends Vue {
             type: this.walletInfos[0].type,
             fileExported: this.walletInfos[0].fileExported,
             wordsExported: this.walletInfos[0].wordsExported,
-            addresses: Array.from(this.walletInfos[0].accounts.values()).map((addressInfo) => ({
-                address: addressInfo.userFriendlyAddress,
-                label: addressInfo.label,
-            })),
+            addresses: Array.from(this.walletInfos[0].accounts.values())
+                .map((addressInfo) => addressInfo.toAddressType()),
+            contracts: this.walletInfos[0].contracts.map((contract) => contract.toContractType()),
         };
 
         this.title = 'Your account is ready.';

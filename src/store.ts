@@ -8,6 +8,7 @@ import {
     LEGACY_GROUPING_ACCOUNT_ID,
     LEGACY_GROUPING_ACCOUNT_LABEL,
 } from '@/lib/Constants';
+import { ContractInfo } from './lib/ContractInfo';
 
 Vue.use(Vuex);
 
@@ -110,7 +111,11 @@ const store: StoreOptions<RootState> = {
             return state.wallets.find((wallet) => wallet.id === id);
         },
         findWalletByAddress: (state) => (address: string): WalletInfo | undefined => {
-            return state.wallets.find((wallet) => wallet.accounts.has(address));
+            const wallet = state.wallets.find((wallet) => wallet.accounts.has(address));
+            if (wallet) return wallet;
+            return state.wallets.find((wallet) => wallet.contracts.some((contract) => {
+                return contract.address.toUserFriendlyAddress() === address;
+            }));
         },
         activeWallet: (state, getters): WalletInfo | undefined => {
             if (!state.activeWalletId) return undefined;
@@ -127,6 +132,7 @@ const store: StoreOptions<RootState> = {
         },
         processedWallets: (state) => {
             const singleAccounts = new Map<string, AccountInfo>();
+            const singleContracts: ContractInfo[] = [];
 
             const processedWallets = state.wallets.filter((wallet) => {
                 if (wallet.type !== WalletType.LEGACY) return true;
@@ -134,6 +140,11 @@ const store: StoreOptions<RootState> = {
                 const [singleAccountAddress, singleAccountInfo] = Array.from(wallet.accounts.entries())[0];
                 singleAccountInfo.walletId = wallet.id;
                 singleAccounts.set(singleAccountAddress, singleAccountInfo);
+
+                for (const contract of wallet.contracts) {
+                    contract.walletId = wallet.id;
+                    singleContracts.push(contract);
+                }
 
                 return false;
             });
@@ -143,7 +154,7 @@ const store: StoreOptions<RootState> = {
                     LEGACY_GROUPING_ACCOUNT_ID,
                     LEGACY_GROUPING_ACCOUNT_LABEL,
                     singleAccounts,
-                    [],
+                    singleContracts,
                     WalletType.LEGACY,
                 ));
             }

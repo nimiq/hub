@@ -1,5 +1,9 @@
 import { AccountInfo, AccountInfoEntry } from './AccountInfo';
-import { ContractInfo } from './ContractInfo';
+import {
+    ContractInfo,
+    ContractInfoEntry,
+    ContractInfoHelper,
+} from './ContractInfo';
 
 export enum WalletType {
     LEGACY = 1,
@@ -13,7 +17,8 @@ export class WalletInfo {
         o.accounts.forEach((accountInfoEntry, userFriendlyAddress) => {
             accounts.set(userFriendlyAddress, AccountInfo.fromObject(accountInfoEntry));
         });
-        return new WalletInfo(o.id, o.label, accounts, o.contracts, o.type,
+        const contracts = o.contracts.map((contract) => ContractInfoHelper.fromObject(contract));
+        return new WalletInfo(o.id, o.label, accounts, contracts, o.type,
             o.keyMissing, o.fileExported, o.wordsExported);
     }
 
@@ -26,16 +31,44 @@ export class WalletInfo {
                        public fileExported: boolean = false,
                        public wordsExported: boolean = false) {}
 
+    public findContractByAddress(address: Nimiq.Address): ContractInfo | undefined {
+        return this.contracts.find((contract) => contract.address.equals(address));
+    }
+
+    public findContractsByOwner(address: Nimiq.Address): ContractInfo[] {
+        return this.contracts.filter((contract) => {
+            switch (contract.type) {
+                case Nimiq.Account.Type.VESTING: return contract.owner.equals(address);
+                case Nimiq.Account.Type.HTLC:
+                    return contract.sender.equals(address)
+                        || contract.recipient.equals(address);
+                default: return false;
+            }
+        });
+    }
+
+    public setContract(updatedContract: ContractInfo) {
+        const index = this.contracts.findIndex((contract) => contract.address.equals(updatedContract.address));
+        if (index < 0) {
+            // Is new contract
+            this.contracts.push(updatedContract);
+            return;
+        }
+
+        this.contracts.splice(index, 1, updatedContract);
+    }
+
     public toObject(): WalletInfoEntry {
         const accountEntries = new Map<string, AccountInfoEntry>();
         this.accounts.forEach((accountInfo, userFriendlyAddress) => {
             accountEntries.set(userFriendlyAddress, accountInfo.toObject());
         });
+        const contractEntries = this.contracts.map((contract) => contract.toObject());
         return {
             id: this.id,
             label: this.label,
             accounts: accountEntries,
-            contracts: this.contracts,
+            contracts: contractEntries,
             type: this.type,
             keyMissing: this.keyMissing,
             fileExported: this.fileExported,
@@ -51,7 +84,7 @@ export interface WalletInfoEntry {
     id: string;
     label: string;
     accounts: Map</*address*/ string, AccountInfoEntry>;
-    contracts: ContractInfo[];
+    contracts: ContractInfoEntry[];
     type: WalletType;
     keyMissing: boolean;
     fileExported: boolean;

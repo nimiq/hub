@@ -2,7 +2,7 @@
     <div class="container pad-bottom">
         <SmallPage>
             <Loader :title="title" :status="status" :state="state" :lightBlue="true"/>
-            <Network :visible="false" ref="network"/>
+            <Network ref="network" :visible="false"/>
         </SmallPage>
     </div>
 </template>
