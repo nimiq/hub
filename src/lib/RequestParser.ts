@@ -27,7 +27,7 @@ export class RequestParser {
             case RequestType.SIGN_TRANSACTION:
                 const signTransactionRequest = request as SignTransactionRequest;
 
-                if (!signTransactionRequest.value) throw new Error ('value is required');
+                if (!signTransactionRequest.value) throw new Error('value is required');
                 if (!signTransactionRequest.validityStartHeight) throw new Error('validityStartHeight is required');
 
                 return {
@@ -48,7 +48,7 @@ export class RequestParser {
             case RequestType.CHECKOUT:
                 const checkoutRequest = request as CheckoutRequest;
 
-                if (!checkoutRequest.value) throw new Error ('value is required');
+                if (!checkoutRequest.value) throw new Error('value is required');
                 if (checkoutRequest.shopLogoUrl && new URL(checkoutRequest.shopLogoUrl).origin !== state.origin) {
                     throw new Error(
                         'shopLogoUrl must have same origin as caller website. Image at ' +
