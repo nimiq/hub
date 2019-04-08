@@ -27,22 +27,22 @@ export interface ParsedSimpleRequest extends ParsedBasicRequest {
 export interface ParsedSignTransactionRequest extends ParsedBasicRequest {
     sender: Nimiq.Address;
     recipient: Nimiq.Address;
-    recipientType?: Nimiq.Account.Type;
+    recipientType: Nimiq.Account.Type;
     value: number;
-    fee?: number;
-    data?: Uint8Array;
-    flags?: number;
+    fee: number;
+    data: Uint8Array;
+    flags: number;
     validityStartHeight: number; // FIXME To be made optional when accounts manager has its own network
 }
 
 export interface ParsedCheckoutRequest extends ParsedBasicRequest {
     shopLogoUrl?: string;
     recipient: Nimiq.Address;
-    recipientType?: Nimiq.Account.Type;
+    recipientType: Nimiq.Account.Type;
     value: number;
-    fee?: number;
-    data?: Uint8Array;
-    flags?: number;
+    fee: number;
+    data: Uint8Array;
+    flags: number;
     validityDuration: number;
 }
 
