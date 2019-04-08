@@ -24,8 +24,7 @@ export interface ParsedSimpleRequest extends ParsedBasicRequest {
     walletId: string;
 }
 
-export interface ParsedSignTransactionRequest extends ParsedSimpleRequest {
-    walletId: string;
+export interface ParsedSignTransactionRequest extends ParsedBasicRequest {
     sender: Nimiq.Address;
     recipient: Nimiq.Address;
     recipientType?: Nimiq.Account.Type;
@@ -48,7 +47,6 @@ export interface ParsedCheckoutRequest extends ParsedBasicRequest {
 }
 
 export interface ParsedSignMessageRequest extends ParsedBasicRequest {
-    walletId?: string;
     signer?: Nimiq.Address;
     message: string | Uint8Array;
 }

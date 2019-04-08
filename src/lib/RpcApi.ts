@@ -154,7 +154,9 @@ export default class RpcApi {
                 }
 
                 let account;
-                if (request && 'walletId' in request) {
+                // Simply testing if the property exists (with `'walletId' in request`) is not enough,
+                // as `undefined` also counts as existing.
+                if (request && (request as ParsedSimpleRequest).walletId) {
                     account = await WalletStore.Instance.get((request as ParsedSimpleRequest).walletId);
                 }
 

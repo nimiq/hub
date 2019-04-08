@@ -7,18 +7,23 @@ import KeyguardClient from '@nimiq/keyguard-client';
 import { WalletStore } from '@/lib/WalletStore';
 import staticStore, { Static } from '../lib/StaticStore';
 import { VestingContractInfo, ContractInfo } from '@/lib/ContractInfo';
+import { WalletInfo } from '../lib/WalletInfo';
+import { Getter } from 'vuex-class';
 
 @Component
 export default class SignTransaction extends Vue {
     @Static private request!: ParsedSignTransactionRequest;
+    @Getter private findWalletByAddress!: (address: string) => WalletInfo | undefined;
 
     public async created() {
         // Forward user through AccountsManager to Keyguard
-        const wallet = await WalletStore.Instance.get(this.request.walletId);
+
+        const wallet = this.findWalletByAddress(this.request.sender.toUserFriendlyAddress());
         if (!wallet) {
-            this.$rpc.reject(new Error('Account ID not found'));
+            this.$rpc.reject(new Error('Address not found'));
             return;
         }
+
         let account = wallet.accounts.get(this.request.sender.toUserFriendlyAddress());
         let contract: ContractInfo | undefined;
         if (!account) {
@@ -31,11 +36,6 @@ export default class SignTransaction extends Vue {
                 }
                 account = wallet.accounts.get((contract as VestingContractInfo).owner.toUserFriendlyAddress());
             }
-
-            if (!account) {
-                this.$rpc.reject(new Error('Address not found'));
-                return;
-            }
         }
 
         const request: KeyguardClient.SignTransactionRequest = {
@@ -43,12 +43,12 @@ export default class SignTransaction extends Vue {
             appName: this.request.appName,
 
             keyId: wallet.id,
-            keyPath: account.path,
+            keyPath: account!.path,
             keyLabel: wallet.label,
 
-            sender: (contract || account).address.serialize(),
+            sender: (contract || account!).address.serialize(),
             senderType: contract ? contract.type : Nimiq.Account.Type.BASIC,
-            senderLabel: (contract || account).label,
+            senderLabel: (contract || account!).label,
             recipient: this.request.recipient.serialize(),
             recipientType: this.request.recipientType,
             recipientLabel: undefined, // XXX Should we accept a recipient label from outside?

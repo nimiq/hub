@@ -14,7 +14,7 @@ export interface SimpleResult {
 
 export type ListResult = WalletInfoEntry[];
 
-export interface SignTransactionRequest extends SimpleRequest {
+export interface SignTransactionRequest extends BasicRequest {
     sender: string;
     recipient: string;
     recipientType?: Nimiq.Account.Type;
@@ -58,7 +58,6 @@ export interface SignedTransaction {
 }
 
 export interface SignMessageRequest extends BasicRequest {
-    accountId?: string;
     signer?: string;
     message: string | Uint8Array;
 }

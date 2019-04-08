@@ -121,7 +121,6 @@ class Demo {
                 throw new Error('No account found');
             }
             const sender = $radio.getAttribute('data-address');
-            const accountId = $radio.getAttribute('data-wallet-id');
             const value = parseInt((document.querySelector('#value') as HTMLInputElement).value) || 1337;
             const fee = parseInt((document.querySelector('#fee') as HTMLInputElement).value) || 0;
             const txData = (document.querySelector('#data') as HTMLInputElement).value || '';
@@ -129,7 +128,6 @@ class Demo {
 
             return {
                 appName: 'Accounts Demos',
-                accountId,
                 sender,
                 recipient: 'NQ63 U7XG 1YYE D6FA SXGG 3F5H X403 NBKN JLDU',
                 value,
@@ -212,11 +210,9 @@ class Demo {
                 throw new Error('No account found');
             }
             const signer = $radio.getAttribute('data-address');
-            const accountId = $radio.getAttribute('data-wallet-id');
 
             return {
                 appName: 'Accounts Demos',
-                accountId,
                 signer,
                 message,
             };
