@@ -205,14 +205,15 @@ export class CookieDecoder {
         const labelBytes = this.readBytes(bytes, labelLength);
 
         // Contract address
-        const addressBytes = this.readBytes(bytes, Nimiq.Address.SERIALIZED_SIZE);
+        // (iframe does not have Nimiq lib)
+        const addressBytes = this.readBytes(bytes, 20 /* Nimiq.Address.SERIALIZED_SIZE */);
 
         switch (type) {
-            case Nimiq.Account.Type.VESTING:
+            case 1 /* Nimiq.Account.Type.VESTING */:
                 const label = labelBytes.length > 0
                     ? Utf8Tools.utf8ByteArrayToString(new Uint8Array(labelBytes))
                     : CONTRACT_DEFAULT_LABEL_VESTING;
-                const ownerBytes = this.readBytes(bytes, Nimiq.Address.SERIALIZED_SIZE);
+                const ownerBytes = this.readBytes(bytes, 20 /* Nimiq.Address.SERIALIZED_SIZE */);
                 const start = this.fromBase256(this.readBytes(bytes, 4)); // Uint32
                 const stepAmount = this.fromBase256(this.readBytes(bytes, 8)); // Uint64
                 const stepBlocks = this.fromBase256(this.readBytes(bytes, 4)); // Uint32
@@ -227,7 +228,7 @@ export class CookieDecoder {
                     stepBlocks,
                     totalAmount,
                 } as VestingContractInfoEntry;
-            case Nimiq.Account.Type.HTLC:
+            case 2 /* Nimiq.Account.Type.HTLC */:
                 throw new Error('HTLC decoding is not yet implemented');
             default:
                 throw new Error('Unknown contract type: ' + type);

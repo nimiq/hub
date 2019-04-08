@@ -1,4 +1,5 @@
 import { VestingContract, HashedTimeLockedContract, Contract } from './PublicRequestTypes';
+import AddressUtils from './AddressUtils';
 
 export class ContractInfoHelper {
     public static fromObject(o: ContractInfoEntry): VestingContractInfo | HashedTimeLockedContractInfo {
@@ -7,6 +8,18 @@ export class ContractInfoHelper {
                 return VestingContractInfo.fromObject(o);
             case Nimiq.Account.Type.HTLC:
                 return HashedTimeLockedContractInfo.fromObject(o);
+            // @ts-ignore Property 'type' does not exist on type 'never'.
+            default: throw new Error('Unknown contract type: ' + o.type);
+        }
+    }
+
+    // Used in iframe
+    public static objectToContractType(o: ContractInfoEntry): VestingContract | HashedTimeLockedContract {
+        switch (o.type) {
+            case 1 /* Nimiq.Account.Type.VESTING */:
+                return VestingContractInfo.objectToContractType(o);
+            case 2 /* Nimiq.Account.Type.HTLC */:
+                return HashedTimeLockedContractInfo.objectToContractType(o);
             // @ts-ignore Property 'type' does not exist on type 'never'.
             default: throw new Error('Unknown contract type: ' + o.type);
         }
@@ -25,6 +38,20 @@ export class VestingContractInfo {
             o.totalAmount,
             o.balance,
         );
+    }
+
+    // Used in iframe
+    public static objectToContractType(o: VestingContractInfoEntry): VestingContract {
+        return {
+            type: 1 /* Nimiq.Account.Type.VESTING */,
+            label: o.label,
+            address: AddressUtils.toUserFriendlyAddress(o.address),
+            owner: AddressUtils.toUserFriendlyAddress(o.owner),
+            start: o.start,
+            stepAmount: o.stepAmount,
+            stepBlocks: o.stepBlocks,
+            totalAmount: o.totalAmount,
+        };
     }
 
     public type = Nimiq.Account.Type.VESTING;
@@ -125,6 +152,24 @@ export class HashedTimeLockedContractInfo {
             o.totalAmount,
             o.balance,
         );
+    }
+
+    // Used in iframe
+    public static objectToContractType(o: HashedTimeLockedContractInfoEntry): HashedTimeLockedContract {
+        return {
+            type: 2 /* Nimiq.Account.Type.HTLC */,
+            label: o.label,
+            address: AddressUtils.toUserFriendlyAddress(o.address),
+            sender: AddressUtils.toUserFriendlyAddress(o.sender),
+            recipient: AddressUtils.toUserFriendlyAddress(o.recipient),
+            hashRoot: Array.from(o.hashRoot).map((byte) => {
+                const hex = byte.toString(16);
+                return `${hex.length < 2 ? '0' : ''}${hex}`;
+            }).join(''),
+            hashCount: o.hashCount,
+            timeout: o.timeout,
+            totalAmount: o.totalAmount,
+        };
     }
 
     public type = Nimiq.Account.Type.HTLC;

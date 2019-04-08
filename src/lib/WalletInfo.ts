@@ -4,6 +4,7 @@ import {
     ContractInfoEntry,
     ContractInfoHelper,
 } from './ContractInfo';
+import { Account } from './PublicRequestTypes';
 
 export enum WalletType {
     LEGACY = 1,
@@ -20,6 +21,18 @@ export class WalletInfo {
         const contracts = o.contracts.map((contract) => ContractInfoHelper.fromObject(contract));
         return new WalletInfo(o.id, o.label, accounts, contracts, o.type,
             o.keyMissing, o.fileExported, o.wordsExported);
+    }
+
+    public static objectToAccountType(o: WalletInfoEntry): Account {
+        return {
+            accountId: o.id,
+            label: o.label,
+            type: o.type,
+            fileExported: o.fileExported,
+            wordsExported: o.wordsExported,
+            addresses: Array.from(o.accounts.values()).map((address) => AccountInfo.objectToAddressType(address)),
+            contracts: o.contracts.map((contract) => ContractInfoHelper.objectToContractType(contract)),
+        };
     }
 
     public constructor(public id: string,
@@ -73,6 +86,18 @@ export class WalletInfo {
             keyMissing: this.keyMissing,
             fileExported: this.fileExported,
             wordsExported: this.wordsExported,
+        };
+    }
+
+    public toAccountType(): Account {
+        return {
+            accountId: this.id,
+            label: this.label,
+            type: this.type,
+            fileExported: this.fileExported,
+            wordsExported: this.wordsExported,
+            addresses: Array.from(this.accounts.values()).map((address) => address.toAddressType()),
+            contracts: this.contracts.map((contract) => contract.toContractType()),
         };
     }
 }

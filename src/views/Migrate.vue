@@ -95,8 +95,8 @@ export default class Migrate extends Vue {
 
         this.title = 'Migration completed.';
         this.state = Loader.State.SUCCESS;
-        const walletInfoEntries = walletInfos.map((walletInfo) => walletInfo.toObject());
-        setTimeout(() => this.$rpc.resolve(walletInfoEntries), Loader.SUCCESS_REDIRECT_DELAY);
+        const listResult = walletInfos.map((walletInfo) => walletInfo.toAccountType());
+        setTimeout(() => this.$rpc.resolve(listResult), Loader.SUCCESS_REDIRECT_DELAY);
     }
 
     private onError(error: Error) {
