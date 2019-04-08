@@ -6,12 +6,13 @@ import { AccountInfoEntry } from './AccountInfo';
 import CookieJar from './CookieJar';
 import {
     ACCOUNT_DEFAULT_LABEL_LEGACY,
-    ACCOUNT_DEFAULT_LABEL_KEYGUARD,
     ACCOUNT_DEFAULT_LABEL_LEDGER,
     LABEL_MAX_LENGTH,
-    ADDRESS_DEFAULT_LABEL_KEYGUARD,
-    ADDRESS_DEFAULT_LABEL_LEDGER,
+    CONTRACT_DEFAULT_LABEL_VESTING,
 } from '@/lib/Constants';
+import LabelingMachine from './LabelingMachine';
+import { ContractInfoEntry, VestingContractInfoEntry } from './ContractInfo';
+import AddressUtils from './AddressUtils';
 
 export class CookieDecoder {
     public static decode(str: string): WalletInfoEntry[] {
@@ -32,11 +33,6 @@ export class CookieDecoder {
 
         return wallets;
     }
-
-    // The following constants are taken from @nimiq/core source,
-    // namely Nimiq.Address and Nimiq.BufferUtils.
-    private static CCODE = 'NQ';
-    private static BASE32_ALPHABET_NIMIQ = '0123456789ABCDEFGHJKLMNPQRSTUVXY';
 
     private static readByte(bytes: number[]): number {
         const byte = bytes.shift();
@@ -60,11 +56,14 @@ export class CookieDecoder {
 
         // Status byte
         const statusByte = this.readByte(bytes);
-        const keyMissing = (statusByte & CookieJar.StatusFlags.KEY_MISSING) === CookieJar.StatusFlags.KEY_MISSING;
+        const keyMissing =
+            (statusByte & CookieJar.StatusFlags.KEY_MISSING) === CookieJar.StatusFlags.KEY_MISSING;
         const fileExported =
             (statusByte & CookieJar.StatusFlags.FILE_EXPORTED) === CookieJar.StatusFlags.FILE_EXPORTED;
         const wordsExported =
             (statusByte & CookieJar.StatusFlags.WORDS_EXPORTED) === CookieJar.StatusFlags.WORDS_EXPORTED;
+        const hasContracts =
+            (statusByte & CookieJar.StatusFlags.HAS_CONTRACTS) === CookieJar.StatusFlags.HAS_CONTRACTS;
 
         // Wallet ID
         let id: string = '';
@@ -86,14 +85,16 @@ export class CookieDecoder {
         if (type === WalletType.LEGACY) {
             const walletLabel = ACCOUNT_DEFAULT_LABEL_LEGACY;
 
-            const accounts = this.decodeAccounts(bytes, type, labelLength);
+            const accounts = this.decodeAccounts(bytes, labelLength);
+
+            const contracts = hasContracts ? this.decodeContracts(bytes) : [];
 
             const walletInfoEntry: WalletInfoEntry = {
                 id,
                 type,
                 label: walletLabel,
                 accounts,
-                contracts: [],
+                contracts,
                 keyMissing,
                 fileExported,
                 wordsExported,
@@ -107,20 +108,23 @@ export class CookieDecoder {
         // Wallet label
         const walletLabelBytes = this.readBytes(bytes, labelLength);
 
-        const walletLabel = walletLabelBytes.length === 0
-            ? type === WalletType.BIP39
-                ? ACCOUNT_DEFAULT_LABEL_KEYGUARD
-                : ACCOUNT_DEFAULT_LABEL_LEDGER
-            : Utf8Tools.utf8ByteArrayToString(new Uint8Array(walletLabelBytes));
+        const accounts = this.decodeAccounts(bytes);
 
-        const accounts = this.decodeAccounts(bytes, type);
+        const contracts = hasContracts ? this.decodeContracts(bytes) : [];
+
+        const firstAccount = accounts.values().next().value;
+        const walletLabel = walletLabelBytes.length > 0
+            ? Utf8Tools.utf8ByteArrayToString(new Uint8Array(walletLabelBytes))
+            : type === WalletType.LEDGER
+                ? ACCOUNT_DEFAULT_LABEL_LEDGER
+                : LabelingMachine.labelAccount(AddressUtils.toUserFriendlyAddress(firstAccount.address));
 
         const walletInfoEntry: WalletInfoEntry = {
             id,
             type,
             label: walletLabel,
             accounts,
-            contracts: [],
+            contracts,
             keyMissing,
             fileExported,
             wordsExported,
@@ -129,22 +133,22 @@ export class CookieDecoder {
         return walletInfoEntry;
     }
 
-    private static decodeAccounts(
-        bytes: number[],
-        type: WalletType,
-        labelLength?: number,
-    ): Map<string, AccountInfoEntry> {
+    private static decodeAccounts(bytes: number[], labelLength?: number): Map<string, AccountInfoEntry> {
         let numberAccounts = 1;
-        if (typeof labelLength === 'undefined') numberAccounts = this.readByte(bytes);
+        if (typeof labelLength === 'undefined') {
+            // When the labelLength is not passed, it means it is not a LEGACY wallet
+            // and the number of accounts is encoded before the list
+            numberAccounts = this.readByte(bytes);
+        }
 
         const accounts: AccountInfoEntry[] = [];
         for (let i = 0; i < numberAccounts; i++) {
-            accounts.push(this.decodeAccount(bytes, type, labelLength));
+            accounts.push(this.decodeAccount(bytes, labelLength));
         }
 
         const accountsMapArray: Array<[string, AccountInfoEntry]> = accounts.map((account) => {
             // Deserialize Nimiq.Address
-            const userFriendlyAddress = this._toUserFriendlyAddress(account.address);
+            const userFriendlyAddress = AddressUtils.toUserFriendlyAddress(account.address);
 
             return [userFriendlyAddress, account] as [string, AccountInfoEntry];
         });
@@ -152,7 +156,7 @@ export class CookieDecoder {
         return new Map(accountsMapArray);
     }
 
-    private static decodeAccount(bytes: number[], type: WalletType, labelLength?: number): AccountInfoEntry {
+    private static decodeAccount(bytes: number[], labelLength?: number): AccountInfoEntry {
         if (typeof labelLength === 'undefined') {
             labelLength = this.readByte(bytes);
         }
@@ -164,15 +168,13 @@ export class CookieDecoder {
         // Account label
         const labelBytes = this.readBytes(bytes, labelLength);
 
-        const accountLabel = labelBytes.length === 0
-            ? type === WalletType.BIP39
-                ? ADDRESS_DEFAULT_LABEL_KEYGUARD
-                : ADDRESS_DEFAULT_LABEL_LEDGER
-            : Utf8Tools.utf8ByteArrayToString(new Uint8Array(labelBytes));
-
         // Account address
         // (iframe does not have Nimiq lib)
         const addressBytes = this.readBytes(bytes, 20 /* Nimiq.Address.SERIALIZED_SIZE */);
+
+        const accountLabel = labelBytes.length > 0
+            ? Utf8Tools.utf8ByteArrayToString(new Uint8Array(labelBytes))
+            : LabelingMachine.labelAddress(AddressUtils.toUserFriendlyAddress(new Uint8Array(addressBytes)));
 
         const accountInfoEntry: AccountInfoEntry = {
             path: 'not public',
@@ -181,6 +183,56 @@ export class CookieDecoder {
         };
 
         return accountInfoEntry;
+    }
+
+    private static decodeContracts(bytes: number[]): ContractInfoEntry[] {
+        const numberContracts = this.readByte(bytes);
+
+        const contracts: ContractInfoEntry[] = [];
+        for (let i = 0; i < numberContracts; i++) {
+            contracts.push(this.decodeContract(bytes));
+        }
+
+        return contracts;
+    }
+
+    private static decodeContract(bytes: number[]): ContractInfoEntry {
+        // Contract type and label length
+        const typeAndLabelLength = this.readByte(bytes);
+        const type = typeAndLabelLength & 0b11;
+        const labelLength = typeAndLabelLength >> 2;
+
+        const labelBytes = this.readBytes(bytes, labelLength);
+
+        // Contract address
+        // (iframe does not have Nimiq lib)
+        const addressBytes = this.readBytes(bytes, 20 /* Nimiq.Address.SERIALIZED_SIZE */);
+
+        switch (type) {
+            case 1 /* Nimiq.Account.Type.VESTING */:
+                const label = labelBytes.length > 0
+                    ? Utf8Tools.utf8ByteArrayToString(new Uint8Array(labelBytes))
+                    : CONTRACT_DEFAULT_LABEL_VESTING;
+                const ownerBytes = this.readBytes(bytes, 20 /* Nimiq.Address.SERIALIZED_SIZE */);
+                const start = this.fromBase256(this.readBytes(bytes, 4)); // Uint32
+                const stepAmount = this.fromBase256(this.readBytes(bytes, 8)); // Uint64
+                const stepBlocks = this.fromBase256(this.readBytes(bytes, 4)); // Uint32
+                const totalAmount = this.fromBase256(this.readBytes(bytes, 8)); // Uint64
+                return {
+                    type,
+                    label,
+                    address: new Uint8Array(addressBytes),
+                    owner: new Uint8Array(ownerBytes),
+                    start,
+                    stepAmount,
+                    stepBlocks,
+                    totalAmount,
+                } as VestingContractInfoEntry;
+            case 2 /* Nimiq.Account.Type.HTLC */:
+                throw new Error('HTLC decoding is not yet implemented');
+            default:
+                throw new Error('Unknown contract type: ' + type);
+        }
     }
 
     private static legacyCookie(version: number, bytes: number[]) {
@@ -258,63 +310,5 @@ export class CookieDecoder {
         }
 
         return bytes;
-    }
-
-    // The following methods are taken from @nimiq/core source,
-    // namely Nimiq.Address and Nimiq.BufferUtils.
-
-    private static _toUserFriendlyAddress(serializedAddress: Uint8Array, withSpaces = true): string {
-        const base32 = this._toBase32(serializedAddress);
-        // tslint:disable-next-line prefer-template
-        const check = ('00' + (98 - this._ibanCheck(base32 + this.CCODE + '00'))).slice(-2);
-        let res = this.CCODE + check + base32;
-        if (withSpaces) res = res.replace(/.{4}/g, '$& ').trim();
-        return res;
-    }
-
-    private static _ibanCheck(str: string): number {
-        const num = str.split('').map((c) => {
-            const code = c.toUpperCase().charCodeAt(0);
-            return code >= 48 && code <= 57 ? c : (code - 55).toString();
-        }).join('');
-        let tmp = '';
-
-        for (let i = 0; i < Math.ceil(num.length / 6); i++) {
-            tmp = (parseInt(tmp + num.substr(i * 6, 6), 10) % 97).toString();
-        }
-
-        return parseInt(tmp, 10);
-    }
-
-    private static _toBase32(buf: Uint8Array, alphabet = CookieDecoder.BASE32_ALPHABET_NIMIQ): string {
-        let shift = 3;
-        let carry = 0;
-        let symbol: number;
-        let res = '';
-
-        for (const byte of buf) {
-            symbol = carry | (byte >> shift);
-            res += alphabet[symbol & 0x1f];
-
-            if (shift > 5) {
-                shift -= 5;
-                symbol = byte >> shift;
-                res += alphabet[symbol & 0x1f];
-            }
-
-            shift = 5 - shift;
-            carry = byte << shift;
-            shift = 8 - shift;
-        }
-
-        if (shift !== 3) {
-            res += alphabet[carry & 0x1f];
-        }
-
-        while (res.length % 8 !== 0 && alphabet.length === 33) {
-            res += alphabet[32];
-        }
-
-        return res;
     }
 }

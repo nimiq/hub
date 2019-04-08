@@ -22,34 +22,29 @@ import { ParsedSimpleRequest } from '../lib/RequestTypes';
 import { Address } from '../lib/PublicRequestTypes';
 import Loader from '@/components/Loader.vue';
 import { Static } from '../lib/StaticStore';
-import { ADDRESS_DEFAULT_LABEL_KEYGUARD } from '../lib/Constants';
+import LabelingMachine from '@/lib/LabelingMachine';
 
 @Component({components: {Loader, SmallPage}})
 export default class AddAccountSuccess extends Vue {
     @Static private request!: ParsedSimpleRequest;
     @State private keyguardResult!: DeriveAddressResult;
 
-    private walletLabel: string = '';
     private state: Loader.State = Loader.State.LOADING;
     private title: string = 'Storing your address';
-    private accountLabel: string = ADDRESS_DEFAULT_LABEL_KEYGUARD;
-    private createdAddress: Nimiq.Address | null = null;
 
     private async mounted() {
-        this.createdAddress = new Nimiq.Address(this.keyguardResult.address);
+        const createdAddress = new Nimiq.Address(this.keyguardResult.address);
 
         const wallet = await WalletStore.Instance.get(this.request.walletId);
         if (!wallet) throw new Error('Account ID not found');
 
-        this.walletLabel = wallet.label;
-
         const newAccount = new AccountInfo(
             this.keyguardResult.keyPath,
-            this.accountLabel,
-            this.createdAddress!,
+            LabelingMachine.labelAddress(createdAddress.toUserFriendlyAddress()),
+            createdAddress,
         );
 
-        wallet.accounts.set(this.createdAddress!.toUserFriendlyAddress(), newAccount);
+        wallet.accounts.set(newAccount.userFriendlyAddress, newAccount);
 
         await WalletStore.Instance.put(wallet);
         // Artificially delay, to display loading status
@@ -58,8 +53,8 @@ export default class AddAccountSuccess extends Vue {
         this.state = Loader.State.SUCCESS;
 
         const result: Address = {
-            address: this.createdAddress!.toUserFriendlyAddress(),
-            label: this.accountLabel,
+            address: newAccount.userFriendlyAddress,
+            label: newAccount.label,
         };
 
         setTimeout(() => this.$rpc.resolve(result), Loader.SUCCESS_REDIRECT_DELAY);

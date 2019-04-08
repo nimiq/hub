@@ -10,7 +10,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Emit, Vue } from 'vue-property-decorator';
+import { Component, Vue } from 'vue-property-decorator';
 import { OnboardingMenu } from '@nimiq/vue-components';
 import { ParsedBasicRequest, RequestType } from '@/lib/RequestTypes';
 import { Static } from '@/lib/StaticStore';
@@ -44,7 +44,6 @@ export default class OnboardingSelector extends Vue {
         this.$rpc.routerPush(`${RequestType.SIGNUP}-ledger`);
     }
 
-    @Emit()
     private close() {
         this.$rpc.reject(new Error(ERROR_CANCELED));
     }

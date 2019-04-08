@@ -11,7 +11,14 @@ import { SignedTransaction } from '../lib/PublicRequestTypes';
 import KeyguardClient from '@nimiq/keyguard-client';
 import { NetworkClient, PlainTransaction, DetailedPlainTransaction } from '@nimiq/network-client';
 import Config from 'config';
-import { NETWORK_TEST, NETWORK_DEV, NETWORK_MAIN, ERROR_INVALID_NETWORK } from '../lib/Constants';
+import {
+    NETWORK_TEST,
+    NETWORK_DEV,
+    NETWORK_MAIN,
+    ERROR_INVALID_NETWORK,
+    CONTRACT_DEFAULT_LABEL_VESTING,
+} from '../lib/Constants';
+import { VestingContractInfo } from '../lib/ContractInfo';
 
 @Component
 class Network extends Vue {
@@ -36,9 +43,11 @@ class Network extends Vue {
         return client.connectPico(addresses);
     }
 
-    // Uint8Arrays cannot be stored in SessionStorage, thus the stored request has arrays instead and is
-    // thus not exactly the type KSignTransactionRequest. Thus all potential Uint8Arrays are converted
-    // into Nimiq.SerialBuffers (sender, recipient, data).
+    public async disconnect() {
+        if (!NetworkClient.hasInstance()) return;
+        return NetworkClient.Instance.disconnect();
+    }
+
     public async prepareTx(
         keyguardRequest: KeyguardClient.SignTransactionRequest,
         keyguardResult: KeyguardClient.SignTransactionResult,
@@ -49,19 +58,19 @@ class Network extends Vue {
 
         if (
             (keyguardRequest.data && keyguardRequest.data.length > 0)
-            || keyguardRequest.senderType !== Nimiq.Account.Type.BASIC
-            || keyguardRequest.recipientType !== Nimiq.Account.Type.BASIC
+            || keyguardRequest.senderType // this condition is truthy when type is 1 or 2
+            || keyguardRequest.recipientType // this condition is truthy when type is 1 or 2
         ) {
             tx = new Nimiq.ExtendedTransaction(
-                new Nimiq.Address(new Nimiq.SerialBuffer(keyguardRequest.sender)),
+                new Nimiq.Address(keyguardRequest.sender),
                 keyguardRequest.senderType || Nimiq.Account.Type.BASIC,
-                new Nimiq.Address(new Nimiq.SerialBuffer(keyguardRequest.recipient)),
+                new Nimiq.Address(keyguardRequest.recipient),
                 keyguardRequest.recipientType || Nimiq.Account.Type.BASIC,
                 keyguardRequest.value,
                 keyguardRequest.fee,
                 keyguardRequest.validityStartHeight,
                 keyguardRequest.flags || 0,
-                new Nimiq.SerialBuffer(keyguardRequest.data || 0),
+                keyguardRequest.data || new Uint8Array(0),
                 Nimiq.SignatureProof.singleSig(
                     new Nimiq.PublicKey(keyguardResult.publicKey),
                     new Nimiq.Signature(keyguardResult.signature),
@@ -70,7 +79,7 @@ class Network extends Vue {
         } else {
             tx = new Nimiq.BasicTransaction(
                 new Nimiq.PublicKey(keyguardResult.publicKey),
-                new Nimiq.Address(new Nimiq.SerialBuffer(keyguardRequest.recipient)),
+                new Nimiq.Address(keyguardRequest.recipient),
                 keyguardRequest.value,
                 keyguardRequest.fee,
                 keyguardRequest.validityStartHeight,
@@ -142,6 +151,21 @@ class Network extends Vue {
     public async requestTransactionReceipts(address: string): Promise<Nimiq.TransactionReceipt[]> {
         const client = await this._getNetworkClient();
         return client.requestTransactionReceipts(address);
+    }
+
+    public async getGenesisVestingContracts(): Promise<VestingContractInfo[]> {
+        const client = await this._getNetworkClient();
+        const contracts = await client.getGenesisVestingContracts();
+
+        return contracts.map((contract) => new VestingContractInfo(
+            CONTRACT_DEFAULT_LABEL_VESTING,
+            Nimiq.Address.fromUserFriendlyAddress(contract.address),
+            Nimiq.Address.fromUserFriendlyAddress(contract.owner),
+            contract.start,
+            Nimiq.Policy.coinsToSatoshis(contract.stepAmount),
+            contract.stepBlocks,
+            Nimiq.Policy.coinsToSatoshis(contract.totalAmount),
+        ));
     }
 
     private created() {

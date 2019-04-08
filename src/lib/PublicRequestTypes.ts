@@ -12,15 +12,15 @@ export interface SimpleResult {
     success: true;
 }
 
-export type ListResult = WalletInfoEntry[];
+export type ListResult = Account[];
 
-export interface SignTransactionRequest extends SimpleRequest {
+export interface SignTransactionRequest extends BasicRequest {
     sender: string;
     recipient: string;
     recipientType?: Nimiq.Account.Type;
     value: number;
     fee?: number;
-    extraData?: Uint8Array;
+    extraData?: Uint8Array | string;
     flags?: number;
     validityStartHeight: number; // FIXME To be made optional when accounts manager has its own network
 }
@@ -31,7 +31,7 @@ export interface CheckoutRequest extends BasicRequest {
     recipientType?: Nimiq.Account.Type;
     value: number;
     fee?: number;
-    extraData?: Uint8Array;
+    extraData?: Uint8Array | string;
     flags?: number;
     validityDuration?: number;
 }
@@ -58,7 +58,6 @@ export interface SignedTransaction {
 }
 
 export interface SignMessageRequest extends BasicRequest {
-    accountId?: string;
     signer?: string;
     message: string | Uint8Array;
 }
@@ -75,6 +74,33 @@ export interface Address {
     label: string;
 }
 
+export interface VestingContract {
+    type: Nimiq.Account.Type.VESTING;
+    address: string; // Userfriendly address
+    label: string;
+
+    owner: string; // Userfriendly address
+    start: number;
+    stepAmount: number;
+    stepBlocks: number;
+    totalAmount: number;
+}
+
+export interface HashedTimeLockedContract {
+    type: Nimiq.Account.Type.HTLC;
+    address: string; // Userfriendly address
+    label: string;
+
+    sender: string;  // Userfriendly address
+    recipient: string;  // Userfriendly address
+    hashRoot: string; // HEX
+    hashCount: number;
+    timeout: number;
+    totalAmount: number;
+}
+
+export type Contract = VestingContract | HashedTimeLockedContract;
+
 export interface Account {
     accountId: string;
     label: string;
@@ -82,6 +108,7 @@ export interface Account {
     fileExported: boolean;
     wordsExported: boolean;
     addresses: Address[];
+    contracts: Contract[];
 }
 
 export interface ExportResult {

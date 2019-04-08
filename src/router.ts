@@ -19,7 +19,7 @@ const Signup                  = () => import(/*webpackChunkName: "onboarding"*/ 
 const SignupSuccess           = () => import(/*webpackChunkName: "onboarding"*/ './views/SignupSuccess.vue');
 const SignupErrorHandler      = () => import(/*webpackChunkName: "onboarding"*/ './views/SignupErrorHandler.vue');
 
-const SignupLedger            = () => import(/*webpackChunkName: "signup-ledger"*/ './views/SignupLedger.vue');
+const SignupLedger            = () => import(/*webpackChunkName: "add-ledger"*/ './views/SignupLedger.vue');
 
 const Login                   = () => import(/*webpackChunkName: "onboarding"*/ './views/Login.vue');
 const LoginSuccess            = () => import(/*webpackChunkName: "onboarding"*/ './views/LoginSuccess.vue');
@@ -35,6 +35,7 @@ const LogoutSuccess           = () => import(/*webpackChunkName: "logout"*/ './v
 
 const AddAccount              = () => import(/*webpackChunkName: "add-account"*/ './views/AddAccount.vue');
 const AddAccountSuccess       = () => import(/*webpackChunkName: "add-account"*/ './views/AddAccountSuccess.vue');
+const AddAddressLedger        = () => import(/*webpackChunkName: "add-ledger"*/ './views/AddAddressLedger.vue');
 
 const Rename                  = () => import(/*webpackChunkName: "rename"*/ './views/Rename.vue');
 
@@ -147,11 +148,6 @@ export default new Router({
             name: RequestType.SIGNUP,
         },
         {
-            path: `/${RequestType.SIGNUP}/ledger`,
-            component: SignupLedger,
-            name: `${RequestType.SIGNUP}-ledger`,
-        },
-        {
             path: `/${RequestType.SIGNUP}/success`,
             component: SignupSuccess,
             name: `${RequestType.SIGNUP}-success`,
@@ -160,6 +156,11 @@ export default new Router({
             path: `/${RequestType.SIGNUP}/error`,
             component: SignupErrorHandler,
             name: `${RequestType.SIGNUP}-error`,
+        },
+        {
+            path: `/${RequestType.SIGNUP}/ledger`,
+            component: SignupLedger,
+            name: `${RequestType.SIGNUP}-ledger`,
         },
         {
             path: `/${RequestType.LOGIN}`,
@@ -215,6 +216,11 @@ export default new Router({
             path: `/${RequestType.ADD_ADDRESS}/success`,
             component: AddAccountSuccess,
             name: `${RequestType.ADD_ADDRESS}-success`,
+        },
+        {
+            path: `/${RequestType.ADD_ADDRESS}/ledger`,
+            component: AddAddressLedger,
+            name: `${RequestType.ADD_ADDRESS}-ledger`,
         },
         {
             path: `/${RequestType.RENAME}`,

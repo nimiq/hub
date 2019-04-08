@@ -2,7 +2,14 @@
 
 import { WalletInfoEntry, WalletType } from './WalletInfo';
 import { Utf8Tools } from '@nimiq/utils';
-import { LABEL_MAX_LENGTH } from '@/lib/Constants';
+import {
+    LABEL_MAX_LENGTH,
+    ACCOUNT_DEFAULT_LABEL_LEDGER,
+    CONTRACT_DEFAULT_LABEL_VESTING,
+    CONTRACT_DEFAULT_LABEL_HTLC,
+} from '@/lib/Constants';
+import LabelingMachine from './LabelingMachine';
+import { ContractInfoEntry, VestingContractInfoEntry, VestingContractInfo } from './ContractInfo';
 
 class CookieJar {
     public static readonly VERSION = 1;
@@ -54,7 +61,7 @@ class CookieJar {
     }
 
     public static encodeAndcutLabel(label: string): Uint8Array {
-        let labelBytes =  Utf8Tools.stringToUtf8ByteArray(label);
+        let labelBytes = Utf8Tools.stringToUtf8ByteArray(label);
 
         if (labelBytes.length <= LABEL_MAX_LENGTH) return labelBytes;
 
@@ -68,11 +75,49 @@ class CookieJar {
         return labelBytes;
     }
 
+    private static checkWalletDefaultLabel(firstAddress: Uint8Array, label: string, type: WalletType): string {
+        if (type === WalletType.LEDGER) {
+            if (label === ACCOUNT_DEFAULT_LABEL_LEDGER) return '';
+            return label;
+        }
+
+        const userFriendlyAddress = new Nimiq.Address(firstAddress).toUserFriendlyAddress();
+        const defaultLabel = LabelingMachine.labelAccount(userFriendlyAddress);
+        if (label === defaultLabel) return '';
+        return label;
+    }
+
+    private static checkAccountDefaultLabel(address: Uint8Array, label: string): string {
+        const userFriendlyAddress = new Nimiq.Address(address).toUserFriendlyAddress();
+        const defaultLabel = LabelingMachine.labelAddress(userFriendlyAddress);
+        if (label === defaultLabel) return '';
+        return label;
+    }
+
+    private static checkContractDefaultLabel(type: Nimiq.Account.Type, label: string): string {
+        switch (type) {
+            case Nimiq.Account.Type.VESTING: return label === CONTRACT_DEFAULT_LABEL_VESTING ? '' : label;
+            case Nimiq.Account.Type.HTLC: return label === CONTRACT_DEFAULT_LABEL_HTLC ? '' : label;
+            default: return label;
+        }
+    }
+
     private static encodeWallet(wallet: WalletInfoEntry) {
         const bytes: number[] = [];
+
+        // The check<Account|Wallet>DefaultLabel functions omit the label when it's the default label
+        const firstAccount = wallet.accounts.values().next().value;
         const label = wallet.type === WalletType.LEGACY
-            ? wallet.accounts.values().next().value.label // label of the single account
-            : wallet.label;
+            ? this.checkAccountDefaultLabel(
+                firstAccount.address,
+                firstAccount.label,
+            )
+            : this.checkWalletDefaultLabel(
+                firstAccount.address,
+                wallet.label,
+                wallet.type,
+            );
+
         const labelBytes = this.encodeAndcutLabel(label);
 
         // Combined label length & wallet type
@@ -83,7 +128,9 @@ class CookieJar {
         statusByte = statusByte
                 | (wallet.keyMissing ? CookieJar.StatusFlags.KEY_MISSING : CookieJar.StatusFlags.NONE)
                 | (wallet.fileExported ? CookieJar.StatusFlags.FILE_EXPORTED : CookieJar.StatusFlags.NONE)
-                | (wallet.wordsExported ? CookieJar.StatusFlags.WORDS_EXPORTED : CookieJar.StatusFlags.NONE);
+                | (wallet.wordsExported ? CookieJar.StatusFlags.WORDS_EXPORTED : CookieJar.StatusFlags.NONE)
+                | (wallet.contracts.length ? CookieJar.StatusFlags.HAS_CONTRACTS : CookieJar.StatusFlags.NONE)
+        ;
         bytes.push(statusByte);
 
         // Wallet ID
@@ -101,9 +148,7 @@ class CookieJar {
         }
 
         // Label
-        if (labelBytes.length > 0) {
-            bytes.push.apply(bytes, Array.from(labelBytes));
-        }
+        bytes.push.apply(bytes, Array.from(labelBytes));
 
         // Legacy account information
         if (wallet.type === WalletType.LEGACY) {
@@ -111,6 +156,9 @@ class CookieJar {
 
             // Account address
             bytes.push.apply(bytes, Array.from(account.address));
+
+            this.encodeContracts(wallet.contracts, bytes);
+
             return bytes;
         }
 
@@ -122,21 +170,58 @@ class CookieJar {
         // Wallet accounts
         const accounts = Array.from(wallet.accounts.values());
         for (const account of accounts) {
-            const labelBytes = this.encodeAndcutLabel(account.label);
+            const label = this.checkAccountDefaultLabel(account.address, account.label);
+            const labelBytes = this.encodeAndcutLabel(label);
 
             // Account label length
             bytes.push(labelBytes.length);
 
             // Account label
-            if (labelBytes.length > 0) {
-                bytes.push.apply(bytes, Array.from(labelBytes));
-            }
+            bytes.push.apply(bytes, Array.from(labelBytes));
 
             // Account address
             bytes.push.apply(bytes, Array.from(account.address));
         }
 
+        this.encodeContracts(wallet.contracts, bytes);
+
         return bytes;
+    }
+
+    private static encodeContracts(contracts: ContractInfoEntry[], bytes: number[]) {
+        if (!contracts.length) return;
+
+        bytes.push(contracts.length);
+
+        for (const contract of contracts) {
+            const label = this.checkContractDefaultLabel(contract.type, contract.label);
+            const labelBytes = this.encodeAndcutLabel(label);
+
+            // Combined contract label length and type
+            bytes.push((labelBytes.length << 2) | contract.type);
+
+            // Contract label
+            bytes.push.apply(bytes, Array.from(labelBytes));
+
+            // Contract address
+            bytes.push.apply(bytes, Array.from(contract.address));
+
+            switch (contract.type) {
+                case Nimiq.Account.Type.VESTING:
+                    const data = contract as VestingContractInfoEntry;
+                    bytes.push.apply(bytes, Array.from(data.owner));
+                    bytes.push.apply(bytes, this.toBase256(data.start, 4)); // Uint32
+                    bytes.push.apply(bytes, this.toBase256(data.stepAmount, 8)); // Uint64
+                    bytes.push.apply(bytes, this.toBase256(data.stepBlocks, 4)); // Uint32
+                    bytes.push.apply(bytes, this.toBase256(data.totalAmount, 8)); // Uint64
+                    break;
+                case Nimiq.Account.Type.HTLC:
+                    throw new Error('HTLC encoding is not yet implemented');
+                default:
+                    // @ts-ignore Property 'type' does not exist on type 'never'.
+                    throw new Error('Unknown contract type: ' + contract.type);
+            }
+        }
     }
 
     private static getCookieContents(): string | null {
@@ -149,8 +234,12 @@ class CookieJar {
         return Nimiq.BufferUtils.fromBase64(encodedWallets).length;
     }
 
-    private static toBase256(value: number) {
-        const bits = value.toString(2);
+    private static toBase256(value: number, padToBytes?: number) {
+        let bits = value.toString(2);
+
+        if (padToBytes) {
+            bits = bits.padStart(padToBytes * 8, '0');
+        }
 
         // Reverse so we can split into 8s from the end
         const reverseBits = bits.split('').reverse().join('');
@@ -170,6 +259,7 @@ namespace CookieJar { // tslint:disable-line no-namespace
         KEY_MISSING    = 1 << 0,
         FILE_EXPORTED  = 1 << 1,
         WORDS_EXPORTED = 1 << 2,
+        HAS_CONTRACTS  = 1 << 3,
     }
 }
 

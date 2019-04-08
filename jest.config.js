@@ -14,6 +14,7 @@ module.exports = {
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
     'config': '<rootDir>/config.local.ts',
+    '@nimiq/iqons/dist/iqons-name.min.js': '@nimiq/iqons/dist/iqons-name.cjs.js',
   },
   snapshotSerializers: [
     'jest-serializer-vue'

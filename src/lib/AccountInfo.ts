@@ -1,3 +1,6 @@
+import { Address } from './PublicRequestTypes';
+import AddressUtils from './AddressUtils';
+
 export class AccountInfo {
     public static fromObject(o: AccountInfoEntry): AccountInfo {
         return new AccountInfo(
@@ -6,6 +9,13 @@ export class AccountInfo {
             new Nimiq.Address(o.address),
             o.balance,
         );
+    }
+
+    public static objectToAddressType(o: AccountInfoEntry): Address {
+        return {
+            address: AddressUtils.toUserFriendlyAddress(o.address),
+            label: o.label,
+        };
     }
 
     public walletId?: string;
@@ -27,6 +37,13 @@ export class AccountInfo {
             label: this.label,
             address: new Uint8Array(this.address.serialize()),
             balance: this.balance,
+        };
+    }
+
+    public toAddressType(): Address {
+        return {
+            address: this.userFriendlyAddress,
+            label: this.label,
         };
     }
 }

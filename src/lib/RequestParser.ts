@@ -19,27 +19,37 @@ import {
     ParsedRenameRequest,
     ParsedRpcRequest,
 } from './RequestTypes';
+import { Utf8Tools } from '@nimiq/utils';
 
 export class RequestParser {
     public static parse(request: RpcRequest, state: State, requestType: RequestType): ParsedRpcRequest | null {
+        if (!request.appName) throw new Error('appName is required');
+
         switch (requestType) {
             case RequestType.SIGN_TRANSACTION:
                 const signTransactionRequest = request as SignTransactionRequest;
+
+                if (!signTransactionRequest.value) throw new Error('value is required');
+                if (!signTransactionRequest.validityStartHeight) throw new Error('validityStartHeight is required');
+
                 return {
                     kind: RequestType.SIGN_TRANSACTION,
                     appName: signTransactionRequest.appName,
-                    walletId: signTransactionRequest.accountId,
                     sender: Nimiq.Address.fromUserFriendlyAddress(signTransactionRequest.sender),
                     recipient: Nimiq.Address.fromUserFriendlyAddress(signTransactionRequest.recipient),
-                    recipientType: signTransactionRequest.recipientType,
+                    recipientType: signTransactionRequest.recipientType || Nimiq.Account.Type.BASIC,
                     value: signTransactionRequest.value,
-                    fee: signTransactionRequest.fee,
-                    data: signTransactionRequest.extraData,
-                    flags: signTransactionRequest.flags,
+                    fee: signTransactionRequest.fee || 0,
+                    data: typeof signTransactionRequest.extraData === 'string'
+                        ? Utf8Tools.stringToUtf8ByteArray(signTransactionRequest.extraData)
+                        : signTransactionRequest.extraData || new Uint8Array(0),
+                    flags: signTransactionRequest.flags || Nimiq.Transaction.Flag.NONE,
                     validityStartHeight: signTransactionRequest.validityStartHeight,
                 } as ParsedSignTransactionRequest;
             case RequestType.CHECKOUT:
                 const checkoutRequest = request as CheckoutRequest;
+
+                if (!checkoutRequest.value) throw new Error('value is required');
                 if (checkoutRequest.shopLogoUrl && new URL(checkoutRequest.shopLogoUrl).origin !== state.origin) {
                     throw new Error(
                         'shopLogoUrl must have same origin as caller website. Image at ' +
@@ -52,11 +62,13 @@ export class RequestParser {
                     appName: checkoutRequest.appName,
                     shopLogoUrl: checkoutRequest.shopLogoUrl,
                     recipient: Nimiq.Address.fromUserFriendlyAddress(checkoutRequest.recipient),
-                    recipientType: checkoutRequest.recipientType,
+                    recipientType: checkoutRequest.recipientType || Nimiq.Account.Type.BASIC,
                     value: checkoutRequest.value,
-                    fee: checkoutRequest.fee,
-                    data: checkoutRequest.extraData,
-                    flags: checkoutRequest.flags,
+                    fee: checkoutRequest.fee || 0,
+                    data: typeof checkoutRequest.extraData === 'string'
+                        ? Utf8Tools.stringToUtf8ByteArray(checkoutRequest.extraData)
+                        : checkoutRequest.extraData || new Uint8Array(0),
+                    flags: checkoutRequest.flags || Nimiq.Transaction.Flag.NONE,
                     validityDuration: !checkoutRequest.validityDuration ? TX_VALIDITY_WINDOW : Math.min(
                         TX_VALIDITY_WINDOW,
                         Math.max(
@@ -79,6 +91,9 @@ export class RequestParser {
             case RequestType.LOGOUT:
             case RequestType.ADD_ADDRESS:
                 const simpleRequest = request as SimpleRequest;
+
+                if (!simpleRequest.accountId) throw new Error('accountId is required');
+
                 return {
                     kind: requestType,
                     appName: simpleRequest.appName,
@@ -86,6 +101,9 @@ export class RequestParser {
                 } as ParsedSimpleRequest;
             case RequestType.RENAME:
                 const renameRequest = request as RenameRequest;
+
+                if (!renameRequest.accountId) throw new Error('accountId is required');
+
                 return {
                     kind: RequestType.RENAME,
                     appName: renameRequest.appName,
@@ -101,7 +119,6 @@ export class RequestParser {
                 return {
                     kind: RequestType.SIGN_MESSAGE,
                     appName: signMessageRequest.appName,
-                    walletId: signMessageRequest.accountId,
                     signer: signMessageRequest.signer
                             ? Nimiq.Address.fromUserFriendlyAddress(signMessageRequest.signer)
                             : undefined,
@@ -118,7 +135,6 @@ export class RequestParser {
                 const signTransactionRequest = request as ParsedSignTransactionRequest;
                 return {
                     appName: signTransactionRequest.appName,
-                    accountId: signTransactionRequest.walletId,
                     sender: signTransactionRequest.sender.toUserFriendlyAddress(),
                     recipient: signTransactionRequest.recipient.toUserFriendlyAddress(),
                     recipientType: signTransactionRequest.recipientType,
@@ -169,7 +185,6 @@ export class RequestParser {
                 const signMessageRequest = request as ParsedSignMessageRequest;
                 return {
                     appName: signMessageRequest.appName,
-                    accountId: signMessageRequest.walletId,
                     signer: signMessageRequest.signer ? signMessageRequest.signer.toUserFriendlyAddress() : undefined,
                     message: signMessageRequest.message,
                 } as SignMessageRequest;

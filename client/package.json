@@ -1,6 +1,6 @@
 {
   "name": "@nimiq/accounts-client",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "main": "dist/AccountsClient.umd.js",
   "module": "dist/AccountsClient.es.js",
   "repository": "https://github.com/nimiq/accounts/tree/master/client",
@@ -15,7 +15,7 @@
     "rollup-plugin-node-resolve": "^3.4.0",
     "rollup-plugin-terser": "^3.0.0",
     "tslint": "^5.11.0",
-    "typescript": "^3.3.3333"
+    "typescript": "^3.4.2"
   },
   "files": [
     "dist"

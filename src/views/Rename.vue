@@ -10,7 +10,7 @@
 
                 <AccountList ref="accountList"
                     :walletId="wallet.id"
-                    :accounts="accounts"
+                    :accounts="accountsAndContractsArray"
                     :editable="true"
                     @account-changed="accountChanged"/>
             </PageBody>
@@ -32,7 +32,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Emit } from 'vue-property-decorator';
+import { Component, Vue } from 'vue-property-decorator';
 import { AccountList, SmallPage, PageHeader, PageBody, PageFooter } from '@nimiq/vue-components';
 import Input from '@/components/Input.vue';
 import { ParsedRenameRequest } from '../lib/RequestTypes';
@@ -67,9 +67,12 @@ export default class Rename extends Vue {
     private wallet: WalletInfo | null = null;
     private labelsStored: boolean = false;
 
-    private get accounts() {
+    private get accountsAndContractsArray() {
         if (!this.wallet) return [];
-        return Array.from(this.wallet.accounts.values());
+        return [
+            ...this.wallet.accounts.values(),
+            ...this.wallet.contracts,
+        ];
     }
 
     private get walletIconClass() {
@@ -108,9 +111,19 @@ export default class Rename extends Vue {
 
     private accountChanged(address: string, label: string) {
         const addressInfo = this.wallet!.accounts.get(address);
-        if (!addressInfo) throw new Error('UNEXPECTED: Address that was changed does not exist');
-        addressInfo.label = label;
-        this.wallet!.accounts.set(address, addressInfo);
+        if (addressInfo) {
+            addressInfo.label = label;
+            this.wallet!.accounts.set(address, addressInfo);
+            return;
+        }
+        const contractInfo = this.wallet!.findContractByAddress(Nimiq.Address.fromUserFriendlyAddress(address));
+        if (contractInfo) {
+            contractInfo.label = label;
+            this.wallet!.setContract(contractInfo);
+            return;
+        }
+
+        throw new Error('UNEXPECTED: Address that was changed does not exist');
     }
 
     private onWalletLabelChange(label: string) {
@@ -131,16 +144,13 @@ export default class Rename extends Vue {
             type: this.wallet!.type,
             fileExported: this.wallet!.fileExported,
             wordsExported: this.wallet!.wordsExported,
-            addresses: Array.from(this.accounts.values()).map((addressInfo) => ({
-                address: addressInfo.userFriendlyAddress,
-                label: addressInfo.label,
-            })),
+            addresses: Array.from(this.wallet!.accounts.values()).map((addressInfo) => addressInfo.toAddressType()),
+            contracts: this.wallet!.contracts.map((contract) => contract.toContractType()),
         };
 
         this.$rpc.resolve(result);
     }
 
-    @Emit()
     private close() {
         this.$rpc.reject(new Error(ERROR_CANCELED));
     }

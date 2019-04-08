@@ -22,7 +22,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Emit } from 'vue-property-decorator';
+import { Component, Vue } from 'vue-property-decorator';
 import { Getter, Mutation } from 'vuex-class';
 import { SmallPage, AccountSelector } from '@nimiq/vue-components';
 import { RequestType } from '../lib/RequestTypes';
@@ -31,6 +31,8 @@ import staticStore, { Static } from '@/lib/StaticStore';
 import { WalletStore } from '@/lib/WalletStore';
 import { WalletInfo } from '../lib/WalletInfo';
 import { ERROR_CANCELED } from '../lib/Constants';
+import { AccountInfo } from '../lib/AccountInfo';
+import { ContractInfo } from '../lib/ContractInfo';
 
 @Component({components: { AccountSelector, SmallPage }})
 export default class ChooseAddress extends Vue {
@@ -60,20 +62,17 @@ export default class ChooseAddress extends Vue {
             return;
         }
 
-        const accountInfo = walletInfo.accounts.get(address);
-        if (!accountInfo) {
-            console.error('Selected address not found:', address);
-            return;
-        }
+        const accountOrContractInfo: AccountInfo | ContractInfo = walletInfo.accounts.get(address) ||
+            walletInfo.findContractByAddress(Nimiq.Address.fromUserFriendlyAddress(address))!;
 
         this.$store.commit('setActiveAccount', {
             walletId: walletInfo.id,
-            userFriendlyAddress: accountInfo.userFriendlyAddress,
+            userFriendlyAddress: accountOrContractInfo.userFriendlyAddress,
         });
 
         const result: Address = {
-            address: accountInfo.userFriendlyAddress,
-            label: accountInfo.label,
+            address: accountOrContractInfo.userFriendlyAddress,
+            label: accountOrContractInfo.label,
         };
 
         this.$rpc.resolve(result);
@@ -111,7 +110,6 @@ export default class ChooseAddress extends Vue {
         delete staticStore.sideResult;
     }
 
-    @Emit()
     private close() {
         this.$rpc.reject(new Error(ERROR_CANCELED));
     }

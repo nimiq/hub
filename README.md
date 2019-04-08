@@ -84,7 +84,7 @@ action. Thus, it is required that API methods are called synchronously within
 the context of a user action, such as a click. See example below.
 
 ```javascript
-document.getElementById('#checkoutButton').addEventListener('click', function(event){
+document.getElementById('checkoutButton').addEventListener('click', function(event){
     accountsClient.checkout(/* see details below */);
 });
 ```
@@ -192,9 +192,9 @@ const requestOptions = {
     //fee: 138,
 
     // [optional] Extra data that should be sent with the transaction.
-    // Type: Uint8Array | Nimiq.SerialBuffer
+    // Type: string | Uint8Array | Nimiq.SerialBuffer
     // Default: new Uint8Array(0)
-    //extraData: Nimiq.BufferUtils.fromAscii('Hello Nimiq!'),
+    //extraData: 'Hello Nimiq!',
 
     // [optional] Nimiq.Transaction.Flag, only required if the transaction
     // creates a contract.
@@ -278,10 +278,9 @@ interface Address {
 
 The `signTransaction()` method is similar to checkout, but provides a different
 UI to the user. The main difference to `checkout()` is that it requires the
-request to already include the sender's account ID and address as `accountId` and
-`sender` respectively, as well as the transaction's `validityStartHeight`. The
-created transaction will only be returned to the caller, not sent to the network
-automatically.
+request to already include the sender's address as `sender`, as well as the
+transaction's `validityStartHeight`. The created transaction will only be
+returned to the caller, not sent to the network automatically.
 
 For brevity, most duplicate parameter explanations are omitted here, please
 refer to [Checkout](#checkout) for more details.
@@ -291,7 +290,6 @@ const requestOptions = {
     appName: 'Nimiq Safe',
 
     // Sender information
-    accountId: 'xxxxxxxx',
     sender: 'NQxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx',
 
     recipient: 'NQxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx',
@@ -537,9 +535,8 @@ result type for [`signup()`](#signup) for details about the `Account` object.
 
 To let the user sign an arbitrary message with any of their addresses, you can
 call `signMessage()` with the following request object. If you do not include
-_both_ the `accountId` _and_ `signer` properties, the user will be prompted to
-select an address from their available accounts. The message can be either a
-string or a Uint8Array byte array.
+a `signer` property, the user will be prompted to select an address from their
+available accounts. The message can be either a string or a Uint8Array byte array.
 
 ```javascript
 const requestOptions = {
@@ -549,9 +546,6 @@ const requestOptions = {
     // The message to sign. Can either be string of valid UTF-8 or a
     // byte array to sign arbitrary data
     message: 'String to sign' || new Uint8Array([...]),
-
-    // [optional] The ID of the account with which to sign
-    accountId: 'xxxxxxxx',
 
     // [optional] The human-readable address with which to sign
     signer: 'NQxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx';

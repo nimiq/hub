@@ -4,7 +4,6 @@ import { State, PostMessageRpcClient } from '@nimiq/rpc';
 import AccountsClient from '../client/AccountsClient';
 import { RequestType } from '../src/lib/RequestTypes';
 import {
-    BasicRequest,
     SimpleRequest,
     Account,
     CheckoutRequest,
@@ -13,7 +12,6 @@ import {
     RenameRequest,
     SignMessageRequest,
 } from '../src/lib/PublicRequestTypes';
-import { WalletInfoEntry } from '../src/lib/WalletInfo';
 import { RedirectRequestBehavior } from '../client/RequestBehavior';
 import { Utf8Tools } from '@nimiq/utils';
 
@@ -121,7 +119,6 @@ class Demo {
                 throw new Error('No account found');
             }
             const sender = $radio.getAttribute('data-address');
-            const accountId = $radio.getAttribute('data-wallet-id');
             const value = parseInt((document.querySelector('#value') as HTMLInputElement).value) || 1337;
             const fee = parseInt((document.querySelector('#fee') as HTMLInputElement).value) || 0;
             const txData = (document.querySelector('#data') as HTMLInputElement).value || '';
@@ -129,7 +126,6 @@ class Demo {
 
             return {
                 appName: 'Accounts Demos',
-                accountId,
                 sender,
                 recipient: 'NQ63 U7XG 1YYE D6FA SXGG 3F5H X403 NBKN JLDU',
                 value,
@@ -212,11 +208,9 @@ class Demo {
                 throw new Error('No account found');
             }
             const signer = $radio.getAttribute('data-address');
-            const accountId = $radio.getAttribute('data-wallet-id');
 
             return {
                 appName: 'Accounts Demos',
-                accountId,
                 signer,
                 message,
             };
@@ -297,7 +291,7 @@ class Demo {
         document.querySelector('#result').textContent = 'Legacy Account stored';
     }
 
-    public async list(): Promise<WalletInfoEntry[]> {
+    public async list(): Promise<Account[]> {
         return await this._accountsClient.list();
     }
 
@@ -401,20 +395,31 @@ class Demo {
         let html = '';
 
         wallets.forEach(wallet => {
-            html += `<li${wallet.keyMissing ? ' style="color:red;"' : ''}>${wallet.label}<br>
-                        <button class="export" data-wallet-id="${wallet.id}">Export</button>
-                        <button class="change-password" data-wallet-id="${wallet.id}">Ch. Pass.</button>
-                        ${wallet.type !== 0 ? `<button class="add-account" data-wallet-id="${wallet.id}">+ Acc</button>` : ''}
-                        <button class="rename" data-wallet-id="${wallet.id}">Rename</button>
-                        <button class="logout" data-wallet-id="${wallet.id}">Logout</button>
+            html += `<li>${wallet.label}<br>
+                        <button class="export" data-wallet-id="${wallet.accountId}">Export</button>
+                        <button class="change-password" data-wallet-id="${wallet.accountId}">Ch. Pass.</button>
+                        ${wallet.type !== 0 ? `<button class="add-account" data-wallet-id="${wallet.accountId}">+ Acc</button>` : ''}
+                        <button class="rename" data-wallet-id="${wallet.accountId}">Rename</button>
+                        <button class="logout" data-wallet-id="${wallet.accountId}">Logout</button>
                         <ul>`;
-            wallet.accounts.forEach((acc, addr) => {
+            wallet.addresses.forEach((acc) => {
                 html += `
                             <li>
                                 <label>
-                                    <input type="radio" name="sign-tx-address" data-address="${addr}" data-wallet-id="${wallet.id}">
+                                    <input type="radio" name="sign-tx-address" data-address="${acc.address}" data-wallet-id="${wallet.accountId}">
                                     ${acc.label}
-                                    <button class="rename" data-wallet-id="${wallet.id}" data-address="${addr}">Rename</button>
+                                    <button class="rename" data-wallet-id="${wallet.accountId}" data-address="${acc.address}">Rename</button>
+                                </label>
+                            </li>
+                `;
+            });
+            wallet.contracts.forEach((con) => {
+                html += `
+                            <li>
+                                <label>
+                                    <input type="radio" name="sign-tx-address" data-address="${con.address}" data-wallet-id="${wallet.accountId}">
+                                    <strong>Contract</strong> ${con.label}
+                                    <button class="rename" data-wallet-id="${wallet.accountId}" data-address="${con.address}">Rename</button>
                                 </label>
                             </li>
                 `;

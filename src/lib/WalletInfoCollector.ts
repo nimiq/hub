@@ -6,15 +6,16 @@ import { WalletInfo, WalletType } from '@/lib/WalletInfo';
 import LedgerApi from '@/lib/LedgerApi'; // TODO import LedgerApi only when needed
 import {
     ACCOUNT_DEFAULT_LABEL_LEGACY,
-    ACCOUNT_DEFAULT_LABEL_KEYGUARD,
     ACCOUNT_DEFAULT_LABEL_LEDGER,
-    ADDRESS_DEFAULT_LABEL_KEYGUARD,
-    ADDRESS_DEFAULT_LABEL_LEDGER,
+    CONTRACT_DEFAULT_LABEL_VESTING,
+    ACCOUNT_TEMPORARY_LABEL_KEYGUARD,
     ACCOUNT_MAX_ALLOWED_ADDRESS_GAP,
     ACCOUNT_BIP32_BASE_PATH_KEYGUARD,
 } from '@/lib/Constants';
 import Config from 'config';
 import { ERROR_TRANSACTION_RECEIPTS } from '../lib/Constants';
+import LabelingMachine from './LabelingMachine';
+import { ContractInfo, VestingContractInfo } from './ContractInfo';
 
 type BasicAccountInfo = {
     address: string,
@@ -59,23 +60,37 @@ export default class WalletInfoCollector {
         const walletInfo = await WalletInfoCollector._getWalletInfoInstance(walletId, walletType);
 
         // Add initial accounts to the walletInfo
-        let initialAccountsPromise;
+        let initialAccountsPromise = Promise.resolve();
         if (initialAccounts && initialAccounts.length > 0) {
             WalletInfoCollector._addAccounts(walletInfo, initialAccounts, undefined);
-            // fetch balances and update again
-            initialAccountsPromise = WalletInfoCollector._getBalances(initialAccounts).then(async (balances) => {
-                WalletInfoCollector._addAccounts(walletInfo, initialAccounts, balances);
-                onUpdate(walletInfo, await derivedAccountsPromise);
-            });
-        } else {
-            initialAccountsPromise = Promise.resolve();
+
+            if (walletType !== WalletType.LEGACY) {
+                // fetch balances and update again
+                initialAccountsPromise = WalletInfoCollector._getBalances(initialAccounts).then(async (balances) => {
+                    WalletInfoCollector._addAccounts(walletInfo, initialAccounts, balances);
+                    onUpdate(walletInfo, await derivedAccountsPromise);
+                });
+            }
         }
         onUpdate(walletInfo, await derivedAccountsPromise);
+
+        // Search for genesis vesting contracts
+        // (only legacy or a first ledger addresses can be owners of genesis vesting contracts)
+        if (walletType === WalletType.LEGACY || walletType === WalletType.LEDGER) {
+            const contracts = await WalletInfoCollector._getGenesisVestingContractsForAddress(
+                walletInfo.accounts.values().next().value.address);
+            WalletInfoCollector._addContracts(walletInfo, contracts);
+        }
 
         if (walletType === WalletType.LEGACY) {
             // legacy wallets have no derived accounts
             await initialAccountsPromise;
             return { walletInfo };
+        }
+
+        // Label Keyguard accounts according to their first identicon background color
+        if (walletType === WalletType.BIP39 && walletInfo.label === ACCOUNT_TEMPORARY_LABEL_KEYGUARD) {
+            walletInfo.label = LabelingMachine.labelAccount((await derivedAccountsPromise)[0].address);
         }
 
         let foundAccounts: BasicAccountInfo[];
@@ -162,7 +177,7 @@ export default class WalletInfoCollector {
     private static _initializeDependencies(walletType: WalletType): void {
         WalletInfoCollector._networkInitializationPromise =
             WalletInfoCollector._networkInitializationPromise
-                || NetworkClient.createInstance(Config.networkEndpoint).init();
+            || NetworkClient.createInstance(Config.networkEndpoint).init();
         WalletInfoCollector._networkInitializationPromise
             .catch(() => delete WalletInfoCollector._networkInitializationPromise);
         if (walletType === WalletType.BIP39) {
@@ -182,7 +197,7 @@ export default class WalletInfoCollector {
         const label = walletType === WalletType.LEGACY
             ? ACCOUNT_DEFAULT_LABEL_LEGACY
             : walletType === WalletType.BIP39
-                ? ACCOUNT_DEFAULT_LABEL_KEYGUARD
+                ? ACCOUNT_TEMPORARY_LABEL_KEYGUARD
                 : ACCOUNT_DEFAULT_LABEL_LEDGER;
         return new WalletInfo(
             walletId,
@@ -259,13 +274,43 @@ export default class WalletInfoCollector {
             const balance = balances ? balances.get(newAccount.address) : undefined;
             const accountInfo = existingAccountInfo || new AccountInfo(
                 newAccount.path,
-                walletInfo.type === WalletType.LEDGER
-                    ? ADDRESS_DEFAULT_LABEL_LEDGER
-                    : ADDRESS_DEFAULT_LABEL_KEYGUARD,
+                LabelingMachine.labelAddress(newAccount.address),
                 Nimiq.Address.fromUserFriendlyAddress(newAccount.address),
             );
             if (balance !== undefined) accountInfo.balance = balance;
             walletInfo.accounts.set(newAccount.address, accountInfo);
         }
+    }
+
+    private static _addContracts(
+        walletInfo: WalletInfo,
+        newContracts: ContractInfo[],
+    ): void {
+        for (const newContract of newContracts) {
+            const existingContract = walletInfo.findContractByAddress(newContract.address);
+            if (!existingContract) {
+                walletInfo.contracts.push(newContract);
+            }
+        }
+    }
+
+    private static async _getGenesisVestingContractsForAddress(address: Nimiq.Address): Promise<VestingContractInfo[]> {
+        const genesisVestingContracts = await WalletInfoCollector._getGenesisVestingContracts();
+        return genesisVestingContracts.filter((contract) => contract.owner.equals(address));
+    }
+
+    private static async _getGenesisVestingContracts(): Promise<VestingContractInfo[]> {
+        await WalletInfoCollector._networkInitializationPromise;
+        const contracts = await NetworkClient.Instance.getGenesisVestingContracts();
+
+        return contracts.map((contract) => new VestingContractInfo(
+            CONTRACT_DEFAULT_LABEL_VESTING,
+            Nimiq.Address.fromUserFriendlyAddress(contract.address),
+            Nimiq.Address.fromUserFriendlyAddress(contract.owner),
+            contract.start,
+            Nimiq.Policy.coinsToSatoshis(contract.stepAmount),
+            contract.stepBlocks,
+            Nimiq.Policy.coinsToSatoshis(contract.totalAmount),
+        ));
     }
 }

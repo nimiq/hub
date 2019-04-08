@@ -707,6 +707,13 @@
     nan "^2.10.0"
     ws "^5.2.0"
 
+"@nimiq/iqons@^1.4.2":
+  version "1.4.2"
+  resolved "https://registry.yarnpkg.com/@nimiq/iqons/-/iqons-1.4.2.tgz#be8c9b8f219783e5fc912726caa375dcce0be447"
+  integrity sha512-fEn4a1mHpSuQexjKpiekYgicaui3MtPptvfSReSOtyPleJbsyb9CSrdDkFuhPVaS88/jxyodjLscRMO4FAPdmw==
+  dependencies:
+    dom-parser "^0.1.5"
+
 "@nimiq/jungle-db@^0.9.17":
   version "0.9.17"
   resolved "https://registry.yarnpkg.com/@nimiq/jungle-db/-/jungle-db-0.9.17.tgz#3a8a55f600da8f8b103ad988d177b2785e1bd6cc"
@@ -757,14 +764,14 @@
   resolved "https://registry.yarnpkg.com/@nimiq/style/-/style-0.4.1.tgz#42b6e3a8ba4a0c7dbd71893b4149094466b48c49"
   integrity sha512-OLWRXTgtxOv0R5cOMZ3M2WCoardx6thGbZbxbpnWdhZkqoYnWqGp0oV5X5ic6Vde4mt403ogXwbfGtzwJknvrQ==
 
-"@nimiq/utils@^0.3.0":
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/@nimiq/utils/-/utils-0.3.0.tgz#9e2e75c3072f6e276a41c9ddd4f0a7df010bff83"
-  integrity sha512-00aTQPtKpXIUz3ZJVrhWIjMPXvSvaY5SygDJwGIPDcP/KYii8FvqWqaYUoKfLe5dRwLxY4kM/Qdw6hWkLdWOBg==
+"@nimiq/utils@^0.3.1":
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/@nimiq/utils/-/utils-0.3.1.tgz#f3bcd0800db207316cac754ff6548a1030290a5c"
+  integrity sha512-DONU//nAegIJHElIPpChbwzcUyA8piuGYeaGeQuGxdn8uCNzjGz8IZwGfnVYLwNONLswkYQQoRsxDsHypqdv3A==
 
 "@nimiq/vue-components@https://github.com/nimiq/vue-components.git#build/accounts":
   version "0.1.0"
-  resolved "https://github.com/nimiq/vue-components.git#2b27d3a9557b7b8643a08699866d77a4ca080f1a"
+  resolved "https://github.com/nimiq/vue-components.git#c1fc9ee6a1d0065d1790c1d5de5746b93849dc38"
   dependencies:
     vue "^2.5.17"
     vue-property-decorator "^7.0.0"
@@ -3042,6 +3049,11 @@ dom-event-types@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/dom-event-types/-/dom-event-types-1.0.0.tgz#5830a0a29e1bf837fe50a70cd80a597232813cae"
   integrity sha512-2G2Vwi2zXTHBGqXHsJ4+ak/iP0N8Ar+G8a7LiD2oup5o4sQWytwqqrZu/O6hIMV0KMID2PL69OhpshLO0n7UJQ==
+
+dom-parser@^0.1.5:
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/dom-parser/-/dom-parser-0.1.5.tgz#a4f6019f9a315b75d7428aaa7ccbf5bd859e16fb"
+  integrity sha1-pPYBn5oxW3XXQoqqfMv1vYWeFvs=
 
 dom-serializer@0:
   version "0.1.0"
@@ -8894,10 +8906,10 @@ typedarray@^0.0.6:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
 
-typescript@^3.3.3333:
-  version "3.3.3333"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.3.3333.tgz#171b2c5af66c59e9431199117a3bcadc66fdcfd6"
-  integrity sha512-JjSKsAfuHBE/fB2oZ8NxtRTk5iGcg6hkYXMnZ3Wc+b2RSqejEqTaem11mHASMnFilHrax3sLK0GDzcJrekZYLw==
+typescript@^3.4.2:
+  version "3.4.2"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.4.2.tgz#9ed4e6475d906f589200193be056f5913caed481"
+  integrity sha512-Og2Vn6Mk7JAuWA1hQdDQN/Ekm/SchX80VzLhjKN9ETYrIepBFAd8PkOdOTK2nKt0FCkmMZKBJvQ1dV1gIxPu/A==
 
 typeson-registry@^1.0.0-alpha.20:
   version "1.0.0-alpha.21"

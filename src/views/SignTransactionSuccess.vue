@@ -7,7 +7,7 @@
                     <h1 class="title nq-h1">Sending your<br>transaction now.</h1>
                 </template>
             </Loader>
-            <Network ref="network"/>
+            <Network ref="network" :visible="false"/>
         </SmallPage>
     </div>
 </template>
@@ -24,7 +24,6 @@ import KeyguardClient from '@nimiq/keyguard-client';
 
 @Component({components: {Network, SmallPage, Loader}})
 export default class SignTransactionSuccess extends Vue {
-    // The stored keyguardRequest does not have Uint8Array, only regular arrays
     @Static private keyguardRequest!: KeyguardClient.SignTransactionRequest;
     @State private keyguardResult!: KeyguardClient.SignTransactionResult;
 

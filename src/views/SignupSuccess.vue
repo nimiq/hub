@@ -12,7 +12,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Component, Vue } from 'vue-property-decorator';
 import { SmallPage } from '@nimiq/vue-components';
 import { AccountInfo } from '../lib/AccountInfo';
 import { WalletInfo, WalletType } from '../lib/WalletInfo';
@@ -20,13 +20,8 @@ import { State } from 'vuex-class';
 import { WalletStore } from '@/lib/WalletStore';
 import { Account } from '../lib/PublicRequestTypes';
 import Loader from '@/components/Loader.vue';
-import {
-    ACCOUNT_DEFAULT_LABEL_KEYGUARD,
-    ACCOUNT_DEFAULT_LABEL_LEDGER,
-    ADDRESS_DEFAULT_LABEL_KEYGUARD,
-    ADDRESS_DEFAULT_LABEL_LEDGER,
-} from '@/lib/Constants';
 import KeyguardClient from '@nimiq/keyguard-client';
+import LabelingMachine from '@/lib/LabelingMachine';
 
 @Component({components: {SmallPage, Loader}})
 export default class SignupSuccess extends Vue {
@@ -37,10 +32,12 @@ export default class SignupSuccess extends Vue {
 
     private async mounted() {
         const walletType = WalletType.BIP39;
-        const walletLabel = ACCOUNT_DEFAULT_LABEL_KEYGUARD;
-        const accountLabel = ADDRESS_DEFAULT_LABEL_KEYGUARD;
 
         const createdAddress = new Nimiq.Address(this.keyguardResult[0].addresses[0].address);
+
+        const userFriendlyAddress = createdAddress.toUserFriendlyAddress();
+        const walletLabel = LabelingMachine.labelAccount(userFriendlyAddress);
+        const accountLabel = LabelingMachine.labelAddress(userFriendlyAddress);
 
         const accountInfo = new AccountInfo(
             this.keyguardResult[0].addresses[0].keyPath,
@@ -51,7 +48,7 @@ export default class SignupSuccess extends Vue {
         const walletInfo = new WalletInfo(
             this.keyguardResult[0].keyId,
             walletLabel,
-            new Map<string, AccountInfo>().set(accountInfo.userFriendlyAddress, accountInfo),
+            new Map<string, AccountInfo>().set(userFriendlyAddress, accountInfo),
             [],
             walletType,
             false, // keyMissing
@@ -73,9 +70,10 @@ export default class SignupSuccess extends Vue {
             fileExported: walletInfo.fileExported,
             wordsExported: walletInfo.wordsExported,
             addresses: [{
-                address: accountInfo.userFriendlyAddress,
+                address: userFriendlyAddress,
                 label: accountInfo.label,
             }],
+            contracts: [], // A newly created account cannot have any contracts
         };
 
         setTimeout(() => this.$rpc.resolve(result), Loader.SUCCESS_REDIRECT_DELAY);
