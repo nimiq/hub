@@ -23,6 +23,8 @@ import { Utf8Tools } from '@nimiq/utils';
 
 export class RequestParser {
     public static parse(request: RpcRequest, state: State, requestType: RequestType): ParsedRpcRequest | null {
+        if (!request.appName) throw new Error('appName is required');
+
         switch (requestType) {
             case RequestType.SIGN_TRANSACTION:
                 const signTransactionRequest = request as SignTransactionRequest;
