@@ -16,7 +16,7 @@ import { Component, Vue } from 'vue-property-decorator';
 import { SmallPage } from '@nimiq/vue-components';
 import { ParsedSimpleRequest } from '../lib/RequestTypes';
 import { ExportResult } from '../lib/PublicRequestTypes';
-import { State, Getter } from 'vuex-class';
+import { State } from 'vuex-class';
 import { Static } from '@/lib/StaticStore';
 import Loader from '@/components/Loader.vue';
 import { WalletInfo } from '@/lib/WalletInfo';
