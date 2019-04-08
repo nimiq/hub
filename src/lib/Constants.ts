@@ -35,3 +35,4 @@ export const NETWORK_DEV = 'dev';
 // Errors
 export const ERROR_CANCELED = 'CANCELED';
 export const ERROR_INVALID_NETWORK = 'Invalid network name';
+export const ERROR_TRANSACTION_RECEIPTS = 'Failed to retrieve transaction receipts for';

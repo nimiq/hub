@@ -148,6 +148,11 @@ class Network extends Vue {
         return client.getBalance(addresses);
     }
 
+    public async requestTransactionReceipts(address: string): Promise<Nimiq.TransactionReceipt[]> {
+        const client = await this._getNetworkClient();
+        return client.requestTransactionReceipts(address);
+    }
+
     public async getGenesisVestingContracts(): Promise<VestingContractInfo[]> {
         const client = await this._getNetworkClient();
         const contracts = await client.getGenesisVestingContracts();

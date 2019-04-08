@@ -13,12 +13,18 @@ import {
     ACCOUNT_BIP32_BASE_PATH_KEYGUARD,
 } from '@/lib/Constants';
 import Config from 'config';
+import { ERROR_TRANSACTION_RECEIPTS } from '../lib/Constants';
 import LabelingMachine from './LabelingMachine';
 import { ContractInfo, VestingContractInfo } from './ContractInfo';
 
-type BasicAccountInfo = { // tslint:disable-line:interface-over-type-literal
+type BasicAccountInfo = {
     address: string,
     path: string,
+};
+
+export type WalletCollectionResult = {
+    walletInfo: WalletInfo,
+    receiptsError?: Error, // if there is an incomplete result due to failed requestTxReceipts requests
 };
 
 export default class WalletInfoCollector {
@@ -28,7 +34,7 @@ export default class WalletInfoCollector {
         initialAccounts?: BasicAccountInfo[],
         // tslint:disable-next-line:no-empty
         onUpdate: (walletInfo: WalletInfo, currentlyCheckedAccounts: BasicAccountInfo[]) => void = () => {},
-    ): Promise<WalletInfo> {
+    ): Promise<WalletCollectionResult> {
         // Kick off loading dependencies
         WalletInfoCollector._initializeDependencies(walletType);
 
@@ -79,7 +85,7 @@ export default class WalletInfoCollector {
         if (walletType === WalletType.LEGACY) {
             // legacy wallets have no derived accounts
             await initialAccountsPromise;
-            return walletInfo;
+            return { walletInfo };
         }
 
         // Label Keyguard accounts according to their first identicon background color
@@ -88,6 +94,7 @@ export default class WalletInfoCollector {
         }
 
         let foundAccounts: BasicAccountInfo[];
+        let receiptsError;
         do {
             const derivedAccounts = await derivedAccountsPromise;
 
@@ -108,14 +115,37 @@ export default class WalletInfoCollector {
                 ACCOUNT_MAX_ALLOWED_ADDRESS_GAP, walletType, walletId);
 
             // find accounts with a balance > 0
-            // TODO should use transaction receipts
-            foundAccounts = [];
+            const foundAddresses: string[] = [];
             const balances = await WalletInfoCollector._getBalances(derivedAccounts!);
             for (const account of derivedAccounts!) {
                 const balance = balances.get(account.address);
-                if (balance === undefined || balance === 0) continue;
-                foundAccounts.push(account);
+                if (balance !== undefined && balance !== 0) {
+                    foundAddresses.push(account.address);
+                }
             }
+
+            // for accounts with balance 0 check if there are transactions
+            const addressesToCheck = derivedAccounts.map((account) => account.address)
+                                                    .filter((address) => foundAddresses.indexOf(address) === -1);
+            await Promise.all(
+                addressesToCheck.map(async (address) => {
+                    try {
+                        const receipts = await NetworkClient.Instance.requestTransactionReceipts(address);
+                        if (receipts.length > 0) {
+                            foundAddresses.push(address);
+                        }
+                    } catch (error) {
+                        if (!error.message.startsWith(ERROR_TRANSACTION_RECEIPTS)) {
+                            throw error;
+                        }
+                        receiptsError = error;
+                        console.debug(error);
+                    }
+                }),
+            );
+
+            foundAccounts = derivedAccounts.filter((account) => foundAddresses.indexOf(account.address) !== -1);
+
             if (foundAccounts.length > 0) {
                 WalletInfoCollector._addAccounts(walletInfo, foundAccounts, balances);
                 onUpdate(walletInfo, derivedAccounts);
@@ -134,7 +164,10 @@ export default class WalletInfoCollector {
         }
 
         await initialAccountsPromise; // make sure initial accounts balances are updated
-        return walletInfo;
+        return {
+            walletInfo,
+            receiptsError,
+        };
     }
 
     private static _keyguardClient?: KeyguardClient; // TODO avoid the need to create another KeyguardClient here

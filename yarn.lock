@@ -739,23 +739,20 @@
   version "0.0.0"
   resolved "https://github.com/nimiq/ledger-api.git#a7d86a47b46d21ec2afea94086b2942ea1adb575"
 
-"@nimiq/network-client@^0.1.5":
-  version "0.1.5"
-  resolved "https://registry.yarnpkg.com/@nimiq/network-client/-/network-client-0.1.5.tgz#18420de8c8c342a4762bf533ffc358c96cc8adca"
-  integrity sha512-PFZhCTbh50g91T1Dnq4dFhfQRjTvch267JYbobcgdtAjq/EGxnXhs6BG/O2G/4jS7MaApIw6eRnU4FODXeQQlg==
+"@nimiq/network-client@^0.1.8":
+  version "0.1.8"
+  resolved "https://registry.yarnpkg.com/@nimiq/network-client/-/network-client-0.1.8.tgz#483c78b4673e74b48fc6266221121c595fe3fbe0"
+  integrity sha512-lJjR99ZK4oWl3j95UCDPv1uHc3dORidFAYGIrExOPj/gqLHPqFYGhDs86vw2EQORPragBEQCvBpGL7/LhuLsXQ==
   dependencies:
     "@nimiq/core-web" "1.4.3"
-    "@nimiq/rpc-events" "^0.0.5"
+    "@nimiq/rpc-events" "^0.0.8"
 
-"@nimiq/rpc-events@^0.0.5":
-  version "0.0.5"
-  resolved "https://registry.yarnpkg.com/@nimiq/rpc-events/-/rpc-events-0.0.5.tgz#7face10c875956aeee8f9b44e2184bcde5b6b203"
+"@nimiq/rpc-events@^0.0.8":
+  version "0.0.8"
+  resolved "https://registry.yarnpkg.com/@nimiq/rpc-events/-/rpc-events-0.0.8.tgz#bb03bb98e6450de3b858260c73dfabca0e4cbce8"
+  integrity sha512-2KYmey23WD1yV/61N+ZdUmHsxXhhie9kZOwDf1PqKbYBEHHJaoqyQb1fEptja6yyVlnZc5tv806JhHWBjJNCVA==
   dependencies:
-    "@nimiq/rpc" "^0.0.11"
-
-"@nimiq/rpc@^0.0.11":
-  version "0.0.11"
-  resolved "https://registry.yarnpkg.com/@nimiq/rpc/-/rpc-0.0.11.tgz#7230365640663827fb115e0d6456222de3b1c5e3"
+    "@nimiq/rpc" "^0.1.4"
 
 "@nimiq/rpc@^0.1.4":
   version "0.1.4"
