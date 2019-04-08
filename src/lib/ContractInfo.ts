@@ -13,6 +13,7 @@ export class ContractInfoHelper {
         }
     }
 
+    // Used in iframe
     public static objectToContractType(o: ContractInfoEntry): VestingContract | HashedTimeLockedContract {
         switch (o.type) {
             case 1 /* Nimiq.Account.Type.VESTING */:
@@ -39,9 +40,10 @@ export class VestingContractInfo {
         );
     }
 
+    // Used in iframe
     public static objectToContractType(o: VestingContractInfoEntry): VestingContract {
         return {
-            type: o.type,
+            type: 1 /* Nimiq.Account.Type.VESTING */,
             label: o.label,
             address: AddressUtils.toUserFriendlyAddress(o.address),
             owner: AddressUtils.toUserFriendlyAddress(o.owner),
@@ -152,9 +154,10 @@ export class HashedTimeLockedContractInfo {
         );
     }
 
+    // Used in iframe
     public static objectToContractType(o: HashedTimeLockedContractInfoEntry): HashedTimeLockedContract {
         return {
-            type: Nimiq.Account.Type.HTLC,
+            type: 2 /* Nimiq.Account.Type.HTLC */,
             label: o.label,
             address: AddressUtils.toUserFriendlyAddress(o.address),
             sender: AddressUtils.toUserFriendlyAddress(o.sender),
