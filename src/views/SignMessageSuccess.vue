@@ -20,7 +20,6 @@ import KeyguardClient from '@nimiq/keyguard-client';
 import { Static } from '@/lib/StaticStore';
 import Loader from '../components/Loader.vue';
 import { SmallPage } from '@nimiq/vue-components';
-import { Utf8Tools } from '@nimiq/utils';
 
 @Component({components: {Loader, SmallPage}})
 export default class SignMessageSuccess extends Vue {
@@ -33,9 +32,6 @@ export default class SignMessageSuccess extends Vue {
             signer: new Nimiq.Address(this.keyguardRequest.signer).toUserFriendlyAddress(),
             signerPublicKey: this.keyguardResult.publicKey,
             signature: this.keyguardResult.signature,
-            message: typeof this.request.message === 'string'
-                ? Utf8Tools.utf8ByteArrayToString(this.keyguardResult.data)
-                : this.keyguardResult.data,
         };
 
         setTimeout(() => this.$rpc.resolve(result), Loader.SUCCESS_REDIRECT_DELAY);

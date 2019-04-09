@@ -66,7 +66,6 @@ export interface SignedMessage {
     signer: string; // Userfriendly address
     signerPublicKey: Uint8Array;
     signature: Uint8Array;
-    message: string | Uint8Array;
 }
 
 export interface Address {
