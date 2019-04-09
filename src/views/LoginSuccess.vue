@@ -54,6 +54,7 @@ export default class LoginSuccess extends Vue {
                     const { walletInfo, receiptsError } = await WalletInfoCollector.collectWalletInfo(
                         keyResult.keyType,
                         keyResult.keyId,
+                        /* walletId */ undefined,
                         keyguardResultAccounts,
                     );
 

@@ -70,25 +70,30 @@ export default class Migrate extends Vue {
         (this.$refs.network as Network).disconnect(); // Prevent syncing consensus
 
         this.status = 'Storing your new accounts...';
-        const walletInfos = legacyAccounts.map((account) => {
-            const address = new Nimiq.Address(account.legacyAccount!.address);
+        // For the wallet ID derivation to work, the ID derivation and storing of new wallets needs
+        // to happen serially, e.g. synchroneous.
+        const walletInfos: WalletInfo[] = [];
+        for (const account of legacyAccounts) {
+            const address = new Nimiq.Address(account.legacyAccount.address);
             const accounts = new Map<string, AccountInfo>([
-                [address.toUserFriendlyAddress(), new AccountInfo('m/0\'', account.legacyAccount!.label, address)],
+                [address.toUserFriendlyAddress(), new AccountInfo('m/0\'', account.legacyAccount.label, address)],
             ]);
 
             const contracts = genesisVestingContracts.filter((contract) => contract.owner.equals(address));
 
-            return new WalletInfo(
+            const walletInfo = new WalletInfo(
+                await WalletStore.deriveId(account.id),
                 account.id,
                 ACCOUNT_DEFAULT_LABEL_LEGACY,
                 accounts,
                 contracts,
                 WalletType.LEGACY,
             );
-        });
 
-        const storagePromises = walletInfos.map((walletInfo) => WalletStore.Instance.put(walletInfo));
-        await Promise.all(storagePromises);
+            await WalletStore.Instance.put(walletInfo);
+
+            walletInfos.push(walletInfo);
+        }
 
         this.status = 'Migrating Keyguard...';
         await this.keyguardClient!.migrateAccountsToKeys();

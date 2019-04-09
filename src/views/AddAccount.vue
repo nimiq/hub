@@ -33,7 +33,7 @@ export default class AddAccount extends Vue {
 
         const request: DeriveAddressRequest = {
             appName: this.request.appName,
-            keyId: this.request.walletId,
+            keyId: wallet.keyId,
             baseKeyPath: `m/44'/242'/0'`,
             indicesToDerive: new Array(14).fill(null).map((_: any, i: number) => `${firstIndexToDerive + i}'`),
         };

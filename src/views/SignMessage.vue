@@ -93,7 +93,7 @@ export default class SignMessage extends Vue {
         const request: KeyguardClient.SignMessageRequest = {
             appName: this.request.appName,
 
-            keyId: walletInfo.id,
+            keyId: walletInfo.keyId,
             keyPath: accountInfo.path,
 
             message: this.messageBytes(),

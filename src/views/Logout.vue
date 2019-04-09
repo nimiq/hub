@@ -20,7 +20,7 @@ export default class Logout extends Vue {
 
         const request: KeyguardClient.RemoveKeyRequest = {
             appName: this.request.appName,
-            keyId: this.request.walletId,
+            keyId: wallet.keyId,
             keyLabel: wallet.label,
         };
 

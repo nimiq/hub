@@ -20,7 +20,7 @@ export default class Export extends Vue {
 
         const request: SimpleRequest = {
             appName: this.request.appName,
-            keyId: this.request.walletId,
+            keyId: wallet.keyId,
             keyLabel: wallet.label,
         };
 

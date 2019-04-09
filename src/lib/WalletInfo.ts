@@ -19,7 +19,7 @@ export class WalletInfo {
             accounts.set(userFriendlyAddress, AccountInfo.fromObject(accountInfoEntry));
         });
         const contracts = o.contracts.map((contract) => ContractInfoHelper.fromObject(contract));
-        return new WalletInfo(o.id, o.label, accounts, contracts, o.type,
+        return new WalletInfo(o.id, o.keyId, o.label, accounts, contracts, o.type,
             o.keyMissing, o.fileExported, o.wordsExported);
     }
 
@@ -36,6 +36,7 @@ export class WalletInfo {
     }
 
     public constructor(public id: string,
+                       public keyId: string,
                        public label: string,
                        public accounts: Map</*address*/ string, AccountInfo>,
                        public contracts: ContractInfo[],
@@ -79,6 +80,7 @@ export class WalletInfo {
         const contractEntries = this.contracts.map((contract) => contract.toObject());
         return {
             id: this.id,
+            keyId: this.keyId,
             label: this.label,
             accounts: accountEntries,
             contracts: contractEntries,
@@ -107,6 +109,7 @@ export class WalletInfo {
  */
 export interface WalletInfoEntry {
     id: string;
+    keyId: string;
     label: string;
     accounts: Map</*address*/ string, AccountInfoEntry>;
     contracts: ContractInfoEntry[];

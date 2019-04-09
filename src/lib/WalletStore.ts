@@ -1,11 +1,29 @@
 import { WalletInfo, WalletInfoEntry } from '@/lib/WalletInfo';
 
 export class WalletStore {
-    public static readonly DB_VERSION = 2;
+    public static readonly DB_VERSION = 3;
     public static readonly DB_NAME = 'nimiq-accounts';
     public static readonly DB_KEY_STORE_NAME = 'wallets';
 
+    public static readonly WALLET_ID_LENGTH = 6;
+
     public static INDEXEDDB_IMPLEMENTATION = window.indexedDB;
+
+    public static async deriveId(keyId: string): Promise<string> {
+        const wallets = await WalletStore.Instance.list();
+        const existingWallet = wallets.find((wallet) => wallet.keyId === keyId);
+        if (existingWallet) return existingWallet.id;
+
+        const existingIds = wallets.map((wallet) => wallet.id);
+        const keyIdBytes = Nimiq.BufferUtils.fromBase64(keyId);
+
+        for (let i = 0; i <= (32 - WalletStore.WALLET_ID_LENGTH); i++) {
+            const id = Nimiq.BufferUtils.toHex(keyIdBytes.subarray(i, i + WalletStore.WALLET_ID_LENGTH));
+            if (existingIds.indexOf(id) === -1) return id;
+        }
+
+        throw new Error('Could not find an available wallet ID');
+    }
 
     private static instance: WalletStore | null = null;
 
@@ -115,10 +133,15 @@ export class WalletStore {
                     db.deleteObjectStore(WalletStore.DB_KEY_STORE_NAME);
                     db.createObjectStore(WalletStore.DB_KEY_STORE_NAME, { keyPath: 'id' });
                 }
+
+                if (event.oldVersion < 3) {
+                    // Change to version 3 just to delete former testnet databases, because we do the same in keyguard.
+                    db.deleteObjectStore(WalletStore.DB_KEY_STORE_NAME);
+                    db.createObjectStore(WalletStore.DB_KEY_STORE_NAME, { keyPath: 'id' });
+                }
             };
         });
 
         return this._dbPromise;
     }
-
 }

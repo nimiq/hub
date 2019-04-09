@@ -91,6 +91,7 @@ export class CookieDecoder {
 
             const walletInfoEntry: WalletInfoEntry = {
                 id,
+                keyId: '',
                 type,
                 label: walletLabel,
                 accounts,
@@ -121,6 +122,7 @@ export class CookieDecoder {
 
         const walletInfoEntry: WalletInfoEntry = {
             id,
+            keyId: '',
             type,
             label: walletLabel,
             accounts,
