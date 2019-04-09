@@ -25,7 +25,7 @@ import { SmallPage } from '@nimiq/vue-components';
 export default class SignMessageSuccess extends Vue {
     @Static private request!: ParsedSignMessageRequest;
     @Static private keyguardRequest!: KeyguardClient.SignMessageRequest;
-    @State private keyguardResult!: KeyguardClient.SignMessageResult;
+    @State private keyguardResult!: KeyguardClient.SignatureResult;
 
     private mounted() {
         const result: SignedMessage = {

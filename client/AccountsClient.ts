@@ -22,10 +22,12 @@ import {
     ListResult,
     RpcResult,
 } from '../src/lib/PublicRequestTypes';
+import { MSG_PREFIX } from '@nimiq/keyguard-client';
 
 export default class AccountsClient {
     public static readonly RequestType: typeof RequestType = RequestType;
     public static readonly RedirectRequestBehavior: typeof RedirectRequestBehavior = RedirectRequestBehavior;
+    public static readonly MSG_PREFIX: string = MSG_PREFIX;
 
     private static get DEFAULT_ENDPOINT() {
         const originArray = location.origin.split('.');
