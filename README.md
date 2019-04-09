@@ -661,7 +661,7 @@ To get started with working on the source code, pull the code and install the de
 ### Setup
 
 ```bash
-git clone git@github.com:nimiq/accounts.git
+git clone https://github.com/nimiq/accounts.git
 cd accounts
 yarn
 ```
