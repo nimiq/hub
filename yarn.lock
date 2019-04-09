@@ -727,10 +727,10 @@
     levelup "^2.0.2"
     node-lmdb "0.6.0"
 
-"@nimiq/keyguard-client@^0.3.0-beta.1":
-  version "0.3.0-beta.1"
-  resolved "https://registry.yarnpkg.com/@nimiq/keyguard-client/-/keyguard-client-0.3.0-beta.1.tgz#39096951f7d337727fdcdc415d9eddda713b2d73"
-  integrity sha512-XxUxcUO1QPM1MeTVF4SNj7X6WxFxKftZX0zvpF4lWz9rHEmre2LludwN52Q9QfaAjcYKJNOERM4wPjA4WSFBsw==
+"@nimiq/keyguard-client@^0.3.0-beta.2":
+  version "0.3.0-beta.2"
+  resolved "https://registry.yarnpkg.com/@nimiq/keyguard-client/-/keyguard-client-0.3.0-beta.2.tgz#1724b7ba99f1530a4c36d1a41e4c8d82c11353c7"
+  integrity sha512-23XWA6S5fM6SVeJg160XMKhwDiSb/XysRVQ4aFhyt9uY7ZycOxzSIkkqEcamzOIlDFCp6ixrcLYqbtebDoO33A==
   dependencies:
     "@nimiq/core-web" "1.4.3"
     "@nimiq/rpc" "^0.1.4"

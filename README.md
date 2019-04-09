@@ -570,8 +570,8 @@ blockchain-related proofs which could be used to impersonate them, the
 Nimiq Keyguard prefixes additional data to the message before signing.
 This prefix consists of
 
-- 1 byte length of the prefix (`22`)
-- a 22 bytes prefix (`'Nimiq Signed Message:\n'`)
+- 1 byte length of the prefix (`22` or `0x16`)
+- a 22 bytes prefix (`'Nimiq Signed Message:\n'`, available as `AccountsClient.MSG_PREFIX`)
 - the length of the message as a stringified number
 
 This data is then hashed with SHA256 before being signed. Together, this leads
@@ -588,7 +588,10 @@ const signature = new Nimiq.Signature(signedMessage.signature);
 const publicKey = new Nimiq.PublicKey(signedMessage.signerPublicKey);
 
 // For string messages:
-const data = '\x16' + 'Nimiq Signed Message:\n' + message.length + message;
+const data = String.fromCharCode(AccountsClient.MSG_PREFIX.length)
+           + AccountsClient.MSG_PREFIX
+           + message.length
+           + message;
 const dataBytes = Nimiq.BufferUtils.fromUtf8(data);
 const hash = Nimiq.Hash.computeSha256(dataBytes);
 
