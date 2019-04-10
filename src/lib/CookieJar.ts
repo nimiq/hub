@@ -12,7 +12,7 @@ import LabelingMachine from './LabelingMachine';
 import { ContractInfoEntry, VestingContractInfoEntry, VestingContractInfo } from './ContractInfo';
 
 class CookieJar {
-    public static readonly VERSION = 1;
+    public static readonly VERSION = 3;
     public static readonly MAX_COOKIE_SIZE = 2500; // byte (3000 would probable be safe, but we'll be safer for now)
 
     public static readonly ENCODED_ACCOUNT_SIZE =
@@ -134,17 +134,9 @@ class CookieJar {
         bytes.push(statusByte);
 
         // Wallet ID
-        if (wallet.type === WalletType.LEDGER) {
-            const walletIdChunks = wallet.id.match(/.{2}/g);
-            for (const chunk of walletIdChunks!) {
-                bytes.push(parseInt(chunk, 16));
-            }
-        } else {
-            // Keyguard Wallet
-            const numericalId = parseInt(wallet.id.substr(1), 10);
-            const idBytes = CookieJar.toBase256(numericalId);
-            bytes.push(idBytes.length);
-            bytes.push.apply(bytes, idBytes);
+        const walletIdChunks = wallet.id.match(/.{2}/g);
+        for (const chunk of walletIdChunks!) {
+            bytes.push(parseInt(chunk, 16));
         }
 
         // Label
