@@ -9,7 +9,7 @@
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { SignedTransaction } from '../lib/PublicRequestTypes';
 import KeyguardClient from '@nimiq/keyguard-client';
-import { NetworkClient, PlainTransaction, DetailedPlainTransaction } from '@nimiq/network-client';
+import { NetworkClient, DetailedPlainTransaction } from '@nimiq/network-client';
 import Config from 'config';
 import {
     NETWORK_TEST,
@@ -30,17 +30,19 @@ class Network extends Vue {
     private boundListeners: Array<[NetworkClient.Events, (...args: any[]) => void]> = [];
 
     public async connect() {
-        // Load network iframe
+        // Load network iframe (automatically starts a pico consensus which does not upgrade to nano)
         const client = await this._getNetworkClient();
     }
 
-    public async connectPico(addresses: string[]): Promise<Map<string, number>> {
-        // Load network iframe
+    public async connectPico(addresses: string[], upgradeToNano = false): Promise<Map<string, number>> {
         const client = await this._getNetworkClient();
-        client.disconnect();
+        // Rerun pico consensus to get balances
+        return client.connectPico(addresses, upgradeToNano);
+    }
 
-        // Connect
-        return client.connectPico(addresses);
+    public async connectNano() {
+        const client = await this._getNetworkClient();
+        return client.connectNano();
     }
 
     public async disconnect() {
