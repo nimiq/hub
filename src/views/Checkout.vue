@@ -29,10 +29,10 @@
                 @account-selected="accountOrContractSelected"
                 @login="goToOnboarding"/>
 
-            <AccountInfoScreen
+            <AccountDetails
                 :address="request.recipient.toUserFriendlyAddress()"
-                :origin="rpcState.origin"
-                :shopLogoUrl="request.shopLogoUrl"
+                :label="shopOrigin"
+                :image="request.shopLogoUrl"
                 @close="showMerchantInfo = false"
             />
         </SmallPage>
@@ -48,7 +48,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { PaymentInfoLine, AccountSelector, AccountInfo as AccountInfoScreen, SmallPage } from '@nimiq/vue-components';
+import { PaymentInfoLine, AccountSelector, AccountDetails, SmallPage } from '@nimiq/vue-components';
 import { ParsedCheckoutRequest, RequestType } from '../lib/RequestTypes';
 import { Account } from '../lib/PublicRequestTypes';
 import { State as RpcState } from '@nimiq/rpc';
@@ -68,7 +68,7 @@ import Loader from '@/components/Loader.vue';
 import KeyguardClient from '@nimiq/keyguard-client';
 import { ContractInfo, VestingContractInfo } from '@/lib/ContractInfo';
 
-@Component({components: {PaymentInfoLine, AccountSelector, AccountInfoScreen, SmallPage, Network, Loader}})
+@Component({components: {PaymentInfoLine, AccountSelector, AccountDetails, SmallPage, Network, Loader}})
 export default class Checkout extends Vue {
     private static readonly BALANCE_CHECK_STORAGE_KEY = 'nimiq_checkout_last_balance_check';
 
@@ -244,6 +244,10 @@ export default class Checkout extends Vue {
         });
     }
 
+    private get shopOrigin() {
+        return this.rpcState.origin.split('://')[1];
+    }
+
     private async handleOnboardingResult() {
         // Check if we are returning from an onboarding request
         if (staticStore.sideResult && !(staticStore.sideResult instanceof Error)) {
@@ -305,7 +309,7 @@ export default class Checkout extends Vue {
         text-align: center;
     }
 
-    .account-info {
+    .account-details {
         position: absolute;
         left: 0;
         top: 0;
@@ -314,11 +318,11 @@ export default class Checkout extends Vue {
         transition: opacity 300ms, z-index 300ms;
     }
 
-    .merchant-info-shown > :not(.account-info) {
+    .merchant-info-shown > :not(.account-details) {
         filter: blur(.75rem);
     }
 
-    .merchant-info-shown > .account-info {
+    .merchant-info-shown > .account-details {
         z-index: 29;
         opacity: 1;
     }
