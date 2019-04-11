@@ -10,8 +10,7 @@
             </IdenticonSelector>
             <div v-else-if="state === 'wallet-summary'" class="wallet-summary">
                 <h1 class="nq-h1">Account Created</h1>
-                <WalletIdentifier :accounts="Array.from(walletInfo.accounts.values())"
-                                  :animate="true"></WalletIdentifier>
+                <AccountRing :addresses="Array.from(walletInfo.accounts.keys())" animate></AccountRing>
                 <div class="message nq-text">This is your account with your first address in it.</div>
                 <button class="nq-button" @click="done">Finish</button>
             </div>
@@ -26,7 +25,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { PageBody, SmallPage } from '@nimiq/vue-components';
+import { PageBody, SmallPage, AccountRing } from '@nimiq/vue-components';
 import { ParsedBasicRequest } from '../lib/RequestTypes';
 import { Account } from '../lib/PublicRequestTypes';
 import { Static } from '../lib/StaticStore';
@@ -34,7 +33,6 @@ import LedgerApi from '../lib/LedgerApi';
 import LedgerUi from '../components/LedgerUi.vue';
 import Loader from '../components/Loader.vue';
 import IdenticonSelector from '../components/IdenticonSelector.vue';
-import WalletIdentifier from '../components/WalletIdentifier.vue';
 import WalletInfoCollector from '../lib/WalletInfoCollector';
 import { WalletInfo, WalletType } from '../lib/WalletInfo';
 import { AccountInfo } from '../lib/AccountInfo';
@@ -42,7 +40,7 @@ import { WalletStore } from '../lib/WalletStore';
 import { ERROR_CANCELED } from '../lib/Constants';
 import LabelingMachine from '@/lib/LabelingMachine';
 
-@Component({components: {PageBody, SmallPage, LedgerUi, Loader, IdenticonSelector, WalletIdentifier}})
+@Component({components: {PageBody, SmallPage, LedgerUi, Loader, IdenticonSelector, AccountRing}})
 export default class SignupLedger extends Vue {
     private static readonly State = {
         IDLE: 'idle',
@@ -218,8 +216,9 @@ export default class SignupLedger extends Vue {
         margin-top: 0;
     }
 
-    .wallet-summary .wallet-identifier {
+    .wallet-summary .account-ring {
         margin: 4.25rem;
+        width: 20rem;
     }
 
     .wallet-summary .message {
