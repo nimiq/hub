@@ -29,12 +29,15 @@
                 @account-selected="accountOrContractSelected"
                 @login="goToOnboarding"/>
 
-            <AccountDetails
-                :address="request.recipient.toUserFriendlyAddress()"
-                :label="shopOrigin"
-                :image="request.shopLogoUrl"
-                @close="showMerchantInfo = false"
-            />
+            <transition name="account-details-fade">
+                <AccountDetails
+                    v-if="showMerchantInfo"
+                    :address="request.recipient.toUserFriendlyAddress()"
+                    :label="shopOrigin"
+                    :image="request.shopLogoUrl"
+                    @close="showMerchantInfo = false"
+                />
+            </transition>
         </SmallPage>
 
         <button class="global-close nq-button-s" @click="close">
@@ -313,18 +316,18 @@ export default class Checkout extends Vue {
         position: absolute;
         left: 0;
         top: 0;
+        opacity: 1;
+        z-index: 1;
+        transition: opacity .3s;
+    }
+
+    .account-details-fade-enter,
+    .account-details-fade-leave-to {
         opacity: 0;
-        z-index: -1;
-        transition: opacity 300ms, z-index 300ms;
     }
 
     .merchant-info-shown > :not(.account-details) {
         filter: blur(.75rem);
-    }
-
-    .merchant-info-shown > .account-details {
-        z-index: 29;
-        opacity: 1;
     }
 
     .non-sufficient-balance {
