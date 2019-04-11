@@ -707,10 +707,10 @@
     nan "^2.10.0"
     ws "^5.2.0"
 
-"@nimiq/iqons@^1.4.2":
-  version "1.4.2"
-  resolved "https://registry.yarnpkg.com/@nimiq/iqons/-/iqons-1.4.2.tgz#be8c9b8f219783e5fc912726caa375dcce0be447"
-  integrity sha512-fEn4a1mHpSuQexjKpiekYgicaui3MtPptvfSReSOtyPleJbsyb9CSrdDkFuhPVaS88/jxyodjLscRMO4FAPdmw==
+"@nimiq/iqons@^1.4.3":
+  version "1.4.3"
+  resolved "https://registry.yarnpkg.com/@nimiq/iqons/-/iqons-1.4.3.tgz#bf12bc4a3a6ce9fb3df316f40525bdd66d68fd84"
+  integrity sha512-N9G87dztRUrfJ/n+OHuxjAJ5G8Nek56ZucAH4AQGpw8B39NHNXvVNtcqBYZd3Vhy8srbSjqsu6Rm6o6sTAY5wQ==
   dependencies:
     dom-parser "^0.1.5"
 
