@@ -134,7 +134,7 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
                 BURN_ADDRESS_HR,
                 {
                     path: 'm/44\'/242\'/0\'/0\'',
-                    label: 'Childish Scoring Warlock',
+                    label: 'Weird Meat-Eating Sorcerer',
                     address: BURN_ADDRESS_S,
                 },
             ],
@@ -291,7 +291,7 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
                 BURN_ADDRESS_HR,
                 {
                     path: 'not public',
-                    label: 'Childish Scoring Warlock',
+                    label: 'Weird Meat-Eating Sorcerer',
                     address: BURN_ADDRESS_S,
                 },
             ],
