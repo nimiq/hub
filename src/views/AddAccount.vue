@@ -13,11 +13,7 @@ export default class AddAccount extends Vue {
     @Static private request!: ParsedSimpleRequest;
 
     public async created() {
-        const wallet = await WalletStore.Instance.get(this.request.walletId);
-        if (!wallet) {
-            this.$rpc.reject(new Error('Account ID not found'));
-            return;
-        }
+        const wallet = (await WalletStore.Instance.get(this.request.walletId))!;
         if (wallet.type === WalletType.LEGACY) {
             this.$rpc.reject(new Error('Cannot add address to single-address account'));
             return;
