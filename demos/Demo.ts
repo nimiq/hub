@@ -425,7 +425,7 @@ class Demo {
                         <button class="export-file" data-wallet-id="${wallet.accountId}">File</button>
                         <button class="export-words" data-wallet-id="${wallet.accountId}">Words</button>
                         <button class="change-password" data-wallet-id="${wallet.accountId}">Ch. Pass.</button>
-                        ${wallet.type !== 0 ? `<button class="add-account" data-wallet-id="${wallet.accountId}">+ Acc</button>` : ''}
+                        ${wallet.type !== 0 ? `<button class="add-account" data-wallet-id="${wallet.accountId}">+ Addr</button>` : ''}
                         <button class="rename" data-wallet-id="${wallet.accountId}">Rename</button>
                         <button class="logout" data-wallet-id="${wallet.accountId}">Logout</button>
                         <ul>`;
