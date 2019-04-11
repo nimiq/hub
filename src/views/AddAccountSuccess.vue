@@ -22,7 +22,6 @@ import { ParsedSimpleRequest } from '../lib/RequestTypes';
 import { Address } from '../lib/PublicRequestTypes';
 import Loader from '@/components/Loader.vue';
 import { Static } from '../lib/StaticStore';
-import LabelingMachine from '@/lib/LabelingMachine';
 
 @Component({components: {Loader, SmallPage}})
 export default class AddAccountSuccess extends Vue {
@@ -40,7 +39,7 @@ export default class AddAccountSuccess extends Vue {
 
         const newAccount = new AccountInfo(
             this.keyguardResult.keyPath,
-            LabelingMachine.labelAddress(createdAddress.toUserFriendlyAddress()),
+            this.keyguardResult.label,
             createdAddress,
         );
 

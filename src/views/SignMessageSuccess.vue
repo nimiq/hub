@@ -26,6 +26,7 @@ import { Utf8Tools } from '@nimiq/utils';
 export default class SignMessageSuccess extends Vue {
     @Static private request!: ParsedSignMessageRequest;
     @Static private keyguardRequest!: KeyguardClient.SignMessageRequest;
+    // @ts-ignore
     @State private keyguardResult!: KeyguardClient.SignMessageResult;
 
     private mounted() {
