@@ -11,6 +11,7 @@ import {
     SignTransactionRequest, SignedTransaction,
     RenameRequest,
     SignMessageRequest,
+    ExportRequest,
 } from '../src/lib/PublicRequestTypes';
 import { RedirectRequestBehavior } from '../client/RequestBehavior';
 import { Utf8Tools } from '@nimiq/utils';
@@ -314,58 +315,32 @@ class Demo {
         } as SimpleRequest;
     }
 
-    public async export(accountId: string) {
-        try {
-            const result = await this._accountsClient.export({
-                appName: 'Accounts Demos',
-                accountId,
-            });
-            console.log('Keyguard result', result);
-            if(result.fileExported) {
-                document.querySelector('#result').textContent = result.wordsExported
-                    ? 'Export sucessful'
-                    : 'File exported';
-            } else {
-                document.querySelector('#result').textContent = result.wordsExported
-                    ? 'Words exported'
-                    : 'nothing exported';
-            }
-        } catch (e) {
-            console.error('Keyguard error', e);
-            document.querySelector('#result').textContent = `Error: ${e.message || e}`;
-        }
+    public export(accountId: string) {
+        this._export({
+            appName: 'Accounts Demos',
+            accountId,
+        });
     }
 
-    public async exportFile(accountId: string) {
-        try {
-            const result = await this._accountsClient.export({
-                appName: 'Accounts Demos',
-                accountId,
-                fileOnly: true,
-            });
-            if(result.fileExported) {
-                document.querySelector('#result').textContent = result.wordsExported
-                    ? 'Export sucessful'
-                    : 'File exported';
-            } else {
-                document.querySelector('#result').textContent = result.wordsExported
-                    ? 'Words exported'
-                    : 'nothing exported';
-            }
-            document.querySelector('#result').textContent = 'Export sucessful';
-        } catch (e) {
-            console.error('Keyguard error', e);
-            document.querySelector('#result').textContent = `Error: ${e.message || e}`;
-        }
+    public exportFile(accountId: string) {
+        this._export({
+            appName: 'Accounts Demos',
+            accountId,
+            fileOnly: true,
+        });
     }
 
-    public async exportWords(accountId: string) {
+    public exportWords(accountId: string) {
+        this._export({
+            appName: 'Accounts Demos',
+            accountId,
+            wordsOnly: true,
+        });
+    }
+
+    private async _export(request: ExportRequest) {
         try {
-            const result = await this._accountsClient.export({
-                appName: 'Accounts Demos',
-                accountId,
-                wordsOnly: true,
-            });
+            const result = await this._accountsClient.export(request);
             console.log('Keyguard result', result);
             if(result.fileExported) {
                 document.querySelector('#result').textContent = result.wordsExported
