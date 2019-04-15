@@ -201,7 +201,10 @@ export default class WalletInfoCollector {
         }
 
         const existingWalletInfo = await WalletStore.Instance.get(walletId);
-        if (existingWalletInfo) return existingWalletInfo;
+        if (existingWalletInfo) {
+            existingWalletInfo.keyMissing = false;
+            return existingWalletInfo;
+        }
 
         const label = walletType === WalletType.LEGACY
             ? ACCOUNT_DEFAULT_LABEL_LEGACY

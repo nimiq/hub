@@ -3,11 +3,12 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { State } from 'vuex-class';
-import { Static } from '../lib/StaticStore';
+import staticStore, { Static } from '../lib/StaticStore';
 import { ParsedRpcRequest, ParsedSimpleRequest, RequestType } from '../lib/RequestTypes';
 import { Errors } from '@nimiq/keyguard-client';
 import { WalletStore } from '../lib/WalletStore';
 import KeyguardClient from '@nimiq/keyguard-client';
+import { DEFAULT_KEY_PATH } from '../lib/Constants';
 
 @Component
 export default class ErrorHandler extends Vue {
@@ -19,7 +20,7 @@ export default class ErrorHandler extends Vue {
         if (!(this.keyguardResult instanceof Error)) return;
         if (this.requestSpecificErrors()) return;
         if (this.keyguardResult.message === Errors.Messages.KEY_NOT_FOUND) {
-            let walletId;
+            let walletId: string;
             if ((this.request as ParsedSimpleRequest).walletId) {
                 // The walletId is already in the Accounts request
                 walletId = (this.request as ParsedSimpleRequest).walletId;
@@ -30,17 +31,31 @@ export default class ErrorHandler extends Vue {
                 walletId = (this.keyguardRequest as KeyguardClient.SignTransactionRequest).keyId;
             } else {
                 // This really should not happen.
-                // Executing this code would mean i.e. a CreateRequest fired KEY_ID_NOT_FOUND which it does not throw
+                // Executing this code would mean i.e. a CreateRequest fired KEY_NOT_FOUND which it does not throw
                 this.$rpc.reject(this.keyguardResult);
                 return;
             }
+
             const walletInfo = await WalletStore.Instance.get(walletId);
-            if (walletInfo) {
-                walletInfo.keyMissing = true;
-                await WalletStore.Instance.put(walletInfo);
+            if (!walletInfo) {
+                this.$rpc.reject(this.keyguardResult); // return it to caller
+                return;
             }
-            // TODO visuals
-            this.$rpc.reject(this.keyguardResult); // return it to caller
+            walletInfo.keyMissing = true;
+            await WalletStore.Instance.put(walletInfo);
+
+            // Redirect to login
+            staticStore.originalRouteName = this.request.kind;
+
+            const request: KeyguardClient.ImportRequest = {
+                appName: this.request.appName,
+                requestedKeyPaths: [DEFAULT_KEY_PATH],
+                isKeyLost: true,
+            };
+
+            const client = this.$rpc.createKeyguardClient();
+            client.import(request);
+
             return;
         }
         // TODO more Error Handling

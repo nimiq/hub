@@ -33,7 +33,6 @@ export default class OnboardingSelector extends Vue {
     private login() {
         const request: KeyguardClient.ImportRequest = {
             appName: this.request.appName,
-            defaultKeyPath: DEFAULT_KEY_PATH,
             requestedKeyPaths: [DEFAULT_KEY_PATH],
         };
         const client = this.$rpc.createKeyguardClient();

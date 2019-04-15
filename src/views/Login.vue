@@ -14,7 +14,6 @@ export default class Login extends Vue {
     public created() {
         const request: KeyguardClient.ImportRequest = {
             appName: this.request.appName,
-            defaultKeyPath: DEFAULT_KEY_PATH,
             requestedKeyPaths: [DEFAULT_KEY_PATH],
         };
 
