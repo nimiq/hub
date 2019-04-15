@@ -6,4 +6,3 @@ describe('AccountsClient', () => {
         expect(AccountsClient.MSG_PREFIX).toEqual(KeyguardClient.MSG_PREFIX);
     });
 });
-
