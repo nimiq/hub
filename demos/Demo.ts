@@ -1,5 +1,3 @@
-/// <reference path="../node_modules/@nimiq/core-types/Nimiq.d.ts" />
-
 import { State, PostMessageRpcClient } from '@nimiq/rpc';
 import AccountsClient from '../client/AccountsClient';
 import { RequestType } from '../src/lib/RequestTypes';
@@ -22,6 +20,8 @@ class Demo {
             ? 'https://keyguard.nimiq-testnet.com'
             : `${location.protocol}//${location.hostname}:8000`;
         const demo = new Demo(keyguardOrigin);
+        // @ts-ignore (Property 'demo' does not exist on type 'Window')
+        window.demo = demo;
 
         const client = new AccountsClient(location.origin);
 
@@ -171,7 +171,7 @@ class Demo {
             try {
                 const result = await client.signMessage(request);
                 console.log('Keyguard result', result);
-                document.querySelector('#result').textContent = 'MSG signed: ' + result.message;
+                document.querySelector('#result').textContent = 'MSG signed: ' + request.message;
             } catch (e) {
                 console.error('Keyguard error', e);
                 document.querySelector('#result').textContent = `Error: ${e.message || e}`;
@@ -193,7 +193,7 @@ class Demo {
             try {
                 const result = await client.signMessage(request);
                 console.log('Keyguard result', result);
-                document.querySelector('#result').textContent = 'MSG signed: ' + result.message;
+                document.querySelector('#result').textContent = 'MSG signed: ' + request.message;
             } catch (e) {
                 console.error('Keyguard error', e);
                 document.querySelector('#result').textContent = `Error: ${e.message || e}`;

@@ -27,6 +27,7 @@ import {
 export default class AccountsClient {
     public static readonly RequestType: typeof RequestType = RequestType;
     public static readonly RedirectRequestBehavior: typeof RedirectRequestBehavior = RedirectRequestBehavior;
+    public static readonly MSG_PREFIX: string = '\x16Nimiq Signed Message:\n';
 
     private static get DEFAULT_ENDPOINT() {
         const originArray = location.origin.split('.');

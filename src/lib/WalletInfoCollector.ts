@@ -5,12 +5,12 @@ import { WalletStore } from '@/lib/WalletStore';
 import { WalletInfo, WalletType } from '@/lib/WalletInfo';
 import LedgerApi from '@/lib/LedgerApi'; // TODO import LedgerApi only when needed
 import {
-    ACCOUNT_DEFAULT_LABEL_LEGACY,
-    ACCOUNT_DEFAULT_LABEL_LEDGER,
-    CONTRACT_DEFAULT_LABEL_VESTING,
-    ACCOUNT_TEMPORARY_LABEL_KEYGUARD,
-    ACCOUNT_MAX_ALLOWED_ADDRESS_GAP,
     ACCOUNT_BIP32_BASE_PATH_KEYGUARD,
+    ACCOUNT_DEFAULT_LABEL_LEDGER,
+    ACCOUNT_DEFAULT_LABEL_LEGACY,
+    ACCOUNT_MAX_ALLOWED_ADDRESS_GAP,
+    ACCOUNT_TEMPORARY_LABEL_KEYGUARD,
+    CONTRACT_DEFAULT_LABEL_VESTING,
 } from '@/lib/Constants';
 import Config from 'config';
 import { ERROR_TRANSACTION_RECEIPTS } from '../lib/Constants';
@@ -31,7 +31,7 @@ export default class WalletInfoCollector {
     public static async collectWalletInfo(
         walletType: WalletType,
         walletId?: string,
-        initialAccounts?: BasicAccountInfo[],
+        initialAccounts: BasicAccountInfo[] = [],
         // tslint:disable-next-line:no-empty
         onUpdate: (walletInfo: WalletInfo, currentlyCheckedAccounts: BasicAccountInfo[]) => void = () => {},
     ): Promise<WalletCollectionResult> {
@@ -59,9 +59,25 @@ export default class WalletInfoCollector {
         }
         const walletInfo = await WalletInfoCollector._getWalletInfoInstance(walletId, walletType);
 
+        // Search for genesis vesting contracts
+        // (only legacy or a first ledger addresses can be owners of genesis vesting contracts)
+        if (walletType === WalletType.LEGACY || walletType === WalletType.LEDGER) {
+            const potentialVestingOwner = walletType === WalletType.LEGACY
+                ? initialAccounts[0] // for legacy wallets we get the only account as initialAccounts from the Keyguard
+                : (await derivedAccountsPromise)[0]; // for ledger we check the first derived account
+            const contracts = await WalletInfoCollector._getGenesisVestingContractsForAddress(
+                Nimiq.Address.fromUserFriendlyAddress(potentialVestingOwner.address));
+            WalletInfoCollector._addContracts(walletInfo, contracts);
+            if (contracts.length > 0
+                && !initialAccounts.some((account) => account.address === potentialVestingOwner.address)) {
+                // make sure a ledger vesting owner account get's added even if it has no balance or transaction history
+                initialAccounts.push(potentialVestingOwner);
+            }
+        }
+
         // Add initial accounts to the walletInfo
         let initialAccountsPromise = Promise.resolve();
-        if (initialAccounts && initialAccounts.length > 0) {
+        if (initialAccounts.length > 0) {
             WalletInfoCollector._addAccounts(walletInfo, initialAccounts, undefined);
 
             if (walletType !== WalletType.LEGACY) {
@@ -73,14 +89,6 @@ export default class WalletInfoCollector {
             }
         }
         onUpdate(walletInfo, await derivedAccountsPromise);
-
-        // Search for genesis vesting contracts
-        // (only legacy or a first ledger addresses can be owners of genesis vesting contracts)
-        if (walletType === WalletType.LEGACY || walletType === WalletType.LEDGER) {
-            const contracts = await WalletInfoCollector._getGenesisVestingContractsForAddress(
-                walletInfo.accounts.values().next().value.address);
-            WalletInfoCollector._addContracts(walletInfo, contracts);
-        }
 
         if (walletType === WalletType.LEGACY) {
             // legacy wallets have no derived accounts
@@ -126,7 +134,7 @@ export default class WalletInfoCollector {
 
             // for accounts with balance 0 check if there are transactions
             const addressesToCheck = derivedAccounts.map((account) => account.address)
-                                                    .filter((address) => foundAddresses.indexOf(address) === -1);
+                .filter((address) => foundAddresses.indexOf(address) === -1);
             await Promise.all(
                 addressesToCheck.map(async (address) => {
                     try {
