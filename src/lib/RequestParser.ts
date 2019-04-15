@@ -102,6 +102,9 @@ export class RequestParser {
                 } as ParsedSimpleRequest;
             case RequestType.EXPORT:
                 const exportRequest = request as ExportRequest;
+
+                if (!exportRequest.accountId) throw new Error('accountId is required');
+
                 return {
                     kind: RequestType.EXPORT,
                     appName: exportRequest.appName,
