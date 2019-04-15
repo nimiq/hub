@@ -42,7 +42,7 @@ export default class SignTransaction extends Vue {
             layout: 'standard',
             appName: this.request.appName,
 
-            keyId: wallet.id,
+            keyId: wallet.keyId,
             keyPath: account!.path,
             keyLabel: wallet.label,
 

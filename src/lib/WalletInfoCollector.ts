@@ -30,7 +30,7 @@ export type WalletCollectionResult = {
 export default class WalletInfoCollector {
     public static async collectWalletInfo(
         walletType: WalletType,
-        walletId?: string,
+        keyId: string,
         initialAccounts: BasicAccountInfo[] = [],
         // tslint:disable-next-line:no-empty
         onUpdate: (walletInfo: WalletInfo, currentlyCheckedAccounts: BasicAccountInfo[]) => void = () => {},
@@ -45,19 +45,11 @@ export default class WalletInfoCollector {
             derivedAccountsPromise = Promise.resolve([]);
         } else {
             derivedAccountsPromise = WalletInfoCollector._deriveAccounts(startIndex,
-                ACCOUNT_MAX_ALLOWED_ADDRESS_GAP, walletType, walletId);
-
-            // for ledger, we retrieve the walletId from the currently connected ledger
-            if (walletType === WalletType.LEDGER && !walletId) {
-                walletId = await LedgerApi.getWalletId();
-            }
+                ACCOUNT_MAX_ALLOWED_ADDRESS_GAP, walletType, keyId);
         }
 
         // Get or create the walletInfo instance
-        if (!walletId) {
-            throw new Error('walletId needed for WalletTypes other than Ledger.');
-        }
-        const walletInfo = await WalletInfoCollector._getWalletInfoInstance(walletId, walletType);
+        const walletInfo = await WalletInfoCollector._getWalletInfoInstance(walletType, keyId);
 
         // Search for genesis vesting contracts
         // (only legacy or a first ledger addresses can be owners of genesis vesting contracts)
@@ -120,7 +112,7 @@ export default class WalletInfoCollector {
             // following the specification would stop the search at index 20.
             startIndex += ACCOUNT_MAX_ALLOWED_ADDRESS_GAP;
             derivedAccountsPromise = WalletInfoCollector._deriveAccounts(startIndex,
-                ACCOUNT_MAX_ALLOWED_ADDRESS_GAP, walletType, walletId);
+                ACCOUNT_MAX_ALLOWED_ADDRESS_GAP, walletType, keyId);
 
             // find accounts with a balance > 0
             const foundAddresses: string[] = [];
@@ -162,7 +154,7 @@ export default class WalletInfoCollector {
 
         // clean up
         if (walletType === WalletType.BIP39 && WalletInfoCollector._keyguardClient) {
-            WalletInfoCollector._keyguardClient.releaseKey(walletId);
+            WalletInfoCollector._keyguardClient.releaseKey(keyId);
         } else if (walletType === WalletType.LEDGER && LedgerApi.currentRequest
             && LedgerApi.currentRequest.type === LedgerApi.RequestType.DERIVE_ACCOUNTS) {
             // next round of derivation still going on although we don't need it
@@ -199,9 +191,18 @@ export default class WalletInfoCollector {
         }
     }
 
-    private static async _getWalletInfoInstance(walletId: string, walletType: WalletType): Promise<WalletInfo> {
+    private static async _getWalletInfoInstance(walletType: WalletType, keyId: string): Promise<WalletInfo> {
+        let walletId: string;
+        if (walletType === WalletType.LEDGER) {
+            // for Ledger, we retrieve the walletId from the currently connected ledger
+            walletId = await LedgerApi.getWalletId();
+        } else {
+            walletId = await WalletStore.deriveId(keyId);
+        }
+
         const existingWalletInfo = await WalletStore.Instance.get(walletId);
         if (existingWalletInfo) return existingWalletInfo;
+
         const label = walletType === WalletType.LEGACY
             ? ACCOUNT_DEFAULT_LABEL_LEGACY
             : walletType === WalletType.BIP39
@@ -209,6 +210,7 @@ export default class WalletInfoCollector {
                 : ACCOUNT_DEFAULT_LABEL_LEDGER;
         return new WalletInfo(
             walletId,
+            keyId,
             label,
             new Map<string, AccountInfo>(),
             [],
@@ -217,14 +219,14 @@ export default class WalletInfoCollector {
         );
     }
 
-    private static async _deriveAccounts(startIndex: number, count: number, walletType: WalletType, walletId?: string)
+    private static async _deriveAccounts(startIndex: number, count: number, walletType: WalletType, keyId?: string)
         : Promise<BasicAccountInfo[]> {
         switch (walletType) {
             case WalletType.LEGACY:
                 throw new Error('Legacy Wallets can not derive accounts.');
             case WalletType.BIP39:
-                if (!walletId) throw new Error('walletId needed for Keyguard account derivation.');
-                return WalletInfoCollector._deriveKeyguardAccounts(startIndex, count, walletId);
+                if (!keyId) throw new Error('keyId required for Keyguard account derivation.');
+                return WalletInfoCollector._deriveKeyguardAccounts(startIndex, count, keyId);
             case WalletType.LEDGER:
                 return WalletInfoCollector._deriveLedgerAccounts(startIndex, count);
             default:
@@ -232,13 +234,13 @@ export default class WalletInfoCollector {
         }
     }
 
-    private static async _deriveKeyguardAccounts(startIndex: number, count: number, walletId: string)
+    private static async _deriveKeyguardAccounts(startIndex: number, count: number, keyId: string)
         : Promise<BasicAccountInfo[]> {
         const pathsToDerive = [];
-        for (let keyId = startIndex; keyId < startIndex + count; ++keyId) {
-            pathsToDerive.push(`${ACCOUNT_BIP32_BASE_PATH_KEYGUARD}${keyId}'`);
+        for (let index = startIndex; index < startIndex + count; ++index) {
+            pathsToDerive.push(`${ACCOUNT_BIP32_BASE_PATH_KEYGUARD}${index}'`);
         }
-        const serializedAddresses = await WalletInfoCollector._keyguardClient!.deriveAddresses(walletId, pathsToDerive);
+        const serializedAddresses = await WalletInfoCollector._keyguardClient!.deriveAddresses(keyId, pathsToDerive);
         const userFriendlyAddresses = serializedAddresses.map((serializedAddress) =>
             new Nimiq.Address(serializedAddress).toUserFriendlyAddress());
         const accounts = [];
@@ -253,8 +255,8 @@ export default class WalletInfoCollector {
 
     private static async _deriveLedgerAccounts(startIndex: number, count: number): Promise<BasicAccountInfo[]> {
         const pathsToDerive = [];
-        for (let keyId = startIndex; keyId < startIndex + count; ++keyId) {
-            pathsToDerive.push(LedgerApi.getBip32PathForKeyId(keyId));
+        for (let index = startIndex; index < startIndex + count; ++index) {
+            pathsToDerive.push(LedgerApi.getBip32PathForKeyId(index));
         }
         return (await LedgerApi.deriveAccounts(pathsToDerive)).map((account) => ({
             path: account.keyPath,

@@ -201,7 +201,7 @@ export default class Checkout extends Vue {
             appName: this.request.appName,
             shopLogoUrl: this.request.shopLogoUrl,
 
-            keyId: walletInfo.id,
+            keyId: walletInfo.keyId,
             keyPath: accountInfo.path,
             keyLabel: walletInfo.label,
 

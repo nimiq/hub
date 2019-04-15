@@ -67,18 +67,9 @@ export class CookieDecoder {
 
         // Wallet ID
         let id: string = '';
-        if (type === WalletType.LEDGER) {
-            for (let i = 0; i < 6; i++) {
-                id += this.readByte(bytes).toString(16);
-            }
-        } else {
-            const idLength = this.readByte(bytes);
-            const idBytes = [];
-            for (let i = 0; i < idLength; i++) {
-                idBytes.push(this.readByte(bytes));
-            }
-            const numericalId = this.fromBase256(idBytes);
-            id = `K${numericalId}`;
+        for (let i = 0; i < 6; i++) {
+            const idChunk = this.readByte(bytes).toString(16);
+            id += `${idChunk.length < 2 ? '0' : ''}${idChunk}`;
         }
 
         // Handle LEGACY wallet
@@ -91,6 +82,7 @@ export class CookieDecoder {
 
             const walletInfoEntry: WalletInfoEntry = {
                 id,
+                keyId: '',
                 type,
                 label: walletLabel,
                 accounts,
@@ -121,6 +113,7 @@ export class CookieDecoder {
 
         const walletInfoEntry: WalletInfoEntry = {
             id,
+            keyId: '',
             type,
             label: walletLabel,
             accounts,
@@ -235,7 +228,7 @@ export class CookieDecoder {
         }
     }
 
-    private static legacyCookie(version: number, bytes: number[]) {
+    private static legacyCookie(version: number, bytes: number[]): WalletInfoEntry[] {
         switch (version) {
             default: return [];
         }

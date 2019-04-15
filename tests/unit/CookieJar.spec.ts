@@ -21,7 +21,8 @@ const BURN_ADDRESS_S = new Uint8Array(BURN_ADDRESS.serialize());
 
 const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
     {
-        id: 'K23',
+        id: '0fe6067b138f',
+        keyId: 'D+YGexOP0yDjr3Uf6WwO9a2/WjhNbZFLrRwdLfuvz9c=',
         label: 'Green Account',
         accounts: new Map<string, AccountInfoEntry>([
             [
@@ -49,6 +50,7 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
     },
     {
         id: '1ee3d926a49d',
+        keyId: '',
         label: 'Monkey Family 🙉',
         accounts: new Map<string, AccountInfoEntry>([
             [
@@ -76,7 +78,8 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         wordsExported: false,
     },
     {
-        id: 'K5',
+        id: '2978bf29b377',
+        keyId: 'KXi/KbN35+oYAIV2ummFjLWxfY/47fo/35Hfa3WNVA0=',
         label: 'My old wallet',
         accounts: new Map<string, AccountInfoEntry>([
             [
@@ -95,7 +98,8 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         wordsExported: true,
     },
     {
-        id: 'K7',
+        id: '78bf29b377e7',
+        keyId: 'KXi/KbN35+oYAIV2ummFjLWxfY/47fo/35Hfa3WNVA1=',
         label: 'Main 🙉',
         accounts: new Map<string, AccountInfoEntry>([
             [
@@ -122,7 +126,8 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         wordsExported: true,
     },
     {
-        id: '1ee3d926a4a0',
+        id: 'a5832a3b9489',
+        keyId: '',
         label: 'Ledger Account',
         accounts: new Map<string, AccountInfoEntry>([
             [
@@ -141,7 +146,8 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         wordsExported: false,
     },
     {
-        id: 'K9000000',
+        id: 'd515aa19c4f7',
+        keyId: '1RWqGcT3D8UENcv+45EjgTe0kHxmUUP35mjW6qUQGbE=',
         label: 'My old wallet',
         accounts: new Map<string, AccountInfoEntry>([
             [
@@ -172,7 +178,8 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
 
 const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
     {
-        id: 'K23',
+        id: '0fe6067b138f',
+        keyId: '',
         label: 'Green Account',
         accounts: new Map<string, AccountInfoEntry>([
             [
@@ -200,6 +207,7 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
     },
     {
         id: '1ee3d926a49d',
+        keyId: '',
         label: 'Monkey Family 🙉',
         accounts: new Map<string, AccountInfoEntry>([
             [
@@ -227,7 +235,8 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         wordsExported: false,
     },
     {
-        id: 'K5',
+        id: '2978bf29b377',
+        keyId: '',
         label: 'Legacy Account',
         accounts: new Map<string, AccountInfoEntry>([
             [
@@ -246,7 +255,8 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         wordsExported: true,
     },
     {
-        id: 'K7',
+        id: '78bf29b377e7',
+        keyId: '',
         label: 'Main 🙉',
         accounts: new Map<string, AccountInfoEntry>([
             [
@@ -273,7 +283,8 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         wordsExported: true,
     },
     {
-        id: '1ee3d926a4a0',
+        id: 'a5832a3b9489',
+        keyId: '',
         label: 'Ledger Account',
         accounts: new Map<string, AccountInfoEntry>([
             [
@@ -292,7 +303,8 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         wordsExported: false,
     },
     {
-        id: 'K9000000',
+        id: 'd515aa19c4f7',
+        keyId: '',
         label: 'Legacy Account',
         accounts: new Map<string, AccountInfoEntry>([
             [
@@ -322,12 +334,12 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
 ];
 
 const BYTES = [
-    1, // cookie version
+    3, // cookie version
 
     // wallet 1 (BIP39)
     2, // wallet label length (0), wallet type (2)
     0b00000001, // Status byte: keyMissing = true, fileExported = false, wordsExported = false, hasContracts = false
-    1, 23, // wallet id
+    0x0f, 0xe6, 0x06, 0x7b, 0x13, 0x8f, // wallet id
     // wallet label (omitted)
     2, // number of accounts
 
@@ -344,7 +356,7 @@ const BYTES = [
     // wallet 2 (LEDGER)
     75, // wallet label length (18), wallet type (3)
     0b00001011, // Status byte: keyMissing = true, fileExported = true, wordsExported = false, hasContracts = true
-    30, 227, 217, 38, 164, 157, // wallet id
+    0x1e, 0xe3, 0xd9, 0x26, 0xa4, 0x9d, // wallet id
     77, 111, 110, 107, 101, 121, 32, 70, 97, 109, 105, 108, 121, 32, 240, 159, 153, 137, // wallet label
     1, // number of accounts
 
@@ -369,7 +381,7 @@ const BYTES = [
     // wallet 3 (LEGACY)
     41, // account label length (10), wallet type (1)
     0b00000101, // Status byte: keyMissing = true, fileExported = false, wordsExported = true, hasContracts = false
-    1, 5, // wallet id
+    0x29, 0x78, 0xbf, 0x29, 0xb3, 0x77, // wallet id
 
         // account
         79, 108, 100, 65, 100, 100, 114, 101, 115, 115, // account label
@@ -378,7 +390,7 @@ const BYTES = [
     // wallet 4 (BIP39)
     38, // wallet label length (9), wallet type (2)
     0b00000110, // Status byte: keyMissing = false, fileExported = true, wordsExported = true, hasContracts = false
-    1, 7, // wallet id
+    0x78, 0xbf, 0x29, 0xb3, 0x77, 0xe7, // wallet id
     77, 97, 105, 110, 32, 240, 159, 153, 137, // wallet label
     2, // number of accounts
 
@@ -395,7 +407,7 @@ const BYTES = [
     // wallet 5 (LEDGER)
     3, // wallet label length (0), wallet type (3)
     0b00000000, // Status byte: keyMissing = false, fileExported = false, wordsExported = false, hasContracts = false
-    30, 227, 217, 38, 164, 160, // wallet id
+    0xa5, 0x83, 0x2a, 0x3b, 0x94, 0x89, // wallet id
     // wallet label (omitted)
     1, // number of accounts
 
@@ -407,7 +419,7 @@ const BYTES = [
     // wallet 6 (LEGACY)
     41, // account label length (10), wallet type (1)
     0b00001010, // Status byte: keyMissing = false, fileExported = true, wordsExported = false, hasContracts = true
-    3, 137, 84, 64, // wallet id
+    0xd5, 0x15, 0xaa, 0x19, 0xc4, 0xf7, // wallet id
 
         // account
         79, 108, 100, 65, 100, 100, 114, 101, 115, 115, // account label
@@ -473,5 +485,14 @@ describe('CookieJar', () => {
         expect(Utf8Tools.utf8ByteArrayToString(CookieJar.encodeAndcutLabel(LABEL_2))).toEqual(CUT_LABEL_2);
         expect(Utf8Tools.utf8ByteArrayToString(CookieJar.encodeAndcutLabel(LABEL_3))).toEqual(CUT_LABEL_3);
         expect(Utf8Tools.utf8ByteArrayToString(CookieJar.encodeAndcutLabel(LABEL_4))).toEqual(CUT_LABEL_4);
+    });
+
+    it('returns no results for old cookie version', async () => {
+        // The first byte is the version, the rest is not important
+        const oldCookie = Nimiq.BufferUtils.toBase64(new Uint8Array([1, 0, 0, 0, 0, 0]));
+        document.cookie = `w=${oldCookie}; max-age=${(60 * 60 * 24 * 365).toString()}`;
+        const wallets = await CookieJar.eat();
+
+        expect(wallets).toEqual([]);
     });
 });

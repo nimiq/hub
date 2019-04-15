@@ -46,6 +46,7 @@ export default class SignupSuccess extends Vue {
         );
 
         const walletInfo = new WalletInfo(
+            await WalletStore.deriveId(this.keyguardResult[0].keyId),
             this.keyguardResult[0].keyId,
             walletLabel,
             new Map<string, AccountInfo>().set(userFriendlyAddress, accountInfo),

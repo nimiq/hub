@@ -152,6 +152,7 @@ const store: StoreOptions<RootState> = {
             if (singleAccounts.size > 0) {
                 processedWallets.push(new WalletInfo(
                     LEGACY_GROUPING_ACCOUNT_ID,
+                    /* keyId */ '',
                     LEGACY_GROUPING_ACCOUNT_LABEL,
                     singleAccounts,
                     singleContracts,

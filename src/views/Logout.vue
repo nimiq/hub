@@ -12,12 +12,12 @@ export default class Logout extends Vue {
     @Static private request!: ParsedSimpleRequest;
 
     public async created() {
-        const wallet = await WalletStore.Instance.get(this.request.walletId);
+        const wallet = (await WalletStore.Instance.get(this.request.walletId))!;
 
         const request: KeyguardClient.RemoveKeyRequest = {
             appName: this.request.appName,
-            keyId: this.request.walletId,
-            keyLabel: !!wallet ? wallet.label : 'I want to log out', // the label to type in Keyguard to confirm logout
+            keyId: wallet.keyId,
+            keyLabel: wallet.label,
         };
 
         const client = this.$rpc.createKeyguardClient();
