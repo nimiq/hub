@@ -35,8 +35,7 @@ export default class AddAccountSuccess extends Vue {
     private async mounted() {
         const createdAddress = new Nimiq.Address(this.keyguardResult.address);
 
-        const wallet = await WalletStore.Instance.get(this.request.walletId);
-        if (!wallet) throw new Error('Account ID not found');
+        const wallet = (await WalletStore.Instance.get(this.request.walletId))!;
 
         const newAccount = new AccountInfo(
             this.keyguardResult.keyPath,

@@ -20,10 +20,10 @@ import { AccountInfo } from '@/lib/AccountInfo';
 import { WalletStore } from '@/lib/WalletStore';
 import { WalletInfo, WalletType } from '@/lib/WalletInfo';
 import { SmallPage } from '@nimiq/vue-components';
+import Network from '@/components/Network.vue';
 import Loader from '@/components/Loader.vue';
 import { KeyguardClient } from '@nimiq/keyguard-client';
 import { ACCOUNT_DEFAULT_LABEL_LEGACY } from '@/lib/Constants';
-import Network from '@/components/Network.vue';
 import { ContractInfo } from '@/lib/ContractInfo';
 
 @Component({components: {SmallPage, Loader, Network}})

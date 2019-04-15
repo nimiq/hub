@@ -121,15 +121,6 @@ export default class ChooseAddress extends Vue {
         position: relative;
     }
 
-    .account-info {
-        position: absolute;
-        left: 0;
-        top: 0;
-        opacity: 0;
-        z-index: -1;
-        transition: opacity 300ms, z-index 300ms;
-    }
-
     .nq-h1 {
         margin-top: 3.5rem;
         margin-bottom: 1rem;

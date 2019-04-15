@@ -12,11 +12,7 @@ export default class Export extends Vue {
     @Static private request!: ParsedSimpleRequest;
 
     public async created() {
-        const wallet = await WalletStore.Instance.get(this.request.walletId);
-        if (!wallet) {
-            this.$rpc.reject(new Error('Account ID not found'));
-            return;
-        }
+        const wallet = (await WalletStore.Instance.get(this.request.walletId))!;
 
         const request: SimpleRequest = {
             appName: this.request.appName,

@@ -562,16 +562,24 @@ interface SignedMessage {
     signer: string;               // Userfriendly address
     signerPublicKey: Uint8Array;  // The public key of the signer
     signature: Uint8Array;        // Signature for the message
-    message: string | Uint8Array; // The signed message (as the same type as it
-                                  // was handed in)
 }
 ```
 
 **Note:** To prevent users from signing valid transactions or other
-blockchain-related proofs which could be used to impersonate them, the Nimiq
-Keyguard prefixes the string `'Nimiq Signed Message: '` (22 one-byte-characters)
-to the input message. The signature is then created over the combined message.
-The prefix is already included in the result's `message` property.
+blockchain-related proofs which could be used to impersonate them, the
+Nimiq Keyguard prefixes additional data to the message before signing.
+This prefix consists of
+
+- 1 byte length of the prefix (`22` or `0x16`)
+- a 22 bytes prefix (`'Nimiq Signed Message:\n'`, available as `AccountsClient.MSG_PREFIX`)
+- the length of the message as a stringified number
+
+This data is then hashed with SHA256 before being signed. Together, this leads
+to the following data structure:
+
+```javascript
+sign( sha256( '\x16' + 'Nimiq Signed Message:\n' + message.length + message ) );
+```
 
 Verifying a signed message could go like this:
 
@@ -579,12 +587,16 @@ Verifying a signed message could go like this:
 const signature = new Nimiq.Signature(signedMessage.signature);
 const publicKey = new Nimiq.PublicKey(signedMessage.signerPublicKey);
 
-const message = typeof signedMessage.message === 'string'
-    ? Nimiq.BufferUtils.fromUtf8(signedMessage.message))
-    : signedMessage.message;
+// For string messages:
+const data = String.fromCharCode(AccountsClient.MSG_PREFIX.length)
+           + AccountsClient.MSG_PREFIX
+           + message.length
+           + message;
+const dataBytes = Nimiq.BufferUtils.fromUtf8(data);
+const hash = Nimiq.Hash.computeSha256(dataBytes);
 
-// Check signature against the message
-const isValid = signature.verify(publicKey, message);
+// Check signature against the hashed message
+const isValid = signature.verify(publicKey, hash);
 ```
 
 ### Listening for redirect responses
@@ -661,7 +673,7 @@ To get started with working on the source code, pull the code and install the de
 ### Setup
 
 ```bash
-git clone git@github.com:nimiq/accounts.git
+git clone https://github.com/nimiq/accounts.git
 cd accounts
 yarn
 ```

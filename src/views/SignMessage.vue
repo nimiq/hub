@@ -9,10 +9,10 @@
                 <span class="origin">{{ originDomain }}</span>
             </div>
 
-            <h1 class="nq-h1">Choose an account to sign</h1>
+            <h1 class="nq-h1">Choose an address to sign</h1>
 
             <AccountSelector
-                :wallets="processedWallets"
+                :wallets="processedWallets | withoutContracts"
                 @account-selected="setAccount"
                 @login="goToOnboarding"/>
         </SmallPage>
@@ -39,7 +39,17 @@ import { Utf8Tools } from '@nimiq/utils';
 import { ERROR_CANCELED } from '@/lib/Constants';
 import { State as RpcState } from '@nimiq/rpc';
 
-@Component({components: {SmallPage, AccountSelector}})
+@Component({
+    components: {SmallPage, AccountSelector},
+    filters: {
+        withoutContracts(wallets: WalletInfo[]): WalletInfo[] {
+            return wallets.map((wallet) => {
+                wallet.contracts = [];
+                return wallet;
+            });
+        },
+    },
+})
 export default class SignMessage extends Vue {
     @Static protected request!: ParsedSignMessageRequest;
     @Static private rpcState!: RpcState;
@@ -96,7 +106,7 @@ export default class SignMessage extends Vue {
             keyId: walletInfo.keyId,
             keyPath: accountInfo.path,
 
-            message: this.messageBytes(),
+            message: this.request.message,
 
             signer: accountInfo.address.serialize(),
             signerLabel: accountInfo.label,
@@ -106,13 +116,6 @@ export default class SignMessage extends Vue {
 
         const client = this.$rpc.createKeyguardClient();
         client.signMessage(request);
-    }
-
-    private messageBytes(): Uint8Array {
-        if (typeof this.request.message === 'string') {
-            return Utf8Tools.stringToUtf8ByteArray(this.request.message);
-        }
-        return new Uint8Array(this.request.message);
     }
 
     private goToOnboarding(useReplace?: boolean) {

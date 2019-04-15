@@ -47,11 +47,7 @@ export default class AddAddressLedger extends Vue {
 
     private async created() {
         // called every time the router shows this page
-        const account = await WalletStore.Instance.get(this.request.walletId);
-        if (!account) {
-            this.$rpc.reject(new Error('Account ID not found'));
-            return;
-        }
+        const account = (await WalletStore.Instance.get(this.request.walletId))!;
         this.account = account;
 
         let startIndex = 0;

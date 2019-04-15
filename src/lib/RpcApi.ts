@@ -138,7 +138,7 @@ export default class RpcApi {
                     request = RequestParser.parse(arg, state, requestType) || undefined;
                     this._staticStore.request = request;
                 } catch (error) {
-                    state.reply(ResponseStatus.ERROR, error);
+                    this.reject(error);
                     return;
                 }
 
@@ -147,17 +147,22 @@ export default class RpcApi {
                     hasRequest: !!this._staticStore.request,
                 });
 
-                if (location.pathname !== '/') {
-                    // Don't jump back to request's initial view on reload when navigated to a subsequent view.
-                    // E.g. if the user switches from Checkout to Import, don't jump back to Checkout on reload.
-                    return;
-                }
-
                 let account;
                 // Simply testing if the property exists (with `'walletId' in request`) is not enough,
                 // as `undefined` also counts as existing.
                 if (request && (request as ParsedSimpleRequest).walletId) {
                     account = await WalletStore.Instance.get((request as ParsedSimpleRequest).walletId);
+                    if (!account && requestType !== RequestType.LOGOUT) {
+                        // no account found although it's required
+                        this.reject(new Error('Account ID not found'));
+                        return;
+                    }
+                }
+
+                if (location.pathname !== '/') {
+                    // Don't jump back to request's initial view on reload when navigated to a subsequent view.
+                    // E.g. if the user switches from Checkout to Import, don't jump back to Checkout on reload.
+                    return;
                 }
 
                 if (account && account.type === WalletType.LEDGER
@@ -221,7 +226,7 @@ export default class RpcApi {
                 this._recoverState(state);
 
                 if (error.message === ERROR_CANCELED) {
-                    this._staticStore.rpcState!.reply(ResponseStatus.ERROR, error);
+                    this.reject(error);
                     return;
                 }
 

@@ -739,10 +739,10 @@
   version "0.0.0"
   resolved "https://github.com/nimiq/ledger-api.git#a7d86a47b46d21ec2afea94086b2942ea1adb575"
 
-"@nimiq/network-client@^0.1.8":
-  version "0.1.8"
-  resolved "https://registry.yarnpkg.com/@nimiq/network-client/-/network-client-0.1.8.tgz#483c78b4673e74b48fc6266221121c595fe3fbe0"
-  integrity sha512-lJjR99ZK4oWl3j95UCDPv1uHc3dORidFAYGIrExOPj/gqLHPqFYGhDs86vw2EQORPragBEQCvBpGL7/LhuLsXQ==
+"@nimiq/network-client@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@nimiq/network-client/-/network-client-0.2.0.tgz#0f4f2b754f7ebf20c8c832c0a3ac0a093f7efc12"
+  integrity sha512-165tjVQrO0TSMQUVJvmuCxMloxnrnXvG5N2M/ZW32pQzZ8a4ho2IaMxj3y9reNQ0606zaad7DYbh2+Ni0LiEZQ==
   dependencies:
     "@nimiq/core-web" "1.4.3"
     "@nimiq/rpc-events" "^0.0.8"
@@ -764,6 +764,11 @@
   resolved "https://registry.yarnpkg.com/@nimiq/style/-/style-0.4.1.tgz#42b6e3a8ba4a0c7dbd71893b4149094466b48c49"
   integrity sha512-OLWRXTgtxOv0R5cOMZ3M2WCoardx6thGbZbxbpnWdhZkqoYnWqGp0oV5X5ic6Vde4mt403ogXwbfGtzwJknvrQ==
 
+"@nimiq/style@^0.5.1":
+  version "0.5.1"
+  resolved "https://registry.yarnpkg.com/@nimiq/style/-/style-0.5.1.tgz#1022a6dab6d43d8c4c9747449f873c327338f3c5"
+  integrity sha512-5j4e0kA1ugYyk5PlsiI9ZfpEIE0HTUN1Qyg3TPxpqAMMv5PJY4zQm/HQiYDFI4M2vT7KK8J3oWwhQk6elhM9xg==
+
 "@nimiq/utils@^0.3.1":
   version "0.3.1"
   resolved "https://registry.yarnpkg.com/@nimiq/utils/-/utils-0.3.1.tgz#f3bcd0800db207316cac754ff6548a1030290a5c"
@@ -771,8 +776,9 @@
 
 "@nimiq/vue-components@https://github.com/nimiq/vue-components.git#build/accounts":
   version "0.1.0"
-  resolved "https://github.com/nimiq/vue-components.git#c1fc9ee6a1d0065d1790c1d5de5746b93849dc38"
+  resolved "https://github.com/nimiq/vue-components.git#b89ae018249ac08b019d09ea0bd8c36a5962c219"
   dependencies:
+    "@nimiq/style" "^0.5.1"
     vue "^2.5.17"
     vue-property-decorator "^7.0.0"
 
