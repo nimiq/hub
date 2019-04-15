@@ -93,7 +93,6 @@ export default class SignupLedger extends Vue {
                 await WalletInfoCollector.collectWalletInfo(
                     WalletType.LEDGER,
                     /* keyId */ '',
-                    /* walletId */ undefined,
                     /* initialAccounts */ [],
                     (walletInfo, currentlyCheckedAccounts) =>
                         this._onWalletInfoUpdate(walletInfo, currentlyCheckedAccounts),

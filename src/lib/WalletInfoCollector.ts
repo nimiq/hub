@@ -31,7 +31,6 @@ export default class WalletInfoCollector {
     public static async collectWalletInfo(
         walletType: WalletType,
         keyId: string,
-        walletId?: string,
         initialAccounts: BasicAccountInfo[] = [],
         // tslint:disable-next-line:no-empty
         onUpdate: (walletInfo: WalletInfo, currentlyCheckedAccounts: BasicAccountInfo[]) => void = () => {},
@@ -47,15 +46,10 @@ export default class WalletInfoCollector {
         } else {
             derivedAccountsPromise = WalletInfoCollector._deriveAccounts(startIndex,
                 ACCOUNT_MAX_ALLOWED_ADDRESS_GAP, walletType, keyId);
-
-            // for ledger, we retrieve the walletId from the currently connected ledger
-            if (walletType === WalletType.LEDGER && !walletId) {
-                walletId = await LedgerApi.getWalletId();
-            }
         }
 
         // Get or create the walletInfo instance
-        const walletInfo = await WalletInfoCollector._getWalletInfoInstance(walletType, keyId, walletId);
+        const walletInfo = await WalletInfoCollector._getWalletInfoInstance(walletType, keyId);
 
         // Search for genesis vesting contracts
         // (only legacy or a first ledger addresses can be owners of genesis vesting contracts)
@@ -197,12 +191,12 @@ export default class WalletInfoCollector {
         }
     }
 
-    private static async _getWalletInfoInstance(
-        walletType: WalletType,
-        keyId: string,
-        walletId?: string,
-    ): Promise<WalletInfo> {
-        if (!walletId) {
+    private static async _getWalletInfoInstance(walletType: WalletType, keyId: string): Promise<WalletInfo> {
+        let walletId: string;
+        if (walletType === WalletType.LEDGER) {
+            // for Ledger, we retrieve the walletId from the currently connected ledger
+            walletId = await LedgerApi.getWalletId();
+        } else {
             walletId = await WalletStore.deriveId(keyId);
         }
 
