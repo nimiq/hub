@@ -327,6 +327,11 @@ export default Loader;
         padding-bottom: 2rem;
     }
 
+    .action-row .nq-link {
+        color: white;
+        font-size: 2rem;
+    }
+
     /* FADE transitions */
 
     .fade-loading-leave-active,
