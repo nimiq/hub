@@ -22,7 +22,11 @@ export class WalletStore {
             if (existingIds.indexOf(id) === -1) return id;
         }
 
-        throw new Error('Could not find an available wallet ID');
+        // Could not find an available wallet ID in the searched space.
+
+        // Hash keyId and recurse
+        const hashedKeyIdBytes = Nimiq.Hash.computeSha256(keyIdBytes);
+        return WalletStore.deriveId(Nimiq.BufferUtils.toBase64(hashedKeyIdBytes));
     }
 
     private static instance: WalletStore | null = null;
