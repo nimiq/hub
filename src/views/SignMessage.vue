@@ -106,7 +106,7 @@ export default class SignMessage extends Vue {
             keyId: walletInfo.id,
             keyPath: accountInfo.path,
 
-            message: this.messageBytes(),
+            message: this.request.message,
 
             signer: accountInfo.address.serialize(),
             signerLabel: accountInfo.label,
@@ -116,13 +116,6 @@ export default class SignMessage extends Vue {
 
         const client = this.$rpc.createKeyguardClient();
         client.signMessage(request);
-    }
-
-    private messageBytes(): Uint8Array {
-        if (typeof this.request.message === 'string') {
-            return Utf8Tools.stringToUtf8ByteArray(this.request.message);
-        }
-        return new Uint8Array(this.request.message);
     }
 
     private goToOnboarding(useReplace?: boolean) {
