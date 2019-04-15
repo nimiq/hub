@@ -55,10 +55,16 @@ export interface ParsedRenameRequest extends ParsedSimpleRequest {
     address?: string;
 }
 
+export interface ParsedExportRequest extends ParsedSimpleRequest {
+    fileOnly?: boolean;
+    wordsOnly?: boolean;
+}
+
 // Discriminated Unions
 export type ParsedRpcRequest = ParsedSignTransactionRequest
                              | ParsedCheckoutRequest
                              | ParsedBasicRequest
                              | ParsedSimpleRequest
                              | ParsedRenameRequest
-                             | ParsedSignMessageRequest;
+                             | ParsedSignMessageRequest
+                             | ParsedExportRequest;

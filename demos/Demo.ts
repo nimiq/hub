@@ -9,6 +9,7 @@ import {
     SignTransactionRequest, SignedTransaction,
     RenameRequest,
     SignMessageRequest,
+    ExportRequest,
 } from '../src/lib/PublicRequestTypes';
 import { RedirectRequestBehavior } from '../client/RequestBehavior';
 import { Utf8Tools } from '@nimiq/utils';
@@ -314,22 +315,46 @@ class Demo {
         } as SimpleRequest;
     }
 
-    public async export(accountId: string) {
+    public export(accountId: string) {
+        this._export({
+            appName: 'Accounts Demos',
+            accountId,
+        });
+    }
+
+    public exportFile(accountId: string) {
+        this._export({
+            appName: 'Accounts Demos',
+            accountId,
+            fileOnly: true,
+        });
+    }
+
+    public exportWords(accountId: string) {
+        this._export({
+            appName: 'Accounts Demos',
+            accountId,
+            wordsOnly: true,
+        });
+    }
+
+    private async _export(request: ExportRequest) {
         try {
-            const result = await this._accountsClient.export(this._createExportRequest(accountId));
+            const result = await this._accountsClient.export(request);
             console.log('Keyguard result', result);
-            document.querySelector('#result').textContent = 'Export sucessful';
+            if(result.fileExported) {
+                document.querySelector('#result').textContent = result.wordsExported
+                    ? 'Export sucessful'
+                    : 'File exported';
+            } else {
+                document.querySelector('#result').textContent = result.wordsExported
+                    ? 'Words exported'
+                    : 'nothing exported';
+            }
         } catch (e) {
             console.error('Keyguard error', e);
             document.querySelector('#result').textContent = `Error: ${e.message || e}`;
         }
-    }
-
-    public _createExportRequest(accountId: string): SimpleRequest {
-        return {
-            appName: 'Accounts Demos',
-            accountId,
-        } as SimpleRequest;
     }
 
     public async changePassword(accountId: string) {
@@ -397,6 +422,8 @@ class Demo {
         wallets.forEach(wallet => {
             html += `<li>${wallet.label}<br>
                         <button class="export" data-wallet-id="${wallet.accountId}">Export</button>
+                        <button class="export-file" data-wallet-id="${wallet.accountId}">File</button>
+                        <button class="export-words" data-wallet-id="${wallet.accountId}">Words</button>
                         <button class="change-password" data-wallet-id="${wallet.accountId}">Ch. Pass.</button>
                         ${wallet.type !== 0 ? `<button class="add-account" data-wallet-id="${wallet.accountId}">+ Acc</button>` : ''}
                         <button class="rename" data-wallet-id="${wallet.accountId}">Rename</button>
@@ -433,6 +460,12 @@ class Demo {
         }
         document.querySelectorAll('button.export').forEach(element => {
             element.addEventListener('click', async () => this.export(element.getAttribute('data-wallet-id')));
+        });
+        document.querySelectorAll('button.export-file').forEach(element => {
+            element.addEventListener('click', async () => this.exportFile(element.getAttribute('data-wallet-id')));
+        });
+        document.querySelectorAll('button.export-words').forEach(element => {
+            element.addEventListener('click', async () => this.exportWords(element.getAttribute('data-wallet-id')));
         });
         document.querySelectorAll('button.change-password').forEach(element => {
             element.addEventListener('click', async () => this.changePassword(element.getAttribute('data-wallet-id')));
