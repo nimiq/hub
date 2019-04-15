@@ -100,7 +100,6 @@ export class RequestParser {
                     appName: simpleRequest.appName,
                     walletId: simpleRequest.accountId,
                 } as ParsedSimpleRequest;
-
             case RequestType.EXPORT:
                 const exportRequest = request as ExportRequest;
                 return {

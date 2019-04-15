@@ -321,7 +321,15 @@ class Demo {
                 accountId,
             });
             console.log('Keyguard result', result);
-            document.querySelector('#result').textContent = 'Export sucessful';
+            if(result.fileExported) {
+                document.querySelector('#result').textContent = result.wordsExported
+                    ? 'Export sucessful'
+                    : 'File exported';
+            } else {
+                document.querySelector('#result').textContent = result.wordsExported
+                    ? 'Words exported'
+                    : 'nothing exported';
+            }
         } catch (e) {
             console.error('Keyguard error', e);
             document.querySelector('#result').textContent = `Error: ${e.message || e}`;
@@ -335,7 +343,15 @@ class Demo {
                 accountId,
                 fileOnly: true,
             });
-            console.log('Keyguard result', result);
+            if(result.fileExported) {
+                document.querySelector('#result').textContent = result.wordsExported
+                    ? 'Export sucessful'
+                    : 'File exported';
+            } else {
+                document.querySelector('#result').textContent = result.wordsExported
+                    ? 'Words exported'
+                    : 'nothing exported';
+            }
             document.querySelector('#result').textContent = 'Export sucessful';
         } catch (e) {
             console.error('Keyguard error', e);
@@ -351,7 +367,15 @@ class Demo {
                 wordsOnly: true,
             });
             console.log('Keyguard result', result);
-            document.querySelector('#result').textContent = 'Export sucessful';
+            if(result.fileExported) {
+                document.querySelector('#result').textContent = result.wordsExported
+                    ? 'Export sucessful'
+                    : 'File exported';
+            } else {
+                document.querySelector('#result').textContent = result.wordsExported
+                    ? 'Words exported'
+                    : 'nothing exported';
+            }
         } catch (e) {
             console.error('Keyguard error', e);
             document.querySelector('#result').textContent = `Error: ${e.message || e}`;
