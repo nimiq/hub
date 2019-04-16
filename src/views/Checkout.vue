@@ -78,7 +78,9 @@ export default class Checkout extends Vue {
     @Static private rpcState!: RpcState;
     @Static private request!: ParsedCheckoutRequest;
     @State private wallets!: WalletInfo[];
+
     @Getter private processedWallets!: WalletInfo[];
+    @Getter private findWalletByAddress!: (address: string, includeContracts: boolean) => WalletInfo | undefined;
 
     @Mutation('addWallet') private $addWallet!: (walletInfo: WalletInfo) => any;
     @Mutation('setActiveAccount') private $setActiveAccount!: (payload: {
@@ -98,7 +100,28 @@ export default class Checkout extends Vue {
         await this.handleOnboardingResult();
 
         if (this.wallets.length === 0) this.goToOnboarding(true);
-        else this.getBalances();
+        else {
+            await this.getBalances();
+
+            // Handle optional sender address included in the request
+            if (this.request.sender) {
+                // Check if the address exists
+                const wallet = this.findWalletByAddress(this.request.sender.toUserFriendlyAddress(), true);
+                if (wallet) {
+                    // Check if that address has enough balance
+                    const accountOrContract = wallet.accounts.get(this.request.sender.toUserFriendlyAddress())
+                        || wallet.findContractByAddress(this.request.sender)!;
+                    if (accountOrContract.balance && accountOrContract.balance >= this.minBalance) {
+                        // Forward to Keyguard, skipping account selection
+                        this.accountOrContractSelected(wallet.id, this.request.sender.toUserFriendlyAddress());
+                        return;
+                    }
+                }
+            }
+
+            // Remove loader to unveil account selector
+            this.hasBalances = true;
+        }
     }
 
     private async getBalances() {
@@ -155,9 +178,6 @@ export default class Checkout extends Vue {
             };
             window.sessionStorage.setItem(Checkout.BALANCE_CHECK_STORAGE_KEY, JSON.stringify(cacheInput));
         }
-
-        // Remove loader
-        this.hasBalances = true;
     }
 
     private onHeadChange(head: Nimiq.BlockHeader | {height: number}) {
@@ -186,10 +206,6 @@ export default class Checkout extends Vue {
             userFriendlyAddress: accountInfo!.userFriendlyAddress,
         });
 
-        this.proceedToKeyguard(walletInfo, accountInfo!, contractInfo);
-    }
-
-    private proceedToKeyguard(walletInfo: WalletInfo, accountInfo: AccountInfo, contractInfo?: ContractInfo) {
         // The next block is the earliest for which tx are accepted by standard miners
         const validityStartHeight = this.height + 1
             - TX_VALIDITY_WINDOW
@@ -202,12 +218,12 @@ export default class Checkout extends Vue {
             shopLogoUrl: this.request.shopLogoUrl,
 
             keyId: walletInfo.keyId,
-            keyPath: accountInfo.path,
+            keyPath: accountInfo!.path,
             keyLabel: walletInfo.label,
 
-            sender: (contractInfo || accountInfo).address.serialize(),
+            sender: (contractInfo || accountInfo!).address.serialize(),
             senderType: contractInfo ? contractInfo.type : Nimiq.Account.Type.BASIC,
-            senderLabel: (contractInfo || accountInfo).label,
+            senderLabel: (contractInfo || accountInfo!).label,
             recipient: this.request.recipient.serialize(),
             recipientType: this.request.recipientType,
             // recipientLabel: '', // Checkout is using the shopOrigin instead
@@ -239,16 +255,19 @@ export default class Checkout extends Vue {
     }
 
     private get hasSufficientBalanceAccount(): boolean {
-        const minBalance = this.request.value + this.request.fee;
         return this.wallets.some((wallet: WalletInfo) => {
             return Array.from(wallet.accounts.values()).some((account: AccountInfo) => {
-                return !!account.balance && account.balance >= minBalance;
+                return !!account.balance && account.balance >= this.minBalance;
             });
         });
     }
 
     private get shopOrigin() {
         return this.rpcState.origin.split('://')[1];
+    }
+
+    private get minBalance() {
+        return this.request.value + this.request.fee;
     }
 
     private async handleOnboardingResult() {

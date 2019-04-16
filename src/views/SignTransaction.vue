@@ -13,12 +13,12 @@ import { Getter } from 'vuex-class';
 @Component
 export default class SignTransaction extends Vue {
     @Static private request!: ParsedSignTransactionRequest;
-    @Getter private findWalletByAddress!: (address: string) => WalletInfo | undefined;
+    @Getter private findWalletByAddress!: (address: string, includeContracts: boolean) => WalletInfo | undefined;
 
     public async created() {
         // Forward user through AccountsManager to Keyguard
 
-        const wallet = this.findWalletByAddress(this.request.sender.toUserFriendlyAddress());
+        const wallet = this.findWalletByAddress(this.request.sender.toUserFriendlyAddress(), true);
         if (!wallet) {
             this.$rpc.reject(new Error('Address not found'));
             return;

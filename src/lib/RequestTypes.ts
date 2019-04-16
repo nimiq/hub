@@ -37,6 +37,7 @@ export interface ParsedSignTransactionRequest extends ParsedBasicRequest {
 
 export interface ParsedCheckoutRequest extends ParsedBasicRequest {
     shopLogoUrl?: string;
+    sender?: Nimiq.Address;
     recipient: Nimiq.Address;
     recipientType: Nimiq.Account.Type;
     value: number;
