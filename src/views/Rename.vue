@@ -1,11 +1,11 @@
 <template>
     <div class="container">
         <SmallPage class="rename">
-            <PageHeader>Rename your Account</PageHeader>
+            <PageHeader>Rename Account</PageHeader>
             <PageBody v-if="wallet">
                 <div class="wallet-label" v-if="wallet.type !== 1 /* LEGACY */">
-                    <div class="wallet-icon nq-icon" :class="walletIconClass"></div>
-                    <Input :value="wallet.label" @changed="onWalletLabelChange" ref="wallet"/>
+                    <AccountRing :addresses="addressesArray"/>
+                    <Input :value="wallet.label" @changed="onWalletLabelChange" placeholder="Name your account" ref="wallet"/>
                 </div>
 
                 <AccountList ref="accountList"
@@ -33,7 +33,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { AccountList, SmallPage, PageHeader, PageBody, PageFooter } from '@nimiq/vue-components';
+import { AccountRing, AccountList, SmallPage, PageHeader, PageBody, PageFooter } from '@nimiq/vue-components';
 import Input from '@/components/Input.vue';
 import { ParsedRenameRequest } from '../lib/RequestTypes';
 import { Account } from '../lib/PublicRequestTypes';
@@ -53,11 +53,12 @@ import { ERROR_CANCELED } from '@/lib/Constants';
 */
 
 @Component({components: {
+    AccountRing,
+    AccountList,
     SmallPage,
     PageHeader,
     PageBody,
     PageFooter,
-    AccountList,
     Input,
     Loader,
 }})
@@ -66,23 +67,6 @@ export default class Rename extends Vue {
 
     private wallet: WalletInfo | null = null;
     private labelsStored: boolean = false;
-
-    private get accountsAndContractsArray() {
-        if (!this.wallet) return [];
-        return [
-            ...this.wallet.accounts.values(),
-            ...this.wallet.contracts,
-        ];
-    }
-
-    private get walletIconClass() {
-        if (!this.wallet) return '';
-        switch (this.wallet.type) {
-            case WalletType.LEGACY: return 'keyguard';
-            case WalletType.BIP39: return 'keyguard';
-            case WalletType.LEDGER: return 'ledger';
-        }
-    }
 
     private async mounted() {
         this.wallet = (await WalletStore.Instance.get(this.request.walletId))!;
@@ -102,6 +86,18 @@ export default class Rename extends Vue {
                 el.focus();
             }
         }
+    }
+
+    private get accountsAndContractsArray() {
+        if (!this.wallet) return [];
+        return [
+            ...this.wallet.accounts.values(),
+            ...this.wallet.contracts,
+        ];
+    }
+
+    private get addressesArray() {
+        return this.accountsAndContractsArray.map((acc) => acc.userFriendlyAddress);
     }
 
     private accountChanged(address: string, label: string) {
@@ -179,8 +175,39 @@ export default class Rename extends Vue {
         font-size: 2.25rem;
         line-height: 2.5rem;
         font-weight: 500;
-        margin: 2rem 3rem 0;
+        margin: 0 3rem;
         padding: 2rem 1rem;
+    }
+
+    :global(.label-input) {
+        font-weight: 600;
+    }
+
+    .wallet-label :global(.label-input) {
+        flex-grow: 1;
+        font-weight: bold;
+        font-size: 2.5rem;
+    }
+
+
+    :global(.label-input input),
+    .account-list :global(.label-input input) {
+        padding-left: 1rem;
+        padding-right: 1rem;
+        font-weight: inherit;
+    }
+
+    .page-body :global(.amount) {
+        opacity: 0.4;
+    }
+
+    .page-body :global(.account-entry:hover .amount) {
+        opacity: 0.7;
+    }
+
+    .account-ring {
+        margin-right: 2rem;
+        flex-shrink: 0;
     }
 
     .loader {
