@@ -431,6 +431,14 @@ const requestOptions = {
 
     // The ID of the account to export
     accountId: 'xxxxxxxx',
+
+    // [optional] Limit the export flow to Login File download
+    // Default: false,
+    //fileOnly: true,
+
+    // [optional] Limit the export flow to Recovery Words export
+    // Default: false,
+    //wordsOnly: true,
 };
 
 // All client requests are async and return a promise
@@ -548,7 +556,9 @@ const requestOptions = {
     message: 'String to sign' || new Uint8Array([...]),
 
     // [optional] The human-readable address with which to sign
-    signer: 'NQxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx';
+    // When not passed, an address selector will be displayed to the user.
+    // Default: undefined,
+    //signer: 'NQxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx';
 };
 
 // All client requests are async and return a promise
