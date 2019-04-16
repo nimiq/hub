@@ -105,6 +105,7 @@ export default class Checkout extends Vue {
 
             // Handle optional sender address included in the request
             if (this.request.sender) {
+                let errorMsg = '';
                 // Check if the address exists
                 const wallet = this.findWalletByAddress(this.request.sender.toUserFriendlyAddress(), true);
                 if (wallet) {
@@ -115,7 +116,16 @@ export default class Checkout extends Vue {
                         // Forward to Keyguard, skipping account selection
                         this.accountOrContractSelected(wallet.id, this.request.sender.toUserFriendlyAddress());
                         return;
+                    } else {
+                        errorMsg = 'Address does not have sufficient balance';
                     }
+                } else {
+                    errorMsg = 'Address not found';
+                }
+
+                if (this.request.forceSender) {
+                    this.$rpc.reject(new Error(errorMsg));
+                    return;
                 }
             }
 

@@ -66,6 +66,7 @@ export class RequestParser {
                     sender: checkoutRequest.sender
                         ? Nimiq.Address.fromUserFriendlyAddress(checkoutRequest.sender)
                         : undefined,
+                    forceSender: !!checkoutRequest.forceSender,
                     recipient: Nimiq.Address.fromUserFriendlyAddress(checkoutRequest.recipient),
                     recipientType: checkoutRequest.recipientType || Nimiq.Account.Type.BASIC,
                     value: checkoutRequest.value,
@@ -166,6 +167,7 @@ export class RequestParser {
                     appName: checkoutRequest.appName,
                     shopLogoUrl: checkoutRequest.shopLogoUrl,
                     sender: checkoutRequest.sender ? checkoutRequest.sender.toUserFriendlyAddress() : undefined,
+                    forceSender: checkoutRequest.forceSender,
                     recipient: checkoutRequest.recipient.toUserFriendlyAddress(),
                     recipientType: checkoutRequest.recipientType,
                     value: checkoutRequest.value,
