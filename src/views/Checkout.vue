@@ -25,7 +25,7 @@
 
             <AccountSelector
                 :wallets="processedWallets"
-                :minBalance="request.value + request.fee"
+                :minBalance="minBalance"
                 @account-selected="accountOrContractSelected"
                 @login="goToOnboarding"/>
 
