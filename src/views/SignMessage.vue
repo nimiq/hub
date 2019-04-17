@@ -13,7 +13,7 @@
 
             <AccountSelector
                 :wallets="processedWallets | withoutContracts"
-                @account-selected="accountSelected"
+                @account-selected="setAccount"
                 @login="goToOnboarding"/>
         </SmallPage>
 
@@ -72,7 +72,7 @@ export default class SignMessage extends Vue {
         if (this.request.signer) {
             const wallet = this.findWalletByAddress(this.request.signer.toUserFriendlyAddress(), false);
             if (wallet) {
-                this.accountSelected(wallet.id, this.request.signer.toUserFriendlyAddress(), true);
+                this.setAccount(wallet.id, this.request.signer.toUserFriendlyAddress(), true);
                 return;
             }
         }
@@ -80,7 +80,7 @@ export default class SignMessage extends Vue {
         this.showAccountSelector = true;
     }
 
-    private async accountSelected(walletId: string, address: string, isFromRequest = false) {
+    private async setAccount(walletId: string, address: string, isFromRequest = false) {
         const walletInfo = this.findWallet(walletId);
         if (!walletInfo) {
             // We can also return an error here and when checking the address below,
