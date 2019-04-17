@@ -189,7 +189,7 @@ export default class Checkout extends Vue {
             const cacheInput = {
                 timestamp: Date.now(),
                 height: this.height,
-                balances: Array.from(balances.entries());
+                balances: Array.from(balances.entries()),
             };
             window.sessionStorage.setItem(Checkout.BALANCE_CHECK_STORAGE_KEY, JSON.stringify(cacheInput));
 
@@ -316,7 +316,7 @@ export default class Checkout extends Vue {
         if (!rawCache) return null;
 
         try {
-            const cache: {timestamp: number, height: number, balances: [string, number][]} = JSON.parse(rawCache);
+            const cache: {timestamp: number, height: number, balances: Array<[string, number]>} = JSON.parse(rawCache);
 
             // Check if expired or doesn't have a height
             if (cache.timestamp < Date.now() - 5 * 60 * 1000 || cache.height === 0) throw new Error();
