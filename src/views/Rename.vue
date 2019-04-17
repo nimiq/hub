@@ -15,10 +15,11 @@
                     @account-changed="accountChanged"/>
             </PageBody>
             <PageFooter>
-                <button class="nq-button" @click="storeLabels">Save</button>
+                <button class="nq-button light-blue" @click="storeLabels">Save</button>
             </PageFooter>
             <transition name='fade-in'>
                 <Loader v-if="labelsStored"
+                    :lightBlue="true"
                     state="success"
                     title="All labels saved."/>
             </transition>
@@ -229,7 +230,7 @@ export default class Rename extends Vue {
             max-height: 8rem;
             max-width: 8rem;
             border-radius: 4rem;
-            bottom: 6rem;
+            bottom: 2rem;
             left: calc(50% - 4rem);
         }
 
