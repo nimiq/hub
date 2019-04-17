@@ -137,64 +137,64 @@ export default class Checkout extends Vue {
     }
 
     private async getBalances(): Promise<Map<string, number>> {
+        const cache = this.getLastBalanceUpdateHeight();
         const isRefresh = !window.performance || performance.navigation.type === 1;
 
-        const cache = this.getLastBalanceUpdateHeight();
         if (!this.sideResultAddedWallet && cache && !isRefresh) {
             this.onHeadChange(cache);
             return cache.balances;
-        } else {
-            // Copy wallets to be able to manipulate them
-            const wallets = this.wallets.slice(0);
-
-            // Generate a new array with references to the respective wallets' accounts
-            const accountsAndContracts = wallets.reduce((acc, wallet) => {
-                acc.push(...wallet.accounts.values());
-                acc.push(...wallet.contracts);
-                return acc;
-            }, [] as Array<AccountInfo | ContractInfo>);
-
-            // Reduce userfriendly addresses from that
-            const addresses = accountsAndContracts.map((accountOrContract) => accountOrContract.userFriendlyAddress);
-
-            // Get balances through pico consensus, also triggers head-change event
-            const network = (this.$refs.network as Network);
-            const balances: Map<string, number> = await network.connectPico(addresses);
-
-            // Update accounts/contracts with their balances
-            // (The accounts are still references to themselves in the wallets' accounts maps)
-            for (const accountOrContract of accountsAndContracts) {
-                const balance = balances.get(accountOrContract.userFriendlyAddress);
-                if (balance === undefined) continue;
-
-                if ('type' in accountOrContract && accountOrContract.type === Nimiq.Account.Type.VESTING) {
-                    // Calculate available amount for vesting contract
-                    accountOrContract.balance = accountOrContract
-                        .calculateAvailableAmount(this.height, Nimiq.Policy.coinsToSatoshis(balance));
-                } else {
-                    accountOrContract.balance = Nimiq.Policy.coinsToSatoshis(balance);
-                }
-            }
-
-            // Store updated wallets
-            for (const wallet of wallets) {
-                // Update IndexedDB
-                await WalletStore.Instance.put(wallet);
-
-                // Update Vuex
-                this.$addWallet(wallet);
-            }
-
-            // Cache height (balances are stored in IndexedDB)
-            const cacheInput = {
-                timestamp: Date.now(),
-                height: this.height,
-                balances: Array.from(balances.entries()),
-            };
-            window.sessionStorage.setItem(Checkout.BALANCE_CHECK_STORAGE_KEY, JSON.stringify(cacheInput));
-
-            return balances;
         }
+
+        // Copy wallets to be able to manipulate them
+        const wallets = this.wallets.slice(0);
+
+        // Generate a new array with references to the respective wallets' accounts
+        const accountsAndContracts = wallets.reduce((acc, wallet) => {
+            acc.push(...wallet.accounts.values());
+            acc.push(...wallet.contracts);
+            return acc;
+        }, [] as Array<AccountInfo | ContractInfo>);
+
+        // Reduce userfriendly addresses from that
+        const addresses = accountsAndContracts.map((accountOrContract) => accountOrContract.userFriendlyAddress);
+
+        // Get balances through pico consensus, also triggers head-change event
+        const network = (this.$refs.network as Network);
+        const balances: Map<string, number> = await network.connectPico(addresses);
+
+        // Update accounts/contracts with their balances
+        // (The accounts are still references to themselves in the wallets' accounts maps)
+        for (const accountOrContract of accountsAndContracts) {
+            const balance = balances.get(accountOrContract.userFriendlyAddress);
+            if (balance === undefined) continue;
+
+            if ('type' in accountOrContract && accountOrContract.type === Nimiq.Account.Type.VESTING) {
+                // Calculate available amount for vesting contract
+                accountOrContract.balance = accountOrContract
+                    .calculateAvailableAmount(this.height, Nimiq.Policy.coinsToSatoshis(balance));
+            } else {
+                accountOrContract.balance = Nimiq.Policy.coinsToSatoshis(balance);
+            }
+        }
+
+        // Store updated wallets
+        for (const wallet of wallets) {
+            // Update IndexedDB
+            await WalletStore.Instance.put(wallet);
+
+            // Update Vuex
+            this.$addWallet(wallet);
+        }
+
+        // Cache height and balances
+        const cacheInput = {
+            timestamp: Date.now(),
+            height: this.height,
+            balances: Array.from(balances.entries()),
+        };
+        window.sessionStorage.setItem(Checkout.BALANCE_CHECK_STORAGE_KEY, JSON.stringify(cacheInput));
+
+        return balances;
     }
 
     private onHeadChange(head: Nimiq.BlockHeader | {height: number}) {
