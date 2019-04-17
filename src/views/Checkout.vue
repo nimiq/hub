@@ -99,39 +99,41 @@ export default class Checkout extends Vue {
 
         await this.handleOnboardingResult();
 
-        if (this.wallets.length === 0) this.goToOnboarding(true);
-        else {
-            const balances = await this.getBalances();
+        if (this.wallets.length === 0) {
+            this.goToOnboarding(true);
+            return;
+        }
 
-            // Handle optional sender address included in the request
-            if (this.request.sender) {
-                let errorMsg = '';
-                // Check if the address exists
-                const senderAddress = this.request.sender.toUserFriendlyAddress();
-                const wallet = this.findWalletByAddress(senderAddress, true);
-                if (wallet) {
-                    // Check if that address has enough balance
-                    const balance = balances.get(senderAddress);
-                    if (balance && balance >= this.minBalance) {
-                        // Forward to Keyguard, skipping account selection
-                        this.setAccountOrContract(wallet.id, senderAddress);
-                        return;
-                    } else {
-                        errorMsg = 'Address does not have sufficient balance';
-                    }
-                } else {
-                    errorMsg = 'Address not found';
-                }
+        const balances = await this.getBalances();
 
-                if (this.request.forceSender) {
-                    this.$rpc.reject(new Error(errorMsg));
+        // Handle optional sender address included in the request
+        if (this.request.sender) {
+            let errorMsg = '';
+            // Check if the address exists
+            const senderAddress = this.request.sender.toUserFriendlyAddress();
+            const wallet = this.findWalletByAddress(senderAddress, true);
+            if (wallet) {
+                // Check if that address has enough balance
+                const balance = balances.get(senderAddress);
+                if (balance && balance >= this.minBalance) {
+                    // Forward to Keyguard, skipping account selection
+                    this.setAccountOrContract(wallet.id, senderAddress);
                     return;
+                } else {
+                    errorMsg = 'Address does not have sufficient balance';
                 }
+            } else {
+                errorMsg = 'Address not found';
             }
 
-            // Remove loader to unveil account selector
-            this.hasBalances = true;
+            if (this.request.forceSender) {
+                this.$rpc.reject(new Error(errorMsg));
+                return;
+            }
         }
+
+        // Remove loader to unveil account selector
+        this.hasBalances = true;
     }
 
     private async getBalances(): Promise<Map<string, number>> {
