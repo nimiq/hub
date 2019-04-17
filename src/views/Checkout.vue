@@ -26,7 +26,7 @@
             <AccountSelector
                 :wallets="processedWallets"
                 :minBalance="minBalance"
-                @account-selected="accountOrContractSelected"
+                @account-selected="setAccountOrContract"
                 @login="goToOnboarding"/>
 
             <transition name="account-details-fade">
@@ -114,7 +114,7 @@ export default class Checkout extends Vue {
                     const balance = balances.get(senderAddress);
                     if (balance && balance >= this.minBalance) {
                         // Forward to Keyguard, skipping account selection
-                        this.accountOrContractSelected(wallet.id, senderAddress);
+                        this.setAccountOrContract(wallet.id, senderAddress);
                         return;
                     } else {
                         errorMsg = 'Address does not have sufficient balance';
@@ -199,7 +199,7 @@ export default class Checkout extends Vue {
         this.height = head.height;
     }
 
-    private accountOrContractSelected(walletId: string, address: string) {
+    private setAccountOrContract(walletId: string, address: string) {
         if (!this.height) return; // TODO: Make it impossible for users to click when height is not ready
 
         const walletInfo = this.wallets.find((wallet: WalletInfo) => wallet.id === walletId)!;
