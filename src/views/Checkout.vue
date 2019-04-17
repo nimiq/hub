@@ -101,20 +101,20 @@ export default class Checkout extends Vue {
 
         if (this.wallets.length === 0) this.goToOnboarding(true);
         else {
-            await this.getBalances();
+            const balances = await this.getBalances();
 
             // Handle optional sender address included in the request
             if (this.request.sender) {
                 let errorMsg = '';
                 // Check if the address exists
-                const wallet = this.findWalletByAddress(this.request.sender.toUserFriendlyAddress(), true);
+                const senderAddress = this.request.sender.toUserFriendlyAddress();
+                const wallet = this.findWalletByAddress(senderAddress, true);
                 if (wallet) {
                     // Check if that address has enough balance
-                    const accountOrContract = wallet.accounts.get(this.request.sender.toUserFriendlyAddress())
-                        || wallet.findContractByAddress(this.request.sender)!;
-                    if (accountOrContract.balance && accountOrContract.balance >= this.minBalance) {
+                    const balance = balances.get(senderAddress);
+                    if (balance && balance >= this.minBalance) {
                         // Forward to Keyguard, skipping account selection
-                        this.accountOrContractSelected(wallet.id, this.request.sender.toUserFriendlyAddress());
+                        this.accountOrContractSelected(wallet.id, senderAddress);
                         return;
                     } else {
                         errorMsg = 'Address does not have sufficient balance';
@@ -134,11 +134,13 @@ export default class Checkout extends Vue {
         }
     }
 
-    private async getBalances() {
+    private async getBalances(): Promise<Map<string, number>> {
         const isRefresh = !window.performance || performance.navigation.type === 1;
 
-        if (!this.sideResultAddedWallet && this.getLastBalanceUpdateHeight() && !isRefresh) {
-            this.onHeadChange(this.getLastBalanceUpdateHeight()!);
+        const cache = this.getLastBalanceUpdateHeight();
+        if (!this.sideResultAddedWallet && cache && !isRefresh) {
+            this.onHeadChange(cache);
+            return cache.balances;
         } else {
             // Copy wallets to be able to manipulate them
             const wallets = this.wallets.slice(0);
@@ -185,8 +187,11 @@ export default class Checkout extends Vue {
             const cacheInput = {
                 timestamp: Date.now(),
                 height: this.height,
+                balances: Array.from(balances.entries());
             };
             window.sessionStorage.setItem(Checkout.BALANCE_CHECK_STORAGE_KEY, JSON.stringify(cacheInput));
+
+            return balances;
         }
     }
 
@@ -304,17 +309,19 @@ export default class Checkout extends Vue {
         delete staticStore.sideResult;
     }
 
-    private getLastBalanceUpdateHeight(): {timestamp: number, height: number} | null {
+    private getLastBalanceUpdateHeight(): {timestamp: number, height: number, balances: Map<string, number>} | null {
         const rawCache = window.sessionStorage.getItem(Checkout.BALANCE_CHECK_STORAGE_KEY);
         if (!rawCache) return null;
 
         try {
-            const cache: {timestamp: number, height: number} = JSON.parse(rawCache);
+            const cache: {timestamp: number, height: number, balances: [string, number][]} = JSON.parse(rawCache);
 
             // Check if expired or doesn't have a height
             if (cache.timestamp < Date.now() - 5 * 60 * 1000 || cache.height === 0) throw new Error();
 
-            return cache;
+            return Object.assign(cache, {
+                balances: new Map(cache.balances),
+            });
         } catch (e) {
             window.sessionStorage.removeItem(Checkout.BALANCE_CHECK_STORAGE_KEY);
             return null;
