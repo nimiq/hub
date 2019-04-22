@@ -1,6 +1,6 @@
 <template>
-    <div class="ledger-ui" :illustration="illustration">
-        <Loader :state="'loading'" :title="instructionsTitle" :status="instructionsText">
+    <div class="ledger-ui" :class="{ small }" :illustration="illustration">
+        <Loader :state="'loading'" :title="instructionsTitle" :status="instructionsText" :small="small">
             <template slot="loading">
                 <div class="ledger-device-container">
                     <div class="ledger-screen-loading ledger-screen"></div>
@@ -29,13 +29,15 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Prop, Vue } from 'vue-property-decorator';
 import LedgerApi from '@/lib/LedgerApi';
 import Loader from '@/components/Loader.vue';
 
 @Component({ components: { Loader } })
 class LedgerUi extends Vue {
     private static CONNECT_ANIMATION_STEP_DURATION = 9000 / 3;
+
+    @Prop(Boolean) public small?: boolean;
 
     private state: LedgerApi.State = LedgerApi.currentState;
     private instructionsTitle: string = '';
@@ -115,7 +117,7 @@ class LedgerUi extends Vue {
                 break;
             case LedgerApi.RequestType.DERIVE_ACCOUNTS:
                 // not interactive, but takes ~6 seconds
-                this._showInstructions('Fetching Addresses');
+                this._showInstructions('Fetching Addresses...');
                 break;
             case LedgerApi.RequestType.CONFIRM_ADDRESS:
                 this._showInstructions('Confirm Address',
@@ -123,7 +125,7 @@ class LedgerUi extends Vue {
                 break;
             case LedgerApi.RequestType.SIGN_TRANSACTION:
                 this._showInstructions('Confirm Transaction',
-                    'Check and confirm on your Ledger whether you want to send this transaction');
+                    'Confirm using your Ledger');
                 break;
             default:
                 throw new Error(`Unhandled request: ${request.type}`);
@@ -153,7 +155,7 @@ class LedgerUi extends Vue {
                 this._showInstructions('', 'The connected Ledger is not the one this account belongs to.');
                 break;
             case LedgerApi.ErrorType.REQUEST_ASSERTION_FAILED:
-                this._showInstructions('Request failed', error.message);
+                this._showInstructions('Request failed', `${this.small ? 'Request failed: ' : ''}${error.message}`);
                 break;
             default:
                 throw new Error(`Unhandled error: ${error.type} - ${error.message}`);
@@ -173,8 +175,14 @@ class LedgerUi extends Vue {
 
     private _showInstructions(title: string | null, text?: string): void {
         this.$emit(!title && !text ? LedgerUi.Events.NO_INFORMATION_SHOWN : LedgerUi.Events.INFORMATION_SHOWN);
-        this.instructionsTitle = title || '';
-        this.instructionsText = text || '';
+        if (this.small) {
+            // On small layout don't show a title but only the message, or if not available use the title as message
+            this.instructionsTitle = '';
+            this.instructionsText = text || title || '';
+        } else {
+            this.instructionsTitle = title || '';
+            this.instructionsText = text || '';
+        }
     }
 
     private get illustration() {
@@ -245,7 +253,12 @@ export default LedgerUi;
         flex-direction: column;
 
         --ledger-connect-animation-duration: 9s;
-        --ledger-scale-factor: 2;
+        --ledger-scale-factor: 1.62;
+        --ledger-opacity: .3;
+    }
+
+    .ledger-ui.small {
+        --ledger-scale-factor: 1.5;
     }
 
     .loader {
@@ -253,9 +266,14 @@ export default LedgerUi;
     }
 
     .ledger-device-container {
-        width: 65%;
+        width: 52%;
         margin: auto;
         position: relative;
+    }
+
+    .ledger-ui.small .ledger-device-container {
+        margin-top: -2rem;
+        width: 48%;
     }
 
     .ledger-device-container::before {
@@ -272,7 +290,15 @@ export default LedgerUi;
         background-size: contain;
     }
 
-    .ledger-opacity-container,
+    .ledger-opacity-container {
+        /* the ledger-device-container size and screen sizes were initially chosen such that the opacity container has
+        exactly the size of the the ledger-device-container at scale factor 2. For other factors adapt size. */
+        top: calc(50% * (1 - 2 / var(--ledger-scale-factor)));
+        left: calc(50% * (1 - 2 / var(--ledger-scale-factor)));
+        width: calc(100% * (2 / var(--ledger-scale-factor)));
+        height: calc(100% * (2 / var(--ledger-scale-factor)));
+    }
+
     .ledger-device,
     .ledger-cable {
         top: 0;
@@ -281,9 +307,8 @@ export default LedgerUi;
     }
 
     .ledger-opacity-container {
-        transform: scale(var(--ledger-scale-factor));
-        opacity: .3;
-        transform-origin: -5%;
+        transform: scale(var(--ledger-scale-factor)) translateX(27.3%);
+        opacity: var(--ledger-opacity);
     }
 
     .ledger-device {
@@ -315,7 +340,6 @@ export default LedgerUi;
     }
 
     .ledger-screen-pin {
-        transform-origin: -57%;
         background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 114 37.5"><path stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12.2 17.5l-2.7 2.7-2.8-2.7M101.8 20.2l2.7-2.7 2.8 2.7"/><text fill="white" font-family="sans-serif" font-size="10" transform="translate(36.4 13.5)">PIN code</text></svg>');
     }
 
@@ -397,15 +421,15 @@ export default LedgerUi;
             transform: scale(1);
         }
         42% {
-            opacity: .3;
-            transform: scale(var(--ledger-scale-factor));
+            opacity: var(--ledger-opacity);
+            transform: scale(var(--ledger-scale-factor)) translateX(27.3%);
         }
         98.5% {
-            opacity: .3;
+            opacity: var(--ledger-opacity);
         }
         100% {
             opacity: 0;
-            transform: scale(var(--ledger-scale-factor));
+            transform: scale(var(--ledger-scale-factor)) translateX(27.3%);
         }
     }
 
@@ -416,8 +440,9 @@ export default LedgerUi;
         35%, 64% {
             opacity: 1;
         }
+        0%,
         33% {
-            transform: scale(calc(1 / var(--ledger-scale-factor)));
+            transform: scale(calc(1 / var(--ledger-scale-factor))) translateX(-105%);
         }
         42% {
             transform: scale(1);
