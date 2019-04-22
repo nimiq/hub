@@ -172,7 +172,6 @@ export default class WalletInfoCollector {
 
     private static _keyguardClient?: KeyguardClient; // TODO avoid the need to create another KeyguardClient here
     private static _networkInitializationPromise?: Promise<void>;
-    private static _wasmInitializationPromise?: Promise<void>;
 
     private static _initializeDependencies(walletType: WalletType): void {
         WalletInfoCollector._networkInitializationPromise =
@@ -180,15 +179,9 @@ export default class WalletInfoCollector {
             || NetworkClient.createInstance(Config.networkEndpoint).init();
         WalletInfoCollector._networkInitializationPromise
             .catch(() => delete WalletInfoCollector._networkInitializationPromise);
-        if (walletType === WalletType.BIP39) {
-            WalletInfoCollector._keyguardClient = WalletInfoCollector._keyguardClient
-                || new KeyguardClient(Config.keyguardEndpoint);
-        } else if (walletType === WalletType.LEDGER) {
-            WalletInfoCollector._wasmInitializationPromise =
-                WalletInfoCollector._wasmInitializationPromise || Nimiq.WasmHelper.doImportBrowser();
-            WalletInfoCollector._wasmInitializationPromise
-                .catch(() => delete WalletInfoCollector._wasmInitializationPromise);
-        }
+        if (walletType !== WalletType.BIP39) return;
+        WalletInfoCollector._keyguardClient = WalletInfoCollector._keyguardClient
+            || new KeyguardClient(Config.keyguardEndpoint);
     }
 
     private static async _getWalletInfoInstance(walletType: WalletType, keyId: string): Promise<WalletInfo> {
