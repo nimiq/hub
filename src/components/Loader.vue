@@ -229,12 +229,13 @@ export default Loader;
 
 <style scoped>
     .loader {
+        --loader-margin: .75rem;
         display: flex;
         flex-direction: column;
         border-radius: 0.5rem;
-        width: calc(100% - 1.5rem);
-        height: calc(100% - 1.5rem);
-        margin: 0.75rem;
+        width: calc(100% - 2 * var(--loader-margin));
+        height: calc(100% - 2 * var(--loader-margin));
+        margin: var(--loader-margin);
         z-index: 1000;
         position: relative;
         flex-grow: 1;
@@ -423,5 +424,39 @@ export default Loader;
     @keyframes success-title-slide {
         from { transform: translateY(8rem); }
         to   { transform: translateY(0); }
+    }
+
+    /* Optional entry animation that components can apply on the loader */
+    .loader.grow-from-bottom-button {
+        position: absolute;
+        animation: loader-grow-from-bottom-button .5s forwards;
+        overflow: hidden;
+    }
+
+    @keyframes loader-grow-from-bottom-button {
+        0%,
+        20% {
+            max-width: calc(100% - 14rem + 1rem); /* +1rem to account for button :focus effect */
+            max-height: 8rem;
+            bottom: calc(4rem - var(--loader-margin) - 1px); /* -1px to account for button :focus effect */
+            left: calc(7rem - var(--loader-margin) - .5rem);
+            border-radius: 4rem;
+        }
+
+        0% {
+            opacity: 0;
+        }
+
+        25% {
+            opacity: 1;
+        }
+
+        100% {
+            max-width: calc(100% - 2 * var(--loader-margin));
+            max-height: calc(100% - 2 * var(--loader-margin));
+            bottom: 0;
+            left: 0;
+            border-radius: 0.5rem;
+        }
     }
 </style>

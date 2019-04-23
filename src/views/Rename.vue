@@ -19,7 +19,8 @@
             </PageFooter>
             <Loader v-if="labelsStored"
                 state="success"
-                title="All labels saved."/>
+                title="All labels saved."
+                class="grow-from-bottom-button" />
         </SmallPage>
 
         <button class="global-close nq-button-s" :class="{'hidden': labelsStored}" @click="close">
@@ -187,36 +188,6 @@ export default class Rename extends Vue {
     }
 
     .loader {
-        position: absolute;
-        animation: grow-from-button .5s forwards;
-        overflow: hidden;
         white-space: nowrap;
-    }
-
-    @keyframes grow-from-button {
-        0%,
-        20% {
-            max-height: 8rem;
-            max-width: calc(100% - 14rem + 1rem); /* +1rem to account for button :focus effect */
-            border-radius: 4rem;
-            bottom: calc(4rem - .75rem - 1px); /* -1px to account for button :focus effect */
-            left: calc(7rem - .75rem - .5rem);
-        }
-
-        0% {
-            opacity: 0;
-        }
-
-        25% {
-            opacity: 1;
-        }
-
-        100% {
-            left: 0;
-            bottom: 0;
-            max-height: calc(100% - 1.5rem);
-            max-width: calc(100% - 1.5rem);
-            border-radius: 0.5rem;
-        }
     }
 </style>
