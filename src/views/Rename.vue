@@ -15,13 +15,11 @@
                     @account-changed="accountChanged"/>
             </PageBody>
             <PageFooter>
-                <button class="nq-button" @click="storeLabels">Save</button>
+                <button class="nq-button light-blue" @click="storeLabels">Save</button>
             </PageFooter>
-            <transition name='fade-in'>
-                <Loader v-if="labelsStored"
-                    state="success"
-                    title="All labels saved."/>
-            </transition>
+            <Loader v-if="labelsStored"
+                state="success"
+                title="All labels saved."/>
         </SmallPage>
 
         <button class="global-close nq-button-s" :class="{'hidden': labelsStored}" @click="close">
@@ -165,6 +163,11 @@ export default class Rename extends Vue {
         padding: 1rem;
     }
 
+    .page-footer .nq-button {
+        width: calc(100% - 12rem);
+        margin-bottom: 3rem;
+    }
+
     .wallet-icon {
         width: 3rem;
         height: 3rem;
@@ -185,38 +188,34 @@ export default class Rename extends Vue {
 
     .loader {
         position: absolute;
-        bottom: 0;
-        left: 0;
-        height: calc(100% - 1.5rem);
-        width: calc(100% - 1.5rem);
+        animation: grow-from-button .5s forwards;
         overflow: hidden;
         white-space: nowrap;
     }
 
-    .fade-in-enter-active {
-        animation: grow-from-button .5s;
-    }
-
     @keyframes grow-from-button {
-        0% {
+        0%,
+        20% {
             max-height: 8rem;
-            max-width: 8rem;
+            max-width: calc(100% - 14rem + 1rem); /* +1rem to account for button :focus effect */
             border-radius: 4rem;
-            bottom: 6rem;
-            left: calc(50% - 4rem);
+            bottom: calc(4rem - .75rem - 1px); /* -1px to account for button :focus effect */
+            left: calc(7rem - .75rem - .5rem);
+        }
+
+        0% {
+            opacity: 0;
         }
 
         25% {
-            max-width: calc(100% - 1.5rem);
-            left: 0;
-        }
-
-        50% {
-            bottom: 0;
+            opacity: 1;
         }
 
         100% {
+            left: 0;
+            bottom: 0;
             max-height: calc(100% - 1.5rem);
+            max-width: calc(100% - 1.5rem);
             border-radius: 0.5rem;
         }
     }
