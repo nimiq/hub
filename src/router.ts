@@ -33,6 +33,8 @@ const ChangePassword          = () => import(/*webpackChunkName: "change-passwor
 const Logout                  = () => import(/*webpackChunkName: "logout"*/ './views/Logout.vue');
 const LogoutSuccess           = () => import(/*webpackChunkName: "logout"*/ './views/LogoutSuccess.vue');
 
+const LogoutLedger            = () => import(/*webpackChunkName: "logout-ledger"*/ './views/LogoutLedger.vue');
+
 const AddAccount              = () => import(/*webpackChunkName: "add-account"*/ './views/AddAccount.vue');
 const AddAccountSuccess       = () => import(/*webpackChunkName: "add-account"*/ './views/AddAccountSuccess.vue');
 const AddAddressLedger        = () => import(/*webpackChunkName: "add-ledger"*/ './views/AddAddressLedger.vue');
@@ -206,6 +208,11 @@ export default new Router({
             path: `/${RequestType.LOGOUT}/success`,
             component: LogoutSuccess,
             name: `${RequestType.LOGOUT}-success`,
+        },
+        {
+            path: `/${RequestType.LOGOUT}/ledger`,
+            component: LogoutLedger,
+            name: `${RequestType.LOGOUT}-ledger`,
         },
         {
             path: `/${RequestType.ADD_ADDRESS}`,
