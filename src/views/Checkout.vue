@@ -202,8 +202,6 @@ export default class Checkout extends Vue {
     }
 
     private setAccountOrContract(walletId: string, address: string) {
-        if (!this.height) return; // TODO: Make it impossible for users to click when height is not ready
-
         const walletInfo = this.wallets.find((wallet: WalletInfo) => wallet.id === walletId)!;
         let accountInfo = walletInfo.accounts.get(address);
         let contractInfo: ContractInfo | undefined;
@@ -217,44 +215,57 @@ export default class Checkout extends Vue {
             accountInfo = walletInfo.accounts.get(contractInfo.owner.toUserFriendlyAddress());
         }
 
-        // FIXME: Currently unused, but should be reactivated
-        this.$store.commit('setActiveAccount', {
+        // FIXME: Also handle active account we get from store
+        this.$setActiveAccount({
             walletId: walletInfo.id,
             userFriendlyAddress: accountInfo!.userFriendlyAddress,
         });
 
-        // The next block is the earliest for which tx are accepted by standard miners
-        const validityStartHeight = this.height + 1
-            - TX_VALIDITY_WINDOW
-            + this.request.validityDuration;
+        this.proceedToTransactionSigning(walletInfo, accountInfo!, contractInfo);
+    }
 
-        const request: KeyguardClient.SignTransactionRequest = {
-            layout: 'checkout',
-            shopOrigin: this.rpcState.origin,
-            appName: this.request.appName,
-            shopLogoUrl: this.request.shopLogoUrl,
+    private proceedToTransactionSigning(walletInfo: WalletInfo, accountInfo: AccountInfo, contractInfo?: ContractInfo) {
+        switch (walletInfo.type) {
+            case WalletType.LEDGER:
+                this.$rpc.routerPush(`${RequestType.SIGN_TRANSACTION}-ledger`);
+                return;
+            case WalletType.LEGACY:
+            case WalletType.BIP39:
+                if (!this.height) return;
 
-            keyId: walletInfo.keyId,
-            keyPath: accountInfo!.path,
-            keyLabel: walletInfo.label,
+                // The next block is the earliest for which tx are accepted by standard miners
+                const validityStartHeight = this.height + 1
+                    - TX_VALIDITY_WINDOW
+                    + this.request.validityDuration;
 
-            sender: (contractInfo || accountInfo!).address.serialize(),
-            senderType: contractInfo ? contractInfo.type : Nimiq.Account.Type.BASIC,
-            senderLabel: (contractInfo || accountInfo!).label,
-            recipient: this.request.recipient.serialize(),
-            recipientType: this.request.recipientType,
-            // recipientLabel: '', // Checkout is using the shopOrigin instead
-            value: this.request.value,
-            fee: this.request.fee,
-            validityStartHeight,
-            data: this.request.data,
-            flags: this.request.flags,
-        };
+                const request: KeyguardClient.SignTransactionRequest = {
+                    layout: 'checkout',
+                    shopOrigin: this.rpcState.origin,
+                    appName: this.request.appName,
+                    shopLogoUrl: this.request.shopLogoUrl,
 
-        staticStore.keyguardRequest = request;
+                    keyId: walletInfo.keyId,
+                    keyPath: accountInfo!.path,
+                    keyLabel: walletInfo.label,
 
-        const client = this.$rpc.createKeyguardClient();
-        client.signTransaction(request);
+                    sender: (contractInfo || accountInfo!).address.serialize(),
+                    senderType: contractInfo ? contractInfo.type : Nimiq.Account.Type.BASIC,
+                    senderLabel: (contractInfo || accountInfo!).label,
+                    recipient: this.request.recipient.serialize(),
+                    recipientType: this.request.recipientType,
+                    // recipientLabel: '', // Checkout is using the shopOrigin instead
+                    value: this.request.value,
+                    fee: this.request.fee,
+                    validityStartHeight,
+                    data: this.request.data,
+                    flags: this.request.flags,
+                };
+
+                staticStore.keyguardRequest = request;
+                const client = this.$rpc.createKeyguardClient();
+                client.signTransaction(request);
+                return;
+        }
     }
 
     private goToOnboarding(useReplace?: boolean) {
@@ -299,7 +310,7 @@ export default class Checkout extends Vue {
                 this.sideResultAddedWallet = true;
 
                 // Set as activeWallet and activeAccount
-                // FIXME: Currently unused, but should be reactivated
+                // FIXME: Also handle active account we get from store
                 const activeAccount = walletInfo.accounts.values().next().value;
 
                 this.$setActiveAccount({

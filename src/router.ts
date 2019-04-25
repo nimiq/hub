@@ -7,6 +7,9 @@ const SignTransaction         = () => import(/*webpackChunkName: "sign-transacti
 const SignTransactionSuccess  = () => import(/*webpackChunkName: "sign-transaction"*/
     './views/SignTransactionSuccess.vue');
 
+const SignTransactionLedger   = () => import(/*webpackChunkName: "sign-transaction-ledger"*/
+    './views/SignTransactionLedger.vue');
+
 const Checkout                = () => import(/*webpackChunkName: "checkout"*/ './views/Checkout.vue');
 const CheckoutTransmission    = () => import(/*webpackChunkName: "checkout"*/ './views/CheckoutTransmission.vue');
 const CheckoutErrorHandler    = () => import(/*webpackChunkName: "checkout"*/ './views/CheckoutErrorHandler.vue');
@@ -37,6 +40,7 @@ const LogoutLedger            = () => import(/*webpackChunkName: "logout-ledger"
 
 const AddAccount              = () => import(/*webpackChunkName: "add-account"*/ './views/AddAccount.vue');
 const AddAccountSuccess       = () => import(/*webpackChunkName: "add-account"*/ './views/AddAccountSuccess.vue');
+
 const AddAddressLedger        = () => import(/*webpackChunkName: "add-ledger"*/ './views/AddAddressLedger.vue');
 
 const Rename                  = () => import(/*webpackChunkName: "rename"*/ './views/Rename.vue');
@@ -123,6 +127,11 @@ export default new Router({
             path: `/${RequestType.SIGN_TRANSACTION}/success`,
             component: SignTransactionSuccess,
             name: `${RequestType.SIGN_TRANSACTION}-success`,
+        },
+        {
+            path: `/${RequestType.SIGN_TRANSACTION}/ledger`,
+            component: SignTransactionLedger,
+            name: `${RequestType.SIGN_TRANSACTION}-ledger`,
         },
         {
             path: `/${RequestType.CHECKOUT}`,

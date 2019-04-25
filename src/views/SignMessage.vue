@@ -138,8 +138,7 @@ export default class SignMessage extends Vue {
             if (walletInfo) {
                 this.$addWallet(walletInfo);
 
-                // Set as activeWallet and activeAccount
-                // FIXME: Currently unused, but should be reactivated
+                // FIXME: Also handle active account we get from store
                 const activeAccount = walletInfo.accounts.values().next().value;
 
                 this.$setActiveAccount({
