@@ -1,5 +1,6 @@
 <template>
-    <div class="network loading nq-blue-bg" :class="alwaysVisible || (visible && !consensusEstablished) ? '' : 'hidden'">
+    <div class="network loading nq-blue-bg"
+         :class="alwaysVisible || (visible && !hasOrSyncsOnTopOfConsensus) ? '' : 'hidden'">
         <div class="loading-animation"></div>
         <div class="loading-status nq-text-s">{{ status }}</div>
     </div>
@@ -21,11 +22,14 @@ import { VestingContractInfo } from '../lib/ContractInfo';
 
 @Component
 class Network extends Vue {
+    // static value shared across all instances which is then copied to the reactive template variable of the instances
+    private static _hasOrSyncsOnTopOfConsensus = false;
+
     @Prop(Boolean) private visible?: boolean;
     @Prop(Boolean) private alwaysVisible?: boolean;
     @Prop(String) private message?: string;
 
-    private consensusEstablished: boolean = false;
+    private hasOrSyncsOnTopOfConsensus: boolean = false;
     private boundListeners: Array<[NetworkClient.Events, (...args: any[]) => void]> = [];
 
     public async connect() {
@@ -164,6 +168,13 @@ class Network extends Vue {
         });
     }
 
+    public async getBlockchainHeight(): Promise<number> {
+        const client = await this._getNetworkClient();
+        if (Network._hasOrSyncsOnTopOfConsensus) return client.headInfo.height;
+        return new Promise((resolve) => this.$once(Network.Events.CONSENSUS_ESTABLISHED,
+            () => resolve(client.headInfo.height)));
+    }
+
     public async getBalances(addresses: string[]): Promise<Map<string, number>> {
         const client = await this._getNetworkClient();
         return client.getBalance(addresses);
@@ -190,8 +201,14 @@ class Network extends Vue {
     }
 
     private created() {
-        this.$on('consensus-established', () => this.consensusEstablished = true);
-        this.$on('consensus-lost', () => this.consensusEstablished = false);
+        this.$on(Network.Events.CONSENSUS_ESTABLISHED, () => {
+            Network._hasOrSyncsOnTopOfConsensus = true;
+            this.hasOrSyncsOnTopOfConsensus = true;
+        });
+        this.$on(Network.Events.CONSENSUS_LOST, () => {
+            Network._hasOrSyncsOnTopOfConsensus = false;
+            this.hasOrSyncsOnTopOfConsensus = false;
+        });
     }
 
     private destroyed() {
@@ -255,6 +272,9 @@ class Network extends Vue {
         if (networkClient.consensusState === 'syncing') this.$emit(Network.Events.CONSENSUS_SYNCING);
         else if (networkClient.consensusState === 'established') this.$emit(Network.Events.CONSENSUS_ESTABLISHED);
         else if (networkClient.consensusState === 'lost') this.$emit(Network.Events.CONSENSUS_LOST);
+        Network._hasOrSyncsOnTopOfConsensus = Network._hasOrSyncsOnTopOfConsensus
+            || networkClient.consensusState === 'established';
+        this.hasOrSyncsOnTopOfConsensus = Network._hasOrSyncsOnTopOfConsensus;
 
         if (networkClient.peerCount !== 0) this.$emit(Network.Events.PEERS_CHANGED, networkClient.peerCount);
 
