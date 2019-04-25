@@ -57,6 +57,10 @@ class Demo {
             await checkoutPopup(await generateCheckoutRequest(demo));
         });
 
+        document.querySelector('button#checkout-popup-with-account').addEventListener('click', async () => {
+            await checkoutPopup(await generateCheckoutRequest(demo, true));
+        });
+
         document.querySelector('button#choose-address').addEventListener('click', async () => {
             try {
                 const result = await client.chooseAddress({ appName: 'Accounts Demos' });
@@ -136,16 +140,23 @@ class Demo {
             };
         }
 
-        async function generateCheckoutRequest(demo: Demo): Promise<CheckoutRequest> {
+        async function generateCheckoutRequest(demo: Demo, useSelectedAddress: boolean): Promise<CheckoutRequest> {
             const value = parseInt((document.querySelector('#value') as HTMLInputElement).value) || 1337;
             const txFee = parseInt((document.querySelector('#fee') as HTMLInputElement).value) || 0;
             const txData = (document.querySelector('#data') as HTMLInputElement).value || '';
+            const $radio = document.querySelector('input[type="radio"]:checked');
+            if (!$radio) {
+                alert('You have no account to send a tx from, create an account first (signup)');
+                throw new Error('No account found');
+            }
+            const sender = $radio.getAttribute('data-address');
+            const forceSender = (document.getElementById('checkout-force-sender') as HTMLInputElement).checked;
 
             return {
                 appName: 'Accounts Demos',
                 shopLogoUrl: `${location.origin}/nimiq.png`,
-                // sender: 'NQ74 X5AS 50F2 X2U8 SK5C 5XML TKDH AA48 GE6A',
-                // forceSender: true,
+                sender: useSelectedAddress ? sender : undefined,
+                forceSender,
                 recipient: 'NQ63 U7XG 1YYE D6FA SXGG 3F5H X403 NBKN JLDU',
                 value,
                 fee: txFee,
