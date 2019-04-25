@@ -75,7 +75,6 @@ export default class Rename extends Vue {
 
         // Wait for the next tick to update the DOM, then focus the correct label
         Vue.nextTick(this.focusElement);
-
     }
 
     private focusElement() {
@@ -96,6 +95,7 @@ export default class Rename extends Vue {
             ...this.wallet.accounts.values(),
             ...this.wallet.contracts,
         ].map((accountOrContract) => {
+            accountOrContract.balance = undefined; // Hide balances in list, as they may be terribly out-of-date
             accountOrContract.placeholder = LabelingMachine.labelAddress(accountOrContract.userFriendlyAddress);
             return accountOrContract;
         });
