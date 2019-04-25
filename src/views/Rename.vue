@@ -171,7 +171,7 @@ export default class Rename extends Vue {
     .wallet-label {
         display: flex;
         flex-direction: row;
-        justify-content: flex-start;
+        justify-content: center;
         align-items: center;
         font-size: 2.25rem;
         line-height: 2.5rem;
@@ -185,7 +185,6 @@ export default class Rename extends Vue {
     }
 
     .wallet-label :global(.label-input) {
-        flex-grow: 1;
         font-weight: bold;
         font-size: 2.5rem;
     }
