@@ -145,8 +145,8 @@ class Demo {
             const txFee = parseInt((document.querySelector('#fee') as HTMLInputElement).value) || 0;
             const txData = (document.querySelector('#data') as HTMLInputElement).value || '';
             const $radio = document.querySelector('input[type="radio"]:checked');
-            if (!$radio) {
-                alert('You have no account to send a tx from, create an account first (signup)');
+            if (useSelectedAddress && !$radio) {
+                alert('You have no account to checkout with, create an account first (signup)');
                 throw new Error('No account found');
             }
             const sender = $radio.getAttribute('data-address');
