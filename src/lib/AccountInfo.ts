@@ -19,6 +19,7 @@ export class AccountInfo {
     }
 
     public walletId?: string;
+    public placeholder?: string;
 
     public constructor(
         public path: string,
