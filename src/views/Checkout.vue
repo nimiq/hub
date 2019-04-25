@@ -25,8 +25,8 @@
 
             <AccountSelector
                 :wallets="processedWallets"
-                :minBalance="request.value + request.fee"
-                @account-selected="accountOrContractSelected"
+                :minBalance="minBalance"
+                @account-selected="setAccountOrContract"
                 @login="goToOnboarding"/>
 
             <transition name="account-details-fade">
@@ -78,7 +78,9 @@ export default class Checkout extends Vue {
     @Static private rpcState!: RpcState;
     @Static private request!: ParsedCheckoutRequest;
     @State private wallets!: WalletInfo[];
+
     @Getter private processedWallets!: WalletInfo[];
+    @Getter private findWalletByAddress!: (address: string, includeContracts: boolean) => WalletInfo | undefined;
 
     @Mutation('addWallet') private $addWallet!: (walletInfo: WalletInfo) => any;
     @Mutation('setActiveAccount') private $setActiveAccount!: (payload: {
@@ -97,74 +99,109 @@ export default class Checkout extends Vue {
 
         await this.handleOnboardingResult();
 
-        if (this.wallets.length === 0) this.goToOnboarding(true);
-        else this.getBalances();
-    }
-
-    private async getBalances() {
-        const isRefresh = !window.performance || performance.navigation.type === 1;
-
-        if (!this.sideResultAddedWallet && this.getLastBalanceUpdateHeight() && !isRefresh) {
-            this.onHeadChange(this.getLastBalanceUpdateHeight()!);
-        } else {
-            // Copy wallets to be able to manipulate them
-            const wallets = this.wallets.slice(0);
-
-            // Generate a new array with references to the respective wallets' accounts
-            const accountsAndContracts = wallets.reduce((acc, wallet) => {
-                acc.push(...wallet.accounts.values());
-                acc.push(...wallet.contracts);
-                return acc;
-            }, [] as Array<AccountInfo | ContractInfo>);
-
-            // Reduce userfriendly addresses from that
-            const addresses = accountsAndContracts.map((accountOrContract) => accountOrContract.userFriendlyAddress);
-
-            // Get balances through pico consensus, also triggers head-change event
-            const network = (this.$refs.network as Network);
-            const balances: Map<string, number> = await network.connectPico(addresses);
-
-            // Update accounts/contracts with their balances
-            // (The accounts are still references to themselves in the wallets' accounts maps)
-            for (const accountOrContract of accountsAndContracts) {
-                const balance = balances.get(accountOrContract.userFriendlyAddress);
-                if (balance === undefined) continue;
-
-                if ('type' in accountOrContract && accountOrContract.type === Nimiq.Account.Type.VESTING) {
-                    // Calculate available amount for vesting contract
-                    accountOrContract.balance = accountOrContract
-                        .calculateAvailableAmount(this.height, Nimiq.Policy.coinsToSatoshis(balance));
-                } else {
-                    accountOrContract.balance = Nimiq.Policy.coinsToSatoshis(balance);
-                }
-            }
-
-            // Store updated wallets
-            for (const wallet of wallets) {
-                // Update IndexedDB
-                await WalletStore.Instance.put(wallet);
-
-                // Update Vuex
-                this.$addWallet(wallet);
-            }
-
-            // Cache height (balances are stored in IndexedDB)
-            const cacheInput = {
-                timestamp: Date.now(),
-                height: this.height,
-            };
-            window.sessionStorage.setItem(Checkout.BALANCE_CHECK_STORAGE_KEY, JSON.stringify(cacheInput));
+        if (this.wallets.length === 0) {
+            this.goToOnboarding(true);
+            return;
         }
 
-        // Remove loader
+        const balances = await this.getBalances();
+
+        // Handle optional sender address included in the request
+        if (this.request.sender) {
+            let errorMsg = '';
+            // Check if the address exists
+            const senderAddress = this.request.sender.toUserFriendlyAddress();
+            const wallet = this.findWalletByAddress(senderAddress, true);
+            if (wallet) {
+                // Check if that address has enough balance
+                const balance = balances.get(senderAddress);
+                if (balance && Nimiq.Policy.coinsToSatoshis(balance) >= this.minBalance) {
+                    // Forward to Keyguard, skipping account selection
+                    this.setAccountOrContract(wallet.id, senderAddress);
+                    return;
+                } else {
+                    errorMsg = 'Address does not have sufficient balance';
+                }
+            } else {
+                errorMsg = 'Address not found';
+            }
+
+            if (this.request.forceSender) {
+                this.$rpc.reject(new Error(errorMsg));
+                return;
+            }
+        }
+
+        // Remove loader to unveil account selector
         this.hasBalances = true;
+    }
+
+    private async getBalances(): Promise<Map<string, number>> {
+        const cache = this.getLastBalanceUpdateHeight();
+        const isRefresh = !window.performance || performance.navigation.type === 1;
+
+        if (!this.sideResultAddedWallet && cache && !isRefresh) {
+            this.onHeadChange(cache);
+            return cache.balances;
+        }
+
+        // Copy wallets to be able to manipulate them
+        const wallets = this.wallets.slice(0);
+
+        // Generate a new array with references to the respective wallets' accounts
+        const accountsAndContracts = wallets.reduce((acc, wallet) => {
+            acc.push(...wallet.accounts.values());
+            acc.push(...wallet.contracts);
+            return acc;
+        }, [] as Array<AccountInfo | ContractInfo>);
+
+        // Reduce userfriendly addresses from that
+        const addresses = accountsAndContracts.map((accountOrContract) => accountOrContract.userFriendlyAddress);
+
+        // Get balances through pico consensus, also triggers head-change event
+        const network = (this.$refs.network as Network);
+        const balances: Map<string, number> = await network.connectPico(addresses);
+
+        // Update accounts/contracts with their balances
+        // (The accounts are still references to themselves in the wallets' accounts maps)
+        for (const accountOrContract of accountsAndContracts) {
+            const balance = balances.get(accountOrContract.userFriendlyAddress);
+            if (balance === undefined) continue;
+
+            if ('type' in accountOrContract && accountOrContract.type === Nimiq.Account.Type.VESTING) {
+                // Calculate available amount for vesting contract
+                accountOrContract.balance = accountOrContract
+                    .calculateAvailableAmount(this.height, Nimiq.Policy.coinsToSatoshis(balance));
+            } else {
+                accountOrContract.balance = Nimiq.Policy.coinsToSatoshis(balance);
+            }
+        }
+
+        // Store updated wallets
+        for (const wallet of wallets) {
+            // Update IndexedDB
+            await WalletStore.Instance.put(wallet);
+
+            // Update Vuex
+            this.$addWallet(wallet);
+        }
+
+        // Cache height and balances
+        const cacheInput = {
+            timestamp: Date.now(),
+            height: this.height,
+            balances: Array.from(balances.entries()),
+        };
+        window.sessionStorage.setItem(Checkout.BALANCE_CHECK_STORAGE_KEY, JSON.stringify(cacheInput));
+
+        return balances;
     }
 
     private onHeadChange(head: Nimiq.BlockHeader | {height: number}) {
         this.height = head.height;
     }
 
-    private accountOrContractSelected(walletId: string, address: string) {
+    private setAccountOrContract(walletId: string, address: string) {
         if (!this.height) return; // TODO: Make it impossible for users to click when height is not ready
 
         const walletInfo = this.wallets.find((wallet: WalletInfo) => wallet.id === walletId)!;
@@ -186,10 +223,6 @@ export default class Checkout extends Vue {
             userFriendlyAddress: accountInfo!.userFriendlyAddress,
         });
 
-        this.proceedToKeyguard(walletInfo, accountInfo!, contractInfo);
-    }
-
-    private proceedToKeyguard(walletInfo: WalletInfo, accountInfo: AccountInfo, contractInfo?: ContractInfo) {
         // The next block is the earliest for which tx are accepted by standard miners
         const validityStartHeight = this.height + 1
             - TX_VALIDITY_WINDOW
@@ -202,12 +235,12 @@ export default class Checkout extends Vue {
             shopLogoUrl: this.request.shopLogoUrl,
 
             keyId: walletInfo.keyId,
-            keyPath: accountInfo.path,
+            keyPath: accountInfo!.path,
             keyLabel: walletInfo.label,
 
-            sender: (contractInfo || accountInfo).address.serialize(),
+            sender: (contractInfo || accountInfo!).address.serialize(),
             senderType: contractInfo ? contractInfo.type : Nimiq.Account.Type.BASIC,
-            senderLabel: (contractInfo || accountInfo).label,
+            senderLabel: (contractInfo || accountInfo!).label,
             recipient: this.request.recipient.serialize(),
             recipientType: this.request.recipientType,
             // recipientLabel: '', // Checkout is using the shopOrigin instead
@@ -239,16 +272,19 @@ export default class Checkout extends Vue {
     }
 
     private get hasSufficientBalanceAccount(): boolean {
-        const minBalance = this.request.value + this.request.fee;
         return this.wallets.some((wallet: WalletInfo) => {
             return Array.from(wallet.accounts.values()).some((account: AccountInfo) => {
-                return !!account.balance && account.balance >= minBalance;
+                return !!account.balance && account.balance >= this.minBalance;
             });
         });
     }
 
     private get shopOrigin() {
         return this.rpcState.origin.split('://')[1];
+    }
+
+    private get minBalance() {
+        return this.request.value + this.request.fee;
     }
 
     private async handleOnboardingResult() {
@@ -275,17 +311,19 @@ export default class Checkout extends Vue {
         delete staticStore.sideResult;
     }
 
-    private getLastBalanceUpdateHeight(): {timestamp: number, height: number} | null {
+    private getLastBalanceUpdateHeight(): {timestamp: number, height: number, balances: Map<string, number>} | null {
         const rawCache = window.sessionStorage.getItem(Checkout.BALANCE_CHECK_STORAGE_KEY);
         if (!rawCache) return null;
 
         try {
-            const cache: {timestamp: number, height: number} = JSON.parse(rawCache);
+            const cache: {timestamp: number, height: number, balances: Array<[string, number]>} = JSON.parse(rawCache);
 
             // Check if expired or doesn't have a height
             if (cache.timestamp < Date.now() - 5 * 60 * 1000 || cache.height === 0) throw new Error();
 
-            return cache;
+            return Object.assign(cache, {
+                balances: new Map(cache.balances),
+            });
         } catch (e) {
             window.sessionStorage.removeItem(Checkout.BALANCE_CHECK_STORAGE_KEY);
             return null;

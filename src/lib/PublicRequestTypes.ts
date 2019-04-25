@@ -27,6 +27,8 @@ export interface SignTransactionRequest extends BasicRequest {
 
 export interface CheckoutRequest extends BasicRequest {
     shopLogoUrl?: string;
+    sender?: string;
+    forceSender?: boolean;
     recipient: string;
     recipientType?: Nimiq.Account.Type;
     value: number;

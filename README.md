@@ -196,6 +196,22 @@ const requestOptions = {
     // Default: new Uint8Array(0)
     //extraData: 'Hello Nimiq!',
 
+    // [optional] Human-readable address of the sender.
+    // If the address exists in the user's Accounts Manager, this parameter
+    // forwards the user directly to the transaction-signing after the
+    // balance check.
+    // Default: undefined
+    //sender: 'NQ07 0000 0000 0000 0000 0000 0000 0000 0000',
+
+    // [optional] Whether to force the submitted sender address
+    // If this parameter is true, an exception is thrown when either the
+    // submitted sender address does not exist or does not have sufficient
+    // balance. When false, the user will be shown the address selector
+    // for the above conditions instead.
+    // (Only relevant in connection with the `sender` parameter)
+    // Default: false
+    //forceSender: true,
+
     // [optional] Nimiq.Transaction.Flag, only required if the transaction
     // creates a contract.
     // Default: Nimiq.Transaction.Flag.NONE (0)
