@@ -115,7 +115,7 @@ export default class Checkout extends Vue {
             if (wallet) {
                 // Check if that address has enough balance
                 const balance = balances.get(senderAddress);
-                if (balance && balance >= this.minBalance) {
+                if (balance && Nimiq.Policy.coinsToSatoshis(balance) >= this.minBalance) {
                     // Forward to Keyguard, skipping account selection
                     this.setAccountOrContract(wallet.id, senderAddress);
                     return;
