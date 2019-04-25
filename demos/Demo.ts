@@ -144,18 +144,22 @@ class Demo {
             const value = parseInt((document.querySelector('#value') as HTMLInputElement).value) || 1337;
             const txFee = parseInt((document.querySelector('#fee') as HTMLInputElement).value) || 0;
             const txData = (document.querySelector('#data') as HTMLInputElement).value || '';
-            const $radio = document.querySelector('input[type="radio"]:checked');
-            if (useSelectedAddress && !$radio) {
-                alert('You have no account to checkout with, create an account first (signup)');
-                throw new Error('No account found');
+
+            let sender: string | undefined = undefined;
+            if (useSelectedAddress) {
+                const $radio = document.querySelector('input[type="radio"]:checked');
+                if (!$radio) {
+                    alert('You have no account to checkout with, create an account first (signup)');
+                    throw new Error('No account found');
+                }
+                sender = $radio.getAttribute('data-address');
             }
-            const sender = $radio.getAttribute('data-address');
             const forceSender = (document.getElementById('checkout-force-sender') as HTMLInputElement).checked;
 
             return {
                 appName: 'Accounts Demos',
                 shopLogoUrl: `${location.origin}/nimiq.png`,
-                sender: useSelectedAddress ? sender : undefined,
+                sender,
                 forceSender,
                 recipient: 'NQ63 U7XG 1YYE D6FA SXGG 3F5H X403 NBKN JLDU',
                 value,
