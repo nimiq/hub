@@ -190,12 +190,14 @@ export default class Rename extends Vue {
         font-size: 2.5rem;
     }
 
-
     :global(.label-input input),
     .account-list :global(.label-input input) {
         padding-left: 1rem;
-        padding-right: 1rem;
-        font-weight: inherit;
+    }
+
+    :global(.label-input .width-finder),
+    .account-list :global(.label-input .width-finder) {
+        padding: 0 1.25rem; /* input padding + border-width */
     }
 
     .page-body :global(.amount) {
