@@ -5,7 +5,7 @@
             <PageBody v-if="wallet">
                 <div class="wallet-label" v-if="wallet.type !== 1 /* LEGACY */">
                     <AccountRing :addresses="addressesArray"/>
-                    <Input :value="wallet.label" @changed="onWalletLabelChange" :placeholder="defaultWalletLabel" ref="wallet"/>
+                    <Input :value="wallet.label" @changed="onWalletLabelChange" :placeholder="wallet.defaultLabel" ref="wallet"/>
                 </div>
 
                 <AccountList ref="accountList"
@@ -43,7 +43,6 @@ import { WalletInfo, WalletType } from '../lib/WalletInfo';
 import { WalletStore } from '@/lib/WalletStore';
 import { Static } from '../lib/StaticStore';
 import { ERROR_CANCELED } from '@/lib/Constants';
-import LabelingMachine from '../lib/LabelingMachine';
 
 /*
     In Case some sort auf Authentication with the wallet is desireable, there are 2 options:
@@ -94,31 +93,23 @@ export default class Rename extends Vue {
         return [
             ...this.wallet.accounts.values(),
             ...this.wallet.contracts,
-        ].map((accountOrContract) => {
-            accountOrContract.placeholder = LabelingMachine.labelAddress(accountOrContract.userFriendlyAddress);
-            return accountOrContract;
-        });
+        ];
     }
 
     private get addressesArray() {
         return this.accountsAndContractsArray.map((acc) => acc.userFriendlyAddress);
     }
 
-    private get defaultWalletLabel() {
-        if (!this.wallet) return 'Name your account';
-        return LabelingMachine.labelAccount(this.wallet.accounts.keys().next().value);
-    }
-
     private accountChanged(address: string, label: string) {
         const addressInfo = this.wallet!.accounts.get(address);
         if (addressInfo) {
-            addressInfo.label = label || LabelingMachine.labelAddress(addressInfo.userFriendlyAddress);
+            addressInfo.label = label || addressInfo.defaultLabel;
             this.wallet!.accounts.set(address, addressInfo);
             return;
         }
         const contractInfo = this.wallet!.findContractByAddress(Nimiq.Address.fromUserFriendlyAddress(address));
         if (contractInfo) {
-            contractInfo.label = label || LabelingMachine.labelAddress(contractInfo.userFriendlyAddress);
+            contractInfo.label = label || contractInfo.defaultLabel;
             this.wallet!.setContract(contractInfo);
             return;
         }
@@ -127,7 +118,7 @@ export default class Rename extends Vue {
     }
 
     private onWalletLabelChange(label: string) {
-        this.wallet!.label = label || this.defaultWalletLabel;
+        this.wallet!.label = label || this.wallet!.defaultLabel;
     }
 
     private storeLabels() {

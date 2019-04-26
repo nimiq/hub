@@ -1,5 +1,6 @@
 import { VestingContract, HashedTimeLockedContract, Contract } from './PublicRequestTypes';
 import AddressUtils from './AddressUtils';
+import LabelingMachine from './LabelingMachine';
 
 export class ContractInfoHelper {
     public static fromObject(o: ContractInfoEntry): VestingContractInfo | HashedTimeLockedContractInfo {
@@ -71,6 +72,10 @@ export class VestingContractInfo {
 
     public get userFriendlyAddress(): string {
         return this.address.toUserFriendlyAddress();
+    }
+
+    public get defaultLabel(): string {
+        return LabelingMachine.labelAddress(this.userFriendlyAddress);
     }
 
     public toObject(): VestingContractInfoEntry {
@@ -191,6 +196,10 @@ export class HashedTimeLockedContractInfo {
 
     public get userFriendlyAddress(): string {
         return this.address.toUserFriendlyAddress();
+    }
+
+    public get defaultLabel(): string {
+        return LabelingMachine.labelAddress(this.userFriendlyAddress);
     }
 
     public toObject(): HashedTimeLockedContractInfoEntry {

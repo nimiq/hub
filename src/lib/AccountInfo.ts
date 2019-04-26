@@ -1,5 +1,6 @@
 import { Address } from './PublicRequestTypes';
 import AddressUtils from './AddressUtils';
+import LabelingMachine from './LabelingMachine';
 
 export class AccountInfo {
     public static fromObject(o: AccountInfoEntry): AccountInfo {
@@ -30,6 +31,10 @@ export class AccountInfo {
 
     public get userFriendlyAddress(): string {
         return this.address.toUserFriendlyAddress();
+    }
+
+    public get defaultLabel(): string {
+        return LabelingMachine.labelAddress(this.userFriendlyAddress);
     }
 
     public toObject(): AccountInfoEntry {

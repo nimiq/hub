@@ -771,7 +771,7 @@
 
 "@nimiq/vue-components@https://github.com/nimiq/vue-components.git#build/accounts":
   version "0.1.0"
-  resolved "https://github.com/nimiq/vue-components.git#670719b803c53dac906f25204b928aecfb646bf0"
+  resolved "https://github.com/nimiq/vue-components.git#1214e3b55284e8e947f3b1d0c64f845b181a06ab"
   dependencies:
     "@nimiq/style" "^0.6.0"
     vue "^2.5.17"
