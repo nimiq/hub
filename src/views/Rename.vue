@@ -15,7 +15,7 @@
                     @account-changed="accountChanged"/>
             </PageBody>
             <PageFooter>
-                <button class="nq-button light-blue" @click="storeLabels">Save</button>
+                <button class="nq-button light-blue save" @click="storeLabels">Save</button>
             </PageFooter>
             <transition name='fade-in'>
                 <Loader v-if="labelsStored"
@@ -219,6 +219,11 @@ export default class Rename extends Vue {
     .account-ring {
         margin-right: 2rem;
         flex-shrink: 0;
+    }
+
+    button.save {
+        width: 41rem; /* To be replaced by nimiq-style class */
+        margin-bottom: 3rem;
     }
 
     .loader {
