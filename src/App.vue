@@ -77,6 +77,15 @@ export default class App extends Vue {
     .global-close {
         margin-top: 8rem;
         margin-bottom: 5rem;
+        background: transparent !important;
+        opacity: 0.5;
+        transition: color .2s ease, opacity .2s ease;
+    }
+
+    .global-close:hover,
+    .global-close:focus {
+        color: var(--nimiq-light-blue);
+        opacity: 1;
     }
 
     .global-close .arrow-left {
