@@ -95,7 +95,6 @@ export default class Rename extends Vue {
             ...this.wallet.accounts.values(),
             ...this.wallet.contracts,
         ].map((accountOrContract) => {
-            accountOrContract.balance = undefined; // Hide balances in list, as they may be terribly out-of-date
             accountOrContract.placeholder = LabelingMachine.labelAddress(accountOrContract.userFriendlyAddress);
             return accountOrContract;
         });
@@ -189,31 +188,25 @@ export default class Rename extends Vue {
         padding: 2rem 1rem;
     }
 
-    :global(.label-input) {
+    >>> .label-input {
         font-weight: 600;
     }
 
-    .wallet-label :global(.label-input) {
+    .wallet-label .label-input {
         font-weight: bold;
         font-size: 2.5rem;
     }
 
-    :global(.label-input input),
-    .account-list :global(.label-input input) {
-        padding-left: 1rem;
+    >>> .label-input input {
+        padding: .5rem 0 .5rem 1rem;
     }
 
-    :global(.label-input .width-finder),
-    .account-list :global(.label-input .width-finder) {
+    >>> .label-input .width-finder {
         padding: 0 1.25rem; /* input padding + border-width */
     }
 
-    .page-body :global(.amount) {
-        opacity: 0.4;
-    }
-
-    .page-body :global(.account-entry:hover .amount) {
-        opacity: 0.7;
+    >>> .amount {
+        display: none; /* Hide balances in list, as they may be terribly out-of-date */
     }
 
     .account-ring {
