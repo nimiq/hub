@@ -57,7 +57,6 @@ export class VestingContractInfo {
 
     public type = Nimiq.Account.Type.VESTING;
     public walletId?: string;
-    public placeholder?: string;
 
     public constructor(
         public label: string,
@@ -180,7 +179,6 @@ export class HashedTimeLockedContractInfo {
 
     public type = Nimiq.Account.Type.HTLC;
     public walletId?: string;
-    public placeholder?: string;
 
     public constructor(
         public label: string,
