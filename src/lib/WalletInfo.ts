@@ -5,6 +5,7 @@ import {
     ContractInfoHelper,
 } from './ContractInfo';
 import { Account } from './PublicRequestTypes';
+import LabelingMachine from './LabelingMachine';
 
 export enum WalletType {
     LEGACY = 1,
@@ -35,15 +36,21 @@ export class WalletInfo {
         };
     }
 
-    public constructor(public id: string,
-                       public keyId: string,
-                       public label: string,
-                       public accounts: Map</*address*/ string, AccountInfo>,
-                       public contracts: ContractInfo[],
-                       public type: WalletType,
-                       public keyMissing: boolean = false,
-                       public fileExported: boolean = false,
-                       public wordsExported: boolean = false) {}
+    public constructor(
+        public id: string,
+        public keyId: string,
+        public label: string,
+        public accounts: Map</*address*/ string, AccountInfo>,
+        public contracts: ContractInfo[],
+        public type: WalletType,
+        public keyMissing: boolean = false,
+        public fileExported: boolean = false,
+        public wordsExported: boolean = false,
+    ) {}
+
+    public get defaultLabel(): string {
+        return LabelingMachine.labelAccount(this.accounts.keys().next().value);
+    }
 
     public findContractByAddress(address: Nimiq.Address): ContractInfo | undefined {
         return this.contracts.find((contract) => contract.address.equals(address));

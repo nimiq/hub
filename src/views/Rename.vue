@@ -1,11 +1,11 @@
 <template>
     <div class="container">
         <SmallPage class="rename">
-            <PageHeader>Rename your Account</PageHeader>
+            <PageHeader>Rename Account</PageHeader>
             <PageBody v-if="wallet">
                 <div class="wallet-label" v-if="wallet.type !== 1 /* LEGACY */">
-                    <div class="wallet-icon nq-icon" :class="walletIconClass"></div>
-                    <Input :value="wallet.label" @changed="onWalletLabelChange" ref="wallet"/>
+                    <AccountRing :addresses="addressesArray"/>
+                    <Input :value="wallet.label" @changed="onWalletLabelChange" :placeholder="wallet.defaultLabel" ref="wallet"/>
                 </div>
 
                 <AccountList ref="accountList"
@@ -15,10 +15,11 @@
                     @account-changed="accountChanged"/>
             </PageBody>
             <PageFooter>
-                <button class="nq-button" @click="storeLabels">Save</button>
+                <button class="nq-button light-blue save" @click="storeLabels">Save</button>
             </PageFooter>
             <transition name='fade-in'>
                 <Loader v-if="labelsStored"
+                    :lightBlue="true"
                     state="success"
                     title="All labels saved."/>
             </transition>
@@ -33,7 +34,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { AccountList, SmallPage, PageHeader, PageBody, PageFooter } from '@nimiq/vue-components';
+import { AccountRing, AccountList, SmallPage, PageHeader, PageBody, PageFooter } from '@nimiq/vue-components';
 import Input from '@/components/Input.vue';
 import { ParsedRenameRequest } from '../lib/RequestTypes';
 import { Account } from '../lib/PublicRequestTypes';
@@ -53,11 +54,12 @@ import { ERROR_CANCELED } from '@/lib/Constants';
 */
 
 @Component({components: {
+    AccountRing,
+    AccountList,
     SmallPage,
     PageHeader,
     PageBody,
     PageFooter,
-    AccountList,
     Input,
     Loader,
 }})
@@ -67,29 +69,11 @@ export default class Rename extends Vue {
     private wallet: WalletInfo | null = null;
     private labelsStored: boolean = false;
 
-    private get accountsAndContractsArray() {
-        if (!this.wallet) return [];
-        return [
-            ...this.wallet.accounts.values(),
-            ...this.wallet.contracts,
-        ];
-    }
-
-    private get walletIconClass() {
-        if (!this.wallet) return '';
-        switch (this.wallet.type) {
-            case WalletType.LEGACY: return 'keyguard';
-            case WalletType.BIP39: return 'keyguard';
-            case WalletType.LEDGER: return 'ledger';
-        }
-    }
-
     private async mounted() {
         this.wallet = (await WalletStore.Instance.get(this.request.walletId))!;
 
         // Wait for the next tick to update the DOM, then focus the correct label
         Vue.nextTick(this.focusElement);
-
     }
 
     private focusElement() {
@@ -104,16 +88,28 @@ export default class Rename extends Vue {
         }
     }
 
+    private get accountsAndContractsArray() {
+        if (!this.wallet) return [];
+        return [
+            ...this.wallet.accounts.values(),
+            ...this.wallet.contracts,
+        ];
+    }
+
+    private get addressesArray() {
+        return this.accountsAndContractsArray.map((acc) => acc.userFriendlyAddress);
+    }
+
     private accountChanged(address: string, label: string) {
         const addressInfo = this.wallet!.accounts.get(address);
         if (addressInfo) {
-            addressInfo.label = label;
+            addressInfo.label = label || addressInfo.defaultLabel;
             this.wallet!.accounts.set(address, addressInfo);
             return;
         }
         const contractInfo = this.wallet!.findContractByAddress(Nimiq.Address.fromUserFriendlyAddress(address));
         if (contractInfo) {
-            contractInfo.label = label;
+            contractInfo.label = label || contractInfo.defaultLabel;
             this.wallet!.setContract(contractInfo);
             return;
         }
@@ -122,7 +118,7 @@ export default class Rename extends Vue {
     }
 
     private onWalletLabelChange(label: string) {
-        this.wallet!.label = label;
+        this.wallet!.label = label || this.wallet!.defaultLabel;
     }
 
     private storeLabels() {
@@ -174,13 +170,44 @@ export default class Rename extends Vue {
     .wallet-label {
         display: flex;
         flex-direction: row;
-        justify-content: flex-start;
+        justify-content: center;
         align-items: center;
         font-size: 2.25rem;
         line-height: 2.5rem;
         font-weight: 500;
-        margin: 2rem 3rem 0;
+        margin: 0 3rem;
         padding: 2rem 1rem;
+    }
+
+    >>> .label-input {
+        font-weight: 600;
+    }
+
+    .wallet-label .label-input {
+        font-weight: bold;
+        font-size: 2.5rem;
+    }
+
+    >>> .label-input input {
+        padding: .5rem 0 .5rem 1rem;
+    }
+
+    >>> .label-input .width-finder {
+        padding: 0 1.25rem; /* input padding + border-width */
+    }
+
+    >>> .amount {
+        display: none; /* Hide balances in list, as they may be terribly out-of-date */
+    }
+
+    .account-ring {
+        margin-right: 2rem;
+        flex-shrink: 0;
+    }
+
+    button.save {
+        width: 41rem; /* To be replaced by nimiq-style class */
+        margin-bottom: 3rem;
     }
 
     .loader {
@@ -202,7 +229,7 @@ export default class Rename extends Vue {
             max-height: 8rem;
             max-width: 8rem;
             border-radius: 4rem;
-            bottom: 6rem;
+            bottom: 2rem;
             left: calc(50% - 4rem);
         }
 

@@ -759,15 +759,10 @@
   resolved "https://registry.yarnpkg.com/@nimiq/rpc/-/rpc-0.1.4.tgz#ff6608255f23bb80079e10b23b7b74c35190e9da"
   integrity sha512-vKU8zw8aHabGBaRTvf31MeVaByhkEChkdlx6IYw555XH5TitYQO6XYfTpoDelXUOG/xX4BQrCMV6NnLKY5yN0Q==
 
-"@nimiq/style@^0.4.1":
-  version "0.4.1"
-  resolved "https://registry.yarnpkg.com/@nimiq/style/-/style-0.4.1.tgz#42b6e3a8ba4a0c7dbd71893b4149094466b48c49"
-  integrity sha512-OLWRXTgtxOv0R5cOMZ3M2WCoardx6thGbZbxbpnWdhZkqoYnWqGp0oV5X5ic6Vde4mt403ogXwbfGtzwJknvrQ==
-
-"@nimiq/style@^0.5.1":
-  version "0.5.1"
-  resolved "https://registry.yarnpkg.com/@nimiq/style/-/style-0.5.1.tgz#1022a6dab6d43d8c4c9747449f873c327338f3c5"
-  integrity sha512-5j4e0kA1ugYyk5PlsiI9ZfpEIE0HTUN1Qyg3TPxpqAMMv5PJY4zQm/HQiYDFI4M2vT7KK8J3oWwhQk6elhM9xg==
+"@nimiq/style@^0.6.0", "@nimiq/style@^0.6.2":
+  version "0.6.2"
+  resolved "https://registry.yarnpkg.com/@nimiq/style/-/style-0.6.2.tgz#dee970c69a53fc3bf95a7f1fe0b656d4e94b897b"
+  integrity sha512-2Je+zUI2m13zfNuUpYdbYHuYqRP2gnuqDDLBVJluUtt1NQH+dCL4f/kl6KOkPEoAkgU6tmICLLIGMuVNEHfrTg==
 
 "@nimiq/utils@^0.3.1":
   version "0.3.1"
@@ -776,9 +771,9 @@
 
 "@nimiq/vue-components@https://github.com/nimiq/vue-components.git#build/accounts":
   version "0.1.0"
-  resolved "https://github.com/nimiq/vue-components.git#b89ae018249ac08b019d09ea0bd8c36a5962c219"
+  resolved "https://github.com/nimiq/vue-components.git#ce0134659499f6a758fce0714e0fce45ec0ef08c"
   dependencies:
-    "@nimiq/style" "^0.5.1"
+    "@nimiq/style" "^0.6.0"
     vue "^2.5.17"
     vue-property-decorator "^7.0.0"
 
@@ -9215,9 +9210,9 @@ vue-template-es2015-compiler@^1.8.2:
   integrity sha512-cliV19VHLJqFUYbz/XeWXe5CO6guzwd0yrrqqp0bmjlMP3ZZULY7fu8RTC4+3lmHwo6ESVDHFDsvjB15hcR5IA==
 
 vue@^2.5.17:
-  version "2.6.7"
-  resolved "https://registry.yarnpkg.com/vue/-/vue-2.6.7.tgz#254f188e7621d2d19ee28d0c0442c6d21b53ae2d"
-  integrity sha512-g7ADfQ82QU+j6F/bVDioVQf2ccIMYLuR4E8ev+RsDBlmwRkhGO3HhgF4PF9vpwjdPpxyb1zzLur2nQ2oIMAMEg==
+  version "2.6.10"
+  resolved "https://registry.yarnpkg.com/vue/-/vue-2.6.10.tgz#a72b1a42a4d82a721ea438d1b6bf55e66195c637"
+  integrity sha512-ImThpeNU9HbdZL3utgMCq0oiMzAkt1mcgy3/E6zWC/G6AaQoeuFdsl9nDhTDU3X1R6FK7nsIUuRACVcjI+A2GQ==
 
 vue@^2.6.6:
   version "2.6.6"
