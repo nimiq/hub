@@ -12,7 +12,8 @@
             <h1 class="nq-h1">Choose an address to sign</h1>
 
             <AccountSelector
-                :wallets="processedWallets | withoutContracts"
+                :wallets="processedWallets"
+                disableContracts
                 @account-selected="setAccount"
                 @login="goToOnboarding"/>
         </SmallPage>
@@ -35,21 +36,10 @@ import { WalletStore } from '@/lib/WalletStore';
 import { AccountInfo } from '@/lib/AccountInfo';
 import { WalletInfo } from '@/lib/WalletInfo';
 import KeyguardClient from '@nimiq/keyguard-client';
-import { Utf8Tools } from '@nimiq/utils';
 import { ERROR_CANCELED } from '@/lib/Constants';
 import { State as RpcState } from '@nimiq/rpc';
 
-@Component({
-    components: {SmallPage, AccountSelector},
-    filters: {
-        withoutContracts(wallets: WalletInfo[]): WalletInfo[] {
-            return wallets.map((wallet) => {
-                wallet.contracts = [];
-                return wallet;
-            });
-        },
-    },
-})
+@Component({components: {SmallPage, AccountSelector}})
 export default class SignMessage extends Vue {
     @Static protected request!: ParsedSignMessageRequest;
     @Static private rpcState!: RpcState;
