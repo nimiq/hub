@@ -97,4 +97,11 @@ export default class App extends Vue {
         visibility: hidden;
         pointer-events: none;
     }
+
+    .global-close:hover .arrow-left,
+    .global-close:focus .arrow-left {
+        /* filter that rotates color to nimiq-light-blue.
+        TODO not necessary anymore once @nimiq/style is updated to svg icons */
+        filter: hue-rotate(-38deg) saturate(1.34) brightness(2.95);
+    }
 </style>
