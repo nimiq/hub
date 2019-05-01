@@ -20,6 +20,9 @@
 //   network, extra data etc). If the user then rejects/confirms, the ledger freezes and can not be unfrozen. This does
 //   not occur with this api, as the api replaces that call after unlock.
 //
+// Notes about app versions < 1.4.1 / 1.4.0:
+// - App versions < 1.4.0 are incompatible with Chrome 72+, see https://github.com/LedgerHQ/ledgerjs/issues/306.
+// - App versions < 1.4.1 are incompatible with Chrome 72-73
 //
 // Notes about app versions < 1.3.1:
 // - Versions < 1.3.1 did not have a heartbeat to avoid timeouts
@@ -57,7 +60,6 @@
 // tslint:disable-next-line:max-line-length
 // TODO: change implementation to be flow typed, integrate into ledger-api repository and bundle with ledger provided flow libraries directly. LedgerJs:any type is just a temporary workaround
 import Observable = Nimiq.Observable;
-import { BrowserDetection } from '@nimiq/utils';
 
 type LedgerJs = any;
 // tslint:disable-next-line:variable-name no-var-requires
@@ -126,7 +128,7 @@ class LedgerApi {
     // public fields and methods
     public static readonly BIP32_BASE_PATH = `44'/242'/0'/`;
     public static readonly BIP32_PATH_REGEX = new RegExp(`^${LedgerApi.BIP32_BASE_PATH}(\\d+)'$`);
-    public static readonly MIN_REQUIRED_APP_VERSION = [1, 3, 1];
+    public static readonly MIN_REQUIRED_APP_VERSION = [1, 4, 1];
     public static readonly WAIT_TIME_AFTER_TIMEOUT = 1500;
     public static readonly WAIT_TIME_AFTER_ERROR = 500;
 
@@ -440,20 +442,13 @@ class LedgerApi {
             LedgerApi._currentlyConnectedWalletId = null; // reset as we don't note when Ledger gets disconnected
             // For errors we can recover from reset the state to IDLE.
             const errorType = LedgerApi.currentState.error ? LedgerApi.currentState.error.type : null;
-            if (errorType !== LedgerApi.ErrorType.NO_BROWSER_SUPPORT
-                && errorType !== LedgerApi.ErrorType.INCOMPATIBLE_CHROME_VERSION) {
+            if (errorType !== LedgerApi.ErrorType.NO_BROWSER_SUPPORT) {
                 LedgerApi._setState(LedgerApi.StateType.IDLE);
             }
         }
     }
 
     private static async _connect(walletId?: string): Promise<LedgerJs> {
-        const browserInfo = BrowserDetection.getBrowserInfo();
-        if (browserInfo.browser === BrowserDetection.Browser.CHROME
-            && browserInfo.version && browserInfo.version.major >= 72) {
-            this._throwError(LedgerApi.ErrorType.INCOMPATIBLE_CHROME_VERSION,
-                new Error('Ledger currently not supported by Chrome 72+'));
-        }
         // Resolves when connected to unlocked ledger with open Nimiq app otherwise throws an exception after timeout.
         // If the Ledger is already connected and the library already loaded, the call typically takes < 250ms.
         try {
@@ -599,7 +594,6 @@ namespace LedgerApi { // tslint:disable-line:no-namespace
     export const enum ErrorType {
         LEDGER_BUSY = 'ledger-busy',
         FAILED_LOADING_DEPENDENCIES = 'failed-loading-dependencies',
-        INCOMPATIBLE_CHROME_VERSION = 'incompatible-chrome-version', // TODO remove this error when not relevant anymore
         NO_BROWSER_SUPPORT = 'no-browser-support',
         APP_OUTDATED = 'app-outdated',
         WRONG_LEDGER = 'wrong-ledger',

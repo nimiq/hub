@@ -143,12 +143,11 @@ class LedgerUi extends Vue {
             case LedgerApi.ErrorType.NO_BROWSER_SUPPORT:
                 this._showInstructions('', 'Ledger not supported by browser or support not enabled.');
                 break;
-            case LedgerApi.ErrorType.INCOMPATIBLE_CHROME_VERSION:
-                this._showInstructions('',
-                    'Ledger currently not compatible with Chrome 72+. Please use Opera or Brave.');
-                break;
             case LedgerApi.ErrorType.APP_OUTDATED:
-                this._showInstructions('', 'Your Nimiq App is outdated. Please update using Ledger Live.');
+                // TODO a firmware update is only required to update from 1.3.1 to 1.4.1. Remove this part of the
+                // message in the future again
+                this._showInstructions('', 'Your Nimiq App is outdated. ' +
+                    'Please update your Ledger firmware and Nimiq App using Ledger Live.');
                 break;
             case LedgerApi.ErrorType.WRONG_LEDGER:
                 this._showInstructions('', 'The connected Ledger is not the one this account belongs to.');
