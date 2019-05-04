@@ -39,9 +39,9 @@ Include the `AccountsClient` JS library as a script tag in your page:
 
 ```html
 <!-- From CDN -->
-<script src="https://unpkg.com/@nimiq/accounts-client@v0.2/dist/standalone/AccountsClient.standalone.umd.js"></script>
+<script src="https://unpkg.com/@nimiq/accounts-client@v0.3/dist/standalone/AccountsClient.standalone.umd.js"></script>
 <!-- or -->
-<script src="https://cdn.jsdelivr.net/npm/@nimiq/accounts-client@v0.2/dist/standalone/AccountsClient.standalone.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@nimiq/accounts-client@v0.3/dist/standalone/AccountsClient.standalone.umd.js"></script>
 ```
 
 It can also be installed from NPM:
