@@ -4,6 +4,7 @@ import router from './router';
 import store from './store';
 import staticStore from '@/lib/StaticStore';
 import RpcApi from '@/lib/RpcApi';
+import Config from 'config';
 import VueRaven from 'vue-raven'; // Sentry.io SDK
 
 // Register service worker if necessary (and possible).
@@ -13,6 +14,11 @@ if ('serviceWorker' in navigator) {
     }).then((reg) => {
         console.debug(`Service worker has been registered for scope: ${reg.scope}`);
     });
+}
+
+// Redirect to Safe (default) if referrer is empty
+if (!document.referrer) {
+    location.href = Config.redirectTarget;
 }
 
 Vue.config.productionTip = false;

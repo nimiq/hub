@@ -3,7 +3,7 @@
   "compilerOptions": {
     "paths": {
       "config": [
-        "config.mainnet.ts"
+        "src/config/config.mainnet.ts"
       ]
     }
   }
