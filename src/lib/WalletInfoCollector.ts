@@ -34,6 +34,7 @@ export default class WalletInfoCollector {
         initialAccounts: BasicAccountInfo[] = [],
         // tslint:disable-next-line:no-empty
         onUpdate: (walletInfo: WalletInfo, currentlyCheckedAccounts: BasicAccountInfo[]) => void = () => {},
+        // TODO onDelete callback
     ): Promise<WalletCollectionResult> {
         // Kick off loading dependencies
         WalletInfoCollector._initializeDependencies(walletType);
@@ -85,6 +86,9 @@ export default class WalletInfoCollector {
         if (walletType === WalletType.LEGACY) {
             // legacy wallets have no derived accounts
             await initialAccountsPromise;
+
+            // TODO await onDelete callback and release key
+
             return { walletInfo };
         }
 
@@ -154,6 +158,9 @@ export default class WalletInfoCollector {
 
         // clean up
         if (walletType === WalletType.BIP39 && WalletInfoCollector._keyguardClient) {
+
+            // TODO await onDelete callback and set shouldBeRemoved flag
+
             WalletInfoCollector._keyguardClient.releaseKey(keyId);
         } else if (walletType === WalletType.LEDGER && LedgerApi.currentRequest
             && LedgerApi.currentRequest.type === LedgerApi.RequestType.DERIVE_ACCOUNTS) {

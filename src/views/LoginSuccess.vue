@@ -36,7 +36,7 @@ export default class LoginSuccess extends Vue {
     private state: Loader.State = Loader.State.LOADING;
     private title: string = 'Collecting your addresses';
     private receiptsError: Error | null = null;
-    private result: Account | null = null;
+    private result: Account[] | null = null;
 
     private async mounted() {
         // TODO: Handle import of both a legacy and bip39 key!
@@ -80,7 +80,7 @@ export default class LoginSuccess extends Vue {
 
     private done() {
         if (!this.walletInfos.length) throw new Error('WalletInfo not ready.');
-        this.result = {
+        this.result = [{
             accountId: this.walletInfos[0].id,
             label: this.walletInfos[0].label,
             type: this.walletInfos[0].type,
@@ -89,7 +89,7 @@ export default class LoginSuccess extends Vue {
             addresses: Array.from(this.walletInfos[0].accounts.values())
                 .map((addressInfo) => addressInfo.toAddressType()),
             contracts: this.walletInfos[0].contracts.map((contract) => contract.toContractType()),
-        };
+        }];
 
         if (this.receiptsError) {
             this.title = 'Your addresses may be\nincomplete.';

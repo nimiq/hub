@@ -4,7 +4,7 @@ import { WalletStore } from '@/lib/WalletStore';
 import { WalletInfoEntry, WalletInfo } from '@/lib/WalletInfo';
 import CookieJar from '@/lib/CookieJar';
 import Config from 'config';
-import { ListResult } from './lib/PublicRequestTypes';
+import { Account } from './lib/PublicRequestTypes';
 
 class IFrameApi {
     public static run() {
@@ -16,7 +16,7 @@ class IFrameApi {
         rpcServer.init();
     }
 
-    public static async list(): Promise<ListResult> {
+    public static async list(): Promise<Account[]> {
         let wallets: WalletInfoEntry[];
         if (BrowserDetection.isIOS() || BrowserDetection.isSafari()) {
             wallets = await CookieJar.eat();
