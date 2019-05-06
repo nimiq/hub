@@ -25,6 +25,8 @@ type BasicAccountInfo = {
 export type WalletCollectionResult = {
     walletInfo: WalletInfo,
     receiptsError?: Error, // if there is an incomplete result due to failed requestTxReceipts requests
+    releaseKey: (removeKey: boolean) => void,
+    hasHistoryOrBalance: boolean, // if the wallet has a transaction history or a balance
 };
 
 export default class WalletInfoCollector {
@@ -34,11 +36,12 @@ export default class WalletInfoCollector {
         initialAccounts: BasicAccountInfo[] = [],
         // tslint:disable-next-line:no-empty
         onUpdate: (walletInfo: WalletInfo, currentlyCheckedAccounts: BasicAccountInfo[]) => void = () => {},
-        // TODO onDelete callback
     ): Promise<WalletCollectionResult> {
         // Kick off loading dependencies
         WalletInfoCollector._initializeDependencies(walletType);
 
+        // track activity of the wallet
+        let hasHistoryOrBalance = false;
         // Kick off first round of account derivation
         let startIndex = 0;
         let derivedAccountsPromise: Promise<BasicAccountInfo[]>;
@@ -65,6 +68,7 @@ export default class WalletInfoCollector {
                 && !initialAccounts.some((account) => account.address === potentialVestingOwner.address)) {
                 // make sure a ledger vesting owner account get's added even if it has no balance or transaction history
                 initialAccounts.push(potentialVestingOwner);
+                hasHistoryOrBalance = true;
             }
         }
 
@@ -73,23 +77,33 @@ export default class WalletInfoCollector {
         if (initialAccounts.length > 0) {
             WalletInfoCollector._addAccounts(walletInfo, initialAccounts, undefined);
 
-            if (walletType !== WalletType.LEGACY) {
-                // fetch balances and update again
-                initialAccountsPromise = WalletInfoCollector._getBalances(initialAccounts).then(async (balances) => {
-                    WalletInfoCollector._addAccounts(walletInfo, initialAccounts, balances);
-                    onUpdate(walletInfo, await derivedAccountsPromise);
-                });
-            }
+            // fetch balances and update again
+            // This step could be skipped for WalletType.LEGACY in case there is only one Account to collect info on.
+            // In that case the WalletInfoCollector needs to wait for consensus unnecessarily.
+            // The WalletInfoCollector however has no knowledge about the number of Accounts (yet).
+            initialAccountsPromise = WalletInfoCollector._getBalances(initialAccounts).then(async (balances) => {
+                WalletInfoCollector._addAccounts(walletInfo, initialAccounts, balances);
+                onUpdate(walletInfo, await derivedAccountsPromise);
+            });
+
         }
         onUpdate(walletInfo, await derivedAccountsPromise);
 
-        if (walletType === WalletType.LEGACY) {
+        if (walletType === WalletType.LEGACY && WalletInfoCollector._keyguardClient) {
             // legacy wallets have no derived accounts
             await initialAccountsPromise;
+            const address = initialAccounts[0].address;
+            hasHistoryOrBalance = walletInfo.accounts.get(address)!.balance !== undefined &&
+                             walletInfo.accounts.get(address)!.balance !== 0 ||
+                             (await NetworkClient.Instance.requestTransactionReceipts(address)).length > 0;
 
-            // TODO await onDelete callback and release key
-
-            return { walletInfo };
+            return {
+                walletInfo,
+                releaseKey: (removeKey) => {
+                    WalletInfoCollector._keyguardClient!.releaseKey(keyId, removeKey);
+                },
+                hasHistoryOrBalance,
+            };
         }
 
         // Label Keyguard accounts according to their first identicon background color
@@ -125,6 +139,7 @@ export default class WalletInfoCollector {
                 const balance = balances.get(account.address);
                 if (balance !== undefined && balance !== 0) {
                     foundAddresses.push(account.address);
+                    hasHistoryOrBalance = true;
                 }
             }
 
@@ -137,6 +152,7 @@ export default class WalletInfoCollector {
                         const receipts = await NetworkClient.Instance.requestTransactionReceipts(address);
                         if (receipts.length > 0) {
                             foundAddresses.push(address);
+                            hasHistoryOrBalance = true;
                         }
                     } catch (error) {
                         if (!error.message.startsWith(ERROR_TRANSACTION_RECEIPTS)) {
@@ -157,12 +173,7 @@ export default class WalletInfoCollector {
         } while (foundAccounts.length > 0);
 
         // clean up
-        if (walletType === WalletType.BIP39 && WalletInfoCollector._keyguardClient) {
-
-            // TODO await onDelete callback and set shouldBeRemoved flag
-
-            WalletInfoCollector._keyguardClient.releaseKey(keyId);
-        } else if (walletType === WalletType.LEDGER && LedgerApi.currentRequest
+        if (walletType === WalletType.LEDGER && LedgerApi.currentRequest
             && LedgerApi.currentRequest.type === LedgerApi.RequestType.DERIVE_ACCOUNTS) {
             // next round of derivation still going on although we don't need it
             derivedAccountsPromise.catch(() => undefined); // to avoid uncaught promise rejection for cancel
@@ -174,6 +185,10 @@ export default class WalletInfoCollector {
         return {
             walletInfo,
             receiptsError,
+            releaseKey: (removeKey) => {
+                WalletInfoCollector._keyguardClient!.releaseKey(keyId, removeKey);
+            },
+            hasHistoryOrBalance,
         };
     }
 
@@ -187,7 +202,7 @@ export default class WalletInfoCollector {
             || NetworkClient.createInstance(Config.networkEndpoint).init();
         WalletInfoCollector._networkInitializationPromise
             .catch(() => delete WalletInfoCollector._networkInitializationPromise);
-        if (walletType === WalletType.BIP39) {
+        if (walletType === WalletType.BIP39 || walletType === WalletType.LEGACY) {
             WalletInfoCollector._keyguardClient = WalletInfoCollector._keyguardClient
                 || new KeyguardClient(Config.keyguardEndpoint);
         } else if (walletType === WalletType.LEDGER) {
