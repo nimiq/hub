@@ -23,7 +23,7 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
     {
         id: '0fe6067b138f',
         keyId: 'D+YGexOP0yDjr3Uf6WwO9a2/WjhNbZFLrRwdLfuvz9c=',
-        label: 'Green Account',
+        label: 'Teal Account',
         accounts: new Map<string, AccountInfoEntry>([
             [
                 DUMMY_ADDRESS_HR1,
@@ -180,7 +180,7 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
     {
         id: '0fe6067b138f',
         keyId: '',
-        label: 'Green Account',
+        label: 'Teal Account',
         accounts: new Map<string, AccountInfoEntry>([
             [
                 DUMMY_ADDRESS_HR1,
