@@ -283,11 +283,8 @@ export default class Checkout extends Vue {
     }
 
     private get hasSufficientBalanceAccount(): boolean {
-        return this.wallets.some((wallet: WalletInfo) => {
-            return Array.from(wallet.accounts.values()).some((account: AccountInfo) => {
-                return !!account.balance && account.balance >= this.minBalance;
-            });
-        });
+        return this.wallets.some((wallet: WalletInfo) => [...wallet.accounts.values(), ...wallet.contracts]
+            .some((info: AccountInfo | ContractInfo) => !!info.balance && info.balance >= this.minBalance));
     }
 
     private get shopOrigin() {
