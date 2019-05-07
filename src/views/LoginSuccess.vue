@@ -58,6 +58,8 @@ export default class LoginSuccess extends Vue {
                             keyResult.keyType,
                             keyResult.keyId,
                             keyguardResultAccounts,
+                            undefined,
+                            this.keyguardResult.length > 1,
                         );
 
                         if (collectionResult.receiptsError) {
@@ -83,22 +85,22 @@ export default class LoginSuccess extends Vue {
 
         // In case there is only one returned Account it is always added.
         // WalletType.LEDGER always returns one Account, hence does not need special treatment in the other cases.
-        let condition: (collectionResult: WalletCollectionResult) => boolean = (collectionResult) => true;
+        let keepWalletCondition: (collectionResult: WalletCollectionResult) => boolean = (collectionResult) => true;
         if (collectionResults.length > 1) {
             if (collectionResults.some((walletInfo) => walletInfo.hasHistoryOrBalance)) {
                 // In case there is more than one account returned and at least one saw activity in the past
                 // add the accounts with activity while discarding the others.
-                condition = (collectionResult) => collectionResult.hasHistoryOrBalance;
+                keepWalletCondition = (collectionResult) => collectionResult.hasHistoryOrBalance;
             } else {
                 // In case of more than one returned account but none saw activity in the past
                 // look for the BIP39 account and add it while discarding the others.
-                condition = (collectionResult) => collectionResult.walletInfo.type === WalletType.BIP39;
+                keepWalletCondition = (collectionResult) => collectionResult.walletInfo.type === WalletType.BIP39;
             }
         }
 
         await Promise.all (
             collectionResults.map( async (collectionResult, index) => {
-                if (condition(collectionResult)) {
+                if (keepWalletCondition(collectionResult)) {
                     await WalletStore.Instance.put(collectionResult.walletInfo);
                     this.walletInfos.push(collectionResult.walletInfo);
                     collectionResult.releaseKey(false);

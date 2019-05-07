@@ -36,6 +36,7 @@ export default class WalletInfoCollector {
         initialAccounts: BasicAccountInfo[] = [],
         // tslint:disable-next-line:no-empty
         onUpdate: (walletInfo: WalletInfo, currentlyCheckedAccounts: BasicAccountInfo[]) => void = () => {},
+        checkLegacyActivity = true,
     ): Promise<WalletCollectionResult> {
         // Kick off loading dependencies
         WalletInfoCollector._initializeDependencies(walletType);
@@ -78,14 +79,13 @@ export default class WalletInfoCollector {
             WalletInfoCollector._addAccounts(walletInfo, initialAccounts, undefined);
 
             // fetch balances and update again
-            // This step could be skipped for WalletType.LEGACY in case there is only one Account to collect info on.
-            // In that case the WalletInfoCollector needs to wait for consensus unnecessarily.
-            // The WalletInfoCollector however has no knowledge about the number of Accounts (yet).
-            initialAccountsPromise = WalletInfoCollector._getBalances(initialAccounts).then(async (balances) => {
-                WalletInfoCollector._addAccounts(walletInfo, initialAccounts, balances);
-                onUpdate(walletInfo, await derivedAccountsPromise);
-            });
-
+            // for legacy accounts only fetch balance if the corresponding flag is set
+            if (walletType !== WalletType.LEGACY || checkLegacyActivity) {
+                initialAccountsPromise = WalletInfoCollector._getBalances(initialAccounts).then(async (balances) => {
+                    WalletInfoCollector._addAccounts(walletInfo, initialAccounts, balances);
+                    onUpdate(walletInfo, await derivedAccountsPromise);
+                });
+            }
         }
         onUpdate(walletInfo, await derivedAccountsPromise);
 
@@ -93,9 +93,12 @@ export default class WalletInfoCollector {
             // legacy wallets have no derived accounts
             await initialAccountsPromise;
             const address = initialAccounts[0].address;
-            hasHistoryOrBalance = walletInfo.accounts.get(address)!.balance !== undefined &&
-                             walletInfo.accounts.get(address)!.balance !== 0 ||
-                             (await NetworkClient.Instance.requestTransactionReceipts(address)).length > 0;
+
+            if (checkLegacyActivity) {
+                hasHistoryOrBalance = walletInfo.accounts.get(address)!.balance !== undefined &&
+                    walletInfo.accounts.get(address)!.balance !== 0 ||
+                    (await NetworkClient.Instance.requestTransactionReceipts(address)).length > 0;
+            }
 
             return {
                 walletInfo,
