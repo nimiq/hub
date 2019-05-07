@@ -31,7 +31,7 @@ export default class SignTransactionSuccess extends Vue {
         const tx = await (this.$refs.network as Network).createTx(Object.assign({
             signerPubKey: this.keyguardResult.publicKey,
         }, this.keyguardResult, this.keyguardRequest));
-        const result: SignedTransaction = (this.$refs.network as Network).makeSignTransactionResult(tx);
+        const result: SignedTransaction = await (this.$refs.network as Network).makeSignTransactionResult(tx);
 
         setTimeout(() => this.$rpc.resolve(result), Loader.SUCCESS_REDIRECT_DELAY);
     }

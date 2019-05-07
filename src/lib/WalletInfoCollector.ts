@@ -76,7 +76,8 @@ export default class WalletInfoCollector {
                 // fetch balances and update again
                 initialAccountsPromise = WalletInfoCollector._getBalances(initialAccounts).then(async (balances) => {
                     WalletInfoCollector._addAccounts(walletInfo, initialAccounts, balances);
-                    onUpdate(walletInfo, await derivedAccountsPromise);
+                    // using catch here to ignore cancellation of ledger derivation in the clean up step of this method
+                    onUpdate(walletInfo, await derivedAccountsPromise.catch(() => []));
                 });
             }
         }
@@ -159,7 +160,6 @@ export default class WalletInfoCollector {
             && LedgerApi.currentRequest.type === LedgerApi.RequestType.DERIVE_ACCOUNTS) {
             // next round of derivation still going on although we don't need it
             derivedAccountsPromise.catch(() => undefined); // to avoid uncaught promise rejection for cancel
-            derivedAccountsPromise = Promise.resolve([]); // for if the initial balance onUpdate did not fire yet
             LedgerApi.currentRequest.cancel();
         }
 

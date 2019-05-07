@@ -115,7 +115,9 @@ class Network extends Vue {
         }
     }
 
-    public makeSignTransactionResult(tx: Nimiq.Transaction): SignedTransaction {
+    public async makeSignTransactionResult(tx: Nimiq.Transaction): Promise<SignedTransaction> {
+        await this._loadNimiq(); // needed for hash computation
+
         const proof = Nimiq.SignatureProof.unserialize(new Nimiq.SerialBuffer(tx.proof));
 
         const result: SignedTransaction = {
@@ -150,7 +152,7 @@ class Network extends Vue {
      * fires its 'transaction-relayed' event for that transaction.
      */
     public async sendToNetwork(tx: Nimiq.Transaction): Promise<SignedTransaction> {
-        const signedTx = this.makeSignTransactionResult(tx);
+        const signedTx = await this.makeSignTransactionResult(tx);
         const client = await this._getNetworkClient();
 
         const txObjToSend = Object.assign({}, signedTx.raw, {

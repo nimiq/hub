@@ -325,17 +325,13 @@ class LedgerApi {
         }
 
         // prepare tx outside of request to avoid that an error would result in an endless loop in _callLedger
-        const [senderPubKeyBytes] = await Promise.all([
+        const [signerPubKeyBytes] = await Promise.all([
             LedgerApi.getPublicKey(keyPath, walletId),
-            Nimiq.WasmHelper.doImportBrowser() // wasm needed for toAddress
+            Nimiq.WasmHelper.doImportBrowser() // wasm needed for toAddress (also in BasicTransaction constructor)
                 .catch((e) => LedgerApi._throwError(LedgerApi.ErrorType.FAILED_LOADING_DEPENDENCIES, e)),
         ]);
-        const senderPubKey = new Nimiq.PublicKey(senderPubKeyBytes);
-        const senderAddress = senderPubKey.toAddress();
-        if (!senderAddress.equals(transaction.sender)) {
-            LedgerApi._throwError(LedgerApi.ErrorType.REQUEST_ASSERTION_FAILED,
-                'Sender Address doesn\'t match this ledger address', request);
-        }
+        const signerPubKey = new Nimiq.PublicKey(signerPubKeyBytes);
+
         const senderType = transaction.senderType !== undefined && transaction.senderType !== null
             ? transaction.senderType
             : Nimiq.Account.Type.BASIC;
@@ -368,11 +364,11 @@ class LedgerApi {
             || flags !== Nimiq.Transaction.Flag.NONE
         ) {
             const extraData = transaction.extraData ? transaction.extraData : new Uint8Array(0);
-            nimiqTx = new Nimiq.ExtendedTransaction(senderAddress, senderType, transaction.recipient, recipientType,
-                transaction.value, fee, transaction.validityStartHeight, flags, extraData, undefined,
+            nimiqTx = new Nimiq.ExtendedTransaction(transaction.sender, senderType, transaction.recipient,
+                recipientType, transaction.value, fee, transaction.validityStartHeight, flags, extraData, undefined,
                 networkId);
         } else {
-            nimiqTx = new Nimiq.BasicTransaction(senderPubKey, transaction.recipient, transaction.value, fee,
+            nimiqTx = new Nimiq.BasicTransaction(signerPubKey, transaction.recipient, transaction.value, fee,
                 transaction.validityStartHeight, undefined, networkId);
         }
         requestParams.transactionToSign = nimiqTx;
@@ -383,7 +379,7 @@ class LedgerApi {
         if (nimiqTx instanceof Nimiq.BasicTransaction) {
             nimiqTx.signature = signature;
         } else {
-            nimiqTx.proof = Nimiq.SignatureProof.singleSig(senderPubKey, signature).serialize();
+            nimiqTx.proof = Nimiq.SignatureProof.singleSig(signerPubKey, signature).serialize();
         }
 
         return nimiqTx;
