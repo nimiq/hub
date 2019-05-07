@@ -99,6 +99,14 @@ export default class SignMessage extends Vue {
             return;
         }
 
+        if (this.showAccountSelector) {
+            // set active account if user selected the account himself
+            this.$setActiveAccount({
+                walletId: walletInfo.id,
+                userFriendlyAddress: accountInfo.userFriendlyAddress,
+            });
+        }
+
         // Forward to Keyguard
         const request: KeyguardClient.SignMessageRequest = {
             appName: this.request.appName,

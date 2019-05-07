@@ -212,13 +212,13 @@ export default class Checkout extends Vue {
                 alert('HTLC contracts are not yet supported for checkout');
                 return;
             }
-            accountInfo = walletInfo.accounts.get(contractInfo.owner.toUserFriendlyAddress());
+            accountInfo = walletInfo.accounts.get(contractInfo.owner.toUserFriendlyAddress())!;
         }
 
         // FIXME: Also handle active account we get from store
         this.$setActiveAccount({
             walletId: walletInfo.id,
-            userFriendlyAddress: accountInfo!.userFriendlyAddress,
+            userFriendlyAddress: (contractInfo || accountInfo).userFriendlyAddress,
         });
 
         this.proceedToTransactionSigning(walletInfo, accountInfo!, contractInfo);
