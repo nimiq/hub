@@ -16,11 +16,6 @@ if ('serviceWorker' in navigator) {
     });
 }
 
-// Redirect to Safe (default) if referrer is empty
-if (!document.referrer) {
-    location.href = Config.redirectTarget;
-}
-
 Vue.config.productionTip = false;
 
 // Set up Identicon SVG file path
