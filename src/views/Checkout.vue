@@ -202,30 +202,19 @@ export default class Checkout extends Vue {
     }
 
     private setAccountOrContract(walletId: string, address: string) {
-        const walletInfo = this.wallets.find((wallet: WalletInfo) => wallet.id === walletId)!;
-        let accountInfo = walletInfo.accounts.get(address);
-        let contractInfo: ContractInfo | undefined;
-        if (!accountInfo) {
-            // Search contracts
-            contractInfo = walletInfo.findContractByAddress(Nimiq.Address.fromUserFriendlyAddress(address))!;
-            if (contractInfo.type === Nimiq.Account.Type.HTLC) {
-                alert('HTLC contracts are not yet supported for checkout');
-                return;
-            }
-            accountInfo = walletInfo.accounts.get(contractInfo.owner.toUserFriendlyAddress())!;
-        }
+        const nimiqAddress = Nimiq.Address.fromUserFriendlyAddress(address);
+        const senderAccount = this.wallets.find((wallet: WalletInfo) => wallet.id === walletId)!;
+        const senderContract = senderAccount.findContractByAddress(nimiqAddress);
+        const signer = senderAccount.findSignerForAddress(nimiqAddress)!;
 
         // FIXME: Also handle active account we get from store
         this.$setActiveAccount({
-            walletId: walletInfo.id,
-            userFriendlyAddress: (contractInfo || accountInfo).userFriendlyAddress,
+            walletId: senderAccount.id,
+            userFriendlyAddress: (senderContract || signer).userFriendlyAddress,
         });
 
-        this.proceedToTransactionSigning(walletInfo, accountInfo!, contractInfo);
-    }
-
-    private proceedToTransactionSigning(walletInfo: WalletInfo, accountInfo: AccountInfo, contractInfo?: ContractInfo) {
-        switch (walletInfo.type) {
+        // proceed to transaction signing
+        switch (senderAccount.type) {
             case WalletType.LEDGER:
                 this.$rpc.routerPush(`${RequestType.SIGN_TRANSACTION}-ledger`);
                 return;
@@ -244,13 +233,13 @@ export default class Checkout extends Vue {
                     appName: this.request.appName,
                     shopLogoUrl: this.request.shopLogoUrl,
 
-                    keyId: walletInfo.keyId,
-                    keyPath: accountInfo!.path,
-                    keyLabel: walletInfo.label,
+                    keyId: senderAccount.keyId,
+                    keyPath: signer!.path,
+                    keyLabel: senderAccount.label,
 
-                    sender: (contractInfo || accountInfo!).address.serialize(),
-                    senderType: contractInfo ? contractInfo.type : Nimiq.Account.Type.BASIC,
-                    senderLabel: (contractInfo || accountInfo!).label,
+                    sender: (senderContract || signer).address.serialize(),
+                    senderType: senderContract ? senderContract.type : Nimiq.Account.Type.BASIC,
+                    senderLabel: (senderContract || signer).label,
                     recipient: this.request.recipient.serialize(),
                     recipientType: this.request.recipientType,
                     // recipientLabel: '', // Checkout is using the shopOrigin instead

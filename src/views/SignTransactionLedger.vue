@@ -112,16 +112,16 @@ export default class SignTransactionLedger extends Vue {
     private shownAccountDetails: AccountDetailsData | null = null;
 
     private created() {
-        let senderAddress: string;
+        let senderUserFriendlyAddress: string;
         if (this.request.kind === RequestType.SIGN_TRANSACTION) {
             // direct sign transaction request invocation
             const signTransactionRequest = this.request as ParsedSignTransactionRequest;
-            senderAddress = signTransactionRequest.sender.toUserFriendlyAddress();
+            senderUserFriendlyAddress = signTransactionRequest.sender.toUserFriendlyAddress();
 
-            const recipientAddress = signTransactionRequest.recipient.toUserFriendlyAddress();
+            const recipientUserFriendlyAddress = signTransactionRequest.recipient.toUserFriendlyAddress();
             this.recipientDetails = {
-                address: recipientAddress,
-                label: recipientAddress,
+                address: recipientUserFriendlyAddress,
+                label: recipientUserFriendlyAddress,
             };
         } else if (this.request.kind === RequestType.CHECKOUT) {
             // coming from checkout
@@ -129,7 +129,7 @@ export default class SignTransactionLedger extends Vue {
             const $subtitle = document.querySelector('.logo .logo-subtitle')!;
             $subtitle.textContent = 'Checkout'; // reapply the checkout subtitle in case the page was reloaded
 
-            senderAddress = this.$store.state.activeUserFriendlyAddress;
+            senderUserFriendlyAddress = this.$store.state.activeUserFriendlyAddress;
 
             this.recipientDetails = {
                 address: checkoutRequest.recipient.toUserFriendlyAddress(),
@@ -141,19 +141,17 @@ export default class SignTransactionLedger extends Vue {
             return;
         }
 
-        let senderAccountInfo, senderAddressOrContractInfo; // tslint:disable-line:one-variable-per-declaration
-        try {
-            ({ senderAccountInfo, senderAddressOrContractInfo } = this._determineSenderAndSignerInfo(senderAddress));
-        } catch (e) {
-            this.$rpc.reject(new Error(e.message));
-            return;
-        }
+        // we know that these exist as their existence was already checked in RpcApi.ts
+        const senderAddress = Nimiq.Address.fromUserFriendlyAddress(senderUserFriendlyAddress);
+        const senderAccount = this.findWalletByAddress(senderUserFriendlyAddress, true)!;
+        const senderContract = senderAccount.findContractByAddress(senderAddress);
+        const signer = senderAccount.findSignerForAddress(senderAddress)!;
 
         this.senderDetails = {
-            address: senderAddress,
-            label: senderAddressOrContractInfo.label || senderAddress,
-            walletLabel: senderAccountInfo.label,
-            balance: senderAddressOrContractInfo.balance,
+            address: senderUserFriendlyAddress,
+            label: (senderContract || signer).label || senderUserFriendlyAddress,
+            walletLabel: senderAccount.label,
+            balance: (senderContract || signer).balance,
         };
     }
 
@@ -176,21 +174,16 @@ export default class SignTransactionLedger extends Vue {
             return;
         }
 
-        // tslint:disable-next-line:one-variable-per-declaration
-        let senderAccountInfo, senderAddressOrContractInfo, signerAddressInfo;
-        try {
-            ({ senderAccountInfo, senderAddressOrContractInfo, signerAddressInfo }
-                = this._determineSenderAndSignerInfo(this.senderDetails.address));
-        } catch (e) {
-            // already handled in created
-            return;
-        }
+        const senderAddress = Nimiq.Address.fromUserFriendlyAddress(this.senderDetails.address);
+        const senderAccount = this.findWalletByAddress(this.senderDetails.address, true)!;
+        const senderContract = senderAccount.findContractByAddress(senderAddress);
+        const signer = senderAccount.findSignerForAddress(senderAddress)!;
 
         let signedTransaction;
         try {
             signedTransaction = await LedgerApi.signTransaction({
-                sender: senderAddressOrContractInfo.address,
-                senderType: (senderAddressOrContractInfo as ContractInfo).type || Nimiq.Account.Type.BASIC,
+                sender: (senderContract || signer).address,
+                senderType: senderContract ? senderContract.type : Nimiq.Account.Type.BASIC,
                 recipient: this.request.recipient,
                 value: this.request.value,
                 fee: this.request.fee || 0,
@@ -198,7 +191,7 @@ export default class SignTransactionLedger extends Vue {
                 network: Config.network,
                 extraData: this.request.data,
                 flags: this.request.flags,
-            }, signerAddressInfo.path, senderAccountInfo.id);
+            }, signer.path, senderAccount.id);
         } catch (e) {
             // If cancelled, handle the exception. Otherwise just keep the error message displayed in ledger ui.
             if (e.message.toLowerCase().indexOf('cancelled') !== -1) {
@@ -258,31 +251,6 @@ export default class SignTransactionLedger extends Vue {
             default:
                 return '';
         }
-    }
-
-    private _determineSenderAndSignerInfo(senderAddress: string): {
-        senderAccountInfo: WalletInfo,
-        senderAddressOrContractInfo: AccountInfo | ContractInfo,
-        signerAddressInfo: AccountInfo,
-    } {
-        // we can assume that these addresses / accounts exist as their existence is already checked in RpcApi.ts
-        const senderAccountInfo = this.findWalletByAddress(senderAddress, true)!;
-        let senderAddressOrContractInfo: AccountInfo | ContractInfo | undefined
-            = senderAccountInfo.accounts.get(senderAddress);
-        let signerAddressInfo;
-        if (senderAddressOrContractInfo) {
-            signerAddressInfo = senderAddressOrContractInfo;
-        } else {
-            // sender is a contract
-            senderAddressOrContractInfo = senderAccountInfo
-                .findContractByAddress(Nimiq.Address.fromUserFriendlyAddress(senderAddress))!;
-            if (senderAddressOrContractInfo.type !== Nimiq.Account.Type.VESTING) {
-                throw new Error('Currently only Vesting contracts are supported');
-            }
-            signerAddressInfo = senderAccountInfo.accounts
-                .get(senderAddressOrContractInfo.owner.toUserFriendlyAddress())!;
-        }
-        return { senderAccountInfo, senderAddressOrContractInfo, signerAddressInfo };
     }
 
     private _back() {
