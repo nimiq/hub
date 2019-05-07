@@ -12,21 +12,18 @@
 </head>
 
 <body>
-    <noscript>
-        <strong>We're sorry but accounts doesn't work properly without JavaScript enabled. Please enable it to
-            continue.</strong>
-    </noscript>
     <div id="app">
         <header class="logo">
             <span class="nq-icon nimiq-logo"></span>
             <span class="logo-wordmark">Nimiq</span>
             <span class="logo-subtitle"></span>
         </header>
-        <div class="loading">
+        <div class="loading hide-on-browser-warning">
             <div class="loading-animation"></div>
             <h2>Loading, hold on</h2>
         </div>
     </div>
+    <%= htmlWebpackPlugin.options.browserWarning %>
     <!-- built files will be auto injected -->
 </body>
 

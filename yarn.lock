@@ -680,6 +680,11 @@
     call-me-maybe "^1.0.1"
     glob-to-regexp "^0.3.0"
 
+"@nimiq/browser-warning@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@nimiq/browser-warning/-/browser-warning-0.2.0.tgz#336acff78e8b8b72c606e45dce4a60251fcf4371"
+  integrity sha512-dZZsfV0xTtlgIQ5V6GkJuQpfElWKL/CdXFFw5YYQIGwx5iV2507amMUsyPhBNwjynlKxkjsrTTTHNz/KEYBN+Q==
+
 "@nimiq/core-types@^1.0.1":
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/@nimiq/core-types/-/core-types-1.0.1.tgz#344cfff6071bf12cfb557f82d586d42cae779797"

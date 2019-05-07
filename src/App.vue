@@ -5,7 +5,7 @@
             <span class="logo-wordmark">Nimiq</span>
             <span class="logo-subtitle"></span>
         </header>
-        <div v-if="!isRequestLoaded" class="loading">
+        <div v-if="!isRequestLoaded" class="loading hide-on-browser-warning">
             <div class="loading-animation"></div>
             <h2>Loading, hold on</h2>
         </div>
