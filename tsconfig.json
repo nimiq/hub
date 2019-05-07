@@ -19,7 +19,7 @@
         "src/*"
       ],
       "config": [
-        "config.local.ts"
+        "src/config/config.local.ts"
       ]
     },
     "lib": [
@@ -32,7 +32,6 @@
   "include": [
     "types/Nimiq.d.ts",
     "types/KeyguardRequest.d.ts",
-    "config.d.ts",
     "src/**/*.ts",
     "src/**/*.tsx",
     "src/**/*.vue",
