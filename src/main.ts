@@ -4,7 +4,6 @@ import router from './router';
 import store from './store';
 import staticStore from '@/lib/StaticStore';
 import RpcApi from '@/lib/RpcApi';
-import Config from 'config';
 import VueRaven from 'vue-raven'; // Sentry.io SDK
 
 // Register service worker if necessary (and possible).
