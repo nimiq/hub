@@ -18,7 +18,7 @@ import { Component, Vue } from 'vue-property-decorator';
 import { ParsedBasicRequest } from '../lib/RequestTypes';
 import { Account } from '../lib/PublicRequestTypes';
 import { State } from 'vuex-class';
-import { WalletInfo, WalletInfoEntry, WalletType } from '../lib/WalletInfo';
+import { WalletInfo, WalletType } from '../lib/WalletInfo';
 import { WalletStore } from '@/lib/WalletStore';
 import { Static } from '@/lib/StaticStore';
 import { SmallPage } from '@nimiq/vue-components';
@@ -84,13 +84,12 @@ export default class LoginSuccess extends Vue {
         );
 
         // In case there is only one returned Account it is always added.
-        // WalletType.LEDGER always returns one Account, hence does not need special treatment in the other cases.
         let keepWalletCondition: (collectionResult: WalletCollectionResult) => boolean = (collectionResult) => true;
         if (collectionResults.length > 1) {
-            if (collectionResults.some((walletInfo) => walletInfo.hasHistoryOrBalance)) {
+            if (collectionResults.some((walletInfo) => walletInfo.hasActivity)) {
                 // In case there is more than one account returned and at least one saw activity in the past
                 // add the accounts with activity while discarding the others.
-                keepWalletCondition = (collectionResult) => collectionResult.hasHistoryOrBalance;
+                keepWalletCondition = (collectionResult) => collectionResult.hasActivity;
             } else {
                 // In case of more than one returned account but none saw activity in the past
                 // look for the BIP39 account and add it while discarding the others.
@@ -99,13 +98,13 @@ export default class LoginSuccess extends Vue {
         }
 
         await Promise.all (
-            collectionResults.map( async (collectionResult, index) => {
+            collectionResults.map( async (collectionResult) => {
                 if (keepWalletCondition(collectionResult)) {
                     await WalletStore.Instance.put(collectionResult.walletInfo);
                     this.walletInfos.push(collectionResult.walletInfo);
-                    collectionResult.releaseKey(false);
+                    await collectionResult.releaseKey(false);
                 } else {
-                    collectionResult.releaseKey(true);
+                    await collectionResult.releaseKey(true);
                 }
             }),
         );
@@ -115,9 +114,8 @@ export default class LoginSuccess extends Vue {
 
     private done() {
         if (!this.walletInfos.length) throw new Error('WalletInfo not ready.');
-        this.result = [];
-        for (const walletInfo of this.walletInfos) {
-            this.result.push({
+
+        this.result = this.walletInfos.map((walletInfo) => ({
                 accountId: walletInfo.id,
                 label: walletInfo.label,
                 type: walletInfo.type,
@@ -126,8 +124,7 @@ export default class LoginSuccess extends Vue {
                 addresses: Array.from(walletInfo.accounts.values())
                     .map((addressInfo) => addressInfo.toAddressType()),
                 contracts: walletInfo.contracts.map((contract) => contract.toContractType()),
-            });
-        }
+        }));
 
         if (this.receiptsError) {
             this.title = 'Your addresses may be\nincomplete.';

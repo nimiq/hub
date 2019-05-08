@@ -26,7 +26,8 @@ export type WalletCollectionResult = {
     walletInfo: WalletInfo,
     receiptsError?: Error, // if there is an incomplete result due to failed requestTxReceipts requests
     releaseKey: (removeKey: boolean) => void,
-    hasHistoryOrBalance: boolean, // if the wallet has a transaction history or a balance
+    hasActivity: boolean, // whether the wallet has a transaction history or a balance or owns a contract
+
 };
 
 export default class WalletInfoCollector {
@@ -39,10 +40,10 @@ export default class WalletInfoCollector {
         checkLegacyActivity = true,
     ): Promise<WalletCollectionResult> {
         // Kick off loading dependencies
-        WalletInfoCollector._initializeDependencies(walletType);
+        WalletInfoCollector._initializeDependencies(walletType, checkLegacyActivity);
 
         // track activity of the wallet
-        let hasHistoryOrBalance = false;
+        let hasActivity = false;
         // Kick off first round of account derivation
         let startIndex = 0;
         let derivedAccountsPromise: Promise<BasicAccountInfo[]>;
@@ -65,11 +66,13 @@ export default class WalletInfoCollector {
             const contracts = await WalletInfoCollector._getGenesisVestingContractsForAddress(
                 Nimiq.Address.fromUserFriendlyAddress(potentialVestingOwner.address));
             WalletInfoCollector._addContracts(walletInfo, contracts);
-            if (contracts.length > 0
-                && !initialAccounts.some((account) => account.address === potentialVestingOwner.address)) {
-                // make sure a ledger vesting owner account get's added even if it has no balance or transaction history
-                initialAccounts.push(potentialVestingOwner);
-                hasHistoryOrBalance = true;
+            if (contracts.length > 0) {
+                if (!initialAccounts.some((account) => account.address === potentialVestingOwner.address)) {
+                    // make sure a ledger vesting owner account get's added
+                    // even if it has no balance or transaction history
+                    initialAccounts.push(potentialVestingOwner);
+                }
+                hasActivity = true;
             }
         }
 
@@ -89,23 +92,23 @@ export default class WalletInfoCollector {
         }
         onUpdate(walletInfo, await derivedAccountsPromise);
 
-        if (walletType === WalletType.LEGACY && WalletInfoCollector._keyguardClient) {
+        if (walletType === WalletType.LEGACY) {
             // legacy wallets have no derived accounts
             await initialAccountsPromise;
             const address = initialAccounts[0].address;
 
             if (checkLegacyActivity) {
-                hasHistoryOrBalance = walletInfo.accounts.get(address)!.balance !== undefined &&
-                    walletInfo.accounts.get(address)!.balance !== 0 ||
+                hasActivity = hasActivity ||
+                    !!walletInfo.accounts.get(address)!.balance ||
                     (await NetworkClient.Instance.requestTransactionReceipts(address)).length > 0;
             }
 
             return {
                 walletInfo,
-                releaseKey: (removeKey) => {
-                    WalletInfoCollector._keyguardClient!.releaseKey(keyId, removeKey);
+                releaseKey: async (removeKey) => {
+                    await WalletInfoCollector._keyguardClient!.releaseKey(keyId, removeKey);
                 },
-                hasHistoryOrBalance,
+                hasActivity,
             };
         }
 
@@ -142,7 +145,7 @@ export default class WalletInfoCollector {
                 const balance = balances.get(account.address);
                 if (balance !== undefined && balance !== 0) {
                     foundAddresses.push(account.address);
-                    hasHistoryOrBalance = true;
+                    hasActivity = true;
                 }
             }
 
@@ -155,7 +158,7 @@ export default class WalletInfoCollector {
                         const receipts = await NetworkClient.Instance.requestTransactionReceipts(address);
                         if (receipts.length > 0) {
                             foundAddresses.push(address);
-                            hasHistoryOrBalance = true;
+                            hasActivity = true;
                         }
                     } catch (error) {
                         if (!error.message.startsWith(ERROR_TRANSACTION_RECEIPTS)) {
@@ -191,7 +194,7 @@ export default class WalletInfoCollector {
             releaseKey: (removeKey) => {
                 WalletInfoCollector._keyguardClient!.releaseKey(keyId, removeKey);
             },
-            hasHistoryOrBalance,
+            hasActivity,
         };
     }
 
@@ -199,13 +202,13 @@ export default class WalletInfoCollector {
     private static _networkInitializationPromise?: Promise<void>;
     private static _wasmInitializationPromise?: Promise<void>;
 
-    private static _initializeDependencies(walletType: WalletType): void {
+    private static _initializeDependencies(walletType: WalletType, checkLegacyActivity: boolean): void {
         WalletInfoCollector._networkInitializationPromise =
             WalletInfoCollector._networkInitializationPromise
             || NetworkClient.createInstance(Config.networkEndpoint).init();
         WalletInfoCollector._networkInitializationPromise
             .catch(() => delete WalletInfoCollector._networkInitializationPromise);
-        if (walletType === WalletType.BIP39 || walletType === WalletType.LEGACY) {
+        if (walletType === WalletType.BIP39 || (walletType === WalletType.LEGACY && checkLegacyActivity)) {
             WalletInfoCollector._keyguardClient = WalletInfoCollector._keyguardClient
                 || new KeyguardClient(Config.keyguardEndpoint);
         } else if (walletType === WalletType.LEDGER) {
