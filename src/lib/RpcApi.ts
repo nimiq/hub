@@ -6,7 +6,7 @@ import Router from 'vue-router';
 import { ParsedSimpleRequest, RequestType } from './RequestTypes';
 import { RequestParser } from './RequestParser';
 import { RpcRequest, RpcResult } from './PublicRequestTypes';
-import { KeyguardCommand, KeyguardClient } from '@nimiq/keyguard-client';
+import { KeyguardCommand, KeyguardClient, Errors } from '@nimiq/keyguard-client';
 import { keyguardResponseRouter } from '@/router';
 import { StaticStore } from '@/lib/StaticStore';
 import { WalletStore } from './WalletStore';
@@ -58,8 +58,11 @@ export default class RpcApi {
     }
 
     public start() {
-        this._server.init();
+        // Redirect to Safe (default) if there is no client.
+        // This happens if user clicks on a link to accounts.nimiq.com.
+        const onClientTimeout = () => { if (!this._store.state.keyguardResult) location.href = Config.redirectTarget; };
         this._keyguardClient.init().catch(console.error); // TODO: Provide better error handling here
+        this._server.init(onClientTimeout);
     }
 
     public createKeyguardClient() {
@@ -83,8 +86,9 @@ export default class RpcApi {
     }
 
     public reject(error: Error) {
-        const ignoredErrors = [ ERROR_CANCELED, 'Request aborted' ];
-        if (ignoredErrors.indexOf(error.message) < 0) {
+        const ignoredErrorTypes = [ Errors.Types.INVALID_REQUEST.toString() ];
+        const ignoredErrors = [ ERROR_CANCELED, 'Request aborted', 'Account ID not found', 'Address not found' ];
+        if (ignoredErrorTypes.indexOf(error.name) < 0 && ignoredErrors.indexOf(error.message) < 0) {
             if (window.location.origin === 'https://accounts.nimiq-testnet.com') {
                 Raven.captureException(error);
             }

@@ -23,7 +23,7 @@ const configureWebpack = {
     // Resolve config for yarn build
     resolve: {
         alias: {
-            config: path.join(__dirname, `config.${buildName}.ts`)
+            config: path.join(__dirname, `src/config/config.${buildName}.ts`)
         }
     },
     // Fix sourcemaps (https://www.mistergoodcat.com/post/the-joy-that-is-source-maps-with-vuejs-and-typescript)
