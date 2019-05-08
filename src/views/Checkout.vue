@@ -127,7 +127,7 @@ export default class Checkout extends Vue {
                 const balance = balances.get(senderAddress);
                 if (balance && Nimiq.Policy.coinsToSatoshis(balance) >= this.minBalance) {
                     // Forward to Keyguard, skipping account selection
-                    this.setAccountOrContract(wallet.id, senderAddress);
+                    this.setAccountOrContract(wallet.id, senderAddress, true);
                     return;
                 } else {
                     errorMsg = 'Address does not have sufficient balance';
@@ -211,7 +211,7 @@ export default class Checkout extends Vue {
         this.height = head.height;
     }
 
-    private setAccountOrContract(walletId: string, address: string) {
+    private setAccountOrContract(walletId: string, address: string, isFromRequest = false) {
         const nimiqAddress = Nimiq.Address.fromUserFriendlyAddress(address);
         const senderAccount = this.wallets.find((wallet: WalletInfo) => wallet.id === walletId)!;
         const senderContract = senderAccount.findContractByAddress(nimiqAddress);
@@ -261,7 +261,7 @@ export default class Checkout extends Vue {
                 };
 
                 staticStore.keyguardRequest = request;
-                const client = this.$rpc.createKeyguardClient();
+                const client = this.$rpc.createKeyguardClient(isFromRequest);
                 client.signTransaction(request);
                 return;
         }

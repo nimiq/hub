@@ -116,7 +116,7 @@ export default class SignMessage extends Vue {
 
         staticStore.keyguardRequest = request;
 
-        const client = this.$rpc.createKeyguardClient();
+        const client = this.$rpc.createKeyguardClient(isFromRequest);
         client.signMessage(request);
     }
 

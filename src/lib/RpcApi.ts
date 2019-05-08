@@ -64,10 +64,12 @@ export default class RpcApi {
     }
 
     public start() {
+        this._keyguardClient.init().catch(console.error); // TODO: Provide better error handling here
+        if (this._store.state.keyguardResult) return;
+
         // Redirect to Safe (default) if there is no client.
         // This happens if user clicks on a link to accounts.nimiq.com.
-        const onClientTimeout = () => { if (!this._store.state.keyguardResult) location.href = Config.redirectTarget; };
-        this._keyguardClient.init().catch(console.error); // TODO: Provide better error handling here
+        const onClientTimeout = () => { location.href = Config.redirectTarget; };
         this._server.init(onClientTimeout);
     }
 
