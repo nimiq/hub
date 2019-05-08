@@ -211,7 +211,7 @@ body {
         url(https://fonts.gstatic.com/l/font?kit=N0bX2SlFPv1weGeLZDtQIuz3qebjUqV8Mgu8fs9pJrQFa-Y9gflcyByir1eEVUHu28s&skey=bb26c8d476ab3f05&v=v6) format('woff');
 }
 
-.browser-warning-container {
+#browser-warning-container {
     position: absolute;
     width: 100%;
     height: calc(100% - 6.5rem); /* 6.5rem for header */

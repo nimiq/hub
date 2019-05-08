@@ -13,7 +13,7 @@
         "postinstall": "cd client && yarn"
     },
     "dependencies": {
-        "@nimiq/browser-warning": "^0.2.0",
+        "@nimiq/browser-warning": "^0.3.0",
         "@nimiq/iqons": "^1.4.4",
         "@nimiq/keyguard-client": "^0.4.3",
         "@nimiq/ledgerjs": "https://github.com/nimiq/ledger-api.git",
