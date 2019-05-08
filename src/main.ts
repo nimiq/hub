@@ -6,6 +6,10 @@ import staticStore from '@/lib/StaticStore';
 import RpcApi from '@/lib/RpcApi';
 import VueRaven from 'vue-raven'; // Sentry.io SDK
 
+if (window.hasBrowserWarning) {
+    throw new Error('Exeution aborted due to browser warning');
+}
+
 // Register service worker if necessary (and possible).
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/ServiceWorker.js', {

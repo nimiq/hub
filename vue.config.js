@@ -1,6 +1,8 @@
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const WriteFileWebpackPlugin = require('write-file-webpack-plugin');
 const path = require('path');
+const fs = require('fs');
+const browserWarning = fs.readFileSync(__dirname + '/node_modules/@nimiq/browser-warning/dist/browser-warning.html.template');
 
 const buildName = process.env.build
     ? process.env.build
@@ -12,7 +14,10 @@ console.log('Building for:', buildName);
 
 const configureWebpack = {
     plugins: [
-        new CopyWebpackPlugin([{ from: 'node_modules/@nimiq/vue-components/dist/img', to: 'img' }]),
+        new CopyWebpackPlugin([
+            { from: 'node_modules/@nimiq/vue-components/dist/img', to: 'img' },
+            { from: 'node_modules/@nimiq/browser-warning/dist', to: './' },
+        ]),
         new WriteFileWebpackPlugin()
     ],
     // Resolve config for yarn build
@@ -42,6 +47,8 @@ module.exports = {
             entry: 'src/main.ts',
             // the source template
             template: 'public/index.html',
+            // insert browser warning html templates
+            browserWarning,
             // output as dist/index.html
             filename: 'index.html',
             // chunks to include on this page, by default includes
