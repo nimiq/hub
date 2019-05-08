@@ -14,7 +14,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { SmallPage, CheckmarkIcon } from '@nimiq/vue-components';
-import { ParsedSimpleRequest } from '../lib/RequestTypes';
+import { ParsedSimpleRequest, RequestType } from '../lib/RequestTypes';
 import { ExportResult } from '../lib/PublicRequestTypes';
 import { State } from 'vuex-class';
 import { Static } from '@/lib/StaticStore';
@@ -26,12 +26,18 @@ import KeyguardClient from '@nimiq/keyguard-client';
 @Component({components: {SmallPage, Loader, CheckmarkIcon}})
 export default class ExportSuccess extends Vue {
     @Static private request!: ParsedSimpleRequest;
+    @Static private originalRouteName?: string;
     @State private keyguardResult!: KeyguardClient.ExportResult;
 
     private loaderState = Loader.State.LOADING;
     private successMessage = '';
 
     private async mounted() {
+        if (this.originalRouteName || this.request.kind === RequestType.MIGRATE) {
+            this.$rpc.routerReplace(RequestType.MIGRATE);
+            return;
+        }
+
         const wallet = (await WalletStore.Instance.get(this.request.walletId))!;
 
         wallet.fileExported = wallet.fileExported || this.keyguardResult.fileExported;

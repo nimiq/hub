@@ -118,6 +118,10 @@ export default class RpcApi {
         this._reply(ResponseStatus.ERROR, error);
     }
 
+    public get keyguardClient(): KeyguardClient {
+        return this._keyguardClient;
+    }
+
     private async _reply(status: ResponseStatus, result: RpcResult | Error) {
         // Update cookies for iOS
         if (BrowserDetection.isIOS() || BrowserDetection.isSafari()) {
@@ -163,6 +167,20 @@ export default class RpcApi {
                 } catch (error) {
                     this.reject(error);
                     return;
+                }
+
+                const wallets = await WalletStore.Instance.list();
+                if (!wallets.length) {
+                    const hasLegacyAccounts = await this._keyguardClient.hasLegacyAccounts();
+                    if (hasLegacyAccounts.success) {
+                        // Keyguard has legacy accounts, redirect to migration
+                        migrationRequired = true;
+                        if (requestType !== RequestType.MIGRATE) {
+                            this._staticStore.originalRouteName = requestType;
+                        }
+                        this.routerReplace(RequestType.MIGRATE);
+                        return;
+                    }
                 }
 
                 let account;

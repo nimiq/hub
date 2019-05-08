@@ -1,6 +1,28 @@
 <template>
     <div class="container pad-bottom">
-        <SmallPage>
+        <SmallPage v-if="!isMigrating">
+            <div class="page-header nq-card-header">
+                <h1 class="nq-h1">We've updated!</h1>
+                <p class="nq-notice info">
+                    The new Nimiq Keyguard requires a database update.
+                </p>
+                <p class="nq-text">
+                    To refresh your backups before we update,<br>select an account below.
+                </p>
+            </div>
+
+
+            <AccountList
+                walletId="unused"
+                :accounts="legacyAccounts"
+                @account-selected="accountSelected"/>
+
+            <PageFooter>
+                <button class="nq-button" @click="runMigration">Ok, update database</button>
+            </PageFooter>
+        </SmallPage>
+
+        <SmallPage v-else>
             <Loader
                 :title="title"
                 :status="status"
@@ -19,28 +41,45 @@ import { Component, Vue } from 'vue-property-decorator';
 import { AccountInfo } from '@/lib/AccountInfo';
 import { WalletStore } from '@/lib/WalletStore';
 import { WalletInfo, WalletType } from '@/lib/WalletInfo';
-import { SmallPage } from '@nimiq/vue-components';
+import { SmallPage, PageHeader, PageBody, PageFooter, AccountList } from '@nimiq/vue-components';
 import Network from '@/components/Network.vue';
 import Loader from '@/components/Loader.vue';
-import { KeyguardClient } from '@nimiq/keyguard-client';
+import KeyguardClient from '@nimiq/keyguard-client';
 import { ACCOUNT_DEFAULT_LABEL_LEGACY } from '@/lib/Constants';
 import { ContractInfo } from '@/lib/ContractInfo';
+import { Static } from '@/lib/StaticStore';
+import { SimpleRequest } from '@/lib/PublicRequestTypes';
 
-@Component({components: {SmallPage, Loader, Network}})
+@Component({components: {SmallPage, PageHeader, PageBody, PageFooter, AccountList, Loader, Network}})
 export default class Migrate extends Vue {
+    @Static private request!: SimpleRequest;
+
     private title: string = 'Migrating your accounts';
     private status: string = 'Connecting to Keyguard...';
     private state: Loader.State = Loader.State.LOADING;
     private message: string = '';
 
-    private keyguardClient?: KeyguardClient;
+    private legacyAccounts: AccountInfo[] = [];
+    private isMigrating: boolean = false;
 
-    public mounted() {
-        this.keyguardClient = this.$rpc.createKeyguardClient();
-        this.run();
+    public async created() {
+        const legacyKeys = await this.$rpc.keyguardClient.listLegacyAccounts();
+        this.legacyAccounts = legacyKeys.map((key) => this.legacyKeyInfoObject2AccountInfo(key));
     }
 
-    private async run() {
+    private accountSelected(walletId: string, address: string) {
+        // Start export request for this address
+        const request: KeyguardClient.ExportRequest = {
+            appName: this.request.appName,
+            keyId: address,
+            keyLabel: '',
+        };
+
+        const client = this.$rpc.createKeyguardClient();
+        client.export(request);
+    }
+
+    private async runMigration() {
         try {
             await this.doMigration();
         } catch (error) {
@@ -49,17 +88,10 @@ export default class Migrate extends Vue {
     }
 
     private async doMigration() {
-        const hasLegacyAccounts = (await this.keyguardClient!.hasLegacyAccounts()).success;
-
-        if (!hasLegacyAccounts) {
-            this.title = 'Nothing to migrate.';
-            this.state = Loader.State.SUCCESS;
-            setTimeout(() => this.$rpc.resolve([]), Loader.SUCCESS_REDIRECT_DELAY);
-            return;
-        }
+        this.isMigrating = true;
 
         this.status = 'Retrieving your legacy accounts...';
-        const legacyAccounts = await this.keyguardClient!.listLegacyAccounts();
+        const legacyAccounts = await this.$rpc.keyguardClient.listLegacyAccounts();
 
         if (!legacyAccounts.length) {
             throw new Error('Could not get legacy accounts from Keyguard');
@@ -96,7 +128,7 @@ export default class Migrate extends Vue {
         }
 
         this.status = 'Migrating Keyguard...';
-        await this.keyguardClient!.migrateAccountsToKeys();
+        await this.$rpc.keyguardClient.migrateAccountsToKeys();
 
         this.title = 'Migration completed.';
         this.state = Loader.State.SUCCESS;
@@ -110,9 +142,6 @@ export default class Migrate extends Vue {
         this.state = Loader.State.ERROR;
         if (window.location.origin === 'https://hub.nimiq-testnet.com') {
             this.$raven.captureException(error);
-            // TODO: Starting with Vue 2.6, if mounted() is async and awaits run(), the error handling will
-            //       be automatically done by the global Vue.config.errorHandler and does not require manual
-            //       capture with Raven.
         }
     }
 
@@ -120,7 +149,21 @@ export default class Migrate extends Vue {
         this.title = 'Migrating your accounts';
         this.status = 'Connecting to Keyguard...';
         this.state = Loader.State.LOADING;
-        setTimeout(() => this.run(), 1000);
+        setTimeout(() => this.runMigration(), 1000);
+    }
+
+    private legacyKeyInfoObject2AccountInfo(keyInfo: KeyguardClient.LegacyKeyInfoObject): AccountInfo {
+        return new AccountInfo(
+            'm/0\'',
+            keyInfo.legacyAccount.label,
+            new Nimiq.Address(keyInfo.legacyAccount.address),
+        );
     }
 }
 </script>
+
+<style>
+    .page-header {
+        padding-bottom: 0;
+    }
+</style>
