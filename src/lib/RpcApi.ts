@@ -71,9 +71,15 @@ export default class RpcApi {
         this._server.init(onClientTimeout);
     }
 
-    public createKeyguardClient() {
+    public createKeyguardClient(handleHistoryBack?: boolean) {
         const localState = this._exportState();
-        const client = new KeyguardClient(Config.keyguardEndpoint, window.location.origin, localState);
+        const client = new KeyguardClient(
+            Config.keyguardEndpoint,
+            window.location.origin,
+            localState,
+            undefined,
+            handleHistoryBack,
+        );
         return client;
     }
 
