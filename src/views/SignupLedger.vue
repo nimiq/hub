@@ -90,13 +90,14 @@ export default class SignupLedger extends Vue {
             try {
                 tryCount += 1;
                 // triggers loading and connecting states in LedgerUi if applicable
-                await WalletInfoCollector.collectWalletInfo(
+                const { releaseKey } = await WalletInfoCollector.collectWalletInfo(
                     WalletType.LEDGER,
                     /* keyId */ '',
                     /* initialAccounts */ [],
                     (walletInfo, currentlyCheckedAccounts) =>
                         this._onWalletInfoUpdate(walletInfo, currentlyCheckedAccounts),
                 );
+                await releaseKey();
                 this.failedFetchingAccounts = false;
                 break;
             } catch (e) {

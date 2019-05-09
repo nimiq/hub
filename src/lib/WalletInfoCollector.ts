@@ -1,5 +1,5 @@
 import { NetworkClient } from '@nimiq/network-client';
-import { KeyguardClient } from '@nimiq/keyguard-client';
+import { KeyguardClient, SimpleResult as KeyguardSimpleResult } from '@nimiq/keyguard-client';
 import { AccountInfo } from '@/lib/AccountInfo';
 import { WalletStore } from '@/lib/WalletStore';
 import { WalletInfo, WalletType } from '@/lib/WalletInfo';
@@ -25,9 +25,8 @@ type BasicAccountInfo = {
 export type WalletCollectionResult = {
     walletInfo: WalletInfo,
     receiptsError?: Error, // if there is an incomplete result due to failed requestTxReceipts requests
-    releaseKey: (removeKey: boolean) => void,
+    releaseKey: (removeKey?: boolean) => Promise<KeyguardSimpleResult | void>,
     hasActivity: boolean, // whether the wallet has a transaction history or a balance or owns a contract
-
 };
 
 export default class WalletInfoCollector {
@@ -105,9 +104,7 @@ export default class WalletInfoCollector {
 
             return {
                 walletInfo,
-                releaseKey: async (removeKey) => {
-                    await WalletInfoCollector._keyguardClient!.releaseKey(keyId, removeKey);
-                },
+                releaseKey: (removeKey?) => WalletInfoCollector._keyguardClient!.releaseKey(keyId, removeKey),
                 hasActivity,
             };
         }
@@ -187,13 +184,15 @@ export default class WalletInfoCollector {
             LedgerApi.currentRequest.cancel();
         }
 
+        const releaseKey = walletType === WalletType.LEDGER
+            ? (removeKey?: boolean) => removeKey ? Promise.reject('Can\'t remove Ledger key') : Promise.resolve()
+            : (removeKey?: boolean) => WalletInfoCollector._keyguardClient!.releaseKey(keyId, removeKey);
+
         await initialAccountsPromise; // make sure initial accounts balances are updated
         return {
             walletInfo,
             receiptsError,
-            releaseKey: (removeKey) => {
-                WalletInfoCollector._keyguardClient!.releaseKey(keyId, removeKey);
-            },
+            releaseKey,
             hasActivity,
         };
     }
