@@ -1,6 +1,5 @@
 <template>
-    <NotEnoughCookieSpace v-if='notEnoughCookieSpace'/>
-    <div v-else class="container">
+    <div class="container">
         <SmallPage>
             <LedgerUi v-if="state === 'ledger-interaction'"></LedgerUi>
             <IdenticonSelector v-else-if="state === 'identicon-selection'" :accounts="addressesToSelectFrom"
@@ -32,10 +31,8 @@ import LedgerApi from '../lib/LedgerApi';
 import { WalletStore } from '../lib/WalletStore';
 import { ACCOUNT_MAX_ALLOWED_ADDRESS_GAP, ERROR_CANCELED } from '../lib/Constants';
 import LabelingMachine from '../lib/LabelingMachine';
-import CookieJar from '../lib/CookieJar';
-import NotEnoughCookieSpace from '../components/NotEnoughCookieSpace.vue';
 
-@Component({components: {PageBody, SmallPage, LedgerUi, Loader, IdenticonSelector, NotEnoughCookieSpace}})
+@Component({components: {PageBody, SmallPage, LedgerUi, Loader, IdenticonSelector}})
 export default class AddAddressLedger extends Vue {
     private static readonly State = {
         LEDGER_INTERACTION: 'ledger-interaction', // can be instructions to connect or also display of an error
@@ -48,14 +45,8 @@ export default class AddAddressLedger extends Vue {
     private state: string = AddAddressLedger.State.LEDGER_INTERACTION;
     private account!: WalletInfo;
     private addressesToSelectFrom: AccountInfo[] = [];
-    private notEnoughCookieSpace = false;
 
     private async created() {
-        if ((BrowserDetection.isIOS() || BrowserDetection.isSafari()) && !CookieJar.canFitNewAccount()) {
-            this.notEnoughCookieSpace = true;
-            return;
-        }
-
         // called every time the router shows this page
         const account = (await WalletStore.Instance.get(this.request.walletId))!;
         this.account = account;
