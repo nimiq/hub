@@ -79,7 +79,7 @@ export default class RpcApi {
             Config.keyguardEndpoint,
             window.location.origin,
             localState,
-            undefined,
+            undefined, // preserveRequests: keep default behavior, which is true for redirects but false for postMessage
             handleHistoryBack,
         );
         return client;
