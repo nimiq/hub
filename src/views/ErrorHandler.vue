@@ -18,7 +18,7 @@ export default class ErrorHandler extends Vue {
 
     public async created() {
         if (!(this.keyguardResult instanceof Error)) return;
-        if (this.requestSpecificErrors()) return;
+
         if (this.keyguardResult.message === Errors.Messages.KEY_NOT_FOUND) {
             let walletId: string;
             if ((this.request as ParsedSimpleRequest).walletId) {
@@ -58,16 +58,15 @@ export default class ErrorHandler extends Vue {
 
             return;
         }
+
+        if (this.keyguardResult.message === Errors.Messages.GOTO_CREATE) {
+            this.$rpc.routerReplace(RequestType.SIGNUP);
+            return;
+        }
+
         // TODO more Error Handling
 
         this.$rpc.reject(this.keyguardResult);
-    }
-
-    /**
-     * use this in derived classes in case a specific error needs special handling.
-     */
-    protected requestSpecificErrors(): boolean {
-        return false;
     }
 }
 </script>
