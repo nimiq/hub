@@ -3,7 +3,7 @@
         <SmallPage>
             <Loader state="success">
                 <template slot="success">
-                    <div class="success nq-icon"></div>
+                    <CheckmarkIcon/>
                     <h1 class="title nq-h1">Sending your<br>transaction now.</h1>
                 </template>
             </Loader>
@@ -15,14 +15,14 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import Network from '@/components/Network.vue';
-import { SmallPage } from '@nimiq/vue-components';
+import { SmallPage, CheckmarkIcon } from '@nimiq/vue-components';
 import { SignedTransaction } from '../lib/PublicRequestTypes';
 import { State } from 'vuex-class';
 import { Static } from '../lib/StaticStore';
 import Loader from '../components/Loader.vue';
 import KeyguardClient from '@nimiq/keyguard-client';
 
-@Component({components: {Network, SmallPage, Loader}})
+@Component({components: {Network, SmallPage, Loader, CheckmarkIcon}})
 export default class SignTransactionSuccess extends Vue {
     @Static private keyguardRequest!: KeyguardClient.SignTransactionRequest;
     @State private keyguardResult!: KeyguardClient.SignTransactionResult;

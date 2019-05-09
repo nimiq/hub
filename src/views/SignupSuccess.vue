@@ -3,7 +3,7 @@
         <SmallPage>
             <Loader :title="title" :state="state" :lightBlue="true">
                 <template slot="success">
-                    <div class="success nq-icon"></div>
+                    <CheckmarkIcon/>
                     <h1 class="title nq-h1">Welcome to the<br>Nimiq Blockchain.</h1>
                 </template>
             </Loader>
@@ -13,7 +13,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { SmallPage } from '@nimiq/vue-components';
+import { SmallPage, CheckmarkIcon } from '@nimiq/vue-components';
 import { AccountInfo } from '../lib/AccountInfo';
 import { WalletInfo, WalletType } from '../lib/WalletInfo';
 import { State } from 'vuex-class';
@@ -23,7 +23,7 @@ import Loader from '@/components/Loader.vue';
 import KeyguardClient from '@nimiq/keyguard-client';
 import LabelingMachine from '@/lib/LabelingMachine';
 
-@Component({components: {SmallPage, Loader}})
+@Component({components: {SmallPage, Loader, CheckmarkIcon}})
 export default class SignupSuccess extends Vue {
     @State private keyguardResult!: KeyguardClient.KeyResult;
 

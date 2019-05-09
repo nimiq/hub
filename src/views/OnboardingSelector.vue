@@ -6,7 +6,7 @@
             <OnboardingMenu @signup="signup" @login="login" @ledger="ledger"/>
 
             <button v-if="!request.disableBack" class="global-close nq-button-s" @click="close">
-                <span class="nq-icon arrow-left"></span>
+                <ArrowLeftSmallIcon/>
                 Back to {{request.appName}}
             </button>
         </div>
@@ -21,8 +21,9 @@ import { ParsedBasicRequest, RequestType } from '@/lib/RequestTypes';
 import { Static } from '@/lib/StaticStore';
 import { DEFAULT_KEY_PATH, ERROR_CANCELED } from '@/lib/Constants';
 import KeyguardClient from '@nimiq/keyguard-client';
+import { ArrowLeftSmallIcon } from '@nimiq/vue-components';
 
-@Component({components: {OnboardingMenu}})
+@Component({components: {OnboardingMenu, ArrowLeftSmallIcon}})
 export default class OnboardingSelector extends Vue {
     @Static private request!: ParsedBasicRequest;
     @Static private originalRouteName?: string;

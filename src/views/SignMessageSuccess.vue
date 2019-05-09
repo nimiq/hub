@@ -3,7 +3,7 @@
         <SmallPage>
             <Loader state="success">
                 <template slot="success">
-                    <div class="success nq-icon"></div>
+                    <CheckmarkIcon/>
                     <h1 class="title nq-h1">Your message is signed.</h1>
                 </template>
             </Loader>
@@ -19,9 +19,9 @@ import { SignedMessage } from '../lib/PublicRequestTypes';
 import KeyguardClient from '@nimiq/keyguard-client';
 import { Static } from '@/lib/StaticStore';
 import Loader from '../components/Loader.vue';
-import { SmallPage } from '@nimiq/vue-components';
+import { SmallPage, CheckmarkIcon } from '@nimiq/vue-components';
 
-@Component({components: {Loader, SmallPage}})
+@Component({components: {Loader, SmallPage, CheckmarkIcon}})
 export default class SignMessageSuccess extends Vue {
     @Static private request!: ParsedSignMessageRequest;
     @Static private keyguardRequest!: KeyguardClient.SignMessageRequest;

@@ -3,7 +3,7 @@
         <SmallPage>
             <Loader :title="title" :state="state" :lightBlue="true">
                 <template slot="success">
-                    <div class="success nq-icon"></div>
+                    <CheckmarkIcon/>
                     <h1 class="title nq-h1">New address added<br>to your account.</h1>
                 </template>
             </Loader>
@@ -13,7 +13,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { SmallPage } from '@nimiq/vue-components';
+import { SmallPage, CheckmarkIcon } from '@nimiq/vue-components';
 import { AccountInfo } from '../lib/AccountInfo';
 import { State } from 'vuex-class';
 import { WalletStore } from '../lib/WalletStore';
@@ -24,7 +24,7 @@ import Loader from '@/components/Loader.vue';
 import { Static } from '../lib/StaticStore';
 import LabelingMachine from '@/lib/LabelingMachine';
 
-@Component({components: {Loader, SmallPage}})
+@Component({components: {Loader, SmallPage, CheckmarkIcon}})
 export default class AddAccountSuccess extends Vue {
     @Static private request!: ParsedSimpleRequest;
     @State private keyguardResult!: DeriveAddressResult;
@@ -60,50 +60,3 @@ export default class AddAccountSuccess extends Vue {
     }
 }
 </script>
-
-<style scoped>
-    .page-body {
-        padding: 1rem 0 4rem 0;
-    }
-
-    .success-box {
-        padding: 5rem 4rem;
-        overflow: auto;
-        margin: 0 1rem;
-        border-radius: 0.5rem;
-        background-position: calc(100% - 2rem) center;
-        background-size: auto 15.125rem;
-        display: block;
-        width: unset;
-        height: unset;
-    }
-
-    .success-box p {
-        width: 25rem;
-        opacity: 1;
-    }
-
-    .success-box p + p {
-        width: 20rem;
-    }
-
-    .login-label {
-        display: flex;
-        flex-direction: row;
-        justify-content: flex-start;
-        align-items: center;
-        font-size: 2.25rem;
-        line-height: 2.5rem;
-        font-weight: 500;
-        margin: 2rem 3rem 0;
-        padding: 2rem 1rem;
-        border-bottom: solid 1px var(--nimiq-card-border-color);
-    }
-
-    .login-icon {
-        height: 3rem;
-        width: 3rem;
-        flex-shrink: 0;
-        margin-right: 1rem;
-    }
-</style>
