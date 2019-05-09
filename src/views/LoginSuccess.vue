@@ -7,7 +7,7 @@
                 :status="status"
                 :lightBlue="true"
                 :mainAction="action"
-                @main-action="resolveResult"
+                @main-action="resolve"
                 :message="message" />
         </SmallPage>
     </div>
@@ -15,6 +15,8 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
+import KeyguardClient from '@nimiq/keyguard-client';
+import { BrowserDetection } from '@nimiq/utils';
 import { ParsedBasicRequest } from '../lib/RequestTypes';
 import { Account } from '../lib/PublicRequestTypes';
 import { State } from 'vuex-class';
@@ -24,7 +26,7 @@ import { Static } from '@/lib/StaticStore';
 import { SmallPage } from '@nimiq/vue-components';
 import Loader from '@/components/Loader.vue';
 import WalletInfoCollector from '@/lib/WalletInfoCollector';
-import KeyguardClient from '@nimiq/keyguard-client';
+import CookieJar from '../lib/CookieJar';
 
 @Component({components: {Loader, SmallPage}})
 export default class LoginSuccess extends Vue {
@@ -35,8 +37,11 @@ export default class LoginSuccess extends Vue {
     private retrievalFailed: boolean = false;
     private state: Loader.State = Loader.State.LOADING;
     private title: string = 'Collecting your addresses';
+    private message: string = '';
+    private action: string = '';
     private receiptsError: Error | null = null;
     private result: Account | null = null;
+    private resolve: ((value?: {} | PromiseLike<{}> | undefined) => void) | null = null;
 
     private async mounted() {
         // TODO: Handle import of both a legacy and bip39 key!
@@ -78,9 +83,9 @@ export default class LoginSuccess extends Vue {
         });
     }
 
-    private done() {
+    private async done() {
         if (!this.walletInfos.length) throw new Error('WalletInfo not ready.');
-        this.result = {
+        const result = {
             accountId: this.walletInfos[0].id,
             label: this.walletInfos[0].label,
             type: this.walletInfos[0].type,
@@ -94,28 +99,28 @@ export default class LoginSuccess extends Vue {
         if (this.receiptsError) {
             this.title = 'Your addresses may be\nincomplete.';
             this.state = Loader.State.WARNING;
-        } else {
-            this.title = 'Your account is ready.';
-            this.state = Loader.State.SUCCESS;
-            setTimeout(this.resolveResult.bind(this), Loader.SUCCESS_REDIRECT_DELAY);
+            this.message = 'We might have missed used addresses that have no balance.';
+            this.action = 'Continue';
+            await new Promise((resolve) => { this.resolve = resolve; });
         }
+
+        const walletInfoEntry = this.walletInfos[0].toObject();
+        if ((BrowserDetection.isIOS() || BrowserDetection.isSafari()) && CookieJar.canFitNewWallet(walletInfoEntry)) {
+            this.title = 'Account may disappear';
+            this.message = 'Unfortunately, due to restrictions of Safari it may happen that this account will '
+                         + 'disappear from some user inferfaces. Please log out of unused accounts to solve this '
+                         + 'issue by freeing up space.';
+            this.action = 'Continue';
+            await new Promise((resolve) => { this.resolve = resolve; });
+        }
+
+        this.title = 'Your account is ready.';
+        this.state = Loader.State.SUCCESS;
+        setTimeout(() => { this.$rpc.resolve(result); }, Loader.SUCCESS_REDIRECT_DELAY);
     }
 
     private get status() {
         return !this.retrievalFailed ? 'Connecting to Nimiq...' : 'Address retrieval failed. Retrying...';
-    }
-
-    private get message() {
-        return this.receiptsError && 'We might have missed used addresses that have no balance.';
-    }
-
-    private get action() {
-        return this.receiptsError && 'Go to account';
-    }
-
-    private resolveResult() {
-        if (!this.result) return;
-        this.$rpc.resolve(this.result);
     }
 }
 </script>

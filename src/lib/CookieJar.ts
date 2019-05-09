@@ -1,6 +1,6 @@
 // tslint:disable no-bitwise no-shadowed-variable
 
-import { WalletInfoEntry, WalletType } from './WalletInfo';
+import { WalletInfoEntry, WalletType, WalletInfo } from './WalletInfo';
 import { Utf8Tools } from '@nimiq/utils';
 import {
     LABEL_MAX_LENGTH,
@@ -10,6 +10,7 @@ import {
 } from '@/lib/Constants';
 import LabelingMachine from './LabelingMachine';
 import { ContractInfoEntry, VestingContractInfoEntry, VestingContractInfo } from './ContractInfo';
+import { AccountInfoEntry } from './AccountInfo';
 
 class CookieJar {
     public static readonly VERSION = 3;
@@ -26,7 +27,12 @@ class CookieJar {
         const encodedWallets = this.encodeCookie(wallets);
         // Add 'Secure;' if we are not in a test environment
         const secure = location.protocol === 'https:' ? 'Secure;' : '';
+
         document.cookie = `w=${encodedWallets};max-age=${maxAge.toString()};${secure}SameSite=strict`;
+        const storedValue = this.getCookieContents();
+        if (encodedWallets !== storedValue) {
+            console.warn('Cookie could not be updated.');
+        }
     }
 
     public static async eat(): Promise<WalletInfoEntry[]> {
@@ -53,11 +59,40 @@ class CookieJar {
     }
 
     public static canFitNewAccount(): boolean {
+        // TODO calculate remaining keyguard storage and check if it's sufficient
         return (this.MAX_COOKIE_SIZE - this.getCookieSize()) >= this.ENCODED_ACCOUNT_SIZE;
     }
 
-    public static canFitNewWallet(wallet: WalletInfoEntry): boolean {
-        return (this.MAX_COOKIE_SIZE - this.getCookieSize()) >= this.encodeWallet(wallet).length;
+    public static canFitNewWallet(wallet?: WalletInfoEntry): boolean {
+        let walletToStore = wallet;
+
+        if (!walletToStore) {
+            const dummyAddressHumanReadable = 'NQ86 6D3H 6MVD 2JV4 N77V FNA5 M9BL 2QSP 1P64';
+            const dummyAddress = Nimiq.Address.fromUserFriendlyAddress(dummyAddressHumanReadable);
+            const dummyAddressSerialized = new Uint8Array(dummyAddress.serialize());
+            walletToStore = {
+                id: '0fe6067b138f',
+                keyId: 'D+YGexOP0yDjr3Uf6WwO9a2/WjhNbZFLrRwdLfuvz9c=',
+                label: 'Some long enough label to represent a long label',
+                accounts: new Map<string, AccountInfoEntry>([
+                    [
+                        dummyAddressHumanReadable,
+                        {
+                            path: 'm/44\'/242\'/0\'/0\'',
+                            label: 'MyAddress1',
+                            address: dummyAddressSerialized,
+                        },
+                    ],
+                ]),
+                contracts: [],
+                type: WalletType.BIP39,
+                keyMissing: true,
+                fileExported: false,
+                wordsExported: false,
+            };
+        }
+
+        return (this.MAX_COOKIE_SIZE - this.getCookieSize()) >= this.encodeWallet(walletToStore).length;
     }
 
     public static encodeAndcutLabel(label: string): Uint8Array {

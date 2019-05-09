@@ -1,5 +1,6 @@
 <template>
-    <div class="container">
+    <NotEnoughCookieSpace v-if='notEnoughCookieSpace'/>
+    <div v-else class="container">
         <OnboardingMenu @signup="signup" @login="login" @ledger="ledger"/>
 
         <button v-if="!request.disableBack" class="global-close nq-button-s" @click="close">
@@ -11,15 +12,27 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
+import KeyguardClient from '@nimiq/keyguard-client';
+import { BrowserDetection } from '@nimiq/utils';
 import OnboardingMenu from '../components/OnboardingMenu.vue';
 import { ParsedBasicRequest, RequestType } from '@/lib/RequestTypes';
 import { Static } from '@/lib/StaticStore';
 import { DEFAULT_KEY_PATH, ERROR_CANCELED } from '@/lib/Constants';
-import KeyguardClient from '@nimiq/keyguard-client';
+import CookieJar from '../lib/CookieJar';
+import NotEnoughCookieSpace from '../components/NotEnoughCookieSpace.vue';
 
-@Component({components: {OnboardingMenu}})
+@Component({components: {OnboardingMenu, NotEnoughCookieSpace}})
 export default class OnboardingSelector extends Vue {
     @Static private request!: ParsedBasicRequest;
+
+    private notEnoughCookieSpace = false;
+
+    public created() {
+        if ((BrowserDetection.isIOS() || BrowserDetection.isSafari()) && !CookieJar.canFitNewAccount()) {
+            this.notEnoughCookieSpace = true;
+            return;
+        }
+    }
 
     private signup() {
         const request: KeyguardClient.CreateRequest = {
