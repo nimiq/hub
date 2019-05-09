@@ -54,13 +54,23 @@ export default class LoginSuccess extends Vue {
                 while (true) {
                     try {
                         tryCount += 1;
-                        const collectionResult = await WalletInfoCollector.collectWalletInfo(
-                            keyResult.keyType,
-                            keyResult.keyId,
-                            keyguardResultAccounts,
-                            undefined,
-                            this.keyguardResult.length > 1,
-                        );
+                        let collectionResult: WalletCollectionResult;
+                        if (keyResult.keyType === WalletType.BIP39) {
+                            collectionResult = await WalletInfoCollector.collectLedgerOrBip39WalletInfo(
+                                WalletType.BIP39,
+                                keyResult.keyId,
+                                keyguardResultAccounts,
+                                undefined,
+                                this.keyguardResult.length === 1,
+                            );
+                        } else {
+                            collectionResult = await WalletInfoCollector.collectLegacyWalletInfo(
+                                keyResult.keyId,
+                                keyguardResultAccounts[0],
+                                undefined,
+                                this.keyguardResult.length === 1,
+                            );
+                        }
 
                         if (collectionResult.receiptsError) {
                             this.receiptsError = collectionResult.receiptsError;
@@ -98,7 +108,7 @@ export default class LoginSuccess extends Vue {
         }
 
         await Promise.all (
-            collectionResults.map( async (collectionResult) => {
+            collectionResults.map(async (collectionResult) => {
                 if (keepWalletCondition(collectionResult)) {
                     await WalletStore.Instance.put(collectionResult.walletInfo);
                     this.walletInfos.push(collectionResult.walletInfo);
