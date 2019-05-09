@@ -65,7 +65,7 @@ export default class ChooseAddress extends Vue {
         const accountOrContractInfo: AccountInfo | ContractInfo = walletInfo.accounts.get(address) ||
             walletInfo.findContractByAddress(Nimiq.Address.fromUserFriendlyAddress(address))!;
 
-        this.$store.commit('setActiveAccount', {
+        this.$setActiveAccount({
             walletId: walletInfo.id,
             userFriendlyAddress: accountOrContractInfo.userFriendlyAddress,
         });
@@ -98,7 +98,7 @@ export default class ChooseAddress extends Vue {
                 this.$addWallet(walletInfo);
 
                 // Set as activeWallet and activeAccount
-                // FIXME: Currently unused, but should be reactivated
+                // FIXME: Also handle active account we get from store
                 const activeAccount = walletInfo.accounts.values().next().value;
 
                 this.$setActiveAccount({

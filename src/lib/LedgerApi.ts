@@ -68,20 +68,17 @@ const LedgerJs: LedgerJs = require('@nimiq/ledgerjs/ledgerjs-nimiq.min.js');
 type LedgerApiListener = (...args: any[]) => void;
 
 interface TransactionInfo {
-    sender: string;
-    recipient: string;
-    value: number;
-    fee: number;
+    sender: Nimiq.Address;
+    senderType?: Nimiq.Account.Type;
+    recipient: Nimiq.Address;
+    recipientType?: Nimiq.Account.Type;
+    value: number; // In Luna
+    fee?: number;
     validityStartHeight: number;
-    network: 'main' | 'test' | 'bounty' | 'dev';
+    network?: 'main' | 'test' | 'dev';
+    flags?: number;
     extraData?: Uint8Array;
 }
-type SignedTransaction = TransactionInfo & {
-    signature: Uint8Array,
-    proof: Uint8Array,
-    senderPubKey: Uint8Array,
-    hash: string, // Base64
-};
 
 class LedgerApiRequest<T> extends Observable {
     public static readonly EVENT_CANCEL = 'cancel';
@@ -309,7 +306,7 @@ class LedgerApi {
     }
 
     public static async signTransaction(transaction: TransactionInfo, keyPath: string, walletId?: string)
-        : Promise<SignedTransaction> {
+        : Promise<Nimiq.Transaction> {
         let nimiqTx: Nimiq.Transaction;
         const requestParams: LedgerApi.RequestParams = {
             walletId,
@@ -328,39 +325,64 @@ class LedgerApi {
         }
 
         // prepare tx outside of request to avoid that an error would result in an endless loop in _callLedger
-        const senderPubKeyBytes = await LedgerApi.getPublicKey(keyPath);
-        const senderPubKey = new Nimiq.PublicKey(senderPubKeyBytes);
-        const senderAddress = senderPubKey.toAddress().toUserFriendlyAddress();
-        if (transaction.sender.replace(/ /g, '')
-            !== senderAddress.replace(/ /g, '')) {
-            LedgerApi._throwError(LedgerApi.ErrorType.REQUEST_ASSERTION_FAILED,
-                'Sender Address doesn\'t match this ledger account', request);
+        const [signerPubKeyBytes] = await Promise.all([
+            LedgerApi.getPublicKey(keyPath, walletId),
+            Nimiq.WasmHelper.doImportBrowser() // wasm needed for toAddress (also in BasicTransaction constructor)
+                .catch((e) => LedgerApi._throwError(LedgerApi.ErrorType.FAILED_LOADING_DEPENDENCIES, e)),
+        ]);
+        const signerPubKey = new Nimiq.PublicKey(signerPubKeyBytes);
+
+        const senderType = transaction.senderType !== undefined && transaction.senderType !== null
+            ? transaction.senderType
+            : Nimiq.Account.Type.BASIC;
+
+        const recipientType = transaction.recipientType !== undefined && transaction.recipientType !== null
+            ? transaction.recipientType
+            : Nimiq.Account.Type.BASIC;
+
+        let network = transaction.network;
+        if (!network) {
+            try {
+                network = Nimiq.GenesisConfig.NETWORK_NAME as 'main' | 'test' | 'dev';
+            } catch (e) {
+                // Genesis config not initialized
+                network = 'main';
+            }
         }
-        const genesisConfig = Nimiq.GenesisConfig.CONFIGS[transaction.network];
+
+        const genesisConfig = Nimiq.GenesisConfig.CONFIGS[network];
         const networkId = genesisConfig.NETWORK_ID;
-        const recipient = Nimiq.Address.fromUserFriendlyAddress(transaction.recipient);
-        const value = Nimiq.Policy.coinsToSatoshis(transaction.value);
-        const fee = Nimiq.Policy.coinsToSatoshis(transaction.fee);
-        if (transaction.extraData && transaction.extraData.length !== 0) {
-            nimiqTx = new Nimiq.ExtendedTransaction(senderPubKey.toAddress(), Nimiq.Account.Type.BASIC,
-                recipient, Nimiq.Account.Type.BASIC, value, fee, transaction.validityStartHeight,
-                Nimiq.Transaction.Flag.NONE, transaction.extraData, undefined, networkId);
+
+        const flags = transaction.flags !== undefined && transaction.flags !== null
+            ? transaction.flags
+            : Nimiq.Transaction.Flag.NONE;
+        const fee = transaction.fee || 0;
+
+        if (transaction.extraData && transaction.extraData.length !== 0
+            || senderType !== Nimiq.Account.Type.BASIC
+            || recipientType !== Nimiq.Account.Type.BASIC
+            || flags !== Nimiq.Transaction.Flag.NONE
+        ) {
+            const extraData = transaction.extraData ? transaction.extraData : new Uint8Array(0);
+            nimiqTx = new Nimiq.ExtendedTransaction(transaction.sender, senderType, transaction.recipient,
+                recipientType, transaction.value, fee, transaction.validityStartHeight, flags, extraData, undefined,
+                networkId);
         } else {
-            nimiqTx = new Nimiq.BasicTransaction(senderPubKey, recipient, value, fee, transaction.validityStartHeight,
-                undefined, networkId);
+            nimiqTx = new Nimiq.BasicTransaction(signerPubKey, transaction.recipient, transaction.value, fee,
+                transaction.validityStartHeight, undefined, networkId);
         }
         requestParams.transactionToSign = nimiqTx;
 
         const signatureBytes = await LedgerApi._callLedger(request);
         const signature = new Nimiq.Signature(signatureBytes);
-        const proof = Nimiq.SignatureProof.singleSig(senderPubKey, signature);
-        return {
-            ...transaction,
-            signature: signatureBytes,
-            proof: proof.serialize(),
-            senderPubKey: senderPubKeyBytes,
-            hash: nimiqTx.hash().toBase64(),
-        };
+
+        if (nimiqTx instanceof Nimiq.BasicTransaction) {
+            nimiqTx.signature = signature;
+        } else {
+            nimiqTx.proof = Nimiq.SignatureProof.singleSig(signerPubKey, signature).serialize();
+        }
+
+        return nimiqTx;
     }
 
     // private fields and methods

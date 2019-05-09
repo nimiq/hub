@@ -76,7 +76,8 @@ export default class WalletInfoCollector {
                 // fetch balances and update again
                 initialAccountsPromise = WalletInfoCollector._getBalances(initialAccounts).then(async (balances) => {
                     WalletInfoCollector._addAccounts(walletInfo, initialAccounts, balances);
-                    onUpdate(walletInfo, await derivedAccountsPromise);
+                    // using catch here to ignore cancellation of ledger derivation in the clean up step of this method
+                    onUpdate(walletInfo, await derivedAccountsPromise.catch(() => []));
                 });
             }
         }
@@ -159,7 +160,6 @@ export default class WalletInfoCollector {
             && LedgerApi.currentRequest.type === LedgerApi.RequestType.DERIVE_ACCOUNTS) {
             // next round of derivation still going on although we don't need it
             derivedAccountsPromise.catch(() => undefined); // to avoid uncaught promise rejection for cancel
-            derivedAccountsPromise = Promise.resolve([]); // for if the initial balance onUpdate did not fire yet
             LedgerApi.currentRequest.cancel();
         }
 
@@ -172,7 +172,6 @@ export default class WalletInfoCollector {
 
     private static _keyguardClient?: KeyguardClient; // TODO avoid the need to create another KeyguardClient here
     private static _networkInitializationPromise?: Promise<void>;
-    private static _wasmInitializationPromise?: Promise<void>;
 
     private static _initializeDependencies(walletType: WalletType): void {
         WalletInfoCollector._networkInitializationPromise =
@@ -180,15 +179,9 @@ export default class WalletInfoCollector {
             || NetworkClient.createInstance(Config.networkEndpoint).init();
         WalletInfoCollector._networkInitializationPromise
             .catch(() => delete WalletInfoCollector._networkInitializationPromise);
-        if (walletType === WalletType.BIP39) {
-            WalletInfoCollector._keyguardClient = WalletInfoCollector._keyguardClient
-                || new KeyguardClient(Config.keyguardEndpoint);
-        } else if (walletType === WalletType.LEDGER) {
-            WalletInfoCollector._wasmInitializationPromise =
-                WalletInfoCollector._wasmInitializationPromise || Nimiq.WasmHelper.doImportBrowser();
-            WalletInfoCollector._wasmInitializationPromise
-                .catch(() => delete WalletInfoCollector._wasmInitializationPromise);
-        }
+        if (walletType !== WalletType.BIP39) return;
+        WalletInfoCollector._keyguardClient = WalletInfoCollector._keyguardClient
+            || new KeyguardClient(Config.keyguardEndpoint);
     }
 
     private static async _getWalletInfoInstance(walletType: WalletType, keyId: string): Promise<WalletInfo> {

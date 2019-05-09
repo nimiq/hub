@@ -28,9 +28,10 @@ export const LEGACY_GROUPING_ACCOUNT_ID = 'LEGACY';
 export const LEGACY_GROUPING_ACCOUNT_LABEL = 'Single Accounts';
 
 // Networks
-export const NETWORK_TEST = 'test';
-export const NETWORK_MAIN = 'main';
-export const NETWORK_DEV = 'dev';
+type NetworkType = 'test' | 'main' | 'dev';
+export const NETWORK_TEST: NetworkType = 'test';
+export const NETWORK_MAIN: NetworkType = 'main';
+export const NETWORK_DEV: NetworkType = 'dev';
 
 // Errors
 export const ERROR_CANCELED = 'CANCELED';

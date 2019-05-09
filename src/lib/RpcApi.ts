@@ -1,12 +1,18 @@
-import { RpcServer, State as RpcState, ResponseStatus } from '@nimiq/rpc';
+import { ResponseStatus, RpcServer, State as RpcState } from '@nimiq/rpc';
 import { BrowserDetection } from '@nimiq/utils';
 import { RootState } from '@/store';
 import { Store } from 'vuex';
 import Router from 'vue-router';
-import { ParsedSimpleRequest, RequestType } from './RequestTypes';
+import {
+    ParsedCheckoutRequest,
+    ParsedSignMessageRequest,
+    ParsedSignTransactionRequest,
+    ParsedSimpleRequest,
+    RequestType,
+} from './RequestTypes';
 import { RequestParser } from './RequestParser';
 import { RpcRequest, RpcResult } from './PublicRequestTypes';
-import { KeyguardCommand, KeyguardClient, Errors } from '@nimiq/keyguard-client';
+import { KeyguardClient, KeyguardCommand, Errors } from '@nimiq/keyguard-client';
 import { keyguardResponseRouter } from '@/router';
 import { StaticStore } from '@/lib/StaticStore';
 import { WalletStore } from './WalletStore';
@@ -154,11 +160,33 @@ export default class RpcApi {
                 let account;
                 // Simply testing if the property exists (with `'walletId' in request`) is not enough,
                 // as `undefined` also counts as existing.
-                if (request && (request as ParsedSimpleRequest).walletId) {
-                    account = await WalletStore.Instance.get((request as ParsedSimpleRequest).walletId);
-                    if (!account) {
-                        // no account found although it's required
-                        this.reject(new Error('Account ID not found'));
+                if (request) {
+                    let accountRequired;
+                    if ((request as ParsedSimpleRequest).walletId) {
+                        accountRequired = true;
+                        account = await WalletStore.Instance.get((request as ParsedSimpleRequest).walletId);
+                    } else if (requestType === RequestType.SIGN_TRANSACTION) {
+                        accountRequired = true;
+                        const address = (request as ParsedSignTransactionRequest).sender;
+                        account = this._store.getters.findWalletByAddress(address.toUserFriendlyAddress(), true);
+                    } else if (requestType === RequestType.SIGN_MESSAGE) {
+                        accountRequired = false; // Sign message allows user to select an account
+                        const address = (request as ParsedSignMessageRequest).signer;
+                        if (address) {
+                            account = this._store.getters.findWalletByAddress(address.toUserFriendlyAddress(), false);
+                        }
+                    } else if (requestType === RequestType.CHECKOUT) {
+                        const checkoutRequest = request as ParsedCheckoutRequest;
+                        accountRequired = checkoutRequest.forceSender;
+                        if (checkoutRequest.sender) {
+                            account = this._store.getters.findWalletByAddress(
+                                checkoutRequest.sender.toUserFriendlyAddress(),
+                                true,
+                            );
+                        }
+                    }
+                    if (accountRequired && !account) {
+                        this.reject(new Error('Account not found'));
                         return;
                     }
                 }
