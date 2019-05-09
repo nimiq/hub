@@ -18,7 +18,6 @@ import { Component, Watch, Vue } from 'vue-property-decorator';
 import { State } from 'vuex-class';
 
 import '@nimiq/style/nimiq-style.min.css';
-import './nimiq-style-icons.min.css';
 import '@nimiq/vue-components/dist/NimiqVueComponents.css';
 
 @Component
