@@ -12,8 +12,6 @@ export interface SimpleResult {
     success: true;
 }
 
-export type ListResult = Account[];
-
 export interface SignTransactionRequest extends BasicRequest {
     sender: string;
     recipient: string;
@@ -136,8 +134,8 @@ export type RpcRequest = SignTransactionRequest
 
 export type RpcResult = SignedTransaction
                       | Account
+                      | Account[]
                       | SimpleResult
                       | Address
                       | SignedMessage
-                      | ListResult
                       | ExportResult;

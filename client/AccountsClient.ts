@@ -20,7 +20,6 @@ import {
     SimpleResult,
     ExportRequest,
     ExportResult,
-    ListResult,
     RpcResult,
 } from '../src/lib/PublicRequestTypes';
 
@@ -83,7 +82,7 @@ export default class AccountsClient {
         return this._request(requestBehavior, RequestType.SIGNUP, [request]);
     }
 
-    public login(request: BasicRequest, requestBehavior = this._defaultBehavior): Promise<Account> {
+    public login(request: BasicRequest, requestBehavior = this._defaultBehavior): Promise<Account[]> {
         return this._request(requestBehavior, RequestType.LOGIN, [request]);
     }
 
@@ -136,14 +135,14 @@ export default class AccountsClient {
         return this._request(requestBehavior, RequestType.SIGN_MESSAGE, [request]);
     }
 
-    public migrate(requestBehavior = this._defaultBehavior): Promise<ListResult> {
+    public migrate(requestBehavior = this._defaultBehavior): Promise<Account[]> {
         return this._request(requestBehavior, RequestType.MIGRATE, [{ appName: 'Accounts Client' }]);
     }
 
     /**
      * Only accessible in iframe from Nimiq domains.
      */
-    public list(requestBehavior = this._iframeBehavior): Promise<ListResult> {
+    public list(requestBehavior = this._iframeBehavior): Promise<Account[]> {
         return this._request(requestBehavior, RequestType.LIST, []);
     }
 
