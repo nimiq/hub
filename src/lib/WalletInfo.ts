@@ -68,6 +68,18 @@ export class WalletInfo {
         });
     }
 
+    public findSignerForAddress(address: Nimiq.Address): AccountInfo | null {
+        const addressInfo: AccountInfo | undefined = this.accounts.get(address.toUserFriendlyAddress());
+        if (addressInfo) return addressInfo; // regular address
+        // address belongs to a contract
+        const contract = this.findContractByAddress(address);
+        if (!contract) return null;
+        if (contract.type !== Nimiq.Account.Type.VESTING) {
+            throw new Error('Currently only Vesting contracts are supported');
+        }
+        return this.accounts.get(contract.owner.toUserFriendlyAddress()) || null;
+    }
+
     public setContract(updatedContract: ContractInfo) {
         const index = this.contracts.findIndex((contract) => contract.address.equals(updatedContract.address));
         if (index < 0) {

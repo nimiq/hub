@@ -63,14 +63,14 @@ class CookieJar {
         return (this.MAX_COOKIE_SIZE - this.getCookieSize()) >= this.ENCODED_ACCOUNT_SIZE;
     }
 
-    public static canFitNewWallet(wallet?: WalletInfoEntry): boolean {
-        let walletToStore = wallet;
+    public static canFitNewWallets(wallets?: WalletInfoEntry[]): boolean {
+        let sizeNeeded = 0;
 
-        if (!walletToStore) {
+        if (!wallets) {
             const dummyAddressHumanReadable = 'NQ86 6D3H 6MVD 2JV4 N77V FNA5 M9BL 2QSP 1P64';
             const dummyAddress = Nimiq.Address.fromUserFriendlyAddress(dummyAddressHumanReadable);
             const dummyAddressSerialized = new Uint8Array(dummyAddress.serialize());
-            walletToStore = {
+            const dummyWallet = {
                 id: '0fe6067b138f',
                 keyId: 'D+YGexOP0yDjr3Uf6WwO9a2/WjhNbZFLrRwdLfuvz9c=',
                 label: 'Some long enough label to represent a long label',
@@ -90,9 +90,14 @@ class CookieJar {
                 fileExported: false,
                 wordsExported: false,
             };
+            sizeNeeded += this.encodeWallet(dummyWallet).length;
+        } else {
+            for (const wallet of wallets) {
+                sizeNeeded += this.encodeWallet(wallet).length;
+            }
         }
 
-        return (this.MAX_COOKIE_SIZE - this.getCookieSize()) >= this.encodeWallet(walletToStore).length;
+        return (this.MAX_COOKIE_SIZE - this.getCookieSize()) >= sizeNeeded;
     }
 
     public static encodeAndcutLabel(label: string): Uint8Array {

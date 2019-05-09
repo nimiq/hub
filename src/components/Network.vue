@@ -1,5 +1,6 @@
 <template>
-    <div class="network loading nq-blue-bg" :class="alwaysVisible || (visible && !consensusEstablished) ? '' : 'hidden'">
+    <div class="network loading nq-blue-bg"
+         :class="alwaysVisible || (visible && !hasOrSyncsOnTopOfConsensus) ? '' : 'hidden'">
         <div class="loading-animation"></div>
         <div class="loading-status nq-text-s">{{ status }}</div>
     </div>
@@ -8,7 +9,6 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { SignedTransaction } from '../lib/PublicRequestTypes';
-import KeyguardClient from '@nimiq/keyguard-client';
 import { NetworkClient, DetailedPlainTransaction } from '@nimiq/network-client';
 import Config from 'config';
 import {
@@ -22,11 +22,14 @@ import { VestingContractInfo } from '../lib/ContractInfo';
 
 @Component
 class Network extends Vue {
+    // static value shared across all instances which is then copied to the reactive template variable of the instances
+    private static _hasOrSyncsOnTopOfConsensus = false;
+
     @Prop(Boolean) private visible?: boolean;
     @Prop(Boolean) private alwaysVisible?: boolean;
     @Prop(String) private message?: string;
 
-    private consensusEstablished: boolean = false;
+    private hasOrSyncsOnTopOfConsensus: boolean = false;
     private boundListeners: Array<[NetworkClient.Events, (...args: any[]) => void]> = [];
 
     public async connect() {
@@ -50,49 +53,71 @@ class Network extends Vue {
         return NetworkClient.Instance.disconnect();
     }
 
-    public async prepareTx(
-        keyguardRequest: KeyguardClient.SignTransactionRequest,
-        keyguardResult: KeyguardClient.SignTransactionResult,
-    ): Promise<Nimiq.Transaction> {
+    public async createTx({
+        sender,
+        senderType = Nimiq.Account.Type.BASIC,
+        recipient,
+        recipientType = Nimiq.Account.Type.BASIC,
+        value,
+        fee = 0,
+        validityStartHeight,
+        flags = Nimiq.Transaction.Flag.NONE,
+        data,
+        signerPubKey,
+        signature,
+    }: {
+        sender: Nimiq.Address | Uint8Array,
+        senderType?: Nimiq.Account.Type,
+        recipient: Nimiq.Address | Uint8Array,
+        recipientType?: Nimiq.Account.Type,
+        value: number,
+        fee?: number,
+        validityStartHeight: number,
+        flags?: number,
+        data?: Uint8Array,
+        signerPubKey: Nimiq.PublicKey | Uint8Array,
+        signature?: Nimiq.Signature | Uint8Array,
+    }): Promise<Nimiq.Transaction> {
+        if (!(sender instanceof Nimiq.Address)) sender = new Nimiq.Address(sender);
+        if (!(recipient instanceof Nimiq.Address)) recipient = new Nimiq.Address(recipient);
+        if (!(signerPubKey instanceof Nimiq.PublicKey)) signerPubKey = new Nimiq.PublicKey(signerPubKey);
+        if (signature && !(signature instanceof Nimiq.Signature)) signature = new Nimiq.Signature(signature);
+
         await this._loadNimiq();
 
-        let tx: Nimiq.Transaction;
-
         if (
-            (keyguardRequest.data && keyguardRequest.data.length > 0)
-            || keyguardRequest.senderType // this condition is truthy when type is 1 or 2
-            || keyguardRequest.recipientType // this condition is truthy when type is 1 or 2
+            (data && data.length > 0)
+            || senderType !== Nimiq.Account.Type.BASIC
+            || recipientType !== Nimiq.Account.Type.BASIC
+            || flags !== Nimiq.Transaction.Flag.NONE
         ) {
-            tx = new Nimiq.ExtendedTransaction(
-                new Nimiq.Address(keyguardRequest.sender),
-                keyguardRequest.senderType || Nimiq.Account.Type.BASIC,
-                new Nimiq.Address(keyguardRequest.recipient),
-                keyguardRequest.recipientType || Nimiq.Account.Type.BASIC,
-                keyguardRequest.value,
-                keyguardRequest.fee,
-                keyguardRequest.validityStartHeight,
-                keyguardRequest.flags || 0,
-                keyguardRequest.data || new Uint8Array(0),
-                Nimiq.SignatureProof.singleSig(
-                    new Nimiq.PublicKey(keyguardResult.publicKey),
-                    new Nimiq.Signature(keyguardResult.signature),
-                ).serialize(),
+            return new Nimiq.ExtendedTransaction(
+                sender,
+                senderType,
+                recipient,
+                recipientType,
+                value,
+                fee,
+                validityStartHeight,
+                flags,
+                data || new Uint8Array(0),
+                signature ? Nimiq.SignatureProof.singleSig(signerPubKey, signature).serialize() : undefined,
             );
         } else {
-            tx = new Nimiq.BasicTransaction(
-                new Nimiq.PublicKey(keyguardResult.publicKey),
-                new Nimiq.Address(keyguardRequest.recipient),
-                keyguardRequest.value,
-                keyguardRequest.fee,
-                keyguardRequest.validityStartHeight,
-                new Nimiq.Signature(keyguardResult.signature),
+            return new Nimiq.BasicTransaction(
+                signerPubKey,
+                recipient,
+                value,
+                fee,
+                validityStartHeight,
+                signature,
             );
         }
-
-        return tx;
     }
 
-    public makeSignTransactionResult(tx: Nimiq.Transaction): SignedTransaction {
+    public async makeSignTransactionResult(tx: Nimiq.Transaction): Promise<SignedTransaction> {
+        await this._loadNimiq(); // needed for hash computation
+
         const proof = Nimiq.SignatureProof.unserialize(new Nimiq.SerialBuffer(tx.proof));
 
         const result: SignedTransaction = {
@@ -127,7 +152,7 @@ class Network extends Vue {
      * fires its 'transaction-relayed' event for that transaction.
      */
     public async sendToNetwork(tx: Nimiq.Transaction): Promise<SignedTransaction> {
-        const signedTx = this.makeSignTransactionResult(tx);
+        const signedTx = await this.makeSignTransactionResult(tx);
         const client = await this._getNetworkClient();
 
         const txObjToSend = Object.assign({}, signedTx.raw, {
@@ -143,6 +168,13 @@ class Network extends Vue {
                 if (txInfo.hash === base64Hash) resolve(signedTx);
             });
         });
+    }
+
+    public async getBlockchainHeight(): Promise<number> {
+        const client = await this._getNetworkClient();
+        if (Network._hasOrSyncsOnTopOfConsensus) return client.headInfo.height;
+        return new Promise((resolve) => this.$once(Network.Events.CONSENSUS_ESTABLISHED,
+            () => resolve(client.headInfo.height)));
     }
 
     public async getBalances(addresses: string[]): Promise<Map<string, number>> {
@@ -171,8 +203,14 @@ class Network extends Vue {
     }
 
     private created() {
-        this.$on('consensus-established', () => this.consensusEstablished = true);
-        this.$on('consensus-lost', () => this.consensusEstablished = false);
+        this.$on(Network.Events.CONSENSUS_ESTABLISHED, () => {
+            Network._hasOrSyncsOnTopOfConsensus = true;
+            this.hasOrSyncsOnTopOfConsensus = true;
+        });
+        this.$on(Network.Events.CONSENSUS_LOST, () => {
+            Network._hasOrSyncsOnTopOfConsensus = false;
+            this.hasOrSyncsOnTopOfConsensus = false;
+        });
     }
 
     private destroyed() {
@@ -236,6 +274,9 @@ class Network extends Vue {
         if (networkClient.consensusState === 'syncing') this.$emit(Network.Events.CONSENSUS_SYNCING);
         else if (networkClient.consensusState === 'established') this.$emit(Network.Events.CONSENSUS_ESTABLISHED);
         else if (networkClient.consensusState === 'lost') this.$emit(Network.Events.CONSENSUS_LOST);
+        Network._hasOrSyncsOnTopOfConsensus = Network._hasOrSyncsOnTopOfConsensus
+            || networkClient.consensusState === 'established';
+        this.hasOrSyncsOnTopOfConsensus = Network._hasOrSyncsOnTopOfConsensus;
 
         if (networkClient.peerCount !== 0) this.$emit(Network.Events.PEERS_CHANGED, networkClient.peerCount);
 

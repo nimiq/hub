@@ -18,37 +18,21 @@ export default class SignTransaction extends Vue {
     public async created() {
         // Forward user through AccountsManager to Keyguard
 
-        const wallet = this.findWalletByAddress(this.request.sender.toUserFriendlyAddress(), true);
-        if (!wallet) {
-            this.$rpc.reject(new Error('Address not found'));
-            return;
-        }
-
-        let account = wallet.accounts.get(this.request.sender.toUserFriendlyAddress());
-        let contract: ContractInfo | undefined;
-        if (!account) {
-            // Search contracts
-            contract = wallet.findContractByAddress(this.request.sender);
-            if (contract) {
-                if (contract.type === Nimiq.Account.Type.HTLC) {
-                    this.$rpc.reject(new Error('HTLC contracts are not yet supported for transaction signing'));
-                    return;
-                }
-                account = wallet.accounts.get((contract as VestingContractInfo).owner.toUserFriendlyAddress());
-            }
-        }
+        const senderAccount = this.findWalletByAddress(this.request.sender.toUserFriendlyAddress(), true)!;
+        const senderContract = senderAccount.findContractByAddress(this.request.sender);
+        const signer = senderAccount.findSignerForAddress(this.request.sender)!;
 
         const request: KeyguardClient.SignTransactionRequest = {
             layout: 'standard',
             appName: this.request.appName,
 
-            keyId: wallet.keyId,
-            keyPath: account!.path,
-            keyLabel: wallet.label,
+            keyId: senderAccount.keyId,
+            keyPath: signer.path,
+            keyLabel: senderAccount.label,
 
-            sender: (contract || account!).address.serialize(),
-            senderType: contract ? contract.type : Nimiq.Account.Type.BASIC,
-            senderLabel: (contract || account!).label,
+            sender: (senderContract || signer).address.serialize(),
+            senderType: senderContract ? senderContract.type : Nimiq.Account.Type.BASIC,
+            senderLabel: (senderContract || signer).label,
             recipient: this.request.recipient.serialize(),
             recipientType: this.request.recipientType,
             recipientLabel: undefined, // XXX Should we accept a recipient label from outside?

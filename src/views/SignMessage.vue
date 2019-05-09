@@ -99,6 +99,14 @@ export default class SignMessage extends Vue {
             return;
         }
 
+        if (this.showAccountSelector) {
+            // set active account if user selected the account himself
+            this.$setActiveAccount({
+                walletId: walletInfo.id,
+                userFriendlyAddress: accountInfo.userFriendlyAddress,
+            });
+        }
+
         // Forward to Keyguard
         const request: KeyguardClient.SignMessageRequest = {
             appName: this.request.appName,
@@ -138,8 +146,7 @@ export default class SignMessage extends Vue {
             if (walletInfo) {
                 this.$addWallet(walletInfo);
 
-                // Set as activeWallet and activeAccount
-                // FIXME: Currently unused, but should be reactivated
+                // FIXME: Also handle active account we get from store
                 const activeAccount = walletInfo.accounts.values().next().value;
 
                 this.$setActiveAccount({

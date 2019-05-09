@@ -202,59 +202,59 @@ export default class Checkout extends Vue {
     }
 
     private setAccountOrContract(walletId: string, address: string) {
-        if (!this.height) return; // TODO: Make it impossible for users to click when height is not ready
+        const nimiqAddress = Nimiq.Address.fromUserFriendlyAddress(address);
+        const senderAccount = this.wallets.find((wallet: WalletInfo) => wallet.id === walletId)!;
+        const senderContract = senderAccount.findContractByAddress(nimiqAddress);
+        const signer = senderAccount.findSignerForAddress(nimiqAddress)!;
 
-        const walletInfo = this.wallets.find((wallet: WalletInfo) => wallet.id === walletId)!;
-        let accountInfo = walletInfo.accounts.get(address);
-        let contractInfo: ContractInfo | undefined;
-        if (!accountInfo) {
-            // Search contracts
-            contractInfo = walletInfo.findContractByAddress(Nimiq.Address.fromUserFriendlyAddress(address))!;
-            if (contractInfo.type === Nimiq.Account.Type.HTLC) {
-                alert('HTLC contracts are not yet supported for checkout');
-                return;
-            }
-            accountInfo = walletInfo.accounts.get(contractInfo.owner.toUserFriendlyAddress());
-        }
-
-        // FIXME: Currently unused, but should be reactivated
-        this.$store.commit('setActiveAccount', {
-            walletId: walletInfo.id,
-            userFriendlyAddress: accountInfo!.userFriendlyAddress,
+        // FIXME: Also handle active account we get from store
+        this.$setActiveAccount({
+            walletId: senderAccount.id,
+            userFriendlyAddress: (senderContract || signer).userFriendlyAddress,
         });
 
-        // The next block is the earliest for which tx are accepted by standard miners
-        const validityStartHeight = this.height + 1
-            - TX_VALIDITY_WINDOW
-            + this.request.validityDuration;
+        // proceed to transaction signing
+        switch (senderAccount.type) {
+            case WalletType.LEDGER:
+                this.$rpc.routerPush(`${RequestType.SIGN_TRANSACTION}-ledger`);
+                return;
+            case WalletType.LEGACY:
+            case WalletType.BIP39:
+                if (!this.height) return;
 
-        const request: KeyguardClient.SignTransactionRequest = {
-            layout: 'checkout',
-            shopOrigin: this.rpcState.origin,
-            appName: this.request.appName,
-            shopLogoUrl: this.request.shopLogoUrl,
+                // The next block is the earliest for which tx are accepted by standard miners
+                const validityStartHeight = this.height + 1
+                    - TX_VALIDITY_WINDOW
+                    + this.request.validityDuration;
 
-            keyId: walletInfo.keyId,
-            keyPath: accountInfo!.path,
-            keyLabel: walletInfo.label,
+                const request: KeyguardClient.SignTransactionRequest = {
+                    layout: 'checkout',
+                    shopOrigin: this.rpcState.origin,
+                    appName: this.request.appName,
+                    shopLogoUrl: this.request.shopLogoUrl,
 
-            sender: (contractInfo || accountInfo!).address.serialize(),
-            senderType: contractInfo ? contractInfo.type : Nimiq.Account.Type.BASIC,
-            senderLabel: (contractInfo || accountInfo!).label,
-            recipient: this.request.recipient.serialize(),
-            recipientType: this.request.recipientType,
-            // recipientLabel: '', // Checkout is using the shopOrigin instead
-            value: this.request.value,
-            fee: this.request.fee,
-            validityStartHeight,
-            data: this.request.data,
-            flags: this.request.flags,
-        };
+                    keyId: senderAccount.keyId,
+                    keyPath: signer!.path,
+                    keyLabel: senderAccount.label,
 
-        staticStore.keyguardRequest = request;
+                    sender: (senderContract || signer).address.serialize(),
+                    senderType: senderContract ? senderContract.type : Nimiq.Account.Type.BASIC,
+                    senderLabel: (senderContract || signer).label,
+                    recipient: this.request.recipient.serialize(),
+                    recipientType: this.request.recipientType,
+                    // recipientLabel: '', // Checkout is using the shopOrigin instead
+                    value: this.request.value,
+                    fee: this.request.fee,
+                    validityStartHeight,
+                    data: this.request.data,
+                    flags: this.request.flags,
+                };
 
-        const client = this.$rpc.createKeyguardClient();
-        client.signTransaction(request);
+                staticStore.keyguardRequest = request;
+                const client = this.$rpc.createKeyguardClient();
+                client.signTransaction(request);
+                return;
+        }
     }
 
     private goToOnboarding(useReplace?: boolean) {
@@ -272,11 +272,8 @@ export default class Checkout extends Vue {
     }
 
     private get hasSufficientBalanceAccount(): boolean {
-        return this.wallets.some((wallet: WalletInfo) => {
-            return Array.from(wallet.accounts.values()).some((account: AccountInfo) => {
-                return !!account.balance && account.balance >= this.minBalance;
-            });
-        });
+        return this.wallets.some((wallet: WalletInfo) => [...wallet.accounts.values(), ...wallet.contracts]
+            .some((info: AccountInfo | ContractInfo) => !!info.balance && info.balance >= this.minBalance));
     }
 
     private get shopOrigin() {
@@ -299,7 +296,7 @@ export default class Checkout extends Vue {
                 this.sideResultAddedWallet = true;
 
                 // Set as activeWallet and activeAccount
-                // FIXME: Currently unused, but should be reactivated
+                // FIXME: Also handle active account we get from store
                 const activeAccount = walletInfo.accounts.values().next().value;
 
                 this.$setActiveAccount({

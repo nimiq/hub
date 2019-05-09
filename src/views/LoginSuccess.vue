@@ -20,13 +20,13 @@ import { BrowserDetection } from '@nimiq/utils';
 import { ParsedBasicRequest } from '../lib/RequestTypes';
 import { Account } from '../lib/PublicRequestTypes';
 import { State } from 'vuex-class';
-import { WalletInfo } from '../lib/WalletInfo';
+import { WalletInfo, WalletType } from '../lib/WalletInfo';
 import { WalletStore } from '@/lib/WalletStore';
 import { Static } from '@/lib/StaticStore';
 import { SmallPage } from '@nimiq/vue-components';
 import Loader from '@/components/Loader.vue';
-import WalletInfoCollector from '@/lib/WalletInfoCollector';
 import CookieJar from '../lib/CookieJar';
+import WalletInfoCollector, { WalletCollectionResult } from '../lib/WalletInfoCollector';
 
 @Component({components: {Loader, SmallPage}})
 export default class LoginSuccess extends Vue {
@@ -40,61 +40,95 @@ export default class LoginSuccess extends Vue {
     private message: string = '';
     private action: string = '';
     private receiptsError: Error | null = null;
-    private result: Account | null = null;
-    private resolve: ((value?: {} | PromiseLike<{}> | undefined) => void) | null = null;
+    private result: Account[] | null = null;
+    private resolve = () => {}; // tslint:disable-line:no-empty
 
     private async mounted() {
-        // TODO: Handle import of both a legacy and bip39 key!
-        this.keyguardResult.map(async (keyResult) => {
-            // The Keyguard always returns (at least) one derived Address,
-            const keyguardResultAccounts = keyResult.addresses.map((addressObj) => ({
-                address: new Nimiq.Address(addressObj.address).toUserFriendlyAddress(),
-                path: addressObj.keyPath,
-            }));
+        const collectionResults: WalletCollectionResult[] = [];
 
-            let tryCount = 0;
-            while (true) {
-                try {
-                    tryCount += 1;
-                    const { walletInfo, receiptsError } = await WalletInfoCollector.collectWalletInfo(
-                        keyResult.keyType,
-                        keyResult.keyId,
-                        keyguardResultAccounts,
-                    );
+        await Promise.all(
+            this.keyguardResult.map(async (keyResult) => {
+                // The Keyguard always returns (at least) one derived Address,
+                const keyguardResultAccounts = keyResult.addresses.map((addressObj) => ({
+                    address: new Nimiq.Address(addressObj.address).toUserFriendlyAddress(),
+                    path: addressObj.keyPath,
+                }));
 
-                    if (receiptsError) {
-                        this.receiptsError = receiptsError;
+                let tryCount = 0;
+                while (true) {
+                    try {
+                        tryCount += 1;
+                        const collectionResult = await WalletInfoCollector.collectWalletInfo(
+                            keyResult.keyType,
+                            keyResult.keyId,
+                            keyguardResultAccounts,
+                            undefined,
+                            this.keyguardResult.length > 1,
+                        );
+
+                        if (collectionResult.receiptsError) {
+                            this.receiptsError = collectionResult.receiptsError;
+                        }
+
+                        collectionResult.walletInfo.fileExported = collectionResult.walletInfo.fileExported
+                            || keyResult.fileExported;
+                        collectionResult.walletInfo.wordsExported = collectionResult.walletInfo.wordsExported
+                            || keyResult.wordsExported;
+
+                        collectionResults.push(collectionResult);
+
+                        this.retrievalFailed = false;
+                        break;
+                    } catch (e) {
+                        this.retrievalFailed = true;
+                        if (tryCount >= 5) throw e;
                     }
-
-                    walletInfo.fileExported = walletInfo.fileExported || keyResult.fileExported;
-                    walletInfo.wordsExported = walletInfo.wordsExported || keyResult.wordsExported;
-
-                    await WalletStore.Instance.put(walletInfo);
-                    this.walletInfos.push(walletInfo);
-
-                    this.retrievalFailed = false;
-                    this.done();
-                    break;
-                } catch (e) {
-                    this.retrievalFailed = true;
-                    if (tryCount >= 5) throw e;
                 }
+            }),
+        );
+
+        // In case there is only one returned Account it is always added.
+        let keepWalletCondition: (collectionResult: WalletCollectionResult) => boolean = (collectionResult) => true;
+        if (collectionResults.length > 1) {
+            if (collectionResults.some((walletInfo) => walletInfo.hasActivity)) {
+                // In case there is more than one account returned and at least one saw activity in the past
+                // add the accounts with activity while discarding the others.
+                keepWalletCondition = (collectionResult) => collectionResult.hasActivity;
+            } else {
+                // In case of more than one returned account but none saw activity in the past
+                // look for the BIP39 account and add it while discarding the others.
+                keepWalletCondition = (collectionResult) => collectionResult.walletInfo.type === WalletType.BIP39;
             }
-        });
+        }
+
+        await Promise.all (
+            collectionResults.map( async (collectionResult) => {
+                if (keepWalletCondition(collectionResult)) {
+                    await WalletStore.Instance.put(collectionResult.walletInfo);
+                    this.walletInfos.push(collectionResult.walletInfo);
+                    await collectionResult.releaseKey(false);
+                } else {
+                    await collectionResult.releaseKey(true);
+                }
+            }),
+        );
+
+        this.done();
     }
 
     private async done() {
         if (!this.walletInfos.length) throw new Error('WalletInfo not ready.');
-        const result = {
-            accountId: this.walletInfos[0].id,
-            label: this.walletInfos[0].label,
-            type: this.walletInfos[0].type,
-            fileExported: this.walletInfos[0].fileExported,
-            wordsExported: this.walletInfos[0].wordsExported,
-            addresses: Array.from(this.walletInfos[0].accounts.values())
-                .map((addressInfo) => addressInfo.toAddressType()),
-            contracts: this.walletInfos[0].contracts.map((contract) => contract.toContractType()),
-        };
+
+        const result = this.walletInfos.map((walletInfo) => ({
+                accountId: walletInfo.id,
+                label: walletInfo.label,
+                type: walletInfo.type,
+                fileExported: walletInfo.fileExported,
+                wordsExported: walletInfo.wordsExported,
+                addresses: Array.from(walletInfo.accounts.values())
+                    .map((addressInfo) => addressInfo.toAddressType()),
+                contracts: walletInfo.contracts.map((contract) => contract.toContractType()),
+        }));
 
         if (this.receiptsError) {
             this.title = 'Your addresses may be\nincomplete.';
@@ -104,9 +138,10 @@ export default class LoginSuccess extends Vue {
             await new Promise((resolve) => { this.resolve = resolve; });
         }
 
-        const walletInfoEntry = this.walletInfos[0].toObject();
-        if ((BrowserDetection.isIOS() || BrowserDetection.isSafari()) && CookieJar.canFitNewWallet(walletInfoEntry)) {
+        const infoEntries = this.walletInfos.map((walletInfo) => walletInfo.toObject());
+        if ((BrowserDetection.isIOS() || BrowserDetection.isSafari()) && !CookieJar.canFitNewWallets(infoEntries)) {
             this.title = 'Account may disappear';
+            this.state = Loader.State.WARNING;
             this.message = 'Unfortunately, due to restrictions of Safari it may happen that this account will '
                          + 'disappear from some user inferfaces. Please log out of unused accounts to solve this '
                          + 'issue by freeing up space.';

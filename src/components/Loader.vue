@@ -1,5 +1,10 @@
 <template>
-    <div class="loader" :class="{ 'nq-blue-bg': showLoadingBackground && !lightBlue, 'nq-light-blue-bg': showLoadingBackground && lightBlue, 'exit-transition': state === 'success' }">
+    <div class="loader" :class="{
+        'nq-blue-bg': showLoadingBackground && !lightBlue,
+        'nq-light-blue-bg': showLoadingBackground && lightBlue,
+        'exit-transition': state === 'success',
+        small,
+    }">
         <transition name="fade-loading">
             <div class="wrapper" v-if="state === 'loading'">
                 <h1 class="title nq-h1">{{ loadingTitle }}</h1>
@@ -97,6 +102,8 @@ import { LoadingSpinner } from '@nimiq/vue-components';
  *
  * **alternativeAction** {string} [optional] Text of alternative action link (link is hidden otherwise)
  *
+ * **small** {boolean} [optional] Toggle to a smaller layout
+ *
  * Events:
  *
  * **@main-action**
@@ -107,9 +114,6 @@ import { LoadingSpinner } from '@nimiq/vue-components';
  * `Loader.State.WARNING` and `Loader.State.ERROR`.
  *
  * The events are available as `Loader.Events.MAIN_ACTION` and `Loader.Events.ALTERNATIVE_ACTION`.
- *
- * Layout:
- * The Layout can be toggled to a smaller Layout by adding the `small` css class.
  */
 @Component({components: {LoadingSpinner}})
 class Loader extends Vue {
@@ -124,6 +128,7 @@ class Loader extends Vue {
     @Prop(String) private message?: string;
     @Prop(String) private mainAction?: string;
     @Prop(String) private alternativeAction?: string;
+    @Prop(Boolean) private small?: boolean;
 
     private currentStatus: string = '';
     private nextStatus: string = '';
@@ -275,7 +280,7 @@ export default Loader;
     }
 
     .loader.small .status-row {
-        margin-bottom: 3rem;
+        margin-bottom: 2.5rem;
     }
 
     .status {
@@ -284,14 +289,15 @@ export default Loader;
         width: 100%;
         margin: 0;
         padding: 0 2rem;
+        font-size: var(--status-font-size);
         font-weight: normal;
         line-height: 1.2;
         opacity: 1;
     }
 
-    .status.next {
-        transform: translateY(var(--status-font-size));
-        opacity: 0;
+    .loader.small .status {
+        /* on small layout center multiple lines vertically instead of overflowing to the top */
+        transform: translateY(calc(50% - var(--status-font-size) / 2));
     }
 
     .status-row.transition .status {
@@ -299,13 +305,18 @@ export default Loader;
     }
 
     .status-row.transition .status.current {
-        transform: translateY(calc(-1 * var(--status-font-size)));
+        transform: translateY(-100%);
         opacity: 0;
     }
 
-    .status-row.transition .status.next {
-        transform: translateY(0);
-        opacity: 1;
+    .loader.small .status-row.transition .status.current {
+        /* on small layout move message less to avoid that it flies over half the screen */
+        transform: translateY(calc(-1 * var(--status-font-size)));
+    }
+
+    .status-row:not(.transition) .status.next {
+        transform: translateY(100%);
+        opacity: 0;
     }
 
     .spacer {
@@ -360,8 +371,10 @@ export default Loader;
         white-space: pre-line;
     }
 
-    .loader .loader.small .title {
+    .loader.small .title {
         margin-top: 3rem;
+        margin-bottom: 2rem;
+        font-size: 2.5rem;
     }
 
     .loader .icon-row .nq-icon {

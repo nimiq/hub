@@ -19,7 +19,7 @@ export default class Signup extends Vue {
     private notEnoughCookieSpace = false;
 
     public created() {
-        if ((BrowserDetection.isIOS() || BrowserDetection.isSafari()) && !CookieJar.canFitNewWallet()) {
+        if ((BrowserDetection.isIOS() || BrowserDetection.isSafari()) && !CookieJar.canFitNewWallets()) {
             this.notEnoughCookieSpace = true;
             return;
         }
