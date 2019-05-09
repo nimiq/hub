@@ -15,7 +15,7 @@
         </SmallPage>
 
         <button class="global-close nq-button-s" @click="close">
-            <span class="nq-icon arrow-left"></span>
+            <ArrowLeftSmallIcon/>
             Back to {{request.appName}}
         </button>
     </div>
@@ -24,7 +24,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { Getter, Mutation } from 'vuex-class';
-import { SmallPage, AccountSelector } from '@nimiq/vue-components';
+import { SmallPage, AccountSelector, ArrowLeftSmallIcon } from '@nimiq/vue-components';
 import { RequestType } from '../lib/RequestTypes';
 import { SimpleRequest, Account, Address } from '../lib/PublicRequestTypes';
 import staticStore, { Static } from '@/lib/StaticStore';
@@ -34,7 +34,7 @@ import { ERROR_CANCELED } from '../lib/Constants';
 import { AccountInfo } from '../lib/AccountInfo';
 import { ContractInfo } from '../lib/ContractInfo';
 
-@Component({components: { AccountSelector, SmallPage }})
+@Component({components: { AccountSelector, SmallPage, ArrowLeftSmallIcon }})
 export default class ChooseAddress extends Vue {
     @Static private request!: SimpleRequest;
 

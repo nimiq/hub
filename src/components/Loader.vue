@@ -28,7 +28,7 @@
 
                 <div class="icon-row">
                     <slot name="success">
-                        <div class="success nq-icon"></div>
+                        <CheckmarkIcon/>
                         <h1 class="title nq-h1">{{ title }}</h1>
                     </slot>
                 </div>
@@ -43,7 +43,7 @@
 
                 <div class="icon-row">
                     <slot name="warning">
-                        <div class="warning nq-icon"></div>
+                        <FaceNeutralIcon/>
 
                         <h1 class="title nq-h1">{{ title }}</h1>
                         <p v-if="message" class="message nq-text">{{ message }}</p>
@@ -63,7 +63,7 @@
 
                 <div class="icon-row">
                     <slot name="error">
-                        <div class="error nq-icon"></div>
+                        <FaceSadIcon/>
 
                         <h1 class="title nq-h1">{{ title }}</h1>
                         <p v-if="message" class="message nq-text">{{ message }}</p>
@@ -81,7 +81,7 @@
 
 <script lang="ts">
 import { Component, Prop, Watch, Vue } from 'vue-property-decorator';
-import { LoadingSpinner } from '@nimiq/vue-components';
+import { LoadingSpinner, CheckmarkIcon, FaceNeutralIcon, FaceSadIcon } from '@nimiq/vue-components';
 
 /**
  * **Nimiq Loader Component**
@@ -115,7 +115,7 @@ import { LoadingSpinner } from '@nimiq/vue-components';
  *
  * The events are available as `Loader.Events.MAIN_ACTION` and `Loader.Events.ALTERNATIVE_ACTION`.
  */
-@Component({components: {LoadingSpinner}})
+@Component({components: {LoadingSpinner, CheckmarkIcon, FaceNeutralIcon, FaceSadIcon}})
 class Loader extends Vue {
     // TODO: Move to CONSTANTS
     public static readonly SUCCESS_REDIRECT_DELAY: number = 2000; // 1s of transition + 1s of display
@@ -386,22 +386,16 @@ export default Loader;
         height: 7rem;
     }
 
-    .loader .nq-icon.success {
-        width: 9rem;
-        height: 9rem;
-        background-image: url('data:image/svg+xml,<svg width="74" height="74" viewBox="0 0 74 74" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M71.1219 1.8436C69.1022 0.394771 66.2911 0.858411 64.8429 2.8792L22.7383 61.617L8.68342 47.5419C7.54679 46.4041 5.88983 45.9594 4.3367 46.3754C2.78357 46.7915 1.57022 48.0049 1.15372 49.5588C0.737223 51.1126 1.18084 52.7708 2.31747 53.9086L20.1223 71.7209C21.0679 72.6313 22.3587 73.0916 23.6667 72.9848C24.9746 72.878 26.1737 72.2144 26.9593 71.1625L72.1569 8.12622C73.6049 6.10533 73.1415 3.29258 71.1219 1.8436Z" fill="white" stroke="white" stroke-width="0.8"/></svg>');
+    .loader .success .nq-icon {
+        font-size: 9rem;
     }
 
-    .loader .nq-icon.warning {
-        width: 10rem;
-        height: 10rem;
-        background-image: url('data:image/svg+xml,<svg width="75" height="74" viewBox="0 0 75 74" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M39.8365 49.2798C39.8365 50.8448 38.5617 52.1253 36.991 52.1253C35.4203 52.1253 34.1455 50.8448 34.1455 49.2798V30.6531C34.1455 29.0767 35.4203 27.8076 36.991 27.8076C38.5617 27.8076 39.8365 29.0767 39.8365 30.6531V49.2798ZM36.991 62.4718C35.4203 62.4718 34.1455 61.197 34.1455 59.6263C34.1455 58.0555 35.4203 56.7808 36.991 56.7808C38.5617 56.7808 39.8365 58.0555 39.8365 59.6263C39.8365 61.197 38.5617 62.4718 36.991 62.4718ZM73.3682 69.1074L39.5351 1.44694C38.5676 -0.482313 35.4148 -0.482313 34.4473 1.44694L0.301268 69.7391C-0.13694 70.6212 -0.0971029 71.6683 0.420779 72.5106C0.944352 73.3472 1.86061 73.8537 2.84515 73.8537H71.1373C71.1771 73.8594 71.2227 73.8594 71.2511 73.8537C72.8218 73.8537 74.0966 72.5846 74.0966 71.0082C74.0966 70.2797 73.8235 69.6139 73.3682 69.1074Z" fill="white"/></svg>');
+    .loader .warning .nq-icon {
+        font-size: 10rem;
     }
 
-    .loader .nq-icon.error {
-        width: 12rem;
-        height: 12rem;
-        background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 102 102" height="102" width="102"><circle fill="none" stroke-width="6" stroke="white" r="48" cy="51" cx="51" /><circle r="4.8243198" cy="38.739731" cx="35.148571" fill="white" /><circle r="4.8243198" cy="38.739239" cx="66.851433" fill="white" /><path d="m 39.972931,69.06373 c 0,0 4.8243,-2.7567 11.027,-2.7567 6.2027,0 11.0271,2.7567 11.0271,2.7567" fill="none" stroke="white" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" /></svg>');
+    .loader .error .nq-icon {
+        font-size: 12rem;
     }
 
     .loader .icon-row .title,

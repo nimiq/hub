@@ -20,7 +20,7 @@
         </SmallPage>
 
         <button class="global-close nq-button-s" @click="_close" :class="{ hidden: confirmedLogout }">
-            <span class="nq-icon arrow-left"></span>
+            <ArrowLeftSmallIcon/>
             Back to {{request.appName}}
         </button>
     </div>
@@ -28,14 +28,14 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { SmallPage, PageHeader, PageBody } from '@nimiq/vue-components';
+import { SmallPage, PageHeader, PageBody, ArrowLeftSmallIcon } from '@nimiq/vue-components';
 import { ParsedSimpleRequest } from '../lib/RequestTypes';
 import { WalletStore } from '@/lib/WalletStore';
 import { Static } from '../lib/StaticStore';
 import { ERROR_CANCELED } from '../lib/Constants';
 import Loader from '../components/Loader.vue';
 
-@Component({components: {SmallPage, PageHeader, PageBody, Loader}})
+@Component({components: {SmallPage, PageHeader, PageBody, Loader, ArrowLeftSmallIcon}})
 export default class LogoutLedger extends Vue {
     @Static private request!: ParsedSimpleRequest;
 

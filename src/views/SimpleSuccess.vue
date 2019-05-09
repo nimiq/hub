@@ -3,7 +3,7 @@
         <SmallPage>
             <Loader :state="state" :lightBlue="true">
                 <template slot="success">
-                    <div class="success nq-icon"></div>
+                    <CheckmarkIcon/>
                     <h1 class="title nq-h1" v-html="text"></h1>
                 </template>
             </Loader>
@@ -13,14 +13,14 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { SmallPage } from '@nimiq/vue-components';
+import { SmallPage, CheckmarkIcon } from '@nimiq/vue-components';
 import { State } from 'vuex-class';
 import { RpcRequest, SimpleResult } from '../lib/PublicRequestTypes';
 import { SimpleResult as KSimpleResult } from '@nimiq/keyguard-client';
 import { Static } from '@/lib/StaticStore';
 import Loader from '../components/Loader.vue';
 
-@Component({components: {SmallPage, Loader}})
+@Component({components: {SmallPage, Loader, CheckmarkIcon}})
 export default class SimpleSuccess extends Vue {
     @Static private request!: RpcRequest;
     @State private keyguardResult!: KSimpleResult;
