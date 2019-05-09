@@ -25,7 +25,7 @@ import { SmallPage } from '@nimiq/vue-components';
 import Loader from '@/components/Loader.vue';
 import WalletInfoCollector from '@/lib/WalletInfoCollector';
 import KeyguardClient from '@nimiq/keyguard-client';
-import { WalletCollectionResult } from '../lib/WalletInfoCollector';
+import { WalletCollectionResultKeyguard } from '../lib/WalletInfoCollector';
 
 @Component({components: {Loader, SmallPage}})
 export default class LoginSuccess extends Vue {
@@ -40,7 +40,7 @@ export default class LoginSuccess extends Vue {
     private result: Account[] | null = null;
 
     private async mounted() {
-        const collectionResults: WalletCollectionResult[] = [];
+        const collectionResults: WalletCollectionResultKeyguard[] = [];
 
         await Promise.all(
             this.keyguardResult.map(async (keyResult) => {
@@ -54,10 +54,9 @@ export default class LoginSuccess extends Vue {
                 while (true) {
                     try {
                         tryCount += 1;
-                        let collectionResult: WalletCollectionResult;
+                        let collectionResult: WalletCollectionResultKeyguard;
                         if (keyResult.keyType === WalletType.BIP39) {
-                            collectionResult = await WalletInfoCollector.collectLedgerOrBip39WalletInfo(
-                                WalletType.BIP39,
+                            collectionResult = await WalletInfoCollector.collectBip39WalletInfo(
                                 keyResult.keyId,
                                 keyguardResultAccounts,
                                 undefined,
@@ -94,7 +93,7 @@ export default class LoginSuccess extends Vue {
         );
 
         // In case there is only one returned Account it is always added.
-        let keepWalletCondition: (collectionResult: WalletCollectionResult) => boolean = (collectionResult) => true;
+        let keepWalletCondition: (collectionResult: WalletCollectionResultKeyguard) => boolean = () => true;
         if (collectionResults.length > 1) {
             if (collectionResults.some((walletInfo) => walletInfo.hasActivity)) {
                 // In case there is more than one account returned and at least one saw activity in the past

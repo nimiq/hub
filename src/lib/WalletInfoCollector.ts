@@ -22,22 +22,97 @@ type BasicAccountInfo = {
     path: string,
 };
 
-export type WalletCollectionResult = {
+export type WalletCollectionResultLedger = {
     walletInfo: WalletInfo,
     receiptsError?: Error, // if there is an incomplete result due to failed requestTxReceipts requests
-    releaseKey: (removeKey?: boolean) => Promise<KeyguardSimpleResult | void>,
     hasActivity: boolean, // whether the wallet has a transaction history or a balance or owns a contract
+};
+export type WalletCollectionResultKeyguard = WalletCollectionResultLedger & {
+    releaseKey: (removeKey?: boolean) => Promise<KeyguardSimpleResult | void>,
 };
 
 export default class WalletInfoCollector {
-    public static async collectLedgerOrBip39WalletInfo(
+    public static async collectBip39WalletInfo(
+        keyId: string,
+        initialAccounts: BasicAccountInfo[],
+        // tslint:disable-next-line:no-empty
+        onUpdate: (walletInfo: WalletInfo, currentlyCheckedAccounts: BasicAccountInfo[]) => void = () => {},
+        skipActivityCheck = false,
+    ): Promise<WalletCollectionResultKeyguard> {
+        return WalletInfoCollector._collectLedgerOrBip39WalletInfo(WalletType.BIP39, keyId, initialAccounts, onUpdate,
+            skipActivityCheck) as Promise<WalletCollectionResultKeyguard>;
+    }
+
+    public static async collectLedgerWalletInfo(
+        initialAccounts: BasicAccountInfo[],
+        // tslint:disable-next-line:no-empty
+        onUpdate: (walletInfo: WalletInfo, currentlyCheckedAccounts: BasicAccountInfo[]) => void = () => {},
+        skipActivityCheck = false,
+    ): Promise<WalletCollectionResultLedger> {
+        return WalletInfoCollector._collectLedgerOrBip39WalletInfo(WalletType.LEDGER, '', initialAccounts, onUpdate,
+            skipActivityCheck);
+    }
+
+    public static async collectLegacyWalletInfo(
+        keyId: string,
+        singleAccount: BasicAccountInfo,
+        // tslint:disable-next-line:no-empty
+        onUpdate: (walletInfo: WalletInfo, currentlyCheckedAccounts: BasicAccountInfo[]) => void = () => {},
+        skipActivityCheck = false,
+    ): Promise<WalletCollectionResultKeyguard> {
+        // Kick off loading dependencies
+        WalletInfoCollector._initializeDependencies(WalletType.LEGACY);
+
+        // Get or create the walletInfo instance
+        const walletInfo = await WalletInfoCollector._getWalletInfoInstance(WalletType.LEGACY, keyId);
+        const singleAccountAsArray = [singleAccount];
+
+        WalletInfoCollector._addAccounts(walletInfo, singleAccountAsArray);
+        onUpdate(walletInfo, singleAccountAsArray);
+
+        const contracts = await WalletInfoCollector._addVestingContracts(walletInfo, singleAccount, onUpdate);
+        let hasActivity = contracts.length > 0;
+
+        if (!skipActivityCheck && !hasActivity) {
+            const balances = await WalletInfoCollector._getBalances([singleAccount]);
+            WalletInfoCollector._addAccounts(walletInfo, singleAccountAsArray, balances);
+            onUpdate(walletInfo, singleAccountAsArray);
+            hasActivity = balances.get(singleAccount.address)! > 0
+                || (await WalletInfoCollector._networkInitializationPromise!
+                    .then(() => NetworkClient.Instance.requestTransactionReceipts(singleAccount.address)))
+                    .length > 0;
+        }
+
+        return {
+            walletInfo,
+            hasActivity,
+            releaseKey: async (removeKey?) => {
+                if (!WalletInfoCollector._keyguardClient) {
+                    if (removeKey) {
+                        // make sure to create a keyguardClient to be able to remove the key
+                        WalletInfoCollector._initializeKeyguardClient();
+                    } else {
+                        // Simply return as legacy keys don't neccessarily need to be released.
+                        // Only a temporary flag in the keyguard session storage is left over by not releasing.
+                        return;
+                    }
+                }
+                return WalletInfoCollector._keyguardClient!.releaseKey(keyId, removeKey);
+            },
+        };
+    }
+
+    private static _keyguardClient?: KeyguardClient; // TODO avoid the need to create another KeyguardClient here
+    private static _networkInitializationPromise?: Promise<void>;
+
+    private static async _collectLedgerOrBip39WalletInfo(
         walletType: WalletType,
         keyId: string,
         initialAccounts: BasicAccountInfo[] = [],
         // tslint:disable-next-line:no-empty
         onUpdate: (walletInfo: WalletInfo, currentlyCheckedAccounts: BasicAccountInfo[]) => void = () => {},
         skipActivityCheck = false,
-    ): Promise<WalletCollectionResult> {
+    ): Promise<WalletCollectionResultKeyguard | WalletCollectionResultLedger> {
         if (walletType !== WalletType.LEDGER && walletType !== WalletType.BIP39) {
             throw new Error('Unsupported wallet type');
         }
@@ -152,9 +227,9 @@ export default class WalletInfoCollector {
             LedgerApi.currentRequest.cancel();
         }
 
-        const releaseKey = walletType === WalletType.LEDGER
-            ? (removeKey?: boolean) => removeKey ? Promise.reject('Can\'t remove Ledger key') : Promise.resolve()
-            : (removeKey?: boolean) => WalletInfoCollector._keyguardClient!.releaseKey(keyId, removeKey);
+        const releaseKey = walletType === WalletType.BIP39
+            ? (removeKey?: boolean) => WalletInfoCollector._keyguardClient!.releaseKey(keyId, removeKey)
+            : null;
 
         return {
             walletInfo,
@@ -163,58 +238,6 @@ export default class WalletInfoCollector {
             hasActivity,
         };
     }
-
-    public static async collectLegacyWalletInfo(
-        keyId: string,
-        singleAccount: BasicAccountInfo,
-        // tslint:disable-next-line:no-empty
-        onUpdate: (walletInfo: WalletInfo, currentlyCheckedAccounts: BasicAccountInfo[]) => void = () => {},
-        skipActivityCheck = false,
-    ): Promise<WalletCollectionResult> {
-        // Kick off loading dependencies
-        WalletInfoCollector._initializeDependencies(WalletType.LEGACY);
-
-        // Get or create the walletInfo instance
-        const walletInfo = await WalletInfoCollector._getWalletInfoInstance(WalletType.LEGACY, keyId);
-        const singleAccountAsArray = [singleAccount];
-
-        WalletInfoCollector._addAccounts(walletInfo, singleAccountAsArray);
-        onUpdate(walletInfo, singleAccountAsArray);
-
-        const contracts = await WalletInfoCollector._addVestingContracts(walletInfo, singleAccount, onUpdate);
-        let hasActivity = contracts.length > 0;
-
-        if (!skipActivityCheck && !hasActivity) {
-            const balances = await WalletInfoCollector._getBalances([singleAccount]);
-            WalletInfoCollector._addAccounts(walletInfo, singleAccountAsArray, balances);
-            onUpdate(walletInfo, singleAccountAsArray);
-            hasActivity = balances.get(singleAccount.address)! > 0
-                || (await WalletInfoCollector._networkInitializationPromise!
-                    .then(() => NetworkClient.Instance.requestTransactionReceipts(singleAccount.address)))
-                    .length > 0;
-        }
-
-        return {
-            walletInfo,
-            hasActivity,
-            releaseKey: async (removeKey?) => {
-                if (!WalletInfoCollector._keyguardClient) {
-                    if (removeKey) {
-                        // make sure to create a keyguardClient to be able to remove the key
-                        WalletInfoCollector._initializeKeyguardClient();
-                    } else {
-                        // Simply return as legacy keys don't neccessarily need to be released.
-                        // Only a temporary flag in the keyguard session storage is left over by not releasing.
-                        return;
-                    }
-                }
-                return WalletInfoCollector._keyguardClient!.releaseKey(keyId, removeKey);
-            },
-        };
-    }
-
-    private static _keyguardClient?: KeyguardClient; // TODO avoid the need to create another KeyguardClient here
-    private static _networkInitializationPromise?: Promise<void>;
 
     private static _initializeDependencies(walletType: WalletType): void {
         WalletInfoCollector._networkInitializationPromise =
