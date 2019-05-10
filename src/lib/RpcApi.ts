@@ -125,9 +125,7 @@ export default class RpcApi {
 
             // Recreate original URL with original query parameters
             const rpcState = this._staticStore.rpcState!;
-            const redirectUrlParams = rpcState.toRequestUrl('rpc://').substring('rpc://'.length);
-
-            const query = this._parseUrlParams(redirectUrlParams);
+            const query = { id: rpcState.id.toString() };
             this._router.push({ name: this._staticStore.originalRouteName, query });
             delete this._staticStore.originalRouteName;
             return;
