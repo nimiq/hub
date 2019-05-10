@@ -732,13 +732,13 @@
     levelup "^2.0.2"
     node-lmdb "0.6.0"
 
-"@nimiq/keyguard-client@^0.5.1-beta.1":
-  version "0.5.1-beta.1"
-  resolved "https://registry.yarnpkg.com/@nimiq/keyguard-client/-/keyguard-client-0.5.1-beta.1.tgz#4ca3797e0cba5b73b2ef54273084288a21db77f3"
-  integrity sha512-3HKTGleZ1liY8ZX68aQuAaqLLXksx2yussfaQwEXL1VHHXcWeOsOoMd1yDpbDqzaGmZt++tHDHNXPSiuH4KQfQ==
+"@nimiq/keyguard-client@^0.5.1-beta.2":
+  version "0.5.1-beta.2"
+  resolved "https://registry.yarnpkg.com/@nimiq/keyguard-client/-/keyguard-client-0.5.1-beta.2.tgz#01d956d4d6b88152cb8fed68ef649627bfdd48f6"
+  integrity sha512-9sicm2uJB8d/Ud2GaioGCQusTNXhrhRNdtj4xjqfVIHNnMb4rlgL2C1YoNFh00OmfO/IEbgo97Ya1106ydZOYw==
   dependencies:
     "@nimiq/core-web" "1.4.3"
-    "@nimiq/rpc" "^0.2.1-beta.2"
+    "@nimiq/rpc" "^0.2.1-beta.3"
 
 "@nimiq/ledgerjs@https://github.com/nimiq/ledger-api.git":
   version "0.0.0"
@@ -764,10 +764,10 @@
   resolved "https://registry.yarnpkg.com/@nimiq/rpc/-/rpc-0.1.4.tgz#ff6608255f23bb80079e10b23b7b74c35190e9da"
   integrity sha512-vKU8zw8aHabGBaRTvf31MeVaByhkEChkdlx6IYw555XH5TitYQO6XYfTpoDelXUOG/xX4BQrCMV6NnLKY5yN0Q==
 
-"@nimiq/rpc@^0.2.1-beta.2":
-  version "0.2.1-beta.2"
-  resolved "https://registry.yarnpkg.com/@nimiq/rpc/-/rpc-0.2.1-beta.2.tgz#54a7c486103ec4b2ca24c17c5593545a150aeebf"
-  integrity sha512-pcROfJZ8YU9FubqL4f9e2Cmpqj7CUgg0UVNGYTQf4dJ4diByj2bAmNcIN/PFOjptC6Tt7e0cuaZ+0zC2WKG6wg==
+"@nimiq/rpc@^0.2.1-beta.3":
+  version "0.2.1-beta.3"
+  resolved "https://registry.yarnpkg.com/@nimiq/rpc/-/rpc-0.2.1-beta.3.tgz#e8109fdbe34a0c46f62331c041ef9a1de0bf87d0"
+  integrity sha512-rv04xGuG697bFxGO2VaVLJDXTPxivfstANvq2oyyKAoHq9vkO2bTj4SBZOUKsn0SJ1Ejttr6Zinq7J6Fqatndw==
 
 "@nimiq/style@^0.6.4":
   version "0.6.4"
