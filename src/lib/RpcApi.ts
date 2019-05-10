@@ -158,11 +158,6 @@ export default class RpcApi {
                     return;
                 }
 
-                this._store.commit('setIncomingRequest', {
-                    hasRpcState: !!this._staticStore.rpcState,
-                    hasRequest: !!this._staticStore.request,
-                });
-
                 let account;
                 // Simply testing if the property exists (with `'walletId' in request`) is not enough,
                 // as `undefined` also counts as existing.
@@ -209,6 +204,8 @@ export default class RpcApi {
                 } else {
                     this.routerReplace(requestType);
                 }
+
+                this._startRoute();
             });
         }
     }
@@ -237,11 +234,6 @@ export default class RpcApi {
         this._staticStore.request = request || undefined;
         this._staticStore.keyguardRequest = keyguardRequest;
         this._staticStore.originalRouteName = originalRouteName;
-
-        this._store.commit('setIncomingRequest', {
-            hasRpcState: !!this._staticStore.rpcState,
-            hasRequest: !!this._staticStore.request,
-        });
     }
 
     private _registerKeyguardApis(commands: KeyguardCommand[]) {
@@ -259,20 +251,36 @@ export default class RpcApi {
                 // was given to the AccountsManager is passed here and the keyguardResponseRouter is turned
                 // from an object into a function instead.
                 this.routerReplace(keyguardResponseRouter(command, this._staticStore.request!.kind).resolve);
+
+                this._startRoute();
             }, (error, state?: any) => {
                 // Recover state
                 this._recoverState(state);
+
+                // Set result
+                this._store.commit('setKeyguardResult', error);
 
                 if (error.message === ERROR_CANCELED) {
                     this.reject(error);
                     return;
                 }
 
-                // Set result
-                this._store.commit('setKeyguardResult', error);
+                if (error.message === 'Request aborted') {
+                    window.history.back();
+                    return;
+                }
 
                 this.routerReplace(keyguardResponseRouter(command, this._staticStore.request!.kind).reject);
+
+                this._startRoute();
             });
         }
+    }
+
+    private _startRoute() {
+        this._store.commit('setIncomingRequest', {
+            hasRpcState: !!this._staticStore.rpcState,
+            hasRequest: !!this._staticStore.request,
+        });
     }
 }
