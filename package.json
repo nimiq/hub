@@ -20,7 +20,7 @@
         "@nimiq/network-client": "^0.2.0",
         "@nimiq/rpc": "^0.1.5",
         "@nimiq/style": "^0.6.2",
-        "@nimiq/utils": "^0.3.1",
+        "@nimiq/utils": "^0.3.2",
         "@nimiq/vue-components": "https://github.com/nimiq/vue-components.git#build/accounts",
         "vue": "^2.6.6",
         "vue-class-component": "^6.0.0",
