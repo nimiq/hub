@@ -82,7 +82,7 @@ import { ParsedCheckoutRequest, ParsedSignTransactionRequest, RequestType } from
 import { WalletInfo } from '../lib/WalletInfo';
 import { AccountInfo } from '../lib/AccountInfo';
 import { ContractInfo } from '../lib/ContractInfo';
-import { ERROR_CANCELED, TX_VALIDITY_WINDOW } from '../lib/Constants';
+import { ERROR_CANCELED, TX_VALIDITY_WINDOW, CASHLINK_FUNDING_DATA } from '../lib/Constants';
 import { Utf8Tools } from '@nimiq/utils';
 import Config from 'config';
 
@@ -235,9 +235,23 @@ export default class SignTransactionLedger extends Vue {
     }
 
     private get transactionData() {
-        return this.request.data && this.request.data.length > 0
+        if (!this.request.data || this.request.data.byteLength === 0) {
+            return null;
+        }
+
+        if (Nimiq.BufferUtils.equals(this.request.data, CASHLINK_FUNDING_DATA)) {
+            return 'Funding cashlink';
+        }
+
+        // tslint:disable-next-line no-bitwise
+        if ((this.request.flags & Nimiq.Transaction.Flag.CONTRACT_CREATION) > 0) {
+            // TODO: Decode contract creation transactions
+            // return ...
+        }
+
+        return Utf8Tools.isValidUtf8(this.request.data, true)
             ? Utf8Tools.utf8ByteArrayToString(this.request.data)
-            : null;
+            : Nimiq.BufferUtils.toHex(this.request.data);
     }
 
     private get loaderTitle() {
