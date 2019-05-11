@@ -34,7 +34,7 @@ export default class AddAccount extends Vue {
             indicesToDerive: new Array(14).fill(null).map((_: any, i: number) => `${firstIndexToDerive + i}'`),
         };
 
-        const client = this.$rpc.createKeyguardClient();
+        const client = this.$rpc.createKeyguardClient(true);
         client.deriveAddress(request);
     }
 }

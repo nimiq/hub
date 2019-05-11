@@ -64,16 +64,24 @@ export default class RpcApi {
     }
 
     public start() {
+        this._keyguardClient.init().catch(console.error); // TODO: Provide better error handling here
+        if (this._store.state.keyguardResult) return;
+
         // Redirect to Safe (default) if there is no client.
         // This happens if user clicks on a link to accounts.nimiq.com.
-        const onClientTimeout = () => { if (!this._store.state.keyguardResult) location.href = Config.redirectTarget; };
-        this._keyguardClient.init().catch(console.error); // TODO: Provide better error handling here
+        const onClientTimeout = () => { location.href = Config.redirectTarget; };
         this._server.init(onClientTimeout);
     }
 
-    public createKeyguardClient() {
+    public createKeyguardClient(handleHistoryBack?: boolean) {
         const localState = this._exportState();
-        const client = new KeyguardClient(Config.keyguardEndpoint, window.location.origin, localState);
+        const client = new KeyguardClient(
+            Config.keyguardEndpoint,
+            window.location.origin,
+            localState,
+            undefined, // preserveRequests: keep default behavior, which is true for redirects but false for postMessage
+            handleHistoryBack,
+        );
         return client;
     }
 

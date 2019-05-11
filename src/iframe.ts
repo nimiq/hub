@@ -33,7 +33,7 @@ class IFrameApi {
         const client = new (await import('@nimiq/keyguard-client')).KeyguardClient();
         const hasKeys = await client.hasKeys();
         if (hasKeys.success) {
-            throw new Error('WALLETS_LOST');
+            throw new Error('ACCOUNTS_LOST');
         }
 
         // If no keys exist, check for legacy accounts
