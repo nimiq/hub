@@ -28,7 +28,7 @@ export default class OnboardingSelector extends Vue {
     private notEnoughCookieSpace = false;
 
     public created() {
-        if ((BrowserDetection.isIOS() || BrowserDetection.isSafari()) && !CookieJar.canFitNewAccount()) {
+        if ((BrowserDetection.isIOS() || BrowserDetection.isSafari()) && !CookieJar.canFitNewWallets()) {
             this.notEnoughCookieSpace = true;
             return;
         }

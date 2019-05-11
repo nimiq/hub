@@ -14,13 +14,14 @@
 
 <script lang="ts">
 import { Component, Prop, Watch, Vue } from 'vue-property-decorator';
-import Loader from './Loader.vue';
 import { SmallPage } from '@nimiq/vue-components';
+import Loader from './Loader.vue';
+import { ERROR_COOKIE_SPACE } from '../lib/Constants';
 
 @Component({components: {Loader, SmallPage}})
 export default class NotEnoughCookieSpace extends Vue {
     private onContinue() {
-        this.$rpc.reject(new Error('Not enough cookie space'));
+        this.$rpc.reject(new Error(ERROR_COOKIE_SPACE));
     }
 }
 </script>

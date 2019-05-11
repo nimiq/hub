@@ -37,3 +37,4 @@ export const NETWORK_DEV: NetworkType = 'dev';
 export const ERROR_CANCELED = 'CANCELED';
 export const ERROR_INVALID_NETWORK = 'Invalid network name';
 export const ERROR_TRANSACTION_RECEIPTS = 'Failed to retrieve transaction receipts for';
+export const ERROR_COOKIE_SPACE = 'Not enough cookie space';

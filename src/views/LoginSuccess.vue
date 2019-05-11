@@ -15,18 +15,19 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
+import { State } from 'vuex-class';
 import KeyguardClient from '@nimiq/keyguard-client';
 import { BrowserDetection } from '@nimiq/utils';
+import { SmallPage } from '@nimiq/vue-components';
 import { ParsedBasicRequest } from '../lib/RequestTypes';
 import { Account } from '../lib/PublicRequestTypes';
-import { State } from 'vuex-class';
 import { WalletInfo, WalletType } from '../lib/WalletInfo';
 import { WalletStore } from '@/lib/WalletStore';
 import { Static } from '@/lib/StaticStore';
-import { SmallPage } from '@nimiq/vue-components';
 import Loader from '@/components/Loader.vue';
 import CookieJar from '../lib/CookieJar';
 import WalletInfoCollector, { WalletCollectionResult } from '../lib/WalletInfoCollector';
+import { ERROR_COOKIE_SPACE } from '../lib/Constants';
 
 @Component({components: {Loader, SmallPage}})
 export default class LoginSuccess extends Vue {
@@ -119,6 +120,18 @@ export default class LoginSuccess extends Vue {
     private async done() {
         if (!this.walletInfos.length) throw new Error('WalletInfo not ready.');
 
+        const infoEntries = this.walletInfos.map((walletInfo) => walletInfo.toObject());
+        if ((BrowserDetection.isIOS() || BrowserDetection.isSafari()) && !CookieJar.canFitNewWallets(infoEntries)) {
+            this.title = 'Space exceeded';
+            this.state = Loader.State.WARNING;
+            this.message = 'Unfortunately, due to space restrictions of Safari and IOS, this account cannot be stored '
+                         + 'properly. Please free up space by logging out of other accounts.';
+            this.action = 'Continue';
+            await new Promise((resolve) => { this.resolve = resolve; });
+            this.$rpc.reject(new Error(ERROR_COOKIE_SPACE));
+            return;
+        }
+
         const result = this.walletInfos.map((walletInfo) => ({
                 accountId: walletInfo.id,
                 label: walletInfo.label,
@@ -134,17 +147,6 @@ export default class LoginSuccess extends Vue {
             this.title = 'Your addresses may be\nincomplete.';
             this.state = Loader.State.WARNING;
             this.message = 'We might have missed used addresses that have no balance.';
-            this.action = 'Continue';
-            await new Promise((resolve) => { this.resolve = resolve; });
-        }
-
-        const infoEntries = this.walletInfos.map((walletInfo) => walletInfo.toObject());
-        if ((BrowserDetection.isIOS() || BrowserDetection.isSafari()) && !CookieJar.canFitNewWallets(infoEntries)) {
-            this.title = 'Account may disappear';
-            this.state = Loader.State.WARNING;
-            this.message = 'Unfortunately, due to restrictions of Safari it may happen that this account will '
-                         + 'disappear from some user inferfaces. Please log out of unused accounts to solve this '
-                         + 'issue by freeing up space.';
             this.action = 'Continue';
             await new Promise((resolve) => { this.resolve = resolve; });
         }
