@@ -266,7 +266,11 @@ export default class RpcApi {
                 }
 
                 if (error.message === 'Request aborted') {
-                    window.history.back();
+                    if (window.opener) {
+                        this.reject(error);
+                    } else {
+                        window.history.back();
+                    }
                     return;
                 }
 
