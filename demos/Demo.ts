@@ -43,7 +43,7 @@ class Demo {
                 console.log('AccountsManager result', result);
                 console.log('State', state);
 
-                document.querySelector('#result').textContent = 'TX signed';
+                document.querySelector('#result').textContent = JSON.stringify(result);
             }, (error: Error, state: State) => {
                 console.error('AccountsManager error', error);
                 console.log('State', state);
@@ -56,18 +56,11 @@ class Demo {
         document.querySelectorAll('input[name="popup-vs-redirect"]').forEach((input: HTMLInputElement) => {
             input.addEventListener('change', event => {
                 const value = (event.target as HTMLInputElement).value;
-                if (value === 'popup') {
-                    // @ts-ignore
-                    demo.client._defaultBehavior = new PopupRequestBehavior(
-                        `left=${window.innerWidth / 2 - 400},top=75,width=800,height=850,location=yes,dependent=yes`);
-                }
-
-                if (value === 'redirect') {
-                    // @ts-ignore
-                    demo.client._defaultBehavior = new RedirectRequestBehavior();
-                }
+                demo.setClientBehavior(value);
             });
         });
+        demo.setClientBehavior(
+            (document.querySelector('input[name="popup-vs-redirect"]:checked') as HTMLInputElement).value);
 
         document.querySelector('button#checkout-popup').addEventListener('click', async () => {
             await checkoutPopup(await generateCheckoutRequest());
@@ -498,6 +491,19 @@ class Demo {
         document.querySelectorAll('button.logout').forEach(element => {
             element.addEventListener('click', async () => this.logout(element.getAttribute('data-wallet-id')));
         });
+    }
+
+    public setClientBehavior(behavior: string) {
+        if (behavior === 'popup') {
+            // @ts-ignore
+            demo.client._defaultBehavior = new PopupRequestBehavior(
+                `left=${window.innerWidth / 2 - 400},top=75,width=800,height=850,location=yes,dependent=yes`);
+        }
+
+        if (behavior === 'redirect') {
+            // @ts-ignore
+            demo.client._defaultBehavior = new RedirectRequestBehavior();
+        }
     }
 
     public get client() {
