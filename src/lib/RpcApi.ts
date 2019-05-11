@@ -192,6 +192,8 @@ export default class RpcApi {
                     }
                 }
 
+                this._startRoute();
+
                 if (location.pathname !== '/') {
                     // Don't jump back to request's initial view on reload when navigated to a subsequent view.
                     // E.g. if the user switches from Checkout to Import, don't jump back to Checkout on reload.
@@ -204,8 +206,6 @@ export default class RpcApi {
                 } else {
                     this.routerReplace(requestType);
                 }
-
-                this._startRoute();
             });
         }
     }
