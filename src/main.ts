@@ -11,18 +11,16 @@ if (window.hasBrowserWarning) {
     throw new Error('Exeution aborted due to browser warning');
 }
 
-if (BrowserDetection.isIOS() || BrowserDetection.isSafari()) {
+if ((BrowserDetection.isIOS() || BrowserDetection.isSafari()) && 'serviceWorker' in navigator) {
     // Register service worker to strip cookie from requests
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/ServiceWorker.js', {
-            scope: '/',
-        }).then((reg) => {
-            console.debug(`Service worker has been registered for scope: ${reg.scope}`);
-        }).catch((error) => {
-            console.error(`Service worker installation failed`);
-            throw error;
-        });
-    }
+    navigator.serviceWorker.register('/ServiceWorker.js', {
+        scope: '/',
+    }).then((reg) => {
+        console.debug(`Service worker has been registered for scope: ${reg.scope}`);
+    }).catch((error) => {
+        console.error(`Service worker installation failed`);
+        throw error;
+    });
 }
 
 Vue.config.productionTip = false;
