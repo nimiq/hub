@@ -6,10 +6,11 @@ import {
     Account,
     CheckoutRequest,
     SimpleResult,
-    SignTransactionRequest, SignedTransaction,
+    SignTransactionRequest,
     RenameRequest,
     SignMessageRequest,
     ExportRequest,
+    RpcResult,
 } from '../src/lib/PublicRequestTypes';
 import { PopupRequestBehavior, RedirectRequestBehavior } from '../client/RequestBehavior';
 import { Utf8Tools } from '@nimiq/utils';
@@ -23,27 +24,32 @@ class Demo {
         // @ts-ignore (Property 'demo' does not exist on type 'Window')
         window.demo = demo;
 
-        demo.client.on(RequestType.CHECKOUT, (result: SignedTransaction, state: State) => {
-            console.log('AccountsManager result', result);
-            console.log('State', state);
+        [
+            RequestType.ADD_ADDRESS,
+            RequestType.CHANGE_PASSWORD,
+            RequestType.CHECKOUT,
+            RequestType.CHOOSE_ADDRESS,
+            RequestType.EXPORT,
+            RequestType.LOGIN,
+            RequestType.LOGOUT,
+            RequestType.MIGRATE,
+            RequestType.ONBOARD,
+            RequestType.RENAME,
+            RequestType.SIGNUP,
+            RequestType.SIGN_MESSAGE,
+            RequestType.SIGN_TRANSACTION,
+        ].forEach(requestType => {
+            demo.client.on(requestType, (result: RpcResult, state: State) => {
+                console.log('AccountsManager result', result);
+                console.log('State', state);
 
-            document.querySelector('#result').textContent = 'TX signed';
-        }, (error: Error, state: State) => {
-            console.error('AccountsManager error', error);
-            console.log('State', state);
+                document.querySelector('#result').textContent = 'TX signed';
+            }, (error: Error, state: State) => {
+                console.error('AccountsManager error', error);
+                console.log('State', state);
 
-            document.querySelector('#result').textContent = `Error: ${error.message || error}`;
-        });
-        demo.client.on(RequestType.SIGNUP, (result: Account, state: State) => {
-            console.log('AccountsManager result', result);
-            console.log('State', state);
-
-            document.querySelector('#result').textContent = 'SignUp completed';
-        }, (error: Error, state: State) => {
-            console.error('AccountsManager error', error);
-            console.log('State', state);
-
-            document.querySelector('#result').textContent = `Error: ${error.message || error}`;
+                document.querySelector('#result').textContent = `Error: ${error.message || error}`;
+            });
         });
         demo.client.checkRedirectResponse();
 
