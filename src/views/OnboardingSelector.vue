@@ -18,7 +18,7 @@ import OnboardingMenu from '../components/OnboardingMenu.vue';
 import { ParsedBasicRequest, RequestType } from '@/lib/RequestTypes';
 import { Static } from '@/lib/StaticStore';
 import { DEFAULT_KEY_PATH, ERROR_CANCELED } from '@/lib/Constants';
-import CookieJar from '../lib/CookieJar';
+import CookieHelper from '../lib/CookieHelper';
 import NotEnoughCookieSpace from '../components/NotEnoughCookieSpace.vue';
 
 @Component({components: {OnboardingMenu, NotEnoughCookieSpace}})
@@ -27,8 +27,8 @@ export default class OnboardingSelector extends Vue {
 
     private notEnoughCookieSpace = false;
 
-    public created() {
-        if ((BrowserDetection.isIOS() || BrowserDetection.isSafari()) && !CookieJar.canFitNewWallets()) {
+    public async created() {
+        if ((BrowserDetection.isIOS() || BrowserDetection.isSafari()) && !await CookieHelper.canFitNewWallets()) {
             this.notEnoughCookieSpace = true;
             return;
         }

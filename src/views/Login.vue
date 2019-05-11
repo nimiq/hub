@@ -9,7 +9,7 @@ import { BrowserDetection } from '@nimiq/utils';
 import { ParsedBasicRequest } from '../lib/RequestTypes';
 import { Static } from '../lib/StaticStore';
 import { DEFAULT_KEY_PATH } from '@/lib/Constants';
-import CookieJar from '../lib/CookieJar';
+import CookieHelper from '../lib/CookieHelper';
 import NotEnoughCookieSpace from '../components/NotEnoughCookieSpace.vue';
 
 @Component({components: {NotEnoughCookieSpace}})
@@ -18,8 +18,8 @@ export default class Login extends Vue {
 
     private notEnoughCookieSpace = false;
 
-    public created() {
-        if ((BrowserDetection.isIOS() || BrowserDetection.isSafari()) && !CookieJar.canFitNewAccount()) {
+    public async created() {
+        if ((BrowserDetection.isIOS() || BrowserDetection.isSafari()) && !await CookieHelper.canFitNewWallets()) {
             this.notEnoughCookieSpace = true;
             return;
         }

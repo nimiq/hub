@@ -1,5 +1,4 @@
 import Vue from 'vue';
-import { BrowserDetection } from '@nimiq/utils';
 import App from './App.vue';
 import router from './router';
 import store from './store';
@@ -11,18 +10,15 @@ if (window.hasBrowserWarning) {
     throw new Error('Exeution aborted due to browser warning');
 }
 
-if (BrowserDetection.isIOS() || BrowserDetection.isSafari()) {
-    // Register service worker to strip cookie from requests
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/ServiceWorker.js', {
-            scope: '/',
-        }).then((reg) => {
-            console.debug(`Service worker has been registered for scope: ${reg.scope}`);
-        }).catch((error) => {
-            console.warn(`Service worker installation failed`);
-            throw error;
-        });
-    }
+// Register service worker if necessary (and possible).
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/ServiceWorker.js', {
+        scope: '/',
+    }).then((reg) => {
+        console.debug(`Service worker has been registered for scope: ${reg.scope}`);
+    }).catch((error) => {
+        console.warn(`Service worker installation failed: ${error}`);
+    });
 }
 
 Vue.config.productionTip = false;

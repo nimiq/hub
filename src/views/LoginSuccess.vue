@@ -25,7 +25,7 @@ import { WalletInfo, WalletType } from '../lib/WalletInfo';
 import { WalletStore } from '@/lib/WalletStore';
 import { Static } from '@/lib/StaticStore';
 import Loader from '@/components/Loader.vue';
-import CookieJar from '../lib/CookieJar';
+import CookieHelper from '../lib/CookieHelper';
 import WalletInfoCollector, { WalletCollectionResult } from '../lib/WalletInfoCollector';
 import { ERROR_COOKIE_SPACE } from '../lib/Constants';
 
@@ -120,16 +120,18 @@ export default class LoginSuccess extends Vue {
     private async done() {
         if (!this.walletInfos.length) throw new Error('WalletInfo not ready.');
 
-        const infoEntries = this.walletInfos.map((walletInfo) => walletInfo.toObject());
-        if ((BrowserDetection.isIOS() || BrowserDetection.isSafari()) && !CookieJar.canFitNewWallets(infoEntries)) {
-            this.title = 'Space exceeded';
-            this.state = Loader.State.WARNING;
-            this.message = 'Unfortunately, due to space restrictions of Safari and IOS, this account cannot be stored '
-                         + 'properly. Please free up space by logging out of other accounts.';
-            this.action = 'Continue';
-            await new Promise((resolve) => { this.resolve = resolve; });
-            this.$rpc.reject(new Error(ERROR_COOKIE_SPACE));
-            return;
+        if (BrowserDetection.isIOS() || BrowserDetection.isSafari()) {
+            const infoEntries = this.walletInfos.map((walletInfo) => walletInfo.toObject());
+            if (!await CookieHelper.canFitNewWallets(infoEntries)) {
+                this.title = 'Space exceeded';
+                this.state = Loader.State.WARNING;
+                this.message = 'Unfortunately, due to space restrictions of Safari and IOS, this account cannot '
+                             + 'be stored properly. Please free up space by logging out of other accounts.';
+                this.action = 'Continue';
+                await new Promise((resolve) => { this.resolve = resolve; });
+                this.$rpc.reject(new Error(ERROR_COOKIE_SPACE));
+                return;
+            }
         }
 
         const result = this.walletInfos.map((walletInfo) => ({
