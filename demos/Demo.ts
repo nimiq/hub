@@ -11,7 +11,7 @@ import {
     SignMessageRequest,
     ExportRequest,
 } from '../src/lib/PublicRequestTypes';
-import { RedirectRequestBehavior } from '../client/RequestBehavior';
+import { PopupRequestBehavior, RedirectRequestBehavior } from '../client/RequestBehavior';
 import { Utf8Tools } from '@nimiq/utils';
 
 class Demo {
@@ -47,8 +47,20 @@ class Demo {
         });
         demo.client.checkRedirectResponse();
 
-        document.querySelector('button#checkout-redirect').addEventListener('click', async () => {
-            checkoutRedirect(await generateCheckoutRequest());
+        document.querySelectorAll('input[name="popup-vs-redirect"]').forEach((input: HTMLInputElement) => {
+            input.addEventListener('change', event => {
+                const value = (event.target as HTMLInputElement).value;
+                if (value === 'popup') {
+                    // @ts-ignore
+                    demo.client._defaultBehavior = new PopupRequestBehavior(
+                        `left=${window.innerWidth / 2 - 400},top=75,width=800,height=850,location=yes,dependent=yes`);
+                }
+
+                if (value === 'redirect') {
+                    // @ts-ignore
+                    demo.client._defaultBehavior = new RedirectRequestBehavior();
+                }
+            });
         });
 
         document.querySelector('button#checkout-popup').addEventListener('click', async () => {
@@ -164,10 +176,6 @@ class Demo {
                 fee: txFee,
                 extraData: Utf8Tools.stringToUtf8ByteArray(txData)
             };
-        }
-
-        function checkoutRedirect(txRequest: CheckoutRequest) {
-            return demo.client.checkout(txRequest, new RedirectRequestBehavior(null, { storedGreeting: 'Hello Nimiq!' }));
         }
 
         async function checkoutPopup(txRequest: CheckoutRequest) {
