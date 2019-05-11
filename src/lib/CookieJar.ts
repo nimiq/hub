@@ -14,7 +14,9 @@ import { AccountInfoEntry } from './AccountInfo';
 
 class CookieJar {
     public static readonly VERSION = 3;
-    public static readonly MAX_COOKIE_SIZE = 2500; // byte (3000 would probable be safe, but we'll be safer for now)
+    public static readonly MAX_COOKIE_SIZE_ACCOUNTS = 3000; // byte, 4*(n/3)=4000 is space taken after base64 encoding
+    public static readonly MAX_COOKIE_SIZE_KEYGUARD = 4000; // byte
+    public static readonly KEYGUARD_COOKIE_SIZE = 46;
 
     public static readonly ENCODED_ACCOUNT_SIZE =
            1 // account label length
@@ -60,7 +62,7 @@ class CookieJar {
 
     public static canFitNewAccount(): boolean {
         // TODO calculate remaining keyguard storage and check if it's sufficient
-        return (this.MAX_COOKIE_SIZE - this.getCookieSize()) >= this.ENCODED_ACCOUNT_SIZE;
+        return (this.MAX_COOKIE_SIZE_ACCOUNTS - this.getCookieSize()) >= this.ENCODED_ACCOUNT_SIZE;
     }
 
     public static canFitNewWallets(wallets?: WalletInfoEntry[]): boolean {
@@ -97,7 +99,7 @@ class CookieJar {
             }
         }
 
-        return (this.MAX_COOKIE_SIZE - this.getCookieSize()) >= sizeNeeded;
+        return (this.MAX_COOKIE_SIZE_ACCOUNTS - this.getCookieSize()) >= sizeNeeded;
     }
 
     public static encodeAndcutLabel(label: string): Uint8Array {
@@ -113,6 +115,12 @@ class CookieJar {
         // Cut off last byte until byte array is valid utf-8
         while (!Utf8Tools.isValidUtf8(labelBytes)) labelBytes = labelBytes.slice(0, labelBytes.length - 1);
         return labelBytes;
+    }
+
+    private static canKeyguardCookieFitWallets(wallets: WalletInfoEntry[]) {
+        const nonLedgerWallets = wallets.filter((wallet) => wallet.type !== WalletType.LEDGER);
+        const cookieSize = nonLedgerWallets.length * this.KEYGUARD_COOKIE_SIZE;
+        return cookieSize <= this.MAX_COOKIE_SIZE_KEYGUARD;
     }
 
     private static checkWalletDefaultLabel(firstAddress: Uint8Array, label: string, type: WalletType): string {
