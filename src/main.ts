@@ -17,7 +17,7 @@ if ('serviceWorker' in navigator) {
     }).then((reg) => {
         console.debug(`Service worker has been registered for scope: ${reg.scope}`);
     }).catch((error) => {
-        console.warn(`Service worker installation failed: ${error}`);
+        console.error(`Service worker installation failed: ${error}`);
     });
 }
 
