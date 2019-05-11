@@ -680,10 +680,10 @@
     call-me-maybe "^1.0.1"
     glob-to-regexp "^0.3.0"
 
-"@nimiq/browser-warning@^0.3.0":
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/@nimiq/browser-warning/-/browser-warning-0.3.0.tgz#445e091045f3f42ac47ac6d8f62b484869e4f1d8"
-  integrity sha512-EGvPTgeAHc6gRSGQavG0RLVgp1nWZFoxkCtcX8a+E1+gTSl41wa5d8+56O5knq/bQoLjTl3EHf0+95PpGycx0Q==
+"@nimiq/browser-warning@^0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@nimiq/browser-warning/-/browser-warning-0.4.0.tgz#82f9c88e75f85fbaab838e970d1f27ad506beefd"
+  integrity sha512-7NEqSzsYwNvLM4KpnGtmSppVJju0HWjrHtbRMWefaXDfugM6bCbMqVLc112Bm88EefPdISj1cTr0pcyZZOCzuQ==
 
 "@nimiq/core-types@^1.0.1":
   version "1.0.1"
@@ -769,10 +769,15 @@
   resolved "https://registry.yarnpkg.com/@nimiq/rpc/-/rpc-0.1.5.tgz#53919b0a3a9abcdfebee0e865f4c663f72a8b8c2"
   integrity sha512-oTRThXzpbQOY8jz8h+2KXucWzW40nVfYBWROKXKBrSozhTG0nR+rzCbEm4ZyTC26b4RnmB6y4nYabUXi7gNWcA==
 
-"@nimiq/style@^0.6.0", "@nimiq/style@^0.6.2":
+"@nimiq/style@^0.6.2":
   version "0.6.2"
   resolved "https://registry.yarnpkg.com/@nimiq/style/-/style-0.6.2.tgz#dee970c69a53fc3bf95a7f1fe0b656d4e94b897b"
   integrity sha512-2Je+zUI2m13zfNuUpYdbYHuYqRP2gnuqDDLBVJluUtt1NQH+dCL4f/kl6KOkPEoAkgU6tmICLLIGMuVNEHfrTg==
+
+"@nimiq/style@^0.6.4":
+  version "0.6.4"
+  resolved "https://registry.yarnpkg.com/@nimiq/style/-/style-0.6.4.tgz#467dc71e41978ef2316b80e8e5c6a973589c2432"
+  integrity sha512-A/OQC92IvunKGs3OlMxILznrjYE0E4Z0IjAFEVzQxmA0aCL7dXfVY0Qi2lCM7quFz8bt7CX1H+oPBPapvqMnhw==
 
 "@nimiq/utils@^0.3.1":
   version "0.3.1"
@@ -781,9 +786,9 @@
 
 "@nimiq/vue-components@https://github.com/nimiq/vue-components.git#build/accounts":
   version "0.1.0"
-  resolved "https://github.com/nimiq/vue-components.git#ce0134659499f6a758fce0714e0fce45ec0ef08c"
+  resolved "https://github.com/nimiq/vue-components.git#05e36ac17598b4698b8abae0cbf214cca5acfa20"
   dependencies:
-    "@nimiq/style" "^0.6.0"
+    "@nimiq/style" "^0.6.4"
     vue "^2.5.17"
     vue-property-decorator "^7.0.0"
 
