@@ -50,6 +50,9 @@ const SignMessageSuccess      = () => import(/*webpackChunkName: "sign-message"*
 const SimpleSuccess           = () => import(/*webpackChunkName: "common"*/ './views/SimpleSuccess.vue');
 const ErrorHandler            = () => import(/*webpackChunkName: "common"*/ './views/ErrorHandler.vue');
 
+const ErrorHandlerUnsupportedLedger = () => import(/*webpackChunkName: "unsupported-ledger"*/
+    './views/ErrorHandlerUnsupportedLedger.vue');
+
 Vue.use(Router);
 
 export function keyguardResponseRouter(
@@ -163,6 +166,11 @@ export default new Router({
             name: `${RequestType.EXPORT}-success`,
         },
         {
+            path: `/${RequestType.EXPORT}/ledger`,
+            component: ErrorHandlerUnsupportedLedger,
+            name: `${RequestType.EXPORT}-ledger`,
+        },
+        {
             path: `/${RequestType.CHANGE_PASSWORD}`,
             component: ChangePassword,
             name: RequestType.CHANGE_PASSWORD,
@@ -171,6 +179,11 @@ export default new Router({
             path: `/${RequestType.CHANGE_PASSWORD}/success`,
             component: SimpleSuccess,
             name: `${RequestType.CHANGE_PASSWORD}-success`,
+        },
+        {
+            path: `/${RequestType.CHANGE_PASSWORD}/ledger`,
+            component: ErrorHandlerUnsupportedLedger,
+            name: `${RequestType.CHANGE_PASSWORD}-ledger`,
         },
         {
             path: `/${RequestType.LOGOUT}`,
@@ -226,6 +239,11 @@ export default new Router({
             path: `/${RequestType.SIGN_MESSAGE}/success`,
             component: SignMessageSuccess,
             name: `${RequestType.SIGN_MESSAGE}-success`,
+        },
+        {
+            path: `/${RequestType.SIGN_MESSAGE}/ledger`,
+            component: ErrorHandlerUnsupportedLedger,
+            // not specifying a name here to not trigger automatic routing to this view in RpcApi.ts
         },
     ],
 });
