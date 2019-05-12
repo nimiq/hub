@@ -55,7 +55,7 @@ export class RedirectRequestBehavior extends RequestBehavior {
         await client.init();
 
         const state: object = Object.assign({}, this._localState, { __command: command });
-        client.callAndSaveLocalState(this._returnUrl, state, command, ...args);
+        client.callAndSaveLocalState(this._returnUrl, state, command, true, ...args);
     }
 }
 
@@ -76,7 +76,7 @@ export class PopupRequestBehavior extends RequestBehavior {
         await client.init();
 
         try {
-            return await client.callAndPersist(command, ...args);
+            return await client.call(command, ...args);
         } catch (e) {
             throw e;
         } finally {
