@@ -102,7 +102,7 @@
         position: absolute;
         z-index: 1;
         will-change: transform;
-        transition: transform .5s, z-index 0s;
+        transition: transform .5s cubic-bezier(0.25, 0, 0, 1), z-index 0s;
         /* use a delay for z-index to keep it above other identicons when transitioning back to initial position */
         transition-delay: 0s, .5s;
         -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
@@ -112,7 +112,7 @@
     .wrapper .identicon {
         width: 100%;
         height: 100%;
-        animation: pop-in 500ms ease;
+        animation: pop-in 500ms cubic-bezier(0.25, 0, 0, 1);
         animation-fill-mode: backwards;
     }
 
@@ -174,7 +174,7 @@
         z-index: 1;
         pointer-events: none;
         opacity: 0;
-        transition: opacity 500ms;
+        transition: opacity 500ms cubic-bezier(0.25, 0, 0, 1);
         will-change: opacity;
         height: 100%;
         width: 100%;

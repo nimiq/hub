@@ -77,8 +77,9 @@ export default class App extends Vue {
         margin-top: 8rem;
         margin-bottom: 5rem;
         background: transparent !important;
-        opacity: 0.5;
-        transition: color .2s ease, opacity .2s ease;
+        opacity: 0.4;
+        font-size: 2rem;
+        transition: color .3s cubic-bezier(0.25, 0, 0, 1), opacity .3s cubic-bezier(0.25, 0, 0, 1);
     }
 
     .global-close:hover,
@@ -87,10 +88,18 @@ export default class App extends Vue {
         opacity: 1;
     }
 
-    .global-close .nq-icon {
-        vertical-align: middle;
+    .global-close .arrow-left {
+        vertical-align: top;
+        width: 11px;
+        height: 9px;
         margin-right: 0.25rem;
-        margin-top: -0.125rem;
+        margin-top: 5px;
+        transition: transform .3s cubic-bezier(0.25, 0, 0, 1);
+    }
+
+    .global-close:hover .nq-icon,
+    .global-close:focus .nq-icon {
+        transform: translate3D(-2px, 0, 0);
     }
 
     .global-close.hidden {
