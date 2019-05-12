@@ -67,8 +67,8 @@ class CookieJar {
 
         if (!wallets) {
             const dummyAddressHumanReadable = 'NQ86 6D3H 6MVD 2JV4 N77V FNA5 M9BL 2QSP 1P64';
-            const dummyAddress = Nimiq.Address.fromUserFriendlyAddress(dummyAddressHumanReadable);
-            const dummyAddressSerialized = new Uint8Array(dummyAddress.serialize());
+            const dummyAddressSerialized = new Uint8Array([51, 71, 19, 87, 173, 20, 186, 75, 28, 253, 125,
+                                                           148, 90, 165, 116, 22, 53, 112, 220, 196]);
             const dummyWallet = {
                 id: '0fe6067b138f',
                 keyId: 'D+YGexOP0yDjr3Uf6WwO9a2/WjhNbZFLrRwdLfuvz9c=',

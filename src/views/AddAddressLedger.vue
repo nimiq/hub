@@ -18,7 +18,6 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { PageBody, SmallPage, ArrowLeftSmallIcon } from '@nimiq/vue-components';
-import { BrowserDetection } from '@nimiq/utils';
 import LedgerUi from '../components/LedgerUi.vue';
 import Loader from '../components/Loader.vue';
 import IdenticonSelector from '../components/IdenticonSelector.vue';

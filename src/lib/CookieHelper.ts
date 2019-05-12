@@ -6,7 +6,7 @@ import { WalletStore } from './WalletStore';
 
 export default class CookieHelper {
     public static readonly MAX_COOKIE_SIZE_KEYGUARD = 4000; // byte
-    public static readonly KEYGUARD_COOKIE_SIZE = 46;
+    public static readonly KEYGUARD_COOKIE_KEY_SIZE = 47; // 1 char for type, 1 for hasPin, 44 for id, 1 for separator
 
     public static async canFitNewWallets(wallets?: WalletInfoEntry[]): Promise<boolean> {
         return CookieJar.canFitNewWallets(wallets) && await CookieHelper._canKeyguardCookieFitNewKey();
@@ -15,7 +15,7 @@ export default class CookieHelper {
     private static async _canKeyguardCookieFitNewKey() {
         const wallets = await WalletStore.Instance.list();
         const nonLedgerWallets = wallets.filter((wallet) => wallet.type !== WalletType.LEDGER);
-        const cookieSize = (nonLedgerWallets.length + 1) * this.KEYGUARD_COOKIE_SIZE;
+        const cookieSize = (nonLedgerWallets.length + 1) * this.KEYGUARD_COOKIE_KEY_SIZE;
         return cookieSize <= this.MAX_COOKIE_SIZE_KEYGUARD;
     }
 }
