@@ -50,7 +50,7 @@ export default class AccountList extends Vue {
     .onboarding-menu {
         max-width: unset;
         min-height: unset;
-        width: 88rem;
+        width: 89rem;
         height: 29rem;
         padding: 0.75rem;
         position: relative;
