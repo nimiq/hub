@@ -102,9 +102,17 @@ export default class LoginSuccess extends Vue {
             }
         }
 
+        let failBecauseOfCookieSpace = false;
+        if (BrowserDetection.isIOS() || BrowserDetection.isSafari()) {
+            const infoEntries = this.walletInfos.map((walletInfo) => walletInfo.toObject());
+            if (!await CookieHelper.canFitNewWallets(infoEntries)) {
+                failBecauseOfCookieSpace = true;
+            }
+        }
+
         await Promise.all (
             collectionResults.map( async (collectionResult) => {
-                if (keepWalletCondition(collectionResult)) {
+                if (!failBecauseOfCookieSpace && keepWalletCondition(collectionResult)) {
                     await WalletStore.Instance.put(collectionResult.walletInfo);
                     this.walletInfos.push(collectionResult.walletInfo);
                     await collectionResult.releaseKey(false);
@@ -114,25 +122,22 @@ export default class LoginSuccess extends Vue {
             }),
         );
 
+        if (failBecauseOfCookieSpace) {
+            this.title = 'Space exceeded';
+            this.state = Loader.State.ERROR;
+            this.message = 'Unfortunately, due to space restrictions of Safari and IOS, this account cannot '
+                         + 'be stored properly. Please free up space by logging out of other accounts.';
+            this.action = 'Continue';
+            await new Promise((resolve) => { this.resolve = resolve; });
+            this.$rpc.reject(new Error(ERROR_COOKIE_SPACE));
+            return;
+        }
+
         this.done();
     }
 
     private async done() {
         if (!this.walletInfos.length) throw new Error('WalletInfo not ready.');
-
-        if (BrowserDetection.isIOS() || BrowserDetection.isSafari()) {
-            const infoEntries = this.walletInfos.map((walletInfo) => walletInfo.toObject());
-            if (!await CookieHelper.canFitNewWallets(infoEntries)) {
-                this.title = 'Space exceeded';
-                this.state = Loader.State.WARNING;
-                this.message = 'Unfortunately, due to space restrictions of Safari and IOS, this account cannot '
-                             + 'be stored properly. Please free up space by logging out of other accounts.';
-                this.action = 'Continue';
-                await new Promise((resolve) => { this.resolve = resolve; });
-                this.$rpc.reject(new Error(ERROR_COOKIE_SPACE));
-                return;
-            }
-        }
 
         const result = this.walletInfos.map((walletInfo) => ({
                 accountId: walletInfo.id,
