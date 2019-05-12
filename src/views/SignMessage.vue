@@ -4,7 +4,7 @@
             <div class="info-line">
                 <span class="request-title">Sign Message</span>
                 <div class="arrow-runway">
-                    <i class="nq-icon arrow-right"></i>
+                    <ArrowRightIcon/>
                 </div>
                 <span class="origin">{{ originDomain }}</span>
             </div>
@@ -20,7 +20,7 @@
         </SmallPage>
 
         <button class="global-close nq-button-s" @click="close">
-            <span class="nq-icon arrow-left"></span>
+            <ArrowLeftSmallIcon/>
             Back to {{request.appName}}
         </button>
     </div>
@@ -29,7 +29,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { Getter, Mutation } from 'vuex-class';
-import { SmallPage, AccountSelector } from '@nimiq/vue-components';
+import { SmallPage, AccountSelector, ArrowRightIcon, ArrowLeftSmallIcon } from '@nimiq/vue-components';
 import { RequestType, ParsedSignMessageRequest } from '../lib/RequestTypes';
 import { Account } from '../lib/PublicRequestTypes';
 import staticStore, { Static } from '../lib/StaticStore';
@@ -41,7 +41,7 @@ import { ERROR_CANCELED } from '@/lib/Constants';
 import { State as RpcState } from '@nimiq/rpc';
 import { WalletType } from '../lib/WalletInfo';
 
-@Component({components: {SmallPage, AccountSelector}})
+@Component({components: {SmallPage, AccountSelector, ArrowRightIcon, ArrowLeftSmallIcon}})
 export default class SignMessage extends Vue {
     @Static protected request!: ParsedSignMessageRequest;
     @Static private rpcState!: RpcState;
@@ -116,7 +116,7 @@ export default class SignMessage extends Vue {
 
         staticStore.keyguardRequest = request;
 
-        const client = this.$rpc.createKeyguardClient();
+        const client = this.$rpc.createKeyguardClient(isFromRequest);
         client.signMessage(request);
     }
 
@@ -182,29 +182,26 @@ export default class SignMessage extends Vue {
 
     .arrow-runway {
         flex-grow: 1;
-        text-align: right;
         display: flex;
         flex-direction: row;
         align-items: center;
+        justify-content: center;
         overflow: hidden;
     }
 
-    .arrow-right {
+    .arrow-runway .nq-icon {
         opacity: 0;
-        width: 100%;
-        background-size: calc(2 * var(--nimiq-size, 8px));
-        background-position: left center;
-        /* animation: arrow-shooting 2s ease-in-out infinite; */
-        opacity: 0.3;
-        background-position: center;
+        font-size: 2rem;
+        animation: arrow-shooting 2s ease-in-out infinite;
+        /* opacity: 0.3;     */
     }
 
     @keyframes arrow-shooting {
-        from { transform: translateX(calc(20% - var(--nimiq-size, 8px))); }
+        from { transform: translateX(-2rem); }
         10% { opacity: 0; }
         50% { opacity: 0.3; }
         90% { opacity: 0; }
-        to { transform: translateX(calc(80% - var(--nimiq-size, 8px))); }
+        to { transform: translateX(2rem); }
     }
 
     .nq-h1 {

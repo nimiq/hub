@@ -12,7 +12,7 @@
                     @click.native="shownAccountDetails = senderDetails"
                     class="blur-target">
                 </Account>
-                <div class="nq-icon arrow-right blur-target"></div>
+                <ArrowRightIcon class="arrow-right blur-target"/>
                 <Account layout="column"
                     :address="recipientDetails.address"
                     :label="recipientDetails.label"
@@ -61,7 +61,7 @@
 
         <button class="global-close nq-button-s" @click="_close"
             :class="{ hidden: state !== constructor.State.OVERVIEW }">
-            <span class="nq-icon arrow-left"></span>
+            <ArrowLeftSmallIcon/>
             {{ request.kind === 'checkout' ? 'Cancel Payment' : `Back to ${request.appName}` }}
         </button>
         <Network ref="network" :visible="false"/>
@@ -70,7 +70,15 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator';
-import { Account, AccountDetails, PageBody, PageHeader, SmallPage } from '@nimiq/vue-components';
+import {
+    Account,
+    AccountDetails,
+    PageBody,
+    PageHeader,
+    SmallPage,
+    ArrowLeftSmallIcon,
+    ArrowRightIcon,
+} from '@nimiq/vue-components';
 import Network from '@/components/Network.vue';
 import LedgerApi from '../lib/LedgerApi';
 import LedgerUi from '../components/LedgerUi.vue';
@@ -80,9 +88,7 @@ import { Getter } from 'vuex-class';
 import { State as RpcState } from '@nimiq/rpc';
 import { ParsedCheckoutRequest, ParsedSignTransactionRequest, RequestType } from '../lib/RequestTypes';
 import { WalletInfo } from '../lib/WalletInfo';
-import { AccountInfo } from '../lib/AccountInfo';
-import { ContractInfo } from '../lib/ContractInfo';
-import { ERROR_CANCELED, TX_VALIDITY_WINDOW } from '../lib/Constants';
+import { ERROR_CANCELED, TX_VALIDITY_WINDOW, CASHLINK_FUNDING_DATA } from '../lib/Constants';
 import { Utf8Tools } from '@nimiq/utils';
 import Config from 'config';
 
@@ -94,7 +100,18 @@ interface AccountDetailsData {
     balance?: number;
 }
 
-@Component({components: {Account, PageBody, PageHeader, SmallPage, LedgerUi, Loader, AccountDetails, Network }})
+@Component({components: {
+    Account,
+    PageBody,
+    PageHeader,
+    SmallPage,
+    LedgerUi,
+    Loader,
+    AccountDetails,
+    Network,
+    ArrowLeftSmallIcon,
+    ArrowRightIcon,
+}})
 export default class SignTransactionLedger extends Vue {
     private static readonly State = {
         OVERVIEW: 'overview',
@@ -235,9 +252,23 @@ export default class SignTransactionLedger extends Vue {
     }
 
     private get transactionData() {
-        return this.request.data && this.request.data.length > 0
+        if (!this.request.data || this.request.data.byteLength === 0) {
+            return null;
+        }
+
+        if (Nimiq.BufferUtils.equals(this.request.data, CASHLINK_FUNDING_DATA)) {
+            return 'Funding cashlink';
+        }
+
+        // tslint:disable-next-line no-bitwise
+        if ((this.request.flags & Nimiq.Transaction.Flag.CONTRACT_CREATION) > 0) {
+            // TODO: Decode contract creation transactions
+            // return ...
+        }
+
+        return Utf8Tools.isValidUtf8(this.request.data, true)
             ? Utf8Tools.utf8ByteArrayToString(this.request.data)
-            : null;
+            : Nimiq.BufferUtils.toHex(this.request.data);
     }
 
     private get loaderTitle() {
@@ -318,11 +349,9 @@ export default class SignTransactionLedger extends Vue {
     }
 
     .accounts .arrow-right {
-        width: 3rem;
-        margin-top: 4rem;
-        /* filter that rotates color to nimiq-light-blue.
-        TODO not necessary anymore once @nimiq/style is updated to svg icons */
-        filter: hue-rotate(-38deg) saturate(1.34) brightness(2.95);
+        font-size: 3rem;
+        margin-top: 3.5rem;
+        color: var(--nimiq-light-blue);
     }
 
     hr {
@@ -404,9 +433,6 @@ export default class SignTransactionLedger extends Vue {
 
     .account-details-shown .blur-target {
         filter: blur(20px);
-    }
-    .account-details-shown .accounts .arrow-right {
-        filter: hue-rotate(-38deg) saturate(1.34) brightness(2.95) blur(20px);
     }
     .account-details-shown .bottom-container {
         filter: blur(35px);

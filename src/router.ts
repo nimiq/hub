@@ -12,7 +12,6 @@ const SignTransactionLedger   = () => import(/*webpackChunkName: "sign-transacti
 
 const Checkout                = () => import(/*webpackChunkName: "checkout"*/ './views/Checkout.vue');
 const CheckoutTransmission    = () => import(/*webpackChunkName: "checkout"*/ './views/CheckoutTransmission.vue');
-const CheckoutErrorHandler    = () => import(/*webpackChunkName: "checkout"*/ './views/CheckoutErrorHandler.vue');
 
 const OnboardingSelector      = () => import(/*webpackChunkName: "onboarding"*/ './views/OnboardingSelector.vue');
 
@@ -20,13 +19,11 @@ const ChooseAddress           = () => import(/*webpackChunkName: "choose-address
 
 const Signup                  = () => import(/*webpackChunkName: "onboarding"*/ './views/Signup.vue');
 const SignupSuccess           = () => import(/*webpackChunkName: "onboarding"*/ './views/SignupSuccess.vue');
-const SignupErrorHandler      = () => import(/*webpackChunkName: "onboarding"*/ './views/SignupErrorHandler.vue');
 
 const SignupLedger            = () => import(/*webpackChunkName: "add-ledger"*/ './views/SignupLedger.vue');
 
 const Login                   = () => import(/*webpackChunkName: "onboarding"*/ './views/Login.vue');
 const LoginSuccess            = () => import(/*webpackChunkName: "onboarding"*/ './views/LoginSuccess.vue');
-const LoginErrorHandler       = () => import(/*webpackChunkName: "onboarding"*/ './views/LoginErrorHandler.vue');
 
 const Export                  = () => import(/*webpackChunkName: "export"*/ './views/Export.vue');
 const ExportSuccess           = () => import(/*webpackChunkName: "export"*/ './views/ExportSuccess.vue');
@@ -49,11 +46,12 @@ const Migrate                 = () => import(/*webpackChunkName: "migrate"*/ './
 
 const SignMessage             = () => import(/*webpackChunkName: "sign-message"*/ './views/SignMessage.vue');
 const SignMessageSuccess      = () => import(/*webpackChunkName: "sign-message"*/ './views/SignMessageSuccess.vue');
-const SignMessageErrorHandler = () => import(/*webpackChunkName: "sign-message"*/
-    './views/SignMessageErrorHandler.vue');
 
 const SimpleSuccess           = () => import(/*webpackChunkName: "common"*/ './views/SimpleSuccess.vue');
 const ErrorHandler            = () => import(/*webpackChunkName: "common"*/ './views/ErrorHandler.vue');
+
+const ErrorHandlerUnsupportedLedger = () => import(/*webpackChunkName: "unsupported-ledger"*/
+    './views/ErrorHandlerUnsupportedLedger.vue');
 
 Vue.use(Router);
 
@@ -61,52 +59,36 @@ export function keyguardResponseRouter(
     command: string,
     originalRequestType: RequestType,
 ): { resolve: string, reject: string } {
+    let resolve = '';
     switch (command) {
         case KeyguardCommand.CREATE:
-            return {
-                resolve: `${RequestType.SIGNUP}-success`,
-                reject: `${RequestType.SIGNUP}-error`,
-            };
+            resolve = `${RequestType.SIGNUP}-success`; break;
         case KeyguardCommand.IMPORT:
-            return {
-                resolve: `${RequestType.LOGIN}-success`,
-                reject: `${RequestType.LOGIN}-error`,
-            };
+            resolve = `${RequestType.LOGIN}-success`; break;
         case KeyguardCommand.REMOVE:
-            return {
-                resolve: `${RequestType.LOGOUT}-success`,
-                reject: 'default-error',
-            };
+            resolve = `${RequestType.LOGOUT}-success`; break;
         case KeyguardCommand.SIGN_TRANSACTION:
             // The SIGN_TRANSACTION Keyguard command is used by Accounts' SIGN_TRANSACTION, CHECKOUT and
             // CASHLINK (future). Thus we return the user to the respective handler component
-            return {
-                resolve: `${originalRequestType}-success`,
-                reject: `${originalRequestType === RequestType.CHECKOUT ? originalRequestType : 'default'}-error`,
-            };
+            resolve = `${originalRequestType}-success`; break;
         case KeyguardCommand.EXPORT:
-            return {
-                resolve: `${RequestType.EXPORT}-success`,
-                reject: 'default-error',
-            };
+            resolve = `${RequestType.EXPORT}-success`; break;
         case KeyguardCommand.CHANGE_PASSWORD:
-            return {
-                resolve: `${RequestType.CHANGE_PASSWORD}-success`,
-                reject: 'default-error',
-            };
+            resolve = `${RequestType.CHANGE_PASSWORD}-success`; break;
         case KeyguardCommand.DERIVE_ADDRESS:
-            return {
-                resolve: `${RequestType.ADD_ADDRESS}-success`,
-                reject: 'default-error',
-            };
+            resolve = `${RequestType.ADD_ADDRESS}-success`; break;
         case KeyguardCommand.SIGN_MESSAGE:
-            return {
-                resolve: `${originalRequestType}-success`,
-                reject: `${originalRequestType}-error`,
-            };
+            // The SIGN_MESSAGE Keyguard command is used by Accounts' SIGN_MESSAGE and
+            // NIMIQ_ID (future). Thus we return the user to the respective handler component
+            resolve = `${originalRequestType}-success`; break;
         default:
             throw new Error(`router.keyguardResponseRouter not defined for Keyguard command: ${command}`);
     }
+
+    return {
+        resolve,
+        reject: 'error',
+    };
 }
 
 export default new Router({
@@ -116,7 +98,7 @@ export default new Router({
         {
             path: '/error',
             component: ErrorHandler,
-            name: 'default-error',
+            name: 'error',
         },
         {
             path: `/${RequestType.SIGN_TRANSACTION}`,
@@ -144,11 +126,6 @@ export default new Router({
             name: `${RequestType.CHECKOUT}-success`,
         },
         {
-            path: `/${RequestType.CHECKOUT}/error`,
-            component: CheckoutErrorHandler,
-            name: `${RequestType.CHECKOUT}-error`,
-        },
-        {
             path: `/${RequestType.ONBOARD}`,
             component: OnboardingSelector,
             name: RequestType.ONBOARD,
@@ -162,11 +139,6 @@ export default new Router({
             path: `/${RequestType.SIGNUP}/success`,
             component: SignupSuccess,
             name: `${RequestType.SIGNUP}-success`,
-        },
-        {
-            path: `/${RequestType.SIGNUP}/error`,
-            component: SignupErrorHandler,
-            name: `${RequestType.SIGNUP}-error`,
         },
         {
             path: `/${RequestType.SIGNUP}/ledger`,
@@ -184,11 +156,6 @@ export default new Router({
             name: `${RequestType.LOGIN}-success`,
         },
         {
-            path: `/${RequestType.LOGIN}/error`,
-            component: LoginErrorHandler,
-            name: `${RequestType.LOGIN}-error`,
-        },
-        {
             path: `/${RequestType.EXPORT}`,
             component: Export,
             name: RequestType.EXPORT,
@@ -199,6 +166,11 @@ export default new Router({
             name: `${RequestType.EXPORT}-success`,
         },
         {
+            path: `/${RequestType.EXPORT}/ledger`,
+            component: ErrorHandlerUnsupportedLedger,
+            name: `${RequestType.EXPORT}-ledger`,
+        },
+        {
             path: `/${RequestType.CHANGE_PASSWORD}`,
             component: ChangePassword,
             name: RequestType.CHANGE_PASSWORD,
@@ -207,6 +179,11 @@ export default new Router({
             path: `/${RequestType.CHANGE_PASSWORD}/success`,
             component: SimpleSuccess,
             name: `${RequestType.CHANGE_PASSWORD}-success`,
+        },
+        {
+            path: `/${RequestType.CHANGE_PASSWORD}/ledger`,
+            component: ErrorHandlerUnsupportedLedger,
+            name: `${RequestType.CHANGE_PASSWORD}-ledger`,
         },
         {
             path: `/${RequestType.LOGOUT}`,
@@ -264,9 +241,9 @@ export default new Router({
             name: `${RequestType.SIGN_MESSAGE}-success`,
         },
         {
-            path: `/${RequestType.SIGN_MESSAGE}/error`,
-            component: SignMessageErrorHandler,
-            name: `${RequestType.SIGN_MESSAGE}-error`,
+            path: `/${RequestType.SIGN_MESSAGE}/ledger`,
+            component: ErrorHandlerUnsupportedLedger,
+            // not specifying a name here to not trigger automatic routing to this view in RpcApi.ts
         },
     ],
 });

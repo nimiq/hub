@@ -45,7 +45,7 @@ export default class SignTransaction extends Vue {
 
         staticStore.keyguardRequest = request;
 
-        const client = this.$rpc.createKeyguardClient();
+        const client = this.$rpc.createKeyguardClient(true);
         client.signTransaction(request);
     }
 }

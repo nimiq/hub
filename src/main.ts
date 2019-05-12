@@ -1,4 +1,5 @@
 import Vue from 'vue';
+import { BrowserDetection } from '@nimiq/utils';
 import App from './App.vue';
 import router from './router';
 import store from './store';
@@ -10,14 +11,15 @@ if (window.hasBrowserWarning) {
     throw new Error('Exeution aborted due to browser warning');
 }
 
-// Register service worker if necessary (and possible).
-if ('serviceWorker' in navigator) {
+if ((BrowserDetection.isIOS() || BrowserDetection.isSafari()) && 'serviceWorker' in navigator) {
+    // Register service worker to strip cookie from requests
     navigator.serviceWorker.register('/ServiceWorker.js', {
         scope: '/',
     }).then((reg) => {
         console.debug(`Service worker has been registered for scope: ${reg.scope}`);
     }).catch((error) => {
-        console.warn(`Service worker installation failed: ${error}`);
+        console.error(`Service worker installation failed`);
+        throw error;
     });
 }
 

@@ -9,7 +9,7 @@
         </SmallPage>
 
         <button class="global-close nq-button-s" @click="close">
-            <span class="nq-icon arrow-left"></span>
+            <ArrowLeftSmallIcon/>
             Back to {{request.appName}}
         </button>
     </div>
@@ -17,7 +17,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { PageBody, SmallPage } from '@nimiq/vue-components';
+import { PageBody, SmallPage, ArrowLeftSmallIcon } from '@nimiq/vue-components';
 import { BrowserDetection } from '@nimiq/utils';
 import LedgerUi from '../components/LedgerUi.vue';
 import Loader from '../components/Loader.vue';
@@ -32,7 +32,7 @@ import { WalletStore } from '../lib/WalletStore';
 import { ACCOUNT_MAX_ALLOWED_ADDRESS_GAP, ERROR_CANCELED } from '../lib/Constants';
 import LabelingMachine from '../lib/LabelingMachine';
 
-@Component({components: {PageBody, SmallPage, LedgerUi, Loader, IdenticonSelector}})
+@Component({components: {PageBody, SmallPage, LedgerUi, Loader, IdenticonSelector, ArrowLeftSmallIcon}})
 export default class AddAddressLedger extends Vue {
     private static readonly State = {
         LEDGER_INTERACTION: 'ledger-interaction', // can be instructions to connect or also display of an error

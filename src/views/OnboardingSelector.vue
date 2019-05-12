@@ -1,12 +1,17 @@
 <template>
     <NotEnoughCookieSpace v-if='notEnoughCookieSpace'/>
-    <div v-else class="container">
+    <div v-else class="container" :class="{isCheckoutOnboarding}">
         <OnboardingMenu @signup="signup" @login="login" @ledger="ledger"/>
+        <h1 v-if="isCheckoutOnboarding" class="uber-header">Pay with Nimiq</h1>
+        <div class="center">
+            <OnboardingMenu @signup="signup" @login="login" @ledger="ledger"/>
 
-        <button v-if="!request.disableBack" class="global-close nq-button-s" @click="close">
-            <span class="nq-icon arrow-left"></span>
-            Back to {{request.appName}}
-        </button>
+            <button v-if="!request.disableBack" class="global-close nq-button-s" @click="close">
+                <ArrowLeftSmallIcon/>
+                Back to {{request.appName}}
+            </button>
+        </div>
+        <div v-if="isCheckoutOnboarding" class="uber-header"><!-- bottom spacing to balance header --></div>
     </div>
 </template>
 
@@ -20,10 +25,12 @@ import { Static } from '@/lib/StaticStore';
 import { DEFAULT_KEY_PATH, ERROR_CANCELED } from '@/lib/Constants';
 import CookieHelper from '../lib/CookieHelper';
 import NotEnoughCookieSpace from '../components/NotEnoughCookieSpace.vue';
+import { ArrowLeftSmallIcon } from '@nimiq/vue-components';
 
-@Component({components: {OnboardingMenu, NotEnoughCookieSpace}})
+@Component({components: {OnboardingMenu, NotEnoughCookieSpace, ArrowLeftSmallIcon}})
 export default class OnboardingSelector extends Vue {
     @Static private request!: ParsedBasicRequest;
+    @Static private originalRouteName?: string;
 
     private notEnoughCookieSpace = false;
 
@@ -59,5 +66,42 @@ export default class OnboardingSelector extends Vue {
     private close() {
         this.$rpc.reject(new Error(ERROR_CANCELED));
     }
+
+    private get isCheckoutOnboarding() {
+        return this.originalRouteName === RequestType.CHECKOUT;
+    }
 }
 </script>
+
+<style>
+    .container.isCheckoutOnboarding {
+        justify-content: space-around !important;
+    }
+
+    .uber-header {
+        font-size: 5rem;
+        margin-top: 2rem;
+        margin-bottom: 6rem;
+    }
+
+    .center {
+        text-align: center;
+        width: 100%;
+    }
+
+    .onboarding-menu {
+        margin: auto !important;
+    }
+
+    @media (max-height: 700px) {
+        .uber-header:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    @media (max-height: 580px), (max-width: 420px) {
+        .uber-header:last-child {
+            display: none;
+        }
+    }
+</style>

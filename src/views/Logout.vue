@@ -20,7 +20,7 @@ export default class Logout extends Vue {
             keyLabel: wallet.label,
         };
 
-        const client = this.$rpc.createKeyguardClient();
+        const client = this.$rpc.createKeyguardClient(true);
         client.remove(request);
     }
 }

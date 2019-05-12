@@ -29,7 +29,7 @@ export default class Login extends Vue {
             requestedKeyPaths: [DEFAULT_KEY_PATH],
         };
 
-        const client = this.$rpc.createKeyguardClient();
+        const client = this.$rpc.createKeyguardClient(true);
         client.import(request);
     }
 }

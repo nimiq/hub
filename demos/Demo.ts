@@ -6,12 +6,13 @@ import {
     Account,
     CheckoutRequest,
     SimpleResult,
-    SignTransactionRequest, SignedTransaction,
+    SignTransactionRequest,
     RenameRequest,
     SignMessageRequest,
     ExportRequest,
+    RpcResult,
 } from '../src/lib/PublicRequestTypes';
-import { RedirectRequestBehavior } from '../client/RequestBehavior';
+import { PopupRequestBehavior, RedirectRequestBehavior } from '../client/RequestBehavior';
 import { Utf8Tools } from '@nimiq/utils';
 
 class Demo {
@@ -23,101 +24,109 @@ class Demo {
         // @ts-ignore (Property 'demo' does not exist on type 'Window')
         window.demo = demo;
 
-        const client = new AccountsClient(location.origin);
+        [
+            RequestType.ADD_ADDRESS,
+            RequestType.CHANGE_PASSWORD,
+            RequestType.CHECKOUT,
+            RequestType.CHOOSE_ADDRESS,
+            RequestType.EXPORT,
+            RequestType.LOGIN,
+            RequestType.LOGOUT,
+            RequestType.MIGRATE,
+            RequestType.ONBOARD,
+            RequestType.RENAME,
+            RequestType.SIGNUP,
+            RequestType.SIGN_MESSAGE,
+            RequestType.SIGN_TRANSACTION,
+        ].forEach(requestType => {
+            demo.client.on(requestType, (result: RpcResult, state: State) => {
+                console.log('AccountsManager result', result);
+                console.log('State', state);
 
-        client.on(RequestType.CHECKOUT, (result: SignedTransaction, state: State) => {
-            console.log('AccountsManager result', result);
-            console.log('State', state);
+                document.querySelector('#result').textContent = JSON.stringify(result);
+            }, (error: Error, state: State) => {
+                console.error('AccountsManager error', error);
+                console.log('State', state);
 
-            document.querySelector('#result').textContent = 'TX signed';
-        }, (error: Error, state: State) => {
-            console.error('AccountsManager error', error);
-            console.log('State', state);
-
-            document.querySelector('#result').textContent = `Error: ${error.message || error}`;
+                document.querySelector('#result').textContent = `Error: ${error.message || error}`;
+            });
         });
-        client.on(RequestType.SIGNUP, (result: Account, state: State) => {
-            console.log('AccountsManager result', result);
-            console.log('State', state);
+        demo.client.checkRedirectResponse();
 
-            document.querySelector('#result').textContent = 'SignUp completed';
-        }, (error: Error, state: State) => {
-            console.error('AccountsManager error', error);
-            console.log('State', state);
-
-            document.querySelector('#result').textContent = `Error: ${error.message || error}`;
+        document.querySelectorAll('input[name="popup-vs-redirect"]').forEach((input: HTMLInputElement) => {
+            input.addEventListener('change', event => {
+                const value = (event.target as HTMLInputElement).value;
+                demo.setClientBehavior(value);
+            });
         });
-        client.checkRedirectResponse();
-
-        document.querySelector('button#checkout-redirect').addEventListener('click', async () => {
-            checkoutRedirect(await generateCheckoutRequest(demo));
-        });
+        demo.setClientBehavior(
+            (document.querySelector('input[name="popup-vs-redirect"]:checked') as HTMLInputElement).value);
 
         document.querySelector('button#checkout-popup').addEventListener('click', async () => {
-            await checkoutPopup(await generateCheckoutRequest(demo));
+            await checkoutPopup(await generateCheckoutRequest());
         });
 
         document.querySelector('button#checkout-popup-with-account').addEventListener('click', async () => {
-            await checkoutPopup(await generateCheckoutRequest(demo, true));
+            await checkoutPopup(await generateCheckoutRequest(true));
         });
 
         document.querySelector('button#choose-address').addEventListener('click', async () => {
             try {
-                const result = await client.chooseAddress({ appName: 'Accounts Demos' });
+                const result = await demo.client.chooseAddress({ appName: 'Accounts Demos' });
                 console.log('Result', result);
                 document.querySelector('#result').textContent = 'Address was chosen';
             } catch (e) {
-                console.error('Result error', e);
+                console.error(e);
                 document.querySelector('#result').textContent = `Error: ${e.message || e}`;
             }
         });
 
         document.querySelector('button#sign-transaction-popup').addEventListener('click', async () => {
-            const txRequest = generateSignTransactionRequest(demo);
+            const txRequest = generateSignTransactionRequest();
             try {
-                const result = await client.signTransaction(txRequest);
-                console.log('Keyguard result', result);
+                const result = await demo.client.signTransaction(txRequest);
+                console.log('Result', result);
                 document.querySelector('#result').textContent = 'TX signed';
             } catch (e) {
-                console.error('Keyguard error', e);
+                console.error(e);
                 document.querySelector('#result').textContent = `Error: ${e.message || e}`;
             }
         });
 
         document.querySelector('button#onboard').addEventListener('click', async () => {
             try {
-                const result = await client.onboard({ appName: 'Accounts Demos' });
-                console.log('Keyguard result', result);
+                const result = await demo.client.onboard({ appName: 'Accounts Demos' });
+                console.log('Result', result);
                 document.querySelector('#result').textContent = 'Onboarding completed!';
             } catch (e) {
-                console.error('Keyguard error', e);
+                console.error(e);
                 document.querySelector('#result').textContent = `Error: ${e.message || e}`;
             }
         });
 
         document.querySelector('button#create').addEventListener('click', async () => {
             try {
-                const result = await client.signup({ appName: 'Accounts Demos' });
-                console.log('Keyguard result', result);
+                const result = await demo.client.signup({ appName: 'Accounts Demos' });
+                console.log('Result', result);
                 document.querySelector('#result').textContent = 'New account & address created';
             } catch (e) {
-                console.error('Keyguard error', e);
+                console.error(e);
                 document.querySelector('#result').textContent = `Error: ${e.message || e}`;
             }
         });
 
         document.querySelector('button#login').addEventListener('click', async () => {
             try {
-                const result = await client.login({ appName: 'Accounts Demos' });
-                console.log('Keyguard result', result);
+                const result = await demo.client.login({ appName: 'Accounts Demos' });
+                console.log('Result', result);
                 document.querySelector('#result').textContent = 'Account imported';
             } catch (e) {
-                console.error('Keyguard error', e);
+                console.error(e);
                 document.querySelector('#result').textContent = `Error: ${e.message || e}`;
             }
         });
 
-        function generateSignTransactionRequest(demo: Demo): SignTransactionRequest {
+        function generateSignTransactionRequest(): SignTransactionRequest {
             const $radio = document.querySelector('input[type="radio"]:checked');
             if (!$radio) {
                 alert('You have no account to send a tx from, create an account first (signup)');
@@ -140,7 +149,7 @@ class Demo {
             };
         }
 
-        async function generateCheckoutRequest(demo: Demo, useSelectedAddress: boolean): Promise<CheckoutRequest> {
+        async function generateCheckoutRequest(useSelectedAddress?: boolean): Promise<CheckoutRequest> {
             const value = parseInt((document.querySelector('#value') as HTMLInputElement).value) || 1337;
             const txFee = parseInt((document.querySelector('#fee') as HTMLInputElement).value) || 0;
             const txData = (document.querySelector('#data') as HTMLInputElement).value || '';
@@ -168,56 +177,34 @@ class Demo {
             };
         }
 
-        function checkoutRedirect(txRequest: CheckoutRequest) {
-            return client.checkout(txRequest, new RedirectRequestBehavior(null, { storedGreeting: 'Hello Nimiq!' }));
-        }
-
         async function checkoutPopup(txRequest: CheckoutRequest) {
             try {
-                const result = await client.checkout(txRequest);
-                console.log('Keyguard result', result);
+                const result = await demo.client.checkout(txRequest);
+                console.log('Result', result);
                 document.querySelector('#result').textContent = 'TX signed';
             } catch (e) {
-                console.error('Keyguard error', e);
+                console.error(e);
                 document.querySelector('#result').textContent = `Error: ${e.message || e}`;
             }
         }
 
         document.querySelector('button#sign-message').addEventListener('click', async () => {
-            const request = await generateSignMessageRequest(demo);
-            try {
-                const result = await client.signMessage(request);
-                console.log('Keyguard result', result);
-                document.querySelector('#result').textContent = 'MSG signed: ' + request.message;
-            } catch (e) {
-                console.error('Keyguard error', e);
-                document.querySelector('#result').textContent = `Error: ${e.message || e}`;
-            }
-        });
-
-        async function generateSignMessageRequest(demo: Demo): Promise<SignMessageRequest> {
-            const message = (document.querySelector('#message') as HTMLInputElement).value || undefined;
-
-            return {
+            const request: SignMessageRequest = {
                 appName: 'Accounts Demos',
                 // signer: 'NQ63 U7XG 1YYE D6FA SXGG 3F5H X403 NBKN JLDU',
-                message,
+                message: (document.querySelector('#message') as HTMLInputElement).value || undefined,
             };
-        }
-
-        document.querySelector('button#sign-message-with-account').addEventListener('click', async () => {
-            const request = await generateSignMessageWithAccountRequest(demo);
             try {
-                const result = await client.signMessage(request);
-                console.log('Keyguard result', result);
+                const result = await demo.client.signMessage(request);
+                console.log('Result', result);
                 document.querySelector('#result').textContent = 'MSG signed: ' + request.message;
             } catch (e) {
-                console.error('Keyguard error', e);
+                console.error(e);
                 document.querySelector('#result').textContent = `Error: ${e.message || e}`;
             }
         });
 
-        async function generateSignMessageWithAccountRequest(demo: Demo): Promise<SignMessageRequest> {
+        document.querySelector('button#sign-message-with-account').addEventListener('click', async () => {
             const message = (document.querySelector('#message') as HTMLInputElement).value || undefined;
 
             const $radio = document.querySelector('input[type="radio"]:checked');
@@ -227,20 +214,29 @@ class Demo {
             }
             const signer = $radio.getAttribute('data-address');
 
-            return {
+            const request: SignMessageRequest = {
                 appName: 'Accounts Demos',
                 signer,
                 message,
             };
-        }
+
+            try {
+                const result = await demo.client.signMessage(request);
+                console.log('Result', result);
+                document.querySelector('#result').textContent = 'MSG signed: ' + request.message;
+            } catch (e) {
+                console.error(e);
+                document.querySelector('#result').textContent = `Error: ${e.message || e}`;
+            }
+        });
 
         document.querySelector('button#migrate').addEventListener('click', async () => {
             try {
-                const result = await client.migrate();
-                console.log('Keyguard result', result);
+                const result = await demo.client.migrate();
+                console.log('Result', result);
                 document.querySelector('#result').textContent = 'Migrated';
             } catch (e) {
-                console.error('Keyguard error', e);
+                console.error(e);
                 document.querySelector('#result').textContent = `Error: ${e.message || e}`;
             }
         });
@@ -248,7 +244,6 @@ class Demo {
         document.querySelector('button#list-keyguard-keys').addEventListener('click', () => demo.listKeyguard());
         document.querySelector('button#setup-legacy-accounts').addEventListener('click', () => demo.setupLegacyAccounts());
         document.querySelector('button#list-accounts').addEventListener('click', async () => demo.updateAccounts());
-        demo._accountsClient = client;
 
         document.querySelectorAll('button').forEach(button => button.disabled = false);
         (document.querySelector('button#list-accounts') as HTMLButtonElement).click();
@@ -310,17 +305,17 @@ class Demo {
     }
 
     public async list(): Promise<Account[]> {
-        return await this._accountsClient.list();
+        return await this.client.list();
     }
 
     public async logout(accountId: string): Promise<SimpleResult> {
         try {
-            const result = await this._accountsClient.logout(this._createLogoutRequest(accountId));
-            console.log('Keyguard result', result);
+            const result = await this.client.logout(this._createLogoutRequest(accountId));
+            console.log('Result', result);
             document.querySelector('#result').textContent = 'Account removed';
             return result;
         } catch (e) {
-            console.error('Keyguard error', e);
+            console.error(e);
             document.querySelector('#result').textContent = `Error: ${e.message || e}`;
         }
     }
@@ -357,8 +352,8 @@ class Demo {
 
     private async _export(request: ExportRequest) {
         try {
-            const result = await this._accountsClient.export(request);
-            console.log('Keyguard result', result);
+            const result = await this.client.export(request);
+            console.log('Result', result);
             if(result.fileExported) {
                 document.querySelector('#result').textContent = result.wordsExported
                     ? 'Export sucessful'
@@ -369,18 +364,18 @@ class Demo {
                     : 'nothing exported';
             }
         } catch (e) {
-            console.error('Keyguard error', e);
+            console.error(e);
             document.querySelector('#result').textContent = `Error: ${e.message || e}`;
         }
     }
 
     public async changePassword(accountId: string) {
         try {
-            const result = await this._accountsClient.changePassword(this._createChangePasswordRequest(accountId));
-            console.log('Keyguard result', result);
+            const result = await this.client.changePassword(this._createChangePasswordRequest(accountId));
+            console.log('Result', result);
             document.querySelector('#result').textContent = 'Export sucessful';
         } catch (e) {
-            console.error('Keyguard error', e);
+            console.error(e);
             document.querySelector('#result').textContent = `Error: ${e.message || e}`;
         }
     }
@@ -394,11 +389,11 @@ class Demo {
 
     public async addAccount(accountId: string) {
         try {
-            const result = await this._accountsClient.addAddress(this._createAddAccountRequest(accountId));
-            console.log('Keyguard result', result);
+            const result = await this.client.addAddress(this._createAddAccountRequest(accountId));
+            console.log('Result', result);
             document.querySelector('#result').textContent = 'Account added';
         } catch (e) {
-            console.error('Keyguard error', e);
+            console.error(e);
             document.querySelector('#result').textContent = `Error: ${e.message || e}`;
         }
     }
@@ -412,11 +407,11 @@ class Demo {
 
     public async rename(accountId: string, account: string) {
         try {
-            const result = await this._accountsClient.rename(this._createRenameRequest(accountId, account));
-            console.log('Keyguard result', result);
+            const result = await this.client.rename(this._createRenameRequest(accountId, account));
+            console.log('Result', result);
             document.querySelector('#result').textContent = 'Done renaming account';
         } catch (e) {
-            console.error('Keyguard error', e);
+            console.error(e);
             document.querySelector('#result').textContent = `Error: ${e.message || e}`;
         }
     }
@@ -496,6 +491,23 @@ class Demo {
         document.querySelectorAll('button.logout').forEach(element => {
             element.addEventListener('click', async () => this.logout(element.getAttribute('data-wallet-id')));
         });
+    }
+
+    public setClientBehavior(behavior: string) {
+        if (behavior === 'popup') {
+            // @ts-ignore
+            demo.client._defaultBehavior = new PopupRequestBehavior(
+                `left=${window.innerWidth / 2 - 400},top=75,width=800,height=850,location=yes,dependent=yes`);
+        }
+
+        if (behavior === 'redirect') {
+            // @ts-ignore
+            demo.client._defaultBehavior = new RedirectRequestBehavior();
+        }
+    }
+
+    public get client() {
+        return this._accountsClient || (this._accountsClient = new AccountsClient(location.origin));
     }
 } // class Demo
 

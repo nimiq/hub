@@ -24,7 +24,7 @@
         </SmallPage>
 
         <button class="global-close nq-button-s" :class="{'hidden': labelsStored}" @click="close">
-            <span class="nq-icon arrow-left"></span>
+            <ArrowLeftSmallIcon/>
             Cancel Renaming
         </button>
     </div>
@@ -33,6 +33,7 @@
 <script lang="ts">
     import { Component, Vue } from 'vue-property-decorator';
     import { AccountRing, AccountList, SmallPage, PageHeader, PageBody, PageFooter } from '@nimiq/vue-components';
+    import { ArrowLeftSmallIcon } from '@nimiq/vue-components';
     import Input from '@/components/Input.vue';
     import { ParsedRenameRequest } from '../lib/RequestTypes';
     import { Account } from '../lib/PublicRequestTypes';
@@ -60,6 +61,7 @@
             PageFooter,
             Input,
             Loader,
+            ArrowLeftSmallIcon,
         }})
     export default class Rename extends Vue {
         @Static private request!: ParsedRenameRequest;

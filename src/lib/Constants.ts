@@ -8,6 +8,7 @@ export const DEFAULT_KEY_PATH = `m/44'/242'/0'/0'`;
 // Transactions
 export const TX_MIN_VALIDITY_DURATION = 10;
 export const TX_VALIDITY_WINDOW = 120;
+export const CASHLINK_FUNDING_DATA = new Uint8Array([0, 130, 128, 146, 135]);
 
 // Labels
 export const LABEL_MAX_LENGTH = 63; // in bytes

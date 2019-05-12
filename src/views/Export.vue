@@ -22,7 +22,7 @@ export default class Export extends Vue {
             wordsOnly: this.request.wordsOnly,
         };
 
-        const client = this.$rpc.createKeyguardClient();
+        const client = this.$rpc.createKeyguardClient(true);
         client.export(request);
     }
 }
