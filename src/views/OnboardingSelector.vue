@@ -1,7 +1,6 @@
 <template>
     <NotEnoughCookieSpace v-if='notEnoughCookieSpace'/>
     <div v-else class="container" :class="{isCheckoutOnboarding}">
-        <OnboardingMenu @signup="signup" @login="login" @ledger="ledger"/>
         <h1 v-if="isCheckoutOnboarding" class="uber-header">Pay with Nimiq</h1>
         <div class="center">
             <OnboardingMenu @signup="signup" @login="login" @ledger="ledger"/>
