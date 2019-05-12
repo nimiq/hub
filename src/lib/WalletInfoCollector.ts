@@ -76,7 +76,7 @@ export default class WalletInfoCollector {
         if (!skipActivityCheck && !hasActivity) {
             const balances = await WalletInfoCollector._getBalances([singleAccount]);
             WalletInfoCollector._addAccounts(walletInfo, singleAccountAsArray, balances);
-            onUpdate(walletInfo, singleAccountAsArray);
+            onUpdate(walletInfo, []);
             hasActivity = balances.get(singleAccount.address)! > 0
                 || (await WalletInfoCollector._networkInitializationPromise!
                     .then(() => NetworkClient.Instance.requestTransactionReceipts(singleAccount.address)))
@@ -120,11 +120,9 @@ export default class WalletInfoCollector {
         // Kick off loading dependencies
         WalletInfoCollector._initializeDependencies(walletType);
 
-        // track activity of the wallet
-        let hasActivity = false;
         // Kick off first round of account derivation
         let startIndex = 0;
-        let derivedAccountsPromise: Promise<BasicAccountInfo[]> = WalletInfoCollector._deriveAccounts(startIndex,
+        let derivedAccountsPromise = WalletInfoCollector._deriveAccounts(startIndex,
             ACCOUNT_MAX_ALLOWED_ADDRESS_GAP, walletType, keyId);
 
         // Get or create the walletInfo instance and derive the first set of derived accounts
@@ -139,12 +137,9 @@ export default class WalletInfoCollector {
         }
         onUpdate(walletInfo, firstSetOfDerivedAccounts);
 
-        // Search genesis vesting contracts for Ledger
-        if (walletType === WalletType.LEDGER) {
-            const contracts = await WalletInfoCollector._addVestingContracts(walletInfo,
-                firstSetOfDerivedAccounts[0], onUpdate);
-            hasActivity = contracts.length > 0;
-        }
+        const contracts = await WalletInfoCollector._addVestingContracts(walletInfo, firstSetOfDerivedAccounts[0],
+            onUpdate);
+        let hasActivity = contracts.length > 0;
 
         // Label Keyguard BIP39 accounts according to their first identicon background color
         if (walletType === WalletType.BIP39 && walletInfo.label === ACCOUNT_TEMPORARY_LABEL_KEYGUARD) {
@@ -172,7 +167,7 @@ export default class WalletInfoCollector {
             derivedAccountsPromise = WalletInfoCollector._deriveAccounts(startIndex,
                 ACCOUNT_MAX_ALLOWED_ADDRESS_GAP, walletType, keyId);
 
-            // already add addresses that are in the initialAccounts
+            // Already add addresses that are in the initialAccounts
             foundAccounts = derivedAccounts.filter((derivedAccount) =>
                 initialAccounts.some((initialAccount) => initialAccount.address === derivedAccount.address));
             let accountsToCheck = skipActivityCheck || hasActivity
@@ -193,7 +188,7 @@ export default class WalletInfoCollector {
             accountsToCheck = skipActivityCheck || hasActivity
                 ? accountsToCheck.filter((account) =>
                     !foundAccounts.some((foundAccount) => foundAccount.address === account.address))
-                : derivedAccounts; // did not find any activity, have to check all accounts
+                : accountsToCheck; // did not find any activity, have to check all accounts
             await Promise.all(
                 accountsToCheck.map(async (account) => {
                     try {
@@ -215,7 +210,7 @@ export default class WalletInfoCollector {
 
             if (foundAccounts.length > 0) {
                 WalletInfoCollector._addAccounts(walletInfo, foundAccounts, balances);
-                onUpdate(walletInfo, derivedAccounts);
+                onUpdate(walletInfo, await derivedAccountsPromise);
             }
         } while (foundAccounts.length > 0);
 
@@ -363,7 +358,7 @@ export default class WalletInfoCollector {
         onUpdate: (walletInfo: WalletInfo, currentlyCheckedAccounts: BasicAccountInfo[]) => void,
     ): Promise<VestingContractInfo[]> {
         if (walletInfo.type !== WalletType.LEGACY && walletInfo.type !== WalletType.LEDGER) {
-            // only legacy or a first ledger addresses can be owners of genesis vesting contracts
+            // Only legacy or a first Ledger addresses can be owners of genesis vesting contracts
             return [];
         }
 
@@ -393,7 +388,7 @@ export default class WalletInfoCollector {
         if (contracts.length > 0) {
             // make sure the vesting owner is added to the account too
             WalletInfoCollector._addAccounts(walletInfo, [potentialOwner]);
-            onUpdate(walletInfo, [potentialOwner]);
+            onUpdate(walletInfo, []);
         }
 
         return contracts;
