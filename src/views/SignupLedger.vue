@@ -18,6 +18,7 @@
 
         <button class="global-close nq-button-s" @click="close">
             <ArrowLeftSmallIcon/>
+            Back to {{request.appName}}
         </button>
     </div>
 </template>
