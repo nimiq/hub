@@ -58,7 +58,7 @@ const ErrorHandlerUnsupportedLedger = () => import(/*webpackChunkName: "unsuppor
 Vue.use(Router);
 
 export function keyguardResponseRouter(
-    command: string,
+    command: KeyguardCommand,
     originalRequestType: RequestType,
 ): { resolve: string, reject: string } {
     let resolve = '';

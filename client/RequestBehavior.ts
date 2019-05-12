@@ -1,5 +1,6 @@
 import { RequestType } from '../src/lib/RequestTypes';
 import { PostMessageRpcClient, RedirectRpcClient } from '@nimiq/rpc';
+import { ResultByRequestType } from '@/lib/PublicRequestTypes';
 
 export class RequestBehavior {
     public static getAllowedOrigin(endpoint: string) {
@@ -13,7 +14,11 @@ export class RequestBehavior {
         this._type = type;
     }
 
-    public async request(endpoint: string, command: RequestType, args: any[]): Promise<any> {
+    public async request<T extends RequestType, B extends RequestBehavior>(
+        endpoint: string,
+        command: T,
+        args: any[],
+    ): Promise<B extends RedirectRequestBehavior ? void : ResultByRequestType<T>> {
         throw new Error('Not implemented');
     }
 
@@ -22,7 +27,7 @@ export class RequestBehavior {
     }
 }
 
-enum BehaviorType {
+export enum BehaviorType {
     REDIRECT,
     POPUP,
     IFRAME,
@@ -48,7 +53,11 @@ export class RedirectRequestBehavior extends RequestBehavior {
         }
     }
 
-    public async request(endpoint: string, command: RequestType, args: any[]): Promise<any> {
+    public async request<T extends RequestType, B extends RedirectRequestBehavior>(
+        endpoint: string,
+        command: T,
+        args: any[],
+    ): Promise<void> {
         const origin = RequestBehavior.getAllowedOrigin(endpoint);
 
         const client = new RedirectRpcClient(endpoint, origin);
@@ -68,7 +77,11 @@ export class PopupRequestBehavior extends RequestBehavior {
         this._options = options;
     }
 
-    public async request(endpoint: string, command: RequestType, args: any[]): Promise<any> {
+    public async request<T extends RequestType, B extends PopupRequestBehavior>(
+        endpoint: string,
+        command: T,
+        args: any[],
+    ): Promise<ResultByRequestType<T>> {
         const origin = RequestBehavior.getAllowedOrigin(endpoint);
 
         const popup = this.createPopup(endpoint);

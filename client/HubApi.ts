@@ -3,6 +3,7 @@ import {
     IFrameRequestBehavior,
     RequestBehavior,
     RedirectRequestBehavior,
+    BehaviorType,
 } from './RequestBehavior';
 import { RedirectRpcClient } from '@nimiq/rpc';
 import { RequestType } from '../src/lib/RequestTypes';
@@ -21,6 +22,7 @@ import {
     ExportRequest,
     ExportResult,
     RpcResult,
+    ResultByRequestType,
 } from '../src/lib/PublicRequestTypes';
 
 export default class HubApi {
@@ -62,87 +64,74 @@ export default class HubApi {
         return this._redirectClient.init();
     }
 
-    public on(
-        command: RequestType,
-        resolve: (result: RpcResult, state: any) => any,
+    public on<T extends RequestType>(
+        command: T,
+        resolve: (result: ResultByRequestType<T>, state: any) => any,
         reject?: (error: Error, state: any) => any,
     ) {
         this._redirectClient.onResponse(command,
             // State is always an object containing at least the __command property
-            (result: RpcResult, rpcId, state) => resolve(result, state),
+            (result: ResultByRequestType<T>, rpcId, state) => resolve(result, state),
             (error: Error, rpcId, state) => reject && reject(error, state),
         );
     }
 
-    public onboard(request: BasicRequest, requestBehavior = this._defaultBehavior): Promise<Account[]> {
+    public onboard(request: BasicRequest, requestBehavior = this._defaultBehavior) {
         return this._request(requestBehavior, RequestType.ONBOARD, [request]);
     }
 
-    public signup(request: BasicRequest, requestBehavior = this._defaultBehavior): Promise<Account[]> {
+    public signup(request: BasicRequest, requestBehavior = this._defaultBehavior) {
         return this._request(requestBehavior, RequestType.SIGNUP, [request]);
     }
 
-    public login(request: BasicRequest, requestBehavior = this._defaultBehavior): Promise<Account[]> {
+    public login(request: BasicRequest, requestBehavior = this._defaultBehavior) {
         return this._request(requestBehavior, RequestType.LOGIN, [request]);
     }
 
-    public chooseAddress(request: BasicRequest, requestBehavior = this._defaultBehavior)
-        : Promise<Address> {
+    public chooseAddress(request: BasicRequest, requestBehavior = this._defaultBehavior) {
         return this._request(requestBehavior, RequestType.CHOOSE_ADDRESS, [request]);
     }
 
-    public signTransaction(
-        request: SignTransactionRequest,
-        requestBehavior = this._defaultBehavior,
-    ): Promise<SignedTransaction> {
+    public signTransaction( request: SignTransactionRequest, requestBehavior = this._defaultBehavior) {
         return this._request(requestBehavior, RequestType.SIGN_TRANSACTION, [request]);
     }
 
-    public checkout(request: CheckoutRequest, requestBehavior = this._defaultBehavior): Promise<SignedTransaction> {
+    public checkout(request: CheckoutRequest, requestBehavior = this._defaultBehavior) {
         return this._request(requestBehavior, RequestType.CHECKOUT, [request]);
     }
 
-    public logout(request: SimpleRequest, requestBehavior = this._defaultBehavior): Promise<SimpleResult> {
+    public logout(request: SimpleRequest, requestBehavior = this._defaultBehavior) {
         return this._request(requestBehavior, RequestType.LOGOUT, [request]);
     }
 
-    public export(
-        request: ExportRequest,
-        requestBehavior = this._defaultBehavior,
-    ): Promise<ExportResult> {
+    public export(request: ExportRequest, requestBehavior = this._defaultBehavior) {
         return this._request(requestBehavior, RequestType.EXPORT, [request]);
     }
 
-    public changePassword(
-        request: SimpleRequest,
-        requestBehavior = this._defaultBehavior,
-    ): Promise<SimpleResult> {
+    public changePassword(request: SimpleRequest, requestBehavior = this._defaultBehavior) {
         return this._request(requestBehavior, RequestType.CHANGE_PASSWORD, [request]);
     }
 
-    public addAddress(request: SimpleRequest, requestBehavior = this._defaultBehavior): Promise<Address> {
+    public addAddress(request: SimpleRequest, requestBehavior = this._defaultBehavior) {
         return this._request(requestBehavior, RequestType.ADD_ADDRESS, [request]);
     }
 
-    public rename(request: RenameRequest, requestBehavior = this._defaultBehavior): Promise<Account> {
+    public rename(request: RenameRequest, requestBehavior = this._defaultBehavior) {
         return this._request(requestBehavior, RequestType.RENAME, [request]);
     }
 
-    public signMessage(
-        request: SignMessageRequest,
-        requestBehavior = this._defaultBehavior,
-    ): Promise<SignedMessage> {
+    public signMessage(request: SignMessageRequest, requestBehavior = this._defaultBehavior) {
         return this._request(requestBehavior, RequestType.SIGN_MESSAGE, [request]);
     }
 
-    public migrate(requestBehavior = this._defaultBehavior): Promise<Account[]> {
+    public migrate(requestBehavior = this._defaultBehavior) {
         return this._request(requestBehavior, RequestType.MIGRATE, [{ appName: 'Accounts Client' }]);
     }
 
     /**
      * Only accessible in iframe from Nimiq domains.
      */
-    public list(requestBehavior = this._iframeBehavior): Promise<Account[]> {
+    public list(requestBehavior = this._iframeBehavior) {
         return this._request(requestBehavior, RequestType.LIST, []);
     }
 
@@ -150,7 +139,11 @@ export default class HubApi {
 
     /* PRIVATE METHODS */
 
-    private _request(behavior: RequestBehavior, command: RequestType, args: any[]) {
-        return behavior.request(this._endpoint, command, args);
+    private _request<R extends RequestType, B extends RequestBehavior>(
+        behavior: B,
+        command: R,
+        args: any[],
+    ) {
+        return behavior.request<R, B>(this._endpoint, command, args);
     }
 }
