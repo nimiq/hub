@@ -774,11 +774,6 @@
   resolved "https://registry.yarnpkg.com/@nimiq/style/-/style-0.6.4.tgz#467dc71e41978ef2316b80e8e5c6a973589c2432"
   integrity sha512-A/OQC92IvunKGs3OlMxILznrjYE0E4Z0IjAFEVzQxmA0aCL7dXfVY0Qi2lCM7quFz8bt7CX1H+oPBPapvqMnhw==
 
-"@nimiq/style@^0.6.4":
-  version "0.6.4"
-  resolved "https://registry.yarnpkg.com/@nimiq/style/-/style-0.6.4.tgz#467dc71e41978ef2316b80e8e5c6a973589c2432"
-  integrity sha512-A/OQC92IvunKGs3OlMxILznrjYE0E4Z0IjAFEVzQxmA0aCL7dXfVY0Qi2lCM7quFz8bt7CX1H+oPBPapvqMnhw==
-
 "@nimiq/utils@^0.3.2":
   version "0.3.2"
   resolved "https://registry.yarnpkg.com/@nimiq/utils/-/utils-0.3.2.tgz#7728d417c6bafacfd2d617a8037839d2bc93a03a"
@@ -786,7 +781,7 @@
 
 "@nimiq/vue-components@https://github.com/nimiq/vue-components.git#build/accounts":
   version "0.1.0"
-  resolved "https://github.com/nimiq/vue-components.git#05e36ac17598b4698b8abae0cbf214cca5acfa20"
+  resolved "https://github.com/nimiq/vue-components.git#2b07f913a5b7da227dc20d86b98148ba705cbfa0"
   dependencies:
     "@nimiq/style" "^0.6.4"
     vue "^2.5.17"
