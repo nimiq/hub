@@ -8,7 +8,7 @@ import { Account } from './lib/PublicRequestTypes';
 
 class IFrameApi {
     public static run() {
-        const rpcServer = new RpcServer(Config.privilegedOrigins[0]);
+        const rpcServer = new RpcServer(Config.privilegedOrigins);
 
         // Register handlers
         rpcServer.onRequest('list', IFrameApi.list);
