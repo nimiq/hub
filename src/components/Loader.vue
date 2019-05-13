@@ -444,7 +444,7 @@ export default Loader;
         0%,
         20% {
             max-width: calc(100% - 14rem + 1rem); /* +1rem to account for button :focus effect */
-            max-height: 8rem;
+            max-height: 7.5rem;
             bottom: calc(4rem - var(--loader-margin) - 1px); /* -1px to account for button :focus effect */
             left: calc(7rem - var(--loader-margin) - .5rem);
             border-radius: 4rem;
