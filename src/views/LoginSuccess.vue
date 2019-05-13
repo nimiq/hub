@@ -136,10 +136,14 @@ export default class LoginSuccess extends Vue {
         }));
 
         if (this.receiptsError) {
-            this.title = 'Your addresses may be\nincomplete.';
+            this.title = 'Your Addresses may be\nincomplete.';
             this.state = Loader.State.WARNING;
         } else {
-            this.title = 'Your account is ready.';
+            if (this.result.length > 1) {
+                this.title = 'Your Accounts are ready.';
+            } else {
+                this.title = 'Your Account is ready.';
+            }
             this.state = Loader.State.SUCCESS;
             setTimeout(this.resolveResult.bind(this), Loader.SUCCESS_REDIRECT_DELAY);
         }
