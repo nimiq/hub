@@ -80,7 +80,6 @@ module.exports = {
     },
     configureWebpack,
     chainWebpack: config => {
-        config.optimization.delete('splitChunks'),
         config.module
             .rule('ts')
             .use('ts-loader')
