@@ -80,6 +80,14 @@ module.exports = {
     },
     configureWebpack,
     chainWebpack: config => {
+        // Do not put prefetch/preload links into the landing pages
+        config.plugins.delete('prefetch-index');
+        config.plugins.delete('preload-index');
+        config.plugins.delete('prefetch-iframe');
+        config.plugins.delete('preload-iframe');
+        config.plugins.delete('prefetch-demos');
+        config.plugins.delete('preload-demos');
+
         config.module
             .rule('ts')
             .use('ts-loader')
