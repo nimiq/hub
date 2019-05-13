@@ -1,28 +1,33 @@
 <template>
-    <div class="ledger-ui" :class="{ small }" :illustration="illustration">
+    <div class="ledger-ui" :class="{ small }">
         <Loader :state="'loading'" :title="instructionsTitle" :status="instructionsText" :small="small">
             <template slot="loading">
-                <div class="ledger-device-container">
-                    <div class="ledger-screen-loading ledger-screen"></div>
-                    <div class="ledger-screen-confirm-address ledger-screen"></div>
-                    <div class="ledger-screen-confirm-transaction ledger-screen"></div>
-                    <div class="ledger-screen-app ledger-screen"></div>
-                    <div class="ledger-screen-home ledger-screen"></div>
-                    <div class="ledger-screen-pin ledger-screen">
-                        <div class="ledger-pin-dot"></div>
-                        <div class="ledger-pin-dot"></div>
-                        <div class="ledger-pin-dot"></div>
-                        <div class="ledger-pin-dot"></div>
-                        <div class="ledger-pin-dot"></div>
-                        <div class="ledger-pin-dot"></div>
-                        <div class="ledger-pin-dot"></div>
-                        <div class="ledger-pin-dot"></div>
+                <transition name="transition-fade">
+                    <LoadingSpinner v-if="illustration === constructor.Illustrations.LOADING"/>
+                </transition>
+                <transition name="transition-fade">
+                    <div v-if="illustration !== constructor.Illustrations.LOADING" class="ledger-device-container"
+                        :illustration="illustration">
+                        <div class="ledger-screen-confirm-address ledger-screen"></div>
+                        <div class="ledger-screen-confirm-transaction ledger-screen"></div>
+                        <div class="ledger-screen-app ledger-screen"></div>
+                        <div class="ledger-screen-home ledger-screen"></div>
+                        <div class="ledger-screen-pin ledger-screen">
+                            <div class="ledger-pin-dot"></div>
+                            <div class="ledger-pin-dot"></div>
+                            <div class="ledger-pin-dot"></div>
+                            <div class="ledger-pin-dot"></div>
+                            <div class="ledger-pin-dot"></div>
+                            <div class="ledger-pin-dot"></div>
+                            <div class="ledger-pin-dot"></div>
+                            <div class="ledger-pin-dot"></div>
+                        </div>
+                        <div class="ledger-opacity-container">
+                            <div class="ledger-cable"></div>
+                            <div class="ledger-device"></div>
+                        </div>
                     </div>
-                    <div class="ledger-opacity-container">
-                        <div class="ledger-cable"></div>
-                        <div class="ledger-device"></div>
-                    </div>
-                </div>
+                </transition>
             </template>
         </Loader>
     </div>
@@ -30,10 +35,11 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
+import { LoadingSpinner } from '@nimiq/vue-components';
 import LedgerApi from '@/lib/LedgerApi';
 import Loader from '@/components/Loader.vue';
 
-@Component({ components: { Loader } })
+@Component({ components: { Loader, LoadingSpinner } })
 class LedgerUi extends Vue {
     private static CONNECT_ANIMATION_STEP_DURATION = 9000 / 3;
 
@@ -89,13 +95,13 @@ class LedgerUi extends Vue {
 
     private _onStateLoading() {
         const retryMessage = this.loadingFailed ? 'Loading failed, retrying...' : '';
-        this._showInstructions('Loading...', retryMessage);
+        this._showInstructions('', retryMessage);
     }
 
     private _onStateConnecting() {
         this.loadingFailed = false;
         // if ledger is already connected via USB and unlocked, establishing the API connection
-        // usually takes < 250ms. Only if connecting takes longer, we show the connect instructions
+        // usually takes < 500ms. Only if connecting takes longer, we show the connect instructions
         if (this.connectTimer !== -1) return;
         this.connectTimer = window.setTimeout(() => {
             this.connectTimer = -1;
@@ -104,7 +110,7 @@ class LedgerUi extends Vue {
             this._cycleConnectInstructions();
             this.connectInstructionsTextInterval =
                 window.setInterval(() => this._cycleConnectInstructions(), LedgerUi.CONNECT_ANIMATION_STEP_DURATION);
-        }, 300);
+        }, 550);
     }
 
     private _onRequest(state: LedgerApi.State) {
@@ -117,7 +123,7 @@ class LedgerUi extends Vue {
                 break;
             case LedgerApi.RequestType.DERIVE_ACCOUNTS:
                 // not interactive, but takes ~6 seconds
-                this._showInstructions('Fetching Addresses...');
+                this._showInstructions('Fetching Addresses');
                 break;
             case LedgerApi.RequestType.CONFIRM_ADDRESS:
                 this._showInstructions('Confirm Address',
@@ -187,9 +193,8 @@ class LedgerUi extends Vue {
 
     private get illustration() {
         switch (this.state.type) {
-            case LedgerApi.StateType.IDLE:
-                return LedgerUi.Illustrations.IDLE;
             case LedgerApi.StateType.LOADING:
+            case LedgerApi.StateType.IDLE: // interpret IDLE as "waiting for request"
                 return LedgerUi.Illustrations.LOADING;
             case LedgerApi.StateType.CONNECTING:
                 return LedgerUi.Illustrations.CONNECTING;
@@ -265,10 +270,22 @@ export default LedgerUi;
         overflow: hidden;
     }
 
+    .loading-spinner,
+    .ledger-device-container {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        transition: opacity .4s;
+    }
+
     .ledger-device-container {
         width: 52%;
-        margin: auto;
-        position: relative;
+    }
+
+    .transition-fade-enter,
+    .transition-fade-leave-to {
+        opacity: 0;
     }
 
     .ledger-ui.small .ledger-device-container {
@@ -330,15 +347,6 @@ export default LedgerUi;
         display: none;
     }
 
-    .ledger-screen-loading {
-        background-image: url('data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCA2NCA2NCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48c3R5bGU+QGtleWZyYW1lcyBhe3Rve3RyYW5zZm9ybTpyb3RhdGUoMjQwZGVnKSB0cmFuc2xhdGVaKDApO319I2NpcmNsZXthbmltYXRpb246MnMgYSBpbmZpbml0ZSBsaW5lYXI7dHJhbnNmb3JtOnJvdGF0ZSgtMTIwZGVnKSB0cmFuc2xhdGVaKDApO3RyYW5zZm9ybS1vcmlnaW46Y2VudGVyO308L3N0eWxlPjxkZWZzPjxjbGlwUGF0aCBpZD0iYSI+PHBhdGggZD0iTTE5LjUgMy41YTcgNyAwIDAgMC02IDMuNEwxIDI4LjNhNi44IDYuOCAwIDAgMCAwIDdsMTIuNCAyMS4yYTcgNyAwIDAgMCA2IDMuNWgyNWE3IDcgMCAwIDAgNi4xLTMuNGwxMi42LTIxLjRhNi45IDYuOSAwIDAgMCAwLTdMNTAuNiA3YTcgNyAwIDAgMC02LTMuNHptMCA0aDI1YzEgMCAyIC42IDIuNiAxLjVsMTIuNSAyMS4zYy41IDEgLjUgMiAwIDNMNDcuMSA1NC40YTMgMyAwIDAgMS0yLjYgMS41aC0yNWMtMSAwLTItLjYtMi42LTEuNUw0LjQgMzMuMmMtLjUtMS0uNS0yIDAtMi45TDE2LjkgOWEzIDMgMCAwIDEgMi42LTEuNXoiIGNsaXAtcnVsZT0iZXZlbm9kZCIvPjwvY2xpcFBhdGg+PC9kZWZzPjxnIGNsaXAtcGF0aD0idXJsKCNhKSI+PGNpcmNsZSBpZD0iY2lyY2xlIiBjeD0iMzIiIGN5PSIzMiIgcj0iMTYiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS1kYXNoYXJyYXk9IjE2LjY2NiA4NC42NjYiIHN0cm9rZS13aWR0aD0iMzIiLz48L2c+PC9zdmc+Cg==');
-        background-size: 25%;
-    }
-
-    .ledger-ui[illustration="loading"] .ledger-screen-loading {
-        display: block;
-    }
-
     .ledger-screen-pin {
         background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 114 37.5"><path stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12.2 17.5l-2.7 2.7-2.8-2.7M101.8 20.2l2.7-2.7 2.8 2.7"/><text fill="white" font-family="sans-serif" font-size="10" transform="translate(36.4 13.5)">PIN code</text></svg>');
     }
@@ -363,7 +371,7 @@ export default LedgerUi;
         background-image: url('data:image/svg+xml,svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 114 37.5"><text font-family="sans-serif" font-size="11" transform="translate(36.5 16.5)"><tspan x="0" y="0">Confirm </tspan><tspan x="-.9" y="12">Address</tspan></text><path fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13.2 21.2l-5.5-5.5m5.5.1l-5.5 5.5m98.5-5.5l-5.5 5.5-2.5-2.5"/></svg>');
     }
 
-    .ledger-ui[illustration="confirm-address"] .ledger-screen-confirm-address {
+    .ledger-device-container[illustration="confirm-address"] .ledger-screen-confirm-address {
         display: block;
     }
 
@@ -371,30 +379,30 @@ export default LedgerUi;
         background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 114 37.5"><text font-family="sans-serif" font-size="11" transform="translate(36.5 16.5)"><tspan x="0" y="0">Confirm </tspan><tspan x="-10.2" y="12">Transaction</tspan></text><path fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13.2 21.2l-5.5-5.5m5.5.1l-5.5 5.5m98.5-5.5l-5.5 5.5-2.5-2.5"/></svg>');
     }
 
-    .ledger-ui[illustration="confirm-transaction"] .ledger-screen-confirm-transaction {
+    .ledger-device-container[illustration="confirm-transaction"] .ledger-screen-confirm-transaction {
         display: block;
     }
 
     /* Connect Animation */
 
-    .ledger-ui[illustration="connecting"] .ledger-cable {
+    .ledger-device-container[illustration="connecting"] .ledger-cable {
         animation: ledger-connect-cable var(--ledger-connect-animation-duration) infinite;
     }
-    .ledger-ui[illustration="connecting"] .ledger-opacity-container {
+    .ledger-device-container[illustration="connecting"] .ledger-opacity-container {
         animation: ledger-scale-and-opacity var(--ledger-connect-animation-duration) both infinite;
     }
-    .ledger-ui[illustration="connecting"] .ledger-screen-pin {
+    .ledger-device-container[illustration="connecting"] .ledger-screen-pin {
         animation: ledger-show-screen-pin var(--ledger-connect-animation-duration) both infinite;
         display: flex;
     }
-    .ledger-ui[illustration="connecting"] .ledger-pin-dot {
+    .ledger-device-container[illustration="connecting"] .ledger-pin-dot {
         animation: ledger-show-pin-dot var(--ledger-connect-animation-duration) both infinite;
     }
-    .ledger-ui[illustration="connecting"] .ledger-screen-home {
+    .ledger-device-container[illustration="connecting"] .ledger-screen-home {
         animation: ledger-show-screen-home var(--ledger-connect-animation-duration) both infinite;
         display: flex;
     }
-    .ledger-ui[illustration="connecting"] .ledger-screen-app {
+    .ledger-device-container[illustration="connecting"] .ledger-screen-app {
         animation: ledger-show-screen-app var(--ledger-connect-animation-duration) both infinite;
         display: flex;
     }

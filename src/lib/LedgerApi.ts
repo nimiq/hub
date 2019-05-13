@@ -472,7 +472,7 @@ class LedgerApi {
 
     private static async _connect(walletId?: string): Promise<LedgerJs> {
         // Resolves when connected to unlocked ledger with open Nimiq app otherwise throws an exception after timeout.
-        // If the Ledger is already connected and the library already loaded, the call typically takes < 250ms.
+        // If the Ledger is already connected and the library already loaded, the call typically takes < 500ms.
         try {
             const api = await LedgerApi._getApi();
             LedgerApi._setState(LedgerApi.StateType.CONNECTING);
