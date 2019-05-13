@@ -49,7 +49,7 @@ export default class Migrate extends Vue {
     }
 
     private async doMigration() {
-        const hasLegacyAccounts = await this.keyguardClient!.hasLegacyAccounts();
+        const hasLegacyAccounts = (await this.keyguardClient!.hasLegacyAccounts()).success;
 
         if (!hasLegacyAccounts) {
             this.title = 'Nothing to migrate.';
@@ -61,7 +61,7 @@ export default class Migrate extends Vue {
         this.status = 'Retrieving your legacy accounts...';
         const legacyAccounts = await this.keyguardClient!.listLegacyAccounts();
 
-        if (!legacyAccounts) {
+        if (!legacyAccounts.length) {
             throw new Error('Could not get legacy accounts from Keyguard');
         }
 
