@@ -23,6 +23,9 @@
         <transition name="transition-fade">
             <div v-if="selectedAccount && confirmAccountSelection" @click="_selectAccount(null)"
                 class="account-details">
+                <LabelInput :placeholder="selectedAccount.defaultLabel" :value="selectedAccount.label"
+                            @changed="selectedAccount.label = $event || selectedAccount.defaultLabel"
+                            @click.native.stop class="label-input" />
                 <AddressDisplay :address="selectedAccount.userFriendlyAddress" @click.native.stop/>
                 <button @click.stop="_onSelectionConfirmed" class="nq-button light-blue">Select</button>
                 <button @click="_selectAccount(null)" class="close-button">
@@ -37,8 +40,9 @@
     import { Component, Prop, Watch, Vue } from 'vue-property-decorator';
     import { LoadingSpinner, Identicon, AddressDisplay, CloseIcon } from '@nimiq/vue-components';
     import { AccountInfo } from '@/lib/AccountInfo';
+    import { default as LabelInput } from './Input.vue';
 
-    @Component({components: { Identicon, LoadingSpinner, AddressDisplay, CloseIcon }})
+    @Component({components: { Identicon, LoadingSpinner, AddressDisplay, LabelInput, CloseIcon }})
     class IdenticonSelector extends Vue {
         private static readonly IDENTICONS_PER_PAGE = 7;
 
@@ -172,7 +176,7 @@
 
     .wrapper.selected {
         z-index: 2;
-        transform: translateY(-12rem);
+        transform: translateY(-12.5rem);
         transition-delay: 0s;
         width: 100%;
         pointer-events: none;
@@ -202,7 +206,12 @@
         transition: opacity .5s;
     }
 
+    .account-details .label-input {
+        max-width: 100%;
+    }
+
     .account-details .address-display {
+        margin-top: 2.5rem;
         user-select: all;
     }
 
