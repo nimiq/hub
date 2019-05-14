@@ -7,7 +7,7 @@
 
             <button v-if="!request.disableBack" class="global-close nq-button-s" @click="close">
                 <ArrowLeftSmallIcon/>
-                Back to {{isCheckoutOnboarding ? 'Checkout' : request.appName}}
+                Back to {{isCheckoutOnboarding ? 'Checkout' : (isChooseAddressOnboarding ? 'Choose Address' : request.appName)}}
             </button>
         </div>
         <div v-if="isCheckoutOnboarding" class="uber-header"><!-- bottom spacing to balance header --></div>
@@ -63,7 +63,7 @@ export default class OnboardingSelector extends Vue {
     }
 
     private close() {
-        if (this.isCheckoutOnboarding) {
+        if (this.isCheckoutOnboarding || this.isChooseAddressOnboarding) {
             window.history.back();
         } else {
             this.$rpc.reject(new Error(ERROR_CANCELED));
@@ -72,6 +72,10 @@ export default class OnboardingSelector extends Vue {
 
     private get isCheckoutOnboarding() {
         return this.originalRouteName === RequestType.CHECKOUT;
+    }
+
+    private get isChooseAddressOnboarding() {
+        return this.originalRouteName === RequestType.CHOOSE_ADDRESS;
     }
 }
 </script>
