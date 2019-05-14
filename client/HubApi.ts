@@ -16,6 +16,12 @@ import {
     SignMessageRequest,
     ExportRequest,
     ResultByRequestType,
+    Account,
+    Address,
+    SignedTransaction,
+    SimpleResult,
+    ExportResult,
+    SignedMessage,
 } from '../src/lib/PublicRequestTypes';
 
 export default class HubApi<DB extends BehaviorType = BehaviorType.POPUP> { // DB: Default Behavior
@@ -75,90 +81,90 @@ export default class HubApi<DB extends BehaviorType = BehaviorType.POPUP> { // D
     public onboard<B extends BehaviorType = DB>(
         request: BasicRequest,
         requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
-    ) {
+    ): Promise<B extends BehaviorType.REDIRECT ? void : Account> {
         return this._request(requestBehavior, RequestType.ONBOARD, [request]);
     }
 
     public signup<B extends BehaviorType = DB>(
         request: BasicRequest,
         requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
-    ) {
+    ): Promise<B extends BehaviorType.REDIRECT ? void : Account> {
         return this._request(requestBehavior, RequestType.SIGNUP, [request]);
     }
 
     public login<B extends BehaviorType = DB>(
         request: BasicRequest,
         requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
-    ) {
+    ): Promise<B extends BehaviorType.REDIRECT ? void : Account[]> {
         return this._request(requestBehavior, RequestType.LOGIN, [request]);
     }
 
     public chooseAddress<B extends BehaviorType = DB>(
         request: BasicRequest,
         requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
-    ) {
+    ): Promise<B extends BehaviorType.REDIRECT ? void : Address> {
         return this._request(requestBehavior, RequestType.CHOOSE_ADDRESS, [request]);
     }
 
     public signTransaction<B extends BehaviorType = DB>(
         request: SignTransactionRequest,
         requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
-    ) {
+    ): Promise<B extends BehaviorType.REDIRECT ? void : SignedTransaction> {
         return this._request(requestBehavior, RequestType.SIGN_TRANSACTION, [request]);
     }
 
     public checkout<B extends BehaviorType = DB>(
         request: CheckoutRequest,
         requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
-    ) {
+    ): Promise<B extends BehaviorType.REDIRECT ? void : SignedTransaction> {
         return this._request(requestBehavior, RequestType.CHECKOUT, [request]);
     }
 
     public logout<B extends BehaviorType = DB>(
         request: SimpleRequest,
         requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
-    ) {
+    ): Promise<B extends BehaviorType.REDIRECT ? void : SimpleResult> {
         return this._request(requestBehavior, RequestType.LOGOUT, [request]);
     }
 
     public export<B extends BehaviorType = DB>(
         request: ExportRequest,
         requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
-    ) {
+    ): Promise<B extends BehaviorType.REDIRECT ? void : ExportResult> {
         return this._request(requestBehavior, RequestType.EXPORT, [request]);
     }
 
     public changePassword<B extends BehaviorType = DB>(
         request: SimpleRequest,
         requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
-    ) {
+    ): Promise<B extends BehaviorType.REDIRECT ? void : SimpleResult> {
         return this._request(requestBehavior, RequestType.CHANGE_PASSWORD, [request]);
     }
 
     public addAddress<B extends BehaviorType = DB>(
         request: SimpleRequest,
         requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
-    ) {
+    ): Promise<B extends BehaviorType.REDIRECT ? void : Address> {
         return this._request(requestBehavior, RequestType.ADD_ADDRESS, [request]);
     }
 
     public rename<B extends BehaviorType = DB>(
         request: RenameRequest,
         requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
-    ) {
+    ): Promise<B extends BehaviorType.REDIRECT ? void : Account> {
         return this._request(requestBehavior, RequestType.RENAME, [request]);
     }
 
     public signMessage<B extends BehaviorType = DB>(
         request: SignMessageRequest,
         requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
-    ) {
+    ): Promise<B extends BehaviorType.REDIRECT ? void : SignedMessage> {
         return this._request(requestBehavior, RequestType.SIGN_MESSAGE, [request]);
     }
 
     public migrate<B extends BehaviorType = DB>(
         requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
-    ) {
+    ): Promise<B extends BehaviorType.REDIRECT ? void : Account[]> {
         return this._request(requestBehavior, RequestType.MIGRATE, [{ appName: 'Accounts Client' }]);
     }
 
@@ -167,7 +173,7 @@ export default class HubApi<DB extends BehaviorType = BehaviorType.POPUP> { // D
      */
     public list<B extends BehaviorType = DB>(
         requestBehavior: RequestBehavior<B> = this._iframeBehavior as any,
-    ) {
+    ): Promise<B extends BehaviorType.REDIRECT ? void : Account[]> {
         return this._request(requestBehavior, RequestType.LIST, []);
     }
 
