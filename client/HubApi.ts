@@ -73,62 +73,102 @@ export default class HubApi<DB extends BehaviorType = BehaviorType.POPUP> { // D
         );
     }
 
-    public onboard(request: BasicRequest, requestBehavior = this._defaultBehavior) {
+    public onboard<B extends BehaviorType = DB>(
+        request: BasicRequest,
+        requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
+    ) {
         return this._request(requestBehavior, RequestType.ONBOARD, [request]);
     }
 
-    public signup(request: BasicRequest, requestBehavior = this._defaultBehavior) {
+    public signup<B extends BehaviorType = DB>(
+        request: BasicRequest,
+        requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
+    ) {
         return this._request(requestBehavior, RequestType.SIGNUP, [request]);
     }
 
-    public login(request: BasicRequest, requestBehavior = this._defaultBehavior) {
+    public login<B extends BehaviorType = DB>(
+        request: BasicRequest,
+        requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
+    ) {
         return this._request(requestBehavior, RequestType.LOGIN, [request]);
     }
 
-    public chooseAddress(request: BasicRequest, requestBehavior = this._defaultBehavior) {
+    public chooseAddress<B extends BehaviorType = DB>(
+        request: BasicRequest,
+        requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
+    ) {
         return this._request(requestBehavior, RequestType.CHOOSE_ADDRESS, [request]);
     }
 
-    public signTransaction( request: SignTransactionRequest, requestBehavior = this._defaultBehavior) {
+    public signTransaction<B extends BehaviorType = DB>(
+        request: SignTransactionRequest,
+        requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
+    ) {
         return this._request(requestBehavior, RequestType.SIGN_TRANSACTION, [request]);
     }
 
-    public checkout(request: CheckoutRequest, requestBehavior = this._defaultBehavior) {
+    public checkout<B extends BehaviorType = DB>(
+        request: CheckoutRequest,
+        requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
+    ) {
         return this._request(requestBehavior, RequestType.CHECKOUT, [request]);
     }
 
-    public logout(request: SimpleRequest, requestBehavior = this._defaultBehavior) {
+    public logout<B extends BehaviorType = DB>(
+        request: SimpleRequest,
+        requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
+    ) {
         return this._request(requestBehavior, RequestType.LOGOUT, [request]);
     }
 
-    public export(request: ExportRequest, requestBehavior = this._defaultBehavior) {
+    public export<B extends BehaviorType = DB>(
+        request: ExportRequest,
+        requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
+    ) {
         return this._request(requestBehavior, RequestType.EXPORT, [request]);
     }
 
-    public changePassword(request: SimpleRequest, requestBehavior = this._defaultBehavior) {
+    public changePassword<B extends BehaviorType = DB>(
+        request: SimpleRequest,
+        requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
+    ) {
         return this._request(requestBehavior, RequestType.CHANGE_PASSWORD, [request]);
     }
 
-    public addAddress(request: SimpleRequest, requestBehavior = this._defaultBehavior) {
+    public addAddress<B extends BehaviorType = DB>(
+        request: SimpleRequest,
+        requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
+    ) {
         return this._request(requestBehavior, RequestType.ADD_ADDRESS, [request]);
     }
 
-    public rename(request: RenameRequest, requestBehavior = this._defaultBehavior) {
+    public rename<B extends BehaviorType = DB>(
+        request: RenameRequest,
+        requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
+    ) {
         return this._request(requestBehavior, RequestType.RENAME, [request]);
     }
 
-    public signMessage(request: SignMessageRequest, requestBehavior = this._defaultBehavior) {
+    public signMessage<B extends BehaviorType = DB>(
+        request: SignMessageRequest,
+        requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
+    ) {
         return this._request(requestBehavior, RequestType.SIGN_MESSAGE, [request]);
     }
 
-    public migrate(requestBehavior = this._defaultBehavior) {
+    public migrate<B extends BehaviorType = DB>(
+        requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
+    ) {
         return this._request(requestBehavior, RequestType.MIGRATE, [{ appName: 'Accounts Client' }]);
     }
 
     /**
      * Only accessible in iframe from Nimiq domains.
      */
-    public list(requestBehavior = this._iframeBehavior) {
+    public list<B extends BehaviorType = DB>(
+        requestBehavior: RequestBehavior<B> = this._iframeBehavior as any,
+    ) {
         return this._request(requestBehavior, RequestType.LIST, []);
     }
 
