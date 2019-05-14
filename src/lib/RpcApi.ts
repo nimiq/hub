@@ -132,7 +132,7 @@ export default class RpcApi {
 
             // Recreate original URL with original query parameters
             const rpcState = this._staticStore.rpcState!;
-            const query = { id: rpcState.id.toString() };
+            const query = { rpcId: rpcState.id.toString() };
             this._router.push({ name: this._staticStore.originalRouteName, query });
             delete this._staticStore.originalRouteName;
             return;
@@ -274,10 +274,10 @@ export default class RpcApi {
 
                 if (error.message === 'Request aborted') {
                     /*
-                     * In case the window is an iFrame and the recovered state is the one with which the
-                     * iFrame was initialized (has a source), then reject it. The iFrame will be closed as a result.
-                     * If not there was another history entry in between, where a history.back() will navigate to,
-                     * not closing the iFrame in the process
+                     * In case the window is a popup and the recovered state is the one with which the popup was
+                     * initialized (has a source), then reject it. The popup will be closed as a result.
+                     * If not, there was another history entry in between, where a history.back() will navigate to,
+                     * not closing the popup in the process.
                      */
                     if (this._staticStore.rpcState!.source && window.opener) {
                         this.reject(error);
