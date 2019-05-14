@@ -34,7 +34,7 @@ export default class App extends Vue {
     }
 
     private get isLoaded() {
-        return (!!this.hasRpcState && !!this.hasRequest) || this.$route.name === 'requestError';
+        return (!!this.hasRpcState && !!this.hasRequest) || this.$route.name === 'request-error';
     }
 }
 </script>
