@@ -66,9 +66,8 @@ export default class HubApi<DB extends BehaviorType = BehaviorType.POPUP> { // D
             // State is always an object containing at least the __command property
             (result: ResultByRequestType<T>, rpcId, state) => resolve(result, state),
             (error: Error, rpcId, state) => {
-                if (reject) {
-                    reject(error, state);
-                }
+                if (!reject) return;
+                reject(error, state);
             },
         );
     }

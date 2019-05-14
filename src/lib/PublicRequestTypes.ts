@@ -142,7 +142,7 @@ export type RpcResult = SignedTransaction
                       | ExportResult;
 
 export type ResultByRequestType<T> =
-    T extends RequestType.ONBOARD | RequestType.SIGNUP | RequestType.RENAME? Account :
+    T extends RequestType.ONBOARD | RequestType.SIGNUP | RequestType.RENAME ? Account :
     T extends RequestType.LOGIN | RequestType.MIGRATE | RequestType.LIST ? Account[] :
     T extends RequestType.CHOOSE_ADDRESS | RequestType.ADD_ADDRESS ? Address :
     T extends RequestType.SIGN_TRANSACTION | RequestType.CHECKOUT ? SignedTransaction :
