@@ -91,7 +91,7 @@ export default class App extends Vue {
         opacity: 1;
     }
 
-    .global-close .arrow-left {
+    .global-close .nq-icon {
         vertical-align: top;
         width: 1.375rem;
         height: 1.125rem;
