@@ -6,11 +6,7 @@
             <span class="logo-subtitle"></span>
         </header>
         <div v-if="!isLoaded" class="loading">
-            <!-- Loading spinner SVG -->
-            <svg height="48" width="54" color="inherit" class="loading-spinner"><g id="loading-spinner">
-                <path class="big-hex" d="M51.9,21.9L41.3,3.6c-0.8-1.3-2.2-2.1-3.7-2.1H16.4c-1.5,0-2.9,0.8-3.7,2.1L2.1,21.9c-0.8,1.3-0.8,2.9,0,4.2 l10.6,18.3c0.8,1.3,2.2,2.1,3.7,2.1h21.3c1.5,0,2.9-0.8,3.7-2.1l10.6-18.3C52.7,24.8,52.7,23.2,51.9,21.9z" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.4" stroke-dasharray="92.5 60"/>
-                <path class="small-hex" d="M51.9,21.9L41.3,3.6c-0.8-1.3-2.2-2.1-3.7-2.1H16.4c-1.5,0-2.9,0.8-3.7,2.1L2.1,21.9c-0.8,1.3-0.8,2.9,0,4.2 l10.6,18.3c0.8,1.3,2.2,2.1,3.7,2.1h21.3c1.5,0,2.9-0.8,3.7-2.1l10.6-18.3C52.7,24.8,52.7,23.2,51.9,21.9z" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-dasharray="47.5 105"/>
-            </g></svg>
+            <LoadingSpinner/>
         </div>
         <router-view v-else/>
     </div>
@@ -20,11 +16,12 @@
 import { Component, Watch, Vue } from 'vue-property-decorator';
 import { State } from 'vuex-class';
 import { REQUEST_ERROR } from './router';
+import { LoadingSpinner } from '@nimiq/vue-components';
 
 import '@nimiq/style/nimiq-style.min.css';
 import '@nimiq/vue-components/dist/NimiqVueComponents.css';
 
-@Component
+@Component({components: {LoadingSpinner}})
 export default class App extends Vue {
     @State('hasRpcState') private hasRpcState!: boolean;
     @State('hasRequest') private hasRequest!: boolean;
