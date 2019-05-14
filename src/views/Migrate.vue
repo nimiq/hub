@@ -1,17 +1,45 @@
 <template>
     <div class="container pad-bottom">
-        <SmallPage v-if="!isMigrating">
-            <div class="page-header nq-card-header">
-                <h1 class="nq-h1">We've updated!</h1>
-                <p class="nq-notice info">
-                    The new Nimiq Keyguard requires a database update.
+        <Network ref="network" :visible="false"/>
+        <SmallPage v-if="page === 'intro'" class="intro">
+            <PageHeader>
+                Time to grow
+                <p slot="more" class="nq-notice info">
+                    Nimiq just got better! New UX and UI come with a batch of new features.
                 </p>
-                <p class="nq-text">
-                    To refresh your backups before we update,<br>select an account below.
-                </p>
-            </div>
+            </PageHeader>
 
+            <PageBody>
+                <div class="topic">
+                    <div class="topic-visual account-ring"></div>
+                    <p class="topic-copy">
+                        One Account can now have multiple Addresses.
+                    </p>
+                </div>
+                <div class="topic">
+                    <p class="topic-copy">
+                        Nimiq implements the ImageWallet standard with the Nimiq Login File.
+                    </p>
+                    <div class="topic-visual login-file"></div>
+                </div>
+                <div class="topic">
+                    <div class="topic-visual qr-code"></div>
+                    <p class="topic-copy">
+                        Create and scan QR codes to quickly share Addresses.
+                    </p>
+                </div>
 
+                <a href="https://medium.com/nimiq-network" target="_blank" class="nq-link link-read-article">
+                    ...and much more. Read the full article <ArrowRightIcon/>
+                </a>
+            </PageBody>
+
+            <PageFooter>
+                <button class="nq-button light-blue" @click="page = 'accounts'">Prepare for update</button>
+            </PageFooter>
+        </SmallPage>
+
+        <SmallPage v-else-if="page === 'accounts'">
             <AccountList
                 walletId="unused"
                 :accounts="legacyAccounts"
@@ -31,7 +59,6 @@
                 mainAction="Try again"
                 @main-action="tryAgain"
             />
-            <Network ref="network" :visible="false"/>
         </SmallPage>
     </div>
 </template>
@@ -41,7 +68,7 @@ import { Component, Vue } from 'vue-property-decorator';
 import { AccountInfo } from '@/lib/AccountInfo';
 import { WalletStore } from '@/lib/WalletStore';
 import { WalletInfo, WalletType } from '@/lib/WalletInfo';
-import { SmallPage, PageHeader, PageBody, PageFooter, AccountList } from '@nimiq/vue-components';
+import { SmallPage, PageHeader, PageBody, PageFooter, AccountList, ArrowRightIcon } from '@nimiq/vue-components';
 import Network from '@/components/Network.vue';
 import Loader from '@/components/Loader.vue';
 import KeyguardClient from '@nimiq/keyguard-client';
@@ -50,9 +77,11 @@ import { ContractInfo } from '@/lib/ContractInfo';
 import { Static } from '@/lib/StaticStore';
 import { SimpleRequest } from '@/lib/PublicRequestTypes';
 
-@Component({components: {SmallPage, PageHeader, PageBody, PageFooter, AccountList, Loader, Network}})
+@Component({components: {SmallPage, PageHeader, PageBody, PageFooter, AccountList, ArrowRightIcon, Loader, Network}})
 export default class Migrate extends Vue {
     @Static private request!: SimpleRequest;
+
+    private page: 'intro' | 'accounts' | 'migration' = 'intro';
 
     private title: string = 'Migrating your accounts';
     private status: string = 'Connecting to Keyguard...';
@@ -99,7 +128,6 @@ export default class Migrate extends Vue {
 
         this.status = 'Detecting vesting contracts...';
         const genesisVestingContracts = await (this.$refs.network as Network).getGenesisVestingContracts();
-        (this.$refs.network as Network).disconnect(); // Prevent syncing consensus
 
         this.status = 'Storing your new accounts...';
         // For the wallet ID derivation to work, the ID derivation and storing of new wallets needs
@@ -163,7 +191,71 @@ export default class Migrate extends Vue {
 </script>
 
 <style>
-    .page-header {
-        padding-bottom: 0;
+    .intro .page-body {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding-left: 5rem;
+        padding-right: 5rem;
+    }
+
+    .topic {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .topic-visual {
+        flex-shrink: 0;
+        width: 8rem;
+        height: 8rem;
+        border-radius: .5rem;
+        background: rgba(0, 0, 0, 0.05);
+        margin-top: -1rem;
+        margin-bottom: -1rem;
+        margin-right: 3rem;
+    }
+
+    .topic-copy {
+        margin: 0;
+        font-size: 2rem;
+        line-height: 1.3;
+    }
+
+    .topic-copy + .topic-visual {
+        margin-right: 0;
+        margin-left: 3rem;
+    }
+
+    .topic-visual.login-file {
+        width: 6.875rem;
+        height: 11.75rem;
+        margin-top: -2.875rem;
+        margin-bottom: -2.875rem;
+    }
+
+    .link-read-article {
+        font-size: 2rem;
+        font-weight: bold;
+        align-self: center;
+    }
+
+    .link-read-article .nq-icon {
+        vertical-align: middle;
+        width: 1.375rem;
+        height: 1.125rem;
+        margin-top: -0.125rem;
+        transition: transform .3s cubic-bezier(0.25, 0, 0, 1);
+    }
+
+    .link-read-article:hover .nq-icon,
+    .link-read-article:focus .nq-icon {
+        transform: translate3D(0.25rem, 0, 0);
+    }
+
+    .page-footer .nq-button {
+        margin-top: 1rem;
+        margin-bottom: 3rem;
+        width: calc(100% - 10rem);
     }
 </style>

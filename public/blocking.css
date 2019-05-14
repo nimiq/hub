@@ -133,12 +133,6 @@ body {
     100% { stroke-dashoffset: 165.5 }
 }
 
-@media (max-width: 450px) {
-    html {
-        font-size: 7px;
-    }
-}
-
 /* Mobile Layout */
 
 @media (max-width: 450px) {
