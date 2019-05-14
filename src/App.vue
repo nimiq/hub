@@ -90,16 +90,16 @@ export default class App extends Vue {
 
     .global-close .arrow-left {
         vertical-align: top;
-        width: 11px;
-        height: 9px;
+        width: 1.375rem;
+        height: 1.125rem;
         margin-right: 0.25rem;
-        margin-top: 5px;
+        margin-top: 0.625rem;
         transition: transform .3s cubic-bezier(0.25, 0, 0, 1);
     }
 
     .global-close:hover .nq-icon,
     .global-close:focus .nq-icon {
-        transform: translate3D(-2px, 0, 0);
+        transform: translate3D(-0.25rem, 0, 0);
     }
 
     .global-close.hidden {
