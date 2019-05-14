@@ -15,10 +15,10 @@
     "dependencies": {
         "@nimiq/browser-warning": "^0.4.0",
         "@nimiq/iqons": "^1.4.4",
-        "@nimiq/keyguard-client": "^0.5.1",
+        "@nimiq/keyguard-client": "^0.6.0",
         "@nimiq/ledgerjs": "https://github.com/nimiq/ledger-api.git",
         "@nimiq/network-client": "^0.2.0",
-        "@nimiq/rpc": "^0.2.2",
+        "@nimiq/rpc": "^0.3.0",
         "@nimiq/style": "^0.7.0",
         "@nimiq/utils": "^0.3.2",
         "@nimiq/vue-components": "https://github.com/nimiq/vue-components.git#build/accounts",
