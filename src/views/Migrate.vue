@@ -39,18 +39,37 @@
             </PageFooter>
         </SmallPage>
 
-        <SmallPage v-else-if="page === 'accounts'">
-            <AccountList
-                walletId="unused"
-                :accounts="legacyAccounts"
-                @account-selected="accountSelected"/>
+        <SmallPage v-else-if="page === 'accounts'" class="accounts">
+            <PageHeader backArrow @back="page = 'intro'; backupsAreSafe = false;">
+                Check your Backup
+                <p slot="more" class="nq-notice warning">
+                    The update is easy, fast and secure. Still – it’s a good time to check on your Recovery Words.
+                </p>
+            </PageHeader>
+            <PageBody>
+                <div v-for="account in legacyAccounts" :key="account.userFriendlyAddress" class="account">
+                    <Identicon :address="account.userFriendlyAddress"/>
+                    <div class="meta">
+                        <div class="label">{{account.label}}</div>
+                        <Amount v-if="account.balance !== undefined" :amount="2037021e5" :decimals="0"/>
+                    </div>
+                    <button class="nq-button-s" @click="startBackup(account.userFriendlyAddress)">Back Up</button>
+                </div>
+            </PageBody>
 
             <PageFooter>
-                <button class="nq-button" @click="runMigration">Ok, update database</button>
+                <div v-if="!backupsAreSafe" class="nq-light-blue-bg check-box">
+                    <label>
+                        <input type="checkbox" v-model="backupsAreSafe">
+                        <div class="checkcircle"></div>
+                        My Backups are safe.
+                    </label>
+                </div>
+                <button v-else class="nq-button light-blue" @click="runMigration">Activate update</button>
             </PageFooter>
         </SmallPage>
 
-        <SmallPage v-else>
+        <SmallPage v-else class="migration">
             <Loader
                 :title="title"
                 :status="status"
@@ -68,7 +87,7 @@ import { Component, Vue } from 'vue-property-decorator';
 import { AccountInfo } from '@/lib/AccountInfo';
 import { WalletStore } from '@/lib/WalletStore';
 import { WalletInfo, WalletType } from '@/lib/WalletInfo';
-import { SmallPage, PageHeader, PageBody, PageFooter, AccountList, ArrowRightIcon } from '@nimiq/vue-components';
+import { SmallPage, PageHeader, PageBody, PageFooter, Identicon, Amount, ArrowRightIcon } from '@nimiq/vue-components';
 import Network from '@/components/Network.vue';
 import Loader from '@/components/Loader.vue';
 import KeyguardClient from '@nimiq/keyguard-client';
@@ -77,11 +96,12 @@ import { ContractInfo } from '@/lib/ContractInfo';
 import { Static } from '@/lib/StaticStore';
 import { SimpleRequest } from '@/lib/PublicRequestTypes';
 
-@Component({components: {SmallPage, PageHeader, PageBody, PageFooter, AccountList, ArrowRightIcon, Loader, Network}})
+@Component({components: {SmallPage, PageHeader, PageBody, PageFooter, Identicon, Amount, ArrowRightIcon, Loader, Network}})
 export default class Migrate extends Vue {
     @Static private request!: SimpleRequest;
 
-    private page: 'intro' | 'accounts' | 'migration' = 'intro';
+    private page: 'intro' | 'accounts' | 'migration' = 'accounts';
+    private backupsAreSafe: boolean = false;
 
     private title: string = 'Migrating your accounts';
     private status: string = 'Connecting to Keyguard...';
@@ -96,7 +116,7 @@ export default class Migrate extends Vue {
         this.legacyAccounts = legacyKeys.map((key) => this.legacyKeyInfoObject2AccountInfo(key));
     }
 
-    private accountSelected(walletId: string, address: string) {
+    private startBackup(address: string) {
         // Start export request for this address
         const request: KeyguardClient.ExportRequest = {
             appName: this.request.appName,
@@ -253,9 +273,90 @@ export default class Migrate extends Vue {
         transform: translate3D(0.25rem, 0, 0);
     }
 
+    .accounts .page-body {
+        margin-top: -2rem;
+        padding-top: 4rem;
+        mask-image: linear-gradient(0deg , rgba(255,255,255,0), rgba(255,255,255, 1) 4rem, rgba(255,255,255,1) calc(100% - 4rem), rgba(255,255,255,0));
+    }
+
+    .account {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+        margin: 4rem 0;
+    }
+
+    .account .identicon {
+        width: 6.25rem;
+        height: 6.25rem;
+        margin-right: 2rem;
+    }
+
+    .account .meta {
+        flex-grow: 1;
+    }
+
+    .account .label {
+        font-size: 2.25rem;
+        line-height: 2rem;
+        font-weight: bold;
+        margin-bottom: -.25rem;
+    }
+
+    .account .amount {
+        font-size: 1.75rem;
+        line-height: 2rem;
+        font-weight: 600;
+        opacity: .5;
+    }
+
     .page-footer .nq-button {
         margin-top: 1rem;
         margin-bottom: 3rem;
         width: calc(100% - 10rem);
+    }
+
+    .check-box {
+        width: 100%;
+        padding: 2.5rem;
+        border-radius: .5rem;
+        font-size: 2.375rem;
+        font-weight: 600;
+        text-align: center;
+        position: relative;
+    }
+
+    .check-box input {
+        position: absolute;
+        left: -9999rem;
+        opacity: 0;
+    }
+
+    .check-box label {
+        display: inline-flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        padding: 1.5rem 2.5rem;
+        cursor: pointer;
+        border-radius: 4rem;
+    }
+
+    .check-box .checkcircle {
+        border: solid .25rem white;
+        border-radius: 50%;
+        width: 3.5rem;
+        height: 3.5rem;
+        opacity: .6;
+        margin-right: 2rem;
+    }
+
+    .check-box input:focus ~ .checkcircle {
+        border-color: red;
+    }
+
+    .check-box input:checked ~ .checkcircle {
+        border-color: green;
     }
 </style>
