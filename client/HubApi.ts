@@ -10,25 +10,18 @@ import { RequestType } from '../src/lib/RequestTypes';
 import {
     BasicRequest,
     SimpleRequest,
-    Account,
     CheckoutRequest,
     SignTransactionRequest,
-    SignedTransaction,
-    Address,
     RenameRequest,
     SignMessageRequest,
-    SignedMessage,
-    SimpleResult,
     ExportRequest,
-    ExportResult,
-    RpcResult,
     ResultByRequestType,
 } from '../src/lib/PublicRequestTypes';
 
-export default class HubApi {
-    public static readonly RequestType: typeof RequestType = RequestType;
-    public static readonly RedirectRequestBehavior: typeof RedirectRequestBehavior = RedirectRequestBehavior;
-    public static readonly MSG_PREFIX: string = '\x16Nimiq Signed Message:\n';
+export default class HubApi<DB extends BehaviorType> { // DB: Default Behavior
+    public static readonly RequestType = RequestType;
+    public static readonly RedirectRequestBehavior = RedirectRequestBehavior;
+    public static readonly MSG_PREFIX = '\x16Nimiq Signed Message:\n';
 
     private static get DEFAULT_ENDPOINT() {
         const originArray = location.origin.split('.');
@@ -46,11 +39,11 @@ export default class HubApi {
     }
 
     private readonly _endpoint: string;
-    private readonly _defaultBehavior: RequestBehavior;
+    private readonly _defaultBehavior: RequestBehavior<DB | BehaviorType.POPUP>;
     private readonly _iframeBehavior: IFrameRequestBehavior;
     private readonly _redirectClient: RedirectRpcClient;
 
-    constructor(endpoint: string = HubApi.DEFAULT_ENDPOINT, defaultBehavior?: RequestBehavior) {
+    constructor(endpoint: string = HubApi.DEFAULT_ENDPOINT, defaultBehavior?: RequestBehavior<DB>) {
         this._endpoint = endpoint;
         this._defaultBehavior = defaultBehavior || new PopupRequestBehavior(
             `left=${window.innerWidth / 2 - 400},top=75,width=800,height=850,location=yes,dependent=yes`);
@@ -72,7 +65,11 @@ export default class HubApi {
         this._redirectClient.onResponse(command,
             // State is always an object containing at least the __command property
             (result: ResultByRequestType<T>, rpcId, state) => resolve(result, state),
-            (error: Error, rpcId, state) => reject && reject(error, state),
+            (error: Error, rpcId, state) => {
+                if (reject) {
+                    reject(error, state);
+                }
+            },
         );
     }
 
@@ -139,11 +136,11 @@ export default class HubApi {
 
     /* PRIVATE METHODS */
 
-    private _request<R extends RequestType, B extends RequestBehavior>(
+    private _request<R extends RequestType, BT extends BehaviorType, B extends RequestBehavior<BT>>(
         behavior: B,
         command: R,
         args: any[],
     ) {
-        return behavior.request<R, B>(this._endpoint, command, args);
+        return behavior.request<R>(this._endpoint, command, args);
     }
 }
