@@ -50,6 +50,8 @@ const SignMessageSuccess      = () => import(/*webpackChunkName: "sign-message"*
 const SimpleSuccess           = () => import(/*webpackChunkName: "common"*/ './views/SimpleSuccess.vue');
 const ErrorHandler            = () => import(/*webpackChunkName: "common"*/ './views/ErrorHandler.vue');
 
+const RequestError            = () => import(/*webpackChunkName: "common"*/ './views/RequestError.vue');
+
 const ErrorHandlerUnsupportedLedger = () => import(/*webpackChunkName: "unsupported-ledger"*/
     './views/ErrorHandlerUnsupportedLedger.vue');
 
@@ -99,6 +101,11 @@ export default new Router({
             path: '/error',
             component: ErrorHandler,
             name: 'error',
+        },
+        {
+            path: '/requestError',
+            component: RequestError,
+            name: 'requestError',
         },
         {
             path: `/${RequestType.SIGN_TRANSACTION}`,
