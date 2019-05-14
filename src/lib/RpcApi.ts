@@ -174,7 +174,6 @@ export default class RpcApi {
                     const hasLegacyAccounts = await this._keyguardClient.hasLegacyAccounts();
                     if (hasLegacyAccounts.success) {
                         // Keyguard has legacy accounts, redirect to migration
-                        migrationRequired = true;
                         if (requestType !== RequestType.MIGRATE) {
                             this._staticStore.originalRouteName = requestType;
                         }
