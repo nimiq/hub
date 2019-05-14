@@ -1,16 +1,16 @@
 <template>
     <NotEnoughCookieSpace v-if='notEnoughCookieSpace'/>
-    <div v-else class="container" :class="{isCheckoutOnboarding}">
-        <h1 v-if="isCheckoutOnboarding" class="uber-header">Pay with Nimiq</h1>
+    <div v-else class="container" :class="{'isSecondaryOnboarding': headerText}">
+        <h1 v-if="headerText" class="uber-header">{{headerText}}</h1>
         <div class="center">
             <OnboardingMenu @signup="signup" @login="login" @ledger="ledger"/>
 
             <button v-if="!request.disableBack" class="global-close nq-button-s" @click="close">
                 <ArrowLeftSmallIcon/>
-                Back to {{isCheckoutOnboarding ? 'Checkout' : (isChooseAddressOnboarding ? 'Choose Address' : request.appName)}}
+                {{backButtonText}}
             </button>
         </div>
-        <div v-if="isCheckoutOnboarding" class="uber-header"><!-- bottom spacing to balance header --></div>
+        <div v-if="headerText" class="uber-header"><!-- bottom spacing to balance header --></div>
     </div>
 </template>
 
@@ -63,25 +63,45 @@ export default class OnboardingSelector extends Vue {
     }
 
     private close() {
-        if (this.isCheckoutOnboarding || this.isChooseAddressOnboarding) {
+        if (this.isSecondaryOnboarding) {
             window.history.back();
         } else {
             this.$rpc.reject(new Error(ERROR_CANCELED));
         }
     }
 
-    private get isCheckoutOnboarding() {
-        return this.originalRouteName === RequestType.CHECKOUT;
+    private get backButtonText() {
+        switch (this.originalRouteName) {
+            case RequestType.CHECKOUT:
+                return 'Back to Checkout';
+            case RequestType.CHOOSE_ADDRESS:
+                return 'Back to Choose Address';
+            case RequestType.SIGN_MESSAGE:
+                return 'Back to Sign Message';
+            default:
+                return `Back to ${this.request.appName}`;
+        }
     }
 
-    private get isChooseAddressOnboarding() {
-        return this.originalRouteName === RequestType.CHOOSE_ADDRESS;
+    private get headerText() {
+        switch (this.originalRouteName) {
+            case RequestType.CHECKOUT:
+                return 'Pay with Nimiq';
+            default:
+                return undefined;
+        }
+    }
+
+    private get isSecondaryOnboarding() {
+        return this.originalRouteName === RequestType.CHECKOUT
+            || this.originalRouteName === RequestType.CHOOSE_ADDRESS
+            || this.originalRouteName === RequestType.SIGN_MESSAGE;
     }
 }
 </script>
 
 <style>
-    .container.isCheckoutOnboarding {
+    .container.isSecondaryOnboarding {
         justify-content: space-around !important;
     }
 
