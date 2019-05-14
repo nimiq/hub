@@ -1,8 +1,9 @@
 <template>
-    <div class="identicon-selector" @keydown.esc="_selectAccount(null)">
-        <h1 class="nq-h1">Choose an Avatar</h1>
+    <div class="identicon-selector" :class="{ 'account-details-shown': selectedAccount && confirmAccountSelection }"
+        @keydown.esc="_selectAccount(null)">
+        <h1 class="nq-h1 blur-target">Choose an Avatar</h1>
         <div class="identicons">
-            <div class="center" v-if="displayedAccounts.length === 0">
+            <div class="center blur-target" v-if="displayedAccounts.length === 0">
                 <LoadingSpinner/>
                 <h2 class="nq-h2">Mixing colors</h2>
             </div>
@@ -11,22 +12,22 @@
                 :class="{ selected: selectedAccount === account && confirmAccountSelection }"
                 :tabindex="selectedAccount && confirmAccountSelection ? -1 : 0">
                 <Identicon :address="account.userFriendlyAddress"></Identicon>
-                <transition name="transition-scale">
-                    <div v-if="selectedAccount === account && confirmAccountSelection" class="address">
-                        {{ account.userFriendlyAddress }}
-                    </div>
-                </transition>
             </button>
         </div>
         <button @click="page += 1" v-if="displayedAccounts.length > 0"
-            :tabindex="selectedAccount && confirmAccountSelection ? -1 : 0" class="generate-more nq-button-s">
+            :tabindex="selectedAccount && confirmAccountSelection ? -1 : 0"
+            class="generate-more nq-button-s blur-target">
             More Avatars
         </button>
 
         <transition name="transition-fade">
-            <div v-if="selectedAccount && confirmAccountSelection" @click="_selectAccount(null)" class="backdrop">
-                <button @click="_onSelectionConfirmed" class="nq-button inverse">Select</button>
-                <button @click="_selectAccount(null)" class="nq-text-s">Back</button>
+            <div v-if="selectedAccount && confirmAccountSelection" @click="_selectAccount(null)"
+                class="account-details">
+                <AddressDisplay :address="selectedAccount.userFriendlyAddress" @click.native.stop/>
+                <button @click.stop="_onSelectionConfirmed" class="nq-button light-blue">Select</button>
+                <button @click="_selectAccount(null)" class="close-button">
+                    <CloseIcon/>
+                </button>
             </div>
         </transition>
     </div>
@@ -34,10 +35,10 @@
 
 <script lang="ts">
     import { Component, Prop, Watch, Vue } from 'vue-property-decorator';
-    import { LoadingSpinner, Identicon } from '@nimiq/vue-components';
+    import { LoadingSpinner, Identicon, AddressDisplay, CloseIcon } from '@nimiq/vue-components';
     import { AccountInfo } from '@/lib/AccountInfo';
 
-    @Component({components: { Identicon, LoadingSpinner }})
+    @Component({components: { Identicon, LoadingSpinner, AddressDisplay, CloseIcon }})
     class IdenticonSelector extends Vue {
         private static readonly IDENTICONS_PER_PAGE = 7;
 
@@ -125,9 +126,8 @@
         height: 14.25rem;
         position: absolute;
         z-index: 1;
-        transition: transform .5s, z-index 0s, width 0s;
-        /* use a delay for z-index and width to only reset the value after transitioning back */
-        transition-delay: 0s, .5s, .5s;
+        /* use a delay for z-index to only reset the value after transitioning back */
+        transition: transform .5s 0s, filter .4s 0s, z-index 0s .5s;
         -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
         cursor: pointer;
         outline: none !important;
@@ -140,30 +140,13 @@
         animation-fill-mode: backwards;
     }
 
-    .wrapper .address {
-        text-align: center;
-        font-size: 1.75rem;
-        margin-top: 3rem;
-        color: white;
-        white-space: nowrap;
-        transform: scale(1) translateY(1rem);
-    }
-
-    .transition-scale-enter,
-    .transition-scale-leave-to {
-        transform: scale(0.5) !important;
-        opacity: 0;
-    }
-
     @keyframes pop-in {
         from { transform: scale(0); }
         to   { transform: scale(1); }
     }
 
-    .wrapper .identicon >>> img,
-    .wrapper .address,
-    .backdrop {
-        transition: transform .5s, opacity .5s;
+    .wrapper .identicon >>> img {
+        transition: transform .5s;
     }
 
     .wrapper:hover >>> img,
@@ -189,48 +172,75 @@
 
     .wrapper.selected {
         z-index: 2;
-        transform: translateY(-5rem);
+        transform: translateY(-12rem);
         transition-delay: 0s;
         width: 100%;
         pointer-events: none;
     }
 
     .wrapper.selected >>> img {
-        transform: scale(1.5) translateY(-1rem);
+        transform: scale(1.264) translateY(-1rem);
     }
 
     .generate-more {
         margin-top: 6rem;
     }
 
-    .backdrop {
+    .account-details {
         position: absolute;
         top: 0;
         left: 0;
-        background: rgba(0, 0, 0, 0.85);
-        z-index: 1;
         height: 100%;
         width: 100%;
+        padding: 4rem;
+        background: rgba(255, 255, 255, .875); /* equivalent to keyguard: .5 on blurred and .75 on account details */
+        z-index: 1;
         display: flex;
-        flex-flow: column;
+        flex-direction: column;
         align-items: center;
+        justify-content: flex-end;
+        transition: opacity .5s;
     }
 
-    .backdrop .nq-button {
-        position: absolute;
-        bottom: 6rem;
-        margin: 0;
+    .account-details .address-display {
+        user-select: all;
     }
 
-    .backdrop button.nq-text-s {
-        color: white;
+    .account-details .nq-button {
+        width: calc(100% - 6rem);
+        margin: 5rem auto 0;
+    }
+
+    .account-details .close-button {
         position: absolute;
-        margin-bottom: 2rem;
-        bottom: 0;
+        right: 2rem;
+        top: 2rem;
+        font-size: 3rem;
+        opacity: .16;
+        transition: opacity .3s ease, color .3s ease;
+    }
+
+    .account-details .close-button:hover {
+        opacity: .25;
+    }
+
+    .account-details .close-button:focus {
+        color: var(--nimiq-light-blue);
+        opacity: .7;
+        outline: none;
     }
 
     .transition-fade-enter,
     .transition-fade-leave-to {
         opacity: 0;
+    }
+
+    .blur-target {
+        transition: filter .4s;
+    }
+
+    .account-details-shown .blur-target,
+    .account-details-shown .wrapper:not(.selected) {
+        filter: blur(20px);
     }
 </style>
