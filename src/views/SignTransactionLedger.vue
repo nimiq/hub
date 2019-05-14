@@ -422,11 +422,6 @@ export default class SignTransactionLedger extends Vue {
         background: rgba(255, 255, 255, .875); /* equivalent to keyguard: .5 on blurred and .75 on account details */
     }
 
-    .transition-fade-enter,
-    .transition-fade-leave-to {
-        opacity: 0;
-    }
-
     .blur-target {
         transition: filter .4s;
     }

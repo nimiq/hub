@@ -239,11 +239,6 @@
         outline: none;
     }
 
-    .transition-fade-enter,
-    .transition-fade-leave-to {
-        opacity: 0;
-    }
-
     .blur-target {
         transition: filter .4s;
     }

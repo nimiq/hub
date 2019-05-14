@@ -224,11 +224,6 @@ export default class SignupLedger extends Vue {
         transition: opacity .4s;
     }
 
-    .transition-fade-enter,
-    .transition-fade-leave-to {
-        opacity: 0;
-    }
-
     .small-page > :not(.loader) {
         width: 100%;
         height: 100%;

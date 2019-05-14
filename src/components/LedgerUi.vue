@@ -283,11 +283,6 @@ export default LedgerUi;
         width: 52%;
     }
 
-    .transition-fade-enter,
-    .transition-fade-leave-to {
-        opacity: 0;
-    }
-
     .ledger-ui.small .ledger-device-container {
         margin-top: -2rem;
         width: 48%;
