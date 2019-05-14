@@ -27,7 +27,7 @@
                 :wallets="processedWallets"
                 :minBalance="minBalance"
                 @account-selected="setAccountOrContract"
-                @login="goToOnboarding"/>
+                @login="() => goToOnboarding(false)"/>
 
             <transition name="account-details-fade">
                 <AccountDetails
@@ -270,7 +270,7 @@ export default class Checkout extends Vue {
     private goToOnboarding(useReplace?: boolean) {
         // Redirect to onboarding
         staticStore.originalRouteName = RequestType.CHECKOUT;
-        if (useReplace && !(useReplace as unknown as MouseEvent).clientX) {
+        if (useReplace) {
             this.$rpc.routerReplace(RequestType.ONBOARD);
         } else {
             this.$rpc.routerPush(RequestType.ONBOARD);
