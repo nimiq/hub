@@ -50,7 +50,7 @@ const SignMessageSuccess      = () => import(/*webpackChunkName: "sign-message"*
 const SimpleSuccess           = () => import(/*webpackChunkName: "common"*/ './views/SimpleSuccess.vue');
 const ErrorHandler            = () => import(/*webpackChunkName: "common"*/ './views/ErrorHandler.vue');
 
-const RequestError            = () => import(/*webpackChunkName: "common"*/ './views/RequestError.vue');
+const RequestError            = () => import(/*webpackChunkName: "request-error"*/ './views/RequestError.vue');
 
 const ErrorHandlerUnsupportedLedger = () => import(/*webpackChunkName: "unsupported-ledger"*/
     './views/ErrorHandlerUnsupportedLedger.vue');
@@ -93,19 +93,22 @@ export function keyguardResponseRouter(
     };
 }
 
+export const REQUEST_ERROR = 'request-error';
+export const ERROR = 'error';
+
 export default new Router({
     mode: 'history',
     base: process.env.BASE_URL,
     routes: [
         {
-            path: '/error',
+            path: `/${ERROR}`,
             component: ErrorHandler,
-            name: 'error',
+            name: ERROR,
         },
         {
-            path: '/requestError',
+            path: `/${REQUEST_ERROR}`,
             component: RequestError,
-            name: 'requestError',
+            name: REQUEST_ERROR,
         },
         {
             path: `/${RequestType.SIGN_TRANSACTION}`,

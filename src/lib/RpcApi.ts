@@ -13,7 +13,7 @@ import {
 import { RequestParser } from './RequestParser';
 import { RpcRequest, RpcResult } from './PublicRequestTypes';
 import { KeyguardClient, KeyguardCommand, Errors } from '@nimiq/keyguard-client';
-import { keyguardResponseRouter } from '@/router';
+import { keyguardResponseRouter, REQUEST_ERROR } from '@/router';
 import { StaticStore } from '@/lib/StaticStore';
 import { WalletStore } from './WalletStore';
 import { WalletType } from '@/lib/WalletInfo';
@@ -73,7 +73,7 @@ export default class RpcApi {
             if (window.opener === null) {
                 location.href = Config.redirectTarget;
             } else {
-                this._router.replace('/requestError');
+                this._router.replace(`/${REQUEST_ERROR}`);
             }
         };
         this._server.init(onClientTimeout);
