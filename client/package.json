@@ -1,9 +1,9 @@
 {
-  "name": "@nimiq/accounts-client",
+  "name": "@nimiq/hub-api",
   "version": "0.4.0",
-  "main": "dist/AccountsClient.umd.js",
-  "module": "dist/AccountsClient.es.js",
-  "repository": "https://github.com/nimiq/accounts/tree/master/client",
+  "main": "dist/HubApi.umd.js",
+  "module": "dist/HubApi.es.js",
+  "repository": "https://github.com/nimiq/hub/tree/master/client",
   "author": "Nimiq Network Ltd.",
   "license": "Apache-2.0",
   "private": false,
@@ -22,13 +22,13 @@
   ],
   "keywords": [
     "Nimiq",
-    "Accounts",
-    "Account Manager"
+    "Hub",
+    "Hub API"
   ],
   "bugs": {
-    "url": "https://github.com/nimiq/accounts/issues"
+    "url": "https://github.com/nimiq/hub/issues"
   },
-  "homepage": "https://github.com/nimiq/accounts/client#readme",
+  "homepage": "https://github.com/nimiq/hub/client#readme",
   "scripts": {
     "build": "cp ../README.md . && rm -rf dist && tsc && rollup -c",
     "lint": "tslint --project tsconfig.json",

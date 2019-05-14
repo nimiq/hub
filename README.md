@@ -1,11 +1,11 @@
-# Nimiq Accounts Manager <!-- omit in toc -->
+# Nimiq Hub <!-- omit in toc -->
 
-The **Accounts Manager** (or **Nimiq Accounts**) provides a unified interface for
+The **Hub** provides a unified interface for
 all Nimiq accounts, addresses, and contracts. It is the primary UI for Nimiq users
 to manage their accounts and provides websites and apps with a concise API to
 interact with their users' Nimiq addresses.
 
-- [The Accounts Client library](#the-accounts-client-library)
+- [The Hub API library](#the-hub-api-library)
     - [Installation](#installation)
     - [Initialization](#initialization)
     - [Usage](#usage)
@@ -24,53 +24,53 @@ interact with their users' Nimiq addresses.
         - [Rename](#rename)
         - [Sign Message](#sign-message)
     - [Listening for redirect responses](#listening-for-redirect-responses)
-- [Running your own Accounts Manager](#running-your-own-accounts-manager)
+- [Running your own Hub](#running-your-own-hub)
 - [Contribute](#contribute)
     - [Setup](#setup)
     - [Run](#run)
     - [Build](#build)
     - [Configuration](#configuration)
 
-## The Accounts Client library
+## The Hub API library
 
 ### Installation
 
-Include the `AccountsClient` JS library as a script tag in your page:
+Include the `HubApi` JS library as a script tag in your page:
 
 ```html
 <!-- From CDN -->
-<script src="https://unpkg.com/@nimiq/accounts-client@v0.4/dist/standalone/AccountsClient.standalone.umd.js"></script>
+<script src="https://unpkg.com/@nimiq/hub-api@v0.4/dist/standalone/HubApi.standalone.umd.js"></script>
 <!-- or -->
-<script src="https://cdn.jsdelivr.net/npm/@nimiq/accounts-client@v0.4/dist/standalone/AccountsClient.standalone.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@nimiq/hub-api@v0.4/dist/standalone/HubApi.standalone.umd.js"></script>
 ```
 
 It can also be installed from NPM:
 
 ```bash
-npm install @nimiq/accounts-client
+npm install @nimiq/hub-api
 # or with yarn
-yarn add @nimiq/accounts-client
+yarn add @nimiq/hub-api
 ```
 
 Then import or require it in your module:
 
 ```javascript
-import AccountsClient from '@nimiq/accounts-client';
+import HubApi from '@nimiq/hub-api';
 // or
-const AccountsClient = require('@nimiq/accounts-client');
+const HubApi = require('@nimiq/hub-api');
 ```
 
 ### Initialization
 
 To start the client, just instantiate the class by passing it the URL of the
-**Accounts Manager** to connect to:
+**Hub** to connect to:
 
 ```javascript
 // Connect to testnet
-const accountsClient = new AccountsClient('https://accounts.nimiq-testnet.com');
+const hubApi = new HubApi('https://hub.nimiq-testnet.com');
 
 // Connect to mainnet
-const accountsClient = new AccountsClient('https://accounts.nimiq.com');
+const hubApi = new HubApi('https://hub.nimiq.com');
 ```
 
 ### Usage
@@ -85,7 +85,7 @@ the context of a user action, such as a click. See example below.
 
 ```javascript
 document.getElementById('checkoutButton').addEventListener('click', function(event){
-    accountsClient.checkout(/* see details below */);
+    hubApi.checkout(/* see details below */);
 });
 ```
 
@@ -99,19 +99,19 @@ For more details about avoiding popup blocking refer to
 
 If you prefer top-level redirects instead of popups, you can pass an
 instance of `RedirectRequestBehavior` as a second parameter to either the
-AccountsClient initialization or to any API method:
+HubApi initialization or to any API method:
 
 > **Note:** The way to configure top-level redirects will change in an upcoming
-> version of the Accounts Client!
+> version of the Hub API!
 
 ```javascript
-const redirectBehavior = new AccountsClient.RedirectRequestBehavior();
+const redirectBehavior = new HubApi.RedirectRequestBehavior();
 
-// Pass the behavior as a second parameter to the AccountsClient
-const accountsClient = new AccountsClient(<url>, redirectBehavior);
+// Pass the behavior as a second parameter to the HubApi
+const hubApi = new HubApi(<url>, redirectBehavior);
 
 // Or pass it as a second parameter to any API method
-const result = accountsClient.checkout(<requestOptions>, redirectBehavior);
+const result = hubApi.checkout(<requestOptions>, redirectBehavior);
 ```
 
 The `RedirectRequestBehavior` accepts two optional parameters:
@@ -197,7 +197,7 @@ const requestOptions = {
     //extraData: 'Hello Nimiq!',
 
     // [optional] Human-readable address of the sender.
-    // If the address exists in the user's Accounts Manager, this parameter
+    // If the address exists in the user's Hub, this parameter
     // forwards the user directly to the transaction-signing after the
     // balance check.
     // Default: undefined
@@ -224,7 +224,7 @@ const requestOptions = {
 };
 
 // All client requests are async and return a promise
-const signedTransaction = await accountsClient.checkout(requestOptions);
+const signedTransaction = await hubApi.checkout(requestOptions);
 ```
 
 The `checkout()` method returns a promise which resolves to a
@@ -274,11 +274,11 @@ the `appName` property:
 ```javascript
 const requestOptions = {
     // The name of your app, should be as short as possible.
-    appName: 'Nimiq Safe',
+    appName: 'My App',
 };
 
 // All client requests are async and return a promise
-const address = await accountsClient.chooseAddress(requestOptions);
+const address = await hubApi.chooseAddress(requestOptions);
 ```
 
 The request's result contains an address string as `address` and a `label`:
@@ -303,7 +303,7 @@ refer to [Checkout](#checkout) for more details.
 
 ```javascript
 const requestOptions = {
-    appName: 'Nimiq Safe',
+    appName: 'My App',
 
     // Sender information
     sender: 'NQxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx',
@@ -327,7 +327,7 @@ const requestOptions = {
 };
 
 // All client requests are async and return a promise
-const signedTransaction = await accountsClient.signTransaction(requestOptions);
+const signedTransaction = await hubApi.signTransaction(requestOptions);
 ```
 
 The `signTransaction()` method returns a `SignedTransaction`. See
@@ -335,17 +335,17 @@ The `signTransaction()` method returns a `SignedTransaction`. See
 
 #### Signup
 
-The `signup()` method creates a new account in the **Accounts Manager**. The user
+The `signup()` method creates a new account in the **Hub**. The user
 will choose an Identicon and optionally set a password.
 
 ```javascript
 const requestOptions = {
     // The name of your app, should be as short as possible.
-    appName: 'Nimiq Safe',
+    appName: 'My App',
 };
 
 // All client requests are async and return a promise
-const account = await accountsClient.signup(requestOptions);
+const account = await hubApi.signup(requestOptions);
 ```
 
 The `signup()` method returns a promise which resolves to an `Account`:
@@ -371,20 +371,20 @@ interface Account {
 #### Login
 
 The `login()` method allows the user to add an existing account to the
-**Accounts Manager** by importing their *Login File*, *Recovery Words* or
+**Hub** by importing their *Login File*, *Recovery Words* or
 old *Account Access File*. After an account has been imported, the
-**Accounts Manager** automatically detects active addresses following the
+**Hub** automatically detects active addresses following the
 [BIP44](https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki#account-discovery)
 method.
 
 ```javascript
 const requestOptions = {
     // The name of your app, should be as short as possible.
-    appName: 'Nimiq Safe',
+    appName: 'My App',
 };
 
 // All client requests are async and return a promise
-const account = await accountsClient.login(requestOptions);
+const account = await hubApi.login(requestOptions);
 ```
 
 The `login()` method returns a promise which resolves to an `Account`. Please see
@@ -399,11 +399,11 @@ Just like the direct methods, it only requires a simple request object:
 ```javascript
 const requestOptions = {
     // The name of your app, should be as short as possible.
-    appName: 'Nimiq Safe',
+    appName: 'My App',
 };
 
 // All client requests are async and return a promise
-const account = await accountsClient.onboard(requestOptions);
+const account = await hubApi.onboard(requestOptions);
 ```
 
 Since `onboard()` is a wrapper around Signup, Login and Ledger, it also returns an
@@ -411,21 +411,21 @@ Since `onboard()` is a wrapper around Signup, Login and Ledger, it also returns 
 
 #### Logout
 
-The `logout()` method removes an account from the **Accounts Manager**. During the
+The `logout()` method removes an account from the **Hub**. During the
 logout process, the user can export the *Login File* or *Recovery Words* before
 the account is deleted.
 
 ```javascript
 const requestOptions = {
     // The name of your app, should be as short as possible.
-    appName: 'Nimiq Safe',
+    appName: 'My App',
 
     // The ID of the account that should be removed
     accountId: 'xxxxxxxx',
 };
 
 // All client requests are async and return a promise
-const logoutResult = await accountsClient.logout(requestOptions);
+const logoutResult = await hubApi.logout(requestOptions);
 ```
 
 The `logout()` method returns a promise which resolves to a simple object
@@ -443,7 +443,7 @@ Using the `export()` method, a user can retrieve the *Login File* or
 ```javascript
 const requestOptions = {
     // The name of your app, should be as short as possible.
-    appName: 'Nimiq Safe',
+    appName: 'My App',
 
     // The ID of the account to export
     accountId: 'xxxxxxxx',
@@ -458,7 +458,7 @@ const requestOptions = {
 };
 
 // All client requests are async and return a promise
-const exportResult = await accountsClient.export(requestOptions);
+const exportResult = await hubApi.export(requestOptions);
 ```
 
 The `export()` method returns a promise which resolves to an object that
@@ -478,14 +478,14 @@ With the `changePassword()` method, a user can change the password of an account
 ```javascript
 const requestOptions = {
     // The name of your app, should be as short as possible.
-    appName: 'Nimiq Safe',
+    appName: 'My App',
 
     // The ID of the account whose password should be changed
     accountId: 'xxxxxxxx',
 };
 
 // All client requests are async and return a promise
-const result = await accountsClient.changePassword(requestOptions);
+const result = await hubApi.changePassword(requestOptions);
 ```
 
 The `changePassword()` method returns a promise which resolves to a simple object
@@ -505,14 +505,14 @@ The method takes a simple request object as its argument:
 ```javascript
 const requestOptions = {
     // The name of your app, should be as short as possible.
-    appName: 'Nimiq Safe',
+    appName: 'My App',
 
     // The ID of the account to which an address should be added
     accountId: 'xxxxxxxx',
 };
 
 // All client requests are async and return a promise
-const address = await accountsClient.addAddress(requestOptions);
+const address = await hubApi.addAddress(requestOptions);
 ```
 
 The request's result contains an address string as `address` and a `label`:
@@ -536,7 +536,7 @@ This method takes the following request object as its only argument:
 ```javascript
 const requestOptions = {
     // The name of your app, should be as short as possible.
-    appName: 'Nimiq Safe',
+    appName: 'My App',
 
     // The ID of the account which should be renamed, or to which the
     // address, which should be renamed, belongs
@@ -548,7 +548,7 @@ const requestOptions = {
 };
 
 // All client requests are async and return a promise
-const account = await accountsClient.rename(requestOptions);
+const account = await hubApi.rename(requestOptions);
 ```
 
 Since more than one label can be renamed during the rename request, the result
@@ -565,7 +565,7 @@ available accounts. The message can be either a string or a Uint8Array byte arra
 ```javascript
 const requestOptions = {
     // The name of your app, should be as short as possible.
-    appName: 'Nimiq Safe',
+    appName: 'My App',
 
     // The message to sign. Can either be string of valid UTF-8 or a
     // byte array to sign arbitrary data
@@ -578,7 +578,7 @@ const requestOptions = {
 };
 
 // All client requests are async and return a promise
-const signedMessage = await accountsClient.signMessage(requestOptions);
+const signedMessage = await hubApi.signMessage(requestOptions);
 ```
 
 The method returns a `SignedMessage` object containing the following properties:
@@ -596,7 +596,7 @@ blockchain-related proofs which could be used to impersonate them, the
 Nimiq Keyguard prefixes additional data to the message before signing.
 This prefix consists of
 
-- a 23 bytes prefix (`'\x16Nimiq Signed Message:\n'`, available as `AccountsClient.MSG_PREFIX`)
+- a 23 bytes prefix (`'\x16Nimiq Signed Message:\n'`, available as `HubApi.MSG_PREFIX`)
 - the length of the message as a stringified number
 
 This data is then hashed with SHA256 before being signed. Together, this leads
@@ -613,7 +613,7 @@ const signature = new Nimiq.Signature(signedMessage.signature);
 const publicKey = new Nimiq.PublicKey(signedMessage.signerPublicKey);
 
 // For string messages:
-const data = AccountsClient.MSG_PREFIX
+const data = HubApi.MSG_PREFIX
            + message.length
            + message;
 const dataBytes = Nimiq.BufferUtils.fromUtf8(data);
@@ -625,37 +625,37 @@ const isValid = signature.verify(publicKey, hash);
 
 ### Listening for redirect responses
 
-If you configured the AccountsClient to use
+If you configured the HubApi to use
 [top-level redirects](#using-top-level-redirects) instead of popups, you need to
 follow the four steps below to specifically listen for the redirects from the
-**Accounts Manager** back to your site, using the `on()` method.
+**Hub** back to your site, using the `on()` method.
 
 Your handler functions will be called with two parameters: the result object and
 the stored data object as it was passed to the
 `RedirectRequestBehavior` [during initialization](#using-top-level-redirects).
 
 ```javascript
-// 1. Initialize an Accounts Manager client instance
-const accountsClient = new AccountsClient(/* ... */);
+// 1. Initialize an Hub client instance
+const hubApi = new HubApi(/* ... */);
 
 // 2. Define your handler functions
 const onSuccess = function(result, storedData) {
-    console.log("Got result from Accounts Manager:", result);
+    console.log("Got result from Hub:", result);
     console.log("Retrieved stored data:": storedData);
 }
 
 const onError = function(error, storedData) {
-    console.log("Got error from Accounts Manager:", error);
+    console.log("Got error from Hub:", error);
     console.log("Retrieved stored data:": storedData);
 }
 
 // 3. Listen for the redirect responses you expect
-accountsClient.on(AccountsClient.RequestType.CHECKOUT, onSuccess, onError);
-accountsClient.on(AccountsClient.RequestType.SIGN_TRANSACTION, onSuccess, onError);
-accountsClient.on(AccountsClient.RequestType.LOGIN, onSuccess, onError);
+hubApi.on(HubApi.RequestType.CHECKOUT, onSuccess, onError);
+hubApi.on(HubApi.RequestType.SIGN_TRANSACTION, onSuccess, onError);
+hubApi.on(HubApi.RequestType.LOGIN, onSuccess, onError);
 
 // 4. After setup is complete, check for a redirect response
-accountsClient.checkRedirectResponse();
+hubApi.checkRedirectResponse();
 ```
 
 <!-- QUESTION/IDEA The RPC ID should be explained.
@@ -667,7 +667,7 @@ accountsClient.checkRedirectResponse();
 The available `RequestType`s, corresponding to the API methods, are:
 
 ```javascript
-enum AccountsClient.RequestType {
+enum HubApi.RequestType {
     CHECKOUT = 'checkout',
     CHOOSE_ADDRESS = 'choose-address',
     SIGN_TRANSACTION = 'sign-transaction',
@@ -683,11 +683,11 @@ enum AccountsClient.RequestType {
 }
 ```
 
-## Running your own Accounts Manager
+## Running your own Hub
 
 TODO
 
-If you want to run your own instance of Accounts Manager, you also need to run
+If you want to run your own instance of Hub, you also need to run
 an instance of the [Keyguard](https://github.com/nimiq/keyguard-next/).
 
 ## Contribute
@@ -697,8 +697,8 @@ To get started with working on the source code, pull the code and install the de
 ### Setup
 
 ```bash
-git clone https://github.com/nimiq/accounts.git
-cd accounts
+git clone https://github.com/nimiq/hub.git
+cd hub 
 yarn
 ```
 

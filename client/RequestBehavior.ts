@@ -108,7 +108,7 @@ export class IFrameRequestBehavior extends RequestBehavior {
 
     public async request(endpoint: string, command: RequestType, args: any[]): Promise<any> {
         if (this._iframe && this._iframe.src !== `${endpoint}${IFrameRequestBehavior.IFRAME_PATH_SUFFIX}`) {
-            throw new Error('Accounts Manager iframe is already opened with another endpoint');
+            throw new Error('Hub iframe is already opened with another endpoint');
         }
 
         const origin = RequestBehavior.getAllowedOrigin(endpoint);
