@@ -1,34 +1,43 @@
 <template>
-    <div class="identicon-selector" :class="{ selected: !!selectedAccount }">
+    <div class="identicon-selector" @keydown.esc="_selectAccount(null)">
         <h1 class="nq-h1">Choose an Avatar</h1>
         <div class="identicons">
             <div class="center" v-if="displayedAccounts.length === 0">
-                <div class="loading-animation"></div>
-                <h2>Mixing colors</h2>
+                <LoadingSpinner/>
+                <h2 class="nq-h2">Mixing colors</h2>
             </div>
-            <div class="wrapper" v-for="account in displayedAccounts" :key="account.userFriendlyAddress"
-                @click="_selectAccount(account)" :class="{ selected: selectedAccount === account }">
+            <button class="wrapper" v-for="account in displayedAccounts" :key="account.userFriendlyAddress"
+                @click="_selectAccount(account)"
+                :class="{ selected: selectedAccount === account && confirmAccountSelection }"
+                :tabindex="selectedAccount && confirmAccountSelection ? -1 : 0">
                 <Identicon :address="account.userFriendlyAddress"></Identicon>
-                <div class="address">{{ account.userFriendlyAddress }}</div>
-            </div>
+                <transition name="transition-scale">
+                    <div v-if="selectedAccount === account && confirmAccountSelection" class="address">
+                        {{ account.userFriendlyAddress }}
+                    </div>
+                </transition>
+            </button>
         </div>
-        <button @click="page += 1" v-if="displayedAccounts.length > 0" class="generate-more nq-button-s">
+        <button @click="page += 1" v-if="displayedAccounts.length > 0"
+            :tabindex="selectedAccount && confirmAccountSelection ? -1 : 0" class="generate-more nq-button-s">
             More Avatars
         </button>
 
-        <div @click="_selectAccount(null)" class="backdrop">
-            <button @click="_onSelectionConfirmed" class="nq-button inverse">Select</button>
-            <a tabindex="0" class="nq-text-s nq-link">Back</a>
-        </div>
+        <transition name="transition-fade">
+            <div v-if="selectedAccount && confirmAccountSelection" @click="_selectAccount(null)" class="backdrop">
+                <button @click="_onSelectionConfirmed" class="nq-button inverse">Select</button>
+                <button @click="_selectAccount(null)" class="nq-text-s">Back</button>
+            </div>
+        </transition>
     </div>
 </template>
 
 <script lang="ts">
     import { Component, Prop, Watch, Vue } from 'vue-property-decorator';
-    import { Identicon } from '@nimiq/vue-components';
+    import { LoadingSpinner, Identicon } from '@nimiq/vue-components';
     import { AccountInfo } from '@/lib/AccountInfo';
 
-    @Component({components: { Identicon }})
+    @Component({components: { Identicon, LoadingSpinner }})
     class IdenticonSelector extends Vue {
         private static readonly IDENTICONS_PER_PAGE = 7;
 
@@ -87,52 +96,18 @@
         overflow: hidden;
     }
 
+    button:not(.nq-button):not(.nq-button-s) {
+        background: unset;
+        border: unset;
+        font-family: unset;
+        padding: unset;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+    }
+
     .nq-h1 {
         margin-top: 0;
         margin-bottom: 6rem;
-    }
-
-    .loading-animation {
-        margin: auto;
-    }
-
-    .wrapper {
-        width: 14.25rem;
-        height: 14.25rem;
-        position: absolute;
-        z-index: 1;
-        will-change: transform;
-        transition: transform .5s, z-index 0s;
-        /* use a delay for z-index to keep it above other identicons when transitioning back to initial position */
-        transition-delay: 0s, .5s;
-        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-        cursor: pointer;
-    }
-
-    .wrapper .identicon {
-        width: 100%;
-        height: 100%;
-        animation: pop-in 500ms ease;
-        animation-fill-mode: backwards;
-    }
-
-    .wrapper .address {
-        visibility: hidden;
-        text-align: center;
-        font-size: 1.75rem;
-        transform: scale(0.5);
-        margin-top: 3rem;
-        color: white;
-    }
-
-    @keyframes pop-in {
-        from { transform: scale(0); }
-        to   { transform: scale(1); }
-    }
-
-    .wrapper .identicon img,
-    .wrapper .address {
-        transition: transform 500ms;
     }
 
     .identicons {
@@ -143,6 +118,57 @@
         width: 100%;
         height: 41rem;
         position: relative;
+    }
+
+    .wrapper {
+        width: 14.25rem;
+        height: 14.25rem;
+        position: absolute;
+        z-index: 1;
+        transition: transform .5s, z-index 0s, width 0s;
+        /* use a delay for z-index and width to only reset the value after transitioning back */
+        transition-delay: 0s, .5s, .5s;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        cursor: pointer;
+        outline: none !important;
+    }
+
+    .wrapper .identicon {
+        width: 100%;
+        height: 100%;
+        animation: pop-in 500ms ease;
+        animation-fill-mode: backwards;
+    }
+
+    .wrapper .address {
+        text-align: center;
+        font-size: 1.75rem;
+        margin-top: 3rem;
+        color: white;
+        white-space: nowrap;
+        transform: scale(1) translateY(1rem);
+    }
+
+    .transition-scale-enter,
+    .transition-scale-leave-to {
+        transform: scale(0.5) !important;
+        opacity: 0;
+    }
+
+    @keyframes pop-in {
+        from { transform: scale(0); }
+        to   { transform: scale(1); }
+    }
+
+    .wrapper .identicon >>> img,
+    .wrapper .address,
+    .backdrop {
+        transition: transform .5s, opacity .5s;
+    }
+
+    .wrapper:hover >>> img,
+    .wrapper:focus >>> img {
+        transform: scale(1.1);
     }
 
     .wrapper:nth-child(1) { transform: translate(  0.0rem, -14.25rem); }
@@ -161,6 +187,17 @@
     .wrapper:nth-child(6) .identicon { animation-delay: 250ms; }
     .wrapper:nth-child(7) .identicon { animation-delay: 300ms; }
 
+    .wrapper.selected {
+        z-index: 2;
+        transform: translateY(-5rem);
+        transition-delay: 0s;
+        width: 100%;
+        pointer-events: none;
+    }
+
+    .wrapper.selected >>> img {
+        transform: scale(1.5) translateY(-1rem);
+    }
 
     .generate-more {
         margin-top: 6rem;
@@ -172,10 +209,6 @@
         left: 0;
         background: rgba(0, 0, 0, 0.85);
         z-index: 1;
-        pointer-events: none;
-        opacity: 0;
-        transition: opacity 500ms;
-        will-change: opacity;
         height: 100%;
         width: 100%;
         display: flex;
@@ -183,42 +216,21 @@
         align-items: center;
     }
 
-    .backdrop button {
-        opacity: 0;
+    .backdrop .nq-button {
         position: absolute;
         bottom: 6rem;
-        pointer-events: none;
         margin: 0;
     }
 
-    .backdrop .nq-link {
+    .backdrop button.nq-text-s {
         color: white;
         position: absolute;
         margin-bottom: 2rem;
         bottom: 0;
-        cursor: pointer;
     }
 
-    .identicon-selector.selected .backdrop,
-    .identicon-selector.selected .backdrop button {
-        opacity: 1;
-        pointer-events: all;
-    }
-
-    .wrapper.selected {
-        z-index: 2;
-        transform: translateY(-5rem);
-        transition-delay: 0s;
-        width: 100%;
-        pointer-events: none;
-    }
-
-    .wrapper.selected img {
-        transform: scale(1.5);
-    }
-
-    .wrapper.selected .address {
-        visibility: visible;
-        transform: scale(1);
+    .transition-fade-enter,
+    .transition-fade-leave-to {
+        opacity: 0;
     }
 </style>
