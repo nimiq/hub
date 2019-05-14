@@ -19,6 +19,7 @@
 <script lang="ts">
 import { Component, Watch, Vue } from 'vue-property-decorator';
 import { State } from 'vuex-class';
+import { REQUEST_ERROR } from './router';
 
 import '@nimiq/style/nimiq-style.min.css';
 import '@nimiq/vue-components/dist/NimiqVueComponents.css';
@@ -34,7 +35,7 @@ export default class App extends Vue {
     }
 
     private get isLoaded() {
-        return (!!this.hasRpcState && !!this.hasRequest) || this.$route.name === 'request-error';
+        return (!!this.hasRpcState && !!this.hasRequest) || this.$route.name === REQUEST_ERROR;
     }
 }
 </script>
