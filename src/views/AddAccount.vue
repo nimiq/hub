@@ -1,21 +1,33 @@
-<template></template>
+<template>
+    <NotEnoughCookieSpace v-if='notEnoughCookieSpace'/>
+</template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { ParsedSimpleRequest } from '../lib/RequestTypes';
 import { DeriveAddressRequest } from '@nimiq/keyguard-client';
+import { BrowserDetection } from '@nimiq/utils';
+import { ParsedSimpleRequest } from '../lib/RequestTypes';
 import { Static } from '../lib/StaticStore';
 import { WalletStore } from '@/lib/WalletStore';
 import { WalletType } from '@/lib/WalletInfo';
+import CookieJar from '../lib/CookieJar';
+import NotEnoughCookieSpace from '../components/NotEnoughCookieSpace.vue';
 
-@Component
+@Component({components: {NotEnoughCookieSpace}})
 export default class AddAccount extends Vue {
     @Static private request!: ParsedSimpleRequest;
+
+    private notEnoughCookieSpace = false;
 
     public async created() {
         const wallet = (await WalletStore.Instance.get(this.request.walletId))!;
         if (wallet.type === WalletType.LEGACY) {
             this.$rpc.reject(new Error('Cannot add address to single-address account'));
+            return;
+        }
+
+        if ((BrowserDetection.isIOS() || BrowserDetection.isSafari()) && !CookieJar.canFitNewAccount()) {
+            this.notEnoughCookieSpace = true;
             return;
         }
 

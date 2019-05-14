@@ -7,7 +7,7 @@
                 :status="status"
                 :lightBlue="true"
                 :mainAction="action"
-                @main-action="resolveResult"
+                @main-action="resolve"
                 :message="message" />
         </SmallPage>
     </div>
@@ -15,17 +15,20 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
+import { State } from 'vuex-class';
+import KeyguardClient from '@nimiq/keyguard-client';
+import { BrowserDetection } from '@nimiq/utils';
+import { SmallPage } from '@nimiq/vue-components';
 import { ParsedBasicRequest } from '../lib/RequestTypes';
 import { Account } from '../lib/PublicRequestTypes';
-import { State } from 'vuex-class';
 import { WalletInfo, WalletType } from '../lib/WalletInfo';
 import { WalletStore } from '@/lib/WalletStore';
 import { Static } from '@/lib/StaticStore';
-import { SmallPage } from '@nimiq/vue-components';
 import Loader from '@/components/Loader.vue';
 import WalletInfoCollector from '@/lib/WalletInfoCollector';
-import KeyguardClient from '@nimiq/keyguard-client';
 import { WalletCollectionResultKeyguard } from '../lib/WalletInfoCollector';
+import CookieHelper from '../lib/CookieHelper';
+import { ERROR_COOKIE_SPACE } from '../lib/Constants';
 
 @Component({components: {Loader, SmallPage}})
 export default class LoginSuccess extends Vue {
@@ -36,8 +39,11 @@ export default class LoginSuccess extends Vue {
     private retrievalFailed: boolean = false;
     private state: Loader.State = Loader.State.LOADING;
     private title: string = 'Collecting your addresses';
+    private message: string = '';
+    private action: string = '';
     private receiptsError: Error | null = null;
     private result: Account[] | null = null;
+    private resolve = () => {}; // tslint:disable-line:no-empty
 
     private async mounted() {
         const collectionResults: WalletCollectionResultKeyguard[] = [];
@@ -106,9 +112,17 @@ export default class LoginSuccess extends Vue {
             }
         }
 
+        let failBecauseOfCookieSpace = false;
+        if (BrowserDetection.isIOS() || BrowserDetection.isSafari()) {
+            const infoEntries = this.walletInfos.map((walletInfo) => walletInfo.toObject());
+            if (!await CookieHelper.canFitNewWallets(infoEntries)) {
+                failBecauseOfCookieSpace = true;
+            }
+        }
+
         await Promise.all (
             collectionResults.map(async (collectionResult) => {
-                if (keepWalletCondition(collectionResult)) {
+                if (!failBecauseOfCookieSpace && keepWalletCondition(collectionResult)) {
                     await WalletStore.Instance.put(collectionResult.walletInfo);
                     this.walletInfos.push(collectionResult.walletInfo);
                     await collectionResult.releaseKey(false);
@@ -118,13 +132,24 @@ export default class LoginSuccess extends Vue {
             }),
         );
 
+        if (failBecauseOfCookieSpace) {
+            this.title = 'Space exceeded';
+            this.state = Loader.State.ERROR;
+            this.message = 'Unfortunately, due to space restrictions of Safari and IOS, this account cannot '
+                         + 'be stored properly. Please free up space by logging out of other accounts.';
+            this.action = 'Continue';
+            await new Promise((resolve) => { this.resolve = resolve; });
+            this.$rpc.reject(new Error(ERROR_COOKIE_SPACE));
+            return;
+        }
+
         this.done();
     }
 
-    private done() {
+    private async done() {
         if (!this.walletInfos.length) throw new Error('WalletInfo not ready.');
 
-        this.result = this.walletInfos.map((walletInfo) => ({
+        const result = this.walletInfos.map((walletInfo) => ({
                 accountId: walletInfo.id,
                 label: walletInfo.label,
                 type: walletInfo.type,
@@ -138,32 +163,22 @@ export default class LoginSuccess extends Vue {
         if (this.receiptsError) {
             this.title = 'Your Addresses may be\nincomplete.';
             this.state = Loader.State.WARNING;
-        } else {
-            if (this.result.length > 1) {
-                this.title = 'Your Accounts are ready.';
-            } else {
-                this.title = 'Your Account is ready.';
-            }
-            this.state = Loader.State.SUCCESS;
-            setTimeout(this.resolveResult.bind(this), Loader.SUCCESS_REDIRECT_DELAY);
+            this.message = 'We might have missed used addresses that have no balance.';
+            this.action = 'Continue';
+            await new Promise((resolve) => { this.resolve = resolve; });
         }
+
+        if (result.length > 1) {
+            this.title = 'Your Accounts are ready.';
+        } else {
+            this.title = 'Your Account is ready.';
+        }
+        this.state = Loader.State.SUCCESS;
+        setTimeout(() => { this.$rpc.resolve(result); }, Loader.SUCCESS_REDIRECT_DELAY);
     }
 
     private get status() {
         return !this.retrievalFailed ? 'Connecting to Nimiq...' : 'Address retrieval failed. Retrying...';
-    }
-
-    private get message() {
-        return this.receiptsError && 'We might have missed used addresses that have no balance.';
-    }
-
-    private get action() {
-        return this.receiptsError && 'Go to account';
-    }
-
-    private resolveResult() {
-        if (!this.result) return;
-        this.$rpc.resolve(this.result);
     }
 }
 </script>
