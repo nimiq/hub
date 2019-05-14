@@ -18,7 +18,7 @@ import {
     ResultByRequestType,
 } from '../src/lib/PublicRequestTypes';
 
-export default class HubApi<DB extends BehaviorType> { // DB: Default Behavior
+export default class HubApi<DB extends BehaviorType = BehaviorType.POPUP> { // DB: Default Behavior
     public static readonly RequestType = RequestType;
     public static readonly RedirectRequestBehavior = RedirectRequestBehavior;
     public static readonly MSG_PREFIX = '\x16Nimiq Signed Message:\n';
@@ -39,14 +39,14 @@ export default class HubApi<DB extends BehaviorType> { // DB: Default Behavior
     }
 
     private readonly _endpoint: string;
-    private readonly _defaultBehavior: RequestBehavior<DB | BehaviorType.POPUP>;
+    private readonly _defaultBehavior: RequestBehavior<DB>;
     private readonly _iframeBehavior: IFrameRequestBehavior;
     private readonly _redirectClient: RedirectRpcClient;
 
     constructor(endpoint: string = HubApi.DEFAULT_ENDPOINT, defaultBehavior?: RequestBehavior<DB>) {
         this._endpoint = endpoint;
         this._defaultBehavior = defaultBehavior || new PopupRequestBehavior(
-            `left=${window.innerWidth / 2 - 400},top=75,width=800,height=850,location=yes,dependent=yes`);
+            `left=${window.innerWidth / 2 - 400},top=75,width=800,height=850,location=yes,dependent=yes`) as any;
         this._iframeBehavior = new IFrameRequestBehavior();
 
         // Check for RPC results in the URL
@@ -59,8 +59,8 @@ export default class HubApi<DB extends BehaviorType> { // DB: Default Behavior
 
     public on<T extends RequestType>(
         command: T,
-        resolve: (result: ResultByRequestType<T>, state: any) => any,
-        reject?: (error: Error, state: any) => any,
+        resolve: (result: ResultByRequestType<T>, state: any) => void,
+        reject?: (error: Error, state: any) => void,
     ) {
         this._redirectClient.onResponse(command,
             // State is always an object containing at least the __command property
@@ -136,8 +136,8 @@ export default class HubApi<DB extends BehaviorType> { // DB: Default Behavior
 
     /* PRIVATE METHODS */
 
-    private _request<R extends RequestType, BT extends BehaviorType, B extends RequestBehavior<BT>>(
-        behavior: B,
+    private _request<R extends RequestType, BT extends BehaviorType>(
+        behavior: RequestBehavior<BT>,
         command: R,
         args: any[],
     ) {

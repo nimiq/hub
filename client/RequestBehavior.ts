@@ -8,9 +8,9 @@ export abstract class RequestBehavior<B extends BehaviorType> {
         return url.origin;
     }
 
-    private readonly _type: BehaviorType;
+    private readonly _type: B;
 
-    constructor(type: BehaviorType) {
+    constructor(type: B) {
         this._type = type;
     }
 
@@ -22,7 +22,7 @@ export abstract class RequestBehavior<B extends BehaviorType> {
         throw new Error('Not implemented');
     }
 
-    public get type() {
+    public get type(): B {
         return this._type;
     }
 }
