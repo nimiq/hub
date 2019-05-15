@@ -41,7 +41,7 @@
 
         <SmallPage v-else-if="page === 'accounts'" class="accounts">
             <PageHeader backArrow @back="page = 'intro'; backupsAreSafe = false;">
-                Check your Backup
+                Check your Backup{{legacyAccounts.length > 1 ? 's' : ''}}
                 <p slot="more" class="nq-notice warning">
                     The update is easy, fast and secure. Still – it’s a good time to check on your Recovery Words.
                 </p>
@@ -58,19 +58,22 @@
             </PageBody>
 
             <PageFooter>
-                <div v-if="!backupsAreSafe" class="nq-light-blue-bg check-box">
-                    <label>
-                        <input type="checkbox" v-model="backupsAreSafe">
-                        <div class="checkcircle"></div>
-                        My Backups are safe.
-                    </label>
-                </div>
-                <button v-else class="nq-button light-blue" @click="runMigration">Activate update</button>
+                <transition name="transition-fade" mode="out-in">
+                    <div v-if="!backupsAreSafe" class="nq-light-blue-bg check-box">
+                        <label>
+                            <input type="checkbox" v-model="backupsAreSafe">
+                            <div class="checkcircle"><CheckmarkIcon/></div>
+                            My Backups are safe.
+                        </label>
+                    </div>
+                    <button v-else class="nq-button light-blue activate" @click="runMigration">Activate update</button>
+                </transition>
             </PageFooter>
         </SmallPage>
 
         <SmallPage v-else class="migration">
             <Loader
+                lightBlue
                 :title="title"
                 :status="status"
                 :state="state"
@@ -87,7 +90,11 @@ import { Component, Vue } from 'vue-property-decorator';
 import { AccountInfo } from '@/lib/AccountInfo';
 import { WalletStore } from '@/lib/WalletStore';
 import { WalletInfo, WalletType } from '@/lib/WalletInfo';
-import { SmallPage, PageHeader, PageBody, PageFooter, Identicon, Amount, ArrowRightIcon } from '@nimiq/vue-components';
+import {
+    SmallPage, PageHeader, PageBody, PageFooter,
+    Identicon, Amount,
+    ArrowRightIcon, CheckmarkIcon,
+} from '@nimiq/vue-components';
 import Network from '@/components/Network.vue';
 import Loader from '@/components/Loader.vue';
 import KeyguardClient from '@nimiq/keyguard-client';
@@ -96,7 +103,12 @@ import { ContractInfo } from '@/lib/ContractInfo';
 import { Static } from '@/lib/StaticStore';
 import { SimpleRequest } from '@/lib/PublicRequestTypes';
 
-@Component({components: {SmallPage, PageHeader, PageBody, PageFooter, Identicon, Amount, ArrowRightIcon, Loader, Network}})
+@Component({components: {
+    SmallPage, PageHeader, PageBody, PageFooter,
+    Identicon, Amount,
+    ArrowRightIcon, CheckmarkIcon,
+    Loader, Network,
+}})
 export default class Migrate extends Vue {
     @Static private request!: SimpleRequest;
 
@@ -109,7 +121,6 @@ export default class Migrate extends Vue {
     private message: string = '';
 
     private legacyAccounts: AccountInfo[] = [];
-    private isMigrating: boolean = false;
 
     public async created() {
         const legacyKeys = await this.$rpc.keyguardClient.listLegacyAccounts();
@@ -137,7 +148,7 @@ export default class Migrate extends Vue {
     }
 
     private async doMigration() {
-        this.isMigrating = true;
+        this.page = 'migration';
 
         this.status = 'Retrieving your legacy accounts...';
         const legacyAccounts = await this.$rpc.keyguardClient.listLegacyAccounts();
@@ -327,6 +338,17 @@ export default class Migrate extends Vue {
         position: relative;
     }
 
+    .check-box {
+        transition: opacity .5s .5s ease-in;
+    }
+
+    .nq-button.activate {
+        transition:
+            transform 450ms cubic-bezier(.25,0,0,1),
+            box-shadow 450ms cubic-bezier(.25,0,0,1),
+            opacity 450ms cubic-bezier(.25,0,0,1);
+    }
+
     .check-box input {
         position: absolute;
         left: -9999rem;
@@ -344,19 +366,80 @@ export default class Migrate extends Vue {
     }
 
     .check-box .checkcircle {
-        border: solid .25rem white;
+        border: solid .25rem rgba(255, 255, 255, 0.6);
         border-radius: 50%;
         width: 3.5rem;
         height: 3.5rem;
-        opacity: .6;
         margin-right: 2rem;
+        position: relative;
+        flex-shrink: 0;
     }
 
-    .check-box input:focus ~ .checkcircle {
-        border-color: red;
+    .check-box .checkcircle .nq-icon {
+        display: none;
+    }
+
+    .check-box .checkcircle::after {
+        content: "";
+        position: absolute;
+        left: -0.875rem;
+        top: -0.875rem;
+        right: -0.875rem;
+        bottom: -0.875rem;
+        border: 0.25rem solid rgba(255, 255, 255, 0.6);
+        border-radius: 50%;
+        opacity: 0;
+    }
+
+    .check-box input:focus ~ .checkcircle::after,
+    .check-box input:active ~ .checkcircle::after {
+        opacity: 1;
     }
 
     .check-box input:checked ~ .checkcircle {
-        border-color: green;
+        background: rgba(255, 255, 255, 0.6);
+        border: none;
+    }
+
+    .check-box input:checked ~ .checkcircle::after {
+        left: -0.625rem;
+        top: -0.625rem;
+        right: -0.625rem;
+        bottom: -0.625rem;
+    }
+
+    .check-box input:checked ~ .checkcircle .nq-icon {
+        position: absolute;
+        display: block;
+        font-size: 3rem;
+        margin-left: -1.125rem;
+        left: 50%;
+        bottom: .75rem;
+    }
+
+    .transition-fade-enter,
+    .transition-fade-leave-to {
+        opacity: 0;
+    }
+
+    /*
+    Because Vue does virtual-DOM diffing, pages are not replaced as complete components but rather
+    parts of the pages are replaced, e.g. the footer content (while the footer element itself
+    stays the same).
+
+    This has a negative visual effect on the check-box, because it has a transition applied
+    which fades it out when it is de-rendered. Because of the DOM-diffing instead of full element
+    replacing, the check-box is rendered fading-out next to the intro page's "Prepare for update"
+    button when clicking on the back arrow.
+
+    These styles here prevent that from happening by force-hiding them.
+
+    If you know a better method to force Vue to throw out an element instead of fading it out,
+    please make yourself known.
+    */
+    .intro .check-box,
+    .intro .activate {
+        display: none;
+        transition: none;
     }
 </style>

@@ -171,8 +171,8 @@ export default class RpcApi {
 
                 const wallets = await WalletStore.Instance.list();
                 if (!wallets.length) {
-                    const hasLegacyAccounts = await this._keyguardClient.hasLegacyAccounts();
-                    if (hasLegacyAccounts.success) {
+                    const hasLegacyAccounts = (await this._keyguardClient.hasLegacyAccounts()).success;
+                    if (hasLegacyAccounts) {
                         // Keyguard has legacy accounts, redirect to migration
                         if (requestType !== RequestType.MIGRATE) {
                             this._staticStore.originalRouteName = requestType;
