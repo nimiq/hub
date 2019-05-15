@@ -1,6 +1,6 @@
 <template>
     <div class="container pad-bottom">
-        <Network ref="network" :visible="false"/>
+        <Network ref="network"/>
         <SmallPage v-if="page === 'intro'" class="intro">
             <PageHeader>
                 Time to grow
@@ -55,7 +55,7 @@
                     <Identicon :address="account.userFriendlyAddress"/>
                     <div class="meta">
                         <div class="label">{{account.label}}</div>
-                        <Amount v-if="account.balance !== undefined" :amount="2037021e5" :decimals="0"/>
+                        <Amount v-if="account.balance !== undefined" :amount="account.balance" :decimals="0"/>
                     </div>
                     <button class="nq-button-s" @click="startBackup(account.userFriendlyAddress)">Back Up</button>
                 </div>
@@ -90,8 +90,8 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
-import { AccountInfo } from '@/lib/AccountInfo';
+import { Component, Vue, Watch } from 'vue-property-decorator';
+import { AccountInfo, AccountInfoEntry } from '@/lib/AccountInfo';
 import { WalletStore } from '@/lib/WalletStore';
 import { WalletInfo, WalletType } from '@/lib/WalletInfo';
 import {
@@ -106,6 +106,13 @@ import { ACCOUNT_DEFAULT_LABEL_LEGACY } from '@/lib/Constants';
 import { ContractInfo } from '@/lib/ContractInfo';
 import { Static } from '@/lib/StaticStore';
 import { SimpleRequest } from '@/lib/PublicRequestTypes';
+
+type SerializedAccount = {
+    path: string;
+    label: string;
+    address: string;
+    balance?: number;
+};
 
 @Component({components: {
     SmallPage, PageHeader, PageBody, PageFooter,
@@ -126,9 +133,40 @@ export default class Migrate extends Vue {
 
     private legacyAccounts: AccountInfo[] = [];
 
+    private LOCALSTORAGE_ACCOUNTS_KEY = '__legacy_accounts';
+
     public async created() {
-        const legacyKeys = await this.$rpc.keyguardClient.listLegacyAccounts();
-        this.legacyAccounts = legacyKeys.map((key) => this.legacyKeyInfoObject2AccountInfo(key));
+        const storedAccounts = window.localStorage.getItem(this.LOCALSTORAGE_ACCOUNTS_KEY);
+        if (storedAccounts && storedAccounts.length) {
+            try {
+                this.legacyAccounts = this.deserializeAccounts(storedAccounts);
+                this.page = 'accounts';
+                console.debug('From LocalStorage');
+            } catch (e) {} // tslint:disable-line:no-empty
+        }
+
+        if (!this.legacyAccounts.length) {
+            const legacyKeys = await this.$rpc.keyguardClient.listLegacyAccounts();
+            this.legacyAccounts = legacyKeys.map((key) => this.legacyKeyInfoObject2AccountInfo(key));
+            window.localStorage.setItem(this.LOCALSTORAGE_ACCOUNTS_KEY, this.serializeAccounts(this.legacyAccounts));
+            console.debug('From Keyguard');
+        }
+    }
+
+    @Watch('legacyAccounts')
+    private async getBalances() {
+        // Get balances from network
+        const network = (this.$refs.network as Network);
+        const balances: Map<string, number> = await network.connectPico(
+            this.legacyAccounts.map((account) => account.userFriendlyAddress));
+        console.log(balances);
+
+        // Update legacyAccounts array
+        this.legacyAccounts.forEach((account) => {
+            const balance = balances.get(account.userFriendlyAddress);
+            account.balance = balance !== undefined ? Nimiq.Policy.coinsToSatoshis(balance) : balance;
+        });
+        window.localStorage.setItem(this.LOCALSTORAGE_ACCOUNTS_KEY, this.serializeAccounts(this.legacyAccounts));
     }
 
     private startBackup(address: string) {
@@ -169,12 +207,12 @@ export default class Migrate extends Vue {
         // to happen serially, e.g. synchroneous.
         const walletInfos: WalletInfo[] = [];
         for (const account of legacyAccounts) {
-            const address = new Nimiq.Address(account.legacyAccount.address);
+            const accountInfo = this.legacyKeyInfoObject2AccountInfo(account);
             const accounts = new Map<string, AccountInfo>([
-                [address.toUserFriendlyAddress(), new AccountInfo('m/0\'', account.legacyAccount.label, address)],
+                [accountInfo.userFriendlyAddress, accountInfo],
             ]);
 
-            const contracts = genesisVestingContracts.filter((contract) => contract.owner.equals(address));
+            const contracts = genesisVestingContracts.filter((contract) => contract.owner.equals(accountInfo.address));
 
             const walletInfo = new WalletInfo(
                 await WalletStore.deriveId(account.id),
@@ -221,6 +259,23 @@ export default class Migrate extends Vue {
             keyInfo.legacyAccount.label,
             new Nimiq.Address(keyInfo.legacyAccount.address),
         );
+    }
+
+    private serializeAccounts(accounts: AccountInfo[]): string {
+        return JSON.stringify(accounts.map((account): SerializedAccount => {
+            const entry = account.toObject();
+            return {
+                ...entry,
+                address: Nimiq.BufferUtils.toBase64(entry.address),
+            };
+        }));
+    }
+
+    private deserializeAccounts(storedAccounts: string): AccountInfo[] {
+        return JSON.parse(storedAccounts).map((entry: SerializedAccount) => AccountInfo.fromObject({
+            ...entry,
+            address: Nimiq.BufferUtils.fromBase64(entry.address),
+        }));
     }
 }
 </script>
