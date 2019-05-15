@@ -779,6 +779,11 @@
   resolved "https://registry.yarnpkg.com/@nimiq/style/-/style-0.7.0.tgz#4443b99c062715c1c913fc3cf16eefd243d5de4a"
   integrity sha512-oYnnbwI/jMN0nIvzKo8iKTmWbJXPL2WVbOl9o24OVb5gY+laz7cba6QVGdKQal+S2Hb1JKK99RV8z4Ve4fF4Yg==
 
+"@nimiq/style@^0.7.1":
+  version "0.7.1"
+  resolved "https://registry.yarnpkg.com/@nimiq/style/-/style-0.7.1.tgz#e9f9423627fe55ea5b6078283312246010e45d77"
+  integrity sha512-tV6TTcJLk7GLXB22gYpieUUfOJxrQdymghOpmU5lDgkqv7f+D1RYSDAzo2gEhOZSsK3Kj8QdE9P6eNHGof29VQ==
+
 "@nimiq/utils@^0.3.2":
   version "0.3.2"
   resolved "https://registry.yarnpkg.com/@nimiq/utils/-/utils-0.3.2.tgz#7728d417c6bafacfd2d617a8037839d2bc93a03a"
@@ -786,9 +791,9 @@
 
 "@nimiq/vue-components@https://github.com/nimiq/vue-components.git#build/accounts":
   version "0.1.0"
-  resolved "https://github.com/nimiq/vue-components.git#15bdd5998dca2a26ac4aca3cc26209def4b721f8"
+  resolved "https://github.com/nimiq/vue-components.git#7e93c3e2221f5525ad1d350385ee5dd50e1994f8"
   dependencies:
-    "@nimiq/style" "^0.7.0"
+    "@nimiq/style" "^0.7.1"
     vue "^2.5.17"
     vue-property-decorator "^7.0.0"
 
