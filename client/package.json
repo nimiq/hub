@@ -1,6 +1,6 @@
 {
   "name": "@nimiq/hub-api",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "main": "dist/HubApi.umd.js",
   "module": "dist/HubApi.es.js",
   "repository": "https://github.com/nimiq/hub/tree/master/client",
