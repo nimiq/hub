@@ -297,22 +297,25 @@ export default class Checkout extends Vue {
     private async handleOnboardingResult() {
         // Check if we are returning from an onboarding request
         if (staticStore.sideResult && !(staticStore.sideResult instanceof Error)) {
-            const sideResult = staticStore.sideResult as Account;
+            const sideResult = staticStore.sideResult as Account[];
 
-            // Add imported wallet to Vuex store
-            const walletInfo = await WalletStore.Instance.get(sideResult.accountId);
-            if (walletInfo) {
-                this.$addWallet(walletInfo);
-                this.sideResultAddedWallet = true;
+            // Add imported wallets to Vuex store
+            for (const account of sideResult) {
+                const walletInfo = await WalletStore.Instance.get(account.accountId);
 
-                // Set as activeWallet and activeAccount
-                // FIXME: Also handle active account we get from store
-                const activeAccount = walletInfo.accounts.values().next().value;
+                if (walletInfo) {
+                    this.$addWallet(walletInfo);
+                    this.sideResultAddedWallet = true;
 
-                this.$setActiveAccount({
-                    walletId: walletInfo.id,
-                    userFriendlyAddress: activeAccount.userFriendlyAddress,
-                });
+                    // Set as activeWallet and activeAccount
+                    // FIXME: Also handle active account we get from store
+                    const activeAccount = walletInfo.accounts.values().next().value;
+
+                    this.$setActiveAccount({
+                        walletId: walletInfo.id,
+                        userFriendlyAddress: activeAccount.userFriendlyAddress,
+                    });
+                }
             }
         }
         delete staticStore.sideResult;
