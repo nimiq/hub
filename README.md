@@ -1,6 +1,6 @@
 # Nimiq Hub <!-- omit in toc -->
 
-The **Hub** provides a unified interface for
+The Nimiq Hub provides a unified interface for
 all Nimiq accounts, addresses, and contracts. It is the primary UI for Nimiq users
 to manage their accounts and provides websites and apps with a concise API to
 interact with their users' Nimiq addresses.
