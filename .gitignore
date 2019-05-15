@@ -21,5 +21,5 @@ package-lock.json
 *.sln
 *.sw*
 
-deployment-accounts
+deployment-hub
 client/README.md
