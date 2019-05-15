@@ -1,8 +1,8 @@
-import AccountsClient from '../../client/AccountsClient';
+import HubApi from '../../client/HubApi';
 import * as KeyguardClient from '@nimiq/keyguard-client';
 
-describe('AccountsClient', () => {
+describe('HubApi', () => {
     it('exports the correct MSG_PREFIX', () => {
-        expect(AccountsClient.MSG_PREFIX).toEqual(KeyguardClient.MSG_PREFIX);
+        expect(HubApi.MSG_PREFIX).toEqual(KeyguardClient.MSG_PREFIX);
     });
 });

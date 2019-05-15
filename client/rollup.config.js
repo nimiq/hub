@@ -4,41 +4,41 @@ import { terser } from "rollup-plugin-terser";
 
 export default [
     {
-        input: 'build/client/AccountsClient.js',
+        input: 'build/client/HubApi.js',
         output: {
-            file: 'dist/AccountsClient.umd.js',
+            file: 'dist/HubApi.umd.js',
             format: 'umd',
-            name: 'AccountsClient',
+            name: 'HubApi',
             globals: { '@nimiq/rpc': 'rpc' }
         },
         external: [ '@nimiq/rpc' ]
     },
     {
-        input: 'build/client/AccountsClient.js',
+        input: 'build/client/HubApi.js',
         output: {
-            file: 'dist/AccountsClient.es.js',
+            file: 'dist/HubApi.es.js',
             format: 'es',
-            name: 'AccountsClient',
+            name: 'HubApi',
             globals: { '@nimiq/rpc': 'rpc' }
         },
         external: [ '@nimiq/rpc' ]
     },
     {
-        input: 'build/client/AccountsClient.js',
+        input: 'build/client/HubApi.js',
         output: {
-            file: 'dist/standalone/AccountsClient.standalone.umd.js',
+            file: 'dist/standalone/HubApi.standalone.umd.js',
             format: 'umd',
-            name: 'AccountsClient',
+            name: 'HubApi',
             globals: { '@nimiq/rpc': 'rpc' }
         },
         plugins: [ resolve(), terser() ]
     },
     {
-        input: 'build/client/AccountsClient.js',
+        input: 'build/client/HubApi.js',
         output: {
-            file: 'dist/standalone/AccountsClient.standalone.es.js',
+            file: 'dist/standalone/HubApi.standalone.es.js',
             format: 'es',
-            name: 'AccountsClient',
+            name: 'HubApi',
             globals: { '@nimiq/rpc': 'rpc' }
         },
         plugins: [ resolve(), terser() ]

@@ -1,5 +1,5 @@
 import { State, PostMessageRpcClient } from '@nimiq/rpc';
-import AccountsClient from '../client/AccountsClient';
+import HubApi from '../client/HubApi';
 import { RequestType } from '../src/lib/RequestTypes';
 import {
     SimpleRequest,
@@ -17,7 +17,7 @@ import { Utf8Tools } from '@nimiq/utils';
 
 class Demo {
     public static run() {
-        const keyguardOrigin = location.origin === 'https://accounts.nimiq-testnet.com'
+        const keyguardOrigin = location.origin === 'https://hub.nimiq-testnet.com'
             ? 'https://keyguard.nimiq-testnet.com'
             : `${location.protocol}//${location.hostname}:8000`;
         const demo = new Demo(keyguardOrigin);
@@ -263,7 +263,7 @@ class Demo {
 
     private _iframeClient: PostMessageRpcClient | null;
     private _keyguardBaseUrl: string;
-    private _accountsClient: AccountsClient;
+    private _hubApi: HubApi;
 
     constructor(keyguardBaseUrl: string) {
         this._iframeClient = null;
@@ -507,7 +507,7 @@ class Demo {
     }
 
     public get client() {
-        return this._accountsClient || (this._accountsClient = new AccountsClient(location.origin));
+        return this._hubApi || (this._hubApi = new HubApi(location.origin));
     }
 } // class Demo
 

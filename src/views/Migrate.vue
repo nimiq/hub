@@ -108,7 +108,7 @@ export default class Migrate extends Vue {
         this.title = 'Whoops, something went wrong';
         this.message = `${error.name}: ${error.message}`;
         this.state = Loader.State.ERROR;
-        if (window.location.origin === 'https://accounts.nimiq-testnet.com') {
+        if (window.location.origin === 'https://hub.nimiq-testnet.com') {
             this.$raven.captureException(error);
             // TODO: Starting with Vue 2.6, if mounted() is async and awaits run(), the error handling will
             //       be automatically done by the global Vue.config.errorHandler and does not require manual

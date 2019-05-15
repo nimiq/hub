@@ -23,7 +23,7 @@ import {
     RpcResult,
 } from '../src/lib/PublicRequestTypes';
 
-export default class AccountsClient {
+export default class HubApi {
     public static readonly RequestType: typeof RequestType = RequestType;
     public static readonly RedirectRequestBehavior: typeof RedirectRequestBehavior = RedirectRequestBehavior;
     public static readonly MSG_PREFIX: string = '\x16Nimiq Signed Message:\n';
@@ -35,9 +35,9 @@ export default class AccountsClient {
 
         switch (tld) {
             case 'nimiq.com':
-                return 'https://accounts.nimiq.com';
+                return 'https://hub.nimiq.com';
             case 'nimiq-testnet.com':
-                return 'https://accounts.nimiq-testnet.com';
+                return 'https://hub.nimiq-testnet.com';
             default:
                 return 'http://localhost:8080';
         }
@@ -48,7 +48,7 @@ export default class AccountsClient {
     private readonly _iframeBehavior: IFrameRequestBehavior;
     private readonly _redirectClient: RedirectRpcClient;
 
-    constructor(endpoint: string = AccountsClient.DEFAULT_ENDPOINT, defaultBehavior?: RequestBehavior) {
+    constructor(endpoint: string = HubApi.DEFAULT_ENDPOINT, defaultBehavior?: RequestBehavior) {
         this._endpoint = endpoint;
         this._defaultBehavior = defaultBehavior || new PopupRequestBehavior(
             `left=${window.innerWidth / 2 - 400},top=75,width=800,height=850,location=yes,dependent=yes`);
