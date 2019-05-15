@@ -57,7 +57,16 @@
                         <div class="label">{{account.label}}</div>
                         <Amount v-if="account.balance !== undefined" :amount="account.balance" :decimals="0"/>
                     </div>
-                    <button class="nq-button-s" @click="startBackup(account.userFriendlyAddress)">Back Up</button>
+                    <button
+                        class="nq-button-s"
+                        :class="{'green': account.isBackedUp}"
+                        @click="startBackupForAddress(account.userFriendlyAddress)">
+                        <svg v-if="account.isBackedUp" width="12" height="11" viewBox="0 0 12 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M10.5 1.9l-5.8 8-3-3.1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+
+                        {{account.isBackedUp ? 'Backed Up' : 'Back Up'}}
+                    </button>
                 </div>
             </PageBody>
 
@@ -104,14 +113,17 @@ import Loader from '@/components/Loader.vue';
 import KeyguardClient from '@nimiq/keyguard-client';
 import { ACCOUNT_DEFAULT_LABEL_LEGACY } from '@/lib/Constants';
 import { ContractInfo } from '@/lib/ContractInfo';
-import { Static } from '@/lib/StaticStore';
+import staticStore, { Static } from '@/lib/StaticStore';
 import { SimpleRequest } from '@/lib/PublicRequestTypes';
+import { State } from 'vuex-class';
+import { RequestType } from '../lib/RequestTypes';
 
 type SerializedAccount = {
     path: string;
     label: string;
     address: string;
     balance?: number;
+    isBackedUp?: boolean;
 };
 
 @Component({components: {
@@ -122,6 +134,8 @@ type SerializedAccount = {
 }})
 export default class Migrate extends Vue {
     @Static private request!: SimpleRequest;
+    @Static private keyguardRequest?: KeyguardClient.ExportRequest;
+    @State private keyguardResult?: KeyguardClient.ExportResult;
 
     private page: 'intro' | 'accounts' | 'migration' = 'intro';
     private backupsAreSafe: boolean = false;
@@ -136,19 +150,29 @@ export default class Migrate extends Vue {
     private LOCALSTORAGE_ACCOUNTS_KEY = '__legacy_accounts';
 
     public async created() {
-        const storedAccounts = window.localStorage.getItem(this.LOCALSTORAGE_ACCOUNTS_KEY);
-        if (storedAccounts && storedAccounts.length) {
-            try {
-                this.legacyAccounts = this.deserializeAccounts(storedAccounts);
-                this.page = 'accounts';
-                console.debug('From LocalStorage');
-            } catch (e) {} // tslint:disable-line:no-empty
-        }
+        try {
+            this.legacyAccounts = this.readAccountsCache(); // Throws when none stored
+            this.page = 'accounts';
+            console.debug('From LocalStorage');
+
+            if (this.keyguardRequest
+                && this.keyguardResult
+                && !(this.keyguardResult instanceof Error)
+                && this.keyguardResult.wordsExported
+            ) {
+                // Find account that was exported
+                const exportedAccount = this.legacyAccounts.find(
+                    (account) => account.userFriendlyAddress === this.keyguardRequest!.keyId,
+                )!;
+                exportedAccount.isBackedUp = true;
+                this.storeAccountsCache();
+            }
+        } catch (e) {} // tslint:disable-line:no-empty
 
         if (!this.legacyAccounts.length) {
             const legacyKeys = await this.$rpc.keyguardClient.listLegacyAccounts();
             this.legacyAccounts = legacyKeys.map((key) => this.legacyKeyInfoObject2AccountInfo(key));
-            window.localStorage.setItem(this.LOCALSTORAGE_ACCOUNTS_KEY, this.serializeAccounts(this.legacyAccounts));
+            this.storeAccountsCache();
             console.debug('From Keyguard');
         }
     }
@@ -166,16 +190,18 @@ export default class Migrate extends Vue {
             const balance = balances.get(account.userFriendlyAddress);
             account.balance = balance !== undefined ? Nimiq.Policy.coinsToSatoshis(balance) : balance;
         });
-        window.localStorage.setItem(this.LOCALSTORAGE_ACCOUNTS_KEY, this.serializeAccounts(this.legacyAccounts));
+        this.storeAccountsCache();
     }
 
-    private startBackup(address: string) {
+    private startBackupForAddress(address: string) {
         // Start export request for this address
         const request: KeyguardClient.ExportRequest = {
             appName: this.request.appName,
             keyId: address,
             keyLabel: '',
         };
+
+        staticStore.keyguardRequest = request;
 
         const client = this.$rpc.createKeyguardClient();
         client.export(request);
@@ -267,15 +293,30 @@ export default class Migrate extends Vue {
             return {
                 ...entry,
                 address: Nimiq.BufferUtils.toBase64(entry.address),
+                isBackedUp: account.isBackedUp,
             };
         }));
     }
 
     private deserializeAccounts(storedAccounts: string): AccountInfo[] {
-        return JSON.parse(storedAccounts).map((entry: SerializedAccount) => AccountInfo.fromObject({
-            ...entry,
-            address: Nimiq.BufferUtils.fromBase64(entry.address),
-        }));
+        return JSON.parse(storedAccounts).map((entry: SerializedAccount) => {
+            const accountInfo = AccountInfo.fromObject({
+                ...entry,
+                address: Nimiq.BufferUtils.fromBase64(entry.address),
+            });
+            accountInfo.isBackedUp = entry.isBackedUp;
+            return accountInfo;
+        });
+    }
+
+    private storeAccountsCache() {
+        window.localStorage.setItem(this.LOCALSTORAGE_ACCOUNTS_KEY, this.serializeAccounts(this.legacyAccounts));
+    }
+
+    private readAccountsCache(): AccountInfo[] {
+        const storedAccounts = window.localStorage.getItem(this.LOCALSTORAGE_ACCOUNTS_KEY);
+        if (!storedAccounts) throw new Error('No accounts cached');
+        return this.deserializeAccounts(storedAccounts);
     }
 }
 </script>
@@ -360,7 +401,8 @@ export default class Migrate extends Vue {
 
     .accounts .page-body {
         margin-top: -2rem;
-        padding-top: 4rem;
+        padding-top: 0;
+        padding-bottom: 0;
         mask-image: linear-gradient(0deg , rgba(255,255,255,0), rgba(255,255,255, 1) 4rem, rgba(255,255,255,1) calc(100% - 4rem), rgba(255,255,255,0));
     }
 
@@ -376,24 +418,39 @@ export default class Migrate extends Vue {
         width: 6.25rem;
         height: 6.25rem;
         margin-right: 2rem;
+        flex-shrink: 0;
     }
 
     .account .meta {
         flex-grow: 1;
+        min-width: 0;
     }
 
     .account .label {
         font-size: 2.25rem;
-        line-height: 2rem;
+        line-height: 3rem;
         font-weight: bold;
-        margin-bottom: -.25rem;
+        white-space: nowrap;
+        overflow: hidden;
+        max-width: 100%;
+        mask-image: linear-gradient(90deg , white, white calc(100% - 3rem), rgba(255,255,255, 0));
     }
 
     .account .amount {
+        display: block;
         font-size: 1.75rem;
         line-height: 2rem;
         font-weight: 600;
         opacity: .5;
+    }
+
+    .account .nq-button-s {
+        margin-left: 1rem;
+        flex-shrink: 0;
+    }
+
+    .account .nq-button-s svg {
+        margin-right: 0.25rem;
     }
 
     .page-footer .nq-button {
