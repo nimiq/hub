@@ -24,13 +24,11 @@
 
             <hr class="blur-target">
 
-            <div class="value nq-light-blue blur-target">
-                {{ transactionValue }}
-                <span class="nim-symbol">NIM</span>
-            </div>
+            <Amount class="value nq-light-blue blur-target"
+                :amount="this.request.value" :minDecimals="2" :maxDecimals="5" />
 
             <div v-if="request.fee" class="fee nq-text-s blur-target">
-                includes {{ transactionFee }} NIM fee
+                + <Amount :amount="this.request.fee" :minDecimals="2" :maxDecimals="5" /> fee
             </div>
 
             <div v-if="transactionData" class="data nq-text blur-target">
@@ -76,6 +74,7 @@ import {
     PageBody,
     PageHeader,
     SmallPage,
+    Amount,
     ArrowLeftSmallIcon,
     ArrowRightIcon,
 } from '@nimiq/vue-components';
@@ -109,6 +108,7 @@ interface AccountDetailsData {
     Loader,
     AccountDetails,
     Network,
+    Amount,
     ArrowLeftSmallIcon,
     ArrowRightIcon,
 }})
@@ -243,14 +243,6 @@ export default class SignTransactionLedger extends Vue {
         }
     }
 
-    private get transactionValue() {
-        return Nimiq.Policy.satoshisToCoins(this.request.value);
-    }
-
-    private get transactionFee() {
-        return Nimiq.Policy.satoshisToCoins(this.request.fee || 0);
-    }
-
     private get transactionData() {
         if (!this.request.data || this.request.data.byteLength === 0) {
             return null;
@@ -312,7 +304,7 @@ export default class SignTransactionLedger extends Vue {
         min-height: 70.5rem;
         position: relative;
         align-items: center;
-        padding: 4rem 4rem 26rem; /* bottom padding for bottom container + additional padding */
+        padding: 3.75rem 4rem 26rem; /* bottom padding for bottom container + additional padding */
         overflow: hidden; /* avoid overflow of blurred elements */
     }
 
@@ -330,8 +322,8 @@ export default class SignTransactionLedger extends Vue {
     .accounts {
         display: flex;
         align-self: stretch;
-        margin-top: 2rem;
-        margin-bottom: 4rem;
+        margin-top: .75rem;
+        margin-bottom: 3.25rem;
     }
 
     .accounts .account {
@@ -365,10 +357,11 @@ export default class SignTransactionLedger extends Vue {
 
     .value {
         font-size: 5rem;
-        margin-top: 3rem;
+        margin-top: 2rem;
     }
 
-    .value .nim-symbol {
+    .value >>> .nim {
+        margin-left: -.25rem;
         font-size: 2.25rem;
         font-weight: 700;
     }
@@ -378,9 +371,9 @@ export default class SignTransactionLedger extends Vue {
     }
 
     .data {
-        margin: .5rem 7rem 0;
+        margin: .25rem 3rem 0;
         opacity: 1;
-        text-align: center;
+        color: var(--nimiq-blue);
     }
 
     .bottom-container {
