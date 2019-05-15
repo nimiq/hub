@@ -1,19 +1,33 @@
 <template>
     <div class="container">
         <SmallPage>
-            <LedgerUi v-show="state === 'ledger-interaction'" @information-shown="_showLedger"></LedgerUi>
-            <Loader v-if="state === 'fetching-accounts' || state === 'finished'"
-                    :state="loaderState" :title="loaderTitle" :status="loaderStatus">
-            </Loader>
-            <IdenticonSelector v-else-if="state === 'identicon-selection'" :accounts="accountsToSelectFrom"
-                               :confirmAccountSelection="false" @identicon-selected="_onAccountSelected">
-            </IdenticonSelector>
-            <div v-else-if="state === 'wallet-summary'" class="wallet-summary">
-                <h1 class="nq-h1">Account Created</h1>
-                <AccountRing :addresses="Array.from(walletInfo.accounts.keys())" animate></AccountRing>
-                <div class="message nq-text">This is your account with your first address in it.</div>
-                <button class="nq-button" @click="done">Finish</button>
-            </div>
+            <LedgerUi v-if="state === constructor.State.LOADING
+                      || state === constructor.State.LEDGER_INTERACTION
+                      || state === constructor.State.FETCHING_ADDRESSES"
+                      @information-shown="_showLedger"></LedgerUi>
+            <transition name="transition-fade">
+                <Loader v-if="state === constructor.State.LOADING
+                        || state === constructor.State.FETCHING_ADDRESSES
+                        || state === constructor.State.FINISHED"
+                        :state="loaderState" :title="loaderTitle" :status="loaderStatus"
+                        :class="{ 'grow-from-bottom-button': state === constructor.State.FINISHED && !hadAccounts }">
+                </Loader>
+            </transition>
+            <transition name="transition-fade">
+                <IdenticonSelector v-if="state === constructor.State.IDENTICON_SELECTION"
+                                   :accounts="accountsToSelectFrom"
+                                   :confirmAccountSelection="false" @identicon-selected="_onAccountSelected">
+                </IdenticonSelector>
+            </transition>
+            <transition name="transition-fade">
+                <div v-if="state === constructor.State.WALLET_SUMMARY
+                    || state === constructor.State.FINISHED && !hadAccounts" class="wallet-summary">
+                    <h1 class="nq-h1">Account Created</h1>
+                    <AccountRing :addresses="Array.from(walletInfo.accounts.keys())" animate></AccountRing>
+                    <div class="message nq-text">This is your account with your first address in it.</div>
+                    <button class="nq-button" @click="done">Finish</button>
+                </div>
+            </transition>
         </SmallPage>
 
         <button class="global-close nq-button-s" @click="close">
@@ -43,9 +57,9 @@ import LabelingMachine from '@/lib/LabelingMachine';
 @Component({components: {PageBody, SmallPage, LedgerUi, Loader, IdenticonSelector, AccountRing, ArrowLeftSmallIcon}})
 export default class SignupLedger extends Vue {
     private static readonly State = {
-        IDLE: 'idle',
+        LOADING: 'loading',
         LEDGER_INTERACTION: 'ledger-interaction', // can be instructions to connect or also display of an error
-        FETCHING_ACCOUNTS: 'fetching-accounts',
+        FETCHING_ADDRESSES: 'fetching-addresses',
         IDENTICON_SELECTION: 'identicon-selection',
         WALLET_SUMMARY: 'wallet-summary',
         FINISHED: 'finished',
@@ -53,7 +67,7 @@ export default class SignupLedger extends Vue {
 
     @Static private request!: ParsedBasicRequest;
 
-    private state: string = SignupLedger.State.IDLE;
+    private state: string = SignupLedger.State.LOADING;
     private walletInfo: WalletInfo | null = null;
     private accountsToSelectFrom: AccountInfo[] = [];
     private hadAccounts: boolean = false;
@@ -65,15 +79,18 @@ export default class SignupLedger extends Vue {
     }
 
     private get loaderTitle() {
-        return this.state !== SignupLedger.State.FINISHED
-            ? 'Fetching Account'
-            : this.hadAccounts
-                ? 'You\'re logged in!'
-                : 'Welcome to the Nimiq Blockchain.';
+        switch (this.state) {
+            case SignupLedger.State.FETCHING_ADDRESSES:
+                return 'Fetching Addresses';
+            case SignupLedger.State.FINISHED:
+                return this.hadAccounts ? 'You\'re logged in!' : 'Welcome to the Nimiq Blockchain.';
+            default:
+                return '';
+        }
     }
 
     private get loaderStatus() {
-        if (this.state !== SignupLedger.State.FETCHING_ACCOUNTS) return '';
+        if (this.state !== SignupLedger.State.FETCHING_ADDRESSES) return '';
         else if (this.failedFetchingAccounts) return 'Failed to fetch account. Retrying...';
         else {
             const count = !this.walletInfo ? 0 : this.walletInfo.accounts.size;
@@ -179,10 +196,10 @@ export default class SignupLedger extends Vue {
         if (currentRequest.type !== LedgerApi.RequestType.DERIVE_ACCOUNTS || currentRequest.cancelled) return;
         if (LedgerApi.currentState.type === LedgerApi.StateType.REQUEST_PROCESSING
             || LedgerApi.currentState.type === LedgerApi.StateType.REQUEST_CANCELLING) {
-            // When we actually fetch the accounts from the device, we already want to show our own Loader instead of
+            // When we actually fetch the accounts from the device, we want to show our own Loader instead of
             // the LedgerUi processing screen to avoid switching back and forth between LedgerUi and Loader during
             // account finding.
-            this.state = SignupLedger.State.FETCHING_ACCOUNTS;
+            this.state = SignupLedger.State.FETCHING_ADDRESSES;
         } else {
             this.state = SignupLedger.State.LEDGER_INTERACTION;
         }
@@ -196,11 +213,29 @@ export default class SignupLedger extends Vue {
 
 <style scoped>
     .small-page {
+        position: relative;
         overflow: hidden;
     }
 
     .small-page > * {
-        flex-grow: 1;
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        transition: opacity .4s;
+    }
+
+    .small-page > :not(.loader) {
+        width: 100%;
+        height: 100%;
+        background: white;
+    }
+
+    .loader >>> .title {
+        min-height: 1em; /* to avoid jumping of the UI when setting a title */
+    }
+
+    .ledger-ui {
+        z-index: 0;
     }
 
     .wallet-summary {
@@ -224,5 +259,10 @@ export default class SignupLedger extends Vue {
         font-size: 2.5rem;
         text-align: center;
         max-width: 35rem;
+    }
+
+    .wallet-summary .nq-button {
+        width: calc(100% - 6rem);
+        margin-bottom: 0;
     }
 </style>

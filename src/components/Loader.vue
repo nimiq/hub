@@ -383,7 +383,6 @@ export default Loader;
 
     .loader .loading-spinner {
         width: 7rem;
-        height: 7rem;
     }
 
     .loader .success .nq-icon {

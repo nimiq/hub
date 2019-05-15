@@ -91,4 +91,9 @@ export default class App extends Vue {
         visibility: hidden;
         pointer-events: none;
     }
+
+    .transition-fade-enter,
+    .transition-fade-leave-to {
+        opacity: 0;
+    }
 </style>

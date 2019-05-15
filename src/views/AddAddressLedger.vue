@@ -1,11 +1,18 @@
 <template>
     <div class="container">
         <SmallPage>
-            <LedgerUi v-if="state === 'ledger-interaction'"></LedgerUi>
-            <IdenticonSelector v-else-if="state === 'identicon-selection'" :accounts="addressesToSelectFrom"
-                               :confirmAccountSelection="false" @identicon-selected="_onAddressSelected">
-            </IdenticonSelector>
-            <Loader v-if="state === 'finished'" state="success" title="Address Added"></Loader>
+            <transition name="transition-fade">
+                <LedgerUi v-if="state === constructor.State.LEDGER_INTERACTION"/>
+            </transition>
+            <transition name="transition-fade">
+                <IdenticonSelector v-if="state === constructor.State.IDENTICON_SELECTION
+                                   || state === constructor.State.FINISHED"
+                                   :accounts="addressesToSelectFrom" @identicon-selected="_onAddressSelected">
+                </IdenticonSelector>
+            </transition>
+            <Loader v-if="state === constructor.State.FINISHED" state="success" title="Address Added"
+                    class="grow-from-bottom-button">
+            </Loader>
         </SmallPage>
 
         <button class="global-close nq-button-s" @click="close">
@@ -100,7 +107,17 @@ export default class AddAddressLedger extends Vue {
 </script>
 
 <style scoped>
+    .small-page {
+        overflow: hidden;
+        position: relative;
+    }
+
     .small-page > * {
-        flex-grow: 1;
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        height: 100%;
+        transition: opacity .4s;
     }
 </style>
