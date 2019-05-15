@@ -115,7 +115,7 @@ import { ContractInfo } from '@/lib/ContractInfo';
 import staticStore, { Static } from '@/lib/StaticStore';
 import { SimpleRequest } from '@/lib/PublicRequestTypes';
 import { State } from 'vuex-class';
-import { RequestType } from '../lib/RequestTypes';
+import { RequestType } from '@/lib/RequestTypes';
 
 type SerializedAccount = {
     path: string;
@@ -139,7 +139,7 @@ export default class Migrate extends Vue {
     private page: 'intro' | 'accounts' | 'migration' = 'intro';
     private backupsAreSafe: boolean = false;
 
-    private title: string = 'Migrating your accounts';
+    private title: string = 'Updating your Accounts';
     private status: string = 'Connecting to Keyguard...';
     private state: Loader.State = Loader.State.LOADING;
     private message: string = '';
@@ -216,12 +216,12 @@ export default class Migrate extends Vue {
     private async doMigration() {
         this.page = 'migration';
 
-        this.status = 'Retrieving your legacy accounts...';
+        this.status = 'Retrieving your old Accounts...';
         const legacyAccounts = await this.$rpc.keyguardClient.listLegacyAccounts();
 
         if (!legacyAccounts.length) {
             this.deleteAccountsCache();
-            this.title = 'Nothing to migrate.';
+            this.title = 'Nothing to update.';
             this.state = Loader.State.SUCCESS;
             setTimeout(() => this.$rpc.resolve([]), Loader.SUCCESS_REDIRECT_DELAY);
             return;
@@ -230,7 +230,7 @@ export default class Migrate extends Vue {
         this.status = 'Detecting vesting contracts...';
         const genesisVestingContracts = await (this.$refs.network as Network).getGenesisVestingContracts();
 
-        this.status = 'Storing your accounts...';
+        this.status = 'Storing your new Accounts...';
         // For the wallet ID derivation to work, the ID derivation and storing of new wallets needs
         // to happen serially, e.g. synchroneous.
         const walletInfos: WalletInfo[] = [];
@@ -259,11 +259,11 @@ export default class Migrate extends Vue {
             walletInfos.push(walletInfo);
         }
 
-        this.status = 'Migrating Keyguard...';
+        this.status = 'Updating Keyguard...';
         await this.$rpc.keyguardClient.migrateAccountsToKeys();
         this.deleteAccountsCache();
 
-        this.title = 'Migration completed.';
+        this.title = 'Accounts updated!';
         this.state = Loader.State.SUCCESS;
         const listResult = walletInfos.map((walletInfo) => walletInfo.toAccountType());
         setTimeout(() => this.$rpc.resolve(listResult), Loader.SUCCESS_REDIRECT_DELAY);
@@ -279,7 +279,7 @@ export default class Migrate extends Vue {
     }
 
     private tryAgain() {
-        this.title = 'Migrating your accounts';
+        this.title = 'Updating your Accounts';
         this.status = 'Connecting to Keyguard...';
         this.state = Loader.State.LOADING;
         setTimeout(() => this.runMigration(), 1000);
