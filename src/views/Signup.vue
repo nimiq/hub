@@ -4,7 +4,8 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import KeyguardClient from '@nimiq/keyguard-client';
+import { State } from 'vuex-class';
+import KeyguardClient, { Errors } from '@nimiq/keyguard-client';
 import { BrowserDetection } from '@nimiq/utils';
 import { ParsedBasicRequest } from '../lib/RequestTypes';
 import { Static } from '../lib/StaticStore';
@@ -15,6 +16,7 @@ import NotEnoughCookieSpace from '../components/NotEnoughCookieSpace.vue';
 @Component({components: {NotEnoughCookieSpace}})
 export default class Signup extends Vue {
     @Static private request!: ParsedBasicRequest;
+    @State private keyguardResult?: Error;
 
     private notEnoughCookieSpace = false;
 
@@ -27,6 +29,9 @@ export default class Signup extends Vue {
         const request: KeyguardClient.CreateRequest = {
             appName: this.request.appName,
             defaultKeyPath: DEFAULT_KEY_PATH,
+            enableBackArrow: (this.keyguardResult && this.keyguardResult.message === Errors.Messages.GOTO_CREATE)
+                ? true
+                : false,
         };
         const client = this.$rpc.createKeyguardClient(true);
         client.create(request);
