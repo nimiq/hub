@@ -21,10 +21,6 @@ export abstract class RequestBehavior<B extends BehaviorType> {
     ): Promise<B extends BehaviorType.REDIRECT ? void : ResultByRequestType<R>> {
         throw new Error('Not implemented');
     }
-
-    public get type(): B {
-        return this._type;
-    }
 }
 
 export enum BehaviorType {
