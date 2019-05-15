@@ -44,6 +44,7 @@ export default class OnboardingSelector extends Vue {
         const request: KeyguardClient.CreateRequest = {
             appName: this.request.appName,
             defaultKeyPath: DEFAULT_KEY_PATH,
+            enableBackArrow: true,
         };
         const client = this.$rpc.createKeyguardClient();
         client.create(request);
@@ -53,6 +54,7 @@ export default class OnboardingSelector extends Vue {
         const request: KeyguardClient.ImportRequest = {
             appName: this.request.appName,
             requestedKeyPaths: [DEFAULT_KEY_PATH],
+            enableBackArrow: true,
         };
         const client = this.$rpc.createKeyguardClient();
         client.import(request);
