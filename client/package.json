@@ -1,6 +1,6 @@
 {
   "name": "@nimiq/hub-api",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "main": "dist/HubApi.umd.js",
   "module": "dist/HubApi.es.js",
   "repository": "https://github.com/nimiq/hub/tree/master/client",
@@ -28,7 +28,7 @@
   "bugs": {
     "url": "https://github.com/nimiq/hub/issues"
   },
-  "homepage": "https://github.com/nimiq/hub/client#readme",
+  "homepage": "https://github.com/nimiq/hub#readme",
   "scripts": {
     "build": "cp ../README.md . && rm -rf dist && tsc && rollup -c",
     "lint": "tslint --project tsconfig.json",
