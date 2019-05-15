@@ -37,7 +37,7 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
                 DUMMY_ADDRESS_HR2,
                 {
                     path: 'm/44\'/242\'/0\'/5\'',
-                    label: 'Divine Jinxing Budgie',
+                    label: 'Divine Wizarding Parakeet',
                     address: DUMMY_ADDRESS_S2,
                 },
             ],
@@ -106,7 +106,7 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
                 DUMMY_ADDRESS_HR1,
                 {
                     path: 'm/44\'/242\'/0\'/0\'',
-                    label: 'Fishy Chirping Fly',
+                    label: 'Marine Chirping Inliner',
                     address: DUMMY_ADDRESS_S1,
                 },
             ],
@@ -134,7 +134,7 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
                 BURN_ADDRESS_HR,
                 {
                     path: 'm/44\'/242\'/0\'/0\'',
-                    label: 'Weird Meat-Eating Sorcerer',
+                    label: 'Inline Meat-Loving Sorcerer',
                     address: BURN_ADDRESS_S,
                 },
             ],
@@ -194,7 +194,7 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
                 DUMMY_ADDRESS_HR2,
                 {
                     path: 'not public',
-                    label: 'Divine Jinxing Budgie',
+                    label: 'Divine Wizarding Parakeet',
                     address: DUMMY_ADDRESS_S2,
                 },
             ],
@@ -263,7 +263,7 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
                 DUMMY_ADDRESS_HR1,
                 {
                     path: 'not public',
-                    label: 'Fishy Chirping Fly',
+                    label: 'Marine Chirping Inliner',
                     address: DUMMY_ADDRESS_S1,
                 },
             ],
@@ -291,7 +291,7 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
                 BURN_ADDRESS_HR,
                 {
                     path: 'not public',
-                    label: 'Weird Meat-Eating Sorcerer',
+                    label: 'Inline Meat-Loving Sorcerer',
                     address: BURN_ADDRESS_S,
                 },
             ],
