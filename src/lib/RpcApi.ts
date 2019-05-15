@@ -178,6 +178,7 @@ export default class RpcApi {
                             this._staticStore.originalRouteName = requestType;
                         }
                         this.routerReplace(RequestType.MIGRATE);
+                        this._startRoute();
                         return;
                     }
                 }
