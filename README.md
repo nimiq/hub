@@ -63,7 +63,7 @@ const HubApi = require('@nimiq/hub-api');
 ### Initialization
 
 To start the client, just instantiate the class by passing it the URL of the
-**Hub** to connect to:
+**Nimiq Hub** to connect to:
 
 ```javascript
 // Connect to testnet
