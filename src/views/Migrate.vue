@@ -60,11 +60,10 @@
                     <button
                         class="nq-button-s"
                         :class="{'green': account.isBackedUp}"
-                        @click="startBackupForAddress(account.userFriendlyAddress)">
+                        @click="startExportForAddress(account.userFriendlyAddress)">
                         <svg v-if="account.isBackedUp" width="12" height="11" viewBox="0 0 12 11" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M10.5 1.9l-5.8 8-3-3.1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
-
                         {{account.isBackedUp ? 'Backed Up' : 'Back Up'}}
                     </button>
                 </div>
@@ -193,8 +192,7 @@ export default class Migrate extends Vue {
         this.storeAccountsCache();
     }
 
-    private startBackupForAddress(address: string) {
-        // Start export request for this address
+    private startExportForAddress(address: string) {
         const request: KeyguardClient.ExportRequest = {
             appName: this.request.appName,
             keyId: address,
@@ -236,8 +234,8 @@ export default class Migrate extends Vue {
         // For the wallet ID derivation to work, the ID derivation and storing of new wallets needs
         // to happen serially, e.g. synchroneous.
         const walletInfos: WalletInfo[] = [];
-        for (const account of legacyAccounts) {
-            const accountInfo = this.legacyKeyInfoObject2AccountInfo(account);
+        for (const keyInfo of legacyAccounts) {
+            const accountInfo = this.legacyKeyInfoObject2AccountInfo(keyInfo);
             const accounts = new Map<string, AccountInfo>([
                 [accountInfo.userFriendlyAddress, accountInfo],
             ]);
@@ -245,12 +243,15 @@ export default class Migrate extends Vue {
             const contracts = genesisVestingContracts.filter((contract) => contract.owner.equals(accountInfo.address));
 
             const walletInfo = new WalletInfo(
-                await WalletStore.deriveId(account.id),
-                account.id,
+                await WalletStore.deriveId(keyInfo.id),
+                keyInfo.id,
                 ACCOUNT_DEFAULT_LABEL_LEGACY,
                 accounts,
                 contracts,
                 WalletType.LEGACY,
+                /* keyMissing */ false,
+                /* fileExported */ false,
+                /* wordsExported */ true,
             );
 
             await WalletStore.Instance.put(walletInfo);
