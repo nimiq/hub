@@ -222,13 +222,17 @@ export default class Migrate extends Vue {
         const legacyAccounts = await this.$rpc.keyguardClient.listLegacyAccounts();
 
         if (!legacyAccounts.length) {
-            throw new Error('Could not get legacy accounts from Keyguard');
+            this.deleteAccountsCache();
+            this.title = 'Nothing to migrate.';
+            this.state = Loader.State.SUCCESS;
+            setTimeout(() => this.$rpc.resolve([]), Loader.SUCCESS_REDIRECT_DELAY);
+            return;
         }
 
         this.status = 'Detecting vesting contracts...';
         const genesisVestingContracts = await (this.$refs.network as Network).getGenesisVestingContracts();
 
-        this.status = 'Storing your new accounts...';
+        this.status = 'Storing your accounts...';
         // For the wallet ID derivation to work, the ID derivation and storing of new wallets needs
         // to happen serially, e.g. synchroneous.
         const walletInfos: WalletInfo[] = [];
@@ -256,6 +260,7 @@ export default class Migrate extends Vue {
 
         this.status = 'Migrating Keyguard...';
         await this.$rpc.keyguardClient.migrateAccountsToKeys();
+        this.deleteAccountsCache();
 
         this.title = 'Migration completed.';
         this.state = Loader.State.SUCCESS;
@@ -317,6 +322,10 @@ export default class Migrate extends Vue {
         const storedAccounts = window.localStorage.getItem(this.LOCALSTORAGE_ACCOUNTS_KEY);
         if (!storedAccounts) throw new Error('No accounts cached');
         return this.deserializeAccounts(storedAccounts);
+    }
+
+    private deleteAccountsCache() {
+        window.localStorage.removeItem(this.LOCALSTORAGE_ACCOUNTS_KEY);
     }
 }
 </script>
