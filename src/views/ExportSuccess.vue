@@ -17,36 +17,39 @@ import { SmallPage, CheckmarkIcon } from '@nimiq/vue-components';
 import { ParsedSimpleRequest, RequestType } from '../lib/RequestTypes';
 import { ExportResult } from '../lib/PublicRequestTypes';
 import { State } from 'vuex-class';
-import { Static } from '@/lib/StaticStore';
+import staticStore, { Static } from '@/lib/StaticStore';
 import Loader from '@/components/Loader.vue';
-import { WalletInfo } from '@/lib/WalletInfo';
 import { WalletStore } from '@/lib/WalletStore';
 import KeyguardClient from '@nimiq/keyguard-client';
 
 @Component({components: {SmallPage, Loader, CheckmarkIcon}})
 export default class ExportSuccess extends Vue {
     @Static private request!: ParsedSimpleRequest;
-    @Static private originalRouteName?: string;
     @State private keyguardResult!: KeyguardClient.ExportResult;
 
     private loaderState = Loader.State.LOADING;
     private successMessage = '';
 
     private async mounted() {
-        if (this.originalRouteName || this.request.kind === RequestType.MIGRATE) {
-            this.$rpc.routerReplace(RequestType.MIGRATE);
-            return;
+        let result: ExportResult;
+
+        // When doing pre-migration exports, or the request is MIGRATE, no wallet will be found.
+        const wallet = this.request.walletId ? await WalletStore.Instance.get(this.request.walletId) : null;
+
+        if (wallet) {
+            wallet.fileExported = wallet.fileExported || this.keyguardResult.fileExported;
+            wallet.wordsExported = wallet.wordsExported || this.keyguardResult.wordsExported;
+
+            result = {
+                fileExported: wallet.fileExported,
+                wordsExported: wallet.wordsExported,
+            };
+        } else {
+            result = {
+                fileExported: this.keyguardResult.fileExported,
+                wordsExported: this.keyguardResult.wordsExported,
+            };
         }
-
-        const wallet = (await WalletStore.Instance.get(this.request.walletId))!;
-
-        wallet.fileExported = wallet.fileExported || this.keyguardResult.fileExported;
-        wallet.wordsExported = wallet.wordsExported || this.keyguardResult.wordsExported;
-
-        const result: ExportResult = {
-            fileExported: wallet.fileExported,
-            wordsExported: wallet.wordsExported,
-        };
 
         if (this.keyguardResult.fileExported) {
             if (this.keyguardResult.wordsExported) {
@@ -61,10 +64,28 @@ export default class ExportSuccess extends Vue {
             return;
         }
 
-        await WalletStore.Instance.put(wallet);
+        if (wallet) {
+            await WalletStore.Instance.put(wallet);
+        }
 
         this.loaderState = Loader.State.SUCCESS;
-        setTimeout(() => this.$rpc.resolve(result), Loader.SUCCESS_REDIRECT_DELAY);
+
+        if (wallet) {
+            setTimeout(() => this.$rpc.resolve(result), Loader.SUCCESS_REDIRECT_DELAY);
+        } else {
+            // This was a pre-migration legacy account export
+
+            // We need to hijack the routing here, so that we do not go through RpcApi's reply method.
+            // Going through that method would redirect the user to the originalRouteName, but it would
+            // not go through the registered AccountsApis, thus not checking the need to migrate,
+            // and thus not setting the originalRouteName again, thus losing the type of the original request.
+            // We want the RpcApi's reply method to only be invoked when migration is finished.
+
+            // Recreate original URL with original query parameters
+            const query = { id: staticStore.rpcState!.id.toString() };
+            setTimeout(
+                () => this.$router.push({ name: RequestType.MIGRATE, query }), Loader.SUCCESS_REDIRECT_DELAY);
+        }
     }
 }
 </script>
