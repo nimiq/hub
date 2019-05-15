@@ -64,7 +64,7 @@ export default class SignupSuccess extends Vue {
 
         this.state = Loader.State.SUCCESS;
 
-        const result: Account = {
+        const result: Account[] = [{
             accountId: walletInfo.id,
             label: walletInfo.label,
             type: walletInfo.type,
@@ -75,7 +75,7 @@ export default class SignupSuccess extends Vue {
                 label: accountInfo.label,
             }],
             contracts: [], // A newly created account cannot have any contracts
-        };
+        }];
 
         setTimeout(() => this.$rpc.resolve(result), Loader.SUCCESS_REDIRECT_DELAY);
     }

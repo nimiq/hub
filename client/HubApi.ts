@@ -74,11 +74,11 @@ export default class HubApi {
         );
     }
 
-    public onboard(request: BasicRequest, requestBehavior = this._defaultBehavior): Promise<Account> {
+    public onboard(request: BasicRequest, requestBehavior = this._defaultBehavior): Promise<Account[]> {
         return this._request(requestBehavior, RequestType.ONBOARD, [request]);
     }
 
-    public signup(request: BasicRequest, requestBehavior = this._defaultBehavior): Promise<Account> {
+    public signup(request: BasicRequest, requestBehavior = this._defaultBehavior): Promise<Account[]> {
         return this._request(requestBehavior, RequestType.SIGNUP, [request]);
     }
 

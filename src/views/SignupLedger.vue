@@ -171,7 +171,7 @@ export default class SignupLedger extends Vue {
     private async done() {
         this.state = SignupLedger.State.FINISHED;
         setTimeout(() => {
-            const result: Account = {
+            const result: Account[] = [{
                 accountId: this.walletInfo!.id,
                 label: this.walletInfo!.label,
                 type: this.walletInfo!.type,
@@ -180,7 +180,7 @@ export default class SignupLedger extends Vue {
                 addresses: Array.from(this.walletInfo!.accounts.values())
                     .map((accountInfo) => accountInfo.toAddressType()),
                 contracts: this.walletInfo!.contracts.map((contract) => contract.toContractType()),
-            };
+            }];
             this.$rpc.resolve(result);
         }, Loader.SUCCESS_REDIRECT_DELAY);
     }
