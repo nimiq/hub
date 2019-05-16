@@ -38,7 +38,7 @@
                 </a>
             </PageBody>
 
-            <PageFooter>
+            <PageFooter key="intro-footer">
                 <button class="nq-button light-blue" @click="page = 'accounts'">Prepare for update</button>
             </PageFooter>
         </SmallPage>
@@ -69,7 +69,7 @@
                 </div>
             </PageBody>
 
-            <PageFooter>
+            <PageFooter key="accounts-footer">
                 <transition name="transition-fade" mode="out-in">
                     <div v-if="!backupsAreSafe" class="nq-light-blue-bg check-box">
                         <label>
@@ -561,26 +561,5 @@ export default class Migrate extends Vue {
     .transition-fade-enter,
     .transition-fade-leave-to {
         opacity: 0;
-    }
-
-    /*
-    Because Vue does virtual-DOM diffing, pages are not replaced as complete components but rather
-    parts of the pages are replaced, e.g. the footer content (while the footer element itself
-    stays the same).
-
-    This has a negative visual effect on the check-box, because it has a transition applied
-    which fades it out when it is de-rendered. Because of the DOM-diffing instead of full element
-    replacing, the check-box is rendered fading-out next to the intro page's "Prepare for update"
-    button when clicking on the back arrow.
-
-    These styles here prevent that from happening by force-hiding them.
-
-    If you know a better method to force Vue to throw out an element instead of fading it out,
-    please make yourself known.
-    */
-    .intro .check-box,
-    .intro .activate {
-        display: none;
-        transition: none;
     }
 </style>
