@@ -69,7 +69,7 @@ export default class AddAddressLedger extends Vue {
             pathsToDerive.push(LedgerApi.getBip32PathForKeyId(keyId));
         }
 
-        const derivedAddressInfos = await LedgerApi.deriveAccounts(pathsToDerive, this.request.walletId);
+        const derivedAddressInfos = await LedgerApi.deriveAccounts(pathsToDerive, this.account.keyId);
         this.addressesToSelectFrom = derivedAddressInfos.map((addressInfo) => new AccountInfo(
             addressInfo.keyPath,
             LabelingMachine.labelAddress(addressInfo.address),

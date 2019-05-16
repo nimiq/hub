@@ -25,6 +25,7 @@ export class WalletStore {
         // Could not find an available wallet ID in the searched space.
 
         // Hash keyId and recurse
+        await Nimiq.WasmHelper.doImportBrowser();
         const hashedKeyIdBytes = Nimiq.Hash.computeSha256(keyIdBytes);
         return WalletStore.deriveId(Nimiq.BufferUtils.toBase64(hashedKeyIdBytes));
     }
