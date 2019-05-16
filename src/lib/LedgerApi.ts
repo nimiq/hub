@@ -58,7 +58,10 @@
 // - ledger already handling another request (from another tab)
 
 // tslint:disable-next-line:max-line-length
-// TODO: change implementation to be flow typed, integrate into ledger-api repository and bundle with ledger provided flow libraries directly. LedgerJs:any type is just a temporary workaround
+// TODO: move to own repository:
+// - change implementation to be flow typed and integrate with ledger provided flow libraries directly.
+// - Also, the verification and address computation in ledgerjs should be done by Nimiq's crypto methods instead of
+//   unnecessarily bundling tweetnacl and blakejs.
 import Observable = Nimiq.Observable;
 
 type LedgerJs = any;
@@ -142,13 +145,13 @@ class LedgerApi {
     }
 
     /**
-     * Get the walletId of the currently connected ledger.
+     * Get the 32 byte walletId of the currently connected ledger as base64.
      * If no ledger is connected, it waits for one to be connected.
      * Throws, if the request is cancelled.
      *
      * If currently a request to the ledger is in process, this call does not require an additional
      * request to the Ledger. Thus, if you want to know the walletId in conjunction with another
-     * request, try to call this method (after initiating the other request but before it finishes).
+     * request, try to call this method after initiating the other request but before it finishes.
      */
     public static async getWalletId(): Promise<string> {
         if (LedgerApi._currentlyConnectedWalletId) return LedgerApi._currentlyConnectedWalletId;
@@ -325,11 +328,7 @@ class LedgerApi {
         }
 
         // prepare tx outside of request to avoid that an error would result in an endless loop in _callLedger
-        const [signerPubKeyBytes] = await Promise.all([
-            LedgerApi.getPublicKey(keyPath, walletId),
-            Nimiq.WasmHelper.doImportBrowser() // wasm needed for toAddress (also in BasicTransaction constructor)
-                .catch((e) => LedgerApi._throwError(LedgerApi.ErrorType.FAILED_LOADING_DEPENDENCIES, e)),
-        ]);
+        const signerPubKeyBytes = await LedgerApi.getPublicKey(keyPath, walletId);
         const signerPubKey = new Nimiq.PublicKey(signerPubKeyBytes);
 
         const senderType = transaction.senderType !== undefined && transaction.senderType !== null
@@ -474,7 +473,7 @@ class LedgerApi {
         // Resolves when connected to unlocked ledger with open Nimiq app otherwise throws an exception after timeout.
         // If the Ledger is already connected and the library already loaded, the call typically takes < 500ms.
         try {
-            const api = await LedgerApi._getApi();
+            const api = await LedgerApi._loadApi();
             LedgerApi._setState(LedgerApi.StateType.CONNECTING);
             // To check whether the connection to Nimiq app is established and to calculate the walletId. This can also
             // unfreeze the ledger app, see notes at top. Using getPublicKey and not getAppConfiguration, as other apps
@@ -483,12 +482,7 @@ class LedgerApi {
                 await api.getPublicKey(LedgerApi.getBip32PathForKeyId(0), /*validate*/ false, /*display*/ false);
             const version = (await api.getAppConfiguration()).version;
             if (!LedgerApi._isAppVersionSupported(version)) throw new Error('Ledger Nimiq App is outdated.');
-            // TODO might want to hash the walletId. However this requires loading the Nimiq wasm for the hash
-            // computation. For sign transaction that doesn't matter as this call requires the wasm anyways but the
-            // other calls don't need it currently. However the verification and address computation in ledgerjs should
-            // be done by Nimiq's crypto methods anyways instead of loading tweetnacl and blakejs. Then, all calls
-            // would need the Nimiq wasm and we could enable walletId hashing here.
-            LedgerApi._currentlyConnectedWalletId = Nimiq.BufferUtils.toHex(firstAccountPubKeyBytes.subarray(0, 6));
+            LedgerApi._currentlyConnectedWalletId = Nimiq.Hash.blake2b(firstAccountPubKeyBytes).toBase64();
             if (walletId !== undefined && LedgerApi._currentlyConnectedWalletId !== walletId) {
                 throw new Error('Wrong Ledger connected');
             }
@@ -517,8 +511,8 @@ class LedgerApi {
         }
     }
 
-    private static async _getApi(): Promise<LedgerJs> {
-        // TODO: Lazy loading
+    private static async _loadApi(): Promise<LedgerJs> {
+        // TODO: Lazy loading of Ledger Api
         LedgerApi._apiPromise = LedgerApi._apiPromise
             || (async () => {
                 LedgerApi._setState(LedgerApi.StateType.LOADING);
@@ -528,7 +522,14 @@ class LedgerApi {
                 LedgerApi._apiPromise = null;
                 throw e;
             });
-        return LedgerApi._apiPromise;
+        const [api] = await Promise.all([
+            LedgerApi._apiPromise,
+            // needed for walletId hashing and address derivation from public key in SignatureProof and BasicTransaction
+            Nimiq.WasmHelper.doImportBrowser(),
+        ]).catch((e) => {
+            throw new Error(`Failed loading dependencies: ${e.message || e}`);
+        });
+        return api;
     }
 
     private static _isAppVersionSupported(versionString: string): boolean {

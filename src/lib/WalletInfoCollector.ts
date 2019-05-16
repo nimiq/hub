@@ -39,8 +39,8 @@ export default class WalletInfoCollector {
         onUpdate: (walletInfo: WalletInfo, currentlyCheckedAccounts: BasicAccountInfo[]) => void = () => {},
         skipActivityCheck = false,
     ): Promise<WalletCollectionResultKeyguard> {
-        return WalletInfoCollector._collectLedgerOrBip39WalletInfo(WalletType.BIP39, keyId, initialAccounts, onUpdate,
-            skipActivityCheck) as Promise<WalletCollectionResultKeyguard>;
+        return WalletInfoCollector._collectLedgerOrBip39WalletInfo(WalletType.BIP39, initialAccounts, onUpdate,
+            skipActivityCheck, keyId) as Promise<WalletCollectionResultKeyguard>;
     }
 
     public static async collectLedgerWalletInfo(
@@ -49,7 +49,7 @@ export default class WalletInfoCollector {
         onUpdate: (walletInfo: WalletInfo, currentlyCheckedAccounts: BasicAccountInfo[]) => void = () => {},
         skipActivityCheck = false,
     ): Promise<WalletCollectionResultLedger> {
-        return WalletInfoCollector._collectLedgerOrBip39WalletInfo(WalletType.LEDGER, '', initialAccounts, onUpdate,
+        return WalletInfoCollector._collectLedgerOrBip39WalletInfo(WalletType.LEDGER, initialAccounts, onUpdate,
             skipActivityCheck);
     }
 
@@ -107,11 +107,11 @@ export default class WalletInfoCollector {
 
     private static async _collectLedgerOrBip39WalletInfo(
         walletType: WalletType,
-        keyId: string,
         initialAccounts: BasicAccountInfo[] = [],
         // tslint:disable-next-line:no-empty
-        onUpdate: (walletInfo: WalletInfo, currentlyCheckedAccounts: BasicAccountInfo[]) => void = () => {},
-        skipActivityCheck = false,
+        onUpdate: (walletInfo: WalletInfo, currentlyCheckedAccounts: BasicAccountInfo[]) => void,
+        skipActivityCheck: boolean,
+        keyId?: string,
     ): Promise<WalletCollectionResultKeyguard | WalletCollectionResultLedger> {
         if (walletType !== WalletType.LEDGER && walletType !== WalletType.BIP39) {
             throw new Error('Unsupported wallet type');
@@ -125,9 +125,15 @@ export default class WalletInfoCollector {
         let derivedAccountsPromise = WalletInfoCollector._deriveAccounts(startIndex,
             ACCOUNT_MAX_ALLOWED_ADDRESS_GAP, walletType, keyId);
 
+        // For ledger retrieve the keyId from the connected Ledger.
+        // Doing this after starting deriveAccounts, as the call is cheaper then.
+        if (walletType === WalletType.LEDGER) {
+            keyId = await LedgerApi.getWalletId();
+        }
+
         // Get or create the walletInfo instance and derive the first set of derived accounts
         const [walletInfo, firstSetOfDerivedAccounts] = await Promise.all([
-            WalletInfoCollector._getWalletInfoInstance(walletType, keyId),
+            WalletInfoCollector._getWalletInfoInstance(walletType, keyId!),
             derivedAccountsPromise,
         ]);
 
@@ -223,7 +229,7 @@ export default class WalletInfoCollector {
         }
 
         const releaseKey = walletType === WalletType.BIP39
-            ? (removeKey?: boolean) => WalletInfoCollector._keyguardClient!.releaseKey(keyId, removeKey)
+            ? (removeKey?: boolean) => WalletInfoCollector._keyguardClient!.releaseKey(keyId!, removeKey)
             : null;
 
         return {
@@ -249,13 +255,7 @@ export default class WalletInfoCollector {
     }
 
     private static async _getWalletInfoInstance(walletType: WalletType, keyId: string): Promise<WalletInfo> {
-        let walletId: string;
-        if (walletType === WalletType.LEDGER) {
-            // for Ledger, we retrieve the walletId from the currently connected ledger
-            walletId = await LedgerApi.getWalletId();
-        } else {
-            walletId = await WalletStore.deriveId(keyId);
-        }
+        const walletId = await WalletStore.deriveId(keyId);
 
         const existingWalletInfo = await WalletStore.Instance.get(walletId);
         if (existingWalletInfo) {

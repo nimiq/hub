@@ -208,7 +208,7 @@ export default class SignTransactionLedger extends Vue {
                 network: Config.network,
                 extraData: this.request.data,
                 flags: this.request.flags,
-            }, signer.path, senderAccount.id);
+            }, signer.path, senderAccount.keyId);
         } catch (e) {
             // If cancelled, handle the exception. Otherwise just keep the error message displayed in ledger ui.
             if (e.message.toLowerCase().indexOf('cancelled') !== -1) {
