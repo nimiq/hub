@@ -1,6 +1,6 @@
 {
   "name": "@nimiq/hub-api",
-  "version": "0.4.2",
+  "version": "0.5.0",
   "main": "dist/HubApi.umd.js",
   "module": "dist/HubApi.es.js",
   "repository": "https://github.com/nimiq/hub/tree/master/client",
@@ -11,10 +11,10 @@
     "@nimiq/rpc": "^0.3.0"
   },
   "devDependencies": {
-    "rollup": "^0.66.1",
-    "rollup-plugin-node-resolve": "^3.4.0",
-    "rollup-plugin-terser": "^3.0.0",
-    "tslint": "^5.11.0",
+    "rollup": "^1.12.1",
+    "rollup-plugin-node-resolve": "^5.0.0",
+    "rollup-plugin-terser": "^4.0.4",
+    "tslint": "^5.16.0",
     "typescript": "^3.4.5"
   },
   "files": [
