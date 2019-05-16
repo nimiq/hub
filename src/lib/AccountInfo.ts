@@ -20,6 +20,7 @@ export class AccountInfo {
     }
 
     public walletId?: string;
+    public isBackedUp?: boolean; /* Used for pre-migration  */
 
     public constructor(
         public path: string,
