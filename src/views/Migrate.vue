@@ -14,12 +14,12 @@
                     <div class="topic-visual account-ring">
                         <AccountRing :addresses="['NQ18 37VM K2Y5 2HPY 5U80 2E0U VHUJ R7RK QSNE', 'NQ81 K7NT 9TJA BXE8 5D0R 3FN4 QJK0 YVYQ YD9A', 'NQ90 277A GR05 F775 AVFK 61RP CS7Y R7JA KGCT']"/>
                     </div>
-                    <p class="topic-copy">
+                    <p class="topic-text">
                         One Account can now have multiple Addresses.
                     </p>
                 </div>
                 <div class="topic">
-                    <p class="topic-copy">
+                    <p class="topic-text">
                         Nimiq implements the ImageWallet standard with the Nimiq Login File.
                     </p>
                     <div class="topic-visual login-file">
@@ -28,13 +28,13 @@
                 </div>
                 <div class="topic">
                     <div class="topic-visual qr-code"><ScanQrCodeIcon/></div>
-                    <p class="topic-copy">
+                    <p class="topic-text">
                         Create and scan QR codes to quickly share Addresses.
                     </p>
                 </div>
 
                 <a href="https://medium.com/nimiq-network" target="_blank" class="nq-link link-read-article">
-                    ...and much more. Read the full article <ArrowRightSmallIcon/>
+                    There's much more. Read the full article <ArrowRightSmallIcon/>
                 </a>
             </PageBody>
 
@@ -356,13 +356,13 @@ export default class Migrate extends Vue {
         margin-right: 3rem;
     }
 
-    .topic-copy {
+    .topic-text {
         margin: 0;
         font-size: 2rem;
         line-height: 1.3;
     }
 
-    .topic-copy + .topic-visual {
+    .topic-text + .topic-visual {
         margin-right: 0;
         margin-left: 2rem; /* Less than the right margin, to fit in Firefox */
     }

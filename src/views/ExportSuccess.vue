@@ -82,7 +82,7 @@ export default class ExportSuccess extends Vue {
             // We want the RpcApi's reply method to only be invoked when migration is finished.
 
             // Recreate original URL with original query parameters
-            const query = { id: staticStore.rpcState!.id.toString() };
+            const query = { rpcId: staticStore.rpcState!.id.toString() };
             setTimeout(
                 () => this.$router.push({ name: RequestType.MIGRATE, query }), Loader.SUCCESS_REDIRECT_DELAY);
         }
