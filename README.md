@@ -345,10 +345,10 @@ const requestOptions = {
 };
 
 // All client requests are async and return a promise
-const account = await hubApi.signup(requestOptions);
+const accounts = await hubApi.signup(requestOptions);
 ```
 
-The `signup()` method returns a promise which resolves to an `Account`:
+The `signup()` method returns a promise which resolves to an array of `Account`s:
 
 ```javascript
 interface Account {
@@ -384,11 +384,11 @@ const requestOptions = {
 };
 
 // All client requests are async and return a promise
-const account = await hubApi.login(requestOptions);
+const accounts = await hubApi.login(requestOptions);
 ```
 
-The `login()` method returns a promise which resolves to an `Account`. Please see
-the result type for [`signup()`](#signup) for details.
+The `login()` method returns a promise which resolves to an array of `Account`s.
+Please see the result type for [`signup()`](#signup) for details.
 
 #### Onboard
 
@@ -403,11 +403,12 @@ const requestOptions = {
 };
 
 // All client requests are async and return a promise
-const account = await hubApi.onboard(requestOptions);
+const accounts = await hubApi.onboard(requestOptions);
 ```
 
 Since `onboard()` is a wrapper around Signup, Login and Ledger, it also returns an
-`Account` result type. Please see the result type for [`signup()`](#signup) for details.
+`Account[]` result type. Please see the result type for [`signup()`](#signup) for
+details.
 
 #### Logout
 
@@ -698,7 +699,7 @@ To get started with working on the source code, pull the code and install the de
 
 ```bash
 git clone https://github.com/nimiq/hub.git
-cd hub 
+cd hub
 yarn
 ```
 
