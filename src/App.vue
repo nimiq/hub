@@ -5,7 +5,7 @@
             <span class="logo-wordmark">Nimiq</span>
             <span class="logo-subtitle"></span>
         </header>
-        <div v-if="!isLoaded" class="loading">
+        <div v-if="!isLoaded || $root.loading" class="loading">
             <LoadingSpinner/>
         </div>
         <router-view v-else/>
