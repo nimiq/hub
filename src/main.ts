@@ -40,18 +40,20 @@ if (window.location.origin === 'https://hub.nimiq-testnet.com') {
 }
 
 const app = new Vue({
-  data: { loading: false },
+  data: { loading: true },
   router,
   store,
   render: (h) => h(App),
 }).$mount('#app');
 
+let _loadingTimeout: number = 0;
 router.beforeEach((to, from, next) => {
-  app.loading = true;
+   // Only show loader when lazy-loading takes longer than 500ms
+  _loadingTimeout = window.setTimeout(() => app.loading = true, 500);
   next();
 });
-
 router.afterEach(() => {
+  window.clearTimeout(_loadingTimeout);
   app.loading = false;
 });
 
