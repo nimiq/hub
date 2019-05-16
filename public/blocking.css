@@ -39,21 +39,6 @@ body {
     padding-bottom: 9.5rem; /* height of header */
 }
 
-.loading-animation {
-    height: 10rem;
-    width: 10rem;
-}
-
-.loading-animation + h2 {
-    margin-top: 4rem;
-    padding-bottom: 8rem;
-    text-transform: uppercase;
-    font-size: 1.75rem;
-    font-weight: 600;
-    line-height: 0.86;
-    letter-spacing: 0.143em;
-}
-
 #app > header {
     box-sizing: content-box;
     width: calc(100% - 2 * 2rem); /* minus padding */
