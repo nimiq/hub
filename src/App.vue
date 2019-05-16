@@ -38,12 +38,6 @@ export default class App extends Vue {
 </script>
 
 <style>
-    @media (max-width: 450px) {
-        html {
-            --nimiq-size: 7px; /* For @nimiq/vue-components */
-        }
-    }
-
     #app > .container {
         display: flex;
         flex-direction: column;
@@ -95,5 +89,27 @@ export default class App extends Vue {
     .transition-fade-enter,
     .transition-fade-leave-to {
         opacity: 0;
+    }
+
+    /* Mobile Layout */
+
+    @media (max-width: 450px) {
+        #app > .container {
+            margin-bottom: 0 !important;
+            justify-content: flex-end;
+        }
+
+        .global-close {
+            position: absolute;
+            right: 1rem;
+            top: 2.5rem;
+            margin: 0;
+        }
+
+        .nq-card {
+            margin: 0;
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+        }
     }
 </style>

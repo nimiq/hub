@@ -139,6 +139,24 @@ body {
     }
 }
 
+/* Mobile Layout */
+
+@media (max-width: 450px) {
+    html {
+        font-size: 7px;
+    }
+
+    #app {
+        width: 100%;
+        padding: 0;
+        justify-content: space-between;
+    }
+
+    #app > header {
+        padding: 2rem;
+    }
+}
+
 /*
  * Style copied from https://fonts.googleapis.com/css?family=Muli:400,600,700
  * But manually added woff fallback files.
