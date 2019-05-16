@@ -81,14 +81,14 @@ export default class HubApi<DB extends BehaviorType = BehaviorType.POPUP> { // D
     public onboard<B extends BehaviorType = DB>(
         request: BasicRequest,
         requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
-    ): Promise<B extends BehaviorType.REDIRECT ? void : Account> {
+    ): Promise<B extends BehaviorType.REDIRECT ? void : Account[]> {
         return this._request(requestBehavior, RequestType.ONBOARD, [request]);
     }
 
     public signup<B extends BehaviorType = DB>(
         request: BasicRequest,
         requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
-    ): Promise<B extends BehaviorType.REDIRECT ? void : Account> {
+    ): Promise<B extends BehaviorType.REDIRECT ? void : Account[]> {
         return this._request(requestBehavior, RequestType.SIGNUP, [request]);
     }
 
