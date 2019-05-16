@@ -1,34 +1,35 @@
 import { RequestType } from '../src/lib/RequestTypes';
 import { PostMessageRpcClient, RedirectRpcClient } from '@nimiq/rpc';
+import { ResultByRequestType } from '../src/lib/PublicRequestTypes';
 
-export class RequestBehavior {
+export abstract class RequestBehavior<B extends BehaviorType> {
     public static getAllowedOrigin(endpoint: string) {
         const url = new URL(endpoint);
         return url.origin;
     }
 
-    private readonly _type: BehaviorType;
+    private readonly _type: B;
 
-    constructor(type: BehaviorType) {
+    constructor(type: B) {
         this._type = type;
     }
 
-    public async request(endpoint: string, command: RequestType, args: any[]): Promise<any> {
+    public async request<R extends RequestType>(
+        endpoint: string,
+        command: R,
+        args: any[],
+    ): Promise<B extends BehaviorType.REDIRECT ? void : ResultByRequestType<R>> {
         throw new Error('Not implemented');
-    }
-
-    public get type() {
-        return this._type;
     }
 }
 
-enum BehaviorType {
+export enum BehaviorType {
     REDIRECT,
     POPUP,
     IFRAME,
 }
 
-export class RedirectRequestBehavior extends RequestBehavior {
+export class RedirectRequestBehavior extends RequestBehavior<BehaviorType.REDIRECT> {
     public static withLocalState(localState: any) {
         return new RedirectRequestBehavior(undefined, localState);
     }
@@ -48,7 +49,11 @@ export class RedirectRequestBehavior extends RequestBehavior {
         }
     }
 
-    public async request(endpoint: string, command: RequestType, args: any[]): Promise<any> {
+    public async request<R extends RequestType>(
+        endpoint: string,
+        command: R,
+        args: any[],
+    ): Promise<void> {
         const origin = RequestBehavior.getAllowedOrigin(endpoint);
 
         const client = new RedirectRpcClient(endpoint, origin);
@@ -59,7 +64,7 @@ export class RedirectRequestBehavior extends RequestBehavior {
     }
 }
 
-export class PopupRequestBehavior extends RequestBehavior {
+export class PopupRequestBehavior extends RequestBehavior<BehaviorType.POPUP> {
     private static DEFAULT_OPTIONS: string = '';
     private _options: string;
 
@@ -68,7 +73,11 @@ export class PopupRequestBehavior extends RequestBehavior {
         this._options = options;
     }
 
-    public async request(endpoint: string, command: RequestType, args: any[]): Promise<any> {
+    public async request<R extends RequestType>(
+        endpoint: string,
+        command: R,
+        args: any[],
+    ): Promise<ResultByRequestType<R>> {
         const origin = RequestBehavior.getAllowedOrigin(endpoint);
 
         const popup = this.createPopup(endpoint);
@@ -94,7 +103,7 @@ export class PopupRequestBehavior extends RequestBehavior {
     }
 }
 
-export class IFrameRequestBehavior extends RequestBehavior {
+export class IFrameRequestBehavior extends RequestBehavior<BehaviorType.IFRAME> {
     private static IFRAME_PATH_SUFFIX = '/iframe.html';
 
     private _iframe: HTMLIFrameElement | null;
@@ -106,7 +115,11 @@ export class IFrameRequestBehavior extends RequestBehavior {
         this._client = null;
     }
 
-    public async request(endpoint: string, command: RequestType, args: any[]): Promise<any> {
+    public async request<R extends RequestType>(
+        endpoint: string,
+        command: R,
+        args: any[],
+    ): Promise<ResultByRequestType<R>> {
         if (this._iframe && this._iframe.src !== `${endpoint}${IFrameRequestBehavior.IFRAME_PATH_SUFFIX}`) {
             throw new Error('Hub iframe is already opened with another endpoint');
         }

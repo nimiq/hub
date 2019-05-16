@@ -1,4 +1,5 @@
-import { WalletType, WalletInfoEntry } from './WalletInfo';
+import { WalletType } from './WalletInfo';
+import { RequestType } from './RequestTypes';
 
 export interface BasicRequest {
     appName: string;
@@ -139,3 +140,13 @@ export type RpcResult = SignedTransaction
                       | Address
                       | SignedMessage
                       | ExportResult;
+
+export type ResultByRequestType<T> =
+    T extends RequestType.RENAME ? Account :
+    T extends RequestType.ONBOARD | RequestType.SIGNUP | RequestType.LOGIN
+            | RequestType.MIGRATE | RequestType.LIST ? Account[] :
+    T extends RequestType.CHOOSE_ADDRESS | RequestType.ADD_ADDRESS ? Address :
+    T extends RequestType.SIGN_TRANSACTION | RequestType.CHECKOUT ? SignedTransaction :
+    T extends RequestType.SIGN_MESSAGE ? SignedMessage :
+    T extends RequestType.LOGOUT | RequestType.CHANGE_PASSWORD ? SimpleResult :
+    T extends RequestType.EXPORT ? ExportResult : never;
