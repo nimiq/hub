@@ -4,6 +4,6 @@ export default {
     keyguardEndpoint: 'https://keyguard.nimiq.com',
     network: NETWORK_MAIN,
     networkEndpoint: 'https://network.nimiq.com',
-    privilegedOrigins: [ 'https://my.nimiq.com' ],
-    redirectTarget: 'https://my.nimiq.com',
+    privilegedOrigins: [ 'https://safe.nimiq.com' ],
+    redirectTarget: 'https://safe.nimiq.com',
 };

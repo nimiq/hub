@@ -5,8 +5,8 @@ export default {
     network: NETWORK_TEST,
     networkEndpoint: 'https://network.nimiq-testnet.com',
     privilegedOrigins: [
-        'https://my.nimiq-testnet.com',
+        'https://safe.nimiq-testnet.com',
         'https://hub.nimiq-testnet.com', // For testing with the deployed demos.html page
     ],
-    redirectTarget: 'https://my.nimiq-testnet.com',
+    redirectTarget: 'https://safe.nimiq-testnet.com',
 };
