@@ -16,7 +16,7 @@
                 disableContracts
                 disableLedgerAccounts
                 @account-selected="setAccount"
-                @login="goToOnboarding"/>
+                @login="() => goToOnboarding(false)"/>
         </SmallPage>
 
         <button class="global-close nq-button-s" @click="close">

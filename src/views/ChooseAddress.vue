@@ -10,7 +10,7 @@
             <AccountSelector
                 :wallets="processedWallets"
                 @account-selected="accountSelected"
-                @login="goToOnboarding"/>
+                @login="() => goToOnboarding(false)"/>
 
         </SmallPage>
 
