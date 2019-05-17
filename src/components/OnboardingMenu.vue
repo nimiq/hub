@@ -74,7 +74,7 @@ export default class AccountList extends Vue {
         font-size: inherit;
         font-family: inherit;
         padding: 4rem;
-        transition: color 500ms;
+        transition: color 450ms cubic-bezier(0.25, 0, 0, 1);
         cursor: pointer;
         text-align: left;
         z-index: 200;
@@ -89,7 +89,7 @@ export default class AccountList extends Vue {
     .choice.ledger:focus ~ .choice.signup svg {
         font-size: 6.75rem;
         color: rgba(31, 35, 72, 0.2); /* based on Nimiq Blue */
-        transition: color 500ms cubic-bezier(0.25, 0, 0, 1);
+        transition: color 450ms cubic-bezier(0.25, 0, 0, 1);
     }
 
     .choice.ledger svg {
@@ -123,7 +123,7 @@ export default class AccountList extends Vue {
         height: calc(100% - 4rem);
         background: var(--nimiq-blue);
         opacity: 0.1;
-        transition: opacity 500ms cubic-bezier(0.25, 0, 0, 1);
+        transition: opacity 450ms cubic-bezier(0.25, 0, 0, 1);
     }
 
     .choice.signup::after,
@@ -150,7 +150,7 @@ export default class AccountList extends Vue {
         left: 0.75rem;
         top: 0.75rem;
         transform: translate3d(0, 0, 0);
-        transition: transform .4s cubic-bezier(0.25, 0, 0, 1);
+        transition: transform 450ms cubic-bezier(0.25, 0, 0, 1);
         z-index: 100;
         width: calc((100% - 1.5rem) / 3);
         height: calc(100% - 1.5rem);
@@ -163,7 +163,7 @@ export default class AccountList extends Vue {
         width: 100%;
         height: 100%;
         border-radius: 0.5rem;
-        transition: opacity 500ms cubic-bezier(0.25, 0, 0, 1);
+        transition: opacity 300ms cubic-bezier(0.25, 0, 0, 1);
     }
 
     .background.login,
