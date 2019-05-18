@@ -9,6 +9,7 @@
     "moduleResolution": "node",
     "experimentalDecorators": true,
     "declaration": true,
+    "declarationDir": "./dist/src/",
     "esModuleInterop": true,
     "sourceMap": true,
     "baseUrl": ".",
@@ -21,7 +22,7 @@
       ]
     },
     "lib": [
-      "es2015",
+      "es2017",
       "dom",
       "dom.iterable",
       "scripthost"
