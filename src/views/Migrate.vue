@@ -5,7 +5,7 @@
             <PageHeader>
                 Time to grow
                 <p slot="more" class="nq-notice info">
-                    Nimiq just got better! New UX and UI come with a batch of new features.
+                    Nimiq just got better! The new design comes with a batch of new features.
                 </p>
             </PageHeader>
 
