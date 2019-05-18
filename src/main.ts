@@ -6,6 +6,8 @@ import store from './store';
 import staticStore from '@/lib/StaticStore';
 import RpcApi from '@/lib/RpcApi';
 import VueRaven from 'vue-raven'; // Sentry.io SDK
+// @ts-ignore
+import IqonsSvg from '@nimiq/iqons/dist/iqons.min.svg';
 
 if (window.hasBrowserWarning) {
     throw new Error('Exeution aborted due to browser warning');
@@ -26,9 +28,13 @@ if ((BrowserDetection.isIOS() || BrowserDetection.isSafari()) && 'serviceWorker'
 Vue.config.productionTip = false;
 
 // Set up Identicon SVG file path
-// FIXME Need to find a better method to automatically detect this
-// @ts-ignore
-self.NIMIQ_IQONS_SVG_PATH = '/img/iqons.min.72f3b689.svg';
+if (IqonsSvg[0] === '"') {
+    // @ts-ignore
+    self.NIMIQ_IQONS_SVG_PATH = IqonsSvg.substring(1, IqonsSvg.length - 1);
+} else {
+    // @ts-ignore
+    self.NIMIQ_IQONS_SVG_PATH = IqonsSvg;
+}
 
 const rpcApi = new RpcApi(store, staticStore, router);
 Vue.prototype.$rpc = rpcApi; // rpcApi is started in App.vue->created()
