@@ -157,15 +157,6 @@
         padding: 0;
     }
 
-    .page-footer {
-        padding: 1rem;
-    }
-
-    .page-footer .nq-button {
-        width: calc(100% - 12rem); /* To be replaced by nimiq-style class */
-        margin-bottom: 3rem;
-    }
-
     .wallet-icon {
         width: 3rem;
         height: 3rem;

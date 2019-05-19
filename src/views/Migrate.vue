@@ -465,8 +465,6 @@ export default class Migrate extends Vue {
 
     .page-footer .nq-button {
         margin-top: 1rem;
-        margin-bottom: 3rem;
-        width: calc(100% - 10rem);
     }
 
     .check-box {
