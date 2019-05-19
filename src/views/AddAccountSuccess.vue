@@ -4,7 +4,7 @@
             <Loader :title="title" :state="state" :lightBlue="true">
                 <template slot="success">
                     <CheckmarkIcon/>
-                    <h1 class="title nq-h1">New address added<br>to your account.</h1>
+                    <h1 class="title nq-h1">New Address added<br>to your Account.</h1>
                 </template>
             </Loader>
         </SmallPage>
@@ -30,7 +30,7 @@ export default class AddAccountSuccess extends Vue {
     @State private keyguardResult!: DeriveAddressResult;
 
     private state: Loader.State = Loader.State.LOADING;
-    private title: string = 'Storing your address';
+    private title: string = 'Storing your Address';
 
     private async mounted() {
         const createdAddress = new Nimiq.Address(this.keyguardResult.address);

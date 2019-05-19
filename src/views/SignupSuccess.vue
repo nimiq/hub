@@ -27,7 +27,7 @@ import LabelingMachine from '@/lib/LabelingMachine';
 export default class SignupSuccess extends Vue {
     @State private keyguardResult!: KeyguardClient.KeyResult;
 
-    private title: string = 'Storing your account';
+    private title: string = 'Storing your Account';
     private state: Loader.State = Loader.State.LOADING;
 
     private async mounted() {
