@@ -435,7 +435,7 @@ export default Loader;
     /* Optional entry animation that components can apply on the loader */
     .loader.grow-from-bottom-button {
         position: absolute;
-        animation: loader-grow-from-bottom-button .5s forwards;
+        animation: loader-grow-from-bottom-button .6s forwards cubic-bezier(0.25, 0, 0, 1);
         overflow: hidden;
     }
 
