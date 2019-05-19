@@ -8,6 +8,7 @@
                 <IdenticonSelector v-if="state === constructor.State.IDENTICON_SELECTION
                                    || state === constructor.State.FINISHED"
                                    :accounts="addressesToSelectFrom" @identicon-selected="_onAddressSelected">
+                    <PageHeader>Choose a new Account</PageHeader>
                 </IdenticonSelector>
             </transition>
             <Loader v-if="state === constructor.State.FINISHED" state="success" title="Address Added"
@@ -24,7 +25,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { PageBody, SmallPage, ArrowLeftSmallIcon } from '@nimiq/vue-components';
+import { PageBody, SmallPage, PageHeader, ArrowLeftSmallIcon } from '@nimiq/vue-components';
 import LedgerUi from '../components/LedgerUi.vue';
 import Loader from '../components/Loader.vue';
 import IdenticonSelector from '../components/IdenticonSelector.vue';
@@ -38,7 +39,7 @@ import { WalletStore } from '../lib/WalletStore';
 import { ACCOUNT_MAX_ALLOWED_ADDRESS_GAP, ERROR_CANCELED } from '../lib/Constants';
 import LabelingMachine from '../lib/LabelingMachine';
 
-@Component({components: {PageBody, SmallPage, LedgerUi, Loader, IdenticonSelector, ArrowLeftSmallIcon}})
+@Component({components: {PageBody, SmallPage, PageHeader, LedgerUi, Loader, IdenticonSelector, ArrowLeftSmallIcon}})
 export default class AddAddressLedger extends Vue {
     private static readonly State = {
         LEDGER_INTERACTION: 'ledger-interaction', // can be instructions to connect or also display of an error

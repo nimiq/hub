@@ -1,7 +1,9 @@
 <template>
     <div class="identicon-selector" :class="{ 'account-details-shown': selectedAccount && confirmAccountSelection }"
         @keydown.esc="_selectAccount(null)">
-        <h1 class="nq-h1 blur-target">Choose an Avatar</h1>
+        <div class="blur-target">
+            <slot></slot>
+        </div>
         <div class="identicons">
             <div class="center blur-target" v-if="displayedAccounts.length === 0">
                 <LoadingSpinner/>
@@ -23,14 +25,14 @@
         <transition name="transition-fade">
             <div v-if="selectedAccount && confirmAccountSelection" @click="_selectAccount(null)"
                 class="account-details">
-                <LabelInput :placeholder="selectedAccount.defaultLabel" :value="selectedAccount.label"
-                            @changed="selectedAccount.label = $event || selectedAccount.defaultLabel"
-                            @click.native.stop class="label-input" />
-                <AddressDisplay :address="selectedAccount.userFriendlyAddress" @click.native.stop/>
-                <button @click.stop="_onSelectionConfirmed" class="nq-button light-blue">Select</button>
-                <button @click="_selectAccount(null)" class="close-button">
+                <button @click="_selectAccount(null)" class="nq-button-s close-button">
                     <CloseIcon/>
                 </button>
+                <LabelInput :placeholder="selectedAccount.defaultLabel" :value="selectedAccount.label"
+                            @changed="selectedAccount.label = $event || selectedAccount.defaultLabel"
+                            @click.native.stop/>
+                <AddressDisplay :address="selectedAccount.userFriendlyAddress" @click.native.stop/>
+                <button @click.stop="_onSelectionConfirmed" class="nq-button light-blue">Select</button>
             </div>
         </transition>
     </div>
@@ -97,8 +99,8 @@
         width: 100%;
         text-align: center;
         position: relative;
-        padding: 4rem;
         overflow: hidden;
+        flex-grow: 1;
     }
 
     button:not(.nq-button):not(.nq-button-s) {
@@ -110,11 +112,6 @@
         -moz-appearance: none;
     }
 
-    .nq-h1 {
-        margin-top: 0;
-        margin-bottom: 6rem;
-    }
-
     .identicons {
         display: flex;
         flex-grow: 1;
@@ -123,6 +120,7 @@
         width: 100%;
         height: 41rem;
         position: relative;
+        margin-top: 3rem;
     }
 
     .wrapper {
@@ -176,7 +174,7 @@
 
     .wrapper.selected {
         z-index: 2;
-        transform: translateY(-12.5rem);
+        transform: translateY(-15rem);
         transition-delay: 0s;
         width: 100%;
         pointer-events: none;
@@ -196,7 +194,7 @@
         left: 0;
         height: 100%;
         width: 100%;
-        padding: 4rem;
+        padding: 4rem 3rem;
         background: rgba(255, 255, 255, .875); /* equivalent to keyguard: .5 on blurred and .75 on account details */
         z-index: 1;
         display: flex;
@@ -207,6 +205,8 @@
     }
 
     .account-details .label-input {
+        font-size: 3rem;
+        font-weight: 600;
         max-width: 100%;
     }
 
@@ -227,6 +227,8 @@
         font-size: 3rem;
         opacity: .16;
         transition: opacity .3s ease, color .3s ease;
+        padding: 0;
+        height: unset;
     }
 
     .account-details .close-button:hover {
