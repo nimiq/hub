@@ -300,9 +300,9 @@ export default class WalletInfoCollector {
         for (let index = startIndex; index < startIndex + count; ++index) {
             pathsToDerive.push(`${ACCOUNT_BIP32_BASE_PATH_KEYGUARD}${index}'`);
         }
-        const serializedAddresses = await WalletInfoCollector._keyguardClient!.deriveAddresses(keyId, pathsToDerive);
-        const userFriendlyAddresses = serializedAddresses.map((serializedAddress) =>
-            new Nimiq.Address(serializedAddress).toUserFriendlyAddress());
+        const derivedAddresses = await WalletInfoCollector._keyguardClient!.deriveAddresses(keyId, pathsToDerive);
+        const userFriendlyAddresses = derivedAddresses.map((derivedAddress) =>
+            new Nimiq.Address(derivedAddress.address).toUserFriendlyAddress());
         const accounts = [];
         for (let i = 0; i < pathsToDerive.length; ++i) {
             accounts.push({
