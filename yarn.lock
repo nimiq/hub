@@ -685,20 +685,20 @@
   resolved "https://registry.yarnpkg.com/@nimiq/browser-warning/-/browser-warning-0.4.0.tgz#82f9c88e75f85fbaab838e970d1f27ad506beefd"
   integrity sha512-7NEqSzsYwNvLM4KpnGtmSppVJju0HWjrHtbRMWefaXDfugM6bCbMqVLc112Bm88EefPdISj1cTr0pcyZZOCzuQ==
 
-"@nimiq/core-types@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@nimiq/core-types/-/core-types-1.0.1.tgz#344cfff6071bf12cfb557f82d586d42cae779797"
-  integrity sha512-Td6rAFhMRJKYqlSmTGw7vInz3j2+MMWvCeCjK8ABUqdYzi9ArE7RBpaeAu4XUQkZpWjFx0DBYWZMxtinwXGQjA==
+"@nimiq/core-types@^1.4.2":
+  version "1.4.2"
+  resolved "https://registry.yarnpkg.com/@nimiq/core-types/-/core-types-1.4.2.tgz#16e7bbc9a1b5a9dd5f7d0d735ef07f096799946c"
+  integrity sha512-M7Qm/dOby0BIWr0/reQEcTP8VrbTdHGZVklPQnpcAJtpY0geDW2XD2jqCcapSOPJCv/fpovDJtTvBMITiGrFFw==
 
 "@nimiq/core-web@1.4.3":
   version "1.4.3"
   resolved "https://registry.yarnpkg.com/@nimiq/core-web/-/core-web-1.4.3.tgz#190d7390324623672fafbbc93841bcf215d2af01"
   integrity sha512-47JMAx8bFcr2uev+QgX4saBUvRQo/8akQdpvf0z1F5N3I8FPyIfEWRjPW2Xu28C+MOdIZ/VkHL/YmMiGBBtEMA==
 
-"@nimiq/core@^1.4.1":
-  version "1.4.1"
-  resolved "https://registry.yarnpkg.com/@nimiq/core/-/core-1.4.1.tgz#8558dd0dc8d34ffd866ea0a35f1fcb2ec4dc5d24"
-  integrity sha512-F/0Ermkr8oCpvxhvXzrQTbKUc/fMy+d1ah1umnj2lhB69dKFvw2Fc8/FW6TxWxRrOWnZ3Rv78HpYF6ExjjxjbQ==
+"@nimiq/core@^1.4.3":
+  version "1.4.3"
+  resolved "https://registry.yarnpkg.com/@nimiq/core/-/core-1.4.3.tgz#aac9256fddcac5fe7fd622ec871d2982602ce946"
+  integrity sha512-Pn9zCgGKpeON6HoM8QA3ngo5FSqVhFhDOiuTFPFWTU99NvVO+CWX5VNj3dTUirUgNsjbzuS3+W35c48BZoBwfw==
   dependencies:
     "@nimiq/jungle-db" "^0.9.17"
     atob "^2.0.3"
