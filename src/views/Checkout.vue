@@ -18,8 +18,8 @@
 
             <div v-if="!hasSufficientBalanceAccount" class="non-sufficient-balance">
                 <p class="nq-text nq-orange">None of your addresses has sufficient balance.</p>
-                <a href="https://changelly.com/exchange/btc/nim?ref_id=v06xmpbqj5lpftuj" target="_blank">
-                    <button class="nq-button-s nq-light-blue-bg"><TransferIcon/> Get NIM&nbsp;</button>
+                <a class="nq-button-s nq-light-blue-bg" href="https://nimiq.com/#exchanges" target="_blank">
+                    <TransferIcon/> Get NIM&nbsp;
                 </a>
             </div>
 
@@ -392,6 +392,7 @@ export default class Checkout extends Vue {
 
     .non-sufficient-balance .nq-button-s {
         color: white;
+        line-height: 3.375rem;
     }
 
     .non-sufficient-balance .nq-icon {
