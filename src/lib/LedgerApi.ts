@@ -525,7 +525,7 @@ class LedgerApi {
         const [api] = await Promise.all([
             LedgerApi._apiPromise,
             // needed for walletId hashing and address derivation from public key in SignatureProof and BasicTransaction
-            Nimiq.WasmHelper.doImportBrowser(),
+            Nimiq.WasmHelper.doImport(),
         ]).catch((e) => {
             throw new Error(`Failed loading dependencies: ${e.message || e}`);
         });
