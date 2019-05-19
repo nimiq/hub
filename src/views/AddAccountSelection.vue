@@ -27,7 +27,6 @@ import { ParsedSimpleRequest } from '../lib/RequestTypes';
 import { Address } from '../lib/PublicRequestTypes';
 import Loader from '../components/Loader.vue';
 import { Static } from '../lib/StaticStore';
-import LabelingMachine from '../lib/LabelingMachine';
 
 @Component({components: {Loader, SmallPage, PageHeader, IdenticonSelector, CheckmarkIcon}})
 export default class AddAccountSelection extends Vue {
