@@ -385,6 +385,7 @@ class LedgerApi {
     }
 
     // private fields and methods
+    private static readonly WALLET_ID_SALT = 42;
     private static _apiPromise: Promise<LedgerJs> | null = null;
     private static _currentState: LedgerApi.State = { type: 'idle' as LedgerApi.StateType };
     private static _currentRequest: LedgerApiRequest<any> | null = null;
@@ -482,7 +483,13 @@ class LedgerApi {
                 await api.getPublicKey(LedgerApi.getBip32PathForKeyId(0), /*validate*/ false, /*display*/ false);
             const version = (await api.getAppConfiguration()).version;
             if (!LedgerApi._isAppVersionSupported(version)) throw new Error('Ledger Nimiq App is outdated.');
-            LedgerApi._currentlyConnectedWalletId = Nimiq.Hash.blake2b(firstAccountPubKeyBytes).toBase64();
+            // Add a salt to the public key, as otherwise the hashing yields the address bytes which means anyone that
+            // knows the address can guess the wallet id. By salting the public key, only people that know the public
+            // key (for example from a signed transaction) can guess the wallet id.
+            const saltedPubKeyBytes = new Nimiq.SerialBuffer(firstAccountPubKeyBytes.length + 1);
+            saltedPubKeyBytes.write(firstAccountPubKeyBytes);
+            saltedPubKeyBytes.writeUint8(LedgerApi.WALLET_ID_SALT);
+            LedgerApi._currentlyConnectedWalletId = Nimiq.Hash.blake2b(saltedPubKeyBytes).toBase64();
             if (walletId !== undefined && LedgerApi._currentlyConnectedWalletId !== walletId) {
                 throw new Error('Wrong Ledger connected');
             }
