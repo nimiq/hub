@@ -8,7 +8,7 @@
                 <IdenticonSelector v-if="state === constructor.State.IDENTICON_SELECTION
                                    || state === constructor.State.FINISHED"
                                    :accounts="addressesToSelectFrom" @identicon-selected="_onAddressSelected">
-                    <PageHeader>Choose a new Account</PageHeader>
+                    <PageHeader slot="header">Choose a new Account</PageHeader>
                 </IdenticonSelector>
             </transition>
             <Loader v-if="state === constructor.State.FINISHED" state="success" title="Address Added"

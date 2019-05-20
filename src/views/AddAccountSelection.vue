@@ -2,7 +2,7 @@
     <div class="container pad-bottom">
         <SmallPage>
             <IdenticonSelector  v-if="!showLoader" :accounts="accounts" @identicon-selected="identiconSelected">
-                <PageHeader backArrow @back="back">Choose a new Account</PageHeader>
+                <PageHeader slot="header" backArrow @back="back">Choose a new Account</PageHeader>
             </IdenticonSelector>
 
             <Loader v-else class="grow-from-bottom-button" :title="title" :state="state" :lightBlue="true">

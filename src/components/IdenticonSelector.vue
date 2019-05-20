@@ -2,7 +2,9 @@
     <div class="identicon-selector" :class="{ 'account-details-shown': selectedAccount && confirmAccountSelection }"
         @keydown.esc="_selectAccount(null)">
         <div class="blur-target">
-            <slot></slot>
+            <slot name="header">
+                <PageHeader>Choose an Avatar</PageHeader>
+            </slot>
         </div>
         <div class="identicons">
             <div class="center blur-target" v-if="displayedAccounts.length === 0">
@@ -40,11 +42,11 @@
 
 <script lang="ts">
     import { Component, Prop, Watch, Vue } from 'vue-property-decorator';
-    import { LoadingSpinner, Identicon, AddressDisplay, CloseIcon } from '@nimiq/vue-components';
+    import { PageHeader, LoadingSpinner, Identicon, AddressDisplay, CloseIcon } from '@nimiq/vue-components';
     import { AccountInfo } from '@/lib/AccountInfo';
     import { default as LabelInput } from './Input.vue';
 
-    @Component({components: { Identicon, LoadingSpinner, AddressDisplay, LabelInput, CloseIcon }})
+    @Component({components: { PageHeader, Identicon, LoadingSpinner, AddressDisplay, LabelInput, CloseIcon }})
     class IdenticonSelector extends Vue {
         private static readonly IDENTICONS_PER_PAGE = 7;
 

@@ -16,9 +16,8 @@
             <transition name="transition-fade">
                 <IdenticonSelector v-if="state === constructor.State.IDENTICON_SELECTION"
                                    :accounts="accountsToSelectFrom"
-                                   :confirmAccountSelection="false" @identicon-selected="_onAccountSelected">
-                    <PageHeader>Choose an Avatar</PageHeader>
-                </IdenticonSelector>
+                                   :confirmAccountSelection="false"
+                                   @identicon-selected="_onAccountSelected"/>
             </transition>
             <transition name="transition-fade">
                 <div v-if="state === constructor.State.WALLET_SUMMARY
