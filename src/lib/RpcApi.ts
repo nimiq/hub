@@ -18,7 +18,6 @@ import { StaticStore } from '@/lib/StaticStore';
 import { WalletStore } from './WalletStore';
 import { WalletType } from '@/lib/WalletInfo';
 import CookieJar from '@/lib/CookieJar';
-import { Raven } from 'vue-raven'; // Sentry.io SDK
 import { ERROR_CANCELED } from './Constants';
 import Config from 'config';
 
@@ -105,16 +104,7 @@ export default class RpcApi {
         this._reply(ResponseStatus.OK, result);
     }
 
-    public reject(error: Error) {
-        const ignoredErrorTypes = [ Errors.Types.INVALID_REQUEST.toString() ];
-        const ignoredErrors = [ ERROR_CANCELED, 'Request aborted', 'Account ID not found', 'Address not found' ];
-        if (ignoredErrorTypes.indexOf(error.name) < 0 && ignoredErrors.indexOf(error.message) < 0) {
-            if (window.location.origin === 'https://hub.nimiq-testnet.com') {
-                console.debug('Request:', JSON.stringify(this._staticStore.request));
-                Raven.captureException(error);
-            }
-        }
-
+    public reject(error: Error, report = false) {
         this._reply(ResponseStatus.ERROR, error);
     }
 
