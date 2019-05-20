@@ -273,7 +273,7 @@ export default class Migrate extends Vue {
         this.title = 'Whoops, something went wrong';
         this.message = `${error.name}: ${error.message}`;
         this.state = Loader.State.ERROR;
-        if (window.location.origin === 'https://hub.nimiq-testnet.com') {
+        if (this.$raven) {
             this.$raven.captureException(error);
         }
     }
