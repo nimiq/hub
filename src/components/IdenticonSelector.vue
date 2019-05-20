@@ -228,20 +228,19 @@
         right: 2rem;
         top: 2rem;
         font-size: 3rem;
-        opacity: .16;
-        transition: opacity .3s ease, color .3s ease;
         padding: 0;
         height: unset;
     }
 
-    .account-details .close-button:hover {
-        opacity: .25;
+    .account-details .close-button .nq-icon {
+        opacity: .2;
+        transition: opacity .3s cubic-bezier(0.25, 0, 0, 1);
     }
 
-    .account-details .close-button:focus {
-        color: var(--nimiq-light-blue);
-        opacity: .7;
-        outline: none;
+    .account-details .close-button .nq-icon:hover,
+    .account-details .close-button .nq-icon:focus,
+    .account-details .close-button .nq-icon:active {
+        opacity: .4;
     }
 
     .blur-target {
