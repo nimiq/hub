@@ -36,7 +36,7 @@ const LogoutSuccess           = () => import(/*webpackChunkName: "logout"*/ './v
 const LogoutLedger            = () => import(/*webpackChunkName: "logout-ledger"*/ './views/LogoutLedger.vue');
 
 const AddAccount              = () => import(/*webpackChunkName: "add-account"*/ './views/AddAccount.vue');
-const AddAccountSuccess       = () => import(/*webpackChunkName: "add-account"*/ './views/AddAccountSuccess.vue');
+const AddAccountSelection     = () => import(/*webpackChunkName: "add-account"*/ './views/AddAccountSelection.vue');
 
 const AddAddressLedger        = () => import(/*webpackChunkName: "add-ledger"*/ './views/AddAddressLedger.vue');
 
@@ -78,7 +78,7 @@ export function keyguardResponseRouter(
         case KeyguardCommand.CHANGE_PASSWORD:
             resolve = `${RequestType.CHANGE_PASSWORD}-success`; break;
         case KeyguardCommand.DERIVE_ADDRESS:
-            resolve = `${RequestType.ADD_ADDRESS}-success`; break;
+            resolve = `${RequestType.ADD_ADDRESS}-selection`; break;
         case KeyguardCommand.SIGN_MESSAGE:
             // The SIGN_MESSAGE Keyguard command is used by Accounts' SIGN_MESSAGE and
             // NIMIQ_ID (future). Thus we return the user to the respective handler component
@@ -216,9 +216,9 @@ export default new Router({
             name: RequestType.ADD_ADDRESS,
         },
         {
-            path: `/${RequestType.ADD_ADDRESS}/success`,
-            component: AddAccountSuccess,
-            name: `${RequestType.ADD_ADDRESS}-success`,
+            path: `/${RequestType.ADD_ADDRESS}/selection`,
+            component: AddAccountSelection,
+            name: `${RequestType.ADD_ADDRESS}-selection`,
         },
         {
             path: `/${RequestType.ADD_ADDRESS}/ledger`,

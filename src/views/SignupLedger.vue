@@ -16,8 +16,8 @@
             <transition name="transition-fade">
                 <IdenticonSelector v-if="state === constructor.State.IDENTICON_SELECTION"
                                    :accounts="accountsToSelectFrom"
-                                   :confirmAccountSelection="false" @identicon-selected="_onAccountSelected">
-                </IdenticonSelector>
+                                   :confirmAccountSelection="false"
+                                   @identicon-selected="_onAccountSelected"/>
             </transition>
             <transition name="transition-fade">
                 <div v-if="state === constructor.State.WALLET_SUMMARY
@@ -39,7 +39,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { PageBody, SmallPage, AccountRing, ArrowLeftSmallIcon } from '@nimiq/vue-components';
+import { PageBody, SmallPage, PageHeader, AccountRing, ArrowLeftSmallIcon } from '@nimiq/vue-components';
 import { ParsedBasicRequest } from '../lib/RequestTypes';
 import { Account } from '../lib/PublicRequestTypes';
 import { Static } from '../lib/StaticStore';
@@ -54,7 +54,11 @@ import { WalletStore } from '../lib/WalletStore';
 import { ERROR_CANCELED } from '../lib/Constants';
 import LabelingMachine from '@/lib/LabelingMachine';
 
-@Component({components: {PageBody, SmallPage, LedgerUi, Loader, IdenticonSelector, AccountRing, ArrowLeftSmallIcon}})
+@Component({components: {
+    PageBody, SmallPage, PageHeader,
+    LedgerUi, Loader, IdenticonSelector,
+    AccountRing, ArrowLeftSmallIcon,
+}})
 export default class SignupLedger extends Vue {
     private static readonly State = {
         LOADING: 'loading',
