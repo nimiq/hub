@@ -6,4 +6,5 @@ export default {
     networkEndpoint: 'https://network.nimiq.com',
     privilegedOrigins: [ 'https://safe.nimiq.com' ],
     redirectTarget: 'https://safe.nimiq.com',
+    reportToSentry: true,
 };

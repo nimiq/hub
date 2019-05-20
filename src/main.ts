@@ -8,6 +8,7 @@ import RpcApi from '@/lib/RpcApi';
 import VueRaven from 'vue-raven'; // Sentry.io SDK
 // @ts-ignore
 import IqonsSvg from '@nimiq/iqons/dist/iqons.min.svg';
+import Config from 'config';
 
 if (window.hasBrowserWarning) {
     throw new Error('Exeution aborted due to browser warning');
@@ -39,7 +40,7 @@ if (IqonsSvg[0] === '"') {
 const rpcApi = new RpcApi(store, staticStore, router);
 Vue.prototype.$rpc = rpcApi; // rpcApi is started in App.vue->created()
 
-if (window.location.origin === 'https://hub.nimiq-testnet.com') {
+if (Config.reportToSentry) {
     Vue.use(VueRaven, {
         dsn: 'https://92f2289fc2ac4c809dfa685911f865c2@sentry.io/1330855',
     });
