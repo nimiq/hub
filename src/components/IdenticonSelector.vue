@@ -196,6 +196,7 @@
         width: 100%;
         padding: 4rem 3rem;
         background: rgba(255, 255, 255, .875); /* equivalent to keyguard: .5 on blurred and .75 on account details */
+        border-radius: 1rem;
         z-index: 1;
         display: flex;
         flex-direction: column;

@@ -5,7 +5,7 @@
                 <PageHeader backArrow @back="back">Choose a new Account</PageHeader>
             </IdenticonSelector>
 
-            <Loader v-else :title="title" :state="state" :lightBlue="true">
+            <Loader v-else class="grow-from-bottom-button" :title="title" :state="state" :lightBlue="true">
                 <template slot="success">
                     <CheckmarkIcon/>
                     <h1 class="title nq-h1">New Address added<br>to your Account.</h1>
@@ -75,3 +75,9 @@ export default class AddAccountSelection extends Vue {
     }
 }
 </script>
+
+<style scoped>
+    .small-page {
+        position: relative;
+    }
+</style>

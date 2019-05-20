@@ -102,7 +102,7 @@ export default class OnboardingSelector extends Vue {
 }
 </script>
 
-<style>
+<style scoped>
     .container.isSecondaryOnboarding {
         justify-content: space-around !important;
     }
