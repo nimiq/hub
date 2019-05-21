@@ -247,6 +247,12 @@
         transition: filter .4s;
     }
 
+    .blur-target.nq-button-s {
+        transition: filter .4s,
+            /* Transitions from @nimiq/style .nq-button-s class for proper hover/focus effect */
+            color .3s cubic-bezier(.25, 0, 0, 1), background-color .3s cubic-bezier(.25, 0, 0, 1);
+    }
+
     .account-details-shown .blur-target,
     .account-details-shown .wrapper:not(.selected) {
         filter: blur(20px);
