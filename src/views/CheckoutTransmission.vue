@@ -1,7 +1,7 @@
 <template>
     <div class="container pad-bottom">
         <SmallPage>
-            <Loader :title="title" :status="status" :state="state" :lightBlue="true"/>
+            <StatusScreen :title="title" :status="status" :state="state" :lightBlue="true"/>
             <Network ref="network" :visible="false"/>
         </SmallPage>
     </div>
@@ -13,10 +13,10 @@ import { Static } from '../lib/StaticStore';
 import { State } from 'vuex-class';
 import { SmallPage } from '@nimiq/vue-components';
 import Network from '@/components/Network.vue';
-import Loader from '../components/Loader.vue';
+import StatusScreen from '../components/StatusScreen.vue';
 import KeyguardClient from '@nimiq/keyguard-client';
 
-@Component({components: {Loader, Network, SmallPage}})
+@Component({components: {StatusScreen, Network, SmallPage}})
 export default class CheckoutTransmission extends Vue {
     @Static private keyguardRequest!: KeyguardClient.SignTransactionRequest;
     @State private keyguardResult!: KeyguardClient.SignTransactionResult;
@@ -35,15 +35,15 @@ export default class CheckoutTransmission extends Vue {
         const result = await (this.$refs.network as Network).sendToNetwork(tx);
         this.isTxSent = true;
 
-        setTimeout(() => this.$rpc.resolve(result), Loader.SUCCESS_REDIRECT_DELAY);
+        setTimeout(() => this.$rpc.resolve(result), StatusScreen.SUCCESS_REDIRECT_DELAY);
     }
 
     private get status(): string {
         return 'Connecting to Nimiq...';
     }
 
-    private get state(): Loader.State {
-        return !this.isTxSent ? Loader.State.LOADING : Loader.State.SUCCESS;
+    private get state(): StatusScreen.State {
+        return !this.isTxSent ? StatusScreen.State.LOADING : StatusScreen.State.SUCCESS;
     }
 
     private get title(): string {

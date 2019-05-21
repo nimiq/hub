@@ -1,6 +1,6 @@
 <template>
     <div class="ledger-ui" :class="{ small }">
-        <Loader :state="'loading'" :title="instructionsTitle" :status="instructionsText" :small="small">
+        <StatusScreen :state="'loading'" :title="instructionsTitle" :status="instructionsText" :small="small">
             <template slot="loading">
                 <transition name="transition-fade">
                     <LoadingSpinner v-if="illustration === constructor.Illustrations.LOADING"/>
@@ -29,7 +29,7 @@
                     </div>
                 </transition>
             </template>
-        </Loader>
+        </StatusScreen>
     </div>
 </template>
 
@@ -37,9 +37,9 @@
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { LoadingSpinner } from '@nimiq/vue-components';
 import LedgerApi from '@/lib/LedgerApi';
-import Loader from '@/components/Loader.vue';
+import StatusScreen from '@/components/StatusScreen.vue';
 
-@Component({ components: { Loader, LoadingSpinner } })
+@Component({ components: { StatusScreen, LoadingSpinner } })
 class LedgerUi extends Vue {
     private static CONNECT_ANIMATION_STEP_DURATION = 9000 / 3;
 

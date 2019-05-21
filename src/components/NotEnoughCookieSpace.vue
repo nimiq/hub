@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <SmallPage>
-            <Loader
+            <StatusScreen
                 state='error'
                 title='Action not possible'
                 message='Unfortunately, due to restrictions of Safari you cannot add more accounts and/or addresses. Please log out of unused accounts to free up space.'
@@ -15,10 +15,10 @@
 <script lang="ts">
 import { Component, Prop, Watch, Vue } from 'vue-property-decorator';
 import { SmallPage } from '@nimiq/vue-components';
-import Loader from './Loader.vue';
+import StatusScreen from './StatusScreen.vue';
 import { ERROR_COOKIE_SPACE } from '../lib/Constants';
 
-@Component({components: {Loader, SmallPage}})
+@Component({components: {StatusScreen, SmallPage}})
 export default class NotEnoughCookieSpace extends Vue {
     private onContinue() {
         this.$rpc.reject(new Error(ERROR_COOKIE_SPACE));

@@ -1,7 +1,7 @@
 <template>
     <div class="container pad-bottom">
         <SmallPage>
-            <Loader title="You are logged out." state="success"/>
+            <StatusScreen title="You are logged out." state="success"/>
         </SmallPage>
     </div>
 </template>
@@ -14,10 +14,10 @@ import { State } from 'vuex-class';
 import { SmallPage } from '@nimiq/vue-components';
 import { WalletStore } from '@/lib/WalletStore';
 import { Static } from '@/lib/StaticStore';
-import Loader from '../components/Loader.vue';
+import StatusScreen from '../components/StatusScreen.vue';
 import KeyguardClient from '@nimiq/keyguard-client';
 
-@Component({components: {Loader, SmallPage}})
+@Component({components: {StatusScreen, SmallPage}})
 export default class LogoutSuccess extends Vue {
     @Static private request!: ParsedSimpleRequest;
     @State private keyguardResult!: KeyguardClient.SimpleResult;
@@ -29,7 +29,7 @@ export default class LogoutSuccess extends Vue {
         // (currently 2s), we need to add a loading state before the success state.
         await WalletStore.Instance.remove(this.request.walletId);
 
-        const remainingTimeout = Math.max(0, Loader.SUCCESS_REDIRECT_DELAY - (Date.now() - start));
+        const remainingTimeout = Math.max(0, StatusScreen.SUCCESS_REDIRECT_DELAY - (Date.now() - start));
 
         setTimeout(() => this.$rpc.resolve(this.keyguardResult as SimpleResult), remainingTimeout);
     }

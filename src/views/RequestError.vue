@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <SmallPage>
-            <Loader
+            <StatusScreen
                 state="error"
                 title="Invalid request"
                 message="Something went wrong with your request. Please try again."
@@ -15,9 +15,9 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { SmallPage } from '@nimiq/vue-components';
-import Loader from '../components/Loader.vue';
+import StatusScreen from '../components/StatusScreen.vue';
 
-@Component({components: {Loader, SmallPage}})
+@Component({components: {StatusScreen, SmallPage}})
 export default class RequestError extends Vue {
     private _close() {
         window.close();

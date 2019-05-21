@@ -38,10 +38,10 @@
             <div class="bottom-container blur-target" :class="{ 'full-height': state !== constructor.State.OVERVIEW }">
                 <LedgerUi ref="ledger-ui" small></LedgerUi>
                 <transition name="transition-fade">
-                    <Loader v-if="state !== constructor.State.OVERVIEW"
+                    <StatusScreen v-if="state !== constructor.State.OVERVIEW"
                         :state="state === constructor.State.FINISHED ? 'success' : 'loading'"
                         :title="loaderTitle">
-                    </Loader>
+                    </StatusScreen>
                 </transition>
             </div>
 
@@ -81,7 +81,7 @@ import {
 import Network from '@/components/Network.vue';
 import LedgerApi from '../lib/LedgerApi';
 import LedgerUi from '../components/LedgerUi.vue';
-import Loader from '../components/Loader.vue';
+import StatusScreen from '../components/StatusScreen.vue';
 import { Static } from '../lib/StaticStore';
 import { Getter } from 'vuex-class';
 import { State as RpcState } from '@nimiq/rpc';
@@ -105,7 +105,7 @@ interface AccountDetailsData {
     PageHeader,
     SmallPage,
     LedgerUi,
-    Loader,
+    StatusScreen,
     AccountDetails,
     Network,
     Amount,
@@ -232,7 +232,7 @@ export default class SignTransactionLedger extends Vue {
         }
 
         this.state = SignTransactionLedger.State.FINISHED;
-        await new Promise((resolve) => setTimeout(resolve, Loader.SUCCESS_REDIRECT_DELAY));
+        await new Promise((resolve) => setTimeout(resolve, StatusScreen.SUCCESS_REDIRECT_DELAY));
         this.$rpc.resolve(result);
     }
 

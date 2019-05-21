@@ -1,9 +1,9 @@
 <template>
     <div class="container">
         <SmallPage>
-            <Loader :state="state" :title="title" :message="_message" main-action="Ok"
+            <StatusScreen :state="state" :title="title" :message="_message" main-action="Ok"
                 @main-action="_close">
-            </Loader>
+            </StatusScreen>
         </SmallPage>
 
         <button class="global-close nq-button-s" @click="_close">
@@ -16,15 +16,15 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { ArrowLeftSmallIcon, SmallPage } from '@nimiq/vue-components';
-import Loader from '../components/Loader.vue';
+import StatusScreen from '../components/StatusScreen.vue';
 import { Static } from '../lib/StaticStore';
 import { ParsedBasicRequest, RequestType } from '../lib/RequestTypes';
 import { ERROR_CANCELED } from '../lib/Constants';
 
-@Component({components: {SmallPage, Loader, ArrowLeftSmallIcon}})
+@Component({components: {SmallPage, StatusScreen, ArrowLeftSmallIcon}})
 export default class ErrorHandlerUnsupportedLedger extends Vue {
     @Static private request!: ParsedBasicRequest;
-    private state = Loader.State.LOADING;
+    private state = StatusScreen.State.LOADING;
     private title = '';
 
     private async mounted() {
@@ -33,7 +33,7 @@ export default class ErrorHandlerUnsupportedLedger extends Vue {
         // by the user or because it is a ledger account.
         const randomWaitTime = 1000 + Math.round(Math.random() * 2000); // 1-3s
         await new Promise((resolve) => setTimeout(resolve, randomWaitTime));
-        this.state = Loader.State.WARNING;
+        this.state = StatusScreen.State.WARNING;
         this.title = 'Unsupported Request';
     }
 

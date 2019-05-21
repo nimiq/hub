@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <SmallPage v-if="height === 0 || !hasBalances">
-            <Loader title="Updating your balances" status="Connecting to Nimiq..."/>
+            <StatusScreen title="Updating your balances" status="Connecting to Nimiq..."/>
         </SmallPage>
 
         <SmallPage v-else :class="{ 'merchant-info-shown': showMerchantInfo }">
@@ -68,7 +68,7 @@ import {
     ERROR_CANCELED,
 } from '@/lib/Constants';
 import Network from '@/components/Network.vue';
-import Loader from '@/components/Loader.vue';
+import StatusScreen from '@/components/StatusScreen.vue';
 import KeyguardClient from '@nimiq/keyguard-client';
 import { ContractInfo, VestingContractInfo } from '@/lib/ContractInfo';
 
@@ -78,7 +78,7 @@ import { ContractInfo, VestingContractInfo } from '@/lib/ContractInfo';
     AccountDetails,
     SmallPage,
     Network,
-    Loader,
+    StatusScreen,
     TransferIcon,
     ArrowLeftSmallIcon,
 }})

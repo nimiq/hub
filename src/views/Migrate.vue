@@ -84,7 +84,7 @@
         </SmallPage>
 
         <SmallPage v-else class="migration">
-            <Loader
+            <StatusScreen
                 lightBlue
                 :title="title"
                 :status="status"
@@ -108,7 +108,7 @@ import {
     ScanQrCodeIcon, ArrowRightSmallIcon, CheckmarkIcon,
 } from '@nimiq/vue-components';
 import Network from '@/components/Network.vue';
-import Loader from '@/components/Loader.vue';
+import StatusScreen from '@/components/StatusScreen.vue';
 import KeyguardClient from '@nimiq/keyguard-client';
 import { ACCOUNT_DEFAULT_LABEL_LEGACY } from '@/lib/Constants';
 import { ContractInfo } from '@/lib/ContractInfo';
@@ -129,7 +129,7 @@ type SerializedAccount = {
     SmallPage, PageHeader, PageBody, PageFooter,
     AccountRing, Identicon, Amount,
     ScanQrCodeIcon, ArrowRightSmallIcon, CheckmarkIcon,
-    Loader, Network,
+    StatusScreen, Network,
 }})
 export default class Migrate extends Vue {
     @Static private request!: SimpleRequest;
@@ -141,7 +141,7 @@ export default class Migrate extends Vue {
 
     private title: string = 'Updating your Accounts';
     private status: string = 'Connecting to Keyguard...';
-    private state: Loader.State = Loader.State.LOADING;
+    private state: StatusScreen.State = StatusScreen.State.LOADING;
     private message: string = '';
 
     private legacyAccounts: AccountInfo[] = [];
@@ -222,8 +222,8 @@ export default class Migrate extends Vue {
         if (!legacyAccounts.length) {
             this.deleteAccountsCache();
             this.title = 'Nothing to update.';
-            this.state = Loader.State.SUCCESS;
-            setTimeout(() => this.$rpc.resolve([]), Loader.SUCCESS_REDIRECT_DELAY);
+            this.state = StatusScreen.State.SUCCESS;
+            setTimeout(() => this.$rpc.resolve([]), StatusScreen.SUCCESS_REDIRECT_DELAY);
             return;
         }
 
@@ -264,15 +264,15 @@ export default class Migrate extends Vue {
         this.deleteAccountsCache();
 
         this.title = 'Accounts updated!';
-        this.state = Loader.State.SUCCESS;
+        this.state = StatusScreen.State.SUCCESS;
         const listResult = walletInfos.map((walletInfo) => walletInfo.toAccountType());
-        setTimeout(() => this.$rpc.resolve(listResult), Loader.SUCCESS_REDIRECT_DELAY);
+        setTimeout(() => this.$rpc.resolve(listResult), StatusScreen.SUCCESS_REDIRECT_DELAY);
     }
 
     private onError(error: Error) {
         this.title = 'Whoops, something went wrong';
         this.message = `${error.name}: ${error.message}`;
-        this.state = Loader.State.ERROR;
+        this.state = StatusScreen.State.ERROR;
         if (this.$raven) {
             this.$raven.captureException(error);
         }
@@ -281,7 +281,7 @@ export default class Migrate extends Vue {
     private tryAgain() {
         this.title = 'Updating your Accounts';
         this.status = 'Connecting to Keyguard...';
-        this.state = Loader.State.LOADING;
+        this.state = StatusScreen.State.LOADING;
         setTimeout(() => this.runMigration(), 1000);
     }
 

@@ -12,11 +12,11 @@
                 <button class="logout-button nq-button red" @click="_logOut">Log Out</button>
             </PageBody>
 
-            <Loader v-if="confirmedLogout"
+            <StatusScreen v-if="confirmedLogout"
                 state="success"
                 title="You are logged out."
                 class="grow-from-bottom-button">
-            </Loader>
+            </StatusScreen>
         </SmallPage>
 
         <button class="global-close nq-button-s" @click="_close" :class="{ hidden: confirmedLogout }">
@@ -33,9 +33,9 @@ import { ParsedSimpleRequest } from '../lib/RequestTypes';
 import { WalletStore } from '@/lib/WalletStore';
 import { Static } from '../lib/StaticStore';
 import { ERROR_CANCELED } from '../lib/Constants';
-import Loader from '../components/Loader.vue';
+import StatusScreen from '../components/StatusScreen.vue';
 
-@Component({components: {SmallPage, PageHeader, PageBody, Loader, ArrowLeftSmallIcon}})
+@Component({components: {SmallPage, PageHeader, PageBody, StatusScreen, ArrowLeftSmallIcon}})
 export default class LogoutLedger extends Vue {
     @Static private request!: ParsedSimpleRequest;
 
@@ -45,7 +45,7 @@ export default class LogoutLedger extends Vue {
         this.confirmedLogout = true;
         await Promise.all([
             WalletStore.Instance.remove(this.request.walletId),
-            new Promise((resolve) => setTimeout(resolve, Loader.SUCCESS_REDIRECT_DELAY)),
+            new Promise((resolve) => setTimeout(resolve, StatusScreen.SUCCESS_REDIRECT_DELAY)),
         ]);
         this.$rpc.resolve({ success: true });
     }
