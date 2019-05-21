@@ -482,7 +482,8 @@ class LedgerApi {
                 await api.getPublicKey(LedgerApi.getBip32PathForKeyId(0), /*validate*/ false, /*display*/ false);
             const version = (await api.getAppConfiguration()).version;
             if (!LedgerApi._isAppVersionSupported(version)) throw new Error('Ledger Nimiq App is outdated.');
-            LedgerApi._currentlyConnectedWalletId = Nimiq.Hash.blake2b(firstAccountPubKeyBytes).toBase64();
+            // Use sha256 as blake2b yields the nimiq address
+            LedgerApi._currentlyConnectedWalletId = Nimiq.Hash.sha256(firstAccountPubKeyBytes).toBase64();
             if (walletId !== undefined && LedgerApi._currentlyConnectedWalletId !== walletId) {
                 throw new Error('Wrong Ledger connected');
             }
