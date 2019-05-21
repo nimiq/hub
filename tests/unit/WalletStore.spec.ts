@@ -10,7 +10,7 @@ const indexedDB: IDBFactory = require('fake-indexeddb'); // tslint:disable-line:
 
 const DUMMY_ADDRESS = Nimiq.Address.fromUserFriendlyAddress('NQ07 0000 0000 0000 0000 0000 0000 0000 0000');
 const DUMMY: WalletInfo[] = [ // IDs must be alphabetically ordered, as the WalletStore uses the id as the primary index
-    new WalletInfo('0fe6067b138f', 'D+YGexOP0yDjr3Uf6WwO9a2/WjhNbZFLrRwdLfuvz9c=', 'Old',
+    new WalletInfo('1ae56b44c65d', 'D+YGexOP0yDjr3Uf6WwO9a2/WjhNbZFLrRwdLfuvz9c=', 'Old',
         new Map<string, AccountInfo>([
             ['NQ07 0000 0000 0000 0000 0000 0000 0000 0000', new AccountInfo('m/0\'', 'OldAddress', DUMMY_ADDRESS)],
         ]), [new VestingContractInfo(
@@ -19,11 +19,11 @@ const DUMMY: WalletInfo[] = [ // IDs must be alphabetically ordered, as the Wall
             Nimiq.Address.fromUserFriendlyAddress('NQ07 0000 0000 0000 0000 0000 0000 0000 0000'),
             0, 1500000, 120000, 3000000,
         )], WalletType.LEGACY),
-    new WalletInfo('2978bf29b377', 'KXi/KbN35+oYAIV2ummFjLWxfY/47fo/35Hfa3WNVA0=', 'Main',
+    new WalletInfo('57e1380cd0e2', 'KXi/KbN35+oYAIV2ummFjLWxfY/47fo/35Hfa3WNVA0=', 'Main',
         new Map<string, AccountInfo>([
             ['NQ07 0000 0000 0000 0000 0000 0000 0000 0000', new AccountInfo('m/0\'', 'MyAccount', DUMMY_ADDRESS)],
         ]), [], WalletType.BIP39),
-    new WalletInfo('2ec615522906', 'LsYVUikGJA5z8p37+LqkH3EZ5opDz2zQRT1r8cGJ8dE=', 'Ledger',
+    new WalletInfo('7a8616a79027', 'LsYVUikGJA5z8p37+LqkH3EZ5opDz2zQRT1r8cGJ8dE=', 'Ledger',
         new Map<string, AccountInfo>([
             ['NQ07 0000 0000 0000 0000 0000 0000 0000 0000', new AccountInfo('m/0\'', 'MyLedger', DUMMY_ADDRESS)],
         ]), [new HashedTimeLockedContractInfo(
@@ -35,10 +35,13 @@ const DUMMY: WalletInfo[] = [ // IDs must be alphabetically ordered, as the Wall
             1, 120, 3000e5,
         )], WalletType.LEDGER),
 ];
+const DUMMY_SALT = new Uint8Array(WalletStore.SALT_LENGTH);
 
 const beforeEachCallback = async () => {
     WalletStore.INDEXEDDB_IMPLEMENTATION = indexedDB;
     await Promise.all(DUMMY.map((wallet) => WalletStore.Instance.put(wallet)));
+    // @ts-ignore private method call
+    await WalletStore.Instance._putMetaData('salt', DUMMY_SALT);
     await WalletStore.Instance.close();
 };
 
@@ -132,22 +135,17 @@ describe('WalletStore', () => {
             {
                 // New keyId
                 keyId: 'pYMqO5SJxFRrb6EKBOf1vH7vcbqzcIyCZ2U3L//fWPo=',
-                accountId: 'a5832a3b9489',
+                accountId: '655884d15860',
             },
             {
                 // Existing keyId
                 keyId: 'KXi/KbN35+oYAIV2ummFjLWxfY/47fo/35Hfa3WNVA0=',
-                accountId: '2978bf29b377',
-            },
-            {
-                // Similar keyId (only last byte is different than existing above)
-                keyId: 'KXi/KbN35+oYAIV2ummFjLWxfY/47fo/35Hfa3WNVA1=',
-                accountId: '78bf29b377e7',
+                accountId: '57e1380cd0e2',
             },
         ];
 
         for (const vector of vectors) {
-            const id = await WalletStore.deriveId(vector.keyId);
+            const id = await WalletStore.Instance.deriveId(vector.keyId);
             expect(id).toBe(vector.accountId);
         }
     });

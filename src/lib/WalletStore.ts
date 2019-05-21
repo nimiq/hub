@@ -1,34 +1,15 @@
 import { WalletInfo, WalletInfoEntry } from '@/lib/WalletInfo';
 
 export class WalletStore {
-    public static readonly DB_VERSION = 3;
+    public static readonly DB_VERSION = 4;
     public static readonly DB_NAME = 'nimiq-accounts';
     public static readonly DB_KEY_STORE_NAME = 'wallets';
+    public static readonly DB_META_DATA_STORE_NAME = 'meta-data';
 
     public static readonly WALLET_ID_LENGTH = 6;
+    public static readonly SALT_LENGTH = 16;
 
     public static INDEXEDDB_IMPLEMENTATION = window.indexedDB;
-
-    public static async deriveId(keyId: string): Promise<string> {
-        const wallets = await WalletStore.Instance.list();
-        const existingWallet = wallets.find((wallet) => wallet.keyId === keyId);
-        if (existingWallet) return existingWallet.id;
-
-        const existingIds = wallets.map((wallet) => wallet.id);
-        const keyIdBytes = Nimiq.BufferUtils.fromBase64(keyId);
-
-        for (let i = 0; i <= (32 - WalletStore.WALLET_ID_LENGTH); i++) {
-            const id = Nimiq.BufferUtils.toHex(keyIdBytes.subarray(i, i + WalletStore.WALLET_ID_LENGTH));
-            if (existingIds.indexOf(id) === -1) return id;
-        }
-
-        // Could not find an available wallet ID in the searched space.
-
-        // Hash keyId and recurse
-        await Nimiq.WasmHelper.doImport();
-        const hashedKeyIdBytes = Nimiq.Hash.computeSha256(keyIdBytes);
-        return WalletStore.deriveId(Nimiq.BufferUtils.toBase64(hashedKeyIdBytes));
-    }
 
     private static instance: WalletStore | null = null;
 
@@ -76,6 +57,34 @@ export class WalletStore {
     private constructor() {
         this._dbPromise = null;
         this._indexedDB = WalletStore.INDEXEDDB_IMPLEMENTATION;
+    }
+
+    public async deriveId(keyId: string): Promise<string> {
+        const wallets = await WalletStore.Instance.list();
+        const existingWallet = wallets.find((wallet) => wallet.keyId === keyId);
+        if (existingWallet) return existingWallet.id;
+
+        const existingIds = wallets.map((wallet) => wallet.id);
+        const keyIdBytes = Nimiq.BufferUtils.fromBase64(keyId);
+
+        // Hashing with a random salt that does not leave the hub to avoid that an external app can derive wallet id's
+        // from public keys (Legacy and Ledger accounts) or get a hint for private key guessing / brute forcing (for
+        // BIP39) as hashing the private key is cheaper than deriving the public key.
+        const salt = await this._getSalt();
+        const saltedKeyIdBytes = new Uint8Array(keyIdBytes.length + salt.length);
+        saltedKeyIdBytes.set(keyIdBytes, 0);
+        saltedKeyIdBytes.set(salt, keyIdBytes.length);
+        await Nimiq.WasmHelper.doImport();
+        const keyIdHash = Nimiq.Hash.computeBlake2b(saltedKeyIdBytes);
+
+        for (let i = 0; i <= (keyIdHash.length - WalletStore.WALLET_ID_LENGTH); i++) {
+            const id = Nimiq.BufferUtils.toHex(keyIdHash.subarray(i, i + WalletStore.WALLET_ID_LENGTH));
+            if (existingIds.indexOf(id) === -1) return id;
+        }
+
+        // Could not find an available wallet ID in the searched space.
+        // Recurse with the hashed value.
+        return this.deriveId(Nimiq.BufferUtils.toBase64(keyIdHash));
     }
 
     public async get(id: string): Promise<WalletInfo | null> {
@@ -144,9 +153,38 @@ export class WalletStore {
                     db.deleteObjectStore(WalletStore.DB_KEY_STORE_NAME);
                     db.createObjectStore(WalletStore.DB_KEY_STORE_NAME, { keyPath: 'id' });
                 }
+
+                if (event.oldVersion < 4) {
+                    // Add the meta data object store
+                    db.createObjectStore(WalletStore.DB_META_DATA_STORE_NAME, { keyPath: 'name' });
+                }
             };
         });
 
         return this._dbPromise;
+    }
+
+    private async _getMetaData(name: string): Promise<any> {
+        const db = await this.connect();
+        const transaction = db.transaction([WalletStore.DB_META_DATA_STORE_NAME]);
+        const request = transaction.objectStore(WalletStore.DB_META_DATA_STORE_NAME).get(name);
+        const result = await WalletStore._requestAsPromise(request, transaction);
+        return result ? result.value : null;
+    }
+
+    private async _putMetaData(name: string, value: any): Promise<void> {
+        const db = await this.connect();
+        const transaction = db.transaction([WalletStore.DB_META_DATA_STORE_NAME], 'readwrite');
+        const request = transaction.objectStore(WalletStore.DB_META_DATA_STORE_NAME).put({ name, value });
+        return WalletStore._requestAsPromise(request, transaction);
+    }
+
+    private async _getSalt() {
+        let salt: Uint8Array = await this._getMetaData('salt');
+        if (salt) return salt;
+        salt = new Uint8Array(WalletStore.SALT_LENGTH);
+        window.crypto.getRandomValues(salt);
+        await this._putMetaData('salt', salt);
+        return salt;
     }
 }

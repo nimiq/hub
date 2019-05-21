@@ -257,7 +257,7 @@ export default class WalletInfoCollector {
     }
 
     private static async _getWalletInfoInstance(walletType: WalletType, keyId: string): Promise<WalletInfo> {
-        const walletId = await WalletStore.deriveId(keyId);
+        const walletId = await WalletStore.Instance.deriveId(keyId);
 
         const existingWalletInfo = await WalletStore.Instance.get(walletId);
         if (existingWalletInfo) {
