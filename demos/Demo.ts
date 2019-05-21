@@ -40,12 +40,12 @@ class Demo {
             RequestType.SIGN_TRANSACTION,
         ].forEach(requestType => {
             demo.client.on(requestType, (result: RpcResult, state: State) => {
-                console.log('AccountsManager result', result);
+                console.log('Hub result', result);
                 console.log('State', state);
 
                 document.querySelector('#result').textContent = JSON.stringify(result);
             }, (error: Error, state: State) => {
-                console.error('AccountsManager error', error);
+                console.error('Hub error', error);
                 console.log('State', state);
 
                 document.querySelector('#result').textContent = `Error: ${error.message || error}`;
