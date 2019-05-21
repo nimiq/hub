@@ -97,7 +97,7 @@ export default class ErrorHandler extends Vue {
         // TODO more Error Handling
         if (this.rejectError(error)) {
             if (this.obfuscateError(error)) {
-                this.$rpc.reject(new Error('Request aborted'));
+                this.$rpc.reject(new CanceledError());
                 return;
             } else {
                 this.$rpc.reject(error);
@@ -133,7 +133,12 @@ export default class ErrorHandler extends Vue {
      */
     private rejectError(error: Error) {
         const ignoredErrorTypes = [ Errors.Types.INVALID_REQUEST.toString() ];
-        const ignoredErrors = [ ERROR_CANCELED, 'Request aborted', 'Account ID not found', 'Address not found' ];
+        const ignoredErrors = [
+            HubErrors.Messages.CANCELED,
+            'Request aborted',
+            'Account ID not found',
+            'Address not found',
+        ];
         return ignoredErrorTypes.indexOf(error.name) > 0
             && ignoredErrors.indexOf(error.message) > 0;
     }

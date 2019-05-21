@@ -19,7 +19,7 @@ import { ArrowLeftSmallIcon, SmallPage } from '@nimiq/vue-components';
 import Loader from '../components/Loader.vue';
 import { Static } from '../lib/StaticStore';
 import { ParsedBasicRequest, RequestType } from '../lib/RequestTypes';
-import { ERROR_CANCELED } from '../lib/Constants';
+import { CanceledError } from '../lib/Errors';
 
 @Component({components: {SmallPage, Loader, ArrowLeftSmallIcon}})
 export default class ErrorHandlerUnsupportedLedger extends Vue {
@@ -52,7 +52,7 @@ export default class ErrorHandlerUnsupportedLedger extends Vue {
     }
 
     private _close() {
-        this.$rpc.reject(new Error(ERROR_CANCELED));
+        this.$rpc.reject(new CanceledError());
     }
 }
 </script>

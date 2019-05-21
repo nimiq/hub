@@ -87,7 +87,8 @@ import { Getter } from 'vuex-class';
 import { State as RpcState } from '@nimiq/rpc';
 import { ParsedCheckoutRequest, ParsedSignTransactionRequest, RequestType } from '../lib/RequestTypes';
 import { WalletInfo } from '../lib/WalletInfo';
-import { ERROR_CANCELED, TX_VALIDITY_WINDOW, CASHLINK_FUNDING_DATA } from '../lib/Constants';
+import { TX_VALIDITY_WINDOW, CASHLINK_FUNDING_DATA } from '../lib/Constants';
+import { CanceledError } from '../lib/Errors';
 import { Utf8Tools } from '@nimiq/utils';
 import Config from 'config';
 
@@ -282,7 +283,7 @@ export default class SignTransactionLedger extends Vue {
 
     private _close() {
         if (this.state !== SignTransactionLedger.State.OVERVIEW) return;
-        this.$rpc.reject(new Error(ERROR_CANCELED));
+        this.$rpc.reject(new CanceledError());
     }
 
     @Watch('shownAccountDetails')

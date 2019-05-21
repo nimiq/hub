@@ -37,7 +37,7 @@ import { WalletStore } from '@/lib/WalletStore';
 import { AccountInfo } from '@/lib/AccountInfo';
 import { WalletInfo } from '@/lib/WalletInfo';
 import KeyguardClient from '@nimiq/keyguard-client';
-import { ERROR_CANCELED } from '@/lib/Constants';
+import { CanceledError } from '@/lib/Errors';
 import { State as RpcState } from '@nimiq/rpc';
 import { WalletType } from '../lib/WalletInfo';
 
@@ -155,7 +155,7 @@ export default class SignMessage extends Vue {
     }
 
     private close() {
-        this.$rpc.reject(new Error(ERROR_CANCELED));
+        this.$rpc.reject(new CanceledError());
     }
 
     private get originDomain() {

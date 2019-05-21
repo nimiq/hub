@@ -32,7 +32,7 @@ import { SmallPage, PageHeader, PageBody, ArrowLeftSmallIcon } from '@nimiq/vue-
 import { ParsedSimpleRequest } from '../lib/RequestTypes';
 import { WalletStore } from '@/lib/WalletStore';
 import { Static } from '../lib/StaticStore';
-import { ERROR_CANCELED } from '../lib/Constants';
+import { CanceledError } from '../lib/Errors';
 import Loader from '../components/Loader.vue';
 
 @Component({components: {SmallPage, PageHeader, PageBody, Loader, ArrowLeftSmallIcon}})
@@ -52,7 +52,7 @@ export default class LogoutLedger extends Vue {
 
     private _close() {
         if (this.confirmedLogout) return;
-        this.$rpc.reject(new Error(ERROR_CANCELED));
+        this.$rpc.reject(new CanceledError());
     }
 }
 </script>

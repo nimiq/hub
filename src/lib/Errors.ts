@@ -59,3 +59,9 @@ export class AccountNotFoundError extends HubError {
         super(HubErrors.Messages.ACCOUNT_NOT_FOUND);
     }
 }
+
+export class CanceledError extends HubError {
+    constructor() {
+        super(HubErrors.Messages.CANCELED);
+    }
+}

@@ -18,9 +18,8 @@ import { StaticStore } from '@/lib/StaticStore';
 import { WalletStore } from './WalletStore';
 import { WalletType } from '@/lib/WalletInfo';
 import CookieJar from '@/lib/CookieJar';
-import { ERROR_CANCELED } from './Constants';
 import Config from 'config';
-import { AccountNotFoundError, UnclassifiedError, VueError } from './Errors';
+import { AccountNotFoundError, UnclassifiedError, VueError, HubErrors } from './Errors';
 import { Vue } from 'vue-property-decorator';
 
 export default class RpcApi {
@@ -148,7 +147,8 @@ export default class RpcApi {
         }
 
         // Check for originalRouteName in StaticStore and route there
-        if (this._staticStore.originalRouteName && (!(result instanceof Error) || result.message !== ERROR_CANCELED)) {
+        if (this._staticStore.originalRouteName
+            && (!(result instanceof Error) || result.message !== HubErrors.Messages.CANCELED)) {
             this._staticStore.sideResult = result;
             this._store.commit('setKeyguardResult', null);
 
@@ -306,7 +306,7 @@ export default class RpcApi {
                 // Set result
                 this._store.commit('setKeyguardResult', error);
 
-                if (error.message === ERROR_CANCELED) {
+                if (error.message === HubErrors.Messages.CANCELED) {
                     this.reject(error);
                     return;
                 }

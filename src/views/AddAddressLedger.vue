@@ -34,9 +34,10 @@ import { ParsedSimpleRequest } from '../lib/RequestTypes';
 import { Address } from '../lib/PublicRequestTypes';
 import { WalletInfo } from '../lib/WalletInfo';
 import { AccountInfo } from '../lib/AccountInfo';
+import { CanceledError } from '../lib/Errors';
 import LedgerApi from '../lib/LedgerApi';
 import { WalletStore } from '../lib/WalletStore';
-import { ACCOUNT_MAX_ALLOWED_ADDRESS_GAP, ERROR_CANCELED } from '../lib/Constants';
+import { ACCOUNT_MAX_ALLOWED_ADDRESS_GAP } from '../lib/Constants';
 import LabelingMachine from '../lib/LabelingMachine';
 
 @Component({components: {PageBody, SmallPage, PageHeader, LedgerUi, Loader, IdenticonSelector, ArrowLeftSmallIcon}})
@@ -102,7 +103,7 @@ export default class AddAddressLedger extends Vue {
     }
 
     private close() {
-        this.$rpc.reject(new Error(ERROR_CANCELED));
+        this.$rpc.reject(new CanceledError());
     }
 }
 </script>

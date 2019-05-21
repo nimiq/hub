@@ -30,7 +30,7 @@ import { SimpleRequest, Account, Address } from '../lib/PublicRequestTypes';
 import staticStore, { Static } from '@/lib/StaticStore';
 import { WalletStore } from '@/lib/WalletStore';
 import { WalletInfo } from '../lib/WalletInfo';
-import { ERROR_CANCELED } from '../lib/Constants';
+import { CanceledError } from '../lib/Errors';
 import { AccountInfo } from '../lib/AccountInfo';
 import { ContractInfo } from '../lib/ContractInfo';
 
@@ -113,7 +113,7 @@ export default class ChooseAddress extends Vue {
     }
 
     private close() {
-        this.$rpc.reject(new Error(ERROR_CANCELED));
+        this.$rpc.reject(new CanceledError());
     }
 }
 </script>

@@ -56,6 +56,7 @@ import { TransferIcon, ArrowLeftSmallIcon } from '@nimiq/vue-components';
 import { ParsedCheckoutRequest, RequestType } from '../lib/RequestTypes';
 import { Account } from '../lib/PublicRequestTypes';
 import { State as RpcState } from '@nimiq/rpc';
+import { CanceledError } from '../lib/Errors';
 import staticStore, { Static } from '@/lib/StaticStore';
 import { WalletStore } from '@/lib/WalletStore';
 import { AccountInfo } from '@/lib/AccountInfo';
@@ -65,7 +66,6 @@ import {
     TX_VALIDITY_WINDOW,
     LEGACY_GROUPING_ACCOUNT_ID,
     LEGACY_GROUPING_ACCOUNT_LABEL,
-    ERROR_CANCELED,
 } from '@/lib/Constants';
 import Network from '@/components/Network.vue';
 import Loader from '@/components/Loader.vue';
@@ -278,7 +278,7 @@ export default class Checkout extends Vue {
     }
 
     private close() {
-        this.$rpc.reject(new Error(ERROR_CANCELED));
+        this.$rpc.reject(new CanceledError());
     }
 
     private get hasSufficientBalanceAccount(): boolean {

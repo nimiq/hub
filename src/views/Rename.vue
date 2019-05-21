@@ -41,7 +41,7 @@
     import { WalletInfo, WalletType } from '../lib/WalletInfo';
     import { WalletStore } from '@/lib/WalletStore';
     import { Static } from '../lib/StaticStore';
-    import { ERROR_CANCELED } from '@/lib/Constants';
+    import { CanceledError } from '@/lib/Errors';
 
     /*
         In Case some sort auf Authentication with the wallet is desireable, there are 2 options:
@@ -143,7 +143,7 @@
         }
 
         private close() {
-            this.$rpc.reject(new Error(ERROR_CANCELED));
+            this.$rpc.reject(new CanceledError());
         }
     }
 </script>

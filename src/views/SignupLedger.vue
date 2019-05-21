@@ -51,7 +51,7 @@ import WalletInfoCollector from '../lib/WalletInfoCollector';
 import { WalletInfo, WalletType } from '../lib/WalletInfo';
 import { AccountInfo } from '../lib/AccountInfo';
 import { WalletStore } from '../lib/WalletStore';
-import { ERROR_CANCELED } from '../lib/Constants';
+import { CanceledError } from '../lib/Errors';
 import LabelingMachine from '@/lib/LabelingMachine';
 
 @Component({components: {
@@ -210,7 +210,7 @@ export default class SignupLedger extends Vue {
     }
 
     private close() {
-        this.$rpc.reject(new Error(ERROR_CANCELED));
+        this.$rpc.reject(new CanceledError());
     }
 }
 </script>

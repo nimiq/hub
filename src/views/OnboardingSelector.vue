@@ -21,7 +21,8 @@ import { BrowserDetection } from '@nimiq/utils';
 import OnboardingMenu from '../components/OnboardingMenu.vue';
 import { ParsedBasicRequest, RequestType } from '@/lib/RequestTypes';
 import { Static } from '@/lib/StaticStore';
-import { DEFAULT_KEY_PATH, ERROR_CANCELED } from '@/lib/Constants';
+import { DEFAULT_KEY_PATH } from '@/lib/Constants';
+import { CanceledError } from '@/lib/Errors';
 import CookieHelper from '../lib/CookieHelper';
 import NotEnoughCookieSpace from '../components/NotEnoughCookieSpace.vue';
 import { ArrowLeftSmallIcon } from '@nimiq/vue-components';
@@ -68,7 +69,7 @@ export default class OnboardingSelector extends Vue {
         if (this.isSecondaryOnboarding) {
             window.history.back();
         } else {
-            this.$rpc.reject(new Error(ERROR_CANCELED));
+            this.$rpc.reject(new CanceledError());
         }
     }
 
