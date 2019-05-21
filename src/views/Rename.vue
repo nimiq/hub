@@ -45,7 +45,7 @@
 
     /*
         In Case some sort auf Authentication with the wallet is desireable, there are 2 options:
-            1.  is to have the user enter the password at the very beginning. This would require the AccountsManager to
+            1.  is to have the user enter the password at the very beginning. This would require the Hub to
                 first redirect to the Keyguard. After returning and validating (sign message) this component would come
                 into view.
             2.  is to have the user enter his Password as confirmation of the changes (sign message and validate). That

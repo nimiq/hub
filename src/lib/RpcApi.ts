@@ -273,7 +273,7 @@ export default class RpcApi {
 
                 // To enable the keyguardResponseRouter to decide correctly to which route it should direct
                 // when returning from the Keyguard's sign-transaction request, the original request kind that
-                // was given to the AccountsManager is passed here and the keyguardResponseRouter is turned
+                // was given to the Hub is passed here and the keyguardResponseRouter is turned
                 // from an object into a function instead.
                 this.routerReplace(keyguardResponseRouter(command, this._staticStore.request!.kind).resolve);
 

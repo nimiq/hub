@@ -32,7 +32,7 @@ export interface ParsedSignTransactionRequest extends ParsedBasicRequest {
     fee: number;
     data: Uint8Array;
     flags: number;
-    validityStartHeight: number; // FIXME To be made optional when accounts manager has its own network
+    validityStartHeight: number; // FIXME To be made optional when hub has its own network
 }
 
 export interface ParsedCheckoutRequest extends ParsedBasicRequest {
