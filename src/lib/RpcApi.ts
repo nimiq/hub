@@ -29,6 +29,13 @@ export default class RpcApi {
     private _router: Router;
     private _keyguardClient: KeyguardClient;
 
+    private _3rdPartyRequestWhitelist: RequestType[] = [
+        RequestType.CHECKOUT,
+        RequestType.SIGN_TRANSACTION,
+        RequestType.SIGN_MESSAGE,
+        RequestType.CHOOSE_ADDRESS,
+    ];
+
     constructor(store: Store<RootState>, staticStore: StaticStore, router: Router) {
         this._store = store;
         this._staticStore = staticStore;
@@ -160,6 +167,15 @@ export default class RpcApi {
             // Server listener
             this._server.onRequest(requestType, async (state, arg: RpcRequest) => {
                 let request;
+
+                if (!this._3rdPartyRequestWhitelist.includes(requestType)) {
+                    // Check that a non-whitelisted request comes from a privileged origin
+                    if (!Config.privilegedOrigins.includes(state.origin)) {
+                        this.reject(new Error('Unauthorized'));
+                        return;
+                    }
+                }
+
                 this._staticStore.rpcState = state;
                 try {
                     request = RequestParser.parse(arg, state, requestType) || undefined;
