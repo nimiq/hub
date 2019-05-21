@@ -200,8 +200,8 @@ export default class SignupLedger extends Vue {
         if (currentRequest.type !== LedgerApi.RequestType.DERIVE_ACCOUNTS || currentRequest.cancelled) return;
         if (LedgerApi.currentState.type === LedgerApi.StateType.REQUEST_PROCESSING
             || LedgerApi.currentState.type === LedgerApi.StateType.REQUEST_CANCELLING) {
-            // When we actually fetch the accounts from the device, we want to show our own Loader instead of
-            // the LedgerUi processing screen to avoid switching back and forth between LedgerUi and Loader during
+            // When we actually fetch the accounts from the device, we want to show our own StatusScreen instead of
+            // the LedgerUi processing screen to avoid switching back and forth between LedgerUi and StatusScreen during
             // account finding.
             this.state = SignupLedger.State.FETCHING_ADDRESSES;
         } else {
@@ -228,13 +228,13 @@ export default class SignupLedger extends Vue {
         transition: opacity .4s;
     }
 
-    .small-page > :not(.loader) {
+    .small-page > :not(.status-screen) {
         width: 100%;
         height: 100%;
         background: white;
     }
 
-    .loader >>> .title {
+    .status-screen >>> .title {
         min-height: 1em; /* to avoid jumping of the UI when setting a title */
     }
 

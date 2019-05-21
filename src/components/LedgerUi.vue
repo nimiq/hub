@@ -266,7 +266,7 @@ export default LedgerUi;
         --ledger-scale-factor: 1.5;
     }
 
-    .loader {
+    .status-screen {
         overflow: hidden;
     }
 

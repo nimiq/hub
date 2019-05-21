@@ -142,7 +142,7 @@ export default class Checkout extends Vue {
             }
         }
 
-        // Remove loader to unveil account selector
+        // Remove StatusScreen to unveil account selector
         this.hasBalances = true;
     }
 
@@ -347,7 +347,7 @@ export default class Checkout extends Vue {
         position: relative;
     }
 
-    .loader {
+    .status-screen {
         position: absolute;
         left: 0;
         top: 0;

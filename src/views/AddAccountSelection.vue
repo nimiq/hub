@@ -1,7 +1,7 @@
 <template>
     <div class="container pad-bottom">
         <SmallPage>
-            <IdenticonSelector  v-if="!showLoader" :accounts="accounts" @identicon-selected="identiconSelected">
+            <IdenticonSelector  v-if="!showStatusScreen" :accounts="accounts" @identicon-selected="identiconSelected">
                 <PageHeader slot="header" backArrow @back="back">Choose a new Account</PageHeader>
             </IdenticonSelector>
 
@@ -33,7 +33,7 @@ export default class AddAccountSelection extends Vue {
     @Static private request!: ParsedSimpleRequest;
     @State private keyguardResult!: DerivedAddress[];
 
-    private showLoader: boolean = false;
+    private showStatusScreen: boolean = false;
     private state: StatusScreen.State = StatusScreen.State.LOADING;
     private title: string = 'Storing your Address';
 
@@ -50,7 +50,7 @@ export default class AddAccountSelection extends Vue {
     }
 
     private async identiconSelected(selectedAccount: AccountInfo) {
-        this.showLoader = true;
+        this.showStatusScreen = true;
 
         const wallet = (await WalletStore.Instance.get(this.request.walletId))!;
 

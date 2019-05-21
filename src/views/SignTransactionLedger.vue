@@ -40,7 +40,7 @@
                 <transition name="transition-fade">
                     <StatusScreen v-if="state !== constructor.State.OVERVIEW"
                         :state="state === constructor.State.FINISHED ? 'success' : 'loading'"
-                        :title="loaderTitle">
+                        :title="statusScreenTitle">
                     </StatusScreen>
                 </transition>
             </div>
@@ -263,7 +263,7 @@ export default class SignTransactionLedger extends Vue {
             : Nimiq.BufferUtils.toHex(this.request.data);
     }
 
-    private get loaderTitle() {
+    private get statusScreenTitle() {
         switch (this.state) {
             case SignTransactionLedger.State.SENDING_TRANSACTION:
                 return 'Sending Transaction';
@@ -404,7 +404,7 @@ export default class SignTransactionLedger extends Vue {
         transition: none !important;
     }
 
-    .loader {
+    .status-screen {
         transition: opacity .4s;
     }
 
