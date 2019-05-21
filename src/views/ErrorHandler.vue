@@ -5,11 +5,11 @@
                 :title="title"
                 :state="state"
                 :lightBlue="true"
-                :mainAction="action"
-                @main-action="() => report(true)"
+                :mainAction="mainAction"
+                @main-action="mainActionHandler"
                 :message="message"
                 :alternativeAction="altAction"
-                @alternativeAction="report" />
+                @alternative-action="altActionHandler" />
         </SmallPage>
     </div>
 </template>
@@ -37,18 +37,17 @@ export default class ErrorHandler extends Vue {
     private state: Loader.State = Loader.State.LOADING;
     private title: string = '';
     private message: string = '';
-    private action: string = '';
+    private mainAction: string = 'Close window';
     private altAction: string = '';
 
     public async created() {
-        let error = null;
-        console.log(this.error);
+        let error: Error | null = null;
         if (this.keyguardResult instanceof Error) {
             error = this.keyguardResult;
         } else if (this.error instanceof Error) {
             error = this.error;
         }
-        if (!error) return;
+        if (!(error instanceof Error)) return;
 
         if (error.message === Errors.Messages.KEY_NOT_FOUND) {
             let walletId: string;
@@ -96,35 +95,66 @@ export default class ErrorHandler extends Vue {
         }
 
         // TODO more Error Handling
-
-        // if (this.responseErrorOnReportingBlacklist()) {
-        //     this.$rpc.reject(error);
-        //     return;
-        // }
+        if (this.rejectError(error)) {
+            if (this.obfuscateError(error)) {
+                this.$rpc.reject(new Error('Request aborted'));
+                return;
+            } else {
+                this.$rpc.reject(error);
+                return;
+            }
+        }
 
         this.state = Loader.State.ERROR;
-        this.title = 'An Error Occured';
-        this.message = 'Help us improve by reporting this Error.';
-        this.action = 'Report';
-        this.altAction = 'No, Thanks!';
+        this.title = 'An error occurred';
 
-    }
-
-    private report(doReport = false) {
-        console.log(`report(${doReport})`);
-        console.debug('Request:', JSON.stringify(this.keyguardRequest));
-        if (doReport) {
-            Raven.captureException(this.keyguardResult);
+        if (this.reportError(error)) {
+            this.message = 'Help us improve by reporting this Error.';
+            this.mainAction = 'Report';
+            this.mainActionHandler = () => {
+                // Raven.captureException(this.keyguardResult);
+                // this.$rpc.reject(error!);
+                this.$rpc.reject(new Error('captured'));
+            };
+            this.altAction = 'Close window';
+            this.altActionHandler = () => {
+                this.$rpc.reject(error!);
+                console.log('trying to reject');
+            };
+        } else {
+            this.mainAction = 'Close window';
+            this.mainActionHandler = () => this.$rpc.reject(error!);
         }
-        this.$rpc.reject(this.keyguardResult);
     }
 
-    private responseErrorOnReportingBlacklist(): boolean {
-        // TODO improve error blacklist
+    /**
+     * Errors that return true when provided as argument to this function
+     * will immediately be rejected.
+     */
+    private rejectError(error: Error) {
         const ignoredErrorTypes = [ Errors.Types.INVALID_REQUEST.toString() ];
         const ignoredErrors = [ ERROR_CANCELED, 'Request aborted', 'Account ID not found', 'Address not found' ];
-        return !(ignoredErrorTypes.indexOf(this.keyguardResult.name) < 0
-            && ignoredErrors.indexOf(this.keyguardResult.message) < 0);
+        return ignoredErrorTypes.indexOf(error.name) > 0
+            && ignoredErrors.indexOf(error.message) > 0;
     }
+
+    /**
+     * Errors that return true when provided as argument to this function
+     * will reject with an `new Error('Request aborted`)`
+     */
+    private obfuscateError(error: Error) {
+        return false;
+    }
+
+    /**
+     * Errors that return true when provided as argument to this function
+     * will provide the option to be reported to sentry
+     */
+    private reportError(error: Error): boolean {
+        return true;
+    }
+
+    private mainActionHandler: () => void = () => {}; // tslint:disable-line:no-empty
+    private altActionHandler: () => void = () => {}; // tslint:disable-line:no-empty
 }
 </script>
