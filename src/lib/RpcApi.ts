@@ -20,7 +20,7 @@ import { WalletType } from '@/lib/WalletInfo';
 import CookieJar from '@/lib/CookieJar';
 import { ERROR_CANCELED } from './Constants';
 import Config from 'config';
-import { AccountNotFoundError, UnclassifiedError } from './Errors';
+import { AccountNotFoundError, UnclassifiedError, VueError } from './Errors';
 import { Vue } from 'vue-property-decorator';
 
 export default class RpcApi {
@@ -99,7 +99,7 @@ export default class RpcApi {
 
         // and finally catch vue errors, too.
         Vue.config.errorHandler = (err, vm, info) => {
-            this._staticStore.error = new UnclassifiedError(err);
+            this._staticStore.error = new VueError(err);
             this.routerReplace(ERROR);
         };
 

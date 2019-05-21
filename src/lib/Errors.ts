@@ -1,4 +1,15 @@
 import { Errors } from '@nimiq/keyguard-client';
+export const HubErrors = {
+    Types: {
+        ...Errors.Types,
+        VUE: 'Vue',
+        HUB: 'Hub',
+    },
+    Messages: {
+        ...Errors.Messages,
+        ACCOUNT_NOT_FOUND: 'Account was not found',
+    },
+};
 
 export class BaseError extends Error {
     constructor(type: string, messageOrError: string | Error | undefined) {
@@ -21,30 +32,30 @@ export class BaseError extends Error {
 
 export class InvalidRequestError extends BaseError {
     constructor(messageOrError: string | Error) {
-        super(Errors.Types.INVALID_REQUEST, messageOrError);
-    }
-}
-
-export class CoreError  extends BaseError {
-    constructor(messageOrError: string | Error) {
-        super(Errors.Types.CORE, messageOrError);
+        super(HubErrors.Types.INVALID_REQUEST, messageOrError);
     }
 }
 
 export class UnclassifiedError  extends BaseError {
     constructor(messageOrError: string | Error) {
-        super(Errors.Types.UNCLASSIFIED, messageOrError);
+        super(HubErrors.Types.UNCLASSIFIED, messageOrError);
     }
 }
 
-export class KeyguardError  extends BaseError {
+export class VueError extends BaseError {
     constructor(messageOrError: string | Error) {
-        super(Errors.Types.KEYGUARD, messageOrError);
+        super(HubErrors.Types.VUE, messageOrError);
     }
 }
 
-export class AccountNotFoundError extends KeyguardError {
+export class HubError  extends BaseError {
+    constructor(messageOrError: string | Error) {
+        super(HubErrors.Types.HUB, messageOrError);
+    }
+}
+
+export class AccountNotFoundError extends HubError {
     constructor() {
-        super(Errors.Messages.KEY_NOT_FOUND);
+        super(HubErrors.Messages.ACCOUNT_NOT_FOUND);
     }
 }
