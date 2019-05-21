@@ -20,6 +20,7 @@ export class StaticStore {
     public keyguardRequest?: KeyguardRequest;
     public originalRouteName?: string;
     public sideResult?: RpcResult | Error;
+    public error?: Error;
 }
 
 // Decorator is capitalized to be consistent with vuex decorators

@@ -31,6 +31,7 @@ import { DEFAULT_KEY_PATH, ERROR_CANCELED } from '../lib/Constants';
 export default class ErrorHandler extends Vue {
     @Static protected request!: ParsedRpcRequest;
     @Static protected keyguardRequest?: KeyguardClient.Request;
+    @Static protected error?: Error;
     @State protected keyguardResult!: Error;
 
     private state: Loader.State = Loader.State.LOADING;
@@ -40,9 +41,16 @@ export default class ErrorHandler extends Vue {
     private altAction: string = '';
 
     public async created() {
-        if (!(this.keyguardResult instanceof Error)) return;
+        let error = null;
+        console.log(this.error);
+        if (this.keyguardResult instanceof Error) {
+            error = this.keyguardResult;
+        } else if (this.error instanceof Error) {
+            error = this.error;
+        }
+        if (!error) return;
 
-        if (this.keyguardResult.message === Errors.Messages.KEY_NOT_FOUND) {
+        if (error.message === Errors.Messages.KEY_NOT_FOUND) {
             let walletId: string;
             if ((this.request as ParsedSimpleRequest).walletId) {
                 // The walletId is already in the Accounts request
@@ -55,13 +63,13 @@ export default class ErrorHandler extends Vue {
             } else {
                 // This really should not happen.
                 // Executing this code would mean i.e. a CreateRequest fired KEY_NOT_FOUND which it does not throw
-                this.$rpc.reject(this.keyguardResult);
+                this.$rpc.reject(error);
                 return;
             }
 
             const walletInfo = await WalletStore.Instance.get(walletId);
             if (!walletInfo) {
-                this.$rpc.reject(this.keyguardResult); // return it to caller
+                this.$rpc.reject(error); // return it to caller
                 return;
             }
             walletInfo.keyMissing = true;
@@ -82,17 +90,17 @@ export default class ErrorHandler extends Vue {
             return;
         }
 
-        if (this.keyguardResult.message === Errors.Messages.GOTO_CREATE) {
+        if (error.message === Errors.Messages.GOTO_CREATE) {
             this.$rpc.routerReplace(RequestType.SIGNUP);
             return;
         }
 
         // TODO more Error Handling
 
-        if (this.responseErrorOnReportingBlacklist()) {
-            this.$rpc.reject(this.keyguardResult);
-            return;
-        }
+        // if (this.responseErrorOnReportingBlacklist()) {
+        //     this.$rpc.reject(error);
+        //     return;
+        // }
 
         this.state = Loader.State.ERROR;
         this.title = 'An Error Occured';
@@ -103,6 +111,7 @@ export default class ErrorHandler extends Vue {
     }
 
     private report(doReport = false) {
+        console.log(`report(${doReport})`);
         console.debug('Request:', JSON.stringify(this.keyguardRequest));
         if (doReport) {
             Raven.captureException(this.keyguardResult);

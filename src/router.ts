@@ -89,7 +89,7 @@ export function keyguardResponseRouter(
 
     return {
         resolve,
-        reject: 'error',
+        reject: ERROR,
     };
 }
 

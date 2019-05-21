@@ -12,14 +12,16 @@ import {
 } from './RequestTypes';
 import { RequestParser } from './RequestParser';
 import { RpcRequest, RpcResult } from './PublicRequestTypes';
-import { KeyguardClient, KeyguardCommand, Errors } from '@nimiq/keyguard-client';
-import { keyguardResponseRouter, REQUEST_ERROR } from '@/router';
+import { KeyguardClient, KeyguardCommand } from '@nimiq/keyguard-client';
+import { keyguardResponseRouter, REQUEST_ERROR, ERROR } from '@/router';
 import { StaticStore } from '@/lib/StaticStore';
 import { WalletStore } from './WalletStore';
 import { WalletType } from '@/lib/WalletInfo';
 import CookieJar from '@/lib/CookieJar';
 import { ERROR_CANCELED } from './Constants';
 import Config from 'config';
+import { AccountNotFoundError, UnclassifiedError } from './Errors';
+import { Vue } from 'vue-property-decorator';
 
 export default class RpcApi {
     private _server: RpcServer;
@@ -75,6 +77,32 @@ export default class RpcApi {
                 this._router.replace(`/${REQUEST_ERROR}`);
             }
         };
+
+        // catch unhandled promise rejections
+        window.addEventListener('unhandledrejection', (event) => {
+            this._staticStore.error = new UnclassifiedError((event as PromiseRejectionEvent).reason);
+            this.routerReplace(ERROR);
+        });
+
+        // catch uncaught errors
+        window.addEventListener('error', (event) => {
+            const ev = event as ErrorEvent;
+            if (ev.error) {
+                this._staticStore.error = new UnclassifiedError((event as ErrorEvent).error);
+            } else {
+                this._staticStore.error = new UnclassifiedError(
+                    `${ev.message} at ${ev.filename}:${ev.lineno}:${ev.colno}`,
+                );
+            }
+            this.routerReplace(ERROR);
+        });
+
+        // and finally catch vue errors, too.
+        Vue.config.errorHandler = (err, vm, info) => {
+            this._staticStore.error = new UnclassifiedError(err);
+            this.routerReplace(ERROR);
+        };
+
         this._server.init(onClientTimeout);
     }
 
@@ -104,7 +132,7 @@ export default class RpcApi {
         this._reply(ResponseStatus.OK, result);
     }
 
-    public reject(error: Error, report = false) {
+    public reject(error: Error) {
         this._reply(ResponseStatus.ERROR, error);
     }
 
@@ -141,6 +169,7 @@ export default class RpcApi {
             request: this._staticStore.request ? RequestParser.raw(this._staticStore.request) : undefined,
             kind: this._staticStore.request ? this._staticStore.request.kind : undefined,
             keyguardRequest: this._staticStore.keyguardRequest,
+            error: this._staticStore.error,
             originalRouteName: this._staticStore.originalRouteName,
         };
     }
@@ -155,7 +184,8 @@ export default class RpcApi {
                     request = RequestParser.parse(arg, state, requestType) || undefined;
                     this._staticStore.request = request;
                 } catch (error) {
-                    this.reject(error);
+                    this._staticStore.error = error;
+                    this.routerReplace(ERROR);
                     return;
                 }
 
@@ -202,7 +232,8 @@ export default class RpcApi {
                         }
                     }
                     if (accountRequired && !account) {
-                        this.reject(new Error('Account not found'));
+                        this._staticStore.error = new AccountNotFoundError();
+                        this.routerReplace(ERROR);
                         return;
                     }
                 }

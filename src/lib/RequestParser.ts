@@ -1,5 +1,6 @@
 import { TX_VALIDITY_WINDOW, TX_MIN_VALIDITY_DURATION } from './Constants';
 import { State } from '@nimiq/rpc';
+import { InvalidRequestError } from './Errors';
 import {
     BasicRequest,
     SimpleRequest,
@@ -31,8 +32,10 @@ export class RequestParser {
             case RequestType.SIGN_TRANSACTION:
                 const signTransactionRequest = request as SignTransactionRequest;
 
-                if (!signTransactionRequest.value) throw new Error('value is required');
-                if (!signTransactionRequest.validityStartHeight) throw new Error('validityStartHeight is required');
+                if (!signTransactionRequest.value) throw new InvalidRequestError('value is required');
+                if (!signTransactionRequest.validityStartHeight) {
+                    throw new InvalidRequestError('validityStartHeight is required');
+                }
 
                 return {
                     kind: RequestType.SIGN_TRANSACTION,
@@ -51,9 +54,9 @@ export class RequestParser {
             case RequestType.CHECKOUT:
                 const checkoutRequest = request as CheckoutRequest;
 
-                if (!checkoutRequest.value) throw new Error('value is required');
+                if (!checkoutRequest.value) throw new InvalidRequestError('value is required');
                 if (checkoutRequest.shopLogoUrl && new URL(checkoutRequest.shopLogoUrl).origin !== state.origin) {
-                    throw new Error(
+                    throw new InvalidRequestError(
                         'shopLogoUrl must have same origin as caller website. Image at ' +
                         checkoutRequest.shopLogoUrl +
                         ' is not on caller origin ' +
@@ -97,7 +100,7 @@ export class RequestParser {
             case RequestType.ADD_ADDRESS:
                 const simpleRequest = request as SimpleRequest;
 
-                if (!simpleRequest.accountId) throw new Error('accountId is required');
+                if (!simpleRequest.accountId) throw new InvalidRequestError('accountId is required');
 
                 return {
                     kind: requestType,
@@ -107,7 +110,7 @@ export class RequestParser {
             case RequestType.EXPORT:
                 const exportRequest = request as ExportRequest;
 
-                if (!exportRequest.accountId) throw new Error('accountId is required');
+                if (!exportRequest.accountId) throw new InvalidRequestError('accountId is required');
 
                 return {
                     kind: RequestType.EXPORT,
@@ -119,7 +122,7 @@ export class RequestParser {
             case RequestType.RENAME:
                 const renameRequest = request as RenameRequest;
 
-                if (!renameRequest.accountId) throw new Error('accountId is required');
+                if (!renameRequest.accountId) throw new InvalidRequestError('accountId is required');
 
                 return {
                     kind: RequestType.RENAME,
@@ -131,7 +134,7 @@ export class RequestParser {
                 const signMessageRequest = request as SignMessageRequest;
                 if (typeof signMessageRequest.message !== 'string'
                     && !(signMessageRequest.message instanceof Uint8Array)) {
-                    throw new Error('message must be a string or Uint8Array');
+                    throw new InvalidRequestError('message must be a string or Uint8Array');
                 }
                 return {
                     kind: RequestType.SIGN_MESSAGE,
