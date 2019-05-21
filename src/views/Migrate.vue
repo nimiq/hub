@@ -243,7 +243,7 @@ export default class Migrate extends Vue {
             const contracts = genesisVestingContracts.filter((contract) => contract.owner.equals(accountInfo.address));
 
             const walletInfo = new WalletInfo(
-                await WalletStore.deriveId(keyInfo.id),
+                await WalletStore.Instance.deriveId(keyInfo.id),
                 keyInfo.id,
                 ACCOUNT_DEFAULT_LABEL_LEGACY,
                 accounts,
