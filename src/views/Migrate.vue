@@ -33,7 +33,7 @@
                     </p>
                 </div>
 
-                <a href="https://medium.com/nimiq-network" target="_blank" class="nq-link link-read-article">
+                <a href="https://medium.com/nimiq-network/the-biggest-release-since-mainnet-launch-f8096e33dab9" target="_blank" class="nq-link link-read-article">
                     There's much more. Read the full article <ArrowRightSmallIcon/>
                 </a>
             </PageBody>
