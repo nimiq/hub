@@ -1,9 +1,9 @@
 import { WalletInfo, WalletInfoEntry } from '@/lib/WalletInfo';
 
 export class WalletStore {
-    public static readonly DB_VERSION = 4;
-    public static readonly DB_NAME = 'nimiq-accounts';
-    public static readonly DB_KEY_STORE_NAME = 'wallets';
+    public static readonly DB_VERSION = 1;
+    public static readonly DB_NAME = 'nimiq-hub';
+    public static readonly DB_ACCOUNTS_STORE_NAME = 'accounts';
     public static readonly DB_META_DATA_STORE_NAME = 'meta-data';
 
     public static readonly WALLET_ID_LENGTH = 6;
@@ -89,30 +89,30 @@ export class WalletStore {
 
     public async get(id: string): Promise<WalletInfo | null> {
         const db = await this.connect();
-        const transaction = db.transaction([WalletStore.DB_KEY_STORE_NAME]);
-        const request = transaction.objectStore(WalletStore.DB_KEY_STORE_NAME).get(id);
+        const transaction = db.transaction([WalletStore.DB_ACCOUNTS_STORE_NAME]);
+        const request = transaction.objectStore(WalletStore.DB_ACCOUNTS_STORE_NAME).get(id);
         const result = await WalletStore._requestAsPromise(request, transaction);
         return result ? WalletInfo.fromObject(result) : result;
     }
 
     public async put(walletInfo: WalletInfo) {
         const db = await this.connect();
-        const transaction = db.transaction([WalletStore.DB_KEY_STORE_NAME], 'readwrite');
-        const request = transaction.objectStore(WalletStore.DB_KEY_STORE_NAME).put(walletInfo.toObject());
+        const transaction = db.transaction([WalletStore.DB_ACCOUNTS_STORE_NAME], 'readwrite');
+        const request = transaction.objectStore(WalletStore.DB_ACCOUNTS_STORE_NAME).put(walletInfo.toObject());
         return WalletStore._requestAsPromise(request, transaction);
     }
 
     public async remove(id: string) {
         const db = await this.connect();
-        const transaction = db.transaction([WalletStore.DB_KEY_STORE_NAME], 'readwrite');
-        const request = transaction.objectStore(WalletStore.DB_KEY_STORE_NAME).delete(id);
+        const transaction = db.transaction([WalletStore.DB_ACCOUNTS_STORE_NAME], 'readwrite');
+        const request = transaction.objectStore(WalletStore.DB_ACCOUNTS_STORE_NAME).delete(id);
         return WalletStore._requestAsPromise(request, transaction);
     }
 
     public async list(): Promise<WalletInfoEntry[]> {
         const db = await this.connect();
-        const request = db.transaction([WalletStore.DB_KEY_STORE_NAME], 'readonly')
-            .objectStore(WalletStore.DB_KEY_STORE_NAME)
+        const request = db.transaction([WalletStore.DB_ACCOUNTS_STORE_NAME], 'readonly')
+            .objectStore(WalletStore.DB_ACCOUNTS_STORE_NAME)
             .openCursor();
 
         const result: WalletInfoEntry[] = await WalletStore._readAllFromCursor(request);
@@ -139,26 +139,8 @@ export class WalletStore {
 
                 if (event.oldVersion < 1) {
                     // Version 1 is the first version of the database.
-                    db.createObjectStore(WalletStore.DB_KEY_STORE_NAME, { keyPath: 'id' });
-                }
-
-                if (event.oldVersion < 2) {
-                    // Change to version 2 just to delete former testnet databases, because we do the same in keyguard.
-                    db.deleteObjectStore(WalletStore.DB_KEY_STORE_NAME);
-                    db.createObjectStore(WalletStore.DB_KEY_STORE_NAME, { keyPath: 'id' });
-                }
-
-                if (event.oldVersion < 3) {
-                    // Change to version 3 just to delete former testnet databases, because we do the same in keyguard.
-                    db.deleteObjectStore(WalletStore.DB_KEY_STORE_NAME);
-                    db.createObjectStore(WalletStore.DB_KEY_STORE_NAME, { keyPath: 'id' });
-                }
-
-                if (event.oldVersion < 4) {
-                    // Add the meta data object store and reset the key store as the old id's are not valid anymore
+                    db.createObjectStore(WalletStore.DB_ACCOUNTS_STORE_NAME, { keyPath: 'id' });
                     db.createObjectStore(WalletStore.DB_META_DATA_STORE_NAME, { keyPath: 'name' });
-                    db.deleteObjectStore(WalletStore.DB_KEY_STORE_NAME);
-                    db.createObjectStore(WalletStore.DB_KEY_STORE_NAME, { keyPath: 'id' });
                 }
             };
         });
