@@ -5,7 +5,7 @@
                 <PageHeader slot="header" backArrow @back="back">Choose a new Account</PageHeader>
             </IdenticonSelector>
 
-            <StatusScreen v-if="showLoader"
+            <StatusScreen v-if="showStatusScreen"
                 class="grow-from-bottom-button"
                 :title="title"
                 :state="state"
@@ -67,7 +67,7 @@ export default class AddAccountSelection extends Vue {
 
         await Promise.all([
             WalletStore.Instance.put(wallet),
-            Vue.nextTick(), // Wait at least one paint cycle to enable animation from blue to green in Loader
+            Vue.nextTick(), // Wait at least one paint cycle to enable animation from blue to green in StatusScreen
         ]);
 
         window.clearTimeout(showLoadingSpinnerTimeout);
