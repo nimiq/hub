@@ -175,7 +175,7 @@ export default class HubApi<DB extends BehaviorType = BehaviorType.POPUP> { // D
     public migrate<B extends BehaviorType = DB>(
         requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
     ): Promise<B extends BehaviorType.REDIRECT ? void : Account[]> {
-        return this._request(requestBehavior, RequestType.MIGRATE, [{ appName: 'Accounts Client' }]);
+        return this._request(requestBehavior, RequestType.MIGRATE, [{ appName: 'Account list' }]);
     }
 
     /**
