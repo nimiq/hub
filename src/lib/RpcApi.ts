@@ -170,8 +170,9 @@ export default class RpcApi {
 
                 if (!this._3rdPartyRequestWhitelist.includes(requestType)) {
                     // Check that a non-whitelisted request comes from a privileged origin
-                    if (!Config.privilegedOrigins.includes(state.origin)) {
-                        this.reject(new Error('Unauthorized'));
+                    if (!Config.privilegedOrigins.includes(state.origin)
+                        && !Config.privilegedOrigins.includes('*')) {
+                        state.reply(ResponseStatus.ERROR, new Error('Unauthorized'));
                         return;
                     }
                 }
