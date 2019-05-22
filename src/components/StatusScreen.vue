@@ -279,7 +279,7 @@ export default StatusScreen;
         position: relative;
     }
 
-    .status-screen .status-row {
+    .status-screen.small .status-row {
         margin-bottom: 2.5rem;
     }
 
