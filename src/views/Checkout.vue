@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <SmallPage v-if="height === 0 || !hasBalances">
-            <StatusScreen title="Updating your balances" status="Connecting to Nimiq..."/>
+            <StatusScreen title="Updating your balances" :status="status"/>
         </SmallPage>
 
         <SmallPage v-else :class="{ 'merchant-info-shown': showMerchantInfo }">
@@ -56,21 +56,21 @@ import { TransferIcon, ArrowLeftSmallIcon } from '@nimiq/vue-components';
 import { ParsedCheckoutRequest, RequestType } from '../lib/RequestTypes';
 import { Account } from '../lib/PublicRequestTypes';
 import { State as RpcState } from '@nimiq/rpc';
-import staticStore, { Static } from '@/lib/StaticStore';
-import { WalletStore } from '@/lib/WalletStore';
-import { AccountInfo } from '@/lib/AccountInfo';
-import { WalletInfo, WalletType } from '@/lib/WalletInfo';
+import staticStore, { Static } from '../lib/StaticStore';
+import { WalletStore } from '../lib/WalletStore';
+import { AccountInfo } from '../lib/AccountInfo';
+import { WalletInfo, WalletType } from '../lib/WalletInfo';
 import { State, Mutation, Getter } from 'vuex-class';
 import {
     TX_VALIDITY_WINDOW,
     LEGACY_GROUPING_ACCOUNT_ID,
     LEGACY_GROUPING_ACCOUNT_LABEL,
     ERROR_CANCELED,
-} from '@/lib/Constants';
-import Network from '@/components/Network.vue';
-import StatusScreen from '@/components/StatusScreen.vue';
+} from '../lib/Constants';
+import Network from '../components/Network.vue';
+import StatusScreen from '../components/StatusScreen.vue';
 import KeyguardClient from '@nimiq/keyguard-client';
-import { ContractInfo, VestingContractInfo } from '@/lib/ContractInfo';
+import { ContractInfo, VestingContractInfo } from '../lib/ContractInfo';
 
 @Component({components: {
     PaymentInfoLine,
@@ -102,6 +102,7 @@ export default class Checkout extends Vue {
     private height: number = 0;
     private hasBalances: boolean = false;
     private sideResultAddedWallet: boolean = false;
+    private status: string = 'Connecting to network...';
 
     private async created() {
         const $subtitle = document.querySelector('.logo .logo-subtitle')!;
@@ -114,6 +115,7 @@ export default class Checkout extends Vue {
             return;
         }
 
+        this.addConsensusListeners();
         const balances = await this.getBalances();
 
         // Handle optional sender address included in the request
@@ -180,7 +182,7 @@ export default class Checkout extends Vue {
 
             if ('type' in accountOrContract && accountOrContract.type === Nimiq.Account.Type.VESTING) {
                 // Calculate available amount for vesting contract
-                accountOrContract.balance = accountOrContract
+                accountOrContract.balance = (accountOrContract as VestingContractInfo)
                     .calculateAvailableAmount(this.height, Nimiq.Policy.coinsToSatoshis(balance));
             } else {
                 accountOrContract.balance = Nimiq.Policy.coinsToSatoshis(balance);
@@ -209,6 +211,13 @@ export default class Checkout extends Vue {
 
     private onHeadChange(head: Nimiq.BlockHeader | {height: number}) {
         this.height = head.height;
+    }
+
+    private addConsensusListeners() {
+        const network = (this.$refs.network as Network);
+        network.$on(Network.Events.API_READY, () => this.status = 'Contacting seed nodes...');
+        network.$on(Network.Events.CONSENSUS_SYNCING, () => this.status = 'Syncing consensus...');
+        network.$on(Network.Events.CONSENSUS_ESTABLISHED, () => this.status = 'Requesting balances...');
     }
 
     private setAccountOrContract(walletId: string, address: string, isFromRequest = false) {

@@ -17,7 +17,7 @@ import { ERROR_TRANSACTION_RECEIPTS } from '../lib/Constants';
 import LabelingMachine from './LabelingMachine';
 import { VestingContractInfo } from './ContractInfo';
 
-type BasicAccountInfo = {
+export type BasicAccountInfo = {
     address: string,
     path: string,
 };
