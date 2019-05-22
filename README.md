@@ -14,15 +14,8 @@ interact with their users' Nimiq addresses.
         - [Checkout](#checkout)
         - [Choose Address](#choose-address)
         - [Sign Transaction](#sign-transaction)
-        - [Signup](#signup)
-        - [Login](#login)
-        - [Onboard](#onboard)
-        - [Logout](#logout)
-        - [Export](#export)
-        - [Change Password](#change-password)
-        - [Add Address](#add-address)
-        - [Rename](#rename)
         - [Sign Message](#sign-message)
+    - [Account Management](#account-management)
     - [Listening for redirect responses](#listening-for-redirect-responses)
 - [Running your own Hub](#running-your-own-hub)
 - [Contribute](#contribute)
@@ -139,14 +132,6 @@ data, see [Listening for redirect responses](#listening-for-redirect-responses).
 - [Checkout](#checkout)
 - [Choose Address](#choose-address)
 - [Sign Transaction](#sign-transaction)
-- [Signup](#signup)
-- [Login](#login)
-- [Onboard](#onboard)
-- [Logout](#logout)
-- [Export](#export)
-- [Change Password](#change-password)
-- [Add Address](#add-address)
-- [Rename](#rename)
 - [Sign Message](#sign-message)
 
 > **Note:**
@@ -333,229 +318,6 @@ const signedTransaction = await hubApi.signTransaction(requestOptions);
 The `signTransaction()` method returns a `SignedTransaction`. See
 [Checkout](#checkout) for details.
 
-#### Signup
-
-The `signup()` method creates a new account in the **Hub**. The user
-will choose an Identicon and optionally set a password.
-
-```javascript
-const requestOptions = {
-    // The name of your app, should be as short as possible.
-    appName: 'My App',
-};
-
-// All client requests are async and return a promise
-const accounts = await hubApi.signup(requestOptions);
-```
-
-The `signup()` method returns a promise which resolves to an array of `Account`s:
-
-```javascript
-interface Account {
-    accountId: string;      // Automatically generated account ID
-    label: string;          // The label (name) generated for the account
-
-    type: WalletType;       // 1 for in-browser multi-address accounts,
-                            // 2 for Ledger hardware accounts
-
-    fileExported: boolean;  // These two flags signal if the user already
-    wordsExported: boolean; // has the Login File or the recovery words
-
-    addresses: Array<{      // During signup, only one address is added to the account
-        address: string;    // Human-readable address
-        label: string;      // The label (name) of the address
-    }>;
-}
-```
-
-#### Login
-
-The `login()` method allows the user to add an existing account to the
-**Hub** by importing their *Login File*, *Recovery Words* or
-old *Account Access File*. After an account has been imported, the
-**Hub** automatically detects active addresses following the
-[BIP44](https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki#account-discovery)
-method.
-
-```javascript
-const requestOptions = {
-    // The name of your app, should be as short as possible.
-    appName: 'My App',
-};
-
-// All client requests are async and return a promise
-const accounts = await hubApi.login(requestOptions);
-```
-
-The `login()` method returns a promise which resolves to an array of `Account`s.
-Please see the result type for [`signup()`](#signup) for details.
-
-#### Onboard
-
-The `onboard()` method presents a choice menu between _Signup_, _Login_, and
-_Connect Ledger_ to the user and is thus a general purpose onboarding method.
-Just like the direct methods, it only requires a simple request object:
-
-```javascript
-const requestOptions = {
-    // The name of your app, should be as short as possible.
-    appName: 'My App',
-};
-
-// All client requests are async and return a promise
-const accounts = await hubApi.onboard(requestOptions);
-```
-
-Since `onboard()` is a wrapper around Signup, Login and Ledger, it also returns an
-`Account[]` result type. Please see the result type for [`signup()`](#signup) for
-details.
-
-#### Logout
-
-The `logout()` method removes an account from the **Hub**. During the
-logout process, the user can export the *Login File* or *Recovery Words* before
-the account is deleted.
-
-```javascript
-const requestOptions = {
-    // The name of your app, should be as short as possible.
-    appName: 'My App',
-
-    // The ID of the account that should be removed
-    accountId: 'xxxxxxxx',
-};
-
-// All client requests are async and return a promise
-const logoutResult = await hubApi.logout(requestOptions);
-```
-
-The `logout()` method returns a promise which resolves to a simple object
-containing the `success` property, which is always true:
-
-```javascript
-{ success: true }
-```
-
-#### Export
-
-Using the `export()` method, a user can retrieve the *Login File* or
-*Recovery Words* of an account.
-
-```javascript
-const requestOptions = {
-    // The name of your app, should be as short as possible.
-    appName: 'My App',
-
-    // The ID of the account to export
-    accountId: 'xxxxxxxx',
-
-    // [optional] Limit the export flow to Login File download
-    // Default: false,
-    //fileOnly: true,
-
-    // [optional] Limit the export flow to Recovery Words export
-    // Default: false,
-    //wordsOnly: true,
-};
-
-// All client requests are async and return a promise
-const exportResult = await hubApi.export(requestOptions);
-```
-
-The `export()` method returns a promise which resolves to an object that
-contains flags for each export type:
-
-```javascript
-interface ExportResult {
-    fileExported: boolean;
-    wordsExported: boolean;
-}
-```
-
-#### Change Password
-
-With the `changePassword()` method, a user can change the password of an account:
-
-```javascript
-const requestOptions = {
-    // The name of your app, should be as short as possible.
-    appName: 'My App',
-
-    // The ID of the account whose password should be changed
-    accountId: 'xxxxxxxx',
-};
-
-// All client requests are async and return a promise
-const result = await hubApi.changePassword(requestOptions);
-```
-
-The `changePassword()` method returns a promise which resolves to a simple object
-containing the `success` property, which is always true:
-
-```javascript
-{ success: true }
-```
-
-#### Add Address
-
-By using the `addAddress()` method, the user is able to derive and add an additional
-address to their account. The method returns the added address and its label.
-
-The method takes a simple request object as its argument:
-
-```javascript
-const requestOptions = {
-    // The name of your app, should be as short as possible.
-    appName: 'My App',
-
-    // The ID of the account to which an address should be added
-    accountId: 'xxxxxxxx',
-};
-
-// All client requests are async and return a promise
-const address = await hubApi.addAddress(requestOptions);
-```
-
-The request's result contains an address string as `address` and a `label`:
-
-```javascript
-interface Address {
-    address: string;  // Human-readable address
-    label: string;    // The address's label (name)
-}
-```
-
-#### Rename
-
-To rename a user's account or addresses, you can call the `rename()` method. The
-UI for the rename action always presents the given account and all its addresses
-to the user. By sending an optional address with the request, that address's label
-will be already pre-selected for the user.
-
-This method takes the following request object as its only argument:
-
-```javascript
-const requestOptions = {
-    // The name of your app, should be as short as possible.
-    appName: 'My App',
-
-    // The ID of the account which should be renamed, or to which the
-    // address, which should be renamed, belongs
-    accountId: 'xxxxxxxx',
-
-    // [optional] The human-readable address which should be pre-selected
-    // for the user to be renamed
-    address: 'NQxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx';
-};
-
-// All client requests are async and return a promise
-const account = await hubApi.rename(requestOptions);
-```
-
-Since more than one label can be renamed during the rename request, the result
-contains the whole account, including all visible addresses. Please see the
-result type for [`signup()`](#signup) for details about the `Account` object.
-
 #### Sign Message
 
 To let the user sign an arbitrary message with any of their addresses, you can
@@ -624,6 +386,14 @@ const hash = Nimiq.Hash.computeSha256(dataBytes);
 const isValid = signature.verify(publicKey, hash);
 ```
 
+### Account Management
+
+Account management functions of the Nimiq Hub, while available on the HubApi, are
+not yet accessible by 3rd-party apps, only by the Nimiq Safe. Developers can however
+configure their own builds to accept arbitrary origins for these methods.
+
+[Account Management API Documentation](https://github.com/nimiq/hub/wiki/Account-Management-API)
+
 ### Listening for redirect responses
 
 If you configured the HubApi to use
@@ -653,7 +423,7 @@ const onError = function(error, storedData) {
 // 3. Listen for the redirect responses you expect
 hubApi.on(HubApi.RequestType.CHECKOUT, onSuccess, onError);
 hubApi.on(HubApi.RequestType.SIGN_TRANSACTION, onSuccess, onError);
-hubApi.on(HubApi.RequestType.LOGIN, onSuccess, onError);
+hubApi.on(HubApi.RequestType.CHOOSE_ADDRESS, onSuccess, onError);
 
 // 4. After setup is complete, check for a redirect response
 hubApi.checkRedirectResponse();
@@ -672,14 +442,6 @@ enum HubApi.RequestType {
     CHECKOUT = 'checkout',
     CHOOSE_ADDRESS = 'choose-address',
     SIGN_TRANSACTION = 'sign-transaction',
-    SIGNUP = 'signup',
-    LOGIN = 'login',
-    ONBOARD = 'onboard',
-    LOGOUT = 'logout',
-    EXPORT = 'export',
-    CHANGE_PASSWORD = 'change-password',
-    ADD_ADDRESS = 'add-address',
-    RENAME = 'rename',
     SIGN_MESSAGE = 'sign-message',
 }
 ```
