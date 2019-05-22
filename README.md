@@ -15,6 +15,7 @@ interact with their users' Nimiq addresses.
         - [Choose Address](#choose-address)
         - [Sign Transaction](#sign-transaction)
         - [Sign Message](#sign-message)
+    - [Account Management](#account-management)
     - [Listening for redirect responses](#listening-for-redirect-responses)
 - [Running your own Hub](#running-your-own-hub)
 - [Contribute](#contribute)
@@ -384,6 +385,14 @@ const hash = Nimiq.Hash.computeSha256(dataBytes);
 // Check signature against the hashed message
 const isValid = signature.verify(publicKey, hash);
 ```
+
+### Account Management
+
+Account management functions of the Nimiq Hub, while available on the HubApi, are
+not yet accessible by 3rd-party apps, only by the Nimiq Safe. Developers can however
+configure their own builds to accept arbitrary origins for these methods.
+
+[Account Management API Documentation](https://github.com/nimiq/hub/wiki/Account-Management-API)
 
 ### Listening for redirect responses
 
