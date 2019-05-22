@@ -1,15 +1,16 @@
 <template>
     <div class="container pad-bottom">
         <SmallPage>
-            <IdenticonSelector  v-if="!showStatusScreen" :accounts="accounts" @identicon-selected="identiconSelected">
+            <IdenticonSelector :accounts="accounts" @identicon-selected="identiconSelected">
                 <PageHeader slot="header" backArrow @back="back">Choose a new Account</PageHeader>
             </IdenticonSelector>
 
-            <StatusScreen v-else class="grow-from-bottom-button" :title="title" :state="state" :lightBlue="true">
-                <template slot="success">
-                    <CheckmarkIcon/>
-                    <h1 class="title nq-h1">New Address added<br>to your Account.</h1>
-                </template>
+            <StatusScreen v-if="showLoader"
+                class="grow-from-bottom-button"
+                :title="title"
+                :state="state"
+                lightBlue>
+                <div v-if="blockLoadingSpinner" slot="loading"><!-- hide loading spinner --></div>
             </StatusScreen>
         </SmallPage>
     </div>
@@ -35,7 +36,8 @@ export default class AddAccountSelection extends Vue {
 
     private showStatusScreen: boolean = false;
     private state: StatusScreen.State = StatusScreen.State.LOADING;
-    private title: string = 'Storing your Address';
+    private title: string = '';
+    private blockLoadingSpinner: boolean = true;
 
     private get accounts(): AccountInfo[] {
         return this.keyguardResult.map((address) => new AccountInfo(
@@ -60,10 +62,17 @@ export default class AddAccountSelection extends Vue {
 
         wallet.accounts.set(selectedAccount.userFriendlyAddress, selectedAccount);
 
-        await WalletStore.Instance.put(wallet);
-        // Artificially delay, to display loading status
-        await new Promise((res) => setTimeout(res, 1000));
+        // Display loading spinner only if storing takes longer than 500ms
+        const blockLoaderTimeout = window.setTimeout(() => this.blockLoadingSpinner = false, 500);
 
+        await Promise.all([
+            WalletStore.Instance.put(wallet),
+            Vue.nextTick(), // Wait at least one paint cycle to enable animation from blue to green in Loader
+        ]);
+
+        window.clearTimeout(blockLoaderTimeout);
+
+        this.title = 'New Address added to your Account.';
         this.state = StatusScreen.State.SUCCESS;
 
         const result: Address = {

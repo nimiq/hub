@@ -442,10 +442,10 @@ export default StatusScreen;
     @keyframes status-screen-grow-from-bottom-button {
         0%,
         20% {
-            max-width: calc(100% - 14rem + 1rem); /* +1rem to account for button :focus effect */
+            max-width: calc(100% - 12rem);
             max-height: 7.5rem;
-            bottom: calc(4rem - var(--status-screen-margin) - 1px); /* -1px to account for button :focus effect */
-            left: calc(7rem - var(--status-screen-margin) - .5rem);
+            bottom: calc(4.25rem - var(--status-screen-margin));
+            left: calc(6rem - var(--status-screen-margin));
             border-radius: 4rem;
         }
 
