@@ -10,7 +10,7 @@
                 :title="title"
                 :state="state"
                 lightBlue>
-                <div v-if="blockLoadingSpinner" slot="loading"><!-- hide loading spinner --></div>
+                <div v-if="!showLoadingSpinner" slot="loading"><!-- hide loading spinner --></div>
             </StatusScreen>
         </SmallPage>
     </div>
@@ -37,7 +37,7 @@ export default class AddAccountSelection extends Vue {
     private showStatusScreen: boolean = false;
     private state: StatusScreen.State = StatusScreen.State.LOADING;
     private title: string = '';
-    private blockLoadingSpinner: boolean = true;
+    private showLoadingSpinner: boolean = false;
 
     private get accounts(): AccountInfo[] {
         return this.keyguardResult.map((address) => new AccountInfo(
@@ -63,14 +63,14 @@ export default class AddAccountSelection extends Vue {
         wallet.accounts.set(selectedAccount.userFriendlyAddress, selectedAccount);
 
         // Display loading spinner only if storing takes longer than 500ms
-        const blockLoaderTimeout = window.setTimeout(() => this.blockLoadingSpinner = false, 500);
+        const showLoadingSpinnerTimeout = window.setTimeout(() => this.showLoadingSpinner = true, 500);
 
         await Promise.all([
             WalletStore.Instance.put(wallet),
             Vue.nextTick(), // Wait at least one paint cycle to enable animation from blue to green in Loader
         ]);
 
-        window.clearTimeout(blockLoaderTimeout);
+        window.clearTimeout(showLoadingSpinnerTimeout);
 
         this.title = 'New Address added to your Account.';
         this.state = StatusScreen.State.SUCCESS;
