@@ -12,7 +12,7 @@ import { Component, Vue } from 'vue-property-decorator';
 import { Static } from '../lib/StaticStore';
 import { State } from 'vuex-class';
 import { SmallPage } from '@nimiq/vue-components';
-import Network from '@/components/Network.vue';
+import Network from '../components/Network.vue';
 import StatusScreen from '../components/StatusScreen.vue';
 import KeyguardClient from '@nimiq/keyguard-client';
 
@@ -22,6 +22,7 @@ export default class CheckoutTransmission extends Vue {
     @State private keyguardResult!: KeyguardClient.SignTransactionResult;
 
     private isTxSent: boolean = false;
+    private status: string = 'Connecting to network...';
 
     private created() {
         const $subtitle = document.querySelector('.logo .logo-subtitle')!;
@@ -29,6 +30,7 @@ export default class CheckoutTransmission extends Vue {
     }
 
     private async mounted() {
+        this.addConsensusListeners();
         const tx = await (this.$refs.network as Network).createTx(Object.assign({
             signerPubKey: this.keyguardResult.publicKey,
         }, this.keyguardResult, this.keyguardRequest));
@@ -38,8 +40,12 @@ export default class CheckoutTransmission extends Vue {
         setTimeout(() => this.$rpc.resolve(result), StatusScreen.SUCCESS_REDIRECT_DELAY);
     }
 
-    private get status(): string {
-        return 'Connecting to Nimiq...';
+    private addConsensusListeners() {
+        const network = (this.$refs.network as Network);
+        network.$on(Network.Events.API_READY, () => this.status = 'Contacting seed nodes...');
+        network.$on(Network.Events.CONSENSUS_SYNCING, () => this.status = 'Syncing consensus...');
+        network.$on(Network.Events.CONSENSUS_ESTABLISHED, () => this.status = 'Sending transaction...');
+        network.$on(Network.Events.TRANSACTION_PENDING, () => this.status = 'Awaiting receipt confirmation...');
     }
 
     private get state(): StatusScreen.State {

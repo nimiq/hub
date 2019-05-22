@@ -22,10 +22,10 @@ import { SmallPage } from '@nimiq/vue-components';
 import { ParsedBasicRequest } from '../lib/RequestTypes';
 import { Account } from '../lib/PublicRequestTypes';
 import { WalletInfo, WalletType } from '../lib/WalletInfo';
-import { WalletStore } from '@/lib/WalletStore';
-import { Static } from '@/lib/StaticStore';
-import StatusScreen from '@/components/StatusScreen.vue';
-import WalletInfoCollector from '@/lib/WalletInfoCollector';
+import { WalletStore } from '../lib/WalletStore';
+import { Static } from '../lib/StaticStore';
+import StatusScreen from '../components/StatusScreen.vue';
+import WalletInfoCollector, { BasicAccountInfo } from '../lib/WalletInfoCollector';
 import { WalletCollectionResultKeyguard } from '../lib/WalletInfoCollector';
 import CookieHelper from '../lib/CookieHelper';
 import { ERROR_COOKIE_SPACE } from '../lib/Constants';
@@ -36,9 +36,9 @@ export default class LoginSuccess extends Vue {
     @State private keyguardResult!: KeyguardClient.KeyResult;
 
     private walletInfos: WalletInfo[] = [];
-    private retrievalFailed: boolean = false;
     private state: StatusScreen.State = StatusScreen.State.LOADING;
-    private title: string = 'Collecting your addresses';
+    private title: string = 'Fetching your addresses';
+    private status: string = 'Connecting to network...';
     private message: string = '';
     private action: string = '';
     private receiptsError: Error | null = null;
@@ -65,14 +65,14 @@ export default class LoginSuccess extends Vue {
                             collectionResult = await WalletInfoCollector.collectBip39WalletInfo(
                                 keyResult.keyId,
                                 keyguardResultAccounts,
-                                undefined,
+                                this.onUpdate.bind(this),
                                 this.keyguardResult.length === 1,
                             );
                         } else {
                             collectionResult = await WalletInfoCollector.collectLegacyWalletInfo(
                                 keyResult.keyId,
                                 keyguardResultAccounts[0],
-                                undefined,
+                                this.onUpdate.bind(this),
                                 this.keyguardResult.length === 1,
                             );
                         }
@@ -88,10 +88,9 @@ export default class LoginSuccess extends Vue {
 
                         collectionResults.push(collectionResult);
 
-                        this.retrievalFailed = false;
                         break;
                     } catch (e) {
-                        this.retrievalFailed = true;
+                        this.status = 'Address detection failed. Retrying...';
                         if (tryCount >= 5) throw e;
                     }
                 }
@@ -146,6 +145,11 @@ export default class LoginSuccess extends Vue {
         this.done();
     }
 
+    private onUpdate(walletInfo: WalletInfo, currentlyCheckedAccounts: BasicAccountInfo[]) {
+        const count = !walletInfo ? 0 : walletInfo.accounts.size;
+        this.status = `Imported ${count} address${count !== 1 ? 'es' : ''} so far...`;
+    }
+
     private async done() {
         if (!this.walletInfos.length) throw new Error('WalletInfo not ready.');
 
@@ -175,10 +179,6 @@ export default class LoginSuccess extends Vue {
         }
         this.state = StatusScreen.State.SUCCESS;
         setTimeout(() => { this.$rpc.resolve(result); }, StatusScreen.SUCCESS_REDIRECT_DELAY);
-    }
-
-    private get status() {
-        return !this.retrievalFailed ? 'Connecting to Nimiq...' : 'Address retrieval failed. Retrying...';
     }
 }
 </script>
