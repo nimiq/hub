@@ -11,9 +11,9 @@
                     <PageHeader slot="header">Choose a new Account</PageHeader>
                 </IdenticonSelector>
             </transition>
-            <Loader v-if="state === constructor.State.FINISHED" state="success" title="Address Added"
+            <StatusScreen v-if="state === constructor.State.FINISHED" state="success" title="Address Added"
                     class="grow-from-bottom-button">
-            </Loader>
+            </StatusScreen>
         </SmallPage>
 
         <button class="global-close nq-button-s" @click="close">
@@ -27,7 +27,7 @@
 import { Component, Vue } from 'vue-property-decorator';
 import { PageBody, SmallPage, PageHeader, ArrowLeftSmallIcon } from '@nimiq/vue-components';
 import LedgerUi from '../components/LedgerUi.vue';
-import Loader from '../components/Loader.vue';
+import StatusScreen from '../components/StatusScreen.vue';
 import IdenticonSelector from '../components/IdenticonSelector.vue';
 import { Static } from '../lib/StaticStore';
 import { ParsedSimpleRequest } from '../lib/RequestTypes';
@@ -39,7 +39,15 @@ import { WalletStore } from '../lib/WalletStore';
 import { ACCOUNT_MAX_ALLOWED_ADDRESS_GAP, ERROR_CANCELED } from '../lib/Constants';
 import LabelingMachine from '../lib/LabelingMachine';
 
-@Component({components: {PageBody, SmallPage, PageHeader, LedgerUi, Loader, IdenticonSelector, ArrowLeftSmallIcon}})
+@Component({components: {
+    PageBody,
+    SmallPage,
+    PageHeader,
+    LedgerUi,
+    StatusScreen,
+    IdenticonSelector,
+    ArrowLeftSmallIcon,
+}})
 export default class AddAddressLedger extends Vue {
     private static readonly State = {
         LEDGER_INTERACTION: 'ledger-interaction', // can be instructions to connect or also display of an error
@@ -93,7 +101,7 @@ export default class AddAddressLedger extends Vue {
         await WalletStore.Instance.put(this.account);
 
         this.state = AddAddressLedger.State.FINISHED;
-        await new Promise((resolve) => setTimeout(resolve, Loader.SUCCESS_REDIRECT_DELAY));
+        await new Promise((resolve) => setTimeout(resolve, StatusScreen.SUCCESS_REDIRECT_DELAY));
         const result: Address = {
             address: userFriendlyAddress,
             label: selectedAccount.label,

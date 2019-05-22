@@ -6,12 +6,12 @@
                       || state === constructor.State.FETCHING_ADDRESSES"
                       @information-shown="_showLedger"></LedgerUi>
             <transition name="transition-fade">
-                <Loader v-if="state === constructor.State.LOADING
+                <StatusScreen v-if="state === constructor.State.LOADING
                         || state === constructor.State.FETCHING_ADDRESSES
                         || state === constructor.State.FINISHED"
-                        :state="loaderState" :title="loaderTitle" :status="loaderStatus"
+                        :state="statusScreenState" :title="statusScreenTitle" :status="statusScreenStatus"
                         :class="{ 'grow-from-bottom-button': state === constructor.State.FINISHED && !hadAccounts }">
-                </Loader>
+                </StatusScreen>
             </transition>
             <transition name="transition-fade">
                 <IdenticonSelector v-if="state === constructor.State.IDENTICON_SELECTION"
@@ -45,7 +45,7 @@ import { Account } from '../lib/PublicRequestTypes';
 import { Static } from '../lib/StaticStore';
 import LedgerApi from '../lib/LedgerApi';
 import LedgerUi from '../components/LedgerUi.vue';
-import Loader from '../components/Loader.vue';
+import StatusScreen from '../components/StatusScreen.vue';
 import IdenticonSelector from '../components/IdenticonSelector.vue';
 import WalletInfoCollector from '../lib/WalletInfoCollector';
 import { WalletInfo, WalletType } from '../lib/WalletInfo';
@@ -56,7 +56,7 @@ import LabelingMachine from '@/lib/LabelingMachine';
 
 @Component({components: {
     PageBody, SmallPage, PageHeader,
-    LedgerUi, Loader, IdenticonSelector,
+    LedgerUi, StatusScreen, IdenticonSelector,
     AccountRing, ArrowLeftSmallIcon,
 }})
 export default class SignupLedger extends Vue {
@@ -78,11 +78,11 @@ export default class SignupLedger extends Vue {
     private cancelled: boolean = false;
     private failedFetchingAccounts: boolean = false;
 
-    private get loaderState() {
-        return this.state === SignupLedger.State.FINISHED ? Loader.State.SUCCESS : Loader.State.LOADING;
+    private get statusScreenState() {
+        return this.state === SignupLedger.State.FINISHED ? StatusScreen.State.SUCCESS : StatusScreen.State.LOADING;
     }
 
-    private get loaderTitle() {
+    private get statusScreenTitle() {
         switch (this.state) {
             case SignupLedger.State.FETCHING_ADDRESSES:
                 return 'Fetching Addresses';
@@ -93,7 +93,7 @@ export default class SignupLedger extends Vue {
         }
     }
 
-    private get loaderStatus() {
+    private get statusScreenStatus() {
         if (this.state !== SignupLedger.State.FETCHING_ADDRESSES) return '';
         else if (this.failedFetchingAccounts) return 'Failed to fetch account. Retrying...';
         else {
@@ -186,7 +186,7 @@ export default class SignupLedger extends Vue {
                 contracts: this.walletInfo!.contracts.map((contract) => contract.toContractType()),
             }];
             this.$rpc.resolve(result);
-        }, Loader.SUCCESS_REDIRECT_DELAY);
+        }, StatusScreen.SUCCESS_REDIRECT_DELAY);
     }
 
     private _showLedger() {
@@ -200,8 +200,8 @@ export default class SignupLedger extends Vue {
         if (currentRequest.type !== LedgerApi.RequestType.DERIVE_ACCOUNTS || currentRequest.cancelled) return;
         if (LedgerApi.currentState.type === LedgerApi.StateType.REQUEST_PROCESSING
             || LedgerApi.currentState.type === LedgerApi.StateType.REQUEST_CANCELLING) {
-            // When we actually fetch the accounts from the device, we want to show our own Loader instead of
-            // the LedgerUi processing screen to avoid switching back and forth between LedgerUi and Loader during
+            // When we actually fetch the accounts from the device, we want to show our own StatusScreen instead of
+            // the LedgerUi processing screen to avoid switching back and forth between LedgerUi and StatusScreen during
             // account finding.
             this.state = SignupLedger.State.FETCHING_ADDRESSES;
         } else {
@@ -228,13 +228,13 @@ export default class SignupLedger extends Vue {
         transition: opacity .4s;
     }
 
-    .small-page > :not(.loader) {
+    .small-page > :not(.status-screen) {
         width: 100%;
         height: 100%;
         background: white;
     }
 
-    .loader >>> .title {
+    .status-screen >>> .title {
         min-height: 1em; /* to avoid jumping of the UI when setting a title */
     }
 

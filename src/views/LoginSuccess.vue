@@ -1,7 +1,7 @@
 <template>
     <div class="container pad-bottom">
         <SmallPage>
-            <Loader
+            <StatusScreen
                 :title="title"
                 :state="state"
                 :status="status"
@@ -24,20 +24,20 @@ import { Account } from '../lib/PublicRequestTypes';
 import { WalletInfo, WalletType } from '../lib/WalletInfo';
 import { WalletStore } from '@/lib/WalletStore';
 import { Static } from '@/lib/StaticStore';
-import Loader from '@/components/Loader.vue';
+import StatusScreen from '@/components/StatusScreen.vue';
 import WalletInfoCollector from '@/lib/WalletInfoCollector';
 import { WalletCollectionResultKeyguard } from '../lib/WalletInfoCollector';
 import CookieHelper from '../lib/CookieHelper';
 import { ERROR_COOKIE_SPACE } from '../lib/Constants';
 
-@Component({components: {Loader, SmallPage}})
+@Component({components: {StatusScreen, SmallPage}})
 export default class LoginSuccess extends Vue {
     @Static private request!: ParsedBasicRequest;
     @State private keyguardResult!: KeyguardClient.KeyResult;
 
     private walletInfos: WalletInfo[] = [];
     private retrievalFailed: boolean = false;
-    private state: Loader.State = Loader.State.LOADING;
+    private state: StatusScreen.State = StatusScreen.State.LOADING;
     private title: string = 'Collecting your addresses';
     private message: string = '';
     private action: string = '';
@@ -134,7 +134,7 @@ export default class LoginSuccess extends Vue {
 
         if (failBecauseOfCookieSpace) {
             this.title = 'Space exceeded';
-            this.state = Loader.State.ERROR;
+            this.state = StatusScreen.State.ERROR;
             this.message = 'Unfortunately, due to space restrictions of Safari and IOS, this account cannot '
                          + 'be stored properly. Please free up space by logging out of other accounts.';
             this.action = 'Continue';
@@ -162,7 +162,7 @@ export default class LoginSuccess extends Vue {
 
         if (this.receiptsError) {
             this.title = 'Your Addresses may be\nincomplete.';
-            this.state = Loader.State.WARNING;
+            this.state = StatusScreen.State.WARNING;
             this.message = 'We might have missed used addresses that have no balance.';
             this.action = 'Continue';
             await new Promise((resolve) => { this.resolve = resolve; });
@@ -173,8 +173,8 @@ export default class LoginSuccess extends Vue {
         } else {
             this.title = 'Your Account is ready.';
         }
-        this.state = Loader.State.SUCCESS;
-        setTimeout(() => { this.$rpc.resolve(result); }, Loader.SUCCESS_REDIRECT_DELAY);
+        this.state = StatusScreen.State.SUCCESS;
+        setTimeout(() => { this.$rpc.resolve(result); }, StatusScreen.SUCCESS_REDIRECT_DELAY);
     }
 
     private get status() {

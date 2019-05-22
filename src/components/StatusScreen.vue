@@ -1,5 +1,5 @@
 <template>
-    <div class="loader" :class="{
+    <div class="status-screen" :class="{
         'nq-blue-bg': showLoadingBackground && !lightBlue,
         'nq-light-blue-bg': showLoadingBackground && lightBlue,
         'exit-transition': state === 'success',
@@ -84,7 +84,7 @@ import { Component, Prop, Watch, Vue } from 'vue-property-decorator';
 import { LoadingSpinner, CheckmarkIcon, FaceNeutralIcon, FaceSadIcon } from '@nimiq/vue-components';
 
 /**
- * **Nimiq Loader Component**
+ * **Nimiq StatusScreen Component**
  *
  * Props:
  *
@@ -110,19 +110,19 @@ import { LoadingSpinner, CheckmarkIcon, FaceNeutralIcon, FaceSadIcon } from '@ni
  *
  * **@alternative-action**
  *
- * The `state` is available as `Loader.State.LOADING`, `Loader.State.SUCCESS`,
- * `Loader.State.WARNING` and `Loader.State.ERROR`.
+ * The `state` is available as `StatusScreen.State.LOADING`, `StatusScreen.State.SUCCESS`,
+ * `StatusScreen.State.WARNING` and `StatusScreen.State.ERROR`.
  *
- * The events are available as `Loader.Events.MAIN_ACTION` and `Loader.Events.ALTERNATIVE_ACTION`.
+ * The events are available as `StatusScreen.Events.MAIN_ACTION` and `StatusScreen.Events.ALTERNATIVE_ACTION`.
  */
 @Component({components: {LoadingSpinner, CheckmarkIcon, FaceNeutralIcon, FaceSadIcon}})
-class Loader extends Vue {
+class StatusScreen extends Vue {
     // TODO: Move to CONSTANTS
     public static readonly SUCCESS_REDIRECT_DELAY: number = 2000; // 1s of transition + 1s of display
 
     @Prop({type: String}) private title?: string;
-    // Using Loader.State.LOADING here results in runtime error: 'Cannot read property 'LOADING' of undefined'
-    @Prop({default: 'loading' as Loader.State}) private state!: Loader.State;
+    // Using StatusScreen.State.LOADING here results in runtime error: 'Cannot read property 'LOADING' of undefined'
+    @Prop({default: 'loading' as StatusScreen.State}) private state!: StatusScreen.State;
     @Prop(Boolean) private lightBlue?: boolean;
     @Prop(String) private status?: string;
     @Prop(String) private message?: string;
@@ -156,14 +156,14 @@ class Loader extends Vue {
         // setting the title) to avoid it being changed on the loading screen when we actually want to set it for the
         // success/error/warning screen.
         this.$nextTick(() => {
-            if (this.state !== Loader.State.LOADING) return;
+            if (this.state !== StatusScreen.State.LOADING) return;
             this.loadingTitle = newTitle;
         });
     }
 
     @Watch('state', {immediate: true})
     private updateState(newState: string, oldState: string) {
-        if (newState === Loader.State.LOADING) {
+        if (newState === StatusScreen.State.LOADING) {
             // Starting in or changing to LOADING
             if (this.hideLoadingBackgroundTimeout !== -1) {
                 clearTimeout(this.hideLoadingBackgroundTimeout);
@@ -172,7 +172,7 @@ class Loader extends Vue {
             this.showLoadingBackground = true;
         } else {
             // other state than LOADING
-            if (oldState === Loader.State.LOADING) {
+            if (oldState === StatusScreen.State.LOADING) {
                 if (this.hideLoadingBackgroundTimeout === -1) {
                     this.hideLoadingBackgroundTimeout = window.setTimeout(() => {
                         this.showLoadingBackground = false;
@@ -207,15 +207,15 @@ class Loader extends Vue {
     }
 
     private onMainAction() {
-        this.$emit(Loader.Events.MAIN_ACTION);
+        this.$emit(StatusScreen.Events.MAIN_ACTION);
     }
 
     private onAlternativeAction() {
-        this.$emit(Loader.Events.ALTERNATIVE_ACTION);
+        this.$emit(StatusScreen.Events.ALTERNATIVE_ACTION);
     }
 }
 
-namespace Loader { // tslint:disable-line no-namespace
+namespace StatusScreen { // tslint:disable-line no-namespace
     export enum State {
         LOADING = 'loading',
         SUCCESS = 'success',
@@ -229,18 +229,18 @@ namespace Loader { // tslint:disable-line no-namespace
     }
 }
 
-export default Loader;
+export default StatusScreen;
 </script>
 
 <style scoped>
-    .loader {
-        --loader-margin: .75rem;
+    .status-screen {
+        --status-screen-margin: .75rem;
         display: flex;
         flex-direction: column;
         border-radius: 0.5rem;
-        width: calc(100% - 2 * var(--loader-margin));
-        height: calc(100% - 2 * var(--loader-margin));
-        margin: var(--loader-margin);
+        width: calc(100% - 2 * var(--status-screen-margin));
+        height: calc(100% - 2 * var(--status-screen-margin));
+        margin: var(--status-screen-margin);
         z-index: 1000;
         position: relative;
         flex-grow: 1;
@@ -279,7 +279,7 @@ export default Loader;
         position: relative;
     }
 
-    .loader.small .status-row {
+    .status-screen .status-row {
         margin-bottom: 2.5rem;
     }
 
@@ -295,7 +295,7 @@ export default Loader;
         opacity: 1;
     }
 
-    .loader.small .status {
+    .status-screen.small .status {
         /* on small layout center multiple lines vertically instead of overflowing to the top */
         transform: translateY(calc(50% - var(--status-font-size) / 2));
     }
@@ -309,7 +309,7 @@ export default Loader;
         opacity: 0;
     }
 
-    .loader.small .status-row.transition .status.current {
+    .status-screen.small .status-row.transition .status.current {
         /* on small layout move message less to avoid that it flies over half the screen */
         transform: translateY(calc(-1 * var(--status-font-size)));
     }
@@ -365,55 +365,55 @@ export default Loader;
 </style>
 
 <style>
-    .loader .title {
+    .status-screen .title {
         line-height: 1;
         margin-top: 4rem;
         white-space: pre-line;
     }
 
-    .loader.small .title {
+    .status-screen.small .title {
         margin-top: 3rem;
         margin-bottom: 2rem;
         font-size: 2.5rem;
     }
 
-    .loader .icon-row .nq-icon {
+    .status-screen .icon-row .nq-icon {
         margin: auto;
     }
 
-    .loader .loading-spinner {
+    .status-screen .loading-spinner {
         width: 7rem;
     }
 
-    .loader .success .nq-icon {
+    .status-screen .success .nq-icon {
         font-size: 9rem;
     }
 
-    .loader .warning .nq-icon {
+    .status-screen .warning .nq-icon {
         font-size: 10rem;
     }
 
-    .loader .error .nq-icon {
+    .status-screen .error .nq-icon {
         font-size: 12rem;
     }
 
-    .loader .icon-row .title,
-    .loader .icon-row .message {
+    .status-screen .icon-row .title,
+    .status-screen .icon-row .message {
         margin-left: auto;
         margin-right: auto;
     }
 
-    .loader .icon-row .title {
+    .status-screen .icon-row .title {
         max-width: 80%;
         line-height: 1.4;
     }
 
-    .loader .message {
+    .status-screen .message {
         max-width: 70%;
         opacity: 1;
     }
 
-    .loader.exit-transition {
+    .status-screen.exit-transition {
         /* animation: exit-transition 600ms 1s; */
     }
 
@@ -423,7 +423,7 @@ export default Loader;
         to   { transform: scale(0); opacity: 0; }
     }
 
-    .loader.exit-transition .success .icon-row {
+    .status-screen.exit-transition .success .icon-row {
         animation: success-title-slide 1s;
     }
 
@@ -432,20 +432,20 @@ export default Loader;
         to   { transform: translateY(0); }
     }
 
-    /* Optional entry animation that components can apply on the loader */
-    .loader.grow-from-bottom-button {
+    /* Optional entry animation that components can apply on the status-screen */
+    .status-screen.grow-from-bottom-button {
         position: absolute;
-        animation: loader-grow-from-bottom-button .6s forwards cubic-bezier(0.25, 0, 0, 1);
+        animation: status-screen-grow-from-bottom-button .6s forwards cubic-bezier(0.25, 0, 0, 1);
         overflow: hidden;
     }
 
-    @keyframes loader-grow-from-bottom-button {
+    @keyframes status-screen-grow-from-bottom-button {
         0%,
         20% {
             max-width: calc(100% - 14rem + 1rem); /* +1rem to account for button :focus effect */
             max-height: 7.5rem;
-            bottom: calc(4rem - var(--loader-margin) - 1px); /* -1px to account for button :focus effect */
-            left: calc(7rem - var(--loader-margin) - .5rem);
+            bottom: calc(4rem - var(--status-screen-margin) - 1px); /* -1px to account for button :focus effect */
+            left: calc(7rem - var(--status-screen-margin) - .5rem);
             border-radius: 4rem;
         }
 
@@ -458,8 +458,8 @@ export default Loader;
         }
 
         100% {
-            max-width: calc(100% - 2 * var(--loader-margin));
-            max-height: calc(100% - 2 * var(--loader-margin));
+            max-width: calc(100% - 2 * var(--status-screen-margin));
+            max-height: calc(100% - 2 * var(--status-screen-margin));
             bottom: 0;
             left: 0;
             border-radius: 0.5rem;

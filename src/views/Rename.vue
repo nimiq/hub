@@ -17,7 +17,7 @@
             <PageFooter>
                 <button class="nq-button light-blue" @click="storeLabels">Save</button>
             </PageFooter>
-            <Loader v-if="labelsStored"
+            <StatusScreen v-if="labelsStored"
                     state="success"
                     title="All labels saved."
                     class="grow-from-bottom-button" />
@@ -37,7 +37,7 @@
     import Input from '@/components/Input.vue';
     import { ParsedRenameRequest } from '../lib/RequestTypes';
     import { Account } from '../lib/PublicRequestTypes';
-    import Loader from '../components/Loader.vue';
+    import StatusScreen from '../components/StatusScreen.vue';
     import { WalletInfo, WalletType } from '../lib/WalletInfo';
     import { WalletStore } from '@/lib/WalletStore';
     import { Static } from '../lib/StaticStore';
@@ -60,7 +60,7 @@
             PageBody,
             PageFooter,
             Input,
-            Loader,
+            StatusScreen,
             ArrowLeftSmallIcon,
         }})
     export default class Rename extends Vue {
@@ -125,7 +125,7 @@
             WalletStore.Instance.put(this.wallet!);
             this.labelsStored = true;
 
-            setTimeout(() => this.done(), Loader.SUCCESS_REDIRECT_DELAY);
+            setTimeout(() => this.done(), StatusScreen.SUCCESS_REDIRECT_DELAY);
         }
 
         private done() {
@@ -201,7 +201,7 @@
         flex-shrink: 0;
     }
 
-    .loader {
+    .status-screen {
         white-space: nowrap;
     }
 </style>

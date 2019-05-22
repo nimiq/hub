@@ -1,16 +1,16 @@
 <template>
     <div class="container pad-bottom">
         <SmallPage>
-            <IdenticonSelector  v-if="!showLoader" :accounts="accounts" @identicon-selected="identiconSelected">
+            <IdenticonSelector  v-if="!showStatusScreen" :accounts="accounts" @identicon-selected="identiconSelected">
                 <PageHeader slot="header" backArrow @back="back">Choose a new Account</PageHeader>
             </IdenticonSelector>
 
-            <Loader v-else class="grow-from-bottom-button" :title="title" :state="state" :lightBlue="true">
+            <StatusScreen v-else class="grow-from-bottom-button" :title="title" :state="state" :lightBlue="true">
                 <template slot="success">
                     <CheckmarkIcon/>
                     <h1 class="title nq-h1">New Address added<br>to your Account.</h1>
                 </template>
-            </Loader>
+            </StatusScreen>
         </SmallPage>
     </div>
 </template>
@@ -25,16 +25,16 @@ import { WalletStore } from '../lib/WalletStore';
 import { DerivedAddress } from '@nimiq/keyguard-client';
 import { ParsedSimpleRequest } from '../lib/RequestTypes';
 import { Address } from '../lib/PublicRequestTypes';
-import Loader from '../components/Loader.vue';
+import StatusScreen from '../components/StatusScreen.vue';
 import { Static } from '../lib/StaticStore';
 
-@Component({components: {Loader, SmallPage, PageHeader, IdenticonSelector, CheckmarkIcon}})
+@Component({components: {StatusScreen, SmallPage, PageHeader, IdenticonSelector, CheckmarkIcon}})
 export default class AddAccountSelection extends Vue {
     @Static private request!: ParsedSimpleRequest;
     @State private keyguardResult!: DerivedAddress[];
 
-    private showLoader: boolean = false;
-    private state: Loader.State = Loader.State.LOADING;
+    private showStatusScreen: boolean = false;
+    private state: StatusScreen.State = StatusScreen.State.LOADING;
     private title: string = 'Storing your Address';
 
     private get accounts(): AccountInfo[] {
@@ -50,7 +50,7 @@ export default class AddAccountSelection extends Vue {
     }
 
     private async identiconSelected(selectedAccount: AccountInfo) {
-        this.showLoader = true;
+        this.showStatusScreen = true;
 
         const wallet = (await WalletStore.Instance.get(this.request.walletId))!;
 
@@ -64,14 +64,14 @@ export default class AddAccountSelection extends Vue {
         // Artificially delay, to display loading status
         await new Promise((res) => setTimeout(res, 1000));
 
-        this.state = Loader.State.SUCCESS;
+        this.state = StatusScreen.State.SUCCESS;
 
         const result: Address = {
             address: selectedAccount.userFriendlyAddress,
             label: selectedAccount.label,
         };
 
-        setTimeout(() => this.$rpc.resolve(result), Loader.SUCCESS_REDIRECT_DELAY);
+        setTimeout(() => this.$rpc.resolve(result), StatusScreen.SUCCESS_REDIRECT_DELAY);
     }
 }
 </script>

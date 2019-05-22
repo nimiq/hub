@@ -1,12 +1,12 @@
 <template>
     <div class="container pad-bottom">
         <SmallPage>
-            <Loader :title="title" :state="state" :lightBlue="true">
+            <StatusScreen :title="title" :state="state" :lightBlue="true">
                 <template slot="success">
                     <CheckmarkIcon/>
                     <h1 class="title nq-h1">Welcome to the<br>Nimiq Blockchain.</h1>
                 </template>
-            </Loader>
+            </StatusScreen>
         </SmallPage>
     </div>
 </template>
@@ -19,16 +19,16 @@ import { WalletInfo, WalletType } from '../lib/WalletInfo';
 import { State } from 'vuex-class';
 import { WalletStore } from '@/lib/WalletStore';
 import { Account } from '../lib/PublicRequestTypes';
-import Loader from '@/components/Loader.vue';
+import StatusScreen from '@/components/StatusScreen.vue';
 import KeyguardClient from '@nimiq/keyguard-client';
 import LabelingMachine from '@/lib/LabelingMachine';
 
-@Component({components: {SmallPage, Loader, CheckmarkIcon}})
+@Component({components: {SmallPage, StatusScreen, CheckmarkIcon}})
 export default class SignupSuccess extends Vue {
     @State private keyguardResult!: KeyguardClient.KeyResult;
 
     private title: string = 'Storing your Account';
-    private state: Loader.State = Loader.State.LOADING;
+    private state: StatusScreen.State = StatusScreen.State.LOADING;
 
     private async mounted() {
         const walletType = WalletType.BIP39;
@@ -62,7 +62,7 @@ export default class SignupSuccess extends Vue {
         // Artificially delay, to display loading status
         await new Promise((res) => setTimeout(res, 2000));
 
-        this.state = Loader.State.SUCCESS;
+        this.state = StatusScreen.State.SUCCESS;
 
         const result: Account[] = [{
             accountId: walletInfo.id,
@@ -77,7 +77,7 @@ export default class SignupSuccess extends Vue {
             contracts: [], // A newly created account cannot have any contracts
         }];
 
-        setTimeout(() => this.$rpc.resolve(result), Loader.SUCCESS_REDIRECT_DELAY);
+        setTimeout(() => this.$rpc.resolve(result), StatusScreen.SUCCESS_REDIRECT_DELAY);
     }
 }
 </script>

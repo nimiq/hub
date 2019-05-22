@@ -1,12 +1,12 @@
 <template>
     <div class="container pad-bottom">
         <SmallPage>
-            <Loader :state="state" :lightBlue="true">
+            <StatusScreen :state="state" :lightBlue="true">
                 <template slot="success">
                     <CheckmarkIcon/>
                     <h1 class="title nq-h1" v-html="text"></h1>
                 </template>
-            </Loader>
+            </StatusScreen>
         </SmallPage>
     </div>
 </template>
@@ -18,16 +18,16 @@ import { State } from 'vuex-class';
 import { RpcRequest, SimpleResult } from '../lib/PublicRequestTypes';
 import { SimpleResult as KSimpleResult } from '@nimiq/keyguard-client';
 import { Static } from '@/lib/StaticStore';
-import Loader from '../components/Loader.vue';
+import StatusScreen from '../components/StatusScreen.vue';
 
-@Component({components: {SmallPage, Loader, CheckmarkIcon}})
+@Component({components: {SmallPage, StatusScreen, CheckmarkIcon}})
 export default class SimpleSuccess extends Vue {
     @Static private request!: RpcRequest;
     @State private keyguardResult!: KSimpleResult;
-    private state: Loader.State = Loader.State.SUCCESS;
+    private state: StatusScreen.State = StatusScreen.State.SUCCESS;
 
     public async mounted() {
-        setTimeout(() => this.$rpc.resolve(this.keyguardResult as SimpleResult), Loader.SUCCESS_REDIRECT_DELAY);
+        setTimeout(() => this.$rpc.resolve(this.keyguardResult as SimpleResult), StatusScreen.SUCCESS_REDIRECT_DELAY);
     }
 
     get text() {

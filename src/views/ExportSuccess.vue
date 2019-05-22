@@ -1,12 +1,12 @@
 <template>
     <div class="container pad-bottom">
         <SmallPage>
-            <Loader :state="loaderState">
+            <StatusScreen :state="statusScreenState">
                 <template slot="success">
                     <CheckmarkIcon/>
                     <h1 class="title nq-h1">{{successMessage}}</h1>
                 </template>
-            </Loader>
+            </StatusScreen>
         </SmallPage>
     </div>
 </template>
@@ -18,16 +18,16 @@ import { ParsedSimpleRequest, RequestType } from '../lib/RequestTypes';
 import { ExportResult } from '../lib/PublicRequestTypes';
 import { State } from 'vuex-class';
 import staticStore, { Static } from '@/lib/StaticStore';
-import Loader from '@/components/Loader.vue';
+import StatusScreen from '@/components/StatusScreen.vue';
 import { WalletStore } from '@/lib/WalletStore';
 import KeyguardClient from '@nimiq/keyguard-client';
 
-@Component({components: {SmallPage, Loader, CheckmarkIcon}})
+@Component({components: {SmallPage, StatusScreen, CheckmarkIcon}})
 export default class ExportSuccess extends Vue {
     @Static private request!: ParsedSimpleRequest;
     @State private keyguardResult!: KeyguardClient.ExportResult;
 
-    private loaderState = Loader.State.LOADING;
+    private statusScreenState = StatusScreen.State.LOADING;
     private successMessage = '';
 
     private async mounted() {
@@ -68,10 +68,10 @@ export default class ExportSuccess extends Vue {
             await WalletStore.Instance.put(wallet);
         }
 
-        this.loaderState = Loader.State.SUCCESS;
+        this.statusScreenState = StatusScreen.State.SUCCESS;
 
         if (wallet) {
-            setTimeout(() => this.$rpc.resolve(result), Loader.SUCCESS_REDIRECT_DELAY);
+            setTimeout(() => this.$rpc.resolve(result), StatusScreen.SUCCESS_REDIRECT_DELAY);
         } else {
             // This was a pre-migration legacy account export
 
@@ -84,7 +84,7 @@ export default class ExportSuccess extends Vue {
             // Recreate original URL with original query parameters
             const query = { rpcId: staticStore.rpcState!.id.toString() };
             setTimeout(
-                () => this.$router.push({ name: RequestType.MIGRATE, query }), Loader.SUCCESS_REDIRECT_DELAY);
+                () => this.$router.push({ name: RequestType.MIGRATE, query }), StatusScreen.SUCCESS_REDIRECT_DELAY);
         }
     }
 }
