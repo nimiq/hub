@@ -18,6 +18,7 @@ export enum RequestType {
 export interface ParsedBasicRequest {
     kind: RequestType;
     appName: string;
+    disableBack?: boolean;
 }
 
 export interface ParsedSimpleRequest extends ParsedBasicRequest {

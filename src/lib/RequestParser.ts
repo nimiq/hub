@@ -91,6 +91,7 @@ export class RequestParser {
                 return {
                     kind: requestType,
                     appName: request.appName,
+                    disableBack: request.disableBack,
                 } as ParsedBasicRequest;
             case RequestType.CHANGE_PASSWORD:
             case RequestType.LOGOUT:
@@ -183,6 +184,7 @@ export class RequestParser {
             case RequestType.LOGIN:
                 return {
                     appName: request.appName,
+                    disableBack: request.disableBack,
                 } as BasicRequest;
             case RequestType.CHANGE_PASSWORD:
             case RequestType.LOGOUT:

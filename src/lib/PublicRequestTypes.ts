@@ -3,6 +3,7 @@ import { RequestType } from './RequestTypes';
 
 export interface BasicRequest {
     appName: string;
+    disableBack?: boolean;
 }
 
 export interface SimpleRequest extends BasicRequest {
