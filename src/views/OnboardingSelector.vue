@@ -19,7 +19,7 @@ import { Component, Vue } from 'vue-property-decorator';
 import KeyguardClient from '@nimiq/keyguard-client';
 import { BrowserDetection } from '@nimiq/utils';
 import OnboardingMenu from '../components/OnboardingMenu.vue';
-import { ParsedBasicRequest, RequestType } from '@/lib/RequestTypes';
+import { ParsedOnboardRequest, RequestType } from '@/lib/RequestTypes';
 import { Static } from '@/lib/StaticStore';
 import { DEFAULT_KEY_PATH, ERROR_CANCELED } from '@/lib/Constants';
 import CookieHelper from '../lib/CookieHelper';
@@ -28,7 +28,7 @@ import { ArrowLeftSmallIcon } from '@nimiq/vue-components';
 
 @Component({components: {OnboardingMenu, NotEnoughCookieSpace, ArrowLeftSmallIcon}})
 export default class OnboardingSelector extends Vue {
-    @Static private request!: ParsedBasicRequest;
+    @Static private request!: ParsedOnboardRequest;
     @Static private originalRouteName?: string;
 
     private notEnoughCookieSpace = false;
