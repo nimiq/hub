@@ -10,6 +10,7 @@ import { RequestType } from '../src/lib/RequestTypes';
 import {
     BasicRequest,
     SimpleRequest,
+    OnboardRequest,
     CheckoutRequest,
     SignTransactionRequest,
     RenameRequest,
@@ -117,7 +118,7 @@ export default class HubApi<DB extends BehaviorType = BehaviorType.POPUP> { // D
      */
 
     public onboard<B extends BehaviorType = DB>(
-        request: BasicRequest,
+        request: OnboardRequest,
         requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
     ): Promise<B extends BehaviorType.REDIRECT ? void : Account[]> {
         return this._request(requestBehavior, RequestType.ONBOARD, [request]);

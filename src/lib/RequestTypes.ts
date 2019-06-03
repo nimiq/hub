@@ -18,11 +18,14 @@ export enum RequestType {
 export interface ParsedBasicRequest {
     kind: RequestType;
     appName: string;
-    disableBack?: boolean;
 }
 
 export interface ParsedSimpleRequest extends ParsedBasicRequest {
     walletId: string;
+}
+
+export interface ParsedOnboardRequest extends ParsedBasicRequest {
+    disableBack: boolean;
 }
 
 export interface ParsedSignTransactionRequest extends ParsedBasicRequest {
@@ -68,6 +71,7 @@ export type ParsedRpcRequest = ParsedSignTransactionRequest
                              | ParsedCheckoutRequest
                              | ParsedBasicRequest
                              | ParsedSimpleRequest
+                             | ParsedOnboardRequest
                              | ParsedRenameRequest
                              | ParsedSignMessageRequest
                              | ParsedExportRequest;

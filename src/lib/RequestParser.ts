@@ -3,6 +3,7 @@ import { State } from '@nimiq/rpc';
 import {
     BasicRequest,
     SimpleRequest,
+    OnboardRequest,
     SignTransactionRequest,
     CheckoutRequest,
     SignMessageRequest,
@@ -14,6 +15,7 @@ import {
     RequestType,
     ParsedBasicRequest,
     ParsedSimpleRequest,
+    ParsedOnboardRequest,
     ParsedSignTransactionRequest,
     ParsedCheckoutRequest,
     ParsedSignMessageRequest,
@@ -84,6 +86,12 @@ export class RequestParser {
                     ),
                 } as ParsedCheckoutRequest;
             case RequestType.ONBOARD:
+                const onboardRequest = request as OnboardRequest;
+                return {
+                    kind: requestType,
+                    appName: onboardRequest.appName,
+                    disableBack: !!onboardRequest.disableBack,
+                } as ParsedOnboardRequest;
             case RequestType.SIGNUP:
             case RequestType.CHOOSE_ADDRESS:
             case RequestType.LOGIN:
@@ -91,7 +99,6 @@ export class RequestParser {
                 return {
                     kind: requestType,
                     appName: request.appName,
-                    disableBack: request.disableBack,
                 } as ParsedBasicRequest;
             case RequestType.CHANGE_PASSWORD:
             case RequestType.LOGOUT:
@@ -177,14 +184,18 @@ export class RequestParser {
                     flags: checkoutRequest.flags,
                     validityDuration: checkoutRequest.validityDuration,
                 } as CheckoutRequest;
-            case RequestType.MIGRATE:
             case RequestType.ONBOARD:
+                const onboardRequest = request as ParsedOnboardRequest;
+                return {
+                    appName: onboardRequest.appName,
+                    disableBack: onboardRequest.disableBack,
+                } as OnboardRequest;
             case RequestType.SIGNUP:
             case RequestType.CHOOSE_ADDRESS:
             case RequestType.LOGIN:
+            case RequestType.MIGRATE:
                 return {
                     appName: request.appName,
-                    disableBack: request.disableBack,
                 } as BasicRequest;
             case RequestType.CHANGE_PASSWORD:
             case RequestType.LOGOUT:

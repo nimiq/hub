@@ -3,7 +3,6 @@ import { RequestType } from './RequestTypes';
 
 export interface BasicRequest {
     appName: string;
-    disableBack?: boolean;
 }
 
 export interface SimpleRequest extends BasicRequest {
@@ -12,6 +11,10 @@ export interface SimpleRequest extends BasicRequest {
 
 export interface SimpleResult {
     success: true;
+}
+
+export interface OnboardRequest extends BasicRequest {
+    disableBack?: boolean;
 }
 
 export interface SignTransactionRequest extends BasicRequest {
@@ -130,6 +133,7 @@ export type RpcRequest = SignTransactionRequest
                        | CheckoutRequest
                        | BasicRequest
                        | SimpleRequest
+                       | OnboardRequest
                        | RenameRequest
                        | SignMessageRequest
                        | ExportRequest;
