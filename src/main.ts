@@ -5,7 +5,8 @@ import router from './router';
 import store from './store';
 import staticStore from '@/lib/StaticStore';
 import RpcApi from '@/lib/RpcApi';
-import VueRaven from 'vue-raven'; // Sentry.io SDK
+import { init as initSentry, captureException } from '@sentry/browser';
+import { Vue as SentryVueIntegration } from '@sentry/integrations';
 // @ts-ignore
 import IqonsSvg from '@nimiq/iqons/dist/iqons.min.svg';
 import Config from 'config';
@@ -41,10 +42,12 @@ const rpcApi = new RpcApi(store, staticStore, router);
 Vue.prototype.$rpc = rpcApi; // rpcApi is started in App.vue->created()
 
 if (Config.reportToSentry) {
-    Vue.use(VueRaven, {
+    initSentry({
         dsn: 'https://92f2289fc2ac4c809dfa685911f865c2@sentry.io/1330855',
+        integrations: [new SentryVueIntegration({Vue, attachProps: true})],
         environment: Config.network,
     });
+    Vue.prototype.$captureException = captureException;
 }
 
 const app = new Vue({
@@ -72,5 +75,6 @@ router.afterEach(() => {
 declare module 'vue/types/vue' {
     interface Vue {
         $rpc: RpcApi;
+        $captureException?: typeof captureException;
     }
 }
