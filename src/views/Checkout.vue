@@ -14,10 +14,10 @@
                 @merchant-info-clicked="showMerchantInfo = true"
             />
 
-            <h1 class="nq-h1">Choose an address to pay</h1>
+            <h1 class="nq-h1">Choose an Address to pay</h1>
 
             <div v-if="!hasSufficientBalanceAccount" class="non-sufficient-balance">
-                <p class="nq-text nq-orange">None of your addresses has sufficient balance.</p>
+                <p class="nq-text nq-orange">None of your Addresses has sufficient balance.</p>
                 <a class="nq-button-s nq-light-blue-bg" href="https://nimiq.com/#exchanges" target="_blank">
                     <TransferIcon/> Get NIM&nbsp;
                 </a>
