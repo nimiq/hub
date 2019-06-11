@@ -37,12 +37,10 @@ export default class ErrorHandler extends Vue {
             }
 
             const walletInfo = await WalletStore.Instance.get(walletId);
-            if (!walletInfo) {
-                this.$rpc.reject(this.keyguardResult); // return it to caller
-                return;
+            if (walletInfo) {
+                walletInfo.keyMissing = true;
+                await WalletStore.Instance.put(walletInfo);
             }
-            walletInfo.keyMissing = true;
-            await WalletStore.Instance.put(walletInfo);
 
             // Redirect to login
             staticStore.originalRouteName = this.request.kind;
