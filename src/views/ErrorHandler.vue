@@ -66,7 +66,7 @@ export default class ErrorHandler extends Vue {
         this.$rpc.reject(this.keyguardResult);
     }
 
-    private async getWalletForThisRequest(): Promise<WalletInfo | undefined> {
+    private async getWalletForThisRequest(): Promise<WalletInfo | undefined | null> {
         if ((this.request as ParsedSimpleRequest).walletId) {
             // The walletId is already in the Hub request
             return WalletStore.Instance.get((this.request as ParsedSimpleRequest).walletId);
