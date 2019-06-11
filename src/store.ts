@@ -117,6 +117,9 @@ const store: StoreOptions<RootState> = {
                 return contract.address.toUserFriendlyAddress() === address;
             }));
         },
+        findWalletByKeyId: (state) => (keyId: string): WalletInfo | undefined => {
+            return state.wallets.find((wallet) => wallet.keyId === keyId);
+        },
         activeWallet: (state, getters): WalletInfo | undefined => {
             if (!state.activeWalletId) return undefined;
             return getters.findWallet(state.activeWalletId);
