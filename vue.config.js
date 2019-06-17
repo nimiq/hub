@@ -40,11 +40,10 @@ const configureWebpack = {
     },
 };
 
-module.exports = {
-    pages: {
-        index: {
-            // entry for the page
-            entry: 'src/main.ts',
+const pages = {
+    index: {
+        // entry for the page
+        entry: 'src/main.ts',
             // the source template
             template: 'public/index.html',
             // insert browser warning html templates
@@ -63,21 +62,27 @@ module.exports = {
             // output as dist/iframe.html
             filename: 'iframe.html',
             // chunks to include on this page, by default includes
-            // extracted common chunks and vendor chunks.
-            chunks: ['chunk-vendors', 'chunk-common', 'iframe']
-        },
-        demos: {
-            // entry for the page
-            entry: 'demos/Demo.ts',
-            // the source template
+        // extracted common chunks and vendor chunks.
+        chunks: ['chunk-vendors', 'chunk-common', 'iframe']
+    },
+};
+
+if (buildName === 'local' || buildName === 'testnet') {
+    pages.demos = {
+        // entry for the page
+        entry: 'demos/Demo.ts',
+        // the source template
             template: 'demos/index.html',
             // output as dist/index.html
             filename: 'demos.html',
-            // chunks to include on this page, by default includes
-            // extracted common chunks and vendor chunks.
-            chunks: ['chunk-vendors', 'chunk-common', 'demos']
-        },
-    },
+        // chunks to include on this page, by default includes
+        // extracted common chunks and vendor chunks.
+        chunks: ['chunk-vendors', 'chunk-common', 'demos']
+    };
+}
+
+module.exports = {
+    pages,
     configureWebpack,
     chainWebpack: config => {
         // Do not put prefetch/preload links into the landing pages
@@ -95,6 +100,6 @@ module.exports = {
             .tap(options => {
                 options.configFile = `tsconfig.${buildName}.json`
                 return options
-        })
+        });
     }
 }
