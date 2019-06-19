@@ -9,7 +9,7 @@
                 <span class="origin">{{ originDomain }}</span>
             </div>
 
-            <h1 class="nq-h1">Choose an address to sign</h1>
+            <h1 class="nq-h1">Choose an Address to sign</h1>
 
             <AccountSelector
                 :wallets="processedWallets"
