@@ -31,7 +31,7 @@
   },
   "homepage": "https://github.com/nimiq/hub#readme",
   "scripts": {
-    "build": "cp ../README.md . && rm -rf build && rm -rf dist && tsc && rollup -c",
+    "build": "rm -rf build && rm -rf dist && tsc && rollup -c",
     "lint": "tslint --project tsconfig.json",
     "lintfix": "yarn lint --fix"
   }

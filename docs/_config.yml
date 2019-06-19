@@ -1,0 +1,14 @@
+# General
+title: "Nimiq Hub API"
+description: "Documentation of the Nimiq Hub API, the secure and central place to interact with your users' keys."
+remote_theme: pmarsceill/just-the-docs
+
+# Theme Options
+search_enabled: true
+aux_links:
+  "Developer Center":
+    - "https://nimiq.com/developers"
+  "NPM":
+    - "https://www.npmjs.com/package/@nimiq/hub-api"
+  "Nimiq.com":
+    - "https://nimiq.com"
