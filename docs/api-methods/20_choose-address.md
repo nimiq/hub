@@ -28,7 +28,9 @@ out which address your app should send funds to.
   <p>Result: <span id="output">-</span></p>
   <button id="choose-address-btn" class="btn btn-primary mb-1">Choose Address</button>
 
-  <script src="https://cdn.jsdelivr.net/npm/@nimiq/hub-api@v1.0/dist/standalone/HubApi.standalone.umd.js"></script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/@nimiq/hub-api@v1.0/dist/standalone/HubApi.standalone.umd.js"
+    integrity="sha256-HZuohwzM5nRdRQh3HLpAcYGbpNe6PtqZRyK+VvUI+nU=" crossorigin="anonymous"></script>
   <script>
     const hubApi = new HubApi('https://hub.nimiq-testnet.com');
 

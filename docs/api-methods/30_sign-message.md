@@ -26,7 +26,9 @@ available accounts. The message can be either a string or a Uint8Array byte arra
   <p>Result: <span id="output">-</span></p>
   <button id="sign-message-btn" class="btn btn-primary mb-1">Sign Message</button>
 
-  <script src="https://cdn.jsdelivr.net/npm/@nimiq/hub-api@v1.0/dist/standalone/HubApi.standalone.umd.js"></script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/@nimiq/hub-api@v1.0/dist/standalone/HubApi.standalone.umd.js"
+    integrity="sha256-HZuohwzM5nRdRQh3HLpAcYGbpNe6PtqZRyK+VvUI+nU=" crossorigin="anonymous"></script>
   <script>
     const hubApi = new HubApi('https://hub.nimiq-testnet.com');
 

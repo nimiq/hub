@@ -19,7 +19,9 @@ permalink: /installation
 Include the Hub API library as a script in your page:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@nimiq/hub-api@v1.0/dist/standalone/HubApi.standalone.umd.js"></script>
+<script
+  src="https://cdn.jsdelivr.net/npm/@nimiq/hub-api@v1.0/dist/standalone/HubApi.standalone.umd.js"
+  integrity="sha256-HZuohwzM5nRdRQh3HLpAcYGbpNe6PtqZRyK+VvUI+nU=" crossorigin="anonymous"></script>
 ```
 
 This will make the `HubApi` object available globally on your site.
