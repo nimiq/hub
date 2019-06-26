@@ -1,10 +1,10 @@
 <template>
     <div class="container">
        <SmallPage>
-            <h1 class="nq-h1">Choose an address</h1>
+            <h1 class="nq-h1">Choose an Address</h1>
 
             <div class="request-info nq-text">
-                {{ request.appName }} is asking for an address to use.
+                {{ request.appName }} is asking for an Address to use.
             </div>
 
             <AccountSelector
