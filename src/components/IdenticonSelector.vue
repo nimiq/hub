@@ -32,9 +32,9 @@
                 </button>
                 <LabelInput :placeholder="selectedAccount.defaultLabel" :value="selectedAccount.label"
                             @changed="selectedAccount.label = $event || selectedAccount.defaultLabel"
-                            @click.native.stop/>
+                            @click.native.stop ref="labelInput"/>
                 <AddressDisplay :address="selectedAccount.userFriendlyAddress" @click.native.stop/>
-                <button @click.stop="_onSelectionConfirmed" class="nq-button light-blue">Select</button>
+                <button @click.stop="_onSelectionConfirmed" class="nq-button light-blue">{{confirmButtonText}}</button>
             </div>
         </transition>
     </div>
@@ -45,6 +45,7 @@
     import { PageHeader, LoadingSpinner, Identicon, AddressDisplay, CloseIcon } from '@nimiq/vue-components';
     import { AccountInfo } from '@/lib/AccountInfo';
     import { default as LabelInput } from './Input.vue';
+    import { getDocumentWidth, MIN_WIDTH_FOR_AUTOFOCUS } from '../lib/Constants';
 
     @Component({components: { PageHeader, Identicon, LoadingSpinner, AddressDisplay, LabelInput, CloseIcon }})
     class IdenticonSelector extends Vue {
@@ -55,6 +56,9 @@
 
         @Prop({ default: true, type: Boolean })
         public confirmAccountSelection!: boolean;
+
+        @Prop({ default: 'Select', type: String })
+        public confirmButtonText!: string;
 
         private page: number = 0;
         private selectedAccount: AccountInfo | null = null;
@@ -78,7 +82,12 @@
 
         private _selectAccount(account: AccountInfo | null) {
             this.selectedAccount = account;
-            if (!account || this.confirmAccountSelection) return;
+            if (!account || this.confirmAccountSelection) {
+                if (getDocumentWidth() > MIN_WIDTH_FOR_AUTOFOCUS) {
+                    Vue.nextTick().then(() => (this.$refs.labelInput as LabelInput).focus());
+                }
+                return;
+            }
             this._onSelectionConfirmed();
         }
 
