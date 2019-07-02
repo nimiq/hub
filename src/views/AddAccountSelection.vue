@@ -13,12 +13,17 @@
                 <div v-if="!showLoadingSpinner" slot="loading"><!-- hide loading spinner --></div>
             </StatusScreen>
         </SmallPage>
+
+        <button class="global-close nq-button-s" @click="close">
+            <ArrowLeftSmallIcon/>
+            Back to {{request.appName}}
+        </button>
     </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { SmallPage, PageHeader, CheckmarkIcon } from '@nimiq/vue-components';
+import { SmallPage, PageHeader, CheckmarkIcon, ArrowLeftSmallIcon } from '@nimiq/vue-components';
 import IdenticonSelector from '../components/IdenticonSelector.vue';
 import { AccountInfo } from '../lib/AccountInfo';
 import { State } from 'vuex-class';
@@ -28,8 +33,9 @@ import { ParsedSimpleRequest } from '../lib/RequestTypes';
 import { Address } from '../lib/PublicRequestTypes';
 import StatusScreen from '../components/StatusScreen.vue';
 import { Static } from '../lib/StaticStore';
+import { ERROR_CANCELED } from '../lib/Constants';
 
-@Component({components: {StatusScreen, SmallPage, PageHeader, IdenticonSelector, CheckmarkIcon}})
+@Component({components: {StatusScreen, SmallPage, PageHeader, IdenticonSelector, CheckmarkIcon, ArrowLeftSmallIcon}})
 export default class AddAccountSelection extends Vue {
     @Static private request!: ParsedSimpleRequest;
     @State private keyguardResult!: DerivedAddress[];
@@ -81,6 +87,10 @@ export default class AddAccountSelection extends Vue {
         };
 
         setTimeout(() => this.$rpc.resolve(result), StatusScreen.SUCCESS_REDIRECT_DELAY);
+    }
+
+    private close() {
+        this.$rpc.reject(new Error(ERROR_CANCELED));
     }
 }
 </script>
