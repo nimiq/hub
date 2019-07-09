@@ -7,8 +7,10 @@
             <transition name="transition-fade">
                 <IdenticonSelector v-if="state === constructor.State.IDENTICON_SELECTION
                                    || state === constructor.State.FINISHED"
-                                   :accounts="addressesToSelectFrom" @identicon-selected="_onAddressSelected">
-                    <PageHeader slot="header">Choose a new Account</PageHeader>
+                                   :accounts="addressesToSelectFrom"
+                                   confirmButtonText="Add to Ledger"
+                                   @identicon-selected="_onAddressSelected">
+                    <PageHeader slot="header">Choose a new Address</PageHeader>
                 </IdenticonSelector>
             </transition>
             <StatusScreen v-if="state === constructor.State.FINISHED" state="success" title="Address Added"

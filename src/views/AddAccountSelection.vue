@@ -1,8 +1,8 @@
 <template>
-    <div class="container pad-bottom">
+    <div class="container">
         <SmallPage>
-            <IdenticonSelector :accounts="accounts" @identicon-selected="identiconSelected">
-                <PageHeader slot="header" backArrow @back="back">Choose a new Account</PageHeader>
+            <IdenticonSelector :accounts="accounts" confirmButtonText="Add to Account" @identicon-selected="identiconSelected">
+                <PageHeader slot="header" backArrow @back="back">Choose a new Address</PageHeader>
             </IdenticonSelector>
 
             <StatusScreen v-if="showStatusScreen"
