@@ -45,7 +45,7 @@
     import { PageHeader, LoadingSpinner, Identicon, AddressDisplay, CloseIcon } from '@nimiq/vue-components';
     import { AccountInfo } from '@/lib/AccountInfo';
     import { default as LabelInput } from './Input.vue';
-    import { getDocumentWidth, MIN_WIDTH_FOR_AUTOFOCUS } from '../lib/Constants';
+    import { isDesktop } from '../lib/Constants';
 
     @Component({components: { PageHeader, Identicon, LoadingSpinner, AddressDisplay, LabelInput, CloseIcon }})
     class IdenticonSelector extends Vue {
@@ -83,7 +83,7 @@
         private _selectAccount(account: AccountInfo | null) {
             this.selectedAccount = account;
             if (!account || this.confirmAccountSelection) {
-                if (getDocumentWidth() > MIN_WIDTH_FOR_AUTOFOCUS) {
+                if (isDesktop()) {
                     Vue.nextTick().then(() => (this.$refs.labelInput as LabelInput).focus());
                 }
                 return;

@@ -41,9 +41,9 @@ export const ERROR_TRANSACTION_RECEIPTS = 'Failed to retrieve transaction receip
 export const ERROR_COOKIE_SPACE = 'Not enough cookie space';
 
 // Input
-export const MIN_WIDTH_FOR_AUTOFOCUS = 600; // px
-export function getDocumentWidth() {
-    return window.innerWidth
+export const MOBILE_MAX_WIDTH = 600; // px
+export function isDesktop() {
+    return (window.innerWidth
         || document.documentElement.clientWidth
-        || document.body.clientWidth;
+        || document.body.clientWidth) > MOBILE_MAX_WIDTH;
 }
