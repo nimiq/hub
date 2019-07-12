@@ -69,12 +69,12 @@ const hubApi = new HubApi(/* ... */);
 // 2. Define your handler functions
 const onSuccess = function(result, storedData) {
     console.log("Got result from Hub:", result);
-    console.log("Retrieved stored data:": storedData);
+    console.log("Retrieved stored data:", storedData);
 }
 
 const onError = function(error, storedData) {
     console.log("Got error from Hub:", error);
-    console.log("Retrieved stored data:": storedData);
+    console.log("Retrieved stored data:", storedData);
 }
 
 // 3. Listen for the redirect responses you expect
