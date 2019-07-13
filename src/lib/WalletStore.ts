@@ -2,7 +2,7 @@ import { WalletInfo, WalletInfoEntry } from '@/lib/WalletInfo';
 import { Store, StoreConstants } from '@/lib/Store';
 
 /**
- * With two ObjectStores sharing the same Databse types inside the Store are not well defined.
+ * With two ObjectStores sharing the same Database, types inside the Store are not well defined.
  * To the outside however, that is completely transparent.
  */
 export class WalletStore extends Store<any, WalletInfoEntry> {
