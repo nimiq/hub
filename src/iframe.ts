@@ -4,7 +4,9 @@ import { WalletStore } from '@/lib/WalletStore';
 import { WalletInfoEntry, WalletInfo } from '@/lib/WalletInfo';
 import CookieJar from '@/lib/CookieJar';
 import Config from 'config';
-import { Account } from './lib/PublicRequestTypes';
+import { Account, IncomingCashlink, OutgoingCashlink } from './lib/PublicRequestTypes';
+import { CashlinkStore } from './lib/CashlinkStore';
+import { CashlinkType } from './lib/CashlinkInfo';
 
 class IFrameApi {
     public static run() {
@@ -43,6 +45,27 @@ class IFrameApi {
         }
 
         return [];
+    }
+
+    public static async cashlinks(): Promise<{incoming: IncomingCashlink[], outgoing: OutgoingCashlink[]}> {
+        const cashlinks = await CashlinkStore.Instance.list();
+        const result: {incoming: IncomingCashlink[], outgoing: OutgoingCashlink[]} = {
+            incoming: [],
+            outgoing: [],
+        };
+        cashlinks.map((cashlink) => (cashlink.type === CashlinkType.INCOMING
+            ? result.incoming.push({
+                address: cashlink.address,
+                message: cashlink.message,
+                status: cashlink.state,
+                sender: cashlink.otherParty!})
+            : result.outgoing.push({
+                address: cashlink.address,
+                message: cashlink.message,
+                status: cashlink.state,
+                recipient: cashlink.otherParty})
+        ));
+        return result;
     }
 }
 
