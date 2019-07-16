@@ -1,5 +1,6 @@
 import { WalletType } from './WalletInfo';
 import { RequestType } from './RequestTypes';
+import { CashlinkState } from './CashlinkInfo';
 
 export interface BasicRequest {
     appName: string;
@@ -127,6 +128,20 @@ export interface ExportResult {
 
 export interface RenameRequest extends SimpleRequest {
     address?: string; // Userfriendly address
+}
+
+export interface Cashlink {
+    address: string; // Userfriendly address
+    message: string | Uint8Array;
+    status: CashlinkState;
+}
+
+export interface IncomingCashlink extends Cashlink {
+    sender: string;
+}
+
+export interface OutgoingCashlink extends Cashlink {
+    recipient?: string;
 }
 
 export type RpcRequest = SignTransactionRequest
