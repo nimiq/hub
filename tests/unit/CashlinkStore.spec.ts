@@ -1,44 +1,55 @@
 import { setup } from './_setup';
 import { Store } from '@/lib/Store';
 import { CashlinkStore } from '@/lib/CashlinkStore';
-import { CashlinkState, CashlinkType, CashlinkInfo } from '@/lib/CashlinkInfo';
+import Cashlink, { CashlinkState, CashlinkType } from '@/lib/Cashlink';
 
 setup();
 
 const indexedDB: IDBFactory = require('fake-indexeddb'); // tslint:disable-line:no-var-requires
 
-// @ts-ignore private method call
+// @ts-ignore private property access
 Store.INDEXEDDB_IMPLEMENTATION = indexedDB;
 
-const DUMMY_DATA: CashlinkInfo[] = [
-    new CashlinkInfo(
-        'NQ07 0000 0000 0000 0000 0000 0000 0000 0000',
-        Nimiq.PrivateKey.generate(),
-        CashlinkType.OUTGOING,
-        1234554321,
-        'Ein Cashlink test Cashlink',
-        Date.now(),
-        CashlinkState.UNCLAIMED,
-        'Test name',
-        'NQ07 0000 0000 0000 0000 0000 0000 0000 0000',
-        'Sent me a cashlink',
-    ),
-    new CashlinkInfo(
-        'NQ38 RLRR UN7M TMGU X685 LCV0 8L6K QXNE FMVL',
-        Nimiq.PrivateKey.generate(),
-        CashlinkType.INCOMING,
-        5000000,
-        'Ein Cashlink test Cashlink',
-        Date.now(),
-        CashlinkState.UNKNOWN,
-        'Test name',
-        'NQ07 0000 0000 0000 0000 0000 0000 0000 0000',
-        'Sent me a cashlink',
-    ),
-];
+const DUMMY_DATA = {
+    addresses: [
+        'NQ73 822X Q55C EQ9N BV36 DD59 TMED X511 TQAY',
+        'NQ94 DA1Q SVB4 61YN XEY6 2TVT F22G 0381 L284',
+    ],
+    cashlinks: [
+        new Cashlink(
+            new Nimiq.PrivateKey(new Uint8Array([
+                70, 207, 252, 77, 192, 84, 237, 202, 3, 46, 88, 64, 101, 200, 131, 19, 212,
+                105, 128, 49, 54, 99, 159, 166, 103, 196, 208, 178, 26, 244, 184, 234,
+            ])),
+            CashlinkType.OUTGOING,
+            1234554321,
+            'Ein Cashlink test Cashlink',
+            CashlinkState.UNCLAIMED,
+        ),
+        new Cashlink(
+            new Nimiq.PrivateKey(new Uint8Array([
+                154, 176, 138, 78, 42, 184, 216, 152, 203, 236, 166, 111, 246, 63, 50, 14,
+                175, 84, 7, 65, 181, 2, 217, 44, 104, 255, 138, 63, 20, 196, 193, 125,
+            ])),
+            CashlinkType.INCOMING,
+            5000000,
+            'Ein Cashlink test Cashlink',
+            CashlinkState.CLAIMED,
+            Date.now(),
+            'NQ07 0000 0000 0000 0000 0000 0000 0000 0000',
+            'Test name',
+        ),
+    ].map((cashlink) => {
+        // Anonymous functions cannot be compared by Jest, so we need to work around that
+        // (https://stackoverflow.com/a/48204295/4204380)
+        // @ts-ignore ignore private property access
+        cashlink._networkClientResolver = expect.any(Function);
+        return cashlink;
+    }),
+};
 
 const beforeEachCallback = async () => {
-    await Promise.all(DUMMY_DATA.map((cashlink) => CashlinkStore.Instance.put(cashlink)));
+    await Promise.all(DUMMY_DATA.cashlinks.map((cashlink) => CashlinkStore.Instance.put(cashlink)));
     await CashlinkStore.Instance.close();
 };
 
@@ -49,7 +60,7 @@ const afterEachCallback = async () => {
         request.onerror = () => reject(request.error);
         request.onsuccess = () => resolve(true);
         request.onblocked = () => {
-            // wait for open connections to get closed
+            // Wait for open connections to get closed
             setTimeout(() => reject(new Error('Can\'t delete database, there is still an open connection.')), 1000);
         };
     });
@@ -65,57 +76,56 @@ describe('CashlinkStore', () => {
         expect(instance1).toBe(instance2);
     });
 
-    it('can get CashlinkInfo', async () => {
-        const cl = await CashlinkStore.Instance.get('NQ07 0000 0000 0000 0000 0000 0000 0000 0000');
-        expect(cl).toEqual(DUMMY_DATA[0]);
+    it('can get a cashlink', async () => {
+        const cl = await CashlinkStore.Instance.get(DUMMY_DATA.addresses[0]);
+        expect(cl).toEqual(DUMMY_DATA.cashlinks[0]);
     });
 
-    it('can list keys', async () => {
-        const keys = await CashlinkStore.Instance.list();
-        expect(keys).toEqual(DUMMY_DATA.map((wi) => wi.toObject()));
+    it('can list cashlinks', async () => {
+        const cashlinkEntries = await CashlinkStore.Instance.list();
+        expect(cashlinkEntries).toEqual(DUMMY_DATA.cashlinks.map((cashlink) => cashlink.toObject()));
     });
 
-    it('can remove keys', async () => {
-        let currentKeys = await CashlinkStore.Instance.list();
-        expect(currentKeys.length).toBe(2);
+    it('can remove cashlinks', async () => {
+        let currentCashlinks = await CashlinkStore.Instance.list();
+        expect(currentCashlinks.length).toBe(2);
 
-        await CashlinkStore.Instance.remove(DUMMY_DATA[0].address);
-        currentKeys = await CashlinkStore.Instance.list();
-        expect(currentKeys.length).toBe(1);
-        expect(currentKeys[0].address).not.toBe(DUMMY_DATA[0].address);
+        await CashlinkStore.Instance.remove(DUMMY_DATA.addresses[0]);
+        currentCashlinks = await CashlinkStore.Instance.list();
+        expect(currentCashlinks.length).toBe(1);
+        expect(currentCashlinks[0].address).toBe(DUMMY_DATA.addresses[1]);
 
-        // check that we can't get a removed key by id
-        const removedKey = await CashlinkStore.Instance.get(DUMMY_DATA[0].address);
-        expect(removedKey).toBeUndefined();
+        // Check that we can't get a removed cashlink by ID
+        const removedCashlink = await CashlinkStore.Instance.get(DUMMY_DATA.addresses[0]);
+        expect(removedCashlink).toBeUndefined();
     });
 
-    it('can add and update keys', async () => {
-        // first clear database
+    it('can add and update cashlinks', async () => {
+        // First clear database
         await afterEachCallback();
 
-        let currentPermissions = await CashlinkStore.Instance.list();
-        expect(currentPermissions.length).toBe(0);
+        let currentCashlinks = await CashlinkStore.Instance.list();
+        expect(currentCashlinks.length).toBe(0);
 
-        // add permissions
-        await CashlinkStore.Instance.put(DUMMY_DATA[0]);
-        currentPermissions = await CashlinkStore.Instance.list();
-        expect(currentPermissions.length).toBe(1);
+        // Add cashlinks
+        await CashlinkStore.Instance.put(DUMMY_DATA.cashlinks[0]);
+        currentCashlinks = await CashlinkStore.Instance.list();
+        expect(currentCashlinks.length).toBe(1);
 
-        // check that the key info has been stored correctly
-        let cashlink = await CashlinkStore.Instance.get(DUMMY_DATA[0].address);
-        expect(cashlink).toEqual(DUMMY_DATA[0]);
+        // Check that the cashlink has been stored correctly
+        let cashlink = await CashlinkStore.Instance.get(DUMMY_DATA.addresses[0]);
+        expect(cashlink).toEqual(DUMMY_DATA.cashlinks[0]);
 
         cashlink!.state = CashlinkState.CLAIMED;
-        cashlink!.otherParty = DUMMY_DATA[1].address;
+        cashlink!.otherParty = DUMMY_DATA.addresses[1];
 
-        // Update the key
+        // Update the cashlink
         await CashlinkStore.Instance.put(cashlink!);
 
-        // Check that the info have been updated correctly
-        cashlink = await CashlinkStore.Instance.get(DUMMY_DATA[0].address);
+        // Check that the cashlink has been updated correctly
+        cashlink = await CashlinkStore.Instance.get(DUMMY_DATA.addresses[0]);
         expect(cashlink).toBeDefined();
         expect(cashlink!.state).toBe(CashlinkState.CLAIMED);
-        expect(cashlink!.otherParty).toBe(DUMMY_DATA[1].address);
-        expect(cashlink!.name).toBe(DUMMY_DATA[0].name);
+        expect(cashlink!.otherParty).toBe(DUMMY_DATA.addresses[1]);
     });
 });
