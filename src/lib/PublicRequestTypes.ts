@@ -1,6 +1,6 @@
 import { WalletType } from './WalletInfo';
 import { RequestType } from './RequestTypes';
-import { CashlinkState } from './CashlinkInfo';
+import { CashlinkState } from './Cashlink';
 
 export interface BasicRequest {
     appName: string;

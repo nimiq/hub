@@ -1,11 +1,37 @@
 import { Utf8Tools } from '@nimiq/utils';
 import { NetworkClient, DetailedPlainTransaction } from '@nimiq/network-client';
-// import { KeyguardClient } from '@nimiq/keyguard-client';
+import { SignTransactionRequestLayout } from '@nimiq/keyguard-client';
 
 export const CashlinkExtraData = {
     FUNDING:  new Uint8Array([0, 130, 128, 146, 135]), // 'CASH'.split('').map(c => c.charCodeAt(0) + 63)
     CLAIMING: new Uint8Array([0, 139, 136, 141, 138]), // 'LINK'.split('').map(c => c.charCodeAt(0) + 63)
 };
+
+export enum CashlinkType {
+    OUTGOING = 0,
+    INCOMING = 1,
+}
+
+export enum CashlinkState {
+    UNKNOWN = -1,
+    UNCHARGED = 0, INITIAL = 0,
+    CHARGING = 1,
+    UNCLAIMED = 2,
+    CLAIMING = 3,
+    CLAIMED = 4, COMPLETE = 4,
+}
+
+export interface CashlinkEntry {
+    address: string;
+    privateKey: Uint8Array;
+    type: CashlinkType;
+    value: number;
+    message: string;
+    state: CashlinkState;
+    date: number;
+    otherParty?: string; /** originalSender | finalRecipient */
+    contactName?: string; /** unused for now */
+}
 
 export default class Cashlink {
     get value() {
@@ -19,13 +45,13 @@ export default class Cashlink {
     }
 
     get message() {
-        return this._messageBytes ? Utf8Tools.utf8ByteArrayToString(this._messageBytes) : '';
+        return Utf8Tools.utf8ByteArrayToString(this._messageBytes);
     }
 
     set message(message) {
         if (this._immutable) throw new Error('Cashlink is immutable');
         const messageBytes = Utf8Tools.stringToUtf8ByteArray(message);
-        if (!Nimiq.NumberUtils.isUint8(messageBytes.length)) throw new Error('Message is too long');
+        if (!Nimiq.NumberUtils.isUint8(messageBytes.byteLength)) throw new Error('Message is too long');
         this._messageBytes = messageBytes;
     }
 
@@ -33,16 +59,17 @@ export default class Cashlink {
         return this._wallet.address;
     }
 
-    get recipient() {
-        return this._recipient;
+    set networkClient(client: NetworkClient) {
+        this._networkClientResolver(client);
     }
 
-    public static create(networkClient: NetworkClient) {
+    public static create(): Cashlink {
+        const type = CashlinkType.OUTGOING;
         const privateKey = Nimiq.PrivateKey.generate();
-        return new Cashlink(networkClient, privateKey);
+        return new Cashlink(privateKey, type);
     }
 
-    public static parse(str: string) {
+    public static parse(str: string): Cashlink | null {
         try {
             str = str.replace(/~/g, '').replace(/=*$/, (match) => new Array(match.length).fill('.').join(''));
             const buf = Nimiq.BufferUtils.fromBase64Url(str);
@@ -57,40 +84,57 @@ export default class Cashlink {
                 message = Utf8Tools.utf8ByteArrayToString(messageBytes);
             }
 
-            const keyPair = Nimiq.KeyPair.derive(key);
-            const wallet = new Nimiq.Wallet(keyPair);
-
-            return { wallet, value, message };
+            return new Cashlink(key, CashlinkType.INCOMING, value, message, CashlinkState.UNKNOWN);
         } catch (e) {
-            return undefined;
+            console.error('Error parsing Cashlink:', e);
+            return null;
         }
     }
-    private $: NetworkClient;
+
+    public static fromObject(object: CashlinkEntry): Cashlink {
+        return new Cashlink(
+            new Nimiq.PrivateKey(object.privateKey),
+            object.type,
+            object.value,
+            object.message,
+            object.state,
+            object.date,
+            object.otherParty,
+            object.contactName,
+        );
+    }
+
+    private $: Promise<NetworkClient>;
+    private _networkClientResolver!: (client: NetworkClient) => void;
     private _wallet: Nimiq.Wallet;
     private _accountRequests: Map<Nimiq.Address, Promise<number>>;
     private _wasEmptied?: boolean;
     private _wasEmptiedRequest: Promise<boolean> | null;
-    private _currentBalance: number;
+    private _currentBalance: number = 0;
     private _immutable: boolean;
     private _eventListeners: {[type: string]: Array<(data: any) => void>};
-    private _messageBytes?: Uint8Array;
+    private _messageBytes: Uint8Array = new Uint8Array(0);
     private _value!: number;
-    private _recipient?: Nimiq.Address;
 
-    constructor(networkClient: NetworkClient, privateKey: Nimiq.PrivateKey, value: number = 0, message?: string) {
-        this.$ = networkClient;
+    constructor(
+        privateKey: Nimiq.PrivateKey,
+        public type: CashlinkType,
+        value: number = 0,
+        message?: string,
+        public state: CashlinkState = CashlinkState.INITIAL,
+        public date: number = Math.floor(Date.now() / 1000),
+        public otherParty?: string, /** originalSender | finalRecipient */
+        public contactName?: string, /** unused for now */
+    ) {
+        this.$ = new Promise((resolve) => {
+            this._networkClientResolver = resolve;
+        });
 
         this._wallet = new Nimiq.Wallet(Nimiq.KeyPair.derive(privateKey));
+
         // for request caching
         this._accountRequests = new Map();
         this._wasEmptiedRequest = null;
-
-        // value will be updated as soon as we have consensus (in _onPotentialBalanceChange)
-        // and a confirmed-amount-changed event gets fired
-        this._currentBalance = 0;
-        if (this.$.consensusState === 'established') {
-            this.getAmount().then((balance: number) => this._currentBalance = balance);
-        }
 
         this.value = value;
         if (message) this.message = message;
@@ -98,28 +142,51 @@ export default class Cashlink {
         this._immutable = !!(value || message);
         this._eventListeners = {};
 
-        // TODO only register event listeners if listening for amount-changed events
-        this.$.on(NetworkClient.Events.TRANSACTION_PENDING, this._onTransactionAddedOrMined.bind(this));
-        this.$.on(NetworkClient.Events.TRANSACTION_MINED, this._onTransactionAddedOrMined.bind(this));
-        this.$.on(NetworkClient.Events.HEAD_CHANGE, this._onHeadChanged.bind(this));
-        this.$.on(NetworkClient.Events.CONSENSUS_ESTABLISHED, this._onPotentialBalanceChange.bind(this));
+        this.$.then((network: NetworkClient) => {
+            if (this.state !== CashlinkState.COMPLETE) {
+                // value will be updated as soon as we have consensus (in _onPotentialBalanceChange)
+                // and a confirmed-amount-changed event gets fired
+                if (network.consensusState === 'established') {
+                    this.getAmount().then((balance: number) => this._currentBalance = balance);
+                }
 
-        // Todo enable as soon as addSubscriptions was merged to core
-        // this.$.consensus.addSubscribtions(wallet.address);
+                network.on(NetworkClient.Events.TRANSACTION_PENDING, this._onTransactionAddedOrMined.bind(this));
+                network.on(NetworkClient.Events.TRANSACTION_MINED, this._onTransactionAddedOrMined.bind(this));
+                network.on(NetworkClient.Events.HEAD_CHANGE, this._onHeadChanged.bind(this));
+                network.on(NetworkClient.Events.CONSENSUS_ESTABLISHED, this._onPotentialBalanceChange.bind(this));
+
+                // TODO enable when addSubscriptions is available in NanoApi
+                // network.addSubscribtions(wallet.address.toUserFriendlyAddress());
+            }
+        });
+    }
+
+    public toObject(): CashlinkEntry {
+        return {
+            address: this.address.toUserFriendlyAddress(),
+            privateKey: new Uint8Array(this._wallet.keyPair.privateKey.serialize()),
+            type: this.type,
+            value: this.value,
+            message: this.message,
+            state: this.state,
+            date: this.date,
+            otherParty: this.otherParty,
+            contactName: this.contactName,
+        };
     }
 
     public render() {
         const buf = new Nimiq.SerialBuffer(
             /*key*/ this._wallet.keyPair.privateKey.serializedSize +
             /*value*/ 8 +
-            /*message length*/ (this._messageBytes ? 1 : 0) +
-            /*message*/ (this._messageBytes ? this._messageBytes.length : 0),
+            /*message length*/ (this._messageBytes.byteLength ? 1 : 0) +
+            /*message*/ this._messageBytes.byteLength,
         );
 
         this._wallet.keyPair.privateKey.serialize(buf);
         buf.writeUint64(this._value);
-        if (this._messageBytes) {
-            buf.writeUint8(this._messageBytes.length);
+        if (this._messageBytes.byteLength) {
+            buf.writeUint8(this._messageBytes.byteLength);
             buf.write(this._messageBytes);
         }
 
@@ -129,56 +196,39 @@ export default class Cashlink {
         // iPhone also has a problem to parse long words with more then 300 chars in a URL in WhatsApp
         // (and possibly others). Therefore we break the words by adding a ~ every 256 characters in long words.
         result = result.replace(/[A-Za-z0-9_]{257,}/g, (match) => match.replace(/.{256}/g, '$&~'));
+
         return result;
     }
 
-    // public async fund(keyguardClient: KeyguardClient, senderUserFriendlyAddress: string, fee = 0) {
-    //     // don't apply _executeUntilSuccess to avoid accidental double funding. Rather throw the exception.
-    //     if (!Nimiq.NumberUtils.isUint64(fee)) {
-    //         throw new Error('Malformed fee');
-    //     }
-    //     if (!this._value) {
-    //         throw new Error('Unknown value');
-    //     }
-    //     if (fee >= this._value) {
-    //         throw new Error('Fee higher than value');
-    //     }
+    public fundingDetails(): {
+        layout: SignTransactionRequestLayout,
+        recipient: Uint8Array,
+        value: number,
+        data: Uint8Array,
+        message: Uint8Array,
+    } {
+        return {
+            layout: 'cashlink',
+            recipient: new Uint8Array(this.address.serialize()),
+            value: this.value,
+            data: CashlinkExtraData.FUNDING,
+            message: this._messageBytes,
+        };
+    }
 
-    //     // not using await this._getBlockchainHeight() to stay in the event loop that opens the keyguard popup
-    //     const validityStartHeight = this.$.headInfo.height;
-    //     const tx = {
-    //         appName: 'App', // FIXME
-    //         validityStartHeight,
-    //         sender: senderUserFriendlyAddress,
-    //         recipient: this._wallet.address.toUserFriendlyAddress(),
-    //         // The recipient pays the fee, thus send value - fee.
-    //         value: Nimiq.Policy.satoshisToCoins(this._value - fee),
-    //         fee: Nimiq.Policy.satoshisToCoins(fee),
-    //         extraData: CashlinkExtraData.FUNDING,
-    //     };
-    //     const signedTx = await keyguardClient.signTransaction(tx);
-    //     if (!signedTx) throw new Error('Transaction cancelled.');
-
-    //     const senderPubKey = Nimiq.PublicKey.unserialize(new Nimiq.SerialBuffer(signedTx.senderPubKey));
-    //     const signature = Nimiq.Signature.unserialize(new Nimiq.SerialBuffer(signedTx.signature));
-    //     const proof = Nimiq.SignatureProof.singleSig(senderPubKey, signature).serialize();
-    //     const nimiqTx = new Nimiq.ExtendedTransaction(
-    //         Nimiq.Address.fromUserFriendlyAddress(senderUserFriendlyAddress),
-    //         Nimiq.Account.Type.BASIC, this._wallet.address, Nimiq.Account.Type.BASIC, this._value - fee, fee,
-    //         validityStartHeight, Nimiq.Transaction.Flag.NONE, tx.extraData, proof);
-    //     await this._sendTransaction(nimiqTx);
-    //     this._value = this._value - fee;
-    // }
-
-    public async claim(recipientUserFriendlyAddress: string, fee = 0): Promise<void> {
-        // get out the funds. Only the confirmed amount, because we can't request unconfirmed funds.
+    public async claim(
+        recipientAddress: string,
+        recipientType: Nimiq.Account.Type = Nimiq.Account.Type.BASIC,
+        fee = 0,
+    ): Promise<void> {
+        // Get out the funds. Only the confirmed amount, because we can't request unconfirmed funds.
         const balance = await this._getBalance();
         if (balance === 0) {
             throw new Error('There is no confirmed balance in this link');
         }
-        this._recipient = Nimiq.Address.fromUserFriendlyAddress(recipientUserFriendlyAddress);
+        const recipient = Nimiq.Address.fromUserFriendlyAddress(recipientAddress);
         const transaction = new Nimiq.ExtendedTransaction(this._wallet.address, Nimiq.Account.Type.BASIC,
-            this._recipient, Nimiq.Account.Type.BASIC, balance - fee, fee, await this._getBlockchainHeight(),
+            recipient, recipientType, balance - fee, fee, await this._getBlockchainHeight(),
             Nimiq.Transaction.Flag.NONE, CashlinkExtraData.CLAIMING);
         const keyPair = this._wallet.keyPair;
         const signature = Nimiq.Signature.create(keyPair.privateKey, keyPair.publicKey, transaction.serializeContent());
@@ -193,7 +243,7 @@ export default class Cashlink {
         let balance = await this._getBalance();
         if (includeUnconfirmed) {
             const transferWalletAddress = this._wallet.address;
-            for (const transaction of this.$.pendingTransactions) {
+            for (const transaction of (await this.$).pendingTransactions) {
                 const sender = transaction.sender;
                 const recipient = transaction.recipient;
                 if (recipient === transferWalletAddress.toUserFriendlyAddress()) {
@@ -205,6 +255,21 @@ export default class Cashlink {
             }
         }
         return balance;
+    }
+
+    public async wasEmptied(): Promise<boolean> {
+        if (this._wasEmptied) return true;
+        this._wasEmptiedRequest = this._wasEmptiedRequest || this._executeUntilSuccess<boolean>(async () => {
+            await this._awaitConsensus();
+            const [transactionReceipts, balance] = await Promise.all([
+                (await this.$).requestTransactionReceipts(this._wallet.address.toUserFriendlyAddress()),
+                this.getAmount(),
+            ]);
+            // considered emptied if value is 0 and account has been used
+            this._wasEmptied = balance === 0 && transactionReceipts.length > 0;
+            return this._wasEmptied;
+        });
+        return this._wasEmptiedRequest;
     }
 
     public on(type: string, callback: (data: any) => void): void {
@@ -234,25 +299,10 @@ export default class Cashlink {
         });
     }
 
-    public async wasEmptied(): Promise<boolean> {
-        if (this._wasEmptied) return true;
-        this._wasEmptiedRequest = this._wasEmptiedRequest || this._executeUntilSuccess<boolean>(async () => {
-            await this._awaitConsensus();
-            const [transactionReceipts, balance] = await Promise.all([
-                this.$.requestTransactionReceipts(this._wallet.address.toUserFriendlyAddress()),
-                this.getAmount(),
-            ]);
-            // considered emptied if value is 0 and account has been used
-            this._wasEmptied = balance === 0 && transactionReceipts.length > 0;
-            return this._wasEmptied;
-        });
-        return this._wasEmptiedRequest;
-    }
-
     private async _awaitConsensus(): Promise<void> {
-        if (this.$.consensusState === 'established') return;
-        return new Promise((resolve, reject) => {
-            this.$.on(NetworkClient.Events.CONSENSUS_ESTABLISHED, resolve);
+        if ((await this.$).consensusState === 'established') return;
+        return new Promise(async (resolve, reject) => {
+            (await this.$).on(NetworkClient.Events.CONSENSUS_ESTABLISHED, resolve);
             setTimeout(() => reject(new Error('Current network consensus unknown.')), 60 * 1000); // 60 seconds
         });
     }
@@ -261,7 +311,7 @@ export default class Cashlink {
         await this._awaitConsensus();
         try {
             const proof = Nimiq.SignatureProof.unserialize(new Nimiq.SerialBuffer(transaction.proof));
-            await this.$.relayTransaction({
+            await (await this.$).relayTransaction({
                 sender: transaction.sender.toUserFriendlyAddress(),
                 senderPubKey: new Uint8Array(proof.publicKey.serialize()),
                 recipient: transaction.recipient.toUserFriendlyAddress(),
@@ -292,27 +342,28 @@ export default class Cashlink {
 
     private async _getBlockchainHeight(): Promise<number> {
         await this._awaitConsensus();
-        return this.$.headInfo.height;
+        return (await this.$).headInfo.height;
     }
 
     private async _getBalance(address = this._wallet.address): Promise<number> {
         let request = this._accountRequests.get(address);
         if (!request) {
-            const headHeight = this.$.headInfo.height;
+            const headHeight = (await this.$).headInfo.height;
             request = this._executeUntilSuccess<number>(async () => {
                 await this._awaitConsensus();
-                const balance = await this.$.getBalance(address.toUserFriendlyAddress());
-                if (this.$.headInfo.height !== headHeight && this._accountRequests.has(address)) {
+                const balances = await (await this.$).getBalance(address.toUserFriendlyAddress());
+                if ((await this.$).headInfo.height !== headHeight && this._accountRequests.has(address)) {
                     // the head changed and there was a new account request for the new head, so we return
                     // that newer request
                     return this._accountRequests.get(address)!;
                 } else {
                     // the head didn't change (so everything alright) or we don't have a newer request and
                     // just return the result we got for the older head
+                    const balance = balances.get(address.toUserFriendlyAddress()) || 0;
                     if (address.equals(this._wallet.address)) {
-                        this._currentBalance = balance.get(address.toUserFriendlyAddress()) || 0;
+                        this._currentBalance = balance;
                     }
-                    return balance.get(address.toUserFriendlyAddress()) || 0;
+                    return balance;
                 }
             });
             this._accountRequests.set(address, request);
@@ -337,7 +388,7 @@ export default class Cashlink {
     }
 
     private async _onPotentialBalanceChange(): Promise<void> {
-        if (this.$.consensusState !== 'established') {
+        if ((await this.$).consensusState !== 'established') {
             // only interested in final balance
             return;
         }

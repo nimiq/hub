@@ -1,7 +1,7 @@
-import { CashlinkInfoEntry, CashlinkInfo } from '@/lib/CashlinkInfo';
+import Cashlink, { CashlinkEntry } from '@/lib/Cashlink';
 import { Store, StoreConstants } from '@/lib/Store';
 
-export class CashlinkStore extends Store<CashlinkInfo, CashlinkInfoEntry> {
+export class CashlinkStore extends Store<Cashlink, CashlinkEntry> {
     private static instance: CashlinkStore | null = null;
 
     static get Instance(): CashlinkStore {
@@ -25,11 +25,11 @@ export class CashlinkStore extends Store<CashlinkInfo, CashlinkInfoEntry> {
         }
     }
 
-    protected infoToEntry(cashlinkInfo: CashlinkInfo): CashlinkInfoEntry {
-        return cashlinkInfo.toObject();
+    protected infoToEntry(cashlink: Cashlink): CashlinkEntry {
+        return cashlink.toObject();
     }
 
-    protected entryToInfo(cashlinkInfoEntry: CashlinkInfoEntry): CashlinkInfo {
-        return CashlinkInfo.fromObject(cashlinkInfoEntry);
+    protected entryToInfo(cashlinkEntry: CashlinkEntry): Cashlink {
+        return Cashlink.fromObject(cashlinkEntry);
     }
 }
