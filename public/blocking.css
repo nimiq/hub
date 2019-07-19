@@ -224,15 +224,14 @@ body {
 }
 
 /*
- * Style copied from https://fonts.googleapis.com/css?family=Fira+Mono&text=0123456789ABCDEFGHJKLMNPQRSTUVXY
+ * Style copied from https://fonts.googleapis.com/css?family=Fira+Mono&text=0123456789ABCDEFGHJKLMNPQRSTUVXY%20
  * Manually added woff fallback.
  */
 @font-face {
     font-family: 'Fira Mono';
     font-style: normal;
     font-weight: 400;
-    src: local('Fira Mono Regular'), local('FiraMono-Regular'), url(https://fonts.gstatic.com/l/font?kit=N0bX2SlFPv1weGeLZDtQJOz3qebjUqV8Mgu8fs9pJrQFa-Y9gflcyByir1eEVUHu28s&skey=bb26c8d476ab3f05&v=v6) format('woff2'),
-        url(https://fonts.gstatic.com/l/font?kit=N0bX2SlFPv1weGeLZDtQIuz3qebjUqV8Mgu8fs9pJrQFa-Y9gflcyByir1eEVUHu28s&skey=bb26c8d476ab3f05&v=v6) format('woff');
+    src: local('Fira Mono Regular'), local('FiraMono-Regular'), url(https://fonts.gstatic.com/l/font?kit=N0bX2SlFPv1weGeLZDtQJOz2uefgU6J9MQqzf7dqJ7MEaOcyg_hbyR-8rlSFUkDt1cpb&skey=bb26c8d476ab3f05&v=v8) format('woff2'), url(https://fonts.gstatic.com/l/font?kit=N0bX2SlFPv1weGeLZDtQIuz2uefgU6J9MQqzf7dqJ7MEaOcyg_hbyR-8rlSFUkDt1cpb&skey=bb26c8d476ab3f05&v=v8) format('woff');
 }
 
 #browser-warning-container {
