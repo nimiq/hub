@@ -41,7 +41,7 @@
     <script>
         Nimiq.WasmHelper.doImport().then(() => {
             Nimiq.GenesisConfig.test();
-            document.querySelectorAll('button').forEach(button => button.disabled = false);
+            document.querySelectorAll('button.enabled-by-nimiq').forEach(button => button.disabled = false);
         });
     </script>
 </body>
