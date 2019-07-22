@@ -36,11 +36,13 @@ export interface CashlinkEntry {
 
 export default class Cashlink {
     get value() {
-        return this._value;
+        return this._value || 0;
     }
 
     set value(value: number) {
-        if (this._immutable) throw new Error('Cashlink is immutable');
+        if (this._value && (this._immutable || this.state !== CashlinkState.UNCHARGED)) {
+            throw new Error('Cashlink is immutable');
+        }
         if (!Nimiq.NumberUtils.isUint64(value) || value === 0) throw new Error('Malformed value');
         this._value = value;
     }
@@ -50,7 +52,9 @@ export default class Cashlink {
     }
 
     set message(message) {
-        if (this._immutable) throw new Error('Cashlink is immutable');
+        if (this._messageBytes.byteLength && (this._immutable || this.state !== CashlinkState.UNCHARGED)) {
+            throw new Error('Cashlink is immutable');
+        }
         const messageBytes = Utf8Tools.stringToUtf8ByteArray(message);
         if (!Nimiq.NumberUtils.isUint8(messageBytes.byteLength)) throw new Error('Message is too long');
         this._messageBytes = messageBytes;
@@ -115,13 +119,13 @@ export default class Cashlink {
     private _immutable: boolean;
     private _eventListeners: {[type: string]: Array<(data: any) => void>} = {};
     private _messageBytes: Uint8Array = new Uint8Array(0);
-    private _value!: number;
+    private _value: number | null = null;
     private _knownTransactions: DetailedPlainTransaction[] = [];
 
     constructor(
         privateKey: Nimiq.PrivateKey,
         public type: CashlinkType,
-        value: number = 0,
+        value?: number,
         message?: string,
         public state: CashlinkState = CashlinkState.UNCHARGED,
         public date: number = Math.floor(Date.now() / 1000),
@@ -135,7 +139,7 @@ export default class Cashlink {
 
         this._wallet = new Nimiq.Wallet(Nimiq.KeyPair.derive(privateKey));
 
-        this.value = value;
+        if (value) this.value = value;
         if (message) this.message = message;
 
         this._immutable = !!(value || message);
@@ -148,8 +152,8 @@ export default class Cashlink {
                     this.getAmount().then((balance: number) => this._currentBalance = balance);
                 }
 
-                network.on(NetworkClient.Events.TRANSACTION_PENDING, this._onTransactionAddedOrExpired.bind(this));
-                // network.on(NetworkClient.Events.TRANSACTION_EXPIRED, this._onTransactionAddedOrExpired.bind(this));
+                network.on(NetworkClient.Events.TRANSACTION_PENDING, this._onTransactionAddedOrRelayed.bind(this));
+                network.on(NetworkClient.Events.TRANSACTION_RELAYED, this._onTransactionAddedOrRelayed.bind(this));
                 network.on(NetworkClient.Events.HEAD_CHANGE, this._onHeadChanged.bind(this));
                 network.on(NetworkClient.Events.CONSENSUS_ESTABLISHED, this._onPotentialBalanceChange.bind(this));
 
@@ -165,16 +169,16 @@ export default class Cashlink {
         if (this.state === CashlinkState.CLAIMED) return;
 
         const knownTransactionReceipts = new Map([[this.address.toUserFriendlyAddress(), new Map(
-            this._knownTransactions.map(tx => [tx.hash, tx.blockHash!]))]]);
+            this._knownTransactions.map((tx) => [tx.hash, tx.blockHash!]))]]);
 
         await this._awaitConsensus();
 
         const [transactionHistory, pendingTransactions, balance] = await Promise.all([
             (await this.$).requestTransactionHistory(this.address.toUserFriendlyAddress(), knownTransactionReceipts),
-            [...(await this.$).pendingTransactions],
+            [...(await this.$).pendingTransactions, ...(await this.$).relayedTransactions],
             this.getAmount(),
         ]);
-        this._knownTransactions.concat(transactionHistory.newTransactions);
+        this._knownTransactions = this._knownTransactions.concat(transactionHistory.newTransactions);
 
         let newState: CashlinkState = this.state;
 
@@ -184,7 +188,8 @@ export default class Cashlink {
                     newState = CashlinkState.UNCHARGED;
                 }
             case CashlinkState.UNCHARGED:
-                const fundingTx = pendingTransactions.find(tx => tx.recipient === this.address.toUserFriendlyAddress());
+                const fundingTx = pendingTransactions.find(
+                    (tx) => tx.recipient === this.address.toUserFriendlyAddress());
                 if (fundingTx) {
                     this.originalSender = fundingTx.sender!;
                     newState = CashlinkState.CHARGING;
@@ -199,7 +204,8 @@ export default class Cashlink {
                     newState = CashlinkState.UNCLAIMED;
                 } else break; // If no transactions are found, no further checks are necessary
             case CashlinkState.UNCLAIMED:
-                const claimingTx = pendingTransactions.find(tx => tx.sender === this.address.toUserFriendlyAddress());
+                console.log(pendingTransactions);
+                const claimingTx = pendingTransactions.find((tx) => tx.sender === this.address.toUserFriendlyAddress());
                 if (claimingTx) {
                     this.finalRecipient = claimingTx.recipient!;
                     newState = CashlinkState.CLAIMING;
@@ -242,7 +248,7 @@ export default class Cashlink {
         );
 
         this._wallet.keyPair.privateKey.serialize(buf);
-        buf.writeUint64(this._value);
+        buf.writeUint64(this.value);
         if (this._messageBytes.byteLength) {
             buf.writeUint8(this._messageBytes.byteLength);
             buf.write(this._messageBytes);
@@ -279,12 +285,12 @@ export default class Cashlink {
         recipientType: Nimiq.Account.Type = Nimiq.Account.Type.BASIC,
         fee = 0,
     ): Promise<void> {
-        if (this.state >= CashlinkState.CLAIMING) {
-            throw new Error('Cashlink has already been claimed');
-        }
+        // if (this.state >= CashlinkState.CLAIMING) {
+        //     throw new Error('Cashlink has already been claimed');
+        // }
 
         // Get out the funds. Only the confirmed amount, because we can't request unconfirmed funds.
-        const balance = await this._getBalance();
+        const balance = Nimiq.Policy.coinsToLunas(await this._getBalance());
         if (!balance) {
             throw new Error('There is no confirmed balance in this link');
         }
@@ -308,7 +314,7 @@ export default class Cashlink {
         let balance = await this._getBalance();
         if (includeUnconfirmed) {
             const transferWalletAddress = this._wallet.address;
-            for (const transaction of (await this.$).pendingTransactions) {
+            for (const transaction of [...(await this.$).pendingTransactions, ...(await this.$).relayedTransactions]) {
                 const sender = transaction.sender!;
                 const recipient = transaction.recipient!;
                 if (recipient === transferWalletAddress.toUserFriendlyAddress()) {
@@ -465,7 +471,7 @@ export default class Cashlink {
         return request;
     }
 
-    private async _onTransactionAddedOrExpired(transaction: DetailedPlainTransaction): Promise<void> {
+    private async _onTransactionAddedOrRelayed(transaction: DetailedPlainTransaction): Promise<void> {
         if (transaction.recipient === this._wallet.address.toUserFriendlyAddress()
             || transaction.sender === this._wallet.address.toUserFriendlyAddress()) {
             const amount = await this.getAmount(true);
@@ -491,6 +497,13 @@ export default class Cashlink {
 
         if (balance !== oldBalance) {
             this.fire('confirmed-balance-change', balance);
+        }
+
+        if (this.state === CashlinkState.CHARGING && balance > 0) {
+            this._updateState(CashlinkState.UNCLAIMED);
+        }
+        if (this.state === CashlinkState.CLAIMING && balance === 0) {
+            this._updateState(CashlinkState.CLAIMED);
         }
     }
 

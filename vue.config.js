@@ -79,6 +79,17 @@ if (buildName === 'local' || buildName === 'testnet') {
         // extracted common chunks and vendor chunks.
         chunks: ['chunk-vendors', 'chunk-common', 'demos']
     };
+    pages.cashlinks = {
+        // entry for the page
+        entry: 'demos/cashlinks/CashlinksDemo.ts',
+        // the source template
+            template: 'demos/cashlinks/index.html',
+            // output as dist/index.html
+            filename: 'cashlinks.html',
+        // chunks to include on this page, by default includes
+        // extracted common chunks and vendor chunks.
+        chunks: ['chunk-vendors', 'chunk-common', 'cashlinks']
+    };
 }
 
 module.exports = {
@@ -92,6 +103,8 @@ module.exports = {
         config.plugins.delete('preload-iframe');
         config.plugins.delete('prefetch-demos');
         config.plugins.delete('preload-demos');
+        config.plugins.delete('prefetch-cashlinks');
+        config.plugins.delete('preload-cashlinks');
 
         config.module
             .rule('ts')
