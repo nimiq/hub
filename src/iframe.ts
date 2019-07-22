@@ -58,12 +58,12 @@ class IFrameApi {
                 address: cashlink.address,
                 message: cashlink.message,
                 status: cashlink.state,
-                sender: cashlink.otherParty!})
+                sender: cashlink.originalSender!})
             : result.outgoing.push({
                 address: cashlink.address,
                 message: cashlink.message,
                 status: cashlink.state,
-                recipient: cashlink.otherParty})
+                recipient: cashlink.finalRecipient})
         ));
         return result;
     }
