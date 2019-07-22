@@ -6,21 +6,21 @@
                 <dt>Address</dt>
                 <dd>{{ cashlink.address.toUserFriendlyAddress() }}</dd>
                 <dt>Value</dt>
-                <dd>{{ cashlink.value / 1e5 }} NIM <button @click="changeValue">change</button></dd>
+                <dd>{{ cashlink.value / 1e5 }} NIM <button @click="changeValue" :disabled="!canBeEdited">change</button></dd>
                 <dt>Message</dt>
-                <dd>{{ cashlink.message }} <button @click="changeMessage">change</button></dd>
+                <dd>{{ cashlink.message }} <button @click="changeMessage" :disabled="!canBeEdited">change</button></dd>
                 <dt>State</dt>
                 <dd>{{ cashlinkState(cashlink.state) }} ({{ cashlink.state }}) <button @click="detectState">Detect</button></dd>
                 <dt>Link</dt>
                 <dd>{{ link }}</dd>
             </dl>
-            <button @click="fund">Fund</button>
-            <button @click="claim">Claim</button>
+            <button @click="fund" :disabled="!canBeFunded">Fund</button>
+            <button @click="claim" :disabled="!canBeClaimed">Claim</button>
             <br><small><em>Funding uses the Checkout UI for now because the Cashlink UI does not yet exist.</em></small>
         </div>
         <div v-else>
-            <button @click="createCashlink" :disabled="!isNimiqLoaded()">Create Cashlink</button>
-            <button @click="loadCashlink()" :disabled="!isNimiqLoaded()">Load Cashlink</button>
+            <button class="enabled-by-nimiq" @click="createCashlink" :disabled="!isNimiqLoaded()">Create Cashlink</button>
+            <button class="enabled-by-nimiq" @click="loadCashlink()" :disabled="!isNimiqLoaded()">Load Cashlink</button>
         </div>
 
         <h2>Network Status</h2>
@@ -34,7 +34,7 @@ import { State } from 'vuex-class';
 import { RpcClient } from '@nimiq/rpc';
 import HubApi from '../../client/HubApi';
 import { Address, CheckoutRequest } from '../../src/lib/PublicRequestTypes';
-import Cashlink from '../../src/lib/Cashlink';
+import Cashlink, { CashlinkState } from '../../src/lib/Cashlink';
 import { NetworkClient } from '@nimiq/network-client';
 
 @Component
@@ -149,6 +149,19 @@ export default class CashlinksDemo extends Vue {
 
     private isNimiqLoaded() {
         return !!window.Nimiq && Nimiq.Module;
+    }
+
+    private get canBeFunded() {
+        return this.cashlink!.state === CashlinkState.UNCHARGED;
+    }
+
+    private get canBeClaimed() {
+        console.log(this.cashlink!.state);
+        return this.cashlink!.state === CashlinkState.UNCLAIMED;
+    }
+
+    private get canBeEdited() {
+        return this.cashlink!.state === CashlinkState.UNCHARGED;
     }
 }
 </script>
