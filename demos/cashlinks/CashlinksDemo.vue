@@ -1,5 +1,9 @@
 <template>
     <div>
+        <small>Using these buttons <strong>irrevocably overwrites</strong> a currently loaded cashlink:</small><br>
+        <button class="enabled-by-nimiq" @click="createCashlink" :disabled="!isNimiqLoaded()">Create Cashlink</button>
+        <button class="enabled-by-nimiq" @click="loadCashlink()" :disabled="!isNimiqLoaded()">Load Cashlink</button>
+
         <h2>Cashlink Info</h2>
         <div v-if="cashlink">
             <dl>
@@ -17,10 +21,6 @@
             <button @click="fund" :disabled="!canBeFunded">Fund</button>
             <button @click="claim" :disabled="!canBeClaimed">Claim</button>
             <br><small><em>Funding uses the Checkout UI for now because the Cashlink UI does not yet exist.</em></small>
-        </div>
-        <div v-else>
-            <button class="enabled-by-nimiq" @click="createCashlink" :disabled="!isNimiqLoaded()">Create Cashlink</button>
-            <button class="enabled-by-nimiq" @click="loadCashlink()" :disabled="!isNimiqLoaded()">Load Cashlink</button>
         </div>
 
         <h2>Network Status</h2>
