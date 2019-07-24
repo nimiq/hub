@@ -61,7 +61,7 @@ export default class Cashlink {
     }
 
     get address() {
-        return this._wallet.address;
+        return this._address;
     }
 
     set networkClient(client: NetworkClient) {
@@ -112,7 +112,8 @@ export default class Cashlink {
 
     private $: Promise<NetworkClient>;
     private _networkClientResolver!: (client: NetworkClient) => void;
-    private _wallet: Nimiq.Wallet;
+    private _keyPair: Nimiq.KeyPair;
+    private _address: Nimiq.Address;
     private _accountRequests: Map<Nimiq.Address, Promise<number>> = new Map();
     // private _wasEmptiedRequest: Promise<boolean> | null = null;
     private _currentBalance: number = 0;
@@ -137,7 +138,8 @@ export default class Cashlink {
             this._networkClientResolver = resolve;
         });
 
-        this._wallet = new Nimiq.Wallet(Nimiq.KeyPair.derive(privateKey));
+        this._keyPair = Nimiq.KeyPair.derive(privateKey);
+        this._address = this._keyPair.publicKey.toAddress();
 
         if (value) this.value = value;
         if (message) this.message = message;
@@ -227,7 +229,7 @@ export default class Cashlink {
     public toObject(): CashlinkEntry {
         return {
             address: this.address.toUserFriendlyAddress(),
-            privateKey: new Uint8Array(this._wallet.keyPair.privateKey.serialize()),
+            privateKey: new Uint8Array(this._keyPair.privateKey.serialize()),
             type: this.type,
             value: this.value,
             message: this.message,
@@ -241,13 +243,13 @@ export default class Cashlink {
 
     public render() {
         const buf = new Nimiq.SerialBuffer(
-            /*key*/ this._wallet.keyPair.privateKey.serializedSize +
+            /*key*/ this._keyPair.privateKey.serializedSize +
             /*value*/ 8 +
             /*message length*/ (this._messageBytes.byteLength ? 1 : 0) +
             /*message*/ this._messageBytes.byteLength,
         );
 
-        this._wallet.keyPair.privateKey.serialize(buf);
+        this._keyPair.privateKey.serialize(buf);
         buf.writeUint64(this.value);
         if (this._messageBytes.byteLength) {
             buf.writeUint8(this._messageBytes.byteLength);
@@ -295,11 +297,11 @@ export default class Cashlink {
             throw new Error('There is no confirmed balance in this link');
         }
         const recipient = Nimiq.Address.fromUserFriendlyAddress(recipientAddress);
-        const transaction = new Nimiq.ExtendedTransaction(this._wallet.address, Nimiq.Account.Type.BASIC,
+        const transaction = new Nimiq.ExtendedTransaction(this.address, Nimiq.Account.Type.BASIC,
             recipient, recipientType, balance - fee, fee, await this._getBlockchainHeight(),
             Nimiq.Transaction.Flag.NONE, CashlinkExtraData.CLAIMING);
 
-        const keyPair = this._wallet.keyPair;
+        const keyPair = this._keyPair;
         const signature = Nimiq.Signature.create(keyPair.privateKey, keyPair.publicKey, transaction.serializeContent());
         const proof = new Uint8Array(Nimiq.SignatureProof.singleSig(keyPair.publicKey, signature).serialize());
 
@@ -313,7 +315,7 @@ export default class Cashlink {
     public async getAmount(includeUnconfirmed?: boolean): Promise<number> {
         let balance = await this._getBalance();
         if (includeUnconfirmed) {
-            const transferWalletAddress = this._wallet.address;
+            const transferWalletAddress = this.address;
             for (const transaction of [...(await this.$).pendingTransactions, ...(await this.$).relayedTransactions]) {
                 const sender = transaction.sender!;
                 const recipient = transaction.recipient!;
@@ -338,7 +340,7 @@ export default class Cashlink {
     //     this._wasEmptiedRequest = this._wasEmptiedRequest || this._executeUntilSuccess<boolean>(async () => {
     //         await this._awaitConsensus();
     //         const [transactionHistory, balance] = await Promise.all([
-    //             (await this.$).requestTransactionHistory(this._wallet.address.toUserFriendlyAddress(), new Map()),
+    //             (await this.$).requestTransactionHistory(this._keyPair.address.toUserFriendlyAddress(), new Map()),
     //             this.getAmount(),
     //         ]);
     //         const transactions = transactionHistory.newTransactions;
@@ -445,7 +447,7 @@ export default class Cashlink {
         return (await this.$).headInfo.height;
     }
 
-    private async _getBalance(address = this._wallet.address): Promise<number> {
+    private async _getBalance(address = this.address): Promise<number> {
         let request = this._accountRequests.get(address);
         if (!request) {
             const headHeight = (await this.$).headInfo.height;
@@ -460,7 +462,7 @@ export default class Cashlink {
                     // the head didn't change (so everything alright) or we don't have a newer request and
                     // just return the result we got for the older head
                     const balance = balances.get(address.toUserFriendlyAddress()) || 0;
-                    if (address.equals(this._wallet.address)) {
+                    if (address.equals(this.address)) {
                         this._currentBalance = balance;
                     }
                     return balance;
@@ -472,8 +474,8 @@ export default class Cashlink {
     }
 
     private async _onTransactionAddedOrRelayed(transaction: DetailedPlainTransaction): Promise<void> {
-        if (transaction.recipient === this._wallet.address.toUserFriendlyAddress()
-            || transaction.sender === this._wallet.address.toUserFriendlyAddress()) {
+        if (transaction.recipient === this.address.toUserFriendlyAddress()
+            || transaction.sender === this.address.toUserFriendlyAddress()) {
             const amount = await this.getAmount(true);
             this.fire('unconfirmed-balance-change', amount);
         }
