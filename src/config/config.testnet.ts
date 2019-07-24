@@ -8,6 +8,5 @@ export default {
         'https://safe.nimiq-testnet.com',
         'https://hub.nimiq-testnet.com', // For testing with the deployed demos.html page
     ],
-    redirectTarget: 'https://safe.nimiq-testnet.com',
     reportToSentry: true,
 };

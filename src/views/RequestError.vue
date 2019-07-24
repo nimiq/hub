@@ -1,11 +1,11 @@
 <template>
-    <div class="container">
+    <div class="container pad-bottom">
         <SmallPage>
             <StatusScreen
                 state="error"
                 title="Invalid request"
                 message="Something went wrong with your request. Please try again."
-                mainAction="Close"
+                :mainAction="_mainAction"
                 @main-action="_close"
             />
         </SmallPage>
@@ -20,7 +20,15 @@ import StatusScreen from '../components/StatusScreen.vue';
 @Component({components: {StatusScreen, SmallPage}})
 export default class RequestError extends Vue {
     private _close() {
-        window.close();
+        if (window.history.length > 1) {
+            window.history.back();
+        } else {
+            window.close();
+        }
+    }
+
+    private get _mainAction(): string {
+        return window.history.length > 1 ? 'Go back' : 'Close';
     }
 }
 </script>
