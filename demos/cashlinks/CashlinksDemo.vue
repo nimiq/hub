@@ -52,22 +52,22 @@ export default class CashlinksDemo extends Vue {
         await this.network.init();
         this.network.connectPico();
 
-        this.loadCashlink(window.location.href);
+        await this.loadCashlink(window.location.href);
     }
 
-    private createCashlink() {
-        this.cashlink = Cashlink.create();
+    private async createCashlink() {
+        this.cashlink = await Cashlink.create();
         this.cashlink.networkClient = this.network;
         this.network.subscribe(this.cashlink.address.toUserFriendlyAddress());
     }
 
-    private loadCashlink(url?: string) {
+    private async loadCashlink(url?: string) {
         const link = url || prompt('Enter cashlink URL:');
         if (!link) return;
         try {
             const fragment = new URL(link).hash.substring(1);
             if (!fragment) return;
-            const cashlink = Cashlink.parse(fragment);
+            const cashlink = await Cashlink.parse(fragment);
             if (!cashlink) return;
             this.cashlink = cashlink;
 

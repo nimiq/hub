@@ -1,6 +1,8 @@
 import { Utf8Tools } from '@nimiq/utils';
 import { NetworkClient, DetailedPlainTransaction } from '@nimiq/network-client';
 import { SignTransactionRequestLayout } from '@nimiq/keyguard-client';
+import { loadNimiq } from './Helpers';
+import { CashlinkState } from './PublicRequestTypes';
 
 export const CashlinkExtraData = {
     FUNDING:  new Uint8Array([0, 130, 128, 146, 135]), // 'CASH'.split('').map(c => c.charCodeAt(0) + 63)
@@ -12,18 +14,9 @@ export enum CashlinkType {
     INCOMING = 1,
 }
 
-export enum CashlinkState {
-    UNKNOWN = -1,
-    UNCHARGED = 0,
-    CHARGING = 1,
-    UNCLAIMED = 2,
-    CLAIMING = 3,
-    CLAIMED = 4,
-}
-
 export interface CashlinkEntry {
     address: string;
-    privateKey: Uint8Array;
+    keyPair: Uint8Array;
     type: CashlinkType;
     value: number;
     message: string;
@@ -60,25 +53,23 @@ export default class Cashlink {
         this._messageBytes = messageBytes;
     }
 
-    get address() {
-        return this._address;
-    }
-
     set networkClient(client: NetworkClient) {
         this._networkClientResolver(client);
     }
 
-    public static create(): Cashlink {
+    public static async create(): Promise<Cashlink> {
         const type = CashlinkType.OUTGOING;
-        const privateKey = Nimiq.PrivateKey.generate();
-        return new Cashlink(privateKey, type);
+        await loadNimiq();
+        const keyPair = Nimiq.KeyPair.derive(Nimiq.PrivateKey.generate());
+        return new Cashlink(keyPair, type, keyPair.publicKey.toAddress());
     }
 
-    public static parse(str: string): Cashlink | null {
+    public static async parse(str: string): Promise<Cashlink | null> {
         try {
             str = str.replace(/~/g, '').replace(/=*$/, (match) => new Array(match.length).fill('.').join(''));
             const buf = Nimiq.BufferUtils.fromBase64Url(str);
-            const key = Nimiq.PrivateKey.unserialize(buf);
+            await loadNimiq();
+            const keyPair = Nimiq.KeyPair.derive(Nimiq.PrivateKey.unserialize(buf));
             const value = buf.readUint64();
             let message;
             if (buf.readPos === buf.byteLength) {
@@ -89,7 +80,13 @@ export default class Cashlink {
                 message = Utf8Tools.utf8ByteArrayToString(messageBytes);
             }
 
-            return new Cashlink(key, CashlinkType.INCOMING, value, message, CashlinkState.UNKNOWN);
+            return new Cashlink(
+                keyPair,
+                CashlinkType.INCOMING,
+                keyPair.publicKey.toAddress(),
+                value,
+                message,
+                CashlinkState.UNKNOWN);
         } catch (e) {
             console.error('Error parsing Cashlink:', e);
             return null;
@@ -98,8 +95,9 @@ export default class Cashlink {
 
     public static fromObject(object: CashlinkEntry): Cashlink {
         return new Cashlink(
-            new Nimiq.PrivateKey(object.privateKey),
+            Nimiq.KeyPair.unserialize(new Nimiq.SerialBuffer(object.keyPair)),
             object.type,
+            Nimiq.Address.fromUserFriendlyAddress(object.address),
             object.value,
             object.message,
             object.state,
@@ -112,8 +110,6 @@ export default class Cashlink {
 
     private $: Promise<NetworkClient>;
     private _networkClientResolver!: (client: NetworkClient) => void;
-    private _keyPair: Nimiq.KeyPair;
-    private _address: Nimiq.Address;
     private _accountRequests: Map<Nimiq.Address, Promise<number>> = new Map();
     // private _wasEmptiedRequest: Promise<boolean> | null = null;
     private _currentBalance: number = 0;
@@ -124,8 +120,9 @@ export default class Cashlink {
     private _knownTransactions: DetailedPlainTransaction[] = [];
 
     constructor(
-        privateKey: Nimiq.PrivateKey,
+        public keyPair: Nimiq.KeyPair,
         public type: CashlinkType,
+        public address: Nimiq.Address,
         value?: number,
         message?: string,
         public state: CashlinkState = CashlinkState.UNCHARGED,
@@ -137,9 +134,6 @@ export default class Cashlink {
         this.$ = new Promise((resolve) => {
             this._networkClientResolver = resolve;
         });
-
-        this._keyPair = Nimiq.KeyPair.derive(privateKey);
-        this._address = this._keyPair.publicKey.toAddress();
 
         if (value) this.value = value;
         if (message) this.message = message;
@@ -229,7 +223,7 @@ export default class Cashlink {
     public toObject(): CashlinkEntry {
         return {
             address: this.address.toUserFriendlyAddress(),
-            privateKey: new Uint8Array(this._keyPair.privateKey.serialize()),
+            keyPair: new Uint8Array(this.keyPair.serialize()),
             type: this.type,
             value: this.value,
             message: this.message,
@@ -243,13 +237,13 @@ export default class Cashlink {
 
     public render() {
         const buf = new Nimiq.SerialBuffer(
-            /*key*/ this._keyPair.privateKey.serializedSize +
+            /*key*/ this.keyPair.privateKey.serializedSize +
             /*value*/ 8 +
             /*message length*/ (this._messageBytes.byteLength ? 1 : 0) +
             /*message*/ this._messageBytes.byteLength,
         );
 
-        this._keyPair.privateKey.serialize(buf);
+        this.keyPair.privateKey.serialize(buf);
         buf.writeUint64(this.value);
         if (this._messageBytes.byteLength) {
             buf.writeUint8(this._messageBytes.byteLength);
@@ -301,7 +295,7 @@ export default class Cashlink {
             recipient, recipientType, balance - fee, fee, await this._getBlockchainHeight(),
             Nimiq.Transaction.Flag.NONE, CashlinkExtraData.CLAIMING);
 
-        const keyPair = this._keyPair;
+        const keyPair = this.keyPair;
         const signature = Nimiq.Signature.create(keyPair.privateKey, keyPair.publicKey, transaction.serializeContent());
         const proof = new Uint8Array(Nimiq.SignatureProof.singleSig(keyPair.publicKey, signature).serialize());
 
