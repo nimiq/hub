@@ -1,6 +1,14 @@
 import { WalletType } from './WalletInfo';
 import { RequestType } from './RequestTypes';
-import { CashlinkState } from './Cashlink';
+
+export enum CashlinkState {
+    UNKNOWN = -1,
+    UNCHARGED = 0,
+    CHARGING = 1,
+    UNCLAIMED = 2,
+    CLAIMING = 3,
+    CLAIMED = 4,
+}
 
 export interface BasicRequest {
     appName: string;

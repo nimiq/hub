@@ -6,13 +6,7 @@ import { SignedTransaction } from '../lib/PublicRequestTypes';
 import { NetworkClient, DetailedPlainTransaction } from '@nimiq/network-client';
 import Config from 'config';
 import { loadNimiq } from '../lib/Helpers';
-import {
-    NETWORK_TEST,
-    NETWORK_DEV,
-    NETWORK_MAIN,
-    ERROR_INVALID_NETWORK,
-    CONTRACT_DEFAULT_LABEL_VESTING,
-} from '../lib/Constants';
+import { CONTRACT_DEFAULT_LABEL_VESTING } from '../lib/Constants';
 import { VestingContractInfo } from '../lib/ContractInfo';
 
 @Component
