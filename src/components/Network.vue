@@ -17,8 +17,6 @@ import { VestingContractInfo } from '../lib/ContractInfo';
 @Component
 class Network extends Vue {
     private static _hasOrSyncsOnTopOfConsensus = false;
-    private _clientInitiatedPromise!: Promise<void>;
-    private _clientInitiatedResolver!: () => void;
 
     private boundListeners: Array<[NetworkClient.Events, (...args: any[]) => void]> = [];
 
@@ -193,8 +191,6 @@ class Network extends Vue {
     }
 
     private created() {
-        this._clientInitiatedPromise = new Promise((res) => this._clientInitiatedResolver = res);
-
         this.$on(Network.Events.CONSENSUS_ESTABLISHED, () => {
             Network._hasOrSyncsOnTopOfConsensus = true;
         });
@@ -212,12 +208,10 @@ class Network extends Vue {
 
     private async _getNetworkClient(): Promise<NetworkClient> {
         if (!NetworkClient.hasInstance()) {
-            const networkClient = NetworkClient.createInstance(Config.networkEndpoint);
-            await networkClient.init();
-            this._clientInitiatedResolver();
+            NetworkClient.createInstance(Config.networkEndpoint);
         }
-
-        await this._clientInitiatedPromise;
+        // Make sure the client is initialized
+        await NetworkClient.Instance.init();
 
         if (this.boundListeners.length === 0) {
             this._registerNetworkListener(NetworkClient.Events.API_READY,
