@@ -125,119 +125,120 @@ export default class WalletInfoCollector {
         let derivedAccountsPromise = WalletInfoCollector._deriveAccounts(startIndex,
             ACCOUNT_MAX_ALLOWED_ADDRESS_GAP, walletType, keyId);
 
-        // For ledger retrieve the keyId from the connected Ledger.
-        // Doing this after starting deriveAccounts, as the call is cheaper then.
-        if (walletType === WalletType.LEDGER) {
-            keyId = await LedgerApi.getWalletId();
-        }
-
-        // Get or create the walletInfo instance and derive the first set of derived accounts
-        const [walletInfo, firstSetOfDerivedAccounts] = await Promise.all([
-            WalletInfoCollector._getWalletInfoInstance(walletType, keyId!),
-            derivedAccountsPromise,
-        ]);
-
-        // Add initial accounts to the walletInfo
-        if (initialAccounts.length > 0) {
-            WalletInfoCollector._addAccounts(walletInfo, initialAccounts);
-        }
-        onUpdate(walletInfo, firstSetOfDerivedAccounts);
-
-        const contracts = await WalletInfoCollector._addVestingContracts(walletInfo, firstSetOfDerivedAccounts[0],
-            onUpdate);
-        let hasActivity = contracts.length > 0;
-
-        // Label Keyguard BIP39 accounts according to their first identicon background color
-        if (walletType === WalletType.BIP39 && walletInfo.label === ACCOUNT_TEMPORARY_LABEL_KEYGUARD) {
-            walletInfo.label = LabelingMachine.labelAccount(firstSetOfDerivedAccounts[0].address);
-        }
-
-        let foundAccounts: BasicAccountInfo[];
-        let receiptsError;
-        do {
-            const derivedAccounts = await derivedAccountsPromise;
-
-            // already start deriving next accounts
-            // By always advancing in groups of MAX_ALLOWED_GAP addresses per round, it often happens that more
-            // addresses are derived and checked for activity than the BIP44 address gap limit
-            // (https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki#address-gap-limit) stipulates, because
-            // whenever an active address in a group of addresses is found, the next full group is also derived. Thus
-            // the actual gap limit of this implementation is up to (2 x MAX_ALLOWED_GAP) - 1.
-            // We argue that this is good UX for users, as potentially more of their active addresses are found, even
-            // if they haven't strictly followed to the standard - at only a relatively small cost to the network.
-            // For example, if the user adds the accounts derived with indices 0, 19, 39 to his wallet but then only
-            // ends up using accounts 0 and 39, the account at index 19 will not be found anymore on reimport. With the
-            // current implementation however, at least the account 39 would be found, while an implementation strictly
-            // following the specification would stop the search at index 20.
-            startIndex += ACCOUNT_MAX_ALLOWED_ADDRESS_GAP;
-            derivedAccountsPromise = WalletInfoCollector._deriveAccounts(startIndex,
-                ACCOUNT_MAX_ALLOWED_ADDRESS_GAP, walletType, keyId);
-
-            // Already add addresses that are in the initialAccounts
-            foundAccounts = derivedAccounts.filter((derivedAccount) =>
-                initialAccounts.some((initialAccount) => initialAccount.address === derivedAccount.address));
-            let accountsToCheck = skipActivityCheck || hasActivity
-                ? derivedAccounts.filter((derivedAccount) =>
-                    !initialAccounts.some((initialAccount) => initialAccount.address === derivedAccount.address))
-                : derivedAccounts;
-
-            const balances = await WalletInfoCollector._getBalances(accountsToCheck);
-            for (const account of accountsToCheck) {
-                const balance = balances.get(account.address);
-                if (balance !== undefined && balance !== 0) {
-                    foundAccounts.push(account);
-                    hasActivity = true;
-                }
+        try {
+            // For ledger retrieve the keyId from the connected Ledger.
+            // Doing this after starting deriveAccounts, as the call is cheaper then.
+            if (walletType === WalletType.LEDGER) {
+                keyId = await LedgerApi.getWalletId();
             }
 
-            // for accounts with balance 0 check if there are transactions
-            accountsToCheck = skipActivityCheck || hasActivity
-                ? accountsToCheck.filter((account) =>
-                    !foundAccounts.some((foundAccount) => foundAccount.address === account.address))
-                : accountsToCheck; // did not find any activity, have to check all accounts
-            await Promise.all(
-                accountsToCheck.map(async (account) => {
-                    try {
-                        await WalletInfoCollector._networkInitializationPromise;
-                        const receipts = await NetworkClient.Instance.requestTransactionReceipts(account.address);
-                        if (receipts.length > 0) {
-                            foundAccounts.push(account);
-                            hasActivity = true;
-                        }
-                    } catch (error) {
-                        if (!error.message.startsWith(ERROR_TRANSACTION_RECEIPTS)) {
-                            throw error;
-                        }
-                        receiptsError = error;
-                        console.debug(error);
+            // Get or create the walletInfo instance and derive the first set of derived accounts
+            const [walletInfo, firstSetOfDerivedAccounts] = await Promise.all([
+                WalletInfoCollector._getWalletInfoInstance(walletType, keyId!),
+                derivedAccountsPromise,
+            ]);
+
+            // Add initial accounts to the walletInfo
+            if (initialAccounts.length > 0) {
+                WalletInfoCollector._addAccounts(walletInfo, initialAccounts);
+            }
+            onUpdate(walletInfo, firstSetOfDerivedAccounts);
+
+            const contracts = await WalletInfoCollector._addVestingContracts(walletInfo, firstSetOfDerivedAccounts[0],
+                onUpdate);
+            let hasActivity = contracts.length > 0;
+
+            // Label Keyguard BIP39 accounts according to their first identicon background color
+            if (walletType === WalletType.BIP39 && walletInfo.label === ACCOUNT_TEMPORARY_LABEL_KEYGUARD) {
+                walletInfo.label = LabelingMachine.labelAccount(firstSetOfDerivedAccounts[0].address);
+            }
+
+            let foundAccounts: BasicAccountInfo[];
+            let receiptsError;
+            do {
+                const derivedAccounts = await derivedAccountsPromise;
+
+                // already start deriving next accounts
+                // By always advancing in groups of MAX_ALLOWED_GAP addresses per round, it often happens that more
+                // addresses are derived and checked for activity than the BIP44 address gap limit
+                // (https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki#address-gap-limit) stipulates,
+                // because whenever an active address in a group of addresses is found, the next full group is also
+                // derived. Thus the actual gap limit of this implementation is up to (2 x MAX_ALLOWED_GAP) - 1.
+                // We argue that this is good UX for users, as potentially more of their active addresses are found,
+                // even if they haven't strictly followed to the standard - at only a relatively small cost to the
+                // network. For example, if the user adds the accounts derived with indices 0, 19, 39 to his wallet but
+                // then only ends up using accounts 0 and 39, the account at index 19 will not be found anymore on
+                // reimport. With the current implementation however, at least the account 39 would be found, while an
+                // implementation strictly following the specification would stop the search at index 20.
+                startIndex += ACCOUNT_MAX_ALLOWED_ADDRESS_GAP;
+                derivedAccountsPromise = WalletInfoCollector._deriveAccounts(startIndex,
+                    ACCOUNT_MAX_ALLOWED_ADDRESS_GAP, walletType, keyId);
+
+                // Already add addresses that are in the initialAccounts
+                foundAccounts = derivedAccounts.filter((derived) =>
+                    initialAccounts.some((initial) => initial.address === derived.address));
+                let accountsToCheck = skipActivityCheck || hasActivity
+                    ? derivedAccounts.filter((derived) =>
+                        !initialAccounts.some((initial) => initial.address === derived.address))
+                    : derivedAccounts;
+
+                const balances = await WalletInfoCollector._getBalances(accountsToCheck);
+                for (const account of accountsToCheck) {
+                    const balance = balances.get(account.address);
+                    if (balance !== undefined && balance !== 0) {
+                        foundAccounts.push(account);
+                        hasActivity = true;
                     }
-                }),
-            );
+                }
 
-            if (foundAccounts.length > 0) {
-                WalletInfoCollector._addAccounts(walletInfo, foundAccounts, balances);
-                onUpdate(walletInfo, await derivedAccountsPromise);
+                // for accounts with balance 0 check if there are transactions
+                accountsToCheck = skipActivityCheck || hasActivity
+                    ? accountsToCheck.filter((account) =>
+                        !foundAccounts.some((foundAccount) => foundAccount.address === account.address))
+                    : accountsToCheck; // did not find any activity, have to check all accounts
+                await Promise.all(
+                    accountsToCheck.map(async (account) => {
+                        try {
+                            await WalletInfoCollector._networkInitializationPromise;
+                            const receipts = await NetworkClient.Instance.requestTransactionReceipts(account.address);
+                            if (receipts.length > 0) {
+                                foundAccounts.push(account);
+                                hasActivity = true;
+                            }
+                        } catch (error) {
+                            if (!error.message.startsWith(ERROR_TRANSACTION_RECEIPTS)) {
+                                throw error;
+                            }
+                            receiptsError = error;
+                            console.debug(error);
+                        }
+                    }),
+                );
+
+                if (foundAccounts.length > 0) {
+                    WalletInfoCollector._addAccounts(walletInfo, foundAccounts, balances);
+                    onUpdate(walletInfo, await derivedAccountsPromise);
+                }
+            } while (foundAccounts.length > 0);
+
+            const releaseKey = walletType === WalletType.BIP39
+                ? (removeKey?: boolean) => WalletInfoCollector._keyguardClient!.releaseKey(keyId!, removeKey)
+                : null;
+
+            return {
+                walletInfo,
+                receiptsError,
+                releaseKey,
+                hasActivity,
+            };
+        } finally {
+            // cancel derivation of accounts that we don't need anymore if we're finished or an exception occurred
+            if (walletType === WalletType.LEDGER && LedgerApi.currentRequest
+                && LedgerApi.currentRequest.type === LedgerApi.RequestType.DERIVE_ACCOUNTS) {
+                derivedAccountsPromise.catch(() => undefined); // to avoid uncaught promise rejection on cancel
+                LedgerApi.currentRequest.cancel();
             }
-        } while (foundAccounts.length > 0);
-
-        // clean up
-        if (walletType === WalletType.LEDGER && LedgerApi.currentRequest
-            && LedgerApi.currentRequest.type === LedgerApi.RequestType.DERIVE_ACCOUNTS) {
-            // next round of derivation still going on although we don't need it
-            derivedAccountsPromise.catch(() => undefined); // to avoid uncaught promise rejection for cancel
-            LedgerApi.currentRequest.cancel();
         }
-
-        const releaseKey = walletType === WalletType.BIP39
-            ? (removeKey?: boolean) => WalletInfoCollector._keyguardClient!.releaseKey(keyId!, removeKey)
-            : null;
-
-        return {
-            walletInfo,
-            receiptsError,
-            releaseKey,
-            hasActivity,
-        };
     }
 
     private static _initializeDependencies(walletType: WalletType): void {

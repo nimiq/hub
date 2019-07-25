@@ -580,7 +580,7 @@ class LedgerApi {
         const listenersForEvent = LedgerApi._listeners.get(eventName);
         if (!listenersForEvent) return;
         for (const listener of listenersForEvent) {
-            listener(...args);
+            setTimeout(listener, 0, ...args);
         }
     }
 
