@@ -59,8 +59,6 @@ export default class SignMessage extends Vue {
     private showAccountSelector = false;
 
     private async created() {
-        await this.handleOnboardingResult();
-
         if (this.request.signer) {
             const wallet = this.findWalletByAddress(this.request.signer.toUserFriendlyAddress(), false);
             if (wallet && wallet.type !== WalletType.LEDGER) {
@@ -128,30 +126,6 @@ export default class SignMessage extends Vue {
         } else {
             this.$rpc.routerPush(RequestType.ONBOARD);
         }
-    }
-
-    private async handleOnboardingResult() {
-        // Check if we are returning from an onboarding request
-        if (staticStore.sideResult && !(staticStore.sideResult instanceof Error)) {
-            const sideResult = staticStore.sideResult as Account[];
-
-            // Add imported wallets to Vuex store
-            for (const account of sideResult) {
-                const walletInfo = await WalletStore.Instance.get(account.accountId);
-                if (walletInfo) {
-                    this.$addWallet(walletInfo);
-
-                    // FIXME: Also handle active account we get from store
-                    const activeAccount = walletInfo.accounts.values().next().value;
-
-                    this.$setActiveAccount({
-                        walletId: walletInfo.id,
-                        userFriendlyAddress: activeAccount.userFriendlyAddress,
-                    });
-                }
-            }
-        }
-        delete staticStore.sideResult;
     }
 
     private close() {

@@ -101,14 +101,11 @@ export default class Checkout extends Vue {
     private showMerchantInfo: boolean = false;
     private height: number = 0;
     private hasBalances: boolean = false;
-    private sideResultAddedWallet: boolean = false;
     private status: string = 'Connecting to network...';
 
     private async created() {
         const $subtitle = document.querySelector('.logo .logo-subtitle')!;
         $subtitle.textContent = 'Checkout';
-
-        await this.handleOnboardingResult();
 
         if (this.wallets.length === 0) {
             this.goToOnboarding(true);
@@ -152,7 +149,8 @@ export default class Checkout extends Vue {
         const cache = this.getLastBalanceUpdateHeight();
         const isRefresh = !window.performance || performance.navigation.type === 1;
 
-        if (!this.sideResultAddedWallet && cache && !isRefresh) {
+        const sideResultAddedWallet = !!staticStore.sideResult && !!(staticStore.sideResult as Account[]).length;
+        if (!sideResultAddedWallet && cache && !isRefresh) {
             this.onHeadChange(cache);
             return cache.balances;
         }
@@ -301,33 +299,6 @@ export default class Checkout extends Vue {
 
     private get minBalance() {
         return this.request.value + this.request.fee;
-    }
-
-    private async handleOnboardingResult() {
-        // Check if we are returning from an onboarding request
-        if (staticStore.sideResult && !(staticStore.sideResult instanceof Error)) {
-            const sideResult = staticStore.sideResult as Account[];
-
-            // Add imported wallets to Vuex store
-            for (const account of sideResult) {
-                const walletInfo = await WalletStore.Instance.get(account.accountId);
-
-                if (walletInfo) {
-                    this.$addWallet(walletInfo);
-                    this.sideResultAddedWallet = true;
-
-                    // Set as activeWallet and activeAccount
-                    // FIXME: Also handle active account we get from store
-                    const activeAccount = walletInfo.accounts.values().next().value;
-
-                    this.$setActiveAccount({
-                        walletId: walletInfo.id,
-                        userFriendlyAddress: activeAccount.userFriendlyAddress,
-                    });
-                }
-            }
-        }
-        delete staticStore.sideResult;
     }
 
     private getLastBalanceUpdateHeight(): {timestamp: number, height: number, balances: Map<string, number>} | null {
