@@ -122,6 +122,10 @@ export default class SignupLedger extends Vue {
             } catch (e) {
                 this.failedFetchingAccounts = true;
                 if (tryCount >= 5) throw e;
+                console.warn('Error while collecting Ledger WalletInfo, retrying', e);
+                if (!LedgerApi.isBusy) continue;
+                // await Ledger request from current iteration to be cancelled to able to start the next one
+                await new Promise((resolve) => LedgerApi.once(LedgerApi.EventType.REQUEST_CANCELLED, resolve));
             }
         }
 
