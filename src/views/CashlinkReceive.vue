@@ -58,7 +58,7 @@
 
                 <PageFooter>
                     <button class="nq-button light-blue" @click="goToSignup">Create Account</button>
-                    <a class="nq-link skip" href="#" @click="goToLogin">
+                    <a class="nq-link skip" href="javascript:void(0)" @click="goToLogin">
                         Log into existing Account
                         <CaretRightSmallIcon/>
                     </a>
@@ -85,6 +85,9 @@ import CashlinkSparkle from '../components/CashlinkSparkle.vue';
 import Cashlink from '../lib/Cashlink';
 import { AccountInfo } from '../lib/AccountInfo';
 import { Getter } from 'vuex-class';
+import staticStore from '@/lib/StaticStore';
+import { CASHLINK_RECEIVE } from '../router';
+import { RequestType, ParsedBasicRequest } from '../lib/RequestTypes';
 
 @Component({components: {
     SmallPage,
@@ -111,8 +114,24 @@ export default class CashlinkReceive extends Vue {
     private statusMessage = '';
 
     public async mounted() {
-        // 1. Detect cashlink in URL and fail if none found
+        // 1. Load cashlink from URL
         this.cashlink = await Cashlink.parse(window.location.hash.substring(1));
+
+        if (this.cashlink) {
+            // Write cashlink into static store
+            staticStore.cashlink = this.cashlink;
+        }
+
+        // 2. If none in URL, try to load from static store
+        if (!this.cashlink && staticStore.cashlink) {
+            this.cashlink = staticStore.cashlink;
+            // Write cashlink back into URL
+            const url = new URL(window.location.href);
+            url.hash = this.cashlink.render();
+            window.history.replaceState(window.history.state, '', url.toString());
+        }
+
+        // 3. Fail if no cashlink found
         if (!this.cashlink) {
             this.statusState = StatusScreen.State.WARNING;
             this.statusTitle = '404 - Cash not found';
@@ -126,11 +145,30 @@ export default class CashlinkReceive extends Vue {
     }
 
     private goToSignup() {
-
+        this.goToOnboarding(RequestType.SIGNUP);
     }
 
     private goToLogin() {
+        this.goToOnboarding(RequestType.ONBOARD);
+    }
 
+    private goToOnboarding(requestType: RequestType) {
+        staticStore.originalRouteName = CASHLINK_RECEIVE;
+
+        // Fake request
+        const request: ParsedBasicRequest = {
+            appName: 'Cashlink',
+            kind: requestType,
+        };
+        staticStore.request = request;
+
+        // Fake incomingRequest, so the routed-to component is rendered by App.vue
+        this.$store.commit('setIncomingRequest', {
+            hasRpcState: true,
+            hasRequest: !!staticStore.request,
+        });
+
+        this.$rpc.routerPush(requestType);
     }
 }
 </script>

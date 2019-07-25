@@ -65,6 +65,7 @@ export default class Cashlink {
     }
 
     public static async parse(str: string): Promise<Cashlink | null> {
+        if (!str) return null;
         try {
             str = str.replace(/~/g, '').replace(/=*$/, (match) => new Array(match.length).fill('.').join(''));
             const buf = Nimiq.BufferUtils.fromBase64Url(str);

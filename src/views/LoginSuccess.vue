@@ -19,11 +19,9 @@ import { State, Action } from 'vuex-class';
 import KeyguardClient from '@nimiq/keyguard-client';
 import { BrowserDetection } from '@nimiq/utils';
 import { SmallPage } from '@nimiq/vue-components';
-import { ParsedBasicRequest } from '../lib/RequestTypes';
 import { Account } from '../lib/PublicRequestTypes';
 import { WalletInfo, WalletType } from '../lib/WalletInfo';
 import { WalletStore } from '../lib/WalletStore';
-import { Static } from '../lib/StaticStore';
 import StatusScreen from '../components/StatusScreen.vue';
 import WalletInfoCollector, { BasicAccountInfo } from '../lib/WalletInfoCollector';
 import { WalletCollectionResultKeyguard } from '../lib/WalletInfoCollector';
@@ -32,7 +30,6 @@ import { ERROR_COOKIE_SPACE } from '../lib/Constants';
 
 @Component({components: {StatusScreen, SmallPage}})
 export default class LoginSuccess extends Vue {
-    @Static private request!: ParsedBasicRequest;
     @State private keyguardResult!: KeyguardClient.KeyResult;
 
     @Action('addWalletAndSetActive') private $addWalletAndSetActive!: (walletInfo: WalletInfo) => any;
