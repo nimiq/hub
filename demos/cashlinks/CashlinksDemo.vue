@@ -33,8 +33,8 @@ import { Component, Watch, Vue } from 'vue-property-decorator';
 import { State } from 'vuex-class';
 import { RpcClient } from '@nimiq/rpc';
 import HubApi from '../../client/HubApi';
-import { Address, CheckoutRequest } from '../../src/lib/PublicRequestTypes';
-import Cashlink, { CashlinkState } from '../../src/lib/Cashlink';
+import { Address, CheckoutRequest, CashlinkState } from '../../src/lib/PublicRequestTypes';
+import Cashlink from '../../src/lib/Cashlink';
 import { NetworkClient } from '@nimiq/network-client';
 
 @Component
