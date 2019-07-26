@@ -356,7 +356,8 @@ export default class RpcApi {
 
     private _startRoute() {
         this._store.commit('setRequestLoaded',
-            !!(this._staticStore.rpcState && this._staticStore.request),
+            !!(this._staticStore.rpcState && this._staticStore.request) ||
+            this._staticStore.originalRouteName === CASHLINK_RECEIVE,
         );
     }
 }
