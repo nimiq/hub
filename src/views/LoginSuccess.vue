@@ -167,7 +167,7 @@ export default class LoginSuccess extends Vue {
         if (this.receiptsError) {
             this.title = 'Your Addresses may be\nincomplete.';
             this.state = StatusScreen.State.WARNING;
-            this.message = 'We might have missed used addresses that have no balance.';
+            this.message = 'Used addresses without balance might have been missed.';
             this.action = 'Continue';
             await new Promise((resolve) => { this.resolve = resolve; });
         }

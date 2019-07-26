@@ -119,7 +119,7 @@ export default class SignupLedger extends Vue {
 
     private get statusScreenMessage() {
         if (this.state !== SignupLedger.State.FETCHING_INCOMPLETE) return '';
-        else return 'We might have missed used addresses that have no balance.';
+        else return 'Used addresses without balance might have been missed.';
     }
 
     private get statusScreenAction() {
