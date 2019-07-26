@@ -163,10 +163,7 @@ export default class CashlinkReceive extends Vue {
         staticStore.request = request;
 
         // Fake incomingRequest, so the routed-to component is rendered by App.vue
-        this.$store.commit('setIncomingRequest', {
-            hasRpcState: true,
-            hasRequest: !!staticStore.request,
-        });
+        this.$store.commit('setRequestLoaded', true);
 
         this.$rpc.routerPush(requestType);
     }

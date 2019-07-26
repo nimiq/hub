@@ -336,9 +336,8 @@ export default class RpcApi {
     }
 
     private _startRoute() {
-        this._store.commit('setIncomingRequest', {
-            hasRpcState: !!this._staticStore.rpcState,
-            hasRequest: !!this._staticStore.request,
-        });
+        this._store.commit('setRequestLoaded',
+            !!(this._staticStore.rpcState && this._staticStore.request),
+        );
     }
 }
