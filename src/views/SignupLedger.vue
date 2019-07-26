@@ -8,8 +8,10 @@
             <transition name="transition-fade">
                 <StatusScreen v-if="state === constructor.State.LOADING
                         || state === constructor.State.FETCHING_ADDRESSES
+                        || state === constructor.State.FETCHING_INCOMPLETE
                         || state === constructor.State.FINISHED"
                         :state="statusScreenState" :title="statusScreenTitle" :status="statusScreenStatus"
+                        :message="statusScreenMessage" :mainAction="statusScreenAction" @main-action="_continue"
                         :class="{ 'grow-from-bottom-button': state === constructor.State.FINISHED && !hadAccounts }">
                 </StatusScreen>
             </transition>
@@ -39,7 +41,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { PageBody, SmallPage, PageHeader, AccountRing, ArrowLeftSmallIcon } from '@nimiq/vue-components';
+import { AccountRing, ArrowLeftSmallIcon, PageBody, PageHeader, SmallPage } from '@nimiq/vue-components';
 import { ParsedBasicRequest } from '../lib/RequestTypes';
 import { Account } from '../lib/PublicRequestTypes';
 import { Static } from '../lib/StaticStore';
@@ -48,7 +50,7 @@ import LedgerUi from '../components/LedgerUi.vue';
 import StatusScreen from '../components/StatusScreen.vue';
 import IdenticonSelector from '../components/IdenticonSelector.vue';
 import WalletInfoCollector from '../lib/WalletInfoCollector';
-import { WalletInfo, WalletType } from '../lib/WalletInfo';
+import { WalletInfo } from '../lib/WalletInfo';
 import { AccountInfo } from '../lib/AccountInfo';
 import { WalletStore } from '../lib/WalletStore';
 import { ERROR_CANCELED } from '../lib/Constants';
@@ -64,6 +66,7 @@ export default class SignupLedger extends Vue {
         LOADING: 'loading',
         LEDGER_INTERACTION: 'ledger-interaction', // can be instructions to connect or also display of an error
         FETCHING_ADDRESSES: 'fetching-addresses',
+        FETCHING_INCOMPLETE: 'fetching-incomplete',
         IDENTICON_SELECTION: 'identicon-selection',
         WALLET_SUMMARY: 'wallet-summary',
         FINISHED: 'finished',
@@ -76,16 +79,26 @@ export default class SignupLedger extends Vue {
     private accountsToSelectFrom: AccountInfo[] = [];
     private hadAccounts: boolean = false;
     private cancelled: boolean = false;
-    private failedFetchingAccounts: boolean = false;
+    private fetchingAddressesFailed: boolean = false;
+    private fetchingAddressesIncomplete: boolean = false;
 
     private get statusScreenState() {
-        return this.state === SignupLedger.State.FINISHED ? StatusScreen.State.SUCCESS : StatusScreen.State.LOADING;
+        switch (this.state) {
+            case SignupLedger.State.FETCHING_INCOMPLETE:
+                return StatusScreen.State.WARNING;
+            case SignupLedger.State.FINISHED:
+                return StatusScreen.State.SUCCESS;
+            default:
+                return StatusScreen.State.LOADING;
+        }
     }
 
     private get statusScreenTitle() {
         switch (this.state) {
             case SignupLedger.State.FETCHING_ADDRESSES:
                 return 'Fetching Addresses';
+            case SignupLedger.State.FETCHING_INCOMPLETE:
+                return 'Your addresses may be\nincomplete.';
             case SignupLedger.State.FINISHED:
                 return this.hadAccounts ? 'You\'re logged in!' : 'Welcome to the Nimiq Blockchain.';
             default:
@@ -95,13 +108,23 @@ export default class SignupLedger extends Vue {
 
     private get statusScreenStatus() {
         if (this.state !== SignupLedger.State.FETCHING_ADDRESSES) return '';
-        else if (this.failedFetchingAccounts) return 'Failed to fetch account. Retrying...';
+        else if (this.fetchingAddressesFailed) return 'Failed to fetch addresses. Retrying...';
         else {
             const count = !this.walletInfo ? 0 : this.walletInfo.accounts.size;
             return count > 0
                 ? `Imported ${count} address${count !== 1 ? 'es' : ''} so far.`
                 : '';
         }
+    }
+
+    private get statusScreenMessage() {
+        if (this.state !== SignupLedger.State.FETCHING_INCOMPLETE) return '';
+        else return 'We might have missed used addresses that have no balance.';
+    }
+
+    private get statusScreenAction() {
+        if (this.state !== SignupLedger.State.FETCHING_INCOMPLETE) return '';
+        else return 'Continue';
     }
 
     private async created() {
@@ -111,16 +134,17 @@ export default class SignupLedger extends Vue {
             try {
                 tryCount += 1;
                 // triggers loading and connecting states in LedgerUi if applicable
-                await WalletInfoCollector.collectLedgerWalletInfo(
+                const collectionResult = await WalletInfoCollector.collectLedgerWalletInfo(
                     /* initialAccounts */ [],
                     (walletInfo, currentlyCheckedAccounts) =>
                         this._onWalletInfoUpdate(walletInfo, currentlyCheckedAccounts),
                     /* skipActivityCheck */ true,
                 );
-                this.failedFetchingAccounts = false;
+                this.fetchingAddressesFailed = false;
+                this.fetchingAddressesIncomplete = !!collectionResult.receiptsError;
                 break;
             } catch (e) {
-                this.failedFetchingAccounts = true;
+                this.fetchingAddressesFailed = true;
                 if (tryCount >= 5) throw e;
                 console.warn('Error while collecting Ledger WalletInfo, retrying', e);
                 if (!LedgerApi.isBusy) continue;
@@ -129,14 +153,7 @@ export default class SignupLedger extends Vue {
             }
         }
 
-        if (this.cancelled) return;
-        if (this.walletInfo!.accounts.size > 0) {
-            this.hadAccounts = true;
-            this.done();
-        } else {
-            // Let user select an account
-            this.state = SignupLedger.State.IDENTICON_SELECTION;
-        }
+        this._continue();
     }
 
     private destroyed() {
@@ -158,6 +175,7 @@ export default class SignupLedger extends Vue {
         currentlyCheckedAccounts?: Array<{ address: string, path: string }>,
     ) {
         this.walletInfo = walletInfo;
+        if (this.cancelled) return;
         this.walletInfo.fileExported = true;
         this.walletInfo.wordsExported = true;
         if (walletInfo.accounts.size > 0) {
@@ -174,6 +192,20 @@ export default class SignupLedger extends Vue {
             ));
         }
         this.$forceUpdate(); // because vue does not recognize changes in walletInfo.accounts map // TODO verify
+    }
+
+    private _continue() {
+        if (this.cancelled) return;
+        if (this.fetchingAddressesIncomplete && this.state !== SignupLedger.State.FETCHING_INCOMPLETE) {
+            // warn user that his addresses might be incomplete
+            this.state = SignupLedger.State.FETCHING_INCOMPLETE;
+        } else if (this.walletInfo!.accounts.size > 0) {
+            this.hadAccounts = true;
+            this.done();
+        } else {
+            // Let user select an account
+            this.state = SignupLedger.State.IDENTICON_SELECTION;
+        }
     }
 
     private async done() {
