@@ -1,6 +1,6 @@
 <template>
     <div class="container pad-bottom">
-        <SmallPage>
+        <SmallPage :class="{ 'account-selector-shown': !!shownAccountSelector }">
             <StatusScreen v-if="!cashlink"
                 :state="statusState"
                 :title="statusTitle"
@@ -39,8 +39,25 @@
                     <div><!-- bottom flex spacer --></div>
                 </PageBody>
                 <PageFooter>
-                    <button class="nq-button" disabled>Checking status...</button>
+                    <button
+                        class="nq-button"
+                        :class="{'loading-spinner': isButtonLoading}"
+                        :disabled="!canCashlinkBeClaimed"
+                    >{{ buttonText }}</button>
                 </PageFooter>
+
+                <transition name="transition-fade">
+                    <div class="overlay" v-if="shownAccountSelector">
+                        <button class="nq-button-s close" @click="shownAccountSelector = false"><CloseIcon/></button>
+                        <PageHeader>Choose an Address</PageHeader>
+                        <AccountSelector
+                            :wallets="processedWallets"
+                            :disableContracts="true"
+                            @account-selected="accountSelected"
+                            @login="goToLogin"
+                        />
+                    </div>
+                </transition>
             </div>
             <div v-else class="card-content no-account">
                 <div><!-- top flex spacer --></div>
@@ -77,17 +94,23 @@ import {
     PageFooter,
     ArrowRightIcon,
     CaretRightSmallIcon,
+    CloseIcon,
     Account,
     Amount,
+    AccountSelector,
 } from '@nimiq/vue-components';
 import StatusScreen from '../components/StatusScreen.vue';
 import CashlinkSparkle from '../components/CashlinkSparkle.vue';
 import Cashlink from '../lib/Cashlink';
+import { CashlinkState } from '../lib/PublicRequestTypes';
 import { AccountInfo } from '../lib/AccountInfo';
-import { Getter } from 'vuex-class';
+import { Getter, Mutation } from 'vuex-class';
 import staticStore from '@/lib/StaticStore';
 import { CASHLINK_RECEIVE } from '../router';
 import { RequestType, ParsedBasicRequest } from '../lib/RequestTypes';
+import { NetworkClient } from '@nimiq/network-client';
+import Config from 'config';
+import { WalletInfo } from '../lib/WalletInfo';
 
 @Component({components: {
     SmallPage,
@@ -98,15 +121,23 @@ import { RequestType, ParsedBasicRequest } from '../lib/RequestTypes';
     PageFooter,
     ArrowRightIcon,
     CaretRightSmallIcon,
+    CloseIcon,
     Account,
     Amount,
+    AccountSelector,
 }})
 export default class CashlinkReceive extends Vue {
     @Getter private hasWallets!: boolean;
     @Getter private activeAccount?: AccountInfo;
+    @Getter private processedWallets!: WalletInfo[];
+
+    @Mutation('setActiveAccount') private $setActiveAccount!:
+        (payload: {walletId: string, userFriendlyAddress: string}) => any;
 
     private cashlink: Cashlink | null = null;
     private selectedAddress: AccountInfo | null = null;
+    private network: NetworkClient | null = null;
+    private shownAccountSelector: boolean = false;
 
     private statusState = StatusScreen.State.LOADING;
     private statusTitle = 'Initializing Cashlink';
@@ -138,10 +169,24 @@ export default class CashlinkReceive extends Vue {
             this.statusMessage = 'This is not a valid cashlink, sorry.';
             return;
         }
+
+        if (this.hasWallets) {
+            // 4. Start network to check chashlink status
+            this.network = NetworkClient.hasInstance()
+                ? NetworkClient.Instance
+                : NetworkClient.createInstance(Config.networkEndpoint);
+            await this.network.init();
+            this.cashlink.networkClient = this.network;
+        }
     }
 
     private selectRecipient() {
-        // dummy
+        this.shownAccountSelector = true;
+    }
+
+    private accountSelected(walletId: string, userFriendlyAddress: string) {
+        this.$setActiveAccount({ walletId, userFriendlyAddress });
+        this.shownAccountSelector = false;
     }
 
     private goToSignup() {
@@ -166,6 +211,33 @@ export default class CashlinkReceive extends Vue {
         this.$store.commit('setRequestLoaded', true);
 
         this.$rpc.routerPush(requestType);
+    }
+
+    private get isCashlinkStateKnown(): boolean {
+        if (!this.network) return false;
+        return this.network.consensusState === 'established'
+            && this.cashlink!.state !== CashlinkState.UNKNOWN;
+    }
+
+    private get canCashlinkBeClaimed(): boolean {
+        if (!this.network) return false;
+        return this.cashlink!.state === CashlinkState.UNCLAIMED;
+    }
+
+    private get buttonText(): string {
+        if (!this.isCashlinkStateKnown) return 'Checking status...';
+        if (this.canCashlinkBeClaimed) return 'Claim cashlink';
+        if (this.cashlink!.state === CashlinkState.UNCHARGED) return 'Cashlink not funded';
+        if (this.cashlink!.state === CashlinkState.CHARGING) return 'Cashlink funding...';
+        else return 'Cashlink empty :(';
+    }
+
+    private get isButtonLoading(): boolean {
+        return !this.isCashlinkStateKnown || this.cashlink!.state === CashlinkState.CHARGING;
+    }
+
+    private get isCashlinkAlreadyClaimed(): boolean {
+        return this.cashlink!.state >= CashlinkState.CLAIMING;
     }
 }
 </script>
@@ -289,6 +361,11 @@ export default class CashlinkReceive extends Vue {
         margin-top: 1rem;
     }
 
+    button.loading-spinner::before {
+        content: 'O';
+        margin-right: 1rem;
+    }
+
     .skip {
         font-size: 1.75rem;
         font-weight: 600;
@@ -321,6 +398,41 @@ export default class CashlinkReceive extends Vue {
 
     .status-screen {
         transition: opacity .4s;
+    }
+
+    .overlay {
+        position: absolute;
+        top: 0;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 100%;
+        transition: opacity .4s;
+        background: rgba(255, 255, 255, .875); /* equivalent to keyguard: .5 on blurred and .75 on account details */
+    }
+
+    .overlay .close {
+        position: absolute;
+        right: 2rem;
+        top: 2rem;
+        font-size: 3rem;
+        padding: 0;
+        height: 3rem;
+        background: none;
+    }
+
+    .overlay .close .nq-icon {
+        opacity: 0.2;
+        transition: opacity .25s;
+    }
+
+    .overlay .close:hover .nq-icon,
+    .overlay .close:focus .nq-icon {
+        opacity: 0.4;
+    }
+
+    .account-selector {
+        margin-top: -3rem;
     }
 
     .blur-target {
