@@ -41,7 +41,6 @@ export default class ChooseAddress extends Vue {
     @Getter private findWallet!: (id: string) => WalletInfo | undefined;
     @Getter private processedWallets!: WalletInfo[];
 
-    @Mutation('addWallet') private $addWallet!: (walletInfo: WalletInfo) => any;
     @Mutation('setActiveAccount') private $setActiveAccount!: (payload: {
         walletId: string,
         userFriendlyAddress: string,

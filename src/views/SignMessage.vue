@@ -50,7 +50,6 @@ export default class SignMessage extends Vue {
     @Getter private findWallet!: (id: string) => WalletInfo | undefined;
     @Getter private findWalletByAddress!: (address: string, includeContracts: boolean) => WalletInfo | undefined;
 
-    @Mutation('addWallet') private $addWallet!: (walletInfo: WalletInfo) => any;
     @Mutation('setActiveAccount') private $setActiveAccount!: (payload: {
         walletId: string,
         userFriendlyAddress: string,
