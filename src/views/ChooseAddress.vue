@@ -41,15 +41,12 @@ export default class ChooseAddress extends Vue {
     @Getter private findWallet!: (id: string) => WalletInfo | undefined;
     @Getter private processedWallets!: WalletInfo[];
 
-    @Mutation('addWallet') private $addWallet!: (walletInfo: WalletInfo) => any;
     @Mutation('setActiveAccount') private $setActiveAccount!: (payload: {
         walletId: string,
         userFriendlyAddress: string,
     }) => any;
 
     public async created() {
-        await this.handleOnboardingResult();
-
         if (this.processedWallets.length === 0) {
             this.goToOnboarding(true);
         }
@@ -85,31 +82,6 @@ export default class ChooseAddress extends Vue {
             this.$rpc.routerReplace(RequestType.ONBOARD);
         }
         this.$rpc.routerPush(RequestType.ONBOARD);
-    }
-
-    private async handleOnboardingResult() {
-        // Check if we are returning from an onboarding request
-        if (staticStore.sideResult && !(staticStore.sideResult instanceof Error)) {
-            const sideResult = staticStore.sideResult as Account[];
-
-            // Add imported wallets to Vuex store
-            for (const account of sideResult) {
-                const walletInfo = await WalletStore.Instance.get(account.accountId);
-                if (walletInfo) {
-                    this.$addWallet(walletInfo);
-
-                    // Set as activeWallet and activeAccount
-                    // FIXME: Also handle active account we get from store
-                    const activeAccount = walletInfo.accounts.values().next().value;
-
-                    this.$setActiveAccount({
-                        walletId: walletInfo.id,
-                        userFriendlyAddress: activeAccount.userFriendlyAddress,
-                    });
-                }
-            }
-        }
-        delete staticStore.sideResult;
     }
 
     private close() {

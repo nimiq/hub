@@ -15,7 +15,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { State } from 'vuex-class';
+import { State, Action } from 'vuex-class';
 import KeyguardClient from '@nimiq/keyguard-client';
 import { BrowserDetection } from '@nimiq/utils';
 import { SmallPage } from '@nimiq/vue-components';
@@ -34,6 +34,8 @@ import { ERROR_COOKIE_SPACE } from '../lib/Constants';
 export default class LoginSuccess extends Vue {
     @Static private request!: ParsedBasicRequest;
     @State private keyguardResult!: KeyguardClient.KeyResult;
+
+    @Action('addWalletAndSetActive') private $addWalletAndSetActive!: (walletInfo: WalletInfo) => any;
 
     private walletInfos: WalletInfo[] = [];
     private state: StatusScreen.State = StatusScreen.State.LOADING;
@@ -152,6 +154,11 @@ export default class LoginSuccess extends Vue {
 
     private async done() {
         if (!this.walletInfos.length) throw new Error('WalletInfo not ready.');
+
+        // Add wallets to vuex
+        for (const walletInfo of this.walletInfos) {
+            this.$addWalletAndSetActive(walletInfo);
+        }
 
         const result = this.walletInfos.map((walletInfo) => ({
                 accountId: walletInfo.id,

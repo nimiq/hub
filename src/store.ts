@@ -105,6 +105,13 @@ const store: StoreOptions<RootState> = {
                 });
             });
         },
+        addWalletAndSetActive({ commit }, walletInfo: WalletInfo) {
+            commit('addWallet', walletInfo);
+            commit('setActiveAccount', {
+                walletId: walletInfo.id,
+                userFriendlyAddress: walletInfo.accounts.values().next().value.userFriendlyAddress,
+            });
+        },
     },
     getters: {
         findWallet: (state) => (id: string): WalletInfo | undefined => {

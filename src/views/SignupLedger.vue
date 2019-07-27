@@ -55,6 +55,7 @@ import { AccountInfo } from '../lib/AccountInfo';
 import { WalletStore } from '../lib/WalletStore';
 import { ERROR_CANCELED } from '../lib/Constants';
 import LabelingMachine from '@/lib/LabelingMachine';
+import { Action } from 'vuex-class';
 
 @Component({components: {
     PageBody, SmallPage, PageHeader,
@@ -73,6 +74,8 @@ export default class SignupLedger extends Vue {
     };
 
     @Static private request!: ParsedBasicRequest;
+
+    @Action('addWalletAndSetActive') private $addWalletAndSetActive!: (walletInfo: WalletInfo) => any;
 
     private state: string = SignupLedger.State.LOADING;
     private walletInfo: WalletInfo | null = null;
@@ -209,6 +212,9 @@ export default class SignupLedger extends Vue {
     }
 
     private async done() {
+        // Add wallet to vuex
+        this.$addWalletAndSetActive(this.walletInfo!);
+
         this.state = SignupLedger.State.FINISHED;
         setTimeout(() => {
             const result: Account[] = [{

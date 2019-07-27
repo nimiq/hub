@@ -16,7 +16,7 @@ import { Component, Vue } from 'vue-property-decorator';
 import { SmallPage, CheckmarkIcon } from '@nimiq/vue-components';
 import { AccountInfo } from '../lib/AccountInfo';
 import { WalletInfo, WalletType } from '../lib/WalletInfo';
-import { State } from 'vuex-class';
+import { State, Action } from 'vuex-class';
 import { WalletStore } from '@/lib/WalletStore';
 import { Account } from '../lib/PublicRequestTypes';
 import StatusScreen from '@/components/StatusScreen.vue';
@@ -26,6 +26,8 @@ import LabelingMachine from '@/lib/LabelingMachine';
 @Component({components: {SmallPage, StatusScreen, CheckmarkIcon}})
 export default class SignupSuccess extends Vue {
     @State private keyguardResult!: KeyguardClient.KeyResult;
+
+    @Action('addWalletAndSetActive') private $addWalletAndSetActive!: (walletInfo: WalletInfo) => any;
 
     private title: string = 'Storing your Account';
     private state: StatusScreen.State = StatusScreen.State.LOADING;
@@ -58,6 +60,9 @@ export default class SignupSuccess extends Vue {
         );
 
         await WalletStore.Instance.put(walletInfo);
+
+        // Add wallet to vuex
+        this.$addWalletAndSetActive(walletInfo);
 
         // Artificially delay, to display loading status
         await new Promise((res) => setTimeout(res, 2000));
