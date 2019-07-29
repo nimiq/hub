@@ -66,7 +66,7 @@
                 </transition>
             </div>
             <div v-if="cashlink && !hasWallets" class="card-content no-account">
-                <div><!-- top flex spacer --></div>
+                <div class="top-spacer"><!-- top flex spacer --></div>
 
                 <CashlinkSparkle/>
 
@@ -88,6 +88,13 @@
                 </PageFooter>
             </div>
         </SmallPage>
+        <div v-if="cashlink && !hasWallets" class="welcome-text">
+            <h1 class="nq-h1">Claim your Cash</h1>
+            <p class="nq-text">
+                <span class="main-text">Congrats, you just opened a Nimiq Cashlink. Create an Account and claim your money.</span>
+                30&nbsp;seconds, no&nbsp;email, no&nbsp;download.
+            </p>
+        </div>
     </div>
 </template>
 
@@ -294,6 +301,11 @@ export default class CashlinkReceive extends Vue {
 </script>
 
 <style scoped>
+    .container {
+        flex-direction: row !important;
+        padding: 0 5rem; /* Side padding for smaller screens */
+    }
+
     .card-content {
         display: flex;
         flex-direction: column;
@@ -303,6 +315,26 @@ export default class CashlinkReceive extends Vue {
     .card-content.no-account {
         align-items: center;
         justify-content: space-between;
+    }
+
+    .welcome-text {
+        max-width: 514px;
+        margin-left: 8.75rem; /* nq-card already has 1.25rem margin */
+    }
+
+    .welcome-text .nq-h1 {
+        font-size: 8rem;
+        margin-top: 0;
+        margin-bottom: 4rem;
+    }
+
+    .welcome-text .nq-text {
+        font-size: 4rem;
+        color: rgba(31, 35, 72, 0.5);
+    }
+
+    .welcome-text .main-text {
+        color: var(--nimiq-blue);
     }
 
     .small-page {
@@ -520,5 +552,90 @@ export default class CashlinkReceive extends Vue {
     }
     .account-selector-shown .page-footer {
         filter: blur(35px);
+    }
+
+    @media (max-width: 939px) {
+        .container {
+            padding: 0 4rem;
+        }
+
+        .welcome-text {
+            margin-left: 5.75rem;
+        }
+
+        .welcome-text .nq-h1 {
+            font-size: 5.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .welcome-text .nq-text {
+            font-size: 3rem;
+        }
+    }
+
+    @media (max-width: 799px) {
+        .container {
+            padding: 0 2.5rem;
+        }
+
+        .welcome-text {
+            margin-left: 3.75rem;
+        }
+
+        .welcome-text .nq-h1 {
+            font-size: 4rem;
+            margin-bottom: 1.75rem;
+        }
+
+        .welcome-text .nq-text {
+            margin-top: 1.75rem;
+            font-size: 2.5rem;
+        }
+    }
+
+    @media (max-width: 699px) {
+        .container {
+            flex-direction: column-reverse !important;
+            padding: 0;
+        }
+
+        .small-page {
+            height: auto;
+            flex-grow: 1;
+        }
+
+        .top-spacer {
+            display: none;
+        }
+
+        .no-account .value {
+            font-size: 6rem;
+        }
+
+        .no-account .data {
+            font-size: 2rem;
+        }
+
+        .welcome-text {
+            max-width: 420px;
+            text-align: center;
+            margin: 3rem 0 4rem;
+            padding: 0 2rem;
+        }
+    }
+
+    @media (max-width: 450px) {
+        .welcome-text {
+            font-weight: 600;
+        }
+
+        .welcome-text .nq-h1 {
+            font-size: 3.5rem;
+        }
+
+        .welcome-text .nq-text {
+            font-size: 1.875rem;
+            line-height: 1.4;
+        }
     }
 </style>
