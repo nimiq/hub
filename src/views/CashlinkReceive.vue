@@ -1,13 +1,15 @@
 <template>
     <div class="container pad-bottom">
         <SmallPage :class="{ 'account-selector-shown': !!shownAccountSelector }">
-            <StatusScreen v-if="!cashlink"
-                :state="statusState"
-                :title="statusTitle"
-                :status="statusStatus"
-                :message="statusMessage"
-            />
-            <div v-else-if="hasWallets" class="card-content has-account">
+            <transition name="transition-fade">
+                <StatusScreen v-if="statusState"
+                    :state="statusState"
+                    :title="statusTitle"
+                    :status="statusStatus"
+                    :message="statusMessage"
+                />
+            </transition>
+            <div v-if="cashlink && hasWallets" class="card-content has-account">
                 <PageHeader class="blur-target">You received a Cashlink!</PageHeader>
                 <PageBody>
                     <div class="accounts">
@@ -40,10 +42,10 @@
                 </PageBody>
                 <PageFooter>
                     <button
-                        class="nq-button"
-                        :class="{'loading-spinner': isButtonLoading}"
+                        class="nq-button light-blue"
                         :disabled="!canCashlinkBeClaimed"
-                    >{{ buttonText }}</button>
+                        @click="claim"
+                    ><CircleSpinner v-if="isButtonLoading"/>{{ buttonText }}</button>
                 </PageFooter>
 
                 <transition name="transition-fade">
@@ -59,7 +61,7 @@
                     </div>
                 </transition>
             </div>
-            <div v-else class="card-content no-account">
+            <div v-if="cashlink && !hasWallets" class="card-content no-account">
                 <div><!-- top flex spacer --></div>
 
                 <CashlinkSparkle/>
@@ -101,6 +103,7 @@ import {
 } from '@nimiq/vue-components';
 import StatusScreen from '../components/StatusScreen.vue';
 import CashlinkSparkle from '../components/CashlinkSparkle.vue';
+import CircleSpinner from '../components/CircleSpinner.vue';
 import Cashlink from '../lib/Cashlink';
 import { CashlinkState } from '../lib/PublicRequestTypes';
 import { AccountInfo } from '../lib/AccountInfo';
@@ -108,14 +111,16 @@ import { Getter, Mutation } from 'vuex-class';
 import staticStore from '@/lib/StaticStore';
 import { CASHLINK_RECEIVE } from '../router';
 import { RequestType, ParsedBasicRequest } from '../lib/RequestTypes';
-import { NetworkClient } from '@nimiq/network-client';
+import { NetworkClient, DetailedPlainTransaction } from '@nimiq/network-client';
 import Config from 'config';
 import { WalletInfo } from '../lib/WalletInfo';
+import { NETWORK_MAIN } from '../lib/Constants';
 
 @Component({components: {
     SmallPage,
     StatusScreen,
     CashlinkSparkle,
+    CircleSpinner,
     PageHeader,
     PageBody,
     PageFooter,
@@ -139,7 +144,7 @@ export default class CashlinkReceive extends Vue {
     private network: NetworkClient | null = null;
     private shownAccountSelector: boolean = false;
 
-    private statusState = StatusScreen.State.LOADING;
+    private statusState: StatusScreen.State | false = StatusScreen.State.LOADING;
     private statusTitle = 'Initializing Cashlink';
     private statusStatus = 'Parsing your link...';
     private statusMessage = '';
@@ -170,6 +175,9 @@ export default class CashlinkReceive extends Vue {
             return;
         }
 
+        // Hide loading screen
+        this.statusState = false;
+
         if (this.hasWallets) {
             // 4. Start network to check chashlink status
             this.network = NetworkClient.hasInstance()
@@ -177,6 +185,34 @@ export default class CashlinkReceive extends Vue {
                 : NetworkClient.createInstance(Config.networkEndpoint);
             await this.network.init();
             this.cashlink.networkClient = this.network;
+        }
+    }
+
+    private async claim() {
+        // Start loading screen
+        this.statusState = StatusScreen.State.LOADING;
+        this.statusTitle = 'Claiming Cashlink';
+        this.statusStatus = 'Sending claiming transaction...';
+
+        this.cashlink!.claim(this.activeAccount!.userFriendlyAddress);
+
+        // Set up transaction-relayed listener, so we know when the tx has been sent
+        try {
+            await new Promise((resolve, reject) => {
+                this.network!.on(NetworkClient.Events.TRANSACTION_RELAYED, (tx: DetailedPlainTransaction) => {
+                    if (tx.sender === this.cashlink!.address.toUserFriendlyAddress()) resolve();
+                    window.setTimeout(reject, 10 * 1000); // 10 seconds timeout
+                });
+            });
+
+            // Show success screen and redirect to Safe
+            this.statusState = StatusScreen.State.SUCCESS;
+            this.statusTitle = 'Cashlink claimed!';
+
+            window.setTimeout(() => this.redirectToSafe(), StatusScreen.SUCCESS_REDIRECT_DELAY);
+        } catch (err) {
+            // Return to regular screen
+            this.statusState = false;
         }
     }
 
@@ -211,6 +247,12 @@ export default class CashlinkReceive extends Vue {
         this.$store.commit('setRequestLoaded', true);
 
         this.$rpc.routerPush(requestType);
+    }
+
+    private redirectToSafe() {
+        window.location.href = Config.network === NETWORK_MAIN
+            ? 'https://safe.nimiq.com'
+            : 'https://safe.nimiq-testnet.com';
     }
 
     private get isCashlinkStateKnown(): boolean {
@@ -361,9 +403,9 @@ export default class CashlinkReceive extends Vue {
         margin-top: 1rem;
     }
 
-    button.loading-spinner::before {
-        content: 'O';
-        margin-right: 1rem;
+    .nq-button >>> .circle-spinner {
+        margin-right: 1.5rem;
+        margin-bottom: -0.375rem;
     }
 
     .skip {
@@ -397,6 +439,7 @@ export default class CashlinkReceive extends Vue {
     }
 
     .status-screen {
+        position: absolute;
         transition: opacity .4s;
     }
 

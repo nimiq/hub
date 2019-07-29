@@ -201,7 +201,6 @@ export default class Cashlink {
                     newState = CashlinkState.UNCLAIMED;
                 } else break; // If no transactions are found, no further checks are necessary
             case CashlinkState.UNCLAIMED:
-                console.log(pendingTransactions);
                 const claimingTx = pendingTransactions.find((tx) => tx.sender === this.address.toUserFriendlyAddress());
                 if (claimingTx) {
                     this.finalRecipient = claimingTx.recipient!;
