@@ -7,6 +7,8 @@
                     :title="statusTitle"
                     :status="statusStatus"
                     :message="statusMessage"
+                    mainAction="Got it"
+                    @main-action="redirectToSafe"
                 />
             </transition>
             <div v-if="cashlink && hasWallets" class="card-content has-account">
@@ -20,12 +22,14 @@
                             <div class="label">Cashlink</div>
                         </div>
                         <ArrowRightIcon class="arrow-right blur-target"/>
-                        <Account layout="column"
-                            :address="activeAccount.userFriendlyAddress"
-                            :label="activeAccount.label"
-                            @click.native="selectRecipient"
-                            class="blur-target">
-                        </Account>
+                        <div class="recipient-button blur-target">
+                            <button class="nq-button-s" @click="selectRecipient">Change</button>
+                            <Account layout="column"
+                                :address="activeAccount.userFriendlyAddress"
+                                :label="activeAccount.label"
+                                @click.native="selectRecipient">
+                            </Account>
+                        </div>
                     </div>
 
                     <hr class="blur-target">
@@ -78,7 +82,7 @@
                 <PageFooter>
                     <button class="nq-button light-blue" @click="goToSignup">Create Account</button>
                     <a class="nq-link skip" href="javascript:void(0)" @click="goToLogin">
-                        Log into existing Account
+                        Login to existing Account
                         <CaretRightSmallIcon/>
                     </a>
                 </PageFooter>
@@ -271,7 +275,12 @@ export default class CashlinkReceive extends Vue {
         if (this.canCashlinkBeClaimed) return 'Claim cashlink';
         if (this.cashlink!.state === CashlinkState.UNCHARGED) return 'Cashlink not funded';
         if (this.cashlink!.state === CashlinkState.CHARGING) return 'Cashlink funding...';
-        else return 'Cashlink empty :(';
+        else {
+            this.statusState = StatusScreen.State.WARNING;
+            this.statusTitle = 'Cashlink is empty';
+            this.statusMessage = 'This cashlink has already been claimed.';
+            return 'Cashlink empty :(';
+        }
     }
 
     private get isButtonLoading(): boolean {
@@ -321,17 +330,18 @@ export default class CashlinkReceive extends Vue {
     .accounts {
         display: flex;
         align-self: stretch;
-        margin-top: .75rem;
     }
 
     .cashlink-account {
         display: flex;
         flex-direction: column;
         align-items: center;
+        margin-top: 5.125rem;
     }
 
-    .accounts .account {
-        width: calc(50% - 1.5rem); /* minus half arrow width */
+    .cashlink-account,
+    .recipient-button {
+        width: calc(50% - 1.5rem - 2.75rem); /* minus half arrow width */
         padding: 0;
     }
 
@@ -362,8 +372,31 @@ export default class CashlinkReceive extends Vue {
 
     .accounts .arrow-right {
         font-size: 3rem;
-        margin-top: 3rem;
+        margin: 8.125rem 2.75rem 3rem;
         color: var(--nimiq-light-blue);
+    }
+
+    .recipient-button {
+        border: .25rem solid rgba(31, 35, 72, 0.1);
+        border-radius: 0.5rem;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        padding-top: 3rem;
+    }
+
+    .recipient-button button {
+        position: absolute;
+        right: 0.75rem;
+        top: 0.75rem;
+        font-size: 1.5rem;
+        height: 2.75rem;
+        padding: 0 1.125rem;
+    }
+
+    .recipient-button .account {
+        padding-left: 0;
+        padding-right: 0;
     }
 
     hr {
