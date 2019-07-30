@@ -27,9 +27,9 @@
 
         <SmallPage class="overlay" v-if="details !== Details.CLOSED">
             <AccountDetails
-                :address="details === Details.SENDER ? sender.address : recipient.address"
+                :address="details === Details.SENDER ? sender.accountInfo.address.toUserFriendlyAddress() : recipient.address"
                 :editable="details === Details.SENDER"
-                :label="details === Details.SENDER ? sender.label : recipient.label"
+                :label="details === Details.SENDER ? sender.accountInfo.label : recipient.label"
                 @close="details = Details.CLOSED"
                 @changed="setLabel"
                 />
@@ -48,11 +48,16 @@
         <PageBody>
             <div class="sender-and-recipient">
                 <a href="javascript:void(0);"  @click="details = Details.SENDER">
-                    <Account layout="column" :address="sender.address" :label="sender.label"/>
+                    <Account layout="column"
+                        :address="sender.accountInfo.address.toUserFriendlyAddress()"
+                        :label="sender.accountInfo.label"/>
                 </a>
                 <div class="arrow-wrapper"><ArrowRightIcon class="nq-light-blue" /></div>
                 <a class="disabled">
-                    <Account layout="column" :label="cashlink.contactName" :address="cashlink.address.toUserFriendlyAddress()"/>
+                    <Account layout="column"
+                        :address="sender.accountInfo.address.toUserFriendlyAddress()"
+                        :displayAsCashlink="true"
+                        :label="cashlink.contactName"/>
                 </a>
             </div>
             <AmountInput class="value" :vanishing="true" placeholder="0.00" :maxValue="sender.balance" :maxFontSize="8" :value="0" @changed="setValue" ref="valueInput" />
@@ -75,6 +80,7 @@ import StatusScreen from '../components/StatusScreen.vue';
 import { State as RpcState } from '@nimiq/rpc';
 import HubApi from '../../client/HubApi';
 import { loadNimiq } from '../lib/Helpers';
+import { AccountInfo } from '../lib/AccountInfo';
 import { RequestType, ParsedCashlinkRequest } from '../lib/RequestTypes';
 import { NetworkClient } from '@nimiq/network-client';
 import { WalletStore } from '../lib/WalletStore';
@@ -82,19 +88,20 @@ import { WalletInfo, WalletType } from '../lib/WalletInfo';
 import { ContractInfo } from '../lib/ContractInfo';
 import KeyguardClient from '@nimiq/keyguard-client';
 import {
-    SmallPage,
+    Account,
+    AccountDetails,
+    AccountSelector,
+    AmountInput,
+    ArrowRightIcon,
+    CloseIcon,
+    LabelInput,
     PageBody,
     PageFooter,
     PageHeader,
-    AmountInput,
-    Account,
-    LabelInput,
-    SettingsIcon,
-    ArrowRightIcon,
-    AccountDetails,
-    AccountSelector,
     SelectBar,
-    CloseIcon } from '@nimiq/vue-components';
+    SettingsIcon,
+    SmallPage,
+} from '@nimiq/vue-components';
 
 enum Details {
     CLOSED,
@@ -103,62 +110,57 @@ enum Details {
 }
 
 @Component({components: {
-    PageBody,
-    SmallPage,
-    PageHeader,
-    PageFooter,
-    AmountInput,
     Account,
-    AccountSelector,
-    LabelInput,
-    SettingsIcon,
-    StatusScreen,
-    ArrowRightIcon,
     AccountDetails,
+    AccountSelector,
+    AmountInput,
+    ArrowRightIcon,
     CloseIcon,
+    LabelInput,
+    PageBody,
+    PageFooter,
+    PageHeader,
     SelectBar,
+    SettingsIcon,
+    SmallPage,
+    StatusScreen,
 }})
 export default class CashlinkCreate extends Vue {
     @Static private request!: ParsedCashlinkRequest;
     @Static private rpcState!: RpcState;
+
     @Getter private processedWallets!: WalletInfo[];
+    @Getter private findWalletByAddress!: (address: string, includeContracts: boolean) => WalletInfo | undefined;
+    @Getter private findWallet!: (id: string) => WalletInfo | undefined;
 
     private cashlink: Cashlink | null = null;
-    private sender: {
-        address: string,
-        label: string,
-        walletId: string,
-        balance?: number,
-        keyPath: string,
-    } | null = null;
     private fee = 0;
+
+    private sender: {
+        accountInfo: AccountInfo,
+        walletId: string,
+    } | null = null;
+    private label = '';
 
     private optionsOpened = false;
     private details = Details.CLOSED;
 
-    private label = '';
-
     public async created() {
+        if (this.request.cashlinkAddress) {
+            this.$router.replace(`/${RequestType.CASHLINK}/manage`);
+            return;
+        }
         if (this.request.senderAddress) {
-            // Load sender information, otherwise the select sender Address screen is shown
-            for (const walletInfo of this.processedWallets) {
-                if (walletInfo.accounts.has(this.request.senderAddress.toUserFriendlyAddress())) {
-                    const foundAddress = walletInfo.accounts.get(this.request.senderAddress.toUserFriendlyAddress());
-                    if (foundAddress) {
-                        this.sender = {
-                            address: this.request.senderAddress.toUserFriendlyAddress(),
-                            label: foundAddress.label,
-                            walletId: walletInfo.id,
-                            balance: foundAddress.balance,
-                            keyPath: foundAddress.path,
-                        };
-                        this.label = foundAddress.label;
-                        break;
-                    }
-                }
+            const wallet = this.findWalletByAddress(this.request.senderAddress.toUserFriendlyAddress(), true);
+            if (wallet) {
+                this.sender = {
+                    walletId: wallet.id,
+                    accountInfo: wallet.accounts.get(this.request.senderAddress.toUserFriendlyAddress())!,
+                };
+                this.label = this.sender!.accountInfo.label;
             }
         }
-        await loadNimiq();
+
         const network = NetworkClient.Instance;
         await network.init();
         await network.connectPico();
@@ -170,19 +172,13 @@ export default class CashlinkCreate extends Vue {
     }
 
     private async setSender(walletId: string, address: string) {
-        const wallet = this.processedWallets.find((value, index) => value.id === walletId);
+        const wallet = this.findWallet(walletId);
         if (wallet) {
-            const foundAddress = wallet.accounts.get(address);
-            if (foundAddress) {
-                this.sender = {
-                    address,
-                    label: foundAddress.label,
-                    walletId,
-                    balance: foundAddress.balance,
-                    keyPath: foundAddress.path,
-                };
-                this.label = foundAddress.label;
-            }
+            this.sender = {
+                walletId: wallet.id,
+                accountInfo: wallet.accounts.get(address)!,
+            };
+            this.label = this.sender!.accountInfo.label;
         }
     }
 
@@ -204,24 +200,23 @@ export default class CashlinkCreate extends Vue {
     }
 
     private async storeContactAndCloseOverlay() {
-        const wallet = this.processedWallets.find((value, index) => value.id === this.sender!.walletId);
+        const wallet = this.findWallet(this.sender!.walletId);
         if (wallet) {
-            const foundAddress = wallet.accounts.get(this.sender!.address);
-            if (foundAddress) {
-                foundAddress.label = this.label;
-                wallet.accounts.set(this.sender!.address, foundAddress);
-                await WalletStore.Instance.put(wallet);
-                this.sender!.label = this.label;
-                this.details = Details.CLOSED;
-            }
+            this.sender!.accountInfo.label = this.label;
+            wallet.accounts.set(
+                this.sender!.accountInfo.address.toUserFriendlyAddress(),
+                this.sender!.accountInfo,
+            );
+            await WalletStore.Instance.put(wallet);
+            this.details = Details.CLOSED;
         }
     }
 
     private sendTransaction() {
         const fundingDetails = this.cashlink!.getFundingDetails();
-        const senderAccount = this.processedWallets.find((wallet: WalletInfo) => wallet.id === this.sender!.walletId)!;
+        const senderAccount = this.findWallet(this.sender!.walletId)!;
         const senderContract = senderAccount.findContractByAddress(
-            Nimiq.Address.fromUserFriendlyAddress(this.sender!.address),
+            this.sender!.accountInfo.address,
         );
 
         const validityStartHeight = NetworkClient.Instance.headInfo.height + 1;
@@ -230,15 +225,15 @@ export default class CashlinkCreate extends Vue {
             appName: this.request.appName,
 
             keyId: senderAccount.keyId,
-            keyPath: this.sender!.keyPath,
-            keyLabel: this.sender!.label,
+            keyPath: this.sender!.accountInfo.path,
+            keyLabel: this.sender!.accountInfo.label,
 
             sender: (senderContract
                 ? senderContract.address
-                : Nimiq.Address.fromUserFriendlyAddress(this.sender!.address)
+                : this.sender!.accountInfo.address
             ).serialize(),
             senderType: senderContract ? senderContract.type : Nimiq.Account.Type.BASIC,
-            senderLabel: (senderContract || this.sender!).label,
+            senderLabel: (senderContract || this.sender!.accountInfo).label,
             recipientLabel: this.cashlink!.contactName,
             recipientType: Nimiq.Account.Type.BASIC,
             fee: this.fee,
@@ -249,11 +244,11 @@ export default class CashlinkCreate extends Vue {
         staticStore.cashlink = this.cashlink!;
         const client = this.$rpc.createKeyguardClient();
         client.signTransaction(request);
-        return;
     }
 
     private login() {
-        console.log('login');
+        staticStore.originalRouteName = RequestType.CASHLINK;
+        this.$rpc.routerPush(RequestType.LOGIN);
     }
 
     private data() {
@@ -322,7 +317,7 @@ export default class CashlinkCreate extends Vue {
 
     .arrow-wrapper {
         font-size: 3rem;
-        margin-top: -3.25rem;
+        margin-top: -6.5rem;
     }
 
     .options-button {
@@ -339,15 +334,22 @@ export default class CashlinkCreate extends Vue {
         width: calc(50% - 1.1235rem);
     }
 
-    .sender-and-recipient .account .identicon {
+    .sender-and-recipient .account >>> .identicon {
         width: 9rem;
         height: 9rem;
+    }
+
+    .sender-and-recipient .account >>> .label {
+        height: 3em;
     }
 
     .create-cashlink .value {
         display: flex;
         align-items: baseline;
         height: 14.5rem; /* 12.5rem height + 2rem padding */
+        border-top: .125rem solid var(--nimiq-highlight-bg);
+        margin-top: 1rem;
+        padding-top: 2rem;
     }
 
     .overlay {
@@ -385,6 +387,10 @@ export default class CashlinkCreate extends Vue {
         padding: 0;
         height: unset;
     }
+    .overlay .cancel-circle .nq-icon {
+        opacity: .2;
+        transition: opacity .3s cubic-bezier(0.25, 0, 0, 1);
+    }
 
 
     .cancel-circle:hover .nq-icon,
@@ -411,5 +417,10 @@ export default class CashlinkCreate extends Vue {
         display: flex;
         align-items: center;
         width: 100%;
+    }
+
+    .create-cashlink .cashlink >>> .label {
+        opacity: .5;
+        line-height: 1.5;
     }
 </style>
