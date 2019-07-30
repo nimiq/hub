@@ -24,6 +24,7 @@ import {
     ExportResult,
     SignedMessage,
     CashlinkRequest,
+    Cashlinks,
     OutgoingCashlink,
 } from '../src/lib/PublicRequestTypes';
 
@@ -195,6 +196,15 @@ export default class HubApi<DB extends BehaviorType = BehaviorType.POPUP> { // D
         requestBehavior: RequestBehavior<B> = this._iframeBehavior as any,
     ): Promise<B extends BehaviorType.REDIRECT ? void : Account[]> {
         return this._request(requestBehavior, RequestType.LIST, []);
+    }
+
+    /**
+     * Only accessible in iframe from Nimiq domains.
+     */
+    public cashlinks<B extends BehaviorType = DB>(
+        requestBehavior: RequestBehavior<B> = this._iframeBehavior as any,
+    ): Promise<B extends BehaviorType.REDIRECT ? void : Cashlinks> {
+        return this._request(requestBehavior, RequestType.LIST_CASHLINKS, []);
     }
 
     // END API

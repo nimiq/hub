@@ -157,6 +157,11 @@ export interface CashlinkRequest extends BasicRequest {
     cashlinkAddress?: string;
 }
 
+export interface Cashlinks {
+    incoming: IncomingCashlink[];
+    outgoing: OutgoingCashlink[];
+}
+
 export type RpcRequest = SignTransactionRequest
                        | CashlinkRequest
                        | CheckoutRequest
@@ -180,6 +185,7 @@ export type ResultByRequestType<T> =
     T extends RequestType.RENAME ? Account :
     T extends RequestType.ONBOARD | RequestType.SIGNUP | RequestType.LOGIN
             | RequestType.MIGRATE | RequestType.LIST ? Account[] :
+    T extends RequestType.LIST_CASHLINKS ? Cashlinks :
     T extends RequestType.CHOOSE_ADDRESS | RequestType.ADD_ADDRESS ? Address :
     T extends RequestType.SIGN_TRANSACTION | RequestType.CHECKOUT ? SignedTransaction :
     T extends RequestType.SIGN_MESSAGE ? SignedMessage :
