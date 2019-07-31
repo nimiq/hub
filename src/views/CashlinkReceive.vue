@@ -131,6 +131,7 @@ import { NetworkClient, DetailedPlainTransaction } from '@nimiq/network-client';
 import Config from 'config';
 import { WalletInfo } from '../lib/WalletInfo';
 import { NETWORK_MAIN } from '../lib/Constants';
+import { CashlinkStore } from '../lib/CashlinkStore';
 
 @Component({components: {
     SmallPage,
@@ -227,9 +228,11 @@ export default class CashlinkReceive extends Vue {
             await new Promise((resolve, reject) => {
                 NetworkClient.Instance.on(NetworkClient.Events.TRANSACTION_RELAYED, (tx: DetailedPlainTransaction) => {
                     if (tx.sender === this.cashlink!.address.toUserFriendlyAddress()) resolve();
-                    window.setTimeout(reject, 10 * 1000); // 10 seconds timeout
+                    // window.setTimeout(reject, 10 * 1000); // 10 seconds timeout
                 });
             });
+
+            await CashlinkStore.Instance.put(this.cashlink!);
 
             // Show success screen and redirect to Safe
             this.statusState = StatusScreen.State.SUCCESS;
