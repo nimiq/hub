@@ -23,6 +23,7 @@ import { keyguardResponseRouter, REQUEST_ERROR } from '@/router';
 import { StaticStore } from '@/lib/StaticStore';
 import { WalletStore } from './WalletStore';
 import { WalletType } from '@/lib/WalletInfo';
+import Cashlink from '@/lib/Cashlink';
 import CookieJar from '@/lib/CookieJar';
 import { Raven } from 'vue-raven'; // Sentry.io SDK
 import { ERROR_CANCELED } from './Constants';
@@ -160,6 +161,7 @@ export default class RpcApi {
             kind: this._staticStore.request ? this._staticStore.request.kind : undefined,
             keyguardRequest: this._staticStore.keyguardRequest,
             originalRouteName: this._staticStore.originalRouteName,
+            cashlink: this._staticStore.cashlink ? this._staticStore.cashlink.toObject() : undefined,
         };
     }
 
@@ -274,11 +276,13 @@ export default class RpcApi {
         const request = RequestParser.parse(storedState.request, rpcState, storedState.kind);
         const keyguardRequest = storedState.keyguardRequest;
         const originalRouteName = storedState.originalRouteName;
+        const cashlink = storedState.cashlink ? Cashlink.fromObject(storedState.cashlink) : undefined;
 
         this._staticStore.rpcState = rpcState;
         this._staticStore.request = request || undefined;
         this._staticStore.keyguardRequest = keyguardRequest;
         this._staticStore.originalRouteName = originalRouteName;
+        this._staticStore.cashlink = cashlink;
     }
 
     private _registerKeyguardApis(commands: KeyguardCommand[]) {
