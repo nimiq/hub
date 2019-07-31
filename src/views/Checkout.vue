@@ -111,7 +111,10 @@ export default class Checkout extends Vue {
             this.goToOnboarding(true);
             return;
         }
+    }
 
+    private async mounted() {
+        // Requires Network child component to be rendered
         this.addConsensusListeners();
         const balances = await this.getBalances();
 
