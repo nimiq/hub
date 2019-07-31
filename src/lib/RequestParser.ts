@@ -2,6 +2,7 @@ import { TX_VALIDITY_WINDOW, TX_MIN_VALIDITY_DURATION } from './Constants';
 import { State } from '@nimiq/rpc';
 import {
     BasicRequest,
+    CashlinkRequest,
     SimpleRequest,
     OnboardRequest,
     SignTransactionRequest,
@@ -14,6 +15,7 @@ import {
 import {
     RequestType,
     ParsedBasicRequest,
+    ParsedCashlinkRequest,
     ParsedSimpleRequest,
     ParsedOnboardRequest,
     ParsedSignTransactionRequest,
@@ -149,6 +151,18 @@ export class RequestParser {
                             : undefined,
                     message: signMessageRequest.message,
                 } as ParsedSignMessageRequest;
+            case RequestType.CASHLINK:
+                const cashlinkRequest = request as CashlinkRequest;
+                return {
+                    kind: RequestType.CASHLINK,
+                    appName: cashlinkRequest.appName,
+                    senderAddress: cashlinkRequest.senderAddress
+                            ? Nimiq.Address.fromUserFriendlyAddress(cashlinkRequest.senderAddress)
+                            : undefined,
+                    cashlinkAddress: cashlinkRequest.cashlinkAddress
+                            ? Nimiq.Address.fromUserFriendlyAddress(cashlinkRequest.cashlinkAddress)
+                            : undefined,
+                } as ParsedCashlinkRequest;
             default:
                 return null;
         }
@@ -169,6 +183,17 @@ export class RequestParser {
                     flags: signTransactionRequest.flags,
                     validityStartHeight: signTransactionRequest.validityStartHeight,
                 } as SignTransactionRequest;
+            case RequestType.CASHLINK:
+                const cashlinkRequest = request as ParsedCashlinkRequest;
+                return {
+                    appName: cashlinkRequest.appName,
+                    cashlinkAddress: cashlinkRequest.cashlinkAddress
+                            ? cashlinkRequest.cashlinkAddress.toUserFriendlyAddress()
+                            : undefined,
+                    senderAddress: cashlinkRequest.senderAddress
+                            ? cashlinkRequest.senderAddress.toUserFriendlyAddress()
+                            : undefined,
+                } as CashlinkRequest;
             case RequestType.CHECKOUT:
                 const checkoutRequest = request as ParsedCheckoutRequest;
                 return {

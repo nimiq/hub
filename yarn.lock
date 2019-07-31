@@ -774,16 +774,21 @@
   resolved "https://registry.yarnpkg.com/@nimiq/style/-/style-0.7.2.tgz#5f4be65de2c5c2b00ccf5bcbc5ea96b95ac0b6a2"
   integrity sha512-Ak3mbHb12eZ+Ai2iLxe9VP9KMM5Dzthwv+CtwmPMJLbog9i8DU051mdVNN8DzhW+s362Jli/HYsoHidOijwskw==
 
+"@nimiq/style@^0.7.3":
+  version "0.7.4"
+  resolved "https://registry.yarnpkg.com/@nimiq/style/-/style-0.7.4.tgz#efc67e243fdb09ff3669d1cf1b2782f9b8ff778d"
+  integrity sha512-IzmqbRRjNWvT3wF/erOH5L4uoXd5JgCtBCA1Cek7bY8pv/N06+brzE8euXFd6ebqQ5tiIDilVK/66w1Rli4wWg==
+
 "@nimiq/utils@^0.3.2":
   version "0.3.2"
   resolved "https://registry.yarnpkg.com/@nimiq/utils/-/utils-0.3.2.tgz#7728d417c6bafacfd2d617a8037839d2bc93a03a"
   integrity sha512-1IuQMlWFlilchL0HBfVvH/s1f3QFxGWw+YMl9dGzL9n0HomFpFMbTF+FhRe4Grfo+V5d1XSwACA7x24kzwcBQw==
 
-"@nimiq/vue-components@https://github.com/nimiq/vue-components.git#build/accounts":
+"@nimiq/vue-components@https://github.com/nimiq/vue-components.git#sebastian/build/accounts":
   version "0.1.0"
-  resolved "https://github.com/nimiq/vue-components.git#08b4217755ec787c011c5dce4b92be0324242f04"
+  resolved "https://github.com/nimiq/vue-components.git#052d674c2d884ff42a0883bc37133314f65588df"
   dependencies:
-    "@nimiq/style" "^0.7.2"
+    "@nimiq/style" "^0.7.3"
     qr-code "github:nimiq/qr-encoder"
     qr-scanner "^1.1.1"
     vue "^2.6.10"

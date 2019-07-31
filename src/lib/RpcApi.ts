@@ -46,6 +46,7 @@ export default class RpcApi {
 
         this._registerAccountsApis([
             RequestType.SIGN_TRANSACTION,
+            RequestType.CASHLINK,
             RequestType.CHECKOUT,
             RequestType.ONBOARD,
             RequestType.SIGNUP,
@@ -308,11 +309,11 @@ export default class RpcApi {
 
                 if (error.message === 'Request aborted') {
                     /*
-                     * In case the window is a popup and the recovered state is the one with which the popup was
-                     * initialized (has a source), then reject it. The popup will be closed as a result.
-                     * If not, there was another history entry in between, where a history.back() will navigate to,
-                     * not closing the popup in the process.
-                     */
+                    * In case the window is a popup and the recovered state is the one with which the popup was
+                    * initialized (has a source), then reject it. The popup will be closed as a result.
+                    * If not, there was another history entry in between, where a history.back() will navigate to,
+                    * not closing the popup in the process.
+                    */
                     if (this._staticStore.rpcState!.source && window.opener) {
                         this.reject(error);
                     } else {

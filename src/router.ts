@@ -10,6 +10,9 @@ const SignTransactionSuccess  = () => import(/*webpackChunkName: "sign-transacti
 const SignTransactionLedger   = () => import(/*webpackChunkName: "sign-transaction-ledger"*/
     './views/SignTransactionLedger.vue');
 
+const CashlinkCreate          = () => import(/*webpackChunkName: "cashlink" */ './views/CashlinkCreate.vue');
+const CashlinkManage          = () => import(/*webpackChunkName: "cashlink" */ './views/CashlinkManage.vue');
+
 const Checkout                = () => import(/*webpackChunkName: "checkout"*/ './views/Checkout.vue');
 const CheckoutTransmission    = () => import(/*webpackChunkName: "checkout"*/ './views/CheckoutTransmission.vue');
 
@@ -124,6 +127,16 @@ export default new Router({
             path: `/${RequestType.SIGN_TRANSACTION}/ledger`,
             component: SignTransactionLedger,
             name: `${RequestType.SIGN_TRANSACTION}-ledger`,
+        },
+        {
+            path: `/${RequestType.CASHLINK}/create`,
+            component: CashlinkCreate,
+            name: RequestType.CASHLINK,
+        },
+        {
+            path: `/${RequestType.CASHLINK}/manage`,
+            component: CashlinkManage,
+            name: `${RequestType.CASHLINK}-success`,
         },
         {
             path: `/${RequestType.CHECKOUT}`,

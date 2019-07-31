@@ -66,6 +66,21 @@ class Demo {
             await checkoutPopup(await generateCheckoutRequest());
         });
 
+        document.querySelector('button#create-cashlink').addEventListener('click', async () => {
+            try {
+                const $radio = document.querySelector('input[type="radio"]:checked');
+                const result = await demo.client.cashlink({
+                    appName: 'Accounts Demos',
+                    //senderAddress: $radio.getAttribute('data-address'),
+                });
+                console.log('Result', result);
+                document.querySelector('#result').textContent = 'Cashlink created';
+            } catch (e) {
+                console.error(e);
+                document.querySelector('#result').textContent = `Error: ${e.message || e}`;
+            }
+        });
+
         document.querySelector('button#checkout-popup-with-account').addEventListener('click', async () => {
             await checkoutPopup(await generateCheckoutRequest(true));
         });

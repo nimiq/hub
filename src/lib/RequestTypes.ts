@@ -13,6 +13,7 @@ export enum RequestType {
     ADD_ADDRESS = 'add-address',
     RENAME = 'rename',
     CHOOSE_ADDRESS = 'choose-address',
+    CASHLINK = 'cashlink',
 }
 
 export interface ParsedBasicRequest {
@@ -66,8 +67,14 @@ export interface ParsedExportRequest extends ParsedSimpleRequest {
     wordsOnly?: boolean;
 }
 
+export interface ParsedCashlinkRequest extends ParsedBasicRequest {
+    senderAddress?: Nimiq.Address;
+    cashlinkAddress?: Nimiq.Address;
+}
+
 // Discriminated Unions
 export type ParsedRpcRequest = ParsedSignTransactionRequest
+                             | ParsedCashlinkRequest
                              | ParsedCheckoutRequest
                              | ParsedBasicRequest
                              | ParsedSimpleRequest
