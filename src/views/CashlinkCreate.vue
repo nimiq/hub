@@ -1,73 +1,80 @@
 <template>
-    <SmallPage v-if="!sender" class="send-tx">
-        <PageHeader>
-            Choose Sender
-        </PageHeader>
-        <AccountSelector :wallets="processedWallets" @account-selected="setSender" @login="login" />
-    </SmallPage>
+    <div class="container">
+        <SmallPage v-if="!sender" class="send-tx">
+            <PageHeader>
+                Choose Sender
+            </PageHeader>
+            <AccountSelector :wallets="processedWallets" @account-selected="setSender" @login="login" />
+        </SmallPage>
 
-    <SmallPage v-else-if="!cashlink">
-        <StatusScreen title="Loading Cashlink"/>
-    </SmallPage>
+        <SmallPage v-else-if="!cashlink">
+            <StatusScreen title="Loading Cashlink"/>
+        </SmallPage>
 
-    <SmallPage v-else class="create-cashlink">
-        <SmallPage class="overlay fee" v-if="optionsOpened">
-            <a href="javascript:void(0)" class="nq-button-s cancel-circle" @click="optionsOpened = false">
-                <CloseIcon/>
-            </a>
+        <SmallPage v-else class="create-cashlink">
+            <SmallPage class="overlay fee" v-if="optionsOpened">
+                <a href="javascript:void(0)" class="nq-button-s cancel-circle" @click="optionsOpened = false">
+                    <CloseIcon/>
+                </a>
+                <PageBody>
+                    <h1 class="nq-h1">Speed up your transaction</h1>
+                    <p class="nq-text">By adding a transation fee, you can influence how fast your transaction will be processed.</p>
+                    <SelectBar ref="fee" :options="OPTIONS" name="fee" :selectedValue="fee" />
+                </PageBody>
+                <PageFooter>
+                    <button class="nq-button light-blue" @click="setFee">Set fee</button>
+                </PageFooter>
+            </SmallPage>
+
+            <SmallPage class="overlay" v-if="details !== Details.CLOSED">
+                <AccountDetails
+                    :address="details === Details.SENDER ? sender.accountInfo.address.toUserFriendlyAddress() : recipient.address"
+                    :editable="details === Details.SENDER"
+                    :label="details === Details.SENDER ? sender.accountInfo.label : recipient.label"
+                    @close="details = Details.CLOSED"
+                    @changed="setLabel"
+                    />
+                <PageFooter>
+                    <button class="nq-button light-blue" @click="storeContactAndCloseOverlay">Save Contact</button>
+                </PageFooter>
+            </SmallPage>
+
+            <PageHeader>
+                Create a Cashlink
+                <a href="javascript:void(0)" class="nq-blue options-button" @click="optionsOpened = true">
+                    <SettingsIcon/>
+                </a>
+            </PageHeader>
+
             <PageBody>
-                <h1 class="nq-h1">Speed up your transaction</h1>
-                <p class="nq-text">By adding a transation fee, you can influence how fast your transaction will be processed.</p>
-                <SelectBar ref="fee" :options="OPTIONS" name="fee" :selectedValue="fee" />
+                <div class="sender-and-recipient">
+                    <a href="javascript:void(0);"  @click="details = Details.SENDER">
+                        <Account layout="column"
+                            :address="sender.accountInfo.address.toUserFriendlyAddress()"
+                            :label="sender.accountInfo.label"/>
+                    </a>
+                    <div class="arrow-wrapper"><ArrowRightIcon class="nq-light-blue" /></div>
+                    <a class="disabled">
+                        <Account layout="column"
+                            :address="sender.accountInfo.address.toUserFriendlyAddress()"
+                            :displayAsCashlink="true"
+                            :label="cashlink.contactName"/>
+                    </a>
+                </div>
+                <AmountInput class="value" :vanishing="true" placeholder="0.00" :maxValue="sender.balance" :maxFontSize="8" :value="0" @changed="setValue" ref="valueInput" />
+                <LabelInput :vanishing="true" placeholder="Add a public message..." :maxBytes="64" @changed="setMessage" />
             </PageBody>
+
             <PageFooter>
-                <button class="nq-button light-blue" @click="setFee">Set fee</button>
+                <button class="nq-button light-blue" :disabled="!cashlink || cashlink.value === 0" @click="sendTransaction">Create Cashlink</button>
             </PageFooter>
         </SmallPage>
 
-        <SmallPage class="overlay" v-if="details !== Details.CLOSED">
-            <AccountDetails
-                :address="details === Details.SENDER ? sender.accountInfo.address.toUserFriendlyAddress() : recipient.address"
-                :editable="details === Details.SENDER"
-                :label="details === Details.SENDER ? sender.accountInfo.label : recipient.label"
-                @close="details = Details.CLOSED"
-                @changed="setLabel"
-                />
-            <PageFooter>
-                <button class="nq-button light-blue" @click="storeContactAndCloseOverlay">Save Contact</button>
-            </PageFooter>
-        </SmallPage>
-
-        <PageHeader>
-            Create a Cashlink
-            <a href="javascript:void(0)" class="nq-blue options-button" @click="optionsOpened = true">
-                <SettingsIcon/>
-            </a>
-        </PageHeader>
-
-        <PageBody>
-            <div class="sender-and-recipient">
-                <a href="javascript:void(0);"  @click="details = Details.SENDER">
-                    <Account layout="column"
-                        :address="sender.accountInfo.address.toUserFriendlyAddress()"
-                        :label="sender.accountInfo.label"/>
-                </a>
-                <div class="arrow-wrapper"><ArrowRightIcon class="nq-light-blue" /></div>
-                <a class="disabled">
-                    <Account layout="column"
-                        :address="sender.accountInfo.address.toUserFriendlyAddress()"
-                        :displayAsCashlink="true"
-                        :label="cashlink.contactName"/>
-                </a>
-            </div>
-            <AmountInput class="value" :vanishing="true" placeholder="0.00" :maxValue="sender.balance" :maxFontSize="8" :value="0" @changed="setValue" ref="valueInput" />
-            <LabelInput :vanishing="true" placeholder="Add a public message..." :maxBytes="64" @changed="setMessage" />
-        </PageBody>
-
-        <PageFooter>
-            <button class="nq-button light-blue" :disabled="!cashlink || cashlink.value === null" @click="sendTransaction">Create Cashlink</button>
-        </PageFooter>
-    </SmallPage>
+        <button class="global-close nq-button-s" @click="close">
+            <ArrowLeftSmallIcon/>
+            Back to {{request.appName}}
+        </button>
+    </div>
 </template>
 
 <script lang="ts">
@@ -77,6 +84,7 @@ import Cashlink from '../lib/Cashlink';
 import { CashlinkState } from '@/lib/PublicRequestTypes';
 import staticStore, { Static } from '@/lib/StaticStore';
 import StatusScreen from '../components/StatusScreen.vue';
+import { ERROR_CANCELED } from '../lib/Constants';
 import { State as RpcState } from '@nimiq/rpc';
 import HubApi from '../../client/HubApi';
 import { loadNimiq } from '../lib/Helpers';
@@ -92,6 +100,7 @@ import {
     AccountDetails,
     AccountSelector,
     AmountInput,
+    ArrowLeftSmallIcon,
     ArrowRightIcon,
     CloseIcon,
     LabelInput,
@@ -114,6 +123,7 @@ enum Details {
     AccountDetails,
     AccountSelector,
     AmountInput,
+    ArrowLeftSmallIcon,
     ArrowRightIcon,
     CloseIcon,
     LabelInput,
@@ -251,6 +261,10 @@ export default class CashlinkCreate extends Vue {
         this.$rpc.routerPush(RequestType.LOGIN);
     }
 
+    private close() {
+        this.$rpc.reject(new Error(ERROR_CANCELED));
+    }
+
     private data() {
             return {
                 OPTIONS: [{
@@ -305,7 +319,7 @@ export default class CashlinkCreate extends Vue {
         margin-bottom: 3rem;
     }
 
-    .address-display {
+    .account-details >>> .address-display {
         margin-top: 3rem;
     }
 
