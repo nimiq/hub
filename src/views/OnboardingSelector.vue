@@ -80,6 +80,8 @@ export default class OnboardingSelector extends Vue {
                 return 'Back to Choose Address';
             case RequestType.SIGN_MESSAGE:
                 return 'Back to Sign Message';
+            case RequestType.CASHLINK:
+                return 'Back to Cashlink';
             default:
                 return `Back to ${this.request.appName}`;
         }
@@ -97,7 +99,8 @@ export default class OnboardingSelector extends Vue {
     private get isSecondaryOnboarding() {
         return this.originalRouteName === RequestType.CHECKOUT
             || this.originalRouteName === RequestType.CHOOSE_ADDRESS
-            || this.originalRouteName === RequestType.SIGN_MESSAGE;
+            || this.originalRouteName === RequestType.SIGN_MESSAGE
+            || this.originalRouteName === RequestType.CASHLINK;
     }
 }
 </script>
