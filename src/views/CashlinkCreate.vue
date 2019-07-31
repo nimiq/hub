@@ -61,7 +61,7 @@
                             :label="cashlink.contactName"/>
                     </a>
                 </div>
-                <AmountInput class="value" :vanishing="true" placeholder="0.00" :maxValue="sender.balance" :maxFontSize="8" :value="0" @changed="setValue" ref="valueInput" />
+                <AmountInput class="value" :vanishing="true" placeholder="0.00" :maxValue="sender.accountInfo.balance" :maxFontSize="8" :value="0" @changed="setValue" ref="valueInput" />
                 <LabelInput :vanishing="true" placeholder="Add a public message..." :maxBytes="64" @changed="setMessage" />
             </PageBody>
 
@@ -258,7 +258,7 @@ export default class CashlinkCreate extends Vue {
 
     private login() {
         staticStore.originalRouteName = RequestType.CASHLINK;
-        this.$rpc.routerPush(RequestType.LOGIN);
+        this.$rpc.routerPush(RequestType.ONBOARD);
     }
 
     private close() {
