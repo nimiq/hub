@@ -66,7 +66,7 @@
             </PageBody>
 
             <PageFooter>
-                <button class="nq-button light-blue" :disabled="!cashlink || cashlink.value === 0" @click="sendTransaction">Create Cashlink</button>
+                <button class="nq-button light-blue" :disabled="!cashlink || value === 0" @click="sendTransaction">Create Cashlink</button>
             </PageFooter>
         </SmallPage>
 
@@ -144,6 +144,7 @@ export default class CashlinkCreate extends Vue {
     @Getter private findWallet!: (id: string) => WalletInfo | undefined;
 
     private cashlink: Cashlink | null = null;
+    private value = 0; // Would be great if we could v-bind the value to the AmountInput
     private fee = 0;
 
     private sender: {
@@ -193,7 +194,8 @@ export default class CashlinkCreate extends Vue {
     }
 
     private setValue(value: number) {
-        this.cashlink!.value = value;
+        this.value = value;
+        if (value > 0) this.cashlink!.value = value;
     }
 
     private setMessage(value: string) {
