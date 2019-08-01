@@ -22,10 +22,11 @@
         "@nimiq/style": "^0.7.2",
         "@nimiq/utils": "^0.3.2",
         "@nimiq/vue-components": "https://github.com/nimiq/vue-components.git#sebastian/build/accounts",
+        "@sentry/browser": "^5.4.0",
+        "@sentry/integrations": "^5.4.1",
         "vue": "^2.6.6",
         "vue-class-component": "^6.0.0",
         "vue-property-decorator": "^7.0.0",
-        "vue-raven": "^1.0.3",
         "vue-router": "^3.0.2",
         "vuex": "^3.1.0",
         "vuex-class": "^0.3.1"
