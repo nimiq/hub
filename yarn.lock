@@ -786,7 +786,7 @@
 
 "@nimiq/vue-components@https://github.com/nimiq/vue-components.git#sebastian/build/accounts":
   version "0.1.0"
-  resolved "https://github.com/nimiq/vue-components.git#017009ad811a8c688d68a1568b2c8b0d0f4b3b53"
+  resolved "https://github.com/nimiq/vue-components.git#ff09c7b173be992c62117e7825ea59bc75c2b08c"
   dependencies:
     "@nimiq/style" "^0.7.3"
     qr-code "github:nimiq/qr-encoder"
