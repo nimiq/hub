@@ -1,14 +1,15 @@
 <template>
     <div class="container">
-        <SmallPage v-if="!sender" class="send-tx">
+
+        <SmallPage v-if="loading">
+            <StatusScreen title="Creating Cashlink"/>
+        </SmallPage>
+
+        <SmallPage v-else-if="!accountOrContractInfo" class="send-tx">
             <PageHeader>
                 Choose Sender
             </PageHeader>
-            <AccountSelector :wallets="processedWallets" @account-selected="setSender" @login="login" />
-        </SmallPage>
-
-        <SmallPage v-else-if="sending">
-            <StatusScreen title="Creating Cashlink"/>
+            <AccountSelector :wallets="processedWallets" @account-selected="setSender" @login="login" :min-balance="1"/>
         </SmallPage>
 
         <SmallPage v-else class="create-cashlink">
@@ -28,8 +29,8 @@
 
             <SmallPage class="overlay" v-if="details !== Details.CLOSED">
                 <AccountDetails
-                    :address="details === Details.SENDER ? sender.accountInfo.address.toUserFriendlyAddress() : recipient.address"
-                    :label="details === Details.SENDER ? sender.accountInfo.label : recipient.label"
+                    :address="details === Details.SENDER ? accountOrContractInfo.address.toUserFriendlyAddress() : recipient.address"
+                    :label="details === Details.SENDER ? accountOrContractInfo.label : recipient.label"
                     @close="details = Details.CLOSED"
                     />
             </SmallPage>
@@ -45,13 +46,13 @@
                 <div class="sender-and-recipient">
                     <a href="javascript:void(0);"  @click="details = Details.SENDER">
                         <Account layout="column"
-                            :address="sender.accountInfo.address.toUserFriendlyAddress()"
-                            :label="sender.accountInfo.label"/>
+                            :address="accountOrContractInfo.address.toUserFriendlyAddress()"
+                            :label="accountOrContractInfo.label"/>
                     </a>
                     <div class="arrow-wrapper"><ArrowRightIcon class="nq-light-blue" /></div>
                     <a class="disabled">
                         <Account layout="column"
-                            :address="sender.accountInfo.address.toUserFriendlyAddress()"
+                            :address="accountOrContractInfo.address.toUserFriendlyAddress()"
                             :displayAsCashlink="true"
                             label="New Cashlink"/>
                     </a>
@@ -92,7 +93,7 @@ import { RequestType, ParsedCashlinkRequest } from '../lib/RequestTypes';
 import { NetworkClient } from '@nimiq/network-client';
 import { WalletStore } from '../lib/WalletStore';
 import { WalletInfo, WalletType } from '../lib/WalletInfo';
-import { ContractInfo } from '../lib/ContractInfo';
+import { ContractInfo, VestingContractInfo } from '../lib/ContractInfo';
 import KeyguardClient from '@nimiq/keyguard-client';
 import {
     Account,
@@ -142,18 +143,17 @@ export default class CashlinkCreate extends Vue {
     @Getter private findWalletByAddress!: (address: string, includeContracts: boolean) => WalletInfo | undefined;
     @Getter private findWallet!: (id: string) => WalletInfo | undefined;
 
+    @Mutation('addWallet') private $addWallet!: (walletInfo: WalletInfo) => any;
+
     private nimiqLoaded?: Promise<void>;
     private balanceUpdated?: Promise<void>;
-    private sending: boolean = false;
+    private loading: boolean = false;
 
     private value = 0;
     private fee = 0;
     private message = '';
 
-    private sender: {
-        accountInfo: AccountInfo,
-        walletId: string,
-    } | null = null;
+    private accountOrContractInfo?: AccountInfo | ContractInfo | null = null;
 
     private optionsOpened = false;
     private details = Details.CLOSED;
@@ -164,7 +164,12 @@ export default class CashlinkCreate extends Vue {
             return;
         }
 
-        this.nimiqLoaded = new Promise((resolve) => loadNimiq().then(() => resolve()));
+        if (!this.request.senderAddress || !this.request.senderBalance) {
+            this.loading = true;
+            await this.initNetwork();
+        }
+
+        this.nimiqLoaded = loadNimiq();
 
         if (this.request.senderAddress) {
             const wallet = this.findWalletByAddress(
@@ -172,51 +177,77 @@ export default class CashlinkCreate extends Vue {
                 true,
             );
             if (wallet) {
-                this.sender = {
-                    walletId: wallet.id,
-                    accountInfo: wallet.accounts.get(this.request.senderAddress.toUserFriendlyAddress())!,
-                };
-                await this.initNetwork();
+                // In case the loading state is active the balance update must be waited upon
+                if (this.loading) {
+                    await this.balanceUpdated!;
+                    this.loading = false;
+                }
+                await this.setSender(wallet.id, this.request.senderAddress.toUserFriendlyAddress());
             }
         }
-    }
-
-    public async mounted() {
-        (this.$refs.amountInput as AmountInput).focus();
+        // In case the loading state is active the balance update must be waited upon
+        if (this.loading) {
+            this.balanceUpdated!.then(() => this.loading = false);
+        }
     }
 
     private async setSender(walletId: string, address: string) {
         const wallet = this.findWallet(walletId);
         if (wallet) {
-            this.sender = {
-                walletId: wallet.id,
-                accountInfo: wallet.accounts.get(address)!,
-            };
+            this.accountOrContractInfo = wallet.accounts.get(address)
+                || wallet.findContractByAddress(Nimiq.Address.fromUserFriendlyAddress(address));
             await this.initNetwork();
+
+            (this.$refs.amountInput as AmountInput).focus();
         }
     }
 
     private async initNetwork() {
         const network = NetworkClient.Instance;
         await network.init();
-        this.balanceUpdated = new Promise((resolve) =>
-            network.connectPico([this.sender!.accountInfo.userFriendlyAddress]).then( async (balances) => {
-                if (balances.has(this.sender!.accountInfo.userFriendlyAddress)) {
-                    this.sender!.accountInfo.balance = Nimiq.Policy.coinsToSatoshis(
-                        balances.get(this.sender!.accountInfo.userFriendlyAddress)!,
-                    );
-                    const wallet = this.findWallet(this.sender!.walletId);
-                    if (wallet) {
-                        wallet.accounts.set(
-                            this.sender!.accountInfo.userFriendlyAddress,
-                            this.sender!.accountInfo,
-                        );
-                        await WalletStore.Instance.put(wallet);
+        this.balanceUpdated = this.balanceUpdated || new Promise((resolve) => {
+            const wallets = this.processedWallets.slice(0);
+            let addresses: string[] = [];
+            let accountsAndContracts = Array<AccountInfo | ContractInfo>();
+            if (!this.accountOrContractInfo) { // No senderAccount in the request
+                accountsAndContracts = wallets.reduce((acc, wallet) => {
+                    acc.push(...wallet.accounts.values());
+                    acc.push(...wallet.contracts);
+                    return acc;
+                }, [] as Array<AccountInfo | ContractInfo>);
+                // Reduce userfriendly addresses from that
+                addresses = accountsAndContracts.map((accountOrContract) => accountOrContract.userFriendlyAddress);
+            } else {
+                accountsAndContracts.push(this.accountOrContractInfo);
+                addresses.push(this.accountOrContractInfo.userFriendlyAddress);
+            }
+            network.connectPico(addresses).then( async (balances) => {
+                for (const accountOrContract of accountsAndContracts) {
+                    const balance = balances.get(accountOrContract.userFriendlyAddress);
+                    if (balance === undefined) continue;
+
+                    if ('type' in accountOrContract && accountOrContract.type === Nimiq.Account.Type.VESTING) {
+                        // Calculate available amount for vesting contract
+                        accountOrContract.balance =
+                            (accountOrContract as VestingContractInfo).calculateAvailableAmount(
+                                NetworkClient.Instance.headInfo.height,
+                                Nimiq.Policy.coinsToSatoshis(balance),
+                            );
+                    } else {
+                        accountOrContract.balance = Nimiq.Policy.coinsToSatoshis(balance);
                     }
-                    resolve();
                 }
-            }),
-        );
+                // Store updated wallets
+                for (const wallet of wallets) {
+                    // Update IndexedDB
+                    await WalletStore.Instance.put(wallet);
+
+                    // Update Vuex
+                    this.$addWallet(wallet);
+                }
+                resolve();
+            });
+        });
     }
 
     private setValue(value: number) {
@@ -225,8 +256,8 @@ export default class CashlinkCreate extends Vue {
 
     @Watch('sender.accountInfo.balance')
     private checkInsufficientBalance() {
-        if (this.sender && this.sender.accountInfo.balance) {
-            return this.value + this.fee > this.sender.accountInfo.balance;
+        if (this.accountOrContractInfo && this.accountOrContractInfo.balance) {
+            return this.value + this.fee > this.accountOrContractInfo.balance;
         }
         return true; // Not insufficient specifically but undefined.
     }
@@ -241,21 +272,22 @@ export default class CashlinkCreate extends Vue {
     }
 
     private sendTransaction() {
-        this.sending = true;
+        let loadingOngoing = true;
+        window.setTimeout(() => this.loading = loadingOngoing, 10);
+
         Promise.all([this.balanceUpdated, this.nimiqLoaded]).then(async () => {
+            loadingOngoing = false;
             if (this.checkInsufficientBalance()) {
-                this.sending = false;
+                this.loading = false;
                 return;
             }
+
             const cashlink = await Cashlink.create();
             cashlink.networkClient = NetworkClient.Instance;
             cashlink.value = this.value;
             cashlink.message = this.message;
             const fundingDetails = cashlink!.getFundingDetails();
-            const senderAccount = this.findWallet(this.sender!.walletId)!;
-            const senderContract = senderAccount.findContractByAddress(
-                this.sender!.accountInfo.address,
-            );
+            const senderAccount = this.findWalletByAddress(this.accountOrContractInfo!.userFriendlyAddress, true)!;
 
             const validityStartHeight = NetworkClient.Instance.headInfo.height + 1;
             const request: KeyguardClient.SignTransactionRequest = Object.assign({}, fundingDetails, {
@@ -263,15 +295,14 @@ export default class CashlinkCreate extends Vue {
                 appName: this.request.appName,
 
                 keyId: senderAccount.keyId,
-                keyPath: this.sender!.accountInfo.path,
-                keyLabel: this.sender!.accountInfo.label,
+                keyPath: senderAccount.findSignerForAddress(this.accountOrContractInfo!.address)!.path,
+                keyLabel: senderAccount.label,
 
-                sender: (senderContract
-                    ? senderContract.address
-                    : this.sender!.accountInfo.address
-                ).serialize(),
-                senderType: senderContract ? senderContract.type : Nimiq.Account.Type.BASIC,
-                senderLabel: (senderContract || this.sender!.accountInfo).label,
+                sender: this.accountOrContractInfo!.address.serialize(),
+                senderType: (this.accountOrContractInfo as ContractInfo).type
+                    ? (this.accountOrContractInfo as ContractInfo).type
+                    : Nimiq.Account.Type.BASIC,
+                senderLabel: this.accountOrContractInfo!.label,
                 recipientLabel: 'New Cashlink',
                 recipientType: Nimiq.Account.Type.BASIC,
                 fee: this.fee,
