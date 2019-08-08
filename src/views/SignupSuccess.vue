@@ -29,7 +29,7 @@ export default class SignupSuccess extends Vue {
 
     @Action('addWalletAndSetActive') private $addWalletAndSetActive!: (walletInfo: WalletInfo) => any;
 
-    private title: string = 'Storing your Account';
+    private title: string = 'Creating your Account';
     private state: StatusScreen.State = StatusScreen.State.LOADING;
 
     private async mounted() {
