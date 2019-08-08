@@ -156,12 +156,13 @@ export class RequestParser {
                 return {
                     kind: RequestType.CASHLINK,
                     appName: cashlinkRequest.appName,
-                    senderAddress: cashlinkRequest.senderAddress
-                            ? Nimiq.Address.fromUserFriendlyAddress(cashlinkRequest.senderAddress)
-                            : undefined,
                     cashlinkAddress: cashlinkRequest.cashlinkAddress
                             ? Nimiq.Address.fromUserFriendlyAddress(cashlinkRequest.cashlinkAddress)
                             : undefined,
+                    senderAddress: cashlinkRequest.senderAddress
+                            ? Nimiq.Address.fromUserFriendlyAddress(cashlinkRequest.senderAddress)
+                            : undefined,
+                    senderBalance: cashlinkRequest.senderBalance,
                 } as ParsedCashlinkRequest;
             default:
                 return null;
@@ -193,6 +194,7 @@ export class RequestParser {
                     senderAddress: cashlinkRequest.senderAddress
                             ? cashlinkRequest.senderAddress.toUserFriendlyAddress()
                             : undefined,
+                    senderBalance: cashlinkRequest.senderBalance,
                 } as CashlinkRequest;
             case RequestType.CHECKOUT:
                 const checkoutRequest = request as ParsedCheckoutRequest;

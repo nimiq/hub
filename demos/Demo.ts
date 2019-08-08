@@ -73,6 +73,7 @@ class Demo {
                 const result = await demo.client.cashlink({
                     appName: 'Accounts Demos',
                     senderAddress: $radio.getAttribute('data-address'),
+                    senderBalance: 5000000,
                 });
                 console.log('Result', result);
                 document.querySelector('#result').textContent = 'Cashlink created';
