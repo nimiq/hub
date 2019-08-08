@@ -147,6 +147,7 @@ export interface Cashlink {
 
 export interface CashlinkRequest extends BasicRequest {
     senderAddress?: string;
+    senderBalance?: number;
     cashlinkAddress?: string;
 }
 
