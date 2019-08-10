@@ -141,7 +141,7 @@ export interface RenameRequest extends SimpleRequest {
 
 export interface Cashlink {
     address: string; // Userfriendly address
-    message: string | Uint8Array;
+    message: string;
     status: CashlinkState;
 }
 
