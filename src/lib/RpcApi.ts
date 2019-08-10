@@ -13,7 +13,7 @@ import {
 import { RequestParser } from './RequestParser';
 import { RpcRequest, RpcResult } from './PublicRequestTypes';
 import { KeyguardClient, KeyguardCommand, Errors } from '@nimiq/keyguard-client';
-import { keyguardResponseRouter, REQUEST_ERROR } from '@/router';
+import { keyguardResponseRouter, REQUEST_ERROR, CASHLINK_RECEIVE } from '@/router';
 import { StaticStore } from '@/lib/StaticStore';
 import { WalletStore } from './WalletStore';
 import { WalletType } from '@/lib/WalletInfo';
@@ -78,6 +78,9 @@ export default class RpcApi {
 
         // If there is no valid request, show an error page
         const onClientTimeout = () => {
+            // @ts-ignore Property 'history' does not exist on type 'VueRouter'
+            if (this._router.history.current.name === CASHLINK_RECEIVE) return;
+
             this._router.replace(`/${REQUEST_ERROR}`);
         };
         this._server.init(onClientTimeout);
@@ -134,14 +137,18 @@ export default class RpcApi {
         }
 
         // Check for originalRouteName in StaticStore and route there
-        if (this._staticStore.originalRouteName && (!(result instanceof Error) || result.message !== ERROR_CANCELED)) {
+        const originalRoute = this._staticStore.originalRouteName;
+        if (originalRoute &&
+            (originalRoute === CASHLINK_RECEIVE ||
+            (!(result instanceof Error) || result.message !== ERROR_CANCELED))
+        ) {
             this._staticStore.sideResult = result;
             this._store.commit('setKeyguardResult', null);
 
             // Recreate original URL with original query parameters
-            const rpcState = this._staticStore.rpcState!;
-            const query = { rpcId: rpcState.id.toString() };
-            this._router.push({ name: this._staticStore.originalRouteName, query });
+            const rpcState = this._staticStore.rpcState;
+            const query = rpcState ? { rpcId: rpcState.id.toString() } : undefined;
+            this._router.push({ name: originalRoute, query });
             delete this._staticStore.originalRouteName;
             return;
         }
@@ -177,7 +184,7 @@ export default class RpcApi {
 
                 this._staticStore.rpcState = state;
                 try {
-                    request = RequestParser.parse(arg, state, requestType) || undefined;
+                    request = RequestParser.parse(arg, requestType, state) || undefined;
                     this._staticStore.request = request;
                 } catch (error) {
                     this.reject(error);
@@ -265,8 +272,8 @@ export default class RpcApi {
     }
 
     private _recoverState(storedState: any) {
-        const rpcState = RpcState.fromJSON(storedState.rpcState);
-        const request = RequestParser.parse(storedState.request, rpcState, storedState.kind);
+        const rpcState = storedState.rpcState ? RpcState.fromJSON(storedState.rpcState) : undefined;
+        const request = RequestParser.parse(storedState.request, storedState.kind, rpcState);
         const keyguardRequest = storedState.keyguardRequest;
         const originalRouteName = storedState.originalRouteName;
         const cashlink = storedState.cashlink ? Cashlink.fromObject(storedState.cashlink) : undefined;
@@ -330,9 +337,9 @@ export default class RpcApi {
     }
 
     private _startRoute() {
-        this._store.commit('setIncomingRequest', {
-            hasRpcState: !!this._staticStore.rpcState,
-            hasRequest: !!this._staticStore.request,
-        });
+        this._store.commit('setRequestLoaded',
+            !!(this._staticStore.rpcState && this._staticStore.request) ||
+            this._staticStore.originalRouteName === CASHLINK_RECEIVE,
+        );
     }
 }
