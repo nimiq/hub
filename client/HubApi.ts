@@ -85,7 +85,7 @@ export default class HubApi<DB extends BehaviorType = BehaviorType.POPUP> { // D
      * Public API
      */
 
-    public cashlink<B extends BehaviorType = DB>(
+    public createCashlink<B extends BehaviorType = DB>(
         request: CashlinkRequest,
         requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
     ): Promise<B extends BehaviorType.REDIRECT ? void : Cashlink> {
