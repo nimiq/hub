@@ -81,7 +81,7 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator';
-import { Getter, Mutation } from 'vuex-class';
+import { Getter, Mutation, State } from 'vuex-class';
 import Cashlink from '../lib/Cashlink';
 import { CashlinkState } from '@/lib/PublicRequestTypes';
 import staticStore, { Static } from '@/lib/StaticStore';
@@ -140,6 +140,8 @@ enum Details {
 export default class CashlinkCreate extends Vue {
     @Static private request!: ParsedCashlinkRequest;
     @Static private rpcState!: RpcState;
+
+    @State private wallets!: WalletInfo[];
 
     @Getter private processedWallets!: WalletInfo[];
     @Getter private findWalletByAddress!: (address: string, includeContracts: boolean) => WalletInfo | undefined;
@@ -211,7 +213,7 @@ export default class CashlinkCreate extends Vue {
         const network = NetworkClient.Instance;
         await network.init();
         this.balanceUpdated = this.balanceUpdated || new Promise((resolve) => {
-            const wallets = this.processedWallets.slice(0);
+            const wallets = this.wallets.slice(0);
             let addresses: string[] = [];
             let accountsAndContracts = Array<AccountInfo | ContractInfo>();
             if (!this.accountOrContractInfo) { // No senderAccount in the request
@@ -226,7 +228,7 @@ export default class CashlinkCreate extends Vue {
                 accountsAndContracts.push(this.accountOrContractInfo);
                 addresses.push(this.accountOrContractInfo.userFriendlyAddress);
             }
-            network.connectPico(addresses).then( async (balances) => {
+            network.connectPico(addresses).then(async (balances) => {
                 for (const accountOrContract of accountsAndContracts) {
                     const balance = balances.get(accountOrContract.userFriendlyAddress);
                     if (balance === undefined) continue;
