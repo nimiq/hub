@@ -1,76 +1,39 @@
 <template>
     <div class="container pad-bottom">
-        <transition name="transition-fade">
-            <SmallPage v-if="cashlink || statusState">
-                <transition name="transition-fade">
-                    <StatusScreen v-if="statusState"
-                        :state="statusState"
-                        :title="statusTitle"
-                        :status="statusStatus"
-                        :message="statusMessage"
-                        mainAction="Got it"
-                        @main-action="redirectToSafe"
-                    />
-                </transition>
-                <div v-if="cashlink && hasWallets" class="card-content has-account" :class="{ 'account-selector-shown': !!shownAccountSelector }">
-                    <PageHeader class="blur-target">You received a Cashlink!</PageHeader>
-                    <PageBody>
-                        <div class="accounts">
-                            <div class="cashlink-account account blur-target">
-                                <div class="cashlink-icon nq-blue-bg">
-                                    <!-- TODO Replace with nimiq-style cashlink icon when available -->
-                                    <img src='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none" stroke="white" stroke-linecap="round" stroke-width="2.5px" stroke-linejoin="round"><path d="M40.25,23.25v-.5a6.5,6.5,0,0,0-6.5-6.5h-3.5a6.5,6.5,0,0,0-6.5,6.5v6.5a6.5,6.5,0,0,0,6.5,6.5h2"/><path class="cls-1" d="M23.75,40.75v.5a6.5,6.5,0,0,0,6.5,6.5h3.5a6.5,6.5,0,0,0,6.5-6.5v-6.5a6.5,6.5,0,0,0-6.5-6.5h-2"/><line class="cls-2" x1="32" y1="11.25" x2="32" y2="15.25"/><line class="cls-2" x1="32" y1="48.75" x2="32" y2="52.75"/></svg>'>
-                                </div>
-                                <div class="label">Cashlink</div>
+        <SmallPage v-if="cashlink || statusState">
+            <transition name="transition-fade">
+                <StatusScreen v-if="statusState"
+                    :state="statusState"
+                    :title="statusTitle"
+                    :status="statusStatus"
+                    :message="statusMessage"
+                    mainAction="Got it"
+                    @main-action="redirectToSafe"
+                />
+            </transition>
+            <div v-if="cashlink && hasWallets" class="card-content has-account" :class="{ 'account-selector-shown': !!shownAccountSelector }">
+                <PageHeader class="blur-target">You received a Cashlink!</PageHeader>
+                <PageBody>
+                    <div class="accounts">
+                        <div class="cashlink-account account blur-target">
+                            <div class="cashlink-icon nq-blue-bg">
+                                <!-- TODO Replace with nimiq-style cashlink icon when available -->
+                                <img src='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none" stroke="white" stroke-linecap="round" stroke-width="2.5px" stroke-linejoin="round"><path d="M40.25,23.25v-.5a6.5,6.5,0,0,0-6.5-6.5h-3.5a6.5,6.5,0,0,0-6.5,6.5v6.5a6.5,6.5,0,0,0,6.5,6.5h2"/><path class="cls-1" d="M23.75,40.75v.5a6.5,6.5,0,0,0,6.5,6.5h3.5a6.5,6.5,0,0,0,6.5-6.5v-6.5a6.5,6.5,0,0,0-6.5-6.5h-2"/><line class="cls-2" x1="32" y1="11.25" x2="32" y2="15.25"/><line class="cls-2" x1="32" y1="48.75" x2="32" y2="52.75"/></svg>'>
                             </div>
-                            <ArrowRightIcon class="arrow-right blur-target"/>
-                            <div class="recipient-button blur-target">
-                                <button class="nq-button-s" @click="selectRecipient">Change</button>
-                                <Account layout="column"
-                                    :address="activeAccount.userFriendlyAddress"
-                                    :label="activeAccount.label"
-                                    @click.native="selectRecipient">
-                                </Account>
-                            </div>
+                            <div class="label">Cashlink</div>
                         </div>
-
-                        <hr class="blur-target">
-
-                        <div>
-                            <Amount class="value nq-light-blue blur-target"
-                                :amount="cashlink.value" :minDecimals="2" :maxDecimals="5" />
-
-                            <div v-if="cashlink.message" class="data nq-text blur-target">
-                                {{ cashlink.message }}
-                            </div>
+                        <ArrowRightIcon class="arrow-right blur-target"/>
+                        <div class="recipient-button blur-target">
+                            <button class="nq-button-s" @click="selectRecipient">Change</button>
+                            <Account layout="column"
+                                :address="activeAccount.userFriendlyAddress"
+                                :label="activeAccount.label"
+                                @click.native="selectRecipient">
+                            </Account>
                         </div>
-                        <div><!-- bottom flex spacer --></div>
-                    </PageBody>
-                    <PageFooter>
-                        <button
-                            class="nq-button light-blue"
-                            :disabled="!canCashlinkBeClaimed"
-                            @click="claim"
-                        ><CircleSpinner v-if="isButtonLoading"/>{{ buttonText }}</button>
-                    </PageFooter>
+                    </div>
 
-                    <transition name="transition-fade">
-                        <div class="overlay" v-if="shownAccountSelector">
-                            <button class="nq-button-s close" @click="shownAccountSelector = false"><CloseIcon/></button>
-                            <PageHeader>Choose an Address</PageHeader>
-                            <AccountSelector
-                                :wallets="processedWallets"
-                                :disableContracts="true"
-                                @account-selected="accountSelected"
-                                @login="goToLogin"
-                            />
-                        </div>
-                    </transition>
-                </div>
-                <div v-if="cashlink && !hasWallets" class="card-content no-account">
-                    <div class="top-spacer"><!-- top flex spacer --></div>
-
-                    <CashlinkSparkle/>
+                    <hr class="blur-target">
 
                     <div>
                         <Amount class="value nq-light-blue blur-target"
@@ -80,26 +43,60 @@
                             {{ cashlink.message }}
                         </div>
                     </div>
+                    <div><!-- bottom flex spacer --></div>
+                </PageBody>
+                <PageFooter>
+                    <button
+                        class="nq-button light-blue"
+                        :disabled="!canCashlinkBeClaimed"
+                        @click="claim"
+                    ><CircleSpinner v-if="isButtonLoading"/>{{ buttonText }}</button>
+                </PageFooter>
 
-                    <PageFooter>
-                        <button class="nq-button light-blue" @click="goToSignup">Create Account</button>
-                        <a class="nq-link skip" href="javascript:void(0)" @click="goToLogin">
-                            Login to existing Account
-                            <CaretRightSmallIcon/>
-                        </a>
-                    </PageFooter>
-                </div>
-            </SmallPage>
-        </transition>
-        <transition name="transition-welcome-text">
-            <div v-if="cashlink && !hasWallets" class="welcome-text">
-                <h1 class="nq-h1">Claim your Cash</h1>
-                <p class="nq-text">
-                    <span class="main-text">Congrats, you just opened a Nimiq Cashlink. Create an Account and claim your money.</span>
-                    30&nbsp;seconds, no&nbsp;email, no&nbsp;download.
-                </p>
+                <transition name="transition-fade">
+                    <div class="overlay" v-if="shownAccountSelector">
+                        <button class="nq-button-s close" @click="shownAccountSelector = false"><CloseIcon/></button>
+                        <PageHeader>Choose an Address</PageHeader>
+                        <AccountSelector
+                            :wallets="processedWallets"
+                            :disableContracts="true"
+                            @account-selected="accountSelected"
+                            @login="goToLogin"
+                        />
+                    </div>
+                </transition>
             </div>
-        </transition>
+            <div v-if="cashlink && !hasWallets" class="card-content no-account">
+                <div class="top-spacer"><!-- top flex spacer --></div>
+
+                <CashlinkSparkle/>
+
+                <div>
+                    <Amount class="value nq-light-blue blur-target"
+                        :amount="cashlink.value" :minDecimals="2" :maxDecimals="5" />
+
+                    <div v-if="cashlink.message" class="data nq-text blur-target">
+                        {{ cashlink.message }}
+                    </div>
+                </div>
+
+                <PageFooter>
+                    <button class="nq-button light-blue" @click="goToSignup">Create Account</button>
+                    <a class="nq-link skip" href="javascript:void(0)" @click="goToLogin">
+                        Login to existing Account
+                        <CaretRightSmallIcon/>
+                    </a>
+                </PageFooter>
+            </div>
+        </SmallPage>
+
+        <div v-if="cashlink && !hasWallets" class="welcome-text">
+            <h1 class="nq-h1">Claim your Cash</h1>
+            <p class="nq-text">
+                <span class="main-text">Congrats, you just opened a Nimiq Cashlink. Create an Account and claim your money.</span>
+                30&nbsp;seconds, no&nbsp;email, no&nbsp;download.
+            </p>
+        </div>
     </div>
 </template>
 
