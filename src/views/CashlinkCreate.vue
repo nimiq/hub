@@ -29,8 +29,10 @@
 
             <SmallPage class="overlay" v-if="details !== Details.CLOSED">
                 <AccountDetails
-                    :address="details === Details.SENDER ? accountOrContractInfo.address.toUserFriendlyAddress() : recipient.address"
-                    :label="details === Details.SENDER ? accountOrContractInfo.label : recipient.label"
+                    :address="accountOrContractInfo.address.toUserFriendlyAddress()"
+                    :label="accountOrContractInfo.label"
+                    :balance="accountOrContractInfo.balance"
+                    :walletLabel="senderWalletLabel"
                     @close="details = Details.CLOSED"
                     />
             </SmallPage>
@@ -58,7 +60,7 @@
                     </a>
                 </div>
                 <AmountInput class="value" :vanishing="true" placeholder="0.00" :maxFontSize="8" v-model="value" ref="amountInput" />
-                <LabelInput :vanishing="true" placeholder="Add a message..." :maxBytes="64" v-model="message" />
+                <LabelInput class="message" :vanishing="true" placeholder="Add a message..." :maxBytes="64" v-model="message" />
             </PageBody>
 
             <PageFooter>
@@ -152,6 +154,7 @@ export default class CashlinkCreate extends Vue {
     private value = 0;
     private fee = 0;
     private message = '';
+    private senderWalletLabel = '';
 
     private accountOrContractInfo?: AccountInfo | ContractInfo | null = null;
 
@@ -196,8 +199,10 @@ export default class CashlinkCreate extends Vue {
         if (wallet) {
             this.accountOrContractInfo = wallet.accounts.get(address)
                 || wallet.findContractByAddress(Nimiq.Address.fromUserFriendlyAddress(address));
+            this.senderWalletLabel = wallet.label;
             await this.initNetwork();
 
+            await Vue.nextTick();
             (this.$refs.amountInput as AmountInput).focus();
         }
     }
@@ -357,6 +362,10 @@ export default class CashlinkCreate extends Vue {
         opacity: 1;
     }
 
+    .page-footer .nq-button {
+        margin-top: 0;
+    }
+
     .create-cashlink .page-body {
         display: flex;
         flex-direction: column;
@@ -423,6 +432,12 @@ export default class CashlinkCreate extends Vue {
         padding-top: 2rem;
     }
 
+    .create-cashlink .message {
+        margin-top: 1rem;
+    }
+
+
+
     .overlay {
         position: absolute;
         z-index: 2;
@@ -462,7 +477,6 @@ export default class CashlinkCreate extends Vue {
         opacity: .2;
         transition: opacity .3s cubic-bezier(0.25, 0, 0, 1);
     }
-
 
     .cancel-circle:hover .nq-icon,
     .cancel-circle:active .nq-icon,
