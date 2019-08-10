@@ -142,13 +142,7 @@ export interface Cashlink {
     address: string; // Userfriendly address
     message: string | Uint8Array;
     status: CashlinkState;
-}
-
-export interface IncomingCashlink extends Cashlink {
     sender: string;
-}
-
-export interface OutgoingCashlink extends Cashlink {
     recipient?: string;
 }
 
@@ -156,11 +150,6 @@ export interface CashlinkRequest extends BasicRequest {
     senderAddress?: string;
     senderBalance?: number;
     cashlinkAddress?: string;
-}
-
-export interface Cashlinks {
-    incoming: IncomingCashlink[];
-    outgoing: OutgoingCashlink[];
 }
 
 export type RpcRequest = SignTransactionRequest
@@ -178,7 +167,7 @@ export type RpcResult = SignedTransaction
                       | Account[]
                       | SimpleResult
                       | Address
-                      | OutgoingCashlink
+                      | Cashlink
                       | SignedMessage
                       | ExportResult;
 
@@ -186,10 +175,10 @@ export type ResultByRequestType<T> =
     T extends RequestType.RENAME ? Account :
     T extends RequestType.ONBOARD | RequestType.SIGNUP | RequestType.LOGIN
             | RequestType.MIGRATE | RequestType.LIST ? Account[] :
-    T extends RequestType.LIST_CASHLINKS ? Cashlinks :
+    T extends RequestType.LIST_CASHLINKS ? Cashlink[] :
     T extends RequestType.CHOOSE_ADDRESS | RequestType.ADD_ADDRESS ? Address :
     T extends RequestType.SIGN_TRANSACTION | RequestType.CHECKOUT ? SignedTransaction :
     T extends RequestType.SIGN_MESSAGE ? SignedMessage :
     T extends RequestType.LOGOUT | RequestType.CHANGE_PASSWORD ? SimpleResult :
     T extends RequestType.EXPORT ? ExportResult :
-    T extends RequestType.CASHLINK ? OutgoingCashlink : never;
+    T extends RequestType.CASHLINK ? Cashlink : never;

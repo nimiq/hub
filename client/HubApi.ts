@@ -24,8 +24,7 @@ import {
     ExportResult,
     SignedMessage,
     CashlinkRequest,
-    Cashlinks,
-    OutgoingCashlink,
+    Cashlink,
 } from '../src/lib/PublicRequestTypes';
 
 export default class HubApi<DB extends BehaviorType = BehaviorType.POPUP> { // DB: Default Behavior
@@ -89,7 +88,7 @@ export default class HubApi<DB extends BehaviorType = BehaviorType.POPUP> { // D
     public cashlink<B extends BehaviorType = DB>(
         request: CashlinkRequest,
         requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
-    ): Promise<B extends BehaviorType.REDIRECT ? void : OutgoingCashlink> {
+    ): Promise<B extends BehaviorType.REDIRECT ? void : Cashlink> {
         return this._request(requestBehavior, RequestType.CASHLINK, [request]);
     }
 
@@ -203,7 +202,7 @@ export default class HubApi<DB extends BehaviorType = BehaviorType.POPUP> { // D
      */
     public cashlinks<B extends BehaviorType = DB>(
         requestBehavior: RequestBehavior<B> = this._iframeBehavior as any,
-    ): Promise<B extends BehaviorType.REDIRECT ? void : Cashlinks> {
+    ): Promise<B extends BehaviorType.REDIRECT ? void : Cashlink[]> {
         return this._request(requestBehavior, RequestType.LIST_CASHLINKS, []);
     }
 
