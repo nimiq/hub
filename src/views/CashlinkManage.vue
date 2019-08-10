@@ -17,7 +17,7 @@
                 </button>
             </PageFooter>
             <PageFooter v-else>
-                <button class="nq-button nq-light-blue-bg copy" @click="copy" ref="copyButton">
+                <button class="nq-button copy" :class="copied ? 'green' : 'light-blue'" @click="copy">
                     <span v-if="copied"><CheckmarkIcon /> Copied</span>
                     <span v-else>Copy</span>
                 </button>
@@ -126,9 +126,12 @@ export default class CashlinkManage extends Vue {
                 signature: this.keyguardResult.signature,
                 extraData: this.keyguardRequest.data,
             });
-            this.state = StatusScreen.State.SUCCESS;
-            await CashlinkStore.Instance.put(this.retrievedCashlink);
-            setTimeout(() => this.isTxSent = true, StatusScreen.SUCCESS_REDIRECT_DELAY);
+
+            network.on(NetworkClient.Events.TRANSACTION_RELAYED, async (txInfo: any) => {
+                await CashlinkStore.Instance.put(this.retrievedCashlink!);
+                this.state = StatusScreen.State.SUCCESS;
+                this.isTxSent = true;
+            });
         }
     }
 
@@ -161,10 +164,8 @@ export default class CashlinkManage extends Vue {
         }
         selection.removeAllRanges();
 
-        const button = (this.$refs.copyButton as HTMLButtonElement);
-        button.classList.remove('nq-light-blue-bg');
-        button.classList.add('nq-green-bg');
         this.copied = true;
+        setTimeout(() => this.copied = false, 500);
     }
 
     private share() {
@@ -247,6 +248,7 @@ export default class CashlinkManage extends Vue {
         word-break: break-all;
         max-width: unset;
         max-height: unset;
+        opacity: .5;
     }
 
     .page-footer {

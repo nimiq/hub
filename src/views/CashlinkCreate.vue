@@ -2,7 +2,7 @@
     <div class="container">
 
         <SmallPage v-if="loading">
-            <StatusScreen title="Creating Cashlink"/>
+            <StatusScreen title="Updating your balances"/>
         </SmallPage>
 
         <SmallPage v-else-if="!accountOrContractInfo" class="send-tx">
@@ -57,8 +57,8 @@
                             label="New Cashlink"/>
                     </a>
                 </div>
-                <AmountInput class="value" :vanishing="true" placeholder="0.00" :maxFontSize="8" :amount="value" @changed="setValue" ref="amountInput" />
-                <LabelInput :vanishing="true" placeholder="Add a message..." :maxBytes="64" @changed="setMessage" :value="message" />
+                <AmountInput class="value" :vanishing="true" placeholder="0.00" :maxFontSize="8" v-model="value" ref="amountInput" />
+                <LabelInput :vanishing="true" placeholder="Add a message..." :maxBytes="64" v-model="message" />
             </PageBody>
 
             <PageFooter>
@@ -250,20 +250,12 @@ export default class CashlinkCreate extends Vue {
         });
     }
 
-    private setValue(value: number) {
-        this.value = value;
-    }
-
     @Watch('sender.accountInfo.balance')
     private checkInsufficientBalance() {
         if (this.accountOrContractInfo && this.accountOrContractInfo.balance) {
             return this.value + this.fee > this.accountOrContractInfo.balance;
         }
         return true; // Not insufficient specifically but undefined.
-    }
-
-    private setMessage(value: string) {
-        this.message = value;
     }
 
     private setFee() {

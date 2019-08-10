@@ -10,7 +10,7 @@ import {
     RenameRequest,
     SignMessageRequest,
     ExportRequest,
-    Cashlinks,
+    Cashlink,
     RpcResult,
 } from '../src/lib/PublicRequestTypes';
 import { PopupRequestBehavior, RedirectRequestBehavior } from '../client/RequestBehavior';
@@ -70,7 +70,7 @@ class Demo {
         document.querySelector('button#create-cashlink').addEventListener('click', async () => {
             try {
                 const $radio = document.querySelector('input[type="radio"]:checked');
-                const result = await demo.client.cashlink({
+                const result = await demo.client.createCashlink({
                     appName: 'Accounts Demos',
                     senderAddress: $radio.getAttribute('data-address'),
                     senderBalance: 5000000,
@@ -84,7 +84,7 @@ class Demo {
         });
         document.querySelector('button#create-cashlink-no-sender').addEventListener('click', async () => {
             try {
-                const result = await demo.client.cashlink({
+                const result = await demo.client.createCashlink({
                     appName: 'Accounts Demos',
                 });
                 console.log('Result', result);
@@ -341,7 +341,7 @@ class Demo {
         return await this.client.list();
     }
 
-    public async cashlinks(): Promise<Cashlinks> {
+    public async cashlinks(): Promise<Cashlink[]> {
         return await this.client.cashlinks();
     }
 
@@ -462,18 +462,18 @@ class Demo {
     }
 
     public async updateAccounts() {
-        const wallets = await this.list();
         const cashlinks = await this.cashlinks();
+        let $ul = document.querySelector('#cashlinks');
         let cashlinksHtml = '';
-        let $ul = document.querySelector('#cashlinks-incoming');
 
-        cashlinks.incoming.forEach(cashlink => {
-            cashlinksHtml += `<li>${cashlink.address}<button class="cashlink-manage" data-cashlink-address="${cashlink.address}">manage</button>`;
+        cashlinks.forEach(cashlink => {
+            cashlinksHtml += `<li>${cashlink.address} <button class="cashlink-manage" data-cashlink-address="${cashlink.address}">manage</button>`;
         });
+
         $ul.innerHTML = cashlinksHtml;
         document.querySelectorAll('button.cashlink-manage').forEach(element => {
             element.addEventListener('click', async () => {
-                await this.client.cashlink({
+                await this.client.createCashlink({
                     appName: 'Accounts Demos',
                     // senderAddress: $radio.getAttribute('data-address'),
                     cashlinkAddress: element.getAttribute('data-cashlink-address'),
@@ -481,20 +481,7 @@ class Demo {
             });
         });
 
-        $ul = document.querySelector('#cashlinks-outgoing');
-        cashlinks.outgoing.forEach(cashlink => {
-            cashlinksHtml += `<li>${cashlink.address}<button class="cashlink-manage" data-cashlink-address="${cashlink.address}">manage</button>`;
-        });
-        $ul.innerHTML = cashlinksHtml;
-        document.querySelectorAll('button.cashlink-manage').forEach(element => {
-            element.addEventListener('click', async () => {
-                await this.client.cashlink({
-                    appName: 'Accounts Demos',
-                    // senderAddress: $radio.getAttribute('data-address'),
-                    cashlinkAddress: element.getAttribute('data-cashlink-address'),
-                });
-            });
-        });
+        const wallets = await this.list();
         console.log('Accounts in Manager:', wallets);
 
         $ul = document.querySelector('#accounts');
