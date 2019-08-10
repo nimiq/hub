@@ -169,7 +169,7 @@ export default class CashlinkManage extends Vue {
         setTimeout(() => this.copied = false, 800);
     }
 
-    private sharePrefix = 'Here is a Cashlink for you!';
+    private sharePrefix = 'Here is your Nimiq Cashlink!';
 
     private get shareText(): string {
         return encodeURIComponent(`${this.sharePrefix} ${this.link}`);
@@ -188,7 +188,7 @@ export default class CashlinkManage extends Vue {
     }
 
     private get mail(): string {
-        return `mailto:?subject=${encodeURIComponent(this.sharePrefix)}&body=${this.shareText}`;
+        return `mailto:?subject=${encodeURIComponent('Nimiq Cashlink')}&body=${this.shareText}`;
     }
 
     private get whatsapp(): string {
@@ -240,9 +240,7 @@ export default class CashlinkManage extends Vue {
 
     .cashlink-receive .cashlink >>> .identicon:before {
         border: .5rem solid var(--nimiq-green);
-        -webkit-animation:spin 4s linear infinite;
-        -moz-animation:spin 4s linear infinite;
-        animation:spin 4s linear infinite;
+        animation: spin 4s linear infinite;
         transition: border 1s ease;
     }
 
