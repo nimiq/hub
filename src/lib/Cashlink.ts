@@ -268,14 +268,14 @@ export default class Cashlink {
         recipient: Uint8Array,
         value: number,
         data: Uint8Array,
-        message: Uint8Array,
+        cashlinkMessage: string,
     } {
         return {
             layout: 'cashlink',
             recipient: new Uint8Array(this.address.serialize()),
             value: this.value,
             data: CashlinkExtraData.FUNDING,
-            message: this._messageBytes,
+            cashlinkMessage: this.message,
         };
     }
 
