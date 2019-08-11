@@ -82,7 +82,7 @@
 
                 <PageFooter>
                     <button class="nq-button light-blue" @click="goToSignup">Create Account</button>
-                    <a class="nq-link skip" href="javascript:void(0)" @click="goToLogin">
+                    <a class="nq-link skip" href="javascript:void(0)" @click="goToOnboarding">
                         Login to existing Account
                         <CaretRightSmallIcon/>
                     </a>
@@ -118,17 +118,15 @@ import StatusScreen from '../components/StatusScreen.vue';
 import CashlinkSparkle from '../components/CashlinkSparkle.vue';
 import CircleSpinner from '../components/CircleSpinner.vue';
 import Cashlink from '../lib/Cashlink';
-import { CashlinkState } from '../lib/PublicRequestTypes';
+import { CashlinkState, BasicRequest } from '../lib/PublicRequestTypes';
 import { AccountInfo } from '../lib/AccountInfo';
 import { Getter, Mutation } from 'vuex-class';
-import staticStore from '@/lib/StaticStore';
-import { CASHLINK_RECEIVE } from '../router';
-import { RequestType, ParsedBasicRequest } from '../lib/RequestTypes';
 import { NetworkClient, DetailedPlainTransaction } from '@nimiq/network-client';
 import Config from 'config';
 import { WalletInfo } from '../lib/WalletInfo';
 import { NETWORK_MAIN } from '../lib/Constants';
 import { CashlinkStore } from '../lib/CashlinkStore';
+import HubApi from '../../client/HubApi';
 
 @Component({components: {
     SmallPage,
@@ -164,25 +162,23 @@ export default class CashlinkReceive extends Vue {
     private statusStatus = 'Parsing your link...';
     private statusMessage = '';
 
+    public created() {
+        function handler(result: any, storedData: {url: string}) {
+            if (storedData.url) window.history.replaceState(window.history.state, '', storedData.url);
+        }
+
+        const hubApi = new HubApi();
+        hubApi.on(HubApi.RequestType.SIGNUP, handler, handler);
+        hubApi.on(HubApi.RequestType.LOGIN, handler, handler);
+        hubApi.on(HubApi.RequestType.ONBOARD, handler, handler);
+        hubApi.checkRedirectResponse();
+    }
+
     public async mounted() {
-        // 1. Load cashlink from URL
+        // Load cashlink from URL
         this.cashlink = await Cashlink.parse(window.location.hash.substring(1));
 
-        if (this.cashlink) {
-            // Write cashlink into static store
-            staticStore.cashlink = this.cashlink;
-        }
-
-        // 2. If none in URL, try to load from static store
-        if (!this.cashlink && staticStore.cashlink) {
-            this.cashlink = staticStore.cashlink;
-            // Write cashlink back into URL
-            const url = new URL(window.location.href);
-            url.hash = this.cashlink.render();
-            window.history.replaceState(window.history.state, '', url.toString());
-        }
-
-        // 3. Fail if no cashlink found
+        // Fail if no cashlink found
         if (!this.cashlink) {
             this.statusState = StatusScreen.State.WARNING;
             this.statusTitle = '404 - Cash not found';
@@ -252,27 +248,30 @@ export default class CashlinkReceive extends Vue {
     }
 
     private goToSignup() {
-        this.goToOnboarding(RequestType.SIGNUP);
+        this.callHub('signup');
     }
 
     private goToLogin() {
-        this.goToOnboarding(RequestType.ONBOARD);
+        this.callHub('login');
     }
 
-    private goToOnboarding(requestType: RequestType) {
-        staticStore.originalRouteName = CASHLINK_RECEIVE;
+    private goToOnboarding() {
+        this.callHub('onboard');
+    }
 
-        // Fake request
-        const request: ParsedBasicRequest = {
+    private callHub(method: string) {
+        const request: BasicRequest = {
             appName: 'Cashlink',
-            kind: requestType,
         };
-        staticStore.request = request;
 
-        // Fake incomingRequest, so the routed-to component is rendered by App.vue
-        this.$store.commit('setRequestLoaded', true);
+        const redirectBehavior = new HubApi.RedirectRequestBehavior(undefined, { url: window.location.href });
+        const hubApi = new HubApi(undefined, redirectBehavior);
 
-        this.$rpc.routerPush(requestType);
+        switch (method) {
+            case 'signup': hubApi.signup(request); break;
+            case 'login': hubApi.login(request); break;
+            case 'onboard': hubApi.onboard(request); break;
+        }
     }
 
     private redirectToSafe() {
@@ -568,6 +567,10 @@ export default class CashlinkReceive extends Vue {
         margin-top: -3rem;
     }
 
+    .account-selector >>> .amount {
+        display: none !important;
+    }
+
     .blur-target {
         transition: filter .4s;
     }
@@ -625,7 +628,7 @@ export default class CashlinkReceive extends Vue {
         }
 
         .small-page {
-            height: auto;
+            height: auto !important;
             flex-grow: 1;
         }
 

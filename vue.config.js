@@ -44,26 +44,37 @@ const pages = {
     index: {
         // entry for the page
         entry: 'src/main.ts',
-            // the source template
-            template: 'public/index.html',
-            // insert browser warning html templates
-            browserWarning,
-            // output as dist/index.html
-            filename: 'index.html',
-            // chunks to include on this page, by default includes
-            // extracted common chunks and vendor chunks.
-            chunks: ['chunk-vendors', 'chunk-common', 'index']
-        },
-        iframe: {
-            // entry for the page
-            entry: 'src/iframe.ts',
-            // the source template
-            template: 'public/iframe.html',
-            // output as dist/iframe.html
-            filename: 'iframe.html',
-            // chunks to include on this page, by default includes
+        // the source template
+        template: 'public/index.html',
+        // insert browser warning html templates
+        browserWarning,
+        // output as dist/index.html
+        filename: 'index.html',
+        // chunks to include on this page, by default includes
+        // extracted common chunks and vendor chunks.
+        chunks: ['chunk-vendors', 'chunk-common', 'index']
+    },
+    iframe: {
+        // entry for the page
+        entry: 'src/iframe.ts',
+        // the source template
+        template: 'public/iframe.html',
+        // output as dist/iframe.html
+        filename: 'iframe.html',
+        // chunks to include on this page, by default includes
         // extracted common chunks and vendor chunks.
         chunks: ['chunk-vendors', 'chunk-common', 'iframe']
+    },
+    'cashlink-app': {
+        // entry for the page
+        entry: 'src/cashlink.ts',
+        // the source template
+        template: 'public/cashlink.html',
+        // output as dist/iframe.html
+        filename: 'cashlink/index.html',
+        // chunks to include on this page, by default includes
+        // extracted common chunks and vendor chunks.
+        chunks: ['chunk-vendors', 'chunk-common', 'cashlink-app']
     },
 };
 
@@ -90,6 +101,8 @@ module.exports = {
         config.plugins.delete('preload-index');
         config.plugins.delete('prefetch-iframe');
         config.plugins.delete('preload-iframe');
+        config.plugins.delete('prefetch-cashlink-app');
+        config.plugins.delete('preload-cashlink-app');
         config.plugins.delete('prefetch-demos');
         config.plugins.delete('preload-demos');
 

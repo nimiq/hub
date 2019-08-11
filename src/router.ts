@@ -12,7 +12,6 @@ const SignTransactionLedger   = () => import(/*webpackChunkName: "sign-transacti
 
 const CashlinkCreate          = () => import(/*webpackChunkName: "cashlink" */ './views/CashlinkCreate.vue');
 const CashlinkManage          = () => import(/*webpackChunkName: "cashlink" */ './views/CashlinkManage.vue');
-const CashlinkReceive         = () => import(/*webpackChunkName: "cashlink" */ './views/CashlinkReceive.vue');
 
 const Checkout                = () => import(/*webpackChunkName: "checkout"*/ './views/Checkout.vue');
 const CheckoutTransmission    = () => import(/*webpackChunkName: "checkout"*/ './views/CheckoutTransmission.vue');
@@ -100,7 +99,6 @@ export function keyguardResponseRouter(
 // Static routes names
 export const REQUEST_ERROR = 'request-error';
 export const ERROR = 'error';
-export const CASHLINK_RECEIVE = 'cashlink-receive';
 
 export default new Router({
     mode: 'history',
@@ -140,11 +138,6 @@ export default new Router({
             path: `/${RequestType.CASHLINK}/manage`,
             component: CashlinkManage,
             name: `${RequestType.CASHLINK}-success`,
-        },
-        {
-            path: `/${RequestType.CASHLINK}`,
-            component: CashlinkReceive,
-            name: CASHLINK_RECEIVE,
         },
         {
             path: `/${RequestType.CHECKOUT}`,
