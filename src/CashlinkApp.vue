@@ -5,7 +5,7 @@
             <span class="logo-wordmark">Nimiq</span>
             <span class="logo-subtitle">Cashlink</span>
             <div class="flex-grow"></div>
-            <a class="nq-button-s" href="https://nimiq.com/#splash">What is Nimiq?</a>
+            <a class="nq-button-s" href="https://nimiq.com/#splash" target="_blank">What is Nimiq?</a>
         </header>
         <div v-if="loading" class="loading">
             <LoadingSpinner/>
