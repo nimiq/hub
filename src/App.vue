@@ -102,7 +102,7 @@ export default class App extends Vue {
         .global-close {
             position: absolute;
             right: 1rem;
-            top: 2.5rem;
+            top: 2rem;
             margin: 0;
         }
 
