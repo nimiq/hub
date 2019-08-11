@@ -106,7 +106,6 @@ export default class CashlinkManage extends Vue {
             }
             // if there was a funding transaction the cashlink is in the static store.
             this.retrievedCashlink.networkClient = network;
-            (NetworkClient.Instance).subscribe(this.retrievedCashlink.address.toUserFriendlyAddress());
             network.on(NetworkClient.Events.API_READY,
                 () => this.status = 'Contacting seed nodes...');
             network.on(NetworkClient.Events.CONSENSUS_SYNCING,

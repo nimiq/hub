@@ -154,8 +154,7 @@ export default class Cashlink {
                 network.on(NetworkClient.Events.HEAD_CHANGE, this._onHeadChanged.bind(this));
                 network.on(NetworkClient.Events.CONSENSUS_ESTABLISHED, this._onPotentialBalanceChange.bind(this));
 
-                // TODO enable when addSubscriptions is available in NanoApi
-                // network.addSubscribtions(wallet.address.toUserFriendlyAddress());
+                network.subscribe(this.address.toUserFriendlyAddress());
             }
         });
 
@@ -478,6 +477,7 @@ export default class Cashlink {
             || transaction.sender === this.address.toUserFriendlyAddress()) {
             const amount = await this.getAmount(true);
             this.fire('unconfirmed-balance-change', amount);
+            this.detectState();
         }
     }
 
@@ -487,6 +487,8 @@ export default class Cashlink {
         // this._wasEmptiedRequest = null;
         // only interested in final balance
         await this._onPotentialBalanceChange();
+
+        if ((await this.$).consensusState === 'established') this.detectState();
     }
 
     private async _onPotentialBalanceChange(): Promise<void> {
