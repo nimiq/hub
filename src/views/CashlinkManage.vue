@@ -1,6 +1,10 @@
 <template>
     <div class="container pad-bottom" v-if="retrievedCashlink">
         <SmallPage class="cashlink-receive">
+            <transition name="transition-fade">
+                <StatusScreen v-if="!isTxSent" state="loading" :title="title" :status="status"/>
+            </transition>
+
             <PageBody>
                 <transition name="transition-fade">
                     <div v-if="isTxSent" class="nq-green cashlink-status"><CheckmarkIcon/>Cashlink created</div>
@@ -97,11 +101,11 @@ export default class CashlinkManage extends Vue {
             }
         }
 
-        const network = NetworkClient.Instance;
-        await network.init();
-        await network.connectPico();
-
         if (!this.isTxSent) {
+            const network = NetworkClient.Instance;
+            await network.init();
+            await network.connectPico();
+
             if (!this.keyguardResult || !this.keyguardRequest) {
                 this.$rpc.reject(new Error('Unexpected: No valid Cashlink;'));
                 return;
@@ -198,6 +202,10 @@ export default class CashlinkManage extends Vue {
 <style scoped>
     .cashlink-receive {
         position: relative
+    }
+
+    .status-screen {
+        position: absolute;
     }
 
     .close {
