@@ -49,6 +49,8 @@ class IFrameApi {
     }
 
     public static async cashlinks(): Promise<Cashlink[]> {
+        if (BrowserDetection.isIOS() || BrowserDetection.isSafari()) return [];
+
         const cashlinks = await CashlinkStore.Instance.list();
         return cashlinks.map((cashlink) => ({
             address: cashlink.address,
