@@ -84,6 +84,8 @@ export default class CashlinkManage extends Vue {
     private copied = false;
     private nativeShareAvailable: boolean = false;
 
+    private sharePrefix = 'Here is your Nimiq Cashlink!';
+
     private async mounted() {
         this.nativeShareAvailable = (!!navigator && !!(navigator as any).share);
         this.retrievedCashlink = this.cashlink;
@@ -171,8 +173,6 @@ export default class CashlinkManage extends Vue {
         this.copied = true;
         setTimeout(() => this.copied = false, 800);
     }
-
-    private sharePrefix = 'Here is your Nimiq Cashlink!';
 
     private get shareText(): string {
         return encodeURIComponent(`${this.sharePrefix} ${this.link}`);
