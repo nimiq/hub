@@ -10,6 +10,12 @@ const buildName = process.env.build
         ? 'testnet'
         : 'local';
 
+const domain = buildName === 'mainnet'
+    ? 'https://hub.nimiq.com'
+    : buildName === 'testnet'
+        ? 'https://hub.nimiq-testnet.com'
+        : 'http://localhost:8080';
+
 console.log('Building for:', buildName);
 
 const configureWebpack = {
@@ -48,6 +54,7 @@ const pages = {
         template: 'public/index.html',
         // insert browser warning html templates
         browserWarning,
+        domain,
         // output as dist/index.html
         filename: 'index.html',
         // chunks to include on this page, by default includes
@@ -70,6 +77,9 @@ const pages = {
         entry: 'src/cashlink.ts',
         // the source template
         template: 'public/cashlink.html',
+        // insert browser warning html templates
+        browserWarning,
+        domain,
         // output as dist/iframe.html
         filename: 'cashlink/index.html',
         // chunks to include on this page, by default includes
