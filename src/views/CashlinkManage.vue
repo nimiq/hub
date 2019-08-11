@@ -16,8 +16,12 @@
                 </div>
             </PageBody>
             <PageFooter v-if="nativeShareAvailable">
-                <button class="nq-button nq-light-blue-bg copy" @click="share">
-                    share
+                <button class="nq-button copy" :class="copied ? 'green' : 'light-blue'" @click="copy">
+                    <span v-if="copied"><CheckmarkIcon /> Copied</span>
+                    <span v-else>Copy</span>
+                </button>
+                <button class="nq-button share-mobile" @click="share">
+                    Share
                 </button>
             </PageFooter>
             <PageFooter v-else>
@@ -87,7 +91,8 @@ export default class CashlinkManage extends Vue {
     private sharePrefix = 'Here is your Nimiq Cashlink!';
 
     private async mounted() {
-        this.nativeShareAvailable = (!!navigator && !!(navigator as any).share);
+        // @ts-ignore Property 'share' does not exist on type 'Navigator'
+        this.nativeShareAvailable = (!!window.navigator && !!window.navigator.share);
         this.retrievedCashlink = this.cashlink;
         if (!this.keyguardResult) {
             // If there is no Keyguard result this is not a freshly funded cashlink
@@ -236,6 +241,7 @@ export default class CashlinkManage extends Vue {
         flex-direction: column;
         align-items: center;
         justify-content: center;
+        flex-grow: 1;
     }
 
     .cashlink-receive .cashlink >>> .identicon {
@@ -270,6 +276,13 @@ export default class CashlinkManage extends Vue {
         opacity: .5;
     }
 
+    .page-body {
+        padding-top: 6rem;
+        padding-bottom: 2rem;
+        display: flex;
+        flex-direction: column;
+    }
+
     .page-footer {
         flex-direction: row;
         justify-content: space-evenly;
@@ -290,7 +303,7 @@ export default class CashlinkManage extends Vue {
         padding: unset;
     }
 
-    .page-footer >>> .social-share {
+    .social-share {
         width: 7.5rem;
         height: 7.5rem;
         border-radius: 50%;
@@ -298,20 +311,35 @@ export default class CashlinkManage extends Vue {
         margin: 2rem 0 3rem;
     }
 
-    .page-footer >>> .social-share.telegram {
+    .social-share.telegram {
         padding-left: 1.75rem;
         padding-right: 2.25rem;
     }
 
-    .page-footer >>> .social-share svg {
+    .social-share svg {
         width: 3.5rem;
         height: 3.5rem;
         transition: opacity .4s ease;
         opacity: .7;
     }
 
-    .page-footer >>> .social-share:hover svg,
-    .page-footer >>> .social-share:focus svg {
+    .social-share:hover svg,
+    .social-share:focus svg {
         opacity: .8;
+    }
+
+    .share-mobile {
+        background: none;
+        box-shadow: none;
+        background-color: rgba(31, 35, 72, 0.07); /* Based on Nimiq Blue */
+        color: rgba(31, 35, 72, 0.7);
+        transition: background-color 300ms, color 300ms;
+    }
+
+    .share-mobile:hover,
+    .share-mobile:focus {
+        background: none;
+        background-color: rgba(31, 35, 72, 0.12); /* Based on Nimiq Blue */
+        color: rgba(31, 35, 72, 1);
     }
 </style>
