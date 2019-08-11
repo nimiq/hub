@@ -292,10 +292,10 @@ export default class CashlinkReceive extends Vue {
     }
 
     private get buttonText(): string {
-        if (!this.isCashlinkStateKnown) return 'Checking status...';
-        if (this.canCashlinkBeClaimed) return 'Claim cashlink';
-        if (this.cashlink!.state === CashlinkState.UNCHARGED) return 'Cashlink not funded';
-        if (this.cashlink!.state === CashlinkState.CHARGING) return 'Cashlink funding...';
+        if (!this.isCashlinkStateKnown) return 'Checking status';
+        else if (this.canCashlinkBeClaimed) return 'Claim cashlink';
+        else if (this.cashlink!.state === CashlinkState.UNCHARGED) return 'Cashlink not funded';
+        else if (this.cashlink!.state === CashlinkState.CHARGING) return 'Cashlink funding';
         else {
             if (!this.isClaiming) {
                 this.statusState = StatusScreen.State.WARNING;
