@@ -89,6 +89,12 @@ const store: StoreOptions<RootState> = {
                     activeWallet = state.wallets[0];
                 }
 
+                // Validate that the address exists on the active wallet
+                if (activeUserFriendlyAddress) {
+                    const activeAccount = activeWallet.accounts.get(activeUserFriendlyAddress);
+                    if (!activeAccount) activeUserFriendlyAddress = null;
+                }
+
                 if (!activeUserFriendlyAddress) {
                     // If none found, pre-select the first available
                     const account = activeWallet.accounts.values().next().value;
@@ -169,6 +175,9 @@ const store: StoreOptions<RootState> = {
             }
 
             return processedWallets;
+        },
+        addressCount: (state) => {
+            return state.wallets.reduce((count, wallet) => count + wallet.accounts.size + wallet.contracts.length, 0);
         },
     },
 };
