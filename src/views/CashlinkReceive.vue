@@ -14,7 +14,7 @@
             <div v-if="cashlink && hasWallets" class="card-content has-account" :class="{ 'account-selector-shown': !!shownAccountSelector }">
                 <PageHeader class="blur-target">You received a Cashlink!</PageHeader>
                 <PageBody>
-                    <div class="accounts">
+                    <div class="accounts" :class="{'single-address': addressCount === 1}">
                         <div class="cashlink-account account blur-target">
                             <div class="cashlink-icon nq-blue-bg">
                                 <!-- TODO Replace with nimiq-style cashlink icon when available -->
@@ -23,14 +23,16 @@
                             <div class="label">Cashlink</div>
                         </div>
                         <ArrowRightIcon class="arrow-right blur-target"/>
-                        <div class="recipient-button blur-target">
+                        <div v-if="addressCount > 1" class="recipient-button blur-target">
                             <button class="nq-button-s" @click="selectRecipient">Change</button>
                             <Account layout="column"
                                 :address="activeAccount.userFriendlyAddress"
                                 :label="activeAccount.label"
-                                @click.native="selectRecipient">
-                            </Account>
+                                @click.native="selectRecipient"/>
                         </div>
+                        <Account v-else layout="column"
+                            :address="activeAccount.userFriendlyAddress"
+                            :label="activeAccount.label"/>
                     </div>
 
                     <hr class="blur-target">
@@ -144,6 +146,7 @@ import HubApi from '../../client/HubApi';
     AccountSelector,
 }})
 export default class CashlinkReceive extends Vue {
+    @Getter private addressCount!: number;
     @Getter private hasWallets!: boolean;
     @Getter private activeAccount?: AccountInfo;
     @Getter private processedWallets!: WalletInfo[];
@@ -401,7 +404,7 @@ export default class CashlinkReceive extends Vue {
         padding: 0;
     }
 
-    .accounts .account:not(.cashlink-account) {
+    .recipient-button .account {
         cursor: pointer;
     }
 
@@ -413,12 +416,12 @@ export default class CashlinkReceive extends Vue {
         margin-bottom: 1.75rem; /* 1.25rem like the Identicon, + 0.5rem from own margin */
     }
 
-    .accounts .account >>> .identicon {
+    .recipient-button .account >>> .identicon {
         height: 9rem;
         transition: transform 0.45s ease;
     }
 
-    .accounts .account:hover >>> .identicon {
+    .recipient-button .account:hover >>> .identicon {
         transform: scale(1.1);
     }
 
@@ -430,6 +433,7 @@ export default class CashlinkReceive extends Vue {
         font-size: 3rem;
         margin: 8.125rem 2.75rem 3rem;
         color: var(--nimiq-light-blue);
+        flex-shrink: 0;
     }
 
     .recipient-button {
@@ -453,6 +457,15 @@ export default class CashlinkReceive extends Vue {
     .recipient-button .account {
         padding-left: 0;
         padding-right: 0;
+    }
+
+    .accounts.single-address .cashlink-account {
+        margin: 2rem 1.5rem 0;
+    }
+
+    .accounts.single-address .arrow-right {
+        margin-top: 5.125rem;
+        margin-right: -1rem;
     }
 
     hr {
