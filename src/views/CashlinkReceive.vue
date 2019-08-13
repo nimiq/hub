@@ -39,7 +39,7 @@
 
                     <div>
                         <Amount class="value nq-light-blue blur-target"
-                            :amount="cashlink.value" :minDecimals="2" :maxDecimals="5" />
+                            :amount="cashlink.value" :minDecimals="0" :maxDecimals="5" />
 
                         <div v-if="cashlink.message" class="data nq-text blur-target">
                             {{ cashlink.message }}
@@ -75,7 +75,7 @@
 
                 <div>
                     <Amount class="value nq-light-blue blur-target"
-                        :amount="cashlink.value" :minDecimals="2" :maxDecimals="5" />
+                        :amount="cashlink.value" :minDecimals="0" :maxDecimals="5" />
 
                     <div v-if="cashlink.message" class="data nq-text blur-target">
                         {{ cashlink.message }}
