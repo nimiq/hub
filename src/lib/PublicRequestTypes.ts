@@ -30,6 +30,7 @@ export interface SignTransactionRequest extends BasicRequest {
     sender: string;
     recipient: string;
     recipientType?: Nimiq.Account.Type;
+    recipientLabel?: string;
     value: number;
     fee?: number;
     extraData?: Uint8Array | string;
