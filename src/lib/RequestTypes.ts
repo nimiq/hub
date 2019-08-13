@@ -32,6 +32,7 @@ export interface ParsedSignTransactionRequest extends ParsedBasicRequest {
     sender: Nimiq.Address;
     recipient: Nimiq.Address;
     recipientType: Nimiq.Account.Type;
+    recipientLabel?: string;
     value: number;
     fee: number;
     data: Uint8Array;

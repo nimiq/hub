@@ -35,7 +35,7 @@ export default class SignTransaction extends Vue {
             senderLabel: (senderContract || signer).label,
             recipient: this.request.recipient.serialize(),
             recipientType: this.request.recipientType,
-            recipientLabel: undefined, // XXX Should we accept a recipient label from outside?
+            recipientLabel: this.request.recipientLabel,
             value: this.request.value,
             fee: this.request.fee,
             validityStartHeight: this.request.validityStartHeight,
