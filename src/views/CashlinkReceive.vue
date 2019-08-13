@@ -451,6 +451,7 @@ export default class CashlinkReceive extends Vue {
         top: 0.75rem;
         font-size: 1.5rem;
         height: 2.75rem;
+        line-height: 2.75rem;
         padding: 0 1.125rem;
     }
 

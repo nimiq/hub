@@ -72,7 +72,7 @@ export default class App extends Vue {
         width: 1.375rem;
         height: 1.125rem;
         margin-right: 0.25rem;
-        margin-top: 0.625rem;
+        margin-top: 1.125rem;
         transition: transform .3s cubic-bezier(0.25, 0, 0, 1);
     }
 

@@ -2,22 +2,22 @@
     <div class="container pad-bottom" v-if="retrievedCashlink">
         <SmallPage class="cashlink-receive">
             <transition name="transition-fade">
-                <StatusScreen v-if="!isTxSent" state="loading" :title="title" :status="status"/>
+                <StatusScreen v-if="!isTxSent" state="loading" :title="title" :status="status" lightBlue/>
             </transition>
 
             <PageBody>
                 <transition name="transition-fade">
-                    <div v-if="isTxSent" class="nq-green cashlink-status"><CheckmarkIcon/>Cashlink created</div>
+                    <div v-if="!isManagementRequest && isTxSent" class="nq-green cashlink-status"><CheckmarkSmallIcon/>Cashlink created</div>
                 </transition>
-                <button class="nq-button-s close" @click="close">done</button>
+                <button class="nq-button-s close" @click="close">Done</button>
                 <div class="cashlink-and-url">
-                    <Account :displayAsCashlink="true" layout="column" :class="{sending: !isTxSent}"/>
+                    <Account :displayAsCashlink="true" layout="column" :class="{'sending': !isTxSent, 'show-loader': !isManagementRequest}"/>
                     <div class="cashlink-url">{{link}}</div>
                 </div>
             </PageBody>
             <PageFooter v-if="nativeShareAvailable">
                 <button class="nq-button copy" :class="copied ? 'green' : 'light-blue'" @click="copy">
-                    <span v-if="copied"><CheckmarkIcon /> Copied</span>
+                    <span v-if="copied"><CheckmarkSmallIcon /> Copied</span>
                     <span v-else>Copy</span>
                 </button>
                 <button class="nq-button share-mobile" @click="share">
@@ -26,7 +26,7 @@
             </PageFooter>
             <PageFooter v-else>
                 <button class="nq-button copy" :class="copied ? 'green' : 'light-blue'" @click="copy">
-                    <span v-if="copied"><CheckmarkIcon /> Copied</span>
+                    <span v-if="copied"><CheckmarkSmallIcon /> Copied</span>
                     <span v-else>Copy</span>
                 </button>
                 <a class="nq-button-s social-share telegram" :href="telegram" target="_blank">
@@ -56,7 +56,7 @@
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import staticStore, { Static } from '../lib/StaticStore';
 import { ParsedCashlinkRequest, RequestType } from '../lib/RequestTypes';
-import { SmallPage, PageBody, PageFooter, Account, CheckmarkIcon } from '@nimiq/vue-components';
+import { SmallPage, PageBody, PageFooter, Account, CheckmarkSmallIcon } from '@nimiq/vue-components';
 import StatusScreen from '../components/StatusScreen.vue';
 import { NetworkClient } from '@nimiq/network-client';
 import { loadNimiq } from '../lib/Helpers';
@@ -69,7 +69,7 @@ import { Cashlink as PublicCashlink } from '../lib/PublicRequestTypes';
 
 @Component({components: {
     Account,
-    CheckmarkIcon,
+    CheckmarkSmallIcon,
     PageBody,
     PageFooter,
     SmallPage,
@@ -82,6 +82,7 @@ export default class CashlinkManage extends Vue {
     @State private keyguardResult?: KeyguardClient.SignTransactionResult;
 
     private isTxSent: boolean = false;
+    private isManagementRequest = false;
     private status: string = 'Connecting to network...';
     private state: StatusScreen.State = StatusScreen.State.LOADING;
     private retrievedCashlink: Cashlink | null = null;
@@ -102,6 +103,7 @@ export default class CashlinkManage extends Vue {
                 if (cashlink) {
                     this.retrievedCashlink = cashlink;
                     this.isTxSent = true;
+                    this.isManagementRequest = true;
                 }
             }
         }
@@ -139,14 +141,14 @@ export default class CashlinkManage extends Vue {
 
             network.on(NetworkClient.Events.TRANSACTION_RELAYED, async (txInfo: any) => {
                 await CashlinkStore.Instance.put(this.retrievedCashlink!);
-                this.state = StatusScreen.State.SUCCESS;
                 this.isTxSent = true;
+                window.setTimeout(() => this.state = StatusScreen.State.SUCCESS, StatusScreen.SUCCESS_REDIRECT_DELAY);
             });
         }
     }
 
     private get title(): string {
-        return this.state === StatusScreen.State.LOADING ? 'Funding your Cashlink' : 'Cashlink funded.';
+        return this.state === StatusScreen.State.LOADING ? 'Creating your Cashlink' : 'Cashlink created.';
     }
 
     private get link(): string {
@@ -224,7 +226,7 @@ export default class CashlinkManage extends Vue {
         position: absolute;
         top: 2rem;
         left: 2rem;
-        transition: opacity .4s;
+        transition: opacity .4s var(--nimiq-ease);
         font-size: 2rem;
         font-weight: bold;
     }
@@ -252,18 +254,22 @@ export default class CashlinkManage extends Vue {
     }
 
     .cashlink-receive .cashlink >>> .identicon:before {
-        border: .5rem solid var(--nimiq-green);
-        animation: spin 4s linear infinite;
-        transition: border 1s ease;
+        border: .5rem solid transparent;
     }
 
-    .cashlink-receive .cashlink.sending  >>> .identicon:before {
+    .cashlink-receive .cashlink.show-loader >>> .identicon:before {
+        border: .5rem solid var(--nimiq-green);
+        animation: spin 4s linear infinite;
+        transition: border 1s var(--nimiq-ease);
+    }
+
+    .cashlink-receive .cashlink.show-loader.sending  >>> .identicon:before {
         border-color: var(--nimiq-gray) var(--nimiq-gray) var(--nimiq-gray) var(--nimiq-light-blue);
     }
 
-@-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }
-@-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); } }
-@keyframes spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
+    @-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }
+    @-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); } }
+    @keyframes spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
 
     .cashlink-receive .cashlink-and-url .cashlink-url {
         text-align: center;
@@ -319,7 +325,7 @@ export default class CashlinkManage extends Vue {
     .social-share svg {
         width: 3.5rem;
         height: 3.5rem;
-        transition: opacity .4s ease;
+        transition: opacity .4s var(--nimiq-ease);
         opacity: .7;
     }
 
@@ -333,7 +339,7 @@ export default class CashlinkManage extends Vue {
         box-shadow: none;
         background-color: rgba(31, 35, 72, 0.07); /* Based on Nimiq Blue */
         color: rgba(31, 35, 72, 0.7);
-        transition: background-color 300ms, color 300ms;
+        transition: background-color 300ms var(--nimiq-ease), color 300ms var(--nimiq-ease);
     }
 
     .share-mobile:hover,
