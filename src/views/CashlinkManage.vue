@@ -12,7 +12,9 @@
                 <button class="nq-button-s close" @click="close">Done</button>
                 <div class="cashlink-and-url">
                     <Account :displayAsCashlink="true" layout="column" :class="{'sending': !isTxSent, 'show-loader': !isManagementRequest}"/>
-                    <div class="cashlink-url">{{link}}</div>
+                    <Copyable :text="link">
+                        <div class="cashlink-url">{{link}}</div>
+                    </Copyable>
                 </div>
             </PageBody>
             <PageFooter v-if="nativeShareAvailable">
@@ -56,7 +58,7 @@
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import staticStore, { Static } from '../lib/StaticStore';
 import { ParsedCashlinkRequest, RequestType } from '../lib/RequestTypes';
-import { SmallPage, PageBody, PageFooter, Account, CheckmarkSmallIcon } from '@nimiq/vue-components';
+import { SmallPage, PageBody, PageFooter, Account, CheckmarkSmallIcon, Copyable } from '@nimiq/vue-components';
 import StatusScreen from '../components/StatusScreen.vue';
 import { NetworkClient } from '@nimiq/network-client';
 import { loadNimiq } from '../lib/Helpers';
@@ -66,6 +68,7 @@ import { CashlinkStore } from '../lib/CashlinkStore';
 import { State } from 'vuex-class';
 import KeyguardClient from '@nimiq/keyguard-client';
 import { Cashlink as PublicCashlink } from '../lib/PublicRequestTypes';
+import { Clipboard } from '@nimiq/utils';
 
 @Component({components: {
     Account,
@@ -74,6 +77,7 @@ import { Cashlink as PublicCashlink } from '../lib/PublicRequestTypes';
     PageFooter,
     SmallPage,
     StatusScreen,
+    Copyable,
 }})
 export default class CashlinkManage extends Vue {
     @Static private request!: ParsedCashlinkRequest;
@@ -165,17 +169,7 @@ export default class CashlinkManage extends Vue {
     }
 
     private copy() {
-        const selection: Selection = window.getSelection()!;
-        const range: Range = window.document.createRange()!;
-        selection.removeAllRanges();
-        range.selectNode(document.querySelector('.cashlink-url')!);
-        selection.addRange(range);
-        try {
-            window.document.execCommand('copy');
-        } catch (err) {
-            // do nothing
-        }
-        selection.removeAllRanges();
+        Clipboard.copy(this.link);
 
         this.copied = true;
         setTimeout(() => this.copied = false, 800);

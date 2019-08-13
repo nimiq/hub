@@ -58,7 +58,7 @@
                             label="New Cashlink"/>
                     </a>
                 </div>
-                <AmountInput class="value" :vanishing="true" placeholder="0.00" :maxFontSize="8" v-model="value" ref="amountInput" />
+                <AmountInput class="value" v-model="value" ref="amountInput" />
                 <LabelInput class="message" :vanishing="true" placeholder="Add a message..." :maxBytes="64" v-model="message" />
             </PageBody>
 
