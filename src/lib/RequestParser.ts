@@ -42,6 +42,7 @@ export class RequestParser {
                     sender: Nimiq.Address.fromUserFriendlyAddress(signTransactionRequest.sender),
                     recipient: Nimiq.Address.fromUserFriendlyAddress(signTransactionRequest.recipient),
                     recipientType: signTransactionRequest.recipientType || Nimiq.Account.Type.BASIC,
+                    recipientLabel: signTransactionRequest.recipientLabel,
                     value: signTransactionRequest.value,
                     fee: signTransactionRequest.fee || 0,
                     data: typeof signTransactionRequest.extraData === 'string'
@@ -163,6 +164,7 @@ export class RequestParser {
                     sender: signTransactionRequest.sender.toUserFriendlyAddress(),
                     recipient: signTransactionRequest.recipient.toUserFriendlyAddress(),
                     recipientType: signTransactionRequest.recipientType,
+                    recipientLabel: signTransactionRequest.recipientLabel,
                     value: signTransactionRequest.value,
                     fee: signTransactionRequest.fee,
                     extraData: signTransactionRequest.data,
