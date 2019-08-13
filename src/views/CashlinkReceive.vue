@@ -213,7 +213,7 @@ export default class CashlinkReceive extends Vue {
         // Start loading screen
         this.statusState = StatusScreen.State.LOADING;
         this.statusTitle = 'Claiming Cashlink';
-        this.statusStatus = 'Sending claiming transaction...';
+        this.statusStatus = 'Connecting to Nimiq...';
 
         this.isClaiming = true;
 
