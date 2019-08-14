@@ -781,7 +781,7 @@
 
 "@nimiq/vue-components@https://github.com/nimiq/vue-components.git#sebastian/build/accounts":
   version "0.1.0"
-  resolved "https://github.com/nimiq/vue-components.git#ba4140d659ac05cc83869efbe83a1cd04b6aa665"
+  resolved "https://github.com/nimiq/vue-components.git#c526b0a555de8f8676bc9273b5dfb01b2d169264"
   dependencies:
     "@nimiq/style" "^0.7.5"
     input-format "^0.2.4"
@@ -5954,6 +5954,7 @@ looper@^3.0.0:
 loose-envify@^1.0.0, loose-envify@^1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/loose-envify/-/loose-envify-1.4.0.tgz#71ee51fa7be4caec1a63839f7e682d8132d30caf"
+  integrity sha512-lyuxPGr/Wfhrlem2CL/UcnUc1zcqKAImBDzukY7Y5F/yQiNdko6+fRLevlw1HgMySw7f611UIY408EtxRSoK3Q==
   dependencies:
     js-tokens "^3.0.0 || ^4.0.0"
 

@@ -5,7 +5,7 @@
             <StatusScreen title="Updating your balances" lightBlue/>
         </SmallPage>
 
-        <SmallPage v-else-if="!accountOrContractInfo" class="send-tx">
+        <SmallPage v-else-if="!accountOrContractInfo" class="create-cashlink-choose-sender">
             <PageHeader>
                 Choose Sender
             </PageHeader>
@@ -14,25 +14,24 @@
 
         <SmallPage v-else class="create-cashlink">
             <SmallPage class="overlay fee" v-if="optionsOpened">
-                <a href="javascript:void(0)" class="nq-button-s cancel-circle" @click="optionsOpened = false">
-                    <CloseIcon/>
-                </a>
                 <PageBody>
                     <h1 class="nq-h1">Speed up your transaction</h1>
                     <p class="nq-text">By adding a transation fee, you can influence how fast your transaction will be processed.</p>
-                    <SelectBar ref="fee" :options="OPTIONS" name="fee" :selectedValue="fee" />
+                    <SelectBar ref="fee" :options="OPTIONS" name="fee" :selectedValue="feeLunaPerByte"  @changed="updateFeePreview"/>
+                    <Amount :amount="feePreview" :minDecimals="0" :maxDecimals="5" />
                 </PageBody>
                 <PageFooter>
                     <button class="nq-button light-blue" @click="setFee">Set fee</button>
                 </PageFooter>
+                <CloseButton class="top-right" @click="closeOptions" />
             </SmallPage>
 
-            <SmallPage class="overlay" v-if="details !== Details.CLOSED">
+            <SmallPage class="overlay" v-if="details !== Details.NONE">
                 <AccountDetails
                     :address="accountOrContractInfo.address.toUserFriendlyAddress()"
                     :label="accountOrContractInfo.label"
                     :balance="accountOrContractInfo.balance"
-                    @close="details = Details.CLOSED"
+                    @close="closeDetails"
                     />
             </SmallPage>
 
@@ -58,15 +57,15 @@
                             label="New Cashlink"/>
                     </a>
                 </div>
-                <AmountInput class="value" v-model="value" ref="amountInput" />
+                <AmountWithFee v-model="liveAmountAndFee" :available-balance="accountOrContractInfo.balance" ref="amountWithFee"/>
                 <LabelInput class="message" :vanishing="true" placeholder="Add a message..." :maxBytes="64" v-model="message" />
             </PageBody>
 
             <PageFooter>
                 <button class="nq-button light-blue"
-                    :disabled="value === 0 || checkInsufficientBalance()"
+                    :disabled="liveAmountAndFee.amount === 0 || !liveAmountAndFee.isValid"
                     @click="sendTransaction">
-                    {{buttonText}}
+                    Create Cashlink
                 </button>
             </PageFooter>
         </SmallPage>
@@ -100,10 +99,11 @@ import {
     Account,
     AccountDetails,
     AccountSelector,
-    AmountInput,
+    Amount,
+    AmountWithFee,
     ArrowLeftSmallIcon,
     ArrowRightIcon,
-    CloseIcon,
+    CloseButton,
     LabelInput,
     PageBody,
     PageFooter,
@@ -112,9 +112,10 @@ import {
     SettingsIcon,
     SmallPage,
 } from '@nimiq/vue-components';
+import { Utf8Tools } from '@nimiq/utils';
 
 enum Details {
-    CLOSED,
+    NONE,
     SENDER,
     RECIPIENT, // used to send the contact for the final recipient once available
 }
@@ -123,10 +124,11 @@ enum Details {
     Account,
     AccountDetails,
     AccountSelector,
-    AmountInput,
+    Amount,
+    AmountWithFee,
     ArrowLeftSmallIcon,
     ArrowRightIcon,
-    CloseIcon,
+    CloseButton,
     LabelInput,
     PageBody,
     PageFooter,
@@ -152,18 +154,23 @@ export default class CashlinkCreate extends Vue {
     private balanceUpdated?: Promise<void>;
     private loading: boolean = false;
 
-    private value = 0;
-    private fee = 0;
+    private liveAmountAndFee: {amount: number, fee: number, isValid: boolean} = {
+        amount: 0,
+        fee: 0,
+        isValid: false,
+    };
+    private feeLunaPerByte: number = 0;
+    private feeLunaPerBytePreview: number = 0;
     private message = '';
 
     private accountOrContractInfo?: AccountInfo | ContractInfo | null = null;
 
     private optionsOpened = false;
-    private details = Details.CLOSED;
+    private details = Details.NONE;
 
     public async created() {
         if (this.request.cashlinkAddress) {
-            this.$router.replace(`/${RequestType.CASHLINK}/manage`);
+            this.$rpc.routerReplace(`${RequestType.CASHLINK}-success`);
             return;
         }
 
@@ -186,6 +193,9 @@ export default class CashlinkCreate extends Vue {
                     this.loading = false;
                 }
                 await this.setSender(wallet.id, this.request.senderAddress.toUserFriendlyAddress());
+                if (this.request.senderBalance) {
+                    this.accountOrContractInfo!.balance = this.request.senderBalance;
+                }
             }
         }
         // In case the loading state is active the balance update must be waited upon
@@ -201,8 +211,9 @@ export default class CashlinkCreate extends Vue {
                 || wallet.findContractByAddress(Nimiq.Address.fromUserFriendlyAddress(address));
             await this.initNetwork();
 
-            await Vue.nextTick();
-            (this.$refs.amountInput as AmountInput).focus();
+            Vue.nextTick(() => (this.$refs.amountWithFee as AmountWithFee).focus());
+        } else {
+            this.$rpc.reject(new Error('WalletId not found!'));
         }
     }
 
@@ -254,17 +265,23 @@ export default class CashlinkCreate extends Vue {
         });
     }
 
-    @Watch('sender.accountInfo.balance')
-    private checkInsufficientBalance() {
-        if (this.accountOrContractInfo && this.accountOrContractInfo.balance) {
-            return this.value + this.fee > this.accountOrContractInfo.balance;
-        }
-        return true; // Not insufficient specifically but undefined.
+    private updateFeePreview(fee: number) {
+        this.feeLunaPerBytePreview = fee;
     }
 
     private setFee() {
         this.optionsOpened = false;
-        this.fee = (this.$refs.fee as SelectBar).value;
+        this.feeLunaPerByte = (this.$refs.fee as SelectBar).value;
+        this.liveAmountAndFee.fee = this.fee;
+        Vue.nextTick(() => (this.$refs.amountWithFee as AmountWithFee).focus());
+    }
+
+    private get fee(): number {
+        return 171 * this.feeLunaPerByte; // 166 + 5 bytes extraData for funding a cashlink
+    }
+
+    private get feePreview(): number {
+        return 171 * this.feeLunaPerBytePreview; // 166 + 5 bytes extraData for funding a cashlink
     }
 
     private sendTransaction() {
@@ -273,14 +290,14 @@ export default class CashlinkCreate extends Vue {
 
         Promise.all([this.balanceUpdated, this.nimiqLoaded]).then(async () => {
             loadingOngoing = false;
-            if (this.checkInsufficientBalance()) {
+            if (!this.liveAmountAndFee.isValid && this.liveAmountAndFee.amount > 0) {
                 this.loading = false;
                 return;
             }
 
             const cashlink = await Cashlink.create();
             cashlink.networkClient = NetworkClient.Instance;
-            cashlink.value = this.value;
+            cashlink.value = this.liveAmountAndFee.amount;
             cashlink.message = this.message;
             const fundingDetails = cashlink!.getFundingDetails();
             const senderAccount = this.findWalletByAddress(this.accountOrContractInfo!.userFriendlyAddress, true)!;
@@ -311,6 +328,16 @@ export default class CashlinkCreate extends Vue {
         });
     }
 
+    private closeOptions() {
+        this.optionsOpened = false;
+        Vue.nextTick(() => (this.$refs.amountWithFee as AmountWithFee).focus());
+    }
+
+    private closeDetails() {
+        this.details = Details.NONE;
+        Vue.nextTick(() => (this.$refs.amountWithFee as AmountWithFee).focus());
+    }
+
     private login() {
         staticStore.originalRouteName = RequestType.CASHLINK;
         this.$rpc.routerPush(RequestType.ONBOARD);
@@ -318,12 +345,6 @@ export default class CashlinkCreate extends Vue {
 
     private close() {
         this.$rpc.reject(new Error(ERROR_CANCELED));
-    }
-
-    private get buttonText() {
-        return this.checkInsufficientBalance()
-            ? 'Insufficient Funds'
-            : 'Create Cashlink';
     }
 
     private data() {
@@ -372,6 +393,8 @@ export default class CashlinkCreate extends Vue {
         justify-content: space-around;
         transition: filter .4s, opacity .3s;
         opacity: 1;
+        padding-bottom: 2rem;
+        padding-top: 0;
         -webkit-filter: blur(0px);
         -moz-filter: blur(0px);
         -o-filter: blur(0px);
@@ -431,8 +454,6 @@ export default class CashlinkCreate extends Vue {
         margin-top: 1rem;
     }
 
-
-
     .overlay {
         position: absolute;
         z-index: 2;
@@ -453,30 +474,25 @@ export default class CashlinkCreate extends Vue {
         justify-content: center;
     }
 
+    .overlay.fee .amount {
+        margin-top: 3rem;
+    }
+
     .overlay.fee p {
         text-align: center;
         margin-bottom: 4rem;
         margin-top: .5rem;
     }
 
-    .overlay .cancel-circle {
-        font-size: 3rem;
-        position: absolute;
-        z-index: 1;
-        top: 2rem;
-        right: 2rem;
-        padding: 0;
-        height: unset;
-    }
-    .overlay .cancel-circle .nq-icon {
-        opacity: .2;
-        transition: opacity .3s cubic-bezier(0.25, 0, 0, 1);
+    .label-input {
+        flex-grow: 1;
     }
 
-    .cancel-circle:hover .nq-icon,
-    .cancel-circle:active .nq-icon,
-    .cancel-circle:focus .nq-icon {
-        opacity: .4;
+    .amount-with-fee {
+        flex-grow: 1;
+        border-top: .125rem solid var(--nimiq-highlight-bg);
+        padding-top: 2rem;
+        justify-content: center;
     }
 
     .create-cashlink .overlay ~ .page-body {
