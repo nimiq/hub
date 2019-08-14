@@ -119,7 +119,6 @@ export default class CashlinkManage extends Vue {
             }
             const network = NetworkClient.Instance;
             await network.init();
-            await network.connectPico();
 
             if (!this.keyguardResult || !this.keyguardRequest) {
                 this.$rpc.reject(new Error('Unexpected: No valid Cashlink;'));

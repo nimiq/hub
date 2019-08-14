@@ -173,7 +173,7 @@ export default class Checkout extends Vue {
 
         // Get balances through pico consensus, also triggers head-change event
         const network = (this.$refs.network as Network);
-        const balances: Map<string, number> = await network.connectPico(addresses);
+        const balances: Map<string, number> = await network.getBalances(addresses);
 
         // Update accounts/contracts with their balances
         // (The accounts are still references to themselves in the wallets' accounts maps)

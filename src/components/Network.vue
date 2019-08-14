@@ -15,27 +15,6 @@ class Network extends Vue {
 
     private boundListeners: Array<[NetworkClient.Events, (...args: any[]) => void]> = [];
 
-    public async connect() {
-        // Load network iframe (automatically starts a pico consensus which does not upgrade to nano)
-        const client = await this._getNetworkClient();
-    }
-
-    public async connectPico(addresses: string[], upgradeToNano = false): Promise<Map<string, number>> {
-        const client = await this._getNetworkClient();
-        // Rerun pico consensus to get balances
-        return client.connectPico(addresses, upgradeToNano);
-    }
-
-    public async connectNano() {
-        const client = await this._getNetworkClient();
-        return client.connectNano();
-    }
-
-    public async disconnect() {
-        if (!NetworkClient.hasInstance()) return;
-        return NetworkClient.Instance.disconnect();
-    }
-
     public async createTx({
         sender,
         senderType = Nimiq.Account.Type.BASIC,

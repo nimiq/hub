@@ -164,8 +164,7 @@ export default class Cashlink {
     public async detectState() {
         if (this.state === CashlinkState.CLAIMED) return;
 
-        const knownTransactionReceipts = new Map([[this.address.toUserFriendlyAddress(), new Map(
-            this._knownTransactions.map((tx) => [tx.hash, tx.blockHash!]))]]);
+        const knownTransactionReceipts = new Map(this._knownTransactions.map((tx) => [tx.hash, tx.blockHash!]));
 
         await this._awaitConsensus();
 
