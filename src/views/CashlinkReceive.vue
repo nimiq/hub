@@ -418,11 +418,6 @@ export default class CashlinkReceive extends Vue {
 
     .recipient-button .account >>> .identicon {
         height: 9rem;
-        transition: transform 0.45s ease;
-    }
-
-    .recipient-button .account:hover >>> .identicon {
-        transform: scale(1.1);
     }
 
     .cashlink-label {
