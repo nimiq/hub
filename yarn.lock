@@ -781,7 +781,7 @@
 
 "@nimiq/vue-components@https://github.com/nimiq/vue-components.git#sebastian/build/accounts":
   version "0.1.0"
-  resolved "https://github.com/nimiq/vue-components.git#c526b0a555de8f8676bc9273b5dfb01b2d169264"
+  resolved "https://github.com/nimiq/vue-components.git#5b6c2771b3ed9cbd994347479023a0d8821130bf"
   dependencies:
     "@nimiq/style" "^0.7.5"
     input-format "^0.2.4"
