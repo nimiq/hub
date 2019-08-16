@@ -490,11 +490,14 @@ export default class CashlinkReceive extends Vue {
     }
 
     .data {
-        margin: 0.5rem 3rem 0;
+        margin: 0.5rem 0 0 3rem;
+        padding-right: 3rem;
         font-size: 2.5rem;
         color: var(--nimiq-blue);
         text-align: center;
         max-height: 9.75rem; /* three lines */
+        overflow: hidden;
+        mask: linear-gradient(90deg, white, white calc(100% - 3rem), rgba(255, 255, 255, 0));
     }
 
     .no-account .data {
