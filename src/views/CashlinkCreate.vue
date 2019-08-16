@@ -490,15 +490,21 @@ export default class CashlinkCreate extends Vue {
 
     .page-body >>> .tooltip-box {
         font-size: 1.75rem;
+        font-weight: 600;
+        line-height: 1.49;
     }
 
     .create-cashlink .tooltip {
         font-size: 3rem;
-        margin: 0 1rem;
+        margin: 1rem 1rem 0;
     }
 
     .create-cashlink .tooltip >>> a.top::after {
         bottom: calc(1em + 0.75rem);
+    }
+
+    .create-cashlink .tooltip:not(.active) >>> a svg {
+        color: rgba(31, 35, 72, 0.25) !important;
     }
 
     .create-cashlink .message {
