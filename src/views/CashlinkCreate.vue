@@ -42,7 +42,7 @@
                 </a>
             </PageHeader>
 
-            <PageBody>
+            <PageBody ref="createCashlinkTooltipTarget">
                 <div class="sender-and-recipient">
                     <a href="javascript:void(0);"  @click="details = Details.SENDER">
                         <Account layout="column"
@@ -58,7 +58,13 @@
                     </a>
                 </div>
                 <AmountWithFee v-model="liveAmountAndFee" :available-balance="accountOrContractInfo.balance" ref="amountWithFee"/>
-                <LabelInput class="message" :vanishing="true" placeholder="Add a message..." :maxBytes="64" v-model="message" />
+                <div class="message-with-tooltip">
+                    <LabelInput class="message" :vanishing="true" placeholder="Add a message..." :maxBytes="64" v-model="message" />
+                    <Tooltip :reference="tooltipTarget" ref="tooltip">
+                        This message will be stored in the Cashlink.
+                        It won’t be part of the public Blockchain and might get lost after the Cashlink was claimed.
+                    </Tooltip>
+                </div>
             </PageBody>
 
             <PageFooter>
@@ -111,6 +117,7 @@ import {
     SelectBar,
     SettingsIcon,
     SmallPage,
+    Tooltip,
 } from '@nimiq/vue-components';
 import { Utf8Tools } from '@nimiq/utils';
 
@@ -137,6 +144,7 @@ enum Details {
     SettingsIcon,
     SmallPage,
     StatusScreen,
+    Tooltip,
 }})
 export default class CashlinkCreate extends Vue {
     @Static private request!: ParsedCashlinkRequest;
@@ -153,6 +161,7 @@ export default class CashlinkCreate extends Vue {
     private nimiqLoaded?: Promise<void>;
     private balanceUpdated?: Promise<void>;
     private loading: boolean = false;
+    private tooltipTargetAvailable = false;
 
     private liveAmountAndFee: {amount: number, fee: number, isValid: boolean} = {
         amount: 0,
@@ -167,6 +176,13 @@ export default class CashlinkCreate extends Vue {
 
     private optionsOpened = false;
     private details = Details.NONE;
+
+    private get tooltipTarget() {
+        if (this.tooltipTargetAvailable) {
+            return this.$refs.createCashlinkTooltipTarget;
+        }
+        return null;
+    }
 
     public async created() {
         if (this.request.cashlinkAddress) {
@@ -204,14 +220,24 @@ export default class CashlinkCreate extends Vue {
         }
     }
 
+    public mounted() {
+        if (this.request.senderAddress) {
+            this.tooltipTargetAvailable = true;
+        }
+    }
+
     private async setSender(walletId: string, address: string) {
         const wallet = this.findWallet(walletId);
         if (wallet) {
             this.accountOrContractInfo = wallet.accounts.get(address)
                 || wallet.findContractByAddress(Nimiq.Address.fromUserFriendlyAddress(address));
-            await this.initNetwork();
 
-            Vue.nextTick(() => (this.$refs.amountWithFee as AmountWithFee).focus());
+            Vue.nextTick(() => {
+                this.tooltipTargetAvailable = true;
+                (this.$refs.amountWithFee as AmountWithFee).focus();
+            });
+
+            await this.initNetwork();
         } else {
             this.$rpc.reject(new Error('WalletId not found!'));
         }
@@ -450,8 +476,28 @@ export default class CashlinkCreate extends Vue {
         padding-top: 2rem;
     }
 
+    .create-cashlink .message-with-tooltip {
+        display: flex;
+        align-items: center;
+        max-width: 100%;
+    }
+
+    .page-body >>> .tooltip-box {
+        font-size: 1.75rem;
+    }
+
+    .create-cashlink .tooltip {
+        font-size: 3rem;
+        margin: 0 1rem;
+    }
+
+    .create-cashlink .tooltip >>> a.top::after {
+        bottom: calc(1em + 0.75rem);
+    }
+
     .create-cashlink .message {
         margin-top: 1rem;
+        flex-grow: 1;
     }
 
     .overlay {
