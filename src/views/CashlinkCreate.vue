@@ -220,12 +220,6 @@ export default class CashlinkCreate extends Vue {
         }
     }
 
-    public mounted() {
-        if (this.request.senderAddress) {
-            this.tooltipTargetAvailable = true;
-        }
-    }
-
     private async setSender(walletId: string, address: string) {
         const wallet = this.findWallet(walletId);
         if (wallet) {
