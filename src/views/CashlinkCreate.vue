@@ -31,7 +31,6 @@
                     :address="accountOrContractInfo.address.toUserFriendlyAddress()"
                     :label="accountOrContractInfo.label"
                     :balance="accountOrContractInfo.balance"
-                    :walletLabel="senderWalletLabel"
                     @close="closeDetails"
                     />
             </SmallPage>
@@ -172,7 +171,6 @@ export default class CashlinkCreate extends Vue {
     private feeLunaPerByte: number = 0;
     private feeLunaPerBytePreview: number = 0;
     private message = '';
-    private senderWalletLabel = '';
 
     private accountOrContractInfo?: AccountInfo | ContractInfo | null = null;
 
@@ -233,7 +231,6 @@ export default class CashlinkCreate extends Vue {
         if (wallet) {
             this.accountOrContractInfo = wallet.accounts.get(address)
                 || wallet.findContractByAddress(Nimiq.Address.fromUserFriendlyAddress(address));
-            this.senderWalletLabel = wallet.label;
 
             Vue.nextTick(() => {
                 this.tooltipTargetAvailable = true;
