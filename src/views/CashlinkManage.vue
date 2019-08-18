@@ -69,6 +69,7 @@ import { State } from 'vuex-class';
 import KeyguardClient from '@nimiq/keyguard-client';
 import { Cashlink as PublicCashlink } from '../lib/PublicRequestTypes';
 import { Clipboard } from '@nimiq/utils';
+import Config from 'config';
 
 @Component({components: {
     Account,
@@ -113,6 +114,9 @@ export default class CashlinkManage extends Vue {
         }
 
         if (!this.isTxSent) {
+            if (!NetworkClient.hasInstance()) {
+                NetworkClient.createInstance(Config.networkEndpoint);
+            }
             const network = NetworkClient.Instance;
             await network.init();
             await network.connectPico();
