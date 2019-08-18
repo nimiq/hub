@@ -20,7 +20,7 @@
         "@nimiq/network-client": "^0.3.2",
         "@nimiq/rpc": "^0.3.0",
         "@nimiq/style": "^0.7.5",
-        "@nimiq/utils": "^0.3.2",
+        "@nimiq/utils": "^0.4.1",
         "@nimiq/vue-components": "https://github.com/nimiq/vue-components.git#daniel/build/hub/cashlinks+checkout",
         "vue": "^2.6.6",
         "vue-class-component": "^6.0.0",
