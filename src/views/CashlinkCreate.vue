@@ -432,10 +432,6 @@ export default class CashlinkCreate extends Vue {
         margin-bottom: 3rem;
     }
 
-    .account-details >>> .address-display {
-        margin-top: 3rem;
-    }
-
     .sender-and-recipient {
         display: flex;
         align-items: center;
