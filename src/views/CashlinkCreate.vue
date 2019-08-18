@@ -2,7 +2,7 @@
     <div class="container">
 
         <SmallPage v-if="loading">
-            <StatusScreen title="Updating your balances"/>
+            <StatusScreen title="Updating your balances" lightBlue/>
         </SmallPage>
 
         <SmallPage v-else-if="!accountOrContractInfo" class="create-cashlink-choose-sender">
