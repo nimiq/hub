@@ -9,7 +9,13 @@
             <PageHeader>
                 Choose Sender
             </PageHeader>
-            <AccountSelector :wallets="processedWallets" @account-selected="setSender" @login="login" :min-balance="1"/>
+            <AccountSelector
+                :wallets="processedWallets"
+                :min-balance="1"
+                :disable-ledger-accounts="true"
+                @account-selected="setSender"
+                @login="login"
+                />
         </SmallPage>
 
         <SmallPage v-else class="create-cashlink">
@@ -203,6 +209,11 @@ export default class CashlinkCreate extends Vue {
                 true,
             );
             if (wallet) {
+                if (wallet.type === WalletType.LEDGER) {
+                    this.$rpc.reject(new Error('Ledgers cannot create Cashlinks yet, we are working on it!'));
+                    return;
+                }
+
                 // In case the loading state is active the balance update must be waited upon
                 if (this.loading) {
                     await this.balanceUpdated!;
