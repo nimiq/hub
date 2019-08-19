@@ -285,8 +285,7 @@ export default class CashlinkReceive extends Vue {
 
     private get isCashlinkStateKnown(): boolean {
         if (!this.consensus) return false;
-        return this.consensus === 'established'
-            && this.cashlink!.state !== CashlinkState.UNKNOWN;
+        return this.cashlink!.state !== CashlinkState.UNKNOWN;
     }
 
     private get canCashlinkBeClaimed(): boolean {
