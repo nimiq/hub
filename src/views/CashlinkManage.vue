@@ -82,8 +82,8 @@ import Config from 'config';
 }})
 export default class CashlinkManage extends Vue {
     @Static private request!: ParsedCashlinkRequest;
-    @Static private cashlink!: Cashlink;
-    @Static private keyguardRequest!: KeyguardClient.SignTransactionRequest;
+    @Static private cashlink?: Cashlink;
+    @Static private keyguardRequest?: KeyguardClient.SignTransactionRequest;
     @State private keyguardResult?: KeyguardClient.SignTransactionResult;
 
     private isTxSent: boolean = false;
@@ -97,23 +97,36 @@ export default class CashlinkManage extends Vue {
     private sharePrefix = 'Here is your Nimiq Cashlink!';
 
     private async mounted() {
-        // @ts-ignore Property 'share' does not exist on type 'Navigator'
-        this.nativeShareAvailable = (!!window.navigator && !!window.navigator.share);
-        this.retrievedCashlink = this.cashlink;
-        if (!this.keyguardResult) {
-            // If there is no Keyguard result this is not a freshly funded cashlink
-            // and must be retrieved from the store.
-            if (this.request.cashlinkAddress) {
-                const cashlink = await CashlinkStore.Instance.get(this.request.cashlinkAddress.toUserFriendlyAddress());
-                if (cashlink) {
-                    this.retrievedCashlink = cashlink;
-                    this.isTxSent = true;
-                    this.isManagementRequest = true;
-                }
+        let storedCashlink;
+        if (this.request.cashlinkAddress) {
+            storedCashlink = await CashlinkStore.Instance.get(this.request.cashlinkAddress.toUserFriendlyAddress());
+            if (!storedCashlink) {
+                this.$rpc.reject(new Error('Could not find requested Cashlink'));
+                return;
             }
+        } else if (this.cashlink) {
+            storedCashlink = await CashlinkStore.Instance.get(this.cashlink.address.toUserFriendlyAddress());
+        } else {
+            // this can happen if the user reloads the page after coming from SignTransactionLedger
+            history.back();
+            return;
         }
 
+        if (storedCashlink) {
+            // cashlink already sent and stored
+            this.retrievedCashlink = storedCashlink;
+            this.isTxSent = true;
+            this.isManagementRequest = !this.cashlink; // freshly created cashlink?
+        } else {
+            this.retrievedCashlink = this.cashlink!;
+        }
+
+        // @ts-ignore Property 'share' does not exist on type 'Navigator'
+        this.nativeShareAvailable = (!!window.navigator && !!window.navigator.share);
+
         if (!this.isTxSent) {
+            // Note that this will never be called when coming from SignTransactionLedger as it sends and stores
+            // the cashlink itself.
             if (!NetworkClient.hasInstance()) {
                 NetworkClient.createInstance(Config.networkEndpoint);
             }

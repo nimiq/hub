@@ -12,7 +12,6 @@
             <AccountSelector
                 :wallets="processedWallets"
                 :min-balance="1"
-                :disable-ledger-accounts="true"
                 @account-selected="setSender"
                 @login="login"
                 />
@@ -163,6 +162,10 @@ export default class CashlinkCreate extends Vue {
     @Getter private findWallet!: (id: string) => WalletInfo | undefined;
 
     @Mutation('addWallet') private $addWallet!: (walletInfo: WalletInfo) => any;
+    @Mutation('setActiveAccount') private $setActiveAccount!: (payload: {
+        walletId: string,
+        userFriendlyAddress: string,
+    }) => any;
 
     private nimiqLoaded?: Promise<void>;
     private balanceUpdated?: Promise<void>;
@@ -209,11 +212,6 @@ export default class CashlinkCreate extends Vue {
                 true,
             );
             if (wallet) {
-                if (wallet.type === WalletType.LEDGER) {
-                    this.$rpc.reject(new Error('Ledgers cannot create Cashlinks yet, we are working on it!'));
-                    return;
-                }
-
                 // In case the loading state is active the balance update must be waited upon
                 if (this.loading) {
                     await this.balanceUpdated!;
@@ -234,8 +232,19 @@ export default class CashlinkCreate extends Vue {
     private async setSender(walletId: string, address: string) {
         const wallet = this.findWallet(walletId);
         if (wallet) {
-            this.accountOrContractInfo = wallet.accounts.get(address)
+            const accountOrContractInfo = wallet.accounts.get(address)
                 || wallet.findContractByAddress(Nimiq.Address.fromUserFriendlyAddress(address));
+            if (!accountOrContractInfo) {
+                this.$rpc.reject(new Error('Sender address not found.'));
+                return;
+            }
+            this.accountOrContractInfo = accountOrContractInfo;
+
+            // FIXME: Also handle active account we get from store
+            this.$setActiveAccount({
+                walletId,
+                userFriendlyAddress: accountOrContractInfo.userFriendlyAddress,
+            });
 
             Vue.nextTick(() => {
                 this.tooltipTargetAvailable = true;
@@ -327,35 +336,47 @@ export default class CashlinkCreate extends Vue {
             }
 
             const cashlink = await Cashlink.create();
+            staticStore.cashlink = cashlink;
             cashlink.networkClient = NetworkClient.Instance;
             cashlink.value = this.liveAmountAndFee.amount;
+            cashlink.fee = this.fee;
             cashlink.message = this.message;
-            const fundingDetails = cashlink!.getFundingDetails();
             const senderAccount = this.findWalletByAddress(this.accountOrContractInfo!.userFriendlyAddress, true)!;
 
-            const validityStartHeight = NetworkClient.Instance.headInfo.height + 1;
-            const request: KeyguardClient.SignTransactionRequest = Object.assign({}, fundingDetails, {
-                shopOrigin: this.rpcState.origin,
-                appName: this.request.appName,
+            // proceed to transaction signing
+            switch (senderAccount.type) {
+                case WalletType.LEDGER:
+                    this.$rpc.routerPush(`${RequestType.SIGN_TRANSACTION}-ledger`);
+                    return;
+                case WalletType.LEGACY:
+                case WalletType.BIP39:
+                    const fundingDetails = cashlink!.getFundingDetails();
+                    const validityStartHeight = NetworkClient.Instance.headInfo.height + 1;
 
-                keyId: senderAccount.keyId,
-                keyPath: senderAccount.findSignerForAddress(this.accountOrContractInfo!.address)!.path,
-                keyLabel: senderAccount.label,
+                    const request: KeyguardClient.SignTransactionRequest = Object.assign({}, fundingDetails, {
+                        shopOrigin: this.rpcState.origin,
+                        appName: this.request.appName,
 
-                sender: this.accountOrContractInfo!.address.serialize(),
-                senderType: (this.accountOrContractInfo as ContractInfo).type
-                    ? (this.accountOrContractInfo as ContractInfo).type
-                    : Nimiq.Account.Type.BASIC,
-                senderLabel: this.accountOrContractInfo!.label,
-                recipientLabel: 'New Cashlink',
-                recipientType: Nimiq.Account.Type.BASIC,
-                fee: this.fee,
-                validityStartHeight,
-            });
-            staticStore.keyguardRequest = request;
-            staticStore.cashlink = cashlink!;
-            const client = this.$rpc.createKeyguardClient();
-            client.signTransaction(request);
+                        keyId: senderAccount.keyId,
+                        keyPath: senderAccount.findSignerForAddress(this.accountOrContractInfo!.address)!.path,
+                        keyLabel: senderAccount.label,
+
+                        sender: this.accountOrContractInfo!.address.serialize(),
+                        senderType: (this.accountOrContractInfo as ContractInfo).type
+                            ? (this.accountOrContractInfo as ContractInfo).type
+                            : Nimiq.Account.Type.BASIC,
+                        senderLabel: this.accountOrContractInfo!.label,
+                        recipient: fundingDetails.recipient.serialize(),
+                        recipientLabel: 'New Cashlink',
+                        recipientType: Nimiq.Account.Type.BASIC,
+                        fee: this.fee,
+                        validityStartHeight,
+                    });
+                    staticStore.keyguardRequest = request;
+                    const client = this.$rpc.createKeyguardClient();
+                    client.signTransaction(request);
+                    return;
+            }
         });
     }
 

@@ -1,5 +1,5 @@
 import { Utf8Tools } from '@nimiq/utils';
-import { NetworkClient, DetailedPlainTransaction } from '@nimiq/network-client';
+import { DetailedPlainTransaction, NetworkClient } from '@nimiq/network-client';
 import { SignTransactionRequestLayout } from '@nimiq/keyguard-client';
 import { loadNimiq } from './Helpers';
 import { CashlinkState } from './PublicRequestTypes';
@@ -38,6 +38,17 @@ export default class Cashlink {
         }
         if (!Nimiq.NumberUtils.isUint64(value) || value === 0) throw new Error('Malformed value');
         this._value = value;
+    }
+
+    set fee(fee: number) {
+        if (this.state === CashlinkState.CLAIMED) {
+            throw new Error('Cashlink is already claimed');
+        }
+        this._fee = fee;
+    }
+
+    get fee() {
+        return this._fee || 0;
     }
 
     get message() {
@@ -118,6 +129,7 @@ export default class Cashlink {
     private _eventListeners: {[type: string]: Array<(data: any) => void>} = {};
     private _messageBytes: Uint8Array = new Uint8Array(0);
     private _value: number | null = null;
+    private _fee: number | null = null;
     private _knownTransactions: DetailedPlainTransaction[] = [];
 
     constructor(
@@ -265,15 +277,17 @@ export default class Cashlink {
 
     public getFundingDetails(): {
         layout: SignTransactionRequestLayout,
-        recipient: Uint8Array,
+        recipient: Nimiq.Address,
         value: number,
+        fee: number,
         data: Uint8Array,
         cashlinkMessage: string,
     } {
         return {
             layout: 'cashlink',
-            recipient: new Uint8Array(this.address.serialize()),
+            recipient: this.address,
             value: this.value,
+            fee: this.fee,
             data: CashlinkExtraData.FUNDING,
             cashlinkMessage: this.message,
         };
@@ -282,7 +296,7 @@ export default class Cashlink {
     public async claim(
         recipientAddress: string,
         recipientType: Nimiq.Account.Type = Nimiq.Account.Type.BASIC,
-        fee = 0,
+        fee: number = this.fee,
     ): Promise<void> {
         // if (this.state >= CashlinkState.CLAIMING) {
         //     throw new Error('Cashlink has already been claimed');

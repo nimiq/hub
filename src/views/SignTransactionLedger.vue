@@ -1,8 +1,11 @@
 <template>
-    <div class="container">
+    <div v-if="request.kind !== 'cashlink' || !!cashlink" class="container">
         <SmallPage :class="{ 'account-details-shown': !!shownAccountDetails }">
-            <PageHeader :back-arrow="request.kind === 'checkout'" @back="_back" class="blur-target">
-                {{ request.kind === 'checkout' ? 'Verify Payment' : 'Confirm Transaction' }}
+            <PageHeader :back-arrow="request.kind === 'checkout' || request.kind === 'cashlink'"
+                @back="_back" class="blur-target">
+                {{ request.kind === 'checkout'
+                    ? 'Verify Payment'
+                    : `Confirm ${request.kind === 'cashlink' ? 'Cashlink' : 'Transaction'}` }}
             </PageHeader>
 
             <div class="accounts">
@@ -17,7 +20,8 @@
                     :address="recipientDetails.address"
                     :label="recipientDetails.label"
                     :image="recipientDetails.image"
-                    @click.native="shownAccountDetails = recipientDetails"
+                    :displayAsCashlink="recipientDetails.isCashlink"
+                    @click.native="shownAccountDetails = !recipientDetails.isCashlink ? recipientDetails : null"
                     class="blur-target">
                 </Account>
             </div>
@@ -25,10 +29,10 @@
             <hr class="blur-target">
 
             <Amount class="value nq-light-blue blur-target"
-                :amount="this.request.value" :minDecimals="2" :maxDecimals="5" />
+                :amount="(cashlink || request).value" :minDecimals="2" :maxDecimals="5" />
 
-            <div v-if="request.fee" class="fee nq-text-s blur-target">
-                + <Amount :amount="this.request.fee" :minDecimals="2" :maxDecimals="5" /> fee
+            <div v-if="(cashlink || request).fee" class="fee nq-text-s blur-target">
+                + <Amount :amount="(cashlink || request).fee" :minDecimals="2" :maxDecimals="5" /> fee
             </div>
 
             <div v-if="transactionData" class="data nq-text blur-target">
@@ -71,12 +75,12 @@ import { Component, Vue, Watch } from 'vue-property-decorator';
 import {
     Account,
     AccountDetails,
-    PageBody,
-    PageHeader,
-    SmallPage,
     Amount,
     ArrowLeftSmallIcon,
     ArrowRightIcon,
+    PageBody,
+    PageHeader,
+    SmallPage,
 } from '@nimiq/vue-components';
 import Network from '@/components/Network.vue';
 import LedgerApi from '../lib/LedgerApi';
@@ -85,11 +89,18 @@ import StatusScreen from '../components/StatusScreen.vue';
 import { Static } from '../lib/StaticStore';
 import { Getter } from 'vuex-class';
 import { State as RpcState } from '@nimiq/rpc';
-import { ParsedCheckoutRequest, ParsedSignTransactionRequest, RequestType } from '../lib/RequestTypes';
+import {
+    ParsedCashlinkRequest,
+    ParsedCheckoutRequest,
+    ParsedSignTransactionRequest,
+    RequestType,
+} from '../lib/RequestTypes';
 import { WalletInfo } from '../lib/WalletInfo';
-import { ERROR_CANCELED, TX_VALIDITY_WINDOW, CASHLINK_FUNDING_DATA } from '../lib/Constants';
+import { CASHLINK_FUNDING_DATA, ERROR_CANCELED, TX_VALIDITY_WINDOW } from '../lib/Constants';
 import { Utf8Tools } from '@nimiq/utils';
 import Config from 'config';
+import Cashlink from '../lib/Cashlink';
+import { CashlinkStore } from '../lib/CashlinkStore';
 
 interface AccountDetailsData {
     address: string;
@@ -97,6 +108,7 @@ interface AccountDetailsData {
     image?: string;
     walletLabel?: string;
     balance?: number;
+    isCashlink?: boolean;
 }
 
 @Component({components: {
@@ -120,7 +132,8 @@ export default class SignTransactionLedger extends Vue {
     };
 
     @Static private rpcState!: RpcState;
-    @Static private request!: ParsedSignTransactionRequest | ParsedCheckoutRequest;
+    @Static private request!: ParsedSignTransactionRequest | ParsedCheckoutRequest | ParsedCashlinkRequest;
+    @Static private cashlink?: Cashlink;
     @Getter private findWalletByAddress!: (address: string, includeContracts: boolean) => WalletInfo | undefined;
 
     private state: string = SignTransactionLedger.State.OVERVIEW;
@@ -153,8 +166,22 @@ export default class SignTransactionLedger extends Vue {
                 label: this.rpcState.origin.split('://')[1],
                 image: checkoutRequest.shopLogoUrl,
             };
+        } else if (this.request.kind === RequestType.CASHLINK) {
+            // coming from cashlink create
+            if (!this.cashlink) {
+                // happens if user reloads the page
+                this._back();
+                return;
+            }
+            senderUserFriendlyAddress = this.$store.state.activeUserFriendlyAddress;
+
+            this.recipientDetails = {
+                address: this.cashlink!.address.toUserFriendlyAddress(),
+                label: 'New Cashlink',
+                isCashlink: true,
+            };
         } else {
-            this.$rpc.reject(new Error('Must be invoked via sign-transaction or checkout requests.'));
+            this.$rpc.reject(new Error('Must be invoked via sign-transaction, checkout or cashlink requests.'));
             return;
         }
 
@@ -175,17 +202,32 @@ export default class SignTransactionLedger extends Vue {
     private async mounted() {
         const network = this.$refs.network as Network;
 
+        let recipient;
+        let value;
+        let fee;
         let validityStartHeight;
+        let data;
+        let flags;
         if (this.request.kind === RequestType.SIGN_TRANSACTION) {
             const signTransactionRequest = this.request as ParsedSignTransactionRequest;
-            validityStartHeight = signTransactionRequest.validityStartHeight;
+            ({ recipient, value, fee, validityStartHeight, data, flags } = signTransactionRequest);
         } else if (this.request.kind === RequestType.CHECKOUT) {
             const checkoutRequest = this.request as ParsedCheckoutRequest;
+            ({ recipient, value, fee, data, flags } = checkoutRequest);
             const blockchainHeight = await network.getBlockchainHeight(); // usually instant as synced in checkout
             // The next block is the earliest for which tx are accepted by standard miners
             validityStartHeight = blockchainHeight + 1
                 - TX_VALIDITY_WINDOW
                 + checkoutRequest.validityDuration;
+        } else if (this.request.kind === RequestType.CASHLINK) {
+            if (!this.cashlink) {
+                // already handled in created
+                return;
+            }
+            ({ recipient, value, fee } = this.cashlink!.getFundingDetails());
+            validityStartHeight = await network.getBlockchainHeight() + 1;
+            data = CASHLINK_FUNDING_DATA;
+            flags = Nimiq.Transaction.Flag.NONE;
         } else {
             // this case get's rejected in created
             return;
@@ -201,19 +243,19 @@ export default class SignTransactionLedger extends Vue {
             signedTransaction = await LedgerApi.signTransaction({
                 sender: (senderContract || signer).address,
                 senderType: senderContract ? senderContract.type : Nimiq.Account.Type.BASIC,
-                recipient: this.request.recipient,
-                value: this.request.value,
-                fee: this.request.fee || 0,
+                recipient,
+                value,
+                fee: fee || 0,
                 validityStartHeight,
                 network: Config.network,
-                extraData: this.request.data,
-                flags: this.request.flags,
+                extraData: data,
+                flags,
             }, signer.path, senderAccount.keyId);
         } catch (e) {
             // If cancelled, handle the exception. Otherwise just keep the error message displayed in ledger ui.
             if (e.message.toLowerCase().indexOf('cancelled') !== -1) {
-                if (this.request.kind === RequestType.CHECKOUT) {
-                    this._back(); // user might want to choose another account or address
+                if (this.request.kind === RequestType.CHECKOUT || this.request.kind === RequestType.CASHLINK) {
+                    this._back(); // user might want to choose another account or address or change cashlink
                 } else {
                     this._close();
                 }
@@ -224,16 +266,22 @@ export default class SignTransactionLedger extends Vue {
         this.shownAccountDetails = null;
 
         let result;
-        if (this.request.kind === RequestType.CHECKOUT) {
+        if (this.request.kind === RequestType.CHECKOUT || this.request.kind === RequestType.CASHLINK) {
             this.state = SignTransactionLedger.State.SENDING_TRANSACTION;
             result = await network.sendToNetwork(signedTransaction);
         } else {
+            // request.kind === SIGN_TRANSACTION
             result = await network.makeSignTransactionResult(signedTransaction);
         }
 
-        this.state = SignTransactionLedger.State.FINISHED;
-        await new Promise((resolve) => setTimeout(resolve, StatusScreen.SUCCESS_REDIRECT_DELAY));
-        this.$rpc.resolve(result);
+        if (this.request.kind !== RequestType.CASHLINK) {
+            this.state = SignTransactionLedger.State.FINISHED;
+            await new Promise((resolve) => setTimeout(resolve, StatusScreen.SUCCESS_REDIRECT_DELAY));
+            this.$rpc.resolve(result);
+        } else {
+            await CashlinkStore.Instance.put(this.cashlink!);
+            this.$rpc.routerReplace(`${RequestType.CASHLINK}-success`);
+        }
     }
 
     private destroyed() {
@@ -244,29 +292,32 @@ export default class SignTransactionLedger extends Vue {
     }
 
     private get transactionData() {
-        if (!this.request.data || this.request.data.byteLength === 0) {
+        if (this.request.kind === RequestType.CASHLINK) {
+            return this.cashlink ? this.cashlink.message : null;
+        }
+
+        const request = this.request as ParsedSignTransactionRequest | ParsedCheckoutRequest;
+        if (!request.data || request.data.byteLength === 0) {
             return null;
         }
 
-        if (Nimiq.BufferUtils.equals(this.request.data, CASHLINK_FUNDING_DATA)) {
-            return 'Funding cashlink';
-        }
-
         // tslint:disable-next-line no-bitwise
-        if ((this.request.flags & Nimiq.Transaction.Flag.CONTRACT_CREATION) > 0) {
+        if ((request.flags & Nimiq.Transaction.Flag.CONTRACT_CREATION) > 0) {
             // TODO: Decode contract creation transactions
             // return ...
         }
 
-        return Utf8Tools.isValidUtf8(this.request.data, true)
-            ? Utf8Tools.utf8ByteArrayToString(this.request.data)
-            : Nimiq.BufferUtils.toHex(this.request.data);
+        return Utf8Tools.isValidUtf8(request.data, true)
+            ? Utf8Tools.utf8ByteArrayToString(request.data)
+            : Nimiq.BufferUtils.toHex(request.data);
     }
 
     private get statusScreenTitle() {
         switch (this.state) {
             case SignTransactionLedger.State.SENDING_TRANSACTION:
-                return 'Sending Transaction';
+                return this.request.kind === RequestType.CASHLINK
+                    ? 'Creating your Cashlink'
+                    : 'Sending Transaction';
             case SignTransactionLedger.State.FINISHED:
                 return this.request.kind === RequestType.SIGN_TRANSACTION
                     ? 'Transaction Signed'
@@ -329,15 +380,23 @@ export default class SignTransactionLedger extends Vue {
     .accounts .account {
         width: calc(50% - 1.5rem); /* minus half arrow width */
         padding: 0;
+    }
+
+    .accounts .account:not(.cashlink) {
         cursor: pointer;
     }
 
-    .accounts .account >>> .identicon {
+    .accounts .account:not(.cashlink) >>> .identicon {
         transition: transform 0.45s ease;
     }
 
-    .accounts .account:hover >>> .identicon {
+    .accounts .account:not(.cashlink):hover >>> .identicon {
         transform: scale(1.1);
+    }
+
+    .accounts .account.cashlink >>> .label {
+        opacity: .5;
+        line-height: 1.5;
     }
 
     .accounts .arrow-right {
