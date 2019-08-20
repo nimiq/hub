@@ -93,20 +93,33 @@ export default class CashlinkManage extends Vue {
     private readonly nativeShareAvailable: boolean = (!!window.navigator && !!window.navigator.share);
 
     private async mounted() {
-        this.retrievedCashlink = this.cashlink || null;
-        if (!this.keyguardResult && this.request.cashlinkAddress) {
-            const cashlink = await CashlinkStore.Instance.get(this.request.cashlinkAddress.toUserFriendlyAddress());
-            if (cashlink) {
-                this.retrievedCashlink = cashlink;
-                this.isTxSent = true;
-                this.isManagementRequest = true;
-            } else {
-                this.$rpc.reject(new Error(`${this.request.cashlinkAddress} is not a valid Cashlink.`));
+        let storedCashlink;
+        if (this.request.cashlinkAddress) {
+            storedCashlink = await CashlinkStore.Instance.get(this.request.cashlinkAddress.toUserFriendlyAddress());
+            if (!storedCashlink) {
+                this.$rpc.reject(new Error(`Could not find Cashlink for address ${this.request.cashlinkAddress}.`));
                 return;
             }
+        } else if (this.cashlink) {
+            storedCashlink = await CashlinkStore.Instance.get(this.cashlink.address.toUserFriendlyAddress());
+        } else {
+            // this can happen if the user reloads the page after coming from SignTransactionLedger
+            history.back();
+            return;
+        }
+
+        if (storedCashlink) {
+            // cashlink already sent and stored
+            this.retrievedCashlink = storedCashlink;
+            this.isTxSent = true;
+            this.isManagementRequest = !this.cashlink; // freshly created cashlink or management request?
+        } else {
+            this.retrievedCashlink = this.cashlink!;
         }
 
         if (!this.isTxSent) {
+            // Note that this will never be called when coming from SignTransactionLedger as it sends and stores
+            // the cashlink itself.
             if (!NetworkClient.hasInstance()) {
                 NetworkClient.createInstance(Config.networkEndpoint);
             }
@@ -117,11 +130,7 @@ export default class CashlinkManage extends Vue {
                 this.$rpc.reject(new Error('Unexpected: No valid Cashlink;'));
                 return;
             }
-            // this.retrievedCashlink is guaranteed to be set here, as it is either
-            // loaded from the  static store in case of a freshly created cashlink or
-            // loaded from the cashlink store if it is a managment call with a cashlinkAddress set in the request.
-            // If no cashlinnk was found the request is already rejected.
-            this.retrievedCashlink!.networkClient = network;
+            this.retrievedCashlink.networkClient = network;
             network.on(NetworkClient.Events.API_READY,
                 () => this.status = 'Contacting seed nodes...');
             network.on(NetworkClient.Events.CONSENSUS_SYNCING,
@@ -132,7 +141,7 @@ export default class CashlinkManage extends Vue {
                 () => this.status = 'Awaiting receipt confirmation...');
 
             // Store cashlink in database first to be safe when browser crashes during sending
-            await CashlinkStore.Instance.put(this.retrievedCashlink!);
+            await CashlinkStore.Instance.put(this.retrievedCashlink);
 
             network.relayTransaction({
                 sender: new Nimiq.Address(this.keyguardRequest.sender).toUserFriendlyAddress(),
@@ -145,7 +154,7 @@ export default class CashlinkManage extends Vue {
                 extraData: this.keyguardRequest.data,
             });
 
-            network.on(NetworkClient.Events.TRANSACTION_RELAYED, async (txInfo: any) => {
+            network.on(NetworkClient.Events.TRANSACTION_RELAYED, async () => {
                 this.isTxSent = true;
             });
         }
