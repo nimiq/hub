@@ -98,7 +98,7 @@ import { AccountInfo } from '../lib/AccountInfo';
 import { RequestType, ParsedCashlinkRequest } from '../lib/RequestTypes';
 import { NetworkClient } from '@nimiq/network-client';
 import { WalletStore } from '../lib/WalletStore';
-import { WalletInfo } from '../lib/WalletInfo';
+import { WalletInfo, WalletType } from '../lib/WalletInfo';
 import { ContractInfo, VestingContractInfo } from '../lib/ContractInfo';
 import KeyguardClient from '@nimiq/keyguard-client';
 import Config from 'config';
@@ -180,6 +180,10 @@ class CashlinkCreate extends Vue {
     @Getter private findWallet!: (id: string) => WalletInfo | undefined;
 
     @Mutation('addWallet') private $addWallet!: (walletInfo: WalletInfo) => any;
+    @Mutation('setActiveAccount') private $setActiveAccount!: (payload: {
+        walletId: string,
+        userFriendlyAddress: string,
+    }) => any;
 
     private nimiqLoadedPromise?: Promise<void>;
     private balanceUpdatedPromise?: Promise<void>;
@@ -263,6 +267,12 @@ class CashlinkCreate extends Vue {
 
         this.accountOrContractInfo = wallet.accounts.get(address)
             || wallet.findContractByAddress(Nimiq.Address.fromUserFriendlyAddress(address))!;
+
+        // FIXME: Also handle active account we get from store
+        this.$setActiveAccount({
+            walletId: wallet.id,
+            userFriendlyAddress: address,
+        });
     }
 
     private async updateBalances() {
@@ -357,32 +367,44 @@ class CashlinkCreate extends Vue {
         }
 
         const cashlink = await Cashlink.create();
+        staticStore.cashlink = cashlink;
         cashlink.networkClient = NetworkClient.Instance;
         cashlink.value = this.liveAmountAndFee.amount;
+        cashlink.fee = this.fee;
         cashlink.message = this.message;
-        const fundingDetails = cashlink.getFundingDetails();
         const senderAccount = this.findWalletByAddress(this.accountOrContractInfo!.userFriendlyAddress, true)!;
 
-        const validityStartHeight = NetworkClient.Instance.headInfo.height + 1;
-        const request: KeyguardClient.SignTransactionRequest = Object.assign({}, fundingDetails, {
-            shopOrigin: this.rpcState.origin,
-            appName: this.request.appName,
-            keyId: senderAccount.keyId,
-            keyPath: senderAccount.findSignerForAddress(this.accountOrContractInfo!.address)!.path,
-            keyLabel: senderAccount.label,
-            sender: this.accountOrContractInfo!.address.serialize(),
-            senderType: (this.accountOrContractInfo as ContractInfo).type
-                ? (this.accountOrContractInfo as ContractInfo).type
-                : Nimiq.Account.Type.BASIC,
-            senderLabel: this.accountOrContractInfo!.label,
-            recipientType: Nimiq.Account.Type.BASIC,
-            fee: this.fee,
-            validityStartHeight,
-        });
-        staticStore.keyguardRequest = request;
-        staticStore.cashlink = cashlink;
-        const client = this.$rpc.createKeyguardClient();
-        client.signTransaction(request);
+        // proceed to transaction signing
+        switch (senderAccount.type) {
+            case WalletType.LEDGER:
+                this.$rpc.routerPush(`${RequestType.SIGN_TRANSACTION}-ledger`);
+                return;
+            case WalletType.LEGACY:
+            case WalletType.BIP39:
+                const fundingDetails = cashlink.getFundingDetails();
+                const validityStartHeight = NetworkClient.Instance.headInfo.height + 1;
+
+                const request: KeyguardClient.SignTransactionRequest = Object.assign({}, fundingDetails, {
+                    shopOrigin: this.rpcState.origin,
+                    appName: this.request.appName,
+                    keyId: senderAccount.keyId,
+                    keyPath: senderAccount.findSignerForAddress(this.accountOrContractInfo!.address)!.path,
+                    keyLabel: senderAccount.label,
+                    sender: this.accountOrContractInfo!.address.serialize(),
+                    senderType: (this.accountOrContractInfo as ContractInfo).type
+                        ? (this.accountOrContractInfo as ContractInfo).type
+                        : Nimiq.Account.Type.BASIC,
+                    senderLabel: this.accountOrContractInfo!.label,
+                    recipient: fundingDetails.recipient.serialize(),
+                    recipientType: Nimiq.Account.Type.BASIC,
+                    fee: this.fee,
+                    validityStartHeight,
+                });
+                staticStore.keyguardRequest = request;
+                const client = this.$rpc.createKeyguardClient();
+                client.signTransaction(request);
+                return;
+        }
     }
 
     private login(useReplace = false) {
