@@ -1,0 +1,8 @@
+<svg width="25" height="40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path opacity=".7" d="M12.174 0v27.52l12.173-7.229L12.173 0z" fill="#000"/>
+  <path opacity=".5" d="M12.174 0L0 20.291l12.174 7.23V0z" fill="#000"/>
+  <path opacity=".7" d="M12.174 29.836v10.008l12.18-17.233-12.18 7.225z" fill="#000"/>
+  <path opacity=".5" d="M12.174 39.844V29.836L0 22.61l12.174 17.233z" fill="#000"/>
+  <path d="M12.174 27.52l12.173-7.229-12.174-5.558V27.52z" fill="#000"/>
+  <path opacity=".4" d="M0 20.291l12.174 7.229V14.733L0 20.29z" fill="#000"/>
+</svg>
