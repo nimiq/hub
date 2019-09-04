@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import { RequestType } from '@/lib/RequestTypes';
+import { RequestType } from '@/lib/PublicRequestTypes';
 import { KeyguardCommand } from '@nimiq/keyguard-client';
 
 const SignTransaction         = () => import(/*webpackChunkName: "sign-transaction"*/ './views/SignTransaction.vue');

@@ -5,12 +5,12 @@ import { Component, Vue } from 'vue-property-decorator';
 import { State, Getter } from 'vuex-class';
 import staticStore, { Static } from '../lib/StaticStore';
 import {
-    RequestType,
     ParsedRpcRequest,
     ParsedSimpleRequest,
     ParsedSignMessageRequest,
     ParsedSignTransactionRequest,
 } from '../lib/RequestTypes';
+import { RequestType } from '../lib/PublicRequestTypes';
 import { Errors } from '@nimiq/keyguard-client';
 import { WalletStore } from '../lib/WalletStore';
 import KeyguardClient from '@nimiq/keyguard-client';

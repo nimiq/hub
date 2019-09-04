@@ -14,8 +14,8 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { SmallPage, CheckmarkIcon } from '@nimiq/vue-components';
-import { ParsedSimpleRequest, RequestType } from '../lib/RequestTypes';
-import { ExportResult } from '../lib/PublicRequestTypes';
+import { ParsedSimpleRequest } from '../lib/RequestTypes';
+import { ExportResult, RequestType } from '../lib/PublicRequestTypes';
 import { State } from 'vuex-class';
 import staticStore, { Static } from '@/lib/StaticStore';
 import StatusScreen from '@/components/StatusScreen.vue';

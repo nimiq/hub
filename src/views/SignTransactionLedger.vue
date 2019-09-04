@@ -85,9 +85,14 @@ import StatusScreen from '../components/StatusScreen.vue';
 import { Static } from '../lib/StaticStore';
 import { Getter } from 'vuex-class';
 import { State as RpcState } from '@nimiq/rpc';
-import { ParsedCheckoutRequest, ParsedSignTransactionRequest, RequestType } from '../lib/RequestTypes';
+import {
+    ParsedCheckoutRequest,
+    ParsedSignTransactionRequest,
+} from '../lib/RequestTypes';
+import { Currency, RequestType } from '../lib/PublicRequestTypes';
 import { WalletInfo } from '../lib/WalletInfo';
 import { ERROR_CANCELED, TX_VALIDITY_WINDOW, CASHLINK_FUNDING_DATA } from '../lib/Constants';
+import { ParsedNimiqDirectPaymentOptions } from '../lib/paymentOptions/NimiqPaymentOptions';
 import { Utf8Tools } from '@nimiq/utils';
 import Config from 'config';
 
@@ -148,8 +153,19 @@ export default class SignTransactionLedger extends Vue {
 
             senderUserFriendlyAddress = this.$store.state.activeUserFriendlyAddress;
 
+            /*
+             * There has to be a NIM paymentOption so find will always return a result.
+             */
+            const recipient = (this.request as ParsedSignTransactionRequest).recipient
+                || ((this.request as ParsedCheckoutRequest).paymentOptions.find(
+                        (option) => option.currency === Currency.NIM,
+                    ) as ParsedNimiqDirectPaymentOptions).protocolSpecific.recipient;
+            if (!recipient) {
+                this.$rpc.reject(new Error('recipient not found/fetched'));
+                return;
+            }
             this.recipientDetails = {
-                address: checkoutRequest.recipient.toUserFriendlyAddress(),
+                address: recipient.toUserFriendlyAddress(),
                 label: this.rpcState.origin.split('://')[1],
                 image: checkoutRequest.shopLogoUrl,
             };
@@ -175,17 +191,34 @@ export default class SignTransactionLedger extends Vue {
     private async mounted() {
         const network = this.$refs.network as Network;
 
-        let validityStartHeight;
+        let recipient: Nimiq.Address;
+        let value: number;
+        let fee: number;
+        let flags: number;
+        let validityStartHeight: number;
+
         if (this.request.kind === RequestType.SIGN_TRANSACTION) {
             const signTransactionRequest = this.request as ParsedSignTransactionRequest;
+            recipient = signTransactionRequest.recipient;
+            value = signTransactionRequest.value;
+            fee = signTransactionRequest.fee;
+            flags = signTransactionRequest.flags;
             validityStartHeight = signTransactionRequest.validityStartHeight;
         } else if (this.request.kind === RequestType.CHECKOUT) {
             const checkoutRequest = this.request as ParsedCheckoutRequest;
+            // Once currency selection is implemented likely no longer needed
+            const nimiqPaymentOption = (checkoutRequest.paymentOptions.find(
+                    (option) => option.currency === Currency.NIM,
+                ) as ParsedNimiqDirectPaymentOptions);
+            recipient = nimiqPaymentOption.protocolSpecific.recipient!;
+            value = nimiqPaymentOption.amount;
+            fee = nimiqPaymentOption.protocolSpecific.fee!;
+            flags = nimiqPaymentOption.protocolSpecific.flags;
             const blockchainHeight = await network.getBlockchainHeight(); // usually instant as synced in checkout
             // The next block is the earliest for which tx are accepted by standard miners
             validityStartHeight = blockchainHeight + 1
                 - TX_VALIDITY_WINDOW
-                + checkoutRequest.validityDuration;
+                + nimiqPaymentOption.protocolSpecific.validityDuration!;
         } else {
             // this case get's rejected in created
             return;
@@ -201,13 +234,13 @@ export default class SignTransactionLedger extends Vue {
             signedTransaction = await LedgerApi.signTransaction({
                 sender: (senderContract || signer).address,
                 senderType: senderContract ? senderContract.type : Nimiq.Account.Type.BASIC,
-                recipient: this.request.recipient,
-                value: this.request.value,
-                fee: this.request.fee || 0,
+                recipient,
+                value,
+                fee: fee || 0,
                 validityStartHeight,
                 network: Config.network,
                 extraData: this.request.data,
-                flags: this.request.flags,
+                flags,
             }, signer.path, senderAccount.keyId);
         } catch (e) {
             // If cancelled, handle the exception. Otherwise just keep the error message displayed in ledger ui.
@@ -252,8 +285,12 @@ export default class SignTransactionLedger extends Vue {
             return 'Funding cashlink';
         }
 
+        const flags = (this.request as ParsedSignTransactionRequest).flags
+            || ((this.request as ParsedCheckoutRequest).paymentOptions.find(
+                (option) => option.currency === Currency.NIM,
+            ) as ParsedNimiqDirectPaymentOptions).protocolSpecific.flags;
         // tslint:disable-next-line no-bitwise
-        if ((this.request.flags & Nimiq.Transaction.Flag.CONTRACT_CREATION) > 0) {
+        if ((flags & Nimiq.Transaction.Flag.CONTRACT_CREATION) > 0) {
             // TODO: Decode contract creation transactions
             // return ...
         }
