@@ -70,6 +70,10 @@ class Demo {
             await checkoutPopup(await generateCheckoutRequest(true));
         });
 
+        document.querySelector('button#multi-checkout').addEventListener('click', async () => {
+            await checkoutPopup(await generateMultiCheckoutRequest());
+        });
+
         document.querySelector('button#choose-address').addEventListener('click', async () => {
             try {
                 const result = await demo.client.chooseAddress({ appName: 'Accounts Demos' });
@@ -158,7 +162,7 @@ class Demo {
             const txFee = parseInt((document.querySelector('#fee') as HTMLInputElement).value) || 0;
             const txData = (document.querySelector('#data') as HTMLInputElement).value || '';
 
-            let sender: string | undefined = undefined;
+            let sender: string | undefined;
             if (useSelectedAddress) {
                 const $radio = document.querySelector('input[type="radio"]:checked');
                 if (!$radio) {
@@ -177,7 +181,54 @@ class Demo {
                 recipient: 'NQ63 U7XG 1YYE D6FA SXGG 3F5H X403 NBKN JLDU',
                 value,
                 fee: txFee,
-                extraData: Utf8Tools.stringToUtf8ByteArray(txData)
+                extraData: Utf8Tools.stringToUtf8ByteArray(txData),
+            };
+        }
+
+        async function generateMultiCheckoutRequest(): Promise<CheckoutRequest> {
+            const now =  + new Date();
+            return {
+                version: 2,
+                appName: 'Accounts Demos',
+                shopLogoUrl: `${location.origin}/nimiq.png`,
+                callbackUrl: `${location.origin}/callback.html`,
+                csrf: 'dummy-csrf-token',
+                time: now,
+                extraData: 'Test MultiCheckout',
+                fiatCurrency: 'EUR',
+                fiatAmount: 24.99,
+                paymentOptions: [
+                    {
+                        currency: HubApi.Currency.BTC,
+                        type: HubApi.PaymentMethod.DIRECT,
+                        amount: '.00029e8',
+                        expires: + new Date(now + 15 * 60000), // 15 minutes
+                        protocolSpecific: {
+                            feePerByte: 2, // 2 sat per byte
+                            recipient: '17w6ar5SqXFGr786WjGHB8xyu48eujHaBe', // Unicef
+                        },
+                    },
+                    {
+                        currency: HubApi.Currency.NIM,
+                        type: HubApi.PaymentMethod.DIRECT,
+                        amount: '20e5',
+                        expires: + new Date(now + 15 * 60000), // 15 minutes
+                        protocolSpecific: {
+                            fee: 50000,
+                        },
+                    },
+                    {
+                        currency: HubApi.Currency.ETH,
+                        type: HubApi.PaymentMethod.DIRECT,
+                        amount: '.0091e18',
+                        expires: + new Date(now + 15 * 60000), // 15 minutes
+                        protocolSpecific: {
+                            gasLimit: 21000,
+                            gasPrice: '10000',
+                            recipient: '0xa4725d6477644286b354288b51122a808389be83', // the water project
+                        },
+                    },
+                ],
             };
         }
 
