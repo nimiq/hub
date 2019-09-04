@@ -1,6 +1,5 @@
 import { State, PostMessageRpcClient } from '@nimiq/rpc';
 import HubApi from '../client/HubApi';
-import { RequestType } from '../src/lib/RequestTypes';
 import {
     SimpleRequest,
     Account,
@@ -11,6 +10,7 @@ import {
     SignMessageRequest,
     ExportRequest,
     RpcResult,
+    RequestType,
 } from '../src/lib/PublicRequestTypes';
 import { PopupRequestBehavior, RedirectRequestBehavior } from '../client/RequestBehavior';
 import { Utf8Tools } from '@nimiq/utils';

@@ -1,5 +1,24 @@
 import { WalletType } from './WalletInfo';
-import { RequestType } from './RequestTypes';
+import { NimiqDirectPaymentOptions } from './paymentOptions/NimiqPaymentOptions';
+import { EtherDirectPaymentOptions } from './paymentOptions/EtherPaymentOptions';
+import { BitcoinDirectPaymentOptions } from './paymentOptions/BitcoinPaymentOptions';
+
+export enum RequestType {
+    LIST = 'list',
+    MIGRATE = 'migrate',
+    CHECKOUT = 'checkout',
+    SIGN_MESSAGE = 'sign-message',
+    SIGN_TRANSACTION = 'sign-transaction',
+    ONBOARD = 'onboard',
+    SIGNUP = 'signup',
+    LOGIN = 'login',
+    EXPORT = 'export',
+    CHANGE_PASSWORD = 'change-password',
+    LOGOUT = 'logout',
+    ADD_ADDRESS = 'add-address',
+    RENAME = 'rename',
+    CHOOSE_ADDRESS = 'choose-address',
+}
 
 export interface BasicRequest {
     appName: string;
@@ -28,7 +47,8 @@ export interface SignTransactionRequest extends BasicRequest {
     validityStartHeight: number; // FIXME To be made optional when hub has its own network
 }
 
-export interface CheckoutRequest extends BasicRequest {
+export interface NimiqCheckoutRequest extends BasicRequest {
+    version?: 1 | undefined;
     shopLogoUrl?: string;
     sender?: string;
     forceSender?: boolean;
@@ -40,6 +60,65 @@ export interface CheckoutRequest extends BasicRequest {
     flags?: number;
     validityDuration?: number;
 }
+
+export enum PaymentMethod {
+    DIRECT,
+    OASIS,
+}
+
+export enum Currency {
+    NIM = 'nim',
+    BTC = 'btc',
+    ETH = 'eth',
+}
+
+export interface PaymentOptions<C, T> {
+    type: T;
+    currency: C;
+    expires: number;
+    /**
+     * amount in the smallest unit of the currency specified in `currency`.
+     * i.e Luna for Currency.NIM and satoshi for Currency.BTC
+     */
+    amount: string;
+}
+
+export type AvailablePaymentOptions = NimiqDirectPaymentOptions
+                             | EtherDirectPaymentOptions
+                             | BitcoinDirectPaymentOptions;
+
+export interface MultiCurrencyCheckoutRequest extends BasicRequest {
+    version: 2;
+    /**
+     * must be located on the same origin as the one the request is sent from
+     */
+    shopLogoUrl: string;
+    /**
+     * input is {currency, type} alongside the orde identifying parameters in the url.
+     * the called url must return a PaymentOptions<currency, type> object
+     */
+    callbackUrl?: string;
+    extraData?: Uint8Array | string;
+    /**
+     * current time in milliseconds
+     */
+    time: number;
+    /**
+     * ISO 4217 Code of the currency used on the calling site.
+     */
+    fiatCurrency: string;
+    /**
+     * value in the currency specified by `fiatCurrency`
+     */
+    fiatAmount: number;
+    /**
+     * array of available payment options.
+     * each currency can only be present once, and a Currency.NIM option must exist.
+     */
+    paymentOptions: AvailablePaymentOptions[];
+}
+
+export type CheckoutRequest = NimiqCheckoutRequest | MultiCurrencyCheckoutRequest;
 
 export interface SignedTransaction {
     serializedTx: string; // HEX

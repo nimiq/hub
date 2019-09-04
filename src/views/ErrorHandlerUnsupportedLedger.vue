@@ -18,7 +18,8 @@ import { Component, Vue } from 'vue-property-decorator';
 import { ArrowLeftSmallIcon, SmallPage } from '@nimiq/vue-components';
 import StatusScreen from '../components/StatusScreen.vue';
 import { Static } from '../lib/StaticStore';
-import { ParsedBasicRequest, RequestType } from '../lib/RequestTypes';
+import { ParsedBasicRequest } from '../lib/RequestTypes';
+import { RequestType } from '../lib/PublicRequestTypes';
 import { ERROR_CANCELED } from '../lib/Constants';
 
 @Component({components: {SmallPage, StatusScreen, ArrowLeftSmallIcon}})
