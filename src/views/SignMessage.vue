@@ -30,8 +30,8 @@
 import { Component, Vue } from 'vue-property-decorator';
 import { Getter, Mutation } from 'vuex-class';
 import { SmallPage, AccountSelector, ArrowRightIcon, ArrowLeftSmallIcon } from '@nimiq/vue-components';
-import { RequestType, ParsedSignMessageRequest } from '../lib/RequestTypes';
-import { Account } from '../lib/PublicRequestTypes';
+import { ParsedSignMessageRequest } from '../lib/RequestTypes';
+import { RequestType, Account } from '../lib/PublicRequestTypes';
 import staticStore, { Static } from '../lib/StaticStore';
 import { WalletStore } from '@/lib/WalletStore';
 import { AccountInfo } from '@/lib/AccountInfo';

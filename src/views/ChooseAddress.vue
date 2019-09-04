@@ -25,8 +25,7 @@
 import { Component, Vue } from 'vue-property-decorator';
 import { Getter, Mutation } from 'vuex-class';
 import { SmallPage, AccountSelector, ArrowLeftSmallIcon } from '@nimiq/vue-components';
-import { RequestType } from '../lib/RequestTypes';
-import { SimpleRequest, Account, Address } from '../lib/PublicRequestTypes';
+import { SimpleRequest, Account, Address, RequestType } from '../lib/PublicRequestTypes';
 import staticStore, { Static } from '@/lib/StaticStore';
 import { WalletStore } from '@/lib/WalletStore';
 import { WalletInfo } from '../lib/WalletInfo';

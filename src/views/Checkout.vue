@@ -53,8 +53,8 @@
 import { Component, Vue } from 'vue-property-decorator';
 import { PaymentInfoLine, AccountSelector, AccountDetails, SmallPage } from '@nimiq/vue-components';
 import { TransferIcon, ArrowLeftSmallIcon } from '@nimiq/vue-components';
-import { ParsedCheckoutRequest, RequestType } from '../lib/RequestTypes';
-import { Account } from '../lib/PublicRequestTypes';
+import { ParsedCheckoutRequest } from '../lib/RequestTypes';
+import { Account, RequestType } from '../lib/PublicRequestTypes';
 import { State as RpcState } from '@nimiq/rpc';
 import staticStore, { Static } from '../lib/StaticStore';
 import { WalletStore } from '../lib/WalletStore';

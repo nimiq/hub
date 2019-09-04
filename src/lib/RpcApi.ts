@@ -8,10 +8,10 @@ import {
     ParsedSignMessageRequest,
     ParsedSignTransactionRequest,
     ParsedSimpleRequest,
-    RequestType,
 } from './RequestTypes';
 import { RequestParser } from './RequestParser';
-import { RpcRequest, RpcResult } from './PublicRequestTypes';
+import { RpcRequest, RpcResult, Currency, RequestType } from './PublicRequestTypes';
+import { ParsedNimiqDirectPaymentOptions } from './paymentOptions/NimiqPaymentOptions';
 import { KeyguardClient, KeyguardCommand, Errors } from '@nimiq/keyguard-client';
 import { keyguardResponseRouter, REQUEST_ERROR } from '@/router';
 import { StaticStore } from '@/lib/StaticStore';
@@ -215,12 +215,24 @@ export default class RpcApi {
                         }
                     } else if (requestType === RequestType.CHECKOUT) {
                         const checkoutRequest = request as ParsedCheckoutRequest;
-                        accountRequired = checkoutRequest.forceSender;
-                        if (checkoutRequest.sender) {
-                            account = this._store.getters.findWalletByAddress(
-                                checkoutRequest.sender.toUserFriendlyAddress(),
-                                true,
-                            );
+                        // forceSender only applies to non-multi-currency checkouts.
+                        if (checkoutRequest.paymentOptions.length === 1
+                            && checkoutRequest.paymentOptions[0].currency === Currency.NIM) {
+
+                            /**
+                             * Later on can potentially be ParsedNimiqOasisPaymentOptions.
+                             * If it will contain the forceSender flag as well it should not be an issue.
+                             */
+                            const protocolSpecific =
+                                (checkoutRequest.paymentOptions[0] as ParsedNimiqDirectPaymentOptions).protocolSpecific;
+
+                            accountRequired = protocolSpecific.forceSender;
+                            if (protocolSpecific.sender) {
+                                account = this._store.getters.findWalletByAddress(
+                                    protocolSpecific.sender.toUserFriendlyAddress(),
+                                    true,
+                                );
+                            }
                         }
                     }
                     if (accountRequired && !account) {
