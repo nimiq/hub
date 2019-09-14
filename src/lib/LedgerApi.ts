@@ -60,6 +60,7 @@
 // tslint:disable-next-line:max-line-length
 // TODO: move to own repository:
 // - change implementation to be flow typed and integrate with ledger provided flow libraries directly.
+// - use an appropriate ledger transport library (u2f, WebAuthn, WebUSB, WebBluetooth) depending on platform
 // - Also, the verification and address computation in ledgerjs should be done by Nimiq's crypto methods instead of
 //   unnecessarily bundling tweetnacl and blakejs.
 import Observable = Nimiq.Observable;
