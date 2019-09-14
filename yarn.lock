@@ -742,7 +742,7 @@
 
 "@nimiq/ledgerjs@https://github.com/nimiq/ledger-api.git":
   version "0.0.0"
-  resolved "https://github.com/nimiq/ledger-api.git#a7d86a47b46d21ec2afea94086b2942ea1adb575"
+  resolved "https://github.com/nimiq/ledger-api.git#4973419acb261ec8e8100e26a6927d78a0a52cb8"
 
 "@nimiq/network-client@^0.2.3":
   version "0.2.3"
