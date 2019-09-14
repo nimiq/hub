@@ -496,9 +496,7 @@ class LedgerApi {
                 LedgerApi._throwError(LedgerApi.ErrorType.WRONG_LEDGER, e);
             }
             LedgerApi._currentlyConnectedWalletId = null;
-            if (message.indexOf('dependencies') !== -1) {
-                LedgerApi._throwError(LedgerApi.ErrorType.FAILED_LOADING_DEPENDENCIES, e);
-            } else if (message.indexOf('browser support') !== -1 || message.indexOf('u2f device_ineligible') !== -1
+            if (message.indexOf('browser support') !== -1 || message.indexOf('u2f device_ineligible') !== -1
                 || message.indexOf('u2f other_error') !== -1) {
                 LedgerApi._throwError(LedgerApi.ErrorType.NO_BROWSER_SUPPORT,
                     'Ledger not supported by browser or support not enabled.');
@@ -506,6 +504,8 @@ class LedgerApi {
                 LedgerApi._throwError(LedgerApi.ErrorType.APP_OUTDATED, e);
             } else if (message.indexOf('busy') !== -1) {
                 LedgerApi._throwError(LedgerApi.ErrorType.LEDGER_BUSY, e);
+            } else if (message.indexOf('dependencies') !== -1) {
+                LedgerApi._throwError(LedgerApi.ErrorType.FAILED_LOADING_DEPENDENCIES, e);
             }
             // on other errors (like timeout, dongle locked) that just keep the API retrying and not fire an error state
             // we just rethrow the error.
