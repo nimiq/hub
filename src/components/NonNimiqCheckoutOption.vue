@@ -12,6 +12,7 @@
                 :status="status"
                 v-if="loading"/>
             <PaymentInfoLine v-if="rpcState"
+                ref="info"
                 :cryptoAmount="{
                     amount: paymentOptions.amount,
                     currency: paymentOptions.currency,
@@ -82,6 +83,16 @@ export default class NonNimiqCheckoutOption<
 > extends CheckoutOption<Parsed> {
     protected selected: boolean = false;
 
+    private checkNetworkInterval: number | null = null;
+
+    public mounted() {
+        this.fetchTime().then((time) => {
+            if (time && this.$refs.info) {
+                (this.$refs.info as PaymentInfoLine).setTime(time);
+            }
+        });
+    }
+
     public data() {
         return {
             Currency,
@@ -91,9 +102,9 @@ export default class NonNimiqCheckoutOption<
     protected async selectCurrency() {
         if (this.request.callbackUrl) {
             if (!this.paymentOptions.protocolSpecific.recipient) {
-                await this.fetchData();
+                await this.fetchPaymentOption();
             } else {
-                this.fetchData();
+                this.fetchPaymentOption();
                 this.loading = false;
             }
         }
@@ -117,10 +128,26 @@ export default class NonNimiqCheckoutOption<
             background: null, // color or null for transparent
             size: 200, // in pixels
         }, element);
+
+        this.checkNetworkInterval = window.setInterval(async () => {
+            const data = new FormData();
+            data.append('currency', this.paymentOptions.currency);
+            data.append('command', 'check_network');
+            const fetchedData = await this.fetchData(data);
+
+            if (fetchedData.transaction_found === true) {
+                window.clearInterval(this.checkNetworkInterval!);
+                this.showSuccessScreen();
+            }
+        }, 4000);
     }
 
     protected checkBlur() {
         // see if window gets blurred as an indicator for an opened wallet app.
+    }
+
+    protected showSuccessScreen() {
+        alert('success');
     }
 }
 </script>
