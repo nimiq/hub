@@ -10,19 +10,25 @@ import {
     ParsedCheckoutRequest,
 } from '../lib/RequestTypes';
 import staticStore, { Static } from '../lib/StaticStore';
+import StatusScreen from './StatusScreen.vue';
+import { ERROR_REQUEST_TIMED_OUT } from '../lib/Constants';
 
 export default class CheckoutOption<
     Parsed extends AvailableParsedPaymentOptions,
 > extends Vue {
     private static timePromise: Promise<number | null> | null = null;
+    protected optionTimeout: number | null = null;
 
     @Prop(Object) protected paymentOptions!: Parsed;
     @Static protected rpcState!: RpcState;
     @Static protected request!: ParsedCheckoutRequest;
 
-    protected loading: boolean = false;
+    protected showStatusScreen: boolean = false;
+    protected state = StatusScreen.State.LOADING;
+    protected timeoutReached: boolean = false;
     protected title = '';
     protected status = '';
+    protected message = '';
 
     protected fetchTime(): Promise<number | null> {
         if (!CheckoutOption.timePromise) {
@@ -55,7 +61,7 @@ export default class CheckoutOption<
         } else {
             this.title = 'Collecting payment details';
             this.status = '';
-            this.loading = true;
+            this.showStatusScreen = true;
 
             const data = new FormData();
             data.append('currency', this.paymentOptions.currency);
@@ -78,7 +84,7 @@ export default class CheckoutOption<
         // https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-3.html#caveats
         this.paymentOptions.update(fetchedData);
 
-        this.loading = false;
+        this.showStatusScreen = false;
         this.$forceUpdate();
     }
 
@@ -111,6 +117,26 @@ export default class CheckoutOption<
         }
 
         return fetchedData;
+    }
+
+    protected setupTimeout(referenceTime: number) {
+        if (!this.paymentOptions.expires) return;
+        this.optionTimeout = window.setTimeout(
+            () => this.timeoutReached = true,
+            this.paymentOptions.expires - referenceTime,
+        );
+    }
+
+    protected timedOut() {
+        this.title = 'The offer expired.';
+        this.message = 'Please go back to the shop and restart the process.';
+        this.showStatusScreen = true;
+        this.$nextTick(() => this.state = StatusScreen.State.WARNING);
+        this.$emit('expired', this.paymentOptions.currency);
+    }
+
+    protected backToShop() {
+        this.$rpc.reject(new Error(ERROR_REQUEST_TIMED_OUT));
     }
 }
 </script>
