@@ -98,6 +98,10 @@ export interface MultiCurrencyCheckoutRequest extends BasicRequest {
      * the called url must return a PaymentOptions<currency, type> object
      */
     callbackUrl?: string;
+    /**
+     * the csrf token, that will be transmitted for future requests to the callback url
+     */
+    csrf?: string;
     extraData?: Uint8Array | string;
     /**
      * current time in milliseconds
