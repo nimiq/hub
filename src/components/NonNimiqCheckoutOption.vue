@@ -9,8 +9,12 @@
         <SmallPage>
             <StatusScreen
                 :title="title"
+                :state="state"
                 :status="status"
-                v-if="loading"/>
+                v-if="showStatusScreen"
+                :message="message"
+                @main-action="() => this.backToShop()"
+                mainAction="Go back to shop"/>
             <PaymentInfoLine v-if="rpcState"
                 ref="info"
                 :cryptoAmount="{
@@ -66,6 +70,7 @@ import { AvailablePaymentOptions, Currency } from '../lib/PublicRequestTypes';
 import { AvailableParsedPaymentOptions } from '../lib/RequestTypes';
 import CheckoutOption from './CheckoutOption.vue';
 import CurrencyInfo from './CurrencyInfo.vue';
+import StatusScreen from './StatusScreen.vue';
 
 @Component({components: {
     Copyable,
@@ -75,6 +80,7 @@ import CurrencyInfo from './CurrencyInfo.vue';
     PaymentInfoLine,
     QrCodeIcon,
     SmallPage,
+    StatusScreen,
     Amount,
 }})
 export default class NonNimiqCheckoutOption<
@@ -85,11 +91,16 @@ export default class NonNimiqCheckoutOption<
     private checkNetworkInterval: number | null = null;
 
     public mounted() {
-        this.fetchTime().then((time) => {
-            if (time && this.$refs.info) {
-                (this.$refs.info as PaymentInfoLine).setTime(time);
-            }
-        });
+        if (this.paymentOptions.expires) {
+            this.fetchTime().then((referenceTime) => {
+                if (referenceTime) {
+                    if (this.$refs.info) {
+                        (this.$refs.info as PaymentInfoLine).setTime(referenceTime);
+                    }
+                    this.setupTimeout(referenceTime);
+                }
+            });
+        }
     }
 
     public data() {
@@ -104,12 +115,8 @@ export default class NonNimiqCheckoutOption<
 
     protected async selectCurrency() {
         if (this.request.callbackUrl) {
-            if (!this.paymentOptions.protocolSpecific.recipient) {
-                await this.fetchPaymentOption();
-            } else {
-                this.fetchPaymentOption();
-                this.loading = false;
-            }
+            this.showStatusScreen = true;
+            await this.fetchPaymentOption();
         }
 
         let element: HTMLElement | null = document.getElementById(this.paymentOptions.currency!);
@@ -140,9 +147,16 @@ export default class NonNimiqCheckoutOption<
 
             if (fetchedData.transaction_found === true) {
                 window.clearInterval(this.checkNetworkInterval!);
-                this.showSuccessScreen();
+                if (this.optionTimeout) {
+                    window.clearTimeout(this.optionTimeout);
+                }
+                return this.showSuccessScreen();
             }
-        }, 4000);
+            if (this.timeoutReached) {
+                window.clearInterval(this.checkNetworkInterval!);
+                this.timedOut();
+            }
+        }, 10000);
     }
 
     protected checkBlur() {
@@ -150,7 +164,10 @@ export default class NonNimiqCheckoutOption<
     }
 
     protected showSuccessScreen() {
-        alert('success');
+        this.title = 'Payment successful';
+        this.showStatusScreen = true;
+        this.$nextTick(() => this.state = StatusScreen.State.SUCCESS);
+        window.setTimeout(() => this.$rpc.resolve({success: true}),  StatusScreen.SUCCESS_REDIRECT_DELAY);
     }
 }
 </script>

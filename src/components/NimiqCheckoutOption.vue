@@ -9,7 +9,11 @@
         <StatusScreen
             :title="title"
             :status="status"
-            v-if="loading"/>
+            :state="state"
+            :message="message"
+            v-if="showStatusScreen"
+            @main-action="() => this.backToShop()"
+            mainAction="Go back to shop"/>
         <template v-if="rpcState">
             <PaymentInfoLine
                 ref="info"
@@ -111,11 +115,16 @@ export default class NimiqCheckoutOption
     }
 
     private async mounted() {
-        this.fetchTime().then((time) => {
-            if (time && this.$refs.info) {
-                (this.$refs.info as PaymentInfoLine).setTime(time);
-            }
-        });
+        if (this.paymentOptions.expires) {
+            this.fetchTime().then((referenceTime) => {
+                if (referenceTime) {
+                    if (this.$refs.info) {
+                        (this.$refs.info as PaymentInfoLine).setTime(referenceTime);
+                    }
+                    this.setupTimeout(referenceTime);
+                }
+            });
+        }
         // Requires Network child component to be rendered
         this.addConsensusListeners();
         this.updateBalancePromise = this.getBalances().then((balances) => {
@@ -221,7 +230,7 @@ export default class NimiqCheckoutOption
         this.$emit('chosen', this.paymentOptions.currency);
 
         if (this.balancesUpdating) {
-            this.loading = true;
+            this.showStatusScreen = true;
             await this.updateBalancePromise;
         }
         const nimiqAddress = Nimiq.Address.fromUserFriendlyAddress(address);
@@ -235,7 +244,7 @@ export default class NimiqCheckoutOption
                 this.$rpc.reject(new Error('Insufficient balance'));
                 return;
             } else {
-                this.loading = false;
+                this.showStatusScreen = false;
                 return;
             }
         }
@@ -252,7 +261,7 @@ export default class NimiqCheckoutOption
                 if (!this.paymentOptions.protocolSpecific.recipient) {
                     await this.fetchPaymentOption();
                 }
-                this.loading = false;
+                this.showStatusScreen = false;
                 this.$rpc.routerPush(`${RequestType.SIGN_TRANSACTION}-ledger`);
                 return;
             case WalletType.LEGACY:

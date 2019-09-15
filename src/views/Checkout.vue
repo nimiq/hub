@@ -12,19 +12,22 @@
                     :paymentOptions="paymentOptions"
                     :key="paymentOptions.currency"
                     :class="{confirmed: choosenCurrency === paymentOptions.currency}"
-                    @chosen="chooseCurrency"/>
+                    @chosen="chooseCurrency"
+                    @expired="expired"/>
                 <EthereumCheckoutOption
                     v-else-if="paymentOptions.currency === Currency.ETH"
                     :paymentOptions="paymentOptions"
                     :key="paymentOptions.currency"
                     :class="{confirmed: choosenCurrency === paymentOptions.currency}"
-                    @chosen="chooseCurrency"/>
+                    @chosen="chooseCurrency"
+                    @expired="expired"/>
                 <BitcoinCheckoutOption
                     v-else-if="paymentOptions.currency === Currency.BTC"
                     :paymentOptions="paymentOptions"
                     :key="paymentOptions.currency"
                     :class="{confirmed: choosenCurrency === paymentOptions.currency}"
-                    @chosen="chooseCurrency"/>
+                    @chosen="chooseCurrency"
+                    @expired="expired"/>
             </template>
         </Carousel>
 
@@ -60,10 +63,12 @@ export default class Checkout extends Vue {
     @Static private request!: ParsedCheckoutRequest;
     private choosenCurrency: Currency | null = null;
     private selectedCurrency: Currency = Currency.NIM;
+    private availableCurrencies: Set<Currency> = new Set<Currency>();
 
     private async created() {
         const $subtitle = document.querySelector('.logo .logo-subtitle')!;
         $subtitle.textContent = 'Checkout';
+        this.request.paymentOptions.forEach((option) => this.availableCurrencies.add(option.currency));
     }
 
     private close() {
@@ -75,8 +80,18 @@ export default class Checkout extends Vue {
     }
 
     private chooseCurrency(currency: Currency) {
-        console.log('choosen', currency);
         this.choosenCurrency = currency;
+    }
+
+    private expired(currency: Currency) {
+        this.availableCurrencies.delete(currency);
+        if (this.availableCurrencies.size === 0 || this.choosenCurrency === currency) {
+            this.choosenCurrency = currency;
+            return;
+        }
+        if (this.selectedCurrency === currency) {
+            this.selectedCurrency = this.availableCurrencies.values().next().value;
+        }
     }
 
     private data() {
