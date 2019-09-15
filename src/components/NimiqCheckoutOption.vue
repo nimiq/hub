@@ -12,6 +12,7 @@
             v-if="loading"/>
         <template v-if="rpcState">
             <PaymentInfoLine
+                ref="info"
                 :cryptoAmount="{
                     amount: paymentOptions.amount,
                     currency: paymentOptions.currency,
@@ -104,13 +105,17 @@ export default class NimiqCheckoutOption
     private height: number = 0;
 
     private created() {
-        console.log(this.paymentOptions);
         if (this.paymentOptions.currency !== Currency.NIM) {
             throw new Error('NimiqCheckoutOption did not get a NimiqPaymentOption.');
         }
     }
 
     private async mounted() {
+        this.fetchTime().then((time) => {
+            if (time && this.$refs.info) {
+                (this.$refs.info as PaymentInfoLine).setTime(time);
+            }
+        });
         // Requires Network child component to be rendered
         this.addConsensusListeners();
         this.updateBalancePromise = this.getBalances().then((balances) => {
@@ -211,7 +216,7 @@ export default class NimiqCheckoutOption
 
     private async setAccountOrContract(walletId: string, address: string, isFromRequest = false) {
         if (this.request.callbackUrl) {
-            await this.fetchData();
+            await this.fetchPaymentOption();
         }
         this.$emit('chosen', this.paymentOptions.currency);
 
@@ -245,7 +250,7 @@ export default class NimiqCheckoutOption
         switch (senderAccount.type) {
             case WalletType.LEDGER:
                 if (!this.paymentOptions.protocolSpecific.recipient) {
-                    await this.fetchData();
+                    await this.fetchPaymentOption();
                 }
                 this.loading = false;
                 this.$rpc.routerPush(`${RequestType.SIGN_TRANSACTION}-ledger`);
@@ -262,7 +267,7 @@ export default class NimiqCheckoutOption
                         : TX_VALIDITY_WINDOW);
 
                 if (!this.paymentOptions.protocolSpecific.recipient) {
-                    await this.fetchData();
+                    await this.fetchPaymentOption();
                 }
 
                 const request: KeyguardClient.SignTransactionRequest = {
