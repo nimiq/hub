@@ -83,6 +83,7 @@ export type AvailableParsedPaymentOptions = ParsedNimiqDirectPaymentOptions
 export interface ParsedCheckoutRequest extends ParsedBasicRequest {
     shopLogoUrl?: string;
     callbackUrl?: string;
+    csrf?: string;
     data: Uint8Array;
     time: number;
     fiatCurrency?: CurrencyCode.CurrencyCodeRecord;

@@ -142,6 +142,9 @@ export class RequestParser {
                                     ' is not on caller origin ' +
                                     state.origin);
                             }
+                            if (!checkoutRequest.csrf) {
+                                throw new Error('A CSRF token must be provided alongside the callbackUrl.');
+                            }
                         }
 
                         const currencies: Set<Currency> = new Set<Currency>();
@@ -151,6 +154,7 @@ export class RequestParser {
                             appName: checkoutRequest.appName,
                             shopLogoUrl: checkoutRequest.shopLogoUrl,
                             callbackUrl: checkoutRequest.callbackUrl,
+                            csrf: checkoutRequest.csrf,
                             data: typeof checkoutRequest.extraData === 'string'
                                 ? Utf8Tools.stringToUtf8ByteArray(checkoutRequest.extraData)
                                 : checkoutRequest.extraData || new Uint8Array(0),
