@@ -285,7 +285,14 @@ class LedgerApi {
         const request = new LedgerApiRequest(LedgerApi.RequestType.CONFIRM_ADDRESS,
             async (api, params): Promise<string> => {
                 const result = await api.getAddress(params.keyPath, /*validate*/ true, /*display*/ true);
-                return result.address;
+                const confirmedAddress = result.address;
+
+                if (params.addressToConfirm!.replace(/ /g, '').toUpperCase()
+                    !== confirmedAddress.replace(/ /g, '').toUpperCase()) {
+                    LedgerApi._throwError(LedgerApi.ErrorType.REQUEST_ASSERTION_FAILED, 'Address mismatch', request);
+                }
+
+                return confirmedAddress;
             },
             {
                 walletId,
@@ -296,12 +303,7 @@ class LedgerApi {
         if (!LedgerApi.BIP32_PATH_REGEX.test(keyPath)) {
             this._throwError(LedgerApi.ErrorType.REQUEST_ASSERTION_FAILED, `Invalid keyPath ${keyPath}`, request);
         }
-        const confirmedAddress: string = await LedgerApi._callLedger(request);
-        if (userFriendlyAddress.replace(/ /g, '')
-            !== confirmedAddress.replace(/ /g, '')) {
-            LedgerApi._throwError(LedgerApi.ErrorType.REQUEST_ASSERTION_FAILED, 'Address mismatch', request);
-        }
-        return confirmedAddress;
+        return LedgerApi._callLedger(request);
     }
 
     public static async getConfirmedAddress(keyPath: string, walletId?: string): Promise<string> {
@@ -311,78 +313,91 @@ class LedgerApi {
 
     public static async signTransaction(transaction: TransactionInfo, keyPath: string, walletId?: string)
         : Promise<Nimiq.Transaction> {
-        let nimiqTx: Nimiq.Transaction;
-        const requestParams: LedgerApi.RequestParams = {
-            walletId,
-            keyPath,
-        };
         const request = new LedgerApiRequest(LedgerApi.RequestType.SIGN_TRANSACTION,
-            async (api, params): Promise<Uint8Array> => {
-                const result = await api.signTransaction(params.keyPath, params.transactionToSign!.serializeContent());
-                return result.signature;
+            async (api, params): Promise<Nimiq.Transaction> => {
+                // Note: We make api calls outside of try...catch blocks to let the exceptions fall through such that
+                // _callLedger can decide how to behave depending on the api error. All other errors are converted to
+                // REQUEST_ASSERTION_FAILED errors which stop the execution of the request.
+                const signerPubKeyBytes =
+                    (await api.getPublicKey(params.keyPath, /*validate*/ true, /*display*/ false)).publicKey;
+
+                let nimiqTx: Nimiq.Transaction;
+                let signerPubKey: Nimiq.PublicKey;
+                try {
+                    const tx = params.transaction!;
+                    signerPubKey = new Nimiq.PublicKey(signerPubKeyBytes);
+
+                    const senderType = tx.senderType !== undefined && tx.senderType !== null
+                        ? tx.senderType
+                        : Nimiq.Account.Type.BASIC;
+
+                    const recipientType = tx.recipientType !== undefined && tx.recipientType !== null
+                        ? tx.recipientType
+                        : Nimiq.Account.Type.BASIC;
+
+                    let network = tx.network;
+                    if (!network) {
+                        try {
+                            network = Nimiq.GenesisConfig.NETWORK_NAME as 'main' | 'test' | 'dev';
+                        } catch (e) {
+                            // Genesis config not initialized
+                            network = 'main';
+                        }
+                    }
+
+                    const genesisConfig = Nimiq.GenesisConfig.CONFIGS[network];
+                    const networkId = genesisConfig.NETWORK_ID;
+
+                    const flags = tx.flags !== undefined && tx.flags !== null
+                        ? tx.flags
+                        : Nimiq.Transaction.Flag.NONE;
+                    const fee = tx.fee || 0;
+
+                    if (tx.extraData && tx.extraData.length !== 0
+                        || senderType !== Nimiq.Account.Type.BASIC
+                        || recipientType !== Nimiq.Account.Type.BASIC
+                        || flags !== Nimiq.Transaction.Flag.NONE
+                    ) {
+                        const extraData = tx.extraData ? tx.extraData : new Uint8Array(0);
+                        nimiqTx = new Nimiq.ExtendedTransaction(tx.sender, senderType, tx.recipient,
+                            recipientType, tx.value, fee, tx.validityStartHeight, flags, extraData,
+                            /*proof*/ undefined, networkId);
+                    } else {
+                        nimiqTx = new Nimiq.BasicTransaction(signerPubKey, tx.recipient, tx.value,
+                            fee, tx.validityStartHeight, /*signature*/ undefined, networkId);
+                    }
+                } catch (e) {
+                    this._throwError(LedgerApi.ErrorType.REQUEST_ASSERTION_FAILED, e, request);
+                }
+
+                const signatureBytes =
+                    (await api.signTransaction(params.keyPath, nimiqTx!.serializeContent())).signature;
+
+                try {
+                    const signature = new Nimiq.Signature(signatureBytes);
+
+                    if (nimiqTx! instanceof Nimiq.BasicTransaction) {
+                        nimiqTx.signature = signature;
+                    } else {
+                        nimiqTx!.proof = Nimiq.SignatureProof.singleSig(signerPubKey!, signature).serialize();
+                    }
+                } catch (e) {
+                    this._throwError(LedgerApi.ErrorType.REQUEST_ASSERTION_FAILED, e, request);
+                }
+
+                return nimiqTx!;
             },
-            requestParams,
+            {
+                walletId,
+                keyPath,
+                transaction,
+            },
         );
 
         if (!LedgerApi.BIP32_PATH_REGEX.test(keyPath)) {
             this._throwError(LedgerApi.ErrorType.REQUEST_ASSERTION_FAILED, `Invalid keyPath ${keyPath}`, request);
         }
-
-        // prepare tx outside of request to avoid that an error would result in an endless loop in _callLedger
-        const signerPubKeyBytes = await LedgerApi.getPublicKey(keyPath, walletId);
-        const signerPubKey = new Nimiq.PublicKey(signerPubKeyBytes);
-
-        const senderType = transaction.senderType !== undefined && transaction.senderType !== null
-            ? transaction.senderType
-            : Nimiq.Account.Type.BASIC;
-
-        const recipientType = transaction.recipientType !== undefined && transaction.recipientType !== null
-            ? transaction.recipientType
-            : Nimiq.Account.Type.BASIC;
-
-        let network = transaction.network;
-        if (!network) {
-            try {
-                network = Nimiq.GenesisConfig.NETWORK_NAME as 'main' | 'test' | 'dev';
-            } catch (e) {
-                // Genesis config not initialized
-                network = 'main';
-            }
-        }
-
-        const genesisConfig = Nimiq.GenesisConfig.CONFIGS[network];
-        const networkId = genesisConfig.NETWORK_ID;
-
-        const flags = transaction.flags !== undefined && transaction.flags !== null
-            ? transaction.flags
-            : Nimiq.Transaction.Flag.NONE;
-        const fee = transaction.fee || 0;
-
-        if (transaction.extraData && transaction.extraData.length !== 0
-            || senderType !== Nimiq.Account.Type.BASIC
-            || recipientType !== Nimiq.Account.Type.BASIC
-            || flags !== Nimiq.Transaction.Flag.NONE
-        ) {
-            const extraData = transaction.extraData ? transaction.extraData : new Uint8Array(0);
-            nimiqTx = new Nimiq.ExtendedTransaction(transaction.sender, senderType, transaction.recipient,
-                recipientType, transaction.value, fee, transaction.validityStartHeight, flags, extraData, undefined,
-                networkId);
-        } else {
-            nimiqTx = new Nimiq.BasicTransaction(signerPubKey, transaction.recipient, transaction.value, fee,
-                transaction.validityStartHeight, undefined, networkId);
-        }
-        requestParams.transactionToSign = nimiqTx;
-
-        const signatureBytes = await LedgerApi._callLedger(request);
-        const signature = new Nimiq.Signature(signatureBytes);
-
-        if (nimiqTx instanceof Nimiq.BasicTransaction) {
-            nimiqTx.signature = signature;
-        } else {
-            nimiqTx.proof = Nimiq.SignatureProof.singleSig(signerPubKey, signature).serialize();
-        }
-
-        return nimiqTx;
+        return LedgerApi._callLedger(request);
     }
 
     // private fields and methods
@@ -433,10 +448,12 @@ class LedgerApi {
                         // user cancelled call on ledger
                         if (message.indexOf('denied') !== -1 // user rejected confirmAddress
                             || message.indexOf('rejected') !== -1) { // user rejected signTransaction
-                            break;
+                            break; // continue after loop
                         }
-                        // Error we can't recover from
-                        if (message.indexOf('not supported') !== -1) { // no browser support
+                        // Errors that should end the request
+                        if ((LedgerApi.currentState.error
+                            && LedgerApi.currentState.error.type === LedgerApi.ErrorType.REQUEST_ASSERTION_FAILED)
+                            || message.indexOf('not supported') !== -1) { // no browser support
                             reject(e);
                             return;
                         }
@@ -462,9 +479,9 @@ class LedgerApi {
         } finally {
             LedgerApi._currentRequest = null;
             LedgerApi._currentlyConnectedWalletId = null; // reset as we don't note when Ledger gets disconnected
-            // For errors we can recover from reset the state to IDLE.
             const errorType = LedgerApi.currentState.error ? LedgerApi.currentState.error.type : null;
-            if (errorType !== LedgerApi.ErrorType.NO_BROWSER_SUPPORT) {
+            if (errorType !== LedgerApi.ErrorType.NO_BROWSER_SUPPORT
+                && errorType !== LedgerApi.ErrorType.REQUEST_ASSERTION_FAILED) {
                 LedgerApi._setState(LedgerApi.StateType.IDLE);
             }
         }
@@ -639,7 +656,7 @@ namespace LedgerApi { // tslint:disable-line:no-namespace
         keyPath?: string; // for everything besides DERIVE_ACCOUNTS
         pathsToDerive?: Iterable<string>; // for DERIVE_ACCOUNTS
         addressToConfirm?: string; // for CONFIRM_TRANSACTION
-        transactionToSign?: Nimiq.Transaction; // for SIGN_TRANSACTION
+        transaction?: TransactionInfo; // for SIGN_TRANSACTION
     }
 }
 
