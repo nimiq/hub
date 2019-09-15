@@ -1,4 +1,4 @@
-import { TX_VALIDITY_WINDOW, TX_MIN_VALIDITY_DURATION } from './Constants';
+import { TX_VALIDITY_WINDOW, TX_MIN_VALIDITY_DURATION, isMilliseconds } from './Constants';
 import { State } from '@nimiq/rpc';
 import {
     BasicRequest,
@@ -147,6 +147,10 @@ export class RequestParser {
                             }
                         }
 
+                        if (checkoutRequest.time && typeof checkoutRequest.time !== 'number') {
+                            throw new Error('time must be a number');
+                        }
+
                         const currencies: Set<Currency> = new Set<Currency>();
 
                         return {
@@ -158,7 +162,11 @@ export class RequestParser {
                             data: typeof checkoutRequest.extraData === 'string'
                                 ? Utf8Tools.stringToUtf8ByteArray(checkoutRequest.extraData)
                                 : checkoutRequest.extraData || new Uint8Array(0),
-                            time: checkoutRequest.time || + new Date(),
+                            time: !checkoutRequest.time
+                                ? + new Date()
+                                : isMilliseconds(checkoutRequest.time)
+                                    ? checkoutRequest.time
+                                    : checkoutRequest.time * 1000,
                             fiatCurrency: CurrencyCode.code(checkoutRequest.fiatCurrency),
                             fiatAmount: checkoutRequest.fiatAmount,
                             paymentOptions: checkoutRequest.paymentOptions.map((option) => {

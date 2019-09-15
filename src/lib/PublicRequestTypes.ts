@@ -29,7 +29,7 @@ export interface SimpleRequest extends BasicRequest {
 }
 
 export interface SimpleResult {
-    success: true;
+    success: boolean;
 }
 
 export interface OnboardRequest extends BasicRequest {

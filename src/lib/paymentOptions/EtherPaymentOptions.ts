@@ -1,5 +1,6 @@
 import { CurrencyCodeRecord } from 'currency-codes';
 import bigInt from 'big-integer';
+import { isMilliseconds } from '../Constants';
 import { Currency, PaymentMethod, PaymentOptions } from '../PublicRequestTypes';
 import { ParsedPaymentOptions } from '../RequestTypes';
 import { createEthereumRequestLink } from '@nimiq/utils';
@@ -56,7 +57,11 @@ export class ParsedEtherDirectPaymentOptions extends ParsedPaymentOptions<Curren
 
     public update(options: EtherDirectPaymentOptions) {
         const newOptions = new ParsedEtherDirectPaymentOptions(options);
-        this.expires = newOptions.expires || this.expires;
+        this.expires = !options.expires ?
+            this.expires
+            : isMilliseconds(options.expires)
+                ? options.expires
+                : options.expires * 1000;
         this.amount = newOptions.amount || this.amount;
         this.protocolSpecific = {
             gasLimit: newOptions.protocolSpecific.gasLimit || this.protocolSpecific.gasLimit,
