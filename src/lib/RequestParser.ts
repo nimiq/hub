@@ -294,6 +294,7 @@ export class RequestParser {
                     shopLogoUrl: checkoutRequest.shopLogoUrl,
                     extraData: checkoutRequest.data,
                     callbackUrl: checkoutRequest.callbackUrl,
+                    csrf: checkoutRequest.csrf,
                     time: checkoutRequest.time,
                     fiatAmount: checkoutRequest.fiatAmount ? checkoutRequest.fiatAmount : undefined,
                     fiatCurrency: checkoutRequest.fiatCurrency ? checkoutRequest.fiatCurrency.code : undefined,
