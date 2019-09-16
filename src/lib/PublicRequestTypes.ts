@@ -48,7 +48,7 @@ export interface SignTransactionRequest extends BasicRequest {
 }
 
 export interface NimiqCheckoutRequest extends BasicRequest {
-    version?: 1 | undefined;
+    version?: 1;
     shopLogoUrl?: string;
     sender?: string;
     forceSender?: boolean;
