@@ -1,5 +1,5 @@
 import { CurrencyCodeRecord } from 'currency-codes';
-import { TX_VALIDITY_WINDOW, TX_MIN_VALIDITY_DURATION, isMilliseconds } from '../Constants';
+import { TX_VALIDITY_WINDOW, TX_MIN_VALIDITY_DURATION } from '../Constants';
 import { Currency, PaymentMethod, PaymentOptions } from '../PublicRequestTypes';
 import { Omit, ParsedPaymentOptions } from '../RequestTypes';
 import { createNimiqRequestLink } from '@nimiq/utils';
@@ -84,11 +84,7 @@ export class ParsedNimiqDirectPaymentOptions extends ParsedPaymentOptions<Curren
 
     public update(options: NimiqDirectPaymentOptions) {
         const newOptions = new ParsedNimiqDirectPaymentOptions(options);
-        this.expires = !options.expires ?
-            this.expires
-            : isMilliseconds(options.expires)
-                ? options.expires
-                : options.expires * 1000;
+        this.expires = newOptions.expires || this.expires;
         this.amount = newOptions.amount || this.amount;
         this.protocolSpecific = {
             sender: newOptions.protocolSpecific.sender || this.protocolSpecific.sender,
