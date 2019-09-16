@@ -1,4 +1,3 @@
-import { isMilliseconds } from '../Constants';
 import { Currency, PaymentMethod, PaymentOptions } from '../PublicRequestTypes';
 import { ParsedPaymentOptions } from '../RequestTypes';
 
@@ -40,11 +39,7 @@ export class ParsedBitcoinDirectPaymentOptions extends ParsedPaymentOptions<Curr
 
     public update(options: BitcoinDirectPaymentOptions) {
         const newOptions = new ParsedBitcoinDirectPaymentOptions(options);
-        this.expires = !options.expires ?
-            this.expires
-            : isMilliseconds(options.expires)
-                ? options.expires
-                : options.expires * 1000;
+        this.expires = newOptions.expires || this.expires;
         this.amount = newOptions.amount || this.amount;
         this.protocolSpecific = {
             fee: newOptions.fee || this.protocolSpecific.fee,
