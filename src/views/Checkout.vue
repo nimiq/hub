@@ -32,7 +32,7 @@
         </Carousel>
 
         <button class="global-close nq-button-s" @click="close">
-            <ArrowLeftSmallIcon class="nq-blue-bg"/>
+            <ArrowLeftSmallIcon/>
             Cancel Payment
         </button>
     </div>
