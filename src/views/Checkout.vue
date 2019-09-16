@@ -4,14 +4,16 @@
             <StatusScreen title="Updating your balances" :status="status"/>
         </SmallPage>
 
-        <SmallPage v-else :class="{ 'merchant-info-shown': showMerchantInfo }">
+        <SmallPage v-else>
             <PaymentInfoLine v-if="rpcState"
-                :amount="request.value"
-                :fee="request.fee"
+                :cryptoAmount="{
+                    amount: request.value,
+                    currency: 'NIM',
+                    digits: 5,
+                }"
                 :address="request.recipient.toUserFriendlyAddress()"
                 :origin="rpcState.origin"
                 :shopLogoUrl="request.shopLogoUrl"
-                @merchant-info-clicked="showMerchantInfo = true"
             />
 
             <h1 class="nq-h1">Choose an Address to pay</h1>
@@ -28,16 +30,6 @@
                 :minBalance="minBalance"
                 @account-selected="setAccountOrContract"
                 @login="() => goToOnboarding(false)"/>
-
-            <transition name="account-details-fade">
-                <AccountDetails
-                    v-if="showMerchantInfo"
-                    :address="request.recipient.toUserFriendlyAddress()"
-                    :label="shopOrigin"
-                    :image="request.shopLogoUrl"
-                    @close="showMerchantInfo = false"
-                />
-            </transition>
         </SmallPage>
 
         <button class="global-close nq-button-s" @click="close">
@@ -51,7 +43,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { PaymentInfoLine, AccountSelector, AccountDetails, SmallPage } from '@nimiq/vue-components';
+import { PaymentInfoLine, AccountSelector, SmallPage } from '@nimiq/vue-components';
 import { TransferIcon, ArrowLeftSmallIcon } from '@nimiq/vue-components';
 import { ParsedCheckoutRequest } from '../lib/RequestTypes';
 import { Account, Currency, RequestType } from '../lib/PublicRequestTypes';
@@ -75,7 +67,6 @@ import { ContractInfo, VestingContractInfo } from '../lib/ContractInfo';
 @Component({components: {
     PaymentInfoLine,
     AccountSelector,
-    AccountDetails,
     SmallPage,
     Network,
     StatusScreen,
@@ -98,7 +89,6 @@ export default class Checkout extends Vue {
         userFriendlyAddress: string,
     }) => any;
 
-    private showMerchantInfo: boolean = false;
     private height: number = 0;
     private hasBalances: boolean = false;
     private status: string = 'Connecting to network...';
@@ -301,10 +291,6 @@ export default class Checkout extends Vue {
             .some((info: AccountInfo | ContractInfo) => !!info.balance && info.balance >= this.minBalance));
     }
 
-    private get shopOrigin() {
-        return this.rpcState.origin.split('://')[1];
-    }
-
     private get minBalance() {
         return this.request.value + this.request.fee;
     }
@@ -346,24 +332,6 @@ export default class Checkout extends Vue {
         margin-bottom: 1rem;
         line-height: 1;
         text-align: center;
-    }
-
-    .account-details {
-        position: absolute;
-        left: 0;
-        top: 0;
-        opacity: 1;
-        z-index: 1;
-        transition: opacity .3s;
-    }
-
-    .account-details-fade-enter,
-    .account-details-fade-leave-to {
-        opacity: 0;
-    }
-
-    .merchant-info-shown > :not(.account-details) {
-        filter: blur(.75rem);
     }
 
     .non-sufficient-balance {

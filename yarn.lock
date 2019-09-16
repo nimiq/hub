@@ -764,15 +764,15 @@
   resolved "https://registry.yarnpkg.com/@nimiq/rpc/-/rpc-0.3.0.tgz#654c05acccc193b7d79fb09b2faf2114945ff872"
   integrity sha512-je7fv+wP4nLEgTcZwu3FaGre22qkZ9AYGbStglVaJAxOH+3CvDnnOIa9IjGFaCEhtRQKRaQEvFqa5vN4IVnH+Q==
 
-"@nimiq/style@^0.7.2":
-  version "0.7.2"
-  resolved "https://registry.yarnpkg.com/@nimiq/style/-/style-0.7.2.tgz#5f4be65de2c5c2b00ccf5bcbc5ea96b95ac0b6a2"
-  integrity sha512-Ak3mbHb12eZ+Ai2iLxe9VP9KMM5Dzthwv+CtwmPMJLbog9i8DU051mdVNN8DzhW+s362Jli/HYsoHidOijwskw==
-
 "@nimiq/style@^0.7.5":
   version "0.7.5"
   resolved "https://registry.yarnpkg.com/@nimiq/style/-/style-0.7.5.tgz#a31904b515ee5ae17a50d1d191e8a971c63ad716"
   integrity sha512-jfY/vkl8BlMQo9kUDsDh4LL/0nnzQaLVehoD3DGVuKJXD7EJaeoVi4EMrkJ9ofdjMTMWX9zzt4kWgKyvzy5lGQ==
+
+"@nimiq/style@^0.7.6":
+  version "0.7.6"
+  resolved "https://registry.yarnpkg.com/@nimiq/style/-/style-0.7.6.tgz#b8a128d8fb6208554883158b8c2fa7f11d9e8333"
+  integrity sha512-qFeIbv/xOCxHjYGfuB5U8Pb1xnRhrvetrdjtLK6zGU7tLWCuyQCOErvAKayVUpvpKyTWsXaG+I2YP2djcNo4kQ==
 
 "@nimiq/utils@^0.4.2":
   version "0.4.2"
@@ -781,9 +781,9 @@
 
 "@nimiq/vue-components@https://github.com/nimiq/vue-components.git#sebastian/build/checkout/hub":
   version "0.1.0"
-  resolved "https://github.com/nimiq/vue-components.git#e9beb7d95a58459edbc7344ce9d532ccaf5118ae"
+  resolved "https://github.com/nimiq/vue-components.git#9d1f742084a138b0270e4cd3f4c11a1eae52b3f6"
   dependencies:
-    "@nimiq/style" "^0.7.5"
+    "@nimiq/style" "^0.7.6"
     big-integer "^1.6.44"
     input-format "^0.2.4"
     qr-code "github:nimiq/qr-encoder"
@@ -7836,9 +7836,9 @@ rc@^1.2.7:
     strip-json-comments "~2.0.1"
 
 react-is@^16.8.1:
-  version "16.9.0"
-  resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.9.0.tgz#21ca9561399aad0ff1a7701c01683e8ca981edcb"
-  integrity sha512-tJBzzzIgnnRfEm046qRcURvwQnZVXmuCbscxUO5RWrGTXpon2d4c8mI0D8WE6ydVIm29JiLB6+RslkIvym9Rjw==
+  version "16.10.2"
+  resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.10.2.tgz#984120fd4d16800e9a738208ab1fba422d23b5ab"
+  integrity sha512-INBT1QEgtcCCgvccr5/86CfD71fw9EPmDxgiJX4I2Ddr6ZsV6iFXsuby+qWJPtmNuMY0zByTsG4468P7nHuNWA==
 
 read-pkg-up@^1.0.1:
   version "1.0.1"
