@@ -2,6 +2,7 @@ import { CurrencyCodeRecord } from 'currency-codes';
 import { TX_VALIDITY_WINDOW, TX_MIN_VALIDITY_DURATION } from '../Constants';
 import { Currency, PaymentMethod, PaymentOptions } from '../PublicRequestTypes';
 import { Omit, ParsedPaymentOptions } from '../RequestTypes';
+import { createNimiqRequestLink } from '@nimiq/utils';
 
 export interface NimiqDirectPaymentOptions extends PaymentOptions<Currency.NIM, PaymentMethod.DIRECT> {
     protocolSpecific: {
@@ -45,7 +46,11 @@ export class ParsedNimiqDirectPaymentOptions extends ParsedPaymentOptions<Curren
     };
 
     public get paymentLink() {
-        return ''; // TODO
+        if (!this.protocolSpecific.recipient) return '#';
+        return createNimiqRequestLink(this.protocolSpecific.recipient.toUserFriendlyAddress(false), {
+            amount: this.amount,
+            basePath: 'safe.nimiq.com',
+        });
     }
 
     public constructor(option: NimiqDirectPaymentOptions | ExtendedNimiqDirectPaymentOptions) {

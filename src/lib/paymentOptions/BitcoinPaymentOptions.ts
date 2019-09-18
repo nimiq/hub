@@ -1,6 +1,8 @@
 import { CurrencyCodeRecord } from 'currency-codes';
 import { Currency, PaymentMethod, PaymentOptions } from '../PublicRequestTypes';
 import { ParsedPaymentOptions } from '../RequestTypes';
+import { createBitcoinRequestLink } from '@nimiq/utils';
+import staticStore from '../StaticStore';
 
 export interface BitcoinDirectPaymentOptions extends PaymentOptions<Currency.BTC, PaymentMethod.DIRECT> {
     protocolSpecific: {
@@ -30,7 +32,12 @@ export class ParsedBitcoinDirectPaymentOptions extends ParsedPaymentOptions<Curr
     }
 
     public get paymentLink() {
-        return ''; // TODO
+        if (!this.protocolSpecific.recipient) return '#';
+        return createBitcoinRequestLink(this.protocolSpecific.recipient, {
+            amount: this.amount,
+            fee: this.protocolSpecific.fee,
+            label: staticStore.request ? `Nimiq Checkout - ${staticStore.request.appName}` : undefined,
+        });
     }
 
     public constructor(option: BitcoinDirectPaymentOptions) {

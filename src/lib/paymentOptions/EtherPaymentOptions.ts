@@ -2,6 +2,7 @@ import { CurrencyCodeRecord } from 'currency-codes';
 import bigInt from 'big-integer';
 import { Currency, PaymentMethod, PaymentOptions } from '../PublicRequestTypes';
 import { ParsedPaymentOptions } from '../RequestTypes';
+import { createEthereumRequestLink } from '@nimiq/utils';
 
 export interface EtherDirectPaymentOptions  extends PaymentOptions<Currency.ETH, PaymentMethod.DIRECT> {
     protocolSpecific: {
@@ -33,7 +34,12 @@ export class ParsedEtherDirectPaymentOptions extends ParsedPaymentOptions<Curren
     }
 
     public get paymentLink() {
-        return ''; // TODO
+        if (!this.protocolSpecific.recipient) return '#';
+        return createEthereumRequestLink(this.protocolSpecific.recipient, {
+            amount: this.amount,
+            gasLimit: this.protocolSpecific.gasLimit,
+            gasPrice: this.protocolSpecific.gasPrice,
+        });
     }
 
     public constructor(option: EtherDirectPaymentOptions) {

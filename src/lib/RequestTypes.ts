@@ -1,4 +1,6 @@
+type BigInteger = import('big-integer').BigInteger; // imports only the type without bundling
 import CurrencyCode from 'currency-codes';
+import { FormattableNumber } from '@nimiq/utils';
 import {
     RequestType,
     PaymentOptions,
@@ -57,6 +59,7 @@ export interface ParsedPaymentOptions<C extends Currency, T extends PaymentMetho
 
 export abstract class ParsedPaymentOptions<C extends Currency, T extends PaymentMethod>
     implements ParsedPaymentOptions<C, T> {
+    public abstract amount: number | BigInteger;
     public readonly abstract digits: number;
     public readonly abstract minDigits: number;
     public readonly abstract maxDigits: number;
@@ -64,6 +67,10 @@ export abstract class ParsedPaymentOptions<C extends Currency, T extends Payment
 
     public constructor(option: PaymentOptions<C, T>) {
         this.expires = option.expires;
+    }
+
+    public get baseUnitAmount(): string {
+        return new FormattableNumber(this.amount).moveDecimalSeparator(-this.digits).toString();
     }
 
     public abstract update(option: PaymentOptions<C, T>): void;

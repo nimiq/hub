@@ -778,10 +778,10 @@
   resolved "https://registry.yarnpkg.com/@nimiq/style/-/style-0.7.5.tgz#a31904b515ee5ae17a50d1d191e8a971c63ad716"
   integrity sha512-jfY/vkl8BlMQo9kUDsDh4LL/0nnzQaLVehoD3DGVuKJXD7EJaeoVi4EMrkJ9ofdjMTMWX9zzt4kWgKyvzy5lGQ==
 
-"@nimiq/utils@^0.3.2":
-  version "0.3.3"
-  resolved "https://registry.yarnpkg.com/@nimiq/utils/-/utils-0.3.3.tgz#883e50b466887748bd7bfc0b12eca16a084e9f70"
-  integrity sha512-vqdkgvnT3Bq4GxcELuUdTONO/zRW4LK3MBbGxevgm/Y5IAVuVKJX6BPUFxowKmk43SNuMGPNi5SipdvdC6/6aw==
+"@nimiq/utils@^0.4.2":
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/@nimiq/utils/-/utils-0.4.2.tgz#973ccd7e84e8398694265fe2cbddf289ffdf7428"
+  integrity sha512-QUxLxVwfad/5xYKo/PQCnWIwiyyDONOnRyyr7l8MlB9B/z0rbFPmZZdRU5gkuRHW7EBQt7Q3262x49yidNVG4A==
 
 "@nimiq/vue-components@https://github.com/nimiq/vue-components.git#sebastian/build/checkout/hub":
   version "0.1.0"
