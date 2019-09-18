@@ -43,10 +43,6 @@ export class ParsedNimiqDirectPaymentOptions extends ParsedPaymentOptions<Curren
         validityDuration?: number,
     };
 
-    public get paymentLink() {
-        return ''; // TODO
-    }
-
     public constructor(option: NimiqDirectPaymentOptions | ExtendedNimiqDirectPaymentOptions) {
         super(option);
         this.amount = parseInt(option.amount, 10);
