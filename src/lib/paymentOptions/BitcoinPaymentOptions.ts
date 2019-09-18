@@ -28,10 +28,6 @@ export class ParsedBitcoinDirectPaymentOptions extends ParsedPaymentOptions<Curr
         return this.protocolSpecific.fee || 0;
     }
 
-    public get paymentLink() {
-        return ''; // TODO
-    }
-
     public constructor(option: BitcoinDirectPaymentOptions) {
         super(option);
         this.amount = Number.parseInt(option.amount, 10);

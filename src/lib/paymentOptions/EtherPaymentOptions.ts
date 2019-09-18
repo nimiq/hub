@@ -32,10 +32,6 @@ export class ParsedEtherDirectPaymentOptions extends ParsedPaymentOptions<Curren
         return this.protocolSpecific.gasPrice!.times(this.protocolSpecific.gasLimit!) || bigInt(0);
     }
 
-    public get paymentLink() {
-        return ''; // TODO
-    }
-
     public constructor(option: EtherDirectPaymentOptions) {
         super(option);
         this.amount = bigInt(option.amount);
