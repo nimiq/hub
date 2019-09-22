@@ -130,13 +130,13 @@ export default class NimiqCheckoutOption
     protected async mounted() {
         if (this.paymentOptions.expires) {
             this.timeOffsetPromise = this.fetchTime().then((referenceTime) => {
-                if (referenceTime) {
-                    if (this.$refs.info) {
-                        (this.$refs.info as PaymentInfoLine).setTime(referenceTime);
-                    }
-                    this.setupTimeout(referenceTime);
-                    return referenceTime - Date.now();
+                if (this.$refs.info) {
+                    (this.$refs.info as PaymentInfoLine).setTime(referenceTime);
                 }
+                this.setupTimeout(referenceTime);
+                return referenceTime - Date.now();
+            }).catch((e: Error) => {
+                this.$rpc.reject(e);
                 return 0;
             });
         }
@@ -244,8 +244,18 @@ export default class NimiqCheckoutOption
 
     private async setAccountOrContract(walletId: string, address: string, isFromRequest = false) {
         if (this.request.callbackUrl) {
-            await this.fetchPaymentOption();
+            try {
+                await this.fetchPaymentOption();
+            } catch (e) {
+                this.$rpc.reject(e);
+                return;
+            }
         }
+        if (!this.paymentOptions.protocolSpecific.recipient) {
+            this.$rpc.reject(new Error('Failed to fetch recipient'));
+            return;
+        }
+
         this.$emit('chosen', this.paymentOptions.currency);
 
         if (this.balancesUpdating) {
@@ -277,10 +287,6 @@ export default class NimiqCheckoutOption
         // proceed to transaction signing
         switch (senderAccount.type) {
             case WalletType.LEDGER:
-                if (!this.paymentOptions.protocolSpecific.recipient) {
-                    await this.fetchPaymentOption();
-                }
-                this.showStatusScreen = false;
                 this.$rpc.routerPush(`${RequestType.SIGN_TRANSACTION}-ledger`);
                 return;
             case WalletType.LEGACY:
@@ -293,10 +299,6 @@ export default class NimiqCheckoutOption
                     + (this.paymentOptions.protocolSpecific.validityDuration
                         ? this.paymentOptions.protocolSpecific.validityDuration
                         : TX_VALIDITY_WINDOW);
-
-                if (!this.paymentOptions.protocolSpecific.recipient) {
-                    await this.fetchPaymentOption();
-                }
 
                 const timeOffset = await this.timeOffsetPromise;
 
