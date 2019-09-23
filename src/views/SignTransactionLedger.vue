@@ -25,10 +25,17 @@
             <hr class="blur-target">
 
             <Amount class="value nq-light-blue blur-target"
-                :amount="paymentDetails.amount" :minDecimals="2" :maxDecimals="5" />
+                :amount="checkoutPaymentOptions ? checkoutPaymentOptions.amount : request.value"
+                :minDecimals="2"
+                :maxDecimals="5"
+            />
 
-            <div v-if="paymentDetails.fee" class="fee nq-text-s blur-target">
-                + <Amount :amount="paymentDetails.fee" :minDecimals="2" :maxDecimals="5" /> fee
+            <div v-if="checkoutPaymentOptions ? checkoutPaymentOptions.protocolSpecific.fee : request.fee"
+                class="fee nq-text-s blur-target">
+                + <Amount
+                    :amount="checkoutPaymentOptions ? checkoutPaymentOptions.protocolSpecific.fee : request.fee"
+                    :minDecimals="2" :maxDecimals="5"
+                /> fee
             </div>
 
             <div v-if="transactionData" class="data nq-text blur-target">
@@ -71,12 +78,12 @@ import { Component, Vue, Watch } from 'vue-property-decorator';
 import {
     Account,
     AccountDetails,
-    PageBody,
-    PageHeader,
-    SmallPage,
     Amount,
     ArrowLeftSmallIcon,
     ArrowRightIcon,
+    PageBody,
+    PageHeader,
+    SmallPage,
 } from '@nimiq/vue-components';
 import Network from '../components/Network.vue';
 import LedgerApi from '../lib/LedgerApi';
@@ -88,10 +95,11 @@ import { State as RpcState } from '@nimiq/rpc';
 import { ParsedCheckoutRequest, ParsedSignTransactionRequest } from '../lib/RequestTypes';
 import { Currency, RequestType } from '../lib/PublicRequestTypes';
 import { WalletInfo } from '../lib/WalletInfo';
-import { ERROR_CANCELED, TX_VALIDITY_WINDOW, CASHLINK_FUNDING_DATA } from '../lib/Constants';
+import { CASHLINK_FUNDING_DATA, ERROR_CANCELED, TX_VALIDITY_WINDOW } from '../lib/Constants';
 import { ParsedNimiqDirectPaymentOptions } from '../lib/paymentOptions/NimiqPaymentOptions';
 import { Utf8Tools } from '@nimiq/utils';
 import Config from 'config';
+import CheckoutServerApi from '../lib/CheckoutServerApi';
 
 interface AccountDetailsData {
     address: string;
@@ -126,16 +134,26 @@ export default class SignTransactionLedger extends Vue {
     @Getter private findWalletByAddress!: (address: string, includeContracts: boolean) => WalletInfo | undefined;
 
     private state: string = SignTransactionLedger.State.OVERVIEW;
-    private senderDetails!: AccountDetailsData;
-    private recipientDetails!: AccountDetailsData;
+    private senderDetails: AccountDetailsData = { address: '', label: '' };
+    private recipientDetails: AccountDetailsData = { address: '', label: ''};
     private shownAccountDetails: AccountDetailsData | null = null;
 
-    private created() {
-        let senderUserFriendlyAddress: string;
+    private async mounted() {
+        const network = this.$refs.network as Network;
+
+        // collect payment information
+        let sender: Nimiq.Address;
+        let recipient: Nimiq.Address;
+        let value: number;
+        let fee: number;
+        let validityStartHeightPromise: Promise<number>;
+        let data: Uint8Array;
+        let flags: number;
         if (this.request.kind === RequestType.SIGN_TRANSACTION) {
             // direct sign transaction request invocation
             const signTransactionRequest = this.request as ParsedSignTransactionRequest;
-            senderUserFriendlyAddress = signTransactionRequest.sender.toUserFriendlyAddress();
+            ({ sender, recipient, value, fee, data, flags } = signTransactionRequest);
+            validityStartHeightPromise = Promise.resolve(signTransactionRequest.validityStartHeight);
 
             const recipientUserFriendlyAddress = signTransactionRequest.recipient.toUserFriendlyAddress();
             this.recipientDetails = {
@@ -149,27 +167,51 @@ export default class SignTransactionLedger extends Vue {
             $subtitle.textContent = 'Checkout'; // reapply the checkout subtitle in case the page was reloaded
             document.title = 'Nimiq Checkout';
 
-            senderUserFriendlyAddress = this.$store.state.activeUserFriendlyAddress;
-
-            if (!this.paymentDetails.recipient) {
-                this._back(); // go back to checkout to fetch payment details
+            // Update checkout payment options. This is typically instant even after reload as CheckoutServerApi caches
+            // the data previously fetched in checkout.
+            const checkoutPaymentOptions = this.checkoutPaymentOptions!;
+            if (checkoutRequest.callbackUrl && checkoutRequest.csrf) {
+                try {
+                    const fetchedPaymentOptions = await CheckoutServerApi.fetchPaymentOption(
+                        checkoutRequest.callbackUrl, Currency.NIM, checkoutPaymentOptions.type, checkoutRequest.csrf);
+                    checkoutPaymentOptions.update(fetchedPaymentOptions);
+                } catch (e) {
+                    this.$rpc.reject(e);
+                    return;
+                }
+            }
+            if (!checkoutPaymentOptions.protocolSpecific.recipient) {
+                this.$rpc.reject(new Error('Failed to fetch checkout recipient.'));
                 return;
             }
+
+            sender = Nimiq.Address.fromUserFriendlyAddress(this.$store.state.activeUserFriendlyAddress);
+            value = checkoutPaymentOptions.amount;
+            ({ recipient, fee, flags } = checkoutPaymentOptions.protocolSpecific);
+            data = checkoutRequest.data;
+
             this.recipientDetails = {
-                address: this.paymentDetails.recipient.toUserFriendlyAddress(),
+                address: recipient.toUserFriendlyAddress(),
                 label: this.rpcState.origin.split('://')[1],
                 image: checkoutRequest.shopLogoUrl,
             };
+
+            // Usually instant as synced in checkout. Only on reload we have to resync.
+            validityStartHeightPromise = network.getBlockchainHeight().then((blockchainHeight) =>
+                blockchainHeight + 1 // The next block is the earliest for which tx are accepted by standard miners
+                - TX_VALIDITY_WINDOW
+                + checkoutPaymentOptions.protocolSpecific.validityDuration,
+            );
         } else {
             this.$rpc.reject(new Error('Must be invoked via sign-transaction or checkout requests.'));
             return;
         }
 
         // we know that these exist as their existence was already checked in RpcApi.ts
-        const senderAddress = Nimiq.Address.fromUserFriendlyAddress(senderUserFriendlyAddress);
+        const senderUserFriendlyAddress = sender.toUserFriendlyAddress();
         const senderAccount = this.findWalletByAddress(senderUserFriendlyAddress, true)!;
-        const senderContract = senderAccount.findContractByAddress(senderAddress);
-        const signer = senderAccount.findSignerForAddress(senderAddress)!;
+        const senderContract = senderAccount.findContractByAddress(sender);
+        const signer = senderAccount.findSignerForAddress(sender)!;
 
         this.senderDetails = {
             address: senderUserFriendlyAddress,
@@ -177,41 +219,16 @@ export default class SignTransactionLedger extends Vue {
             walletLabel: senderAccount.label,
             balance: (senderContract || signer).balance,
         };
-    }
 
-    private async mounted() {
-        const network = this.$refs.network as Network;
-
-        let recipient: Nimiq.Address;
-        let value: number;
-        let fee: number;
-        let validityStartHeight: number;
-        let data: Uint8Array;
-        let flags: number;
-        if (this.request.kind === RequestType.SIGN_TRANSACTION) {
-            const signTransactionRequest = this.request as ParsedSignTransactionRequest;
-            ({ recipient, value, fee, validityStartHeight, data, flags } = signTransactionRequest);
-        } else if (this.request.kind === RequestType.CHECKOUT) {
-            if (!this.paymentDetails.recipient) {
-                // this case get's rejected in created
-                return;
-            }
-            ({ recipient, amount: value, fee, data, flags } = this.paymentDetails);
-            const blockchainHeight = await network.getBlockchainHeight(); // usually instant as synced in checkout
-            // The next block is the earliest for which tx are accepted by standard miners
-            validityStartHeight = blockchainHeight + 1
-                - TX_VALIDITY_WINDOW
-                + (this.paymentDetails as ParsedNimiqDirectPaymentOptions['protocolSpecific']).validityDuration;
-        } else {
-            // this case get's rejected in created
+        let validityStartHeight;
+        try {
+            validityStartHeight = await validityStartHeightPromise;
+        } catch (e) {
+            this.$rpc.reject(e);
             return;
         }
 
-        const senderAddress = Nimiq.Address.fromUserFriendlyAddress(this.senderDetails.address);
-        const senderAccount = this.findWalletByAddress(this.senderDetails.address, true)!;
-        const senderContract = senderAccount.findContractByAddress(senderAddress);
-        const signer = senderAccount.findSignerForAddress(senderAddress)!;
-
+        // sign transaction
         let signedTransaction;
         try {
             signedTransaction = await LedgerApi.signTransaction({
@@ -239,6 +256,7 @@ export default class SignTransactionLedger extends Vue {
 
         this.shownAccountDetails = null;
 
+        // send transaction to network and finish
         let result;
         if (this.request.kind === RequestType.CHECKOUT) {
             this.state = SignTransactionLedger.State.SENDING_TRANSACTION;
@@ -259,39 +277,39 @@ export default class SignTransactionLedger extends Vue {
         }
     }
 
-    private get paymentDetails() {
-        if (this.request.kind === RequestType.SIGN_TRANSACTION) {
-            const signTransactionRequest = this.request as ParsedSignTransactionRequest;
-            return Object.assign({}, signTransactionRequest, { amount: signTransactionRequest.value });
-        } else {
-            //  return a flattened nim payment details object
-            const checkoutRequest = this.request as ParsedCheckoutRequest;
-            const nimiqPaymentOption = checkoutRequest.paymentOptions.find(
-                (option) => option.currency === Currency.NIM,
-            ) as ParsedNimiqDirectPaymentOptions;
-            // note: getters do not get assigned
-            return Object.assign({}, checkoutRequest, nimiqPaymentOption, nimiqPaymentOption.protocolSpecific);
-        }
+    private get checkoutPaymentOptions() {
+        if (this.request.kind !== RequestType.CHECKOUT) return null;
+        const checkoutRequest = this.request as ParsedCheckoutRequest;
+        return checkoutRequest.paymentOptions.find(
+            (option) => option.currency === Currency.NIM,
+        ) as ParsedNimiqDirectPaymentOptions;
     }
 
     private get transactionData() {
-        if (!this.paymentDetails.data || this.paymentDetails.data.byteLength === 0) {
+        if (!this.request.data || this.request.data.byteLength === 0) {
             return null;
         }
 
-        if (Nimiq.BufferUtils.equals(this.paymentDetails.data, CASHLINK_FUNDING_DATA)) {
+        if (Nimiq.BufferUtils.equals(this.request.data, CASHLINK_FUNDING_DATA)) {
             return 'Funding cashlink';
         }
 
+        let flags;
+        if (this.request.kind === RequestType.SIGN_TRANSACTION) {
+            const signTransactionRequest = this.request as ParsedSignTransactionRequest;
+            flags = signTransactionRequest.flags;
+        } else {
+            flags = this.checkoutPaymentOptions!.protocolSpecific.flags;
+        }
         // tslint:disable-next-line no-bitwise
-        if ((this.paymentDetails.flags & Nimiq.Transaction.Flag.CONTRACT_CREATION) > 0) {
+        if ((flags & Nimiq.Transaction.Flag.CONTRACT_CREATION) > 0) {
             // TODO: Decode contract creation transactions
             // return ...
         }
 
-        return Utf8Tools.isValidUtf8(this.paymentDetails.data, true)
-            ? Utf8Tools.utf8ByteArrayToString(this.paymentDetails.data)
-            : Nimiq.BufferUtils.toHex(this.paymentDetails.data);
+        return Utf8Tools.isValidUtf8(this.request.data, true)
+            ? Utf8Tools.utf8ByteArrayToString(this.request.data)
+            : Nimiq.BufferUtils.toHex(this.request.data);
     }
 
     private get statusScreenTitle() {
