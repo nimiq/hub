@@ -1,6 +1,27 @@
 <template>
     <div class="container">
         <SmallPage :class="{ 'account-details-shown': !!shownAccountDetails }">
+            <PaymentInfoLine
+                v-if="request.kind === 'checkout'"
+                ref="info"
+                class="blur-target"
+                :cryptoAmount="{
+                    amount: checkoutPaymentOptions.amount + checkoutPaymentOptions.protocolSpecific.fee,
+                    currency: checkoutPaymentOptions.currency,
+                    decimals: checkoutPaymentOptions.decimals,
+                }"
+                :fiatAmount="request.fiatAmount && request.fiatCurrency ? {
+                    amount: request.fiatAmount,
+                    currency: request.fiatCurrency,
+                } : null"
+                :address="checkoutPaymentOptions.protocolSpecific.recipient
+                    ? checkoutPaymentOptions.protocolSpecific.recipient.toUserFriendlyAddress()
+                    : null"
+                :origin="rpcState.origin"
+                :shopLogoUrl="request.shopLogoUrl"
+                :startTime="request.time"
+                :endTime="checkoutPaymentOptions.expires"
+            />
             <PageHeader :back-arrow="request.kind === 'checkout'" @back="_back" class="blur-target">
                 {{ request.kind === 'checkout' ? 'Verify Payment' : 'Confirm Transaction' }}
             </PageHeader>
@@ -83,6 +104,7 @@ import {
     ArrowRightIcon,
     PageBody,
     PageHeader,
+    PaymentInfoLine,
     SmallPage,
 } from '@nimiq/vue-components';
 import Network from '../components/Network.vue';
@@ -113,6 +135,7 @@ interface AccountDetailsData {
     Account,
     PageBody,
     PageHeader,
+    PaymentInfoLine,
     SmallPage,
     LedgerUi,
     StatusScreen,
@@ -355,6 +378,11 @@ export default class SignTransactionLedger extends Vue {
         align-items: center;
         padding: 3.75rem 4rem 26rem; /* bottom padding for bottom container + additional padding */
         overflow: hidden; /* avoid overflow of blurred elements */
+    }
+
+    .info-line {
+        align-self: stretch;
+        margin: -2rem -1.5rem 3rem;
     }
 
     .page-header {
