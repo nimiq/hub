@@ -180,8 +180,10 @@ class Network extends Vue {
     public async getBlockchainHeight(): Promise<number> {
         const client = await this.getNetworkClient();
         if (Network._hasOrSyncsOnTopOfConsensus) return client.headInfo.height;
-        return new Promise((resolve) => this.$once(Network.Events.CONSENSUS_ESTABLISHED,
-            () => resolve(client.headInfo.height)));
+        return new Promise((resolve) => this.$once(Network.Events.CONSENSUS_ESTABLISHED, () =>
+            // At the time of the consensus event, the new head is not populated yet. Therefore, instead of accessing
+            // client.headInfo we wait for the HEAD_CHANGE which is triggered immediately after CONSENSUS_ESTABLISHED
+            this.$once(Network.Events.HEAD_CHANGE, (head: { height: number }) => resolve(head.height))));
     }
 
     public async getBalances(addresses: string[]): Promise<Map<string, number>> {
