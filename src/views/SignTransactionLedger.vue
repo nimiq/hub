@@ -67,8 +67,16 @@
                 <LedgerUi ref="ledger-ui" small></LedgerUi>
                 <transition name="transition-fade">
                     <StatusScreen v-if="state !== constructor.State.OVERVIEW"
-                        :state="state === constructor.State.FINISHED ? 'success' : 'loading'"
-                        :title="statusScreenTitle">
+                        :state="statusScreenState"
+                        :title="statusScreenTitle"
+                        :mainAction="state === constructor.State.EXPIRED ? 'Go back to shop' : null"
+                        @main-action="_close"
+                    >
+                        <template v-if="state === constructor.State.EXPIRED" v-slot:warning>
+                            <StopwatchIcon class="stopwatch-icon"/>
+                            <h1 class="title nq-h1">{{ statusScreenTitle }}</h1>
+                            <p class="message nq-text">Please go back to the shop and restart the process.</p>
+                        </template>
                     </StatusScreen>
                 </transition>
             </div>
@@ -106,6 +114,7 @@ import {
     PageHeader,
     PaymentInfoLine,
     SmallPage,
+    StopwatchIcon,
 } from '@nimiq/vue-components';
 import Network from '../components/Network.vue';
 import LedgerApi from '../lib/LedgerApi';
@@ -117,7 +126,7 @@ import { State as RpcState } from '@nimiq/rpc';
 import { ParsedCheckoutRequest, ParsedSignTransactionRequest } from '../lib/RequestTypes';
 import { Currency, RequestType } from '../lib/PublicRequestTypes';
 import { WalletInfo } from '../lib/WalletInfo';
-import { CASHLINK_FUNDING_DATA, ERROR_CANCELED, TX_VALIDITY_WINDOW } from '../lib/Constants';
+import { CASHLINK_FUNDING_DATA, ERROR_CANCELED, ERROR_REQUEST_TIMED_OUT, TX_VALIDITY_WINDOW } from '../lib/Constants';
 import { ParsedNimiqDirectPaymentOptions } from '../lib/paymentOptions/NimiqPaymentOptions';
 import { Utf8Tools } from '@nimiq/utils';
 import Config from 'config';
@@ -144,12 +153,14 @@ interface AccountDetailsData {
     Amount,
     ArrowLeftSmallIcon,
     ArrowRightIcon,
+    StopwatchIcon,
 }})
 export default class SignTransactionLedger extends Vue {
     private static readonly State = {
         OVERVIEW: 'overview',
         SENDING_TRANSACTION: 'sending-transaction',
         FINISHED: 'finished',
+        EXPIRED: 'expired',
     };
 
     @Static private rpcState!: RpcState;
@@ -160,6 +171,7 @@ export default class SignTransactionLedger extends Vue {
     private senderDetails: AccountDetailsData = { address: '', label: '' };
     private recipientDetails: AccountDetailsData = { address: '', label: ''};
     private shownAccountDetails: AccountDetailsData | null = null;
+    private _checkoutExpiryTimeout: number = -1;
 
     private async mounted() {
         const network = this.$refs.network as Network;
@@ -225,6 +237,11 @@ export default class SignTransactionLedger extends Vue {
                 - TX_VALIDITY_WINDOW
                 + checkoutPaymentOptions.protocolSpecific.validityDuration,
             );
+
+            // synchronize time in background
+            if (checkoutPaymentOptions.expires) {
+                this._initializeCheckoutExpiryTimer().catch((e) => this.$rpc.reject(e));
+            }
         } else {
             this.$rpc.reject(new Error('Must be invoked via sign-transaction or checkout requests.'));
             return;
@@ -266,8 +283,10 @@ export default class SignTransactionLedger extends Vue {
                 flags,
             }, signer.path, senderAccount.keyId);
         } catch (e) {
-            // If cancelled, handle the exception. Otherwise just keep the error message displayed in ledger ui.
-            if (e.message.toLowerCase().indexOf('cancelled') !== -1) {
+            // If cancelled and not expired, handle the exception. Otherwise just keep the ledger ui / expiry error
+            // message displayed.
+            if (this.state !== SignTransactionLedger.State.EXPIRED
+                && e.message.toLowerCase().indexOf('cancelled') !== -1) {
                 if (this.request.kind === RequestType.CHECKOUT) {
                     this._back(); // user might want to choose another account or address
                 } else {
@@ -294,10 +313,8 @@ export default class SignTransactionLedger extends Vue {
     }
 
     private destroyed() {
-        const currentRequest = LedgerApi.currentRequest;
-        if (currentRequest && currentRequest.type === LedgerApi.RequestType.SIGN_TRANSACTION) {
-            currentRequest.cancel();
-        }
+        clearTimeout(this._checkoutExpiryTimeout);
+        this._cancelLedgerRequest();
     }
 
     private get checkoutPaymentOptions() {
@@ -335,6 +352,17 @@ export default class SignTransactionLedger extends Vue {
             : Nimiq.BufferUtils.toHex(this.request.data);
     }
 
+    private get statusScreenState() {
+        switch (this.state) {
+            case SignTransactionLedger.State.FINISHED:
+                return StatusScreen.State.SUCCESS;
+            case SignTransactionLedger.State.EXPIRED:
+                return StatusScreen.State.WARNING;
+            default:
+                return StatusScreen.State.LOADING;
+        }
+    }
+
     private get statusScreenTitle() {
         switch (this.state) {
             case SignTransactionLedger.State.SENDING_TRANSACTION:
@@ -343,9 +371,30 @@ export default class SignTransactionLedger extends Vue {
                 return this.request.kind === RequestType.SIGN_TRANSACTION
                     ? 'Transaction Signed'
                     : 'Transaction Sent';
+            case SignTransactionLedger.State.EXPIRED:
+                return 'The offer expired.';
             default:
                 return '';
         }
+    }
+
+    private async _initializeCheckoutExpiryTimer() {
+        if (!this.checkoutPaymentOptions || !this.checkoutPaymentOptions.expires) return;
+        const checkoutRequest = this.request as ParsedCheckoutRequest;
+        if (!checkoutRequest.callbackUrl || !checkoutRequest.csrf) {
+            throw new Error('callbackUrl and csrf token are required to fetch time.');
+        }
+        const referenceTime = await CheckoutServerApi.fetchTime(checkoutRequest.callbackUrl, checkoutRequest.csrf);
+        (this.$refs.info as PaymentInfoLine).setTime(referenceTime);
+        clearTimeout(this._checkoutExpiryTimeout);
+        this._checkoutExpiryTimeout = window.setTimeout(
+            () => {
+                this.shownAccountDetails = null;
+                this.state = SignTransactionLedger.State.EXPIRED;
+                this._cancelLedgerRequest();
+            },
+            this.checkoutPaymentOptions.expires - referenceTime,
+        );
     }
 
     private _back() {
@@ -353,8 +402,17 @@ export default class SignTransactionLedger extends Vue {
     }
 
     private _close() {
-        if (this.state !== SignTransactionLedger.State.OVERVIEW) return;
-        this.$rpc.reject(new Error(ERROR_CANCELED));
+        if (this.state !== SignTransactionLedger.State.OVERVIEW
+            && this.state !== SignTransactionLedger.State.EXPIRED) return;
+        const error = this.state === SignTransactionLedger.State.EXPIRED ? ERROR_REQUEST_TIMED_OUT : ERROR_CANCELED;
+        this.$rpc.reject(new Error(error));
+    }
+
+    private _cancelLedgerRequest() {
+        const currentRequest = LedgerApi.currentRequest;
+        if (currentRequest && currentRequest.type === LedgerApi.RequestType.SIGN_TRANSACTION) {
+            currentRequest.cancel();
+        }
     }
 
     @Watch('shownAccountDetails')
@@ -483,6 +541,10 @@ export default class SignTransactionLedger extends Vue {
 
     .status-screen {
         transition: opacity .4s;
+    }
+
+    .status-screen .stopwatch-icon {
+        font-size: 15.5rem;
     }
 
     .account-details {
