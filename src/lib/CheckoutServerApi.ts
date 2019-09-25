@@ -1,27 +1,23 @@
-import { Currency, PaymentType, PaymentOptionsForCurrencyAndType } from './PublicRequestTypes';
+import { Currency, PaymentType, PaymentOptionsForCurrencyAndType, PaymentState } from './PublicRequestTypes';
 import { isMilliseconds } from './Helpers';
+
+export interface GetStateResponse {
+    time: number;
+    payment_accepted: boolean;
+    payment_state: PaymentState;
+}
 
 export default class CheckoutServerApi {
     public static async fetchTime(endPoint: string, csrfToken: string): Promise<number> {
-        CheckoutServerApi._timePromise = CheckoutServerApi._timePromise || (async () => {
-            const requestData = new FormData();
-            requestData.append('command', 'get_time');
-            const fetchedData = await CheckoutServerApi._fetchData(endPoint, requestData, csrfToken);
-            if (!fetchedData.time || typeof fetchedData.time !== 'number') {
-                throw new Error('Failed to fetch time.');
-            }
-            if (isMilliseconds(fetchedData.time)) { // time is already in milliseconds
-                return fetchedData.time;
-            } else { // time must be converted to milliseconds
-                return fetchedData.time * 1000;
-            }
-        })();
-        try {
-            return await CheckoutServerApi._timePromise;
-        } catch (e) {
-            delete CheckoutServerApi._timePromise;
-            throw e;
+        let fetchPromise: Promise<GetStateResponse>;
+        if (CheckoutServerApi._getStatePromises.size === 0) {
+            fetchPromise = CheckoutServerApi.getState(endPoint, Currency.NIM, csrfToken);
+        } else {
+            fetchPromise = CheckoutServerApi._getStatePromises.entries().next().value[1];
         }
+        return fetchPromise.then((value: GetStateResponse) => {
+            return isMilliseconds(value.time) ? value.time : value.time * 1000;
+        });
     }
 
     public static async fetchPaymentOption<C extends Currency, T extends PaymentType>(
@@ -54,18 +50,37 @@ export default class CheckoutServerApi {
         return fetchedData;
     }
 
-    public static async checkNetwork<C extends Currency>(
+    public static async getState<C extends Currency>(
         endPoint: string,
         currency: C,
         csrfToken: string,
-    ): Promise<{ transaction_found: boolean }> {
+    ): Promise<GetStateResponse> {
         const data = new FormData();
         data.append('currency', currency);
-        data.append('command', 'check_network');
-        return CheckoutServerApi._fetchData(endPoint, data, csrfToken);
+        data.append('command', 'get_state');
+        if (CheckoutServerApi._getStatePromises.has(currency)) {
+            return CheckoutServerApi._getStatePromises.get(currency)!;
+        }
+        const fetchedDataPromise = CheckoutServerApi._fetchData(endPoint, data, csrfToken).then(
+            (value) => {
+                window.setTimeout(
+                    () => CheckoutServerApi._getStatePromises.delete(currency),
+                    3000,
+                );
+                value.time = isMilliseconds(value.time) ? value.time : value.time * 1000;
+                return value;
+            },
+            (e) => {
+                CheckoutServerApi._getStatePromises.delete(currency);
+                return Promise.reject(e);
+            },
+        );
+        CheckoutServerApi._getStatePromises.set(currency, fetchedDataPromise);
+
+        return fetchedDataPromise;
     }
 
-    private static _timePromise?: Promise<number>;
+    private static _getStatePromises = new Map<Currency, Promise<GetStateResponse>>();
 
     private static async _fetchData(endPoint: string, requestData: FormData, csrfToken: string): Promise<any> {
         requestData.append('csrf', csrfToken);

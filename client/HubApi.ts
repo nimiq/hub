@@ -25,6 +25,7 @@ import {
     SignedMessage,
     Currency,
     PaymentType,
+    PaymentState,
 } from '../src/lib/PublicRequestTypes';
 
 export default class HubApi<DB extends BehaviorType = BehaviorType.POPUP> { // DB: Default Behavior
@@ -32,6 +33,7 @@ export default class HubApi<DB extends BehaviorType = BehaviorType.POPUP> { // D
     public static readonly RedirectRequestBehavior = RedirectRequestBehavior;
     public static readonly Currency = Currency;
     public static readonly PaymentType = PaymentType;
+    public static readonly PaymentState = PaymentState;
     public static readonly MSG_PREFIX = '\x16Nimiq Signed Message:\n';
 
     /** @deprecated */

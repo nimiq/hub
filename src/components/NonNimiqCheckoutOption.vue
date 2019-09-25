@@ -187,13 +187,13 @@ export default class NonNimiqCheckoutOption<
             if (!this.request.callbackUrl || !this.request.csrf) return;
             let fetchedData;
             try {
-                fetchedData = await CheckoutServerApi.checkNetwork(this.request.callbackUrl,
+                fetchedData = await CheckoutServerApi.getState(this.request.callbackUrl,
                     this.paymentOptions.currency, this.request.csrf);
             } catch (e) {
                 return;
             }
 
-            if (fetchedData.transaction_found === true) {
+            if (fetchedData.payment_accepted === true) {
                 window.clearInterval(this.checkNetworkInterval!);
                 window.clearTimeout(this.optionTimeout);
                 return this.showSuccessScreen();

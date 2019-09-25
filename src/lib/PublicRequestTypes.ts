@@ -78,6 +78,13 @@ export type ProtocolSpecificsForCurrency<C extends Currency> =
     : C extends Currency.ETH ? EtherSpecifics
     : undefined;
 
+export enum PaymentState {
+    NOT_FOUND = 'NOT_FOUND',
+    PAID = 'PAID',
+    UNDERPAID = 'UNDERPAID',
+    OVERPAID = 'OVERPAID',
+}
+
 export interface PaymentOptions<C extends Currency, T extends PaymentType> {
     type: T;
     currency: C;
