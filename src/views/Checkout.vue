@@ -54,7 +54,7 @@ import { Component, Vue } from 'vue-property-decorator';
 import { PaymentInfoLine, AccountSelector, AccountDetails, SmallPage } from '@nimiq/vue-components';
 import { TransferIcon, ArrowLeftSmallIcon } from '@nimiq/vue-components';
 import { ParsedCheckoutRequest } from '../lib/RequestTypes';
-import { Account, RequestType } from '../lib/PublicRequestTypes';
+import { Account, Currency, RequestType } from '../lib/PublicRequestTypes';
 import { State as RpcState } from '@nimiq/rpc';
 import staticStore, { Static } from '../lib/StaticStore';
 import { WalletStore } from '../lib/WalletStore';
@@ -268,6 +268,11 @@ export default class Checkout extends Vue {
                     validityStartHeight,
                     data: this.request.data,
                     flags: this.request.flags,
+
+                    fiatAmount: this.request.fiatAmount,
+                    fiatCurrency: this.request.fiatCurrency,
+                    time: this.request.time, // TODO convert times from server time to local time
+                    expires: this.request.paymentOptions.find((option) => option.currency === Currency.NIM)!.expires,
                 };
 
                 staticStore.keyguardRequest = request;
