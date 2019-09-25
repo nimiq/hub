@@ -129,9 +129,9 @@ import CheckoutServerApi from '../lib/CheckoutServerApi';
 export default class NonNimiqCheckoutOption<
     Parsed extends AvailableParsedPaymentOptions
 > extends CheckoutOption<Parsed> {
-    protected selected: boolean = false;
-
-    private checkNetworkInterval: number | null = null;
+    protected async created() {
+        await super.created();
+    }
 
     protected mounted() {
         super.mounted();
@@ -143,20 +143,12 @@ export default class NonNimiqCheckoutOption<
     }
 
     protected async selectCurrency() {
-        this.selected = true;
         if (this.request.callbackUrl) {
+            this.state = StatusScreen.State.LOADING;
             this.showStatusScreen = true;
-            try {
-                await this.fetchPaymentOption();
-            } catch (e) {
-                this.$rpc.reject(e);
-                return;
-            }
         }
-        if (!this.paymentOptions.protocolSpecific.recipient) {
-            this.$rpc.reject(new Error('Failed to fetch recipient'));
-            return;
-        }
+        await super.selectCurrency();
+
         let element: HTMLElement | null = document.getElementById(this.paymentOptions.currency!);
         if (element) {
             element = element.querySelector('.qr-code');
@@ -164,8 +156,6 @@ export default class NonNimiqCheckoutOption<
         if (!element) {
             throw new Error(`An Element #${this.paymentOptions.currency} .qr-code must exist`);
         }
-
-        this.$emit('chosen', this.paymentOptions.currency);
 
         this.$nextTick(() =>
                 QrCode.render({
@@ -180,26 +170,7 @@ export default class NonNimiqCheckoutOption<
             ),
         );
 
-        this.checkNetworkInterval = window.setInterval(async () => {
-            if (!this.request.callbackUrl || !this.request.csrf) return;
-            let fetchedData;
-            try {
-                fetchedData = await CheckoutServerApi.getState(this.request.callbackUrl,
-                    this.paymentOptions.currency, this.request.csrf);
-            } catch (e) {
-                return;
-            }
-
-            if (fetchedData.transaction_found === true) {
-                window.clearInterval(this.checkNetworkInterval!);
-                window.clearTimeout(this.optionTimeout);
-                return this.showSuccessScreen();
-            }
-            if (this.timeoutReached) {
-                window.clearInterval(this.checkNetworkInterval!);
-                this.timedOut();
-            }
-        }, 10000);
+        this.checkNetworkInterval = window.setInterval(this.getState.bind(this), 10000);
     }
 
     protected checkBlur() {

@@ -20,15 +20,27 @@ export default class CheckoutOption<
     protected state = StatusScreen.State.LOADING;
     protected timeOffsetPromise!: Promise<number>;
     protected timeoutReached: boolean = false;
+    protected checkNetworkInterval: number = -1;
+    protected selected: boolean = false;
     protected title = '';
     protected status = '';
     protected message = '';
 
+    protected async created() {
+        // If history.state does have an entry for this currencies previous selection, select it again
+        if (window.history.state.selectedCurrency
+            && window.history.state.selectedCurrency === this.paymentOptions.currency) {
+            await this.selectCurrency();
+        }
+    }
     protected mounted() {
         if (!this.paymentOptions.expires) {
             this.timeOffsetPromise = Promise.resolve(0);
             return;
         }
+
+        this.getState();
+
         this.timeOffsetPromise = this.fetchTime().then((referenceTime) => {
             if (this.$refs.info) {
                 (this.$refs.info as PaymentInfoLine).setTime(referenceTime);
@@ -52,6 +64,28 @@ export default class CheckoutOption<
         return CheckoutServerApi.fetchTime(this.request.callbackUrl, this.request.csrf);
     }
 
+    protected getState() {
+        if (!this.request.callbackUrl || !this.request.csrf) {
+            throw new Error('Can\'t get state without callbackUrl and csrf token');
+        }
+
+        CheckoutServerApi.getState(
+            this.request.callbackUrl,
+            this.paymentOptions.currency,
+            this.request.csrf,
+        ).then((fetchedState) => {
+            if (fetchedState.payment_accepted === true) {
+                window.clearInterval(this.checkNetworkInterval);
+                window.clearTimeout(this.optionTimeout);
+                return this.showSuccessScreen();
+            }
+            if (this.timeoutReached) {
+                window.clearInterval(this.checkNetworkInterval);
+                this.timedOut();
+            }
+        });
+    }
+
     protected async fetchPaymentOption(): Promise<void> {
         let fetchedData: any;
 
@@ -67,13 +101,16 @@ export default class CheckoutOption<
 
         this.paymentOptions.update(fetchedData);
 
+        window.clearTimeout(this.optionTimeout);
+        this.setupTimeout(Date.now() - (await this.timeOffsetPromise));
+
         this.showStatusScreen = false;
         this.$forceUpdate();
     }
 
     protected setupTimeout(referenceTime: number) {
         this.optionTimeout = window.setTimeout(
-            () => this.timeoutReached = true,
+            () => this.checkNetworkInterval !== -1 ? this.timeoutReached = true : this.timedOut(),
             this.paymentOptions.expires - referenceTime,
         );
     }
@@ -89,6 +126,32 @@ export default class CheckoutOption<
 
     protected backToShop() {
         this.$rpc.resolve({success: false});
+    }
+
+    protected showSuccessScreen() {
+        return;
+    }
+
+    protected async selectCurrency() {
+        this.selected = true;
+        if (this.request.callbackUrl) {
+            try {
+                await this.fetchPaymentOption();
+            } catch (e) {
+                this.$rpc.reject(e);
+                return;
+            }
+        }
+        if (!this.paymentOptions.protocolSpecific.recipient) {
+            this.$rpc.reject(new Error('Failed to fetch recipient'));
+            return;
+        }
+
+        // set the selected currency in history state to enable re-selection
+        window.history.replaceState(
+            Object.assign({}, window.history.state, {selectedCurrency: this.paymentOptions.currency}),
+            '');
+        this.$emit('chosen', this.paymentOptions.currency);
     }
 }
 </script>
