@@ -76,6 +76,7 @@ export default class Checkout extends Vue {
     }
 
     private chooseCurrency(currency: Currency) {
+        this.selectedCurrency = currency;
         this.choosenCurrency = currency;
     }
 
