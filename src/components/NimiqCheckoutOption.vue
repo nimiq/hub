@@ -106,6 +106,7 @@ export default class NimiqCheckoutOption
         userFriendlyAddress: string,
     }) => any;
 
+    private timeOffsetPromise: Promise<number> = Promise.resolve(0);
     private updateBalancePromise: Promise<void> | null = null;
     private balancesUpdating: boolean = true;
     private height: number = 0;
@@ -118,13 +119,15 @@ export default class NimiqCheckoutOption
 
     protected async mounted() {
         if (this.paymentOptions.expires) {
-            this.fetchTime().then((referenceTime) => {
+            this.timeOffsetPromise = this.fetchTime().then((referenceTime) => {
                 if (referenceTime) {
                     if (this.$refs.info) {
                         (this.$refs.info as PaymentInfoLine).setTime(referenceTime);
                     }
                     this.setupTimeout(referenceTime);
+                    return referenceTime - Date.now();
                 }
+                return 0;
             });
         }
         // Requires Network child component to be rendered
@@ -285,6 +288,8 @@ export default class NimiqCheckoutOption
                     await this.fetchPaymentOption();
                 }
 
+                const timeOffset = await this.timeOffsetPromise;
+
                 const request: KeyguardClient.SignTransactionRequest = {
                     layout: 'checkout',
                     shopOrigin: this.rpcState.origin,
@@ -309,8 +314,10 @@ export default class NimiqCheckoutOption
 
                     fiatAmount: this.request.fiatAmount,
                     fiatCurrency: this.request.fiatCurrency,
-                    time: this.request.time, // TODO convert times from server time to local time
-                    expires: this.paymentOptions.expires,
+                    time: this.request.time - timeOffset, // normalize time to our local system time
+                    expires: this.paymentOptions.expires
+                        ? this.paymentOptions.expires - timeOffset
+                        : undefined,
                 };
 
                 staticStore.keyguardRequest = request;
