@@ -10,12 +10,12 @@ import {
     ParsedSimpleRequest,
 } from './RequestTypes';
 import { RequestParser } from './RequestParser';
-import { RpcRequest, RpcResult, Currency, RequestType } from './PublicRequestTypes';
+import { Currency, RequestType, RpcRequest, RpcResult } from './PublicRequestTypes';
 import { ParsedNimiqDirectPaymentOptions } from './paymentOptions/NimiqPaymentOptions';
 import {
     KeyguardClient,
     KeyguardCommand,
-    Errors,
+    Errors as KeyguardErrors,
     ObjectType,
     ResultByCommand,
 } from '@nimiq/keyguard-client';
@@ -114,7 +114,7 @@ export default class RpcApi {
     }
 
     public reject(error: Error) {
-        const ignoredErrorTypes = [ Errors.Types.INVALID_REQUEST.toString() ];
+        const ignoredErrorTypes = [ KeyguardErrors.Types.INVALID_REQUEST.toString() ];
         const ignoredErrors = [ ERROR_CANCELED, 'Request aborted', 'Account ID not found', 'Address not found' ];
         if (ignoredErrorTypes.indexOf(error.name) < 0 && ignoredErrors.indexOf(error.message) < 0) {
             if (Config.reportToSentry) {
@@ -330,7 +330,7 @@ export default class RpcApi {
         // Set result
         this._store.commit('setKeyguardResult', error);
 
-        if (error.message === ERROR_CANCELED) {
+        if (error.message === KeyguardErrors.Messages.CANCELED) {
             this.reject(error);
             return;
         }
@@ -350,9 +350,15 @@ export default class RpcApi {
             return;
         }
 
-        this.routerReplace(keyguardResponseRouter(command, this._staticStore.request!.kind).reject);
-
         this._startRoute();
+
+        if (error.message === KeyguardErrors.Messages.EXPIRED) {
+            // Don't reject but navigate to checkout to display the expiration warning there.
+            this.routerReplace(RequestType.CHECKOUT);
+            return;
+        }
+
+        this.routerReplace(keyguardResponseRouter(command, this._staticStore.request!.kind).reject);
     }
 
     private _startRoute() {
