@@ -6,7 +6,7 @@ import staticStore from '../StaticStore';
 
 export interface BitcoinDirectPaymentOptions extends PaymentOptions<Currency.BTC, PaymentMethod.DIRECT> {
     protocolSpecific: {
-        fee?: number;
+        fee?: number | string;
         recipient?: string;
     };
 }
@@ -42,9 +42,38 @@ export class ParsedBitcoinDirectPaymentOptions extends ParsedPaymentOptions<Curr
 
     public constructor(option: BitcoinDirectPaymentOptions) {
         super(option);
-        this.amount = Number.parseInt(option.amount, 10);
+        if (!option.amount) {
+            throw new Error('Each paymentOption must provide an amount.');
+        } else {
+            try {
+                this.amount = Number.parseInt(option.amount, 10);
+            } catch (err) {
+                throw new Error('The provided amount must parse as an Integer');
+            }
+        }
+
+        let fee: number | undefined;
+        if (option.protocolSpecific.fee) {
+            if (typeof option.protocolSpecific.fee === 'string') {
+                try {
+                    fee = Number.parseInt(option.protocolSpecific.fee, 10);
+                } catch (err) {
+                    throw new Error('The provided fee must parse as an integer');
+                }
+            } else if (typeof option.protocolSpecific.fee === 'number') {
+                fee = option.protocolSpecific.fee;
+            } else {
+                throw new Error('If a fee is provided it must either be a number or a string');
+            }
+        }
+
+        if (option.protocolSpecific.recipient && typeof option.protocolSpecific.recipient !== 'string') {
+            // add btc address validation here.
+            throw new Error('If a recipient is provided it must be a string');
+        }
+
         this.protocolSpecific = {
-            fee: option.protocolSpecific.fee,
+            fee,
             recipient: option.protocolSpecific.recipient,
         };
     }
@@ -62,7 +91,6 @@ export class ParsedBitcoinDirectPaymentOptions extends ParsedPaymentOptions<Curr
     public fiatFee(fiatAmount: number, fiatCurrency: CurrencyCodeRecord): number {
         if (!this.amount || !fiatAmount || !fiatCurrency) {
             throw new Error('amount, fiatAmount and fiatCurrency must be provided');
-            return 0;
         }
         if (!this.fee) {
             return 0;

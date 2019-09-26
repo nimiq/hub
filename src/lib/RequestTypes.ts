@@ -49,9 +49,9 @@ export interface ParsedSignTransactionRequest extends ParsedBasicRequest {
 }
 
 export interface ParsedPaymentOptions<C extends Currency, T extends PaymentMethod> {
-    currency: C;
-    type: T;
-    expires: number;
+    readonly currency: C;
+    readonly type: T;
+    expires?: number;
     paymentLink: string;
     raw(): PaymentOptions<C, T>;
 }
@@ -62,12 +62,14 @@ export abstract class ParsedPaymentOptions<C extends Currency, T extends Payment
     public readonly abstract digits: number;
     public readonly abstract minDigits: number;
     public readonly abstract maxDigits: number;
-    public expires: number;
+    public expires?: number;
 
     public constructor(option: PaymentOptions<C, T>) {
-        this.expires = isMilliseconds(option.expires)
-            ? option.expires
-            : option.expires * 1000;
+        this.expires = option.expires
+            ? isMilliseconds(option.expires)
+                ? option.expires
+                : option.expires * 1000
+            : undefined;
     }
 
     public get baseUnitAmount(): string {

@@ -6,7 +6,7 @@ import { createNimiqRequestLink } from '@nimiq/utils';
 
 export interface NimiqDirectPaymentOptions extends PaymentOptions<Currency.NIM, PaymentMethod.DIRECT> {
     protocolSpecific: {
-        fee?: number;
+        fee?: number | string;
         validityDuration?: number;
         sender?: string;
         forceSender?: boolean;
@@ -55,20 +55,63 @@ export class ParsedNimiqDirectPaymentOptions extends ParsedPaymentOptions<Curren
 
     public constructor(option: NimiqDirectPaymentOptions | ExtendedNimiqDirectPaymentOptions) {
         super(option);
-        this.amount = parseInt(option.amount, 10);
+        if (!option.amount) {
+            throw new Error('Each paymentOption must provide an amount.');
+        } else {
+            try {
+                this.amount = Number.parseInt(option.amount, 10);
+            } catch (err) {
+                throw new Error('The provided amount must parse as an integer');
+            }
+        }
+
+        let sender: Nimiq.Address | undefined;
+        if (option.protocolSpecific.sender) {
+            if (typeof option.protocolSpecific.sender === 'string') {
+                try {
+                    sender = Nimiq.Address.fromUserFriendlyAddress(option.protocolSpecific.sender);
+                } catch (err) {
+                    throw new Error('sender must be a vaid user friendly address');
+                }
+            } else {
+                throw new Error('If a sender is provided it must be a user friendly address string');
+            }
+        }
+
+        let recipient: Nimiq.Address | undefined;
+        if (option.protocolSpecific.recipient) {
+            if (typeof option.protocolSpecific.recipient === 'string') {
+                try {
+                    recipient = Nimiq.Address.fromUserFriendlyAddress(option.protocolSpecific.recipient);
+                } catch (err) {
+                    throw new Error('recipient must be a vaid user friendly address');
+                }
+            } else {
+                throw new Error('If a recipient is provided it must be a user friendly address string');
+            }
+        }
+
+        let fee: number | undefined;
+        if (option.protocolSpecific.fee) {
+            if (typeof option.protocolSpecific.fee === 'number') {
+                fee = option.protocolSpecific.fee;
+            } else if (typeof option.protocolSpecific.fee === 'string') {
+                try {
+                    fee = Number.parseInt(option.protocolSpecific.fee, 10);
+                } catch (err) {
+                    throw new Error('The provided fee must parse as an integer');
+                }
+            } else {
+                throw new Error('If a fee is provided it must be of type string or number');
+            }
+        }
+
         this.protocolSpecific = {
-            sender: option.protocolSpecific.sender
-                ? Nimiq.Address.fromUserFriendlyAddress(
-                    option.protocolSpecific.sender)
-                : undefined,
+            sender,
             forceSender: !!option.protocolSpecific.forceSender,
-            fee: option.protocolSpecific.fee,
-            flags: (option as ExtendedNimiqDirectPaymentOptions)
-                .protocolSpecific.flags || Nimiq.Transaction.Flag.NONE,
-            recipient: option.protocolSpecific.recipient
-                ? Nimiq.Address.fromUserFriendlyAddress(
-                    option.protocolSpecific.recipient)
-                : undefined,
+            fee,
+            flags: (option as ExtendedNimiqDirectPaymentOptions).protocolSpecific.flags || Nimiq.Transaction.Flag.NONE,
+            recipient,
             recipientType: option.protocolSpecific.recipientType,
             validityDuration: !option.protocolSpecific.validityDuration
                 ? TX_VALIDITY_WINDOW

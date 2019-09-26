@@ -6,7 +6,7 @@ import { createEthereumRequestLink } from '@nimiq/utils';
 
 export interface EtherDirectPaymentOptions  extends PaymentOptions<Currency.ETH, PaymentMethod.DIRECT> {
     protocolSpecific: {
-        gasLimit?: number;
+        gasLimit?: number | string;
         gasPrice?: string;
         recipient?: string;
     };
@@ -44,12 +44,52 @@ export class ParsedEtherDirectPaymentOptions extends ParsedPaymentOptions<Curren
 
     public constructor(option: EtherDirectPaymentOptions) {
         super(option);
-        this.amount = bigInt(option.amount);
+        if (!option.amount) {
+            throw new Error('Each paymentOption must provide an amount.');
+        } else {
+            try {
+                this.amount = bigInt(option.amount);
+            } catch (err) {
+                throw new Error('The provided amount must parse as an integer');
+            }
+        }
+
+        let gasLimit: number | undefined;
+        if (option.protocolSpecific.gasLimit) {
+            if (typeof option.protocolSpecific.gasLimit === 'string') {
+                try {
+                    gasLimit = Number.parseInt(option.protocolSpecific.gasLimit, 10);
+                } catch (err) {
+                    throw new Error('The provided gasLimit must parse as an integer');
+                }
+            } else if (typeof option.protocolSpecific.gasLimit === 'number') {
+                gasLimit = option.protocolSpecific.gasLimit;
+            } else {
+                throw new Error('If a gasLimit is provided it must either be of type string or number');
+            }
+        }
+
+        let gasPrice: bigInt.BigInteger | undefined;
+        if (option.protocolSpecific.gasPrice) {
+            if (typeof option.protocolSpecific.gasPrice !== 'string') {
+                throw new Error('If a gasPrice is provided it must be of type string');
+            } else {
+                try {
+                    gasPrice = bigInt(option.protocolSpecific.gasPrice);
+                } catch (err) {
+                    throw new Error('The provided gasPrice must parse as an integer');
+                }
+            }
+        }
+
+        if (option.protocolSpecific.recipient && typeof option.protocolSpecific.recipient !== 'string') {
+            // add eth address validation here.
+            throw new Error('If a recipient is provided it must be of type string');
+        }
+
         this.protocolSpecific = {
-            gasLimit: option.protocolSpecific.gasLimit,
-            gasPrice: option.protocolSpecific.gasPrice
-                ? bigInt(option.protocolSpecific.gasPrice)
-                : undefined,
+            gasLimit,
+            gasPrice,
             recipient: option.protocolSpecific.recipient,
         };
     }

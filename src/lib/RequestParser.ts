@@ -108,47 +108,71 @@ export class RequestParser {
                     } as ParsedCheckoutRequest;
                 } else {
                     if (checkoutRequest.version === 2) {
+                        let origin;
+
                         if (!checkoutRequest.paymentOptions.some((option) => option.currency === Currency.NIM)) {
                             throw new Error('CheckoutRequest must provide a NIM paymentOption.');
                         }
 
-                        if (!checkoutRequest.shopLogoUrl
-                            || new URL(checkoutRequest.shopLogoUrl).origin !== state.origin) {
+                        if (!checkoutRequest.shopLogoUrl || typeof checkoutRequest.shopLogoUrl !== 'string') {
+                            throw new Error('shopLogoUrl: string is required');
+                        }
+                        try {
+                            origin = new URL(checkoutRequest.shopLogoUrl).origin;
+                        } catch (err) {
+                            throw new Error(`shopLogoUrl must be a valid URL: ${err}`);
+                        }
+                        if (origin !== state.origin) {
                             throw new Error(
                                 'shopLogoUrl must have same origin as caller website. Image at ' +
                                 checkoutRequest.shopLogoUrl +
                                 ' is not on caller origin ' +
                                 state.origin);
                         }
-
+                        if (!checkoutRequest.fiatCurrency || typeof checkoutRequest.fiatCurrency !== 'string') {
+                            throw new Error('fiatCurrency: string is required');
+                        }
                         if (!CurrencyCode.codes().includes(checkoutRequest.fiatCurrency)) {
-                            throw new Error(`FiatCurrency ${checkoutRequest.fiatCurrency} not in ISO 4217`);
+                            throw new Error(`FiatCurrency '${checkoutRequest.fiatCurrency}' not in ISO 4217`);
                         }
 
-                        if (!checkoutRequest.fiatAmount || checkoutRequest.fiatAmount <= 0) {
+                        if (!checkoutRequest.fiatAmount
+                            || typeof checkoutRequest.fiatAmount !== 'number'
+                            || checkoutRequest.fiatAmount <= 0) {
                             throw new Error('fiatAmount must be a positive non-zero number');
                         }
 
-                        if (!checkoutRequest.callbackUrl) {
+                        if (!checkoutRequest.callbackUrl || typeof checkoutRequest.callbackUrl !== 'string') {
+                            if (checkoutRequest.paymentOptions.some(
+                                (option) => option.currency !== Currency.NIM,
+                                )) {
+                                throw new Error('A callbackUrl: string is required for currencies other than NIM to ' +
+                                    'monitor payments.');
+                            }
                             if (!checkoutRequest.paymentOptions.every(
                                     (option) => !!option.protocolSpecific.recipient,
                                 )) {
-                                throw new Error('A callbackUrl or all recipients must be provided');
+                                throw new Error('A callbackUrl: string or all recipients must be provided');
                             }
                         } else {
-                            if (new URL(checkoutRequest.callbackUrl).origin !== state.origin) {
+                            try {
+                                origin = new URL(checkoutRequest.callbackUrl).origin;
+                            } catch (err) {
+                                throw new Error(`callbackUrl must be a valid URL: ${err}`);
+                            }
+                            if (origin !== state.origin) {
                                 throw new Error('callBackUrl must have the same origin as caller Website. ' +
                                     checkoutRequest.callbackUrl +
                                     ' is not on caller origin ' +
                                     state.origin);
                             }
-                            if (!checkoutRequest.csrf) {
+                            if (!checkoutRequest.csrf || typeof checkoutRequest.csrf !== 'string') {
                                 throw new Error('A CSRF token must be provided alongside the callbackUrl.');
                             }
                         }
 
                         if (checkoutRequest.time && typeof checkoutRequest.time !== 'number') {
-                            throw new Error('time must be a number');
+                            throw new Error('time: number is required');
                         }
 
                         const currencies: Set<Currency> = new Set<Currency>();
@@ -170,13 +194,6 @@ export class RequestParser {
                             fiatCurrency: CurrencyCode.code(checkoutRequest.fiatCurrency),
                             fiatAmount: checkoutRequest.fiatAmount,
                             paymentOptions: checkoutRequest.paymentOptions.map((option) => {
-                                if (!option.amount) {
-                                    throw new Error('Each paymentOption must provide an amount.');
-                                }
-                                if (!option.expires) {
-                                    throw new Error('Each paymentOption must provide its expiration time');
-                                }
-
                                 if (currencies.has(option.currency)) {
                                     throw new Error('Each Currency can only have one paymentOption');
                                 } else {
