@@ -6,7 +6,7 @@ import { Static } from '../lib/StaticStore';
 import StatusScreen from './StatusScreen.vue';
 import CheckoutServerApi, { GetStateResponse } from '../lib/CheckoutServerApi';
 import { PaymentInfoLine } from '@nimiq/vue-components';
-import { HISTORY_KEY_SELECTED_CURRENCY } from '../lib/Constants';
+import { ERROR_REQUEST_TIMED_OUT, HISTORY_KEY_SELECTED_CURRENCY } from '../lib/Constants';
 
 export default class CheckoutOption<
     Parsed extends AvailableParsedPaymentOptions,
@@ -135,7 +135,7 @@ export default class CheckoutOption<
     }
 
     protected backToShop() {
-        this.$rpc.resolve({success: false});
+        this.$rpc.reject(new Error(ERROR_REQUEST_TIMED_OUT));
     }
 
     protected showSuccessScreen() {
