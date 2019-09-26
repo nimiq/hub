@@ -39,7 +39,7 @@ export const ERROR_CANCELED = 'CANCELED';
 export const ERROR_INVALID_NETWORK = 'Invalid network name';
 export const ERROR_TRANSACTION_RECEIPTS = 'Failed to retrieve transaction receipts for';
 export const ERROR_COOKIE_SPACE = 'Not enough cookie space';
-
+export const ERROR_REQUEST_TIMED_OUT = 'REQUEST_TIMED_OUT';
 // Input
 export const MOBILE_MAX_WIDTH = 600; // px
 export function isDesktop() {
