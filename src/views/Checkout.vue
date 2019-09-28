@@ -69,6 +69,7 @@ export default class Checkout extends Vue {
         const $subtitle = document.querySelector('.logo .logo-subtitle')!;
         $subtitle.textContent = 'Checkout';
         this.availableCurrencies = this.request.paymentOptions.map((option) => option.currency);
+        document.title = 'Nimiq Checkout';
     }
 
     private close() {
@@ -104,17 +105,6 @@ export default class Checkout extends Vue {
         text-align: center;
     }
 
-    .carousel >>> .currency-info {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        transition: transform 0.5s cubic-bezier(.67,0,.16,1);
-        transform: translateY(0rem);
-    }
-    .carousel > :not(.selected) >>> .currency-info {
-        transform: translateY(-6rem);
-    }
-
     .carousel {
         width: 100%;
         box-sizing: border-box;
@@ -127,9 +117,33 @@ export default class Checkout extends Vue {
         padding: 4rem 0;
     }
 
-    .carousel :not(.selected) >>> .payment-option {
+    .carousel >>> > :not(.selected) .payment-option {
         -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
         filter: grayscale(100%);
     }
-</style>
 
+    .carousel >>> .currency-info {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        transition: transform .5s cubic-bezier(.67,0,.16,1), opacity .25s var(--nimiq-ease);
+        transform: translateY(0rem);
+    }
+
+    .carousel >>> > :not(.selected) .currency-info {
+        transform: translateY(-8.75rem);
+    }
+
+    .carousel.disabled >>> > :not(.selected) .currency-info {
+        opacity: 0;
+    }
+
+    /* make empty padding in cards click through to cards behind */
+    .carousel >>> > * {
+        pointer-events: none;
+    }
+    .carousel >>> .currency-info > *,
+    .carousel >>> .nq-card {
+        pointer-events: all !important;
+    }
+</style>
