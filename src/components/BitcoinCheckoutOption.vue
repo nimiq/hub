@@ -6,6 +6,7 @@ import NonNimiqCheckoutOption from './NonNimiqCheckoutOption.vue';
 
 export default class BitcoinCheckoutOption
     extends NonNimiqCheckoutOption<ParsedBitcoinDirectPaymentOptions> {
+    protected currencyFullName = 'Bitcoin';
     protected icon = 'icon-btc.svg';
 
     protected get paymentLink() {
