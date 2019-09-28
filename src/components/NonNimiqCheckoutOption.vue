@@ -56,12 +56,9 @@
                         :maxDecimals="paymentOptions.digits < 8 ? paymentOptions.digits : 8"
                         :amount="paymentOptions.amount"
                     />
-                    <Amount class="fiat"
-                        :currency="request.fiatCurrency.code"
-                        :totalDecimals="request.fiatCurrency.digits"
-                        :decimals="request.fiatCurrency.digits"
-                        :amount="request.fiatAmount * 10 ** request.fiatCurrency.digits"
-                    />
+                    <div v-if="paymentOptions.fee !== 0" class="fee">
+                        + network fee
+                    </div>
                 </div>
             </PageBody>
             <PageBody v-else>
@@ -69,7 +66,7 @@
                 </div>
                 <div class="copyable-payment-information">
                     <Copyable :text="paymentOptions.baseUnitAmount">
-                        <Amount class="nq-link payment-link"
+                        <Amount class="nq-link"
                             :currency="paymentOptions.currency"
                             :totalDecimals="paymentOptions.digits"
                             :minDecimals="paymentOptions.digits"
@@ -78,16 +75,16 @@
                         />
                     </Copyable>
                     <Copyable>
-                        <a class="nq-link payment-link">{{paymentOptions.protocolSpecific.recipient}}</a>
+                        <a class="nq-link">{{paymentOptions.protocolSpecific.recipient}}</a>
                     </Copyable>
                 </div>
             </PageBody>
             <PageFooter v-if="selected">
-                <a class="nq-button light-blue" :href="paymentOptions.paymentLink">Use app</a>
+                <a class="nq-button light-blue" :href="paymentOptions.paymentLink">Open Wallet App</a>
                 <p class="nq-text-s"><AlertTriangleIcon/>Don’t close this window until confirmation</p>
             </PageFooter>
             <PageFooter v-else>
-                <button class="nq-button light-blue" @click="selectCurrency">Pay with {{paymentOptions.currency}}</button>
+                <button class="nq-button light-blue" @click="selectCurrency">Pay with {{currencyFullName}}</button>
             </PageFooter>
         </SmallPage>
     </div>
@@ -128,12 +125,17 @@ import StatusScreen from './StatusScreen.vue';
 export default class NonNimiqCheckoutOption<
     Parsed extends AvailableParsedPaymentOptions
 > extends CheckoutOption<Parsed> {
+    protected currencyFullName: string = ''; // to be set by child class
+
     protected async created() {
         return await super.created();
     }
 
     protected async mounted() {
         super.mounted();
+        if (!this.currencyFullName) {
+            this.currencyFullName = this.paymentOptions.currency; // just as a fallback in case not set by child class
+        }
     }
 
     protected destroyed() {
@@ -220,19 +222,14 @@ export default class NonNimiqCheckoutOption<
         justify-content: space-around;
     }
 
-    .payment-option:not(.confirmed) h2,
-    .payment-option:not(.confirmed) a.payment-link.blurred,
-    .payment-option:not(.confirmed) .copyable-payment-information {
-        filter: blur(1.5rem);
-        opacity: .1;
-        transition: filte .5s ease, opacity .5s ease;
+    /* Hide payment info line contents until currency selected. Only show timer. */
+    .payment-option .info-line >>> > :not(.timer):not(.amounts) {
+        transition: opacity .5s var(--nimiq-ease);
     }
 
-    .payment-option:not(.confirmed) .info-line >>> .amounts,
-    .payment-option:not(.confirmed) .info-line >>> .arrow-runway,
-    .payment-option:not(.confirmed) .info-line >>> .description .account {
+    .payment-option:not(.confirmed) .info-line >>> > :not(.timer):not(.amounts) {
         opacity: 0;
-        transition: opacity .5s ease;
+        pointer-events: none;
     }
 
     .payment-option .page-body {
@@ -241,17 +238,24 @@ export default class NonNimiqCheckoutOption<
         padding-bottom: 0;
     }
 
+    .payment-option .account,
+    .payment-option .account >>> .identicon-and-label {
+        width: 100%;
+    }
+
     .payment-option .account >>> .identicon-and-label .identicon {
         width: 21rem;
         height: 21rem;
     }
 
     .payment-option .account >>> .identicon-and-label .label {
+        max-width: 100%;
         font-weight: 600;
         font-size: 3.5rem;
         line-height: 3.5rem;
         margin-top: 2.75rem;
         margin-bottom: 3rem;
+        text-overflow: fade;
     }
 
     .payment-option .amounts {
@@ -270,7 +274,7 @@ export default class NonNimiqCheckoutOption<
         line-height: 5rem;
     }
 
-    .payment-option .amounts .fiat {
+    .payment-option .amounts .fee {
         margin-top: 1.75rem;
         font-size: 2rem;
         line-height: 2.75rem;
@@ -279,20 +283,6 @@ export default class NonNimiqCheckoutOption<
     .payment-option.confirmed .page-body {
         justify-content: flex-end;
         padding-bottom: 1rem;
-    }
-
-    .payment-option .page-body .payment-link {
-        word-break: break-all;
-        text-align: center;
-        background: none;
-    }
-
-    .payment-option:not(.confirmed) .page-body .payment-link {
-        background: var(--nimiq-blue-bg);
-        transition: background 5s ease, color 5s ease;
-        color: transparent;
-        border-radius: 1.5rem;
-        width: 100%;
     }
 
     .copyable-payment-information {
@@ -305,7 +295,8 @@ export default class NonNimiqCheckoutOption<
         padding: 1rem;
         width: 100%;
         text-align: center;
-        pointer-events: none;
+        border: 1px solid rgba(31, 35, 72, 0.1);
+        word-break: break-all;
     }
 
     .page-footer a.nq-button {
@@ -323,12 +314,6 @@ export default class NonNimiqCheckoutOption<
 
     .page-footer a.nq-button + p.nq-text-s > svg {
         margin-right: 1rem;
-    }
-
-    /* todo */
-    .confirmed .copyable-payment-information >>> .copyable {
-        border: 1px solid rgba(31, 35, 72, 0.1);
-        pointer-events: all;
     }
 
     .copyable-payment-information >>> .copyable + .copyable {

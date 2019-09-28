@@ -4,6 +4,7 @@ import NonNimiqCheckoutOption from './NonNimiqCheckoutOption.vue';
 
 export default class EtherCheckoutOption
     extends NonNimiqCheckoutOption<ParsedEtherDirectPaymentOptions> {
+    protected currencyFullName = 'Ethereum';
     protected icon = 'icon-eth.svg';
 }
 </script>
