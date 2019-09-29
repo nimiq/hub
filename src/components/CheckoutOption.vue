@@ -4,7 +4,7 @@ import { State as RpcState } from '@nimiq/rpc';
 import { AvailableParsedPaymentOptions, ParsedCheckoutRequest } from '../lib/RequestTypes';
 import { Static } from '../lib/StaticStore';
 import StatusScreen from './StatusScreen.vue';
-import CheckoutServerApi from '../lib/CheckoutServerApi';
+import CheckoutServerApi, { GetStateResponse } from '../lib/CheckoutServerApi';
 import { PaymentInfoLine } from '@nimiq/vue-components';
 
 export default class CheckoutOption<
@@ -18,7 +18,8 @@ export default class CheckoutOption<
 
     protected showStatusScreen: boolean = false;
     protected state = StatusScreen.State.LOADING;
-    protected timeOffsetPromise!: Promise<number>;
+    protected lastPaymentState?: GetStateResponse;
+    protected timeOffsetPromise: Promise<number> = Promise.resolve(0);
     protected timeoutReached: boolean = false;
     protected checkNetworkInterval: number = -1;
     protected selected: boolean = false;
@@ -27,63 +28,64 @@ export default class CheckoutOption<
     protected message = '';
 
     protected async created() {
+        // First fetch current state to check whether user already paid and synchronize the time. We can only do this if
+        // a callbackUrl was provided. Note that for NIM no merchant server callbackUrl is strictly required as for NIM
+        // we can detect payments ourselves (see RequestParser).
+        if (this.request.callbackUrl) {
+            const statePromise = this.getState();
+            this.timeOffsetPromise = statePromise.then((state) => state.time - Date.now());
+            try {
+                this.lastPaymentState = await statePromise;
+            } catch (e) {
+                this.$rpc.reject(e);
+                return false;
+            }
+        }
+
         // If history.state does have an entry for this currencies previous selection, select it again
         if (window.history.state.selectedCurrency
-            && window.history.state.selectedCurrency === this.paymentOptions.currency) {
-            await this.selectCurrency();
+            && window.history.state.selectedCurrency === this.paymentOptions.currency
+            && !await this.selectCurrency()) {
+            return false;
         }
+
+        if (this.paymentOptions.expires) {
+            this.setupTimeout();
+        }
+        return true;
     }
-    protected mounted() {
-        if (!this.paymentOptions.expires) {
-            this.timeOffsetPromise = Promise.resolve(0);
-            return;
+
+    protected async mounted() {
+        if (this.request.callbackUrl && this.$refs.info) {
+            (this.$refs.info as PaymentInfoLine).setTime((await this.timeOffsetPromise) + Date.now());
         }
-
-        this.getState();
-
-        this.timeOffsetPromise = this.fetchTime().then((referenceTime) => {
-            if (this.$refs.info) {
-                (this.$refs.info as PaymentInfoLine).setTime(referenceTime);
-            }
-            this.setupTimeout(referenceTime);
-            return referenceTime - Date.now();
-        }).catch((e: Error) => {
-            this.$rpc.reject(e);
-            return 0;
-        });
     }
 
     protected destroyed() {
         if (this.optionTimeout) clearTimeout(this.optionTimeout);
     }
 
-    protected async fetchTime(): Promise<number> {
-        if (!this.request.callbackUrl || !this.request.csrf) {
-            throw new Error('Can\'t fetch time without callbackUrl and csrf token');
-        }
-        return CheckoutServerApi.fetchTime(this.request.callbackUrl, this.request.csrf);
-    }
-
-    protected getState() {
+    protected async getState() {
         if (!this.request.callbackUrl || !this.request.csrf) {
             throw new Error('Can\'t get state without callbackUrl and csrf token');
         }
 
-        CheckoutServerApi.getState(
+        const fetchedState = await CheckoutServerApi.getState(
             this.request.callbackUrl,
             this.paymentOptions.currency,
             this.request.csrf,
-        ).then((fetchedState) => {
-            if (fetchedState.payment_accepted === true) {
-                window.clearInterval(this.checkNetworkInterval);
-                window.clearTimeout(this.optionTimeout);
-                return this.showSuccessScreen();
-            }
-            if (this.timeoutReached) {
-                window.clearInterval(this.checkNetworkInterval);
-                this.timedOut();
-            }
-        });
+        );
+        if (fetchedState.payment_accepted) {
+            window.clearInterval(this.checkNetworkInterval);
+            window.clearTimeout(this.optionTimeout);
+            this.showSuccessScreen();
+            return fetchedState;
+        }
+        if (this.timeoutReached) {
+            window.clearInterval(this.checkNetworkInterval);
+            this.timedOut();
+        }
+        return fetchedState;
     }
 
     protected async fetchPaymentOption(): Promise<void> {
@@ -101,15 +103,22 @@ export default class CheckoutOption<
 
         this.paymentOptions.update(fetchedData);
 
-        window.clearTimeout(this.optionTimeout);
-        this.setupTimeout(Date.now() - (await this.timeOffsetPromise));
+        // update timeout in case that expiry changed
+        if (fetchedData.expires) {
+            this.setupTimeout();
+        }
 
         this.showStatusScreen = false;
         this.$forceUpdate();
     }
 
-    protected setupTimeout(referenceTime: number) {
+    protected async setupTimeout() {
+        window.clearTimeout(this.optionTimeout);
+        const referenceTime = Date.now() + (await this.timeOffsetPromise); // as a side effect ensures lastPaymentState
+        if (!this.paymentOptions.expires || this.lastPaymentState && this.lastPaymentState.payment_accepted) return;
         this.optionTimeout = window.setTimeout(
+            // if the network check is active, only set a flag to be checked after the network check to avoid that the
+            // offer gets displayed as expired when the network check would detect a successful payment.
             () => this.checkNetworkInterval !== -1 ? this.timeoutReached = true : this.timedOut(),
             this.paymentOptions.expires - referenceTime,
         );
@@ -139,12 +148,12 @@ export default class CheckoutOption<
                 await this.fetchPaymentOption();
             } catch (e) {
                 this.$rpc.reject(e);
-                return;
+                return false;
             }
         }
         if (!this.paymentOptions.protocolSpecific.recipient) {
             this.$rpc.reject(new Error('Failed to fetch recipient'));
-            return;
+            return false;
         }
 
         // set the selected currency in history state to enable re-selection
@@ -152,6 +161,7 @@ export default class CheckoutOption<
             Object.assign({}, window.history.state, {selectedCurrency: this.paymentOptions.currency}),
             '');
         this.$emit('chosen', this.paymentOptions.currency);
+        return true;
     }
 }
 </script>
