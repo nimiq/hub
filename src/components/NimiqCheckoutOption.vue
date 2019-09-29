@@ -143,7 +143,7 @@ export default class NimiqCheckoutOption
         if (this.paymentOptions.currency !== Currency.NIM) {
             throw new Error('NimiqCheckoutOption did not get a NimiqPaymentOption.');
         }
-        await super.created();
+        return await super.created();
     }
 
     protected async mounted() {
@@ -251,7 +251,7 @@ export default class NimiqCheckoutOption
     }
 
     private async setAccountOrContract(walletId: string, address: string, isFromRequest = false) {
-        super.selectCurrency();
+        if (!await super.selectCurrency()) return;
 
         if (this.balancesUpdating) {
             this.showStatusScreen = true;
