@@ -109,7 +109,6 @@ import { AvailableParsedPaymentOptions } from '../lib/RequestTypes';
 import CheckoutOption from './CheckoutOption.vue';
 import CurrencyInfo from './CurrencyInfo.vue';
 import StatusScreen from './StatusScreen.vue';
-import CheckoutServerApi from '../lib/CheckoutServerApi';
 
 @Component({components: {
     Account,
@@ -129,10 +128,10 @@ export default class NonNimiqCheckoutOption<
     Parsed extends AvailableParsedPaymentOptions
 > extends CheckoutOption<Parsed> {
     protected async created() {
-        await super.created();
+        return await super.created();
     }
 
-    protected mounted() {
+    protected async mounted() {
         super.mounted();
     }
 
@@ -150,7 +149,7 @@ export default class NonNimiqCheckoutOption<
             this.state = StatusScreen.State.LOADING;
             this.showStatusScreen = true;
         }
-        await super.selectCurrency();
+        if (!await super.selectCurrency()) return false;
 
         let element: HTMLElement | null = document.getElementById(this.paymentOptions.currency!);
         if (element) {
@@ -173,7 +172,10 @@ export default class NonNimiqCheckoutOption<
             ),
         );
 
-        this.checkNetworkInterval = window.setInterval(this.getState.bind(this), 10000);
+        this.checkNetworkInterval = window.setInterval(async () => {
+            this.lastPaymentState = await this.getState();
+        }, 10000);
+        return true;
     }
 
     protected checkBlur() {
