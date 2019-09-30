@@ -129,8 +129,7 @@ export default class CheckoutOption<
         if (fetchedData.expires) {
             this.setupTimeout();
         }
-
-        this.showStatusScreen = false;
+        this.showStatusScreen = this.timeoutReached;
         this.$forceUpdate();
     }
 
@@ -138,12 +137,17 @@ export default class CheckoutOption<
         window.clearTimeout(this.optionTimeout);
         const referenceTime = Date.now() + (await this.timeOffsetPromise); // as a side effect ensures lastPaymentState
         if (!this.paymentOptions.expires || this.lastPaymentState && this.lastPaymentState.payment_accepted) return;
-        this.optionTimeout = window.setTimeout(
-            // if the network check is active, only set a flag to be checked after the network check to avoid that the
-            // offer gets displayed as expired when the network check would detect a successful payment.
-            () => this.checkNetworkInterval !== -1 ? this.timeoutReached = true : this.timedOut(),
-            this.paymentOptions.expires - referenceTime,
-        );
+        const timeLeft = this.paymentOptions.expires - referenceTime;
+        if (timeLeft > 0) {
+            this.optionTimeout = window.setTimeout(
+                // if the network check is active, only set a flag to be checked after the network check to avoid that
+                // the offer gets displayed as expired when the network check would detect a successful payment.
+                () => this.checkNetworkInterval !== -1 ? this.timeoutReached = true : this.timedOut(),
+                timeLeft,
+            );
+        } else {
+            this.checkNetworkInterval !== -1 ? this.timeoutReached = true : this.timedOut();
+        }
     }
 
     protected timedOut() {
@@ -180,6 +184,7 @@ export default class CheckoutOption<
     }
 
     protected async selectCurrency() {
+        window.clearTimeout(this.optionTimeout);
         this.selected = true;
         this.$emit('chosen', this.paymentOptions.currency);
         if (this.request.callbackUrl) {
