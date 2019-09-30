@@ -115,7 +115,7 @@ export class ParsedEtherDirectPaymentOptions extends ParsedPaymentOptions<Curren
         }
 
         return this.fee
-            .times(bigInt(fiatAmount * (10 ** fiatCurrency.digits)))
+            .times(bigInt(Math.round(fiatAmount * (10 ** fiatCurrency.digits))))
             .divide(this.amount) // integer division loss of precision here.
             .valueOf() / (10 ** fiatCurrency.digits);
     }
