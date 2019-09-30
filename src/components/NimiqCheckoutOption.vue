@@ -13,8 +13,8 @@
                 :title="title"
                 :status="status"
                 :message="message"
-                @main-action="() => this.backToShop()"
-                mainAction="Go back to shop"
+                @main-action="mainAction"
+                :mainAction="mainActionText"
             >
                 <template v-if="timeoutReached" v-slot:warning>
                     <StopwatchIcon class="stopwatch-icon"/>
@@ -254,6 +254,7 @@ export default class NimiqCheckoutOption
         if (!await super.selectCurrency()) return;
 
         if (this.balancesUpdating) {
+            this.state = StatusScreen.State.LOADING;
             this.showStatusScreen = true;
             await this.updateBalancePromise;
         }
