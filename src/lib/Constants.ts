@@ -48,6 +48,9 @@ export function isDesktop() {
         || document.body.clientWidth) > MOBILE_MAX_WIDTH;
 }
 
+// History state
+export const HISTORY_KEY_SELECTED_CURRENCY = 'selected-currency';
+
 // time
 export function isMilliseconds(time: number) {
     /*

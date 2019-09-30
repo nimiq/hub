@@ -6,6 +6,7 @@ import { Static } from '../lib/StaticStore';
 import StatusScreen from './StatusScreen.vue';
 import CheckoutServerApi, { GetStateResponse } from '../lib/CheckoutServerApi';
 import { PaymentInfoLine } from '@nimiq/vue-components';
+import { HISTORY_KEY_SELECTED_CURRENCY } from '../lib/Constants';
 
 export default class CheckoutOption<
     Parsed extends AvailableParsedPaymentOptions,
@@ -43,8 +44,8 @@ export default class CheckoutOption<
         }
 
         // If history.state does have an entry for this currencies previous selection, select it again
-        if (window.history.state.selectedCurrency
-            && window.history.state.selectedCurrency === this.paymentOptions.currency
+        if (window.history.state
+            && window.history.state[HISTORY_KEY_SELECTED_CURRENCY] === this.paymentOptions.currency
             && !await this.selectCurrency()) {
             return false;
         }
@@ -158,7 +159,7 @@ export default class CheckoutOption<
 
         // set the selected currency in history state to enable re-selection
         window.history.replaceState(
-            Object.assign({}, window.history.state, {selectedCurrency: this.paymentOptions.currency}),
+            Object.assign({}, window.history.state, {[HISTORY_KEY_SELECTED_CURRENCY]: this.paymentOptions.currency}),
             '');
         this.$emit('chosen', this.paymentOptions.currency);
         return true;

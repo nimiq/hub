@@ -1,6 +1,6 @@
 <template>
     <div class="payment-option" :id="paymentOptions.currency">
-        <CurrencyInfo
+        <CurrencyInfo v-if="request.paymentOptions.length > 1"
             :currency="paymentOptions.currency"
             :fiatCurrency="request.fiatCurrency"
             :fiatFeeAmount="paymentOptions.fiatFee(request.fiatAmount, request.fiatCurrency)"
