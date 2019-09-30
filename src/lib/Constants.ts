@@ -42,3 +42,6 @@ export const ERROR_COOKIE_SPACE = 'Not enough cookie space';
 export const ERROR_REQUEST_TIMED_OUT = 'REQUEST_TIMED_OUT';
 // Input
 export const MOBILE_MAX_WIDTH = 600; // px
+
+// History state
+export const HISTORY_KEY_SELECTED_CURRENCY = 'selected-currency';
