@@ -73,8 +73,7 @@
 
 <script lang="ts">
 import { Component } from 'vue-property-decorator';
-import {
-    Copyable,
+import { Copyable,
     PageBody,
     PageFooter,
     PaymentInfoLine,
@@ -84,7 +83,6 @@ import {
     Amount,
 } from '@nimiq/vue-components';
 import QrCode from 'qr-code';
-import { Currency } from '../lib/PublicRequestTypes';
 import { AvailableParsedPaymentOptions } from '../lib/RequestTypes';
 import CheckoutOption from './CheckoutOption.vue';
 import CurrencyInfo from './CurrencyInfo.vue';
@@ -110,23 +108,8 @@ export default class NonNimiqCheckoutOption<
 
     private checkNetworkInterval: number | null = null;
 
-    public data() {
-        return {
-            Currency,
-        };
-    }
-
     protected mounted() {
-        if (this.paymentOptions.expires) {
-            this.fetchTime().then((referenceTime) => {
-                if (this.$refs.info) {
-                    (this.$refs.info as PaymentInfoLine).setTime(referenceTime);
-                }
-                this.setupTimeout(referenceTime);
-            }).catch((e: Error) => {
-                this.$rpc.reject(e);
-            });
-        }
+        super.mounted();
     }
 
     protected destroyed() {
@@ -185,9 +168,7 @@ export default class NonNimiqCheckoutOption<
 
             if (fetchedData.transaction_found === true) {
                 window.clearInterval(this.checkNetworkInterval!);
-                if (this.optionTimeout) {
-                    window.clearTimeout(this.optionTimeout);
-                }
+                window.clearTimeout(this.optionTimeout);
                 return this.showSuccessScreen();
             }
             if (this.timeoutReached) {

@@ -1,11 +1,6 @@
 <script lang="ts">
-import { State, Mutation, Getter } from 'vuex-class';
-import bigInt from 'big-integer';
 import { createEthereumRequestLink } from '@nimiq/utils';
-import {
-    EtherDirectPaymentOptions,
-    ParsedEtherDirectPaymentOptions,
-} from '../lib/paymentOptions/EtherPaymentOptions';
+import { ParsedEtherDirectPaymentOptions } from '../lib/paymentOptions/EtherPaymentOptions';
 import NonNimiqCheckoutOption from './NonNimiqCheckoutOption.vue';
 
 export default class EtherCheckoutOption

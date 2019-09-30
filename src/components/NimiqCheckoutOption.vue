@@ -67,24 +67,18 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component } from 'vue-property-decorator';
 import { State, Mutation, Getter } from 'vuex-class';
 import KeyguardClient from '@nimiq/keyguard-client';
-import { State as RpcState } from '@nimiq/rpc';
 import { AccountSelector, PaymentInfoLine, SmallPage, StopwatchIcon, TransferIcon } from '@nimiq/vue-components';
 import { AccountInfo } from '../lib/AccountInfo';
-import {
-    TX_VALIDITY_WINDOW,
-    LEGACY_GROUPING_ACCOUNT_ID,
-    LEGACY_GROUPING_ACCOUNT_LABEL,
-    ERROR_CANCELED,
-} from '../lib/Constants';
+import { TX_VALIDITY_WINDOW } from '../lib/Constants';
 import { ContractInfo, VestingContractInfo } from '../lib/ContractInfo';
 import { Account, Currency, RequestType } from '../lib/PublicRequestTypes';
-import staticStore, { Static } from '../lib/StaticStore';
+import staticStore from '../lib/StaticStore';
 import { WalletInfo, WalletType } from '../lib/WalletInfo';
 import { WalletStore } from '../lib/WalletStore';
-import { NimiqDirectPaymentOptions, ParsedNimiqDirectPaymentOptions } from '../lib/paymentOptions/NimiqPaymentOptions';
+import { ParsedNimiqDirectPaymentOptions } from '../lib/paymentOptions/NimiqPaymentOptions';
 import Network from './Network.vue';
 import StatusScreen from './StatusScreen.vue';
 import CheckoutOption from './CheckoutOption.vue';
@@ -114,7 +108,6 @@ export default class NimiqCheckoutOption
         userFriendlyAddress: string,
     }) => any;
 
-    private timeOffsetPromise: Promise<number> = Promise.resolve(0);
     private updateBalancePromise: Promise<void> | null = null;
     private balancesUpdating: boolean = true;
     private height: number = 0;
@@ -126,18 +119,7 @@ export default class NimiqCheckoutOption
     }
 
     protected async mounted() {
-        if (this.paymentOptions.expires) {
-            this.timeOffsetPromise = this.fetchTime().then((referenceTime) => {
-                if (this.$refs.info) {
-                    (this.$refs.info as PaymentInfoLine).setTime(referenceTime);
-                }
-                this.setupTimeout(referenceTime);
-                return referenceTime - Date.now();
-            }).catch((e: Error) => {
-                this.$rpc.reject(e);
-                return 0;
-            });
-        }
+        super.mounted();
         // Requires Network child component to be rendered
         this.addConsensusListeners();
         this.updateBalancePromise = this.getBalances().then((balances) => {

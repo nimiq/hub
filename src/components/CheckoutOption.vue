@@ -5,12 +5,13 @@ import { AvailableParsedPaymentOptions, ParsedCheckoutRequest } from '../lib/Req
 import { Static } from '../lib/StaticStore';
 import StatusScreen from './StatusScreen.vue';
 import CheckoutServerApi from '../lib/CheckoutServerApi';
+import { PaymentInfoLine } from '@nimiq/vue-components';
 import { ERROR_REQUEST_TIMED_OUT } from '../lib/Constants';
 
 export default class CheckoutOption<
     Parsed extends AvailableParsedPaymentOptions,
 > extends Vue {
-    protected optionTimeout: number | null = null;
+    protected optionTimeout: number = -1;
 
     @Prop(Object) protected paymentOptions!: Parsed;
     @Static protected rpcState!: RpcState;
@@ -18,10 +19,28 @@ export default class CheckoutOption<
 
     protected showStatusScreen: boolean = false;
     protected state = StatusScreen.State.LOADING;
+    protected timeOffsetPromise!: Promise<number>;
     protected timeoutReached: boolean = false;
     protected title = '';
     protected status = '';
     protected message = '';
+
+    protected mounted() {
+        if (!this.paymentOptions.expires) {
+            this.timeOffsetPromise = Promise.resolve(0);
+            return;
+        }
+        this.timeOffsetPromise = this.fetchTime().then((referenceTime) => {
+            if (this.$refs.info) {
+                (this.$refs.info as PaymentInfoLine).setTime(referenceTime);
+            }
+            this.setupTimeout(referenceTime);
+            return referenceTime - Date.now();
+        }).catch((e: Error) => {
+            this.$rpc.reject(e);
+            return 0;
+        });
+    }
 
     protected destroyed() {
         if (this.optionTimeout) clearTimeout(this.optionTimeout);
