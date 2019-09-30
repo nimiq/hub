@@ -81,7 +81,15 @@
                 </div>
             </PageBody>
             <PageFooter v-if="selected">
-                <a class="nq-button light-blue" :href="paymentOptions.paymentLink">Open Wallet App</a>
+                <a class="nq-button light-blue use-app-button" :disabled="appNotFound" @click="checkBlur" :href="paymentOptions.paymentLink">
+                    <template v-if="appNotFound">
+                        <span>No App found</span>
+                        <span>Please send the transaction manually</span>
+                    </template>
+                    <template v-else>
+                        Open Wallet App
+                    </template>
+                </a>
                 <p class="nq-text-s"><AlertTriangleIcon/>Don’t close this window until confirmation</p>
             </PageFooter>
             <PageFooter v-else>
@@ -130,6 +138,7 @@ export default class NonNimiqCheckoutOption<
     Parsed extends AvailableParsedPaymentOptions
 > extends CheckoutOption<Parsed> {
     protected currencyFullName: string = ''; // to be set by child class
+    protected appNotFound: boolean = false;
 
     protected async created() {
         return await super.created();
@@ -182,7 +191,14 @@ export default class NonNimiqCheckoutOption<
     }
 
     protected checkBlur() {
-        // see if window gets blurred as an indicator for an opened wallet app.
+        const blurTimeout = window.setTimeout(() => {
+            this.appNotFound = true;
+            window.onblur = null;
+        }, 500);
+        window.onblur = (event) => {
+            window.clearTimeout(blurTimeout);
+            window.onblur = null;
+        };
     }
 
     private data() {
@@ -363,5 +379,24 @@ export default class NonNimiqCheckoutOption<
         top: calc(50% - 1rem);
         width: 1.75rem;
         height: 2rem;
+    }
+
+    .use-app-button {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+        padding-top: 0.625rem;
+        padding-bottom: 0.625rem;
+    }
+
+    .use-app-button > span {
+        display: flex;
+        line-height: 1;
+    }
+
+    .use-app-button > span + span {
+        font-size: 1.625rem;
+        text-transform: none;
+        letter-spacing: normal;
     }
 </style>
