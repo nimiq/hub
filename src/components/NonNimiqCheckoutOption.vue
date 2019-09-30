@@ -7,14 +7,23 @@
             :currencyIcon="icon"/>
 
         <SmallPage>
-            <StatusScreen
-                :title="title"
-                :state="state"
-                :status="status"
-                v-if="showStatusScreen"
-                :message="message"
-                @main-action="() => this.backToShop()"
-                mainAction="Go back to shop"/>
+            <transition name="transition-fade">
+                <StatusScreen
+                    v-if="showStatusScreen"
+                    :state="state"
+                    :title="title"
+                    :status="status"
+                    :message="message"
+                    @main-action="() => this.backToShop()"
+                    mainAction="Go back to shop"
+                >
+                    <template v-if="timeoutReached" v-slot:warning>
+                        <StopwatchIcon class="stopwatch-icon"/>
+                        <h1 class="title nq-h1">{{ title }}</h1>
+                        <p v-if="message" class="message nq-text">{{ message }}</p>
+                    </template>
+                </StatusScreen>
+            </transition>
             <PaymentInfoLine v-if="rpcState"
                 ref="info"
                 :cryptoAmount="{
@@ -65,7 +74,16 @@
 
 <script lang="ts">
 import { Component } from 'vue-property-decorator';
-import { Copyable, PageBody, PageFooter, PaymentInfoLine, QrCodeIcon, SmallPage, Amount } from '@nimiq/vue-components';
+import {
+    Copyable,
+    PageBody,
+    PageFooter,
+    PaymentInfoLine,
+    QrCodeIcon,
+    SmallPage,
+    StopwatchIcon,
+    Amount,
+} from '@nimiq/vue-components';
 import QrCode from 'qr-code';
 import { AvailablePaymentOptions, Currency } from '../lib/PublicRequestTypes';
 import { AvailableParsedPaymentOptions } from '../lib/RequestTypes';
@@ -82,6 +100,7 @@ import StatusScreen from './StatusScreen.vue';
     QrCodeIcon,
     SmallPage,
     StatusScreen,
+    StopwatchIcon,
     Amount,
 }})
 export default class NonNimiqCheckoutOption<
@@ -179,6 +198,11 @@ export default class NonNimiqCheckoutOption<
         position: absolute;
         left: 0;
         top: 0;
+        transition: opacity .3s var(--nimiq-ease);
+    }
+
+    .status-screen .stopwatch-icon {
+        font-size: 15.5rem;
     }
 
     .currency-info h1 {

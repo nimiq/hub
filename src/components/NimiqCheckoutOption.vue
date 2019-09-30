@@ -6,14 +6,23 @@
         :fiatFeeAmount="paymentOptions.fiatFee(request.fiatAmount, request.fiatCurrency)"
         />
     <SmallPage>
-        <StatusScreen
-            :title="title"
-            :status="status"
-            :state="state"
-            :message="message"
-            v-if="showStatusScreen"
-            @main-action="() => this.backToShop()"
-            mainAction="Go back to shop"/>
+        <transition name="transition-fade">
+            <StatusScreen
+                v-if="showStatusScreen"
+                :state="state"
+                :title="title"
+                :status="status"
+                :message="message"
+                @main-action="() => this.backToShop()"
+                mainAction="Go back to shop"
+            >
+                <template v-if="timeoutReached" v-slot:warning>
+                    <StopwatchIcon class="stopwatch-icon"/>
+                    <h1 class="title nq-h1">{{ title }}</h1>
+                    <p v-if="message" class="message nq-text">{{ message }}</p>
+                </template>
+            </StatusScreen>
+        </transition>
         <template v-if="rpcState">
             <PaymentInfoLine
                 ref="info"
@@ -63,7 +72,7 @@ import { Component, Vue } from 'vue-property-decorator';
 import { State, Mutation, Getter } from 'vuex-class';
 import KeyguardClient from '@nimiq/keyguard-client';
 import { State as RpcState } from '@nimiq/rpc';
-import { AccountSelector, PaymentInfoLine, SmallPage, TransferIcon } from '@nimiq/vue-components';
+import { AccountSelector, PaymentInfoLine, SmallPage, StopwatchIcon, TransferIcon } from '@nimiq/vue-components';
 import { AccountInfo } from '../lib/AccountInfo';
 import {
     TX_VALIDITY_WINDOW,
@@ -90,6 +99,7 @@ import CurrencyInfo from './CurrencyInfo.vue';
     SmallPage,
     StatusScreen,
     PaymentInfoLine,
+    StopwatchIcon,
     TransferIcon,
 }})
 export default class NimiqCheckoutOption
@@ -372,6 +382,11 @@ export default class NimiqCheckoutOption
         position: absolute;
         left: 0;
         top: 0;
+        transition: opacity .3s var(--nimiq-ease);
+    }
+
+    .status-screen .stopwatch-icon {
+        font-size: 15.5rem;
     }
 
     .nq-h1 {
