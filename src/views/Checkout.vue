@@ -4,8 +4,8 @@
             :entries="request.paymentOptions.map((paymentOptions) => paymentOptions.currency)"
             :animationDuration="500"
             :selected="selectedCurrency"
-            :disabled="choosenCurrency !== null"
-            @select="updateSelection">
+            :disabled="choosenCurrency !== null || availableCurrencies.length === 0"
+            @select="selectedCurrency = $event">
             <template v-for="paymentOptions of request.paymentOptions" v-slot:[paymentOptions.currency]>
                 <NimiqCheckoutOption
                     v-if="paymentOptions.currency === Currency.NIM"
@@ -47,7 +47,7 @@ import EthereumCheckoutOption from '../components/EthereumCheckoutOption.vue';
 import NimiqCheckoutOption from '../components/NimiqCheckoutOption.vue';
 import { Currency } from '../lib/PublicRequestTypes';
 import { State as RpcState } from '@nimiq/rpc';
-import staticStore, { Static } from '../lib/StaticStore';
+import { Static } from '../lib/StaticStore';
 import { ERROR_CANCELED } from '../lib/Constants';
 
 @Component({components: {
@@ -63,20 +63,16 @@ export default class Checkout extends Vue {
     @Static private request!: ParsedCheckoutRequest;
     private choosenCurrency: Currency | null = null;
     private selectedCurrency: Currency = Currency.NIM;
-    private availableCurrencies: Set<Currency> = new Set<Currency>();
+    private availableCurrencies: Currency[] = [];
 
     private async created() {
         const $subtitle = document.querySelector('.logo .logo-subtitle')!;
         $subtitle.textContent = 'Checkout';
-        this.request.paymentOptions.forEach((option) => this.availableCurrencies.add(option.currency));
+        this.availableCurrencies = this.request.paymentOptions.map((option) => option.currency);
     }
 
     private close() {
         this.$rpc.reject(new Error(ERROR_CANCELED));
-    }
-
-    private updateSelection(selectedCurrency: string) {
-        this.selectedCurrency = selectedCurrency as Currency;
     }
 
     private chooseCurrency(currency: Currency) {
@@ -84,14 +80,7 @@ export default class Checkout extends Vue {
     }
 
     private expired(currency: Currency) {
-        this.availableCurrencies.delete(currency);
-        if (this.availableCurrencies.size === 0 || this.choosenCurrency === currency) {
-            this.choosenCurrency = currency;
-            return;
-        }
-        if (this.selectedCurrency === currency) {
-            this.selectedCurrency = this.availableCurrencies.values().next().value;
-        }
+        this.availableCurrencies.splice(this.availableCurrencies.indexOf(currency), 1);
     }
 
     private data() {
