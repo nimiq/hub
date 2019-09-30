@@ -1,6 +1,7 @@
 <template>
     <div class="container">
         <Carousel
+            :class="{'offset-currency-info-on-disabled': request.paymentOptions.length > 1}"
             :entries="request.paymentOptions.map((paymentOptions) => paymentOptions.currency)"
             :animationDuration="500"
             :selected="selectedCurrency"
@@ -110,16 +111,15 @@ export default class Checkout extends Vue {
         box-sizing: border-box;
         padding: 0;
         overflow: hidden;
+        transition: margin-top 1s var(--nimiq-ease);
+    }
+
+    .carousel.disabled.offset-currency-info-on-disabled {
+        margin-top: -16.125rem; /* currency-info height */
     }
 
     .carousel >>> .payment-option {
-        transition: filter .5s ease;
         padding: 4rem 0;
-    }
-
-    .carousel >>> > :not(.selected) .payment-option {
-        -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
-        filter: grayscale(100%);
     }
 
     .carousel >>> .currency-info {
@@ -134,7 +134,7 @@ export default class Checkout extends Vue {
         transform: translateY(-8.75rem);
     }
 
-    .carousel.disabled >>> > :not(.selected) .currency-info {
+    .carousel.disabled >>> .currency-info {
         opacity: 0;
     }
 
