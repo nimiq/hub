@@ -7,6 +7,7 @@ import StatusScreen from './StatusScreen.vue';
 import CheckoutServerApi, { GetStateResponse } from '../lib/CheckoutServerApi';
 import { PaymentInfoLine } from '@nimiq/vue-components';
 import { ERROR_REQUEST_TIMED_OUT, HISTORY_KEY_SELECTED_CURRENCY } from '../lib/Constants';
+import { PaymentState } from '../lib/PublicRequestTypes';
 
 export default class CheckoutOption<
     Parsed extends AvailableParsedPaymentOptions,
@@ -27,6 +28,8 @@ export default class CheckoutOption<
     protected title = '';
     protected status = '';
     protected message = '';
+    protected mainActionText: string = '';
+    protected mainAction: () => void = () => console.warn('mainAction not set.');
 
     protected async created() {
         // First fetch current state to check whether user already paid and synchronize the time. We can only do this if
@@ -79,9 +82,21 @@ export default class CheckoutOption<
         if (fetchedState.payment_accepted) {
             window.clearInterval(this.checkNetworkInterval);
             window.clearTimeout(this.optionTimeout);
-            this.showSuccessScreen();
+            if (fetchedState.payment_state === PaymentState.PAID) {
+                this.showSuccessScreen();
+            } else if (fetchedState.payment_state === PaymentState.OVERPAID) {
+                // TODO: indicate user he paid too much and needs to contact support
+                // For now is an accepted payment the same way a correctly paid payment is.
+                this.showSuccessScreen();
+            } else {
+                throw new Error('Incompatible combination for payment_state and payment_accepted.');
+            }
             return fetchedState;
+        } else if (fetchedState.payment_state === PaymentState.UNDERPAID) {
+            this.showUnderpaidWarningScreen();
         }
+        // else is PaymentState.NOT_FOUND which necessitates no action
+
         if (this.timeoutReached) {
             window.clearInterval(this.checkNetworkInterval);
             this.timedOut();
@@ -92,6 +107,7 @@ export default class CheckoutOption<
     protected async fetchPaymentOption(): Promise<void> {
         let fetchedData: any;
 
+        this.state = StatusScreen.State.LOADING;
         this.title = 'Collecting payment details';
         this.status = '';
         this.showStatusScreen = true;
@@ -129,6 +145,8 @@ export default class CheckoutOption<
         this.timeoutReached = true;
         this.title = 'The offer expired.';
         this.message = 'Please go back to the shop and restart the process.';
+        this.mainAction = () => this.backToShop();
+        this.mainActionText = 'Go back to shop';
         this.showStatusScreen = true;
         this.state = StatusScreen.State.WARNING;
         this.$emit('expired', this.paymentOptions.currency);
@@ -139,7 +157,19 @@ export default class CheckoutOption<
     }
 
     protected showSuccessScreen() {
-        return;
+        this.title = 'Payment successful';
+        this.showStatusScreen = true;
+        this.state = StatusScreen.State.SUCCESS;
+        window.setTimeout(() => this.$rpc.resolve({success: true}),  StatusScreen.SUCCESS_REDIRECT_DELAY);
+    }
+
+    protected showUnderpaidWarningScreen() {
+        this.title = 'Incomplete Transaction.';
+        this.message = 'Please transfer the correct amount and contact support.';
+        this.mainAction = () => this.showStatusScreen = false;
+        this.mainActionText = 'back';
+        this.showStatusScreen = true;
+        this.state = StatusScreen.State.WARNING;
     }
 
     protected async selectCurrency() {

@@ -14,8 +14,8 @@
                     :title="title"
                     :status="status"
                     :message="message"
-                    @main-action="() => this.backToShop()"
-                    mainAction="Go back to shop"
+                    @main-action="mainAction"
+                    :mainAction="mainActionText"
                 >
                     <template v-if="timeoutReached" v-slot:warning>
                         <StopwatchIcon class="stopwatch-icon"/>
@@ -179,13 +179,6 @@ export default class NonNimiqCheckoutOption<
 
     protected checkBlur() {
         // see if window gets blurred as an indicator for an opened wallet app.
-    }
-
-    protected showSuccessScreen() {
-        this.title = 'Payment successful';
-        this.showStatusScreen = true;
-        this.$nextTick(() => this.state = StatusScreen.State.SUCCESS);
-        window.setTimeout(() => this.$rpc.resolve({success: true}),  StatusScreen.SUCCESS_REDIRECT_DELAY);
     }
 }
 </script>
