@@ -132,10 +132,11 @@ export default class CheckoutOption<
     }
 
     protected timedOut() {
+        this.timeoutReached = true;
         this.title = 'The offer expired.';
         this.message = 'Please go back to the shop and restart the process.';
         this.showStatusScreen = true;
-        this.$nextTick(() => this.state = StatusScreen.State.WARNING);
+        this.state = StatusScreen.State.WARNING;
         this.$emit('expired', this.paymentOptions.currency);
     }
 
