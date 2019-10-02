@@ -91,7 +91,13 @@ export default class NonNimiqCheckoutOption<
 
     private checkNetworkInterval: number | null = null;
 
-    public mounted() {
+    public data() {
+        return {
+            Currency,
+        };
+    }
+
+    protected mounted() {
         if (this.paymentOptions.expires) {
             this.fetchTime().then((referenceTime) => {
                 if (referenceTime) {
@@ -104,10 +110,9 @@ export default class NonNimiqCheckoutOption<
         }
     }
 
-    public data() {
-        return {
-            Currency,
-        };
+    protected destroyed() {
+        if (this.checkNetworkInterval) clearInterval(this.checkNetworkInterval);
+        super.destroyed();
     }
 
     protected async selectCurrency() {

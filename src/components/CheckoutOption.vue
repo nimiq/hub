@@ -32,6 +32,10 @@ export default class CheckoutOption<
     protected status = '';
     protected message = '';
 
+    protected destroyed() {
+        if (this.optionTimeout) clearTimeout(this.optionTimeout);
+    }
+
     protected fetchTime(): Promise<number | null> {
         if (!CheckoutOption.timePromise) {
             if (this.request.callbackUrl) {
