@@ -108,13 +108,13 @@ export default class NimiqCheckoutOption
     private balancesUpdating: boolean = true;
     private height: number = 0;
 
-    private created() {
+    protected created() {
         if (this.paymentOptions.currency !== Currency.NIM) {
             throw new Error('NimiqCheckoutOption did not get a NimiqPaymentOption.');
         }
     }
 
-    private async mounted() {
+    protected async mounted() {
         if (this.paymentOptions.expires) {
             this.fetchTime().then((referenceTime) => {
                 if (referenceTime) {
@@ -148,6 +148,10 @@ export default class NimiqCheckoutOption
                 }
             }
         }
+    }
+
+    protected destroyed() {
+        super.destroyed();
     }
 
     private async getBalances(): Promise<Map<string, number>> {
