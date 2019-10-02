@@ -5,7 +5,12 @@
             <img v-else-if="currencyIcon" :src="currencyIcon"/>
             {{currency}}
         </h1>
-        <p class="nq-text">{{fiatFeeAmount.toFixed(fiatCurrency.digits)}} {{fiatCurrency.code}} Fee</p>
+        <p class="nq-text">{{ fiatFeeAmount === 0
+            ? 'No Fee'
+            : isAlmostFree
+                ? `~0 ${fiatCurrency.code} Fee`
+                : `~${fiatFeeAmount.toFixed(fiatCurrency.digits)} ${fiatCurrency.code} Fee`
+        }}</p>
     </div>
 </template>
 
@@ -26,6 +31,10 @@ export default class CurrencyInfo extends Vue {
             Currency,
         };
     }
+
+    private get isAlmostFree() {
+        return this.fiatFeeAmount !== 0 && Math.round(this.fiatFeeAmount * 10 ** this.fiatCurrency.digits) === 0;
+    }
 }
 </script>
 
@@ -33,14 +42,25 @@ export default class CurrencyInfo extends Vue {
     .currency-info h1 {
         display: flex;
         align-items: center;
-        margin-bottom: 0;
+        margin-bottom: 0 !important;
+        padding-bottom: 1.5rem; /* use padding instead of rem to make gap clickable */
         text-transform: uppercase;
+        font-size: 3.375rem;
     }
 
     .currency-info img,
     .currency-info .nq-icon {
-        width: 4.5rem;
         height: 4.5rem;
         margin-right: 2rem;
+    }
+
+    .currency-info .nq-icon {
+        width: 4.5rem;
+    }
+
+    .currency-info p {
+        margin-top: 0;
+        margin-bottom: 3.375rem;
+        font-size: 2.5rem;
     }
 </style>
