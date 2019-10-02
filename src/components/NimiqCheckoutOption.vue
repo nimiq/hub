@@ -4,7 +4,7 @@
         :currency="paymentOptions.currency"
         :fiatCurrency="request.fiatCurrency"
         :fiatFeeAmount="paymentOptions.fiatFee(request.fiatAmount)"
-        />
+    />
     <SmallPage>
         <transition name="transition-fade">
             <StatusScreen
