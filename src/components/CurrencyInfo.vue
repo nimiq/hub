@@ -6,7 +6,12 @@
             {{currency}}
         </h1>
         <p class="nq-text">
-            <FiatAmount :amount="fiatFeeAmount" :currency="fiatCurrency" />
+            <span v-if="fiatFeeAmount === 0">No</span>
+            <span v-else-if="isAlmostFree">~ 0</span>
+            <span v-else>
+                ~
+                <FiatAmount :amount="fiatFeeAmount" :currency="fiatCurrency" />
+            </span>
             Fee
         </p>
     </div>
@@ -19,15 +24,24 @@ import { Currency } from '../lib/PublicRequestTypes';
 
 @Component({components: {FiatAmount}})
 export default class CurrencyInfo extends Vue {
-    @Prop(String) private currency!: Currency;
+    @Prop({ type: String, required: true }) private currency!: Currency;
+    @Prop({ type: String, required: true }) private fiatCurrency!: string;
+    @Prop({ type: Number, required: true }) private fiatFeeAmount!: number;
     @Prop(String) private currencyIcon?: string;
-    @Prop(String) private fiatCurrency!: string;
-    @Prop(Number) private fiatFeeAmount!: number;
 
     private data() {
         return {
             Currency,
         };
+    }
+
+    private get isAlmostFree() {
+        // Check whether the amount is less than 1 of the smallest unit by checking whether all digits of the rendered
+        // number are 0.
+        return this.fiatFeeAmount !== 0
+            && !!this.fiatFeeAmount.toLocaleString('en-US', { style: 'currency', currency: this.fiatCurrency })
+                .replace(/\D+/g, '') // remove all non-digits
+                .match(/^0+$/);
     }
 }
 </script>
@@ -36,14 +50,25 @@ export default class CurrencyInfo extends Vue {
     .currency-info h1 {
         display: flex;
         align-items: center;
-        margin-bottom: 0;
+        margin-bottom: 0 !important;
+        padding-bottom: 1.5rem; /* use padding instead of rem to make gap clickable */
         text-transform: uppercase;
+        font-size: 3.375rem;
     }
 
     .currency-info img,
     .currency-info .nq-icon {
-        width: 4.5rem;
         height: 4.5rem;
         margin-right: 2rem;
+    }
+
+    .currency-info .nq-icon {
+        width: 4.5rem;
+    }
+
+    .currency-info p {
+        margin-top: 0;
+        margin-bottom: 3.25rem;
+        font-size: 2.5rem;
     }
 </style>
