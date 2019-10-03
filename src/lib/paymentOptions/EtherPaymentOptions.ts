@@ -2,7 +2,7 @@ import { CurrencyCodeRecord } from 'currency-codes';
 import bigInt from 'big-integer';
 import { Currency, PaymentMethod, PaymentOptions } from '../PublicRequestTypes';
 import { ParsedPaymentOptions } from '../RequestTypes';
-import { createEthereumRequestLink } from '@nimiq/utils';
+import { createEthereumRequestLink, toNonScientificNumberString } from '@nimiq/utils';
 
 export interface EtherDirectPaymentOptions  extends PaymentOptions<Currency.ETH, PaymentMethod.DIRECT> {
     protocolSpecific: {
@@ -44,46 +44,26 @@ export class ParsedEtherDirectPaymentOptions extends ParsedPaymentOptions<Curren
 
     public constructor(option: EtherDirectPaymentOptions) {
         super(option);
-        if (!option.amount) {
-            throw new Error('Each paymentOption must provide an amount.');
-        } else {
-            try {
-                this.amount = bigInt(option.amount);
-            } catch (err) {
-                throw new Error('The provided amount must parse as an integer');
-            }
-        }
+        this.amount = bigInt(option.amount); // note that bigInt resolves scientific notation like 2e3 automatically
 
         let gasLimit: number | undefined;
-        if (option.protocolSpecific.gasLimit) {
-            if (typeof option.protocolSpecific.gasLimit === 'string') {
-                try {
-                    gasLimit = Number.parseInt(option.protocolSpecific.gasLimit, 10);
-                } catch (err) {
-                    throw new Error('The provided gasLimit must parse as an integer');
-                }
-            } else if (typeof option.protocolSpecific.gasLimit === 'number') {
-                gasLimit = option.protocolSpecific.gasLimit;
-            } else {
-                throw new Error('If a gasLimit is provided it must either be of type string or number');
+        if (option.protocolSpecific.gasLimit !== undefined) {
+            if (!this.isNonNegativeInteger(option.protocolSpecific.gasLimit)) {
+                throw new Error('If provided, gasLimit must be a non-negative integer');
             }
+            gasLimit = Number.parseInt(toNonScientificNumberString(option.protocolSpecific.gasLimit), 10);
         }
 
         let gasPrice: bigInt.BigInteger | undefined;
-        if (option.protocolSpecific.gasPrice) {
-            if (typeof option.protocolSpecific.gasPrice !== 'string') {
-                throw new Error('If a gasPrice is provided it must be of type string');
-            } else {
-                try {
-                    gasPrice = bigInt(option.protocolSpecific.gasPrice);
-                } catch (err) {
-                    throw new Error('The provided gasPrice must parse as an integer');
-                }
+        if (option.protocolSpecific.gasPrice !== undefined) {
+            if (!this.isNonNegativeInteger(option.protocolSpecific.gasPrice)) {
+                throw new Error('If provided, gasPrice must be a non-negative integer');
             }
+            gasPrice = bigInt(option.protocolSpecific.gasPrice);
         }
 
         if (option.protocolSpecific.recipient && typeof option.protocolSpecific.recipient !== 'string') {
-            // add eth address validation here.
+            // TODO add eth address validation here?
             throw new Error('If a recipient is provided it must be of type string');
         }
 

@@ -1,7 +1,7 @@
 import { CurrencyCodeRecord } from 'currency-codes';
 import { Currency, PaymentMethod, PaymentOptions } from '../PublicRequestTypes';
 import { ParsedPaymentOptions } from '../RequestTypes';
-import { createBitcoinRequestLink } from '@nimiq/utils';
+import { createBitcoinRequestLink, toNonScientificNumberString } from '@nimiq/utils';
 import staticStore from '../StaticStore';
 
 export interface BitcoinDirectPaymentOptions extends PaymentOptions<Currency.BTC, PaymentMethod.DIRECT> {
@@ -42,33 +42,18 @@ export class ParsedBitcoinDirectPaymentOptions extends ParsedPaymentOptions<Curr
 
     public constructor(option: BitcoinDirectPaymentOptions) {
         super(option);
-        if (!option.amount) {
-            throw new Error('Each paymentOption must provide an amount.');
-        } else {
-            try {
-                this.amount = Number.parseInt(option.amount, 10);
-            } catch (err) {
-                throw new Error('The provided amount must parse as an Integer');
-            }
-        }
+        this.amount = Number.parseInt(toNonScientificNumberString(option.amount), 10);
 
         let fee: number | undefined;
-        if (option.protocolSpecific.fee) {
-            if (typeof option.protocolSpecific.fee === 'string') {
-                try {
-                    fee = Number.parseInt(option.protocolSpecific.fee, 10);
-                } catch (err) {
-                    throw new Error('The provided fee must parse as an integer');
-                }
-            } else if (typeof option.protocolSpecific.fee === 'number') {
-                fee = option.protocolSpecific.fee;
-            } else {
-                throw new Error('If a fee is provided it must either be a number or a string');
+        if (option.protocolSpecific.fee !== undefined) {
+            if (!this.isNonNegativeInteger(option.protocolSpecific.fee)) {
+                throw new Error('If provided, fee must be a non-negative integer');
             }
+            fee = Number.parseInt(toNonScientificNumberString(option.protocolSpecific.fee), 10);
         }
 
         if (option.protocolSpecific.recipient && typeof option.protocolSpecific.recipient !== 'string') {
-            // add btc address validation here.
+            // TODO add btc address validation here?
             throw new Error('If a recipient is provided it must be a string');
         }
 

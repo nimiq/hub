@@ -65,24 +65,41 @@ export class RequestParser {
             case RequestType.CHECKOUT:
                 const checkoutRequest = request as CheckoutRequest;
 
-                if (!checkoutRequest.version || checkoutRequest.version === 1) {
-                    if (!checkoutRequest!.value) throw new Error('value is required');
-
-                    if (checkoutRequest.shopLogoUrl && new URL(checkoutRequest.shopLogoUrl).origin !== state.origin) {
+                if (checkoutRequest.shopLogoUrl) {
+                    let origin;
+                    try {
+                        origin = new URL(checkoutRequest.shopLogoUrl).origin;
+                    } catch (err) {
+                        throw new Error(`shopLogoUrl must be a valid URL: ${err}`);
+                    }
+                    if (origin !== state.origin) {
                         throw new Error(
                             'shopLogoUrl must have same origin as caller website. Image at ' +
                             checkoutRequest.shopLogoUrl +
                             ' is not on caller origin ' +
-                            state.origin);
+                            state.origin,
+                        );
+                    }
+                }
+
+                if (checkoutRequest.extraData !== undefined && typeof checkoutRequest.extraData !== 'string'
+                    && !(checkoutRequest.extraData instanceof Uint8Array)) {
+                    throw new Error('extraData must be a string or Uint8Array');
+                }
+                const data = typeof checkoutRequest.extraData === 'string'
+                    ? Utf8Tools.stringToUtf8ByteArray(checkoutRequest.extraData)
+                    : checkoutRequest.extraData || new Uint8Array(0);
+
+                if (!checkoutRequest.version || checkoutRequest.version === 1) {
+                    if (typeof checkoutRequest.value !== 'number' || checkoutRequest.value <= 0) {
+                        throw new Error('value must be a number >0');
                     }
 
                     return {
                         kind: RequestType.CHECKOUT,
                         appName: checkoutRequest.appName,
                         shopLogoUrl: checkoutRequest.shopLogoUrl,
-                        data: typeof checkoutRequest.extraData === 'string'
-                            ? Utf8Tools.stringToUtf8ByteArray(checkoutRequest.extraData)
-                            : checkoutRequest.extraData || new Uint8Array(0),
+                        data,
                         time: + new Date(),
                         paymentOptions: [new ParsedNimiqDirectPaymentOptions({
                             currency: Currency.NIM,
@@ -96,13 +113,7 @@ export class RequestParser {
                                 forceSender: !!checkoutRequest.forceSender,
                                 fee: checkoutRequest.fee || 0,
                                 flags: checkoutRequest.flags,
-                                validityDuration: !checkoutRequest.validityDuration ? TX_VALIDITY_WINDOW : Math.min(
-                                    TX_VALIDITY_WINDOW,
-                                    Math.max(
-                                        TX_MIN_VALIDITY_DURATION,
-                                        checkoutRequest.validityDuration,
-                                    ),
-                                ),
+                                validityDuration: checkoutRequest.validityDuration,
                             },
                         })],
                     } as ParsedCheckoutRequest;
@@ -113,21 +124,8 @@ export class RequestParser {
                         if (!checkoutRequest.paymentOptions.some((option) => option.currency === Currency.NIM)) {
                             throw new Error('CheckoutRequest must provide a NIM paymentOption.');
                         }
-
-                        if (!checkoutRequest.shopLogoUrl || typeof checkoutRequest.shopLogoUrl !== 'string') {
-                            throw new Error('shopLogoUrl: string is required');
-                        }
-                        try {
-                            origin = new URL(checkoutRequest.shopLogoUrl).origin;
-                        } catch (err) {
-                            throw new Error(`shopLogoUrl must be a valid URL: ${err}`);
-                        }
-                        if (origin !== state.origin) {
-                            throw new Error(
-                                'shopLogoUrl must have same origin as caller website. Image at ' +
-                                checkoutRequest.shopLogoUrl +
-                                ' is not on caller origin ' +
-                                state.origin);
+                        if (!checkoutRequest.shopLogoUrl) {
+                            throw new Error('shopLogoUrl: string is required'); // shop logo non optional in version 2
                         }
                         if (!checkoutRequest.fiatCurrency || typeof checkoutRequest.fiatCurrency !== 'string') {
                             throw new Error('fiatCurrency: string is required');
@@ -164,7 +162,8 @@ export class RequestParser {
                                 throw new Error('callBackUrl must have the same origin as caller Website. ' +
                                     checkoutRequest.callbackUrl +
                                     ' is not on caller origin ' +
-                                    state.origin);
+                                    state.origin,
+                                );
                             }
                             if (!checkoutRequest.csrf || typeof checkoutRequest.csrf !== 'string') {
                                 throw new Error('A CSRF token must be provided alongside the callbackUrl.');
@@ -183,9 +182,7 @@ export class RequestParser {
                             shopLogoUrl: checkoutRequest.shopLogoUrl,
                             callbackUrl: checkoutRequest.callbackUrl,
                             csrf: checkoutRequest.csrf,
-                            data: typeof checkoutRequest.extraData === 'string'
-                                ? Utf8Tools.stringToUtf8ByteArray(checkoutRequest.extraData)
-                                : checkoutRequest.extraData || new Uint8Array(0),
+                            data,
                             time: !checkoutRequest.time
                                 ? + new Date()
                                 : isMilliseconds(checkoutRequest.time)
@@ -214,7 +211,7 @@ export class RequestParser {
                                     default:
                                         throw new Error(`PaymentMethod not supported`);
                                 }
-                        }),
+                            }),
                         } as ParsedCheckoutRequest;
                     }
                 }

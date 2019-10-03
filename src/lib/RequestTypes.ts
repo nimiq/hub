@@ -1,7 +1,7 @@
 type BigInteger = import('big-integer').BigInteger; // imports only the type without bundling
 import CurrencyCode from 'currency-codes';
 import { isMilliseconds } from './Constants';
-import { FormattableNumber } from '@nimiq/utils';
+import { FormattableNumber, toNonScientificNumberString } from '@nimiq/utils';
 import {
     RequestType,
     PaymentOptions,
@@ -65,7 +65,10 @@ export abstract class ParsedPaymentOptions<C extends Currency, T extends Payment
     public expires?: number;
 
     public constructor(option: PaymentOptions<C, T>) {
-        this.expires = option.expires
+        if (!this.isNonNegativeInteger(option.amount)) {
+            throw new Error('amount must be a non-negative integer');
+        }
+        this.expires = typeof option.expires === 'number'
             ? isMilliseconds(option.expires)
                 ? option.expires
                 : option.expires * 1000
@@ -77,6 +80,14 @@ export abstract class ParsedPaymentOptions<C extends Currency, T extends Payment
     }
 
     public abstract update(option: PaymentOptions<C, T>): void;
+
+    protected isNonNegativeInteger(value: string | number | bigint | BigInteger) {
+        try {
+            return /^\d+$/.test(toNonScientificNumberString(value));
+        } catch (e) {
+            return false;
+        }
+    }
 }
 
 export type AvailableParsedPaymentOptions = ParsedNimiqDirectPaymentOptions

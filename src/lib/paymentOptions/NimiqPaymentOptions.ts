@@ -2,7 +2,7 @@ import { CurrencyCodeRecord } from 'currency-codes';
 import { TX_VALIDITY_WINDOW, TX_MIN_VALIDITY_DURATION } from '../Constants';
 import { Currency, PaymentMethod, PaymentOptions } from '../PublicRequestTypes';
 import { Omit, ParsedPaymentOptions } from '../RequestTypes';
-import { createNimiqRequestLink } from '@nimiq/utils';
+import { createNimiqRequestLink, toNonScientificNumberString } from '@nimiq/utils';
 
 export interface NimiqDirectPaymentOptions extends PaymentOptions<Currency.NIM, PaymentMethod.DIRECT> {
     protocolSpecific: {
@@ -17,7 +17,7 @@ export interface NimiqDirectPaymentOptions extends PaymentOptions<Currency.NIM, 
 
 export type ExtendedNimiqDirectPaymentOptions = Omit<NimiqDirectPaymentOptions, 'protocolSpecific'> & {
     protocolSpecific: {
-        fee?: number;
+        fee?: number | string;
         validityDuration?: number;
         flags: number;
         recipient?: string;
@@ -37,12 +37,12 @@ export class ParsedNimiqDirectPaymentOptions extends ParsedPaymentOptions<Curren
     public amount: number;
     public protocolSpecific: {
         sender?: Nimiq.Address,
-        forceSender?: boolean,
-        fee?: number,
+        forceSender: boolean,
+        fee: number,
         flags: number,
         recipient?: Nimiq.Address,
         recipientType?: Nimiq.Account.Type,
-        validityDuration?: number,
+        validityDuration: number,
     };
 
     public get paymentLink() {
@@ -55,64 +55,61 @@ export class ParsedNimiqDirectPaymentOptions extends ParsedPaymentOptions<Curren
 
     public constructor(option: NimiqDirectPaymentOptions | ExtendedNimiqDirectPaymentOptions) {
         super(option);
-        if (!option.amount) {
-            throw new Error('Each paymentOption must provide an amount.');
-        } else {
-            try {
-                this.amount = Number.parseInt(option.amount, 10);
-            } catch (err) {
-                throw new Error('The provided amount must parse as an integer');
-            }
-        }
+        this.amount = Number.parseInt(toNonScientificNumberString(option.amount), 10);
 
         let sender: Nimiq.Address | undefined;
-        if (option.protocolSpecific.sender) {
-            if (typeof option.protocolSpecific.sender === 'string') {
-                try {
-                    sender = Nimiq.Address.fromUserFriendlyAddress(option.protocolSpecific.sender);
-                } catch (err) {
-                    throw new Error('sender must be a vaid user friendly address');
-                }
-            } else {
-                throw new Error('If a sender is provided it must be a user friendly address string');
+        if (option.protocolSpecific.sender !== undefined) {
+            try {
+                sender = Nimiq.Address.fromUserFriendlyAddress(option.protocolSpecific.sender);
+            } catch (err) {
+                throw new Error('If provided, sender must be a valid user friendly address string');
             }
         }
 
         let recipient: Nimiq.Address | undefined;
-        if (option.protocolSpecific.recipient) {
-            if (typeof option.protocolSpecific.recipient === 'string') {
-                try {
-                    recipient = Nimiq.Address.fromUserFriendlyAddress(option.protocolSpecific.recipient);
-                } catch (err) {
-                    throw new Error('recipient must be a vaid user friendly address');
-                }
-            } else {
-                throw new Error('If a recipient is provided it must be a user friendly address string');
+        if (option.protocolSpecific.recipient !== undefined) {
+            try {
+                recipient = Nimiq.Address.fromUserFriendlyAddress(option.protocolSpecific.recipient);
+            } catch (err) {
+                throw new Error('If provided, recipient must be a valid user friendly address string');
             }
         }
 
-        let fee: number | undefined;
-        if (option.protocolSpecific.fee) {
-            if (typeof option.protocolSpecific.fee === 'number') {
-                fee = option.protocolSpecific.fee;
-            } else if (typeof option.protocolSpecific.fee === 'string') {
-                try {
-                    fee = Number.parseInt(option.protocolSpecific.fee, 10);
-                } catch (err) {
-                    throw new Error('The provided fee must parse as an integer');
-                }
-            } else {
-                throw new Error('If a fee is provided it must be of type string or number');
+        let recipientType: Nimiq.Account.Type | undefined;
+        if (option.protocolSpecific.recipientType !== undefined) {
+            if (!Object.values(Nimiq.Account.Type).includes(option.protocolSpecific.recipientType)) {
+                throw new Error('If provided, recipientType must be a valid nimiq account type');
             }
+            recipientType = option.protocolSpecific.recipientType;
+        }
+
+        let fee: number | undefined;
+        if (option.protocolSpecific.fee !== undefined) {
+            if (!this.isNonNegativeInteger(option.protocolSpecific.fee)) {
+                throw new Error('If provided, fee must be a non-negative integer');
+            }
+            fee = Number.parseInt(toNonScientificNumberString(option.protocolSpecific.fee), 10);
+        } else {
+            fee = 0;
+        }
+
+        if (option.protocolSpecific.validityDuration !== undefined
+            && !this.isNonNegativeInteger(option.protocolSpecific.validityDuration)) {
+            throw new Error('If provided, validityDuration must be a non-negative integer.');
+        }
+
+        const flags = (option as ExtendedNimiqDirectPaymentOptions).protocolSpecific.flags;
+        if (flags !== undefined && typeof flags !== 'number') {
+            throw new Error('If provided, flags must be a number.');
         }
 
         this.protocolSpecific = {
             sender,
             forceSender: !!option.protocolSpecific.forceSender,
             fee,
-            flags: (option as ExtendedNimiqDirectPaymentOptions).protocolSpecific.flags || Nimiq.Transaction.Flag.NONE,
+            flags: flags || Nimiq.Transaction.Flag.NONE,
             recipient,
-            recipientType: option.protocolSpecific.recipientType,
+            recipientType,
             validityDuration: !option.protocolSpecific.validityDuration
                 ? TX_VALIDITY_WINDOW
                 : Math.min(
@@ -145,7 +142,7 @@ export class ParsedNimiqDirectPaymentOptions extends ParsedPaymentOptions<Curren
     }
 
     public get fee(): number {
-        return this.protocolSpecific.fee || 0;
+        return this.protocolSpecific.fee;
     }
 
     public fiatFee(fiatAmount: number, fiatCurrency: CurrencyCodeRecord): number {
