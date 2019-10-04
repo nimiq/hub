@@ -115,7 +115,7 @@ export class RequestParser {
                                 flags: checkoutRequest.flags,
                                 validityDuration: checkoutRequest.validityDuration,
                             },
-                        })],
+                        }, data)],
                     } as ParsedCheckoutRequest;
                 } else {
                     if (checkoutRequest.version === 2) {
@@ -200,7 +200,7 @@ export class RequestParser {
                                     case PaymentMethod.DIRECT:
                                         switch (option.currency) {
                                             case Currency.NIM:
-                                                return new ParsedNimiqDirectPaymentOptions(option);
+                                                return new ParsedNimiqDirectPaymentOptions(option, data);
                                             case Currency.ETH:
                                                 return new ParsedEtherDirectPaymentOptions(option);
                                             case Currency.BTC:

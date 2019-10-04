@@ -7,6 +7,7 @@ import { createNimiqRequestLink, toNonScientificNumberString } from '@nimiq/util
 export interface NimiqDirectPaymentOptions extends PaymentOptions<Currency.NIM, PaymentMethod.DIRECT> {
     protocolSpecific: {
         fee?: number | string;
+        feePerByte?: number | string;
         validityDuration?: number;
         sender?: string;
         forceSender?: boolean;
@@ -18,6 +19,7 @@ export interface NimiqDirectPaymentOptions extends PaymentOptions<Currency.NIM, 
 export type ExtendedNimiqDirectPaymentOptions = Omit<NimiqDirectPaymentOptions, 'protocolSpecific'> & {
     protocolSpecific: {
         fee?: number | string;
+        feePerByte?: number | string;
         validityDuration?: number;
         flags: number;
         recipient?: string;
@@ -39,11 +41,14 @@ export class ParsedNimiqDirectPaymentOptions extends ParsedPaymentOptions<Curren
         sender?: Nimiq.Address,
         forceSender: boolean,
         fee: number,
+        feePerByte: number;
         flags: number,
         recipient?: Nimiq.Address,
         recipientType?: Nimiq.Account.Type,
         validityDuration: number,
     };
+
+    private extraData: Uint8Array;
 
     public get paymentLink() {
         if (!this.protocolSpecific.recipient) return '#';
@@ -53,8 +58,9 @@ export class ParsedNimiqDirectPaymentOptions extends ParsedPaymentOptions<Curren
         });
     }
 
-    public constructor(option: NimiqDirectPaymentOptions | ExtendedNimiqDirectPaymentOptions) {
+    public constructor(option: NimiqDirectPaymentOptions | ExtendedNimiqDirectPaymentOptions, extraData: Uint8Array) {
         super(option);
+        this.extraData = extraData;
         this.amount = Number.parseInt(toNonScientificNumberString(option.amount), 10);
 
         let sender: Nimiq.Address | undefined;
@@ -83,14 +89,46 @@ export class ParsedNimiqDirectPaymentOptions extends ParsedPaymentOptions<Curren
             recipientType = option.protocolSpecific.recipientType;
         }
 
+        const flags = (option as ExtendedNimiqDirectPaymentOptions).protocolSpecific.flags;
+        if (flags !== undefined && typeof flags !== 'number') {
+            throw new Error('If provided, flags must be a number.');
+        }
+
+        let feePerByte: number | undefined;
+        if (option.protocolSpecific.feePerByte !== undefined) {
+            try {
+                feePerByte = parseFloat(toNonScientificNumberString(option.protocolSpecific.feePerByte));
+            } catch (e) {
+                throw new Error('If provided, feePerByte must be a valid number');
+            }
+        }
+
         let fee: number | undefined;
         if (option.protocolSpecific.fee !== undefined) {
             if (!this.isNonNegativeInteger(option.protocolSpecific.fee)) {
                 throw new Error('If provided, fee must be a non-negative integer');
             }
             fee = Number.parseInt(toNonScientificNumberString(option.protocolSpecific.fee), 10);
+        }
+
+        const requiresExtendedTransaction = extraData.length > 0
+            || recipientType !== undefined && recipientType !== Nimiq.Account.Type.BASIC
+            || flags !== undefined && flags !== Nimiq.Transaction.Flag.NONE;
+        // Note that the transaction size can be bigger than this, for example if the sender type the user wants to use
+        // requires an extended transaction or if an extended transaction includes a multi signature proof. The size
+        // is therefore just an estimate. In the majority of cases the estimate will be accurate though and a fee that
+        // is slightly off will generally not be a problem.
+        const estimatedTransactionSize = requiresExtendedTransaction ? 166 + extraData.length : 138;
+
+        if (fee === undefined) {
+            if (feePerByte === undefined) {
+                feePerByte = 0;
+                fee = 0;
+            } else {
+                fee = Math.ceil(feePerByte * estimatedTransactionSize);
+            }
         } else {
-            fee = 0;
+            feePerByte = fee / estimatedTransactionSize;
         }
 
         if (option.protocolSpecific.validityDuration !== undefined
@@ -98,15 +136,11 @@ export class ParsedNimiqDirectPaymentOptions extends ParsedPaymentOptions<Curren
             throw new Error('If provided, validityDuration must be a non-negative integer.');
         }
 
-        const flags = (option as ExtendedNimiqDirectPaymentOptions).protocolSpecific.flags;
-        if (flags !== undefined && typeof flags !== 'number') {
-            throw new Error('If provided, flags must be a number.');
-        }
-
         this.protocolSpecific = {
             sender,
             forceSender: !!option.protocolSpecific.forceSender,
             fee,
+            feePerByte,
             flags: flags || Nimiq.Transaction.Flag.NONE,
             recipient,
             recipientType,
@@ -123,13 +157,14 @@ export class ParsedNimiqDirectPaymentOptions extends ParsedPaymentOptions<Curren
     }
 
     public update(options: NimiqDirectPaymentOptions) {
-        const newOptions = new ParsedNimiqDirectPaymentOptions(options);
+        const newOptions = new ParsedNimiqDirectPaymentOptions(options, this.extraData);
         this.expires = newOptions.expires || this.expires;
         this.amount = newOptions.amount || this.amount;
         this.protocolSpecific = {
             sender: newOptions.protocolSpecific.sender || this.protocolSpecific.sender,
             forceSender: newOptions.protocolSpecific.forceSender || this.protocolSpecific.forceSender,
             fee: newOptions.protocolSpecific.fee || this.protocolSpecific.fee,
+            feePerByte: newOptions.protocolSpecific.feePerByte || this.protocolSpecific.feePerByte,
             flags: newOptions.protocolSpecific.flags || this.protocolSpecific.flags,
             recipient: newOptions.protocolSpecific.recipient || this.protocolSpecific.recipient,
             recipientType: newOptions.protocolSpecific.recipientType || this.protocolSpecific.recipientType,
@@ -167,6 +202,7 @@ export class ParsedNimiqDirectPaymentOptions extends ParsedPaymentOptions<Curren
                     ? this.protocolSpecific.recipient.toUserFriendlyAddress()
                     : undefined,
                 fee: this.protocolSpecific.fee,
+                feePerByte: this.protocolSpecific.feePerByte,
                 validityDuration: this.protocolSpecific.validityDuration,
                 sender: this.protocolSpecific.sender
                     ? this.protocolSpecific.sender.toUserFriendlyAddress()
