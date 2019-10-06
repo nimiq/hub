@@ -62,8 +62,15 @@
                 </div>
             </PageBody>
             <PageBody v-else>
-                <div class="qr-code">
-                </div>
+                <QrCode
+                    :data="paymentLink"
+                    :fill="{
+                        type: 'radial-gradient',
+                        position: [1, 1, 0, 1, 1, Math.sqrt(2)],
+                        colorStops: [ [0, '#260133'], [1, '#1F2348'] ] // nimiq-blue
+                    }"
+                    :size="180"
+                />
                 <div class="copyable-payment-information">
                     <Copyable :text="paymentOptions.baseUnitAmount">
                         <Amount class="nq-link"
@@ -81,7 +88,7 @@
             </PageBody>
             <PageFooter v-if="selected">
                 <a class="nq-button light-blue use-app-button" :disabled="appNotFound" @click="checkBlur"
-                    :href="this.paymentLink">
+                    :href="paymentLink">
                     <template v-if="appNotFound">
                         <span>No App found</span>
                         <span>Please send the transaction manually</span>
@@ -108,13 +115,13 @@ import {
     PageBody,
     PageFooter,
     PaymentInfoLine,
+    QrCode,
     SmallPage,
     StopwatchIcon,
     UnderPaymentIcon,
     Amount,
     FiatAmount,
 } from '@nimiq/vue-components';
-import QrCode from 'qr-code';
 import { PaymentState } from '../lib/PublicRequestTypes';
 import { AvailableParsedPaymentOptions } from '../lib/RequestTypes';
 import CheckoutOption from './CheckoutOption.vue';
@@ -129,6 +136,7 @@ import StatusScreen from './StatusScreen.vue';
     PageBody,
     PageFooter,
     PaymentInfoLine,
+    QrCode,
     SmallPage,
     StatusScreen,
     StopwatchIcon,
@@ -168,27 +176,6 @@ export default class NonNimiqCheckoutOption<
             this.showStatusScreen = true;
         }
         if (!await super.selectCurrency()) return false;
-
-        let element: HTMLElement | null = document.getElementById(this.paymentOptions.currency!);
-        if (element) {
-            element = element.querySelector('.qr-code');
-        }
-        if (!element) {
-            throw new Error(`An Element #${this.paymentOptions.currency} .qr-code must exist`);
-        }
-
-        this.$nextTick(() =>
-                QrCode.render({
-                    text: this.paymentLink,
-                    radius: 0.5, // 0.0 to 0.5
-                    ecLevel: 'M', // L, M, Q, H
-                    fill: '#1F2348', // foreground color
-                    background: null, // color or null for transparent
-                    size: 200, // in pixels
-                },
-                element!,
-            ),
-        );
 
         this.checkNetworkInterval = window.setInterval(async () => {
             this.lastPaymentState = await this.getState();
