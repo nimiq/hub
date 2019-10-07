@@ -70,6 +70,15 @@ export default class CheckoutOption<
         if (this.optionTimeout) clearTimeout(this.optionTimeout);
     }
 
+    protected get manualPaymentDetails(): Array<{ label: string, value: number | string | { [key: string]: any } }> {
+        // can be extended by child classes with additional currency specific payment details
+        if (!this.paymentOptions.protocolSpecific.recipient) return [];
+        return [{
+            label: 'Address',
+            value: this.paymentOptions.protocolSpecific.recipient,
+        }];
+    }
+
     protected async getState() {
         if (!this.request.callbackUrl || !this.request.csrf) {
             throw new Error('Can\'t get state without callbackUrl and csrf token');

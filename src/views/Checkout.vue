@@ -142,10 +142,6 @@ export default class Checkout extends Vue {
         flex-grow: 1; /* spacer for content distribution instead of margin which is used for disabled carousel offset */
     }
 
-    .container >>> .small-page {
-        position: relative;
-    }
-
     .container >>> .nq-h1 {
         margin-top: 3.5rem;
         margin-bottom: 1rem;
