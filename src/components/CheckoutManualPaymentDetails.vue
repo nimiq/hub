@@ -1,6 +1,6 @@
 <template>
     <SmallPage class="checkout-manual-payment-details nq-blue-bg">
-        <CloseButton class="top-right" @click="$emit(constructor.Events.CLOSE)"/>
+        <CloseButton class="close-button" @click="$emit(constructor.Events.CLOSE)"/>
         <p class="nq-notice info">
             Paste the information<br/>below into your<br/>wallet app.
         </p>
@@ -39,6 +39,13 @@ export default CheckoutManualPaymentDetails;
 <style scoped>
     .small-page {
         padding: 4rem;
+    }
+
+    .close-button {
+        position: absolute;
+        top: 3rem;
+        right: 3rem;
+        color: white;
     }
 
     .nq-notice {
