@@ -1,5 +1,6 @@
 <template>
     <div class="container">
+        <div class="spacer"></div>
         <Carousel
             :class="{'offset-currency-info-on-disabled': request.paymentOptions.length > 1}"
             :entries="request.paymentOptions.map((paymentOptions) => paymentOptions.currency)"
@@ -36,12 +37,25 @@
             <ArrowLeftSmallIcon/>
             Cancel Payment
         </button>
+        <div class="spacer"></div>
+
+        <transition name="transition-disclaimer">
+            <component :is="screenFitsDisclaimer ? 'div' : 'BottomOverlay'"
+                v-if="screenFitsDisclaimer || !disclaimerOverlayClosed"
+                class="disclaimer"
+                @close="_closeDisclaimerOverlay"
+            >
+                <strong>Disclaimer</strong>
+                This Nimiq interface is non-custodial and solely used to bridge the customer with the merchant directly
+                (P2P). Payment and order fulfillment are sole responsibility of the customer and merchant respectively.
+            </component>
+        </transition>
     </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { Carousel, ArrowLeftSmallIcon } from '@nimiq/vue-components';
+import { BottomOverlay, Carousel, ArrowLeftSmallIcon } from '@nimiq/vue-components';
 import { ParsedCheckoutRequest } from '../lib/RequestTypes';
 import BitcoinCheckoutOption from '../components/BitcoinCheckoutOption.vue';
 import EthereumCheckoutOption from '../components/EthereumCheckoutOption.vue';
@@ -53,24 +67,37 @@ import { ERROR_CANCELED } from '../lib/Constants';
 
 @Component({components: {
     ArrowLeftSmallIcon,
+    BottomOverlay,
     Carousel,
     BitcoinCheckoutOption,
     EthereumCheckoutOption,
     NimiqCheckoutOption,
 }})
 export default class Checkout extends Vue {
+    private static DISCLAIMER_CLOSED_COOKIE = 'checkout-disclaimer-closed';
 
     @Static private rpcState!: RpcState;
     @Static private request!: ParsedCheckoutRequest;
     private choosenCurrency: Currency | null = null;
     private selectedCurrency: Currency = Currency.NIM;
     private availableCurrencies: Currency[] = [];
+    private disclaimerOverlayClosed: boolean = false;
+    private screenFitsDisclaimer: boolean = true;
 
     private async created() {
         const $subtitle = document.querySelector('.logo .logo-subtitle')!;
         $subtitle.textContent = 'Checkout';
         this.availableCurrencies = this.request.paymentOptions.map((option) => option.currency);
         document.title = 'Nimiq Checkout';
+        this.disclaimerOverlayClosed = new RegExp(`(^| )${Checkout.DISCLAIMER_CLOSED_COOKIE}=`).test(document.cookie);
+
+        this._onResize = this._onResize.bind(this);
+        window.addEventListener('resize', this._onResize);
+        this._onResize();
+    }
+
+    private destroyed() {
+        window.removeEventListener('resize', this._onResize);
     }
 
     private close() {
@@ -86,6 +113,18 @@ export default class Checkout extends Vue {
         this.availableCurrencies.splice(this.availableCurrencies.indexOf(currency), 1);
     }
 
+    private _closeDisclaimerOverlay() {
+        this.disclaimerOverlayClosed = true;
+        // store a session cookie for current domain and path
+        document.cookie = `${Checkout.DISCLAIMER_CLOSED_COOKIE}=`;
+    }
+
+    private _onResize() {
+        const minWidth = 675; // Width below which disclaimer would break into three lines.
+        const minHeight = 890; // Height at which two lines fit at bottom, also if logos over carousel shown.
+        this.screenFitsDisclaimer = window.innerWidth >= minWidth && window.innerHeight >= minHeight;
+    }
+
     private data() {
         return {
             Currency,
@@ -95,6 +134,14 @@ export default class Checkout extends Vue {
 </script>
 
 <style scoped>
+    .container {
+        margin-top: -2rem; /* to get a bit more space for the long checkout page */
+    }
+
+    .container .spacer {
+        flex-grow: 1; /* spacer for content distribution instead of margin which is used for disabled carousel offset */
+    }
+
     .container >>> .small-page {
         position: relative;
     }
@@ -119,7 +166,7 @@ export default class Checkout extends Vue {
     }
 
     .carousel >>> .payment-option {
-        padding: 4rem 0;
+        padding-bottom: 4rem;
     }
 
     .carousel >>> .currency-info {
@@ -288,5 +335,59 @@ export default class Checkout extends Vue {
 
     .carousel >>> > :not(.selected) .payment-option:not(.confirmed) video {
         opacity: 0;
+    }
+
+    .global-close {
+        margin-top: 1rem;
+    }
+
+    .disclaimer {
+        width: calc(100% - 3rem);
+        transition: opacity .3s var(--nimiq-ease), max-height .3s var(--nimiq-ease);
+    }
+
+    .disclaimer:not(.bottom-overlay) {
+        margin-bottom: 1rem;
+        color: #1f234859; /* nimiq-blue with .35 opacity */
+        font-size: 1.5rem;
+        line-height: 1.3;
+        font-weight: 600;
+        text-align: center;
+        overflow: hidden;
+    }
+
+    .disclaimer.transition-disclaimer-enter,
+    .disclaimer.transition-disclaimer-leave-to {
+        opacity: 0;
+    }
+
+    .disclaimer:not(.bottom-overlay).transition-disclaimer-enter,
+    .disclaimer:not(.bottom-overlay).transition-disclaimer-leave-to {
+        max-height: 0;
+    }
+
+    .disclaimer:not(.bottom-overlay).transition-disclaimer-enter-to,
+    .disclaimer:not(.bottom-overlay).transition-disclaimer-leave {
+        max-height: 3.75rem; /* height of 2 lines of disclaimer */
+    }
+
+    .disclaimer > strong {
+        font-weight: bold;
+        line-height: 1;
+        letter-spacing: .1rem;
+        text-transform: uppercase;
+    }
+
+    .disclaimer.bottom-overlay > strong {
+        font-size: 1.75rem;
+        letter-spacing: .125rem;
+        opacity: .5;
+    }
+
+    @media (max-width: 1300px) {
+        .disclaimer:not(.bottom-overlay) {
+            max-width: 92rem; /* break disclaimer into 2 lines about equal in length */
+            margin-bottom: 1.5rem;
+        }
     }
 </style>
