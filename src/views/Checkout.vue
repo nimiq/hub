@@ -13,21 +13,33 @@
                     v-if="paymentOptions.currency === Currency.NIM"
                     :paymentOptions="paymentOptions"
                     :key="paymentOptions.currency"
-                    :class="{confirmed: choosenCurrency === paymentOptions.currency}"
+                    :class="{
+                        confirmed: choosenCurrency === paymentOptions.currency,
+                        left: leftSlide === Currency.NIM,
+                        right: rightSlide === Currency.NIM
+                    }"
                     @chosen="chooseCurrency"
                     @expired="expired"/>
                 <EthereumCheckoutOption
                     v-else-if="paymentOptions.currency === Currency.ETH"
                     :paymentOptions="paymentOptions"
                     :key="paymentOptions.currency"
-                    :class="{confirmed: choosenCurrency === paymentOptions.currency}"
+                    :class="{
+                        confirmed: choosenCurrency === paymentOptions.currency,
+                        left: leftSlide === Currency.ETH,
+                        right: rightSlide === Currency.ETH
+                    }"
                     @chosen="chooseCurrency"
                     @expired="expired"/>
                 <BitcoinCheckoutOption
                     v-else-if="paymentOptions.currency === Currency.BTC"
                     :paymentOptions="paymentOptions"
                     :key="paymentOptions.currency"
-                    :class="{confirmed: choosenCurrency === paymentOptions.currency}"
+                    :class="{
+                        confirmed: choosenCurrency === paymentOptions.currency,
+                        left: leftSlide === Currency.BTC,
+                        right: rightSlide === Currency.BTC
+                    }"
                     @chosen="chooseCurrency"
                     @expired="expired"/>
             </template>
@@ -54,7 +66,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Vue, Watch } from 'vue-property-decorator';
 import { BottomOverlay, Carousel, ArrowLeftSmallIcon } from '@nimiq/vue-components';
 import { ParsedCheckoutRequest } from '../lib/RequestTypes';
 import BitcoinCheckoutOption from '../components/BitcoinCheckoutOption.vue';
@@ -80,9 +92,23 @@ export default class Checkout extends Vue {
     @Static private request!: ParsedCheckoutRequest;
     private choosenCurrency: Currency | null = null;
     private selectedCurrency: Currency = Currency.NIM;
+    private leftSlide!: Currency;
+    private rightSlide!: Currency;
     private availableCurrencies: Currency[] = [];
     private disclaimerOverlayClosed: boolean = false;
     private screenFitsDisclaimer: boolean = true;
+
+    @Watch('selectedCurrency', { immediate: true })
+    private updateUnselected() {
+        const entries = this.request.paymentOptions.map((paymentOptions) => paymentOptions.currency);
+        const idSelected = entries.indexOf(this.selectedCurrency);
+
+        const idLeft = idSelected === 0 ? entries.length - 1 : idSelected - 1;
+        const idRight = idSelected === entries.length - 1 ? 0 : idSelected + 1;
+
+        this.leftSlide = entries[idLeft];
+        this.rightSlide = entries[idRight];
+    }
 
     private async created() {
         const $subtitle = document.querySelector('.logo .logo-subtitle')!;
@@ -169,16 +195,64 @@ export default class Checkout extends Vue {
         display: flex;
         flex-direction: column;
         align-items: center;
-        transition: transform .5s cubic-bezier(.67,0,.16,1), opacity .25s var(--nimiq-ease);
-        transform: translateY(0rem);
+
+        --currency-info-translate-y: -8.75rem;
+        transition:
+            transform .5s cubic-bezier(.67,0,.16,1),
+            opacity .25s var(--nimiq-ease);
+        transform: scale(1) translateY(0rem);
     }
 
     .carousel >>> > :not(.selected) .currency-info {
-        transform: translateY(-8.75rem);
+        transform: scale(1) translateY(var(--currency-info-translate-y));
     }
 
     .carousel.disabled >>> .currency-info {
         opacity: 0;
+    }
+
+    /* Mobile Layout */
+    @media (max-width: 500px) {
+        .carousel >>> * {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .carousel >>> .payment-option {
+            padding: 0;
+        }
+
+        .carousel >>> .currency-info {
+            --currency-info-mobile-scale: .8;
+            transform:
+                scale(var(--currency-info-mobile-scale))
+                translateY(1.4rem);
+        }
+
+        .carousel >>> > :not(.selected) .currency-info {
+            transform:
+                scale(var(--currency-info-mobile-scale))
+                translateY(var(--currency-info-translate-y));
+        }
+
+        .carousel >>> > :not(.selected) .left .currency-info {
+            transform:
+                scale(var(--currency-info-mobile-scale))
+                translateY(var(--currency-info-translate-y))
+                translateX(8rem);
+        }
+
+        .carousel >>> > :not(.selected) .right .currency-info {
+            transform:
+                scale(var(--currency-info-mobile-scale))
+                translateY(var(--currency-info-translate-y))
+                translateX(-8rem);
+        }
+
+        .carousel >>> .confirmed .nq-card {
+            /* 56px for mobile browser address bar */
+            /* 7.5rem for Nimiq logo & cancel button */
+            height: calc(100vh - 7.5rem - 56px);
+        }
     }
 
     /* make empty padding in cards click through to cards behind */
@@ -384,6 +458,15 @@ export default class Checkout extends Vue {
         .disclaimer:not(.bottom-overlay) {
             max-width: 92rem; /* break disclaimer into 2 lines about equal in length */
             margin-bottom: 1.5rem;
+        }
+    }
+
+    /* Mobile Layout */
+    @media (max-width: 450px) {
+        .carousel >>> .nq-card {
+            width: 100vw;
+            max-width: none;
+            margin: 0;
         }
     }
 </style>
