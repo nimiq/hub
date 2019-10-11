@@ -60,6 +60,7 @@ export default class HubApi<DB extends BehaviorType = BehaviorType.POPUP> { // D
 
     private readonly _endpoint: string;
     private readonly _defaultBehavior: RequestBehavior<DB>;
+    private readonly _checkoutDefaultBehavior: RequestBehavior<DB>;
     private readonly _iframeBehavior: IFrameRequestBehavior;
     private readonly _redirectClient: RedirectRpcClient;
 
@@ -67,6 +68,9 @@ export default class HubApi<DB extends BehaviorType = BehaviorType.POPUP> { // D
         this._endpoint = endpoint;
         this._defaultBehavior = defaultBehavior || new PopupRequestBehavior(
             `left=${window.innerWidth / 2 - 400},top=75,width=800,height=850,location=yes,dependent=yes`) as any;
+        // If no default behavior specified, use a default behavior with increased window height for checkout.
+        this._checkoutDefaultBehavior = defaultBehavior || new PopupRequestBehavior(
+            `left=${window.innerWidth / 2 - 400},top=50,width=800,height=890,location=yes,dependent=yes`) as any;
         this._iframeBehavior = new IFrameRequestBehavior();
 
         // Check for RPC results in the URL
@@ -98,7 +102,7 @@ export default class HubApi<DB extends BehaviorType = BehaviorType.POPUP> { // D
 
     public checkout<B extends BehaviorType = DB>(
         request: Promise<CheckoutRequest> | CheckoutRequest,
-        requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
+        requestBehavior: RequestBehavior<B> = this._checkoutDefaultBehavior as any,
     ): Promise<B extends BehaviorType.REDIRECT ? void : SignedTransaction> {
         return this._request(requestBehavior, RequestType.CHECKOUT, [request]);
     }
