@@ -12,7 +12,7 @@ import {
     RpcResult,
     RequestType,
 } from '../src/lib/PublicRequestTypes';
-import { PopupRequestBehavior, RedirectRequestBehavior } from '../client/RequestBehavior';
+import { RedirectRequestBehavior } from '../client/RequestBehavior';
 import { Utf8Tools } from '@nimiq/utils';
 
 class Demo {
@@ -62,21 +62,21 @@ class Demo {
         demo.setClientBehavior(
             (document.querySelector('input[name="popup-vs-redirect"]:checked') as HTMLInputElement).value);
 
-        document.querySelector('button#checkout-popup').addEventListener('click', async () => {
-            await checkoutPopup(await generateCheckoutRequest());
+        document.querySelector('button#checkout').addEventListener('click', async () => {
+            await checkout(await generateCheckoutRequest());
         });
 
-        document.querySelector('button#checkout-popup-with-account').addEventListener('click', async () => {
-            await checkoutPopup(await generateCheckoutRequest(true));
+        document.querySelector('button#checkout-with-account').addEventListener('click', async () => {
+            await checkout(await generateCheckoutRequest(true));
         });
 
         document.querySelector('button#multi-checkout').addEventListener('click', async () => {
-            await checkoutPopup(await generateMultiCheckoutRequest());
+            await checkout(await generateMultiCheckoutRequest());
         });
 
         document.querySelector('button#choose-address').addEventListener('click', async () => {
             try {
-                const result = await demo.client.chooseAddress({ appName: 'Accounts Demos' });
+                const result = await demo.client.chooseAddress({ appName: 'Accounts Demos' }, demo._defaultBehavior);
                 console.log('Result', result);
                 document.querySelector('#result').textContent = 'Address was chosen';
             } catch (e) {
@@ -85,14 +85,15 @@ class Demo {
             }
         });
 
-        document.querySelector('button#sign-transaction-popup').addEventListener('click', async () => {
+        document.querySelector('button#sign-transaction').addEventListener('click', async () => {
             const txRequest = generateSignTransactionRequest();
             try {
                 const result = await demo.client.signTransaction(
-                    new Promise<SignTransactionRequest>((resolve, reject) => {
+                    new Promise<SignTransactionRequest>((resolve) => {
                         window.setTimeout(() => resolve(txRequest), 2000);
-                    },
-                ));
+                    }),
+                    demo._defaultBehavior,
+                );
                 console.log('Result', result);
                 document.querySelector('#result').textContent = 'TX signed';
             } catch (e) {
@@ -103,7 +104,7 @@ class Demo {
 
         document.querySelector('button#onboard').addEventListener('click', async () => {
             try {
-                const result = await demo.client.onboard({ appName: 'Accounts Demos' });
+                const result = await demo.client.onboard({ appName: 'Accounts Demos' }, demo._defaultBehavior);
                 console.log('Result', result);
                 document.querySelector('#result').textContent = 'Onboarding completed!';
             } catch (e) {
@@ -114,7 +115,7 @@ class Demo {
 
         document.querySelector('button#create').addEventListener('click', async () => {
             try {
-                const result = await demo.client.signup({ appName: 'Accounts Demos' });
+                const result = await demo.client.signup({ appName: 'Accounts Demos' }, demo._defaultBehavior);
                 console.log('Result', result);
                 document.querySelector('#result').textContent = 'New account & address created';
             } catch (e) {
@@ -125,7 +126,7 @@ class Demo {
 
         document.querySelector('button#login').addEventListener('click', async () => {
             try {
-                const result = await demo.client.login({ appName: 'Accounts Demos' });
+                const result = await demo.client.login({ appName: 'Accounts Demos' }, demo._defaultBehavior);
                 console.log('Result', result);
                 document.querySelector('#result').textContent = 'Account imported';
             } catch (e) {
@@ -232,9 +233,9 @@ class Demo {
             };
         }
 
-        async function checkoutPopup(txRequest: CheckoutRequest) {
+        async function checkout(txRequest: CheckoutRequest) {
             try {
-                const result = await demo.client.checkout(txRequest);
+                const result = await demo.client.checkout(txRequest, demo._defaultBehavior);
                 console.log('Result', result);
                 document.querySelector('#result').textContent = 'TX signed';
             } catch (e) {
@@ -250,7 +251,7 @@ class Demo {
                 message: (document.querySelector('#message') as HTMLInputElement).value || undefined,
             };
             try {
-                const result = await demo.client.signMessage(request);
+                const result = await demo.client.signMessage(request, demo._defaultBehavior);
                 console.log('Result', result);
                 document.querySelector('#result').textContent = 'MSG signed: ' + request.message;
             } catch (e) {
@@ -276,7 +277,7 @@ class Demo {
             };
 
             try {
-                const result = await demo.client.signMessage(request);
+                const result = await demo.client.signMessage(request, demo._defaultBehavior);
                 console.log('Result', result);
                 document.querySelector('#result').textContent = 'MSG signed: ' + request.message;
             } catch (e) {
@@ -287,7 +288,7 @@ class Demo {
 
         document.querySelector('button#migrate').addEventListener('click', async () => {
             try {
-                const result = await demo.client.migrate();
+                const result = await demo.client.migrate(demo._defaultBehavior);
                 console.log('Result', result);
                 document.querySelector('#result').textContent = 'Migrated';
             } catch (e) {
@@ -319,6 +320,7 @@ class Demo {
     private _iframeClient: PostMessageRpcClient | null;
     private _keyguardBaseUrl: string;
     private _hubApi: HubApi;
+    private _defaultBehavior: RedirectRequestBehavior | undefined;
 
     constructor(keyguardBaseUrl: string) {
         this._iframeClient = null;
@@ -365,7 +367,7 @@ class Demo {
 
     public async logout(accountId: string): Promise<SimpleResult> {
         try {
-            const result = await this.client.logout(this._createLogoutRequest(accountId));
+            const result = await this.client.logout(this._createLogoutRequest(accountId), this._defaultBehavior);
             console.log('Result', result);
             document.querySelector('#result').textContent = 'Account removed';
             return result;
@@ -407,7 +409,7 @@ class Demo {
 
     private async _export(request: ExportRequest) {
         try {
-            const result = await this.client.export(request);
+            const result = await this.client.export(request, this._defaultBehavior);
             console.log('Result', result);
             if(result.fileExported) {
                 document.querySelector('#result').textContent = result.wordsExported
@@ -426,7 +428,10 @@ class Demo {
 
     public async changePassword(accountId: string) {
         try {
-            const result = await this.client.changePassword(this._createChangePasswordRequest(accountId));
+            const result = await this.client.changePassword(
+                this._createChangePasswordRequest(accountId),
+                this._defaultBehavior,
+            );
             console.log('Result', result);
             document.querySelector('#result').textContent = 'Export sucessful';
         } catch (e) {
@@ -444,7 +449,10 @@ class Demo {
 
     public async addAccount(accountId: string) {
         try {
-            const result = await this.client.addAddress(this._createAddAccountRequest(accountId));
+            const result = await this.client.addAddress(
+                this._createAddAccountRequest(accountId),
+                this._defaultBehavior,
+            );
             console.log('Result', result);
             document.querySelector('#result').textContent = 'Account added';
         } catch (e) {
@@ -462,7 +470,10 @@ class Demo {
 
     public async rename(accountId: string, account: string) {
         try {
-            const result = await this.client.rename(this._createRenameRequest(accountId, account));
+            const result = await this.client.rename(
+                this._createRenameRequest(accountId, account),
+                this._defaultBehavior,
+            );
             console.log('Result', result);
             document.querySelector('#result').textContent = 'Done renaming account';
         } catch (e) {
@@ -550,14 +561,9 @@ class Demo {
 
     public setClientBehavior(behavior: string) {
         if (behavior === 'popup') {
-            // @ts-ignore
-            demo.client._defaultBehavior = new PopupRequestBehavior(
-                `left=${window.innerWidth / 2 - 400},top=75,width=800,height=850,location=yes,dependent=yes`);
-        }
-
-        if (behavior === 'redirect') {
-            // @ts-ignore
-            demo.client._defaultBehavior = new RedirectRequestBehavior();
+            this._defaultBehavior = undefined; // use the clients default behavior which is popup
+        } else if (behavior === 'redirect') {
+            this._defaultBehavior = new RedirectRequestBehavior();
         }
     }
 
