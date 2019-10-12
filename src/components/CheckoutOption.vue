@@ -18,18 +18,19 @@ export default class CheckoutOption<
     @Static protected rpcState!: RpcState;
     @Static protected request!: ParsedCheckoutRequest;
 
-    protected showStatusScreen: boolean = false;
-    protected state = StatusScreen.State.LOADING;
     protected lastPaymentState?: GetStateResponse;
     protected timeOffsetPromise: Promise<number> = Promise.resolve(0);
     protected timeoutReached: boolean = false;
     protected checkNetworkInterval: number = -1;
+    protected paymentState: PaymentState = PaymentState.NOT_FOUND;
     protected selected: boolean = false;
-    protected title = '';
-    protected status = '';
-    protected message = '';
-    protected mainActionText: string = '';
-    protected mainAction: () => void = () => console.warn('mainAction not set.');
+    protected showStatusScreen: boolean = false;
+    protected statusScreenState = StatusScreen.State.LOADING;
+    protected statusScreenTitle: string = '';
+    protected statusScreenStatus: string = '';
+    protected statusScreenMessage: string = '';
+    protected statusScreenMainActionText: string = '';
+    protected statusScreenMainAction: () => void = () => console.warn('statusScreenMainAction not set.');
 
     protected async created() {
         // First fetch current state to check whether user already paid and synchronize the time. We can only do this if
@@ -79,6 +80,7 @@ export default class CheckoutOption<
             this.paymentOptions.currency,
             this.request.csrf,
         );
+        this.paymentState = fetchedState.payment_state;
         if (fetchedState.payment_accepted) {
             window.clearInterval(this.checkNetworkInterval);
             window.clearTimeout(this.optionTimeout);
@@ -107,9 +109,9 @@ export default class CheckoutOption<
     protected async fetchPaymentOption(): Promise<void> {
         let fetchedData: any;
 
-        this.state = StatusScreen.State.LOADING;
-        this.title = 'Collecting payment details';
-        this.status = '';
+        this.statusScreenState = StatusScreen.State.LOADING;
+        this.statusScreenTitle = 'Collecting payment details';
+        this.statusScreenStatus = '';
         this.showStatusScreen = true;
 
         if (!this.request.callbackUrl || !this.request.csrf) {
@@ -143,12 +145,12 @@ export default class CheckoutOption<
 
     protected timedOut() {
         this.timeoutReached = true;
-        this.title = 'The offer expired.';
-        this.message = 'Please go back to the shop and restart the process.';
-        this.mainAction = () => this.backToShop();
-        this.mainActionText = 'Go back to shop';
+        this.statusScreenTitle = 'The offer expired.';
+        this.statusScreenMessage = 'Please go back to the shop and restart the process.';
+        this.statusScreenMainAction = () => this.backToShop();
+        this.statusScreenMainActionText = 'Go back to shop';
+        this.statusScreenState = StatusScreen.State.WARNING;
         this.showStatusScreen = true;
-        this.state = StatusScreen.State.WARNING;
         this.$emit('expired', this.paymentOptions.currency);
     }
 
@@ -157,19 +159,21 @@ export default class CheckoutOption<
     }
 
     protected showSuccessScreen() {
-        this.title = 'Payment successful';
+        this.statusScreenTitle = 'Payment successful';
+        this.statusScreenState = StatusScreen.State.SUCCESS;
         this.showStatusScreen = true;
-        this.state = StatusScreen.State.SUCCESS;
         window.setTimeout(() => this.$rpc.resolve({success: true}),  StatusScreen.SUCCESS_REDIRECT_DELAY);
     }
 
     protected showUnderpaidWarningScreen() {
-        this.title = 'Incomplete Transaction.';
-        this.message = 'Please transfer the correct amount and contact support.';
-        this.mainAction = () => this.showStatusScreen = false;
-        this.mainActionText = 'back';
+        this.paymentState = PaymentState.UNDERPAID;
+        this.statusScreenTitle = 'Incomplete payment';
+        this.statusScreenMessage = 'You transferred an insufficient amount. ' +
+            'Please contact the merchant for a refund. Restart to pay for your order.';
+        this.statusScreenMainAction = () => this.showStatusScreen = false;
+        this.statusScreenMainActionText = 'Restart Payment';
         this.showStatusScreen = true;
-        this.state = StatusScreen.State.WARNING;
+        this.statusScreenState = StatusScreen.State.WARNING;
     }
 
     protected async selectCurrency() {
