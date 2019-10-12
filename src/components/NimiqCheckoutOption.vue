@@ -9,17 +9,18 @@
         <transition name="transition-fade">
             <StatusScreen
                 v-if="showStatusScreen"
-                :state="state"
-                :title="title"
-                :status="status"
-                :message="message"
-                @main-action="mainAction"
-                :mainAction="mainActionText"
+                :state="statusScreenState"
+                :title="statusScreenTitle"
+                :status="statusScreenStatus"
+                :message="statusScreenMessage"
+                @main-action="statusScreenMainAction"
+                :mainAction="statusScreenMainActionText"
             >
-                <template v-if="timeoutReached" v-slot:warning>
-                    <StopwatchIcon class="stopwatch-icon"/>
-                    <h1 class="title nq-h1">{{ title }}</h1>
-                    <p v-if="message" class="message nq-text">{{ message }}</p>
+                <template v-if="timeoutReached || paymentState === PaymentState.UNDERPAID" v-slot:warning>
+                    <StopwatchIcon v-if="timeoutReached" class="stopwatch-icon"/>
+                    <UnderPaymentIcon v-else class="under-payment-icon"/>
+                    <h1 class="title nq-h1">{{ statusScreenTitle }}</h1>
+                    <p v-if="statusScreenMessage" class="message nq-text">{{ statusScreenMessage }}</p>
                 </template>
             </StatusScreen>
         </transition>
@@ -92,11 +93,12 @@ import {
     SmallPage,
     StopwatchIcon,
     TransferIcon,
+    UnderPaymentIcon,
 } from '@nimiq/vue-components';
 import { AccountInfo } from '../lib/AccountInfo';
 import { TX_VALIDITY_WINDOW } from '../lib/Constants';
 import { ContractInfo, VestingContractInfo } from '../lib/ContractInfo';
-import { Account, Currency, RequestType } from '../lib/PublicRequestTypes';
+import { Account, Currency, PaymentState, RequestType } from '../lib/PublicRequestTypes';
 import staticStore from '../lib/StaticStore';
 import { WalletInfo, WalletType } from '../lib/WalletInfo';
 import { WalletStore } from '../lib/WalletStore';
@@ -118,6 +120,7 @@ import CurrencyInfo from './CurrencyInfo.vue';
     ArrowRightSmallIcon,
     StopwatchIcon,
     TransferIcon,
+    UnderPaymentIcon,
 }})
 export default class NimiqCheckoutOption
     extends CheckoutOption<ParsedNimiqDirectPaymentOptions> {
@@ -245,16 +248,16 @@ export default class NimiqCheckoutOption
 
     private addConsensusListeners() {
         const network = (this.$refs.network as Network);
-        network.$on(Network.Events.API_READY, () => this.status = 'Contacting seed nodes...');
-        network.$on(Network.Events.CONSENSUS_SYNCING, () => this.status = 'Syncing consensus...');
-        network.$on(Network.Events.CONSENSUS_ESTABLISHED, () => this.status = 'Requesting balances...');
+        network.$on(Network.Events.API_READY, () => this.statusScreenStatus = 'Contacting seed nodes...');
+        network.$on(Network.Events.CONSENSUS_SYNCING, () => this.statusScreenStatus = 'Syncing consensus...');
+        network.$on(Network.Events.CONSENSUS_ESTABLISHED, () => this.statusScreenStatus = 'Requesting balances...');
     }
 
     private async setAccountOrContract(walletId: string, address: string, isFromRequest = false) {
         if (!await super.selectCurrency()) return;
 
         if (this.balancesUpdating) {
-            this.state = StatusScreen.State.LOADING;
+            this.statusScreenState = StatusScreen.State.LOADING;
             this.showStatusScreen = true;
             await this.updateBalancePromise;
         }
@@ -368,6 +371,10 @@ export default class NimiqCheckoutOption
             return null;
         }
     }
+
+    private data() {
+        return { PaymentState };
+    }
 }
 </script>
 
@@ -386,6 +393,10 @@ export default class NimiqCheckoutOption
 
     .status-screen .stopwatch-icon {
         font-size: 15.5rem;
+    }
+
+    .status-screen .under-payment-icon {
+        font-size: 18.75rem;
     }
 
     .nq-h1 {
