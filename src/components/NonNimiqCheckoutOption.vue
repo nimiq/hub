@@ -10,17 +10,18 @@
             <transition name="transition-fade">
                 <StatusScreen
                     v-if="showStatusScreen"
-                    :state="state"
-                    :title="title"
-                    :status="status"
-                    :message="message"
-                    @main-action="mainAction"
-                    :mainAction="mainActionText"
+                    :state="statusScreenState"
+                    :title="statusScreenTitle"
+                    :status="statusScreenStatus"
+                    :message="statusScreenMessage"
+                    @main-action="statusScreenMainAction"
+                    :mainAction="statusScreenMainActionText"
                 >
-                    <template v-if="timeoutReached" v-slot:warning>
-                        <StopwatchIcon class="stopwatch-icon"/>
-                        <h1 class="title nq-h1">{{ title }}</h1>
-                        <p v-if="message" class="message nq-text">{{ message }}</p>
+                    <template v-if="timeoutReached || paymentState === PaymentState.UNDERPAID" v-slot:warning>
+                        <StopwatchIcon v-if="timeoutReached" class="stopwatch-icon"/>
+                        <UnderPaymentIcon v-else class="under-payment-icon"/>
+                        <h1 class="title nq-h1">{{ statusScreenTitle }}</h1>
+                        <p v-if="statusScreenMessage" class="message nq-text">{{ statusScreenMessage }}</p>
                     </template>
                 </StatusScreen>
             </transition>
@@ -100,10 +101,12 @@ import {
     PaymentInfoLine,
     SmallPage,
     StopwatchIcon,
+    UnderPaymentIcon,
     Amount,
     FiatAmount,
 } from '@nimiq/vue-components';
 import QrCode from 'qr-code';
+import { PaymentState } from '../lib/PublicRequestTypes';
 import { AvailableParsedPaymentOptions } from '../lib/RequestTypes';
 import CheckoutOption from './CheckoutOption.vue';
 import CurrencyInfo from './CurrencyInfo.vue';
@@ -120,6 +123,7 @@ import StatusScreen from './StatusScreen.vue';
     SmallPage,
     StatusScreen,
     StopwatchIcon,
+    UnderPaymentIcon,
     Amount,
     FiatAmount,
 }})
@@ -150,7 +154,7 @@ export default class NonNimiqCheckoutOption<
 
     protected async selectCurrency() {
         if (this.request.callbackUrl) {
-            this.state = StatusScreen.State.LOADING;
+            this.statusScreenState = StatusScreen.State.LOADING;
             this.showStatusScreen = true;
         }
         if (!await super.selectCurrency()) return false;
@@ -185,6 +189,10 @@ export default class NonNimiqCheckoutOption<
     protected checkBlur() {
         // see if window gets blurred as an indicator for an opened wallet app.
     }
+
+    private data() {
+        return { PaymentState };
+    }
 }
 </script>
 
@@ -198,6 +206,10 @@ export default class NonNimiqCheckoutOption<
 
     .status-screen .stopwatch-icon {
         font-size: 15.5rem;
+    }
+
+    .status-screen .under-payment-icon {
+        font-size: 18.75rem;
     }
 
     .currency-info h1 {
