@@ -1,7 +1,7 @@
 import bigInt from 'big-integer';
 import { Currency, PaymentType, PaymentOptions } from '../PublicRequestTypes';
 import { ParsedPaymentOptions } from './ParsedPaymentOptions';
-import { toNonScientificNumberString } from '@nimiq/utils';
+import { toNonScientificNumberString, FormattableNumber } from '@nimiq/utils';
 
 export interface EtherSpecifics {
     gasLimit?: number | string;
@@ -69,6 +69,15 @@ export class ParsedEtherDirectPaymentOptions extends ParsedPaymentOptions<Curren
 
     public get fee(): bigInt.BigInteger {
         return this.protocolSpecific.gasPrice!.times(this.protocolSpecific.gasLimit!) || bigInt(0);
+    }
+
+    public get feeString(): string {
+        if (this.protocolSpecific.gasPrice) {
+            const fee = new FormattableNumber(this.protocolSpecific.gasPrice)
+                .moveDecimalSeparator(-9).toString({ maxDecimals: 2 });
+            return fee !== '0' ? `Apply a gas price of at least ${fee} gwei.` : '';
+        }
+        return '';
     }
 
     public fiatFee(fiatAmount: number): number {

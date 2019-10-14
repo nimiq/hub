@@ -43,9 +43,9 @@
                         :shopLogoUrl="request.shopLogoUrl"
                         :startTime="request.time"
                         :endTime="paymentOptions.expires" />
-                    <h2 class="nq-h1" v-if="this.selected">
+                    <h1 class="nq-h1" v-if="this.selected">
                         Send your transaction
-                    </h2>
+                    </h1>
                     <PageBody v-if="!this.selected">
                         <Account layout="column"
                             :image="request.shopLogoUrl"
@@ -64,16 +64,9 @@
                         </div>
                     </PageBody>
                     <PageBody v-else>
-                        <p v-if="paymentOptions.fee" class="nq-notice warning">
+                        <p class="nq-notice warning">
                             Don’t close this window until confirmation. <br />
-                            Apply a network fee of at least
-                            <Amount
-                                :decimals="paymentOptions.decimals"
-                                :minDecimals="paymentOptions.decimals"
-                                :maxDecimals="paymentOptions.decimals"
-                                :currency="paymentOptions.currency"
-                                :amount="paymentOptions.fee"
-                            />.
+                            {{ paymentOptions.feeString }}
                         </p>
                         <QrCode
                             :data="paymentLink"
@@ -112,6 +105,7 @@
                 <CheckoutManualPaymentDetails
                     v-if="manualPaymentDetailsOpen"
                     :paymentDetails="manualPaymentDetails"
+                    :paymentOptions="paymentOptions"
                     @close="manualPaymentDetailsOpen = false"
                 />
             </transition>
@@ -124,7 +118,6 @@ import { Component } from 'vue-property-decorator';
 import {
     Account,
     CaretRightSmallIcon,
-    CloseIcon,
     PageBody,
     PageFooter,
     PaymentInfoLine,
@@ -146,7 +139,6 @@ import CheckoutManualPaymentDetails from './CheckoutManualPaymentDetails.vue';
     Account,
     CaretRightSmallIcon,
     CheckoutManualPaymentDetails,
-    CloseIcon,
     CurrencyInfo,
     PageBody,
     PageFooter,

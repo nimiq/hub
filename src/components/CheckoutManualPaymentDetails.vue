@@ -1,24 +1,66 @@
 <template>
     <SmallPage class="checkout-manual-payment-details nq-blue-bg">
-        <CloseButton class="close-button" @click="$emit(constructor.Events.CLOSE)"/>
-        <p class="nq-notice info">
-            Paste the information<br/>below into your<br/>wallet app.
-        </p>
-        <CopyableField
-            v-for="entry in paymentDetails"
-            :key="entry.label"
-            :label="entry.label"
-            :value="entry.value"
+        <PaymentInfoLine v-if="rpcState"
+            ref="info"
+            theme="inverse"
+            :cryptoAmount="{
+                amount: paymentOptions.amount,
+                currency: paymentOptions.currency,
+                decimals: paymentOptions.decimals,
+            }"
+            :fiatAmount="request.fiatAmount && request.fiatCurrency ? {
+                amount: request.fiatAmount,
+                currency: request.fiatCurrency,
+            } : null"
+            :address="paymentOptions.protocolSpecific.recipient"
+            :origin="rpcState.origin"
+            :shopLogoUrl="request.shopLogoUrl"
+            :startTime="request.time"
+            :endTime="paymentOptions.expires"
         />
+        <PageHeader backArrow @back="$emit(constructor.Events.CLOSE)">
+            Send your transaction
+        </PageHeader>
+        <PageBody>
+            <p class="nq-notice warning">
+                Don’t close this window until confirmation. <br />
+                {{ paymentOptions.feeString }}
+            </p>
+            <CopyableField
+                v-for="entry in paymentDetails"
+                :key="entry.label"
+                :label="entry.label"
+                :value="entry.value"
+            />
+        </PageBody>
     </SmallPage>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import { CloseButton, CopyableField, SmallPage } from '@nimiq/vue-components';
+import {
+    CopyableField,
+    SmallPage,
+    PageHeader,
+    PageBody,
+    PaymentInfoLine,
+    UniversalAmount,
+} from '@nimiq/vue-components';
+import { State as RpcState } from '@nimiq/rpc';
+import { Static } from '../lib/StaticStore';
+import { AvailableParsedPaymentOptions, ParsedCheckoutRequest } from '../lib/RequestTypes';
 
-@Component({components: {CloseButton, CopyableField, SmallPage}})
-class CheckoutManualPaymentDetails extends Vue {
+@Component({ components: {
+    CopyableField,
+    SmallPage,
+    PageHeader,
+    PageBody,
+    PaymentInfoLine,
+    UniversalAmount,
+}})
+class CheckoutManualPaymentDetails<
+    Parsed extends AvailableParsedPaymentOptions,
+> extends Vue {
     @Prop({
         type: Array,
         required: true,
@@ -27,6 +69,14 @@ class CheckoutManualPaymentDetails extends Vue {
                 && (['object', 'string', 'number'].includes(typeof entry.value))),
     })
     public paymentDetails!: Array<{ label: string, value: { label: string, value: string | number | object } }>;
+
+    @Prop({
+        type: Object,
+        required: true,
+    }) public paymentOptions!: Parsed;
+
+    @Static private rpcState!: RpcState;
+    @Static private request!: ParsedCheckoutRequest;
 }
 namespace CheckoutManualPaymentDetails { // tslint:disable-line:no-namespace
     export enum Events {
@@ -37,20 +87,33 @@ export default CheckoutManualPaymentDetails;
 </script>
 
 <style scoped>
-    .small-page {
-        padding: 4rem;
+    .page-body {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
     }
 
-    .close-button {
-        position: absolute;
-        top: 3rem;
-        right: 3rem;
-        color: white;
+    .page-body >>> p {
+        flex-basis: 9rem;
+        flex-shrink: 1;
+    }
+
+    .page-header {
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+    }
+
+    .copyable-field >>> .nq-label {
+        margin-top: 2rem;
+    }
+
+    .page-header >>> .nq-h1 {
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
     }
 
     .nq-notice {
-        margin: auto;
-        font-size: 2.5rem;
+        margin: 0;
         text-align: center;
     }
 </style>
