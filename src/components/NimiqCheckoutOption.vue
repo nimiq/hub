@@ -45,8 +45,12 @@
         </template>
         <template v-if="wallets.length === 0">
             <h2 class="nq-h1">Imagine if paying with<br/>crypto was easy</h2>
-            <PageBody>
-                <!-- TODO -->
+            <PageBody class="video-container">
+                <video autoplay loop muted playsinline disablePictureInPicture>
+                    <source src="/checkout-demo.mp4#t=0.7" type="video/mp4">
+                    <!-- have video start at .7s to have a meaningful preview image rendered for mobile browsers that
+                    don't autoplay. Note this only applies to the first play, loops will start at 0. -->
+                </video>
             </PageBody>
             <PageFooter>
                 <button class="nq-button-s nq-light-blue-bg" @click="goToOnboarding">Login</button>
@@ -400,6 +404,21 @@ export default class NimiqCheckoutOption
         margin-bottom: 1rem;
         line-height: 1;
         text-align: center;
+    }
+
+    .video-container {
+        position: relative;
+        padding: 0;
+        margin: 3rem 1rem 0 1rem;
+        border-radius: .5rem;
+        background: var(--nimiq-gray);
+    }
+
+    .video-container > video {
+        position: absolute;
+        height: 100%;
+        left: 50%;
+        transform: translateX(-50%);
     }
 
     .safe-onboarding-link {
