@@ -263,18 +263,30 @@ export default class Checkout extends Vue {
         opacity: 1;
     }
 
-    .carousel >>> > :not(.selected) .payment-option .amounts {
+    .carousel >>> > :not(.selected) .payment-option:not(.confirmed) .amounts {
         transition: border-top-color .5s var(--nimiq-ease);
         border-top-color: var(--nimiq-card-bg);
     }
 
-    .carousel >>> > :not(.selected) .payment-option .nq-button {
+    .carousel >>> > :not(.selected) .payment-option:not(.confirmed) .nq-button {
         transition: box-shadow .5s var(--nimiq-ease);
         box-shadow: none;
     }
 
-    .carousel >>> > :not(.selected) .payment-option .arrow-runway {
+    .carousel >>> > :not(.selected) .payment-option:not(.confirmed) .arrow-runway {
         transition: opacity .5s var(--nimiq-ease);
+        opacity: 0;
+    }
+
+    .carousel >>> > :not(.selected) .payment-option:not(.confirmed) .arrow-runway * {
+        animation: unset; /* disable animation in background to avoid unnecessary rendering layers */
+    }
+
+    .carousel >>> .payment-option:not(.confirmed) video {
+        transition: opacity .5s var(--nimiq-ease);
+    }
+
+    .carousel >>> > :not(.selected) .payment-option:not(.confirmed) video {
         opacity: 0;
     }
 </style>
