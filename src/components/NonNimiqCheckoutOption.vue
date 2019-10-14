@@ -232,6 +232,10 @@ export default class NonNimiqCheckoutOption<
         pointer-events: none;
     }
 
+    .payment-option:not(.confirmed) .info-line >>> > .arrow-runway * {
+        animation: unset; /* disable animation while hidden to avoid unnecessary rendering layers */
+    }
+
     .payment-option .page-body {
         width: 52.5rem;
         padding-top: 0;
