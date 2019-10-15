@@ -49,6 +49,7 @@ import {
 import { State as RpcState } from '@nimiq/rpc';
 import { Static } from '../lib/StaticStore';
 import { AvailableParsedPaymentOptions, ParsedCheckoutRequest } from '../lib/RequestTypes';
+import CheckoutServerApi from '../lib/CheckoutServerApi';
 
 @Component({ components: {
     CopyableField,
@@ -77,6 +78,17 @@ class CheckoutManualPaymentDetails<
 
     @Static private rpcState!: RpcState;
     @Static private request!: ParsedCheckoutRequest;
+
+    private async mounted() {
+        const paymentInfoLine = this.$refs.info as PaymentInfoLine;
+        if (!paymentInfoLine) return;
+
+        if (!this.request.callbackUrl || !this.request.csrf) {
+            throw new Error('Can\'t fetch time without callbackUrl and csrf token');
+        }
+        const serverTime = await CheckoutServerApi.fetchTime(this.request.callbackUrl, this.request.csrf);
+        paymentInfoLine.setTime(serverTime);
+    }
 }
 namespace CheckoutManualPaymentDetails { // tslint:disable-line:no-namespace
     export enum Events {
