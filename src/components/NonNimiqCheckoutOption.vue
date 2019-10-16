@@ -6,109 +6,104 @@
             :fiatFeeAmount="paymentOptions.fiatFee(request.fiatAmount)"
             :currencyIcon="icon"/>
 
-        <div class="nq-card-wrapper">
-            <transition name="transition-fade">
-                <SmallPage v-if="!manualPaymentDetailsOpen">
-                    <transition name="transition-fade">
-                        <StatusScreen
-                            v-if="showStatusScreen"
-                            :state="statusScreenState"
-                            :title="statusScreenTitle"
-                            :status="statusScreenStatus"
-                            :message="statusScreenMessage"
-                            @main-action="statusScreenMainAction"
-                            :mainAction="statusScreenMainActionText"
-                        >
-                            <template v-if="timeoutReached || paymentState === PaymentState.UNDERPAID" v-slot:warning>
-                                <StopwatchIcon v-if="timeoutReached" class="stopwatch-icon"/>
-                                <UnderPaymentIcon v-else class="under-payment-icon"/>
-                                <h1 class="title nq-h1">{{ statusScreenTitle }}</h1>
-                                <p v-if="statusScreenMessage" class="message nq-text">{{ statusScreenMessage }}</p>
-                            </template>
-                        </StatusScreen>
-                    </transition>
-                    <PaymentInfoLine v-if="rpcState"
-                        ref="info"
-                        :cryptoAmount="{
-                            amount: paymentOptions.amount,
-                            currency: paymentOptions.currency,
-                            decimals: paymentOptions.decimals,
-                        }"
-                        :fiatAmount="request.fiatAmount && request.fiatCurrency ? {
-                            amount: request.fiatAmount,
-                            currency: request.fiatCurrency,
-                        } : null"
-                        :address="paymentOptions.protocolSpecific.recipient"
-                        :origin="rpcState.origin"
-                        :shopLogoUrl="request.shopLogoUrl"
-                        :startTime="request.time"
-                        :endTime="paymentOptions.expires" />
-                    <h1 class="nq-h1" v-if="this.selected">
-                        Send your transaction
-                    </h1>
-                    <PageBody v-if="!this.selected">
-                        <Account layout="column"
-                            :image="request.shopLogoUrl"
-                            :label="rpcState.origin.split('://')[1]"/>
-                        <div class="amounts">
-                            <Amount class="crypto nq-light-blue"
-                                :currency="paymentOptions.currency"
-                                :totalDecimals="paymentOptions.decimals"
-                                :minDecimals="0"
-                                :maxDecimals="paymentOptions.decimals < 8 ? paymentOptions.decimals : 8"
-                                :amount="paymentOptions.amount"
-                            />
-                            <div v-if="paymentOptions.fee !== 0" class="fee">
-                                + network fee
-                            </div>
-                        </div>
-                    </PageBody>
-                    <PageBody v-else>
-                        <p class="nq-notice warning">
-                            Don’t close this window until confirmation. <br />
-                            {{ paymentOptions.feeString }}
-                        </p>
-                        <QrCode
-                            :data="paymentLink"
-                            :fill="{
-                                type: 'radial-gradient',
-                                position: [1, 1, 0, 1, 1, Math.sqrt(2)],
-                                colorStops: [ [0, '#260133'], [1, '#1F2348'] ] // nimiq-blue
-                            }"
-                            :size="200"
+        <div class="nq-card-wrapper" :class="{ 'manual-payment-opened': manualPaymentDetailsOpen }">
+            <SmallPage>
+                <transition name="transition-fade">
+                    <StatusScreen
+                        v-if="showStatusScreen"
+                        :state="statusScreenState"
+                        :title="statusScreenTitle"
+                        :status="statusScreenStatus"
+                        :message="statusScreenMessage"
+                        @main-action="statusScreenMainAction"
+                        :mainAction="statusScreenMainActionText"
+                    >
+                        <template v-if="timeoutReached || paymentState === PaymentState.UNDERPAID" v-slot:warning>
+                            <StopwatchIcon v-if="timeoutReached" class="stopwatch-icon"/>
+                            <UnderPaymentIcon v-else class="under-payment-icon"/>
+                            <h1 class="title nq-h1">{{ statusScreenTitle }}</h1>
+                            <p v-if="statusScreenMessage" class="message nq-text">{{ statusScreenMessage }}</p>
+                        </template>
+                    </StatusScreen>
+                </transition>
+                <PaymentInfoLine v-if="rpcState"
+                    ref="info"
+                    :cryptoAmount="{
+                        amount: paymentOptions.amount,
+                        currency: paymentOptions.currency,
+                        decimals: paymentOptions.decimals,
+                    }"
+                    :fiatAmount="request.fiatAmount && request.fiatCurrency ? {
+                        amount: request.fiatAmount,
+                        currency: request.fiatCurrency,
+                    } : null"
+                    :address="paymentOptions.protocolSpecific.recipient"
+                    :origin="rpcState.origin"
+                    :shopLogoUrl="request.shopLogoUrl"
+                    :startTime="request.time"
+                    :endTime="paymentOptions.expires" />
+                <h1 class="nq-h1" v-if="this.selected">
+                    Send your transaction
+                </h1>
+                <PageBody v-if="!this.selected">
+                    <Account layout="column"
+                        :image="request.shopLogoUrl"
+                        :label="rpcState.origin.split('://')[1]"/>
+                    <div class="amounts">
+                        <Amount class="crypto nq-light-blue"
+                            :currency="paymentOptions.currency"
+                            :totalDecimals="paymentOptions.decimals"
+                            :minDecimals="0"
+                            :maxDecimals="paymentOptions.decimals < 8 ? paymentOptions.decimals : 8"
+                            :amount="paymentOptions.amount"
                         />
-                    </PageBody>
-                    <PageFooter v-if="selected">
-                        <a class="nq-button light-blue use-app-button"
-                            :disabled="appNotFound"
-                            @click="checkBlur"
-                            :href="paymentLink"
-                        >
-                            <template v-if="appNotFound">
-                                <span>No App found</span>
-                                <span>Please send the transaction manually</span>
-                            </template>
-                            <template v-else>
-                                Open Wallet App
-                            </template>
-                        </a>
-                        <p class="nq-text-s" @click="manualPaymentDetailsOpen = true" >
-                            Enter manually<CaretRightSmallIcon/>
-                        </p>
-                    </PageFooter>
-                    <PageFooter v-else>
-                        <button class="nq-button light-blue" @click="selectCurrency">Pay with {{currencyFullName}}</button>
-                    </PageFooter>
-                </SmallPage>
-            </transition>
-            <transition name="transition-fade">
-                <CheckoutManualPaymentDetails
-                    v-if="manualPaymentDetailsOpen"
-                    :paymentDetails="manualPaymentDetails"
-                    :paymentOptions="paymentOptions"
-                    @close="manualPaymentDetailsOpen = false"
-                />
-            </transition>
+                        <div v-if="paymentOptions.fee !== 0" class="fee">
+                            + network fee
+                        </div>
+                    </div>
+                </PageBody>
+                <PageBody v-else>
+                    <p class="nq-notice warning">
+                        Don’t close this window until confirmation. <br />
+                        {{ paymentOptions.feeString }}
+                    </p>
+                    <QrCode
+                        :data="paymentLink"
+                        :fill="{
+                            type: 'radial-gradient',
+                            position: [1, 1, 0, 1, 1, Math.sqrt(2)],
+                            colorStops: [ [0, '#260133'], [1, '#1F2348'] ] // nimiq-blue
+                        }"
+                        :size="200"
+                    />
+                </PageBody>
+                <PageFooter v-if="selected">
+                    <a class="nq-button light-blue use-app-button"
+                        :disabled="appNotFound"
+                        @click="checkBlur"
+                        :href="paymentLink"
+                    >
+                        <template v-if="appNotFound">
+                            <span>No App found</span>
+                            <span>Please send the transaction manually</span>
+                        </template>
+                        <template v-else>
+                            Open Wallet App
+                        </template>
+                    </a>
+                    <p class="nq-text-s" @click="manualPaymentDetailsOpen = true" >
+                        Enter manually<CaretRightSmallIcon/>
+                    </p>
+                </PageFooter>
+                <PageFooter v-else>
+                    <button class="nq-button light-blue" @click="selectCurrency">Pay with {{currencyFullName}}</button>
+                </PageFooter>
+            </SmallPage>
+            <CheckoutManualPaymentDetails
+                :paymentDetails="manualPaymentDetails"
+                :paymentOptions="paymentOptions"
+                @close="manualPaymentDetailsOpen = false"
+            />
         </div>
     </div>
 </template>
@@ -242,14 +237,36 @@ export default class NonNimiqCheckoutOption<
         position: relative;
     }
 
-    .payment-option .nq-card-wrapper > * {
-        transition: opacity .3s var(--nimiq-ease);
+    .payment-option.confirmed .nq-card-wrapper > * {
+        transition-property: transform, visibility;
+        transition-duration: .3s;
+        transform-style: preserve-3d;
+        backface-visibility: hidden;
     }
 
-    .payment-option .nq-card-wrapper > .transition-fade-leave-active {
+    .payment-option:not(.confirmed) .checkout-manual-payment-details {
+        display: none;
+    }
+
+    .payment-option.confirmed .nq-card-wrapper {
+        perspective: 1000px;
+        --safari-rotate-fix: translateZ(1px);
+    }
+
+    .payment-option.confirmed .nq-card-wrapper.manual-payment-opened .checkout-manual-payment-details,
+    .payment-option.confirmed .nq-card-wrapper:not(.manual-payment-opened) .small-page:first-child {
+        transform: rotateY(0) var(--safari-rotate-fix);
+    }
+
+    .payment-option.confirmed .nq-card-wrapper .checkout-manual-payment-details {
         position: absolute;
         top: 0;
         left: 0;
+        transform: rotateY(180deg) var(--safari-rotate-fix);
+    }
+
+    .payment-option.confirmed .nq-card-wrapper.manual-payment-opened .small-page:first-child {
+        transform: rotateY(-180deg) var(--safari-rotate-fix);
     }
 
     .small-page {
