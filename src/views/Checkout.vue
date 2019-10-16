@@ -157,10 +157,6 @@ export default class Checkout extends Vue {
         transition: margin-top 1s var(--nimiq-ease);
     }
 
-    .carousel.disabled {
-        overflow: visible;
-    }
-
     .carousel.disabled.offset-currency-info-on-disabled {
         margin-top: -16.125rem; /* currency-info height */
     }
