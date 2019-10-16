@@ -7,20 +7,10 @@ import {
     PaymentOptions,
     Currency,
     PaymentMethod,
-    MultiCurrencyCheckoutRequest,
 } from './PublicRequestTypes';
-import {
-    ParsedNimiqDirectPaymentOptions,
-    ExtendedNimiqDirectPaymentOptions,
- } from './paymentOptions/NimiqPaymentOptions';
-import {
-    ParsedEtherDirectPaymentOptions,
-    EtherDirectPaymentOptions,
-} from './paymentOptions/EtherPaymentOptions';
-import {
-    ParsedBitcoinDirectPaymentOptions,
-    BitcoinDirectPaymentOptions,
-} from './paymentOptions/BitcoinPaymentOptions';
+import { ParsedNimiqDirectPaymentOptions } from './paymentOptions/NimiqPaymentOptions';
+import { ParsedEtherDirectPaymentOptions } from './paymentOptions/EtherPaymentOptions';
+import { ParsedBitcoinDirectPaymentOptions } from './paymentOptions/BitcoinPaymentOptions';
 
 export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 
@@ -95,6 +85,7 @@ export type AvailableParsedPaymentOptions = ParsedNimiqDirectPaymentOptions
                                    | ParsedBitcoinDirectPaymentOptions;
 
 export interface ParsedCheckoutRequest extends ParsedBasicRequest {
+    version: number;
     shopLogoUrl?: string;
     callbackUrl?: string;
     csrf?: string;
@@ -104,19 +95,6 @@ export interface ParsedCheckoutRequest extends ParsedBasicRequest {
     fiatAmount?: number;
     paymentOptions: AvailableParsedPaymentOptions[];
 }
-
-export type ExtendedPaymentOptions = ExtendedNimiqDirectPaymentOptions
-                                   | EtherDirectPaymentOptions
-                                   | BitcoinDirectPaymentOptions;
-
-export type ExtendedCheckoutRequest = Omit<MultiCurrencyCheckoutRequest,
-    'paymentOptions' | 'fiatCurrency' | 'fiatAmount'> & {
-    fiatCurrency?: CurrencyCode.CurrencyCodeRecord;
-    fiatAmount?: number;
-    paymentOptions: ExtendedPaymentOptions[];
-};
-
-export type ExtendedRpcRequest = ExtendedCheckoutRequest;
 
 export interface ParsedSignMessageRequest extends ParsedBasicRequest {
     signer?: Nimiq.Address;
