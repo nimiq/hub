@@ -8,25 +8,13 @@ export interface NimiqDirectPaymentOptions extends PaymentOptions<Currency.NIM, 
         fee?: number | string;
         feePerByte?: number | string;
         validityDuration?: number;
+        flags?: number;
         sender?: string;
         forceSender?: boolean;
         recipient?: string;
         recipientType?: Nimiq.Account.Type;
     };
 }
-
-export type ExtendedNimiqDirectPaymentOptions = Omit<NimiqDirectPaymentOptions, 'protocolSpecific'> & {
-    protocolSpecific: {
-        fee?: number | string;
-        feePerByte?: number | string;
-        validityDuration?: number;
-        flags: number;
-        recipient?: string;
-        recipientType?: Nimiq.Account.Type;
-        sender?: string;
-        forceSender: boolean;
-    };
-};
 
 export class ParsedNimiqDirectPaymentOptions extends ParsedPaymentOptions<Currency.NIM, PaymentMethod.DIRECT> {
     public readonly decimals: number = 5;
@@ -49,7 +37,7 @@ export class ParsedNimiqDirectPaymentOptions extends ParsedPaymentOptions<Curren
 
     private extraData: Uint8Array;
 
-    public constructor(option: NimiqDirectPaymentOptions | ExtendedNimiqDirectPaymentOptions, extraData: Uint8Array) {
+    public constructor(option: NimiqDirectPaymentOptions, extraData: Uint8Array) {
         super(option);
         this.extraData = extraData;
         this.amount = Number.parseInt(toNonScientificNumberString(option.amount), 10);
@@ -80,7 +68,7 @@ export class ParsedNimiqDirectPaymentOptions extends ParsedPaymentOptions<Curren
             recipientType = option.protocolSpecific.recipientType;
         }
 
-        const flags = (option as ExtendedNimiqDirectPaymentOptions).protocolSpecific.flags;
+        const flags = (option as NimiqDirectPaymentOptions).protocolSpecific.flags;
         if (flags !== undefined && typeof flags !== 'number') {
             throw new Error('If provided, flags must be a number.');
         }
@@ -182,7 +170,7 @@ export class ParsedNimiqDirectPaymentOptions extends ParsedPaymentOptions<Curren
         return this.fee * fiatAmount / this.amount;
     }
 
-    public raw(): ExtendedNimiqDirectPaymentOptions {
+    public raw(): NimiqDirectPaymentOptions {
         return {
             currency: this.currency,
             type: this.type,
