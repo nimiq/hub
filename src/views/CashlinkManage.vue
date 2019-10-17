@@ -136,7 +136,7 @@ export default class CashlinkManage extends Vue {
             network.on(NetworkClient.Events.TRANSACTION_PENDING,
                 () => this.status = 'Awaiting receipt confirmation...');
 
-            const result = await network.relayTransaction({
+            network.relayTransaction({
                 sender: new Nimiq.Address(this.keyguardRequest.sender).toUserFriendlyAddress(),
                 senderPubKey: this.keyguardResult.publicKey,
                 recipient:  new Nimiq.Address(this.keyguardRequest.recipient).toUserFriendlyAddress(),
