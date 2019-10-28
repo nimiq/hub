@@ -2,9 +2,8 @@ import Vue from 'vue';
 import { BrowserDetection } from '@nimiq/utils';
 import App from './CashlinkApp.vue';
 import store from './store';
-// import { init as initSentry, captureException } from '@sentry/browser';
-// import { Vue as SentryVueIntegration } from '@sentry/integrations';
-import VueRaven from 'vue-raven'; // Sentry.io SDK
+import { init as initSentry, captureException } from '@sentry/browser';
+import { Vue as SentryVueIntegration } from '@sentry/integrations';
 // @ts-ignore
 import IqonsSvg from '@nimiq/iqons/dist/iqons.min.svg';
 import Config from 'config';
@@ -37,16 +36,12 @@ if (IqonsSvg[0] === '"') {
 }
 
 if (Config.reportToSentry) {
-    // initSentry({
-    //     dsn: 'https://92f2289fc2ac4c809dfa685911f865c2@sentry.io/1330855',
-    //     integrations: [new SentryVueIntegration({Vue, attachProps: true})],
-    //     environment: Config.network,
-    // });
-    // Vue.prototype.$captureException = captureException;
-    Vue.use(VueRaven, {
+    initSentry({
         dsn: 'https://92f2289fc2ac4c809dfa685911f865c2@sentry.io/1330855',
+        integrations: [new SentryVueIntegration({Vue, attachProps: true})],
         environment: Config.network,
     });
+    Vue.prototype.$captureException = captureException;
 }
 
 const app = new Vue({
@@ -55,8 +50,8 @@ const app = new Vue({
 }).$mount('#app');
 
 // Types
-// declare module 'vue/types/vue' {
-//     interface Vue {
-//         $captureException?: typeof captureException;
-//     }
-// }
+declare module 'vue/types/vue' {
+    interface Vue {
+        $captureException?: typeof captureException;
+    }
+}
