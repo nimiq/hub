@@ -180,7 +180,7 @@ export default class Migrate extends Vue {
     private async getBalances() {
         // Get balances from network
         const network = (this.$refs.network as Network);
-        const balances: Map<string, number> = await network.connectPico(
+        const balances: Map<string, number> = await network.getBalances(
             this.legacyAccounts.map((account) => account.userFriendlyAddress));
         console.log(balances);
 
