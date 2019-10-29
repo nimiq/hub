@@ -287,8 +287,12 @@ export default class SignTransactionLedger extends Vue {
             // message displayed.
             if (this.state !== SignTransactionLedger.State.EXPIRED
                 && e.message.toLowerCase().indexOf('cancelled') !== -1) {
-                if (this.request.kind === RequestType.CHECKOUT) {
-                    this._back(); // user might want to choose another account or address
+                if (this.request.kind === RequestType.CHECKOUT
+                    && (!this.checkoutPaymentOptions!.protocolSpecific.sender
+                    || !sender.equals(this.checkoutPaymentOptions!.protocolSpecific.sender))) {
+                    // If user got here after selecting an account in the checkout flow (which was not automatically
+                    // selected via the checkout request) he might want to switch to another one
+                    this._back();
                 } else {
                     this._close();
                 }
