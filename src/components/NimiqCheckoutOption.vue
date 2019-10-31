@@ -8,7 +8,7 @@
     <SmallPage>
         <transition name="transition-fade">
             <StatusScreen
-                v-if="showStatusScreen"
+                v-if="delayedShowStatusScreen"
                 :state="statusScreenState"
                 :title="statusScreenTitle"
                 :status="statusScreenStatus"
@@ -81,7 +81,7 @@
 </template>
 
 <script lang="ts">
-import { Component } from 'vue-property-decorator';
+import { Component, Watch } from 'vue-property-decorator';
 import { State, Mutation, Getter } from 'vuex-class';
 import KeyguardClient from '@nimiq/keyguard-client';
 import {
@@ -136,11 +136,14 @@ export default class NimiqCheckoutOption
         userFriendlyAddress: string,
     }) => any;
 
+    private readonly safeOnboardingLink: string
+        = `https://safe.nimiq${location.hostname.endsWith('testnet.com') ? '-testnet' : ''}.com/?onboarding=signup`;
+
     private updateBalancePromise: Promise<void> | null = null;
     private balancesUpdating: boolean = true;
     private height: number = 0;
-    private readonly safeOnboardingLink: string
-        = `https://safe.nimiq${location.hostname.endsWith('testnet.com') ? '-testnet' : ''}.com/?onboarding=signup`;
+    private delayedShowStatusScreen: boolean = this.showStatusScreen;
+    private _delayedHideStatusScreenTimeout: number = -1;
 
     protected async created() {
         if (this.paymentOptions.currency !== Currency.NIM) {
@@ -178,6 +181,21 @@ export default class NimiqCheckoutOption
 
     protected destroyed() {
         super.destroyed();
+    }
+
+    @Watch('showStatusScreen')
+    private _delayShowStatusScreen(showStatusScreen: boolean) {
+        if (showStatusScreen) {
+            // show status screen immediately
+            clearTimeout(this._delayedHideStatusScreenTimeout);
+            this.delayedShowStatusScreen = true;
+        } else {
+            // Hide status screen after a delay to avoid flickering when showStatusScreen is false just for a short
+            // moment before the status screen should be shown again. This is the case in setAccountOrContract when
+            // switching from the fetchPaymentOption (in selectCurrency) status screen to the balance update status
+            // screen and then to the redirect loading spinner
+            this._delayedHideStatusScreenTimeout = window.setTimeout(() => this.delayedShowStatusScreen = false, 100);
+        }
     }
 
     private async getBalances(): Promise<Map<string, number>> {
