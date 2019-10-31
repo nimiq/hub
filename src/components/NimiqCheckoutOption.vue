@@ -254,10 +254,12 @@ export default class NimiqCheckoutOption
     }
 
     private async setAccountOrContract(walletId: string, address: string, isFromRequest = false) {
+        const startTime = Date.now();
         if (!await super.selectCurrency()) return;
 
         if (this.balancesUpdating) {
             this.statusScreenState = StatusScreen.State.LOADING;
+            this.statusScreenTitle = 'Updating balances';
             this.showStatusScreen = true;
             await this.updateBalancePromise;
         }
@@ -282,6 +284,17 @@ export default class NimiqCheckoutOption
             walletId: senderAccount.id,
             userFriendlyAddress: (senderContract || signer).userFriendlyAddress,
         });
+
+        // If checkout carousel has multiple cards give it some time to run the card selection animation before
+        // redirecting to Keyguard or Ledger flow.
+        const waitTime = 400 - (Date.now() - startTime);
+        if (waitTime > 0 && this.request.paymentOptions.length > 1) {
+            // If a loading screen was shown for fetchPaymentoption (in selectCurrency) or the balance update,
+            // keep it artificially open until the redirect
+            this.showStatusScreen = this.showStatusScreen
+                || this.statusScreenState === StatusScreen.State.LOADING && !!this.statusScreenTitle;
+            await new Promise((resolve) => setTimeout(resolve, waitTime));
+        }
 
         // proceed to transaction signing
         switch (senderAccount.type) {
