@@ -22,8 +22,6 @@ export interface CashlinkEntry {
     message: string;
     state: CashlinkState;
     date: number;
-    originalSender?: string;
-    finalRecipient?: string;
     contactName?: string; /** unused for now */
 }
 
@@ -103,8 +101,6 @@ export default class Cashlink {
             object.message,
             object.state,
             object.date,
-            object.originalSender,
-            object.finalRecipient,
             object.contactName,
         );
     }
@@ -127,8 +123,6 @@ export default class Cashlink {
         message?: string,
         public state: CashlinkState = CashlinkState.UNCHARGED,
         public date: number = Math.floor(Date.now() / 1000),
-        public originalSender?: string,
-        public finalRecipient?: string,
         public contactName?: string, /** unused for now */
     ) {
         this._network = new Promise((resolve) => {
@@ -185,55 +179,32 @@ export default class Cashlink {
 
         switch (this.state) {
             case CashlinkState.UNKNOWN:
-            case CashlinkState.UNCHARGED:
-            case CashlinkState.CHARGING:
                 if (/*!balance && */!this._knownTransactions.length && !pendingTransactions.length) {
                     newState = CashlinkState.UNCHARGED;
                     break;
                 }
-
-                // General principles:
-                // 1. From the recipient's point-of-view, the originalSender of a cashlink is
-                //    the address that funded the cashlink first.
-                // 2. From the sender's point-of-view, the finalRecipient of a cashlink is
-                //    the address that claimed the cashlink first.
-                //
-                // This makes sure that the first known sender/recipient of a cashlink won't
-                // change and can be cached, for example in the Safe.
-
-                let originalSender;
-
+            case CashlinkState.UNCHARGED:
                 const pendingFundingTx = pendingTransactions.find(
                     (tx) => tx.recipient === this.address.toUserFriendlyAddress());
                 if (pendingFundingTx) {
-                    originalSender = pendingFundingTx.sender!;
                     newState = CashlinkState.CHARGING;
                 }
-
-                // A known funding transaction overwrites a pending funding transaction according to the 1st principle.
+            case CashlinkState.CHARGING:
                 const knownFundingTx = this._knownTransactions.find(
                     (tx) => tx.recipient === this.address.toUserFriendlyAddress());
                 if (knownFundingTx) {
-                    originalSender = knownFundingTx.sender!;
                     newState = CashlinkState.UNCLAIMED;
                 }
-
-                if (originalSender && this.originalSender !== originalSender) {
-                    this.originalSender = originalSender;
-                }
-
                 if (!knownFundingTx) break; // If no known transactions are found, no further checks are necessary
             case CashlinkState.UNCLAIMED:
                 const claimingTx = pendingTransactions.find(
                     (tx) => tx.sender === this.address.toUserFriendlyAddress());
                 if (claimingTx) {
-                    this.finalRecipient = claimingTx.recipient!;
                     newState = CashlinkState.CLAIMING;
                 }
             case CashlinkState.CLAIMING:
                 for (let i = 1; i < this._knownTransactions.length; i++) {
                     if (this._knownTransactions[i].sender === this.address.toUserFriendlyAddress()) {
-                        this.finalRecipient = this._knownTransactions[i].recipient;
                         newState = CashlinkState.CLAIMED;
                         break;
                     }
@@ -252,8 +223,6 @@ export default class Cashlink {
             message: this.message,
             state: this.state,
             date: this.date,
-            originalSender: this.originalSender,
-            finalRecipient: this.finalRecipient,
             contactName: this.contactName,
         };
     }
@@ -344,11 +313,9 @@ export default class Cashlink {
                 if (recipient === transferWalletAddress.toUserFriendlyAddress()) {
                     // money sent to the transfer wallet
                     balance += transaction.value!;
-                    this.originalSender = sender;
                     this._updateState(CashlinkState.CHARGING);
                 } else if (sender === transferWalletAddress.toUserFriendlyAddress()) {
                     balance -= transaction.value! + transaction.fee!;
-                    this.finalRecipient = recipient;
                     this._updateState(CashlinkState.CLAIMING);
                 }
             }

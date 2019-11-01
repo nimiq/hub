@@ -4,7 +4,7 @@ import { WalletStore } from '@/lib/WalletStore';
 import { WalletInfoEntry, WalletInfo } from '@/lib/WalletInfo';
 import CookieJar from '@/lib/CookieJar';
 import Config from 'config';
-import { Account, IncomingCashlink, OutgoingCashlink } from './lib/PublicRequestTypes';
+import { Account, Cashlink } from './lib/PublicRequestTypes';
 import { CashlinkStore } from './lib/CashlinkStore';
 import { CashlinkType } from './lib/Cashlink';
 
@@ -47,25 +47,13 @@ class IFrameApi {
         return [];
     }
 
-    public static async cashlinks(): Promise<{incoming: IncomingCashlink[], outgoing: OutgoingCashlink[]}> {
-        const cashlinks = await CashlinkStore.Instance.list();
-        const result: {incoming: IncomingCashlink[], outgoing: OutgoingCashlink[]} = {
-            incoming: [],
-            outgoing: [],
-        };
-        cashlinks.map((cashlink) => (cashlink.type === CashlinkType.INCOMING
-            ? result.incoming.push({
-                address: cashlink.address,
-                message: cashlink.message,
-                status: cashlink.state,
-                sender: cashlink.originalSender!})
-            : result.outgoing.push({
-                address: cashlink.address,
-                message: cashlink.message,
-                status: cashlink.state,
-                recipient: cashlink.finalRecipient})
-        ));
-        return result;
+    public static async cashlinks(): Promise<Cashlink[]> {
+        const cashlinksEntries = await CashlinkStore.Instance.list();
+        return cashlinksEntries.map((cashlink) => ({
+            address: cashlink.address,
+            message: cashlink.message,
+            status: cashlink.state,
+        }));
     }
 }
 

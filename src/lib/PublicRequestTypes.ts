@@ -144,14 +144,6 @@ export interface Cashlink {
     status: CashlinkState;
 }
 
-export interface IncomingCashlink extends Cashlink {
-    sender: string;
-}
-
-export interface OutgoingCashlink extends Cashlink {
-    recipient?: string;
-}
-
 export type RpcRequest = SignTransactionRequest
                        | CheckoutRequest
                        | BasicRequest

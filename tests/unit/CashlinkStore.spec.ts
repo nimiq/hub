@@ -45,9 +45,7 @@ const DUMMY_DATA = {
             'Ein Cashlink test Cashlink',
             CashlinkState.CLAIMED,
             Date.now(),
-            'NQ07 0000 0000 0000 0000 0000 0000 0000 0000',
-            undefined,
-            'Test name',
+            'Contact name',
         ),
     ].map((cashlink) => {
         // Anonymous functions cannot be compared by Jest, so we need to work around that
@@ -127,7 +125,6 @@ describe('CashlinkStore', () => {
         expect(cashlink).toEqual(DUMMY_DATA.cashlinks[0]);
 
         cashlink!.state = CashlinkState.CLAIMED;
-        cashlink!.originalSender = DUMMY_DATA.addresses[1];
 
         // Update the cashlink
         await CashlinkStore.Instance.put(cashlink!);
@@ -136,6 +133,5 @@ describe('CashlinkStore', () => {
         cashlink = await CashlinkStore.Instance.get(DUMMY_DATA.addresses[0]);
         expect(cashlink).toBeDefined();
         expect(cashlink!.state).toBe(CashlinkState.CLAIMED);
-        expect(cashlink!.originalSender).toBe(DUMMY_DATA.addresses[1]);
     });
 });
