@@ -163,18 +163,21 @@ export default class Cashlink {
     public async detectState() {
         if (this.state === CashlinkState.CLAIMED) return;
 
+        // TODO: Replace by
+        // const knownTransactionReceipts = new Map(this._knownTransactions.map((tx) => [tx.hash, tx.blockHash!]));
+        // after merging into or rebasing onto master.
         const knownTransactionReceipts = new Map([[this.address.toUserFriendlyAddress(), new Map(
             this._knownTransactions.map((tx) => [tx.hash, tx.blockHash!]))]]);
 
         await this._awaitConsensus();
 
-        const [transactionHistory, pendingTransactions, balance] = await Promise.all([
+        const [transactionHistory, pendingTransactions/*, balance*/] = await Promise.all([
             (await this._network).requestTransactionHistory(
                 this.address.toUserFriendlyAddress(),
                 knownTransactionReceipts,
             ),
             [...(await this._network).pendingTransactions, ...(await this._network).relayedTransactions],
-            this.getAmount(),
+            // this.getAmount(),
         ]);
         this._knownTransactions = this._knownTransactions.concat(transactionHistory.newTransactions);
 
@@ -182,31 +185,47 @@ export default class Cashlink {
 
         switch (this.state) {
             case CashlinkState.UNKNOWN:
-                if (!balance && !this._knownTransactions.length && !pendingTransactions.length) {
-                    newState = CashlinkState.UNCHARGED;
-                }
             case CashlinkState.UNCHARGED:
-                const fundingTx = pendingTransactions.find(
+            case CashlinkState.CHARGING:
+                if (/*!balance && */!this._knownTransactions.length && !pendingTransactions.length) {
+                    newState = CashlinkState.UNCHARGED;
+                    break;
+                }
+
+                // General principles:
+                // 1. From the recipient's point-of-view, the originalSender of a cashlink is
+                //    the address that funded the cashlink first.
+                // 2. From the sender's point-of-view, the finalRecipient of a cashlink is
+                //    the address that claimed the cashlink first.
+                //
+                // This makes sure that the first known sender/recipient of a cashlink won't
+                // change and can be cached, for example in the Safe.
+
+                let originalSender;
+
+                const pendingFundingTx = pendingTransactions.find(
                     (tx) => tx.recipient === this.address.toUserFriendlyAddress());
-                if (fundingTx) {
-                    this.originalSender = fundingTx.sender!;
+                if (pendingFundingTx) {
+                    originalSender = pendingFundingTx.sender!;
                     newState = CashlinkState.CHARGING;
                 }
-            case CashlinkState.CHARGING:
-                if (this._knownTransactions[0]) {
-                    if (this.originalSender && this.originalSender !== this._knownTransactions[0].sender) {
-                        console.warn(
-                            'Previously detected original sender is different from sender of first tx',
-                            this.originalSender,
-                            this._knownTransactions[0].sender,
-                        );
-                    } else {
-                        this.originalSender = this._knownTransactions[0].sender;
-                    }
+
+                // A known funding transaction overwrites a pending funding transaction according to the 1st principle.
+                const knownFundingTx = this._knownTransactions.find(
+                    (tx) => tx.recipient === this.address.toUserFriendlyAddress());
+                if (knownFundingTx) {
+                    originalSender = knownFundingTx.sender!;
                     newState = CashlinkState.UNCLAIMED;
-                } else break; // If no transactions are found, no further checks are necessary
+                }
+
+                if (originalSender && this.originalSender !== originalSender) {
+                    this.originalSender = originalSender;
+                }
+
+                if (!knownFundingTx) break; // If no known transactions are found, no further checks are necessary
             case CashlinkState.UNCLAIMED:
-                const claimingTx = pendingTransactions.find((tx) => tx.sender === this.address.toUserFriendlyAddress());
+                const claimingTx = pendingTransactions.find(
+                    (tx) => tx.sender === this.address.toUserFriendlyAddress());
                 if (claimingTx) {
                     this.finalRecipient = claimingTx.recipient!;
                     newState = CashlinkState.CLAIMING;
