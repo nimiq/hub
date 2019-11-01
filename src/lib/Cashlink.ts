@@ -219,7 +219,6 @@ export default class Cashlink {
                         break;
                     }
                 }
-            default: break;
         }
 
         if (newState !== this.state) this._updateState(newState);
@@ -319,7 +318,7 @@ export default class Cashlink {
             const transferWalletAddress = this.address;
             for (const transaction of [
                 ...(await this._network).pendingTransactions,
-                ...(await this._network).relayedTransactions
+                ...(await this._network).relayedTransactions,
             ]) {
                 const sender = transaction.sender!;
                 const recipient = transaction.recipient!;
@@ -400,8 +399,8 @@ export default class Cashlink {
             console.error(e);
             return new Promise((resolve) => {
                 setTimeout(() => {
-                    this._executeUntilSuccess(fn, args).then((result) => resolve(result as T));
-                }, 5000);
+                    this._executeUntilSuccess(fn, args).then(resolve);
+                }, 1000); // Retry in 1 second
             });
         }
     }
