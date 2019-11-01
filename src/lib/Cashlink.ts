@@ -111,7 +111,7 @@ export default class Cashlink {
 
     private _network: Promise<NetworkClient>;
     private _networkClientResolver!: (client: NetworkClient) => void;
-    private _accountRequests: Map<Nimiq.Address, Promise<number>> = new Map();
+    private _balanceRequest: Promise<number> | null = null;
     private _currentBalance: number = 0;
     private _immutable: boolean;
     private _eventListeners: {[type: string]: Array<(data: any) => void>} = {};
@@ -411,30 +411,26 @@ export default class Cashlink {
         return (await this._network).headInfo.height;
     }
 
-    private async _getBalance(address = this.address): Promise<number> {
-        let request = this._accountRequests.get(address);
-        if (!request) {
-            const headHeight = (await this._network).headInfo.height;
-            request = this._executeUntilSuccess<number>(async () => {
-                await this._awaitConsensus();
-                const balances = await (await this._network).getBalance(address.toUserFriendlyAddress());
-                if ((await this._network).headInfo.height !== headHeight && this._accountRequests.has(address)) {
-                    // the head changed and there was a new account request for the new head, so we return
-                    // that newer request
-                    return this._accountRequests.get(address)!;
-                } else {
-                    // the head didn't change (so everything alright) or we don't have a newer request and
-                    // just return the result we got for the older head
-                    const balance = balances.get(address.toUserFriendlyAddress()) || 0;
-                    if (address.equals(this.address)) {
-                        this._currentBalance = balance;
-                    }
-                    return balance;
-                }
-            });
-            this._accountRequests.set(address, request);
-        }
-        return request;
+    private async _getBalance(): Promise<number> {
+        if (this._balanceRequest) return this._balanceRequest;
+
+        const address = this.address.toUserFriendlyAddress();
+        const headHeight = (await this._network).headInfo.height;
+        return (this._balanceRequest = this._executeUntilSuccess<number>(async () => {
+            await this._awaitConsensus();
+            const balances = await (await this._network).getBalance(address);
+
+            // If the head changed in the meantime, it means the balance request got nulled. But code might still
+            // await this outdated promise, so we make sure to return the new promise from this old request.
+            if ((await this._network).headInfo.height !== headHeight && this._balanceRequest) {
+                return this._balanceRequest;
+            }
+
+            // Otherwise update the balance and resolve.
+            const balance = balances.get(address) || 0;
+            this._currentBalance = balance;
+            return balance;
+        }));
     }
 
     private async _onTransactionAddedOrRelayed(transaction: DetailedPlainTransaction): Promise<void> {
@@ -448,7 +444,7 @@ export default class Cashlink {
 
     private async _onHeadChanged(o: {height: number}): Promise<void> {
         // balances potentially changed
-        this._accountRequests.clear();
+        this._balanceRequest = null;
         // only interested in final balance
         await this._onPotentialBalanceChange();
 
