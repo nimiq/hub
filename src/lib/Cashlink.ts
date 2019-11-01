@@ -109,10 +109,9 @@ export default class Cashlink {
         );
     }
 
-    private $: Promise<NetworkClient>;
+    private _network: Promise<NetworkClient>;
     private _networkClientResolver!: (client: NetworkClient) => void;
     private _accountRequests: Map<Nimiq.Address, Promise<number>> = new Map();
-    // private _wasEmptiedRequest: Promise<boolean> | null = null;
     private _currentBalance: number = 0;
     private _immutable: boolean;
     private _eventListeners: {[type: string]: Array<(data: any) => void>} = {};
@@ -132,7 +131,7 @@ export default class Cashlink {
         public finalRecipient?: string,
         public contactName?: string, /** unused for now */
     ) {
-        this.$ = new Promise((resolve) => {
+        this._network = new Promise((resolve) => {
             this._networkClientResolver = resolve;
         });
 
@@ -141,7 +140,7 @@ export default class Cashlink {
 
         this._immutable = !!(value || message);
 
-        this.$.then((network: NetworkClient) => {
+        this._network.then((network: NetworkClient) => {
             if (this.state !== CashlinkState.CLAIMED) {
                 // value will be updated as soon as we have consensus (in _onPotentialBalanceChange)
                 // and a confirmed-amount-changed event gets fired
@@ -170,8 +169,11 @@ export default class Cashlink {
         await this._awaitConsensus();
 
         const [transactionHistory, pendingTransactions, balance] = await Promise.all([
-            (await this.$).requestTransactionHistory(this.address.toUserFriendlyAddress(), knownTransactionReceipts),
-            [...(await this.$).pendingTransactions, ...(await this.$).relayedTransactions],
+            (await this._network).requestTransactionHistory(
+                this.address.toUserFriendlyAddress(),
+                knownTransactionReceipts,
+            ),
+            [...(await this._network).pendingTransactions, ...(await this._network).relayedTransactions],
             this.getAmount(),
         ]);
         this._knownTransactions = this._knownTransactions.concat(transactionHistory.newTransactions);
@@ -315,7 +317,10 @@ export default class Cashlink {
         let balance = await this._getBalance();
         if (includeUnconfirmed) {
             const transferWalletAddress = this.address;
-            for (const transaction of [...(await this.$).pendingTransactions, ...(await this.$).relayedTransactions]) {
+            for (const transaction of [
+                ...(await this._network).pendingTransactions,
+                ...(await this._network).relayedTransactions
+            ]) {
                 const sender = transaction.sender!;
                 const recipient = transaction.recipient!;
                 if (recipient === transferWalletAddress.toUserFriendlyAddress()) {
@@ -332,46 +337,6 @@ export default class Cashlink {
         }
         return balance;
     }
-
-    // public async wasEmptied(): Promise<boolean> {
-    //     if (this.state === CashlinkState.CLAIMED) return true;
-
-    //     this._wasEmptiedRequest = this._wasEmptiedRequest || this._executeUntilSuccess<boolean>(async () => {
-    //         await this._awaitConsensus();
-    //         const [transactionHistory, balance] = await Promise.all([
-    //             (await this.$).requestTransactionHistory(this._keyPair.address.toUserFriendlyAddress(), new Map()),
-    //             this.getAmount(),
-    //         ]);
-    //         const transactions = transactionHistory.newTransactions;
-
-    //         let state = this.state;
-
-    //         // Find original sender
-    //         if (!this.originalSender && transactions[0]) {
-    //             this.originalSender = transactions[0].sender;
-    //             state = CashlinkState.UNCLAIMED;
-    //         }
-
-    //         // Find final recipient
-    //         if (!this.finalRecipient)
-    //         for (let i = 1; i < transactions.length; i++) {
-    //             if (transactions[i].sender === this.address.toUserFriendlyAddress()) {
-    //                 this.finalRecipient = transactions[i].recipient;
-    //                 break;
-    //             }
-    //         }
-
-    //         // considered emptied if value is 0 and account has been used
-    //         if (balance === 0 && transactions.length > 0) {
-    //             state = CashlinkState.CLAIMED;
-    //             this._updateState(state);
-    //             return true;
-    //         }
-    //         return false;
-    //     });
-
-    //     return this._wasEmptiedRequest;
-    // }
 
     public on(type: string, callback: (data: any) => void): void {
         if (!(type in this._eventListeners)) {
@@ -401,9 +366,9 @@ export default class Cashlink {
     }
 
     private async _awaitConsensus(): Promise<void> {
-        if ((await this.$).consensusState === 'established') return;
+        if ((await this._network).consensusState === 'established') return;
         return new Promise(async (resolve, reject) => {
-            (await this.$).on(NetworkClient.Events.CONSENSUS_ESTABLISHED, resolve);
+            (await this._network).on(NetworkClient.Events.CONSENSUS_ESTABLISHED, resolve);
             // setTimeout(() => reject(new Error('Current network consensus unknown.')), 60 * 1000); // 60 seconds
         });
     }
@@ -412,7 +377,7 @@ export default class Cashlink {
         await this._awaitConsensus();
         try {
             const proof = Nimiq.SignatureProof.unserialize(new Nimiq.SerialBuffer(transaction.proof));
-            await (await this.$).relayTransaction({
+            await (await this._network).relayTransaction({
                 sender: transaction.sender.toUserFriendlyAddress(),
                 senderPubKey: new Uint8Array(proof.publicKey.serialize()),
                 recipient: transaction.recipient.toUserFriendlyAddress(),
@@ -443,17 +408,17 @@ export default class Cashlink {
 
     private async _getBlockchainHeight(): Promise<number> {
         await this._awaitConsensus();
-        return (await this.$).headInfo.height;
+        return (await this._network).headInfo.height;
     }
 
     private async _getBalance(address = this.address): Promise<number> {
         let request = this._accountRequests.get(address);
         if (!request) {
-            const headHeight = (await this.$).headInfo.height;
+            const headHeight = (await this._network).headInfo.height;
             request = this._executeUntilSuccess<number>(async () => {
                 await this._awaitConsensus();
-                const balances = await (await this.$).getBalance(address.toUserFriendlyAddress());
-                if ((await this.$).headInfo.height !== headHeight && this._accountRequests.has(address)) {
+                const balances = await (await this._network).getBalance(address.toUserFriendlyAddress());
+                if ((await this._network).headInfo.height !== headHeight && this._accountRequests.has(address)) {
                     // the head changed and there was a new account request for the new head, so we return
                     // that newer request
                     return this._accountRequests.get(address)!;
@@ -484,15 +449,14 @@ export default class Cashlink {
     private async _onHeadChanged(o: {height: number}): Promise<void> {
         // balances potentially changed
         this._accountRequests.clear();
-        // this._wasEmptiedRequest = null;
         // only interested in final balance
         await this._onPotentialBalanceChange();
 
-        if ((await this.$).consensusState === 'established') this.detectState();
+        if ((await this._network).consensusState === 'established') this.detectState();
     }
 
     private async _onPotentialBalanceChange(): Promise<void> {
-        if ((await this.$).consensusState !== 'established') {
+        if ((await this._network).consensusState !== 'established') {
             // only interested in final balance
             return;
         }
