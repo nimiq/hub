@@ -65,6 +65,7 @@ export default class Cashlink {
     }
 
     public static async parse(str: string): Promise<Cashlink | null> {
+        if (!str) return null;
         try {
             str = str.replace(/~/g, '').replace(/=*$/, (match) => new Array(match.length).fill('.').join(''));
             const buf = Nimiq.BufferUtils.fromBase64Url(str);
@@ -153,8 +154,7 @@ export default class Cashlink {
                 network.on(NetworkClient.Events.HEAD_CHANGE, this._onHeadChanged.bind(this));
                 network.on(NetworkClient.Events.CONSENSUS_ESTABLISHED, this._onPotentialBalanceChange.bind(this));
 
-                // TODO enable when addSubscriptions is available in NanoApi
-                // network.addSubscribtions(wallet.address.toUserFriendlyAddress());
+                network.subscribe(this.address.toUserFriendlyAddress());
             }
         });
 
@@ -192,15 +192,18 @@ export default class Cashlink {
                 }
             case CashlinkState.CHARGING:
                 if (this._knownTransactions[0]) {
-                    if (this.originalSender !== this._knownTransactions[0].sender) {
-                        console.warn('Previously detected original sender is different from sender of first tx');
+                    if (this.originalSender && this.originalSender !== this._knownTransactions[0].sender) {
+                        console.warn(
+                            'Previously detected original sender is different from sender of first tx',
+                            this.originalSender,
+                            this._knownTransactions[0].sender,
+                        );
                     } else {
                         this.originalSender = this._knownTransactions[0].sender;
                     }
                     newState = CashlinkState.UNCLAIMED;
                 } else break; // If no transactions are found, no further checks are necessary
             case CashlinkState.UNCLAIMED:
-                console.log(pendingTransactions);
                 const claimingTx = pendingTransactions.find((tx) => tx.sender === this.address.toUserFriendlyAddress());
                 if (claimingTx) {
                     this.finalRecipient = claimingTx.recipient!;
@@ -265,14 +268,14 @@ export default class Cashlink {
         recipient: Uint8Array,
         value: number,
         data: Uint8Array,
-        message: Uint8Array,
+        cashlinkMessage: string,
     } {
         return {
             layout: 'cashlink',
             recipient: new Uint8Array(this.address.serialize()),
             value: this.value,
             data: CashlinkExtraData.FUNDING,
-            message: this._messageBytes,
+            cashlinkMessage: this.message,
         };
     }
 
@@ -284,6 +287,8 @@ export default class Cashlink {
         // if (this.state >= CashlinkState.CLAIMING) {
         //     throw new Error('Cashlink has already been claimed');
         // }
+
+        await loadNimiq();
 
         // Get out the funds. Only the confirmed amount, because we can't request unconfirmed funds.
         const balance = Nimiq.Policy.coinsToLunas(await this._getBalance());
@@ -472,6 +477,7 @@ export default class Cashlink {
             || transaction.sender === this.address.toUserFriendlyAddress()) {
             const amount = await this.getAmount(true);
             this.fire('unconfirmed-balance-change', amount);
+            this.detectState();
         }
     }
 
@@ -481,6 +487,8 @@ export default class Cashlink {
         // this._wasEmptiedRequest = null;
         // only interested in final balance
         await this._onPotentialBalanceChange();
+
+        if ((await this.$).consensusState === 'established') this.detectState();
     }
 
     private async _onPotentialBalanceChange(): Promise<void> {
