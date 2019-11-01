@@ -135,27 +135,39 @@ export default class Cashlink {
         this._immutable = !!(value || message);
 
         this._network.then((network: NetworkClient) => {
-            if (this.state !== CashlinkState.CLAIMED) {
-                // value will be updated as soon as we have consensus (in _onPotentialBalanceChange)
-                // and a confirmed-amount-changed event gets fired
-                if (network.consensusState === 'established') {
-                    this.getAmount().then((balance: number) => this._currentBalance = balance);
-                }
-
-                network.on(NetworkClient.Events.TRANSACTION_PENDING, this._onTransactionAddedOrRelayed.bind(this));
-                network.on(NetworkClient.Events.TRANSACTION_RELAYED, this._onTransactionAddedOrRelayed.bind(this));
-                network.on(NetworkClient.Events.HEAD_CHANGE, this._onHeadChanged.bind(this));
-                network.on(NetworkClient.Events.CONSENSUS_ESTABLISHED, this._onPotentialBalanceChange.bind(this));
-
-                network.subscribe(this.address.toUserFriendlyAddress());
+            // value will be updated as soon as we have consensus (in _onPotentialBalanceChange)
+            // and a confirmed-amount-changed event gets fired
+            if (network.consensusState === 'established') {
+                this.getAmount(); // Updates _currentBalance internally
             }
+
+            network.on(NetworkClient.Events.TRANSACTION_PENDING, this._onTransactionAddedOrRelayed.bind(this));
+            network.on(NetworkClient.Events.TRANSACTION_RELAYED, this._onTransactionAddedOrRelayed.bind(this));
+            network.on(NetworkClient.Events.HEAD_CHANGE, this._onHeadChanged.bind(this));
+            network.on(NetworkClient.Events.CONSENSUS_ESTABLISHED, this._onPotentialBalanceChange.bind(this));
+
+            network.subscribe(this.address.toUserFriendlyAddress());
         });
 
         this.detectState();
     }
 
     public async detectState() {
-        if (this.state === CashlinkState.CLAIMED) return;
+        await this._awaitConsensus();
+
+        // Getting the balance and pending txs is very efficient for the network
+        const [balance, pendingTransactions] = await Promise.all([
+            this.getAmount(),
+            [...(await this._network).pendingTransactions, ...(await this._network).relayedTransactions],
+        ]);
+
+        const pendingFundingTx = pendingTransactions.find(
+            (tx) => tx.recipient === this.address.toUserFriendlyAddress());
+        const pendingClaimingTx = pendingTransactions.find(
+            (tx) => tx.sender === this.address.toUserFriendlyAddress());
+
+        // Only exit if the cashlink is CLAIMED and not currently funded or being funded.
+        if (this.state === CashlinkState.CLAIMED && !balance && !pendingFundingTx) return;
 
         // TODO: Replace by
         // const knownTransactionReceipts = new Map(this._knownTransactions.map((tx) => [tx.hash, tx.blockHash!]));
@@ -163,52 +175,55 @@ export default class Cashlink {
         const knownTransactionReceipts = new Map([[this.address.toUserFriendlyAddress(), new Map(
             this._knownTransactions.map((tx) => [tx.hash, tx.blockHash!]))]]);
 
-        await this._awaitConsensus();
-
-        const [transactionHistory, pendingTransactions/*, balance*/] = await Promise.all([
-            (await this._network).requestTransactionHistory(
-                this.address.toUserFriendlyAddress(),
-                knownTransactionReceipts,
-            ),
-            [...(await this._network).pendingTransactions, ...(await this._network).relayedTransactions],
-            // this.getAmount(),
-        ]);
+        const transactionHistory = await (await this._network).requestTransactionHistory(
+            this.address.toUserFriendlyAddress(),
+            knownTransactionReceipts,
+        );
         this._knownTransactions = this._knownTransactions.concat(transactionHistory.newTransactions);
 
         let newState: CashlinkState = this.state;
 
+        const knownFundingTx = this._knownTransactions.find(
+            (tx) => tx.recipient === this.address.toUserFriendlyAddress());
+        const knownClaimingTx = this._knownTransactions.find(
+            (tx) => tx.sender === this.address.toUserFriendlyAddress());
+
         switch (this.state) {
             case CashlinkState.UNKNOWN:
-                if (/*!balance && */!this._knownTransactions.length && !pendingTransactions.length) {
+                if (!pendingFundingTx && !knownFundingTx) {
                     newState = CashlinkState.UNCHARGED;
                     break;
                 }
             case CashlinkState.UNCHARGED:
-                const pendingFundingTx = pendingTransactions.find(
-                    (tx) => tx.recipient === this.address.toUserFriendlyAddress());
                 if (pendingFundingTx) {
                     newState = CashlinkState.CHARGING;
                 }
             case CashlinkState.CHARGING:
-                const knownFundingTx = this._knownTransactions.find(
-                    (tx) => tx.recipient === this.address.toUserFriendlyAddress());
+                if (!balance && !pendingFundingTx) {
+                    // Handle expired/replaced funding tx
+                    newState = CashlinkState.UNCHARGED;
+                    // Not break;ing here, because we need to see if the cashlink is already CLAIMED.
+                }
                 if (knownFundingTx) {
                     newState = CashlinkState.UNCLAIMED;
-                }
-                if (!knownFundingTx) break; // If no known transactions are found, no further checks are necessary
+                } else break; // If no known transactions are found, no further checks are necessary
             case CashlinkState.UNCLAIMED:
-                const claimingTx = pendingTransactions.find(
-                    (tx) => tx.sender === this.address.toUserFriendlyAddress());
-                if (claimingTx) {
+                if (pendingClaimingTx) {
                     newState = CashlinkState.CLAIMING;
                 }
             case CashlinkState.CLAIMING:
-                for (let i = 1; i < this._knownTransactions.length; i++) {
-                    if (this._knownTransactions[i].sender === this.address.toUserFriendlyAddress()) {
-                        newState = CashlinkState.CLAIMED;
-                        break;
-                    }
+                if (balance) {
+                    // Handle recharged/reused cashlink
+                    if (!pendingClaimingTx) newState = CashlinkState.UNCLAIMED;
+                    break; // If a balance is detected on the cashlink, it cannot be CLAIMED.
                 }
+                if (knownClaimingTx) {
+                    newState = CashlinkState.CLAIMED;
+                }
+            case CashlinkState.CLAIMED:
+                if (pendingFundingTx) newState = CashlinkState.CHARGING;
+                if (balance) newState = CashlinkState.UNCLAIMED;
+                if (pendingClaimingTx) newState = CashlinkState.CLAIMING;
         }
 
         if (newState !== this.state) this._updateState(newState);
@@ -273,9 +288,9 @@ export default class Cashlink {
         recipientType: Nimiq.Account.Type = Nimiq.Account.Type.BASIC,
         fee = 0,
     ): Promise<void> {
-        // if (this.state >= CashlinkState.CLAIMING) {
-        //     throw new Error('Cashlink has already been claimed');
-        // }
+        if (this.state >= CashlinkState.CLAIMING) {
+            throw new Error('Cashlink has already been claimed');
+        }
 
         await loadNimiq();
 
@@ -303,20 +318,17 @@ export default class Cashlink {
     public async getAmount(includeUnconfirmed?: boolean): Promise<number> {
         let balance = await this._getBalance();
         if (includeUnconfirmed) {
-            const transferWalletAddress = this.address;
             for (const transaction of [
                 ...(await this._network).pendingTransactions,
                 ...(await this._network).relayedTransactions,
             ]) {
                 const sender = transaction.sender!;
                 const recipient = transaction.recipient!;
-                if (recipient === transferWalletAddress.toUserFriendlyAddress()) {
+                if (recipient === this.address.toUserFriendlyAddress()) {
                     // money sent to the transfer wallet
                     balance += transaction.value!;
-                    this._updateState(CashlinkState.CHARGING);
-                } else if (sender === transferWalletAddress.toUserFriendlyAddress()) {
+                } else if (sender === this.address.toUserFriendlyAddress()) {
                     balance -= transaction.value! + transaction.fee!;
-                    this._updateState(CashlinkState.CLAIMING);
                 }
             }
         }
@@ -432,8 +444,6 @@ export default class Cashlink {
         this._balanceRequest = null;
         // only interested in final balance
         await this._onPotentialBalanceChange();
-
-        if ((await this._network).consensusState === 'established') this.detectState();
     }
 
     private async _onPotentialBalanceChange(): Promise<void> {
@@ -448,12 +458,7 @@ export default class Cashlink {
             this.fire('confirmed-balance-change', balance);
         }
 
-        if (this.state === CashlinkState.CHARGING && balance > 0) {
-            this._updateState(CashlinkState.UNCLAIMED);
-        }
-        if (this.state === CashlinkState.CLAIMING && balance === 0) {
-            this._updateState(CashlinkState.CLAIMED);
-        }
+        this.detectState();
     }
 
     private _updateState(state: CashlinkState) {
