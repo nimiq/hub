@@ -6,7 +6,6 @@ import CookieJar from '@/lib/CookieJar';
 import Config from 'config';
 import { Account, Cashlink } from './lib/PublicRequestTypes';
 import { CashlinkStore } from './lib/CashlinkStore';
-import { CashlinkType } from './lib/Cashlink';
 
 class IFrameApi {
     public static run() {

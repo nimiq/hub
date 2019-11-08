@@ -9,15 +9,9 @@ export const CashlinkExtraData = {
     CLAIMING: new Uint8Array([0, 139, 136, 141, 138]), // 'LINK'.split('').map(c => c.charCodeAt(0) + 63)
 };
 
-export enum CashlinkType {
-    OUTGOING = 0,
-    INCOMING = 1,
-}
-
 export interface CashlinkEntry {
     address: string;
     keyPair: Uint8Array;
-    type: CashlinkType;
     value: number;
     message: string;
     state: CashlinkState;
@@ -56,10 +50,9 @@ export default class Cashlink {
     }
 
     public static async create(): Promise<Cashlink> {
-        const type = CashlinkType.OUTGOING;
         await loadNimiq();
         const keyPair = Nimiq.KeyPair.derive(Nimiq.PrivateKey.generate());
-        return new Cashlink(keyPair, type, keyPair.publicKey.toAddress());
+        return new Cashlink(keyPair, keyPair.publicKey.toAddress());
     }
 
     public static async parse(str: string): Promise<Cashlink | null> {
@@ -81,7 +74,6 @@ export default class Cashlink {
 
             return new Cashlink(
                 keyPair,
-                CashlinkType.INCOMING,
                 keyPair.publicKey.toAddress(),
                 value,
                 message,
@@ -95,7 +87,6 @@ export default class Cashlink {
     public static fromObject(object: CashlinkEntry): Cashlink {
         return new Cashlink(
             Nimiq.KeyPair.unserialize(new Nimiq.SerialBuffer(object.keyPair)),
-            object.type,
             Nimiq.Address.fromUserFriendlyAddress(object.address),
             object.value,
             object.message,
@@ -117,7 +108,6 @@ export default class Cashlink {
 
     constructor(
         public keyPair: Nimiq.KeyPair,
-        public type: CashlinkType,
         public address: Nimiq.Address,
         value?: number,
         message?: string,
@@ -233,7 +223,6 @@ export default class Cashlink {
         return {
             address: this.address.toUserFriendlyAddress(),
             keyPair: new Uint8Array(this.keyPair.serialize()),
-            type: this.type,
             value: this.value,
             message: this.message,
             state: this.state,
