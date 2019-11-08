@@ -17,11 +17,7 @@ import {
     KeyguardCommand,
     Errors,
     ObjectType,
-    SignatureResult,
-    DerivedAddress,
-    SingleKeyResult,
-    ExportResult,
-    SimpleResult,
+    ResultByCommand,
 } from '@nimiq/keyguard-client';
 import { keyguardResponseRouter, REQUEST_ERROR } from '@/router';
 import { StaticStore } from '@/lib/StaticStore';
@@ -31,8 +27,6 @@ import CookieJar from '@/lib/CookieJar';
 import { Raven } from 'vue-raven'; // Sentry.io SDK
 import { ERROR_CANCELED } from './Constants';
 import Config from 'config';
-
-type KeyguardResult = SignatureResult | DerivedAddress[] | SingleKeyResult[] | ExportResult | SimpleResult;
 
 export default class RpcApi {
     private _server: RpcServer;
@@ -297,7 +291,11 @@ export default class RpcApi {
         }
     }
 
-    private _keyguardSuccessHandler(command: KeyguardCommand, result: KeyguardResult, state?: ObjectType | null) {
+    private _keyguardSuccessHandler<C extends KeyguardCommand>(
+        command: C,
+        result: ResultByCommand<C>,
+        state?: ObjectType | null,
+    ) {
         // Recover state
         this._recoverState(state);
 
