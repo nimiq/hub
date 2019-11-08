@@ -12,7 +12,13 @@ import {
 } from './RequestTypes';
 import { RequestParser } from './RequestParser';
 import { RpcRequest, RpcResult } from './PublicRequestTypes';
-import { KeyguardClient, KeyguardCommand, Errors } from '@nimiq/keyguard-client';
+import {
+    KeyguardClient,
+    KeyguardCommand,
+    Errors,
+    ObjectType,
+    ResultByCommand,
+} from '@nimiq/keyguard-client';
 import { keyguardResponseRouter, REQUEST_ERROR } from '@/router';
 import { StaticStore } from '@/lib/StaticStore';
 import { WalletStore } from './WalletStore';
@@ -43,7 +49,7 @@ export default class RpcApi {
         this._server = new RpcServer('*');
         this._keyguardClient = new KeyguardClient(Config.keyguardEndpoint);
 
-        this._registerAccountsApis([
+        this._registerHubApis([
             RequestType.SIGN_TRANSACTION,
             RequestType.CHECKOUT,
             RequestType.ONBOARD,
@@ -157,93 +163,95 @@ export default class RpcApi {
         };
     }
 
-    private _registerAccountsApis(requestTypes: RequestType[]) {
+    private _registerHubApis(requestTypes: RequestType[]) {
         for (const requestType of requestTypes) {
             // Server listener
-            this._server.onRequest(requestType, async (state, arg: RpcRequest) => {
-                let request;
+            this._server.onRequest(requestType, (state, arg) => this._hubApiHandler(requestType, state, arg));
+        }
+    }
 
-                if (!this._3rdPartyRequestWhitelist.includes(requestType)) {
-                    // Check that a non-whitelisted request comes from a privileged origin
-                    if (!Config.privilegedOrigins.includes(state.origin)
-                        && !Config.privilegedOrigins.includes('*')) {
-                        state.reply(ResponseStatus.ERROR, new Error('Unauthorized'));
-                        return;
-                    }
+    private async _hubApiHandler(requestType: RequestType, state: RpcState, arg: RpcRequest) {
+        let request;
+
+        if (!this._3rdPartyRequestWhitelist.includes(requestType)) {
+            // Check that a non-whitelisted request comes from a privileged origin
+            if (!Config.privilegedOrigins.includes(state.origin)
+                && !Config.privilegedOrigins.includes('*')) {
+                state.reply(ResponseStatus.ERROR, new Error('Unauthorized'));
+                return;
+            }
+        }
+
+        this._staticStore.rpcState = state;
+        try {
+            request = RequestParser.parse(arg, state, requestType) || undefined;
+            this._staticStore.request = request;
+        } catch (error) {
+            this.reject(error);
+            return;
+        }
+
+        const wallets = await WalletStore.Instance.list();
+        if (!wallets.length) {
+            const hasLegacyAccounts = (await this._keyguardClient.hasLegacyAccounts()).success;
+            if (hasLegacyAccounts) {
+                // Keyguard has legacy accounts, redirect to migration
+                if (requestType !== RequestType.MIGRATE) {
+                    this._staticStore.originalRouteName = requestType;
                 }
-
-                this._staticStore.rpcState = state;
-                try {
-                    request = RequestParser.parse(arg, state, requestType) || undefined;
-                    this._staticStore.request = request;
-                } catch (error) {
-                    this.reject(error);
-                    return;
-                }
-
-                const wallets = await WalletStore.Instance.list();
-                if (!wallets.length) {
-                    const hasLegacyAccounts = (await this._keyguardClient.hasLegacyAccounts()).success;
-                    if (hasLegacyAccounts) {
-                        // Keyguard has legacy accounts, redirect to migration
-                        if (requestType !== RequestType.MIGRATE) {
-                            this._staticStore.originalRouteName = requestType;
-                        }
-                        this.routerReplace(RequestType.MIGRATE);
-                        this._startRoute();
-                        return;
-                    }
-                }
-
-                let account;
-                // Simply testing if the property exists (with `'walletId' in request`) is not enough,
-                // as `undefined` also counts as existing.
-                if (request) {
-                    let accountRequired;
-                    if ((request as ParsedSimpleRequest).walletId) {
-                        accountRequired = true;
-                        account = await WalletStore.Instance.get((request as ParsedSimpleRequest).walletId);
-                    } else if (requestType === RequestType.SIGN_TRANSACTION) {
-                        accountRequired = true;
-                        const address = (request as ParsedSignTransactionRequest).sender;
-                        account = this._store.getters.findWalletByAddress(address.toUserFriendlyAddress(), true);
-                    } else if (requestType === RequestType.SIGN_MESSAGE) {
-                        accountRequired = false; // Sign message allows user to select an account
-                        const address = (request as ParsedSignMessageRequest).signer;
-                        if (address) {
-                            account = this._store.getters.findWalletByAddress(address.toUserFriendlyAddress(), false);
-                        }
-                    } else if (requestType === RequestType.CHECKOUT) {
-                        const checkoutRequest = request as ParsedCheckoutRequest;
-                        accountRequired = checkoutRequest.forceSender;
-                        if (checkoutRequest.sender) {
-                            account = this._store.getters.findWalletByAddress(
-                                checkoutRequest.sender.toUserFriendlyAddress(),
-                                true,
-                            );
-                        }
-                    }
-                    if (accountRequired && !account) {
-                        this.reject(new Error('Account not found'));
-                        return;
-                    }
-                }
-
+                this.routerReplace(RequestType.MIGRATE);
                 this._startRoute();
+                return;
+            }
+        }
 
-                if (location.pathname !== '/') {
-                    // Don't jump back to request's initial view on reload when navigated to a subsequent view.
-                    // E.g. if the user switches from Checkout to Import, don't jump back to Checkout on reload.
-                    return;
+        let account;
+        // Simply testing if the property exists (with `'walletId' in request`) is not enough,
+        // as `undefined` also counts as existing.
+        if (request) {
+            let accountRequired;
+            if ((request as ParsedSimpleRequest).walletId) {
+                accountRequired = true;
+                account = await WalletStore.Instance.get((request as ParsedSimpleRequest).walletId);
+            } else if (requestType === RequestType.SIGN_TRANSACTION) {
+                accountRequired = true;
+                const address = (request as ParsedSignTransactionRequest).sender;
+                account = this._store.getters.findWalletByAddress(address.toUserFriendlyAddress(), true);
+            } else if (requestType === RequestType.SIGN_MESSAGE) {
+                accountRequired = false; // Sign message allows user to select an account
+                const address = (request as ParsedSignMessageRequest).signer;
+                if (address) {
+                    account = this._store.getters.findWalletByAddress(address.toUserFriendlyAddress(), false);
                 }
+            } else if (requestType === RequestType.CHECKOUT) {
+                const checkoutRequest = request as ParsedCheckoutRequest;
+                accountRequired = checkoutRequest.forceSender;
+                if (checkoutRequest.sender) {
+                    account = this._store.getters.findWalletByAddress(
+                        checkoutRequest.sender.toUserFriendlyAddress(),
+                        true,
+                    );
+                }
+            }
+            if (accountRequired && !account) {
+                this.reject(new Error('Account not found'));
+                return;
+            }
+        }
 
-                if (account && account.type === WalletType.LEDGER
-                    && this._router.getMatchedComponents({ name: `${requestType}-ledger` }).length > 0) {
-                    this.routerReplace(`${requestType}-ledger`);
-                } else {
-                    this.routerReplace(requestType);
-                }
-            });
+        this._startRoute();
+
+        if (location.pathname !== '/') {
+            // Don't jump back to request's initial view on reload when navigated to a subsequent view.
+            // E.g. if the user switches from Checkout to Import, don't jump back to Checkout on reload.
+            return;
+        }
+
+        if (account && account.type === WalletType.LEDGER
+            && this._router.getMatchedComponents({ name: `${requestType}-ledger` }).length > 0) {
+            this.routerReplace(`${requestType}-ledger`);
+        } else {
+            this.routerReplace(requestType);
         }
     }
 
@@ -276,52 +284,63 @@ export default class RpcApi {
     private _registerKeyguardApis(commands: KeyguardCommand[]) {
         for (const command of commands) {
             // Server listener
-            this._keyguardClient.on(command, (result, state) => {
-                // Recover state
-                this._recoverState(state);
-
-                // Set result
-                this._store.commit('setKeyguardResult', result);
-
-                // To enable the keyguardResponseRouter to decide correctly to which route it should direct
-                // when returning from the Keyguard's sign-transaction request, the original request kind that
-                // was given to the Hub is passed here and the keyguardResponseRouter is turned
-                // from an object into a function instead.
-                this.routerReplace(keyguardResponseRouter(command, this._staticStore.request!.kind).resolve);
-
-                this._startRoute();
-            }, (error, state?: any) => {
-                // Recover state
-                this._recoverState(state);
-
-                // Set result
-                this._store.commit('setKeyguardResult', error);
-
-                if (error.message === ERROR_CANCELED) {
-                    this.reject(error);
-                    return;
-                }
-
-                if (error.message === 'Request aborted') {
-                    /*
-                     * In case the window is a popup and the recovered state is the one with which the popup was
-                     * initialized (has a source), then reject it. The popup will be closed as a result.
-                     * If not, there was another history entry in between, where a history.back() will navigate to,
-                     * not closing the popup in the process.
-                     */
-                    if (this._staticStore.rpcState!.source && window.opener) {
-                        this.reject(error);
-                    } else {
-                        window.history.back();
-                    }
-                    return;
-                }
-
-                this.routerReplace(keyguardResponseRouter(command, this._staticStore.request!.kind).reject);
-
-                this._startRoute();
-            });
+            this._keyguardClient.on(command,
+                (result, state) => this._keyguardSuccessHandler(command, result, state),
+                (error, state) => this._keyguardErrorHandler(command, error, state),
+            );
         }
+    }
+
+    private _keyguardSuccessHandler<C extends KeyguardCommand>(
+        command: C,
+        result: ResultByCommand<C>,
+        state?: ObjectType | null,
+    ) {
+        // Recover state
+        this._recoverState(state);
+
+        // Set result
+        this._store.commit('setKeyguardResult', result);
+
+        // To enable the keyguardResponseRouter to decide correctly to which route it should direct
+        // when returning from the Keyguard's sign-transaction request, the original request kind that
+        // was given to the Hub is passed here and the keyguardResponseRouter is turned
+        // from an object into a function instead.
+        this.routerReplace(keyguardResponseRouter(command, this._staticStore.request!.kind).resolve);
+
+        this._startRoute();
+    }
+
+    private _keyguardErrorHandler(command: KeyguardCommand, error: Error, state: any) {
+        // Recover state
+        this._recoverState(state);
+
+        // Set result
+        this._store.commit('setKeyguardResult', error);
+
+        if (error.message === ERROR_CANCELED) {
+            this.reject(error);
+            return;
+        }
+
+        if (error.message === 'Request aborted') {
+            /*
+             * In case the window is a popup and the recovered state is the one with which the popup was
+             * initialized (has a source), then reject it. The popup will be closed as a result.
+             * If not, there was another history entry in between, where a history.back() will navigate to,
+             * not closing the popup in the process.
+             */
+            if (this._staticStore.rpcState!.source && window.opener) {
+                this.reject(error);
+            } else {
+                window.history.back();
+            }
+            return;
+        }
+
+        this.routerReplace(keyguardResponseRouter(command, this._staticStore.request!.kind).reject);
+
+        this._startRoute();
     }
 
     private _startRoute() {
