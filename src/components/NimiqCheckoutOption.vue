@@ -51,7 +51,10 @@
             </PageBody>
             <PageFooter>
                 <button class="nq-button-s nq-light-blue-bg" @click="goToOnboarding">Login</button>
-                <a href="javascript:void(0);" class="nq-link nq-light-blue" @click="goToOnboarding">Try it now</a>
+                <a :href="safeOnboardingLink" target="_blank" class="safe-onboarding-link nq-link nq-light-blue">
+                    Try it now
+                    <ArrowRightSmallIcon/>
+                </a>
             </PageFooter>
         </template>
         <template v-else>
@@ -79,6 +82,7 @@ import { State, Mutation, Getter } from 'vuex-class';
 import KeyguardClient from '@nimiq/keyguard-client';
 import {
     AccountSelector,
+    ArrowRightSmallIcon,
     PageBody,
     PageFooter,
     PaymentInfoLine,
@@ -108,6 +112,7 @@ import CurrencyInfo from './CurrencyInfo.vue';
     SmallPage,
     StatusScreen,
     PaymentInfoLine,
+    ArrowRightSmallIcon,
     StopwatchIcon,
     TransferIcon,
 }})
@@ -128,6 +133,8 @@ export default class NimiqCheckoutOption
     private updateBalancePromise: Promise<void> | null = null;
     private balancesUpdating: boolean = true;
     private height: number = 0;
+    private readonly safeOnboardingLink: string
+        = `https://safe.nimiq${location.hostname.endsWith('testnet.com') ? '-testnet' : ''}.com/?onboarding=signup`;
 
     protected created() {
         if (this.paymentOptions.currency !== Currency.NIM) {
@@ -396,8 +403,22 @@ export default class NimiqCheckoutOption
         text-align: center;
     }
 
-    a.nq-button {
-        line-height: 7.5rem;
+    .safe-onboarding-link {
+        margin-bottom: .25rem;
+        align-self: center;
+        font-size: 2rem;
+        font-weight: bold;
+        text-decoration: none;
+    }
+
+    .safe-onboarding-link .nq-icon {
+        margin-left: .25rem;
+        font-size: 1.5rem;
+        transition: transform .3s var(--nimiq-ease);
+    }
+
+    .safe-onboarding-link:hover .nq-icon {
+        transform: translateX(.25rem);
     }
 
     .non-sufficient-balance {
