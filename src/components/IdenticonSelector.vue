@@ -83,7 +83,7 @@
         private _selectAccount(account: AccountInfo | null) {
             this.selectedAccount = account;
             if (!account || this.confirmAccountSelection) {
-                if (isDesktop()) {
+                if (account && isDesktop()) {
                     Vue.nextTick().then(() => (this.$refs.labelInput as LabelInput).focus());
                 }
                 return;
