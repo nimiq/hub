@@ -1,4 +1,3 @@
-import { CurrencyCodeRecord } from 'currency-codes';
 import { TX_VALIDITY_WINDOW, TX_MIN_VALIDITY_DURATION } from '../Constants';
 import { Currency, PaymentMethod, PaymentOptions } from '../PublicRequestTypes';
 import { Omit, ParsedPaymentOptions } from '../RequestTypes';
@@ -27,9 +26,9 @@ export type ExtendedNimiqDirectPaymentOptions = Omit<NimiqDirectPaymentOptions, 
 };
 
 export class ParsedNimiqDirectPaymentOptions extends ParsedPaymentOptions<Currency.NIM, PaymentMethod.DIRECT> {
-    public readonly digits: number = 5;
-    public readonly minDigits: number = 0;
-    public readonly maxDigits: number = 0;
+    public readonly decimals: number = 5;
+    public readonly minDecimals: number = 0;
+    public readonly maxDecimals: number = 0;
     public readonly currency: Currency.NIM = Currency.NIM;
     public readonly type: PaymentMethod.DIRECT = PaymentMethod.DIRECT;
 
@@ -100,9 +99,9 @@ export class ParsedNimiqDirectPaymentOptions extends ParsedPaymentOptions<Curren
         return this.protocolSpecific.fee || 0;
     }
 
-    public fiatFee(fiatAmount: number, fiatCurrency: CurrencyCodeRecord): number {
-        if (!this.amount || !fiatAmount || !fiatCurrency) {
-            throw new Error('amount, fiatAmount and fiatCurrency must be provided');
+    public fiatFee(fiatAmount: number): number {
+        if (!this.amount || !fiatAmount) {
+            throw new Error('amount and fiatAmount must be provided');
             return 0;
         }
         if (!this.fee) {

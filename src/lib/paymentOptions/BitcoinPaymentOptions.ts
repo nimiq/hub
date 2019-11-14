@@ -1,4 +1,3 @@
-import { CurrencyCodeRecord } from 'currency-codes';
 import { Currency, PaymentMethod, PaymentOptions } from '../PublicRequestTypes';
 import { ParsedPaymentOptions } from '../RequestTypes';
 
@@ -10,9 +9,9 @@ export interface BitcoinDirectPaymentOptions extends PaymentOptions<Currency.BTC
 }
 
 export class ParsedBitcoinDirectPaymentOptions extends ParsedPaymentOptions<Currency.BTC, PaymentMethod.DIRECT> {
-    public readonly digits: number = 8;
-    public readonly minDigits: number = 3;
-    public readonly maxDigits: number = 5;
+    public readonly decimals: number = 8;
+    public readonly minDecimals: number = 3;
+    public readonly maxDecimals: number = 5;
     public readonly currency: Currency.BTC = Currency.BTC;
     public readonly type: PaymentMethod.DIRECT = PaymentMethod.DIRECT;
     public amount: number;
@@ -52,9 +51,9 @@ export class ParsedBitcoinDirectPaymentOptions extends ParsedPaymentOptions<Curr
         };
     }
 
-    public fiatFee(fiatAmount: number, fiatCurrency: CurrencyCodeRecord): number {
-        if (!this.amount || !fiatAmount || !fiatCurrency) {
-            throw new Error('amount, fiatAmount and fiatCurrency must be provided');
+    public fiatFee(fiatAmount: number): number {
+        if (!this.amount || !fiatAmount) {
+            throw new Error('amount and fiatAmount must be provided');
             return 0;
         }
         if (!this.fee) {

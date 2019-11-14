@@ -1,4 +1,3 @@
-import CurrencyCode from 'currency-codes';
 import {
     RequestType,
     PaymentOptions,
@@ -57,9 +56,9 @@ export interface ParsedPaymentOptions<C extends Currency, T extends PaymentMetho
 
 export abstract class ParsedPaymentOptions<C extends Currency, T extends PaymentMethod>
     implements ParsedPaymentOptions<C, T> {
-    public readonly abstract digits: number;
-    public readonly abstract minDigits: number;
-    public readonly abstract maxDigits: number;
+    public readonly abstract decimals: number;
+    public readonly abstract minDecimals: number;
+    public readonly abstract maxDecimals: number;
     public expires: number;
 
     public constructor(option: PaymentOptions<C, T>) {
@@ -78,7 +77,7 @@ export interface ParsedCheckoutRequest extends ParsedBasicRequest {
     callbackUrl?: string;
     data: Uint8Array;
     time: number;
-    fiatCurrency?: CurrencyCode.CurrencyCodeRecord;
+    fiatCurrency?: string;
     fiatAmount?: number;
     paymentOptions: AvailableParsedPaymentOptions[];
 }
@@ -89,7 +88,7 @@ export type ExtendedPaymentOptions = ExtendedNimiqDirectPaymentOptions
 
 export type ExtendedCheckoutRequest = Omit<MultiCurrencyCheckoutRequest,
     'paymentOptions' | 'fiatCurrency' | 'fiatAmount'> & {
-    fiatCurrency?: CurrencyCode.CurrencyCodeRecord;
+    fiatCurrency?: string;
     fiatAmount?: number;
     paymentOptions: ExtendedPaymentOptions[];
 };
