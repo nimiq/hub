@@ -112,10 +112,10 @@ export default class LoginSuccess extends Vue {
 
         let failBecauseOfCookieSpace = false;
         if (BrowserDetection.isIOS() || BrowserDetection.isSafari()) {
-            const infoEntries = this.walletInfos.map((walletInfo) => walletInfo.toObject());
-            if (!await CookieHelper.canFitNewWallets(infoEntries)) {
-                failBecauseOfCookieSpace = true;
-            }
+            const walletInfosToKeep = collectionResults
+                .filter((collectionResult) => keepWalletCondition(collectionResult))
+                .map((collectionResult) => collectionResult.walletInfo.toObject());
+            failBecauseOfCookieSpace = !await CookieHelper.canFitNewWallets(walletInfosToKeep);
         }
 
         await Promise.all (
