@@ -30,7 +30,6 @@ import {
 import { ParsedNimiqDirectPaymentOptions } from './paymentOptions/NimiqPaymentOptions';
 import { ParsedEtherDirectPaymentOptions } from './paymentOptions/EtherPaymentOptions';
 import { ParsedBitcoinDirectPaymentOptions } from './paymentOptions/BitcoinPaymentOptions';
-import CurrencyCode from 'currency-codes';
 import { Utf8Tools } from '@nimiq/utils';
 
 export class RequestParser {
@@ -121,8 +120,16 @@ export class RequestParser {
                                 state.origin);
                         }
 
-                        if (!CurrencyCode.codes().includes(checkoutRequest.fiatCurrency)) {
-                            throw new Error(`FiatCurrency ${checkoutRequest.fiatCurrency} not in ISO 4217`);
+                        try {
+                            // Test whether the browser is able to parse the currency as an ISO 4217 currency code,
+                            // see https://www.ecma-international.org/ecma-402/1.0/#sec-6.3.1
+                            (0).toLocaleString('en-US', {
+                                style: 'currency',
+                                currency: checkoutRequest.fiatCurrency,
+                            });
+                        } catch (e) {
+                            throw new Error(`Failed to parse currency ${checkoutRequest.fiatCurrency}. Is it a valid ` +
+                                'ISO 4217 currency code?');
                         }
 
                         if (!checkoutRequest.fiatAmount || checkoutRequest.fiatAmount <= 0) {
@@ -155,7 +162,7 @@ export class RequestParser {
                                 ? Utf8Tools.stringToUtf8ByteArray(checkoutRequest.extraData)
                                 : checkoutRequest.extraData || new Uint8Array(0),
                             time: checkoutRequest.time || + new Date(),
-                            fiatCurrency: CurrencyCode.code(checkoutRequest.fiatCurrency),
+                            fiatCurrency: checkoutRequest.fiatCurrency,
                             fiatAmount: checkoutRequest.fiatAmount,
                             paymentOptions: checkoutRequest.paymentOptions.map((option) => {
                                 if (!option.amount) {
@@ -284,7 +291,7 @@ export class RequestParser {
                     callbackUrl: checkoutRequest.callbackUrl,
                     time: checkoutRequest.time,
                     fiatAmount: checkoutRequest.fiatAmount ? checkoutRequest.fiatAmount : undefined,
-                    fiatCurrency: checkoutRequest.fiatCurrency ? checkoutRequest.fiatCurrency.code : undefined,
+                    fiatCurrency: checkoutRequest.fiatCurrency ? checkoutRequest.fiatCurrency : undefined,
                     paymentOptions: checkoutRequest.paymentOptions.map((option) => {
                         switch (option.type) {
                             case PaymentMethod.DIRECT:

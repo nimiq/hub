@@ -1,7 +1,7 @@
-import { CurrencyCodeRecord } from 'currency-codes';
 import bigInt from 'big-integer';
 import { Currency, PaymentMethod, PaymentOptions } from '../PublicRequestTypes';
 import { ParsedPaymentOptions } from '../RequestTypes';
+import { toNonScientificNumberString } from '@nimiq/utils';
 
 export interface EtherDirectPaymentOptions  extends PaymentOptions<Currency.ETH, PaymentMethod.DIRECT> {
     protocolSpecific: {
@@ -12,9 +12,9 @@ export interface EtherDirectPaymentOptions  extends PaymentOptions<Currency.ETH,
 }
 
 export class ParsedEtherDirectPaymentOptions extends ParsedPaymentOptions<Currency.ETH, PaymentMethod.DIRECT> {
-    public readonly digits: number = 18;
-    public readonly minDigits: number = 1;
-    public readonly maxDigits: number = 3;
+    public readonly decimals: number = 18;
+    public readonly minDecimals: number = 1;
+    public readonly maxDecimals: number = 3;
     public readonly currency: Currency.ETH = Currency.ETH;
     public readonly type: PaymentMethod.DIRECT = PaymentMethod.DIRECT;
     public amount: bigInt.BigInteger;
@@ -59,19 +59,22 @@ export class ParsedEtherDirectPaymentOptions extends ParsedPaymentOptions<Curren
         };
     }
 
-    public fiatFee(fiatAmount: number, fiatCurrency: CurrencyCodeRecord): number {
-        if (!this.amount || !fiatAmount || !fiatCurrency) {
-            throw new Error('amount, fiatAmount and fiatCurrency must be provided');
+    public fiatFee(fiatAmount: number): number {
+        if (!this.amount || !fiatAmount) {
+            throw new Error('amount and fiatAmount must be provided');
         }
 
         if (this.fee.isZero()) {
             return 0;
         }
 
+        const decimalMatch = toNonScientificNumberString(fiatAmount).match(/(?:\D)(\d+)$/);
+        const decimalCount = decimalMatch ? decimalMatch[1].length : 0;
+        const conversionFactor = 10 ** decimalCount; // convert amount to smallest unit for bigint calculations
         return this.fee
-            .times(bigInt(fiatAmount * (10 ** fiatCurrency.digits)))
+            .times(bigInt(Math.round(fiatAmount * conversionFactor)))
             .divide(this.amount) // integer division loss of precision here.
-            .valueOf() / (10 ** fiatCurrency.digits);
+            .valueOf() / conversionFactor;
     }
 
     public raw(): EtherDirectPaymentOptions {
