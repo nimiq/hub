@@ -1,28 +1,26 @@
 import bigInt from 'big-integer';
 import { Currency, PaymentMethod, PaymentOptions } from '../PublicRequestTypes';
-import { ParsedPaymentOptions } from '../RequestTypes';
+import { Omit, ParsedPaymentOptions } from '../RequestTypes';
 import { toNonScientificNumberString } from '@nimiq/utils';
 
-export interface EtherDirectPaymentOptions  extends PaymentOptions<Currency.ETH, PaymentMethod.DIRECT> {
-    protocolSpecific: {
-        gasLimit?: number | string;
-        gasPrice?: string;
-        recipient?: string;
-    };
+export interface EtherProtocolSpecific {
+    gasLimit?: number | string;
+    gasPrice?: string;
+    recipient?: string;
 }
+
+export type ParsedEtherProtocolSpecific = Omit<EtherProtocolSpecific, 'gasLimit' | 'gasPrice'> & {
+    gasLimit?: number;
+    gasPrice?: bigInt.BigInteger;
+};
+
+export type EtherDirectPaymentOptions = PaymentOptions<Currency.ETH, PaymentMethod.DIRECT>;
 
 export class ParsedEtherDirectPaymentOptions extends ParsedPaymentOptions<Currency.ETH, PaymentMethod.DIRECT> {
     public readonly decimals: number = 18;
-    public readonly minDecimals: number = 1;
-    public readonly maxDecimals: number = 3;
     public readonly currency: Currency.ETH = Currency.ETH;
     public readonly type: PaymentMethod.DIRECT = PaymentMethod.DIRECT;
     public amount: bigInt.BigInteger;
-    public protocolSpecific: {
-        gasLimit?: number;
-        gasPrice?: bigInt.BigInteger;
-        recipient?: string;
-    };
 
     public get total(): bigInt.BigInteger {
         return this.amount.add(this.fee);

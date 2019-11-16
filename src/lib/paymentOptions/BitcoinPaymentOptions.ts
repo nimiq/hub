@@ -1,27 +1,25 @@
 import { Currency, PaymentMethod, PaymentOptions } from '../PublicRequestTypes';
-import { ParsedPaymentOptions } from '../RequestTypes';
+import { Omit, ParsedPaymentOptions } from '../RequestTypes';
 import { toNonScientificNumberString } from '@nimiq/utils';
 
-export interface BitcoinDirectPaymentOptions extends PaymentOptions<Currency.BTC, PaymentMethod.DIRECT> {
-    protocolSpecific: {
-        fee?: number | string;
-        feePerByte?: number | string;
-        recipient?: string;
-    };
+export interface BitcoinProtocolSpecific {
+    fee?: number | string;
+    feePerByte?: number | string;
+    recipient?: string;
 }
+
+export type ParsedBitcoinProtocolSpecific = Omit<BitcoinProtocolSpecific, 'fee' | 'feePerByte'> & {
+    fee?: number;
+    feePerByte?: number;
+};
+
+export type BitcoinDirectPaymentOptions = PaymentOptions<Currency.BTC, PaymentMethod.DIRECT>;
 
 export class ParsedBitcoinDirectPaymentOptions extends ParsedPaymentOptions<Currency.BTC, PaymentMethod.DIRECT> {
     public readonly decimals: number = 8;
-    public readonly minDecimals: number = 3;
-    public readonly maxDecimals: number = 5;
     public readonly currency: Currency.BTC = Currency.BTC;
     public readonly type: PaymentMethod.DIRECT = PaymentMethod.DIRECT;
     public amount: number;
-    public protocolSpecific: {
-        fee?: number;
-        feePerByte?: number;
-        recipient?: string;
-    };
 
     public get total(): number {
         return (this.amount + this.fee);

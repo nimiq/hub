@@ -7,9 +7,18 @@ import {
     Currency,
     PaymentMethod,
 } from './PublicRequestTypes';
-import { ParsedNimiqDirectPaymentOptions } from './paymentOptions/NimiqPaymentOptions';
-import { ParsedEtherDirectPaymentOptions } from './paymentOptions/EtherPaymentOptions';
-import { ParsedBitcoinDirectPaymentOptions } from './paymentOptions/BitcoinPaymentOptions';
+import {
+    ParsedNimiqProtocolSpecific,
+    ParsedNimiqDirectPaymentOptions,
+} from './paymentOptions/NimiqPaymentOptions';
+import {
+    ParsedEtherProtocolSpecific,
+    ParsedEtherDirectPaymentOptions,
+} from './paymentOptions/EtherPaymentOptions';
+import {
+    ParsedBitcoinProtocolSpecific,
+    ParsedBitcoinDirectPaymentOptions,
+} from './paymentOptions/BitcoinPaymentOptions';
 
 export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 
@@ -37,9 +46,16 @@ export interface ParsedSignTransactionRequest extends ParsedBasicRequest {
     validityStartHeight: number; // FIXME To be made optional when hub has its own network
 }
 
+export type ParsedProtocolSpecificForCurrency<C extends Currency> =
+    C extends Currency.NIM ? ParsedNimiqProtocolSpecific
+    : C extends Currency.BTC ? ParsedBitcoinProtocolSpecific
+    : C extends Currency.ETH ? ParsedEtherProtocolSpecific
+    : {} | undefined;
+
 export interface ParsedPaymentOptions<C extends Currency, T extends PaymentMethod> {
     readonly currency: C;
     readonly type: T;
+    protocolSpecific: ParsedProtocolSpecificForCurrency<C>;
     expires?: number;
     raw(): PaymentOptions<C, T>;
 }
@@ -48,8 +64,6 @@ export abstract class ParsedPaymentOptions<C extends Currency, T extends Payment
     implements ParsedPaymentOptions<C, T> {
     public abstract amount: number | BigInteger;
     public readonly abstract decimals: number;
-    public readonly abstract minDecimals: number;
-    public readonly abstract maxDecimals: number;
     public expires?: number;
 
     public constructor(option: PaymentOptions<C, T>) {
