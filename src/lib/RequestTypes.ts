@@ -1,15 +1,10 @@
 type BigInteger = import('big-integer').BigInteger; // imports only the type without bundling
 import { FormattableNumber, toNonScientificNumberString } from '@nimiq/utils';
 import { isMilliseconds } from './Constants';
-import {
-    RequestType,
-    PaymentOptions,
-    Currency,
-    PaymentMethod,
-} from './PublicRequestTypes';
-import { ParsedNimiqDirectPaymentOptions } from './paymentOptions/NimiqPaymentOptions';
-import { ParsedEtherDirectPaymentOptions } from './paymentOptions/EtherPaymentOptions';
-import { ParsedBitcoinDirectPaymentOptions } from './paymentOptions/BitcoinPaymentOptions';
+import { RequestType, PaymentOptions, Currency, PaymentMethod } from './PublicRequestTypes';
+import { ParsedNimiqSpecifics, ParsedNimiqDirectPaymentOptions } from './paymentOptions/NimiqPaymentOptions';
+import { ParsedEtherSpecifics, ParsedEtherDirectPaymentOptions } from './paymentOptions/EtherPaymentOptions';
+import { ParsedBitcoinSpecifics, ParsedBitcoinDirectPaymentOptions } from './paymentOptions/BitcoinPaymentOptions';
 
 export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 
@@ -37,9 +32,16 @@ export interface ParsedSignTransactionRequest extends ParsedBasicRequest {
     validityStartHeight: number; // FIXME To be made optional when hub has its own network
 }
 
+export type ParsedProtocolSpecificsForCurrency<C extends Currency> =
+    C extends Currency.NIM ? ParsedNimiqSpecifics
+    : C extends Currency.BTC ? ParsedBitcoinSpecifics
+    : C extends Currency.ETH ? ParsedEtherSpecifics
+    : undefined;
+
 export interface ParsedPaymentOptions<C extends Currency, T extends PaymentMethod> {
     readonly currency: C;
     readonly type: T;
+    protocolSpecific: ParsedProtocolSpecificsForCurrency<C>;
     expires?: number;
     raw(): PaymentOptions<C, T>;
 }
@@ -48,8 +50,6 @@ export abstract class ParsedPaymentOptions<C extends Currency, T extends Payment
     implements ParsedPaymentOptions<C, T> {
     public abstract amount: number | BigInteger;
     public readonly abstract decimals: number;
-    public readonly abstract minDecimals: number;
-    public readonly abstract maxDecimals: number;
     public expires?: number;
 
     public constructor(option: PaymentOptions<C, T>) {

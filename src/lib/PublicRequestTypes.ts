@@ -1,7 +1,7 @@
 import { WalletType } from './WalletInfo';
-import { NimiqDirectPaymentOptions } from './paymentOptions/NimiqPaymentOptions';
-import { EtherDirectPaymentOptions } from './paymentOptions/EtherPaymentOptions';
-import { BitcoinDirectPaymentOptions } from './paymentOptions/BitcoinPaymentOptions';
+import { NimiqSpecifics, NimiqDirectPaymentOptions } from './paymentOptions/NimiqPaymentOptions';
+import { EtherSpecifics, EtherDirectPaymentOptions } from './paymentOptions/EtherPaymentOptions';
+import { BitcoinSpecifics, BitcoinDirectPaymentOptions } from './paymentOptions/BitcoinPaymentOptions';
 
 export enum RequestType {
     LIST = 'list',
@@ -72,7 +72,13 @@ export enum Currency {
     ETH = 'eth',
 }
 
-export interface PaymentOptions<C, T> {
+export type ProtocolSpecificsForCurrency<C extends Currency> =
+    C extends Currency.NIM ? NimiqSpecifics
+    : C extends Currency.BTC ? BitcoinSpecifics
+    : C extends Currency.ETH ? EtherSpecifics
+    : undefined;
+
+export interface PaymentOptions<C extends Currency, T extends PaymentMethod> {
     type: T;
     currency: C;
     expires?: number;
@@ -81,6 +87,7 @@ export interface PaymentOptions<C, T> {
      * i.e Luna for Currency.NIM and Satoshi for Currency.BTC
      */
     amount: string;
+    protocolSpecific: ProtocolSpecificsForCurrency<C>;
 }
 
 export type AvailablePaymentOptions = NimiqDirectPaymentOptions

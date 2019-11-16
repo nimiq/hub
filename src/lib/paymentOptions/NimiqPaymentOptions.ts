@@ -3,37 +3,33 @@ import { Currency, PaymentMethod, PaymentOptions } from '../PublicRequestTypes';
 import { Omit, ParsedPaymentOptions } from '../RequestTypes';
 import { toNonScientificNumberString } from '@nimiq/utils';
 
-export interface NimiqDirectPaymentOptions extends PaymentOptions<Currency.NIM, PaymentMethod.DIRECT> {
-    protocolSpecific: {
-        fee?: number | string;
-        feePerByte?: number | string;
-        validityDuration?: number;
-        flags?: number;
-        sender?: string;
-        forceSender?: boolean;
-        recipient?: string;
-        recipientType?: Nimiq.Account.Type;
-    };
+export interface NimiqSpecifics {
+    fee?: number | string;
+    feePerByte?: number | string;
+    validityDuration?: number;
+    flags?: number;
+    sender?: string;
+    forceSender?: boolean;
+    recipient?: string;
+    recipientType?: Nimiq.Account.Type;
 }
+
+export type ParsedNimiqSpecifics = Omit<NimiqSpecifics, 'sender' | 'recipient' | 'fee' | 'feePerByte'>
+    & Required<Pick<NimiqSpecifics, 'forceSender' | 'flags' | 'validityDuration'>> & {
+    sender?: Nimiq.Address,
+    recipient?: Nimiq.Address,
+    fee: number,
+    feePerByte: number,
+};
+
+export type NimiqDirectPaymentOptions = PaymentOptions<Currency.NIM, PaymentMethod.DIRECT>;
 
 export class ParsedNimiqDirectPaymentOptions extends ParsedPaymentOptions<Currency.NIM, PaymentMethod.DIRECT> {
     public readonly decimals: number = 5;
-    public readonly minDecimals: number = 0;
-    public readonly maxDecimals: number = 0;
     public readonly currency: Currency.NIM = Currency.NIM;
     public readonly type: PaymentMethod.DIRECT = PaymentMethod.DIRECT;
 
     public amount: number;
-    public protocolSpecific: {
-        sender?: Nimiq.Address,
-        forceSender: boolean,
-        fee: number,
-        feePerByte: number;
-        flags: number,
-        recipient?: Nimiq.Address,
-        recipientType?: Nimiq.Account.Type,
-        validityDuration: number,
-    };
 
     private extraData: Uint8Array;
 
