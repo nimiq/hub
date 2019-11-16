@@ -79,7 +79,7 @@
                         />
                     </PageBody>
                     <PageFooter v-if="selected">
-                        <a class="nq-button light-blue use-app-button"
+                        <button class="nq-button light-blue use-app-button"
                             :disabled="appNotFound"
                             @click="checkBlur"
                             :href="paymentLink"
@@ -91,7 +91,7 @@
                             <template v-else>
                                 Open Wallet App
                             </template>
-                        </a>
+                        </button>
                         <p class="nq-text-s" @click="manualPaymentDetailsOpen = true" >
                             Enter manually<CaretRightSmallIcon/>
                         </p>
@@ -308,6 +308,7 @@ export default class NonNimiqCheckoutOption<
         padding-top: 0;
         padding-bottom: 0;
         text-align: center;
+        overflow: hidden;
     }
 
     .payment-option.confirmed .page-body {
@@ -330,11 +331,6 @@ export default class NonNimiqCheckoutOption<
 
     .payment-option .small-page {
         width: 52.5rem;
-    }
-
-    .payment-option .page-body {
-        padding-top: 0;
-        padding-bottom: 0;
     }
 
     .payment-option .account,
@@ -379,12 +375,24 @@ export default class NonNimiqCheckoutOption<
         line-height: 2.75rem;
     }
 
-    .page-footer a.nq-button {
-        line-height: 7.5rem;
-        margin: 2rem 4.75rem 2rem;
+    .page-footer {
+        align-items: center;
     }
 
-    .page-footer a.nq-button + p.nq-text-s {
+    .page-footer button.nq-button {
+        line-height: 7.5rem;
+        margin: 2rem 4.75rem 2rem;
+        box-sizing: content-box;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+        align-items: center;
+        --padding: .625rem;
+        padding-top: var(--padding);
+        padding-bottom: var(--padding);
+    }
+
+    .page-footer button.nq-button + p.nq-text-s {
         align-self: center;
         color:  rgba(31, 35, 72, 0.5);
         align-items: center;
@@ -393,18 +401,10 @@ export default class NonNimiqCheckoutOption<
         cursor: pointer;
     }
 
-    .page-footer a.nq-button + p.nq-text-s > .nq-icon {
+    .page-footer button.nq-button + p.nq-text-s > .nq-icon {
         --icon-size: 1.2rem;
         height: var(--icon-size);
         width: var(--icon-size);
-    }
-
-    .use-app-button {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-evenly;
-        padding-top: 0.625rem;
-        padding-bottom: 0.625rem;
     }
 
     .use-app-button > span {

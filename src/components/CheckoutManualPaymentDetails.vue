@@ -119,13 +119,20 @@ export default CheckoutManualPaymentDetails;
         margin-top: 2rem;
     }
 
-    .page-header >>> .nq-h1 {
-        margin-top: 0 !important;
-        margin-bottom: 0 !important;
+    .page-header >>> h1.nq-h1 {
+        margin-top: 0;
+        margin-bottom: 0;
     }
 
     .nq-notice {
         margin: 0;
         text-align: center;
+    }
+
+    @media (max-width: 375px) {
+        .page-header >>> h1.nq-h1 {
+            font-size: 2.5rem;
+            line-height: 3.25rem;
+        }
     }
 </style>

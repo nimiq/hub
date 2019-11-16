@@ -92,6 +92,11 @@ export default class App extends Vue {
     }
 
     /* Mobile Layout */
+    @media (max-width: 400px) {
+        .global-close > span {
+            display: none;
+        }
+    }
 
     @media (max-width: 450px) {
         #app > .container {
@@ -102,7 +107,7 @@ export default class App extends Vue {
         .global-close {
             position: absolute;
             right: 1rem;
-            top: 2rem;
+            top: 2.4rem;
             margin: 0;
         }
 
