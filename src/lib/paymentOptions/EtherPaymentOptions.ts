@@ -19,27 +19,27 @@ export type EtherDirectPaymentOptions = PaymentOptions<Currency.ETH, PaymentMeth
 export class ParsedEtherDirectPaymentOptions extends ParsedPaymentOptions<Currency.ETH, PaymentMethod.DIRECT> {
     public amount: bigInt.BigInteger;
 
-    public constructor(option: EtherDirectPaymentOptions) {
-        super(option);
-        this.amount = bigInt(option.amount); // note that bigInt resolves scientific notation like 2e3 automatically
+    public constructor(options: EtherDirectPaymentOptions) {
+        super(options);
+        this.amount = bigInt(options.amount); // note that bigInt resolves scientific notation like 2e3 automatically
 
         let gasLimit: number | undefined;
-        if (option.protocolSpecific.gasLimit !== undefined) {
-            if (!this.isNonNegativeInteger(option.protocolSpecific.gasLimit)) {
+        if (options.protocolSpecific.gasLimit !== undefined) {
+            if (!this.isNonNegativeInteger(options.protocolSpecific.gasLimit)) {
                 throw new Error('If provided, gasLimit must be a non-negative integer');
             }
-            gasLimit = Number.parseInt(toNonScientificNumberString(option.protocolSpecific.gasLimit), 10);
+            gasLimit = Number.parseInt(toNonScientificNumberString(options.protocolSpecific.gasLimit), 10);
         }
 
         let gasPrice: bigInt.BigInteger | undefined;
-        if (option.protocolSpecific.gasPrice !== undefined) {
-            if (!this.isNonNegativeInteger(option.protocolSpecific.gasPrice)) {
+        if (options.protocolSpecific.gasPrice !== undefined) {
+            if (!this.isNonNegativeInteger(options.protocolSpecific.gasPrice)) {
                 throw new Error('If provided, gasPrice must be a non-negative integer');
             }
-            gasPrice = bigInt(option.protocolSpecific.gasPrice);
+            gasPrice = bigInt(options.protocolSpecific.gasPrice);
         }
 
-        if (option.protocolSpecific.recipient && typeof option.protocolSpecific.recipient !== 'string') {
+        if (options.protocolSpecific.recipient && typeof options.protocolSpecific.recipient !== 'string') {
             // TODO add eth address validation here?
             throw new Error('If a recipient is provided it must be of type string');
         }
@@ -47,7 +47,7 @@ export class ParsedEtherDirectPaymentOptions extends ParsedPaymentOptions<Curren
         this.protocolSpecific = {
             gasLimit,
             gasPrice,
-            recipient: option.protocolSpecific.recipient,
+            recipient: options.protocolSpecific.recipient,
         };
     }
 
