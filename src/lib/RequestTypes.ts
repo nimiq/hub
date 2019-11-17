@@ -66,17 +66,17 @@ export interface ParsedPaymentOptions<C extends Currency, T extends PaymentMetho
 export abstract class ParsedPaymentOptions<C extends Currency, T extends PaymentMethod>
     implements ParsedPaymentOptions<C, T> {
 
-    protected constructor(option: PaymentOptionsForCurrencyAndType<C, T>) {
-        if (option.currency !== this.currency || option.type !== this.type) {
+    protected constructor(options: PaymentOptionsForCurrencyAndType<C, T>) {
+        if (options.currency !== this.currency || options.type !== this.type) {
             throw new Error(`Can't parse given options as ${this.constructor.name}.`);
         }
-        if (!this.isNonNegativeInteger(option.amount)) {
+        if (!this.isNonNegativeInteger(options.amount)) {
             throw new Error('amount must be a non-negative integer');
         }
-        this.expires = typeof option.expires === 'number'
-            ? isMilliseconds(option.expires)
-                ? option.expires
-                : option.expires * 1000
+        this.expires = typeof options.expires === 'number'
+            ? isMilliseconds(options.expires)
+                ? options.expires
+                : options.expires * 1000
             : undefined;
     }
 
@@ -86,10 +86,10 @@ export abstract class ParsedPaymentOptions<C extends Currency, T extends Payment
 
     public update<P extends ParsedPaymentOptions<C, T>>(
         this: P,
-        option: PaymentOptionsForCurrencyAndType<C, T>,
+        options: PaymentOptionsForCurrencyAndType<C, T>,
         ...additionalArgs: any[]
     ) {
-        const parsedOptions = new this.constructor(option as any, ...additionalArgs); // parse to check validity
+        const parsedOptions = new this.constructor(options as any, ...additionalArgs); // parse to check validity
         this.amount = parsedOptions.amount; // amount must exist on all parsed options
         this.expires = parsedOptions.expires !== undefined ? parsedOptions.expires : this.expires;
         for (const key of

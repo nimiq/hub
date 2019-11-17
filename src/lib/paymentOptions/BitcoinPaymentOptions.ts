@@ -18,25 +18,25 @@ export type BitcoinDirectPaymentOptions = PaymentOptions<Currency.BTC, PaymentMe
 export class ParsedBitcoinDirectPaymentOptions extends ParsedPaymentOptions<Currency.BTC, PaymentMethod.DIRECT> {
     public amount: number;
 
-    public constructor(option: BitcoinDirectPaymentOptions) {
-        super(option);
-        this.amount = Number.parseInt(toNonScientificNumberString(option.amount), 10);
+    public constructor(options: BitcoinDirectPaymentOptions) {
+        super(options);
+        this.amount = Number.parseInt(toNonScientificNumberString(options.amount), 10);
 
         let feePerByte: number | undefined;
-        if (option.protocolSpecific.feePerByte !== undefined) {
+        if (options.protocolSpecific.feePerByte !== undefined) {
             try {
-                feePerByte = parseFloat(toNonScientificNumberString(option.protocolSpecific.feePerByte));
+                feePerByte = parseFloat(toNonScientificNumberString(options.protocolSpecific.feePerByte));
             } catch (e) {
                 throw new Error('If provided, feePerByte must be a valid number');
             }
         }
 
         let fee: number | undefined;
-        if (option.protocolSpecific.fee !== undefined) {
-            if (!this.isNonNegativeInteger(option.protocolSpecific.fee)) {
+        if (options.protocolSpecific.fee !== undefined) {
+            if (!this.isNonNegativeInteger(options.protocolSpecific.fee)) {
                 throw new Error('If provided, fee must be a non-negative integer');
             }
-            fee = Number.parseInt(toNonScientificNumberString(option.protocolSpecific.fee), 10);
+            fee = Number.parseInt(toNonScientificNumberString(options.protocolSpecific.fee), 10);
         }
 
         if (feePerByte === undefined && fee !== undefined) {
@@ -48,7 +48,7 @@ export class ParsedBitcoinDirectPaymentOptions extends ParsedPaymentOptions<Curr
             fee = feePerByte * 250; // 250 is the estimated size for a standard tx with two inputs and one output
         }
 
-        if (option.protocolSpecific.recipient && typeof option.protocolSpecific.recipient !== 'string') {
+        if (options.protocolSpecific.recipient && typeof options.protocolSpecific.recipient !== 'string') {
             // TODO add btc address validation here?
             throw new Error('If a recipient is provided it must be a string');
         }
@@ -56,7 +56,7 @@ export class ParsedBitcoinDirectPaymentOptions extends ParsedPaymentOptions<Curr
         this.protocolSpecific = {
             fee,
             feePerByte,
-            recipient: option.protocolSpecific.recipient,
+            recipient: options.protocolSpecific.recipient,
         };
     }
 
