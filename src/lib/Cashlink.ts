@@ -159,11 +159,7 @@ export default class Cashlink {
         // Only exit if the cashlink is CLAIMED and not currently funded or being funded.
         if (this.state === CashlinkState.CLAIMED && !balance && !pendingFundingTx) return;
 
-        // TODO: Replace by
-        // const knownTransactionReceipts = new Map(this._knownTransactions.map((tx) => [tx.hash, tx.blockHash!]));
-        // after merging into or rebasing onto master.
-        const knownTransactionReceipts = new Map([[this.address.toUserFriendlyAddress(), new Map(
-            this._knownTransactions.map((tx) => [tx.hash, tx.blockHash!]))]]);
+        const knownTransactionReceipts = new Map(this._knownTransactions.map((tx) => [tx.hash, tx.blockHash!]));
 
         const transactionHistory = await (await this._network).requestTransactionHistory(
             this.address.toUserFriendlyAddress(),
