@@ -28,7 +28,7 @@
       "dom",
       "dom.iterable",
       "scripthost",
-      "esnext.bigint",
+      "esnext.bigint"
     ]
   },
   "include": [

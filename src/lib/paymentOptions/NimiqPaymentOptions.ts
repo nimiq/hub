@@ -131,22 +131,6 @@ export class ParsedNimiqDirectPaymentOptions extends ParsedPaymentOptions<Curren
         };
     }
 
-    public update(options: NimiqDirectPaymentOptions) {
-        const newOptions = new ParsedNimiqDirectPaymentOptions(options, this.extraData);
-        this.expires = newOptions.expires || this.expires;
-        this.amount = newOptions.amount || this.amount;
-        this.protocolSpecific = {
-            sender: newOptions.protocolSpecific.sender || this.protocolSpecific.sender,
-            forceSender: newOptions.protocolSpecific.forceSender || this.protocolSpecific.forceSender,
-            fee: newOptions.protocolSpecific.fee || this.protocolSpecific.fee,
-            feePerByte: newOptions.protocolSpecific.feePerByte || this.protocolSpecific.feePerByte,
-            flags: newOptions.protocolSpecific.flags || this.protocolSpecific.flags,
-            recipient: newOptions.protocolSpecific.recipient || this.protocolSpecific.recipient,
-            recipientType: newOptions.protocolSpecific.recipientType || this.protocolSpecific.recipientType,
-            validityDuration: newOptions.protocolSpecific.validityDuration || this.protocolSpecific.validityDuration,
-        };
-    }
-
     public get total(): number {
         return this.amount + this.fee;
     }
@@ -164,6 +148,10 @@ export class ParsedNimiqDirectPaymentOptions extends ParsedPaymentOptions<Curren
             return 0;
         }
         return this.fee * fiatAmount / this.amount;
+    }
+
+    public update(options: NimiqDirectPaymentOptions) {
+        super.update(options, this.extraData);
     }
 
     public raw(): NimiqDirectPaymentOptions {
