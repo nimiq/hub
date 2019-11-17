@@ -3,9 +3,9 @@ import { FormattableNumber, toNonScientificNumberString } from '@nimiq/utils';
 import { isMilliseconds } from './Constants';
 import {
     RequestType,
-    PaymentOptions,
     Currency,
     PaymentMethod,
+    PaymentOptionsForCurrencyAndType,
 } from './PublicRequestTypes';
 import {
     ParsedNimiqProtocolSpecific,
@@ -55,7 +55,10 @@ export interface ParsedPaymentOptions<C extends Currency, T extends PaymentMetho
     readonly type: T;
     protocolSpecific: ParsedProtocolSpecificForCurrency<C>;
     expires?: number;
-    raw(): PaymentOptions<C, T>;
+    constructor: ParsedPaymentOptionsForCurrencyAndType<C, T>;
+    new(options: PaymentOptionsForCurrencyAndType<C, T>, ...optionalArgs: any[]):
+        ParsedPaymentOptionsForCurrencyAndType<C, T>;
+    raw(): PaymentOptionsForCurrencyAndType<C, T>;
 }
 
 export abstract class ParsedPaymentOptions<C extends Currency, T extends PaymentMethod>
@@ -64,7 +67,7 @@ export abstract class ParsedPaymentOptions<C extends Currency, T extends Payment
     public readonly abstract decimals: number;
     public expires?: number;
 
-    public constructor(option: PaymentOptions<C, T>) {
+    protected constructor(option: PaymentOptionsForCurrencyAndType<C, T>) {
         if (!this.isNonNegativeInteger(option.amount)) {
             throw new Error('amount must be a non-negative integer');
         }
@@ -79,7 +82,20 @@ export abstract class ParsedPaymentOptions<C extends Currency, T extends Payment
         return new FormattableNumber(this.amount).moveDecimalSeparator(-this.decimals).toString();
     }
 
-    public abstract update(option: PaymentOptions<C, T>): void;
+    public update<P extends ParsedPaymentOptions<C, T>>(
+        this: P,
+        option: PaymentOptionsForCurrencyAndType<C, T>,
+        ...additionalArgs: any[]
+    ) {
+        const parsedOptions = new this.constructor(option as any, ...additionalArgs); // parse to check validity
+        this.amount = parsedOptions.amount; // amount must exist on all parsed options
+        this.expires = parsedOptions.expires !== undefined ? parsedOptions.expires : this.expires;
+        for (const key of
+            Object.keys(parsedOptions.protocolSpecific) as Array<keyof typeof parsedOptions.protocolSpecific>) {
+            if (parsedOptions.protocolSpecific[key] === undefined) continue;
+            this.protocolSpecific[key] = parsedOptions.protocolSpecific[key];
+        }
+    }
 
     protected isNonNegativeInteger(value: string | number | bigint | BigInteger) {
         try {
@@ -93,6 +109,14 @@ export abstract class ParsedPaymentOptions<C extends Currency, T extends Payment
 export type AvailableParsedPaymentOptions = ParsedNimiqDirectPaymentOptions
                                    | ParsedEtherDirectPaymentOptions
                                    | ParsedBitcoinDirectPaymentOptions;
+
+export type ParsedPaymentOptionsForCurrencyAndType<C extends Currency, T extends PaymentMethod> =
+    T extends PaymentMethod.DIRECT ?
+        C extends Currency.NIM ? ParsedNimiqDirectPaymentOptions
+        : C extends Currency.BTC ? ParsedBitcoinDirectPaymentOptions
+        : C extends Currency.ETH ? ParsedEtherDirectPaymentOptions
+        : ParsedPaymentOptions<C, T>
+    : ParsedPaymentOptions<C, T>;
 
 export interface ParsedCheckoutRequest extends ParsedBasicRequest {
     version: number;

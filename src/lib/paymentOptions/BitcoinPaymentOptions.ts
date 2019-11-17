@@ -71,17 +71,6 @@ export class ParsedBitcoinDirectPaymentOptions extends ParsedPaymentOptions<Curr
         };
     }
 
-    public update(options: BitcoinDirectPaymentOptions) {
-        const newOptions = new ParsedBitcoinDirectPaymentOptions(options);
-        this.expires = newOptions.expires || this.expires;
-        this.amount = newOptions.amount || this.amount;
-        this.protocolSpecific = {
-            fee: newOptions.fee || this.protocolSpecific.fee,
-            feePerByte: newOptions.protocolSpecific.feePerByte || this.protocolSpecific.feePerByte,
-            recipient: newOptions.protocolSpecific.recipient || this.protocolSpecific.recipient,
-        };
-    }
-
     public fiatFee(fiatAmount: number): number {
         if (!this.amount || !fiatAmount) {
             throw new Error('amount and fiatAmount must be provided');
