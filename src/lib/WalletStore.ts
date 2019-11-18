@@ -91,11 +91,11 @@ export class WalletStore extends Store<any, WalletInfoEntry> {
         }
     }
 
-    protected infoToEntry(walletInfoOrValue: WalletInfoEntry): WalletInfoEntry {
+    protected toEntry(walletInfoOrValue: WalletInfoEntry): WalletInfoEntry {
         return walletInfoOrValue;
     }
 
-    protected entryToInfo(walletInfoEntry: WalletInfoEntry): WalletInfoEntry {
+    protected fromEntry(walletInfoEntry: WalletInfoEntry): WalletInfoEntry {
         return walletInfoEntry;
     }
 
@@ -107,8 +107,7 @@ export class WalletStore extends Store<any, WalletInfoEntry> {
 
     private async _putMetaData(name: string, value: any): Promise<void> {
         this._storeName = WalletStore.DB_META_DATA_STORE_NAME;
-        const result = super.put({value, name});
-        return result;
+        return super.put({value, name});
     }
 
     private async _getSalt() {

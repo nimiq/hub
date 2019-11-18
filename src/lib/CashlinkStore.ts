@@ -25,11 +25,11 @@ export class CashlinkStore extends Store<Cashlink, CashlinkEntry> {
         }
     }
 
-    protected infoToEntry(cashlink: Cashlink): CashlinkEntry {
+    protected toEntry(cashlink: Cashlink): CashlinkEntry {
         return cashlink.toObject();
     }
 
-    protected entryToInfo(cashlinkEntry: CashlinkEntry): Cashlink {
+    protected fromEntry(cashlinkEntry: CashlinkEntry): Cashlink {
         return Cashlink.fromObject(cashlinkEntry);
     }
 }

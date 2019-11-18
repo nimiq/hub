@@ -4,7 +4,7 @@ export interface StoreConstants {
     DB_STORE_NAME: string;
 }
 
-export abstract class Store<Info, InfoEntry> {
+export abstract class Store<Info, Entry> {
     private static INDEXEDDB_IMPLEMENTATION = window.indexedDB;
 
     private _dbPromise: Promise<IDBDatabase> | null;
@@ -20,13 +20,13 @@ export abstract class Store<Info, InfoEntry> {
         const transaction = db.transaction(this.getConstants().DB_STORE_NAME);
         const request = transaction.objectStore(this.getConstants().DB_STORE_NAME).get(id);
         const result = await this._requestAsPromise(request, transaction);
-        return result ? this.entryToInfo(result) : result;
+        return result ? this.fromEntry(result) : result;
     }
 
     public async put(value: Info) {
         const db = await this.connect();
         const transaction = db.transaction(this.getConstants().DB_STORE_NAME, 'readwrite');
-        const request = transaction.objectStore(this.getConstants().DB_STORE_NAME).put(this.infoToEntry(value));
+        const request = transaction.objectStore(this.getConstants().DB_STORE_NAME).put(this.toEntry(value));
         return this._requestAsPromise(request, transaction);
     }
 
@@ -37,7 +37,7 @@ export abstract class Store<Info, InfoEntry> {
         return this._requestAsPromise(request, transaction);
     }
 
-    public async list(): Promise<InfoEntry[]> {
+    public async list(): Promise<Entry[]> {
         const db = await this.connect();
         const request = db.transaction([this.getConstants().DB_STORE_NAME], 'readonly')
             .objectStore(this.getConstants().DB_STORE_NAME)
@@ -57,9 +57,9 @@ export abstract class Store<Info, InfoEntry> {
 
     protected abstract upgrade(request: any, event: IDBVersionChangeEvent): void;
 
-    protected abstract infoToEntry(info: Info): InfoEntry;
+    protected abstract toEntry(info: Info): Entry;
 
-    protected abstract entryToInfo(infoEntry: InfoEntry): Info;
+    protected abstract fromEntry(entry: Entry): Info;
 
     private async connect(): Promise<IDBDatabase> {
         if (this._dbPromise) { return this._dbPromise; }
