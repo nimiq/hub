@@ -122,7 +122,8 @@ body {
 
 @media (max-width: 450px) {
     html {
-        font-size: 7px;
+        font-size: 7px !important;
+        --nimiq-style: 7px;
     }
 
     #app {
