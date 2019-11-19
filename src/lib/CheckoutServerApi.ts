@@ -101,7 +101,7 @@ export default class CheckoutServerApi {
             // the 'Access-Control-Allow-Credentials: true' header.
             const fetchRequest = new Request(endPoint, init);
             fetchResponse = await fetch(fetchRequest);
-        } catch(err) {
+        } catch (err) {
             // If the previous request with included credentials fails, we try again with the
             // credentials omitted (default for cross-origin requests). Some implementations might
             // not have the header set, because they don't require cookies or auth headers for
