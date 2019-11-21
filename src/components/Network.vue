@@ -251,7 +251,7 @@ class Network extends Vue {
     }
 }
 
-namespace Network { // tslint:disable-line:no-namespace
+namespace Network {
     export const enum Events {
         API_READY = 'api-ready',
         API_FAIL = 'api-fail',

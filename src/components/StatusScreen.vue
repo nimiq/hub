@@ -215,7 +215,7 @@ class StatusScreen extends Vue {
     }
 }
 
-namespace StatusScreen { // tslint:disable-line no-namespace
+namespace StatusScreen {
     export enum State {
         LOADING = 'loading',
         SUCCESS = 'success',

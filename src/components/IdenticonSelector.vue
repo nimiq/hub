@@ -96,7 +96,7 @@
         }
     }
 
-    namespace IdenticonSelector { // tslint:disable-line:no-namespace
+    namespace IdenticonSelector {
         export const enum Events {
             IDENTICON_SELECTED = 'identicon-selected',
         }
