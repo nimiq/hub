@@ -91,12 +91,26 @@ export default class CheckoutServerApi {
             body:  requestData,
             mode: 'cors',
             cache: 'default',
-            credentials: 'omit',
+            credentials: 'include',
         };
 
-        const fetchRequest = new Request(endPoint, init);
+        let fetchResponse;
+        try {
+            // First we try to send the request with 'credentials: include', which includes cookies
+            // and auth headers in cross-origin requests, but in turn requires the server to set
+            // the 'Access-Control-Allow-Credentials: true' header.
+            const fetchRequest = new Request(endPoint, init);
+            fetchResponse = await fetch(fetchRequest);
+        } catch (err) {
+            // If the previous request with included credentials fails, we try again with the
+            // credentials omitted (default for cross-origin requests). Some implementations might
+            // not have the header set, because they don't require cookies or auth headers for
+            // authenticating the webhook.
+            delete init.credentials;
+            const fetchRequest = new Request(endPoint, init);
+            fetchResponse = await fetch(fetchRequest);
+        }
 
-        const fetchResponse = await fetch(fetchRequest);
         if (!fetchResponse.ok) {
             throw new Error(`${fetchResponse.status} - ${fetchResponse.statusText}`);
         }
