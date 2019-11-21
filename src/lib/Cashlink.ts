@@ -19,11 +19,7 @@ export interface CashlinkEntry {
     contactName?: string; /** unused for now */
 }
 
-export default class Cashlink {
-    public static Events = {
-        UNCONFIRMED_BALANCE_CHANGE: 'unconfirmed-balance-change',
-        CONFIRMED_BALANCE_CHANGE: 'confirmed-balance-change',
-    }
+class Cashlink {
 
     get value() {
         return this._value || 0;
@@ -329,14 +325,14 @@ export default class Cashlink {
         return balance;
     }
 
-    public on(type: string, callback: (data: any) => void): void {
+    public on(type: Cashlink.Events, callback: (data: any) => void): void {
         if (!(type in this._eventListeners)) {
             this._eventListeners[type] = [];
         }
         this._eventListeners[type].push(callback);
     }
 
-    public off(type: string, callback: (data: any) => void): void {
+    public off(type: Cashlink.Events, callback: (data: any) => void): void {
         if (!(type in this._eventListeners)) {
             return;
         }
@@ -347,7 +343,7 @@ export default class Cashlink {
         this._eventListeners[type].splice(index, 1);
     }
 
-    public fire(type: string, arg: any): void {
+    public fire(type: Cashlink.Events, arg: any): void {
         if (!(type in this._eventListeners)) {
             return;
         }
@@ -458,6 +454,16 @@ export default class Cashlink {
 
     private _updateState(state: CashlinkState) {
         this.state = state;
-        this.fire('state-change', state);
+        this.fire(Cashlink.Events.STATE_CHANGE, state);
     }
 }
+
+namespace Cashlink {
+    export enum Events {
+        UNCONFIRMED_BALANCE_CHANGE = 'unconfirmed-balance-change',
+        CONFIRMED_BALANCE_CHANGE = 'confirmed-balance-change',
+        STATE_CHANGE = 'state-change',
+    }
+}
+
+export default Cashlink;
