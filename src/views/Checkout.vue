@@ -2,7 +2,10 @@
     <div class="container">
         <div class="spacer"></div>
         <Carousel
-            :class="{'offset-currency-info-on-disabled': request.paymentOptions.length > 1}"
+            :class="{
+                ios: isIos,
+                'offset-currency-info-on-disabled': request.paymentOptions.length > 1,
+            }"
             :entries="request.paymentOptions.map((paymentOptions) => paymentOptions.currency)"
             :animationDuration="500"
             :selected="selectedCurrency"
@@ -95,6 +98,7 @@ export default class Checkout extends Vue {
     private leftSlide!: Currency;
     private rightSlide!: Currency;
     private availableCurrencies: Currency[] = [];
+    private isIos: boolean = this._isIos();
     private disclaimerOverlayClosed: boolean = false;
     private screenFitsDisclaimer: boolean = true;
 
@@ -155,6 +159,15 @@ export default class Checkout extends Vue {
         return {
             Currency,
         };
+    }
+
+    private _isIos() {
+        const ua = window.navigator.userAgent;
+        const iOS = !!ua.match(/iPad/i) || !!ua.match(/iPhone/i);
+        const webkit = !!ua.match(/WebKit/i);
+        const iOSSafari = iOS && webkit && !ua.match(/CriOS/i);
+
+        return iOSSafari && (/iP(hone|od|ad)/).test(window.navigator.platform);
     }
 }
 </script>
@@ -262,8 +275,18 @@ export default class Checkout extends Vue {
         .carousel >>> .confirmed .nq-card {
             /* 56px for mobile browser address bar */
             /* 7.5rem for Nimiq logo & cancel button */
-            height: calc(100vh - 7.5rem - 56px);
+            --iosBottomBar: 0px;
+            height: calc(100vh - 7.5rem - 56px - var(--iosBottomBar));
             min-height: 71rem;
+        }
+
+        .carousel >>> .currency-info .nq-h1 {
+            margin-top: 0;
+        }
+
+        /* IOS specific */
+        .carousel.ios >>> .confirmed .nq-card {
+            --iosBottomBar: 74px;
         }
     }
 

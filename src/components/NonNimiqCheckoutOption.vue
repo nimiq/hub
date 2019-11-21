@@ -97,7 +97,9 @@
                         </p>
                     </PageFooter>
                     <PageFooter v-else>
-                        <button class="nq-button light-blue" @click="selectCurrency">Pay with {{currencyFullName}}</button>
+                        <button class="nq-button light-blue" @click="selectCurrency">
+                            Pay with {{currencyFullName}}
+                        </button>
                     </PageFooter>
                 </SmallPage>
                 <CheckoutManualPaymentDetails
@@ -178,6 +180,11 @@ export default class NonNimiqCheckoutOption<
     }
 
     protected async selectCurrency() {
+        if (document.activeElement) {
+            // prevent the “Open wallet app” button to have focus by default when clicking on the “Pay with…” button
+            // (happens only on mobile devices)
+            (document.activeElement as HTMLElement).blur();
+        }
         if (this.request.callbackUrl) {
             this.statusScreenState = StatusScreen.State.LOADING;
             this.showStatusScreen = true;
@@ -187,6 +194,7 @@ export default class NonNimiqCheckoutOption<
         this.checkNetworkInterval = window.setInterval(async () => {
             this.lastPaymentState = await this.getState();
         }, 10000);
+
         return true;
     }
 
