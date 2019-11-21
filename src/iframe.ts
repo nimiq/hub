@@ -47,6 +47,8 @@ class IFrameApi {
     }
 
     public static async cashlinks(): Promise<Cashlink[]> {
+        // Cashlinks are not stored in cookies on iOS/Safari, because they would take up too much space.
+        // TODO: Use Storage Access API on iOS/Safari to access IndexedDB in the iframe.
         const cashlinksEntries = await CashlinkStore.Instance.list();
         return cashlinksEntries.map((cashlink) => ({
             address: cashlink.address,

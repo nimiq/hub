@@ -15,11 +15,16 @@ export interface CashlinkEntry {
     value: number;
     message: string;
     state: CashlinkState;
-    date: number;
+    timestamp: number;
     contactName?: string; /** unused for now */
 }
 
 export default class Cashlink {
+    public static Events = {
+        UNCONFIRMED_BALANCE_CHANGE: 'unconfirmed-balance-change',
+        CONFIRMED_BALANCE_CHANGE: 'confirmed-balance-change',
+    }
+
     get value() {
         return this._value || 0;
     }
@@ -77,7 +82,8 @@ export default class Cashlink {
                 keyPair.publicKey.toAddress(),
                 value,
                 message,
-                CashlinkState.UNKNOWN);
+                CashlinkState.UNKNOWN,
+            );
         } catch (e) {
             console.error('Error parsing Cashlink:', e);
             return null;
@@ -91,7 +97,8 @@ export default class Cashlink {
             object.value,
             object.message,
             object.state,
-            object.date,
+            // @ts-ignore `timestamp` was called `date` before and was live in the mainnet.
+            object.timestamp || object.date,
             object.contactName,
         );
     }
@@ -112,7 +119,7 @@ export default class Cashlink {
         value?: number,
         message?: string,
         public state: CashlinkState = CashlinkState.UNCHARGED,
-        public date: number = Math.floor(Date.now() / 1000),
+        public timestamp: number = Math.floor(Date.now() / 1000),
         public contactName?: string, /** unused for now */
     ) {
         this._network = new Promise((resolve) => {
@@ -126,7 +133,7 @@ export default class Cashlink {
 
         this._network.then((network: NetworkClient) => {
             // value will be updated as soon as we have consensus (in _onPotentialBalanceChange)
-            // and a confirmed-amount-changed event gets fired
+            // and a Cashlink.Event.CONFIRMED_BALANCE_CHANGE event gets fired
             if (network.consensusState === 'established') {
                 this.getAmount(); // Updates _currentBalance internally
             }
@@ -146,15 +153,18 @@ export default class Cashlink {
         await this._awaitConsensus();
 
         // Getting the balance and pending txs is very efficient for the network
-        const [balance, pendingTransactions] = await Promise.all([
-            this.getAmount(),
-            [...(await this._network).pendingTransactions, ...(await this._network).relayedTransactions],
-        ]);
+        const balance = await this.getAmount();
+        const pendingTransactions = [
+            ...(await this._network).pendingTransactions,
+            ...(await this._network).relayedTransactions,
+        ];
+
+        const address = this.address.toUserFriendlyAddress();
 
         const pendingFundingTx = pendingTransactions.find(
-            (tx) => tx.recipient === this.address.toUserFriendlyAddress());
+            (tx) => tx.recipient === address);
         const pendingClaimingTx = pendingTransactions.find(
-            (tx) => tx.sender === this.address.toUserFriendlyAddress());
+            (tx) => tx.sender === address);
 
         // Only exit if the cashlink is CLAIMED and not currently funded or being funded.
         if (this.state === CashlinkState.CLAIMED && !balance && !pendingFundingTx) return;
@@ -162,7 +172,7 @@ export default class Cashlink {
         const knownTransactionReceipts = new Map(this._knownTransactions.map((tx) => [tx.hash, tx.blockHash!]));
 
         const transactionHistory = await (await this._network).requestTransactionHistory(
-            this.address.toUserFriendlyAddress(),
+            address,
             knownTransactionReceipts,
         );
         this._knownTransactions = this._knownTransactions.concat(transactionHistory.newTransactions);
@@ -170,9 +180,9 @@ export default class Cashlink {
         let newState: CashlinkState = this.state;
 
         const knownFundingTx = this._knownTransactions.find(
-            (tx) => tx.recipient === this.address.toUserFriendlyAddress());
+            (tx) => tx.recipient === address);
         const knownClaimingTx = this._knownTransactions.find(
-            (tx) => tx.sender === this.address.toUserFriendlyAddress());
+            (tx) => tx.sender === address);
 
         switch (this.state) {
             case CashlinkState.UNKNOWN:
@@ -201,12 +211,13 @@ export default class Cashlink {
                 if (balance) {
                     // Handle recharged/reused cashlink
                     if (!pendingClaimingTx) newState = CashlinkState.UNCLAIMED;
-                    break; // If a balance is detected on the cashlink, it cannot be CLAIMED.
+                    break; // If a balance is detected on the cashlink, it cannot be in CLAIMED state.
                 }
                 if (knownClaimingTx) {
                     newState = CashlinkState.CLAIMED;
                 }
             case CashlinkState.CLAIMED:
+                // Detect cashlink re-use
                 if (pendingFundingTx) newState = CashlinkState.CHARGING;
                 if (balance) newState = CashlinkState.UNCLAIMED;
                 if (pendingClaimingTx) newState = CashlinkState.CLAIMING;
@@ -217,12 +228,12 @@ export default class Cashlink {
 
     public toObject(): CashlinkEntry {
         return {
-            address: this.address.toUserFriendlyAddress(),
             keyPair: new Uint8Array(this.keyPair.serialize()),
+            address: this.address.toUserFriendlyAddress(),
             value: this.value,
             message: this.message,
             state: this.state,
-            date: this.date,
+            timestamp: this.timestamp,
             contactName: this.contactName,
         };
     }
@@ -295,9 +306,7 @@ export default class Cashlink {
 
         transaction.proof = proof;
 
-        await this._executeUntilSuccess(async () => {
-            await this._sendTransaction(transaction);
-        });
+        await this._executeUntilSuccess(() => this._sendTransaction(transaction));
     }
 
     public async getAmount(includeUnconfirmed?: boolean): Promise<number> {
@@ -342,16 +351,17 @@ export default class Cashlink {
         if (!(type in this._eventListeners)) {
             return;
         }
-        this._eventListeners[type].forEach((callback) => {
-            callback(arg);
-        });
+        this._eventListeners[type].forEach((callback) => callback(arg));
     }
 
     private async _awaitConsensus(): Promise<void> {
         if ((await this._network).consensusState === 'established') return;
-        return new Promise(async (resolve, reject) => {
-            (await this._network).on(NetworkClient.Events.CONSENSUS_ESTABLISHED, resolve);
-            // setTimeout(() => reject(new Error('Current network consensus unknown.')), 60 * 1000); // 60 seconds
+        return new Promise(async (resolve) => {
+            const handler = async () => {
+                (await this._network).off(NetworkClient.Events.CONSENSUS_ESTABLISHED, handler);
+                resolve();
+            };
+            (await this._network).on(NetworkClient.Events.CONSENSUS_ESTABLISHED, handler);
         });
     }
 
@@ -397,7 +407,7 @@ export default class Cashlink {
         if (this._balanceRequest) return this._balanceRequest;
 
         const address = this.address.toUserFriendlyAddress();
-        const headHeight = (await this._network).headInfo.height;
+        const headHeight = await this._getBlockchainHeight();
         return (this._balanceRequest = this._executeUntilSuccess<number>(async () => {
             await this._awaitConsensus();
             const balances = await (await this._network).getBalance(address);
@@ -419,7 +429,7 @@ export default class Cashlink {
         if (transaction.recipient === this.address.toUserFriendlyAddress()
             || transaction.sender === this.address.toUserFriendlyAddress()) {
             const amount = await this.getAmount(true);
-            this.fire('unconfirmed-balance-change', amount);
+            this.fire(Cashlink.Events.UNCONFIRMED_BALANCE_CHANGE, amount);
             this.detectState();
         }
     }
@@ -440,7 +450,7 @@ export default class Cashlink {
         const balance = await this.getAmount();
 
         if (balance !== oldBalance) {
-            this.fire('confirmed-balance-change', balance);
+            this.fire(Cashlink.Events.CONFIRMED_BALANCE_CHANGE, balance);
         }
 
         this.detectState();
