@@ -62,7 +62,8 @@ const beforeEachCallback = async () => {
 const afterEachCallback = async () => {
     await CashlinkStore.Instance.close();
     await new Promise((resolve, reject) => {
-        const request = indexedDB.deleteDatabase(CashlinkStore.Instance.getConstants().DB_NAME);
+        // @ts-ignore access to private property
+        const request = indexedDB.deleteDatabase(CashlinkStore.Instance.DB_NAME);
         request.onerror = () => reject(request.error);
         request.onsuccess = () => resolve(true);
         request.onblocked = () => {

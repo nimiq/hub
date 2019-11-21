@@ -53,7 +53,8 @@ const beforeEachCallback = async () => {
 const afterEachCallback = async () => {
     await WalletStore.Instance.close();
     await new Promise((resolve, reject) => {
-        const request = indexedDB.deleteDatabase(WalletStore.Instance.getConstants().DB_NAME);
+        // @ts-ignore access to private property
+        const request = indexedDB.deleteDatabase(WalletStore.Instance.DB_NAME);
         request.onerror = () => reject(request.error);
         request.onsuccess = () => resolve(true);
         request.onblocked = () => {

@@ -1,5 +1,5 @@
 import { WalletInfo, WalletInfoEntry } from '@/lib/WalletInfo';
-import { Store, StoreConstants } from '@/lib/Store';
+import { Store } from '@/lib/Store';
 
 /**
  * With two ObjectStores sharing the same Database, types inside the Store are not well defined.
@@ -13,16 +13,23 @@ export class WalletStore extends Store<any, WalletInfoEntry> {
     public static readonly SALT_LENGTH = 16;
 
     private static instance: WalletStore | null = null;
-    private _storeName: string;
+    private _storeName: string = WalletStore.DB_ACCOUNTS_STORE_NAME;
 
-    static get Instance(): WalletStore {
-        if (!WalletStore.instance) WalletStore.instance = new WalletStore();
-        return WalletStore.instance;
+    protected get DB_NAME(): string {
+        return 'nimiq-hub';
     }
 
-    protected constructor() {
-        super();
-        this._storeName = WalletStore.DB_ACCOUNTS_STORE_NAME;
+    protected get DB_STORE_NAME(): string {
+        return this._storeName;
+    }
+
+    protected get DB_VERSION(): number {
+        return 1;
+    }
+
+    public static get Instance(): WalletStore {
+        if (!WalletStore.instance) WalletStore.instance = new WalletStore();
+        return WalletStore.instance;
     }
 
     public async deriveId(keyId: string): Promise<string> {
@@ -74,14 +81,6 @@ export class WalletStore extends Store<any, WalletInfoEntry> {
         return super.list()  as Promise<WalletInfoEntry[]>;
     }
 
-    public getConstants(): StoreConstants {
-        return {
-            DB_VERSION: 1,
-            DB_NAME: 'nimiq-hub',
-            DB_STORE_NAME: this._storeName,
-        };
-    }
-
     protected upgrade(request: any, event: IDBVersionChangeEvent): void {
         const db = request.result;
         if (event.oldVersion < 1) {
@@ -91,12 +90,12 @@ export class WalletStore extends Store<any, WalletInfoEntry> {
         }
     }
 
-    protected toEntry(walletInfoOrValue: WalletInfoEntry): WalletInfoEntry {
-        return walletInfoOrValue;
+    protected toEntry<T>(walletInfoOrMetaData: T): T {
+        return walletInfoOrMetaData;
     }
 
-    protected fromEntry(walletInfoEntry: WalletInfoEntry): WalletInfoEntry {
-        return walletInfoEntry;
+    protected fromEntry<T>(walletEntryOrMetaDataEntry: T): T {
+        return walletEntryOrMetaDataEntry;
     }
 
     private async _getMetaData(name: string): Promise<any> {
