@@ -36,6 +36,7 @@
         "@nimiq/core": "^1.5.3",
         "@nimiq/core-web": "^1.5.3",
         "@types/jest": "^24.0.6",
+        "@types/node": "^12.12.14",
         "@vue/babel-preset-app": "^3.4.1",
         "@vue/cli-plugin-typescript": "^3.4.1",
         "@vue/cli-plugin-unit-jest": "^3.4.1",
@@ -46,7 +47,7 @@
         "fake-indexeddb": "^2.0.5",
         "jest": "^24.1.0",
         "ts-jest": "^24.0.0",
-        "typescript": "^3.4.2",
+        "typescript": "^3.5.1",
         "vue-template-compiler": "^2.6.6",
         "write-file-webpack-plugin": "^4.5.0"
     }

@@ -6,8 +6,6 @@ import { ParsedNimiqSpecifics, ParsedNimiqDirectPaymentOptions } from './payment
 import { ParsedEtherSpecifics, ParsedEtherDirectPaymentOptions } from './paymentOptions/EtherPaymentOptions';
 import { ParsedBitcoinSpecifics, ParsedBitcoinDirectPaymentOptions } from './paymentOptions/BitcoinPaymentOptions';
 
-export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
-
 export interface ParsedBasicRequest {
     kind: RequestType;
     appName: string;
