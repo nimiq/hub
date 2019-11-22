@@ -99,7 +99,7 @@ class Cashlink {
         );
     }
 
-    private _network: Promise<NetworkClient>;
+    private _getNetwork: () => Promise<NetworkClient>;
     private _networkClientResolver!: (client: NetworkClient) => void;
     private _balanceRequest: Promise<number> | null = null;
     private _currentBalance: number = 0;
@@ -118,16 +118,18 @@ class Cashlink {
         public timestamp: number = Math.floor(Date.now() / 1000),
         public contactName?: string, /** unused for now */
     ) {
-        this._network = new Promise((resolve) => {
+        const networkPromise = new Promise<NetworkClient>((resolve) => {
+            // Safe resolver function for when the network client gets assigned
             this._networkClientResolver = resolve;
         });
+        this._getNetwork = () => networkPromise;
 
         if (value) this.value = value;
         if (message) this.message = message;
 
         this._immutable = !!(value || message);
 
-        this._network.then((network: NetworkClient) => {
+        this._getNetwork().then((network: NetworkClient) => {
             // value will be updated as soon as we have consensus (in _onPotentialBalanceChange)
             // and a Cashlink.Event.CONFIRMED_BALANCE_CHANGE event gets fired
             if (network.consensusState === 'established') {
@@ -151,8 +153,8 @@ class Cashlink {
         // Getting the balance and pending txs is very efficient for the network
         const balance = await this.getAmount();
         const pendingTransactions = [
-            ...(await this._network).pendingTransactions,
-            ...(await this._network).relayedTransactions,
+            ...(await this._getNetwork()).pendingTransactions,
+            ...(await this._getNetwork()).relayedTransactions,
         ];
 
         const address = this.address.toUserFriendlyAddress();
@@ -167,7 +169,7 @@ class Cashlink {
 
         const knownTransactionReceipts = new Map(this._knownTransactions.map((tx) => [tx.hash, tx.blockHash!]));
 
-        const transactionHistory = await (await this._network).requestTransactionHistory(
+        const transactionHistory = await (await this._getNetwork()).requestTransactionHistory(
             address,
             knownTransactionReceipts,
         );
@@ -213,7 +215,7 @@ class Cashlink {
                     newState = CashlinkState.CLAIMED;
                 }
             case CashlinkState.CLAIMED:
-                // Detect cashlink re-use
+                // Detect cashlink re-use and chain rebranches
                 if (pendingFundingTx) newState = CashlinkState.CHARGING;
                 if (balance) newState = CashlinkState.UNCLAIMED;
                 if (pendingClaimingTx) newState = CashlinkState.CLAIMING;
@@ -268,7 +270,7 @@ class Cashlink {
     } {
         return {
             layout: 'cashlink',
-            recipient: new Uint8Array(this.address.serialize()),
+            recipient: this.address.serialize(),
             value: this.value,
             data: CashlinkExtraData.FUNDING,
             cashlinkMessage: this.message,
@@ -298,7 +300,7 @@ class Cashlink {
 
         const keyPair = this.keyPair;
         const signature = Nimiq.Signature.create(keyPair.privateKey, keyPair.publicKey, transaction.serializeContent());
-        const proof = new Uint8Array(Nimiq.SignatureProof.singleSig(keyPair.publicKey, signature).serialize());
+        const proof = Nimiq.SignatureProof.singleSig(keyPair.publicKey, signature).serialize();
 
         transaction.proof = proof;
 
@@ -309,8 +311,8 @@ class Cashlink {
         let balance = await this._getBalance();
         if (includeUnconfirmed) {
             for (const transaction of [
-                ...(await this._network).pendingTransactions,
-                ...(await this._network).relayedTransactions,
+                ...(await this._getNetwork()).pendingTransactions,
+                ...(await this._getNetwork()).relayedTransactions,
             ]) {
                 const sender = transaction.sender!;
                 const recipient = transaction.recipient!;
@@ -351,13 +353,13 @@ class Cashlink {
     }
 
     private async _awaitConsensus(): Promise<void> {
-        if ((await this._network).consensusState === 'established') return;
+        if ((await this._getNetwork()).consensusState === 'established') return;
         return new Promise(async (resolve) => {
             const handler = async () => {
-                (await this._network).off(NetworkClient.Events.CONSENSUS_ESTABLISHED, handler);
+                (await this._getNetwork()).off(NetworkClient.Events.CONSENSUS_ESTABLISHED, handler);
                 resolve();
             };
-            (await this._network).on(NetworkClient.Events.CONSENSUS_ESTABLISHED, handler);
+            (await this._getNetwork()).on(NetworkClient.Events.CONSENSUS_ESTABLISHED, handler);
         });
     }
 
@@ -365,14 +367,14 @@ class Cashlink {
         await this._awaitConsensus();
         try {
             const proof = Nimiq.SignatureProof.unserialize(new Nimiq.SerialBuffer(transaction.proof));
-            await (await this._network).relayTransaction({
+            await (await this._getNetwork()).relayTransaction({
                 sender: transaction.sender.toUserFriendlyAddress(),
-                senderPubKey: new Uint8Array(proof.publicKey.serialize()),
+                senderPubKey: proof.publicKey.serialize(),
                 recipient: transaction.recipient.toUserFriendlyAddress(),
                 value: Nimiq.Policy.lunasToCoins(transaction.value),
                 fee: Nimiq.Policy.lunasToCoins(transaction.fee),
                 validityStartHeight: transaction.validityStartHeight,
-                signature: new Uint8Array(proof.signature.serialize()),
+                signature: proof.signature.serialize(),
                 extraData: transaction.data,
             });
         } catch (e) {
@@ -396,7 +398,7 @@ class Cashlink {
 
     private async _getBlockchainHeight(): Promise<number> {
         await this._awaitConsensus();
-        return (await this._network).headInfo.height;
+        return (await this._getNetwork()).headInfo.height;
     }
 
     private async _getBalance(): Promise<number> {
@@ -406,11 +408,11 @@ class Cashlink {
         const headHeight = await this._getBlockchainHeight();
         return (this._balanceRequest = this._executeUntilSuccess<number>(async () => {
             await this._awaitConsensus();
-            const balances = await (await this._network).getBalance(address);
+            const balances = await (await this._getNetwork()).getBalance(address);
 
             // If the head changed in the meantime, it means the balance request got nulled. But code might still
             // await this outdated promise, so we make sure to return the new promise from this old request.
-            if ((await this._network).headInfo.height !== headHeight && this._balanceRequest) {
+            if ((await this._getNetwork()).headInfo.height !== headHeight && this._balanceRequest) {
                 return this._balanceRequest;
             }
 
@@ -438,7 +440,7 @@ class Cashlink {
     }
 
     private async _onPotentialBalanceChange(): Promise<void> {
-        if ((await this._network).consensusState !== 'established') {
+        if ((await this._getNetwork()).consensusState !== 'established') {
             // only interested in final balance
             return;
         }

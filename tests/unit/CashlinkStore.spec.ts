@@ -49,6 +49,8 @@ const DUMMY_DATA = {
         // Anonymous functions cannot be compared by Jest, so we need to work around that
         // (https://stackoverflow.com/a/48204295/4204380)
         // @ts-ignore ignore private property access
+        cashlink._getNetwork = expect.any(Function);
+        // @ts-ignore ignore private property access
         cashlink._networkClientResolver = expect.any(Function);
         return cashlink;
     }),
