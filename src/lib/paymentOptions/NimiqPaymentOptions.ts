@@ -1,6 +1,6 @@
 import { TX_VALIDITY_WINDOW, TX_MIN_VALIDITY_DURATION } from '../Constants';
 import { Currency, PaymentMethod, PaymentOptions } from '../PublicRequestTypes';
-import { Omit, ParsedPaymentOptions } from '../RequestTypes';
+import { ParsedPaymentOptions } from '../RequestTypes';
 import { toNonScientificNumberString } from '@nimiq/utils';
 
 export interface NimiqProtocolSpecific {

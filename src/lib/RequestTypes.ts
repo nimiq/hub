@@ -20,8 +20,6 @@ import {
     ParsedBitcoinDirectPaymentOptions,
 } from './paymentOptions/BitcoinPaymentOptions';
 
-export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
-
 export interface ParsedBasicRequest {
     kind: RequestType;
     appName: string;
