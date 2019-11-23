@@ -50,7 +50,6 @@ export default class CashlinksDemo extends Vue {
     public async created() {
         this._hubApi = new HubApi();
         await this.network.init();
-        this.network.connectPico();
 
         await this.loadCashlink(window.location.href);
     }
@@ -58,7 +57,7 @@ export default class CashlinksDemo extends Vue {
     private async createCashlink() {
         this.cashlink = await Cashlink.create();
         this.cashlink.networkClient = this.network;
-        this.network.subscribe(this.cashlink.address.toUserFriendlyAddress());
+        this.subscribeEvents(this.cashlink);
     }
 
     private async loadCashlink(url?: string) {
@@ -72,7 +71,7 @@ export default class CashlinksDemo extends Vue {
             this.cashlink = cashlink;
 
             this.cashlink.networkClient = this.network;
-            this.network.subscribe(this.cashlink.address.toUserFriendlyAddress());
+            this.subscribeEvents(this.cashlink);
         } catch (e) {
             alert(e.message);
         }
@@ -151,12 +150,16 @@ export default class CashlinksDemo extends Vue {
         return !!window.Nimiq && Nimiq.Module;
     }
 
+    private subscribeEvents(cashlink: Cashlink) {
+        cashlink.on(Cashlink.Events.STATE_CHANGE, (state: number) => console.log(this.cashlinkState(state)));
+        cashlink.on(Cashlink.Events.BALANCE_CHANGE, (balance) => console.log('New Balance: ', balance));
+    }
+
     private get canBeFunded() {
         return this.cashlink!.state === CashlinkState.UNCHARGED;
     }
 
     private get canBeClaimed() {
-        console.log(this.cashlink!.state);
         return this.cashlink!.state === CashlinkState.UNCLAIMED;
     }
 

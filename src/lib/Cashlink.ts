@@ -143,6 +143,7 @@ class Cashlink {
 
             network.on(NetworkClient.Events.TRANSACTION_PENDING, this._onTransactionAddedOrRelayed.bind(this));
             network.on(NetworkClient.Events.TRANSACTION_RELAYED, this._onTransactionAddedOrRelayed.bind(this));
+            network.on(NetworkClient.Events.TRANSACTION_MINED, this._onTransactionAddedOrRelayed.bind(this));
             network.on(NetworkClient.Events.BALANCES_CHANGED, this._onBalancesChanged.bind(this));
 
             // Triggers a BALANCES_CHANGED event if this is the first time this address is subscribed
