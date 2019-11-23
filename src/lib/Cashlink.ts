@@ -292,8 +292,8 @@ class Cashlink {
 
         await loadNimiq();
 
-        // Get out the funds.
-        const balance = await this._awaitBalance();
+        // Only claim the amount specified in the cashlink (or the cashlink balance, if smaller)
+        const balance = Math.min(this.value, await this._awaitBalance());
         if (!balance) {
             throw new Error('There is no balance in this link');
         }
