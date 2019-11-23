@@ -99,10 +99,13 @@ class Cashlink {
         );
     }
 
+    /**
+     * Cashlink balance in luna
+     */
+    public balance: number | null = null;
+
     private _getNetwork: () => Promise<NetworkClient>;
     private _networkClientResolver!: (client: NetworkClient) => void;
-    private _balanceRequest: Promise<number> | null = null;
-    private _currentBalance: number = 0;
     private _immutable: boolean;
     private _eventListeners: {[type: string]: Array<(data: any) => void>} = {};
     private _messageBytes: Uint8Array = new Uint8Array(0);
@@ -130,18 +133,20 @@ class Cashlink {
         this._immutable = !!(value || message);
 
         this._getNetwork().then((network: NetworkClient) => {
-            // value will be updated as soon as we have consensus (in _onPotentialBalanceChange)
-            // and a Cashlink.Event.CONFIRMED_BALANCE_CHANGE event gets fired
+            const userFriendlyAddress = this.address.toUserFriendlyAddress();
+
+            // When not yet established, the balance will be updated by the nano-api as soon
+            // as we have consensus, because subscribing (below) triggers a balance check.
             if (network.consensusState === 'established') {
-                this.getAmount(); // Updates _currentBalance internally
+                network.getBalance(userFriendlyAddress).then(this._onBalancesChanged.bind(this));
             }
 
             network.on(NetworkClient.Events.TRANSACTION_PENDING, this._onTransactionAddedOrRelayed.bind(this));
             network.on(NetworkClient.Events.TRANSACTION_RELAYED, this._onTransactionAddedOrRelayed.bind(this));
-            network.on(NetworkClient.Events.HEAD_CHANGE, this._onHeadChanged.bind(this));
-            network.on(NetworkClient.Events.CONSENSUS_ESTABLISHED, this._onPotentialBalanceChange.bind(this));
+            network.on(NetworkClient.Events.BALANCES_CHANGED, this._onBalancesChanged.bind(this));
 
-            network.subscribe(this.address.toUserFriendlyAddress());
+            // Triggers a BALANCES_CHANGED event if this is the first time this address is subscribed
+            network.subscribe(userFriendlyAddress);
         });
 
         this.detectState();
@@ -150,8 +155,7 @@ class Cashlink {
     public async detectState() {
         await this._awaitConsensus();
 
-        // Getting the balance and pending txs is very efficient for the network
-        const balance = await this.getAmount();
+        const balance = await this._awaitBalance();
         const pendingTransactions = [
             ...(await this._getNetwork()).pendingTransactions,
             ...(await this._getNetwork()).relayedTransactions,
@@ -288,10 +292,10 @@ class Cashlink {
 
         await loadNimiq();
 
-        // Get out the funds. Only the confirmed amount, because we can't request unconfirmed funds.
-        const balance = Nimiq.Policy.coinsToLunas(await this._getBalance());
+        // Get out the funds.
+        const balance = await this._awaitBalance();
         if (!balance) {
-            throw new Error('There is no confirmed balance in this link');
+            throw new Error('There is no balance in this link');
         }
         const recipient = Nimiq.Address.fromUserFriendlyAddress(recipientAddress);
         const transaction = new Nimiq.ExtendedTransaction(this.address, Nimiq.Account.Type.BASIC,
@@ -304,27 +308,7 @@ class Cashlink {
 
         transaction.proof = proof;
 
-        await this._executeUntilSuccess(() => this._sendTransaction(transaction));
-    }
-
-    public async getAmount(includeUnconfirmed?: boolean): Promise<number> {
-        let balance = await this._getBalance();
-        if (includeUnconfirmed) {
-            for (const transaction of [
-                ...(await this._getNetwork()).pendingTransactions,
-                ...(await this._getNetwork()).relayedTransactions,
-            ]) {
-                const sender = transaction.sender!;
-                const recipient = transaction.recipient!;
-                if (recipient === this.address.toUserFriendlyAddress()) {
-                    // money sent to the transfer wallet
-                    balance += transaction.value!;
-                } else if (sender === this.address.toUserFriendlyAddress()) {
-                    balance -= transaction.value! + transaction.fee!;
-                }
-            }
-        }
-        return balance;
+        return this._sendTransaction(transaction);
     }
 
     public on(type: Cashlink.Events, callback: (data: any) => void): void {
@@ -363,6 +347,17 @@ class Cashlink {
         });
     }
 
+    private async _awaitBalance(): Promise<number> {
+        if (this.balance !== null) return this.balance;
+        return new Promise(async (resolve) => {
+            const handler = async (balance: number) => {
+                this.off(Cashlink.Events.BALANCE_CHANGE, handler);
+                resolve(balance);
+            };
+            this.on(Cashlink.Events.BALANCE_CHANGE, handler);
+        });
+    }
+
     private async _sendTransaction(transaction: Nimiq.Transaction): Promise<void> {
         await this._awaitConsensus();
         try {
@@ -383,87 +378,35 @@ class Cashlink {
         }
     }
 
-    private async _executeUntilSuccess<T>(fn: (...args: any[]) => T | Promise<T>, args: any[] = []): Promise<T> {
-        try {
-            return await fn.apply(this, args);
-        } catch (e) {
-            console.error(e);
-            return new Promise((resolve) => {
-                setTimeout(() => {
-                    this._executeUntilSuccess(fn, args).then(resolve);
-                }, 1000); // Retry in 1 second
-            });
-        }
-    }
-
     private async _getBlockchainHeight(): Promise<number> {
         await this._awaitConsensus();
         return (await this._getNetwork()).headInfo.height;
     }
 
-    private async _getBalance(): Promise<number> {
-        if (this._balanceRequest) return this._balanceRequest;
-
-        const address = this.address.toUserFriendlyAddress();
-        const headHeight = await this._getBlockchainHeight();
-        return (this._balanceRequest = this._executeUntilSuccess<number>(async () => {
-            await this._awaitConsensus();
-            const balances = await (await this._getNetwork()).getBalance(address);
-
-            // If the head changed in the meantime, it means the balance request got nulled. But code might still
-            // await this outdated promise, so we make sure to return the new promise from this old request.
-            if ((await this._getNetwork()).headInfo.height !== headHeight && this._balanceRequest) {
-                return this._balanceRequest;
-            }
-
-            // Otherwise update the balance and resolve.
-            const balance = balances.get(address) || 0;
-            this._currentBalance = balance;
-            return balance;
-        }));
-    }
-
     private async _onTransactionAddedOrRelayed(transaction: DetailedPlainTransaction): Promise<void> {
         if (transaction.recipient === this.address.toUserFriendlyAddress()
             || transaction.sender === this.address.toUserFriendlyAddress()) {
-            const amount = await this.getAmount(true);
-            this.fire(Cashlink.Events.UNCONFIRMED_BALANCE_CHANGE, amount);
             this.detectState();
         }
     }
 
-    private async _onHeadChanged(o: {height: number}): Promise<void> {
-        // balances potentially changed
-        this._balanceRequest = null;
-        // only interested in final balance
-        await this._onPotentialBalanceChange();
-    }
-
-    private async _onPotentialBalanceChange(): Promise<void> {
-        if ((await this._getNetwork()).consensusState !== 'established') {
-            // only interested in final balance
-            return;
+    private _onBalancesChanged(balances: Map<string, number>) {
+        const address = this.address.toUserFriendlyAddress();
+        if (balances.has(address)) {
+            this.balance = Nimiq.Policy.coinsToLunas(balances.get(address)!);
+            this.fire(Cashlink.Events.BALANCE_CHANGE, this.balance);
         }
-        const oldBalance = this._currentBalance;
-        const balance = await this.getAmount();
-
-        if (balance !== oldBalance) {
-            this.fire(Cashlink.Events.CONFIRMED_BALANCE_CHANGE, balance);
-        }
-
-        this.detectState();
     }
 
     private _updateState(state: CashlinkState) {
         this.state = state;
-        this.fire(Cashlink.Events.STATE_CHANGE, state);
+        this.fire(Cashlink.Events.STATE_CHANGE, this.state);
     }
 }
 
 namespace Cashlink {
     export enum Events {
-        UNCONFIRMED_BALANCE_CHANGE = 'unconfirmed-balance-change',
-        CONFIRMED_BALANCE_CHANGE = 'confirmed-balance-change',
+        BALANCE_CHANGE = 'balance-change',
         STATE_CHANGE = 'state-change',
     }
 }
