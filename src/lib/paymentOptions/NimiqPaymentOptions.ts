@@ -25,12 +25,7 @@ export type ParsedNimiqProtocolSpecific = Omit<NimiqProtocolSpecific, 'sender' |
 export type NimiqDirectPaymentOptions = PaymentOptions<Currency.NIM, PaymentMethod.DIRECT>;
 
 export class ParsedNimiqDirectPaymentOptions extends ParsedPaymentOptions<Currency.NIM, PaymentMethod.DIRECT> {
-    public readonly decimals: number = 5;
-    public readonly currency: Currency.NIM = Currency.NIM;
-    public readonly type: PaymentMethod.DIRECT = PaymentMethod.DIRECT;
-
     public amount: number;
-
     private extraData: Uint8Array;
 
     public constructor(option: NimiqDirectPaymentOptions, extraData: Uint8Array) {
@@ -129,6 +124,18 @@ export class ParsedNimiqDirectPaymentOptions extends ParsedPaymentOptions<Curren
                     ),
                 ),
         };
+    }
+
+    public get currency(): Currency.NIM {
+        return Currency.NIM;
+    }
+
+    public get type(): PaymentMethod.DIRECT {
+        return PaymentMethod.DIRECT;
+    }
+
+    public get decimals(): number {
+        return 5;
     }
 
     public get total(): number {

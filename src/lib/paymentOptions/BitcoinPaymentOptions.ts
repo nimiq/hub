@@ -16,18 +16,7 @@ export type ParsedBitcoinProtocolSpecific = Omit<BitcoinProtocolSpecific, 'fee' 
 export type BitcoinDirectPaymentOptions = PaymentOptions<Currency.BTC, PaymentMethod.DIRECT>;
 
 export class ParsedBitcoinDirectPaymentOptions extends ParsedPaymentOptions<Currency.BTC, PaymentMethod.DIRECT> {
-    public readonly decimals: number = 8;
-    public readonly currency: Currency.BTC = Currency.BTC;
-    public readonly type: PaymentMethod.DIRECT = PaymentMethod.DIRECT;
     public amount: number;
-
-    public get total(): number {
-        return (this.amount + this.fee);
-    }
-
-    public get fee(): number {
-        return this.protocolSpecific.fee || 0;
-    }
 
     public constructor(option: BitcoinDirectPaymentOptions) {
         super(option);
@@ -69,6 +58,26 @@ export class ParsedBitcoinDirectPaymentOptions extends ParsedPaymentOptions<Curr
             feePerByte,
             recipient: option.protocolSpecific.recipient,
         };
+    }
+
+    public get currency(): Currency.BTC {
+        return Currency.BTC;
+    }
+
+    public get type(): PaymentMethod.DIRECT {
+        return PaymentMethod.DIRECT;
+    }
+
+    public get decimals(): number {
+        return 8;
+    }
+
+    public get total(): number {
+        return (this.amount + this.fee);
+    }
+
+    public get fee(): number {
+        return this.protocolSpecific.fee || 0;
     }
 
     public fiatFee(fiatAmount: number): number {
