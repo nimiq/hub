@@ -39,7 +39,9 @@ export type ParsedProtocolSpecificsForCurrency<C extends Currency> =
 export interface ParsedPaymentOptions<C extends Currency, T extends PaymentMethod> {
     readonly currency: C;
     readonly type: T;
+    readonly decimals: number;
     protocolSpecific: ParsedProtocolSpecificsForCurrency<C>;
+    amount: number | BigInteger;
     expires?: number;
     constructor: ParsedPaymentOptionsForCurrencyAndType<C, T>;
     new(options: PaymentOptionsForCurrencyAndType<C, T>, ...optionalArgs: any[]):
@@ -49,11 +51,11 @@ export interface ParsedPaymentOptions<C extends Currency, T extends PaymentMetho
 
 export abstract class ParsedPaymentOptions<C extends Currency, T extends PaymentMethod>
     implements ParsedPaymentOptions<C, T> {
-    public abstract amount: number | BigInteger;
-    public readonly abstract decimals: number;
-    public expires?: number;
 
     protected constructor(option: PaymentOptionsForCurrencyAndType<C, T>) {
+        if (option.currency !== this.currency || option.type !== this.type) {
+            throw new Error(`Can't parse given options as ${this.constructor.name}.`);
+        }
         if (!this.isNonNegativeInteger(option.amount)) {
             throw new Error('amount must be a non-negative integer');
         }
