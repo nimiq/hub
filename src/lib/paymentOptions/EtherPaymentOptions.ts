@@ -17,18 +17,7 @@ export type ParsedEtherSpecifics = Omit<EtherSpecifics, 'gasLimit' | 'gasPrice'>
 export type EtherDirectPaymentOptions = PaymentOptions<Currency.ETH, PaymentMethod.DIRECT>;
 
 export class ParsedEtherDirectPaymentOptions extends ParsedPaymentOptions<Currency.ETH, PaymentMethod.DIRECT> {
-    public readonly decimals: number = 18;
-    public readonly currency: Currency.ETH = Currency.ETH;
-    public readonly type: PaymentMethod.DIRECT = PaymentMethod.DIRECT;
     public amount: bigInt.BigInteger;
-
-    public get total(): bigInt.BigInteger {
-        return this.amount.add(this.fee);
-    }
-
-    public get fee(): bigInt.BigInteger {
-        return this.protocolSpecific.gasPrice!.times(this.protocolSpecific.gasLimit!) || bigInt(0);
-    }
 
     public constructor(option: EtherDirectPaymentOptions) {
         super(option);
@@ -60,6 +49,26 @@ export class ParsedEtherDirectPaymentOptions extends ParsedPaymentOptions<Curren
             gasPrice,
             recipient: option.protocolSpecific.recipient,
         };
+    }
+
+    public get currency(): Currency.ETH {
+        return Currency.ETH;
+    }
+
+    public get type(): PaymentMethod.DIRECT {
+        return PaymentMethod.DIRECT;
+    }
+
+    public get decimals(): number {
+        return 18;
+    }
+
+    public get total(): bigInt.BigInteger {
+        return this.amount.add(this.fee);
+    }
+
+    public get fee(): bigInt.BigInteger {
+        return this.protocolSpecific.gasPrice!.times(this.protocolSpecific.gasLimit!) || bigInt(0);
     }
 
     public fiatFee(fiatAmount: number): number {
