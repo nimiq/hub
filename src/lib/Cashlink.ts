@@ -141,15 +141,17 @@ class Cashlink {
                 network.getBalance(userFriendlyAddress).then(this._onBalancesChanged.bind(this));
             }
 
-            network.on(NetworkClient.Events.TRANSACTION_PENDING, this._onTransactionAddedOrRelayed.bind(this));
-            network.on(NetworkClient.Events.TRANSACTION_RELAYED, this._onTransactionAddedOrRelayed.bind(this));
-            network.on(NetworkClient.Events.TRANSACTION_MINED, this._onTransactionAddedOrRelayed.bind(this));
+            // Only listen for 'received' and 'mined' events, because 'relayed' events trigger a
+            // balance change in the nano-api, too, which triggers the state detection already.
+            network.on(NetworkClient.Events.TRANSACTION_PENDING, this._onTransactionReceivedOrMined.bind(this));
+            network.on(NetworkClient.Events.TRANSACTION_MINED, this._onTransactionReceivedOrMined.bind(this));
             network.on(NetworkClient.Events.BALANCES_CHANGED, this._onBalancesChanged.bind(this));
 
             // Triggers a BALANCES_CHANGED event if this is the first time this address is subscribed
             network.subscribe(userFriendlyAddress);
         });
 
+        // Run initial state detection (awaits consensus in detectState())
         this.detectState();
     }
 
@@ -384,19 +386,29 @@ class Cashlink {
         return (await this._getNetwork()).headInfo.height;
     }
 
-    private async _onTransactionAddedOrRelayed(transaction: DetailedPlainTransaction): Promise<void> {
+    private async _onTransactionReceivedOrMined(transaction: DetailedPlainTransaction): Promise<void> {
         if (transaction.recipient === this.address.toUserFriendlyAddress()
             || transaction.sender === this.address.toUserFriendlyAddress()) {
+            // Always run state detection when a transaction comes in
+            // or an incoming or outgoing transaction was mined, as those
+            // events likely signal a state change of the cashlink.
             this.detectState();
         }
     }
 
     private _onBalancesChanged(balances: Map<string, number>) {
         const address = this.address.toUserFriendlyAddress();
-        if (balances.has(address)) {
-            this.balance = Nimiq.Policy.coinsToLunas(balances.get(address)!);
-            this.fire(Cashlink.Events.BALANCE_CHANGE, this.balance);
-        }
+
+        if (!balances.has(address)) return;
+
+        this.balance = Nimiq.Policy.coinsToLunas(balances.get(address)!);
+        this.fire(Cashlink.Events.BALANCE_CHANGE, this.balance);
+        // Always run state detection when the balance changes,
+        // to catch state changes even when the transaction events
+        // have not been recognized (can happen when an incoming
+        // transaction gets mined before it's pending state is
+        // broadcasted to this client).
+        this.detectState();
     }
 
     private _updateState(state: CashlinkState) {
