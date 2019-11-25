@@ -173,6 +173,7 @@ export type ResultByRequestType<T> =
     T extends RequestType.RENAME ? Account :
     T extends RequestType.ONBOARD | RequestType.SIGNUP | RequestType.LOGIN
             | RequestType.MIGRATE | RequestType.LIST ? Account[] :
+    T extends RequestType.LIST_CASHLINKS ? Cashlink[] :
     T extends RequestType.CHOOSE_ADDRESS | RequestType.ADD_ADDRESS ? Address :
     T extends RequestType.SIGN_TRANSACTION | RequestType.CHECKOUT ? SignedTransaction :
     T extends RequestType.SIGN_MESSAGE ? SignedMessage :

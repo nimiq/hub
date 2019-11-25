@@ -13,6 +13,7 @@ class IFrameApi {
 
         // Register handlers
         rpcServer.onRequest('list', IFrameApi.list);
+        rpcServer.onRequest('list-cashlinks', IFrameApi.cashlinks);
 
         rpcServer.init();
     }
