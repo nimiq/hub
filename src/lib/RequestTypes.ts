@@ -1,5 +1,6 @@
 export enum RequestType {
     LIST = 'list',
+    LIST_CASHLINKS = 'list-cashlinks',
     MIGRATE = 'migrate',
     CHECKOUT = 'checkout',
     SIGN_MESSAGE = 'sign-message',
