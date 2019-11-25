@@ -145,7 +145,13 @@ export interface Cashlink {
     status: CashlinkState;
 }
 
+export interface CashlinkRequest extends BasicRequest {
+    senderAddress?: string;
+    cashlinkAddress?: string;
+}
+
 export type RpcRequest = SignTransactionRequest
+                       | CashlinkRequest
                        | CheckoutRequest
                        | BasicRequest
                        | SimpleRequest
@@ -159,6 +165,7 @@ export type RpcResult = SignedTransaction
                       | Account[]
                       | SimpleResult
                       | Address
+                      | Cashlink
                       | SignedMessage
                       | ExportResult;
 
@@ -170,4 +177,6 @@ export type ResultByRequestType<T> =
     T extends RequestType.SIGN_TRANSACTION | RequestType.CHECKOUT ? SignedTransaction :
     T extends RequestType.SIGN_MESSAGE ? SignedMessage :
     T extends RequestType.LOGOUT | RequestType.CHANGE_PASSWORD ? SimpleResult :
-    T extends RequestType.EXPORT ? ExportResult : never;
+    T extends RequestType.EXPORT ? ExportResult :
+    T extends RequestType.CASHLINK ? Cashlink :
+    never;
