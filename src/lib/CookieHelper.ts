@@ -9,7 +9,11 @@ export default class CookieHelper {
     public static readonly KEYGUARD_COOKIE_KEY_SIZE = 47; // 1 char for type, 1 for hasPin, 44 for id, 1 for separator
 
     public static async canFitNewWallets(wallets?: WalletInfoEntry[]): Promise<boolean> {
-        return CookieJar.canFitNewWallets(wallets) && await CookieHelper._canKeyguardCookieFitNewKey();
+        const [canHubCookieFitNewWallets, canKeyguardCookieFitNewWallets] = await Promise.all([
+            CookieJar.canFitNewWallets(wallets),
+            CookieHelper._canKeyguardCookieFitNewKey(),
+        ]);
+        return canHubCookieFitNewWallets && canKeyguardCookieFitNewWallets;
     }
 
     private static async _canKeyguardCookieFitNewKey() {

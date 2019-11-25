@@ -62,7 +62,7 @@ class CookieJar {
         return (this.MAX_COOKIE_SIZE - this.getCookieSize()) >= this.ENCODED_ACCOUNT_SIZE;
     }
 
-    public static canFitNewWallets(wallets?: WalletInfoEntry[]): boolean {
+    public static async canFitNewWallets(wallets?: WalletInfoEntry[]): Promise<boolean> {
         let sizeNeeded = 0;
 
         if (!wallets) {
@@ -91,15 +91,20 @@ class CookieJar {
             };
             sizeNeeded += this.encodeWallet(dummyWallet).length;
         } else {
+            const existingWallets = await this.eat();
             for (const wallet of wallets) {
-                sizeNeeded += this.encodeWallet(wallet).length;
+                const existingWallet = existingWallets.find((w) => w.id === wallet.id);
+                // new wallet might be larger or even smaller, for example if labels became shorter
+                const currentSize = existingWallet ? this.encodeWallet(existingWallet).length : 0;
+                const newSize = this.encodeWallet(wallet).length;
+                sizeNeeded += newSize - currentSize;
             }
         }
 
         return (this.MAX_COOKIE_SIZE - this.getCookieSize()) >= sizeNeeded;
     }
 
-    public static encodeAndcutLabel(label: string): Uint8Array {
+    public static encodeAndCutLabel(label: string): Uint8Array {
         const labelBytes = Utf8Tools.stringToUtf8ByteArray(label);
         const { result, didTruncate } = Utf8Tools.truncateToUtf8ByteLength(labelBytes, LABEL_MAX_LENGTH);
         if (didTruncate && typeof global === 'undefined') {
@@ -152,7 +157,7 @@ class CookieJar {
                 wallet.type,
             );
 
-        const labelBytes = this.encodeAndcutLabel(label);
+        const labelBytes = this.encodeAndCutLabel(label);
 
         // Combined label length & wallet type
         bytes.push((labelBytes.length << 2) | wallet.type);
@@ -197,7 +202,7 @@ class CookieJar {
         const accounts = Array.from(wallet.accounts.values());
         for (const account of accounts) {
             const label = this.checkAccountDefaultLabel(account.address, account.label);
-            const labelBytes = this.encodeAndcutLabel(label);
+            const labelBytes = this.encodeAndCutLabel(label);
 
             // Account label length
             bytes.push(labelBytes.length);
@@ -221,7 +226,7 @@ class CookieJar {
 
         for (const contract of contracts) {
             const label = this.checkContractDefaultLabel(contract.type, contract.label);
-            const labelBytes = this.encodeAndcutLabel(label);
+            const labelBytes = this.encodeAndCutLabel(label);
 
             // Combined contract label length and type
             bytes.push((labelBytes.length << 2) | contract.type);

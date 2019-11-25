@@ -485,10 +485,10 @@ describe('CookieJar', () => {
         const CUT_LABEL_3 = 'Label ❤ with ❤ multi 🙉 byte 🙉 characters that is v…'; // 63 byte
         const CUT_LABEL_4 = 'Label with a multibyte character at the max len position: …'; // 61 byte
 
-        expect(Utf8Tools.utf8ByteArrayToString(CookieJar.encodeAndcutLabel(LABEL_1))).toEqual(CUT_LABEL_1);
-        expect(Utf8Tools.utf8ByteArrayToString(CookieJar.encodeAndcutLabel(LABEL_2))).toEqual(CUT_LABEL_2);
-        expect(Utf8Tools.utf8ByteArrayToString(CookieJar.encodeAndcutLabel(LABEL_3))).toEqual(CUT_LABEL_3);
-        expect(Utf8Tools.utf8ByteArrayToString(CookieJar.encodeAndcutLabel(LABEL_4))).toEqual(CUT_LABEL_4);
+        expect(Utf8Tools.utf8ByteArrayToString(CookieJar.encodeAndCutLabel(LABEL_1))).toEqual(CUT_LABEL_1);
+        expect(Utf8Tools.utf8ByteArrayToString(CookieJar.encodeAndCutLabel(LABEL_2))).toEqual(CUT_LABEL_2);
+        expect(Utf8Tools.utf8ByteArrayToString(CookieJar.encodeAndCutLabel(LABEL_3))).toEqual(CUT_LABEL_3);
+        expect(Utf8Tools.utf8ByteArrayToString(CookieJar.encodeAndCutLabel(LABEL_4))).toEqual(CUT_LABEL_4);
     });
 
     it('returns no results for old cookie version', async () => {
