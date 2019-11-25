@@ -15,7 +15,7 @@
 <script lang="ts">
 import { Component, Watch, Vue } from 'vue-property-decorator';
 import { State } from 'vuex-class';
-import { REQUEST_ERROR, CASHLINK_RECEIVE } from './router';
+import { REQUEST_ERROR } from './router';
 import { LoadingSpinner } from '@nimiq/vue-components';
 
 import '@nimiq/style/nimiq-style.min.css';
@@ -32,8 +32,7 @@ export default class App extends Vue {
 
     private get isLoaded() {
         return this.isRequestLoaded
-            || this.$route.name === REQUEST_ERROR
-            || this.$route.name === CASHLINK_RECEIVE;
+            || this.$route.name === REQUEST_ERROR;
     }
 }
 </script>

@@ -26,7 +26,7 @@ import {
 import { Utf8Tools } from '@nimiq/utils';
 
 export class RequestParser {
-    public static parse(request: RpcRequest, requestType: RequestType, state?: State): ParsedRpcRequest | null {
+    public static parse(request: RpcRequest, state: State, requestType: RequestType): ParsedRpcRequest | null {
         if (!request.appName) throw new Error('appName is required');
 
         switch (requestType) {
@@ -54,7 +54,6 @@ export class RequestParser {
                 const checkoutRequest = request as CheckoutRequest;
 
                 if (!checkoutRequest.value) throw new Error('value is required');
-                if (!state) throw new Error('Unexpected: RPC state is not defined in a checkout request');
                 if (checkoutRequest.shopLogoUrl && new URL(checkoutRequest.shopLogoUrl).origin !== state.origin) {
                     throw new Error(
                         'shopLogoUrl must have same origin as caller website. Image at ' +
