@@ -57,7 +57,7 @@ import { CashlinkState } from '@/lib/PublicRequestTypes';
 import { CashlinkStore } from '../lib/CashlinkStore';
 import { State } from 'vuex-class';
 import KeyguardClient from '@nimiq/keyguard-client';
-import { OutgoingCashlink } from '../lib/PublicRequestTypes';
+import { Cashlink as PublicCashlink } from '../lib/PublicRequestTypes';
 
 @Component({components: {
     Account,
@@ -84,7 +84,7 @@ export default class CashlinkManage extends Vue {
         this.nativeShareAvailable = (!!navigator && !!(navigator as any).share);
         this.retrievedCashlink = this.cashlink;
         if (!this.keyguardResult) {
-            // If there is no keyguard result this is not a freshly funded cashlink
+            // If there is no Keyguard result this is not a freshly funded cashlink
             // and must be retrieved from the store.
             if (this.request.cashlinkAddress) {
                 const cashlink = await CashlinkStore.Instance.get(this.request.cashlinkAddress.toUserFriendlyAddress());
@@ -145,8 +145,7 @@ export default class CashlinkManage extends Vue {
             address: this.retrievedCashlink!.address.toUserFriendlyAddress(),
             message: this.retrievedCashlink!.message,
             status: this.retrievedCashlink!.state,
-            originalSender: this.retrievedCashlink!.originalSender,
-        } as OutgoingCashlink);
+        } as PublicCashlink);
     }
 
     private copy() {
