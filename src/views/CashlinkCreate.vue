@@ -255,7 +255,7 @@ export default class CashlinkCreate extends Vue {
                 accountsAndContracts.push(this.accountOrContractInfo);
                 addresses.push(this.accountOrContractInfo.userFriendlyAddress);
             }
-            network.connectPico(addresses).then(async (balances) => {
+            network.getBalance(addresses).then(async (balances) => {
                 for (const accountOrContract of accountsAndContracts) {
                     const balance = balances.get(accountOrContract.userFriendlyAddress);
                     if (balance === undefined) continue;
