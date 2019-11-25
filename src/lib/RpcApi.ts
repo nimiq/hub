@@ -19,7 +19,7 @@ import {
     ObjectType,
     ResultByCommand,
 } from '@nimiq/keyguard-client';
-import { keyguardResponseRouter, REQUEST_ERROR } from '@/router';
+import { keyguardResponseRouter, REQUEST_ERROR, CASHLINK_RECEIVE } from '@/router';
 import { StaticStore } from '@/lib/StaticStore';
 import { WalletStore } from './WalletStore';
 import { WalletType } from '@/lib/WalletInfo';
@@ -83,6 +83,9 @@ export default class RpcApi {
 
         // If there is no valid request, show an error page
         const onClientTimeout = () => {
+            // @ts-ignore Property 'history' does not exist on type 'VueRouter'
+            if (this._router.history.current.name === CASHLINK_RECEIVE) return;
+
             this._router.replace(`/${REQUEST_ERROR}`);
         };
         this._server.init(onClientTimeout);

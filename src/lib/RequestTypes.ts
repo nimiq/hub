@@ -13,6 +13,7 @@ export enum RequestType {
     ADD_ADDRESS = 'add-address',
     RENAME = 'rename',
     CHOOSE_ADDRESS = 'choose-address',
+    CASHLINK = 'cashlink',
 }
 
 export interface ParsedBasicRequest {
