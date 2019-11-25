@@ -1,5 +1,6 @@
 import { setup } from './_setup';
 import { WalletInfo, WalletType } from '@/lib/WalletInfo';
+import { Store } from '@/lib/Store';
 import { WalletStore } from '@/lib/WalletStore';
 import { AccountInfo } from '@/lib/AccountInfo';
 import { VestingContractInfo, HashedTimeLockedContractInfo } from '@/lib/ContractInfo';
@@ -7,6 +8,9 @@ import { VestingContractInfo, HashedTimeLockedContractInfo } from '@/lib/Contrac
 setup();
 
 const indexedDB: IDBFactory = require('fake-indexeddb'); // tslint:disable-line:no-var-requires
+
+// @ts-ignore private field access
+Store.INDEXEDDB_IMPLEMENTATION = indexedDB;
 
 const DUMMY_ADDRESS = Nimiq.Address.fromUserFriendlyAddress('NQ07 0000 0000 0000 0000 0000 0000 0000 0000');
 const DUMMY: WalletInfo[] = [ // IDs must be alphabetically ordered, as the WalletStore uses the id as the primary index
@@ -40,7 +44,6 @@ const DUMMY: WalletInfo[] = [ // IDs must be alphabetically ordered, as the Wall
 const DUMMY_SALT = new Uint8Array(WalletStore.SALT_LENGTH);
 
 const beforeEachCallback = async () => {
-    WalletStore.INDEXEDDB_IMPLEMENTATION = indexedDB;
     await Promise.all(DUMMY.map((wallet) => WalletStore.Instance.put(wallet)));
     // @ts-ignore private method call
     await WalletStore.Instance._putMetaData('salt', DUMMY_SALT);
@@ -50,7 +53,8 @@ const beforeEachCallback = async () => {
 const afterEachCallback = async () => {
     await WalletStore.Instance.close();
     await new Promise((resolve, reject) => {
-        const request = indexedDB.deleteDatabase(WalletStore.DB_NAME);
+        // @ts-ignore access to private property
+        const request = indexedDB.deleteDatabase(WalletStore.Instance.DB_NAME);
         request.onerror = () => reject(request.error);
         request.onsuccess = () => resolve(true);
         request.onblocked = () => {

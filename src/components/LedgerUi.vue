@@ -232,7 +232,7 @@ class LedgerUi extends Vue {
     }
 }
 
-namespace LedgerUi { // tslint:disable-line:no-namespace
+namespace LedgerUi {
     export const enum Events {
         NO_INFORMATION_SHOWN = 'no-information-shown',
         INFORMATION_SHOWN = 'information-shown',

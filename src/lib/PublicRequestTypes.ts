@@ -1,6 +1,15 @@
 import { WalletType } from './WalletInfo';
 import { RequestType } from './RequestTypes';
 
+export enum CashlinkState {
+    UNKNOWN = -1,
+    UNCHARGED = 0,
+    CHARGING = 1,
+    UNCLAIMED = 2,
+    CLAIMING = 3,
+    CLAIMED = 4,
+}
+
 export interface BasicRequest {
     appName: string;
 }
@@ -127,6 +136,12 @@ export interface ExportResult {
 
 export interface RenameRequest extends SimpleRequest {
     address?: string; // Userfriendly address
+}
+
+export interface Cashlink {
+    address: string; // Userfriendly address
+    message: string | Uint8Array;
+    status: CashlinkState;
 }
 
 export type RpcRequest = SignTransactionRequest

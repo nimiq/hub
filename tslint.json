@@ -30,6 +30,7 @@
       "check-typecast",
       "check-type-operator",
       "check-preblock"
-    ]
+    ],
+    "no-namespace": false
   }
 }

@@ -604,7 +604,7 @@ class LedgerApi {
 
 }
 
-namespace LedgerApi { // tslint:disable-line:no-namespace
+namespace LedgerApi {
     // events appear at a single point of time while states reflect the current state of the api for a timespan ranging
     // into the future. E.g. if a request was cancelled, a REQUEST_CANCELLED event gets thrown and the state changes to
     // IDLE. Errors trigger an error state (e.g. when app outdated) and thus are a state, not an event.

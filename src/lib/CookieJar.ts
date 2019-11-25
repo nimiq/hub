@@ -284,7 +284,7 @@ class CookieJar {
     }
 }
 
-namespace CookieJar { // tslint:disable-line no-namespace
+namespace CookieJar {
     export enum StatusFlags {
         NONE           = 0,
         KEY_MISSING    = 1 << 0,

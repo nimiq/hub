@@ -4,7 +4,8 @@ import { WalletStore } from '@/lib/WalletStore';
 import { WalletInfoEntry, WalletInfo } from '@/lib/WalletInfo';
 import CookieJar from '@/lib/CookieJar';
 import Config from 'config';
-import { Account } from './lib/PublicRequestTypes';
+import { Account, Cashlink } from './lib/PublicRequestTypes';
+import { CashlinkStore } from './lib/CashlinkStore';
 
 class IFrameApi {
     public static run() {
@@ -43,6 +44,17 @@ class IFrameApi {
         }
 
         return [];
+    }
+
+    public static async cashlinks(): Promise<Cashlink[]> {
+        // Cashlinks are not stored in cookies on iOS/Safari, because they would take up too much space.
+        // TODO: Use Storage Access API on iOS/Safari to access IndexedDB in the iframe.
+        const cashlinksEntries = await CashlinkStore.Instance.list();
+        return cashlinksEntries.map((cashlink) => ({
+            address: cashlink.address,
+            message: cashlink.message,
+            status: cashlink.state,
+        }));
     }
 }
 

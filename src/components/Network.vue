@@ -5,13 +5,8 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 import { SignedTransaction } from '../lib/PublicRequestTypes';
 import { NetworkClient, DetailedPlainTransaction } from '@nimiq/network-client';
 import Config from 'config';
-import {
-    NETWORK_TEST,
-    NETWORK_DEV,
-    NETWORK_MAIN,
-    ERROR_INVALID_NETWORK,
-    CONTRACT_DEFAULT_LABEL_VESTING,
-} from '../lib/Constants';
+import { loadNimiq } from '../lib/Helpers';
+import { CONTRACT_DEFAULT_LABEL_VESTING } from '../lib/Constants';
 import { VestingContractInfo } from '../lib/ContractInfo';
 
 @Component
@@ -50,7 +45,7 @@ class Network extends Vue {
         if (!(signerPubKey instanceof Nimiq.PublicKey)) signerPubKey = new Nimiq.PublicKey(signerPubKey);
         if (signature && !(signature instanceof Nimiq.Signature)) signature = new Nimiq.Signature(signature);
 
-        await this._loadNimiq();
+        await loadNimiq();
 
         if (
             (data && data.length > 0)
@@ -83,7 +78,7 @@ class Network extends Vue {
     }
 
     public async makeSignTransactionResult(tx: Nimiq.Transaction): Promise<SignedTransaction> {
-        await this._loadNimiq(); // needed for hash computation
+        await loadNimiq(); // needed for hash computation
 
         const proof = Nimiq.SignatureProof.unserialize(new Nimiq.SerialBuffer(tx.proof));
 
@@ -254,34 +249,9 @@ class Network extends Vue {
 
         if (networkClient.headInfo.height !== 0) this.$emit(Network.Events.HEAD_CHANGE, networkClient.headInfo);
     }
-
-    private async _loadNimiq() {
-        await Nimiq.WasmHelper.doImport();
-        let genesisConfigInitialized = true;
-        try {
-            Nimiq.GenesisConfig.NETWORK_ID; // tslint:disable-line:no-unused-expression
-        } catch (e) {
-            genesisConfigInitialized = false;
-        }
-        if (!genesisConfigInitialized) {
-            switch (Config.network) {
-                case NETWORK_TEST:
-                    Nimiq.GenesisConfig.test();
-                    break;
-                case NETWORK_MAIN:
-                    Nimiq.GenesisConfig.main();
-                    break;
-                case NETWORK_DEV:
-                    Nimiq.GenesisConfig.dev();
-                    break;
-                default:
-                    throw new Error(ERROR_INVALID_NETWORK);
-            }
-        }
-    }
 }
 
-namespace Network { // tslint:disable-line:no-namespace
+namespace Network {
     export const enum Events {
         API_READY = 'api-ready',
         API_FAIL = 'api-fail',
