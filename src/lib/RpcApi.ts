@@ -52,6 +52,7 @@ export default class RpcApi {
 
         this._registerHubApis([
             RequestType.SIGN_TRANSACTION,
+            RequestType.CASHLINK,
             RequestType.CHECKOUT,
             RequestType.ONBOARD,
             RequestType.SIGNUP,

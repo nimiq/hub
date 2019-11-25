@@ -68,8 +68,14 @@ export interface ParsedExportRequest extends ParsedSimpleRequest {
     wordsOnly?: boolean;
 }
 
+export interface ParsedCashlinkRequest extends ParsedBasicRequest {
+    senderAddress?: Nimiq.Address;
+    cashlinkAddress?: Nimiq.Address;
+}
+
 // Discriminated Unions
 export type ParsedRpcRequest = ParsedSignTransactionRequest
+                             | ParsedCashlinkRequest
                              | ParsedCheckoutRequest
                              | ParsedBasicRequest
                              | ParsedSimpleRequest
