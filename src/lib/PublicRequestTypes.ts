@@ -29,7 +29,7 @@ export interface SimpleRequest extends BasicRequest {
 }
 
 export interface SimpleResult {
-    success: boolean;
+    success: true;
 }
 
 export interface OnboardRequest extends BasicRequest {
@@ -91,8 +91,8 @@ export interface PaymentOptions<C extends Currency, T extends PaymentMethod> {
 }
 
 export type AvailablePaymentOptions = NimiqDirectPaymentOptions
-                             | EtherDirectPaymentOptions
-                             | BitcoinDirectPaymentOptions;
+                                    | EtherDirectPaymentOptions
+                                    | BitcoinDirectPaymentOptions;
 
 export type PaymentOptionsForCurrencyAndType<C extends Currency, T extends PaymentMethod> =
     T extends PaymentMethod.DIRECT ?
@@ -118,9 +118,12 @@ export interface MultiCurrencyCheckoutRequest extends BasicRequest {
      * The csrf token, that will be transmitted for future requests to the callback url
      */
     csrf?: string;
+    /**
+     * The data to be included in the transaction. Ignored for `Currenct.BTC` and `Currency.ETH`.
+     */
     extraData?: Uint8Array | string;
     /**
-     * Current time in milliseconds
+     * Current time in seconds or milliseconds
      */
     time: number;
     /**

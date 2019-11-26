@@ -8,7 +8,7 @@ export interface BitcoinSpecifics {
     recipient?: string;
 }
 
-export type ParsedBitcoinSpecifics = Omit<BitcoinSpecifics, 'fee' | 'feePerByte'> & {
+export type ParsedBitcoinSpecifics = Pick<BitcoinSpecifics, 'recipient'> & {
     fee?: number;
     feePerByte?: number;
 };
@@ -20,7 +20,7 @@ export class ParsedBitcoinDirectPaymentOptions extends ParsedPaymentOptions<Curr
 
     public constructor(options: BitcoinDirectPaymentOptions) {
         super(options);
-        this.amount = Number.parseInt(toNonScientificNumberString(options.amount), 10);
+        this.amount = parseInt(toNonScientificNumberString(options.amount), 10);
 
         let feePerByte: number | undefined;
         if (options.protocolSpecific.feePerByte !== undefined) {
@@ -36,7 +36,7 @@ export class ParsedBitcoinDirectPaymentOptions extends ParsedPaymentOptions<Curr
             if (!this.isNonNegativeInteger(options.protocolSpecific.fee)) {
                 throw new Error('If provided, fee must be a non-negative integer');
             }
-            fee = Number.parseInt(toNonScientificNumberString(options.protocolSpecific.fee), 10);
+            fee = parseInt(toNonScientificNumberString(options.protocolSpecific.fee), 10);
         }
 
         if (feePerByte === undefined && fee !== undefined) {
@@ -96,11 +96,7 @@ export class ParsedBitcoinDirectPaymentOptions extends ParsedPaymentOptions<Curr
             type: this.type,
             expires: this.expires,
             amount: this.amount.toString(),
-            protocolSpecific: {
-                fee: this.protocolSpecific.fee,
-                feePerByte: this.protocolSpecific.feePerByte,
-                recipient: this.protocolSpecific.recipient,
-            },
+            protocolSpecific: this.protocolSpecific,
         };
     }
 }

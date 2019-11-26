@@ -9,7 +9,7 @@ export interface EtherSpecifics {
     recipient?: string;
 }
 
-export type ParsedEtherSpecifics = Omit<EtherSpecifics, 'gasLimit' | 'gasPrice'> & {
+export type ParsedEtherSpecifics = Pick<EtherSpecifics, 'recipient'> & {
     gasLimit?: number;
     gasPrice?: bigInt.BigInteger;
 };
@@ -28,7 +28,7 @@ export class ParsedEtherDirectPaymentOptions extends ParsedPaymentOptions<Curren
             if (!this.isNonNegativeInteger(options.protocolSpecific.gasLimit)) {
                 throw new Error('If provided, gasLimit must be a non-negative integer');
             }
-            gasLimit = Number.parseInt(toNonScientificNumberString(options.protocolSpecific.gasLimit), 10);
+            gasLimit = parseInt(toNonScientificNumberString(options.protocolSpecific.gasLimit), 10);
         }
 
         let gasPrice: bigInt.BigInteger | undefined;

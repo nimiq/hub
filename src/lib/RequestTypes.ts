@@ -54,7 +54,7 @@ export abstract class ParsedPaymentOptions<C extends Currency, T extends Payment
 
     protected constructor(options: PaymentOptionsForCurrencyAndType<C, T>) {
         if (options.currency !== this.currency || options.type !== this.type) {
-            throw new Error(`Can't parse given options as ${this.constructor.name}.`);
+            throw new Error(`Cannot parse given options as ${this.constructor.name}.`);
         }
         if (!this.isNonNegativeInteger(options.amount)) {
             throw new Error('amount must be a non-negative integer');
@@ -77,7 +77,7 @@ export abstract class ParsedPaymentOptions<C extends Currency, T extends Payment
     ) {
         const parsedOptions = new this.constructor(options as any, ...additionalArgs); // parse to check validity
         this.amount = parsedOptions.amount; // amount must exist on all parsed options
-        this.expires = parsedOptions.expires !== undefined ? parsedOptions.expires : this.expires;
+        this.expires = parsedOptions.expires || this.expires;
         for (const key of
             Object.keys(parsedOptions.protocolSpecific) as Array<keyof typeof parsedOptions.protocolSpecific>) {
             if (parsedOptions.protocolSpecific[key] === undefined) continue;
@@ -95,8 +95,8 @@ export abstract class ParsedPaymentOptions<C extends Currency, T extends Payment
 }
 
 export type AvailableParsedPaymentOptions = ParsedNimiqDirectPaymentOptions
-                                   | ParsedEtherDirectPaymentOptions
-                                   | ParsedBitcoinDirectPaymentOptions;
+                                          | ParsedEtherDirectPaymentOptions
+                                          | ParsedBitcoinDirectPaymentOptions;
 
 export type ParsedPaymentOptionsForCurrencyAndType<C extends Currency, T extends PaymentMethod> =
     T extends PaymentMethod.DIRECT ?

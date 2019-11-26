@@ -31,7 +31,7 @@ export class ParsedNimiqDirectPaymentOptions extends ParsedPaymentOptions<Curren
     public constructor(options: NimiqDirectPaymentOptions, extraData: Uint8Array) {
         super(options);
         this.extraData = extraData;
-        this.amount = Number.parseInt(toNonScientificNumberString(options.amount), 10);
+        this.amount = parseInt(toNonScientificNumberString(options.amount), 10);
 
         let sender: Nimiq.Address | undefined;
         if (options.protocolSpecific.sender !== undefined) {
@@ -54,12 +54,12 @@ export class ParsedNimiqDirectPaymentOptions extends ParsedPaymentOptions<Curren
         let recipientType: Nimiq.Account.Type | undefined;
         if (options.protocolSpecific.recipientType !== undefined) {
             if (!Object.values(Nimiq.Account.Type).includes(options.protocolSpecific.recipientType)) {
-                throw new Error('If provided, recipientType must be a valid nimiq account type');
+                throw new Error('If provided, recipientType must be a valid Nimiq account type');
             }
             recipientType = options.protocolSpecific.recipientType;
         }
 
-        const flags = (options as NimiqDirectPaymentOptions).protocolSpecific.flags;
+        const flags = options.protocolSpecific.flags;
         if (flags !== undefined && typeof flags !== 'number') {
             throw new Error('If provided, flags must be a number.');
         }
@@ -78,17 +78,17 @@ export class ParsedNimiqDirectPaymentOptions extends ParsedPaymentOptions<Curren
             if (!this.isNonNegativeInteger(options.protocolSpecific.fee)) {
                 throw new Error('If provided, fee must be a non-negative integer');
             }
-            fee = Number.parseInt(toNonScientificNumberString(options.protocolSpecific.fee), 10);
+            fee = parseInt(toNonScientificNumberString(options.protocolSpecific.fee), 10);
         }
 
-        const requiresExtendedTransaction = extraData.length > 0
+        const requiresExtendedTransaction = extraData.byteLength > 0
             || recipientType !== undefined && recipientType !== Nimiq.Account.Type.BASIC
             || flags !== undefined && flags !== Nimiq.Transaction.Flag.NONE;
         // Note that the transaction size can be bigger than this, for example if the sender type the user wants to use
         // requires an extended transaction or if an extended transaction includes a multi signature proof. The size
         // is therefore just an estimate. In the majority of cases the estimate will be accurate though and a fee that
         // is slightly off will generally not be a problem.
-        const estimatedTransactionSize = requiresExtendedTransaction ? 166 + extraData.length : 138;
+        const estimatedTransactionSize = requiresExtendedTransaction ? 166 + extraData.byteLength : 138;
 
         if (fee === undefined) {
             if (feePerByte === undefined) {
@@ -149,7 +149,6 @@ export class ParsedNimiqDirectPaymentOptions extends ParsedPaymentOptions<Curren
     public fiatFee(fiatAmount: number): number {
         if (!this.amount || !fiatAmount) {
             throw new Error('amount and fiatAmount must be provided');
-            return 0;
         }
         if (!this.fee) {
             return 0;
