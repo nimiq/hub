@@ -90,7 +90,7 @@ export default class HubApi<DB extends BehaviorType = BehaviorType.POPUP> { // D
     public checkout<B extends BehaviorType = DB>(
         request: Promise<CheckoutRequest> | CheckoutRequest,
         requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
-    ): Promise<B extends BehaviorType.REDIRECT ? void : SignedTransaction | SimpleResult> {
+    ): Promise<B extends BehaviorType.REDIRECT ? void : SignedTransaction> {
         return this._request(requestBehavior, RequestType.CHECKOUT, [request]);
     }
 
