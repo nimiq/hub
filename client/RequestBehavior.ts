@@ -81,6 +81,10 @@ export class PopupRequestBehavior extends RequestBehavior<BehaviorType.POPUP> {
         const origin = RequestBehavior.getAllowedOrigin(endpoint);
 
         const popup = this.createPopup(endpoint);
+
+        // Add page overlay
+        const $overlay = this.appendOverlay(popup);
+
         const client = new PostMessageRpcClient(popup, origin);
         await client.init();
 
@@ -89,6 +93,9 @@ export class PopupRequestBehavior extends RequestBehavior<BehaviorType.POPUP> {
         } catch (e) {
             throw e;
         } finally {
+            // Remove page overlay
+            this.removeOverlay($overlay);
+
             client.close();
             popup.close();
         }
@@ -100,6 +107,74 @@ export class PopupRequestBehavior extends RequestBehavior<BehaviorType.POPUP> {
             throw new Error('Failed to open popup');
         }
         return popup;
+    }
+
+    private appendOverlay(popup: Window): HTMLDivElement {
+        // Overlay background
+        const overlay = document.createElement('div');
+        overlay.style.position = 'absolute';
+        overlay.style.top = '0';
+        overlay.style.right = '0';
+        overlay.style.bottom = '0';
+        overlay.style.left = '0';
+        overlay.style.background = 'rgba(31, 35, 72, 0.8)';
+        overlay.style.display = 'flex';
+        overlay.style.flexDirection = 'column';
+        overlay.style.alignItems = 'center';
+        overlay.style.justifyContent = 'space-between';
+        overlay.style.cursor = 'pointer';
+        overlay.style.color = 'white';
+        overlay.style.textAlign = 'center';
+        overlay.style.opacity = '0';
+        overlay.style.transition = 'opacity 0.6s ease';
+        overlay.addEventListener('click', () => popup.focus());
+
+        // Top flex spacer
+        overlay.appendChild(document.createElement('div'));
+
+        // Explainer text
+        const text = document.createElement('div');
+        text.appendChild(document.createTextNode('A popup is active,'));
+        text.appendChild(document.createElement('br'));
+        text.appendChild(document.createTextNode('click anywhere to refocus.'));
+        text.style.fontSize = '24px';
+        text.style.fontWeight = '600';
+        text.style.lineHeight = '40px';
+        overlay.appendChild(text);
+
+        // Logo
+        const logo = document.createElement('img');
+        // tslint:disable-next-line max-line-length
+        logo.src = 'data:image/svg+xml,<svg width="135" height="32" viewBox="0 0 135 32" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M35.6 14.5l-7.5-13A3 3 0 0025.5 0h-15a3 3 0 00-2.6 1.5l-7.5 13a3 3 0 000 3l7.5 13a3 3 0 002.6 1.5h15a3 3 0 002.6-1.5l7.5-13a3 3 0 000-3z" fill="url(%23hub-overlay-nimiq-logo)"/><path d="M62.25 6.5h3.26v19H63L52.75 12.25V25.5H49.5v-19H52l10.25 13.25V6.5zM72 25.5v-19h3.5v19H72zM97.75 6.5h2.75v19h-3V13.75L92.37 25.5h-2.25L85 13.75V25.5h-3v-19h2.75l6.5 14.88 6.5-14.88zM107 25.5v-19h3.5v19H107zM133.88 21.17a7.91 7.91 0 01-4.01 3.8c.16.38.94 1.44 1.52 2.05.59.6 1.2 1.23 1.98 1.86L131 30.75a15.91 15.91 0 01-4.45-5.02l-.8.02c-1.94 0-3.55-.4-4.95-1.18a7.79 7.79 0 01-3.2-3.4 11.68 11.68 0 01-1.1-5.17c0-2.03.37-3.69 1.12-5.17a7.9 7.9 0 013.2-3.4 9.8 9.8 0 014.93-1.18c1.9 0 3.55.4 4.94 1.18a7.79 7.79 0 013.2 3.4 11.23 11.23 0 011.1 5.17c0 2.03-.44 3.83-1.11 5.17zm-12.37.01a5.21 5.21 0 004.24 1.82 5.2 5.2 0 004.23-1.82c1.01-1.21 1.52-2.92 1.52-5.18 0-2.24-.5-4-1.52-5.2a5.23 5.23 0 00-4.23-1.8c-1.82 0-3.23.6-4.24 1.79-1 1.2-1.51 2.95-1.51 5.21s.5 3.97 1.51 5.18z" fill="white"/><defs><radialGradient id="hub-overlay-nimiq-logo" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(-35.9969 0 0 -32 36 32)"><stop stop-color="%23EC991C"/><stop offset="1" stop-color="%23E9B213"/></radialGradient></defs></svg>';
+        logo.style.marginBottom = '56px';
+        overlay.appendChild(logo);
+
+        // Close button
+        const button = document.createElement('div');
+        button.innerHTML = '&times;';
+        button.style.position = 'absolute';
+        button.style.top = '8px';
+        button.style.right = '8px';
+        button.style.fontSize = '24px';
+        button.style.lineHeight = '32px';
+        button.style.fontWeight = '600';
+        button.style.width = '32px';
+        button.style.height = '32px';
+        button.style.opacity = '0.8';
+        button.addEventListener('click', () => popup.close());
+        overlay.appendChild(button);
+
+        // The 100ms delay is not just because the DOM element needs to be rendered before it
+        // can be animated, but also because it actually feels better when there is a short
+        // delay between the opening popup and the background fading.
+        setTimeout(() => overlay.style.opacity = '1', 100);
+
+        return document.body.appendChild(overlay);
+    }
+
+    private removeOverlay(overlay: HTMLDivElement): void {
+        overlay.style.opacity = '0';
+        setTimeout(() => document.body.removeChild(overlay), 400);
     }
 }
 
