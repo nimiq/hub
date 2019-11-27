@@ -1,6 +1,6 @@
 type BigInteger = import('big-integer').BigInteger; // imports only the type without bundling
 import { FormattableNumber, toNonScientificNumberString } from '@nimiq/utils';
-import { isMilliseconds } from './Constants';
+import { isMilliseconds } from './Helpers';
 import { Currency, PaymentMethod, PaymentOptionsForCurrencyAndType, RequestType } from './PublicRequestTypes';
 import { ParsedNimiqSpecifics, ParsedNimiqDirectPaymentOptions } from './paymentOptions/NimiqPaymentOptions';
 import { ParsedEtherSpecifics, ParsedEtherDirectPaymentOptions } from './paymentOptions/EtherPaymentOptions';

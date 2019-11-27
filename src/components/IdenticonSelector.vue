@@ -45,7 +45,7 @@
     import { PageHeader, LoadingSpinner, Identicon, AddressDisplay, CloseIcon } from '@nimiq/vue-components';
     import { AccountInfo } from '@/lib/AccountInfo';
     import { default as LabelInput } from './Input.vue';
-    import { isDesktop } from '../lib/Constants';
+    import { isDesktop } from '../lib/Helpers';
 
     @Component({components: { PageHeader, Identicon, LoadingSpinner, AddressDisplay, LabelInput, CloseIcon }})
     class IdenticonSelector extends Vue {

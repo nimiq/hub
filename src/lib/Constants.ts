@@ -42,17 +42,3 @@ export const ERROR_COOKIE_SPACE = 'Not enough cookie space';
 
 // Input
 export const MOBILE_MAX_WIDTH = 600; // px
-export function isDesktop() {
-    return (window.innerWidth
-        || document.documentElement.clientWidth
-        || document.body.clientWidth) > MOBILE_MAX_WIDTH;
-}
-
-// time
-export function isMilliseconds(time: number) {
-    /*
-     * 1568577148 = timestamp at time of writing
-     * 100000000000 ~ 11/16/5138
-     */
-    return time > 100000000000;
-}
