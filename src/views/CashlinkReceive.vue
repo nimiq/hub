@@ -16,10 +16,7 @@
                 <PageBody>
                     <div class="accounts" :class="{'single-address': addressCount === 1}">
                         <div class="cashlink-account account blur-target">
-                            <div class="cashlink-icon nq-blue-bg">
-                                <!-- TODO Replace with nimiq-style cashlink icon when available -->
-                                <img src='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none" stroke="white" stroke-linecap="round" stroke-width="2.5px" stroke-linejoin="round"><path d="M40.25,23.25v-.5a6.5,6.5,0,0,0-6.5-6.5h-3.5a6.5,6.5,0,0,0-6.5,6.5v6.5a6.5,6.5,0,0,0,6.5,6.5h2"/><path class="cls-1" d="M23.75,40.75v.5a6.5,6.5,0,0,0,6.5,6.5h3.5a6.5,6.5,0,0,0,6.5-6.5v-6.5a6.5,6.5,0,0,0-6.5-6.5h-2"/><line class="cls-2" x1="32" y1="11.25" x2="32" y2="15.25"/><line class="cls-2" x1="32" y1="48.75" x2="32" y2="52.75"/></svg>'>
-                            </div>
+                            <CashlinkIcon class="cashlink-icon nq-blue-bg"/>
                             <div class="label">Cashlink</div>
                         </div>
                         <ArrowRightIcon class="arrow-right blur-target"/>
@@ -35,11 +32,13 @@
                             :label="activeAccount.label"/>
                     </div>
 
-                    <hr class="blur-target">
+                    <hr class="blur-target"/>
 
                     <div>
                         <Amount class="value nq-light-blue blur-target"
-                            :amount="cashlink.value" :minDecimals="0" :maxDecimals="5" />
+                            :amount="cashlink.value"
+                            :minDecimals="0"
+                            :maxDecimals="5"/>
 
                         <div v-if="cashlink.message" class="data nq-text blur-target">
                             {{ cashlink.message }}
@@ -56,7 +55,7 @@
                 </PageFooter>
 
                 <transition name="transition-fade">
-                    <div class="overlay" v-if="shownAccountSelector">
+                    <div v-if="shownAccountSelector" class="overlay">
                         <button class="nq-button-s close" @click="shownAccountSelector = false"><CloseIcon/></button>
                         <PageHeader>Choose an Address</PageHeader>
                         <AccountSelector
@@ -111,6 +110,7 @@ import {
     PageFooter,
     ArrowRightIcon,
     CaretRightSmallIcon,
+    CashlinkIcon,
     CloseIcon,
     Account,
     Amount,
@@ -140,6 +140,7 @@ import HubApi from '../../client/HubApi';
     PageFooter,
     ArrowRightIcon,
     CaretRightSmallIcon,
+    CashlinkIcon,
     CloseIcon,
     Account,
     Amount,
@@ -166,9 +167,11 @@ export default class CashlinkReceive extends Vue {
     private statusMessage = '';
 
     public created() {
-        function handler(result: any, storedData: {url: string}) {
-            if (storedData.url) window.history.replaceState(window.history.state, '', storedData.url);
-        }
+        const handler = (result: any, storedData: {url: string}) => {
+            if (storedData.url) {
+                window.history.replaceState(window.history.state, '', storedData.url);
+            }
+        };
 
         const hubApi = new HubApi();
         hubApi.on(HubApi.RequestType.SIGNUP, handler, handler);
@@ -178,14 +181,14 @@ export default class CashlinkReceive extends Vue {
     }
 
     public async mounted() {
-        // Load cashlink from URL
+        // Load Cashlink from URL
         this.cashlink = await Cashlink.parse(window.location.hash.substring(1));
 
-        // Fail if no cashlink found
+        // Fail if no Cashlink was found
         if (!this.cashlink) {
             this.statusState = StatusScreen.State.WARNING;
             this.statusTitle = '404 - Cash not found';
-            this.statusMessage = 'This is not a valid cashlink, sorry.';
+            this.statusMessage = 'This is not a valid Cashlink, sorry.';
             return;
         }
 
@@ -193,7 +196,7 @@ export default class CashlinkReceive extends Vue {
         this.statusState = false;
 
         if (this.hasWallets) {
-            // 4. Start network to check chashlink status
+            // Start network to check Cashlink status
             if (!NetworkClient.hasInstance()) {
                 NetworkClient.createInstance(Config.networkEndpoint);
             }
@@ -295,14 +298,14 @@ export default class CashlinkReceive extends Vue {
 
     private get buttonText(): string {
         if (!this.isCashlinkStateKnown) return 'Checking status';
-        else if (this.canCashlinkBeClaimed) return 'Claim cashlink';
+        else if (this.canCashlinkBeClaimed) return 'Claim Cashlink';
         else if (this.cashlink!.state === CashlinkState.UNCHARGED) return 'Cashlink not funded';
         else if (this.cashlink!.state === CashlinkState.CHARGING) return 'Cashlink funding';
         else {
             if (!this.isClaiming) {
                 this.statusState = StatusScreen.State.WARNING;
                 this.statusTitle = 'Cashlink is empty';
-                this.statusMessage = 'This cashlink has already been claimed.';
+                this.statusMessage = 'This Cashlink has already been claimed.';
             }
             return 'Cashlink empty :(';
         }
@@ -413,6 +416,11 @@ export default class CashlinkReceive extends Vue {
         border-radius: 4rem;
         margin: 0.5rem;
         margin-bottom: 1.75rem; /* 1.25rem like the Identicon, + 0.5rem from own margin */
+    }
+
+    .cashlink-icon svg {
+        width: 100%;
+        height: 100%;
     }
 
     .recipient-button .account >>> .identicon {

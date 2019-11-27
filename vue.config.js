@@ -80,7 +80,7 @@ const pages = {
         // insert browser warning html templates
         browserWarning,
         domain,
-        // output as dist/iframe.html
+        // output as dist/cashlink/index.html
         filename: 'cashlink/index.html',
         // chunks to include on this page, by default includes
         // extracted common chunks and vendor chunks.
