@@ -1,4 +1,4 @@
-import { isMilliseconds } from './Constants';
+import { isMilliseconds } from './Helpers';
 import { State } from '@nimiq/rpc';
 import {
     BasicRequest,
