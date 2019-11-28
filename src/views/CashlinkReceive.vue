@@ -216,25 +216,23 @@ export default class CashlinkReceive extends Vue {
         this.cashlink!.claim(this.activeAccount!.userFriendlyAddress);
 
         // Set up transaction-relayed listener, so we know when the tx has been sent
-        try {
-            await new Promise((resolve, reject) => {
-                NetworkClient.Instance.on(NetworkClient.Events.TRANSACTION_RELAYED, (tx: DetailedPlainTransaction) => {
-                    if (tx.sender === this.cashlink!.address.toUserFriendlyAddress()) resolve();
-                    // window.setTimeout(reject, 10 * 1000); // 10 seconds timeout
-                });
+        await new Promise((resolve, reject) => {
+            NetworkClient.Instance.on(NetworkClient.Events.TRANSACTION_RELAYED, (tx: DetailedPlainTransaction) => {
+                if (tx.sender === this.cashlink!.address.toUserFriendlyAddress()) resolve();
             });
+        });
 
+        try {
             await CashlinkStore.Instance.put(this.cashlink!);
-
-            // Show success screen and redirect to Safe
-            this.statusState = StatusScreen.State.SUCCESS;
-            this.statusTitle = 'Cashlink claimed!';
-
-            window.setTimeout(() => this.redirectToSafe(), StatusScreen.SUCCESS_REDIRECT_DELAY);
         } catch (err) {
-            // Return to regular screen
-            this.statusState = false;
+            // Ignore, because cashlink has been claimed sucessfully and will show up in the Safe
         }
+
+        // Show success screen and redirect to Safe
+        this.statusState = StatusScreen.State.SUCCESS;
+        this.statusTitle = 'Cashlink claimed!';
+
+        window.setTimeout(() => this.redirectToSafe(), StatusScreen.SUCCESS_REDIRECT_DELAY);
     }
 
     private accountSelected(walletId: string, userFriendlyAddress: string) {
