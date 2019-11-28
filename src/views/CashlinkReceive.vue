@@ -15,17 +15,15 @@
                 <PageHeader class="blur-target">You received a Cashlink!</PageHeader>
                 <PageBody>
                     <div class="accounts" :class="{'single-address': addressCount === 1}">
-                        <div class="cashlink-account account blur-target">
-                            <CashlinkIcon class="cashlink-icon nq-blue-bg"/>
-                            <div class="label">Cashlink</div>
-                        </div>
+                        <Account class="cashlink-account blur-target" layout="column"
+                            :displayAsCashlink="true"
+                            label="Cashlink"/>
                         <ArrowRightIcon class="arrow-right blur-target"/>
                         <div v-if="addressCount > 1" class="recipient-button blur-target">
                             <button class="nq-button-s" @click="isAccountSelectorOpened = true;">Change</button>
                             <Account layout="column"
                                 :address="activeAccount.userFriendlyAddress"
-                                :label="activeAccount.label"
-                                @click.native="isAccountSelectorOpened = true;"/>
+                                :label="activeAccount.label"/>
                         </div>
                         <Account v-else layout="column"
                             :address="activeAccount.userFriendlyAddress"
@@ -56,7 +54,7 @@
 
                 <transition name="transition-fade">
                     <div v-if="isAccountSelectorOpened" class="overlay">
-                        <CloseButton @click="isAccountSelectorOpened = false" />
+                        <CloseButton class="top-right" @click="isAccountSelectorOpened = false" />
                         <PageHeader>Choose an Address</PageHeader>
                         <AccountSelector
                             :wallets="processedWallets"
@@ -110,7 +108,6 @@ import {
     PageFooter,
     ArrowRightIcon,
     CaretRightSmallIcon,
-    CashlinkIcon,
     CloseButton,
     Account,
     Amount,
@@ -140,7 +137,6 @@ import HubApi from '../../client/HubApi';
     PageFooter,
     ArrowRightIcon,
     CaretRightSmallIcon,
-    CashlinkIcon,
     CloseButton,
     Account,
     Amount,
@@ -363,20 +359,12 @@ export default class CashlinkReceive extends Vue {
     }
 
     .cashlink-account {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        margin-top: 5.125rem;
+        margin-top: 3rem;
     }
 
     .cashlink-account,
     .recipient-button {
         width: calc(50% - 1.5rem - 2.75rem); /* minus half arrow width */
-        padding: 0;
-    }
-
-    .recipient-button .account {
-        cursor: pointer;
     }
 
     .cashlink-icon {
@@ -402,7 +390,7 @@ export default class CashlinkReceive extends Vue {
 
     .accounts .arrow-right {
         font-size: 3rem;
-        margin: 8.125rem 2.75rem 3rem;
+        margin: 8.125rem 2.75rem 0;
         color: var(--nimiq-light-blue);
         flex-shrink: 0;
     }
@@ -421,6 +409,7 @@ export default class CashlinkReceive extends Vue {
         right: 0.75rem;
         top: 0.75rem;
         font-size: 1.5rem;
+        line-height: 2.75rem;
         height: 2.75rem;
         padding: 0 1.125rem;
     }
@@ -431,12 +420,12 @@ export default class CashlinkReceive extends Vue {
     }
 
     .accounts.single-address .cashlink-account {
-        margin: 2rem 1.5rem 0;
+        margin-top: 0;
+        width: calc(50% - 2rem);
     }
 
     .accounts.single-address .arrow-right {
-        margin-top: 5.125rem;
-        margin-right: -1rem;
+        margin: 5.125rem 0 0 auto;
     }
 
     hr {
@@ -526,26 +515,6 @@ export default class CashlinkReceive extends Vue {
         height: 100%;
         transition: opacity .4s;
         background: rgba(255, 255, 255, .875); /* equivalent to keyguard: .5 on blurred and .75 on account details */
-    }
-
-    .overlay .close {
-        position: absolute;
-        right: 2rem;
-        top: 2rem;
-        font-size: 3rem;
-        padding: 0;
-        height: 3rem;
-        background: none;
-    }
-
-    .overlay .close .nq-icon {
-        opacity: 0.2;
-        transition: opacity .25s;
-    }
-
-    .overlay .close:hover .nq-icon,
-    .overlay .close:focus .nq-icon {
-        opacity: 0.4;
     }
 
     .account-selector {
