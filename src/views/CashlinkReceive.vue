@@ -11,7 +11,7 @@
                     @main-action="redirectToSafe"
                 />
             </transition>
-            <div v-if="cashlink && hasWallets" class="card-content has-account" :class="{ 'account-selector-shown': !!shownAccountSelector }">
+            <div v-if="cashlink && hasWallets" class="card-content has-account" :class="{ 'account-selector-shown': !!isAccountSelectorOpened }">
                 <PageHeader class="blur-target">You received a Cashlink!</PageHeader>
                 <PageBody>
                     <div class="accounts" :class="{'single-address': addressCount === 1}">
@@ -21,11 +21,11 @@
                         </div>
                         <ArrowRightIcon class="arrow-right blur-target"/>
                         <div v-if="addressCount > 1" class="recipient-button blur-target">
-                            <button class="nq-button-s" @click="selectRecipient">Change</button>
+                            <button class="nq-button-s" @click="isAccountSelectorOpened = true;">Change</button>
                             <Account layout="column"
                                 :address="activeAccount.userFriendlyAddress"
                                 :label="activeAccount.label"
-                                @click.native="selectRecipient"/>
+                                @click.native="isAccountSelectorOpened = true;"/>
                         </div>
                         <Account v-else layout="column"
                             :address="activeAccount.userFriendlyAddress"
@@ -55,14 +55,14 @@
                 </PageFooter>
 
                 <transition name="transition-fade">
-                    <div v-if="shownAccountSelector" class="overlay">
-                        <button class="nq-button-s close" @click="shownAccountSelector = false"><CloseIcon/></button>
+                    <div v-if="isAccountSelectorOpened" class="overlay">
+                        <CloseButton @click="isAccountSelectorOpened = false" />
                         <PageHeader>Choose an Address</PageHeader>
                         <AccountSelector
                             :wallets="processedWallets"
                             :disableContracts="true"
                             @account-selected="accountSelected"
-                            @login="goToLogin"
+                            @login="callHub('login')"
                         />
                     </div>
                 </transition>
@@ -82,8 +82,8 @@
                 </div>
 
                 <PageFooter>
-                    <button class="nq-button light-blue" @click="goToSignup">Create Account</button>
-                    <a class="nq-link skip" href="javascript:void(0)" @click="goToOnboarding">
+                    <button class="nq-button light-blue" @click="callHub('signup')">Create Account</button>
+                    <a class="nq-link skip" href="javascript:void(0)" @click="callHub('onboard')">
                         Login to existing Account
                         <CaretRightSmallIcon/>
                     </a>
@@ -94,8 +94,8 @@
         <div v-if="cashlink && !hasWallets" class="welcome-text">
             <h1 class="nq-h1">Claim your Cash</h1>
             <p class="nq-text">
-                <span class="main-text">Congrats, you just opened a Nimiq Cashlink. Create an Account and claim your money.</span>
-                30&nbsp;seconds, no&nbsp;email, no&nbsp;download.
+                Congrats, you just opened a Nimiq Cashlink. Create an Account and claim your money.
+                <span class="secondary-text">30&nbsp;seconds, no&nbsp;email, no&nbsp;download.</span>
             </p>
         </div>
     </div>
@@ -111,7 +111,7 @@ import {
     ArrowRightIcon,
     CaretRightSmallIcon,
     CashlinkIcon,
-    CloseIcon,
+    CloseButton,
     Account,
     Amount,
     AccountSelector,
@@ -141,7 +141,7 @@ import HubApi from '../../client/HubApi';
     ArrowRightIcon,
     CaretRightSmallIcon,
     CashlinkIcon,
-    CloseIcon,
+    CloseButton,
     Account,
     Amount,
     AccountSelector,
@@ -157,13 +157,12 @@ export default class CashlinkReceive extends Vue {
 
     private cashlink: Cashlink | null = null;
     private selectedAddress: AccountInfo | null = null;
-    private consensus: string | null = null;
-    private shownAccountSelector: boolean = false;
+    private isAccountSelectorOpened: boolean = false;
     private isClaiming: boolean = false;
 
     private statusState: StatusScreen.State | false = false;
-    private statusTitle = 'Initializing Cashlink';
-    private statusStatus = 'Parsing your link...';
+    private statusTitle = '';
+    private statusStatus = '';
     private statusMessage = '';
 
     public created() {
@@ -192,24 +191,18 @@ export default class CashlinkReceive extends Vue {
             return;
         }
 
-        // Hide loading screen
-        this.statusState = false;
+        // When user has no wallets, skip Cashlink init because user needs to signup/login first
+        // which requires this page to be reloaded anyway.
+        if (!this.hasWallets) return;
 
-        if (this.hasWallets) {
-            // Start network to check Cashlink status
-            if (!NetworkClient.hasInstance()) {
-                NetworkClient.createInstance(Config.networkEndpoint);
-            }
-            await NetworkClient.Instance.init();
-
-            // Set up consensus listeners
-            NetworkClient.Instance.on(NetworkClient.Events.CONSENSUS_SYNCING, () => this.consensus = 'syncing');
-            NetworkClient.Instance.on(NetworkClient.Events.CONSENSUS_ESTABLISHED, () => this.consensus = 'established');
-            NetworkClient.Instance.on(NetworkClient.Events.CONSENSUS_LOST, () => this.consensus = 'lost');
-            this.consensus = NetworkClient.Instance.consensusState;
-
-            this.cashlink.networkClient = NetworkClient.Instance;
+        // Start network to check Cashlink status
+        if (!NetworkClient.hasInstance()) {
+            NetworkClient.createInstance(Config.networkEndpoint);
         }
+        await NetworkClient.Instance.init();
+
+        // Assign network to Cashlink
+        this.cashlink.networkClient = NetworkClient.Instance;
     }
 
     private async claim() {
@@ -244,28 +237,12 @@ export default class CashlinkReceive extends Vue {
         }
     }
 
-    private selectRecipient() {
-        this.shownAccountSelector = true;
-    }
-
     private accountSelected(walletId: string, userFriendlyAddress: string) {
         this.$setActiveAccount({ walletId, userFriendlyAddress });
-        this.shownAccountSelector = false;
+        this.isAccountSelectorOpened = false;
     }
 
-    private goToSignup() {
-        this.callHub('signup');
-    }
-
-    private goToLogin() {
-        this.callHub('login');
-    }
-
-    private goToOnboarding() {
-        this.callHub('onboard');
-    }
-
-    private callHub(method: string) {
+    private callHub(method: 'signup' | 'login' | 'onboard') {
         const request: BasicRequest = {
             appName: 'Cashlink',
         };
@@ -287,12 +264,10 @@ export default class CashlinkReceive extends Vue {
     }
 
     private get isCashlinkStateKnown(): boolean {
-        if (!this.consensus) return false;
         return this.cashlink!.state !== CashlinkState.UNKNOWN;
     }
 
     private get canCashlinkBeClaimed(): boolean {
-        if (!this.consensus) return false;
         return this.cashlink!.state === CashlinkState.UNCLAIMED;
     }
 
@@ -313,10 +288,6 @@ export default class CashlinkReceive extends Vue {
 
     private get isButtonLoading(): boolean {
         return !this.isCashlinkStateKnown || this.cashlink!.state === CashlinkState.CHARGING;
-    }
-
-    private get isCashlinkAlreadyClaimed(): boolean {
-        return this.cashlink!.state >= CashlinkState.CLAIMING;
     }
 }
 </script>
@@ -352,11 +323,11 @@ export default class CashlinkReceive extends Vue {
 
     .welcome-text .nq-text {
         font-size: 4rem;
-        color: rgba(31, 35, 72, 0.5);
+        color: var(--nimiq-blue);
     }
 
-    .welcome-text .main-text {
-        color: var(--nimiq-blue);
+    .welcome-text .secondary-text {
+        color: rgba(31, 35, 72, 0.5);
     }
 
     .transition-welcome-text-enter,
@@ -521,13 +492,13 @@ export default class CashlinkReceive extends Vue {
         margin: -1.5rem auto 1rem;
         padding: 0 2rem;
         opacity: 0.7;
-        transition: opacity .3s cubic-bezier(0.25, 0, 0, 1);
+        transition: opacity .3s var(--nimiq-ease);
     }
 
     .skip .nq-icon  {
         height: 1.125rem;
         width: 1.125rem;
-        transition: transform .3s cubic-bezier(0.25, 0, 0, 1);
+        transition: transform .3s var(--nimiq-ease);
         vertical-align: middle;
     }
 

@@ -5,7 +5,7 @@
             <span class="logo-wordmark">Nimiq</span>
             <span class="logo-subtitle">Cashlink</span>
             <div class="flex-grow"></div>
-            <a class="nq-button-s" href="https://nimiq.com/#splash" target="_blank">What is Nimiq?</a>
+            <a class="nq-button-s" href="https://nimiq.com" target="_blank">What is Nimiq?</a>
         </header>
         <div v-if="loading" class="loading">
             <LoadingSpinner/>
@@ -28,8 +28,10 @@ export default class CashlinkApp extends Vue {
     private loading = true;
 
     public async created() {
-        await this.$store.dispatch('initWallets');
-        await loadNimiq();
+        await Promise.all([
+            await this.$store.dispatch('initWallets'),
+            await loadNimiq(),
+        ]);
         this.loading = false;
     }
 }

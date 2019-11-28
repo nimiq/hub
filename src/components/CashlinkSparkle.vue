@@ -5,16 +5,19 @@
         <svg class="mobile" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 375 84" width="100%" height="100%"><defs><radialGradient id="radial-gradient" cx="24.32" cy="15.3" r="5.17" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#ec991c"/><stop offset="1" stop-color="#e9b213"/></radialGradient><radialGradient id="mrg-2" cx="354.82" cy="10.3" r="5.17" xlink:href="#radial-gradient"/><radialGradient id="mrg-3" cx="148.82" cy="22.8" r="5.17" xlink:href="#radial-gradient"/><radialGradient id="mrg-4" cx="290.32" cy="14.3" r="5.17" xlink:href="#radial-gradient"/><radialGradient id="mrg-5" cx="63.32" cy="12.8" r="5.17" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#41a38e"/><stop offset="1" stop-color="#21bca5"/></radialGradient><radialGradient id="mrg-6" cx="207.82" cy="27.8" r="5.17" xlink:href="#mrg-5"/><radialGradient id="mrg-7" cx="335.82" cy="16.3" r="5.17" xlink:href="#mrg-5"/><radialGradient id="mrg-8" cx="363.32" cy="51.3" r="5.17" xlink:href="#mrg-5"/><radialGradient id="mrg-9" cx="124.32" cy="15.3" r="5.17" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#265dd7"/><stop offset="1" stop-color="#0582ca"/></radialGradient><radialGradient id="mrg-10" cx="29.82" cy="52.3" r="5.17" xlink:href="#mrg-9"/><radialGradient id="mrg-11" cx="255.32" cy="21.8" r="5.17" xlink:href="#mrg-9"/></defs><title>sparkle-mobile</title><g id="sparkle"><circle class="cls-1" cx="10.5" cy="39" r="2.5"/><circle class="cls-2" cx="8.5" cy="27.5" r="2.5"/><circle class="cls-1" cx="25" cy="26" r="2.5"/><circle class="cls-3" cx="22.5" cy="13.5" r="2.5"/><circle class="cls-2" cx="36.5" cy="8.5" r="2.5"/><circle class="cls-1" cx="53.5" cy="20" r="2.5"/><circle class="cls-4" cx="65" cy="40" r="2.5"/><circle class="cls-5" cx="92" cy="18" r="2.5"/><circle class="cls-5" cx="75" cy="22.5" r="2.5"/><circle class="cls-1" cx="84.5" cy="12" r="2.5"/><circle class="cls-5" cx="109.5" cy="17.5" r="2.5"/><circle class="cls-4" cx="127.5" cy="26" r="2.5"/><circle class="cls-5" cx="141.5" cy="10" r="2.5"/><circle class="cls-4" cx="167" cy="23" r="2.5"/><circle class="cls-5" cx="177" cy="12.5" r="2.5"/><circle class="cls-5" cx="191" cy="10" r="2.5"/><circle class="cls-4" cx="215" cy="22.5" r="2.5"/><circle class="cls-5" cx="218.93" cy="8.5" r="2.5"/><circle class="cls-4" cx="236.5" cy="27" r="2.5"/><circle class="cls-5" cx="249.5" cy="10" r="2.5"/><circle class="cls-4" cx="264.5" cy="26" r="2.5"/><circle class="cls-4" cx="278.5" cy="23" r="2.5"/><circle class="cls-5" cx="299.5" cy="13" r="2.5"/><circle class="cls-4" cx="303" cy="22" r="2.5"/><circle class="cls-1" cx="320" cy="8.5" r="2.5"/><circle class="cls-4" cx="324" cy="20.5" r="2.5"/><circle class="cls-5" cx="346.5" cy="19.5" r="2.5"/><circle class="cls-4" cx="341" cy="28.5" r="2.5"/><circle class="cls-6" cx="353" cy="8.5" r="2.5"/><circle class="cls-2" cx="364.5" cy="25.5" r="2.5"/><circle class="cls-1" cx="366.5" cy="41" r="2.5"/><circle class="cls-5" cx="354" cy="43.5" r="2.5"/><circle class="cls-4" cx="349" cy="52" r="2.5"/><circle class="cls-5" cx="366.5" cy="64" r="2.5"/><circle class="cls-4" cx="355.5" cy="81.5" r="2.5"/><circle class="cls-5" cx="19" cy="45" r="2.5"/><circle class="cls-5" cx="26.5" cy="38.5" r="2.5"/><circle class="cls-5" cx="33.5" cy="31.5" r="2.5"/><circle class="cls-4" cx="35.5" cy="44" r="2.5"/><circle class="cls-4" cx="8.5" cy="61.5" r="2.5"/><circle class="cls-4" cx="20" cy="68" r="2.5"/><circle class="cls-5" cx="8.5" cy="73" r="2.5"/><circle class="cls-7" cx="147" cy="21" r="2.5"/><circle class="cls-8" cx="288.5" cy="12.5" r="2.5"/><circle class="cls-9" cx="61.5" cy="11" r="2.5"/><circle class="cls-10" cx="206" cy="26" r="2.5"/><circle class="cls-11" cx="334" cy="14.5" r="2.5"/><circle class="cls-12" cx="361.5" cy="49.5" r="2.5"/><circle class="cls-13" cx="122.5" cy="13.5" r="2.5"/><circle class="cls-14" cx="28" cy="50.5" r="2.5"/><circle class="cls-15" cx="253.5" cy="20" r="2.5"/></g></svg>
 
         <div class="icon nq-blue-bg desktop">
-            <img src='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="100%" height="100%" fill="none" stroke="white" stroke-linecap="round" stroke-width="5px" stroke-linejoin="round"><path class="cls-1" d="M80.5,46.4v-.9a13,13,0,0,0-13-13h-7a13,13,0,0,0-13,13v13a13,13,0,0,0,13,13h4"/><path class="cls-1" d="M47.5,81.4v1.1a13,13,0,0,0,13,13h7a13,13,0,0,0,13-13v-13a13,13,0,0,0-13-13h-4"/><line class="cls-2" x1="64" y1="31.5" x2="64" y2="22.5"/><line class="cls-2" x1="64" y1="105.5" x2="64" y2="96.5"/></svg>'>
+            <CashlinkIcon/>
         </div>
     </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { CashlinkIcon } from '@nimiq/vue-components';
 
-@Component
-export default class CashlinkSparkle extends Vue {}
+export default {
+    components: {
+        CashlinkIcon,
+    },
+};
 </script>
 
 <style scoped>
@@ -31,6 +34,11 @@ export default class CashlinkSparkle extends Vue {}
         width: 16rem;
         height: 16rem;
         border-radius: 8rem;
+    }
+
+    .icon svg {
+        width: 100%;
+        height: 100%;
     }
 
     .desktop .cls-2,
