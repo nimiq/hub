@@ -1,5 +1,6 @@
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const WriteFileWebpackPlugin = require('write-file-webpack-plugin');
+const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
 const path = require('path');
 const fs = require('fs');
 const browserWarning = fs.readFileSync(__dirname + '/node_modules/@nimiq/browser-warning/dist/browser-warning.html.template');
@@ -24,7 +25,7 @@ const configureWebpack = {
             { from: 'node_modules/@nimiq/vue-components/dist/img', to: 'img' },
             { from: 'node_modules/@nimiq/browser-warning/dist', to: './' },
         ]),
-        new WriteFileWebpackPlugin()
+        new WriteFileWebpackPlugin(),
     ],
     // Resolve config for yarn build
     resolve: {
@@ -123,6 +124,12 @@ module.exports = {
             .tap(options => {
                 options.configFile = `tsconfig.${buildName}.json`
                 return options
-        });
+            });
+
+        config
+            .plugin('script-ext-html-webpack-plugin')
+            .use(ScriptExtHtmlWebpackPlugin, [{
+                defaultAttribute: 'defer',
+            }]);
     }
 }
