@@ -1,7 +1,7 @@
 type BigInteger = import('big-integer').BigInteger; // imports only the type without bundling
 import { FormattableNumber, toNonScientificNumberString } from '@nimiq/utils';
 import { isMilliseconds } from './Helpers';
-import { Currency, PaymentMethod, PaymentOptionsForCurrencyAndType, RequestType } from './PublicRequestTypes';
+import { Currency, PaymentType, PaymentOptionsForCurrencyAndType, RequestType } from './PublicRequestTypes';
 import { ParsedNimiqSpecifics, ParsedNimiqDirectPaymentOptions } from './paymentOptions/NimiqPaymentOptions';
 import { ParsedEtherSpecifics, ParsedEtherDirectPaymentOptions } from './paymentOptions/EtherPaymentOptions';
 import { ParsedBitcoinSpecifics, ParsedBitcoinDirectPaymentOptions } from './paymentOptions/BitcoinPaymentOptions';
@@ -36,7 +36,7 @@ export type ParsedProtocolSpecificsForCurrency<C extends Currency> =
     : C extends Currency.ETH ? ParsedEtherSpecifics
     : undefined;
 
-export interface ParsedPaymentOptions<C extends Currency, T extends PaymentMethod> {
+export interface ParsedPaymentOptions<C extends Currency, T extends PaymentType> {
     readonly currency: C;
     readonly type: T;
     readonly decimals: number;
@@ -49,7 +49,7 @@ export interface ParsedPaymentOptions<C extends Currency, T extends PaymentMetho
     raw(): PaymentOptionsForCurrencyAndType<C, T>;
 }
 
-export abstract class ParsedPaymentOptions<C extends Currency, T extends PaymentMethod>
+export abstract class ParsedPaymentOptions<C extends Currency, T extends PaymentType>
     implements ParsedPaymentOptions<C, T> {
 
     protected constructor(options: PaymentOptionsForCurrencyAndType<C, T>) {
@@ -98,8 +98,8 @@ export type AvailableParsedPaymentOptions = ParsedNimiqDirectPaymentOptions
                                           | ParsedEtherDirectPaymentOptions
                                           | ParsedBitcoinDirectPaymentOptions;
 
-export type ParsedPaymentOptionsForCurrencyAndType<C extends Currency, T extends PaymentMethod> =
-    T extends PaymentMethod.DIRECT ?
+export type ParsedPaymentOptionsForCurrencyAndType<C extends Currency, T extends PaymentType> =
+    T extends PaymentType.DIRECT ?
         C extends Currency.NIM ? ParsedNimiqDirectPaymentOptions
         : C extends Currency.BTC ? ParsedBitcoinDirectPaymentOptions
         : C extends Currency.ETH ? ParsedEtherDirectPaymentOptions

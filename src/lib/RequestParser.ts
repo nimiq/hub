@@ -11,7 +11,7 @@ import {
     ExportRequest,
     RpcRequest,
     Currency,
-    PaymentMethod,
+    PaymentType,
     RequestType,
     NimiqCheckoutRequest,
     MultiCurrencyCheckoutRequest,
@@ -103,7 +103,7 @@ export class RequestParser {
                         time: Date.now(),
                         paymentOptions: [new ParsedNimiqDirectPaymentOptions({
                             currency: Currency.NIM,
-                            type: PaymentMethod.DIRECT,
+                            type: PaymentType.DIRECT,
                             amount: checkoutRequest.value.toString(),
                             expires: 0, // unused for NimiqCheckoutRequests
                             protocolSpecific: {
@@ -204,7 +204,7 @@ export class RequestParser {
                                 currencies.add(option.currency);
                             }
                             switch (option.type) {
-                                case PaymentMethod.DIRECT:
+                                case PaymentType.DIRECT:
                                     switch (option.currency) {
                                         case Currency.NIM:
                                             return new ParsedNimiqDirectPaymentOptions(option, data);
@@ -216,7 +216,7 @@ export class RequestParser {
                                             throw new Error(`Currency ${(option as any).currency} not supported`);
                                     }
                                 default:
-                                    throw new Error(`PaymentMethod ${(option as any).type} not supported`);
+                                    throw new Error(`PaymentType ${(option as any).type} not supported`);
                             }
                         }),
                     } as ParsedCheckoutRequest;
@@ -342,7 +342,7 @@ export class RequestParser {
                             fiatCurrency: checkoutRequest.fiatCurrency || undefined,
                             paymentOptions: checkoutRequest.paymentOptions.map((option) => {
                                 switch (option.type) {
-                                    case PaymentMethod.DIRECT:
+                                    case PaymentType.DIRECT:
                                         return option.raw();
                                     default:
                                         throw new Error('paymentOption.type not supported');

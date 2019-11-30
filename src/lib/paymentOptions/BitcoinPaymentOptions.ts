@@ -1,4 +1,4 @@
-import { Currency, PaymentMethod, PaymentOptions } from '../PublicRequestTypes';
+import { Currency, PaymentType, PaymentOptions } from '../PublicRequestTypes';
 import { ParsedPaymentOptions } from '../RequestTypes';
 import { toNonScientificNumberString } from '@nimiq/utils';
 
@@ -13,9 +13,9 @@ export type ParsedBitcoinSpecifics = Pick<BitcoinSpecifics, 'recipient'> & {
     feePerByte?: number;
 };
 
-export type BitcoinDirectPaymentOptions = PaymentOptions<Currency.BTC, PaymentMethod.DIRECT>;
+export type BitcoinDirectPaymentOptions = PaymentOptions<Currency.BTC, PaymentType.DIRECT>;
 
-export class ParsedBitcoinDirectPaymentOptions extends ParsedPaymentOptions<Currency.BTC, PaymentMethod.DIRECT> {
+export class ParsedBitcoinDirectPaymentOptions extends ParsedPaymentOptions<Currency.BTC, PaymentType.DIRECT> {
     public amount: number;
 
     public constructor(options: BitcoinDirectPaymentOptions) {
@@ -64,8 +64,8 @@ export class ParsedBitcoinDirectPaymentOptions extends ParsedPaymentOptions<Curr
         return Currency.BTC;
     }
 
-    public get type(): PaymentMethod.DIRECT {
-        return PaymentMethod.DIRECT;
+    public get type(): PaymentType.DIRECT {
+        return PaymentType.DIRECT;
     }
 
     public get decimals(): number {
