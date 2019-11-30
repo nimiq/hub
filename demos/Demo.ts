@@ -435,7 +435,7 @@ class Demo {
                 this._defaultBehavior,
             );
             console.log('Result', result);
-            document.querySelector('#result').textContent = 'Export sucessful';
+            document.querySelector('#result').textContent = 'Successfully changed Password';
         } catch (e) {
             console.error(e);
             document.querySelector('#result').textContent = `Error: ${e.message || e}`;

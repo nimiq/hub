@@ -19,9 +19,11 @@ import { State, Action } from 'vuex-class';
 import KeyguardClient from '@nimiq/keyguard-client';
 import { BrowserDetection } from '@nimiq/utils';
 import { SmallPage } from '@nimiq/vue-components';
-import { Account } from '../lib/PublicRequestTypes';
+import { ParsedBasicRequest } from '../lib/RequestTypes';
+import { Account, RequestType } from '../lib/PublicRequestTypes';
 import { WalletInfo, WalletType } from '../lib/WalletInfo';
 import { WalletStore } from '../lib/WalletStore';
+import { Static } from '../lib/StaticStore';
 import StatusScreen from '../components/StatusScreen.vue';
 import WalletInfoCollector, { BasicAccountInfo } from '../lib/WalletInfoCollector';
 import { WalletCollectionResultKeyguard } from '../lib/WalletInfoCollector';
@@ -30,6 +32,7 @@ import { ERROR_COOKIE_SPACE } from '../lib/Constants';
 
 @Component({components: {StatusScreen, SmallPage}})
 export default class LoginSuccess extends Vue {
+    @Static private request!: ParsedBasicRequest;
     @State private keyguardResult!: KeyguardClient.KeyResult;
 
     @Action('addWalletAndSetActive') private $addWalletAndSetActive!: (walletInfo: WalletInfo) => any;
@@ -174,6 +177,16 @@ export default class LoginSuccess extends Vue {
             this.message = 'Used addresses without balance might have been missed.';
             this.action = 'Continue';
             await new Promise((resolve) => { this.resolve = resolve; });
+        }
+
+        // In RequestType.CHANGE_PASSWORD a reset password function was added leading to an import with
+        // recovery words. Display an appropriate success message in case that is how this successful
+        // import came to be.
+        if (this.request.kind === RequestType.CHANGE_PASSWORD) {
+            this.title = 'Your password was changed.';
+            this.state = StatusScreen.State.SUCCESS;
+            setTimeout(() => { this.$rpc.resolve({success: true}); }, StatusScreen.SUCCESS_REDIRECT_DELAY);
+            return;
         }
 
         if (result.length > 1) {
