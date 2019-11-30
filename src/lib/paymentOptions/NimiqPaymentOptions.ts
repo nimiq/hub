@@ -1,5 +1,5 @@
 import { TX_VALIDITY_WINDOW, TX_MIN_VALIDITY_DURATION } from '../Constants';
-import { Currency, PaymentMethod, PaymentOptions } from '../PublicRequestTypes';
+import { Currency, PaymentType, PaymentOptions } from '../PublicRequestTypes';
 import { ParsedPaymentOptions } from '../RequestTypes';
 import { toNonScientificNumberString } from '@nimiq/utils';
 
@@ -22,9 +22,9 @@ export type ParsedNimiqSpecifics = Omit<NimiqSpecifics, 'sender' | 'recipient' |
     feePerByte: number,
 };
 
-export type NimiqDirectPaymentOptions = PaymentOptions<Currency.NIM, PaymentMethod.DIRECT>;
+export type NimiqDirectPaymentOptions = PaymentOptions<Currency.NIM, PaymentType.DIRECT>;
 
-export class ParsedNimiqDirectPaymentOptions extends ParsedPaymentOptions<Currency.NIM, PaymentMethod.DIRECT> {
+export class ParsedNimiqDirectPaymentOptions extends ParsedPaymentOptions<Currency.NIM, PaymentType.DIRECT> {
     public amount: number;
     private extraData: Uint8Array;
 
@@ -130,8 +130,8 @@ export class ParsedNimiqDirectPaymentOptions extends ParsedPaymentOptions<Curren
         return Currency.NIM;
     }
 
-    public get type(): PaymentMethod.DIRECT {
-        return PaymentMethod.DIRECT;
+    public get type(): PaymentType.DIRECT {
+        return PaymentType.DIRECT;
     }
 
     public get decimals(): number {

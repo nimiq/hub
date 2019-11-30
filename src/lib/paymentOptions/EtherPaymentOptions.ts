@@ -1,5 +1,5 @@
 import bigInt from 'big-integer';
-import { Currency, PaymentMethod, PaymentOptions } from '../PublicRequestTypes';
+import { Currency, PaymentType, PaymentOptions } from '../PublicRequestTypes';
 import { ParsedPaymentOptions } from '../RequestTypes';
 import { toNonScientificNumberString } from '@nimiq/utils';
 
@@ -14,9 +14,9 @@ export type ParsedEtherSpecifics = Pick<EtherSpecifics, 'recipient'> & {
     gasPrice?: bigInt.BigInteger;
 };
 
-export type EtherDirectPaymentOptions = PaymentOptions<Currency.ETH, PaymentMethod.DIRECT>;
+export type EtherDirectPaymentOptions = PaymentOptions<Currency.ETH, PaymentType.DIRECT>;
 
-export class ParsedEtherDirectPaymentOptions extends ParsedPaymentOptions<Currency.ETH, PaymentMethod.DIRECT> {
+export class ParsedEtherDirectPaymentOptions extends ParsedPaymentOptions<Currency.ETH, PaymentType.DIRECT> {
     public amount: bigInt.BigInteger;
 
     public constructor(options: EtherDirectPaymentOptions) {
@@ -55,8 +55,8 @@ export class ParsedEtherDirectPaymentOptions extends ParsedPaymentOptions<Curren
         return Currency.ETH;
     }
 
-    public get type(): PaymentMethod.DIRECT {
-        return PaymentMethod.DIRECT;
+    public get type(): PaymentType.DIRECT {
+        return PaymentType.DIRECT;
     }
 
     public get decimals(): number {

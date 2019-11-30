@@ -61,7 +61,7 @@ export interface NimiqCheckoutRequest extends BasicRequest {
     validityDuration?: number;
 }
 
-export enum PaymentMethod {
+export enum PaymentType {
     DIRECT,
     OASIS,
 }
@@ -78,7 +78,7 @@ export type ProtocolSpecificsForCurrency<C extends Currency> =
     : C extends Currency.ETH ? EtherSpecifics
     : undefined;
 
-export interface PaymentOptions<C extends Currency, T extends PaymentMethod> {
+export interface PaymentOptions<C extends Currency, T extends PaymentType> {
     type: T;
     currency: C;
     expires?: number;
@@ -94,8 +94,8 @@ export type AvailablePaymentOptions = NimiqDirectPaymentOptions
                                     | EtherDirectPaymentOptions
                                     | BitcoinDirectPaymentOptions;
 
-export type PaymentOptionsForCurrencyAndType<C extends Currency, T extends PaymentMethod> =
-    T extends PaymentMethod.DIRECT ?
+export type PaymentOptionsForCurrencyAndType<C extends Currency, T extends PaymentType> =
+    T extends PaymentType.DIRECT ?
         C extends Currency.NIM ? NimiqDirectPaymentOptions
         : C extends Currency.BTC ? BitcoinDirectPaymentOptions
         : C extends Currency.ETH ? EtherDirectPaymentOptions

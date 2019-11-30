@@ -24,15 +24,22 @@ import {
     ExportResult,
     SignedMessage,
     Currency,
-    PaymentMethod,
+    PaymentType,
 } from '../src/lib/PublicRequestTypes';
 
 export default class HubApi<DB extends BehaviorType = BehaviorType.POPUP> { // DB: Default Behavior
     public static readonly RequestType = RequestType;
     public static readonly RedirectRequestBehavior = RedirectRequestBehavior;
     public static readonly Currency = Currency;
-    public static readonly PaymentMethod = PaymentMethod;
+    public static readonly PaymentType = PaymentType;
     public static readonly MSG_PREFIX = '\x16Nimiq Signed Message:\n';
+
+    /** @deprecated */
+    public static get PaymentMethod() {
+        console.warn('PaymentMethod has been renamed to PaymentType. Access via HubApi.PaymentMethod will soon '
+            + 'get disabled. Use HubApi.PaymentType instead.');
+        return PaymentType;
+    }
 
     private static get DEFAULT_ENDPOINT() {
         const originArray = location.origin.split('.');
