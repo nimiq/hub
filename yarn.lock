@@ -731,10 +731,10 @@
     leveldown "^5.1.1"
     levelup "^4.1.0"
 
-"@nimiq/keyguard-client@^1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@nimiq/keyguard-client/-/keyguard-client-1.1.0.tgz#2c507c0bf8554093a43d1e5e6ab95cecf9545a91"
-  integrity sha512-Y65eHziIt2/Tp6j/sjxcmjUU1mvQe1CNcvepUHXhuo+Du87gopO+tt/Z0aAiD4NbZNR1HQHskmM3NmLOj47+3w==
+"@nimiq/keyguard-client@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@nimiq/keyguard-client/-/keyguard-client-1.2.0.tgz#b4ab9daa6a9af3134bfb9743b8c0c06c633b5fbc"
+  integrity sha512-FhoABWGsWNFd7XpqUmPXG0zH9fZ28FpbbhxVboUmm/GWfeMlTf5kcHA821sG4qicIrCtUWFC6mtCto9LkqHFkA==
   dependencies:
     "@nimiq/core-web" "1.4.3"
     "@nimiq/rpc" "^0.3.0"

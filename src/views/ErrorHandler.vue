@@ -61,6 +61,40 @@ export default class ErrorHandler extends Vue {
             return;
         }
 
+        if (this.keyguardResult.message === Errors.Messages.GOTO_RESET_PASSWORD) {
+            try {
+                const walletInfo = await this.getWalletForThisRequest();
+                if (walletInfo) {
+                    const request: KeyguardClient.ResetPasswordRequest = {
+                        appName: this.request.appName,
+                        requestedKeyPaths: [
+                            DEFAULT_KEY_PATH,
+                            ...[...walletInfo.accounts.values()].map((account) => account.path),
+                        ],
+                        isKeyLost: false,
+                        expectedKeyId: walletInfo.keyId,
+                        wordsOnly: true,
+                    };
+
+                    const client = this.$rpc.createKeyguardClient();
+                    client.resetPassword(request);
+
+                    return;
+                } else {
+                    // This is most definitely never going to happen.
+                    // It would require the initial CHANGE_PASSWORD request to go through (and find the wallet)
+                    // while the subsequent call to this function needs to then not find it anymore.
+                    // However in the unlikely scenario of it happening nonetheless we provide a proper error
+                    // and close the window.
+                    this.$rpc.reject(new Error('Wallet does not exist.'));
+                    return;
+                }
+            } catch (error) {
+                this.$rpc.reject(error);
+                return;
+            }
+        }
+
         // TODO more Error Handling
 
         this.$rpc.reject(this.keyguardResult);
