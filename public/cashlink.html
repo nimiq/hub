@@ -1,13 +1,21 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <script type="text/javascript" src="/browser-warning.js" defer></script>
     <script src="https://cdn.nimiq-testnet.com/v1.5.3/web-offline.js"></script>
-    <title>My Nimiq Accounts</title>
+    <title>Nimiq Cashlink</title>
+
+    <meta name="robots" content="noindex, follow">
+    <meta name="description" content="Here is your Nimiq Cashlink!">
+
+    <!-- sharing -->
+    <meta name="twitter:image" content="<%= htmlWebpackPlugin.options.domain %>/cashlink-icon.png" />
+    <meta name="twitter:author" content="@nimiq" />
+    <meta property="og:image" content="<%= htmlWebpackPlugin.options.domain %>/cashlink-icon.png" />
+
     <link href="/blocking.css" rel="stylesheet">
     <link rel="icon" href="<%= htmlWebpackPlugin.options.domain %>/favicon.ico">
 </head>
@@ -30,5 +38,4 @@
     <%= htmlWebpackPlugin.options.browserWarning %>
     <!-- built files will be auto injected -->
 </body>
-
 </html>

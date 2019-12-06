@@ -93,6 +93,7 @@ export function keyguardResponseRouter(
     };
 }
 
+// Static routes names
 export const REQUEST_ERROR = 'request-error';
 export const ERROR = 'error';
 

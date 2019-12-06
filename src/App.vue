@@ -23,8 +23,7 @@ import '@nimiq/vue-components/dist/NimiqVueComponents.css';
 
 @Component({components: {LoadingSpinner}})
 export default class App extends Vue {
-    @State('hasRpcState') private hasRpcState!: boolean;
-    @State('hasRequest') private hasRequest!: boolean;
+    @State('isRequestLoaded') private isRequestLoaded!: boolean;
 
     public async created() {
         await this.$store.dispatch('initWallets');
@@ -32,7 +31,8 @@ export default class App extends Vue {
     }
 
     private get isLoaded() {
-        return (!!this.hasRpcState && !!this.hasRequest) || this.$route.name === REQUEST_ERROR;
+        return this.isRequestLoaded
+            || this.$route.name === REQUEST_ERROR;
     }
 }
 </script>

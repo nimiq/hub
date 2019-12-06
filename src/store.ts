@@ -13,8 +13,7 @@ import { ContractInfo } from './lib/ContractInfo';
 Vue.use(Vuex);
 
 export interface RootState {
-    hasRpcState: boolean;
-    hasRequest: boolean;
+    isRequestLoaded: boolean;
     wallets: WalletInfo[]; // TODO: this is not JSON compatible, is this a problem?
     keyguardResult: KeyguardResult | Error | null;
     chosenWalletLabel: string | null;
@@ -24,8 +23,7 @@ export interface RootState {
 
 const store: StoreOptions<RootState> = {
     state: {
-        hasRpcState: false,
-        hasRequest: false,
+        isRequestLoaded: false,
         wallets: [],
         keyguardResult: null, // undefined is not reactive
         chosenWalletLabel: null,
@@ -33,9 +31,8 @@ const store: StoreOptions<RootState> = {
         activeUserFriendlyAddress: null,
     },
     mutations: {
-        setIncomingRequest(state, payload: { hasRpcState: boolean, hasRequest: boolean }) {
-            state.hasRpcState = payload.hasRpcState;
-            state.hasRequest = payload.hasRequest;
+        setRequestLoaded(state, payload: boolean) {
+            state.isRequestLoaded = payload;
         },
         initWallets(state, wallets: WalletInfo[]) {
             state.wallets = wallets;
@@ -90,6 +87,12 @@ const store: StoreOptions<RootState> = {
                 if (!activeWallet) {
                     // If none found, pre-select the first available
                     activeWallet = state.wallets[0];
+                }
+
+                // Validate that the address exists on the active wallet
+                if (activeUserFriendlyAddress) {
+                    const activeAccount = activeWallet.accounts.get(activeUserFriendlyAddress);
+                    if (!activeAccount) activeUserFriendlyAddress = null;
                 }
 
                 if (!activeUserFriendlyAddress) {
@@ -172,6 +175,9 @@ const store: StoreOptions<RootState> = {
             }
 
             return processedWallets;
+        },
+        addressCount: (state) => {
+            return state.wallets.reduce((count, wallet) => count + wallet.accounts.size + wallet.contracts.length, 0);
         },
     },
 };

@@ -139,14 +139,15 @@ export default class RpcApi {
         }
 
         // Check for originalRouteName in StaticStore and route there
-        if (this._staticStore.originalRouteName && (!(result instanceof Error) || result.message !== ERROR_CANCELED)) {
+        const originalRoute = this._staticStore.originalRouteName;
+        if (originalRoute && (!(result instanceof Error) || result.message !== ERROR_CANCELED)) {
             this._staticStore.sideResult = result;
             this._store.commit('setKeyguardResult', null);
 
             // Recreate original URL with original query parameters
             const rpcState = this._staticStore.rpcState!;
             const query = { rpcId: rpcState.id.toString() };
-            this._router.push({ name: this._staticStore.originalRouteName, query });
+            this._router.push({ name: originalRoute, query });
             delete this._staticStore.originalRouteName;
             return;
         }
@@ -156,7 +157,7 @@ export default class RpcApi {
 
     private _exportState(): any {
         return {
-            rpcState: this._staticStore.rpcState ? this._staticStore.rpcState.toJSON() : undefined,
+            rpcState: this._staticStore.rpcState!.toJSON(),
             request: this._staticStore.request ? RequestParser.raw(this._staticStore.request) : undefined,
             kind: this._staticStore.request ? this._staticStore.request.kind : undefined,
             keyguardRequest: this._staticStore.keyguardRequest,
@@ -348,9 +349,6 @@ export default class RpcApi {
     }
 
     private _startRoute() {
-        this._store.commit('setIncomingRequest', {
-            hasRpcState: !!this._staticStore.rpcState,
-            hasRequest: !!this._staticStore.request,
-        });
+        this._store.commit('setRequestLoaded', !!(this._staticStore.rpcState && this._staticStore.request));
     }
 }
