@@ -29,8 +29,8 @@ export default class CashlinkApp extends Vue {
 
     public async created() {
         await Promise.all([
-            await this.$store.dispatch('initWallets'),
-            await loadNimiq(),
+            this.$store.dispatch('initWallets'),
+            loadNimiq(),
         ]);
         this.loading = false;
     }

@@ -46,7 +46,7 @@
                 </PageBody>
                 <PageFooter>
                     <button
-                        class="nq-button light-blue"
+                        class="nq-button light-blue blur-target"
                         :disabled="!canCashlinkBeClaimed"
                         @click="claim"
                     ><CircleSpinner v-if="isButtonLoading"/>{{ buttonText }}</button>
@@ -71,10 +71,10 @@
                 <CashlinkSparkle/>
 
                 <div>
-                    <Amount class="value nq-light-blue blur-target"
+                    <Amount class="value nq-light-blue"
                         :amount="cashlink.value" :minDecimals="0" :maxDecimals="5" />
 
-                    <div v-if="cashlink.message" class="data nq-text blur-target">
+                    <div v-if="cashlink.message" class="data nq-text">
                         {{ cashlink.message }}
                     </div>
                 </div>
@@ -624,7 +624,6 @@ export default class CashlinkReceive extends Vue {
             font-size: 1.875rem;
             line-height: 1.4;
         }
-
 
         .account-selector-shown .blur-target {
             filter: blur(10px);
