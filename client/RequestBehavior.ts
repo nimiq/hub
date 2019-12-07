@@ -65,12 +65,23 @@ export class RedirectRequestBehavior extends RequestBehavior<BehaviorType.REDIRE
 }
 
 export class PopupRequestBehavior extends RequestBehavior<BehaviorType.POPUP> {
-    private static DEFAULT_OPTIONS: string = '';
-    private _options: string;
+    private static DEFAULT_FEATURES = '';
+    private static DEFAULT_OPTIONS = {
+        overlay: true,
+    };
+    private _popupFeatures: typeof PopupRequestBehavior.DEFAULT_FEATURES;
+    private _options: typeof PopupRequestBehavior.DEFAULT_OPTIONS;
 
-    constructor(options = PopupRequestBehavior.DEFAULT_OPTIONS) {
+    constructor(
+        popupFeatures = PopupRequestBehavior.DEFAULT_FEATURES,
+        options?: typeof PopupRequestBehavior.DEFAULT_OPTIONS,
+    ) {
         super(BehaviorType.POPUP);
-        this._options = options;
+        this._popupFeatures = popupFeatures;
+        this._options = {
+            ...PopupRequestBehavior.DEFAULT_OPTIONS,
+            ...options,
+        };
     }
 
     public async request<R extends RequestType>(
@@ -102,14 +113,16 @@ export class PopupRequestBehavior extends RequestBehavior<BehaviorType.POPUP> {
     }
 
     public createPopup(url: string) {
-        const popup = window.open(url, 'NimiqAccounts', this._options);
+        const popup = window.open(url, 'NimiqAccounts', this._popupFeatures);
         if (!popup) {
             throw new Error('Failed to open popup');
         }
         return popup;
     }
 
-    private appendOverlay(popup: Window): HTMLDivElement {
+    private appendOverlay(popup: Window): HTMLDivElement | null {
+        if (!this._options.overlay) return null;
+
         const createElement = document.createElement.bind(document);
         const createTextNode = document.createTextNode.bind(document);
         const appendChild = (node: Node, child: Node) => node.appendChild(child);
@@ -181,9 +194,11 @@ export class PopupRequestBehavior extends RequestBehavior<BehaviorType.POPUP> {
         return appendChild(document.body, overlay) as HTMLDivElement;
     }
 
-    private removeOverlay(overlay: HTMLDivElement): void {
-        overlay.style.opacity = '0';
-        setTimeout(() => document.body.removeChild(overlay), 400);
+    private removeOverlay($overlay: HTMLDivElement | null): void {
+        if (!$overlay) return;
+
+        $overlay.style.opacity = '0';
+        setTimeout(() => document.body.removeChild($overlay), 400);
     }
 }
 
