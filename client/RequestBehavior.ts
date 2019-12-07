@@ -140,9 +140,11 @@ export class PopupRequestBehavior extends RequestBehavior<BehaviorType.POPUP> {
         // Explainer text
         const text = createElement('div');
         const textStyle = text.style;
-        appendChild(text, createTextNode('A popup is active,'));
+        appendChild(text, createTextNode('A popup has been opened,'));
         appendChild(text, createElement('br'));
-        appendChild(text, createTextNode('click anywhere to refocus.'));
+        appendChild(text, createTextNode('click anywhere to bring it back to the front.'));
+        // tslint:disable-next-line max-line-length
+        textStyle.fontFamily = 'Muli, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif';
         textStyle.fontSize = '24px';
         textStyle.fontWeight = '600';
         textStyle.lineHeight = '40px';
