@@ -123,6 +123,7 @@ export class PopupRequestBehavior extends RequestBehavior<BehaviorType.POPUP> {
     private appendOverlay(popup: Window): HTMLDivElement | null {
         if (!this._options.overlay) return null;
 
+        // Define DOM-method abstractions to allow better minification
         const createElement = document.createElement.bind(document);
         const createTextNode = document.createTextNode.bind(document);
         const appendChild = (node: Node, child: Node) => node.appendChild(child);
