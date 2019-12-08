@@ -2,7 +2,8 @@ import { TX_VALIDITY_WINDOW, TX_MIN_VALIDITY_DURATION } from './Constants';
 import { State } from '@nimiq/rpc';
 import {
     BasicRequest,
-    CashlinkRequest,
+    CreateCashlinkRequest,
+    ManageCashlinkRequest,
     SimpleRequest,
     OnboardRequest,
     SignTransactionRequest,
@@ -15,7 +16,8 @@ import {
 import {
     RequestType,
     ParsedBasicRequest,
-    ParsedCashlinkRequest,
+    ParsedCreateCashlinkRequest,
+    ParsedManageCashlinkRequest,
     ParsedSimpleRequest,
     ParsedOnboardRequest,
     ParsedSignTransactionRequest,
@@ -152,24 +154,25 @@ export class RequestParser {
                             : undefined,
                     message: signMessageRequest.message,
                 } as ParsedSignMessageRequest;
-            case RequestType.CASHLINK:
-                const cashlinkRequest = request as CashlinkRequest;
-                if (cashlinkRequest.cashlinkAddress && cashlinkRequest.senderAddress) {
-                    console.warn(
-                        'CashlinkRequest.cashlinkAddress and CashlinkRequest.senderAddress should not both be defined.',
-                    );
-                }
+            case RequestType.CREATE_CASHLINK:
+                const createCashlinkRequest = request as CreateCashlinkRequest;
                 return {
-                    kind: RequestType.CASHLINK,
-                    appName: cashlinkRequest.appName,
-                    cashlinkAddress: cashlinkRequest.cashlinkAddress
-                            ? Nimiq.Address.fromUserFriendlyAddress(cashlinkRequest.cashlinkAddress)
+                    kind: RequestType.CREATE_CASHLINK,
+                    appName: createCashlinkRequest.appName,
+                    senderAddress: createCashlinkRequest.senderAddress
+                            ? Nimiq.Address.fromUserFriendlyAddress(createCashlinkRequest.senderAddress)
                             : undefined,
-                    senderAddress: cashlinkRequest.senderAddress
-                            ? Nimiq.Address.fromUserFriendlyAddress(cashlinkRequest.senderAddress)
-                            : undefined,
-                    senderBalance: cashlinkRequest.senderBalance,
-                } as ParsedCashlinkRequest;
+                    senderBalance: createCashlinkRequest.senderBalance,
+                } as ParsedCreateCashlinkRequest;
+            case RequestType.MANAGE_CASHLINK:
+                const manageCashlinkRequest = request as ManageCashlinkRequest;
+                return {
+                    kind: RequestType.MANAGE_CASHLINK,
+                    appName: manageCashlinkRequest.appName,
+                    cashlinkAddress: manageCashlinkRequest.cashlinkAddress
+                        ? Nimiq.Address.fromUserFriendlyAddress(manageCashlinkRequest.cashlinkAddress)
+                        : undefined,
+                } as ParsedManageCashlinkRequest;
             default:
                 return null;
         }
@@ -191,18 +194,23 @@ export class RequestParser {
                     flags: signTransactionRequest.flags,
                     validityStartHeight: signTransactionRequest.validityStartHeight,
                 } as SignTransactionRequest;
-            case RequestType.CASHLINK:
-                const cashlinkRequest = request as ParsedCashlinkRequest;
+            case RequestType.CREATE_CASHLINK:
+                const createCashlinkRequest = request as ParsedCreateCashlinkRequest;
                 return {
-                    appName: cashlinkRequest.appName,
-                    cashlinkAddress: cashlinkRequest.cashlinkAddress
-                            ? cashlinkRequest.cashlinkAddress.toUserFriendlyAddress()
+                    appName: createCashlinkRequest.appName,
+                    senderAddress: createCashlinkRequest.senderAddress
+                            ? createCashlinkRequest.senderAddress.toUserFriendlyAddress()
                             : undefined,
-                    senderAddress: cashlinkRequest.senderAddress
-                            ? cashlinkRequest.senderAddress.toUserFriendlyAddress()
-                            : undefined,
-                    senderBalance: cashlinkRequest.senderBalance,
-                } as CashlinkRequest;
+                    senderBalance: createCashlinkRequest.senderBalance,
+                } as CreateCashlinkRequest;
+            case RequestType.MANAGE_CASHLINK:
+                const manageCashlinkRequest = request as ParsedManageCashlinkRequest;
+                return {
+                    appName: manageCashlinkRequest.appName,
+                    cashlinkAddress: manageCashlinkRequest.cashlinkAddress
+                        ? manageCashlinkRequest.cashlinkAddress.toUserFriendlyAddress()
+                        : undefined,
+                } as ManageCashlinkRequest;
             case RequestType.CHECKOUT:
                 const checkoutRequest = request as ParsedCheckoutRequest;
                 return {

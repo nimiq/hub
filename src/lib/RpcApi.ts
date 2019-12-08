@@ -12,13 +12,7 @@ import {
 } from './RequestTypes';
 import { RequestParser } from './RequestParser';
 import { RpcRequest, RpcResult } from './PublicRequestTypes';
-import {
-    KeyguardClient,
-    KeyguardCommand,
-    Errors,
-    ObjectType,
-    ResultByCommand,
-} from '@nimiq/keyguard-client';
+import { Errors, KeyguardClient, KeyguardCommand, ObjectType, ResultByCommand } from '@nimiq/keyguard-client';
 import { keyguardResponseRouter, REQUEST_ERROR } from '@/router';
 import { StaticStore } from '@/lib/StaticStore';
 import { WalletStore } from './WalletStore';
@@ -64,7 +58,8 @@ export default class RpcApi {
 
         this._registerHubApis([
             RequestType.SIGN_TRANSACTION,
-            RequestType.CASHLINK,
+            RequestType.CREATE_CASHLINK,
+            RequestType.MANAGE_CASHLINK,
             RequestType.CHECKOUT,
             RequestType.ONBOARD,
             RequestType.SIGNUP,

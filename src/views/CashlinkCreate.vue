@@ -95,7 +95,7 @@ import { ERROR_CANCELED } from '../lib/Constants';
 import { State as RpcState } from '@nimiq/rpc';
 import { loadNimiq } from '../lib/Helpers';
 import { AccountInfo } from '../lib/AccountInfo';
-import { RequestType, ParsedCashlinkRequest } from '../lib/RequestTypes';
+import { RequestType, ParsedCreateCashlinkRequest } from '../lib/RequestTypes';
 import { NetworkClient } from '@nimiq/network-client';
 import { WalletStore } from '../lib/WalletStore';
 import { WalletInfo, WalletType } from '../lib/WalletInfo';
@@ -172,7 +172,7 @@ class CashlinkCreate extends Vue {
         fee: SelectBar,
     };
 
-    @Static private request!: ParsedCashlinkRequest;
+    @Static private request!: ParsedCreateCashlinkRequest;
     @Static private rpcState!: RpcState;
 
     @State private wallets!: WalletInfo[];
@@ -213,11 +213,6 @@ class CashlinkCreate extends Vue {
     }
 
     public async created() {
-        if (this.request.cashlinkAddress) {
-            this.$rpc.routerReplace(`${RequestType.CASHLINK}-manage`);
-            return;
-        }
-
         // if there are no existing accounts, redirect to Onboarding
         if (this.wallets.length === 0) {
             this.login(true);
@@ -421,7 +416,7 @@ class CashlinkCreate extends Vue {
     }
 
     private login(useReplace = false) {
-        staticStore.originalRouteName = RequestType.CASHLINK;
+        staticStore.originalRouteName = RequestType.CREATE_CASHLINK;
         if (useReplace) {
             this.$rpc.routerReplace(RequestType.ONBOARD);
         } else {

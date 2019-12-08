@@ -23,7 +23,8 @@ import {
     SimpleResult,
     ExportResult,
     SignedMessage,
-    CashlinkRequest,
+    CreateCashlinkRequest,
+    ManageCashlinkRequest,
     Cashlink,
 } from '../src/lib/PublicRequestTypes';
 
@@ -86,10 +87,17 @@ export default class HubApi<DB extends BehaviorType = BehaviorType.POPUP> { // D
      */
 
     public createCashlink<B extends BehaviorType = DB>(
-        request: Promise<CashlinkRequest> | CashlinkRequest,
+        request: Promise<CreateCashlinkRequest> | CreateCashlinkRequest,
         requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
     ): Promise<B extends BehaviorType.REDIRECT ? void : Cashlink> {
-        return this._request(requestBehavior, RequestType.CASHLINK, [request]);
+        return this._request(requestBehavior, RequestType.CREATE_CASHLINK, [request]);
+    }
+
+    public manageCashlink<B extends BehaviorType = DB>(
+        request: Promise<ManageCashlinkRequest> | ManageCashlinkRequest,
+        requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
+    ): Promise<B extends BehaviorType.REDIRECT ? void : Cashlink> {
+        return this._request(requestBehavior, RequestType.MANAGE_CASHLINK, [request]);
     }
 
     public checkout<B extends BehaviorType = DB>(

@@ -1,11 +1,11 @@
 <template>
-    <div v-if="request.kind === 'cashlink' ? !!cashlink : true" class="container">
+    <div v-if="request.kind === 'create-cashlink' ? !!cashlink : true" class="container">
         <SmallPage :class="{ 'account-details-shown': !!shownAccountDetails }">
-            <PageHeader :back-arrow="request.kind === 'checkout' || request.kind === 'cashlink'"
+            <PageHeader :back-arrow="request.kind === 'checkout' || request.kind === 'create-cashlink'"
                 @back="_back" class="blur-target">
                 {{ request.kind === 'checkout'
                     ? 'Verify Payment'
-                    : `Confirm ${request.kind === 'cashlink' ? 'Cashlink' : 'Transaction'}` }}
+                    : `Confirm ${request.kind === 'create-cashlink' ? 'Cashlink' : 'Transaction'}` }}
             </PageHeader>
 
             <div class="accounts">
@@ -90,7 +90,7 @@ import { Static } from '../lib/StaticStore';
 import { Getter } from 'vuex-class';
 import { State as RpcState } from '@nimiq/rpc';
 import {
-    ParsedCashlinkRequest,
+    ParsedCreateCashlinkRequest,
     ParsedCheckoutRequest,
     ParsedSignTransactionRequest,
     RequestType,
@@ -132,7 +132,7 @@ export default class SignTransactionLedger extends Vue {
     };
 
     @Static private rpcState!: RpcState;
-    @Static private request!: ParsedSignTransactionRequest | ParsedCheckoutRequest | ParsedCashlinkRequest;
+    @Static private request!: ParsedSignTransactionRequest | ParsedCheckoutRequest | ParsedCreateCashlinkRequest;
     @Static private cashlink?: Cashlink;
     @Getter private findWalletByAddress!: (address: string, includeContracts: boolean) => WalletInfo | undefined;
 
@@ -167,7 +167,7 @@ export default class SignTransactionLedger extends Vue {
                 label: this.rpcState.origin.split('://')[1],
                 image: checkoutRequest.shopLogoUrl,
             };
-        } else if (this.request.kind === RequestType.CASHLINK) {
+        } else if (this.request.kind === RequestType.CREATE_CASHLINK) {
             // coming from cashlink create
             if (!this.cashlink) {
                 this.$rpc.reject( new Error('Ledger Cashlink Signing expects the Cashlink to sign to be in the '
@@ -222,7 +222,7 @@ export default class SignTransactionLedger extends Vue {
                 - TX_VALIDITY_WINDOW
                 + checkoutRequest.validityDuration,
             );
-        } else if (this.request.kind === RequestType.CASHLINK) {
+        } else if (this.request.kind === RequestType.CREATE_CASHLINK) {
             if (!this.cashlink) {
                 // already handled in created
                 return;
@@ -262,7 +262,8 @@ export default class SignTransactionLedger extends Vue {
             } catch (e) {
                 // If cancelled, handle the exception. Otherwise just keep the error message displayed in ledger ui.
                 if (e.message.toLowerCase().indexOf('cancelled') !== -1 && !this.isDestroyed) {
-                    if (this.request.kind === RequestType.CHECKOUT || this.request.kind === RequestType.CASHLINK) {
+                    if (this.request.kind === RequestType.CHECKOUT
+                        || this.request.kind === RequestType.CREATE_CASHLINK) {
                         this._back(); // user might want to choose another account or address or change cashlink
                     } else {
                         this._close();
@@ -275,7 +276,7 @@ export default class SignTransactionLedger extends Vue {
         this.shownAccountDetails = null;
 
         let result;
-        if (this.request.kind === RequestType.CHECKOUT || this.request.kind === RequestType.CASHLINK) {
+        if (this.request.kind === RequestType.CHECKOUT || this.request.kind === RequestType.CREATE_CASHLINK) {
             this.state = SignTransactionLedger.State.SENDING_TRANSACTION;
             if (this.cashlink) {
                 // Store cashlink in database first to be safe when browser crashes during sending
@@ -287,12 +288,12 @@ export default class SignTransactionLedger extends Vue {
             result = await network.makeSignTransactionResult(signedTransaction);
         }
 
-        if (this.request.kind !== RequestType.CASHLINK) {
+        if (this.request.kind !== RequestType.CREATE_CASHLINK) {
             this.state = SignTransactionLedger.State.FINISHED;
             await new Promise((resolve) => setTimeout(resolve, StatusScreen.SUCCESS_REDIRECT_DELAY));
             this.$rpc.resolve(result);
         } else {
-            this.$rpc.routerReplace(`${RequestType.CASHLINK}-manage`);
+            this.$rpc.routerReplace(RequestType.MANAGE_CASHLINK);
         }
     }
 
@@ -305,7 +306,7 @@ export default class SignTransactionLedger extends Vue {
     }
 
     private get transactionData() {
-        if (this.request.kind === RequestType.CASHLINK) {
+        if (this.request.kind === RequestType.CREATE_CASHLINK) {
             return this.cashlink ? this.cashlink.message : null;
         }
 
@@ -328,7 +329,7 @@ export default class SignTransactionLedger extends Vue {
     private get statusScreenTitle() {
         switch (this.state) {
             case SignTransactionLedger.State.SENDING_TRANSACTION:
-                return this.request.kind === RequestType.CASHLINK
+                return this.request.kind === RequestType.CREATE_CASHLINK
                     ? 'Creating your Cashlink'
                     : 'Sending Transaction';
             case SignTransactionLedger.State.FINISHED:

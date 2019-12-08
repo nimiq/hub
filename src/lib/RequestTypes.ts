@@ -14,7 +14,8 @@ export enum RequestType {
     ADD_ADDRESS = 'add-address',
     RENAME = 'rename',
     CHOOSE_ADDRESS = 'choose-address',
-    CASHLINK = 'cashlink',
+    CREATE_CASHLINK = 'create-cashlink',
+    MANAGE_CASHLINK = 'manage-cashlink',
 }
 
 export interface ParsedBasicRequest {
@@ -69,15 +70,19 @@ export interface ParsedExportRequest extends ParsedSimpleRequest {
     wordsOnly?: boolean;
 }
 
-export interface ParsedCashlinkRequest extends ParsedBasicRequest {
+export interface ParsedCreateCashlinkRequest extends ParsedBasicRequest {
     senderAddress?: Nimiq.Address;
     senderBalance?: number;
-    cashlinkAddress?: Nimiq.Address;
+}
+
+export interface ParsedManageCashlinkRequest extends ParsedBasicRequest {
+    cashlinkAddress: Nimiq.Address;
 }
 
 // Discriminated Unions
 export type ParsedRpcRequest = ParsedSignTransactionRequest
-                             | ParsedCashlinkRequest
+                             | ParsedCreateCashlinkRequest
+                             | ParsedManageCashlinkRequest
                              | ParsedCheckoutRequest
                              | ParsedBasicRequest
                              | ParsedSimpleRequest

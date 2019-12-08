@@ -54,7 +54,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { Static } from '../lib/StaticStore';
-import { ParsedCashlinkRequest, RequestType } from '../lib/RequestTypes';
+import { ParsedCreateCashlinkRequest, ParsedManageCashlinkRequest, RequestType } from '../lib/RequestTypes';
 import { SmallPage, PageBody, PageFooter, Account, CheckmarkSmallIcon, Copyable } from '@nimiq/vue-components';
 import StatusScreen from '../components/StatusScreen.vue';
 import Network from '../components/Network.vue';
@@ -78,7 +78,7 @@ import { Clipboard } from '@nimiq/utils';
 export default class CashlinkManage extends Vue {
     private static readonly SHARE_PREFIX: string = 'Here is your Nimiq Cashlink!';
 
-    @Static private request!: ParsedCashlinkRequest;
+    @Static private request!: ParsedManageCashlinkRequest | ParsedCreateCashlinkRequest;
     @Static private cashlink?: Cashlink;
     @Static private keyguardRequest?: KeyguardClient.SignTransactionRequest;
     @State private keyguardResult?: KeyguardClient.SignTransactionResult;
@@ -98,7 +98,7 @@ export default class CashlinkManage extends Vue {
 
         this.isManagementRequest = !this.cashlink; // freshly created cashlink or management request?
         let storedCashlink;
-        if (this.request.cashlinkAddress) {
+        if ('cashlinkAddress' in this.request && !!this.request.cashlinkAddress) {
             storedCashlink = await CashlinkStore.Instance.get(this.request.cashlinkAddress.toUserFriendlyAddress());
             if (!storedCashlink) {
                 this.$rpc.reject(new Error(`Could not find Cashlink for address ${this.request.cashlinkAddress}.`));
@@ -108,7 +108,7 @@ export default class CashlinkManage extends Vue {
             storedCashlink = await CashlinkStore.Instance.get(this.cashlink.address.toUserFriendlyAddress());
         } else {
             this.$rpc.reject(new Error('CashlinkManage expects the cashlink to display to be specified either via '
-                + 'request.cashlinkMessage or the cashlink in the static store.'));
+                + 'request.cashlinkAddress or the cashlink in the static store.'));
             return;
         }
 
@@ -163,7 +163,7 @@ export default class CashlinkManage extends Vue {
     }
 
     private get link(): string {
-        return `${window.location.origin}/${RequestType.CASHLINK}/#${this.retrievedCashlink!.render()}`;
+        return `${window.location.origin}/cashlink/#${this.retrievedCashlink!.render()}`;
     }
 
     private close() {

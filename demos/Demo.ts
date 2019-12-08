@@ -379,9 +379,9 @@ class Demo {
 
         $ul.innerHTML = cashlinksHtml;
         document.querySelectorAll('button.cashlink-manage').forEach((element) => {
-            element.addEventListener('click', () => this.client.createCashlink({
+            element.addEventListener('click', () => this.client.manageCashlink({
                 appName: 'Hub Demos',
-                cashlinkAddress: (element as HTMLElement).dataset.cashlinkAddress,
+                cashlinkAddress: (element as HTMLElement).dataset.cashlinkAddress!,
             }));
         });
 
