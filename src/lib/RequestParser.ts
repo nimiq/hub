@@ -167,16 +167,30 @@ export class RequestParser {
                     throw new Error('Invalid Cashlink senderBalance');
                 }
 
+                const value = createCashlinkRequest.value;
+                if (value !== undefined && (!Nimiq.NumberUtils.isUint64(value) || value === 0)) {
+                    throw new Error('Malformed Cashlink value');
+                }
+
+                const message = createCashlinkRequest.message;
+                if (message !== undefined && (typeof message !== 'string'
+                    || !Nimiq.NumberUtils.isUint8(Utf8Tools.stringToUtf8ByteArray(message).length))) {
+                    throw new Error('Malformed Cashlink message');
+                }
+
                 const returnCashlink = !!createCashlinkRequest.returnCashlink;
                 if (returnCashlink && !isPriviledgedOrigin(state.origin)) {
                     throw new Error(`Origin ${state.origin} is not authorized to request returnCashlink.`);
                 }
                 const skipSharing = !!createCashlinkRequest.returnCashlink && !!createCashlinkRequest.skipSharing;
+
                 return {
                     kind: RequestType.CREATE_CASHLINK,
                     appName: createCashlinkRequest.appName,
                     senderAddress,
                     senderBalance,
+                    value,
+                    message,
                     returnCashlink,
                     skipSharing,
                 } as ParsedCreateCashlinkRequest;
@@ -218,6 +232,8 @@ export class RequestParser {
                             ? createCashlinkRequest.senderAddress.toUserFriendlyAddress()
                             : undefined,
                     senderBalance: createCashlinkRequest.senderBalance,
+                    value: createCashlinkRequest.value,
+                    message: createCashlinkRequest.message,
                     returnCashlink: createCashlinkRequest.returnCashlink,
                     skipSharing: createCashlinkRequest.skipSharing,
                 } as CreateCashlinkRequest;

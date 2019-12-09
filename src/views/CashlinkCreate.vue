@@ -58,7 +58,7 @@
                         <hr/>
                         <AmountWithFee ref="amountWithFee" :available-balance="availableBalance" v-model="liveAmountAndFee"/>
                         <div class="message-with-tooltip">
-                            <LabelInput class="message" placeholder="Add a message..." :vanishing="true" :maxBytes="64" v-model="message" />
+                            <LabelInput class="message" placeholder="Add a message..." :vanishing="true" :maxBytes="255" v-model="message" />
                             <Tooltip ref="tooltip" :reference="$refs.createCashlinkTooltipTarget">
                                 This message will be stored in the Cashlink.
                                 It won’t be part of the public Blockchain and might get lost after the Cashlink was claimed.
@@ -224,6 +224,14 @@ class CashlinkCreate extends Vue {
         if (this.request.senderAddress
             && !this.findWalletByAddress(this.request.senderAddress.toUserFriendlyAddress(), true)) {
             this.request.senderAddress = undefined;
+        }
+
+        if (this.request.value) {
+            this.liveAmountAndFee.amount = this.request.value;
+        }
+
+        if (this.request.message) {
+            this.message = this.request.message;
         }
 
         if (!NetworkClient.hasInstance()) {

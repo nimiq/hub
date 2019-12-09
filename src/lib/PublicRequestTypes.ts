@@ -147,7 +147,10 @@ export interface Cashlink {
     cashlink?: string;
 }
 
-export type CreateCashlinkRequest = BasicRequest & (
+export type CreateCashlinkRequest = BasicRequest & {
+    value?: number,
+    message?: string,
+} & (
     {} | {
         senderAddress: string,
         senderBalance?: number,

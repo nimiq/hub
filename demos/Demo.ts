@@ -76,8 +76,18 @@ class Demo {
 
         document.querySelector('button#create-cashlink').addEventListener('click', async () => {
             try {
+                let value: number | undefined =
+                    parseInt((document.querySelector('#cashlink-value') as HTMLInputElement).value);
+                value = !Number.isNaN(value) ? value : undefined;
+
+                let message: string | undefined =
+                    (document.querySelector('#cashlink-message') as HTMLInputElement).value;
+                message = !!message ? message : undefined;
+
                 let request: CreateCashlinkRequest = {
                     appName: 'Hub Demos',
+                    value,
+                    message,
                 };
 
                 const useSelectedAddress = (document.querySelector(
