@@ -12,6 +12,7 @@ import {
     ExportRequest,
     Cashlink,
     RpcResult,
+    CreateCashlinkRequest,
 } from '../src/lib/PublicRequestTypes';
 import { PopupRequestBehavior, RedirectRequestBehavior } from '../client/RequestBehavior';
 import { Utf8Tools } from '@nimiq/utils';
@@ -67,32 +68,50 @@ class Demo {
             await checkoutPopup(await generateCheckoutRequest());
         });
 
-        document.querySelector('button#create-cashlink').addEventListener('click', async () => {
-            const $radio = document.querySelector('input[type="radio"]:checked');
-            if (!$radio) {
-                alert('You have no account to create a Cashlink with, create an account first (signup)');
-                throw new Error('No account found');
-            }
-            try {
-                const result = await demo.client.createCashlink({
-                    appName: 'Hub Demos',
-                    senderAddress: ($radio as HTMLElement).dataset.address,
-                    senderBalance: 5000,
-                });
-                console.log('Result', result);
-                document.querySelector('#result').textContent = 'Cashlink created';
-            } catch (e) {
-                console.error(e);
-                document.querySelector('#result').textContent = `Error: ${e.message || e}`;
-            }
+        const $returnCashlinkCheckbox = document.querySelector('#cashlink-return-cashlink') as HTMLInputElement;
+        $returnCashlinkCheckbox.addEventListener('change', () => {
+            (document.querySelector('#cashlink-skip-sharing-container') as HTMLElement).style.display =
+                $returnCashlinkCheckbox.checked ? 'block' : 'none';
         });
-        document.querySelector('button#create-cashlink-no-sender').addEventListener('click', async () => {
+
+        document.querySelector('button#create-cashlink').addEventListener('click', async () => {
             try {
-                const result = await demo.client.createCashlink({
+                let request: CreateCashlinkRequest = {
                     appName: 'Hub Demos',
-                });
+                };
+
+                const useSelectedAddress = (document.querySelector(
+                    '#cashlink-use-selected-address') as HTMLInputElement).checked;
+                if (useSelectedAddress) {
+                    const $addressRadio = document.querySelector('input[name="address"]:checked');
+                    if (!$addressRadio) {
+                        alert('You have no account to send a cashlink from, create an account first (signup)');
+                        throw new Error('No account found');
+                    }
+                    request = {
+                        ...request,
+                        senderAddress: ($addressRadio as HTMLInputElement).dataset.address,
+                        senderBalance: 5e5, // just set an arbitrary balance for testing
+                    };
+                }
+
+                const returnCashlink = $returnCashlinkCheckbox.checked;
+                if (returnCashlink) {
+                    const skipSharing = (document.querySelector(
+                        '#cashlink-skip-sharing') as HTMLInputElement).checked;
+                    request = {
+                        ...request,
+                        returnCashlink,
+                        skipSharing,
+                    };
+                }
+
+                const result = await demo.client.createCashlink(request);
                 console.log('Result', result);
-                document.querySelector('#result').textContent = 'Cashlink created';
+                document.querySelector('#result').textContent = `Cashlink created${result.cashlink
+                    ? `: ${result.cashlink}`
+                    : ''
+                }`;
             } catch (e) {
                 console.error(e);
                 document.querySelector('#result').textContent = `Error: ${e.message || e}`;
@@ -164,7 +183,7 @@ class Demo {
         });
 
         function generateSignTransactionRequest(): SignTransactionRequest {
-            const $radio = document.querySelector('input[type="radio"]:checked');
+            const $radio = document.querySelector('input[name="address"]:checked');
             if (!$radio) {
                 alert('You have no account to send a tx from, create an account first (signup)');
                 throw new Error('No account found');
@@ -194,7 +213,7 @@ class Demo {
 
             let sender: string | undefined;
             if (useSelectedAddress) {
-                const $radio = document.querySelector('input[type="radio"]:checked');
+                const $radio = document.querySelector('input[name="address"]:checked');
                 if (!$radio) {
                     alert('You have no account to checkout with, create an account first (signup)');
                     throw new Error('No account found');
@@ -245,7 +264,7 @@ class Demo {
         document.querySelector('button#sign-message-with-account').addEventListener('click', async () => {
             const message = (document.querySelector('#message') as HTMLInputElement).value || undefined;
 
-            const $radio = document.querySelector('input[type="radio"]:checked');
+            const $radio = document.querySelector('input[name="address"]:checked');
             if (!$radio) {
                 alert('You have no account to send a tx from, create an account first (signup)');
                 throw new Error('No account found');
@@ -408,7 +427,7 @@ class Demo {
                     <li>
                         <label>
                             <input type="radio"
-                                name="sign-tx-address"
+                                name="address"
                                 data-address="${acc.address}"
                                 data-wallet-id="${wallet.accountId}">
                             ${acc.label}
@@ -424,7 +443,7 @@ class Demo {
                     <li>
                         <label>
                             <input type="radio"
-                                name="sign-tx-address"
+                                name="address"
                                 data-address="${con.address}"
                                 data-wallet-id="${wallet.accountId}">
                             <strong>Contract</strong> ${con.label}
@@ -439,8 +458,8 @@ class Demo {
         });
 
         $ul.innerHTML = html;
-        if (document.querySelector('input[type="radio"]')) {
-            (document.querySelector('input[type="radio"]') as HTMLInputElement).checked = true;
+        if (document.querySelector('input[name="address"]')) {
+            (document.querySelector('input[name="address"]') as HTMLInputElement).checked = true;
         }
         document.querySelectorAll('button.export').forEach((element) => {
             element.addEventListener('click', async () => this.export((element as HTMLElement).dataset.walletId));

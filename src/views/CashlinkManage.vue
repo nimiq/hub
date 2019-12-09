@@ -1,11 +1,11 @@
 <template>
     <div class="container pad-bottom">
-        <SmallPage class="cashlink-manage" v-if="retrievedCashlink">
+        <SmallPage class="cashlink-manage" v-if="retrievedCashlink" :class="{ 'fixed-height': this.request.skipSharing }">
             <transition name="transition-fade">
-                <StatusScreen v-if="!isTxSent" :state="state" :title="title" :status="status" lightBlue/>
+                <StatusScreen v-if="!isTxSent || this.request.skipSharing" :state="state" :title="title" :status="status" lightBlue/>
             </transition>
 
-            <PageBody>
+            <PageBody v-if="!this.request.skipSharing">
                 <transition name="transition-fade">
                     <div v-if="!isManagementRequest && isTxSent" class="nq-green cashlink-status"><CheckmarkSmallIcon/>Cashlink created</div>
                 </transition>
@@ -17,7 +17,7 @@
                     </Copyable>
                 </div>
             </PageBody>
-            <PageFooter>
+            <PageFooter v-if="!this.request.skipSharing">
                 <button class="nq-button copy" :class="copied ? 'green' : 'light-blue'" @click="copy">
                     <span v-if="copied"><CheckmarkSmallIcon /> Copied</span>
                     <span v-else>Copy</span>
@@ -156,6 +156,11 @@ export default class CashlinkManage extends Vue {
             await network.sendToNetwork(transactionToSend);
             this.isTxSent = true;
         }
+
+        if ('skipSharing' in this.request && this.request.skipSharing) {
+            this.state = StatusScreen.State.SUCCESS;
+            window.setTimeout(() => this.close(), StatusScreen.SUCCESS_REDIRECT_DELAY);
+        }
     }
 
     private get title(): string {
@@ -167,12 +172,17 @@ export default class CashlinkManage extends Vue {
     }
 
     private close() {
-        this.$rpc.resolve({
+        const result: PublicCashlink = {
             address: this.retrievedCashlink!.address.toUserFriendlyAddress(),
             message: this.retrievedCashlink!.message,
             value: this.retrievedCashlink!.value,
             status: this.retrievedCashlink!.state,
-        } as PublicCashlink);
+        };
+        if ('returnCashlink' in this.request && this.request.returnCashlink) {
+            // exposes the cashlink private key to the caller
+            result.cashlink = this.link;
+        }
+        this.$rpc.resolve(result);
     }
 
     private copy() {
@@ -211,7 +221,11 @@ export default class CashlinkManage extends Vue {
 <style scoped>
     .cashlink-manage {
         position: relative;
+    }
+
+    .cashlink-manage:not(.fixed-height) {
         height: auto;
+        min-height: 70.5rem;
     }
 
     .status-screen {

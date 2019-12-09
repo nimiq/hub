@@ -110,9 +110,21 @@
 
 <div class="request">
     <h2>Cashlink</h2>
-    <br/>
-    <button id="create-cashlink">create Cashlink using selected Address</button>
-    <button id="create-cashlink-no-sender">create Cashlink</button>
+    <br>
+    <div>
+        <input id="cashlink-use-selected-address" type="checkbox" checked>
+        <label for="cashlink-use-selected-address">Selected address as sender</label>
+    </div>
+    <div>
+        <input id="cashlink-return-cashlink" type="checkbox">
+        <label for="cashlink-return-cashlink">Return cashlink</label>
+    </div>
+    <div id="cashlink-skip-sharing-container" style="display: none">
+        <input id="cashlink-skip-sharing" type="checkbox" checked>
+        <label for="cashlink-skip-sharing">Skip sharing</label>
+    </div>
+    <br>
+    <button id="create-cashlink">Create Cashlink</button>
     <ul id="cashlinks"></ul>
 </div>
 

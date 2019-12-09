@@ -1,4 +1,5 @@
 import { TX_VALIDITY_WINDOW, TX_MIN_VALIDITY_DURATION } from './Constants';
+import { isPriviledgedOrigin } from '@/lib/Helpers';
 import { State } from '@nimiq/rpc';
 import {
     BasicRequest,
@@ -150,19 +151,34 @@ export class RequestParser {
                     kind: RequestType.SIGN_MESSAGE,
                     appName: signMessageRequest.appName,
                     signer: signMessageRequest.signer
-                            ? Nimiq.Address.fromUserFriendlyAddress(signMessageRequest.signer)
-                            : undefined,
+                        ? Nimiq.Address.fromUserFriendlyAddress(signMessageRequest.signer)
+                        : undefined,
                     message: signMessageRequest.message,
                 } as ParsedSignMessageRequest;
             case RequestType.CREATE_CASHLINK:
                 const createCashlinkRequest = request as CreateCashlinkRequest;
+                const senderAddress = 'senderAddress' in createCashlinkRequest
+                    ? Nimiq.Address.fromUserFriendlyAddress(createCashlinkRequest.senderAddress)
+                    : undefined;
+                const senderBalance = 'senderBalance' in createCashlinkRequest
+                    ? createCashlinkRequest.senderBalance
+                    : undefined;
+                if (senderBalance !== undefined && !Nimiq.NumberUtils.isUint64(senderBalance)) {
+                    throw new Error('Invalid Cashlink senderBalance');
+                }
+
+                const returnCashlink = !!createCashlinkRequest.returnCashlink;
+                if (returnCashlink && !isPriviledgedOrigin(state.origin)) {
+                    throw new Error(`Origin ${state.origin} is not authorized to request returnCashlink.`);
+                }
+                const skipSharing = !!createCashlinkRequest.returnCashlink && !!createCashlinkRequest.skipSharing;
                 return {
                     kind: RequestType.CREATE_CASHLINK,
                     appName: createCashlinkRequest.appName,
-                    senderAddress: createCashlinkRequest.senderAddress
-                            ? Nimiq.Address.fromUserFriendlyAddress(createCashlinkRequest.senderAddress)
-                            : undefined,
-                    senderBalance: createCashlinkRequest.senderBalance,
+                    senderAddress,
+                    senderBalance,
+                    returnCashlink,
+                    skipSharing,
                 } as ParsedCreateCashlinkRequest;
             case RequestType.MANAGE_CASHLINK:
                 const manageCashlinkRequest = request as ManageCashlinkRequest;
@@ -202,6 +218,8 @@ export class RequestParser {
                             ? createCashlinkRequest.senderAddress.toUserFriendlyAddress()
                             : undefined,
                     senderBalance: createCashlinkRequest.senderBalance,
+                    returnCashlink: createCashlinkRequest.returnCashlink,
+                    skipSharing: createCashlinkRequest.skipSharing,
                 } as CreateCashlinkRequest;
             case RequestType.MANAGE_CASHLINK:
                 const manageCashlinkRequest = request as ParsedManageCashlinkRequest;

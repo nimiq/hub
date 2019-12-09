@@ -43,3 +43,7 @@ export const loadNimiq = async () => {
         }
     }
 };
+
+export function isPriviledgedOrigin(origin: string) {
+    return Config.privilegedOrigins.includes(origin) || Config.privilegedOrigins.includes('*');
+}

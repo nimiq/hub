@@ -144,12 +144,21 @@ export interface Cashlink {
     message: string;
     value: number;
     status: CashlinkState;
+    cashlink?: string;
 }
 
-export interface CreateCashlinkRequest extends BasicRequest {
-    senderAddress?: string;
-    senderBalance?: number;
-}
+export type CreateCashlinkRequest = BasicRequest & (
+    {} | {
+        senderAddress: string,
+        senderBalance?: number,
+    }
+) & ({
+        returnCashlink?: false,
+    } | {
+        returnCashlink: true,
+        skipSharing?: boolean,
+    }
+);
 
 export interface ManageCashlinkRequest extends BasicRequest {
     cashlinkAddress: string;

@@ -73,6 +73,8 @@ export interface ParsedExportRequest extends ParsedSimpleRequest {
 export interface ParsedCreateCashlinkRequest extends ParsedBasicRequest {
     senderAddress?: Nimiq.Address;
     senderBalance?: number;
+    returnCashlink: boolean;
+    skipSharing: boolean;
 }
 
 export interface ParsedManageCashlinkRequest extends ParsedBasicRequest {
