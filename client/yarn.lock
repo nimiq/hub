@@ -18,6 +18,11 @@
     esutils "^2.0.2"
     js-tokens "^4.0.0"
 
+"@nimiq/core-web@^1.5.3":
+  version "1.5.3"
+  resolved "https://registry.yarnpkg.com/@nimiq/core-web/-/core-web-1.5.3.tgz#f0a4de59394f210f2c2d9cda8ee35c716847d40e"
+  integrity sha512-W66SS9n3ygYgD52r1GJr1WtYYOkcZsqdtMmDCEwDvkrmeARnHs2sAvj77Wt4PQG8JA7GwK5svIJr6rGccCaekw==
+
 "@nimiq/rpc@^0.3.0":
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/@nimiq/rpc/-/rpc-0.3.0.tgz#654c05acccc193b7d79fb09b2faf2114945ff872"
@@ -106,6 +111,11 @@ base@^0.11.1:
     isobject "^3.0.1"
     mixin-deep "^1.2.0"
     pascalcase "^0.1.1"
+
+big-integer@^1.6.48:
+  version "1.6.48"
+  resolved "https://registry.yarnpkg.com/big-integer/-/big-integer-1.6.48.tgz#8fd88bd1632cba4a1c8c3e3d7159f08bb95b4b9e"
+  integrity sha512-j51egjPa7/i+RdiRuJbPdJ2FIUYYPhvYLjzoYbcMMm62ooO6F94fETG4MTs46zPAF9Brs04OajboA/qTGuz78w==
 
 brace-expansion@^1.1.7:
   version "1.1.11"

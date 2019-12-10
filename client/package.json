@@ -7,8 +7,11 @@
   "author": "Nimiq Network Ltd.",
   "license": "Apache-2.0",
   "private": false,
+  "types": "types/index.d.ts",
   "dependencies": {
-    "@nimiq/rpc": "^0.3.0"
+    "@nimiq/core-web": "^1.5.3",
+    "@nimiq/rpc": "^0.3.0",
+    "big-integer": "^1.6.48"
   },
   "devDependencies": {
     "rollup": "^1.12.1",
