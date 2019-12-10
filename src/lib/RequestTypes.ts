@@ -1,3 +1,5 @@
+import { CashlinkTheme } from './PublicRequestTypes';
+
 export enum RequestType {
     LIST = 'list',
     LIST_CASHLINKS = 'list-cashlinks',
@@ -75,6 +77,7 @@ export interface ParsedCreateCashlinkRequest extends ParsedBasicRequest {
     senderBalance?: number;
     value?: number;
     message?: string;
+    theme: CashlinkTheme;
     returnCashlink: boolean;
     skipSharing: boolean;
 }

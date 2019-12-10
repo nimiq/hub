@@ -1,32 +1,33 @@
-import { TX_VALIDITY_WINDOW, TX_MIN_VALIDITY_DURATION } from './Constants';
+import { TX_MIN_VALIDITY_DURATION, TX_VALIDITY_WINDOW } from './Constants';
 import { isPriviledgedOrigin } from '@/lib/Helpers';
 import { State } from '@nimiq/rpc';
 import {
     BasicRequest,
-    CreateCashlinkRequest,
-    ManageCashlinkRequest,
-    SimpleRequest,
-    OnboardRequest,
-    SignTransactionRequest,
+    CashlinkTheme,
     CheckoutRequest,
-    SignMessageRequest,
-    RenameRequest,
+    CreateCashlinkRequest,
     ExportRequest,
+    ManageCashlinkRequest,
+    OnboardRequest,
+    RenameRequest,
     RpcRequest,
+    SignMessageRequest,
+    SignTransactionRequest,
+    SimpleRequest,
 } from './PublicRequestTypes';
 import {
-    RequestType,
     ParsedBasicRequest,
-    ParsedCreateCashlinkRequest,
-    ParsedManageCashlinkRequest,
-    ParsedSimpleRequest,
-    ParsedOnboardRequest,
-    ParsedSignTransactionRequest,
     ParsedCheckoutRequest,
-    ParsedSignMessageRequest,
-    ParsedRenameRequest,
+    ParsedCreateCashlinkRequest,
     ParsedExportRequest,
+    ParsedManageCashlinkRequest,
+    ParsedOnboardRequest,
+    ParsedRenameRequest,
     ParsedRpcRequest,
+    ParsedSignMessageRequest,
+    ParsedSignTransactionRequest,
+    ParsedSimpleRequest,
+    RequestType,
 } from './RequestTypes';
 import { Utf8Tools } from '@nimiq/utils';
 
@@ -186,6 +187,14 @@ export class RequestParser {
                     message = truncated;
                 }
 
+                const theme = createCashlinkRequest.theme || CashlinkTheme.UNSPECIFIED;
+                if (!Object.values(CashlinkTheme).includes(theme) || !Nimiq.NumberUtils.isUint8(theme)) {
+                    // Also checking whether theme is a valid Uint8 to catch ids that are potentially to high in the
+                    // CashlinkTheme enum and to filter out values that are actually the enum keys that have been added
+                    // by typescript for reverse mapping.
+                    throw new Error('Invalid Cashlink theme');
+                }
+
                 const returnCashlink = !!createCashlinkRequest.returnCashlink;
                 if (returnCashlink && !isPriviledgedOrigin(state.origin)) {
                     throw new Error(`Origin ${state.origin} is not authorized to request returnCashlink.`);
@@ -199,6 +208,7 @@ export class RequestParser {
                     senderBalance,
                     value,
                     message,
+                    theme,
                     returnCashlink,
                     skipSharing,
                 } as ParsedCreateCashlinkRequest;
@@ -243,6 +253,7 @@ export class RequestParser {
                     senderBalance: createCashlinkRequest.senderBalance,
                     value: createCashlinkRequest.value,
                     message: createCashlinkRequest.message,
+                    theme: createCashlinkRequest.theme,
                     returnCashlink: createCashlinkRequest.returnCashlink,
                     skipSharing: createCashlinkRequest.skipSharing,
                 } as CreateCashlinkRequest;

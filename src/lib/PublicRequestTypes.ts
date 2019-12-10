@@ -1,15 +1,6 @@
 import { WalletType } from './WalletInfo';
 import { RequestType } from './RequestTypes';
 
-export enum CashlinkState {
-    UNKNOWN = -1,
-    UNCHARGED = 0,
-    CHARGING = 1,
-    UNCLAIMED = 2,
-    CLAIMING = 3,
-    CLAIMED = 4,
-}
-
 export interface BasicRequest {
     appName: string;
 }
@@ -139,16 +130,32 @@ export interface RenameRequest extends SimpleRequest {
     address?: string; // Userfriendly address
 }
 
+export enum CashlinkState {
+    UNKNOWN = -1,
+    UNCHARGED = 0,
+    CHARGING = 1,
+    UNCLAIMED = 2,
+    CLAIMING = 3,
+    CLAIMED = 4,
+}
+
+export enum CashlinkTheme {
+    UNSPECIFIED, // Equivalent to theme being omitted
+    STANDARD,
+}
+
 export interface Cashlink {
     address: string; // Userfriendly address
     message: string;
     value: number;
     status: CashlinkState;
+    theme: CashlinkTheme;
     cashlink?: string;
 }
 
 export type CreateCashlinkRequest = BasicRequest & {
     value?: number,
+    theme?: CashlinkTheme,
 } & (
     {} | {
         message: string,

@@ -13,6 +13,7 @@ import {
     Cashlink,
     RpcResult,
     CreateCashlinkRequest,
+    CashlinkTheme,
 } from '../src/lib/PublicRequestTypes';
 import { PopupRequestBehavior, RedirectRequestBehavior } from '../client/RequestBehavior';
 import { Utf8Tools } from '@nimiq/utils';
@@ -74,6 +75,16 @@ class Demo {
                 $returnCashlinkCheckbox.checked ? 'block' : 'none';
         });
 
+        const themeSelector = document.querySelector('#cashlink-theme') as HTMLSelectElement;
+        Object.entries(CashlinkTheme).forEach(([themeName, themeId]) => {
+            // filter out entries added by typescript for reverse mapping
+            if (typeof themeId !== 'number') return;
+            const option = document.createElement('option');
+            option.text = themeName;
+            option.value = themeId.toString();
+            themeSelector.add(option);
+        });
+
         document.querySelector('button#create-cashlink').addEventListener('click', async () => {
             try {
                 let value: number | undefined =
@@ -87,11 +98,15 @@ class Demo {
                 const autoTruncateMessage: boolean =
                     (document.querySelector('#cashlink-auto-truncate-message') as HTMLInputElement).checked;
 
+                let theme: CashlinkTheme | undefined = Number.parseInt(themeSelector.value);
+                theme = !Number.isNaN(theme) ? theme : undefined;
+
                 let request: CreateCashlinkRequest = {
                     appName: 'Hub Demos',
                     value,
                     message,
                     autoTruncateMessage,
+                    theme,
                 };
 
                 const useSelectedAddress = (document.querySelector(

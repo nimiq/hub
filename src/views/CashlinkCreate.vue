@@ -388,6 +388,9 @@ class CashlinkCreate extends Vue {
         cashlink.value = this.liveAmountAndFee.amount;
         cashlink.fee = this.fee;
         cashlink.message = this.message;
+        if (this.request.theme) {
+            cashlink.theme = this.request.theme;
+        }
         const senderAccount = this.findWalletByAddress(this.accountOrContractInfo!.userFriendlyAddress, true)!;
 
         // proceed to transaction signing

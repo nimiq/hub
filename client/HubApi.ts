@@ -26,11 +26,13 @@ import {
     CreateCashlinkRequest,
     ManageCashlinkRequest,
     Cashlink,
+    CashlinkTheme,
 } from '../src/lib/PublicRequestTypes';
 
 export default class HubApi<DB extends BehaviorType = BehaviorType.POPUP> { // DB: Default Behavior
     public static readonly RequestType = RequestType;
     public static readonly RedirectRequestBehavior = RedirectRequestBehavior;
+    public static readonly CashlinkTheme = CashlinkTheme;
     public static readonly MSG_PREFIX = '\x16Nimiq Signed Message:\n';
 
     private static get DEFAULT_ENDPOINT() {

@@ -4,9 +4,10 @@ import { WalletStore } from '@/lib/WalletStore';
 import { WalletInfoEntry, WalletInfo } from '@/lib/WalletInfo';
 import CookieJar from '@/lib/CookieJar';
 import Config from 'config';
-import { Account, Cashlink } from './lib/PublicRequestTypes';
-import { RequestType } from './lib/RequestTypes';
+import { Account, Cashlink as PublicCashlink } from './lib/PublicRequestTypes';
+import Cashlink from './lib/Cashlink';
 import { CashlinkStore } from './lib/CashlinkStore';
+import { RequestType } from './lib/RequestTypes';
 
 class IFrameApi {
     public static run() {
@@ -48,7 +49,7 @@ class IFrameApi {
         return [];
     }
 
-    public static async cashlinks(): Promise<Cashlink[]> {
+    public static async cashlinks(): Promise<PublicCashlink[]> {
         // Cashlinks are not stored in cookies on iOS/Safari, because they would take up too much space.
         // TODO: Use Storage Access API on iOS/Safari to access IndexedDB in the iframe.
         if (BrowserDetection.isIOS() || BrowserDetection.isSafari()) return [];
@@ -59,6 +60,7 @@ class IFrameApi {
             message: cashlink.message,
             value: cashlink.value,
             status: cashlink.state,
+            theme: cashlink.theme || Cashlink.DEFAULT_THEME,
         }));
     }
 }
