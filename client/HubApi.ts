@@ -26,12 +26,17 @@ import {
     CreateCashlinkRequest,
     ManageCashlinkRequest,
     Cashlink,
+    CashlinkState,
     CashlinkTheme,
 } from '../src/lib/PublicRequestTypes';
 
 export default class HubApi<DB extends BehaviorType = BehaviorType.POPUP> { // DB: Default Behavior
+    // Expose request behaviors and enums. Not exporting them via regular exports to avoid that users of the umd build
+    // have to use bundle['default'] to access the default export.
     public static readonly RequestType = RequestType;
     public static readonly RedirectRequestBehavior = RedirectRequestBehavior;
+    public static readonly PopupRequestBehavior = PopupRequestBehavior;
+    public static readonly CashlinkState = CashlinkState;
     public static readonly CashlinkTheme = CashlinkTheme;
     public static readonly MSG_PREFIX = '\x16Nimiq Signed Message:\n';
 
