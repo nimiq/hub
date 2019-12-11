@@ -84,10 +84,14 @@ class Demo {
                     (document.querySelector('#cashlink-message') as HTMLInputElement).value;
                 message = !!message ? message : undefined;
 
+                const autoTruncateMessage: boolean =
+                    (document.querySelector('#cashlink-auto-truncate-message') as HTMLInputElement).checked;
+
                 let request: CreateCashlinkRequest = {
                     appName: 'Hub Demos',
                     value,
                     message,
+                    autoTruncateMessage,
                 };
 
                 const useSelectedAddress = (document.querySelector(

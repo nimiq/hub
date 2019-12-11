@@ -471,15 +471,19 @@ describe('CookieJar', () => {
     });
 
     it('can correctly cut overlong labels', () => {
-        const LABEL_1 = 'Standard Address'; // 16 chars, 16 byte
-        const LABEL_2 = 'Very very very very very very very very very very very long ASCII label'; // 71 chars, 71 byte
-        const LABEL_3 = 'Label ❤ with ❤ multi 🙉 byte 🙉 characters that is very long indeed'; // 67 chars, 75 byte
-        const LABEL_4 = 'Label with a multibyte character at the max length position: 🙉'; // 63 chars, 65 byte
+        // 16 chars, 16 byte
+        const LABEL_1 = 'Standard Address';
+        // 71 chars, 71 byte
+        const LABEL_2 = 'Very very very very very very very very very very very long ASCII label';
+        // 65 symbols, 67 chars (the monkeys are astral symbols consisting of 2 surrogate pairs), 75 byte
+        const LABEL_3 = 'Label ❤ with ❤ multi 🙉 byte 🙉 characters that is very long indeed';
+        // 60 symbols, 62 chars, 66 byte
+        const LABEL_4 = 'Label with a multibyte character at the max len position: 🙉🙉';
 
         const CUT_LABEL_1 = 'Standard Address'; // 16 byte
-        const CUT_LABEL_2 = 'Very very very very very very very very very very very long ASC'; // 63 byte
-        const CUT_LABEL_3 = 'Label ❤ with ❤ multi 🙉 byte 🙉 characters that is very'; // 63 byte
-        const CUT_LABEL_4 = 'Label with a multibyte character at the max length position: '; // 61 byte
+        const CUT_LABEL_2 = 'Very very very very very very very very very very very long …'; // 63 byte
+        const CUT_LABEL_3 = 'Label ❤ with ❤ multi 🙉 byte 🙉 characters that is v…'; // 63 byte
+        const CUT_LABEL_4 = 'Label with a multibyte character at the max len position: …'; // 61 byte
 
         expect(Utf8Tools.utf8ByteArrayToString(CookieJar.encodeAndcutLabel(LABEL_1))).toEqual(CUT_LABEL_1);
         expect(Utf8Tools.utf8ByteArrayToString(CookieJar.encodeAndcutLabel(LABEL_2))).toEqual(CUT_LABEL_2);

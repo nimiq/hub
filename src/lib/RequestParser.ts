@@ -172,10 +172,18 @@ export class RequestParser {
                     throw new Error('Malformed Cashlink value');
                 }
 
-                const message = createCashlinkRequest.message;
-                if (message !== undefined && (typeof message !== 'string'
-                    || !Nimiq.NumberUtils.isUint8(Utf8Tools.stringToUtf8ByteArray(message).length))) {
-                    throw new Error('Malformed Cashlink message');
+                let message = 'message' in createCashlinkRequest ? createCashlinkRequest.message : undefined;
+                if (message !== undefined) {
+                    if (typeof message !== 'string') {
+                        throw new Error('Cashlink message must be a string');
+                    }
+                    const { result: truncated, didTruncate } = Utf8Tools.truncateToUtf8ByteLength(message, 255);
+                    if (!('autoTruncateMessage' in createCashlinkRequest && createCashlinkRequest.autoTruncateMessage)
+                        && didTruncate) {
+                        throw new Error('Cashlink must be shorter than 256 bytes or autoTruncateMessage must be '
+                            + 'enabled.');
+                    }
+                    message = truncated;
                 }
 
                 const returnCashlink = !!createCashlinkRequest.returnCashlink;
@@ -226,6 +234,7 @@ export class RequestParser {
                 } as SignTransactionRequest;
             case RequestType.CREATE_CASHLINK:
                 const createCashlinkRequest = request as ParsedCreateCashlinkRequest;
+                // Note that there is no need to export autoTruncateMessage as the message already got truncated
                 return {
                     appName: createCashlinkRequest.appName,
                     senderAddress: createCashlinkRequest.senderAddress

@@ -1,7 +1,6 @@
 // tslint:disable no-bitwise no-shadowed-variable
 
-import { WalletInfoEntry, WalletType, WalletInfo } from './WalletInfo';
-import { Utf8Tools } from '@nimiq/utils';
+import { WalletInfoEntry, WalletType } from './WalletInfo';
 import {
     LABEL_MAX_LENGTH,
     ACCOUNT_DEFAULT_LABEL_LEDGER,
@@ -11,6 +10,7 @@ import {
 import LabelingMachine from './LabelingMachine';
 import { ContractInfoEntry, VestingContractInfoEntry } from './ContractInfo';
 import { AccountInfoEntry } from './AccountInfo';
+import { Utf8Tools } from '@nimiq/utils';
 
 class CookieJar {
     public static readonly VERSION = 3;
@@ -100,18 +100,13 @@ class CookieJar {
     }
 
     public static encodeAndcutLabel(label: string): Uint8Array {
-        let labelBytes = Utf8Tools.stringToUtf8ByteArray(label);
-
-        if (labelBytes.length <= LABEL_MAX_LENGTH) return labelBytes;
-
-        // Don't output warning in NodeJS environment (when running tests)
-        if (typeof global === 'undefined') console.warn('Label will be shortened for cookie:', label);
-
-        labelBytes = labelBytes.slice(0, LABEL_MAX_LENGTH);
-
-        // Cut off last byte until byte array is valid utf-8
-        while (!Utf8Tools.isValidUtf8(labelBytes)) labelBytes = labelBytes.slice(0, labelBytes.length - 1);
-        return labelBytes;
+        const labelBytes = Utf8Tools.stringToUtf8ByteArray(label);
+        const { result, didTruncate } = Utf8Tools.truncateToUtf8ByteLength(labelBytes, LABEL_MAX_LENGTH);
+        if (didTruncate && typeof global === 'undefined') {
+            // Warn when not running in NodeJS environment (running tests)
+            console.warn('Label was shortened for cookie:', label);
+        }
+        return result;
     }
 
     private static checkWalletDefaultLabel(firstAddress: Uint8Array, label: string, type: WalletType): string {
