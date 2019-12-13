@@ -57,6 +57,7 @@ class IFrameApi {
         return cashlinksEntries.map((cashlink) => ({
             address: cashlink.address,
             message: cashlink.message,
+            value: cashlink.value,
             status: cashlink.state,
         }));
     }

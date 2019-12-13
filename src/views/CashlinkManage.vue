@@ -170,6 +170,7 @@ export default class CashlinkManage extends Vue {
         this.$rpc.resolve({
             address: this.retrievedCashlink!.address.toUserFriendlyAddress(),
             message: this.retrievedCashlink!.message,
+            value: this.retrievedCashlink!.value,
             status: this.retrievedCashlink!.state,
         } as PublicCashlink);
     }
