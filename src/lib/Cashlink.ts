@@ -71,6 +71,10 @@ class Cashlink {
         this._theme = theme;
     }
 
+    get isThemeEncodedInLink() {
+        return !!this._theme;
+    }
+
     set networkClient(client: NetworkClient) {
         this._networkClientResolver(client);
     }
@@ -475,7 +479,7 @@ namespace Cashlink {
         STATE_CHANGE = 'state-change',
     }
 
-    export const DEFAULT_THEME = CashlinkTheme.STANDARD;
+    export const DEFAULT_THEME = CashlinkTheme.CHRISTMAS;
 }
 
 export default Cashlink;

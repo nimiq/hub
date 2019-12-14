@@ -142,6 +142,7 @@ export enum CashlinkState {
 export enum CashlinkTheme {
     UNSPECIFIED, // Equivalent to theme being omitted
     STANDARD,
+    CHRISTMAS,
 }
 
 export interface Cashlink {
