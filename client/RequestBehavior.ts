@@ -132,7 +132,7 @@ export class PopupRequestBehavior extends RequestBehavior<BehaviorType.POPUP> {
         const overlay = createElement('div');
         overlay.id = 'nimiq-hub-overlay';
         const overlayStyle = overlay.style;
-        overlayStyle.position = 'absolute';
+        overlayStyle.position = 'fixed';
         overlayStyle.top = '0';
         overlayStyle.right = '0';
         overlayStyle.bottom = '0';
