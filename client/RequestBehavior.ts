@@ -97,9 +97,9 @@ export class PopupRequestBehavior extends RequestBehavior<BehaviorType.POPUP> {
         const $overlay = this.appendOverlay(popup);
 
         const client = new PostMessageRpcClient(popup, origin);
-        await client.init();
 
         try {
+            await client.init();
             return await client.call(command, ...(await Promise.all(args)));
         } catch (e) {
             throw e;
