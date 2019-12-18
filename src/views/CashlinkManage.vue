@@ -131,6 +131,9 @@ export default class CashlinkManage extends Vue {
             network.on(NetworkClient.Events.TRANSACTION_PENDING,
                 () => this.status = 'Awaiting receipt confirmation...');
 
+            // Store cashlink in database first to be safe when browser crashes during sending
+            await CashlinkStore.Instance.put(this.retrievedCashlink!);
+
             network.relayTransaction({
                 sender: new Nimiq.Address(this.keyguardRequest.sender).toUserFriendlyAddress(),
                 senderPubKey: this.keyguardResult.publicKey,
@@ -143,7 +146,6 @@ export default class CashlinkManage extends Vue {
             });
 
             network.on(NetworkClient.Events.TRANSACTION_RELAYED, async (txInfo: any) => {
-                await CashlinkStore.Instance.put(this.retrievedCashlink!);
                 this.state = StatusScreen.State.SUCCESS;
                 window.setTimeout(() => this.isTxSent = true, StatusScreen.SUCCESS_REDIRECT_DELAY);
             });
