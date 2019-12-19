@@ -32,7 +32,7 @@ export default class CheckoutServerApi {
             // Retrieve the data from state if already fetched
             fetchedData = history.state[currency];
         } else {
-            const requestData = new FormData();
+            const requestData = new URLSearchParams();
             requestData.append('currency', currency);
             requestData.append('command', 'set_currency');
             fetchedData = await CheckoutServerApi._fetchData(endPoint, requestData, csrfToken);
@@ -55,7 +55,7 @@ export default class CheckoutServerApi {
         currency: C,
         csrfToken: string,
     ): Promise<GetStateResponse> {
-        const data = new FormData();
+        const data = new URLSearchParams();
         data.append('currency', currency);
         data.append('command', 'get_state');
         if (CheckoutServerApi._getStatePromises.has(currency)) {
@@ -82,13 +82,13 @@ export default class CheckoutServerApi {
 
     private static _getStatePromises = new Map<Currency, Promise<GetStateResponse>>();
 
-    private static async _fetchData(endPoint: string, requestData: FormData, csrfToken: string): Promise<any> {
+    private static async _fetchData(endPoint: string, requestData: URLSearchParams, csrfToken: string): Promise<any> {
         requestData.append('csrf', csrfToken);
         const headers = new Headers();
         const init: RequestInit = {
             method: 'POST',
             headers,
-            body:  requestData,
+            body: requestData,
             mode: 'cors',
             cache: 'default',
             credentials: 'include',
