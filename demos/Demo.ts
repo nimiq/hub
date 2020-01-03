@@ -39,7 +39,7 @@ class Demo {
             RequestType.SIGNUP,
             RequestType.SIGN_MESSAGE,
             RequestType.SIGN_TRANSACTION,
-        ].forEach(requestType => {
+        ].forEach((requestType) => {
             demo.client.on(requestType, (result: RpcResult, state: State) => {
                 console.log('Hub result', result);
                 console.log('State', state);
@@ -55,7 +55,7 @@ class Demo {
         demo.client.checkRedirectResponse();
 
         document.querySelectorAll('input[name="popup-vs-redirect"]').forEach((input: HTMLInputElement) => {
-            input.addEventListener('change', event => {
+            input.addEventListener('change', (event) => {
                 const value = (event.target as HTMLInputElement).value;
                 demo.setClientBehavior(value);
             });
@@ -68,11 +68,15 @@ class Demo {
         });
 
         document.querySelector('button#create-cashlink').addEventListener('click', async () => {
+            const $radio = document.querySelector('input[type="radio"]:checked');
+            if (!$radio) {
+                alert('You have no account to create a Cashlink with, create an account first (signup)');
+                throw new Error('No account found');
+            }
             try {
-                const $radio = document.querySelector('input[type="radio"]:checked');
                 const result = await demo.client.createCashlink({
-                    appName: 'Accounts Demos',
-                    senderAddress: $radio.getAttribute('data-address'),
+                    appName: 'Hub Demos',
+                    senderAddress: ($radio as HTMLElement).dataset.address,
                     senderBalance: 5000,
                 });
                 console.log('Result', result);
@@ -85,7 +89,7 @@ class Demo {
         document.querySelector('button#create-cashlink-no-sender').addEventListener('click', async () => {
             try {
                 const result = await demo.client.createCashlink({
-                    appName: 'Accounts Demos',
+                    appName: 'Hub Demos',
                 });
                 console.log('Result', result);
                 document.querySelector('#result').textContent = 'Cashlink created';
@@ -101,7 +105,7 @@ class Demo {
 
         document.querySelector('button#choose-address').addEventListener('click', async () => {
             try {
-                const result = await demo.client.chooseAddress({ appName: 'Accounts Demos' });
+                const result = await demo.client.chooseAddress({ appName: 'Hub Demos' });
                 console.log('Result', result);
                 document.querySelector('#result').textContent = 'Address was chosen';
             } catch (e) {
@@ -128,7 +132,7 @@ class Demo {
 
         document.querySelector('button#onboard').addEventListener('click', async () => {
             try {
-                const result = await demo.client.onboard({ appName: 'Accounts Demos' });
+                const result = await demo.client.onboard({ appName: 'Hub Demos' });
                 console.log('Result', result);
                 document.querySelector('#result').textContent = 'Onboarding completed!';
             } catch (e) {
@@ -139,7 +143,7 @@ class Demo {
 
         document.querySelector('button#create').addEventListener('click', async () => {
             try {
-                const result = await demo.client.signup({ appName: 'Accounts Demos' });
+                const result = await demo.client.signup({ appName: 'Hub Demos' });
                 console.log('Result', result);
                 document.querySelector('#result').textContent = 'New account & address created';
             } catch (e) {
@@ -150,7 +154,7 @@ class Demo {
 
         document.querySelector('button#login').addEventListener('click', async () => {
             try {
-                const result = await demo.client.login({ appName: 'Accounts Demos' });
+                const result = await demo.client.login({ appName: 'Hub Demos' });
                 console.log('Result', result);
                 document.querySelector('#result').textContent = 'Account imported';
             } catch (e) {
@@ -165,48 +169,49 @@ class Demo {
                 alert('You have no account to send a tx from, create an account first (signup)');
                 throw new Error('No account found');
             }
-            const sender = $radio.getAttribute('data-address');
-            const value = parseInt((document.querySelector('#value') as HTMLInputElement).value) || 1337;
-            const fee = parseInt((document.querySelector('#fee') as HTMLInputElement).value) || 0;
+            const sender = ($radio as HTMLElement).dataset.address;
+            const value = parseInt((document.querySelector('#value') as HTMLInputElement).value, 10) || 1337;
+            const fee = parseInt((document.querySelector('#fee') as HTMLInputElement).value, 10) || 0;
             const txData = (document.querySelector('#data') as HTMLInputElement).value || '';
-            const validityStartHeight = (document.querySelector('#validitystartheight') as HTMLInputElement).value || '1234';
+            const validityStartHeight = (document.querySelector('#validitystartheight') as HTMLInputElement).value
+                || '1234';
 
             return {
-                appName: 'Accounts Demos',
+                appName: 'Hub Demos',
                 sender,
                 recipient: 'NQ63 U7XG 1YYE D6FA SXGG 3F5H X403 NBKN JLDU',
                 value,
                 fee,
                 extraData: Utf8Tools.stringToUtf8ByteArray(txData),
-                validityStartHeight: parseInt(validityStartHeight),
+                validityStartHeight: parseInt(validityStartHeight, 10),
             };
         }
 
         async function generateCheckoutRequest(useSelectedAddress?: boolean): Promise<CheckoutRequest> {
-            const value = parseInt((document.querySelector('#value') as HTMLInputElement).value) || 1337;
-            const txFee = parseInt((document.querySelector('#fee') as HTMLInputElement).value) || 0;
+            const value = parseInt((document.querySelector('#value') as HTMLInputElement).value, 10) || 1337;
+            const txFee = parseInt((document.querySelector('#fee') as HTMLInputElement).value, 10) || 0;
             const txData = (document.querySelector('#data') as HTMLInputElement).value || '';
 
-            let sender: string | undefined = undefined;
+            let sender: string | undefined;
             if (useSelectedAddress) {
                 const $radio = document.querySelector('input[type="radio"]:checked');
                 if (!$radio) {
                     alert('You have no account to checkout with, create an account first (signup)');
                     throw new Error('No account found');
                 }
-                sender = $radio.getAttribute('data-address');
+                sender = ($radio as HTMLElement).dataset.address;
             }
             const forceSender = (document.getElementById('checkout-force-sender') as HTMLInputElement).checked;
 
             return {
-                appName: 'Accounts Demos',
+                appName: 'Hub Demos',
                 shopLogoUrl: `${location.origin}/nimiq.png`,
                 sender,
                 forceSender,
                 recipient: 'NQ63 U7XG 1YYE D6FA SXGG 3F5H X403 NBKN JLDU',
                 value,
                 fee: txFee,
-                extraData: Utf8Tools.stringToUtf8ByteArray(txData)
+                extraData: Utf8Tools.stringToUtf8ByteArray(txData),
             };
         }
 
@@ -223,7 +228,7 @@ class Demo {
 
         document.querySelector('button#sign-message').addEventListener('click', async () => {
             const request: SignMessageRequest = {
-                appName: 'Accounts Demos',
+                appName: 'Hub Demos',
                 // signer: 'NQ63 U7XG 1YYE D6FA SXGG 3F5H X403 NBKN JLDU',
                 message: (document.querySelector('#message') as HTMLInputElement).value || undefined,
             };
@@ -245,10 +250,10 @@ class Demo {
                 alert('You have no account to send a tx from, create an account first (signup)');
                 throw new Error('No account found');
             }
-            const signer = $radio.getAttribute('data-address');
+            const signer = ($radio as HTMLElement).dataset.address;
 
             const request: SignMessageRequest = {
-                appName: 'Accounts Demos',
+                appName: 'Hub Demos',
                 signer,
                 message,
             };
@@ -275,10 +280,11 @@ class Demo {
         });
 
         document.querySelector('button#list-keyguard-keys').addEventListener('click', () => demo.listKeyguard());
-        document.querySelector('button#setup-legacy-accounts').addEventListener('click', () => demo.setupLegacyAccounts());
+        document.querySelector('button#setup-legacy-accounts').addEventListener('click',
+            () => demo.setupLegacyAccounts());
         document.querySelector('button#list-accounts').addEventListener('click', async () => demo.updateAccounts());
 
-        document.querySelectorAll('button').forEach(button => button.disabled = false);
+        document.querySelectorAll('button').forEach((button) => button.disabled = false);
         (document.querySelector('button#list-accounts') as HTMLButtonElement).click();
     } // run
 
@@ -301,6 +307,181 @@ class Demo {
     constructor(keyguardBaseUrl: string) {
         this._iframeClient = null;
         this._keyguardBaseUrl = keyguardBaseUrl;
+    }
+
+    public async changePassword(accountId: string) {
+        try {
+            const result = await this.client.changePassword(this._createChangePasswordRequest(accountId));
+            console.log('Result', result);
+            document.querySelector('#result').textContent = 'Export sucessful';
+        } catch (e) {
+            console.error(e);
+            document.querySelector('#result').textContent = `Error: ${e.message || e}`;
+        }
+    }
+
+    public _createChangePasswordRequest(accountId: string): SimpleRequest {
+        return {
+            appName: 'Hub Demos',
+            accountId,
+        } as SimpleRequest;
+    }
+
+    public async addAccount(accountId: string) {
+        try {
+            const result = await this.client.addAddress(this._createAddAccountRequest(accountId));
+            console.log('Result', result);
+            document.querySelector('#result').textContent = 'Account added';
+        } catch (e) {
+            console.error(e);
+            document.querySelector('#result').textContent = `Error: ${e.message || e}`;
+        }
+    }
+
+    public _createAddAccountRequest(accountId: string): SimpleRequest {
+        return {
+            appName: 'Hub Demos',
+            accountId,
+        } as SimpleRequest;
+    }
+
+    public async rename(accountId: string, account: string) {
+        try {
+            const result = await this.client.rename(this._createRenameRequest(accountId, account));
+            console.log('Result', result);
+            document.querySelector('#result').textContent = 'Done renaming account';
+        } catch (e) {
+            console.error(e);
+            document.querySelector('#result').textContent = `Error: ${e.message || e}`;
+        }
+    }
+
+    public _createRenameRequest(accountId: string, address: string ): RenameRequest {
+        return {
+            appName: 'Hub Demos',
+            accountId,
+            address,
+        };
+    }
+
+    public async updateAccounts() {
+        const cashlinks = await this.cashlinks();
+        let $ul = document.querySelector('#cashlinks');
+        let cashlinksHtml = '';
+
+        cashlinks.forEach((cashlink) => {
+            cashlinksHtml += `
+            <li>
+                ${cashlink.address}
+                <button class="cashlink-manage" data-cashlink-address="${cashlink.address}">manage</button>
+            </li>`;
+        });
+
+        $ul.innerHTML = cashlinksHtml;
+        document.querySelectorAll('button.cashlink-manage').forEach((element) => {
+            element.addEventListener('click', () => this.client.createCashlink({
+                appName: 'Hub Demos',
+                cashlinkAddress: (element as HTMLElement).dataset.cashlinkAddress,
+            }));
+        });
+
+        const wallets = await this.list();
+        console.log('Accounts in Manager:', wallets);
+
+        $ul = document.querySelector('#accounts');
+        let html = '';
+
+        wallets.forEach((wallet) => {
+            html += `<li>${wallet.label}<br>
+                        <button class="export" data-wallet-id="${wallet.accountId}">Export</button>
+                        <button class="export-file" data-wallet-id="${wallet.accountId}">File</button>
+                        <button class="export-words" data-wallet-id="${wallet.accountId}">Words</button>
+                        <button class="change-password" data-wallet-id="${wallet.accountId}">Ch. Pass.</button>
+                        ${wallet.type !== 0
+                            ? `<button class="add-account" data-wallet-id="${wallet.accountId}">+ Addr</button>`
+                            : ''}
+                        <button class="rename" data-wallet-id="${wallet.accountId}">Rename</button>
+                        <button class="logout" data-wallet-id="${wallet.accountId}">Logout</button>
+                        <ul>`;
+            wallet.addresses.forEach((acc) => {
+                html += `
+                    <li>
+                        <label>
+                            <input type="radio"
+                                name="sign-tx-address"
+                                data-address="${acc.address}"
+                                data-wallet-id="${wallet.accountId}">
+                            ${acc.label}
+                            <button class="rename" data-wallet-id="${wallet.accountId}" data-address="${acc.address}">
+                                Rename
+                            </button>
+                        </label>
+                    </li>
+                `;
+            });
+            wallet.contracts.forEach((con) => {
+                html += `
+                    <li>
+                        <label>
+                            <input type="radio"
+                                name="sign-tx-address"
+                                data-address="${con.address}"
+                                data-wallet-id="${wallet.accountId}">
+                            <strong>Contract</strong> ${con.label}
+                            <button class="rename" data-wallet-id="${wallet.accountId}" data-address="${con.address}">
+                                Rename
+                            </button>
+                        </label>
+                    </li>
+                `;
+            });
+            html += '</ul></li>';
+        });
+
+        $ul.innerHTML = html;
+        if (document.querySelector('input[type="radio"]')) {
+            (document.querySelector('input[type="radio"]') as HTMLInputElement).checked = true;
+        }
+        document.querySelectorAll('button.export').forEach((element) => {
+            element.addEventListener('click', async () => this.export((element as HTMLElement).dataset.walletId));
+        });
+        document.querySelectorAll('button.export-file').forEach((element) => {
+            element.addEventListener('click', async () => this.exportFile((element as HTMLElement).dataset.walletId));
+        });
+        document.querySelectorAll('button.export-words').forEach((element) => {
+            element.addEventListener('click', async () => this.exportWords((element as HTMLElement).dataset.walletId));
+        });
+        document.querySelectorAll('button.change-password').forEach((element) => {
+            element.addEventListener('click',
+                async () => this.changePassword((element as HTMLElement).dataset.walletId));
+        });
+        document.querySelectorAll('button.rename').forEach((element) => {
+            element.addEventListener('click',
+                async () => this.rename(
+                    (element as HTMLElement).dataset.walletId,
+                    (element as HTMLElement).dataset.address,
+                ),
+            );
+        });
+        document.querySelectorAll('button.add-account').forEach((element) => {
+            element.addEventListener('click', async () => this.addAccount((element as HTMLElement).dataset.walletId));
+        });
+        document.querySelectorAll('button.logout').forEach((element) => {
+            element.addEventListener('click', async () => this.logout((element as HTMLElement).dataset.walletId));
+        });
+    }
+
+    public setClientBehavior(behavior: string) {
+        if (behavior === 'popup') {
+            // @ts-ignore
+            demo.client._defaultBehavior = new PopupRequestBehavior(
+                `left=${window.innerWidth / 2 - 400},top=75,width=800,height=850,location=yes,dependent=yes`);
+        }
+
+        if (behavior === 'redirect') {
+            // @ts-ignore
+            demo.client._defaultBehavior = new RedirectRequestBehavior();
+        }
     }
 
     public async startIframeClient(baseUrl: string): Promise<PostMessageRpcClient> {
@@ -328,7 +509,9 @@ class Demo {
     }
 
     public async setupLegacyAccounts() {
-        const client = await this.startPopupClient(`${this._keyguardBaseUrl}/demos/setup.html`, 'Nimiq Keyguard Setup Popup');
+        const client = await this.startPopupClient(
+            `${this._keyguardBaseUrl}/demos/setup.html`, 'Nimiq Keyguard Setup Popup',
+        );
         const result = await client.call('setUpLegacyAccounts');
         client.close();
         // @ts-ignore Property '_target' is private and only accessible within class 'PostMessageRpcClient'.
@@ -359,21 +542,21 @@ class Demo {
 
     public _createLogoutRequest(accountId: string): SimpleRequest {
         return {
-            appName: 'Accounts Demos',
+            appName: 'Hub Demos',
             accountId,
         } as SimpleRequest;
     }
 
     public export(accountId: string) {
         this._export({
-            appName: 'Accounts Demos',
+            appName: 'Hub Demos',
             accountId,
         });
     }
 
     public exportFile(accountId: string) {
         this._export({
-            appName: 'Accounts Demos',
+            appName: 'Hub Demos',
             accountId,
             fileOnly: true,
         });
@@ -381,7 +564,7 @@ class Demo {
 
     public exportWords(accountId: string) {
         this._export({
-            appName: 'Accounts Demos',
+            appName: 'Hub Demos',
             accountId,
             wordsOnly: true,
         });
@@ -391,7 +574,7 @@ class Demo {
         try {
             const result = await this.client.export(request);
             console.log('Result', result);
-            if(result.fileExported) {
+            if (result.fileExported) {
                 document.querySelector('#result').textContent = result.wordsExported
                     ? 'Export sucessful'
                     : 'File exported';
@@ -403,162 +586,6 @@ class Demo {
         } catch (e) {
             console.error(e);
             document.querySelector('#result').textContent = `Error: ${e.message || e}`;
-        }
-    }
-
-    public async changePassword(accountId: string) {
-        try {
-            const result = await this.client.changePassword(this._createChangePasswordRequest(accountId));
-            console.log('Result', result);
-            document.querySelector('#result').textContent = 'Export sucessful';
-        } catch (e) {
-            console.error(e);
-            document.querySelector('#result').textContent = `Error: ${e.message || e}`;
-        }
-    }
-
-    public _createChangePasswordRequest(accountId: string): SimpleRequest {
-        return {
-            appName: 'Accounts Demos',
-            accountId,
-        } as SimpleRequest;
-    }
-
-    public async addAccount(accountId: string) {
-        try {
-            const result = await this.client.addAddress(this._createAddAccountRequest(accountId));
-            console.log('Result', result);
-            document.querySelector('#result').textContent = 'Account added';
-        } catch (e) {
-            console.error(e);
-            document.querySelector('#result').textContent = `Error: ${e.message || e}`;
-        }
-    }
-
-    public _createAddAccountRequest(accountId: string): SimpleRequest {
-        return {
-            appName: 'Accounts Demos',
-            accountId,
-        } as SimpleRequest;
-    }
-
-    public async rename(accountId: string, account: string) {
-        try {
-            const result = await this.client.rename(this._createRenameRequest(accountId, account));
-            console.log('Result', result);
-            document.querySelector('#result').textContent = 'Done renaming account';
-        } catch (e) {
-            console.error(e);
-            document.querySelector('#result').textContent = `Error: ${e.message || e}`;
-        }
-    }
-
-    public _createRenameRequest(accountId: string, address: string ): RenameRequest {
-        return {
-            appName: 'Accounts Demos',
-            accountId,
-            address,
-        };
-    }
-
-    public async updateAccounts() {
-        const cashlinks = await this.cashlinks();
-        let $ul = document.querySelector('#cashlinks');
-        let cashlinksHtml = '';
-
-        cashlinks.forEach(cashlink => {
-            cashlinksHtml += `<li>${cashlink.address} <button class="cashlink-manage" data-cashlink-address="${cashlink.address}">manage</button>`;
-        });
-
-        $ul.innerHTML = cashlinksHtml;
-        document.querySelectorAll('button.cashlink-manage').forEach(element => {
-            element.addEventListener('click', async () => {
-                await this.client.createCashlink({
-                    appName: 'Accounts Demos',
-                    // senderAddress: $radio.getAttribute('data-address'),
-                    cashlinkAddress: element.getAttribute('data-cashlink-address'),
-                });
-            });
-        });
-
-        const wallets = await this.list();
-        console.log('Accounts in Manager:', wallets);
-
-        $ul = document.querySelector('#accounts');
-        let html = '';
-
-        wallets.forEach(wallet => {
-            html += `<li>${wallet.label}<br>
-                        <button class="export" data-wallet-id="${wallet.accountId}">Export</button>
-                        <button class="export-file" data-wallet-id="${wallet.accountId}">File</button>
-                        <button class="export-words" data-wallet-id="${wallet.accountId}">Words</button>
-                        <button class="change-password" data-wallet-id="${wallet.accountId}">Ch. Pass.</button>
-                        ${wallet.type !== 0 ? `<button class="add-account" data-wallet-id="${wallet.accountId}">+ Addr</button>` : ''}
-                        <button class="rename" data-wallet-id="${wallet.accountId}">Rename</button>
-                        <button class="logout" data-wallet-id="${wallet.accountId}">Logout</button>
-                        <ul>`;
-            wallet.addresses.forEach((acc) => {
-                html += `
-                            <li>
-                                <label>
-                                    <input type="radio" name="sign-tx-address" data-address="${acc.address}" data-wallet-id="${wallet.accountId}">
-                                    ${acc.label}
-                                    <button class="rename" data-wallet-id="${wallet.accountId}" data-address="${acc.address}">Rename</button>
-                                </label>
-                            </li>
-                `;
-            });
-            wallet.contracts.forEach((con) => {
-                html += `
-                            <li>
-                                <label>
-                                    <input type="radio" name="sign-tx-address" data-address="${con.address}" data-wallet-id="${wallet.accountId}">
-                                    <strong>Contract</strong> ${con.label}
-                                    <button class="rename" data-wallet-id="${wallet.accountId}" data-address="${con.address}">Rename</button>
-                                </label>
-                            </li>
-                `;
-            });
-            html += '</ul></li>';
-        });
-
-        $ul.innerHTML = html;
-        if (document.querySelector('input[type="radio"]')) {
-            (document.querySelector('input[type="radio"]') as HTMLInputElement).checked = true;
-        }
-        document.querySelectorAll('button.export').forEach(element => {
-            element.addEventListener('click', async () => this.export(element.getAttribute('data-wallet-id')));
-        });
-        document.querySelectorAll('button.export-file').forEach(element => {
-            element.addEventListener('click', async () => this.exportFile(element.getAttribute('data-wallet-id')));
-        });
-        document.querySelectorAll('button.export-words').forEach(element => {
-            element.addEventListener('click', async () => this.exportWords(element.getAttribute('data-wallet-id')));
-        });
-        document.querySelectorAll('button.change-password').forEach(element => {
-            element.addEventListener('click', async () => this.changePassword(element.getAttribute('data-wallet-id')));
-        });
-        document.querySelectorAll('button.rename').forEach(element => {
-            element.addEventListener('click', async () => this.rename(element.getAttribute('data-wallet-id'), element.getAttribute('data-address')));
-        });
-        document.querySelectorAll('button.add-account').forEach(element => {
-            element.addEventListener('click', async () => this.addAccount(element.getAttribute('data-wallet-id')));
-        });
-        document.querySelectorAll('button.logout').forEach(element => {
-            element.addEventListener('click', async () => this.logout(element.getAttribute('data-wallet-id')));
-        });
-    }
-
-    public setClientBehavior(behavior: string) {
-        if (behavior === 'popup') {
-            // @ts-ignore
-            demo.client._defaultBehavior = new PopupRequestBehavior(
-                `left=${window.innerWidth / 2 - 400},top=75,width=800,height=850,location=yes,dependent=yes`);
-        }
-
-        if (behavior === 'redirect') {
-            // @ts-ignore
-            demo.client._defaultBehavior = new RedirectRequestBehavior();
         }
     }
 
