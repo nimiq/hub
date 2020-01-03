@@ -146,8 +146,7 @@ export default class CashlinkManage extends Vue {
             });
 
             network.on(NetworkClient.Events.TRANSACTION_RELAYED, async (txInfo: any) => {
-                this.state = StatusScreen.State.SUCCESS;
-                window.setTimeout(() => this.isTxSent = true, StatusScreen.SUCCESS_REDIRECT_DELAY);
+                this.isTxSent = true;
             });
         }
     }
@@ -209,7 +208,7 @@ export default class CashlinkManage extends Vue {
 
     .status-screen {
         position: absolute;
-        transition: opacity .3s;
+        transition: opacity .3s var(--nimiq-ease);
     }
 
     .close {
