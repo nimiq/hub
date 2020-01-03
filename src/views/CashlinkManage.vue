@@ -1,8 +1,8 @@
 <template>
     <div class="container pad-bottom" v-if="retrievedCashlink">
-        <SmallPage class="cashlink-receive">
+        <SmallPage class="cashlink-manage">
             <transition name="transition-fade">
-                <StatusScreen v-if="!isTxSent" state="loading" :title="title" :status="status" lightBlue/>
+                <StatusScreen v-if="!isTxSent" :state="state" :title="title" :status="status" lightBlue/>
             </transition>
 
             <PageBody>
@@ -11,59 +11,53 @@
                 </transition>
                 <button class="nq-button-s close" @click="close">Done</button>
                 <div class="cashlink-and-url">
-                    <Account :displayAsCashlink="true" layout="column" :class="{'sending': !isTxSent, 'show-loader': !isManagementRequest}"/>
+                    <Account layout="column" :displayAsCashlink="true" :class="{'sending': !isTxSent, 'show-loader': !isManagementRequest}"/>
                     <Copyable :text="link">
                         <div class="cashlink-url">{{link}}</div>
                     </Copyable>
                 </div>
             </PageBody>
-            <PageFooter v-if="nativeShareAvailable">
+            <PageFooter>
                 <button class="nq-button copy" :class="copied ? 'green' : 'light-blue'" @click="copy">
                     <span v-if="copied"><CheckmarkSmallIcon /> Copied</span>
                     <span v-else>Copy</span>
                 </button>
-                <button class="nq-button share-mobile" @click="share">
+                <button v-if="nativeShareAvailable" class="nq-button share-mobile" @click="share">
                     Share
                 </button>
-            </PageFooter>
-            <PageFooter v-else>
-                <button class="nq-button copy" :class="copied ? 'green' : 'light-blue'" @click="copy">
-                    <span v-if="copied"><CheckmarkSmallIcon /> Copied</span>
-                    <span v-else>Copy</span>
-                </button>
-                <a class="nq-button-s social-share telegram" :href="telegram" target="_blank">
-                    <svg width="29" height="25" viewBox="0 0 29 25" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                        <path opacity=".6" d="M28.537.528c-.103-.308-.224-.397-.416-.472-.42-.164-1.124.084-1.124.084S1.943 9.496.516 10.534c-.308.225-.416.351-.467.505-.247.74.523 1.062.523 1.062l6.458 2.185s.023.005.056.005l3.024 8.7s.275.585.61.777c.01.01.024.014.033.023l.028.014c.038.019.08.028.131.028.005 0 .01.005.014.005h.005c.252 0 .658-.22 1.311-.903a56.694 56.694 0 0 1 3.392-3.227c2.221 1.595 4.61 3.354 5.642 4.275.518.463.952.538 1.306.524.98-.038 1.251-1.155 1.251-1.155s4.573-19.09 4.722-21.65c.014-.252.038-.411.038-.584.004-.239-.019-.477-.056-.59zM8.332 13.758l.004-.132c3.463-2.268 13.887-9.089 14.568-9.35.122-.038.21.004.187.093-.308 1.123-11.866 11.797-11.866 11.797s-.042.056-.07.122l-.014-.01-.397 4.398-2.412-6.919z"/>
-                    </svg>
-                </a>
-                <a class="nq-button-s social-share" :href="mail">
-                    <svg width="28" height="24" viewBox="0 0 28 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                        <g opacity=".6">
-                            <path d="M13.9047 11.3644C14.0384 11.4981 14.1721 11.4981 14.3058 11.3644L27.1408 2.80767C27.4082 2.67397 27.5419 2.40658 27.4082 2.13918C27.1408 0.935891 26.0713 0 24.7343 0H2.67397C1.33699 0 0.267397 0.935891 0 2.13918C0 2.40658 0.133699 2.67397 0.401096 2.94137L13.9047 11.3644Z"/>
-                            <path d="M15.3754 14.4395C14.5732 14.9743 13.6373 14.9743 12.8351 14.4395L1.06959 6.95235C0.668494 6.81865 0.267398 6.95235 0.133699 7.21975C0 7.35345 0 7.48715 0 7.62085V20.7233C0 22.194 1.20329 23.3973 2.67398 23.3973H24.7343C26.205 23.3973 27.4082 22.194 27.4082 20.7233V7.62085C27.4082 7.21975 27.1408 6.95235 26.7398 6.95235C26.6061 6.95235 26.4724 6.95235 26.3387 7.08605L15.3754 14.4395Z"/>
-                        </g>
-                    </svg>
-                </a>
-                <a class="nq-button-s social-share" :href="whatsapp" target="_blank">
-                    <svg width="28" height="28" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                        <path opacity=".6" d="M14 0C6.3 0 0 6.235 0 14c0 2.823.817 5.647 2.45 8L.817 26.706c-.117.235 0 .47.116.588.117.118.35.235.584.118l5.016-1.53C13.067 30 21.7 28 25.783 21.412c1.4-2.235 2.1-4.824 2.1-7.412C28 6.235 21.7 0 14 0zm8.4 19.647c-.817 1.53-2.333 2.47-4.083 2.47-1.4-.117-2.8-.588-3.967-1.176-2.8-1.294-5.25-3.412-7-6.117-2.217-2.942-2.333-5.765-.233-8.118.583-.47 1.4-.706 2.216-.588.584.117 1.167.47 1.4 1.058l.467 1.06c.35.823.7 1.646.7 1.764.233.353.233.823 0 1.177-.35.588-.7 1.176-1.167 1.646a10.68 10.68 0 0 0 2.1 2.471c.934.824 1.984 1.53 3.15 1.883.35-.471.934-1.177 1.167-1.53a1.175 1.175 0 0 1 1.517-.47c.466.117 2.916 1.411 2.916 1.411.35.118.584.353.817.588.467.942.467 1.765 0 2.471z"/>
-                    </svg>
-                </a>
+                <template v-else>
+                    <a class="nq-button-s social-share telegram" target="_blank" :href="telegram">
+                        <svg width="29" height="25" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path opacity=".6" d="M28.54.53c-.1-.31-.23-.4-.42-.47C27.7-.11 27 .14 27 .14S1.94 9.5.52 10.54c-.31.22-.42.35-.47.5-.25.74.52 1.06.52 1.06l6.46 2.19h.06L10.1 23s.28.59.61.78l.03.02.03.02.13.02h.02c.25 0 .66-.21 1.31-.9a56.7 56.7 0 013.4-3.22 90.48 90.48 0 015.64 4.27c.51.47.95.54 1.3.53.98-.04 1.25-1.16 1.25-1.16S28.41 4.26 28.56 1.7c0-.25.03-.4.03-.58 0-.24-.02-.48-.05-.6zM8.34 13.76v-.13c3.46-2.27 13.88-9.1 14.56-9.35.13-.04.21 0 .2.09-.32 1.12-11.88 11.8-11.88 11.8l-.06.12-.02-.01-.4 4.4-2.4-6.92z"/>
+                        </svg>
+                    </a>
+                    <a class="nq-button-s social-share" :href="mail">
+                        <svg width="28" height="24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <g opacity=".6">
+                                <path d="M13.9 11.36c.14.14.27.14.4 0l12.84-8.55c.27-.14.4-.4.27-.67A2.73 2.73 0 0024.73 0H2.67A2.73 2.73 0 000 2.14c0 .27.13.53.4.8l13.5 8.42z"/>
+                                <path d="M15.38 14.44c-.8.53-1.74.53-2.55 0L1.08 6.95c-.4-.13-.8 0-.94.27-.13.13-.13.27-.13.4v13.1a2.68 2.68 0 002.67 2.68h22.06a2.68 2.68 0 002.68-2.68V7.62c0-.4-.27-.67-.67-.67-.13 0-.27 0-.4.14l-10.96 7.35z"/>
+                            </g>
+                        </svg>
+                    </a>
+                    <a class="nq-button-s social-share" target="_blank" :href="whatsapp">
+                        <svg width="28" height="28" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path opacity=".6" d="M14 0A14 14 0 000 14c0 2.82.82 5.65 2.45 8L.82 26.7c-.12.24 0 .48.11.6.12.11.35.23.59.11l5.01-1.53a13.91 13.91 0 0019.25-4.47c1.4-2.23 2.1-4.82 2.1-7.41C28 6.24 21.7 0 14 0zm8.4 19.65a4.57 4.57 0 01-4.08 2.47c-1.4-.12-2.8-.6-3.97-1.18a16.76 16.76 0 01-7-6.12c-2.22-2.94-2.33-5.76-.23-8.11a2.9 2.9 0 012.21-.6c.59.12 1.17.48 1.4 1.07l.47 1.06c.35.82.7 1.64.7 1.76.23.35.23.82 0 1.18-.35.58-.7 1.17-1.17 1.64a10.68 10.68 0 002.1 2.47 8.68 8.68 0 003.15 1.89c.35-.47.94-1.18 1.17-1.53a1.18 1.18 0 011.52-.47c.46.11 2.91 1.4 2.91 1.4.35.13.59.36.82.6.47.94.47 1.76 0 2.47z"/>
+                        </svg>
+                    </a>
+                </template>
             </PageFooter>
         </SmallPage>
     </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator';
-import staticStore, { Static } from '../lib/StaticStore';
+import { Component, Vue } from 'vue-property-decorator';
+import { Static } from '../lib/StaticStore';
 import { ParsedCashlinkRequest, RequestType } from '../lib/RequestTypes';
 import { SmallPage, PageBody, PageFooter, Account, CheckmarkSmallIcon, Copyable } from '@nimiq/vue-components';
 import StatusScreen from '../components/StatusScreen.vue';
 import { NetworkClient } from '@nimiq/network-client';
-import { loadNimiq } from '../lib/Helpers';
 import Cashlink from '../lib/Cashlink';
-import { CashlinkState } from '@/lib/PublicRequestTypes';
 import { CashlinkStore } from '../lib/CashlinkStore';
 import { State } from 'vuex-class';
 import KeyguardClient from '@nimiq/keyguard-client';
@@ -81,35 +75,34 @@ import Config from 'config';
     Copyable,
 }})
 export default class CashlinkManage extends Vue {
+    private static readonly SHARE_PREFIX: string = 'Here is your Nimiq Cashlink!';
+
     @Static private request!: ParsedCashlinkRequest;
-    @Static private cashlink!: Cashlink;
-    @Static private keyguardRequest!: KeyguardClient.SignTransactionRequest;
+    @Static private cashlink?: Cashlink;
+    @Static private keyguardRequest?: KeyguardClient.SignTransactionRequest;
     @State private keyguardResult?: KeyguardClient.SignTransactionResult;
 
     private isTxSent: boolean = false;
-    private isManagementRequest = false;
+    private isManagementRequest: boolean = false;
     private status: string = 'Connecting to network...';
     private state: StatusScreen.State = StatusScreen.State.LOADING;
     private retrievedCashlink: Cashlink | null = null;
-    private copied = false;
-    private nativeShareAvailable: boolean = false;
+    private copied: boolean = false;
 
-    private sharePrefix = 'Here is your Nimiq Cashlink!';
+    // @ts-ignore Property 'share' does not exist on type 'Navigator'
+    private readonly nativeShareAvailable: boolean = (!!window.navigator && !!window.navigator.share);
 
     private async mounted() {
-        // @ts-ignore Property 'share' does not exist on type 'Navigator'
-        this.nativeShareAvailable = (!!window.navigator && !!window.navigator.share);
-        this.retrievedCashlink = this.cashlink;
-        if (!this.keyguardResult) {
-            // If there is no Keyguard result this is not a freshly funded cashlink
-            // and must be retrieved from the store.
-            if (this.request.cashlinkAddress) {
-                const cashlink = await CashlinkStore.Instance.get(this.request.cashlinkAddress.toUserFriendlyAddress());
-                if (cashlink) {
-                    this.retrievedCashlink = cashlink;
-                    this.isTxSent = true;
-                    this.isManagementRequest = true;
-                }
+        this.retrievedCashlink = this.cashlink || null;
+        if (!this.keyguardResult && this.request.cashlinkAddress) {
+            const cashlink = await CashlinkStore.Instance.get(this.request.cashlinkAddress.toUserFriendlyAddress());
+            if (cashlink) {
+                this.retrievedCashlink = cashlink;
+                this.isTxSent = true;
+                this.isManagementRequest = true;
+            } else {
+                this.$rpc.reject(new Error(`${this.request.cashlinkAddress} is not a valid Cashlink.`));
+                return;
             }
         }
 
@@ -124,8 +117,11 @@ export default class CashlinkManage extends Vue {
                 this.$rpc.reject(new Error('Unexpected: No valid Cashlink;'));
                 return;
             }
-            // if there was a funding transaction the cashlink is in the static store.
-            this.retrievedCashlink.networkClient = network;
+            // this.retrievedCashlink is guaranteed to be set here, as it is either
+            // loaded from the  static store in case of a freshly created cashlink or
+            // loaded from the cashlink store if it is a managment call with a cashlinkAddress set in the request.
+            // If no cashlinnk was found the request is already rejected.
+            this.retrievedCashlink!.networkClient = network;
             network.on(NetworkClient.Events.API_READY,
                 () => this.status = 'Contacting seed nodes...');
             network.on(NetworkClient.Events.CONSENSUS_SYNCING,
@@ -148,8 +144,8 @@ export default class CashlinkManage extends Vue {
 
             network.on(NetworkClient.Events.TRANSACTION_RELAYED, async (txInfo: any) => {
                 await CashlinkStore.Instance.put(this.retrievedCashlink!);
-                this.isTxSent = true;
-                window.setTimeout(() => this.state = StatusScreen.State.SUCCESS, StatusScreen.SUCCESS_REDIRECT_DELAY);
+                this.state = StatusScreen.State.SUCCESS;
+                window.setTimeout(() => this.isTxSent = true, StatusScreen.SUCCESS_REDIRECT_DELAY);
             });
         }
     }
@@ -178,13 +174,13 @@ export default class CashlinkManage extends Vue {
     }
 
     private get shareText(): string {
-        return encodeURIComponent(`${this.sharePrefix} ${this.link}`);
+        return encodeURIComponent(`${CashlinkManage.SHARE_PREFIX} ${this.link}`);
     }
 
     private share() {
         (navigator as any).share({
             title: 'Nimiq Cashlink',
-            text: this.sharePrefix,
+            text: CashlinkManage.SHARE_PREFIX,
             url: this.link,
         }).catch( (error: Error) => console.log('Error sharing', error));
     }
@@ -204,13 +200,14 @@ export default class CashlinkManage extends Vue {
 </script>
 
 <style scoped>
-    .cashlink-receive {
+    .cashlink-manage {
         position: relative;
         height: auto;
     }
 
     .status-screen {
         position: absolute;
+        transition: opacity .3s;
     }
 
     .close {
@@ -233,7 +230,7 @@ export default class CashlinkManage extends Vue {
         margin-right: 1.25rem;
     }
 
-    .cashlink-receive .cashlink-and-url {
+    .cashlink-manage .cashlink-and-url {
         height: 100%;
         width: 100%;
         display: flex;
@@ -243,32 +240,30 @@ export default class CashlinkManage extends Vue {
         flex-grow: 1;
     }
 
-    .cashlink-receive .cashlink >>> .identicon {
+    .cashlink-manage .cashlink >>> .identicon {
         width: 18rem;
         height: 18rem;
         padding: 1rem;
         margin-bottom: 1.25rem;
     }
 
-    .cashlink-receive .cashlink >>> .identicon:before {
+    .cashlink-manage .cashlink >>> .identicon:before {
         border: .5rem solid transparent;
     }
 
-    .cashlink-receive .cashlink.show-loader >>> .identicon:before {
+    .cashlink-manage .cashlink.show-loader >>> .identicon:before {
         border: .5rem solid var(--nimiq-green);
         animation: spin 4s linear infinite;
         transition: border 1s var(--nimiq-ease);
     }
 
-    .cashlink-receive .cashlink.show-loader.sending  >>> .identicon:before {
+    .cashlink-manage .cashlink.show-loader.sending  >>> .identicon:before {
         border-color: var(--nimiq-gray) var(--nimiq-gray) var(--nimiq-gray) var(--nimiq-light-blue);
     }
 
-    @-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }
-    @-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); } }
     @keyframes spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
 
-    .cashlink-receive .cashlink-and-url .cashlink-url {
+    .cashlink-manage .cashlink-and-url .cashlink-url {
         text-align: center;
         font-size: 3rem;
         line-height: 4rem;

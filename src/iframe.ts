@@ -5,6 +5,7 @@ import { WalletInfoEntry, WalletInfo } from '@/lib/WalletInfo';
 import CookieJar from '@/lib/CookieJar';
 import Config from 'config';
 import { Account, Cashlink } from './lib/PublicRequestTypes';
+import { RequestType } from './lib/RequestTypes';
 import { CashlinkStore } from './lib/CashlinkStore';
 
 class IFrameApi {
@@ -12,8 +13,8 @@ class IFrameApi {
         const rpcServer = new RpcServer(Config.privilegedOrigins);
 
         // Register handlers
-        rpcServer.onRequest('list', IFrameApi.list);
-        rpcServer.onRequest('list-cashlinks', IFrameApi.cashlinks);
+        rpcServer.onRequest(RequestType.LIST, IFrameApi.list);
+        rpcServer.onRequest(RequestType.LIST_CASHLINKS, IFrameApi.cashlinks);
 
         rpcServer.init();
     }

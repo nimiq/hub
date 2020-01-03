@@ -154,6 +154,11 @@ export class RequestParser {
                 } as ParsedSignMessageRequest;
             case RequestType.CASHLINK:
                 const cashlinkRequest = request as CashlinkRequest;
+                if (cashlinkRequest.cashlinkAddress && cashlinkRequest.senderAddress) {
+                    console.warn(
+                        'CashlinkRequest.cashlinkAddress and CashlinkRequest.senderAddress should not both be defined.',
+                    );
+                }
                 return {
                     kind: RequestType.CASHLINK,
                     appName: cashlinkRequest.appName,
