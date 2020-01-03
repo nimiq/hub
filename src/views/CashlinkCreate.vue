@@ -12,30 +12,32 @@
                     <AccountSelector :wallets="processedWallets" :min-balance="1" @account-selected="setSender" @login="login"/>
                 </div>
 
-                <div v-else class="create-cashlink" key="create">
-                    <SmallPage v-if="optionsOpened" class="overlay fee">
-                        <PageBody>
-                            <h1 class="nq-h1">Speed up your transaction</h1>
-                            <p class="nq-text">By adding a transation fee, you can influence how fast your transaction will be processed.</p>
-                            <SelectBar name="fee" ref="fee" :options="FEE_OPTIONS" :selectedValue="feeLunaPerByte" @changed="updateFeePreview"/>
-                            <Amount :amount="feePreview" :minDecimals="0" :maxDecimals="5" />
-                        </PageBody>
-                        <PageFooter>
-                            <button class="nq-button light-blue" @click="setFee">Set fee</button>
-                        </PageFooter>
-                        <CloseButton class="top-right" @click="optionsOpened = false" />
-                    </SmallPage>
+                <div v-else class="create-cashlink" key="create" :class="{ blurred: optionsOpened || openedDetails !== constructor.Details.NONE }">
+                    <transition name="transition-fade">
+                        <SmallPage v-if="optionsOpened" class="overlay fee" key="fee">
+                            <PageBody>
+                                <h1 class="nq-h1">Speed up your transaction</h1>
+                                <p class="nq-text">By adding a transation fee, you can influence how fast your transaction will be processed.</p>
+                                <SelectBar name="fee" ref="fee" :options="constructor.FEE_OPTIONS" :selectedValue="feeLunaPerByte" @changed="updateFeePreview"/>
+                                <Amount :amount="feePreview" :minDecimals="0" :maxDecimals="5" />
+                            </PageBody>
+                            <PageFooter>
+                                <button class="nq-button light-blue" @click="setFee">Set fee</button>
+                            </PageFooter>
+                            <CloseButton class="top-right" @click="optionsOpened = false" />
+                        </SmallPage>
 
-                    <SmallPage v-if="openedDetails !== Details.NONE" class="overlay">
-                        <AccountDetails
-                            :address="accountOrContractInfo.address.toUserFriendlyAddress()"
-                            :label="accountOrContractInfo.label"
-                            :balance="availableBalance"
-                            @close="openedDetails = Details.NONE"/>
-                    </SmallPage>
+                        <SmallPage v-if="openedDetails !== constructor.Details.NONE" class="overlay" key="details">
+                            <AccountDetails
+                                :address="accountOrContractInfo.address.toUserFriendlyAddress()"
+                                :label="accountOrContractInfo.label"
+                                :balance="availableBalance"
+                                @close="openedDetails = constructor.Details.NONE"/>
+                        </SmallPage>
+                    </transition>
 
                     <PageHeader :backArrow="!request.senderAddress" @back="reset">
-                        Create a Cashlink
+                        <span>Create a Cashlink</span>
                         <a href="javascript:void(0)" class="nq-blue options-button" @click="optionsOpened = true">
                             <SettingsIcon/>
                         </a>
@@ -47,12 +49,13 @@
                                 class="sender"
                                 :address="accountOrContractInfo.address.toUserFriendlyAddress()"
                                 :label="accountOrContractInfo.label"
-                                @click.native="openedDetails = Details.SENDER"/>
+                                @click.native="openedDetails = constructor.Details.SENDER"/>
                             <ArrowRightIcon class="nq-light-blue arrow"/>
                             <Account layout="column"
                                 label="New Cashlink"
                                 :displayAsCashlink="true"/>
                         </div>
+                        <hr/>
                         <AmountWithFee ref="amountWithFee" :available-balance="availableBalance" v-model="liveAmountAndFee"/>
                         <div class="message-with-tooltip">
                             <LabelInput class="message" placeholder="Add a message..." :vanishing="true" :maxBytes="64" v-model="message" />
@@ -118,12 +121,6 @@ import {
     Tooltip,
 } from '@nimiq/vue-components';
 
-enum Details {
-    NONE,
-    SENDER,
-    RECIPIENT, // used to send the contact for the final recipient once available
-}
-
 @Component({components: {
     Account,
     AccountDetails,
@@ -143,7 +140,30 @@ enum Details {
     StatusScreen,
     Tooltip,
 }})
-export default class CashlinkCreate extends Vue {
+class CashlinkCreate extends Vue {
+    private static readonly FEE_OPTIONS: Array<{
+        color: string,
+        value: number,
+        text: string,
+        index: number,
+    }> = [{
+            color: 'nq-light-blue-bg',
+            value: 0,
+            text: 'free',
+            index: 0,
+        }, {
+            color: 'nq-green-bg',
+            value: 1,
+            text: 'standard',
+            index: 1,
+        }, {
+            color: 'nq-gold-bg',
+            value: 2,
+            text: 'express',
+            index: 2,
+        },
+    ];
+
     public $refs!: {
         createCashlinkTooltipTarget: PageBody,
         amountWithFee: AmountWithFee,
@@ -177,7 +197,7 @@ export default class CashlinkCreate extends Vue {
     private accountOrContractInfo: AccountInfo | ContractInfo | null = null;
 
     private optionsOpened = false;
-    private openedDetails = Details.NONE;
+    private openedDetails = CashlinkCreate.Details.NONE;
 
     private get availableBalance() {
         if (this.accountOrContractInfo && this.accountOrContractInfo.balance) {
@@ -190,6 +210,19 @@ export default class CashlinkCreate extends Vue {
         if (this.request.cashlinkAddress) {
             this.$rpc.routerReplace(`${RequestType.CASHLINK}-manage`);
             return;
+        }
+
+        // if there are no existing accounts, redirect to Onboarding
+        if (this.wallets.length === 0) {
+            this.login(true);
+            return;
+        }
+
+        // If there is no wallet to the address provided in the request,
+        // remove it to let the user potentially choose another.
+        if (this.request.senderAddress
+            && !this.findWalletByAddress(this.request.senderAddress.toUserFriendlyAddress(), true)) {
+            this.request.senderAddress = undefined;
         }
 
         if (!NetworkClient.hasInstance()) {
@@ -213,8 +246,8 @@ export default class CashlinkCreate extends Vue {
             // If a balance was given in the request use it until the balance update finishes.
             // The given balance in the request takes precedence over the currently stored (before the update)
             // balance in the store.
-            if (this.request.senderBalance) {
-                this.accountOrContractInfo!.balance = this.request.senderBalance;
+            if (this.accountOrContractInfo && this.request.senderBalance) {
+                this.accountOrContractInfo.balance = this.request.senderBalance;
             }
         }
     }
@@ -352,9 +385,13 @@ export default class CashlinkCreate extends Vue {
         client.signTransaction(request);
     }
 
-    private login() {
+    private login(useReplace = false) {
         staticStore.originalRouteName = RequestType.CASHLINK;
-        this.$rpc.routerPush(RequestType.ONBOARD);
+        if (useReplace) {
+            this.$rpc.routerReplace(RequestType.ONBOARD);
+        } else {
+            this.$rpc.routerPush(RequestType.ONBOARD);
+        }
     }
 
     private close() {
@@ -369,36 +406,24 @@ export default class CashlinkCreate extends Vue {
     @Watch('accountOrContractInfo')
     @Watch('openedDetails')
     @Watch('optionsOpened')
-    private focus(newValue: boolean | Details | AccountInfo | ContractInfo) {
+    private focus(newValue: boolean | CashlinkCreate.Details | AccountInfo | ContractInfo) {
         if ((typeof newValue === 'boolean' && newValue === false)
-            || (typeof newValue === 'number' && newValue === Details.NONE)
+            || (typeof newValue === 'number' && newValue === CashlinkCreate.Details.NONE)
             || (typeof newValue === 'object' && newValue !== null)) {
             Vue.nextTick(() => this.$refs.amountWithFee!.focus());
         }
     }
+}
 
-    private data() {
-        return {
-            FEE_OPTIONS: [{
-                color: 'nq-light-blue-bg',
-                value: 0,
-                text: 'free',
-                index: 0,
-            }, {
-                color: 'nq-green-bg',
-                value: 1,
-                text: 'standard',
-                index: 1,
-            }, {
-                color: 'nq-gold-bg',
-                value: 2,
-                text: 'express',
-                index: 2,
-            }],
-            Details,
-        };
+namespace CashlinkCreate {
+    export enum Details {
+        NONE,
+        SENDER,
+        RECIPIENT, // used to send the contact for the final recipient once available
     }
 }
+
+export default CashlinkCreate;
 </script>
 
 <style scoped>
@@ -410,7 +435,7 @@ export default class CashlinkCreate extends Vue {
 
     .status-screen {
         position: absolute;
-        transition: opacity .3s;
+        transition: opacity .3s var(--nimiq-ease);
     }
 
     .create-cashlink,
@@ -432,10 +457,8 @@ export default class CashlinkCreate extends Vue {
         flex-direction: column;
         align-items: center;
         justify-content: space-around;
-        opacity: 1;
         padding-bottom: 2rem;
         padding-top: 0;
-        filter: blur(0px);
     }
 
     .create-cashlink .page-body > .nq-label {
@@ -452,6 +475,7 @@ export default class CashlinkCreate extends Vue {
     .sender-and-recipient .arrow {
         font-size: 3rem;
         margin-top: -6.5rem;
+        transition: opacity .3s var(--nimiq-ease);
     }
 
     .options-button {
@@ -467,9 +491,7 @@ export default class CashlinkCreate extends Vue {
         opacity: 1;
     }
 
-    .sender-and-recipient >>> .account {
-        color: inherit;
-        text-decoration: none;
+    .sender-and-recipient .account {
         width: calc(50% - 1.1235rem);
     }
 
@@ -531,7 +553,9 @@ export default class CashlinkCreate extends Vue {
         left: 0;
         top: 0;
         margin: 0;
+        box-shadow: 0 0;
         background: rgba(255, 255, 255, .5);
+        transition: opacity .3s var(--nimiq-ease);
     }
 
     .overlay .account-details {
@@ -559,13 +583,22 @@ export default class CashlinkCreate extends Vue {
         flex-grow: 1;
     }
 
+    .create-cashlink > .page-body hr {
+        width: 100%;
+        margin: 0;
+        height: 0.125rem;
+        border: none;
+        background-color: var(--nimiq-highlight-bg);
+        transition: opacity .3s var(--nimiq-ease);
+    }
+
     .amount-with-fee {
         flex-grow: 1;
-        border-top: .125rem solid var(--nimiq-highlight-bg);
-        padding-top: 2rem;
+        margin-top: 2rem;
         justify-content: center;
     }
 
+    .create-cashlink .page-header >>> h1 > span,
     .create-cashlink .page-body >>> .amount-with-fee input,
     .create-cashlink .page-body >>> .amount-with-fee .nim,
     .create-cashlink .page-body >>> .amount-with-fee .fee-section,
@@ -574,7 +607,7 @@ export default class CashlinkCreate extends Vue {
     .create-cashlink .page-body >>> .message-with-tooltip input,
     .create-cashlink .page-body >>> .tooltip,
     .create-cashlink .page-footer >>> button {
-        transition: filter .3s, opacity .3s;
+        transition: filter .3s var(--nimiq-ease), opacity .3s var(--nimiq-ease);
         filter: blur(0px);
         opacity: 1;
     }
@@ -584,26 +617,28 @@ export default class CashlinkCreate extends Vue {
     }
 
     /* these elements are too small to make a notable difference in the blurred background */
-    .create-cashlink .page-body >>> .arrow,
-    .create-cashlink .overlay ~ .page-header >>> a { /* back button and fee button */
+    .create-cashlink.blurred > .page-body >>> .arrow, /* arrow between the identicons */
+    .create-cashlink.blurred > .page-body hr, /* line seperating identicons and amount */
+    .create-cashlink.blurred > .page-header >>> a , /* back button */
+    .create-cashlink.blurred > .page-header >>> h1 > a { /* back button */
         opacity: 0;
     }
 
-    .create-cashlink .overlay ~ .page-body,
-    .create-cashlink .overlay ~ .page-body >>> .account,
-    .create-cashlink .overlay ~ .page-body >>> .label-input {
+    .create-cashlink.blurred > .page-body,
+    .create-cashlink.blurred > .page-body >>> .account,
+    .create-cashlink.blurred > .page-body >>> .label-input {
         overflow: visible; /** needed for ugly hard lines to disappear */
     }
 
-    .create-cashlink .overlay ~ .page-header >>> h1,
-    .create-cashlink .overlay ~ .page-body >>> .amount-with-fee input,
-    .create-cashlink .overlay ~ .page-body >>> .amount-with-fee .nim,
-    .create-cashlink .overlay ~ .page-body >>> .amount-with-fee .fee-section,
-    .create-cashlink .overlay ~ .page-body >>> .label,
-    .create-cashlink .overlay ~ .page-body >>> .identicon,
-    .create-cashlink .overlay ~ .page-body >>> .message-with-tooltip input,
-    .create-cashlink .overlay ~ .page-body >>> .tooltip,
-    .create-cashlink .overlay ~ .page-footer >>> button {
+    .create-cashlink.blurred > .page-header >>> h1 > span,
+    .create-cashlink.blurred > .page-body >>> .amount-with-fee input,
+    .create-cashlink.blurred > .page-body >>> .amount-with-fee .nim,
+    .create-cashlink.blurred > .page-body >>> .amount-with-fee .fee-section,
+    .create-cashlink.blurred > .page-body >>> .label,
+    .create-cashlink.blurred > .page-body >>> .identicon,
+    .create-cashlink.blurred > .page-body >>> .message-with-tooltip input,
+    .create-cashlink.blurred > .page-body >>> .tooltip,
+    .create-cashlink.blurred > .page-footer >>> button {
         opacity: .5;
         filter: blur(20px);
     }

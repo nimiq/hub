@@ -91,6 +91,8 @@ export default class OnboardingSelector extends Vue {
         switch (this.originalRouteName) {
             case RequestType.CHECKOUT:
                 return 'Pay with Nimiq';
+            case RequestType.CASHLINK:
+                return 'Login to fund your Cashlink';
             default:
                 return undefined;
         }
