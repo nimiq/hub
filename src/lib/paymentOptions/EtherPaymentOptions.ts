@@ -1,6 +1,6 @@
 import bigInt from 'big-integer';
 import { Currency, PaymentType, PaymentOptions } from '../PublicRequestTypes';
-import { ParsedPaymentOptions } from '../RequestTypes';
+import { ParsedPaymentOptions } from './ParsedPaymentOptions';
 import { toNonScientificNumberString } from '@nimiq/utils';
 
 export interface EtherSpecifics {
@@ -72,12 +72,12 @@ export class ParsedEtherDirectPaymentOptions extends ParsedPaymentOptions<Curren
     }
 
     public fiatFee(fiatAmount: number): number {
-        if (!this.amount || !fiatAmount) {
-            throw new Error('amount and fiatAmount must be provided');
-        }
-
         if (this.fee.isZero()) {
             return 0;
+        }
+
+        if (!this.amount || !fiatAmount) {
+            throw new Error('amount and fiatAmount must be provided');
         }
 
         const decimalMatch = toNonScientificNumberString(fiatAmount).match(/(?:\D)(\d+)$/);
