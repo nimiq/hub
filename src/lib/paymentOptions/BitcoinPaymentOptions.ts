@@ -1,5 +1,5 @@
 import { Currency, PaymentType, PaymentOptions } from '../PublicRequestTypes';
-import { ParsedPaymentOptions } from '../RequestTypes';
+import { ParsedPaymentOptions } from './ParsedPaymentOptions';
 import { toNonScientificNumberString } from '@nimiq/utils';
 
 export interface BitcoinSpecifics {

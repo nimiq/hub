@@ -199,7 +199,7 @@ export class RequestParser {
                         fiatAmount: checkoutRequest.fiatAmount,
                         paymentOptions: checkoutRequest.paymentOptions.map((option) => {
                             if (currencies.has(option.currency)) {
-                                throw new Error('Each Currency can only have one paymentOption');
+                                throw new Error('Only one paymentOption can be provided per cryptocurrency');
                             } else {
                                 currencies.add(option.currency);
                             }
@@ -331,23 +331,9 @@ export class RequestParser {
                         } as NimiqCheckoutRequest;
                     case 2:
                         return {
-                            appName: checkoutRequest.appName,
-                            version: 2,
-                            shopLogoUrl: checkoutRequest.shopLogoUrl,
+                            ...checkoutRequest,
                             extraData: checkoutRequest.data,
-                            callbackUrl: checkoutRequest.callbackUrl,
-                            csrf: checkoutRequest.csrf,
-                            time: checkoutRequest.time,
-                            fiatAmount: checkoutRequest.fiatAmount || undefined,
-                            fiatCurrency: checkoutRequest.fiatCurrency || undefined,
-                            paymentOptions: checkoutRequest.paymentOptions.map((option) => {
-                                switch (option.type) {
-                                    case PaymentType.DIRECT:
-                                        return option.raw();
-                                    default:
-                                        throw new Error('paymentOption.type not supported');
-                                }
-                            }),
+                            paymentOptions: checkoutRequest.paymentOptions.map((option) => option.raw()),
                         } as MultiCurrencyCheckoutRequest;
                     }
             case RequestType.ONBOARD:
