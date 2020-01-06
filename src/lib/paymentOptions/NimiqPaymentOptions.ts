@@ -1,6 +1,6 @@
 import { TX_VALIDITY_WINDOW, TX_MIN_VALIDITY_DURATION } from '../Constants';
 import { Currency, PaymentType, PaymentOptions } from '../PublicRequestTypes';
-import { ParsedPaymentOptions } from '../RequestTypes';
+import { ParsedPaymentOptions } from './ParsedPaymentOptions';
 import { toNonScientificNumberString } from '@nimiq/utils';
 
 export interface NimiqSpecifics {
@@ -34,7 +34,7 @@ export class ParsedNimiqDirectPaymentOptions extends ParsedPaymentOptions<Curren
         this.amount = parseInt(toNonScientificNumberString(options.amount), 10);
 
         let sender: Nimiq.Address | undefined;
-        if (options.protocolSpecific.sender !== undefined) {
+        if (options.protocolSpecific.sender) {
             try {
                 sender = Nimiq.Address.fromUserFriendlyAddress(options.protocolSpecific.sender);
             } catch (err) {
@@ -43,7 +43,7 @@ export class ParsedNimiqDirectPaymentOptions extends ParsedPaymentOptions<Curren
         }
 
         let recipient: Nimiq.Address | undefined;
-        if (options.protocolSpecific.recipient !== undefined) {
+        if (options.protocolSpecific.recipient) {
             try {
                 recipient = Nimiq.Address.fromUserFriendlyAddress(options.protocolSpecific.recipient);
             } catch (err) {
@@ -82,8 +82,8 @@ export class ParsedNimiqDirectPaymentOptions extends ParsedPaymentOptions<Curren
         }
 
         const requiresExtendedTransaction = extraData.byteLength > 0
-            || recipientType !== undefined && recipientType !== Nimiq.Account.Type.BASIC
-            || flags !== undefined && flags !== Nimiq.Transaction.Flag.NONE;
+            || (recipientType !== undefined && recipientType !== Nimiq.Account.Type.BASIC)
+            || (flags !== undefined && flags !== Nimiq.Transaction.Flag.NONE);
         // Note that the transaction size can be bigger than this, for example if the sender type the user wants to use
         // requires an extended transaction or if an extended transaction includes a multi signature proof. The size
         // is therefore just an estimate. In the majority of cases the estimate will be accurate though and a fee that
@@ -102,8 +102,8 @@ export class ParsedNimiqDirectPaymentOptions extends ParsedPaymentOptions<Curren
         }
 
         if (options.protocolSpecific.validityDuration !== undefined
-            && !this.isNonNegativeInteger(options.protocolSpecific.validityDuration)) {
-            throw new Error('If provided, validityDuration must be a non-negative integer.');
+            && options.protocolSpecific.validityDuration <= 0) {
+            throw new Error('If provided, validityDuration must be a positive integer.');
         }
 
         this.protocolSpecific = {
@@ -147,11 +147,11 @@ export class ParsedNimiqDirectPaymentOptions extends ParsedPaymentOptions<Curren
     }
 
     public fiatFee(fiatAmount: number): number {
-        if (!this.amount || !fiatAmount) {
-            throw new Error('amount and fiatAmount must be provided');
-        }
         if (!this.fee) {
             return 0;
+        }
+        if (!this.amount || !fiatAmount) {
+            throw new Error('amount and fiatAmount must be provided');
         }
         return this.fee * fiatAmount / this.amount;
     }

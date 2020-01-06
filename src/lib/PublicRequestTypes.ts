@@ -83,7 +83,7 @@ export interface PaymentOptions<C extends Currency, T extends PaymentType> {
     currency: C;
     expires?: number;
     /**
-     * Amount in the smallest unit of the currency specified in `currency`.
+     * Amount in the smallest unit of the currency specified as `currency`.
      * i.e Luna for Currency.NIM and Satoshi for Currency.BTC
      */
     amount: string;
@@ -109,13 +109,13 @@ export interface MultiCurrencyCheckoutRequest extends BasicRequest {
      */
     shopLogoUrl: string;
     /**
-     * TODO
+     * TODO description of the api the callback needs to provide.
      * Input is {currency, type} alongside the order identifying parameters in the url.
      * the called url must return a PaymentOptions<currency, type> object
      */
     callbackUrl?: string;
     /**
-     * The csrf token, that will be transmitted for future requests to the callback url
+     * A CSRF token, that will be transmitted in all requests to the callback url.
      */
     csrf?: string;
     /**
@@ -127,7 +127,7 @@ export interface MultiCurrencyCheckoutRequest extends BasicRequest {
      */
     time: number;
     /**
-     * ISO 4217 Code of the fiat currency used on the calling site.
+     * ISO 4217 Code (three letters) of the fiat currency used on the calling site.
      */
     fiatCurrency: string;
     /**

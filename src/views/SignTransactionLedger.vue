@@ -85,10 +85,7 @@ import StatusScreen from '../components/StatusScreen.vue';
 import { Static } from '../lib/StaticStore';
 import { Getter } from 'vuex-class';
 import { State as RpcState } from '@nimiq/rpc';
-import {
-    ParsedCheckoutRequest,
-    ParsedSignTransactionRequest,
-} from '../lib/RequestTypes';
+import { ParsedCheckoutRequest, ParsedSignTransactionRequest } from '../lib/RequestTypes';
 import { Currency, RequestType } from '../lib/PublicRequestTypes';
 import { WalletInfo } from '../lib/WalletInfo';
 import { ERROR_CANCELED, TX_VALIDITY_WINDOW, CASHLINK_FUNDING_DATA } from '../lib/Constants';
@@ -218,7 +215,7 @@ export default class SignTransactionLedger extends Vue {
             // The next block is the earliest for which tx are accepted by standard miners
             validityStartHeight = blockchainHeight + 1
                 - TX_VALIDITY_WINDOW
-                + nimiqPaymentOption.protocolSpecific.validityDuration!;
+                + nimiqPaymentOption.protocolSpecific.validityDuration;
         } else {
             // this case get's rejected in created
             return;
