@@ -140,6 +140,7 @@ export default class SignTransactionLedger extends Vue {
     private senderDetails!: AccountDetailsData;
     private recipientDetails!: AccountDetailsData;
     private shownAccountDetails: AccountDetailsData | null = null;
+    private isDestroyed: boolean = false;
 
     private created() {
         let senderUserFriendlyAddress: string;
@@ -254,7 +255,7 @@ export default class SignTransactionLedger extends Vue {
             }, signer.path, senderAccount.keyId);
         } catch (e) {
             // If cancelled, handle the exception. Otherwise just keep the error message displayed in ledger ui.
-            if (e.message.toLowerCase().indexOf('cancelled') !== -1) {
+            if (e.message.toLowerCase().indexOf('cancelled') !== -1 && !this.isDestroyed) {
                 if (this.request.kind === RequestType.CHECKOUT || this.request.kind === RequestType.CASHLINK) {
                     this._back(); // user might want to choose another account or address or change cashlink
                 } else {
@@ -289,6 +290,7 @@ export default class SignTransactionLedger extends Vue {
     }
 
     private destroyed() {
+        this.isDestroyed = true;
         const currentRequest = LedgerApi.currentRequest;
         if (currentRequest && currentRequest.type === LedgerApi.RequestType.SIGN_TRANSACTION) {
             currentRequest.cancel();
