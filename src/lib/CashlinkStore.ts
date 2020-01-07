@@ -30,7 +30,9 @@ export class CashlinkStore extends Store<Cashlink, CashlinkEntry> {
     }
 
     protected toEntry(cashlink: Cashlink): CashlinkEntry {
-        return cashlink.toObject();
+        // Exclude contactName and fee when writing to store to save some data. contactName is currently unused and fee
+        // can be safely omitted as it is only used at Cashlink creation time which is also when the entry gets stored.
+        return cashlink.toObject(/*includeOptional*/ false);
     }
 
     protected fromEntry(cashlinkEntry: CashlinkEntry): Cashlink {
