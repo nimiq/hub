@@ -77,6 +77,16 @@ const afterEachCallback = async () => {
     });
 };
 
+function expectEqualIgnoringFeeAndContactName(a: any, b: any) {
+    const filterIgnoredKeys = (key: string) => key !== 'fee' && key !== '_fee' && key !== 'contactName';
+    const keysA = Object.keys(a).filter(filterIgnoredKeys);
+    const keysB = Object.keys(b).filter(filterIgnoredKeys);
+    expect(keysA).toEqual(keysB);
+    for (const key of keysA) {
+        expect(a[key]).toEqual(b[key]);
+    }
+}
+
 describe('CashlinkStore', () => {
     beforeEach(beforeEachCallback);
     afterEach(afterEachCallback);
@@ -89,12 +99,14 @@ describe('CashlinkStore', () => {
 
     it('can get a cashlink', async () => {
         const cl = await CashlinkStore.Instance.get(DUMMY_DATA.addresses[0]);
-        expect(cl).toEqual(DUMMY_DATA.cashlinks[0]);
+        expectEqualIgnoringFeeAndContactName(cl, DUMMY_DATA.cashlinks[0]);
     });
 
     it('can list cashlinks', async () => {
         const cashlinkEntries = await CashlinkStore.Instance.list();
-        expect(cashlinkEntries).toEqual(DUMMY_DATA.cashlinks.map((cashlink) => cashlink.toObject()));
+        expect(cashlinkEntries).toEqual(DUMMY_DATA.cashlinks.map((cashlink) =>
+            cashlink.toObject(/*includeOptional*/ false),
+        ));
     });
 
     it('can remove cashlinks', async () => {
@@ -125,7 +137,7 @@ describe('CashlinkStore', () => {
 
         // Check that the cashlink has been stored correctly
         let cashlink = await CashlinkStore.Instance.get(DUMMY_DATA.addresses[0]);
-        expect(cashlink).toEqual(DUMMY_DATA.cashlinks[0]);
+        expectEqualIgnoringFeeAndContactName(cashlink, DUMMY_DATA.cashlinks[0]);
 
         cashlink!.state = CashlinkState.CLAIMED;
 

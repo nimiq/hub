@@ -249,17 +249,20 @@ class Cashlink {
         if (newState !== this.state) this._updateState(newState);
     }
 
-    public toObject(): CashlinkEntry {
-        return {
+    public toObject(includeOptional: boolean = true): CashlinkEntry {
+        const result: CashlinkEntry = {
             keyPair: new Uint8Array(this.keyPair.serialize()),
             address: this.address.toUserFriendlyAddress(),
             value: this.value,
-            fee: this.fee,
             message: this.message,
             state: this.state,
             timestamp: this.timestamp,
-            contactName: this.contactName,
         };
+        if (includeOptional) {
+            result.fee = this.fee;
+            result.contactName = this.contactName;
+        }
+        return result;
     }
 
     public render() {
