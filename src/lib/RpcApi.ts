@@ -50,6 +50,13 @@ export default class RpcApi {
         this._server = new RpcServer('*');
         this._keyguardClient = new KeyguardClient(Config.keyguardEndpoint);
 
+        // On reload recover any state exported to the current history entry. Note that if we came back from the
+        // Keyguard by history back navigation and rejectOnBack was enabled for the request, the state provided to
+        // _keyguardErrorHandler will overwrite the state here.
+        if (history.state && history.state.exportedState) {
+            this._recoverState(history.state.exportedState);
+        }
+
         this._registerHubApis([
             RequestType.SIGN_TRANSACTION,
             RequestType.CASHLINK,
@@ -83,9 +90,7 @@ export default class RpcApi {
         if (this._store.state.keyguardResult) return;
 
         // If there is no valid request, show an error page
-        const onClientTimeout = () => {
-            this._router.replace(`/${REQUEST_ERROR}`);
-        };
+        const onClientTimeout = () => this.routerReplace(REQUEST_ERROR);
         this._server.init(onClientTimeout);
     }
 
@@ -98,17 +103,29 @@ export default class RpcApi {
             undefined, // preserveRequests: keep default behavior, which is true for redirects but false for postMessage
             handleHistoryBack,
         );
+        if (!handleHistoryBack) {
+            // The Keyguard client rejects on history back only if handleHistoryBack is activated. If the Keyguard does
+            // not reject it also does not provide us the localState to recover. For this case, we encode it manually in
+            // the history, to retrieve it from there.
+            this._exportStateToHistory();
+        }
         return client;
     }
 
-    public routerPush(routeName: string) {
-        const query = this._parseUrlParams(window.location.search);
-        this._router.push({name: routeName, query});
+    public routerPush(routeName: string, query?: { [key: string]: string }) {
+        query = query || this._parseUrlParams(window.location.search);
+        this._router.push({name: routeName, query}, () => {
+            // export state to the newly pushed history entry to be available on reload
+            this._exportStateToHistory();
+        });
     }
 
-    public routerReplace(routeName: string) {
-        const query = this._parseUrlParams(window.location.search);
-        this._router.replace({name: routeName, query});
+    public routerReplace(routeName: string, query?: { [key: string]: string }) {
+        query = query || this._parseUrlParams(window.location.search);
+        this._router.replace({name: routeName, query}, () => {
+            // export state to the updated history entry to be available on reload
+            this._exportStateToHistory();
+        });
     }
 
     public resolve(result: RpcResult) {
@@ -148,8 +165,8 @@ export default class RpcApi {
             // Recreate original URL with original query parameters
             const rpcState = this._staticStore.rpcState!;
             const query = { rpcId: rpcState.id.toString() };
-            this._router.push({ name: originalRoute, query });
             delete this._staticStore.originalRouteName;
+            this.routerPush(originalRoute, query);
             return;
         }
 
@@ -165,6 +182,10 @@ export default class RpcApi {
             originalRouteName: this._staticStore.originalRouteName,
             cashlink: this._staticStore.cashlink ? this._staticStore.cashlink.toObject() : undefined,
         };
+    }
+
+    private _exportStateToHistory() {
+        history.replaceState({ ...history.state, exportedState: this._exportState() }, '');
     }
 
     private _registerHubApis(requestTypes: RequestType[]) {
