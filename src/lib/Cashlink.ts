@@ -26,15 +26,15 @@ class Cashlink {
 
     set value(value: number) {
         if (this._value && (this._immutable || this.state !== CashlinkState.UNCHARGED)) {
-            throw new Error('Cashlink is immutable');
+            throw new Error('Cannot set value, Cashlink is immutable');
         }
-        if (!Nimiq.NumberUtils.isUint64(value) || value === 0) throw new Error('Malformed value');
+        if (!Nimiq.NumberUtils.isUint64(value) || value === 0) throw new Error('Malformed Cashlink value');
         this._value = value;
     }
 
     set fee(fee: number) {
         if (this.state === CashlinkState.CLAIMED) {
-            console.warn('Cashlink is already claimed');
+            console.warn('Setting a fee will typically have no effect anymore as Cashlink is already claimed');
         }
         this._fee = fee;
     }
@@ -49,10 +49,10 @@ class Cashlink {
 
     set message(message) {
         if (this._messageBytes.byteLength && (this._immutable || this.state !== CashlinkState.UNCHARGED)) {
-            throw new Error('Cashlink is immutable');
+            throw new Error('Cannot set message, Cashlink is immutable');
         }
         const messageBytes = Utf8Tools.stringToUtf8ByteArray(message);
-        if (!Nimiq.NumberUtils.isUint8(messageBytes.byteLength)) throw new Error('Message is too long');
+        if (!Nimiq.NumberUtils.isUint8(messageBytes.byteLength)) throw new Error('Cashlink message is too long');
         this._messageBytes = messageBytes;
     }
 
@@ -303,7 +303,7 @@ class Cashlink {
         fee: number = this.fee,
     ): Promise<void> {
         if (this.state >= CashlinkState.CLAIMING) {
-            throw new Error('Cashlink has already been claimed');
+            throw new Error('Cannot claim, Cashlink has already been claimed');
         }
 
         await loadNimiq();
@@ -311,7 +311,7 @@ class Cashlink {
         // Only claim the amount specified in the cashlink (or the cashlink balance, if smaller)
         const balance = Math.min(this.value, await this._awaitBalance());
         if (!balance) {
-            throw new Error('There is no balance in this link');
+            throw new Error('Cannot claim, there is no balance in this link');
         }
         const recipient = Nimiq.Address.fromUserFriendlyAddress(recipientAddress);
         const transaction = new Nimiq.ExtendedTransaction(this.address, Nimiq.Account.Type.BASIC,
