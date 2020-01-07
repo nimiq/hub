@@ -164,6 +164,8 @@ class CashlinkCreate extends Vue {
         },
     ];
 
+    private static readonly TRANSACTION_SIZE = 171; // 166 + 5 bytes extraData for funding a cashlink
+
     public $refs!: {
         createCashlinkTooltipTarget: PageBody,
         amountWithFee: AmountWithFee,
@@ -233,7 +235,7 @@ class CashlinkCreate extends Vue {
             NetworkClient.createInstance(Config.networkEndpoint);
         }
 
-        this.loading = !this.request.senderAddress || !this.request.senderBalance;
+        this.loading = !staticStore.cashlink && (!this.request.senderAddress || !this.request.senderBalance);
 
         this.nimiqLoadedPromise = loadNimiq();
         this.balanceUpdatedPromise = this.updateBalances();
@@ -241,7 +243,18 @@ class CashlinkCreate extends Vue {
             this.balanceUpdatedPromise.then(() => this.loading = false);
         }
 
-        if (this.request.senderAddress) {
+        if (staticStore.cashlink) {
+            // If the Cashlink is restored in the static store after navigating back from the Keyguard or Ledger signing
+            // also restore the previously used values in the UI.
+            this.liveAmountAndFee.amount = staticStore.cashlink.value;
+            this.feeLunaPerByte = this.feeLunaPerBytePreview =
+                Math.round(staticStore.cashlink.fee / CashlinkCreate.TRANSACTION_SIZE);
+            this.liveAmountAndFee.fee = this.fee;
+            this.message = staticStore.cashlink.message;
+            // Restore the sender from activeAccount. We don't await the balance update as we assume it to not have
+            // changed.
+            this.setSender(this.$store.state.activeWalletId, this.$store.state.activeUserFriendlyAddress);
+        } else if (this.request.senderAddress) {
             if (!this.request.senderBalance) {
                 await this.balanceUpdatedPromise;
             }
@@ -347,11 +360,11 @@ class CashlinkCreate extends Vue {
     }
 
     private get fee(): number {
-        return 171 * this.feeLunaPerByte; // 166 + 5 bytes extraData for funding a cashlink
+        return CashlinkCreate.TRANSACTION_SIZE * this.feeLunaPerByte;
     }
 
     private get feePreview(): number {
-        return 171 * this.feeLunaPerBytePreview; // 166 + 5 bytes extraData for funding a cashlink
+        return CashlinkCreate.TRANSACTION_SIZE * this.feeLunaPerBytePreview;
     }
 
     private async sendTransaction() {
