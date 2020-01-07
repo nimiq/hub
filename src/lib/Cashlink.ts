@@ -12,6 +12,7 @@ export interface CashlinkEntry {
     address: string;
     keyPair: Uint8Array;
     value: number;
+    fee?: number;
     message: string;
     state: CashlinkState;
     timestamp: number;
@@ -87,6 +88,7 @@ class Cashlink {
                 keyPair,
                 keyPair.publicKey.toAddress(),
                 value,
+                undefined, // fee
                 message,
                 CashlinkState.UNKNOWN,
             );
@@ -101,6 +103,7 @@ class Cashlink {
             Nimiq.KeyPair.unserialize(new Nimiq.SerialBuffer(object.keyPair)),
             Nimiq.Address.fromUserFriendlyAddress(object.address),
             object.value,
+            object.fee,
             object.message,
             object.state,
             // @ts-ignore `timestamp` was called `date` before and was live in the mainnet.
@@ -113,6 +116,7 @@ class Cashlink {
      * Cashlink balance in luna
      */
     public balance: number | null = null;
+    public state: CashlinkState;
 
     private _getNetwork: () => Promise<NetworkClient>;
     private _networkClientResolver!: (client: NetworkClient) => void;
@@ -127,8 +131,9 @@ class Cashlink {
         public keyPair: Nimiq.KeyPair,
         public address: Nimiq.Address,
         value?: number,
+        fee?: number,
         message?: string,
-        public state: CashlinkState = CashlinkState.UNCHARGED,
+        state: CashlinkState = CashlinkState.UNCHARGED,
         public timestamp: number = Math.floor(Date.now() / 1000),
         public contactName?: string, /** unused for now */
     ) {
@@ -139,7 +144,9 @@ class Cashlink {
         this._getNetwork = () => networkPromise;
 
         if (value) this.value = value;
+        if (fee) this.fee = fee;
         if (message) this.message = message;
+        this.state = state;
 
         this._immutable = !!(value || message);
 
@@ -247,6 +254,7 @@ class Cashlink {
             keyPair: new Uint8Array(this.keyPair.serialize()),
             address: this.address.toUserFriendlyAddress(),
             value: this.value,
+            fee: this.fee,
             message: this.message,
             state: this.state,
             timestamp: this.timestamp,
