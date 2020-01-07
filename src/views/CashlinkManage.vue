@@ -103,8 +103,8 @@ export default class CashlinkManage extends Vue {
         } else if (this.cashlink) {
             storedCashlink = await CashlinkStore.Instance.get(this.cashlink.address.toUserFriendlyAddress());
         } else {
-            // this can happen if the user reloads the page after coming from SignTransactionLedger
-            history.back();
+            this.$rpc.reject(new Error('CashlinkManage expects the cashlink to display to be specified either via '
+                + 'request.cashlinkMessage or the cashlink in the static store.'));
             return;
         }
 

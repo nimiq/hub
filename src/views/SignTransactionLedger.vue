@@ -170,8 +170,8 @@ export default class SignTransactionLedger extends Vue {
         } else if (this.request.kind === RequestType.CASHLINK) {
             // coming from cashlink create
             if (!this.cashlink) {
-                // happens if user reloads the page
-                this._back();
+                this.$rpc.reject( new Error('Ledger Cashlink Signing expects the Cashlink to sign to be in the '
+                    + 'static store.'));
                 return;
             }
             senderUserFriendlyAddress = this.$store.state.activeUserFriendlyAddress;

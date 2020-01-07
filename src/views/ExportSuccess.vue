@@ -83,8 +83,7 @@ export default class ExportSuccess extends Vue {
 
             // Recreate original URL with original query parameters
             const query = { rpcId: staticStore.rpcState!.id.toString() };
-            setTimeout(
-                () => this.$router.push({ name: RequestType.MIGRATE, query }), StatusScreen.SUCCESS_REDIRECT_DELAY);
+            setTimeout(() => this.$rpc.routerPush(RequestType.MIGRATE, query), StatusScreen.SUCCESS_REDIRECT_DELAY);
         }
     }
 }
