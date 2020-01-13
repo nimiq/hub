@@ -134,14 +134,16 @@ class Network extends Vue {
         });
         client.relayTransaction(txObjToSend);
 
-        return new Promise<SignedTransaction>((resolve, reject) => {
-            this.$once('transaction-relayed', (txInfo: any) => {
+        return new Promise<SignedTransaction>((resolve) => {
+            const listener = (txInfo: any) => {
                 if (txInfo.hash !== base64Hash) return;
+                this.$off(Network.Events.TRANSACTION_RELAYED, listener);
                 unrelayedTransactionMap = getHistoryStorage(Network.HISTORY_KEY_UNRELAYED_TRANSACTIONS);
                 delete unrelayedTransactionMap[base64Hash];
                 setHistoryStorage(Network.HISTORY_KEY_UNRELAYED_TRANSACTIONS, unrelayedTransactionMap);
                 resolve(signedTx);
-            });
+            };
+            this.$on(Network.Events.TRANSACTION_RELAYED, listener);
         });
     }
 
