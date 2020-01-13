@@ -130,7 +130,7 @@ class Network extends Vue {
         }, '');
 
         const signedTx = await this.makeSignTransactionResult(tx);
-        const client = await this._getNetworkClient();
+        const client = await this.getNetworkClient();
 
         const txObjToSend = Object.assign({}, signedTx.raw, {
             senderPubKey: signedTx.raw.signerPublicKey,
@@ -184,24 +184,24 @@ class Network extends Vue {
     }
 
     public async getBlockchainHeight(): Promise<number> {
-        const client = await this._getNetworkClient();
+        const client = await this.getNetworkClient();
         if (Network._hasOrSyncsOnTopOfConsensus) return client.headInfo.height;
         return new Promise((resolve) => this.$once(Network.Events.CONSENSUS_ESTABLISHED,
             () => resolve(client.headInfo.height)));
     }
 
     public async getBalances(addresses: string[]): Promise<Map<string, number>> {
-        const client = await this._getNetworkClient();
+        const client = await this.getNetworkClient();
         return client.getBalance(addresses);
     }
 
     public async requestTransactionReceipts(address: string): Promise<Nimiq.TransactionReceipt[]> {
-        const client = await this._getNetworkClient();
+        const client = await this.getNetworkClient();
         return client.requestTransactionReceipts(address);
     }
 
     public async getGenesisVestingContracts(): Promise<VestingContractInfo[]> {
-        const client = await this._getNetworkClient();
+        const client = await this.getNetworkClient();
         const contracts = await client.getGenesisVestingContracts();
 
         return contracts.map((contract) => new VestingContractInfo(
@@ -215,23 +215,7 @@ class Network extends Vue {
         ));
     }
 
-    private created() {
-        this.$on(Network.Events.CONSENSUS_ESTABLISHED, () => {
-            Network._hasOrSyncsOnTopOfConsensus = true;
-        });
-        this.$on(Network.Events.CONSENSUS_LOST, () => {
-            Network._hasOrSyncsOnTopOfConsensus = false;
-        });
-    }
-
-    private destroyed() {
-        if (!NetworkClient.hasInstance()) return;
-        for (const [event, listener] of this.boundListeners) {
-            NetworkClient.Instance.off(event, listener);
-        }
-    }
-
-    private async _getNetworkClient(): Promise<NetworkClient> {
+    public async getNetworkClient(): Promise<NetworkClient> {
         if (!NetworkClient.hasInstance()) {
             NetworkClient.createInstance(Config.networkEndpoint);
         }
@@ -269,6 +253,22 @@ class Network extends Vue {
         }
 
         return NetworkClient.Instance;
+    }
+
+    private created() {
+        this.$on(Network.Events.CONSENSUS_ESTABLISHED, () => {
+            Network._hasOrSyncsOnTopOfConsensus = true;
+        });
+        this.$on(Network.Events.CONSENSUS_LOST, () => {
+            Network._hasOrSyncsOnTopOfConsensus = false;
+        });
+    }
+
+    private destroyed() {
+        if (!NetworkClient.hasInstance()) return;
+        for (const [event, listener] of this.boundListeners) {
+            NetworkClient.Instance.off(event, listener);
+        }
     }
 
     private _registerNetworkListener(event: NetworkClient.Events, listener: (...args: any[]) => void) {

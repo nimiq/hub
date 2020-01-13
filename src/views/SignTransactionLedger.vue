@@ -204,30 +204,31 @@ export default class SignTransactionLedger extends Vue {
     private async mounted() {
         const network = this.$refs.network as Network;
 
-        let recipient;
-        let value;
-        let fee;
-        let validityStartHeight;
-        let data;
-        let flags;
+        let recipient: Nimiq.Address;
+        let value: number;
+        let fee: number;
+        let data: Uint8Array;
+        let flags: number;
+        let validityStartHeightPromise: Promise<number>;
         if (this.request.kind === RequestType.SIGN_TRANSACTION) {
             const signTransactionRequest = this.request as ParsedSignTransactionRequest;
-            ({ recipient, value, fee, validityStartHeight, data, flags } = signTransactionRequest);
+            ({ recipient, value, fee, data, flags } = signTransactionRequest);
+            validityStartHeightPromise = Promise.resolve(signTransactionRequest.validityStartHeight);
         } else if (this.request.kind === RequestType.CHECKOUT) {
             const checkoutRequest = this.request as ParsedCheckoutRequest;
             ({ recipient, value, fee, data, flags } = checkoutRequest);
-            const blockchainHeight = await network.getBlockchainHeight(); // usually instant as synced in checkout
-            // The next block is the earliest for which tx are accepted by standard miners
-            validityStartHeight = blockchainHeight + 1
+            validityStartHeightPromise = network.getBlockchainHeight().then((height: number) =>
+                height + 1 // The next block is the earliest for which tx are accepted by standard miners
                 - TX_VALIDITY_WINDOW
-                + checkoutRequest.validityDuration;
+                + checkoutRequest.validityDuration,
+            );
         } else if (this.request.kind === RequestType.CASHLINK) {
             if (!this.cashlink) {
                 // already handled in created
                 return;
             }
             ({ recipient, value, fee } = this.cashlink.getFundingDetails());
-            validityStartHeight = await network.getBlockchainHeight() + 1;
+            validityStartHeightPromise = network.getBlockchainHeight().then((height: number) => height + 1);
             data = CASHLINK_FUNDING_DATA;
             flags = Nimiq.Transaction.Flag.NONE;
         } else {
@@ -239,30 +240,36 @@ export default class SignTransactionLedger extends Vue {
         const senderAccount = this.findWalletByAddress(this.senderDetails.address, true)!;
         const senderContract = senderAccount.findContractByAddress(senderAddress);
         const signer = senderAccount.findSignerForAddress(senderAddress)!;
+        const transactionInfo = {
+            sender: (senderContract || signer).address,
+            senderType: senderContract ? senderContract.type : Nimiq.Account.Type.BASIC,
+            recipient,
+            value,
+            fee: fee || 0,
+            network: Config.network,
+            extraData: data,
+            flags,
+        };
 
-        let signedTransaction;
-        try {
-            signedTransaction = await LedgerApi.signTransaction({
-                sender: (senderContract || signer).address,
-                senderType: senderContract ? senderContract.type : Nimiq.Account.Type.BASIC,
-                recipient,
-                value,
-                fee: fee || 0,
-                validityStartHeight,
-                network: Config.network,
-                extraData: data,
-                flags,
-            }, signer.path, senderAccount.keyId);
-        } catch (e) {
-            // If cancelled, handle the exception. Otherwise just keep the error message displayed in ledger ui.
-            if (e.message.toLowerCase().indexOf('cancelled') !== -1 && !this.isDestroyed) {
-                if (this.request.kind === RequestType.CHECKOUT || this.request.kind === RequestType.CASHLINK) {
-                    this._back(); // user might want to choose another account or address or change cashlink
-                } else {
-                    this._close();
+        // Check whether transaction was already signed but not successfully sent before user reloaded the page.
+        let signedTransaction = network.getUnrelayedTransactions(transactionInfo)[0];
+        if (!signedTransaction) {
+            try {
+                signedTransaction = await LedgerApi.signTransaction({
+                    ...transactionInfo,
+                    validityStartHeight: await validityStartHeightPromise,
+                }, signer.path, senderAccount.keyId);
+            } catch (e) {
+                // If cancelled, handle the exception. Otherwise just keep the error message displayed in ledger ui.
+                if (e.message.toLowerCase().indexOf('cancelled') !== -1 && !this.isDestroyed) {
+                    if (this.request.kind === RequestType.CHECKOUT || this.request.kind === RequestType.CASHLINK) {
+                        this._back(); // user might want to choose another account or address or change cashlink
+                    } else {
+                        this._close();
+                    }
                 }
+                return;
             }
-            return;
         }
 
         this.shownAccountDetails = null;
