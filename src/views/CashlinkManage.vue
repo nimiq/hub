@@ -1,6 +1,6 @@
 <template>
-    <div class="container pad-bottom" v-if="retrievedCashlink">
-        <SmallPage class="cashlink-manage">
+    <div class="container pad-bottom">
+        <SmallPage class="cashlink-manage" v-if="retrievedCashlink">
             <transition name="transition-fade">
                 <StatusScreen v-if="!isTxSent" :state="state" :title="title" :status="status" lightBlue/>
             </transition>
@@ -47,6 +47,7 @@
                 </template>
             </PageFooter>
         </SmallPage>
+        <Network ref="network" :visible="false"/>
     </div>
 </template>
 
@@ -56,14 +57,13 @@ import { Static } from '../lib/StaticStore';
 import { ParsedCashlinkRequest, RequestType } from '../lib/RequestTypes';
 import { SmallPage, PageBody, PageFooter, Account, CheckmarkSmallIcon, Copyable } from '@nimiq/vue-components';
 import StatusScreen from '../components/StatusScreen.vue';
-import { NetworkClient } from '@nimiq/network-client';
+import Network from '../components/Network.vue';
 import Cashlink from '../lib/Cashlink';
 import { CashlinkStore } from '../lib/CashlinkStore';
 import { State } from 'vuex-class';
 import KeyguardClient from '@nimiq/keyguard-client';
 import { Cashlink as PublicCashlink } from '../lib/PublicRequestTypes';
 import { Clipboard } from '@nimiq/utils';
-import Config from 'config';
 
 @Component({components: {
     Account,
@@ -72,6 +72,7 @@ import Config from 'config';
     PageFooter,
     SmallPage,
     StatusScreen,
+    Network,
     Copyable,
 }})
 export default class CashlinkManage extends Vue {
@@ -93,6 +94,9 @@ export default class CashlinkManage extends Vue {
     private readonly nativeShareAvailable: boolean = (!!window.navigator && !!window.navigator.share);
 
     private async mounted() {
+        const network = this.$refs.network as Network;
+
+        this.isManagementRequest = !this.cashlink; // freshly created cashlink or management request?
         let storedCashlink;
         if (this.request.cashlinkAddress) {
             storedCashlink = await CashlinkStore.Instance.get(this.request.cashlinkAddress.toUserFriendlyAddress());
@@ -108,55 +112,49 @@ export default class CashlinkManage extends Vue {
             return;
         }
 
+        let transactionToSend;
         if (storedCashlink) {
-            // cashlink already sent and stored
+            // Cashlink is typically already sent as the sending happens right after storing the Cashlink. However, it
+            // might be that the sending failed and the user reloaded the page, in which case we try sending again.
+            transactionToSend = network.getUnrelayedTransactions({
+                recipient: storedCashlink.address,
+                value: storedCashlink.value,
+            })[0];
+            this.isTxSent = !transactionToSend;
             this.retrievedCashlink = storedCashlink;
-            this.isTxSent = true;
-            this.isManagementRequest = !this.cashlink; // freshly created cashlink or management request?
         } else {
+            // Cashlink can not have been sent yet because whenever it gets sent, it was also added to the store.
+            this.isTxSent = false;
             this.retrievedCashlink = this.cashlink!;
         }
 
         if (!this.isTxSent) {
             // Note that this will never be called when coming from SignTransactionLedger as it sends and stores
             // the cashlink itself.
-            if (!NetworkClient.hasInstance()) {
-                NetworkClient.createInstance(Config.networkEndpoint);
-            }
-            const network = NetworkClient.Instance;
-            await network.init();
-
             if (!this.keyguardResult || !this.keyguardRequest) {
                 this.$rpc.reject(new Error('Unexpected: No valid Cashlink;'));
                 return;
             }
-            this.retrievedCashlink.networkClient = network;
-            network.on(NetworkClient.Events.API_READY,
+            network.$on(Network.Events.API_READY,
                 () => this.status = 'Contacting seed nodes...');
-            network.on(NetworkClient.Events.CONSENSUS_SYNCING,
+            network.$on(Network.Events.CONSENSUS_SYNCING,
                 () => this.status = 'Syncing consensus...');
-            network.on(NetworkClient.Events.CONSENSUS_ESTABLISHED,
+            network.$on(Network.Events.CONSENSUS_ESTABLISHED,
                 () => this.status = 'Sending transaction...');
-            network.on(NetworkClient.Events.TRANSACTION_PENDING,
+            network.$on(Network.Events.TRANSACTION_PENDING,
                 () => this.status = 'Awaiting receipt confirmation...');
+            this.retrievedCashlink.networkClient = await network.getNetworkClient();
 
             // Store cashlink in database first to be safe when browser crashes during sending
             await CashlinkStore.Instance.put(this.retrievedCashlink);
 
-            network.relayTransaction({
-                sender: new Nimiq.Address(this.keyguardRequest.sender).toUserFriendlyAddress(),
-                senderPubKey: this.keyguardResult.publicKey,
-                recipient:  new Nimiq.Address(this.keyguardRequest.recipient).toUserFriendlyAddress(),
-                value: Nimiq.Policy.lunasToCoins(this.keyguardRequest.value),
-                fee: Nimiq.Policy.lunasToCoins(this.keyguardRequest.fee),
-                validityStartHeight: this.keyguardRequest.validityStartHeight,
+            transactionToSend = transactionToSend || await network.createTx({
+                ...this.keyguardRequest,
+                signerPubKey: this.keyguardResult.publicKey,
                 signature: this.keyguardResult.signature,
-                extraData: this.keyguardRequest.data,
             });
-
-            network.on(NetworkClient.Events.TRANSACTION_RELAYED, async () => {
-                this.isTxSent = true;
-            });
+            await network.sendToNetwork(transactionToSend);
+            this.isTxSent = true;
         }
     }
 
