@@ -28,8 +28,13 @@ import CookieJar from '@/lib/CookieJar';
 import { Raven } from 'vue-raven'; // Sentry.io SDK
 import { ERROR_CANCELED } from './Constants';
 import Config from 'config';
+import { setHistoryStorage, getHistoryStorage } from '@/lib/Helpers';
 
 export default class RpcApi {
+    private static get HISTORY_KEY_RPC_STATE() {
+        return 'rpc-api-exported-state';
+    }
+
     private _server: RpcServer;
     private _store: Store<RootState>;
     private _staticStore: StaticStore;
@@ -53,8 +58,8 @@ export default class RpcApi {
         // On reload recover any state exported to the current history entry. Note that if we came back from the
         // Keyguard by history back navigation and rejectOnBack was enabled for the request, the state provided to
         // _keyguardErrorHandler will overwrite the state here.
-        if (history.state && history.state.exportedState) {
-            this._recoverState(history.state.exportedState);
+        if (getHistoryStorage(RpcApi.HISTORY_KEY_RPC_STATE)) {
+            this._recoverState(getHistoryStorage(RpcApi.HISTORY_KEY_RPC_STATE));
         }
 
         this._registerHubApis([
@@ -107,7 +112,7 @@ export default class RpcApi {
             // The Keyguard client rejects on history back only if handleHistoryBack is activated. If the Keyguard does
             // not reject it also does not provide us the localState to recover. For this case, we encode it manually in
             // the history, to retrieve it from there.
-            this._exportStateToHistory();
+            setHistoryStorage(RpcApi.HISTORY_KEY_RPC_STATE, this._exportState());
         }
         return client;
     }
@@ -116,7 +121,7 @@ export default class RpcApi {
         query = query || this._parseUrlParams(window.location.search);
         this._router.push({name: routeName, query}, () => {
             // export state to the newly pushed history entry to be available on reload
-            this._exportStateToHistory();
+            setHistoryStorage(RpcApi.HISTORY_KEY_RPC_STATE, this._exportState());
         });
     }
 
@@ -124,7 +129,7 @@ export default class RpcApi {
         query = query || this._parseUrlParams(window.location.search);
         this._router.replace({name: routeName, query}, () => {
             // export state to the updated history entry to be available on reload
-            this._exportStateToHistory();
+            setHistoryStorage(RpcApi.HISTORY_KEY_RPC_STATE, this._exportState());
         });
     }
 
@@ -182,10 +187,6 @@ export default class RpcApi {
             originalRouteName: this._staticStore.originalRouteName,
             cashlink: this._staticStore.cashlink ? this._staticStore.cashlink.toObject() : undefined,
         };
-    }
-
-    private _exportStateToHistory() {
-        history.replaceState({ ...history.state, exportedState: this._exportState() }, '');
     }
 
     private _registerHubApis(requestTypes: RequestType[]) {
