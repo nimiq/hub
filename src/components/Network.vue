@@ -5,7 +5,7 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 import { SignedTransaction } from '../lib/PublicRequestTypes';
 import { NetworkClient, DetailedPlainTransaction } from '@nimiq/network-client';
 import Config from 'config';
-import { loadNimiq } from '../lib/Helpers';
+import { loadNimiq, setHistoryStorage, getHistoryStorage } from '../lib/Helpers';
 import { CONTRACT_DEFAULT_LABEL_VESTING } from '../lib/Constants';
 import { VestingContractInfo } from '../lib/ContractInfo';
 
@@ -119,15 +119,10 @@ class Network extends Vue {
         // Store the transaction in the history state to be able to resend the transaction when the user reloads the
         // window in case it failed to relay it to the network. Not using localstorage or sessionstorage as the
         // transaction should not be broadcast anymore when user closes page, accepting that it failed to send.
-        let unrelayedTransactionMap = history.state && history.state[Network.HISTORY_KEY_UNRELAYED_TRANSACTIONS]
-            ? history.state[Network.HISTORY_KEY_UNRELAYED_TRANSACTIONS]
-            : {};
+        let unrelayedTransactionMap = getHistoryStorage(Network.HISTORY_KEY_UNRELAYED_TRANSACTIONS) || {};
         const base64Hash = tx.hash().toBase64();
         unrelayedTransactionMap[base64Hash] = tx.serialize();
-        history.replaceState({
-            ...history.state,
-            [Network.HISTORY_KEY_UNRELAYED_TRANSACTIONS]: unrelayedTransactionMap,
-        }, '');
+        setHistoryStorage(Network.HISTORY_KEY_UNRELAYED_TRANSACTIONS, unrelayedTransactionMap);
 
         const signedTx = await this.makeSignTransactionResult(tx);
         const client = await this.getNetworkClient();
@@ -142,12 +137,9 @@ class Network extends Vue {
         return new Promise<SignedTransaction>((resolve, reject) => {
             this.$once('transaction-relayed', (txInfo: any) => {
                 if (txInfo.hash !== base64Hash) return;
-                unrelayedTransactionMap = history.state[Network.HISTORY_KEY_UNRELAYED_TRANSACTIONS];
+                unrelayedTransactionMap = getHistoryStorage(Network.HISTORY_KEY_UNRELAYED_TRANSACTIONS);
                 delete unrelayedTransactionMap[base64Hash];
-                history.replaceState({
-                    ...history.state,
-                    [Network.HISTORY_KEY_UNRELAYED_TRANSACTIONS]: unrelayedTransactionMap,
-                }, '');
+                setHistoryStorage(Network.HISTORY_KEY_UNRELAYED_TRANSACTIONS, unrelayedTransactionMap);
                 resolve(signedTx);
             });
         });
@@ -164,9 +156,9 @@ class Network extends Vue {
         flags?: number,
         data?: Uint8Array,
     }): Nimiq.Transaction[] {
-        if (!history.state || !history.state[Network.HISTORY_KEY_UNRELAYED_TRANSACTIONS]) return [];
+        if (!getHistoryStorage(Network.HISTORY_KEY_UNRELAYED_TRANSACTIONS)) return [];
         const serializedTransactions: Uint8Array[]
-            = Object.values(history.state[Network.HISTORY_KEY_UNRELAYED_TRANSACTIONS]);
+            = Object.values(getHistoryStorage(Network.HISTORY_KEY_UNRELAYED_TRANSACTIONS));
         const transactions = serializedTransactions.map((serializedTx: Uint8Array) =>
             Nimiq.Transaction.unserialize(new Nimiq.SerialBuffer(serializedTx)));
         if (!filter) return transactions;
