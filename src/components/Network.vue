@@ -114,6 +114,21 @@ class Network extends Vue {
      * fires its 'transaction-relayed' event for that transaction.
      */
     public async sendToNetwork(tx: Nimiq.Transaction): Promise<SignedTransaction> {
+        await loadNimiq(); // needed for hash computation
+
+        // Store the transaction in the history state to be able to resend the transaction when the user reloads the
+        // window in case it failed to relay it to the network. Not using localstorage or sessionstorage as the
+        // transaction should not be broadcast anymore when user closes page, accepting that it failed to send.
+        let unrelayedTransactionMap = history.state && history.state[Network.HISTORY_KEY_UNRELAYED_TRANSACTIONS]
+            ? history.state[Network.HISTORY_KEY_UNRELAYED_TRANSACTIONS]
+            : {};
+        const base64Hash = tx.hash().toBase64();
+        unrelayedTransactionMap[base64Hash] = tx.serialize();
+        history.replaceState({
+            ...history.state,
+            [Network.HISTORY_KEY_UNRELAYED_TRANSACTIONS]: unrelayedTransactionMap,
+        }, '');
+
         const signedTx = await this.makeSignTransactionResult(tx);
         const client = await this._getNetworkClient();
 
@@ -125,11 +140,47 @@ class Network extends Vue {
         client.relayTransaction(txObjToSend);
 
         return new Promise<SignedTransaction>((resolve, reject) => {
-            const base64Hash = Nimiq.BufferUtils.toBase64(Nimiq.BufferUtils.fromHex(signedTx.hash));
             this.$once('transaction-relayed', (txInfo: any) => {
-                if (txInfo.hash === base64Hash) resolve(signedTx);
+                if (txInfo.hash !== base64Hash) return;
+                unrelayedTransactionMap = history.state[Network.HISTORY_KEY_UNRELAYED_TRANSACTIONS];
+                delete unrelayedTransactionMap[base64Hash];
+                history.replaceState({
+                    ...history.state,
+                    [Network.HISTORY_KEY_UNRELAYED_TRANSACTIONS]: unrelayedTransactionMap,
+                }, '');
+                resolve(signedTx);
             });
         });
+    }
+
+    public getUnrelayedTransactions(filter?: {
+        sender?: Nimiq.Address,
+        senderType?: Nimiq.Account.Type,
+        recipient?: Nimiq.Address,
+        recipientType?: Nimiq.Account.Type,
+        value?: number,
+        fee?: number,
+        validityStartHeight?: number,
+        flags?: number,
+        data?: Uint8Array,
+    }): Nimiq.Transaction[] {
+        if (!history.state || !history.state[Network.HISTORY_KEY_UNRELAYED_TRANSACTIONS]) return [];
+        const serializedTransactions: Uint8Array[]
+            = Object.values(history.state[Network.HISTORY_KEY_UNRELAYED_TRANSACTIONS]);
+        const transactions = serializedTransactions.map((serializedTx: Uint8Array) =>
+            Nimiq.Transaction.unserialize(new Nimiq.SerialBuffer(serializedTx)));
+        if (!filter) return transactions;
+        return transactions.filter((tx: Nimiq.Transaction) =>
+            (filter.sender === undefined || tx.sender.equals(filter.sender))
+            && (filter.senderType === undefined || tx.senderType === filter.senderType)
+            && (filter.recipient === undefined || tx.recipient.equals(filter.recipient))
+            && (filter.recipientType === undefined || tx.recipientType === filter.recipientType)
+            && (filter.value === undefined || tx.value === filter.value)
+            && (filter.fee === undefined || tx.fee === filter.fee)
+            && (filter.validityStartHeight === undefined || tx.validityStartHeight === filter.validityStartHeight)
+            && (filter.flags === undefined || tx.flags === filter.flags)
+            && (filter.data === undefined || Nimiq.BufferUtils.equals(tx.data, filter.data)),
+        );
     }
 
     public async getBlockchainHeight(): Promise<number> {
@@ -266,6 +317,8 @@ namespace Network {
         TRANSACTION_RELAYED = 'transaction-relayed',
         HEAD_CHANGE = 'head-change',
     }
+
+    export const HISTORY_KEY_UNRELAYED_TRANSACTIONS = 'network-unrelayed-transactions';
 }
 
 export default Network;
