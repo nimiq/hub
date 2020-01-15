@@ -1,7 +1,7 @@
 import { setup } from './_setup';
 import { Store } from '@/lib/Store';
 import { CashlinkStore } from '@/lib/CashlinkStore';
-import Cashlink from '@/lib/Cashlink';
+import Cashlink, { DEFAULT_THEME } from '@/lib/Cashlink';
 import { CashlinkState } from '@/lib/PublicRequestTypes';
 
 setup();
@@ -44,7 +44,7 @@ const DUMMY_DATA = {
             undefined,
             'Ein Cashlink test Cashlink',
             CashlinkState.CLAIMED,
-            Cashlink.DEFAULT_THEME,
+            DEFAULT_THEME,
             Date.now(),
             'Contact name',
         ),

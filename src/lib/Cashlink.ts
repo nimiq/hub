@@ -20,6 +20,9 @@ export interface CashlinkEntry {
     contactName?: string; /** unused for now */
 }
 
+// To be updated with the seasons
+export const DEFAULT_THEME = CashlinkTheme.STANDARD;
+
 class Cashlink {
     get value() {
         return this._value || 0;
@@ -58,12 +61,12 @@ class Cashlink {
     }
 
     get theme() {
-        return this._theme || Cashlink.DEFAULT_THEME;
+        return this._theme || DEFAULT_THEME;
     }
 
     set theme(theme: CashlinkTheme) {
         if (this._theme && (this._immutable || this.state !== CashlinkState.UNCHARGED)) {
-            throw new Error('Cashlink is immutable');
+            throw new Error('Cannot set theme, Cashlink is immutable');
         }
         if (!Object.values(CashlinkTheme).includes(theme) || !Nimiq.NumberUtils.isUint8(theme)) {
             throw new Error('Unsupported theme');
@@ -478,8 +481,6 @@ namespace Cashlink {
         BALANCE_CHANGE = 'balance-change',
         STATE_CHANGE = 'state-change',
     }
-
-    export const DEFAULT_THEME = CashlinkTheme.CHRISTMAS;
 }
 
 export default Cashlink;

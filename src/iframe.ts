@@ -5,7 +5,7 @@ import { WalletInfoEntry, WalletInfo } from '@/lib/WalletInfo';
 import CookieJar from '@/lib/CookieJar';
 import Config from 'config';
 import { Account, Cashlink as PublicCashlink } from './lib/PublicRequestTypes';
-import Cashlink from './lib/Cashlink';
+import { DEFAULT_THEME } from './lib/Cashlink';
 import { CashlinkStore } from './lib/CashlinkStore';
 import { RequestType } from './lib/RequestTypes';
 
@@ -60,7 +60,7 @@ class IFrameApi {
             message: cashlink.message,
             value: cashlink.value,
             status: cashlink.state,
-            theme: cashlink.theme || Cashlink.DEFAULT_THEME,
+            theme: cashlink.theme || DEFAULT_THEME,
         }));
     }
 }
