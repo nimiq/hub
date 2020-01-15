@@ -110,9 +110,39 @@
 
 <div class="request">
     <h2>Cashlink</h2>
-    <br/>
-    <button id="create-cashlink">create Cashlink using selected Address</button>
-    <button id="create-cashlink-no-sender">create Cashlink</button>
+    <br>
+    <div>
+        <input id="cashlink-use-selected-address" type="checkbox" checked>
+        <label for="cashlink-use-selected-address">Selected address as sender</label>
+    </div>
+    <div>
+        <label for="cashlink-value">Value (optional):</label>
+        <input id="cashlink-value" type="number">
+    </div>
+    <div>
+        <label for="cashlink-message">Message (optional):</label>
+        <input id="cashlink-message">
+    </div>
+    <div>
+        <input id="cashlink-auto-truncate-message" type="checkbox">
+        <label for="cashlink-auto-truncate-message">Auto truncate message</label>
+    </div>
+    <div>
+        <input id="cashlink-return-cashlink" type="checkbox">
+        <label for="cashlink-return-cashlink">Return cashlink</label>
+    </div>
+    <div id="cashlink-skip-sharing-container" style="display: none">
+        <input id="cashlink-skip-sharing" type="checkbox" checked>
+        <label for="cashlink-skip-sharing">Skip sharing</label>
+    </div>
+    <div>
+        <label for="cashlink-theme">Theme</label>
+        <select id="cashlink-theme">
+            <option selected value="">Omitted</option>
+        </select>
+    </div>
+    <br>
+    <button id="create-cashlink">Create Cashlink</button>
     <ul id="cashlinks"></ul>
 </div>
 

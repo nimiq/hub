@@ -778,10 +778,12 @@
   resolved "https://registry.yarnpkg.com/@nimiq/style/-/style-0.7.6.tgz#b8a128d8fb6208554883158b8c2fa7f11d9e8333"
   integrity sha512-qFeIbv/xOCxHjYGfuB5U8Pb1xnRhrvetrdjtLK6zGU7tLWCuyQCOErvAKayVUpvpKyTWsXaG+I2YP2djcNo4kQ==
 
-"@nimiq/utils@^0.4.1":
-  version "0.4.1"
-  resolved "https://registry.yarnpkg.com/@nimiq/utils/-/utils-0.4.1.tgz#19b77441440d1fd8463315b2a98ffad23eeddb95"
-  integrity sha512-Zl/QfOA7/5EApkEAG7Di8sS/6jlvNhtX462iWot9RiC7tVeaeMk+5Q7WlT5g7dVXSCNyz5IFRYewFP5PlIojgw==
+"@nimiq/utils@^0.4.4":
+  version "0.4.4"
+  resolved "https://registry.yarnpkg.com/@nimiq/utils/-/utils-0.4.4.tgz#f58e054115467999e05eaa6cc896d25f656f2a03"
+  integrity sha512-4jXa+rkmqSW9wQdi5ZPmhWjdNJU+RmdIkpbUY44Qz/b/JFpY5ZYObaxyRJGorIQbJo2qf0zhmlH2f2NYBCXoHw==
+  dependencies:
+    big-integer "^1.6.44"
 
 "@nimiq/vue-components@https://github.com/nimiq/vue-components.git#daniel/build/hub/cashlinks+checkout":
   version "0.1.0"

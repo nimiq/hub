@@ -1,5 +1,11 @@
 <template>
-    <div class="container pad-bottom">
+    <div class="container pad-bottom" :class="{ themed: themeBackground }">
+        <img v-if="themeBackground && !isMobile"
+            :src="`/img/cashlink-themes/${themeBackground}.svg`"
+            class="theme-background theme-background-desktop"
+            :class="themeBackground"
+            @load="$event.target.style.opacity = 1"
+        >
         <SmallPage v-if="cashlink || statusState">
             <transition name="transition-fade">
                 <StatusScreen v-if="statusState"
@@ -89,12 +95,21 @@
             </div>
         </SmallPage>
 
-        <div v-if="cashlink && !hasWallets" class="welcome-text">
-            <h1 class="nq-h1">Claim your Cash</h1>
-            <p class="nq-text">
-                Congrats, you just opened a Nimiq Cashlink. Create an Account and claim your money.
-                <span class="secondary-text">30&nbsp;seconds, no&nbsp;email, no&nbsp;download.</span>
-            </p>
+        <div v-if="(cashlink && !hasWallets) || isMobile" class="outside-container">
+            <img v-if="themeBackground && isMobile"
+                 :src="`/img/cashlink-themes/${themeBackground}-mobile.svg`"
+                 class="theme-background theme-background-mobile"
+                 :class="themeBackground"
+                 @load="$event.target.style.opacity = 1"
+            >
+            <div v-if="cashlink && !hasWallets" class="welcome-text">
+                <h1 class="nq-h1">{{ welcomeHeadline }}</h1>
+                <p class="nq-text">
+                    {{ welcomeText }}
+                    Create an Account and claim your money.
+                    <span class="secondary-text">30&nbsp;seconds, no&nbsp;email, no&nbsp;download.</span>
+                </p>
+            </div>
         </div>
     </div>
 </template>
@@ -117,7 +132,7 @@ import StatusScreen from '../components/StatusScreen.vue';
 import CashlinkSparkle from '../components/CashlinkSparkle.vue';
 import CircleSpinner from '../components/CircleSpinner.vue';
 import Cashlink from '../lib/Cashlink';
-import { CashlinkState, BasicRequest } from '../lib/PublicRequestTypes';
+import { CashlinkState, BasicRequest, CashlinkTheme } from '../lib/PublicRequestTypes';
 import { AccountInfo } from '../lib/AccountInfo';
 import { Getter, Mutation } from 'vuex-class';
 import { NetworkClient, DetailedPlainTransaction } from '@nimiq/network-client';
@@ -143,6 +158,8 @@ import HubApi from '../../client/HubApi';
     AccountSelector,
 }})
 export default class CashlinkReceive extends Vue {
+    private static MOBILE_BREAKPOINT = 450;
+
     @Getter private addressCount!: number;
     @Getter private hasWallets!: boolean;
     @Getter private activeAccount?: AccountInfo;
@@ -155,6 +172,7 @@ export default class CashlinkReceive extends Vue {
     private selectedAddress: AccountInfo | null = null;
     private isAccountSelectorOpened: boolean = false;
     private isClaiming: boolean = false;
+    private isMobile: boolean = false;
 
     private statusState: StatusScreen.State | false = false;
     private statusTitle = '';
@@ -173,6 +191,10 @@ export default class CashlinkReceive extends Vue {
         hubApi.on(HubApi.RequestType.LOGIN, handler, handler);
         hubApi.on(HubApi.RequestType.ONBOARD, handler, handler);
         hubApi.checkRedirectResponse();
+
+        this._onResize = this._onResize.bind(this);
+        window.addEventListener('resize', this._onResize);
+        this._onResize();
     }
 
     public async mounted() {
@@ -199,6 +221,10 @@ export default class CashlinkReceive extends Vue {
 
         // Assign network to Cashlink
         this.cashlink.networkClient = NetworkClient.Instance;
+    }
+
+    public destroyed() {
+        window.removeEventListener('resize', this._onResize);
     }
 
     private async claim() {
@@ -283,6 +309,37 @@ export default class CashlinkReceive extends Vue {
     private get isButtonLoading(): boolean {
         return !this.isCashlinkStateKnown || this.cashlink!.state === CashlinkState.CHARGING;
     }
+
+    private get themeBackground(): string | null {
+        return this.cashlink && this.cashlink.theme !== CashlinkTheme.STANDARD
+            ? `${CashlinkTheme[this.cashlink.theme].toLowerCase().replace(/_/g, '-')}`
+            : null;
+    }
+
+    private get welcomeHeadline(): string {
+        const theme = this.cashlink ? this.cashlink.theme : CashlinkTheme.STANDARD;
+        switch (theme) {
+            case CashlinkTheme.CHRISTMAS: return 'You are loved';
+            default: return 'Claim your Cash';
+        }
+    }
+
+    private get welcomeText(): string {
+        const theme = this.cashlink ? this.cashlink.theme : CashlinkTheme.STANDARD;
+        switch (theme) {
+            case CashlinkTheme.CHRISTMAS:
+                if (this.cashlink && this.cashlink.isThemeEncodedInLink) {
+                    return 'Congrats, you received a Nimiq Gift Card.';
+                } else {
+                    return 'Congrats, somebody gifted you a Nimiq Cashlink.';
+                }
+            default: return 'Congrats, you just opened a Nimiq Cashlink.';
+        }
+    }
+
+    private _onResize() {
+        this.isMobile = window.innerWidth <= CashlinkReceive.MOBILE_BREAKPOINT;
+    }
 }
 </script>
 
@@ -290,6 +347,31 @@ export default class CashlinkReceive extends Vue {
     .container {
         flex-direction: row !important;
         padding: 0 5rem; /* Side padding for smaller screens */
+    }
+
+    .theme-background {
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: opacity 1s var(--nimiq-ease);
+        opacity: 0;
+        z-index: -1; /* put behind header */
+    }
+
+    .theme-background-desktop {
+        position: fixed;
+    }
+
+    .theme-background-mobile {
+        position: absolute;
+        top: -7.5rem; /* header height */
+        height: calc(100% + 7.5rem);
+    }
+
+    .theme-background.christmas {
+        object-position: bottom right;
     }
 
     .card-content {
@@ -303,10 +385,17 @@ export default class CashlinkReceive extends Vue {
         justify-content: space-between;
     }
 
+    .outside-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        align-self: stretch;
+        position: relative;
+    }
+
     .welcome-text {
         max-width: 514px;
         margin-left: 8.75rem; /* nq-card already has 1.25rem margin */
-        transition: opacity .8s, transform .8s;
     }
 
     .welcome-text .nq-h1 {
@@ -322,12 +411,6 @@ export default class CashlinkReceive extends Vue {
 
     .welcome-text .secondary-text {
         color: rgba(31, 35, 72, 0.5);
-    }
-
-    .transition-welcome-text-enter,
-    .transition-welcome-text-leave-to {
-        opacity: 0;
-        transform: translate3d(-6rem, 0, 0);
     }
 
     .small-page {
@@ -504,6 +587,7 @@ export default class CashlinkReceive extends Vue {
     .status-screen {
         position: absolute;
         transition: opacity .4s;
+        z-index: 2;
     }
 
     .overlay {
@@ -583,7 +667,6 @@ export default class CashlinkReceive extends Vue {
 
         .small-page {
             height: auto !important;
-            flex-grow: 1;
         }
 
         .top-spacer {
@@ -604,11 +687,6 @@ export default class CashlinkReceive extends Vue {
             margin: 3rem 0 4rem;
             padding: 0 2rem;
         }
-
-        .transition-welcome-text-enter,
-        .transition-welcome-text-leave-to {
-            transform: translate3d(0, 3rem, 0);
-        }
     }
 
     @media (max-width: 450px) {
@@ -623,6 +701,14 @@ export default class CashlinkReceive extends Vue {
         .welcome-text .nq-text {
             font-size: 1.875rem;
             line-height: 1.4;
+        }
+
+        .themed .outside-container {
+            flex-grow: 1;
+        }
+
+        .container:not(.themed) .small-page {
+            flex-grow: 1;
         }
 
         .account-selector-shown .blur-target {

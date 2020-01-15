@@ -1,29 +1,33 @@
-import { TX_VALIDITY_WINDOW, TX_MIN_VALIDITY_DURATION } from './Constants';
+import { TX_MIN_VALIDITY_DURATION, TX_VALIDITY_WINDOW } from './Constants';
+import { isPriviledgedOrigin } from '@/lib/Helpers';
 import { State } from '@nimiq/rpc';
 import {
     BasicRequest,
-    CashlinkRequest,
-    SimpleRequest,
-    OnboardRequest,
-    SignTransactionRequest,
+    CashlinkTheme,
     CheckoutRequest,
-    SignMessageRequest,
-    RenameRequest,
+    CreateCashlinkRequest,
     ExportRequest,
+    ManageCashlinkRequest,
+    OnboardRequest,
+    RenameRequest,
     RpcRequest,
+    SignMessageRequest,
+    SignTransactionRequest,
+    SimpleRequest,
 } from './PublicRequestTypes';
 import {
-    RequestType,
     ParsedBasicRequest,
-    ParsedCashlinkRequest,
-    ParsedSimpleRequest,
-    ParsedOnboardRequest,
-    ParsedSignTransactionRequest,
     ParsedCheckoutRequest,
-    ParsedSignMessageRequest,
-    ParsedRenameRequest,
+    ParsedCreateCashlinkRequest,
     ParsedExportRequest,
+    ParsedManageCashlinkRequest,
+    ParsedOnboardRequest,
+    ParsedRenameRequest,
     ParsedRpcRequest,
+    ParsedSignMessageRequest,
+    ParsedSignTransactionRequest,
+    ParsedSimpleRequest,
+    RequestType,
 } from './RequestTypes';
 import { Utf8Tools } from '@nimiq/utils';
 
@@ -148,28 +152,75 @@ export class RequestParser {
                     kind: RequestType.SIGN_MESSAGE,
                     appName: signMessageRequest.appName,
                     signer: signMessageRequest.signer
-                            ? Nimiq.Address.fromUserFriendlyAddress(signMessageRequest.signer)
-                            : undefined,
+                        ? Nimiq.Address.fromUserFriendlyAddress(signMessageRequest.signer)
+                        : undefined,
                     message: signMessageRequest.message,
                 } as ParsedSignMessageRequest;
-            case RequestType.CASHLINK:
-                const cashlinkRequest = request as CashlinkRequest;
-                if (cashlinkRequest.cashlinkAddress && cashlinkRequest.senderAddress) {
-                    console.warn(
-                        'CashlinkRequest.cashlinkAddress and CashlinkRequest.senderAddress should not both be defined.',
-                    );
+            case RequestType.CREATE_CASHLINK:
+                const createCashlinkRequest = request as CreateCashlinkRequest;
+                const senderAddress = 'senderAddress' in createCashlinkRequest
+                    ? Nimiq.Address.fromUserFriendlyAddress(createCashlinkRequest.senderAddress)
+                    : undefined;
+                const senderBalance = 'senderBalance' in createCashlinkRequest
+                    ? createCashlinkRequest.senderBalance
+                    : undefined;
+                if (senderBalance !== undefined && !Nimiq.NumberUtils.isUint64(senderBalance)) {
+                    throw new Error('Invalid Cashlink senderBalance');
                 }
+
+                const value = createCashlinkRequest.value;
+                if (value !== undefined && (!Nimiq.NumberUtils.isUint64(value) || value === 0)) {
+                    throw new Error('Malformed Cashlink value');
+                }
+
+                let message = 'message' in createCashlinkRequest ? createCashlinkRequest.message : undefined;
+                if (message !== undefined) {
+                    if (typeof message !== 'string') {
+                        throw new Error('Cashlink message must be a string');
+                    }
+                    const { result: truncated, didTruncate } = Utf8Tools.truncateToUtf8ByteLength(message, 255);
+                    if (!('autoTruncateMessage' in createCashlinkRequest && createCashlinkRequest.autoTruncateMessage)
+                        && didTruncate) {
+                        throw new Error('Cashlink must be shorter than 256 bytes or autoTruncateMessage must be '
+                            + 'enabled.');
+                    }
+                    message = truncated;
+                }
+
+                const theme = createCashlinkRequest.theme || CashlinkTheme.UNSPECIFIED;
+                if (!Object.values(CashlinkTheme).includes(theme) || !Nimiq.NumberUtils.isUint8(theme)) {
+                    // Also checking whether theme is a valid Uint8 to catch ids that are potentially to high in the
+                    // CashlinkTheme enum and to filter out values that are actually the enum keys that have been added
+                    // by typescript for reverse mapping.
+                    throw new Error('Invalid Cashlink theme');
+                }
+
+                const returnCashlink = !!createCashlinkRequest.returnCashlink;
+                if (returnCashlink && !isPriviledgedOrigin(state.origin)) {
+                    throw new Error(`Origin ${state.origin} is not authorized to request returnCashlink.`);
+                }
+                const skipSharing = !!createCashlinkRequest.returnCashlink && !!createCashlinkRequest.skipSharing;
+
                 return {
-                    kind: RequestType.CASHLINK,
-                    appName: cashlinkRequest.appName,
-                    cashlinkAddress: cashlinkRequest.cashlinkAddress
-                            ? Nimiq.Address.fromUserFriendlyAddress(cashlinkRequest.cashlinkAddress)
-                            : undefined,
-                    senderAddress: cashlinkRequest.senderAddress
-                            ? Nimiq.Address.fromUserFriendlyAddress(cashlinkRequest.senderAddress)
-                            : undefined,
-                    senderBalance: cashlinkRequest.senderBalance,
-                } as ParsedCashlinkRequest;
+                    kind: RequestType.CREATE_CASHLINK,
+                    appName: createCashlinkRequest.appName,
+                    senderAddress,
+                    senderBalance,
+                    value,
+                    message,
+                    theme,
+                    returnCashlink,
+                    skipSharing,
+                } as ParsedCreateCashlinkRequest;
+            case RequestType.MANAGE_CASHLINK:
+                const manageCashlinkRequest = request as ManageCashlinkRequest;
+                return {
+                    kind: RequestType.MANAGE_CASHLINK,
+                    appName: manageCashlinkRequest.appName,
+                    cashlinkAddress: manageCashlinkRequest.cashlinkAddress
+                        ? Nimiq.Address.fromUserFriendlyAddress(manageCashlinkRequest.cashlinkAddress)
+                        : undefined,
+                } as ParsedManageCashlinkRequest;
             default:
                 return null;
         }
@@ -191,18 +242,29 @@ export class RequestParser {
                     flags: signTransactionRequest.flags,
                     validityStartHeight: signTransactionRequest.validityStartHeight,
                 } as SignTransactionRequest;
-            case RequestType.CASHLINK:
-                const cashlinkRequest = request as ParsedCashlinkRequest;
+            case RequestType.CREATE_CASHLINK:
+                const createCashlinkRequest = request as ParsedCreateCashlinkRequest;
+                // Note that there is no need to export autoTruncateMessage as the message already got truncated
                 return {
-                    appName: cashlinkRequest.appName,
-                    cashlinkAddress: cashlinkRequest.cashlinkAddress
-                            ? cashlinkRequest.cashlinkAddress.toUserFriendlyAddress()
+                    appName: createCashlinkRequest.appName,
+                    senderAddress: createCashlinkRequest.senderAddress
+                            ? createCashlinkRequest.senderAddress.toUserFriendlyAddress()
                             : undefined,
-                    senderAddress: cashlinkRequest.senderAddress
-                            ? cashlinkRequest.senderAddress.toUserFriendlyAddress()
-                            : undefined,
-                    senderBalance: cashlinkRequest.senderBalance,
-                } as CashlinkRequest;
+                    senderBalance: createCashlinkRequest.senderBalance,
+                    value: createCashlinkRequest.value,
+                    message: createCashlinkRequest.message,
+                    theme: createCashlinkRequest.theme,
+                    returnCashlink: createCashlinkRequest.returnCashlink,
+                    skipSharing: createCashlinkRequest.skipSharing,
+                } as CreateCashlinkRequest;
+            case RequestType.MANAGE_CASHLINK:
+                const manageCashlinkRequest = request as ParsedManageCashlinkRequest;
+                return {
+                    appName: manageCashlinkRequest.appName,
+                    cashlinkAddress: manageCashlinkRequest.cashlinkAddress
+                        ? manageCashlinkRequest.cashlinkAddress.toUserFriendlyAddress()
+                        : undefined,
+                } as ManageCashlinkRequest;
             case RequestType.CHECKOUT:
                 const checkoutRequest = request as ParsedCheckoutRequest;
                 return {

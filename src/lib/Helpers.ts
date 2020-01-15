@@ -5,6 +5,7 @@ import {
     NETWORK_MAIN,
     ERROR_INVALID_NETWORK,
 } from '../lib/Constants';
+import { Utf8Tools } from '@nimiq/utils';
 
 export function setHistoryStorage(key: string, data: any) {
     // Note that data can be anything that can be structurally cloned:
@@ -43,3 +44,7 @@ export const loadNimiq = async () => {
         }
     }
 };
+
+export function isPriviledgedOrigin(origin: string) {
+    return Config.privilegedOrigins.includes(origin) || Config.privilegedOrigins.includes('*');
+}

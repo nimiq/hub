@@ -44,6 +44,7 @@ const DUMMY_DATA = {
             undefined,
             'Ein Cashlink test Cashlink',
             CashlinkState.CLAIMED,
+            Cashlink.DEFAULT_THEME,
             Date.now(),
             'Contact name',
         ),

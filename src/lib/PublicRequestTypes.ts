@@ -1,15 +1,6 @@
 import { WalletType } from './WalletInfo';
 import { RequestType } from './RequestTypes';
 
-export enum CashlinkState {
-    UNKNOWN = -1,
-    UNCHARGED = 0,
-    CHARGING = 1,
-    UNCLAIMED = 2,
-    CLAIMING = 3,
-    CLAIMED = 4,
-}
-
 export interface BasicRequest {
     appName: string;
 }
@@ -139,20 +130,58 @@ export interface RenameRequest extends SimpleRequest {
     address?: string; // Userfriendly address
 }
 
+export enum CashlinkState {
+    UNKNOWN = -1,
+    UNCHARGED = 0,
+    CHARGING = 1,
+    UNCLAIMED = 2,
+    CLAIMING = 3,
+    CLAIMED = 4,
+}
+
+export enum CashlinkTheme {
+    UNSPECIFIED, // Equivalent to theme being omitted
+    STANDARD,
+    CHRISTMAS,
+}
+
 export interface Cashlink {
     address: string; // Userfriendly address
     message: string;
+    value: number;
     status: CashlinkState;
+    theme: CashlinkTheme;
+    cashlink?: string;
 }
 
-export interface CashlinkRequest extends BasicRequest {
-    senderAddress?: string;
-    senderBalance?: number;
-    cashlinkAddress?: string;
+export type CreateCashlinkRequest = BasicRequest & {
+    value?: number,
+    theme?: CashlinkTheme,
+} & (
+    {} | {
+        message: string,
+        autoTruncateMessage?: boolean,
+    }
+) & (
+    {} | {
+        senderAddress: string,
+        senderBalance?: number,
+    }
+) & ({
+        returnCashlink?: false,
+    } | {
+        returnCashlink: true,
+        skipSharing?: boolean,
+    }
+);
+
+export interface ManageCashlinkRequest extends BasicRequest {
+    cashlinkAddress: string;
 }
 
 export type RpcRequest = SignTransactionRequest
-                       | CashlinkRequest
+                       | CreateCashlinkRequest
+                       | ManageCashlinkRequest
                        | CheckoutRequest
                        | BasicRequest
                        | SimpleRequest
@@ -180,5 +209,5 @@ export type ResultByRequestType<T> =
     T extends RequestType.SIGN_MESSAGE ? SignedMessage :
     T extends RequestType.LOGOUT | RequestType.CHANGE_PASSWORD ? SimpleResult :
     T extends RequestType.EXPORT ? ExportResult :
-    T extends RequestType.CASHLINK ? Cashlink :
+    T extends RequestType.CREATE_CASHLINK | RequestType.MANAGE_CASHLINK ? Cashlink :
     never;

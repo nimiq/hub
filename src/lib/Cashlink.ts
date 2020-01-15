@@ -1,7 +1,7 @@
 import { Utf8Tools } from '@nimiq/utils';
 import { DetailedPlainTransaction, NetworkClient } from '@nimiq/network-client';
 import { loadNimiq } from './Helpers';
-import { CashlinkState } from './PublicRequestTypes';
+import { CashlinkState, CashlinkTheme } from './PublicRequestTypes';
 
 export const CashlinkExtraData = {
     FUNDING:  new Uint8Array([0, 130, 128, 146, 135]), // 'CASH'.split('').map(c => c.charCodeAt(0) + 63)
@@ -16,11 +16,11 @@ export interface CashlinkEntry {
     message: string;
     state: CashlinkState;
     timestamp: number;
+    theme?: CashlinkTheme;
     contactName?: string; /** unused for now */
 }
 
 class Cashlink {
-
     get value() {
         return this._value || 0;
     }
@@ -48,13 +48,31 @@ class Cashlink {
         return Utf8Tools.utf8ByteArrayToString(this._messageBytes);
     }
 
-    set message(message) {
+    set message(message: string) {
         if (this._messageBytes.byteLength && (this._immutable || this.state !== CashlinkState.UNCHARGED)) {
             throw new Error('Cannot set message, Cashlink is immutable');
         }
         const messageBytes = Utf8Tools.stringToUtf8ByteArray(message);
         if (!Nimiq.NumberUtils.isUint8(messageBytes.byteLength)) throw new Error('Cashlink message is too long');
         this._messageBytes = messageBytes;
+    }
+
+    get theme() {
+        return this._theme || Cashlink.DEFAULT_THEME;
+    }
+
+    set theme(theme: CashlinkTheme) {
+        if (this._theme && (this._immutable || this.state !== CashlinkState.UNCHARGED)) {
+            throw new Error('Cashlink is immutable');
+        }
+        if (!Object.values(CashlinkTheme).includes(theme) || !Nimiq.NumberUtils.isUint8(theme)) {
+            throw new Error('Unsupported theme');
+        }
+        this._theme = theme;
+    }
+
+    get isThemeEncodedInLink() {
+        return !!this._theme;
     }
 
     set networkClient(client: NetworkClient) {
@@ -75,13 +93,17 @@ class Cashlink {
             await loadNimiq();
             const keyPair = Nimiq.KeyPair.derive(Nimiq.PrivateKey.unserialize(buf));
             const value = buf.readUint64();
-            let message;
+            let message: string;
             if (buf.readPos === buf.byteLength) {
                 message = '';
             } else {
                 const messageLength = buf.readUint8();
                 const messageBytes = buf.read(messageLength);
                 message = Utf8Tools.utf8ByteArrayToString(messageBytes);
+            }
+            let theme: CashlinkTheme | undefined;
+            if (buf.readPos < buf.byteLength) {
+                theme = buf.readUint8();
             }
 
             return new Cashlink(
@@ -91,6 +113,7 @@ class Cashlink {
                 undefined, // fee
                 message,
                 CashlinkState.UNKNOWN,
+                theme,
             );
         } catch (e) {
             console.error('Error parsing Cashlink:', e);
@@ -106,6 +129,7 @@ class Cashlink {
             object.fee,
             object.message,
             object.state,
+            object.theme,
             // @ts-ignore `timestamp` was called `date` before and was live in the mainnet.
             object.timestamp || object.date,
             object.contactName,
@@ -125,6 +149,7 @@ class Cashlink {
     private _messageBytes: Uint8Array = new Uint8Array(0);
     private _value: number | null = null;
     private _fee: number | null = null;
+    private _theme: CashlinkTheme = CashlinkTheme.UNSPECIFIED; // note that UNSPECIFIED equals to 0 and is thus falsy
     private _knownTransactions: DetailedPlainTransaction[] = [];
 
     constructor(
@@ -134,6 +159,7 @@ class Cashlink {
         fee?: number,
         message?: string,
         state: CashlinkState = CashlinkState.UNCHARGED,
+        theme?: CashlinkTheme,
         public timestamp: number = Math.floor(Date.now() / 1000),
         public contactName?: string, /** unused for now */
     ) {
@@ -146,9 +172,10 @@ class Cashlink {
         if (value) this.value = value;
         if (fee) this.fee = fee;
         if (message) this.message = message;
+        if (theme) this.theme = theme;
         this.state = state;
 
-        this._immutable = !!(value || message);
+        this._immutable = !!(value || message || theme);
 
         this._getNetwork().then((network: NetworkClient) => {
             const userFriendlyAddress = this.address.toUserFriendlyAddress();
@@ -256,6 +283,7 @@ class Cashlink {
             value: this.value,
             message: this.message,
             state: this.state,
+            theme: this._theme,
             timestamp: this.timestamp,
         };
         if (includeOptional) {
@@ -269,15 +297,19 @@ class Cashlink {
         const buf = new Nimiq.SerialBuffer(
             /*key*/ this.keyPair.privateKey.serializedSize +
             /*value*/ 8 +
-            /*message length*/ (this._messageBytes.byteLength ? 1 : 0) +
-            /*message*/ this._messageBytes.byteLength,
+            /*message length*/ (this._messageBytes.byteLength || this._theme ? 1 : 0) +
+            /*message*/ this._messageBytes.byteLength +
+            /*theme*/ (this._theme ? 1 : 0),
         );
 
         this.keyPair.privateKey.serialize(buf);
         buf.writeUint64(this.value);
-        if (this._messageBytes.byteLength) {
+        if (this._messageBytes.byteLength || this._theme) {
             buf.writeUint8(this._messageBytes.byteLength);
             buf.write(this._messageBytes);
+        }
+        if (this._theme) {
+            buf.writeUint8(this._theme);
         }
 
         let result = Nimiq.BufferUtils.toBase64Url(buf);
@@ -446,6 +478,8 @@ namespace Cashlink {
         BALANCE_CHANGE = 'balance-change',
         STATE_CHANGE = 'state-change',
     }
+
+    export const DEFAULT_THEME = CashlinkTheme.CHRISTMAS;
 }
 
 export default Cashlink;

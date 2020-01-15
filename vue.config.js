@@ -23,6 +23,7 @@ const configureWebpack = {
         new CopyWebpackPlugin([
             { from: 'node_modules/@nimiq/vue-components/dist/img', to: 'img' },
             { from: 'node_modules/@nimiq/browser-warning/dist', to: './' },
+            { from: 'assets/img/cashlink-themes', to: 'img/cashlink-themes' },
         ]),
         new WriteFileWebpackPlugin()
     ],

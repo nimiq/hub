@@ -7,6 +7,8 @@ export default {
     privilegedOrigins: [
         'https://safe.nimiq-testnet.com',
         'https://hub.nimiq-testnet.com', // For testing with the deployed demos.html page
+        'https://www.nimiq-testnet.com', // To allow gift cards app to request returnCashlink
+        'https://nimiq-testnet.com', // To allow gift cards app to request returnCashlink
     ],
     reportToSentry: true,
 };

@@ -75,7 +75,9 @@ export function keyguardResponseRouter(
         case KeyguardCommand.SIGN_TRANSACTION:
             // The SIGN_TRANSACTION Keyguard command is used by Accounts' SIGN_TRANSACTION, CHECKOUT and
             // CASHLINK. Thus we return the user to the respective handler component
-            resolve = `${originalRequestType}-${originalRequestType === RequestType.CASHLINK ? 'manage' : 'success'}`;
+            resolve = originalRequestType === RequestType.CREATE_CASHLINK
+                ? RequestType.MANAGE_CASHLINK
+                : `${originalRequestType}-success`;
             break;
         case KeyguardCommand.EXPORT:
             resolve = `${RequestType.EXPORT}-success`; break;
@@ -131,14 +133,14 @@ export default new Router({
             name: `${RequestType.SIGN_TRANSACTION}-ledger`,
         },
         {
-            path: `/${RequestType.CASHLINK}/create`,
+            path: `/cashlink/create`,
             component: CashlinkCreate,
-            name: RequestType.CASHLINK,
+            name: RequestType.CREATE_CASHLINK,
         },
         {
-            path: `/${RequestType.CASHLINK}/manage`,
+            path: `/cashlink/manage`,
             component: CashlinkManage,
-            name: `${RequestType.CASHLINK}-manage`,
+            name: RequestType.MANAGE_CASHLINK,
         },
         {
             path: `/${RequestType.CHECKOUT}`,

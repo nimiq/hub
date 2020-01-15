@@ -1,3 +1,5 @@
+import { CashlinkTheme } from './PublicRequestTypes';
+
 export enum RequestType {
     LIST = 'list',
     LIST_CASHLINKS = 'list-cashlinks',
@@ -14,7 +16,8 @@ export enum RequestType {
     ADD_ADDRESS = 'add-address',
     RENAME = 'rename',
     CHOOSE_ADDRESS = 'choose-address',
-    CASHLINK = 'cashlink',
+    CREATE_CASHLINK = 'create-cashlink',
+    MANAGE_CASHLINK = 'manage-cashlink',
 }
 
 export interface ParsedBasicRequest {
@@ -69,15 +72,24 @@ export interface ParsedExportRequest extends ParsedSimpleRequest {
     wordsOnly?: boolean;
 }
 
-export interface ParsedCashlinkRequest extends ParsedBasicRequest {
+export interface ParsedCreateCashlinkRequest extends ParsedBasicRequest {
     senderAddress?: Nimiq.Address;
     senderBalance?: number;
-    cashlinkAddress?: Nimiq.Address;
+    value?: number;
+    message?: string;
+    theme: CashlinkTheme;
+    returnCashlink: boolean;
+    skipSharing: boolean;
+}
+
+export interface ParsedManageCashlinkRequest extends ParsedBasicRequest {
+    cashlinkAddress: Nimiq.Address;
 }
 
 // Discriminated Unions
 export type ParsedRpcRequest = ParsedSignTransactionRequest
-                             | ParsedCashlinkRequest
+                             | ParsedCreateCashlinkRequest
+                             | ParsedManageCashlinkRequest
                              | ParsedCheckoutRequest
                              | ParsedBasicRequest
                              | ParsedSimpleRequest

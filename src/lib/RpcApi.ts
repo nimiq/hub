@@ -12,13 +12,7 @@ import {
 } from './RequestTypes';
 import { RequestParser } from './RequestParser';
 import { RpcRequest, RpcResult } from './PublicRequestTypes';
-import {
-    KeyguardClient,
-    KeyguardCommand,
-    Errors,
-    ObjectType,
-    ResultByCommand,
-} from '@nimiq/keyguard-client';
+import { Errors, KeyguardClient, KeyguardCommand, ObjectType, ResultByCommand } from '@nimiq/keyguard-client';
 import { keyguardResponseRouter, REQUEST_ERROR } from '@/router';
 import { StaticStore } from '@/lib/StaticStore';
 import { WalletStore } from './WalletStore';
@@ -27,6 +21,7 @@ import Cashlink from '@/lib/Cashlink';
 import CookieJar from '@/lib/CookieJar';
 import { Raven } from 'vue-raven'; // Sentry.io SDK
 import { ERROR_CANCELED } from './Constants';
+import { isPriviledgedOrigin } from '@/lib/Helpers';
 import Config from 'config';
 import { setHistoryStorage, getHistoryStorage } from '@/lib/Helpers';
 
@@ -64,7 +59,8 @@ export default class RpcApi {
 
         this._registerHubApis([
             RequestType.SIGN_TRANSACTION,
-            RequestType.CASHLINK,
+            RequestType.CREATE_CASHLINK,
+            RequestType.MANAGE_CASHLINK,
             RequestType.CHECKOUT,
             RequestType.ONBOARD,
             RequestType.SIGNUP,
@@ -199,13 +195,10 @@ export default class RpcApi {
     private async _hubApiHandler(requestType: RequestType, state: RpcState, arg: RpcRequest) {
         let request;
 
-        if (!this._3rdPartyRequestWhitelist.includes(requestType)) {
-            // Check that a non-whitelisted request comes from a privileged origin
-            if (!Config.privilegedOrigins.includes(state.origin)
-                && !Config.privilegedOrigins.includes('*')) {
-                state.reply(ResponseStatus.ERROR, new Error('Unauthorized'));
-                return;
-            }
+        // Check that a non-whitelisted request comes from a privileged origin
+        if (!this._3rdPartyRequestWhitelist.includes(requestType) && !isPriviledgedOrigin(state.origin)) {
+            state.reply(ResponseStatus.ERROR, new Error(`${state.origin} is unauthorized to call ${requestType}`));
+            return;
         }
 
         this._staticStore.rpcState = state;
