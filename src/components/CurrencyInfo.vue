@@ -1,7 +1,7 @@
 <template>
     <div class="currency-info">
         <h1 class="nq-h1">
-            <span v-if="currency === Currency.NIM" class="nq-icon nimiq-logo"></span>
+            <span v-if="currency === constructor.Currency.NIM" class="nq-icon nimiq-logo"></span>
             <img v-else-if="currencyIcon" :src="currencyIcon"/>
             {{currency}}
         </h1>
@@ -20,20 +20,14 @@
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator';
 import { FiatAmount } from '@nimiq/vue-components';
-import { Currency } from '../lib/PublicRequestTypes';
+import { Currency as PublicCurrency } from '../lib/PublicRequestTypes';
 
 @Component({components: {FiatAmount}})
-export default class CurrencyInfo extends Vue {
-    @Prop({ type: String, required: true }) private currency!: Currency;
+class CurrencyInfo extends Vue {
+    @Prop({ type: String, required: true }) private currency!: PublicCurrency;
     @Prop({ type: String, required: true }) private fiatCurrency!: string;
     @Prop({ type: Number, required: true }) private fiatFeeAmount!: number;
     @Prop(String) private currencyIcon?: string;
-
-    private data() {
-        return {
-            Currency,
-        };
-    }
 
     private get isAlmostFree() {
         // Check whether the amount is less than 1 of the smallest unit by checking whether all digits of the rendered
@@ -44,6 +38,12 @@ export default class CurrencyInfo extends Vue {
                 .match(/^0+$/);
     }
 }
+
+namespace CurrencyInfo { // tslint:disable-line:no-namespace
+    export const Currency = PublicCurrency;
+}
+
+export default CurrencyInfo;
 </script>
 
 <style scoped>
