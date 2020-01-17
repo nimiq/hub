@@ -20,9 +20,6 @@ export interface CashlinkEntry {
     contactName?: string; /** unused for now */
 }
 
-// To be updated with the seasons
-export const DEFAULT_THEME = CashlinkTheme.STANDARD;
-
 class Cashlink {
     get value() {
         return this._value || 0;
@@ -61,7 +58,7 @@ class Cashlink {
     }
 
     get theme() {
-        return this._theme || DEFAULT_THEME;
+        return this._theme || Cashlink.DEFAULT_THEME;
     }
 
     set theme(theme: CashlinkTheme) {
@@ -481,6 +478,10 @@ namespace Cashlink {
         BALANCE_CHANGE = 'balance-change',
         STATE_CHANGE = 'state-change',
     }
+
+    // To be updated with the seasons
+    export const DEFAULT_THEME = CashlinkTheme.STANDARD;
+
 }
 
 export default Cashlink;
