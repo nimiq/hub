@@ -151,7 +151,7 @@ export interface Cashlink {
     value: number;
     status: CashlinkState;
     theme: CashlinkTheme;
-    cashlink?: string;
+    link?: string;
 }
 
 export type CreateCashlinkRequest = BasicRequest & {
@@ -168,9 +168,9 @@ export type CreateCashlinkRequest = BasicRequest & {
         senderBalance?: number,
     }
 ) & ({
-        returnCashlink?: false,
+        returnLink?: false,
     } | {
-        returnCashlink: true,
+        returnLink: true,
         skipSharing?: boolean,
     }
 );

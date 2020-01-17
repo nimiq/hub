@@ -328,7 +328,7 @@ export default class CashlinkReceive extends Vue {
         const theme = this.cashlink ? this.cashlink.theme : CashlinkTheme.STANDARD;
         switch (theme) {
             case CashlinkTheme.CHRISTMAS:
-                if (this.cashlink && this.cashlink.isThemeEncodedInLink) {
+                if (this.cashlink && this.cashlink.hasEncodedTheme) {
                     return 'Congrats, you received a Nimiq Gift Card.';
                 } else {
                     return 'Congrats, somebody gifted you a Nimiq Cashlink.';

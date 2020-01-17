@@ -69,10 +69,10 @@ class Demo {
             await checkoutPopup(await generateCheckoutRequest());
         });
 
-        const $returnCashlinkCheckbox = document.querySelector('#cashlink-return-cashlink') as HTMLInputElement;
-        $returnCashlinkCheckbox.addEventListener('change', () => {
+        const $returnLinkCheckbox = document.querySelector('#cashlink-return-link') as HTMLInputElement;
+        $returnLinkCheckbox.addEventListener('change', () => {
             (document.querySelector('#cashlink-skip-sharing-container') as HTMLElement).style.display =
-                $returnCashlinkCheckbox.checked ? 'block' : 'none';
+                $returnLinkCheckbox.checked ? 'block' : 'none';
         });
 
         const themeSelector = document.querySelector('#cashlink-theme') as HTMLSelectElement;
@@ -124,21 +124,21 @@ class Demo {
                     };
                 }
 
-                const returnCashlink = $returnCashlinkCheckbox.checked;
-                if (returnCashlink) {
+                const returnLink = $returnLinkCheckbox.checked;
+                if (returnLink) {
                     const skipSharing = (document.querySelector(
                         '#cashlink-skip-sharing') as HTMLInputElement).checked;
                     request = {
                         ...request,
-                        returnCashlink,
+                        returnLink,
                         skipSharing,
                     };
                 }
 
                 const result = await demo.client.createCashlink(request);
                 console.log('Result', result);
-                document.querySelector('#result').textContent = `Cashlink created${result.cashlink
-                    ? `: ${result.cashlink}`
+                document.querySelector('#result').textContent = `Cashlink created${result.link
+                    ? `: ${result.link}`
                     : ''
                 }`;
             } catch (e) {

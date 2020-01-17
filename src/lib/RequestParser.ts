@@ -181,8 +181,8 @@ export class RequestParser {
                     const { result: truncated, didTruncate } = Utf8Tools.truncateToUtf8ByteLength(message, 255);
                     if (!('autoTruncateMessage' in createCashlinkRequest && createCashlinkRequest.autoTruncateMessage)
                         && didTruncate) {
-                        throw new Error('Cashlink must be shorter than 256 bytes or autoTruncateMessage must be '
-                            + 'enabled.');
+                        throw new Error('Cashlink message must be shorter than 256 bytes or autoTruncateMessage must '
+                            + 'be enabled.');
                     }
                     message = truncated;
                 }
@@ -195,11 +195,11 @@ export class RequestParser {
                     throw new Error('Invalid Cashlink theme');
                 }
 
-                const returnCashlink = !!createCashlinkRequest.returnCashlink;
-                if (returnCashlink && !isPriviledgedOrigin(state.origin)) {
-                    throw new Error(`Origin ${state.origin} is not authorized to request returnCashlink.`);
+                const returnLink = !!createCashlinkRequest.returnLink;
+                if (returnLink && !isPriviledgedOrigin(state.origin)) {
+                    throw new Error(`Origin ${state.origin} is not authorized to request returnLink.`);
                 }
-                const skipSharing = !!createCashlinkRequest.returnCashlink && !!createCashlinkRequest.skipSharing;
+                const skipSharing = !!createCashlinkRequest.returnLink && !!createCashlinkRequest.skipSharing;
 
                 return {
                     kind: RequestType.CREATE_CASHLINK,
@@ -209,7 +209,7 @@ export class RequestParser {
                     value,
                     message,
                     theme,
-                    returnCashlink,
+                    returnLink,
                     skipSharing,
                 } as ParsedCreateCashlinkRequest;
             case RequestType.MANAGE_CASHLINK:
@@ -217,9 +217,7 @@ export class RequestParser {
                 return {
                     kind: RequestType.MANAGE_CASHLINK,
                     appName: manageCashlinkRequest.appName,
-                    cashlinkAddress: manageCashlinkRequest.cashlinkAddress
-                        ? Nimiq.Address.fromUserFriendlyAddress(manageCashlinkRequest.cashlinkAddress)
-                        : undefined,
+                    cashlinkAddress: Nimiq.Address.fromUserFriendlyAddress(manageCashlinkRequest.cashlinkAddress),
                 } as ParsedManageCashlinkRequest;
             default:
                 return null;
@@ -254,7 +252,7 @@ export class RequestParser {
                     value: createCashlinkRequest.value,
                     message: createCashlinkRequest.message,
                     theme: createCashlinkRequest.theme,
-                    returnCashlink: createCashlinkRequest.returnCashlink,
+                    returnLink: createCashlinkRequest.returnLink,
                     skipSharing: createCashlinkRequest.skipSharing,
                 } as CreateCashlinkRequest;
             case RequestType.MANAGE_CASHLINK:

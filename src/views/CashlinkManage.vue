@@ -179,9 +179,9 @@ export default class CashlinkManage extends Vue {
             status: this.retrievedCashlink!.state,
             theme: this.retrievedCashlink!.theme,
         };
-        if ('returnCashlink' in this.request && this.request.returnCashlink) {
+        if ('returnLink' in this.request && this.request.returnLink) {
             // exposes the cashlink private key to the caller
-            result.cashlink = this.link;
+            result.link = this.link;
         }
         this.$rpc.resolve(result);
     }
