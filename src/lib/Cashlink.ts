@@ -480,7 +480,9 @@ namespace Cashlink {
     }
 
     // To be updated with the seasons
-    export const DEFAULT_THEME = CashlinkTheme.STANDARD;
+    export const DEFAULT_THEME = navigator.languages.find((lang) => /^(zh|cmn|yue)|-(CN|HK|TW)$/i.test(lang))
+        ? CashlinkTheme.LUNAR_NEW_YEAR // Enable for users that speak Chinese // TODO should add other languages
+        : CashlinkTheme.STANDARD;
 
 }
 
