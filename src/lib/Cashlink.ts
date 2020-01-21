@@ -479,8 +479,15 @@ namespace Cashlink {
         STATE_CHANGE = 'state-change',
     }
 
-    // To be updated with the seasons
-    export const DEFAULT_THEME = CashlinkTheme.STANDARD;
+    // To be updated with the seasons.
+    // Currently enable LUNAR_NEW_YEAR theme for users that speak Chinese, Korean, Vietnamese, Malay or Indonesian (note
+    // that language tags follow BCP47 which starts with a ISO639 language and optionally ends with a ISO3166 country).
+    // Disable after the Lantern Festival, which ends Feb 8th.
+    export const DEFAULT_THEME = Date.now() < new Date('Wed, 9 Feb 2020 23:59:00 GMT+8').valueOf()
+        && navigator.languages.find(
+            (lang) => /^(zh|cmn|yue|gan|ko|vi|may|msa|mal|id)\b|-(CN|HK|TW|MO|KP|KR|VN|MY|SG|ID)$/i.test(lang))
+        ? CashlinkTheme.LUNAR_NEW_YEAR
+        : CashlinkTheme.STANDARD;
 
 }
 

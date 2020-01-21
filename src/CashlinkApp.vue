@@ -1,16 +1,18 @@
 <template>
-    <div id="app">
+    <div id="app" :class="{ 'dark-theme': isDarkTheme }">
         <header class="logo">
             <span class="nq-icon nimiq-logo"></span>
             <span class="logo-wordmark">Nimiq</span>
             <span class="logo-subtitle">Cashlink</span>
             <div class="flex-grow"></div>
-            <a class="nq-button-s" href="https://nimiq.com" target="_blank">What is Nimiq?</a>
+            <a class="nq-button-s" :class="{ inverse: isDarkTheme }" href="https://nimiq.com" target="_blank">
+                What is Nimiq?
+            </a>
         </header>
         <div v-if="loading" class="loading">
             <LoadingSpinner/>
         </div>
-        <CashlinkReceive v-else/>
+        <CashlinkReceive v-else @theme-change="_onThemeChange"/>
     </div>
 </template>
 
@@ -18,6 +20,7 @@
 import { Component, Vue } from 'vue-property-decorator';
 import { LoadingSpinner } from '@nimiq/vue-components';
 import CashlinkReceive from './views/CashlinkReceive.vue';
+import { CashlinkTheme } from './lib/PublicRequestTypes';
 import { loadNimiq } from './lib/Helpers';
 
 import '@nimiq/style/nimiq-style.min.css';
@@ -26,6 +29,7 @@ import '@nimiq/vue-components/dist/NimiqVueComponents.css';
 @Component({components: {LoadingSpinner, CashlinkReceive}})
 export default class CashlinkApp extends Vue {
     private loading = true;
+    private isDarkTheme = false;
 
     public async created() {
         await Promise.all([
@@ -34,12 +38,24 @@ export default class CashlinkApp extends Vue {
         ]);
         this.loading = false;
     }
+
+    private _onThemeChange(theme: CashlinkTheme, isDarkTheme: boolean) {
+        this.isDarkTheme = isDarkTheme;
+    }
 }
 </script>
 
 <style>
     header .nq-button-s {
         line-height: 3.375rem;
+    }
+
+    header {
+        transition: color .3s var(--nimiq-ease);
+    }
+
+    .dark-theme header {
+        color: white;
     }
 
     #app > .container {

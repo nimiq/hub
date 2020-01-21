@@ -1,5 +1,5 @@
 <template>
-    <div class="container pad-bottom" :class="{ themed: themeBackground }">
+    <div class="container pad-bottom" :class="{ themed: themeBackground, 'dark-theme': isDarkTheme }">
         <img v-if="themeBackground && !isMobile"
             :src="`/img/cashlink-themes/${themeBackground}.svg`"
             class="theme-background theme-background-desktop"
@@ -157,7 +157,7 @@ import HubApi from '../../client/HubApi';
     Amount,
     AccountSelector,
 }})
-export default class CashlinkReceive extends Vue {
+class CashlinkReceive extends Vue {
     private static MOBILE_BREAKPOINT = 450;
 
     @Getter private addressCount!: number;
@@ -207,6 +207,10 @@ export default class CashlinkReceive extends Vue {
             this.statusTitle = '404 - Cash not found';
             this.statusMessage = 'This is not a valid Cashlink, sorry.';
             return;
+        }
+
+        if (this.cashlink.theme) {
+            this.$emit(CashlinkReceive.Events.THEME_CHANGED, this.cashlink.theme, this.isDarkTheme);
         }
 
         // When user has no wallets, skip Cashlink init because user needs to signup/login first
@@ -316,24 +320,28 @@ export default class CashlinkReceive extends Vue {
             : null;
     }
 
+    private get isDarkTheme(): boolean {
+        return !!this.cashlink && this.cashlink.theme === CashlinkTheme.LUNAR_NEW_YEAR;
+    }
+
     private get welcomeHeadline(): string {
         const theme = this.cashlink ? this.cashlink.theme : CashlinkTheme.STANDARD;
         switch (theme) {
-            case CashlinkTheme.CHRISTMAS: return 'You are loved';
+            case CashlinkTheme.CHRISTMAS:
+            case CashlinkTheme.LUNAR_NEW_YEAR:
+                return 'You are loved';
             default: return 'Claim your Cash';
         }
     }
 
     private get welcomeText(): string {
-        const theme = this.cashlink ? this.cashlink.theme : CashlinkTheme.STANDARD;
-        switch (theme) {
-            case CashlinkTheme.CHRISTMAS:
-                if (this.cashlink && this.cashlink.hasEncodedTheme) {
-                    return 'Congrats, you received a Nimiq Gift Card.';
-                } else {
-                    return 'Congrats, somebody gifted you a Nimiq Cashlink.';
-                }
-            default: return 'Congrats, you just opened a Nimiq Cashlink.';
+        if (this.cashlink && this.cashlink.hasEncodedTheme) {
+            return 'Congrats, you received a Nimiq Gift Card.';
+        } else {
+            const theme = this.cashlink ? this.cashlink.theme : CashlinkTheme.STANDARD;
+            return theme === CashlinkTheme.STANDARD
+                ? 'Congrats, you just opened a Nimiq Cashlink.'
+                : 'Congrats, somebody gifted you a Nimiq Cashlink.';
         }
     }
 
@@ -341,6 +349,14 @@ export default class CashlinkReceive extends Vue {
         this.isMobile = window.innerWidth <= CashlinkReceive.MOBILE_BREAKPOINT;
     }
 }
+
+namespace CashlinkReceive {
+    export enum Events {
+        THEME_CHANGED = 'theme-change',
+    }
+}
+
+export default CashlinkReceive;
 </script>
 
 <style scoped>
@@ -367,10 +383,11 @@ export default class CashlinkReceive extends Vue {
     .theme-background-mobile {
         position: absolute;
         top: -7.5rem; /* header height */
-        height: calc(100% + 7.5rem);
+        height: calc(100% + 7.5rem + 1rem); /* + header height + SmallPage border radius */
     }
 
-    .theme-background.christmas {
+    .theme-background.christmas,
+    .theme-background.lunar-new-year {
         object-position: bottom right;
     }
 
@@ -398,6 +415,10 @@ export default class CashlinkReceive extends Vue {
         margin-left: 8.75rem; /* nq-card already has 1.25rem margin */
     }
 
+    .dark-theme .welcome-text {
+        color: white;
+    }
+
     .welcome-text .nq-h1 {
         font-size: 8rem;
         margin-top: 0;
@@ -406,11 +427,15 @@ export default class CashlinkReceive extends Vue {
 
     .welcome-text .nq-text {
         font-size: 4rem;
-        color: var(--nimiq-blue);
+        color: inherit;
     }
 
     .welcome-text .secondary-text {
         color: rgba(31, 35, 72, 0.5);
+    }
+
+    .dark-theme .welcome-text .secondary-text {
+        color: rgba(255, 255, 255, .65);
     }
 
     .small-page {
@@ -709,6 +734,10 @@ export default class CashlinkReceive extends Vue {
 
         .container:not(.themed) .small-page {
             flex-grow: 1;
+        }
+
+        .small-page {
+            max-width: unset !important;
         }
 
         .account-selector-shown .blur-target {
