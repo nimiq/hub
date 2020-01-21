@@ -143,6 +143,7 @@ export enum CashlinkTheme {
     UNSPECIFIED, // Equivalent to theme being omitted
     STANDARD,
     CHRISTMAS,
+    LUNAR_NEW_YEAR,
 }
 
 export interface Cashlink {
