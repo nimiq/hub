@@ -5,11 +5,9 @@ import router from './router';
 import store from './store';
 import staticStore from '@/lib/StaticStore';
 import RpcApi from '@/lib/RpcApi';
-import { init as initSentry, captureException } from '@sentry/browser';
-import { Vue as SentryVueIntegration } from '@sentry/integrations';
+import { startSentry } from '@/lib/Helpers';
 // @ts-ignore
 import IqonsSvg from '@nimiq/iqons/dist/iqons.min.svg';
-import Config from 'config';
 
 if (window.hasBrowserWarning) {
     throw new Error('Exeution aborted due to browser warning');
@@ -41,14 +39,7 @@ if (IqonsSvg[0] === '"') {
 const rpcApi = new RpcApi(store, staticStore, router);
 Vue.prototype.$rpc = rpcApi; // rpcApi is started in App.vue->created()
 
-if (Config.reportToSentry) {
-    initSentry({
-        dsn: 'https://92f2289fc2ac4c809dfa685911f865c2@sentry.io/1330855',
-        integrations: [new SentryVueIntegration({Vue, attachProps: true})],
-        environment: Config.network,
-    });
-    Vue.prototype.$captureException = captureException;
-}
+startSentry(Vue);
 
 const app = new Vue({
     data: { loading: true },
@@ -75,6 +66,5 @@ router.afterEach(() => {
 declare module 'vue/types/vue' {
     interface Vue {
         $rpc: RpcApi;
-        $captureException?: typeof captureException;
     }
 }

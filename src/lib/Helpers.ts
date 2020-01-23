@@ -5,6 +5,8 @@ import {
     NETWORK_MAIN,
     ERROR_INVALID_NETWORK,
 } from '../lib/Constants';
+import { init as initSentry, captureException } from '@sentry/browser';
+import { Vue as SentryVueIntegration } from '@sentry/integrations';
 
 export function setHistoryStorage(key: string, data: any) {
     // Note that data can be anything that can be structurally cloned:
@@ -46,4 +48,22 @@ export const loadNimiq = async () => {
 
 export function isPriviledgedOrigin(origin: string) {
     return Config.privilegedOrigins.includes(origin) || Config.privilegedOrigins.includes('*');
+}
+
+export function startSentry(Vue: any) {
+    if (Config.reportToSentry) {
+        initSentry({
+            dsn: 'https://92f2289fc2ac4c809dfa685911f865c2@sentry.io/1330855',
+            integrations: [new SentryVueIntegration({Vue, attachProps: true})],
+            environment: Config.network,
+        });
+        Vue.prototype.$captureException = captureException;
+    }
+}
+
+// Types
+declare module 'vue/types/vue' {
+    interface Vue {
+        $captureException?: typeof captureException;
+    }
 }
