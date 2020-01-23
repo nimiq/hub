@@ -22,10 +22,11 @@
         "@nimiq/style": "^0.7.5",
         "@nimiq/utils": "^0.4.4",
         "@nimiq/vue-components": "https://github.com/nimiq/vue-components.git#daniel/build/hub/cashlinks+checkout",
+        "@sentry/browser": "^5.11.1",
+        "@sentry/integrations": "^5.11.1",
         "vue": "^2.6.6",
         "vue-class-component": "^6.0.0",
         "vue-property-decorator": "^7.0.0",
-        "vue-raven": "^1.0.3",
         "vue-router": "^3.0.2",
         "vuex": "^3.1.0",
         "vuex-class": "^0.3.1"
