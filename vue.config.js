@@ -11,6 +11,10 @@ const buildName = process.env.build
         ? 'testnet'
         : 'local';
 
+const cdnDomain = buildName === 'mainnet'
+    ? 'https://cdn.nimiq.com'
+    : 'https://cdn.nimiq-testnet.com';
+
 const domain = buildName === 'mainnet'
     ? 'https://hub.nimiq.com'
     : buildName === 'testnet'
@@ -55,6 +59,7 @@ const pages = {
         template: 'public/index.html',
         // insert browser warning html templates
         browserWarning,
+        cdnDomain,
         domain,
         // output as dist/index.html
         filename: 'index.html',
@@ -80,6 +85,7 @@ const pages = {
         template: 'public/cashlink.html',
         // insert browser warning html templates
         browserWarning,
+        cdnDomain,
         domain,
         // output as dist/cashlink/index.html
         filename: 'cashlink/index.html',
