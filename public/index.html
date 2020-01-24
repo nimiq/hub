@@ -5,6 +5,10 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!-- On browser warning offer the caller url as shareUrl as opening the hub itself in a different browser or tab
+    doesn't make sense because the hub requires a request. Note that the snippet is written in old-fashioned Javascript
+    as required by the browser warnings and minified by hand as the HtmlWebpackPlugin only minifies html. -->
+    <script>window.onBrowserWarning=function(){var caller=document.referrer||window.opener;return{hasShareButton:caller,shareUrl:caller}}</script>
     <script type="text/javascript" src="/browser-warning.js" defer></script>
     <script src="<%= htmlWebpackPlugin.options.cdnDomain %>/v1.5.3/web-offline.js" defer></script>
     <title>My Nimiq Accounts</title>
