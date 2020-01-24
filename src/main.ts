@@ -10,7 +10,7 @@ import { startSentry } from '@/lib/Helpers';
 import IqonsSvg from '@nimiq/iqons/dist/iqons.min.svg';
 
 if (window.hasBrowserWarning) {
-    throw new Error('Exeution aborted due to browser warning');
+    throw new Error('Execution aborted due to browser warning');
 }
 
 if ((BrowserDetection.isIOS() || BrowserDetection.isSafari()) && 'serviceWorker' in navigator) {

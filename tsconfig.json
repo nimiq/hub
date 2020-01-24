@@ -12,7 +12,8 @@
     "baseUrl": ".",
     "types": [
       "node",
-      "jest"
+      "jest",
+      "@nimiq/browser-warning"
     ],
     "paths": {
       "@/*": [
@@ -31,7 +32,6 @@
   },
   "include": [
     "types/Nimiq.d.ts",
-    "types/BrowserWarning.d.ts",
     "src/**/*.ts",
     "src/**/*.tsx",
     "src/**/*.vue",
