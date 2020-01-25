@@ -4,6 +4,8 @@ const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
 const path = require('path');
 const fs = require('fs');
 const browserWarning = fs.readFileSync(__dirname + '/node_modules/@nimiq/browser-warning/dist/browser-warning.html.template');
+// const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+
 
 const buildName = process.env.build
     ? process.env.build
@@ -30,6 +32,7 @@ const configureWebpack = {
             { from: 'node_modules/@nimiq/browser-warning/dist', to: './' },
         ]),
         new WriteFileWebpackPlugin(),
+        // new BundleAnalyzerPlugin(),
     ],
     // Resolve config for yarn build
     resolve: {
