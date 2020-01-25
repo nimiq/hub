@@ -38,10 +38,12 @@ const configureWebpack = {
         }
     },
     // Fix sourcemaps (https://www.mistergoodcat.com/post/the-joy-that-is-source-maps-with-vuejs-and-typescript)
-    devtool: 'eval-source-map',
+    devtool: process.env.NODE_ENV === 'development'
+        ? 'eval-source-map' // exact mapping; fast to build; large; disabled code minification and inlined maps
+        : 'source-map', // exact mapping; slow to build; small; enabled code minification and extracted maps
     output: {
         devtoolModuleFilenameTemplate: info => {
-            var $filename = 'sources://' + info.resourcePath;
+            let $filename = 'sources://' + info.resourcePath;
             if (info.resourcePath.match(/\.vue$/) && !info.query.match(/type=script/)) {
                 $filename = 'webpack-generated:///' + info.resourcePath + '?' + info.hash;
             }
@@ -100,9 +102,9 @@ if (buildName === 'local' || buildName === 'testnet') {
         // entry for the page
         entry: 'demos/Demo.ts',
         // the source template
-            template: 'demos/index.html',
-            // output as dist/index.html
-            filename: 'demos.html',
+        template: 'demos/index.html',
+        // output as dist/demos.html
+        filename: 'demos.html',
         // chunks to include on this page, by default includes
         // extracted common chunks and vendor chunks.
         chunks: ['chunk-vendors', 'chunk-common', 'demos']
@@ -138,4 +140,4 @@ module.exports = {
                 defaultAttribute: 'defer',
             }]);
     }
-}
+};
