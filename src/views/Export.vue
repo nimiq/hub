@@ -17,7 +17,7 @@ export default class Export extends Vue {
         const request: KeyguardClient.ExportRequest = {
             appName: this.request.appName,
             keyId: wallet.keyId,
-            keyLabel: wallet.label,
+            keyLabel: wallet.labelForKeyguard,
             fileOnly: this.request.fileOnly,
             wordsOnly: this.request.wordsOnly,
         };

@@ -17,7 +17,7 @@ export default class ChangePassword extends Vue {
         const request: KeyguardClient.SimpleRequest = {
             appName: this.request.appName,
             keyId: wallet.keyId,
-            keyLabel: wallet.label,
+            keyLabel: wallet.labelForKeyguard,
         };
 
         const client = this.$rpc.createKeyguardClient(true);

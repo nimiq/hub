@@ -52,6 +52,10 @@ export class WalletInfo {
         return LabelingMachine.labelAccount(this.accounts.keys().next().value);
     }
 
+    public get labelForKeyguard(): string | undefined {
+        return this.type !== WalletType.LEGACY ? this.label : undefined;
+    }
+
     public findContractByAddress(address: Nimiq.Address): ContractInfo | undefined {
         return this.contracts.find((contract) => contract.address.equals(address));
     }

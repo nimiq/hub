@@ -408,7 +408,7 @@ class CashlinkCreate extends Vue {
                     appName: this.request.appName,
                     keyId: senderAccount.keyId,
                     keyPath: senderAccount.findSignerForAddress(this.accountOrContractInfo!.address)!.path,
-                    keyLabel: senderAccount.label,
+                    keyLabel: senderAccount.labelForKeyguard,
                     sender: this.accountOrContractInfo!.address.serialize(),
                     senderType: (this.accountOrContractInfo as ContractInfo).type
                         ? (this.accountOrContractInfo as ContractInfo).type

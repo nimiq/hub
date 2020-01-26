@@ -17,7 +17,7 @@ export default class Logout extends Vue {
         const request: KeyguardClient.RemoveKeyRequest = {
             appName: this.request.appName,
             keyId: wallet.keyId,
-            keyLabel: wallet.label,
+            keyLabel: wallet.labelForKeyguard || wallet.accounts.values().next().value.label,
         };
 
         const client = this.$rpc.createKeyguardClient(true);

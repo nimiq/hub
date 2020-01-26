@@ -28,7 +28,7 @@ export default class SignTransaction extends Vue {
 
             keyId: senderAccount.keyId,
             keyPath: signer.path,
-            keyLabel: senderAccount.label,
+            keyLabel: senderAccount.labelForKeyguard,
 
             sender: (senderContract || signer).address.serialize(),
             senderType: senderContract ? senderContract.type : Nimiq.Account.Type.BASIC,
