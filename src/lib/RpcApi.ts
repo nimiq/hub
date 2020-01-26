@@ -90,8 +90,9 @@ export default class RpcApi {
         this._keyguardClient.init().catch(console.error); // TODO: Provide better error handling here
         if (this._store.state.keyguardResult) return;
 
-        // If there is no valid request, show an error page
-        const onClientTimeout = () => this.routerReplace(REQUEST_ERROR);
+        // If there is no valid request, show an error page.
+        // Not using routerReplace here as that method exports the state which does not exist when there is no request.
+        const onClientTimeout = () => this._router.replace(`/${REQUEST_ERROR}`);
         this._server.init(onClientTimeout);
     }
 
