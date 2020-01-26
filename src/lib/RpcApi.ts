@@ -151,7 +151,7 @@ export default class RpcApi {
 
     public reject(error: Error) {
         const ignoredErrorTypes = [ KeyguardErrors.Types.INVALID_REQUEST.toString() ];
-        const ignoredErrors = [ ERROR_CANCELED, 'Request aborted', 'Account ID not found', 'Address not found' ];
+        const ignoredErrors = [ ERROR_CANCELED, 'Request aborted', 'WalletId not found', 'Address not found' ];
         if (ignoredErrorTypes.indexOf(error.name) < 0 && ignoredErrors.indexOf(error.message) < 0) {
             if (Config.reportToSentry) {
                 console.debug('Request:', JSON.stringify(this._staticStore.request));
@@ -244,10 +244,12 @@ export default class RpcApi {
         // Simply testing if the property exists (with `'walletId' in request`) is not enough,
         // as `undefined` also counts as existing.
         if (request) {
-            let accountRequired;
+            let accountRequired: boolean | undefined;
+            let errorMsg = 'Address not found'; // Error message for all cases but the first
             if ((request as ParsedSimpleRequest).walletId) {
                 accountRequired = true;
                 account = await WalletStore.Instance.get((request as ParsedSimpleRequest).walletId);
+                if (!account) errorMsg = 'WalletId not found';
             } else if (requestType === RequestType.SIGN_TRANSACTION) {
                 accountRequired = true;
                 const address = (request as ParsedSignTransactionRequest).sender;
@@ -281,7 +283,7 @@ export default class RpcApi {
                 }
             }
             if (accountRequired && !account) {
-                this.reject(new Error('Account not found'));
+                this.reject(new Error(errorMsg));
                 return;
             }
         }

@@ -54,7 +54,7 @@ export default class ChooseAddress extends Vue {
     private accountSelected(walletId: string, address: string) {
         const walletInfo = this.findWallet(walletId);
         if (!walletInfo) {
-            console.error('Selected account not found:', walletId);
+            console.error('UNEXPECTED: Selected walletId not found:', walletId);
             return;
         }
 

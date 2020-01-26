@@ -278,7 +278,8 @@ class CashlinkCreate extends Vue {
             ? this.findWallet(walletId)
             : this.findWalletByAddress(address, true);
         if (!wallet) {
-            this.$rpc.reject(new Error('WalletId not found!'));
+            const errorMsg = walletId ? 'UNEXPECTED: WalletId not found!' : 'Address not found';
+            this.$rpc.reject(new Error(errorMsg));
             return;
         }
 
@@ -303,7 +304,7 @@ class CashlinkCreate extends Vue {
         let addresses: string[] = [];
         let accountsAndContracts: Array<AccountInfo | ContractInfo> = [];
 
-        if (!this.request.senderAddress) { // No senderAccount in the request
+        if (!this.request.senderAddress) { // No senderAddress in the request
             accountsAndContracts = wallets.reduce((acc, wallet) => {
                 acc.push(...wallet.accounts.values());
                 acc.push(...wallet.contracts);
@@ -315,7 +316,7 @@ class CashlinkCreate extends Vue {
         } else {
             const wallet = this.findWalletByAddress(this.request.senderAddress.toUserFriendlyAddress(), true);
             if (!wallet) {
-                this.$rpc.reject(new Error('WalletId not found!'));
+                this.$rpc.reject(new Error('Address not found!'));
                 return;
             }
 

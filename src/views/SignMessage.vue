@@ -79,14 +79,14 @@ export default class SignMessage extends Vue {
             // Instead we quietly ignore any unavailable pre-set walletId and address and give
             // the user the option to chose as if it was not pre-set.
             this.showAccountSelector = true;
-            if (!isFromRequest) throw new Error(`UNEXPECTED: Selected walletId was not found: ${walletId}`);
+            if (!isFromRequest) throw new Error(`UNEXPECTED: Selected walletId not found: ${walletId}`);
             return;
         }
 
         const accountInfo = walletInfo.accounts.get(address);
         if (!accountInfo) {
             this.showAccountSelector = true;
-            if (!isFromRequest) throw new Error(`UNEXPECTED: Selected account was not found: ${address}`);
+            if (!isFromRequest) throw new Error(`UNEXPECTED: Selected account not found: ${address}`);
             return;
         }
 
