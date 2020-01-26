@@ -8,7 +8,7 @@
 
         <div class="nq-card-wrapper">
             <transition name="transition-flip">
-                <SmallPage v-if="!manualPaymentDetailsOpen">
+                <SmallPage v-if="!manualPaymentDetailsOpen" class="flip-primary">
                     <transition name="transition-fade">
                         <StatusScreen
                             v-if="showStatusScreen"
@@ -107,6 +107,7 @@
                     :paymentDetails="manualPaymentDetails"
                     :paymentOptions="paymentOptions"
                     @close="manualPaymentDetailsOpen = false"
+                    class="flip-secondary"
                 />
             </transition>
         </div>
@@ -253,39 +254,8 @@ export default class NonNimiqCheckoutOption<
         position: relative;
     }
 
-    .payment-option.confirmed .nq-card-wrapper {
+    .payment-option .nq-card-wrapper {
         perspective: 250rem;
-        --safari-rotate-fix: translateZ(1px);
-    }
-
-    .nq-card-wrapper > .transition-flip-enter-active,
-    .nq-card-wrapper > .transition-flip-leave-active {
-        transition: transform .6s;
-        transform-style: preserve-3d;
-        backface-visibility: hidden;
-    }
-
-    .payment-option .nq-card-wrapper > .transition-flip-leave-active {
-        position: absolute;
-        top: 0;
-        left: 0;
-    }
-
-    .nq-card-wrapper > :not(.checkout-manual-payment-details).transition-flip-enter,
-    .nq-card-wrapper > :not(.checkout-manual-payment-details).transition-flip-leave-to {
-        transform: rotateY(-180deg) var(--safari-rotate-fix);
-    }
-
-    .nq-card-wrapper > .checkout-manual-payment-details.transition-flip-enter,
-    .nq-card-wrapper > .checkout-manual-payment-details.transition-flip-leave-to {
-        transform: rotateY(180deg) var(--safari-rotate-fix);
-    }
-
-    .nq-card-wrapper > :not(.checkout-manual-payment-details).transition-flip-enter-to,
-    .nq-card-wrapper > :not(.checkout-manual-payment-details).transition-flip-leave,
-    .nq-card-wrapper > .checkout-manual-payment-details.transition-flip-enter-to,
-    .nq-card-wrapper > .checkout-manual-payment-details.transition-flip-leave {
-        transform: rotateY(0) var(--safari-rotate-fix);
     }
 
     .nq-card-wrapper > .transition-flip-enter-active >>> .info-line .arrow-runway *,
