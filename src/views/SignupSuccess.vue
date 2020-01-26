@@ -1,12 +1,7 @@
 <template>
     <div class="container pad-bottom">
         <SmallPage>
-            <StatusScreen :title="title" :state="state" :lightBlue="true">
-                <template slot="success">
-                    <CheckmarkIcon/>
-                    <h1 class="title nq-h1">Welcome to the<br>Nimiq Blockchain.</h1>
-                </template>
-            </StatusScreen>
+            <StatusScreen :title="title" :state="state" :lightBlue="true"/>
         </SmallPage>
     </div>
 </template>
@@ -67,6 +62,7 @@ export default class SignupSuccess extends Vue {
         // Artificially delay, to display loading status
         await new Promise((res) => setTimeout(res, 2000));
 
+        this.title = 'Welcome to the\nNimiq Blockchain.';
         this.state = StatusScreen.State.SUCCESS;
 
         const result: Account[] = [{

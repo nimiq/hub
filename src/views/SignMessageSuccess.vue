@@ -1,12 +1,7 @@
 <template>
     <div class="container pad-bottom">
         <SmallPage>
-            <StatusScreen state="success">
-                <template slot="success">
-                    <CheckmarkIcon/>
-                    <h1 class="title nq-h1">Your message is signed.</h1>
-                </template>
-            </StatusScreen>
+            <StatusScreen state="success" title="Your message is signed."/>
         </SmallPage>
     </div>
 </template>
