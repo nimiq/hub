@@ -1,12 +1,7 @@
 <template>
     <div class="container pad-bottom">
         <SmallPage>
-            <StatusScreen :state="statusScreenState">
-                <template slot="success">
-                    <CheckmarkIcon/>
-                    <h1 class="title nq-h1">{{successMessage}}</h1>
-                </template>
-            </StatusScreen>
+            <StatusScreen :title="successMessage" :state="statusScreenState"/>
         </SmallPage>
     </div>
 </template>
@@ -51,15 +46,7 @@ export default class ExportSuccess extends Vue {
             };
         }
 
-        if (this.keyguardResult.fileExported) {
-            if (this.keyguardResult.wordsExported) {
-                this.successMessage = 'Account backed up!';
-            } else {
-                this.successMessage = 'Login File exported!';
-            }
-        } else if (this.keyguardResult.wordsExported) {
-            this.successMessage = 'Recovery Words exported!';
-        } else {
+        if (!this.keyguardResult.fileExported && !this.keyguardResult.wordsExported) {
             this.$rpc.resolve(result);
             return;
         }
@@ -68,6 +55,15 @@ export default class ExportSuccess extends Vue {
             await WalletStore.Instance.put(wallet);
         }
 
+        if (this.keyguardResult.fileExported) {
+            if (this.keyguardResult.wordsExported) {
+                this.successMessage = 'Account backed up!';
+            } else {
+                this.successMessage = 'Login File exported!';
+            }
+        } else if (this.keyguardResult.wordsExported) {
+            this.successMessage = 'Recovery Words exported!';
+        }
         this.statusScreenState = StatusScreen.State.SUCCESS;
 
         if (wallet) {

@@ -1,12 +1,7 @@
 <template>
     <div class="container pad-bottom">
         <SmallPage>
-            <StatusScreen :state="state" :lightBlue="true">
-                <template slot="success">
-                    <CheckmarkIcon/>
-                    <h1 class="title nq-h1" v-html="text"></h1>
-                </template>
-            </StatusScreen>
+            <StatusScreen :title="text" :state="state" :lightBlue="true"/>
         </SmallPage>
     </div>
 </template>
