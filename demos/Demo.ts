@@ -291,8 +291,6 @@ class Demo {
         });
 
         document.querySelector('button#sign-message-with-account').addEventListener('click', async () => {
-            const message = (document.querySelector('#message') as HTMLInputElement).value || undefined;
-
             const $radio = document.querySelector('input[name="address"]:checked');
             if (!$radio) {
                 alert('You have no account to send a tx from, create an account first (signup)');
@@ -303,7 +301,27 @@ class Demo {
             const request: SignMessageRequest = {
                 appName: 'Hub Demos',
                 signer,
-                message,
+                message: (document.querySelector('#message') as HTMLInputElement).value || undefined,
+            };
+
+            try {
+                const result = await demo.client.signMessage(request);
+                console.log('Result', result);
+                document.querySelector('#result').textContent = 'MSG signed: ' + request.message;
+            } catch (e) {
+                console.error(e);
+                document.querySelector('#result').textContent = `Error: ${e.message || e}`;
+            }
+        });
+
+        document.querySelector('button#sign-message-with-tabs').addEventListener('click', async () => {
+            const $radio = document.querySelector('input[name="address"]:checked');
+            const signer = $radio && ($radio as HTMLElement).dataset.address || undefined;
+
+            const request: SignMessageRequest = {
+                appName: 'Hub Demos',
+                signer,
+                message: `This is a\n\tmessage\n\twith tabs.\n\n\t\tTouble tab!`,
             };
 
             try {
