@@ -5,7 +5,7 @@ import router from './router';
 import store from './store';
 import staticStore from '@/lib/StaticStore';
 import RpcApi from '@/lib/RpcApi';
-import { startSentry } from '@/lib/Helpers';
+import { startSentry } from './lib/Sentry';
 // @ts-ignore
 import IqonsSvg from '@nimiq/iqons/dist/iqons.min.svg';
 

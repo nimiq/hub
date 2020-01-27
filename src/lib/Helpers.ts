@@ -5,8 +5,6 @@ import {
     NETWORK_MAIN,
     ERROR_INVALID_NETWORK,
 } from '../lib/Constants';
-import { init as initSentry, captureException } from '@sentry/browser';
-import { Vue as SentryVueIntegration } from '@sentry/integrations';
 import { MOBILE_MAX_WIDTH } from './Constants';
 
 export function setHistoryStorage(key: string, data: any) {
@@ -51,17 +49,6 @@ export function isPriviledgedOrigin(origin: string) {
     return Config.privilegedOrigins.includes(origin) || Config.privilegedOrigins.includes('*');
 }
 
-export function startSentry(Vue: any) {
-    if (Config.reportToSentry) {
-        initSentry({
-            dsn: 'https://92f2289fc2ac4c809dfa685911f865c2@sentry.io/1330855',
-            integrations: [new SentryVueIntegration({Vue, attachProps: true})],
-            environment: Config.network,
-        });
-        Vue.prototype.$captureException = captureException;
-    }
-}
-
 export function isDesktop() {
     return (window.innerWidth
         || document.documentElement.clientWidth
@@ -74,11 +61,4 @@ export function isMilliseconds(time: number) {
      * 100000000000 ~ 11/16/5138
      */
     return time > 100000000000;
-}
-
-// Types
-declare module 'vue/types/vue' {
-    interface Vue {
-        $captureException?: typeof captureException;
-    }
 }

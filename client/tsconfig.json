@@ -30,6 +30,7 @@
   },
   "include": [
     "types/Nimiq.d.ts",
+    "types/shims-config.d.ts",
     "*.ts"
   ],
   "exclude": [

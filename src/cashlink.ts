@@ -2,7 +2,7 @@ import Vue from 'vue';
 import { BrowserDetection } from '@nimiq/utils';
 import App from './CashlinkApp.vue';
 import store from './store';
-import { startSentry } from '@/lib/Helpers';
+import { startSentry } from './lib/Sentry';
 // @ts-ignore
 import IqonsSvg from '@nimiq/iqons/dist/iqons.min.svg';
 
