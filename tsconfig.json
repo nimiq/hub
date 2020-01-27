@@ -25,9 +25,11 @@
     },
     "lib": [
       "es2017",
+      "esnext",
       "dom",
       "dom.iterable",
-      "scripthost"
+      "scripthost",
+      "esnext.bigint"
     ]
   },
   "include": [

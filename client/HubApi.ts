@@ -6,8 +6,8 @@ import {
     BehaviorType,
 } from './RequestBehavior';
 import { RedirectRpcClient } from '@nimiq/rpc';
-import { RequestType } from '../src/lib/RequestTypes';
 import {
+    RequestType,
     BasicRequest,
     SimpleRequest,
     OnboardRequest,
@@ -28,6 +28,9 @@ import {
     Cashlink,
     CashlinkState,
     CashlinkTheme,
+    Currency,
+    PaymentType,
+    PaymentState,
 } from '../src/lib/PublicRequestTypes';
 
 export default class HubApi<DB extends BehaviorType = BehaviorType.POPUP> { // DB: Default Behavior
@@ -38,7 +41,17 @@ export default class HubApi<DB extends BehaviorType = BehaviorType.POPUP> { // D
     public static readonly PopupRequestBehavior = PopupRequestBehavior;
     public static readonly CashlinkState = CashlinkState;
     public static readonly CashlinkTheme = CashlinkTheme;
+    public static readonly Currency = Currency;
+    public static readonly PaymentType = PaymentType;
+    public static readonly PaymentState = PaymentState;
     public static readonly MSG_PREFIX = '\x16Nimiq Signed Message:\n';
+
+    /** @deprecated */
+    public static get PaymentMethod() {
+        console.warn('PaymentMethod has been renamed to PaymentType. Access via HubApi.PaymentMethod will soon '
+            + 'get disabled. Use HubApi.PaymentType instead.');
+        return PaymentType;
+    }
 
     private static get DEFAULT_ENDPOINT() {
         const originArray = location.origin.split('.');
@@ -57,6 +70,7 @@ export default class HubApi<DB extends BehaviorType = BehaviorType.POPUP> { // D
 
     private readonly _endpoint: string;
     private readonly _defaultBehavior: RequestBehavior<DB>;
+    private readonly _checkoutDefaultBehavior: RequestBehavior<DB>;
     private readonly _iframeBehavior: IFrameRequestBehavior;
     private readonly _redirectClient: RedirectRpcClient;
 
@@ -64,6 +78,9 @@ export default class HubApi<DB extends BehaviorType = BehaviorType.POPUP> { // D
         this._endpoint = endpoint;
         this._defaultBehavior = defaultBehavior || new PopupRequestBehavior(
             `left=${window.innerWidth / 2 - 400},top=75,width=800,height=850,location=yes,dependent=yes`) as any;
+        // If no default behavior specified, use a default behavior with increased window height for checkout.
+        this._checkoutDefaultBehavior = defaultBehavior || new PopupRequestBehavior(
+            `left=${window.innerWidth / 2 - 400},top=50,width=800,height=890,location=yes,dependent=yes`) as any;
         this._iframeBehavior = new IFrameRequestBehavior();
 
         // Check for RPC results in the URL
@@ -109,7 +126,7 @@ export default class HubApi<DB extends BehaviorType = BehaviorType.POPUP> { // D
 
     public checkout<B extends BehaviorType = DB>(
         request: Promise<CheckoutRequest> | CheckoutRequest,
-        requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
+        requestBehavior: RequestBehavior<B> = this._checkoutDefaultBehavior as any,
     ): Promise<B extends BehaviorType.REDIRECT ? void : SignedTransaction> {
         return this._request(requestBehavior, RequestType.CHECKOUT, [request]);
     }

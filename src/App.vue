@@ -86,12 +86,48 @@ export default class App extends Vue {
         pointer-events: none;
     }
 
+    /* transition-fade */
     .transition-fade-enter,
     .transition-fade-leave-to {
         opacity: 0;
     }
 
+    /* transition-flip: Note that position: relative and a perspective needs to be applied to the parent */
+    .transition-flip-enter-active,
+    .transition-flip-leave-active {
+        --safari-rotate-fix: translateZ(1px);
+        transition: transform .6s;
+        transform-style: preserve-3d;
+        backface-visibility: hidden;
+    }
+
+    .transition-flip-leave-active {
+        position: absolute !important;
+        top: 0;
+        left: 0;
+    }
+
+    .transition-flip-enter-to,
+    .transition-flip-leave {
+        transform: rotateY(0) var(--safari-rotate-fix);
+    }
+
+    .transition-flip-enter.flip-primary,
+    .transition-flip-leave-to.flip-primary {
+        transform: rotateY(-180deg) var(--safari-rotate-fix);
+    }
+
+    .transition-flip-enter.flip-secondary,
+    .transition-flip-leave-to.flip-secondary {
+        transform: rotateY(180deg) var(--safari-rotate-fix);
+    }
+
     /* Mobile Layout */
+    @media (max-width: 400px) {
+        .global-close > span {
+            display: none;
+        }
+    }
 
     @media (max-width: 450px) {
         #app > .container {
@@ -102,7 +138,7 @@ export default class App extends Vue {
         .global-close {
             position: absolute;
             right: 1rem;
-            top: 2rem;
+            top: 2.4rem;
             margin: 0;
         }
 

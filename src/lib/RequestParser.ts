@@ -1,5 +1,5 @@
-import { TX_MIN_VALIDITY_DURATION, TX_VALIDITY_WINDOW } from './Constants';
-import { isPriviledgedOrigin } from '@/lib/Helpers';
+import { HISTORY_KEY_SELECTED_CURRENCY } from './Constants';
+import { isMilliseconds, isPriviledgedOrigin } from './Helpers';
 import { State } from '@nimiq/rpc';
 import {
     BasicRequest,
@@ -14,6 +14,11 @@ import {
     SignMessageRequest,
     SignTransactionRequest,
     SimpleRequest,
+    Currency,
+    PaymentType,
+    RequestType,
+    NimiqCheckoutRequest,
+    MultiCurrencyCheckoutRequest,
 } from './PublicRequestTypes';
 import {
     ParsedBasicRequest,
@@ -27,12 +32,18 @@ import {
     ParsedSignMessageRequest,
     ParsedSignTransactionRequest,
     ParsedSimpleRequest,
-    RequestType,
 } from './RequestTypes';
+import { ParsedNimiqDirectPaymentOptions } from './paymentOptions/NimiqPaymentOptions';
+import { ParsedEtherDirectPaymentOptions } from './paymentOptions/EtherPaymentOptions';
+import { ParsedBitcoinDirectPaymentOptions } from './paymentOptions/BitcoinPaymentOptions';
 import { Utf8Tools } from '@nimiq/utils';
 
 export class RequestParser {
-    public static parse(request: RpcRequest, state: State, requestType: RequestType): ParsedRpcRequest | null {
+    public static parse(
+            request: RpcRequest,
+            state: State,
+            requestType: RequestType,
+        ): ParsedRpcRequest | null {
         if (!request.appName) throw new Error('appName is required');
 
         switch (requestType) {
@@ -60,38 +71,168 @@ export class RequestParser {
             case RequestType.CHECKOUT:
                 const checkoutRequest = request as CheckoutRequest;
 
-                if (!checkoutRequest.value) throw new Error('value is required');
-                if (checkoutRequest.shopLogoUrl && new URL(checkoutRequest.shopLogoUrl).origin !== state.origin) {
-                    throw new Error(
-                        'shopLogoUrl must have same origin as caller website. Image at ' +
-                        checkoutRequest.shopLogoUrl +
-                        ' is not on caller origin ' +
-                        state.origin);
+                if (checkoutRequest.shopLogoUrl) {
+                    let origin;
+                    try {
+                        origin = new URL(checkoutRequest.shopLogoUrl).origin;
+                    } catch (err) {
+                        throw new Error(`shopLogoUrl must be a valid URL: ${err}`);
+                    }
+                    if (origin !== state.origin) {
+                        throw new Error(
+                            'shopLogoUrl must have same origin as caller website. Image at ' +
+                            checkoutRequest.shopLogoUrl +
+                            ' is not on caller origin ' +
+                            state.origin,
+                        );
+                    }
                 }
-                return {
-                    kind: RequestType.CHECKOUT,
-                    appName: checkoutRequest.appName,
-                    shopLogoUrl: checkoutRequest.shopLogoUrl,
-                    sender: checkoutRequest.sender
-                        ? Nimiq.Address.fromUserFriendlyAddress(checkoutRequest.sender)
-                        : undefined,
-                    forceSender: !!checkoutRequest.forceSender,
-                    recipient: Nimiq.Address.fromUserFriendlyAddress(checkoutRequest.recipient),
-                    recipientType: checkoutRequest.recipientType || Nimiq.Account.Type.BASIC,
-                    value: checkoutRequest.value,
-                    fee: checkoutRequest.fee || 0,
-                    data: typeof checkoutRequest.extraData === 'string'
-                        ? Utf8Tools.stringToUtf8ByteArray(checkoutRequest.extraData)
-                        : checkoutRequest.extraData || new Uint8Array(0),
-                    flags: checkoutRequest.flags || Nimiq.Transaction.Flag.NONE,
-                    validityDuration: !checkoutRequest.validityDuration ? TX_VALIDITY_WINDOW : Math.min(
-                        TX_VALIDITY_WINDOW,
-                        Math.max(
-                            TX_MIN_VALIDITY_DURATION,
-                            checkoutRequest.validityDuration,
+
+                if (checkoutRequest.extraData !== undefined && typeof checkoutRequest.extraData !== 'string'
+                    && !(checkoutRequest.extraData instanceof Uint8Array)) {
+                    throw new Error('extraData must be a string or Uint8Array');
+                }
+                const data = typeof checkoutRequest.extraData === 'string'
+                    ? Utf8Tools.stringToUtf8ByteArray(checkoutRequest.extraData)
+                    : checkoutRequest.extraData || new Uint8Array(0);
+
+                if (!checkoutRequest.version || checkoutRequest.version === 1) {
+                    if (typeof checkoutRequest.value !== 'number' || checkoutRequest.value <= 0) {
+                        throw new Error('value must be a number >0');
+                    }
+
+                    return {
+                        kind: RequestType.CHECKOUT,
+                        version: 1,
+                        appName: checkoutRequest.appName,
+                        shopLogoUrl: checkoutRequest.shopLogoUrl,
+                        data,
+                        time: Date.now(),
+                        paymentOptions: [new ParsedNimiqDirectPaymentOptions({
+                            currency: Currency.NIM,
+                            type: PaymentType.DIRECT,
+                            amount: checkoutRequest.value.toString(),
+                            expires: 0, // unused for NimiqCheckoutRequests
+                            protocolSpecific: {
+                                recipient: checkoutRequest.recipient,
+                                recipientType: checkoutRequest.recipientType || Nimiq.Account.Type.BASIC,
+                                sender: checkoutRequest.sender,
+                                forceSender: !!checkoutRequest.forceSender,
+                                fee: checkoutRequest.fee || 0,
+                                flags: checkoutRequest.flags || Nimiq.Transaction.Flag.NONE,
+                                validityDuration: checkoutRequest.validityDuration,
+                            },
+                        }, data)],
+                    } as ParsedCheckoutRequest;
+                }
+
+                if (checkoutRequest.version === 2) {
+                    if (!checkoutRequest.paymentOptions.some((option) => option.currency === Currency.NIM)) {
+                        throw new Error('CheckoutRequest must provide a NIM paymentOption.');
+                    }
+                    if (!checkoutRequest.shopLogoUrl) {
+                        throw new Error('shopLogoUrl: string is required'); // shop logo non optional in version 2
+                    }
+
+                    try {
+                        // Test whether the browser is able to parse the currency as an ISO 4217 currency code,
+                        // see https://www.ecma-international.org/ecma-402/1.0/#sec-6.3.1
+                        (0).toLocaleString('en-US', {
+                            style: 'currency',
+                            currency: checkoutRequest.fiatCurrency,
+                        });
+                    } catch (e) {
+                        throw new Error(`Failed to parse currency ${checkoutRequest.fiatCurrency}. Is it a valid ` +
+                            'ISO 4217 currency code?');
+                    }
+
+                    if (!checkoutRequest.fiatAmount
+                        || typeof checkoutRequest.fiatAmount !== 'number'
+                        || checkoutRequest.fiatAmount <= 0) {
+                        throw new Error('fiatAmount must be a positive non-zero number');
+                    }
+
+                    if (!checkoutRequest.callbackUrl || typeof checkoutRequest.callbackUrl !== 'string') {
+                        if (checkoutRequest.paymentOptions.some(
+                            (option) => option.currency !== Currency.NIM,
+                            )) {
+                            throw new Error('A callbackUrl: string is required for currencies other than NIM to ' +
+                                'monitor payments.');
+                        }
+                        if (!checkoutRequest.paymentOptions.every(
+                                (option) => !!option.protocolSpecific.recipient,
+                            )) {
+                            throw new Error('A callbackUrl: string or all recipients must be provided');
+                        }
+                    } else {
+                        let origin;
+                        try {
+                            origin = new URL(checkoutRequest.callbackUrl).origin;
+                        } catch (err) {
+                            throw new Error(`callbackUrl must be a valid URL: ${err}`);
+                        }
+                        if (origin !== state.origin) {
+                            throw new Error('callbackUrl must have the same origin as caller Website. ' +
+                                checkoutRequest.callbackUrl +
+                                ' is not on caller origin ' +
+                                state.origin,
+                            );
+                        }
+                        if (!checkoutRequest.csrf || typeof checkoutRequest.csrf !== 'string') {
+                            throw new Error('A CSRF token must be provided alongside the callbackUrl.');
+                        }
+                    }
+
+                    if (checkoutRequest.time && typeof checkoutRequest.time !== 'number') {
+                        throw new Error('time: number is required');
+                    }
+
+                    const currencies = new Set<Currency>();
+
+                    return {
+                        kind: RequestType.CHECKOUT,
+                        version: 2,
+                        appName: checkoutRequest.appName,
+                        shopLogoUrl: checkoutRequest.shopLogoUrl,
+                        callbackUrl: checkoutRequest.callbackUrl,
+                        csrf: checkoutRequest.csrf,
+                        data,
+                        time: !checkoutRequest.time
+                            ? Date.now()
+                            : isMilliseconds(checkoutRequest.time)
+                                ? checkoutRequest.time
+                                : checkoutRequest.time * 1000,
+                        fiatCurrency: checkoutRequest.fiatCurrency,
+                        fiatAmount: checkoutRequest.fiatAmount,
+                        paymentOptions: checkoutRequest.paymentOptions.map((option) => {
+                            if (currencies.has(option.currency)) {
+                                throw new Error('Only one paymentOption can be provided per cryptocurrency');
+                            } else {
+                                currencies.add(option.currency);
+                            }
+                            switch (option.type) {
+                                case PaymentType.DIRECT:
+                                    switch (option.currency) {
+                                        case Currency.NIM:
+                                            return new ParsedNimiqDirectPaymentOptions(option, data);
+                                        case Currency.ETH:
+                                            return new ParsedEtherDirectPaymentOptions(option);
+                                        case Currency.BTC:
+                                            return new ParsedBitcoinDirectPaymentOptions(option);
+                                        default:
+                                            throw new Error(`Currency ${(option as any).currency} not supported`);
+                                    }
+                                default:
+                                    throw new Error(`PaymentType ${(option as any).type} not supported`);
+                            }
+                        }).filter((parsedPaymentOption) =>
+                            // First parse all payment options to run complete input validation, then if one
+                            // currency had been selected before keep only that one.
+                            !history.state || !history.state[HISTORY_KEY_SELECTED_CURRENCY]
+                                || history.state[HISTORY_KEY_SELECTED_CURRENCY] === parsedPaymentOption.currency,
                         ),
-                    ),
-                } as ParsedCheckoutRequest;
+                    } as ParsedCheckoutRequest;
+                }
             case RequestType.ONBOARD:
                 const onboardRequest = request as OnboardRequest;
                 return {
@@ -224,7 +365,8 @@ export class RequestParser {
         }
     }
 
-    public static raw(request: ParsedRpcRequest): RpcRequest | null {
+    public static raw(request: ParsedRpcRequest)
+        : RpcRequest | null {
         switch (request.kind) {
             case RequestType.SIGN_TRANSACTION:
                 const signTransactionRequest = request as ParsedSignTransactionRequest;
@@ -265,19 +407,34 @@ export class RequestParser {
                 } as ManageCashlinkRequest;
             case RequestType.CHECKOUT:
                 const checkoutRequest = request as ParsedCheckoutRequest;
-                return {
-                    appName: checkoutRequest.appName,
-                    shopLogoUrl: checkoutRequest.shopLogoUrl,
-                    sender: checkoutRequest.sender ? checkoutRequest.sender.toUserFriendlyAddress() : undefined,
-                    forceSender: checkoutRequest.forceSender,
-                    recipient: checkoutRequest.recipient.toUserFriendlyAddress(),
-                    recipientType: checkoutRequest.recipientType,
-                    value: checkoutRequest.value,
-                    fee: checkoutRequest.fee,
-                    extraData: checkoutRequest.data,
-                    flags: checkoutRequest.flags,
-                    validityDuration: checkoutRequest.validityDuration,
-                } as CheckoutRequest;
+                switch (checkoutRequest.version) {
+                    case 1:
+                        const nimiqOptions = checkoutRequest.paymentOptions[0] as ParsedNimiqDirectPaymentOptions;
+                        return {
+                            appName: checkoutRequest.appName,
+                            version: 1,
+                            shopLogoUrl: checkoutRequest.shopLogoUrl,
+                            sender: nimiqOptions.protocolSpecific.sender
+                                ? nimiqOptions.protocolSpecific.sender!.toUserFriendlyAddress()
+                                : undefined,
+                            forceSender: nimiqOptions.protocolSpecific.forceSender,
+                            recipient: nimiqOptions.protocolSpecific.recipient
+                                ? nimiqOptions.protocolSpecific.recipient!.toUserFriendlyAddress()
+                                : undefined,
+                            recipientType: nimiqOptions.protocolSpecific.recipientType,
+                            value: nimiqOptions.amount,
+                            fee: nimiqOptions.protocolSpecific.fee,
+                            extraData: checkoutRequest.data,
+                            flags: nimiqOptions.protocolSpecific.flags,
+                            validityDuration: nimiqOptions.protocolSpecific.validityDuration,
+                        } as NimiqCheckoutRequest;
+                    case 2:
+                        return {
+                            ...checkoutRequest,
+                            extraData: checkoutRequest.data,
+                            paymentOptions: checkoutRequest.paymentOptions.map((option) => option.raw()),
+                        } as MultiCurrencyCheckoutRequest;
+                    }
             case RequestType.ONBOARD:
                 const onboardRequest = request as ParsedOnboardRequest;
                 return {

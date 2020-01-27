@@ -743,6 +743,7 @@ export default CashlinkReceive;
         .account-selector-shown .blur-target {
             filter: blur(10px);
         }
+
         .account-selector-shown .page-footer {
             filter: blur(25px);
         }

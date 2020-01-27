@@ -54,7 +54,8 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { Static } from '../lib/StaticStore';
-import { ParsedCreateCashlinkRequest, ParsedManageCashlinkRequest, RequestType } from '../lib/RequestTypes';
+import { Cashlink as PublicCashlink } from '../lib/PublicRequestTypes';
+import { ParsedCreateCashlinkRequest, ParsedManageCashlinkRequest } from '../lib/RequestTypes';
 import { SmallPage, PageBody, PageFooter, Account, CheckmarkSmallIcon, Copyable } from '@nimiq/vue-components';
 import StatusScreen from '../components/StatusScreen.vue';
 import Network from '../components/Network.vue';
@@ -62,7 +63,6 @@ import Cashlink from '../lib/Cashlink';
 import { CashlinkStore } from '../lib/CashlinkStore';
 import { State } from 'vuex-class';
 import KeyguardClient from '@nimiq/keyguard-client';
-import { Cashlink as PublicCashlink } from '../lib/PublicRequestTypes';
 import { Clipboard } from '@nimiq/utils';
 
 @Component({components: {

@@ -8,11 +8,17 @@ import {
     ParsedSignMessageRequest,
     ParsedSignTransactionRequest,
     ParsedSimpleRequest,
-    RequestType,
 } from './RequestTypes';
 import { RequestParser } from './RequestParser';
-import { RpcRequest, RpcResult } from './PublicRequestTypes';
-import { Errors, KeyguardClient, KeyguardCommand, ObjectType, ResultByCommand } from '@nimiq/keyguard-client';
+import { Currency, RequestType, RpcRequest, RpcResult } from './PublicRequestTypes';
+import { ParsedNimiqDirectPaymentOptions } from './paymentOptions/NimiqPaymentOptions';
+import {
+    KeyguardClient,
+    KeyguardCommand,
+    Errors as KeyguardErrors,
+    ObjectType,
+    ResultByCommand,
+} from '@nimiq/keyguard-client';
 import { keyguardResponseRouter, REQUEST_ERROR } from '@/router';
 import { StaticStore } from '@/lib/StaticStore';
 import { WalletStore } from './WalletStore';
@@ -135,7 +141,7 @@ export default class RpcApi {
     }
 
     public reject(error: Error) {
-        const ignoredErrorTypes = [ Errors.Types.INVALID_REQUEST.toString() ];
+        const ignoredErrorTypes = [ KeyguardErrors.Types.INVALID_REQUEST.toString() ];
         const ignoredErrors = [ ERROR_CANCELED, 'Request aborted', 'Account ID not found', 'Address not found' ];
         if (ignoredErrorTypes.indexOf(error.name) < 0 && ignoredErrors.indexOf(error.message) < 0) {
             if (Config.reportToSentry) {
@@ -245,12 +251,24 @@ export default class RpcApi {
                 }
             } else if (requestType === RequestType.CHECKOUT) {
                 const checkoutRequest = request as ParsedCheckoutRequest;
-                accountRequired = checkoutRequest.forceSender;
-                if (checkoutRequest.sender) {
-                    account = this._store.getters.findWalletByAddress(
-                        checkoutRequest.sender.toUserFriendlyAddress(),
-                        true,
-                    );
+                // forceSender only applies to non-multi-currency checkouts.
+                if (checkoutRequest.paymentOptions.length === 1
+                    && checkoutRequest.paymentOptions[0].currency === Currency.NIM) {
+
+                    /**
+                     * Later on can potentially be ParsedNimiqOasisPaymentOptions.
+                     * If it will contain the forceSender flag as well it should not be an issue.
+                     */
+                    const protocolSpecific =
+                        (checkoutRequest.paymentOptions[0] as ParsedNimiqDirectPaymentOptions).protocolSpecific;
+
+                    accountRequired = protocolSpecific.forceSender;
+                    if (protocolSpecific.sender) {
+                        account = this._store.getters.findWalletByAddress(
+                            protocolSpecific.sender.toUserFriendlyAddress(),
+                            true,
+                        );
+                    }
                 }
             }
             if (accountRequired && !account) {
@@ -340,7 +358,7 @@ export default class RpcApi {
         // Set result
         this._store.commit('setKeyguardResult', error);
 
-        if (error.message === ERROR_CANCELED) {
+        if (error.message === KeyguardErrors.Messages.CANCELED) {
             this.reject(error);
             return;
         }
@@ -360,9 +378,15 @@ export default class RpcApi {
             return;
         }
 
-        this.routerReplace(keyguardResponseRouter(command, this._staticStore.request!.kind).reject);
-
         this._startRoute();
+
+        if (error.message === KeyguardErrors.Messages.EXPIRED) {
+            // Don't reject but navigate to checkout to display the expiration warning there.
+            this.routerReplace(RequestType.CHECKOUT);
+            return;
+        }
+
+        this.routerReplace(keyguardResponseRouter(command, this._staticStore.request!.kind).reject);
     }
 
     private _startRoute() {

@@ -223,7 +223,7 @@ export default class WalletInfoCollector {
 
             const releaseKey = walletType === WalletType.BIP39
                 ? (removeKey?: boolean) => WalletInfoCollector._keyguardClient!.releaseKey(keyId!, removeKey)
-                : null;
+                : undefined;
 
             return {
                 walletInfo,

@@ -110,7 +110,13 @@ if (buildName === 'local' || buildName === 'testnet') {
         filename: 'demos.html',
         // chunks to include on this page, by default includes
         // extracted common chunks and vendor chunks.
-        chunks: ['chunk-vendors', 'chunk-common', 'demos']
+        chunks: ['chunk-vendors', 'chunk-common', 'demos'],
+    };
+    pages.callback = {
+        entry: 'demos/callback.ts',
+        template: 'demos/callback.html',
+        filename: 'callback.html',
+        chunks: [],
     };
 }
 
@@ -127,6 +133,8 @@ module.exports = {
         config.plugins.delete('preload-cashlink-app');
         config.plugins.delete('prefetch-demos');
         config.plugins.delete('preload-demos');
+        config.plugins.delete('prefetch-callback');
+        config.plugins.delete('preload-callback');
 
         config.module
             .rule('ts')

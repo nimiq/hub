@@ -1,6 +1,27 @@
 <template>
     <div v-if="request.kind === 'create-cashlink' ? !!cashlink : true" class="container">
         <SmallPage :class="{ 'account-details-shown': !!shownAccountDetails }">
+            <PaymentInfoLine
+                v-if="request.kind === 'checkout'"
+                ref="info"
+                class="blur-target"
+                :cryptoAmount="{
+                    amount: checkoutPaymentOptions.amount + checkoutPaymentOptions.protocolSpecific.fee,
+                    currency: checkoutPaymentOptions.currency,
+                    decimals: checkoutPaymentOptions.decimals,
+                }"
+                :fiatAmount="request.fiatAmount && request.fiatCurrency ? {
+                    amount: request.fiatAmount,
+                    currency: request.fiatCurrency,
+                } : null"
+                :address="checkoutPaymentOptions.protocolSpecific.recipient
+                    ? checkoutPaymentOptions.protocolSpecific.recipient.toUserFriendlyAddress()
+                    : null"
+                :origin="rpcState.origin"
+                :shopLogoUrl="request.shopLogoUrl"
+                :startTime="request.time"
+                :endTime="checkoutPaymentOptions.expires"
+            />
             <PageHeader :back-arrow="request.kind === 'checkout' || request.kind === 'create-cashlink'"
                 @back="_back" class="blur-target">
                 {{ request.kind === 'checkout'
@@ -29,10 +50,19 @@
             <hr class="blur-target">
 
             <Amount class="value nq-light-blue blur-target"
-                :amount="(cashlink || request).value" :minDecimals="2" :maxDecimals="5" />
+                :amount="checkoutPaymentOptions ? checkoutPaymentOptions.amount : (cashlink || request).value"
+                :minDecimals="2"
+                :maxDecimals="5"
+            />
 
-            <div v-if="(cashlink || request).fee" class="fee nq-text-s blur-target">
-                + <Amount :amount="(cashlink || request).fee" :minDecimals="2" :maxDecimals="5" /> fee
+            <div v-if="checkoutPaymentOptions ? checkoutPaymentOptions.protocolSpecific.fee : (cashlink || request).fee"
+                class="fee nq-text-s blur-target">
+                + <Amount
+                    :amount="checkoutPaymentOptions
+                        ? checkoutPaymentOptions.protocolSpecific.fee
+                        : (cashlink || request).fee"
+                    :minDecimals="2" :maxDecimals="5"
+                /> fee
             </div>
 
             <div v-if="transactionData" class="data nq-text blur-target">
@@ -43,8 +73,16 @@
                 <LedgerUi ref="ledger-ui" small></LedgerUi>
                 <transition name="transition-fade">
                     <StatusScreen v-if="state !== constructor.State.OVERVIEW"
-                        :state="state === constructor.State.FINISHED ? 'success' : 'loading'"
-                        :title="statusScreenTitle">
+                        :state="statusScreenState"
+                        :title="statusScreenTitle"
+                        :mainAction="state === constructor.State.EXPIRED ? 'Go back to shop' : null"
+                        @main-action="_close"
+                    >
+                        <template v-if="state === constructor.State.EXPIRED" v-slot:warning>
+                            <StopwatchIcon class="stopwatch-icon"/>
+                            <h1 class="title nq-h1">{{ statusScreenTitle }}</h1>
+                            <p class="message nq-text">Please go back to the shop and restart the process.</p>
+                        </template>
                     </StatusScreen>
                 </transition>
             </div>
@@ -80,27 +118,27 @@ import {
     ArrowRightIcon,
     PageBody,
     PageHeader,
+    PaymentInfoLine,
     SmallPage,
+    StopwatchIcon,
 } from '@nimiq/vue-components';
-import Network from '@/components/Network.vue';
+import Network from '../components/Network.vue';
 import LedgerApi from '../lib/LedgerApi';
 import LedgerUi from '../components/LedgerUi.vue';
 import StatusScreen from '../components/StatusScreen.vue';
 import { Static } from '../lib/StaticStore';
 import { Getter } from 'vuex-class';
 import { State as RpcState } from '@nimiq/rpc';
-import {
-    ParsedCreateCashlinkRequest,
-    ParsedCheckoutRequest,
-    ParsedSignTransactionRequest,
-    RequestType,
-} from '../lib/RequestTypes';
+import { ParsedCreateCashlinkRequest, ParsedCheckoutRequest, ParsedSignTransactionRequest } from '../lib/RequestTypes';
+import { Currency, RequestType } from '../lib/PublicRequestTypes';
 import { WalletInfo } from '../lib/WalletInfo';
-import { CASHLINK_FUNDING_DATA, ERROR_CANCELED, TX_VALIDITY_WINDOW } from '../lib/Constants';
+import { CASHLINK_FUNDING_DATA, ERROR_CANCELED, ERROR_REQUEST_TIMED_OUT, TX_VALIDITY_WINDOW } from '../lib/Constants';
+import { ParsedNimiqDirectPaymentOptions } from '../lib/paymentOptions/NimiqPaymentOptions';
 import { Utf8Tools } from '@nimiq/utils';
 import Config from 'config';
 import Cashlink from '../lib/Cashlink';
 import { CashlinkStore } from '../lib/CashlinkStore';
+import CheckoutServerApi from '../lib/CheckoutServerApi';
 
 interface AccountDetailsData {
     address: string;
@@ -115,6 +153,7 @@ interface AccountDetailsData {
     Account,
     PageBody,
     PageHeader,
+    PaymentInfoLine,
     SmallPage,
     LedgerUi,
     StatusScreen,
@@ -123,12 +162,14 @@ interface AccountDetailsData {
     Amount,
     ArrowLeftSmallIcon,
     ArrowRightIcon,
+    StopwatchIcon,
 }})
 export default class SignTransactionLedger extends Vue {
     private static readonly State = {
         OVERVIEW: 'overview',
         SENDING_TRANSACTION: 'sending-transaction',
         FINISHED: 'finished',
+        EXPIRED: 'expired',
     };
 
     @Static private rpcState!: RpcState;
@@ -137,17 +178,28 @@ export default class SignTransactionLedger extends Vue {
     @Getter private findWalletByAddress!: (address: string, includeContracts: boolean) => WalletInfo | undefined;
 
     private state: string = SignTransactionLedger.State.OVERVIEW;
-    private senderDetails!: AccountDetailsData;
-    private recipientDetails!: AccountDetailsData;
+    private senderDetails: AccountDetailsData = { address: '', label: '' };
+    private recipientDetails: AccountDetailsData = { address: '', label: ''};
     private shownAccountDetails: AccountDetailsData | null = null;
     private isDestroyed: boolean = false;
+    private _checkoutExpiryTimeout: number = -1;
 
-    private created() {
-        let senderUserFriendlyAddress: string;
+    private async mounted() {
+        const network = this.$refs.network as Network;
+
+        // collect payment information
+        let sender: Nimiq.Address;
+        let recipient: Nimiq.Address;
+        let value: number;
+        let fee: number;
+        let validityStartHeightPromise: Promise<number>;
+        let data: Uint8Array;
+        let flags: number;
         if (this.request.kind === RequestType.SIGN_TRANSACTION) {
             // direct sign transaction request invocation
             const signTransactionRequest = this.request as ParsedSignTransactionRequest;
-            senderUserFriendlyAddress = signTransactionRequest.sender.toUserFriendlyAddress();
+            ({ sender, recipient, value, fee, data, flags } = signTransactionRequest);
+            validityStartHeightPromise = Promise.resolve(signTransactionRequest.validityStartHeight);
 
             const recipientUserFriendlyAddress = signTransactionRequest.recipient.toUserFriendlyAddress();
             this.recipientDetails = {
@@ -159,14 +211,48 @@ export default class SignTransactionLedger extends Vue {
             const checkoutRequest = this.request as ParsedCheckoutRequest;
             const $subtitle = document.querySelector('.logo .logo-subtitle')!;
             $subtitle.textContent = 'Checkout'; // reapply the checkout subtitle in case the page was reloaded
+            document.title = 'Nimiq Checkout';
 
-            senderUserFriendlyAddress = this.$store.state.activeUserFriendlyAddress;
+            // Update checkout payment options. This is typically instant even after reload as CheckoutServerApi caches
+            // the data previously fetched in checkout.
+            const checkoutPaymentOptions = this.checkoutPaymentOptions!;
+            if (checkoutRequest.callbackUrl && checkoutRequest.csrf) {
+                try {
+                    const fetchedPaymentOptions = await CheckoutServerApi.fetchPaymentOption(
+                        checkoutRequest.callbackUrl, Currency.NIM, checkoutPaymentOptions.type, checkoutRequest.csrf);
+                    checkoutPaymentOptions.update(fetchedPaymentOptions);
+                } catch (e) {
+                    this.$rpc.reject(e);
+                    return;
+                }
+            }
+            if (!checkoutPaymentOptions.protocolSpecific.recipient) {
+                this.$rpc.reject(new Error('Failed to fetch checkout recipient.'));
+                return;
+            }
+
+            sender = Nimiq.Address.fromUserFriendlyAddress(this.$store.state.activeUserFriendlyAddress);
+            value = checkoutPaymentOptions.amount;
+            ({ recipient, fee, flags } = checkoutPaymentOptions.protocolSpecific);
+            data = checkoutRequest.data;
 
             this.recipientDetails = {
-                address: checkoutRequest.recipient.toUserFriendlyAddress(),
+                address: recipient.toUserFriendlyAddress(),
                 label: this.rpcState.origin.split('://')[1],
                 image: checkoutRequest.shopLogoUrl,
             };
+
+            // Usually instant as synced in checkout. Only on reload we have to resync.
+            validityStartHeightPromise = network.getBlockchainHeight().then((blockchainHeight) =>
+                blockchainHeight + 1 // The next block is the earliest for which tx are accepted by standard miners
+                - TX_VALIDITY_WINDOW
+                + checkoutPaymentOptions.protocolSpecific.validityDuration,
+            );
+
+            // synchronize time in background
+            if (checkoutPaymentOptions.expires) {
+                this._initializeCheckoutExpiryTimer().catch((e) => this.$rpc.reject(e));
+            }
         } else if (this.request.kind === RequestType.CREATE_CASHLINK) {
             // coming from cashlink create
             if (!this.cashlink) {
@@ -174,7 +260,11 @@ export default class SignTransactionLedger extends Vue {
                     + 'static store.'));
                 return;
             }
-            senderUserFriendlyAddress = this.$store.state.activeUserFriendlyAddress;
+            sender = Nimiq.Address.fromUserFriendlyAddress(this.$store.state.activeUserFriendlyAddress);
+            ({ recipient, value, fee } = this.cashlink!.getFundingDetails());
+            validityStartHeightPromise = network.getBlockchainHeight().then((blockchainHeight) => blockchainHeight + 1);
+            data = CASHLINK_FUNDING_DATA;
+            flags = Nimiq.Transaction.Flag.NONE;
 
             this.recipientDetails = {
                 address: this.cashlink.address.toUserFriendlyAddress(),
@@ -188,10 +278,10 @@ export default class SignTransactionLedger extends Vue {
         }
 
         // we know that these exist as their existence was already checked in RpcApi.ts
-        const senderAddress = Nimiq.Address.fromUserFriendlyAddress(senderUserFriendlyAddress);
+        const senderUserFriendlyAddress = sender.toUserFriendlyAddress();
         const senderAccount = this.findWalletByAddress(senderUserFriendlyAddress, true)!;
-        const senderContract = senderAccount.findContractByAddress(senderAddress);
-        const signer = senderAccount.findSignerForAddress(senderAddress)!;
+        const senderContract = senderAccount.findContractByAddress(sender);
+        const signer = senderAccount.findSignerForAddress(sender)!;
 
         this.senderDetails = {
             address: senderUserFriendlyAddress,
@@ -199,47 +289,7 @@ export default class SignTransactionLedger extends Vue {
             walletLabel: senderAccount.label,
             balance: (senderContract || signer).balance,
         };
-    }
 
-    private async mounted() {
-        const network = this.$refs.network as Network;
-
-        let recipient: Nimiq.Address;
-        let value: number;
-        let fee: number;
-        let data: Uint8Array;
-        let flags: number;
-        let validityStartHeightPromise: Promise<number>;
-        if (this.request.kind === RequestType.SIGN_TRANSACTION) {
-            const signTransactionRequest = this.request as ParsedSignTransactionRequest;
-            ({ recipient, value, fee, data, flags } = signTransactionRequest);
-            validityStartHeightPromise = Promise.resolve(signTransactionRequest.validityStartHeight);
-        } else if (this.request.kind === RequestType.CHECKOUT) {
-            const checkoutRequest = this.request as ParsedCheckoutRequest;
-            ({ recipient, value, fee, data, flags } = checkoutRequest);
-            validityStartHeightPromise = network.getBlockchainHeight().then((height: number) =>
-                height + 1 // The next block is the earliest for which tx are accepted by standard miners
-                - TX_VALIDITY_WINDOW
-                + checkoutRequest.validityDuration,
-            );
-        } else if (this.request.kind === RequestType.CREATE_CASHLINK) {
-            if (!this.cashlink) {
-                // already handled in created
-                return;
-            }
-            ({ recipient, value, fee } = this.cashlink.getFundingDetails());
-            validityStartHeightPromise = network.getBlockchainHeight().then((height: number) => height + 1);
-            data = CASHLINK_FUNDING_DATA;
-            flags = Nimiq.Transaction.Flag.NONE;
-        } else {
-            // this case get's rejected in created
-            return;
-        }
-
-        const senderAddress = Nimiq.Address.fromUserFriendlyAddress(this.senderDetails.address);
-        const senderAccount = this.findWalletByAddress(this.senderDetails.address, true)!;
-        const senderContract = senderAccount.findContractByAddress(senderAddress);
-        const signer = senderAccount.findSignerForAddress(senderAddress)!;
         const transactionInfo = {
             sender: (senderContract || signer).address,
             senderType: senderContract ? senderContract.type : Nimiq.Account.Type.BASIC,
@@ -254,17 +304,35 @@ export default class SignTransactionLedger extends Vue {
         // Check whether transaction was already signed but not successfully sent before user reloaded the page.
         let signedTransaction = network.getUnrelayedTransactions(transactionInfo)[0];
         if (!signedTransaction) {
+            let validityStartHeight;
+            try {
+                validityStartHeight = await validityStartHeightPromise;
+            } catch (e) {
+                this.$rpc.reject(e);
+                return;
+            }
+
             try {
                 signedTransaction = await LedgerApi.signTransaction({
                     ...transactionInfo,
-                    validityStartHeight: await validityStartHeightPromise,
+                    validityStartHeight,
                 }, signer.path, senderAccount.keyId);
             } catch (e) {
-                // If cancelled, handle the exception. Otherwise just keep the error message displayed in ledger ui.
-                if (e.message.toLowerCase().indexOf('cancelled') !== -1 && !this.isDestroyed) {
-                    if (this.request.kind === RequestType.CHECKOUT
+                // If cancelled and not expired, handle the exception. Otherwise just keep the ledger ui / expiry error
+                // message displayed.
+                if (this.state !== SignTransactionLedger.State.EXPIRED
+                    && e.message.toLowerCase().indexOf('cancelled') !== -1) {
+                    const isCheckoutRequestWithManuallySelectedAddress = this.request.kind === RequestType.CHECKOUT
+                        && (
+                            !this.checkoutPaymentOptions!.protocolSpecific.sender
+                            || !sender.equals(this.checkoutPaymentOptions!.protocolSpecific.sender)
+                        );
+
+                    if (isCheckoutRequestWithManuallySelectedAddress
                         || this.request.kind === RequestType.CREATE_CASHLINK) {
-                        this._back(); // user might want to choose another account or address or change cashlink
+                        // If user got here after selecting an account in the checkout flow (which was not automatically
+                        // selected via the checkout request) he might want to switch to another one
+                        this._back();
                     } else {
                         this._close();
                     }
@@ -275,6 +343,7 @@ export default class SignTransactionLedger extends Vue {
 
         this.shownAccountDetails = null;
 
+        // send transaction to network and finish
         let result;
         if (this.request.kind === RequestType.CHECKOUT || this.request.kind === RequestType.CREATE_CASHLINK) {
             this.state = SignTransactionLedger.State.SENDING_TRANSACTION;
@@ -299,10 +368,16 @@ export default class SignTransactionLedger extends Vue {
 
     private destroyed() {
         this.isDestroyed = true;
-        const currentRequest = LedgerApi.currentRequest;
-        if (currentRequest && currentRequest.type === LedgerApi.RequestType.SIGN_TRANSACTION) {
-            currentRequest.cancel();
-        }
+        clearTimeout(this._checkoutExpiryTimeout);
+        this._cancelLedgerRequest();
+    }
+
+    private get checkoutPaymentOptions() {
+        if (this.request.kind !== RequestType.CHECKOUT) return null;
+        const checkoutRequest = this.request as ParsedCheckoutRequest;
+        return checkoutRequest.paymentOptions.find(
+            (option) => option.currency === Currency.NIM,
+        ) as ParsedNimiqDirectPaymentOptions;
     }
 
     private get transactionData() {
@@ -315,8 +390,15 @@ export default class SignTransactionLedger extends Vue {
             return null;
         }
 
+        let flags;
+        if (this.request.kind === RequestType.SIGN_TRANSACTION) {
+            const signTransactionRequest = this.request as ParsedSignTransactionRequest;
+            flags = signTransactionRequest.flags;
+        } else {
+            flags = this.checkoutPaymentOptions!.protocolSpecific.flags;
+        }
         // tslint:disable-next-line no-bitwise
-        if ((request.flags & Nimiq.Transaction.Flag.CONTRACT_CREATION) > 0) {
+        if ((flags & Nimiq.Transaction.Flag.CONTRACT_CREATION) > 0) {
             // TODO: Decode contract creation transactions
             // return ...
         }
@@ -324,6 +406,17 @@ export default class SignTransactionLedger extends Vue {
         return Utf8Tools.isValidUtf8(request.data, true)
             ? Utf8Tools.utf8ByteArrayToString(request.data)
             : Nimiq.BufferUtils.toHex(request.data);
+    }
+
+    private get statusScreenState() {
+        switch (this.state) {
+            case SignTransactionLedger.State.FINISHED:
+                return StatusScreen.State.SUCCESS;
+            case SignTransactionLedger.State.EXPIRED:
+                return StatusScreen.State.WARNING;
+            default:
+                return StatusScreen.State.LOADING;
+        }
     }
 
     private get statusScreenTitle() {
@@ -336,9 +429,30 @@ export default class SignTransactionLedger extends Vue {
                 return this.request.kind === RequestType.SIGN_TRANSACTION
                     ? 'Transaction Signed'
                     : 'Transaction Sent';
+            case SignTransactionLedger.State.EXPIRED:
+                return 'The offer expired.';
             default:
                 return '';
         }
+    }
+
+    private async _initializeCheckoutExpiryTimer() {
+        if (!this.checkoutPaymentOptions || !this.checkoutPaymentOptions.expires) return;
+        const checkoutRequest = this.request as ParsedCheckoutRequest;
+        if (!checkoutRequest.callbackUrl || !checkoutRequest.csrf) {
+            throw new Error('callbackUrl and csrf token are required to fetch time.');
+        }
+        const referenceTime = await CheckoutServerApi.fetchTime(checkoutRequest.callbackUrl, checkoutRequest.csrf);
+        (this.$refs.info as PaymentInfoLine).setTime(referenceTime);
+        clearTimeout(this._checkoutExpiryTimeout);
+        this._checkoutExpiryTimeout = window.setTimeout(
+            () => {
+                this.shownAccountDetails = null;
+                this.state = SignTransactionLedger.State.EXPIRED;
+                this._cancelLedgerRequest();
+            },
+            this.checkoutPaymentOptions.expires - referenceTime,
+        );
     }
 
     private _back() {
@@ -346,8 +460,17 @@ export default class SignTransactionLedger extends Vue {
     }
 
     private _close() {
-        if (this.state !== SignTransactionLedger.State.OVERVIEW) return;
-        this.$rpc.reject(new Error(ERROR_CANCELED));
+        if (this.state !== SignTransactionLedger.State.OVERVIEW
+            && this.state !== SignTransactionLedger.State.EXPIRED) return;
+        const error = this.state === SignTransactionLedger.State.EXPIRED ? ERROR_REQUEST_TIMED_OUT : ERROR_CANCELED;
+        this.$rpc.reject(new Error(error));
+    }
+
+    private _cancelLedgerRequest() {
+        const currentRequest = LedgerApi.currentRequest;
+        if (currentRequest && currentRequest.type === LedgerApi.RequestType.SIGN_TRANSACTION) {
+            currentRequest.cancel();
+        }
     }
 
     @Watch('shownAccountDetails')
@@ -371,6 +494,11 @@ export default class SignTransactionLedger extends Vue {
         align-items: center;
         padding: 3.75rem 4rem 26rem; /* bottom padding for bottom container + additional padding */
         overflow: hidden; /* avoid overflow of blurred elements */
+    }
+
+    .info-line {
+        align-self: stretch;
+        margin: -2rem -1.5rem 3rem;
     }
 
     .page-header {
@@ -479,6 +607,10 @@ export default class SignTransactionLedger extends Vue {
 
     .status-screen {
         transition: opacity .4s;
+    }
+
+    .status-screen .stopwatch-icon {
+        font-size: 15.5rem;
     }
 
     .account-details {

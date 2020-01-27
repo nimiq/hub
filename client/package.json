@@ -10,7 +10,7 @@
   "types": "types/index.d.ts",
   "dependencies": {
     "@nimiq/core-web": "^1.5.3",
-    "@nimiq/rpc": "^0.3.0",
+    "@nimiq/rpc": "^0.4.0",
     "big-integer": "^1.6.48"
   },
   "devDependencies": {
@@ -18,7 +18,7 @@
     "rollup-plugin-node-resolve": "^5.0.0",
     "rollup-plugin-terser": "^4.0.4",
     "tslint": "^5.16.0",
-    "typescript": "^3.4.5"
+    "typescript": "^3.5.1"
   },
   "files": [
     "dist",

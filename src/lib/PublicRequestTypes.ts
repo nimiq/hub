@@ -1,5 +1,31 @@
 import { WalletType } from './WalletInfo';
-import { RequestType } from './RequestTypes';
+
+type NimiqSpecifics = import('./paymentOptions/NimiqPaymentOptions').NimiqSpecifics;
+type NimiqDirectPaymentOptions = import('./paymentOptions/NimiqPaymentOptions').NimiqDirectPaymentOptions;
+type BitcoinSpecifics = import('./paymentOptions/BitcoinPaymentOptions').BitcoinSpecifics;
+type BitcoinDirectPaymentOptions = import('./paymentOptions/BitcoinPaymentOptions').BitcoinDirectPaymentOptions;
+type EtherSpecifics = import('./paymentOptions/EtherPaymentOptions').EtherSpecifics;
+type EtherDirectPaymentOptions = import('./paymentOptions/EtherPaymentOptions').EtherDirectPaymentOptions;
+
+export enum RequestType {
+    LIST = 'list',
+    LIST_CASHLINKS = 'list-cashlinks',
+    MIGRATE = 'migrate',
+    CHECKOUT = 'checkout',
+    SIGN_MESSAGE = 'sign-message',
+    SIGN_TRANSACTION = 'sign-transaction',
+    ONBOARD = 'onboard',
+    SIGNUP = 'signup',
+    LOGIN = 'login',
+    EXPORT = 'export',
+    CHANGE_PASSWORD = 'change-password',
+    LOGOUT = 'logout',
+    ADD_ADDRESS = 'add-address',
+    RENAME = 'rename',
+    CHOOSE_ADDRESS = 'choose-address',
+    CREATE_CASHLINK = 'create-cashlink',
+    MANAGE_CASHLINK = 'manage-cashlink',
+}
 
 export interface BasicRequest {
     appName: string;
@@ -29,7 +55,8 @@ export interface SignTransactionRequest extends BasicRequest {
     validityStartHeight: number; // FIXME To be made optional when hub has its own network
 }
 
-export interface CheckoutRequest extends BasicRequest {
+export interface NimiqCheckoutRequest extends BasicRequest {
+    version?: 1;
     shopLogoUrl?: string;
     sender?: string;
     forceSender?: boolean;
@@ -41,6 +68,95 @@ export interface CheckoutRequest extends BasicRequest {
     flags?: number;
     validityDuration?: number;
 }
+
+export enum PaymentType {
+    DIRECT,
+    OASIS,
+}
+
+export enum Currency {
+    NIM = 'nim',
+    BTC = 'btc',
+    ETH = 'eth',
+}
+
+export type ProtocolSpecificsForCurrency<C extends Currency> =
+    C extends Currency.NIM ? NimiqSpecifics
+    : C extends Currency.BTC ? BitcoinSpecifics
+    : C extends Currency.ETH ? EtherSpecifics
+    : undefined;
+
+export enum PaymentState {
+    NOT_FOUND = 'NOT_FOUND',
+    PAID = 'PAID',
+    UNDERPAID = 'UNDERPAID',
+    OVERPAID = 'OVERPAID',
+}
+
+export interface PaymentOptions<C extends Currency, T extends PaymentType> {
+    type: T;
+    currency: C;
+    expires?: number;
+    /**
+     * Amount in the smallest unit of the currency specified as `currency`.
+     * i.e Luna for Currency.NIM and Satoshi for Currency.BTC
+     */
+    amount: string;
+    protocolSpecific: ProtocolSpecificsForCurrency<C>;
+}
+
+export type AvailablePaymentOptions = NimiqDirectPaymentOptions
+                                    | EtherDirectPaymentOptions
+                                    | BitcoinDirectPaymentOptions;
+
+export type PaymentOptionsForCurrencyAndType<C extends Currency, T extends PaymentType> =
+    T extends PaymentType.DIRECT ?
+        C extends Currency.NIM ? NimiqDirectPaymentOptions
+        : C extends Currency.BTC ? BitcoinDirectPaymentOptions
+        : C extends Currency.ETH ? EtherDirectPaymentOptions
+        : PaymentOptions<C, T>
+    : PaymentOptions<C, T>;
+
+export interface MultiCurrencyCheckoutRequest extends BasicRequest {
+    version: 2;
+    /**
+     * Must be located on the same origin as the one the request is sent from.
+     */
+    shopLogoUrl: string;
+    /**
+     * TODO description of the api the callback needs to provide.
+     * Input is {currency, type} alongside the order identifying parameters in the url.
+     * the called url must return a PaymentOptions<currency, type> object
+     */
+    callbackUrl?: string;
+    /**
+     * A CSRF token, that will be transmitted in all requests to the callback url.
+     */
+    csrf?: string;
+    /**
+     * The data to be included in the transaction. Ignored for `Currenct.BTC` and `Currency.ETH`.
+     */
+    extraData?: Uint8Array | string;
+    /**
+     * Current time in seconds or milliseconds
+     */
+    time: number;
+    /**
+     * ISO 4217 Code (three letters) of the fiat currency used on the calling site.
+     */
+    fiatCurrency: string;
+    /**
+     * Amount in the currency specified by `fiatCurrency`
+     */
+    fiatAmount: number;
+    /**
+     * Array of available payment options.
+     * Each currency can only be present once, and a Currency.NIM option must exist.
+     */
+    paymentOptions: AvailablePaymentOptions[];
+}
+
+export type CheckoutRequest = NimiqCheckoutRequest | MultiCurrencyCheckoutRequest;
 
 export interface SignedTransaction {
     serializedTx: string; // HEX

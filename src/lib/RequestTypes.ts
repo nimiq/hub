@@ -1,24 +1,9 @@
+import { Currency, PaymentType, RequestType } from './PublicRequestTypes';
+import { ParsedPaymentOptions } from './paymentOptions/ParsedPaymentOptions';
+import { ParsedNimiqSpecifics, ParsedNimiqDirectPaymentOptions } from './paymentOptions/NimiqPaymentOptions';
+import { ParsedEtherSpecifics, ParsedEtherDirectPaymentOptions } from './paymentOptions/EtherPaymentOptions';
+import { ParsedBitcoinSpecifics, ParsedBitcoinDirectPaymentOptions } from './paymentOptions/BitcoinPaymentOptions';
 import { CashlinkTheme } from './PublicRequestTypes';
-
-export enum RequestType {
-    LIST = 'list',
-    LIST_CASHLINKS = 'list-cashlinks',
-    MIGRATE = 'migrate',
-    CHECKOUT = 'checkout',
-    SIGN_MESSAGE = 'sign-message',
-    SIGN_TRANSACTION = 'sign-transaction',
-    ONBOARD = 'onboard',
-    SIGNUP = 'signup',
-    LOGIN = 'login',
-    EXPORT = 'export',
-    CHANGE_PASSWORD = 'change-password',
-    LOGOUT = 'logout',
-    ADD_ADDRESS = 'add-address',
-    RENAME = 'rename',
-    CHOOSE_ADDRESS = 'choose-address',
-    CREATE_CASHLINK = 'create-cashlink',
-    MANAGE_CASHLINK = 'manage-cashlink',
-}
 
 export interface ParsedBasicRequest {
     kind: RequestType;
@@ -45,17 +30,34 @@ export interface ParsedSignTransactionRequest extends ParsedBasicRequest {
     validityStartHeight: number; // FIXME To be made optional when hub has its own network
 }
 
+export type ParsedProtocolSpecificsForCurrency<C extends Currency> =
+    C extends Currency.NIM ? ParsedNimiqSpecifics
+    : C extends Currency.BTC ? ParsedBitcoinSpecifics
+    : C extends Currency.ETH ? ParsedEtherSpecifics
+    : undefined;
+
+export type AvailableParsedPaymentOptions = ParsedNimiqDirectPaymentOptions
+                                          | ParsedEtherDirectPaymentOptions
+                                          | ParsedBitcoinDirectPaymentOptions;
+
+export type ParsedPaymentOptionsForCurrencyAndType<C extends Currency, T extends PaymentType> =
+    T extends PaymentType.DIRECT ?
+        C extends Currency.NIM ? ParsedNimiqDirectPaymentOptions
+        : C extends Currency.BTC ? ParsedBitcoinDirectPaymentOptions
+        : C extends Currency.ETH ? ParsedEtherDirectPaymentOptions
+        : ParsedPaymentOptions<C, T>
+    : ParsedPaymentOptions<C, T>;
+
 export interface ParsedCheckoutRequest extends ParsedBasicRequest {
+    version: number;
     shopLogoUrl?: string;
-    sender?: Nimiq.Address;
-    forceSender: boolean;
-    recipient: Nimiq.Address;
-    recipientType: Nimiq.Account.Type;
-    value: number;
-    fee: number;
+    callbackUrl?: string;
+    csrf?: string;
     data: Uint8Array;
-    flags: number;
-    validityDuration: number;
+    time: number;
+    fiatCurrency?: string;
+    fiatAmount?: number;
+    paymentOptions: AvailableParsedPaymentOptions[];
 }
 
 export interface ParsedSignMessageRequest extends ParsedBasicRequest {

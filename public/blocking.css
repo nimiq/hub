@@ -122,7 +122,8 @@ body {
 
 @media (max-width: 450px) {
     html {
-        font-size: 7px;
+        font-size: 7px !important;
+        touch-action: manipulation; /* remove 300ms delay on mobile touch */
     }
 
     #app {

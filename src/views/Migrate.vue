@@ -113,9 +113,8 @@ import KeyguardClient from '@nimiq/keyguard-client';
 import { ACCOUNT_DEFAULT_LABEL_LEGACY } from '@/lib/Constants';
 import { ContractInfo } from '@/lib/ContractInfo';
 import staticStore, { Static } from '@/lib/StaticStore';
-import { SimpleRequest } from '@/lib/PublicRequestTypes';
+import { SimpleRequest, RequestType } from '@/lib/PublicRequestTypes';
 import { State } from 'vuex-class';
-import { RequestType } from '@/lib/RequestTypes';
 
 type SerializedAccount = {
     path: string;
