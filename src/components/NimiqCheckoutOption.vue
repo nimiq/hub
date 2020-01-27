@@ -63,8 +63,8 @@
         </template>
         <template v-else>
             <h2 class="nq-h1">Choose an Address to pay</h2>
-            <div v-if="!balancesUpdating && !hasSufficientBalanceAccount" class="non-sufficient-balance">
-                <p class="nq-text nq-orange">None of your Addresses has sufficient balance.</p>
+            <div v-if="!balancesUpdating && !hasEligibleAddress" class="non-sufficient-balance">
+                <p class="nq-text nq-orange">None of your available Addresses has sufficient balance.</p>
                 <a class="nq-button-pill light-blue" href="https://nimiq.com/#exchanges" target="_blank">
                     <TransferIcon/> Get NIM&nbsp;
                 </a>
@@ -72,6 +72,9 @@
             <AccountSelector
                 :wallets="processedWallets"
                 :minBalance="balancesUpdating ? 0 : paymentOptions.total"
+                :disabledAddresses="paymentOptions.protocolSpecific.recipient
+                    ? [paymentOptions.protocolSpecific.recipient.toUserFriendlyAddress()]
+                    : []"
                 @account-selected="setAccountOrContract"
                 @login="() => goToOnboarding(false)"/>
         </template>
@@ -275,6 +278,27 @@ class NimiqCheckoutOption
         const startTime = Date.now();
         if (!await super.selectCurrency()) return;
 
+        // sender and recipient cannot be the same, as keyguard would reject.
+        // Should only happen when force sender flag is set to true, nimiq is the sole paymentOption
+        // and the addresses are identical. In that case the request is rejected.
+        if (address === this.paymentOptions.protocolSpecific.recipient!.toUserFriendlyAddress()) {
+            if (this.request.paymentOptions.length === 1
+                && this.paymentOptions.protocolSpecific.forceSender
+                && this.paymentOptions.protocolSpecific.sender
+                && this.paymentOptions.protocolSpecific.sender.toUserFriendlyAddress() === address) {
+                this.$rpc.reject(new Error('Sender and Recipient cannot be identical.'));
+            } else {
+                // Otherwise it is unclear how this error came to be.
+                // Gracefully fail by not selecting the address but returning to the address selection instead.
+                console.log('request:', JSON.stringify(this.request));
+                console.log('paymentOptions:', JSON.stringify(this.paymentOptions));
+                if (this.$captureException) {
+                    this.$captureException(new Error('UNEXPECTED Checkout: Sender and Recipient are identical.'));
+                }
+                return;
+            }
+        }
+
         if (this.balancesUpdating) {
             this.statusScreenState = StatusScreen.State.LOADING;
             this.statusScreenTitle = 'Updating balances';
@@ -379,9 +403,18 @@ class NimiqCheckoutOption
         }
     }
 
-    private get hasSufficientBalanceAccount(): boolean {
+    private get hasEligibleAddress(): boolean {
+
+        const recipientAddress = this.paymentOptions.protocolSpecific.recipient
+            ? this.paymentOptions.protocolSpecific.recipient.toUserFriendlyAddress()
+            : '';
         return this.wallets.some((wallet: WalletInfo) => [...wallet.accounts.values(), ...wallet.contracts]
-            .some((info: AccountInfo | ContractInfo) => !!info.balance && info.balance >= this.paymentOptions.total));
+            .some((info: AccountInfo | ContractInfo) =>
+                // address has a balance and balance is sufficient
+                !!info.balance && info.balance >= this.paymentOptions.total
+                // has either not a set recipient yet or the current address is not the recipient
+                // as it cannot be used to send from.
+                && recipientAddress !== info.userFriendlyAddress));
     }
 
     private getLastBalanceUpdateHeight(): {timestamp: number, height: number, balances: Map<string, number>} | null {
