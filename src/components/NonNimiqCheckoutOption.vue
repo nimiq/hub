@@ -19,7 +19,7 @@
                             @main-action="statusScreenMainAction"
                             :mainAction="statusScreenMainActionText"
                         >
-                            <template v-if="timeoutReached || paymentState === PaymentState.UNDERPAID" v-slot:warning>
+                            <template v-if="timeoutReached || paymentState === constructor.PaymentState.UNDERPAID" v-slot:warning>
                                 <StopwatchIcon v-if="timeoutReached" class="stopwatch-icon"/>
                                 <UnderPaymentIcon v-else class="under-payment-icon"/>
                                 <h1 class="title nq-h1">{{ statusScreenTitle }}</h1>
@@ -129,7 +129,7 @@ import {
     Amount,
     FiatAmount,
 } from '@nimiq/vue-components';
-import { PaymentState } from '../lib/PublicRequestTypes';
+import { PaymentState as PublicPaymentState } from '../lib/PublicRequestTypes';
 import { AvailableParsedPaymentOptions } from '../lib/RequestTypes';
 import CheckoutOption from './CheckoutOption.vue';
 import CurrencyInfo from './CurrencyInfo.vue';
@@ -152,7 +152,7 @@ import CheckoutManualPaymentDetails from './CheckoutManualPaymentDetails.vue';
     Amount,
     FiatAmount,
 }})
-export default class NonNimiqCheckoutOption<
+class NonNimiqCheckoutOption<
     Parsed extends AvailableParsedPaymentOptions
 > extends CheckoutOption<Parsed> {
     protected currencyFullName: string = ''; // to be set by child class
@@ -177,7 +177,7 @@ export default class NonNimiqCheckoutOption<
     }
 
     protected get paymentLink(): string {
-        throw new Error('Needs to be implemented by child classes.');
+        throw new Error('NonNimiqCheckoutOption.paymentLink() Needs to be implemented by child classes.');
     }
 
     protected async selectCurrency() {
@@ -224,11 +224,13 @@ export default class NonNimiqCheckoutOption<
             window.onblur = null;
         };
     }
-
-    private data() {
-        return { PaymentState };
-    }
 }
+
+namespace NonNimiqCheckoutOption {
+    export const PaymentState = PublicPaymentState;
+}
+
+export default NonNimiqCheckoutOption;
 </script>
 
 <style scoped>

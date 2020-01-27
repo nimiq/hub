@@ -90,7 +90,7 @@ class CheckoutManualPaymentDetails<
         paymentInfoLine.setTime(serverTime);
     }
 }
-namespace CheckoutManualPaymentDetails { // tslint:disable-line:no-namespace
+namespace CheckoutManualPaymentDetails {
     export enum Events {
         CLOSE = 'close',
     }

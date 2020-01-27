@@ -233,8 +233,7 @@ export default class SignTransactionLedger extends Vue {
 
             sender = Nimiq.Address.fromUserFriendlyAddress(this.$store.state.activeUserFriendlyAddress);
             value = checkoutPaymentOptions.amount;
-            ({ recipient, fee, flags } = checkoutPaymentOptions.protocolSpecific);
-            data = checkoutRequest.data;
+            ({ recipient, fee, flags, extraData: data } = checkoutPaymentOptions.protocolSpecific);
 
             this.recipientDetails = {
                 address: recipient.toUserFriendlyAddress(),
@@ -385,27 +384,30 @@ export default class SignTransactionLedger extends Vue {
             return this.cashlink ? this.cashlink.message : null;
         }
 
-        const request = this.request as ParsedSignTransactionRequest | ParsedCheckoutRequest;
-        if (!request.data || request.data.byteLength === 0) {
-            return null;
-        }
-
+        let data;
         let flags;
         if (this.request.kind === RequestType.SIGN_TRANSACTION) {
             const signTransactionRequest = this.request as ParsedSignTransactionRequest;
+            data = signTransactionRequest.data;
             flags = signTransactionRequest.flags;
         } else {
+            data = this.checkoutPaymentOptions!.protocolSpecific.extraData;
             flags = this.checkoutPaymentOptions!.protocolSpecific.flags;
         }
+
+        if (!data || data.length === 0) {
+            return null;
+        }
+
         // tslint:disable-next-line no-bitwise
         if ((flags & Nimiq.Transaction.Flag.CONTRACT_CREATION) > 0) {
             // TODO: Decode contract creation transactions
             // return ...
         }
 
-        return Utf8Tools.isValidUtf8(request.data, true)
-            ? Utf8Tools.utf8ByteArrayToString(request.data)
-            : Nimiq.BufferUtils.toHex(request.data);
+        return Utf8Tools.isValidUtf8(data, true)
+            ? Utf8Tools.utf8ByteArrayToString(data)
+            : Nimiq.BufferUtils.toHex(data);
     }
 
     private get statusScreenState() {

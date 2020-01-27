@@ -126,8 +126,12 @@ export default class CheckoutOption<
         if (!this.request.callbackUrl || !this.request.csrf) {
             throw new Error('Can\'t fetch payment details without callbackUrl and csrf token');
         }
-        fetchedData = await CheckoutServerApi.fetchPaymentOption(this.request.callbackUrl, this.paymentOptions.currency,
-            this.paymentOptions.type, this.request.csrf);
+        fetchedData = await CheckoutServerApi.fetchPaymentOption(
+            this.request.callbackUrl,
+            this.paymentOptions.currency,
+            this.paymentOptions.type,
+            this.request.csrf,
+        );
 
         // @ts-ignore: Call signatures for generic union types are not currently supported, see
         // https://github.com/microsoft/TypeScript/issues/30613 and
@@ -145,7 +149,7 @@ export default class CheckoutOption<
     protected async setupTimeout() {
         window.clearTimeout(this.optionTimeout);
         const referenceTime = Date.now() + (await this.timeOffsetPromise); // as a side effect ensures lastPaymentState
-        if (!this.paymentOptions.expires || this.lastPaymentState && this.lastPaymentState.payment_accepted) return;
+        if (!this.paymentOptions.expires || (this.lastPaymentState && this.lastPaymentState.payment_accepted)) return;
         const timeLeft = this.paymentOptions.expires - referenceTime;
         if (timeLeft > 0) {
             this.optionTimeout = window.setTimeout(
