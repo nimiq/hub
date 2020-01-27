@@ -13,35 +13,35 @@
             @select="selectedCurrency = $event">
             <template v-for="paymentOptions of request.paymentOptions" v-slot:[paymentOptions.currency]>
                 <NimiqCheckoutOption
-                    v-if="paymentOptions.currency === Currency.NIM"
+                    v-if="paymentOptions.currency === constructor.Currency.NIM"
                     :paymentOptions="paymentOptions"
                     :key="paymentOptions.currency"
                     :class="{
                         confirmed: choosenCurrency === paymentOptions.currency,
-                        left: leftSlide === Currency.NIM,
-                        right: rightSlide === Currency.NIM
+                        left: leftSlide === constructor.Currency.NIM,
+                        right: rightSlide === constructor.Currency.NIM
                     }"
                     @chosen="chooseCurrency"
                     @expired="expired"/>
                 <EthereumCheckoutOption
-                    v-else-if="paymentOptions.currency === Currency.ETH"
+                    v-else-if="paymentOptions.currency === constructor.Currency.ETH"
                     :paymentOptions="paymentOptions"
                     :key="paymentOptions.currency"
                     :class="{
                         confirmed: choosenCurrency === paymentOptions.currency,
-                        left: leftSlide === Currency.ETH,
-                        right: rightSlide === Currency.ETH
+                        left: leftSlide === constructor.Currency.ETH,
+                        right: rightSlide === constructor.Currency.ETH
                     }"
                     @chosen="chooseCurrency"
                     @expired="expired"/>
                 <BitcoinCheckoutOption
-                    v-else-if="paymentOptions.currency === Currency.BTC"
+                    v-else-if="paymentOptions.currency === constructor.Currency.BTC"
                     :paymentOptions="paymentOptions"
                     :key="paymentOptions.currency"
                     :class="{
                         confirmed: choosenCurrency === paymentOptions.currency,
-                        left: leftSlide === Currency.BTC,
-                        right: rightSlide === Currency.BTC
+                        left: leftSlide === constructor.Currency.BTC,
+                        right: rightSlide === constructor.Currency.BTC
                     }"
                     @chosen="chooseCurrency"
                     @expired="expired"/>
@@ -76,7 +76,7 @@ import { ParsedCheckoutRequest } from '../lib/RequestTypes';
 import BitcoinCheckoutOption from '../components/BitcoinCheckoutOption.vue';
 import EthereumCheckoutOption from '../components/EthereumCheckoutOption.vue';
 import NimiqCheckoutOption from '../components/NimiqCheckoutOption.vue';
-import { Currency } from '../lib/PublicRequestTypes';
+import { Currency as PublicCurrency } from '../lib/PublicRequestTypes';
 import { State as RpcState } from '@nimiq/rpc';
 import { Static } from '../lib/StaticStore';
 import { ERROR_CANCELED } from '../lib/Constants';
@@ -89,16 +89,16 @@ import { ERROR_CANCELED } from '../lib/Constants';
     EthereumCheckoutOption,
     NimiqCheckoutOption,
 }})
-export default class Checkout extends Vue {
+class Checkout extends Vue {
     private static DISCLAIMER_CLOSED_COOKIE = 'checkout-disclaimer-closed';
 
     @Static private rpcState!: RpcState;
     @Static private request!: ParsedCheckoutRequest;
-    private choosenCurrency: Currency | null = null;
-    private selectedCurrency: Currency = Currency.NIM;
-    private leftSlide!: Currency;
-    private rightSlide!: Currency;
-    private availableCurrencies: Currency[] = [];
+    private choosenCurrency: PublicCurrency | null = null;
+    private selectedCurrency: PublicCurrency = Checkout.Currency.NIM;
+    private leftSlide!: PublicCurrency;
+    private rightSlide!: PublicCurrency;
+    private availableCurrencies: PublicCurrency[] = [];
     private readonly isIOS: boolean = BrowserDetection.isIOS();
     private disclaimerOverlayClosed: boolean = false;
     private screenFitsDisclaimer: boolean = true;
@@ -135,12 +135,12 @@ export default class Checkout extends Vue {
         this.$rpc.reject(new Error(ERROR_CANCELED));
     }
 
-    private chooseCurrency(currency: Currency) {
+    private chooseCurrency(currency: PublicCurrency) {
         this.selectedCurrency = currency;
         this.choosenCurrency = currency;
     }
 
-    private expired(currency: Currency) {
+    private expired(currency: PublicCurrency) {
         this.availableCurrencies.splice(this.availableCurrencies.indexOf(currency), 1);
     }
 
@@ -155,13 +155,13 @@ export default class Checkout extends Vue {
         const minHeight = 890; // Height at which two lines fit at bottom, also if logos over carousel shown.
         this.screenFitsDisclaimer = window.innerWidth >= minWidth && window.innerHeight >= minHeight;
     }
-
-    private data() {
-        return {
-            Currency,
-        };
-    }
 }
+
+namespace Checkout {
+    export const Currency = PublicCurrency;
+}
+
+export default Checkout;
 </script>
 
 <style scoped>

@@ -88,14 +88,6 @@ export class RequestParser {
                     }
                 }
 
-                if (checkoutRequest.extraData !== undefined && typeof checkoutRequest.extraData !== 'string'
-                    && !(checkoutRequest.extraData instanceof Uint8Array)) {
-                    throw new Error('extraData must be a string or Uint8Array');
-                }
-                const data = typeof checkoutRequest.extraData === 'string'
-                    ? Utf8Tools.stringToUtf8ByteArray(checkoutRequest.extraData)
-                    : checkoutRequest.extraData || new Uint8Array(0);
-
                 if (!checkoutRequest.version || checkoutRequest.version === 1) {
                     if (typeof checkoutRequest.value !== 'number' || checkoutRequest.value <= 0) {
                         throw new Error('value must be a number >0');
@@ -106,7 +98,6 @@ export class RequestParser {
                         version: 1,
                         appName: checkoutRequest.appName,
                         shopLogoUrl: checkoutRequest.shopLogoUrl,
-                        data,
                         time: Date.now(),
                         paymentOptions: [new ParsedNimiqDirectPaymentOptions({
                             currency: Currency.NIM,
@@ -114,6 +105,7 @@ export class RequestParser {
                             amount: checkoutRequest.value.toString(),
                             expires: 0, // unused for NimiqCheckoutRequests
                             protocolSpecific: {
+                                extraData: checkoutRequest.extraData,
                                 recipient: checkoutRequest.recipient,
                                 recipientType: checkoutRequest.recipientType || Nimiq.Account.Type.BASIC,
                                 sender: checkoutRequest.sender,
@@ -122,7 +114,7 @@ export class RequestParser {
                                 flags: checkoutRequest.flags || Nimiq.Transaction.Flag.NONE,
                                 validityDuration: checkoutRequest.validityDuration,
                             },
-                        }, data)],
+                        })],
                     } as ParsedCheckoutRequest;
                 }
 
@@ -196,7 +188,6 @@ export class RequestParser {
                         shopLogoUrl: checkoutRequest.shopLogoUrl,
                         callbackUrl: checkoutRequest.callbackUrl,
                         csrf: checkoutRequest.csrf,
-                        data,
                         time: !checkoutRequest.time
                             ? Date.now()
                             : isMilliseconds(checkoutRequest.time)
@@ -214,7 +205,17 @@ export class RequestParser {
                                 case PaymentType.DIRECT:
                                     switch (option.currency) {
                                         case Currency.NIM:
-                                            return new ParsedNimiqDirectPaymentOptions(option, data);
+                                            // Once extraData from MultiCurrencyCheckoutRequest is removed
+                                            // the next few lines become obsolete.
+                                            if (!option.protocolSpecific.extraData) {
+                                                option.protocolSpecific.extraData = checkoutRequest.extraData;
+                                                if (option.protocolSpecific.extraData) {
+                                                    console.warn('Usage of MultiCurrencyCheckoutRequest.extraData is'
+                                                        + ' deprecated. Use NimiqDirectPaymentOptions.protocolSpecific'
+                                                        + '.extraData instead');
+                                                }
+                                            }
+                                            return new ParsedNimiqDirectPaymentOptions(option);
                                         case Currency.ETH:
                                             return new ParsedEtherDirectPaymentOptions(option);
                                         case Currency.BTC:
@@ -424,14 +425,13 @@ export class RequestParser {
                             recipientType: nimiqOptions.protocolSpecific.recipientType,
                             value: nimiqOptions.amount,
                             fee: nimiqOptions.protocolSpecific.fee,
-                            extraData: checkoutRequest.data,
+                            extraData: nimiqOptions.protocolSpecific.extraData,
                             flags: nimiqOptions.protocolSpecific.flags,
                             validityDuration: nimiqOptions.protocolSpecific.validityDuration,
                         } as NimiqCheckoutRequest;
                     case 2:
                         return {
                             ...checkoutRequest,
-                            extraData: checkoutRequest.data,
                             paymentOptions: checkoutRequest.paymentOptions.map((option) => option.raw()),
                         } as MultiCurrencyCheckoutRequest;
                     }

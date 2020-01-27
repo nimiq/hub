@@ -16,7 +16,7 @@
                 @main-action="statusScreenMainAction"
                 :mainAction="statusScreenMainActionText"
             >
-                <template v-if="timeoutReached || paymentState === PaymentState.UNDERPAID" v-slot:warning>
+                <template v-if="timeoutReached || paymentState === constructor.PaymentState.UNDERPAID" v-slot:warning>
                     <StopwatchIcon v-if="timeoutReached" class="stopwatch-icon"/>
                     <UnderPaymentIcon v-else class="under-payment-icon"/>
                     <h1 class="title nq-h1">{{ statusScreenTitle }}</h1>
@@ -98,7 +98,7 @@ import {
 import { AccountInfo } from '../lib/AccountInfo';
 import { TX_VALIDITY_WINDOW } from '../lib/Constants';
 import { ContractInfo, VestingContractInfo } from '../lib/ContractInfo';
-import { Account, Currency, PaymentState, RequestType } from '../lib/PublicRequestTypes';
+import { Account, Currency, PaymentState as PublicPaymentState, RequestType } from '../lib/PublicRequestTypes';
 import staticStore from '../lib/StaticStore';
 import { WalletInfo, WalletType } from '../lib/WalletInfo';
 import { WalletStore } from '../lib/WalletStore';
@@ -122,7 +122,7 @@ import CurrencyInfo from './CurrencyInfo.vue';
     TransferIcon,
     UnderPaymentIcon,
 }})
-export default class NimiqCheckoutOption
+class NimiqCheckoutOption
     extends CheckoutOption<ParsedNimiqDirectPaymentOptions> {
     private static readonly BALANCE_CHECK_STORAGE_KEY = 'nimiq_checkout_last_balance_check';
     @State private wallets!: WalletInfo[];
@@ -351,7 +351,7 @@ export default class NimiqCheckoutOption
                     value: this.paymentOptions.amount,
                     fee: this.paymentOptions.protocolSpecific.fee || 0,
                     validityStartHeight,
-                    data: this.request.data,
+                    data: this.paymentOptions.protocolSpecific.extraData,
                     flags: this.paymentOptions.protocolSpecific.flags,
 
                     fiatAmount: this.request.fiatAmount,
@@ -402,11 +402,13 @@ export default class NimiqCheckoutOption
             return null;
         }
     }
-
-    private data() {
-        return { PaymentState };
-    }
 }
+
+namespace NimiqCheckoutOption {
+    export const PaymentState = PublicPaymentState;
+}
+
+export default NimiqCheckoutOption;
 </script>
 
 <style scoped>

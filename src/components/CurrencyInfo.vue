@@ -39,7 +39,7 @@ class CurrencyInfo extends Vue {
     }
 }
 
-namespace CurrencyInfo { // tslint:disable-line:no-namespace
+namespace CurrencyInfo {
     export const Currency = PublicCurrency;
 }
 
