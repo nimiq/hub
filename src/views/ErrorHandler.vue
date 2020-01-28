@@ -57,7 +57,7 @@ export default class ErrorHandler extends Vue {
         }
 
         if (this.keyguardResult.message === Errors.Messages.GOTO_CREATE) {
-            this.$rpc.routerReplace(RequestType.SIGNUP);
+            this.$router.replace({name: RequestType.SIGNUP});
             return;
         }
 
