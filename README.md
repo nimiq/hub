@@ -79,6 +79,8 @@ The following values can be changed via configuration files:
 - networkEndpoint: The location of the network iframe instance you want to use.
 - privilegedOrigins: An array of origins with special access rights, nameley
   permission to use iframe methods like `list()`.
+- redirectTarget: In case of empty referrer or absence of request, the user is
+  redirected to this page.
 
 The default config file is `config.local.ts`. To use a different file
 (especially useful for deployment), set an environment variable

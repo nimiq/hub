@@ -10,5 +10,6 @@ export default {
         'https://www.nimiq.com', // To allow gift cards app to request returnLink for Cashlinks
         'https://nimiq.com', // To allow gift cards app to request returnLink for Cashlinks
     ],
+    redirectTarget: 'https://safe.nimiq.com',
     reportToSentry: true,
 };
