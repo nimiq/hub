@@ -29,7 +29,7 @@ export type NimiqDirectPaymentOptions = PaymentOptions<Currency.NIM, PaymentType
 export class ParsedNimiqDirectPaymentOptions extends ParsedPaymentOptions<Currency.NIM, PaymentType.DIRECT> {
     public amount: number;
 
-    public constructor(options: NimiqDirectPaymentOptions, enforceDefaultValues = true) {
+    public constructor(options: NimiqDirectPaymentOptions, allowUndefinedFees = false) {
         super(options);
 
         if (options.protocolSpecific.extraData !== undefined && typeof options.protocolSpecific.extraData !== 'string'
@@ -90,29 +90,29 @@ export class ParsedNimiqDirectPaymentOptions extends ParsedPaymentOptions<Curren
             fee = parseInt(toNonScientificNumberString(options.protocolSpecific.fee), 10);
         }
 
-        if (enforceDefaultValues) {
-            const requiresExtendedTransaction = extraData && extraData.byteLength > 0
-                || (recipientType !== undefined && recipientType !== Nimiq.Account.Type.BASIC)
-                || (flags !== undefined && flags !== Nimiq.Transaction.Flag.NONE);
-            // Note that the transaction size can be bigger than this, for example if the sender type the user wants
-            // to use requires an extended transaction or if an extended transaction includes a multi signature proof.
-            // The size is therefore just an estimate. In the majority of cases the estimate will be accurate though
-            // and a fee that is slightly off will generally not be a problem.
-            const estimatedTransactionSize = requiresExtendedTransaction
-                ? 166 + (extraData ? extraData.byteLength : 0)
-                : 138;
+        const requiresExtendedTransaction = extraData && extraData.byteLength > 0
+            || (recipientType !== undefined && recipientType !== Nimiq.Account.Type.BASIC)
+            || (flags !== undefined && flags !== Nimiq.Transaction.Flag.NONE);
+        // Note that the transaction size can be bigger than this, for example if the sender type the user wants
+        // to use requires an extended transaction or if an extended transaction includes a multi signature proof.
+        // The size is therefore just an estimate. In the majority of cases the estimate will be accurate though
+        // and a fee that is slightly off will generally not be a problem.
+        const estimatedTransactionSize = requiresExtendedTransaction
+            ? 166 + (extraData ? extraData.byteLength : 0)
+            : 138;
 
+        // feePerByte takes precedence over fee as it is the more meaningful value for the transaction and its speed.
+        if (feePerByte === undefined) {
             if (fee === undefined) {
-                // xxx
-                if (feePerByte === undefined) {
+                if (!allowUndefinedFees) {
                     feePerByte = 0;
                     fee = 0;
-                } else {
-                    fee = Math.ceil(feePerByte * estimatedTransactionSize);
                 }
             } else {
                 feePerByte = fee / estimatedTransactionSize;
             }
+        } else {
+            fee = Math.ceil(feePerByte * estimatedTransactionSize);
         }
 
         if (options.protocolSpecific.validityDuration !== undefined
