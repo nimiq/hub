@@ -60,7 +60,7 @@ export default class OnboardingSelector extends Vue {
     }
 
     private ledger() {
-        this.$rpc.routerPush(`${RequestType.SIGNUP}-ledger`);
+        this.$router.push({name: `${RequestType.SIGNUP}-ledger`});
     }
 
     private close() {

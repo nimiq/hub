@@ -361,7 +361,7 @@ export default class SignTransactionLedger extends Vue {
             await new Promise((resolve) => setTimeout(resolve, StatusScreen.SUCCESS_REDIRECT_DELAY));
             this.$rpc.resolve(result);
         } else {
-            this.$rpc.routerReplace(RequestType.MANAGE_CASHLINK);
+            this.$router.replace({name: RequestType.MANAGE_CASHLINK});
         }
     }
 

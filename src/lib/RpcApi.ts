@@ -2,7 +2,7 @@ import { ResponseStatus, RpcServer, State as RpcState } from '@nimiq/rpc';
 import { BrowserDetection } from '@nimiq/utils';
 import { RootState } from '@/store';
 import { Store } from 'vuex';
-import Router from 'vue-router';
+import Router, { Route } from 'vue-router';
 import {
     ParsedCheckoutRequest,
     ParsedSignMessageRequest,
@@ -90,6 +90,52 @@ export default class RpcApi {
             KeyguardCommand.DERIVE_ADDRESS,
             KeyguardCommand.SIGN_MESSAGE,
         ]);
+
+        this._router.beforeEach((to: Route, from: Route, next: (arg?: string | false | Route) => void) => {
+            // // There is an intial redirect from '/' to '/' which does not need to be handled at all.
+            if (to.name === REQUEST_ERROR || (to.path === '/' && from.path === '/')) {
+                next();
+                return;
+            }
+            // If the target already has its rpcId, do not update it, since the caller to push()/replace()
+            // can provide it.
+            if ( to.query.rpcId ) {
+                next();
+                return;
+            }
+
+            const rpcId = from.query.rpcId || this._parseUrlParams(window.location.search).rpcId;
+            // In case no rpcId can be found the request is not functional and needs to be rejected.
+            if (!rpcId) {
+                this.reject(new Error('UNEXPECTED: RpcId not present'));
+                next(false);
+                return;
+            }
+
+            next({
+                ...to,
+                query: {
+                    ...to.query,
+                    rpcId,
+                },
+            });
+        });
+
+        this._router.afterEach((to: Route, from: Route) => {
+            // There is an intial redirect from '/' to '/' which does not need to be handled at all.
+            if (to.path === '/' && from.path === '/') {
+                return;
+            }
+            // In case there is an rpcState export the entire state to the newly pushed history entry
+            // to be available on reload.
+            // This is potentially redundand to the above condition but added as a precaution,
+            // especially considering the no-request case a few lines down within RpcApi.start().
+            if (this._staticStore.rpcState) {
+                // A small timeout is needed, since Vue does push the new history state only after the afterEach
+                // hooks are executed, thus overwriting any state set in these hooks.
+                window.setTimeout(() => setHistoryStorage(RpcApi.HISTORY_KEY_RPC_STATE, this._exportState()), 10);
+            }
+        });
     }
 
     public start() {
@@ -103,9 +149,7 @@ export default class RpcApi {
             if (window.opener === null && window.history.length > 1 && !window.location.hash) {
                 location.href = Config.redirectTarget;
             } else {
-                // Not using routerReplace here as that method exports the state which does not exist when there is no
-                // request.
-                this._router.replace(`/${REQUEST_ERROR}`);
+                this._router.replace({name: REQUEST_ERROR});
             }
         };
         this._server.init(onClientTimeout);
@@ -127,22 +171,6 @@ export default class RpcApi {
             setHistoryStorage(RpcApi.HISTORY_KEY_RPC_STATE, this._exportState());
         }
         return client;
-    }
-
-    public routerPush(routeName: string, query?: { [key: string]: string }) {
-        query = query || this._parseUrlParams(window.location.search);
-        this._router.push({name: routeName, query}, () => {
-            // export state to the newly pushed history entry to be available on reload
-            setHistoryStorage(RpcApi.HISTORY_KEY_RPC_STATE, this._exportState());
-        });
-    }
-
-    public routerReplace(routeName: string, query?: { [key: string]: string }) {
-        query = query || this._parseUrlParams(window.location.search);
-        this._router.replace({name: routeName, query}, () => {
-            // export state to the updated history entry to be available on reload
-            setHistoryStorage(RpcApi.HISTORY_KEY_RPC_STATE, this._exportState());
-        });
     }
 
     public resolve(result: RpcResult) {
@@ -183,7 +211,7 @@ export default class RpcApi {
             const rpcState = this._staticStore.rpcState!;
             const query = { rpcId: rpcState.id.toString() };
             delete this._staticStore.originalRouteName;
-            this.routerPush(originalRoute, query);
+            this._router.push({name: originalRoute, query});
             return;
         }
 
@@ -234,7 +262,7 @@ export default class RpcApi {
                 if (requestType !== RequestType.MIGRATE) {
                     this._staticStore.originalRouteName = requestType;
                 }
-                this.routerReplace(RequestType.MIGRATE);
+                this._router.replace({name: RequestType.MIGRATE});
                 this._startRoute();
                 return;
             }
@@ -298,9 +326,9 @@ export default class RpcApi {
 
         if (account && account.type === WalletType.LEDGER
             && this._router.getMatchedComponents({ name: `${requestType}-ledger` }).length > 0) {
-            this.routerReplace(`${requestType}-ledger`);
+            this._router.replace({name: `${requestType}-ledger`});
         } else {
-            this.routerReplace(requestType);
+            this._router.replace({name: requestType});
         }
     }
 
@@ -357,7 +385,7 @@ export default class RpcApi {
         // when returning from the Keyguard's sign-transaction request, the original request kind that
         // was given to the Hub is passed here and the keyguardResponseRouter is turned
         // from an object into a function instead.
-        this.routerReplace(keyguardResponseRouter(command, this._staticStore.request!.kind).resolve);
+        this._router.replace({name: keyguardResponseRouter(command, this._staticStore.request!.kind).resolve});
 
         this._startRoute();
     }
@@ -393,11 +421,11 @@ export default class RpcApi {
 
         if (error.message === KeyguardErrors.Messages.EXPIRED) {
             // Don't reject but navigate to checkout to display the expiration warning there.
-            this.routerReplace(RequestType.CHECKOUT);
+            this._router.replace({ name: RequestType.CHECKOUT });
             return;
         }
 
-        this.routerReplace(keyguardResponseRouter(command, this._staticStore.request!.kind).reject);
+        this._router.replace({name: keyguardResponseRouter(command, this._staticStore.request!.kind).reject});
     }
 
     private _startRoute() {

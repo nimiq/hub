@@ -341,7 +341,7 @@ class NimiqCheckoutOption
         // proceed to transaction signing
         switch (senderAccount.type) {
             case WalletType.LEDGER:
-                this.$rpc.routerPush(`${RequestType.SIGN_TRANSACTION}-ledger`);
+                this.$router.push({name: `${RequestType.SIGN_TRANSACTION}-ledger`});
                 return;
             case WalletType.LEGACY:
             case WalletType.BIP39:
@@ -397,9 +397,9 @@ class NimiqCheckoutOption
         // Redirect to onboarding
         staticStore.originalRouteName = RequestType.CHECKOUT;
         if (useReplace) {
-            this.$rpc.routerReplace(RequestType.ONBOARD);
+            this.$router.replace({name: RequestType.ONBOARD});
         } else {
-            this.$rpc.routerPush(RequestType.ONBOARD);
+            this.$router.push({name: RequestType.ONBOARD});
         }
     }
 

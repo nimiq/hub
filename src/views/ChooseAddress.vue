@@ -78,9 +78,9 @@ export default class ChooseAddress extends Vue {
         // Redirect to onboarding
         staticStore.originalRouteName = RequestType.CHOOSE_ADDRESS;
         if (useReplace) {
-            this.$rpc.routerReplace(RequestType.ONBOARD);
+            this.$router.replace({name: RequestType.ONBOARD});
         }
-        this.$rpc.routerPush(RequestType.ONBOARD);
+        this.$router.push({name: RequestType.ONBOARD});
     }
 
     private close() {

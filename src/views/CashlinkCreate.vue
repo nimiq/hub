@@ -398,7 +398,7 @@ class CashlinkCreate extends Vue {
         // proceed to transaction signing
         switch (senderAccount.type) {
             case WalletType.LEDGER:
-                this.$rpc.routerPush(`${RequestType.SIGN_TRANSACTION}-ledger`);
+                this.$router.push({name: `${RequestType.SIGN_TRANSACTION}-ledger`});
                 return;
             case WalletType.LEGACY:
             case WalletType.BIP39:
@@ -431,9 +431,9 @@ class CashlinkCreate extends Vue {
     private login(useReplace = false) {
         staticStore.originalRouteName = RequestType.CREATE_CASHLINK;
         if (useReplace) {
-            this.$rpc.routerReplace(RequestType.ONBOARD);
+            this.$router.replace({name: RequestType.ONBOARD});
         } else {
-            this.$rpc.routerPush(RequestType.ONBOARD);
+            this.$router.push({name: RequestType.ONBOARD});
         }
     }
 
