@@ -349,7 +349,7 @@ class NimiqCheckoutOption
                     recipientType: this.paymentOptions.protocolSpecific.recipientType,
                     // recipientLabel: '', // Checkout is using the shopOrigin instead
                     value: this.paymentOptions.amount,
-                    fee: this.paymentOptions.protocolSpecific.fee || 0,
+                    fee: this.paymentOptions.fee,
                     validityStartHeight,
                     data: this.paymentOptions.protocolSpecific.extraData,
                     flags: this.paymentOptions.protocolSpecific.flags,

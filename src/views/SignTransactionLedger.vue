@@ -6,7 +6,7 @@
                 ref="info"
                 class="blur-target"
                 :cryptoAmount="{
-                    amount: checkoutPaymentOptions.amount + checkoutPaymentOptions.protocolSpecific.fee,
+                    amount: checkoutPaymentOptions.amount + checkoutPaymentOptions.fee,
                     currency: checkoutPaymentOptions.currency,
                     decimals: checkoutPaymentOptions.decimals,
                 }"
@@ -55,11 +55,11 @@
                 :maxDecimals="5"
             />
 
-            <div v-if="checkoutPaymentOptions ? checkoutPaymentOptions.protocolSpecific.fee : (cashlink || request).fee"
+            <div v-if="checkoutPaymentOptions ? checkoutPaymentOptions.fee : (cashlink || request).fee"
                 class="fee nq-text-s blur-target">
                 + <Amount
                     :amount="checkoutPaymentOptions
-                        ? checkoutPaymentOptions.protocolSpecific.fee
+                        ? checkoutPaymentOptions.fee
                         : (cashlink || request).fee"
                     :minDecimals="2" :maxDecimals="5"
                 /> fee
@@ -193,7 +193,7 @@ export default class SignTransactionLedger extends Vue {
         let value: number;
         let fee: number;
         let validityStartHeightPromise: Promise<number>;
-        let data: Uint8Array;
+        let data: Uint8Array | undefined;
         let flags: number;
         if (this.request.kind === RequestType.SIGN_TRANSACTION) {
             // direct sign transaction request invocation
@@ -232,8 +232,8 @@ export default class SignTransactionLedger extends Vue {
             }
 
             sender = Nimiq.Address.fromUserFriendlyAddress(this.$store.state.activeUserFriendlyAddress);
-            value = checkoutPaymentOptions.amount;
-            ({ recipient, fee, flags, extraData: data } = checkoutPaymentOptions.protocolSpecific);
+            ({ amount: value, fee } = checkoutPaymentOptions);
+            ({ recipient, flags, extraData: data } = checkoutPaymentOptions.protocolSpecific);
 
             this.recipientDetails = {
                 address: recipient.toUserFriendlyAddress(),
