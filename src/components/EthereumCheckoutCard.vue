@@ -1,11 +1,11 @@
 <script lang="ts">
 import { createEthereumRequestLink } from '@nimiq/utils';
 import { ParsedEtherDirectPaymentOptions } from '../lib/paymentOptions/EtherPaymentOptions';
-import NonNimiqCheckoutOption from './NonNimiqCheckoutOption.vue';
+import NonNimiqCheckoutCard from './NonNimiqCheckoutCard.vue';
 import { FormattableNumber } from '@nimiq/utils';
 
-export default class EtherCheckoutOption
-    extends NonNimiqCheckoutOption<ParsedEtherDirectPaymentOptions> {
+export default class EtherCheckoutCard
+    extends NonNimiqCheckoutCard<ParsedEtherDirectPaymentOptions> {
     protected currencyFullName = 'Ethereum';
     protected icon = 'icon-eth.svg';
 

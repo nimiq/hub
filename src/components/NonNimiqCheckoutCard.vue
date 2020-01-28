@@ -131,7 +131,7 @@ import {
 } from '@nimiq/vue-components';
 import { PaymentState as PublicPaymentState } from '../lib/PublicRequestTypes';
 import { AvailableParsedPaymentOptions } from '../lib/RequestTypes';
-import CheckoutOption from './CheckoutOption.vue';
+import CheckoutCard from './CheckoutCard.vue';
 import CurrencyInfo from './CurrencyInfo.vue';
 import StatusScreen from './StatusScreen.vue';
 import CheckoutManualPaymentDetails from './CheckoutManualPaymentDetails.vue';
@@ -152,9 +152,9 @@ import CheckoutManualPaymentDetails from './CheckoutManualPaymentDetails.vue';
     Amount,
     FiatAmount,
 }})
-class NonNimiqCheckoutOption<
+class NonNimiqCheckoutCard<
     Parsed extends AvailableParsedPaymentOptions
-> extends CheckoutOption<Parsed> {
+> extends CheckoutCard<Parsed> {
     protected currencyFullName: string = ''; // to be set by child class
     protected appNotFound: boolean = false;
 
@@ -177,7 +177,7 @@ class NonNimiqCheckoutOption<
     }
 
     protected get paymentLink(): string {
-        throw new Error('NonNimiqCheckoutOption.paymentLink() Needs to be implemented by child classes.');
+        throw new Error('NonNimiqCheckoutCard.paymentLink() Needs to be implemented by child classes.');
     }
 
     protected async selectCurrency() {
@@ -226,11 +226,11 @@ class NonNimiqCheckoutOption<
     }
 }
 
-namespace NonNimiqCheckoutOption {
+namespace NonNimiqCheckoutCard {
     export const PaymentState = PublicPaymentState;
 }
 
-export default NonNimiqCheckoutOption;
+export default NonNimiqCheckoutCard;
 </script>
 
 <style scoped>

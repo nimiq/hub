@@ -108,7 +108,7 @@ import { WalletStore } from '../lib/WalletStore';
 import { ParsedNimiqDirectPaymentOptions } from '../lib/paymentOptions/NimiqPaymentOptions';
 import Network from './Network.vue';
 import StatusScreen from './StatusScreen.vue';
-import CheckoutOption from './CheckoutOption.vue';
+import CheckoutCard from './CheckoutCard.vue';
 import CurrencyInfo from './CurrencyInfo.vue';
 
 @Component({components: {
@@ -125,8 +125,8 @@ import CurrencyInfo from './CurrencyInfo.vue';
     TransferIcon,
     UnderPaymentIcon,
 }})
-class NimiqCheckoutOption
-    extends CheckoutOption<ParsedNimiqDirectPaymentOptions> {
+class NimiqCheckoutCard
+    extends CheckoutCard<ParsedNimiqDirectPaymentOptions> {
     private static readonly BALANCE_CHECK_STORAGE_KEY = 'nimiq_checkout_last_balance_check';
     @State private wallets!: WalletInfo[];
 
@@ -150,7 +150,7 @@ class NimiqCheckoutOption
 
     protected async created() {
         if (this.paymentOptions.currency !== Currency.NIM) {
-            throw new Error('NimiqCheckoutOption did not get a NimiqPaymentOption.');
+            throw new Error('NimiqCheckoutCard did not get a NimiqPaymentOption.');
         }
         return await super.created();
     }
@@ -258,7 +258,7 @@ class NimiqCheckoutOption
             height: this.height,
             balances: Array.from(balances.entries()),
         };
-        window.sessionStorage.setItem(NimiqCheckoutOption.BALANCE_CHECK_STORAGE_KEY, JSON.stringify(cacheInput));
+        window.sessionStorage.setItem(NimiqCheckoutCard.BALANCE_CHECK_STORAGE_KEY, JSON.stringify(cacheInput));
 
         return balances;
     }
@@ -418,7 +418,7 @@ class NimiqCheckoutOption
     }
 
     private getLastBalanceUpdateHeight(): {timestamp: number, height: number, balances: Map<string, number>} | null {
-        const rawCache = window.sessionStorage.getItem(NimiqCheckoutOption.BALANCE_CHECK_STORAGE_KEY);
+        const rawCache = window.sessionStorage.getItem(NimiqCheckoutCard.BALANCE_CHECK_STORAGE_KEY);
         if (!rawCache) return null;
 
         try {
@@ -431,17 +431,17 @@ class NimiqCheckoutOption
                 balances: new Map(cache.balances),
             });
         } catch (e) {
-            window.sessionStorage.removeItem(NimiqCheckoutOption.BALANCE_CHECK_STORAGE_KEY);
+            window.sessionStorage.removeItem(NimiqCheckoutCard.BALANCE_CHECK_STORAGE_KEY);
             return null;
         }
     }
 }
 
-namespace NimiqCheckoutOption {
+namespace NimiqCheckoutCard {
     export const PaymentState = PublicPaymentState;
 }
 
-export default NimiqCheckoutOption;
+export default NimiqCheckoutCard;
 </script>
 
 <style scoped>

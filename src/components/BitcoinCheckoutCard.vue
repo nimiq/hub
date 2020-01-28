@@ -2,11 +2,11 @@
 import { createBitcoinRequestLink } from '@nimiq/utils';
 import staticStore from '../lib/StaticStore';
 import { ParsedBitcoinDirectPaymentOptions } from '../lib/paymentOptions/BitcoinPaymentOptions';
-import NonNimiqCheckoutOption from './NonNimiqCheckoutOption.vue';
+import NonNimiqCheckoutCard from './NonNimiqCheckoutCard.vue';
 import { FormattableNumber } from '@nimiq/utils';
 
-export default class BitcoinCheckoutOption
-    extends NonNimiqCheckoutOption<ParsedBitcoinDirectPaymentOptions> {
+export default class BitcoinCheckoutCard
+    extends NonNimiqCheckoutCard<ParsedBitcoinDirectPaymentOptions> {
     protected currencyFullName = 'Bitcoin';
     protected icon = 'icon-btc.svg';
 

@@ -9,7 +9,7 @@ import { PaymentInfoLine } from '@nimiq/vue-components';
 import { ERROR_REQUEST_TIMED_OUT, HISTORY_KEY_SELECTED_CURRENCY } from '../lib/Constants';
 import { PaymentState } from '../lib/PublicRequestTypes';
 
-export default class CheckoutOption<
+export default class CheckoutCard<
     Parsed extends AvailableParsedPaymentOptions,
 > extends Vue {
     protected optionTimeout: number = -1;

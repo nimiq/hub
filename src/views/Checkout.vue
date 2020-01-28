@@ -12,7 +12,7 @@
             :disabled="choosenCurrency !== null || availableCurrencies.length === 0"
             @select="selectedCurrency = $event">
             <template v-for="paymentOptions of request.paymentOptions" v-slot:[paymentOptions.currency]>
-                <NimiqCheckoutOption
+                <NimiqCheckoutCard
                     v-if="paymentOptions.currency === constructor.Currency.NIM"
                     :paymentOptions="paymentOptions"
                     :key="paymentOptions.currency"
@@ -23,7 +23,7 @@
                     }"
                     @chosen="chooseCurrency"
                     @expired="expired"/>
-                <EthereumCheckoutOption
+                <EthereumCheckoutCard
                     v-else-if="paymentOptions.currency === constructor.Currency.ETH"
                     :paymentOptions="paymentOptions"
                     :key="paymentOptions.currency"
@@ -34,7 +34,7 @@
                     }"
                     @chosen="chooseCurrency"
                     @expired="expired"/>
-                <BitcoinCheckoutOption
+                <BitcoinCheckoutCard
                     v-else-if="paymentOptions.currency === constructor.Currency.BTC"
                     :paymentOptions="paymentOptions"
                     :key="paymentOptions.currency"
@@ -73,9 +73,9 @@ import { Component, Vue, Watch } from 'vue-property-decorator';
 import { BottomOverlay, Carousel, ArrowLeftSmallIcon } from '@nimiq/vue-components';
 import { BrowserDetection } from '@nimiq/utils';
 import { ParsedCheckoutRequest } from '../lib/RequestTypes';
-import BitcoinCheckoutOption from '../components/BitcoinCheckoutOption.vue';
-import EthereumCheckoutOption from '../components/EthereumCheckoutOption.vue';
-import NimiqCheckoutOption from '../components/NimiqCheckoutOption.vue';
+import BitcoinCheckoutCard from '../components/BitcoinCheckoutCard.vue';
+import EthereumCheckoutCard from '../components/EthereumCheckoutCard.vue';
+import NimiqCheckoutCard from '../components/NimiqCheckoutCard.vue';
 import { Currency as PublicCurrency } from '../lib/PublicRequestTypes';
 import { State as RpcState } from '@nimiq/rpc';
 import { Static } from '../lib/StaticStore';
@@ -85,9 +85,9 @@ import { ERROR_CANCELED } from '../lib/Constants';
     ArrowLeftSmallIcon,
     BottomOverlay,
     Carousel,
-    BitcoinCheckoutOption,
-    EthereumCheckoutOption,
-    NimiqCheckoutOption,
+    BitcoinCheckoutCard,
+    EthereumCheckoutCard,
+    NimiqCheckoutCard,
 }})
 class Checkout extends Vue {
     private static DISCLAIMER_CLOSED_COOKIE = 'checkout-disclaimer-closed';
