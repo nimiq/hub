@@ -387,12 +387,9 @@ export default class SignTransactionLedger extends Vue {
         let data;
         let flags;
         if (this.request.kind === RequestType.SIGN_TRANSACTION) {
-            const signTransactionRequest = this.request as ParsedSignTransactionRequest;
-            data = signTransactionRequest.data;
-            flags = signTransactionRequest.flags;
+            ({data, flags} = this.request as ParsedSignTransactionRequest);
         } else {
-            data = this.checkoutPaymentOptions!.protocolSpecific.extraData;
-            flags = this.checkoutPaymentOptions!.protocolSpecific.flags;
+            ({extraData: data, flags} = this.checkoutPaymentOptions!.protocolSpecific);
         }
 
         if (!data || data.length === 0) {

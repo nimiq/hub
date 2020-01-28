@@ -95,7 +95,7 @@ class Checkout extends Vue {
     @Static private rpcState!: RpcState;
     @Static private request!: ParsedCheckoutRequest;
     private choosenCurrency: PublicCurrency | null = null;
-    private selectedCurrency: PublicCurrency = Checkout.Currency.NIM;
+    private selectedCurrency: PublicCurrency = PublicCurrency.NIM;
     private leftSlide!: PublicCurrency;
     private rightSlide!: PublicCurrency;
     private availableCurrencies: PublicCurrency[] = [];
