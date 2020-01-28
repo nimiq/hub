@@ -277,7 +277,6 @@ class Demo {
                 callbackUrl: `${location.origin}/callback.html`,
                 csrf: 'dummy-csrf-token',
                 time: now,
-                extraData: 'Test MultiCheckout',
                 fiatCurrency: 'EUR',
                 fiatAmount: 24.99,
                 paymentOptions: [
@@ -298,6 +297,7 @@ class Demo {
                         expires: + new Date(now + 15 * 60000), // 15 minutes
                         protocolSpecific: {
                             fee: 50000,
+                            extraData: 'Test MultiCheckout',
                         },
                     },
                     {

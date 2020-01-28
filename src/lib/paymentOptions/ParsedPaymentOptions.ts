@@ -16,7 +16,7 @@ export interface ParsedPaymentOptions<C extends Currency, T extends PaymentType>
     amount: number | BigInteger;
     expires?: number;
     constructor: ParsedPaymentOptionsForCurrencyAndType<C, T>;
-    new(options: PaymentOptionsForCurrencyAndType<C, T>, ...optionalArgs: any[]):
+    new(options: PaymentOptionsForCurrencyAndType<C, T>, enforceDefaultValues?: boolean):
         ParsedPaymentOptionsForCurrencyAndType<C, T>;
 }
 
@@ -50,7 +50,8 @@ implements ParsedPaymentOptions<C, T> {
         options: PaymentOptionsForCurrencyAndType<C, T>,
         ...additionalArgs: any[]
     ) {
-        const parsedOptions = new this.constructor(options as any, ...additionalArgs); // parse to check validity
+        // Parse to check validity. Do not enforce default values, since undefined values are not updated.
+        const parsedOptions = new this.constructor(options as any, false);
         this.amount = parsedOptions.amount; // amount must exist on all parsed options
         this.expires = parsedOptions.expires || this.expires;
         for (const key of
