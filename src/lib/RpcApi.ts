@@ -92,20 +92,20 @@ export default class RpcApi {
         ]);
 
         this._router.beforeEach((to: Route, from: Route, next: (arg?: string | false | Route) => void) => {
-            // // There is an intial redirect from '/' to '/' which does not need to be handled at all.
+            // There is an intial redirect from '/' to '/' which does not need to be handled at all.
             if (to.name === REQUEST_ERROR || (to.path === '/' && from.path === '/')) {
                 next();
                 return;
             }
-            // If the target already has its rpcId, do not update it, since the caller to push()/replace()
-            // can provide it.
+
+            // If the navigation call already contains an rpcId, do not replace it.
             if ( to.query.rpcId ) {
                 next();
                 return;
             }
 
             const rpcId = from.query.rpcId || this._parseUrlParams(window.location.search).rpcId;
-            // In case no rpcId can be found the request is not functional and needs to be rejected.
+            // In case no rpcId can be found, the request is not functional and needs to be rejected.
             if (!rpcId) {
                 this.reject(new Error('UNEXPECTED: RpcId not present'));
                 next(false);
@@ -126,7 +126,7 @@ export default class RpcApi {
             if (to.path === '/' && from.path === '/') {
                 return;
             }
-            // In case there is an rpcState export the entire state to the newly pushed history entry
+            // If we have an rpcState, export the entire state to the newly pushed history entry
             // to be available on reload.
             // This is potentially redundand to the above condition but added as a precaution,
             // especially considering the no-request case a few lines down within RpcApi.start().
