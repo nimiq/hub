@@ -300,7 +300,7 @@ export class RequestParser {
                 } as ParsedSignMessageRequest;
             case RequestType.CREATE_CASHLINK:
                 const createCashlinkRequest = request as CreateCashlinkRequest;
-                const senderAddress = 'senderAddress' in createCashlinkRequest
+                const senderAddress = 'senderAddress' in createCashlinkRequest && !!createCashlinkRequest.senderAddress
                     ? Nimiq.Address.fromUserFriendlyAddress(createCashlinkRequest.senderAddress)
                     : undefined;
                 const senderBalance = 'senderBalance' in createCashlinkRequest
