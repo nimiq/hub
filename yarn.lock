@@ -947,10 +947,10 @@
   version "0.0.0"
   resolved "https://github.com/nimiq/ledger-api.git#4973419acb261ec8e8100e26a6927d78a0a52cb8"
 
-"@nimiq/network-client@^0.3.2":
-  version "0.3.2"
-  resolved "https://registry.yarnpkg.com/@nimiq/network-client/-/network-client-0.3.2.tgz#f3b5d6fbd9823b49dec7166b1f1d5d6bf7eee8b6"
-  integrity sha512-BYy6wozIDME6BVv0TlVNC+lDtnEGJ+MdjuuePWh2Uj77CvOlBrbunknJaZqdsdM4G/2uxucKNERQPjZjzMvgcA==
+"@nimiq/network-client@^0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@nimiq/network-client/-/network-client-0.4.0.tgz#05383c707384a59e44c905acf0684bfded0ffa26"
+  integrity sha512-qgg9c2Qiln+BRsFXs85xgYQ6SSelMd67It+O1nVH4O4n18anJq+AY610TGIR+B1CsQg3nAe0KG392apZ16A5KQ==
   dependencies:
     "@nimiq/core-web" "1.5.3"
     "@nimiq/rpc-events" "^0.0.8"
