@@ -989,17 +989,17 @@
   dependencies:
     big-integer "^1.6.44"
 
-"@nimiq/vue-components@https://github.com/nimiq/vue-components.git#daniel/build/hub/cashlinks+checkout":
+"@nimiq/vue-components@https://github.com/nimiq/vue-components.git#build/hub":
   version "0.1.0"
-  resolved "https://github.com/nimiq/vue-components.git#64d1e83964a6a425a8cf2845a8f262093fd92274"
+  resolved "https://github.com/nimiq/vue-components.git#ebfd1c5957b5ebbf16a1ff6a22ce5aa9af409c4e"
   dependencies:
     "@nimiq/style" "^0.7.6"
     big-integer "^1.6.44"
-    input-format "^0.2.4"
+    input-format "^0.2.8"
     qr-code "github:nimiq/qr-encoder"
     qr-scanner "^1.1.1"
-    vue "^2.6.10"
-    vue-property-decorator "^7.0.0"
+    vue "^2.6.11"
+    vue-property-decorator "^8.4.0"
 
 "@nodelib/fs.stat@^1.1.2":
   version "1.1.3"
@@ -5045,7 +5045,7 @@ ini@^1.3.4, ini@~1.3.0:
   resolved "https://registry.yarnpkg.com/ini/-/ini-1.3.5.tgz#eee25f56db1c9ec6085e0c22778083f596abf927"
   integrity sha512-RZY5huIKCMRWDUqZlEi72f/lmXKMvuszcMBduliQ3nnWbx9X/ZBQO7DijMEYS9EhHBb2qacRUMtC7svLwe0lcw==
 
-input-format@^0.2.4:
+input-format@^0.2.8:
   version "0.2.8"
   resolved "https://registry.yarnpkg.com/input-format/-/input-format-0.2.8.tgz#5e63d0f789a2081c1673c17c21bd0f9fd11d0ba4"
   integrity sha512-PUBQ7LQMq4xdF4nEXxZTKGRAA6QTCz2icH2bU1WBDn9GcP8mKygpOqqivf41vSfFd3UagzqcMFMSswqngQGvuA==
@@ -10056,10 +10056,6 @@ vm-browserify@^1.0.1:
   resolved "https://registry.yarnpkg.com/vm-browserify/-/vm-browserify-1.1.2.tgz#78641c488b8e6ca91a75f511e7a3b32a86e5dda0"
   integrity sha512-2ham8XPWTONajOR0ohOKOHXkm3+gaBmGut3SRuu75xLd/RRaY6vqgh8NBYYk7+RW3u5AtzPQZG8F10LHkl0lAQ==
 
-vue-class-component@^6.2.0:
-  version "6.3.2"
-  resolved "https://registry.yarnpkg.com/vue-class-component/-/vue-class-component-6.3.2.tgz#e6037e84d1df2af3bde4f455e50ca1b9eec02be6"
-
 vue-class-component@^7.1.0:
   version "7.2.2"
   resolved "https://registry.yarnpkg.com/vue-class-component/-/vue-class-component-7.2.2.tgz#aecc6d28801f64c61eb04407cf3a5476da26b0c0"
@@ -10095,12 +10091,6 @@ vue-loader@^15.8.3:
     loader-utils "^1.1.0"
     vue-hot-reload-api "^2.3.0"
     vue-style-loader "^4.1.0"
-
-vue-property-decorator@^7.0.0:
-  version "7.2.0"
-  resolved "https://registry.yarnpkg.com/vue-property-decorator/-/vue-property-decorator-7.2.0.tgz#8e6b0f4dcc630c357135f76366ba7bd91f1db015"
-  dependencies:
-    vue-class-component "^6.2.0"
 
 vue-property-decorator@^8.4.0:
   version "8.4.0"
@@ -10138,11 +10128,6 @@ vue-template-es2015-compiler@^1.9.0:
   version "1.9.1"
   resolved "https://registry.yarnpkg.com/vue-template-es2015-compiler/-/vue-template-es2015-compiler-1.9.1.tgz#1ee3bc9a16ecbf5118be334bb15f9c46f82f5825"
   integrity sha512-4gDntzrifFnCEvyoO8PqyJDmguXgVPxKiIxrBKjIowvL9l+N66196+72XVYR8BBf1Uv1Fgt3bGevJ+sEmxfZzw==
-
-vue@^2.6.10:
-  version "2.6.10"
-  resolved "https://registry.yarnpkg.com/vue/-/vue-2.6.10.tgz#a72b1a42a4d82a721ea438d1b6bf55e66195c637"
-  integrity sha512-ImThpeNU9HbdZL3utgMCq0oiMzAkt1mcgy3/E6zWC/G6AaQoeuFdsl9nDhTDU3X1R6FK7nsIUuRACVcjI+A2GQ==
 
 vue@^2.6.11:
   version "2.6.11"

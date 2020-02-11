@@ -44,7 +44,6 @@ import {
     PageHeader,
     PageBody,
     PaymentInfoLine,
-    UniversalAmount,
 } from '@nimiq/vue-components';
 import { State as RpcState } from '@nimiq/rpc';
 import { Static } from '../lib/StaticStore';
@@ -57,7 +56,6 @@ import CheckoutServerApi from '../lib/CheckoutServerApi';
     PageHeader,
     PageBody,
     PaymentInfoLine,
-    UniversalAmount,
 }})
 class CheckoutManualPaymentDetails<
     Parsed extends AvailableParsedPaymentOptions,
