@@ -14,13 +14,13 @@
   },
   "dependencies": {
     "@nimiq/browser-warning": "^1.1.0",
-    "@nimiq/iqons": "^1.5.0",
+    "@nimiq/iqons": "^1.5.2",
     "@nimiq/keyguard-client": "^1.2.0",
     "@nimiq/ledgerjs": "https://github.com/nimiq/ledger-api.git",
     "@nimiq/network-client": "^0.3.2",
     "@nimiq/rpc": "^0.4.0",
     "@nimiq/style": "^0.7.5",
-    "@nimiq/utils": "^0.4.4",
+    "@nimiq/utils": "^0.4.6",
     "@nimiq/vue-components": "https://github.com/nimiq/vue-components.git#daniel/build/hub/cashlinks+checkout",
     "@sentry/browser": "^5.12.1",
     "@sentry/integrations": "^5.12.0",
@@ -29,12 +29,12 @@
     "vue-property-decorator": "^8.4.0",
     "vue-router": "^3.1.5",
     "vuex": "^3.1.2",
-    "vuex-class": "^0.3.1"
+    "vuex-class": "^0.3.2"
   },
   "devDependencies": {
-    "@babel/core": "^7.3.3",
-    "@nimiq/core": "^1.5.3",
-    "@nimiq/core-web": "^1.5.3",
+    "@babel/core": "^7.8.4",
+    "@nimiq/core": "^1.5.4",
+    "@nimiq/core-web": "^1.5.4",
     "@types/jest": "^24.0.6",
     "@types/node": "^12.12.14",
     "@vue/babel-preset-app": "^3.4.1",
@@ -51,7 +51,7 @@
     "script-ext-html-webpack-plugin": "^2.1.4",
     "ts-jest": "^24.0.0",
     "typescript": "~3.7.5",
-    "vue-template-compiler": "^2.6.6",
-    "write-file-webpack-plugin": "^4.5.0"
+    "vue-template-compiler": "^2.6.11",
+    "write-file-webpack-plugin": "^4.5.1"
   }
 }
