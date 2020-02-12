@@ -348,7 +348,7 @@ export default class WalletInfoCollector {
             const accountInfo = existingAccountInfo || new AccountInfo(
                 newAccount.path,
                 LabelingMachine.labelAddress(newAccount.address),
-                Nimiq.Address.fromUserFriendlyAddress(newAccount.address),
+                Nimiq.Address.fromString(newAccount.address),
             );
             if (balance !== undefined) accountInfo.balance = balance;
             walletInfo.accounts.set(newAccount.address, accountInfo);
@@ -369,15 +369,15 @@ export default class WalletInfoCollector {
         const genesisVestingContracts = (await NetworkClient.Instance.getGenesisVestingContracts())
             .map((contract) => new VestingContractInfo(
                 CONTRACT_DEFAULT_LABEL_VESTING,
-                Nimiq.Address.fromUserFriendlyAddress(contract.address),
-                Nimiq.Address.fromUserFriendlyAddress(contract.owner),
+                Nimiq.Address.fromString(contract.address),
+                Nimiq.Address.fromString(contract.owner),
                 contract.start,
                 Nimiq.Policy.coinsToSatoshis(contract.stepAmount),
                 contract.stepBlocks,
                 Nimiq.Policy.coinsToSatoshis(contract.totalAmount),
             ));
 
-        const potentialVestingOwnerAddress = Nimiq.Address.fromUserFriendlyAddress(potentialOwner.address);
+        const potentialVestingOwnerAddress = Nimiq.Address.fromString(potentialOwner.address);
         const contracts = genesisVestingContracts
             .filter((contract) => contract.owner.equals(potentialVestingOwnerAddress));
 

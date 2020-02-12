@@ -56,8 +56,8 @@ export class RequestParser {
                 return {
                     kind: RequestType.SIGN_TRANSACTION,
                     appName: signTransactionRequest.appName,
-                    sender: Nimiq.Address.fromUserFriendlyAddress(signTransactionRequest.sender),
-                    recipient: Nimiq.Address.fromUserFriendlyAddress(signTransactionRequest.recipient),
+                    sender: Nimiq.Address.fromString(signTransactionRequest.sender),
+                    recipient: Nimiq.Address.fromString(signTransactionRequest.recipient),
                     recipientType: signTransactionRequest.recipientType || Nimiq.Account.Type.BASIC,
                     recipientLabel: signTransactionRequest.recipientLabel,
                     value: signTransactionRequest.value,
@@ -294,14 +294,14 @@ export class RequestParser {
                     kind: RequestType.SIGN_MESSAGE,
                     appName: signMessageRequest.appName,
                     signer: signMessageRequest.signer
-                        ? Nimiq.Address.fromUserFriendlyAddress(signMessageRequest.signer)
+                        ? Nimiq.Address.fromString(signMessageRequest.signer)
                         : undefined,
                     message: signMessageRequest.message,
                 } as ParsedSignMessageRequest;
             case RequestType.CREATE_CASHLINK:
                 const createCashlinkRequest = request as CreateCashlinkRequest;
                 const senderAddress = 'senderAddress' in createCashlinkRequest && !!createCashlinkRequest.senderAddress
-                    ? Nimiq.Address.fromUserFriendlyAddress(createCashlinkRequest.senderAddress)
+                    ? Nimiq.Address.fromString(createCashlinkRequest.senderAddress)
                     : undefined;
                 const senderBalance = 'senderBalance' in createCashlinkRequest
                     ? createCashlinkRequest.senderBalance
@@ -359,7 +359,7 @@ export class RequestParser {
                 return {
                     kind: RequestType.MANAGE_CASHLINK,
                     appName: manageCashlinkRequest.appName,
-                    cashlinkAddress: Nimiq.Address.fromUserFriendlyAddress(manageCashlinkRequest.cashlinkAddress),
+                    cashlinkAddress: Nimiq.Address.fromString(manageCashlinkRequest.cashlinkAddress),
                 } as ParsedManageCashlinkRequest;
             default:
                 return null;

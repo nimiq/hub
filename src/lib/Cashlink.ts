@@ -124,7 +124,7 @@ class Cashlink {
     public static fromObject(object: CashlinkEntry): Cashlink {
         return new Cashlink(
             Nimiq.KeyPair.unserialize(new Nimiq.SerialBuffer(object.keyPair)),
-            Nimiq.Address.fromUserFriendlyAddress(object.address),
+            Nimiq.Address.fromString(object.address),
             object.value,
             object.fee,
             object.message,
@@ -356,7 +356,7 @@ class Cashlink {
         if (!balance) {
             throw new Error('Cannot claim, there is no balance in this link');
         }
-        const recipient = Nimiq.Address.fromUserFriendlyAddress(recipientAddress);
+        const recipient = Nimiq.Address.fromString(recipientAddress);
         const transaction = new Nimiq.ExtendedTransaction(this.address, Nimiq.Account.Type.BASIC,
             recipient, recipientType, balance - fee, fee, await this._getBlockchainHeight(),
             Nimiq.Transaction.Flag.NONE, CashlinkExtraData.CLAIMING);

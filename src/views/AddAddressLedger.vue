@@ -84,7 +84,7 @@ export default class AddAddressLedger extends Vue {
         this.addressesToSelectFrom = derivedAddressInfos.map((addressInfo) => new AccountInfo(
             addressInfo.keyPath,
             LabelingMachine.labelAddress(addressInfo.address),
-            Nimiq.Address.fromUserFriendlyAddress(addressInfo.address),
+            Nimiq.Address.fromString(addressInfo.address),
             0, // balance 0 because user selects from unused addresses
         ));
         this.state = AddAddressLedger.State.IDENTICON_SELECTION;

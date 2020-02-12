@@ -284,7 +284,7 @@ class CashlinkCreate extends Vue {
         }
 
         this.accountOrContractInfo = wallet.accounts.get(address)
-            || wallet.findContractByAddress(Nimiq.Address.fromUserFriendlyAddress(address))!;
+            || wallet.findContractByAddress(Nimiq.Address.fromString(address))!;
 
         // FIXME: Also handle active account we get from store
         this.$setActiveAccount({

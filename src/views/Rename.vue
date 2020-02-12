@@ -107,7 +107,7 @@
                 this.wallet!.accounts.set(address, addressInfo);
                 return;
             }
-            const contractInfo = this.wallet!.findContractByAddress(Nimiq.Address.fromUserFriendlyAddress(address));
+            const contractInfo = this.wallet!.findContractByAddress(Nimiq.Address.fromString(address));
             if (contractInfo) {
                 contractInfo.label = label || contractInfo.defaultLabel;
                 this.wallet!.setContract(contractInfo);
