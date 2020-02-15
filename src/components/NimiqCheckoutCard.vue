@@ -305,7 +305,7 @@ class NimiqCheckoutCard
             this.showStatusScreen = true;
             await this.updateBalancePromise;
         }
-        const nimiqAddress = Nimiq.Address.fromUserFriendlyAddress(address);
+        const nimiqAddress = Nimiq.Address.fromString(address);
         const senderAccount = this.wallets.find((wallet: WalletInfo) => wallet.id === walletId)!;
         const senderContract = senderAccount.findContractByAddress(nimiqAddress);
         const signer = senderAccount.findSignerForAddress(nimiqAddress)!;

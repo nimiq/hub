@@ -45,7 +45,7 @@ export class ParsedNimiqDirectPaymentOptions extends ParsedPaymentOptions<Curren
         let sender: Nimiq.Address | undefined;
         if (options.protocolSpecific.sender !== undefined) {
             try {
-                sender = Nimiq.Address.fromUserFriendlyAddress(options.protocolSpecific.sender);
+                sender = Nimiq.Address.fromString(options.protocolSpecific.sender);
             } catch (err) {
                 throw new Error('If provided, sender must be a valid user friendly address string');
             }
@@ -54,7 +54,7 @@ export class ParsedNimiqDirectPaymentOptions extends ParsedPaymentOptions<Curren
         let recipient: Nimiq.Address | undefined;
         if (options.protocolSpecific.recipient !== undefined) {
             try {
-                recipient = Nimiq.Address.fromUserFriendlyAddress(options.protocolSpecific.recipient);
+                recipient = Nimiq.Address.fromString(options.protocolSpecific.recipient);
             } catch (err) {
                 throw new Error('If provided, recipient must be a valid user friendly address string');
             }

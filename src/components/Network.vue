@@ -202,8 +202,8 @@ class Network extends Vue {
 
         return contracts.map((contract) => new VestingContractInfo(
             CONTRACT_DEFAULT_LABEL_VESTING,
-            Nimiq.Address.fromUserFriendlyAddress(contract.address),
-            Nimiq.Address.fromUserFriendlyAddress(contract.owner),
+            Nimiq.Address.fromString(contract.address),
+            Nimiq.Address.fromString(contract.owner),
             contract.start,
             Nimiq.Policy.coinsToSatoshis(contract.stepAmount),
             contract.stepBlocks,

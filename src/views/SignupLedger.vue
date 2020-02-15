@@ -190,7 +190,7 @@ export default class SignupLedger extends Vue {
             this.accountsToSelectFrom = currentlyCheckedAccounts.map((account) => new AccountInfo(
                 account.path,
                 LabelingMachine.labelAddress(account.address),
-                Nimiq.Address.fromUserFriendlyAddress(account.address),
+                Nimiq.Address.fromString(account.address),
                 0, // balance 0 because if user has to select an account, it's gonna be an unused one
             ));
         }
