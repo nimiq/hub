@@ -18,8 +18,8 @@
                     :key="paymentOptions.currency"
                     :class="{
                         confirmed: choosenCurrency === paymentOptions.currency,
-                        left: leftSlide === constructor.Currency.NIM,
-                        right: rightSlide === constructor.Currency.NIM
+                        left: leftCard === constructor.Currency.NIM,
+                        right: rightCard === constructor.Currency.NIM
                     }"
                     @chosen="chooseCurrency"
                     @expired="expired"/>
@@ -29,8 +29,8 @@
                     :key="paymentOptions.currency"
                     :class="{
                         confirmed: choosenCurrency === paymentOptions.currency,
-                        left: leftSlide === constructor.Currency.ETH,
-                        right: rightSlide === constructor.Currency.ETH
+                        left: leftCard === constructor.Currency.ETH,
+                        right: rightCard === constructor.Currency.ETH
                     }"
                     @chosen="chooseCurrency"
                     @expired="expired"/>
@@ -40,8 +40,8 @@
                     :key="paymentOptions.currency"
                     :class="{
                         confirmed: choosenCurrency === paymentOptions.currency,
-                        left: leftSlide === constructor.Currency.BTC,
-                        right: rightSlide === constructor.Currency.BTC
+                        left: leftCard === constructor.Currency.BTC,
+                        right: rightCard === constructor.Currency.BTC
                     }"
                     @chosen="chooseCurrency"
                     @expired="expired"/>
@@ -96,8 +96,8 @@ class Checkout extends Vue {
     @Static private request!: ParsedCheckoutRequest;
     private choosenCurrency: PublicCurrency | null = null;
     private selectedCurrency: PublicCurrency = PublicCurrency.NIM;
-    private leftSlide!: PublicCurrency;
-    private rightSlide!: PublicCurrency;
+    private leftCard: PublicCurrency | null = null;
+    private rightCard: PublicCurrency | null = null;
     private availableCurrencies: PublicCurrency[] = [];
     private readonly isIOS: boolean = BrowserDetection.isIOS();
     private disclaimerOverlayClosed: boolean = false;
@@ -106,13 +106,17 @@ class Checkout extends Vue {
     @Watch('selectedCurrency', { immediate: true })
     private updateUnselected() {
         const entries = this.request.paymentOptions.map((paymentOptions) => paymentOptions.currency);
-        const idSelected = entries.indexOf(this.selectedCurrency);
+        if (entries.length === 1) return;
 
-        const idLeft = idSelected === 0 ? entries.length - 1 : idSelected - 1;
-        const idRight = idSelected === entries.length - 1 ? 0 : idSelected + 1;
-
-        this.leftSlide = entries[idLeft];
-        this.rightSlide = entries[idRight];
+        const indexSelected = entries.indexOf(this.selectedCurrency);
+        if (entries.length === 2) {
+            // We have two cards. Determine whether the non selected is to the left or to the right.
+            this.leftCard = indexSelected === 1 ? entries[0] : null;
+            this.rightCard = indexSelected === 1 ? null : entries[1];
+        } else {
+            this.leftCard = entries[(indexSelected - 1 + entries.length) % entries.length];
+            this.rightCard = entries[(indexSelected + 1) % entries.length];
+        }
     }
 
     private async created() {
