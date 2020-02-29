@@ -40,25 +40,25 @@ yarn
 Compile and serve with hot-reload in the background for development:
 
 ```bash
-yarn run serve
+yarn serve
 ```
 
 Compile and lint continuously in the background for development:
 
 ```bash
-yarn run build --watch
+yarn build --watch
 ```
 
 Lint and fix files:
 
 ```bash
-yarn run lint
+yarn lint
 ```
 
 Run unit tests:
 
 ```bash
-yarn run test
+yarn test
 ```
 
 ### Build
@@ -66,7 +66,14 @@ yarn run test
 Compile and minify for production:
 
 ```bash
-yarn run build
+# Using local config
+yarn build
+
+# Using testnet config
+build=testnet yarn build
+
+# Using mainnet config
+build=mainnet yarn build
 ```
 
 ### Configuration
