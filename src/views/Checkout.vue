@@ -379,6 +379,7 @@ export default Checkout;
         box-shadow: 0 0 0 1rem var(--nimiq-card-bg);
     }
 
+    .carousel >>> .payment-option:not(.confirmed) .timer::after,
     .carousel >>> > :not(.selected) .payment-option:not(.confirmed) .nq-button::after,
     .carousel >>> > :not(.selected) .payment-option:not(.confirmed) .nq-button-s::after,
     .carousel >>> > :not(.selected) .payment-option:not(.confirmed) .nq-button-pill::after {
