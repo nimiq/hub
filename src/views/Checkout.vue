@@ -2,11 +2,12 @@
     <div class="container">
         <div class="spacer"></div>
         <Carousel
+            ref="carousel"
             :class="{
                 ios: isIOS,
                 'offset-currency-info-on-disabled': request.paymentOptions.length > 1,
             }"
-            :entries="request.paymentOptions.map((paymentOptions) => paymentOptions.currency)"
+            :entries="initialCurrencies"
             :animationDuration="500"
             :selected="selectedCurrency"
             :disabled="choosenCurrency !== null || availableCurrencies.length === 0"
@@ -98,10 +99,12 @@ class Checkout extends Vue {
     private selectedCurrency: PublicCurrency = PublicCurrency.NIM;
     private leftCard: PublicCurrency | null = null;
     private rightCard: PublicCurrency | null = null;
+    private initialCurrencies: PublicCurrency[] = [];
     private availableCurrencies: PublicCurrency[] = [];
     private readonly isIOS: boolean = BrowserDetection.isIOS();
     private disclaimerOverlayClosed: boolean = false;
     private screenFitsDisclaimer: boolean = true;
+    private dimensionsUpdateTimeout: number = -1;
 
     @Watch('selectedCurrency', { immediate: true })
     private updateUnselected() {
@@ -122,7 +125,8 @@ class Checkout extends Vue {
     private async created() {
         const $subtitle = document.querySelector('.logo .logo-subtitle')!;
         $subtitle.textContent = 'Checkout';
-        this.availableCurrencies = this.request.paymentOptions.map((option) => option.currency);
+        this.initialCurrencies = this.request.paymentOptions.map((option) => option.currency);
+        this.availableCurrencies = [ ...this.initialCurrencies ];
         document.title = 'Nimiq Checkout';
         this.disclaimerOverlayClosed = new RegExp(`(^| )${Checkout.DISCLAIMER_CLOSED_COOKIE}=`).test(document.cookie);
 
@@ -142,6 +146,7 @@ class Checkout extends Vue {
     private chooseCurrency(currency: PublicCurrency) {
         this.selectedCurrency = currency;
         this.choosenCurrency = currency;
+        (this.$refs.carousel as Carousel).updateDimensions();
     }
 
     private expired(currency: PublicCurrency) {
@@ -158,6 +163,12 @@ class Checkout extends Vue {
         const minWidth = 675; // Width below which disclaimer would break into three lines.
         const minHeight = 890; // Height at which two lines fit at bottom, also if logos over carousel shown.
         this.screenFitsDisclaimer = window.innerWidth >= minWidth && window.innerHeight >= minHeight;
+        // Throttle calls to carousel.updateDimensions as its an expensive call
+        clearTimeout(this.dimensionsUpdateTimeout);
+        this.dimensionsUpdateTimeout = window.setTimeout(
+            () => (this.$refs.carousel as Carousel).updateDimensions(),
+            150,
+        );
     }
 }
 
