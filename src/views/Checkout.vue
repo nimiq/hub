@@ -220,7 +220,7 @@ export default Checkout;
         transition:
             transform .5s cubic-bezier(.67,0,.16,1),
             opacity .25s var(--nimiq-ease);
-        transform: scale(1) translateY(0rem);
+        transform: scale(1) translateY(0);
     }
 
     .carousel >>> > :not(.selected) .currency-info {
@@ -245,7 +245,7 @@ export default Checkout;
             --currency-info-mobile-scale: .8;
             transform:
                 scale(var(--currency-info-mobile-scale))
-                translateY(1.4rem);
+                translateY(calc(var(--currency-info-translate-y) / -5));
         }
 
         .carousel >>> > :not(.selected) .currency-info {
@@ -291,6 +291,10 @@ export default Checkout;
             width: 100vw;
             max-width: none;
             margin: 0;
+        }
+
+        .carousel >>> .currency-info {
+            --currency-info-translate-y: calc(-100vw / 7.2);
         }
     }
 
