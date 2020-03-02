@@ -79,7 +79,7 @@ export default class WalletInfoCollector {
             onUpdate(walletInfo, []);
             hasActivity = balances.get(singleAccount.address)! > 0
                 || (await WalletInfoCollector._networkInitializationPromise!
-                    .then(() => NetworkClient.Instance.requestTransactionReceipts(singleAccount.address)))
+                    .then(() => NetworkClient.Instance.requestTransactionReceipts(singleAccount.address, 1)))
                     .length > 0;
         }
 
@@ -200,7 +200,8 @@ export default class WalletInfoCollector {
                     accountsToCheck.map(async (account) => {
                         try {
                             await WalletInfoCollector._networkInitializationPromise;
-                            const receipts = await NetworkClient.Instance.requestTransactionReceipts(account.address);
+                            const receipts = await NetworkClient.Instance
+                                .requestTransactionReceipts(account.address, 1);
                             if (receipts.length > 0) {
                                 foundAccounts.push(account);
                                 hasActivity = true;
