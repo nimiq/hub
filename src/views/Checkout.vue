@@ -208,7 +208,7 @@ export default Checkout;
     }
 
     .carousel >>> .payment-option:not(.confirmed) .nq-card {
-        transition: transform .5s var(--nimiq-ease);
+        transition: transform .5s cubic-bezier(.67, 0, .16, 1);
     }
     .carousel >>> > :not(.selected) .left .nq-card {
         transform: translateX(8rem);
