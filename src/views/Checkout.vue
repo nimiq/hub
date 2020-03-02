@@ -196,7 +196,9 @@ export default Checkout;
     }
 
     .carousel {
-        width: 100%;
+        --currency-info-height: 16rem;
+
+        width: 100vw;
         box-sizing: border-box;
         padding: 0;
         overflow: hidden;
@@ -204,7 +206,7 @@ export default Checkout;
     }
 
     .carousel.disabled.offset-currency-info-on-disabled {
-        margin-top: -16.125rem; /* currency-info height */
+        margin-top: calc(-1 * var(--currency-info-height));
     }
 
     .carousel >>> .payment-option:not(.confirmed) .nq-card {
@@ -219,7 +221,7 @@ export default Checkout;
     }
 
     .carousel >>> .payment-option {
-        padding-bottom: 4rem;
+        padding-bottom: 5rem;
     }
 
     .carousel >>> .currency-info {
@@ -244,12 +246,16 @@ export default Checkout;
 
     /* Mobile Layout */
     @media (max-width: 500px) {
+        .carousel {
+            --currency-info-height: 10rem;
+        }
+
         .carousel >>> * {
             -webkit-tap-highlight-color: transparent;
         }
 
         .carousel >>> .payment-option {
-            padding: 0;
+            padding-bottom: 3rem;
         }
 
         .carousel >>> .currency-info {
@@ -298,6 +304,10 @@ export default Checkout;
     }
 
     @media (max-width: 450px) {
+        .carousel >>> .payment-option {
+            padding-bottom: 0;
+        }
+
         .carousel >>> .nq-card {
             width: 100vw;
             max-width: none;
@@ -306,6 +316,11 @@ export default Checkout;
 
         .carousel >>> .currency-info {
             --currency-info-translate-y: calc(-100vw / 7.2);
+        }
+
+        /* make carousel bottom align on mobile */
+        .carousel ~ .spacer {
+            display: none;
         }
     }
 
@@ -463,11 +478,10 @@ export default Checkout;
     }
 
     .global-close {
-        margin-top: 1rem;
+        margin-top: 0;
     }
 
     .disclaimer {
-        width: calc(100% - 3rem);
         transition: opacity .3s var(--nimiq-ease), max-height .3s var(--nimiq-ease);
     }
 
