@@ -245,6 +245,10 @@ export default Checkout;
         opacity: 0;
     }
 
+    .carousel.disabled >>> .currency-info * {
+        pointer-events: none !important;
+    }
+
     /* Mobile Layout */
     @media (max-width: 500px) {
         .carousel.has-currency-info {
