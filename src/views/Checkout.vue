@@ -5,7 +5,7 @@
             ref="carousel"
             :class="{
                 ios: isIOS,
-                'has-currency-info': request.paymentOptions.length > 1,
+                'has-currency-info': initialCurrencies.length > 1,
             }"
             :entries="initialCurrencies"
             :animationDuration="500"
@@ -80,7 +80,7 @@ import NimiqCheckoutCard from '../components/NimiqCheckoutCard.vue';
 import { Currency as PublicCurrency } from '../lib/PublicRequestTypes';
 import { State as RpcState } from '@nimiq/rpc';
 import { Static } from '../lib/StaticStore';
-import { ERROR_CANCELED } from '../lib/Constants';
+import { ERROR_CANCELED, HISTORY_KEY_SELECTED_CURRENCY } from '../lib/Constants';
 
 @Component({components: {
     ArrowLeftSmallIcon,
@@ -125,7 +125,11 @@ class Checkout extends Vue {
     private async created() {
         const $subtitle = document.querySelector('.logo .logo-subtitle')!;
         $subtitle.textContent = 'Checkout';
-        this.initialCurrencies = this.request.paymentOptions.map((option) => option.currency);
+        this.initialCurrencies = this.request.paymentOptions.map((option) => option.currency).filter((currency) =>
+            !history.state
+            || !history.state[HISTORY_KEY_SELECTED_CURRENCY]
+            || history.state[HISTORY_KEY_SELECTED_CURRENCY] === currency,
+        );
         this.availableCurrencies = [ ...this.initialCurrencies ];
         document.title = 'Nimiq Checkout';
         this.disclaimerOverlayClosed = new RegExp(`(^| )${Checkout.DISCLAIMER_CLOSED_COOKIE}=`).test(document.cookie);
