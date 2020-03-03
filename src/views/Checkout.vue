@@ -5,7 +5,7 @@
             ref="carousel"
             :class="{
                 ios: isIOS,
-                'offset-currency-info-on-disabled': request.paymentOptions.length > 1,
+                'has-currency-info': request.paymentOptions.length > 1,
             }"
             :entries="initialCurrencies"
             :animationDuration="500"
@@ -196,7 +196,7 @@ export default Checkout;
     }
 
     .carousel {
-        --currency-info-height: 16rem;
+        --currency-info-height: 0rem;
 
         width: 100vw;
         box-sizing: border-box;
@@ -205,7 +205,8 @@ export default Checkout;
         transition: margin-top 1s var(--nimiq-ease);
     }
 
-    .carousel.disabled.offset-currency-info-on-disabled {
+    .carousel.disabled.has-currency-info {
+        --currency-info-height: 16rem;
         margin-top: calc(-1 * var(--currency-info-height));
     }
 
@@ -229,7 +230,7 @@ export default Checkout;
         flex-direction: column;
         align-items: center;
 
-        --currency-info-translate-y: -8.75rem;
+        --currency-info-translate-y: -8.875rem;
         transition:
             transform .5s cubic-bezier(.67,0,.16,1),
             opacity .25s var(--nimiq-ease);
@@ -246,7 +247,7 @@ export default Checkout;
 
     /* Mobile Layout */
     @media (max-width: 500px) {
-        .carousel {
+        .carousel.has-currency-info {
             --currency-info-height: 10rem;
         }
 
@@ -285,25 +286,19 @@ export default Checkout;
                 translateX(-8rem);
         }
 
-        .carousel >>> .confirmed .nq-card {
-            /* 56px for mobile browser address bar */
-            /* 7.5rem for Nimiq logo & cancel button */
-            --iosBottomBar: 0px;
-            height: calc(100vh - 7.5rem - 56px - var(--iosBottomBar));
-            min-height: 71rem;
-        }
-
         .carousel >>> .currency-info .nq-h1 {
             margin-top: 0;
-        }
-
-        /* IOS specific */
-        .carousel.ios >>> .confirmed .nq-card {
-            --iosBottomBar: 74px;
         }
     }
 
     @media (max-width: 450px) {
+        .carousel {
+            /* On mobile align currency infos via perspective as the positioning of the background cards doesn't really
+            matter and alignment via translations would be too complicated as they depend on the card width and height
+            which vary on mobile. */
+            perspective-origin: 50% calc(var(--currency-info-height) + 2rem);
+        }
+
         .carousel >>> .payment-option {
             padding-bottom: 0;
         }
@@ -315,7 +310,27 @@ export default Checkout;
         }
 
         .carousel >>> .currency-info {
-            --currency-info-translate-y: calc(-100vw / 7.2);
+            --currency-info-translate-y: -.9rem;
+        }
+
+        /* Make cards full height on mobile */
+        .carousel >>> .nq-card {
+            --ios-bottom-bar-height: 0px;
+            /* 56px for mobile browser address bar */
+            /* 7.5rem for Nimiq logo & cancel button */
+            --available-mobile-height: calc(100vh - 7.5rem - 56px - var(--ios-bottom-bar-height));
+            /* 1.5rem for additional padding to header */
+            height: calc(var(--available-mobile-height) - var(--currency-info-height) - 1.5rem);
+            min-height: 70.5rem;
+        }
+
+        /* IOS specific */
+        .carousel.ios >>> .nq-card {
+            --ios-bottom-bar-height: 74px;
+        }
+
+        .carousel >>> .confirmed .nq-card {
+            height: var(--available-mobile-height);
         }
 
         /* make carousel bottom align on mobile */
