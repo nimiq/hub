@@ -53,7 +53,7 @@
                         <div class="amounts">
                             <Amount class="crypto nq-light-blue"
                                 :currency="paymentOptions.currency"
-                                :totalDecimals="paymentOptions.decimals"
+                                :currencyDecimals="paymentOptions.decimals"
                                 :minDecimals="0"
                                 :maxDecimals="paymentOptions.decimals < 8 ? paymentOptions.decimals : 8"
                                 :amount="paymentOptions.amount"
