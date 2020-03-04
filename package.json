@@ -18,7 +18,7 @@
         "@nimiq/keyguard-client": "^1.2.0",
         "@nimiq/ledgerjs": "https://github.com/nimiq/ledger-api.git",
         "@nimiq/network-client": "^0.4.0",
-        "@nimiq/rpc": "^0.4.0",
+        "@nimiq/rpc": "^0.4.1",
         "@nimiq/style": "^0.7.5",
         "@nimiq/utils": "^0.4.6",
         "@nimiq/vue-components": "https://github.com/nimiq/vue-components.git#build/hub",
