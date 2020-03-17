@@ -989,9 +989,9 @@
   dependencies:
     big-integer "^1.6.44"
 
-"@nimiq/vue-components@https://github.com/nimiq/vue-components.git#build/hub":
+"@nimiq/vue-components@github:nimiq/vue-components#build/hub":
   version "0.1.0"
-  resolved "https://github.com/nimiq/vue-components.git#ebfd1c5957b5ebbf16a1ff6a22ce5aa9af409c4e"
+  resolved "https://codeload.github.com/nimiq/vue-components/tar.gz/a6519d7c23b3773fb2df9d2ac78da3314a0c1586"
   dependencies:
     "@nimiq/style" "^0.7.6"
     big-integer "^1.6.44"
@@ -8341,7 +8341,12 @@ rc@^1.2.7:
     minimist "^1.2.0"
     strip-json-comments "~2.0.1"
 
-react-is@^16.8.1, react-is@^16.8.4:
+react-is@^16.8.1:
+  version "16.13.0"
+  resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.0.tgz#0f37c3613c34fe6b37cd7f763a0d6293ab15c527"
+  integrity sha512-GFMtL0vHkiBv9HluwNZTggSn/sCyEt9n02aM0dSAjGGyqyNlAyftYm4phPxdvCigG15JreC5biwxCgTAJZ7yAA==
+
+react-is@^16.8.4:
   version "16.12.0"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.12.0.tgz#2cc0fe0fba742d97fd527c42a13bec4eeb06241c"
   integrity sha512-rPCkf/mWBtKc97aLL9/txD8DZdemK0vkA3JMLShjlJB3Pj3s+lpf1KaBzMfQrAmhMQB0n1cU/SUGgKKBCe837Q==

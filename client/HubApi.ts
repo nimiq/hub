@@ -80,7 +80,7 @@ export default class HubApi<DB extends BehaviorType = BehaviorType.POPUP> { // D
             `left=${window.innerWidth / 2 - 400},top=75,width=800,height=850,location=yes,dependent=yes`) as any;
         // If no default behavior specified, use a default behavior with increased window height for checkout.
         this._checkoutDefaultBehavior = defaultBehavior || new PopupRequestBehavior(
-            `left=${window.innerWidth / 2 - 400},top=50,width=800,height=890,location=yes,dependent=yes`) as any;
+            `left=${window.innerWidth / 2 - 400},top=50,width=800,height=895,location=yes,dependent=yes`) as any;
         this._iframeBehavior = new IFrameRequestBehavior();
 
         // Check for RPC results in the URL

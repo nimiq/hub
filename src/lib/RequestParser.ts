@@ -1,4 +1,3 @@
-import { HISTORY_KEY_SELECTED_CURRENCY } from './Constants';
 import { isMilliseconds, isPriviledgedOrigin } from './Helpers';
 import { State } from '@nimiq/rpc';
 import {
@@ -226,12 +225,7 @@ export class RequestParser {
                                 default:
                                     throw new Error(`PaymentType ${(option as any).type} not supported`);
                             }
-                        }).filter((parsedPaymentOption) =>
-                            // First parse all payment options to run complete input validation, then if one
-                            // currency had been selected before keep only that one.
-                            !history.state || !history.state[HISTORY_KEY_SELECTED_CURRENCY]
-                                || history.state[HISTORY_KEY_SELECTED_CURRENCY] === parsedPaymentOption.currency,
-                        ),
+                        }),
                     } as ParsedCheckoutRequest;
                 }
             case RequestType.ONBOARD:

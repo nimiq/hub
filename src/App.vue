@@ -142,6 +142,11 @@ export default class App extends Vue {
             margin: 0;
         }
 
+        .global-close::before {
+            /* avoid that the button overflows the page, causing vertical scrolling on mobile */
+            right: -1rem;
+        }
+
         .nq-card {
             margin: 0;
             border-bottom-left-radius: 0;

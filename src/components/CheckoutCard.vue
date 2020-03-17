@@ -24,6 +24,7 @@ export default class CheckoutCard<
     protected checkNetworkInterval: number = -1;
     protected paymentState: PaymentState = PaymentState.NOT_FOUND;
     protected selected: boolean = false;
+    protected hasCurrencyInfo!: boolean;
     protected showStatusScreen: boolean = false;
     protected statusScreenState = StatusScreen.State.LOADING;
     protected statusScreenTitle: string = '';
@@ -33,6 +34,9 @@ export default class CheckoutCard<
     protected statusScreenMainAction: () => void = () => console.warn('statusScreenMainAction not set.');
 
     protected async created() {
+        this.hasCurrencyInfo = this.request.paymentOptions.length > 1
+            && (!history.state || !history.state[HISTORY_KEY_SELECTED_CURRENCY]);
+
         // First fetch current state to check whether user already paid and synchronize the time. We can only do this if
         // a callbackUrl was provided. Note that for NIM no merchant server callbackUrl is strictly required as for NIM
         // we can detect payments ourselves (see RequestParser).
