@@ -28,7 +28,7 @@ export default class SimpleSuccess extends Vue {
     get text() {
         switch (this.$route.name) {
             case 'change-password-success':
-                return 'Your password was changed.';
+                return this.$t('Your password was changed.') as string;
             default:
                 throw new Error('No matching route');
         }

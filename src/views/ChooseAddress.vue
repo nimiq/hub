@@ -1,10 +1,10 @@
 <template>
     <div class="container">
        <SmallPage>
-            <h1 class="nq-h1">Choose an Address</h1>
+            <h1 class="nq-h1">{{ $t('Choose an Address') }}</h1>
 
             <div class="request-info nq-text">
-                {{ request.appName }} is asking for an Address to use.
+                {{ $t('{appName} is asking for an Address to use.', { appName: request.appName }) }}
             </div>
 
             <AccountSelector
@@ -16,7 +16,7 @@
 
         <button class="global-close nq-button-s" @click="close">
             <ArrowLeftSmallIcon/>
-            Back to {{request.appName}}
+            {{ $t('Back to {appName}', { appName: request.appName} }) }}
         </button>
     </div>
 </template>

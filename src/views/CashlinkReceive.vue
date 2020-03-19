@@ -18,7 +18,7 @@
                 />
             </transition>
             <div v-if="cashlink && hasWallets" class="card-content has-account" :class="{ 'account-selector-shown': !!isAccountSelectorOpened }">
-                <PageHeader class="blur-target">You received a Cashlink!</PageHeader>
+                <PageHeader class="blur-target">{{ $t('You received a Cashlink!') }}</PageHeader>
                 <PageBody>
                     <div class="accounts" :class="{'single-address': addressCount === 1}">
                         <Account class="cashlink-account blur-target" layout="column"
@@ -26,7 +26,7 @@
                             label="Cashlink"/>
                         <ArrowRightIcon class="arrow-right blur-target"/>
                         <div v-if="addressCount > 1" class="recipient-button blur-target">
-                            <button class="nq-button-s" @click="isAccountSelectorOpened = true;">Change</button>
+                            <button class="nq-button-s" @click="isAccountSelectorOpened = true;">{{ $t('Change') }}</button>
                             <Account layout="column"
                                 :address="activeAccount.userFriendlyAddress"
                                 :label="activeAccount.label"/>
@@ -61,7 +61,7 @@
                 <transition name="transition-fade">
                     <div v-if="isAccountSelectorOpened" class="overlay">
                         <CloseButton class="top-right" @click="isAccountSelectorOpened = false" />
-                        <PageHeader>Choose an Address</PageHeader>
+                        <PageHeader>{{ $t('Choose an Address') }}</PageHeader>
                         <AccountSelector
                             :wallets="processedWallets"
                             :disableContracts="true"
@@ -86,9 +86,9 @@
                 </div>
 
                 <PageFooter>
-                    <button class="nq-button light-blue" @click="callHub('signup')">Create Account</button>
+                    <button class="nq-button light-blue" @click="callHub('signup')">{{{ $t('Create Account') }}}</button>
                     <a class="nq-link skip" href="javascript:void(0)" @click="callHub('onboard')">
-                        Login to existing Account
+                        {{ $t('Login to existing Account') }}
                         <CaretRightSmallIcon/>
                     </a>
                 </PageFooter>
@@ -106,8 +106,8 @@
                 <h1 class="nq-h1">{{ welcomeHeadline }}</h1>
                 <p class="nq-text">
                     {{ welcomeText }}
-                    Create an Account and claim your money.
-                    <span class="secondary-text">30&nbsp;seconds, no&nbsp;email, no&nbsp;download.</span>
+                    {{ $t('Create an Account and claim your money.') }}
+                    <span class="secondary-text">{{ $t('30&nbsp;seconds, no&nbsp;email, no&nbsp;download.') /* TODO: check if this works properly */ }}</span>
                 </p>
             </div>
         </div>
@@ -204,8 +204,8 @@ class CashlinkReceive extends Vue {
         // Fail if no Cashlink was found
         if (!this.cashlink) {
             this.statusState = StatusScreen.State.WARNING;
-            this.statusTitle = '404 - Cash not found';
-            this.statusMessage = 'This is not a valid Cashlink, sorry.';
+            this.statusTitle = this.$t('404 - Cash not found') as string;
+            this.statusMessage = this.$t('This is not a valid Cashlink, sorry.') as string;
             return;
         }
 
@@ -234,8 +234,8 @@ class CashlinkReceive extends Vue {
     private async claim() {
         // Start loading screen
         this.statusState = StatusScreen.State.LOADING;
-        this.statusTitle = 'Claiming Cashlink';
-        this.statusStatus = 'Connecting to Nimiq...';
+        this.statusTitle = this.$t('Claiming Cashlink') as string;
+        this.statusStatus = this.$t('Connecting to Nimiq...') as string;
 
         this.isClaiming = true;
 
@@ -256,7 +256,7 @@ class CashlinkReceive extends Vue {
 
         // Show success screen and redirect to Safe
         this.statusState = StatusScreen.State.SUCCESS;
-        this.statusTitle = 'Cashlink claimed!';
+        this.statusTitle = this.$t('Cashlink claimed!') as string;
 
         window.setTimeout(() => this.redirectToSafe(), StatusScreen.SUCCESS_REDIRECT_DELAY);
     }
@@ -296,17 +296,17 @@ class CashlinkReceive extends Vue {
     }
 
     private get buttonText(): string {
-        if (!this.isCashlinkStateKnown) return 'Checking status';
-        else if (this.canCashlinkBeClaimed) return 'Claim Cashlink';
-        else if (this.cashlink!.state === CashlinkState.UNCHARGED) return 'Cashlink not funded';
-        else if (this.cashlink!.state === CashlinkState.CHARGING) return 'Cashlink funding';
+        if (!this.isCashlinkStateKnown) return this.$t('Checking status') as string;
+        else if (this.canCashlinkBeClaimed) return this.$t('Claim Cashlink') as string;
+        else if (this.cashlink!.state === CashlinkState.UNCHARGED) return this.$t('Cashlink not funded') as string;
+        else if (this.cashlink!.state === CashlinkState.CHARGING) return this.$t('Cashlink funding') as string;
         else {
             if (!this.isClaiming) {
                 this.statusState = StatusScreen.State.WARNING;
-                this.statusTitle = 'Cashlink is empty';
-                this.statusMessage = 'This Cashlink has already been claimed.';
+                this.statusTitle = this.$t('Cashlink is empty') as string;
+                this.statusMessage = this.$t('This Cashlink has already been claimed.') as string;
             }
-            return 'Cashlink empty :(';
+            return this.$t('Cashlink empty :(') as string;
         }
     }
 
@@ -342,23 +342,23 @@ class CashlinkReceive extends Vue {
             case CashlinkTheme.GENERIC:
             case CashlinkTheme.CHRISTMAS:
             case CashlinkTheme.LUNAR_NEW_YEAR:
-                return 'You are loved';
+                return this.$t('You are loved') as string;
             case CashlinkTheme.EASTER:
                 return 'Happy Easter!';
             case CashlinkTheme.BIRTHDAY:
                 return 'Happy birthday!';
-            default: return 'Claim your Cash';
+            default: return this.$t('Claim your Cash') as string;
         }
     }
 
     private get welcomeText(): string {
         if (this.cashlink && this.cashlink.hasEncodedTheme) {
-            return 'Congrats, you received a Nimiq Gift Card.';
+            return this.$t('Congrats, you received a Nimiq Gift Card.') as string;
         } else {
             const theme = this.cashlink ? this.cashlink.theme : CashlinkTheme.STANDARD;
             return theme === CashlinkTheme.STANDARD
-                ? 'Congrats, you just opened a Nimiq Cashlink.'
-                : 'Congrats, somebody gifted you a Nimiq Cashlink.';
+                ? this.$t('Congrats, you just opened a Nimiq Cashlink.') as string
+                : this.$t('Congrats, somebody gifted you a Nimiq Cashlink.') as string;
         }
     }
 

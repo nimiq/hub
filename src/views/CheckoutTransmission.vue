@@ -32,7 +32,7 @@ export default class CheckoutTransmission extends Vue {
     @Static private keyguardRequest!: KeyguardClient.SignTransactionRequest;
     @State private keyguardResult!: KeyguardClient.SignTransactionResult;
 
-    private status: string = 'Connecting to network...';
+    private status: string = this.$t('Connecting to network...') as string;
     private state = StatusScreen.State.LOADING;
     private message: string = '';
 
@@ -60,17 +60,21 @@ export default class CheckoutTransmission extends Vue {
 
     private addConsensusListeners() {
         const network = (this.$refs.network as Network);
-        network.$on(Network.Events.API_READY, () => this.status = 'Contacting seed nodes...');
-        network.$on(Network.Events.CONSENSUS_SYNCING, () => this.status = 'Syncing consensus...');
-        network.$on(Network.Events.CONSENSUS_ESTABLISHED, () => this.status = 'Sending transaction...');
-        network.$on(Network.Events.TRANSACTION_PENDING, () => this.status = 'Awaiting receipt confirmation...');
+        network.$on(Network.Events.API_READY, () =>
+            this.status = this.$t('Contacting seed nodes...') as string);
+        network.$on(Network.Events.CONSENSUS_SYNCING, () =>
+            this.status = this.$t('Syncing consensus...') as string);
+        network.$on(Network.Events.CONSENSUS_ESTABLISHED, () =>
+            this.status = this.$t('Sending transaction...') as string);
+        network.$on(Network.Events.TRANSACTION_PENDING, () =>
+            this.status = this.$t('Awaiting receipt confirmation...') as string);
     }
 
     private get title(): string {
         switch (this.state) {
-            case StatusScreen.State.SUCCESS: return 'Payment successful.';
+            case StatusScreen.State.SUCCESS: return this.$t('Payment successful.') as string;
             case StatusScreen.State.WARNING: return 'Something went wrong';
-            default: return 'Processing your payment';
+            default: return this.$t('Processing your payment') as string;
         }
     }
 

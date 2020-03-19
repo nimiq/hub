@@ -1,6 +1,10 @@
+# 
 msgid ""
 msgstr ""
+"Language-Team: Spanish (https://www.transifex.com/nimiq-foundation/teams/107400/es/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
+"Language: es\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: src/views/ChooseAddress.vue:7
 msgid "{appName} is asking for an Address to use."
@@ -55,20 +59,15 @@ msgstr ""
 msgid "Address detection failed. Retrying..."
 msgstr ""
 
-#: src/views/CashlinkManage.vue:145
-#: src/views/CheckoutTransmission.vue:52
+#: src/views/CashlinkManage.vue:145 src/views/CheckoutTransmission.vue:52
 msgid "Awaiting receipt confirmation..."
 msgstr ""
 
-#: src/views/AddAccountSelection.vue:19
-#: src/views/AddAddressLedger.vue:23
-#: src/views/CashlinkCreate.vue:83
-#: src/views/ChooseAddress.vue:19
+#: src/views/AddAccountSelection.vue:19 src/views/AddAddressLedger.vue:23
+#: src/views/CashlinkCreate.vue:83 src/views/ChooseAddress.vue:19
 #: src/views/ErrorHandlerUnsupportedLedger.vue:11
-#: src/views/LogoutLedger.vue:24
-#: src/views/OnboardingSelector.vue:85
-#: src/views/SignMessage.vue:24
-#: src/views/SignTransactionLedger.vue:105
+#: src/views/LogoutLedger.vue:24 src/views/OnboardingSelector.vue:85
+#: src/views/SignMessage.vue:24 src/views/SignTransactionLedger.vue:105
 msgid "Back to {appName}"
 msgstr ""
 
@@ -97,7 +96,9 @@ msgid "Backed Up"
 msgstr ""
 
 #: src/views/CashlinkCreate.vue:20
-msgid "By adding a transation fee, you can influence how fast your transaction will be processed."
+msgid ""
+"By adding a transation fee, you can influence how fast your transaction will"
+" be processed."
 msgstr ""
 
 #: src/views/Checkout.vue:53
@@ -156,13 +157,11 @@ msgstr ""
 msgid "Checking status"
 msgstr ""
 
-#: src/views/AddAccountSelection.vue:5
-#: src/views/AddAddressLedger.vue:13
+#: src/views/AddAccountSelection.vue:5 src/views/AddAddressLedger.vue:13
 msgid "Choose a new Address"
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:64
-#: src/views/ChooseAddress.vue:4
+#: src/views/CashlinkReceive.vue:64 src/views/ChooseAddress.vue:4
 msgid "Choose an Address"
 msgstr ""
 
@@ -234,18 +233,15 @@ msgstr ""
 msgid "Congrats, you received a Nimiq Gift Card."
 msgstr ""
 
-#: src/components/LedgerUi.vue:190
-#: src/components/OnboardingMenu.vue:5
+#: src/components/LedgerUi.vue:190 src/components/OnboardingMenu.vue:5
 msgid "Connect Ledger"
 msgstr ""
 
-#: src/views/Migrate.vue:142
-#: src/views/Migrate.vue:282
+#: src/views/Migrate.vue:142 src/views/Migrate.vue:282
 msgid "Connecting to Keyguard..."
 msgstr ""
 
-#: src/views/CheckoutTransmission.vue:25
-#: src/views/LoginSuccess.vue:43
+#: src/views/CheckoutTransmission.vue:25 src/views/LoginSuccess.vue:43
 msgid "Connecting to network..."
 msgstr ""
 
@@ -253,8 +249,7 @@ msgstr ""
 msgid "Connecting to Nimiq..."
 msgstr ""
 
-#: src/components/NimiqCheckoutCard.vue:273
-#: src/views/CashlinkManage.vue:139
+#: src/components/NimiqCheckoutCard.vue:273 src/views/CashlinkManage.vue:139
 #: src/views/CheckoutTransmission.vue:46
 msgid "Contacting seed nodes..."
 msgstr ""
@@ -263,10 +258,8 @@ msgstr ""
 msgid "Contacts are not affected."
 msgstr ""
 
-#: src/components/NotEnoughCookieSpace.vue:8
-#: src/views/LoginSuccess.vue:143
-#: src/views/LoginSuccess.vue:180
-#: src/views/SignupLedger.vue:132
+#: src/components/NotEnoughCookieSpace.vue:8 src/views/LoginSuccess.vue:143
+#: src/views/LoginSuccess.vue:180 src/views/SignupLedger.vue:132
 msgid "Continue"
 msgstr ""
 
@@ -282,8 +275,7 @@ msgstr ""
 msgid "Create a Cashlink"
 msgstr ""
 
-#: src/components/OnboardingMenu.vue:17
-#: src/views/CashlinkReceive.vue:89
+#: src/components/OnboardingMenu.vue:17 src/views/CashlinkReceive.vue:89
 msgid "Create Account"
 msgstr ""
 
@@ -336,8 +328,7 @@ msgstr ""
 msgid "fee"
 msgstr ""
 
-#: src/components/LedgerUi.vue:126
-#: src/views/SignupLedger.vue:102
+#: src/components/LedgerUi.vue:126 src/views/SignupLedger.vue:102
 msgid "Fetching Addresses"
 msgstr ""
 
@@ -362,11 +353,13 @@ msgid "Go back to shop"
 msgstr ""
 
 #: src/views/SignupLedger.vue:120
-msgid "Imported {count} address so far... | Imported {count} addresses so far..."
+msgid ""
+"Imported {count} address so far... | Imported {count} addresses so far..."
 msgstr ""
 
 #: src/views/LoginSuccess.vue:154
-msgid "Imported {count} address so far...| Imported {count} addresses so far..."
+msgid ""
+"Imported {count} address so far...| Imported {count} addresses so far..."
 msgstr ""
 
 #: src/components/CheckoutCard.vue:190
@@ -445,7 +438,8 @@ msgid "Nimiq implements the ImageWallet standard with the Nimiq Login File."
 msgstr ""
 
 #: src/views/Migrate.vue:8
-msgid "Nimiq just got better! The new design comes with a batch of new features."
+msgid ""
+"Nimiq just got better! The new design comes with a batch of new features."
 msgstr ""
 
 #: src/components/CurrencyInfo.vue:9
@@ -501,11 +495,11 @@ msgid "Please cancel the request on your Ledger"
 msgstr ""
 
 #: src/components/CheckoutCard.vue:192
-msgid "Please contact the merchant for a refund. Restart to pay for your order."
+msgid ""
+"Please contact the merchant for a refund. Restart to pay for your order."
 msgstr ""
 
-#: src/components/CheckoutCard.vue:169
-#: src/views/SignTransactionLedger.vue:84
+#: src/components/CheckoutCard.vue:169 src/views/SignTransactionLedger.vue:84
 msgid "Please go back to the shop and restart the process."
 msgstr ""
 
@@ -562,8 +556,7 @@ msgstr ""
 msgid "Send your transaction"
 msgstr ""
 
-#: src/views/CashlinkManage.vue:143
-#: src/views/CheckoutTransmission.vue:50
+#: src/views/CashlinkManage.vue:143 src/views/CheckoutTransmission.vue:50
 msgid "Sending transaction..."
 msgstr ""
 
@@ -595,8 +588,7 @@ msgstr ""
 msgid "Storing your new Accounts..."
 msgstr ""
 
-#: src/components/NimiqCheckoutCard.vue:275
-#: src/views/CashlinkManage.vue:141
+#: src/components/NimiqCheckoutCard.vue:275 src/views/CashlinkManage.vue:141
 #: src/views/CheckoutTransmission.vue:48
 msgid "Syncing consensus..."
 msgstr ""
@@ -610,7 +602,9 @@ msgid "The offer expired."
 msgstr ""
 
 #: src/views/Migrate.vue:50
-msgid "The update is easy, fast and secure. Still – it’s a good time to check on your Recovery Words."
+msgid ""
+"The update is easy, fast and secure. Still – it’s a good time to check on "
+"your Recovery Words."
 msgstr ""
 
 #: src/views/Migrate.vue:37
@@ -630,11 +624,17 @@ msgid "This is your account with your first address in it."
 msgstr ""
 
 #: src/views/CashlinkCreate.vue:63
-msgid "This message will be stored in the Cashlink.                                It won’t be part of the public Blockchain and might get lost after the Cashlink was claimed."
+msgid ""
+"This message will be stored in the Cashlink.                                "
+"It won’t be part of the public Blockchain and might get lost after the "
+"Cashlink was claimed."
 msgstr ""
 
 #: src/views/Checkout.vue:64
-msgid "This Nimiq interface is non-custodial and solely used to bridge the customer with the merchant directly (P2P). Payment and order fulfillment are sole responsibility of the customer and merchant respectively."
+msgid ""
+"This Nimiq interface is non-custodial and solely used to bridge the customer"
+" with the merchant directly (P2P). Payment and order fulfillment are sole "
+"responsibility of the customer and merchant respectively."
 msgstr ""
 
 #: src/views/ErrorHandlerUnsupportedLedger.vue:53
@@ -646,7 +646,8 @@ msgid "Time to grow"
 msgstr ""
 
 #: src/views/ErrorHandlerUnsupportedLedger.vue:51
-msgid "To change the PIN of your Ledger please go to the settings on your device."
+msgid ""
+"To change the PIN of your Ledger please go to the settings on your device."
 msgstr ""
 
 #: src/components/NimiqCheckoutCard.vue:59
@@ -654,7 +655,9 @@ msgid "Try it now"
 msgstr ""
 
 #: src/components/NotEnoughCookieSpace.vue:7
-msgid "Unfortunately, due to restrictions of Safari you cannot add more accounts and/or addresses. Please log out of unused accounts to free up space."
+msgid ""
+"Unfortunately, due to restrictions of Safari you cannot add more accounts "
+"and/or addresses. Please log out of unused accounts to free up space."
 msgstr ""
 
 #: src/views/LoginSuccess.vue:139
@@ -675,13 +678,11 @@ msgstr ""
 msgid "Updating Keyguard..."
 msgstr ""
 
-#: src/views/Migrate.vue:141
-#: src/views/Migrate.vue:281
+#: src/views/Migrate.vue:141 src/views/Migrate.vue:281
 msgid "Updating your Accounts"
 msgstr ""
 
-#: src/views/LoginSuccess.vue:179
-#: src/views/SignupLedger.vue:127
+#: src/views/LoginSuccess.vue:179 src/views/SignupLedger.vue:127
 msgid "Used addresses without balance might have been missed."
 msgstr ""
 
@@ -747,7 +748,6 @@ msgstr ""
 msgid "Your Nimiq App is outdated. "
 msgstr ""
 
-#: src/views/LoginSuccess.vue:188
-#: src/views/SimpleSuccess.vue:31
+#: src/views/LoginSuccess.vue:188 src/views/SimpleSuccess.vue:31
 msgid "Your password was changed."
 msgstr ""

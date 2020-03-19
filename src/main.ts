@@ -1,5 +1,4 @@
 import Vue from 'vue';
-import VueI18n from 'vue-i18n';
 import { BrowserDetection } from '@nimiq/utils';
 import App from './App.vue';
 import router from './router';
@@ -7,9 +6,10 @@ import store from './store';
 import staticStore from '@/lib/StaticStore';
 import RpcApi from '@/lib/RpcApi';
 import { startSentry } from './lib/Sentry';
-import { i18n, loadLanguageAsync, autodetectLanguage } from './i18n/i18n-setup';
+import VueI18n from 'vue-i18n';
 // @ts-ignore
 import IqonsSvg from '@nimiq/iqons/dist/iqons.min.svg';
+import { i18n, loadLanguageAsync, autodetectLanguage } from './i18n/i18n-setup';
 
 if (window.hasBrowserWarning) {
     throw new Error('Execution aborted due to browser warning');
@@ -41,9 +41,11 @@ if (IqonsSvg[0] === '"') {
 const rpcApi = new RpcApi(store, staticStore, router);
 Vue.prototype.$rpc = rpcApi; // rpcApi is started in App.vue->created()
 
+startSentry(Vue);
+
 Vue.use(VueI18n);
 
-startSentry(Vue);
+loadLanguageAsync(autodetectLanguage());
 
 const app = new Vue({
     data: { loading: true },
@@ -52,8 +54,6 @@ const app = new Vue({
     i18n,
     render: (h) => h(App),
 }).$mount('#app');
-
-loadLanguageAsync(autodetectLanguage());
 
 let _loadingTimeout: number = -1;
 router.beforeEach((to, from, next) => {

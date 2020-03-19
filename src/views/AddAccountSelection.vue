@@ -2,7 +2,7 @@
     <div class="container">
         <SmallPage>
             <IdenticonSelector :accounts="accounts" confirmButtonText="Add to Account" @identicon-selected="identiconSelected">
-                <PageHeader slot="header" backArrow @back="back">Choose a new Address</PageHeader>
+                <PageHeader slot="header" backArrow @back="back">{{ $t('Choose a new Address') }}</PageHeader>
             </IdenticonSelector>
 
             <StatusScreen v-if="showStatusScreen"
@@ -16,7 +16,7 @@
 
         <button class="global-close nq-button-s" @click="close">
             <ArrowLeftSmallIcon/>
-            Back to {{request.appName}}
+            {{ $t('Back to {appName}', { appName: request.appName }) }}
         </button>
     </div>
 </template>
@@ -78,7 +78,7 @@ export default class AddAccountSelection extends Vue {
 
         window.clearTimeout(showLoadingSpinnerTimeout);
 
-        this.title = 'New Address added to your Account.';
+        this.title = this.$t('New Address added to your Account.') as string;
         this.state = StatusScreen.State.SUCCESS;
 
         const result: Address = {

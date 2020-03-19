@@ -27,8 +27,8 @@
             <PageHeader :back-arrow="request.kind === 'checkout' || request.kind === 'create-cashlink'"
                 @back="_back" class="blur-target">
                 {{ request.kind === 'checkout'
-                    ? 'Verify Payment'
-                    : `Confirm ${request.kind === 'create-cashlink' ? 'Cashlink' : 'Transaction'}` }}
+                    ? $t('Verify Payment')
+                    : `${$t('Confirm')} ${request.kind === 'create-cashlink' ? $t('Cashlink') : $('Transaction')}` }}
             </PageHeader>
 
             <div class="accounts">
@@ -64,7 +64,7 @@
                         ? checkoutPaymentOptions.fee
                         : (cashlink || request).fee"
                     :minDecimals="2" :maxDecimals="5"
-                /> fee
+                /> {{ $t('fee') }}
             </div>
 
             <div v-if="transactionData" class="data nq-text blur-target">
@@ -83,7 +83,7 @@
                         <template v-if="state === constructor.State.EXPIRED" v-slot:warning>
                             <StopwatchIcon class="stopwatch-icon"/>
                             <h1 class="title nq-h1">{{ statusScreenTitle }}</h1>
-                            <p class="message nq-text">Please go back to the shop and restart the process.</p>
+                            <p class="message nq-text">{{ $t('Please go back to the shop and restart the process.') }}</p>
                         </template>
                     </StatusScreen>
                 </transition>
@@ -104,7 +104,7 @@
         <button class="global-close nq-button-s" @click="_close"
             :class="{ hidden: state !== constructor.State.OVERVIEW }">
             <ArrowLeftSmallIcon/>
-            {{ request.kind === 'checkout' ? 'Cancel Payment' : `Back to ${request.appName}` }}
+            {{ request.kind === 'checkout' ? $t('Cancel Payment') : $t(`Back to {appName}`, { appName: request.appName }) }}
         </button>
         <Network ref="network" :visible="false"/>
     </div>

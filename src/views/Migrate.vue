@@ -3,9 +3,9 @@
         <Network ref="network"/>
         <SmallPage v-if="page === 'intro'" class="intro">
             <PageHeader>
-                Time to grow
+                {{ $t('Time to grow') }}
                 <p slot="more" class="nq-notice info">
-                    Nimiq just got better! The new design comes with a batch of new features.
+                    {{ $t('Nimiq just got better! The new design comes with a batch of new features.') }}
                 </p>
             </PageHeader>
 
@@ -15,12 +15,12 @@
                         <AccountRing :addresses="['NQ18 37VM K2Y5 2HPY 5U80 2E0U VHUJ R7RK QSNE', 'NQ81 K7NT 9TJA BXE8 5D0R 3FN4 QJK0 YVYQ YD9A', 'NQ90 277A GR05 F775 AVFK 61RP CS7Y R7JA KGCT']"/>
                     </div>
                     <p class="topic-text">
-                        One Account can now have multiple Addresses.
+                        {{ $t('One Account can now have multiple Addresses.') }}
                     </p>
                 </div>
                 <div class="topic">
                     <p class="topic-text">
-                        Nimiq implements the ImageWallet standard with the Nimiq Login File.
+                        {{ $t('Nimiq implements the ImageWallet standard with the Nimiq Login File.') }}
                     </p>
                     <div class="topic-visual login-file">
                         <svg width="58" height="97" viewBox="0 0 58 97" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x=".59" y=".78" width="56.81" height="95.45" rx="2.78" fill="#fff"/><path d="M1.67 3.7c0-1.01.83-1.84 1.85-1.84h50.95c1.02 0 1.85.83 1.85 1.85v89.58c0 1.02-.83 1.85-1.85 1.85H3.52a1.85 1.85 0 0 1-1.85-1.85V3.71z" fill="url(#paint0_radial)"/><g opacity=".5" fill="#fff"><g clip-path="url(#clip0)"><path d="M15.87 10.5l-1.02-1.77a.4.4 0 0 0-.35-.2h-2.03a.4.4 0 0 0-.35.2l-1.01 1.76a.4.4 0 0 0 0 .4l1.01 1.77c.08.13.21.2.35.2h2.03a.4.4 0 0 0 .35-.2l1.02-1.76a.4.4 0 0 0 0-.4z"/><rect x="17.26" y="9.14" width="12.12" height="3.03" rx="1.51"/><rect x="30.89" y="9.14" width="15.15" height="3.03" rx="1.51"/></g><rect x="21.8" y="16.52" width="14.39" height="1.51" rx=".76"/></g><g opacity=".5" fill="#fff"><path fill-rule="evenodd" clip-rule="evenodd" d="M23.47 67.02h-6.62c-.61 0-1.1-.5-1.1-1.1v-6.63c0-.61.49-1.1 1.1-1.1h6.62c.62 0 1.11.49 1.11 1.1v6.63c0 .6-.5 1.1-1.1 1.1zm-5.24-6.63a.28.28 0 0 0-.28.28v3.86c0 .16.13.28.28.28h3.86c.16 0 .28-.12.28-.28v-3.86a.28.28 0 0 0-.28-.28h-3.86zM16.85 75.86h6.62c.61 0 1.1.5 1.1 1.1v6.63c0 .6-.49 1.1-1.1 1.1h-6.62c-.61 0-1.1-.49-1.1-1.1v-6.63c0-.6.49-1.1 1.1-1.1zm5.24 6.62c.16 0 .28-.12.28-.27v-3.87a.28.28 0 0 0-.28-.27h-3.86a.28.28 0 0 0-.28.27v3.87c0 .15.13.27.28.27h3.86zM34.52 58.18h6.63c.6 0 1.1.5 1.1 1.1v6.64c0 .6-.5 1.1-1.1 1.1h-6.63c-.6 0-1.1-.5-1.1-1.1v-6.63c0-.61.5-1.1 1.1-1.1zm5.25 6.63c.15 0 .27-.12.27-.28v-3.86a.28.28 0 0 0-.27-.28H35.9a.28.28 0 0 0-.27.28v3.86c0 .16.12.28.27.28h3.87z"/><path d="M26.79 62.88h1.1a.83.83 0 1 0 0-1.66.28.28 0 0 1-.27-.28V59.3a.83.83 0 0 0-1.66 0v2.76c0 .46.37.83.83.83zM30.1 60.12c.16 0 .28.12.28.27v6.08a.83.83 0 0 0 1.66 0v-7.18a.83.83 0 0 0-.83-.83h-1.1a.83.83 0 0 0 0 1.66zM22.1 69.78c0 .46.36.83.82.83h3.87c.46 0 .83-.37.83-.83v-4.42a.83.83 0 0 0-1.66 0v3.32c0 .15-.12.27-.28.27h-2.76a.83.83 0 0 0-.83.83z"/><path d="M19.06 68.95a.83.83 0 0 0-.83.83v2.76c0 .16-.13.28-.28.28h-1.1a.83.83 0 0 0 0 1.66H31.2c.45 0 .83-.37.83-.83v-3.32a.83.83 0 0 0-1.66 0v2.21c0 .16-.13.28-.28.28h-9.94a.28.28 0 0 1-.28-.28v-2.76a.83.83 0 0 0-.82-.83zM30.93 76.96a.83.83 0 0 0-.83-.83H26.8a.83.83 0 0 0-.83.83v4.42a.83.83 0 0 0 1.66 0v-3.31c0-.16.12-.28.27-.28h2.21c.46 0 .83-.37.83-.83zM41.15 82.76h-9.39a.28.28 0 0 1-.28-.28v-2.2a.83.83 0 0 0-1.65 0v3.31c0 .46.37.83.82.83h10.5a.83.83 0 1 0 0-1.66z"/><path fill-rule="evenodd" clip-rule="evenodd" d="M37.28 80.55h-3.31a.83.83 0 0 1-.83-.83v-3.31c0-.46.37-.83.83-.83h3.31c.46 0 .83.37.83.83v3.31c0 .46-.37.83-.83.83zm-2.2-3.31a.28.28 0 0 0-.28.27v1.1c0 .16.12.28.27.28h1.1c.16 0 .28-.12.28-.27v-1.1a.28.28 0 0 0-.27-.28h-1.1z"/><path d="M40.6 72.27a.83.83 0 0 0-.83.83v7.18a.83.83 0 1 0 1.66 0V73.1a.83.83 0 0 0-.83-.83zM41.43 69.23a.83.83 0 0 0-.83-.83h-6.08a.83.83 0 0 0-.83.83v3.31a.83.83 0 1 0 1.66 0v-2.2c0-.16.12-.28.28-.28h4.97c.45 0 .83-.37.83-.83z"/></g><g opacity=".35" fill="#fff"><path opacity=".7" d="M32.29 29.4l-1.57-2.72a.63.63 0 0 0-.54-.31h-3.14a.63.63 0 0 0-.54.31l-1.57 2.72a.63.63 0 0 0 0 .62l1.57 2.72c.11.2.32.31.54.31h3.14c.22 0 .43-.12.54-.31l1.57-2.72a.62.62 0 0 0 0-.62z"/><path opacity=".78" d="M32.29 45.2l-1.57-2.72a.63.63 0 0 0-.54-.31h-3.14a.63.63 0 0 0-.54.3l-1.57 2.72a.63.63 0 0 0 0 .63l1.57 2.72c.11.2.32.31.54.31h3.14c.22 0 .43-.12.54-.31l1.57-2.72a.62.62 0 0 0 0-.63z"/><path opacity=".5" d="M25.45 33.35l-1.57-2.72a.63.63 0 0 0-.54-.31h-3.13a.63.63 0 0 0-.54.31l-1.57 2.72a.63.63 0 0 0 0 .62l1.56 2.72c.12.2.32.31.55.31h3.13c.22 0 .43-.12.54-.31l1.57-2.72a.63.63 0 0 0 0-.62z"/><path opacity=".6" d="M25.45 41.24l-1.57-2.71a.63.63 0 0 0-.54-.31h-3.13a.63.63 0 0 0-.54.3l-1.57 2.72a.63.63 0 0 0 0 .63l1.56 2.72c.12.2.32.31.55.31h3.13c.22 0 .43-.12.54-.31l1.57-2.72a.63.63 0 0 0 0-.63z"/><path opacity=".8" d="M39.12 33.35l-1.56-2.72a.63.63 0 0 0-.55-.31h-3.13a.63.63 0 0 0-.54.31l-1.57 2.72a.63.63 0 0 0 0 .62l1.57 2.72c.1.2.32.31.54.31h3.13c.23 0 .43-.12.54-.31l1.57-2.72a.62.62 0 0 0 0-.62z"/><path opacity=".6" d="M39.12 41.24l-1.56-2.71a.63.63 0 0 0-.55-.31h-3.13a.63.63 0 0 0-.54.3l-1.57 2.72a.63.63 0 0 0 0 .63l1.57 2.72c.1.2.32.31.54.31H37c.23 0 .43-.12.54-.31l1.57-2.72a.62.62 0 0 0 0-.63z"/></g><defs><radialGradient id="paint0_radial" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(-54.6465 0 0 -93.2842 56.32 95.14)"><stop stop-color="#EC991C"/><stop offset="1" stop-color="#E9B213"/></radialGradient><clipPath id="clip0"><path fill="#fff" transform="translate(11.05 8.53)" d="M0 0h35.81v4.33H0z"/></clipPath></defs></svg>
@@ -29,25 +29,25 @@
                 <div class="topic">
                     <div class="topic-visual qr-code"><ScanQrCodeIcon/></div>
                     <p class="topic-text">
-                        Create and scan QR codes to quickly share Addresses.
+                        {{ $t('Create and scan QR codes to quickly share Addresses.') }}
                     </p>
                 </div>
 
                 <a href="https://medium.com/nimiq-network/the-biggest-release-since-mainnet-launch-f8096e33dab9" target="_blank" class="nq-link link-read-article">
-                    There's much more. Read the full article <ArrowRightSmallIcon/>
+                    {{ $t("There's much more. Read the full article") }} <ArrowRightSmallIcon/>
                 </a>
             </PageBody>
 
             <PageFooter key="intro-footer">
-                <button class="nq-button light-blue" @click="page = 'accounts'">Prepare for update</button>
+                <button class="nq-button light-blue" @click="page = 'accounts'">{{ $t('Prepare for update') }}</button>
             </PageFooter>
         </SmallPage>
 
         <SmallPage v-else-if="page === 'accounts'" class="accounts">
             <PageHeader backArrow @back="page = 'intro'; backupsAreSafe = false;">
-                Check your Backup{{legacyAccounts.length > 1 ? 's' : ''}}
+                {{ $tc('Check your Backup | Check your Backups', legacyAccounts.length) }}
                 <p slot="more" class="nq-notice warning">
-                    The update is easy, fast and secure. Still – it’s a good time to check on your Recovery Words.
+                    {{ $t('The update is easy, fast and secure. Still – it’s a good time to check on your Recovery Words.') }}
                 </p>
             </PageHeader>
             <PageBody>
@@ -64,7 +64,7 @@
                         <svg v-if="account.isBackedUp" width="12" height="11" viewBox="0 0 12 11" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M10.5 1.9l-5.8 8-3-3.1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
-                        {{account.isBackedUp ? 'Backed Up' : 'Back Up'}}
+                        {{ account.isBackedUp ? $t('Backed Up') : $t('Back Up') }}
                     </button>
                 </div>
             </PageBody>
@@ -75,10 +75,10 @@
                         <label>
                             <input type="checkbox" v-model="backupsAreSafe">
                             <div class="checkcircle"><CheckmarkIcon/></div>
-                            My Backups are safe.
+                            {{ $t('My Backups are safe.') }}
                         </label>
                     </div>
-                    <button v-else class="nq-button light-blue activate" @click="runMigration">Activate update</button>
+                    <button v-else class="nq-button light-blue activate" @click="runMigration">{{ $t('Activate update') }}</button>
                 </transition>
             </PageFooter>
         </SmallPage>
@@ -138,8 +138,8 @@ export default class Migrate extends Vue {
     private page: 'intro' | 'accounts' | 'migration' = 'intro';
     private backupsAreSafe: boolean = false;
 
-    private title: string = 'Updating your Accounts';
-    private status: string = 'Connecting to Keyguard...';
+    private title: string = this.$t('Updating your Accounts') as string;
+    private status: string = this.$t('Connecting to Keyguard...') as string;
     private state: StatusScreen.State = StatusScreen.State.LOADING;
     private message: string = '';
 
@@ -215,21 +215,21 @@ export default class Migrate extends Vue {
     private async doMigration() {
         this.page = 'migration';
 
-        this.status = 'Retrieving your old Accounts...';
+        this.status = this.$t('Retrieving your old Accounts...') as string;
         const legacyAccounts = await this.$rpc.keyguardClient.listLegacyAccounts();
 
         if (!legacyAccounts.length) {
             this.deleteAccountsCache();
-            this.title = 'Nothing to update.';
+            this.title = this.$t('Nothing to update.') as string;
             this.state = StatusScreen.State.SUCCESS;
             setTimeout(() => this.$rpc.resolve([]), StatusScreen.SUCCESS_REDIRECT_DELAY);
             return;
         }
 
-        this.status = 'Detecting vesting contracts...';
+        this.status = this.$t('Detecting vesting contracts...') as string;
         const genesisVestingContracts = await (this.$refs.network as Network).getGenesisVestingContracts();
 
-        this.status = 'Storing your new Accounts...';
+        this.status = this.$t('Storing your new Accounts...') as string;
         // For the wallet ID derivation to work, the ID derivation and storing of new wallets needs
         // to happen serially, e.g. synchroneous.
         const walletInfos: WalletInfo[] = [];
@@ -258,18 +258,18 @@ export default class Migrate extends Vue {
             walletInfos.push(walletInfo);
         }
 
-        this.status = 'Updating Keyguard...';
+        this.status = this.$t('Updating Keyguard...') as string;
         await this.$rpc.keyguardClient.migrateAccountsToKeys();
         this.deleteAccountsCache();
 
-        this.title = 'Accounts updated!';
+        this.title = this.$t('Accounts updated!') as string;
         this.state = StatusScreen.State.SUCCESS;
         const listResult = walletInfos.map((walletInfo) => walletInfo.toAccountType());
         setTimeout(() => this.$rpc.resolve(listResult), StatusScreen.SUCCESS_REDIRECT_DELAY);
     }
 
     private onError(error: Error) {
-        this.title = 'Whoops, something went wrong';
+        this.title = this.$t('Whoops, something went wrong') as string;
         this.message = `${error.name}: ${error.message}`;
         this.state = StatusScreen.State.ERROR;
         if (this.$captureException) {
@@ -278,8 +278,8 @@ export default class Migrate extends Vue {
     }
 
     private tryAgain() {
-        this.title = 'Updating your Accounts';
-        this.status = 'Connecting to Keyguard...';
+        this.title = this.$t('Updating your Accounts') as string;
+        this.status = this.$t('Connecting to Keyguard...') as string;
         this.state = StatusScreen.State.LOADING;
         setTimeout(() => this.runMigration(), 1000);
     }

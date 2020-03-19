@@ -2,20 +2,20 @@
     <SmallPage class="onboarding-menu">
         <button class="choice ledger" tabindex="3" @click="ledger">
             <LedgerIcon/>
-            <h2 class="nq-h2">Connect Ledger</h2>
-            <p class="text">Connect your<br>Ledger Nano S.</p>
+            <h2 class="nq-h2">{{ $t('Connect Ledger') }}</h2>
+            <p class="text">{{ $t('Connect your<br>Ledger Nano S.') }}</p>
         </button>
 
         <button class="choice login" tabindex="2" @click="login">
             <LoginIcon/>
-            <h2 class="nq-h2">Login</h2>
-            <p class="text">Use your Login File<br>or Recovery Words.</p>
+            <h2 class="nq-h2">{{ $t('Login') }}</h2>
+            <p class="text">{{ $t('Use your Login File<br>or Recovery Words.') }}</p>
         </button>
 
         <button class="choice signup" tabindex="1" @click="signup">
             <PlusCircleIcon/>
-            <h2 class="nq-h2">Create Account</h2>
-            <p class="text">Choose an Avatar.<br>Set a password. Done.</p>
+            <h2 class="nq-h2">{{ $t('Create Account') }}</h2>
+            <p class="text">{{ $t('Choose an Avatar.<br>Set a password. Done.') }}</p>
         </button>
 
         <div class="background-container">

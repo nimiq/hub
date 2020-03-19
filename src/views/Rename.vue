@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <SmallPage class="rename">
-            <PageHeader>Rename Account</PageHeader>
+            <PageHeader>{{ $t('Rename Account') }}</PageHeader>
             <PageBody v-if="wallet">
                 <div class="wallet-label" v-if="wallet.type !== 1 /* LEGACY */">
                     <AccountRing :addresses="addressesArray"/>
@@ -15,7 +15,7 @@
                              @account-changed="accountChanged"/>
             </PageBody>
             <PageFooter>
-                <button class="nq-button light-blue" @click="storeLabels">Save</button>
+                <button class="nq-button light-blue" @click="storeLabels">{{ $t('Save') }}</button>
             </PageFooter>
             <StatusScreen v-if="labelsStored"
                     state="success"
@@ -25,7 +25,7 @@
 
         <button class="global-close nq-button-s" :class="{'hidden': labelsStored}" @click="close">
             <ArrowLeftSmallIcon/>
-            Cancel Renaming
+            {{ $t('Cancel Renaming') }}
         </button>
     </div>
 </template>

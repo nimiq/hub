@@ -4,6 +4,7 @@ import VueI18n from 'vue-i18n';
 Vue.use(VueI18n);
 
 const DEFAULT_LANGUAGE = 'en';
+const SUPPORTED_LANGUAGES = [DEFAULT_LANGUAGE];
 const loadedLanguages: string[] = []; // our default language that is preloaded, if any
 
 export const i18n = new VueI18n({
@@ -18,10 +19,7 @@ function setI18nLanguage(lang: string) {
 }
 
 export function loadLanguageAsync(lang: string) {
-    // If the same language
-    if (i18n.locale === lang) {
-        return Promise.resolve(setI18nLanguage(lang));
-    }
+    if (!SUPPORTED_LANGUAGES.includes(lang)) lang = DEFAULT_LANGUAGE;
 
     // If the language was already loaded
     if (loadedLanguages.includes(lang)) {
@@ -41,6 +39,5 @@ export function loadLanguageAsync(lang: string) {
 export function autodetectLanguage() {
     const langRaw = window.navigator.language;
     const langParts = langRaw.replace('-', '_').split('_');
-    loadLanguageAsync(langParts[0]);
     return langParts[0];
 }

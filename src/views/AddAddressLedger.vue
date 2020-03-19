@@ -10,7 +10,7 @@
                                    :accounts="addressesToSelectFrom"
                                    confirmButtonText="Add to Ledger"
                                    @identicon-selected="_onAddressSelected">
-                    <PageHeader slot="header">Choose a new Address</PageHeader>
+                    <PageHeader slot="header">{{ $t('Choose a new Address') }}</PageHeader>
                 </IdenticonSelector>
             </transition>
             <StatusScreen v-if="state === constructor.State.FINISHED" state="success" title="Address Added"
@@ -20,7 +20,7 @@
 
         <button class="global-close nq-button-s" @click="close">
             <ArrowLeftSmallIcon/>
-            Back to {{request.appName}}
+            {{ $t('Back to {appName}', { appName: request.appName }) }}
         </button>
     </div>
 </template>

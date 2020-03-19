@@ -3,13 +3,13 @@
         @keydown.esc="_selectAccount(null)">
         <div class="blur-target">
             <slot name="header">
-                <PageHeader>Choose an Avatar</PageHeader>
+                <PageHeader>{{ $t('Choose an Avatar') }}</PageHeader>
             </slot>
         </div>
         <div class="identicons">
             <div class="center blur-target" v-if="displayedAccounts.length === 0">
                 <LoadingSpinner/>
-                <h2 class="nq-h2">Mixing colors</h2>
+                <h2 class="nq-h2">{{ $t('Mixing colors') }}</h2>
             </div>
             <button class="wrapper" v-for="account in displayedAccounts" :key="account.userFriendlyAddress"
                 @click="_selectAccount(account)"
@@ -21,7 +21,7 @@
         <button @click="page += 1" v-if="displayedAccounts.length > 0"
             :tabindex="selectedAccount && confirmAccountSelection ? -1 : 0"
             class="generate-more nq-button-s blur-target">
-            More Avatars
+            {{ $t('More Avatars') }}
         </button>
 
         <transition name="transition-fade">

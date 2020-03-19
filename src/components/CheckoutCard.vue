@@ -119,7 +119,7 @@ export default class CheckoutCard<
         let fetchedData: any;
 
         this.statusScreenState = StatusScreen.State.LOADING;
-        this.statusScreenTitle = 'Collecting payment details';
+        this.statusScreenTitle = this.$t('Collecting payment details') as string;
         this.statusScreenStatus = '';
         this.showStatusScreen = true;
 
@@ -165,10 +165,10 @@ export default class CheckoutCard<
 
     protected timedOut() {
         this.timeoutReached = true;
-        this.statusScreenTitle = 'The offer expired.';
-        this.statusScreenMessage = 'Please go back and restart the process.';
+        this.statusScreenTitle = this.$t('The offer expired.') as string;
+        this.statusScreenMessage = this.$t('Please go back and restart the process.') as string;
         this.statusScreenMainAction = () => this.backToShop();
-        this.statusScreenMainActionText = 'Go back';
+        this.statusScreenMainActionText = this.$t('Go back') as string;
         this.statusScreenState = StatusScreen.State.WARNING;
         this.showStatusScreen = true;
         this.$emit('expired', this.paymentOptions.currency);
@@ -179,7 +179,7 @@ export default class CheckoutCard<
     }
 
     protected showSuccessScreen() {
-        this.statusScreenTitle = 'Payment successful';
+        this.statusScreenTitle = this.$t('Payment successful') as string;
         this.statusScreenState = StatusScreen.State.SUCCESS;
         this.showStatusScreen = true;
         window.setTimeout(() => this.$rpc.resolve({success: true}),  StatusScreen.SUCCESS_REDIRECT_DELAY);
@@ -187,11 +187,11 @@ export default class CheckoutCard<
 
     protected showUnderpaidWarningScreen() {
         this.paymentState = PaymentState.UNDERPAID;
-        this.statusScreenTitle = 'Incomplete payment';
-        this.statusScreenMessage = 'You transferred an insufficient amount. ' +
-            'Please contact the merchant for a refund. Restart to pay for your order.';
+        this.statusScreenTitle = this.$t('Incomplete payment') as string;
+        this.statusScreenMessage = this.$t('You transferred an insufficient amount. ') as string +
+            this.$t('Please contact the merchant for a refund. Restart to pay for your order.') as string;
         this.statusScreenMainAction = () => this.showStatusScreen = false;
-        this.statusScreenMainActionText = 'Restart Payment';
+        this.statusScreenMainActionText = this.$t('Restart Payment') as string;
         this.showStatusScreen = true;
         this.statusScreenState = StatusScreen.State.WARNING;
     }

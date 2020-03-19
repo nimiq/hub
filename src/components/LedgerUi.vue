@@ -29,7 +29,7 @@
                 <transition name="transition-fade">
                     <button v-if="showConnectButton" class="nq-button-s inverse connect-button"
                         :class="{ pulsate: connectAnimationStep === 4 }" @click="_connect">
-                        Connect
+                        {{ $t('Connect') }}
                     </button>
                 </transition>
             </template>
@@ -151,7 +151,7 @@ class LedgerUi extends Vue {
                 this._onRequest(state);
                 break;
             case StateType.REQUEST_CANCELLING:
-                this._showInstructions('', 'Please cancel the request on your Ledger');
+                this._showInstructions('', this.$t('Please cancel the request on your Ledger') as string);
                 break;
             case StateType.ERROR:
                 this._onError(state);
@@ -162,7 +162,7 @@ class LedgerUi extends Vue {
     }
 
     private _onStateLoading() {
-        const retryMessage = this.loadingFailed ? 'Loading failed, retrying...' : '';
+        const retryMessage = this.loadingFailed ? this.$t('Loading failed, retrying...') as string : '';
         this._showInstructions('', retryMessage);
     }
 
@@ -176,15 +176,22 @@ class LedgerUi extends Vue {
                 break;
             case RequestType.DERIVE_ADDRESSES:
                 // not interactive, but takes ~6 seconds
-                this._showInstructions('Fetching Addresses');
+                this._showInstructions(this.$t('Fetching Addresses') as string);
                 break;
             case RequestType.CONFIRM_ADDRESS:
-                this._showInstructions('Confirm Address',
-                    `Confirm that the address on your Ledger matches ${request.params.addressToConfirm!}`);
+                this._showInstructions(
+                    this.$t('Confirm Address') as string,
+                    this.$t(
+                        'Confirm that the address on your Ledger matches {addressToConfirm}',
+                        { addressToConfirm: request.params.addressToConfirm! },
+                    ) as string,
+                );
                 break;
             case RequestType.SIGN_TRANSACTION:
-                this._showInstructions('Confirm Transaction',
-                    'Confirm using your Ledger');
+                this._showInstructions(
+                    this.$t('Confirm Transaction') as string,
+                    this.$t('Confirm using your Ledger') as string,
+                );
                 break;
             default:
                 throw new Error(`Unhandled request: ${request.type}`);
@@ -195,7 +202,7 @@ class LedgerUi extends Vue {
         const error = state.error!;
         switch (error.type) {
             case ErrorType.LEDGER_BUSY:
-                this._showInstructions('', 'Please cancel the previous request on your Ledger.');
+                this._showInstructions('', this.$t('Please cancel the previous request on your Ledger.') as string);
                 break;
             case ErrorType.LOADING_DEPENDENCIES_FAILED:
                 this.loadingFailed = true;
@@ -210,17 +217,23 @@ class LedgerUi extends Vue {
                 this.showConnectButton = true;
                 break;
             case ErrorType.NO_BROWSER_SUPPORT:
-                this._showInstructions('', 'Ledger not supported by browser.');
+                this._showInstructions('', this.$t('Ledger not supported by browser.') as string);
                 break;
             case ErrorType.APP_OUTDATED:
-                this._showInstructions('', 'Your Nimiq App is outdated. ' +
-                    'Please update your Ledger firmware and Nimiq App using Ledger Live.');
+                this._showInstructions('', this.$t('Your Nimiq App is outdated. ') as string
+                    + this.$t('Please update your Ledger firmware and Nimiq App using Ledger Live.') as string);
                 break;
             case ErrorType.WRONG_LEDGER:
-                this._showInstructions('', 'The connected Ledger is not the one this account belongs to.');
+                this._showInstructions(
+                    '',
+                    this.$t('The connected Ledger is not the one this account belongs to.') as string,
+                );
                 break;
             case ErrorType.REQUEST_ASSERTION_FAILED:
-                this._showInstructions('Request failed', `${this.small ? 'Request failed: ' : ''}${error.message}`);
+                this._showInstructions(
+                    this.$t('Request failed') as string,
+                    `${this.small ? this.$t('Request failed: ') as string : ''}${error.message}`,
+                );
                 break;
             default:
                 throw new Error(`Unhandled error: ${error.type} - ${error.message}`);
@@ -229,16 +242,16 @@ class LedgerUi extends Vue {
 
     private _cycleConnectInstructions() {
         const instructions = [
-            '1. Connect your Ledger Device',
-            '2. Enter your Pin',
-            '3. Open the Nimiq App',
+            this.$t('1. Connect your Ledger Device') as string,
+            this.$t('2. Enter your Pin') as string,
+            this.$t('3. Open the Nimiq App') as string,
         ];
         if (this.showConnectButton) {
-            instructions.push('4. Click "Connect"');
+            instructions.push(this.$t('4. Click "Connect"') as string);
         }
         const oldInstructionIndex = instructions.indexOf(this.instructionsText);
         const instructionIndex = (oldInstructionIndex + 1) % instructions.length;
-        this._showInstructions('Connect Ledger', instructions[instructionIndex]);
+        this._showInstructions(this.$t('Connect Ledger') as string, instructions[instructionIndex]);
         this.connectAnimationStep = instructionIndex + 1; // Set animation step which starts counting at 1
     }
 

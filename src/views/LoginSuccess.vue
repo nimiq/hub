@@ -39,8 +39,8 @@ export default class LoginSuccess extends Vue {
 
     private walletInfos: WalletInfo[] = [];
     private state: StatusScreen.State = StatusScreen.State.LOADING;
-    private title: string = 'Fetching your addresses';
-    private status: string = 'Connecting to network...';
+    private title: string = this.$t('Fetching your addresses') as string;
+    private status: string = this.$t('Connecting to network...') as string;
     private message: string = '';
     private action: string = '';
     private receiptsError: Error | null = null;
@@ -92,7 +92,7 @@ export default class LoginSuccess extends Vue {
 
                         break;
                     } catch (e) {
-                        this.status = 'Address detection failed. Retrying...';
+                        this.status = this.$t('Address detection failed. Retrying...') as string;
                         if (tryCount >= 5) throw e;
                     }
                 }
@@ -134,11 +134,13 @@ export default class LoginSuccess extends Vue {
         );
 
         if (failBecauseOfCookieSpace) {
-            this.title = 'Space exceeded';
+            this.title = this.$t('Space exceeded') as string;
             this.state = StatusScreen.State.ERROR;
-            this.message = 'Unfortunately, due to space restrictions of Safari and IOS, this account cannot '
-                         + 'be stored properly. Please free up space by logging out of other accounts.';
-            this.action = 'Continue';
+            this.message = this.$t(
+                `Unfortunately, due to space restrictions of Safari and IOS, this account cannot be stored properly.
+                Please free up space by logging out of other accounts.`,
+            ) as string;
+            this.action = this.$t('Continue') as string;
             await new Promise((resolve) => { this.resolve = resolve; });
             this.$rpc.reject(new Error(ERROR_COOKIE_SPACE));
             return;
@@ -149,7 +151,7 @@ export default class LoginSuccess extends Vue {
 
     private onUpdate(walletInfo: WalletInfo, currentlyCheckedAccounts: BasicAccountInfo[]) {
         const count = !walletInfo ? 0 : walletInfo.accounts.size;
-        this.status = `Imported ${count} address${count !== 1 ? 'es' : ''} so far...`;
+        this.status = this.$tc('Imported {count} address so far...| Imported {count} addresses so far...', count);
     }
 
     private async done() {
@@ -172,10 +174,10 @@ export default class LoginSuccess extends Vue {
         }));
 
         if (this.receiptsError) {
-            this.title = 'Your Addresses may be\nincomplete.';
+            this.title = this.$t('Your Addresses may be\nincomplete.') as string;
             this.state = StatusScreen.State.WARNING;
-            this.message = 'Used addresses without balance might have been missed.';
-            this.action = 'Continue';
+            this.message = this.$t('Used addresses without balance might have been missed.') as string;
+            this.action = this.$t('Continue') as string;
             await new Promise((resolve) => { this.resolve = resolve; });
         }
 
@@ -183,16 +185,16 @@ export default class LoginSuccess extends Vue {
         // recovery words. Display an appropriate success message in case that is how this successful
         // import came to be.
         if (this.request.kind === RequestType.CHANGE_PASSWORD) {
-            this.title = 'Your password was changed.';
+            this.title = this.$t('Your password was changed.') as string;
             this.state = StatusScreen.State.SUCCESS;
             setTimeout(() => { this.$rpc.resolve({success: true}); }, StatusScreen.SUCCESS_REDIRECT_DELAY);
             return;
         }
 
         if (result.length > 1) {
-            this.title = 'Your Accounts are ready.';
+            this.title = this.$t('Your Accounts are ready.') as string;
         } else {
-            this.title = 'Your Account is ready.';
+            this.title = this.$t('Your Account is ready.') as string;
         }
         this.state = StatusScreen.State.SUCCESS;
         setTimeout(() => { this.$rpc.resolve(result); }, StatusScreen.SUCCESS_REDIRECT_DELAY);

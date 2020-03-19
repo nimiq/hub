@@ -3,9 +3,9 @@
         <SmallPage>
             <StatusScreen
                 state='error'
-                title='Action not possible'
-                message='Unfortunately, due to restrictions of Safari you cannot add more accounts and/or addresses. Please log out of unused accounts to free up space.'
-                mainAction='Continue'
+                :title='$t("Action not possible")'
+                :message='$t("Unfortunately, due to restrictions of Safari you cannot add more accounts and/or addresses. Please log out of unused accounts to free up space.")'
+                :mainAction='$t("Continue")'
                 @main-action='onContinue'
             />
         </SmallPage>

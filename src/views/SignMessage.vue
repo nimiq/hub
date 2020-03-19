@@ -2,14 +2,14 @@
     <div v-if="showAccountSelector" class="container">
         <SmallPage>
             <div class="info-line">
-                <span class="request-title">Sign Message</span>
+                <span class="request-title">{{ $t('Sign Message') }}</span>
                 <div class="arrow-runway">
                     <ArrowRightIcon/>
                 </div>
                 <span class="origin">{{ originDomain }}</span>
             </div>
 
-            <h1 class="nq-h1">Choose an Address to sign</h1>
+            <h1 class="nq-h1">{{ $t('Choose an Address to sign') }}</h1>
 
             <AccountSelector
                 :wallets="processedWallets"
@@ -21,7 +21,7 @@
 
         <button class="global-close nq-button-s" @click="close">
             <ArrowLeftSmallIcon/>
-            Back to {{request.appName}}
+            {{ $t('Back to {appName}', { appName: request.appName }) }}
         </button>
     </div>
 </template>
