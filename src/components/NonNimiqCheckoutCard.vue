@@ -316,6 +316,7 @@ export default NonNimiqCheckoutCard;
     .payment-option .account,
     .payment-option .account >>> .identicon-and-label {
         width: 100%;
+        flex-grow: 1;
     }
 
     .payment-option .account >>> .identicon-and-label .identicon {
@@ -327,9 +328,8 @@ export default NonNimiqCheckoutCard;
         max-width: 100%;
         font-weight: 600;
         font-size: 3.5rem;
-        line-height: 3.5rem;
+        line-height: 4rem;
         margin-top: 2.75rem;
-        margin-bottom: 3rem;
         text-overflow: fade;
     }
 
