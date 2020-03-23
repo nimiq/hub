@@ -97,7 +97,7 @@
 
         <div v-if="(cashlink && !hasWallets) || isMobile" class="outside-container">
             <img v-if="themeBackground && isMobile"
-                 :src="`/img/cashlink-themes/${themeBackground}-mobile.svg`"
+                 :src="`/img/cashlink-themes/${themeBackground}${hasMobileTheme ? '-mobile' : ''}.svg`"
                  class="theme-background theme-background-mobile"
                  :class="themeBackground"
                  @load="$event.target.style.opacity = 1"
@@ -324,12 +324,26 @@ class CashlinkReceive extends Vue {
         return !!this.cashlink && this.cashlink.theme === CashlinkTheme.LUNAR_NEW_YEAR;
     }
 
+    private get hasMobileTheme(): boolean {
+        const theme = this.cashlink ? this.cashlink.theme : CashlinkTheme.STANDARD;
+        switch (theme) {
+            case CashlinkTheme.STANDARD:
+            case CashlinkTheme.BIRTHDAY:
+                return false;
+            default:
+                return true;
+        }
+    }
+
     private get welcomeHeadline(): string {
         const theme = this.cashlink ? this.cashlink.theme : CashlinkTheme.STANDARD;
         switch (theme) {
+            case CashlinkTheme.GENERIC:
             case CashlinkTheme.CHRISTMAS:
             case CashlinkTheme.LUNAR_NEW_YEAR:
                 return 'You are loved';
+            case CashlinkTheme.BIRTHDAY:
+                return 'Happy birthday!';
             default: return 'Claim your Cash';
         }
     }
@@ -386,9 +400,17 @@ export default CashlinkReceive;
         height: calc(100% + 7.5rem + 1rem); /* + header height + SmallPage border radius */
     }
 
+    .theme-background.generic {
+        object-position: center bottom;
+    }
+
     .theme-background.christmas,
     .theme-background.lunar-new-year {
-        object-position: bottom right;
+        object-position: right bottom;
+    }
+
+    .theme-background.birthday {
+        object-position: 70% bottom;
     }
 
     .card-content {
