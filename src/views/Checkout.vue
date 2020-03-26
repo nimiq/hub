@@ -57,7 +57,7 @@
 
         <transition name="transition-disclaimer">
             <component :is="screenFitsDisclaimer ? 'div' : 'BottomOverlay'"
-                v-if="screenFitsDisclaimer || !disclaimerOverlayClosed"
+                v-if="screenFitsDisclaimer || !disclaimerRecentlyClosed"
                 class="disclaimer"
                 @close="_closeDisclaimerOverlay"
             >
@@ -91,7 +91,8 @@ import { ERROR_CANCELED, HISTORY_KEY_SELECTED_CURRENCY } from '../lib/Constants'
     NimiqCheckoutCard,
 }})
 class Checkout extends Vue {
-    private static DISCLAIMER_CLOSED_COOKIE = 'checkout-disclaimer-closed';
+    private static DISCLAIMER_CLOSED_STORAGE_KEY = 'checkout-disclaimer-last-closed';
+    private static DISCLAIMER_CLOSED_EXPIRY = 24 * 60 * 60 * 1000; // One day
 
     @Static private rpcState!: RpcState;
     @Static private request!: ParsedCheckoutRequest;
@@ -102,7 +103,7 @@ class Checkout extends Vue {
     private initialCurrencies: PublicCurrency[] = [];
     private availableCurrencies: PublicCurrency[] = [];
     private readonly isIOS: boolean = BrowserDetection.isIOS();
-    private disclaimerOverlayClosed: boolean = false;
+    private disclaimerRecentlyClosed: boolean = false;
     private screenFitsDisclaimer: boolean = true;
     private dimensionsUpdateTimeout: number = -1;
 
@@ -132,7 +133,9 @@ class Checkout extends Vue {
         );
         this.availableCurrencies = [ ...this.initialCurrencies ];
         document.title = 'Nimiq Checkout';
-        this.disclaimerOverlayClosed = new RegExp(`(^| )${Checkout.DISCLAIMER_CLOSED_COOKIE}=`).test(document.cookie);
+        const lastDisclaimerClose = parseInt(window.localStorage[Checkout.DISCLAIMER_CLOSED_STORAGE_KEY], 10);
+        this.disclaimerRecentlyClosed = !Number.isNaN(lastDisclaimerClose)
+            && Date.now() - lastDisclaimerClose < Checkout.DISCLAIMER_CLOSED_EXPIRY;
 
         this._onResize = this._onResize.bind(this);
         window.addEventListener('resize', this._onResize);
@@ -158,9 +161,9 @@ class Checkout extends Vue {
     }
 
     private _closeDisclaimerOverlay() {
-        this.disclaimerOverlayClosed = true;
-        // store a session cookie for current domain and path
-        document.cookie = `${Checkout.DISCLAIMER_CLOSED_COOKIE}=`;
+        this.disclaimerRecentlyClosed = true;
+        // store when the disclaimer was closed
+        window.localStorage[Checkout.DISCLAIMER_CLOSED_STORAGE_KEY] = Date.now();
     }
 
     private _onResize() {
