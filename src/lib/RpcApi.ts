@@ -47,6 +47,8 @@ export default class RpcApi {
         RequestType.SIGN_TRANSACTION,
         RequestType.SIGN_MESSAGE,
         RequestType.CHOOSE_ADDRESS,
+        RequestType.CREATE_CASHLINK,
+        RequestType.MANAGE_CASHLINK,
     ];
 
     constructor(store: Store<RootState>, staticStore: StaticStore, router: Router) {
