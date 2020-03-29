@@ -112,6 +112,12 @@ export default class CheckoutServerApi {
         }
 
         if (!fetchResponse.ok) {
+            if (process.env.NODE_ENV === 'development'
+                || document.referrer === 'https://hub.nimiq-testnet.com/demos.html') {
+                // Use fake data in local development or deployed testnet hub demo page if we have no checkout server
+                console.warn('Using dummy data instead of actual checkout server.');
+                return this._generateDummyData(requestData);
+            }
             throw new Error(`${fetchResponse.status} - ${fetchResponse.statusText}`);
         }
 
@@ -121,5 +127,44 @@ export default class CheckoutServerApi {
         }
 
         return fetchedData;
+    }
+
+    private static _generateDummyData(requestData: URLSearchParams) {
+        const now = Date.now();
+        const options = [
+            {
+                currency: Currency.BTC,
+                type: PaymentType.DIRECT,
+                amount: '.0002e8',
+                expires: now + 15 * 60000, // 15 minutes
+                protocolSpecific: {
+                    feePerByte: 2, // 2 sat per byte
+                    recipient: '17w6ar5SqXFGr786WjGHB8xyu48eujHaBe', // Unicef
+                },
+            },
+            {
+                currency: Currency.NIM,
+                type: PaymentType.DIRECT,
+                amount: '1e5',
+                expires: now + 15 * 60000, // 15 minutes
+                protocolSpecific: {
+                    fee: 50000,
+                    recipient: 'NQ09 VF5Y 1PKV MRM4 5LE1 55KV P6R2 GXYJ XYQF', // Nimiq foundation
+                },
+            },
+            {
+                currency: Currency.ETH,
+                type: PaymentType.DIRECT,
+                amount: '.0023e18',
+                expires: now + 15 * 60000, // 15 minutes
+                protocolSpecific: {
+                    gasLimit: 21000,
+                    gasPrice: '10000',
+                    recipient: '0xa4725d6477644286b354288b51122a808389be83', // the water project
+                },
+            },
+        ];
+        const requestedOption = options.find((option) => option.currency === requestData.get('currency'));
+        return Object.assign({ time: now }, requestedOption);
     }
 }
