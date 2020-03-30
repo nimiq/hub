@@ -19,6 +19,8 @@ users' Nimiq addresses.
 - [Usage](/hub/usage)
 - [API Reference](/hub/api-reference)
     - [Checkout](/hub/api-reference/checkout)
+    - [Create Cashlink](/hub/api-reference/create-cashlink)
+    - [Manage Cashlink](/hub/api-reference/manage-cashlink)
     - [Choose Address](/hub/api-reference/choose-address)
     - [Sign Message](/hub/api-reference/sign-message)
     - [Sign Transaction](/hub/api-reference/sign-transaction)
