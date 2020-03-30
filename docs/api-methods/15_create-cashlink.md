@@ -9,13 +9,11 @@ permalink: /api-reference/create-cashlink
 # Create Cashlink
 {: .no_toc }
 
-A Cashlink is a special form of sending NIM in form of a link. All the information is included in the link, non is stored on third-party servers or the clouds -- it's truly non-custodial.
-The `createCashlink()` method creates such a link and charges it with NIM.
+A Cashlink is a special way of sending NIM in form of a link. All the information about the NIM being sent is included in the link, non is stored on third-party servers or the clouds -- it's truly non-custodial.
+The `createCashlink()` method allows the user to create such a link and charge it with NIM.
 
-This will open a pop-up for the user to select the address to send from &mdash;
-or cancel the request. During the payment process, the signed transaction is
-sent (relayed) to the network but also returned to the caller, e.g. for
-processing in your site, storage on your server or re-submittal.
+Calling this method will open a pop-up for the user to select the address to charge the Cashlink from &mdash;
+or cancel the request.
 
 ## Table of Contents
 {: .no_toc .text-delta }
@@ -66,17 +64,18 @@ const result = await hubApi.createCashlink(options);
 
 ## Options
 
-(On mobile, scroll right to see the whole table.)
+(On mobile, scroll right to see the entire table.)
 
 | Option | Type | Required? | Description |
 |:-------|:-----|:----------|:------------|
 | `appName` | string | **yes** | The name of your app, should be as short as possible. |
-| `value` | number | no | Value to be loaded onto the Cashlink, in Luna. |
-| `message` | string | no | A message to be included into the Cashlink. Can be changed by the user. |
-| `autoTruncateMessage` | boolean | no | A message to be included into the Cashlink. Can be changed by the user. |
-| `senderAddress` | string | no | Preset the address the Cashlink should be filled from. If it doesn't exists, all available addresses are shown. |
-| `returnLink` | boolean | no | As the Cashlink is similar to cash (who get's the hands on it can use it), the user will handle it confidentially. But you can also request to return the create Cashlink with this flag. Default: false. |
-| `skipSharing` | boolean | no | If you sent `returnLink` to `true`, you can also set this flag. If set, the dialog will skip the section to share the Cashlink after it has been created. Default: false. |
+| `value` | number | no | Amount of NIM to be loaded onto the Cashlink, in Luna. |
+| `message` | string | no | A message to be included with the Cashlink. Can be changed by the user. Maximum 255 bytes. |
+| `autoTruncateMessage` | boolean | no | Truncate the message automatically if it is longer than 255 bytes. Default: true. |
+| `returnLink` | boolean | no | As the Cashlink is similar to cash (who get's the hands on it can use the NIM), the user will handle it confidentially. Thus, this flag is available for privileged apps only, i.e. apps at nimiq.com. Default: false. |
+| `skipSharing` | boolean | no | If you set `returnLink` to `true`, this flag can also be set. If set, the dialog will skip the section helping the user to share the Cashlink after it has been created. Default: false. |
+| `senderAddress` | string | no | Preset the address the Cashlink should be funded from. If the address doesn't exists, all available addresses will be shown. |
+| `senderBalance` | number | no | If `senderAddress` is set, you can pass the latest balance if you know it. This will speed up the process as the Hub doesn't need to wait for the balance to be retrieved from the network. |
 
 ## Result
 
@@ -84,7 +83,8 @@ The `createCashlink()` method returns a promise which resolves to a `Cashlink` i
 
 ```javascript
 interface Cashlink {
-    address: string;       // Human-readable funding address
+    address: string;       // Human-readable address of
+                           // where the NIM are stored
     message: string;
     value: number;         // In Luna
     status: CashlinkState; // See below
@@ -112,4 +112,6 @@ enum CashlinkTheme {
 }
 ```
 
-When the resulting link is opened in a browser, the recipient can claim the NIM. Thus, Cashlinks are a great tool to on-board users that don't have a Nimiq address yet. See [Manage Cashlink](manage-cashlink) to redeem a Cashlink programmatically.
+The `address` returned from `createCashlink()` is the address of the account that was created and is now stored in the Cashlink. (That's how Cashlinks work, the account is inside. :)) So, the address can be used to identify the Cashlink.
+
+When the resulting link is opened in a browser, the recipient can claim the NIM. Thus, Cashlinks are a great tool to on-board users that don't have a Nimiq address yet. See [Manage Cashlink](manage-cashlink) for a user interface to cancel and share a Cashlink.
