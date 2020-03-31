@@ -70,12 +70,13 @@ const result = await hubApi.createCashlink(options);
 |:-------|:-----|:----------|:------------|
 | `appName` | string | **yes** | The name of your app, should be as short as possible. |
 | `value` | number | no | Amount of NIM to be loaded onto the Cashlink, in Luna. |
+| `theme` | number | no | Give your Cashlink a custom look e.g. for birthdays, seasonal greetings or Luna New Year - more will be added in the future. Use the `CashlinkTheme` enum. |
 | `message` | string | no | A message to be included with the Cashlink. Can be changed by the user. Maximum 255 bytes. |
 | `autoTruncateMessage` | boolean | no | Truncate the message automatically if it is longer than 255 bytes. Default: true. |
-| `returnLink` | boolean | no | As the Cashlink is similar to cash (who get's the hands on it can use the NIM), the user will handle it confidentially. Thus, this flag is available for privileged apps only, i.e. apps at nimiq.com. Default: false. |
-| `skipSharing` | boolean | no | If you set `returnLink` to `true`, this flag can also be set. If set, the dialog will skip the section helping the user to share the Cashlink after it has been created. Default: false. |
 | `senderAddress` | string | no | Preset the address the Cashlink should be funded from. If the address doesn't exists, all available addresses will be shown. |
 | `senderBalance` | number | no | If `senderAddress` is set, you can pass the latest balance if you know it. This will speed up the process as the Hub doesn't need to wait for the balance to be retrieved from the network. |
+| `returnLink` | boolean | no | As the Cashlink is similar to cash (who get's the hands on it can use the NIM), the user will handle it confidentially. Thus, this flag is available for privileged apps only, i.e. apps at nimiq.com. Default: false. |
+| `skipSharing` | boolean | no | If you set `returnLink` to `true`, this flag can also be set. If set, the dialog will skip the section helping the user to share the Cashlink after it has been created. Default: false. |
 
 ## Result
 
