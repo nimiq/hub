@@ -185,9 +185,9 @@ const signedTransaction = await hubApi.checkout(options);
 |:-------|:-----|:----------|:------------|
 | `appName` | string | **yes** | The name of your app, should be as short as possible. |
 | `version` | number | **yes** | Set to `2` for Multicurrency Checkout. |
-| `callbackUrl` | string | **yes** | The URL will be called to receive the payment details for BTC and ETH. **# what will be sent? What expected in return? Why extra callback and not part of request?** |
+| `callbackUrl` | string | **yes** | The URL will be called to receive the payment details for BTC and ETH. See [Callback](#callback) for details |
 | `csrf` | string | no | To make sure the request came from you. |
-| `time` | number | **yes** | Current time in seconds or milliseconds. |
+| `time` | number | **yes** | Current time on your server in seconds or milliseconds. |
 | `shopLogoUrl` | string | **yes** | An image URL. Must be on the same origin as the request is sent from. Should be square and at least 146x146 px. |
 | `fiatCurrency` | string | **yes** | Currency symbol (ISO 4217 Code) of the fiat you are requesting to be paid in. See below. |
 | `fiatAmount` | number | **yes** | Exact fiat amount you are requesting to be paid in. |
@@ -211,23 +211,33 @@ const signedTransaction = await hubApi.checkout(options);
 
 #### Protocol specific: Bitcoin
 
-All fields are optional. If you don't set them during the request, they are required when receiving the callback at `callbackUrl`.
+All fields are optional. All fields can be set or overwritten when answering the callback at `callbackUrl`.
 
 | Option | Type | Required? | Description |
 |:-------|:-----|:----------|:------------|
-| `feePerByte` | number | no | The fee to be used for the transaction, 2 Satoshis per byte are recommended. |
+| `feePerByte` | number | no | The fee to be used for the transaction, 2 Satoshis per byte are recommended. Default: 0 (Thus, this value should always be set!) |
 | `fee` | number | no | The absolute fee, we recommend to use `feePerByte` (above). |
 | `recipient` | string | no | Bitcoin address to receive the BTC at. If you don't set that here it's required when receiving the callback on `callbackUrl`. **# limits on which formats are accepted?** |
 
 #### Protocol specific: Ethereum
 
-All fields are optional. If you don't set them during the request, they are required when receiving the callback at `callbackUrl`.
+All fields are optional. All fields can be set or overwritten when answering the callback at `callbackUrl`.
 
 | Option | Type | Required? | Description |
 |:-------|:-----|:----------|:------------|
 | `gasLimit` | number | no | Maximum of gas to be paid for the transaction; 21000 recommended. |
 | `gasPrice` | string | no | In Gwei (1 billion Wei); multiplying limit and price will result in the fee to be paid. Recommended: 10000. |
 | `recipient` | string | no | Ethereum address to receive the ETH at. |
+
+### Callback
+
+The idea of using a callback is that a Bitcoin or Ethereum address can be created only when the user selects to pay by that crypto. All information returned from your server to the callback will overwrite the fields given in the request's `protocolSpecific`.
+
+**TODO:** will add
+
+* Flow chart of calls and callbacks
+* Data structures requested
+* Data provided
 
 ## Result
 
