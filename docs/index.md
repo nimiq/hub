@@ -26,3 +26,4 @@ users' Nimiq addresses.
     - [Sign Transaction](/hub/api-reference/sign-transaction)
     - [Account Management](/hub/api-reference/account-management)
 - [Using Redirects](/hub/using-redirects)
+- [Customize Look](/hub/customize-look)
