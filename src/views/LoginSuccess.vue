@@ -151,7 +151,7 @@ export default class LoginSuccess extends Vue {
 
     private onUpdate(walletInfo: WalletInfo, currentlyCheckedAccounts: BasicAccountInfo[]) {
         const count = !walletInfo ? 0 : walletInfo.accounts.size;
-        this.status = this.$tc('Imported {count} address so far...| Imported {count} addresses so far...', count);
+        this.status = this.$tc('Imported {count} address so far... | Imported {count} addresses so far...', count);
     }
 
     private async done() {
@@ -191,11 +191,7 @@ export default class LoginSuccess extends Vue {
             return;
         }
 
-        if (result.length > 1) {
-            this.title = this.$t('Your Accounts are ready.') as string;
-        } else {
-            this.title = this.$t('Your Account is ready.') as string;
-        }
+        this.title = this.$tc('Your Account is ready. | Your Accounts are ready.', result.length);
         this.state = StatusScreen.State.SUCCESS;
         setTimeout(() => { this.$rpc.resolve(result); }, StatusScreen.SUCCESS_REDIRECT_DELAY);
     }

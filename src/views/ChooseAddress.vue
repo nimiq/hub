@@ -16,7 +16,7 @@
 
         <button class="global-close nq-button-s" @click="close">
             <ArrowLeftSmallIcon/>
-            {{ $t('Back to {appName}', { appName: request.appName} }) }}
+            {{ $t('Back to {appName}', { appName: request.appName}) }}
         </button>
     </div>
 </template>

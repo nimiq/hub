@@ -105,7 +105,7 @@ export default class SignupLedger extends Vue {
             case SignupLedger.State.FETCHING_ADDRESSES:
                 return this.$t('Fetching Addresses') as string;
             case SignupLedger.State.FETCHING_INCOMPLETE:
-                return this.$t('Your addresses may be\nincomplete.') as string;
+                return this.$t('Your Addresses may be\nincomplete.') as string;
             case SignupLedger.State.FINISHED:
                 return this.hadAccounts
                     ? this.$t('You\'re logged in!') as string

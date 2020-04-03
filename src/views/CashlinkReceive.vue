@@ -86,7 +86,7 @@
                 </div>
 
                 <PageFooter>
-                    <button class="nq-button light-blue" @click="callHub('signup')">{{{ $t('Create Account') }}}</button>
+                    <button class="nq-button light-blue" @click="callHub('signup')">{{ $t('Create Account') }}</button>
                     <a class="nq-link skip" href="javascript:void(0)" @click="callHub('onboard')">
                         {{ $t('Login to existing Account') }}
                         <CaretRightSmallIcon/>

@@ -352,14 +352,9 @@ msgstr ""
 msgid "Go back to shop"
 msgstr ""
 
-#: src/views/SignupLedger.vue:120
+#: src/views/LoginSuccess.vue:154 src/views/SignupLedger.vue:120
 msgid ""
 "Imported {count} address so far... | Imported {count} addresses so far..."
-msgstr ""
-
-#: src/views/LoginSuccess.vue:154
-msgid ""
-"Imported {count} address so far...| Imported {count} addresses so far..."
 msgstr ""
 
 #: src/components/CheckoutCard.vue:190
@@ -720,21 +715,11 @@ msgstr ""
 msgid "You're logged in!"
 msgstr ""
 
-#: src/views/LoginSuccess.vue:197
-msgid "Your Account is ready."
+#: src/views/LoginSuccess.vue:194
+msgid "Your Account is ready. | Your Accounts are ready."
 msgstr ""
 
-#: src/views/LoginSuccess.vue:195
-msgid "Your Accounts are ready."
-msgstr ""
-
-#: src/views/SignupLedger.vue:104
-msgid ""
-"Your addresses may be\n"
-"incomplete."
-msgstr ""
-
-#: src/views/LoginSuccess.vue:177
+#: src/views/LoginSuccess.vue:177 src/views/SignupLedger.vue:104
 msgid ""
 "Your Addresses may be\n"
 "incomplete."
