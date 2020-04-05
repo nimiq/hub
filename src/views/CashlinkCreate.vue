@@ -59,7 +59,7 @@
                         <AmountWithFee ref="amountWithFee" :available-balance="availableBalance" v-model="liveAmountAndFee"/>
                         <div class="message-with-tooltip">
                             <LabelInput class="message" placeholder="Add a message..." :vanishing="true" :maxBytes="255" v-model="message" />
-                            <Tooltip ref="tooltip" :reference="$refs.createCashlinkTooltipTarget">
+                            <Tooltip ref="tooltip" :container="$refs.createCashlinkTooltipTarget" autoWidth>
                                 This message will be stored in the Cashlink.
                                 It won’t be part of the public Blockchain and might get lost after the Cashlink was claimed.
                             </Tooltip>

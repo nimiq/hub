@@ -977,10 +977,15 @@
   resolved "https://registry.yarnpkg.com/@nimiq/rpc/-/rpc-0.4.1.tgz#d5df1e426793afcdd8c407a2968442bbee874dbd"
   integrity sha512-aQigD21o7S1+J9kfWBA9sDPjtQ+K1keL02eahc6UjSL/+9SVMY+zetSDdjq6d4zNBLRnVayjw0G2hc/yKUMZ0Q==
 
-"@nimiq/style@^0.7.5", "@nimiq/style@^0.7.6":
+"@nimiq/style@^0.7.5":
   version "0.7.6"
   resolved "https://registry.yarnpkg.com/@nimiq/style/-/style-0.7.6.tgz#b8a128d8fb6208554883158b8c2fa7f11d9e8333"
   integrity sha512-qFeIbv/xOCxHjYGfuB5U8Pb1xnRhrvetrdjtLK6zGU7tLWCuyQCOErvAKayVUpvpKyTWsXaG+I2YP2djcNo4kQ==
+
+"@nimiq/style@^0.8.0":
+  version "0.8.0"
+  resolved "https://registry.yarnpkg.com/@nimiq/style/-/style-0.8.0.tgz#b97ec06ca7742c5fc8fa5a9951008ceb9e81d469"
+  integrity sha512-Pu4GSeMfOOsA8wW7JE1vABEcK7porFE0+vcUhhhnk7Y58YC5QG9d9Sk2zUjp2IwSbPp05t4ocLqJAm1WX0jhAg==
 
 "@nimiq/utils@^0.4.6":
   version "0.4.6"
@@ -991,9 +996,9 @@
 
 "@nimiq/vue-components@github:nimiq/vue-components#build/hub":
   version "0.1.0"
-  resolved "https://codeload.github.com/nimiq/vue-components/tar.gz/45424c0b1d767f38dbe77a509bbf08ff1ed077ae"
+  resolved "https://codeload.github.com/nimiq/vue-components/tar.gz/09034494049070dc558dee9849e52f97b4788ecc"
   dependencies:
-    "@nimiq/style" "^0.7.6"
+    "@nimiq/style" "^0.8.0"
     big-integer "^1.6.44"
     input-format "^0.2.8"
     qr-code "github:nimiq/qr-encoder"
