@@ -328,6 +328,7 @@ class CashlinkReceive extends Vue {
         const theme = this.cashlink ? this.cashlink.theme : CashlinkTheme.STANDARD;
         switch (theme) {
             case CashlinkTheme.STANDARD:
+            case CashlinkTheme.EASTER:
             case CashlinkTheme.BIRTHDAY:
                 return false;
             default:
@@ -342,6 +343,8 @@ class CashlinkReceive extends Vue {
             case CashlinkTheme.CHRISTMAS:
             case CashlinkTheme.LUNAR_NEW_YEAR:
                 return 'You are loved';
+            case CashlinkTheme.EASTER:
+                return 'Happy Easter!';
             case CashlinkTheme.BIRTHDAY:
                 return 'Happy birthday!';
             default: return 'Claim your Cash';
@@ -407,6 +410,10 @@ export default CashlinkReceive;
     .theme-background.christmas,
     .theme-background.lunar-new-year {
         object-position: right bottom;
+    }
+
+    .theme-background.easter {
+        object-position: center 60%;
     }
 
     .theme-background.birthday {
@@ -756,6 +763,10 @@ export default CashlinkReceive;
 
         .container:not(.themed) .small-page {
             flex-grow: 1;
+        }
+
+        .theme-background.easter {
+            object-position: 60% center;
         }
 
         .small-page {

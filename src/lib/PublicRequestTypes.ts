@@ -261,6 +261,7 @@ export enum CashlinkTheme {
     STANDARD,
     CHRISTMAS,
     LUNAR_NEW_YEAR,
+    EASTER,
     GENERIC,
     BIRTHDAY,
 }
