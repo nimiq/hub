@@ -5,6 +5,7 @@ const path = require('path');
 const fs = require('fs');
 const browserWarning = fs.readFileSync(__dirname + '/node_modules/@nimiq/browser-warning/dist/browser-warning.html.template');
 // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const PoLoaderOptimizer = require('webpack-i18n-tools')();
 
 const buildName = process.env.NODE_ENV === 'production'
     ? process.env.build
@@ -31,6 +32,7 @@ const configureWebpack = {
             { from: 'node_modules/@nimiq/browser-warning/dist', to: './' },
         ]),
         new WriteFileWebpackPlugin(),
+        new PoLoaderOptimizer(),
         // new BundleAnalyzerPlugin(),
     ],
     // Resolve config for yarn build
@@ -40,9 +42,8 @@ const configureWebpack = {
         }
     },
     // Fix sourcemaps (https://www.mistergoodcat.com/post/the-joy-that-is-source-maps-with-vuejs-and-typescript)
-    devtool: process.env.NODE_ENV === 'development'
-        ? 'eval-source-map' // exact mapping; fast to build; large; disabled code minification and inlined maps
-        : 'source-map', // exact mapping; slow to build; small; enabled code minification and extracted maps
+    devtool: 'source-map', // exact mapping; slow to build; small; enabled code minification and extracted maps
+    // TODO: 'eval-source-map' temporarily removed for webpack-i18n-tools, will be fixed in future versions
     output: {
         devtoolModuleFilenameTemplate: info => {
             let $filename = 'sources://' + info.resourcePath;
@@ -143,6 +144,14 @@ module.exports = {
                 options.configFile = `tsconfig.${buildName}.json`
                 return options
             });
+
+        config.module
+            .rule('po')
+                .test(/\.pot?$/)
+                .use('po-loader')
+                .loader('webpack-i18n-tools')
+                .end()
+            .end();
 
         config
             .plugin('script-ext-html-webpack-plugin')
