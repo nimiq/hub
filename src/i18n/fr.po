@@ -656,6 +656,10 @@ msgid ""
 " with the merchant directly (P2P). Payment and order fulfillment are sole "
 "responsibility of the customer and merchant respectively."
 msgstr ""
+"Cette interface Nimiq est non-custodial et uniquement utilisée pour "
+"connecter le client et le marchant directement (P2P). Le paiement et "
+"l'exécution des commandes sont de la seule responsabilité du client et du "
+"commerçant respectivement."
 
 #: src/views/ErrorHandlerUnsupportedLedger.vue:53
 msgid "This operation is not supported for Ledgers."
@@ -751,22 +755,24 @@ msgstr "Vous êtes connecté !"
 
 #: src/views/LoginSuccess.vue:194
 msgid "Your Account is ready. | Your Accounts are ready."
-msgstr ""
+msgstr "Votre compte est prêt. | Vos comptes sont prêts."
 
 #: src/views/LoginSuccess.vue:177 src/views/SignupLedger.vue:104
 msgid ""
 "Your Addresses may be\n"
 "incomplete."
 msgstr ""
+"Vos adresses peuvent être\n"
+"incomplètes."
 
 #: src/views/SignMessageSuccess.vue:4
 msgid "Your message is signed."
-msgstr ""
+msgstr "Votre message est signé."
 
 #: src/components/LedgerUi.vue:164
 msgid "Your Nimiq App is outdated. "
-msgstr ""
+msgstr "Votre App Nimiq n'est pas à jour."
 
 #: src/views/LoginSuccess.vue:188 src/views/SimpleSuccess.vue:31
 msgid "Your password was changed."
-msgstr ""
+msgstr "Votre mot de passe a été changé."

@@ -1,7 +1,7 @@
 <template>
     <div class="container pad-bottom">
         <SmallPage>
-            <StatusScreen title="You are logged out." state="success"/>
+            <StatusScreen :title="$t('You are logged out.')" state="success"/>
         </SmallPage>
     </div>
 </template>

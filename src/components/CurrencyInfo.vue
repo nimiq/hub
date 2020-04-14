@@ -12,7 +12,7 @@
                 ~
                 <FiatAmount :amount="fiatFeeAmount" :currency="fiatCurrency" />
             </span>
-            Fee
+            {{ $t('Fee') }}
         </p>
     </div>
 </template>

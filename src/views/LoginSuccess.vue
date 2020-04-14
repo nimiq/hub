@@ -39,8 +39,8 @@ export default class LoginSuccess extends Vue {
 
     private walletInfos: WalletInfo[] = [];
     private state: StatusScreen.State = StatusScreen.State.LOADING;
-    private title: string = this.$t('Fetching your addresses') as string;
-    private status: string = this.$t('Connecting to network...') as string;
+    private title: string = this.$root.$t('Fetching your addresses') as string;
+    private status: string = this.$root.$t('Connecting to network...') as string;
     private message: string = '';
     private action: string = '';
     private receiptsError: Error | null = null;
@@ -92,7 +92,7 @@ export default class LoginSuccess extends Vue {
 
                         break;
                     } catch (e) {
-                        this.status = this.$t('Address detection failed. Retrying...') as string;
+                        this.status = this.$root.$t('Address detection failed. Retrying...') as string;
                         if (tryCount >= 5) throw e;
                     }
                 }

@@ -10,7 +10,11 @@
         "test:unit": "vue-cli-service test:unit",
         "test": "yarn test:unit",
         "pr": "yarn lint && yarn build:ci && yarn test && cd client && yarn lint && yarn build",
-        "postinstall": "cd client && yarn"
+        "postinstall": "cd client && yarn",
+        "i18n:extract": "node ./node_modules/webpack-i18n-tools/index.js ./src/i18n/en.po",
+        "i18n:pull": "tx pull --all --parallel --no-interactive",
+        "i18n:push": "tx push --source",
+        "i18n:sync": "yarn i18n:extract && yarn i18n:push ; yarn i18n:pull"
     },
     "dependencies": {
         "@nimiq/browser-warning": "^1.1.0",
@@ -20,7 +24,7 @@
         "@nimiq/network-client": "^0.4.0",
         "@nimiq/rpc": "^0.4.1",
         "@nimiq/style": "^0.8.2",
-        "@nimiq/utils": "^0.4.6",
+        "@nimiq/utils": "0.5.0",
         "@nimiq/vue-components": "https://github.com/nimiq/vue-components#build/hub",
         "@sentry/browser": "^5.12.1",
         "@sentry/integrations": "^5.12.0",

@@ -14,7 +14,7 @@
 
             <StatusScreen v-if="confirmedLogout"
                 state="success"
-                title="You are logged out."
+                :title="$t('You are logged out.')"
                 class="grow-from-bottom-button">
             </StatusScreen>
         </SmallPage>

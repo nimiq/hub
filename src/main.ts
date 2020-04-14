@@ -6,7 +6,6 @@ import store from './store';
 import staticStore from '@/lib/StaticStore';
 import RpcApi from '@/lib/RpcApi';
 import { startSentry } from './lib/Sentry';
-import VueI18n from 'vue-i18n';
 // @ts-ignore
 import IqonsSvg from '@nimiq/iqons/dist/iqons.min.svg';
 import { i18n, loadLanguageAsync, autodetectLanguage } from './i18n/i18n-setup';
@@ -42,8 +41,6 @@ const rpcApi = new RpcApi(store, staticStore, router);
 Vue.prototype.$rpc = rpcApi; // rpcApi is started in App.vue->created()
 
 startSentry(Vue);
-
-Vue.use(VueI18n);
 
 loadLanguageAsync(autodetectLanguage());
 

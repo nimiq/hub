@@ -52,16 +52,16 @@
                                 @click.native="openedDetails = constructor.Details.SENDER"/>
                             <ArrowRightIcon class="nq-light-blue arrow"/>
                             <Account layout="column"
-                                label="New Cashlink"
+                                :label="$t('New Cashlink')"
                                 :displayAsCashlink="true"/>
                         </div>
                         <hr/>
                         <AmountWithFee ref="amountWithFee" :available-balance="availableBalance" v-model="liveAmountAndFee"/>
                         <div class="message-with-tooltip">
-                            <LabelInput class="message" placeholder="Add a message..." :vanishing="true" :maxBytes="255" v-model="message" />
+                            <LabelInput class="message" :placeholder="$t('Add a message...')" :vanishing="true" :maxBytes="255" v-model="message" />
                             <Tooltip ref="tooltip" :container="$refs.createCashlinkTooltipTarget" autoWidth>
-                                {{ $t('This message will be stored in the Cashlink.\
-                                It won’t be part of the public Blockchain and might get lost after the Cashlink was claimed.') }}
+                                {{ $t('This message will be stored in the Cashlink.') }}
+                                {{ $t('It won’t be part of the public Blockchain and might get lost after the Cashlink was claimed.') }}
                             </Tooltip>
                         </div>
                     </PageBody>
@@ -101,6 +101,7 @@ import { NetworkClient } from '@nimiq/network-client';
 import { WalletStore } from '../lib/WalletStore';
 import { WalletInfo, WalletType } from '../lib/WalletInfo';
 import { ContractInfo, VestingContractInfo } from '../lib/ContractInfo';
+import { i18n } from '../i18n/i18n-setup';
 import KeyguardClient from '@nimiq/keyguard-client';
 import Config from 'config';
 import {
@@ -150,17 +151,17 @@ class CashlinkCreate extends Vue {
     }> = [{
             color: 'nq-light-blue-bg',
             value: 0,
-            text: 'free',
+            text: i18n.t('free') as string,
             index: 0,
         }, {
             color: 'nq-green-bg',
             value: 1,
-            text: 'standard',
+            text: i18n.t('standard') as string,
             index: 1,
         }, {
             color: 'nq-gold-bg',
             value: 2,
-            text: 'express',
+            text: i18n.t('express') as string,
             index: 2,
         },
     ];

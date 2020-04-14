@@ -22,7 +22,7 @@ export default class EtherCheckoutCard
 
     protected get manualPaymentDetails() {
         const paymentDetails = [ ...super.manualPaymentDetails, {
-            label: 'Amount',
+            label: this.$t('Amount') as string,
             value: {
                 ETH: new FormattableNumber(this.paymentOptions.amount)
                     .moveDecimalSeparator(-this.paymentOptions.decimals).toString(),
@@ -30,7 +30,7 @@ export default class EtherCheckoutCard
         }];
         if (this.paymentOptions.protocolSpecific.gasPrice) {
             paymentDetails.push({
-                label: 'Gas Price',
+                label: this.$t('Gas Price') as string,
                 value: {
                     GWEI: new FormattableNumber(this.paymentOptions.protocolSpecific.gasPrice)
                         .moveDecimalSeparator(-9).toString({ maxDecimals: 2 }),
@@ -41,7 +41,7 @@ export default class EtherCheckoutCard
         }
         if (this.paymentOptions.protocolSpecific.gasLimit) {
             paymentDetails.push({
-                label: 'Gas Limit',
+                label: this.$t('Gas Limit') as string,
                 value: this.paymentOptions.protocolSpecific.gasLimit,
             });
         }

@@ -273,7 +273,7 @@ export default class SignTransactionLedger extends Vue {
 
             this.recipientDetails = {
                 address: this.cashlink.address.toUserFriendlyAddress(),
-                label: 'New Cashlink',
+                label: this.$t('New Cashlink') as string,
                 isCashlink: true,
             };
         } else {

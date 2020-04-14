@@ -3,7 +3,6 @@ import { BrowserDetection } from '@nimiq/utils';
 import App from './CashlinkApp.vue';
 import store from './store';
 import { startSentry } from './lib/Sentry';
-import VueI18n from 'vue-i18n';
 // @ts-ignore
 import IqonsSvg from '@nimiq/iqons/dist/iqons.min.svg';
 import { i18n, loadLanguageAsync, autodetectLanguage } from './i18n/i18n-setup';
@@ -37,12 +36,10 @@ if (IqonsSvg[0] === '"') {
 
 startSentry(Vue);
 
-Vue.use(VueI18n);
-
 loadLanguageAsync(autodetectLanguage());
 
 const app = new Vue({
     store,
-    render: (h) => h(App),
     i18n,
+    render: (h) => h(App),
 }).$mount('#app');

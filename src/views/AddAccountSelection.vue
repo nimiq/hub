@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <SmallPage>
-            <IdenticonSelector :accounts="accounts" confirmButtonText="Add to Account" @identicon-selected="identiconSelected">
+            <IdenticonSelector :accounts="accounts" :confirmButtonText="$t('Add to Account')" @identicon-selected="identiconSelected">
                 <PageHeader slot="header" backArrow @back="back">{{ $t('Choose a new Address') }}</PageHeader>
             </IdenticonSelector>
 

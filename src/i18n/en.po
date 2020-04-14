@@ -100,7 +100,7 @@ msgstr ""
 msgid "By adding a transation fee, you can influence how fast your transaction will be processed."
 msgstr ""
 
-#: src/views/Checkout.vue:53
+#: src/views/Checkout.vue:54
 msgid "Cancel"
 msgstr ""
 
@@ -186,7 +186,7 @@ msgstr ""
 msgid "Claim Cashlink"
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:333
+#: src/views/CashlinkReceive.vue:350
 msgid "Claim your Cash"
 msgstr ""
 
@@ -198,7 +198,7 @@ msgstr ""
 msgid "Close"
 msgstr ""
 
-#: src/components/CheckoutCard.vue:122
+#: src/components/CheckoutCard.vue:126
 msgid "Collecting payment details"
 msgstr ""
 
@@ -222,15 +222,15 @@ msgstr ""
 msgid "Confirm using your Ledger"
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:344
+#: src/views/CashlinkReceive.vue:361
 msgid "Congrats, somebody gifted you a Nimiq Cashlink."
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:343
+#: src/views/CashlinkReceive.vue:360
 msgid "Congrats, you just opened a Nimiq Cashlink."
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:339
+#: src/views/CashlinkReceive.vue:356
 msgid "Congrats, you received a Nimiq Gift Card."
 msgstr ""
 
@@ -311,7 +311,7 @@ msgstr ""
 msgid "Detecting vesting contracts..."
 msgstr ""
 
-#: src/views/Checkout.vue:63
+#: src/views/Checkout.vue:64
 msgid "Disclaimer"
 msgstr ""
 
@@ -357,7 +357,7 @@ msgstr ""
 msgid "Go back"
 msgstr ""
 
-#: src/components/CheckoutCard.vue:171
+#: src/components/CheckoutCard.vue:175
 msgid "Go back to shop"
 msgstr ""
 
@@ -366,7 +366,7 @@ msgstr ""
 msgid "Imported {count} address so far... | Imported {count} addresses so far..."
 msgstr ""
 
-#: src/components/CheckoutCard.vue:190
+#: src/components/CheckoutCard.vue:194
 msgid "Incomplete payment"
 msgstr ""
 
@@ -477,11 +477,11 @@ msgstr ""
 msgid "Pay with Nimiq"
 msgstr ""
 
-#: src/views/Checkout.vue:53
+#: src/views/Checkout.vue:54
 msgid "Payment"
 msgstr ""
 
-#: src/components/CheckoutCard.vue:182
+#: src/components/CheckoutCard.vue:186
 msgid "Payment successful"
 msgstr ""
 
@@ -497,11 +497,11 @@ msgstr ""
 msgid "Please cancel the request on your Ledger"
 msgstr ""
 
-#: src/components/CheckoutCard.vue:192
+#: src/components/CheckoutCard.vue:196
 msgid "Please contact the merchant for a refund. Restart to pay for your order."
 msgstr ""
 
-#: src/components/CheckoutCard.vue:169
+#: src/components/CheckoutCard.vue:173
 #: src/views/SignTransactionLedger.vue:84
 msgid "Please go back to the shop and restart the process."
 msgstr ""
@@ -542,7 +542,7 @@ msgstr ""
 msgid "Requesting balances..."
 msgstr ""
 
-#: src/components/CheckoutCard.vue:194
+#: src/components/CheckoutCard.vue:198
 msgid "Restart Payment"
 msgstr ""
 
@@ -602,7 +602,7 @@ msgstr ""
 msgid "The connected Ledger is not the one this account belongs to."
 msgstr ""
 
-#: src/components/CheckoutCard.vue:168
+#: src/components/CheckoutCard.vue:172
 msgid "The offer expired."
 msgstr ""
 
@@ -630,7 +630,7 @@ msgstr ""
 msgid "This message will be stored in the Cashlink.                                It won’t be part of the public Blockchain and might get lost after the Cashlink was claimed."
 msgstr ""
 
-#: src/views/Checkout.vue:64
+#: src/views/Checkout.vue:65
 msgid "This Nimiq interface is non-custodial and solely used to bridge the customer with the merchant directly (P2P). Payment and order fulfillment are sole responsibility of the customer and merchant respectively."
 msgstr ""
 
@@ -700,7 +700,7 @@ msgstr ""
 msgid "Whoops, something went wrong"
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:332
+#: src/views/CashlinkReceive.vue:345
 msgid "You are loved"
 msgstr ""
 
@@ -708,7 +708,7 @@ msgstr ""
 msgid "You received a Cashlink!"
 msgstr ""
 
-#: src/components/CheckoutCard.vue:191
+#: src/components/CheckoutCard.vue:195
 msgid "You transferred an insufficient amount. "
 msgstr ""
 
