@@ -144,15 +144,11 @@ export class RequestParser {
                     }
 
                     if (!checkoutRequest.callbackUrl || typeof checkoutRequest.callbackUrl !== 'string') {
-                        if (checkoutRequest.paymentOptions.some(
-                            (option) => option.currency !== Currency.NIM,
-                            )) {
+                        if (checkoutRequest.paymentOptions.some((option) => option.currency !== Currency.NIM)) {
                             throw new Error('A callbackUrl: string is required for currencies other than NIM to ' +
                                 'monitor payments.');
                         }
-                        if (!checkoutRequest.paymentOptions.every(
-                                (option) => !!option.protocolSpecific.recipient,
-                            )) {
+                        if (!checkoutRequest.paymentOptions.every((option) => !!option.protocolSpecific.recipient)) {
                             throw new Error('A callbackUrl: string or all recipients must be provided');
                         }
                     } else {
@@ -206,13 +202,12 @@ export class RequestParser {
                                         case Currency.NIM:
                                             // Once extraData from MultiCurrencyCheckoutRequest is removed
                                             // the next few lines become obsolete.
-                                            if (!option.protocolSpecific.extraData) {
+                                            if (!option.protocolSpecific.extraData && checkoutRequest.extraData) {
+                                                console.warn('Usage of MultiCurrencyCheckoutRequest.extraData is'
+                                                + ' deprecated. Use NimiqDirectPaymentOptions.protocolSpecific'
+                                                + '.extraData instead');
+
                                                 option.protocolSpecific.extraData = checkoutRequest.extraData;
-                                                if (option.protocolSpecific.extraData) {
-                                                    console.warn('Usage of MultiCurrencyCheckoutRequest.extraData is'
-                                                        + ' deprecated. Use NimiqDirectPaymentOptions.protocolSpecific'
-                                                        + '.extraData instead');
-                                                }
                                             }
                                             return new ParsedNimiqDirectPaymentOptions(option);
                                         case Currency.ETH:
@@ -228,6 +223,8 @@ export class RequestParser {
                         }),
                     } as ParsedCheckoutRequest;
                 }
+
+                throw new Error('Invalid version: must be 1 or 2');
             case RequestType.ONBOARD:
                 const onboardRequest = request as OnboardRequest;
                 return {
