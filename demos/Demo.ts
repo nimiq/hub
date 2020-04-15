@@ -269,7 +269,7 @@ class Demo {
         }
 
         async function generateMultiCheckoutRequest(): Promise<CheckoutRequest> {
-            const now =  + new Date();
+            const now = Date.now();
             return {
                 version: 2,
                 appName: 'Accounts Demos',
