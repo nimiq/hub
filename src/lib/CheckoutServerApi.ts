@@ -118,7 +118,13 @@ export default class CheckoutServerApi {
                 console.warn('Using dummy data instead of actual checkout server.');
                 return this._generateDummyData(requestData);
             }
-            throw new Error(`${fetchResponse.status} - ${fetchResponse.statusText}`);
+            let errorMsg = '';
+            try {
+                errorMsg = (await fetchResponse.json()).error;
+            } catch (error) {
+                // Ignore
+            }
+            throw new Error(`Callback Error: ${fetchResponse.status} - ${errorMsg || fetchResponse.statusText}`);
         }
 
         const fetchedData = await fetchResponse.json();
