@@ -9,15 +9,8 @@ export interface GetStateResponse {
 
 export default class CheckoutServerApi {
     public static async fetchTime(endPoint: string, csrfToken: string): Promise<number> {
-        let fetchPromise: Promise<GetStateResponse>;
-        if (CheckoutServerApi._getStatePromises.size === 0) {
-            fetchPromise = CheckoutServerApi.getState(endPoint, Currency.NIM, csrfToken);
-        } else {
-            fetchPromise = CheckoutServerApi._getStatePromises.entries().next().value[1];
-        }
-        return fetchPromise.then((value: GetStateResponse) => {
-            return isMilliseconds(value.time) ? value.time : value.time * 1000;
-        });
+        const value = await CheckoutServerApi.getState(endPoint, csrfToken);
+        return value.time;
     }
 
     public static async fetchPaymentOption<C extends Currency, T extends PaymentType>(
@@ -38,49 +31,46 @@ export default class CheckoutServerApi {
             fetchedData = await CheckoutServerApi._fetchData(endPoint, requestData, csrfToken);
 
             // Store in state in case this fetch gets repeated (also after reload and history.back)
-            history.replaceState(Object.assign({}, history.state, {
+            history.replaceState({
+                ...history.state,
                 [currency]: fetchedData,
-            }), '');
+            }, '');
         }
 
-        if (currency !== fetchedData.currency
-            || type !== fetchedData.type) {
+        if (currency !== fetchedData.currency || type !== fetchedData.type) {
             throw new Error('Unexpected: fetch did not return the correct currency/type combination');
         }
+
         return fetchedData;
     }
 
-    public static async getState<C extends Currency>(
+    public static async getState(
         endPoint: string,
-        currency: C,
         csrfToken: string,
     ): Promise<GetStateResponse> {
+        if (CheckoutServerApi._getStatePromise) return CheckoutServerApi._getStatePromise;
+
         const data = new URLSearchParams();
-        data.append('currency', currency);
         data.append('command', 'get_state');
-        if (CheckoutServerApi._getStatePromises.has(currency)) {
-            return CheckoutServerApi._getStatePromises.get(currency)!;
-        }
-        const fetchedDataPromise = CheckoutServerApi._fetchData(endPoint, data, csrfToken).then(
+
+        CheckoutServerApi._getStatePromise = CheckoutServerApi._fetchData(endPoint, data, csrfToken).then(
             (value) => {
-                window.setTimeout(
-                    () => CheckoutServerApi._getStatePromises.delete(currency),
-                    3000,
-                );
+                // Clear cached request after 3 seconds
+                window.setTimeout(() => CheckoutServerApi._getStatePromise = null, 3000);
+
                 value.time = isMilliseconds(value.time) ? value.time : value.time * 1000;
                 return value;
             },
             (e) => {
-                CheckoutServerApi._getStatePromises.delete(currency);
+                CheckoutServerApi._getStatePromise = null;
                 return Promise.reject(e);
             },
         );
-        CheckoutServerApi._getStatePromises.set(currency, fetchedDataPromise);
 
-        return fetchedDataPromise;
+        return CheckoutServerApi._getStatePromise;
     }
 
-    private static _getStatePromises = new Map<Currency, Promise<GetStateResponse>>();
+    private static _getStatePromise: Promise<GetStateResponse> | null = null;
 
     private static async _fetchData(endPoint: string, requestData: URLSearchParams, csrfToken: string): Promise<any> {
         requestData.append('csrf', csrfToken);

@@ -88,11 +88,7 @@ export default class CheckoutCard<
             throw new Error('Can\'t get state without callbackUrl and csrf token');
         }
 
-        const fetchedState = await CheckoutServerApi.getState(
-            this.request.callbackUrl,
-            this.paymentOptions.currency,
-            this.request.csrf,
-        );
+        const fetchedState = await CheckoutServerApi.getState(this.request.callbackUrl, this.request.csrf);
         this.paymentState = fetchedState.payment_state;
         if (fetchedState.payment_accepted) {
             window.clearInterval(this.checkNetworkInterval);
