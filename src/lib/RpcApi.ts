@@ -292,7 +292,7 @@ export default class RpcApi {
                 }
             } else if (requestType === RequestType.CHECKOUT) {
                 const checkoutRequest = request as ParsedCheckoutRequest;
-                // forceSender only applies to non-multi-currency checkouts.
+                // forceSender only applies to NIM-only checkouts.
                 if (checkoutRequest.paymentOptions.length === 1
                     && checkoutRequest.paymentOptions[0].currency === Currency.NIM) {
 

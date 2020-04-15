@@ -36,6 +36,7 @@ import { ParsedNimiqDirectPaymentOptions } from './paymentOptions/NimiqPaymentOp
 import { ParsedEtherDirectPaymentOptions } from './paymentOptions/EtherPaymentOptions';
 import { ParsedBitcoinDirectPaymentOptions } from './paymentOptions/BitcoinPaymentOptions';
 import { Utf8Tools } from '@nimiq/utils';
+import config from 'config';
 
 export class RequestParser {
     public static parse(
@@ -118,9 +119,12 @@ export class RequestParser {
                 }
 
                 if (checkoutRequest.version === 2) {
-                    if (!checkoutRequest.paymentOptions.some((option) => option.currency === Currency.NIM)) {
-                        throw new Error('CheckoutRequest must provide a NIM paymentOption.');
+                    if (!config.allowsCheckoutWithoutNim(state.origin)) {
+                        if (!checkoutRequest.paymentOptions.some((option) => option.currency === Currency.NIM)) {
+                            throw new Error('CheckoutRequest must provide a NIM paymentOption.');
+                        }
                     }
+
                     if (!checkoutRequest.shopLogoUrl) {
                         throw new Error('shopLogoUrl: string is required'); // shop logo non optional in version 2
                     }

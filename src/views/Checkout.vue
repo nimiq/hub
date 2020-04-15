@@ -97,7 +97,7 @@ class Checkout extends Vue {
     @Static private rpcState!: RpcState;
     @Static private request!: ParsedCheckoutRequest;
     private choosenCurrency: PublicCurrency | null = null;
-    private selectedCurrency: PublicCurrency = PublicCurrency.NIM;
+    private selectedCurrency: PublicCurrency | null = null;
     private leftCard: PublicCurrency | null = null;
     private rightCard: PublicCurrency | null = null;
     private initialCurrencies: PublicCurrency[] = [];
@@ -109,6 +109,8 @@ class Checkout extends Vue {
 
     @Watch('selectedCurrency', { immediate: true })
     private updateUnselected() {
+        if (!this.selectedCurrency) return;
+
         const entries = this.request.paymentOptions.map((paymentOptions) => paymentOptions.currency);
         if (entries.length === 1) return;
 
@@ -132,6 +134,11 @@ class Checkout extends Vue {
             || history.state[HISTORY_KEY_SELECTED_CURRENCY] === currency,
         );
         this.availableCurrencies = [ ...this.initialCurrencies ];
+        if (this.availableCurrencies.includes(PublicCurrency.NIM)) {
+            this.selectedCurrency = PublicCurrency.NIM;
+        } else {
+            this.selectedCurrency = this.availableCurrencies[0];
+        }
         document.title = 'Nimiq Checkout';
         const lastDisclaimerClose = parseInt(window.localStorage[Checkout.DISCLAIMER_CLOSED_STORAGE_KEY], 10);
         this.disclaimerRecentlyClosed = !Number.isNaN(lastDisclaimerClose)

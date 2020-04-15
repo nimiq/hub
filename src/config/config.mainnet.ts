@@ -13,4 +13,7 @@ export default {
     ],
     redirectTarget: 'https://safe.nimiq.com',
     reportToSentry: true,
+    allowsCheckoutWithoutNim: (origin: string): boolean => [
+        'https://vendor.cryptopayment.link',
+    ].includes(origin),
 };
