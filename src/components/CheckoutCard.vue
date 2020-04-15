@@ -170,9 +170,9 @@ export default class CheckoutCard<
     protected timedOut() {
         this.timeoutReached = true;
         this.statusScreenTitle = 'The offer expired.';
-        this.statusScreenMessage = 'Please go back to the shop and restart the process.';
+        this.statusScreenMessage = 'Please go back and restart the process.';
         this.statusScreenMainAction = () => this.backToShop();
-        this.statusScreenMainActionText = 'Go back to shop';
+        this.statusScreenMainActionText = 'Go back';
         this.statusScreenState = StatusScreen.State.WARNING;
         this.showStatusScreen = true;
         this.$emit('expired', this.paymentOptions.currency);
