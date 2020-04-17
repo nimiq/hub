@@ -97,7 +97,7 @@ class Checkout extends Vue {
     @Static private rpcState!: RpcState;
     @Static private request!: ParsedCheckoutRequest;
     private choosenCurrency: PublicCurrency | null = null;
-    private selectedCurrency: PublicCurrency = PublicCurrency.NIM;
+    private selectedCurrency: PublicCurrency | null = null;
     private leftCard: PublicCurrency | null = null;
     private rightCard: PublicCurrency | null = null;
     private initialCurrencies: PublicCurrency[] = [];
@@ -107,12 +107,12 @@ class Checkout extends Vue {
     private screenFitsDisclaimer: boolean = true;
     private dimensionsUpdateTimeout: number = -1;
 
-    @Watch('selectedCurrency', { immediate: true })
+    @Watch('selectedCurrency')
     private updateUnselected() {
         const entries = this.request.paymentOptions.map((paymentOptions) => paymentOptions.currency);
         if (entries.length === 1) return;
 
-        const indexSelected = entries.indexOf(this.selectedCurrency);
+        const indexSelected = entries.indexOf(this.selectedCurrency!);
         if (entries.length === 2) {
             // We have two cards. Determine whether the non selected is to the left or to the right.
             this.leftCard = indexSelected === 1 ? entries[0] : null;
@@ -132,6 +132,11 @@ class Checkout extends Vue {
             || history.state[HISTORY_KEY_SELECTED_CURRENCY] === currency,
         );
         this.availableCurrencies = [ ...this.initialCurrencies ];
+        if (this.availableCurrencies.includes(PublicCurrency.NIM)) {
+            this.selectedCurrency = PublicCurrency.NIM;
+        } else {
+            this.selectedCurrency = this.availableCurrencies[0];
+        }
         document.title = 'Nimiq Checkout';
         const lastDisclaimerClose = parseInt(window.localStorage[Checkout.DISCLAIMER_CLOSED_STORAGE_KEY], 10);
         this.disclaimerRecentlyClosed = !Number.isNaN(lastDisclaimerClose)

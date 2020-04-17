@@ -45,8 +45,8 @@ export const loadNimiq = async () => {
     }
 };
 
-export function isPriviledgedOrigin(origin: string) {
-    return Config.privilegedOrigins.includes(origin) || Config.privilegedOrigins.includes('*');
+export function includesOrigin(list: string[], origin: string) {
+    return list.includes(origin) || list.includes('*');
 }
 
 export function isDesktop() {

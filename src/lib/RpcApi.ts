@@ -27,7 +27,7 @@ import Cashlink from '@/lib/Cashlink';
 import CookieJar from '@/lib/CookieJar';
 import { captureException } from '@sentry/browser';
 import { ERROR_CANCELED } from './Constants';
-import { isPriviledgedOrigin } from '@/lib/Helpers';
+import { includesOrigin } from '@/lib/Helpers';
 import Config from 'config';
 import { setHistoryStorage, getHistoryStorage } from '@/lib/Helpers';
 
@@ -241,8 +241,10 @@ export default class RpcApi {
     private async _hubApiHandler(requestType: RequestType, state: RpcState, arg: RpcRequest) {
         let request;
 
-        // Check that a non-whitelisted request comes from a privileged origin
-        if (!this._3rdPartyRequestWhitelist.includes(requestType) && !isPriviledgedOrigin(state.origin)) {
+        if ( // Check that a non-whitelisted request comes from a privileged origin
+            !this._3rdPartyRequestWhitelist.includes(requestType)
+            && !includesOrigin(Config.privilegedOrigins, state.origin)
+        ) {
             state.reply(ResponseStatus.ERROR, new Error(`${state.origin} is unauthorized to call ${requestType}`));
             return;
         }
@@ -292,7 +294,7 @@ export default class RpcApi {
                 }
             } else if (requestType === RequestType.CHECKOUT) {
                 const checkoutRequest = request as ParsedCheckoutRequest;
-                // forceSender only applies to non-multi-currency checkouts.
+                // forceSender only applies to NIM-only checkouts.
                 if (checkoutRequest.paymentOptions.length === 1
                     && checkoutRequest.paymentOptions[0].currency === Currency.NIM) {
 

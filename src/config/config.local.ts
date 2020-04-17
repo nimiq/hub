@@ -7,4 +7,5 @@ export default {
     privilegedOrigins: [ '*' ],
     redirectTarget: window.location.protocol + '//' + window.location.hostname + ':8080/demos.html',
     reportToSentry: false,
+    checkoutWithoutNimOrigins: [ '*' ],
 };

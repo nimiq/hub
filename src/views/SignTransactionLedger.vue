@@ -219,7 +219,11 @@ export default class SignTransactionLedger extends Vue {
             if (checkoutRequest.callbackUrl && checkoutRequest.csrf) {
                 try {
                     const fetchedPaymentOptions = await CheckoutServerApi.fetchPaymentOption(
-                        checkoutRequest.callbackUrl, Currency.NIM, checkoutPaymentOptions.type, checkoutRequest.csrf);
+                        checkoutRequest.callbackUrl,
+                        checkoutPaymentOptions.currency,
+                        checkoutPaymentOptions.type,
+                        checkoutRequest.csrf,
+                    );
                     checkoutPaymentOptions.update(fetchedPaymentOptions);
                 } catch (e) {
                     this.$rpc.reject(e);
@@ -375,7 +379,7 @@ export default class SignTransactionLedger extends Vue {
         if (this.request.kind !== RequestType.CHECKOUT) return null;
         const checkoutRequest = this.request as ParsedCheckoutRequest;
         return checkoutRequest.paymentOptions.find(
-            (option) => option.currency === Currency.NIM,
+            (option) => option.currency === Currency.NIM, // TODO: Also handle BTC payments
         ) as ParsedNimiqDirectPaymentOptions;
     }
 

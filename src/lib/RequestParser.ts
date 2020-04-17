@@ -1,4 +1,4 @@
-import { isMilliseconds, isPriviledgedOrigin } from './Helpers';
+import { isMilliseconds, includesOrigin } from './Helpers';
 import { State } from '@nimiq/rpc';
 import {
     BasicRequest,
@@ -36,6 +36,7 @@ import { ParsedNimiqDirectPaymentOptions } from './paymentOptions/NimiqPaymentOp
 import { ParsedEtherDirectPaymentOptions } from './paymentOptions/EtherPaymentOptions';
 import { ParsedBitcoinDirectPaymentOptions } from './paymentOptions/BitcoinPaymentOptions';
 import { Utf8Tools } from '@nimiq/utils';
+import Config from 'config';
 
 export class RequestParser {
     public static parse(
@@ -118,9 +119,13 @@ export class RequestParser {
                 }
 
                 if (checkoutRequest.version === 2) {
-                    if (!checkoutRequest.paymentOptions.some((option) => option.currency === Currency.NIM)) {
+                    if ( // Check if the origin is allowed to make requests without a NIM payment option
+                        !includesOrigin(Config.checkoutWithoutNimOrigins, state.origin)
+                        && !checkoutRequest.paymentOptions.some((option) => option.currency === Currency.NIM)
+                    ) {
                         throw new Error('CheckoutRequest must provide a NIM paymentOption.');
                     }
+
                     if (!checkoutRequest.shopLogoUrl) {
                         throw new Error('shopLogoUrl: string is required'); // shop logo non optional in version 2
                     }
@@ -144,15 +149,11 @@ export class RequestParser {
                     }
 
                     if (!checkoutRequest.callbackUrl || typeof checkoutRequest.callbackUrl !== 'string') {
-                        if (checkoutRequest.paymentOptions.some(
-                            (option) => option.currency !== Currency.NIM,
-                            )) {
+                        if (checkoutRequest.paymentOptions.some((option) => option.currency !== Currency.NIM)) {
                             throw new Error('A callbackUrl: string is required for currencies other than NIM to ' +
                                 'monitor payments.');
                         }
-                        if (!checkoutRequest.paymentOptions.every(
-                                (option) => !!option.protocolSpecific.recipient,
-                            )) {
+                        if (!checkoutRequest.paymentOptions.every((option) => !!option.protocolSpecific.recipient)) {
                             throw new Error('A callbackUrl: string or all recipients must be provided');
                         }
                     } else {
@@ -206,13 +207,12 @@ export class RequestParser {
                                         case Currency.NIM:
                                             // Once extraData from MultiCurrencyCheckoutRequest is removed
                                             // the next few lines become obsolete.
-                                            if (!option.protocolSpecific.extraData) {
+                                            if (!option.protocolSpecific.extraData && checkoutRequest.extraData) {
+                                                console.warn('Usage of MultiCurrencyCheckoutRequest.extraData is'
+                                                    + ' deprecated. Use NimiqDirectPaymentOptions.protocolSpecific'
+                                                    + '.extraData instead');
+
                                                 option.protocolSpecific.extraData = checkoutRequest.extraData;
-                                                if (option.protocolSpecific.extraData) {
-                                                    console.warn('Usage of MultiCurrencyCheckoutRequest.extraData is'
-                                                        + ' deprecated. Use NimiqDirectPaymentOptions.protocolSpecific'
-                                                        + '.extraData instead');
-                                                }
                                             }
                                             return new ParsedNimiqDirectPaymentOptions(option);
                                         case Currency.ETH:
@@ -228,6 +228,8 @@ export class RequestParser {
                         }),
                     } as ParsedCheckoutRequest;
                 }
+
+                throw new Error('Invalid version: must be 1 or 2');
             case RequestType.ONBOARD:
                 const onboardRequest = request as OnboardRequest;
                 return {
@@ -332,7 +334,7 @@ export class RequestParser {
                 }
 
                 const returnLink = !!createCashlinkRequest.returnLink;
-                if (returnLink && !isPriviledgedOrigin(state.origin)) {
+                if (returnLink && !includesOrigin(Config.privilegedOrigins, state.origin)) {
                     throw new Error(`Origin ${state.origin} is not authorized to request returnLink.`);
                 }
                 const skipSharing = !!createCashlinkRequest.returnLink && !!createCashlinkRequest.skipSharing;

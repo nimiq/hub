@@ -13,4 +13,7 @@ export default {
     ],
     redirectTarget: 'https://safe.nimiq-testnet.com',
     reportToSentry: true,
+    checkoutWithoutNimOrigins: [
+        'https://checkout-service-staging-0.web.app',
+    ],
 };
