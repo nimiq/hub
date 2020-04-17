@@ -209,8 +209,8 @@ export class RequestParser {
                                             // the next few lines become obsolete.
                                             if (!option.protocolSpecific.extraData && checkoutRequest.extraData) {
                                                 console.warn('Usage of MultiCurrencyCheckoutRequest.extraData is'
-                                                + ' deprecated. Use NimiqDirectPaymentOptions.protocolSpecific'
-                                                + '.extraData instead');
+                                                    + ' deprecated. Use NimiqDirectPaymentOptions.protocolSpecific'
+                                                    + '.extraData instead');
 
                                                 option.protocolSpecific.extraData = checkoutRequest.extraData;
                                             }
