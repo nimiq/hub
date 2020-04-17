@@ -6,12 +6,11 @@ const fs = require('fs');
 const browserWarning = fs.readFileSync(__dirname + '/node_modules/@nimiq/browser-warning/dist/browser-warning.html.template');
 // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
-
-const buildName = process.env.build
+const buildName = process.env.NODE_ENV === 'production'
     ? process.env.build
-    : process.env.NODE_ENV === 'production'
-        ? 'testnet'
-        : 'local';
+    : 'local';
+
+if (!buildName) throw new Error('Please specify the build config with the `build` environment variable');
 
 const cdnDomain = buildName === 'mainnet'
     ? 'https://cdn.nimiq.com'
