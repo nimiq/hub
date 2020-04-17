@@ -1,4 +1,4 @@
-import { isMilliseconds, isPriviledgedOrigin } from './Helpers';
+import { isMilliseconds, includesOrigin } from './Helpers';
 import { State } from '@nimiq/rpc';
 import {
     BasicRequest,
@@ -36,7 +36,7 @@ import { ParsedNimiqDirectPaymentOptions } from './paymentOptions/NimiqPaymentOp
 import { ParsedEtherDirectPaymentOptions } from './paymentOptions/EtherPaymentOptions';
 import { ParsedBitcoinDirectPaymentOptions } from './paymentOptions/BitcoinPaymentOptions';
 import { Utf8Tools } from '@nimiq/utils';
-import config from 'config';
+import Config from 'config';
 
 export class RequestParser {
     public static parse(
@@ -119,10 +119,11 @@ export class RequestParser {
                 }
 
                 if (checkoutRequest.version === 2) {
-                    if (!config.allowsCheckoutWithoutNim(state.origin)) {
-                        if (!checkoutRequest.paymentOptions.some((option) => option.currency === Currency.NIM)) {
-                            throw new Error('CheckoutRequest must provide a NIM paymentOption.');
-                        }
+                    if ( // Check if the origin is allowed to make requests without a NIM payment option
+                        !includesOrigin(Config.checkoutWithoutNimOrigins, state.origin)
+                        && !checkoutRequest.paymentOptions.some((option) => option.currency === Currency.NIM)
+                    ) {
+                        throw new Error('CheckoutRequest must provide a NIM paymentOption.');
                     }
 
                     if (!checkoutRequest.shopLogoUrl) {
@@ -333,7 +334,7 @@ export class RequestParser {
                 }
 
                 const returnLink = !!createCashlinkRequest.returnLink;
-                if (returnLink && !isPriviledgedOrigin(state.origin)) {
+                if (returnLink && !includesOrigin(Config.privilegedOrigins, state.origin)) {
                     throw new Error(`Origin ${state.origin} is not authorized to request returnLink.`);
                 }
                 const skipSharing = !!createCashlinkRequest.returnLink && !!createCashlinkRequest.skipSharing;

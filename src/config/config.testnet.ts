@@ -13,7 +13,7 @@ export default {
     ],
     redirectTarget: 'https://safe.nimiq-testnet.com',
     reportToSentry: true,
-    allowsCheckoutWithoutNim: (origin: string): boolean => [
+    checkoutWithoutNimOrigins: [
         'https://checkout-service-staging-0.web.app',
-    ].includes(origin),
+    ],
 };
