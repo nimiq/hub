@@ -326,7 +326,8 @@ export type ResultByRequestType<T> =
             | RequestType.MIGRATE | RequestType.LIST ? Account[] :
     T extends RequestType.LIST_CASHLINKS ? Cashlink[] :
     T extends RequestType.CHOOSE_ADDRESS | RequestType.ADD_ADDRESS ? Address :
-    T extends RequestType.SIGN_TRANSACTION | RequestType.CHECKOUT ? SignedTransaction :
+    T extends RequestType.SIGN_TRANSACTION ? SignedTransaction :
+    T extends RequestType.CHECKOUT ? SignedTransaction | SimpleResult :
     T extends RequestType.SIGN_MESSAGE ? SignedMessage :
     T extends RequestType.LOGOUT | RequestType.CHANGE_PASSWORD ? SimpleResult :
     T extends RequestType.EXPORT ? ExportResult :

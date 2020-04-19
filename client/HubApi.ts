@@ -124,11 +124,16 @@ export default class HubApi<DB extends BehaviorType = BehaviorType.POPUP> { // D
         return this._request(requestBehavior, RequestType.MANAGE_CASHLINK, [request]);
     }
 
-    public checkout<B extends BehaviorType = DB>(
-        request: Promise<CheckoutRequest> | CheckoutRequest,
+    public checkout<R extends CheckoutRequest, B extends BehaviorType = DB>(
+        request: Promise<R> | R,
         requestBehavior: RequestBehavior<B> = this._checkoutDefaultBehavior as any,
-    ): Promise<B extends BehaviorType.REDIRECT ? void : SignedTransaction> {
-        return this._request(requestBehavior, RequestType.CHECKOUT, [request]);
+    ): Promise<B extends BehaviorType.REDIRECT
+        ? void
+        : R extends { version: 2 }
+            ? SimpleResult | SignedTransaction
+            : SignedTransaction
+    > {
+        return this._request(requestBehavior, RequestType.CHECKOUT, [request]) as any;
     }
 
     public chooseAddress<B extends BehaviorType = DB>(
