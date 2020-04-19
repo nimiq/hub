@@ -6,7 +6,7 @@
                 ref="info"
                 class="blur-target"
                 :cryptoAmount="{
-                    amount: checkoutPaymentOptions.amount + checkoutPaymentOptions.fee,
+                    amount: checkoutPaymentOptions.amount,
                     currency: checkoutPaymentOptions.currency,
                     decimals: checkoutPaymentOptions.decimals,
                 }"
@@ -14,6 +14,8 @@
                     amount: request.fiatAmount,
                     currency: request.fiatCurrency,
                 } : null"
+                :vendorMarkup="checkoutPaymentOptions.vendorMarkup"
+                :networkFee="checkoutPaymentOptions.fee"
                 :address="checkoutPaymentOptions.protocolSpecific.recipient
                     ? checkoutPaymentOptions.protocolSpecific.recipient.toUserFriendlyAddress()
                     : null"

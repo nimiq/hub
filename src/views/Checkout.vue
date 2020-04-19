@@ -434,8 +434,12 @@ export default Checkout;
         .carousel >>> .payment-option:not(.confirmed) .info-line .account::after,
         .carousel >>> .payment-option:not(.confirmed) .account-selector .wallet-label::before {
             --placeholder-height: 3.25rem;
-            top: initial;
             box-shadow: 0 0 0 1rem var(--nimiq-card-bg);
+        }
+
+        .carousel >>> .payment-option:not(.confirmed) .info-line .account::after,
+        .carousel >>> .payment-option:not(.confirmed) .account-selector .wallet-label::before {
+            top: initial;
         }
 
         .carousel >>> .payment-option:not(.confirmed) .timer::after,

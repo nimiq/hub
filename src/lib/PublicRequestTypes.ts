@@ -103,6 +103,11 @@ export interface PaymentOptions<C extends Currency, T extends PaymentType> {
      * i.e Luna for Currency.NIM and Satoshi for Currency.BTC
      */
     amount: string;
+    /**
+     * Crypto payment markup contained in `amount` that the vendor charges. Relative value, e.g. .01 for 1%.
+     * Can be negative to describe a discount.
+     */
+    vendorMarkup?: number;
     protocolSpecific: ProtocolSpecificsForCurrency<C>;
 }
 

@@ -36,6 +36,8 @@
                     amount: request.fiatAmount,
                     currency: request.fiatCurrency,
                 } : null"
+                :vendorMarkup="paymentOptions.vendorMarkup"
+                :networkFee="paymentOptions.fee"
                 :address="paymentOptions.protocolSpecific.recipient
                     ? paymentOptions.protocolSpecific.recipient.toUserFriendlyAddress()
                     : null"
@@ -380,6 +382,7 @@ class NimiqCheckoutCard
 
                     fiatAmount: this.request.fiatAmount,
                     fiatCurrency: this.request.fiatCurrency,
+                    vendorMarkup: this.paymentOptions.vendorMarkup,
                     time: this.request.time - timeOffset, // normalize time to our local system time
                     expires: this.paymentOptions.expires
                         ? this.paymentOptions.expires - timeOffset

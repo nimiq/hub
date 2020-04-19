@@ -104,6 +104,7 @@ export class ParsedBitcoinDirectPaymentOptions extends ParsedPaymentOptions<Curr
             type: this.type,
             expires: this.expires,
             amount: this.amount.toString(),
+            vendorMarkup: this.vendorMarkup,
             protocolSpecific: this.protocolSpecific,
         };
     }

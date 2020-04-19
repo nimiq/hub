@@ -284,7 +284,8 @@ class Demo {
                         currency: HubApi.Currency.BTC,
                         type: HubApi.PaymentType.DIRECT,
                         amount: '.00029e8',
-                        expires: + new Date(now + 15 * 60000), // 15 minutes
+                        vendorMarkup: .01,
+                        expires: now + 15 * 60000, // 15 minutes
                         protocolSpecific: {
                             feePerByte: 2, // 2 sat per byte
                             recipient: '17w6ar5SqXFGr786WjGHB8xyu48eujHaBe', // Unicef
@@ -294,9 +295,10 @@ class Demo {
                         currency: HubApi.Currency.NIM,
                         type: HubApi.PaymentType.DIRECT,
                         amount: '20e5',
-                        expires: + new Date(now + 15 * 60000), // 15 minutes
+                        vendorMarkup: 0,
+                        expires: now + 15 * 60000, // 15 minutes
                         protocolSpecific: {
-                            fee: 50000,
+                            fee: .005e5,
                             extraData: 'Test MultiCheckout',
                         },
                     },
@@ -304,10 +306,10 @@ class Demo {
                         currency: HubApi.Currency.ETH,
                         type: HubApi.PaymentType.DIRECT,
                         amount: '.0091e18',
-                        expires: + new Date(now + 15 * 60000), // 15 minutes
+                        expires: now + 15 * 60000, // 15 minutes
                         protocolSpecific: {
                             gasLimit: 21000,
-                            gasPrice: '10000',
+                            gasPrice: '2e9',
                             recipient: '0xa4725d6477644286b354288b51122a808389be83', // the water project
                         },
                     },

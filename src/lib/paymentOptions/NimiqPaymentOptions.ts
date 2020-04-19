@@ -32,6 +32,8 @@ export class ParsedNimiqDirectPaymentOptions extends ParsedPaymentOptions<Curren
     public constructor(options: NimiqDirectPaymentOptions, allowUndefinedFees = false) {
         super(options);
 
+        this.amount = parseInt(toNonScientificNumberString(options.amount), 10);
+
         if (options.protocolSpecific.extraData !== undefined && typeof options.protocolSpecific.extraData !== 'string'
             && !(options.protocolSpecific.extraData instanceof Uint8Array)) {
             throw new Error('extraData must be a string or Uint8Array');
@@ -39,8 +41,6 @@ export class ParsedNimiqDirectPaymentOptions extends ParsedPaymentOptions<Curren
         const extraData = typeof options.protocolSpecific.extraData === 'string'
             ? Utf8Tools.stringToUtf8ByteArray(options.protocolSpecific.extraData)
             : options.protocolSpecific.extraData;
-
-        this.amount = parseInt(toNonScientificNumberString(options.amount), 10);
 
         let sender: Nimiq.Address | undefined;
         if (options.protocolSpecific.sender !== undefined) {
@@ -177,6 +177,7 @@ export class ParsedNimiqDirectPaymentOptions extends ParsedPaymentOptions<Curren
             type: this.type,
             expires: this.expires,
             amount: this.amount.toString(),
+            vendorMarkup: this.vendorMarkup,
             protocolSpecific: {
                 recipient: this.protocolSpecific.recipient
                     ? this.protocolSpecific.recipient.toUserFriendlyAddress()

@@ -38,6 +38,8 @@
                             amount: request.fiatAmount,
                             currency: request.fiatCurrency,
                         } : null"
+                        :vendorMarkup="paymentOptions.vendorMarkup"
+                        :networkFee="paymentOptions.fee"
                         :address="paymentOptions.protocolSpecific.recipient"
                         :origin="rpcState.origin"
                         :shopLogoUrl="request.shopLogoUrl"

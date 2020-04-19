@@ -104,6 +104,7 @@ export class ParsedEtherDirectPaymentOptions extends ParsedPaymentOptions<Curren
             type: this.type,
             expires: this.expires,
             amount: this.amount.toString(),
+            vendorMarkup: this.vendorMarkup,
             protocolSpecific: {
                 gasLimit: this.protocolSpecific.gasLimit,
                 gasPrice: this.protocolSpecific.gasPrice

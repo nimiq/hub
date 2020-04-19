@@ -141,6 +141,7 @@ export default class CheckoutServerApi {
                     currency: Currency.BTC,
                     type: PaymentType.DIRECT,
                     amount: '.0002e8',
+                    vendorMarkup: -.05,
                     expires: now + 15 * 60000, // 15 minutes
                     protocolSpecific: {
                         feePerByte: 2, // 2 sat per byte
@@ -161,10 +162,11 @@ export default class CheckoutServerApi {
                     currency: Currency.ETH,
                     type: PaymentType.DIRECT,
                     amount: '.0023e18',
+                    vendorMarkup: .03,
                     expires: now + 15 * 60000, // 15 minutes
                     protocolSpecific: {
                         gasLimit: 21000,
-                        gasPrice: '10000',
+                        gasPrice: '3e9',
                         recipient: '0xa4725d6477644286b354288b51122a808389be83', // the water project
                     },
                 },

@@ -14,6 +14,7 @@ import {
 export interface ParsedPaymentOptions<C extends Currency, T extends PaymentType> {
     protocolSpecific: ParsedProtocolSpecificsForCurrency<C>;
     amount: number | BigInteger;
+    vendorMarkup?: number;
     expires?: number;
     constructor: ParsedPaymentOptionsForCurrencyAndType<C, T>;
     new(options: PaymentOptionsForCurrencyAndType<C, T>, allowUndefinedFees?: boolean):
@@ -30,6 +31,14 @@ implements ParsedPaymentOptions<C, T> {
         if (!this.isNonNegativeInteger(options.amount)) {
             throw new Error('Amount must be a non-negative integer');
         }
+        if (options.vendorMarkup !== undefined
+            && (typeof options.vendorMarkup !== 'number'
+                || !Number.isFinite(options.vendorMarkup)
+                || options.vendorMarkup <= -1)
+        ) {
+            throw new Error('If provided, vendorMarkup must be a finite number > -1');
+        }
+        this.vendorMarkup = options.vendorMarkup;
         this.expires = typeof options.expires === 'number'
             ? isMilliseconds(options.expires)
                 ? options.expires
@@ -50,9 +59,10 @@ implements ParsedPaymentOptions<C, T> {
         options: PaymentOptionsForCurrencyAndType<C, T>,
         ...additionalArgs: any[]
     ) {
-        // Parse to check validity. Do not enforce default values, since undefined values are not updated.
-        const parsedOptions = new this.constructor(options as any, true);
+        // Parse to check validity. Do not enforce calculation of fees to not update them if they were undefined.
+        const parsedOptions = new this.constructor(options as any, /* allowUndefinedFees */ true);
         this.amount = parsedOptions.amount; // amount must exist on all parsed options
+        this.vendorMarkup = parsedOptions.vendorMarkup !== undefined ? parsedOptions.vendorMarkup : this.vendorMarkup;
         this.expires = parsedOptions.expires || this.expires;
         for (const key of
             Object.keys(parsedOptions.protocolSpecific) as Array<keyof typeof parsedOptions.protocolSpecific>) {
