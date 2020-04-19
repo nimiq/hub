@@ -62,8 +62,9 @@
                 @close="_closeDisclaimerOverlay"
             >
                 <strong>Disclaimer</strong>
-                This Nimiq interface is non-custodial and solely used to bridge the customer with the merchant directly
-                (P2P). Payment and order fulfillment are sole responsibility of the customer and merchant respectively.
+                This Nimiq interface is non-custodial and solely used to bridge the payment sender with the payment
+                recipient directly (P2P). Payment and deliverable fulfillment for payment are sole responsibility of
+                those two respective parties.
             </component>
         </transition>
     </div>
@@ -172,8 +173,8 @@ class Checkout extends Vue {
     }
 
     private _onResize() {
-        const minWidth = 675; // Width below which disclaimer would break into three lines.
-        const minHeight = 890; // Height at which two lines fit at bottom, also if logos over carousel shown.
+        const minWidth = 740; // Width below which disclaimer would break into three lines.
+        const minHeight = 890; // Height at which two lines fit at bottom, also with logos over carousel shown.
         this.screenFitsDisclaimer = window.innerWidth >= minWidth && window.innerHeight >= minHeight;
         // Throttle calls to carousel.updateDimensions as its an expensive call
         clearTimeout(this.dimensionsUpdateTimeout);
@@ -556,7 +557,7 @@ export default Checkout;
         opacity: .5;
     }
 
-    @media (max-width: 1300px) {
+    @media (max-width: 1400px) {
         .disclaimer:not(.bottom-overlay) {
             max-width: 92rem; /* break disclaimer into 2 lines about equal in length */
             margin-bottom: 1.5rem;
