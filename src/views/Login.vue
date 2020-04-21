@@ -27,6 +27,7 @@ export default class Login extends Vue {
         const request: KeyguardClient.ImportRequest = {
             appName: this.request.appName,
             requestedKeyPaths: [DEFAULT_KEY_PATH],
+            bitcoinXPubPath: `m/49'/1'/0'`,
         };
 
         const client = this.$rpc.createKeyguardClient(true);

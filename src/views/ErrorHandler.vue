@@ -48,6 +48,7 @@ export default class ErrorHandler extends Vue {
                 appName: this.request.appName,
                 requestedKeyPaths: [DEFAULT_KEY_PATH],
                 isKeyLost: true,
+                bitcoinXPubPath: `m/49'/1'/0'`,
             };
 
             const client = this.$rpc.createKeyguardClient();
@@ -74,6 +75,7 @@ export default class ErrorHandler extends Vue {
                         isKeyLost: false,
                         expectedKeyId: walletInfo.keyId,
                         wordsOnly: true,
+                        bitcoinXPubPath: `m/49'/1'/0'`,
                     };
 
                     const client = this.$rpc.createKeyguardClient();
