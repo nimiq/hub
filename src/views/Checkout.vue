@@ -57,7 +57,7 @@
 
         <transition name="transition-disclaimer">
             <component :is="screenFitsDisclaimer ? 'div' : 'BottomOverlay'"
-                v-if="(screenFitsDisclaimer || !disclaimerRecentlyClosed) && !disclaimerDisabled"
+                v-if="(screenFitsDisclaimer || !disclaimerRecentlyClosed) && !request.disableDisclaimer"
                 class="disclaimer"
                 @close="_closeDisclaimerOverlay"
             >
@@ -104,8 +104,6 @@ class Checkout extends Vue {
     private initialCurrencies: PublicCurrency[] = [];
     private availableCurrencies: PublicCurrency[] = [];
     private readonly isIOS: boolean = BrowserDetection.isIOS();
-    private readonly disclaimerDisabled: boolean = // disable disclaimer for voting app
-        /^https?:\/\/(www\.)?nimiq(-testnet)?\.com\/voting\b/.test(document.referrer);
     private disclaimerRecentlyClosed: boolean = false;
     private screenFitsDisclaimer: boolean = true;
     private dimensionsUpdateTimeout: number = -1;

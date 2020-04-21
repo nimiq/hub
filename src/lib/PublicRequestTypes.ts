@@ -67,6 +67,7 @@ export interface NimiqCheckoutRequest extends BasicRequest {
     extraData?: Uint8Array | string;
     flags?: number;
     validityDuration?: number;
+    disableDisclaimer?: boolean; // only allowed for privileged origins
 }
 
 export enum PaymentType {
@@ -155,6 +156,10 @@ export interface MultiCurrencyCheckoutRequest extends BasicRequest {
      * Each currency can only be present once, and a Currency.NIM option must exist.
      */
     paymentOptions: AvailablePaymentOptions[];
+    /**
+     * Option to disable the disclaimer at the bottom of the checkout page. Only allowed for privileged origins.
+     */
+    disableDisclaimer?: boolean; // only allowed for privileged origins
 }
 
 export type CheckoutRequest = NimiqCheckoutRequest | MultiCurrencyCheckoutRequest;

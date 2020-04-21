@@ -57,6 +57,7 @@ export interface ParsedCheckoutRequest extends ParsedBasicRequest {
     fiatCurrency?: string;
     fiatAmount?: number;
     paymentOptions: AvailableParsedPaymentOptions[];
+    disableDisclaimer: boolean;
 }
 
 export interface ParsedSignMessageRequest extends ParsedBasicRequest {

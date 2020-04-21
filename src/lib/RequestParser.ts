@@ -88,6 +88,13 @@ export class RequestParser {
                     }
                 }
 
+                let disableDisclaimer = !!checkoutRequest.disableDisclaimer;
+                if (disableDisclaimer && !includesOrigin(Config.privilegedOrigins, state.origin)) {
+                    // warn and continue
+                    console.warn(`Origin ${state.origin} is not authorized to request disableDisclaimer.`);
+                    disableDisclaimer = false;
+                }
+
                 if (!checkoutRequest.version || checkoutRequest.version === 1) {
                     if (typeof checkoutRequest.value !== 'number' || checkoutRequest.value <= 0) {
                         throw new Error('value must be a number >0');
@@ -115,6 +122,7 @@ export class RequestParser {
                                 validityDuration: checkoutRequest.validityDuration,
                             },
                         })],
+                        disableDisclaimer,
                     } as ParsedCheckoutRequest;
                 }
 
@@ -226,6 +234,7 @@ export class RequestParser {
                                     throw new Error(`PaymentType ${(option as any).type} not supported`);
                             }
                         }),
+                        disableDisclaimer,
                     } as ParsedCheckoutRequest;
                 }
 
@@ -424,6 +433,7 @@ export class RequestParser {
                             extraData: nimiqOptions.protocolSpecific.extraData,
                             flags: nimiqOptions.protocolSpecific.flags,
                             validityDuration: nimiqOptions.protocolSpecific.validityDuration,
+                            disableDisclaimer: checkoutRequest.disableDisclaimer,
                         } as NimiqCheckoutRequest;
                     case 2:
                         return {
