@@ -64,7 +64,7 @@ be used to sign transactions offline.
           appName: 'Hub API Docs',
           sender: chosenAddress,
           recipient: 'NQ07 0000 0000 0000 0000 0000 0000 0000 0000',
-          value: 3.14 * 1e5, // 3.14 NIM,
+          value: 3.14 * 1e5, /* 3.14 NIM */
           validityStartHeight: 500000,
         });
         output.textContent = 'Transaction signed!';
@@ -79,7 +79,7 @@ const options = {
   appName: 'Hub API Docs',
   sender: chosenAddress,
   recipient: 'NQ07 0000 0000 0000 0000 0000 0000 0000 0000',
-  value: 3.14 * 1e5, // 3.14 NIM
+  value: 3.14 * 1e5, /* 3.14 NIM */
   validityStartHeight: 500000,
   // See more options in the table below
 };

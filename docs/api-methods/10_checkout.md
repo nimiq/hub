@@ -40,7 +40,7 @@ processing in your site, storage on your server or re-submittal.
         const result = await hubApi.checkout({
           appName: 'Hub API Docs',
           recipient: 'NQ07 0000 0000 0000 0000 0000 0000 0000 0000',
-          value: 3.14 * 1e5, // 3.14 NIM
+          value: 3.14 * 1e5, /* 3.14 NIM */
         });
         output.textContent = 'Checkout complete, transaction sent!';
       } catch (error) {
@@ -53,7 +53,7 @@ processing in your site, storage on your server or re-submittal.
 const options = {
   appName: 'Hub API Docs',
   recipient: 'NQ07 0000 0000 0000 0000 0000 0000 0000 0000',
-  value: 3.14 * 1e5, // 3.14 NIM
+  value: 3.14 * 1e5, /* 3.14 NIM */
   // See more options in the table below
 };
 
