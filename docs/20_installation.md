@@ -20,8 +20,8 @@ Include the Hub API library as a script in your page:
 
 ```html
 <script
-  src="https://cdn.jsdelivr.net/npm/@nimiq/hub-api@v1.0/dist/standalone/HubApi.standalone.umd.js"
-  integrity="sha256-HZuohwzM5nRdRQh3HLpAcYGbpNe6PtqZRyK+VvUI+nU=" crossorigin="anonymous"></script>
+  src="https://cdn.jsdelivr.net/npm/@nimiq/hub-api@v1.2.3/dist/standalone/HubApi.standalone.umd.js"
+  integrity="sha256-5X6zryCUAPOnfjLU8tEtJrLdcslA2UI27RsUWnLAxHs=" crossorigin="anonymous"></script>
 ```
 
 This will make the `HubApi` object available globally on your site.
@@ -30,7 +30,7 @@ You can also `import` from the CDN as an ES6 module:
 
 ```html
 <script type="module">
-  import HubApi from 'https://cdn.jsdelivr.net/npm/@nimiq/hub-api@v1.0/dist/standalone/HubApi.standalone.es.js';
+  import HubApi from 'https://cdn.jsdelivr.net/npm/@nimiq/hub-api@latest/dist/standalone/HubApi.standalone.es.js';
 
   // Your code here...
 </script>

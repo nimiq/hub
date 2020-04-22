@@ -14,8 +14,8 @@ Get started in three easy steps:
   <button id="choose-address" class="btn btn-primary mb-1">Choose Address</button>
 
   <script
-    src="https://cdn.jsdelivr.net/npm/@nimiq/hub-api@v1.0/dist/standalone/HubApi.standalone.umd.js"
-    integrity="sha256-HZuohwzM5nRdRQh3HLpAcYGbpNe6PtqZRyK+VvUI+nU=" crossorigin="anonymous"></script>
+    src="https://cdn.jsdelivr.net/npm/@nimiq/hub-api@v1.2.3/dist/standalone/HubApi.standalone.umd.js"
+    integrity="sha256-5X6zryCUAPOnfjLU8tEtJrLdcslA2UI27RsUWnLAxHs=" crossorigin="anonymous"></script>
 
   <script>
     const hubApi = new HubApi('https://hub.nimiq-testnet.com');
@@ -38,8 +38,8 @@ Your address: <span id="output">-</span>
 
 <!-- 1. Include the Hub API from the CDN -->
 <script
-  src="https://cdn.jsdelivr.net/npm/@nimiq/hub-api@v1.0/dist/standalone/HubApi.standalone.umd.js"
-  integrity="sha256-HZuohwzM5nRdRQh3HLpAcYGbpNe6PtqZRyK+VvUI+nU=" crossorigin="anonymous"></script>
+  src="https://cdn.jsdelivr.net/npm/@nimiq/hub-api@v1.2.3/dist/standalone/HubApi.standalone.umd.js"
+  integrity="sha256-5X6zryCUAPOnfjLU8tEtJrLdcslA2UI27RsUWnLAxHs=" crossorigin="anonymous"></script>
 
 <script>
   // 2. Initialize the Hub API for the testnet (for mainnet use 'https://hub.nimiq.com')
