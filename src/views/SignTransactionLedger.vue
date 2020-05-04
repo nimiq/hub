@@ -293,6 +293,9 @@ export default class SignTransactionLedger extends Vue {
             balance: (senderContract || signer).balance,
         };
 
+        // If user left this view in the mean time, don't continue signing / sending the transaction
+        if (this.isDestroyed) return;
+
         const transactionInfo = {
             sender: (senderContract || signer).address,
             senderType: senderContract ? senderContract.type : Nimiq.Account.Type.BASIC,
@@ -321,6 +324,7 @@ export default class SignTransactionLedger extends Vue {
                     validityStartHeight,
                 }, signer.path, senderAccount.keyId);
             } catch (e) {
+                if (this.isDestroyed) return; // user is not on this view anymore
                 // If cancelled and not expired, handle the exception. Otherwise just keep the ledger ui / expiry error
                 // message displayed.
                 if (this.state !== SignTransactionLedger.State.EXPIRED
