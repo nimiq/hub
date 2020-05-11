@@ -19,7 +19,7 @@
             </PageFooter>
             <StatusScreen v-if="labelsStored"
                     state="success"
-                    :title="$('All labels saved.')"
+                    :title="$t('All labels saved.')"
                     class="grow-from-bottom-button" />
         </SmallPage>
 

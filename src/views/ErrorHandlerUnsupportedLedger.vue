@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <SmallPage>
-            <StatusScreen :state="state" :title="title" :message="_message" main-action="Ok"
+            <StatusScreen :state="state" :title="title" :message="_message" :main-action="$t('Ok')"
                 @main-action="_close">
             </StatusScreen>
         </SmallPage>

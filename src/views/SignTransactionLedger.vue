@@ -26,9 +26,13 @@
             />
             <PageHeader :back-arrow="request.kind === 'checkout' || request.kind === 'create-cashlink'"
                 @back="_back" class="blur-target">
-                {{ request.kind === 'checkout'
-                    ? $t('Verify Payment')
-                    : `${$t('Confirm')} ${request.kind === 'create-cashlink' ? $t('Cashlink') : $('Transaction')}` }}
+                {{
+                    request.kind === 'checkout'
+                        ? $t('Verify Payment')
+                        : request.kind === 'create-cashlink'
+                            ? $t('Confirm Cashlink')
+                            : $t('Confirm Transaction')
+                }}
             </PageHeader>
 
             <div class="accounts">

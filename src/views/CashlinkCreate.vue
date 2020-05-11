@@ -3,7 +3,7 @@
         <SmallPage>
 
             <transition name="transition-fade">
-                <StatusScreen v-if="loading" title="Updating your balances" lightBlue key="loading"/>
+                <StatusScreen v-if="loading" :title="$t('Updating your balances')" lightBlue key="loading"/>
 
                 <div v-else-if="!accountOrContractInfo" class="create-cashlink-choose-sender" key="choose-sender">
                     <PageHeader>

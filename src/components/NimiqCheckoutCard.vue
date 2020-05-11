@@ -47,7 +47,7 @@
                 :endTime="paymentOptions.expires" />
         </template>
         <template v-if="wallets.length === 0">
-            <h2 class="nq-h1">{{ $t('Imagine if paying with<br/>crypto was easy') }}</h2>
+            <h2 class="nq-h1">{{ $t('Imagine if paying with\ncrypto was easy') }}</h2>
             <PageBody class="video-container">
                 <video autoplay loop muted playsinline disablePictureInPicture>
                     <source src="/checkout-demo.mp4#t=0.7" type="video/mp4">
@@ -476,6 +476,7 @@ export default NimiqCheckoutCard;
         margin-bottom: 1rem;
         line-height: 1;
         text-align: center;
+        white-space: pre-line
     }
 
     .video-container {

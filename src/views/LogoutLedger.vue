@@ -8,7 +8,7 @@
                     {{ request.appName === 'Accounts' ? $t('Contacts are not affected.') : '' }}
                 </div>
                 <div class="ledger-illustration"></div>
-                <div class="hint nq-text">{{ $t('Your Ledger is<br>required to log in again.') }}</div>
+                <div class="hint nq-text">{{ $t('Your Ledger is\nrequired to log in again.') }}</div>
                 <button class="logout-button nq-button red" @click="_logOut">{{ $t('Log Out') }}</button>
             </PageBody>
 
@@ -81,6 +81,7 @@ export default class LogoutLedger extends Vue {
     .hint {
         font-size: 2.5rem;
         line-height: 1.4;
+        white-space: pre-line;
     }
 
     .ledger-illustration {

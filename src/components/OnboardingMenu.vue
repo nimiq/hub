@@ -3,19 +3,19 @@
         <button class="choice ledger" tabindex="3" @click="ledger">
             <LedgerIcon/>
             <h2 class="nq-h2">{{ $t('Connect Ledger') }}</h2>
-            <p class="text">{{ $t('Connect your')}} <br> {{ $t('Ledger Nano S.') }}</p>
+            <p class="text">{{ $t('Connect your\nLedger Nano S.') }}</p>
         </button>
 
         <button class="choice login" tabindex="2" @click="login">
             <LoginIcon/>
             <h2 class="nq-h2">{{ $t('Login') }}</h2>
-            <p class="text">{{ $t('Use your Login File')}} <br> {{ $t('or Recovery Words.') }}</p>
+            <p class="text">{{ $t('Use your Login File\nor Recovery Words.') }}</p>
         </button>
 
         <button class="choice signup" tabindex="1" @click="signup">
             <PlusCircleIcon/>
             <h2 class="nq-h2">{{ $t('Create Account') }}</h2>
-            <p class="text">{{ $t('Choose an Avatar.')}} <br> {{ $t('Set a password. Done.') }}</p>
+            <p class="text">{{ $t('Choose an Avatar.\nSet a password. Done.') }}</p>
         </button>
 
         <div class="background-container">
@@ -143,6 +143,7 @@ export default class AccountList extends Vue {
         font-size: 2rem;
         line-height: 1.3125;
         margin: 0;
+        white-space: pre-line;
     }
 
     .background-container {

@@ -188,8 +188,7 @@ export default class CheckoutCard<
     protected showUnderpaidWarningScreen() {
         this.paymentState = PaymentState.UNDERPAID;
         this.statusScreenTitle = this.$t('Incomplete payment') as string;
-        this.statusScreenMessage = this.$t('You transferred an insufficient amount. ') as string +
-            this.$t('Please contact the merchant for a refund. Restart to pay for your order.') as string;
+        this.statusScreenMessage = this.$t('You transferred an insufficient amount. Please contact the merchant for a refund. Restart to pay for your order.') as string;
         this.statusScreenMainAction = () => this.showStatusScreen = false;
         this.statusScreenMainActionText = this.$t('Restart Payment') as string;
         this.showStatusScreen = true;

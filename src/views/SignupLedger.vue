@@ -34,7 +34,7 @@
 
         <button class="global-close nq-button-s" @click="close">
             <ArrowLeftSmallIcon/>
-            {{ $('Back to {appName}', { appName: request.appName }) }}
+            {{ $t('Back to {appName}', { appName: request.appName }) }}
         </button>
     </div>
 </template>
@@ -121,7 +121,7 @@ export default class SignupLedger extends Vue {
         else {
             const count = !this.walletInfo ? 0 : this.walletInfo.accounts.size;
             return count > 0
-                ? this.$tc('Imported {count} address so far... | Imported {count} addresses so far...')
+                ? this.$tc('Imported {count} address so far... | Imported {count} addresses so far...', count)
                 : '';
         }
     }

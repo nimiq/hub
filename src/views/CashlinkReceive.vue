@@ -13,7 +13,7 @@
                     :title="statusTitle"
                     :status="statusStatus"
                     :message="statusMessage"
-                    mainAction="Got it"
+                    :mainAction="$t('Got it')"
                     @main-action="redirectToSafe"
                 />
             </transition>
@@ -107,7 +107,7 @@
                 <p class="nq-text">
                     {{ welcomeText }}
                     {{ $t('Create an Account and claim your money.') }}
-                    <span class="secondary-text">{{ $t('30&nbsp;seconds, no&nbsp;email, no&nbsp;download.') /* TODO: check if this works properly */ }}</span>
+                    <span class="secondary-text">{{ $t('30\u00a0seconds, no\u00a0email, no\u00a0download.') /* TODO: check if this works properly, step 2 with \u00a0 */ }}</span>
                 </p>
             </div>
         </div>

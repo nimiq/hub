@@ -90,7 +90,7 @@
                 :status="status"
                 :state="state"
                 :message="message"
-                mainAction="Try again"
+                :mainAction="$t('Try again')"
                 @main-action="tryAgain"
             />
         </SmallPage>
