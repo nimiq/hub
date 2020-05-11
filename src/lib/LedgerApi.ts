@@ -1,9 +1,9 @@
 // Some notes about the behaviour of the ledger:
 // - The ledger only supports one call at a time.
 // - If the browser doesn't support U2F, an exception gets thrown ("U2F browser support is needed for Ledger")
-// - Firefox' implementation of U2F (when enabled in about:config) does not seem to be compatible with ledger and
-//   throws "U2F DEVICE_INELIGIBLE"
-// - The browsers U2F API has a timeout after which the call fails in the browser. The timeout is about 30s
+// - The browsers U2F API has a timeout after which the call fails in the browser. The timeout is about 30s.
+// - Previously, a "timeout" exception got thrown on u2f timeouts, but now it's generic "U2F DEVICE_INELIGIBLE" in
+//   Chrome and "U2F OTHER_ERROR" in Firefox.
 // - The Nimiq Ledger App avoids timeouts by keeping the call alive via a heartbeat when the Ledger is connected and the
 //   app opened. However when the Ledger is not connected or gets disconnected, timeouts still occur.
 // - If the ledger is locked while the nimiq app (or another app throwing that same exception) was running, a "dongle
@@ -42,6 +42,12 @@
 //   otherwise the Nimiq app gets displayed. If the user confirms the new request, the app afterwards behaves normal.
 //   If he declines the request though, any request afterwards seems to time out and the nimiq ledger app needs to be
 //   restarted. This is a corner case that is not covered in this api.
+//
+// Notes about old Firefox versions:
+// - Old Firefox implementation of U2F (when enabled in about:config) did not seem to be compatible with ledger and
+//   threw "U2F DEVICE_INELIGIBLE". Previously, we translated that error into the "not supported" error, but the current
+//   api doesn't do so anymore as the current Firefox version is compatible and DEVICE_INELIGIBLE gets now thrown
+//   on timeouts (see above).
 
 // The following flows should be tested if changing this code:
 // - ledger not connected yet
@@ -444,7 +450,8 @@ class LedgerApi {
                         console.log(e);
                         const message = (e.message || e || '').toLowerCase();
                         wasLocked = message.indexOf('locked') !== -1;
-                        if (message.indexOf('timeout') !== -1) isConnected = false;
+                        const isTimeout = /timeout|u2f device_ineligible|u2f other_error/i.test(message);
+                        if (isTimeout) isConnected = false;
                         // user cancelled call on ledger
                         if (message.indexOf('denied') !== -1 // user rejected confirmAddress
                             || message.indexOf('rejected') !== -1) { // user rejected signTransaction
@@ -458,7 +465,8 @@ class LedgerApi {
                             return;
                         }
                         // On other errors try again
-                        if (message.indexOf('timeout') === -1 && message.indexOf('locked') === -1
+                        if (message.indexOf('timeout') === -1 && message.indexOf('u2f device_ineligible') === -1
+                            && message.indexOf('u2f other_error') === -1 && message.indexOf('locked') === -1
                             && message.indexOf('busy') === -1 && message.indexOf('outdated') === -1
                             && message.indexOf('dependencies') === -1 && message.indexOf('wrong ledger') === -1) {
                             console.warn('Unknown Ledger Error', e);
@@ -513,8 +521,7 @@ class LedgerApi {
                 LedgerApi._throwError(LedgerApi.ErrorType.WRONG_LEDGER, e);
             }
             LedgerApi._currentlyConnectedWalletId = null;
-            if (message.indexOf('browser support') !== -1 || message.indexOf('u2f device_ineligible') !== -1
-                || message.indexOf('u2f other_error') !== -1) {
+            if (message.indexOf('browser support') !== -1) {
                 LedgerApi._throwError(LedgerApi.ErrorType.NO_BROWSER_SUPPORT,
                     'Ledger not supported by browser or support not enabled.');
             } else if (message.indexOf('outdated') !== -1) {
