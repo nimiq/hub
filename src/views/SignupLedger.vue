@@ -45,7 +45,11 @@ import { AccountRing, ArrowLeftSmallIcon, PageBody, PageHeader, SmallPage } from
 import { ParsedBasicRequest } from '../lib/RequestTypes';
 import { Account } from '../lib/PublicRequestTypes';
 import { Static } from '../lib/StaticStore';
-import LedgerApi from '../lib/LedgerApi';
+import LedgerApi, {
+    RequestType as LedgerApiRequestType,
+    StateType as LedgerApiStateType,
+    EventType as LedgerApiEventType,
+} from '@nimiq/ledger-api';
 import LedgerUi from '../components/LedgerUi.vue';
 import StatusScreen from '../components/StatusScreen.vue';
 import IdenticonSelector from '../components/IdenticonSelector.vue';
@@ -152,7 +156,7 @@ export default class SignupLedger extends Vue {
                 console.warn('Error while collecting Ledger WalletInfo, retrying', e);
                 if (!LedgerApi.isBusy) continue;
                 // await Ledger request from current iteration to be cancelled to able to start the next one
-                await new Promise((resolve) => LedgerApi.once(LedgerApi.EventType.REQUEST_CANCELLED, resolve));
+                await new Promise((resolve) => LedgerApi.once(LedgerApiEventType.REQUEST_CANCELLED, resolve));
             }
         }
 
@@ -160,10 +164,10 @@ export default class SignupLedger extends Vue {
     }
 
     private destroyed() {
-        const currentRequest = LedgerApi.currentRequest;
-        if (currentRequest && currentRequest.type === LedgerApi.RequestType.DERIVE_ACCOUNTS) {
-            currentRequest.cancel();
-        }
+        LedgerApi.disconnect(
+            /* cancelRequest */ true,
+            /* requestTypeToDisconnect */ LedgerApiRequestType.DERIVE_ADDRESSES,
+        );
         this.cancelled = true;
     }
 
@@ -239,9 +243,9 @@ export default class SignupLedger extends Vue {
             this.state = SignupLedger.State.LEDGER_INTERACTION;
             return;
         }
-        if (currentRequest.type !== LedgerApi.RequestType.DERIVE_ACCOUNTS || currentRequest.cancelled) return;
-        if (LedgerApi.currentState.type === LedgerApi.StateType.REQUEST_PROCESSING
-            || LedgerApi.currentState.type === LedgerApi.StateType.REQUEST_CANCELLING) {
+        if (currentRequest.type !== LedgerApiRequestType.DERIVE_ADDRESSES || currentRequest.cancelled) return;
+        if (LedgerApi.currentState.type === LedgerApiStateType.REQUEST_PROCESSING
+            || LedgerApi.currentState.type === LedgerApiStateType.REQUEST_CANCELLING) {
             // When we actually fetch the accounts from the device, we want to show our own StatusScreen instead of
             // the LedgerUi processing screen to avoid switching back and forth between LedgerUi and StatusScreen during
             // account finding.

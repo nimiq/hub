@@ -36,8 +36,8 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { LoadingSpinner } from '@nimiq/vue-components';
-import LedgerApi from '@/lib/LedgerApi';
-import StatusScreen from '@/components/StatusScreen.vue';
+import LedgerApi, { ErrorType, EventType, RequestType, State, StateType } from '@nimiq/ledger-api';
+import StatusScreen from '../components/StatusScreen.vue';
 
 @Component({ components: { StatusScreen, LoadingSpinner } })
 class LedgerUi extends Vue {
@@ -45,7 +45,7 @@ class LedgerUi extends Vue {
 
     @Prop(Boolean) public small?: boolean;
 
-    private state: LedgerApi.State = LedgerApi.currentState;
+    private state: State = LedgerApi.currentState;
     private instructionsTitle: string = '';
     private instructionsText: string = '';
     private connectTimer: number = -1;
@@ -54,16 +54,16 @@ class LedgerUi extends Vue {
 
     private created() {
         this._onStateChange = this._onStateChange.bind(this);
-        LedgerApi.on(LedgerApi.EventType.STATE_CHANGE, this._onStateChange);
+        LedgerApi.on(EventType.STATE_CHANGE, this._onStateChange);
         this._onStateChange(LedgerApi.currentState);
     }
 
     private destroyed() {
-        LedgerApi.off(LedgerApi.EventType.STATE_CHANGE, this._onStateChange);
+        LedgerApi.off(EventType.STATE_CHANGE, this._onStateChange);
     }
 
-    private _onStateChange(state: LedgerApi.State) {
-        if (state.type === LedgerApi.StateType.CONNECTING) {
+    private _onStateChange(state: State) {
+        if (state.type === StateType.CONNECTING) {
             // if connecting, only switch to connecting state if connecting takes some time
             this._onStateConnecting();
             return;
@@ -75,19 +75,19 @@ class LedgerUi extends Vue {
 
         this.state = state;
         switch (state.type) {
-            case LedgerApi.StateType.IDLE:
+            case StateType.IDLE:
                 this._showInstructions(null);
                 break;
-            case LedgerApi.StateType.LOADING:
+            case StateType.LOADING:
                 this._onStateLoading();
                 break;
-            case LedgerApi.StateType.REQUEST_PROCESSING:
+            case StateType.REQUEST_PROCESSING:
                 this._onRequest(state);
                 break;
-            case LedgerApi.StateType.REQUEST_CANCELLING:
+            case StateType.REQUEST_CANCELLING:
                 this._showInstructions('', 'Please cancel the request on your Ledger');
                 break;
-            case LedgerApi.StateType.ERROR:
+            case StateType.ERROR:
                 this._onError(state);
                 break;
         }
@@ -105,7 +105,7 @@ class LedgerUi extends Vue {
         if (this.connectTimer !== -1) return;
         this.connectTimer = window.setTimeout(() => {
             this.connectTimer = -1;
-            if (LedgerApi.currentState.type !== LedgerApi.StateType.CONNECTING) return;
+            if (LedgerApi.currentState.type !== StateType.CONNECTING) return;
             this.state = LedgerApi.currentState;
             this._cycleConnectInstructions();
             this.connectInstructionsTextInterval =
@@ -113,23 +113,23 @@ class LedgerUi extends Vue {
         }, 1050);
     }
 
-    private _onRequest(state: LedgerApi.State) {
+    private _onRequest(state: State) {
         const request = state.request!;
         switch (request.type) {
-            case LedgerApi.RequestType.GET_WALLET_ID:
-            case LedgerApi.RequestType.GET_PUBLIC_KEY:
-            case LedgerApi.RequestType.GET_ADDRESS:
+            case RequestType.GET_WALLET_ID:
+            case RequestType.GET_PUBLIC_KEY:
+            case RequestType.GET_ADDRESS:
                 // no instructions needed as not interactive
                 break;
-            case LedgerApi.RequestType.DERIVE_ACCOUNTS:
+            case RequestType.DERIVE_ADDRESSES:
                 // not interactive, but takes ~6 seconds
                 this._showInstructions('Fetching Addresses');
                 break;
-            case LedgerApi.RequestType.CONFIRM_ADDRESS:
+            case RequestType.CONFIRM_ADDRESS:
                 this._showInstructions('Confirm Address',
                     `Confirm that the address on your Ledger matches ${request.params.addressToConfirm!}`);
                 break;
-            case LedgerApi.RequestType.SIGN_TRANSACTION:
+            case RequestType.SIGN_TRANSACTION:
                 this._showInstructions('Confirm Transaction',
                     'Confirm using your Ledger');
                 break;
@@ -138,29 +138,27 @@ class LedgerUi extends Vue {
         }
     }
 
-    private _onError(state: LedgerApi.State) {
+    private _onError(state: State) {
         const error = state.error!;
         switch (error.type) {
-            case LedgerApi.ErrorType.LEDGER_BUSY:
+            case ErrorType.LEDGER_BUSY:
                 this._showInstructions('', 'Please cancel the previous request on your Ledger.');
                 break;
-            case LedgerApi.ErrorType.FAILED_LOADING_DEPENDENCIES:
+            case ErrorType.LOADING_DEPENDENCIES_FAILED:
                 this.loadingFailed = true;
                 this._onStateLoading(); // show as still loading / retrying
                 break;
-            case LedgerApi.ErrorType.NO_BROWSER_SUPPORT:
-                this._showInstructions('', 'Ledger not supported by browser or support not enabled.');
+            case ErrorType.NO_BROWSER_SUPPORT:
+                this._showInstructions('', 'Ledger not supported by browser.');
                 break;
-            case LedgerApi.ErrorType.APP_OUTDATED:
-                // TODO a firmware update is only required to update from 1.3.1 to 1.4.1. Remove this part of the
-                // message in the future again
+            case ErrorType.APP_OUTDATED:
                 this._showInstructions('', 'Your Nimiq App is outdated. ' +
                     'Please update your Ledger firmware and Nimiq App using Ledger Live.');
                 break;
-            case LedgerApi.ErrorType.WRONG_LEDGER:
+            case ErrorType.WRONG_LEDGER:
                 this._showInstructions('', 'The connected Ledger is not the one this account belongs to.');
                 break;
-            case LedgerApi.ErrorType.REQUEST_ASSERTION_FAILED:
+            case ErrorType.REQUEST_ASSERTION_FAILED:
                 this._showInstructions('Request failed', `${this.small ? 'Request failed: ' : ''}${error.message}`);
                 break;
             default:
@@ -193,40 +191,40 @@ class LedgerUi extends Vue {
 
     private get illustration() {
         switch (this.state.type) {
-            case LedgerApi.StateType.LOADING:
-            case LedgerApi.StateType.IDLE: // interpret IDLE as "waiting for request"
+            case StateType.LOADING:
+            case StateType.IDLE: // interpret IDLE as "waiting for request"
                 return LedgerUi.Illustrations.LOADING;
-            case LedgerApi.StateType.CONNECTING:
+            case StateType.CONNECTING:
                 return LedgerUi.Illustrations.CONNECTING;
-            case LedgerApi.StateType.REQUEST_PROCESSING:
-            case LedgerApi.StateType.REQUEST_CANCELLING:
+            case StateType.REQUEST_PROCESSING:
+            case StateType.REQUEST_CANCELLING:
                 return this._computeIllustrationForRequestType(this.state.request!.type);
-            case LedgerApi.StateType.ERROR:
+            case StateType.ERROR:
                 switch (this.state.error!.type) {
-                    case LedgerApi.ErrorType.FAILED_LOADING_DEPENDENCIES:
+                    case ErrorType.LOADING_DEPENDENCIES_FAILED:
                         return LedgerUi.Illustrations.LOADING;
-                    case LedgerApi.ErrorType.REQUEST_ASSERTION_FAILED:
+                    case ErrorType.REQUEST_ASSERTION_FAILED:
                         return this._computeIllustrationForRequestType(this.state.request!.type);
-                    case LedgerApi.ErrorType.LEDGER_BUSY:
+                    case ErrorType.LEDGER_BUSY:
                         return this._computeIllustrationForRequestType(LedgerApi.currentRequest!.type);
-                    case LedgerApi.ErrorType.NO_BROWSER_SUPPORT:
-                    case LedgerApi.ErrorType.APP_OUTDATED:
-                    case LedgerApi.ErrorType.WRONG_LEDGER:
+                    case ErrorType.NO_BROWSER_SUPPORT:
+                    case ErrorType.APP_OUTDATED:
+                    case ErrorType.WRONG_LEDGER:
                         return LedgerUi.Illustrations.IDLE;
                 }
         }
     }
 
-    private _computeIllustrationForRequestType(requestType: LedgerApi.RequestType): string {
+    private _computeIllustrationForRequestType(requestType: RequestType): string {
         switch (requestType) {
-            case LedgerApi.RequestType.GET_WALLET_ID:
-            case LedgerApi.RequestType.GET_ADDRESS:
-            case LedgerApi.RequestType.GET_PUBLIC_KEY:
-            case LedgerApi.RequestType.DERIVE_ACCOUNTS:
+            case RequestType.GET_WALLET_ID:
+            case RequestType.GET_ADDRESS:
+            case RequestType.GET_PUBLIC_KEY:
+            case RequestType.DERIVE_ADDRESSES:
                 return LedgerUi.Illustrations.LOADING;
-            case LedgerApi.RequestType.CONFIRM_ADDRESS:
+            case RequestType.CONFIRM_ADDRESS:
                 return LedgerUi.Illustrations.CONFIRM_ADDRESS;
-            case LedgerApi.RequestType.SIGN_TRANSACTION:
+            case RequestType.SIGN_TRANSACTION:
                 return LedgerUi.Illustrations.CONFIRM_TRANSACTION;
         }
     }

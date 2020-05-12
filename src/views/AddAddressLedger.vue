@@ -36,7 +36,7 @@ import { ParsedSimpleRequest } from '../lib/RequestTypes';
 import { Address } from '../lib/PublicRequestTypes';
 import { WalletInfo } from '../lib/WalletInfo';
 import { AccountInfo } from '../lib/AccountInfo';
-import LedgerApi from '../lib/LedgerApi';
+import LedgerApi, { RequestType as LedgerApiRequestType } from '@nimiq/ledger-api';
 import { WalletStore } from '../lib/WalletStore';
 import { ACCOUNT_MAX_ALLOWED_ADDRESS_GAP, ERROR_CANCELED } from '../lib/Constants';
 import LabelingMachine from '../lib/LabelingMachine';
@@ -80,7 +80,7 @@ export default class AddAddressLedger extends Vue {
             pathsToDerive.push(LedgerApi.getBip32PathForKeyId(keyId));
         }
 
-        const derivedAddressInfos = await LedgerApi.deriveAccounts(pathsToDerive, this.account.keyId);
+        const derivedAddressInfos = await LedgerApi.deriveAddresses(pathsToDerive, this.account.keyId);
         this.addressesToSelectFrom = derivedAddressInfos.map((addressInfo) => new AccountInfo(
             addressInfo.keyPath,
             LabelingMachine.labelAddress(addressInfo.address),
@@ -91,10 +91,10 @@ export default class AddAddressLedger extends Vue {
     }
 
     private destroyed() {
-        const currentRequest = LedgerApi.currentRequest;
-        if (currentRequest && currentRequest.type === LedgerApi.RequestType.DERIVE_ACCOUNTS) {
-            currentRequest.cancel();
-        }
+        LedgerApi.disconnect(
+            /* cancelRequest */ true,
+            /* requestTypeToDisconnect */ LedgerApiRequestType.DERIVE_ADDRESSES,
+        );
     }
 
     private async _onAddressSelected(selectedAccount: AccountInfo) {

@@ -125,7 +125,7 @@ import {
     StopwatchIcon,
 } from '@nimiq/vue-components';
 import Network from '../components/Network.vue';
-import LedgerApi from '../lib/LedgerApi';
+import LedgerApi, { RequestType as LedgerApiRequestType } from '@nimiq/ledger-api';
 import LedgerUi from '../components/LedgerUi.vue';
 import StatusScreen from '../components/StatusScreen.vue';
 import { Static } from '../lib/StaticStore';
@@ -476,10 +476,10 @@ export default class SignTransactionLedger extends Vue {
     }
 
     private _cancelLedgerRequest() {
-        const currentRequest = LedgerApi.currentRequest;
-        if (currentRequest && currentRequest.type === LedgerApi.RequestType.SIGN_TRANSACTION) {
-            currentRequest.cancel();
-        }
+        LedgerApi.disconnect(
+            /* cancelRequest */ true,
+            /* requestTypeToDisconnect */ LedgerApiRequestType.SIGN_TRANSACTION,
+        );
     }
 
     @Watch('shownAccountDetails')

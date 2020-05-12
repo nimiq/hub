@@ -3,7 +3,7 @@ import { KeyguardClient, SimpleResult as KeyguardSimpleResult } from '@nimiq/key
 import { AccountInfo } from '@/lib/AccountInfo';
 import { WalletStore } from '@/lib/WalletStore';
 import { WalletInfo, WalletType } from '@/lib/WalletInfo';
-import LedgerApi from '@/lib/LedgerApi'; // TODO import LedgerApi only when needed
+import LedgerApi, { RequestType as LedgerApiRequestType } from '@nimiq/ledger-api'; // TODO import only when needed
 import {
     ACCOUNT_BIP32_BASE_PATH_KEYGUARD,
     ACCOUNT_DEFAULT_LABEL_LEDGER,
@@ -233,11 +233,13 @@ export default class WalletInfoCollector {
                 hasActivity,
             };
         } finally {
-            // cancel derivation of accounts that we don't need anymore if we're finished or an exception occurred
-            if (walletType === WalletType.LEDGER && LedgerApi.currentRequest
-                && LedgerApi.currentRequest.type === LedgerApi.RequestType.DERIVE_ACCOUNTS) {
+            // cancel derivation of addresses that we don't need anymore if we're finished or an exception occurred
+            if (walletType === WalletType.LEDGER) {
                 derivedAccountsPromise.catch(() => undefined); // to avoid uncaught promise rejection on cancel
-                LedgerApi.currentRequest.cancel();
+                LedgerApi.disconnect(
+                    /* cancelRequest */ true,
+                    /* requestTypeToDisconnect */ LedgerApiRequestType.DERIVE_ADDRESSES,
+                );
             }
         }
     }
@@ -322,9 +324,9 @@ export default class WalletInfoCollector {
         for (let index = startIndex; index < startIndex + count; ++index) {
             pathsToDerive.push(LedgerApi.getBip32PathForKeyId(index));
         }
-        return (await LedgerApi.deriveAccounts(pathsToDerive)).map((account) => ({
-            path: account.keyPath,
-            address: account.address,
+        return (await LedgerApi.deriveAddresses(pathsToDerive)).map((address) => ({
+            path: address.keyPath,
+            address: address.address,
         }));
     }
 
