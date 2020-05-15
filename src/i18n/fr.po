@@ -135,7 +135,7 @@ msgstr ""
 
 #: src/views/Checkout.vue:55
 msgid "Cancel {payment}"
-msgstr "Annuler le {payment}"
+msgstr "Annuler {payment}"
 
 #: src/views/SignTransactionLedger.vue:109
 msgid "Cancel Payment"
@@ -573,7 +573,7 @@ msgstr "Payer avec Nimiq"
 
 #: src/views/Checkout.vue:57
 msgid "Payment"
-msgstr "Paiement"
+msgstr "le Paiement"
 
 #: src/components/CheckoutCard.vue:182
 msgid "Payment successful"

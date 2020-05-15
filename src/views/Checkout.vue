@@ -52,8 +52,8 @@
         <button class="global-close nq-button-s" @click="close">
             <ArrowLeftSmallIcon/>
 
-            <i18n path="Cancel {payment}">
-                <template v-slot:payment>
+            <i18n path="Cancel {payment}" :tag="false">
+                <template #payment>
                     <span>{{ $t('Payment') }}</span>
                 </template>
             </i18n>
