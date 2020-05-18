@@ -10,19 +10,18 @@ msgstr ""
 msgid "+ network fee"
 msgstr ""
 
-#: src/components/LedgerUi.vue:183
+#: src/components/LedgerUi.vue:184
 msgid "1. Connect your Ledger Device"
 msgstr ""
 
-#: src/components/LedgerUi.vue:184
+#: src/components/LedgerUi.vue:185
 msgid "2. Enter your Pin"
 msgstr ""
 
-#: src/components/LedgerUi.vue:185
+#: src/components/LedgerUi.vue:186
 msgid "3. Open the Nimiq App"
 msgstr ""
 
-#. TODO: check if this works properly, step 2 with \u00a0
 #: src/views/CashlinkReceive.vue:110
 msgid "30 seconds, no email, no download."
 msgstr ""
@@ -80,7 +79,7 @@ msgstr ""
 msgid "Amount"
 msgstr ""
 
-#: src/views/CashlinkManage.vue:145
+#: src/views/CashlinkManage.vue:146
 #: src/views/CheckoutTransmission.vue:52
 msgid "Awaiting receipt confirmation..."
 msgstr ""
@@ -146,7 +145,7 @@ msgstr ""
 msgid "Cashlink created"
 msgstr ""
 
-#: src/views/CashlinkManage.vue:169
+#: src/views/CashlinkManage.vue:170
 msgid "Cashlink created."
 msgstr ""
 
@@ -263,7 +262,7 @@ msgstr ""
 msgid "Congrats, you received a Nimiq Gift Card."
 msgstr ""
 
-#: src/components/LedgerUi.vue:189
+#: src/components/LedgerUi.vue:190
 #: src/components/OnboardingMenu.vue:5
 msgid "Connect Ledger"
 msgstr ""
@@ -279,6 +278,7 @@ msgstr ""
 msgid "Connecting to Keyguard..."
 msgstr ""
 
+#: src/views/CashlinkManage.vue:89
 #: src/views/CheckoutTransmission.vue:25
 #: src/views/LoginSuccess.vue:43
 msgid "Connecting to network..."
@@ -289,7 +289,7 @@ msgid "Connecting to Nimiq..."
 msgstr ""
 
 #: src/components/NimiqCheckoutCard.vue:273
-#: src/views/CashlinkManage.vue:139
+#: src/views/CashlinkManage.vue:140
 #: src/views/CheckoutTransmission.vue:46
 msgid "Contacting seed nodes..."
 msgstr ""
@@ -338,7 +338,8 @@ msgstr ""
 msgid "Creating your Account"
 msgstr ""
 
-#: src/views/CashlinkManage.vue:168
+#: src/views/CashlinkManage.vue:169
+#: src/views/SignTransactionLedger.vue:437
 msgid "Creating your Cashlink"
 msgstr ""
 
@@ -416,6 +417,10 @@ msgstr ""
 
 #: src/views/CashlinkReceive.vue:16
 msgid "Got it"
+msgstr ""
+
+#: src/views/CashlinkManage.vue:80
+msgid "Here is your Nimiq Cashlink!"
 msgstr ""
 
 #: src/components/NimiqCheckoutCard.vue:48
@@ -601,11 +606,11 @@ msgstr ""
 msgid "Rename Account"
 msgstr ""
 
-#: src/components/LedgerUi.vue:172
+#: src/components/LedgerUi.vue:173
 msgid "Request failed"
 msgstr ""
 
-#: src/components/LedgerUi.vue:173
+#: src/components/LedgerUi.vue:174
 msgid "Request failed: "
 msgstr ""
 
@@ -613,7 +618,7 @@ msgstr ""
 msgid "Requesting balances..."
 msgstr ""
 
-#: src/components/CheckoutCard.vue:193
+#: src/components/CheckoutCard.vue:194
 msgid "Restart Payment"
 msgstr ""
 
@@ -630,7 +635,11 @@ msgstr ""
 msgid "Send your transaction"
 msgstr ""
 
-#: src/views/CashlinkManage.vue:143
+#: src/views/SignTransactionLedger.vue:438
+msgid "Sending Transaction"
+msgstr ""
+
+#: src/views/CashlinkManage.vue:144
 #: src/views/CheckoutTransmission.vue:50
 msgid "Sending transaction..."
 msgstr ""
@@ -668,16 +677,21 @@ msgid "Storing your new Accounts..."
 msgstr ""
 
 #: src/components/NimiqCheckoutCard.vue:275
-#: src/views/CashlinkManage.vue:141
+#: src/views/CashlinkManage.vue:142
 #: src/views/CheckoutTransmission.vue:48
 msgid "Syncing consensus..."
 msgstr ""
 
-#: src/components/LedgerUi.vue:168
+#: src/components/LedgerUi.vue:169
 msgid "The connected Ledger is not the one this account belongs to."
 msgstr ""
 
+#: src/i18n/i18n-setup.ts:58
+msgid "The display language changed but some translations can't be updated. Do you want to reload the page to update thoses? ({oldLang} to {newLang})"
+msgstr ""
+
 #: src/components/CheckoutCard.vue:168
+#: src/views/SignTransactionLedger.vue:444
 msgid "The offer expired."
 msgstr ""
 
@@ -719,6 +733,14 @@ msgstr ""
 
 #: src/views/ErrorHandlerUnsupportedLedger.vue:51
 msgid "To change the PIN of your Ledger please go to the settings on your device."
+msgstr ""
+
+#: src/views/SignTransactionLedger.vue:442
+msgid "Transaction Sent"
+msgstr ""
+
+#: src/views/SignTransactionLedger.vue:441
+msgid "Transaction Signed"
 msgstr ""
 
 #: src/views/Migrate.vue:93

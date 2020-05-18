@@ -20,6 +20,8 @@ function setI18nLanguage(lang: string) {
     return lang;
 }
 
+// Asynchronously load a translation file for a specified language
+// and set this one as the active language
 export async function loadLanguage(lang: string) {
     if (!SUPPORTED_LANGUAGES.includes(lang)) lang = DEFAULT_LANGUAGE;
 
@@ -35,14 +37,46 @@ export async function loadLanguage(lang: string) {
     return setI18nLanguage(lang);
 }
 
+// Return the language stored in the `lang` cookie. Fallback to the browser language
 export function detectLanguage() {
     const langCookie = Cookie.getCookie('lang');
     const langRaw = window.navigator.language;
-    const langParts = langRaw.replace('-', '_').split('_');
+    const langParts = langRaw.split('_');
 
     return langCookie || langParts[0];
 }
 
-router.beforeEach((to, from, next) =>
+// If the user changed the language in another window/tab,
+// then ask him if he wants to reload the page to update non-reactive translations
+let alreadyAskedTheUser = false;
+function onTabFocus() {
+    if (alreadyAskedTheUser) return;
+
+    const lang = detectLanguage();
+    if (i18n.locale !== lang) {
+        alreadyAskedTheUser = true;
+        const question = i18n.t('The display language changed but some translations can\'t be updated. '
+            + 'Do you want to reload the page to update thoses? ({oldLang} to {newLang})',
+            { oldLang: i18n.locale, newLang: lang }) as string;
+
+        if (confirm(question)) {
+            location.reload();
+        } else {
+            loadLanguage(detectLanguage());
+        }
+    }
+}
+
+// Set a window/tab focus event to check if the user changed the language in another window/tab
+if (/*@cc_on!@*/false) { // check for Internet Explorer
+    // @ts-ignore
+    document.onfocusin = onTabFocus;
+} else {
+    window.onfocus = onTabFocus;
+}
+
+// This router navigation guard is to prevent switching
+// to the new route before the language file finished loading.
+router.beforeResolve((to, from, next) =>
     loadLanguage(detectLanguage()).then(() => next()),
 );

@@ -151,17 +151,17 @@ class CashlinkCreate extends Vue {
     }> = [{
             color: 'nq-light-blue-bg',
             value: 0,
-            text: i18n.t('free') as string,
+            get text() { return i18n.t('free') as string; },
             index: 0,
         }, {
             color: 'nq-green-bg',
             value: 1,
-            text: i18n.t('standard') as string,
+            get text() { return i18n.t('standard') as string; },
             index: 1,
         }, {
             color: 'nq-gold-bg',
             value: 2,
-            text: i18n.t('express') as string,
+            get text() { return i18n.t('express') as string; },
             index: 2,
         },
     ];

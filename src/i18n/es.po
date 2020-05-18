@@ -14,19 +14,18 @@ msgstr ""
 msgid "+ network fee"
 msgstr ""
 
-#: src/components/LedgerUi.vue:183
+#: src/components/LedgerUi.vue:184
 msgid "1. Connect your Ledger Device"
 msgstr ""
 
-#: src/components/LedgerUi.vue:184
+#: src/components/LedgerUi.vue:185
 msgid "2. Enter your Pin"
 msgstr ""
 
-#: src/components/LedgerUi.vue:185
+#: src/components/LedgerUi.vue:186
 msgid "3. Open the Nimiq App"
 msgstr ""
 
-#. TODO: check if this works properly, step 2 with \u00a0
 #: src/views/CashlinkReceive.vue:110
 msgid "30 seconds, no email, no download."
 msgstr ""
@@ -84,7 +83,7 @@ msgstr ""
 msgid "Amount"
 msgstr ""
 
-#: src/views/CashlinkManage.vue:145 src/views/CheckoutTransmission.vue:52
+#: src/views/CashlinkManage.vue:146 src/views/CheckoutTransmission.vue:52
 msgid "Awaiting receipt confirmation..."
 msgstr ""
 
@@ -147,7 +146,7 @@ msgstr ""
 msgid "Cashlink created"
 msgstr ""
 
-#: src/views/CashlinkManage.vue:169
+#: src/views/CashlinkManage.vue:170
 msgid "Cashlink created."
 msgstr ""
 
@@ -225,7 +224,7 @@ msgstr ""
 msgid "Close"
 msgstr ""
 
-#: src/components/CheckoutCard.vue:126
+#: src/components/CheckoutCard.vue:122
 msgid "Collecting payment details"
 msgstr ""
 
@@ -261,7 +260,7 @@ msgstr ""
 msgid "Congrats, you received a Nimiq Gift Card."
 msgstr ""
 
-#: src/components/LedgerUi.vue:189 src/components/OnboardingMenu.vue:5
+#: src/components/LedgerUi.vue:190 src/components/OnboardingMenu.vue:5
 msgid "Connect Ledger"
 msgstr ""
 
@@ -275,7 +274,8 @@ msgstr ""
 msgid "Connecting to Keyguard..."
 msgstr ""
 
-#: src/views/CheckoutTransmission.vue:25 src/views/LoginSuccess.vue:43
+#: src/views/CashlinkManage.vue:89 src/views/CheckoutTransmission.vue:25
+#: src/views/LoginSuccess.vue:43
 msgid "Connecting to network..."
 msgstr ""
 
@@ -283,7 +283,7 @@ msgstr ""
 msgid "Connecting to Nimiq..."
 msgstr ""
 
-#: src/components/NimiqCheckoutCard.vue:273 src/views/CashlinkManage.vue:139
+#: src/components/NimiqCheckoutCard.vue:273 src/views/CashlinkManage.vue:140
 #: src/views/CheckoutTransmission.vue:46
 msgid "Contacting seed nodes..."
 msgstr ""
@@ -329,7 +329,7 @@ msgstr ""
 msgid "Creating your Account"
 msgstr ""
 
-#: src/views/CashlinkManage.vue:168
+#: src/views/CashlinkManage.vue:169 src/views/SignTransactionLedger.vue:437
 msgid "Creating your Cashlink"
 msgstr ""
 
@@ -399,12 +399,16 @@ msgstr ""
 msgid "Get NIM"
 msgstr ""
 
-#: src/components/CheckoutCard.vue:175 src/views/RequestError.vue:31
+#: src/components/CheckoutCard.vue:171 src/views/RequestError.vue:31
 msgid "Go back"
 msgstr ""
 
 #: src/views/CashlinkReceive.vue:16
 msgid "Got it"
+msgstr ""
+
+#: src/views/CashlinkManage.vue:80
+msgid "Here is your Nimiq Cashlink!"
 msgstr ""
 
 #: src/components/NimiqCheckoutCard.vue:48
@@ -418,7 +422,7 @@ msgid ""
 "Imported {count} address so far... | Imported {count} addresses so far..."
 msgstr ""
 
-#: src/components/CheckoutCard.vue:194
+#: src/components/CheckoutCard.vue:190
 msgid "Incomplete payment"
 msgstr ""
 
@@ -495,7 +499,7 @@ msgstr ""
 msgid "New Address added to your Account."
 msgstr ""
 
-#: src/views/CashlinkCreate.vue:55 src/views/SignTransactionLedger.vue:274
+#: src/views/CashlinkCreate.vue:55 src/views/SignTransactionLedger.vue:278
 msgid "New Cashlink"
 msgstr ""
 
@@ -548,7 +552,7 @@ msgstr ""
 msgid "Payment"
 msgstr ""
 
-#: src/components/CheckoutCard.vue:186
+#: src/components/CheckoutCard.vue:182
 msgid "Payment successful"
 msgstr ""
 
@@ -564,7 +568,7 @@ msgstr ""
 msgid "Please cancel the request on your Ledger"
 msgstr ""
 
-#: src/components/CheckoutCard.vue:173
+#: src/components/CheckoutCard.vue:169
 msgid "Please go back and restart the process."
 msgstr ""
 
@@ -592,11 +596,11 @@ msgstr ""
 msgid "Rename Account"
 msgstr ""
 
-#: src/components/LedgerUi.vue:172
+#: src/components/LedgerUi.vue:173
 msgid "Request failed"
 msgstr ""
 
-#: src/components/LedgerUi.vue:173
+#: src/components/LedgerUi.vue:174
 msgid "Request failed: "
 msgstr ""
 
@@ -604,7 +608,7 @@ msgstr ""
 msgid "Requesting balances..."
 msgstr ""
 
-#: src/components/CheckoutCard.vue:197
+#: src/components/CheckoutCard.vue:194
 msgid "Restart Payment"
 msgstr ""
 
@@ -621,7 +625,11 @@ msgstr ""
 msgid "Send your transaction"
 msgstr ""
 
-#: src/views/CashlinkManage.vue:143 src/views/CheckoutTransmission.vue:50
+#: src/views/SignTransactionLedger.vue:438
+msgid "Sending Transaction"
+msgstr ""
+
+#: src/views/CashlinkManage.vue:144 src/views/CheckoutTransmission.vue:50
 msgid "Sending transaction..."
 msgstr ""
 
@@ -657,16 +665,22 @@ msgstr ""
 msgid "Storing your new Accounts..."
 msgstr ""
 
-#: src/components/NimiqCheckoutCard.vue:275 src/views/CashlinkManage.vue:141
+#: src/components/NimiqCheckoutCard.vue:275 src/views/CashlinkManage.vue:142
 #: src/views/CheckoutTransmission.vue:48
 msgid "Syncing consensus..."
 msgstr ""
 
-#: src/components/LedgerUi.vue:168
+#: src/components/LedgerUi.vue:169
 msgid "The connected Ledger is not the one this account belongs to."
 msgstr ""
 
-#: src/components/CheckoutCard.vue:172
+#: src/i18n/i18n-setup.ts:58
+msgid ""
+"The display language changed but some translations can't be updated. Do you "
+"want to reload the page to update thoses? ({oldLang} to {newLang})"
+msgstr ""
+
+#: src/components/CheckoutCard.vue:168 src/views/SignTransactionLedger.vue:444
 msgid "The offer expired."
 msgstr ""
 
@@ -698,9 +712,10 @@ msgstr ""
 
 #: src/views/Checkout.vue:72
 msgid ""
-"This Nimiq interface is non-custodial and solely used to bridge the customer"
-" with the merchant directly (P2P). Payment and order fulfillment are sole "
-"responsibility of the customer and merchant respectively."
+"This Nimiq interface is non-custodial and solely used to bridge the payment "
+"sender with the payment recipient directly (P2P). Payment and deliverable "
+"fulfillment for payment are sole responsibility of those two respective "
+"parties."
 msgstr ""
 
 #: src/views/ErrorHandlerUnsupportedLedger.vue:53
@@ -714,6 +729,14 @@ msgstr ""
 #: src/views/ErrorHandlerUnsupportedLedger.vue:51
 msgid ""
 "To change the PIN of your Ledger please go to the settings on your device."
+msgstr ""
+
+#: src/views/SignTransactionLedger.vue:442
+msgid "Transaction Sent"
+msgstr ""
+
+#: src/views/SignTransactionLedger.vue:441
+msgid "Transaction Signed"
 msgstr ""
 
 #: src/views/Migrate.vue:93
@@ -800,7 +823,7 @@ msgstr ""
 msgid "You received a Cashlink!"
 msgstr ""
 
-#: src/components/CheckoutCard.vue:195
+#: src/components/CheckoutCard.vue:191
 msgid ""
 "You transferred an insufficient amount. Please contact the merchant for a "
 "refund. Restart to pay for your order."

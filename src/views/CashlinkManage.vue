@@ -74,6 +74,7 @@ import { CashlinkStore } from '../lib/CashlinkStore';
 import { State } from 'vuex-class';
 import KeyguardClient from '@nimiq/keyguard-client';
 import { Clipboard } from '@nimiq/utils';
+import { i18n } from '../i18n/i18n-setup';
 import { ERROR_CANCELED } from '../lib/Constants';
 
 @Component({components: {
@@ -87,7 +88,7 @@ import { ERROR_CANCELED } from '../lib/Constants';
     Copyable,
 }})
 export default class CashlinkManage extends Vue {
-    private static readonly SHARE_PREFIX: string = 'Here is your Nimiq Cashlink!';
+    private static readonly SHARE_PREFIX: string = i18n.t('Here is your Nimiq Cashlink!') as string;
 
     @Static private request!: ParsedManageCashlinkRequest | ParsedCreateCashlinkRequest;
     @Static private cashlink?: Cashlink;
@@ -96,7 +97,7 @@ export default class CashlinkManage extends Vue {
 
     private isTxSent: boolean = false;
     private isManagementRequest: boolean = false;
-    private status: string = 'Connecting to network...';
+    private status: string = this.$t('Connecting to network...') as string;
     private state: StatusScreen.State = StatusScreen.State.LOADING;
     private message: string = '';
     private retrievedCashlink: Cashlink | null = null;

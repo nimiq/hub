@@ -107,7 +107,7 @@
                 <p class="nq-text">
                     {{ welcomeText }}
                     {{ $t('Create an Account and claim your money.') }}
-                    <span class="secondary-text">{{ $t('30\u00a0seconds, no\u00a0email, no\u00a0download.') /* TODO: check if this works properly, step 2 with \u00a0 */ }}</span>
+                    <span class="secondary-text">{{ $t('30\u00a0seconds, no\u00a0email, no\u00a0download.') }}</span>
                 </p>
             </div>
         </div>

@@ -436,14 +436,14 @@ export default class SignTransactionLedger extends Vue {
         switch (this.state) {
             case SignTransactionLedger.State.SENDING_TRANSACTION:
                 return this.request.kind === RequestType.CREATE_CASHLINK
-                    ? 'Creating your Cashlink'
-                    : 'Sending Transaction';
+                    ? this.$t('Creating your Cashlink') as string
+                    : this.$t('Sending Transaction') as string;
             case SignTransactionLedger.State.FINISHED:
                 return this.request.kind === RequestType.SIGN_TRANSACTION
-                    ? 'Transaction Signed'
-                    : 'Transaction Sent';
+                    ? this.$t('Transaction Signed') as string
+                    : this.$t('Transaction Sent') as string;
             case SignTransactionLedger.State.EXPIRED:
-                return 'The offer expired.';
+                return this.$t('The offer expired.') as string;
             default:
                 return '';
         }

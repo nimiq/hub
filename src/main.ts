@@ -8,7 +8,7 @@ import RpcApi from '@/lib/RpcApi';
 import { startSentry } from './lib/Sentry';
 // @ts-ignore
 import IqonsSvg from '@nimiq/iqons/dist/iqons.min.svg';
-import { i18n } from './i18n/i18n-setup';
+import { i18n, loadLanguage, detectLanguage } from './i18n/i18n-setup';
 
 if (window.hasBrowserWarning) {
     throw new Error('Execution aborted due to browser warning');
@@ -41,6 +41,8 @@ const rpcApi = new RpcApi(store, staticStore, router);
 Vue.prototype.$rpc = rpcApi; // rpcApi is started in App.vue->created()
 
 startSentry(Vue);
+
+loadLanguage(detectLanguage());
 
 const app = new Vue({
     data: { loading: true },

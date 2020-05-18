@@ -220,8 +220,8 @@ class LedgerUi extends Vue {
                 this._showInstructions('', this.$t('Ledger not supported by browser.') as string);
                 break;
             case ErrorType.APP_OUTDATED:
-                this._showInstructions('', this.$t('Your Nimiq App is outdated. ') as string
-                    + this.$t('Please update your Ledger firmware and Nimiq App using Ledger Live.') as string);
+                this._showInstructions('', this.$t('Your Nimiq App is outdated. '
+                    + 'Please update your Ledger firmware and Nimiq App using Ledger Live.') as string);
                 break;
             case ErrorType.WRONG_LEDGER:
                 this._showInstructions(
