@@ -7,11 +7,11 @@
                 </transition>
                 <transition name="transition-fade">
                     <div v-if="illustration !== constructor.Illustrations.LOADING" class="ledger-device-container"
-                        :illustration="illustration">
+                        :illustration="illustration" :connect-animation-step="connectAnimationStep">
                         <div class="ledger-screen-confirm-address ledger-screen"></div>
                         <div class="ledger-screen-confirm-transaction ledger-screen"></div>
                         <div class="ledger-screen-app ledger-screen"></div>
-                        <div class="ledger-screen-home ledger-screen"></div>
+                        <div class="ledger-screen-dashboard ledger-screen"></div>
                         <div class="ledger-screen-pin ledger-screen">
                             <div class="ledger-pin-dot"></div>
                             <div class="ledger-pin-dot"></div>
@@ -48,8 +48,9 @@ class LedgerUi extends Vue {
     private state: State = LedgerApi.currentState;
     private instructionsTitle: string = '';
     private instructionsText: string = '';
+    private connectAnimationStep: number = -1;
+    private connectAnimationInterval: number = -1;
     private connectTimer: number = -1;
-    private connectInstructionsTextInterval: number = -1;
     private loadingFailed: boolean = false;
 
     private created() {
@@ -69,9 +70,10 @@ class LedgerUi extends Vue {
             return;
         }
         clearTimeout(this.connectTimer);
-        clearInterval(this.connectInstructionsTextInterval);
+        clearInterval(this.connectAnimationInterval);
         this.connectTimer = -1;
-        this.connectInstructionsTextInterval = -1;
+        this.connectAnimationInterval = -1;
+        this.connectAnimationStep = -1;
 
         this.state = state;
         switch (state.type) {
@@ -108,7 +110,7 @@ class LedgerUi extends Vue {
             if (LedgerApi.currentState.type !== StateType.CONNECTING) return;
             this.state = LedgerApi.currentState;
             this._cycleConnectInstructions();
-            this.connectInstructionsTextInterval =
+            this.connectAnimationInterval =
                 window.setInterval(() => this._cycleConnectInstructions(), LedgerUi.CONNECT_ANIMATION_STEP_DURATION);
         }, 1050);
     }
@@ -175,6 +177,7 @@ class LedgerUi extends Vue {
         const currentInstructionsIndex = instructions.indexOf(this.instructionsText);
         const nextInstructionsIndex = (currentInstructionsIndex + 1) % instructions.length;
         this._showInstructions('Connect Ledger', instructions[nextInstructionsIndex]);
+        this.connectAnimationStep = nextInstructionsIndex + 1;
     }
 
     private _showInstructions(title: string | null, text?: string): void {
@@ -255,7 +258,7 @@ export default LedgerUi;
         display: flex;
         flex-direction: column;
 
-        --ledger-connect-animation-duration: 9s;
+        --ledger-connect-animation-step-duration: 3s;
         --ledger-scale-factor: 1.62;
         --ledger-opacity: .3;
     }
@@ -352,7 +355,7 @@ export default LedgerUi;
         height: 15.7%;
     }
 
-    .ledger-screen-home {
+    .ledger-screen-dashboard {
         background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 114 37.5"><path fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M103.5 16.2l2.7 2.7-2.7 2.8m-93 .1L7.8 19l2.7-2.8M40.2 14.5h3.6m26.4 0h3.6"/><text font-family="sans-serif" font-size="11.2" transform="translate(41.3 32.3)">Nimiq</text><path d="M27.3 14.8h-.6v1.9h.2c.7 0 2.2 0 2.2-.9 0-.8-1-1-1.8-1zm1.4-1.7c0-.8-.9-.9-1.5-.9h-.5V14h.1c.7 0 1.9 0 1.9-.9z"/><path d="M27.5 7.5a7 7 0 0 0-7 7c0 3.9 3.1 7 7 7s7-3.1 7-7a7 7 0 0 0-7-7zm3.3 8.4c-.1 1.4-1.2 1.7-2.6 1.9v1.4h-.9v-1.4h-.7v1.4h-.8v-1.4h-1.7l.2-1h.7c.3 0 .3-.2.3-.3v-3.8c0-.2-.2-.4-.5-.4h-.6v-.9H26V9.9h.8v1.5h.7V9.9h.9v1.4c1.1.1 2 .4 2.1 1.4 0 .8-.3 1.2-.8 1.5.7.2 1.2.6 1.1 1.7zm33.5-2l-3.1-5.3c-.2-.4-.6-.6-1.1-.6h-6.3c-.4 0-.9.2-1.1.6l-3.1 5.3c-.2.4-.2.8 0 1.2l3.1 5.3c.2.4.6.6 1.1.6h6.3c.4 0 .9-.2 1.1-.6l3.1-5.3c.3-.4.3-.8 0-1.2zm22.2-6.4a7 7 0 0 0-7 7c0 3.9 3.1 7 7 7s7-3.1 7-7a7 7 0 0 0-7-7zm0 11.5l-3-4 3 1.8 3-1.8-3 4zm0-2.8l-3-1.7 3-4.5 3 4.5-3 1.7z"/></svg>');
     }
 
@@ -378,25 +381,33 @@ export default LedgerUi;
 
     /* Connect Animation */
 
-    .ledger-device-container[illustration="connecting"] .ledger-cable {
-        animation: ledger-connect-cable var(--ledger-connect-animation-duration) infinite;
+    .ledger-device-container[illustration="connecting"][connect-animation-step="1"] .ledger-opacity-container {
+        animation: ledger-fade-in var(--ledger-connect-animation-step-duration) both;
     }
-    .ledger-device-container[illustration="connecting"] .ledger-opacity-container {
-        animation: ledger-scale-and-opacity var(--ledger-connect-animation-duration) both infinite;
+    .ledger-device-container[illustration="connecting"][connect-animation-step="1"] .ledger-cable {
+        animation: ledger-connect-cable var(--ledger-connect-animation-step-duration) both;
     }
-    .ledger-device-container[illustration="connecting"] .ledger-screen-pin {
-        animation: ledger-show-screen-pin var(--ledger-connect-animation-duration) both infinite;
+
+    .ledger-device-container[illustration="connecting"][connect-animation-step="2"] .ledger-opacity-container {
+        animation: ledger-scale var(--ledger-connect-animation-step-duration) both;
+    }
+    .ledger-device-container[illustration="connecting"][connect-animation-step="2"] .ledger-screen-pin {
+        animation: ledger-show-screen-pin var(--ledger-connect-animation-step-duration) both;
         display: flex;
     }
-    .ledger-device-container[illustration="connecting"] .ledger-pin-dot {
-        animation: ledger-show-pin-dot var(--ledger-connect-animation-duration) both infinite;
+    .ledger-device-container[illustration="connecting"][connect-animation-step="2"] .ledger-pin-dot {
+        animation: ledger-show-pin-dot var(--ledger-connect-animation-step-duration) both;
     }
-    .ledger-device-container[illustration="connecting"] .ledger-screen-home {
-        animation: ledger-show-screen-home var(--ledger-connect-animation-duration) both infinite;
+
+    .ledger-device-container[illustration="connecting"][connect-animation-step="3"] .ledger-opacity-container {
+        animation: ledger-fade-out var(--ledger-connect-animation-step-duration) both;
+    }
+    .ledger-device-container[illustration="connecting"][connect-animation-step="3"] .ledger-screen-dashboard {
+        animation: ledger-show-screen-dashboard var(--ledger-connect-animation-step-duration) both;
         display: flex;
     }
-    .ledger-device-container[illustration="connecting"] .ledger-screen-app {
-        animation: ledger-show-screen-app var(--ledger-connect-animation-duration) both infinite;
+    .ledger-device-container[illustration="connecting"][connect-animation-step="3"] .ledger-screen-app {
+        animation: ledger-show-screen-app var(--ledger-connect-animation-step-duration) both;
         display: flex;
     }
 
@@ -404,98 +415,113 @@ export default LedgerUi;
         0% {
             transform: translateX(-50%);
         }
-        25% {
+        75%, 100% {
             transform: translateX(0);
         }
     }
 
-    @keyframes ledger-scale-and-opacity {
+    @keyframes ledger-fade-in {
         0% {
             opacity: 0;
             transform: scale(1);
         }
-        3% {
-            opacity: 1;
-        }
-        33% {
+        10%, 100% {
             opacity: 1;
             transform: scale(1);
         }
-        42% {
+    }
+
+    @keyframes ledger-scale {
+        0% {
+            opacity: 1;
+            transform: scale(1);
+        }
+        25%, 100% {
             opacity: var(--ledger-opacity);
             transform: scale(var(--ledger-scale-factor)) translateX(27.3%);
         }
-        98.5% {
+    }
+
+    @keyframes ledger-fade-out {
+        0%, 95% {
             opacity: var(--ledger-opacity);
         }
         100% {
             opacity: 0;
-            transform: scale(var(--ledger-scale-factor)) translateX(27.3%);
         }
     }
 
     @keyframes ledger-show-screen-pin {
-        0%, 33%, 66%, 100% {
+        0% {
             opacity: 0;
-        }
-        35%, 64% {
-            opacity: 1;
-        }
-        0%,
-        33% {
             transform: scale(calc(1 / var(--ledger-scale-factor))) translateX(-105%);
         }
-        42% {
+        5% {
+            opacity: 1;
+        }
+        25% {
             transform: scale(1);
+        }
+        95% {
+            opacity: 1;
+        }
+        100% {
+            opacity: 0;
         }
     }
 
     @keyframes ledger-show-pin-dot {
-        0%, 37% {
+        0%, 12% {
             background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="30" height="3" x="1" y="28" fill="white" ry="1.5"/></svg>');
         }
-        38%, 100% {
+        17%, 100% {
             background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><circle cx="16" cy="16" r="15" fill="white"/></svg>');
         }
     }
 
-    @keyframes ledger-show-screen-home {
-        0%, 66%, 85%, 100% {
+    @keyframes ledger-show-screen-dashboard {
+        0% {
             opacity: 0;
         }
-        68%, 83% {
+        5%, 50% {
             opacity: 1;
+        }
+        55%, 100% {
+            opacity: 0;
         }
     }
 
     @keyframes ledger-show-screen-app {
-        0%, 85%, 100% {
+        0%, 55% {
             opacity: 0;
         }
-        87%, 98% {
+        60%, 95% {
             opacity: 1;
+        }
+        100% {
+            opacity: 0;
         }
     }
 
     .ledger-ui .ledger-pin-dot:nth-child(2) {
-        animation-delay: calc(1 * var(--ledger-connect-animation-duration) / 3.5 / 8);
+        animation-delay: calc(1 * var(--ledger-connect-animation-step-duration) / 1.15 / 8) !important;
     }
     .ledger-ui .ledger-pin-dot:nth-child(3) {
-        animation-delay: calc(2 * var(--ledger-connect-animation-duration) / 3.5 / 8);
+        animation-delay: calc(2 * var(--ledger-connect-animation-step-duration) / 1.15 / 8) !important;
     }
     .ledger-ui .ledger-pin-dot:nth-child(4) {
-        animation-delay: calc(3 * var(--ledger-connect-animation-duration) / 3.5 / 8);
+        animation-delay: calc(3 * var(--ledger-connect-animation-step-duration) / 1.15 / 8) !important;
     }
     .ledger-ui .ledger-pin-dot:nth-child(5) {
-        animation-delay: calc(4 * var(--ledger-connect-animation-duration) / 3.5 / 8);
+        animation-delay: calc(4 * var(--ledger-connect-animation-step-duration) / 1.15 / 8) !important;
     }
     .ledger-ui .ledger-pin-dot:nth-child(6) {
-        animation-delay: calc(5 * var(--ledger-connect-animation-duration) / 3.5 / 8);
+        animation-delay: calc(5 * var(--ledger-connect-animation-step-duration) / 1.15 / 8) !important;
     }
     .ledger-ui .ledger-pin-dot:nth-child(7) {
-        animation-delay: calc(6 * var(--ledger-connect-animation-duration) / 3.5 / 8);
+        animation-delay: calc(6 * var(--ledger-connect-animation-step-duration) / 1.15 / 8) !important;
     }
     .ledger-ui .ledger-pin-dot:nth-child(8) {
-        animation-delay: calc(7 * var(--ledger-connect-animation-duration) / 3.5 / 8);
+        animation-delay: calc(7 * var(--ledger-connect-animation-step-duration) / 1.15 / 8) !important;
     }
 </style>
