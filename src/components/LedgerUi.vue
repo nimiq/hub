@@ -1,13 +1,11 @@
 <template>
-    <div class="ledger-ui" :class="{ small }">
+    <div class="ledger-ui" :class="{ small, 'has-connect-button': showConnectButton }">
         <StatusScreen :state="'loading'" :title="instructionsTitle" :status="instructionsText" :small="small">
             <template slot="loading">
                 <transition name="transition-fade">
                     <LoadingSpinner v-if="illustration === constructor.Illustrations.LOADING"/>
-                </transition>
-                <transition name="transition-fade">
-                    <div v-if="illustration !== constructor.Illustrations.LOADING" class="ledger-device-container"
-                        :illustration="illustration" :connect-animation-step="connectAnimationStep">
+                    <div v-else class="ledger-device-container" :illustration="illustration"
+                        :connect-animation-step="connectAnimationStep">
                         <div class="ledger-screen-confirm-address ledger-screen"></div>
                         <div class="ledger-screen-confirm-transaction ledger-screen"></div>
                         <div class="ledger-screen-app ledger-screen"></div>
@@ -28,13 +26,19 @@
                         </div>
                     </div>
                 </transition>
+                <transition name="transition-fade">
+                    <button v-if="showConnectButton" class="nq-button-s inverse connect-button"
+                        :class="{ pulsate: connectAnimationStep === 4 }" @click="_connect">
+                        Connect
+                    </button>
+                </transition>
             </template>
         </StatusScreen>
     </div>
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import { LoadingSpinner } from '@nimiq/vue-components';
 import LedgerApi, { ErrorType, EventType, RequestType, State, StateType } from '@nimiq/ledger-api';
 import StatusScreen from '../components/StatusScreen.vue';
@@ -48,6 +52,7 @@ class LedgerUi extends Vue {
     private state: State = LedgerApi.currentState;
     private instructionsTitle: string = '';
     private instructionsText: string = '';
+    private showConnectButton: boolean = false;
     private connectAnimationStep: number = -1;
     private connectAnimationInterval: number = -1;
     private connectTimer: number = -1;
@@ -61,19 +66,70 @@ class LedgerUi extends Vue {
 
     private destroyed() {
         LedgerApi.off(EventType.STATE_CHANGE, this._onStateChange);
+        clearTimeout(this.connectTimer);
+        clearInterval(this.connectAnimationInterval);
+    }
+
+    private _connect() {
+        // Manual connection in the context of a user gesture.
+        LedgerApi.connect();
+    }
+
+    private get illustration() {
+        switch (this.state.type) {
+            case StateType.LOADING:
+            case StateType.IDLE: // interpret IDLE as "waiting for request"
+                return LedgerUi.Illustrations.LOADING;
+            case StateType.CONNECTING:
+                return LedgerUi.Illustrations.CONNECTING;
+            case StateType.REQUEST_PROCESSING:
+            case StateType.REQUEST_CANCELLING:
+                return this._computeIllustrationForRequestType(this.state.request!.type);
+            case StateType.ERROR:
+                switch (this.state.error!.type) {
+                    case ErrorType.LOADING_DEPENDENCIES_FAILED:
+                        return LedgerUi.Illustrations.LOADING;
+                    case ErrorType.USER_INTERACTION_REQUIRED:
+                    case ErrorType.CONNECTION_ABORTED: // keep animation running and ask user to use the connect button
+                        return LedgerUi.Illustrations.CONNECTING;
+                    case ErrorType.REQUEST_ASSERTION_FAILED:
+                        return this._computeIllustrationForRequestType(this.state.request!.type);
+                    case ErrorType.LEDGER_BUSY:
+                        return this._computeIllustrationForRequestType(LedgerApi.currentRequest!.type);
+                    case ErrorType.NO_BROWSER_SUPPORT:
+                    case ErrorType.APP_OUTDATED:
+                    case ErrorType.WRONG_LEDGER:
+                        return LedgerUi.Illustrations.IDLE;
+                }
+        }
+    }
+
+    private _computeIllustrationForRequestType(requestType: RequestType): string {
+        switch (requestType) {
+            case RequestType.GET_WALLET_ID:
+            case RequestType.GET_ADDRESS:
+            case RequestType.GET_PUBLIC_KEY:
+            case RequestType.DERIVE_ADDRESSES:
+                return LedgerUi.Illustrations.LOADING;
+            case RequestType.CONFIRM_ADDRESS:
+                return LedgerUi.Illustrations.CONFIRM_ADDRESS;
+            case RequestType.SIGN_TRANSACTION:
+                return LedgerUi.Illustrations.CONFIRM_TRANSACTION;
+        }
     }
 
     private _onStateChange(state: State) {
         if (state.type === StateType.CONNECTING) {
-            // if connecting, only switch to connecting state if connecting takes some time
-            this._onStateConnecting();
+            this.loadingFailed = false;
+            // If connecting, only switch to connecting state if connecting takes some time. If ledger is already
+            // connected via USB and unlocked, establishing the API connection usually takes < 1s.
+            this.connectTimer = window.setTimeout(() => {
+                if (LedgerApi.currentState.type !== StateType.CONNECTING) return;
+                this.state = LedgerApi.currentState;
+            }, 1050);
             return;
         }
         clearTimeout(this.connectTimer);
-        clearInterval(this.connectAnimationInterval);
-        this.connectTimer = -1;
-        this.connectAnimationInterval = -1;
-        this.connectAnimationStep = -1;
 
         this.state = state;
         switch (state.type) {
@@ -92,27 +148,14 @@ class LedgerUi extends Vue {
             case StateType.ERROR:
                 this._onError(state);
                 break;
+            default:
+                throw new Error(`Unhandled state: ${state.type}`);
         }
     }
 
     private _onStateLoading() {
         const retryMessage = this.loadingFailed ? 'Loading failed, retrying...' : '';
         this._showInstructions('', retryMessage);
-    }
-
-    private _onStateConnecting() {
-        this.loadingFailed = false;
-        // If ledger is already connected via USB and unlocked, establishing the API connection
-        // usually takes < 1s. Only if connecting takes longer, we show the connect instructions
-        if (this.connectTimer !== -1) return;
-        this.connectTimer = window.setTimeout(() => {
-            this.connectTimer = -1;
-            if (LedgerApi.currentState.type !== StateType.CONNECTING) return;
-            this.state = LedgerApi.currentState;
-            this._cycleConnectInstructions();
-            this.connectAnimationInterval =
-                window.setInterval(() => this._cycleConnectInstructions(), LedgerUi.CONNECT_ANIMATION_STEP_DURATION);
-        }, 1050);
     }
 
     private _onRequest(state: State) {
@@ -150,6 +193,14 @@ class LedgerUi extends Vue {
                 this.loadingFailed = true;
                 this._onStateLoading(); // show as still loading / retrying
                 break;
+            case ErrorType.USER_INTERACTION_REQUIRED:
+            case ErrorType.CONNECTION_ABORTED:
+                // No instructions to set here. The state change triggers the connection animation and instruction loop.
+                // Set showConnectButton as flag and not have it as a getter depending on the state such that the
+                // animation loop continues to include the fourth step for consistency even when the error is resolved
+                // and the api switches to the connecting state.
+                this.showConnectButton = true;
+                break;
             case ErrorType.NO_BROWSER_SUPPORT:
                 this._showInstructions('', 'Ledger not supported by browser.');
                 break;
@@ -174,10 +225,26 @@ class LedgerUi extends Vue {
             '2. Enter your Pin',
             '3. Open the Nimiq App',
         ];
-        const currentInstructionsIndex = instructions.indexOf(this.instructionsText);
-        const nextInstructionsIndex = (currentInstructionsIndex + 1) % instructions.length;
-        this._showInstructions('Connect Ledger', instructions[nextInstructionsIndex]);
-        this.connectAnimationStep = nextInstructionsIndex + 1;
+        if (this.showConnectButton) {
+            instructions.push('4. Click "Connect"');
+        }
+        const oldInstructionIndex = instructions.indexOf(this.instructionsText);
+        const instructionIndex = (oldInstructionIndex + 1) % instructions.length;
+        this._showInstructions('Connect Ledger', instructions[instructionIndex]);
+        this.connectAnimationStep = instructionIndex + 1; // Set animation step which starts counting at 1
+    }
+
+    @Watch('illustration', { immediate: true })
+    private _onIllustrationChange(illustration: string) {
+        if (illustration === LedgerUi.Illustrations.CONNECTING) {
+            this._cycleConnectInstructions();
+            this.connectAnimationInterval =
+                window.setInterval(() => this._cycleConnectInstructions(), LedgerUi.CONNECT_ANIMATION_STEP_DURATION);
+        } else {
+            clearInterval(this.connectAnimationInterval);
+            this.connectAnimationStep = -1;
+            this.showConnectButton = false;
+        }
     }
 
     private _showInstructions(title: string | null, text?: string): void {
@@ -189,46 +256,6 @@ class LedgerUi extends Vue {
         } else {
             this.instructionsTitle = title || '';
             this.instructionsText = text || '';
-        }
-    }
-
-    private get illustration() {
-        switch (this.state.type) {
-            case StateType.LOADING:
-            case StateType.IDLE: // interpret IDLE as "waiting for request"
-                return LedgerUi.Illustrations.LOADING;
-            case StateType.CONNECTING:
-                return LedgerUi.Illustrations.CONNECTING;
-            case StateType.REQUEST_PROCESSING:
-            case StateType.REQUEST_CANCELLING:
-                return this._computeIllustrationForRequestType(this.state.request!.type);
-            case StateType.ERROR:
-                switch (this.state.error!.type) {
-                    case ErrorType.LOADING_DEPENDENCIES_FAILED:
-                        return LedgerUi.Illustrations.LOADING;
-                    case ErrorType.REQUEST_ASSERTION_FAILED:
-                        return this._computeIllustrationForRequestType(this.state.request!.type);
-                    case ErrorType.LEDGER_BUSY:
-                        return this._computeIllustrationForRequestType(LedgerApi.currentRequest!.type);
-                    case ErrorType.NO_BROWSER_SUPPORT:
-                    case ErrorType.APP_OUTDATED:
-                    case ErrorType.WRONG_LEDGER:
-                        return LedgerUi.Illustrations.IDLE;
-                }
-        }
-    }
-
-    private _computeIllustrationForRequestType(requestType: RequestType): string {
-        switch (requestType) {
-            case RequestType.GET_WALLET_ID:
-            case RequestType.GET_ADDRESS:
-            case RequestType.GET_PUBLIC_KEY:
-            case RequestType.DERIVE_ADDRESSES:
-                return LedgerUi.Illustrations.LOADING;
-            case RequestType.CONFIRM_ADDRESS:
-                return LedgerUi.Illustrations.CONFIRM_ADDRESS;
-            case RequestType.SIGN_TRANSACTION:
-                return LedgerUi.Illustrations.CONFIRM_TRANSACTION;
         }
     }
 }
@@ -259,16 +286,54 @@ export default LedgerUi;
         flex-direction: column;
 
         --ledger-connect-animation-step-duration: 3s;
+        --ledger-container-width: 52%;
         --ledger-scale-factor: 1.62;
+        --ledger-y-offset: 0rem; /* unit can't be omitted here */
         --ledger-opacity: .3;
     }
 
     .ledger-ui.small {
+        --ledger-container-width: 48%;
         --ledger-scale-factor: 1.5;
+        --ledger-y-offset: -2rem;
+    }
+
+    .ledger-ui.has-connect-button.small {
+        --ledger-container-width: 44%;
+        --ledger-y-offset: -3.5rem;
     }
 
     .status-screen {
         overflow: hidden;
+    }
+
+    .status-screen >>> .status-row {
+        transition: margin-bottom .4s;
+    }
+
+    .ledger-ui.has-connect-button .status-screen >>> .status-row {
+        margin-bottom: 7rem;
+        pointer-events: none;
+    }
+
+    .ledger-ui.has-connect-button.small .status-screen >>> .status-row {
+        margin-bottom: 5.5rem;
+    }
+
+    .connect-button {
+        position: absolute;
+        width: 10rem;
+        left: calc(50% - 5rem);
+        bottom: 2rem;
+        transition: opacity .4s;
+    }
+
+    .connect-button.pulsate:not(:hover):not(:focus) {
+        animation: connect-button-pulsate calc(var(--ledger-connect-animation-step-duration) / 4) alternate infinite;
+    }
+
+    .ledger-ui.small .connect-button {
+        bottom: 1rem;
     }
 
     .loading-spinner,
@@ -281,12 +346,9 @@ export default LedgerUi;
     }
 
     .ledger-device-container {
-        width: 52%;
-    }
-
-    .ledger-ui.small .ledger-device-container {
-        margin-top: -2rem;
-        width: 48%;
+        width: var(--ledger-container-width);
+        transform: translate(-50%, calc(-50% + var(--ledger-y-offset)));
+        transition: opacity .4s, transform .4s, width .4s;
     }
 
     .ledger-device-container::before {
@@ -411,6 +473,19 @@ export default LedgerUi;
         display: flex;
     }
 
+    .has-connect-button [illustration="connecting"][connect-animation-step="3"] .ledger-opacity-container,
+    .has-connect-button [illustration="connecting"][connect-animation-step="4"] .ledger-opacity-container {
+        /* Span animation over two animation steps via animation delay */
+        animation: ledger-fade-out var(--ledger-connect-animation-step-duration)
+            var(--ledger-connect-animation-step-duration) both;
+    }
+    .has-connect-button [illustration="connecting"][connect-animation-step="3"] .ledger-screen-app,
+    .has-connect-button [illustration="connecting"][connect-animation-step="4"] .ledger-screen-app {
+        /* Use animation with double the duration */
+        animation: ledger-show-screen-app-double-duration calc(2 * var(--ledger-connect-animation-step-duration)) both;
+        display: flex;
+    }
+
     @keyframes ledger-connect-cable {
         0% {
             transform: translateX(-50%);
@@ -500,6 +575,24 @@ export default LedgerUi;
         }
         100% {
             opacity: 0;
+        }
+    }
+
+    @keyframes ledger-show-screen-app-double-duration {
+        0%, 27.5% {
+            opacity: 0;
+        }
+        30%, 97.5% {
+            opacity: 1;
+        }
+        100% {
+            opacity: 0;
+        }
+    }
+
+    @keyframes connect-button-pulsate {
+        100% {
+            background-color: rgba(255, 255, 255, var(--ledger-opacity));
         }
     }
 
