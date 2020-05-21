@@ -41,7 +41,7 @@ export async function loadLanguage(lang: string) {
 export function detectLanguage() {
     const langCookie = Cookie.getCookie('lang');
     const langRaw = window.navigator.language;
-    const langParts = langRaw.split('_');
+    const langParts = langRaw.split('-');
 
     return langCookie || langParts[0];
 }
@@ -55,8 +55,8 @@ function onTabFocus() {
     const lang = detectLanguage();
     if (i18n.locale !== lang) {
         alreadyAskedTheUser = true;
-        const question = i18n.t('The display language changed but some translations can\'t be updated. '
-            + 'Do you want to reload the page to update thoses? ({oldLang} to {newLang})',
+        const question = i18n.t('The display language changed. Do you want to reload the page to update all '
+            + 'translations? Otherwise, some translations might not be updated automatically. ({oldLang} to {newLang})',
             { oldLang: i18n.locale, newLang: lang }) as string;
 
         if (confirm(question)) {
@@ -68,12 +68,7 @@ function onTabFocus() {
 }
 
 // Set a window/tab focus event to check if the user changed the language in another window/tab
-if (/*@cc_on!@*/false) { // check for Internet Explorer
-    // @ts-ignore
-    document.onfocusin = onTabFocus;
-} else {
-    window.onfocus = onTabFocus;
-}
+window.addEventListener('focus', onTabFocus);
 
 // This router navigation guard is to prevent switching
 // to the new route before the language file finished loading.

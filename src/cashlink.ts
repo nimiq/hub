@@ -36,10 +36,10 @@ if (IqonsSvg[0] === '"') {
 
 startSentry(Vue);
 
-loadLanguage(detectLanguage());
-
-const app = new Vue({
-    store,
-    i18n,
-    render: (h) => h(App),
-}).$mount('#app');
+loadLanguage(detectLanguage()).then(() => {
+    const app = new Vue({
+        store,
+        i18n,
+        render: (h) => h(App),
+    }).$mount('#app');
+});
