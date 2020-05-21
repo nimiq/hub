@@ -135,7 +135,7 @@ class LedgerApi {
     // public fields and methods
     public static readonly BIP32_BASE_PATH = `44'/242'/0'/`;
     public static readonly BIP32_PATH_REGEX = new RegExp(`^${LedgerApi.BIP32_BASE_PATH}(\\d+)'$`);
-    public static readonly MIN_REQUIRED_APP_VERSION = [1, 4, 1];
+    public static readonly MIN_REQUIRED_APP_VERSION = [1, 4, 3];
     public static readonly WAIT_TIME_AFTER_TIMEOUT = 1500;
     public static readonly WAIT_TIME_AFTER_ERROR = 500;
 
@@ -497,7 +497,7 @@ class LedgerApi {
 
     private static async _connect(walletId?: string): Promise<LedgerJs> {
         // Resolves when connected to unlocked ledger with open Nimiq app otherwise throws an exception after timeout.
-        // If the Ledger is already connected and the library already loaded, the call typically takes < 500ms.
+        // If the Ledger is already connected and the library already loaded, the call typically takes < 1s.
         try {
             const api = await LedgerApi._loadApi();
             LedgerApi._setState(LedgerApi.StateType.CONNECTING);

@@ -100,8 +100,8 @@ class LedgerUi extends Vue {
 
     private _onStateConnecting() {
         this.loadingFailed = false;
-        // if ledger is already connected via USB and unlocked, establishing the API connection
-        // usually takes < 500ms. Only if connecting takes longer, we show the connect instructions
+        // If ledger is already connected via USB and unlocked, establishing the API connection
+        // usually takes < 1s. Only if connecting takes longer, we show the connect instructions
         if (this.connectTimer !== -1) return;
         this.connectTimer = window.setTimeout(() => {
             this.connectTimer = -1;
@@ -110,7 +110,7 @@ class LedgerUi extends Vue {
             this._cycleConnectInstructions();
             this.connectInstructionsTextInterval =
                 window.setInterval(() => this._cycleConnectInstructions(), LedgerUi.CONNECT_ANIMATION_STEP_DURATION);
-        }, 550);
+        }, 1050);
     }
 
     private _onRequest(state: LedgerApi.State) {
