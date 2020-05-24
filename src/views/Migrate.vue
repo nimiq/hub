@@ -115,6 +115,7 @@ import { ContractInfo } from '@/lib/ContractInfo';
 import staticStore, { Static } from '@/lib/StaticStore';
 import { SimpleRequest, RequestType } from '@/lib/PublicRequestTypes';
 import { State } from 'vuex-class';
+import { i18n } from '../i18n/i18n-setup';
 
 type SerializedAccount = {
     path: string;
@@ -138,8 +139,8 @@ export default class Migrate extends Vue {
     private page: 'intro' | 'accounts' | 'migration' = 'intro';
     private backupsAreSafe: boolean = false;
 
-    private title: string = this.$t('Updating your Accounts') as string;
-    private status: string = this.$t('Connecting to Keyguard...') as string;
+    private title: string = i18n.t('Updating your Accounts') as string;
+    private status: string = i18n.t('Connecting to Keyguard...') as string;
     private state: StatusScreen.State = StatusScreen.State.LOADING;
     private message: string = '';
 

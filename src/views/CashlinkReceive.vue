@@ -344,9 +344,9 @@ class CashlinkReceive extends Vue {
             case CashlinkTheme.LUNAR_NEW_YEAR:
                 return this.$t('You are loved') as string;
             case CashlinkTheme.EASTER:
-                return 'Happy Easter!';
+                return this.$t('Happy Easter!') as string;
             case CashlinkTheme.BIRTHDAY:
-                return 'Happy birthday!';
+                return this.$t('Happy birthday!') as string;
             default: return this.$t('Claim your Cash') as string;
         }
     }

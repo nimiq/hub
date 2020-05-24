@@ -25,6 +25,7 @@ import { SmallPage } from '@nimiq/vue-components';
 import Network from '../components/Network.vue';
 import StatusScreen from '../components/StatusScreen.vue';
 import KeyguardClient from '@nimiq/keyguard-client';
+import { i18n } from '../i18n/i18n-setup';
 import { ERROR_CANCELED } from '../lib/Constants';
 
 @Component({components: {StatusScreen, Network, SmallPage}})
@@ -32,7 +33,7 @@ export default class CheckoutTransmission extends Vue {
     @Static private keyguardRequest!: KeyguardClient.SignTransactionRequest;
     @State private keyguardResult!: KeyguardClient.SignTransactionResult;
 
-    private status: string = this.$t('Connecting to network...') as string;
+    private status: string = i18n.t('Connecting to network...') as string;
     private state = StatusScreen.State.LOADING;
     private message: string = '';
 

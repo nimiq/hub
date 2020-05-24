@@ -38,7 +38,7 @@ msgstr ""
 msgid "Account Created"
 msgstr ""
 
-#: src/views/Migrate.vue:265
+#: src/views/Migrate.vue:266
 msgid "Accounts updated!"
 msgstr ""
 
@@ -80,7 +80,7 @@ msgid "Amount"
 msgstr ""
 
 #: src/views/CashlinkManage.vue:146
-#: src/views/CheckoutTransmission.vue:52
+#: src/views/CheckoutTransmission.vue:53
 msgid "Awaiting receipt confirmation..."
 msgstr ""
 
@@ -273,13 +273,13 @@ msgid ""
 "Ledger Nano S."
 msgstr ""
 
-#: src/views/Migrate.vue:142
-#: src/views/Migrate.vue:282
+#: src/views/Migrate.vue:143
+#: src/views/Migrate.vue:283
 msgid "Connecting to Keyguard..."
 msgstr ""
 
 #: src/views/CashlinkManage.vue:89
-#: src/views/CheckoutTransmission.vue:25
+#: src/views/CheckoutTransmission.vue:26
 #: src/views/LoginSuccess.vue:43
 msgid "Connecting to network..."
 msgstr ""
@@ -290,7 +290,7 @@ msgstr ""
 
 #: src/components/NimiqCheckoutCard.vue:273
 #: src/views/CashlinkManage.vue:140
-#: src/views/CheckoutTransmission.vue:46
+#: src/views/CheckoutTransmission.vue:47
 msgid "Contacting seed nodes..."
 msgstr ""
 
@@ -334,7 +334,7 @@ msgstr ""
 msgid "Create Cashlink"
 msgstr ""
 
-#: src/views/SignupSuccess.vue:27
+#: src/views/SignupSuccess.vue:28
 msgid "Creating your Account"
 msgstr ""
 
@@ -343,7 +343,7 @@ msgstr ""
 msgid "Creating your Cashlink"
 msgstr ""
 
-#: src/views/Migrate.vue:229
+#: src/views/Migrate.vue:230
 msgid "Detecting vesting contracts..."
 msgstr ""
 
@@ -417,6 +417,14 @@ msgstr ""
 
 #: src/views/CashlinkReceive.vue:16
 msgid "Got it"
+msgstr ""
+
+#: src/views/CashlinkReceive.vue:349
+msgid "Happy birthday!"
+msgstr ""
+
+#: src/views/CashlinkReceive.vue:347
+msgid "Happy Easter!"
 msgstr ""
 
 #: src/views/CashlinkManage.vue:80
@@ -534,7 +542,7 @@ msgstr ""
 msgid "None of your available Addresses has sufficient balance."
 msgstr ""
 
-#: src/views/Migrate.vue:223
+#: src/views/Migrate.vue:224
 msgid "Nothing to update."
 msgstr ""
 
@@ -566,7 +574,7 @@ msgstr ""
 msgid "Payment successful"
 msgstr ""
 
-#: src/views/CheckoutTransmission.vue:62
+#: src/views/CheckoutTransmission.vue:63
 msgid "Payment successful."
 msgstr ""
 
@@ -594,7 +602,7 @@ msgstr ""
 msgid "Prepare for update"
 msgstr ""
 
-#: src/views/CheckoutTransmission.vue:61
+#: src/views/CheckoutTransmission.vue:62
 msgid "Processing your payment"
 msgstr ""
 
@@ -622,7 +630,7 @@ msgstr ""
 msgid "Restart Payment"
 msgstr ""
 
-#: src/views/Migrate.vue:218
+#: src/views/Migrate.vue:219
 msgid "Retrieving your old Accounts..."
 msgstr ""
 
@@ -640,7 +648,7 @@ msgid "Sending Transaction"
 msgstr ""
 
 #: src/views/CashlinkManage.vue:144
-#: src/views/CheckoutTransmission.vue:50
+#: src/views/CheckoutTransmission.vue:51
 msgid "Sending transaction..."
 msgstr ""
 
@@ -672,13 +680,13 @@ msgstr ""
 msgid "standard"
 msgstr ""
 
-#: src/views/Migrate.vue:232
+#: src/views/Migrate.vue:233
 msgid "Storing your new Accounts..."
 msgstr ""
 
 #: src/components/NimiqCheckoutCard.vue:275
 #: src/views/CashlinkManage.vue:142
-#: src/views/CheckoutTransmission.vue:48
+#: src/views/CheckoutTransmission.vue:49
 msgid "Syncing consensus..."
 msgstr ""
 
@@ -687,7 +695,7 @@ msgid "The connected Ledger is not the one this account belongs to."
 msgstr ""
 
 #: src/i18n/i18n-setup.ts:58
-msgid "The display language changed but some translations can't be updated. Do you want to reload the page to update thoses? ({oldLang} to {newLang})"
+msgid "The display language changed. Do you want to reload the page to update all translations? Otherwise, some translations might not be updated automatically. ({oldLang} to {newLang})"
 msgstr ""
 
 #: src/components/CheckoutCard.vue:168
@@ -769,12 +777,12 @@ msgstr ""
 msgid "Updating balances"
 msgstr ""
 
-#: src/views/Migrate.vue:261
+#: src/views/Migrate.vue:262
 msgid "Updating Keyguard..."
 msgstr ""
 
-#: src/views/Migrate.vue:141
-#: src/views/Migrate.vue:281
+#: src/views/Migrate.vue:142
+#: src/views/Migrate.vue:282
 msgid "Updating your Accounts"
 msgstr ""
 
@@ -797,7 +805,7 @@ msgstr ""
 msgid "Verify Payment"
 msgstr ""
 
-#: src/views/SignupSuccess.vue:65
+#: src/views/SignupSuccess.vue:66
 msgid ""
 "Welcome to the\n"
 "Nimiq Blockchain."
@@ -811,7 +819,7 @@ msgstr ""
 msgid "What is Nimiq?"
 msgstr ""
 
-#: src/views/Migrate.vue:272
+#: src/views/Migrate.vue:273
 msgid "Whoops, something went wrong"
 msgstr ""
 

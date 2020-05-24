@@ -97,7 +97,7 @@ export default class CashlinkManage extends Vue {
 
     private isTxSent: boolean = false;
     private isManagementRequest: boolean = false;
-    private status: string = this.$t('Connecting to network...') as string;
+    private status: string = i18n.t('Connecting to network...') as string;
     private state: StatusScreen.State = StatusScreen.State.LOADING;
     private message: string = '';
     private retrievedCashlink: Cashlink | null = null;
