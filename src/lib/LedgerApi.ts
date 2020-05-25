@@ -135,7 +135,7 @@ class LedgerApi {
     // public fields and methods
     public static readonly BIP32_BASE_PATH = `44'/242'/0'/`;
     public static readonly BIP32_PATH_REGEX = new RegExp(`^${LedgerApi.BIP32_BASE_PATH}(\\d+)'$`);
-    public static readonly MIN_REQUIRED_APP_VERSION = [1, 4, 3];
+    public static readonly MIN_REQUIRED_APP_VERSION = [1, 4, 2];
     public static readonly WAIT_TIME_AFTER_TIMEOUT = 1500;
     public static readonly WAIT_TIME_AFTER_ERROR = 500;
 
