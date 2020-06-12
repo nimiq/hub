@@ -1,7 +1,17 @@
 <template>
     <div class="container pad-bottom">
         <SmallPage>
-            <StatusScreen :title="title" :status="status" :state="state" :lightBlue="true"/>
+            <StatusScreen
+                :title="title"
+                :status="status"
+                :state="state"
+                :message="message"
+                mainAction="Reload"
+                alternativeAction="Cancel"
+                @main-action="reload"
+                @alternative-action="cancel"
+                lightBlue
+            />
             <Network ref="network" :visible="false"/>
         </SmallPage>
     </div>
@@ -15,14 +25,16 @@ import { SmallPage } from '@nimiq/vue-components';
 import Network from '../components/Network.vue';
 import StatusScreen from '../components/StatusScreen.vue';
 import KeyguardClient from '@nimiq/keyguard-client';
+import { ERROR_CANCELED } from '../lib/Constants';
 
 @Component({components: {StatusScreen, Network, SmallPage}})
 export default class CheckoutTransmission extends Vue {
     @Static private keyguardRequest!: KeyguardClient.SignTransactionRequest;
     @State private keyguardResult!: KeyguardClient.SignTransactionResult;
 
-    private isTxSent: boolean = false;
     private status: string = 'Connecting to network...';
+    private state = StatusScreen.State.LOADING;
+    private message: string = '';
 
     private created() {
         const $subtitle = document.querySelector('.logo .logo-subtitle')!;
@@ -34,10 +46,16 @@ export default class CheckoutTransmission extends Vue {
         const tx = await (this.$refs.network as Network).createTx(Object.assign({
             signerPubKey: this.keyguardResult.publicKey,
         }, this.keyguardResult, this.keyguardRequest));
-        const result = await (this.$refs.network as Network).sendToNetwork(tx);
-        this.isTxSent = true;
 
-        setTimeout(() => this.$rpc.resolve(result), StatusScreen.SUCCESS_REDIRECT_DELAY);
+        try {
+            const result = await (this.$refs.network as Network).sendToNetwork(tx);
+            this.state = StatusScreen.State.SUCCESS;
+
+            setTimeout(() => this.$rpc.resolve(result), StatusScreen.SUCCESS_REDIRECT_DELAY);
+        } catch (error) {
+            this.state = StatusScreen.State.WARNING;
+            this.message = error.message;
+        }
     }
 
     private addConsensusListeners() {
@@ -48,12 +66,20 @@ export default class CheckoutTransmission extends Vue {
         network.$on(Network.Events.TRANSACTION_PENDING, () => this.status = 'Awaiting receipt confirmation...');
     }
 
-    private get state(): StatusScreen.State {
-        return !this.isTxSent ? StatusScreen.State.LOADING : StatusScreen.State.SUCCESS;
+    private get title(): string {
+        switch (this.state) {
+            case StatusScreen.State.SUCCESS: return 'Payment successful.';
+            case StatusScreen.State.WARNING: return 'Something went wrong';
+            default: return 'Processing your payment';
+        }
     }
 
-    private get title(): string {
-        return !this.isTxSent ? 'Processing your payment' : 'Payment successful.';
+    private reload() {
+        window.location.reload();
+    }
+
+    private cancel() {
+        this.$rpc.reject(new Error(ERROR_CANCELED));
     }
 }
 </script>
