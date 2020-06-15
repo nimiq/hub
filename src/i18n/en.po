@@ -299,8 +299,8 @@ msgid "Contacts are not affected."
 msgstr ""
 
 #: src/components/NotEnoughCookieSpace.vue:8
-#: src/views/LoginSuccess.vue:143
-#: src/views/LoginSuccess.vue:180
+#: src/views/LoginSuccess.vue:141
+#: src/views/LoginSuccess.vue:178
 #: src/views/SignupLedger.vue:132
 msgid "Continue"
 msgstr ""
@@ -437,7 +437,7 @@ msgid ""
 "crypto was easy"
 msgstr ""
 
-#: src/views/LoginSuccess.vue:154
+#: src/views/LoginSuccess.vue:152
 #: src/views/SignupLedger.vue:120
 msgid "Imported {count} address so far... | Imported {count} addresses so far..."
 msgstr ""
@@ -455,9 +455,7 @@ msgid "It won’t be part of the public Blockchain and might get lost after the 
 msgstr ""
 
 #: src/views/ErrorHandlerUnsupportedLedger.vue:46
-msgid ""
-"Ledger accounts cannot be exported.\n"
-"                    Please refer to your 24 words backup you created when setting up your device."
+msgid "Ledger accounts cannot be exported. Please refer to your 24 words backup you created when setting up your device."
 msgstr ""
 
 #: src/components/LedgerUi.vue:159
@@ -694,7 +692,7 @@ msgstr ""
 msgid "The connected Ledger is not the one this account belongs to."
 msgstr ""
 
-#: src/i18n/i18n-setup.ts:58
+#: src/i18n/i18n-setup.ts:63
 msgid "The display language changed. Do you want to reload the page to update all translations? Otherwise, some translations might not be updated automatically. ({oldLang} to {newLang})"
 msgstr ""
 
@@ -731,7 +729,7 @@ msgstr ""
 msgid "This Nimiq interface is non-custodial and solely used to bridge the payment sender with the payment recipient directly (P2P). Payment and deliverable fulfillment for payment are sole responsibility of those two respective parties."
 msgstr ""
 
-#: src/views/ErrorHandlerUnsupportedLedger.vue:53
+#: src/views/ErrorHandlerUnsupportedLedger.vue:51
 msgid "This operation is not supported for Ledgers."
 msgstr ""
 
@@ -739,7 +737,7 @@ msgstr ""
 msgid "Time to grow"
 msgstr ""
 
-#: src/views/ErrorHandlerUnsupportedLedger.vue:51
+#: src/views/ErrorHandlerUnsupportedLedger.vue:49
 msgid "To change the PIN of your Ledger please go to the settings on your device."
 msgstr ""
 
@@ -764,9 +762,7 @@ msgid "Unfortunately, due to restrictions of Safari you cannot add more accounts
 msgstr ""
 
 #: src/views/LoginSuccess.vue:139
-msgid ""
-"Unfortunately, due to space restrictions of Safari and IOS, this account cannot be stored properly.\n"
-"                Please free up space by logging out of other accounts."
+msgid "Unfortunately, due to space restrictions of Safari and IOS, this account cannot be stored properly. Please free up space by logging out of other accounts."
 msgstr ""
 
 #: src/views/ErrorHandlerUnsupportedLedger.vue:38
@@ -796,7 +792,7 @@ msgid ""
 "or Recovery Words."
 msgstr ""
 
-#: src/views/LoginSuccess.vue:179
+#: src/views/LoginSuccess.vue:177
 #: src/views/SignupLedger.vue:127
 msgid "Used addresses without balance might have been missed."
 msgstr ""
@@ -844,11 +840,11 @@ msgstr ""
 msgid "You're logged in!"
 msgstr ""
 
-#: src/views/LoginSuccess.vue:194
+#: src/views/LoginSuccess.vue:192
 msgid "Your Account is ready. | Your Accounts are ready."
 msgstr ""
 
-#: src/views/LoginSuccess.vue:177
+#: src/views/LoginSuccess.vue:175
 #: src/views/SignupLedger.vue:104
 msgid ""
 "Your Addresses may be\n"
@@ -869,7 +865,7 @@ msgstr ""
 msgid "Your Nimiq App is outdated. Please update your Ledger firmware and Nimiq App using Ledger Live."
 msgstr ""
 
-#: src/views/LoginSuccess.vue:188
+#: src/views/LoginSuccess.vue:186
 #: src/views/SimpleSuccess.vue:31
 msgid "Your password was changed."
 msgstr ""

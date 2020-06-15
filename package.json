@@ -3,9 +3,9 @@
     "version": "1.0.0",
     "private": true,
     "scripts": {
-        "serve": "vue-cli-service serve",
-        "build": "vue-cli-service build --modern App",
-        "build:ci": "build=testnet vue-cli-service build",
+        "serve": "yarn i18n:extract && vue-cli-service serve",
+        "build": "yarn i18n:extract && vue-cli-service build --modern App",
+        "build:ci": "yarn i18n:extract && build=testnet vue-cli-service build",
         "lint": "vue-cli-service lint --no-fix",
         "test:unit": "vue-cli-service test:unit",
         "test": "yarn test:unit",

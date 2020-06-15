@@ -5,7 +5,7 @@ import store from './store';
 import { startSentry } from './lib/Sentry';
 // @ts-ignore
 import IqonsSvg from '@nimiq/iqons/dist/iqons.min.svg';
-import { i18n, loadLanguage, detectLanguage } from './i18n/i18n-setup';
+import { i18n, setLanguage, detectLanguage } from './i18n/i18n-setup';
 
 if (window.hasBrowserWarning) {
     throw new Error('Execution aborted due to browser warning');
@@ -36,7 +36,7 @@ if (IqonsSvg[0] === '"') {
 
 startSentry(Vue);
 
-loadLanguage(detectLanguage()).then(() => {
+setLanguage(detectLanguage()).then(() => {
     const app = new Vue({
         store,
         i18n,

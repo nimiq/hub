@@ -136,10 +136,8 @@ export default class LoginSuccess extends Vue {
         if (failBecauseOfCookieSpace) {
             this.title = this.$t('Space exceeded') as string;
             this.state = StatusScreen.State.ERROR;
-            this.message = this.$t(
-                `Unfortunately, due to space restrictions of Safari and IOS, this account cannot be stored properly.
-                Please free up space by logging out of other accounts.`,
-            ) as string;
+            this.message = this.$t('Unfortunately, due to space restrictions of Safari and IOS, this account cannot be '
+                + 'stored properly. Please free up space by logging out of other accounts.') as string;
             this.action = this.$t('Continue') as string;
             await new Promise((resolve) => { this.resolve = resolve; });
             this.$rpc.reject(new Error(ERROR_COOKIE_SPACE));

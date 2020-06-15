@@ -43,10 +43,8 @@ export default class ErrorHandlerUnsupportedLedger extends Vue {
             case RequestType.SIGN_MESSAGE:
                 return this.$t('Message signing is not yet supported for Ledgers.') as string;
             case RequestType.EXPORT:
-                return this.$t(
-                    `Ledger accounts cannot be exported.
-                    Please refer to your 24 words backup you created when setting up your device.`,
-                ) as string;
+                return this.$t('Ledger accounts cannot be exported. '
+                    + 'Please refer to your 24 words backup you created when setting up your device.') as string;
             case RequestType.CHANGE_PASSWORD:
                 return this.$t('To change the PIN of your Ledger please go to the settings on your device.') as string;
             default:
