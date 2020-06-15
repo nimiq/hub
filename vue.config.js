@@ -28,8 +28,17 @@ console.log('Building for:', buildName);
 const configureWebpack = {
     plugins: [
         new CopyWebpackPlugin([
-            { from: 'node_modules/@nimiq/vue-components/dist/img', to: 'img' },
             { from: 'node_modules/@nimiq/browser-warning/dist', to: './' },
+            { from: 'node_modules/@nimiq/vue-components/dist/img', to: 'img' },
+            {
+                from: 'node_modules/@nimiq/vue-components/dist/NimiqVueComponents.umd.min.lang-*.js',
+                to: './js',
+                flatten: true,
+                transformPath(path) {
+                    // The bundled NimiqVueComponents.umd.js tries to load the the non-minified files
+                    return path.replace('.min', '');
+                },
+            },
         ]),
         new WriteFileWebpackPlugin(),
         new PoLoaderOptimizer(),

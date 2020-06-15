@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import VueI18n from 'vue-i18n';
+import { I18nMixin as VueComponentsI18n } from '@nimiq/vue-components';
 import { Cookie } from '@nimiq/utils';
 import router from '../router';
 
@@ -19,6 +20,8 @@ export const i18n = new VueI18n({
 // and set this one as the active language
 export async function setLanguage(lang: string) {
     if (!SUPPORTED_LANGUAGES.includes(lang)) lang = DEFAULT_LANGUAGE;
+
+    VueComponentsI18n.setLanguage(lang);
 
     // If the language was already loaded
     if (LOADED_LANGUAGES.includes(lang)) {
