@@ -132,19 +132,23 @@ class Network extends Vue {
             value: Nimiq.Policy.satoshisToCoins(signedTx.raw.value),
             fee: Nimiq.Policy.satoshisToCoins(signedTx.raw.fee),
         });
-        client.relayTransaction(txObjToSend);
 
-        return new Promise<SignedTransaction>((resolve) => {
-            const listener = (txInfo: any) => {
-                if (txInfo.hash !== base64Hash) return;
-                this.$off(Network.Events.TRANSACTION_RELAYED, listener);
-                unrelayedTransactionMap = getHistoryStorage(Network.HISTORY_KEY_UNRELAYED_TRANSACTIONS);
-                delete unrelayedTransactionMap[base64Hash];
-                setHistoryStorage(Network.HISTORY_KEY_UNRELAYED_TRANSACTIONS, unrelayedTransactionMap);
-                resolve(signedTx);
-            };
-            this.$on(Network.Events.TRANSACTION_RELAYED, listener);
-        });
+        const plainTx = await client.relayTransaction(txObjToSend) as
+            ReturnType<Nimiq.Client.TransactionDetails['toPlain']>;
+
+        if (plainTx.state === 'expired') {
+            throw new Error('Transaction is expired');
+        }
+
+        if (plainTx.state === 'new') {
+            throw new Error('Transaction could not be relayed');
+        }
+
+        unrelayedTransactionMap = getHistoryStorage(Network.HISTORY_KEY_UNRELAYED_TRANSACTIONS);
+        delete unrelayedTransactionMap[base64Hash];
+        setHistoryStorage(Network.HISTORY_KEY_UNRELAYED_TRANSACTIONS, unrelayedTransactionMap);
+
+        return signedTx;
     }
 
     public getUnrelayedTransactions(filter?: {

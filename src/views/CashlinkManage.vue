@@ -2,7 +2,17 @@
     <div class="container pad-bottom">
         <SmallPage class="cashlink-manage" v-if="retrievedCashlink" :class="{ 'fixed-height': this.request.skipSharing }">
             <transition name="transition-fade">
-                <StatusScreen v-if="!isTxSent || this.request.skipSharing" :state="state" :title="title" :status="status" lightBlue/>
+                <StatusScreen v-if="!isTxSent || this.request.skipSharing"
+                    :state="state"
+                    :title="title"
+                    :status="status"
+                    :message="message"
+                    mainAction="Reload"
+                    alternativeAction="Cancel"
+                    @main-action="reload"
+                    @alternative-action="cancel"
+                    lightBlue
+                />
             </transition>
 
             <PageBody v-if="!this.request.skipSharing">
@@ -64,6 +74,7 @@ import { CashlinkStore } from '../lib/CashlinkStore';
 import { State } from 'vuex-class';
 import KeyguardClient from '@nimiq/keyguard-client';
 import { Clipboard } from '@nimiq/utils';
+import { ERROR_CANCELED } from '../lib/Constants';
 
 @Component({components: {
     Account,
@@ -87,6 +98,7 @@ export default class CashlinkManage extends Vue {
     private isManagementRequest: boolean = false;
     private status: string = 'Connecting to network...';
     private state: StatusScreen.State = StatusScreen.State.LOADING;
+    private message: string = '';
     private retrievedCashlink: Cashlink | null = null;
     private copied: boolean = false;
 
@@ -153,8 +165,14 @@ export default class CashlinkManage extends Vue {
                 signerPubKey: this.keyguardResult.publicKey,
                 signature: this.keyguardResult.signature,
             });
-            await network.sendToNetwork(transactionToSend);
-            this.isTxSent = true;
+            try {
+                await network.sendToNetwork(transactionToSend);
+                this.isTxSent = true;
+            } catch (error) {
+                this.state = StatusScreen.State.WARNING;
+                this.message = error.message;
+                return;
+            }
         }
 
         if ('skipSharing' in this.request && this.request.skipSharing) {
@@ -164,7 +182,11 @@ export default class CashlinkManage extends Vue {
     }
 
     private get title(): string {
-        return this.state === StatusScreen.State.LOADING ? 'Creating your Cashlink' : 'Cashlink created.';
+        switch (this.state) {
+            case StatusScreen.State.SUCCESS: return 'Cashlink created.';
+            case StatusScreen.State.WARNING: return 'Something went wrong';
+            default: return 'Creating your Cashlink';
+        }
     }
 
     private get link(): string {
@@ -215,6 +237,14 @@ export default class CashlinkManage extends Vue {
 
     private get whatsapp(): string {
         return `https://api.whatsapp.com/send?text=${this.shareText}`;
+    }
+
+    private reload() {
+        window.location.reload();
+    }
+
+    private cancel() {
+        this.$rpc.reject(new Error(ERROR_CANCELED));
     }
 }
 </script>
