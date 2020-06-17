@@ -79,8 +79,8 @@ msgstr ""
 msgid "Amount"
 msgstr ""
 
-#: src/views/CashlinkManage.vue:146
-#: src/views/CheckoutTransmission.vue:53
+#: src/views/CashlinkManage.vue:158
+#: src/views/CheckoutTransmission.vue:77
 msgid "Awaiting receipt confirmation..."
 msgstr ""
 
@@ -125,6 +125,11 @@ msgstr ""
 msgid "By adding a transation fee, you can influence how fast your transaction will be processed."
 msgstr ""
 
+#: src/views/CashlinkManage.vue:11
+#: src/views/CheckoutTransmission.vue:10
+msgid "Cancel"
+msgstr ""
+
 #: src/views/Checkout.vue:55
 msgid "Cancel {payment}"
 msgstr ""
@@ -141,11 +146,11 @@ msgstr ""
 msgid "Cashlink claimed!"
 msgstr ""
 
-#: src/views/CashlinkManage.vue:10
+#: src/views/CashlinkManage.vue:20
 msgid "Cashlink created"
 msgstr ""
 
-#: src/views/CashlinkManage.vue:170
+#: src/views/CashlinkManage.vue:193
 msgid "Cashlink created."
 msgstr ""
 
@@ -278,8 +283,8 @@ msgstr ""
 msgid "Connecting to Keyguard..."
 msgstr ""
 
-#: src/views/CashlinkManage.vue:89
-#: src/views/CheckoutTransmission.vue:26
+#: src/views/CashlinkManage.vue:100
+#: src/views/CheckoutTransmission.vue:36
 #: src/views/LoginSuccess.vue:43
 msgid "Connecting to network..."
 msgstr ""
@@ -289,8 +294,8 @@ msgid "Connecting to Nimiq..."
 msgstr ""
 
 #: src/components/NimiqCheckoutCard.vue:273
-#: src/views/CashlinkManage.vue:140
-#: src/views/CheckoutTransmission.vue:47
+#: src/views/CashlinkManage.vue:152
+#: src/views/CheckoutTransmission.vue:71
 msgid "Contacting seed nodes..."
 msgstr ""
 
@@ -305,11 +310,11 @@ msgstr ""
 msgid "Continue"
 msgstr ""
 
-#: src/views/CashlinkManage.vue:22
+#: src/views/CashlinkManage.vue:32
 msgid "Copied"
 msgstr ""
 
-#: src/views/CashlinkManage.vue:23
+#: src/views/CashlinkManage.vue:33
 msgid "Copy"
 msgstr ""
 
@@ -338,7 +343,7 @@ msgstr ""
 msgid "Creating your Account"
 msgstr ""
 
-#: src/views/CashlinkManage.vue:169
+#: src/views/CashlinkManage.vue:195
 #: src/views/SignTransactionLedger.vue:437
 msgid "Creating your Cashlink"
 msgstr ""
@@ -356,7 +361,7 @@ msgstr ""
 msgid "Don’t close this window until confirmation."
 msgstr ""
 
-#: src/views/CashlinkManage.vue:12
+#: src/views/CashlinkManage.vue:22
 msgid "Done"
 msgstr ""
 
@@ -427,7 +432,7 @@ msgstr ""
 msgid "Happy Easter!"
 msgstr ""
 
-#: src/views/CashlinkManage.vue:80
+#: src/views/CashlinkManage.vue:91
 msgid "Here is your Nimiq Cashlink!"
 msgstr ""
 
@@ -572,7 +577,7 @@ msgstr ""
 msgid "Payment successful"
 msgstr ""
 
-#: src/views/CheckoutTransmission.vue:63
+#: src/views/CheckoutTransmission.vue:82
 msgid "Payment successful."
 msgstr ""
 
@@ -600,12 +605,17 @@ msgstr ""
 msgid "Prepare for update"
 msgstr ""
 
-#: src/views/CheckoutTransmission.vue:62
+#: src/views/CheckoutTransmission.vue:84
 msgid "Processing your payment"
 msgstr ""
 
 #: src/views/ExportSuccess.vue:65
 msgid "Recovery Words exported!"
+msgstr ""
+
+#: src/views/CashlinkManage.vue:10
+#: src/views/CheckoutTransmission.vue:9
+msgid "Reload"
 msgstr ""
 
 #: src/views/Rename.vue:4
@@ -645,8 +655,8 @@ msgstr ""
 msgid "Sending Transaction"
 msgstr ""
 
-#: src/views/CashlinkManage.vue:144
-#: src/views/CheckoutTransmission.vue:51
+#: src/views/CashlinkManage.vue:156
+#: src/views/CheckoutTransmission.vue:75
 msgid "Sending transaction..."
 msgstr ""
 
@@ -654,12 +664,17 @@ msgstr ""
 msgid "Set fee"
 msgstr ""
 
-#: src/views/CashlinkManage.vue:26
+#: src/views/CashlinkManage.vue:36
 msgid "Share"
 msgstr ""
 
 #: src/views/SignMessage.vue:5
 msgid "Sign Message"
+msgstr ""
+
+#: src/views/CashlinkManage.vue:194
+#: src/views/CheckoutTransmission.vue:83
+msgid "Something went wrong"
 msgstr ""
 
 #: src/views/RequestError.vue:7
@@ -683,8 +698,8 @@ msgid "Storing your new Accounts..."
 msgstr ""
 
 #: src/components/NimiqCheckoutCard.vue:275
-#: src/views/CashlinkManage.vue:142
-#: src/views/CheckoutTransmission.vue:49
+#: src/views/CashlinkManage.vue:154
+#: src/views/CheckoutTransmission.vue:73
 msgid "Syncing consensus..."
 msgstr ""
 
@@ -692,7 +707,7 @@ msgstr ""
 msgid "The connected Ledger is not the one this account belongs to."
 msgstr ""
 
-#: src/i18n/i18n-setup.ts:63
+#: src/i18n/i18n-setup.ts:60
 msgid "The display language changed. Do you want to reload the page to update all translations? Otherwise, some translations might not be updated automatically. ({oldLang} to {newLang})"
 msgstr ""
 
@@ -739,6 +754,16 @@ msgstr ""
 
 #: src/views/ErrorHandlerUnsupportedLedger.vue:49
 msgid "To change the PIN of your Ledger please go to the settings on your device."
+msgstr ""
+
+#: src/views/CashlinkManage.vue:177
+#: src/views/CheckoutTransmission.vue:61
+msgid "Transaction could not be relayed"
+msgstr ""
+
+#: src/views/CashlinkManage.vue:175
+#: src/views/CheckoutTransmission.vue:59
+msgid "Transaction is expired"
 msgstr ""
 
 #: src/views/SignTransactionLedger.vue:442

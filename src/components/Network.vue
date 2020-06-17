@@ -137,11 +137,11 @@ class Network extends Vue {
             ReturnType<Nimiq.Client.TransactionDetails['toPlain']>;
 
         if (plainTx.state === 'expired') {
-            throw new Error('Transaction is expired');
+            throw new Error(Network.Errors.TRANSACTION_EXPIRED);
         }
 
         if (plainTx.state === 'new') {
-            throw new Error('Transaction could not be relayed');
+            throw new Error(Network.Errors.TRANSACTION_NOT_RELAYED);
         }
 
         unrelayedTransactionMap = getHistoryStorage(Network.HISTORY_KEY_UNRELAYED_TRANSACTIONS);
@@ -311,6 +311,11 @@ namespace Network {
         TRANSACTION_MINED = 'transaction-mined',
         TRANSACTION_RELAYED = 'transaction-relayed',
         HEAD_CHANGE = 'head-change',
+    }
+
+    export const enum Errors {
+        TRANSACTION_EXPIRED = 'Transaction is expired',
+        TRANSACTION_NOT_RELAYED = 'Transaction could not be relayed',
     }
 
     export const HISTORY_KEY_UNRELAYED_TRANSACTIONS = 'network-unrelayed-transactions';

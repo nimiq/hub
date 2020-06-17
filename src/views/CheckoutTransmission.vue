@@ -6,8 +6,8 @@
                 :status="status"
                 :state="state"
                 :message="message"
-                mainAction="Reload"
-                alternativeAction="Cancel"
+                :mainAction="$t('Reload')"
+                :alternativeAction="$t('Cancel')"
                 @main-action="reload"
                 @alternative-action="cancel"
                 lightBlue
@@ -55,7 +55,13 @@ export default class CheckoutTransmission extends Vue {
             setTimeout(() => this.$rpc.resolve(result), StatusScreen.SUCCESS_REDIRECT_DELAY);
         } catch (error) {
             this.state = StatusScreen.State.WARNING;
-            this.message = error.message;
+            if (error.message === Network.Errors.TRANSACTION_EXPIRED) {
+                this.message = this.$t('Transaction is expired') as string;
+            } else if (error.message === Network.Errors.TRANSACTION_NOT_RELAYED) {
+                this.message = this.$t('Transaction could not be relayed') as string;
+            } else {
+                this.message = error.message;
+            }
         }
     }
 
@@ -74,7 +80,7 @@ export default class CheckoutTransmission extends Vue {
     private get title(): string {
         switch (this.state) {
             case StatusScreen.State.SUCCESS: return this.$t('Payment successful.') as string;
-            case StatusScreen.State.WARNING: return 'Something went wrong';
+            case StatusScreen.State.WARNING: return this.$t('Something went wrong') as string;
             default: return this.$t('Processing your payment') as string;
         }
     }
