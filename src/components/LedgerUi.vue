@@ -84,27 +84,13 @@ class LedgerUi extends Vue {
                 return LedgerUi.Illustrations.CONNECTING;
             case StateType.REQUEST_PROCESSING:
             case StateType.REQUEST_CANCELLING:
-                return this._computeIllustrationForRequestType(this.state.request!.type);
+                return this._getIllustrationForRequestType(this.state.request!.type);
             case StateType.ERROR:
-                switch (this.state.error!.type) {
-                    case ErrorType.LOADING_DEPENDENCIES_FAILED:
-                        return LedgerUi.Illustrations.LOADING;
-                    case ErrorType.USER_INTERACTION_REQUIRED:
-                    case ErrorType.CONNECTION_ABORTED: // keep animation running and ask user to use the connect button
-                        return LedgerUi.Illustrations.CONNECTING;
-                    case ErrorType.REQUEST_ASSERTION_FAILED:
-                        return this._computeIllustrationForRequestType(this.state.request!.type);
-                    case ErrorType.LEDGER_BUSY:
-                        return this._computeIllustrationForRequestType(LedgerApi.currentRequest!.type);
-                    case ErrorType.NO_BROWSER_SUPPORT:
-                    case ErrorType.APP_OUTDATED:
-                    case ErrorType.WRONG_LEDGER:
-                        return LedgerUi.Illustrations.IDLE;
-                }
+                return this._getIllustrationForErrorType(this.state.error!.type);
         }
     }
 
-    private _computeIllustrationForRequestType(requestType: RequestType): string {
+    private _getIllustrationForRequestType(requestType: RequestType): string {
         switch (requestType) {
             case RequestType.GET_WALLET_ID:
             case RequestType.GET_ADDRESS:
@@ -115,6 +101,24 @@ class LedgerUi extends Vue {
                 return LedgerUi.Illustrations.CONFIRM_ADDRESS;
             case RequestType.SIGN_TRANSACTION:
                 return LedgerUi.Illustrations.CONFIRM_TRANSACTION;
+        }
+    }
+
+    private _getIllustrationForErrorType(errorType: ErrorType): string {
+        switch (errorType) {
+            case ErrorType.LOADING_DEPENDENCIES_FAILED:
+                return LedgerUi.Illustrations.LOADING;
+            case ErrorType.USER_INTERACTION_REQUIRED:
+            case ErrorType.CONNECTION_ABORTED: // keep animation running and ask user to use the connect button
+                return LedgerUi.Illustrations.CONNECTING;
+            case ErrorType.REQUEST_ASSERTION_FAILED:
+                return this._getIllustrationForRequestType(this.state.request!.type);
+            case ErrorType.LEDGER_BUSY:
+                return this._getIllustrationForRequestType(LedgerApi.currentRequest!.type);
+            case ErrorType.NO_BROWSER_SUPPORT:
+            case ErrorType.APP_OUTDATED:
+            case ErrorType.WRONG_LEDGER:
+                return LedgerUi.Illustrations.IDLE;
         }
     }
 
