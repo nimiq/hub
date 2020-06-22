@@ -6,7 +6,7 @@ msgstr ""
 msgid "{appName} is asking for an Address to use."
 msgstr ""
 
-#: src/components/NonNimiqCheckoutCard.vue:62
+#: src/components/NonNimiqCheckoutCard.vue:64
 msgid "+ network fee"
 msgstr ""
 
@@ -92,7 +92,7 @@ msgstr ""
 #: src/views/LogoutLedger.vue:24
 #: src/views/OnboardingSelector.vue:85
 #: src/views/SignMessage.vue:24
-#: src/views/SignTransactionLedger.vue:109
+#: src/views/SignTransactionLedger.vue:111
 #: src/views/SignupLedger.vue:37
 msgid "Back to {appName}"
 msgstr ""
@@ -134,7 +134,7 @@ msgstr ""
 msgid "Cancel {payment}"
 msgstr ""
 
-#: src/views/SignTransactionLedger.vue:109
+#: src/views/SignTransactionLedger.vue:111
 msgid "Cancel Payment"
 msgstr ""
 
@@ -192,7 +192,7 @@ msgstr ""
 msgid "Choose an Address"
 msgstr ""
 
-#: src/components/NimiqCheckoutCard.vue:65
+#: src/components/NimiqCheckoutCard.vue:67
 msgid "Choose an Address to pay"
 msgstr ""
 
@@ -238,7 +238,7 @@ msgstr ""
 msgid "Confirm Address"
 msgstr ""
 
-#: src/views/SignTransactionLedger.vue:31
+#: src/views/SignTransactionLedger.vue:33
 msgid "Confirm Cashlink"
 msgstr ""
 
@@ -247,7 +247,7 @@ msgid "Confirm that the address on your Ledger matches {addressToConfirm}"
 msgstr ""
 
 #: src/components/LedgerUi.vue:137
-#: src/views/SignTransactionLedger.vue:32
+#: src/views/SignTransactionLedger.vue:34
 msgid "Confirm Transaction"
 msgstr ""
 
@@ -293,7 +293,7 @@ msgstr ""
 msgid "Connecting to Nimiq..."
 msgstr ""
 
-#: src/components/NimiqCheckoutCard.vue:273
+#: src/components/NimiqCheckoutCard.vue:275
 #: src/views/CashlinkManage.vue:152
 #: src/views/CheckoutTransmission.vue:71
 msgid "Contacting seed nodes..."
@@ -344,7 +344,7 @@ msgid "Creating your Account"
 msgstr ""
 
 #: src/views/CashlinkManage.vue:195
-#: src/views/SignTransactionLedger.vue:437
+#: src/views/SignTransactionLedger.vue:439
 msgid "Creating your Cashlink"
 msgstr ""
 
@@ -356,8 +356,8 @@ msgstr ""
 msgid "Disclaimer"
 msgstr ""
 
-#: src/components/CheckoutManualPaymentDetails.vue:26
-#: src/components/NonNimiqCheckoutCard.vue:68
+#: src/components/CheckoutManualPaymentDetails.vue:28
+#: src/components/NonNimiqCheckoutCard.vue:70
 msgid "Don’t close this window until confirmation."
 msgstr ""
 
@@ -365,7 +365,7 @@ msgstr ""
 msgid "Done"
 msgstr ""
 
-#: src/components/NonNimiqCheckoutCard.vue:96
+#: src/components/NonNimiqCheckoutCard.vue:98
 msgid "Enter manually"
 msgstr ""
 
@@ -377,7 +377,7 @@ msgstr ""
 msgid "Failed to fetch addresses. Retrying..."
 msgstr ""
 
-#: src/views/SignTransactionLedger.vue:69
+#: src/views/SignTransactionLedger.vue:71
 msgid "fee"
 msgstr ""
 
@@ -411,7 +411,7 @@ msgstr ""
 msgid "Gas Price"
 msgstr ""
 
-#: src/components/NimiqCheckoutCard.vue:69
+#: src/components/NimiqCheckoutCard.vue:71
 msgid "Get NIM"
 msgstr ""
 
@@ -436,7 +436,7 @@ msgstr ""
 msgid "Here is your Nimiq Cashlink!"
 msgstr ""
 
-#: src/components/NimiqCheckoutCard.vue:48
+#: src/components/NimiqCheckoutCard.vue:50
 msgid ""
 "Imagine if paying with\n"
 "crypto was easy"
@@ -479,7 +479,7 @@ msgstr ""
 msgid "Logging out will delete custom settings and names for this account."
 msgstr ""
 
-#: src/components/NimiqCheckoutCard.vue:57
+#: src/components/NimiqCheckoutCard.vue:59
 #: src/components/OnboardingMenu.vue:11
 msgid "Login"
 msgstr ""
@@ -521,7 +521,7 @@ msgid "New Address added to your Account."
 msgstr ""
 
 #: src/views/CashlinkCreate.vue:55
-#: src/views/SignTransactionLedger.vue:278
+#: src/views/SignTransactionLedger.vue:280
 msgid "New Cashlink"
 msgstr ""
 
@@ -537,11 +537,11 @@ msgstr ""
 msgid "No"
 msgstr ""
 
-#: src/components/NonNimiqCheckoutCard.vue:88
+#: src/components/NonNimiqCheckoutCard.vue:90
 msgid "No App found"
 msgstr ""
 
-#: src/components/NimiqCheckoutCard.vue:67
+#: src/components/NimiqCheckoutCard.vue:69
 msgid "None of your available Addresses has sufficient balance."
 msgstr ""
 
@@ -557,11 +557,11 @@ msgstr ""
 msgid "One Account can now have multiple Addresses."
 msgstr ""
 
-#: src/components/NonNimiqCheckoutCard.vue:92
+#: src/components/NonNimiqCheckoutCard.vue:94
 msgid "Open Wallet App"
 msgstr ""
 
-#: src/components/NonNimiqCheckoutCard.vue:101
+#: src/components/NonNimiqCheckoutCard.vue:103
 msgid "Pay with {currencyFullName}"
 msgstr ""
 
@@ -593,11 +593,11 @@ msgstr ""
 msgid "Please go back and restart the process."
 msgstr ""
 
-#: src/views/SignTransactionLedger.vue:88
+#: src/views/SignTransactionLedger.vue:90
 msgid "Please go back to the shop and restart the process."
 msgstr ""
 
-#: src/components/NonNimiqCheckoutCard.vue:89
+#: src/components/NonNimiqCheckoutCard.vue:91
 msgid "Please send the transaction manually"
 msgstr ""
 
@@ -630,7 +630,7 @@ msgstr ""
 msgid "Request failed: "
 msgstr ""
 
-#: src/components/NimiqCheckoutCard.vue:277
+#: src/components/NimiqCheckoutCard.vue:279
 msgid "Requesting balances..."
 msgstr ""
 
@@ -646,12 +646,12 @@ msgstr ""
 msgid "Save"
 msgstr ""
 
-#: src/components/CheckoutManualPaymentDetails.vue:22
-#: src/components/NonNimiqCheckoutCard.vue:47
+#: src/components/CheckoutManualPaymentDetails.vue:24
+#: src/components/NonNimiqCheckoutCard.vue:49
 msgid "Send your transaction"
 msgstr ""
 
-#: src/views/SignTransactionLedger.vue:438
+#: src/views/SignTransactionLedger.vue:440
 msgid "Sending Transaction"
 msgstr ""
 
@@ -697,7 +697,7 @@ msgstr ""
 msgid "Storing your new Accounts..."
 msgstr ""
 
-#: src/components/NimiqCheckoutCard.vue:275
+#: src/components/NimiqCheckoutCard.vue:277
 #: src/views/CashlinkManage.vue:154
 #: src/views/CheckoutTransmission.vue:73
 msgid "Syncing consensus..."
@@ -712,7 +712,7 @@ msgid "The display language changed. Do you want to reload the page to update al
 msgstr ""
 
 #: src/components/CheckoutCard.vue:168
-#: src/views/SignTransactionLedger.vue:444
+#: src/views/SignTransactionLedger.vue:446
 msgid "The offer expired."
 msgstr ""
 
@@ -766,11 +766,11 @@ msgstr ""
 msgid "Transaction is expired"
 msgstr ""
 
-#: src/views/SignTransactionLedger.vue:442
+#: src/views/SignTransactionLedger.vue:444
 msgid "Transaction Sent"
 msgstr ""
 
-#: src/views/SignTransactionLedger.vue:441
+#: src/views/SignTransactionLedger.vue:443
 msgid "Transaction Signed"
 msgstr ""
 
@@ -778,7 +778,7 @@ msgstr ""
 msgid "Try again"
 msgstr ""
 
-#: src/components/NimiqCheckoutCard.vue:59
+#: src/components/NimiqCheckoutCard.vue:61
 msgid "Try it now"
 msgstr ""
 
@@ -794,7 +794,7 @@ msgstr ""
 msgid "Unsupported Request"
 msgstr ""
 
-#: src/components/NimiqCheckoutCard.vue:307
+#: src/components/NimiqCheckoutCard.vue:309
 msgid "Updating balances"
 msgstr ""
 
@@ -822,7 +822,7 @@ msgstr ""
 msgid "Used addresses without balance might have been missed."
 msgstr ""
 
-#: src/views/SignTransactionLedger.vue:29
+#: src/views/SignTransactionLedger.vue:31
 msgid "Verify Payment"
 msgstr ""
 
