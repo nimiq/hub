@@ -54,7 +54,7 @@
         "ts-jest": "^24.0.0",
         "typescript": "~3.7.5",
         "vue-template-compiler": "^2.6.11",
-        "webpack-i18n-tools": "https://github.com/Yukiioz/webpack-i18n-tools.git#master",
+        "webpack-i18n-tools": "https://github.com/nimiq/webpack-i18n-tools#master",
         "write-file-webpack-plugin": "^4.5.1"
     }
 }
