@@ -40,7 +40,7 @@
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import { LoadingSpinner } from '@nimiq/vue-components';
-import LedgerApi, { ErrorType, EventType, RequestType, State, StateType } from '@nimiq/ledger-api';
+import LedgerApi, { ErrorType, EventType, RequestType, State, StateType, TransportType } from '@nimiq/ledger-api';
 import StatusScreen from '../components/StatusScreen.vue';
 
 @Component({ components: { StatusScreen, LoadingSpinner } })
@@ -125,12 +125,16 @@ class LedgerUi extends Vue {
     private _onStateChange(state: State) {
         if (state.type === StateType.CONNECTING) {
             this.loadingFailed = false;
-            // If connecting, only switch to connecting state if connecting takes some time. If ledger is already
-            // connected via USB and unlocked, establishing the API connection usually takes < 1s.
+            // If connecting, only switch to connecting state if the Ledger is not attached yet. Determining this is a
+            // bit faster for WebUSB, WebHID and WebBLE than for WebAuthn and U2F.
+            const delay = LedgerApi.transportType === TransportType.WEB_AUTHN
+                || LedgerApi.transportType === TransportType.U2F
+                ? 1050
+                : 700;
             this.connectTimer = window.setTimeout(() => {
                 if (LedgerApi.currentState.type !== StateType.CONNECTING) return;
                 this.state = LedgerApi.currentState;
-            }, 1050);
+            }, delay);
             return;
         }
         clearTimeout(this.connectTimer);
