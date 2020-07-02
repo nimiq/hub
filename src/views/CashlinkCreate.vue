@@ -3,11 +3,11 @@
         <SmallPage>
 
             <transition name="transition-fade">
-                <StatusScreen v-if="loading" title="Updating your balances" lightBlue key="loading"/>
+                <StatusScreen v-if="loading" :title="$t('Updating your balances')" lightBlue key="loading"/>
 
                 <div v-else-if="!accountOrContractInfo" class="create-cashlink-choose-sender" key="choose-sender">
                     <PageHeader>
-                        Choose Sender
+                        {{ $t('Choose Sender') }}
                     </PageHeader>
                     <AccountSelector :wallets="processedWallets" :min-balance="1" @account-selected="setSender" @login="login"/>
                 </div>
@@ -16,13 +16,13 @@
                     <transition name="transition-fade">
                         <SmallPage v-if="optionsOpened" class="overlay fee" key="fee">
                             <PageBody>
-                                <h1 class="nq-h1">Speed up your transaction</h1>
-                                <p class="nq-text">By adding a transation fee, you can influence how fast your transaction will be processed.</p>
+                                <h1 class="nq-h1">{{ $t('Speed up your transaction') }}</h1>
+                                <p class="nq-text">{{ $t('By adding a transation fee, you can influence how fast your transaction will be processed.') }}</p>
                                 <SelectBar name="fee" ref="fee" :options="constructor.FEE_OPTIONS" :selectedValue="feeLunaPerByte" @changed="updateFeePreview"/>
                                 <Amount :amount="feePreview" :minDecimals="0" :maxDecimals="5" />
                             </PageBody>
                             <PageFooter>
-                                <button class="nq-button light-blue" @click="setFee">Set fee</button>
+                                <button class="nq-button light-blue" @click="setFee">{{ $t('Set fee') }}</button>
                             </PageFooter>
                             <CloseButton class="top-right" @click="optionsOpened = false" />
                         </SmallPage>
@@ -37,7 +37,7 @@
                     </transition>
 
                     <PageHeader :backArrow="!request.senderAddress" @back="reset">
-                        <span>Create a Cashlink</span>
+                        <span>{{ $t('Create a Cashlink') }}</span>
                         <a href="javascript:void(0)" class="nq-blue options-button" @click="optionsOpened = true">
                             <SettingsIcon/>
                         </a>
@@ -52,16 +52,16 @@
                                 @click.native="openedDetails = constructor.Details.SENDER"/>
                             <ArrowRightIcon class="nq-light-blue arrow"/>
                             <Account layout="column"
-                                label="New Cashlink"
+                                :label="$t('New Cashlink')"
                                 :displayAsCashlink="true"/>
                         </div>
                         <hr/>
                         <AmountWithFee ref="amountWithFee" :available-balance="availableBalance" v-model="liveAmountAndFee"/>
                         <div class="message-with-tooltip">
-                            <LabelInput class="message" placeholder="Add a message..." :vanishing="true" :maxBytes="255" v-model="message" />
+                            <LabelInput class="message" :placeholder="$t('Add a message...')" :vanishing="true" :maxBytes="255" v-model="message" />
                             <Tooltip ref="tooltip" :container="$refs.createCashlinkTooltipTarget" autoWidth>
-                                This message will be stored in the Cashlink.
-                                It won’t be part of the public Blockchain and might get lost after the Cashlink was claimed.
+                                {{ $t('This message will be stored in the Cashlink.') }}
+                                {{ $t('It won’t be part of the public Blockchain and might get lost after the Cashlink was claimed.') }}
                             </Tooltip>
                         </div>
                     </PageBody>
@@ -70,7 +70,7 @@
                         <button class="nq-button light-blue"
                             :disabled="liveAmountAndFee.amount === 0 || !liveAmountAndFee.isValid"
                             @click="sendTransaction">
-                            Create Cashlink
+                            {{ $t('Create Cashlink') }}
                         </button>
                     </PageFooter>
                 </div>
@@ -80,7 +80,7 @@
 
         <button class="global-close nq-button-s" @click="close">
             <ArrowLeftSmallIcon/>
-            Back to {{request.appName}}
+            {{ $t('Back to {appName}', { appName: request.appName }) }}
         </button>
     </div>
 </template>
@@ -101,6 +101,7 @@ import { NetworkClient } from '@nimiq/network-client';
 import { WalletStore } from '../lib/WalletStore';
 import { WalletInfo, WalletType } from '../lib/WalletInfo';
 import { ContractInfo, VestingContractInfo } from '../lib/ContractInfo';
+import { i18n } from '../i18n/i18n-setup';
 import KeyguardClient from '@nimiq/keyguard-client';
 import Config from 'config';
 import {
@@ -150,17 +151,17 @@ class CashlinkCreate extends Vue {
     }> = [{
             color: 'nq-light-blue-bg',
             value: 0,
-            text: 'free',
+            get text() { return i18n.t('free') as string; },
             index: 0,
         }, {
             color: 'nq-green-bg',
             value: 1,
-            text: 'standard',
+            get text() { return i18n.t('standard') as string; },
             index: 1,
         }, {
             color: 'nq-gold-bg',
             value: 2,
-            text: 'express',
+            get text() { return i18n.t('express') as string; },
             index: 2,
         },
     ];

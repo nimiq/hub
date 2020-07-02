@@ -21,11 +21,11 @@
             :endTime="paymentOptions.expires"
         />
         <PageHeader backArrow @back="$emit(constructor.Events.CLOSE)">
-            Send your transaction
+            {{ $t('Send your transaction') }}
         </PageHeader>
         <PageBody>
             <p class="nq-notice warning">
-                Don’t close this window until confirmation. <br />
+                {{ $t('Don’t close this window until confirmation.') }} <br />
                 {{ paymentOptions.feeString }}
             </p>
             <CopyableField

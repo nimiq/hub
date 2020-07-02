@@ -3,8 +3,8 @@
         <SmallPage>
             <StatusScreen
                 state="error"
-                title="Invalid request"
-                message="Something went wrong with your request. Please try again."
+                :title="$t('Invalid request')"
+                :message="$t('Something went wrong with your request. Please try again.')"
                 :mainAction="_mainAction"
                 @main-action="_close"
             />
@@ -28,7 +28,7 @@ export default class RequestError extends Vue {
     }
 
     private get _mainAction(): string {
-        return window.history.length > 1 ? 'Go back' : 'Close';
+        return window.history.length > 1 ? this.$t('Go back') as string : this.$t('Close') as string;
     }
 }
 </script>

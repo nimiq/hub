@@ -8,19 +8,19 @@
                 <IdenticonSelector v-if="state === constructor.State.IDENTICON_SELECTION
                                    || state === constructor.State.FINISHED"
                                    :accounts="addressesToSelectFrom"
-                                   confirmButtonText="Add to Ledger"
+                                   :confirmButtonText="$t('Add to Ledger')"
                                    @identicon-selected="_onAddressSelected">
-                    <PageHeader slot="header">Choose a new Address</PageHeader>
+                    <PageHeader slot="header">{{ $t('Choose a new Address') }}</PageHeader>
                 </IdenticonSelector>
             </transition>
-            <StatusScreen v-if="state === constructor.State.FINISHED" state="success" title="Address Added"
+            <StatusScreen v-if="state === constructor.State.FINISHED" state="success" :title="$t('Address Added')"
                     class="grow-from-bottom-button">
             </StatusScreen>
         </SmallPage>
 
         <button class="global-close nq-button-s" @click="close">
             <ArrowLeftSmallIcon/>
-            Back to {{request.appName}}
+            {{ $t('Back to {appName}', { appName: request.appName }) }}
         </button>
     </div>
 </template>

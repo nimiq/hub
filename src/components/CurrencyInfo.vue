@@ -6,13 +6,13 @@
             {{currency}}
         </h1>
         <p class="nq-text">
-            <span v-if="fiatFeeAmount === 0">No</span>
+            <span v-if="fiatFeeAmount === 0">{{ $t('No') }}</span>
             <span v-else-if="isAlmostFree">~ 0</span>
             <span v-else>
                 ~
                 <FiatAmount :amount="fiatFeeAmount" :currency="fiatCurrency" />
             </span>
-            Fee
+            {{ $t('Fee') }}
         </p>
     </div>
 </template>

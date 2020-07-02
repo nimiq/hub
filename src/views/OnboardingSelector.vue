@@ -74,24 +74,24 @@ export default class OnboardingSelector extends Vue {
     private get backButtonText() {
         switch (this.originalRouteName) {
             case RequestType.CHECKOUT:
-                return 'Back to Checkout';
+                return this.$t('Back to Checkout') as string;
             case RequestType.CHOOSE_ADDRESS:
-                return 'Back to Choose Address';
+                return this.$t('Back to Choose Address') as string;
             case RequestType.SIGN_MESSAGE:
-                return 'Back to Sign Message';
+                return this.$t('Back to Sign Message') as string;
             case RequestType.CREATE_CASHLINK:
-                return 'Back to Cashlink';
+                return this.$t('Back to Cashlink') as string;
             default:
-                return `Back to ${this.request.appName}`;
+                return this.$t('Back to {appName}', { appName: this.request.appName }) as string;
         }
     }
 
     private get headerText() {
         switch (this.originalRouteName) {
             case RequestType.CHECKOUT:
-                return 'Pay with Nimiq';
+                return this.$t('Pay with Nimiq') as string;
             case RequestType.CREATE_CASHLINK:
-                return 'Login to fund your Cashlink';
+                return this.$t('Login to fund your Cashlink') as string;
             default:
                 return undefined;
         }

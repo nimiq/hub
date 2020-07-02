@@ -23,7 +23,7 @@ export default class BitcoinCheckoutCard
 
     protected get manualPaymentDetails() {
         const paymentDetails = [ ...super.manualPaymentDetails, {
-            label: 'Amount',
+            label: this.$t('Amount') as string,
             value: {
                 mBTC: new FormattableNumber(this.paymentOptions.amount)
                     .moveDecimalSeparator(-this.paymentOptions.decimals + 3).toString(),
@@ -41,7 +41,7 @@ export default class BitcoinCheckoutCard
                     .moveDecimalSeparator(-this.paymentOptions.decimals).toString();
             }
             paymentDetails.push({
-                label: 'Fee',
+                label: this.$t('Fee') as string,
                 value: fees,
             });
         }

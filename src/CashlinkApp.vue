@@ -6,7 +6,7 @@
             <span class="logo-subtitle">Cashlink</span>
             <div class="flex-grow"></div>
             <a class="nq-button-s" :class="{ inverse: isDarkTheme }" href="https://nimiq.com" target="_blank">
-                What is Nimiq?
+                {{ $t('What is Nimiq?') }}
             </a>
         </header>
         <div v-if="loading" class="loading">

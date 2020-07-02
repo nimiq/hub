@@ -51,20 +51,25 @@
 
         <button class="global-close nq-button-s" @click="close">
             <ArrowLeftSmallIcon/>
-            Cancel <span>Payment</span>
+
+            <i18n path="Cancel {payment}" :tag="false">
+                <template #payment>
+                    <span>{{ $t('Payment') }}</span>
+                </template>
+            </i18n>
         </button>
         <div class="spacer"></div>
 
         <transition name="transition-disclaimer">
             <component :is="screenFitsDisclaimer ? 'div' : 'BottomOverlay'"
                 v-if="(screenFitsDisclaimer || !disclaimerRecentlyClosed) && !request.disableDisclaimer"
+                ref="disclaimer"
                 class="disclaimer"
+                :class="{ 'long-disclaimer': hasLongDisclaimer }"
                 @close="_closeDisclaimerOverlay"
             >
-                <strong>Disclaimer</strong>
-                This Nimiq interface is non-custodial and solely used to bridge the payment sender with the payment
-                recipient directly (P2P). Payment and deliverable fulfillment for payment are sole responsibility of
-                those two respective parties.
+                <strong>{{ $t('Disclaimer') }}</strong>
+                {{ $t('This Nimiq interface is non-custodial and solely used to bridge the payment sender with the payment recipient directly (P2P). Payment and deliverable fulfillment for payment are sole responsibility of those two respective parties.') }}
             </component>
         </transition>
     </div>
@@ -105,6 +110,7 @@ class Checkout extends Vue {
     private availableCurrencies: PublicCurrency[] = [];
     private readonly isIOS: boolean = BrowserDetection.isIOS();
     private disclaimerRecentlyClosed: boolean = false;
+    private hasLongDisclaimer: boolean = false;
     private screenFitsDisclaimer: boolean = true;
     private dimensionsUpdateTimeout: number = -1;
 
@@ -148,6 +154,11 @@ class Checkout extends Vue {
         this._onResize();
     }
 
+    private mounted() {
+        this.hasLongDisclaimer = !!this.$refs.disclaimer
+            && (this.$refs.disclaimer as HTMLElement).textContent!.length > 250;
+    }
+
     private destroyed() {
         window.removeEventListener('resize', this._onResize);
     }
@@ -173,8 +184,8 @@ class Checkout extends Vue {
     }
 
     private _onResize() {
-        const minWidth = 740; // Width below which disclaimer would break into three lines.
-        const minHeight = 890; // Height at which two lines fit at bottom, also with logos over carousel shown.
+        const minWidth = 740; // Width below which English disclaimer would break into three lines.
+        const minHeight = 890; // Height at which disclaimer fits at bottom, also with logos over carousel shown.
         this.screenFitsDisclaimer = window.innerWidth >= minWidth && window.innerHeight >= minHeight;
         // Throttle calls to carousel.updateDimensions as its an expensive call
         clearTimeout(this.dimensionsUpdateTimeout);
@@ -545,7 +556,7 @@ export default Checkout;
 
     .disclaimer:not(.bottom-overlay).transition-disclaimer-enter-to,
     .disclaimer:not(.bottom-overlay).transition-disclaimer-leave {
-        max-height: 3.75rem; /* height of 2 lines of disclaimer */
+        max-height: 4.625rem; /* Height of ~2.5 lines at which transition looks decent for 2 and 3 disclaimer lines */
     }
 
     .disclaimer > strong {
@@ -561,10 +572,25 @@ export default Checkout;
         opacity: .5;
     }
 
-    @media (max-width: 1400px) {
-        .disclaimer:not(.bottom-overlay) {
-            max-width: 92rem; /* break disclaimer into 2 lines about equal in length */
+    @media (max-width: 1800px) {
+        .disclaimer.long-disclaimer:not(.bottom-overlay) {
+            max-width: 115rem; /* break long disclaimer into 2 lines about equal in length (e.g. French) */
             margin-bottom: 1.5rem;
+        }
+    }
+
+    @media (max-width: 1400px) {
+        .disclaimer:not(.long-disclaimer):not(.bottom-overlay) {
+            max-width: 92rem; /* break short disclaimer into 2 lines about equal in length (e.g. English) */
+            margin-bottom: 1.5rem;
+        }
+    }
+
+    @media (max-width: 1000px) {
+        .disclaimer.long-disclaimer:not(.bottom-overlay) {
+            /* make more space when long disclaimer breaks into 3 lines (e.g. French) */
+            margin-top: -.5rem;
+            margin-bottom: 1rem;
         }
     }
 </style>

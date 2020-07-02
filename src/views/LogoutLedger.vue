@@ -1,27 +1,27 @@
 <template>
     <div class="container">
         <SmallPage>
-            <PageHeader>Mind the loss of settings</PageHeader>
+            <PageHeader>{{ $t('Mind the loss of settings') }}</PageHeader>
             <PageBody>
                 <div class="warning nq-text nq-red">
-                    Logging out will delete custom settings and names for this account.
-                    {{ request.appName === 'Accounts' ? 'Contacts are not affected.' : '' }}
+                    {{ $t('Logging out will delete custom settings and names for this account.') }}
+                    {{ request.appName === 'Accounts' ? $t('Contacts are not affected.') : '' }}
                 </div>
                 <div class="ledger-illustration"></div>
-                <div class="hint nq-text">Your Ledger is<br>required to log in again.</div>
-                <button class="logout-button nq-button red" @click="_logOut">Log Out</button>
+                <div class="hint nq-text">{{ $t('Your Ledger is\nrequired to log in again.') }}</div>
+                <button class="logout-button nq-button red" @click="_logOut">{{ $t('Log Out') }}</button>
             </PageBody>
 
             <StatusScreen v-if="confirmedLogout"
                 state="success"
-                title="You are logged out."
+                :title="$t('You are logged out.')"
                 class="grow-from-bottom-button">
             </StatusScreen>
         </SmallPage>
 
         <button class="global-close nq-button-s" @click="_close" :class="{ hidden: confirmedLogout }">
             <ArrowLeftSmallIcon/>
-            Back to {{request.appName}}
+            {{ $t('Back to {appName}', { appName: request.appName }) }}
         </button>
     </div>
 </template>
@@ -81,6 +81,7 @@ export default class LogoutLedger extends Vue {
     .hint {
         font-size: 2.5rem;
         line-height: 1.4;
+        white-space: pre-line;
     }
 
     .ledger-illustration {

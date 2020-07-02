@@ -47,7 +47,7 @@
                 :endTime="paymentOptions.expires" />
         </template>
         <template v-if="wallets.length === 0">
-            <h2 class="nq-h1">Imagine if paying with<br/>crypto was easy</h2>
+            <h2 class="nq-h1">{{ $t('Imagine if paying with\ncrypto was easy') }}</h2>
             <PageBody class="video-container">
                 <video autoplay loop muted playsinline disablePictureInPicture>
                     <source src="/checkout-demo.mp4#t=0.7" type="video/mp4">
@@ -56,19 +56,19 @@
                 </video>
             </PageBody>
             <PageFooter>
-                <button class="nq-button-pill light-blue" @click="goToOnboarding">Login</button>
+                <button class="nq-button-pill light-blue" @click="goToOnboarding">{{ $t('Login') }}</button>
                 <a :href="safeOnboardingLink" target="_blank" class="safe-onboarding-link nq-link nq-light-blue">
-                    Try it now
+                    {{ $t('Try it now') }}
                     <ArrowRightSmallIcon/>
                 </a>
             </PageFooter>
         </template>
         <template v-else>
-            <h2 class="nq-h1">Choose an Address to pay</h2>
+            <h2 class="nq-h1">{{ $t('Choose an Address to pay') }}</h2>
             <div v-if="!balancesUpdating && !hasEligibleAddress" class="non-sufficient-balance">
-                <p class="nq-text nq-orange">None of your available Addresses has sufficient balance.</p>
+                <p class="nq-text nq-orange">{{ $t('None of your available Addresses has sufficient balance.') }}</p>
                 <a class="nq-button-pill light-blue" href="https://nimiq.com/#exchanges" target="_blank">
-                    <TransferIcon/> Get NIM&nbsp;
+                    <TransferIcon/> {{ $t('Get NIM') }}&nbsp;
                 </a>
             </div>
             <AccountSelector
@@ -271,9 +271,12 @@ class NimiqCheckoutCard
 
     private addConsensusListeners() {
         const network = (this.$refs.network as Network);
-        network.$on(Network.Events.API_READY, () => this.statusScreenStatus = 'Contacting seed nodes...');
-        network.$on(Network.Events.CONSENSUS_SYNCING, () => this.statusScreenStatus = 'Syncing consensus...');
-        network.$on(Network.Events.CONSENSUS_ESTABLISHED, () => this.statusScreenStatus = 'Requesting balances...');
+        network.$on(Network.Events.API_READY,
+            () => this.statusScreenStatus = this.$t('Contacting seed nodes...') as string);
+        network.$on(Network.Events.CONSENSUS_SYNCING,
+            () => this.statusScreenStatus = this.$t('Syncing consensus...') as string);
+        network.$on(Network.Events.CONSENSUS_ESTABLISHED,
+            () => this.statusScreenStatus = this.$t('Requesting balances...') as string);
     }
 
     private async setAccountOrContract(walletId: string, address: string, isFromRequest = false) {
@@ -303,7 +306,7 @@ class NimiqCheckoutCard
 
         if (this.balancesUpdating) {
             this.statusScreenState = StatusScreen.State.LOADING;
-            this.statusScreenTitle = 'Updating balances';
+            this.statusScreenTitle = this.$t('Updating balances') as string;
             this.showStatusScreen = true;
             await this.updateBalancePromise;
         }
@@ -473,6 +476,7 @@ export default NimiqCheckoutCard;
         margin-bottom: 1rem;
         line-height: 1;
         text-align: center;
+        white-space: pre-line
     }
 
     .video-container {

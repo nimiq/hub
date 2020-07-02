@@ -26,9 +26,13 @@
             />
             <PageHeader :back-arrow="request.kind === 'checkout' || request.kind === 'create-cashlink'"
                 @back="_back" class="blur-target">
-                {{ request.kind === 'checkout'
-                    ? 'Verify Payment'
-                    : `Confirm ${request.kind === 'create-cashlink' ? 'Cashlink' : 'Transaction'}` }}
+                {{
+                    request.kind === 'checkout'
+                        ? $t('Verify Payment')
+                        : request.kind === 'create-cashlink'
+                            ? $t('Confirm Cashlink')
+                            : $t('Confirm Transaction')
+                }}
             </PageHeader>
 
             <div class="accounts">
@@ -64,7 +68,7 @@
                         ? checkoutPaymentOptions.fee
                         : (cashlink || request).fee"
                     :minDecimals="2" :maxDecimals="5"
-                /> fee
+                /> {{ $t('fee') }}
             </div>
 
             <div v-if="transactionData" class="data nq-text blur-target">
@@ -83,7 +87,7 @@
                         <template v-if="state === constructor.State.EXPIRED" v-slot:warning>
                             <StopwatchIcon class="stopwatch-icon"/>
                             <h1 class="title nq-h1">{{ statusScreenTitle }}</h1>
-                            <p class="message nq-text">Please go back to the shop and restart the process.</p>
+                            <p class="message nq-text">{{ $t('Please go back to the shop and restart the process.') }}</p>
                         </template>
                     </StatusScreen>
                 </transition>
@@ -104,7 +108,7 @@
         <button class="global-close nq-button-s" @click="_close"
             :class="{ hidden: state !== constructor.State.OVERVIEW }">
             <ArrowLeftSmallIcon/>
-            {{ request.kind === 'checkout' ? 'Cancel Payment' : `Back to ${request.appName}` }}
+            {{ request.kind === 'checkout' ? $t('Cancel Payment') : $t(`Back to {appName}`, { appName: request.appName }) }}
         </button>
         <Network ref="network" :visible="false"/>
     </div>
@@ -273,7 +277,7 @@ export default class SignTransactionLedger extends Vue {
 
             this.recipientDetails = {
                 address: this.cashlink.address.toUserFriendlyAddress(),
-                label: 'New Cashlink',
+                label: this.$t('New Cashlink') as string,
                 isCashlink: true,
             };
         } else {
@@ -432,14 +436,14 @@ export default class SignTransactionLedger extends Vue {
         switch (this.state) {
             case SignTransactionLedger.State.SENDING_TRANSACTION:
                 return this.request.kind === RequestType.CREATE_CASHLINK
-                    ? 'Creating your Cashlink'
-                    : 'Sending Transaction';
+                    ? this.$t('Creating your Cashlink') as string
+                    : this.$t('Sending Transaction') as string;
             case SignTransactionLedger.State.FINISHED:
                 return this.request.kind === RequestType.SIGN_TRANSACTION
-                    ? 'Transaction Signed'
-                    : 'Transaction Sent';
+                    ? this.$t('Transaction Signed') as string
+                    : this.$t('Transaction Sent') as string;
             case SignTransactionLedger.State.EXPIRED:
-                return 'The offer expired.';
+                return this.$t('The offer expired.') as string;
             default:
                 return '';
         }

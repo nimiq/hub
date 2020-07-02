@@ -17,6 +17,7 @@ import { Account } from '../lib/PublicRequestTypes';
 import StatusScreen from '@/components/StatusScreen.vue';
 import KeyguardClient from '@nimiq/keyguard-client';
 import LabelingMachine from '@/lib/LabelingMachine';
+import { i18n } from '../i18n/i18n-setup';
 
 @Component({components: {SmallPage, StatusScreen, CheckmarkIcon}})
 export default class SignupSuccess extends Vue {
@@ -24,7 +25,7 @@ export default class SignupSuccess extends Vue {
 
     @Action('addWalletAndSetActive') private $addWalletAndSetActive!: (walletInfo: WalletInfo) => any;
 
-    private title: string = 'Creating your Account';
+    private title: string = i18n.t('Creating your Account') as string;
     private state: StatusScreen.State = StatusScreen.State.LOADING;
 
     private async mounted() {
@@ -62,7 +63,7 @@ export default class SignupSuccess extends Vue {
         // Artificially delay, to display loading status
         await new Promise((res) => setTimeout(res, 2000));
 
-        this.title = 'Welcome to the\nNimiq Blockchain.';
+        this.title = this.$t('Welcome to the\nNimiq Blockchain.') as string;
         this.state = StatusScreen.State.SUCCESS;
 
         const result: Account[] = [{

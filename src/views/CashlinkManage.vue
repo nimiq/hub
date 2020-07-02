@@ -7,8 +7,8 @@
                     :title="title"
                     :status="status"
                     :message="message"
-                    mainAction="Reload"
-                    alternativeAction="Cancel"
+                    :mainAction="$t('Reload')"
+                    :alternativeAction="$t('Cancel')"
                     @main-action="reload"
                     @alternative-action="cancel"
                     lightBlue
@@ -17,9 +17,9 @@
 
             <PageBody v-if="!this.request.skipSharing">
                 <transition name="transition-fade">
-                    <div v-if="!isManagementRequest && isTxSent" class="nq-green cashlink-status"><CheckmarkSmallIcon/>Cashlink created</div>
+                    <div v-if="!isManagementRequest && isTxSent" class="nq-green cashlink-status"><CheckmarkSmallIcon/>{{ $t('Cashlink created') }}</div>
                 </transition>
-                <button class="nq-button-s close" @click="close">Done</button>
+                <button class="nq-button-s close" @click="close">{{ $t('Done') }}</button>
                 <div class="cashlink-and-url">
                     <Account layout="column" :displayAsCashlink="true" :class="{'sending': !isTxSent, 'show-loader': !isManagementRequest}"/>
                     <Copyable :text="link">
@@ -29,11 +29,11 @@
             </PageBody>
             <PageFooter v-if="!this.request.skipSharing">
                 <button class="nq-button copy" :class="copied ? 'green' : 'light-blue'" @click="copy">
-                    <span v-if="copied"><CheckmarkSmallIcon /> Copied</span>
-                    <span v-else>Copy</span>
+                    <span v-if="copied"><CheckmarkSmallIcon /> {{ $t('Copied') }}</span>
+                    <span v-else>{{ $t('Copy') }}</span>
                 </button>
                 <button v-if="nativeShareAvailable" class="nq-button share-mobile" @click="share">
-                    Share
+                    {{ $t('Share') }}
                 </button>
                 <template v-else>
                     <a class="nq-button-s social-share telegram" target="_blank" :href="telegram">
@@ -74,6 +74,7 @@ import { CashlinkStore } from '../lib/CashlinkStore';
 import { State } from 'vuex-class';
 import KeyguardClient from '@nimiq/keyguard-client';
 import { Clipboard } from '@nimiq/utils';
+import { i18n } from '../i18n/i18n-setup';
 import { ERROR_CANCELED } from '../lib/Constants';
 
 @Component({components: {
@@ -87,7 +88,7 @@ import { ERROR_CANCELED } from '../lib/Constants';
     Copyable,
 }})
 export default class CashlinkManage extends Vue {
-    private static readonly SHARE_PREFIX: string = 'Here is your Nimiq Cashlink!';
+    private static readonly SHARE_PREFIX: string = i18n.t('Here is your Nimiq Cashlink!') as string;
 
     @Static private request!: ParsedManageCashlinkRequest | ParsedCreateCashlinkRequest;
     @Static private cashlink?: Cashlink;
@@ -96,7 +97,7 @@ export default class CashlinkManage extends Vue {
 
     private isTxSent: boolean = false;
     private isManagementRequest: boolean = false;
-    private status: string = 'Connecting to network...';
+    private status: string = i18n.t('Connecting to network...') as string;
     private state: StatusScreen.State = StatusScreen.State.LOADING;
     private message: string = '';
     private retrievedCashlink: Cashlink | null = null;
@@ -148,13 +149,13 @@ export default class CashlinkManage extends Vue {
                 return;
             }
             network.$on(Network.Events.API_READY,
-                () => this.status = 'Contacting seed nodes...');
+                () => this.status = this.$t('Contacting seed nodes...') as string);
             network.$on(Network.Events.CONSENSUS_SYNCING,
-                () => this.status = 'Syncing consensus...');
+                () => this.status = this.$t('Syncing consensus...') as string);
             network.$on(Network.Events.CONSENSUS_ESTABLISHED,
-                () => this.status = 'Sending transaction...');
+                () => this.status = this.$t('Sending transaction...') as string);
             network.$on(Network.Events.TRANSACTION_PENDING,
-                () => this.status = 'Awaiting receipt confirmation...');
+                () => this.status = this.$t('Awaiting receipt confirmation...') as string);
             this.retrievedCashlink.networkClient = await network.getNetworkClient();
 
             // Store cashlink in database first to be safe when browser crashes during sending
@@ -170,7 +171,13 @@ export default class CashlinkManage extends Vue {
                 this.isTxSent = true;
             } catch (error) {
                 this.state = StatusScreen.State.WARNING;
-                this.message = error.message;
+                if (error.message === Network.Errors.TRANSACTION_EXPIRED) {
+                    this.message = this.$t('Transaction is expired') as string;
+                } else if (error.message === Network.Errors.TRANSACTION_NOT_RELAYED) {
+                    this.message = this.$t('Transaction could not be relayed') as string;
+                } else {
+                    this.message = error.message;
+                }
                 return;
             }
         }
@@ -183,9 +190,9 @@ export default class CashlinkManage extends Vue {
 
     private get title(): string {
         switch (this.state) {
-            case StatusScreen.State.SUCCESS: return 'Cashlink created.';
-            case StatusScreen.State.WARNING: return 'Something went wrong';
-            default: return 'Creating your Cashlink';
+            case StatusScreen.State.SUCCESS: return this.$t('Cashlink created.') as string;
+            case StatusScreen.State.WARNING: return this.$t('Something went wrong') as string;
+            default: return this.$t('Creating your Cashlink') as string;
         }
     }
 

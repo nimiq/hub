@@ -1,7 +1,7 @@
 <template>
     <div class="container pad-bottom">
         <SmallPage>
-            <StatusScreen state="success" title="Your message is signed."/>
+            <StatusScreen state="success" :title="$t('Your message is signed.')"/>
         </SmallPage>
     </div>
 </template>

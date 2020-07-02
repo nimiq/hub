@@ -24,17 +24,17 @@
             <transition name="transition-fade">
                 <div v-if="state === constructor.State.WALLET_SUMMARY
                     || state === constructor.State.FINISHED && !hadAccounts" class="wallet-summary">
-                    <h1 class="nq-h1">Account Created</h1>
+                    <h1 class="nq-h1">{{ $t('Account Created') }}</h1>
                     <AccountRing :addresses="Array.from(walletInfo.accounts.keys())" animate></AccountRing>
-                    <div class="message nq-text">This is your account with your first address in it.</div>
-                    <button class="nq-button" @click="done">Finish</button>
+                    <div class="message nq-text">{{ $t('This is your account with your first address in it.') }}</div>
+                    <button class="nq-button" @click="done">{{ $t('Finish') }}</button>
                 </div>
             </transition>
         </SmallPage>
 
         <button class="global-close nq-button-s" @click="close">
             <ArrowLeftSmallIcon/>
-            Back to {{request.appName}}
+            {{ $t('Back to {appName}', { appName: request.appName }) }}
         </button>
     </div>
 </template>
@@ -103,11 +103,13 @@ export default class SignupLedger extends Vue {
     private get statusScreenTitle() {
         switch (this.state) {
             case SignupLedger.State.FETCHING_ADDRESSES:
-                return 'Fetching Addresses';
+                return this.$t('Fetching Addresses') as string;
             case SignupLedger.State.FETCHING_INCOMPLETE:
-                return 'Your addresses may be\nincomplete.';
+                return this.$t('Your Addresses may be\nincomplete.') as string;
             case SignupLedger.State.FINISHED:
-                return this.hadAccounts ? 'You\'re logged in!' : 'Welcome to the Nimiq Blockchain.';
+                return this.hadAccounts
+                    ? this.$t('You\'re logged in!') as string
+                    : this.$t('Welcome to the Nimiq Blockchain.') as string;
             default:
                 return '';
         }
@@ -115,23 +117,23 @@ export default class SignupLedger extends Vue {
 
     private get statusScreenStatus() {
         if (this.state !== SignupLedger.State.FETCHING_ADDRESSES) return '';
-        else if (this.fetchingAddressesFailed) return 'Failed to fetch addresses. Retrying...';
+        else if (this.fetchingAddressesFailed) return this.$t('Failed to fetch addresses. Retrying...') as string;
         else {
             const count = !this.walletInfo ? 0 : this.walletInfo.accounts.size;
             return count > 0
-                ? `Imported ${count} address${count !== 1 ? 'es' : ''} so far.`
+                ? this.$tc('Imported {count} address so far... | Imported {count} addresses so far...', count)
                 : '';
         }
     }
 
     private get statusScreenMessage() {
         if (this.state !== SignupLedger.State.FETCHING_INCOMPLETE) return '';
-        else return 'Used addresses without balance might have been missed.';
+        else return this.$t('Used addresses without balance might have been missed.') as string;
     }
 
     private get statusScreenAction() {
         if (this.state !== SignupLedger.State.FETCHING_INCOMPLETE) return '';
-        else return 'Continue';
+        else return this.$t('Continue') as string;
     }
 
     private async created() {
