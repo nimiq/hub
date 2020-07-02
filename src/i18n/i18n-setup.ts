@@ -7,7 +7,7 @@ import router from '../router';
 Vue.use(VueI18n);
 
 const DEFAULT_LANGUAGE = 'en';
-const SUPPORTED_LANGUAGES = [DEFAULT_LANGUAGE, 'fr'];
+const SUPPORTED_LANGUAGES = [DEFAULT_LANGUAGE, 'de', 'fr', 'zh'];
 const LOADED_LANGUAGES: string[] = [];
 
 export const i18n = new VueI18n({

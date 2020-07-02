@@ -247,7 +247,7 @@ class LedgerUi extends Vue {
             this.$t('3. Open the Nimiq App') as string,
         ];
         if (this.showConnectButton) {
-            instructions.push(this.$t('4. Click "Connect"') as string);
+            instructions.push(this.$t('4. Click Connect') as string);
         }
         const oldInstructionIndex = instructions.indexOf(this.instructionsText);
         const instructionIndex = (oldInstructionIndex + 1) % instructions.length;
