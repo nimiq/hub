@@ -107,8 +107,8 @@ To help translate the Hub, the procedure is as follows:
 - The translations are located in the `src/i18n` folder. A translation file for a language is named as the language's
   two letter [ISO 639-1 code](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) plus file extension `.po`. For
   example, for French with two letter code `fr` the translations are located at `src/i18n/fr.po`. If that file doesn't
-  exist yet, i.e. you're starting a new translation, please duplicate `en.po` as starting point and rename it
-  accordingly.
+  exist yet, i.e. you're starting a new translation, please duplicate `en.po` as starting point, rename it accordingly
+  and then add the language to the `SUPPORTED_LANGUAGES` in `i18n-setup.ts`.
 
 - In the language files, the source strings to be translated are between double quotes after the word `msgid`.
   For Example:
@@ -121,6 +121,13 @@ To help translate the Hub, the procedure is as follows:
   msgstr "Compte Créé"
   ```
   Please only edit the translations, not the source strings.
+
+- You can test your translations locally by running the demo page as described in section [Run](#run) and then setting a
+  language cookie in the served page. To do so, open your browser's developer console (ctrl + shift + c) and input
+  `document.cookie = 'lang=<lang>'` where `<lang>` should be replaced by the two letter language code of the language
+  you want to test, for example `document.cookie = 'lang=fr'`. After reloading the page, the Hub should be displayed in
+  your chosen language. If you struggle setting up the local demo you can ask us to setup an online demo for you after
+  opening a pull request.
 
 - Once the file has been fully translated or you are done updating an existing language file, you can open a pull
   request here in github.
