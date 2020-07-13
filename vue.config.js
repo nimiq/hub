@@ -25,29 +25,27 @@ const domain = buildName === 'mainnet'
 
 console.log('Building for:', buildName);
 
-const CopyWebpackPluginVueComponents = {
+// Unfortunately have to copy the translation files for each of the defined `pages`. Might be fixable by specifying a
+// vue-cli publicPath but didn't work on a quick try. Also not sure whether we'd really like to mess with the public
+// path as relative publicPaths do not play well with multiple pages according to documentation and absolute publicPath
+// might not be desirable for us. Therefore, for now we copy the language files into multiple folders.
+const vueComponentsTranslationsToFolders = process.env.NODE_ENV === 'production' ? ['./', './cashlink'] : ['./js'];
+const vueComponentsTranslationsCopyOptions = vueComponentsTranslationsToFolders.map((toFolder) => ({
+    from: 'node_modules/@nimiq/vue-components/dist/NimiqVueComponents.umd.min.lang-*.js',
+    to: toFolder,
     flatten: true,
     transformPath(path) {
         // The bundled NimiqVueComponents.umd.js tries to load the the non-minified files
         return path.replace('.min', '');
     },
-};
+}));
 
 const configureWebpack = {
     plugins: [
         new CopyWebpackPlugin([
             { from: 'node_modules/@nimiq/browser-warning/dist', to: './' },
             { from: 'node_modules/@nimiq/vue-components/dist/img', to: 'img' },
-            {
-                from: 'node_modules/@nimiq/vue-components/dist/NimiqVueComponents.umd.min.lang-*.js',
-                to: './js',
-                ...CopyWebpackPluginVueComponents,
-            },
-            {
-                from: 'node_modules/@nimiq/vue-components/dist/NimiqVueComponents.umd.min.lang-*.js',
-                to: './cashlink',
-                ...CopyWebpackPluginVueComponents,
-            },
+            ...vueComponentsTranslationsCopyOptions,
         ]),
         new WriteFileWebpackPlugin(),
         new PoLoaderOptimizer(),
