@@ -381,10 +381,6 @@ export default StatusScreen;
         margin: auto;
     }
 
-    .status-screen .loading-spinner {
-        width: 7rem;
-    }
-
     .status-screen .success .nq-icon {
         font-size: 9rem;
     }
