@@ -11,7 +11,7 @@ export default {
         'https://www.nimiq-testnet.com', // To allow gift cards app to request returnLink for Cashlinks
         'https://nimiq-testnet.com', // To allow gift cards app to request returnLink for Cashlinks
     ],
-    redirectTarget: 'https://safe.nimiq-testnet.com',
+    redirectTarget: 'https://wallet.nimiq-testnet.com',
     reportToSentry: true,
     checkoutWithoutNimOrigins: [
         'https://checkout-service-staging-0.web.app',

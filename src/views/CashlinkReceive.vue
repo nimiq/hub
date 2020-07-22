@@ -14,7 +14,7 @@
                     :status="statusStatus"
                     :message="statusMessage"
                     :mainAction="$t('Got it')"
-                    @main-action="redirectToSafe"
+                    @main-action="redirectToWallet"
                 />
             </transition>
             <div v-if="cashlink && hasWallets" class="card-content has-account" :class="{ 'account-selector-shown': !!isAccountSelectorOpened }">
@@ -258,7 +258,7 @@ class CashlinkReceive extends Vue {
         this.statusState = StatusScreen.State.SUCCESS;
         this.statusTitle = this.$t('Cashlink claimed!') as string;
 
-        window.setTimeout(() => this.redirectToSafe(), StatusScreen.SUCCESS_REDIRECT_DELAY);
+        window.setTimeout(() => this.redirectToWallet(), StatusScreen.SUCCESS_REDIRECT_DELAY);
     }
 
     private accountSelected(walletId: string, userFriendlyAddress: string) {
@@ -281,10 +281,8 @@ class CashlinkReceive extends Vue {
         }
     }
 
-    private redirectToSafe() {
-        window.location.href = Config.network === NETWORK_MAIN
-            ? 'https://safe.nimiq.com'
-            : 'https://safe.nimiq-testnet.com';
+    private redirectToWallet() {
+        window.location.href = Config.redirectTarget;
     }
 
     private get isCashlinkStateKnown(): boolean {
