@@ -57,7 +57,7 @@
             </PageBody>
             <PageFooter>
                 <button class="nq-button-pill light-blue" @click="goToOnboarding">Login</button>
-                <a :href="safeOnboardingLink" target="_blank" class="safe-onboarding-link nq-link nq-light-blue">
+                <a :href="onboardingLink" target="_blank" class="safe-onboarding-link nq-link nq-light-blue">
                     Try it now
                     <ArrowRightSmallIcon/>
                 </a>
@@ -141,8 +141,8 @@ class NimiqCheckoutCard
         userFriendlyAddress: string,
     }) => any;
 
-    private readonly safeOnboardingLink: string
-        = `https://safe.nimiq${location.hostname.endsWith('testnet.com') ? '-testnet' : ''}.com/?onboarding=signup`;
+    private readonly onboardingLink: string
+        = `https://wallet.nimiq${location.hostname.endsWith('testnet.com') ? '-testnet' : ''}.com`;
 
     private updateBalancePromise: Promise<void> | null = null;
     private balancesUpdating: boolean = true;
