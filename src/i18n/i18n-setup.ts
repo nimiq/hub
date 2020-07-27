@@ -73,8 +73,9 @@ function onTabFocus() {
 // Set a window/tab focus event to check if the user changed the language in another window/tab
 window.addEventListener('focus', onTabFocus);
 
-// This router navigation guard is to prevent switching
-// to the new route before the language file finished loading.
-router.beforeResolve((to, from, next) =>
-    setLanguage(detectLanguage()).then(() => next()),
-);
+/* Temporarily moved to the main.ts file in the `beforeEach` navigation guard */
+// // This router navigation guard is to prevent switching
+// // to the new route before the language file finished loading.
+// router.beforeResolve((to, from, next) =>
+//     setLanguage(detectLanguage()).then(() => next()),
+// );
