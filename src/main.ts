@@ -58,7 +58,7 @@ router.beforeEach((to, from, next) => {
         // Only show loader when lazy-loading takes longer than 500ms
         _loadingTimeout = window.setTimeout(() => app.loading = true, 500);
     }
-    setLanguage(detectLanguage()).then(() => next());
+    next();
 });
 router.afterEach(() => {
     window.clearTimeout(_loadingTimeout);
