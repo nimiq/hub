@@ -17,9 +17,18 @@ import {
 } from '../src/lib/PublicRequestTypes';
 import { RedirectRequestBehavior } from '../client/RequestBehavior';
 import { Utf8Tools } from '@nimiq/utils';
+import { KeyguardClient,SignBtcTransactionRequestStandard, KeyguardCommand } from '@nimiq/keyguard-client';
 
 class Demo {
     public static run() {
+        const keyguardClient = new KeyguardClient();
+        keyguardClient.on(KeyguardCommand.SIGN_BTC_TRANSACTION, (result) => {
+            console.log("Keyguard Result:", result);
+        }, (error) => {
+            console.log("Keyguard Error:", error);
+        });
+        keyguardClient.init();
+
         const keyguardOrigin = location.origin === 'https://hub.nimiq-testnet.com'
             ? 'https://keyguard.nimiq-testnet.com'
             : `${location.protocol}//${location.hostname}:8000`;
@@ -393,6 +402,37 @@ class Demo {
                 const result = await demo.client.migrate(demo._defaultBehavior);
                 console.log('Result', result);
                 document.querySelector('#result').textContent = 'Migrated';
+            } catch (e) {
+                console.error(e);
+                document.querySelector('#result').textContent = `Error: ${e.message || e}`;
+            }
+        });
+
+        document.querySelector('button#sign-btc-transaction').addEventListener('click', async () => {
+            const txRequest: SignBtcTransactionRequestStandard = {
+                appName: 'Hub Demos',
+                keyId: '7O9JPRFBINBhXBoS1gIU1Hq/T4ZdHhShJxXeUz3UdtE=',
+                recipientLabel: 'Paul McCartney',
+                inputs: [{
+                    keyPath: 'm/49\'/1\'/0\'/0/0',
+                    txHash: 'ef4aaf6087d0cc48ff09355d715c257078467ca4d9dd75a20824e70a78fb43cc',
+                    outputIndex: 0,
+                    outputScript: 'a914a7b4db6aa34c1dcab54cc4b4cd2b1595ddd8f23487',
+                    value: Math.round(0.010 * 1e8),
+                }],
+                recipientOutput: {
+                    address: '2N96BkaAfS3FMDqeRJzPTwV2XUovk5tzDcf',
+                    value: Math.round(0.009 * 1e8),
+                },
+                // changeOutput: {
+                //     address: '',
+                //     value: 0,
+                // },
+            };
+            try {
+                const keyguardClient = new KeyguardClient(undefined, location.href);
+                keyguardClient.signBtcTransaction(txRequest);
+                // KeyguardClient redirects, so no further execution possible
             } catch (e) {
                 console.error(e);
                 document.querySelector('#result').textContent = `Error: ${e.message || e}`;
