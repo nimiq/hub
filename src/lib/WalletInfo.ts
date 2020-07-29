@@ -1,4 +1,5 @@
 import { AccountInfo, AccountInfoEntry } from './AccountInfo';
+import { BtcAddressInfo, BtcAddressInfoEntry } from './bitcoin/BtcAddressInfo';
 import {
     ContractInfo,
     ContractInfoEntry,
@@ -20,8 +21,12 @@ export class WalletInfo {
             accounts.set(userFriendlyAddress, AccountInfo.fromObject(accountInfoEntry));
         });
         const contracts = o.contracts.map((contract) => ContractInfoHelper.fromObject(contract));
+        const btcAddresses = {
+            internal: o.btcAddresses.internal.map(btcAddressInfoEntry => BtcAddressInfo.fromObject(btcAddressInfoEntry)),
+            external: o.btcAddresses.external.map(btcAddressInfoEntry => BtcAddressInfo.fromObject(btcAddressInfoEntry)),
+        };
         return new WalletInfo(o.id, o.keyId, o.label, accounts, contracts, o.type,
-            o.keyMissing, o.fileExported, o.wordsExported);
+            o.keyMissing, o.fileExported, o.wordsExported, btcAddresses);
     }
 
     public static objectToAccountType(o: WalletInfoEntry): Account {
@@ -33,6 +38,10 @@ export class WalletInfo {
             wordsExported: o.wordsExported,
             addresses: Array.from(o.accounts.values()).map((address) => AccountInfo.objectToAddressType(address)),
             contracts: o.contracts.map((contract) => ContractInfoHelper.objectToContractType(contract)),
+            btcAddresses: {
+                internal: o.btcAddresses.internal.map(entry => BtcAddressInfo.objectToBtcAddressType(entry)),
+                external: o.btcAddresses.external.map(entry => BtcAddressInfo.objectToBtcAddressType(entry)),
+            },
         };
     }
 
@@ -46,6 +55,13 @@ export class WalletInfo {
         public keyMissing: boolean = false,
         public fileExported: boolean = false,
         public wordsExported: boolean = false,
+        public btcAddresses: {
+            internal: BtcAddressInfo[],
+            external: BtcAddressInfo[],
+        } = {
+            internal: [],
+            external: [],
+        },
     ) {}
 
     public get defaultLabel(): string {
@@ -111,6 +127,10 @@ export class WalletInfo {
             keyMissing: this.keyMissing,
             fileExported: this.fileExported,
             wordsExported: this.wordsExported,
+            btcAddresses: {
+                internal: this.btcAddresses.internal.map(btcAddressInfo => btcAddressInfo.toObject()),
+                external: this.btcAddresses.external.map(btcAddressInfo => btcAddressInfo.toObject()),
+            },
         };
     }
 
@@ -123,6 +143,10 @@ export class WalletInfo {
             wordsExported: this.wordsExported,
             addresses: Array.from(this.accounts.values()).map((address) => address.toAddressType()),
             contracts: this.contracts.map((contract) => contract.toContractType()),
+            btcAddresses: {
+                internal: this.btcAddresses.internal.map(btcAddressInfo => btcAddressInfo.toBtcAddressType()),
+                external: this.btcAddresses.external.map(btcAddressInfo => btcAddressInfo.toBtcAddressType()),
+            },
         };
     }
 }
@@ -140,4 +164,8 @@ export interface WalletInfoEntry {
     keyMissing: boolean;
     fileExported: boolean;
     wordsExported: boolean;
+    btcAddresses: {
+        internal: BtcAddressInfoEntry[],
+        external: BtcAddressInfoEntry[],
+    };
 }
