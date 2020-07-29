@@ -26,6 +26,8 @@ import { DEFAULT_KEY_PATH, ERROR_CANCELED } from '@/lib/Constants';
 import CookieHelper from '../lib/CookieHelper';
 import NotEnoughCookieSpace from '../components/NotEnoughCookieSpace.vue';
 import { ArrowLeftSmallIcon } from '@nimiq/vue-components';
+import { BTC_ACCOUNT_KEY_PATH } from '../lib/bitcoin/BitcoinConstants';
+import Config from 'config';
 
 @Component({components: {OnboardingMenu, NotEnoughCookieSpace, ArrowLeftSmallIcon}})
 export default class OnboardingSelector extends Vue {
@@ -54,7 +56,7 @@ export default class OnboardingSelector extends Vue {
             appName: this.request.appName,
             requestedKeyPaths: [DEFAULT_KEY_PATH],
             enableBackArrow: true,
-            bitcoinXPubPath: `m/49'/1'/0'`,
+            bitcoinXPubPath: BTC_ACCOUNT_KEY_PATH[Config.bitcoinAddressType][Config.bitcoinNetwork],
         };
         const client = this.$rpc.createKeyguardClient();
         client.import(request);

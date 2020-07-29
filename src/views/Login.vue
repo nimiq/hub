@@ -11,6 +11,8 @@ import { Static } from '../lib/StaticStore';
 import { DEFAULT_KEY_PATH } from '@/lib/Constants';
 import CookieHelper from '../lib/CookieHelper';
 import NotEnoughCookieSpace from '../components/NotEnoughCookieSpace.vue';
+import { BTC_ACCOUNT_KEY_PATH } from '../lib/bitcoin/BitcoinConstants';
+import Config from 'config';
 
 @Component({components: {NotEnoughCookieSpace}})
 export default class Login extends Vue {
@@ -27,7 +29,7 @@ export default class Login extends Vue {
         const request: KeyguardClient.ImportRequest = {
             appName: this.request.appName,
             requestedKeyPaths: [DEFAULT_KEY_PATH],
-            bitcoinXPubPath: `m/49'/1'/0'`,
+            bitcoinXPubPath: BTC_ACCOUNT_KEY_PATH[Config.bitcoinAddressType][Config.bitcoinNetwork],
         };
 
         const client = this.$rpc.createKeyguardClient(true);
