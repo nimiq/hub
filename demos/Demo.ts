@@ -272,7 +272,7 @@ class Demo {
             const now = Date.now();
             return {
                 version: 2,
-                appName: 'Accounts Demos',
+                appName: 'Hub Demos',
                 shopLogoUrl: `${location.origin}/nimiq.png`,
                 callbackUrl: `${location.origin}/callback.html`,
                 csrf: 'dummy-csrf-token',
@@ -642,7 +642,7 @@ class Demo {
         // @ts-ignore Property '_target' is private and only accessible within class 'PostMessageRpcClient'.
         client._target.close();
         console.log('Legacy Account setup:', result);
-        document.querySelector('#result').textContent = 'Legacy Account stored';
+        document.querySelector('#result').textContent = 'Legacy account stored';
     }
 
     public async list(): Promise<Account[]> {

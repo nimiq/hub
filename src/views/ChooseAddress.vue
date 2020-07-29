@@ -4,7 +4,7 @@
             <h1 class="nq-h1">{{ $t('Choose an Address') }}</h1>
 
             <div class="request-info nq-text">
-                {{ $t('{appName} is asking for an Address to use.', { appName: request.appName }) }}
+                {{ $t('{appName} is asking for an address to use.', { appName: request.appName }) }}
             </div>
 
             <AccountSelector

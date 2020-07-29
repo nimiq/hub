@@ -243,7 +243,7 @@ class LedgerUi extends Vue {
     private _cycleConnectInstructions() {
         const instructions = [
             this.$t('1. Connect your Ledger Device') as string,
-            this.$t('2. Enter your Pin') as string,
+            this.$t('2. Enter your PIN') as string,
             this.$t('3. Open the Nimiq App') as string,
         ];
         if (this.showConnectButton) {

@@ -86,9 +86,9 @@
                 </div>
 
                 <PageFooter>
-                    <button class="nq-button light-blue" @click="callHub('signup')">{{ $t('Create Account') }}</button>
+                    <button class="nq-button light-blue" @click="callHub('signup')">{{ $t('Create account') }}</button>
                     <a class="nq-link skip" href="javascript:void(0)" @click="callHub('onboard')">
-                        {{ $t('Login to existing Account') }}
+                        {{ $t('Login to existing account') }}
                         <CaretRightSmallIcon/>
                     </a>
                 </PageFooter>
@@ -106,7 +106,7 @@
                 <h1 class="nq-h1">{{ welcomeHeadline }}</h1>
                 <p class="nq-text">
                     {{ welcomeText }}
-                    {{ $t('Create an Account and claim your money.') }}
+                    {{ $t('Create an account and claim your money.') }}
                     <span class="secondary-text">{{ $t('30\u00a0seconds, no\u00a0email, no\u00a0download.') }}</span>
                 </p>
             </div>

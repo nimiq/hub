@@ -26,7 +26,7 @@ out which address your app should send funds to.
 
 <div class="code-example">
   <p>Result: <span id="output">-</span></p>
-  <button id="choose-address-btn" class="btn btn-primary mb-1">Choose Address</button>
+  <button id="choose-address-btn" class="btn btn-primary mb-1">Choose address</button>
 
   <script
     src="https://cdn.jsdelivr.net/npm/@nimiq/hub-api@v1.2.3/dist/standalone/HubApi.standalone.umd.js"

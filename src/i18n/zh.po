@@ -12,7 +12,7 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #: src/views/ChooseAddress.vue:7
-msgid "{appName} is asking for an Address to use."
+msgid "{appName} is asking for an address to use."
 msgstr "{appName}要求使用地址"
 
 #: src/components/NonNimiqCheckoutCard.vue:64
@@ -24,8 +24,8 @@ msgid "1. Connect your Ledger Device"
 msgstr "1. 连接您的Ledger设备"
 
 #: src/components/LedgerUi.vue:246
-msgid "2. Enter your Pin"
-msgstr "2. 输入您的Pin码"
+msgid "2. Enter your PIN"
+msgstr "2. 输入您的PIN码"
 
 #: src/components/LedgerUi.vue:247
 msgid "3. Open the Nimiq App"
@@ -68,7 +68,7 @@ msgid "Add a message..."
 msgstr "添加消息..."
 
 #: src/views/AddAccountSelection.vue:4
-msgid "Add to Account"
+msgid "Add to account"
 msgstr "添加到帐户"
 
 #: src/views/AddAddressLedger.vue:11
@@ -100,8 +100,8 @@ msgstr "正在等待收据确认..."
 #: src/views/CashlinkCreate.vue:83 src/views/ChooseAddress.vue:19
 #: src/views/ErrorHandlerUnsupportedLedger.vue:11
 #: src/views/LogoutLedger.vue:24 src/views/OnboardingSelector.vue:85
-#: src/views/SignMessage.vue:24 src/views/SignTransactionLedger.vue:111
-#: src/views/SignupLedger.vue:37
+#: src/views/Rename.vue:28 src/views/SignMessage.vue:24
+#: src/views/SignTransactionLedger.vue:111 src/views/SignupLedger.vue:37
 msgid "Back to {appName}"
 msgstr "返回 {appName}"
 
@@ -147,10 +147,6 @@ msgstr "取消 {付款}"
 msgid "Cancel Payment"
 msgstr "取消付款"
 
-#: src/views/Rename.vue:28
-msgid "Cancel Renaming"
-msgstr "取消重命名"
-
 #: src/views/CashlinkReceive.vue:259
 msgid "Cashlink claimed!"
 msgstr "现金链接已领取！"
@@ -163,19 +159,19 @@ msgstr "现金链接已创建"
 msgid "Cashlink created."
 msgstr "现金链接已创建"
 
-#: src/views/CashlinkReceive.vue:309
+#: src/views/CashlinkReceive.vue:307
 msgid "Cashlink empty :("
 msgstr "现金链接为空 :("
 
-#: src/views/CashlinkReceive.vue:302
+#: src/views/CashlinkReceive.vue:300
 msgid "Cashlink funding"
 msgstr "现金链接资金"
 
-#: src/views/CashlinkReceive.vue:306
+#: src/views/CashlinkReceive.vue:304
 msgid "Cashlink is empty"
 msgstr "现金链接为空 "
 
-#: src/views/CashlinkReceive.vue:301
+#: src/views/CashlinkReceive.vue:299
 msgid "Cashlink not funded"
 msgstr "现金链接没有资金"
 
@@ -187,7 +183,7 @@ msgstr "更改"
 msgid "Check your Backup | Check your Backups"
 msgstr "检查您的备份 | 检查您的备份"
 
-#: src/views/CashlinkReceive.vue:299
+#: src/views/CashlinkReceive.vue:297
 msgid "Checking status"
 msgstr "检查状态"
 
@@ -223,11 +219,11 @@ msgstr ""
 msgid "Choose Sender"
 msgstr "选择发件人"
 
-#: src/views/CashlinkReceive.vue:300
+#: src/views/CashlinkReceive.vue:298
 msgid "Claim Cashlink"
 msgstr "领取现金链接"
 
-#: src/views/CashlinkReceive.vue:350
+#: src/views/CashlinkReceive.vue:348
 msgid "Claim your Cash"
 msgstr "领取现金"
 
@@ -263,15 +259,15 @@ msgstr "确认交易"
 msgid "Confirm using your Ledger"
 msgstr "确认使用您的Ledger"
 
-#: src/views/CashlinkReceive.vue:361
+#: src/views/CashlinkReceive.vue:359
 msgid "Congrats, somebody gifted you a Nimiq Cashlink."
 msgstr "恭喜，有人给您Nimiq 现金链接"
 
-#: src/views/CashlinkReceive.vue:360
+#: src/views/CashlinkReceive.vue:358
 msgid "Congrats, you just opened a Nimiq Cashlink."
 msgstr "恭喜，您刚刚打开了Nimiq 现金链接"
 
-#: src/views/CashlinkReceive.vue:356
+#: src/views/CashlinkReceive.vue:354
 msgid "Congrats, you received a Nimiq Gift Card."
 msgstr "恭喜，您收到了Nimiq礼品卡"
 
@@ -328,16 +324,20 @@ msgstr "拷贝"
 msgid "Create a Cashlink"
 msgstr "创建现金链接"
 
-#: src/components/OnboardingMenu.vue:17 src/views/CashlinkReceive.vue:89
+#: src/views/CashlinkReceive.vue:89
+msgid "Create account"
+msgstr "创建账户"
+
+#: src/components/OnboardingMenu.vue:17
 msgid "Create Account"
 msgstr "创建账户"
 
 #: src/views/CashlinkReceive.vue:109
-msgid "Create an Account and claim your money."
+msgid "Create an account and claim your money."
 msgstr "创建一个帐户并索取您的钱"
 
 #: src/views/Migrate.vue:32
-msgid "Create and scan QR codes to quickly share Addresses."
+msgid "Create and scan QR codes to quickly share addresses."
 msgstr "创建并扫描QR码以快速共享地址"
 
 #: src/views/CashlinkCreate.vue:73
@@ -426,11 +426,11 @@ msgstr "返回"
 msgid "Got it"
 msgstr "了解"
 
-#: src/views/CashlinkReceive.vue:349
+#: src/views/CashlinkReceive.vue:347
 msgid "Happy birthday!"
 msgstr "生日快乐！"
 
-#: src/views/CashlinkReceive.vue:347
+#: src/views/CashlinkReceive.vue:345
 msgid "Happy Easter!"
 msgstr "复活节快乐！"
 
@@ -497,7 +497,7 @@ msgid "Login File exported!"
 msgstr "登录文件已导出！"
 
 #: src/views/CashlinkReceive.vue:91
-msgid "Login to existing Account"
+msgid "Login to existing account"
 msgstr "登录到现有帐户"
 
 #: src/views/OnboardingSelector.vue:94
@@ -550,7 +550,7 @@ msgid "No App found"
 msgstr "找不到应用"
 
 #: src/components/NimiqCheckoutCard.vue:69
-msgid "None of your available Addresses has sufficient balance."
+msgid "None of your available addresses has sufficient balance."
 msgstr "您的可用地址皆没有足够的余额"
 
 #: src/views/Migrate.vue:224
@@ -562,7 +562,7 @@ msgid "Ok"
 msgstr "Ok"
 
 #: src/views/Migrate.vue:18
-msgid "One Account can now have multiple Addresses."
+msgid "One account can now have multiple addresses."
 msgstr "一个帐户现在可以具有多个地址"
 
 #: src/components/NonNimiqCheckoutCard.vue:94
@@ -646,7 +646,7 @@ msgid "Restart Payment"
 msgstr "重新开始付款"
 
 #: src/views/Migrate.vue:219
-msgid "Retrieving your old Accounts..."
+msgid "Retrieving your old accounts..."
 msgstr "正在检索您的旧帐户..."
 
 #: src/views/Rename.vue:18
@@ -699,7 +699,7 @@ msgid "standard"
 msgstr "标准"
 
 #: src/views/Migrate.vue:233
-msgid "Storing your new Accounts..."
+msgid "Storing your new accounts..."
 msgstr "正在存储您的新帐户..."
 
 #: src/components/NimiqCheckoutCard.vue:277 src/views/CashlinkManage.vue:154
@@ -732,7 +732,7 @@ msgstr "此更新非常容易，快速和安全。但是，现在仍是检查您
 msgid "There's much more. Read the full article"
 msgstr "还有更多信息，请阅读全文"
 
-#: src/views/CashlinkReceive.vue:307
+#: src/views/CashlinkReceive.vue:305
 msgid "This Cashlink has already been claimed."
 msgstr "此现金链接已被领取"
 
@@ -866,7 +866,7 @@ msgstr "糟糕，出了点问题"
 msgid "You are logged out."
 msgstr "您已登出"
 
-#: src/views/CashlinkReceive.vue:345
+#: src/views/CashlinkReceive.vue:343
 msgid "You are loved"
 msgstr "你被爱了"
 

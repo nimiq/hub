@@ -11,7 +11,7 @@ Get started in three easy steps:
 
 <div class="code-example">
   <p>Your address: <span id="output">-</span></p>
-  <button id="choose-address" class="btn btn-primary mb-1">Choose Address</button>
+  <button id="choose-address" class="btn btn-primary mb-1">Choose address</button>
 
   <script
     src="https://cdn.jsdelivr.net/npm/@nimiq/hub-api@v1.2.3/dist/standalone/HubApi.standalone.umd.js"
@@ -34,7 +34,7 @@ Get started in three easy steps:
 </div>
 ```html
 Your address: <span id="output">-</span>
-<button id="choose-address">Choose Address</button>
+<button id="choose-address">Choose address</button>
 
 <!-- 1. Include the Hub API from the CDN -->
 <script
