@@ -233,11 +233,6 @@ export interface HashedTimeLockedContract {
 
 export type Contract = VestingContract | HashedTimeLockedContract;
 
-export interface BtcAddress {
-    address: string,
-    path: string,
-}
-
 export interface Account {
     accountId: string;
     label: string;
@@ -247,8 +242,8 @@ export interface Account {
     addresses: Address[];
     contracts: Contract[];
     btcAddresses: {
-        internal: BtcAddress[],
-        external: BtcAddress[],
+        internal: string[],
+        external: string[],
     };
 }
 

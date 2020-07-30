@@ -70,6 +70,9 @@ const configureWebpack = {
         },
         devtoolFallbackModuleFilenameTemplate: 'webpack:///[resource-path]?[hash]',
     },
+    externals: {
+        'bitcoinjs-lib': 'BitcoinJS',
+    },
 };
 
 const pages = {

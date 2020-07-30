@@ -46,6 +46,7 @@ export default class OnboardingSelector extends Vue {
             appName: this.request.appName,
             defaultKeyPath: DEFAULT_KEY_PATH,
             enableBackArrow: true,
+            bitcoinXPubPath: BTC_ACCOUNT_KEY_PATH[Config.bitcoinAddressType][Config.bitcoinNetwork],
         };
         const client = this.$rpc.createKeyguardClient();
         client.create(request);

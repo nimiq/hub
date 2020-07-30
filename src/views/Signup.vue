@@ -12,6 +12,8 @@ import { Static } from '../lib/StaticStore';
 import { DEFAULT_KEY_PATH } from '@/lib/Constants';
 import CookieHelper from '../lib/CookieHelper';
 import NotEnoughCookieSpace from '../components/NotEnoughCookieSpace.vue';
+import { BTC_ACCOUNT_KEY_PATH } from '../lib/bitcoin/BitcoinConstants';
+import Config from 'config';
 
 @Component({components: {NotEnoughCookieSpace}})
 export default class Signup extends Vue {
@@ -32,6 +34,7 @@ export default class Signup extends Vue {
             enableBackArrow: (this.keyguardResult && this.keyguardResult.message === Errors.Messages.GOTO_CREATE)
                 ? true
                 : false,
+            bitcoinXPubPath: BTC_ACCOUNT_KEY_PATH[Config.bitcoinAddressType][Config.bitcoinNetwork],
         };
         const client = this.$rpc.createKeyguardClient(true);
         client.create(request);

@@ -21,15 +21,25 @@ export class WalletInfo {
             accounts.set(userFriendlyAddress, AccountInfo.fromObject(accountInfoEntry));
         });
         const contracts = o.contracts.map((contract) => ContractInfoHelper.fromObject(contract));
+
+        // Polyfill BTC address lists for pre-BTC wallets
+        if (!o.btcAddresses) o.btcAddresses = { internal: [], external: [] };
+
         const btcAddresses = {
-            internal: o.btcAddresses.internal.map(btcAddressInfoEntry => BtcAddressInfo.fromObject(btcAddressInfoEntry)),
-            external: o.btcAddresses.external.map(btcAddressInfoEntry => BtcAddressInfo.fromObject(btcAddressInfoEntry)),
+            internal: o.btcAddresses.internal
+                .map((btcAddressInfoEntry) => BtcAddressInfo.fromObject(btcAddressInfoEntry)),
+            external: o.btcAddresses.external
+                .map((btcAddressInfoEntry) => BtcAddressInfo.fromObject(btcAddressInfoEntry)),
         };
+
         return new WalletInfo(o.id, o.keyId, o.label, accounts, contracts, o.type,
-            o.keyMissing, o.fileExported, o.wordsExported, btcAddresses);
+            o.keyMissing, o.fileExported, o.wordsExported, o.btcXPub, btcAddresses);
     }
 
     public static objectToAccountType(o: WalletInfoEntry): Account {
+        // Polyfill BTC address lists for pre-BTC wallets
+        if (!o.btcAddresses) o.btcAddresses = { internal: [], external: [] };
+
         return {
             accountId: o.id,
             label: o.label,
@@ -39,8 +49,8 @@ export class WalletInfo {
             addresses: Array.from(o.accounts.values()).map((address) => AccountInfo.objectToAddressType(address)),
             contracts: o.contracts.map((contract) => ContractInfoHelper.objectToContractType(contract)),
             btcAddresses: {
-                internal: o.btcAddresses.internal.map(entry => BtcAddressInfo.objectToBtcAddressType(entry)),
-                external: o.btcAddresses.external.map(entry => BtcAddressInfo.objectToBtcAddressType(entry)),
+                internal: o.btcAddresses.internal.map((entry) => BtcAddressInfo.objectToBtcAddressType(entry)),
+                external: o.btcAddresses.external.map((entry) => BtcAddressInfo.objectToBtcAddressType(entry)),
             },
         };
     }
@@ -55,6 +65,7 @@ export class WalletInfo {
         public keyMissing: boolean = false,
         public fileExported: boolean = false,
         public wordsExported: boolean = false,
+        public btcXPub?: string,
         public btcAddresses: {
             internal: BtcAddressInfo[],
             external: BtcAddressInfo[],
@@ -127,9 +138,10 @@ export class WalletInfo {
             keyMissing: this.keyMissing,
             fileExported: this.fileExported,
             wordsExported: this.wordsExported,
+            btcXPub: this.btcXPub,
             btcAddresses: {
-                internal: this.btcAddresses.internal.map(btcAddressInfo => btcAddressInfo.toObject()),
-                external: this.btcAddresses.external.map(btcAddressInfo => btcAddressInfo.toObject()),
+                internal: this.btcAddresses.internal.map((btcAddressInfo) => btcAddressInfo.toObject()),
+                external: this.btcAddresses.external.map((btcAddressInfo) => btcAddressInfo.toObject()),
             },
         };
     }
@@ -144,8 +156,8 @@ export class WalletInfo {
             addresses: Array.from(this.accounts.values()).map((address) => address.toAddressType()),
             contracts: this.contracts.map((contract) => contract.toContractType()),
             btcAddresses: {
-                internal: this.btcAddresses.internal.map(btcAddressInfo => btcAddressInfo.toBtcAddressType()),
-                external: this.btcAddresses.external.map(btcAddressInfo => btcAddressInfo.toBtcAddressType()),
+                internal: this.btcAddresses.internal.map((btcAddressInfo) => btcAddressInfo.toBtcAddressType()),
+                external: this.btcAddresses.external.map((btcAddressInfo) => btcAddressInfo.toBtcAddressType()),
             },
         };
     }
@@ -164,6 +176,7 @@ export interface WalletInfoEntry {
     keyMissing: boolean;
     fileExported: boolean;
     wordsExported: boolean;
+    btcXPub?: string;
     btcAddresses: {
         internal: BtcAddressInfoEntry[],
         external: BtcAddressInfoEntry[],

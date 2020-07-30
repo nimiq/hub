@@ -88,6 +88,7 @@ class CookieJar {
                 keyMissing: true,
                 fileExported: false,
                 wordsExported: false,
+                btcAddresses: { internal: [], external: [] },
             };
             sizeNeeded += this.encodeWallet(dummyWallet).length;
         } else {
@@ -213,6 +214,8 @@ class CookieJar {
             // Account address
             bytes.push.apply(bytes, Array.from(account.address));
         }
+
+        // FIXME: Bitcoin accounts are skipped for now
 
         this.encodeContracts(wallet.contracts, bytes);
 

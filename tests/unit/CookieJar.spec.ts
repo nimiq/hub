@@ -3,6 +3,7 @@ import { WalletType, WalletInfoEntry } from '@/lib/WalletInfo';
 import { AccountInfoEntry } from '@/lib/AccountInfo';
 import CookieJar from '@/lib/CookieJar';
 import { Utf8Tools } from '@nimiq/utils';
+import { BtcAddressInfo, BtcAddressInfoEntry } from '@/lib/bitcoin/BtcAddressInfo';
 
 setup();
 
@@ -47,6 +48,13 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         keyMissing: true,
         fileExported: false,
         wordsExported: false,
+        btcAddresses: { internal: [{ // Test that this address is ignored by the CookieJar and not encoded/decoded
+            path: 'some path',
+            address: 'some address',
+            used: true,
+            balance: 10000,
+        } as BtcAddressInfoEntry],
+        external: [] },
     },
     {
         id: '1ee3d926a49d',
@@ -76,6 +84,7 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         keyMissing: true,
         fileExported: true,
         wordsExported: false,
+        btcAddresses: { internal: [], external: [] },
     },
     {
         id: '2978bf29b377',
@@ -96,6 +105,7 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         keyMissing: true,
         fileExported: false,
         wordsExported: true,
+        btcAddresses: { internal: [], external: [] },
     },
     {
         id: '78bf29b377e7',
@@ -124,6 +134,7 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         keyMissing: false,
         fileExported: true,
         wordsExported: true,
+        btcAddresses: { internal: [], external: [] },
     },
     {
         id: 'a5832a3b9489',
@@ -144,6 +155,7 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         keyMissing: false,
         fileExported: false,
         wordsExported: false,
+        btcAddresses: { internal: [], external: [] },
     },
     {
         id: 'd515aa19c4f7',
@@ -173,6 +185,7 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         keyMissing: false,
         fileExported: true,
         wordsExported: false,
+        btcAddresses: { internal: [], external: [] },
     },
 ];
 
@@ -204,6 +217,7 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         keyMissing: true,
         fileExported: false,
         wordsExported: false,
+        btcAddresses: { internal: [], external: [] },
     },
     {
         id: '1ee3d926a49d',
@@ -233,6 +247,7 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         keyMissing: true,
         fileExported: true,
         wordsExported: false,
+        btcAddresses: { internal: [], external: [] },
     },
     {
         id: '2978bf29b377',
@@ -253,6 +268,7 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         keyMissing: true,
         fileExported: false,
         wordsExported: true,
+        btcAddresses: { internal: [], external: [] },
     },
     {
         id: '78bf29b377e7',
@@ -281,6 +297,7 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         keyMissing: false,
         fileExported: true,
         wordsExported: true,
+        btcAddresses: { internal: [], external: [] },
     },
     {
         id: 'a5832a3b9489',
@@ -301,6 +318,7 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         keyMissing: false,
         fileExported: false,
         wordsExported: false,
+        btcAddresses: { internal: [], external: [] },
     },
     {
         id: 'd515aa19c4f7',
@@ -330,6 +348,7 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         keyMissing: false,
         fileExported: true,
         wordsExported: false,
+        btcAddresses: { internal: [], external: [] },
     },
 ];
 

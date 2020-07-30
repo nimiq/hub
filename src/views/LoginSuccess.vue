@@ -69,6 +69,7 @@ export default class LoginSuccess extends Vue {
                                 keyguardResultAccounts,
                                 this.onUpdate.bind(this),
                                 this.keyguardResult.length === 1,
+                                keyResult.bitcoinXPub,
                             );
                         } else {
                             collectionResult = await WalletInfoCollector.collectLegacyWalletInfo(
@@ -160,16 +161,7 @@ export default class LoginSuccess extends Vue {
             this.$addWalletAndSetActive(walletInfo);
         }
 
-        const result = this.walletInfos.map((walletInfo) => ({
-                accountId: walletInfo.id,
-                label: walletInfo.label,
-                type: walletInfo.type,
-                fileExported: walletInfo.fileExported,
-                wordsExported: walletInfo.wordsExported,
-                addresses: Array.from(walletInfo.accounts.values())
-                    .map((addressInfo) => addressInfo.toAddressType()),
-                contracts: walletInfo.contracts.map((contract) => contract.toContractType()),
-        }));
+        const result = this.walletInfos.map((walletInfo) => walletInfo.toAccountType());
 
         if (this.receiptsError) {
             this.title = this.$t('Your Addresses may be\nincomplete.') as string;

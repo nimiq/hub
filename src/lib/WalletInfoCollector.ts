@@ -16,6 +16,18 @@ import Config from 'config';
 import { ERROR_TRANSACTION_RECEIPTS } from '../lib/Constants';
 import LabelingMachine from './LabelingMachine';
 import { VestingContractInfo } from './ContractInfo';
+import { BtcAddressInfo } from './bitcoin/BtcAddressInfo';
+import { loadBitcoinJS } from './bitcoin/BitcoinJSLoader';
+import { Receipt as BtcReceipt } from '@nimiq/electrum-client';
+import {
+    EXTERNAL_INDEX,
+    INTERNAL_INDEX,
+    BTC_ACCOUNT_MAX_ALLOWED_ADDRESS_GAP,
+    EXTENDED_KEY_PREFIXES,
+    BTC_ACCOUNT_KEY_PATH,
+    BTC_NETWORK_TEST,
+} from './bitcoin/BitcoinConstants';
+import { getBtcNetwork, publicKeyToPayment, deriveAddressesFromXPub } from './bitcoin/BitcoinUtils';
 
 export type BasicAccountInfo = {
     address: string,
@@ -38,9 +50,10 @@ export default class WalletInfoCollector {
         // tslint:disable-next-line:no-empty
         onUpdate: (walletInfo: WalletInfo, currentlyCheckedAccounts: BasicAccountInfo[]) => void = () => {},
         skipActivityCheck = false,
+        bitcoinXPub?: string,
     ): Promise<WalletCollectionResultKeyguard> {
         return WalletInfoCollector._collectLedgerOrBip39WalletInfo(WalletType.BIP39, initialAccounts, onUpdate,
-            skipActivityCheck, keyId) as Promise<WalletCollectionResultKeyguard>;
+            skipActivityCheck, keyId, bitcoinXPub) as Promise<WalletCollectionResultKeyguard>;
     }
 
     public static async collectLedgerWalletInfo(
@@ -112,6 +125,7 @@ export default class WalletInfoCollector {
         onUpdate: (walletInfo: WalletInfo, currentlyCheckedAccounts: BasicAccountInfo[]) => void,
         skipActivityCheck: boolean,
         keyId?: string,
+        bitcoinXPub?: string,
     ): Promise<WalletCollectionResultKeyguard | WalletCollectionResultLedger> {
         if (walletType !== WalletType.LEDGER && walletType !== WalletType.BIP39) {
             throw new Error('Unsupported wallet type');
@@ -130,7 +144,16 @@ export default class WalletInfoCollector {
             // Doing this after starting deriveAccounts, as the call is cheaper then.
             if (walletType === WalletType.LEDGER) {
                 keyId = await LedgerApi.getWalletId();
+                bitcoinXPub = undefined; // TODO: Get Ledger BTC xpub
             }
+
+            // Start BTC address detection
+            const bitcoinAddresses: Promise<{
+                internal: BtcAddressInfo[],
+                external: BtcAddressInfo[],
+            }> = bitcoinXPub
+                ? this._deriveBitcoinAddresses(bitcoinXPub)
+                : Promise.resolve({internal: [], external: []});
 
             // Get or create the walletInfo instance and derive the first set of derived accounts
             const [walletInfo, firstSetOfDerivedAccounts] = await Promise.all([
@@ -144,8 +167,12 @@ export default class WalletInfoCollector {
             }
             onUpdate(walletInfo, firstSetOfDerivedAccounts);
 
-            const contracts = await WalletInfoCollector._addVestingContracts(walletInfo, firstSetOfDerivedAccounts[0],
-                onUpdate);
+            // This path is only called for LEDGER or BIP39 accounts, but
+            // BIP39 accounts cannot have vesting contracts because they
+            // did not exist at mainnet launch.
+            const contracts = walletType === WalletType.LEDGER
+                ? await WalletInfoCollector._addVestingContracts(walletInfo, firstSetOfDerivedAccounts[0], onUpdate)
+                : [];
             let hasActivity = contracts.length > 0;
 
             // Label Keyguard BIP39 accounts according to their first identicon background color
@@ -169,7 +196,7 @@ export default class WalletInfoCollector {
                 // network. For example, if the user adds the accounts derived with indices 0, 19, 39 to his wallet but
                 // then only ends up using accounts 0 and 39, the account at index 19 will not be found anymore on
                 // reimport. With the current implementation however, at least the account 39 would be found, while an
-                // implementation strictly following the specification would stop the search at index 20.
+                // implementation strictly following the specification would stop the search at index 19.
                 startIndex += ACCOUNT_MAX_ALLOWED_ADDRESS_GAP;
                 derivedAccountsPromise = WalletInfoCollector._deriveAccounts(startIndex,
                     ACCOUNT_MAX_ALLOWED_ADDRESS_GAP, walletType, keyId);
@@ -225,6 +252,11 @@ export default class WalletInfoCollector {
             const releaseKey = walletType === WalletType.BIP39
                 ? (removeKey?: boolean) => WalletInfoCollector._keyguardClient!.releaseKey(keyId!, removeKey)
                 : undefined;
+
+            const btcAddresses = await bitcoinAddresses;
+            walletInfo.btcXPub = bitcoinXPub;
+            walletInfo.btcAddresses = btcAddresses;
+            hasActivity = hasActivity || btcAddresses.external.some((btcAddressInfo) => btcAddressInfo.used);
 
             return {
                 walletInfo,
@@ -398,5 +430,91 @@ export default class WalletInfoCollector {
         }
 
         return contracts;
+    }
+
+    // TODO: Also return a potential receipt error
+    private static async _deriveBitcoinAddresses(xpub: string): Promise<{
+        internal: BtcAddressInfo[],
+        external: BtcAddressInfo[],
+    }> {
+        // @nimiq/electrum-client already depends on a globally available BitcoinJS,
+        // so we need to load it first.
+        await loadBitcoinJS();
+
+        const NimiqElectrumClient = await import(/*webpackChunkName: "electrum-client"*/ '@nimiq/electrum-client');
+        const electrum = new NimiqElectrumClient.ElectrumApi({
+            token: Config.bitcoinNetwork === BTC_NETWORK_TEST ? 'testnet' : 'mainnet',
+            network: Config.bitcoinNetwork === BTC_NETWORK_TEST ? 'testnet' : 'bitcoin',
+        });
+
+        // Setup Bitcoin network
+        const network: BitcoinJS.Network = {
+            ...getBtcNetwork(),
+            // Adjust the first bytes of xpubs to the respective BIP we are using, to ensure correct xpub parsing
+            bip32: EXTENDED_KEY_PREFIXES[Config.bitcoinAddressType][Config.bitcoinNetwork],
+        };
+
+        const extendedKey = BitcoinJS.bip32.fromBase58(xpub, network);
+        const externalKey = extendedKey.derive(EXTERNAL_INDEX);
+        const externalPath =
+            `${BTC_ACCOUNT_KEY_PATH[Config.bitcoinAddressType][Config.bitcoinNetwork]}/${EXTERNAL_INDEX}`;
+
+        /**
+         * According to https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki#account-discovery
+         * wallets should only scan external addresses for activity, as internal addresses can only receive
+         * transactions from external addresses of the same wallet anyway and will thus be discovered when
+         * parsing the external tx history. Since we only check for receipts in this address detection step,
+         * we cannot find out which internal addresses specifically have been used yet.
+         * At the end of the detection, we will simply return the same number of internal addresses as we
+         * return external ones, and the wallet can then find out which of those have been used by checking
+         * the actual transactions against the internal addresses. That should be enough internal addresses
+         * to provide regular wallet functionality.
+         */
+
+        let gap = 0;
+        let i = 0;
+        const externalAddresses: BtcAddressInfo[] = [];
+
+        while (gap < BTC_ACCOUNT_MAX_ALLOWED_ADDRESS_GAP) {
+            const pubKey = externalKey.derive(i).publicKey;
+
+            const address = publicKeyToPayment(pubKey).address;
+            if (!address) throw new Error(`Cannot create external address for ${xpub} index ${i}`);
+
+            // Check address balance
+            const balances = await electrum.getBalance(address);
+
+            // If no balance, then check tx activity
+            const receipts = !balances.confirmed && !balances.unconfirmed
+                ? await electrum.getReceipts(address)
+                : [] as BtcReceipt[];
+
+            const used = balances.confirmed > 0 || balances.unconfirmed > 0 || receipts.length > 0;
+
+            externalAddresses.push(new BtcAddressInfo(
+                `${externalPath}/${i}`,
+                address,
+                used,
+                balances.confirmed,
+            ));
+
+            if (used) {
+                gap = 0;
+            } else {
+                gap += 1;
+            }
+
+            i += 1;
+        }
+
+        // TODO: Derive a few more external addresses to give to the wallet as a reserve.
+
+        // As described above, generate the same number of internal addresses as we derived external ones
+        const internalAddresses = deriveAddressesFromXPub(extendedKey, [INTERNAL_INDEX], 0, externalAddresses.length);
+
+        return {
+            internal: internalAddresses,
+            external: externalAddresses,
+        };
     }
 }

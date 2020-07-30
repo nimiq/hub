@@ -1,5 +1,3 @@
-import { BtcAddress } from '../PublicRequestTypes';
-
 export class BtcAddressInfo {
     public static fromObject(o: BtcAddressInfoEntry): BtcAddressInfo {
         return new BtcAddressInfo(
@@ -10,11 +8,8 @@ export class BtcAddressInfo {
         );
     }
 
-    public static objectToBtcAddressType(o: BtcAddressInfoEntry): BtcAddress {
-        return {
-            address: o.address,
-            path: o.path,
-        };
+    public static objectToBtcAddressType(o: BtcAddressInfoEntry): string {
+        return o.address;
     }
 
     public walletId?: string;
@@ -35,11 +30,8 @@ export class BtcAddressInfo {
         };
     }
 
-    public toBtcAddressType(): BtcAddress {
-        return {
-            address: this.address,
-            path: this.path,
-        };
+    public toBtcAddressType(): string {
+        return this.address;
     }
 }
 
