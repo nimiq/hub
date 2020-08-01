@@ -20,7 +20,7 @@ import LabelingMachine from '@/lib/LabelingMachine';
 import { i18n } from '../i18n/i18n-setup';
 import { deriveAddressesFromXPub } from '../lib/bitcoin/BitcoinUtils';
 import { loadBitcoinJS } from '../lib/bitcoin/BitcoinJSLoader';
-import { INTERNAL_INDEX, EXTERNAL_INDEX } from '../lib/bitcoin/BitcoinConstants';
+import { INTERNAL_INDEX, EXTERNAL_INDEX, BTC_ACCOUNT_MAX_ALLOWED_ADDRESS_GAP } from '../lib/bitcoin/BitcoinConstants';
 
 @Component({components: {SmallPage, StatusScreen, CheckmarkIcon}})
 export default class SignupSuccess extends Vue {
@@ -51,8 +51,10 @@ export default class SignupSuccess extends Vue {
         const bitcoinXPub = this.keyguardResult[0].bitcoinXPub;
         const btcAddresses = bitcoinXPub
             ? {
-                internal: deriveAddressesFromXPub(bitcoinXPub, [INTERNAL_INDEX]),
-                external: deriveAddressesFromXPub(bitcoinXPub, [EXTERNAL_INDEX]),
+                internal:
+                    deriveAddressesFromXPub(bitcoinXPub, [INTERNAL_INDEX], 0, 2 * BTC_ACCOUNT_MAX_ALLOWED_ADDRESS_GAP),
+                external:
+                    deriveAddressesFromXPub(bitcoinXPub, [EXTERNAL_INDEX], 0, 2 * BTC_ACCOUNT_MAX_ALLOWED_ADDRESS_GAP),
             }
             : {
                 internal: [],

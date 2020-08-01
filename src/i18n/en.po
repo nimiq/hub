@@ -834,7 +834,7 @@ msgstr ""
 msgid "Verify Payment"
 msgstr ""
 
-#: src/views/SignupSuccess.vue:84
+#: src/views/SignupSuccess.vue:86
 msgid ""
 "Welcome to the\n"
 "Nimiq Blockchain."
