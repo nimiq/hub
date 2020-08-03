@@ -375,31 +375,28 @@ export class RequestParser {
                     || !signBtcTransactionRequest.inputs.length) throw new Error('inputs must be a non-empty array');
 
                 const inputs = signBtcTransactionRequest.inputs.map((input) => {
-                    if (!input.address
-                        || typeof input.address !== 'string'
+                    if (!input || typeof input !== 'object') throw new Error('input must be an object');
+
+                    if (typeof input.address !== 'string'
                         || input.address.length < 26
                         || input.address.length > 35
                     ) throw new Error('input must contain a valid address');
 
-                    if (!input.transactionHash
-                        || typeof input.transactionHash !== 'string'
+                    if (typeof input.transactionHash !== 'string'
                         || input.transactionHash.length !== 64
                     ) throw new Error('input must contain a valid transactionHash');
 
-                    if (!input.outputIndex
-                        || typeof input.outputIndex !== 'number'
+                    if (typeof input.outputIndex !== 'number'
                         || input.outputIndex < 0
                     ) throw new Error('input must contain a valid outputIndex');
 
-                    if (!input.outputScript
-                        || typeof input.outputScript !== 'string'
+                    if (typeof input.outputScript !== 'string'
                         || (input.outputScript.length !== 44     // P2WPKH
                             && input.outputScript.length !== 46  // P2SH
                             && input.outputScript.length !== 50) // P2PKH
                     ) throw new Error('input must contain a valid outputScript');
 
-                    if (!input.value
-                        || typeof input.value !== 'number'
+                    if (typeof input.value !== 'number'
                         || input.value <= 0
                     ) throw new Error('input must contain a positive value');
 
