@@ -88,6 +88,29 @@ export interface ParsedManageCashlinkRequest extends ParsedBasicRequest {
     cashlinkAddress: Nimiq.Address;
 }
 
+/**
+ * Bitcoin
+ */
+
+export interface ParsedSignBtcTransactionRequest extends ParsedBasicRequest {
+    inputs: Array<{
+        address: string,
+        transactionHash: string,
+        outputIndex: number,
+        outputScript: string,
+        value: number,
+    }>;
+    output: {
+        address: string,
+        value: number,
+        label?: string,
+    };
+    changeOutput?: {
+        address: string,
+        value: number,
+    };
+}
+
 // Discriminated Unions
 export type ParsedRpcRequest = ParsedSignTransactionRequest
                              | ParsedCreateCashlinkRequest
@@ -98,4 +121,5 @@ export type ParsedRpcRequest = ParsedSignTransactionRequest
                              | ParsedOnboardRequest
                              | ParsedRenameRequest
                              | ParsedSignMessageRequest
-                             | ParsedExportRequest;
+                             | ParsedExportRequest
+                             | ParsedSignBtcTransactionRequest;

@@ -25,6 +25,7 @@ export enum RequestType {
     CHOOSE_ADDRESS = 'choose-address',
     CREATE_CASHLINK = 'create-cashlink',
     MANAGE_CASHLINK = 'manage-cashlink',
+    SIGN_BTC_TRANSACTION = 'sign-btc-transaction',
 }
 
 export interface BasicRequest {
@@ -314,6 +315,34 @@ export interface ManageCashlinkRequest extends BasicRequest {
     cashlinkAddress: string;
 }
 
+/**
+ * Bitcoin
+ */
+
+export interface SignBtcTransactionRequest extends BasicRequest {
+    inputs: Array<{
+        address: string,
+        transactionHash: string,
+        outputIndex: number,
+        outputScript: string,
+        value: number,
+    }>;
+    output: {
+        address: string,
+        value: number,
+        label?: string,
+    };
+    changeOutput?: {
+        address: string,
+        value: number,
+    };
+}
+
+export interface SignedBtcTransaction {
+    serializedTx: string; // HEX
+    hash: string; // HEX
+}
+
 export type RpcRequest = SignTransactionRequest
                        | CreateCashlinkRequest
                        | ManageCashlinkRequest
@@ -323,7 +352,8 @@ export type RpcRequest = SignTransactionRequest
                        | OnboardRequest
                        | RenameRequest
                        | SignMessageRequest
-                       | ExportRequest;
+                       | ExportRequest
+                       | SignBtcTransactionRequest;
 
 export type RpcResult = SignedTransaction
                       | Account
@@ -332,7 +362,8 @@ export type RpcResult = SignedTransaction
                       | Address
                       | Cashlink
                       | SignedMessage
-                      | ExportResult;
+                      | ExportResult
+                      | SignedBtcTransaction;
 
 export type ResultByRequestType<T> =
     T extends RequestType.RENAME ? Account :

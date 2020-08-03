@@ -58,6 +58,11 @@ const RequestError            = () => import(/*webpackChunkName: "request-error"
 const ErrorHandlerUnsupportedLedger = () => import(/*webpackChunkName: "unsupported-ledger"*/
     './views/ErrorHandlerUnsupportedLedger.vue');
 
+const SignBtcTransaction         = () => import(/*webpackChunkName: "sign-btc-transaction"*/
+    './views/SignBtcTransaction.vue');
+const SignBtcTransactionSuccess  = () => import(/*webpackChunkName: "sign-btc-transaction"*/
+    './views/SignBtcTransactionSuccess.vue');
+
 Vue.use(Router);
 
 export function keyguardResponseRouter(
@@ -88,6 +93,10 @@ export function keyguardResponseRouter(
         case KeyguardCommand.SIGN_MESSAGE:
             // The SIGN_MESSAGE Keyguard command is used by Accounts' SIGN_MESSAGE and
             // NIMIQ_ID (future). Thus we return the user to the respective handler component
+            resolve = `${originalRequestType}-success`; break;
+        case KeyguardCommand.SIGN_BTC_TRANSACTION:
+            // The SIGN_BTC_TRANSACTION Keyguard command is used by Accounts' SIGN_BTC_TRANSACTION andCHECKOUT.
+            // Thus we return the user to the respective handler component
             resolve = `${originalRequestType}-success`; break;
         default:
             throw new Error(`router.keyguardResponseRouter not defined for Keyguard command: ${command}`);
@@ -271,6 +280,16 @@ export default new Router({
             path: `/${RequestType.SIGN_MESSAGE}/ledger`,
             component: ErrorHandlerUnsupportedLedger,
             // not specifying a name here to not trigger automatic routing to this view in RpcApi.ts
+        },
+        {
+            path: `/${RequestType.SIGN_BTC_TRANSACTION}`,
+            component: SignBtcTransaction,
+            name: RequestType.SIGN_BTC_TRANSACTION,
+        },
+        {
+            path: `/${RequestType.SIGN_BTC_TRANSACTION}/success`,
+            component: SignBtcTransactionSuccess,
+            name: `${RequestType.SIGN_BTC_TRANSACTION}-success`,
         },
     ],
 });

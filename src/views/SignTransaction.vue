@@ -4,9 +4,7 @@
 import { Component, Vue } from 'vue-property-decorator';
 import { ParsedSignTransactionRequest } from '../lib/RequestTypes';
 import KeyguardClient from '@nimiq/keyguard-client';
-import { WalletStore } from '@/lib/WalletStore';
 import staticStore, { Static } from '../lib/StaticStore';
-import { VestingContractInfo, ContractInfo } from '@/lib/ContractInfo';
 import { WalletInfo } from '../lib/WalletInfo';
 import { Getter } from 'vuex-class';
 

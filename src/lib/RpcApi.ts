@@ -8,6 +8,7 @@ import {
     ParsedSignMessageRequest,
     ParsedSignTransactionRequest,
     ParsedSimpleRequest,
+    ParsedSignBtcTransactionRequest,
 } from './RequestTypes';
 import { RequestParser } from './RequestParser';
 import { Currency, RequestType, RpcRequest, RpcResult } from './PublicRequestTypes';
@@ -49,6 +50,7 @@ export default class RpcApi {
         RequestType.CHOOSE_ADDRESS,
         RequestType.CREATE_CASHLINK,
         RequestType.MANAGE_CASHLINK,
+        RequestType.SIGN_BTC_TRANSACTION,
     ];
 
     constructor(store: Store<RootState>, staticStore: StaticStore, router: Router) {
@@ -81,6 +83,7 @@ export default class RpcApi {
             RequestType.SIGN_MESSAGE,
             RequestType.MIGRATE,
             RequestType.CHOOSE_ADDRESS,
+            RequestType.SIGN_BTC_TRANSACTION,
         ]);
         this._registerKeyguardApis([
             KeyguardCommand.SIGN_TRANSACTION,
@@ -91,6 +94,7 @@ export default class RpcApi {
             KeyguardCommand.REMOVE,
             KeyguardCommand.DERIVE_ADDRESS,
             KeyguardCommand.SIGN_MESSAGE,
+            KeyguardCommand.SIGN_BTC_TRANSACTION,
         ]);
 
         this._router.beforeEach((to: Route, from: Route, next: (arg?: string | false | Route) => void) => {
@@ -281,11 +285,15 @@ export default class RpcApi {
             if ((request as ParsedSimpleRequest).walletId) {
                 accountRequired = true;
                 account = await WalletStore.Instance.get((request as ParsedSimpleRequest).walletId);
-                if (!account) errorMsg = 'WalletId not found';
+                errorMsg = 'WalletId not found';
             } else if (requestType === RequestType.SIGN_TRANSACTION) {
                 accountRequired = true;
                 const address = (request as ParsedSignTransactionRequest).sender;
                 account = this._store.getters.findWalletByAddress(address.toUserFriendlyAddress(), true);
+            } else if (requestType === RequestType.SIGN_BTC_TRANSACTION) {
+                accountRequired = true;
+                const btcAddress = (request as ParsedSignBtcTransactionRequest).inputs[0].address;
+                account = this._store.getters.findWalletByBtcAddress(btcAddress);
             } else if (requestType === RequestType.SIGN_MESSAGE) {
                 accountRequired = false; // Sign message allows user to select an account
                 const address = (request as ParsedSignMessageRequest).signer;

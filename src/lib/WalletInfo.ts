@@ -111,6 +111,12 @@ export class WalletInfo {
         return this.accounts.get(contract.owner.toUserFriendlyAddress()) || null;
     }
 
+    public findBtcAddressInfo(address: string): BtcAddressInfo | null {
+        return this.btcAddresses.internal.find((addressInfo) => addressInfo.address === address)
+            || this.btcAddresses.external.find((addressInfo) => addressInfo.address === address)
+            || null;
+    }
+
     public setContract(updatedContract: ContractInfo) {
         const index = this.contracts.findIndex((contract) => contract.address.equals(updatedContract.address));
         if (index < 0) {

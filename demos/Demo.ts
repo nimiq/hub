@@ -415,7 +415,7 @@ class Demo {
                 recipientLabel: 'Paul McCartney',
                 inputs: [{
                     keyPath: 'm/49\'/1\'/0\'/0/0',
-                    txHash: 'ef4aaf6087d0cc48ff09355d715c257078467ca4d9dd75a20824e70a78fb43cc',
+                    transactionHash: 'ef4aaf6087d0cc48ff09355d715c257078467ca4d9dd75a20824e70a78fb43cc',
                     outputIndex: 0,
                     outputScript: 'a914a7b4db6aa34c1dcab54cc4b4cd2b1595ddd8f23487',
                     value: Math.round(0.010 * 1e8),
@@ -425,6 +425,7 @@ class Demo {
                     value: Math.round(0.009 * 1e8),
                 },
                 // changeOutput: {
+                //     keyPath: 'm/49\'/1\'/0\'/1/0',
                 //     address: '',
                 //     value: 0,
                 // },
