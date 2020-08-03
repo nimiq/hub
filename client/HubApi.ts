@@ -25,6 +25,8 @@ import {
     SignedMessage,
     CreateCashlinkRequest,
     ManageCashlinkRequest,
+    SignBtcTransactionRequest,
+    SignedBtcTransaction,
     Cashlink,
     CashlinkState,
     CashlinkTheme,
@@ -155,6 +157,13 @@ export default class HubApi<DB extends BehaviorType = BehaviorType.POPUP> { // D
         requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
     ): Promise<B extends BehaviorType.REDIRECT ? void : SignedMessage> {
         return this._request(requestBehavior, RequestType.SIGN_MESSAGE, [request]);
+    }
+
+    public signBtcTransaction<B extends BehaviorType = DB>(
+        request: Promise<SignBtcTransactionRequest> | SignBtcTransactionRequest,
+        requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
+    ): Promise<B extends BehaviorType.REDIRECT ? void : SignedBtcTransaction> {
+        return this._request(requestBehavior, RequestType.SIGN_BTC_TRANSACTION, [request]);
     }
 
     /**
