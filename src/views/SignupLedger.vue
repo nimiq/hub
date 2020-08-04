@@ -223,7 +223,7 @@ export default class SignupLedger extends Vue {
 
         this.state = SignupLedger.State.FINISHED;
         setTimeout(() => {
-            const result = this.walletInfo!.toAccountType();
+            const result: Account[] = [this.walletInfo!.toAccountType()];
             this.$rpc.resolve(result);
         }, StatusScreen.SUCCESS_REDIRECT_DELAY);
     }

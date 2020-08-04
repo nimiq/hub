@@ -129,7 +129,7 @@
         }
 
         private done() {
-            const result = this.wallet!.toAccountType();
+            const result: Account = this.wallet!.toAccountType();
             this.$rpc.resolve(result);
         }
 
