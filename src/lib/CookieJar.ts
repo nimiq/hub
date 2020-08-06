@@ -11,6 +11,7 @@ import LabelingMachine from './LabelingMachine';
 import { ContractInfoEntry, VestingContractInfoEntry } from './ContractInfo';
 import { AccountInfoEntry } from './AccountInfo';
 import { Utf8Tools } from '@nimiq/utils';
+import { decodeBase58 } from './bitcoin/Base58';
 
 class CookieJar {
     public static readonly VERSION = 3;
@@ -21,6 +22,15 @@ class CookieJar {
         + 63 // account label
         + 20 // address
     ;
+
+    public static XPUB_TYPES = [
+        '0488b21e', // xpub - BIP44 Mainnet
+        '043587cf', // tpub - BIP44 Testnet
+        '049d7cb2', // ypub - BIP49 Mainnet
+        '044a5262', // upub - BIP49 Testnet
+        '04b24746', // zpub - BIP84 Mainnet
+        '045f1cf6', // vpub - BIP84 Testnet
+    ];
 
     public static fill(wallets: WalletInfoEntry[]) {
         const maxAge = 60 * 60 * 24 * 365; // 1 year
@@ -88,6 +98,7 @@ class CookieJar {
                 keyMissing: true,
                 fileExported: false,
                 wordsExported: false,
+                btcXPub: 'xpub6H1LXWLaKsWFhvm6RVpEL9P4KfRZSW7abD2ttkWP3SSQvnyA8FSVqNTEcYFgJS2UaFcxupHiYkro49S8yGasTvXEYBVPamhGW6cFJodrTHy',
                 btcAddresses: { internal: [], external: [] },
             };
             sizeNeeded += this.encodeWallet(dummyWallet).length;
@@ -170,6 +181,7 @@ class CookieJar {
                 | (wallet.fileExported ? CookieJar.StatusFlags.FILE_EXPORTED : CookieJar.StatusFlags.NONE)
                 | (wallet.wordsExported ? CookieJar.StatusFlags.WORDS_EXPORTED : CookieJar.StatusFlags.NONE)
                 | (wallet.contracts.length ? CookieJar.StatusFlags.HAS_CONTRACTS : CookieJar.StatusFlags.NONE)
+                | (wallet.btcXPub ? CookieJar.StatusFlags.HAS_XPUB : CookieJar.StatusFlags.NONE)
         ;
         bytes.push(statusByte);
 
@@ -215,9 +227,9 @@ class CookieJar {
             bytes.push.apply(bytes, Array.from(account.address));
         }
 
-        // FIXME: Bitcoin accounts are skipped for now
-
         this.encodeContracts(wallet.contracts, bytes);
+
+        this.encodeXPub(wallet.btcXPub, bytes);
 
         return bytes;
     }
@@ -256,6 +268,21 @@ class CookieJar {
                     throw new Error('Unknown contract type: ' + contract.type);
             }
         }
+
+        return bytes;
+    }
+
+    private static encodeXPub(xpub: string | undefined, bytes: number[]) {
+        if (!xpub) return;
+
+        const xpubBytes = decodeBase58(xpub);
+        const xpubType = CookieJar.XPUB_TYPES.indexOf(Nimiq.BufferUtils.toHex(new Uint8Array(xpubBytes.slice(0, 4))));
+        const xpubBody = xpubBytes.slice(4);
+
+        bytes.push(xpubType);
+        bytes.push.apply(bytes, xpubBody);
+
+        return bytes;
     }
 
     private static getCookieContents(): string | null {
@@ -294,6 +321,7 @@ namespace CookieJar {
         FILE_EXPORTED  = 1 << 1,
         WORDS_EXPORTED = 1 << 2,
         HAS_CONTRACTS  = 1 << 3,
+        HAS_XPUB       = 1 << 4,
     }
 }
 

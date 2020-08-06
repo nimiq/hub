@@ -13,6 +13,7 @@ import {
 import LabelingMachine from './LabelingMachine';
 import { ContractInfoEntry, VestingContractInfoEntry } from './ContractInfo';
 import AddressUtils from './AddressUtils';
+import { encodeBase58 } from './bitcoin/Base58';
 
 export class CookieDecoder {
     public static decode(str: string): WalletInfoEntry[] {
@@ -64,6 +65,8 @@ export class CookieDecoder {
             (statusByte & CookieJar.StatusFlags.WORDS_EXPORTED) === CookieJar.StatusFlags.WORDS_EXPORTED;
         const hasContracts =
             (statusByte & CookieJar.StatusFlags.HAS_CONTRACTS) === CookieJar.StatusFlags.HAS_CONTRACTS;
+        const hasXPub =
+            (statusByte & CookieJar.StatusFlags.HAS_XPUB) === CookieJar.StatusFlags.HAS_XPUB;
 
         // Wallet ID
         let id: string = '';
@@ -105,6 +108,8 @@ export class CookieDecoder {
 
         const contracts = hasContracts ? this.decodeContracts(bytes) : [];
 
+        const btcXPub = hasXPub ? this.decodeXPub(bytes) : undefined;
+
         const firstAccount = accounts.values().next().value;
         const walletLabel = walletLabelBytes.length > 0
             ? Utf8Tools.utf8ByteArrayToString(new Uint8Array(walletLabelBytes))
@@ -122,6 +127,7 @@ export class CookieDecoder {
             keyMissing,
             fileExported,
             wordsExported,
+            btcXPub,
             btcAddresses: { internal: [], external: [] },
         };
 
@@ -228,6 +234,16 @@ export class CookieDecoder {
             default:
                 throw new Error('Unknown contract type: ' + type);
         }
+    }
+
+    private static decodeXPub(bytes: number[]): string {
+        const xpubType = this.readByte(bytes);
+        const xpubBytes = this.readBytes(bytes, 78); // 82 length - 4 bytes prefix
+
+        const prefix = CookieJar.XPUB_TYPES[xpubType];
+        const prefixBytes = prefix.match(/.{2}/g)!.map((byte) => parseInt(byte, 16));
+
+        return encodeBase58(prefixBytes.concat(xpubBytes));
     }
 
     private static legacyCookie(version: number, bytes: number[]): WalletInfoEntry[] {
