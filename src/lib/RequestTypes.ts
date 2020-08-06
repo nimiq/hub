@@ -111,6 +111,11 @@ export interface ParsedSignBtcTransactionRequest extends ParsedBasicRequest {
     };
 }
 
+export interface ParsedAddBtcAddressesRequest extends ParsedSimpleRequest {
+    chain: 'internal' | 'external';
+    firstIndex: number;
+}
+
 // Discriminated Unions
 export type ParsedRpcRequest = ParsedSignTransactionRequest
                              | ParsedCreateCashlinkRequest
@@ -122,4 +127,5 @@ export type ParsedRpcRequest = ParsedSignTransactionRequest
                              | ParsedRenameRequest
                              | ParsedSignMessageRequest
                              | ParsedExportRequest
-                             | ParsedSignBtcTransactionRequest;
+                             | ParsedSignBtcTransactionRequest
+                             | ParsedAddBtcAddressesRequest;

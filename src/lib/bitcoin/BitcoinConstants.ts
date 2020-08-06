@@ -62,3 +62,5 @@ export const BIP84_ADDRESS_PREFIX = {
     MAIN: 'bc',
     TEST: 'tb',
 };
+
+export const ERROR_NO_XPUB = 'NO_XPUB';
