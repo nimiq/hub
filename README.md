@@ -160,7 +160,7 @@ To help translate the Hub, the procedure is as follows:
   must also be preserved in the translation. For example:
   ```
   msgid "Your Account is ready. | Your Accounts are ready."
-  msgstr "Votre compte est prêt. | Vos comptes sont prêts."
+  msgstr "Votre Compte est prêt. | Vos Comptes sont prêts."
   ```
 
 - If you're a transifex collaborator, and need some information about how to get started, here are two links for you:

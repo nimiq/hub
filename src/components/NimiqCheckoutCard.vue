@@ -66,7 +66,7 @@
         <template v-else>
             <h2 class="nq-h1">{{ $t('Choose an Address to pay') }}</h2>
             <div v-if="!balancesUpdating && !hasEligibleAddress" class="non-sufficient-balance">
-                <p class="nq-text nq-orange">{{ $t('None of your available Addresses has sufficient balance.') }}</p>
+                <p class="nq-text nq-orange">{{ $t('None of your available addresses has sufficient balance.') }}</p>
                 <a class="nq-button-pill light-blue" href="https://nimiq.com/#exchanges" target="_blank">
                     <TransferIcon/> {{ $t('Get NIM') }}&nbsp;
                 </a>

@@ -25,7 +25,7 @@
 
         <button class="global-close nq-button-s" :class="{'hidden': labelsStored}" @click="close">
             <ArrowLeftSmallIcon/>
-            {{ $t('Cancel Renaming') }}
+            {{ $t('Back to {appName}', { appName: request.appName }) }}
         </button>
     </div>
 </template>

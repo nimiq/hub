@@ -30,7 +30,7 @@ be used to sign transactions offline.
 <div class="code-example">
   <p>Result: <span id="output">-</span></p>
   <small>Please choose an address first to use as the sender:</small><br>
-  <button id="choose-address-btn" class="btn mb-1">Choose Address</button>
+  <button id="choose-address-btn" class="btn mb-1">Choose address</button>
   <button id="sign-transaction-btn" class="btn btn-primary mb-1" disabled>Sign Transaction</button>
 
   <script

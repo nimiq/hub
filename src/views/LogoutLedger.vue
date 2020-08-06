@@ -5,7 +5,9 @@
             <PageBody>
                 <div class="warning nq-text nq-red">
                     {{ $t('Logging out will delete custom settings and names for this account.') }}
-                    {{ request.appName === 'Accounts' ? $t('Contacts are not affected.') : '' }}
+                    {{ request.appName === 'Wallet' || request.appName === 'Accounts'
+                        ? $t('Contacts are not affected.') /* for safe and wallet add a note regarding contacts */
+                        : '' }}
                 </div>
                 <div class="ledger-illustration"></div>
                 <div class="hint nq-text">{{ $t('Your Ledger is\nrequired to log in again.') }}</div>

@@ -15,7 +15,7 @@
                         <AccountRing :addresses="['NQ18 37VM K2Y5 2HPY 5U80 2E0U VHUJ R7RK QSNE', 'NQ81 K7NT 9TJA BXE8 5D0R 3FN4 QJK0 YVYQ YD9A', 'NQ90 277A GR05 F775 AVFK 61RP CS7Y R7JA KGCT']"/>
                     </div>
                     <p class="topic-text">
-                        {{ $t('One Account can now have multiple Addresses.') }}
+                        {{ $t('One account can now have multiple addresses.') }}
                     </p>
                 </div>
                 <div class="topic">
@@ -29,7 +29,7 @@
                 <div class="topic">
                     <div class="topic-visual qr-code"><ScanQrCodeIcon/></div>
                     <p class="topic-text">
-                        {{ $t('Create and scan QR codes to quickly share Addresses.') }}
+                        {{ $t('Create and scan QR codes to quickly share addresses.') }}
                     </p>
                 </div>
 
@@ -216,7 +216,7 @@ export default class Migrate extends Vue {
     private async doMigration() {
         this.page = 'migration';
 
-        this.status = this.$t('Retrieving your old Accounts...') as string;
+        this.status = this.$t('Retrieving your old accounts...') as string;
         const legacyAccounts = await this.$rpc.keyguardClient.listLegacyAccounts();
 
         if (!legacyAccounts.length) {
@@ -230,7 +230,7 @@ export default class Migrate extends Vue {
         this.status = this.$t('Detecting vesting contracts...') as string;
         const genesisVestingContracts = await (this.$refs.network as Network).getGenesisVestingContracts();
 
-        this.status = this.$t('Storing your new Accounts...') as string;
+        this.status = this.$t('Storing your new accounts...') as string;
         // For the wallet ID derivation to work, the ID derivation and storing of new wallets needs
         // to happen serially, e.g. synchroneous.
         const walletInfos: WalletInfo[] = [];

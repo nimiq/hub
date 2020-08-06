@@ -14,7 +14,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: src/views/ChooseAddress.vue:7
-msgid "{appName} is asking for an Address to use."
+msgid "{appName} is asking for an address to use."
 msgstr "{appName} fragt nach einer Adresse die verwendet werden soll."
 
 #: src/components/NonNimiqCheckoutCard.vue:64
@@ -26,8 +26,8 @@ msgid "1. Connect your Ledger Device"
 msgstr "1. Verbinde deinen Ledger"
 
 #: src/components/LedgerUi.vue:246
-msgid "2. Enter your Pin"
-msgstr "2. PIN eingeben"
+msgid "2. Enter your PIN"
+msgstr "2. Gib deine PIN ein"
 
 #: src/components/LedgerUi.vue:247
 msgid "3. Open the Nimiq App"
@@ -70,7 +70,7 @@ msgid "Add a message..."
 msgstr "Nachricht hinzufügen..."
 
 #: src/views/AddAccountSelection.vue:4
-msgid "Add to Account"
+msgid "Add to account"
 msgstr "Dem Konto hinzufügen"
 
 #: src/views/AddAddressLedger.vue:11
@@ -102,8 +102,8 @@ msgstr "Warte auf Empfangsbestätigung..."
 #: src/views/CashlinkCreate.vue:83 src/views/ChooseAddress.vue:19
 #: src/views/ErrorHandlerUnsupportedLedger.vue:11
 #: src/views/LogoutLedger.vue:24 src/views/OnboardingSelector.vue:85
-#: src/views/SignMessage.vue:24 src/views/SignTransactionLedger.vue:111
-#: src/views/SignupLedger.vue:37
+#: src/views/Rename.vue:28 src/views/SignMessage.vue:24
+#: src/views/SignTransactionLedger.vue:111 src/views/SignupLedger.vue:37
 msgid "Back to {appName}"
 msgstr "Zurück zu {appName}"
 
@@ -151,10 +151,6 @@ msgstr "{payment} abbrechen"
 msgid "Cancel Payment"
 msgstr "Zahlung Abbrechen"
 
-#: src/views/Rename.vue:28
-msgid "Cancel Renaming"
-msgstr "Umbenennen Abbrechen"
-
 #: src/views/CashlinkReceive.vue:259
 msgid "Cashlink claimed!"
 msgstr "Cashlink eingelöst!"
@@ -167,19 +163,19 @@ msgstr "Cashlink erstellt"
 msgid "Cashlink created."
 msgstr "Cashlink erstellt."
 
-#: src/views/CashlinkReceive.vue:309
+#: src/views/CashlinkReceive.vue:307
 msgid "Cashlink empty :("
 msgstr "Cashlink ist leer :("
 
-#: src/views/CashlinkReceive.vue:302
+#: src/views/CashlinkReceive.vue:300
 msgid "Cashlink funding"
 msgstr "Cashlink-Aufladung"
 
-#: src/views/CashlinkReceive.vue:306
+#: src/views/CashlinkReceive.vue:304
 msgid "Cashlink is empty"
 msgstr "Cashlink ist leer"
 
-#: src/views/CashlinkReceive.vue:301
+#: src/views/CashlinkReceive.vue:299
 msgid "Cashlink not funded"
 msgstr "Cashlink nicht aufgeladen"
 
@@ -191,7 +187,7 @@ msgstr "Ändern"
 msgid "Check your Backup | Check your Backups"
 msgstr "Überprüfe dein Sicherung | Überprüfe deine Sicherungen"
 
-#: src/views/CashlinkReceive.vue:299
+#: src/views/CashlinkReceive.vue:297
 msgid "Checking status"
 msgstr "Überprüfe Status"
 
@@ -225,11 +221,11 @@ msgstr "Wähle einen Avatar. Erstelle ein Passwort. Fertig."
 msgid "Choose Sender"
 msgstr "Wähle Absender"
 
-#: src/views/CashlinkReceive.vue:300
+#: src/views/CashlinkReceive.vue:298
 msgid "Claim Cashlink"
 msgstr "Cashlink einlösen"
 
-#: src/views/CashlinkReceive.vue:350
+#: src/views/CashlinkReceive.vue:348
 msgid "Claim your Cash"
 msgstr "Löse deinen Cashlink ein"
 
@@ -267,15 +263,15 @@ msgstr "Transaktion bestätigen"
 msgid "Confirm using your Ledger"
 msgstr "Bestätige, deinen Ledger zu benutzen"
 
-#: src/views/CashlinkReceive.vue:361
+#: src/views/CashlinkReceive.vue:359
 msgid "Congrats, somebody gifted you a Nimiq Cashlink."
 msgstr "Glückwunsch! Jemand hat dir einen Nimiq Cashlink geschenkt. "
 
-#: src/views/CashlinkReceive.vue:360
+#: src/views/CashlinkReceive.vue:358
 msgid "Congrats, you just opened a Nimiq Cashlink."
 msgstr "Glückwunsch! Du hast gerade einen Nimiq Cashlink geöffnet. "
 
-#: src/views/CashlinkReceive.vue:356
+#: src/views/CashlinkReceive.vue:354
 msgid "Congrats, you received a Nimiq Gift Card."
 msgstr "Glückwunsch! Du hast eine Nimiq Geschenkkarte erhalten. "
 
@@ -334,16 +330,20 @@ msgstr "Kopieren"
 msgid "Create a Cashlink"
 msgstr "Erstelle einen Cashlink"
 
-#: src/components/OnboardingMenu.vue:17 src/views/CashlinkReceive.vue:89
+#: src/views/CashlinkReceive.vue:89
+msgid "Create account"
+msgstr "Konto erstellen"
+
+#: src/components/OnboardingMenu.vue:17
 msgid "Create Account"
 msgstr "Konto erstellen"
 
 #: src/views/CashlinkReceive.vue:109
-msgid "Create an Account and claim your money."
+msgid "Create an account and claim your money."
 msgstr "Erstelle ein Konto und erhalte dein Geld. "
 
 #: src/views/Migrate.vue:32
-msgid "Create and scan QR codes to quickly share Addresses."
+msgid "Create and scan QR codes to quickly share addresses."
 msgstr ""
 "Erstelle und scanne QR-Codes, um schnell Adressen mit anderen zu teilen."
 
@@ -433,11 +433,11 @@ msgstr "Zurück"
 msgid "Got it"
 msgstr "Alles klar"
 
-#: src/views/CashlinkReceive.vue:349
+#: src/views/CashlinkReceive.vue:347
 msgid "Happy birthday!"
 msgstr "Herzlichen Glückwunsch zum Geburtstag!"
 
-#: src/views/CashlinkReceive.vue:347
+#: src/views/CashlinkReceive.vue:345
 msgid "Happy Easter!"
 msgstr "Frohe Ostern!"
 
@@ -512,7 +512,7 @@ msgid "Login File exported!"
 msgstr "Login-Datei exportiert!"
 
 #: src/views/CashlinkReceive.vue:91
-msgid "Login to existing Account"
+msgid "Login to existing account"
 msgstr "In vorhandenes Konto einloggen"
 
 #: src/views/OnboardingSelector.vue:94
@@ -568,7 +568,7 @@ msgid "No App found"
 msgstr "App nicht gefunden"
 
 #: src/components/NimiqCheckoutCard.vue:69
-msgid "None of your available Addresses has sufficient balance."
+msgid "None of your available addresses has sufficient balance."
 msgstr "Keine deiner Adressen verfügt über ausreichendes Guthaben."
 
 #: src/views/Migrate.vue:224
@@ -580,7 +580,7 @@ msgid "Ok"
 msgstr "Ok"
 
 #: src/views/Migrate.vue:18
-msgid "One Account can now have multiple Addresses."
+msgid "One account can now have multiple addresses."
 msgstr "Ein Konto kann jetzt mehrere Adressen haben."
 
 #: src/components/NonNimiqCheckoutCard.vue:94
@@ -664,7 +664,7 @@ msgid "Restart Payment"
 msgstr "Zahlung neu starten"
 
 #: src/views/Migrate.vue:219
-msgid "Retrieving your old Accounts..."
+msgid "Retrieving your old accounts..."
 msgstr "Rufe alte Konten ab..."
 
 #: src/views/Rename.vue:18
@@ -718,8 +718,8 @@ msgid "standard"
 msgstr "Standard"
 
 #: src/views/Migrate.vue:233
-msgid "Storing your new Accounts..."
-msgstr "Neuen Konten werden gespeichet..."
+msgid "Storing your new accounts..."
+msgstr "Neue Konten werden gespeichert..."
 
 #: src/components/NimiqCheckoutCard.vue:277 src/views/CashlinkManage.vue:154
 #: src/views/CheckoutTransmission.vue:73
@@ -756,7 +756,7 @@ msgstr ""
 msgid "There's much more. Read the full article"
 msgstr "Aber es gibt noch viel mehr. Lese den vollständigen Artikel"
 
-#: src/views/CashlinkReceive.vue:307
+#: src/views/CashlinkReceive.vue:305
 msgid "This Cashlink has already been claimed."
 msgstr "Dieser Cashlink wurde bereits benutzt."
 
@@ -902,7 +902,7 @@ msgstr "Ups, etwas ist schief gelaufen"
 msgid "You are logged out."
 msgstr "Du bist abgemeldet."
 
-#: src/views/CashlinkReceive.vue:345
+#: src/views/CashlinkReceive.vue:343
 msgid "You are loved"
 msgstr "Jemand denkt an dich"
 

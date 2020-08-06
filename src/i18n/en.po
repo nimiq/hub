@@ -3,7 +3,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 
 #: src/views/ChooseAddress.vue:7
-msgid "{appName} is asking for an Address to use."
+msgid "{appName} is asking for an address to use."
 msgstr ""
 
 #: src/components/NonNimiqCheckoutCard.vue:64
@@ -15,7 +15,7 @@ msgid "1. Connect your Ledger Device"
 msgstr ""
 
 #: src/components/LedgerUi.vue:246
-msgid "2. Enter your Pin"
+msgid "2. Enter your PIN"
 msgstr ""
 
 #: src/components/LedgerUi.vue:247
@@ -59,7 +59,7 @@ msgid "Add a message..."
 msgstr ""
 
 #: src/views/AddAccountSelection.vue:4
-msgid "Add to Account"
+msgid "Add to account"
 msgstr ""
 
 #: src/views/AddAddressLedger.vue:11
@@ -93,8 +93,9 @@ msgstr ""
 #: src/views/CashlinkCreate.vue:83
 #: src/views/ChooseAddress.vue:19
 #: src/views/ErrorHandlerUnsupportedLedger.vue:11
-#: src/views/LogoutLedger.vue:24
+#: src/views/LogoutLedger.vue:26
 #: src/views/OnboardingSelector.vue:89
+#: src/views/Rename.vue:28
 #: src/views/SignMessage.vue:24
 #: src/views/SignTransactionLedger.vue:111
 #: src/views/SignupLedger.vue:37
@@ -140,10 +141,6 @@ msgstr ""
 
 #: src/views/SignTransactionLedger.vue:111
 msgid "Cancel Payment"
-msgstr ""
-
-#: src/views/Rename.vue:28
-msgid "Cancel Renaming"
 msgstr ""
 
 #: src/views/CashlinkReceive.vue:259
@@ -307,7 +304,8 @@ msgstr ""
 msgid "Contacting seed nodes..."
 msgstr ""
 
-#: src/views/LogoutLedger.vue:8
+#. for safe and wallet add a note regarding contacts
+#: src/views/LogoutLedger.vue:9
 msgid "Contacts are not affected."
 msgstr ""
 
@@ -330,17 +328,20 @@ msgstr ""
 msgid "Create a Cashlink"
 msgstr ""
 
-#: src/components/OnboardingMenu.vue:17
 #: src/views/CashlinkReceive.vue:89
+msgid "Create account"
+msgstr ""
+
+#: src/components/OnboardingMenu.vue:17
 msgid "Create Account"
 msgstr ""
 
 #: src/views/CashlinkReceive.vue:109
-msgid "Create an Account and claim your money."
+msgid "Create an account and claim your money."
 msgstr ""
 
 #: src/views/Migrate.vue:32
-msgid "Create and scan QR codes to quickly share Addresses."
+msgid "Create and scan QR codes to quickly share addresses."
 msgstr ""
 
 #: src/views/CashlinkCreate.vue:73
@@ -479,7 +480,7 @@ msgstr ""
 msgid "Loading failed, retrying..."
 msgstr ""
 
-#: src/views/LogoutLedger.vue:12
+#: src/views/LogoutLedger.vue:14
 msgid "Log Out"
 msgstr ""
 
@@ -497,7 +498,7 @@ msgid "Login File exported!"
 msgstr ""
 
 #: src/views/CashlinkReceive.vue:91
-msgid "Login to existing Account"
+msgid "Login to existing account"
 msgstr ""
 
 #: src/views/OnboardingSelector.vue:98
@@ -550,7 +551,7 @@ msgid "No App found"
 msgstr ""
 
 #: src/components/NimiqCheckoutCard.vue:69
-msgid "None of your available Addresses has sufficient balance."
+msgid "None of your available addresses has sufficient balance."
 msgstr ""
 
 #: src/views/Migrate.vue:224
@@ -562,7 +563,7 @@ msgid "Ok"
 msgstr ""
 
 #: src/views/Migrate.vue:18
-msgid "One Account can now have multiple Addresses."
+msgid "One account can now have multiple addresses."
 msgstr ""
 
 #: src/components/NonNimiqCheckoutCard.vue:94
@@ -647,7 +648,7 @@ msgid "Restart Payment"
 msgstr ""
 
 #: src/views/Migrate.vue:219
-msgid "Retrieving your old Accounts..."
+msgid "Retrieving your old accounts..."
 msgstr ""
 
 #: src/views/Rename.vue:18
@@ -702,7 +703,7 @@ msgid "standard"
 msgstr ""
 
 #: src/views/Migrate.vue:233
-msgid "Storing your new Accounts..."
+msgid "Storing your new accounts..."
 msgstr ""
 
 #: src/components/NimiqCheckoutCard.vue:277
@@ -852,7 +853,7 @@ msgstr ""
 msgid "Whoops, something went wrong"
 msgstr ""
 
-#: src/views/LogoutLedger.vue:17
+#: src/views/LogoutLedger.vue:19
 #: src/views/LogoutSuccess.vue:4
 msgid "You are logged out."
 msgstr ""
@@ -884,7 +885,7 @@ msgid ""
 "incomplete."
 msgstr ""
 
-#: src/views/LogoutLedger.vue:11
+#: src/views/LogoutLedger.vue:13
 msgid ""
 "Your Ledger is\n"
 "required to log in again."
