@@ -473,7 +473,7 @@ export default class WalletInfoCollector {
 
         let gap = 0;
         let i = 0;
-        let externalAddresses: BtcAddressInfo[] = [];
+        const externalAddresses: BtcAddressInfo[] = [];
 
         while (gap < BTC_ACCOUNT_MAX_ALLOWED_ADDRESS_GAP) {
             const pubKey = externalKey.derive(i).publicKey;
@@ -506,11 +506,6 @@ export default class WalletInfoCollector {
 
             i += 1;
         }
-
-        // Derive a few more external addresses to give to the wallet as a reserve.
-        externalAddresses = externalAddresses.concat(
-            deriveAddressesFromXPub(externalKey, [], externalAddresses.length, BTC_ACCOUNT_MAX_ALLOWED_ADDRESS_GAP),
-        );
 
         // As described above, generate the same number of internal addresses as we derived external ones
         const internalAddresses = deriveAddressesFromXPub(extendedKey, [INTERNAL_INDEX], 0, externalAddresses.length);
