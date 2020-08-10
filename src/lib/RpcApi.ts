@@ -11,7 +11,7 @@ import {
     ParsedSignBtcTransactionRequest,
 } from './RequestTypes';
 import { RequestParser } from './RequestParser';
-import { Currency, RequestType, RpcRequest, RpcResult } from './PublicRequestTypes';
+import { Currency, RequestType, RpcRequest, RpcResult } from '../../client/PublicRequestTypes';
 import { ParsedNimiqDirectPaymentOptions } from './paymentOptions/NimiqPaymentOptions';
 import {
     KeyguardClient,

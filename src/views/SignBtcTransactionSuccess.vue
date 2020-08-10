@@ -4,7 +4,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { SignedBtcTransaction } from '../lib/PublicRequestTypes';
+import { SignedBtcTransaction } from '../../client/PublicRequestTypes';
 import { State } from 'vuex-class';
 import KeyguardClient from '@nimiq/keyguard-client';
 

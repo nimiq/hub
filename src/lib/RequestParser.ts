@@ -19,7 +19,7 @@ import {
     NimiqCheckoutRequest,
     MultiCurrencyCheckoutRequest,
     SignBtcTransactionRequest,
-} from './PublicRequestTypes';
+} from '../../client/PublicRequestTypes';
 import {
     ParsedBasicRequest,
     ParsedCheckoutRequest,
