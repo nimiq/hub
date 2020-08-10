@@ -53,8 +53,8 @@ export const EXTENDED_KEY_PREFIXES = {
 
 export const BIP49_ADDRESS_VERSIONS = {
     // See https://en.bitcoin.it/wiki/List_of_address_prefixes
-    MAIN: [0, 5],
-    TEST: [111, 196],
+    MAIN: [0, 5], // 0 = BIP44, 5 = BIP49
+    TEST: [111, 196], // 111 = BIP44, 196 = BIP49
 };
 
 export const BIP84_ADDRESS_PREFIX = {
