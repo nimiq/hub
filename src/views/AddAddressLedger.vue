@@ -39,7 +39,7 @@ import { AccountInfo } from '../lib/AccountInfo';
 import LedgerApi, { RequestType as LedgerApiRequestType } from '@nimiq/ledger-api';
 import { WalletStore } from '../lib/WalletStore';
 import { ACCOUNT_MAX_ALLOWED_ADDRESS_GAP, ERROR_CANCELED } from '../lib/Constants';
-import LabelingMachine from '../lib/LabelingMachine';
+import { labelAddress } from '../lib/LabelingMachine';
 
 @Component({components: {
     PageBody,
@@ -83,7 +83,7 @@ export default class AddAddressLedger extends Vue {
         const derivedAddressInfos = await LedgerApi.deriveAddresses(pathsToDerive, this.account.keyId);
         this.addressesToSelectFrom = derivedAddressInfos.map((addressInfo) => new AccountInfo(
             addressInfo.keyPath,
-            LabelingMachine.labelAddress(addressInfo.address),
+            labelAddress(addressInfo.address),
             Nimiq.Address.fromString(addressInfo.address),
             0, // balance 0 because user selects from unused addresses
         ));

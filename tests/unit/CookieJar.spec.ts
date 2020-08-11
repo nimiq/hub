@@ -3,6 +3,7 @@ import { WalletType, WalletInfoEntry } from '@/lib/WalletInfo';
 import { AccountInfoEntry } from '@/lib/AccountInfo';
 import CookieJar from '@/lib/CookieJar';
 import { Utf8Tools } from '@nimiq/utils';
+import { setLanguage } from '@/i18n/i18n-setup';
 
 setup();
 
@@ -443,6 +444,7 @@ const BASE64 = Nimiq.BufferUtils.toBase64(new Uint8Array(BYTES));
 const COOKIE = `w=${BASE64}`;
 
 describe('CookieJar', () => {
+    beforeAll(() => setLanguage('en'));
 
     // Clear cookie before and after each test
     const clearCookie = () => document.cookie = 'w=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';

@@ -5,7 +5,7 @@ import {
     ContractInfoHelper,
 } from './ContractInfo';
 import { Account } from './PublicRequestTypes';
-import LabelingMachine from './LabelingMachine';
+import { labelKeyguardAccount } from './LabelingMachine';
 
 export enum WalletType {
     LEGACY = 1,
@@ -49,7 +49,7 @@ export class WalletInfo {
     ) {}
 
     public get defaultLabel(): string {
-        return LabelingMachine.labelAccount(this.accounts.keys().next().value);
+        return labelKeyguardAccount(this.accounts.keys().next().value);
     }
 
     public get labelForKeyguard(): string | undefined {

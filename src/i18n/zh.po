@@ -15,6 +15,10 @@ msgstr ""
 msgid "{appName} is asking for an address to use."
 msgstr "{appName}要求使用地址"
 
+#: src/lib/LabelingMachine.ts:13
+msgid "{color} Account"
+msgstr ""
+
 #: src/components/NonNimiqCheckoutCard.vue:64
 msgid "+ network fee"
 msgstr "+网络费"
@@ -51,7 +55,7 @@ msgstr "账户已备份！"
 msgid "Account Created"
 msgstr "账户已创建"
 
-#: src/views/Migrate.vue:266
+#: src/views/Migrate.vue:265
 msgid "Accounts updated!"
 msgstr "账户已更新！"
 
@@ -99,7 +103,7 @@ msgstr "正在等待收据确认..."
 #: src/views/AddAccountSelection.vue:19 src/views/AddAddressLedger.vue:23
 #: src/views/CashlinkCreate.vue:83 src/views/ChooseAddress.vue:19
 #: src/views/ErrorHandlerUnsupportedLedger.vue:11
-#: src/views/LogoutLedger.vue:24 src/views/OnboardingSelector.vue:85
+#: src/views/LogoutLedger.vue:26 src/views/OnboardingSelector.vue:85
 #: src/views/Rename.vue:28 src/views/SignMessage.vue:24
 #: src/views/SignTransactionLedger.vue:111 src/views/SignupLedger.vue:37
 msgid "Back to {appName}"
@@ -128,6 +132,14 @@ msgstr "备份"
 #: src/views/Migrate.vue:67
 msgid "Backed Up"
 msgstr "已备份"
+
+#: src/lib/LabelingMachine.ts:43
+msgid "Blue"
+msgstr "蓝"
+
+#: src/lib/LabelingMachine.ts:48
+msgid "Brown"
+msgstr "棕"
 
 #: src/views/CashlinkCreate.vue:20
 msgid ""
@@ -285,7 +297,7 @@ msgid ""
 "Ledger Nano S."
 msgstr "连接您的Ledger Nano S"
 
-#: src/views/Migrate.vue:143 src/views/Migrate.vue:283
+#: src/views/Migrate.vue:142 src/views/Migrate.vue:282
 msgid "Connecting to Keyguard..."
 msgstr "正在连接到键盘守卫 ..."
 
@@ -303,7 +315,8 @@ msgstr "正在连接到Nimiq ..."
 msgid "Contacting seed nodes..."
 msgstr "正在联络种子节点..."
 
-#: src/views/LogoutLedger.vue:8
+#. for safe and wallet add a note regarding contacts
+#: src/views/LogoutLedger.vue:9
 msgid "Contacts are not affected."
 msgstr "联系人不受影响"
 
@@ -352,7 +365,7 @@ msgstr "正在创建您的帐户"
 msgid "Creating your Cashlink"
 msgstr "正在创建您的现金链接"
 
-#: src/views/Migrate.vue:230
+#: src/views/Migrate.vue:229
 msgid "Detecting vesting contracts..."
 msgstr "正在检测归属合同..."
 
@@ -426,6 +439,10 @@ msgstr "返回"
 msgid "Got it"
 msgstr "了解"
 
+#: src/lib/LabelingMachine.ts:47
+msgid "Green"
+msgstr "绿"
+
 #: src/views/CashlinkReceive.vue:347
 msgid "Happy birthday!"
 msgstr "生日快乐！"
@@ -455,6 +472,10 @@ msgstr "到目前为止，已导入{count}地址...到目前为止，已导入{c
 msgid "Incomplete payment"
 msgstr "付款未完成"
 
+#: src/lib/LabelingMachine.ts:42
+msgid "Indigo"
+msgstr "靛蓝"
+
 #: src/views/RequestError.vue:6
 msgid "Invalid request"
 msgstr "无效的请求"
@@ -464,6 +485,10 @@ msgid ""
 "It won’t be part of the public Blockchain and might get lost after the "
 "Cashlink was claimed."
 msgstr "它不会成为公共区块链的一部分，并且可能会在使用现金链接之后被丢失"
+
+#: src/lib/LabelingMachine.ts:17
+msgid "Ledger Account"
+msgstr ""
 
 #: src/views/ErrorHandlerUnsupportedLedger.vue:46
 msgid ""
@@ -475,11 +500,15 @@ msgstr "Ledger帐户无法导出。请参考设置设备时创建的24字备份"
 msgid "Ledger not supported by browser."
 msgstr ""
 
+#: src/lib/LabelingMachine.ts:21
+msgid "Legacy Account"
+msgstr ""
+
 #: src/components/LedgerUi.vue:165
 msgid "Loading failed, retrying..."
 msgstr "加载失败，正在重试..."
 
-#: src/views/LogoutLedger.vue:12
+#: src/views/LogoutLedger.vue:14
 msgid "Log Out"
 msgstr "登出"
 
@@ -553,7 +582,7 @@ msgstr "找不到应用"
 msgid "None of your available addresses has sufficient balance."
 msgstr "您的可用地址皆没有足够的余额"
 
-#: src/views/Migrate.vue:224
+#: src/views/Migrate.vue:223
 msgid "Nothing to update."
 msgstr "无需更新"
 
@@ -568,6 +597,10 @@ msgstr "一个帐户现在可以具有多个地址"
 #: src/components/NonNimiqCheckoutCard.vue:94
 msgid "Open Wallet App"
 msgstr "打开钱包应用"
+
+#: src/lib/LabelingMachine.ts:39
+msgid "Orange"
+msgstr "橙"
 
 #: src/components/NonNimiqCheckoutCard.vue:103
 msgid "Pay with {currencyFullName}"
@@ -588,6 +621,10 @@ msgstr "付款成功"
 #: src/views/CheckoutTransmission.vue:82
 msgid "Payment successful."
 msgstr "付款成功"
+
+#: src/lib/LabelingMachine.ts:46
+msgid "Pink"
+msgstr "粉红"
 
 #: src/components/LedgerUi.vue:205
 msgid "Please cancel the previous request on your Ledger."
@@ -617,9 +654,17 @@ msgstr "准备更新"
 msgid "Processing your payment"
 msgstr "正在进行您的付款"
 
+#: src/lib/LabelingMachine.ts:44
+msgid "Purple"
+msgstr "紫"
+
 #: src/views/ExportSuccess.vue:65
 msgid "Recovery Words exported!"
 msgstr "恢复字已导出！"
+
+#: src/lib/LabelingMachine.ts:40
+msgid "Red"
+msgstr "红"
 
 #: src/views/CashlinkManage.vue:10 src/views/CheckoutTransmission.vue:9
 msgid "Reload"
@@ -645,7 +690,7 @@ msgstr "更新余额..."
 msgid "Restart Payment"
 msgstr "重新开始付款"
 
-#: src/views/Migrate.vue:219
+#: src/views/Migrate.vue:218
 msgid "Retrieving your old accounts..."
 msgstr "正在检索您的旧帐户..."
 
@@ -678,6 +723,10 @@ msgstr "分享"
 msgid "Sign Message"
 msgstr "签名信息"
 
+#: src/lib/LabelingMachine.ts:33
+msgid "Single Accounts"
+msgstr ""
+
 #: src/views/CashlinkManage.vue:194 src/views/CheckoutTransmission.vue:83
 msgid "Something went wrong"
 msgstr "出了点问题"
@@ -698,7 +747,7 @@ msgstr "加快您的交易"
 msgid "standard"
 msgstr "标准"
 
-#: src/views/Migrate.vue:233
+#: src/views/Migrate.vue:232
 msgid "Storing your new accounts..."
 msgstr "正在存储您的新帐户..."
 
@@ -706,6 +755,10 @@ msgstr "正在存储您的新帐户..."
 #: src/views/CheckoutTransmission.vue:73
 msgid "Syncing consensus..."
 msgstr "正在同步共识..."
+
+#: src/lib/LabelingMachine.ts:45
+msgid "Teal"
+msgstr "青"
 
 #: src/components/LedgerUi.vue:229
 msgid "The connected Ledger is not the one this account belongs to."
@@ -814,11 +867,11 @@ msgstr "不支持的请求"
 msgid "Updating balances"
 msgstr "更新余额"
 
-#: src/views/Migrate.vue:262
+#: src/views/Migrate.vue:261
 msgid "Updating Keyguard..."
 msgstr "正在更新键盘守卫 ..."
 
-#: src/views/Migrate.vue:142 src/views/Migrate.vue:282
+#: src/views/Migrate.vue:141 src/views/Migrate.vue:281
 msgid "Updating your Accounts"
 msgstr "更新您的帐户"
 
@@ -842,6 +895,10 @@ msgstr "已使用地址若没有余额可能会丢失"
 msgid "Verify Payment"
 msgstr "验证付款"
 
+#: src/lib/LabelingMachine.ts:25
+msgid "Vesting Contract"
+msgstr ""
+
 #: src/views/SignupSuccess.vue:66
 msgid ""
 "Welcome to the\n"
@@ -858,11 +915,15 @@ msgstr "欢迎来到Nimiq区块链"
 msgid "What is Nimiq?"
 msgstr "什么是Nimiq？"
 
-#: src/views/Migrate.vue:273
+#: src/views/Migrate.vue:272
 msgid "Whoops, something went wrong"
 msgstr "糟糕，出了点问题"
 
-#: src/views/LogoutLedger.vue:17 src/views/LogoutSuccess.vue:4
+#: src/lib/LabelingMachine.ts:41
+msgid "Yellow"
+msgstr "黄"
+
+#: src/views/LogoutLedger.vue:19 src/views/LogoutSuccess.vue:4
 msgid "You are logged out."
 msgstr "您已登出"
 
@@ -896,7 +957,7 @@ msgstr ""
 "您的地址可能\n"
 "不完整"
 
-#: src/views/LogoutLedger.vue:11
+#: src/views/LogoutLedger.vue:13
 msgid ""
 "Your Ledger is\n"
 "required to log in again."

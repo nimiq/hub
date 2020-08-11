@@ -58,7 +58,7 @@ import { WalletInfo } from '../lib/WalletInfo';
 import { AccountInfo } from '../lib/AccountInfo';
 import { WalletStore } from '../lib/WalletStore';
 import { ERROR_CANCELED } from '../lib/Constants';
-import LabelingMachine from '@/lib/LabelingMachine';
+import { labelAddress } from '@/lib/LabelingMachine';
 import { Action } from 'vuex-class';
 
 @Component({components: {
@@ -195,7 +195,7 @@ export default class SignupLedger extends Vue {
             // an account already
             this.accountsToSelectFrom = currentlyCheckedAccounts.map((account) => new AccountInfo(
                 account.path,
-                LabelingMachine.labelAddress(account.address),
+                labelAddress(account.address),
                 Nimiq.Address.fromString(account.address),
                 0, // balance 0 because if user has to select an account, it's gonna be an unused one
             ));

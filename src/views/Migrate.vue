@@ -99,7 +99,7 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator';
-import { AccountInfo, AccountInfoEntry } from '@/lib/AccountInfo';
+import { AccountInfo } from '@/lib/AccountInfo';
 import { WalletStore } from '@/lib/WalletStore';
 import { WalletInfo, WalletType } from '@/lib/WalletInfo';
 import {
@@ -110,10 +110,9 @@ import {
 import Network from '@/components/Network.vue';
 import StatusScreen from '@/components/StatusScreen.vue';
 import KeyguardClient from '@nimiq/keyguard-client';
-import { ACCOUNT_DEFAULT_LABEL_LEGACY } from '@/lib/Constants';
-import { ContractInfo } from '@/lib/ContractInfo';
+import { labelLegacyAccount } from '@/lib/LabelingMachine';
 import staticStore, { Static } from '@/lib/StaticStore';
-import { SimpleRequest, RequestType } from '@/lib/PublicRequestTypes';
+import { SimpleRequest } from '@/lib/PublicRequestTypes';
 import { State } from 'vuex-class';
 import { i18n } from '../i18n/i18n-setup';
 
@@ -245,7 +244,7 @@ export default class Migrate extends Vue {
             const walletInfo = new WalletInfo(
                 await WalletStore.Instance.deriveId(keyInfo.id),
                 keyInfo.id,
-                ACCOUNT_DEFAULT_LABEL_LEGACY,
+                labelLegacyAccount(),
                 accounts,
                 contracts,
                 WalletType.LEGACY,
