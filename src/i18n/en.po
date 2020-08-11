@@ -126,6 +126,10 @@ msgstr ""
 msgid "Backed Up"
 msgstr ""
 
+#: src/views/ActivateBitcoinSuccess.vue:72
+msgid "Bitcoin activated"
+msgstr ""
+
 #: src/views/CashlinkCreate.vue:20
 msgid "By adding a transation fee, you can influence how fast your transaction will be processed."
 msgstr ""
@@ -400,6 +404,7 @@ msgstr ""
 msgid "Fetching Addresses"
 msgstr ""
 
+#: src/views/ActivateBitcoinSuccess.vue:36
 #: src/views/LoginSuccess.vue:42
 msgid "Fetching your addresses"
 msgstr ""
@@ -710,6 +715,10 @@ msgstr ""
 #: src/views/CashlinkManage.vue:154
 #: src/views/CheckoutTransmission.vue:73
 msgid "Syncing consensus..."
+msgstr ""
+
+#: src/views/ActivateBitcoinSuccess.vue:37
+msgid "Syncing with Bitcoin network..."
 msgstr ""
 
 #: src/components/LedgerUi.vue:229

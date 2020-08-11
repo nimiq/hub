@@ -63,6 +63,11 @@ const SignBtcTransaction         = () => import(/*webpackChunkName: "sign-btc-tr
 const SignBtcTransactionSuccess  = () => import(/*webpackChunkName: "sign-btc-transaction"*/
     './views/SignBtcTransactionSuccess.vue');
 
+const ActivateBitcoin         = () => import(/*webpackChunkName: "activate-btc"*/
+    './views/ActivateBitcoin.vue');
+const ActivateBitcoinSuccess  = () => import(/*webpackChunkName: "activate-btc"*/
+    './views/ActivateBitcoinSuccess.vue');
+
 Vue.use(Router);
 
 export function keyguardResponseRouter(
@@ -290,6 +295,16 @@ export default new Router({
             path: `/${RequestType.SIGN_BTC_TRANSACTION}/success`,
             component: SignBtcTransactionSuccess,
             name: `${RequestType.SIGN_BTC_TRANSACTION}-success`,
+        },
+        {
+            path: `/${RequestType.ACTIVATE_BITCOIN}`,
+            component: ActivateBitcoin,
+            name: RequestType.ACTIVATE_BITCOIN,
+        },
+        {
+            path: `/${RequestType.ACTIVATE_BITCOIN}/success`,
+            component: ActivateBitcoinSuccess,
+            name: `${RequestType.ACTIVATE_BITCOIN}-success`,
         },
     ],
 });

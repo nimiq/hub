@@ -84,6 +84,7 @@ export default class RpcApi {
             RequestType.MIGRATE,
             RequestType.CHOOSE_ADDRESS,
             RequestType.SIGN_BTC_TRANSACTION,
+            RequestType.ACTIVATE_BITCOIN,
         ]);
         this._registerKeyguardApis([
             KeyguardCommand.SIGN_TRANSACTION,
@@ -95,6 +96,7 @@ export default class RpcApi {
             KeyguardCommand.DERIVE_ADDRESS,
             KeyguardCommand.SIGN_MESSAGE,
             KeyguardCommand.SIGN_BTC_TRANSACTION,
+            KeyguardCommand.DERIVE_BTC_XPUB,
         ]);
 
         this._router.beforeEach((to: Route, from: Route, next: (arg?: string | false | Route) => void) => {
