@@ -1,12 +1,12 @@
 # 
 # Translators:
 # Talleyrand <baptistekugener@wanadoo.fr>, 2020
-# Matheo <matheo@nimiq.com>, 2020
 # Daniel, 2020
+# Matheo <matheo@nimiq.com>, 2020
 # 
 msgid ""
 msgstr ""
-"Last-Translator: Daniel, 2020\n"
+"Last-Translator: Matheo <matheo@nimiq.com>, 2020\n"
 "Language-Team: French (https://www.transifex.com/nimiq-foundation/teams/107400/fr/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: fr\n"
@@ -18,7 +18,7 @@ msgstr "{appName} demande quelle adresse utiliser."
 
 #: src/lib/LabelingMachine.ts:13
 msgid "{color} Account"
-msgstr ""
+msgstr "Compte {color}"
 
 #: src/components/NonNimiqCheckoutCard.vue:64
 msgid "+ network fee"
@@ -496,7 +496,7 @@ msgstr ""
 
 #: src/lib/LabelingMachine.ts:17
 msgid "Ledger Account"
-msgstr ""
+msgstr "Compte Ledger"
 
 #: src/views/ErrorHandlerUnsupportedLedger.vue:46
 msgid ""
@@ -513,7 +513,7 @@ msgstr "Ledger non supporté par votre navigateur."
 
 #: src/lib/LabelingMachine.ts:21
 msgid "Legacy Account"
-msgstr ""
+msgstr "Compte Legacy"
 
 #: src/components/LedgerUi.vue:165
 msgid "Loading failed, retrying..."
@@ -743,7 +743,7 @@ msgstr "Signer le message"
 
 #: src/lib/LabelingMachine.ts:33
 msgid "Single Accounts"
-msgstr ""
+msgstr "Comptes Legacy"
 
 #: src/views/CashlinkManage.vue:194 src/views/CheckoutTransmission.vue:83
 msgid "Something went wrong"
@@ -918,9 +918,7 @@ msgstr "Mise à jour de vos soldes"
 msgid ""
 "Use your Login File\n"
 "or Recovery Words."
-msgstr ""
-"Utilisez votre Fichier de Connexion\n"
-"ou les Mots de Récupération."
+msgstr "Utilisez votre Fichier de Connexion ou les Mots de Récupération."
 
 #: src/views/LoginSuccess.vue:177 src/views/SignupLedger.vue:131
 msgid "Used addresses without balance might have been missed."

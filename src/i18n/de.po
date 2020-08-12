@@ -197,7 +197,7 @@ msgstr "Ändern"
 
 #: src/views/Migrate.vue:48
 msgid "Check your Backup | Check your Backups"
-msgstr "Überprüfe dein Sicherung | Überprüfe deine Sicherungen"
+msgstr "Überprüfe dein Backup | Überprüfe deine Backups"
 
 #: src/views/CashlinkReceive.vue:297
 msgid "Checking status"
@@ -273,7 +273,7 @@ msgstr "Transaktion bestätigen"
 
 #: src/components/LedgerUi.vue:193
 msgid "Confirm using your Ledger"
-msgstr "Bestätige, deinen Ledger zu benutzen"
+msgstr "Bestätige mittels deines Ledgers"
 
 #: src/views/CashlinkReceive.vue:359
 msgid "Congrats, somebody gifted you a Nimiq Cashlink."
@@ -511,7 +511,7 @@ msgstr ""
 
 #: src/components/LedgerUi.vue:220
 msgid "Ledger not supported by browser."
-msgstr "Ledger werden von deinem Browser nicht unterstützt."
+msgstr "Ledger wird von deinem Browser nicht unterstützt."
 
 #: src/lib/LabelingMachine.ts:21
 msgid "Legacy Account"
@@ -566,7 +566,7 @@ msgstr "Mehr Avatare"
 
 #: src/views/Migrate.vue:78
 msgid "My Backups are safe."
-msgstr "Meine Sicherungen sind an einem sicheren Fleck."
+msgstr "Meine Backups sind an einem sicheren Ort."
 
 #: src/views/AddAccountSelection.vue:81
 msgid "New Address added to your Account."
@@ -919,9 +919,7 @@ msgstr "Aktualisiere deine Guthaben"
 msgid ""
 "Use your Login File\n"
 "or Recovery Words."
-msgstr ""
-"Benutze deine Login-Datei\n"
-"oder deine Wiederherstellungswörter."
+msgstr "Benutze deine Login-Datei oder deine Wie­der­her­stellungswörter."
 
 #: src/views/LoginSuccess.vue:177 src/views/SignupLedger.vue:131
 msgid "Used addresses without balance might have been missed."
@@ -1013,8 +1011,8 @@ msgid ""
 "Your Nimiq App is outdated. Please update your Ledger firmware and Nimiq App"
 " using Ledger Live."
 msgstr ""
-"Deine Nimiq App ist veraltet. Bitte installiere die neuste Ledger Firmware "
-"und Nimiq App mittels Ledger Live."
+"Deine Nimiq App ist veraltet. Bitte starte Ledger Live und installiere die "
+"neuste Ledger Firmware und Nimiq App."
 
 #: src/views/LoginSuccess.vue:186 src/views/SimpleSuccess.vue:31
 msgid "Your password was changed."
