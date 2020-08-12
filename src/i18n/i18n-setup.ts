@@ -2,7 +2,6 @@ import Vue from 'vue';
 import VueI18n from 'vue-i18n';
 import { I18nMixin as VueComponentsI18n } from '@nimiq/vue-components';
 import { Cookie } from '@nimiq/utils';
-import router from '../router';
 
 Vue.use(VueI18n);
 
@@ -72,15 +71,3 @@ function onTabFocus() {
 
 // Set a window/tab focus event to check if the user changed the language in another window/tab
 window.addEventListener('focus', onTabFocus);
-
-// This router navigation guard is to prevent switching
-// to the new route before the language file finished loading.
-router.beforeResolve((to, from, next) => {
-    if (to.path === '/') {
-        // The root path doesn't require any translations, therefore we can continue right away. Also, this fixes what
-        // seems to be a race condition between the beforeEach in the RpcApi and this beforeResolve, see issue #422
-        next();
-        return;
-    }
-    setLanguage(detectLanguage()).then(() => next());
-});
