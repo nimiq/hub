@@ -26,7 +26,7 @@ import StatusScreen from '../components/StatusScreen.vue';
 import WalletInfoCollector from '../lib/WalletInfoCollector';
 
 @Component({components: {StatusScreen, SmallPage}})
-export default class LoginSuccess extends Vue {
+export default class ActivateBitcoinSuccess extends Vue {
     @Static private request!: ParsedSimpleRequest;
     @State private keyguardResult!: KeyguardClient.DeriveBtcXpubResult;
     @Getter private findWallet!: (id: string) => WalletInfo | undefined;
@@ -35,10 +35,10 @@ export default class LoginSuccess extends Vue {
     private state: StatusScreen.State = StatusScreen.State.LOADING;
     private title: string = this.$root.$t('Fetching your addresses') as string;
     private status: string = this.$root.$t('Syncing with Bitcoin network...') as string;
-    // private message: string = '';
-    // private action: string = '';
-    // private receiptsError: Error | null = null;
-    // private resolve = () => {}; // tslint:disable-line:no-empty
+    private message: string = '';
+    private action: string = '';
+    private receiptsError: Error | null = null;
+    private resolve = () => {}; // tslint:disable-line:no-empty
 
     private async mounted() {
         const walletInfo = this.findWallet(this.request.walletId);
@@ -46,6 +46,8 @@ export default class LoginSuccess extends Vue {
         if (!walletInfo) {
             throw new Error(`UNEXPECTED: accountId not found anymore in ActivateBitcoinSuccess (${this.request.walletId})`);
         }
+
+        this.walletInfo = walletInfo;
 
         const btcAddresses = await WalletInfoCollector.deriveBitcoinAddresses(this.keyguardResult.bitcoinXPub);
 

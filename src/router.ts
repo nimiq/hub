@@ -103,6 +103,8 @@ export function keyguardResponseRouter(
             // The SIGN_BTC_TRANSACTION Keyguard command is used by Accounts' SIGN_BTC_TRANSACTION andCHECKOUT.
             // Thus we return the user to the respective handler component
             resolve = `${originalRequestType}-success`; break;
+        case KeyguardCommand.DERIVE_BTC_XPUB:
+            resolve = `${RequestType.ACTIVATE_BITCOIN}-success`; break;
         default:
             throw new Error(`router.keyguardResponseRouter not defined for Keyguard command: ${command}`);
     }
