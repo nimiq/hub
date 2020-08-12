@@ -18,9 +18,16 @@ class CookieJar {
     public static readonly MAX_COOKIE_SIZE = 3000; // byte, 4*(n/3)=4000 is space taken after base64 encoding
 
     public static readonly ENCODED_ACCOUNT_SIZE =
-           1 // account label length
-        + 63 // account label
+           1 // account type + label length
+        +  1 // status byte
+        +  6 // account id
+        + 63 // account label (not included if default label, but not checked during renaming)
+        +  1 // number of addresses
+        +  1 // address label length
+        + 63 // address label (not included if default label, but not checked during renaming)
         + 20 // address
+        +  1 // xpub type
+        + 78 // xpub length
     ;
 
     public static XPUB_TYPES = [

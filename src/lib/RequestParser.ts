@@ -259,6 +259,7 @@ export class RequestParser {
             case RequestType.CHANGE_PASSWORD:
             case RequestType.LOGOUT:
             case RequestType.ADD_ADDRESS:
+            case RequestType.ACTIVATE_BITCOIN:
                 const simpleRequest = request as SimpleRequest;
 
                 if (!simpleRequest.accountId) throw new Error('accountId is required');
@@ -540,6 +541,7 @@ export class RequestParser {
             case RequestType.CHANGE_PASSWORD:
             case RequestType.LOGOUT:
             case RequestType.ADD_ADDRESS:
+            case RequestType.ACTIVATE_BITCOIN:
                 const simpleRequest = request as ParsedSimpleRequest;
                 return {
                     appName: simpleRequest.appName,

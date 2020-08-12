@@ -27,6 +27,7 @@ export enum RequestType {
     MANAGE_CASHLINK = 'manage-cashlink',
     SIGN_BTC_TRANSACTION = 'sign-btc-transaction',
     ADD_BTC_ADDRESSES = 'add-btc-addresses',
+    ACTIVATE_BITCOIN = 'activate-bitcoin',
 }
 
 export interface BasicRequest {

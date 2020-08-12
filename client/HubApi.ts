@@ -236,6 +236,13 @@ export default class HubApi<DB extends BehaviorType = BehaviorType.POPUP> { // D
         return this._request(requestBehavior, RequestType.MIGRATE, [{ appName: 'Account list' }]);
     }
 
+    public activateBitcoin<B extends BehaviorType = DB>(
+        request: Promise<SimpleRequest> | SimpleRequest,
+        requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
+    ): Promise<B extends BehaviorType.REDIRECT ? void : Account> {
+        return this._request(requestBehavior, RequestType.ACTIVATE_BITCOIN, [request]);
+    }
+
     /**
      * Only accessible in iframe from Nimiq domains.
      */
