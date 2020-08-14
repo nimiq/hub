@@ -52,9 +52,9 @@ export default class SignupSuccess extends Vue {
         const btcAddresses = bitcoinXPub
             ? {
                 internal:
-                    deriveAddressesFromXPub(bitcoinXPub, [INTERNAL_INDEX], 0, 2 * BTC_ACCOUNT_MAX_ALLOWED_ADDRESS_GAP),
+                    deriveAddressesFromXPub(bitcoinXPub, [INTERNAL_INDEX], 0, BTC_ACCOUNT_MAX_ALLOWED_ADDRESS_GAP),
                 external:
-                    deriveAddressesFromXPub(bitcoinXPub, [EXTERNAL_INDEX], 0, 2 * BTC_ACCOUNT_MAX_ALLOWED_ADDRESS_GAP),
+                    deriveAddressesFromXPub(bitcoinXPub, [EXTERNAL_INDEX], 0, BTC_ACCOUNT_MAX_ALLOWED_ADDRESS_GAP),
             }
             : {
                 internal: [],
