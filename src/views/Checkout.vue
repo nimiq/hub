@@ -155,8 +155,8 @@ class Checkout extends Vue {
     }
 
     private mounted() {
-        this.hasLongDisclaimer = !!this.$refs.disclaimer
-            && (this.$refs.disclaimer as HTMLElement).textContent!.length > 250;
+        const disclaimer = (this.$refs.disclaimer as BottomOverlay).$el || this.$refs.disclaimer;
+        this.hasLongDisclaimer = !!disclaimer && disclaimer.textContent!.length > 250;
     }
 
     private destroyed() {
