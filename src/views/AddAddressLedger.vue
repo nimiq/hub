@@ -18,18 +18,16 @@
             </StatusScreen>
         </SmallPage>
 
-        <button class="global-close nq-button-s" @click="close">
-            <ArrowLeftSmallIcon/>
-            {{ $t('Back to {appName}', { appName: request.appName }) }}
-        </button>
+        <GlobalClose />
     </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { PageBody, SmallPage, PageHeader, ArrowLeftSmallIcon } from '@nimiq/vue-components';
+import { PageBody, SmallPage, PageHeader } from '@nimiq/vue-components';
 import LedgerUi from '../components/LedgerUi.vue';
 import StatusScreen from '../components/StatusScreen.vue';
+import GlobalClose from '../components/GlobalClose.vue';
 import IdenticonSelector from '../components/IdenticonSelector.vue';
 import { Static } from '../lib/StaticStore';
 import { ParsedSimpleRequest } from '../lib/RequestTypes';
@@ -38,17 +36,17 @@ import { WalletInfo } from '../lib/WalletInfo';
 import { AccountInfo } from '../lib/AccountInfo';
 import LedgerApi, { RequestType as LedgerApiRequestType } from '@nimiq/ledger-api';
 import { WalletStore } from '../lib/WalletStore';
-import { ACCOUNT_MAX_ALLOWED_ADDRESS_GAP, ERROR_CANCELED } from '../lib/Constants';
+import { ACCOUNT_MAX_ALLOWED_ADDRESS_GAP } from '../lib/Constants';
 import { labelAddress } from '../lib/LabelingMachine';
 
 @Component({components: {
     PageBody,
     SmallPage,
     PageHeader,
-    LedgerUi,
     StatusScreen,
+    GlobalClose,
+    LedgerUi,
     IdenticonSelector,
-    ArrowLeftSmallIcon,
 }})
 export default class AddAddressLedger extends Vue {
     private static readonly State = {
@@ -109,10 +107,6 @@ export default class AddAddressLedger extends Vue {
             label: selectedAccount.label,
         };
         this.$rpc.resolve(result);
-    }
-
-    private close() {
-        this.$rpc.reject(new Error(ERROR_CANCELED));
     }
 }
 </script>
