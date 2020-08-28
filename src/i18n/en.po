@@ -92,9 +92,20 @@ msgstr ""
 msgid "Awaiting receipt confirmation..."
 msgstr ""
 
-#: src/components/GlobalClose.vue:26
-#: src/views/OnboardingSelector.vue:82
+#: src/components/GlobalClose.vue:40
 msgid "Back to {appName}"
+msgstr ""
+
+#: src/components/GlobalClose.vue:35
+msgid "Back to {Nimiq Faucet}"
+msgstr ""
+
+#: src/components/GlobalClose.vue:34
+msgid "Back to {Nimiq Miner}"
+msgstr ""
+
+#: src/components/GlobalClose.vue:33
+msgid "Back to {Wallet}"
 msgstr ""
 
 #: src/views/OnboardingSelector.vue:80
@@ -107,6 +118,27 @@ msgstr ""
 
 #: src/views/OnboardingSelector.vue:76
 msgid "Back to Choose Address"
+msgstr ""
+
+#: src/components/GlobalClose.vue:39
+msgid "Back to CryptoPayment.link"
+msgstr ""
+
+#: src/components/GlobalClose.vue:36
+msgid "Back to Donation Button Creator"
+msgstr ""
+
+#. Nimiq Safe
+#: src/components/GlobalClose.vue:32
+msgid "Back to my accounts"
+msgstr ""
+
+#: src/components/GlobalClose.vue:37
+msgid "Back to Nimiq Gift Card"
+msgstr ""
+
+#: src/components/GlobalClose.vue:38
+msgid "Back to Nimiq Vote"
 msgstr ""
 
 #: src/views/OnboardingSelector.vue:78

@@ -79,7 +79,7 @@ export default class OnboardingSelector extends Vue {
             case RequestType.CREATE_CASHLINK:
                 return this.$t('Back to Cashlink') as string;
             default:
-                return this.$t('Back to {appName}', { appName: this.request.appName }) as string;
+                return ''; // use default label
         }
     }
 
