@@ -6,7 +6,7 @@ import { Cookie } from '@nimiq/utils';
 Vue.use(VueI18n);
 
 const DEFAULT_LANGUAGE = 'en';
-const SUPPORTED_LANGUAGES = [DEFAULT_LANGUAGE, 'de', 'es', 'fr', 'zh'];
+const SUPPORTED_LANGUAGES = [DEFAULT_LANGUAGE, 'zh'];
 const LOADED_LANGUAGES: string[] = [];
 
 export const i18n = new VueI18n({
@@ -39,8 +39,7 @@ export async function setLanguage(lang: string) {
 // Return the language stored in the `lang` cookie. Fallback to the browser language
 export function detectLanguage() {
     const langCookie = Cookie.getCookie('lang');
-    // const fallbackLang = window.navigator.language.split('-')[0];
-    const fallbackLang = 'en'; // TODO just temporarily, until language switching is enabled in wallet
+    const fallbackLang = window.navigator.language.split('-')[0];
 
     let lang = langCookie || fallbackLang;
     // If the language is not supported set it to the default one
