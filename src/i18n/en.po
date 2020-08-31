@@ -311,9 +311,7 @@ msgid "Connect Ledger"
 msgstr ""
 
 #: src/components/OnboardingMenu.vue:6
-msgid ""
-"Connect your\n"
-"Ledger Nano S."
+msgid "Connect your Ledger Nano S or Nano X."
 msgstr ""
 
 #: src/views/Migrate.vue:142

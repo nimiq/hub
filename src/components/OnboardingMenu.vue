@@ -1,9 +1,9 @@
 <template>
-    <SmallPage class="onboarding-menu">
+    <SmallPage class="onboarding-menu" :class="{ 'has-three-line-text': hasThreeLineText }">
         <button class="choice ledger" tabindex="3" @click="ledger">
             <LedgerIcon/>
             <h2 class="nq-h2">{{ $t('Connect Ledger') }}</h2>
-            <p class="text">{{ $t('Connect your\nLedger Nano S.') }}</p>
+            <p class="text">{{ $t('Connect your Ledger Nano S or Nano X.') }}</p>
         </button>
 
         <button class="choice login" tabindex="2" @click="login">
@@ -32,6 +32,14 @@ import { SmallPage, LedgerIcon, PlusCircleIcon, LoginIcon } from '@nimiq/vue-com
 
 @Component({components: {SmallPage, LedgerIcon, PlusCircleIcon, LoginIcon}})
 export default class AccountList extends Vue {
+    private hasThreeLineText: boolean = false;
+
+    private mounted() {
+        this.hasThreeLineText = [...this.$el.querySelectorAll('.text')].some((text) => {
+            return (text as HTMLElement).offsetHeight > 50; // note that this works independent of zoom level
+        });
+    }
+
     @Emit()
     // tslint:disable-next-line:no-empty
     private signup() {}
@@ -51,7 +59,7 @@ export default class AccountList extends Vue {
         max-width: unset;
         min-height: unset;
         width: 89rem;
-        height: 29rem;
+        height: auto;
         padding: 0.75rem;
         position: relative;
         display: flex;
@@ -61,24 +69,32 @@ export default class AccountList extends Vue {
         overflow: hidden;
     }
 
-    .choice,
-    .choice.login:hover ~ .choice.signup,
-    .choice.login:focus ~ .choice.signup,
-    .choice.ledger:hover ~ .choice.signup,
-    .choice.ledger:focus ~ .choice.signup {
+    .choice {
+        display: flex;
+        flex-direction: column;
         width: 33.33%;
-        height: 100%;
+        padding: 4rem 4rem 3.75rem;
         background: none;
         border: none;
         outline: none;
         font-size: inherit;
         font-family: inherit;
-        padding: 4rem;
         transition: color 450ms cubic-bezier(0.25, 0, 0, 1);
         cursor: pointer;
         text-align: left;
         z-index: 200;
         position: relative;
+    }
+
+    .has-three-line-text .choice {
+        min-height: 27rem;
+        padding: 3rem 3rem 2rem; /* by reduced padding the 3 line text might become 2 lines but that still looks ok */
+    }
+
+    .choice.login:hover ~ .choice.signup,
+    .choice.login:focus ~ .choice.signup,
+    .choice.ledger:hover ~ .choice.signup,
+    .choice.ledger:focus ~ .choice.signup {
         color: inherit;
     }
 
@@ -201,18 +217,20 @@ export default class AccountList extends Vue {
             flex-direction: column-reverse;
         }
 
-        .choice,
-        .choice.login:hover ~ .choice.signup,
-        .choice.login:focus ~ .choice.signup,
-        .choice.ledger:hover ~ .choice.signup,
-        .choice.ledger:focus ~ .choice.signup {
+        .choice {
             width: 100%;
             height: 33%;
-            padding: 3.5rem 3rem;
+            min-height: unset !important;
+            padding: 3.25rem 3rem !important;
+            justify-content: center;
         }
 
         .choice h2 {
-            margin-top: 0;
+            margin-top: -.25rem;
+        }
+
+        .choice .text {
+            max-width: 23rem;
         }
 
         .choice svg {
