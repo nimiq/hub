@@ -608,6 +608,10 @@ export default CashlinkCreate;
         margin-top: 3rem;
     }
 
+    .overlay.fee h1 {
+        text-align: center;
+    }
+
     .overlay.fee p {
         text-align: center;
         margin-bottom: 4rem;
