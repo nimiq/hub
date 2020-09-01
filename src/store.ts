@@ -4,10 +4,8 @@ import { Result as KeyguardResult } from '@nimiq/keyguard-client';
 import { WalletInfo, WalletType } from '@/lib/WalletInfo';
 import { WalletStore } from '@/lib/WalletStore';
 import { AccountInfo } from '@/lib/AccountInfo';
-import {
-    LEGACY_GROUPING_ACCOUNT_ID,
-    LEGACY_GROUPING_ACCOUNT_LABEL,
-} from '@/lib/Constants';
+import { labelLegacyAccountGroup } from '@/lib/LabelingMachine';
+import { LEGACY_GROUPING_ACCOUNT_ID } from '@/lib/Constants';
 import { ContractInfo } from './lib/ContractInfo';
 
 Vue.use(Vuex);
@@ -167,7 +165,7 @@ const store: StoreOptions<RootState> = {
                 processedWallets.push(new WalletInfo(
                     LEGACY_GROUPING_ACCOUNT_ID,
                     /* keyId */ '',
-                    LEGACY_GROUPING_ACCOUNT_LABEL,
+                    labelLegacyAccountGroup(),
                     singleAccounts,
                     singleContracts,
                     WalletType.LEGACY,

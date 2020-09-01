@@ -1,13 +1,14 @@
 // tslint:disable no-bitwise no-shadowed-variable
 
 import { WalletInfoEntry, WalletType } from './WalletInfo';
+import { LABEL_MAX_LENGTH } from '../lib/Constants';
 import {
-    LABEL_MAX_LENGTH,
-    ACCOUNT_DEFAULT_LABEL_LEDGER,
-    CONTRACT_DEFAULT_LABEL_VESTING,
-    CONTRACT_DEFAULT_LABEL_HTLC,
-} from '@/lib/Constants';
-import LabelingMachine from './LabelingMachine';
+    labelAddress,
+    labelKeyguardAccount,
+    labelVestingContract,
+    labelHashedTimeLockedContract,
+    labelLedgerAccount,
+} from './LabelingMachine';
 import { ContractInfoEntry, VestingContractInfoEntry } from './ContractInfo';
 import { AccountInfoEntry } from './AccountInfo';
 import { Utf8Tools } from '@nimiq/utils';
@@ -116,27 +117,27 @@ class CookieJar {
 
     private static checkWalletDefaultLabel(firstAddress: Uint8Array, label: string, type: WalletType): string {
         if (type === WalletType.LEDGER) {
-            if (label === ACCOUNT_DEFAULT_LABEL_LEDGER) return '';
+            if (label === labelLedgerAccount()) return '';
             return label;
         }
 
         const userFriendlyAddress = new Nimiq.Address(firstAddress).toUserFriendlyAddress();
-        const defaultLabel = LabelingMachine.labelAccount(userFriendlyAddress);
+        const defaultLabel = labelKeyguardAccount(userFriendlyAddress);
         if (label === defaultLabel) return '';
         return label;
     }
 
     private static checkAccountDefaultLabel(address: Uint8Array, label: string): string {
         const userFriendlyAddress = new Nimiq.Address(address).toUserFriendlyAddress();
-        const defaultLabel = LabelingMachine.labelAddress(userFriendlyAddress);
+        const defaultLabel = labelAddress(userFriendlyAddress);
         if (label === defaultLabel) return '';
         return label;
     }
 
     private static checkContractDefaultLabel(type: Nimiq.Account.Type, label: string): string {
         switch (type) {
-            case Nimiq.Account.Type.VESTING: return label === CONTRACT_DEFAULT_LABEL_VESTING ? '' : label;
-            case Nimiq.Account.Type.HTLC: return label === CONTRACT_DEFAULT_LABEL_HTLC ? '' : label;
+            case Nimiq.Account.Type.VESTING: return label === labelVestingContract() ? '' : label;
+            case Nimiq.Account.Type.HTLC: return label === labelHashedTimeLockedContract() ? '' : label;
             default: return label;
         }
     }

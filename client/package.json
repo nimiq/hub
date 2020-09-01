@@ -14,6 +14,7 @@
     "big-integer": "^1.6.48"
   },
   "devDependencies": {
+    "@rollup/plugin-json": "^4.1.0",
     "rollup": "^1.12.1",
     "rollup-plugin-node-resolve": "^5.0.0",
     "rollup-plugin-terser": "^4.0.4",
@@ -36,6 +37,8 @@
   "scripts": {
     "build": "rm -rf build && rm -rf dist && tsc && rollup -c",
     "lint": "tslint --project tsconfig.json",
-    "lintfix": "yarn lint --fix"
+    "lintfix": "yarn lint --fix",
+    "i18n:pull": "tx pull --all --parallel --no-interactive --force --minimum-perc 95",
+    "i18n:push": "tx push --source"
   }
 }
