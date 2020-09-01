@@ -319,8 +319,8 @@ msgid "Connect Ledger"
 msgstr "Connecter le Ledger"
 
 #: src/components/OnboardingMenu.vue:6
-msgid "Connect your Ledger Nano S or Nano X."
-msgstr "Connectez votre Ledger Nano S ou Nano X."
+msgid "Connect your Ledger Nano S or Nano X."
+msgstr "Connectez votre Ledger Nano S ou Nano X."
 
 #: src/views/Migrate.vue:142 src/views/Migrate.vue:282
 msgid "Connecting to Keyguard..."
@@ -998,7 +998,7 @@ msgid "You're logged in!"
 msgstr "Vous êtes connecté !"
 
 #: src/views/LoginSuccess.vue:192
-msgid "Your Account is ready. | Your Accounts are ready."
+msgid "Your Account is ready. | Your Accounts are ready."
 msgstr "Votre compte est prêt. | Vos comptes sont prêts."
 
 #: src/views/LoginSuccess.vue:175 src/views/SignupLedger.vue:101

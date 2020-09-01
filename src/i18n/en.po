@@ -311,7 +311,7 @@ msgid "Connect Ledger"
 msgstr ""
 
 #: src/components/OnboardingMenu.vue:6
-msgid "Connect your Ledger Nano S or Nano X."
+msgid "Connect your Ledger Nano S or Nano X."
 msgstr ""
 
 #: src/views/Migrate.vue:142
@@ -950,7 +950,7 @@ msgid "You're logged in!"
 msgstr ""
 
 #: src/views/LoginSuccess.vue:192
-msgid "Your Account is ready. | Your Accounts are ready."
+msgid "Your Account is ready. | Your Accounts are ready."
 msgstr ""
 
 #: src/views/LoginSuccess.vue:175

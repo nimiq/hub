@@ -317,8 +317,8 @@ msgid "Connect Ledger"
 msgstr "连接Ledger"
 
 #: src/components/OnboardingMenu.vue:6
-msgid "Connect your Ledger Nano S or Nano X."
-msgstr "连接您的Ledger Nano S或NanoX。"
+msgid "Connect your Ledger Nano S or Nano X."
+msgstr "连接您的Ledger Nano S或Nano X。"
 
 #: src/views/Migrate.vue:142 src/views/Migrate.vue:282
 msgid "Connecting to Keyguard..."
@@ -489,7 +489,7 @@ msgstr ""
 #: src/views/LoginSuccess.vue:152 src/views/SignupLedger.vue:117
 msgid ""
 "Imported {count} address so far... | Imported {count} addresses so far..."
-msgstr "到目前为止，已导入{count}地址...到目前为止，已导入{count}个地址..."
+msgstr "到目前为止，已导入{count}地址... | 到目前为止，已导入{count}个地址..."
 
 #: src/components/CheckoutCard.vue:190
 msgid "Incomplete payment"
@@ -965,8 +965,8 @@ msgid "You're logged in!"
 msgstr "您已登录！"
 
 #: src/views/LoginSuccess.vue:192
-msgid "Your Account is ready. | Your Accounts are ready."
-msgstr "您的帐户已准备就绪。| 您的帐户已准备就绪。"
+msgid "Your Account is ready. | Your Accounts are ready."
+msgstr "您的帐户已准备就绪。 | 您的帐户已准备就绪。"
 
 #: src/views/LoginSuccess.vue:175 src/views/SignupLedger.vue:101
 msgid ""
