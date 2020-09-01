@@ -1,11 +1,11 @@
 # 
 # Translators:
-# Daniel, 2020
 # Sven <sven@nimiq.com>, 2020
+# Daniel, 2020
 # 
 msgid ""
 msgstr ""
-"Last-Translator: Sven <sven@nimiq.com>, 2020\n"
+"Last-Translator: Daniel, 2020\n"
 "Language-Team: Chinese (https://www.transifex.com/nimiq-foundation/teams/107400/zh/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: zh\n"
@@ -100,28 +100,56 @@ msgstr "金额"
 msgid "Awaiting receipt confirmation..."
 msgstr "正在等待收据确认..."
 
-#: src/views/AddAccountSelection.vue:19 src/views/AddAddressLedger.vue:23
-#: src/views/CashlinkCreate.vue:83 src/views/ChooseAddress.vue:19
-#: src/views/ErrorHandlerUnsupportedLedger.vue:11
-#: src/views/LogoutLedger.vue:26 src/views/OnboardingSelector.vue:85
-#: src/views/Rename.vue:28 src/views/SignMessage.vue:24
-#: src/views/SignTransactionLedger.vue:111 src/views/SignupLedger.vue:37
+#: src/components/GlobalClose.vue:40
 msgid "Back to {appName}"
 msgstr "返回 {appName}"
 
-#: src/views/OnboardingSelector.vue:83
+#: src/components/GlobalClose.vue:35
+msgid "Back to {Nimiq Faucet}"
+msgstr "返回 {Nimiq Faucet}"
+
+#: src/components/GlobalClose.vue:34
+msgid "Back to {Nimiq Miner}"
+msgstr "返回 {Nimiq Miner}"
+
+#: src/components/GlobalClose.vue:33
+msgid "Back to {Wallet}"
+msgstr "返回 {Wallet}"
+
+#: src/views/OnboardingSelector.vue:80
 msgid "Back to Cashlink"
 msgstr "返回现金链接"
 
-#: src/views/OnboardingSelector.vue:77
+#: src/views/OnboardingSelector.vue:74
 msgid "Back to Checkout"
 msgstr "返回结账"
 
-#: src/views/OnboardingSelector.vue:79
+#: src/views/OnboardingSelector.vue:76
 msgid "Back to Choose Address"
 msgstr "返回选择地址"
 
-#: src/views/OnboardingSelector.vue:81
+#: src/components/GlobalClose.vue:39
+msgid "Back to CryptoPayment.link"
+msgstr "返回 CryptoPayment.link"
+
+#: src/components/GlobalClose.vue:36
+msgid "Back to Donation Button Creator"
+msgstr "返回捐赠按钮创建工具"
+
+#. Nimiq Safe
+#: src/components/GlobalClose.vue:32
+msgid "Back to my accounts"
+msgstr "返回我的帐户"
+
+#: src/components/GlobalClose.vue:37
+msgid "Back to Nimiq Gift Card"
+msgstr "返回Nimiq礼品卡"
+
+#: src/components/GlobalClose.vue:38
+msgid "Back to Nimiq Vote"
+msgstr "返回Nimiq投票"
+
+#: src/views/OnboardingSelector.vue:78
 msgid "Back to Sign Message"
 msgstr "返回签名信息"
 
@@ -147,16 +175,13 @@ msgid ""
 " be processed."
 msgstr "通过添加交易费，您可以决定交易的处理速度"
 
-#: src/views/CashlinkManage.vue:11 src/views/CheckoutTransmission.vue:10
+#: src/views/CashlinkManage.vue:11 src/views/Checkout.vue:182
+#: src/views/CheckoutTransmission.vue:10
 msgid "Cancel"
 msgstr "取消"
 
-#: src/views/Checkout.vue:55
-msgid "Cancel {payment}"
-msgstr "取消 {付款}"
-
-#: src/views/SignTransactionLedger.vue:111
-msgid "Cancel Payment"
+#: src/views/Checkout.vue:181 src/views/SignTransactionLedger.vue:108
+msgid "Cancel payment"
 msgstr "取消付款"
 
 #: src/views/CashlinkReceive.vue:259
@@ -292,10 +317,8 @@ msgid "Connect Ledger"
 msgstr "连接Ledger"
 
 #: src/components/OnboardingMenu.vue:6
-msgid ""
-"Connect your\n"
-"Ledger Nano S."
-msgstr "连接您的Ledger Nano S"
+msgid "Connect your Ledger Nano S or Nano X."
+msgstr "连接您的Ledger Nano S或NanoX。"
 
 #: src/views/Migrate.vue:142 src/views/Migrate.vue:282
 msgid "Connecting to Keyguard..."
@@ -321,7 +344,7 @@ msgid "Contacts are not affected."
 msgstr "联系人不受影响"
 
 #: src/components/NotEnoughCookieSpace.vue:8 src/views/LoginSuccess.vue:141
-#: src/views/LoginSuccess.vue:178 src/views/SignupLedger.vue:136
+#: src/views/LoginSuccess.vue:178 src/views/SignupLedger.vue:129
 msgid "Continue"
 msgstr "继续"
 
@@ -361,7 +384,7 @@ msgstr "创建现金链接"
 msgid "Creating your Account"
 msgstr "正在创建您的帐户"
 
-#: src/views/CashlinkManage.vue:195 src/views/SignTransactionLedger.vue:439
+#: src/views/CashlinkManage.vue:195 src/views/SignTransactionLedger.vue:436
 msgid "Creating your Cashlink"
 msgstr "正在创建您的现金链接"
 
@@ -369,7 +392,7 @@ msgstr "正在创建您的现金链接"
 msgid "Detecting vesting contracts..."
 msgstr "正在检测归属合同..."
 
-#: src/views/Checkout.vue:71
+#: src/views/Checkout.vue:63
 msgid "Disclaimer"
 msgstr "免责声明"
 
@@ -386,11 +409,11 @@ msgstr "完成"
 msgid "Enter manually"
 msgstr "手动输入"
 
-#: src/views/CashlinkCreate.vue:164
+#: src/views/CashlinkCreate.vue:159
 msgid "express"
 msgstr "表现"
 
-#: src/views/SignupLedger.vue:120
+#: src/views/SignupLedger.vue:113
 msgid "Failed to fetch addresses. Retrying..."
 msgstr "无法获取地址。正在重试..."
 
@@ -403,7 +426,7 @@ msgstr "费用"
 msgid "Fee"
 msgstr "费用"
 
-#: src/components/LedgerUi.vue:179 src/views/SignupLedger.vue:106
+#: src/components/LedgerUi.vue:179 src/views/SignupLedger.vue:99
 msgid "Fetching Addresses"
 msgstr "正在提取地址"
 
@@ -415,7 +438,7 @@ msgstr "正在提取您的地址"
 msgid "Finish"
 msgstr "结束"
 
-#: src/views/CashlinkCreate.vue:154
+#: src/views/CashlinkCreate.vue:149
 msgid "free"
 msgstr "免费"
 
@@ -463,7 +486,7 @@ msgstr ""
 "试想如果使用\n"
 "加密很容易"
 
-#: src/views/LoginSuccess.vue:152 src/views/SignupLedger.vue:124
+#: src/views/LoginSuccess.vue:152 src/views/SignupLedger.vue:117
 msgid ""
 "Imported {count} address so far... | Imported {count} addresses so far..."
 msgstr "到目前为止，已导入{count}地址...到目前为止，已导入{count}个地址..."
@@ -490,7 +513,7 @@ msgstr "它不会成为公共区块链的一部分，并且可能会在使用现
 msgid "Ledger Account"
 msgstr "Ledger 帐户"
 
-#: src/views/ErrorHandlerUnsupportedLedger.vue:46
+#: src/views/ErrorHandlerUnsupportedLedger.vue:44
 msgid ""
 "Ledger accounts cannot be exported. Please refer to your 24 words backup you"
 " created when setting up your device."
@@ -529,11 +552,11 @@ msgstr "登录文件已导出！"
 msgid "Login to existing account"
 msgstr "登录到现有帐户"
 
-#: src/views/OnboardingSelector.vue:94
+#: src/views/OnboardingSelector.vue:91
 msgid "Login to fund your Cashlink"
 msgstr "登录以资助您的现金链接"
 
-#: src/views/ErrorHandlerUnsupportedLedger.vue:44
+#: src/views/ErrorHandlerUnsupportedLedger.vue:42
 msgid "Message signing is not yet supported for Ledgers."
 msgstr "分类帐尚不支持信息签名"
 
@@ -553,11 +576,11 @@ msgstr "更多头像"
 msgid "My Backups are safe."
 msgstr "我的备份很安全"
 
-#: src/views/AddAccountSelection.vue:81
+#: src/views/AddAccountSelection.vue:78
 msgid "New Address added to your Account."
 msgstr "新地址已添加到您的帐户"
 
-#: src/views/CashlinkCreate.vue:55 src/views/SignTransactionLedger.vue:280
+#: src/views/CashlinkCreate.vue:55 src/views/SignTransactionLedger.vue:277
 msgid "New Cashlink"
 msgstr "新的现金链接"
 
@@ -606,13 +629,9 @@ msgstr "橙"
 msgid "Pay with {currencyFullName}"
 msgstr "使用{currencyFullName}支付"
 
-#: src/views/OnboardingSelector.vue:92
+#: src/views/OnboardingSelector.vue:89
 msgid "Pay with Nimiq"
 msgstr "使用Nimiq支付"
-
-#: src/views/Checkout.vue:57
-msgid "Payment"
-msgstr "付款"
 
 #: src/components/CheckoutCard.vue:182
 msgid "Payment successful"
@@ -703,7 +722,7 @@ msgstr "储存"
 msgid "Send your transaction"
 msgstr "发送您的交易"
 
-#: src/views/SignTransactionLedger.vue:440
+#: src/views/SignTransactionLedger.vue:437
 msgid "Sending Transaction"
 msgstr "发送交易"
 
@@ -743,7 +762,7 @@ msgstr "超出范围"
 msgid "Speed up your transaction"
 msgstr "加快您的交易"
 
-#: src/views/CashlinkCreate.vue:159
+#: src/views/CashlinkCreate.vue:154
 msgid "standard"
 msgstr "标准"
 
@@ -764,14 +783,14 @@ msgstr "青"
 msgid "The connected Ledger is not the one this account belongs to."
 msgstr "您所连接的分类帐不是该帐户所属的分类帐"
 
-#: src/i18n/i18n-setup.ts:60
+#: src/i18n/i18n-setup.ts:58
 msgid ""
 "The display language changed. Do you want to reload the page to update all "
 "translations? Otherwise, some translations might not be updated "
 "automatically. ({oldLang} to {newLang})"
 msgstr "显示语言已更改。您要重新加载页面以更新所有翻译吗？否则，某些翻译可能不会自动更新。 （{oldLang}至{newLang}）"
 
-#: src/components/CheckoutCard.vue:168 src/views/SignTransactionLedger.vue:446
+#: src/components/CheckoutCard.vue:168 src/views/SignTransactionLedger.vue:443
 msgid "The offer expired."
 msgstr "报价已过期"
 
@@ -801,7 +820,7 @@ msgstr "这是您的账户，里面有您的第一个地址"
 msgid "This message will be stored in the Cashlink."
 msgstr "此信息将存储在现金链接中"
 
-#: src/views/Checkout.vue:72
+#: src/views/Checkout.vue:64
 msgid ""
 "This Nimiq interface is non-custodial and solely used to bridge the payment "
 "sender with the payment recipient directly (P2P). Payment and deliverable "
@@ -809,7 +828,7 @@ msgid ""
 "parties."
 msgstr "Nimiq的用户界面是非托管性的，仅用于连接付款的发送方与接收方（P2P）。支付和可交付的付款履行由这两方各自负责"
 
-#: src/views/ErrorHandlerUnsupportedLedger.vue:51
+#: src/views/ErrorHandlerUnsupportedLedger.vue:49
 msgid "This operation is not supported for Ledgers."
 msgstr "Ledger不支持此操作"
 
@@ -817,7 +836,7 @@ msgstr "Ledger不支持此操作"
 msgid "Time to grow"
 msgstr "是时候成长了"
 
-#: src/views/ErrorHandlerUnsupportedLedger.vue:49
+#: src/views/ErrorHandlerUnsupportedLedger.vue:47
 msgid ""
 "To change the PIN of your Ledger please go to the settings on your device."
 msgstr "欲更改分类帐的PIN码，请转到设备上的设置"
@@ -830,11 +849,11 @@ msgstr "交易无法转发"
 msgid "Transaction is expired"
 msgstr "交易已过期"
 
-#: src/views/SignTransactionLedger.vue:444
+#: src/views/SignTransactionLedger.vue:441
 msgid "Transaction Sent"
 msgstr "交易已发送"
 
-#: src/views/SignTransactionLedger.vue:443
+#: src/views/SignTransactionLedger.vue:440
 msgid "Transaction Signed"
 msgstr "交易已签署"
 
@@ -859,7 +878,7 @@ msgid ""
 "accounts."
 msgstr "不幸的是，由于Safari和IOS的空间限制，该帐户无法正确存储。请通过登出其他帐户释放空间。"
 
-#: src/views/ErrorHandlerUnsupportedLedger.vue:38
+#: src/views/ErrorHandlerUnsupportedLedger.vue:36
 msgid "Unsupported Request"
 msgstr "不支持的请求"
 
@@ -887,7 +906,7 @@ msgstr ""
 "使用您的登录文件\n"
 "或恢复字"
 
-#: src/views/LoginSuccess.vue:177 src/views/SignupLedger.vue:131
+#: src/views/LoginSuccess.vue:177 src/views/SignupLedger.vue:124
 msgid "Used addresses without balance might have been missed."
 msgstr "已使用地址若没有余额可能会丢失"
 
@@ -907,7 +926,7 @@ msgstr ""
 "欢迎来到\n"
 "Nimiq区块链"
 
-#: src/views/SignupLedger.vue:112
+#: src/views/SignupLedger.vue:105
 msgid "Welcome to the Nimiq Blockchain."
 msgstr "欢迎来到Nimiq区块链"
 
@@ -941,7 +960,7 @@ msgid ""
 "refund. Restart to pay for your order."
 msgstr "您转入的金额不足，请联系商家进行退款，并重新支付您的订单"
 
-#: src/views/SignupLedger.vue:111
+#: src/views/SignupLedger.vue:104
 msgid "You're logged in!"
 msgstr "您已登录！"
 
@@ -949,7 +968,7 @@ msgstr "您已登录！"
 msgid "Your Account is ready. | Your Accounts are ready."
 msgstr "您的帐户已准备就绪。| 您的帐户已准备就绪。"
 
-#: src/views/LoginSuccess.vue:175 src/views/SignupLedger.vue:108
+#: src/views/LoginSuccess.vue:175 src/views/SignupLedger.vue:101
 msgid ""
 "Your Addresses may be\n"
 "incomplete."
