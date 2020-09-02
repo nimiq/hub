@@ -49,15 +49,7 @@
             </template>
         </Carousel>
 
-        <button class="global-close nq-button-s" @click="close">
-            <ArrowLeftSmallIcon/>
-
-            <i18n path="Cancel {payment}" :tag="false">
-                <template #payment>
-                    <span>{{ $t('Payment') }}</span>
-                </template>
-            </i18n>
-        </button>
+        <GlobalClose :buttonLabel="globalCloseButtonLabel" />
         <div class="spacer"></div>
 
         <transition name="transition-disclaimer">
@@ -77,19 +69,20 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator';
-import { BottomOverlay, Carousel, ArrowLeftSmallIcon } from '@nimiq/vue-components';
+import { BottomOverlay, Carousel } from '@nimiq/vue-components';
 import { BrowserDetection } from '@nimiq/utils';
 import { ParsedCheckoutRequest } from '../lib/RequestTypes';
+import GlobalClose from '../components/GlobalClose.vue';
 import BitcoinCheckoutCard from '../components/BitcoinCheckoutCard.vue';
 import EthereumCheckoutCard from '../components/EthereumCheckoutCard.vue';
 import NimiqCheckoutCard from '../components/NimiqCheckoutCard.vue';
 import { Currency as PublicCurrency } from '../lib/PublicRequestTypes';
 import { State as RpcState } from '@nimiq/rpc';
 import { Static } from '../lib/StaticStore';
-import { ERROR_CANCELED, HISTORY_KEY_SELECTED_CURRENCY } from '../lib/Constants';
+import { HISTORY_KEY_SELECTED_CURRENCY } from '../lib/Constants';
 
 @Component({components: {
-    ArrowLeftSmallIcon,
+    GlobalClose,
     BottomOverlay,
     Carousel,
     BitcoinCheckoutCard,
@@ -113,6 +106,7 @@ class Checkout extends Vue {
     private hasLongDisclaimer: boolean = false;
     private screenFitsDisclaimer: boolean = true;
     private dimensionsUpdateTimeout: number = -1;
+    private globalCloseButtonLabel: string = '';
 
     @Watch('selectedCurrency')
     private updateUnselected() {
@@ -155,16 +149,12 @@ class Checkout extends Vue {
     }
 
     private mounted() {
-        this.hasLongDisclaimer = !!this.$refs.disclaimer
-            && (this.$refs.disclaimer as HTMLElement).textContent!.length > 250;
+        const disclaimer = (this.$refs.disclaimer as BottomOverlay).$el || this.$refs.disclaimer;
+        this.hasLongDisclaimer = !!disclaimer && disclaimer.textContent!.length > 250;
     }
 
     private destroyed() {
         window.removeEventListener('resize', this._onResize);
-    }
-
-    private close() {
-        this.$rpc.reject(new Error(ERROR_CANCELED));
     }
 
     private chooseCurrency(currency: PublicCurrency) {
@@ -187,6 +177,9 @@ class Checkout extends Vue {
         const minWidth = 740; // Width below which English disclaimer would break into three lines.
         const minHeight = 890; // Height at which disclaimer fits at bottom, also with logos over carousel shown.
         this.screenFitsDisclaimer = window.innerWidth >= minWidth && window.innerHeight >= minHeight;
+        this.globalCloseButtonLabel = window.innerWidth > 400
+            ? this.$t('Cancel payment') as string
+            : this.$t('Cancel') as string;
         // Throttle calls to carousel.updateDimensions as its an expensive call
         clearTimeout(this.dimensionsUpdateTimeout);
         this.dimensionsUpdateTimeout = window.setTimeout(

@@ -105,11 +105,8 @@
             </transition>
         </SmallPage>
 
-        <button class="global-close nq-button-s" @click="_close"
-            :class="{ hidden: state !== constructor.State.OVERVIEW }">
-            <ArrowLeftSmallIcon/>
-            {{ request.kind === 'checkout' ? $t('Cancel Payment') : $t(`Back to {appName}`, { appName: request.appName }) }}
-        </button>
+        <GlobalClose :buttonLabel="request.kind === 'checkout' ? $t('Cancel payment') : '' /* use default */"
+            :onClose="_close" :hidden="state !== constructor.State.OVERVIEW" />
         <Network ref="network" :visible="false"/>
     </div>
 </template>
@@ -120,7 +117,6 @@ import {
     Account,
     AccountDetails,
     Amount,
-    ArrowLeftSmallIcon,
     ArrowRightIcon,
     PageBody,
     PageHeader,
@@ -132,6 +128,7 @@ import Network from '../components/Network.vue';
 import LedgerApi, { RequestType as LedgerApiRequestType } from '@nimiq/ledger-api';
 import LedgerUi from '../components/LedgerUi.vue';
 import StatusScreen from '../components/StatusScreen.vue';
+import GlobalClose from '../components/GlobalClose.vue';
 import { Static } from '../lib/StaticStore';
 import { Getter } from 'vuex-class';
 import { State as RpcState } from '@nimiq/rpc';
@@ -163,10 +160,10 @@ interface AccountDetailsData {
     SmallPage,
     LedgerUi,
     StatusScreen,
+    GlobalClose,
     AccountDetails,
     Network,
     Amount,
-    ArrowLeftSmallIcon,
     ArrowRightIcon,
     StopwatchIcon,
 }})

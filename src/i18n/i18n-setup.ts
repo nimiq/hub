@@ -2,12 +2,11 @@ import Vue from 'vue';
 import VueI18n from 'vue-i18n';
 import { I18nMixin as VueComponentsI18n } from '@nimiq/vue-components';
 import { Cookie } from '@nimiq/utils';
-import router from '../router';
 
 Vue.use(VueI18n);
 
 const DEFAULT_LANGUAGE = 'en';
-const SUPPORTED_LANGUAGES = [DEFAULT_LANGUAGE, 'de', 'fr', 'zh'];
+const SUPPORTED_LANGUAGES = [DEFAULT_LANGUAGE, 'zh'];
 const LOADED_LANGUAGES: string[] = [];
 
 export const i18n = new VueI18n({
@@ -40,8 +39,7 @@ export async function setLanguage(lang: string) {
 // Return the language stored in the `lang` cookie. Fallback to the browser language
 export function detectLanguage() {
     const langCookie = Cookie.getCookie('lang');
-    // const fallbackLang = window.navigator.language.split('-')[0];
-    const fallbackLang = 'en'; // TODO just temporarily, until language switching is enabled in wallet
+    const fallbackLang = window.navigator.language.split('-')[0];
 
     let lang = langCookie || fallbackLang;
     // If the language is not supported set it to the default one
@@ -72,15 +70,3 @@ function onTabFocus() {
 
 // Set a window/tab focus event to check if the user changed the language in another window/tab
 window.addEventListener('focus', onTabFocus);
-
-// This router navigation guard is to prevent switching
-// to the new route before the language file finished loading.
-router.beforeResolve((to, from, next) => {
-    if (to.path === '/') {
-        // The root path doesn't require any translations, therefore we can continue right away. Also, this fixes what
-        // seems to be a race condition between the beforeEach in the RpcApi and this beforeResolve, see issue #422
-        next();
-        return;
-    }
-    setLanguage(detectLanguage()).then(() => next());
-});

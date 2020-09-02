@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-       <SmallPage>
+        <SmallPage>
             <h1 class="nq-h1">{{ $t('Choose an Address') }}</h1>
 
             <div class="request-info nq-text">
@@ -14,26 +14,22 @@
 
         </SmallPage>
 
-        <button class="global-close nq-button-s" @click="close">
-            <ArrowLeftSmallIcon/>
-            {{ $t('Back to {appName}', { appName: request.appName}) }}
-        </button>
+        <GlobalClose />
     </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { Getter, Mutation } from 'vuex-class';
-import { SmallPage, AccountSelector, ArrowLeftSmallIcon } from '@nimiq/vue-components';
-import { SimpleRequest, Account, Address, RequestType } from '../lib/PublicRequestTypes';
+import { SmallPage, AccountSelector } from '@nimiq/vue-components';
+import GlobalClose from '../components/GlobalClose.vue';
+import { SimpleRequest, Address, RequestType } from '../lib/PublicRequestTypes';
 import staticStore, { Static } from '@/lib/StaticStore';
-import { WalletStore } from '@/lib/WalletStore';
 import { WalletInfo } from '../lib/WalletInfo';
-import { ERROR_CANCELED } from '../lib/Constants';
 import { AccountInfo } from '../lib/AccountInfo';
 import { ContractInfo } from '../lib/ContractInfo';
 
-@Component({components: { AccountSelector, SmallPage, ArrowLeftSmallIcon }})
+@Component({components: { AccountSelector, SmallPage, GlobalClose }})
 export default class ChooseAddress extends Vue {
     @Static private request!: SimpleRequest;
 
@@ -81,10 +77,6 @@ export default class ChooseAddress extends Vue {
             this.$router.replace({name: RequestType.ONBOARD});
         }
         this.$router.push({name: RequestType.ONBOARD});
-    }
-
-    private close() {
-        this.$rpc.reject(new Error(ERROR_CANCELED));
     }
 }
 </script>

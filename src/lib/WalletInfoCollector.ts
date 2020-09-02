@@ -4,17 +4,16 @@ import { AccountInfo } from '@/lib/AccountInfo';
 import { WalletStore } from '@/lib/WalletStore';
 import { WalletInfo, WalletType } from '@/lib/WalletInfo';
 import LedgerApi, { RequestType as LedgerApiRequestType } from '@nimiq/ledger-api'; // TODO import only when needed
-import {
-    ACCOUNT_BIP32_BASE_PATH_KEYGUARD,
-    ACCOUNT_DEFAULT_LABEL_LEDGER,
-    ACCOUNT_DEFAULT_LABEL_LEGACY,
-    ACCOUNT_MAX_ALLOWED_ADDRESS_GAP,
-    ACCOUNT_TEMPORARY_LABEL_KEYGUARD,
-    CONTRACT_DEFAULT_LABEL_VESTING,
-} from '@/lib/Constants';
+import { ACCOUNT_BIP32_BASE_PATH_KEYGUARD, ACCOUNT_MAX_ALLOWED_ADDRESS_GAP } from '@/lib/Constants';
 import Config from 'config';
 import { ERROR_TRANSACTION_RECEIPTS } from '../lib/Constants';
-import LabelingMachine from './LabelingMachine';
+import {
+    labelAddress,
+    labelKeyguardAccount,
+    labelLedgerAccount,
+    labelLegacyAccount,
+    labelVestingContract,
+} from './LabelingMachine';
 import { VestingContractInfo } from './ContractInfo';
 import { BtcAddressInfo } from './bitcoin/BtcAddressInfo';
 import { loadBitcoinJS } from './bitcoin/BitcoinJSLoader';
@@ -42,6 +41,8 @@ export type WalletCollectionResultLedger = {
 export type WalletCollectionResultKeyguard = WalletCollectionResultLedger & {
     releaseKey: (removeKey?: boolean) => Promise<KeyguardSimpleResult | void>,
 };
+
+const TEMPORARY_ACCOUNT_LABEL_KEYGUARD = '~~~TEMP~~~';
 
 export default class WalletInfoCollector {
     public static async collectBip39WalletInfo(
@@ -260,8 +261,8 @@ export default class WalletInfoCollector {
             let hasActivity = contracts.length > 0;
 
             // Label Keyguard BIP39 accounts according to their first identicon background color
-            if (walletType === WalletType.BIP39 && walletInfo.label === ACCOUNT_TEMPORARY_LABEL_KEYGUARD) {
-                walletInfo.label = LabelingMachine.labelAccount(firstSetOfDerivedAccounts[0].address);
+            if (walletType === WalletType.BIP39 && walletInfo.label === TEMPORARY_ACCOUNT_LABEL_KEYGUARD) {
+                walletInfo.label = labelKeyguardAccount(firstSetOfDerivedAccounts[0].address);
             }
 
             let foundAccounts: BasicAccountInfo[];
@@ -386,10 +387,10 @@ export default class WalletInfoCollector {
         }
 
         const label = walletType === WalletType.LEGACY
-            ? ACCOUNT_DEFAULT_LABEL_LEGACY
+            ? labelLegacyAccount()
             : walletType === WalletType.BIP39
-                ? ACCOUNT_TEMPORARY_LABEL_KEYGUARD
-                : ACCOUNT_DEFAULT_LABEL_LEDGER;
+                ? TEMPORARY_ACCOUNT_LABEL_KEYGUARD
+                : labelLedgerAccount();
         return new WalletInfo(
             walletId,
             keyId,
@@ -466,7 +467,7 @@ export default class WalletInfoCollector {
             const balance = balances ? balances.get(newAccount.address) : undefined;
             const accountInfo = existingAccountInfo || new AccountInfo(
                 newAccount.path,
-                LabelingMachine.labelAddress(newAccount.address),
+                labelAddress(newAccount.address),
                 Nimiq.Address.fromString(newAccount.address),
             );
             if (balance !== undefined) accountInfo.balance = balance;
@@ -487,7 +488,7 @@ export default class WalletInfoCollector {
         await WalletInfoCollector._networkInitializationPromise;
         const genesisVestingContracts = (await NetworkClient.Instance.getGenesisVestingContracts())
             .map((contract) => new VestingContractInfo(
-                CONTRACT_DEFAULT_LABEL_VESTING,
+                labelVestingContract(),
                 Nimiq.Address.fromString(contract.address),
                 Nimiq.Address.fromString(contract.owner),
                 contract.start,

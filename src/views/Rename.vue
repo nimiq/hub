@@ -23,25 +23,21 @@
                     class="grow-from-bottom-button" />
         </SmallPage>
 
-        <button class="global-close nq-button-s" :class="{'hidden': labelsStored}" @click="close">
-            <ArrowLeftSmallIcon/>
-            {{ $t('Back to {appName}', { appName: request.appName }) }}
-        </button>
+        <GlobalClose :hidden="labelsStored"/>
     </div>
 </template>
 
 <script lang="ts">
     import { Component, Vue } from 'vue-property-decorator';
     import { AccountRing, AccountList, SmallPage, PageHeader, PageBody, PageFooter } from '@nimiq/vue-components';
-    import { ArrowLeftSmallIcon } from '@nimiq/vue-components';
-    import Input from '@/components/Input.vue';
+    import Input from '../components/Input.vue';
     import { ParsedRenameRequest } from '../lib/RequestTypes';
     import { Account } from '../lib/PublicRequestTypes';
     import StatusScreen from '../components/StatusScreen.vue';
+    import GlobalClose from '../components/GlobalClose.vue';
     import { WalletInfo, WalletType } from '../lib/WalletInfo';
     import { WalletStore } from '@/lib/WalletStore';
     import { Static } from '../lib/StaticStore';
-    import { ERROR_CANCELED } from '@/lib/Constants';
 
     /*
         In Case some sort auf Authentication with the wallet is desireable, there are 2 options:
@@ -61,7 +57,7 @@
             PageFooter,
             Input,
             StatusScreen,
-            ArrowLeftSmallIcon,
+            GlobalClose,
         }})
     export default class Rename extends Vue {
         @Static private request!: ParsedRenameRequest;
@@ -131,10 +127,6 @@
         private done() {
             const result: Account = this.wallet!.toAccountType();
             this.$rpc.resolve(result);
-        }
-
-        private close() {
-            this.$rpc.reject(new Error(ERROR_CANCELED));
         }
     }
 </script>

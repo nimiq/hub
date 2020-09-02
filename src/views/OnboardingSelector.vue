@@ -5,10 +5,7 @@
         <div class="center">
             <OnboardingMenu @signup="signup" @login="login" @ledger="ledger"/>
 
-            <button v-if="!request.disableBack" class="global-close nq-button-s" @click="close">
-                <ArrowLeftSmallIcon/>
-                {{backButtonText}}
-            </button>
+            <GlobalClose v-if="!request.disableBack" :buttonLabel="backButtonLabel" :onClose="close"/>
         </div>
         <div v-if="headerText" class="uber-header"><!-- bottom spacing to balance header --></div>
     </div>
@@ -18,6 +15,7 @@
 import { Component, Vue } from 'vue-property-decorator';
 import KeyguardClient from '@nimiq/keyguard-client';
 import { BrowserDetection } from '@nimiq/utils';
+import GlobalClose from '../components/GlobalClose.vue';
 import OnboardingMenu from '../components/OnboardingMenu.vue';
 import { ParsedOnboardRequest } from '@/lib/RequestTypes';
 import { RequestType } from '@/lib/PublicRequestTypes';
@@ -25,11 +23,10 @@ import { Static } from '@/lib/StaticStore';
 import { DEFAULT_KEY_PATH, ERROR_CANCELED } from '@/lib/Constants';
 import CookieHelper from '../lib/CookieHelper';
 import NotEnoughCookieSpace from '../components/NotEnoughCookieSpace.vue';
-import { ArrowLeftSmallIcon } from '@nimiq/vue-components';
 import { BTC_ACCOUNT_KEY_PATH } from '../lib/bitcoin/BitcoinConstants';
 import Config from 'config';
 
-@Component({components: {OnboardingMenu, NotEnoughCookieSpace, ArrowLeftSmallIcon}})
+@Component({components: {GlobalClose, OnboardingMenu, NotEnoughCookieSpace}})
 export default class OnboardingSelector extends Vue {
     @Static private request!: ParsedOnboardRequest;
     @Static private originalRouteName?: string;
@@ -75,7 +72,7 @@ export default class OnboardingSelector extends Vue {
         }
     }
 
-    private get backButtonText() {
+    private get backButtonLabel() {
         switch (this.originalRouteName) {
             case RequestType.CHECKOUT:
                 return this.$t('Back to Checkout') as string;
@@ -86,7 +83,7 @@ export default class OnboardingSelector extends Vue {
             case RequestType.CREATE_CASHLINK:
                 return this.$t('Back to Cashlink') as string;
             default:
-                return this.$t('Back to {appName}', { appName: this.request.appName }) as string;
+                return ''; // use default label
         }
     }
 

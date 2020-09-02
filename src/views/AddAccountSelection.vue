@@ -14,16 +14,13 @@
             </StatusScreen>
         </SmallPage>
 
-        <button class="global-close nq-button-s" @click="close">
-            <ArrowLeftSmallIcon/>
-            {{ $t('Back to {appName}', { appName: request.appName }) }}
-        </button>
+        <GlobalClose />
     </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { SmallPage, PageHeader, CheckmarkIcon, ArrowLeftSmallIcon } from '@nimiq/vue-components';
+import { SmallPage, PageHeader, CheckmarkIcon } from '@nimiq/vue-components';
 import IdenticonSelector from '../components/IdenticonSelector.vue';
 import { AccountInfo } from '../lib/AccountInfo';
 import { State } from 'vuex-class';
@@ -32,10 +29,10 @@ import { DerivedAddress } from '@nimiq/keyguard-client';
 import { ParsedSimpleRequest } from '../lib/RequestTypes';
 import { Address } from '../lib/PublicRequestTypes';
 import StatusScreen from '../components/StatusScreen.vue';
+import GlobalClose from '../components/GlobalClose.vue';
 import { Static } from '../lib/StaticStore';
-import { ERROR_CANCELED } from '../lib/Constants';
 
-@Component({components: {StatusScreen, SmallPage, PageHeader, IdenticonSelector, CheckmarkIcon, ArrowLeftSmallIcon}})
+@Component({components: {SmallPage, PageHeader, StatusScreen, GlobalClose, IdenticonSelector, CheckmarkIcon}})
 export default class AddAccountSelection extends Vue {
     @Static private request!: ParsedSimpleRequest;
     @State private keyguardResult!: DerivedAddress[];
@@ -87,10 +84,6 @@ export default class AddAccountSelection extends Vue {
         };
 
         setTimeout(() => this.$rpc.resolve(result), StatusScreen.SUCCESS_REDIRECT_DELAY);
-    }
-
-    private close() {
-        this.$rpc.reject(new Error(ERROR_CANCELED));
     }
 }
 </script>

@@ -32,19 +32,14 @@
             </transition>
         </SmallPage>
 
-        <button class="global-close nq-button-s" @click="close">
-            <ArrowLeftSmallIcon/>
-            {{ $t('Back to {appName}', { appName: request.appName }) }}
-        </button>
+        <GlobalClose />
     </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { AccountRing, ArrowLeftSmallIcon, PageBody, PageHeader, SmallPage } from '@nimiq/vue-components';
-import { ParsedBasicRequest } from '../lib/RequestTypes';
+import { AccountRing, PageBody, PageHeader, SmallPage } from '@nimiq/vue-components';
 import { Account } from '../lib/PublicRequestTypes';
-import { Static } from '../lib/StaticStore';
 import LedgerApi, {
     RequestType as LedgerApiRequestType,
     StateType as LedgerApiStateType,
@@ -52,19 +47,19 @@ import LedgerApi, {
 } from '@nimiq/ledger-api';
 import LedgerUi from '../components/LedgerUi.vue';
 import StatusScreen from '../components/StatusScreen.vue';
+import GlobalClose from '../components/GlobalClose.vue';
 import IdenticonSelector from '../components/IdenticonSelector.vue';
 import WalletInfoCollector from '../lib/WalletInfoCollector';
 import { WalletInfo } from '../lib/WalletInfo';
 import { AccountInfo } from '../lib/AccountInfo';
 import { WalletStore } from '../lib/WalletStore';
-import { ERROR_CANCELED } from '../lib/Constants';
-import LabelingMachine from '@/lib/LabelingMachine';
+import { labelAddress } from '@/lib/LabelingMachine';
 import { Action } from 'vuex-class';
 
 @Component({components: {
     PageBody, SmallPage, PageHeader,
-    LedgerUi, StatusScreen, IdenticonSelector,
-    AccountRing, ArrowLeftSmallIcon,
+    StatusScreen, GlobalClose, LedgerUi,
+    IdenticonSelector, AccountRing,
 }})
 export default class SignupLedger extends Vue {
     private static readonly State = {
@@ -76,8 +71,6 @@ export default class SignupLedger extends Vue {
         WALLET_SUMMARY: 'wallet-summary',
         FINISHED: 'finished',
     };
-
-    @Static private request!: ParsedBasicRequest;
 
     @Action('addWalletAndSetActive') private $addWalletAndSetActive!: (walletInfo: WalletInfo) => any;
 
@@ -195,7 +188,7 @@ export default class SignupLedger extends Vue {
             // an account already
             this.accountsToSelectFrom = currentlyCheckedAccounts.map((account) => new AccountInfo(
                 account.path,
-                LabelingMachine.labelAddress(account.address),
+                labelAddress(account.address),
                 Nimiq.Address.fromString(account.address),
                 0, // balance 0 because if user has to select an account, it's gonna be an unused one
             ));
@@ -246,10 +239,6 @@ export default class SignupLedger extends Vue {
         } else {
             this.state = SignupLedger.State.LEDGER_INTERACTION;
         }
-    }
-
-    private close() {
-        this.$rpc.reject(new Error(ERROR_CANCELED));
     }
 }
 </script>
