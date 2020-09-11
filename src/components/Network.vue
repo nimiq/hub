@@ -103,6 +103,7 @@ class Network extends Vue {
                 extraData: tx.data,
                 flags: tx.flags,
                 networkId: tx.networkId,
+                proof: tx.proof,
             },
         };
 

@@ -4,6 +4,7 @@ import { ParsedNimiqSpecifics, ParsedNimiqDirectPaymentOptions } from './payment
 import { ParsedEtherSpecifics, ParsedEtherDirectPaymentOptions } from './paymentOptions/EtherPaymentOptions';
 import { ParsedBitcoinSpecifics, ParsedBitcoinDirectPaymentOptions } from './paymentOptions/BitcoinPaymentOptions';
 import { CashlinkTheme } from './PublicRequestTypes';
+import { AccountInfo } from './AccountInfo';
 
 export interface ParsedBasicRequest {
     kind: RequestType;
@@ -116,6 +117,78 @@ export interface ParsedAddBtcAddressesRequest extends ParsedSimpleRequest {
     firstIndex: number;
 }
 
+/**
+ * Swap
+ */
+
+export interface ParsedSetupSwapRequest extends ParsedBasicRequest {
+    fund: {
+        type: 'NIM',
+        sender: Nimiq.Address,
+        value: number, // Luna
+        fee: number, // Luna
+        extraData: Uint8Array, // HTLC data
+        validityStartHeight: number,
+    } | {
+        type: 'BTC',
+        inputs: Array<{
+            address: string,
+            transactionHash: string,
+            outputIndex: number,
+            outputScript: string,
+            value: number, // Sats
+        }>;
+        output: {
+            address: string, // HTLC address
+            value: number, // Sats
+        };
+        changeOutput?: {
+            address: string,
+            value: number, // Sats
+        };
+        htlcScript: Uint8Array,
+        refundAddress: string,
+    };
+
+    redeem: {
+        type: 'NIM',
+        sender: Nimiq.Address, // HTLC address
+        recipient: Nimiq.Address, // My address, must be redeem address of HTLC
+        value: number, // Luna
+        fee: number, // Luna
+        extraData?: Uint8Array,
+        validityStartHeight: number,
+        htlcData: Uint8Array,
+    } | {
+        type: 'BTC',
+        input: {
+            transactionHash: string,
+            outputIndex: number,
+            outputScript: string,
+            value: number, // Sats
+            witnessScript: string,
+        };
+        output: {
+            address: string, // My address, must be redeem address of HTLC
+            value: number, // Sats
+        };
+    };
+
+    // Data needed for display
+    fiatCurrency: string;
+    nimFiatRate: number;
+    btcFiatRate: number;
+    serviceNetworkFee: number; // Luna or Sats, depending which one gets funded
+    serviceExchangeFee: number; // Luna or Sats, depending which one gets funded
+    nimiqAddresses: Array<{
+        address: Nimiq.Address,
+        balance: number, // Luna
+    }>;
+    bitcoinAccount: {
+        balance: number, // Sats
+    };
+}
+
 // Discriminated Unions
 export type ParsedRpcRequest = ParsedSignTransactionRequest
                              | ParsedCreateCashlinkRequest
@@ -128,4 +201,5 @@ export type ParsedRpcRequest = ParsedSignTransactionRequest
                              | ParsedSignMessageRequest
                              | ParsedExportRequest
                              | ParsedSignBtcTransactionRequest
-                             | ParsedAddBtcAddressesRequest;
+                             | ParsedAddBtcAddressesRequest
+                             | ParsedSetupSwapRequest;
