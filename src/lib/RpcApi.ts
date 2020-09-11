@@ -9,6 +9,7 @@ import {
     ParsedSignTransactionRequest,
     ParsedSimpleRequest,
     ParsedSignBtcTransactionRequest,
+    ParsedSetupSwapRequest,
 } from './RequestTypes';
 import { RequestParser } from './RequestParser';
 import { Currency, RequestType, RpcRequest, RpcResult } from './PublicRequestTypes';
@@ -324,6 +325,13 @@ export default class RpcApi {
                             true,
                         );
                     }
+                }
+            } else if (requestType === RequestType.SETUP_SWAP) {
+                accountRequired = true;
+                const { fund, redeem } = (request as ParsedSetupSwapRequest);
+                const address = fund.type === 'NIM' ? fund.sender : redeem.type === 'NIM' ? redeem.recipient : null;
+                if (address) {
+                    account = this._store.getters.findWalletByAddress(address.toUserFriendlyAddress(), true);
                 }
             }
             if (accountRequired && !account) {

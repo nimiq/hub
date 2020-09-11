@@ -442,6 +442,18 @@ export class RequestParser {
 
                 // Validate and parse only what we use in the Hub
 
+                if (!['NIM', 'BTC'].includes(setupSwapRequest.fund.type)) {
+                    throw new Error('Funding object type must be "NIM" or "BTC"');
+                }
+
+                if (!['NIM', 'BTC'].includes(setupSwapRequest.redeem.type)) {
+                    throw new Error('Redeeming object type must be "NIM" or "BTC"');
+                }
+
+                if (setupSwapRequest.fund.type === setupSwapRequest.redeem.type) {
+                    throw new Error('Cannot swap between the same types');
+                }
+
                 const parsedSetupSwapRequest: ParsedSetupSwapRequest = {
                     kind: RequestType.SETUP_SWAP,
                     ...setupSwapRequest,
@@ -470,11 +482,6 @@ export class RequestParser {
                             ? Nimiq.BufferUtils.fromAny(setupSwapRequest.redeem.htlcData)
                             : setupSwapRequest.redeem.htlcData,
                     } : setupSwapRequest.redeem,
-
-                    nimiqAddresses: setupSwapRequest.nimiqAddresses.map((addressData) => ({
-                        ...addressData,
-                        address: Nimiq.Address.fromAny(addressData.address),
-                    })),
                 };
                 return parsedSetupSwapRequest;
             default:
@@ -617,11 +624,6 @@ export class RequestParser {
                         sender: setupSwapRequest.redeem.sender.toUserFriendlyAddress(),
                         recipient: setupSwapRequest.redeem.recipient.toUserFriendlyAddress(),
                     } : setupSwapRequest.redeem,
-
-                    nimiqAddresses: setupSwapRequest.nimiqAddresses.map((addressData) => ({
-                        ...addressData,
-                        address: addressData.address.toUserFriendlyAddress(),
-                    })),
                 };
                 return swapSetupRequest;
             default:

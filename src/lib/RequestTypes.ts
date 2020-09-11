@@ -4,7 +4,6 @@ import { ParsedNimiqSpecifics, ParsedNimiqDirectPaymentOptions } from './payment
 import { ParsedEtherSpecifics, ParsedEtherDirectPaymentOptions } from './paymentOptions/EtherPaymentOptions';
 import { ParsedBitcoinSpecifics, ParsedBitcoinDirectPaymentOptions } from './paymentOptions/BitcoinPaymentOptions';
 import { CashlinkTheme } from './PublicRequestTypes';
-import { AccountInfo } from './AccountInfo';
 
 export interface ParsedBasicRequest {
     kind: RequestType;
@@ -181,7 +180,7 @@ export interface ParsedSetupSwapRequest extends ParsedBasicRequest {
     serviceNetworkFee: number; // Luna or Sats, depending which one gets funded
     serviceExchangeFee: number; // Luna or Sats, depending which one gets funded
     nimiqAddresses: Array<{
-        address: Nimiq.Address,
+        address: string,
         balance: number, // Luna
     }>;
     bitcoinAccount: {
