@@ -16,6 +16,7 @@ import {
     SignBtcTransactionRequest,
     CashlinkTheme,
     RequestType,
+    SetupSwapRequest,
 } from '../src/lib/PublicRequestTypes';
 import { RedirectRequestBehavior, PopupRequestBehavior } from '../client/RequestBehavior';
 import { Utf8Tools } from '@nimiq/utils';
@@ -453,6 +454,80 @@ class Demo {
             };
             try {
                 const result = await demo.client.signBtcTransaction(txRequest, demo._defaultBehavior as PopupRequestBehavior);
+                console.log('Result', result);
+                document.querySelector('#result').textContent = 'Signed: ' + result.serializedTx;
+            } catch (e) {
+                console.error(e);
+                document.querySelector('#result').textContent = `Error: ${e.message || e}`;
+            }
+        });
+
+        document.querySelector('button#setup-swap.nim-to-btc').addEventListener('click', async () => {
+            // const $radio = document.querySelector('input[name="address"]:checked');
+            // if (!$radio) {
+            //     alert('You have no account to send a tx from, create an account first (signup)');
+            //     throw new Error('No account found');
+            // }
+            // const accountId = $radio.closest('ul').closest('li').querySelector('button').dataset.walletId;
+            const accountId = '44012bb58ff5';
+
+            const account = (await demo.list()).find((wallet) => wallet.accountId === accountId);
+            if (!account) {
+                alert('Account for the demo swap not found. Currently only Sören has this account.');
+                throw new Error('Account not found');
+            }
+
+            if (account.type === WalletType.LEGACY) {
+                alert('Cannot sign BTC transactions with a legacy account');
+                throw new Error('Cannot use legacy account');
+            }
+
+            const redeemAddress = account.btcAddresses ? account.btcAddresses.external[0] : null;
+            if (!redeemAddress) {
+                alert('No BTC address found in account, activate Bitcoin for this account first');
+                throw new Error('No BTC address found');
+            }
+
+            const request: SetupSwapRequest = {
+                appName: 'Hub Demos',
+                fund: {
+                    type: 'NIM',
+                    sender: account.addresses[0].address,
+                    value: 2709.79904 * 1e5,
+                    fee: 0,
+                    extraData: 'anlssPDlYuJ5R8hvRtmP3EVjywhona4vd7BI3MCOFNcxBOoUIitb4QMZNYm9TPJr6LpTyq2WJSLYwtBr6jaor6LrJjgvNFcr4gEAEWWF',
+                    validityStartHeight: 1140000,
+                },
+                redeem: {
+                    type: 'BTC',
+                    input: {
+                        transactionHash: 'ef4aaf6087d0cc48ff09355d715c257078467ca4d9dd75a20824e70a78fb43cc',
+                        outputIndex: 0,
+                        outputScript: BitcoinJS.address.toOutputScript('tb1q0hzaqgespv4a67wrc843gkjd5s668l6arm820utp32m9nss90ejq83klw7', BitcoinJS.networks.testnet).toString('hex'),
+                        witnessScript: '6382012088a820193589bd4cf26be8ba53caad962522d8c2d06bea36a8afa2eb26382f34572be28876a91484eb9bcbd90ce7d3360992259e4b9b818215a96088ac67044934565fb17576a91457f4babc23d2369572394cf80f28daeb9c3b58f188ac68',
+                        value: Math.round(0.001004 * 1e8),
+                    },
+                    output: {
+                        address: redeemAddress,
+                        value: 0.001 * 1e8,
+                    },
+                },
+
+                fiatCurrency: 'eur',
+                nimFiatRate: 0.00267,
+                btcFiatRate: 8662.93,
+                serviceNetworkFee: 10.73171 * 1e5,
+                serviceExchangeFee: 5.40878 * 1e5,
+                nimiqAddresses: account.addresses.map((address) => ({
+                    address: address.address,
+                    balance: Math.round((Math.random() * 10000 + 3000) * 1e5),
+                })),
+                bitcoinAccount: {
+                    balance: Math.round((Math.random() * 0.001 + 0.001) * 1e8),
+                },
+            };
+            try {
+                const result = await demo.client.setupSwap(request, demo._defaultBehavior as PopupRequestBehavior);
                 console.log('Result', result);
                 document.querySelector('#result').textContent = 'Signed: ' + result.serializedTx;
             } catch (e) {
