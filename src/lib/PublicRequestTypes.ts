@@ -373,6 +373,7 @@ export type RpcResult = SignedTransaction
                       | SimpleResult
                       | Address
                       | Cashlink
+                      | Cashlink[]
                       | SignedMessage
                       | ExportResult
                       | SignedBtcTransaction

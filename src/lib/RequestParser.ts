@@ -378,11 +378,6 @@ export class RequestParser {
                 const inputs = signBtcTransactionRequest.inputs.map((input) => {
                     if (!input || typeof input !== 'object') throw new Error('input must be an object');
 
-                    if (typeof input.address !== 'string'
-                        || input.address.length < 26
-                        || input.address.length > 35
-                    ) throw new Error('input must contain a valid address');
-
                     if (typeof input.transactionHash !== 'string'
                         || input.transactionHash.length !== 64
                     ) throw new Error('input must contain a valid transactionHash');
@@ -409,11 +404,6 @@ export class RequestParser {
                 ) throw new Error('output must be an object');
 
                 const output = signBtcTransactionRequest.output;
-                if (!output.address
-                    || typeof output.address !== 'string'
-                    || output.address.length < 26
-                    || output.address.length > 35
-                ) throw new Error('output must contain a valid address');
 
                 if (!output.value
                     || typeof output.value !== 'number'
@@ -431,11 +421,6 @@ export class RequestParser {
                     }
 
                     changeOutput = signBtcTransactionRequest.changeOutput;
-                    if (!changeOutput.address
-                        || typeof changeOutput.address !== 'string'
-                        || changeOutput.address.length < 26
-                        || changeOutput.address.length > 35
-                    ) throw new Error('changeOutput must contain a valid address');
 
                     if (!changeOutput.value
                         || typeof changeOutput.value !== 'number'
