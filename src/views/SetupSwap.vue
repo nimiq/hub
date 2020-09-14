@@ -4,7 +4,7 @@
 import { Component, Vue } from 'vue-property-decorator';
 import { ParsedSetupSwapRequest } from '../lib/RequestTypes';
 import KeyguardClient from '@nimiq/keyguard-client';
-import { Static } from '../lib/StaticStore';
+import staticStore, { Static } from '../lib/StaticStore';
 import { WalletInfo } from '../lib/WalletInfo';
 import { Getter } from 'vuex-class';
 import { BtcAddressInfo } from '../lib/bitcoin/BtcAddressInfo';
@@ -155,7 +155,7 @@ export default class SetupSwap extends Vue {
         request.nimiqAddresses = this.request.nimiqAddresses;
         request.bitcoinAccount = this.request.bitcoinAccount;
 
-        // staticStore.keyguardRequest = request; // Currently not used in SetupSwapSuccess
+        staticStore.keyguardRequest = request as KeyguardClient.SignSwapRequest;
 
         const client = this.$rpc.createKeyguardClient(true);
         client.signSwap(request as KeyguardClient.SignSwapRequest);

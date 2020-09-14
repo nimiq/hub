@@ -36,6 +36,7 @@ import {
     PaymentType,
     PaymentState,
     SetupSwapRequest,
+    SetupSwapResult,
 } from '../src/lib/PublicRequestTypes';
 
 export default class HubApi<DB extends BehaviorType = BehaviorType.POPUP> { // DB: Default Behavior
@@ -172,7 +173,7 @@ export default class HubApi<DB extends BehaviorType = BehaviorType.POPUP> { // D
     public setupSwap<B extends BehaviorType = DB>(
         request: Promise<SetupSwapRequest> | SetupSwapRequest,
         requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
-    ): Promise<B extends BehaviorType.REDIRECT ? void : undefined> {
+    ): Promise<B extends BehaviorType.REDIRECT ? void : SetupSwapResult> {
         return this._request(requestBehavior, RequestType.SETUP_SWAP, [request]);
     }
 

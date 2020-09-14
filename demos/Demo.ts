@@ -529,7 +529,7 @@ class Demo {
             try {
                 const result = await demo.client.setupSwap(request, demo._defaultBehavior as PopupRequestBehavior);
                 console.log('Result', result);
-                document.querySelector('#result').textContent = 'Signed: ' + result.serializedTx;
+                document.querySelector('#result').innerHTML = `Signed successfully!<br>NIM:&nbsp;${result.nim.serializedTx}<br>BTC:&nbsp;${result.btc.serializedTx}`;
             } catch (e) {
                 console.error(e);
                 document.querySelector('#result').textContent = `Error: ${e.message || e}`;
@@ -606,7 +606,7 @@ class Demo {
             try {
                 const result = await demo.client.setupSwap(request, demo._defaultBehavior as PopupRequestBehavior);
                 console.log('Result', result);
-                document.querySelector('#result').textContent = 'Signed: ' + result.serializedTx;
+                document.querySelector('#result').innerHTML = `Signed successfully!<br>NIM:&nbsp;${result.nim.serializedTx}<br>BTC:&nbsp;${result.btc.serializedTx}`;
             } catch (e) {
                 console.error(e);
                 document.querySelector('#result').textContent = `Error: ${e.message || e}`;

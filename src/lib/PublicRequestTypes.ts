@@ -263,6 +263,11 @@ export interface SetupSwapRequest extends BasicRequest {
     };
 }
 
+export interface SetupSwapResult {
+    nim: SignedTransaction;
+    btc: SignedBtcTransaction;
+}
+
 export interface SignMessageRequest extends BasicRequest {
     signer?: string;
     message: string | Uint8Array;
@@ -448,7 +453,8 @@ export type RpcResult = SignedTransaction
                       | SignedMessage
                       | ExportResult
                       | SignedBtcTransaction
-                      | AddBtcAddressesResult;
+                      | AddBtcAddressesResult
+                      | SetupSwapResult;
 
 export type ResultByRequestType<T> =
     T extends RequestType.RENAME ? Account :
@@ -465,5 +471,5 @@ export type ResultByRequestType<T> =
     T extends RequestType.SIGN_BTC_TRANSACTION ? SignedBtcTransaction :
     T extends RequestType.ACTIVATE_BITCOIN ? Account :
     T extends RequestType.ADD_BTC_ADDRESSES ? AddBtcAddressesResult :
-    T extends RequestType.SETUP_SWAP ? undefined :
+    T extends RequestType.SETUP_SWAP ? SetupSwapResult :
     never;

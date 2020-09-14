@@ -67,7 +67,7 @@ const ActivateBitcoin         = () => import(/*webpackChunkName: "activate-btc"*
 const ActivateBitcoinSuccess  = () => import(/*webpackChunkName: "activate-btc"*/ './views/ActivateBitcoinSuccess.vue');
 
 const SetupSwap               = () => import(/*webpackChunkName: "swap"*/ './views/SetupSwap.vue');
-// const SetupSwapSuccess        = () => import(/*webpackChunkName: "swap"*/ './views/SetupSwapSuccess.vue');
+const SetupSwapSuccess        = () => import(/*webpackChunkName: "swap"*/ './views/SetupSwapSuccess.vue');
 
 Vue.use(Router);
 
@@ -316,10 +316,10 @@ export default new Router({
             component: SetupSwap,
             name: RequestType.SETUP_SWAP,
         },
-        // {
-        //     path: `/${RequestType.SETUP_SWAP}/success`,
-        //     component: SetupSwapSuccess,
-        //     name: `${RequestType.SETUP_SWAP}-success`,
-        // },
+        {
+            path: `/${RequestType.SETUP_SWAP}/success`,
+            component: SetupSwapSuccess,
+            name: `${RequestType.SETUP_SWAP}-success`,
+        },
     ],
 });
