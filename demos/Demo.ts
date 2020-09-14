@@ -520,7 +520,84 @@ class Demo {
                 serviceExchangeFee: 5.40878 * 1e5,
                 nimiqAddresses: account.addresses.map((address) => ({
                     address: address.address,
-                    balance: Math.round((Math.random() * 10000 + 3000) * 1e5),
+                    balance: Math.round(Math.random() * 10000 + 3000) * 1e5,
+                })),
+                bitcoinAccount: {
+                    balance: Math.round((Math.random() * 0.001 + 0.001) * 1e8),
+                },
+            };
+            try {
+                const result = await demo.client.setupSwap(request, demo._defaultBehavior as PopupRequestBehavior);
+                console.log('Result', result);
+                document.querySelector('#result').textContent = 'Signed: ' + result.serializedTx;
+            } catch (e) {
+                console.error(e);
+                document.querySelector('#result').textContent = `Error: ${e.message || e}`;
+            }
+        });
+
+        document.querySelector('button#setup-swap.btc-to-nim').addEventListener('click', async () => {
+            // const $radio = document.querySelector('input[name="address"]:checked');
+            // if (!$radio) {
+            //     alert('You have no account to send a tx from, create an account first (signup)');
+            //     throw new Error('No account found');
+            // }
+            // const accountId = $radio.closest('ul').closest('li').querySelector('button').dataset.walletId;
+            const accountId = '44012bb58ff5';
+
+            const account = (await demo.list()).find((wallet) => wallet.accountId === accountId);
+            if (!account) {
+                alert('Account for the demo swap not found. Currently only Sören has this account.');
+                throw new Error('Account not found');
+            }
+
+            if (account.type === WalletType.LEGACY) {
+                alert('Cannot sign BTC transactions with a legacy account');
+                throw new Error('Cannot use legacy account');
+            }
+
+            const refundAddress = account.btcAddresses ? account.btcAddresses.external[0] : null;
+            if (!refundAddress) {
+                alert('No BTC address found in account, activate Bitcoin for this account first');
+                throw new Error('No BTC address found');
+            }
+
+            const request: SetupSwapRequest = {
+                appName: 'Hub Demos',
+                fund: {
+                    type: 'BTC',
+                    inputs: [{
+                        address: refundAddress,
+                        transactionHash: 'ef4aaf6087d0cc48ff09355d715c257078467ca4d9dd75a20824e70a78fb43cc',
+                        outputIndex: 0,
+                        outputScript: BitcoinJS.address.toOutputScript(refundAddress, BitcoinJS.networks.testnet).toString('hex'),
+                        value: 0.00076136 * 1e8,
+                    }],
+                    output: {
+                        address: 'tb1qkg69q2pmq8yncjusk2h77vru99rk8n6pcxdxzzzseupaqc2x64ts4uhrj8',
+                        value: 0.00075736 * 1e8,
+                    },
+                    refundAddress: refundAddress,
+                    htlcScript: '6382012088a8204b268b25df99a2edb5d9fb59d4ad56402f429a47c751069918a9790743c16b788876a9146ec1c15aa31a3fe4da55ed81fc264a56bae75c7888ac6704cb53565fb17576a91484eb9bcbd90ce7d3360992259e4b9b818215a96088ac68',
+                },
+                redeem: {
+                    type: 'NIM',
+                    sender: 'NQ32 71G4 AQ88 RVA4 4XYC CH39 V2AG HTAM S0YL',
+                    recipient: account.addresses[0].address,
+                    value: 2000 * 1e5,
+                    fee: 0,
+                    validityStartHeight: 1140135,
+                    htlcData: 'aJ2uL3ewSNzAjhTXMQTqFCIrW+FqeWyw8OVi4nlHyG9G2Y/cRWPLCANLJosl35mi7bXZ+1nUrVZAL0KaR8dRBpkYqXkHQ8FreAEAEWYf',
+                },
+
+                fiatCurrency: 'eur',
+                nimFiatRate: 0.00267,
+                btcFiatRate: 8662.93,
+                serviceNetworkFee: 0.000004 * 1e8,
+                serviceExchangeFee: Math.round(0.00000151168 * 1e8),
+                nimiqAddresses: account.addresses.map((address) => ({
+                    address: address.address,
+                    balance: Math.round(Math.random() * 5000) * 1e5,
                 })),
                 bitcoinAccount: {
                     balance: Math.round((Math.random() * 0.001 + 0.001) * 1e8),
