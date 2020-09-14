@@ -6,7 +6,7 @@ import { SignedTransaction } from '../../client/PublicRequestTypes';
 import { NetworkClient, DetailedPlainTransaction } from '@nimiq/network-client';
 import Config from 'config';
 import { loadNimiq, setHistoryStorage, getHistoryStorage } from '../lib/Helpers';
-import { CONTRACT_DEFAULT_LABEL_VESTING } from '../lib/Constants';
+import { labelVestingContract } from '../lib/LabelingMachine';
 import { VestingContractInfo } from '../lib/ContractInfo';
 
 @Component
@@ -200,7 +200,7 @@ class Network extends Vue {
         const contracts = await client.getGenesisVestingContracts();
 
         return contracts.map((contract) => new VestingContractInfo(
-            CONTRACT_DEFAULT_LABEL_VESTING,
+            labelVestingContract(),
             Nimiq.Address.fromString(contract.address),
             Nimiq.Address.fromString(contract.owner),
             contract.start,

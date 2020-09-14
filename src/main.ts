@@ -42,6 +42,7 @@ Vue.prototype.$rpc = rpcApi; // rpcApi is started in App.vue->created()
 
 startSentry(Vue);
 
+// Kick off loading the language file
 setLanguage(detectLanguage());
 
 const app = new Vue({
@@ -60,6 +61,19 @@ router.beforeEach((to, from, next) => {
     }
     next();
 });
+
+// This router navigation guard is to prevent switching
+// to the new route before the language file finished loading.
+router.beforeResolve((to, from, next) => {
+    if (to.path === '/') {
+        // The root path doesn't require any translations, therefore we can continue right away. Also, this fixes what
+        // seems to be a race condition between the beforeEach in the RpcApi and this beforeResolve, see issue #422
+        next();
+        return;
+    }
+    setLanguage(detectLanguage()).then(() => next());
+});
+
 router.afterEach(() => {
     window.clearTimeout(_loadingTimeout);
     _loadingTimeout = -1;

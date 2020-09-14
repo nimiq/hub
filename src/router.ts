@@ -16,8 +16,6 @@ const CashlinkManage          = () => import(/*webpackChunkName: "cashlink" */ '
 const Checkout                = () => import(/*webpackChunkName: "checkout"*/ './views/Checkout.vue');
 const CheckoutTransmission    = () => import(/*webpackChunkName: "checkout"*/ './views/CheckoutTransmission.vue');
 
-const OnboardingSelector      = () => import(/*webpackChunkName: "onboarding"*/ './views/OnboardingSelector.vue');
-
 const ChooseAddress           = () => import(/*webpackChunkName: "choose-address"*/ './views/ChooseAddress.vue');
 
 const Signup                  = () => import(/*webpackChunkName: "onboarding"*/ './views/Signup.vue');
@@ -42,6 +40,8 @@ const AddAccount              = () => import(/*webpackChunkName: "add-account"*/
 const AddAccountSelection     = () => import(/*webpackChunkName: "add-account"*/ './views/AddAccountSelection.vue');
 
 const AddAddressLedger        = () => import(/*webpackChunkName: "add-ledger"*/ './views/AddAddressLedger.vue');
+
+const OnboardingSelector      = () => import(/*webpackChunkName: "onboarding"*/ './views/OnboardingSelector.vue');
 
 const Rename                  = () => import(/*webpackChunkName: "rename"*/ './views/Rename.vue');
 
@@ -103,6 +103,8 @@ export function keyguardResponseRouter(
             // The SIGN_BTC_TRANSACTION Keyguard command is used by Accounts' SIGN_BTC_TRANSACTION andCHECKOUT.
             // Thus we return the user to the respective handler component
             resolve = `${originalRequestType}-success`; break;
+        case KeyguardCommand.DERIVE_BTC_XPUB:
+            resolve = `${RequestType.ACTIVATE_BITCOIN}-success`; break;
         default:
             throw new Error(`router.keyguardResponseRouter not defined for Keyguard command: ${command}`);
     }

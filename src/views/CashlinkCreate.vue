@@ -75,13 +75,9 @@
                     </PageFooter>
                 </div>
             </transition>
-
         </SmallPage>
 
-        <button class="global-close nq-button-s" @click="close">
-            <ArrowLeftSmallIcon/>
-            {{ $t('Back to {appName}', { appName: request.appName }) }}
-        </button>
+        <GlobalClose />
     </div>
 </template>
 
@@ -91,7 +87,7 @@ import { Getter, Mutation, State } from 'vuex-class';
 import Cashlink from '../lib/Cashlink';
 import staticStore, { Static } from '../lib/StaticStore';
 import StatusScreen from '../components/StatusScreen.vue';
-import { ERROR_CANCELED } from '../lib/Constants';
+import GlobalClose from '../components/GlobalClose.vue';
 import { State as RpcState } from '@nimiq/rpc';
 import { loadNimiq } from '../lib/Helpers';
 import { AccountInfo } from '../lib/AccountInfo';
@@ -110,7 +106,6 @@ import {
     AccountSelector,
     Amount,
     AmountWithFee,
-    ArrowLeftSmallIcon,
     ArrowRightIcon,
     CloseButton,
     LabelInput,
@@ -129,9 +124,9 @@ import {
     AccountSelector,
     Amount,
     AmountWithFee,
-    ArrowLeftSmallIcon,
     ArrowRightIcon,
     CloseButton,
+    GlobalClose,
     LabelInput,
     PageBody,
     PageFooter,
@@ -438,10 +433,6 @@ class CashlinkCreate extends Vue {
         }
     }
 
-    private close() {
-        this.$rpc.reject(new Error(ERROR_CANCELED));
-    }
-
     private reset() {
         this.liveAmountAndFee.isValid = false;
         this.accountOrContractInfo = null;
@@ -615,6 +606,10 @@ export default CashlinkCreate;
 
     .overlay.fee .amount {
         margin-top: 3rem;
+    }
+
+    .overlay.fee h1 {
+        text-align: center;
     }
 
     .overlay.fee p {

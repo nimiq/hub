@@ -19,29 +19,24 @@
                 @login="() => goToOnboarding(false)"/>
         </SmallPage>
 
-        <button class="global-close nq-button-s" @click="close">
-            <ArrowLeftSmallIcon/>
-            {{ $t('Back to {appName}', { appName: request.appName }) }}
-        </button>
+        <GlobalClose />
     </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { Getter, Mutation } from 'vuex-class';
-import { SmallPage, AccountSelector, ArrowRightIcon, ArrowLeftSmallIcon } from '@nimiq/vue-components';
+import { SmallPage, AccountSelector, ArrowRightIcon } from '@nimiq/vue-components';
+import GlobalClose from '../components/GlobalClose.vue';
 import { ParsedSignMessageRequest } from '../lib/RequestTypes';
-import { RequestType, Account } from '../../client/PublicRequestTypes';
+import { RequestType } from '../../client/PublicRequestTypes';
 import staticStore, { Static } from '../lib/StaticStore';
-import { WalletStore } from '@/lib/WalletStore';
-import { AccountInfo } from '@/lib/AccountInfo';
 import { WalletInfo } from '@/lib/WalletInfo';
 import KeyguardClient from '@nimiq/keyguard-client';
-import { ERROR_CANCELED } from '@/lib/Constants';
 import { State as RpcState } from '@nimiq/rpc';
 import { WalletType } from '../lib/WalletInfo';
 
-@Component({components: {SmallPage, AccountSelector, ArrowRightIcon, ArrowLeftSmallIcon}})
+@Component({components: {SmallPage, GlobalClose, AccountSelector, ArrowRightIcon}})
 export default class SignMessage extends Vue {
     @Static protected request!: ParsedSignMessageRequest;
     @Static private rpcState!: RpcState;
@@ -125,10 +120,6 @@ export default class SignMessage extends Vue {
         } else {
             this.$router.push({name: RequestType.ONBOARD});
         }
-    }
-
-    private close() {
-        this.$rpc.reject(new Error(ERROR_CANCELED));
     }
 
     private get originDomain() {

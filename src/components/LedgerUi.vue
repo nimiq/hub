@@ -343,9 +343,9 @@ export default LedgerUi;
 
     .connect-button {
         position: absolute;
-        width: 10rem;
-        left: calc(50% - 5rem);
+        left: 50%;
         bottom: 2rem;
+        transform: translateX(-50%);
         transition: opacity .4s;
     }
 

@@ -21,23 +21,20 @@
             </StatusScreen>
         </SmallPage>
 
-        <button class="global-close nq-button-s" @click="_close" :class="{ hidden: confirmedLogout }">
-            <ArrowLeftSmallIcon/>
-            {{ $t('Back to {appName}', { appName: request.appName }) }}
-        </button>
+        <GlobalClose :hidden="confirmedLogout"/>
     </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { SmallPage, PageHeader, PageBody, ArrowLeftSmallIcon } from '@nimiq/vue-components';
+import { SmallPage, PageHeader, PageBody } from '@nimiq/vue-components';
 import { ParsedSimpleRequest } from '../lib/RequestTypes';
 import { WalletStore } from '@/lib/WalletStore';
 import { Static } from '../lib/StaticStore';
-import { ERROR_CANCELED } from '../lib/Constants';
 import StatusScreen from '../components/StatusScreen.vue';
+import GlobalClose from '../components/GlobalClose.vue';
 
-@Component({components: {SmallPage, PageHeader, PageBody, StatusScreen, ArrowLeftSmallIcon}})
+@Component({components: {SmallPage, PageHeader, PageBody, StatusScreen, GlobalClose}})
 export default class LogoutLedger extends Vue {
     @Static private request!: ParsedSimpleRequest;
 
@@ -50,11 +47,6 @@ export default class LogoutLedger extends Vue {
             new Promise((resolve) => setTimeout(resolve, StatusScreen.SUCCESS_REDIRECT_DELAY)),
         ]);
         this.$rpc.resolve({ success: true });
-    }
-
-    private _close() {
-        if (this.confirmedLogout) return;
-        this.$rpc.reject(new Error(ERROR_CANCELED));
     }
 }
 </script>

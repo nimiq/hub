@@ -4,13 +4,14 @@ import { WalletInfoEntry, WalletType } from './WalletInfo';
 import { Utf8Tools } from '@nimiq/utils';
 import { AccountInfoEntry } from './AccountInfo';
 import CookieJar from './CookieJar';
+import { LABEL_MAX_LENGTH } from '@/lib/Constants';
 import {
-    ACCOUNT_DEFAULT_LABEL_LEGACY,
-    ACCOUNT_DEFAULT_LABEL_LEDGER,
-    LABEL_MAX_LENGTH,
-    CONTRACT_DEFAULT_LABEL_VESTING,
-} from '@/lib/Constants';
-import LabelingMachine from './LabelingMachine';
+    labelAddress,
+    labelKeyguardAccount,
+    labelLegacyAccount,
+    labelLedgerAccount,
+    labelVestingContract,
+} from './LabelingMachine';
 import { ContractInfoEntry, VestingContractInfoEntry } from './ContractInfo';
 import AddressUtils from './AddressUtils';
 import { encodeBase58 } from './bitcoin/Base58';
@@ -77,7 +78,7 @@ export class CookieDecoder {
 
         // Handle LEGACY wallet
         if (type === WalletType.LEGACY) {
-            const walletLabel = ACCOUNT_DEFAULT_LABEL_LEGACY;
+            const walletLabel = labelLegacyAccount();
 
             const accounts = this.decodeAccounts(bytes, labelLength);
 
@@ -114,8 +115,8 @@ export class CookieDecoder {
         const walletLabel = walletLabelBytes.length > 0
             ? Utf8Tools.utf8ByteArrayToString(new Uint8Array(walletLabelBytes))
             : type === WalletType.LEDGER
-                ? ACCOUNT_DEFAULT_LABEL_LEDGER
-                : LabelingMachine.labelAccount(AddressUtils.toUserFriendlyAddress(firstAccount.address));
+                ? labelLedgerAccount()
+                : labelKeyguardAccount(AddressUtils.toUserFriendlyAddress(firstAccount.address));
 
         const walletInfoEntry: WalletInfoEntry = {
             id,
@@ -175,7 +176,7 @@ export class CookieDecoder {
 
         const accountLabel = labelBytes.length > 0
             ? Utf8Tools.utf8ByteArrayToString(new Uint8Array(labelBytes))
-            : LabelingMachine.labelAddress(AddressUtils.toUserFriendlyAddress(new Uint8Array(addressBytes)));
+            : labelAddress(AddressUtils.toUserFriendlyAddress(new Uint8Array(addressBytes)));
 
         const accountInfoEntry: AccountInfoEntry = {
             path: 'not public',
@@ -213,7 +214,7 @@ export class CookieDecoder {
             case 1 /* Nimiq.Account.Type.VESTING */:
                 const label = labelBytes.length > 0
                     ? Utf8Tools.utf8ByteArrayToString(new Uint8Array(labelBytes))
-                    : CONTRACT_DEFAULT_LABEL_VESTING;
+                    : labelVestingContract();
                 const ownerBytes = this.readBytes(bytes, 20 /* Nimiq.Address.SERIALIZED_SIZE */);
                 const start = this.fromBase256(this.readBytes(bytes, 4)); // Uint32
                 const stepAmount = this.fromBase256(this.readBytes(bytes, 8)); // Uint64

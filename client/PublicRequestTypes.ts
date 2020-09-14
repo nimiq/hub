@@ -373,6 +373,7 @@ export type RpcResult = SignedTransaction
                       | SimpleResult
                       | Address
                       | Cashlink
+                      | Cashlink[]
                       | SignedMessage
                       | ExportResult
                       | SignedBtcTransaction
@@ -390,4 +391,7 @@ export type ResultByRequestType<T> =
     T extends RequestType.LOGOUT | RequestType.CHANGE_PASSWORD ? SimpleResult :
     T extends RequestType.EXPORT ? ExportResult :
     T extends RequestType.CREATE_CASHLINK | RequestType.MANAGE_CASHLINK ? Cashlink :
+    T extends RequestType.SIGN_BTC_TRANSACTION ? SignedBtcTransaction :
+    T extends RequestType.ACTIVATE_BITCOIN ? Account :
+    T extends RequestType.ADD_BTC_ADDRESSES ? AddBtcAddressesResult :
     never;

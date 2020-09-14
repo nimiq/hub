@@ -1,6 +1,7 @@
 // rollup.config.js
 import resolve from 'rollup-plugin-node-resolve';
-import { terser } from "rollup-plugin-terser";
+import json from '@rollup/plugin-json';
+import { terser } from 'rollup-plugin-terser';
 
 export default [
     {
@@ -11,7 +12,8 @@ export default [
             name: 'HubApi',
             globals: { '@nimiq/rpc': 'rpc' }
         },
-        external: [ '@nimiq/rpc' ]
+        external: [ '@nimiq/rpc' ],
+        plugins: [ json() ],
     },
     {
         input: 'build/HubApi.js',
@@ -21,7 +23,8 @@ export default [
             name: 'HubApi',
             globals: { '@nimiq/rpc': 'rpc' }
         },
-        external: [ '@nimiq/rpc' ]
+        external: [ '@nimiq/rpc' ],
+        plugins: [ json() ],
     },
     {
         input: 'build/HubApi.js',
@@ -31,7 +34,7 @@ export default [
             name: 'HubApi',
             globals: { '@nimiq/rpc': 'rpc' }
         },
-        plugins: [ resolve(), terser() ]
+        plugins: [ resolve(), json(), terser() ],
     },
     {
         input: 'build/HubApi.js',
@@ -41,6 +44,6 @@ export default [
             name: 'HubApi',
             globals: { '@nimiq/rpc': 'rpc' }
         },
-        plugins: [ resolve(), terser() ]
+        plugins: [ resolve(), json(), terser() ],
     }
 ];

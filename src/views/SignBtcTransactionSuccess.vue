@@ -1,6 +1,4 @@
-<template>
-    <Network ref="network" :visible="false"/>
-</template>
+<template></template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';

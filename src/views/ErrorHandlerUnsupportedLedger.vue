@@ -6,23 +6,21 @@
             </StatusScreen>
         </SmallPage>
 
-        <button class="global-close nq-button-s" @click="_close">
-            <ArrowLeftSmallIcon/>
-            {{ $t('Back to {appName}', { appName: request.appName }) }}
-        </button>
+        <GlobalClose />
     </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { ArrowLeftSmallIcon, SmallPage } from '@nimiq/vue-components';
+import { SmallPage } from '@nimiq/vue-components';
 import StatusScreen from '../components/StatusScreen.vue';
+import GlobalClose from '../components/GlobalClose.vue';
 import { Static } from '../lib/StaticStore';
 import { ParsedBasicRequest } from '../lib/RequestTypes';
 import { RequestType } from '../../client/PublicRequestTypes';
 import { ERROR_CANCELED } from '../lib/Constants';
 
-@Component({components: {SmallPage, StatusScreen, ArrowLeftSmallIcon}})
+@Component({components: {SmallPage, StatusScreen, GlobalClose}})
 export default class ErrorHandlerUnsupportedLedger extends Vue {
     @Static private request!: ParsedBasicRequest;
     private state = StatusScreen.State.LOADING;

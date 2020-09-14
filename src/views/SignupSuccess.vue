@@ -16,7 +16,7 @@ import { WalletStore } from '@/lib/WalletStore';
 import { Account } from '../../client/PublicRequestTypes';
 import StatusScreen from '@/components/StatusScreen.vue';
 import KeyguardClient from '@nimiq/keyguard-client';
-import LabelingMachine from '@/lib/LabelingMachine';
+import { labelAddress, labelKeyguardAccount } from '@/lib/LabelingMachine';
 import { i18n } from '../i18n/i18n-setup';
 import { deriveAddressesFromXPub } from '../lib/bitcoin/BitcoinUtils';
 import { loadBitcoinJS } from '../lib/bitcoin/BitcoinJSLoader';
@@ -37,8 +37,8 @@ export default class SignupSuccess extends Vue {
         const createdAddress = new Nimiq.Address(this.keyguardResult[0].addresses[0].address);
 
         const userFriendlyAddress = createdAddress.toUserFriendlyAddress();
-        const walletLabel = LabelingMachine.labelAccount(userFriendlyAddress);
-        const accountLabel = LabelingMachine.labelAddress(userFriendlyAddress);
+        const walletLabel = labelKeyguardAccount(userFriendlyAddress);
+        const accountLabel = labelAddress(userFriendlyAddress);
 
         const accountInfo = new AccountInfo(
             this.keyguardResult[0].addresses[0].keyPath,
@@ -52,9 +52,9 @@ export default class SignupSuccess extends Vue {
         const btcAddresses = bitcoinXPub
             ? {
                 internal:
-                    deriveAddressesFromXPub(bitcoinXPub, [INTERNAL_INDEX], 0, 2 * BTC_ACCOUNT_MAX_ALLOWED_ADDRESS_GAP),
+                    deriveAddressesFromXPub(bitcoinXPub, [INTERNAL_INDEX], 0, BTC_ACCOUNT_MAX_ALLOWED_ADDRESS_GAP),
                 external:
-                    deriveAddressesFromXPub(bitcoinXPub, [EXTERNAL_INDEX], 0, 2 * BTC_ACCOUNT_MAX_ALLOWED_ADDRESS_GAP),
+                    deriveAddressesFromXPub(bitcoinXPub, [EXTERNAL_INDEX], 0, BTC_ACCOUNT_MAX_ALLOWED_ADDRESS_GAP),
             }
             : {
                 internal: [],

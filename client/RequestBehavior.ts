@@ -1,5 +1,6 @@
 import { PostMessageRpcClient, RedirectRpcClient } from '@nimiq/rpc';
 import { ResultByRequestType, RequestType } from './PublicRequestTypes';
+import translate from './i18n/i18n';
 
 export abstract class RequestBehavior<B extends BehaviorType> {
     public static getAllowedOrigin(endpoint: string) {
@@ -124,7 +125,6 @@ export class PopupRequestBehavior extends RequestBehavior<BehaviorType.POPUP> {
 
         // Define DOM-method abstractions to allow better minification
         const createElement = document.createElement.bind(document);
-        const createTextNode = document.createTextNode.bind(document);
         const appendChild = (node: Node, child: Node) => node.appendChild(child);
 
         // Overlay background
@@ -154,15 +154,15 @@ export class PopupRequestBehavior extends RequestBehavior<BehaviorType.POPUP> {
 
         // Explainer text
         const text = createElement('div');
+        text.textContent = translate('popup-overlay');
         const textStyle = text.style;
-        appendChild(text, createTextNode('A popup has been opened,'));
-        appendChild(text, createElement('br'));
-        appendChild(text, createTextNode('click anywhere to bring it back to the front.'));
+        textStyle.padding = '20px';
         // tslint:disable-next-line max-line-length
         textStyle.fontFamily = 'Muli, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif';
         textStyle.fontSize = '24px';
         textStyle.fontWeight = '600';
         textStyle.lineHeight = '40px';
+        textStyle.whiteSpace = 'pre-line';
         appendChild(overlay, text);
 
         // Logo

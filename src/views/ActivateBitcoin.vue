@@ -16,7 +16,7 @@ import { WalletInfo, WalletType } from '../lib/WalletInfo';
 import Config from 'config';
 
 @Component({components: {NotEnoughCookieSpace}})
-export default class Login extends Vue {
+export default class ActivateBitcoin extends Vue {
     @Static private request!: ParsedSimpleRequest;
     @Getter private findWallet!: (id: string) => WalletInfo | undefined;
 
