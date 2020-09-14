@@ -18,6 +18,7 @@ export default class SignBtcTransaction extends Vue {
     public async created() {
         // Forward user through Hub to Keyguard
 
+        // TODO: Derive new addresses, if the requested address is not in the known list
         const senderAccount = this.findWalletByBtcAddress(this.request.inputs[0].address)!;
 
         const inputs: KeyguardClient.BitcoinTransactionInput[] = this.request.inputs.map((input) => {

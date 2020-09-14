@@ -19,6 +19,7 @@ import {
     NimiqCheckoutRequest,
     MultiCurrencyCheckoutRequest,
     SignBtcTransactionRequest,
+    SetupSwapRequest,
 } from '../../client/PublicRequestTypes';
 import {
     ParsedBasicRequest,
@@ -33,6 +34,7 @@ import {
     ParsedSignTransactionRequest,
     ParsedSimpleRequest,
     ParsedSignBtcTransactionRequest,
+    ParsedSetupSwapRequest,
 } from './RequestTypes';
 import { ParsedNimiqDirectPaymentOptions } from './paymentOptions/NimiqPaymentOptions';
 import { ParsedEtherDirectPaymentOptions } from './paymentOptions/EtherPaymentOptions';
@@ -435,6 +437,53 @@ export class RequestParser {
                     output,
                     changeOutput,
                 } as ParsedSignBtcTransactionRequest;
+            case RequestType.SETUP_SWAP:
+                const setupSwapRequest = request as SetupSwapRequest;
+
+                // Validate and parse only what we use in the Hub
+
+                if (!['NIM', 'BTC'].includes(setupSwapRequest.fund.type)) {
+                    throw new Error('Funding object type must be "NIM" or "BTC"');
+                }
+
+                if (!['NIM', 'BTC'].includes(setupSwapRequest.redeem.type)) {
+                    throw new Error('Redeeming object type must be "NIM" or "BTC"');
+                }
+
+                if (setupSwapRequest.fund.type === setupSwapRequest.redeem.type) {
+                    throw new Error('Cannot swap between the same types');
+                }
+
+                const parsedSetupSwapRequest: ParsedSetupSwapRequest = {
+                    kind: RequestType.SETUP_SWAP,
+                    ...setupSwapRequest,
+
+                    fund: setupSwapRequest.fund.type === 'NIM' ? {
+                        ...setupSwapRequest.fund,
+                        sender: Nimiq.Address.fromAny(setupSwapRequest.fund.sender),
+                        extraData: typeof setupSwapRequest.fund.extraData === 'string'
+                            ? Nimiq.BufferUtils.fromAny(setupSwapRequest.fund.extraData)
+                            : setupSwapRequest.fund.extraData,
+                    } : {
+                        ...setupSwapRequest.fund,
+                        htlcScript: typeof setupSwapRequest.fund.htlcScript === 'string'
+                            ? Nimiq.BufferUtils.fromAny(setupSwapRequest.fund.htlcScript)
+                            : setupSwapRequest.fund.htlcScript,
+                    },
+
+                    redeem: setupSwapRequest.redeem.type === 'NIM' ? {
+                        ...setupSwapRequest.redeem,
+                        sender: Nimiq.Address.fromAny(setupSwapRequest.redeem.sender),
+                        recipient: Nimiq.Address.fromAny(setupSwapRequest.redeem.recipient),
+                        extraData: typeof setupSwapRequest.redeem.extraData === 'string'
+                            ? Nimiq.BufferUtils.fromAny(setupSwapRequest.redeem.extraData)
+                            : setupSwapRequest.redeem.extraData,
+                        htlcData: typeof setupSwapRequest.redeem.htlcData === 'string'
+                            ? Nimiq.BufferUtils.fromAny(setupSwapRequest.redeem.htlcData)
+                            : setupSwapRequest.redeem.htlcData,
+                    } : setupSwapRequest.redeem,
+                };
+                return parsedSetupSwapRequest;
             default:
                 return null;
         }
@@ -557,11 +606,26 @@ export class RequestParser {
             case RequestType.SIGN_BTC_TRANSACTION:
                 const signBtcTransactionRequest = request as ParsedSignBtcTransactionRequest;
                 return {
-                    appName: signBtcTransactionRequest.appName,
-                    inputs: signBtcTransactionRequest.inputs,
-                    output: signBtcTransactionRequest.output,
-                    changeOutput: signBtcTransactionRequest.changeOutput,
+                    ...signBtcTransactionRequest,
                 } as SignBtcTransactionRequest;
+            case RequestType.SETUP_SWAP:
+                const setupSwapRequest = request as ParsedSetupSwapRequest;
+
+                const swapSetupRequest: SetupSwapRequest = {
+                    ...setupSwapRequest,
+
+                    fund: setupSwapRequest.fund.type === 'NIM' ? {
+                        ...setupSwapRequest.fund,
+                        sender: setupSwapRequest.fund.sender.toUserFriendlyAddress(),
+                    } : setupSwapRequest.fund,
+
+                    redeem: setupSwapRequest.redeem.type === 'NIM' ? {
+                        ...setupSwapRequest.redeem,
+                        sender: setupSwapRequest.redeem.sender.toUserFriendlyAddress(),
+                        recipient: setupSwapRequest.redeem.recipient.toUserFriendlyAddress(),
+                    } : setupSwapRequest.redeem,
+                };
+                return swapSetupRequest;
             default:
                 return null;
         }

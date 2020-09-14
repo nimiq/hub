@@ -80,15 +80,16 @@ class Network extends Vue {
     public async makeSignTransactionResult(tx: Nimiq.Transaction): Promise<SignedTransaction> {
         await loadNimiq(); // needed for hash computation
 
-        const proof = Nimiq.SignatureProof.unserialize(new Nimiq.SerialBuffer(tx.proof));
+        const signatureProof = Nimiq.SignatureProof.unserialize(
+            new Nimiq.SerialBuffer(tx.proof.subarray(tx.proof.length - Nimiq.SignatureProof.SINGLE_SIG_SIZE)));
 
         const result: SignedTransaction = {
             serializedTx: Nimiq.BufferUtils.toHex(tx.serialize()),
             hash: tx.hash().toHex(),
 
             raw: {
-                signerPublicKey: proof.publicKey.serialize(),
-                signature: proof.signature.serialize(),
+                signerPublicKey: signatureProof.publicKey.serialize(),
+                signature: signatureProof.signature.serialize(),
 
                 sender: tx.sender.toUserFriendlyAddress(),
                 senderType: tx.senderType,
@@ -103,6 +104,7 @@ class Network extends Vue {
                 extraData: tx.data,
                 flags: tx.flags,
                 networkId: tx.networkId,
+                proof: tx.proof,
             },
         };
 

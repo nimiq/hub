@@ -28,6 +28,7 @@ export enum RequestType {
     SIGN_BTC_TRANSACTION = 'sign-btc-transaction',
     ADD_BTC_ADDRESSES = 'add-btc-addresses',
     ACTIVATE_BITCOIN = 'activate-bitcoin',
+    SETUP_SWAP = 'setup-swap',
 }
 
 export interface BasicRequest {
@@ -190,7 +191,81 @@ export interface SignedTransaction {
         extraData: Uint8Array;
         flags: number;
         networkId: number;
+        proof: Uint8Array;
     };
+}
+
+export interface SetupSwapRequest extends BasicRequest {
+    fund: {
+        type: 'NIM',
+        sender: string, // My address, must be redeem address of HTLC, or if contract, its owner must be redeem address
+        value: number, // Luna
+        fee: number, // Luna
+        extraData: Uint8Array | string, // HTLC data
+        validityStartHeight: number,
+    } | {
+        type: 'BTC',
+        inputs: Array<{
+            address: string,
+            transactionHash: string,
+            outputIndex: number,
+            outputScript: string,
+            value: number, // Sats
+        }>;
+        output: {
+            address: string, // HTLC address
+            value: number, // Sats
+        };
+        changeOutput?: {
+            address: string,
+            value: number, // Sats
+        };
+        htlcScript: Uint8Array | string,
+        refundAddress: string,
+    };
+
+    redeem: {
+        type: 'NIM',
+        sender: string, // HTLC address
+        recipient: string, // My address, must be redeem address of HTLC
+        value: number, // Luna
+        fee: number, // Luna
+        extraData?: Uint8Array | string,
+        validityStartHeight: number,
+        htlcData: Uint8Array | string,
+    } | {
+        type: 'BTC',
+        input: {
+            transactionHash: string,
+            outputIndex: number,
+            outputScript: string,
+            value: number, // Sats
+            witnessScript: string,
+        };
+        output: {
+            address: string, // My address, must be redeem address of HTLC
+            value: number, // Sats
+        };
+    };
+
+    // Data needed for display
+    fiatCurrency: string;
+    nimFiatRate: number;
+    btcFiatRate: number;
+    serviceNetworkFee: number; // Luna or Sats, depending which one gets funded
+    serviceExchangeFee: number; // Luna or Sats, depending which one gets funded
+    nimiqAddresses: Array<{
+        address: string,
+        balance: number, // Luna
+    }>;
+    bitcoinAccount: {
+        balance: number, // Sats
+    };
+}
+
+export interface SetupSwapResult {
+    nim: SignedTransaction;
+    btc: SignedBtcTransaction;
 }
 
 export interface SignMessageRequest extends BasicRequest {
@@ -365,7 +440,8 @@ export type RpcRequest = SignTransactionRequest
                        | SignMessageRequest
                        | ExportRequest
                        | SignBtcTransactionRequest
-                       | AddBtcAddressesRequest;
+                       | AddBtcAddressesRequest
+                       | SetupSwapRequest;
 
 export type RpcResult = SignedTransaction
                       | Account
@@ -377,7 +453,8 @@ export type RpcResult = SignedTransaction
                       | SignedMessage
                       | ExportResult
                       | SignedBtcTransaction
-                      | AddBtcAddressesResult;
+                      | AddBtcAddressesResult
+                      | SetupSwapResult;
 
 export type ResultByRequestType<T> =
     T extends RequestType.RENAME ? Account :
@@ -394,4 +471,5 @@ export type ResultByRequestType<T> =
     T extends RequestType.SIGN_BTC_TRANSACTION ? SignedBtcTransaction :
     T extends RequestType.ACTIVATE_BITCOIN ? Account :
     T extends RequestType.ADD_BTC_ADDRESSES ? AddBtcAddressesResult :
+    T extends RequestType.SETUP_SWAP ? SetupSwapResult :
     never;

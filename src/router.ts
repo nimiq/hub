@@ -58,15 +58,16 @@ const RequestError            = () => import(/*webpackChunkName: "request-error"
 const ErrorHandlerUnsupportedLedger = () => import(/*webpackChunkName: "unsupported-ledger"*/
     './views/ErrorHandlerUnsupportedLedger.vue');
 
-const SignBtcTransaction         = () => import(/*webpackChunkName: "sign-btc-transaction"*/
+const SignBtcTransaction        = () => import(/*webpackChunkName: "sign-btc-transaction"*/
     './views/SignBtcTransaction.vue');
-const SignBtcTransactionSuccess  = () => import(/*webpackChunkName: "sign-btc-transaction"*/
-    './views/SignBtcTransactionSuccess.vue');
+const SignBtcTransactionSuccess = () => import(/*webpackChunkName: "sign-btc-transaction"*/
+'./views/SignBtcTransactionSuccess.vue');
 
-const ActivateBitcoin         = () => import(/*webpackChunkName: "activate-btc"*/
-    './views/ActivateBitcoin.vue');
-const ActivateBitcoinSuccess  = () => import(/*webpackChunkName: "activate-btc"*/
-    './views/ActivateBitcoinSuccess.vue');
+const ActivateBitcoin         = () => import(/*webpackChunkName: "activate-btc"*/ './views/ActivateBitcoin.vue');
+const ActivateBitcoinSuccess  = () => import(/*webpackChunkName: "activate-btc"*/ './views/ActivateBitcoinSuccess.vue');
+
+const SetupSwap               = () => import(/*webpackChunkName: "swap"*/ './views/SetupSwap.vue');
+const SetupSwapSuccess        = () => import(/*webpackChunkName: "swap"*/ './views/SetupSwapSuccess.vue');
 
 Vue.use(Router);
 
@@ -105,6 +106,8 @@ export function keyguardResponseRouter(
             resolve = `${originalRequestType}-success`; break;
         case KeyguardCommand.DERIVE_BTC_XPUB:
             resolve = `${RequestType.ACTIVATE_BITCOIN}-success`; break;
+        case KeyguardCommand.SIGN_SWAP:
+            resolve = `${RequestType.SETUP_SWAP}-success`; break;
         default:
             throw new Error(`router.keyguardResponseRouter not defined for Keyguard command: ${command}`);
     }
@@ -307,6 +310,16 @@ export default new Router({
             path: `/${RequestType.ACTIVATE_BITCOIN}/success`,
             component: ActivateBitcoinSuccess,
             name: `${RequestType.ACTIVATE_BITCOIN}-success`,
+        },
+        {
+            path: `/${RequestType.SETUP_SWAP}`,
+            component: SetupSwap,
+            name: RequestType.SETUP_SWAP,
+        },
+        {
+            path: `/${RequestType.SETUP_SWAP}/success`,
+            component: SetupSwapSuccess,
+            name: `${RequestType.SETUP_SWAP}-success`,
         },
     ],
 });

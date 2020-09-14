@@ -9,6 +9,7 @@ import {
     ParsedSignTransactionRequest,
     ParsedSimpleRequest,
     ParsedSignBtcTransactionRequest,
+    ParsedSetupSwapRequest,
 } from './RequestTypes';
 import { RequestParser } from './RequestParser';
 import { Currency, RequestType, RpcRequest, RpcResult } from '../../client/PublicRequestTypes';
@@ -85,6 +86,7 @@ export default class RpcApi {
             RequestType.CHOOSE_ADDRESS,
             RequestType.SIGN_BTC_TRANSACTION,
             RequestType.ACTIVATE_BITCOIN,
+            RequestType.SETUP_SWAP,
         ]);
         this._registerKeyguardApis([
             KeyguardCommand.SIGN_TRANSACTION,
@@ -97,6 +99,7 @@ export default class RpcApi {
             KeyguardCommand.SIGN_MESSAGE,
             KeyguardCommand.SIGN_BTC_TRANSACTION,
             KeyguardCommand.DERIVE_BTC_XPUB,
+            KeyguardCommand.SIGN_SWAP,
         ]);
 
         this._router.beforeEach((to: Route, from: Route, next: (arg?: string | false | Route) => void) => {
@@ -322,6 +325,13 @@ export default class RpcApi {
                             true,
                         );
                     }
+                }
+            } else if (requestType === RequestType.SETUP_SWAP) {
+                accountRequired = true;
+                const { fund, redeem } = (request as ParsedSetupSwapRequest);
+                const address = fund.type === 'NIM' ? fund.sender : redeem.type === 'NIM' ? redeem.recipient : null;
+                if (address) {
+                    account = this._store.getters.findWalletByAddress(address.toUserFriendlyAddress(), true);
                 }
             }
             if (accountRequired && !account) {
