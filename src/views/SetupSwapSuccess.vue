@@ -52,16 +52,18 @@ export default class SetupSwapSuccess extends Vue {
                 this.$rpc.reject(new Error('Disallowed HTLC hash length (!= 32 bytes)'));
                 return;
             }
-            const secret = new Uint8Array(hashSize);
 
-            const proof = new Nimiq.SerialBuffer(3 + 2 * hashSize + Nimiq.SignatureProof.SINGLE_SIG_SIZE);
+            const preImage = '0000000000000000000000000000000000000000000000000000000000000000';
+            const hashRoot = '66687aadf862bd776c8fc18b8e9f8e20089714856ee233b3902a591d0d5f2925'; // SHA256 of preImage
+
+            const proof = new Nimiq.SerialBuffer(3 + 2 * 32 + Nimiq.SignatureProof.SINGLE_SIG_SIZE);
             // FIXME: Use constant when HTLC is part of CoreJS web-offline build
             proof.writeUint8(1 /* Nimiq.HashedTimeLockedContract.ProofType.REGULAR_TRANSFER */);
             proof.writeUint8(algorithm);
             proof.writeUint8(hashCount);
-            proof.write(Nimiq.Hash.computeSha256(secret)); // Hash (hashroot)
-            proof.write(secret); // Secret (preimage)
-            proof.write(new Nimiq.SerialBuffer(nimTx.proof)); // Current proof is only a regular SignatureProof
+            proof.write(Nimiq.BufferUtils.fromHex(hashRoot));
+            proof.write(Nimiq.BufferUtils.fromHex(preImage));
+            proof.write(new Nimiq.SerialBuffer(nimTx.proof)); // Current tx.proof is a regular SignatureProof
             nimTx.proof = proof;
         } else {
             this.$rpc.reject(new Error('Could not find NIM transaction data in Keyguard request'));
