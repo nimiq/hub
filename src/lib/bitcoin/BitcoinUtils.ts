@@ -24,8 +24,8 @@ export function getBtcNetwork() {
     }
 }
 
-export function publicKeyToPayment(publicKey: Buffer) {
-    switch (Config.bitcoinAddressType) {
+export function publicKeyToPayment(publicKey: Buffer, addressType = Config.bitcoinAddressType) {
+    switch (addressType) {
         case NESTED_SEGWIT:
             return BitcoinJS.payments.p2sh({
                 redeem: BitcoinJS.payments.p2wpkh({
@@ -39,7 +39,7 @@ export function publicKeyToPayment(publicKey: Buffer) {
                 network: getBtcNetwork(),
             });
         default:
-            throw new Error('Invalid bitcoinAddressType configuration');
+            throw new Error('Invalid address type');
     }
 }
 
@@ -78,6 +78,7 @@ export function deriveAddressesFromXPub(
     derivationPath: number[],
     startIndex = 0,
     count = BTC_ACCOUNT_MAX_ALLOWED_ADDRESS_GAP,
+    addressType = Config.bitcoinAddressType,
 ): BtcAddressInfo[] {
     let extendedKey: BitcoinJS.BIP32Interface;
     if (typeof xpub === 'string') {
@@ -107,7 +108,7 @@ export function deriveAddressesFromXPub(
     for (let i = startIndex; i < startIndex + count; i++) {
         const pubKey = baseKey.derive(i).publicKey;
 
-        const address = publicKeyToPayment(pubKey).address;
+        const address = publicKeyToPayment(pubKey, addressType).address;
         if (!address) throw new Error(`Cannot create external address for ${extendedKey.toBase58()} index ${i}`);
 
         addresses.push(new BtcAddressInfo(

@@ -19,6 +19,8 @@ import {
     EXTENDED_KEY_PREFIXES,
     EXTERNAL_INDEX, INTERNAL_INDEX,
     BTC_ACCOUNT_MAX_ALLOWED_ADDRESS_GAP,
+    NESTED_SEGWIT,
+    NATIVE_SEGWIT,
 } from './lib/bitcoin/BitcoinConstants';
 import { getBtcNetwork, deriveAddressesFromXPub } from './lib/bitcoin/BitcoinUtils';
 
@@ -121,11 +123,13 @@ class IFrameApi {
 
         await loadBitcoinJS();
 
+        const xPubType = ['ypub', 'upub'].includes(wallet.btcXPub.substr(0, 4)) ? NESTED_SEGWIT : NATIVE_SEGWIT;
+
         // Setup Bitcoin network
         const network: BitcoinJS.Network = {
             ...getBtcNetwork(),
             // Adjust the first bytes of xpubs to the respective BIP we are using, to ensure correct xpub parsing
-            bip32: EXTENDED_KEY_PREFIXES[Config.bitcoinAddressType][Config.bitcoinNetwork],
+            bip32: EXTENDED_KEY_PREFIXES[xPubType][Config.bitcoinNetwork],
         };
 
         const extendedKey = BitcoinJS.bip32.fromBase58(wallet.btcXPub, network);
@@ -134,6 +138,7 @@ class IFrameApi {
             [chain === 'external' ? EXTERNAL_INDEX : INTERNAL_INDEX],
             firstIndex,
             BTC_ACCOUNT_MAX_ALLOWED_ADDRESS_GAP,
+            xPubType,
         ).map((addressInfo) => addressInfo.address);
 
         return {
