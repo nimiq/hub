@@ -372,6 +372,8 @@ export class RequestParser {
             case RequestType.SIGN_BTC_TRANSACTION:
                 const signBtcTransactionRequest = request as SignBtcTransactionRequest;
 
+                if (!signBtcTransactionRequest.accountId) throw new Error('accountId is required');
+
                 if (!signBtcTransactionRequest.inputs || !Array.isArray(signBtcTransactionRequest.inputs)
                     || !signBtcTransactionRequest.inputs.length) throw new Error('inputs must be a non-empty array');
 
@@ -430,6 +432,7 @@ export class RequestParser {
 
                 return {
                     kind: RequestType.SIGN_BTC_TRANSACTION,
+                    walletId: signBtcTransactionRequest.accountId,
                     appName: signBtcTransactionRequest.appName,
                     inputs,
                     output,
@@ -558,6 +561,7 @@ export class RequestParser {
                 const signBtcTransactionRequest = request as ParsedSignBtcTransactionRequest;
                 return {
                     appName: signBtcTransactionRequest.appName,
+                    accountId: signBtcTransactionRequest.walletId,
                     inputs: signBtcTransactionRequest.inputs,
                     output: signBtcTransactionRequest.output,
                     changeOutput: signBtcTransactionRequest.changeOutput,

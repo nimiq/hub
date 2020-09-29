@@ -50,7 +50,7 @@ export default class RpcApi {
         RequestType.CHOOSE_ADDRESS,
         RequestType.CREATE_CASHLINK,
         RequestType.MANAGE_CASHLINK,
-        RequestType.SIGN_BTC_TRANSACTION,
+        // RequestType.SIGN_BTC_TRANSACTION,
     ];
 
     constructor(store: Store<RootState>, staticStore: StaticStore, router: Router) {
@@ -292,10 +292,10 @@ export default class RpcApi {
                 accountRequired = true;
                 const address = (request as ParsedSignTransactionRequest).sender;
                 account = this._store.getters.findWalletByAddress(address.toUserFriendlyAddress(), true);
-            } else if (requestType === RequestType.SIGN_BTC_TRANSACTION) {
-                accountRequired = true;
-                const btcAddress = (request as ParsedSignBtcTransactionRequest).inputs[0].address;
-                account = this._store.getters.findWalletByBtcAddress(btcAddress);
+            // } else if (requestType === RequestType.SIGN_BTC_TRANSACTION) {
+            //     accountRequired = true;
+            //     const btcAddress = (request as ParsedSignBtcTransactionRequest).inputs[0].address;
+            //     account = this._store.getters.findWalletByBtcAddress(btcAddress);
             } else if (requestType === RequestType.SIGN_MESSAGE) {
                 accountRequired = false; // Sign message allows user to select an account
                 const address = (request as ParsedSignMessageRequest).signer;

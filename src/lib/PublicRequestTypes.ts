@@ -321,7 +321,7 @@ export interface ManageCashlinkRequest extends BasicRequest {
  * Bitcoin
  */
 
-export interface SignBtcTransactionRequest extends BasicRequest {
+export interface SignBtcTransactionRequest extends SimpleRequest {
     inputs: Array<{
         address: string,
         transactionHash: string,
