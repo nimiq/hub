@@ -1,7 +1,19 @@
-<template></template>
+<template>
+    <div v-if="derivingAddresses" class="container pad-bottom">
+        <SmallPage>
+            <StatusScreen
+                :title="$t('Fetching your addresses')"
+                :status="$t('Syncing with Bitcoin network...')"
+                state="loading"
+                :lightBlue="true" />
+        </SmallPage>
+    </div>
+</template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
+import { SmallPage } from '@nimiq/vue-components';
+import StatusScreen from '../components/StatusScreen.vue';
 import { ParsedSignBtcTransactionRequest } from '../lib/RequestTypes';
 import KeyguardClient from '@nimiq/keyguard-client';
 import { Static } from '../lib/StaticStore';
@@ -12,10 +24,12 @@ import { BREAK } from '../lib/Constants';
 import { WalletStore } from '../lib/WalletStore';
 import WalletInfoCollector from '@/lib/WalletInfoCollector';
 
-@Component
+@Component({components: {StatusScreen, SmallPage}})
 export default class SignBtcTransaction extends Vue {
     @Static private request!: ParsedSignBtcTransactionRequest;
     @Getter private findWallet!: (id: string) => WalletInfo | undefined;
+
+    private derivingAddresses = false;
 
     public async created() {
         // Forward user through Hub to Keyguard
@@ -32,6 +46,8 @@ export default class SignBtcTransaction extends Vue {
         for (const input of this.request.inputs) {
             let addressInfo = walletInfo.findBtcAddressInfo(input.address);
             if (!addressInfo) {
+                this.derivingAddresses = true;
+
                 // Derive new addresses starting from the last used index
                 let index = walletInfo.btcAddresses.external.length - 1;
                 for (; index >= 0; index--) {
