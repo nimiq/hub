@@ -32,7 +32,9 @@
   "include": [
     "types/Nimiq.d.ts",
     "types/shims-config.d.ts",
-    "*.ts"
+    "*.ts",
+    "i18n/*.ts",
+    "i18n/*.json"
   ],
   "exclude": [
     "node_modules"

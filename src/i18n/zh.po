@@ -1,11 +1,11 @@
 # 
 # Translators:
-# Sven <sven@nimiq.com>, 2020
 # Daniel, 2020
+# Sven <sven@nimiq.com>, 2020
 # 
 msgid ""
 msgstr ""
-"Last-Translator: Daniel, 2020\n"
+"Last-Translator: Sven <sven@nimiq.com>, 2020\n"
 "Language-Team: Chinese (https://www.transifex.com/nimiq-foundation/teams/107400/zh/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: zh\n"
@@ -53,7 +53,7 @@ msgstr "账户已备份！"
 
 #: src/views/SignupLedger.vue:27
 msgid "Account Created"
-msgstr "账户已创建"
+msgstr "账户已建立"
 
 #: src/views/Migrate.vue:265
 msgid "Accounts updated!"
@@ -249,7 +249,7 @@ msgid ""
 "Choose an Avatar.\n"
 "Set a password. Done."
 msgstr ""
-"选择一个头像。\n"
+"选择一个头像，\n"
 "设置密码，完成！"
 
 #: src/views/CashlinkCreate.vue:10
@@ -336,7 +336,7 @@ msgstr "正在连接到Nimiq ..."
 #: src/components/NimiqCheckoutCard.vue:275 src/views/CashlinkManage.vue:152
 #: src/views/CheckoutTransmission.vue:71
 msgid "Contacting seed nodes..."
-msgstr "正在联络种子节点..."
+msgstr "正在联系种子节点..."
 
 #. for safe and wallet add a note regarding contacts
 #: src/views/LogoutLedger.vue:9
@@ -358,35 +358,35 @@ msgstr "拷贝"
 
 #: src/views/CashlinkCreate.vue:40
 msgid "Create a Cashlink"
-msgstr "创建现金链接"
+msgstr "建立现金链接"
 
 #: src/views/CashlinkReceive.vue:89
 msgid "Create account"
-msgstr "创建账户"
+msgstr "建立账户"
 
 #: src/components/OnboardingMenu.vue:17
 msgid "Create Account"
-msgstr "创建账户"
+msgstr "建立账户"
 
 #: src/views/CashlinkReceive.vue:109
 msgid "Create an account and claim your money."
-msgstr "创建一个帐户并索取您的钱"
+msgstr "建立一个帐户并取得您的资金。"
 
 #: src/views/Migrate.vue:32
 msgid "Create and scan QR codes to quickly share addresses."
-msgstr "创建并扫描QR码以快速共享地址"
+msgstr "建立并扫描QR码以快速共享地址。"
 
 #: src/views/CashlinkCreate.vue:73
 msgid "Create Cashlink"
-msgstr "创建现金链接"
+msgstr "建立现金链接"
 
 #: src/views/SignupSuccess.vue:28
 msgid "Creating your Account"
-msgstr "正在创建您的帐户"
+msgstr "正在建立您的帐户"
 
 #: src/views/CashlinkManage.vue:195 src/views/SignTransactionLedger.vue:436
 msgid "Creating your Cashlink"
-msgstr "正在创建您的现金链接"
+msgstr "正在建立您的现金链接"
 
 #: src/views/Migrate.vue:229
 msgid "Detecting vesting contracts..."
@@ -476,7 +476,7 @@ msgstr "复活节快乐！"
 
 #: src/views/CashlinkManage.vue:91
 msgid "Here is your Nimiq Cashlink!"
-msgstr "这是您的Nimiq 现金链接！"
+msgstr "这是您的Nimiq现金链接！"
 
 #: src/components/NimiqCheckoutCard.vue:50
 msgid ""
@@ -489,7 +489,7 @@ msgstr ""
 #: src/views/LoginSuccess.vue:152 src/views/SignupLedger.vue:117
 msgid ""
 "Imported {count} address so far... | Imported {count} addresses so far..."
-msgstr "到目前为止，已导入{count}地址... | 到目前为止，已导入{count}个地址..."
+msgstr "目前已导入{count}个地址... | 目前已导入{count}个地址..."
 
 #: src/components/CheckoutCard.vue:190
 msgid "Incomplete payment"
@@ -525,7 +525,7 @@ msgstr "此浏览器不支持Ledger"
 
 #: src/lib/LabelingMachine.ts:21
 msgid "Legacy Account"
-msgstr "遗产账户"
+msgstr "传统账户"
 
 #: src/components/LedgerUi.vue:165
 msgid "Loading failed, retrying..."
@@ -558,7 +558,7 @@ msgstr "登录以资助您的现金链接"
 
 #: src/views/ErrorHandlerUnsupportedLedger.vue:42
 msgid "Message signing is not yet supported for Ledgers."
-msgstr "分类帐尚不支持信息签名"
+msgstr "Ledger尚不支持信息签名"
 
 #: src/views/LogoutLedger.vue:4
 msgid "Mind the loss of settings"
@@ -651,7 +651,7 @@ msgstr "请在您的Ledger上取消先前的请求"
 
 #: src/components/LedgerUi.vue:154
 msgid "Please cancel the request on your Ledger"
-msgstr "请在您的分类帐上取消请求"
+msgstr "请在您的Ledger上取消请求"
 
 #: src/components/CheckoutCard.vue:169
 msgid "Please go back and restart the process."
@@ -659,7 +659,7 @@ msgstr "请返回并重新启动此流程"
 
 #: src/views/SignTransactionLedger.vue:90
 msgid "Please go back to the shop and restart the process."
-msgstr "请返回商店并重新启用此流程。"
+msgstr "请返回商店并重新启用此流程"
 
 #: src/components/NonNimiqCheckoutCard.vue:91
 msgid "Please send the transaction manually"
@@ -781,7 +781,7 @@ msgstr "青"
 
 #: src/components/LedgerUi.vue:229
 msgid "The connected Ledger is not the one this account belongs to."
-msgstr "您所连接的分类帐不是该帐户所属的分类帐"
+msgstr "您所连接的Ledger不是该帐户所属的Ledger"
 
 #: src/i18n/i18n-setup.ts:58
 msgid ""
@@ -798,11 +798,11 @@ msgstr "报价已过期"
 msgid ""
 "The update is easy, fast and secure. Still – it’s a good time to check on "
 "your Recovery Words."
-msgstr "此更新非常容易，快速和安全。但是，现在仍是检查您的恢复字的好时机"
+msgstr "此更新非常容易，快速和安全。不过－现在是您检查恢复字的好时机。"
 
 #: src/views/Migrate.vue:37
 msgid "There's much more. Read the full article"
-msgstr "还有更多信息，请阅读全文"
+msgstr "还有更多信息，请阅读全文。"
 
 #: src/views/CashlinkReceive.vue:305
 msgid "This Cashlink has already been claimed."
@@ -810,11 +810,11 @@ msgstr "此现金链接已被领取"
 
 #: src/views/CashlinkReceive.vue:208
 msgid "This is not a valid Cashlink, sorry."
-msgstr "抱歉，这不是有效的现金链接"
+msgstr "抱歉，这不是有效的现金链接。"
 
 #: src/views/SignupLedger.vue:29
 msgid "This is your account with your first address in it."
-msgstr "这是您的账户，里面有您的第一个地址"
+msgstr "这是您的账户及您的第一个地址。"
 
 #: src/views/CashlinkCreate.vue:63
 msgid "This message will be stored in the Cashlink."
@@ -826,7 +826,7 @@ msgid ""
 "sender with the payment recipient directly (P2P). Payment and deliverable "
 "fulfillment for payment are sole responsibility of those two respective "
 "parties."
-msgstr "Nimiq的用户界面是非托管性的，仅用于连接付款的发送方与接收方（P2P）。支付和可交付的付款履行由这两方各自负责"
+msgstr "Nimiq的用户界面为非托管，仅用于连接付款的发送方与接收方（P2P）。支付和交付款项的履行由当事者双方各自负责。"
 
 #: src/views/ErrorHandlerUnsupportedLedger.vue:49
 msgid "This operation is not supported for Ledgers."
@@ -839,7 +839,7 @@ msgstr "是时候成长了"
 #: src/views/ErrorHandlerUnsupportedLedger.vue:47
 msgid ""
 "To change the PIN of your Ledger please go to the settings on your device."
-msgstr "欲更改分类帐的PIN码，请转到设备上的设置"
+msgstr "欲更改Ledger的PIN码，请转到设备上的设置"
 
 #: src/views/CashlinkManage.vue:177 src/views/CheckoutTransmission.vue:61
 msgid "Transaction could not be relayed"
@@ -876,7 +876,7 @@ msgid ""
 "Unfortunately, due to space restrictions of Safari and IOS, this account "
 "cannot be stored properly. Please free up space by logging out of other "
 "accounts."
-msgstr "不幸的是，由于Safari和IOS的空间限制，该帐户无法正确存储。请通过登出其他帐户释放空间。"
+msgstr "很遗憾地，由于Safari和IOS的空间限制，该帐户无法正确存储。请通过登出其他帐户释放空间。"
 
 #: src/views/ErrorHandlerUnsupportedLedger.vue:36
 msgid "Unsupported Request"
@@ -888,7 +888,7 @@ msgstr "更新余额"
 
 #: src/views/Migrate.vue:261
 msgid "Updating Keyguard..."
-msgstr "正在更新键盘守卫 ..."
+msgstr "正在更新键盘守卫..."
 
 #: src/views/Migrate.vue:141 src/views/Migrate.vue:281
 msgid "Updating your Accounts"
@@ -904,7 +904,7 @@ msgid ""
 "or Recovery Words."
 msgstr ""
 "使用您的登录文件\n"
-"或恢复字"
+"或恢复字登录。"
 
 #: src/views/LoginSuccess.vue:177 src/views/SignupLedger.vue:124
 msgid "Used addresses without balance might have been missed."
@@ -932,7 +932,7 @@ msgstr "欢迎来到Nimiq区块链"
 
 #: src/CashlinkApp.vue:9
 msgid "What is Nimiq?"
-msgstr "什么是Nimiq？"
+msgstr "Nimiq是什么？"
 
 #: src/views/Migrate.vue:272
 msgid "Whoops, something went wrong"
@@ -948,11 +948,11 @@ msgstr "您已登出"
 
 #: src/views/CashlinkReceive.vue:343
 msgid "You are loved"
-msgstr "你被爱了"
+msgstr "您被爱着"
 
 #: src/views/CashlinkReceive.vue:21
 msgid "You received a Cashlink!"
-msgstr "你收到了一个现金链接！"
+msgstr "您收到了一个现金链接！"
 
 #: src/components/CheckoutCard.vue:191
 msgid ""
@@ -981,7 +981,7 @@ msgid ""
 "Your Ledger is\n"
 "required to log in again."
 msgstr ""
-"您的分类帐\n"
+"您的Ledger\n"
 "需要再次登录"
 
 #: src/views/SignMessageSuccess.vue:4
@@ -992,7 +992,7 @@ msgstr "您的信息已签署"
 msgid ""
 "Your Nimiq App is outdated. Please update your Ledger firmware and Nimiq App"
 " using Ledger Live."
-msgstr "您的Nimiq应用已过时，请使用Ledger Live更新您的Ledger固件和Nimiq 应用"
+msgstr "您的Nimiq应用已过时，请使用Ledger Live更新您的Ledger固件和Nimiq应用。"
 
 #: src/views/LoginSuccess.vue:186 src/views/SimpleSuccess.vue:31
 msgid "Your password was changed."

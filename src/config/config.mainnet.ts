@@ -1,5 +1,5 @@
 import { NETWORK_MAIN } from '../lib/Constants';
-import { BTC_NETWORK_MAIN, NESTED_SEGWIT } from '../lib/bitcoin/BitcoinConstants';
+import { BTC_NETWORK_MAIN, NATIVE_SEGWIT } from '../lib/bitcoin/BitcoinConstants';
 
 export default {
     keyguardEndpoint: 'https://keyguard.nimiq.com',
@@ -20,5 +20,5 @@ export default {
 
     enableBitcoin: true,
     bitcoinNetwork: BTC_NETWORK_MAIN,
-    bitcoinAddressType: NESTED_SEGWIT,
+    bitcoinAddressType: NATIVE_SEGWIT,
 };
