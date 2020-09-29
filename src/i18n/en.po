@@ -153,7 +153,7 @@ msgstr ""
 msgid "Backed Up"
 msgstr ""
 
-#: src/views/ActivateBitcoinSuccess.vue:74
+#: src/views/ActivateBitcoinSuccess.vue:69
 msgid "Bitcoin activated"
 msgstr ""
 
@@ -437,6 +437,7 @@ msgstr ""
 
 #: src/views/ActivateBitcoinSuccess.vue:36
 #: src/views/LoginSuccess.vue:42
+#: src/views/SignBtcTransaction.vue:5
 msgid "Fetching your addresses"
 msgstr ""
 
@@ -781,6 +782,7 @@ msgid "Syncing consensus..."
 msgstr ""
 
 #: src/views/ActivateBitcoinSuccess.vue:37
+#: src/views/SignBtcTransaction.vue:6
 msgid "Syncing with Bitcoin network..."
 msgstr ""
 

@@ -83,7 +83,7 @@ msgstr "Agregar a Ledger"
 msgid "Address Added"
 msgstr "Dirección Agregada"
 
-#: src/views/LoginSuccess.vue:95
+#: src/views/LoginSuccess.vue:96
 msgid "Address detection failed. Retrying..."
 msgstr "Detección de dirección fallida. Reintentando..."
 
@@ -116,15 +116,15 @@ msgstr "Volver al {Nimiq Miner}"
 msgid "Back to {Wallet}"
 msgstr "Volver a la {Wallet}"
 
-#: src/views/OnboardingSelector.vue:80
+#: src/views/OnboardingSelector.vue:84
 msgid "Back to Cashlink"
 msgstr "Volver a Cashlink"
 
-#: src/views/OnboardingSelector.vue:74
+#: src/views/OnboardingSelector.vue:78
 msgid "Back to Checkout"
 msgstr "Volver al Proceso de Pago"
 
-#: src/views/OnboardingSelector.vue:76
+#: src/views/OnboardingSelector.vue:80
 msgid "Back to Choose Address"
 msgstr "Volver a Elegir Dirección"
 
@@ -149,7 +149,7 @@ msgstr "Volver a las Tarjetas de Regalo Nimiq"
 msgid "Back to Nimiq Vote"
 msgstr "Volver a Votación Nimiq"
 
-#: src/views/OnboardingSelector.vue:78
+#: src/views/OnboardingSelector.vue:82
 msgid "Back to Sign Message"
 msgstr "Volver a Firmar Mensaje"
 
@@ -160,6 +160,10 @@ msgstr "Respaldar"
 #: src/views/Migrate.vue:67
 msgid "Backed Up"
 msgstr "Respaldada"
+
+#: src/views/ActivateBitcoinSuccess.vue:69
+msgid "Bitcoin activated"
+msgstr ""
 
 #: src/lib/LabelingMachine.ts:43
 msgid "Blue"
@@ -345,8 +349,8 @@ msgstr "Contactando nodos semilla..."
 msgid "Contacts are not affected."
 msgstr "Los contactos no se han afectado."
 
-#: src/components/NotEnoughCookieSpace.vue:8 src/views/LoginSuccess.vue:141
-#: src/views/LoginSuccess.vue:178 src/views/SignupLedger.vue:129
+#: src/components/NotEnoughCookieSpace.vue:8 src/views/LoginSuccess.vue:142
+#: src/views/LoginSuccess.vue:170 src/views/SignupLedger.vue:129
 msgid "Continue"
 msgstr "Continuar"
 
@@ -382,7 +386,7 @@ msgstr "Cree y escanee códigos QR para compartir direcciones rápidamente."
 msgid "Create Cashlink"
 msgstr "Creando Cashlink"
 
-#: src/views/SignupSuccess.vue:28
+#: src/views/SignupSuccess.vue:31
 msgid "Creating your Account"
 msgstr "Creando su Cuenta"
 
@@ -432,7 +436,8 @@ msgstr "Cuota"
 msgid "Fetching Addresses"
 msgstr "Obteniendo Direcciones"
 
-#: src/views/LoginSuccess.vue:42
+#: src/views/ActivateBitcoinSuccess.vue:36 src/views/LoginSuccess.vue:42
+#: src/views/SignBtcTransaction.vue:5
 msgid "Fetching your addresses"
 msgstr "Obteniendo sus direcciones"
 
@@ -488,7 +493,7 @@ msgstr ""
 "Imagine si pagar con\n"
 "cripto fuera fácil"
 
-#: src/views/LoginSuccess.vue:152 src/views/SignupLedger.vue:117
+#: src/views/LoginSuccess.vue:153 src/views/SignupLedger.vue:117
 msgid ""
 "Imported {count} address so far... | Imported {count} addresses so far..."
 msgstr ""
@@ -560,7 +565,7 @@ msgstr "¡Archivo de Sesión exportado!"
 msgid "Login to existing account"
 msgstr "Iniciar Sesión a cuenta existente"
 
-#: src/views/OnboardingSelector.vue:91
+#: src/views/OnboardingSelector.vue:95
 msgid "Login to fund your Cashlink"
 msgstr "Iniciar sesión para financiar su Cashlink"
 
@@ -640,7 +645,7 @@ msgstr "Naranja"
 msgid "Pay with {currencyFullName}"
 msgstr "Pagar con {currencyFullName}"
 
-#: src/views/OnboardingSelector.vue:89
+#: src/views/OnboardingSelector.vue:93
 msgid "Pay with Nimiq"
 msgstr "Pagar con Nimiq"
 
@@ -765,7 +770,7 @@ msgstr "Algo salió mal"
 msgid "Something went wrong with your request. Please try again."
 msgstr "Algo salió mal con su petición. Por favor intente de nuevo."
 
-#: src/views/LoginSuccess.vue:137
+#: src/views/LoginSuccess.vue:138
 msgid "Space exceeded"
 msgstr "Espacio excedido"
 
@@ -785,6 +790,10 @@ msgstr "Almacenando sus cuentas nuevas..."
 #: src/views/CheckoutTransmission.vue:73
 msgid "Syncing consensus..."
 msgstr "Sincronizando consenso...."
+
+#: src/views/ActivateBitcoinSuccess.vue:37 src/views/SignBtcTransaction.vue:6
+msgid "Syncing with Bitcoin network..."
+msgstr ""
 
 #: src/lib/LabelingMachine.ts:45
 msgid "Teal"
@@ -894,7 +903,7 @@ msgstr ""
 " pueden agregar mas cuentas y/o direcciones. Por favor libere espacio "
 "cerrando sesión en otras cuentas."
 
-#: src/views/LoginSuccess.vue:139
+#: src/views/LoginSuccess.vue:140
 msgid ""
 "Unfortunately, due to space restrictions of Safari and IOS, this account "
 "cannot be stored properly. Please free up space by logging out of other "
@@ -932,7 +941,7 @@ msgstr ""
 "Use su Archivo de Sesión\n"
 "o Palabras de Respaldo."
 
-#: src/views/LoginSuccess.vue:177 src/views/SignupLedger.vue:124
+#: src/views/LoginSuccess.vue:169 src/views/SignupLedger.vue:124
 msgid "Used addresses without balance might have been missed."
 msgstr "Puede que se ignoraran direcciones usadas sin balance."
 
@@ -944,7 +953,7 @@ msgstr "Verifique Pago"
 msgid "Vesting Contract"
 msgstr "Contratos Vesting"
 
-#: src/views/SignupSuccess.vue:66
+#: src/views/SignupSuccess.vue:86
 msgid ""
 "Welcome to the\n"
 "Nimiq Blockchain."
@@ -992,11 +1001,11 @@ msgstr ""
 msgid "You're logged in!"
 msgstr "¡Ha iniciado sesión!"
 
-#: src/views/LoginSuccess.vue:192
+#: src/views/LoginSuccess.vue:184
 msgid "Your Account is ready. | Your Accounts are ready."
 msgstr "Su Cuenta esta lista. | Sus Cuentas están listas."
 
-#: src/views/LoginSuccess.vue:175 src/views/SignupLedger.vue:101
+#: src/views/LoginSuccess.vue:167 src/views/SignupLedger.vue:101
 msgid ""
 "Your Addresses may be\n"
 "incomplete."
@@ -1024,6 +1033,6 @@ msgstr ""
 "Su Aplicación Nimiq esta desactualizada.. Por favor actualice el firmware "
 "Ledger y la Aplicación de Nimiq usando el Ledger Live."
 
-#: src/views/LoginSuccess.vue:186 src/views/SimpleSuccess.vue:31
+#: src/views/LoginSuccess.vue:178 src/views/SimpleSuccess.vue:31
 msgid "Your password was changed."
 msgstr "Su contraseña fue cambiada."
