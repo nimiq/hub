@@ -24,7 +24,9 @@ import {
     BTC_ACCOUNT_MAX_ALLOWED_ADDRESS_GAP,
     EXTENDED_KEY_PREFIXES,
     BTC_ACCOUNT_KEY_PATH,
-    BTC_NETWORK_TEST,
+    BTC_NETWORK_MAIN,
+    NESTED_SEGWIT,
+    NATIVE_SEGWIT,
 } from './bitcoin/BitcoinConstants';
 import { getBtcNetwork, publicKeyToPayment, deriveAddressesFromXPub } from './bitcoin/BitcoinUtils';
 
@@ -117,7 +119,7 @@ export default class WalletInfoCollector {
     }
 
     // TODO: Also return a potential receipt error
-    public static async deriveBitcoinAddresses(xpub: string): Promise<{
+    public static async deriveBitcoinAddresses(xpub: string, startIndex = 0): Promise<{
         internal: BtcAddressInfo[],
         external: BtcAddressInfo[],
     }> {
@@ -126,22 +128,17 @@ export default class WalletInfoCollector {
         await loadBitcoinJS();
 
         const NimiqElectrumClient = await import(/*webpackChunkName: "electrum-client"*/ '@nimiq/electrum-client');
-        const electrum = new NimiqElectrumClient.ElectrumApi({
-            token: Config.bitcoinNetwork === BTC_NETWORK_TEST ? 'testnet' : 'mainnet',
-            network: Config.bitcoinNetwork === BTC_NETWORK_TEST ? 'testnet' : 'bitcoin',
-        });
+        NimiqElectrumClient.GenesisConfig[Config.bitcoinNetwork === BTC_NETWORK_MAIN ? 'mainnet' : 'testnet']();
+        const electrum = new NimiqElectrumClient.ElectrumClient();
+        await electrum.waitForConsensusEstablished();
 
-        // Setup Bitcoin network
-        const network: BitcoinJS.Network = {
-            ...getBtcNetwork(),
-            // Adjust the first bytes of xpubs to the respective BIP we are using, to ensure correct xpub parsing
-            bip32: EXTENDED_KEY_PREFIXES[Config.bitcoinAddressType][Config.bitcoinNetwork],
-        };
+        const xPubType = ['ypub', 'upub'].includes(xpub.substr(0, 4)) ? NESTED_SEGWIT : NATIVE_SEGWIT;
 
+        const network = getBtcNetwork(xPubType);
         const extendedKey = BitcoinJS.bip32.fromBase58(xpub, network);
         const externalKey = extendedKey.derive(EXTERNAL_INDEX);
         const externalPath =
-            `${BTC_ACCOUNT_KEY_PATH[Config.bitcoinAddressType][Config.bitcoinNetwork]}/${EXTERNAL_INDEX}`;
+            `${BTC_ACCOUNT_KEY_PATH[xPubType][Config.bitcoinNetwork]}/${EXTERNAL_INDEX}`;
 
         /**
          * According to https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki#account-discovery
@@ -151,18 +148,18 @@ export default class WalletInfoCollector {
          * we cannot find out which internal addresses specifically have been used yet.
          * At the end of the detection, we will simply return the same number of internal addresses as we
          * return external ones, and the wallet can then find out which of those have been used by checking
-         * the actual transactions against the internal addresses. That should be enough internal addresses
-         * to provide regular wallet functionality.
+         * the actual transactions against the internal addresses. The wallet can then derive additional
+         * internal addresses via the iframe request if necessary.
          */
 
         let gap = 0;
-        let i = 0;
+        let i = startIndex;
         const externalAddresses: BtcAddressInfo[] = [];
 
         while (gap < BTC_ACCOUNT_MAX_ALLOWED_ADDRESS_GAP) {
             const pubKey = externalKey.derive(i).publicKey;
 
-            const address = publicKeyToPayment(pubKey).address;
+            const address = publicKeyToPayment(pubKey, xPubType).address;
             if (!address) throw new Error(`Cannot create external address for ${xpub} index ${i}`);
 
             // Check address balance
@@ -170,7 +167,7 @@ export default class WalletInfoCollector {
 
             // If no balance, then check tx activity
             const receipts = !balances.confirmed && !balances.unconfirmed
-                ? await electrum.getReceipts(address)
+                ? await electrum.getTransactionReceiptsByAddress(address)
                 : [] as BtcReceipt[];
 
             const used = balances.confirmed > 0 || balances.unconfirmed > 0 || receipts.length > 0;
@@ -192,7 +189,13 @@ export default class WalletInfoCollector {
         }
 
         // As described above, generate the same number of internal addresses as we derived external ones
-        const internalAddresses = deriveAddressesFromXPub(extendedKey, [INTERNAL_INDEX], 0, externalAddresses.length);
+        const internalAddresses = deriveAddressesFromXPub(
+            extendedKey,
+            [INTERNAL_INDEX],
+            startIndex,
+            externalAddresses.length,
+            xPubType,
+        );
 
         return {
             internal: internalAddresses,

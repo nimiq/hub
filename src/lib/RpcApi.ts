@@ -287,7 +287,7 @@ export default class RpcApi {
             if ((request as ParsedSimpleRequest).walletId) {
                 accountRequired = true;
                 account = await WalletStore.Instance.get((request as ParsedSimpleRequest).walletId);
-                errorMsg = 'WalletId not found';
+                errorMsg = 'AccountId not found';
             } else if (requestType === RequestType.SIGN_TRANSACTION) {
                 accountRequired = true;
                 const address = (request as ParsedSignTransactionRequest).sender;
