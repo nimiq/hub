@@ -1,7 +1,19 @@
-<template></template>
+<template>
+    <div v-if="derivingAddresses" class="container pad-bottom">
+        <SmallPage>
+            <StatusScreen
+                :title="$t('Fetching your addresses')"
+                :status="$t('Syncing with Bitcoin network...')"
+                state="loading"
+                :lightBlue="true" />
+        </SmallPage>
+    </div>
+</template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
+import { SmallPage } from '@nimiq/vue-components';
+import StatusScreen from '../components/StatusScreen.vue';
 import { ParsedSignBtcTransactionRequest } from '../lib/RequestTypes';
 import KeyguardClient from '@nimiq/keyguard-client';
 import { Static } from '../lib/StaticStore';
@@ -9,37 +21,73 @@ import { WalletInfo } from '../lib/WalletInfo';
 import { Getter } from 'vuex-class';
 import { BtcAddressInfo } from '../lib/bitcoin/BtcAddressInfo';
 import { BREAK } from '../lib/Constants';
+import { WalletStore } from '../lib/WalletStore';
+import WalletInfoCollector from '@/lib/WalletInfoCollector';
 
-@Component
+@Component({components: {StatusScreen, SmallPage}})
 export default class SignBtcTransaction extends Vue {
     @Static private request!: ParsedSignBtcTransactionRequest;
-    @Getter private findWalletByBtcAddress!: (address: string) => WalletInfo | undefined;
+    @Getter private findWallet!: (id: string) => WalletInfo | undefined;
+
+    private derivingAddresses = false;
 
     public async created() {
         // Forward user through Hub to Keyguard
 
-        // TODO: Derive new addresses, if the requested address is not in the known list
-        const senderAccount = this.findWalletByBtcAddress(this.request.inputs[0].address)!;
+        const walletInfo = this.findWallet(this.request.walletId)!;
 
-        const inputs: KeyguardClient.BitcoinTransactionInput[] = this.request.inputs.map((input) => {
-            const addressInfo = senderAccount.findBtcAddressInfo(input.address);
+        if (!walletInfo.btcXPub || !walletInfo.btcAddresses || !walletInfo.btcAddresses.external.length) {
+            this.$rpc.reject(new Error(`Account does not have any Bitcoin addresses`));
+            return;
+        }
+
+        const inputs: KeyguardClient.BitcoinTransactionInput[] = [];
+
+        for (const input of this.request.inputs) {
+            let addressInfo = walletInfo.findBtcAddressInfo(input.address);
             if (!addressInfo) {
-                this.$rpc.reject(new Error(`Input address not found: ${input.address}`));
-                throw BREAK;
+                this.derivingAddresses = true;
+
+                // Derive new addresses starting from the last used index
+                let index = walletInfo.btcAddresses.external.length - 1;
+                for (; index >= 0; index--) {
+                    if (walletInfo.btcAddresses.external[index].used) break;
+                }
+
+                const newAddresses = await WalletInfoCollector.deriveBitcoinAddresses(walletInfo.btcXPub!, index + 1);
+
+                let i = index + 1;
+                for (const external of newAddresses.external) {
+                    walletInfo.btcAddresses.external[i] = external;
+                    i += 1;
+                }
+                i = index + 1;
+                for (const internal of newAddresses.internal) {
+                    walletInfo.btcAddresses.internal[i] = internal;
+                    i += 1;
+                }
+
+                WalletStore.Instance.put(walletInfo);
+
+                addressInfo = walletInfo.findBtcAddressInfo(input.address);
+                if (!addressInfo) {
+                    this.$rpc.reject(new Error(`Input address not found: ${input.address}`));
+                    throw BREAK;
+                }
             }
 
-            return {
+            inputs.push({
                 keyPath: addressInfo.path,
                 transactionHash: input.transactionHash,
                 outputIndex: input.outputIndex,
                 outputScript: input.outputScript,
                 value: input.value,
-            } as KeyguardClient.BitcoinTransactionInput;
-        });
+            });
+        }
 
         let changeOutput: KeyguardClient.BitcoinTransactionChangeOutput | undefined;
         if (this.request.changeOutput) {
-            const addressInfo = senderAccount.findBtcAddressInfo(this.request.changeOutput.address);
+            const addressInfo = walletInfo.findBtcAddressInfo(this.request.changeOutput.address);
             if (!addressInfo) {
                 this.$rpc.reject(new Error(`Change address not found: ${this.request.changeOutput.address}`));
                 return;
@@ -60,8 +108,8 @@ export default class SignBtcTransaction extends Vue {
             recipientOutput: this.request.output,
             changeOutput,
 
-            keyId: senderAccount.keyId,
-            keyLabel: senderAccount.labelForKeyguard,
+            keyId: walletInfo.keyId,
+            keyLabel: walletInfo.labelForKeyguard,
 
             // flags: this.request.flags,
         };
