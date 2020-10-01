@@ -16,11 +16,12 @@ import { CashlinkStore } from './lib/CashlinkStore';
 import { loadBitcoinJS } from './lib/bitcoin/BitcoinJSLoader';
 import {
     ERROR_NO_XPUB,
-    EXTENDED_KEY_PREFIXES,
     EXTERNAL_INDEX, INTERNAL_INDEX,
     BTC_ACCOUNT_MAX_ALLOWED_ADDRESS_GAP,
+    NESTED_SEGWIT,
+    NATIVE_SEGWIT,
 } from './lib/bitcoin/BitcoinConstants';
-import { getBtcNetwork, deriveAddressesFromXPub } from './lib/bitcoin/BitcoinUtils';
+import { deriveAddressesFromXPub } from './lib/bitcoin/BitcoinUtils';
 
 class IFrameApi {
     public static run() {
@@ -121,19 +122,14 @@ class IFrameApi {
 
         await loadBitcoinJS();
 
-        // Setup Bitcoin network
-        const network: BitcoinJS.Network = {
-            ...getBtcNetwork(),
-            // Adjust the first bytes of xpubs to the respective BIP we are using, to ensure correct xpub parsing
-            bip32: EXTENDED_KEY_PREFIXES[Config.bitcoinAddressType][Config.bitcoinNetwork],
-        };
+        const xPubType = ['ypub', 'upub'].includes(wallet.btcXPub.substr(0, 4)) ? NESTED_SEGWIT : NATIVE_SEGWIT;
 
-        const extendedKey = BitcoinJS.bip32.fromBase58(wallet.btcXPub, network);
         const addresses = deriveAddressesFromXPub(
-            extendedKey,
+            wallet.btcXPub,
             [chain === 'external' ? EXTERNAL_INDEX : INTERNAL_INDEX],
             firstIndex,
             BTC_ACCOUNT_MAX_ALLOWED_ADDRESS_GAP,
+            xPubType,
         ).map((addressInfo) => addressInfo.address);
 
         return {

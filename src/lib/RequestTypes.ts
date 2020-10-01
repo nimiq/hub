@@ -92,7 +92,7 @@ export interface ParsedManageCashlinkRequest extends ParsedBasicRequest {
  * Bitcoin
  */
 
-export interface ParsedSignBtcTransactionRequest extends ParsedBasicRequest {
+export interface ParsedSignBtcTransactionRequest extends ParsedSimpleRequest {
     inputs: Array<{
         address: string,
         transactionHash: string,

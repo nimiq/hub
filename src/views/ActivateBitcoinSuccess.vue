@@ -54,11 +54,6 @@ export default class ActivateBitcoinSuccess extends Vue {
         this.walletInfo.btcXPub = this.keyguardResult.bitcoinXPub;
         this.walletInfo.btcAddresses = btcAddresses;
 
-        this.done();
-    }
-
-    private async done() {
-
         WalletStore.Instance.put(this.walletInfo);
 
         // if (this.receiptsError) {

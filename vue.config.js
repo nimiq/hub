@@ -72,6 +72,7 @@ const configureWebpack = {
     },
     externals: {
         'bitcoinjs-lib': 'BitcoinJS',
+        'buffer': 'BitcoinJS',
     },
 };
 
