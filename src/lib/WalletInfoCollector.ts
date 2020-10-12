@@ -129,16 +129,7 @@ export default class WalletInfoCollector {
 
         const NimiqElectrumClient = await import(/*webpackChunkName: "electrum-client"*/ '@nimiq/electrum-client');
         NimiqElectrumClient.GenesisConfig[Config.bitcoinNetwork === BTC_NETWORK_MAIN ? 'mainnet' : 'testnet']();
-        let options = {};
-        if (location.origin === 'http://localhost:8080') {
-            options = {
-                websocketProxy: {
-                    tcp: 'wss://api.nimiqwatch.com:50002',
-                    ssl: 'wss://api.nimiqwatch.com:50003',
-                },
-            };
-        }
-        const electrum = new NimiqElectrumClient.ElectrumClient(options);
+        const electrum = new NimiqElectrumClient.ElectrumClient();
         await electrum.waitForConsensusEstablished();
 
         const xPubType = ['ypub', 'upub'].includes(xpub.substr(0, 4)) ? NESTED_SEGWIT : NATIVE_SEGWIT;
