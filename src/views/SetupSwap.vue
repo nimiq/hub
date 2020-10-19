@@ -1,19 +1,32 @@
-<template></template>
+<template>
+    <div v-if="derivingAddresses" class="container pad-bottom">
+        <SmallPage>
+            <StatusScreen
+                :title="$t('Fetching your addresses')"
+                :status="$t('Syncing with Bitcoin network...')"
+                state="loading"
+                :lightBlue="true" />
+        </SmallPage>
+    </div>
+</template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
+import { SmallPage } from '@nimiq/vue-components';
+import StatusScreen from '../components/StatusScreen.vue';
 import { ParsedSetupSwapRequest } from '../lib/RequestTypes';
 import KeyguardClient from '@nimiq/keyguard-client';
 import staticStore, { Static } from '../lib/StaticStore';
 import { WalletInfo } from '../lib/WalletInfo';
 import { Getter } from 'vuex-class';
 import { BtcAddressInfo } from '../lib/bitcoin/BtcAddressInfo';
-import { BREAK } from '../lib/Constants';
 
-@Component
+@Component({components: {StatusScreen, SmallPage}})
 export default class SetupSwap extends Vue {
     @Static private request!: ParsedSetupSwapRequest;
     @Getter private findWalletByAddress!: (address: string) => WalletInfo | undefined;
+
+    private derivingAddresses = false;
 
     public async created() {
         // Forward user through Hub to Keyguard
@@ -52,22 +65,34 @@ export default class SetupSwap extends Vue {
         }
 
         if (this.request.fund.type === 'BTC') {
-            const inputs: KeyguardClient.BitcoinTransactionInput[] = this.request.fund.inputs.map((input) => {
-                const addressInfo = account.findBtcAddressInfo(input.address);
+            const inputs: KeyguardClient.BitcoinTransactionInput[] = [];
+
+            for (const input of this.request.fund.inputs) {
+                let addressInfo = account.findBtcAddressInfo(input.address);
+                if (addressInfo instanceof Promise) {
+                    this.derivingAddresses = true;
+                    addressInfo = await addressInfo;
+                    this.derivingAddresses = false;
+                }
                 if (!addressInfo) {
                     this.$rpc.reject(new Error(`Input address not found: ${input.address}`));
-                    throw BREAK;
+                    return;
                 }
 
-                return {
+                inputs.push({
                     ...input,
                     keyPath: addressInfo.path,
-                } as KeyguardClient.BitcoinTransactionInput;
-            });
+                } as KeyguardClient.BitcoinTransactionInput);
+            }
 
             let changeOutput: KeyguardClient.BitcoinTransactionChangeOutput | undefined;
             if (this.request.fund.changeOutput) {
-                const addressInfo = account.findBtcAddressInfo(this.request.fund.changeOutput.address);
+                let addressInfo = account.findBtcAddressInfo(this.request.fund.changeOutput.address);
+                if (addressInfo instanceof Promise) {
+                    this.derivingAddresses = true;
+                    addressInfo = await addressInfo;
+                    this.derivingAddresses = false;
+                }
                 if (!addressInfo) {
                     this.$rpc.reject(
                         new Error(`Change address not found: ${this.request.fund.changeOutput.address}`));
@@ -81,7 +106,12 @@ export default class SetupSwap extends Vue {
                 };
             }
 
-            const refundAddressInfo = account.findBtcAddressInfo(this.request.fund.refundAddress);
+            let refundAddressInfo = account.findBtcAddressInfo(this.request.fund.refundAddress);
+            if (refundAddressInfo instanceof Promise) {
+                this.derivingAddresses = true;
+                refundAddressInfo = await refundAddressInfo;
+                this.derivingAddresses = false;
+            }
             if (!refundAddressInfo) {
                 this.$rpc.reject(new Error(`Refund address not found: ${this.request.fund.refundAddress}`));
                 return;
@@ -122,7 +152,12 @@ export default class SetupSwap extends Vue {
         if (this.request.redeem.type === 'BTC') {
             const input = this.request.redeem.input;
 
-            const addressInfo = account.findBtcAddressInfo(this.request.redeem.output.address);
+            let addressInfo = account.findBtcAddressInfo(this.request.redeem.output.address);
+            if (addressInfo instanceof Promise) {
+                this.derivingAddresses = true;
+                addressInfo = await addressInfo;
+                this.derivingAddresses = false;
+            }
             if (!addressInfo) {
                 this.$rpc.reject(new Error(`Redeem address not found: ${this.request.redeem.output.address}`));
                 return;

@@ -20,9 +20,6 @@ import { Static } from '../lib/StaticStore';
 import { WalletInfo } from '../lib/WalletInfo';
 import { Getter } from 'vuex-class';
 import { BtcAddressInfo } from '../lib/bitcoin/BtcAddressInfo';
-import { BREAK } from '../lib/Constants';
-import { WalletStore } from '../lib/WalletStore';
-import WalletInfoCollector from '@/lib/WalletInfoCollector';
 
 @Component({components: {StatusScreen, SmallPage}})
 export default class SignBtcTransaction extends Vue {
@@ -45,35 +42,14 @@ export default class SignBtcTransaction extends Vue {
 
         for (const input of this.request.inputs) {
             let addressInfo = walletInfo.findBtcAddressInfo(input.address);
-            if (!addressInfo) {
+            if (addressInfo instanceof Promise) {
                 this.derivingAddresses = true;
-
-                // Derive new addresses starting from the last used index
-                let index = walletInfo.btcAddresses.external.length - 1;
-                for (; index >= 0; index--) {
-                    if (walletInfo.btcAddresses.external[index].used) break;
-                }
-
-                const newAddresses = await WalletInfoCollector.deriveBitcoinAddresses(walletInfo.btcXPub!, index + 1);
-
-                let i = index + 1;
-                for (const external of newAddresses.external) {
-                    walletInfo.btcAddresses.external[i] = external;
-                    i += 1;
-                }
-                i = index + 1;
-                for (const internal of newAddresses.internal) {
-                    walletInfo.btcAddresses.internal[i] = internal;
-                    i += 1;
-                }
-
-                WalletStore.Instance.put(walletInfo);
-
-                addressInfo = walletInfo.findBtcAddressInfo(input.address);
-                if (!addressInfo) {
-                    this.$rpc.reject(new Error(`Input address not found: ${input.address}`));
-                    throw BREAK;
-                }
+                addressInfo = await addressInfo;
+                this.derivingAddresses = false;
+            }
+            if (!addressInfo) {
+                this.$rpc.reject(new Error(`Input address not found: ${input.address}`));
+                return;
             }
 
             inputs.push({
@@ -87,7 +63,8 @@ export default class SignBtcTransaction extends Vue {
 
         let changeOutput: KeyguardClient.BitcoinTransactionChangeOutput | undefined;
         if (this.request.changeOutput) {
-            const addressInfo = walletInfo.findBtcAddressInfo(this.request.changeOutput.address);
+            const addressInfo =
+                walletInfo.findBtcAddressInfo(this.request.changeOutput.address, false) as BtcAddressInfo | null;
             if (!addressInfo) {
                 this.$rpc.reject(new Error(`Change address not found: ${this.request.changeOutput.address}`));
                 return;
