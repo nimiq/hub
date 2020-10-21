@@ -4,6 +4,7 @@ import { ParsedNimiqSpecifics, ParsedNimiqDirectPaymentOptions } from './payment
 import { ParsedEtherSpecifics, ParsedEtherDirectPaymentOptions } from './paymentOptions/EtherPaymentOptions';
 import { ParsedBitcoinSpecifics, ParsedBitcoinDirectPaymentOptions } from './paymentOptions/BitcoinPaymentOptions';
 import { CashlinkTheme } from './PublicRequestTypes';
+import { Swap, SwapAsset } from './FastspotApi';
 
 export interface ParsedBasicRequest {
     kind: RequestType;
@@ -121,15 +122,17 @@ export interface ParsedAddBtcAddressesRequest extends ParsedSimpleRequest {
  */
 
 export interface ParsedSetupSwapRequest extends ParsedBasicRequest {
+    swapId: string;
+
     fund: {
-        type: 'NIM',
+        type: SwapAsset.NIM,
         sender: Nimiq.Address,
         value: number, // Luna
         fee: number, // Luna
-        extraData: Uint8Array, // HTLC data
+        // extraData: Uint8Array, // HTLC data
         validityStartHeight: number,
     } | {
-        type: 'BTC',
+        type: SwapAsset.BTC,
         inputs: Array<{
             address: string,
             transactionHash: string,
@@ -138,34 +141,34 @@ export interface ParsedSetupSwapRequest extends ParsedBasicRequest {
             value: number, // Sats
         }>;
         output: {
-            address: string, // HTLC address
+            // address: string, // HTLC address
             value: number, // Sats
         };
         changeOutput?: {
             address: string,
             value: number, // Sats
         };
-        htlcScript: Uint8Array,
+        // htlcScript: Uint8Array,
         refundAddress: string,
     };
 
     redeem: {
-        type: 'NIM',
-        sender: Nimiq.Address, // HTLC address
+        type: SwapAsset.NIM,
+        // sender: Nimiq.Address, // HTLC address
         recipient: Nimiq.Address, // My address, must be redeem address of HTLC
         value: number, // Luna
         fee: number, // Luna
         extraData?: Uint8Array,
         validityStartHeight: number,
-        htlcData: Uint8Array,
+        // htlcData: Uint8Array,
     } | {
-        type: 'BTC',
+        type: SwapAsset.BTC,
         input: {
-            transactionHash: string,
-            outputIndex: number,
-            outputScript: string,
+            // transactionHash: string,
+            // outputIndex: number,
+            // outputScript: string,
             value: number, // Sats
-            witnessScript: string,
+            // witnessScript: string,
         };
         output: {
             address: string, // My address, must be redeem address of HTLC

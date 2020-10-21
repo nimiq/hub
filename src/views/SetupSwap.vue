@@ -12,14 +12,15 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
+import { Getter } from 'vuex-class';
 import { SmallPage } from '@nimiq/vue-components';
 import StatusScreen from '../components/StatusScreen.vue';
 import { ParsedSetupSwapRequest } from '../lib/RequestTypes';
 import KeyguardClient from '@nimiq/keyguard-client';
 import staticStore, { Static } from '../lib/StaticStore';
 import { WalletInfo } from '../lib/WalletInfo';
-import { Getter } from 'vuex-class';
 import { BtcAddressInfo } from '../lib/bitcoin/BtcAddressInfo';
+import { SwapAsset } from '@/lib/FastspotApi';
 
 @Component({components: {StatusScreen, SmallPage}})
 export default class SetupSwap extends Vue {
@@ -31,9 +32,9 @@ export default class SetupSwap extends Vue {
     public async created() {
         // Forward user through Hub to Keyguard
 
-        const nimAddress = this.request.fund.type === 'NIM'
+        const nimAddress = this.request.fund.type === SwapAsset.NIM
             ? this.request.fund.sender.toUserFriendlyAddress()
-            : this.request.redeem.type === 'NIM'
+            : this.request.redeem.type === SwapAsset.NIM
                 ? this.request.redeem.recipient.toUserFriendlyAddress()
                 : ''; // Should never happen, if parsing works correctly
         const account = this.findWalletByAddress(nimAddress)!;
@@ -43,29 +44,26 @@ export default class SetupSwap extends Vue {
 
             keyId: account.keyId,
             keyLabel: account.labelForKeyguard,
+
+            swapId: this.request.swapId,
         };
 
-        // TODO: Derive new addresses, if the requested address is not in the known list
-
-        if (this.request.fund.type === 'NIM') {
+        if (this.request.fund.type === SwapAsset.NIM) {
             const senderContract = account.findContractByAddress(this.request.fund.sender);
             const signer = account.findSignerForAddress(this.request.fund.sender)!;
 
             request.fund = {
-                type: 'NIM',
+                type: SwapAsset.NIM,
                 keyPath: signer.path,
                 sender: (senderContract || signer).address.serialize(),
-                senderType: senderContract ? senderContract.type : Nimiq.Account.Type.BASIC,
                 senderLabel: (senderContract || signer).label,
                 value: this.request.fund.value,
                 fee: this.request.fund.fee,
-                validityStartHeight: this.request.fund.validityStartHeight,
-                data: this.request.fund.extraData,
             };
         }
 
-        if (this.request.fund.type === 'BTC') {
-            const inputs: KeyguardClient.BitcoinTransactionInput[] = [];
+        if (this.request.fund.type === SwapAsset.BTC) {
+            const keyPaths: string[] = [];
 
             for (const input of this.request.fund.inputs) {
                 let addressInfo = account.findBtcAddressInfo(input.address);
@@ -79,13 +77,21 @@ export default class SetupSwap extends Vue {
                     return;
                 }
 
-                inputs.push({
-                    ...input,
-                    keyPath: addressInfo.path,
-                } as KeyguardClient.BitcoinTransactionInput);
+                keyPaths.push(addressInfo.path);
             }
 
-            let changeOutput: KeyguardClient.BitcoinTransactionChangeOutput | undefined;
+            const inputValue = this.request.fund.inputs.reduce((sum, input) => sum + input.value, 0);
+            const outputValue = this.request.fund.output.value;
+            const changeOutputValue = this.request.fund.changeOutput ? this.request.fund.changeOutput.value : 0;
+
+            request.fund = {
+                type: SwapAsset.BTC,
+                keyPaths,
+                value: outputValue,
+                fee: inputValue - outputValue - changeOutputValue,
+            };
+
+            // Validate that we own the change address
             if (this.request.fund.changeOutput) {
                 let addressInfo = account.findBtcAddressInfo(this.request.fund.changeOutput.address);
                 if (addressInfo instanceof Promise) {
@@ -98,14 +104,9 @@ export default class SetupSwap extends Vue {
                         new Error(`Change address not found: ${this.request.fund.changeOutput.address}`));
                     return;
                 }
-
-                changeOutput = {
-                    keyPath: addressInfo.path,
-                    // address: addressInfo.address,
-                    value: this.request.fund.changeOutput.value,
-                };
             }
 
+            // Validate that we own the refund address
             let refundAddressInfo = account.findBtcAddressInfo(this.request.fund.refundAddress);
             if (refundAddressInfo instanceof Promise) {
                 this.derivingAddresses = true;
@@ -116,42 +117,31 @@ export default class SetupSwap extends Vue {
                 this.$rpc.reject(new Error(`Refund address not found: ${this.request.fund.refundAddress}`));
                 return;
             }
-
-            request.fund = {
-                type: 'BTC',
-                inputs,
-                recipientOutput: this.request.fund.output,
-                changeOutput,
-                htlcScript: this.request.fund.htlcScript,
-                refundKeyPath: refundAddressInfo.path,
-            };
         }
 
-        if (this.request.redeem.type === 'NIM') {
+        if (this.request.redeem.type === SwapAsset.NIM) {
             const signer = account.findSignerForAddress(this.request.redeem.recipient);
             if (!signer) {
                 this.$rpc.reject(new Error(`Redeem address not found: ${this.request.redeem.recipient}`));
                 return;
             }
 
+            if (!signer.address.equals(this.request.redeem.recipient)) {
+                this.$rpc.reject(new Error(`Redeem address not found: ${this.request.redeem.recipient}`));
+                return;
+            }
+
             request.redeem = {
-                type: 'NIM',
+                type: SwapAsset.NIM,
                 keyPath: signer.path,
-                sender: this.request.redeem.sender.serialize(),
-                senderType: Nimiq.Account.Type.HTLC,
                 recipient: signer.address.serialize(),
                 recipientLabel: signer.label,
                 value: this.request.redeem.value,
                 fee: this.request.redeem.fee,
-                validityStartHeight: this.request.redeem.validityStartHeight,
-                data: this.request.redeem.extraData,
-                htlcData: this.request.redeem.htlcData,
             };
         }
 
-        if (this.request.redeem.type === 'BTC') {
-            const input = this.request.redeem.input;
-
+        if (this.request.redeem.type === SwapAsset.BTC) {
             let addressInfo = account.findBtcAddressInfo(this.request.redeem.output.address);
             if (addressInfo instanceof Promise) {
                 this.derivingAddresses = true;
@@ -163,21 +153,16 @@ export default class SetupSwap extends Vue {
                 return;
             }
 
-            const inputs: KeyguardClient.BitcoinTransactionInput[] = [{
-                ...input,
-                keyPath: addressInfo.path,
-            }];
+            const keyPaths = [addressInfo.path];
 
-            const output: KeyguardClient.BitcoinTransactionChangeOutput = {
-                keyPath: addressInfo.path,
-                // address: addressInfo.address,
-                value: this.request.redeem.output.value,
-            };
+            const inputValue = this.request.redeem.input.value;
+            const outputValue = this.request.redeem.output.value;
 
             request.redeem = {
-                type: 'BTC',
-                inputs,
-                changeOutput: output,
+                type: SwapAsset.BTC,
+                keyPaths,
+                value: outputValue,
+                fee: inputValue - outputValue,
             };
         }
 
@@ -189,8 +174,6 @@ export default class SetupSwap extends Vue {
         request.serviceExchangeFee = this.request.serviceExchangeFee;
         request.nimiqAddresses = this.request.nimiqAddresses;
         request.bitcoinAccount = this.request.bitcoinAccount;
-
-        staticStore.keyguardRequest = request as KeyguardClient.SignSwapRequest;
 
         const client = this.$rpc.createKeyguardClient(true);
         client.signSwap(request as KeyguardClient.SignSwapRequest);
