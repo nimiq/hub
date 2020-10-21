@@ -7,6 +7,8 @@ import {
 } from './ContractInfo';
 import { Account } from '../../client/PublicRequestTypes';
 import { labelKeyguardAccount } from './LabelingMachine';
+import WalletInfoCollector from './WalletInfoCollector';
+import { WalletStore } from '../lib/WalletStore';
 
 export enum WalletType {
     LEGACY = 1,
@@ -111,10 +113,40 @@ export class WalletInfo {
         return this.accounts.get(contract.owner.toUserFriendlyAddress()) || null;
     }
 
-    public findBtcAddressInfo(address: string): BtcAddressInfo | null {
-        return this.btcAddresses.internal.find((addressInfo) => addressInfo.address === address)
-            || this.btcAddresses.external.find((addressInfo) => addressInfo.address === address)
+    public findBtcAddressInfo(
+        address: string,
+        deriveIfNotFound = true,
+    ): BtcAddressInfo | null | Promise<BtcAddressInfo | null> {
+        const addressInfo = this.btcAddresses.internal.find((ai) => ai.address === address)
+            || this.btcAddresses.external.find((ai) => ai.address === address)
             || null;
+
+        if (addressInfo || !deriveIfNotFound) return addressInfo;
+
+        return new Promise<BtcAddressInfo | null>(async (resolve) => {
+            // Derive new addresses starting from the last used index
+            let index = this.btcAddresses.external.length - 1;
+            for (; index >= 0; index--) {
+                if (this.btcAddresses.external[index].used) break;
+            }
+
+            const newAddresses = await WalletInfoCollector.deriveBitcoinAddresses(this.btcXPub!, index + 1);
+
+            let i = index + 1;
+            for (const external of newAddresses.external) {
+                this.btcAddresses.external[i] = external;
+                i += 1;
+            }
+            i = index + 1;
+            for (const internal of newAddresses.internal) {
+                this.btcAddresses.internal[i] = internal;
+                i += 1;
+            }
+
+            await WalletStore.Instance.put(this);
+
+            resolve(this.findBtcAddressInfo(address, false) as BtcAddressInfo | null);
+        });
     }
 
     public setContract(updatedContract: ContractInfo) {

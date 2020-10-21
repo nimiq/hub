@@ -41,6 +41,7 @@ import { ParsedEtherDirectPaymentOptions } from './paymentOptions/EtherPaymentOp
 import { ParsedBitcoinDirectPaymentOptions } from './paymentOptions/BitcoinPaymentOptions';
 import { Utf8Tools } from '@nimiq/utils';
 import Config from 'config';
+import { SwapAsset } from './FastspotApi';
 
 export class RequestParser {
     public static parse(
@@ -463,28 +464,24 @@ export class RequestParser {
 
                     fund: setupSwapRequest.fund.type === 'NIM' ? {
                         ...setupSwapRequest.fund,
+                        type: SwapAsset[setupSwapRequest.fund.type],
                         sender: Nimiq.Address.fromAny(setupSwapRequest.fund.sender),
-                        extraData: typeof setupSwapRequest.fund.extraData === 'string'
-                            ? Nimiq.BufferUtils.fromAny(setupSwapRequest.fund.extraData)
-                            : setupSwapRequest.fund.extraData,
                     } : {
                         ...setupSwapRequest.fund,
-                        htlcScript: typeof setupSwapRequest.fund.htlcScript === 'string'
-                            ? Nimiq.BufferUtils.fromAny(setupSwapRequest.fund.htlcScript)
-                            : setupSwapRequest.fund.htlcScript,
+                        type: SwapAsset[setupSwapRequest.fund.type],
                     },
 
                     redeem: setupSwapRequest.redeem.type === 'NIM' ? {
                         ...setupSwapRequest.redeem,
-                        sender: Nimiq.Address.fromAny(setupSwapRequest.redeem.sender),
+                        type: SwapAsset[setupSwapRequest.redeem.type],
                         recipient: Nimiq.Address.fromAny(setupSwapRequest.redeem.recipient),
                         extraData: typeof setupSwapRequest.redeem.extraData === 'string'
                             ? Nimiq.BufferUtils.fromAny(setupSwapRequest.redeem.extraData)
                             : setupSwapRequest.redeem.extraData,
-                        htlcData: typeof setupSwapRequest.redeem.htlcData === 'string'
-                            ? Nimiq.BufferUtils.fromAny(setupSwapRequest.redeem.htlcData)
-                            : setupSwapRequest.redeem.htlcData,
-                    } : setupSwapRequest.redeem,
+                    } : {
+                        ...setupSwapRequest.redeem,
+                        type: SwapAsset[setupSwapRequest.redeem.type],
+                    },
                 };
                 return parsedSetupSwapRequest;
             default:
@@ -621,14 +618,15 @@ export class RequestParser {
                 const swapSetupRequest: SetupSwapRequest = {
                     ...setupSwapRequest,
 
+                    // @ts-ignore Type 'Address' is not assignable to type 'string'
                     fund: setupSwapRequest.fund.type === 'NIM' ? {
                         ...setupSwapRequest.fund,
                         sender: setupSwapRequest.fund.sender.toUserFriendlyAddress(),
                     } : setupSwapRequest.fund,
 
+                    // @ts-ignore Type 'Address' is not assignable to type 'string'
                     redeem: setupSwapRequest.redeem.type === 'NIM' ? {
                         ...setupSwapRequest.redeem,
-                        sender: setupSwapRequest.redeem.sender.toUserFriendlyAddress(),
                         recipient: setupSwapRequest.redeem.recipient.toUserFriendlyAddress(),
                     } : setupSwapRequest.redeem,
                 };

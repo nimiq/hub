@@ -3,6 +3,7 @@ const {
     networks,
     payments,
     address,
+    ECPair, // Used in swap-iframe to recreate keypairs from stored privatekeys
 
     // Required by @nimiq/electrum-client
     Transaction,
@@ -18,6 +19,7 @@ module.exports = {
     networks,
     payments,
     address,
+    ECPair,
 
     // Required by @nimiq/electrum-client
     Transaction,
