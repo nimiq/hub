@@ -101,11 +101,11 @@ import {
     UnderPaymentIcon,
 } from '@nimiq/vue-components';
 import { AccountInfo } from '../lib/AccountInfo';
-import { TX_VALIDITY_WINDOW } from '../lib/Constants';
+import { TX_VALIDITY_WINDOW, WalletType } from '../lib/Constants';
 import { ContractInfo, VestingContractInfo } from '../lib/ContractInfo';
 import { Account, Currency, PaymentState as PublicPaymentState, RequestType } from '../lib/PublicRequestTypes';
 import staticStore from '../lib/StaticStore';
-import { WalletInfo, WalletType } from '../lib/WalletInfo';
+import { WalletInfo } from '../lib/WalletInfo';
 import { WalletStore } from '../lib/WalletStore';
 import { ParsedNimiqDirectPaymentOptions } from '../lib/paymentOptions/NimiqPaymentOptions';
 import Network from './Network.vue';

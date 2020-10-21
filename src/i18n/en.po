@@ -46,7 +46,7 @@ msgstr ""
 msgid "Account Created"
 msgstr ""
 
-#: src/views/Migrate.vue:265
+#: src/views/Migrate.vue:266
 msgid "Accounts updated!"
 msgstr ""
 
@@ -318,8 +318,8 @@ msgstr ""
 msgid "Connect your Ledger Nano S or Nano X."
 msgstr ""
 
-#: src/views/Migrate.vue:142
-#: src/views/Migrate.vue:282
+#: src/views/Migrate.vue:143
+#: src/views/Migrate.vue:283
 msgid "Connecting to Keyguard..."
 msgstr ""
 
@@ -383,7 +383,7 @@ msgstr ""
 msgid "Create Cashlink"
 msgstr ""
 
-#: src/views/SignupSuccess.vue:31
+#: src/views/SignupSuccess.vue:32
 msgid "Creating your Account"
 msgstr ""
 
@@ -392,7 +392,7 @@ msgstr ""
 msgid "Creating your Cashlink"
 msgstr ""
 
-#: src/views/Migrate.vue:229
+#: src/views/Migrate.vue:230
 msgid "Detecting vesting contracts..."
 msgstr ""
 
@@ -413,7 +413,7 @@ msgstr ""
 msgid "Enter manually"
 msgstr ""
 
-#: src/views/CashlinkCreate.vue:159
+#: src/views/CashlinkCreate.vue:160
 msgid "express"
 msgstr ""
 
@@ -446,7 +446,7 @@ msgstr ""
 msgid "Finish"
 msgstr ""
 
-#: src/views/CashlinkCreate.vue:149
+#: src/views/CashlinkCreate.vue:150
 msgid "free"
 msgstr ""
 
@@ -608,7 +608,7 @@ msgstr ""
 msgid "None of your available addresses has sufficient balance."
 msgstr ""
 
-#: src/views/Migrate.vue:223
+#: src/views/Migrate.vue:224
 msgid "Nothing to update."
 msgstr ""
 
@@ -717,7 +717,7 @@ msgstr ""
 msgid "Restart Payment"
 msgstr ""
 
-#: src/views/Migrate.vue:218
+#: src/views/Migrate.vue:219
 msgid "Retrieving your old accounts..."
 msgstr ""
 
@@ -776,11 +776,11 @@ msgstr ""
 msgid "Speed up your transaction"
 msgstr ""
 
-#: src/views/CashlinkCreate.vue:154
+#: src/views/CashlinkCreate.vue:155
 msgid "standard"
 msgstr ""
 
-#: src/views/Migrate.vue:232
+#: src/views/Migrate.vue:233
 msgid "Storing your new accounts..."
 msgstr ""
 
@@ -895,12 +895,12 @@ msgstr ""
 msgid "Updating balances"
 msgstr ""
 
-#: src/views/Migrate.vue:261
+#: src/views/Migrate.vue:262
 msgid "Updating Keyguard..."
 msgstr ""
 
-#: src/views/Migrate.vue:141
-#: src/views/Migrate.vue:281
+#: src/views/Migrate.vue:142
+#: src/views/Migrate.vue:282
 msgid "Updating your Accounts"
 msgstr ""
 
@@ -927,7 +927,7 @@ msgstr ""
 msgid "Vesting Contract"
 msgstr ""
 
-#: src/views/SignupSuccess.vue:86
+#: src/views/SignupSuccess.vue:87
 msgid ""
 "Welcome to the\n"
 "Nimiq Blockchain."
@@ -941,7 +941,7 @@ msgstr ""
 msgid "What is Nimiq?"
 msgstr ""
 
-#: src/views/Migrate.vue:272
+#: src/views/Migrate.vue:273
 msgid "Whoops, something went wrong"
 msgstr ""
 

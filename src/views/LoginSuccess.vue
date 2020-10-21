@@ -21,14 +21,14 @@ import { BrowserDetection } from '@nimiq/utils';
 import { SmallPage } from '@nimiq/vue-components';
 import { ParsedBasicRequest } from '../lib/RequestTypes';
 import { Account, RequestType } from '../lib/PublicRequestTypes';
-import { WalletInfo, WalletType } from '../lib/WalletInfo';
+import { WalletInfo } from '../lib/WalletInfo';
 import { WalletStore } from '../lib/WalletStore';
 import { Static } from '../lib/StaticStore';
 import StatusScreen from '../components/StatusScreen.vue';
 import WalletInfoCollector, { BasicAccountInfo } from '../lib/WalletInfoCollector';
 import { WalletCollectionResultKeyguard } from '../lib/WalletInfoCollector';
 import CookieHelper from '../lib/CookieHelper';
-import { ERROR_COOKIE_SPACE } from '../lib/Constants';
+import { ERROR_COOKIE_SPACE, WalletType } from '../lib/Constants';
 
 @Component({components: {StatusScreen, SmallPage}})
 export default class LoginSuccess extends Vue {

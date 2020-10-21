@@ -24,11 +24,10 @@ import {
 import { keyguardResponseRouter, REQUEST_ERROR } from '@/router';
 import { StaticStore } from '@/lib/StaticStore';
 import { WalletStore } from './WalletStore';
-import { WalletType } from '@/lib/WalletInfo';
 import Cashlink from '@/lib/Cashlink';
 import CookieJar from '@/lib/CookieJar';
 import { captureException } from '@sentry/browser';
-import { ERROR_CANCELED } from './Constants';
+import { ERROR_CANCELED, WalletType } from './Constants';
 import { includesOrigin } from '@/lib/Helpers';
 import Config from 'config';
 import { setHistoryStorage, getHistoryStorage } from '@/lib/Helpers';

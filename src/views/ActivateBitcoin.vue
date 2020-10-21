@@ -12,7 +12,8 @@ import { Static } from '../lib/StaticStore';
 import CookieHelper from '../lib/CookieHelper';
 import NotEnoughCookieSpace from '../components/NotEnoughCookieSpace.vue';
 import { BTC_ACCOUNT_KEY_PATH } from '../lib/bitcoin/BitcoinConstants';
-import { WalletInfo, WalletType } from '../lib/WalletInfo';
+import { WalletInfo } from '../lib/WalletInfo';
+import { WalletType } from '../lib/Constants';
 import Config from 'config';
 
 @Component({components: {NotEnoughCookieSpace}})

@@ -1,5 +1,6 @@
 import { setup } from './_setup';
-import { WalletInfo, WalletType } from '@/lib/WalletInfo';
+import { WalletInfo } from '@/lib/WalletInfo';
+import { WalletType } from '@/lib/Constants';
 import { Store } from '@/lib/Store';
 import { WalletStore } from '@/lib/WalletStore';
 import { AccountInfo } from '@/lib/AccountInfo';

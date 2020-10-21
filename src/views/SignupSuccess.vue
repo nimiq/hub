@@ -10,7 +10,8 @@
 import { Component, Vue } from 'vue-property-decorator';
 import { SmallPage, CheckmarkIcon } from '@nimiq/vue-components';
 import { AccountInfo } from '../lib/AccountInfo';
-import { WalletInfo, WalletType } from '../lib/WalletInfo';
+import { WalletInfo } from '../lib/WalletInfo';
+import { WalletType } from '../lib/Constants';
 import { State, Action } from 'vuex-class';
 import { WalletStore } from '@/lib/WalletStore';
 import { Account } from '../lib/PublicRequestTypes';

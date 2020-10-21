@@ -34,7 +34,7 @@ import staticStore, { Static } from '../lib/StaticStore';
 import { WalletInfo } from '@/lib/WalletInfo';
 import KeyguardClient from '@nimiq/keyguard-client';
 import { State as RpcState } from '@nimiq/rpc';
-import { WalletType } from '../lib/WalletInfo';
+import { WalletType } from '../lib/Constants';
 
 @Component({components: {SmallPage, GlobalClose, AccountSelector, ArrowRightIcon}})
 export default class SignMessage extends Vue {

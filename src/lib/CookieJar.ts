@@ -1,7 +1,7 @@
 // tslint:disable no-bitwise no-shadowed-variable
 
-import { WalletInfoEntry, WalletType } from './WalletInfo';
-import { LABEL_MAX_LENGTH } from '../lib/Constants';
+import { WalletInfoEntry } from './WalletInfo';
+import { LABEL_MAX_LENGTH, WalletType } from '../lib/Constants';
 import {
     labelAddress,
     labelKeyguardAccount,

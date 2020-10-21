@@ -2,11 +2,11 @@ import { NetworkClient } from '@nimiq/network-client';
 import { KeyguardClient, SimpleResult as KeyguardSimpleResult } from '@nimiq/keyguard-client';
 import { AccountInfo } from '@/lib/AccountInfo';
 import { WalletStore } from '@/lib/WalletStore';
-import { WalletInfo, WalletType } from '@/lib/WalletInfo';
+import { WalletInfo } from '@/lib/WalletInfo';
 import LedgerApi, { RequestType as LedgerApiRequestType } from '@nimiq/ledger-api'; // TODO import only when needed
 import { ACCOUNT_BIP32_BASE_PATH_KEYGUARD, ACCOUNT_MAX_ALLOWED_ADDRESS_GAP } from '@/lib/Constants';
 import Config from 'config';
-import { ERROR_TRANSACTION_RECEIPTS } from '../lib/Constants';
+import { ERROR_TRANSACTION_RECEIPTS, WalletType } from '../lib/Constants';
 import {
     labelAddress,
     labelKeyguardAccount,

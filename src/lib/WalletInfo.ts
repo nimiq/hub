@@ -9,12 +9,7 @@ import { Account } from './PublicRequestTypes';
 import { labelKeyguardAccount } from './LabelingMachine';
 import WalletInfoCollector from './WalletInfoCollector';
 import { WalletStore } from '../lib/WalletStore';
-
-export enum WalletType {
-    LEGACY = 1,
-    BIP39 = 2,
-    LEDGER = 3,
-}
+import { WalletType } from './Constants';
 
 export class WalletInfo {
     public static fromObject(o: WalletInfoEntry): WalletInfo {

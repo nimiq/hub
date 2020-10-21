@@ -1,11 +1,11 @@
 import Vue from 'vue';
 import Vuex, { StoreOptions } from 'vuex';
 import { Result as KeyguardResult } from '@nimiq/keyguard-client';
-import { WalletInfo, WalletType } from '@/lib/WalletInfo';
+import { WalletInfo } from '@/lib/WalletInfo';
 import { WalletStore } from '@/lib/WalletStore';
 import { AccountInfo } from '@/lib/AccountInfo';
 import { labelLegacyAccountGroup } from '@/lib/LabelingMachine';
-import { LEGACY_GROUPING_ACCOUNT_ID } from '@/lib/Constants';
+import { LEGACY_GROUPING_ACCOUNT_ID, WalletType } from '@/lib/Constants';
 import { ContractInfo } from './lib/ContractInfo';
 
 Vue.use(Vuex);
