@@ -21,4 +21,9 @@ export default {
     enableBitcoin: true,
     bitcoinNetwork: BTC_NETWORK_MAIN,
     bitcoinAddressType: NATIVE_SEGWIT,
+
+    fastspot: {
+        apiEndpoint: 'https://v1.fastspot.io/fast/v1',
+        apiKey: '',
+    },
 };

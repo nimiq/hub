@@ -200,7 +200,6 @@ export interface NimiqHtlcCreationInstructions {
     sender: string; // My address, must be redeem address of HTLC, or if contract, its owner must be redeem address
     value: number; // Luna
     fee: number; // Luna
-    extraData: Uint8Array | string; // HTLC data
     validityStartHeight: number;
 }
 
@@ -214,36 +213,31 @@ export interface BitcoinHtlcCreationInstructions {
         value: number, // Sats
     }>;
     output: {
-        address: string, // HTLC address
         value: number, // Sats
     };
     changeOutput?: {
         address: string,
         value: number, // Sats
     };
-    htlcScript: Uint8Array | string;
     refundAddress: string;
 }
 
 export interface NimiqSettlementInstructions {
     type: 'NIM';
-    sender: string; // HTLC address
     recipient: string; // My address, must be redeem address of HTLC
     value: number; // Luna
     fee: number; // Luna
     extraData?: Uint8Array | string;
     validityStartHeight: number;
-    htlcData: Uint8Array | string;
 }
 
 export interface BitcoinSettlementInstructions {
     type: 'BTC';
     input: {
-        transactionHash: string,
-        outputIndex: number,
-        outputScript: string,
+        // transactionHash: string,
+        // outputIndex: number,
+        // outputScript: string,
         value: number, // Sats
-        witnessScript: string,
     };
     output: {
         address: string, // My address, must be redeem address of HTLC
@@ -260,6 +254,7 @@ export type HtlcSettlementInstructions =
     | BitcoinSettlementInstructions;
 
 export interface SetupSwapRequest extends BasicRequest {
+    swapId: string;
     fund: HtlcCreationInstructions;
     redeem: HtlcSettlementInstructions;
 
