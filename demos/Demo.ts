@@ -21,7 +21,7 @@ import {
 import { RedirectRequestBehavior, PopupRequestBehavior } from '../client/RequestBehavior';
 import { Utf8Tools } from '@nimiq/utils';
 import { KeyguardClient, KeyguardCommand } from '@nimiq/keyguard-client';
-import { WalletType } from '../src/lib/WalletInfo';
+import { WalletType } from '../src/lib/Constants';
 
 class Demo {
     public static run() {
