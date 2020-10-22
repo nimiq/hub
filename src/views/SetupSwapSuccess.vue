@@ -26,6 +26,7 @@ import { ParsedSetupSwapRequest } from '../lib/RequestTypes';
 import { WalletInfo } from '../lib/WalletInfo';
 import { BTC_NETWORK_MAIN } from '../lib/bitcoin/BitcoinConstants';
 import Config from 'config';
+import { loadBitcoinJS } from '../lib/bitcoin/BitcoinJSLoader';
 
 @Component({components: {Network, SmallPage, StatusScreen}})
 export default class SetupSwapSuccess extends Vue {
@@ -170,6 +171,10 @@ export default class SetupSwapSuccess extends Vue {
                     }
                     return false;
                 }
+
+                // @nimiq/electrum-client already depends on a globally available BitcoinJS,
+                // so we need to load it first.
+                await loadBitcoinJS();
 
                 const NimiqElectrumClient = await import(/*webpackChunkName: "electrum-client"*/ '@nimiq/electrum-client');
                 NimiqElectrumClient.GenesisConfig[Config.bitcoinNetwork === BTC_NETWORK_MAIN ? 'mainnet' : 'testnet']();
