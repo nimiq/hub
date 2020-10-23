@@ -218,6 +218,7 @@ export default class SetupSwapSuccess extends Vue {
             }, keyguardResult.nim, this.request.fund, {
                 recipient: Nimiq.Address.CONTRACT_CREATION,
                 recipientType: Nimiq.Account.Type.HTLC,
+                data: nimHtlcByteArray,
                 flags: Nimiq.Transaction.Flag.CONTRACT_CREATION,
             }));
         } else if (this.request.redeem.type === SwapAsset.NIM) {
