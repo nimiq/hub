@@ -63,15 +63,29 @@ export default class SetupSwap extends Vue {
         }
 
         if (this.request.fund.type === SwapAsset.BTC) {
-            const keyPaths: string[] = [];
-
-            for (const input of this.request.fund.inputs) {
-                let addressInfo = account.findBtcAddressInfo(input.address);
+            // Only derive BTC addresses once for the account, not mulitple times if addresses are fake
+            const addresses = this.request.fund.inputs.map((input) => input.address)
+                .concat(
+                    this.request.fund.changeOutput ? this.request.fund.changeOutput.address : [],
+                    this.request.fund.refundAddress,
+                );
+            let hasDerivedAddresses = false;
+            const addressInfos: {[address: string]: BtcAddressInfo | null} = {};
+            for (const address of addresses) {
+                let addressInfo = account.findBtcAddressInfo(address, !hasDerivedAddresses);
                 if (addressInfo instanceof Promise) {
                     this.derivingAddresses = true;
+                    hasDerivedAddresses = true;
                     addressInfo = await addressInfo;
                     this.derivingAddresses = false;
                 }
+                addressInfos[address] = addressInfo;
+            }
+
+            const keyPaths: string[] = [];
+
+            for (const input of this.request.fund.inputs) {
+                const addressInfo = addressInfos[input.address];
                 if (!addressInfo) {
                     this.$rpc.reject(new Error(`Input address not found: ${input.address}`));
                     return;
@@ -93,12 +107,7 @@ export default class SetupSwap extends Vue {
 
             // Validate that we own the change address
             if (this.request.fund.changeOutput) {
-                let addressInfo = account.findBtcAddressInfo(this.request.fund.changeOutput.address);
-                if (addressInfo instanceof Promise) {
-                    this.derivingAddresses = true;
-                    addressInfo = await addressInfo;
-                    this.derivingAddresses = false;
-                }
+                const addressInfo = addressInfos[this.request.fund.changeOutput.address];
                 if (!addressInfo) {
                     this.$rpc.reject(
                         new Error(`Change address not found: ${this.request.fund.changeOutput.address}`));
@@ -107,12 +116,7 @@ export default class SetupSwap extends Vue {
             }
 
             // Validate that we own the refund address
-            let refundAddressInfo = account.findBtcAddressInfo(this.request.fund.refundAddress);
-            if (refundAddressInfo instanceof Promise) {
-                this.derivingAddresses = true;
-                refundAddressInfo = await refundAddressInfo;
-                this.derivingAddresses = false;
-            }
+            const refundAddressInfo = addressInfos[this.request.fund.refundAddress];
             if (!refundAddressInfo) {
                 this.$rpc.reject(new Error(`Refund address not found: ${this.request.fund.refundAddress}`));
                 return;

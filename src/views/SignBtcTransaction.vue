@@ -63,8 +63,12 @@ export default class SignBtcTransaction extends Vue {
 
         let changeOutput: KeyguardClient.BitcoinTransactionChangeOutput | undefined;
         if (this.request.changeOutput) {
-            const addressInfo =
-                walletInfo.findBtcAddressInfo(this.request.changeOutput.address, false) as BtcAddressInfo | null;
+            let addressInfo = walletInfo.findBtcAddressInfo(this.request.changeOutput.address);
+            if (addressInfo instanceof Promise) {
+                this.derivingAddresses = true;
+                addressInfo = await addressInfo;
+                this.derivingAddresses = false;
+            }
             if (!addressInfo) {
                 this.$rpc.reject(new Error(`Change address not found: ${this.request.changeOutput.address}`));
                 return;

@@ -49,7 +49,7 @@ export default class ActivateBitcoinSuccess extends Vue {
 
         this.walletInfo = walletInfo;
 
-        const btcAddresses = await WalletInfoCollector.deriveBitcoinAddresses(this.keyguardResult.bitcoinXPub);
+        const btcAddresses = await WalletInfoCollector.detectBitcoinAddresses(this.keyguardResult.bitcoinXPub);
 
         this.walletInfo.btcXPub = this.keyguardResult.bitcoinXPub;
         this.walletInfo.btcAddresses = btcAddresses;

@@ -118,7 +118,7 @@ export default class WalletInfoCollector {
     }
 
     // TODO: Also return a potential receipt error
-    public static async deriveBitcoinAddresses(xpub: string, startIndex = 0): Promise<{
+    public static async detectBitcoinAddresses(xpub: string, startIndex = 0): Promise<{
         internal: BtcAddressInfo[],
         external: BtcAddressInfo[],
     }> {
@@ -135,9 +135,6 @@ export default class WalletInfoCollector {
 
         const network = getBtcNetwork(xPubType);
         const extendedKey = BitcoinJS.bip32.fromBase58(xpub, network);
-        const externalKey = extendedKey.derive(EXTERNAL_INDEX);
-        const externalPath =
-            `${BTC_ACCOUNT_KEY_PATH[xPubType][Config.bitcoinNetwork]}/${EXTERNAL_INDEX}`;
 
         /**
          * According to https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki#account-discovery
@@ -151,54 +148,52 @@ export default class WalletInfoCollector {
          * internal addresses via the iframe request if necessary.
          */
 
-        let gap = 0;
-        let i = startIndex;
-        const externalAddresses: BtcAddressInfo[] = [];
+        const addresses: [BtcAddressInfo[], BtcAddressInfo[]] = [[], []];
 
-        while (gap < BTC_ACCOUNT_MAX_ALLOWED_ADDRESS_GAP) {
-            const pubKey = externalKey.derive(i).publicKey;
+        for (const INDEX of [EXTERNAL_INDEX, INTERNAL_INDEX]) {
+            const baseKey = extendedKey.derive(INDEX);
+            const basePath = `${BTC_ACCOUNT_KEY_PATH[xPubType][Config.bitcoinNetwork]}/${INDEX}`;
 
-            const address = publicKeyToPayment(pubKey, xPubType).address;
-            if (!address) throw new Error(`Cannot create external address for ${xpub} index ${i}`);
+            let gap = 0;
+            let i = startIndex;
 
-            // Check address balance
-            const balances = await electrum.getBalance(address);
+            while (gap < BTC_ACCOUNT_MAX_ALLOWED_ADDRESS_GAP) {
+                const pubKey = baseKey.derive(i).publicKey;
 
-            // If no balance, then check tx activity
-            const receipts = !balances.confirmed && !balances.unconfirmed
-                ? await electrum.getTransactionReceiptsByAddress(address)
-                : [] as BtcReceipt[];
+                const address = publicKeyToPayment(pubKey, xPubType).address;
+                if (!address) throw new Error(`Cannot create external address for ${xpub} index ${i}`);
 
-            const used = balances.confirmed > 0 || balances.unconfirmed > 0 || receipts.length > 0;
+                // Check address balance
+                const balances = await electrum.getBalance(address);
+                const balance = balances.confirmed + balances.unconfirmed;
 
-            externalAddresses.push(new BtcAddressInfo(
-                `${externalPath}/${i}`,
-                address,
-                used,
-                balances.confirmed,
-            ));
+                // If no balance, then check tx activity
+                const receipts = !balance
+                    ? await electrum.getTransactionReceiptsByAddress(address)
+                    : [] as BtcReceipt[];
 
-            if (used) {
-                gap = 0;
-            } else {
-                gap += 1;
+                const used = balance > 0 || receipts.length > 0;
+
+                addresses[INDEX].push(new BtcAddressInfo(
+                    `${basePath}/${i}`,
+                    address,
+                    used,
+                    balance,
+                ));
+
+                if (used) {
+                    gap = 0;
+                } else {
+                    gap += 1;
+                }
+
+                i += 1;
             }
-
-            i += 1;
         }
 
-        // As described above, generate the same number of internal addresses as we derived external ones
-        const internalAddresses = deriveAddressesFromXPub(
-            extendedKey,
-            [INTERNAL_INDEX],
-            startIndex,
-            externalAddresses.length,
-            xPubType,
-        );
-
         return {
-            internal: internalAddresses,
-            external: externalAddresses,
+            internal: addresses[INTERNAL_INDEX],
+            external: addresses[EXTERNAL_INDEX],
         };
     }
 
@@ -239,7 +234,7 @@ export default class WalletInfoCollector {
                 internal: BtcAddressInfo[],
                 external: BtcAddressInfo[],
             }> = bitcoinXPub
-                ? this.deriveBitcoinAddresses(bitcoinXPub)
+                ? this.detectBitcoinAddresses(bitcoinXPub)
                 : Promise.resolve({internal: [], external: []});
 
             // Get or create the walletInfo instance and derive the first set of derived accounts
