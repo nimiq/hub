@@ -437,6 +437,7 @@ msgstr ""
 
 #: src/views/ActivateBitcoinSuccess.vue:36
 #: src/views/LoginSuccess.vue:42
+#: src/views/RefundSwap.vue:5
 #: src/views/SetupSwap.vue:5
 #: src/views/SignBtcTransaction.vue:5
 msgid "Fetching your addresses"
@@ -791,6 +792,7 @@ msgid "Syncing consensus..."
 msgstr ""
 
 #: src/views/ActivateBitcoinSuccess.vue:37
+#: src/views/RefundSwap.vue:6
 #: src/views/SetupSwap.vue:6
 #: src/views/SignBtcTransaction.vue:6
 msgid "Syncing with Bitcoin network..."

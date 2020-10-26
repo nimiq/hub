@@ -15,6 +15,7 @@
 import { Component, Vue } from 'vue-property-decorator';
 import { State, Getter } from 'vuex-class';
 import KeyguardClient from '@nimiq/keyguard-client';
+import { BitcoinTransactionInputType } from '@nimiq/keyguard-client';
 import { TransactionDetails as BtcTransactionDetails } from '@nimiq/electrum-client';
 import { SmallPage } from '@nimiq/vue-components';
 import { SwapAsset, PreSwap, Swap, confirmSwap, NimHtlcDetails, BtcHtlcDetails } from '../lib/FastspotApi';
@@ -199,6 +200,7 @@ export default class SetupSwapSuccess extends Vue {
                     outputScript: output.script,
                     value: this.request.redeem.input.value,
                     witnessScript: btcHtlcData.script,
+                    type: BitcoinTransactionInputType.HTLC_REDEEM,
                 }],
                 changeOutput: this.request.redeem.output,
             };

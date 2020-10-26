@@ -37,6 +37,7 @@ import {
     PaymentState,
     SetupSwapRequest,
     SetupSwapResult,
+    RefundSwapRequest,
 } from '../src/lib/PublicRequestTypes';
 
 export default class HubApi<DB extends BehaviorType = BehaviorType.POPUP> { // DB: Default Behavior
@@ -175,6 +176,13 @@ export default class HubApi<DB extends BehaviorType = BehaviorType.POPUP> { // D
         requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
     ): Promise<B extends BehaviorType.REDIRECT ? void : SetupSwapResult> {
         return this._request(requestBehavior, RequestType.SETUP_SWAP, [request]);
+    }
+
+    public refundSwap<B extends BehaviorType = DB>(
+        request: Promise<RefundSwapRequest> | RefundSwapRequest,
+        requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
+    ): Promise<B extends BehaviorType.REDIRECT ? void : SignedTransaction | SignedBtcTransaction> {
+        return this._request(requestBehavior, RequestType.REFUND_SWAP, [request]);
     }
 
     /**

@@ -68,6 +68,8 @@ const ActivateBitcoinSuccess  = () => import(/*webpackChunkName: "activate-btc"*
 
 const SetupSwap               = () => import(/*webpackChunkName: "swap"*/ './views/SetupSwap.vue');
 const SetupSwapSuccess        = () => import(/*webpackChunkName: "swap"*/ './views/SetupSwapSuccess.vue');
+const RefundSwap               = () => import(/*webpackChunkName: "swap"*/ './views/RefundSwap.vue');
+const RefundSwapSuccess        = () => import(/*webpackChunkName: "swap"*/ './views/RefundSwapSuccess.vue');
 
 Vue.use(Router);
 
@@ -84,8 +86,8 @@ export function keyguardResponseRouter(
         case KeyguardCommand.REMOVE:
             resolve = `${RequestType.LOGOUT}-success`; break;
         case KeyguardCommand.SIGN_TRANSACTION:
-            // The SIGN_TRANSACTION Keyguard command is used by Accounts' SIGN_TRANSACTION, CHECKOUT and
-            // CASHLINK. Thus we return the user to the respective handler component
+            // The SIGN_TRANSACTION Keyguard command is used by Hub's SIGN_TRANSACTION, CHECKOUT,
+            // CASHLINK and REFUND_SWAP. Thus we return the user to the respective handler component
             resolve = originalRequestType === RequestType.CREATE_CASHLINK
                 ? RequestType.MANAGE_CASHLINK
                 : `${originalRequestType}-success`;
@@ -97,12 +99,12 @@ export function keyguardResponseRouter(
         case KeyguardCommand.DERIVE_ADDRESS:
             resolve = `${RequestType.ADD_ADDRESS}-selection`; break;
         case KeyguardCommand.SIGN_MESSAGE:
-            // The SIGN_MESSAGE Keyguard command is used by Accounts' SIGN_MESSAGE and
+            // The SIGN_MESSAGE Keyguard command is used by Hub's SIGN_MESSAGE and
             // NIMIQ_ID (future). Thus we return the user to the respective handler component
             resolve = `${originalRequestType}-success`; break;
         case KeyguardCommand.SIGN_BTC_TRANSACTION:
-            // The SIGN_BTC_TRANSACTION Keyguard command is used by Accounts' SIGN_BTC_TRANSACTION andCHECKOUT.
-            // Thus we return the user to the respective handler component
+            // The SIGN_BTC_TRANSACTION Keyguard command is used by Hub's SIGN_BTC_TRANSACTION, CHECKOUT
+            // and REFUND_SWAP. Thus we return the user to the respective handler component
             resolve = `${originalRequestType}-success`; break;
         case KeyguardCommand.DERIVE_BTC_XPUB:
             resolve = `${RequestType.ACTIVATE_BITCOIN}-success`; break;
@@ -320,6 +322,16 @@ export default new Router({
             path: `/${RequestType.SETUP_SWAP}/success`,
             component: SetupSwapSuccess,
             name: `${RequestType.SETUP_SWAP}-success`,
+        },
+        {
+            path: `/${RequestType.REFUND_SWAP}`,
+            component: RefundSwap,
+            name: RequestType.REFUND_SWAP,
+        },
+        {
+            path: `/${RequestType.REFUND_SWAP}/success`,
+            component: RefundSwapSuccess,
+            name: `${RequestType.REFUND_SWAP}-success`,
         },
     ],
 });

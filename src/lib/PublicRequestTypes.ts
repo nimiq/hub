@@ -29,6 +29,7 @@ export enum RequestType {
     ADD_BTC_ADDRESSES = 'add-btc-addresses',
     ACTIVATE_BITCOIN = 'activate-bitcoin',
     SETUP_SWAP = 'setup-swap',
+    REFUND_SWAP = 'refund-swap',
 }
 
 export interface BasicRequest {
@@ -222,7 +223,7 @@ export interface BitcoinHtlcCreationInstructions {
     refundAddress: string;
 }
 
-export interface NimiqSettlementInstructions {
+export interface NimiqHtlcSettlementInstructions {
     type: 'NIM';
     recipient: string; // My address, must be redeem address of HTLC
     value: number; // Luna
@@ -231,7 +232,7 @@ export interface NimiqSettlementInstructions {
     validityStartHeight: number;
 }
 
-export interface BitcoinSettlementInstructions {
+export interface BitcoinHtlcSettlementInstructions {
     type: 'BTC';
     input: {
         // transactionHash: string,
@@ -245,13 +246,44 @@ export interface BitcoinSettlementInstructions {
     };
 }
 
+export interface NimiqHtlcRefundInstructions {
+    type: 'NIM';
+    sender: string; // HTLC address
+    recipient: string; // My address, must be refund address of HTLC
+    value: number; // Luna
+    fee: number; // Luna
+    extraData?: Uint8Array | string;
+    validityStartHeight: number;
+}
+
+export interface BitcoinHtlcRefundInstructions {
+    type: 'BTC';
+    input: {
+        transactionHash: string,
+        outputIndex: number,
+        outputScript: string,
+        address: string, // HTLC address
+        value: number, // Sats
+        witnessScript: string,
+    };
+    output: {
+        address: string, // My address
+        value: number, // Sats
+    };
+    refundAddress: string; // My address, must be refund address of HTLC
+}
+
 export type HtlcCreationInstructions =
     NimiqHtlcCreationInstructions
     | BitcoinHtlcCreationInstructions;
 
 export type HtlcSettlementInstructions =
-    NimiqSettlementInstructions
-    | BitcoinSettlementInstructions;
+    NimiqHtlcSettlementInstructions
+    | BitcoinHtlcSettlementInstructions;
+
+export type HtlcRefundInstructions =
+    NimiqHtlcRefundInstructions
+    | BitcoinHtlcRefundInstructions;
 
 export interface SetupSwapRequest extends BasicRequest {
     swapId: string;
@@ -277,6 +309,10 @@ export interface SetupSwapRequest extends BasicRequest {
 export interface SetupSwapResult {
     nim: SignedTransaction;
     btc: SignedBtcTransaction;
+}
+
+export interface RefundSwapRequest extends SimpleRequest {
+    refund: HtlcRefundInstructions;
 }
 
 export interface SignMessageRequest extends BasicRequest {
@@ -452,7 +488,8 @@ export type RpcRequest = SignTransactionRequest
                        | ExportRequest
                        | SignBtcTransactionRequest
                        | AddBtcAddressesRequest
-                       | SetupSwapRequest;
+                       | SetupSwapRequest
+                       | RefundSwapRequest;
 
 export type RpcResult = SignedTransaction
                       | Account

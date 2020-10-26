@@ -86,6 +86,7 @@ export default class RpcApi {
             RequestType.SIGN_BTC_TRANSACTION,
             RequestType.ACTIVATE_BITCOIN,
             RequestType.SETUP_SWAP,
+            RequestType.REFUND_SWAP,
         ]);
         this._registerKeyguardApis([
             KeyguardCommand.SIGN_TRANSACTION,

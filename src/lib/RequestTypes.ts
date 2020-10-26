@@ -191,6 +191,33 @@ export interface ParsedSetupSwapRequest extends ParsedBasicRequest {
     };
 }
 
+export interface ParsedRefundSwapRequest extends ParsedSimpleRequest {
+    refund: {
+        type: SwapAsset.NIM;
+        sender: Nimiq.Address; // HTLC address
+        recipient: Nimiq.Address; // My address, must be refund address of HTLC
+        value: number; // Luna
+        fee: number; // Luna
+        extraData?: Uint8Array;
+        validityStartHeight: number;
+    } | {
+        type: SwapAsset.BTC;
+        input: {
+            transactionHash: string,
+            outputIndex: number,
+            outputScript: string,
+            address: string, // HTLC address
+            value: number, // Sats
+            witnessScript: string,
+        };
+        output: {
+            address: string, // My address
+            value: number, // Sats
+        };
+        refundAddress: string; // My address, must be refund address of HTLC
+    };
+}
+
 // Discriminated Unions
 export type ParsedRpcRequest = ParsedSignTransactionRequest
                              | ParsedCreateCashlinkRequest
@@ -204,4 +231,5 @@ export type ParsedRpcRequest = ParsedSignTransactionRequest
                              | ParsedExportRequest
                              | ParsedSignBtcTransactionRequest
                              | ParsedAddBtcAddressesRequest
-                             | ParsedSetupSwapRequest;
+                             | ParsedSetupSwapRequest
+                             | ParsedRefundSwapRequest;
