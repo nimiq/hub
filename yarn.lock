@@ -1029,9 +1029,9 @@
     leveldown "^5.1.1"
     levelup "^4.1.0"
 
-"@nimiq/keyguard-client@https://gitpkg.now.sh/nimiq/keyguard?25bad84d25452c36a15d46ab727bf1938faf745d&scripts.postinstall=cd%20client%20%26%26%20.%2Fbuild-gitpkg.sh":
+"@nimiq/keyguard-client@https://gitpkg.now.sh/nimiq/keyguard?b61e4174834bc0df20f5cfdeb973233ea30492f2&scripts.postinstall=cd%20client%20%26%26%20.%2Fbuild-gitpkg.sh":
   version "1.0.0"
-  resolved "https://gitpkg.now.sh/nimiq/keyguard?25bad84d25452c36a15d46ab727bf1938faf745d&scripts.postinstall=cd%20client%20%26%26%20.%2Fbuild-gitpkg.sh#6d34cc16f821140613046540578b67b0a4f6fd82"
+  resolved "https://gitpkg.now.sh/nimiq/keyguard?b61e4174834bc0df20f5cfdeb973233ea30492f2&scripts.postinstall=cd%20client%20%26%26%20.%2Fbuild-gitpkg.sh#61925b7635b84659b0582d71efe2e3e2f123de6f"
 
 "@nimiq/ledger-api@^1.1.0":
   version "1.1.0"

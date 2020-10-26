@@ -180,7 +180,8 @@ export interface ParsedSetupSwapRequest extends ParsedBasicRequest {
     fiatCurrency: string;
     nimFiatRate: number;
     btcFiatRate: number;
-    serviceNetworkFee: number; // Luna or Sats, depending which one gets funded
+    serviceFundingNetworkFee: number; // Luna or Sats, depending which one gets funded
+    serviceRedeemingNetworkFee: number; // Luna or Sats, depending which one gets redeemed
     serviceExchangeFee: number; // Luna or Sats, depending which one gets funded
     nimiqAddresses: Array<{
         address: string,

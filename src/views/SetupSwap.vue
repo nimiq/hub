@@ -174,7 +174,8 @@ export default class SetupSwap extends Vue {
         request.fiatCurrency = this.request.fiatCurrency;
         request.nimFiatRate = this.request.nimFiatRate;
         request.btcFiatRate = this.request.btcFiatRate;
-        request.serviceNetworkFee = this.request.serviceNetworkFee;
+        request.serviceFundingNetworkFee = this.request.serviceFundingNetworkFee;
+        request.serviceRedeemingNetworkFee = this.request.serviceRedeemingNetworkFee;
         request.serviceExchangeFee = this.request.serviceExchangeFee;
         request.nimiqAddresses = this.request.nimiqAddresses;
         request.bitcoinAccount = this.request.bitcoinAccount;
