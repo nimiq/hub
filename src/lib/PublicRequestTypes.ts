@@ -1,4 +1,4 @@
-import type { WalletType } from './Constants';
+import { WalletType } from './Constants';
 
 type NimiqSpecifics = import('./paymentOptions/NimiqPaymentOptions').NimiqSpecifics;
 type NimiqDirectPaymentOptions = import('./paymentOptions/NimiqPaymentOptions').NimiqDirectPaymentOptions;
