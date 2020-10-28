@@ -41,7 +41,7 @@ import { Component, Vue } from 'vue-property-decorator';
 import { AccountRing, PageBody, PageHeader, SmallPage } from '@nimiq/vue-components';
 import { Account } from '../lib/PublicRequestTypes';
 import LedgerApi, {
-    RequestType as LedgerApiRequestType,
+    RequestTypeNimiq as LedgerApiRequestType,
     StateType as LedgerApiStateType,
     EventType as LedgerApiEventType,
 } from '@nimiq/ledger-api';
@@ -161,7 +161,7 @@ export default class SignupLedger extends Vue {
     private destroyed() {
         LedgerApi.disconnect(
             /* cancelRequest */ true,
-            /* requestTypeToDisconnect */ LedgerApiRequestType.DERIVE_ADDRESSES,
+            /* requestTypesToDisconnect */ [LedgerApiRequestType.GET_WALLET_ID, LedgerApiRequestType.DERIVE_ADDRESSES],
         );
         this.cancelled = true;
     }
@@ -229,7 +229,8 @@ export default class SignupLedger extends Vue {
             this.state = SignupLedger.State.LEDGER_INTERACTION;
             return;
         }
-        if (currentRequest.type !== LedgerApiRequestType.DERIVE_ADDRESSES || currentRequest.cancelled) return;
+        if (currentRequest.cancelled || (currentRequest.type !== LedgerApiRequestType.GET_WALLET_ID
+            && currentRequest.type !== LedgerApiRequestType.DERIVE_ADDRESSES)) return;
         if (LedgerApi.currentState.type === LedgerApiStateType.REQUEST_PROCESSING
             || LedgerApi.currentState.type === LedgerApiStateType.REQUEST_CANCELLING) {
             // When we actually fetch the accounts from the device, we want to show our own StatusScreen instead of

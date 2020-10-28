@@ -40,7 +40,18 @@
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import { LoadingSpinner } from '@nimiq/vue-components';
-import LedgerApi, { ErrorType, EventType, RequestType, State, StateType, TransportType } from '@nimiq/ledger-api';
+import LedgerApi, {
+    Coin,
+    ErrorState,
+    ErrorType,
+    EventType,
+    Request,
+    RequestTypeBitcoin,
+    RequestTypeNimiq,
+    State,
+    StateType,
+    TransportType,
+} from '@nimiq/ledger-api';
 import StatusScreen from '../components/StatusScreen.vue';
 
 @Component({ components: { StatusScreen, LoadingSpinner } })
@@ -71,8 +82,14 @@ class LedgerUi extends Vue {
     }
 
     private _connect() {
+        const { currentRequest } = LedgerApi;
+        if (!currentRequest) return;
         // Manual connection in the context of a user gesture.
-        LedgerApi.connect();
+        if (currentRequest.coin === Coin.NIMIQ) {
+            LedgerApi.connect(currentRequest.coin);
+        } else {
+            LedgerApi.connect(currentRequest.coin, currentRequest.network);
+        }
     }
 
     private get illustration() {
@@ -84,40 +101,48 @@ class LedgerUi extends Vue {
                 return LedgerUi.Illustrations.CONNECTING;
             case StateType.REQUEST_PROCESSING:
             case StateType.REQUEST_CANCELLING:
-                return this._getIllustrationForRequestType(this.state.request!.type);
+                return this._getIllustrationForRequest(this.state.request);
             case StateType.ERROR:
-                return this._getIllustrationForErrorType(this.state.error!.type);
+                return this._getIllustrationForErrorState(this.state);
         }
     }
 
-    private _getIllustrationForRequestType(requestType: RequestType): string {
-        switch (requestType) {
-            case RequestType.GET_WALLET_ID:
-            case RequestType.GET_ADDRESS:
-            case RequestType.GET_PUBLIC_KEY:
-            case RequestType.DERIVE_ADDRESSES:
+    private _getIllustrationForRequest(request: Request): string {
+        switch (request.type) {
+            case RequestTypeNimiq.GET_WALLET_ID:
+            case RequestTypeNimiq.GET_PUBLIC_KEY:
+            case RequestTypeNimiq.DERIVE_ADDRESSES:
+            // TODO instructions for u2f/WebAuthn confirmation on Ledger for fetching BTC public keys / addresses.
+            case RequestTypeBitcoin.GET_WALLET_ID:
+            case RequestTypeBitcoin.GET_EXTENDED_PUBLIC_KEY:
                 return LedgerUi.Illustrations.LOADING;
-            case RequestType.CONFIRM_ADDRESS:
-                return LedgerUi.Illustrations.CONFIRM_ADDRESS;
-            case RequestType.SIGN_TRANSACTION:
+            case RequestTypeNimiq.GET_ADDRESS:
+            case RequestTypeBitcoin.GET_ADDRESS_AND_PUBLIC_KEY:
+                return request.display ? LedgerUi.Illustrations.CONFIRM_ADDRESS : LedgerUi.Illustrations.LOADING;
+            case RequestTypeNimiq.SIGN_TRANSACTION:
+            case RequestTypeBitcoin.SIGN_TRANSACTION:
                 return LedgerUi.Illustrations.CONFIRM_TRANSACTION;
         }
     }
 
-    private _getIllustrationForErrorType(errorType: ErrorType): string {
-        switch (errorType) {
+    private _getIllustrationForErrorState(errorState: ErrorState): string {
+        switch (errorState.errorType) {
             case ErrorType.LOADING_DEPENDENCIES_FAILED:
                 return LedgerUi.Illustrations.LOADING;
-            case ErrorType.USER_INTERACTION_REQUIRED:
+            case ErrorType.WRONG_APP:
+            case ErrorType.USER_INTERACTION_REQUIRED: // keep animation running and ask user to use the connect button
             case ErrorType.CONNECTION_ABORTED: // keep animation running and ask user to use the connect button
                 return LedgerUi.Illustrations.CONNECTING;
             case ErrorType.REQUEST_ASSERTION_FAILED:
-                return this._getIllustrationForRequestType(this.state.request!.type);
+                return this._getIllustrationForRequest(
+                    (errorState as ErrorState<ErrorType.REQUEST_ASSERTION_FAILED>).request,
+                );
             case ErrorType.LEDGER_BUSY:
-                return this._getIllustrationForRequestType(LedgerApi.currentRequest!.type);
-            case ErrorType.NO_BROWSER_SUPPORT:
+                // show the illustration for already running request
+                return this._getIllustrationForRequest(LedgerApi.currentRequest!);
+            case ErrorType.BROWSER_UNSUPPORTED:
             case ErrorType.APP_OUTDATED:
-            case ErrorType.WRONG_LEDGER:
+            case ErrorType.WRONG_WALLET:
                 return LedgerUi.Illustrations.IDLE;
         }
     }
@@ -148,7 +173,7 @@ class LedgerUi extends Vue {
                 this._onStateLoading();
                 break;
             case StateType.REQUEST_PROCESSING:
-                this._onRequest(state);
+                this._onRequest(state.request);
                 break;
             case StateType.REQUEST_CANCELLING:
                 this._showInstructions('', this.$t('Please cancel the request on your Ledger') as string);
@@ -166,47 +191,58 @@ class LedgerUi extends Vue {
         this._showInstructions('', retryMessage);
     }
 
-    private _onRequest(state: State) {
-        const request = state.request!;
+    private _onRequest(request: Request) {
         switch (request.type) {
-            case RequestType.GET_WALLET_ID:
-            case RequestType.GET_PUBLIC_KEY:
-            case RequestType.GET_ADDRESS:
+            case RequestTypeNimiq.GET_WALLET_ID:
+            case RequestTypeNimiq.GET_PUBLIC_KEY:
+            // TODO instructions for u2f/WebAuthn confirmation on Ledger for fetching BTC public keys / addresses.
+            case RequestTypeBitcoin.GET_WALLET_ID:
                 // no instructions needed as not interactive
                 break;
-            case RequestType.DERIVE_ADDRESSES:
-                // not interactive, but takes ~6 seconds
+            case RequestTypeNimiq.GET_ADDRESS:
+            case RequestTypeBitcoin.GET_ADDRESS_AND_PUBLIC_KEY:
+                if (request.display) {
+                    this._showInstructions(
+                        this.$t('Confirm Address') as string,
+                        !request.expectedAddress
+                            ? this.$t('Confirm the address on your Ledger') as string
+                            : this.$t(
+                                'Confirm that the address on your Ledger matches {addressToConfirm}',
+                                { addressToConfirm: request.expectedAddress },
+                            ) as string,
+                    );
+                } // else no instructions needed as not interactive
+                break;
+            case RequestTypeNimiq.DERIVE_ADDRESSES:
+            case RequestTypeBitcoin.GET_EXTENDED_PUBLIC_KEY:
+                // not interactive, but takes some seconds
                 this._showInstructions(this.$t('Fetching Addresses') as string);
                 break;
-            case RequestType.CONFIRM_ADDRESS:
-                this._showInstructions(
-                    this.$t('Confirm Address') as string,
-                    this.$t(
-                        'Confirm that the address on your Ledger matches {addressToConfirm}',
-                        { addressToConfirm: request.params.addressToConfirm! },
-                    ) as string,
-                );
-                break;
-            case RequestType.SIGN_TRANSACTION:
+            case RequestTypeNimiq.SIGN_TRANSACTION:
+            case RequestTypeBitcoin.SIGN_TRANSACTION:
                 this._showInstructions(
                     this.$t('Confirm Transaction') as string,
                     this.$t('Confirm using your Ledger') as string,
                 );
                 break;
             default:
+                // @ts-ignore request has type never here as this case should never actually happen
                 throw new Error(`Unhandled request: ${request.type}`);
         }
     }
 
-    private _onError(state: State) {
-        const error = state.error!;
-        switch (error.type) {
+    private _onError(errorState: ErrorState) {
+        switch (errorState.errorType) {
             case ErrorType.LEDGER_BUSY:
                 this._showInstructions('', this.$t('Please cancel the previous request on your Ledger.') as string);
                 break;
             case ErrorType.LOADING_DEPENDENCIES_FAILED:
                 this.loadingFailed = true;
                 this._onStateLoading(); // show as still loading / retrying
+                break;
+            case ErrorType.WRONG_APP:
+                // No instructions to set here. The state change triggers the connection animation and instruction loop.
+                this.showConnectButton = false; // we're connected to the Ledger but the wrong app
                 break;
             case ErrorType.USER_INTERACTION_REQUIRED:
             case ErrorType.CONNECTION_ABORTED:
@@ -216,35 +252,39 @@ class LedgerUi extends Vue {
                 // and the api switches to the connecting state.
                 this.showConnectButton = true;
                 break;
-            case ErrorType.NO_BROWSER_SUPPORT:
+            case ErrorType.BROWSER_UNSUPPORTED:
                 this._showInstructions('', this.$t('Ledger not supported by browser.') as string);
                 break;
             case ErrorType.APP_OUTDATED:
-                this._showInstructions('', this.$t('Your Nimiq App is outdated. '
-                    + 'Please update your Ledger firmware and Nimiq App using Ledger Live.') as string);
+                const request = (errorState as ErrorState<ErrorType.APP_OUTDATED>).request;
+                this._showInstructions('', this.$t(
+                    'Your {app} app is outdated. Please update your Ledger firmware and {app} app using Ledger Live.',
+                    { app: request.requiredApp },
+                ) as string);
                 break;
-            case ErrorType.WRONG_LEDGER:
+            case ErrorType.WRONG_WALLET:
                 this._showInstructions(
                     '',
-                    this.$t('The connected Ledger is not the one this account belongs to.') as string,
+                    this.$t('The connected wallet or Ledger is not the one this account belongs to.') as string,
                 );
                 break;
             case ErrorType.REQUEST_ASSERTION_FAILED:
                 this._showInstructions(
                     this.$t('Request failed') as string,
-                    `${this.small ? this.$t('Request failed: ') as string : ''}${error.message}`,
+                    `${this.small ? this.$t('Request failed: ') as string : ''}${errorState.message}`,
                 );
                 break;
             default:
-                throw new Error(`Unhandled error: ${error.type} - ${error.message}`);
+                throw new Error(`Unhandled error: ${errorState.type} - ${errorState.message}`);
         }
     }
 
     private _cycleConnectInstructions() {
+        const app = LedgerApi.currentRequest ? LedgerApi.currentRequest.requiredApp : 'Nimiq';
         const instructions = [
             this.$t('1. Connect your Ledger Device') as string,
             this.$t('2. Enter your PIN') as string,
-            this.$t('3. Open the Nimiq App') as string,
+            this.$t('3. Open the {app} App', { app }) as string,
         ];
         if (this.showConnectButton) {
             instructions.push(this.$t('4. Click Connect') as string);

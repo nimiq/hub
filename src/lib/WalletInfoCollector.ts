@@ -3,7 +3,8 @@ import { KeyguardClient, SimpleResult as KeyguardSimpleResult } from '@nimiq/key
 import { AccountInfo } from '@/lib/AccountInfo';
 import { WalletStore } from '@/lib/WalletStore';
 import { WalletInfo } from '@/lib/WalletInfo';
-import LedgerApi, { RequestType as LedgerApiRequestType } from '@nimiq/ledger-api'; // TODO import only when needed
+// TODO import only when needed
+import LedgerApi, { Coin, getBip32Path, RequestTypeNimiq as LedgerApiRequestType } from '@nimiq/ledger-api';
 import { ACCOUNT_BIP32_BASE_PATH_KEYGUARD, ACCOUNT_MAX_ALLOWED_ADDRESS_GAP } from '@/lib/Constants';
 import Config from 'config';
 import { ERROR_TRANSACTION_RECEIPTS, WalletType } from '../lib/Constants';
@@ -216,21 +217,18 @@ export default class WalletInfoCollector {
         // Kick off loading dependencies
         WalletInfoCollector._initializeDependencies(walletType);
 
+        if (!keyId && walletType === WalletType.LEDGER) {
+            keyId = await LedgerApi.Nimiq.getWalletId();
+        }
+
         // Kick off first round of account derivation
         let startIndex = 0;
         let derivedAccountsPromise = WalletInfoCollector._deriveAccounts(startIndex,
             ACCOUNT_MAX_ALLOWED_ADDRESS_GAP, walletType, keyId);
 
         try {
-            // For ledger retrieve the keyId from the connected Ledger.
-            // Doing this after starting deriveAccounts, as the call is cheaper then.
-            if (walletType === WalletType.LEDGER) {
-                keyId = await LedgerApi.getWalletId();
-                bitcoinXPub = undefined; // TODO: Get Ledger BTC xpub
-            }
-
             // Start BTC address detection
-            const bitcoinAddresses: Promise<{
+            const bitcoinAddressesPromise: Promise<{
                 internal: BtcAddressInfo[],
                 external: BtcAddressInfo[],
             }> = bitcoinXPub
@@ -335,10 +333,10 @@ export default class WalletInfoCollector {
                 ? (removeKey?: boolean) => WalletInfoCollector._keyguardClient!.releaseKey(keyId!, removeKey)
                 : undefined;
 
-            const btcAddresses = await bitcoinAddresses;
+            const bitcoinAddresses = await bitcoinAddressesPromise;
             walletInfo.btcXPub = bitcoinXPub;
-            walletInfo.btcAddresses = btcAddresses;
-            hasActivity = hasActivity || btcAddresses.external.some((btcAddressInfo) => btcAddressInfo.used);
+            walletInfo.btcAddresses = bitcoinAddresses;
+            hasActivity = hasActivity || bitcoinAddresses.external.some((btcAddressInfo) => btcAddressInfo.used);
 
             return {
                 walletInfo,
@@ -352,7 +350,10 @@ export default class WalletInfoCollector {
                 derivedAccountsPromise.catch(() => undefined); // to avoid uncaught promise rejection on cancel
                 LedgerApi.disconnect(
                     /* cancelRequest */ true,
-                    /* requestTypeToDisconnect */ LedgerApiRequestType.DERIVE_ADDRESSES,
+                    /* requestTypesToDisconnect */ [
+                        LedgerApiRequestType.GET_WALLET_ID,
+                        LedgerApiRequestType.DERIVE_ADDRESSES,
+                    ],
                 );
             }
         }
@@ -436,9 +437,12 @@ export default class WalletInfoCollector {
     private static async _deriveLedgerAccounts(startIndex: number, count: number): Promise<BasicAccountInfo[]> {
         const pathsToDerive = [];
         for (let index = startIndex; index < startIndex + count; ++index) {
-            pathsToDerive.push(LedgerApi.getBip32PathForKeyId(index));
+            pathsToDerive.push(getBip32Path({
+                coin: Coin.NIMIQ,
+                addressIndex: index,
+            }));
         }
-        return (await LedgerApi.deriveAddresses(pathsToDerive)).map((address) => ({
+        return (await LedgerApi.Nimiq.deriveAddresses(pathsToDerive)).map((address) => ({
             path: address.keyPath,
             address: address.address,
         }));

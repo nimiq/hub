@@ -125,7 +125,7 @@ import {
     StopwatchIcon,
 } from '@nimiq/vue-components';
 import Network from '../components/Network.vue';
-import LedgerApi, { RequestType as LedgerApiRequestType } from '@nimiq/ledger-api';
+import LedgerApi, { RequestTypeNimiq as LedgerApiRequestType } from '@nimiq/ledger-api';
 import LedgerUi from '../components/LedgerUi.vue';
 import StatusScreen from '../components/StatusScreen.vue';
 import GlobalClose from '../components/GlobalClose.vue';
@@ -322,7 +322,7 @@ export default class SignTransactionLedger extends Vue {
             }
 
             try {
-                signedTransaction = await LedgerApi.signTransaction({
+                signedTransaction = await LedgerApi.Nimiq.signTransaction({
                     ...transactionInfo,
                     validityStartHeight,
                 }, signer.path, senderAccount.keyId);
