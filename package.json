@@ -22,7 +22,7 @@
         "@nimiq/browser-warning": "^1.1.0",
         "@nimiq/electrum-client": "https://github.com/nimiq/electrum-client#build",
         "@nimiq/iqons": "^1.5.2",
-        "@nimiq/keyguard-client": "https://gitpkg.now.sh/nimiq/keyguard?9faca955e9e5800a2b8a6d6af378286c743a03db&scripts.postinstall=cd%20client%20%26%26%20.%2Fbuild-gitpkg.sh",
+        "@nimiq/keyguard-client": "1.4.0-beta.1",
         "@nimiq/ledger-api": "^1.1.0",
         "@nimiq/network-client": "^0.4.0",
         "@nimiq/rpc": "^0.4.1",
