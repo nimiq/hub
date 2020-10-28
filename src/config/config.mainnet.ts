@@ -23,7 +23,7 @@ export default {
     bitcoinAddressType: NATIVE_SEGWIT,
 
     fastspot: {
-        apiEndpoint: 'https://v1.fastspot.io/fast/v1',
+        apiEndpoint: 'https://api.fastspot.io/fast/v1',
         apiKey: '',
     },
 };
