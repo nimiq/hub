@@ -55,7 +55,7 @@ msgstr "¡Cuenta respaldada!"
 msgid "Account Created"
 msgstr "Cuenta Creada"
 
-#: src/views/Migrate.vue:265
+#: src/views/Migrate.vue:266
 msgid "Accounts updated!"
 msgstr "¡Cuenta Actualizada!"
 
@@ -326,7 +326,7 @@ msgstr "Conectar Ledger"
 msgid "Connect your Ledger Nano S or Nano X."
 msgstr "Conecte su Ledger Nano S o Nano X."
 
-#: src/views/Migrate.vue:142 src/views/Migrate.vue:282
+#: src/views/Migrate.vue:143 src/views/Migrate.vue:283
 msgid "Connecting to Keyguard..."
 msgstr "Conectándose al Keyguard..."
 
@@ -386,7 +386,7 @@ msgstr "Cree y escanee códigos QR para compartir direcciones rápidamente."
 msgid "Create Cashlink"
 msgstr "Creando Cashlink"
 
-#: src/views/SignupSuccess.vue:31
+#: src/views/SignupSuccess.vue:32
 msgid "Creating your Account"
 msgstr "Creando su Cuenta"
 
@@ -394,7 +394,7 @@ msgstr "Creando su Cuenta"
 msgid "Creating your Cashlink"
 msgstr "Creando su Cashlink"
 
-#: src/views/Migrate.vue:229
+#: src/views/Migrate.vue:230
 msgid "Detecting vesting contracts..."
 msgstr "Detectando contratos vesting..."
 
@@ -415,7 +415,7 @@ msgstr "Listo"
 msgid "Enter manually"
 msgstr "Ingrese manualmente"
 
-#: src/views/CashlinkCreate.vue:159
+#: src/views/CashlinkCreate.vue:160
 msgid "express"
 msgstr "Exprés "
 
@@ -437,6 +437,7 @@ msgid "Fetching Addresses"
 msgstr "Obteniendo Direcciones"
 
 #: src/views/ActivateBitcoinSuccess.vue:36 src/views/LoginSuccess.vue:42
+#: src/views/RefundSwap.vue:5 src/views/SetupSwap.vue:5
 #: src/views/SignBtcTransaction.vue:5
 msgid "Fetching your addresses"
 msgstr "Obteniendo sus direcciones"
@@ -445,7 +446,7 @@ msgstr "Obteniendo sus direcciones"
 msgid "Finish"
 msgstr "Finalizar"
 
-#: src/views/CashlinkCreate.vue:149
+#: src/views/CashlinkCreate.vue:150
 msgid "free"
 msgstr "gratis"
 
@@ -621,7 +622,7 @@ msgstr "No se encontró ninguna Aplicación"
 msgid "None of your available addresses has sufficient balance."
 msgstr "Ninguna de sus direcciones disponibles tiene suficientes fondos."
 
-#: src/views/Migrate.vue:223
+#: src/views/Migrate.vue:224
 msgid "Nothing to update."
 msgstr "Nada por actualizar."
 
@@ -685,6 +686,10 @@ msgstr "Por favor envíe la transacción manualmente"
 msgid "Prepare for update"
 msgstr "Prepárese para la actualización"
 
+#: src/views/SetupSwapSuccess.vue:5
+msgid "Preparing Swap"
+msgstr ""
+
 #: src/views/CheckoutTransmission.vue:84
 msgid "Processing your payment"
 msgstr "Procesando su pago"
@@ -725,7 +730,7 @@ msgstr "Solicitando balances..."
 msgid "Restart Payment"
 msgstr "Reiniciar Pago"
 
-#: src/views/Migrate.vue:218
+#: src/views/Migrate.vue:219
 msgid "Retrieving your old accounts..."
 msgstr "Obteniendo sus cuentas viejas..."
 
@@ -758,6 +763,10 @@ msgstr "Compartir"
 msgid "Sign Message"
 msgstr "Firmar Mensaje"
 
+#: src/views/SetupSwapSuccess.vue:6
+msgid "Signing transactions..."
+msgstr ""
+
 #: src/lib/LabelingMachine.ts:33
 msgid "Single Accounts"
 msgstr "Cuentas Individual"
@@ -778,11 +787,11 @@ msgstr "Espacio excedido"
 msgid "Speed up your transaction"
 msgstr "Acelere su transacción"
 
-#: src/views/CashlinkCreate.vue:154
+#: src/views/CashlinkCreate.vue:155
 msgid "standard"
 msgstr "Estándar"
 
-#: src/views/Migrate.vue:232
+#: src/views/Migrate.vue:233
 msgid "Storing your new accounts..."
 msgstr "Almacenando sus cuentas nuevas..."
 
@@ -791,7 +800,8 @@ msgstr "Almacenando sus cuentas nuevas..."
 msgid "Syncing consensus..."
 msgstr "Sincronizando consenso...."
 
-#: src/views/ActivateBitcoinSuccess.vue:37 src/views/SignBtcTransaction.vue:6
+#: src/views/ActivateBitcoinSuccess.vue:37 src/views/RefundSwap.vue:6
+#: src/views/SetupSwap.vue:6 src/views/SignBtcTransaction.vue:6
 msgid "Syncing with Bitcoin network..."
 msgstr ""
 
@@ -921,11 +931,11 @@ msgstr "Petición no soportada"
 msgid "Updating balances"
 msgstr "Actualizando balances"
 
-#: src/views/Migrate.vue:261
+#: src/views/Migrate.vue:262
 msgid "Updating Keyguard..."
 msgstr "Actualizando Keyguard..."
 
-#: src/views/Migrate.vue:141 src/views/Migrate.vue:281
+#: src/views/Migrate.vue:142 src/views/Migrate.vue:282
 msgid "Updating your Accounts"
 msgstr "Actualizando sus Cuentas"
 
@@ -953,7 +963,7 @@ msgstr "Verifique Pago"
 msgid "Vesting Contract"
 msgstr "Contratos Vesting"
 
-#: src/views/SignupSuccess.vue:86
+#: src/views/SignupSuccess.vue:87
 msgid ""
 "Welcome to the\n"
 "Nimiq Blockchain."
@@ -969,7 +979,7 @@ msgstr "Bienvenido a la Cadena de Bloques Nimiq"
 msgid "What is Nimiq?"
 msgstr "¿Qué es Nimiq?"
 
-#: src/views/Migrate.vue:272
+#: src/views/Migrate.vue:273
 msgid "Whoops, something went wrong"
 msgstr "Whoops, algo salió mal"
 

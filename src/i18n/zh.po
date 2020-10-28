@@ -55,7 +55,7 @@ msgstr "账户已备份！"
 msgid "Account Created"
 msgstr "账户已建立"
 
-#: src/views/Migrate.vue:265
+#: src/views/Migrate.vue:266
 msgid "Accounts updated!"
 msgstr "账户已更新！"
 
@@ -324,7 +324,7 @@ msgstr "连接Ledger"
 msgid "Connect your Ledger Nano S or Nano X."
 msgstr "连接您的Ledger Nano S或Nano X。"
 
-#: src/views/Migrate.vue:142 src/views/Migrate.vue:282
+#: src/views/Migrate.vue:143 src/views/Migrate.vue:283
 msgid "Connecting to Keyguard..."
 msgstr "正在连接到键盘守卫 ..."
 
@@ -384,7 +384,7 @@ msgstr "建立并扫描QR码以快速共享地址。"
 msgid "Create Cashlink"
 msgstr "建立现金链接"
 
-#: src/views/SignupSuccess.vue:31
+#: src/views/SignupSuccess.vue:32
 msgid "Creating your Account"
 msgstr "正在建立您的帐户"
 
@@ -392,7 +392,7 @@ msgstr "正在建立您的帐户"
 msgid "Creating your Cashlink"
 msgstr "正在建立您的现金链接"
 
-#: src/views/Migrate.vue:229
+#: src/views/Migrate.vue:230
 msgid "Detecting vesting contracts..."
 msgstr "正在检测归属合同..."
 
@@ -413,7 +413,7 @@ msgstr "完成"
 msgid "Enter manually"
 msgstr "手动输入"
 
-#: src/views/CashlinkCreate.vue:159
+#: src/views/CashlinkCreate.vue:160
 msgid "express"
 msgstr "表现"
 
@@ -435,6 +435,7 @@ msgid "Fetching Addresses"
 msgstr "正在提取地址"
 
 #: src/views/ActivateBitcoinSuccess.vue:36 src/views/LoginSuccess.vue:42
+#: src/views/RefundSwap.vue:5 src/views/SetupSwap.vue:5
 #: src/views/SignBtcTransaction.vue:5
 msgid "Fetching your addresses"
 msgstr "正在提取您的地址"
@@ -443,7 +444,7 @@ msgstr "正在提取您的地址"
 msgid "Finish"
 msgstr "结束"
 
-#: src/views/CashlinkCreate.vue:149
+#: src/views/CashlinkCreate.vue:150
 msgid "free"
 msgstr "免费"
 
@@ -610,7 +611,7 @@ msgstr "找不到应用"
 msgid "None of your available addresses has sufficient balance."
 msgstr "您的可用地址皆没有足够的余额"
 
-#: src/views/Migrate.vue:223
+#: src/views/Migrate.vue:224
 msgid "Nothing to update."
 msgstr "无需更新"
 
@@ -674,6 +675,10 @@ msgstr "请手动发送交易"
 msgid "Prepare for update"
 msgstr "准备更新"
 
+#: src/views/SetupSwapSuccess.vue:5
+msgid "Preparing Swap"
+msgstr ""
+
 #: src/views/CheckoutTransmission.vue:84
 msgid "Processing your payment"
 msgstr "正在进行您的付款"
@@ -714,7 +719,7 @@ msgstr "更新余额..."
 msgid "Restart Payment"
 msgstr "重新开始付款"
 
-#: src/views/Migrate.vue:218
+#: src/views/Migrate.vue:219
 msgid "Retrieving your old accounts..."
 msgstr "正在检索您的旧帐户..."
 
@@ -747,6 +752,10 @@ msgstr "分享"
 msgid "Sign Message"
 msgstr "签名信息"
 
+#: src/views/SetupSwapSuccess.vue:6
+msgid "Signing transactions..."
+msgstr ""
+
 #: src/lib/LabelingMachine.ts:33
 msgid "Single Accounts"
 msgstr "单一账户"
@@ -767,11 +776,11 @@ msgstr "超出范围"
 msgid "Speed up your transaction"
 msgstr "加快您的交易"
 
-#: src/views/CashlinkCreate.vue:154
+#: src/views/CashlinkCreate.vue:155
 msgid "standard"
 msgstr "标准"
 
-#: src/views/Migrate.vue:232
+#: src/views/Migrate.vue:233
 msgid "Storing your new accounts..."
 msgstr "正在存储您的新帐户..."
 
@@ -780,7 +789,8 @@ msgstr "正在存储您的新帐户..."
 msgid "Syncing consensus..."
 msgstr "正在同步共识..."
 
-#: src/views/ActivateBitcoinSuccess.vue:37 src/views/SignBtcTransaction.vue:6
+#: src/views/ActivateBitcoinSuccess.vue:37 src/views/RefundSwap.vue:6
+#: src/views/SetupSwap.vue:6 src/views/SignBtcTransaction.vue:6
 msgid "Syncing with Bitcoin network..."
 msgstr ""
 
@@ -895,11 +905,11 @@ msgstr "不支持的请求"
 msgid "Updating balances"
 msgstr "更新余额"
 
-#: src/views/Migrate.vue:261
+#: src/views/Migrate.vue:262
 msgid "Updating Keyguard..."
 msgstr "正在更新键盘守卫..."
 
-#: src/views/Migrate.vue:141 src/views/Migrate.vue:281
+#: src/views/Migrate.vue:142 src/views/Migrate.vue:282
 msgid "Updating your Accounts"
 msgstr "更新您的帐户"
 
@@ -927,7 +937,7 @@ msgstr "验证付款"
 msgid "Vesting Contract"
 msgstr "归属合同"
 
-#: src/views/SignupSuccess.vue:86
+#: src/views/SignupSuccess.vue:87
 msgid ""
 "Welcome to the\n"
 "Nimiq Blockchain."
@@ -943,7 +953,7 @@ msgstr "欢迎来到Nimiq区块链"
 msgid "What is Nimiq?"
 msgstr "Nimiq是什么？"
 
-#: src/views/Migrate.vue:272
+#: src/views/Migrate.vue:273
 msgid "Whoops, something went wrong"
 msgstr "糟糕，出了点问题"
 
