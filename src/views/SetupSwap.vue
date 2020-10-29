@@ -63,6 +63,11 @@ export default class SetupSwap extends Vue {
         }
 
         if (this.request.fund.type === SwapAsset.BTC) {
+            if (!this.request.fund.inputs.length) {
+                this.$rpc.reject(new Error('No BTC funding inputs provided'));
+                return;
+            }
+
             // Only derive BTC addresses once for the account, not mulitple times if addresses are fake
             const addresses = this.request.fund.inputs.map((input) => input.address)
                 .concat(
@@ -131,7 +136,7 @@ export default class SetupSwap extends Vue {
             }
 
             if (!signer.address.equals(this.request.redeem.recipient)) {
-                this.$rpc.reject(new Error(`Redeem address not found: ${this.request.redeem.recipient}`));
+                this.$rpc.reject(new Error(`Redeem address cannot be a contract`));
                 return;
             }
 
