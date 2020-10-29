@@ -87,7 +87,7 @@ export default class SetupSwap extends Vue {
                 addressInfos[address] = addressInfo;
             }
 
-            const keyPaths: string[] = [];
+            const keyPaths = new Set<string>();
 
             for (const input of this.request.fund.inputs) {
                 const addressInfo = addressInfos[input.address];
@@ -96,7 +96,7 @@ export default class SetupSwap extends Vue {
                     return;
                 }
 
-                keyPaths.push(addressInfo.path);
+                keyPaths.add(addressInfo.path);
             }
 
             const inputValue = this.request.fund.inputs.reduce((sum, input) => sum + input.value, 0);
@@ -105,7 +105,7 @@ export default class SetupSwap extends Vue {
 
             request.fund = {
                 type: SwapAsset.BTC,
-                keyPaths,
+                keyPaths: [...keyPaths],
                 value: outputValue,
                 fee: inputValue - outputValue - changeOutputValue,
             };
