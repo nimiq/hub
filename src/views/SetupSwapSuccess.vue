@@ -209,7 +209,14 @@ export default class SetupSwapSuccess extends Vue {
         // Sign transactions via Keyguard iframe
 
         const client = this.$rpc.createKeyguardClient();
-        const keyguardResult = await client.signSwapTransactions(request as KeyguardClient.SignSwapTransactionsRequest);
+        let keyguardResult: KeyguardClient.SignSwapTransactionsResult;
+        try {
+            keyguardResult = await client
+                .signSwapTransactions(request as KeyguardClient.SignSwapTransactionsRequest);
+        } catch (error) {
+            this.$rpc.reject(error);
+            return;
+        }
 
         // Construct Hub response
 
