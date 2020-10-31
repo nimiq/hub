@@ -126,9 +126,9 @@ import {
 } from '@nimiq/vue-components';
 import Network from '../components/Network.vue';
 import LedgerApi, { RequestTypeNimiq as LedgerApiRequestType } from '@nimiq/ledger-api';
-import LedgerUi from '../components/LedgerUi.vue';
 import StatusScreen from '../components/StatusScreen.vue';
 import GlobalClose from '../components/GlobalClose.vue';
+import LedgerUi from '../components/LedgerUi.vue';
 import { Static } from '../lib/StaticStore';
 import { Getter } from 'vuex-class';
 import { State as RpcState } from '@nimiq/rpc';
@@ -603,11 +603,6 @@ export default class SignTransactionLedger extends Vue {
     .bottom-container > * {
         position: absolute;
         top: 0;
-    }
-
-    .ledger-ui {
-        width: 100%;
-        height: 100%;
     }
 
     .ledger-ui.animations-paused >>> * {

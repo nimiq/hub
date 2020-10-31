@@ -45,9 +45,9 @@ import LedgerApi, {
     StateType as LedgerApiStateType,
     EventType as LedgerApiEventType,
 } from '@nimiq/ledger-api';
-import LedgerUi from '../components/LedgerUi.vue';
 import StatusScreen from '../components/StatusScreen.vue';
 import GlobalClose from '../components/GlobalClose.vue';
+import LedgerUi from '../components/LedgerUi.vue';
 import IdenticonSelector from '../components/IdenticonSelector.vue';
 import WalletInfoCollector from '../lib/WalletInfoCollector';
 import { WalletInfo } from '../lib/WalletInfo';
@@ -96,7 +96,7 @@ export default class SignupLedger extends Vue {
     private get statusScreenTitle() {
         switch (this.state) {
             case SignupLedger.State.FETCHING_ADDRESSES:
-                return this.$t('Fetching Addresses') as string;
+                return this.$t('Fetching your Addresses') as string;
             case SignupLedger.State.FETCHING_INCOMPLETE:
                 return this.$t('Your Addresses may be\nincomplete.') as string;
             case SignupLedger.State.FINISHED:

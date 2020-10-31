@@ -216,7 +216,7 @@ class LedgerUi extends Vue {
             case RequestTypeNimiq.DERIVE_ADDRESSES:
             case RequestTypeBitcoin.GET_EXTENDED_PUBLIC_KEY:
                 // not interactive, but takes some seconds
-                this._showInstructions(this.$t('Fetching Addresses') as string);
+                this._showInstructions(this.$t('Fetching your Addresses') as string);
                 break;
             case RequestTypeNimiq.SIGN_TRANSACTION:
             case RequestTypeBitcoin.SIGN_TRANSACTION:
@@ -342,6 +342,7 @@ export default LedgerUi;
 <style scoped>
     .ledger-ui {
         width: 100%;
+        height: 100%;
         text-align: center;
         display: flex;
         flex-direction: column;

@@ -25,9 +25,9 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { PageBody, SmallPage, PageHeader } from '@nimiq/vue-components';
-import LedgerUi from '../components/LedgerUi.vue';
 import StatusScreen from '../components/StatusScreen.vue';
 import GlobalClose from '../components/GlobalClose.vue';
+import LedgerUi from '../components/LedgerUi.vue';
 import IdenticonSelector from '../components/IdenticonSelector.vue';
 import { Static } from '../lib/StaticStore';
 import { ParsedSimpleRequest } from '../lib/RequestTypes';

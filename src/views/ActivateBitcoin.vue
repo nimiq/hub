@@ -5,7 +5,6 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { Getter } from 'vuex-class';
-import KeyguardClient from '@nimiq/keyguard-client';
 import { BrowserDetection } from '@nimiq/utils';
 import { ParsedSimpleRequest } from '../lib/RequestTypes';
 import { Static } from '../lib/StaticStore';
@@ -15,6 +14,10 @@ import { BTC_ACCOUNT_KEY_PATH } from '../lib/bitcoin/BitcoinConstants';
 import { WalletInfo } from '../lib/WalletInfo';
 import { WalletType } from '../lib/Constants';
 import Config from 'config';
+
+// Import only types to avoid bundling of KeyguardClient in Ledger request if not required.
+// (But note that currently, the KeyguardClient is still always bundled in th RpcApi).
+type KeyguardDeriveBtcXPubRequest = import('@nimiq/keyguard-client').DeriveBtcXPubRequest;
 
 @Component({components: {NotEnoughCookieSpace}})
 export default class ActivateBitcoin extends Vue {
@@ -37,20 +40,23 @@ export default class ActivateBitcoin extends Vue {
                 btcXPub: 'xpub6H1LXWLaKsWFhvm6RVpEL9P4KfRZSW7abD2ttkWP3SSQvnyA8FSVqNTEcYFgJS2UaFcxupHiYkro49S8yGasTvXEYBVPamhGW6cFJodrTHy',
             };
 
-            if (!(await CookieHelper.canFitNewWallets([walletInfoEntry]))) {
-                this.notEnoughCookieSpace = true;
-                return;
-            }
+            this.notEnoughCookieSpace = !(await CookieHelper.canFitNewWallets([walletInfoEntry]));
+            if (this.notEnoughCookieSpace) return;
         }
 
-        const request: KeyguardClient.DeriveBtcXPubRequest = {
+        this._startBtcXpubRequest(walletInfo.keyId);
+    }
+
+    protected _startBtcXpubRequest(keyId: string) {
+        // note that this method gets overwritten for ActivateBitcoinLedger
+        const keyguardRequest: KeyguardDeriveBtcXPubRequest = {
             appName: this.request.appName,
-            keyId: walletInfo.keyId,
+            keyId,
             bitcoinXPubPath: BTC_ACCOUNT_KEY_PATH[Config.bitcoinAddressType][Config.bitcoinNetwork],
         };
 
         const client = this.$rpc.createKeyguardClient(true);
-        client.deriveBtcXPub(request);
+        client.deriveBtcXPub(keyguardRequest);
     }
 }
 </script>

@@ -2,7 +2,7 @@
     <div v-if="derivingAddresses" class="container pad-bottom">
         <SmallPage>
             <StatusScreen
-                :title="$t('Fetching your addresses')"
+                :title="$t('Fetching your Addresses')"
                 :status="$t('Syncing with Bitcoin network...')"
                 state="loading"
                 :lightBlue="true" />

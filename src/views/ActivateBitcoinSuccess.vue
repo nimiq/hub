@@ -4,8 +4,8 @@
             <StatusScreen
                 :title="title"
                 :state="state"
-                :status="status"
-                :lightBlue="true"
+                :status="$t('Syncing with Bitcoin network...')"
+                :lightBlue="!isLedgerAccount"
                 :mainAction="action"
                 @main-action="resolve"
                 :message="message" />
@@ -19,6 +19,7 @@ import { State, Getter } from 'vuex-class';
 import KeyguardClient from '@nimiq/keyguard-client';
 import { SmallPage } from '@nimiq/vue-components';
 import { ParsedSimpleRequest } from '../lib/RequestTypes';
+import { WalletType } from '../lib/Constants';
 import { WalletInfo } from '../lib/WalletInfo';
 import { WalletStore } from '../lib/WalletStore';
 import { Static } from '../lib/StaticStore';
@@ -31,30 +32,29 @@ export default class ActivateBitcoinSuccess extends Vue {
     @State private keyguardResult!: KeyguardClient.DeriveBtcXPubResult;
     @Getter private findWallet!: (id: string) => WalletInfo | undefined;
 
-    private walletInfo!: WalletInfo;
     private state: StatusScreen.State = StatusScreen.State.LOADING;
-    private title: string = this.$root.$t('Fetching your addresses') as string;
-    private status: string = this.$root.$t('Syncing with Bitcoin network...') as string;
+    private title: string = this.$root.$t('Fetching your Addresses') as string;
     private message: string = '';
     private action: string = '';
+    private isLedgerAccount: boolean = false;
     private receiptsError: Error | null = null;
     private resolve = () => {}; // tslint:disable-line:no-empty
 
-    private async mounted() {
+    private async created() {
         const walletInfo = this.findWallet(this.request.walletId);
 
         if (!walletInfo) {
             throw new Error(`UNEXPECTED: accountId not found anymore in ActivateBitcoinSuccess (${this.request.walletId})`);
         }
 
-        this.walletInfo = walletInfo;
+        this.isLedgerAccount = walletInfo.type === WalletType.LEDGER;
 
         const btcAddresses = await WalletInfoCollector.detectBitcoinAddresses(this.keyguardResult.bitcoinXPub);
 
-        this.walletInfo.btcXPub = this.keyguardResult.bitcoinXPub;
-        this.walletInfo.btcAddresses = btcAddresses;
+        walletInfo.btcXPub = this.keyguardResult.bitcoinXPub;
+        walletInfo.btcAddresses = btcAddresses;
 
-        WalletStore.Instance.put(this.walletInfo);
+        WalletStore.Instance.put(walletInfo);
 
         // if (this.receiptsError) {
         //     this.title = this.$t('Your Addresses may be\nincomplete.') as string;
@@ -64,7 +64,7 @@ export default class ActivateBitcoinSuccess extends Vue {
         //     await new Promise((resolve) => { this.resolve = resolve; });
         // }
 
-        const result = this.walletInfo.toAccountType();
+        const result = walletInfo.toAccountType();
 
         this.title = this.$t('Bitcoin activated') as string;
         this.state = StatusScreen.State.SUCCESS;

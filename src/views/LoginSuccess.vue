@@ -39,7 +39,7 @@ export default class LoginSuccess extends Vue {
 
     private walletInfos: WalletInfo[] = [];
     private state: StatusScreen.State = StatusScreen.State.LOADING;
-    private title: string = this.$root.$t('Fetching your addresses') as string;
+    private title: string = this.$root.$t('Fetching your Addresses') as string;
     private status: string = this.$root.$t('Connecting to network...') as string;
     private message: string = '';
     private action: string = '';

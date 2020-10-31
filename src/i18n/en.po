@@ -434,17 +434,17 @@ msgstr ""
 msgid "Fee"
 msgstr ""
 
-#: src/components/LedgerUi.vue:219
-#: src/views/SignupLedger.vue:99
-msgid "Fetching Addresses"
-msgstr ""
-
-#: src/views/ActivateBitcoinSuccess.vue:36
-#: src/views/LoginSuccess.vue:42
 #: src/views/RefundSwap.vue:5
 #: src/views/SetupSwap.vue:5
-#: src/views/SignBtcTransaction.vue:5
 msgid "Fetching your addresses"
+msgstr ""
+
+#: src/components/LedgerUi.vue:219
+#: src/views/ActivateBitcoinSuccess.vue:36
+#: src/views/LoginSuccess.vue:42
+#: src/views/SignBtcTransaction.vue:5
+#: src/views/SignupLedger.vue:99
+msgid "Fetching your Addresses"
 msgstr ""
 
 #: src/views/SignupLedger.vue:30
@@ -795,7 +795,7 @@ msgstr ""
 msgid "Syncing consensus..."
 msgstr ""
 
-#: src/views/ActivateBitcoinSuccess.vue:37
+#: src/views/ActivateBitcoinSuccess.vue:7
 #: src/views/RefundSwap.vue:6
 #: src/views/SetupSwap.vue:6
 #: src/views/SignBtcTransaction.vue:6

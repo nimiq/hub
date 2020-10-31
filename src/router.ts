@@ -66,6 +66,9 @@ const SignBtcTransactionSuccess = () => import(/*webpackChunkName: "sign-btc-tra
 const ActivateBitcoin         = () => import(/*webpackChunkName: "activate-btc"*/ './views/ActivateBitcoin.vue');
 const ActivateBitcoinSuccess  = () => import(/*webpackChunkName: "activate-btc"*/ './views/ActivateBitcoinSuccess.vue');
 
+const ActivateBitcoinLedger = () => import(/*webpackChunkName: "activate-btc-ledger"*/
+    './views/ActivateBitcoinLedger.vue');
+
 const SetupSwap               = () => import(/*webpackChunkName: "swap"*/ './views/SetupSwap.vue');
 const SetupSwapSuccess        = () => import(/*webpackChunkName: "swap"*/ './views/SetupSwapSuccess.vue');
 const RefundSwap               = () => import(/*webpackChunkName: "swap"*/ './views/RefundSwap.vue');
@@ -307,6 +310,11 @@ export default new Router({
             path: `/${RequestType.ACTIVATE_BITCOIN}`,
             component: ActivateBitcoin,
             name: RequestType.ACTIVATE_BITCOIN,
+        },
+        {
+            path: `/${RequestType.ACTIVATE_BITCOIN}/ledger`,
+            component: ActivateBitcoinLedger,
+            name: `${RequestType.ACTIVATE_BITCOIN}-ledger`,
         },
         {
             path: `/${RequestType.ACTIVATE_BITCOIN}/success`,
