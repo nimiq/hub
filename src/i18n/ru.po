@@ -691,7 +691,7 @@ msgstr "Подготовка к обновлению"
 
 #: src/views/SetupSwapSuccess.vue:5
 msgid "Preparing Swap"
-msgstr ""
+msgstr "Готовимся к обмену"
 
 #: src/views/CheckoutTransmission.vue:84
 msgid "Processing your payment"
@@ -768,7 +768,7 @@ msgstr "Подписать сообщение"
 
 #: src/views/SetupSwapSuccess.vue:6
 msgid "Signing transactions..."
-msgstr ""
+msgstr "Подписание транзакций..."
 
 #: src/lib/LabelingMachine.ts:33
 msgid "Single Accounts"

@@ -163,7 +163,7 @@ msgstr "Respaldada"
 
 #: src/views/ActivateBitcoinSuccess.vue:69
 msgid "Bitcoin activated"
-msgstr ""
+msgstr "Bitcoin activado"
 
 #: src/lib/LabelingMachine.ts:43
 msgid "Blue"
@@ -688,7 +688,7 @@ msgstr "Prepárese para la actualización"
 
 #: src/views/SetupSwapSuccess.vue:5
 msgid "Preparing Swap"
-msgstr ""
+msgstr "Preparando intercambio"
 
 #: src/views/CheckoutTransmission.vue:84
 msgid "Processing your payment"
@@ -765,7 +765,7 @@ msgstr "Firmar Mensaje"
 
 #: src/views/SetupSwapSuccess.vue:6
 msgid "Signing transactions..."
-msgstr ""
+msgstr "Firmando transacciones..."
 
 #: src/lib/LabelingMachine.ts:33
 msgid "Single Accounts"
@@ -803,7 +803,7 @@ msgstr "Sincronizando consenso...."
 #: src/views/ActivateBitcoinSuccess.vue:37 src/views/RefundSwap.vue:6
 #: src/views/SetupSwap.vue:6 src/views/SignBtcTransaction.vue:6
 msgid "Syncing with Bitcoin network..."
-msgstr ""
+msgstr "Sincronizando con la red Bitcoin..."
 
 #: src/lib/LabelingMachine.ts:45
 msgid "Teal"

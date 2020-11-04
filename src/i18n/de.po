@@ -3,11 +3,13 @@
 # Johannes Demuth <johannes.demuth@outlook.com>, 2020
 # Irfan Maranki, 2020
 # Sven <sven@nimiq.com>, 2020
+# Redexe <timo.niehoff@yahoo.de>, 2020
 # Daniel, 2020
+# Sören <hello@soerenschwert.de>, 2020
 # 
 msgid ""
 msgstr ""
-"Last-Translator: Daniel, 2020\n"
+"Last-Translator: Sören <hello@soerenschwert.de>, 2020\n"
 "Language-Team: German (https://www.transifex.com/nimiq-foundation/teams/107400/de/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: de\n"
@@ -15,7 +17,7 @@ msgstr ""
 
 #: src/views/ChooseAddress.vue:7
 msgid "{appName} is asking for an address to use."
-msgstr "{appName} fragt nach einer Adresse die verwendet werden soll."
+msgstr "{appName} fragt nach einer Adresse, die verwendet werden soll."
 
 #: src/lib/LabelingMachine.ts:13
 msgid "{color} Account"
@@ -165,7 +167,7 @@ msgstr "Gesichert"
 
 #: src/views/ActivateBitcoinSuccess.vue:69
 msgid "Bitcoin activated"
-msgstr ""
+msgstr "Bitcoin aktiviert"
 
 #: src/lib/LabelingMachine.ts:43
 msgid "Blue"
@@ -573,7 +575,7 @@ msgstr "In vorhandenes Konto einloggen"
 
 #: src/views/OnboardingSelector.vue:95
 msgid "Login to fund your Cashlink"
-msgstr "Einloggen um Cashlink aufzuladen"
+msgstr "Einloggen, um Cashlink aufzuladen"
 
 #: src/views/ErrorHandlerUnsupportedLedger.vue:42
 msgid "Message signing is not yet supported for Ledgers."
@@ -693,7 +695,7 @@ msgstr "Update vorbereiten"
 
 #: src/views/SetupSwapSuccess.vue:5
 msgid "Preparing Swap"
-msgstr ""
+msgstr "Tausch wird vorbereitet"
 
 #: src/views/CheckoutTransmission.vue:84
 msgid "Processing your payment"
@@ -770,7 +772,7 @@ msgstr "Nachricht signieren"
 
 #: src/views/SetupSwapSuccess.vue:6
 msgid "Signing transactions..."
-msgstr ""
+msgstr "Signiere Transaktionen..."
 
 #: src/lib/LabelingMachine.ts:33
 msgid "Single Accounts"
@@ -809,7 +811,7 @@ msgstr "Konsensus wird synchronisiert..."
 #: src/views/ActivateBitcoinSuccess.vue:37 src/views/RefundSwap.vue:6
 #: src/views/SetupSwap.vue:6 src/views/SignBtcTransaction.vue:6
 msgid "Syncing with Bitcoin network..."
-msgstr ""
+msgstr "Synchronisiere mit dem Bitcoin Netzwerk..."
 
 #: src/lib/LabelingMachine.ts:45
 msgid "Teal"
