@@ -13,9 +13,8 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { State, Getter } from 'vuex-class';
+import { Getter } from 'vuex-class';
 import KeyguardClient from '@nimiq/keyguard-client';
-import { BitcoinTransactionInputType } from '@nimiq/keyguard-client';
 import { PlainOutput, TransactionDetails as BtcTransactionDetails } from '@nimiq/electrum-client';
 import { SmallPage } from '@nimiq/vue-components';
 import {
@@ -33,9 +32,8 @@ import { SetupSwapResult, SignedTransaction, SignedBtcTransaction } from '../lib
 import { Static } from '../lib/StaticStore';
 import { ParsedSetupSwapRequest } from '../lib/RequestTypes';
 import { WalletInfo } from '../lib/WalletInfo';
-import { BTC_NETWORK_MAIN } from '../lib/bitcoin/BitcoinConstants';
 import Config from 'config';
-import { loadBitcoinJS } from '../lib/bitcoin/BitcoinJSLoader';
+import { getElectrumClient } from '../lib/bitcoin/ElectrumClient';
 
 @Component({components: {Network, SmallPage, StatusScreen}})
 export default class SetupSwapSuccess extends Vue {
@@ -171,14 +169,7 @@ export default class SetupSwapSuccess extends Vue {
                     return false;
                 }
 
-                // @nimiq/electrum-client already depends on a globally available BitcoinJS,
-                // so we need to load it first.
-                await loadBitcoinJS();
-
-                const NimiqElectrumClient = await import(/*webpackChunkName: "electrum-client"*/ '@nimiq/electrum-client');
-                NimiqElectrumClient.GenesisConfig[Config.bitcoinNetwork === BTC_NETWORK_MAIN ? 'main' : 'test']();
-                const electrum = new NimiqElectrumClient.ElectrumClient();
-                await electrum.waitForConsensusEstablished();
+                const electrum = await getElectrumClient();
 
                 // First check history
                 const history = await electrum.getTransactionsByAddress(btcHtlcData.address);

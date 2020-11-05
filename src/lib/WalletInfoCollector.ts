@@ -18,13 +18,13 @@ import {
 import { VestingContractInfo } from './ContractInfo';
 import { BtcAddressInfo } from './bitcoin/BtcAddressInfo';
 import { loadBitcoinJS } from './bitcoin/BitcoinJSLoader';
+import { getElectrumClient } from './bitcoin/ElectrumClient';
 import { Receipt as BtcReceipt } from '@nimiq/electrum-client';
 import {
     EXTERNAL_INDEX,
     INTERNAL_INDEX,
     BTC_ACCOUNT_MAX_ALLOWED_ADDRESS_GAP,
     BTC_ACCOUNT_KEY_PATH,
-    BTC_NETWORK_MAIN,
     NESTED_SEGWIT,
     NATIVE_SEGWIT,
 } from './bitcoin/BitcoinConstants';
@@ -123,14 +123,10 @@ export default class WalletInfoCollector {
         internal: BtcAddressInfo[],
         external: BtcAddressInfo[],
     }> {
-        // @nimiq/electrum-client already depends on a globally available BitcoinJS,
-        // so we need to load it first.
-        await loadBitcoinJS();
-
-        const NimiqElectrumClient = await import(/*webpackChunkName: "electrum-client"*/ '@nimiq/electrum-client');
-        NimiqElectrumClient.GenesisConfig[Config.bitcoinNetwork === BTC_NETWORK_MAIN ? 'main' : 'test']();
-        const electrum = new NimiqElectrumClient.ElectrumClient();
-        await electrum.waitForConsensusEstablished();
+        const [electrum] = await Promise.all([
+            getElectrumClient(),
+            loadBitcoinJS(),
+        ]);
 
         const xPubType = ['ypub', 'upub'].includes(xpub.substr(0, 4)) ? NESTED_SEGWIT : NATIVE_SEGWIT;
 
