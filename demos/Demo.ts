@@ -20,6 +20,7 @@ import {
 import { RedirectRequestBehavior, PopupRequestBehavior } from '../client/RequestBehavior';
 import { Utf8Tools } from '@nimiq/utils';
 import { WalletType } from '../src/lib/Constants';
+import { WalletStore } from '../src/lib/WalletStore';
 
 // BitcoinJS is defined as a global variable in BitcoinJS.min.js loaded by demos/index.html
 declare global {
@@ -404,6 +405,41 @@ class Demo {
             } catch (e) {
                 console.error(e);
                 document.querySelector('#result').textContent = `Error: ${e.message || e}`;
+            }
+        });
+
+        document.querySelector('button#activate-btc')!.addEventListener('click', async () => {
+            const $radio = document.querySelector('input[name="address"]:checked');
+            if (!$radio) {
+                alert('You have no account to activate BTC for, create an account first (signup)');
+                throw new Error('No account found');
+            }
+            const accountId = $radio.closest('ul')!.closest('li')!.querySelector('button')!.dataset.walletId!;
+
+            const wallet = await WalletStore.Instance.get(accountId);
+            if (!wallet) throw new Error('Account not found');
+
+            if (wallet.btcXPub || wallet.btcAddresses.external.length || wallet.btcAddresses.internal.length) {
+                if (!confirm('Btc support is already activated for the selected account. Do you want to clear the '
+                    + 'account\'s Bitcoin metadata and re-activate BTC support?')) {
+                    document.querySelector('#result')!.textContent = 'Activation cancelled';
+                    return;
+                }
+                wallet.btcXPub = undefined;
+                wallet.btcAddresses = { external: [], internal: [] };
+                await WalletStore.Instance.put(wallet);
+            }
+
+            try {
+                const result = await demo.client.activateBitcoin({
+                    appName: 'Hub Demos',
+                    accountId,
+                }, demo._defaultBehavior);
+                console.log('Result', result);
+                document.querySelector('#result')!.textContent = 'Activated account: ' + JSON.stringify(result);
+            } catch (e) {
+                console.error(e);
+                document.querySelector('#result')!.textContent = `Error: ${e.message || e}`;
             }
         });
 

@@ -149,7 +149,9 @@
 </div>
 
 <div class="request">
-    <h2>Bitcoin Transaction</h2>
+    <h2>Bitcoin</h2>
+    <br>
+    <button id="activate-btc" disabled>Activate BTC</button>
     <br>
     <button id="sign-btc-transaction" disabled>Sign BTC Tx</button>
     <button id="setup-swap" class="nim-to-btc" disabled>Swap NIM -> BTC</button>
@@ -161,7 +163,10 @@
     <p id="result"></p>
 </div>
 
+<!-- needed for Sign Btc Transaction demo -->
 <script src="/bitcoin/BitcoinJS.min.js"></script>
+<!-- needed for WalletStore in Activate Btc demo -->
+<script src="<%= htmlWebpackPlugin.options.cdnDomain %>/v1.5.3/web-offline.js" defer></script>
 
 <!-- built files will be auto injected -->
 </body>

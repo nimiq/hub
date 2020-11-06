@@ -126,6 +126,7 @@ if (buildName === 'local' || buildName === 'testnet') {
         entry: 'demos/Demo.ts',
         // the source template
         template: 'demos/index.html',
+        cdnDomain,
         // output as dist/demos.html
         filename: 'demos.html',
         // chunks to include on this page, by default includes
