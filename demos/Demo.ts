@@ -1,5 +1,4 @@
 import { State, PostMessageRpcClient } from '@nimiq/rpc';
-import * as BitcoinJS from 'bitcoinjs-lib';
 import HubApi from '../client/HubApi';
 import {
     SimpleRequest,
@@ -20,19 +19,15 @@ import {
 } from '../src/lib/PublicRequestTypes';
 import { RedirectRequestBehavior, PopupRequestBehavior } from '../client/RequestBehavior';
 import { Utf8Tools } from '@nimiq/utils';
-import { KeyguardClient, KeyguardCommand } from '@nimiq/keyguard-client';
 import { WalletType } from '../src/lib/Constants';
+
+// BitcoinJS is defined as a global variable in BitcoinJS.min.js loaded by demos/index.html
+declare global {
+    const BitcoinJS: typeof import('bitcoinjs-lib');
+}
 
 class Demo {
     public static run() {
-        const keyguardClient = new KeyguardClient();
-        keyguardClient.on(KeyguardCommand.SIGN_BTC_TRANSACTION, (result) => {
-            console.log("Keyguard Result:", result);
-        }, (error) => {
-            console.log("Keyguard Error:", error);
-        });
-        keyguardClient.init();
-
         const keyguardOrigin = location.origin === 'https://hub.nimiq-testnet.com'
             ? 'https://keyguard.nimiq-testnet.com'
             : `${location.protocol}//${location.hostname}:8000`;
@@ -360,7 +355,7 @@ class Demo {
         document.querySelector('button#sign-message-with-account').addEventListener('click', async () => {
             const $radio = document.querySelector('input[name="address"]:checked');
             if (!$radio) {
-                alert('You have no account to send a tx from, create an account first (signup)');
+                alert('You have no account to sign a message by, create an account first (signup)');
                 throw new Error('No account found');
             }
             const signer = ($radio as HTMLElement).dataset.address;
@@ -418,9 +413,9 @@ class Demo {
                 alert('You have no account to send a tx from, create an account first (signup)');
                 throw new Error('No account found');
             }
-            const accountId = $radio.closest('ul').closest('li').querySelector('button').dataset.walletId;
+            const accountId = $radio.closest('ul')!.closest('li')!.querySelector('button')!.dataset.walletId!;
 
-            const account = (await demo.list()).find((wallet) => wallet.accountId === accountId);
+            const account = (await demo.list()).find((wallet) => wallet.accountId === accountId)!;
             if (account.type === WalletType.LEGACY) {
                 alert('Cannot sign BTC transactions with a legacy account');
                 throw new Error('Cannot use legacy account');
@@ -434,6 +429,7 @@ class Demo {
 
             const txRequest: SignBtcTransactionRequest = {
                 appName: 'Hub Demos',
+                accountId,
                 inputs: [{
                     address: senderAddress,
                     transactionHash: 'ef4aaf6087d0cc48ff09355d715c257078467ca4d9dd75a20824e70a78fb43cc',
