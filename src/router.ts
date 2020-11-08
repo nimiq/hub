@@ -63,6 +63,9 @@ const SignBtcTransaction        = () => import(/*webpackChunkName: "sign-btc-tra
 const SignBtcTransactionSuccess = () => import(/*webpackChunkName: "sign-btc-transaction"*/
 './views/SignBtcTransactionSuccess.vue');
 
+const SignBtcTransactionLedger  = () => import(/*webpackChunkName: "sign-btc-transaction-ledger"*/
+    './views/SignBtcTransactionLedger.vue');
+
 const ActivateBitcoin         = () => import(/*webpackChunkName: "activate-btc"*/ './views/ActivateBitcoin.vue');
 const ActivateBitcoinSuccess  = () => import(/*webpackChunkName: "activate-btc"*/ './views/ActivateBitcoinSuccess.vue');
 
@@ -300,6 +303,11 @@ export default new Router({
             path: `/${RequestType.SIGN_BTC_TRANSACTION}`,
             component: SignBtcTransaction,
             name: RequestType.SIGN_BTC_TRANSACTION,
+        },
+        {
+            path: `/${RequestType.SIGN_BTC_TRANSACTION}/ledger`,
+            component: SignBtcTransactionLedger,
+            name: `${RequestType.SIGN_BTC_TRANSACTION}-ledger`,
         },
         {
             path: `/${RequestType.SIGN_BTC_TRANSACTION}/success`,

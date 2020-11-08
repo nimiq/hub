@@ -15,22 +15,27 @@ import { Component, Vue } from 'vue-property-decorator';
 import { SmallPage } from '@nimiq/vue-components';
 import StatusScreen from '../components/StatusScreen.vue';
 import { ParsedSignBtcTransactionRequest } from '../lib/RequestTypes';
-import KeyguardClient from '@nimiq/keyguard-client';
 import { Static } from '../lib/StaticStore';
 import { WalletInfo } from '../lib/WalletInfo';
 import { Getter } from 'vuex-class';
-import { BtcAddressInfo } from '../lib/bitcoin/BtcAddressInfo';
+
+// Import only types to avoid bundling of KeyguardClient in Ledger request if not required.
+// (But note that currently, the KeyguardClient is still always bundled in th RpcApi).
+type KeyguardSignBtcTransactionRequest = import('@nimiq/keyguard-client').SignBtcTransactionRequest;
+type BitcoinTransactionInput = import('@nimiq/keyguard-client').BitcoinTransactionInput;
+type BitcoinTransactionChangeOutput = Required<import('@nimiq/keyguard-client').BitcoinTransactionChangeOutput>;
+export type BitcoinTransactionInfo = Omit<import('@nimiq/keyguard-client').BitcoinTransactionInfo, 'changeOutput'> & {
+    changeOutput?: BitcoinTransactionChangeOutput,
+};
 
 @Component({components: {StatusScreen, SmallPage}})
 export default class SignBtcTransaction extends Vue {
-    @Static private request!: ParsedSignBtcTransactionRequest;
+    @Static protected request!: ParsedSignBtcTransactionRequest;
     @Getter private findWallet!: (id: string) => WalletInfo | undefined;
 
     private derivingAddresses = false;
 
-    public async created() {
-        // Forward user through Hub to Keyguard
-
+    protected async created() {
         const walletInfo = this.findWallet(this.request.walletId)!;
 
         if (!walletInfo.btcXPub || !walletInfo.btcAddresses || !walletInfo.btcAddresses.external.length) {
@@ -38,7 +43,7 @@ export default class SignBtcTransaction extends Vue {
             return;
         }
 
-        const inputs: KeyguardClient.BitcoinTransactionInput[] = [];
+        const inputs: BitcoinTransactionInput[] = [];
 
         for (const input of this.request.inputs) {
             let addressInfo = walletInfo.findBtcAddressInfo(input.address);
@@ -61,7 +66,7 @@ export default class SignBtcTransaction extends Vue {
             });
         }
 
-        let changeOutput: KeyguardClient.BitcoinTransactionChangeOutput | undefined;
+        let changeOutput: BitcoinTransactionChangeOutput | undefined;
         if (this.request.changeOutput) {
             let addressInfo = walletInfo.findBtcAddressInfo(this.request.changeOutput.address);
             if (addressInfo instanceof Promise) {
@@ -81,13 +86,21 @@ export default class SignBtcTransaction extends Vue {
             };
         }
 
-        const request: KeyguardClient.SignBtcTransactionRequest = {
+        this._signBtcTransaction({
+            inputs,
+            changeOutput,
+            recipientOutput: this.request.output,
+        }, walletInfo);
+    }
+
+    protected _signBtcTransaction(transactionInfo: BitcoinTransactionInfo, walletInfo: WalletInfo) {
+        // note that this method gets overwritten for SignBtcTransactionLedger
+
+        const request: KeyguardSignBtcTransactionRequest = {
             layout: 'standard',
             appName: this.request.appName,
 
-            inputs,
-            recipientOutput: this.request.output,
-            changeOutput,
+            ...transactionInfo,
 
             keyId: walletInfo.keyId,
             keyLabel: walletInfo.labelForKeyguard,

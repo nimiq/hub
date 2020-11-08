@@ -289,6 +289,7 @@ msgid "Confirm the address on your Ledger"
 msgstr ""
 
 #: src/components/LedgerUi.vue:224
+#: src/views/SignBtcTransactionLedger.vue:4
 #: src/views/SignTransactionLedger.vue:34
 msgid "Confirm Transaction"
 msgstr ""
@@ -392,7 +393,7 @@ msgid "Creating your Account"
 msgstr ""
 
 #: src/views/CashlinkManage.vue:195
-#: src/views/SignTransactionLedger.vue:436
+#: src/views/SignTransactionLedger.vue:439
 msgid "Creating your Cashlink"
 msgstr ""
 
@@ -425,6 +426,7 @@ msgstr ""
 msgid "Failed to fetch addresses. Retrying..."
 msgstr ""
 
+#: src/views/SignBtcTransactionLedger.vue:30
 #: src/views/SignTransactionLedger.vue:71
 msgid "fee"
 msgstr ""
@@ -735,7 +737,7 @@ msgstr ""
 msgid "Send your transaction"
 msgstr ""
 
-#: src/views/SignTransactionLedger.vue:437
+#: src/views/SignTransactionLedger.vue:440
 msgid "Sending Transaction"
 msgstr ""
 
@@ -800,6 +802,7 @@ msgstr ""
 #: src/views/RefundSwap.vue:6
 #: src/views/SetupSwap.vue:6
 #: src/views/SignBtcTransaction.vue:6
+#: src/views/SignBtcTransactionLedger.vue:114
 msgid "Syncing with Bitcoin network..."
 msgstr ""
 
@@ -816,7 +819,7 @@ msgid "The display language changed. Do you want to reload the page to update al
 msgstr ""
 
 #: src/components/CheckoutCard.vue:168
-#: src/views/SignTransactionLedger.vue:443
+#: src/views/SignTransactionLedger.vue:446
 msgid "The offer expired."
 msgstr ""
 
@@ -870,11 +873,12 @@ msgstr ""
 msgid "Transaction is expired"
 msgstr ""
 
-#: src/views/SignTransactionLedger.vue:441
+#: src/views/SignTransactionLedger.vue:444
 msgid "Transaction Sent"
 msgstr ""
 
-#: src/views/SignTransactionLedger.vue:440
+#: src/views/SignBtcTransactionLedger.vue:109
+#: src/views/SignTransactionLedger.vue:443
 msgid "Transaction Signed"
 msgstr ""
 
@@ -892,6 +896,10 @@ msgstr ""
 
 #: src/views/LoginSuccess.vue:140
 msgid "Unfortunately, due to space restrictions of Safari and IOS, this account cannot be stored properly. Please free up space by logging out of other accounts."
+msgstr ""
+
+#: src/views/SignBtcTransactionLedger.vue:9
+msgid "Unlabeled"
 msgstr ""
 
 #: src/views/ErrorHandlerUnsupportedLedger.vue:36

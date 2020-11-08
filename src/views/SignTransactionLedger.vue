@@ -353,6 +353,9 @@ export default class SignTransactionLedger extends Vue {
 
         this.shownAccountDetails = null;
 
+        // If user left this view in the mean time, don't continue
+        if (this.isDestroyed) return;
+
         // send transaction to network and finish
         let result;
         if (this.request.kind === RequestType.CHECKOUT || this.request.kind === RequestType.CREATE_CASHLINK) {
@@ -386,7 +389,7 @@ export default class SignTransactionLedger extends Vue {
         if (this.request.kind !== RequestType.CHECKOUT) return null;
         const checkoutRequest = this.request as ParsedCheckoutRequest;
         return checkoutRequest.paymentOptions.find(
-            (option) => option.currency === Currency.NIM, // TODO: Also handle BTC payments
+            (option) => option.currency === Currency.NIM,
         ) as ParsedNimiqDirectPaymentOptions;
     }
 
