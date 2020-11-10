@@ -1,0 +1,22 @@
+name: Complete Check
+
+on:
+  - push
+  - pull_request
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v2-beta # Remove when node-lmdb supports Node 14 (https://github.com/Venemo/node-lmdb/issues/181)
+      with:
+        node-version: '12'
+    - uses: actions/cache@v2
+      with:
+        path: '**/node_modules'
+        key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+    - name: Install modules
+      run: yarn
+    - name: Run
+      run: yarn pr
