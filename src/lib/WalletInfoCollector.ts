@@ -127,7 +127,7 @@ export default class WalletInfoCollector {
         await loadBitcoinJS();
 
         const NimiqElectrumClient = await import(/*webpackChunkName: "electrum-client"*/ '@nimiq/electrum-client');
-        NimiqElectrumClient.GenesisConfig[Config.bitcoinNetwork === BTC_NETWORK_MAIN ? 'mainnet' : 'testnet']();
+        NimiqElectrumClient.GenesisConfig[Config.bitcoinNetwork === BTC_NETWORK_MAIN ? 'main' : 'test']();
         const electrum = new NimiqElectrumClient.ElectrumClient();
         await electrum.waitForConsensusEstablished();
 
