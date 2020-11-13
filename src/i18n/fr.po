@@ -1,12 +1,12 @@
 # 
 # Translators:
 # Talleyrand <baptistekugener@wanadoo.fr>, 2020
-# Matheo <matheo@nimiq.com>, 2020
 # Daniel, 2020
+# Matheo <matheo@nimiq.com>, 2020
 # 
 msgid ""
 msgstr ""
-"Last-Translator: Daniel, 2020\n"
+"Last-Translator: Matheo <matheo@nimiq.com>, 2020\n"
 "Language-Team: French (https://www.transifex.com/nimiq-foundation/teams/107400/fr/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: fr\n"
@@ -164,7 +164,7 @@ msgstr "Sauvegardé"
 
 #: src/views/ActivateBitcoinSuccess.vue:69
 msgid "Bitcoin activated"
-msgstr ""
+msgstr "Bitcoin activé"
 
 #: src/lib/LabelingMachine.ts:43
 msgid "Blue"
@@ -693,7 +693,7 @@ msgstr "Préparer la mise à jour"
 
 #: src/views/SetupSwapSuccess.vue:5
 msgid "Preparing Swap"
-msgstr ""
+msgstr "Swap en préparation"
 
 #: src/views/CheckoutTransmission.vue:84
 msgid "Processing your payment"
@@ -770,7 +770,7 @@ msgstr "Signer le message"
 
 #: src/views/SetupSwapSuccess.vue:6
 msgid "Signing transactions..."
-msgstr ""
+msgstr "Signature des transactions..."
 
 #: src/lib/LabelingMachine.ts:33
 msgid "Single Accounts"
@@ -808,7 +808,7 @@ msgstr "Synchronisation du consensus..."
 #: src/views/ActivateBitcoinSuccess.vue:37 src/views/RefundSwap.vue:6
 #: src/views/SetupSwap.vue:6 src/views/SignBtcTransaction.vue:6
 msgid "Syncing with Bitcoin network..."
-msgstr ""
+msgstr "Synchronisation avec le réseau Bitcoin..."
 
 #: src/lib/LabelingMachine.ts:45
 msgid "Teal"
