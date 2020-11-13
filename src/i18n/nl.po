@@ -1,12 +1,12 @@
 # 
 # Translators:
 # Jim <jimvendrig10@gmail.com>, 2020
-# Stefan, 2020
 # BlockchainShay <Shaylish@live.nl>, 2020
+# Stefan, 2020
 # 
 msgid ""
 msgstr ""
-"Last-Translator: BlockchainShay <Shaylish@live.nl>, 2020\n"
+"Last-Translator: Stefan, 2020\n"
 "Language-Team: Dutch (https://www.transifex.com/nimiq-foundation/teams/107400/nl/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: nl\n"
@@ -257,7 +257,7 @@ msgid ""
 "Set a password. Done."
 msgstr ""
 "Kies een avatar \n"
-"Stel een wachtwoord in. Gedaan."
+"Stel een wachtwoord in. Klaar."
 
 #: src/views/CashlinkCreate.vue:10
 msgid "Choose Sender"
@@ -494,7 +494,7 @@ msgid ""
 "crypto was easy"
 msgstr ""
 "Stel je voor dat betalen met \n"
-"Crypto makkelijk was"
+"cryptovaluta makkelijk was"
 
 #: src/views/LoginSuccess.vue:153 src/views/SignupLedger.vue:117
 msgid ""
@@ -568,11 +568,11 @@ msgstr "Login File geëxporteerd!"
 
 #: src/views/CashlinkReceive.vue:91
 msgid "Login to existing account"
-msgstr "Login met bestaand account"
+msgstr "Inloggen met bestaand account"
 
 #: src/views/OnboardingSelector.vue:95
 msgid "Login to fund your Cashlink"
-msgstr "Login om je Cashlink te financiëren"
+msgstr "Inloggen om je Cashlink te financiëren"
 
 #: src/views/ErrorHandlerUnsupportedLedger.vue:42
 msgid "Message signing is not yet supported for Ledgers."
@@ -854,7 +854,7 @@ msgstr "Sorry. Deze Cashlink is niet geldig."
 
 #: src/views/SignupLedger.vue:29
 msgid "This is your account with your first address in it."
-msgstr "Dit is je account met je eerste adres."
+msgstr "Dit is je account met eerste adres."
 
 #: src/views/CashlinkCreate.vue:63
 msgid "This message will be stored in the Cashlink."
@@ -867,11 +867,10 @@ msgid ""
 "fulfillment for payment are sole responsibility of those two respective "
 "parties."
 msgstr ""
-"Deze Nimiq-interface wordt niet bewaard en wordt alleen gebruikt om de "
-"afzender van de betaling rechtstreeks met de ontvanger van de betaling te "
-"overbruggen (P2P). Het nakomen van de betaling en van de levering voor "
-"betaling zijn uitsluitend de verantwoordelijkheid van deze twee respectieve "
-"partijen."
+"Deze Nimiq-interface wordt alleen gebruikt om de ontvanger van de betaling "
+"rechtstreeks het bedrag te versturen (P2P). Het nakomen van de betaling en "
+"de levering zijn uitsluitend de verantwoordelijkheid van de twee respectieve"
+" partijen."
 
 #: src/views/ErrorHandlerUnsupportedLedger.vue:49
 msgid "This operation is not supported for Ledgers."
@@ -917,7 +916,7 @@ msgid ""
 "Unfortunately, due to restrictions of Safari you cannot add more accounts "
 "and/or addresses. Please log out of unused accounts to free up space."
 msgstr ""
-"Helaas, door de restricties van safari kan je niet meer accounts of adressen"
+"Helaas, door de restricties van Safari kan je niet meer accounts of adressen"
 " toevoegen. Log alstublieft uit bij de ongebruikte accounts om ruimte vrij "
 "te maken."
 
@@ -927,7 +926,7 @@ msgid ""
 "cannot be stored properly. Please free up space by logging out of other "
 "accounts."
 msgstr ""
-"Helaas, door de ruimte restricties van Safari en IOS, kan dit account niet "
+"Helaas, door de ruimte restricties van Safari en iOS, kan dit account niet "
 "naar behoren opgeslagen worden. Log alstublieft uit bij andere accounts om "
 "ruimte vrij te maken."
 
@@ -956,12 +955,12 @@ msgid ""
 "Use your Login File\n"
 "or Recovery Words."
 msgstr ""
-"Gebruik je login file\n"
-"of je herstel woorden"
+"Gebruik je Login File\n"
+"of je herstelwoorden"
 
 #: src/views/LoginSuccess.vue:169 src/views/SignupLedger.vue:124
 msgid "Used addresses without balance might have been missed."
-msgstr "gebruikte adressen zonder balans kunnen gemist zijn"
+msgstr "Gebruikte adressen zonder balans kunnen niet aanwezig zijn."
 
 #: src/views/SignTransactionLedger.vue:31
 msgid "Verify Payment"
@@ -1021,7 +1020,7 @@ msgstr "Je bent ingelogd! "
 
 #: src/views/LoginSuccess.vue:184
 msgid "Your Account is ready. | Your Accounts are ready."
-msgstr "Je account is klaar. Je accounts zijn klaar."
+msgstr "Je account is klaar. | Je accounts zijn klaar."
 
 #: src/views/LoginSuccess.vue:167 src/views/SignupLedger.vue:101
 msgid ""
@@ -1049,7 +1048,7 @@ msgid ""
 " using Ledger Live."
 msgstr ""
 "Je Nimiq app is verouderd. Update alstublieft je Ledger firmware en de Nimiq"
-" App als je Ledger live gebruikt."
+" App als je Ledger Live gebruikt."
 
 #: src/views/LoginSuccess.vue:178 src/views/SimpleSuccess.vue:31
 msgid "Your password was changed."
