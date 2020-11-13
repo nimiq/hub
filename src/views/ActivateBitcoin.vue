@@ -43,14 +43,14 @@ export default class ActivateBitcoin extends Vue {
             }
         }
 
-        const request: KeyguardClient.DeriveBtcXpubRequest = {
+        const request: KeyguardClient.DeriveBtcXPubRequest = {
             appName: this.request.appName,
             keyId: walletInfo.keyId,
             bitcoinXPubPath: BTC_ACCOUNT_KEY_PATH[Config.bitcoinAddressType][Config.bitcoinNetwork],
         };
 
         const client = this.$rpc.createKeyguardClient(true);
-        client.deriveBtcXpub(request);
+        client.deriveBtcXPub(request);
     }
 }
 </script>

@@ -28,7 +28,7 @@ import WalletInfoCollector from '../lib/WalletInfoCollector';
 @Component({components: {StatusScreen, SmallPage}})
 export default class ActivateBitcoinSuccess extends Vue {
     @Static private request!: ParsedSimpleRequest;
-    @State private keyguardResult!: KeyguardClient.DeriveBtcXpubResult;
+    @State private keyguardResult!: KeyguardClient.DeriveBtcXPubResult;
     @Getter private findWallet!: (id: string) => WalletInfo | undefined;
 
     private walletInfo!: WalletInfo;
