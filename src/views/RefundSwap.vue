@@ -21,7 +21,7 @@ import { ParsedRefundSwapRequest } from '../lib/RequestTypes';
 import { Static } from '../lib/StaticStore';
 import { WalletInfo } from '../lib/WalletInfo';
 import { BtcAddressInfo } from '../lib/bitcoin/BtcAddressInfo';
-import { SwapAsset } from '@/lib/FastspotApi';
+import { SwapAsset } from '@nimiq/fastspot-api';
 
 @Component({components: {StatusScreen, SmallPage}})
 export default class SetupSwap extends Vue {

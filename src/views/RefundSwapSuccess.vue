@@ -9,7 +9,7 @@ import Network from '../components/Network.vue';
 import { SignedBtcTransaction, SignedTransaction } from '../lib/PublicRequestTypes';
 import { Static } from '../lib/StaticStore';
 import KeyguardClient from '@nimiq/keyguard-client';
-import { SwapAsset } from '@/lib/FastspotApi';
+import { SwapAsset } from '@nimiq/fastspot-api';
 import { ParsedRefundSwapRequest } from '@/lib/RequestTypes';
 
 @Component({components: {Network}})

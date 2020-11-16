@@ -18,7 +18,15 @@ import KeyguardClient from '@nimiq/keyguard-client';
 import { BitcoinTransactionInputType } from '@nimiq/keyguard-client';
 import { TransactionDetails as BtcTransactionDetails } from '@nimiq/electrum-client';
 import { SmallPage } from '@nimiq/vue-components';
-import { SwapAsset, PreSwap, Swap, confirmSwap, NimHtlcDetails, BtcHtlcDetails } from '../lib/FastspotApi';
+import {
+    init as initFastspotApi,
+    SwapAsset,
+    PreSwap,
+    Swap,
+    confirmSwap,
+    NimHtlcDetails,
+    BtcHtlcDetails,
+} from '@nimiq/fastspot-api';
 import StatusScreen from '../components/StatusScreen.vue';
 import Network from '../components/Network.vue';
 import { SetupSwapResult, SignedTransaction, SignedBtcTransaction } from '../lib/PublicRequestTypes';
@@ -37,6 +45,8 @@ export default class SetupSwapSuccess extends Vue {
 
     private async mounted() {
         // Confirm swap to Fastspot and get contract details
+
+        initFastspotApi(Config.fastspot.apiEndpoint, Config.fastspot.apiKey);
 
         let confirmedSwap: Swap;
         try {

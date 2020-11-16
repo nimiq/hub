@@ -3,7 +3,7 @@ import { ParsedPaymentOptions } from './paymentOptions/ParsedPaymentOptions';
 import { ParsedNimiqSpecifics, ParsedNimiqDirectPaymentOptions } from './paymentOptions/NimiqPaymentOptions';
 import { ParsedEtherSpecifics, ParsedEtherDirectPaymentOptions } from './paymentOptions/EtherPaymentOptions';
 import { ParsedBitcoinSpecifics, ParsedBitcoinDirectPaymentOptions } from './paymentOptions/BitcoinPaymentOptions';
-import { SwapAsset } from './FastspotApi';
+import { SwapAsset } from '@nimiq/fastspot-api';
 
 export interface ParsedBasicRequest {
     kind: RequestType;

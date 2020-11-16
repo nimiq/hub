@@ -43,7 +43,7 @@ import { ParsedEtherDirectPaymentOptions } from './paymentOptions/EtherPaymentOp
 import { ParsedBitcoinDirectPaymentOptions } from './paymentOptions/BitcoinPaymentOptions';
 import { Utf8Tools } from '@nimiq/utils';
 import Config from 'config';
-import { SwapAsset } from './FastspotApi';
+import { SwapAsset } from '@nimiq/fastspot-api';
 
 export class RequestParser {
     public static parse(
