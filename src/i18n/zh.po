@@ -163,7 +163,7 @@ msgstr "已备份"
 
 #: src/views/ActivateBitcoinSuccess.vue:69
 msgid "Bitcoin activated"
-msgstr ""
+msgstr "比特币已激活"
 
 #: src/lib/LabelingMachine.ts:43
 msgid "Blue"
@@ -677,7 +677,7 @@ msgstr "准备更新"
 
 #: src/views/SetupSwapSuccess.vue:5
 msgid "Preparing Swap"
-msgstr ""
+msgstr "准备交换"
 
 #: src/views/CheckoutTransmission.vue:84
 msgid "Processing your payment"
@@ -754,7 +754,7 @@ msgstr "签名信息"
 
 #: src/views/SetupSwapSuccess.vue:6
 msgid "Signing transactions..."
-msgstr ""
+msgstr "正在签署交易..."
 
 #: src/lib/LabelingMachine.ts:33
 msgid "Single Accounts"
@@ -792,7 +792,7 @@ msgstr "正在同步共识..."
 #: src/views/ActivateBitcoinSuccess.vue:37 src/views/RefundSwap.vue:6
 #: src/views/SetupSwap.vue:6 src/views/SignBtcTransaction.vue:6
 msgid "Syncing with Bitcoin network..."
-msgstr ""
+msgstr "正在与比特币网络同步..."
 
 #: src/lib/LabelingMachine.ts:45
 msgid "Teal"

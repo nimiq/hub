@@ -1,12 +1,12 @@
 # 
 # Translators:
 # Talleyrand <baptistekugener@wanadoo.fr>, 2020
-# Matheo <matheo@nimiq.com>, 2020
 # Daniel, 2020
+# Matheo <matheo@nimiq.com>, 2020
 # 
 msgid ""
 msgstr ""
-"Last-Translator: Daniel, 2020\n"
+"Last-Translator: Matheo <matheo@nimiq.com>, 2020\n"
 "Language-Team: French (https://www.transifex.com/nimiq-foundation/teams/107400/fr/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: fr\n"
@@ -66,7 +66,7 @@ msgstr "Action impossible"
 
 #: src/views/Migrate.vue:81
 msgid "Activate update"
-msgstr "Activer mise-à-jour"
+msgstr "Activer la mise-à-jour"
 
 #: src/views/CashlinkCreate.vue:61
 msgid "Add a message..."
@@ -86,7 +86,7 @@ msgstr "Adresse ajoutée"
 
 #: src/views/LoginSuccess.vue:96
 msgid "Address detection failed. Retrying..."
-msgstr "Détection d'adresse échouée. Nouvelle tentative en cours..."
+msgstr "Détection d'adresse échouée. Nouvelle tentative..."
 
 #: src/views/Rename.vue:22
 msgid "All labels saved."
@@ -164,7 +164,7 @@ msgstr "Sauvegardé"
 
 #: src/views/ActivateBitcoinSuccess.vue:69
 msgid "Bitcoin activated"
-msgstr ""
+msgstr "Bitcoin activé"
 
 #: src/lib/LabelingMachine.ts:43
 msgid "Blue"
@@ -255,7 +255,9 @@ msgstr "Choisi un avatar"
 msgid ""
 "Choose an Avatar.\n"
 "Set a password. Done."
-msgstr "Choisissez un avatar et définissez un mot de passe."
+msgstr ""
+"Choisissez un avatar.\n"
+"Définissez un mot de passe. Terminé."
 
 #: src/views/CashlinkCreate.vue:10
 msgid "Choose Sender"
@@ -279,7 +281,7 @@ msgstr "Fermer"
 
 #: src/components/CheckoutCard.vue:122
 msgid "Collecting payment details"
-msgstr "Collection des détails du paiment"
+msgstr "Collection des détails du paiement"
 
 #: src/components/LedgerUi.vue:183
 msgid "Confirm Address"
@@ -292,7 +294,7 @@ msgstr "Confimer le Cashlink"
 #: src/components/LedgerUi.vue:184
 msgid "Confirm that the address on your Ledger matches {addressToConfirm}"
 msgstr ""
-"Confirme que l'adresse sur votre Ledger correspond à {addressToConfirm}"
+"Confirmez que l'adresse sur votre Ledger correspond à {addressToConfirm}"
 
 #: src/components/LedgerUi.vue:192 src/views/SignTransactionLedger.vue:34
 msgid "Confirm Transaction"
@@ -300,7 +302,7 @@ msgstr "Confirmer la Transaction"
 
 #: src/components/LedgerUi.vue:193
 msgid "Confirm using your Ledger"
-msgstr "Confirmer en utilisant votre Ledger"
+msgstr "Confirmez en utilisant votre Ledger"
 
 #: src/views/CashlinkReceive.vue:359
 msgid "Congrats, somebody gifted you a Nimiq Cashlink."
@@ -376,7 +378,7 @@ msgstr "Créer un Compte"
 
 #: src/views/CashlinkReceive.vue:109
 msgid "Create an account and claim your money."
-msgstr "Créer un compte et réclamer votre argent."
+msgstr "Créez un compte et réclamez votre argent."
 
 #: src/views/Migrate.vue:32
 msgid "Create and scan QR codes to quickly share addresses."
@@ -409,7 +411,7 @@ msgstr "Ne fermez pas cette fenêtre avant confirmation."
 
 #: src/views/CashlinkManage.vue:22
 msgid "Done"
-msgstr "Finir"
+msgstr "Terminer"
 
 #: src/components/NonNimiqCheckoutCard.vue:98
 msgid "Enter manually"
@@ -421,7 +423,7 @@ msgstr "express"
 
 #: src/views/SignupLedger.vue:113
 msgid "Failed to fetch addresses. Retrying..."
-msgstr "Récupération des adresses échouée. Nouvel essai en cours..."
+msgstr "Récupération des adresses échouée. Nouvelle tentative..."
 
 #: src/views/SignTransactionLedger.vue:71
 msgid "fee"
@@ -444,7 +446,7 @@ msgstr "Récupération de vos adresses"
 
 #: src/views/SignupLedger.vue:30
 msgid "Finish"
-msgstr "Terminer"
+msgstr "Finir"
 
 #: src/views/CashlinkCreate.vue:150
 msgid "free"
@@ -544,11 +546,11 @@ msgstr "Compte Legacy"
 
 #: src/components/LedgerUi.vue:165
 msgid "Loading failed, retrying..."
-msgstr "Chargement échoué, nouvel essai en cours..."
+msgstr "Chargement échoué, nouvelle tentative..."
 
 #: src/views/LogoutLedger.vue:14
 msgid "Log Out"
-msgstr "Déconnecter"
+msgstr "Se déconnecter"
 
 #: src/views/LogoutLedger.vue:7
 msgid "Logging out will delete custom settings and names for this account."
@@ -571,13 +573,11 @@ msgstr " Connexion à un compte existant"
 
 #: src/views/OnboardingSelector.vue:95
 msgid "Login to fund your Cashlink"
-msgstr "Connectez-vous pour créditer votre Cashlink"
+msgstr "Connectez-vous pour financer votre Cashlink"
 
 #: src/views/ErrorHandlerUnsupportedLedger.vue:42
 msgid "Message signing is not yet supported for Ledgers."
-msgstr ""
-"La signature de messages n'est pas encore supportée pour les appareils "
-"Ledgers."
+msgstr "La signature de messages n'est pas encore supportée pour les Ledgers."
 
 #: src/views/LogoutLedger.vue:4
 msgid "Mind the loss of settings"
@@ -585,7 +585,7 @@ msgstr "Attention à la perte des paramètres"
 
 #: src/components/IdenticonSelector.vue:12
 msgid "Mixing colors"
-msgstr "Mélanger les couleurs"
+msgstr "Mélange des couleurs"
 
 #: src/components/IdenticonSelector.vue:24
 msgid "More Avatars"
@@ -681,7 +681,7 @@ msgstr "Veuillez revenir en arrière et redémarrer le processus."
 
 #: src/views/SignTransactionLedger.vue:90
 msgid "Please go back to the shop and restart the process."
-msgstr "Veuillez retourner au magasin et de recommencer le processus."
+msgstr "Veuillez retourner au magasin et recommencer le processus."
 
 #: src/components/NonNimiqCheckoutCard.vue:91
 msgid "Please send the transaction manually"
@@ -693,7 +693,7 @@ msgstr "Préparer la mise à jour"
 
 #: src/views/SetupSwapSuccess.vue:5
 msgid "Preparing Swap"
-msgstr ""
+msgstr "Swap en préparation"
 
 #: src/views/CheckoutTransmission.vue:84
 msgid "Processing your payment"
@@ -725,7 +725,7 @@ msgstr "Requête échouée"
 
 #: src/components/LedgerUi.vue:235
 msgid "Request failed: "
-msgstr "Requête échouée: "
+msgstr "Requête échouée :"
 
 #: src/components/NimiqCheckoutCard.vue:279
 msgid "Requesting balances..."
@@ -770,7 +770,7 @@ msgstr "Signer le message"
 
 #: src/views/SetupSwapSuccess.vue:6
 msgid "Signing transactions..."
-msgstr ""
+msgstr "Signature des transactions..."
 
 #: src/lib/LabelingMachine.ts:33
 msgid "Single Accounts"
@@ -790,7 +790,7 @@ msgstr "Espace dépassé"
 
 #: src/views/CashlinkCreate.vue:19
 msgid "Speed up your transaction"
-msgstr "Accélérer votre transaction"
+msgstr "Accélérez votre transaction"
 
 #: src/views/CashlinkCreate.vue:155
 msgid "standard"
@@ -808,7 +808,7 @@ msgstr "Synchronisation du consensus..."
 #: src/views/ActivateBitcoinSuccess.vue:37 src/views/RefundSwap.vue:6
 #: src/views/SetupSwap.vue:6 src/views/SignBtcTransaction.vue:6
 msgid "Syncing with Bitcoin network..."
-msgstr ""
+msgstr "Synchronisation avec le réseau Bitcoin..."
 
 #: src/lib/LabelingMachine.ts:45
 msgid "Teal"
@@ -837,7 +837,7 @@ msgid ""
 "The update is easy, fast and secure. Still – it’s a good time to check on "
 "your Recovery Words."
 msgstr ""
-"La mise à jour est facile, rapide et sécurisée. Cependant c'est le bon "
+"La mise à jour est facile, rapide et sécurisée. Cependant, c'est le bon "
 "moment pour vérifier vos Mots de Récupération."
 
 #: src/views/Migrate.vue:37
