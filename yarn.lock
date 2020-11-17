@@ -972,11 +972,6 @@
   resolved "https://registry.yarnpkg.com/@nimiq/browser-warning/-/browser-warning-1.1.0.tgz#f600b0bf73a91e2195e1e344f6bcd603b4d3f18e"
   integrity sha512-18SdpZfnYTiwoPbBsTtnSqyIMSn6cupWwYoIIBQm5sPzh31ZlNrE/S3KkyGW8YShBGaCh39Z8XAMvuCIX/hNMg==
 
-"@nimiq/core-web@1.4.3":
-  version "1.4.3"
-  resolved "https://registry.yarnpkg.com/@nimiq/core-web/-/core-web-1.4.3.tgz#190d7390324623672fafbbc93841bcf215d2af01"
-  integrity sha512-47JMAx8bFcr2uev+QgX4saBUvRQo/8akQdpvf0z1F5N3I8FPyIfEWRjPW2Xu28C+MOdIZ/VkHL/YmMiGBBtEMA==
-
 "@nimiq/core-web@1.5.3":
   version "1.5.3"
   resolved "https://registry.yarnpkg.com/@nimiq/core-web/-/core-web-1.5.3.tgz#f0a4de59394f210f2c2d9cda8ee35c716847d40e"
@@ -1039,13 +1034,9 @@
     leveldown "^5.1.1"
     levelup "^4.1.0"
 
-"@nimiq/keyguard-client@1.4.0-beta.2":
-  version "1.4.0-beta.2"
-  resolved "https://registry.yarnpkg.com/@nimiq/keyguard-client/-/keyguard-client-1.4.0-beta.2.tgz#47af2d3730baff3738b140e316cc4ea1f7a2d826"
-  integrity sha512-IJzBYiu9a7dMYTwNB3bd8k9FqWbkhGRW5jLWKVAeal5vU6vuZs98wNnLkaHEz68pydQrNDgtst1x985lp/3ETg==
-  dependencies:
-    "@nimiq/core-web" "1.4.3"
-    "@nimiq/rpc" "^0.3.0"
+"@nimiq/keyguard-client@https://gitpkg.now.sh/nimiq/keyguard?799d736fe15816e0bd3c0c6f2a21da796bdc7d80&scripts.postinstall=cd%20client%20%26%26%20.%2Fbuild-gitpkg.sh":
+  version "1.0.0"
+  resolved "https://gitpkg.now.sh/nimiq/keyguard?799d736fe15816e0bd3c0c6f2a21da796bdc7d80&scripts.postinstall=cd%20client%20%26%26%20.%2Fbuild-gitpkg.sh#849b9b4a31833f8102b1f4ea92da4c431db27389"
 
 "@nimiq/ledger-api@^1.1.0":
   version "1.1.0"
@@ -1083,11 +1074,6 @@
   version "0.1.5"
   resolved "https://registry.yarnpkg.com/@nimiq/rpc/-/rpc-0.1.5.tgz#53919b0a3a9abcdfebee0e865f4c663f72a8b8c2"
   integrity sha512-oTRThXzpbQOY8jz8h+2KXucWzW40nVfYBWROKXKBrSozhTG0nR+rzCbEm4ZyTC26b4RnmB6y4nYabUXi7gNWcA==
-
-"@nimiq/rpc@^0.3.0":
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/@nimiq/rpc/-/rpc-0.3.0.tgz#654c05acccc193b7d79fb09b2faf2114945ff872"
-  integrity sha512-je7fv+wP4nLEgTcZwu3FaGre22qkZ9AYGbStglVaJAxOH+3CvDnnOIa9IjGFaCEhtRQKRaQEvFqa5vN4IVnH+Q==
 
 "@nimiq/rpc@^0.4.1":
   version "0.4.1"

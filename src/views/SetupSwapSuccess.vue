@@ -16,7 +16,7 @@ import { Component, Vue } from 'vue-property-decorator';
 import { State, Getter } from 'vuex-class';
 import KeyguardClient from '@nimiq/keyguard-client';
 import { BitcoinTransactionInputType } from '@nimiq/keyguard-client';
-import { TransactionDetails as BtcTransactionDetails } from '@nimiq/electrum-client';
+import { PlainOutput, TransactionDetails as BtcTransactionDetails } from '@nimiq/electrum-client';
 import { SmallPage } from '@nimiq/vue-components';
 import {
     init as initFastspotApi,
@@ -131,37 +131,22 @@ export default class SetupSwapSuccess extends Vue {
 
             request.fund = {
                 type: SwapAsset.NIM,
-                sender: (senderContract || signer).address.serialize(),
-                senderType: senderContract ? senderContract.type : Nimiq.Account.Type.BASIC,
-                value: this.request.fund.value,
-                fee: this.request.fund.fee,
-                validityStartHeight: this.request.fund.validityStartHeight,
-                data: nimHtlcByteArray,
+                htlcData: nimHtlcByteArray,
             };
         }
 
         if (this.request.fund.type === SwapAsset.BTC) {
             request.fund = {
                 type: SwapAsset.BTC,
-                inputs: this.request.fund.inputs,
-                recipientOutput: {
-                    address: btcHtlcData.address,
-                    value: this.request.fund.output.value,
-                },
-                changeOutput: this.request.fund.changeOutput,
+                htlcScript: Nimiq.BufferUtils.fromHex(btcHtlcData.script),
             };
         }
 
         if (this.request.redeem.type === SwapAsset.NIM) {
             request.redeem = {
                 type: SwapAsset.NIM,
-                sender: Nimiq.Address.fromUserFriendlyAddress(nimHtlcData.address).serialize(),
-                senderType: Nimiq.Account.Type.HTLC,
-                recipient: this.request.redeem.recipient.serialize(),
-                value: this.request.redeem.value,
-                fee: this.request.redeem.fee,
-                validityStartHeight: this.request.redeem.validityStartHeight,
-                data: this.request.redeem.extraData,
+                htlcData: nimHtlcByteArray,
+                htlcAddress: nimHtlcData.address,
             };
         }
 
@@ -170,7 +155,10 @@ export default class SetupSwapSuccess extends Vue {
             // BTC tx hash and output data
 
             // eslint-disable-next-line no-async-promise-executor
-            const { transaction, output } = await new Promise(async (resolve) => {
+            const { transaction, output } = await new Promise<{
+                transaction: BtcTransactionDetails,
+                output: PlainOutput,
+            }>(async (resolve) => {
                 function listener(tx: BtcTransactionDetails) {
                     const htlcOutput = tx.outputs.find((out) => out.address === btcHtlcData.address);
                     if (htlcOutput && htlcOutput.value === confirmedSwap.to.amount) {
@@ -204,15 +192,9 @@ export default class SetupSwapSuccess extends Vue {
 
             request.redeem = {
                 type: SwapAsset.BTC,
-                inputs: [{
-                    transactionHash: transaction.transactionHash,
-                    outputIndex: output.index,
-                    outputScript: output.script,
-                    value: this.request.redeem.input.value,
-                    witnessScript: btcHtlcData.script,
-                    type: BitcoinTransactionInputType.HTLC_REDEEM,
-                }],
-                changeOutput: this.request.redeem.output,
+                htlcScript: Nimiq.BufferUtils.fromHex(btcHtlcData.script),
+                transactionHash: transaction.transactionHash,
+                outputIndex: output.index,
             };
         }
 

@@ -21,6 +21,7 @@ import staticStore, { Static } from '../lib/StaticStore';
 import { WalletInfo } from '../lib/WalletInfo';
 import { BtcAddressInfo } from '../lib/bitcoin/BtcAddressInfo';
 import { SwapAsset } from '@nimiq/fastspot-api';
+import { ERROR_CANCELED } from '@/lib/Constants';
 
 @Component({components: {StatusScreen, SmallPage}})
 export default class SetupSwap extends Vue {
@@ -56,9 +57,11 @@ export default class SetupSwap extends Vue {
                 type: SwapAsset.NIM,
                 keyPath: signer.path,
                 sender: (senderContract || signer).address.serialize(),
+                senderType: senderContract ? senderContract.type : Nimiq.Account.Type.BASIC,
                 senderLabel: (senderContract || signer).label,
                 value: this.request.fund.value,
                 fee: this.request.fund.fee,
+                validityStartHeight: this.request.fund.validityStartHeight,
             };
         }
 
@@ -87,28 +90,12 @@ export default class SetupSwap extends Vue {
                 addressInfos[address] = addressInfo;
             }
 
-            const keyPaths = new Set<string>();
-
-            for (const input of this.request.fund.inputs) {
-                const addressInfo = addressInfos[input.address];
-                if (!addressInfo) {
-                    this.$rpc.reject(new Error(`Input address not found: ${input.address}`));
-                    return;
-                }
-
-                keyPaths.add(addressInfo.path);
+            // Validate that we own the refund address
+            const refundAddressInfo = addressInfos[this.request.fund.refundAddress];
+            if (!refundAddressInfo) {
+                this.$rpc.reject(new Error(`Refund address not found: ${this.request.fund.refundAddress}`));
+                return;
             }
-
-            const inputValue = this.request.fund.inputs.reduce((sum, input) => sum + input.value, 0);
-            const outputValue = this.request.fund.output.value;
-            const changeOutputValue = this.request.fund.changeOutput ? this.request.fund.changeOutput.value : 0;
-
-            request.fund = {
-                type: SwapAsset.BTC,
-                keyPaths: [...keyPaths],
-                value: outputValue,
-                fee: inputValue - outputValue - changeOutputValue,
-            };
 
             // Validate that we own the change address
             if (this.request.fund.changeOutput) {
@@ -120,12 +107,28 @@ export default class SetupSwap extends Vue {
                 }
             }
 
-            // Validate that we own the refund address
-            const refundAddressInfo = addressInfos[this.request.fund.refundAddress];
-            if (!refundAddressInfo) {
-                this.$rpc.reject(new Error(`Refund address not found: ${this.request.fund.refundAddress}`));
-                return;
-            }
+            request.fund = {
+                type: SwapAsset.BTC,
+                inputs: this.request.fund.inputs.map((input) => {
+                    const addressInfo = addressInfos[input.address];
+                    if (!addressInfo) {
+                        this.$rpc.reject(new Error(`Input address not found: ${input.address}`));
+                        throw ERROR_CANCELED;
+                    }
+                    return {
+                        ...input,
+                        keyPath: addressInfo.path,
+                    };
+                }),
+                recipientOutput: this.request.fund.output,
+                ...(this.request.fund.changeOutput ? {
+                    changeOutput: {
+                        ...this.request.fund.changeOutput,
+                        keyPath: addressInfos[this.request.fund.changeOutput.address]!.path,
+                    },
+                } : {}),
+                refundKeyPath: refundAddressInfo.path,
+            };
         }
 
         if (this.request.redeem.type === SwapAsset.NIM) {
@@ -147,6 +150,7 @@ export default class SetupSwap extends Vue {
                 recipientLabel: signer.label,
                 value: this.request.redeem.value,
                 fee: this.request.redeem.fee,
+                validityStartHeight: this.request.redeem.validityStartHeight,
             };
         }
 
@@ -162,16 +166,16 @@ export default class SetupSwap extends Vue {
                 return;
             }
 
-            const keyPaths = [addressInfo.path];
-
-            const inputValue = this.request.redeem.input.value;
-            const outputValue = this.request.redeem.output.value;
-
             request.redeem = {
                 type: SwapAsset.BTC,
-                keyPaths,
-                value: outputValue,
-                fee: inputValue - outputValue,
+                input: {
+                    ...this.request.redeem.input,
+                    keyPath: addressInfo.path,
+                },
+                output: {
+                    ...this.request.redeem.output,
+                    keyPath: addressInfo.path,
+                },
             };
         }
 
