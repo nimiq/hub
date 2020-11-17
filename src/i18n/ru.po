@@ -2,10 +2,11 @@
 # Translators:
 # Пётр Павлович <faentoad@gmail.com>, 2020
 # Vad <vjuruss@gmail.com>, 2020
+# Daniel, 2020
 # 
 msgid ""
 msgstr ""
-"Last-Translator: Vad <vjuruss@gmail.com>, 2020\n"
+"Last-Translator: Daniel, 2020\n"
 "Language-Team: Russian (https://www.transifex.com/nimiq-foundation/teams/107400/ru/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: ru\n"
@@ -951,9 +952,7 @@ msgstr "Обновление ваших балансов"
 msgid ""
 "Use your Login File\n"
 "or Recovery Words."
-msgstr ""
-"Используйте Файл Авторизации\n"
-"или Защитную Фразу."
+msgstr "Используйте Файл Авторизации или Защитную Фразу."
 
 #: src/views/LoginSuccess.vue:169 src/views/SignupLedger.vue:124
 msgid "Used addresses without balance might have been missed."
