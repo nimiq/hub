@@ -7,7 +7,7 @@
                 :status="status"
                 :lightBlue="!isLedgerAccount"
                 :mainAction="action"
-                @main-action="resolve"
+                @main-action="_reload"
                 :message="message" />
         </SmallPage>
 
@@ -42,8 +42,6 @@ export default class ActivateBitcoinSuccess extends Vue {
     private action: string = '';
     private isLedgerAccount: boolean = false;
     private isGlobalCloseHidden: boolean = false;
-    private receiptsError: Error | null = null;
-    private resolve = () => {}; // tslint:disable-line:no-empty
 
     private async created() {
         const walletInfo = this.findWallet(this.request.walletId);
@@ -60,20 +58,21 @@ export default class ActivateBitcoinSuccess extends Vue {
             this.status = this.$root.$t('Syncing with Bitcoin network...') as string;
         }
 
-        const btcAddresses = await WalletInfoCollector.detectBitcoinAddresses(this.keyguardResult.bitcoinXPub);
+        let btcAddresses;
+        try {
+            btcAddresses = await WalletInfoCollector.detectBitcoinAddresses(this.keyguardResult.bitcoinXPub);
+        } catch (e) {
+            this.state = StatusScreen.State.ERROR;
+            this.title = this.$t('Syncing Failed') as string;
+            this.message = this.$t('Syncing with Bitcoin network failed: {error}', { error: e.message || e }) as string;
+            this.action = this.$t('Retry') as string;
+            return;
+        }
 
         walletInfo.btcXPub = this.keyguardResult.bitcoinXPub;
         walletInfo.btcAddresses = btcAddresses;
 
         WalletStore.Instance.put(walletInfo);
-
-        // if (this.receiptsError) {
-        //     this.title = this.$t('Your Addresses may be\nincomplete.') as string;
-        //     this.state = StatusScreen.State.WARNING;
-        //     this.message = this.$t('Used addresses without balance might have been missed.') as string;
-        //     this.action = this.$t('Continue') as string;
-        //     await new Promise((resolve) => { this.resolve = resolve; });
-        // }
 
         const result = walletInfo.toAccountType();
 
@@ -90,6 +89,10 @@ export default class ActivateBitcoinSuccess extends Vue {
             this.isGlobalCloseHidden = true;
             this.status = this.$root.$t('Syncing with Bitcoin network...') as string;
         });
+    }
+
+    private _reload() {
+        window.location.reload();
     }
 }
 </script>

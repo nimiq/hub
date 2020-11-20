@@ -169,7 +169,7 @@ msgstr ""
 msgid "Balance:"
 msgstr ""
 
-#: src/views/ActivateBitcoinSuccess.vue:80
+#: src/views/ActivateBitcoinSuccess.vue:79
 msgid "Bitcoin activated"
 msgstr ""
 
@@ -768,6 +768,10 @@ msgstr ""
 msgid "Retrieving your old accounts..."
 msgstr ""
 
+#: src/views/ActivateBitcoinSuccess.vue:68
+msgid "Retry"
+msgstr ""
+
 #: src/views/Rename.vue:18
 msgid "Save"
 msgstr ""
@@ -842,8 +846,16 @@ msgstr ""
 msgid "Syncing consensus..."
 msgstr ""
 
-#: src/views/ActivateBitcoinSuccess.vue:60
-#: src/views/ActivateBitcoinSuccess.vue:91
+#: src/views/ActivateBitcoinSuccess.vue:66
+msgid "Syncing Failed"
+msgstr ""
+
+#: src/views/ActivateBitcoinSuccess.vue:67
+msgid "Syncing with Bitcoin network failed: {error}"
+msgstr ""
+
+#: src/views/ActivateBitcoinSuccess.vue:58
+#: src/views/ActivateBitcoinSuccess.vue:90
 #: src/views/RefundSwap.vue:6
 #: src/views/SetupSwap.vue:6
 #: src/views/SignBtcTransaction.vue:6

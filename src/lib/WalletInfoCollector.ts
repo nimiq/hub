@@ -28,7 +28,7 @@ import {
     NESTED_SEGWIT,
     NATIVE_SEGWIT,
 } from './bitcoin/BitcoinConstants';
-import { getBtcNetwork, publicKeyToPayment, deriveAddressesFromXPub } from './bitcoin/BitcoinUtils';
+import { getBtcNetwork, publicKeyToPayment } from './bitcoin/BitcoinUtils';
 
 export type BasicAccountInfo = {
     address: string,
@@ -118,7 +118,6 @@ export default class WalletInfoCollector {
         };
     }
 
-    // TODO: Also return a potential receipt error
     public static async detectBitcoinAddresses(xpub: string, startIndex = 0): Promise<{
         internal: BtcAddressInfo[],
         external: BtcAddressInfo[],
@@ -329,6 +328,8 @@ export default class WalletInfoCollector {
                 ? (removeKey?: boolean) => WalletInfoCollector._keyguardClient!.releaseKey(keyId!, removeKey)
                 : undefined;
 
+            // Note that for Bitcoin we don't catch sync errors as receiptErrors which are only to be handled optionally
+            // but throw instead as for Bitcoin it is important to complete a full sync to avoid address re-use.
             const bitcoinAddresses = await bitcoinAddressesPromise;
             walletInfo.btcXPub = bitcoinXPub;
             walletInfo.btcAddresses = bitcoinAddresses;
