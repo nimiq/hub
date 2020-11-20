@@ -30,13 +30,18 @@
                 {{ $t('fee') }}
             </div>
 
-            <div class="bottom-container" :class="{ 'full-height': state === constructor.State.FINISHED }">
+            <div class="bottom-container" :class="{
+                'full-height': state === constructor.State.FINISHED || state === constructor.State.SYNCING_FAILED,
+            }">
                 <LedgerUi small></LedgerUi>
                 <transition name="transition-fade">
                     <StatusScreen v-if="state !== constructor.State.READY"
                         :state="statusScreenState"
                         :title="statusScreenTitle"
                         :status="statusScreenStatus"
+                        :message="statusScreenMessage"
+                        :mainAction="statusScreenAction"
+                        @main-action="_reload"
                         :small="state === constructor.State.SYNCING">
                     </StatusScreen>
                 </transition>
@@ -68,18 +73,21 @@ import { loadBitcoinJS } from '../lib/bitcoin/BitcoinJSLoader';
 import { getElectrumClient } from '../lib/bitcoin/ElectrumClient';
 
 // Import only types to avoid bundling of lazy-loaded BitcoinJS.
-type BitcoinJsTx = import('bitcoinjs-lib').Transaction;
+type BitcoinTransactionInput = import('@nimiq/keyguard-client').BitcoinTransactionInput;
+type BitcoinJsTransaction = import('bitcoinjs-lib').Transaction;
 
 @Component({components: {StatusScreen, SmallPage, PageHeader, Amount, GlobalClose, LedgerUi, LabelAvatar}})
 export default class SignBtcTransactionLedger extends SignBtcTransaction {
     private static readonly State = {
         SYNCING: 'syncing',
+        SYNCING_FAILED: 'syncing-failed',
         READY: 'ready',
         FINISHED: 'finished',
     };
 
     private state: string = SignBtcTransactionLedger.State.SYNCING;
     private fee!: number;
+    private syncError?: string;
     private _isDestroyed: boolean = false;
 
     protected async created() {
@@ -100,67 +108,50 @@ export default class SignBtcTransactionLedger extends SignBtcTransaction {
     }
 
     private get statusScreenState() {
-        return this.state === SignBtcTransactionLedger.State.FINISHED
-            ? StatusScreen.State.SUCCESS
-            : StatusScreen.State.LOADING;
+        switch (this.state) {
+            case SignBtcTransactionLedger.State.FINISHED: return StatusScreen.State.SUCCESS;
+            case SignBtcTransactionLedger.State.SYNCING_FAILED: return StatusScreen.State.ERROR;
+            default: return StatusScreen.State.LOADING;
+        }
     }
 
     private get statusScreenTitle() {
-        return this.state === SignBtcTransactionLedger.State.FINISHED ? this.$t('Transaction Signed') as string : '';
+        switch (this.state) {
+            case SignBtcTransactionLedger.State.FINISHED: return this.$t('Transaction Signed') as string;
+            case SignBtcTransactionLedger.State.SYNCING_FAILED: return this.$t('Syncing Failed') as string;
+            default: return '';
+        }
     }
 
     private get statusScreenStatus() {
-        return this.state === SignBtcTransactionLedger.State.SYNCING
-            ? this.$t('Syncing with Bitcoin network...') as string
-            : '';
+        if (this.state !== SignBtcTransactionLedger.State.SYNCING) return '';
+        return this.$t('Syncing with Bitcoin network...') as string;
+    }
+
+    private get statusScreenMessage() {
+        if (this.state !== SignBtcTransactionLedger.State.SYNCING_FAILED) return '';
+        return this.$t('Syncing with Bitcoin network failed: {error}', { error: this.syncError });
+    }
+
+    private get statusScreenAction() {
+        if (this.state !== SignBtcTransactionLedger.State.SYNCING_FAILED) return '';
+        return this.$t('Retry') as string;
     }
 
     protected async _signBtcTransaction(transactionInfo: BitcoinTransactionInfo, walletInfo: WalletInfo) {
-        const [electrum] = await Promise.all([
-            getElectrumClient(),
-            loadBitcoinJS(),
-        ]);
-        // note that buffer is marked as external module in vue.config.js and internally, the buffer bundled with
-        // BitcoinJS is used, therefore we retrieve it after having BitcoinJS loaded.
-        // TODO change this when we don't prebuild BitcoinJS anymore
-        const Buffer = await import('buffer').then((module) => module.Buffer);
+        const bitcoinJsPromise = loadBitcoinJS();
 
         // Fetch whole input transactions for computation of Ledger's trusted inputs
-        const inputTransactions: BitcoinJsTx[] = await Promise.all(transactionInfo.inputs.map(async (input) => {
-            const fetchedInput = await electrum.getTransaction(input.transactionHash);
-
-            const inputTransaction = new BitcoinJS.Transaction();
-            inputTransaction.version = fetchedInput.version;
-            inputTransaction.locktime = fetchedInput.locktime;
-
-            // note: index is the index of the input among the other inputs of this transaction, not the index among the
-            // other outputs of the previous transaction
-            const inputInputs = fetchedInput.inputs.sort((a, b) => a.index - b.index);
-            for (const { transactionHash: hashHex, outputIndex, script: scriptHex, sequence, witness } of inputInputs) {
-                // transaction hash string representation is reversed, see BitcoinJS.Transaction.getId
-                const hash = Buffer.from(hashHex, 'hex').reverse();
-                const script = Buffer.from(scriptHex, 'hex');
-                const index = inputTransaction.addInput(hash, outputIndex, sequence, script);
-
-                inputTransaction.setWitness(index, witness.map((w) => {
-                    if (typeof w === 'number') {
-                        // TODO this case can actually not happen, the type in the electrum-api is wrong
-                        const buffer = Buffer.alloc(1);
-                        buffer[0] = w;
-                        return buffer;
-                    }
-                    return Buffer.from(w, 'hex');
-                }));
-            }
-
-            const inputOutputs = fetchedInput.outputs.sort((a, b) => a.index - b.index);
-            for (const { value, script: scriptHex } of inputOutputs) {
-                const script = Buffer.from(scriptHex, 'hex');
-                inputTransaction.addOutput(script, value);
-            }
-
-            return inputTransaction;
-        }));
+        let inputTransactions: BitcoinJsTransaction[];
+        try {
+            inputTransactions = await Promise.all(
+                transactionInfo.inputs.map((input) => this._getInputTransaction(input)),
+            );
+        } catch (e) {
+            this.state = SignBtcTransactionLedger.State.SYNCING_FAILED;
+            this.syncError = e.message || e;
+            return;
+        }
 
         const inputs: LedgerBitcoinTransactionInfo['inputs'] = transactionInfo.inputs.map((input, i) => ({
             transaction: inputTransactions[i],
@@ -169,6 +160,7 @@ export default class SignBtcTransactionLedger extends SignBtcTransaction {
         }));
 
         // Prepare outputs and pre-calculate output scripts
+        await bitcoinJsPromise;
         const network = Config.bitcoinNetwork === BTC_NETWORK_TEST
             ? BitcoinJS.networks.testnet
             : BitcoinJS.networks.bitcoin;
@@ -223,6 +215,55 @@ export default class SignBtcTransactionLedger extends SignBtcTransaction {
         this.state = SignBtcTransactionLedger.State.FINISHED;
         await new Promise((resolve) => setTimeout(resolve, StatusScreen.SUCCESS_REDIRECT_DELAY));
         this.$rpc.resolve(result);
+    }
+
+    private async _getInputTransaction(input: BitcoinTransactionInput): Promise<BitcoinJsTransaction> {
+        const [electrum] = await Promise.all([
+            getElectrumClient(),
+            loadBitcoinJS(),
+        ]);
+        // note that buffer is marked as external module in vue.config.js and internally, the buffer bundled with
+        // BitcoinJS is used, therefore we retrieve it after having BitcoinJS loaded.
+        // TODO change this when we don't prebuild BitcoinJS anymore
+        const Buffer = await import('buffer').then((module) => module.Buffer);
+
+        const fetchedInput = await electrum.getTransaction(input.transactionHash);
+
+        const inputTransaction = new BitcoinJS.Transaction();
+        inputTransaction.version = fetchedInput.version;
+        inputTransaction.locktime = fetchedInput.locktime;
+
+        // note: index is the index of the input among the other inputs of this transaction, not the index among the
+        // other outputs of the previous transaction
+        const inputInputs = fetchedInput.inputs.sort((a, b) => a.index - b.index);
+        for (const { transactionHash: hashHex, outputIndex, script: scriptHex, sequence, witness } of inputInputs) {
+            // transaction hash string representation is reversed, see BitcoinJS.Transaction.getId
+            const hash = Buffer.from(hashHex, 'hex').reverse();
+            const script = Buffer.from(scriptHex, 'hex');
+            const index = inputTransaction.addInput(hash, outputIndex, sequence, script);
+
+            inputTransaction.setWitness(index, witness.map((w) => {
+                if (typeof w === 'number') {
+                    // TODO this case can actually not happen, the type in the electrum-api is wrong
+                    const buffer = Buffer.alloc(1);
+                    buffer[0] = w;
+                    return buffer;
+                }
+                return Buffer.from(w, 'hex');
+            }));
+        }
+
+        const inputOutputs = fetchedInput.outputs.sort((a, b) => a.index - b.index);
+        for (const { value, script: scriptHex } of inputOutputs) {
+            const script = Buffer.from(scriptHex, 'hex');
+            inputTransaction.addOutput(script, value);
+        }
+
+        return inputTransaction;
+    }
+
+    private _reload() {
+        window.location.reload();
     }
 }
 </script>
@@ -299,6 +340,7 @@ export default class SignBtcTransactionLedger extends SignBtcTransaction {
 
     .status-screen {
         transition: opacity .4s;
+        overflow: hidden;
     }
 
     .ledger-ui >>> .loading-spinner {
