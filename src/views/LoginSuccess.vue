@@ -50,55 +50,65 @@ export default class LoginSuccess extends Vue {
     private async mounted() {
         const collectionResults: WalletCollectionResultKeyguard[] = [];
 
-        await Promise.all(
-            this.keyguardResult.map(async (keyResult) => {
-                // The Keyguard always returns (at least) one derived Address,
-                const keyguardResultAccounts = keyResult.addresses.map((addressObj) => ({
-                    address: new Nimiq.Address(addressObj.address).toUserFriendlyAddress(),
-                    path: addressObj.keyPath,
-                }));
+        try {
+            await Promise.all(
+                this.keyguardResult.map(async (keyResult) => {
+                    // The Keyguard always returns (at least) one derived Address,
+                    const keyguardResultAccounts = keyResult.addresses.map((addressObj) => ({
+                        address: new Nimiq.Address(addressObj.address).toUserFriendlyAddress(),
+                        path: addressObj.keyPath,
+                    }));
 
-                let tryCount = 0;
-                while (true) {
-                    try {
-                        tryCount += 1;
-                        let collectionResult: WalletCollectionResultKeyguard;
-                        if (keyResult.keyType === WalletType.BIP39) {
-                            collectionResult = await WalletInfoCollector.collectBip39WalletInfo(
-                                keyResult.keyId,
-                                keyguardResultAccounts,
-                                this.onUpdate.bind(this),
-                                this.keyguardResult.length === 1,
-                                keyResult.bitcoinXPub,
-                            );
-                        } else {
-                            collectionResult = await WalletInfoCollector.collectLegacyWalletInfo(
-                                keyResult.keyId,
-                                keyguardResultAccounts[0],
-                                this.onUpdate.bind(this),
-                                this.keyguardResult.length === 1,
-                            );
+                    let tryCount = 0;
+                    while (true) {
+                        try {
+                            tryCount += 1;
+                            let collectionResult: WalletCollectionResultKeyguard;
+                            if (keyResult.keyType === WalletType.BIP39) {
+                                collectionResult = await WalletInfoCollector.collectBip39WalletInfo(
+                                    keyResult.keyId,
+                                    keyguardResultAccounts,
+                                    this.onUpdate.bind(this),
+                                    this.keyguardResult.length === 1,
+                                    keyResult.bitcoinXPub,
+                                );
+                            } else {
+                                collectionResult = await WalletInfoCollector.collectLegacyWalletInfo(
+                                    keyResult.keyId,
+                                    keyguardResultAccounts[0],
+                                    this.onUpdate.bind(this),
+                                    this.keyguardResult.length === 1,
+                                );
+                            }
+
+                            if (collectionResult.receiptsError) {
+                                this.receiptsError = collectionResult.receiptsError;
+                            }
+
+                            collectionResult.walletInfo.fileExported = collectionResult.walletInfo.fileExported
+                                || keyResult.fileExported;
+                            collectionResult.walletInfo.wordsExported = collectionResult.walletInfo.wordsExported
+                                || keyResult.wordsExported;
+
+                            collectionResults.push(collectionResult);
+
+                            break;
+                        } catch (e) {
+                            this.status = this.$root.$t('Address detection failed. Retrying...') as string;
+                            if (tryCount >= 5) throw e;
                         }
-
-                        if (collectionResult.receiptsError) {
-                            this.receiptsError = collectionResult.receiptsError;
-                        }
-
-                        collectionResult.walletInfo.fileExported = collectionResult.walletInfo.fileExported
-                            || keyResult.fileExported;
-                        collectionResult.walletInfo.wordsExported = collectionResult.walletInfo.wordsExported
-                            || keyResult.wordsExported;
-
-                        collectionResults.push(collectionResult);
-
-                        break;
-                    } catch (e) {
-                        this.status = this.$root.$t('Address detection failed. Retrying...') as string;
-                        if (tryCount >= 5) throw e;
                     }
-                }
-            }),
-        );
+                }),
+            );
+        } catch (e) {
+            this.state = StatusScreen.State.ERROR;
+            this.title = this.$t('Fetching Addresses Failed') as string;
+            this.message = this.$t('Syncing with the network failed: {error}', { error: e.message || e }) as string;
+            this.action = this.$t('Retry') as string;
+            await new Promise((resolve) => { this.resolve = resolve; });
+            window.location.reload();
+            return;
+        }
 
         // In case there is only one returned Account it is always added.
         let keepWalletCondition: (collectionResult: WalletCollectionResultKeyguard) => boolean = () => true;
