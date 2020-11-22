@@ -125,9 +125,6 @@ const store: StoreOptions<RootState> = {
                 return contract.address.toUserFriendlyAddress() === address;
             }));
         },
-        findWalletByBtcAddress: (state) => (address: string): WalletInfo | undefined => {
-            return state.wallets.find((wallet) => wallet.findBtcAddressInfo(address));
-        },
         findWalletByKeyId: (state) => (keyId: string): WalletInfo | undefined => {
             return state.wallets.find((wallet) => wallet.keyId === keyId);
         },

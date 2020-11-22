@@ -8,7 +8,6 @@ import {
     ParsedSignMessageRequest,
     ParsedSignTransactionRequest,
     ParsedSimpleRequest,
-    ParsedSignBtcTransactionRequest,
     ParsedSetupSwapRequest,
 } from './RequestTypes';
 import { RequestParser } from './RequestParser';
@@ -288,6 +287,8 @@ export default class RpcApi {
         if (request) {
             let accountRequired: boolean | undefined;
             let errorMsg = 'Address not found'; // Error message for all cases but the first
+            // Note that we don't check for btc addresses here. Instead, btc request handlers check whether the address
+            // can be derived.
             if ((request as ParsedSimpleRequest).walletId) {
                 accountRequired = true;
                 account = await WalletStore.Instance.get((request as ParsedSimpleRequest).walletId);
@@ -296,10 +297,6 @@ export default class RpcApi {
                 accountRequired = true;
                 const address = (request as ParsedSignTransactionRequest).sender;
                 account = this._store.getters.findWalletByAddress(address.toUserFriendlyAddress(), true);
-            // } else if (requestType === RequestType.SIGN_BTC_TRANSACTION) {
-            //     accountRequired = true;
-            //     const btcAddress = (request as ParsedSignBtcTransactionRequest).inputs[0].address;
-            //     account = this._store.getters.findWalletByBtcAddress(btcAddress);
             } else if (requestType === RequestType.SIGN_MESSAGE) {
                 accountRequired = false; // Sign message allows user to select an account
                 const address = (request as ParsedSignMessageRequest).signer;

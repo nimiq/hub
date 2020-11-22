@@ -485,7 +485,7 @@ msgstr ""
 #: src/components/LedgerUi.vue:221
 #: src/views/ActivateBitcoinSuccess.vue:39
 #: src/views/LoginSuccess.vue:42
-#: src/views/SignBtcTransaction.vue:5
+#: src/views/SignBtcTransaction.vue:115
 #: src/views/SignupLedger.vue:104
 msgid "Fetching your Addresses"
 msgstr ""
@@ -775,7 +775,7 @@ msgstr ""
 
 #: src/views/ActivateBitcoinSuccess.vue:68
 #: src/views/LoginSuccess.vue:107
-#: src/views/SignBtcTransactionLedger.vue:138
+#: src/views/SignBtcTransaction.vue:133
 #: src/views/SignupLedger.vue:145
 msgid "Retry"
 msgstr ""
@@ -855,12 +855,13 @@ msgid "Syncing consensus..."
 msgstr ""
 
 #: src/views/ActivateBitcoinSuccess.vue:66
-#: src/views/SignBtcTransactionLedger.vue:121
+#: src/views/SignBtcTransaction.vue:116
+#: src/views/SignBtcTransactionLedger.vue:120
 msgid "Syncing Failed"
 msgstr ""
 
 #: src/views/ActivateBitcoinSuccess.vue:67
-#: src/views/SignBtcTransactionLedger.vue:133
+#: src/views/SignBtcTransaction.vue:128
 msgid "Syncing with Bitcoin network failed: {error}"
 msgstr ""
 
@@ -868,8 +869,7 @@ msgstr ""
 #: src/views/ActivateBitcoinSuccess.vue:90
 #: src/views/RefundSwap.vue:6
 #: src/views/SetupSwap.vue:6
-#: src/views/SignBtcTransaction.vue:6
-#: src/views/SignBtcTransactionLedger.vue:128
+#: src/views/SignBtcTransaction.vue:123
 msgid "Syncing with Bitcoin network..."
 msgstr ""
 
@@ -949,7 +949,7 @@ msgstr ""
 msgid "Transaction Sent"
 msgstr ""
 
-#: src/views/SignBtcTransactionLedger.vue:120
+#: src/views/SignBtcTransactionLedger.vue:119
 #: src/views/SignTransactionLedger.vue:443
 msgid "Transaction Signed"
 msgstr ""

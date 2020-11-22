@@ -78,16 +78,15 @@ type BitcoinJsTransaction = import('bitcoinjs-lib').Transaction;
 
 @Component({components: {StatusScreen, SmallPage, PageHeader, Amount, GlobalClose, LedgerUi, LabelAvatar}})
 export default class SignBtcTransactionLedger extends SignBtcTransaction {
-    private static readonly State = {
-        SYNCING: 'syncing',
-        SYNCING_FAILED: 'syncing-failed',
+    protected static readonly State = {
+        ...SignBtcTransaction.State,
         READY: 'ready',
         FINISHED: 'finished',
     };
 
-    private state: string = SignBtcTransactionLedger.State.SYNCING;
+    // different than in parent class we always have to sync for fetching trusted inputs
+    protected state: string = SignBtcTransactionLedger.State.SYNCING;
     private fee!: number;
-    private syncError?: string;
     private _isDestroyed: boolean = false;
 
     protected async created() {
@@ -107,7 +106,7 @@ export default class SignBtcTransactionLedger extends SignBtcTransaction {
         );
     }
 
-    private get statusScreenState() {
+    protected get statusScreenState() {
         switch (this.state) {
             case SignBtcTransactionLedger.State.FINISHED: return StatusScreen.State.SUCCESS;
             case SignBtcTransactionLedger.State.SYNCING_FAILED: return StatusScreen.State.ERROR;
@@ -115,27 +114,12 @@ export default class SignBtcTransactionLedger extends SignBtcTransaction {
         }
     }
 
-    private get statusScreenTitle() {
+    protected get statusScreenTitle() {
         switch (this.state) {
             case SignBtcTransactionLedger.State.FINISHED: return this.$t('Transaction Signed') as string;
             case SignBtcTransactionLedger.State.SYNCING_FAILED: return this.$t('Syncing Failed') as string;
             default: return '';
         }
-    }
-
-    private get statusScreenStatus() {
-        if (this.state !== SignBtcTransactionLedger.State.SYNCING) return '';
-        return this.$t('Syncing with Bitcoin network...') as string;
-    }
-
-    private get statusScreenMessage() {
-        if (this.state !== SignBtcTransactionLedger.State.SYNCING_FAILED) return '';
-        return this.$t('Syncing with Bitcoin network failed: {error}', { error: this.syncError });
-    }
-
-    private get statusScreenAction() {
-        if (this.state !== SignBtcTransactionLedger.State.SYNCING_FAILED) return '';
-        return this.$t('Retry') as string;
     }
 
     protected async _signBtcTransaction(transactionInfo: BitcoinTransactionInfo, walletInfo: WalletInfo) {
@@ -144,6 +128,7 @@ export default class SignBtcTransactionLedger extends SignBtcTransaction {
         // Fetch whole input transactions for computation of Ledger's trusted inputs
         let inputTransactions: BitcoinJsTransaction[];
         try {
+            this.state = SignBtcTransactionLedger.State.SYNCING;
             inputTransactions = await Promise.all(
                 transactionInfo.inputs.map((input) => this._getInputTransaction(input)),
             );
@@ -260,10 +245,6 @@ export default class SignBtcTransactionLedger extends SignBtcTransaction {
         }
 
         return inputTransaction;
-    }
-
-    private _reload() {
-        window.location.reload();
     }
 }
 </script>
