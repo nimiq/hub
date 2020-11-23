@@ -2,10 +2,14 @@
     <div class="container pad-bottom">
         <SmallPage>
             <StatusScreen
-                :title="$t('Preparing Swap')"
-                :status="$t('Signing transactions...')"
-                state="loading"
-                :lightBlue="true" />
+                :state="statusScreenState"
+                :title="statusScreenTitle"
+                :status="statusScreenStatus"
+                :message="statusScreenMessage"
+                :mainAction="statusScreenAction"
+                @main-action="_reload"
+                lightBlue
+            />
         </SmallPage>
         <Network ref="network" :visible="false"/>
     </div>
@@ -38,13 +42,24 @@ import { getElectrumClient } from '../lib/bitcoin/ElectrumClient';
 
 @Component({components: {Network, SmallPage, StatusScreen}})
 export default class SetupSwapSuccess extends Vue {
+    private static State = {
+        FETCHING_SWAP_DATA: 'fetching-swap-data',
+        FETCHING_SWAP_DATA_FAILED: 'fetching-swap-data-failed',
+        SYNCING: 'syncing',
+        SYNCING_FAILED: 'syncing-failed',
+        SIGNING_TRANSACTIONS: 'signing-transactions',
+    };
+
     @Static private request!: ParsedSetupSwapRequest;
     // @State private keyguardResult!: KeyguardClient.SignSwapResult;
     @Getter private findWalletByAddress!: (address: string) => WalletInfo | undefined;
 
+    private state: string = SetupSwapSuccess.State.FETCHING_SWAP_DATA;
+    private error?: string;
+
     private async mounted() {
         // Confirm swap to Fastspot and get contract details
-
+        this.state = SetupSwapSuccess.State.FETCHING_SWAP_DATA;
         initFastspotApi(Config.fastspot.apiEndpoint, Config.fastspot.apiKey);
 
         let confirmedSwap: Swap;
@@ -74,7 +89,8 @@ export default class SetupSwapSuccess extends Vue {
             console.debug('Swap:', confirmedSwap);
         } catch (error) {
             console.error(error);
-            this.$rpc.reject(error);
+            this.state = SetupSwapSuccess.State.FETCHING_SWAP_DATA_FAILED;
+            this.error = error;
             return;
         }
 
@@ -157,45 +173,58 @@ export default class SetupSwapSuccess extends Vue {
             // Fetch missing info from the blockchain
             // BTC tx hash and output data
 
-            // eslint-disable-next-line no-async-promise-executor
-            const { transaction, output } = await new Promise<{
-                transaction: BtcTransactionDetails,
-                output: PlainOutput,
-            }>(async (resolve) => {
-                function listener(tx: BtcTransactionDetails) {
-                    const htlcOutput = tx.outputs.find((out) => out.address === btcHtlcData.address);
-                    if (htlcOutput && htlcOutput.value === confirmedSwap.to.amount) {
-                        resolve({
-                            transaction: tx,
-                            output: htlcOutput,
-                        });
-                        return true;
+            try {
+                this.state = SetupSwapSuccess.State.SYNCING;
+                const { transaction, output } = await new Promise<{
+                    transaction: BtcTransactionDetails,
+                    output: PlainOutput,
+                }>(async (resolve, reject) => {
+                    function listener(tx: BtcTransactionDetails) {
+                        const htlcOutput = tx.outputs.find((out) => out.address === btcHtlcData.address);
+                        if (htlcOutput && htlcOutput.value === confirmedSwap.to.amount) {
+                            resolve({
+                                transaction: tx,
+                                output: htlcOutput,
+                            });
+                            return true;
+                        }
+                        return false;
                     }
-                    return false;
-                }
 
-                const electrum = await getElectrumClient();
+                    try {
+                        const electrum = await getElectrumClient();
 
-                // First check history
-                const history = await electrum.getTransactionsByAddress(btcHtlcData.address);
-                for (const tx of history) {
-                    if (listener(tx)) return;
-                }
+                        // First check history
+                        const history = await electrum.getTransactionsByAddress(btcHtlcData.address);
 
-                // Then subscribe to new transactions
-                electrum.addTransactionListener(listener, [btcHtlcData.address]);
-            });
+                        for (const tx of history) {
+                            if (listener(tx)) return;
+                        }
 
-            request.redeem = {
-                type: SwapAsset.BTC,
-                htlcScript: Nimiq.BufferUtils.fromHex(btcHtlcData.script),
-                transactionHash: transaction.transactionHash,
-                outputIndex: output.index,
-            };
+                        // Then subscribe to new transactions
+                        electrum.addTransactionListener(listener, [btcHtlcData.address]);
+                    } catch (error) {
+                        reject(error);
+                    }
+                });
+
+                request.redeem = {
+                    type: SwapAsset.BTC,
+                    htlcScript: Nimiq.BufferUtils.fromHex(btcHtlcData.script),
+                    transactionHash: transaction.transactionHash,
+                    outputIndex: output.index,
+                };
+            } catch (error) {
+                console.error(error);
+                this.state =  SetupSwapSuccess.State.SYNCING_FAILED;
+                this.error = error;
+                return;
+            }
         }
 
         // Sign transactions via Keyguard iframe
 
+        this.state = SetupSwapSuccess.State.SIGNING_TRANSACTIONS;
         const client = this.$rpc.createKeyguardClient();
         let keyguardResult: KeyguardClient.SignSwapTransactionsResult;
         try {
@@ -270,6 +299,57 @@ export default class SetupSwapSuccess extends Vue {
         };
 
         this.$rpc.resolve(result);
+    }
+
+    private get statusScreenState(): StatusScreen.State {
+        if (this.state === SetupSwapSuccess.State.FETCHING_SWAP_DATA_FAILED
+            || this.state === SetupSwapSuccess.State.SYNCING_FAILED) return StatusScreen.State.ERROR;
+        return StatusScreen.State.LOADING;
+    }
+
+    private get statusScreenTitle() {
+        switch (this.state) {
+            case SetupSwapSuccess.State.FETCHING_SWAP_DATA_FAILED:
+                return this.$t('Fetching Swap Data Failed') as string;
+            case SetupSwapSuccess.State.SYNCING_FAILED:
+                return this.$t('Syncing Failed') as string;
+            default:
+                return this.$t('Preparing Swap') as string;
+        }
+    }
+
+    private get statusScreenStatus() {
+        switch (this.state) {
+            case SetupSwapSuccess.State.FETCHING_SWAP_DATA:
+                return this.$t('Fetching swap data...') as string;
+            case SetupSwapSuccess.State.SYNCING:
+                return this.$t('Syncing with Bitcoin network...') as string;
+            case SetupSwapSuccess.State.SIGNING_TRANSACTIONS:
+                return this.$t('Signing transactions...') as string;
+            default:
+                return '';
+        }
+    }
+
+    private get statusScreenMessage() {
+        switch (this.state) {
+            case SetupSwapSuccess.State.FETCHING_SWAP_DATA_FAILED:
+                return this.$t('Fetching swap data failed: {error}', { error: this.error });
+            case SetupSwapSuccess.State.SYNCING_FAILED:
+                return this.$t('Syncing with Bitcoin network failed: {error}', { error: this.error });
+            default:
+                return '';
+        }
+    }
+
+    private get statusScreenAction() {
+        if (this.state !== SetupSwapSuccess.State.FETCHING_SWAP_DATA_FAILED
+            && this.state !== SetupSwapSuccess.State.SYNCING_FAILED) return '';
+        return this.$t('Retry') as string;
+    }
+
+    private _reload() {
+        window.location.reload();
     }
 }
 </script>
