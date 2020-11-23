@@ -489,13 +489,10 @@ msgstr ""
 msgid "Fetching swap data..."
 msgstr ""
 
-#: src/views/RefundSwap.vue:5
-msgid "Fetching your addresses"
-msgstr ""
-
 #: src/components/LedgerUi.vue:221
 #: src/views/ActivateBitcoinSuccess.vue:39
 #: src/views/LoginSuccess.vue:42
+#: src/views/RefundSwap.vue:135
 #: src/views/SetupSwap.vue:219
 #: src/views/SignBtcTransaction.vue:115
 #: src/views/SignupLedger.vue:104
@@ -787,6 +784,7 @@ msgstr ""
 
 #: src/views/ActivateBitcoinSuccess.vue:68
 #: src/views/LoginSuccess.vue:107
+#: src/views/RefundSwap.vue:153
 #: src/views/SetupSwap.vue:237
 #: src/views/SetupSwapSuccess.vue:348
 #: src/views/SignBtcTransaction.vue:133
@@ -869,6 +867,7 @@ msgid "Syncing consensus..."
 msgstr ""
 
 #: src/views/ActivateBitcoinSuccess.vue:66
+#: src/views/RefundSwap.vue:136
 #: src/views/SetupSwap.vue:220
 #: src/views/SetupSwapSuccess.vue:315
 #: src/views/SignBtcTransaction.vue:116
@@ -877,6 +876,7 @@ msgid "Syncing Failed"
 msgstr ""
 
 #: src/views/ActivateBitcoinSuccess.vue:67
+#: src/views/RefundSwap.vue:148
 #: src/views/SetupSwap.vue:232
 #: src/views/SetupSwapSuccess.vue:339
 #: src/views/SignBtcTransaction.vue:128
@@ -885,7 +885,7 @@ msgstr ""
 
 #: src/views/ActivateBitcoinSuccess.vue:58
 #: src/views/ActivateBitcoinSuccess.vue:90
-#: src/views/RefundSwap.vue:6
+#: src/views/RefundSwap.vue:143
 #: src/views/SetupSwap.vue:227
 #: src/views/SetupSwapSuccess.vue:326
 #: src/views/SignBtcTransaction.vue:123

@@ -1,11 +1,15 @@
 <template>
-    <div v-if="derivingAddresses" class="container pad-bottom">
+    <div v-if="state !== constructor.State.NONE" class="container pad-bottom">
         <SmallPage>
             <StatusScreen
-                :title="$t('Fetching your addresses')"
-                :status="$t('Syncing with Bitcoin network...')"
-                state="loading"
-                :lightBlue="true" />
+                :state="statusScreenState"
+                :title="statusScreenTitle"
+                :status="statusScreenStatus"
+                :message="statusScreenMessage"
+                :mainAction="statusScreenAction"
+                @main-action="_reload"
+                lightBlue
+            />
         </SmallPage>
     </div>
 </template>
@@ -20,15 +24,21 @@ import StatusScreen from '../components/StatusScreen.vue';
 import { ParsedRefundSwapRequest } from '../lib/RequestTypes';
 import { Static } from '../lib/StaticStore';
 import { WalletInfo } from '../lib/WalletInfo';
-import { BtcAddressInfo } from '../lib/bitcoin/BtcAddressInfo';
 import { SwapAsset } from '@nimiq/fastspot-api';
 
 @Component({components: {StatusScreen, SmallPage}})
-export default class SetupSwap extends Vue {
+export default class RefundSwap extends Vue {
+    private static State = {
+        NONE: 'none',
+        SYNCING: 'syncing',
+        SYNCING_FAILED: 'syncing-failed',
+    };
+
     @Static private request!: ParsedRefundSwapRequest;
     @Getter private findWallet!: (id: string) => WalletInfo | undefined;
 
-    private derivingAddresses = false;
+    private state: string = RefundSwap.State.NONE;
+    private syncError?: string;
 
     public async created() {
         // Forward user through Hub to Keyguard
@@ -62,28 +72,34 @@ export default class SetupSwap extends Vue {
         }
 
         if (this.request.refund.type === SwapAsset.BTC) {
-            let hasDerivedAddresses = false;
-            let addressInfo = await account.findBtcAddressInfo(this.request.refund.refundAddress);
-            if (addressInfo instanceof Promise) {
-                this.derivingAddresses = true;
-                hasDerivedAddresses = true;
-                addressInfo = await addressInfo;
-                this.derivingAddresses = false;
-            }
-            if (!addressInfo) {
-                this.$rpc.reject(new Error(`Refund address not found: ${this.request.refund.refundAddress}`));
-                return;
-            }
+            let inputKeyPath: string;
+            try {
+                // Note that the sync state will only be visible in UI if the sync is not instant (if we actually sync)
+                this.state = RefundSwap.State.SYNCING;
 
-            let outputAddressInfo = await account.findBtcAddressInfo(this.request.refund.output.address,
-                !hasDerivedAddresses);
-            if (outputAddressInfo instanceof Promise) {
-                this.derivingAddresses = true;
-                outputAddressInfo = await outputAddressInfo;
-                this.derivingAddresses = false;
-            }
-            if (!outputAddressInfo) {
-                this.$rpc.reject(new Error(`Output address not found: ${this.request.refund.output.address}`));
+                let didDeriveAddresses = false;
+                let addressInfo = account.findBtcAddressInfo(this.request.refund.refundAddress);
+                if (addressInfo instanceof Promise) {
+                    didDeriveAddresses = true;
+                    addressInfo = await addressInfo;
+                }
+                if (!addressInfo) {
+                    this.$rpc.reject(new Error(`Refund address not found: ${this.request.refund.refundAddress}`));
+                    return;
+                }
+                inputKeyPath = addressInfo.path;
+
+                const outputAddressInfo = await account.findBtcAddressInfo(this.request.refund.output.address,
+                    !didDeriveAddresses);
+                if (!outputAddressInfo) {
+                    this.$rpc.reject(new Error(`Output address not found: ${this.request.refund.output.address}`));
+                    return;
+                }
+
+                this.state = RefundSwap.State.NONE;
+            } catch (e) {
+                this.state = RefundSwap.State.SYNCING_FAILED;
+                this.syncError = e.message || e;
                 return;
             }
 
@@ -95,7 +111,7 @@ export default class SetupSwap extends Vue {
 
                 inputs: [{
                     ...this.request.refund.input,
-                    keyPath: addressInfo.path,
+                    keyPath: inputKeyPath,
                     type: BitcoinTransactionInputType.HTLC_REFUND,
                 }],
                 recipientOutput: {
@@ -107,6 +123,38 @@ export default class SetupSwap extends Vue {
             const client = this.$rpc.createKeyguardClient(true);
             client.signBtcTransaction(request);
         }
+    }
+
+    private get statusScreenState(): StatusScreen.State {
+        if (this.state === RefundSwap.State.SYNCING_FAILED) return StatusScreen.State.ERROR;
+        return StatusScreen.State.LOADING;
+    }
+
+    private get statusScreenTitle() {
+        switch (this.state) {
+            case RefundSwap.State.SYNCING: return this.$t('Fetching your Addresses') as string;
+            case RefundSwap.State.SYNCING_FAILED: return this.$t('Syncing Failed') as string;
+            default: return '';
+        }
+    }
+
+    private get statusScreenStatus() {
+        if (this.state !== RefundSwap.State.SYNCING) return '';
+        return this.$t('Syncing with Bitcoin network...') as string;
+    }
+
+    private get statusScreenMessage() {
+        if (this.state !== RefundSwap.State.SYNCING_FAILED) return '';
+        return this.$t('Syncing with Bitcoin network failed: {error}', { error: this.syncError });
+    }
+
+    private get statusScreenAction() {
+        if (this.state !== RefundSwap.State.SYNCING_FAILED) return '';
+        return this.$t('Retry') as string;
+    }
+
+    private _reload() {
+        window.location.reload();
     }
 }
 </script>
