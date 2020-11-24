@@ -257,6 +257,7 @@ export class RequestParser {
             case RequestType.CHOOSE_ADDRESS:
             case RequestType.LOGIN:
             case RequestType.MIGRATE:
+            case RequestType.ADD_VESTING_CONTRACT:
                 return {
                     kind: requestType,
                     appName: request.appName,
@@ -599,6 +600,7 @@ export class RequestParser {
             case RequestType.CHOOSE_ADDRESS:
             case RequestType.LOGIN:
             case RequestType.MIGRATE:
+            case RequestType.ADD_VESTING_CONTRACT:
                 return {
                     appName: request.appName,
                 } as BasicRequest;

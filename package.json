@@ -25,7 +25,7 @@
         "@nimiq/iqons": "^1.5.2",
         "@nimiq/keyguard-client": "^1.4.0",
         "@nimiq/ledger-api": "^2.0.0",
-        "@nimiq/network-client": "^0.4.0",
+        "@nimiq/network-client": "^0.6.2",
         "@nimiq/rpc": "^0.4.1",
         "@nimiq/style": "^0.8.2",
         "@nimiq/utils": "^0.5.0",

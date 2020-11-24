@@ -62,12 +62,20 @@ msgstr ""
 msgid "Add a message..."
 msgstr ""
 
+#: src/views/AddVestingContract.vue:51
+msgid "Add contract"
+msgstr ""
+
 #: src/views/AddAccountSelection.vue:4
 msgid "Add to account"
 msgstr ""
 
 #: src/views/AddAddressLedger.vue:11
 msgid "Add to Ledger"
+msgstr ""
+
+#: src/views/AddVestingContract.vue:4
+msgid "Add Vesting Contract"
 msgstr ""
 
 #: src/views/AddAddressLedger.vue:16
@@ -85,6 +93,10 @@ msgstr ""
 #: src/components/BitcoinCheckoutCard.vue:26
 #: src/components/EthereumCheckoutCard.vue:25
 msgid "Amount"
+msgstr ""
+
+#: src/views/AddVestingContract.vue:40
+msgid "Amount/Step:"
 msgstr ""
 
 #: src/views/CashlinkManage.vue:158
@@ -153,8 +165,16 @@ msgstr ""
 msgid "Backed Up"
 msgstr ""
 
+#: src/views/AddVestingContract.vue:28
+msgid "Balance:"
+msgstr ""
+
 #: src/views/ActivateBitcoinSuccess.vue:80
 msgid "Bitcoin activated"
+msgstr ""
+
+#: src/views/AddVestingContract.vue:36
+msgid "Blocks/Step:"
 msgstr ""
 
 #: src/lib/LabelingMachine.ts:43
@@ -356,6 +376,14 @@ msgstr ""
 msgid "Continue"
 msgstr ""
 
+#: src/views/AddVestingContract.vue:56
+msgid "Contract added."
+msgstr ""
+
+#: src/views/AddVestingContract.vue:20
+msgid "Contract Information"
+msgstr ""
+
 #: src/views/CashlinkManage.vue:32
 msgid "Copied"
 msgstr ""
@@ -418,6 +446,10 @@ msgstr ""
 msgid "Enter manually"
 msgstr ""
 
+#: src/views/AddVestingContract.vue:45
+msgid "Enter the address of a vesting contract."
+msgstr ""
+
 #: src/views/CashlinkCreate.vue:160
 msgid "express"
 msgstr ""
@@ -434,6 +466,10 @@ msgstr ""
 #: src/components/BitcoinCheckoutCard.vue:44
 #: src/components/CurrencyInfo.vue:15
 msgid "Fee"
+msgstr ""
+
+#: src/views/AddVestingContract.vue:16
+msgid "Fetching contract information..."
 msgstr ""
 
 #: src/views/RefundSwap.vue:5
@@ -635,6 +671,10 @@ msgstr ""
 msgid "Orange"
 msgstr ""
 
+#: src/views/AddVestingContract.vue:22
+msgid "Owner:"
+msgstr ""
+
 #: src/components/NonNimiqCheckoutCard.vue:103
 msgid "Pay with {currencyFullName}"
 msgstr ""
@@ -787,11 +827,16 @@ msgstr ""
 msgid "standard"
 msgstr ""
 
+#: src/views/AddVestingContract.vue:32
+msgid "Start Block:"
+msgstr ""
+
 #: src/views/Migrate.vue:233
 msgid "Storing your new accounts..."
 msgstr ""
 
 #: src/components/NimiqCheckoutCard.vue:277
+#: src/views/AddVestingContract.vue:11
 #: src/views/CashlinkManage.vue:154
 #: src/views/CheckoutTransmission.vue:73
 msgid "Syncing consensus..."
@@ -939,6 +984,7 @@ msgid "Verify Payment"
 msgstr ""
 
 #: src/lib/LabelingMachine.ts:25
+#: src/views/AddVestingContract.vue:137
 msgid "Vesting Contract"
 msgstr ""
 
