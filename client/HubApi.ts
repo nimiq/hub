@@ -219,6 +219,13 @@ export default class HubApi<DB extends BehaviorType = BehaviorType.POPUP> { // D
         return this._request(requestBehavior, RequestType.RENAME, [request]);
     }
 
+    public addVestingContract<B extends BehaviorType = DB>(
+        request: Promise<BasicRequest> | BasicRequest,
+        requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
+    ): Promise<B extends BehaviorType.REDIRECT ? void : Account> {
+        return this._request(requestBehavior, RequestType.ADD_VESTING_CONTRACT, [request]);
+    }
+
     public migrate<B extends BehaviorType = DB>(
         requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
     ): Promise<B extends BehaviorType.REDIRECT ? void : Account[]> {

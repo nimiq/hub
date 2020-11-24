@@ -78,6 +78,7 @@ export default class RpcApi {
             RequestType.LOGOUT,
             RequestType.ADD_ADDRESS,
             RequestType.RENAME,
+            RequestType.ADD_VESTING_CONTRACT,
             RequestType.SIGN_MESSAGE,
             RequestType.MIGRATE,
             RequestType.CHOOSE_ADDRESS,

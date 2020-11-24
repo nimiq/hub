@@ -44,6 +44,8 @@ const AddAddressLedger        = () => import(/*webpackChunkName: "add-ledger"*/ 
 const OnboardingSelector      = () => import(/*webpackChunkName: "onboarding"*/ './views/OnboardingSelector.vue');
 
 const Rename                  = () => import(/*webpackChunkName: "rename"*/ './views/Rename.vue');
+const AddVestingContract      = () => import(/*webpackChunkName: "add-vesting-contract"*/
+    './views/AddVestingContract.vue');
 
 const Migrate                 = () => import(/*webpackChunkName: "migrate"*/ './views/Migrate.vue');
 
@@ -246,6 +248,11 @@ export default new Router({
             path: `/${RequestType.RENAME}`,
             component: Rename,
             name: RequestType.RENAME,
+        },
+        {
+            path: `/${RequestType.ADD_VESTING_CONTRACT}`,
+            component: AddVestingContract,
+            name: RequestType.ADD_VESTING_CONTRACT,
         },
         {
             path: `/${RequestType.MIGRATE}`,

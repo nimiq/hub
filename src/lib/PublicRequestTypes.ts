@@ -22,6 +22,7 @@ export enum RequestType {
     LOGOUT = 'logout',
     ADD_ADDRESS = 'add-address',
     RENAME = 'rename',
+    ADD_VESTING_CONTRACT = 'add-vesting-contract',
     CHOOSE_ADDRESS = 'choose-address',
     CREATE_CASHLINK = 'create-cashlink',
     MANAGE_CASHLINK = 'manage-cashlink',
