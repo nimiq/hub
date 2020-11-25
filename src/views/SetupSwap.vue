@@ -72,7 +72,8 @@ export default class SetupSwap extends Vue {
             }
 
             // Only derive BTC addresses once for the account, not mulitple times if addresses are fake
-            const addresses = this.request.fund.inputs.map((input) => input.address)
+            const addresses = this.request.fund.inputs
+                .map((input) => input.address)
                 .concat(
                     this.request.fund.changeOutput ? this.request.fund.changeOutput.address : [],
                     this.request.fund.refundAddress,
