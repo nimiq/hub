@@ -2,24 +2,26 @@
     <div class="container">
         <SmallPage>
             <StatusScreen
-                :title="title"
-                :state="state"
-                :status="status"
+                :state="statusScreenState"
+                :title="statusScreenTitle"
+                :status="statusScreenStatus"
+                :message="statusScreenMessage"
+                :mainAction="statusScreenAction"
+                @main-action="_statusScreenActionHandler"
                 :lightBlue="!isLedgerAccount"
-                :mainAction="action"
-                @main-action="_reload"
-                :message="message" />
+            />
         </SmallPage>
 
-        <GlobalClose :hidden="isGlobalCloseHidden" />
+        <GlobalClose :hidden="state !== State.TRANSITION_SYNCING && state !== State.SYNCING_FAILED" />
     </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component } from 'vue-property-decorator';
 import { State, Getter } from 'vuex-class';
 import KeyguardClient from '@nimiq/keyguard-client';
 import { SmallPage } from '@nimiq/vue-components';
+import BitcoinSyncBaseView from './BitcoinSyncBaseView.vue';
 import { ParsedSimpleRequest } from '../lib/RequestTypes';
 import { WalletType } from '../lib/Constants';
 import { WalletInfo } from '../lib/WalletInfo';
@@ -30,18 +32,20 @@ import GlobalClose from '../components/GlobalClose.vue';
 import WalletInfoCollector from '../lib/WalletInfoCollector';
 
 @Component({components: {StatusScreen, SmallPage, GlobalClose}})
-export default class ActivateBitcoinSuccess extends Vue {
+export default class ActivateBitcoinSuccess extends BitcoinSyncBaseView {
+    protected get State() {
+        return {
+            ...super.State,
+            TRANSITION_SYNCING: 'transition-syncing', // transition ui from ActivateBitcoinLedger into SYNCING state
+            FINISHED: 'finished',
+        };
+    }
+
     @Static private request!: ParsedSimpleRequest;
     @State private keyguardResult!: KeyguardClient.DeriveBtcXPubResult;
     @Getter private findWallet!: (id: string) => WalletInfo | undefined;
 
-    private state: StatusScreen.State = StatusScreen.State.LOADING;
-    private title: string = this.$root.$t('Fetching your Addresses') as string;
-    private status: string = '';
-    private message: string = '';
-    private action: string = '';
     private isLedgerAccount: boolean = false;
-    private isGlobalCloseHidden: boolean = false;
 
     private async created() {
         const walletInfo = this.findWallet(this.request.walletId);
@@ -51,21 +55,17 @@ export default class ActivateBitcoinSuccess extends Vue {
         }
 
         this.isLedgerAccount = walletInfo.type === WalletType.LEDGER;
-
-        if (!this.isLedgerAccount) {
-            // For non-Ledger accounts immediately set UI state without transitioning
-            this.isGlobalCloseHidden = true;
-            this.status = this.$root.$t('Syncing with Bitcoin network...') as string;
-        }
+        this.state = this.isLedgerAccount
+            ? this.State.TRANSITION_SYNCING // set ui state from which to transition to SYNCING state
+            : this.State.SYNCING;
 
         let btcAddresses;
         try {
             btcAddresses = await WalletInfoCollector.detectBitcoinAddresses(this.keyguardResult.bitcoinXPub);
         } catch (e) {
-            this.state = StatusScreen.State.ERROR;
-            this.title = this.$t('Syncing Failed') as string;
-            this.message = this.$t('Syncing with Bitcoin network failed: {error}', { error: e.message || e }) as string;
-            this.action = this.$t('Retry') as string;
+            console.error(e);
+            this.state = this.State.SYNCING_FAILED;
+            this.error = e;
             return;
         }
 
@@ -76,23 +76,34 @@ export default class ActivateBitcoinSuccess extends Vue {
 
         const result = walletInfo.toAccountType();
 
-        this.title = this.$t('Bitcoin activated') as string;
-        this.state = StatusScreen.State.SUCCESS;
+        this.state = this.State.FINISHED;
         setTimeout(() => { this.$rpc.resolve(result); }, StatusScreen.SUCCESS_REDIRECT_DELAY);
     }
 
     private mounted() {
-        if (!this.isLedgerAccount) return;
-        requestAnimationFrame(() => {
-            // For Ledger transition UI after first rendering a state that replicates ActivateBitcoinLedger for a smooth
-            // transition between the two views.
-            this.isGlobalCloseHidden = true;
-            this.status = this.$root.$t('Syncing with Bitcoin network...') as string;
-        });
+        if (this.state !== this.State.TRANSITION_SYNCING) return;
+        // For Ledger transition UI after first rendering a state that replicates ActivateBitcoinLedger for a smooth
+        // transition between the two views.
+        requestAnimationFrame(() => this.state = this.State.SYNCING);
     }
 
-    private _reload() {
-        window.location.reload();
+    protected get statusScreenState(): StatusScreen.State {
+        if (this.state === this.State.FINISHED) return StatusScreen.State.SUCCESS;
+        return super.statusScreenState;
     }
+
+    protected get statusScreenTitle() {
+        switch (this.state) {
+            case this.State.TRANSITION_SYNCING:
+                return this.$t('Fetching your Addresses') as string;
+            case this.State.FINISHED:
+                return this.$t('Bitcoin activated') as string;
+            default:
+                return super.statusScreenTitle;
+        }
+    }
+
+    // Note: not overwriting statusScreenStatus as we can stick to the default behavior which returns '' for
+    // TRANSITION_SYNCING such that the status animates in on change to SYNCING.
 }
 </script>

@@ -1,23 +1,8 @@
-<template>
-    <div v-if="state !== constructor.State.NONE" class="container pad-bottom">
-        <SmallPage>
-            <StatusScreen
-                :state="statusScreenState"
-                :title="statusScreenTitle"
-                :status="statusScreenStatus"
-                :message="statusScreenMessage"
-                :mainAction="statusScreenAction"
-                @main-action="_reload"
-                lightBlue
-            />
-        </SmallPage>
-    </div>
-</template>
-
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component } from 'vue-property-decorator';
 import { Getter } from 'vuex-class';
 import { SmallPage } from '@nimiq/vue-components';
+import BitcoinSyncBaseView from './BitcoinSyncBaseView.vue';
 import KeyguardClient from '@nimiq/keyguard-client';
 import { BitcoinTransactionInputType } from '@nimiq/keyguard-client';
 import StatusScreen from '../components/StatusScreen.vue';
@@ -26,19 +11,10 @@ import { Static } from '../lib/StaticStore';
 import { WalletInfo } from '../lib/WalletInfo';
 import { SwapAsset } from '@nimiq/fastspot-api';
 
-@Component({components: {StatusScreen, SmallPage}})
-export default class RefundSwap extends Vue {
-    private static State = {
-        NONE: 'none',
-        SYNCING: 'syncing',
-        SYNCING_FAILED: 'syncing-failed',
-    };
-
+@Component({components: {StatusScreen, SmallPage}}) // including components used in parent class
+export default class RefundSwap extends BitcoinSyncBaseView {
     @Static private request!: ParsedRefundSwapRequest;
     @Getter private findWallet!: (id: string) => WalletInfo | undefined;
-
-    private state: string = RefundSwap.State.NONE;
-    private syncError?: string;
 
     public async created() {
         // Forward user through Hub to Keyguard
@@ -75,7 +51,7 @@ export default class RefundSwap extends Vue {
             let inputKeyPath: string;
             try {
                 // Note that the sync state will only be visible in UI if the sync is not instant (if we actually sync)
-                this.state = RefundSwap.State.SYNCING;
+                this.state = this.State.SYNCING;
 
                 let didDeriveAddresses = false;
                 let addressInfo = account.findBtcAddressInfo(this.request.refund.refundAddress);
@@ -96,10 +72,10 @@ export default class RefundSwap extends Vue {
                     return;
                 }
 
-                this.state = RefundSwap.State.NONE;
+                this.state = this.State.NONE;
             } catch (e) {
-                this.state = RefundSwap.State.SYNCING_FAILED;
-                this.syncError = e.message || e;
+                this.state = this.State.SYNCING_FAILED;
+                this.error = e.message || e;
                 return;
             }
 
@@ -123,38 +99,6 @@ export default class RefundSwap extends Vue {
             const client = this.$rpc.createKeyguardClient(true);
             client.signBtcTransaction(request);
         }
-    }
-
-    private get statusScreenState(): StatusScreen.State {
-        if (this.state === RefundSwap.State.SYNCING_FAILED) return StatusScreen.State.ERROR;
-        return StatusScreen.State.LOADING;
-    }
-
-    private get statusScreenTitle() {
-        switch (this.state) {
-            case RefundSwap.State.SYNCING: return this.$t('Fetching your Addresses') as string;
-            case RefundSwap.State.SYNCING_FAILED: return this.$t('Syncing Failed') as string;
-            default: return '';
-        }
-    }
-
-    private get statusScreenStatus() {
-        if (this.state !== RefundSwap.State.SYNCING) return '';
-        return this.$t('Syncing with Bitcoin network...') as string;
-    }
-
-    private get statusScreenMessage() {
-        if (this.state !== RefundSwap.State.SYNCING_FAILED) return '';
-        return this.$t('Syncing with Bitcoin network failed: {error}', { error: this.syncError });
-    }
-
-    private get statusScreenAction() {
-        if (this.state !== RefundSwap.State.SYNCING_FAILED) return '';
-        return this.$t('Retry') as string;
-    }
-
-    private _reload() {
-        window.location.reload();
     }
 }
 </script>

@@ -1,22 +1,7 @@
-<template>
-    <div v-if="state !== constructor.State.NONE" class="container pad-bottom">
-        <SmallPage>
-            <StatusScreen
-                :state="statusScreenState"
-                :title="statusScreenTitle"
-                :status="statusScreenStatus"
-                :message="statusScreenMessage"
-                :mainAction="statusScreenAction"
-                @main-action="_reload"
-                lightBlue
-            />
-        </SmallPage>
-    </div>
-</template>
-
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component } from 'vue-property-decorator';
 import { SmallPage } from '@nimiq/vue-components';
+import BitcoinSyncBaseView from './BitcoinSyncBaseView.vue';
 import StatusScreen from '../components/StatusScreen.vue';
 import { ParsedSignBtcTransactionRequest } from '../lib/RequestTypes';
 import { Static } from '../lib/StaticStore';
@@ -32,19 +17,10 @@ export type BitcoinTransactionInfo = Omit<import('@nimiq/keyguard-client').Bitco
     changeOutput?: BitcoinTransactionChangeOutput,
 };
 
-@Component({components: {StatusScreen, SmallPage}})
-export default class SignBtcTransaction extends Vue {
-    protected static State = {
-        NONE: 'none',
-        SYNCING: 'syncing',
-        SYNCING_FAILED: 'syncing-failed',
-    };
-
+@Component({components: {StatusScreen, SmallPage}}) // including components used in parent class
+export default class SignBtcTransaction extends BitcoinSyncBaseView {
     @Static protected request!: ParsedSignBtcTransactionRequest;
-    @Getter protected findWallet!: (id: string) => WalletInfo | undefined;
-
-    protected state: string = SignBtcTransaction.State.NONE;
-    protected syncError?: string;
+    @Getter private findWallet!: (id: string) => WalletInfo | undefined;
 
     protected async created() {
         const walletInfo = this.findWallet(this.request.walletId)!;
@@ -59,7 +35,7 @@ export default class SignBtcTransaction extends Vue {
 
         try {
             // Note that the sync state will only be visible in the UI if the sync is not instant (if we actually sync)
-            this.state = SignBtcTransaction.State.SYNCING;
+            this.state = this.State.SYNCING;
 
             for (const input of this.request.inputs) {
                 const addressInfo = await walletInfo.findBtcAddressInfo(input.address);
@@ -91,10 +67,10 @@ export default class SignBtcTransaction extends Vue {
                 };
             }
 
-            this.state = SignBtcTransaction.State.NONE;
+            this.state = this.State.NONE;
         } catch (e) {
-            this.state = SignBtcTransaction.State.SYNCING_FAILED;
-            this.syncError = e.message || e;
+            this.state = this.State.SYNCING_FAILED;
+            this.error = e.message || e;
             return;
         }
 
@@ -103,34 +79,6 @@ export default class SignBtcTransaction extends Vue {
             changeOutput,
             recipientOutput: this.request.output,
         }, walletInfo);
-    }
-
-    protected get statusScreenState(): StatusScreen.State {
-        if (this.state === SignBtcTransaction.State.SYNCING_FAILED) return StatusScreen.State.ERROR;
-        return StatusScreen.State.LOADING;
-    }
-
-    protected get statusScreenTitle() {
-        switch (this.state) {
-            case SignBtcTransaction.State.SYNCING: return this.$t('Fetching your Addresses') as string;
-            case SignBtcTransaction.State.SYNCING_FAILED: return this.$t('Syncing Failed') as string;
-            default: return '';
-        }
-    }
-
-    protected get statusScreenStatus() {
-        if (this.state !== SignBtcTransaction.State.SYNCING) return '';
-        return this.$t('Syncing with Bitcoin network...') as string;
-    }
-
-    protected get statusScreenMessage() {
-        if (this.state !== SignBtcTransaction.State.SYNCING_FAILED) return '';
-        return this.$t('Syncing with Bitcoin network failed: {error}', { error: this.syncError });
-    }
-
-    protected get statusScreenAction() {
-        if (this.state !== SignBtcTransaction.State.SYNCING_FAILED) return '';
-        return this.$t('Retry') as string;
     }
 
     protected _signBtcTransaction(transactionInfo: BitcoinTransactionInfo, walletInfo: WalletInfo) {
@@ -152,10 +100,6 @@ export default class SignBtcTransaction extends Vue {
 
         const client = this.$rpc.createKeyguardClient(true);
         client.signBtcTransaction(request);
-    }
-
-    protected _reload() {
-        window.location.reload();
     }
 }
 </script>

@@ -1,23 +1,8 @@
-<template>
-    <div v-if="state !== constructor.State.NONE" class="container pad-bottom">
-        <SmallPage>
-            <StatusScreen
-                :state="statusScreenState"
-                :title="statusScreenTitle"
-                :status="statusScreenStatus"
-                :message="statusScreenMessage"
-                :mainAction="statusScreenAction"
-                @main-action="_reload"
-                lightBlue
-            />
-        </SmallPage>
-    </div>
-</template>
-
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component } from 'vue-property-decorator';
 import { Getter } from 'vuex-class';
 import { SmallPage } from '@nimiq/vue-components';
+import BitcoinSyncBaseView from './BitcoinSyncBaseView.vue';
 import StatusScreen from '../components/StatusScreen.vue';
 import { ParsedSetupSwapRequest } from '../lib/RequestTypes';
 import KeyguardClient from '@nimiq/keyguard-client';
@@ -27,19 +12,10 @@ import { BtcAddressInfo } from '../lib/bitcoin/BtcAddressInfo';
 import { SwapAsset } from '@nimiq/fastspot-api';
 import { ERROR_CANCELED } from '@/lib/Constants';
 
-@Component({components: {StatusScreen, SmallPage}})
-export default class SetupSwap extends Vue {
-    private static State = {
-        NONE: 'none',
-        SYNCING: 'syncing',
-        SYNCING_FAILED: 'syncing-failed',
-    };
-
+@Component({components: {StatusScreen, SmallPage}}) // including components used in parent class
+export default class SetupSwap extends BitcoinSyncBaseView {
     @Static private request!: ParsedSetupSwapRequest;
     @Getter private findWalletByAddress!: (address: string) => WalletInfo | undefined;
-
-    private state: string = SetupSwap.State.NONE;
-    private syncError?: string;
 
     public async created() {
         // Forward user through Hub to Keyguard
@@ -62,7 +38,7 @@ export default class SetupSwap extends Vue {
 
         try {
             // Note that the sync state will only be visible in the UI if the sync is not instant (if we actually sync)
-            this.state = SetupSwap.State.SYNCING;
+            this.state = this.State.SYNCING;
 
             if (this.request.fund.type === SwapAsset.NIM) {
                 const senderContract = account.findContractByAddress(this.request.fund.sender);
@@ -188,10 +164,10 @@ export default class SetupSwap extends Vue {
                 };
             }
 
-            this.state = SetupSwap.State.NONE;
+            this.state = this.State.NONE;
         } catch (e) {
-            this.state = SetupSwap.State.SYNCING_FAILED;
-            this.syncError = e.message || e;
+            this.state = this.State.SYNCING_FAILED;
+            this.error = e.message || e;
             return;
         }
 
@@ -207,38 +183,6 @@ export default class SetupSwap extends Vue {
 
         const client = this.$rpc.createKeyguardClient(true);
         client.signSwap(request as KeyguardClient.SignSwapRequest);
-    }
-
-    private get statusScreenState(): StatusScreen.State {
-        if (this.state === SetupSwap.State.SYNCING_FAILED) return StatusScreen.State.ERROR;
-        return StatusScreen.State.LOADING;
-    }
-
-    private get statusScreenTitle() {
-        switch (this.state) {
-            case SetupSwap.State.SYNCING: return this.$t('Fetching your Addresses') as string;
-            case SetupSwap.State.SYNCING_FAILED: return this.$t('Syncing Failed') as string;
-            default: return '';
-        }
-    }
-
-    private get statusScreenStatus() {
-        if (this.state !== SetupSwap.State.SYNCING) return '';
-        return this.$t('Syncing with Bitcoin network...') as string;
-    }
-
-    private get statusScreenMessage() {
-        if (this.state !== SetupSwap.State.SYNCING_FAILED) return '';
-        return this.$t('Syncing with Bitcoin network failed: {error}', { error: this.syncError });
-    }
-
-    private get statusScreenAction() {
-        if (this.state !== SetupSwap.State.SYNCING_FAILED) return '';
-        return this.$t('Retry') as string;
-    }
-
-    private _reload() {
-        window.location.reload();
     }
 }
 </script>

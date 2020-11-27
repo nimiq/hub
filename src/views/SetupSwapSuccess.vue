@@ -1,26 +1,10 @@
-<template>
-    <div class="container pad-bottom">
-        <SmallPage>
-            <StatusScreen
-                :state="statusScreenState"
-                :title="statusScreenTitle"
-                :status="statusScreenStatus"
-                :message="statusScreenMessage"
-                :mainAction="statusScreenAction"
-                @main-action="_reload"
-                lightBlue
-            />
-        </SmallPage>
-        <Network ref="network" :visible="false"/>
-    </div>
-</template>
-
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component } from 'vue-property-decorator';
 import { Getter } from 'vuex-class';
 import KeyguardClient from '@nimiq/keyguard-client';
 import { PlainOutput, TransactionDetails as BtcTransactionDetails } from '@nimiq/electrum-client';
 import { SmallPage } from '@nimiq/vue-components';
+import BitcoinSyncBaseView from './BitcoinSyncBaseView.vue';
 import {
     init as initFastspotApi,
     SwapAsset,
@@ -40,27 +24,26 @@ import { WalletInfo } from '../lib/WalletInfo';
 import Config from 'config';
 import { getElectrumClient } from '../lib/bitcoin/ElectrumClient';
 
-@Component({components: {Network, SmallPage, StatusScreen}})
-export default class SetupSwapSuccess extends Vue {
-    private static State = {
-        FETCHING_SWAP_DATA: 'fetching-swap-data',
-        FETCHING_SWAP_DATA_FAILED: 'fetching-swap-data-failed',
-        SYNCING: 'syncing',
-        SYNCING_FAILED: 'syncing-failed',
-        SIGNING_TRANSACTIONS: 'signing-transactions',
-    };
+@Component({components: {Network, SmallPage, StatusScreen}}) // including components used in parent class
+export default class SetupSwapSuccess extends BitcoinSyncBaseView {
+    protected get State() {
+        return {
+            ...super.State,
+            FETCHING_SWAP_DATA: 'fetching-swap-data',
+            FETCHING_SWAP_DATA_FAILED: 'fetching-swap-data-failed',
+            SIGNING_TRANSACTIONS: 'signing-transactions',
+        };
+    }
 
     @Static private request!: ParsedSetupSwapRequest;
     // @State private keyguardResult!: KeyguardClient.SignSwapResult;
     @Getter private findWalletByAddress!: (address: string) => WalletInfo | undefined;
 
-    private state: string = SetupSwapSuccess.State.FETCHING_SWAP_DATA;
-    private error?: string;
-
     private async mounted() {
         // Confirm swap to Fastspot and get contract details
-        this.state = SetupSwapSuccess.State.FETCHING_SWAP_DATA;
+        this.state = this.State.FETCHING_SWAP_DATA;
         initFastspotApi(Config.fastspot.apiEndpoint, Config.fastspot.apiKey);
+        const $nimiqNetwork = new Network();
 
         let confirmedSwap: Swap;
         try {
@@ -89,7 +72,7 @@ export default class SetupSwapSuccess extends Vue {
             console.debug('Swap:', confirmedSwap);
         } catch (error) {
             console.error(error);
-            this.state = SetupSwapSuccess.State.FETCHING_SWAP_DATA_FAILED;
+            this.state = this.State.FETCHING_SWAP_DATA_FAILED;
             this.error = error;
             return;
         }
@@ -174,7 +157,7 @@ export default class SetupSwapSuccess extends Vue {
             // BTC tx hash and output data
 
             try {
-                this.state = SetupSwapSuccess.State.SYNCING;
+                this.state = this.State.SYNCING;
                 const { transaction, output } = await new Promise<{
                     transaction: BtcTransactionDetails,
                     output: PlainOutput,
@@ -216,7 +199,7 @@ export default class SetupSwapSuccess extends Vue {
                 };
             } catch (error) {
                 console.error(error);
-                this.state =  SetupSwapSuccess.State.SYNCING_FAILED;
+                this.state =  this.State.SYNCING_FAILED;
                 this.error = error;
                 return;
             }
@@ -224,7 +207,7 @@ export default class SetupSwapSuccess extends Vue {
 
         // Sign transactions via Keyguard iframe
 
-        this.state = SetupSwapSuccess.State.SIGNING_TRANSACTIONS;
+        this.state = this.State.SIGNING_TRANSACTIONS;
         const client = this.$rpc.createKeyguardClient();
         let keyguardResult: KeyguardClient.SignSwapTransactionsResult;
         try {
@@ -239,7 +222,7 @@ export default class SetupSwapSuccess extends Vue {
 
         let nimTx: Nimiq.Transaction;
         if (this.request.fund.type === SwapAsset.NIM) {
-            nimTx = await (this.$refs.network as Network).createTx(Object.assign({
+            nimTx = await $nimiqNetwork.createTx(Object.assign({
                 signerPubKey: keyguardResult.nim.publicKey,
             }, keyguardResult.nim, this.request.fund, {
                 recipient: Nimiq.Address.CONTRACT_CREATION,
@@ -248,7 +231,7 @@ export default class SetupSwapSuccess extends Vue {
                 flags: Nimiq.Transaction.Flag.CONTRACT_CREATION,
             }));
         } else if (this.request.redeem.type === SwapAsset.NIM) {
-            nimTx = await (this.$refs.network as Network).createTx(Object.assign({
+            nimTx = await $nimiqNetwork.createTx(Object.assign({
                 signerPubKey: keyguardResult.nim.publicKey,
             }, keyguardResult.nim, this.request.redeem, {
                 sender: Nimiq.Address.fromUserFriendlyAddress(nimHtlcData.address),
@@ -286,7 +269,7 @@ export default class SetupSwapSuccess extends Vue {
             return;
         }
 
-        const nimResult: SignedTransaction = await (this.$refs.network as Network).makeSignTransactionResult(nimTx);
+        const nimResult: SignedTransaction = await $nimiqNetwork.makeSignTransactionResult(nimTx);
 
         const btcResult: SignedBtcTransaction = {
             serializedTx: keyguardResult.btc.raw,
@@ -301,55 +284,44 @@ export default class SetupSwapSuccess extends Vue {
         this.$rpc.resolve(result);
     }
 
-    private get statusScreenState(): StatusScreen.State {
-        if (this.state === SetupSwapSuccess.State.FETCHING_SWAP_DATA_FAILED
-            || this.state === SetupSwapSuccess.State.SYNCING_FAILED) return StatusScreen.State.ERROR;
-        return StatusScreen.State.LOADING;
+    protected get statusScreenState(): StatusScreen.State {
+        if (this.state === this.State.FETCHING_SWAP_DATA_FAILED) return StatusScreen.State.ERROR;
+        return super.statusScreenState;
     }
 
-    private get statusScreenTitle() {
+    protected get statusScreenTitle() {
         switch (this.state) {
-            case SetupSwapSuccess.State.FETCHING_SWAP_DATA_FAILED:
+            case this.State.FETCHING_SWAP_DATA_FAILED:
                 return this.$t('Fetching Swap Data Failed') as string;
-            case SetupSwapSuccess.State.SYNCING_FAILED:
+            case this.State.SYNCING_FAILED:
                 return this.$t('Syncing Failed') as string;
             default:
                 return this.$t('Preparing Swap') as string;
         }
     }
 
-    private get statusScreenStatus() {
+    protected get statusScreenStatus() {
         switch (this.state) {
-            case SetupSwapSuccess.State.FETCHING_SWAP_DATA:
+            case this.State.FETCHING_SWAP_DATA:
                 return this.$t('Fetching swap data...') as string;
-            case SetupSwapSuccess.State.SYNCING:
-                return this.$t('Syncing with Bitcoin network...') as string;
-            case SetupSwapSuccess.State.SIGNING_TRANSACTIONS:
+            case this.State.SIGNING_TRANSACTIONS:
                 return this.$t('Signing transactions...') as string;
             default:
-                return '';
+                return super.statusScreenStatus;
         }
     }
 
-    private get statusScreenMessage() {
-        switch (this.state) {
-            case SetupSwapSuccess.State.FETCHING_SWAP_DATA_FAILED:
-                return this.$t('Fetching swap data failed: {error}', { error: this.error });
-            case SetupSwapSuccess.State.SYNCING_FAILED:
-                return this.$t('Syncing with Bitcoin network failed: {error}', { error: this.error });
-            default:
-                return '';
+    protected get statusScreenMessage() {
+        if (this.state === this.State.FETCHING_SWAP_DATA_FAILED) {
+            return this.$t('Fetching swap data failed: {error}', { error: this.error });
         }
+        return super.statusScreenMessage;
     }
 
-    private get statusScreenAction() {
-        if (this.state !== SetupSwapSuccess.State.FETCHING_SWAP_DATA_FAILED
-            && this.state !== SetupSwapSuccess.State.SYNCING_FAILED) return '';
+    protected get statusScreenAction() {
+        if (this.state !== this.State.FETCHING_SWAP_DATA_FAILED
+            && this.state !== this.State.SYNCING_FAILED) return '';
         return this.$t('Retry') as string;
-    }
-
-    private _reload() {
-        window.location.reload();
     }
 }
 </script>

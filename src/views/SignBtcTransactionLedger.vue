@@ -31,24 +31,24 @@
             </div>
 
             <div class="bottom-container" :class="{
-                'full-height': state === constructor.State.FINISHED || state === constructor.State.SYNCING_FAILED,
+                'full-height': state === State.FINISHED || state === State.SYNCING_FAILED,
             }">
                 <LedgerUi small></LedgerUi>
                 <transition name="transition-fade">
-                    <StatusScreen v-if="state !== constructor.State.READY"
+                    <StatusScreen v-if="state !== State.READY"
                         :state="statusScreenState"
                         :title="statusScreenTitle"
                         :status="statusScreenStatus"
                         :message="statusScreenMessage"
                         :mainAction="statusScreenAction"
-                        @main-action="_reload"
-                        :small="state === constructor.State.SYNCING">
+                        @main-action="_statusScreenActionHandler"
+                        :small="state === State.SYNCING">
                     </StatusScreen>
                 </transition>
             </div>
         </SmallPage>
 
-        <GlobalClose :hidden="state === constructor.State.FINISHED" />
+        <GlobalClose :hidden="state === State.FINISHED" />
     </div>
 </template>
 
@@ -78,14 +78,16 @@ type BitcoinJsTransaction = import('bitcoinjs-lib').Transaction;
 
 @Component({components: {StatusScreen, SmallPage, PageHeader, Amount, GlobalClose, LedgerUi, LabelAvatar}})
 export default class SignBtcTransactionLedger extends SignBtcTransaction {
-    protected static readonly State = {
-        ...SignBtcTransaction.State,
-        READY: 'ready',
-        FINISHED: 'finished',
-    };
+    protected get State() {
+        return {
+            ...super.State,
+            READY: 'ready',
+            FINISHED: 'finished',
+        };
+    }
 
     // different than in parent class we always have to sync for fetching trusted inputs
-    protected state: string = SignBtcTransactionLedger.State.SYNCING;
+    protected state: string = this.State.SYNCING;
     private fee!: number;
     private _isDestroyed: boolean = false;
 
@@ -107,18 +109,15 @@ export default class SignBtcTransactionLedger extends SignBtcTransaction {
     }
 
     protected get statusScreenState() {
-        switch (this.state) {
-            case SignBtcTransactionLedger.State.FINISHED: return StatusScreen.State.SUCCESS;
-            case SignBtcTransactionLedger.State.SYNCING_FAILED: return StatusScreen.State.ERROR;
-            default: return StatusScreen.State.LOADING;
-        }
+        if (this.state === this.State.FINISHED) return StatusScreen.State.SUCCESS;
+        return super.statusScreenState;
     }
 
     protected get statusScreenTitle() {
         switch (this.state) {
-            case SignBtcTransactionLedger.State.FINISHED: return this.$t('Transaction Signed') as string;
-            case SignBtcTransactionLedger.State.SYNCING_FAILED: return this.$t('Syncing Failed') as string;
-            default: return '';
+            case this.State.FINISHED: return this.$t('Transaction Signed') as string;
+            case this.State.SYNCING_FAILED: return this.$t('Syncing Failed') as string;
+            default: return ''; // also for SYNCING don't display a title in small ui, different to parent class
         }
     }
 
@@ -128,13 +127,13 @@ export default class SignBtcTransactionLedger extends SignBtcTransaction {
         // Fetch whole input transactions for computation of Ledger's trusted inputs
         let inputTransactions: BitcoinJsTransaction[];
         try {
-            this.state = SignBtcTransactionLedger.State.SYNCING;
+            this.state = this.State.SYNCING;
             inputTransactions = await Promise.all(
                 transactionInfo.inputs.map((input) => this._getInputTransaction(input)),
             );
         } catch (e) {
-            this.state = SignBtcTransactionLedger.State.SYNCING_FAILED;
-            this.syncError = e.message || e;
+            this.state = this.State.SYNCING_FAILED;
+            this.error = e.message || e;
             return;
         }
 
@@ -173,7 +172,7 @@ export default class SignBtcTransactionLedger extends SignBtcTransaction {
 
         // Set the state change slightly delayed to give the Ledger api time to load dependencies and the Ledger time to
         // process the request
-        setTimeout(() => this.state = SignBtcTransactionLedger.State.READY, 300);
+        setTimeout(() => this.state = this.State.READY, 300);
 
         let signedTransactionHex: string;
         try {
@@ -197,7 +196,7 @@ export default class SignBtcTransactionLedger extends SignBtcTransaction {
             hash: signedTransaction.getId(),
         };
 
-        this.state = SignBtcTransactionLedger.State.FINISHED;
+        this.state = this.State.FINISHED;
         await new Promise((resolve) => setTimeout(resolve, StatusScreen.SUCCESS_REDIRECT_DELAY));
         this.$rpc.resolve(result);
     }
