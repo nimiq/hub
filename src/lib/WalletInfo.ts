@@ -118,34 +118,38 @@ export class WalletInfo {
 
         if (addressInfo || !deriveIfNotFound) return addressInfo;
 
-        return new Promise<BtcAddressInfo | null>(async (resolve) => {
-            // Derive new addresses starting from the last used index
-            let index = Math.min(this.btcAddresses.external.length, this.btcAddresses.internal.length) - 1;
-            let lastExternalUsed = 0;
-            let lastInternalUsed = 0;
-            for (; index >= 0; index--) {
-                if (!lastExternalUsed && this.btcAddresses.external[index].used) lastExternalUsed = index;
-                if (!lastInternalUsed && this.btcAddresses.internal[index].used) lastInternalUsed = index;
-                if (lastExternalUsed && lastInternalUsed) break;
+        return new Promise<BtcAddressInfo | null>(async (resolve, reject) => {
+            try {
+                // Derive new addresses starting from the last used index
+                let index = Math.min(this.btcAddresses.external.length, this.btcAddresses.internal.length) - 1;
+                let lastExternalUsed = 0;
+                let lastInternalUsed = 0;
+                for (; index >= 0; index--) {
+                    if (!lastExternalUsed && this.btcAddresses.external[index].used) lastExternalUsed = index;
+                    if (!lastInternalUsed && this.btcAddresses.internal[index].used) lastInternalUsed = index;
+                    if (lastExternalUsed && lastInternalUsed) break;
+                }
+                index = Math.min(lastExternalUsed, lastInternalUsed);
+
+                const newAddresses = await WalletInfoCollector.detectBitcoinAddresses(this.btcXPub!, index + 1);
+
+                let i = index + 1;
+                for (const external of newAddresses.external) {
+                    this.btcAddresses.external[i] = external;
+                    i += 1;
+                }
+                i = index + 1;
+                for (const internal of newAddresses.internal) {
+                    this.btcAddresses.internal[i] = internal;
+                    i += 1;
+                }
+
+                await WalletStore.Instance.put(this);
+
+                resolve(this.findBtcAddressInfo(address, false) as BtcAddressInfo | null);
+            } catch (e) {
+                reject(e);
             }
-            index = Math.min(lastExternalUsed, lastInternalUsed);
-
-            const newAddresses = await WalletInfoCollector.detectBitcoinAddresses(this.btcXPub!, index + 1);
-
-            let i = index + 1;
-            for (const external of newAddresses.external) {
-                this.btcAddresses.external[i] = external;
-                i += 1;
-            }
-            i = index + 1;
-            for (const internal of newAddresses.internal) {
-                this.btcAddresses.internal[i] = internal;
-                i += 1;
-            }
-
-            await WalletStore.Instance.put(this);
-
-            resolve(this.findBtcAddressInfo(address, false) as BtcAddressInfo | null);
         });
     }
 
