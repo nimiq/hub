@@ -1,5 +1,5 @@
 <template>
-    <div v-if="state !== State.NONE" class="container pad-bottom">
+    <div v-if="state !== State.NONE" class="container">
         <SmallPage>
             <StatusScreen
                 :state="statusScreenState"
@@ -7,10 +7,12 @@
                 :status="statusScreenStatus"
                 :message="statusScreenMessage"
                 :mainAction="statusScreenAction"
+                :lightBlue="!useDarkSyncStatusScreen"
                 @main-action="_statusScreenActionHandler"
-                lightBlue
             />
         </SmallPage>
+
+        <GlobalClose :hidden="!isGlobalCloseShown" />
     </div>
 </template>
 
@@ -32,6 +34,7 @@ export default class BitcoinSyncBaseView extends Vue {
     }
 
     protected state: string = this.State.NONE;
+    protected useDarkSyncStatusScreen = false;
     protected error: string = '';
 
     protected get statusScreenState(): StatusScreen.State {
@@ -63,6 +66,10 @@ export default class BitcoinSyncBaseView extends Vue {
     protected get statusScreenAction() {
         if (this.state !== this.State.SYNCING_FAILED) return '';
         return this.$t('Retry') as string;
+    }
+
+    protected get isGlobalCloseShown() {
+        return this.state === this.State.SYNCING_FAILED;
     }
 
     protected _statusScreenActionHandler() {

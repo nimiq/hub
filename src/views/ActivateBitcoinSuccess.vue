@@ -1,21 +1,3 @@
-<template>
-    <div class="container">
-        <SmallPage>
-            <StatusScreen
-                :state="statusScreenState"
-                :title="statusScreenTitle"
-                :status="statusScreenStatus"
-                :message="statusScreenMessage"
-                :mainAction="statusScreenAction"
-                @main-action="_statusScreenActionHandler"
-                :lightBlue="!isLedgerAccount"
-            />
-        </SmallPage>
-
-        <GlobalClose :hidden="state !== State.TRANSITION_SYNCING && state !== State.SYNCING_FAILED" />
-    </div>
-</template>
-
 <script lang="ts">
 import { Component } from 'vue-property-decorator';
 import { State, Getter } from 'vuex-class';
@@ -31,7 +13,7 @@ import StatusScreen from '../components/StatusScreen.vue';
 import GlobalClose from '../components/GlobalClose.vue';
 import WalletInfoCollector from '../lib/WalletInfoCollector';
 
-@Component({components: {StatusScreen, SmallPage, GlobalClose}})
+@Component({components: {StatusScreen, SmallPage, GlobalClose}}) // including components used in parent class
 export default class ActivateBitcoinSuccess extends BitcoinSyncBaseView {
     protected get State() {
         return {
@@ -45,8 +27,6 @@ export default class ActivateBitcoinSuccess extends BitcoinSyncBaseView {
     @State private keyguardResult!: KeyguardClient.DeriveBtcXPubResult;
     @Getter private findWallet!: (id: string) => WalletInfo | undefined;
 
-    private isLedgerAccount: boolean = false;
-
     private async created() {
         const walletInfo = this.findWallet(this.request.walletId);
 
@@ -54,10 +34,10 @@ export default class ActivateBitcoinSuccess extends BitcoinSyncBaseView {
             throw new Error(`UNEXPECTED: accountId not found anymore in ActivateBitcoinSuccess (${this.request.walletId})`);
         }
 
-        this.isLedgerAccount = walletInfo.type === WalletType.LEDGER;
-        this.state = this.isLedgerAccount
+        this.state = walletInfo.type === WalletType.LEDGER
             ? this.State.TRANSITION_SYNCING // set ui state from which to transition to SYNCING state
             : this.State.SYNCING;
+        this.useDarkSyncStatusScreen = walletInfo.type === WalletType.LEDGER;
 
         let btcAddresses;
         try {
@@ -101,6 +81,10 @@ export default class ActivateBitcoinSuccess extends BitcoinSyncBaseView {
             default:
                 return super.statusScreenTitle;
         }
+    }
+
+    protected get isGlobalCloseShown() {
+        return this.state === this.State.TRANSITION_SYNCING || super.isGlobalCloseShown;
     }
 
     // Note: not overwriting statusScreenStatus as we can stick to the default behavior which returns '' for

@@ -169,7 +169,7 @@ msgstr ""
 msgid "Balance:"
 msgstr ""
 
-#: src/views/ActivateBitcoinSuccess.vue:100
+#: src/views/ActivateBitcoinSuccess.vue:80
 msgid "Bitcoin activated"
 msgstr ""
 
@@ -477,21 +477,21 @@ msgstr ""
 msgid "Fetching contract information..."
 msgstr ""
 
-#: src/views/SetupSwapSuccess.vue:295
+#: src/views/SetupSwapSuccess.vue:296
 msgid "Fetching Swap Data Failed"
 msgstr ""
 
-#: src/views/SetupSwapSuccess.vue:316
+#: src/views/SetupSwapSuccess.vue:317
 msgid "Fetching swap data failed: {error}"
 msgstr ""
 
-#: src/views/SetupSwapSuccess.vue:306
+#: src/views/SetupSwapSuccess.vue:307
 msgid "Fetching swap data..."
 msgstr ""
 
 #: src/components/LedgerUi.vue:221
-#: src/views/ActivateBitcoinSuccess.vue:98
-#: src/views/BitcoinSyncBaseView.vue:45
+#: src/views/ActivateBitcoinSuccess.vue:78
+#: src/views/BitcoinSyncBaseView.vue:48
 #: src/views/LoginSuccess.vue:42
 #: src/views/SignupLedger.vue:104
 msgid "Fetching your Addresses"
@@ -731,7 +731,7 @@ msgstr ""
 msgid "Prepare for update"
 msgstr ""
 
-#: src/views/SetupSwapSuccess.vue:299
+#: src/views/SetupSwapSuccess.vue:300
 msgid "Preparing Swap"
 msgstr ""
 
@@ -780,9 +780,9 @@ msgstr ""
 msgid "Retrieving your old accounts..."
 msgstr ""
 
-#: src/views/BitcoinSyncBaseView.vue:65
+#: src/views/BitcoinSyncBaseView.vue:68
 #: src/views/LoginSuccess.vue:107
-#: src/views/SetupSwapSuccess.vue:324
+#: src/views/SetupSwapSuccess.vue:325
 #: src/views/SignupLedger.vue:145
 msgid "Retry"
 msgstr ""
@@ -817,7 +817,7 @@ msgstr ""
 msgid "Sign Message"
 msgstr ""
 
-#: src/views/SetupSwapSuccess.vue:308
+#: src/views/SetupSwapSuccess.vue:309
 msgid "Signing transactions..."
 msgstr ""
 
@@ -861,17 +861,17 @@ msgstr ""
 msgid "Syncing consensus..."
 msgstr ""
 
-#: src/views/BitcoinSyncBaseView.vue:47
-#: src/views/SetupSwapSuccess.vue:297
+#: src/views/BitcoinSyncBaseView.vue:50
+#: src/views/SetupSwapSuccess.vue:298
 #: src/views/SignBtcTransactionLedger.vue:119
 msgid "Syncing Failed"
 msgstr ""
 
-#: src/views/BitcoinSyncBaseView.vue:60
+#: src/views/BitcoinSyncBaseView.vue:63
 msgid "Syncing with Bitcoin network failed: {error}"
 msgstr ""
 
-#: src/views/BitcoinSyncBaseView.vue:55
+#: src/views/BitcoinSyncBaseView.vue:58
 msgid "Syncing with Bitcoin network..."
 msgstr ""
 

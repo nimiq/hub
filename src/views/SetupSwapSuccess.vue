@@ -16,6 +16,7 @@ import {
     BtcHtlcDetails,
 } from '@nimiq/fastspot-api';
 import StatusScreen from '../components/StatusScreen.vue';
+import GlobalClose from '../components/GlobalClose.vue';
 import Network from '../components/Network.vue';
 import { SetupSwapResult, SignedTransaction, SignedBtcTransaction } from '../lib/PublicRequestTypes';
 import { Static } from '../lib/StaticStore';
@@ -24,7 +25,7 @@ import { WalletInfo } from '../lib/WalletInfo';
 import Config from 'config';
 import { getElectrumClient } from '../lib/bitcoin/ElectrumClient';
 
-@Component({components: {Network, SmallPage, StatusScreen}}) // including components used in parent class
+@Component({components: {SmallPage, StatusScreen, GlobalClose}}) // including components used in parent class
 export default class SetupSwapSuccess extends BitcoinSyncBaseView {
     protected get State() {
         return {
@@ -322,6 +323,10 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
         if (this.state !== this.State.FETCHING_SWAP_DATA_FAILED
             && this.state !== this.State.SYNCING_FAILED) return '';
         return this.$t('Retry') as string;
+    }
+
+    protected get isGlobalCloseShown() {
+        return this.state === this.State.FETCHING_SWAP_DATA_FAILED || super.isGlobalCloseShown;
     }
 }
 </script>

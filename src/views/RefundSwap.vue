@@ -6,12 +6,13 @@ import BitcoinSyncBaseView from './BitcoinSyncBaseView.vue';
 import KeyguardClient from '@nimiq/keyguard-client';
 import { BitcoinTransactionInputType } from '@nimiq/keyguard-client';
 import StatusScreen from '../components/StatusScreen.vue';
+import GlobalClose from '../components/GlobalClose.vue';
 import { ParsedRefundSwapRequest } from '../lib/RequestTypes';
 import { Static } from '../lib/StaticStore';
 import { WalletInfo } from '../lib/WalletInfo';
 import { SwapAsset } from '@nimiq/fastspot-api';
 
-@Component({components: {StatusScreen, SmallPage}}) // including components used in parent class
+@Component({components: {StatusScreen, SmallPage, GlobalClose}}) // including components used in parent class
 export default class RefundSwap extends BitcoinSyncBaseView {
     @Static private request!: ParsedRefundSwapRequest;
     @Getter private findWallet!: (id: string) => WalletInfo | undefined;

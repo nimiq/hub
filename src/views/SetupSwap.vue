@@ -4,6 +4,7 @@ import { Getter } from 'vuex-class';
 import { SmallPage } from '@nimiq/vue-components';
 import BitcoinSyncBaseView from './BitcoinSyncBaseView.vue';
 import StatusScreen from '../components/StatusScreen.vue';
+import GlobalClose from '../components/GlobalClose.vue';
 import { ParsedSetupSwapRequest } from '../lib/RequestTypes';
 import KeyguardClient from '@nimiq/keyguard-client';
 import { Static } from '../lib/StaticStore';
@@ -12,7 +13,7 @@ import { BtcAddressInfo } from '../lib/bitcoin/BtcAddressInfo';
 import { SwapAsset } from '@nimiq/fastspot-api';
 import { ERROR_CANCELED } from '@/lib/Constants';
 
-@Component({components: {StatusScreen, SmallPage}}) // including components used in parent class
+@Component({components: {StatusScreen, SmallPage, GlobalClose}}) // including components used in parent class
 export default class SetupSwap extends BitcoinSyncBaseView {
     @Static private request!: ParsedSetupSwapRequest;
     @Getter private findWalletByAddress!: (address: string) => WalletInfo | undefined;

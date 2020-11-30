@@ -3,6 +3,7 @@ import { Component } from 'vue-property-decorator';
 import { SmallPage } from '@nimiq/vue-components';
 import BitcoinSyncBaseView from './BitcoinSyncBaseView.vue';
 import StatusScreen from '../components/StatusScreen.vue';
+import GlobalClose from '../components/GlobalClose.vue';
 import { ParsedSignBtcTransactionRequest } from '../lib/RequestTypes';
 import { Static } from '../lib/StaticStore';
 import { WalletInfo } from '../lib/WalletInfo';
@@ -17,7 +18,7 @@ export type BitcoinTransactionInfo = Omit<import('@nimiq/keyguard-client').Bitco
     changeOutput?: BitcoinTransactionChangeOutput,
 };
 
-@Component({components: {StatusScreen, SmallPage}}) // including components used in parent class
+@Component({components: {StatusScreen, SmallPage, GlobalClose}}) // including components used in parent class
 export default class SignBtcTransaction extends BitcoinSyncBaseView {
     @Static protected request!: ParsedSignBtcTransactionRequest;
     @Getter private findWallet!: (id: string) => WalletInfo | undefined;
