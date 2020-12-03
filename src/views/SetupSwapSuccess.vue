@@ -23,6 +23,7 @@ import {
     PreSwap,
     Swap,
     confirmSwap,
+    getSwap,
     NimHtlcDetails,
     BtcHtlcDetails,
 } from '@nimiq/fastspot-api';
@@ -62,9 +63,13 @@ export default class SetupSwapSuccess extends Vue {
                 address: this.request.fund.type === SwapAsset.NIM
                     ? this.request.fund.sender.toUserFriendlyAddress()
                     : this.request.fund.refundAddress,
+            }).catch((error) => {
+                if (error.message === 'The swap was already confirmed before.') {
+                    return getSwap(this.request.swapId) as Promise<Swap>;
+                } else {
+                    throw error;
+                }
             });
-            // confirmedSwap.from.fee = swapSuggestion.from.fee;
-            // confirmedSwap.to.fee = swapSuggestion.to.fee;
 
             console.debug('Swap:', confirmedSwap);
         } catch (error) {
