@@ -1,10 +1,9 @@
 import Vue from 'vue';
 import { BrowserDetection } from '@nimiq/utils';
+import { setAssetPublicPath as setVueComponentsAssetPath } from '@nimiq/vue-components';
 import App from './CashlinkApp.vue';
 import store from './store';
 import { startSentry } from './lib/Sentry';
-// @ts-ignore
-import IqonsSvg from '@nimiq/iqons/dist/iqons.min.svg';
 import { i18n, setLanguage, detectLanguage } from './i18n/i18n-setup';
 
 if (window.hasBrowserWarning) {
@@ -25,14 +24,9 @@ if ((BrowserDetection.isIOS() || BrowserDetection.isSafari()) && 'serviceWorker'
 
 Vue.config.productionTip = false;
 
-// Set up Identicon SVG file path
-if (IqonsSvg[0] === '"') {
-    // @ts-ignore
-    self.NIMIQ_IQONS_SVG_PATH = IqonsSvg.substring(1, IqonsSvg.length - 1);
-} else {
-    // @ts-ignore
-    self.NIMIQ_IQONS_SVG_PATH = IqonsSvg;
-}
+// Set asset path relative to the public path defined in vue.config.json,
+// see https://cli.vuejs.org/guide/mode-and-env.html#using-env-variables-in-client-side-code
+setVueComponentsAssetPath(`${process.env.BASE_URL}js/`, `${process.env.BASE_URL}img/`);
 
 startSentry(Vue);
 
