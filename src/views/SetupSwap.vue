@@ -28,7 +28,7 @@ export default class SetupSwap extends BitcoinSyncBaseView {
                 : ''; // Should never happen, if parsing works correctly
         const account = this.findWalletByAddress(nimAddress)!;
 
-        const request: Partial<KeyguardClient.SignSwapRequest> = {
+        const request: Partial<KeyguardClient.SignSwapRequestSlider> = {
             appName: this.request.appName,
 
             keyId: account.keyId,
@@ -174,11 +174,16 @@ export default class SetupSwap extends BitcoinSyncBaseView {
 
         // Display data
         request.fiatCurrency = this.request.fiatCurrency;
-        request.nimFiatRate = this.request.nimFiatRate;
-        request.btcFiatRate = this.request.btcFiatRate;
-        request.serviceFundingNetworkFee = this.request.serviceFundingNetworkFee;
-        request.serviceRedeemingNetworkFee = this.request.serviceRedeemingNetworkFee;
-        request.serviceExchangeFee = this.request.serviceExchangeFee;
+        request.fundingFiatRate = this.request.fund.type === SwapAsset.NIM
+            ? this.request.nimFiatRate
+            : this.request.btcFiatRate;
+        request.redeemingFiatRate = this.request.redeem.type === SwapAsset.NIM
+            ? this.request.nimFiatRate
+            : this.request.btcFiatRate;
+        request.serviceFundingFee = this.request.serviceFundingNetworkFee;
+        request.serviceRedeemingFee = this.request.serviceRedeemingNetworkFee;
+        request.serviceSwapFee = this.request.serviceExchangeFee;
+        request.layout = 'slider';
         request.nimiqAddresses = this.request.nimiqAddresses;
         request.bitcoinAccount = this.request.bitcoinAccount;
 
