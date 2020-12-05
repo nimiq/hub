@@ -873,7 +873,7 @@ msgstr ""
 
 #: src/views/BitcoinSyncBaseView.vue:50
 #: src/views/SetupSwapSuccess.vue:362
-#: src/views/SignBtcTransactionLedger.vue:119
+#: src/views/SignBtcTransactionLedger.vue:115
 msgid "Syncing Failed"
 msgstr ""
 
@@ -961,7 +961,7 @@ msgstr ""
 msgid "Transaction Sent"
 msgstr ""
 
-#: src/views/SignBtcTransactionLedger.vue:118
+#: src/views/SignBtcTransactionLedger.vue:114
 #: src/views/SignTransactionLedger.vue:443
 msgid "Transaction Signed"
 msgstr ""
