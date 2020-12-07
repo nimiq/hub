@@ -1122,9 +1122,9 @@
   dependencies:
     big-integer "^1.6.44"
 
-"@nimiq/vue-components@https://github.com/nimiq/vue-components#build/hub":
+"@nimiq/vue-components@https://github.com/nimiq/vue-components#build/translations":
   version "0.1.0"
-  resolved "https://github.com/nimiq/vue-components#4c6a9a79a781e528f9de3046ed01d8b50696543c"
+  resolved "https://github.com/nimiq/vue-components#d9b8ed16f2b80055e65bc81fa0375f953f589b55"
   dependencies:
     "@nimiq/style" "^0.8.2"
     big-integer "^1.6.44"
