@@ -224,6 +224,13 @@ export interface BitcoinHtlcCreationInstructions {
     refundAddress: string;
 }
 
+export interface EuroHtlcCreationInstructions {
+    type: 'EUR';
+    value: number; // Eurocents
+    fee: number; // Eurocents
+    bankLabel?: string;
+}
+
 export interface NimiqHtlcSettlementInstructions {
     type: 'NIM';
     recipient: string; // My address, must be redeem address of HTLC
@@ -276,7 +283,8 @@ export interface BitcoinHtlcRefundInstructions {
 
 export type HtlcCreationInstructions =
     NimiqHtlcCreationInstructions
-    | BitcoinHtlcCreationInstructions;
+    | BitcoinHtlcCreationInstructions
+    | EuroHtlcCreationInstructions;
 
 export type HtlcSettlementInstructions =
     NimiqHtlcSettlementInstructions
@@ -298,18 +306,20 @@ export interface SetupSwapRequest extends BasicRequest {
     serviceFundingNetworkFee: number; // Luna or Sats, depending which one gets funded
     serviceRedeemingNetworkFee: number; // Luna or Sats, depending which one gets redeemed
     serviceExchangeFee: number; // Luna or Sats, depending which one gets funded
-    nimiqAddresses: Array<{
+    layout?: 'standard' | 'slider';
+    nimiqAddresses?: Array<{
         address: string,
         balance: number, // Luna
     }>;
-    bitcoinAccount: {
+    bitcoinAccount?: {
         balance: number, // Sats
     };
 }
 
 export interface SetupSwapResult {
-    nim: SignedTransaction;
-    btc: SignedBtcTransaction;
+    nim?: SignedTransaction;
+    btc?: SignedBtcTransaction;
+    eur?: string; // When funding EUR: empty string, when redeeming EUR: JWS of the settlement instructions
 }
 
 export interface RefundSwapRequest extends SimpleRequest {

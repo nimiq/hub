@@ -1022,10 +1022,10 @@
   dependencies:
     bitcoinjs-lib "^5.1.10"
 
-"@nimiq/fastspot-api@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@nimiq/fastspot-api/-/fastspot-api-1.0.0.tgz#9334abf699d3ce9582872c1bb9ad776f41ab311d"
-  integrity sha512-IhfRkLJdhqnCodwdizg7EX4ckdwS/QGWpn/afEBISeu6FgRHXPu6qCw3pADUtfROrRRdDC2cT3hj8/wOS6XikA==
+"@nimiq/fastspot-api@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@nimiq/fastspot-api/-/fastspot-api-1.2.0.tgz#ccd4685c703877d278e75043f5ea8755ac6e68c4"
+  integrity sha512-VJzYbaNSTtrMuIf8fw27vfagepply/0017rQKanYN4QIN1d8EcUZYv4o2IWHKSyf6EUXzOBcMt8JYwiszjq5hA==
 
 "@nimiq/iqons@^1.5.2":
   version "1.5.2"
@@ -1047,9 +1047,9 @@
     leveldown "^5.1.1"
     levelup "^4.1.0"
 
-"@nimiq/keyguard-client@https://gitpkg.now.sh/nimiq/keyguard?2a9f58fad82c492e47fd4eb48c46c41d37d7a725&scripts.postinstall=cd%20client%20%26%26%20.%2Fbuild-gitpkg.sh":
+"@nimiq/keyguard-client@https://gitpkg.now.sh/nimiq/keyguard?2cf31aa231e365112f9efff2cbb30b6e55f9b1cf&scripts.postinstall=cd%20client%20%26%26%20.%2Fbuild-gitpkg.sh":
   version "1.0.0"
-  resolved "https://gitpkg.now.sh/nimiq/keyguard?2a9f58fad82c492e47fd4eb48c46c41d37d7a725&scripts.postinstall=cd%20client%20%26%26%20.%2Fbuild-gitpkg.sh#80c94a5664ef933d82075915f4fe8e20db84d49b"
+  resolved "https://gitpkg.now.sh/nimiq/keyguard?2cf31aa231e365112f9efff2cbb30b6e55f9b1cf&scripts.postinstall=cd%20client%20%26%26%20.%2Fbuild-gitpkg.sh#5d8c0dae2854ad92d33b47a770590834af407fd8"
 
 "@nimiq/ledger-api@^2.0.0":
   version "2.0.0"

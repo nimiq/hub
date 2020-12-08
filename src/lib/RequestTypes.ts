@@ -149,6 +149,11 @@ export interface ParsedSetupSwapRequest extends ParsedBasicRequest {
         };
         // htlcScript: Uint8Array,
         refundAddress: string,
+    } | {
+        type: SwapAsset.EUR,
+        value: number, // Eurocents
+        fee: number, // Eurocents
+        bankLabel?: string,
     };
 
     redeem: {
@@ -176,17 +181,18 @@ export interface ParsedSetupSwapRequest extends ParsedBasicRequest {
     };
 
     // Data needed for display
+    layout: 'standard' | 'slider';
     fiatCurrency: string;
     nimFiatRate: number;
     btcFiatRate: number;
     serviceFundingNetworkFee: number; // Luna or Sats, depending which one gets funded
     serviceRedeemingNetworkFee: number; // Luna or Sats, depending which one gets redeemed
     serviceExchangeFee: number; // Luna or Sats, depending which one gets funded
-    nimiqAddresses: Array<{
+    nimiqAddresses?: Array<{
         address: string,
         balance: number, // Luna
     }>;
-    bitcoinAccount: {
+    bitcoinAccount?: {
         balance: number, // Sats
     };
 }

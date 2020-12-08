@@ -449,16 +449,22 @@ export class RequestParser {
 
                 // Validate and parse only what we use in the Hub
 
-                if (!['NIM', 'BTC'].includes(setupSwapRequest.fund.type)) {
-                    throw new Error('Funding object type must be "NIM" or "BTC"');
+                if (!['NIM', 'BTC', 'EUR'].includes(setupSwapRequest.fund.type)) {
+                    throw new Error('Funding type is not supported');
                 }
 
-                if (!['NIM', 'BTC'].includes(setupSwapRequest.redeem.type)) {
-                    throw new Error('Redeeming object type must be "NIM" or "BTC"');
+                if (!['NIM', 'BTC'/* , 'EUR' */].includes(setupSwapRequest.redeem.type)) {
+                    throw new Error('Redeeming type is not supported');
                 }
 
                 if (setupSwapRequest.fund.type === setupSwapRequest.redeem.type) {
                     throw new Error('Cannot swap between the same types');
+                }
+
+                if (setupSwapRequest.layout === 'slider') {
+                    if (!Array.isArray(setupSwapRequest.nimiqAddresses)) {
+                        throw new Error('When using the "slider" layout, `nimAddresses` must be an array');
+                    }
                 }
 
                 const parsedSetupSwapRequest: ParsedSetupSwapRequest = {
@@ -469,7 +475,10 @@ export class RequestParser {
                         ...setupSwapRequest.fund,
                         type: SwapAsset[setupSwapRequest.fund.type],
                         sender: Nimiq.Address.fromAny(setupSwapRequest.fund.sender),
-                    } : {
+                    } : setupSwapRequest.fund.type === 'BTC' ? {
+                        ...setupSwapRequest.fund,
+                        type: SwapAsset[setupSwapRequest.fund.type],
+                    } : { // EUR
                         ...setupSwapRequest.fund,
                         type: SwapAsset[setupSwapRequest.fund.type],
                     },
@@ -485,6 +494,8 @@ export class RequestParser {
                         ...setupSwapRequest.redeem,
                         type: SwapAsset[setupSwapRequest.redeem.type],
                     },
+
+                    layout: setupSwapRequest.layout || 'standard',
                 };
                 return parsedSetupSwapRequest;
             case RequestType.REFUND_SWAP:
