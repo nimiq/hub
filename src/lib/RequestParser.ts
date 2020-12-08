@@ -467,6 +467,10 @@ export class RequestParser {
                     if (!Array.isArray(setupSwapRequest.nimiqAddresses)) {
                         throw new Error('When using the "slider" layout, `nimAddresses` must be an array');
                     }
+
+                    if (!setupSwapRequest.bitcoinAccount) {
+                        throw new Error('When using the "slider" layout, `bitcoinAccount` must be provided');
+                    }
                 }
 
                 if (setupSwapRequest.redeem.type === 'NIM') {
