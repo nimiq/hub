@@ -338,7 +338,7 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
             };
         }
 
-        if (keyguardResult.eur) {
+        if (typeof keyguardResult.eur === 'string') {
             result.eur = keyguardResult.eur;
         }
 
