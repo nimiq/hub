@@ -53,7 +53,7 @@ msgstr "404 - Geld niet gevonden"
 msgid "Account backed up!"
 msgstr "Account geback-upt!"
 
-#: src/views/SignupLedger.vue:27
+#: src/views/SignupLedger.vue:28
 msgid "Account Created"
 msgstr "Account aangemaakt"
 
@@ -93,7 +93,7 @@ msgstr "Vestingcontract toevoegen"
 msgid "Address Added"
 msgstr "Adres toegevoegd"
 
-#: src/views/LoginSuccess.vue:96
+#: src/views/LoginSuccess.vue:97
 msgid "Address detection failed. Retrying..."
 msgstr "Adresherkenning mislukt. Probeer het opnieuw... "
 
@@ -377,8 +377,8 @@ msgstr " Seed nodes contacteren..."
 msgid "Contacts are not affected."
 msgstr "Contacten zijn niet aangepast."
 
-#: src/components/NotEnoughCookieSpace.vue:8 src/views/LoginSuccess.vue:142
-#: src/views/LoginSuccess.vue:170 src/views/SignupLedger.vue:129
+#: src/components/NotEnoughCookieSpace.vue:8 src/views/LoginSuccess.vue:152
+#: src/views/LoginSuccess.vue:180 src/views/SignupLedger.vue:143
 msgid "Continue"
 msgstr "Doorgaan"
 
@@ -459,7 +459,7 @@ msgstr "Voer het adres van een vestingcontract in."
 msgid "express"
 msgstr "express"
 
-#: src/views/SignupLedger.vue:113
+#: src/views/SignupLedger.vue:120
 msgid "Failed to fetch addresses. Retrying..."
 msgstr "Adres binnenhalen is mislukt. Nieuwe poging..."
 
@@ -473,21 +473,33 @@ msgstr "kosten"
 msgid "Fee"
 msgstr "kosten"
 
+#: src/views/LoginSuccess.vue:105 src/views/SignupLedger.vue:108
+msgid "Fetching Addresses Failed"
+msgstr ""
+
 #: src/views/AddVestingContract.vue:16
 msgid "Fetching contract information..."
 msgstr "Contractinformatie ophalen..."
 
-#: src/views/RefundSwap.vue:5 src/views/SetupSwap.vue:5
-msgid "Fetching your addresses"
-msgstr "Jouw adressen ophalen"
+#: src/views/SetupSwapSuccess.vue:296
+msgid "Fetching Swap Data Failed"
+msgstr ""
 
-#: src/components/LedgerUi.vue:221 src/views/ActivateBitcoinSuccess.vue:39
-#: src/views/LoginSuccess.vue:42 src/views/SignBtcTransaction.vue:5
-#: src/views/SignupLedger.vue:99
+#: src/views/SetupSwapSuccess.vue:317
+msgid "Fetching swap data failed: {error}"
+msgstr ""
+
+#: src/views/SetupSwapSuccess.vue:307
+msgid "Fetching swap data..."
+msgstr ""
+
+#: src/components/LedgerUi.vue:221 src/views/ActivateBitcoinSuccess.vue:78
+#: src/views/BitcoinSyncBaseView.vue:48 src/views/LoginSuccess.vue:42
+#: src/views/SignupLedger.vue:104
 msgid "Fetching your Addresses"
 msgstr "Je adressen ophalen"
 
-#: src/views/SignupLedger.vue:30
+#: src/views/SignupLedger.vue:31
 msgid "Finish"
 msgstr "Afronden"
 
@@ -539,7 +551,7 @@ msgstr ""
 "Stel je voor dat betalen met \n"
 "cryptovaluta makkelijk was"
 
-#: src/views/LoginSuccess.vue:153 src/views/SignupLedger.vue:117
+#: src/views/LoginSuccess.vue:163 src/views/SignupLedger.vue:124
 msgid ""
 "Imported {count} address so far... | Imported {count} addresses so far..."
 msgstr ""
@@ -737,7 +749,7 @@ msgstr "Stuur de transactie alstublieft handmatig"
 msgid "Prepare for update"
 msgstr "Maak je klaar voor een update"
 
-#: src/views/SetupSwapSuccess.vue:5
+#: src/views/SetupSwapSuccess.vue:300
 msgid "Preparing Swap"
 msgstr "Swap voorbereiden"
 
@@ -785,6 +797,11 @@ msgstr "Betaling opnieuw starten"
 msgid "Retrieving your old accounts..."
 msgstr "Oude accounts ophalen..."
 
+#: src/views/BitcoinSyncBaseView.vue:68 src/views/LoginSuccess.vue:107
+#: src/views/SetupSwapSuccess.vue:325 src/views/SignupLedger.vue:145
+msgid "Retry"
+msgstr ""
+
 #: src/views/Rename.vue:18
 msgid "Save"
 msgstr "Opslaan"
@@ -814,7 +831,7 @@ msgstr "Delen"
 msgid "Sign Message"
 msgstr "Bericht ondertekenen"
 
-#: src/views/SetupSwapSuccess.vue:6
+#: src/views/SetupSwapSuccess.vue:309
 msgid "Signing transactions..."
 msgstr "Transacties ondertekenen..."
 
@@ -831,7 +848,7 @@ msgid "Something went wrong with your request. Please try again."
 msgstr ""
 "Er is iets verkeerd gegaan met je aanvraag. Probeer het alstublieft opnieuw."
 
-#: src/views/LoginSuccess.vue:138
+#: src/views/LoginSuccess.vue:148
 msgid "Space exceeded"
 msgstr "Ruimte overschreden"
 
@@ -857,12 +874,22 @@ msgstr "Je nieuwe accounts opslaan..."
 msgid "Syncing consensus..."
 msgstr "Consensus synchroniseren..."
 
-#: src/views/ActivateBitcoinSuccess.vue:60
-#: src/views/ActivateBitcoinSuccess.vue:91 src/views/RefundSwap.vue:6
-#: src/views/SetupSwap.vue:6 src/views/SignBtcTransaction.vue:6
-#: src/views/SignBtcTransactionLedger.vue:114
+#: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapSuccess.vue:298
+#: src/views/SignBtcTransactionLedger.vue:119
+msgid "Syncing Failed"
+msgstr ""
+
+#: src/views/BitcoinSyncBaseView.vue:63
+msgid "Syncing with Bitcoin network failed: {error}"
+msgstr ""
+
+#: src/views/BitcoinSyncBaseView.vue:58
 msgid "Syncing with Bitcoin network..."
 msgstr "Synchroniseren met Bitcoin netwerk..."
+
+#: src/views/LoginSuccess.vue:106 src/views/SignupLedger.vue:134
+msgid "Syncing with the network failed: {error}"
+msgstr ""
 
 #: src/lib/LabelingMachine.ts:45
 msgid "Teal"
@@ -906,7 +933,7 @@ msgstr "Deze Cashlink is al geclaimd."
 msgid "This is not a valid Cashlink, sorry."
 msgstr "Sorry. Deze Cashlink is niet geldig."
 
-#: src/views/SignupLedger.vue:29
+#: src/views/SignupLedger.vue:30
 msgid "This is your account with your first address in it."
 msgstr "Dit is je account met eerste adres."
 
@@ -953,7 +980,7 @@ msgstr "Transactie is verlopen"
 msgid "Transaction Sent"
 msgstr "Transactie verstuurd "
 
-#: src/views/SignBtcTransactionLedger.vue:109
+#: src/views/SignBtcTransactionLedger.vue:118
 #: src/views/SignTransactionLedger.vue:443
 msgid "Transaction Signed"
 msgstr "Transactie ondertekend"
@@ -975,7 +1002,7 @@ msgstr ""
 " toevoegen. Log alstublieft uit bij de ongebruikte accounts om ruimte vrij "
 "te maken."
 
-#: src/views/LoginSuccess.vue:140
+#: src/views/LoginSuccess.vue:150
 msgid ""
 "Unfortunately, due to space restrictions of Safari and IOS, this account "
 "cannot be stored properly. Please free up space by logging out of other "
@@ -1017,7 +1044,7 @@ msgstr ""
 "Gebruik je Login File\n"
 "of je herstelwoorden."
 
-#: src/views/LoginSuccess.vue:169 src/views/SignupLedger.vue:124
+#: src/views/LoginSuccess.vue:179 src/views/SignupLedger.vue:132
 msgid "Used addresses without balance might have been missed."
 msgstr "Gebruikte adressen zonder balans kunnen niet aanwezig zijn."
 
@@ -1025,7 +1052,7 @@ msgstr "Gebruikte adressen zonder balans kunnen niet aanwezig zijn."
 msgid "Verify Payment"
 msgstr "Controleer de betaling"
 
-#: src/lib/LabelingMachine.ts:25 src/views/AddVestingContract.vue:141
+#: src/lib/LabelingMachine.ts:25 src/views/AddVestingContract.vue:137
 msgid "Vesting Contract"
 msgstr "Vestingcontract"
 
@@ -1037,7 +1064,7 @@ msgstr ""
 "Welkom bij de\n"
 "Nimiq Blockchain."
 
-#: src/views/SignupLedger.vue:105
+#: src/views/SignupLedger.vue:112
 msgid "Welcome to the Nimiq Blockchain."
 msgstr "Welkom bij de Nimiq Blockchain."
 
@@ -1073,7 +1100,7 @@ msgstr ""
 "Je hebt onvoldoende overgemaakt. Neem contact op met de verkoper voor een "
 "terugbetaling. Begin opnieuw om uw bestelling te betalen."
 
-#: src/views/SignupLedger.vue:104
+#: src/views/SignupLedger.vue:111
 msgid "You're logged in!"
 msgstr "Je bent ingelogd! "
 
@@ -1085,11 +1112,11 @@ msgstr ""
 "Je {app} app is verouderd. Werk je Ledger-firmware en {app} app bij met "
 "Ledger Live."
 
-#: src/views/LoginSuccess.vue:184
+#: src/views/LoginSuccess.vue:194
 msgid "Your Account is ready. | Your Accounts are ready."
 msgstr "Je account is klaar. | Je accounts zijn klaar."
 
-#: src/views/LoginSuccess.vue:167 src/views/SignupLedger.vue:101
+#: src/views/LoginSuccess.vue:177 src/views/SignupLedger.vue:106
 msgid ""
 "Your Addresses may be\n"
 "incomplete."
@@ -1107,6 +1134,6 @@ msgstr "Je Ledger is nodig om opnieuw in te loggen."
 msgid "Your message is signed."
 msgstr "Je bericht is ondertekend."
 
-#: src/views/LoginSuccess.vue:178 src/views/SimpleSuccess.vue:31
+#: src/views/LoginSuccess.vue:188 src/views/SimpleSuccess.vue:31
 msgid "Your password was changed."
 msgstr "Je wachtwoord is gewijzigd."

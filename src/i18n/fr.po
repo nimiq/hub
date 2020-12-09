@@ -52,7 +52,7 @@ msgstr "404 - Argent introuvable"
 msgid "Account backed up!"
 msgstr "Compte sauvegardé !"
 
-#: src/views/SignupLedger.vue:27
+#: src/views/SignupLedger.vue:28
 msgid "Account Created"
 msgstr "Compte créé"
 
@@ -92,7 +92,7 @@ msgstr "Ajouter un contrat d'acquisition"
 msgid "Address Added"
 msgstr "Adresse ajoutée"
 
-#: src/views/LoginSuccess.vue:96
+#: src/views/LoginSuccess.vue:97
 msgid "Address detection failed. Retrying..."
 msgstr "Détection d'adresse échouée. Nouvelle tentative..."
 
@@ -376,8 +376,8 @@ msgstr "En train de contacter les seed nodes..."
 msgid "Contacts are not affected."
 msgstr "Les contacts ne sont pas affectés."
 
-#: src/components/NotEnoughCookieSpace.vue:8 src/views/LoginSuccess.vue:142
-#: src/views/LoginSuccess.vue:170 src/views/SignupLedger.vue:129
+#: src/components/NotEnoughCookieSpace.vue:8 src/views/LoginSuccess.vue:152
+#: src/views/LoginSuccess.vue:180 src/views/SignupLedger.vue:143
 msgid "Continue"
 msgstr "Continuer"
 
@@ -458,7 +458,7 @@ msgstr "Saisissez l'adresse d'un contrat d'acquisition."
 msgid "express"
 msgstr "express"
 
-#: src/views/SignupLedger.vue:113
+#: src/views/SignupLedger.vue:120
 msgid "Failed to fetch addresses. Retrying..."
 msgstr "Récupération des adresses échouée. Nouvelle tentative..."
 
@@ -472,21 +472,33 @@ msgstr "frais"
 msgid "Fee"
 msgstr "Frais"
 
+#: src/views/LoginSuccess.vue:105 src/views/SignupLedger.vue:108
+msgid "Fetching Addresses Failed"
+msgstr ""
+
 #: src/views/AddVestingContract.vue:16
 msgid "Fetching contract information..."
 msgstr "Obtention d'informations sur les contrats..."
 
-#: src/views/RefundSwap.vue:5 src/views/SetupSwap.vue:5
-msgid "Fetching your addresses"
-msgstr "Récupération de vos adresses"
+#: src/views/SetupSwapSuccess.vue:296
+msgid "Fetching Swap Data Failed"
+msgstr ""
 
-#: src/components/LedgerUi.vue:221 src/views/ActivateBitcoinSuccess.vue:39
-#: src/views/LoginSuccess.vue:42 src/views/SignBtcTransaction.vue:5
-#: src/views/SignupLedger.vue:99
+#: src/views/SetupSwapSuccess.vue:317
+msgid "Fetching swap data failed: {error}"
+msgstr ""
+
+#: src/views/SetupSwapSuccess.vue:307
+msgid "Fetching swap data..."
+msgstr ""
+
+#: src/components/LedgerUi.vue:221 src/views/ActivateBitcoinSuccess.vue:78
+#: src/views/BitcoinSyncBaseView.vue:48 src/views/LoginSuccess.vue:42
+#: src/views/SignupLedger.vue:104
 msgid "Fetching your Addresses"
 msgstr "Récupération de vos adresses"
 
-#: src/views/SignupLedger.vue:30
+#: src/views/SignupLedger.vue:31
 msgid "Finish"
 msgstr "Finir"
 
@@ -538,7 +550,7 @@ msgstr ""
 "Imaginez si payer avec\n"
 "de la crypto était facile."
 
-#: src/views/LoginSuccess.vue:153 src/views/SignupLedger.vue:117
+#: src/views/LoginSuccess.vue:163 src/views/SignupLedger.vue:124
 msgid ""
 "Imported {count} address so far... | Imported {count} addresses so far..."
 msgstr ""
@@ -737,7 +749,7 @@ msgstr "Veuillez envoyer la transaction manuellement"
 msgid "Prepare for update"
 msgstr "Préparer la mise à jour"
 
-#: src/views/SetupSwapSuccess.vue:5
+#: src/views/SetupSwapSuccess.vue:300
 msgid "Preparing Swap"
 msgstr "Swap en préparation"
 
@@ -785,6 +797,11 @@ msgstr "Recommencer le paiement"
 msgid "Retrieving your old accounts..."
 msgstr "Récupération de vos anciens comptes..."
 
+#: src/views/BitcoinSyncBaseView.vue:68 src/views/LoginSuccess.vue:107
+#: src/views/SetupSwapSuccess.vue:325 src/views/SignupLedger.vue:145
+msgid "Retry"
+msgstr ""
+
 #: src/views/Rename.vue:18
 msgid "Save"
 msgstr "Enregistrer"
@@ -814,7 +831,7 @@ msgstr "Partager"
 msgid "Sign Message"
 msgstr "Signer le message"
 
-#: src/views/SetupSwapSuccess.vue:6
+#: src/views/SetupSwapSuccess.vue:309
 msgid "Signing transactions..."
 msgstr "Signature des transactions..."
 
@@ -830,7 +847,7 @@ msgstr "Quelque chose s'est mal passée"
 msgid "Something went wrong with your request. Please try again."
 msgstr "Un problème est survenu lors de la requête. Veuillez réessayer."
 
-#: src/views/LoginSuccess.vue:138
+#: src/views/LoginSuccess.vue:148
 msgid "Space exceeded"
 msgstr "Espace dépassé"
 
@@ -856,12 +873,22 @@ msgstr "Enregistrement de vos nouveaux comptes..."
 msgid "Syncing consensus..."
 msgstr "Synchronisation du consensus..."
 
-#: src/views/ActivateBitcoinSuccess.vue:60
-#: src/views/ActivateBitcoinSuccess.vue:91 src/views/RefundSwap.vue:6
-#: src/views/SetupSwap.vue:6 src/views/SignBtcTransaction.vue:6
-#: src/views/SignBtcTransactionLedger.vue:114
+#: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapSuccess.vue:298
+#: src/views/SignBtcTransactionLedger.vue:119
+msgid "Syncing Failed"
+msgstr ""
+
+#: src/views/BitcoinSyncBaseView.vue:63
+msgid "Syncing with Bitcoin network failed: {error}"
+msgstr ""
+
+#: src/views/BitcoinSyncBaseView.vue:58
 msgid "Syncing with Bitcoin network..."
 msgstr "Synchronisation avec le réseau Bitcoin..."
+
+#: src/views/LoginSuccess.vue:106 src/views/SignupLedger.vue:134
+msgid "Syncing with the network failed: {error}"
+msgstr ""
 
 #: src/lib/LabelingMachine.ts:45
 msgid "Teal"
@@ -906,7 +933,7 @@ msgstr "Ce Cashlink a déjà été réclamé."
 msgid "This is not a valid Cashlink, sorry."
 msgstr "Ce n'est pas un Cashlink valide, désolé."
 
-#: src/views/SignupLedger.vue:29
+#: src/views/SignupLedger.vue:30
 msgid "This is your account with your first address in it."
 msgstr "Ceci est votre compte avec votre première adresse incluse."
 
@@ -953,7 +980,7 @@ msgstr "La transaction est expirée"
 msgid "Transaction Sent"
 msgstr "Transaction envoyée"
 
-#: src/views/SignBtcTransactionLedger.vue:109
+#: src/views/SignBtcTransactionLedger.vue:118
 #: src/views/SignTransactionLedger.vue:443
 msgid "Transaction Signed"
 msgstr "Transaction signée"
@@ -975,7 +1002,7 @@ msgstr ""
 "ajouter plus de comptes et/ou d'adresses. Veuillez vous déconnecter des "
 "comptes inutilisés pour libérer de l'espace de stockage."
 
-#: src/views/LoginSuccess.vue:140
+#: src/views/LoginSuccess.vue:150
 msgid ""
 "Unfortunately, due to space restrictions of Safari and IOS, this account "
 "cannot be stored properly. Please free up space by logging out of other "
@@ -1015,7 +1042,7 @@ msgid ""
 "or Recovery Words."
 msgstr "Utilisez votre Fichier de Connexion ou les Mots de Récupération."
 
-#: src/views/LoginSuccess.vue:169 src/views/SignupLedger.vue:124
+#: src/views/LoginSuccess.vue:179 src/views/SignupLedger.vue:132
 msgid "Used addresses without balance might have been missed."
 msgstr "Les adresses utilisées sans solde peuvent avoir été manquées."
 
@@ -1023,7 +1050,7 @@ msgstr "Les adresses utilisées sans solde peuvent avoir été manquées."
 msgid "Verify Payment"
 msgstr "Vérifier le paiement"
 
-#: src/lib/LabelingMachine.ts:25 src/views/AddVestingContract.vue:141
+#: src/lib/LabelingMachine.ts:25 src/views/AddVestingContract.vue:137
 msgid "Vesting Contract"
 msgstr "Contrat d'acquisition"
 
@@ -1035,7 +1062,7 @@ msgstr ""
 "Bienvenue sur la \n"
 "Blockchain Nimiq."
 
-#: src/views/SignupLedger.vue:105
+#: src/views/SignupLedger.vue:112
 msgid "Welcome to the Nimiq Blockchain."
 msgstr "Bienvenue sur la Blockchain Nimiq."
 
@@ -1071,7 +1098,7 @@ msgstr ""
 "Vous avez transféré un montant insuffisant. Veuillez contacter le marchand "
 "pour un remboursement. Redémarrez pour payer votre commande."
 
-#: src/views/SignupLedger.vue:104
+#: src/views/SignupLedger.vue:111
 msgid "You're logged in!"
 msgstr "Vous êtes connecté !"
 
@@ -1083,11 +1110,11 @@ msgstr ""
 "Votre application {app} est obsolète. Veuillez mettre à jour votre "
 "micrologiciel Ledger et votre application {app} en utilisant Ledger Live."
 
-#: src/views/LoginSuccess.vue:184
+#: src/views/LoginSuccess.vue:194
 msgid "Your Account is ready. | Your Accounts are ready."
 msgstr "Votre compte est prêt. | Vos comptes sont prêts."
 
-#: src/views/LoginSuccess.vue:167 src/views/SignupLedger.vue:101
+#: src/views/LoginSuccess.vue:177 src/views/SignupLedger.vue:106
 msgid ""
 "Your Addresses may be\n"
 "incomplete."
@@ -1107,6 +1134,6 @@ msgstr ""
 msgid "Your message is signed."
 msgstr "Votre message est signé."
 
-#: src/views/LoginSuccess.vue:178 src/views/SimpleSuccess.vue:31
+#: src/views/LoginSuccess.vue:188 src/views/SimpleSuccess.vue:31
 msgid "Your password was changed."
 msgstr "Votre mot de passe a été changé."
