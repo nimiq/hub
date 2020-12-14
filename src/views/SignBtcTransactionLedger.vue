@@ -118,6 +118,8 @@ export default class SignBtcTransactionLedger extends SignBtcTransaction {
     }
 
     protected async _signBtcTransaction(transactionInfo: BitcoinTransactionInfo, walletInfo: WalletInfo) {
+        // If user left this view in the mean time, don't continue signing the transaction
+        if (this._isDestroyed) return;
 
         let ledgerTransactionInfo: LedgerBitcoinTransactionInfo;
         try {

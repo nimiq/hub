@@ -47,6 +47,7 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
     @State private keyguardResult?: KeyguardSimpleResult;
 
     protected async mounted() {
+        // use mounted instead of created to ensure that SetupSwapLedger has the chance to run its created hook before.
         if (!await this._shouldConfirmSwap()) {
             return; // keep potential error message displayed
         }
@@ -110,6 +111,7 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
         if (this._isDestroyed) return;
 
         // Validate contract details
+        // TODO add BTC htlc validation
 
         if (confirmedSwap.from.asset === SwapAsset.NIM || confirmedSwap.to.asset === SwapAsset.NIM) {
             const nimHtlcData = confirmedSwap.contracts[SwapAsset.NIM]!.htlc as NimHtlcDetails;
@@ -263,6 +265,7 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
         // Sign transactions
         this.state = this.State.SIGNING_TRANSACTIONS;
         let nimiqTransaction: Nimiq.Transaction | undefined;
+        let nimiqProxyTransaction: Nimiq.Transaction | undefined;
         let bitcoinTransaction: SignedBtcTransaction | undefined;
         let refundTransaction: string | undefined;
         let euroSettlement: string | undefined;
@@ -274,6 +277,7 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
             if (!signingResult) return; // failed to sign and an error is getting displayed
             ({
                 nim: nimiqTransaction,
+                nimProxy: nimiqProxyTransaction,
                 btc: bitcoinTransaction,
                 eur: euroSettlement,
                 refundTx: refundTransaction,
@@ -328,6 +332,9 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
 
         const result: SetupSwapResult = {
             nim: nimiqTransaction ? await this.nimiqNetwork.makeSignTransactionResult(nimiqTransaction) : undefined,
+            nimProxy: nimiqProxyTransaction
+                ? await this.nimiqNetwork.makeSignTransactionResult(nimiqProxyTransaction)
+                : undefined,
             btc: bitcoinTransaction,
             eur: euroSettlement,
             refundTx: refundTransaction,
@@ -341,11 +348,17 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
     }
 
     protected async _shouldConfirmSwap() {
+        // note that this method gets overwritten for SetupSwapLedger
         return this.keyguardResult && this.keyguardResult.success && !this._isDestroyed;
     }
 
-    protected async _signSwapTransactions(htlcInfo: SwapHtlcInfo)
-        : Promise<{ nim?: Nimiq.Transaction, btc?: SignedBtcTransaction, eur?: string, refundTx?: string } | null> {
+    protected async _signSwapTransactions(htlcInfo: SwapHtlcInfo): Promise<{
+        nim?: Nimiq.Transaction,
+        nimProxy?: Nimiq.Transaction, // only in SetupSwapLedger
+        btc?: SignedBtcTransaction,
+        eur?: string,
+        refundTx?: string,
+    } | null> {
         // Note that this method gets overwritten for SetupSwapLedger
         const keyguardRequest: KeyguardSignSwapTransactionsRequest = {
             ...htlcInfo,

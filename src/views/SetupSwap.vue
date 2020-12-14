@@ -23,7 +23,9 @@ export default class SetupSwap extends BitcoinSyncBaseView {
     protected _account!: WalletInfo;
     protected _isDestroyed: boolean = false;
 
-    protected async created() {
+    protected async mounted() {
+        // use mounted instead of created to ensure that SetupSwapLedger has the chance to run its created hook before.
+
         // existence checked by _hubApiHandler in RpcApi
         this._account = this.findWallet(this.request.walletId)!;
 
@@ -89,7 +91,11 @@ export default class SetupSwap extends BitcoinSyncBaseView {
 
         if (this.request.fund.type === SwapAsset.NIM) {
             const senderContract = this._account.findContractByAddress(this.request.fund.sender);
-            const signer = this._account.findSignerForAddress(this.request.fund.sender)!;
+            const signer = this._account.findSignerForAddress(this.request.fund.sender);
+
+            if (!signer) {
+                throw new Error(`Unknown sender ${this.request.fund.sender.toUserFriendlyAddress()}`);
+            }
 
             fundingInfo = {
                 type: SwapAsset.NIM,

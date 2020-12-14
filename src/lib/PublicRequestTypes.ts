@@ -318,6 +318,7 @@ export interface SetupSwapRequest extends SimpleRequest {
 
 export interface SetupSwapResult {
     nim?: SignedTransaction;
+    nimProxy?: SignedTransaction;
     btc?: SignedBtcTransaction;
     eur?: string; // When funding EUR: empty string, when redeeming EUR: JWS of the settlement instructions
     refundTx?: string;
