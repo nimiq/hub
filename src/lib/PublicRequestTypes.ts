@@ -301,11 +301,11 @@ export interface SetupSwapRequest extends BasicRequest {
 
     // Data needed for display
     fiatCurrency: string;
-    nimFiatRate: number;
-    btcFiatRate: number;
-    serviceFundingNetworkFee: number; // Luna or Sats, depending which one gets funded
-    serviceRedeemingNetworkFee: number; // Luna or Sats, depending which one gets redeemed
-    serviceExchangeFee: number; // Luna or Sats, depending which one gets funded
+    fundingFiatRate: number;
+    redeemingFiatRate: number;
+    serviceFundingFee: number; // Luna or Sats, depending which one gets funded
+    serviceRedeemingFee: number; // Luna or Sats, depending which one gets redeemed
+    serviceSwapFee: number; // Luna or Sats, depending which one gets funded
     layout?: 'standard' | 'slider';
     nimiqAddresses?: Array<{
         address: string,

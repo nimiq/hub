@@ -183,15 +183,11 @@ export default class SetupSwap extends BitcoinSyncBaseView {
 
         // Display data
         request.fiatCurrency = this.request.fiatCurrency;
-        request.fundingFiatRate = this.request.fund.type === SwapAsset.NIM
-            ? this.request.nimFiatRate
-            : this.request.btcFiatRate;
-        request.redeemingFiatRate = this.request.redeem.type === SwapAsset.NIM
-            ? this.request.nimFiatRate
-            : this.request.btcFiatRate;
-        request.serviceFundingFee = this.request.serviceFundingNetworkFee;
-        request.serviceRedeemingFee = this.request.serviceRedeemingNetworkFee;
-        request.serviceSwapFee = this.request.serviceExchangeFee;
+        request.fundingFiatRate = this.request.fundingFiatRate;
+        request.redeemingFiatRate = this.request.redeemingFiatRate;
+        request.serviceFundingFee = this.request.serviceFundingFee;
+        request.serviceRedeemingFee = this.request.serviceRedeemingFee;
+        request.serviceSwapFee = this.request.serviceSwapFee;
         request.layout = this.request.layout;
         if (request.layout === 'slider') {
             request.nimiqAddresses = this.request.nimiqAddresses;

@@ -888,7 +888,7 @@ msgstr ""
 msgid "The connected wallet or Ledger is not the one this account belongs to."
 msgstr ""
 
-#: src/i18n/i18n-setup.ts:58
+#: src/i18n/i18n-setup.ts:63
 msgid "The display language changed. Do you want to reload the page to update all translations? Otherwise, some translations might not be updated automatically. ({oldLang} to {newLang})"
 msgstr ""
 
