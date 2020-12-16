@@ -16,17 +16,11 @@ import { ERROR_CANCELED } from '@/lib/Constants';
 @Component({components: {StatusScreen, SmallPage, GlobalClose}}) // including components used in parent class
 export default class SetupSwap extends BitcoinSyncBaseView {
     @Static private request!: ParsedSetupSwapRequest;
-    @Getter private findWalletByAddress!: (address: string) => WalletInfo | undefined;
+    @Getter private findWallet!: (id: string) => WalletInfo | undefined;
 
     public async created() {
         // Forward user through Hub to Keyguard
-
-        const nimAddress = this.request.fund.type === SwapAsset.NIM
-            ? this.request.fund.sender.toUserFriendlyAddress()
-            : this.request.redeem.type === SwapAsset.NIM
-                ? this.request.redeem.recipient.toUserFriendlyAddress()
-                : ''; // Should never happen, if parsing works correctly
-        const account = this.findWalletByAddress(nimAddress)!;
+        const account = this.findWallet(this.request.walletId)!;
 
         const request: Partial<KeyguardClient.SignSwapRequest> = {
             appName: this.request.appName,

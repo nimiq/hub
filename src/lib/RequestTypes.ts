@@ -120,7 +120,7 @@ export interface ParsedAddBtcAddressesRequest extends ParsedSimpleRequest {
  * Swap
  */
 
-export interface ParsedSetupSwapRequest extends ParsedBasicRequest {
+export interface ParsedSetupSwapRequest extends ParsedSimpleRequest {
     swapId: string;
 
     fund: {

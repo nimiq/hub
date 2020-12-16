@@ -447,6 +447,8 @@ export class RequestParser {
             case RequestType.SETUP_SWAP:
                 const setupSwapRequest = request as SetupSwapRequest;
 
+                if (!setupSwapRequest.accountId) throw new Error('accountId is required');
+
                 // Validate and parse only what we use in the Hub
 
                 if (!['NIM', 'BTC', 'EUR'].includes(setupSwapRequest.fund.type)) {
@@ -469,6 +471,7 @@ export class RequestParser {
 
                 const parsedSetupSwapRequest: ParsedSetupSwapRequest = {
                     kind: RequestType.SETUP_SWAP,
+                    walletId: setupSwapRequest.accountId,
                     ...setupSwapRequest,
 
                     fund: setupSwapRequest.fund.type === 'NIM' ? {
@@ -657,9 +660,9 @@ export class RequestParser {
                 } as SignBtcTransactionRequest;
             case RequestType.SETUP_SWAP:
                 const setupSwapRequest = request as ParsedSetupSwapRequest;
-
-                const swapSetupRequest: SetupSwapRequest = {
+                return {
                     ...setupSwapRequest,
+                    accountId: setupSwapRequest.walletId,
 
                     // @ts-ignore Type 'Address' is not assignable to type 'string'
                     fund: setupSwapRequest.fund.type === 'NIM' ? {
@@ -672,23 +675,20 @@ export class RequestParser {
                         ...setupSwapRequest.redeem,
                         recipient: setupSwapRequest.redeem.recipient.toUserFriendlyAddress(),
                     } : setupSwapRequest.redeem,
-                };
-                return swapSetupRequest;
+                } as SetupSwapRequest;
             case RequestType.REFUND_SWAP:
-                const parsedRefundSwapRequest = request as ParsedRefundSwapRequest;
-
-                const refundSwapRequest: RefundSwapRequest = {
-                    ...parsedRefundSwapRequest,
-                    accountId: parsedRefundSwapRequest.walletId,
+                const refundSwapRequest = request as ParsedRefundSwapRequest;
+                return {
+                    ...refundSwapRequest,
+                    accountId: refundSwapRequest.walletId,
 
                     // @ts-ignore Type 'Address' is not assignable to type 'string'
-                    refund: parsedRefundSwapRequest.refund.type === 'NIM' ? {
-                        ...parsedRefundSwapRequest.refund,
-                        sender: parsedRefundSwapRequest.refund.sender.toUserFriendlyAddress(),
-                        recipient: parsedRefundSwapRequest.refund.recipient.toUserFriendlyAddress(),
-                    } : parsedRefundSwapRequest.refund,
-                };
-                return refundSwapRequest;
+                    refund: refundSwapRequest.refund.type === 'NIM' ? {
+                        ...refundSwapRequest.refund,
+                        sender: refundSwapRequest.refund.sender.toUserFriendlyAddress(),
+                        recipient: refundSwapRequest.refund.recipient.toUserFriendlyAddress(),
+                    } : refundSwapRequest.refund,
+                } as RefundSwapRequest;
             default:
                 return null;
         }

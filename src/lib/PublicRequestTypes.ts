@@ -294,7 +294,7 @@ export type HtlcRefundInstructions =
     NimiqHtlcRefundInstructions
     | BitcoinHtlcRefundInstructions;
 
-export interface SetupSwapRequest extends BasicRequest {
+export interface SetupSwapRequest extends SimpleRequest {
     swapId: string;
     fund: HtlcCreationInstructions;
     redeem: HtlcSettlementInstructions;
