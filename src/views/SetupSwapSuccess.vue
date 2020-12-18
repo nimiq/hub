@@ -415,7 +415,7 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
     protected get statusScreenTitle() {
         switch (this.state) {
             case this.State.FETCHING_SWAP_DATA_FAILED:
-                return this.$t('Fetching Swap Data Failed') as string;
+                return this.$t('Swap Setup Failed') as string;
             case this.State.SYNCING_FAILED:
                 return this.$t('Syncing Failed') as string;
             default:

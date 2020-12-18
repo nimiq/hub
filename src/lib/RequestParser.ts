@@ -471,6 +471,16 @@ export class RequestParser {
                     if (!setupSwapRequest.bitcoinAccount) {
                         throw new Error('When using the "slider" layout, `bitcoinAccount` must be provided');
                     }
+
+                    const nimiqAddress = setupSwapRequest.fund.type === 'NIM'
+                        ? Nimiq.Address.fromAny(setupSwapRequest.fund.sender)
+                        : setupSwapRequest.redeem.type === 'NIM'
+                            ? Nimiq.Address.fromAny(setupSwapRequest.redeem.recipient)
+                            : '';
+                    if (nimiqAddress && !setupSwapRequest.nimiqAddresses.some(
+                        ({ address }) => Nimiq.Address.fromAny(address).equals(nimiqAddress))) {
+                        throw new Error('The address details of the NIM address doing the swap must be provided');
+                    }
                 }
 
                 if (setupSwapRequest.redeem.type === 'NIM') {
@@ -520,6 +530,7 @@ export class RequestParser {
 
                     layout: setupSwapRequest.layout || 'standard',
                 };
+
                 return parsedSetupSwapRequest;
             case RequestType.REFUND_SWAP:
                 const refundSwapRequest = request as RefundSwapRequest;

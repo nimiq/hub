@@ -200,6 +200,7 @@ class LedgerUi extends Vue {
             // TODO instructions for u2f/WebAuthn confirmation on Ledger for fetching BTC public keys / addresses.
             case RequestTypeBitcoin.GET_WALLET_ID:
                 // no instructions needed as not interactive
+                this._showInstructions(null);
                 break;
             case RequestTypeNimiq.GET_ADDRESS:
             case RequestTypeBitcoin.GET_ADDRESS_AND_PUBLIC_KEY:
@@ -213,7 +214,10 @@ class LedgerUi extends Vue {
                                 { addressToConfirm: request.expectedAddress },
                             ) as string,
                     );
-                } // else no instructions needed as not interactive
+                } else {
+                    // no instructions needed as not interactive
+                    this._showInstructions(null);
+                }
                 break;
             case RequestTypeNimiq.DERIVE_ADDRESSES:
             case RequestTypeBitcoin.GET_EXTENDED_PUBLIC_KEY:
