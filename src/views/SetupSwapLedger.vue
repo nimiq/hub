@@ -507,7 +507,7 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
                     keyPath: swapSetupInfo.redeem.input.keyPath,
                     transactionHash: htlcInfo.redeem.transactionHash,
                     outputIndex: htlcInfo.redeem.outputIndex,
-                    customScript: Nimiq.BufferUtils.toHex(htlcInfo.redeem.htlcScript),
+                    witnessScript: Nimiq.BufferUtils.toHex(htlcInfo.redeem.htlcScript),
                 }],
                 recipientOutput: {
                     ...swapSetupInfo.redeem.output,

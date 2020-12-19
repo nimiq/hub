@@ -97,8 +97,9 @@ export interface ParsedSignBtcTransactionRequest extends ParsedSimpleRequest {
         address: string,
         transactionHash: string,
         outputIndex: number,
-        outputScript: string,
+        outputScript: string, // hex
         value: number,
+        witnessScript?: string, // Custom witness script for p2wsh input. hex.
     }>;
     output: {
         address: string,

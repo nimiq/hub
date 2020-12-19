@@ -461,8 +461,9 @@ export interface SignBtcTransactionRequest extends SimpleRequest {
         address: string,
         transactionHash: string,
         outputIndex: number,
-        outputScript: string,
+        outputScript: string, // hex or base64
         value: number,
+        witnessScript?: string, // Custom witness script for p2wsh input. hex or base64.
     }>;
     output: {
         address: string,

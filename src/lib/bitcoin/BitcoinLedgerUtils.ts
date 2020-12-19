@@ -11,8 +11,7 @@ type LedgerBitcoinTransactionInfo = import('@nimiq/ledger-api').TransactionInfoB
 export async function prepareBitcoinTransactionForLedgerSigning(
     transactionInfo: Omit<BitcoinTransactionInfo, 'inputs'>
         & { inputs: Array<
-            Pick<BitcoinTransactionInfo['inputs'][0], 'transactionHash' | 'outputIndex' | 'keyPath'>
-            & { customScript?: string }
+            Pick<BitcoinTransactionInfo['inputs'][0], 'transactionHash' | 'outputIndex' | 'keyPath' | 'witnessScript'>
         > },
 ): Promise<LedgerBitcoinTransactionInfo> {
     const bitcoinJsPromise = loadBitcoinJS();
@@ -29,7 +28,7 @@ export async function prepareBitcoinTransactionForLedgerSigning(
         transaction: inputTransactions[i],
         index: input.outputIndex,
         keyPath: input.keyPath.replace(/m\//, ''),
-        customScript: input.customScript,
+        customScript: input.witnessScript,
     }));
 
     // Prepare outputs and pre-calculate output scripts

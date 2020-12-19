@@ -386,37 +386,61 @@ export class RequestParser {
                 const inputs = signBtcTransactionRequest.inputs.map((input) => {
                     if (!input || typeof input !== 'object') throw new Error('input must be an object');
 
-                    if (typeof input.transactionHash !== 'string'
-                        || input.transactionHash.length !== 64
-                    ) throw new Error('input must contain a valid transactionHash');
+                    // tslint:disable-next-line:no-shadowed-variable
+                    const { address, transactionHash, outputIndex, value } = input;
+                    let { outputScript, witnessScript } = input;
 
-                    if (typeof input.outputIndex !== 'number'
-                        || input.outputIndex < 0
-                    ) throw new Error('input must contain a valid outputIndex');
+                    if (typeof address !== 'string') throw new Error('input must contain an address of type string');
 
-                    if (typeof input.outputScript !== 'string'
-                        || (input.outputScript.length !== 44     // P2WPKH
-                            && input.outputScript.length !== 46  // P2SH
-                            && input.outputScript.length !== 50) // P2PKH
-                    ) throw new Error('input must contain a valid outputScript');
+                    if (typeof transactionHash !== 'string' || transactionHash.length !== 64) {
+                        throw new Error('input must contain a valid transactionHash');
+                    }
+                    try {
+                        Nimiq.BufferUtils.fromHex(transactionHash); // throws if invalid hex
+                    } catch (e) {
+                        throw new Error('input transactionHash must be hex');
+                    }
 
-                    if (typeof input.value !== 'number'
-                        || input.value <= 0
-                    ) throw new Error('input must contain a positive value');
+                    if (typeof outputIndex !== 'number' || outputIndex < 0) {
+                        throw new Error('input must contain a valid outputIndex');
+                    }
 
-                    return input;
+                    try {
+                        // Convert to hex. Throws if invalid hex or base64.
+                        outputScript = Nimiq.BufferUtils.toHex(Nimiq.BufferUtils.fromAny(outputScript));
+                    } catch (e) {
+                        throw new Error('input outputScript must be hex or base64');
+                    }
+                    if (outputScript.length !== 44    // P2WPKH
+                        && outputScript.length !== 46 // P2SH
+                        && outputScript.length !== 50 // P2PKH
+                    ) throw new Error('input outputScript has invalid length');
+
+                    if (witnessScript !== undefined) {
+                        if (typeof witnessScript !== 'string') throw new Error('Invalid input witnessScript');
+                        try {
+                            // Convert to hex. Throws if invalid hex or base64.
+                            witnessScript = Nimiq.BufferUtils.toHex(Nimiq.BufferUtils.fromAny(witnessScript));
+                        } catch (e) {
+                            throw new Error('input witnessScript must be hex or base64');
+                        }
+                    }
+
+                    if (typeof value !== 'number' || value <= 0) throw new Error('input must contain a positive value');
+
+                    // return only checked properties
+                    return { address, transactionHash, outputIndex, outputScript, value, witnessScript };
                 });
 
-                if (!signBtcTransactionRequest.output
-                    || typeof signBtcTransactionRequest.output !== 'object'
-                ) throw new Error('output must be an object');
+                if (!signBtcTransactionRequest.output || typeof signBtcTransactionRequest.output !== 'object') {
+                    throw new Error('output must be an object');
+                }
 
                 const output = signBtcTransactionRequest.output;
 
-                if (!output.value
-                    || typeof output.value !== 'number'
-                    || output.value <= 0
-                ) throw new Error('output must contain a positive value');
+                if (!output.value || typeof output.value !== 'number' || output.value <= 0) {
+                    throw new Error('output must contain a positive value');
+                }
 
                 if (output.label && typeof output.label !== 'string') {
                     throw new Error('output label must be a string');
@@ -430,20 +454,20 @@ export class RequestParser {
 
                     changeOutput = signBtcTransactionRequest.changeOutput;
 
-                    if (!changeOutput.value
-                        || typeof changeOutput.value !== 'number'
-                        || changeOutput.value <= 0
-                    ) throw new Error('changeOutput must contain a positive value');
+                    if (!changeOutput.value || typeof changeOutput.value !== 'number' || changeOutput.value <= 0) {
+                        throw new Error('changeOutput must contain a positive value');
+                    }
                 }
 
-                return {
+                const parsedSignBtcTransactionRequest: ParsedSignBtcTransactionRequest = {
                     kind: RequestType.SIGN_BTC_TRANSACTION,
                     walletId: signBtcTransactionRequest.accountId,
                     appName: signBtcTransactionRequest.appName,
                     inputs,
                     output,
                     changeOutput,
-                } as ParsedSignBtcTransactionRequest;
+                };
+                return parsedSignBtcTransactionRequest;
             case RequestType.SETUP_SWAP:
                 const setupSwapRequest = request as SetupSwapRequest;
 

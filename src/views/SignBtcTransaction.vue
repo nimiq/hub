@@ -50,6 +50,7 @@ export default class SignBtcTransaction extends BitcoinSyncBaseView {
                     transactionHash: input.transactionHash,
                     outputIndex: input.outputIndex,
                     outputScript: input.outputScript,
+                    witnessScript: input.witnessScript,
                     value: input.value,
                 });
             }
