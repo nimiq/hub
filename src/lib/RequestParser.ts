@@ -596,7 +596,10 @@ export class RequestParser {
                 const signTransactionRequest = request as ParsedSignTransactionRequest;
                 return {
                     appName: signTransactionRequest.appName,
-                    sender: signTransactionRequest.sender.toUserFriendlyAddress(),
+                    sender: signTransactionRequest.sender instanceof Nimiq.Address
+                        ? signTransactionRequest.sender.toUserFriendlyAddress()
+                        // Note: additional sender information is lost and does not survive reloads, see RequestTypes.ts
+                        : signTransactionRequest.sender.address.toUserFriendlyAddress(),
                     recipient: signTransactionRequest.recipient.toUserFriendlyAddress(),
                     recipientType: signTransactionRequest.recipientType,
                     recipientLabel: signTransactionRequest.recipientLabel,
@@ -709,6 +712,7 @@ export class RequestParser {
                 return {
                     appName: signBtcTransactionRequest.appName,
                     accountId: signBtcTransactionRequest.walletId,
+                    // Note: input.keyPath is lost on re-parsing and does not survive reloads, see RequestTypes.ts
                     inputs: signBtcTransactionRequest.inputs,
                     output: signBtcTransactionRequest.output,
                     changeOutput: signBtcTransactionRequest.changeOutput,

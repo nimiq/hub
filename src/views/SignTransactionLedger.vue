@@ -191,7 +191,7 @@ export default class SignTransactionLedger extends Vue {
         const network = this.$refs.network as Network;
 
         // collect payment information
-        let sender: Nimiq.Address;
+        let sender: ParsedSignTransactionRequest['sender'];
         let recipient: Nimiq.Address;
         let value: number;
         let fee: number;
@@ -283,25 +283,50 @@ export default class SignTransactionLedger extends Vue {
             return;
         }
 
-        // we know that these exist as their existence was already checked in RpcApi.ts
-        const senderUserFriendlyAddress = sender.toUserFriendlyAddress();
-        const senderAccount = this.findWalletByAddress(senderUserFriendlyAddress, true)!;
-        const senderContract = senderAccount.findContractByAddress(sender);
-        const signer = senderAccount.findSignerForAddress(sender)!;
+        let senderAddress: Nimiq.Address;
+        let senderType: Nimiq.Account.Type | undefined;
+        let signerKeyId: string;
+        let signerKeyPath: string;
 
-        this.senderDetails = {
-            address: senderUserFriendlyAddress,
-            label: (senderContract || signer).label || senderUserFriendlyAddress,
-            walletLabel: senderAccount.label,
-            balance: (senderContract || signer).balance,
-        };
+        if (sender instanceof Nimiq.Address) {
+            // we know that these exist as their existence was already checked in RpcApi.ts
+            const senderUserFriendlyAddress = sender.toUserFriendlyAddress();
+            const senderAccount = this.findWalletByAddress(senderUserFriendlyAddress, true)!;
+            const senderContract = senderAccount.findContractByAddress(sender);
+            const signer = senderAccount.findSignerForAddress(sender)!;
+
+            senderAddress = sender;
+            senderType = senderContract ? senderContract.type : Nimiq.Account.Type.BASIC;
+            signerKeyId = senderAccount.keyId;
+            signerKeyPath = signer.path;
+
+            this.senderDetails = {
+                address: senderUserFriendlyAddress,
+                label: (senderContract || signer).label || senderUserFriendlyAddress,
+                walletLabel: senderAccount.label,
+                balance: (senderContract || signer).balance,
+            };
+        } else {
+            ({
+                address: senderAddress,
+                type: senderType,
+                signerKeyId,
+                signerKeyPath,
+            } = sender);
+            const senderUserFriendlyAddress = senderAddress.toUserFriendlyAddress();
+
+            this.senderDetails = {
+                address: senderUserFriendlyAddress,
+                label: sender.label || senderUserFriendlyAddress,
+            };
+        }
 
         // If user left this view in the mean time, don't continue signing / sending the transaction
         if (this.isDestroyed) return;
 
         const transactionInfo = {
-            sender: (senderContract || signer).address,
-            senderType: senderContract ? senderContract.type : Nimiq.Account.Type.BASIC,
+            sender: senderAddress,
+            senderType,
             recipient,
             value,
             fee: fee || 0,
@@ -325,7 +350,7 @@ export default class SignTransactionLedger extends Vue {
                 signedTransaction = await LedgerApi.Nimiq.signTransaction({
                     ...transactionInfo,
                     validityStartHeight,
-                }, signer.path, senderAccount.keyId);
+                }, signerKeyPath, signerKeyId);
             } catch (e) {
                 if (this.isDestroyed) return; // user is not on this view anymore
                 // If cancelled and not expired, handle the exception. Otherwise just keep the ledger ui / expiry error
@@ -335,7 +360,7 @@ export default class SignTransactionLedger extends Vue {
                     const isCheckoutRequestWithManuallySelectedAddress = this.request.kind === RequestType.CHECKOUT
                         && (
                             !this.checkoutPaymentOptions!.protocolSpecific.sender
-                            || !sender.equals(this.checkoutPaymentOptions!.protocolSpecific.sender)
+                            || !senderAddress.equals(this.checkoutPaymentOptions!.protocolSpecific.sender)
                         );
 
                     if (isCheckoutRequestWithManuallySelectedAddress

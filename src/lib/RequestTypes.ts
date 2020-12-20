@@ -19,7 +19,16 @@ export interface ParsedOnboardRequest extends ParsedBasicRequest {
 }
 
 export interface ParsedSignTransactionRequest extends ParsedBasicRequest {
-    sender: Nimiq.Address;
+    // The sender object is currently only for internal use and can not be set in the public request.
+    // Note that the object does not get exported to the history state in RpcApi and therefore does not survive reloads.
+    sender: Nimiq.Address | {
+        address: Nimiq.Address,
+        label?: string,
+        walletLabel?: string,
+        type?: Nimiq.Account.Type,
+        signerKeyId: string,
+        signerKeyPath: string,
+    };
     recipient: Nimiq.Address;
     recipientType: Nimiq.Account.Type;
     recipientLabel?: string;
@@ -98,8 +107,11 @@ export interface ParsedSignBtcTransactionRequest extends ParsedSimpleRequest {
         transactionHash: string,
         outputIndex: number,
         outputScript: string, // hex
-        value: number,
         witnessScript?: string, // Custom witness script for p2wsh input. hex.
+        value: number,
+        // Currently only for internal use. Can not be set in public request.
+        // Note that it gets lost on re-parsing in RequestParser and therefore does not survive reloads.
+        keyPath?: string,
     }>;
     output: {
         address: string,

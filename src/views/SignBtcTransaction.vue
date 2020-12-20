@@ -39,14 +39,20 @@ export default class SignBtcTransaction extends BitcoinSyncBaseView {
             this.state = this.State.SYNCING;
 
             for (const input of this.request.inputs) {
-                const addressInfo = await walletInfo.findBtcAddressInfo(input.address);
-                if (!addressInfo) {
-                    this.$rpc.reject(new Error(`Input address not found: ${input.address}`));
-                    return;
+                let keyPath: string;
+                if (input.keyPath) {
+                    keyPath = input.keyPath;
+                } else {
+                    const addressInfo = await walletInfo.findBtcAddressInfo(input.address);
+                    if (!addressInfo) {
+                        this.$rpc.reject(new Error(`Input address not found: ${input.address}`));
+                        return;
+                    }
+                    keyPath = addressInfo.path;
                 }
 
                 inputs.push({
-                    keyPath: addressInfo.path,
+                    keyPath,
                     transactionHash: input.transactionHash,
                     outputIndex: input.outputIndex,
                     outputScript: input.outputScript,

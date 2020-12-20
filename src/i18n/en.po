@@ -445,7 +445,7 @@ msgid "Creating your Account"
 msgstr ""
 
 #: src/views/CashlinkManage.vue:195
-#: src/views/SignTransactionLedger.vue:439
+#: src/views/SignTransactionLedger.vue:464
 msgid "Creating your Cashlink"
 msgstr ""
 
@@ -830,7 +830,7 @@ msgstr ""
 msgid "Send your transaction"
 msgstr ""
 
-#: src/views/SignTransactionLedger.vue:440
+#: src/views/SignTransactionLedger.vue:465
 msgid "Sending Transaction"
 msgstr ""
 
@@ -938,7 +938,7 @@ msgid "The display language changed. Do you want to reload the page to update al
 msgstr ""
 
 #: src/components/CheckoutCard.vue:168
-#: src/views/SignTransactionLedger.vue:446
+#: src/views/SignTransactionLedger.vue:471
 msgid "The offer expired."
 msgstr ""
 
@@ -1000,12 +1000,12 @@ msgstr ""
 msgid "Transaction is expired"
 msgstr ""
 
-#: src/views/SignTransactionLedger.vue:444
+#: src/views/SignTransactionLedger.vue:469
 msgid "Transaction Sent"
 msgstr ""
 
 #: src/views/SignBtcTransactionLedger.vue:114
-#: src/views/SignTransactionLedger.vue:443
+#: src/views/SignTransactionLedger.vue:468
 msgid "Transaction Signed"
 msgstr ""
 

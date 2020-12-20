@@ -294,7 +294,10 @@ export default class RpcApi {
                 errorMsg = 'AccountId not found';
             } else if (requestType === RequestType.SIGN_TRANSACTION) {
                 accountRequired = true;
-                const address = (request as ParsedSignTransactionRequest).sender;
+                const parsedSignTransactionRequest = request as ParsedSignTransactionRequest;
+                const address = parsedSignTransactionRequest.sender instanceof Nimiq.Address
+                    ? parsedSignTransactionRequest.sender
+                    : parsedSignTransactionRequest.sender.address;
                 account = this._store.getters.findWalletByAddress(address.toUserFriendlyAddress(), true);
             } else if (requestType === RequestType.SIGN_MESSAGE) {
                 accountRequired = false; // Sign message allows user to select an account
