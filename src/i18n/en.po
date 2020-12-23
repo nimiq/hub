@@ -445,7 +445,7 @@ msgid "Creating your Account"
 msgstr ""
 
 #: src/views/CashlinkManage.vue:195
-#: src/views/SignTransactionLedger.vue:464
+#: src/views/SignTransactionLedger.vue:472
 msgid "Creating your Cashlink"
 msgstr ""
 
@@ -830,7 +830,7 @@ msgstr ""
 msgid "Send your transaction"
 msgstr ""
 
-#: src/views/SignTransactionLedger.vue:465
+#: src/views/SignTransactionLedger.vue:473
 msgid "Sending Transaction"
 msgstr ""
 
@@ -897,6 +897,10 @@ msgstr ""
 msgid "Swap Setup Failed"
 msgstr ""
 
+#: src/views/RefundSwapLedger.vue:327
+msgid "Syncing"
+msgstr ""
+
 #: src/components/NimiqCheckoutCard.vue:277
 #: src/views/AddVestingContract.vue:11
 #: src/views/CashlinkManage.vue:154
@@ -907,8 +911,16 @@ msgstr ""
 #: src/views/BitcoinSyncBaseView.vue:50
 #: src/views/SetupSwapLedger.vue:653
 #: src/views/SetupSwapSuccess.vue:420
-#: src/views/SignBtcTransactionLedger.vue:115
+#: src/views/SignBtcTransactionLedger.vue:117
 msgid "Syncing Failed"
+msgstr ""
+
+#: src/views/RefundSwapLedger.vue:337
+msgid "Syncing with {currency} network failed: {error}"
+msgstr ""
+
+#: src/views/RefundSwapLedger.vue:332
+msgid "Syncing with {currency} network..."
 msgstr ""
 
 #: src/views/BitcoinSyncBaseView.vue:63
@@ -938,7 +950,7 @@ msgid "The display language changed. Do you want to reload the page to update al
 msgstr ""
 
 #: src/components/CheckoutCard.vue:168
-#: src/views/SignTransactionLedger.vue:471
+#: src/views/SignTransactionLedger.vue:479
 msgid "The offer expired."
 msgstr ""
 
@@ -1000,12 +1012,12 @@ msgstr ""
 msgid "Transaction is expired"
 msgstr ""
 
-#: src/views/SignTransactionLedger.vue:469
+#: src/views/SignTransactionLedger.vue:477
 msgid "Transaction Sent"
 msgstr ""
 
-#: src/views/SignBtcTransactionLedger.vue:114
-#: src/views/SignTransactionLedger.vue:468
+#: src/views/SignBtcTransactionLedger.vue:116
+#: src/views/SignTransactionLedger.vue:476
 msgid "Transaction Signed"
 msgstr ""
 

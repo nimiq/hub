@@ -414,6 +414,7 @@ export class RequestParser {
                     if (outputScript.length !== 44    // P2WPKH
                         && outputScript.length !== 46 // P2SH
                         && outputScript.length !== 50 // P2PKH
+                        && outputScript.length !== 68 // HTLC
                     ) throw new Error('input outputScript has invalid length');
 
                     if (witnessScript !== undefined) {
@@ -559,7 +560,8 @@ export class RequestParser {
             case RequestType.REFUND_SWAP:
                 const refundSwapRequest = request as RefundSwapRequest;
 
-                // Validate and parse only what we use in the Hub
+                // Only basic parsing and validation. Refund transaction specific data will be validated by the Keyguard
+                // or subsequent Ledger transaction signing requests.
 
                 if (!['NIM', 'BTC'].includes(refundSwapRequest.refund.type)) {
                     throw new Error('Refunding object type must be "NIM" or "BTC"');
@@ -567,7 +569,7 @@ export class RequestParser {
 
                 const parsedRefundSwapRequest: ParsedRefundSwapRequest = {
                     kind: RequestType.REFUND_SWAP,
-                    ...refundSwapRequest,
+                    appName: refundSwapRequest.appName,
                     walletId: refundSwapRequest.accountId,
 
                     refund: refundSwapRequest.refund.type === 'NIM' ? {

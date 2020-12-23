@@ -229,7 +229,7 @@ type SwapAmountInfo = {
 // As the Ledger Nimiq app currently does not support signing HTLCs yet, we use a key derived from the Ledger Nimiq
 // public key at LEDGER_HTLC_PROXY_KEY_PATH as a proxy for signing the HTLC. Note that 2 ** 31 - 1 is the max index
 // allowed by bip32.
-export const LEDGER_HTLC_PROXY_KEY_PATH = getBip32Path({
+const LEDGER_HTLC_PROXY_KEY_PATH = getBip32Path({
     coin: Coin.NIMIQ,
     accountIndex: 2 ** 31 - 1,
     addressIndex: 2 ** 31 - 1,
@@ -431,7 +431,7 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
             };
             // funding tx from Ledger to proxy address
             nimiqProxyTransactionInfo = {
-                signerPubKey: nimiqProxyKey.publicKey,
+                signerPubKey: nimiqProxyKey.publicKey, // anything, unused as signed by Ledger
                 sender: this.nimiqLedgerAddressInfo.address,
                 recipient: nimiqProxyKey.publicKey.toAddress(),
                 value: swapSetupInfo.fund.value,

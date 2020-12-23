@@ -4,6 +4,7 @@ import { SmallPage } from '@nimiq/vue-components';
 import BitcoinSyncBaseView from './BitcoinSyncBaseView.vue';
 import StatusScreen from '../components/StatusScreen.vue';
 import GlobalClose from '../components/GlobalClose.vue';
+import { RequestType } from '../lib/PublicRequestTypes';
 import { ParsedSignBtcTransactionRequest } from '../lib/RequestTypes';
 import { Static } from '../lib/StaticStore';
 import { WalletInfo } from '../lib/WalletInfo';
@@ -24,6 +25,20 @@ export default class SignBtcTransaction extends BitcoinSyncBaseView {
     @Getter private findWallet!: (id: string) => WalletInfo | undefined;
 
     protected async created() {
+        if (this.request.kind !== RequestType.SIGN_BTC_TRANSACTION) {
+            if (history.length >= 3) {
+                // First history entry is root, the second an original request handler invoking the transaction signing
+                // and the third is this one. If there was an original request handler calling us but the intermediate
+                // transaction signing request was lost on reload and instead the original request recovered from the
+                // RPC state, navigate back to the original request handler.
+                // TODO implementing a proper request call stack instead of the originalRouteName hack would avoid this
+                history.back();
+            } else {
+                this.$rpc.reject(new Error(`Unexpected request ${this.request.kind}`));
+            }
+            return;
+        }
+
         const walletInfo = this.findWallet(this.request.walletId)!;
 
         if (!walletInfo.btcXPub || !walletInfo.btcAddresses || !walletInfo.btcAddresses.external.length) {

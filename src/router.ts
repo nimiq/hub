@@ -81,6 +81,8 @@ const RefundSwapSuccess       = () => import(/*webpackChunkName: "swap"*/ './vie
 
 const SetupSwapLedger         = () => import(/*webpackChunkName: "swap-ledger"*/ './views/SetupSwapLedger.vue');
 
+const RefundSwapLedger        = () => import(/*webpackChunkName: "refund-swap-ledger"*/ './views/RefundSwapLedger.vue');
+
 Vue.use(Router);
 
 export function keyguardResponseRouter(
@@ -314,14 +316,14 @@ export default new Router({
             name: RequestType.SIGN_BTC_TRANSACTION,
         },
         {
-            path: `/${RequestType.SIGN_BTC_TRANSACTION}/ledger`,
-            component: SignBtcTransactionLedger,
-            name: `${RequestType.SIGN_BTC_TRANSACTION}-ledger`,
-        },
-        {
             path: `/${RequestType.SIGN_BTC_TRANSACTION}/success`,
             component: SignBtcTransactionSuccess,
             name: `${RequestType.SIGN_BTC_TRANSACTION}-success`,
+        },
+        {
+            path: `/${RequestType.SIGN_BTC_TRANSACTION}/ledger`,
+            component: SignBtcTransactionLedger,
+            name: `${RequestType.SIGN_BTC_TRANSACTION}-ledger`,
         },
         {
             path: `/${RequestType.ACTIVATE_BITCOIN}`,
@@ -329,14 +331,14 @@ export default new Router({
             name: RequestType.ACTIVATE_BITCOIN,
         },
         {
-            path: `/${RequestType.ACTIVATE_BITCOIN}/ledger`,
-            component: ActivateBitcoinLedger,
-            name: `${RequestType.ACTIVATE_BITCOIN}-ledger`,
-        },
-        {
             path: `/${RequestType.ACTIVATE_BITCOIN}/success`,
             component: ActivateBitcoinSuccess,
             name: `${RequestType.ACTIVATE_BITCOIN}-success`,
+        },
+        {
+            path: `/${RequestType.ACTIVATE_BITCOIN}/ledger`,
+            component: ActivateBitcoinLedger,
+            name: `${RequestType.ACTIVATE_BITCOIN}-ledger`,
         },
         {
             path: `/${RequestType.SETUP_SWAP}`,
@@ -344,14 +346,14 @@ export default new Router({
             name: RequestType.SETUP_SWAP,
         },
         {
-            path: `/${RequestType.SETUP_SWAP}/ledger`,
-            component: SetupSwapLedger,
-            name: `${RequestType.SETUP_SWAP}-ledger`,
-        },
-        {
             path: `/${RequestType.SETUP_SWAP}/success`,
             component: SetupSwapSuccess,
             name: `${RequestType.SETUP_SWAP}-success`,
+        },
+        {
+            path: `/${RequestType.SETUP_SWAP}/ledger`,
+            component: SetupSwapLedger,
+            name: `${RequestType.SETUP_SWAP}-ledger`,
         },
         {
             path: `/${RequestType.REFUND_SWAP}`,
@@ -362,6 +364,11 @@ export default new Router({
             path: `/${RequestType.REFUND_SWAP}/success`,
             component: RefundSwapSuccess,
             name: `${RequestType.REFUND_SWAP}-success`,
+        },
+        {
+            path: `/${RequestType.REFUND_SWAP}/ledger`,
+            component: RefundSwapLedger,
+            name: `${RequestType.REFUND_SWAP}-ledger`,
         },
     ],
 });

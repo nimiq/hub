@@ -277,6 +277,14 @@ export default class SignTransactionLedger extends Vue {
                 label: this.$t('New Cashlink') as string,
                 isCashlink: true,
             };
+        } else if (history.length >= 3) {
+            // First history entry is root, the second an original request handler invoking the transaction signing
+            // and the third is this one. If there was an original request handler calling us but the intermediate
+            // transaction signing request was lost on reload and instead the original request recovered from the
+            // RPC state, navigate back to the original request handler.
+            // TODO implementing a proper request call stack instead of the originalRouteName hack would avoid this
+            history.back();
+            return;
         } else {
             this.$rpc.reject(new Error('Legder Transaction Signing must be invoked via sign-transaction, '
                 + 'checkout or cashlink requests.'));

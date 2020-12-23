@@ -436,7 +436,7 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
 
     protected get statusScreenMessage() {
         if (this.state === this.State.FETCHING_SWAP_DATA_FAILED) {
-            return this.$t('Fetching swap data failed: {error}', { error: this.error });
+            return this.$t('Fetching swap data failed: {error}', { error: this.error }) as string;
         }
         return super.statusScreenMessage;
     }

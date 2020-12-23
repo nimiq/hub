@@ -270,7 +270,6 @@ export interface BitcoinHtlcRefundInstructions {
         transactionHash: string,
         outputIndex: number,
         outputScript: string,
-        address: string, // HTLC address
         value: number, // Sats
         witnessScript: string,
     };

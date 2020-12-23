@@ -1,5 +1,5 @@
 <template>
-    <div class="container">
+    <div v-if="request.kind === 'sign-btc-transaction'" class="container">
         <SmallPage>
             <PageHeader>{{ $t('Confirm Transaction') }}</PageHeader>
 
@@ -64,6 +64,7 @@ import LedgerApi, {
     TransactionInfoBitcoin as LedgerBitcoinTransactionInfo,
     RequestTypeBitcoin as LedgerApiRequestType,
 } from '@nimiq/ledger-api';
+import { RequestType } from '../lib/PublicRequestTypes';
 import { SignedBtcTransaction } from '../lib/PublicRequestTypes';
 import { ERROR_CANCELED } from '../lib/Constants';
 import { WalletInfo } from '../lib/WalletInfo';
@@ -86,6 +87,7 @@ export default class SignBtcTransactionLedger extends SignBtcTransaction {
     private _isDestroyed: boolean = false;
 
     protected async created() {
+        if (this.request.kind !== RequestType.SIGN_BTC_TRANSACTION) return; // see parent class
         // preload BitcoinJS
         loadBitcoinJS();
         // Note that vue-class-component transforms the inheritance into a merge of vue mixins where each class retains

@@ -19,8 +19,9 @@ export interface ParsedOnboardRequest extends ParsedBasicRequest {
 }
 
 export interface ParsedSignTransactionRequest extends ParsedBasicRequest {
-    // The sender object is currently only for internal use and can not be set in the public request.
+    // The sender object is currently only for internal use in RefundSwapLedger and can not be set in public request.
     // Note that the object does not get exported to the history state in RpcApi and therefore does not survive reloads.
+    // However, the RefundSwapLedger handler is built in a way that it starts over on reloads to avoid the problem.
     sender: Nimiq.Address | {
         address: Nimiq.Address,
         label?: string,
@@ -109,8 +110,9 @@ export interface ParsedSignBtcTransactionRequest extends ParsedSimpleRequest {
         outputScript: string, // hex
         witnessScript?: string, // Custom witness script for p2wsh input. hex.
         value: number,
-        // Currently only for internal use. Can not be set in public request.
-        // Note that it gets lost on re-parsing in RequestParser and therefore does not survive reloads.
+        // Currently only for internal use in RefundSwapLedger. Can not be set in public request.
+        // Note that the keyPath gets lost on re-parsing in RequestParser and therefore does not survive reloads.
+        // However, the RefundSwapLedger handler is built in a way that it starts over on reloads to avoid the problem.
         keyPath?: string,
     }>;
     output: {
@@ -225,7 +227,6 @@ export interface ParsedRefundSwapRequest extends ParsedSimpleRequest {
             transactionHash: string,
             outputIndex: number,
             outputScript: string,
-            address: string, // HTLC address
             value: number, // Sats
             witnessScript: string,
         };
