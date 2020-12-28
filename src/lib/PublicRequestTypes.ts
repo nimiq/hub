@@ -320,6 +320,7 @@ export interface SetupSwapResult {
     nim?: SignedTransaction;
     btc?: SignedBtcTransaction;
     eur?: string; // When funding EUR: empty string, when redeeming EUR: JWS of the settlement instructions
+    refundTx?: string;
 }
 
 export interface RefundSwapRequest extends SimpleRequest {

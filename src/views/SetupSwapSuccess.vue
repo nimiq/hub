@@ -342,6 +342,10 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
             result.eur = keyguardResult.eur;
         }
 
+        if (typeof keyguardResult.refundTx === 'string') {
+            result.refundTx = keyguardResult.refundTx;
+        }
+
         this.$rpc.resolve(result);
     }
 
