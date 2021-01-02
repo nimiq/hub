@@ -1,10 +1,11 @@
 # 
 # Translators:
 # Petro M <petro.matsyburka@outlook.com>, 2020
+# Daniel, 2020
 # 
 msgid ""
 msgstr ""
-"Last-Translator: Petro M <petro.matsyburka@outlook.com>, 2020\n"
+"Last-Translator: Daniel, 2020\n"
 "Language-Team: Ukrainian (https://www.transifex.com/nimiq-foundation/teams/110181/uk/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: uk\n"
@@ -36,7 +37,7 @@ msgstr "3. Відкрийте {app} додаток"
 
 #: src/views/CashlinkReceive.vue:110
 msgid "30 seconds, no email, no download."
-msgstr "30 секунд, без пошти, без скачування."
+msgstr "30 секунд, без пошти, без скачування."
 
 #: src/components/LedgerUi.vue:292
 msgid "4. Click Connect"
@@ -273,7 +274,7 @@ msgid ""
 "Set a password. Done."
 msgstr ""
 "Виберіть адресу\n"
-" Встановіть пароль. Готово."
+"Встановіть пароль. Готово."
 
 #: src/views/CashlinkCreate.vue:10
 msgid "Choose Sender"
@@ -346,7 +347,7 @@ msgstr "Підключити Ledger"
 
 #: src/components/OnboardingMenu.vue:6
 msgid "Connect your Ledger Nano S or Nano X."
-msgstr "Підключіть Ledger Nano S або Nano X."
+msgstr "Підключіть Ledger Nano S або Nano X."
 
 #: src/views/Migrate.vue:143 src/views/Migrate.vue:283
 msgid "Connecting to Keyguard..."
@@ -455,7 +456,7 @@ msgstr "швидкий"
 
 #: src/views/SignupLedger.vue:120
 msgid "Failed to fetch addresses. Retrying..."
-msgstr "Не вдалося отримати адреси. Повторна спроба"
+msgstr "Не вдалося отримати адреси. Повторна спроба..."
 
 #: src/views/SignBtcTransactionLedger.vue:30
 #: src/views/SignTransactionLedger.vue:71
@@ -481,7 +482,7 @@ msgstr "Не вдалося отримати дані обміну"
 
 #: src/views/SetupSwapSuccess.vue:377
 msgid "Fetching swap data failed: {error}"
-msgstr "Не вдалося отримати дані обміну: {помилка}"
+msgstr "Не вдалося отримати дані обміну: {error}"
 
 #: src/views/SetupSwapSuccess.vue:367
 msgid "Fetching swap data..."
@@ -549,7 +550,7 @@ msgstr ""
 msgid ""
 "Imported {count} address so far... | Imported {count} addresses so far..."
 msgstr ""
-"Наразі імпортовано {count} адресу ... | Наразі імпортовано {count} адрес ..."
+"Наразі імпортовано {count} адресу... | Наразі імпортовано {count} адрес..."
 
 #: src/components/CheckoutCard.vue:190
 msgid "Incomplete payment"
@@ -671,7 +672,7 @@ msgstr "Жодний з доступних рахунків не має дост
 
 #: src/views/Migrate.vue:224
 msgid "Nothing to update."
-msgstr "Оновлень нема"
+msgstr "Оновлень нема."
 
 #: src/views/ErrorHandlerUnsupportedLedger.vue:4
 msgid "Ok"
@@ -715,7 +716,7 @@ msgstr "Рожевий"
 
 #: src/components/LedgerUi.vue:239
 msgid "Please cancel the previous request on your Ledger."
-msgstr "Будь ласка, скасуйте попередній запит у Ledger"
+msgstr "Будь ласка, скасуйте попередній запит у Ledger."
 
 #: src/components/LedgerUi.vue:181
 msgid "Please cancel the request on your Ledger"
@@ -1025,9 +1026,7 @@ msgstr "Завантажуємо баланс на рахунках"
 msgid ""
 "Use your Login File\n"
 "or Recovery Words."
-msgstr ""
-"Використовуючи файл-ключ\n"
-"або секретні слова"
+msgstr "Використовуючи файл-ключ або секретні слова."
 
 #: src/views/LoginSuccess.vue:179 src/views/SignupLedger.vue:132
 msgid "Used addresses without balance might have been missed."
@@ -1047,11 +1046,11 @@ msgid ""
 "Nimiq Blockchain."
 msgstr ""
 "Вітаємо в\n"
-"блокчейні Німік"
+"блокчейні Німік."
 
 #: src/views/SignupLedger.vue:112
 msgid "Welcome to the Nimiq Blockchain."
-msgstr "Вітаємо в блокчейні Німік"
+msgstr "Вітаємо в блокчейні Німік."
 
 #: src/CashlinkApp.vue:9
 msgid "What is Nimiq?"
@@ -1067,7 +1066,7 @@ msgstr "Жовтий"
 
 #: src/views/LogoutLedger.vue:19 src/views/LogoutSuccess.vue:4
 msgid "You are logged out."
-msgstr "Ви вийшли"
+msgstr "Ви вийшли."
 
 #: src/views/CashlinkReceive.vue:343
 msgid "You are loved"
@@ -1105,9 +1104,7 @@ msgstr "Ваш рахунок готовий. | Ваші рахунки гото
 msgid ""
 "Your Addresses may be\n"
 "incomplete."
-msgstr ""
-"Ваша адреса може бути\n"
-"неповна"
+msgstr "Ваша адреса може бути неповна."
 
 #: src/views/LogoutLedger.vue:13
 msgid ""
@@ -1115,7 +1112,7 @@ msgid ""
 "required to log in again."
 msgstr ""
 "Щоб увійти знову потрібно\n"
-" використати Ledger"
+"використати Ledger."
 
 #: src/views/SignMessageSuccess.vue:4
 msgid "Your message is signed."
