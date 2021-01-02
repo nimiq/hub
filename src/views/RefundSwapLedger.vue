@@ -104,8 +104,7 @@ export default class RefundSwapLedger extends RefundSwap {
 
             const request = this.request as ParsedSignTransactionRequest;
             const { sender: senderInfo, recipient, value, fee, data, validityStartHeight } = request;
-            const htlcOrProxyAddress = senderInfo instanceof Nimiq.Address ? senderInfo : senderInfo.address;
-            const htlcOrProxyUserFriendlyAddress = htlcOrProxyAddress.toUserFriendlyAddress();
+            const sender = senderInfo instanceof Nimiq.Address ? senderInfo : senderInfo.address;
             // existence guaranteed as already checked previously in RefundSwap
             const ledgerAccount = this.findWalletByAddress(recipient.toUserFriendlyAddress(), true)!;
 
@@ -117,89 +116,60 @@ export default class RefundSwapLedger extends RefundSwap {
             const proxyKey = Nimiq.KeyPair.derive(new Nimiq.PrivateKey(pubKeyAsEntropy.serialize()));
             const proxyAddress = proxyKey.publicKey.toAddress();
 
-            if (!htlcOrProxyAddress.equals(proxyAddress)) {
-                let htlcBalance: number;
-                try {
-                    htlcBalance = Nimiq.Policy.coinsToLunas(
-                        (await network.getBalances([htlcOrProxyUserFriendlyAddress]))
-                            .get(htlcOrProxyUserFriendlyAddress)!,
-                    );
-                } catch (e) {
-                    this.state = this.State.SYNCING_FAILED;
-                    this.error = e.message || e;
-                    return;
-                }
+            let transaction: Nimiq.Transaction;
 
-                if (htlcBalance >= value + fee) {
-                    // redeem funds from htlc to proxy
+            if (sender.equals(proxyAddress)) {
+                // Redeem funds from proxy.
 
-                    const htlcTransaction = await network.createTx({
-                        sender: htlcOrProxyAddress,
-                        senderType: Nimiq.Account.Type.HTLC,
-                        recipient: proxyAddress,
-                        value,
-                        fee,
-                        validityStartHeight,
-                        data: data || ProxyExtraData.FUND,
-                        signerPubKey: proxyKey.publicKey,
-                    });
+                transaction = await network.createTx({
+                    signerPubKey: proxyKey.publicKey,
+                    sender,
+                    recipient,
+                    value,
+                    fee,
+                    validityStartHeight,
+                    data: ProxyExtraData.REDEEM,
+                });
 
-                    // create htlc timeout resolve signature proof
-                    const proof = new Nimiq.SerialBuffer(1 + Nimiq.SignatureProof.SINGLE_SIG_SIZE);
-                    // FIXME: Use constant when HTLC is part of CoreJS web-offline build
-                    proof.writeUint8(3 /* Nimiq.HashedTimeLockedContract.ProofType.TIMEOUT_RESOLVE */);
-                    Nimiq.SignatureProof.singleSig(
+                transaction.proof = Nimiq.SignatureProof.singleSig(
+                    proxyKey.publicKey,
+                    Nimiq.Signature.create(
+                        proxyKey.privateKey,
                         proxyKey.publicKey,
-                        Nimiq.Signature.create(
-                            proxyKey.privateKey,
-                            proxyKey.publicKey,
-                            htlcTransaction.serializeContent(),
-                        ),
-                    ).serialize(proof);
-                    htlcTransaction.proof = proof;
+                        transaction.serializeContent(),
+                    ),
+                ).serialize();
+            } else {
+                // Redeem funds from htlc.
+                // Htlc redeem tx currently has to be signed by the proxy but doesn't have to forward funds through it.
 
-                    // send to network and await transaction getting mined
-                    try {
-                        await new Promise((resolve, reject) => {
-                            const listener = (transaction: DetailedPlainTransaction) => {
-                                if (transaction.sender !== htlcOrProxyUserFriendlyAddress) return;
-                                network.$off(Network.Events.TRANSACTION_MINED, listener);
-                                resolve();
-                            };
-                            network.$on(Network.Events.TRANSACTION_MINED, listener);
+                transaction = await network.createTx({
+                    signerPubKey: proxyKey.publicKey,
+                    sender,
+                    senderType: Nimiq.Account.Type.HTLC,
+                    recipient,
+                    value,
+                    fee,
+                    validityStartHeight,
+                    data,
+                });
 
-                            network.sendToNetwork(htlcTransaction).catch(reject);
-                        });
-                    } catch (e) {
-                        this.state = this.State.SYNCING_FAILED;
-                        this.error = e.message || e;
-                        return;
-                    }
-                }
+                // create htlc timeout resolve signature proof
+                const proof = new Nimiq.SerialBuffer(1 + Nimiq.SignatureProof.SINGLE_SIG_SIZE);
+                // FIXME: Use constant when HTLC is part of CoreJS web-offline build
+                proof.writeUint8(3 /* Nimiq.HashedTimeLockedContract.ProofType.TIMEOUT_RESOLVE */);
+                Nimiq.SignatureProof.singleSig(
+                    proxyKey.publicKey,
+                    Nimiq.Signature.create(
+                        proxyKey.privateKey,
+                        proxyKey.publicKey,
+                        transaction.serializeContent(),
+                    ),
+                ).serialize(proof);
+                transaction.proof = proof;
             }
 
-            // redeem funds from proxy
-
-            const proxyTransaction = await network.createTx({
-                sender: proxyAddress,
-                recipient,
-                value,
-                fee: 0,
-                validityStartHeight,
-                data: ProxyExtraData.REDEEM,
-                signerPubKey: proxyKey.publicKey,
-            });
-
-            proxyTransaction.proof = Nimiq.SignatureProof.singleSig(
-                proxyKey.publicKey,
-                Nimiq.Signature.create(
-                    proxyKey.privateKey,
-                    proxyKey.publicKey,
-                    proxyTransaction.serializeContent(),
-                ),
-            ).serialize();
-
-            this.$rpc.resolve(await network.makeSignTransactionResult(proxyTransaction));
+            this.$rpc.resolve(await network.makeSignTransactionResult(transaction));
         } else if (this.request.kind === RequestType.SIGN_BTC_TRANSACTION) {
             // Bitcoin transaction
 
@@ -244,14 +214,14 @@ export default class RefundSwapLedger extends RefundSwap {
         if ('sender' in request) {
             // Nimiq request
             const { keyId, sender, recipient, recipientLabel, value, fee, validityStartHeight, data } = request;
-            const senderAddress = Nimiq.Address.unserialize(new Nimiq.SerialBuffer(sender));
+            const senderAddress = new Nimiq.Address(sender);
 
             // For Ledgers, the HTLC is currently created by a proxy address, see SetupSwapLedger, which also needs to
             // sign the refund transaction. Let the user just sign an unused dummy transaction for ux consistency.
             const signTransactionRequest: SignTransactionRequest = {
                 appName: request.appName,
                 sender: senderAddress.toUserFriendlyAddress(),
-                recipient: Nimiq.Address.unserialize(new Nimiq.SerialBuffer(recipient)).toUserFriendlyAddress(),
+                recipient: new Nimiq.Address(recipient).toUserFriendlyAddress(),
                 recipientLabel,
                 value,
                 fee,
