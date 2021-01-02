@@ -30,8 +30,7 @@ import StatusScreen from '../components/StatusScreen.vue';
 import GlobalClose from '../components/GlobalClose.vue';
 import LedgerUi from '../components/LedgerUi.vue';
 import Network from '../components/Network.vue';
-import { DetailedPlainTransaction } from '@nimiq/network-client';
-import LedgerApi, { getBip32Path, Coin } from '@nimiq/ledger-api';
+import LedgerApi, { getBip32Path, parseBip32Path, Coin } from '@nimiq/ledger-api';
 import { SwapAsset } from '@nimiq/fastspot-api';
 import Config from 'config';
 import {
@@ -56,15 +55,6 @@ import { BTC_NETWORK_TEST } from '../lib/bitcoin/BitcoinConstants';
 // (But note that currently, the KeyguardClient is still always bundled in the RpcApi).
 type KeyguardSignNimTransactionRequest = import('@nimiq/keyguard-client').SignTransactionRequest;
 type KeyguardSignBtcTransactionRequest = import('@nimiq/keyguard-client').SignBtcTransactionRequest;
-
-// As the Ledger Nimiq app currently does not support signing HTLCs yet, we use a key derived from the Ledger Nimiq
-// public key at LEDGER_HTLC_PROXY_KEY_PATH as a proxy for signing the HTLC. Note that 2 ** 31 - 1 is the max index
-// allowed by bip32.
-const LEDGER_HTLC_PROXY_KEY_PATH = getBip32Path({
-    coin: Coin.NIMIQ,
-    accountIndex: 2 ** 31 - 1,
-    addressIndex: 2 ** 31 - 1,
-});
 
 const ProxyExtraData = {
     // HTLC Proxy Funding, abbreviated as 'HPFD', mapped to values outside of basic ascii range
@@ -107,12 +97,20 @@ export default class RefundSwapLedger extends RefundSwap {
             const sender = senderInfo instanceof Nimiq.Address ? senderInfo : senderInfo.address;
             // existence guaranteed as already checked previously in RefundSwap
             const ledgerAccount = this.findWalletByAddress(recipient.toUserFriendlyAddress(), true)!;
+            const { addressIndex: ledgerAddressIndex } = parseBip32Path(
+                ledgerAccount.findSignerForAddress(recipient)!.path,
+            );
 
             const network = new Network();
             network.getNetworkClient(); // init network
 
             // For Ledgers, the HTLC is currently signed by a proxy address, see SetupSwapLedger
-            const pubKeyAsEntropy = await LedgerApi.Nimiq.getPublicKey(LEDGER_HTLC_PROXY_KEY_PATH, ledgerAccount.keyId);
+            const proxyKeyPath = getBip32Path({
+                coin: Coin.NIMIQ,
+                accountIndex: 2 ** 31 - 1, // max index allowed by bip32
+                addressIndex: 2 ** 31 - 1 - ledgerAddressIndex, // use a distinct proxy per address for improved privacy
+            });
+            const pubKeyAsEntropy = await LedgerApi.Nimiq.getPublicKey(proxyKeyPath, ledgerAccount.keyId);
             const proxyKey = Nimiq.KeyPair.derive(new Nimiq.PrivateKey(pubKeyAsEntropy.serialize()));
             const proxyAddress = proxyKey.publicKey.toAddress();
 
@@ -235,15 +233,15 @@ export default class RefundSwapLedger extends RefundSwap {
             ) as ParsedSignTransactionRequest;
 
             // Sign the dummy transaction from an unused keyPath which does not actually hold funds.
-            // We use LEDGER_HTLC_PROXY_KEY_PATH here but note that this is different from the proxy account as the
-            // proxy account is derived from the public key. Also note that this signed tx should not be exposed to not
-            // expose the public key.
+            // We use the highest bip32 nimiq path here; but note that the signing address is different from the proxy
+            // account even if the paths coincide as the proxy account is derived from the public key. Note that in the
+            // case of a coinciding path, this signed tx should not be exposed to not expose the public key.
             parsedSignTransactionRequest.sender = {
                 address: senderAddress,
                 label: 'Swap HTLC',
                 // type: Nimiq.Account.Type.HTLC, // Ledgers currently can not sign actual htlc transactions
                 signerKeyId: keyId,
-                signerKeyPath: LEDGER_HTLC_PROXY_KEY_PATH,
+                signerKeyPath: getBip32Path({ coin: Coin.NIMIQ, accountIndex: 2 ** 31 - 1, addressIndex: 2 ** 31 - 1 }),
             };
 
             // redirect to SignTransactionLedger

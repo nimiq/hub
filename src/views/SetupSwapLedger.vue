@@ -189,6 +189,7 @@ import LedgerApi, {
     TransactionInfoNimiq as LedgerNimiqTransactionInfo,
     TransactionInfoBitcoin as LedgerBitcoinTransactionInfo,
     getBip32Path,
+    parseBip32Path,
     Coin,
 } from '@nimiq/ledger-api';
 import { FormattableNumber } from '@nimiq/utils';
@@ -226,15 +227,6 @@ type SwapAmountInfo = {
     newBalance?: number,
 };
 
-// As the Ledger Nimiq app currently does not support signing HTLCs yet, we use a key derived from the Ledger Nimiq
-// public key at LEDGER_HTLC_PROXY_KEY_PATH as a proxy for signing the HTLC. Note that 2 ** 31 - 1 is the max index
-// allowed by bip32.
-const LEDGER_HTLC_PROXY_KEY_PATH = getBip32Path({
-    coin: Coin.NIMIQ,
-    accountIndex: 2 ** 31 - 1,
-    addressIndex: 2 ** 31 - 1,
-});
-
 const ProxyExtraData = {
     // HTLC Proxy Funding, abbreviated as 'HPFD', mapped to values outside of basic ascii range
     FUND:  new Uint8Array([0, ...('HPFD'.split('').map((c) => c.charCodeAt(0) + 63))]),
@@ -267,7 +259,7 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
     protected _account!: WalletInfo;
     private readonly SwapAsset = SwapAsset;
     private ledgerInstructionsShown = false;
-    private nimiqLedgerAddressInfo!: { address: Nimiq.Address, label: string, balance: number };
+    private nimiqLedgerAddressInfo!: { address: Nimiq.Address, label: string, balance: number, signerPath: string };
     private _nimiqProxyKeyPromise!: Promise<Nimiq.KeyPair>;
     private _setupSwapPromise!: Promise<SwapSetupInfo>;
 
@@ -309,15 +301,21 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
         } else {
             nimiqLedgerAddressInfo.balance = nimiqLedgerAddressInfo.balance || 0;
         }
-        this.nimiqLedgerAddressInfo = nimiqLedgerAddressInfo as Required<Pick<
-            typeof nimiqLedgerAddressInfo,
-            'address' | 'label' | 'balance'
-        >>;
+        this.nimiqLedgerAddressInfo = {
+            ...nimiqLedgerAddressInfo as Required<Pick<typeof nimiqLedgerAddressInfo, 'address' | 'label' | 'balance'>>,
+            signerPath: this._account.findSignerForAddress(nimiqLedgerAddress)!.path,
+        };
 
         // As the Ledger Nimiq app currently does not support signing HTLCs yet, we use a proxy in-memory key.
-        // This key gets derived from the Ledger public key at LEDGER_HTLC_PROXY_KEY_PATH as entropy.
+        // This key gets derived from the Ledger public key at proxyKeyPath as entropy.
         this._nimiqProxyKeyPromise = (async () => {
-            const pubKeyAsEntropy = await LedgerApi.Nimiq.getPublicKey(LEDGER_HTLC_PROXY_KEY_PATH, this._account.keyId);
+            const { addressIndex } = parseBip32Path(this.nimiqLedgerAddressInfo.signerPath);
+            const proxyKeyPath = getBip32Path({
+                coin: Coin.NIMIQ,
+                accountIndex: 2 ** 31 - 1, // max index allowed by bip32
+                addressIndex: 2 ** 31 - 1 - addressIndex, // use a distinct proxy per address for improved privacy
+            });
+            const pubKeyAsEntropy = await LedgerApi.Nimiq.getPublicKey(proxyKeyPath, this._account.keyId);
             const nimProxyKey = Nimiq.KeyPair.derive(new Nimiq.PrivateKey(pubKeyAsEntropy.serialize()));
 
             // Replace nim address by the proxy's address. Don't replace request.nimiqAddresses which should contain the
@@ -529,7 +527,7 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
                 if (!signedNimiqProxyTransaction) {
                     signedNimiqProxyTransaction = await LedgerApi.Nimiq.signTransaction(
                         nimiqProxyTransactionInfo,
-                        this._account.findSignerForAddress(this.nimiqLedgerAddressInfo.address)!.path,
+                        this.nimiqLedgerAddressInfo.signerPath,
                         this._account.keyId,
                     );
                 }
@@ -551,10 +549,11 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
                 };
                 await LedgerApi.Nimiq.signTransaction(
                     dummyTransaction,
-                    // Any unused key path; We use LEDGER_HTLC_PROXY_KEY_PATH here but note that this is different from
-                    // the proxy account as the proxy account is derived from the public key. Also note that this signed
-                    // tx should not be exposed to not expose the public key.
-                    LEDGER_HTLC_PROXY_KEY_PATH,
+                    // Any unused key path; We use the highest bip32 nimiq path here; but note that the signing address
+                    // is different from the proxy account even if the paths coincide as the proxy account is derived
+                    // from the public key. Note that in the case of a coinciding path, this signed tx should not be
+                    // exposed to not expose the public key.
+                    getBip32Path({ coin: Coin.NIMIQ, accountIndex: 2 ** 31 - 1, addressIndex: 2 ** 31 - 1 }),
                     this._account.keyId,
                 );
             } else {

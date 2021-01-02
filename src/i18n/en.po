@@ -892,12 +892,12 @@ msgstr ""
 msgid "Swap fee"
 msgstr ""
 
-#: src/views/SetupSwapLedger.vue:638
+#: src/views/SetupSwapLedger.vue:637
 #: src/views/SetupSwapSuccess.vue:418
 msgid "Swap Setup Failed"
 msgstr ""
 
-#: src/views/RefundSwapLedger.vue:297
+#: src/views/RefundSwapLedger.vue:295
 msgid "Syncing"
 msgstr ""
 
@@ -909,17 +909,17 @@ msgid "Syncing consensus..."
 msgstr ""
 
 #: src/views/BitcoinSyncBaseView.vue:50
-#: src/views/SetupSwapLedger.vue:640
+#: src/views/SetupSwapLedger.vue:639
 #: src/views/SetupSwapSuccess.vue:420
 #: src/views/SignBtcTransactionLedger.vue:117
 msgid "Syncing Failed"
 msgstr ""
 
-#: src/views/RefundSwapLedger.vue:307
+#: src/views/RefundSwapLedger.vue:305
 msgid "Syncing with {currency} network failed: {error}"
 msgstr ""
 
-#: src/views/RefundSwapLedger.vue:302
+#: src/views/RefundSwapLedger.vue:300
 msgid "Syncing with {currency} network..."
 msgstr ""
 
@@ -928,7 +928,7 @@ msgid "Syncing with Bitcoin network failed: {error}"
 msgstr ""
 
 #: src/views/BitcoinSyncBaseView.vue:58
-#: src/views/SetupSwapLedger.vue:650
+#: src/views/SetupSwapLedger.vue:649
 msgid "Syncing with Bitcoin network..."
 msgstr ""
 
