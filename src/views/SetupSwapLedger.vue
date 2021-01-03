@@ -205,6 +205,7 @@ import { SignedBtcTransaction } from '../lib/PublicRequestTypes';
 import { WalletInfo } from '../lib/WalletInfo';
 import { ERROR_CANCELED } from '../lib/Constants';
 import { BTC_NETWORK_TEST } from '../lib/bitcoin/BitcoinConstants';
+import { loadNimiq } from '../lib/Helpers';
 import { loadBitcoinJS } from '../lib/bitcoin/BitcoinJSLoader';
 import { getElectrumClient } from '../lib/bitcoin/ElectrumClient';
 import { satoshisToCoins } from '../lib/bitcoin/BitcoinUtils';
@@ -264,10 +265,14 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
     private _setupSwapPromise!: Promise<SwapSetupInfo>;
 
     protected async created() {
-        // preload BitcoinJS and the electrum client used in prepareBitcoinTransactionForLedgerSigning
         Promise.all([
-            loadBitcoinJS(),
-            getElectrumClient(),
+            // preload nimiq cryptography used in ledger api and createTx, sendToNetwork
+            this.request.fund.type === SwapAsset.NIM || this.request.redeem.type === SwapAsset.NIM ? loadNimiq() : null,
+            // if we need to fund the proxy address, pre-initialize the nimiq network
+            this.request.fund.type === SwapAsset.NIM ? this.nimiqNetwork.getNetworkClient() : null,
+            // preload BitcoinJS and the electrum client used in prepareBitcoinTransactionForLedgerSigning
+            this.request.fund.type === SwapAsset.BTC || this.request.redeem.type === SwapAsset.BTC
+                ? loadBitcoinJS().then(getElectrumClient) : null,
         ]).catch(() => void 0);
 
         this._setupSwapPromise = new Promise((resolve) => this._setupSwap = resolve);

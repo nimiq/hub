@@ -22,6 +22,7 @@ import { SetupSwapResult, SignedBtcTransaction } from '../lib/PublicRequestTypes
 import { Static } from '../lib/StaticStore';
 import { ParsedSetupSwapRequest } from '../lib/RequestTypes';
 import Config from 'config';
+import { loadNimiq } from '../lib/Helpers';
 import { getElectrumClient } from '../lib/bitcoin/ElectrumClient';
 
 // Import only types to avoid bundling of KeyguardClient in Ledger request if not required.
@@ -47,6 +48,13 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
     @State private keyguardResult?: KeyguardSimpleResult;
 
     protected async mounted() {
+        Promise.all([
+            // if nimiq is involved, preload nimiq cryptography used in createTx, makeSignTransactionResult
+            this.request.fund.type === SwapAsset.NIM || this.request.redeem.type === SwapAsset.NIM ? loadNimiq() : null,
+            // if we need to fetch the tx from the network, preload the electrum client
+            this.request.redeem.type === SwapAsset.BTC ? getElectrumClient() : null,
+        ]).catch(() => void 0);
+
         // use mounted instead of created to ensure that SetupSwapLedger has the chance to run its created hook before.
         if (!await this._shouldConfirmSwap()) {
             return; // keep potential error message displayed
