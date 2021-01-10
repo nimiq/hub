@@ -10,11 +10,12 @@ msgstr ""
 msgid "{color} Account"
 msgstr ""
 
-#: src/views/SetupSwapLedger.vue:46
+#: src/views/SetupSwapLedger.vue:57
+#: src/views/SetupSwapLedger.vue:78
 msgid "{percentage} of swap value."
 msgstr ""
 
-#: src/views/SetupSwapLedger.vue:15
+#: src/views/SetupSwapLedger.vue:30
 msgid "{totalFees} fees"
 msgstr ""
 
@@ -107,7 +108,7 @@ msgstr ""
 msgid "Amount/Step:"
 msgstr ""
 
-#: src/views/SetupSwapLedger.vue:31
+#: src/views/SetupSwapLedger.vue:47
 msgid "Atomic swaps require two BTC transactions."
 msgstr ""
 
@@ -181,7 +182,8 @@ msgstr ""
 msgid "Balance:"
 msgstr ""
 
-#: src/views/SetupSwapLedger.vue:69
+#: src/views/SetupSwapLedger.vue:106
+#: src/views/SetupSwapLedger.vue:153
 msgid "Bitcoin"
 msgstr ""
 
@@ -201,7 +203,7 @@ msgstr ""
 msgid "Brown"
 msgstr ""
 
-#: src/views/SetupSwapLedger.vue:26
+#: src/views/SetupSwapLedger.vue:42
 msgid "BTC network fee"
 msgstr ""
 
@@ -667,7 +669,7 @@ msgstr ""
 msgid "New Cashlink"
 msgstr ""
 
-#: src/views/SetupSwapLedger.vue:34
+#: src/views/SetupSwapLedger.vue:64
 msgid "NIM network fee"
 msgstr ""
 
@@ -699,6 +701,10 @@ msgstr ""
 
 #: src/views/Migrate.vue:224
 msgid "Nothing to update."
+msgstr ""
+
+#: src/views/SetupSwapLedger.vue:52
+msgid "OASIS service fee"
 msgstr ""
 
 #: src/views/ErrorHandlerUnsupportedLedger.vue:4
@@ -888,11 +894,11 @@ msgstr ""
 msgid "Storing your new accounts..."
 msgstr ""
 
-#: src/views/SetupSwapLedger.vue:41
+#: src/views/SetupSwapLedger.vue:73
 msgid "Swap fee"
 msgstr ""
 
-#: src/views/SetupSwapLedger.vue:642
+#: src/views/SetupSwapLedger.vue:767
 #: src/views/SetupSwapSuccess.vue:426
 msgid "Swap Setup Failed"
 msgstr ""
@@ -909,7 +915,7 @@ msgid "Syncing consensus..."
 msgstr ""
 
 #: src/views/BitcoinSyncBaseView.vue:50
-#: src/views/SetupSwapLedger.vue:644
+#: src/views/SetupSwapLedger.vue:769
 #: src/views/SetupSwapSuccess.vue:428
 #: src/views/SignBtcTransactionLedger.vue:117
 msgid "Syncing Failed"
@@ -928,7 +934,7 @@ msgid "Syncing with Bitcoin network failed: {error}"
 msgstr ""
 
 #: src/views/BitcoinSyncBaseView.vue:58
-#: src/views/SetupSwapLedger.vue:654
+#: src/views/SetupSwapLedger.vue:779
 msgid "Syncing with Bitcoin network..."
 msgstr ""
 
@@ -986,7 +992,7 @@ msgstr ""
 msgid "This operation is not supported for Ledgers."
 msgstr ""
 
-#: src/views/SetupSwapLedger.vue:10
+#: src/views/SetupSwapLedger.vue:25
 msgid "This rate includes the swap fee."
 msgstr ""
 
@@ -998,7 +1004,7 @@ msgstr ""
 msgid "To change the PIN of your Ledger please go to the settings on your device."
 msgstr ""
 
-#: src/views/SetupSwapLedger.vue:53
+#: src/views/SetupSwapLedger.vue:86
 msgid "Total fees"
 msgstr ""
 
@@ -1138,6 +1144,10 @@ msgstr ""
 msgid ""
 "Your Addresses may be\n"
 "incomplete."
+msgstr ""
+
+#: src/views/SetupSwapLedger.vue:110
+msgid "Your Bank"
 msgstr ""
 
 #: src/views/LogoutLedger.vue:13

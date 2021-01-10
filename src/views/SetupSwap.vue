@@ -82,7 +82,8 @@ export default class SetupSwap extends BitcoinSyncBaseView {
         // Note that the sync state will only be visible in the UI if the sync is not instant (if we actually sync)
         this.state = this.State.SYNCING;
 
-        if (!this._account.btcXPub || !this._account.btcAddresses || !this._account.btcAddresses.external.length) {
+        if ((this.request.fund.type === SwapAsset.BTC || this.request.redeem.type === SwapAsset.BTC)
+            && (!this._account.btcXPub || !this._account.btcAddresses || !this._account.btcAddresses.external.length)) {
             throw new Error(`Account does not have any Bitcoin addresses`);
         }
 

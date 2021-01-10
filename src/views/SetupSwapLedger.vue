@@ -1,12 +1,27 @@
 <template>
     <div class="container">
-        <SmallPage>
+        <SmallPage :style="{ minWidth: request.layout === 'slider' ? '63.5rem' : '0' }">
             <PageHeader back-arrow @back="_close">
                 <template #default>{{ $t('Confirm Swap') }}</template>
                 <template #more>
                     <!-- Exchange rate info -->
                     <Tooltip preferredPosition="bottom right" class="exchange-rate-tooltip">
-                        <template #trigger>{{ _formattedExchangeRate }}</template>
+                        <template #trigger>
+                            <!-- Note: the base currency is never a fiat currency, thus no need to use FiatAmount -->
+                            1 {{ _baseAmountInfo.currency }} =
+                            <Amount v-if="_otherAmountInfo.currency === SwapAsset.BTC
+                                || _otherAmountInfo.currency === SwapAsset.NIM"
+                                :amount="_exchangeRate * 10 ** (_otherAmountInfo.currencyDecimals + 1)"
+                                :currency="_otherAmountInfo.currency"
+                                :currencyDecimals="_otherAmountInfo.currencyDecimals + 1"
+                                :maxDecimals="_otherAmountInfo.currencyDecimals + 1"
+                                :minDecimals="0"
+                            />
+                            <FiatAmount v-else
+                                :amount="_exchangeRate"
+                                :currency="request.fiatCurrency"
+                            />
+                        </template>
                         <template #default>{{ $t('This rate includes the swap fee.') }}</template>
                     </Tooltip>
                     <!-- Fee info -->
@@ -23,29 +38,47 @@
                         </template>
                         <template #default>
                             <!-- Bitcoin fee info first -->
-                            <label>{{ $t('BTC network fee') }}</label>
-                            <FiatAmount
-                                :amount="_toFiat(_amountInfoForCurrency[SwapAsset.BTC].fees, SwapAsset.BTC)"
-                                :currency="request.fiatCurrency"
-                            />
-                            <div class="explainer">{{ $t('Atomic swaps require two BTC transactions.') }}</div>
+                            <template v-if="_amountInfoForCurrency[SwapAsset.BTC]">
+                                <label>{{ $t('BTC network fee') }}</label>
+                                <FiatAmount
+                                    :amount="_toFiat(_amountInfoForCurrency[SwapAsset.BTC].fees, SwapAsset.BTC)"
+                                    :currency="request.fiatCurrency"
+                                />
+                                <div class="explainer">{{ $t('Atomic swaps require two BTC transactions.') }}</div>
+                            </template>
 
-                            <!-- Nimiq fee info -->
-                            <label>{{ $t('NIM network fee') }}</label>
-                            <FiatAmount
-                                :amount="_toFiat(_amountInfoForCurrency[SwapAsset.NIM].fees, SwapAsset.NIM)"
-                                :currency="request.fiatCurrency"
-                            />
+                            <!-- Euro fee second -->
+                            <template v-if="_amountInfoForCurrency[SwapAsset.EUR]">
+                                <label>{{ $t('OASIS service fee') }}</label>
+                                <FiatAmount
+                                    :amount="_toFiat(_amountInfoForCurrency[SwapAsset.EUR].fees, SwapAsset.EUR)"
+                                    :currency="request.fiatCurrency"
+                                />
+                                <div class="explainer">{{ $t('{percentage} of swap value.', {
+                                    percentage: _formattedOasisFee,
+                                }) }}</div>
+                            </template>
+
+                            <!-- Nimiq fee last -->
+                            <template v-if="_amountInfoForCurrency[SwapAsset.NIM]">
+                                <label>{{ $t('NIM network fee') }}</label>
+                                <FiatAmount
+                                    :amount="_toFiat(_amountInfoForCurrency[SwapAsset.NIM].fees, SwapAsset.NIM)"
+                                    :currency="request.fiatCurrency"
+                                />
+                            </template>
 
                             <!-- Swap fee -->
-                            <label>{{ $t('Swap fee') }}</label>
-                            <FiatAmount
-                                :amount="_toFiat(request.serviceSwapFee, _fundingAmountInfo.currency)"
-                                :currency="request.fiatCurrency"
-                            />
-                            <div class="explainer">{{ $t('{percentage} of swap value.', {
-                                percentage: _formattedServiceFee,
-                            }) }}</div>
+                            <template v-if="request.serviceSwapFee">
+                                <label>{{ $t('Swap fee') }}</label>
+                                <FiatAmount
+                                    :amount="_toFiat(request.serviceSwapFee, _fundingAmountInfo.currency)"
+                                    :currency="request.fiatCurrency"
+                                />
+                                <div class="explainer">{{ $t('{percentage} of swap value.', {
+                                    percentage: _formattedServiceFee,
+                                }) }}</div>
+                            </template>
 
                             <hr>
 
@@ -61,7 +94,58 @@
                 </template>
             </PageHeader>
 
-            <PageBody>
+            <PageBody v-if="request.layout === 'standard'" class="layout-standard">
+                <div class="address-infos">
+                    <template v-for="fundingOrRedeemingInfo in [request.fund, request.redeem]">
+                        <div v-if="fundingOrRedeemingInfo.type === SwapAsset.NIM">
+                            <Identicon :address="nimiqLedgerAddressInfo.address.toUserFriendlyAddress()" />
+                            <label>{{ nimiqLedgerAddressInfo.label }}</label>
+                        </div>
+                        <div v-else-if="fundingOrRedeemingInfo.type === SwapAsset.BTC">
+                            <img src="/icon-btc.svg">
+                            <label>{{ $t('Bitcoin') }}</label>
+                        </div>
+                        <div v-else-if="fundingOrRedeemingInfo.type === SwapAsset.EUR">
+                            <img src="/icon-bank.svg">
+                            <label>{{ request.fund.bankLabel || $t('Your Bank') }}</label>
+                        </div>
+                        <ArrowRightIcon v-if="fundingOrRedeemingInfo === request.fund" />
+                    </template>
+                </div>
+
+                <div class="swap-values">
+                    <!-- use Amount component also for fiat to display currency as currency code instead of symbol -->
+                    <Amount
+                        :amount="_fundingAmountInfo.myAmount"
+                        :currency="_fundingAmountInfo.currency"
+                        :currencyDecimals="_fundingAmountInfo.currencyDecimals"
+                        :maxDecimals="_fundingAmountInfo.currencyDecimals"
+                        :minDecimals="_fundingAmountInfo.currency === SwapAsset.EUR
+                            ? _fundingAmountInfo.currencyDecimals : 0"
+                        class="from-value nq-light-blue"
+                    />
+
+                    <div class="to-value nq-gray">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="27" height="21" viewBox="0 0 27 21">
+                            <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5">
+                                <path d="M.75.75v6a8 8 0 008 8h17"/>
+                                <path d="M20.75 9.25l5.5 5.5-5.5 5.5" stroke-linejoin="round"/>
+                            </g>
+                        </svg>
+                        <Amount
+                            :amount="_redeemingAmountInfo.myAmount"
+                            :currency="_redeemingAmountInfo.currency"
+                            :currencyDecimals="_redeemingAmountInfo.currencyDecimals"
+                            :maxDecimals="_redeemingAmountInfo.currencyDecimals"
+                            :minDecimals="_redeemingAmountInfo.currency === SwapAsset.EUR
+                                ? _redeemingAmountInfo.currencyDecimals : 0"
+                        />
+                    </div>
+                </div>
+            </PageBody>
+
+            <PageBody v-else-if="request.layout === 'slider'" class="layout-slider">
+                <!-- Note: the slider layout is currently only for NIM <-> BTC swaps -->
                 <div class="address-infos">
                     <Identicon :address="nimiqLedgerAddressInfo.address.toUserFriendlyAddress()" />
                     <label>{{ nimiqLedgerAddressInfo.label }}</label>
@@ -176,7 +260,16 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
 import { Getter } from 'vuex-class';
-import { SmallPage, PageHeader, PageBody, Identicon, Amount, FiatAmount, Tooltip } from '@nimiq/vue-components';
+import {
+    SmallPage,
+    PageHeader,
+    PageBody,
+    Identicon,
+    Amount,
+    FiatAmount,
+    Tooltip,
+    ArrowRightIcon,
+} from '@nimiq/vue-components';
 import SetupSwap, { SwapSetupInfo } from './SetupSwap.vue';
 import SetupSwapSuccess, { SwapHtlcInfo } from './SetupSwapSuccess.vue';
 import StatusScreen from '../components/StatusScreen.vue';
@@ -188,11 +281,11 @@ import LedgerApi, {
     RequestTypeBitcoin as LedgerApiRequestTypeBitcoin,
     TransactionInfoNimiq as LedgerNimiqTransactionInfo,
     TransactionInfoBitcoin as LedgerBitcoinTransactionInfo,
+    Network as LedgerApiNetwork,
     getBip32Path,
     parseBip32Path,
     Coin,
 } from '@nimiq/ledger-api';
-import { FormattableNumber } from '@nimiq/utils';
 import {
     getBackgroundColorName as getIdenticonBackgroundColorName,
     backgroundColors as identiconBackgroundColors,
@@ -243,6 +336,7 @@ const ProxyExtraData = {
     Amount,
     FiatAmount,
     Tooltip,
+    ArrowRightIcon,
     StatusScreen,
     GlobalClose,
     LedgerUi,
@@ -260,82 +354,81 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
     protected _account!: WalletInfo;
     private readonly SwapAsset = SwapAsset;
     private ledgerInstructionsShown = false;
-    private nimiqLedgerAddressInfo!: { address: Nimiq.Address, label: string, balance: number, signerPath: string };
-    private _nimiqProxyKeyPromise!: Promise<Nimiq.KeyPair>;
     private _setupSwapPromise!: Promise<SwapSetupInfo>;
+    private nimiqLedgerAddressInfo?: { address: Nimiq.Address, label: string, balance: number, signerPath: string };
+    private _nimiqProxyKeyPromise?: Promise<Nimiq.KeyPair>;
 
     protected async created() {
+        const { fund, redeem, nimiqAddresses, walletId } = this.request;
+
         Promise.all([
             // preload nimiq cryptography used in ledger api and createTx, sendToNetwork
-            this.request.fund.type === SwapAsset.NIM || this.request.redeem.type === SwapAsset.NIM ? loadNimiq() : null,
+            fund.type === SwapAsset.NIM || redeem.type === SwapAsset.NIM ? loadNimiq() : null,
             // if we need to fund the proxy address, pre-initialize the nimiq network
-            this.request.fund.type === SwapAsset.NIM ? this.nimiqNetwork.getNetworkClient() : null,
+            fund.type === SwapAsset.NIM ? this.nimiqNetwork.getNetworkClient() : null,
             // preload BitcoinJS and the electrum client used in prepareBitcoinTransactionForLedgerSigning
-            this.request.fund.type === SwapAsset.BTC || this.request.redeem.type === SwapAsset.BTC
+            fund.type === SwapAsset.BTC || redeem.type === SwapAsset.BTC
                 ? loadBitcoinJS().then(getElectrumClient) : null,
         ]).catch(() => void 0);
 
         this._setupSwapPromise = new Promise((resolve) => this._setupSwap = resolve);
 
-        if ((this.request.fund.type !== SwapAsset.NIM && this.request.fund.type !== SwapAsset.BTC)
-            || (this.request.redeem.type !== SwapAsset.NIM && this.request.redeem.type !== SwapAsset.BTC)) {
-            const error = new Error('Fiat swaps currently not supported for Ledgers');
-            this.$rpc.reject(error);
-            throw error;
-        }
-
         // existence checked by _hubApiHandler in RpcApi
-        this._account = this.findWallet(this.request.walletId)!;
+        this._account = this.findWallet(walletId)!;
 
-        const nimiqLedgerAddress = this.request.fund.type === SwapAsset.NIM
-            ? this.request.fund.sender
-            : this.request.redeem.type === SwapAsset.NIM
-                ? this.request.redeem.recipient
-                : (() => { throw new Error('Swap does not contain a NIM address'); })();
-        const nimiqLedgerAddressInfo = this._account.findContractByAddress(nimiqLedgerAddress)
-            || this._account.accounts.get(nimiqLedgerAddress.toUserFriendlyAddress());
-        if (!nimiqLedgerAddressInfo) {
-            this.$rpc.reject(new Error(`Unknown address ${nimiqLedgerAddress.toUserFriendlyAddress()}`));
-            return;
-        }
-        if (this.request.nimiqAddresses) {
-            // Use the provided balance as it's potentially more up to date. Existence of an entry for our address is
-            // ensured by RequestParser.
-            nimiqLedgerAddressInfo.balance = this.request.nimiqAddresses.find(
-                ({ address }) => Nimiq.Address.fromAny(address).equals(nimiqLedgerAddress))!.balance;
-        } else {
-            nimiqLedgerAddressInfo.balance = nimiqLedgerAddressInfo.balance || 0;
-        }
-        this.nimiqLedgerAddressInfo = {
-            ...nimiqLedgerAddressInfo as Required<Pick<typeof nimiqLedgerAddressInfo, 'address' | 'label' | 'balance'>>,
-            signerPath: this._account.findSignerForAddress(nimiqLedgerAddress)!.path,
-        };
-
-        // As the Ledger Nimiq app currently does not support signing HTLCs yet, we use a proxy in-memory key.
-        // This key gets derived from the Ledger public key at proxyKeyPath as entropy.
-        this._nimiqProxyKeyPromise = (async () => {
-            const { addressIndex } = parseBip32Path(this.nimiqLedgerAddressInfo.signerPath);
-            const proxyKeyPath = getBip32Path({
-                coin: Coin.NIMIQ,
-                accountIndex: 2 ** 31 - 1, // max index allowed by bip32
-                addressIndex: 2 ** 31 - 1 - addressIndex, // use a distinct proxy per address for improved privacy
-            });
-            const pubKeyAsEntropy = await LedgerApi.Nimiq.getPublicKey(proxyKeyPath, this._account.keyId);
-            const nimProxyKey = Nimiq.KeyPair.derive(new Nimiq.PrivateKey(pubKeyAsEntropy.serialize()));
-
-            // Replace nim address by the proxy's address. Don't replace request.nimiqAddresses which should contain the
-            // original address for display.
-            const proxyAddress = nimProxyKey.publicKey.toAddress();
-            if (this.request.fund.type === SwapAsset.NIM) {
-                this.request.fund.sender = proxyAddress; // also defines the htlc refundAddress in SetupSwapSuccess
-            } else if (this.request.redeem.type === SwapAsset.NIM) {
-                this.request.redeem.recipient = proxyAddress; // also defines the htlc redeemAddress in SetupSwapSuccess
+        if (fund.type === SwapAsset.NIM || redeem.type === SwapAsset.NIM) {
+            const nimiqLedgerAddress = fund.type === SwapAsset.NIM
+                ? fund.sender
+                : redeem.type === SwapAsset.NIM
+                    ? redeem.recipient
+                    : (() => { throw new Error('Unexpected'); })(); // should never happen
+            const nimiqLedgerAddressInfo = this._account.findContractByAddress(nimiqLedgerAddress)
+                || this._account.accounts.get(nimiqLedgerAddress.toUserFriendlyAddress());
+            if (!nimiqLedgerAddressInfo) {
+                this.$rpc.reject(new Error(`Unknown address ${nimiqLedgerAddress.toUserFriendlyAddress()}`));
+                return;
             }
+            if (nimiqAddresses) {
+                // Use the provided balance as it's potentially more up to date. Existence of an entry for our address
+                // is ensured by RequestParser.
+                nimiqLedgerAddressInfo.balance = nimiqAddresses.find(
+                    ({ address }) => Nimiq.Address.fromAny(address).equals(nimiqLedgerAddress))!.balance;
+            } else {
+                nimiqLedgerAddressInfo.balance = nimiqLedgerAddressInfo.balance || 0;
+            }
+            const signerPath = this._account.findSignerForAddress(nimiqLedgerAddress)!.path;
+            this.nimiqLedgerAddressInfo = {
+                ...nimiqLedgerAddressInfo as Required<
+                    Pick<typeof nimiqLedgerAddressInfo, 'address' | 'label' | 'balance'>>,
+                signerPath,
+            };
 
-            return nimProxyKey;
-        })();
-        // Catch errors to avoid uncaught promise rejections but ignore them and just keep errors displayed in LedgerUi.
-        this._nimiqProxyKeyPromise.catch(() => void 0);
+            // As the Ledger Nimiq app currently does not support signing HTLCs yet, we use a proxy in-memory key.
+            // This key gets derived from the Ledger public key at proxyKeyPath as entropy.
+            this._nimiqProxyKeyPromise = (async () => {
+                const { addressIndex } = parseBip32Path(signerPath);
+                const proxyKeyPath = getBip32Path({
+                    coin: Coin.NIMIQ,
+                    accountIndex: 2 ** 31 - 1, // max index allowed by bip32
+                    addressIndex: 2 ** 31 - 1 - addressIndex, // use a distinct proxy per address for improved privacy
+                });
+                const pubKeyAsEntropy = await LedgerApi.Nimiq.getPublicKey(proxyKeyPath, this._account.keyId);
+                const nimProxyKey = Nimiq.KeyPair.derive(new Nimiq.PrivateKey(pubKeyAsEntropy.serialize()));
+
+                // Replace nim address by the proxy's address. Don't replace request.nimiqAddresses which should contain
+                // the original address for display.
+                const proxyAddress = nimProxyKey.publicKey.toAddress();
+                if (fund.type === SwapAsset.NIM) {
+                    fund.sender = proxyAddress; // also defines the htlc refundAddress in SetupSwapSuccess
+                } else if (redeem.type === SwapAsset.NIM) {
+                    redeem.recipient = proxyAddress; // also defines the htlc redeemAddress in SetupSwapSuccess
+                }
+
+                return nimProxyKey;
+            })();
+            // Catch errors to avoid uncaught promise rejections but ignore them and keep errors displayed in LedgerUi.
+            this._nimiqProxyKeyPromise.catch(() => void 0);
+        }
     }
 
     protected destroyed() {
@@ -356,18 +449,20 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
         if (!swapSetupInfo) return null;
 
         // Replace nim address by the proxy's address.
-        let nimProxyKey: Nimiq.KeyPair;
-        try {
-            nimProxyKey = await this._nimiqProxyKeyPromise;
-        } catch (e) {
-            return null;
-        }
-        const proxyAddress = nimProxyKey.publicKey.toAddress().serialize();
-        if (swapSetupInfo.fund.type === SwapAsset.NIM) {
-            swapSetupInfo.fund.sender = proxyAddress;
-            swapSetupInfo.fund.senderType = Nimiq.Account.Type.BASIC;
-        } else if (swapSetupInfo.redeem.type === SwapAsset.NIM) {
-            swapSetupInfo.redeem.recipient = proxyAddress;
+        if (this._nimiqProxyKeyPromise) {
+            let nimProxyKey: Nimiq.KeyPair;
+            try {
+                nimProxyKey = await this._nimiqProxyKeyPromise;
+            } catch (e) {
+                return null;
+            }
+            const proxyAddress = nimProxyKey.publicKey.toAddress().serialize();
+            if (swapSetupInfo.fund.type === SwapAsset.NIM) {
+                swapSetupInfo.fund.sender = proxyAddress;
+                swapSetupInfo.fund.senderType = Nimiq.Account.Type.BASIC;
+            } else if (swapSetupInfo.redeem.type === SwapAsset.NIM) {
+                swapSetupInfo.redeem.recipient = proxyAddress;
+            }
         }
 
         return swapSetupInfo;
@@ -376,13 +471,19 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
     protected async _shouldConfirmSwap() {
         if (this._isDestroyed) return false;
         try {
-            await Promise.all([
-                // await first step of swap setup
-                this._setupSwapPromise,
-                // This requires the user to connect and unlock his ledger which also shows that the user intends to
-                // actually do the swap.
-                this._nimiqProxyKeyPromise,
-            ]);
+            // await first step of swap setup
+            const swapSetupInfo = await this._setupSwapPromise;
+            // Require user to connect and unlock his ledger which also shows that he intends to actually do the swap.
+            if (this._nimiqProxyKeyPromise) {
+                await this._nimiqProxyKeyPromise;
+            } else if (swapSetupInfo.fund.type === SwapAsset.BTC || swapSetupInfo.redeem.type === SwapAsset.BTC) {
+                await LedgerApi.Bitcoin.getWalletId(Config.bitcoinNetwork === BTC_NETWORK_TEST
+                    ? LedgerApiNetwork.TESTNET
+                    : LedgerApiNetwork.MAINNET,
+                );
+            } else {
+                return false;
+            }
         } catch (e) {
             return false;
         }
@@ -390,34 +491,42 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
     }
 
     protected async _signSwapTransactions(htlcInfo: SwapHtlcInfo)
-        : Promise<{ nim: Nimiq.Transaction, nimProxy?: Nimiq.Transaction, btc: SignedBtcTransaction } | null> {
+        : Promise<{ nim?: Nimiq.Transaction, nimProxy?: Nimiq.Transaction, btc?: SignedBtcTransaction, eur?: string }
+        | null> {
+        // Called from SetupSwapSuccess
         if (this._isDestroyed) return null;
         let swapSetupInfo: SwapSetupInfo;
-        let nimiqProxyKey: Nimiq.KeyPair;
-        let Buffer: typeof import('buffer').Buffer;
+        let nimiqProxyKey: Nimiq.KeyPair | undefined;
+        let Buffer: typeof import('buffer').Buffer | undefined;
         try {
             [swapSetupInfo, nimiqProxyKey] = await Promise.all([
                 this._setupSwapPromise,
                 this._nimiqProxyKeyPromise,
-                loadBitcoinJS(),
+                this.request.fund.type === SwapAsset.BTC || this.request.redeem.type === SwapAsset.BTC
+                    ? loadBitcoinJS() : null,
             ]);
-            // note that buffer is marked as external module in vue.config.js and internally, the buffer bundled with
-            // BitcoinJS is used, therefore we retrieve it after having BitcoinJS loaded.
-            // TODO change this when we don't prebuild BitcoinJS anymore
-            Buffer = await import('buffer').then((module) => module.Buffer);
+            if (typeof BitcoinJS !== 'undefined') {
+                // note that buffer is marked as external module in vue.config.js and internally, the buffer bundled
+                // with BitcoinJS is used, therefore we retrieve it after having BitcoinJS loaded.
+                // TODO change this when we don't prebuild BitcoinJS anymore
+                Buffer = await import('buffer').then((module) => module.Buffer);
+            }
         } catch (e) {
             return null;
         }
 
         if (this._isDestroyed) return null;
 
-        // Collect nimiq swap transaction info
+        // Step 1: collect transaction infos to sign
 
-        let nimiqSwapTransactionInfo: Parameters<Network['createTx']>[0]; // currently signed by proxy, not Ledger
+        // Collect nimiq swap transaction info
+        let nimiqSwapTransactionInfo: Parameters<Network['createTx']>[0] | undefined; // signed by proxy, not Ledger
         let nimiqProxyTransactionInfo: LedgerNimiqTransactionInfo & Parameters<Network['createTx']>[0] | undefined;
         if (this.request.fund.type === SwapAsset.NIM
             && swapSetupInfo.fund.type === SwapAsset.NIM
-            && htlcInfo.fund.type === SwapAsset.NIM) {
+            && htlcInfo.fund.type === SwapAsset.NIM
+            && this.nimiqLedgerAddressInfo
+            && nimiqProxyKey) {
             nimiqSwapTransactionInfo = {
                 signerPubKey: nimiqProxyKey.publicKey,
                 sender: new Nimiq.Address(swapSetupInfo.fund.sender),
@@ -445,7 +554,9 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
             };
         } else if (this.request.redeem.type === SwapAsset.NIM
             && swapSetupInfo.redeem.type === SwapAsset.NIM
-            && htlcInfo.redeem.type === SwapAsset.NIM) {
+            && htlcInfo.redeem.type === SwapAsset.NIM
+            && this.nimiqLedgerAddressInfo
+            && nimiqProxyKey) {
             // The htlc redeem tx currently has to be signed by the proxy but doesn't have to forward funds through it.
             nimiqSwapTransactionInfo = {
                 signerPubKey: nimiqProxyKey.publicKey,
@@ -457,19 +568,18 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
                 validityStartHeight: swapSetupInfo.redeem.validityStartHeight,
                 // network: Config.network, // enable when signed by Ledger
             };
-        } else {
-            throw new Error('Could not find NIM transaction data');
         }
 
         // Collect bitcoin swap transaction info
-
-        let bitcoinTransactionInfo: Parameters<typeof prepareBitcoinTransactionForLedgerSigning>[0];
-        const bitcoinNetwork = Config.bitcoinNetwork === BTC_NETWORK_TEST
+        let bitcoinTransactionInfo: Parameters<typeof prepareBitcoinTransactionForLedgerSigning>[0] | undefined;
+        const bitcoinNetwork = typeof BitcoinJS !== 'undefined' && (Config.bitcoinNetwork === BTC_NETWORK_TEST
             ? BitcoinJS.networks.testnet
-            : BitcoinJS.networks.bitcoin;
+            : BitcoinJS.networks.bitcoin);
         if (this.request.fund.type === SwapAsset.BTC
             && swapSetupInfo.fund.type === SwapAsset.BTC
-            && htlcInfo.fund.type === SwapAsset.BTC) {
+            && htlcInfo.fund.type === SwapAsset.BTC
+            && bitcoinNetwork
+            && Buffer) {
             const htlcAddress = BitcoinJS.payments.p2wsh({
                 witness: [Buffer.from(htlcInfo.fund.htlcScript)],
                 network: bitcoinNetwork,
@@ -508,25 +618,26 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
                 },
                 // no change output
             };
-        } else {
-            throw new Error('Could not find BTC transaction data');
         }
 
         // prepare btc transaction for ledger signing
-        const preparedBitcoinTransactionInfoPromise = prepareBitcoinTransactionForLedgerSigning(bitcoinTransactionInfo);
+        const preparedBitcoinTransactionInfoPromise = bitcoinTransactionInfo
+            && prepareBitcoinTransactionForLedgerSigning(bitcoinTransactionInfo);
 
-        // sign transactions
+        // Step 2: sign transactions on the Ledger
 
-        let signedNimiqSwapTransaction: Nimiq.Transaction;
+        let signedNimiqSwapTransaction: Nimiq.Transaction | undefined;
         let signedNimiqProxyTransaction: Nimiq.Transaction | undefined;
         let nimiqSendPromise: Promise<any> = Promise.resolve();
-        let signedBitcoinTransactionHex: string;
+        let signedBitcoinTransaction: BitcoinJS.Transaction | undefined;
+        let euroSettlement: string | undefined;
         try {
             if (this._isDestroyed) return null;
 
-            // First sign Nim transaction as user is already connected to nimiq app and to give time for proxy funding
+            // First sign Nim transaction (if Nim is involved in the swap) as user is already connected to nimiq app and
+            // to give time for proxy funding.
 
-            if (swapSetupInfo.fund.type === SwapAsset.NIM && nimiqProxyTransactionInfo) {
+            if (swapSetupInfo.fund.type === SwapAsset.NIM && nimiqProxyTransactionInfo && this.nimiqLedgerAddressInfo) {
                 // send funding tx from Ledger to proxy address
                 signedNimiqProxyTransaction = this.nimiqNetwork.getUnrelayedTransactions(nimiqProxyTransactionInfo)[0];
                 if (!signedNimiqProxyTransaction) {
@@ -538,7 +649,7 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
                 }
                 // ignore broadcast errors. The Wallet will also try to send the tx
                 nimiqSendPromise = this.nimiqNetwork.sendToNetwork(signedNimiqProxyTransaction).catch(() => void 0);
-            } else if (swapSetupInfo.redeem.type === SwapAsset.NIM) {
+            } else if (swapSetupInfo.redeem.type === SwapAsset.NIM && nimiqSwapTransactionInfo) {
                 // For redeeming, the htlc swap transaction is signed by the proxy. Nonetheless, we let the user sign an
                 // unused dummy transaction for ux consistency. This transaction is signed from a keyPath which does not
                 // actually hold funds.
@@ -561,11 +672,34 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
                     getBip32Path({ coin: Coin.NIMIQ, accountIndex: 2 ** 31 - 1, addressIndex: 2 ** 31 - 1 }),
                     this._account.keyId,
                 );
-            } else {
-                throw new Error('Could not find NIM transaction data');
             }
 
-            // Sign swap transaction by proxy
+            if (this._isDestroyed) return null;
+
+            // Sign the Btc transaction
+
+            if (preparedBitcoinTransactionInfoPromise) {
+                let preparedBitcoinTransactionInfo: LedgerBitcoinTransactionInfo;
+                try {
+                    preparedBitcoinTransactionInfo = await preparedBitcoinTransactionInfoPromise;
+                } catch (e) {
+                    this.error = e.message || e;
+                    return null;
+                }
+
+                signedBitcoinTransaction = BitcoinJS.Transaction.fromHex(
+                    await LedgerApi.Bitcoin.signTransaction(preparedBitcoinTransactionInfo));
+            }
+        } catch (e) {
+            // If cancelled reject. Otherwise just keep the ledger ui / error message displayed.
+            if (e.message.toLowerCase().indexOf('cancelled') !== -1) throw new Error(ERROR_CANCELED);
+            return null;
+        }
+
+        // Step 3: sign transactions not signed by Ledger
+
+        // Sign Nim swap transaction by proxy
+        if (nimiqSwapTransactionInfo && nimiqProxyKey) {
             signedNimiqSwapTransaction = await this.nimiqNetwork.createTx(nimiqSwapTransactionInfo);
             signedNimiqSwapTransaction.proof = Nimiq.SignatureProof.singleSig(
                 nimiqProxyKey.publicKey,
@@ -575,30 +709,20 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
                     signedNimiqSwapTransaction.serializeContent(),
                 ),
             ).serialize();
-
-            if (this._isDestroyed) return null;
-
-            // Then sign the Btc transaction
-
-            let preparedBitcoinTransactionInfo: LedgerBitcoinTransactionInfo;
-            try {
-                preparedBitcoinTransactionInfo = await preparedBitcoinTransactionInfoPromise;
-            } catch (e) {
-                this.error = e.message || e;
-                return null;
-            }
-
-            signedBitcoinTransactionHex = await LedgerApi.Bitcoin.signTransaction(preparedBitcoinTransactionInfo);
-        } catch (e) {
-            // If cancelled reject. Otherwise just keep the ledger ui / error message displayed.
-            if (e.message.toLowerCase().indexOf('cancelled') !== -1) throw new Error(ERROR_CANCELED);
-            return null;
         }
-        const signedBitcoinTransaction = BitcoinJS.Transaction.fromHex(signedBitcoinTransactionHex);
+
+        // Set euro settlement
+        if (swapSetupInfo.fund.type === SwapAsset.EUR) {
+            // Nothing to sign for funding EUR
+            euroSettlement = '';
+        }
+
+        // Step 4: post process signed transactions
 
         // set htlc witness for redeeming the BTC htlc. For Nimiq, the htlc proof is set in SetupSwapSuccess.
-
-        if (swapSetupInfo.redeem.type === SwapAsset.BTC && htlcInfo.redeem.type === SwapAsset.BTC) {
+        if (swapSetupInfo.redeem.type === SwapAsset.BTC
+            && htlcInfo.redeem.type === SwapAsset.BTC
+            && signedBitcoinTransaction) {
             const htlcInput = signedBitcoinTransaction.ins[0];
             // get signature and signer pub key from default witness generated by ledgerjs (see @ledgerhq/hw-app-btc
             // createTransaction.js creation of the witness towards the end of createTransaction)
@@ -623,10 +747,11 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
         return {
             nim: signedNimiqSwapTransaction,
             nimProxy: signedNimiqProxyTransaction,
-            btc: {
+            btc: signedBitcoinTransaction && {
                 serializedTx: signedBitcoinTransaction.toHex(),
                 hash: signedBitcoinTransaction.getId(),
             },
+            eur: euroSettlement,
         };
     }
 
@@ -666,7 +791,7 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
                 currencyDecimals = 5;
                 fees = fundInfo.fee + serviceFundingFee;
                 myAmount = fundInfo.value + fundInfo.fee;
-                newBalance = this.nimiqLedgerAddressInfo.balance - myAmount;
+                newBalance = this.nimiqLedgerAddressInfo!.balance - myAmount;
                 break;
             case SwapAsset.BTC:
                 currencyDecimals = 8;
@@ -676,6 +801,12 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
                     + serviceFundingFee;
                 myAmount = inputsValue - (changeOutput ? changeOutput.value : 0);
                 newBalance = bitcoinAccount ? bitcoinAccount.balance - myAmount : undefined;
+                break;
+            case SwapAsset.EUR:
+                currencyDecimals = 2;
+                fees = fundInfo.fee + serviceFundingFee;
+                myAmount = fundInfo.value + fundInfo.fee;
+                newBalance = undefined; // unknown and unused
                 break;
             default:
                 throw new Error(`Unsupported currency ${currency}`);
@@ -696,7 +827,7 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
                 currencyDecimals = 5;
                 myAmount = redeemInfo.value;
                 fees = redeemInfo.fee + serviceRedeemingFee;
-                newBalance = this.nimiqLedgerAddressInfo.balance + myAmount;
+                newBalance = this.nimiqLedgerAddressInfo!.balance + myAmount;
                 break;
             case SwapAsset.BTC:
                 currencyDecimals = 8;
@@ -706,6 +837,12 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
                     + serviceRedeemingFee;
                 newBalance = bitcoinAccount ? bitcoinAccount.balance + myAmount : undefined;
                 break;
+            // case SwapAsset.EUR:
+            //     currencyDecimals = 2;
+            //     myAmount = redeemInfo.value;
+            //     fees = redeemInfo.fee + serviceRedeemingFee;
+            //     newBalance = undefined; // unknown and unused
+            //     break;
             default:
                 throw new Error(`Unsupported currency ${currency}`);
         }
@@ -745,7 +882,7 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
             + this._toFiat(this.request.serviceSwapFee, this._fundingAmountInfo.currency); // in funding currency
     }
 
-    private get _formattedExchangeRate(): string {
+    private get _exchangeRate(): number {
         // how much is one coin of the base currency in the other currency (based on theirAmount as the exchange is
         // determined on their side)?
         const exchangeRate = this._toCoins(this._otherAmountInfo.theirAmount, this._otherAmountInfo.currency)
@@ -755,22 +892,30 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
         // paying or receiving the base currency. Add or subtract a small epsilon to avoid rounding up or down due to
         // floating point imprecision.
         const roundingFactor = 10 ** (this._otherAmountInfo.currencyDecimals + 1);
-        const roundedExchangeRate = this._fundingAmountInfo === this._baseAmountInfo
+        return this._fundingAmountInfo === this._baseAmountInfo
             // when funding, a lower rate is worse (receives less of other currency for same amount of base currency)
             ? Math.floor(exchangeRate * roundingFactor + 1e-10) / roundingFactor
             // when redeeming, a higher rate is worse (pays more of other currency for same amount of base currency)
             : Math.ceil(exchangeRate * roundingFactor - 1e-10) / roundingFactor;
-        return `1 ${this._baseAmountInfo.currency} = `
-            + `${new FormattableNumber(roundedExchangeRate).toString(true)} ${this._otherAmountInfo.currency}`;
     }
 
     private get _formattedServiceFee(): string {
         const { serviceSwapFee } = this.request; // in funding currency
-        const relativeServiceFees = serviceSwapFee / (this._fundingAmountInfo.theirAmount - serviceSwapFee);
+        const relativeServiceFee = serviceSwapFee / (this._fundingAmountInfo.theirAmount - serviceSwapFee);
         // Convert to percent and round to two decimals. Always ceil to avoid displaying a lower fee than charged.
         // Subtract a small epsilon to avoid that numbers get rounded up as a result of floating point imprecision after
         // multiplication. Otherwise formatting for example .07 would result in 7.01%.
-        return `${Math.ceil(relativeServiceFees * 100 * 100 - 1e-10) / 100}%`;
+        return `${Math.ceil(relativeServiceFee * 100 * 100 - 1e-10) / 100}%`;
+    }
+
+    private get _formattedOasisFee(): string {
+        const euroAmountInfo = this._amountInfoForCurrency[SwapAsset.EUR];
+        if (!euroAmountInfo) return '0%';
+        const relativeOasisFee = euroAmountInfo.fees / this._fundingAmountInfo.theirAmount;
+        // Convert to percent and round to two decimals. Always ceil to avoid displaying a lower fee than charged.
+        // Subtract a small epsilon to avoid that numbers get rounded up as a result of floating point imprecision after
+        // multiplication. Otherwise formatting for example .07 would result in 7.01%.
+        return `${Math.ceil(relativeOasisFee * 100 * 100 - 1e-10) / 100}%`;
     }
 
     private get _balanceBarEntries(): BalanceBarEntry[] {
@@ -790,7 +935,7 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
                         getIdenticonBackgroundColorName(nimiqAddress.toUserFriendlyAddress()),
                     )],
                     oldFiatBalance,
-                    newFiatBalance: nimiqAddress.equals(this.nimiqLedgerAddressInfo.address)
+                    newFiatBalance: nimiqAddress.equals(this.nimiqLedgerAddressInfo!.address)
                         ? this._toFiat(this._amountInfoForCurrency[SwapAsset.NIM]!.newBalance!, SwapAsset.NIM)
                         : oldFiatBalance,
                 };
@@ -830,7 +975,6 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
 <style scoped>
     .small-page {
         position: relative;
-        min-width: 63.5rem;
         padding-bottom: 24rem; /* for bottom container + additional padding */
     }
 
@@ -913,41 +1057,139 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
         align-items: center;
     }
 
-    .address-infos > .identicon {
-        width: 5.75rem;
-        height: 5.75rem;
-        margin: -.25rem 0;
-    }
-
-    .address-infos > img {
-        width: 5.25rem;
-        height: 5.25rem;
-    }
-
-    .address-infos > label {
-        max-width: calc(50% - 5.75rem - 3rem); /* minus identicon width and margin */
-        margin: 0 1.5rem;
+    .address-infos label {
         font-size: 2rem;
         font-weight: 600;
         line-height: 1.3;
     }
 
-    .address-infos > label:first-of-type {
+    /* Standard layout */
+
+    .layout-standard {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .layout-standard .address-infos {
+        flex-direction: row;
+        align-items: flex-start;
+        margin: 1rem 0 2rem;
+    }
+
+    .layout-standard .address-infos > div {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: calc(50% - 1.5rem);
+    }
+
+    .layout-standard .address-infos .identicon {
+        width: 9rem;
+        height: 9rem;
+    }
+
+    .layout-standard .address-infos :not(.identicon) > img {
+        width: 8.5rem;
+        height: 8.5rem;
+        margin: .25rem;
+    }
+
+    .layout-standard .address-infos label {
+        position: relative;
+        width: 18.5rem; /* 148px, the width the automatic labels are designed for */
+        margin: 1.75rem 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-align: center;
+    }
+
+    .layout-standard .address-infos label::after {
+        content: '';
+        display: inline-block;
+        width: 2rem;
+        height: 100%;
+        position: absolute;
+        right: 0;
+        background: linear-gradient(to right, rgba(255, 255, 255, 0), white);
+    }
+
+    .layout-standard .address-infos .nq-icon {
+        margin-top: 3.5rem;
+        height: 2.25rem;
+        width: 3rem;
+        color: var(--nimiq-light-blue);
+    }
+
+    .layout-standard .swap-values {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: flex-start;
+        margin: 0 auto;
+    }
+
+    .layout-standard .from-value {
+        font-size: 4rem;
+        font-weight: 600;
+    }
+
+    .layout-standard .from-value >>> .currency {
+        margin-left: -.15em;
+        font-size: 0.625em;
+        font-weight: bold;
+    }
+
+    .layout-standard .to-value {
+        font-size: 2.5rem;
+        font-weight: 600;
+        opacity: 0.6;
+    }
+
+    .layout-standard .to-value svg {
+        opacity: 0.5;
+        margin-left: 1.5rem;
+        margin-right: 0.375rem;
+    }
+
+    .layout-standard .to-value >>> .currency {
+        margin-left: -.15em;
+        font-size: 0.8em;
+        font-weight: bold;
+    }
+
+    /* Slider layout */
+
+    .layout-slider .address-infos > .identicon {
+        width: 5.75rem;
+        height: 5.75rem;
+        margin: -.25rem 0;
+    }
+
+    .layout-slider .address-infos > img {
+        width: 5.25rem;
+        height: 5.25rem;
+    }
+
+    .layout-slider .address-infos > label {
+        max-width: calc(50% - 5.75rem - 3rem); /* minus identicon width and margin */
+        margin: 0 1.5rem;
+    }
+
+    .layout-slider .address-infos > label:first-of-type {
         margin-right: auto;
     }
 
-    .balance-bar {
+    .layout-slider .balance-bar {
         display: flex;
         align-items: center;
         height: 3.5rem;
         margin: 2.75rem 0 4rem;
     }
 
-    .balance-bar > :not(:last-child) {
+    .layout-slider .balance-bar > :not(:last-child) {
         margin-right: 0.375rem;
     }
 
-    .balance-bar .bar {
+    .layout-slider .balance-bar .bar {
         position: relative;
         height: 2.5rem;
         border-radius: 0.5rem;
@@ -956,17 +1198,17 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
         overflow: hidden;
     }
 
-    .balance-bar .bar:first-child {
+    .layout-slider .balance-bar .bar:first-child {
         border-top-left-radius: 2rem;
         border-bottom-left-radius: 2rem;
     }
 
-    .balance-bar .bar:last-child {
+    .layout-slider .balance-bar .bar:last-child {
         border-top-right-radius: 2rem;
         border-bottom-right-radius: 2rem;
     }
 
-    .balance-bar .bar .change {
+    .layout-slider .balance-bar .bar .change {
         position: absolute;
         height: 100%;
         right: 0;
@@ -974,61 +1216,61 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
         background: url('/swap-change-background.svg') repeat-x;
     }
 
-    .balance-bar .separator ~ .bar .change {
+    .layout-slider .balance-bar .separator ~ .bar .change {
         left: 0;
         right: unset;
     }
 
-    .balance-bar .separator {
+    .layout-slider .balance-bar .separator {
         width: 0.25rem;
         height: 100%;
         background: rgba(31, 35, 72, 0.3);
         border-radius: .125rem;
     }
 
-    .swap-values {
+    .layout-slider .swap-values {
         margin-bottom: 2rem;
     }
 
-    .swap-values > *,
-    .new-balances > * {
+    .layout-slider .swap-values > *,
+    .layout-slider .new-balances > * {
         display: flex;
         flex-direction: column;
         line-height: 1;
     }
 
-    .swap-values > :last-child,
-    .new-balances > :last-child {
+    .layout-slider .swap-values > :last-child,
+    .layout-slider .new-balances > :last-child {
         text-align: right;
     }
 
-    .swap-values .amount,
-    .new-balances .amount {
+    .layout-slider .swap-values .amount,
+    .layout-slider .new-balances .amount {
         font-size: 2.5rem;
         font-weight: bold;
     }
 
-    .swap-values .fiat-amount,
-    .new-balances .fiat-amount {
+    .layout-slider .swap-values .fiat-amount,
+    .layout-slider .new-balances .fiat-amount {
         margin-top: .5rem;
         font-size: 2rem;
         font-weight: 600;
         opacity: .4;
     }
 
-    .swap-values .redeeming {
+    .layout-slider .swap-values .redeeming {
         color: var(--nimiq-green);
     }
 
-    .swap-values .redeeming .amount::before {
+    .layout-slider .swap-values .redeeming .amount::before {
         content: '+';
     }
 
-    .swap-values :not(.redeeming) .amount::before {
+    .layout-slider .swap-values :not(.redeeming) .amount::before {
         content: '-';
     }
 
-    .swap-values .redeeming .fiat-amount {
+    .layout-slider .swap-values .redeeming .fiat-amount {
         opacity: .7;
     }
 
