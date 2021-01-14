@@ -601,6 +601,7 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
                         address: this.request.fund.changeOutput.address,
                     },
                 } : {}),
+                locktime: swapSetupInfo.fund.locktime,
             };
         } else if (this.request.redeem.type === SwapAsset.BTC
             && swapSetupInfo.redeem.type === SwapAsset.BTC

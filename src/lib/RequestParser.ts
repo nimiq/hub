@@ -387,7 +387,7 @@ export class RequestParser {
                     if (!input || typeof input !== 'object') throw new Error('input must be an object');
 
                     // tslint:disable-next-line:no-shadowed-variable
-                    const { address, transactionHash, outputIndex, value } = input;
+                    const { address, transactionHash, outputIndex, value, sequence } = input;
                     let { outputScript, witnessScript } = input;
 
                     if (typeof address !== 'string') throw new Error('input must contain an address of type string');
@@ -429,8 +429,12 @@ export class RequestParser {
 
                     if (typeof value !== 'number' || value <= 0) throw new Error('input must contain a positive value');
 
+                    if (sequence !== undefined && !Nimiq.NumberUtils.isUint32(sequence)) {
+                        throw new Error('Invalid input sequence');
+                    }
+
                     // return only checked properties
-                    return { address, transactionHash, outputIndex, outputScript, value, witnessScript };
+                    return { address, transactionHash, outputIndex, outputScript, value, witnessScript, sequence };
                 });
 
                 if (!signBtcTransactionRequest.output || typeof signBtcTransactionRequest.output !== 'object') {
@@ -460,6 +464,11 @@ export class RequestParser {
                     }
                 }
 
+                const locktime = signBtcTransactionRequest.locktime;
+                if (locktime !== undefined && !Nimiq.NumberUtils.isUint32(locktime)) {
+                    throw new Error('Invalid locktime');
+                }
+
                 const parsedSignBtcTransactionRequest: ParsedSignBtcTransactionRequest = {
                     kind: RequestType.SIGN_BTC_TRANSACTION,
                     walletId: signBtcTransactionRequest.accountId,
@@ -467,6 +476,7 @@ export class RequestParser {
                     inputs,
                     output,
                     changeOutput,
+                    locktime,
                 };
                 return parsedSignBtcTransactionRequest;
             case RequestType.SETUP_SWAP:
@@ -718,6 +728,7 @@ export class RequestParser {
                     inputs: signBtcTransactionRequest.inputs,
                     output: signBtcTransactionRequest.output,
                     changeOutput: signBtcTransactionRequest.changeOutput,
+                    locktime: signBtcTransactionRequest.locktime,
                 } as SignBtcTransactionRequest;
             case RequestType.SETUP_SWAP:
                 const setupSwapRequest = request as ParsedSetupSwapRequest;

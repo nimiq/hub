@@ -213,6 +213,7 @@ export interface BitcoinHtlcCreationInstructions {
         outputIndex: number,
         outputScript: string,
         value: number, // Sats
+        sequence?: number,
     }>;
     output: {
         value: number, // Sats
@@ -222,6 +223,7 @@ export interface BitcoinHtlcCreationInstructions {
         value: number, // Sats
     };
     refundAddress: string;
+    locktime?: number;
 }
 
 export interface EuroHtlcCreationInstructions {
@@ -463,6 +465,7 @@ export interface SignBtcTransactionRequest extends SimpleRequest {
         outputScript: string, // hex or base64
         value: number,
         witnessScript?: string, // Custom witness script for p2wsh input. hex or base64.
+        sequence?: number,
     }>;
     output: {
         address: string,
@@ -473,6 +476,7 @@ export interface SignBtcTransactionRequest extends SimpleRequest {
         address: string,
         value: number,
     };
+    locktime?: number;
 }
 
 export interface SignedBtcTransaction {

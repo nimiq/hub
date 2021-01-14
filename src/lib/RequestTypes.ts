@@ -110,6 +110,7 @@ export interface ParsedSignBtcTransactionRequest extends ParsedSimpleRequest {
         outputScript: string, // hex
         witnessScript?: string, // Custom witness script for p2wsh input. hex.
         value: number,
+        sequence?: number,
         // Currently only for internal use in RefundSwapLedger. Can not be set in public request.
         // Note that the keyPath gets lost on re-parsing in RequestParser and therefore does not survive reloads.
         // However, the RefundSwapLedger handler is built in a way that it starts over on reloads to avoid the problem.
@@ -124,6 +125,7 @@ export interface ParsedSignBtcTransactionRequest extends ParsedSimpleRequest {
         address: string,
         value: number,
     };
+    locktime?: number;
 }
 
 export interface ParsedAddBtcAddressesRequest extends ParsedSimpleRequest {
@@ -153,6 +155,7 @@ export interface ParsedSetupSwapRequest extends ParsedSimpleRequest {
             outputIndex: number,
             outputScript: string,
             value: number, // Sats
+            sequence?: number,
         }>;
         output: {
             // address: string, // HTLC address
@@ -162,6 +165,7 @@ export interface ParsedSetupSwapRequest extends ParsedSimpleRequest {
             address: string,
             value: number, // Sats
         };
+        locktime?: number,
         // htlcScript: Uint8Array,
         refundAddress: string,
     } | {

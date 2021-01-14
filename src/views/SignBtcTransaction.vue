@@ -73,6 +73,7 @@ export default class SignBtcTransaction extends BitcoinSyncBaseView {
                     outputScript: input.outputScript,
                     witnessScript: input.witnessScript,
                     value: input.value,
+                    sequence: input.sequence,
                 });
             }
 
@@ -101,6 +102,7 @@ export default class SignBtcTransaction extends BitcoinSyncBaseView {
             inputs,
             changeOutput,
             recipientOutput: this.request.output,
+            locktime: this.request.locktime,
         }, walletInfo);
     }
 

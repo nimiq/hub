@@ -171,6 +171,7 @@ export default class SetupSwap extends BitcoinSyncBaseView {
                         keyPath: addressInfos[this.request.fund.changeOutput.address]!.path,
                     },
                 } : {}),
+                locktime: this.request.fund.locktime,
                 refundKeyPath: refundAddressInfo.path,
             };
         }
