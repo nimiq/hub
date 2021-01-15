@@ -48,8 +48,9 @@ import {
 import { RequestParser } from '../lib/RequestParser';
 import staticStore, { Static } from '../lib/StaticStore';
 import { WalletInfo } from '../lib/WalletInfo';
-import { loadBitcoinJS } from '../lib/bitcoin/BitcoinJSLoader';
 import { BTC_NETWORK_TEST } from '../lib/bitcoin/BitcoinConstants';
+import { loadBitcoinJS } from '../lib/bitcoin/BitcoinJSLoader';
+import { decodeBtcScript } from '../lib/HtlcUtils';
 
 // Import only types to avoid bundling of KeyguardClient in Ledger request if not required.
 // (But note that currently, the KeyguardClient is still always bundled in the RpcApi).
@@ -267,14 +268,24 @@ export default class RefundSwapLedger extends RefundSwap {
                 bitcoinNetwork,
             );
 
+            // The timeoutTimestamp we parse from the BTC HTLC script is forwarded one hour
+            // (because the timeout in the script itself is set back one hour, because the BTC
+            // network only accepts locktimes that are at least one hour old). So we need to
+            // remove this added hour before using it as the transaction's locktime.
+            const { timeoutTimestamp } = await decodeBtcScript(htlcInput.witnessScript!);
+            const locktime = timeoutTimestamp - (60 * 60) + 1;
+            const sequence = 0xfffffffe; // Signal to use locktime, but do not opt into replace-by-fee
+
             const signBtcTransactionRequest: SignBtcTransactionRequest = {
                 appName,
                 accountId,
                 inputs: [{
                     ...htlcInput, // also includes the witnessScript
+                    sequence,
                     address: htlcAddress,
                 }],
                 output,
+                locktime,
             };
             const parsedSignBtcTransactionRequest = RequestParser.parse(
                 signBtcTransactionRequest,

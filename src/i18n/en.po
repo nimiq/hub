@@ -903,7 +903,7 @@ msgstr ""
 msgid "Swap Setup Failed"
 msgstr ""
 
-#: src/views/RefundSwapLedger.vue:295
+#: src/views/RefundSwapLedger.vue:306
 msgid "Syncing"
 msgstr ""
 
@@ -921,11 +921,11 @@ msgstr ""
 msgid "Syncing Failed"
 msgstr ""
 
-#: src/views/RefundSwapLedger.vue:305
+#: src/views/RefundSwapLedger.vue:316
 msgid "Syncing with {currency} network failed: {error}"
 msgstr ""
 
-#: src/views/RefundSwapLedger.vue:300
+#: src/views/RefundSwapLedger.vue:311
 msgid "Syncing with {currency} network..."
 msgstr ""
 
