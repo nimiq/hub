@@ -1,13 +1,16 @@
 <template>
     <NotEnoughCookieSpace v-if='notEnoughCookieSpace'/>
-    <div v-else class="container" :class="{'isSecondaryOnboarding': headerText}">
-        <h1 v-if="headerText" class="uber-header">{{headerText}}</h1>
+    <div v-else class="container" :class="{'has-heading': headerText}">
+        <div class="headline-container">
+            <h1 v-if="headerText" class="uber-header">{{ headerText }}</h1>
+            <p v-if="sublineText" class="nq-text subline-text"> {{ sublineText }}</p>
+        </div>
         <div class="center">
             <OnboardingMenu @signup="signup" @login="login" @ledger="ledger"/>
 
             <GlobalClose v-if="!request.disableBack" :buttonLabel="backButtonLabel" :onClose="close"/>
         </div>
-        <div v-if="headerText" class="uber-header"><!-- bottom spacing to balance header --></div>
+        <div v-if="headerText" class="uber-footer"><!-- bottom spacing to balance header --></div>
     </div>
 </template>
 
@@ -85,10 +88,21 @@ export default class OnboardingSelector extends Vue {
 
     private get headerText() {
         switch (this.originalRouteName) {
+            case undefined:
+                return this.$t('Join Nimiq') as string;
             case RequestType.CHECKOUT:
                 return this.$t('Pay with Nimiq') as string;
             case RequestType.CREATE_CASHLINK:
                 return this.$t('Login to fund your Cashlink') as string;
+            default:
+                return undefined;
+        }
+    }
+
+    private get sublineText() {
+        switch (this.originalRouteName) {
+            case undefined:
+                return this.$t('No download, no registration,\n100% free') as string;
             default:
                 return undefined;
         }
@@ -104,14 +118,30 @@ export default class OnboardingSelector extends Vue {
 </script>
 
 <style scoped>
-    .container.isSecondaryOnboarding {
+    .container.has-heading {
         justify-content: space-around !important;
+    }
+
+    .headline-container,
+    .uber-footer {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin-top: 6rem;
     }
 
     .uber-header {
         font-size: 5rem;
-        margin-top: 2rem;
-        margin-bottom: 6rem;
+        margin: 0;
+    }
+
+    .subline-text {
+        font-size: 2rem;
+        font-weight: 600;
+        color: rgba(31, 35, 72, 0.6);
+        white-space: pre-line;
+        text-align: center;
     }
 
     .center {
@@ -123,14 +153,21 @@ export default class OnboardingSelector extends Vue {
         margin: auto !important;
     }
 
-    @media (max-height: 700px) {
-        .uber-header:last-child {
-            margin-bottom: 0;
+    @media (max-width: 450px) {
+        .headline-container {
+            flex-grow: 1;
+            margin-top: 2rem;
         }
-    }
 
-    @media (max-height: 580px), (max-width: 420px) {
-        .uber-header:last-child {
+        .subline-text {
+            font-size: 2.125rem;
+        }
+
+        .onboarding-menu {
+            height: 55rem;
+        }
+
+        .uber-footer {
             display: none;
         }
     }
