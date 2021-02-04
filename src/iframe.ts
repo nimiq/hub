@@ -7,6 +7,7 @@ import Config from 'config';
 import { Account, Cashlink as PublicCashlink, RequestType } from './lib/PublicRequestTypes';
 import Cashlink from './lib/Cashlink';
 import { CashlinkStore } from './lib/CashlinkStore';
+import { detectLanguage, setLanguage } from './i18n/i18n-setup';
 
 class IFrameApi {
     public static run() {
@@ -22,6 +23,12 @@ class IFrameApi {
     public static async list(): Promise<Account[]> {
         let wallets: WalletInfoEntry[];
         if (BrowserDetection.isIOS() || BrowserDetection.isSafari()) {
+            /*
+            ** We need to load the language before the Cookie decoding
+            ** since it'll use functions from the LabelingMachine that require the language to be loaded.
+            ** Otherwise the label will show up as a number. (translation string index)
+            */
+            await setLanguage(detectLanguage());
             wallets = await CookieJar.eat();
         } else {
             wallets = await WalletStore.Instance.list();
