@@ -1,13 +1,13 @@
 # 
 # Translators:
-# Jim <jimvendrig10@gmail.com>, 2020
 # BlockchainShay <Shaylish@live.nl>, 2020
 # Daniel, 2020
-# Stefan, 2020
+# Stefan, 2021
+# Jim <jimvendrig10@gmail.com>, 2021
 # 
 msgid ""
 msgstr ""
-"Last-Translator: Stefan, 2020\n"
+"Last-Translator: Jim <jimvendrig10@gmail.com>, 2021\n"
 "Language-Team: Dutch (https://www.transifex.com/nimiq-foundation/teams/110181/nl/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: nl\n"
@@ -130,15 +130,15 @@ msgstr "Terug naar {Nimiq Miner}"
 msgid "Back to {Wallet}"
 msgstr "Terug naar {Wallet}"
 
-#: src/views/OnboardingSelector.vue:84
+#: src/views/OnboardingSelector.vue:87
 msgid "Back to Cashlink"
 msgstr "Terug naar Cashlink"
 
-#: src/views/OnboardingSelector.vue:78
+#: src/views/OnboardingSelector.vue:81
 msgid "Back to Checkout"
 msgstr "Terug naar Checkout"
 
-#: src/views/OnboardingSelector.vue:80
+#: src/views/OnboardingSelector.vue:83
 msgid "Back to Choose Address"
 msgstr "Terug naar Gekozen adres"
 
@@ -163,7 +163,7 @@ msgstr "Terug naar Nimiq Gift Card "
 msgid "Back to Nimiq Vote"
 msgstr "Terug naar Nimiq Vote "
 
-#: src/views/OnboardingSelector.vue:82
+#: src/views/OnboardingSelector.vue:85
 msgid "Back to Sign Message"
 msgstr "Terug naar bericht ondertekenen"
 
@@ -475,23 +475,23 @@ msgstr "kosten"
 
 #: src/views/LoginSuccess.vue:105 src/views/SignupLedger.vue:108
 msgid "Fetching Addresses Failed"
-msgstr ""
+msgstr "Ophalen van adressen is mislukt"
 
 #: src/views/AddVestingContract.vue:16
 msgid "Fetching contract information..."
 msgstr "Contractinformatie ophalen..."
 
-#: src/views/SetupSwapSuccess.vue:356
+#: src/views/SetupSwapSuccess.vue:360
 msgid "Fetching Swap Data Failed"
-msgstr ""
+msgstr "Ophalen van Swap data is mislukt"
 
-#: src/views/SetupSwapSuccess.vue:377
+#: src/views/SetupSwapSuccess.vue:381
 msgid "Fetching swap data failed: {error}"
-msgstr ""
+msgstr "Ophalen van Swap data is mislukt: {error}"
 
-#: src/views/SetupSwapSuccess.vue:367
+#: src/views/SetupSwapSuccess.vue:371
 msgid "Fetching swap data..."
-msgstr ""
+msgstr "Swap data ophalen..."
 
 #: src/components/LedgerUi.vue:221 src/views/ActivateBitcoinSuccess.vue:78
 #: src/views/BitcoinSyncBaseView.vue:48 src/views/LoginSuccess.vue:42
@@ -578,6 +578,10 @@ msgstr ""
 "Het zal geen onderdeel zijn van de publieke Blockchain en kan verloren raken"
 " nadat de Cashlink is geclaimed."
 
+#: src/views/OnboardingSelector.vue:96
+msgid "Join Nimiq"
+msgstr ""
+
 #: src/lib/LabelingMachine.ts:17
 msgid "Ledger Account"
 msgstr "Ledger account"
@@ -625,7 +629,7 @@ msgstr "Login File geëxporteerd!"
 msgid "Login to existing account"
 msgstr "Inloggen met bestaand account"
 
-#: src/views/OnboardingSelector.vue:95
+#: src/views/OnboardingSelector.vue:100
 msgid "Login to fund your Cashlink"
 msgstr "Inloggen om je Cashlink te financiëren"
 
@@ -677,6 +681,12 @@ msgstr "Nee"
 msgid "No App found"
 msgstr "Geen app gevonden"
 
+#: src/views/OnboardingSelector.vue:109
+msgid ""
+"No download, no registration,\n"
+"100% free"
+msgstr ""
+
 #: src/components/NimiqCheckoutCard.vue:69
 msgid "None of your available addresses has sufficient balance."
 msgstr "Geen van je beschikbare adressen heeft voldoende saldo."
@@ -709,7 +719,7 @@ msgstr "Eigenaar:"
 msgid "Pay with {currencyFullName}"
 msgstr "Betalen met {currencyFullName}"
 
-#: src/views/OnboardingSelector.vue:93
+#: src/views/OnboardingSelector.vue:98
 msgid "Pay with Nimiq"
 msgstr "Betaal met Nimiq"
 
@@ -749,7 +759,7 @@ msgstr "Stuur de transactie alstublieft handmatig"
 msgid "Prepare for update"
 msgstr "Maak je klaar voor een update"
 
-#: src/views/SetupSwapSuccess.vue:360
+#: src/views/SetupSwapSuccess.vue:364
 msgid "Preparing Swap"
 msgstr "Swap voorbereiden"
 
@@ -798,9 +808,9 @@ msgid "Retrieving your old accounts..."
 msgstr "Oude accounts ophalen..."
 
 #: src/views/BitcoinSyncBaseView.vue:68 src/views/LoginSuccess.vue:107
-#: src/views/SetupSwapSuccess.vue:385 src/views/SignupLedger.vue:145
+#: src/views/SetupSwapSuccess.vue:389 src/views/SignupLedger.vue:145
 msgid "Retry"
-msgstr ""
+msgstr "Probeer opnieuw"
 
 #: src/views/Rename.vue:18
 msgid "Save"
@@ -831,7 +841,7 @@ msgstr "Delen"
 msgid "Sign Message"
 msgstr "Bericht ondertekenen"
 
-#: src/views/SetupSwapSuccess.vue:369
+#: src/views/SetupSwapSuccess.vue:373
 msgid "Signing transactions..."
 msgstr "Transacties ondertekenen..."
 
@@ -874,14 +884,14 @@ msgstr "Je nieuwe accounts opslaan..."
 msgid "Syncing consensus..."
 msgstr "Consensus synchroniseren..."
 
-#: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapSuccess.vue:358
+#: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapSuccess.vue:362
 #: src/views/SignBtcTransactionLedger.vue:119
 msgid "Syncing Failed"
-msgstr ""
+msgstr "Synchroniseren mislukt"
 
 #: src/views/BitcoinSyncBaseView.vue:63
 msgid "Syncing with Bitcoin network failed: {error}"
-msgstr ""
+msgstr "Synchroniseren met Bitcoin-netwerk mislukt: {error}"
 
 #: src/views/BitcoinSyncBaseView.vue:58
 msgid "Syncing with Bitcoin network..."
@@ -889,7 +899,7 @@ msgstr "Synchroniseren met Bitcoin netwerk..."
 
 #: src/views/LoginSuccess.vue:106 src/views/SignupLedger.vue:134
 msgid "Syncing with the network failed: {error}"
-msgstr ""
+msgstr "Synchroniseren met het netwerk is mislukt: {error}"
 
 #: src/lib/LabelingMachine.ts:45
 msgid "Teal"

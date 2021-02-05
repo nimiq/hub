@@ -2,14 +2,14 @@
 # Translators:
 # Johannes Demuth <johannes.demuth@outlook.com>, 2020
 # Irfan Maranki, 2020
-# Sven <sven@nimiq.com>, 2020
-# Redexe <timo.niehoff@yahoo.de>, 2020
-# Sören Schwert <hello@soerenschwert.de>, 2020
-# Daniel, 2020
+# Sören Schwert <hello@soerenschwert.de>, 2021
+# Sven <sven@nimiq.com>, 2021
+# Redexe <timo.niehoff@yahoo.de>, 2021
+# Daniel, 2021
 # 
 msgid ""
 msgstr ""
-"Last-Translator: Daniel, 2020\n"
+"Last-Translator: Daniel, 2021\n"
 "Language-Team: German (https://www.transifex.com/nimiq-foundation/teams/110181/de/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: de\n"
@@ -37,7 +37,7 @@ msgstr "2. Gib deine PIN ein"
 
 #: src/components/LedgerUi.vue:289
 msgid "3. Open the {app} App"
-msgstr ""
+msgstr "3. {app}-App öffnen"
 
 #: src/views/CashlinkReceive.vue:110
 msgid "30 seconds, no email, no download."
@@ -77,7 +77,7 @@ msgstr "Nachricht hinzufügen..."
 
 #: src/views/AddVestingContract.vue:51
 msgid "Add contract"
-msgstr ""
+msgstr "Vertrag hinzufügen"
 
 #: src/views/AddAccountSelection.vue:4
 msgid "Add to account"
@@ -89,7 +89,7 @@ msgstr "Zum Ledger hinzufügen"
 
 #: src/views/AddVestingContract.vue:4
 msgid "Add Vesting Contract"
-msgstr ""
+msgstr "Vesting-Vertrag hinzufügen"
 
 #: src/views/AddAddressLedger.vue:16
 msgid "Address Added"
@@ -110,7 +110,7 @@ msgstr "Betrag"
 
 #: src/views/AddVestingContract.vue:40
 msgid "Amount/Step:"
-msgstr ""
+msgstr "Menge/Schritt:"
 
 #: src/views/CashlinkManage.vue:158 src/views/CheckoutTransmission.vue:77
 msgid "Awaiting receipt confirmation..."
@@ -132,15 +132,15 @@ msgstr "Zurück zum {Nimiq Miner}"
 msgid "Back to {Wallet}"
 msgstr "Zurück zur {Wallet}"
 
-#: src/views/OnboardingSelector.vue:84
+#: src/views/OnboardingSelector.vue:87
 msgid "Back to Cashlink"
 msgstr "Zurück zum Cashlink"
 
-#: src/views/OnboardingSelector.vue:78
+#: src/views/OnboardingSelector.vue:81
 msgid "Back to Checkout"
 msgstr "Zurück zum Checkout"
 
-#: src/views/OnboardingSelector.vue:80
+#: src/views/OnboardingSelector.vue:83
 msgid "Back to Choose Address"
 msgstr "Zurück zur Adressauswahl"
 
@@ -165,7 +165,7 @@ msgstr "Zurück zur Geschenkkarte"
 msgid "Back to Nimiq Vote"
 msgstr "Zurück zur Abstimmung"
 
-#: src/views/OnboardingSelector.vue:82
+#: src/views/OnboardingSelector.vue:85
 msgid "Back to Sign Message"
 msgstr "Zurück zu Nachrichtensignierung"
 
@@ -179,7 +179,7 @@ msgstr "Gesichert"
 
 #: src/views/AddVestingContract.vue:28
 msgid "Balance:"
-msgstr ""
+msgstr "Saldo:"
 
 #: src/views/ActivateBitcoinSuccess.vue:80
 msgid "Bitcoin activated"
@@ -187,7 +187,7 @@ msgstr "Bitcoin aktiviert"
 
 #: src/views/AddVestingContract.vue:36
 msgid "Blocks/Step:"
-msgstr ""
+msgstr "Blöcke/Schritt:"
 
 #: src/lib/LabelingMachine.ts:43
 msgid "Blue"
@@ -320,7 +320,7 @@ msgstr ""
 
 #: src/components/LedgerUi.vue:210
 msgid "Confirm the address on your Ledger"
-msgstr ""
+msgstr "Überprüfe die Adresse auf deinem Ledger"
 
 #: src/components/LedgerUi.vue:226 src/views/SignBtcTransactionLedger.vue:4
 #: src/views/SignTransactionLedger.vue:34
@@ -385,11 +385,11 @@ msgstr "Fortsetzen"
 
 #: src/views/AddVestingContract.vue:56
 msgid "Contract added."
-msgstr ""
+msgstr "Vertrag hinzugefügt."
 
 #: src/views/AddVestingContract.vue:20
 msgid "Contract Information"
-msgstr ""
+msgstr "Vertragsdetails"
 
 #: src/views/CashlinkManage.vue:32
 msgid "Copied"
@@ -455,7 +455,7 @@ msgstr "Manuell eingeben"
 
 #: src/views/AddVestingContract.vue:45
 msgid "Enter the address of a vesting contract."
-msgstr ""
+msgstr "Gib die Adresse eines Vesting-Vertrages ein."
 
 #: src/views/CashlinkCreate.vue:160
 msgid "express"
@@ -477,29 +477,29 @@ msgstr "Gebühr"
 
 #: src/views/LoginSuccess.vue:105 src/views/SignupLedger.vue:108
 msgid "Fetching Addresses Failed"
-msgstr ""
+msgstr "Laden der Adressen fehlgeschlagen"
 
 #: src/views/AddVestingContract.vue:16
 msgid "Fetching contract information..."
-msgstr ""
+msgstr "Lade Vertragsadressen"
 
-#: src/views/SetupSwapSuccess.vue:356
+#: src/views/SetupSwapSuccess.vue:360
 msgid "Fetching Swap Data Failed"
-msgstr ""
+msgstr "Laden der Swap-Daten fehlgeschlagen"
 
-#: src/views/SetupSwapSuccess.vue:377
+#: src/views/SetupSwapSuccess.vue:381
 msgid "Fetching swap data failed: {error}"
-msgstr ""
+msgstr "Laden der Swap-Daten fehlgeschlagen: {error}"
 
-#: src/views/SetupSwapSuccess.vue:367
+#: src/views/SetupSwapSuccess.vue:371
 msgid "Fetching swap data..."
-msgstr ""
+msgstr "Lade Swap-Daten..."
 
 #: src/components/LedgerUi.vue:221 src/views/ActivateBitcoinSuccess.vue:78
 #: src/views/BitcoinSyncBaseView.vue:48 src/views/LoginSuccess.vue:42
 #: src/views/SignupLedger.vue:104
 msgid "Fetching your Addresses"
-msgstr ""
+msgstr "Lade deine Adressen"
 
 #: src/views/SignupLedger.vue:31
 msgid "Finish"
@@ -579,6 +579,10 @@ msgstr ""
 "Es wird nicht Teil der öffentlichen Blockchain und kann verloren gehen "
 "nachdem der Cashlink eingelöst wurde. "
 
+#: src/views/OnboardingSelector.vue:96
+msgid "Join Nimiq"
+msgstr ""
+
 #: src/lib/LabelingMachine.ts:17
 msgid "Ledger Account"
 msgstr "Ledger-Konto"
@@ -627,7 +631,7 @@ msgstr "Login-Datei exportiert!"
 msgid "Login to existing account"
 msgstr "In vorhandenes Konto einloggen"
 
-#: src/views/OnboardingSelector.vue:95
+#: src/views/OnboardingSelector.vue:100
 msgid "Login to fund your Cashlink"
 msgstr "Einloggen, um Cashlink aufzuladen"
 
@@ -679,6 +683,12 @@ msgstr "Keine"
 msgid "No App found"
 msgstr "App nicht gefunden"
 
+#: src/views/OnboardingSelector.vue:109
+msgid ""
+"No download, no registration,\n"
+"100% free"
+msgstr ""
+
 #: src/components/NimiqCheckoutCard.vue:69
 msgid "None of your available addresses has sufficient balance."
 msgstr "Keine deiner Adressen verfügt über ausreichendes Guthaben."
@@ -705,13 +715,13 @@ msgstr "Oranges"
 
 #: src/views/AddVestingContract.vue:22
 msgid "Owner:"
-msgstr ""
+msgstr "Eigentümer:"
 
 #: src/components/NonNimiqCheckoutCard.vue:103
 msgid "Pay with {currencyFullName}"
 msgstr "Bezahle mit {currencyFullName}"
 
-#: src/views/OnboardingSelector.vue:93
+#: src/views/OnboardingSelector.vue:98
 msgid "Pay with Nimiq"
 msgstr "Bezahle mit Nimiq"
 
@@ -751,7 +761,7 @@ msgstr "Bitte sende die Transaktion manuell"
 msgid "Prepare for update"
 msgstr "Update vorbereiten"
 
-#: src/views/SetupSwapSuccess.vue:360
+#: src/views/SetupSwapSuccess.vue:364
 msgid "Preparing Swap"
 msgstr "Tausch wird vorbereitet"
 
@@ -800,9 +810,9 @@ msgid "Retrieving your old accounts..."
 msgstr "Rufe alte Konten ab..."
 
 #: src/views/BitcoinSyncBaseView.vue:68 src/views/LoginSuccess.vue:107
-#: src/views/SetupSwapSuccess.vue:385 src/views/SignupLedger.vue:145
+#: src/views/SetupSwapSuccess.vue:389 src/views/SignupLedger.vue:145
 msgid "Retry"
-msgstr ""
+msgstr "Noch einmal"
 
 #: src/views/Rename.vue:18
 msgid "Save"
@@ -833,7 +843,7 @@ msgstr "Teilen"
 msgid "Sign Message"
 msgstr "Nachricht signieren"
 
-#: src/views/SetupSwapSuccess.vue:369
+#: src/views/SetupSwapSuccess.vue:373
 msgid "Signing transactions..."
 msgstr "Signiere Transaktionen..."
 
@@ -864,7 +874,7 @@ msgstr "Standard"
 
 #: src/views/AddVestingContract.vue:32
 msgid "Start Block:"
-msgstr ""
+msgstr "Startblock:"
 
 #: src/views/Migrate.vue:233
 msgid "Storing your new accounts..."
@@ -876,14 +886,14 @@ msgstr "Neue Konten werden gespeichert..."
 msgid "Syncing consensus..."
 msgstr "Konsensus wird synchronisiert..."
 
-#: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapSuccess.vue:358
+#: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapSuccess.vue:362
 #: src/views/SignBtcTransactionLedger.vue:119
 msgid "Syncing Failed"
-msgstr ""
+msgstr "Synchronisierung fehlgeschlagen"
 
 #: src/views/BitcoinSyncBaseView.vue:63
 msgid "Syncing with Bitcoin network failed: {error}"
-msgstr ""
+msgstr "Synchronisierung mit Bitcoin-Netzwerk fehlgeschlagen: {error}"
 
 #: src/views/BitcoinSyncBaseView.vue:58
 msgid "Syncing with Bitcoin network..."
@@ -891,7 +901,7 @@ msgstr "Synchronisiere mit dem Bitcoin Netzwerk..."
 
 #: src/views/LoginSuccess.vue:106 src/views/SignupLedger.vue:134
 msgid "Syncing with the network failed: {error}"
-msgstr ""
+msgstr "Synchronisierung mit Netzwerk fehlgeschlagen: {error}"
 
 #: src/lib/LabelingMachine.ts:45
 msgid "Teal"
@@ -899,7 +909,7 @@ msgstr "Türkises"
 
 #: src/components/LedgerUi.vue:270
 msgid "The connected wallet or Ledger is not the one this account belongs to."
-msgstr ""
+msgstr "Das Konto gehört nicht zum verbundenen Ledger oder Wallet."
 
 #: src/i18n/i18n-setup.ts:63
 msgid ""
@@ -1016,7 +1026,7 @@ msgstr ""
 
 #: src/views/SignBtcTransactionLedger.vue:9
 msgid "Unlabeled"
-msgstr ""
+msgstr "Unbenannt"
 
 #: src/views/ErrorHandlerUnsupportedLedger.vue:36
 msgid "Unsupported Request"
@@ -1054,7 +1064,7 @@ msgstr "Überprüfe die Zahlung"
 
 #: src/lib/LabelingMachine.ts:25 src/views/AddVestingContract.vue:137
 msgid "Vesting Contract"
-msgstr "Vesting-Contract"
+msgstr "Vesting-Vertrag"
 
 #: src/views/SignupSuccess.vue:87
 msgid ""
@@ -1110,6 +1120,8 @@ msgid ""
 "Your {app} app is outdated. Please update your Ledger firmware and {app} app"
 " using Ledger Live."
 msgstr ""
+"Deine {app}-App ist veraltet. Bitte aktualisiere die Ledger-Firmware and "
+"{app}-App mittels Ledger Live."
 
 #: src/views/LoginSuccess.vue:194
 msgid "Your Account is ready. | Your Accounts are ready."

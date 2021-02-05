@@ -1,11 +1,11 @@
 # 
 # Translators:
 # Daniel, 2020
-# Sven <sven@nimiq.com>, 2020
+# Sven <sven@nimiq.com>, 2021
 # 
 msgid ""
 msgstr ""
-"Last-Translator: Sven <sven@nimiq.com>, 2020\n"
+"Last-Translator: Sven <sven@nimiq.com>, 2021\n"
 "Language-Team: Chinese (https://www.transifex.com/nimiq-foundation/teams/110181/zh/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: zh\n"
@@ -33,7 +33,7 @@ msgstr "2. 输入您的PIN码"
 
 #: src/components/LedgerUi.vue:289
 msgid "3. Open the {app} App"
-msgstr ""
+msgstr "3.打开{app}应用"
 
 #: src/views/CashlinkReceive.vue:110
 msgid "30 seconds, no email, no download."
@@ -73,7 +73,7 @@ msgstr "添加消息..."
 
 #: src/views/AddVestingContract.vue:51
 msgid "Add contract"
-msgstr ""
+msgstr "添加合同"
 
 #: src/views/AddAccountSelection.vue:4
 msgid "Add to account"
@@ -85,7 +85,7 @@ msgstr "添加到Ledger"
 
 #: src/views/AddVestingContract.vue:4
 msgid "Add Vesting Contract"
-msgstr ""
+msgstr "添加归属合同"
 
 #: src/views/AddAddressLedger.vue:16
 msgid "Address Added"
@@ -106,7 +106,7 @@ msgstr "金额"
 
 #: src/views/AddVestingContract.vue:40
 msgid "Amount/Step:"
-msgstr ""
+msgstr "金额/步骤："
 
 #: src/views/CashlinkManage.vue:158 src/views/CheckoutTransmission.vue:77
 msgid "Awaiting receipt confirmation..."
@@ -128,15 +128,15 @@ msgstr "返回 {Nimiq Miner}"
 msgid "Back to {Wallet}"
 msgstr "返回 {Wallet}"
 
-#: src/views/OnboardingSelector.vue:84
+#: src/views/OnboardingSelector.vue:87
 msgid "Back to Cashlink"
 msgstr "返回现金链接"
 
-#: src/views/OnboardingSelector.vue:78
+#: src/views/OnboardingSelector.vue:81
 msgid "Back to Checkout"
 msgstr "返回结账"
 
-#: src/views/OnboardingSelector.vue:80
+#: src/views/OnboardingSelector.vue:83
 msgid "Back to Choose Address"
 msgstr "返回选择地址"
 
@@ -161,7 +161,7 @@ msgstr "返回Nimiq礼品卡"
 msgid "Back to Nimiq Vote"
 msgstr "返回Nimiq投票"
 
-#: src/views/OnboardingSelector.vue:82
+#: src/views/OnboardingSelector.vue:85
 msgid "Back to Sign Message"
 msgstr "返回签名信息"
 
@@ -175,7 +175,7 @@ msgstr "已备份"
 
 #: src/views/AddVestingContract.vue:28
 msgid "Balance:"
-msgstr ""
+msgstr "金额："
 
 #: src/views/ActivateBitcoinSuccess.vue:80
 msgid "Bitcoin activated"
@@ -183,7 +183,7 @@ msgstr "比特币已激活"
 
 #: src/views/AddVestingContract.vue:36
 msgid "Blocks/Step:"
-msgstr ""
+msgstr "区块/步骤："
 
 #: src/lib/LabelingMachine.ts:43
 msgid "Blue"
@@ -314,7 +314,7 @@ msgstr "确认您Ledger中的地址与{addressToConfirm}相匹配"
 
 #: src/components/LedgerUi.vue:210
 msgid "Confirm the address on your Ledger"
-msgstr ""
+msgstr "确认Ledger上的地址"
 
 #: src/components/LedgerUi.vue:226 src/views/SignBtcTransactionLedger.vue:4
 #: src/views/SignTransactionLedger.vue:34
@@ -379,11 +379,11 @@ msgstr "继续"
 
 #: src/views/AddVestingContract.vue:56
 msgid "Contract added."
-msgstr ""
+msgstr "合同已添加"
 
 #: src/views/AddVestingContract.vue:20
 msgid "Contract Information"
-msgstr ""
+msgstr "合同信息"
 
 #: src/views/CashlinkManage.vue:32
 msgid "Copied"
@@ -448,7 +448,7 @@ msgstr "手动输入"
 
 #: src/views/AddVestingContract.vue:45
 msgid "Enter the address of a vesting contract."
-msgstr ""
+msgstr "输入归属合同的地址。"
 
 #: src/views/CashlinkCreate.vue:160
 msgid "express"
@@ -470,29 +470,29 @@ msgstr "费用"
 
 #: src/views/LoginSuccess.vue:105 src/views/SignupLedger.vue:108
 msgid "Fetching Addresses Failed"
-msgstr ""
+msgstr "提取地址失败"
 
 #: src/views/AddVestingContract.vue:16
 msgid "Fetching contract information..."
-msgstr ""
+msgstr "正在获取合同信息..."
 
-#: src/views/SetupSwapSuccess.vue:356
+#: src/views/SetupSwapSuccess.vue:360
 msgid "Fetching Swap Data Failed"
-msgstr ""
+msgstr "提取交换数据失败"
 
-#: src/views/SetupSwapSuccess.vue:377
+#: src/views/SetupSwapSuccess.vue:381
 msgid "Fetching swap data failed: {error}"
-msgstr ""
+msgstr "提取交换数据失败：{error}"
 
-#: src/views/SetupSwapSuccess.vue:367
+#: src/views/SetupSwapSuccess.vue:371
 msgid "Fetching swap data..."
-msgstr ""
+msgstr "正在获取交换数据..."
 
 #: src/components/LedgerUi.vue:221 src/views/ActivateBitcoinSuccess.vue:78
 #: src/views/BitcoinSyncBaseView.vue:48 src/views/LoginSuccess.vue:42
 #: src/views/SignupLedger.vue:104
 msgid "Fetching your Addresses"
-msgstr ""
+msgstr "正在提取地址"
 
 #: src/views/SignupLedger.vue:31
 msgid "Finish"
@@ -569,6 +569,10 @@ msgid ""
 "Cashlink was claimed."
 msgstr "它不会成为公共区块链的一部分，并且可能会在使用现金链接之后被丢失"
 
+#: src/views/OnboardingSelector.vue:96
+msgid "Join Nimiq"
+msgstr ""
+
 #: src/lib/LabelingMachine.ts:17
 msgid "Ledger Account"
 msgstr "Ledger 帐户"
@@ -612,7 +616,7 @@ msgstr "登录文件已导出！"
 msgid "Login to existing account"
 msgstr "登录到现有帐户"
 
-#: src/views/OnboardingSelector.vue:95
+#: src/views/OnboardingSelector.vue:100
 msgid "Login to fund your Cashlink"
 msgstr "登录以资助您的现金链接"
 
@@ -661,6 +665,12 @@ msgstr "不是"
 msgid "No App found"
 msgstr "找不到应用"
 
+#: src/views/OnboardingSelector.vue:109
+msgid ""
+"No download, no registration,\n"
+"100% free"
+msgstr ""
+
 #: src/components/NimiqCheckoutCard.vue:69
 msgid "None of your available addresses has sufficient balance."
 msgstr "您的可用地址皆没有足够的余额"
@@ -687,13 +697,13 @@ msgstr "橙"
 
 #: src/views/AddVestingContract.vue:22
 msgid "Owner:"
-msgstr ""
+msgstr "所有者："
 
 #: src/components/NonNimiqCheckoutCard.vue:103
 msgid "Pay with {currencyFullName}"
 msgstr "使用{currencyFullName}支付"
 
-#: src/views/OnboardingSelector.vue:93
+#: src/views/OnboardingSelector.vue:98
 msgid "Pay with Nimiq"
 msgstr "使用Nimiq支付"
 
@@ -733,7 +743,7 @@ msgstr "请手动发送交易"
 msgid "Prepare for update"
 msgstr "准备更新"
 
-#: src/views/SetupSwapSuccess.vue:360
+#: src/views/SetupSwapSuccess.vue:364
 msgid "Preparing Swap"
 msgstr "准备交换"
 
@@ -782,9 +792,9 @@ msgid "Retrieving your old accounts..."
 msgstr "正在检索您的旧帐户..."
 
 #: src/views/BitcoinSyncBaseView.vue:68 src/views/LoginSuccess.vue:107
-#: src/views/SetupSwapSuccess.vue:385 src/views/SignupLedger.vue:145
+#: src/views/SetupSwapSuccess.vue:389 src/views/SignupLedger.vue:145
 msgid "Retry"
-msgstr ""
+msgstr "重试"
 
 #: src/views/Rename.vue:18
 msgid "Save"
@@ -815,7 +825,7 @@ msgstr "分享"
 msgid "Sign Message"
 msgstr "签名信息"
 
-#: src/views/SetupSwapSuccess.vue:369
+#: src/views/SetupSwapSuccess.vue:373
 msgid "Signing transactions..."
 msgstr "正在签署交易..."
 
@@ -845,7 +855,7 @@ msgstr "标准"
 
 #: src/views/AddVestingContract.vue:32
 msgid "Start Block:"
-msgstr ""
+msgstr "起始区块："
 
 #: src/views/Migrate.vue:233
 msgid "Storing your new accounts..."
@@ -857,14 +867,14 @@ msgstr "正在存储您的新帐户..."
 msgid "Syncing consensus..."
 msgstr "正在同步共识..."
 
-#: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapSuccess.vue:358
+#: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapSuccess.vue:362
 #: src/views/SignBtcTransactionLedger.vue:119
 msgid "Syncing Failed"
-msgstr ""
+msgstr "同步失败"
 
 #: src/views/BitcoinSyncBaseView.vue:63
 msgid "Syncing with Bitcoin network failed: {error}"
-msgstr ""
+msgstr "与比特币网络同步失败：{error}"
 
 #: src/views/BitcoinSyncBaseView.vue:58
 msgid "Syncing with Bitcoin network..."
@@ -872,7 +882,7 @@ msgstr "正在与比特币网络同步..."
 
 #: src/views/LoginSuccess.vue:106 src/views/SignupLedger.vue:134
 msgid "Syncing with the network failed: {error}"
-msgstr ""
+msgstr "与网络同步失败：{error}"
 
 #: src/lib/LabelingMachine.ts:45
 msgid "Teal"

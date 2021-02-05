@@ -1,12 +1,12 @@
 # 
 # Translators:
 # Пётр Павлович <faentoad@gmail.com>, 2020
-# Vad <vjuruss@gmail.com>, 2020
 # Daniel, 2020
+# Vad <vjuruss@gmail.com>, 2021
 # 
 msgid ""
 msgstr ""
-"Last-Translator: Daniel, 2020\n"
+"Last-Translator: Vad <vjuruss@gmail.com>, 2021\n"
 "Language-Team: Russian (https://www.transifex.com/nimiq-foundation/teams/110181/ru/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: ru\n"
@@ -129,15 +129,15 @@ msgstr "Вернуться в {Nimiq Miner}"
 msgid "Back to {Wallet}"
 msgstr "Вернуться в {Wallet}"
 
-#: src/views/OnboardingSelector.vue:84
+#: src/views/OnboardingSelector.vue:87
 msgid "Back to Cashlink"
 msgstr "Вернуться в Cashlink"
 
-#: src/views/OnboardingSelector.vue:78
+#: src/views/OnboardingSelector.vue:81
 msgid "Back to Checkout"
 msgstr "Вернуться к оформлению заказа"
 
-#: src/views/OnboardingSelector.vue:80
+#: src/views/OnboardingSelector.vue:83
 msgid "Back to Choose Address"
 msgstr "Вернуться к выбору адреса"
 
@@ -162,7 +162,7 @@ msgstr "Вернуться к созданию Nimiq Gift Card"
 msgid "Back to Nimiq Vote"
 msgstr "Вернуться в Nimiq Vote"
 
-#: src/views/OnboardingSelector.vue:82
+#: src/views/OnboardingSelector.vue:85
 msgid "Back to Sign Message"
 msgstr "Вернуться к созданию подписи сообщения"
 
@@ -484,15 +484,15 @@ msgstr ""
 msgid "Fetching contract information..."
 msgstr ""
 
-#: src/views/SetupSwapSuccess.vue:356
+#: src/views/SetupSwapSuccess.vue:360
 msgid "Fetching Swap Data Failed"
 msgstr ""
 
-#: src/views/SetupSwapSuccess.vue:377
+#: src/views/SetupSwapSuccess.vue:381
 msgid "Fetching swap data failed: {error}"
 msgstr ""
 
-#: src/views/SetupSwapSuccess.vue:367
+#: src/views/SetupSwapSuccess.vue:371
 msgid "Fetching swap data..."
 msgstr ""
 
@@ -579,6 +579,10 @@ msgstr ""
 "Это не станет частью публичного Блокчейна и может потеряться после того, как"
 " вы заберёте Cashlink."
 
+#: src/views/OnboardingSelector.vue:96
+msgid "Join Nimiq"
+msgstr ""
+
 #: src/lib/LabelingMachine.ts:17
 msgid "Ledger Account"
 msgstr "Аккаунт Ledger"
@@ -627,7 +631,7 @@ msgstr "Файл Авторизации экспортирован!"
 msgid "Login to existing account"
 msgstr "Войти в существующий аккаунт"
 
-#: src/views/OnboardingSelector.vue:95
+#: src/views/OnboardingSelector.vue:100
 msgid "Login to fund your Cashlink"
 msgstr "Авторизуйтесь, чтобы добавить средства на ваш Cashlink"
 
@@ -676,6 +680,12 @@ msgstr "Нет"
 msgid "No App found"
 msgstr "Приложение не найдено"
 
+#: src/views/OnboardingSelector.vue:109
+msgid ""
+"No download, no registration,\n"
+"100% free"
+msgstr ""
+
 #: src/components/NimiqCheckoutCard.vue:69
 msgid "None of your available addresses has sufficient balance."
 msgstr "Баланс на ваших доступных счетах недостаточен."
@@ -708,7 +718,7 @@ msgstr ""
 msgid "Pay with {currencyFullName}"
 msgstr "Оплатить в {currencyFullName}"
 
-#: src/views/OnboardingSelector.vue:93
+#: src/views/OnboardingSelector.vue:98
 msgid "Pay with Nimiq"
 msgstr "Оплатить в Nimiq"
 
@@ -748,7 +758,7 @@ msgstr "Пожалуйста, отправьте транзакцию вручн
 msgid "Prepare for update"
 msgstr "Подготовка к обновлению"
 
-#: src/views/SetupSwapSuccess.vue:360
+#: src/views/SetupSwapSuccess.vue:364
 msgid "Preparing Swap"
 msgstr "Готовимся к обмену"
 
@@ -797,7 +807,7 @@ msgid "Retrieving your old accounts..."
 msgstr "Восстановление ваших старых учетных записей..."
 
 #: src/views/BitcoinSyncBaseView.vue:68 src/views/LoginSuccess.vue:107
-#: src/views/SetupSwapSuccess.vue:385 src/views/SignupLedger.vue:145
+#: src/views/SetupSwapSuccess.vue:389 src/views/SignupLedger.vue:145
 msgid "Retry"
 msgstr ""
 
@@ -830,7 +840,7 @@ msgstr "Поделиться"
 msgid "Sign Message"
 msgstr "Подписать сообщение"
 
-#: src/views/SetupSwapSuccess.vue:369
+#: src/views/SetupSwapSuccess.vue:373
 msgid "Signing transactions..."
 msgstr "Подписание транзакций..."
 
@@ -873,7 +883,7 @@ msgstr "Сохранение ваших новых учетных записей
 msgid "Syncing consensus..."
 msgstr "Синхронизация консенсуса..."
 
-#: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapSuccess.vue:358
+#: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapSuccess.vue:362
 #: src/views/SignBtcTransactionLedger.vue:119
 msgid "Syncing Failed"
 msgstr ""
