@@ -569,6 +569,10 @@ msgstr ""
 msgid "It won’t be part of the public Blockchain and might get lost after the Cashlink was claimed."
 msgstr ""
 
+#: src/views/OnboardingSelector.vue:92
+msgid "Join Nimiq"
+msgstr ""
+
 #: src/lib/LabelingMachine.ts:17
 msgid "Ledger Account"
 msgstr ""
@@ -657,6 +661,12 @@ msgstr ""
 
 #: src/components/NonNimiqCheckoutCard.vue:90
 msgid "No App found"
+msgstr ""
+
+#: src/views/OnboardingSelector.vue:105
+msgid ""
+"No download, no registration,\n"
+"100% free"
 msgstr ""
 
 #: src/components/NimiqCheckoutCard.vue:69
