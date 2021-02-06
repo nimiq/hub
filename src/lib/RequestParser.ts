@@ -469,6 +469,22 @@ export class RequestParser {
                     }
                 }
 
+                if (setupSwapRequest.redeem.type === 'NIM') {
+                    if (!setupSwapRequest.redeem.validityStartHeight
+                        || setupSwapRequest.redeem.validityStartHeight < 1) {
+                        throw new Error(
+                            `Invalid validity start height: ${setupSwapRequest.redeem.validityStartHeight}`,
+                        );
+                    }
+                }
+
+                if (setupSwapRequest.fund.type === 'NIM') {
+                    if (!setupSwapRequest.fund.validityStartHeight
+                        || setupSwapRequest.fund.validityStartHeight < 1) {
+                        throw new Error(`Invalid validity start height: ${setupSwapRequest.fund.validityStartHeight}`);
+                    }
+                }
+
                 const parsedSetupSwapRequest: ParsedSetupSwapRequest = {
                     kind: RequestType.SETUP_SWAP,
                     walletId: setupSwapRequest.accountId,
