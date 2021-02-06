@@ -683,7 +683,7 @@ msgstr "Geen app gevonden"
 
 #: src/views/OnboardingSelector.vue:109
 msgid ""
-"No download, no registration,\n"
+"No registration, no install,\n"
 "100% free"
 msgstr ""
 

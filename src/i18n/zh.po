@@ -571,7 +571,7 @@ msgstr "它不会成为公共区块链的一部分，并且可能会在使用现
 
 #: src/views/OnboardingSelector.vue:96
 msgid "Join Nimiq"
-msgstr ""
+msgstr "加入 Nimiq"
 
 #: src/lib/LabelingMachine.ts:17
 msgid "Ledger Account"
@@ -667,7 +667,7 @@ msgstr "找不到应用"
 
 #: src/views/OnboardingSelector.vue:109
 msgid ""
-"No download, no registration,\n"
+"No registration, no install,\n"
 "100% free"
 msgstr ""
 
@@ -890,7 +890,7 @@ msgstr "青"
 
 #: src/components/LedgerUi.vue:270
 msgid "The connected wallet or Ledger is not the one this account belongs to."
-msgstr ""
+msgstr "您连接的钱包或Ledger不是这个账户所属的。"
 
 #: src/i18n/i18n-setup.ts:63
 msgid ""
@@ -990,7 +990,7 @@ msgstr "很遗憾地，由于Safari和IOS的空间限制，该帐户无法正确
 
 #: src/views/SignBtcTransactionLedger.vue:9
 msgid "Unlabeled"
-msgstr ""
+msgstr "无标签"
 
 #: src/views/ErrorHandlerUnsupportedLedger.vue:36
 msgid "Unsupported Request"
@@ -1082,7 +1082,7 @@ msgstr "您已登录！"
 msgid ""
 "Your {app} app is outdated. Please update your Ledger firmware and {app} app"
 " using Ledger Live."
-msgstr ""
+msgstr "您的{app}应用已过时。 请使用Ledger Live更新您的Ledger固件和{app}应用。"
 
 #: src/views/LoginSuccess.vue:194
 msgid "Your Account is ready. | Your Accounts are ready."
