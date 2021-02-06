@@ -102,7 +102,7 @@ export default class OnboardingSelector extends Vue {
     private get sublineText() {
         switch (this.originalRouteName) {
             case undefined:
-                return this.$t('No download, no registration,\n100% free') as string;
+                return this.$t('No registration, no install,\n100% free') as string;
             default:
                 return undefined;
         }
