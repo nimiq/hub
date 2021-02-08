@@ -574,7 +574,7 @@ msgstr ""
 
 #: src/views/OnboardingSelector.vue:96
 msgid "Join Nimiq"
-msgstr ""
+msgstr "Приєднатися до Nimiq"
 
 #: src/lib/LabelingMachine.ts:17
 msgid "Ledger Account"
@@ -674,7 +674,7 @@ msgstr "Додаток не знайдено"
 msgid ""
 "No registration, no install,\n"
 "100% free"
-msgstr ""
+msgstr "Без завантаження і реєстрації, 100% безкоштовно."
 
 #: src/components/NimiqCheckoutCard.vue:69
 msgid "None of your available addresses has sufficient balance."
