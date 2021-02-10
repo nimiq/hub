@@ -23,24 +23,8 @@ msgstr ""
 msgid "+ network fee"
 msgstr ""
 
-#: src/components/LedgerUi.vue:291
-msgid "1. Connect your Ledger Device"
-msgstr ""
-
-#: src/components/LedgerUi.vue:292
-msgid "2. Enter your PIN"
-msgstr ""
-
-#: src/components/LedgerUi.vue:293
-msgid "3. Open the {app} App"
-msgstr ""
-
 #: src/views/CashlinkReceive.vue:110
 msgid "30 seconds, no email, no download."
-msgstr ""
-
-#: src/components/LedgerUi.vue:296
-msgid "4. Click Connect"
 msgstr ""
 
 #: src/views/CashlinkReceive.vue:207
@@ -306,6 +290,10 @@ msgstr ""
 msgid "Claiming Cashlink"
 msgstr ""
 
+#: src/components/LedgerUi.vue:300
+msgid "Click Connect"
+msgstr ""
+
 #: src/views/RequestError.vue:31
 msgid "Close"
 msgstr ""
@@ -314,7 +302,7 @@ msgstr ""
 msgid "Collecting payment details"
 msgstr ""
 
-#: src/components/LedgerUi.vue:209
+#: src/components/LedgerUi.vue:214
 msgid "Confirm Address"
 msgstr ""
 
@@ -326,21 +314,21 @@ msgstr ""
 msgid "Confirm Swap"
 msgstr ""
 
-#: src/components/LedgerUi.vue:212
+#: src/components/LedgerUi.vue:217
 msgid "Confirm that the address on your Ledger matches {addressToConfirm}"
 msgstr ""
 
-#: src/components/LedgerUi.vue:211
+#: src/components/LedgerUi.vue:216
 msgid "Confirm the address on your Ledger"
 msgstr ""
 
-#: src/components/LedgerUi.vue:230
+#: src/components/LedgerUi.vue:235
 #: src/views/SignBtcTransactionLedger.vue:4
 #: src/views/SignTransactionLedger.vue:34
 msgid "Confirm Transaction"
 msgstr ""
 
-#: src/components/LedgerUi.vue:231
+#: src/components/LedgerUi.vue:236
 msgid "Confirm using your Ledger"
 msgstr ""
 
@@ -356,13 +344,17 @@ msgstr ""
 msgid "Congrats, you received a Nimiq Gift Card."
 msgstr ""
 
-#: src/components/LedgerUi.vue:34
+#: src/components/LedgerUi.vue:38
 msgid "Connect"
 msgstr ""
 
-#: src/components/LedgerUi.vue:300
+#: src/components/LedgerUi.vue:308
 #: src/components/OnboardingMenu.vue:5
 msgid "Connect Ledger"
+msgstr ""
+
+#: src/components/LedgerUi.vue:295
+msgid "Connect your Ledger Device"
 msgstr ""
 
 #: src/components/OnboardingMenu.vue:6
@@ -476,6 +468,10 @@ msgstr ""
 msgid "Enter the address of a vesting contract."
 msgstr ""
 
+#: src/components/LedgerUi.vue:296
+msgid "Enter your PIN"
+msgstr ""
+
 #: src/views/CashlinkCreate.vue:160
 msgid "express"
 msgstr ""
@@ -511,7 +507,7 @@ msgstr ""
 msgid "Fetching swap data..."
 msgstr ""
 
-#: src/components/LedgerUi.vue:225
+#: src/components/LedgerUi.vue:230
 #: src/views/ActivateBitcoinSuccess.vue:84
 #: src/views/BitcoinSyncBaseView.vue:48
 #: src/views/LoginSuccess.vue:42
@@ -603,7 +599,7 @@ msgstr ""
 msgid "Ledger accounts cannot be exported. Please refer to your 24 words backup you created when setting up your device."
 msgstr ""
 
-#: src/components/LedgerUi.vue:262
+#: src/components/LedgerUi.vue:265
 msgid "Ledger not supported by browser."
 msgstr ""
 
@@ -611,7 +607,7 @@ msgstr ""
 msgid "Legacy Account"
 msgstr ""
 
-#: src/components/LedgerUi.vue:192
+#: src/components/LedgerUi.vue:197
 msgid "Loading failed, retrying..."
 msgstr ""
 
@@ -715,6 +711,10 @@ msgstr ""
 msgid "One account can now have multiple addresses."
 msgstr ""
 
+#: src/components/LedgerUi.vue:298
+msgid "Open the {app} App"
+msgstr ""
+
 #: src/components/NonNimiqCheckoutCard.vue:94
 msgid "Open Wallet App"
 msgstr ""
@@ -747,11 +747,11 @@ msgstr ""
 msgid "Pink"
 msgstr ""
 
-#: src/components/LedgerUi.vue:243
+#: src/components/LedgerUi.vue:248
 msgid "Please cancel the previous request on your Ledger."
 msgstr ""
 
-#: src/components/LedgerUi.vue:181
+#: src/components/LedgerUi.vue:186
 msgid "Please cancel the request on your Ledger"
 msgstr ""
 
@@ -800,11 +800,11 @@ msgstr ""
 msgid "Rename Account"
 msgstr ""
 
-#: src/components/LedgerUi.vue:279
+#: src/components/LedgerUi.vue:282
 msgid "Request failed"
 msgstr ""
 
-#: src/components/LedgerUi.vue:280
+#: src/components/LedgerUi.vue:283
 msgid "Request failed: "
 msgstr ""
 
@@ -947,7 +947,7 @@ msgstr ""
 msgid "Teal"
 msgstr ""
 
-#: src/components/LedgerUi.vue:274
+#: src/components/LedgerUi.vue:277
 msgid "The connected wallet or Ledger is not the one this account belongs to."
 msgstr ""
 
@@ -1131,7 +1131,7 @@ msgstr ""
 msgid "You're logged in!"
 msgstr ""
 
-#: src/components/LedgerUi.vue:266
+#: src/components/LedgerUi.vue:269
 msgid "Your {app} app is outdated. Please update your Ledger firmware and {app} app using Ledger Live."
 msgstr ""
 
