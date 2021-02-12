@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-        <SmallPage :style="{ minWidth: request.layout === 'slider' ? '63.5rem' : '0' }">
+        <SmallPage :class="{ 'wide-page': request.layout === 'slider' }">
             <PageHeader back-arrow @back="_close">
                 <template #default>{{ $t('Confirm Swap') }}</template>
                 <template #more>
@@ -239,7 +239,56 @@
                     @no-information-shown="ledgerInstructionsShown = false"
                 />
                 <transition name="transition-fade">
-                    <StatusScreen v-if="state === State.SYNCING_FAILED || state === State.FETCHING_SWAP_DATA_FAILED
+                    <div v-if="_currentSigningInfo && ledgerApiStateType === LedgerApiStateType.REQUEST_PROCESSING"
+                        class="signing-info nq-blue-bg"
+                    >
+                        <div class="signing-instructions">
+                            <CheckmarkSmallIcon v-for="step in _currentSigningInfo.step - 1" class="step" />
+                            <div v-if="_currentSigningInfo.totalSteps > 1" class="step current-step">
+                                {{ _currentSigningInfo.step }}
+                            </div>
+                            <div class="instructions-text">{{ _currentSigningInfo.instructions }}</div>
+                            <div class="step" v-for="step in _currentSigningInfo.totalSteps - _currentSigningInfo.step">
+                                {{ step + _currentSigningInfo.step }}
+                            </div>
+                        </div>
+                        <div class="transaction-details"
+                            :class="{
+                                // For long BTC htlc addresses use a two line layout
+                                'two-line-address-layout': _currentSigningInfo.recipient.length > 44,
+                                // on narrower standard layout shrink long amounts if they and the labels don't fit
+                                'shrink-amounts': request.layout === 'standard'
+                                    && (
+                                        $t('Amount')
+                                        + `${_currentSigningInfo.amount / 10 ** _currentSigningInfo.currencyDecimals}`
+                                        + $t('Fee')
+                                        + `${_currentSigningInfo.fee / 10 ** _currentSigningInfo.currencyDecimals}`
+                                    ).length > 29,
+                             }"
+                        >
+                            <label class="address-label">{{ $t('Address') }}</label>
+                            <div class="address">{{ _currentSigningInfo.recipient }}</div>
+                            <label class="amount-label">{{ $t('Amount') }}</label>
+                            <Amount
+                                :amount="_currentSigningInfo.amount"
+                                :currency="_currentSigningInfo.currency"
+                                :currencyDecimals="_currentSigningInfo.currencyDecimals"
+                                :maxDecimals="_currentSigningInfo.currencyDecimals"
+                                :minDecimals="0"
+                                class="amount"
+                            />
+                            <label class="fee-label">{{ $t('Fee') }}</label>
+                            <Amount
+                                :amount="_currentSigningInfo.fee"
+                                :currency="_currentSigningInfo.currency"
+                                :currencyDecimals="_currentSigningInfo.currencyDecimals"
+                                :maxDecimals="_currentSigningInfo.currencyDecimals"
+                                :minDecimals="0"
+                                class="fee"
+                            />
+                        </div>
+                    </div>
+                    <StatusScreen v-else-if="state === State.SYNCING_FAILED || state === State.FETCHING_SWAP_DATA_FAILED
                         || !ledgerInstructionsShown"
                         :state="statusScreenState"
                         :title="statusScreenTitle"
@@ -269,6 +318,7 @@ import {
     FiatAmount,
     Tooltip,
     ArrowRightIcon,
+    CheckmarkSmallIcon,
 } from '@nimiq/vue-components';
 import SetupSwap, { SwapSetupInfo } from './SetupSwap.vue';
 import SetupSwapSuccess, { SwapHtlcInfo } from './SetupSwapSuccess.vue';
@@ -277,6 +327,9 @@ import GlobalClose from '../components/GlobalClose.vue';
 import LedgerUi from '../components/LedgerUi.vue';
 import Network from '../components/Network.vue';
 import LedgerApi, {
+    EventType as LedgerApiEventType,
+    State as LedgerApiState,
+    StateType as LedgerApiStateType,
     RequestTypeNimiq as LedgerApiRequestTypeNimiq,
     RequestTypeBitcoin as LedgerApiRequestTypeBitcoin,
     TransactionInfoNimiq as LedgerNimiqTransactionInfo,
@@ -314,11 +367,23 @@ type BalanceBarEntry = {
 type SwapAmountInfo = {
     myAmount: number,
     theirAmount: number,
+    myTransactionFee: number,
     fees: number,
     currency: SwapAsset,
     currencyDecimals: number,
     fiatRate: number;
     newBalance?: number,
+};
+
+type SigningInfo = {
+    step: number,
+    totalSteps: number,
+    instructions: string,
+    recipient: string,
+    amount: number,
+    fee: number,
+    currency: SwapAsset,
+    currencyDecimals: number,
 };
 
 const ProxyExtraData = {
@@ -337,6 +402,7 @@ const ProxyExtraData = {
     FiatAmount,
     Tooltip,
     ArrowRightIcon,
+    CheckmarkSmallIcon,
     StatusScreen,
     GlobalClose,
     LedgerUi,
@@ -353,10 +419,15 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
     @Getter protected findWallet!: (id: string) => WalletInfo | undefined;
     protected _account!: WalletInfo;
     private readonly SwapAsset = SwapAsset;
-    private ledgerInstructionsShown = false;
+    private readonly LedgerApiStateType = LedgerApiStateType;
     private _setupSwapPromise!: Promise<SwapSetupInfo>;
     private nimiqLedgerAddressInfo?: { address: Nimiq.Address, label: string, balance: number, signerPath: string };
     private _nimiqProxyKeyPromise?: Promise<Nimiq.KeyPair>;
+    private ledgerInstructionsShown = false;
+    private ledgerApiStateType: LedgerApiStateType = LedgerApi.currentState.type;
+    private currentlySignedTransaction: LedgerNimiqTransactionInfo
+        | Parameters<typeof prepareBitcoinTransactionForLedgerSigning>[0]
+        | null = null;
 
     protected async created() {
         const { fund, redeem, nimiqAddresses, walletId } = this.request;
@@ -429,10 +500,14 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
             // Catch errors to avoid uncaught promise rejections but ignore them and keep errors displayed in LedgerUi.
             this._nimiqProxyKeyPromise.catch(() => void 0);
         }
+
+        this._onLedgerApiStateChange = this._onLedgerApiStateChange.bind(this);
+        LedgerApi.on(LedgerApiEventType.STATE_CHANGE, this._onLedgerApiStateChange);
     }
 
     protected destroyed() {
         this._isDestroyed = true;
+        LedgerApi.off(LedgerApiEventType.STATE_CHANGE, this._onLedgerApiStateChange);
         LedgerApi.disconnect(
             /* cancelRequest */ true,
             /* requestTypesToDisconnect */ [
@@ -640,6 +715,7 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
 
             if (swapSetupInfo.fund.type === SwapAsset.NIM && nimiqProxyTransactionInfo && this.nimiqLedgerAddressInfo) {
                 // send funding tx from Ledger to proxy address
+                this.currentlySignedTransaction = nimiqProxyTransactionInfo;
                 signedNimiqProxyTransaction = this.nimiqNetwork.getUnrelayedTransactions(nimiqProxyTransactionInfo)[0];
                 if (!signedNimiqProxyTransaction) {
                     signedNimiqProxyTransaction = await LedgerApi.Nimiq.signTransaction(
@@ -664,6 +740,7 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
                         ? nimiqSwapTransactionInfo.recipient
                         : new Nimiq.Address(nimiqSwapTransactionInfo.recipient),
                 };
+                this.currentlySignedTransaction = dummyTransaction;
                 await LedgerApi.Nimiq.signTransaction(
                     dummyTransaction,
                     // Any unused key path; We use the highest bip32 nimiq path here; but note that the signing address
@@ -679,7 +756,7 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
 
             // Sign the Btc transaction
 
-            if (preparedBitcoinTransactionInfoPromise) {
+            if (bitcoinTransactionInfo && preparedBitcoinTransactionInfoPromise) {
                 let preparedBitcoinTransactionInfo: LedgerBitcoinTransactionInfo;
                 try {
                     preparedBitcoinTransactionInfo = await preparedBitcoinTransactionInfoPromise;
@@ -687,6 +764,11 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
                     this.error = e.message || e;
                     return null;
                 }
+
+                // Set the state to idle in case it wasn't set yet, as the LedgerApi event fires asynchronously, to
+                // avoid that the signing instructions already switch to the next request before it's being processed.
+                this.ledgerApiStateType = LedgerApiStateType.IDLE;
+                this.currentlySignedTransaction = bitcoinTransactionInfo;
 
                 signedBitcoinTransaction = BitcoinJS.Transaction.fromHex(
                     await LedgerApi.Bitcoin.signTransaction(preparedBitcoinTransactionInfo));
@@ -785,12 +867,12 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
         const { type: currency } = fundInfo;
         let currencyDecimals: number;
         let myAmount: number; // what we are paying including fees
-        let fees: number;
+        let myTransactionFee: number;
         let newBalance: number | undefined;
         switch (fundInfo.type) {
             case SwapAsset.NIM:
                 currencyDecimals = 5;
-                fees = fundInfo.fee + serviceFundingFee;
+                myTransactionFee = fundInfo.fee;
                 myAmount = fundInfo.value + fundInfo.fee;
                 newBalance = this.nimiqLedgerAddressInfo!.balance - myAmount;
                 break;
@@ -798,22 +880,23 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
                 currencyDecimals = 8;
                 const { inputs, output, changeOutput } = fundInfo;
                 const inputsValue = inputs.reduce((sum, { value }) => sum + value, 0);
-                fees = (inputsValue - output.value - (changeOutput ? changeOutput.value : 0)) // inputs minus outputs
-                    + serviceFundingFee;
+                // inputs minus outputs
+                myTransactionFee = (inputsValue - output.value - (changeOutput ? changeOutput.value : 0));
                 myAmount = inputsValue - (changeOutput ? changeOutput.value : 0);
                 newBalance = bitcoinAccount ? bitcoinAccount.balance - myAmount : undefined;
                 break;
             case SwapAsset.EUR:
                 currencyDecimals = 2;
-                fees = fundInfo.fee + serviceFundingFee;
+                myTransactionFee = fundInfo.fee;
                 myAmount = fundInfo.value + fundInfo.fee;
                 newBalance = undefined; // unknown and unused
                 break;
             default:
                 throw new Error(`Unsupported currency ${currency}`);
         }
+        const fees = myTransactionFee + serviceFundingFee;
         const theirAmount = myAmount - fees; // what the other party receives excluding fees
-        return { myAmount, theirAmount, fees, currency, currencyDecimals, newBalance, fiatRate };
+        return { myAmount, theirAmount, myTransactionFee, fees, currency, currencyDecimals, newBalance, fiatRate };
     }
 
     private get _redeemingAmountInfo(): SwapAmountInfo {
@@ -821,34 +904,34 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
         const { type: currency } = redeemInfo;
         let currencyDecimals: number;
         let myAmount: number; // what we receive excluding fees
-        let fees: number;
+        let myTransactionFee: number;
         let newBalance: number | undefined;
         switch (redeemInfo.type) {
             case SwapAsset.NIM:
                 currencyDecimals = 5;
                 myAmount = redeemInfo.value;
-                fees = redeemInfo.fee + serviceRedeemingFee;
+                myTransactionFee = redeemInfo.fee;
                 newBalance = this.nimiqLedgerAddressInfo!.balance + myAmount;
                 break;
             case SwapAsset.BTC:
                 currencyDecimals = 8;
                 const { input, output } = redeemInfo;
                 myAmount = output.value;
-                fees = input.value - output.value // inputs minus outputs
-                    + serviceRedeemingFee;
+                myTransactionFee = input.value - output.value; // inputs minus outputs
                 newBalance = bitcoinAccount ? bitcoinAccount.balance + myAmount : undefined;
                 break;
             // case SwapAsset.EUR:
             //     currencyDecimals = 2;
             //     myAmount = redeemInfo.value;
-            //     fees = redeemInfo.fee + serviceRedeemingFee;
+            //     myTransactionFee = redeemInfo.fee;
             //     newBalance = undefined; // unknown and unused
             //     break;
             default:
                 throw new Error(`Unsupported currency ${currency}`);
         }
+        const fees = myTransactionFee + serviceRedeemingFee;
         const theirAmount = myAmount + fees; // what the other party pays including fees
-        return { myAmount, theirAmount, fees, currency, currencyDecimals, newBalance, fiatRate };
+        return { myAmount, theirAmount, myTransactionFee, fees, currency, currencyDecimals, newBalance, fiatRate };
     }
 
     private get _baseAmountInfo(): SwapAmountInfo {
@@ -875,6 +958,45 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
         amountInfoForCurrency[this._fundingAmountInfo.currency] = this._fundingAmountInfo;
         amountInfoForCurrency[this._redeemingAmountInfo.currency] = this._redeemingAmountInfo;
         return amountInfoForCurrency;
+    }
+
+    private get _currentSigningInfo(): SigningInfo | null {
+        if (!this.currentlySignedTransaction) return null;
+        let currency: SwapAsset;
+        let recipient: string;
+        if ('recipient' in this.currentlySignedTransaction) {
+            currency = SwapAsset.NIM;
+            recipient = this.currentlySignedTransaction.recipient.toUserFriendlyAddress();
+        } else {
+            currency = SwapAsset.BTC;
+            recipient = this.currentlySignedTransaction.recipientOutput.address;
+        }
+
+        const amountInfo = this._amountInfoForCurrency[currency];
+        if (!amountInfo) return null;
+
+        const currenciesToBeSigned = [this._baseAmountInfo, this._otherAmountInfo]
+            .map(({ currency: c }) => c)
+            // filter out fiat funding which does not have to be signed on the Ledger
+            .filter((c) => c === SwapAsset.NIM || c === SwapAsset.BTC);
+
+        return {
+            step: currenciesToBeSigned.indexOf(currency) + 1,
+            totalSteps: currenciesToBeSigned.length,
+            instructions: this.$t('Confirm {outgoingOrIncoming} {currency} transaction', {
+                currency,
+                outgoingOrIncoming: this._fundingAmountInfo.currency === currency
+                    ? this.$t('outgoing')
+                    : this.$t('incoming'),
+            }) as string,
+            recipient,
+            amount: this._fundingAmountInfo.currency === currency
+                ? amountInfo.myAmount - amountInfo.myTransactionFee
+                : amountInfo.myAmount,
+            fee: amountInfo.myTransactionFee,
+            currency,
+            currencyDecimals: amountInfo.currencyDecimals,
+        };
     }
 
     private get _totalFiatFees(): number {
@@ -949,6 +1071,10 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
         ];
     }
 
+    private _onLedgerApiStateChange(state: LedgerApiState) {
+        this.ledgerApiStateType = state.type;
+    }
+
     private _toCoins(amount: number, currency: SwapAsset) {
         switch (currency) {
             case SwapAsset.NIM: return Nimiq.Policy.lunasToCoins(amount);
@@ -977,6 +1103,10 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
     .small-page {
         position: relative;
         padding-bottom: 24rem; /* for bottom container + additional padding */
+    }
+
+    .small-page.wide-page {
+        min-width: 63.5rem;
     }
 
     .page-header {
@@ -1290,14 +1420,199 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
     .bottom-container > * {
         position: absolute;
         top: 0;
-    }
-
-    .status-screen {
         transition: opacity .4s;
         overflow: hidden;
     }
 
     .ledger-ui >>> .loading-spinner {
         margin-top: -1.25rem; /* position at same position as StatusScreen's loading spinner */
+    }
+
+    .signing-info {
+        display: flex;
+        padding: 2rem;
+        margin: .75rem;
+        width: calc(100% - 1.5rem); /* minus 2 * margin */
+        height: calc(100% - 1.5rem);
+        border-radius: .625rem;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        z-index: 1000;
+    }
+
+    .signing-instructions {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .signing-instructions .step {
+        display: flex;
+        width: 2.5rem;
+        height: 2.5rem;
+        margin: 0 .375rem;
+        border-radius: 1.25rem;
+        justify-content: center;
+        align-items: center;
+        font-size: 1.5rem;
+        font-weight: bold;
+        line-height: 1;
+        color: rgba(255, 255, 255, .5);
+        background: rgba(255, 255, 255, .1);
+    }
+
+    .signing-instructions .step.nq-icon {
+        padding: .75rem;
+    }
+
+    .signing-instructions .current-step {
+        color: white;
+    }
+
+    .signing-instructions .instructions-text {
+        font-size: 1.75rem;
+        font-weight: 600;
+        margin: 0 1rem 0 .625rem;
+    }
+
+    .transaction-details {
+        /* as grid layout to be able to align address with amount in two-line-address-layout regardless of label
+        transaction lengths */
+        display: grid;
+        min-width: 100%;
+        grid-template-columns: 1fr auto 1fr auto;
+        /* short address layout: have the address and address label in separate lines */
+        grid-template-areas:
+            "address-label address-label address-label address-label"
+            "address       address       address       address"
+            "amount-label  amount        fee-label     fee";
+    }
+
+    .transaction-details.two-line-address-layout {
+        grid-template-columns: .5fr auto 1fr auto;
+        /* long address layout: no own line for address label, allow the address to break into multiple lines instead */
+        grid-template-areas:
+            "address-label   address   address   address"
+            "amount-label    amount    fee-label fee";
+    }
+
+    .transaction-details > * {
+        border-radius: .5rem;
+        padding: 1rem 1rem .875rem;
+        border: .25rem solid rgba(255, 255, 255, .15);
+    }
+
+    .transaction-details.two-line-address-layout .address-label,
+    .transaction-details .amount-label,
+    .transaction-details .fee-label {
+        padding-right: 0;
+        border-right: none;
+        border-top-right-radius: unset;
+        border-bottom-right-radius: unset;
+    }
+    .transaction-details.two-line-address-layout .address,
+    .transaction-details .amount,
+    .transaction-details .fee {
+        border-left: none;
+        border-top-left-radius: unset;
+        border-bottom-left-radius: unset;
+    }
+    .transaction-details:not(.two-line-address-layout) .address-label {
+        border-bottom: none;
+        border-bottom-left-radius: unset;
+        border-bottom-right-radius: unset;
+    }
+    .transaction-details:not(.two-line-address-layout) .address {
+        padding-top: .125rem;
+        border-top: none;
+        border-top-left-radius: unset;
+        border-top-right-radius: unset;
+    }
+
+    .transaction-details .address ~ * {
+        margin-top: 1.5rem;
+    }
+    .transaction-details .fee-label {
+        margin-left: 1.5rem;
+    }
+
+    .transaction-details label {
+        font-size: 1.5rem;
+        font-weight: bold;
+        line-height: 1;
+        letter-spacing: 0.0875rem;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, .5);
+    }
+
+    /* Let the browser lazy load the missing glyph for the letter I that is not included in the Fira Mono subset for
+    Nimiq addresses (see blocking.css) when we need it to render the ticker "NIM".
+    See https://jakearchibald.com/2014/minimising-font-downloads/ or https://jakearchibald.com/2017/combining-fonts/ */
+    @font-face {
+        font-family: 'Fira Mono';
+        font-style: normal;
+        font-weight: 400;
+        font-display: swap;
+        src: local('Fira Mono Regular'), local('FiraMono-Regular'),
+            /* Taken from https://fonts.googleapis.com/css2?family=Fira+Mono&text=I */
+            url(https://fonts.gstatic.com/l/font?kit=N0bX2SlFPv1weGeLZDtQJOzW0A&skey=bb26c8d476ab3f05&v=v9) format('woff2');
+        unicode-range: U+49; /* capital I */
+    }
+
+    .transaction-details label + * {
+        font-family: 'Fira Mono', monospace;
+        font-size: 1.75rem;
+        line-height: 1;
+    }
+
+    .wide-page .transaction-details label + * {
+        font-size: 2rem;
+        line-height: .75;
+    }
+
+    .transaction-details .address {
+        word-spacing: -.25rem;
+        white-space: nowrap;
+    }
+
+    .wide-page  .transaction-details .address {
+        word-spacing: normal;
+    }
+
+    .transaction-details.two-line-address-layout .address {
+        padding-top: .5rem;
+        line-height: 1.3;
+        word-break: break-all;
+        white-space: normal;
+    }
+
+    .transaction-details .amount,
+    .transaction-details .fee {
+        word-spacing: -.375rem;
+    }
+
+    .transaction-details.shrink-amounts .amount,
+    .transaction-details.shrink-amounts .fee {
+        letter-spacing: -.125rem;
+    }
+
+    .transaction-details .address-label {
+        grid-area: address-label;
+    }
+    .transaction-details .address {
+        grid-area: address;
+    }
+    .transaction-details .amount-label {
+        grid-area: amount-label;
+    }
+    .transaction-details .amount:not(.fee) {
+        grid-area: amount;
+    }
+    .transaction-details .fee-label {
+        grid-area: fee-label;
+    }
+    .transaction-details .fee {
+        grid-area: fee;
     }
 </style>

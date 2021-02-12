@@ -71,6 +71,10 @@ msgstr ""
 msgid "Add Vesting Contract"
 msgstr ""
 
+#: src/views/SetupSwapLedger.vue:269
+msgid "Address"
+msgstr ""
+
 #: src/views/AddAddressLedger.vue:16
 msgid "Address Added"
 msgstr ""
@@ -85,6 +89,8 @@ msgstr ""
 
 #: src/components/BitcoinCheckoutCard.vue:26
 #: src/components/EthereumCheckoutCard.vue:25
+#: src/views/SetupSwapLedger.vue:262
+#: src/views/SetupSwapLedger.vue:271
 msgid "Amount"
 msgstr ""
 
@@ -302,6 +308,10 @@ msgstr ""
 msgid "Collecting payment details"
 msgstr ""
 
+#: src/views/SetupSwapLedger.vue:986
+msgid "Confirm {outgoingOrIncoming} {currency} transaction"
+msgstr ""
+
 #: src/components/LedgerUi.vue:214
 msgid "Confirm Address"
 msgstr ""
@@ -487,6 +497,8 @@ msgstr ""
 
 #: src/components/BitcoinCheckoutCard.vue:44
 #: src/components/CurrencyInfo.vue:15
+#: src/views/SetupSwapLedger.vue:264
+#: src/views/SetupSwapLedger.vue:280
 msgid "Fee"
 msgstr ""
 
@@ -569,6 +581,10 @@ msgstr ""
 #: src/views/LoginSuccess.vue:163
 #: src/views/SignupLedger.vue:124
 msgid "Imported {count} address so far... | Imported {count} addresses so far..."
+msgstr ""
+
+#: src/views/SetupSwapLedger.vue:990
+msgid "incoming"
 msgstr ""
 
 #: src/components/CheckoutCard.vue:190
@@ -721,6 +737,10 @@ msgstr ""
 
 #: src/lib/LabelingMachine.ts:39
 msgid "Orange"
+msgstr ""
+
+#: src/views/SetupSwapLedger.vue:989
+msgid "outgoing"
 msgstr ""
 
 #: src/views/AddVestingContract.vue:22
@@ -898,7 +918,7 @@ msgstr ""
 msgid "Swap fee"
 msgstr ""
 
-#: src/views/SetupSwapLedger.vue:768
+#: src/views/SetupSwapLedger.vue:850
 #: src/views/SetupSwapSuccess.vue:462
 msgid "Swap Setup Failed"
 msgstr ""
@@ -915,7 +935,7 @@ msgid "Syncing consensus..."
 msgstr ""
 
 #: src/views/BitcoinSyncBaseView.vue:50
-#: src/views/SetupSwapLedger.vue:770
+#: src/views/SetupSwapLedger.vue:852
 #: src/views/SetupSwapSuccess.vue:464
 #: src/views/SignBtcTransactionLedger.vue:117
 msgid "Syncing Failed"
@@ -934,7 +954,7 @@ msgid "Syncing with Bitcoin network failed: {error}"
 msgstr ""
 
 #: src/views/BitcoinSyncBaseView.vue:58
-#: src/views/SetupSwapLedger.vue:780
+#: src/views/SetupSwapLedger.vue:862
 msgid "Syncing with Bitcoin network..."
 msgstr ""
 
