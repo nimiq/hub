@@ -11,7 +11,8 @@ import { WalletStore } from '../lib/WalletStore';
 import { Static } from '../lib/StaticStore';
 import StatusScreen from '../components/StatusScreen.vue';
 import GlobalClose from '../components/GlobalClose.vue';
-import WalletInfoCollector from '../lib/WalletInfoCollector';
+import { deriveAddressesFromXPub } from '../lib/bitcoin/BitcoinUtils';
+import { BTC_ACCOUNT_MAX_ALLOWED_ADDRESS_GAP, EXTERNAL_INDEX, INTERNAL_INDEX } from '../lib/bitcoin/BitcoinConstants';
 
 @Component({components: {StatusScreen, SmallPage, GlobalClose}}) // including components used in parent class
 export default class ActivateBitcoinSuccess extends BitcoinSyncBaseView {
@@ -39,15 +40,20 @@ export default class ActivateBitcoinSuccess extends BitcoinSyncBaseView {
             : this.State.SYNCING;
         this.useDarkSyncStatusScreen = walletInfo.type === WalletType.LEDGER;
 
-        let btcAddresses;
-        try {
-            btcAddresses = await WalletInfoCollector.detectBitcoinAddresses(this.keyguardResult.bitcoinXPub);
-        } catch (e) {
-            console.error(e);
-            this.state = this.State.SYNCING_FAILED;
-            this.error = e;
-            return;
-        }
+        const btcAddresses = {
+            external: deriveAddressesFromXPub(
+                this.keyguardResult.bitcoinXPub,
+                [EXTERNAL_INDEX],
+                0,
+                BTC_ACCOUNT_MAX_ALLOWED_ADDRESS_GAP,
+            ),
+            internal: deriveAddressesFromXPub(
+                this.keyguardResult.bitcoinXPub,
+                [INTERNAL_INDEX],
+                0,
+                BTC_ACCOUNT_MAX_ALLOWED_ADDRESS_GAP,
+            ),
+        };
 
         walletInfo.btcXPub = this.keyguardResult.bitcoinXPub;
         walletInfo.btcAddresses = btcAddresses;
