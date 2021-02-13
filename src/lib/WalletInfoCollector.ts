@@ -222,6 +222,7 @@ export default class WalletInfoCollector {
             ACCOUNT_MAX_ALLOWED_ADDRESS_GAP, walletType, keyId);
 
         try {
+            await loadBitcoinJS();
             // Start BTC address detection
             const bitcoinAddresses: {
                 internal: BtcAddressInfo[],

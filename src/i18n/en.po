@@ -177,7 +177,7 @@ msgstr ""
 msgid "Bitcoin"
 msgstr ""
 
-#: src/views/ActivateBitcoinSuccess.vue:86
+#: src/views/ActivateBitcoinSuccess.vue:89
 msgid "Bitcoin activated"
 msgstr ""
 
@@ -520,7 +520,7 @@ msgid "Fetching swap data..."
 msgstr ""
 
 #: src/components/LedgerUi.vue:230
-#: src/views/ActivateBitcoinSuccess.vue:84
+#: src/views/ActivateBitcoinSuccess.vue:87
 #: src/views/BitcoinSyncBaseView.vue:48
 #: src/views/LoginSuccess.vue:42
 #: src/views/SignupLedger.vue:104
