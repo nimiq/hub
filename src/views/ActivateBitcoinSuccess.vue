@@ -63,7 +63,7 @@ export default class ActivateBitcoinSuccess extends BitcoinSyncBaseView {
 
         WalletStore.Instance.put(walletInfo);
 
-        const result = walletInfo.toAccountType();
+        const result = await walletInfo.toAccountType();
 
         this.state = this.State.FINISHED;
         setTimeout(() => { this.$rpc.resolve(result); }, StatusScreen.SUCCESS_REDIRECT_DELAY);

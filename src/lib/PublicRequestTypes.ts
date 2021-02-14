@@ -384,6 +384,7 @@ export interface Account {
         internal: string[],
         external: string[],
     };
+    uid: string;
 }
 
 export interface ExportRequest extends SimpleRequest {

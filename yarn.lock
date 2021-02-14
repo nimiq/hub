@@ -1027,10 +1027,10 @@
   dependencies:
     bitcoinjs-lib "^5.1.10"
 
-"@nimiq/fastspot-api@^1.2.1":
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/@nimiq/fastspot-api/-/fastspot-api-1.2.1.tgz#22630be7a6da7fe624e2ec85e31c9ca9e68afb22"
-  integrity sha512-p1/pYrObxNEgRqNAgkXWbDbbwfObXKXaXeFkWKG473Ywc5xTDGxVzW9FmD8+DbaSIm1WZDKi7CbYovu+JEQe+w==
+"@nimiq/fastspot-api@^1.4.0":
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/@nimiq/fastspot-api/-/fastspot-api-1.4.0.tgz#bfcad4eb797a3016d33dbf3d2dabe39b162494c5"
+  integrity sha512-UORkWgg0ZTLrsXCXRC3hfVWYn7EtcSRXMhzCULEc2bE4NJ/YaeCOs0UamCknEXrS8Qlb4RIUTDAVyKVnIqPMUA==
 
 "@nimiq/iqons@^1.5.2":
   version "1.5.2"
