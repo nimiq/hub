@@ -1,6 +1,6 @@
 <script lang="ts">
 import { Component } from 'vue-property-decorator';
-import { State } from 'vuex-class';
+import { State, Getter } from 'vuex-class';
 import { PlainOutput, TransactionDetails as BtcTransactionDetails } from '@nimiq/electrum-client';
 import { SmallPage } from '@nimiq/vue-components';
 import BitcoinSyncBaseView from './BitcoinSyncBaseView.vue';
@@ -26,6 +26,7 @@ import { loadNimiq } from '../lib/Helpers';
 import { decodeNimHtlcData, decodeBtcScript } from '../lib/HtlcUtils';
 import { loadBitcoinJS } from '../lib/bitcoin/BitcoinJSLoader';
 import { getElectrumClient } from '../lib/bitcoin/ElectrumClient';
+import { WalletInfo } from '../lib/WalletInfo';
 
 // Import only types to avoid bundling of KeyguardClient in Ledger request if not required.
 // (But note that currently, the KeyguardClient is still always bundled in the RpcApi).
@@ -44,6 +45,7 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
         };
     }
 
+    @Getter protected findWallet!: (id: string) => WalletInfo | undefined;
     @Static protected request!: ParsedSetupSwapRequest;
     protected nimiqNetwork: Network = new Network();
     protected _isDestroyed: boolean = false;
@@ -93,6 +95,11 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
             default: break;
         }
 
+        // Generate UID to track account limits
+        const walletInfo = this.findWallet(this.request.walletId);
+        if (!walletInfo) throw new Error('UNEXPECTED: Cannot find walletId for swap signing');
+        const uid = await walletInfo.getUid();
+
         let confirmedSwap: Swap;
         try {
             confirmedSwap = await confirmSwap({
@@ -105,7 +112,7 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
                 // Refund
                 asset: this.request.fund.type,
                 address: refundAddress,
-            }).catch((error) => {
+            }, uid).catch((error) => {
                 if (error.message === 'The swap was already confirmed before.') {
                     return getSwap(this.request.swapId) as Promise<Swap>;
                 } else {
