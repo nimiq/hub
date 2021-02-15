@@ -508,11 +508,11 @@ msgstr "Obtención de Direcciones Fallida"
 msgid "Fetching contract information..."
 msgstr "Obteniendo información del contrato..."
 
-#: src/views/SetupSwapSuccess.vue:483
+#: src/views/SetupSwapSuccess.vue:490
 msgid "Fetching swap data failed: {error}"
 msgstr "Obtención de datos de intercambio fallida: {error}"
 
-#: src/views/SetupSwapSuccess.vue:473
+#: src/views/SetupSwapSuccess.vue:480
 msgid "Fetching swap data..."
 msgstr "Obteniendo datos del intercambio..."
 
@@ -802,7 +802,7 @@ msgstr "Por favor envíe la transacción manualmente"
 msgid "Prepare for update"
 msgstr "Prepárese para la actualización"
 
-#: src/views/SetupSwapSuccess.vue:466
+#: src/views/SetupSwapSuccess.vue:473
 msgid "Preparing Swap"
 msgstr "Preparando intercambio"
 
@@ -851,7 +851,7 @@ msgid "Retrieving your old accounts..."
 msgstr "Obteniendo sus cuentas viejas..."
 
 #: src/views/BitcoinSyncBaseView.vue:68 src/views/LoginSuccess.vue:107
-#: src/views/SetupSwapSuccess.vue:491 src/views/SignupLedger.vue:145
+#: src/views/SetupSwapSuccess.vue:498 src/views/SignupLedger.vue:145
 msgid "Retry"
 msgstr "Reintentar"
 
@@ -884,7 +884,7 @@ msgstr "Compartir"
 msgid "Sign Message"
 msgstr "Firmar Mensaje"
 
-#: src/views/SetupSwapSuccess.vue:475
+#: src/views/SetupSwapSuccess.vue:482
 msgid "Signing transactions..."
 msgstr "Firmando transacciones..."
 
@@ -924,7 +924,7 @@ msgstr "Almacenando sus cuentas nuevas..."
 msgid "Swap fee"
 msgstr ""
 
-#: src/views/SetupSwapLedger.vue:850 src/views/SetupSwapSuccess.vue:462
+#: src/views/SetupSwapLedger.vue:850 src/views/SetupSwapSuccess.vue:469
 msgid "Swap Setup Failed"
 msgstr ""
 
@@ -939,7 +939,7 @@ msgid "Syncing consensus..."
 msgstr "Sincronizando consenso...."
 
 #: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapLedger.vue:852
-#: src/views/SetupSwapSuccess.vue:464
+#: src/views/SetupSwapSuccess.vue:471
 #: src/views/SignBtcTransactionLedger.vue:117
 msgid "Syncing Failed"
 msgstr "Sincronización Fallida"

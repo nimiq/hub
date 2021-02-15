@@ -506,11 +506,11 @@ msgstr "Не вдалося отримати адреси"
 msgid "Fetching contract information..."
 msgstr "Завантаження контактних даних..."
 
-#: src/views/SetupSwapSuccess.vue:483
+#: src/views/SetupSwapSuccess.vue:490
 msgid "Fetching swap data failed: {error}"
 msgstr "Не вдалося отримати дані обміну: {error}"
 
-#: src/views/SetupSwapSuccess.vue:473
+#: src/views/SetupSwapSuccess.vue:480
 msgid "Fetching swap data..."
 msgstr "Отримання даних обміну..."
 
@@ -794,7 +794,7 @@ msgstr "Будь ласка, надішліть переказ вручну"
 msgid "Prepare for update"
 msgstr "Розпочати оновлення"
 
-#: src/views/SetupSwapSuccess.vue:466
+#: src/views/SetupSwapSuccess.vue:473
 msgid "Preparing Swap"
 msgstr "Підготовлюється обмін"
 
@@ -843,7 +843,7 @@ msgid "Retrieving your old accounts..."
 msgstr "Завантаження старих рахунків..."
 
 #: src/views/BitcoinSyncBaseView.vue:68 src/views/LoginSuccess.vue:107
-#: src/views/SetupSwapSuccess.vue:491 src/views/SignupLedger.vue:145
+#: src/views/SetupSwapSuccess.vue:498 src/views/SignupLedger.vue:145
 msgid "Retry"
 msgstr "Повторити спробу"
 
@@ -876,7 +876,7 @@ msgstr "Поділитися"
 msgid "Sign Message"
 msgstr "Підписати повідомлення"
 
-#: src/views/SetupSwapSuccess.vue:475
+#: src/views/SetupSwapSuccess.vue:482
 msgid "Signing transactions..."
 msgstr "Підписання переказу..."
 
@@ -916,7 +916,7 @@ msgstr "Збереження ваших нових рахунків..."
 msgid "Swap fee"
 msgstr ""
 
-#: src/views/SetupSwapLedger.vue:850 src/views/SetupSwapSuccess.vue:462
+#: src/views/SetupSwapLedger.vue:850 src/views/SetupSwapSuccess.vue:469
 msgid "Swap Setup Failed"
 msgstr ""
 
@@ -931,7 +931,7 @@ msgid "Syncing consensus..."
 msgstr "Встановлення консенсус..."
 
 #: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapLedger.vue:852
-#: src/views/SetupSwapSuccess.vue:464
+#: src/views/SetupSwapSuccess.vue:471
 #: src/views/SignBtcTransactionLedger.vue:117
 msgid "Syncing Failed"
 msgstr "Помилка синхронізації"
