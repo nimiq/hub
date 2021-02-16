@@ -983,8 +983,7 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
         return {
             step: currenciesToBeSigned.indexOf(currency) + 1,
             totalSteps: currenciesToBeSigned.length,
-            instructions: this.$t('Confirm {outgoingOrIncoming} {currency} transaction', {
-                currency,
+            instructions: this.$t('Confirm {outgoingOrIncoming} transaction on Ledger', {
                 outgoingOrIncoming: this._fundingAmountInfo.currency === currency
                     ? this.$t('outgoing')
                     : this.$t('incoming'),

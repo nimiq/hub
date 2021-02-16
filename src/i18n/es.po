@@ -316,7 +316,7 @@ msgid "Collecting payment details"
 msgstr "Recolectando detalles de pago"
 
 #: src/views/SetupSwapLedger.vue:986
-msgid "Confirm {outgoingOrIncoming} {currency} transaction"
+msgid "Confirm {outgoingOrIncoming} transaction on Ledger"
 msgstr ""
 
 #: src/components/LedgerUi.vue:214
@@ -581,7 +581,7 @@ msgstr ""
 "Se han importando {count} dirección por ahora... | Se han importando {count}"
 " direcciones por ahora... "
 
-#: src/views/SetupSwapLedger.vue:990
+#: src/views/SetupSwapLedger.vue:989
 msgid "incoming"
 msgstr ""
 
@@ -750,7 +750,7 @@ msgstr "Abrir Aplicación Billetera"
 msgid "Orange"
 msgstr "Naranja"
 
-#: src/views/SetupSwapLedger.vue:989
+#: src/views/SetupSwapLedger.vue:988
 msgid "outgoing"
 msgstr ""
 

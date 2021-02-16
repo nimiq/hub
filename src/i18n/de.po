@@ -318,8 +318,8 @@ msgid "Collecting payment details"
 msgstr "Zahlungsdetails werden ermittelt"
 
 #: src/views/SetupSwapLedger.vue:986
-msgid "Confirm {outgoingOrIncoming} {currency} transaction"
-msgstr "Bestätige {outgoingOrIncoming} {currency} Transaktion"
+msgid "Confirm {outgoingOrIncoming} transaction on Ledger"
+msgstr ""
 
 #: src/components/LedgerUi.vue:214
 msgid "Confirm Address"
@@ -585,7 +585,7 @@ msgid ""
 msgstr ""
 "{count} Adresse bisher importiert... | {count} Adressen bisher importiert..."
 
-#: src/views/SetupSwapLedger.vue:990
+#: src/views/SetupSwapLedger.vue:989
 msgid "incoming"
 msgstr "eingehende"
 
@@ -757,7 +757,7 @@ msgstr "Öffne die Wallet App"
 msgid "Orange"
 msgstr "Oranges"
 
-#: src/views/SetupSwapLedger.vue:989
+#: src/views/SetupSwapLedger.vue:988
 msgid "outgoing"
 msgstr "ausgehende"
 

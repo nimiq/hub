@@ -314,7 +314,7 @@ msgid "Collecting payment details"
 msgstr "Збір платіжних реквізитів"
 
 #: src/views/SetupSwapLedger.vue:986
-msgid "Confirm {outgoingOrIncoming} {currency} transaction"
+msgid "Confirm {outgoingOrIncoming} transaction on Ledger"
 msgstr ""
 
 #: src/components/LedgerUi.vue:214
@@ -578,7 +578,7 @@ msgid ""
 msgstr ""
 "Наразі імпортовано {count} адресу... | Наразі імпортовано {count} адрес..."
 
-#: src/views/SetupSwapLedger.vue:990
+#: src/views/SetupSwapLedger.vue:989
 msgid "incoming"
 msgstr ""
 
@@ -742,7 +742,7 @@ msgstr "Відкрити додаток гаманця"
 msgid "Orange"
 msgstr "Помаранчевий"
 
-#: src/views/SetupSwapLedger.vue:989
+#: src/views/SetupSwapLedger.vue:988
 msgid "outgoing"
 msgstr ""
 

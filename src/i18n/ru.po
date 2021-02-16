@@ -317,7 +317,7 @@ msgid "Collecting payment details"
 msgstr "Собираем платёжные данные"
 
 #: src/views/SetupSwapLedger.vue:986
-msgid "Confirm {outgoingOrIncoming} {currency} transaction"
+msgid "Confirm {outgoingOrIncoming} transaction on Ledger"
 msgstr ""
 
 #: src/components/LedgerUi.vue:214
@@ -585,7 +585,7 @@ msgid ""
 "Imported {count} address so far... | Imported {count} addresses so far..."
 msgstr "Импортирован {count} адрес... | Импортировано {count} адресов..."
 
-#: src/views/SetupSwapLedger.vue:990
+#: src/views/SetupSwapLedger.vue:989
 msgid "incoming"
 msgstr ""
 
@@ -752,7 +752,7 @@ msgstr "Открыть Wallet App"
 msgid "Orange"
 msgstr "Оранжевый"
 
-#: src/views/SetupSwapLedger.vue:989
+#: src/views/SetupSwapLedger.vue:988
 msgid "outgoing"
 msgstr ""
 
