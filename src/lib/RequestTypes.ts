@@ -19,7 +19,17 @@ export interface ParsedOnboardRequest extends ParsedBasicRequest {
 }
 
 export interface ParsedSignTransactionRequest extends ParsedBasicRequest {
-    sender: Nimiq.Address;
+    // The sender object is currently only for internal use in RefundSwapLedger and can not be set in public request.
+    // Note that the object does not get exported to the history state in RpcApi and therefore does not survive reloads.
+    // However, the RefundSwapLedger handler is built in a way that it starts over on reloads to avoid the problem.
+    sender: Nimiq.Address | {
+        address: Nimiq.Address,
+        label?: string,
+        walletLabel?: string,
+        type?: Nimiq.Account.Type,
+        signerKeyId: string,
+        signerKeyPath: string,
+    };
     recipient: Nimiq.Address;
     recipientType: Nimiq.Account.Type;
     recipientLabel?: string;
@@ -97,8 +107,14 @@ export interface ParsedSignBtcTransactionRequest extends ParsedSimpleRequest {
         address: string,
         transactionHash: string,
         outputIndex: number,
-        outputScript: string,
+        outputScript: string, // hex
+        witnessScript?: string, // Custom witness script for p2wsh input. hex.
         value: number,
+        sequence?: number,
+        // Currently only for internal use in RefundSwapLedger. Can not be set in public request.
+        // Note that the keyPath gets lost on re-parsing in RequestParser and therefore does not survive reloads.
+        // However, the RefundSwapLedger handler is built in a way that it starts over on reloads to avoid the problem.
+        keyPath?: string,
     }>;
     output: {
         address: string,
@@ -109,6 +125,7 @@ export interface ParsedSignBtcTransactionRequest extends ParsedSimpleRequest {
         address: string,
         value: number,
     };
+    locktime?: number;
 }
 
 export interface ParsedAddBtcAddressesRequest extends ParsedSimpleRequest {
@@ -120,7 +137,7 @@ export interface ParsedAddBtcAddressesRequest extends ParsedSimpleRequest {
  * Swap
  */
 
-export interface ParsedSetupSwapRequest extends ParsedBasicRequest {
+export interface ParsedSetupSwapRequest extends ParsedSimpleRequest {
     swapId: string;
 
     fund: {
@@ -138,6 +155,7 @@ export interface ParsedSetupSwapRequest extends ParsedBasicRequest {
             outputIndex: number,
             outputScript: string,
             value: number, // Sats
+            sequence?: number,
         }>;
         output: {
             // address: string, // HTLC address
@@ -147,8 +165,14 @@ export interface ParsedSetupSwapRequest extends ParsedBasicRequest {
             address: string,
             value: number, // Sats
         };
+        locktime?: number,
         // htlcScript: Uint8Array,
         refundAddress: string,
+    } | {
+        type: SwapAsset.EUR,
+        value: number, // Eurocents
+        fee: number, // Eurocents
+        bankLabel?: string,
     };
 
     redeem: {
@@ -176,17 +200,18 @@ export interface ParsedSetupSwapRequest extends ParsedBasicRequest {
     };
 
     // Data needed for display
+    layout: 'standard' | 'slider';
     fiatCurrency: string;
-    nimFiatRate: number;
-    btcFiatRate: number;
-    serviceFundingNetworkFee: number; // Luna or Sats, depending which one gets funded
-    serviceRedeemingNetworkFee: number; // Luna or Sats, depending which one gets redeemed
-    serviceExchangeFee: number; // Luna or Sats, depending which one gets funded
-    nimiqAddresses: Array<{
+    fundingFiatRate: number;
+    redeemingFiatRate: number;
+    serviceFundingFee: number; // Luna or Sats, depending which one gets funded
+    serviceRedeemingFee: number; // Luna or Sats, depending which one gets redeemed
+    serviceSwapFee: number; // Luna or Sats, depending which one gets funded
+    nimiqAddresses?: Array<{
         address: string,
         balance: number, // Luna
     }>;
-    bitcoinAccount: {
+    bitcoinAccount?: {
         balance: number, // Sats
     };
 }
@@ -206,7 +231,6 @@ export interface ParsedRefundSwapRequest extends ParsedSimpleRequest {
             transactionHash: string,
             outputIndex: number,
             outputScript: string,
-            address: string, // HTLC address
             value: number, // Sats
             witnessScript: string,
         };

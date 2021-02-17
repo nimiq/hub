@@ -213,6 +213,7 @@ export interface BitcoinHtlcCreationInstructions {
         outputIndex: number,
         outputScript: string,
         value: number, // Sats
+        sequence?: number,
     }>;
     output: {
         value: number, // Sats
@@ -222,6 +223,14 @@ export interface BitcoinHtlcCreationInstructions {
         value: number, // Sats
     };
     refundAddress: string;
+    locktime?: number;
+}
+
+export interface EuroHtlcCreationInstructions {
+    type: 'EUR';
+    value: number; // Eurocents
+    fee: number; // Eurocents
+    bankLabel?: string;
 }
 
 export interface NimiqHtlcSettlementInstructions {
@@ -263,7 +272,6 @@ export interface BitcoinHtlcRefundInstructions {
         transactionHash: string,
         outputIndex: number,
         outputScript: string,
-        address: string, // HTLC address
         value: number, // Sats
         witnessScript: string,
     };
@@ -276,7 +284,8 @@ export interface BitcoinHtlcRefundInstructions {
 
 export type HtlcCreationInstructions =
     NimiqHtlcCreationInstructions
-    | BitcoinHtlcCreationInstructions;
+    | BitcoinHtlcCreationInstructions
+    | EuroHtlcCreationInstructions;
 
 export type HtlcSettlementInstructions =
     NimiqHtlcSettlementInstructions
@@ -286,30 +295,34 @@ export type HtlcRefundInstructions =
     NimiqHtlcRefundInstructions
     | BitcoinHtlcRefundInstructions;
 
-export interface SetupSwapRequest extends BasicRequest {
+export interface SetupSwapRequest extends SimpleRequest {
     swapId: string;
     fund: HtlcCreationInstructions;
     redeem: HtlcSettlementInstructions;
 
     // Data needed for display
     fiatCurrency: string;
-    nimFiatRate: number;
-    btcFiatRate: number;
-    serviceFundingNetworkFee: number; // Luna or Sats, depending which one gets funded
-    serviceRedeemingNetworkFee: number; // Luna or Sats, depending which one gets redeemed
-    serviceExchangeFee: number; // Luna or Sats, depending which one gets funded
-    nimiqAddresses: Array<{
+    fundingFiatRate: number;
+    redeemingFiatRate: number;
+    serviceFundingFee: number; // Luna or Sats, depending which one gets funded
+    serviceRedeemingFee: number; // Luna or Sats, depending which one gets redeemed
+    serviceSwapFee: number; // Luna or Sats, depending which one gets funded
+    layout?: 'standard' | 'slider';
+    nimiqAddresses?: Array<{
         address: string,
         balance: number, // Luna
     }>;
-    bitcoinAccount: {
+    bitcoinAccount?: {
         balance: number, // Sats
     };
 }
 
 export interface SetupSwapResult {
-    nim: SignedTransaction;
-    btc: SignedBtcTransaction;
+    nim?: SignedTransaction;
+    nimProxy?: SignedTransaction;
+    btc?: SignedBtcTransaction;
+    eur?: string; // When funding EUR: empty string, when redeeming EUR: JWS of the settlement instructions
+    refundTx?: string;
 }
 
 export interface RefundSwapRequest extends SimpleRequest {
@@ -371,6 +384,7 @@ export interface Account {
         internal: string[],
         external: string[],
     };
+    uid: string;
 }
 
 export interface ExportRequest extends SimpleRequest {
@@ -449,8 +463,10 @@ export interface SignBtcTransactionRequest extends SimpleRequest {
         address: string,
         transactionHash: string,
         outputIndex: number,
-        outputScript: string,
+        outputScript: string, // hex or base64
         value: number,
+        witnessScript?: string, // Custom witness script for p2wsh input. hex or base64.
+        sequence?: number,
     }>;
     output: {
         address: string,
@@ -461,6 +477,7 @@ export interface SignBtcTransactionRequest extends SimpleRequest {
         address: string,
         value: number,
     };
+    locktime?: number;
 }
 
 export interface SignedBtcTransaction {

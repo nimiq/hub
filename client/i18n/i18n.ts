@@ -6,10 +6,12 @@ import es from './es.json';
 import fil from './fil.json';
 import fr from './fr.json';
 import nl from './nl.json';
+import pl from './pl.json';
 import ru from './ru.json';
+import uk from './uk.json';
 import zh from './zh.json';
 
-const translations: { [lang: string]: { [id: string]: string } } = { de, en, es, fil, fr, nl, ru, zh };
+const translations: { [lang: string]: { [id: string]: string } } = { de, en, es, fil, fr, nl, pl, ru, uk, zh };
 
 export default function translate(id: string, language?: string) {
     if (!language) {
