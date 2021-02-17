@@ -32,6 +32,7 @@ export async function setLanguage(lang: string) {
     const messages = await import(/* webpackChunkName: "lang-[request]" */ `@/i18n/${lang}.po`);
     i18n.setLocaleMessage(lang, messages.default || {});
     LOADED_LANGUAGES.push(lang);
+    document.querySelector('html')!.setAttribute('lang', lang);
     i18n.locale = lang;
     return lang;
 }
