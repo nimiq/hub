@@ -206,6 +206,20 @@ export interface ParsedSetupSwapRequest extends ParsedSimpleRequest {
             address: string, // My address, must be redeem address of HTLC
             value: number, // Sats
         };
+    } | {
+        type: SwapAsset.EUR,
+        value: number; // Eurocents
+        fee: number; // Eurocents
+        bankLabel?: string;
+        settlement: {
+            type: 'sepa',
+            recipient: {
+                name: string,
+                iban: string,
+            },
+        } | {
+            type: 'mock',
+        };
     };
 
     // Data needed for display

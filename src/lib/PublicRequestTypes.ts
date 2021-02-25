@@ -269,6 +269,22 @@ export interface BitcoinHtlcSettlementInstructions {
     };
 }
 
+export interface EuroHtlcSettlementInstructions {
+    type: 'EUR';
+    value: number; // Eurocents
+    fee: number; // Eurocents
+    bankLabel?: string;
+    settlement: {
+        type: 'sepa',
+        recipient: {
+            name: string,
+            iban: string,
+        },
+    } | {
+        type: 'mock',
+    };
+}
+
 export interface NimiqHtlcRefundInstructions {
     type: 'NIM';
     sender: string; // HTLC address
@@ -302,7 +318,8 @@ export type HtlcCreationInstructions =
 
 export type HtlcSettlementInstructions =
     NimiqHtlcSettlementInstructions
-    | BitcoinHtlcSettlementInstructions;
+    | BitcoinHtlcSettlementInstructions
+    | EuroHtlcSettlementInstructions;
 
 export type HtlcRefundInstructions =
     NimiqHtlcRefundInstructions
