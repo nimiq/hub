@@ -505,7 +505,7 @@ export class RequestParser {
                     throw new Error('Funding type is not supported');
                 }
 
-                if (!['NIM', 'BTC'/* , 'EUR' */].includes(setupSwapRequest.redeem.type)) {
+                if (!['NIM', 'BTC', 'EUR'].includes(setupSwapRequest.redeem.type)) {
                     throw new Error('Redeeming type is not supported');
                 }
 
@@ -573,7 +573,10 @@ export class RequestParser {
                         extraData: typeof setupSwapRequest.redeem.extraData === 'string'
                             ? Nimiq.BufferUtils.fromAny(setupSwapRequest.redeem.extraData)
                             : setupSwapRequest.redeem.extraData,
-                    } : {
+                    } : setupSwapRequest.redeem.type === 'BTC' ? {
+                        ...setupSwapRequest.redeem,
+                        type: SwapAsset[setupSwapRequest.redeem.type],
+                    } : { // EUR
                         ...setupSwapRequest.redeem,
                         type: SwapAsset[setupSwapRequest.redeem.type],
                     },

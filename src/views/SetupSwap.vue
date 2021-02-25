@@ -10,6 +10,7 @@ import { Static } from '../lib/StaticStore';
 import { WalletInfo } from '../lib/WalletInfo';
 import { BtcAddressInfo } from '../lib/bitcoin/BtcAddressInfo';
 import { SwapAsset } from '@nimiq/fastspot-api';
+import { DEFAULT_KEY_PATH } from '../lib/Constants';
 
 // Import only types to avoid bundling of KeyguardClient in Ledger request if not required.
 // (But note that currently, the KeyguardClient is still always bundled in the RpcApi).
@@ -228,6 +229,17 @@ export default class SetupSwap extends BitcoinSyncBaseView {
                     ...this.request.redeem.output,
                     keyPath: addressInfo.path,
                 },
+            };
+        }
+
+        if (this.request.redeem.type === SwapAsset.EUR) {
+            redeemingInfo = {
+                type: SwapAsset.EUR,
+                keyPath: DEFAULT_KEY_PATH,
+                settlement: this.request.redeem.settlement,
+                amount: this.request.redeem.value,
+                fee: this.request.redeem.fee,
+                bankLabel: this.request.redeem.bankLabel,
             };
         }
 

@@ -243,12 +243,12 @@
                         class="signing-info nq-blue-bg"
                     >
                         <div class="signing-instructions">
-                            <CheckmarkSmallIcon v-for="step in _currentSigningInfo.step - 1" class="step" />
+                            <CheckmarkSmallIcon v-for="step in _currentSigningInfo.step - 1" class="step" :key="`step-icon-${step}`" />
                             <div v-if="_currentSigningInfo.totalSteps > 1" class="step current-step">
                                 {{ _currentSigningInfo.step }}
                             </div>
                             <div class="instructions-text">{{ _currentSigningInfo.instructions }}</div>
-                            <div class="step" v-for="step in _currentSigningInfo.totalSteps - _currentSigningInfo.step">
+                            <div class="step" v-for="step in _currentSigningInfo.totalSteps - _currentSigningInfo.step" :key="`step-${step}`">
                                 {{ step + _currentSigningInfo.step }}
                             </div>
                         </div>
@@ -563,6 +563,11 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
             return false;
         }
         return !this._isDestroyed;
+    }
+
+    protected _getOasisRecipientPublicKey() {
+        throw new Error('Not implemented for Ledger');
+        return 'pubkey?';
     }
 
     protected async _signSwapTransactions(htlcInfo: SwapHtlcInfo)

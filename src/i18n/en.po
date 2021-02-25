@@ -308,7 +308,7 @@ msgstr ""
 msgid "Collecting payment details"
 msgstr ""
 
-#: src/views/SetupSwapLedger.vue:986
+#: src/views/SetupSwapLedger.vue:991
 msgid "Confirm {outgoingOrIncoming} transaction on Ledger"
 msgstr ""
 
@@ -511,11 +511,11 @@ msgstr ""
 msgid "Fetching contract information..."
 msgstr ""
 
-#: src/views/SetupSwapSuccess.vue:490
+#: src/views/SetupSwapSuccess.vue:523
 msgid "Fetching swap data failed: {error}"
 msgstr ""
 
-#: src/views/SetupSwapSuccess.vue:480
+#: src/views/SetupSwapSuccess.vue:513
 msgid "Fetching swap data..."
 msgstr ""
 
@@ -583,7 +583,7 @@ msgstr ""
 msgid "Imported {count} address so far... | Imported {count} addresses so far..."
 msgstr ""
 
-#: src/views/SetupSwapLedger.vue:989
+#: src/views/SetupSwapLedger.vue:994
 msgid "incoming"
 msgstr ""
 
@@ -739,7 +739,7 @@ msgstr ""
 msgid "Orange"
 msgstr ""
 
-#: src/views/SetupSwapLedger.vue:988
+#: src/views/SetupSwapLedger.vue:993
 msgid "outgoing"
 msgstr ""
 
@@ -791,7 +791,7 @@ msgstr ""
 msgid "Prepare for update"
 msgstr ""
 
-#: src/views/SetupSwapSuccess.vue:473
+#: src/views/SetupSwapSuccess.vue:506
 msgid "Preparing Swap"
 msgstr ""
 
@@ -842,7 +842,7 @@ msgstr ""
 
 #: src/views/BitcoinSyncBaseView.vue:68
 #: src/views/LoginSuccess.vue:107
-#: src/views/SetupSwapSuccess.vue:498
+#: src/views/SetupSwapSuccess.vue:531
 #: src/views/SignupLedger.vue:145
 msgid "Retry"
 msgstr ""
@@ -877,7 +877,7 @@ msgstr ""
 msgid "Sign Message"
 msgstr ""
 
-#: src/views/SetupSwapSuccess.vue:482
+#: src/views/SetupSwapSuccess.vue:515
 msgid "Signing transactions..."
 msgstr ""
 
@@ -918,8 +918,8 @@ msgstr ""
 msgid "Swap fee"
 msgstr ""
 
-#: src/views/SetupSwapLedger.vue:850
-#: src/views/SetupSwapSuccess.vue:469
+#: src/views/SetupSwapLedger.vue:855
+#: src/views/SetupSwapSuccess.vue:502
 msgid "Swap Setup Failed"
 msgstr ""
 
@@ -935,8 +935,8 @@ msgid "Syncing consensus..."
 msgstr ""
 
 #: src/views/BitcoinSyncBaseView.vue:50
-#: src/views/SetupSwapLedger.vue:852
-#: src/views/SetupSwapSuccess.vue:471
+#: src/views/SetupSwapLedger.vue:857
+#: src/views/SetupSwapSuccess.vue:504
 #: src/views/SignBtcTransactionLedger.vue:117
 msgid "Syncing Failed"
 msgstr ""
@@ -954,7 +954,7 @@ msgid "Syncing with Bitcoin network failed: {error}"
 msgstr ""
 
 #: src/views/BitcoinSyncBaseView.vue:58
-#: src/views/SetupSwapLedger.vue:862
+#: src/views/SetupSwapLedger.vue:867
 msgid "Syncing with Bitcoin network..."
 msgstr ""
 
