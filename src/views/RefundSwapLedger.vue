@@ -30,7 +30,7 @@ import StatusScreen from '../components/StatusScreen.vue';
 import GlobalClose from '../components/GlobalClose.vue';
 import LedgerUi from '../components/LedgerUi.vue';
 import Network from '../components/Network.vue';
-import LedgerApi, { getBip32Path, parseBip32Path, Coin } from '@nimiq/ledger-api';
+import { getBip32Path, Coin } from '@nimiq/ledger-api';
 import { SwapAsset } from '@nimiq/fastspot-api';
 import Config from 'config';
 import {
@@ -51,18 +51,12 @@ import { WalletInfo } from '../lib/WalletInfo';
 import { BTC_NETWORK_TEST } from '../lib/bitcoin/BitcoinConstants';
 import { loadBitcoinJS } from '../lib/bitcoin/BitcoinJSLoader';
 import { decodeBtcScript } from '../lib/HtlcUtils';
+import { getLedgerSwapProxy, LedgerSwapProxyExtraData } from '../lib/LedgerSwapProxy';
 
 // Import only types to avoid bundling of KeyguardClient in Ledger request if not required.
 // (But note that currently, the KeyguardClient is still always bundled in the RpcApi).
 type KeyguardSignNimTransactionRequest = import('@nimiq/keyguard-client').SignTransactionRequest;
 type KeyguardSignBtcTransactionRequest = import('@nimiq/keyguard-client').SignBtcTransactionRequest;
-
-const ProxyExtraData = {
-    // HTLC Proxy Funding, abbreviated as 'HPFD', mapped to values outside of basic ascii range
-    FUND:  new Uint8Array([0, ...('HPFD'.split('').map((c) => c.charCodeAt(0) + 63))]),
-    // HTLC Proxy Redeeming, abbreviated as 'HPRD', mapped to values outside of basic ascii range
-    REDEEM: new Uint8Array([0, ...('HPRD'.split('').map((c) => c.charCodeAt(0) + 63))]),
-};
 
 @Component({components: {StatusScreen, SmallPage, GlobalClose, LedgerUi}})
 export default class RefundSwapLedger extends RefundSwap {
@@ -98,21 +92,15 @@ export default class RefundSwapLedger extends RefundSwap {
             const sender = senderInfo instanceof Nimiq.Address ? senderInfo : senderInfo.address;
             // existence guaranteed as already checked previously in RefundSwap
             const ledgerAccount = this.findWalletByAddress(recipient.toUserFriendlyAddress(), true)!;
-            const { addressIndex: ledgerAddressIndex } = parseBip32Path(
-                ledgerAccount.findSignerForAddress(recipient)!.path,
-            );
 
             const network = new Network();
             network.getNetworkClient(); // init network
 
             // For Ledgers, the HTLC is currently signed by a proxy address, see SetupSwapLedger
-            const proxyKeyPath = getBip32Path({
-                coin: Coin.NIMIQ,
-                accountIndex: 2 ** 31 - 1, // max index allowed by bip32
-                addressIndex: 2 ** 31 - 1 - ledgerAddressIndex, // use a distinct proxy per address for improved privacy
-            });
-            const pubKeyAsEntropy = await LedgerApi.Nimiq.getPublicKey(proxyKeyPath, ledgerAccount.keyId);
-            const proxyKey = Nimiq.KeyPair.derive(new Nimiq.PrivateKey(pubKeyAsEntropy.serialize()));
+            const proxyKey = await getLedgerSwapProxy(
+                ledgerAccount.findSignerForAddress(recipient)!.path,
+                ledgerAccount.keyId,
+            );
             const proxyAddress = proxyKey.publicKey.toAddress();
 
             let transaction: Nimiq.Transaction;
@@ -127,7 +115,7 @@ export default class RefundSwapLedger extends RefundSwap {
                     value,
                     fee,
                     validityStartHeight,
-                    data: ProxyExtraData.REDEEM,
+                    data: LedgerSwapProxyExtraData.REDEEM,
                 });
 
                 transaction.proof = Nimiq.SignatureProof.singleSig(
