@@ -308,7 +308,7 @@ msgstr ""
 msgid "Collecting payment details"
 msgstr ""
 
-#: src/views/SetupSwapLedger.vue:972
+#: src/views/SetupSwapLedger.vue:978
 msgid "Confirm {outgoingOrIncoming} transaction on Ledger"
 msgstr ""
 
@@ -583,7 +583,7 @@ msgstr ""
 msgid "Imported {count} address so far... | Imported {count} addresses so far..."
 msgstr ""
 
-#: src/views/SetupSwapLedger.vue:975
+#: src/views/SetupSwapLedger.vue:981
 msgid "incoming"
 msgstr ""
 
@@ -739,7 +739,7 @@ msgstr ""
 msgid "Orange"
 msgstr ""
 
-#: src/views/SetupSwapLedger.vue:974
+#: src/views/SetupSwapLedger.vue:980
 msgid "outgoing"
 msgstr ""
 
@@ -918,12 +918,12 @@ msgstr ""
 msgid "Swap fee"
 msgstr ""
 
-#: src/views/SetupSwapLedger.vue:836
+#: src/views/SetupSwapLedger.vue:842
 #: src/views/SetupSwapSuccess.vue:469
 msgid "Swap Setup Failed"
 msgstr ""
 
-#: src/views/RefundSwapLedger.vue:318
+#: src/views/RefundSwapLedger.vue:334
 msgid "Syncing"
 msgstr ""
 
@@ -935,17 +935,17 @@ msgid "Syncing consensus..."
 msgstr ""
 
 #: src/views/BitcoinSyncBaseView.vue:50
-#: src/views/SetupSwapLedger.vue:838
+#: src/views/SetupSwapLedger.vue:844
 #: src/views/SetupSwapSuccess.vue:471
 #: src/views/SignBtcTransactionLedger.vue:117
 msgid "Syncing Failed"
 msgstr ""
 
-#: src/views/RefundSwapLedger.vue:328
+#: src/views/RefundSwapLedger.vue:344
 msgid "Syncing with {currency} network failed: {error}"
 msgstr ""
 
-#: src/views/RefundSwapLedger.vue:323
+#: src/views/RefundSwapLedger.vue:339
 msgid "Syncing with {currency} network..."
 msgstr ""
 
@@ -954,7 +954,7 @@ msgid "Syncing with Bitcoin network failed: {error}"
 msgstr ""
 
 #: src/views/BitcoinSyncBaseView.vue:58
-#: src/views/SetupSwapLedger.vue:848
+#: src/views/SetupSwapLedger.vue:854
 msgid "Syncing with Bitcoin network..."
 msgstr ""
 

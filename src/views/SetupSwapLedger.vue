@@ -470,7 +470,13 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
             // As the Ledger Nimiq app currently does not support signing HTLCs yet, we use a proxy in-memory key.
             // This key gets deterministically derived from a Ledger public key and a secret salt as entropy.
             this._nimiqProxyKeyPromise = (async () => {
-                const nimProxyKey = await getLedgerSwapProxy(signerPath, this._account.keyId);
+                const swapValidityStartHeight = this.request.fund.type === SwapAsset.NIM
+                    ? this.request.fund.validityStartHeight
+                    : this.request.redeem.type === SwapAsset.NIM
+                        ? this.request.redeem.validityStartHeight
+                        : (() => { throw new Error('Unexpected'); })(); // should never happen
+                // Retrieve the proxy from the Ledger
+                const nimProxyKey = await getLedgerSwapProxy(swapValidityStartHeight, signerPath, this._account.keyId);
 
                 // Replace nim address by the proxy's address. Don't replace request.nimiqAddresses which should contain
                 // the original address for display.

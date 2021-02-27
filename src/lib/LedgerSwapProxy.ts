@@ -10,14 +10,16 @@ export const LedgerSwapProxyExtraData = {
 
 const LEDGER_SWAP_PROXY_SALT_STORAGE_KEY = 'ledger-swap-proxy-salt';
 
-export async function getLedgerSwapProxy(ownerPath: string, ownerKeyId?: string) {
+export async function getLedgerSwapProxy(swapValidityStartHeight: number, ownerPath: string, ownerKeyId?: string) {
     const { addressIndex } = parseBip32Path(ownerPath);
     // Use a public key derived from the Ledger as part of the entropy to make access to the Ledger mandatory for
     // signing proxy transactions.
     const proxyKeyPath = getBip32Path({
         coin: Coin.NIMIQ,
-        accountIndex: 2 ** 31 - 1, // max index allowed by bip32
-        addressIndex: 2 ** 31 - 1 - addressIndex, // use a distinct proxy per address for improved privacy
+        // Create a unique proxy per swap by factoring in the validity start height at the time of proxy funding and
+        // the address index of the proxy owning Ledger address. Go from the maximum index allowed by bip32.
+        accountIndex: 2 ** 31 - 1 - swapValidityStartHeight,
+        addressIndex: 2 ** 31 - 1 - addressIndex,
     });
     const [entropySourcePublicKey] = await Promise.all([
         LedgerApi.Nimiq.getPublicKey(proxyKeyPath, ownerKeyId),

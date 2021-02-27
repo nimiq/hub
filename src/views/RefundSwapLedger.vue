@@ -69,6 +69,16 @@ export default class RefundSwapLedger extends RefundSwap {
 
     protected async created() {
         if (this.request.kind === RequestType.REFUND_SWAP) {
+            if ((this.request as ParsedRefundSwapRequest).refund.type === SwapAsset.NIM) {
+                const network = new Network();
+                Promise.all([
+                    // start syncing with the network for later retrieving transaction histories below
+                    network.getNetworkClient(),
+                    // preload nimiq cryptography used in getLedgerSwapProxy, createTx, makeSignTransactionResult
+                    loadNimiq(),
+                ]).catch(() => void 0);
+            }
+
             // first entry point into the flow is handled by the parent class which then calls _signTransaction
             return;
         }
@@ -95,34 +105,51 @@ export default class RefundSwapLedger extends RefundSwap {
             const ledgerAccount = this.findWalletByAddress(recipient.toUserFriendlyAddress(), true)!;
 
             const network = new Network();
-            Promise.all([
-                // init network
-                network.getNetworkClient(),
-                // preload nimiq cryptography used in getLedgerSwapProxy, createTx, makeSignTransactionResult
-                loadNimiq(),
-            ]).catch(() => void 0);
+            const networkClient = await network.getNetworkClient();
 
-            // For Ledgers, the HTLC is currently signed by a proxy address, see SetupSwapLedger
+            const senderUserFriendlyAddress = sender.toUserFriendlyAddress();
+            const senderTransactionHistory = await networkClient.getTransactionsByAddress(senderUserFriendlyAddress);
+            if (!senderTransactionHistory.length) {
+                this.$rpc.reject(new Error('Failed to sync sender transaction history'));
+                return;
+            }
+            // Get the oldest transaction as funding the transaction. Note that non-legacy swap proxies are swap
+            // specific and not reused.
+            const senderFundingTransaction = senderTransactionHistory[senderTransactionHistory.length - 1];
+
+            // For Ledgers, the HTLC is currently created and owned by an intermediary proxy key, see SetupSwapLedger.
+            // Determine the proxy address.
+            let proxyUserFriendlyAddress: string;
+            if (senderFundingTransaction.data.raw === Nimiq.BufferUtils.toHex(LedgerSwapProxyExtraData.FUND)) {
+                // The refund sender got funded by a proxy funding transaction, thus is the proxy.
+                proxyUserFriendlyAddress = senderUserFriendlyAddress;
+            } else {
+                // The refund sender is the HTLC which got funded by the proxy.
+                proxyUserFriendlyAddress = senderFundingTransaction.sender;
+            }
+
+            // Retrieve the proxy key for this swap from the Ledger
             const ledgerRecipientPath = ledgerAccount.findSignerForAddress(recipient)!.path;
-            const proxyKey = await getLedgerSwapProxy(
+            let proxyKey = await getLedgerSwapProxy(
+                senderFundingTransaction.validityStartHeight, // same for proxy funding and htlc funding tx
                 ledgerRecipientPath,
                 ledgerAccount.keyId,
             );
-            const proxyAddress = proxyKey.publicKey.toAddress();
-            const legacyProxyKey = await getLegacyLedgerSwapProxy(
-                ledgerRecipientPath,
-                ledgerAccount.keyId,
-            );
-            const legacyProxyAddress = legacyProxyKey.publicKey.toAddress();
+            if (proxyKey.publicKey.toAddress().toUserFriendlyAddress() !== proxyUserFriendlyAddress) {
+                proxyKey = await getLegacyLedgerSwapProxy(
+                    ledgerRecipientPath,
+                    ledgerAccount.keyId,
+                );
+            }
 
-            let transaction: Nimiq.Transaction;
+            // Sign the refund transaction
+            let refundTransaction: Nimiq.Transaction;
 
-            if (sender.equals(proxyAddress) || sender.equals(legacyProxyAddress)) {
+            if (senderUserFriendlyAddress === proxyUserFriendlyAddress) {
                 // Redeem funds from proxy.
-                const proxyToUse = sender.equals(proxyAddress) ? proxyKey : legacyProxyKey;
 
-                transaction = await network.createTx({
-                    signerPubKey: proxyToUse.publicKey,
+                refundTransaction = await network.createTx({
+                    signerPubKey: proxyKey.publicKey,
                     sender,
                     recipient,
                     value,
@@ -131,31 +158,20 @@ export default class RefundSwapLedger extends RefundSwap {
                     data: LedgerSwapProxyExtraData.REDEEM,
                 });
 
-                transaction.proof = Nimiq.SignatureProof.singleSig(
-                    proxyToUse.publicKey,
+                refundTransaction.proof = Nimiq.SignatureProof.singleSig(
+                    proxyKey.publicKey,
                     Nimiq.Signature.create(
-                        proxyToUse.privateKey,
-                        proxyToUse.publicKey,
-                        transaction.serializeContent(),
+                        proxyKey.privateKey,
+                        proxyKey.publicKey,
+                        refundTransaction.serializeContent(),
                     ),
                 ).serialize();
             } else {
                 // Redeem funds from htlc.
-                // Determine proxy to use.
-                const networkClient = await network.getNetworkClient();
-                const [htlcDetails] = await networkClient.getAccounts(sender.toUserFriendlyAddress());
-                if (Nimiq.Account.Type.fromAny(htlcDetails.type) !== Nimiq.Account.Type.HTLC) {
-                    this.$rpc.reject(new Error(`Unexpected refund sender type ${htlcDetails.type}`));
-                    return;
-                }
-                const proxyToUse = (htlcDetails as any).sender === proxyAddress.toUserFriendlyAddress()
-                    ? proxyKey
-                    : legacyProxyKey;
-
                 // Htlc redeem tx currently has to be signed by the proxy but doesn't have to forward funds through it.
 
-                transaction = await network.createTx({
-                    signerPubKey: proxyToUse.publicKey,
+                refundTransaction = await network.createTx({
+                    signerPubKey: proxyKey.publicKey,
                     sender,
                     senderType: Nimiq.Account.Type.HTLC,
                     recipient,
@@ -170,17 +186,17 @@ export default class RefundSwapLedger extends RefundSwap {
                 // FIXME: Use constant when HTLC is part of CoreJS web-offline build
                 proof.writeUint8(3 /* Nimiq.HashedTimeLockedContract.ProofType.TIMEOUT_RESOLVE */);
                 Nimiq.SignatureProof.singleSig(
-                    proxyToUse.publicKey,
+                    proxyKey.publicKey,
                     Nimiq.Signature.create(
-                        proxyToUse.privateKey,
-                        proxyToUse.publicKey,
-                        transaction.serializeContent(),
+                        proxyKey.privateKey,
+                        proxyKey.publicKey,
+                        refundTransaction.serializeContent(),
                     ),
                 ).serialize(proof);
-                transaction.proof = proof;
+                refundTransaction.proof = proof;
             }
 
-            this.$rpc.resolve(await network.makeSignTransactionResult(transaction));
+            this.$rpc.resolve(await network.makeSignTransactionResult(refundTransaction));
         } else if (this.request.kind === RequestType.SIGN_BTC_TRANSACTION) {
             // Bitcoin transaction
 
