@@ -18,6 +18,15 @@ export interface ParsedOnboardRequest extends ParsedBasicRequest {
     disableBack: boolean;
 }
 
+export interface ParsedChooseAddressRequest extends ParsedBasicRequest {
+    returnBtcAddress: boolean;
+    minBalance: number;
+    disableContracts: boolean;
+    disableLegacyAddresses: boolean;
+    disableBip39Addresses: boolean;
+    disableLedgerAddresses: boolean;
+}
+
 export interface ParsedSignTransactionRequest extends ParsedBasicRequest {
     // The sender object is currently only for internal use in RefundSwapLedger and can not be set in public request.
     // Note that the object does not get exported to the history state in RpcApi and therefore does not survive reloads.
