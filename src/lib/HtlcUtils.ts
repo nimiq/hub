@@ -2,12 +2,15 @@ import { BIP84_ADDRESS_PREFIX } from './bitcoin/BitcoinConstants';
 import { loadBitcoinJS } from './bitcoin/BitcoinJSLoader';
 import Config from 'config';
 
-export function decodeNimHtlcData(data: string) {
+export function decodeNimHtlcData(data: string | Uint8Array) {
     const error = new Error('Invalid NIM HTLC data');
 
-    if (typeof data !== 'string' || data.length !== 156) throw error;
+    if (typeof data === 'string') {
+        data = Nimiq.BufferUtils.fromAny(data);
+    }
+    if (data.length !== 78) throw error;
 
-    const buf = new Nimiq.SerialBuffer(Nimiq.BufferUtils.fromHex(data));
+    const buf = new Nimiq.SerialBuffer(data);
 
     const sender = Nimiq.Address.unserialize(buf).toUserFriendlyAddress();
     const recipient = Nimiq.Address.unserialize(buf).toUserFriendlyAddress();
