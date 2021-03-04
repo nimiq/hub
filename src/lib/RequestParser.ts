@@ -260,12 +260,12 @@ export class RequestParser {
                 return {
                     kind: requestType,
                     appName: chooseAddressRequest.appName,
-                    returnBtcAddress: chooseAddressRequest.returnBtcAddress || false,
-                    minBalance: chooseAddressRequest.minBalance || 0,
-                    disableContracts: chooseAddressRequest.disableContracts || false,
-                    disableLegacyAddresses: chooseAddressRequest.disableLegacyAddresses || false,
-                    disableBip39Addresses: chooseAddressRequest.disableBip39Addresses || false,
-                    disableLedgerAddresses: chooseAddressRequest.disableLedgerAddresses || false,
+                    returnBtcAddress: !!chooseAddressRequest.returnBtcAddress,
+                    minBalance: Number(chooseAddressRequest.minBalance) || 0,
+                    disableContracts: !!chooseAddressRequest.disableContracts,
+                    disableLegacyAddresses: !!chooseAddressRequest.disableLegacyAddresses,
+                    disableBip39Addresses: !!chooseAddressRequest.disableBip39Addresses,
+                    disableLedgerAddresses: !!chooseAddressRequest.disableLedgerAddresses,
                 } as ParsedChooseAddressRequest;
             case RequestType.SIGNUP:
             case RequestType.LOGIN:

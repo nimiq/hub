@@ -18,7 +18,7 @@
                 @account-selected="accountSelected"
                 @login="() => goToOnboarding(false)"/>
 
-            <StatusScreen v-if="state !== 'none'"
+            <StatusScreen v-if="state !== State.NONE"
                 :state="statusScreenState"
                 :title="statusScreenTitle"
                 :status="statusScreenStatus"
@@ -37,18 +37,18 @@
 import { Component } from 'vue-property-decorator';
 import { Getter, Mutation } from 'vuex-class';
 import { SmallPage, AccountSelector } from '@nimiq/vue-components';
+import BitcoinSyncBaseView from './BitcoinSyncBaseView.vue';
+import StatusScreen from '../components/StatusScreen.vue';
 import GlobalClose from '../components/GlobalClose.vue';
 import { ChooseAddressResult, RequestType } from '../lib/PublicRequestTypes';
 import { ParsedChooseAddressRequest } from '../lib/RequestTypes';
-import staticStore, { Static } from '@/lib/StaticStore';
+import staticStore, { Static } from '../lib/StaticStore';
 import { WalletInfo } from '../lib/WalletInfo';
 import { AccountInfo } from '../lib/AccountInfo';
 import { ContractInfo } from '../lib/ContractInfo';
 import WalletInfoCollector from '../lib/WalletInfoCollector';
 import { WalletStore } from '../lib/WalletStore';
-import BitcoinSyncBaseView from './BitcoinSyncBaseView.vue';
 import { BtcAddressInfo } from '../lib/bitcoin/BtcAddressInfo';
-import StatusScreen from '../components/StatusScreen.vue';
 
 @Component({components: { AccountSelector, SmallPage, StatusScreen, GlobalClose }})
 export default class ChooseAddress extends BitcoinSyncBaseView {
@@ -103,12 +103,12 @@ export default class ChooseAddress extends BitcoinSyncBaseView {
                 return;
             }
             walletInfo.btcAddresses = btcAddresses;
-            WalletStore.Instance.put(walletInfo);
+            await WalletStore.Instance.put(walletInfo);
             const unusedExternalAddresses = btcAddresses.external.filter((addressInfo) => !addressInfo.used);
             if (unusedExternalAddresses.length > 0) {
                 // We try to use the 7th unused address, because the first is reserved for swaps, and the next 5
                 // are reserved for copying in the Wallet. This way we hope to not have double-use of an address.
-                btcAddress = unusedExternalAddresses[Math.min(unusedExternalAddresses.length, 6)].address;
+                btcAddress = unusedExternalAddresses[Math.min(unusedExternalAddresses.length - 1, 6)].address;
             }
         }
 
