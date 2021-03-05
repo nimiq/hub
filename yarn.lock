@@ -995,22 +995,22 @@
   resolved "https://registry.yarnpkg.com/@nimiq/core-web/-/core-web-1.5.3.tgz#f0a4de59394f210f2c2d9cda8ee35c716847d40e"
   integrity sha512-W66SS9n3ygYgD52r1GJr1WtYYOkcZsqdtMmDCEwDvkrmeARnHs2sAvj77Wt4PQG8JA7GwK5svIJr6rGccCaekw==
 
-"@nimiq/core-web@^1.5.4":
-  version "1.5.4"
-  resolved "https://registry.yarnpkg.com/@nimiq/core-web/-/core-web-1.5.4.tgz#647e3f018b5a3245f1feb028ca77155a89528cb4"
-  integrity sha512-g08sY0afLC6u1zfWsS+vhNm90XpPU4bWI9k9qAiqicxXtF0sM+f7CyfXuUXRjeK6cEqeK3GLesygT4BM5kOhTQ==
-
 "@nimiq/core-web@^1.5.6":
   version "1.5.6"
   resolved "https://registry.yarnpkg.com/@nimiq/core-web/-/core-web-1.5.6.tgz#3802f9ed996bbd84186b455d28bedc0b62ba20e7"
   integrity sha512-42tDJBoniJqAg3jYqb+5EzLQYY7/fl2UHMM3jfLpgDuYUgKAk4mHcJ9rP5cWCrkaWfR2z+ZMkaGiWdkrpxwBlQ==
 
-"@nimiq/core@^1.5.4":
-  version "1.5.7"
-  resolved "https://registry.yarnpkg.com/@nimiq/core/-/core-1.5.7.tgz#60e07174925dcb273c336bbdf6b05f96d35b42b3"
-  integrity sha512-wP6PffJv3oemTXVG42+OlU0KodSOOc9NEiHZVlF4pJHtdGiGGFfBzZQOSwkd6kYdPy3102TOFrPEllzEgI+FmA==
+"@nimiq/core-web@^1.5.8":
+  version "1.5.8"
+  resolved "https://registry.yarnpkg.com/@nimiq/core-web/-/core-web-1.5.8.tgz#da8abef84c6d293cbb9ca495a77f08daa08886b9"
+  integrity sha512-MNpFbGZetz2eZcHtJVa5tpmLjPf65mTcJBRQkOHS8kWE+f+Z++hdnwWUBQCEAph4oC6bsE5JSuU7VpwcogN7+w==
+
+"@nimiq/core@^1.5.8":
+  version "1.5.8"
+  resolved "https://registry.yarnpkg.com/@nimiq/core/-/core-1.5.8.tgz#44c9708c236972ae6891d77f6dae5a1939e504f5"
+  integrity sha512-rVRUgSxmYSZTcpmamwW8Iz0JU4xzG8ECrr7ZlD+mTTSbtgRUkf5SUJ9qNvkxM3pC+9620XILjZpTIlL6ScrJLw==
   dependencies:
-    "@nimiq/jungle-db" "^0.9.20"
+    "@nimiq/jungle-db" "^0.9.22"
     atob "^2.0.3"
     bindings "^1.3.0"
     btoa "^1.1.2"
@@ -1039,7 +1039,7 @@
   dependencies:
     dom-parser "^0.1.5"
 
-"@nimiq/jungle-db@^0.9.20":
+"@nimiq/jungle-db@^0.9.22":
   version "0.9.22"
   resolved "https://registry.yarnpkg.com/@nimiq/jungle-db/-/jungle-db-0.9.22.tgz#a65ac962f777052a632552edff4a60f3e1e1cff1"
   integrity sha512-4zTBL9gRThq3dLK1AISSA9wXXYhaU39bX/KVE8Qa/MxqSUUWgZml9BvZnWf5gno2qdr3fvng3hqGZ5eveCADGg==

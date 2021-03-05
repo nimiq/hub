@@ -9,7 +9,7 @@
   "private": false,
   "types": "types/index.d.ts",
   "dependencies": {
-    "@nimiq/core-web": "^1.5.3",
+    "@nimiq/core-web": "^1.5.8",
     "@nimiq/rpc": "^0.4.0",
     "big-integer": "^1.6.48"
   },
