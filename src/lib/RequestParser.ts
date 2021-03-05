@@ -8,6 +8,7 @@ import {
     ExportRequest,
     ManageCashlinkRequest,
     OnboardRequest,
+    ChooseAddressRequest,
     RenameRequest,
     RpcRequest,
     SignMessageRequest,
@@ -29,6 +30,7 @@ import {
     ParsedExportRequest,
     ParsedManageCashlinkRequest,
     ParsedOnboardRequest,
+    ParsedChooseAddressRequest,
     ParsedRenameRequest,
     ParsedRpcRequest,
     ParsedSignMessageRequest,
@@ -253,8 +255,19 @@ export class RequestParser {
                     appName: onboardRequest.appName,
                     disableBack: !!onboardRequest.disableBack,
                 } as ParsedOnboardRequest;
-            case RequestType.SIGNUP:
             case RequestType.CHOOSE_ADDRESS:
+                const chooseAddressRequest = request as ChooseAddressRequest;
+                return {
+                    kind: requestType,
+                    appName: chooseAddressRequest.appName,
+                    returnBtcAddress: !!chooseAddressRequest.returnBtcAddress,
+                    minBalance: Number(chooseAddressRequest.minBalance) || 0,
+                    disableContracts: !!chooseAddressRequest.disableContracts,
+                    disableLegacyAccounts: !!chooseAddressRequest.disableLegacyAccounts,
+                    disableBip39Accounts: !!chooseAddressRequest.disableBip39Accounts,
+                    disableLedgerAccounts: !!chooseAddressRequest.disableLedgerAccounts,
+                } as ParsedChooseAddressRequest;
+            case RequestType.SIGNUP:
             case RequestType.LOGIN:
             case RequestType.MIGRATE:
             case RequestType.ADD_VESTING_CONTRACT:
@@ -680,8 +693,12 @@ export class RequestParser {
                     appName: onboardRequest.appName,
                     disableBack: onboardRequest.disableBack,
                 } as OnboardRequest;
-            case RequestType.SIGNUP:
             case RequestType.CHOOSE_ADDRESS:
+                const chooseAddressRequest = request as ParsedChooseAddressRequest;
+                return {
+                    ...chooseAddressRequest,
+                } as ChooseAddressRequest;
+            case RequestType.SIGNUP:
             case RequestType.LOGIN:
             case RequestType.MIGRATE:
             case RequestType.ADD_VESTING_CONTRACT:

@@ -49,6 +49,19 @@ export interface OnboardRequest extends BasicRequest {
     disableBack?: boolean;
 }
 
+export interface ChooseAddressRequest extends BasicRequest {
+    returnBtcAddress?: boolean;
+    minBalance?: number;
+    disableContracts?: boolean;
+    disableLegacyAccounts?: boolean;
+    disableBip39Accounts?: boolean;
+    disableLedgerAccounts?: boolean;
+}
+
+export interface ChooseAddressResult extends Address {
+    btcAddress?: string;
+}
+
 export interface SignTransactionRequest extends BasicRequest {
     sender: string;
     recipient: string;
@@ -500,6 +513,7 @@ export type RpcRequest = SignTransactionRequest
                        | CheckoutRequest
                        | BasicRequest
                        | SimpleRequest
+                       | ChooseAddressRequest
                        | OnboardRequest
                        | RenameRequest
                        | SignMessageRequest
@@ -513,6 +527,7 @@ export type RpcResult = SignedTransaction
                       | Account
                       | Account[]
                       | SimpleResult
+                      | ChooseAddressResult
                       | Address
                       | Cashlink
                       | Cashlink[]
