@@ -1,8 +1,13 @@
 import { isMilliseconds, includesOrigin } from './Helpers';
 import { State } from '@nimiq/rpc';
 import {
-    BasicRequest,
+    RequestType,
     CashlinkTheme,
+    Currency,
+    PaymentType,
+} from './PublicRequestTypes';
+import type {
+    BasicRequest,
     CheckoutRequest,
     CreateCashlinkRequest,
     ExportRequest,
@@ -14,16 +19,13 @@ import {
     SignMessageRequest,
     SignTransactionRequest,
     SimpleRequest,
-    Currency,
-    PaymentType,
-    RequestType,
     NimiqCheckoutRequest,
     MultiCurrencyCheckoutRequest,
     SignBtcTransactionRequest,
     SetupSwapRequest,
     RefundSwapRequest,
 } from './PublicRequestTypes';
-import {
+import type {
     ParsedBasicRequest,
     ParsedCheckoutRequest,
     ParsedCreateCashlinkRequest,

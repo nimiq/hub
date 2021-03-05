@@ -3,8 +3,8 @@ import { BTC_NETWORK_MAIN } from './BitcoinConstants';
 import { loadBitcoinJS } from './BitcoinJSLoader';
 
 // Import only types to avoid bundling of lazy-loaded libs.
-type ElectrumClient = import('@nimiq/electrum-client').ElectrumClient;
-type BitcoinJsTransaction = import('bitcoinjs-lib').Transaction;
+import type { ElectrumClient } from '@nimiq/electrum-client';
+import type { Transaction as BitcoinJsTransaction } from 'bitcoinjs-lib';
 
 let electrumClientPromise: Promise<ElectrumClient> | null = null;
 

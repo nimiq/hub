@@ -4,9 +4,9 @@ import { fetchTransaction } from './ElectrumClient';
 import { loadBitcoinJS } from './BitcoinJSLoader';
 
 // Import only types to avoid bundling
-type BitcoinJsTransaction = import('bitcoinjs-lib').Transaction;
-type BitcoinTransactionInfo = import('../../views/SignBtcTransaction.vue').BitcoinTransactionInfo;
-type LedgerBitcoinTransactionInfo = import('@nimiq/ledger-api').TransactionInfoBitcoin;
+import type { Transaction as BitcoinJsTransaction } from 'bitcoinjs-lib';
+import type { BitcoinTransactionInfo } from '../../views/SignBtcTransaction.vue';
+import type { TransactionInfoBitcoin as LedgerBitcoinTransactionInfo } from '@nimiq/ledger-api';
 
 export async function prepareBitcoinTransactionForLedgerSigning(
     transactionInfo: Omit<BitcoinTransactionInfo, 'inputs'>
@@ -53,7 +53,7 @@ export async function prepareBitcoinTransactionForLedgerSigning(
         outputs.push({
             amount: transactionInfo.changeOutput.value,
             outputScript: BitcoinJS.address.toOutputScript(
-                transactionInfo.changeOutput.address,
+                transactionInfo.changeOutput.address!,
                 network,
             ).toString('hex'),
         });
