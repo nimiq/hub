@@ -53,9 +53,9 @@ export interface ChooseAddressRequest extends BasicRequest {
     returnBtcAddress?: boolean;
     minBalance?: number;
     disableContracts?: boolean;
-    disableLegacyAddresses?: boolean;
-    disableBip39Addresses?: boolean;
-    disableLedgerAddresses?: boolean;
+    disableLegacyAccounts?: boolean;
+    disableBip39Accounts?: boolean;
+    disableLedgerAccounts?: boolean;
 }
 
 export interface ChooseAddressResult extends Address {

@@ -11,9 +11,9 @@
                 :wallets="processedWallets"
                 :minBalance="request.minBalance"
                 :disableContracts="request.disableContracts"
-                :disableLegacyAccounts="request.disableLegacyAddresses"
-                :disableBip39Accounts="request.disableBip39Addresses"
-                :disableLedgerAccounts="request.disableLedgerAddresses"
+                :disableLegacyAccounts="request.disableLegacyAccounts"
+                :disableBip39Accounts="request.disableBip39Accounts"
+                :disableLedgerAccounts="request.disableLedgerAccounts"
                 :highlightBitcoinAccounts="request.returnBtcAddress"
                 @account-selected="accountSelected"
                 @login="() => goToOnboarding(false)"/>

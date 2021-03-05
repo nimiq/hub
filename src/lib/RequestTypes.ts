@@ -22,9 +22,9 @@ export interface ParsedChooseAddressRequest extends ParsedBasicRequest {
     returnBtcAddress: boolean;
     minBalance: number;
     disableContracts: boolean;
-    disableLegacyAddresses: boolean;
-    disableBip39Addresses: boolean;
-    disableLedgerAddresses: boolean;
+    disableLegacyAccounts: boolean;
+    disableBip39Accounts: boolean;
+    disableLedgerAccounts: boolean;
 }
 
 export interface ParsedSignTransactionRequest extends ParsedBasicRequest {

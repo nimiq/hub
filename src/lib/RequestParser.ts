@@ -263,9 +263,9 @@ export class RequestParser {
                     returnBtcAddress: !!chooseAddressRequest.returnBtcAddress,
                     minBalance: Number(chooseAddressRequest.minBalance) || 0,
                     disableContracts: !!chooseAddressRequest.disableContracts,
-                    disableLegacyAddresses: !!chooseAddressRequest.disableLegacyAddresses,
-                    disableBip39Addresses: !!chooseAddressRequest.disableBip39Addresses,
-                    disableLedgerAddresses: !!chooseAddressRequest.disableLedgerAddresses,
+                    disableLegacyAccounts: !!chooseAddressRequest.disableLegacyAccounts,
+                    disableBip39Accounts: !!chooseAddressRequest.disableBip39Accounts,
+                    disableLedgerAccounts: !!chooseAddressRequest.disableLedgerAccounts,
                 } as ParsedChooseAddressRequest;
             case RequestType.SIGNUP:
             case RequestType.LOGIN:
