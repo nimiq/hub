@@ -959,7 +959,7 @@ msgstr "青"
 msgid "The connected wallet or Ledger is not the one this account belongs to."
 msgstr "您连接的钱包或Ledger不是这个账户所属的。"
 
-#: src/i18n/i18n-setup.ts:63
+#: src/i18n/i18n-setup.ts:64
 msgid ""
 "The display language changed. Do you want to reload the page to update all "
 "translations? Otherwise, some translations might not be updated "

@@ -2,12 +2,12 @@
 # Translators:
 # Talleyrand, 2020
 # Daniel, 2020
-# Matheo <matheo@nimiq.com>, 2021
 # Robinson BARAIS, 2021
+# Matheo <matheo@nimiq.com>, 2021
 # 
 msgid ""
 msgstr ""
-"Last-Translator: Robinson BARAIS, 2021\n"
+"Last-Translator: Matheo <matheo@nimiq.com>, 2021\n"
 "Language-Team: French (https://www.transifex.com/nimiq-foundation/teams/110181/fr/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: fr\n"
@@ -23,11 +23,11 @@ msgstr "Compte {color}"
 
 #: src/views/SetupSwapLedger.vue:57 src/views/SetupSwapLedger.vue:78
 msgid "{percentage} of swap value."
-msgstr ""
+msgstr "{percentage} de la valeur du swap."
 
 #: src/views/SetupSwapLedger.vue:30
 msgid "{totalFees} fees"
-msgstr ""
+msgstr "{totalFees} frais"
 
 #: src/components/NonNimiqCheckoutCard.vue:64
 msgid "+ network fee"
@@ -83,7 +83,7 @@ msgstr "Ajouter un contrat d'acquisition"
 
 #: src/views/SetupSwapLedger.vue:269
 msgid "Address"
-msgstr ""
+msgstr "Adresse"
 
 #: src/views/AddAddressLedger.vue:16
 msgid "Address Added"
@@ -109,7 +109,7 @@ msgstr "Montant / Étape :"
 
 #: src/views/SetupSwapLedger.vue:47
 msgid "Atomic swaps require two BTC transactions."
-msgstr ""
+msgstr "Les swaps atomique nécessitent 2 transactions BTC."
 
 #: src/views/CashlinkManage.vue:158 src/views/CheckoutTransmission.vue:77
 msgid "Awaiting receipt confirmation..."
@@ -182,7 +182,7 @@ msgstr "Solde :"
 
 #: src/views/SetupSwapLedger.vue:106 src/views/SetupSwapLedger.vue:153
 msgid "Bitcoin"
-msgstr ""
+msgstr "Bitcoin"
 
 #: src/views/ActivateBitcoinSuccess.vue:89
 msgid "Bitcoin activated"
@@ -202,7 +202,7 @@ msgstr "Marron"
 
 #: src/views/SetupSwapLedger.vue:42
 msgid "BTC network fee"
-msgstr ""
+msgstr "Frais de réseau BTC"
 
 #: src/views/CashlinkCreate.vue:20
 msgid ""
@@ -307,7 +307,7 @@ msgstr "Réclamation du Cashlink"
 
 #: src/components/LedgerUi.vue:300
 msgid "Click Connect"
-msgstr ""
+msgstr "Cliquez sur Connecter"
 
 #: src/views/RequestError.vue:31
 msgid "Close"
@@ -319,7 +319,7 @@ msgstr "Collection des détails du paiement"
 
 #: src/views/SetupSwapLedger.vue:986
 msgid "Confirm {outgoingOrIncoming} transaction on Ledger"
-msgstr ""
+msgstr "Confirmez la transaction {outgoingOrIncoming} sur votre Ledger"
 
 #: src/components/LedgerUi.vue:214
 msgid "Confirm Address"
@@ -331,7 +331,7 @@ msgstr "Confimer le Cashlink"
 
 #: src/views/SetupSwapLedger.vue:5
 msgid "Confirm Swap"
-msgstr ""
+msgstr "Confirmez le swap"
 
 #: src/components/LedgerUi.vue:217
 msgid "Confirm that the address on your Ledger matches {addressToConfirm}"
@@ -373,7 +373,7 @@ msgstr "Connecter le Ledger"
 
 #: src/components/LedgerUi.vue:295
 msgid "Connect your Ledger Device"
-msgstr ""
+msgstr "Connectez votre Ledger"
 
 #: src/components/OnboardingMenu.vue:6
 msgid "Connect your Ledger Nano S or Nano X."
@@ -482,7 +482,7 @@ msgstr "Saisissez l'adresse d'un contrat d'acquisition."
 
 #: src/components/LedgerUi.vue:296
 msgid "Enter your PIN"
-msgstr ""
+msgstr "Entrez votre PIN"
 
 #: src/views/CashlinkCreate.vue:160
 msgid "express"
@@ -586,7 +586,7 @@ msgstr ""
 
 #: src/views/SetupSwapLedger.vue:989
 msgid "incoming"
-msgstr ""
+msgstr "entrante"
 
 #: src/components/CheckoutCard.vue:190
 msgid "Incomplete payment"
@@ -610,7 +610,7 @@ msgstr ""
 
 #: src/views/OnboardingSelector.vue:96
 msgid "Join Nimiq"
-msgstr ""
+msgstr "Rejoindre Nimiq"
 
 #: src/lib/LabelingMachine.ts:17
 msgid "Ledger Account"
@@ -694,7 +694,7 @@ msgstr "Nouveau Cashlink"
 
 #: src/views/SetupSwapLedger.vue:64
 msgid "NIM network fee"
-msgstr ""
+msgstr "Frais de réseau NIM"
 
 #: src/views/Migrate.vue:23
 msgid "Nimiq implements the ImageWallet standard with the Nimiq Login File."
@@ -721,6 +721,8 @@ msgid ""
 "No registration, no install,\n"
 "100% free"
 msgstr ""
+"Pas d'inscription, pas d'installation,\n"
+"100% gratuit"
 
 #: src/components/NimiqCheckoutCard.vue:69
 msgid "None of your available addresses has sufficient balance."
@@ -732,7 +734,7 @@ msgstr "Rien à mettre à jour."
 
 #: src/views/SetupSwapLedger.vue:52
 msgid "OASIS service fee"
-msgstr ""
+msgstr "Frais de service OASIS"
 
 #: src/views/ErrorHandlerUnsupportedLedger.vue:4
 msgid "Ok"
@@ -744,7 +746,7 @@ msgstr "Un compte peut dorénavant avoir plusieurs adresses."
 
 #: src/components/LedgerUi.vue:298
 msgid "Open the {app} App"
-msgstr ""
+msgstr "Ouvrez l'app {app}"
 
 #: src/components/NonNimiqCheckoutCard.vue:94
 msgid "Open Wallet App"
@@ -756,7 +758,7 @@ msgstr "Orange"
 
 #: src/views/SetupSwapLedger.vue:988
 msgid "outgoing"
-msgstr ""
+msgstr "sortante"
 
 #: src/views/AddVestingContract.vue:22
 msgid "Owner:"
@@ -926,15 +928,15 @@ msgstr "Enregistrement de vos nouveaux comptes..."
 
 #: src/views/SetupSwapLedger.vue:73
 msgid "Swap fee"
-msgstr ""
+msgstr "Frais de swap"
 
 #: src/views/SetupSwapLedger.vue:850 src/views/SetupSwapSuccess.vue:469
 msgid "Swap Setup Failed"
-msgstr ""
+msgstr "Echec de la mise en place du swap"
 
 #: src/views/RefundSwapLedger.vue:306
 msgid "Syncing"
-msgstr ""
+msgstr "Synchronisation"
 
 #: src/components/NimiqCheckoutCard.vue:277
 #: src/views/AddVestingContract.vue:11 src/views/CashlinkManage.vue:154
@@ -950,11 +952,11 @@ msgstr "Synchronisation échouée"
 
 #: src/views/RefundSwapLedger.vue:316
 msgid "Syncing with {currency} network failed: {error}"
-msgstr ""
+msgstr "Synchronisation avec le réseau {currency} échoué : {error}"
 
 #: src/views/RefundSwapLedger.vue:311
 msgid "Syncing with {currency} network..."
-msgstr ""
+msgstr "Synchronisation avec le réseau {currency}..."
 
 #: src/views/BitcoinSyncBaseView.vue:63
 msgid "Syncing with Bitcoin network failed: {error}"
@@ -977,7 +979,7 @@ msgid "The connected wallet or Ledger is not the one this account belongs to."
 msgstr ""
 "Le Wallet ou le Ledger connecté n'est pas celui auquel ce compte appartient."
 
-#: src/i18n/i18n-setup.ts:63
+#: src/i18n/i18n-setup.ts:64
 msgid ""
 "The display language changed. Do you want to reload the page to update all "
 "translations? Otherwise, some translations might not be updated "
@@ -1038,7 +1040,7 @@ msgstr "Cette opération n'est pas supportée par les Ledgers."
 
 #: src/views/SetupSwapLedger.vue:25
 msgid "This rate includes the swap fee."
-msgstr ""
+msgstr "Ce taux inclut le frais de swap."
 
 #: src/views/Migrate.vue:6
 msgid "Time to grow"
@@ -1053,7 +1055,7 @@ msgstr ""
 
 #: src/views/SetupSwapLedger.vue:86
 msgid "Total fees"
-msgstr ""
+msgstr "Total des frais"
 
 #: src/views/CashlinkManage.vue:177 src/views/CheckoutTransmission.vue:61
 msgid "Transaction could not be relayed"
@@ -1211,7 +1213,7 @@ msgstr ""
 
 #: src/views/SetupSwapLedger.vue:110
 msgid "Your Bank"
-msgstr ""
+msgstr "Votre banque"
 
 #: src/views/LogoutLedger.vue:13
 msgid ""

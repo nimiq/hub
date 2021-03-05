@@ -974,7 +974,7 @@ msgstr ""
 "La billetera conectada o la Ledger no es la misma a la cual pertenece esta "
 "cuenta."
 
-#: src/i18n/i18n-setup.ts:63
+#: src/i18n/i18n-setup.ts:64
 msgid ""
 "The display language changed. Do you want to reload the page to update all "
 "translations? Otherwise, some translations might not be updated "

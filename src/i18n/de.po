@@ -4,12 +4,12 @@
 # Irfan Maranki, 2020
 # Sören Schwert <hello@soerenschwert.de>, 2021
 # Sven <sven@nimiq.com>, 2021
-# Redexe <timo.niehoff@yahoo.de>, 2021
 # Daniel, 2021
+# Redexe <timo.niehoff@yahoo.de>, 2021
 # 
 msgid ""
 msgstr ""
-"Last-Translator: Daniel, 2021\n"
+"Last-Translator: Redexe <timo.niehoff@yahoo.de>, 2021\n"
 "Language-Team: German (https://www.transifex.com/nimiq-foundation/teams/110181/de/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: de\n"
@@ -111,7 +111,7 @@ msgstr "Menge/Schritt:"
 
 #: src/views/SetupSwapLedger.vue:47
 msgid "Atomic swaps require two BTC transactions."
-msgstr "Ein sicherer Tausch benötigt zwei BTC-Transaktionen."
+msgstr "Ein Tausch benötigt zwei BTC-Transaktionen."
 
 #: src/views/CashlinkManage.vue:158 src/views/CheckoutTransmission.vue:77
 msgid "Awaiting receipt confirmation..."
@@ -319,7 +319,7 @@ msgstr "Zahlungsdetails werden ermittelt"
 
 #: src/views/SetupSwapLedger.vue:986
 msgid "Confirm {outgoingOrIncoming} transaction on Ledger"
-msgstr ""
+msgstr "Bestätige {outgoingOrIncoming} Transaktion auf dem Ledger"
 
 #: src/components/LedgerUi.vue:214
 msgid "Confirm Address"
@@ -980,7 +980,7 @@ msgstr "Türkises"
 msgid "The connected wallet or Ledger is not the one this account belongs to."
 msgstr "Das Konto gehört nicht zum verbundenen Ledger oder Wallet."
 
-#: src/i18n/i18n-setup.ts:63
+#: src/i18n/i18n-setup.ts:64
 msgid ""
 "The display language changed. Do you want to reload the page to update all "
 "translations? Otherwise, some translations might not be updated "
