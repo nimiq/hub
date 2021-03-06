@@ -511,11 +511,11 @@ msgstr ""
 msgid "Fetching contract information..."
 msgstr ""
 
-#: src/views/SetupSwapSuccess.vue:490
+#: src/views/SetupSwapSuccess.vue:474
 msgid "Fetching swap data failed: {error}"
 msgstr ""
 
-#: src/views/SetupSwapSuccess.vue:480
+#: src/views/SetupSwapSuccess.vue:464
 msgid "Fetching swap data..."
 msgstr ""
 
@@ -791,7 +791,7 @@ msgstr ""
 msgid "Prepare for update"
 msgstr ""
 
-#: src/views/SetupSwapSuccess.vue:473
+#: src/views/SetupSwapSuccess.vue:457
 msgid "Preparing Swap"
 msgstr ""
 
@@ -842,7 +842,7 @@ msgstr ""
 
 #: src/views/BitcoinSyncBaseView.vue:68
 #: src/views/LoginSuccess.vue:107
-#: src/views/SetupSwapSuccess.vue:498
+#: src/views/SetupSwapSuccess.vue:482
 #: src/views/SignupLedger.vue:145
 msgid "Retry"
 msgstr ""
@@ -877,7 +877,7 @@ msgstr ""
 msgid "Sign Message"
 msgstr ""
 
-#: src/views/SetupSwapSuccess.vue:482
+#: src/views/SetupSwapSuccess.vue:466
 msgid "Signing transactions..."
 msgstr ""
 
@@ -919,11 +919,11 @@ msgid "Swap fee"
 msgstr ""
 
 #: src/views/SetupSwapLedger.vue:813
-#: src/views/SetupSwapSuccess.vue:469
+#: src/views/SetupSwapSuccess.vue:453
 msgid "Swap Setup Failed"
 msgstr ""
 
-#: src/views/RefundSwapLedger.vue:273
+#: src/views/RefundSwapLedger.vue:272
 msgid "Syncing"
 msgstr ""
 
@@ -936,16 +936,16 @@ msgstr ""
 
 #: src/views/BitcoinSyncBaseView.vue:50
 #: src/views/SetupSwapLedger.vue:815
-#: src/views/SetupSwapSuccess.vue:471
+#: src/views/SetupSwapSuccess.vue:455
 #: src/views/SignBtcTransactionLedger.vue:117
 msgid "Syncing Failed"
 msgstr ""
 
-#: src/views/RefundSwapLedger.vue:283
+#: src/views/RefundSwapLedger.vue:282
 msgid "Syncing with {currency} network failed: {error}"
 msgstr ""
 
-#: src/views/RefundSwapLedger.vue:278
+#: src/views/RefundSwapLedger.vue:277
 msgid "Syncing with {currency} network..."
 msgstr ""
 

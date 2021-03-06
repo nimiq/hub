@@ -23,9 +23,9 @@ import { Static } from '../lib/StaticStore';
 import { ParsedSetupSwapRequest } from '../lib/RequestTypes';
 import Config from 'config';
 import { loadNimiq } from '../lib/Helpers';
-import { decodeNimHtlcData, decodeBtcScript } from '../lib/HtlcUtils';
 import { loadBitcoinJS } from '../lib/bitcoin/BitcoinJSLoader';
 import { getElectrumClient } from '../lib/bitcoin/ElectrumClient';
+import { decodeBtcScript } from '../lib/bitcoin/BitcoinHtlcUtils';
 import { WalletInfo } from '../lib/WalletInfo';
 
 // Import only types to avoid bundling of KeyguardClient in Ledger request if not required.
@@ -133,42 +133,36 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
         // Validate contract details
         // TODO also validate timeouts?
         let hashRoot: string | undefined;
+        let nimiqHtlcHashAlgorithm: Nimiq.Hash.Algorithm | undefined;
 
         if (confirmedSwap.from.asset === SwapAsset.NIM || confirmedSwap.to.asset === SwapAsset.NIM) {
             const { data: nimHtlcData } = confirmedSwap.contracts[SwapAsset.NIM]!.htlc as NimHtlcDetails;
-            const decodedNimHtlc = decodeNimHtlcData(nimHtlcData);
+            const decodedNimHtlc = Nimiq.HashedTimeLockedContract.dataToPlain(Nimiq.BufferUtils.fromHex(nimHtlcData));
 
-            // TODO: Decode via HashedTimeLockedContract instead of HtlcUtils when HTLC is part of CoreJS web-offline
-            // const htlcData = Nimiq.HashedTimeLockedContract.dataToPlain(this.keyguardRequest.redeem.htlcData);
-            // if (!('hashAlgorithm' in htlcData)) {
-            //     this.$rpc.reject(new Error('UNEXPECTED: Could not decode NIM htlcData'));
-            //     return;
-            // }
-            // const { hashAlgorithm, hashCount } = htlcData;
-            // const algorithm = Nimiq.Hash.Algorithm.fromString(hashAlgorithm);
-
-            hashRoot = decodedNimHtlc.hash;
-
-            const hashSize = Nimiq.Hash.SIZE.get(decodedNimHtlc.hashAlgorithm)!;
-            if (hashSize !== 32) {
-                // Hash must be 32 bytes, as otherwise it cannot work with the BTC HTLC
-                this.$rpc.reject(new Error('Disallowed HTLC hash length'));
+            if (!('hashRoot' in decodedNimHtlc && 'hashAlgorithm' in decodedNimHtlc && 'hashCount' in decodedNimHtlc
+                && 'sender' in decodedNimHtlc && 'recipient' in decodedNimHtlc)) {
+                this.$rpc.reject(new Error('Invalid Nimiq HTLC data'));
                 return;
             }
-            if (decodedNimHtlc.hashCount !== 1) {
-                // Hash count must be 1 for us to accept the swap
-                this.$rpc.reject(new Error('Disallowed HTLC hash count'));
-                return;
-            }
+            const {
+                sender: decodedRefundAddress,
+                recipient: decodedRedeemAddress,
+                hashRoot: decodedHashRoot,
+                hashCount,
+            } = decodedNimHtlc;
+            nimiqHtlcHashAlgorithm = (Nimiq.Hash.Algorithm as any).fromAny(decodedNimHtlc.hashAlgorithm);
+            const hashSize = Nimiq.Hash.SIZE.get(nimiqHtlcHashAlgorithm!);
 
-            if (confirmedSwap.from.asset === SwapAsset.NIM && refundAddress !== decodedNimHtlc.refundAddress) {
-                this.$rpc.reject(new Error('Unknown HTLC refund address'));
+            if (nimiqHtlcHashAlgorithm === Nimiq.Hash.Algorithm.ARGON2D // argon2d is blacklisted for HTLCs
+                || hashSize !== 32 // Hash must be 32 bytes, as otherwise it cannot work with the BTC HTLC
+                || hashCount !== 1 // Hash count must be 1 for us to accept the swap
+                || (confirmedSwap.from.asset === SwapAsset.NIM && refundAddress !== decodedRefundAddress)
+                || (confirmedSwap.to.asset === SwapAsset.NIM && redeemAddress !== decodedRedeemAddress)
+            ) {
+                this.$rpc.reject(new Error('Invalid Nimiq HTLC data'));
                 return;
             }
-            if (confirmedSwap.to.asset === SwapAsset.NIM && redeemAddress !== decodedNimHtlc.redeemAddress) {
-                this.$rpc.reject(new Error('Unknown HTLC redeem address'));
-                return;
-            }
+            hashRoot = decodedHashRoot;
         }
 
         if (confirmedSwap.from.asset === SwapAsset.BTC || confirmedSwap.to.asset === SwapAsset.BTC) {
@@ -176,27 +170,21 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
             await loadBitcoinJS();
             const decodedBtcHtlc = await decodeBtcScript(btcHtlcScript);
 
-            if (hashRoot && decodedBtcHtlc.hash !== hashRoot) {
-                this.$rpc.reject(new Error('HTLC hash roots do not match'));
+            if ((hashRoot && decodedBtcHtlc.hashRoot !== hashRoot) // hashRoots must match
+                || (confirmedSwap.from.asset === SwapAsset.BTC && refundAddress !== decodedBtcHtlc.refundAddress)
+                || (confirmedSwap.to.asset === SwapAsset.BTC && redeemAddress !== decodedBtcHtlc.redeemAddress)
+            ) {
+                this.$rpc.reject(new Error('Invalid Bitcoin HTLC data'));
                 return;
             }
-            hashRoot = decodedBtcHtlc.hash;
-
-            if (confirmedSwap.from.asset === SwapAsset.BTC && refundAddress !== decodedBtcHtlc.refundAddress) {
-                this.$rpc.reject(new Error('Unknown HTLC refund address'));
-                return;
-            }
-            if (confirmedSwap.to.asset === SwapAsset.BTC && redeemAddress !== decodedBtcHtlc.redeemAddress) {
-                this.$rpc.reject(new Error('Unknown HTLC redeem address'));
-                return;
-            }
+            hashRoot = decodedBtcHtlc.hashRoot;
         }
 
         if (confirmedSwap.from.asset === SwapAsset.EUR /* || confirmedSwap.to.asset === SwapAsset.EUR */) {
             // FIXME: Fetch contract from OASIS API and compare instead of trusting Fastspot
 
             if (hashRoot && confirmedSwap.hash !== hashRoot) {
-                this.$rpc.reject(new Error('HTLC hash roots do not match'));
+                this.$rpc.reject(new Error('Invalid Euro HTLC data'));
                 return;
             }
             hashRoot = confirmedSwap.hash;
@@ -352,26 +340,22 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
             }
 
             // for redeeming nim transaction prepare a htlc proof with a dummy preImage and hashRoot
-            if (this.request.redeem.type === SwapAsset.NIM && redeemingHtlcInfo.type === SwapAsset.NIM) {
+            if (this.request.redeem.type === SwapAsset.NIM && redeemingHtlcInfo.type === SwapAsset.NIM
+                && nimiqHtlcHashAlgorithm) {
                 const dummyPreImage = '0000000000000000000000000000000000000000000000000000000000000000';
                 const dummyHashRoot = '66687aadf862bd776c8fc18b8e9f8e20089714856ee233b3902a591d0d5f2925'; // sha256
 
-                // FIXME: Enable decoding when HTLC is part of CoreJS web-offline build
-                const algorithm = redeemingHtlcInfo.htlcData[20 + 20] as Nimiq.Hash.Algorithm;
-                const hashCount = redeemingHtlcInfo.htlcData[20 + 20 + 32 + 1];
-
                 const proof = new Nimiq.SerialBuffer(3 + 2 * 32 + Nimiq.SignatureProof.SINGLE_SIG_SIZE);
-                // FIXME: Use constant when HTLC is part of CoreJS web-offline build
-                proof.writeUint8(1 /* Nimiq.HashedTimeLockedContract.ProofType.REGULAR_TRANSFER */);
-                proof.writeUint8(algorithm);
-                proof.writeUint8(hashCount);
+                proof.writeUint8(Nimiq.HashedTimeLockedContract.ProofType.REGULAR_TRANSFER);
+                proof.writeUint8(nimiqHtlcHashAlgorithm);
+                proof.writeUint8(1); // hashCount must be 1 for our swaps
                 proof.write(Nimiq.BufferUtils.fromHex(dummyHashRoot));
                 proof.write(Nimiq.BufferUtils.fromHex(dummyPreImage));
                 proof.write(new Nimiq.SerialBuffer(nimiqTransaction.proof)); // Current proof is regular SignatureProof
                 nimiqTransaction.proof = proof;
             }
 
-            // FIXME: Enable validation when HTLC is part of CoreJS web-offline build
+            // FIXME: Enable validation when MerkleTree is part of CoreJS web-offline build
             // // Validate that transaction is valid
             // if (!nimiqTransaction.verify()) {
             //     this.$rpc.reject(new Error('NIM transaction is invalid'));

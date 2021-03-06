@@ -1,38 +1,6 @@
-import { BIP84_ADDRESS_PREFIX } from './bitcoin/BitcoinConstants';
-import { loadBitcoinJS } from './bitcoin/BitcoinJSLoader';
+import { BIP84_ADDRESS_PREFIX } from './BitcoinConstants';
+import { loadBitcoinJS } from './BitcoinJSLoader';
 import Config from 'config';
-
-export function decodeNimHtlcData(data: string | Uint8Array) {
-    const error = new Error('Invalid NIM HTLC data');
-
-    if (typeof data === 'string') {
-        data = Nimiq.BufferUtils.fromAny(data);
-    }
-    if (data.length !== 78) throw error;
-
-    const buf = new Nimiq.SerialBuffer(data);
-
-    const sender = Nimiq.Address.unserialize(buf).toUserFriendlyAddress();
-    const recipient = Nimiq.Address.unserialize(buf).toUserFriendlyAddress();
-    const hashAlgorithm = buf.readUint8() as Nimiq.Hash.Algorithm;
-    if (hashAlgorithm !== Nimiq.Hash.Algorithm.BLAKE2B
-        && hashAlgorithm !== Nimiq.Hash.Algorithm.SHA256
-        && hashAlgorithm !== Nimiq.Hash.Algorithm.SHA512) throw error; // Unknown hash algorithm or blacklisted Argon2d
-    const hashRoot = Nimiq.Hash.unserialize(buf, hashAlgorithm).toHex();
-    const hashCount = buf.readUint8();
-    const timeout = buf.readUint32();
-
-    if (!hashRoot || !timeout) throw error;
-
-    return {
-        refundAddress: sender,
-        redeemAddress: recipient,
-        hash: hashRoot,
-        hashAlgorithm,
-        hashCount,
-        timeoutBlockHeight: timeout,
-    };
-}
 
 export async function decodeBtcScript(script: string) {
     // note that buffer is marked as external module in vue.config.js and internally, the buffer bundled
@@ -61,7 +29,7 @@ export async function decodeBtcScript(script: string) {
 
     // Check hash
     if (asm[++i] !== 'OP_SHA256' || asm[i + 2] !== 'OP_EQUALVERIFY') throw error;
-    const hash = asm[++i];
+    const hashRoot = asm[++i];
     ++i;
 
     // Check redeem address
@@ -105,7 +73,7 @@ export async function decodeBtcScript(script: string) {
     return {
         refundAddress,
         redeemAddress,
-        hash,
+        hashRoot,
         timeoutTimestamp,
     };
 }

@@ -6,6 +6,7 @@ const fs = require('fs');
 const browserWarning = fs.readFileSync(__dirname + '/node_modules/@nimiq/browser-warning/dist/browser-warning.html.template');
 // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const PoLoaderOptimizer = require('webpack-i18n-tools')();
+const coreVersion = require('@nimiq/core-web/package.json').version;
 
 const buildName = process.env.NODE_ENV === 'production'
     ? process.env.build
@@ -82,8 +83,9 @@ const pages = {
         template: 'public/index.html',
         // insert browser warning html templates
         browserWarning,
-        cdnDomain,
         domain,
+        cdnDomain,
+        coreVersion,
         // output as dist/index.html
         filename: 'index.html',
         // chunks to include on this page, by default includes
@@ -108,8 +110,9 @@ const pages = {
         template: 'public/cashlink.html',
         // insert browser warning html templates
         browserWarning,
-        cdnDomain,
         domain,
+        cdnDomain,
+        coreVersion,
         // output as dist/cashlink/index.html
         filename: 'cashlink/index.html',
         // chunks to include on this page, by default includes
@@ -125,6 +128,7 @@ if (buildName === 'local' || buildName === 'testnet') {
         // the source template
         template: 'demos/index.html',
         cdnDomain,
+        coreVersion,
         // output as dist/demos.html
         filename: 'demos.html',
         // chunks to include on this page, by default includes

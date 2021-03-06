@@ -26,14 +26,13 @@ export default class SignBtcTransactionSuccess extends Vue {
             }));
 
             const proof = new Nimiq.SerialBuffer(1 + Nimiq.SignatureProof.SINGLE_SIG_SIZE);
-            // FIXME: Use constant when HTLC is part of CoreJS web-offline build
-            proof.writeUint8(3 /* Nimiq.HashedTimeLockedContract.ProofType.TIMEOUT_RESOLVE */);
+            proof.writeUint8(Nimiq.HashedTimeLockedContract.ProofType.TIMEOUT_RESOLVE);
             proof.write(new Nimiq.SerialBuffer(tx.proof)); // Current tx.proof is a regular SignatureProof
             tx.proof = proof;
 
-            // FIXME: Enable validation when HTLC is part of CoreJS web-offline build
+            // FIXME: Enable validation when MerkleTree is part of CoreJS web-offline build
             // The signature check below can then be removed
-            // // Validate that transaction is valid
+            // // Validate that the transaction is valid
             // if (!tx.verify()) {
             //     this.$rpc.reject(new Error('NIM transaction is invalid'));
             //     return;

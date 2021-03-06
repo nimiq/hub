@@ -51,9 +51,9 @@ import staticStore, { Static } from '../lib/StaticStore';
 import { WalletInfo } from '../lib/WalletInfo';
 import { BTC_NETWORK_TEST } from '../lib/bitcoin/BitcoinConstants';
 import { loadBitcoinJS } from '../lib/bitcoin/BitcoinJSLoader';
-import { decodeBtcScript } from '../lib/HtlcUtils';
+import { decodeBtcScript } from '../lib/bitcoin/BitcoinHtlcUtils';
 import LedgerSwapProxy from '../lib/LedgerSwapProxy';
-import { ERROR_CANCELED } from '@/lib/Constants';
+import { ERROR_CANCELED } from '../lib/Constants';
 
 // Import only types to avoid bundling of KeyguardClient in Ledger request if not required.
 // (But note that currently, the KeyguardClient is still always bundled in the RpcApi).
@@ -131,8 +131,7 @@ export default class RefundSwapLedger extends RefundSwap {
             if (refundTransaction.senderType === Nimiq.Account.Type.HTLC) {
                 // create htlc timeout resolve signature proof
                 const proof = new Nimiq.SerialBuffer(1 + refundTransaction.proof.length);
-                // FIXME: Use constant when HTLC is part of CoreJS web-offline build
-                proof.writeUint8(3 /* Nimiq.HashedTimeLockedContract.ProofType.TIMEOUT_RESOLVE */);
+                proof.writeUint8(Nimiq.HashedTimeLockedContract.ProofType.TIMEOUT_RESOLVE);
                 proof.write(refundTransaction.proof);
                 refundTransaction.proof = proof;
             }

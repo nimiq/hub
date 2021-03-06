@@ -2,7 +2,6 @@ import LedgerApi, { Coin, TransactionInfoNimiq, getBip32Path, parseBip32Path } f
 import { NetworkClient } from '@nimiq/network-client';
 import Config from 'config';
 import { loadNimiq } from './Helpers';
-import { decodeNimHtlcData } from '../lib/HtlcUtils';
 
 const LedgerSwapProxyExtraData = {
     // HTLC Proxy Funding, abbreviated as 'HPFD', mapped to values outside of basic ascii range
@@ -157,8 +156,9 @@ export default class LedgerSwapProxy {
         TransactionInfoNimiq,
         'sender' | 'senderType' | 'recipient' | 'recipientType' | 'validityStartHeight' | 'flags' | 'extraData'
     > {
-        if (!Nimiq.Address.fromAny(decodeNimHtlcData(htlcData).refundAddress).equals(this.address)) {
-            throw new Error('The swap proxy must be the created HTLC\'s refund address.');
+        const decodedHtlcScript = Nimiq.HashedTimeLockedContract.dataToPlain(htlcData);
+        if (!('sender' in decodedHtlcScript) || !Nimiq.Address.fromAny(decodedHtlcScript.sender).equals(this.address)) {
+            throw new Error('The HTLC refund address must be the swap proxy.');
         }
         return {
             sender: this.address,
