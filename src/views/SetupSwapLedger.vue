@@ -752,7 +752,8 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
 
         // Step 3: sign transactions not signed by Ledger
 
-        // Sign Nim swap transaction by proxy
+        // Sign Nim swap transaction by proxy. Note that as we just created the proxy, we should still have the salt and
+        // therefore the transaction can be signed with the local proxy key without Ledger involvement.
         if (nimiqSwapTransactionInfo && nimiqSwapProxy) {
             signedNimiqSwapTransaction = await nimiqSwapProxy.signTransaction(nimiqSwapTransactionInfo);
         }

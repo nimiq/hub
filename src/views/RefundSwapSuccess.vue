@@ -25,7 +25,7 @@ export default class SignBtcTransactionSuccess extends Vue {
                 senderType: Nimiq.Account.Type.HTLC,
             }));
 
-            const proof = new Nimiq.SerialBuffer(1 + Nimiq.SignatureProof.SINGLE_SIG_SIZE);
+            const proof = new Nimiq.SerialBuffer(1 + tx.proof.length);
             proof.writeUint8(Nimiq.HashedTimeLockedContract.ProofType.TIMEOUT_RESOLVE);
             proof.write(new Nimiq.SerialBuffer(tx.proof)); // Current tx.proof is a regular SignatureProof
             tx.proof = proof;

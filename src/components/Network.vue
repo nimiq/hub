@@ -80,16 +80,29 @@ class Network extends Vue {
     public async makeSignTransactionResult(tx: Nimiq.Transaction): Promise<SignedTransaction> {
         await loadNimiq(); // needed for hash computation
 
-        const signatureProof = Nimiq.SignatureProof.unserialize(
-            new Nimiq.SerialBuffer(tx.proof.subarray(tx.proof.length - Nimiq.SignatureProof.SINGLE_SIG_SIZE)));
+        const parsedProof = (Nimiq.Account as any).TYPE_MAP.get(tx.senderType).proofToPlain(tx.proof) as ReturnType<
+            typeof Nimiq.BasicAccount.proofToPlain
+            | typeof Nimiq.HashedTimeLockedContract.proofToPlain
+            | typeof Nimiq.VestingContract.proofToPlain
+        >;
+        const signerPublicKeyHex = 'publicKey' in parsedProof
+            ? parsedProof.publicKey
+            : 'creatorPublicKey' in parsedProof
+                ? parsedProof.creatorPublicKey
+                : (() => { throw new Error('Unsupported transaction proof'); })();
+        const signatureHex = 'signature' in parsedProof
+            ? parsedProof.signature
+            : 'creatorSignature' in parsedProof
+                ? parsedProof.creatorSignature
+                : (() => { throw new Error('Unsupported transaction proof'); })();
 
         const result: SignedTransaction = {
             serializedTx: Nimiq.BufferUtils.toHex(tx.serialize()),
             hash: tx.hash().toHex(),
 
             raw: {
-                signerPublicKey: signatureProof.publicKey.serialize(),
-                signature: signatureProof.signature.serialize(),
+                signerPublicKey: Nimiq.BufferUtils.fromHex(signerPublicKeyHex),
+                signature: Nimiq.BufferUtils.fromHex(signatureHex),
 
                 sender: tx.sender.toUserFriendlyAddress(),
                 senderType: tx.senderType,

@@ -345,7 +345,7 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
                 const dummyPreImage = '0000000000000000000000000000000000000000000000000000000000000000';
                 const dummyHashRoot = '66687aadf862bd776c8fc18b8e9f8e20089714856ee233b3902a591d0d5f2925'; // sha256
 
-                const proof = new Nimiq.SerialBuffer(3 + 2 * 32 + Nimiq.SignatureProof.SINGLE_SIG_SIZE);
+                const proof = new Nimiq.SerialBuffer(3 + 2 * 32 + nimiqTransaction.proof.length);
                 proof.writeUint8(Nimiq.HashedTimeLockedContract.ProofType.REGULAR_TRANSFER);
                 proof.writeUint8(nimiqHtlcHashAlgorithm);
                 proof.writeUint8(1); // hashCount must be 1 for our swaps
