@@ -3,7 +3,7 @@ import { NetworkClient } from '@nimiq/network-client';
 import Config from 'config';
 import { loadNimiq } from './Helpers';
 
-const LedgerSwapProxyMarker = {
+export const LedgerSwapProxyMarker = {
     // HTLC Proxy Funding, abbreviated as 'HPFD', mapped to values outside of basic ascii range
     FUND:  new Uint8Array([0, ...('HPFD'.split('').map((c) => c.charCodeAt(0) + 63))]),
     // HTLC Proxy Redeeming, abbreviated as 'HPRD', mapped to values outside of basic ascii range
@@ -215,6 +215,10 @@ export default class LedgerSwapProxy {
         }
     }
 
+    public get canSignLocally(): boolean {
+        return !!this._localSignerPrivateKey;
+    }
+
     public getFundingInfo(): Pick<
         TransactionInfoNimiq,
         'recipient' | 'recipientType' | 'validityStartHeight' | 'extraData'
@@ -304,7 +308,7 @@ export default class LedgerSwapProxy {
                 this._localSignerPublicKey,
                 transaction.serializeContent(),
             );
-            transaction.proof = this._createSignatureProof(this._localSignerPublicKey, signature).serialize();
+            transaction.proof = this.createSignatureProof(this._localSignerPublicKey, signature).serialize();
         } else {
             // Sign with the Ledger as backup.
             this._ledgerSignerPublicKey = this._ledgerSignerPublicKey
@@ -317,15 +321,15 @@ export default class LedgerSwapProxy {
             const { signature } = Nimiq.SignatureProof.unserialize(new Nimiq.SerialBuffer(
                 (await LedgerApi.Nimiq.signTransaction(transaction, this._ledgerKeyPath, this._ledgerKeyId)).proof,
             ));
-            transaction.proof = this._createSignatureProof(this._ledgerSignerPublicKey, signature).serialize();
+            transaction.proof = this.createSignatureProof(this._ledgerSignerPublicKey!, signature).serialize();
         }
 
         return transaction;
     }
 
-    private _createSignatureProof(signer: Nimiq.PublicKey, signature: Nimiq.Signature): Nimiq.SignatureProof {
+    public createSignatureProof(signer: Nimiq.PublicKey, signature: Nimiq.Signature): Nimiq.SignatureProof {
         if (!signer.equals(this._localSignerPublicKey) && !signer.equals(this._ledgerSignerPublicKey)) {
-            throw new Error('Unexpected proxy signer.');
+            throw new Error('Invalid proxy signer.');
         }
         if (!this._ledgerSignerPublicKey) {
             return Nimiq.SignatureProof.singleSig(signer, signature);

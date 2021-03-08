@@ -720,6 +720,7 @@ msgid "OASIS service fee"
 msgstr ""
 
 #: src/views/ErrorHandlerUnsupportedLedger.vue:4
+#: src/views/RefundSwapLedger.vue:332
 msgid "Ok"
 msgstr ""
 
@@ -809,6 +810,14 @@ msgstr ""
 
 #: src/lib/LabelingMachine.ts:40
 msgid "Red"
+msgstr ""
+
+#: src/views/RefundSwapLedger.vue:302
+msgid "Refund Failed"
+msgstr ""
+
+#: src/views/RefundSwapLedger.vue:321
+msgid "Refunding this Swap is currently not supported on this device or browser. Please use the device and browser you originally created the Swap with. Otherwise please try again in the future."
 msgstr ""
 
 #: src/views/CashlinkManage.vue:10
@@ -923,7 +932,7 @@ msgstr ""
 msgid "Swap Setup Failed"
 msgstr ""
 
-#: src/views/RefundSwapLedger.vue:272
+#: src/views/RefundSwapLedger.vue:300
 msgid "Syncing"
 msgstr ""
 
@@ -941,11 +950,11 @@ msgstr ""
 msgid "Syncing Failed"
 msgstr ""
 
-#: src/views/RefundSwapLedger.vue:282
+#: src/views/RefundSwapLedger.vue:316
 msgid "Syncing with {currency} network failed: {error}"
 msgstr ""
 
-#: src/views/RefundSwapLedger.vue:277
+#: src/views/RefundSwapLedger.vue:310
 msgid "Syncing with {currency} network..."
 msgstr ""
 
