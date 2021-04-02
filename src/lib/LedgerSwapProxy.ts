@@ -2,6 +2,7 @@ import LedgerApi, { Coin, TransactionInfoNimiq, getBip32Path, parseBip32Path } f
 import { NetworkClient } from '@nimiq/network-client';
 import Config from 'config';
 import { loadNimiq } from './Helpers';
+import '../lib/MerkleTreePatch';
 
 export const LedgerSwapProxyMarker = {
     // HTLC Proxy Funding, abbreviated as 'HPFD', mapped to values outside of basic ascii range
@@ -159,15 +160,10 @@ export default class LedgerSwapProxy {
         localSignerPublicKey: Nimiq.PublicKey,
         ledgerSignerPublicKey: Nimiq.PublicKey,
     ): Nimiq.Address {
-        // See MultiSigWallet and MerkleTree in core-js. Note that we don't use MerkleTree.computeRoot because the class
-        // is not included in the core-js offline build. Also note that we don't have to aggregate the public keys as
-        // it's a 1 of 2 multi sig, where a single signature suffices.
-        // TODO use MerkleTree.computeRoot when it gets added to core-js
+        // See MultiSigWallet in core-js. Note that we don't have to aggregate the public keys as it's a 1 of 2 multi
+        // sig, where a single signature suffices.
         const publicKeys = [localSignerPublicKey, ledgerSignerPublicKey].sort((a, b) => a.compare(b));
-        const merkleRoot = Nimiq.Hash.light(Nimiq.BufferUtils.concatTypedArrays(
-            Nimiq.Hash.computeBlake2b(publicKeys[0].serialize()),
-            Nimiq.Hash.computeBlake2b(publicKeys[1].serialize()),
-        ) as Uint8Array);
+        const merkleRoot = Nimiq.MerkleTree.computeRoot(publicKeys);
         return Nimiq.Address.fromHash(merkleRoot);
     }
 
@@ -335,15 +331,8 @@ export default class LedgerSwapProxy {
             return Nimiq.SignatureProof.singleSig(signer, signature);
         } else {
             // Create a multisig SignatureProof.
-            // We build the multisig proof manually instead of using SignatureProof.multiSig because it uses
-            // MerkleTree._hash in its MerklePath.compute call which is not available in the core-js offline build.
-            // TODO use SignatureProof.multiSig when MerkleTree it gets added to core-js
-            const merklePath = Nimiq.MerklePath.compute(
-                [this._localSignerPublicKey, this._ledgerSignerPublicKey!].sort((a, b) => a.compare(b)),
-                signer,
-                (publicKey: Nimiq.PublicKey) => publicKey.hash(),
-            );
-            return new Nimiq.SignatureProof(signer, merklePath, signature);
+            const publicKeys = [this._localSignerPublicKey, this._ledgerSignerPublicKey!].sort((a, b) => a.compare(b));
+            return Nimiq.SignatureProof.multiSig(signer, publicKeys, signature);
         }
     }
 }

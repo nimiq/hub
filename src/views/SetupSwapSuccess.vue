@@ -27,6 +27,7 @@ import { loadBitcoinJS } from '../lib/bitcoin/BitcoinJSLoader';
 import { getElectrumClient } from '../lib/bitcoin/ElectrumClient';
 import { decodeBtcScript } from '../lib/bitcoin/BitcoinHtlcUtils';
 import { WalletInfo } from '../lib/WalletInfo';
+import '../lib/MerkleTreePatch';
 
 // Import only types to avoid bundling of KeyguardClient in Ledger request if not required.
 // (But note that currently, the KeyguardClient is still always bundled in the RpcApi).
@@ -351,14 +352,6 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
         if (this._isDestroyed) return;
 
         if (nimiqTransaction) {
-            // If we have a Nimiq transaction, validate it (to make sure we are not returning an invalid tx)
-            // FIXME: unnecessary once we enable nimiqTransaction.verify() below
-            const signatureProof = Nimiq.SignatureProof.unserialize(new Nimiq.SerialBuffer(nimiqTransaction.proof));
-            if (!signatureProof.verify(null, nimiqTransaction.serializeContent())) {
-                this.$rpc.reject(new Error('NIM signature is invalid'));
-                return;
-            }
-
             // for redeeming nim transaction prepare a htlc proof with a dummy preImage and hashRoot
             if (this.request.redeem.type === SwapAsset.NIM && redeemingHtlcInfo.type === SwapAsset.NIM
                 && nimiqHtlcHashAlgorithm) {
@@ -375,12 +368,11 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
                 nimiqTransaction.proof = proof;
             }
 
-            // FIXME: Enable validation when MerkleTree is part of CoreJS web-offline build
-            // // Validate that transaction is valid
-            // if (!nimiqTransaction.verify()) {
-            //     this.$rpc.reject(new Error('NIM transaction is invalid'));
-            //     return;
-            // }
+            // Validate that transaction is valid
+            if (!nimiqTransaction.verify()) {
+                this.$rpc.reject(new Error('NIM transaction is invalid'));
+                return;
+            }
         }
 
         // Construct Hub response
