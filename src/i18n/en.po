@@ -720,7 +720,7 @@ msgid "OASIS service fee"
 msgstr ""
 
 #: src/views/ErrorHandlerUnsupportedLedger.vue:4
-#: src/views/RefundSwapLedger.vue:332
+#: src/views/RefundSwapLedger.vue:339
 msgid "Ok"
 msgstr ""
 
@@ -812,11 +812,11 @@ msgstr ""
 msgid "Red"
 msgstr ""
 
-#: src/views/RefundSwapLedger.vue:302
+#: src/views/RefundSwapLedger.vue:309
 msgid "Refund Failed"
 msgstr ""
 
-#: src/views/RefundSwapLedger.vue:321
+#: src/views/RefundSwapLedger.vue:328
 msgid "Refunding this Swap is currently not supported on this device or browser. Please use the device and browser you originally created the Swap with. Otherwise please try again in the future."
 msgstr ""
 
@@ -932,7 +932,7 @@ msgstr ""
 msgid "Swap Setup Failed"
 msgstr ""
 
-#: src/views/RefundSwapLedger.vue:300
+#: src/views/RefundSwapLedger.vue:307
 msgid "Syncing"
 msgstr ""
 
@@ -950,11 +950,11 @@ msgstr ""
 msgid "Syncing Failed"
 msgstr ""
 
-#: src/views/RefundSwapLedger.vue:316
+#: src/views/RefundSwapLedger.vue:323
 msgid "Syncing with {currency} network failed: {error}"
 msgstr ""
 
-#: src/views/RefundSwapLedger.vue:310
+#: src/views/RefundSwapLedger.vue:317
 msgid "Syncing with {currency} network..."
 msgstr ""
 

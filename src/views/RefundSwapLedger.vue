@@ -53,6 +53,7 @@ import { loadBitcoinJS } from '../lib/bitcoin/BitcoinJSLoader';
 import { decodeBtcScript } from '../lib/bitcoin/BitcoinHtlcUtils';
 import LedgerSwapProxy, { LedgerSwapProxyMarker } from '../lib/LedgerSwapProxy';
 import { ERROR_CANCELED } from '../lib/Constants';
+import '../lib/MerkleTreePatch';
 
 // Import only types to avoid bundling of KeyguardClient in Ledger request if not required.
 // (But note that currently, the KeyguardClient is still always bundled in the RpcApi).
@@ -155,6 +156,12 @@ export default class RefundSwapLedger extends RefundSwap {
                 proof.writeUint8(Nimiq.HashedTimeLockedContract.ProofType.TIMEOUT_RESOLVE);
                 proof.write(refundTransaction.proof);
                 refundTransaction.proof = proof;
+            }
+
+            // Validate that the transaction is valid
+            if (!refundTransaction.verify()) {
+                this.$rpc.reject(new Error('NIM transaction is invalid'));
+                return;
             }
 
             this.$rpc.resolve(await (new Network()).makeSignTransactionResult(refundTransaction));
