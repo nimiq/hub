@@ -147,22 +147,36 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
             const {
                 sender: decodedRefundAddress,
                 recipient: decodedRedeemAddress,
-                hashRoot: decodedHashRoot,
                 hashCount,
             } = decodedNimHtlc;
+            hashRoot = decodedNimHtlc.hashRoot;
             nimiqHtlcHashAlgorithm = (Nimiq.Hash.Algorithm as any).fromAny(decodedNimHtlc.hashAlgorithm);
             const hashSize = Nimiq.Hash.SIZE.get(nimiqHtlcHashAlgorithm!);
 
-            if (nimiqHtlcHashAlgorithm === Nimiq.Hash.Algorithm.ARGON2D // argon2d is blacklisted for HTLCs
-                || hashSize !== 32 // Hash must be 32 bytes, as otherwise it cannot work with the BTC HTLC
-                || hashCount !== 1 // Hash count must be 1 for us to accept the swap
-                || (confirmedSwap.from.asset === SwapAsset.NIM && refundAddress !== decodedRefundAddress)
-                || (confirmedSwap.to.asset === SwapAsset.NIM && redeemAddress !== decodedRedeemAddress)
-            ) {
-                this.$rpc.reject(new Error('Invalid Nimiq HTLC data'));
+            if (nimiqHtlcHashAlgorithm === Nimiq.Hash.Algorithm.ARGON2D) {
+                // argon2d is blacklisted for HTLCs
+                this.$rpc.reject(new Error('Disallowed HTLC hash algorithm argon2d'));
                 return;
             }
-            hashRoot = decodedHashRoot;
+            if (hashSize !== 32) {
+                // Hash must be 32 bytes, as otherwise it cannot work with the BTC HTLC
+                this.$rpc.reject(new Error('Disallowed HTLC hash length'));
+                return;
+            }
+            if (hashCount !== 1) {
+                // Hash count must be 1 for us to accept the swap
+                this.$rpc.reject(new Error('Disallowed HTLC hash count'));
+                return;
+            }
+
+            if (confirmedSwap.from.asset === SwapAsset.NIM && refundAddress !== decodedRefundAddress) {
+                this.$rpc.reject(new Error('Unknown HTLC refund address'));
+                return;
+            }
+            if (confirmedSwap.to.asset === SwapAsset.NIM && redeemAddress !== decodedRedeemAddress) {
+                this.$rpc.reject(new Error('Unknown HTLC redeem address'));
+                return;
+            }
         }
 
         if (confirmedSwap.from.asset === SwapAsset.BTC || confirmedSwap.to.asset === SwapAsset.BTC) {
@@ -170,21 +184,27 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
             await loadBitcoinJS();
             const decodedBtcHtlc = await decodeBtcScript(btcHtlcScript);
 
-            if ((hashRoot && decodedBtcHtlc.hashRoot !== hashRoot) // hashRoots must match
-                || (confirmedSwap.from.asset === SwapAsset.BTC && refundAddress !== decodedBtcHtlc.refundAddress)
-                || (confirmedSwap.to.asset === SwapAsset.BTC && redeemAddress !== decodedBtcHtlc.redeemAddress)
-            ) {
-                this.$rpc.reject(new Error('Invalid Bitcoin HTLC data'));
+            if (hashRoot && decodedBtcHtlc.hashRoot !== hashRoot) {
+                this.$rpc.reject(new Error('HTLC hash roots do not match'));
                 return;
             }
             hashRoot = decodedBtcHtlc.hashRoot;
+
+            if (confirmedSwap.from.asset === SwapAsset.BTC && refundAddress !== decodedBtcHtlc.refundAddress) {
+                this.$rpc.reject(new Error('Unknown HTLC refund address'));
+                return;
+            }
+            if (confirmedSwap.to.asset === SwapAsset.BTC && redeemAddress !== decodedBtcHtlc.redeemAddress) {
+                this.$rpc.reject(new Error('Unknown HTLC redeem address'));
+                return;
+            }
         }
 
         if (confirmedSwap.from.asset === SwapAsset.EUR /* || confirmedSwap.to.asset === SwapAsset.EUR */) {
             // FIXME: Fetch contract from OASIS API and compare instead of trusting Fastspot
 
             if (hashRoot && confirmedSwap.hash !== hashRoot) {
-                this.$rpc.reject(new Error('Invalid Euro HTLC data'));
+                this.$rpc.reject(new Error('HTLC hash roots do not match'));
                 return;
             }
             hashRoot = confirmedSwap.hash;
