@@ -9,7 +9,7 @@
                     <PageHeader>
                         {{ $t('Choose Sender') }}
                     </PageHeader>
-                    <AccountSelector :wallets="processedWallets" :min-balance="1" @account-selected="setSender" @login="login"/>
+                    <AccountSelector :wallets="processedWallets" :min-balance="request.value || 1" @account-selected="setSender" @login="login"/>
                 </div>
 
                 <div v-else class="create-cashlink" key="create" :class="{ blurred: optionsOpened || openedDetails !== constructor.Details.NONE }">

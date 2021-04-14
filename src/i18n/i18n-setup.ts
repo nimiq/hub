@@ -6,7 +6,7 @@ import { Cookie } from '@nimiq/utils';
 Vue.use(VueI18n);
 
 const DEFAULT_LANGUAGE = 'en';
-const SUPPORTED_LANGUAGES = [DEFAULT_LANGUAGE, 'es', 'zh'];
+const SUPPORTED_LANGUAGES = [DEFAULT_LANGUAGE, 'de', 'es', 'fr', 'ru', 'uk', 'zh'];
 const LOADED_LANGUAGES: string[] = [];
 
 export const i18n = new VueI18n({
@@ -53,6 +53,11 @@ export function detectLanguage() {
 // then ask him if he wants to reload the page to update non-reactive translations
 let offerReload = true;
 function onTabFocus() {
+    if (!LOADED_LANGUAGES.length) {
+        // No language for which we'd need to update any translations has been loaded yet.
+        // Also we don't have any language loaded for translating the error message itself.
+        return;
+    }
     const lang = detectLanguage();
     if (i18n.locale !== lang) {
         const question = i18n.t('The display language changed. Do you want to reload the page to update all '

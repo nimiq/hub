@@ -24,7 +24,7 @@
         "@nimiq/iqons": "^1.5.2",
         "@nimiq/keyguard-client": "https://gitpkg.now.sh/nimiq/keyguard?529e33f5f0ad31d79e0f73e5073147a7e5e7fd58&scripts.postinstall=cd%20client%20%26%26%20.%2Fbuild-gitpkg.sh",
         "@nimiq/ledger-api": "^1.1.0",
-        "@nimiq/network-client": "^0.4.0",
+        "@nimiq/network-client": "^0.6.2",
         "@nimiq/rpc": "^0.4.1",
         "@nimiq/style": "^0.8.2",
         "@nimiq/utils": "^0.5.0",

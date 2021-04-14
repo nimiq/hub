@@ -62,12 +62,20 @@ msgstr ""
 msgid "Add a message..."
 msgstr ""
 
+#: src/views/AddVestingContract.vue:51
+msgid "Add contract"
+msgstr ""
+
 #: src/views/AddAccountSelection.vue:4
 msgid "Add to account"
 msgstr ""
 
 #: src/views/AddAddressLedger.vue:11
 msgid "Add to Ledger"
+msgstr ""
+
+#: src/views/AddVestingContract.vue:4
+msgid "Add Vesting Contract"
 msgstr ""
 
 #: src/views/AddAddressLedger.vue:16
@@ -85,6 +93,10 @@ msgstr ""
 #: src/components/BitcoinCheckoutCard.vue:26
 #: src/components/EthereumCheckoutCard.vue:25
 msgid "Amount"
+msgstr ""
+
+#: src/views/AddVestingContract.vue:40
+msgid "Amount/Step:"
 msgstr ""
 
 #: src/views/CashlinkManage.vue:158
@@ -108,15 +120,15 @@ msgstr ""
 msgid "Back to {Wallet}"
 msgstr ""
 
-#: src/views/OnboardingSelector.vue:84
+#: src/views/OnboardingSelector.vue:87
 msgid "Back to Cashlink"
 msgstr ""
 
-#: src/views/OnboardingSelector.vue:78
+#: src/views/OnboardingSelector.vue:81
 msgid "Back to Checkout"
 msgstr ""
 
-#: src/views/OnboardingSelector.vue:80
+#: src/views/OnboardingSelector.vue:83
 msgid "Back to Choose Address"
 msgstr ""
 
@@ -141,7 +153,7 @@ msgstr ""
 msgid "Back to Nimiq Vote"
 msgstr ""
 
-#: src/views/OnboardingSelector.vue:82
+#: src/views/OnboardingSelector.vue:85
 msgid "Back to Sign Message"
 msgstr ""
 
@@ -153,8 +165,16 @@ msgstr ""
 msgid "Backed Up"
 msgstr ""
 
+#: src/views/AddVestingContract.vue:28
+msgid "Balance:"
+msgstr ""
+
 #: src/views/ActivateBitcoinSuccess.vue:69
 msgid "Bitcoin activated"
+msgstr ""
+
+#: src/views/AddVestingContract.vue:36
+msgid "Blocks/Step:"
 msgstr ""
 
 #: src/lib/LabelingMachine.ts:43
@@ -351,6 +371,14 @@ msgstr ""
 msgid "Continue"
 msgstr ""
 
+#: src/views/AddVestingContract.vue:56
+msgid "Contract added."
+msgstr ""
+
+#: src/views/AddVestingContract.vue:20
+msgid "Contract Information"
+msgstr ""
+
 #: src/views/CashlinkManage.vue:32
 msgid "Copied"
 msgstr ""
@@ -413,6 +441,10 @@ msgstr ""
 msgid "Enter manually"
 msgstr ""
 
+#: src/views/AddVestingContract.vue:45
+msgid "Enter the address of a vesting contract."
+msgstr ""
+
 #: src/views/CashlinkCreate.vue:159
 msgid "express"
 msgstr ""
@@ -433,6 +465,10 @@ msgstr ""
 #: src/components/LedgerUi.vue:179
 #: src/views/SignupLedger.vue:99
 msgid "Fetching Addresses"
+msgstr ""
+
+#: src/views/AddVestingContract.vue:16
+msgid "Fetching contract information..."
 msgstr ""
 
 #: src/views/ActivateBitcoinSuccess.vue:36
@@ -513,6 +549,10 @@ msgstr ""
 msgid "It won’t be part of the public Blockchain and might get lost after the Cashlink was claimed."
 msgstr ""
 
+#: src/views/OnboardingSelector.vue:96
+msgid "Join Nimiq"
+msgstr ""
+
 #: src/lib/LabelingMachine.ts:17
 msgid "Ledger Account"
 msgstr ""
@@ -554,7 +594,7 @@ msgstr ""
 msgid "Login to existing account"
 msgstr ""
 
-#: src/views/OnboardingSelector.vue:95
+#: src/views/OnboardingSelector.vue:100
 msgid "Login to fund your Cashlink"
 msgstr ""
 
@@ -603,6 +643,12 @@ msgstr ""
 msgid "No App found"
 msgstr ""
 
+#: src/views/OnboardingSelector.vue:109
+msgid ""
+"No registration, no install,\n"
+"100% free"
+msgstr ""
+
 #: src/components/NimiqCheckoutCard.vue:69
 msgid "None of your available addresses has sufficient balance."
 msgstr ""
@@ -627,11 +673,15 @@ msgstr ""
 msgid "Orange"
 msgstr ""
 
+#: src/views/AddVestingContract.vue:22
+msgid "Owner:"
+msgstr ""
+
 #: src/components/NonNimiqCheckoutCard.vue:103
 msgid "Pay with {currencyFullName}"
 msgstr ""
 
-#: src/views/OnboardingSelector.vue:93
+#: src/views/OnboardingSelector.vue:98
 msgid "Pay with Nimiq"
 msgstr ""
 
@@ -771,11 +821,16 @@ msgstr ""
 msgid "standard"
 msgstr ""
 
+#: src/views/AddVestingContract.vue:32
+msgid "Start Block:"
+msgstr ""
+
 #: src/views/Migrate.vue:232
 msgid "Storing your new accounts..."
 msgstr ""
 
 #: src/components/NimiqCheckoutCard.vue:277
+#: src/views/AddVestingContract.vue:11
 #: src/views/CashlinkManage.vue:154
 #: src/views/CheckoutTransmission.vue:73
 msgid "Syncing consensus..."
@@ -794,7 +849,7 @@ msgstr ""
 msgid "The connected Ledger is not the one this account belongs to."
 msgstr ""
 
-#: src/i18n/i18n-setup.ts:58
+#: src/i18n/i18n-setup.ts:63
 msgid "The display language changed. Do you want to reload the page to update all translations? Otherwise, some translations might not be updated automatically. ({oldLang} to {newLang})"
 msgstr ""
 
@@ -914,6 +969,7 @@ msgid "Verify Payment"
 msgstr ""
 
 #: src/lib/LabelingMachine.ts:25
+#: src/views/AddVestingContract.vue:137
 msgid "Vesting Contract"
 msgstr ""
 
