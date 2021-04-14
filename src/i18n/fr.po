@@ -511,7 +511,11 @@ msgstr "Échec de la récupération des adresses"
 msgid "Fetching contract information..."
 msgstr "Obtention d'informations sur les contrats..."
 
-#: src/views/SetupSwapSuccess.vue:490
+#: src/views/RefundSwap.vue:5 src/views/SetupSwap.vue:5
+msgid "Fetching your addresses"
+msgstr "Récupération de vos adresses"
+
+#: src/views/SetupSwapSuccess.vue:377
 msgid "Fetching swap data failed: {error}"
 msgstr "Échec de la récupération des données du swap : {error}"
 
