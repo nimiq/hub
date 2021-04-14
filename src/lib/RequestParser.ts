@@ -18,6 +18,7 @@ import {
     RequestType,
     NimiqCheckoutRequest,
     MultiCurrencyCheckoutRequest,
+    SignBtcTransactionRequest,
 } from './PublicRequestTypes';
 import {
     ParsedBasicRequest,
@@ -31,6 +32,7 @@ import {
     ParsedSignMessageRequest,
     ParsedSignTransactionRequest,
     ParsedSimpleRequest,
+    ParsedSignBtcTransactionRequest,
 } from './RequestTypes';
 import { ParsedNimiqDirectPaymentOptions } from './paymentOptions/NimiqPaymentOptions';
 import { ParsedEtherDirectPaymentOptions } from './paymentOptions/EtherPaymentOptions';
@@ -258,6 +260,7 @@ export class RequestParser {
             case RequestType.CHANGE_PASSWORD:
             case RequestType.LOGOUT:
             case RequestType.ADD_ADDRESS:
+            case RequestType.ACTIVATE_BITCOIN:
                 const simpleRequest = request as SimpleRequest;
 
                 if (!simpleRequest.accountId) throw new Error('accountId is required');
@@ -367,6 +370,75 @@ export class RequestParser {
                     appName: manageCashlinkRequest.appName,
                     cashlinkAddress: Nimiq.Address.fromString(manageCashlinkRequest.cashlinkAddress),
                 } as ParsedManageCashlinkRequest;
+            case RequestType.SIGN_BTC_TRANSACTION:
+                const signBtcTransactionRequest = request as SignBtcTransactionRequest;
+
+                if (!signBtcTransactionRequest.accountId) throw new Error('accountId is required');
+
+                if (!signBtcTransactionRequest.inputs || !Array.isArray(signBtcTransactionRequest.inputs)
+                    || !signBtcTransactionRequest.inputs.length) throw new Error('inputs must be a non-empty array');
+
+                const inputs = signBtcTransactionRequest.inputs.map((input) => {
+                    if (!input || typeof input !== 'object') throw new Error('input must be an object');
+
+                    if (typeof input.transactionHash !== 'string'
+                        || input.transactionHash.length !== 64
+                    ) throw new Error('input must contain a valid transactionHash');
+
+                    if (typeof input.outputIndex !== 'number'
+                        || input.outputIndex < 0
+                    ) throw new Error('input must contain a valid outputIndex');
+
+                    if (typeof input.outputScript !== 'string'
+                        || (input.outputScript.length !== 44     // P2WPKH
+                            && input.outputScript.length !== 46  // P2SH
+                            && input.outputScript.length !== 50) // P2PKH
+                    ) throw new Error('input must contain a valid outputScript');
+
+                    if (typeof input.value !== 'number'
+                        || input.value <= 0
+                    ) throw new Error('input must contain a positive value');
+
+                    return input;
+                });
+
+                if (!signBtcTransactionRequest.output
+                    || typeof signBtcTransactionRequest.output !== 'object'
+                ) throw new Error('output must be an object');
+
+                const output = signBtcTransactionRequest.output;
+
+                if (!output.value
+                    || typeof output.value !== 'number'
+                    || output.value <= 0
+                ) throw new Error('output must contain a positive value');
+
+                if (output.label && typeof output.label !== 'string') {
+                    throw new Error('output label must be a string');
+                }
+
+                let changeOutput: ParsedSignBtcTransactionRequest['changeOutput'] | undefined;
+                if (signBtcTransactionRequest.changeOutput) {
+                    if (typeof signBtcTransactionRequest.changeOutput !== 'object') {
+                        throw new Error('changeOutput must be an object');
+                    }
+
+                    changeOutput = signBtcTransactionRequest.changeOutput;
+
+                    if (!changeOutput.value
+                        || typeof changeOutput.value !== 'number'
+                        || changeOutput.value <= 0
+                    ) throw new Error('changeOutput must contain a positive value');
+                }
+
+                return {
+                    kind: RequestType.SIGN_BTC_TRANSACTION,
+                    walletId: signBtcTransactionRequest.accountId,
+                    appName: signBtcTransactionRequest.appName,
+                    inputs,
+                    output,
+                    changeOutput,
+                } as ParsedSignBtcTransactionRequest;
             default:
                 return null;
         }
@@ -459,6 +531,7 @@ export class RequestParser {
             case RequestType.CHANGE_PASSWORD:
             case RequestType.LOGOUT:
             case RequestType.ADD_ADDRESS:
+            case RequestType.ACTIVATE_BITCOIN:
                 const simpleRequest = request as ParsedSimpleRequest;
                 return {
                     appName: simpleRequest.appName,
@@ -486,6 +559,15 @@ export class RequestParser {
                     signer: signMessageRequest.signer ? signMessageRequest.signer.toUserFriendlyAddress() : undefined,
                     message: signMessageRequest.message,
                 } as SignMessageRequest;
+            case RequestType.SIGN_BTC_TRANSACTION:
+                const signBtcTransactionRequest = request as ParsedSignBtcTransactionRequest;
+                return {
+                    appName: signBtcTransactionRequest.appName,
+                    accountId: signBtcTransactionRequest.walletId,
+                    inputs: signBtcTransactionRequest.inputs,
+                    output: signBtcTransactionRequest.output,
+                    changeOutput: signBtcTransactionRequest.changeOutput,
+                } as SignBtcTransactionRequest;
             default:
                 return null;
         }

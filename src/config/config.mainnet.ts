@@ -1,4 +1,5 @@
 import { NETWORK_MAIN } from '../lib/Constants';
+import { BTC_NETWORK_MAIN, NATIVE_SEGWIT } from '../lib/bitcoin/BitcoinConstants';
 
 export default {
     keyguardEndpoint: 'https://keyguard.nimiq.com',
@@ -16,4 +17,8 @@ export default {
     checkoutWithoutNimOrigins: [
         'https://vendor.cryptopayment.link',
     ],
+
+    enableBitcoin: true,
+    bitcoinNetwork: BTC_NETWORK_MAIN,
+    bitcoinAddressType: NATIVE_SEGWIT,
 };

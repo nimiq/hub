@@ -26,6 +26,9 @@ export enum RequestType {
     CHOOSE_ADDRESS = 'choose-address',
     CREATE_CASHLINK = 'create-cashlink',
     MANAGE_CASHLINK = 'manage-cashlink',
+    SIGN_BTC_TRANSACTION = 'sign-btc-transaction',
+    ADD_BTC_ADDRESSES = 'add-btc-addresses',
+    ACTIVATE_BITCOIN = 'activate-bitcoin',
 }
 
 export interface BasicRequest {
@@ -242,6 +245,10 @@ export interface Account {
     wordsExported: boolean;
     addresses: Address[];
     contracts: Contract[];
+    btcAddresses: {
+        internal: string[],
+        external: string[],
+    };
 }
 
 export interface ExportRequest extends SimpleRequest {
@@ -311,6 +318,43 @@ export interface ManageCashlinkRequest extends BasicRequest {
     cashlinkAddress: string;
 }
 
+/**
+ * Bitcoin
+ */
+
+export interface SignBtcTransactionRequest extends SimpleRequest {
+    inputs: Array<{
+        address: string,
+        transactionHash: string,
+        outputIndex: number,
+        outputScript: string,
+        value: number,
+    }>;
+    output: {
+        address: string,
+        value: number,
+        label?: string,
+    };
+    changeOutput?: {
+        address: string,
+        value: number,
+    };
+}
+
+export interface SignedBtcTransaction {
+    serializedTx: string; // HEX
+    hash: string; // HEX
+}
+
+export interface AddBtcAddressesRequest extends SimpleRequest {
+    chain: 'internal' | 'external';
+    firstIndex: number;
+}
+
+export interface AddBtcAddressesResult {
+    addresses: string[];
+}
+
 export type RpcRequest = SignTransactionRequest
                        | CreateCashlinkRequest
                        | ManageCashlinkRequest
@@ -320,7 +364,9 @@ export type RpcRequest = SignTransactionRequest
                        | OnboardRequest
                        | RenameRequest
                        | SignMessageRequest
-                       | ExportRequest;
+                       | ExportRequest
+                       | SignBtcTransactionRequest
+                       | AddBtcAddressesRequest;
 
 export type RpcResult = SignedTransaction
                       | Account
@@ -328,8 +374,11 @@ export type RpcResult = SignedTransaction
                       | SimpleResult
                       | Address
                       | Cashlink
+                      | Cashlink[]
                       | SignedMessage
-                      | ExportResult;
+                      | ExportResult
+                      | SignedBtcTransaction
+                      | AddBtcAddressesResult;
 
 export type ResultByRequestType<T> =
     T extends RequestType.RENAME ? Account :
@@ -343,4 +392,7 @@ export type ResultByRequestType<T> =
     T extends RequestType.LOGOUT | RequestType.CHANGE_PASSWORD ? SimpleResult :
     T extends RequestType.EXPORT ? ExportResult :
     T extends RequestType.CREATE_CASHLINK | RequestType.MANAGE_CASHLINK ? Cashlink :
+    T extends RequestType.SIGN_BTC_TRANSACTION ? SignedBtcTransaction :
+    T extends RequestType.ACTIVATE_BITCOIN ? Account :
+    T extends RequestType.ADD_BTC_ADDRESSES ? AddBtcAddressesResult :
     never;

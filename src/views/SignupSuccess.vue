@@ -18,6 +18,9 @@ import StatusScreen from '@/components/StatusScreen.vue';
 import KeyguardClient from '@nimiq/keyguard-client';
 import { labelAddress, labelKeyguardAccount } from '@/lib/LabelingMachine';
 import { i18n } from '../i18n/i18n-setup';
+import { deriveAddressesFromXPub } from '../lib/bitcoin/BitcoinUtils';
+import { loadBitcoinJS } from '../lib/bitcoin/BitcoinJSLoader';
+import { INTERNAL_INDEX, EXTERNAL_INDEX, BTC_ACCOUNT_MAX_ALLOWED_ADDRESS_GAP } from '../lib/bitcoin/BitcoinConstants';
 
 @Component({components: {SmallPage, StatusScreen, CheckmarkIcon}})
 export default class SignupSuccess extends Vue {
@@ -43,6 +46,21 @@ export default class SignupSuccess extends Vue {
             createdAddress!,
         );
 
+        // Derive initial BTC addresses
+        await loadBitcoinJS();
+        const bitcoinXPub = this.keyguardResult[0].bitcoinXPub;
+        const btcAddresses = bitcoinXPub
+            ? {
+                internal:
+                    deriveAddressesFromXPub(bitcoinXPub, [INTERNAL_INDEX], 0, BTC_ACCOUNT_MAX_ALLOWED_ADDRESS_GAP),
+                external:
+                    deriveAddressesFromXPub(bitcoinXPub, [EXTERNAL_INDEX], 0, BTC_ACCOUNT_MAX_ALLOWED_ADDRESS_GAP),
+            }
+            : {
+                internal: [],
+                external: [],
+            };
+
         const walletInfo = new WalletInfo(
             await WalletStore.Instance.deriveId(this.keyguardResult[0].keyId),
             this.keyguardResult[0].keyId,
@@ -53,6 +71,8 @@ export default class SignupSuccess extends Vue {
             false, // keyMissing
             this.keyguardResult[0].fileExported,
             this.keyguardResult[0].wordsExported,
+            this.keyguardResult[0].bitcoinXPub,
+            btcAddresses,
         );
 
         await WalletStore.Instance.put(walletInfo);
@@ -66,19 +86,7 @@ export default class SignupSuccess extends Vue {
         this.title = this.$t('Welcome to the\nNimiq Blockchain.') as string;
         this.state = StatusScreen.State.SUCCESS;
 
-        const result: Account[] = [{
-            accountId: walletInfo.id,
-            label: walletInfo.label,
-            type: walletInfo.type,
-            fileExported: walletInfo.fileExported,
-            wordsExported: walletInfo.wordsExported,
-            addresses: [{
-                address: userFriendlyAddress,
-                label: accountInfo.label,
-            }],
-            contracts: [], // A newly created account cannot have any contracts
-        }];
-
+        const result: Account[] = [walletInfo.toAccountType()];
         setTimeout(() => this.$rpc.resolve(result), StatusScreen.SUCCESS_REDIRECT_DELAY);
     }
 }

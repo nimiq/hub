@@ -125,16 +125,7 @@
         }
 
         private done() {
-            const result: Account = {
-                accountId: this.wallet!.id,
-                label: this.wallet!.label,
-                type: this.wallet!.type,
-                fileExported: this.wallet!.fileExported,
-                wordsExported: this.wallet!.wordsExported,
-                addresses: Array.from(this.wallet!.accounts.values()).map((addressInfo) => addressInfo.toAddressType()),
-                contracts: this.wallet!.contracts.map((contract) => contract.toContractType()),
-            };
-
+            const result: Account = this.wallet!.toAccountType();
             this.$rpc.resolve(result);
         }
     }

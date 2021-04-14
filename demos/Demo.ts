@@ -1,4 +1,5 @@
 import { State, PostMessageRpcClient } from '@nimiq/rpc';
+import * as BitcoinJS from 'bitcoinjs-lib';
 import HubApi from '../client/HubApi';
 import {
     SimpleRequest,
@@ -12,14 +13,25 @@ import {
     Cashlink,
     RpcResult,
     CreateCashlinkRequest,
+    SignBtcTransactionRequest,
     CashlinkTheme,
     RequestType,
 } from '../src/lib/PublicRequestTypes';
-import { RedirectRequestBehavior } from '../client/RequestBehavior';
+import { RedirectRequestBehavior, PopupRequestBehavior } from '../client/RequestBehavior';
 import { Utf8Tools } from '@nimiq/utils';
+import { KeyguardClient, KeyguardCommand } from '@nimiq/keyguard-client';
+import { WalletType } from '../src/lib/WalletInfo';
 
 class Demo {
     public static run() {
+        const keyguardClient = new KeyguardClient();
+        keyguardClient.on(KeyguardCommand.SIGN_BTC_TRANSACTION, (result) => {
+            console.log("Keyguard Result:", result);
+        }, (error) => {
+            console.log("Keyguard Error:", error);
+        });
+        keyguardClient.init();
+
         const keyguardOrigin = location.origin === 'https://hub.nimiq-testnet.com'
             ? 'https://keyguard.nimiq-testnet.com'
             : `${location.protocol}//${location.hostname}:8000`;
@@ -143,7 +155,7 @@ class Demo {
                     };
                 }
 
-                const result = await demo.client.createCashlink(request, demo._defaultBehavior);
+                const result = await demo.client.createCashlink(request, demo._defaultBehavior as PopupRequestBehavior);
                 console.log('Result', result);
                 document.querySelector('#result').textContent = `Cashlink created${result.link
                     ? `: ${result.link}`
@@ -399,6 +411,56 @@ class Demo {
             }
         });
 
+        document.querySelector('button#sign-btc-transaction').addEventListener('click', async () => {
+            const $radio = document.querySelector('input[name="address"]:checked');
+            if (!$radio) {
+                alert('You have no account to send a tx from, create an account first (signup)');
+                throw new Error('No account found');
+            }
+            const accountId = $radio.closest('ul').closest('li').querySelector('button').dataset.walletId;
+
+            const account = (await demo.list()).find((wallet) => wallet.accountId === accountId);
+            if (account.type === WalletType.LEGACY) {
+                alert('Cannot sign BTC transactions with a legacy account');
+                throw new Error('Cannot use legacy account');
+            }
+
+            const senderAddress = account.btcAddresses ? account.btcAddresses.external[0] : null;
+            if (!senderAddress) {
+                alert('No BTC address found in account, activate Bitcoin for this account first');
+                throw new Error('No BTC address found');
+            }
+
+            const txRequest: SignBtcTransactionRequest = {
+                appName: 'Hub Demos',
+                inputs: [{
+                    address: senderAddress,
+                    transactionHash: 'ef4aaf6087d0cc48ff09355d715c257078467ca4d9dd75a20824e70a78fb43cc',
+                    outputIndex: 0,
+                    outputScript: BitcoinJS.address.toOutputScript(senderAddress, BitcoinJS.networks.testnet).toString('hex'),
+                    value: Math.round(0.010 * 1e8),
+                }],
+                output: {
+                    address: 'tb1qegge25w53hyv4lyye4w3ntsj9gg5j2l7fej0ze',
+                    value: Math.round(0.009 * 1e8),
+                    label: 'Paul McCartney',
+                },
+                // changeOutput: {
+                //     keyPath: 'm/49\'/1\'/0\'/1/0',
+                //     address: '',
+                //     value: 0,
+                // },
+            };
+            try {
+                const result = await demo.client.signBtcTransaction(txRequest, demo._defaultBehavior as PopupRequestBehavior);
+                console.log('Result', result);
+                document.querySelector('#result').textContent = 'Signed: ' + result.serializedTx;
+            } catch (e) {
+                console.error(e);
+                document.querySelector('#result').textContent = `Error: ${e.message || e}`;
+            }
+        });
+
         document.querySelector('button#list-keyguard-keys').addEventListener('click', () => demo.listKeyguard());
         document.querySelector('button#setup-legacy-accounts').addEventListener('click',
             () => demo.setupLegacyAccounts());
@@ -423,7 +485,7 @@ class Demo {
     private _iframeClient: PostMessageRpcClient | null;
     private _keyguardBaseUrl: string;
     private _hubApi: HubApi;
-    private _defaultBehavior: RedirectRequestBehavior | undefined;
+    private _defaultBehavior?: RedirectRequestBehavior | PopupRequestBehavior;
 
     constructor(keyguardBaseUrl: string) {
         this._iframeClient = null;
@@ -655,7 +717,7 @@ class Demo {
 
     public async logout(accountId: string): Promise<SimpleResult> {
         try {
-            const result = await this.client.logout(this._createLogoutRequest(accountId), this._defaultBehavior);
+            const result = await this.client.logout(this._createLogoutRequest(accountId), this._defaultBehavior as PopupRequestBehavior);
             console.log('Result', result);
             document.querySelector('#result').textContent = 'Account removed';
             return result;
@@ -697,7 +759,7 @@ class Demo {
 
     private async _export(request: ExportRequest) {
         try {
-            const result = await this.client.export(request, this._defaultBehavior);
+            const result = await this.client.export(request, this._defaultBehavior as PopupRequestBehavior);
             console.log('Result', result);
             if (result.fileExported) {
                 document.querySelector('#result').textContent = result.wordsExported

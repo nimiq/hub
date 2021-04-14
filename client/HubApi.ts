@@ -25,6 +25,10 @@ import {
     SignedMessage,
     CreateCashlinkRequest,
     ManageCashlinkRequest,
+    SignBtcTransactionRequest,
+    SignedBtcTransaction,
+    AddBtcAddressesRequest,
+    AddBtcAddressesResult,
     Cashlink,
     CashlinkState,
     CashlinkTheme,
@@ -157,6 +161,13 @@ export default class HubApi<DB extends BehaviorType = BehaviorType.POPUP> { // D
         return this._request(requestBehavior, RequestType.SIGN_MESSAGE, [request]);
     }
 
+    public signBtcTransaction<B extends BehaviorType = DB>(
+        request: Promise<SignBtcTransactionRequest> | SignBtcTransactionRequest,
+        requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
+    ): Promise<B extends BehaviorType.REDIRECT ? void : SignedBtcTransaction> {
+        return this._request(requestBehavior, RequestType.SIGN_BTC_TRANSACTION, [request]);
+    }
+
     /**
      * Account Management
      *
@@ -232,6 +243,13 @@ export default class HubApi<DB extends BehaviorType = BehaviorType.POPUP> { // D
         return this._request(requestBehavior, RequestType.MIGRATE, [{ appName: 'Account list' }]);
     }
 
+    public activateBitcoin<B extends BehaviorType = DB>(
+        request: Promise<SimpleRequest> | SimpleRequest,
+        requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
+    ): Promise<B extends BehaviorType.REDIRECT ? void : Account> {
+        return this._request(requestBehavior, RequestType.ACTIVATE_BITCOIN, [request]);
+    }
+
     /**
      * Only accessible in iframe from Nimiq domains.
      */
@@ -241,13 +259,17 @@ export default class HubApi<DB extends BehaviorType = BehaviorType.POPUP> { // D
         return this._request(requestBehavior, RequestType.LIST, []);
     }
 
-    /**
-     * Only accessible in iframe from Nimiq domains.
-     */
     public cashlinks<B extends BehaviorType = DB>(
         requestBehavior: RequestBehavior<B> = this._iframeBehavior as any,
     ): Promise<B extends BehaviorType.REDIRECT ? void : Cashlink[]> {
         return this._request(requestBehavior, RequestType.LIST_CASHLINKS, []);
+    }
+
+    public addBtcAddresses<B extends BehaviorType = DB>(
+        request: AddBtcAddressesRequest,
+        requestBehavior: RequestBehavior<B> = this._iframeBehavior as any,
+    ): Promise<B extends BehaviorType.REDIRECT ? void : AddBtcAddressesResult> {
+        return this._request(requestBehavior, RequestType.ADD_BTC_ADDRESSES, [request]);
     }
 
     // END API

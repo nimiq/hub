@@ -112,7 +112,7 @@ import StatusScreen from '@/components/StatusScreen.vue';
 import KeyguardClient from '@nimiq/keyguard-client';
 import { labelLegacyAccount } from '@/lib/LabelingMachine';
 import staticStore, { Static } from '@/lib/StaticStore';
-import { SimpleRequest } from '@/lib/PublicRequestTypes';
+import { SimpleRequest, Account } from '@/lib/PublicRequestTypes';
 import { State } from 'vuex-class';
 import { i18n } from '../i18n/i18n-setup';
 
@@ -264,7 +264,7 @@ export default class Migrate extends Vue {
 
         this.title = this.$t('Accounts updated!') as string;
         this.state = StatusScreen.State.SUCCESS;
-        const listResult = walletInfos.map((walletInfo) => walletInfo.toAccountType());
+        const listResult: Account[] = walletInfos.map((walletInfo) => walletInfo.toAccountType());
         setTimeout(() => this.$rpc.resolve(listResult), StatusScreen.SUCCESS_REDIRECT_DELAY);
     }
 

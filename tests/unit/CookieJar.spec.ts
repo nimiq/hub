@@ -4,6 +4,7 @@ import { AccountInfoEntry } from '@/lib/AccountInfo';
 import CookieJar from '@/lib/CookieJar';
 import { Utf8Tools } from '@nimiq/utils';
 import { setLanguage } from '@/i18n/i18n-setup';
+import { BtcAddressInfo, BtcAddressInfoEntry } from '@/lib/bitcoin/BtcAddressInfo';
 
 setup();
 
@@ -48,6 +49,15 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         keyMissing: true,
         fileExported: false,
         wordsExported: false,
+        btcXPub: 'xpub6H1LXWLaKsWFhvm6RVpEL9P4KfRZSW7abD2ttkWP3SSQvnyA8FSVqNTEcYFgJS2UaFcxupHiYkro49S8yGasTvXEYBVPamhGW'
+            + '6cFJodrTHy',
+        btcAddresses: { internal: [{ // Test that this address is ignored by the CookieJar and not encoded/decoded
+            path: 'some path',
+            address: 'some address',
+            used: true,
+            balance: 10000,
+        } as BtcAddressInfoEntry],
+        external: [] },
     },
     {
         id: '1ee3d926a49d',
@@ -77,6 +87,8 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         keyMissing: true,
         fileExported: true,
         wordsExported: false,
+        // btcXPub: undefined,
+        btcAddresses: { internal: [], external: [] },
     },
     {
         id: '2978bf29b377',
@@ -97,6 +109,7 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         keyMissing: true,
         fileExported: false,
         wordsExported: true,
+        btcAddresses: { internal: [], external: [] },
     },
     {
         id: '78bf29b377e7',
@@ -125,6 +138,8 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         keyMissing: false,
         fileExported: true,
         wordsExported: true,
+        // btcXPub: undefined,
+        btcAddresses: { internal: [], external: [] },
     },
     {
         id: 'a5832a3b9489',
@@ -145,6 +160,9 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         keyMissing: false,
         fileExported: false,
         wordsExported: false,
+        btcXPub: 'tpubD6NzVbkrYhZ4WLczPJWReQycCJdd6YVWXubbVUFnJ5KgU5MDQrD998ZJLNGbhd2pq7ZtDiPYTfJ7iBenLVQpYgSQqPjUsQeJX'
+            + 'H8VQ8xA67D',
+        btcAddresses: { internal: [], external: [] },
     },
     {
         id: 'd515aa19c4f7',
@@ -174,6 +192,7 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         keyMissing: false,
         fileExported: true,
         wordsExported: false,
+        btcAddresses: { internal: [], external: [] },
     },
 ];
 
@@ -205,6 +224,9 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         keyMissing: true,
         fileExported: false,
         wordsExported: false,
+        btcXPub: 'xpub6H1LXWLaKsWFhvm6RVpEL9P4KfRZSW7abD2ttkWP3SSQvnyA8FSVqNTEcYFgJS2UaFcxupHiYkro49S8yGasTvXEYBVPamhGW'
+            + '6cFJodrTHy',
+        btcAddresses: { internal: [], external: [] },
     },
     {
         id: '1ee3d926a49d',
@@ -234,6 +256,8 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         keyMissing: true,
         fileExported: true,
         wordsExported: false,
+        // btcXPub: undefined,
+        btcAddresses: { internal: [], external: [] },
     },
     {
         id: '2978bf29b377',
@@ -254,6 +278,7 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         keyMissing: true,
         fileExported: false,
         wordsExported: true,
+        btcAddresses: { internal: [], external: [] },
     },
     {
         id: '78bf29b377e7',
@@ -282,6 +307,8 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         keyMissing: false,
         fileExported: true,
         wordsExported: true,
+        // btcXPub: undefined,
+        btcAddresses: { internal: [], external: [] },
     },
     {
         id: 'a5832a3b9489',
@@ -302,6 +329,9 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         keyMissing: false,
         fileExported: false,
         wordsExported: false,
+        btcXPub: 'tpubD6NzVbkrYhZ4WLczPJWReQycCJdd6YVWXubbVUFnJ5KgU5MDQrD998ZJLNGbhd2pq7ZtDiPYTfJ7iBenLVQpYgSQqPjUsQeJX'
+            + 'H8VQ8xA67D',
+        btcAddresses: { internal: [], external: [] },
     },
     {
         id: 'd515aa19c4f7',
@@ -331,6 +361,7 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         keyMissing: false,
         fileExported: true,
         wordsExported: false,
+        btcAddresses: { internal: [], external: [] },
     },
 ];
 
@@ -339,7 +370,15 @@ const BYTES = [
 
     // wallet 1 (BIP39)
     2, // wallet label length (0), wallet type (2)
-    0b00000001, // Status byte: keyMissing = true, fileExported = false, wordsExported = false, hasContracts = false
+    /**
+     * Status byte, least to most significant bit:
+     *  keyMissing = true,
+     *  fileExported = false,
+     *  wordsExported = false,
+     *  hasContracts = false,
+     *  hasXPub = true,
+     */
+    0b00010001,
     0x0f, 0xe6, 0x06, 0x7b, 0x13, 0x8f, // wallet id
     // wallet label (omitted)
     2, // number of accounts
@@ -354,9 +393,24 @@ const BYTES = [
         // account label (omitted)
         101, 254, 174, 109, 147, 234, 215, 10, 22, 16, 67, 70, 109, 90, 53, 154, 43, 22, 180, 254, // account address
 
+    // xpub
+    0, // type xpub
+    5, 216, 128, 215, 216, 59, 154, 202, 0, 199, 131, 230, 123, 146, 29, 43, 235, 143, 107, 56, 156, 198, 70, 215, 38,
+    59, 65, 69, 112, 29, 173, 210, 22, 21, 72, 168, 176, 120, 230, 94, 158, 2, 42, 71, 20, 36, 218, 94, 101, 116, 153,
+    209, 255, 81, 203, 67, 196, 116, 129, 160, 59, 30, 119, 249, 81, 254, 100, 206, 201, 245, 164, 143, 112, 17, 24,
+    211, 162, 104,
+
     // wallet 2 (LEDGER)
     75, // wallet label length (18), wallet type (3)
-    0b00001011, // Status byte: keyMissing = true, fileExported = true, wordsExported = false, hasContracts = true
+    /**
+     * Status byte, least to most significant bit:
+     *  keyMissing = true,
+     *  fileExported = true,
+     *  wordsExported = false,
+     *  hasContracts = true,
+     *  hasXPub = false,
+     */
+    0b00001011,
     0x1e, 0xe3, 0xd9, 0x26, 0xa4, 0x9d, // wallet id
     77, 111, 110, 107, 101, 121, 32, 70, 97, 109, 105, 108, 121, 32, 240, 159, 153, 137, // wallet label
     1, // number of accounts
@@ -390,7 +444,15 @@ const BYTES = [
 
     // wallet 4 (BIP39)
     38, // wallet label length (9), wallet type (2)
-    0b00000110, // Status byte: keyMissing = false, fileExported = true, wordsExported = true, hasContracts = false
+    /**
+     * Status byte, least to most significant bit:
+     *  keyMissing = false,
+     *  fileExported = true,
+     *  wordsExported = true,
+     *  hasContracts = false,
+     *  hasXPub = false,
+     */
+    0b00000110,
     0x78, 0xbf, 0x29, 0xb3, 0x77, 0xe7, // wallet id
     77, 97, 105, 110, 32, 240, 159, 153, 137, // wallet label
     2, // number of accounts
@@ -407,7 +469,15 @@ const BYTES = [
 
     // wallet 5 (LEDGER)
     3, // wallet label length (0), wallet type (3)
-    0b00000000, // Status byte: keyMissing = false, fileExported = false, wordsExported = false, hasContracts = false
+    /**
+     * Status byte, least to most significant bit:
+     *  keyMissing = false,
+     *  fileExported = false,
+     *  wordsExported = false,
+     *  hasContracts = false,
+     *  hasXPub = true,
+     */
+    0b00010000,
     0xa5, 0x83, 0x2a, 0x3b, 0x94, 0x89, // wallet id
     // wallet label (omitted)
     1, // number of accounts
@@ -416,6 +486,12 @@ const BYTES = [
         0, // account label length
         // account label (omitted)
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // account address
+
+    // xpub
+    1, // type tpub
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 149,
+    136, 97, 20,
 
     // wallet 6 (LEGACY)
     41, // account label length (10), wallet type (1)
