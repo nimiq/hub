@@ -57,6 +57,7 @@ const configureWebpack = {
     // Fix sourcemaps (https://www.mistergoodcat.com/post/the-joy-that-is-source-maps-with-vuejs-and-typescript)
     devtool: 'source-map', // exact mapping; slow to build; small; enabled code minification and extracted maps
     // TODO: 'eval-source-map' temporarily removed for webpack-i18n-tools, will be fixed in future versions
+    node: false,
     output: {
         devtoolModuleFilenameTemplate: info => {
             let $filename = 'sources://' + info.resourcePath;
