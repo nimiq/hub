@@ -8,7 +8,7 @@ import {
     ParsedSignMessageRequest,
     ParsedSignTransactionRequest,
     ParsedSimpleRequest,
-    ParsedSignBtcTransactionRequest,
+    ParsedSetupSwapRequest,
 } from './RequestTypes';
 import { RequestParser } from './RequestParser';
 import { Currency, RequestType, RpcRequest, RpcResult } from './PublicRequestTypes';
@@ -23,11 +23,10 @@ import {
 import { keyguardResponseRouter, REQUEST_ERROR } from '@/router';
 import { StaticStore } from '@/lib/StaticStore';
 import { WalletStore } from './WalletStore';
-import { WalletType } from '@/lib/WalletInfo';
 import Cashlink from '@/lib/Cashlink';
 import CookieJar from '@/lib/CookieJar';
 import { captureException } from '@sentry/browser';
-import { ERROR_CANCELED } from './Constants';
+import { ERROR_CANCELED, WalletType } from './Constants';
 import { includesOrigin } from '@/lib/Helpers';
 import Config from 'config';
 import { setHistoryStorage, getHistoryStorage } from '@/lib/Helpers';
@@ -86,6 +85,8 @@ export default class RpcApi {
             RequestType.CHOOSE_ADDRESS,
             RequestType.SIGN_BTC_TRANSACTION,
             RequestType.ACTIVATE_BITCOIN,
+            RequestType.SETUP_SWAP,
+            RequestType.REFUND_SWAP,
         ]);
         this._registerKeyguardApis([
             KeyguardCommand.SIGN_TRANSACTION,
@@ -98,6 +99,7 @@ export default class RpcApi {
             KeyguardCommand.SIGN_MESSAGE,
             KeyguardCommand.SIGN_BTC_TRANSACTION,
             KeyguardCommand.DERIVE_BTC_XPUB,
+            KeyguardCommand.SIGN_SWAP,
         ]);
 
         this._router.beforeEach((to: Route, from: Route, next: (arg?: string | false | Route) => void) => {
@@ -285,6 +287,8 @@ export default class RpcApi {
         if (request) {
             let accountRequired: boolean | undefined;
             let errorMsg = 'Address not found'; // Error message for all cases but the first
+            // Note that we don't check for btc addresses here. Instead, btc request handlers check whether the address
+            // can be derived.
             if ((request as ParsedSimpleRequest).walletId) {
                 accountRequired = true;
                 account = await WalletStore.Instance.get((request as ParsedSimpleRequest).walletId);
@@ -293,10 +297,6 @@ export default class RpcApi {
                 accountRequired = true;
                 const address = (request as ParsedSignTransactionRequest).sender;
                 account = this._store.getters.findWalletByAddress(address.toUserFriendlyAddress(), true);
-            // } else if (requestType === RequestType.SIGN_BTC_TRANSACTION) {
-            //     accountRequired = true;
-            //     const btcAddress = (request as ParsedSignBtcTransactionRequest).inputs[0].address;
-            //     account = this._store.getters.findWalletByBtcAddress(btcAddress);
             } else if (requestType === RequestType.SIGN_MESSAGE) {
                 accountRequired = false; // Sign message allows user to select an account
                 const address = (request as ParsedSignMessageRequest).signer;
@@ -323,6 +323,13 @@ export default class RpcApi {
                             true,
                         );
                     }
+                }
+            } else if (requestType === RequestType.SETUP_SWAP) {
+                accountRequired = true;
+                const { fund, redeem } = (request as ParsedSetupSwapRequest);
+                const address = fund.type === 'NIM' ? fund.sender : redeem.type === 'NIM' ? redeem.recipient : null;
+                if (address) {
+                    account = this._store.getters.findWalletByAddress(address.toUserFriendlyAddress(), true);
                 }
             }
             if (accountRequired && !account) {

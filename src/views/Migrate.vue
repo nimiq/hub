@@ -101,7 +101,8 @@
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import { AccountInfo } from '@/lib/AccountInfo';
 import { WalletStore } from '@/lib/WalletStore';
-import { WalletInfo, WalletType } from '@/lib/WalletInfo';
+import { WalletInfo } from '@/lib/WalletInfo';
+import { WalletType } from '../lib/Constants';
 import {
     SmallPage, PageHeader, PageBody, PageFooter,
     AccountRing, Identicon, Amount,

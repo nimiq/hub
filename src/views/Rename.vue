@@ -35,7 +35,8 @@
     import { Account } from '../lib/PublicRequestTypes';
     import StatusScreen from '../components/StatusScreen.vue';
     import GlobalClose from '../components/GlobalClose.vue';
-    import { WalletInfo, WalletType } from '../lib/WalletInfo';
+    import { WalletInfo } from '../lib/WalletInfo';
+    import { WalletType } from '../lib/Constants';
     import { WalletStore } from '@/lib/WalletStore';
     import { Static } from '../lib/StaticStore';
 

@@ -1,10 +1,10 @@
 // tslint:disable no-bitwise no-shadowed-variable
 
-import { WalletInfoEntry, WalletType } from './WalletInfo';
+import { WalletInfoEntry } from './WalletInfo';
 import { Utf8Tools } from '@nimiq/utils';
 import { AccountInfoEntry } from './AccountInfo';
 import CookieJar from './CookieJar';
-import { LABEL_MAX_LENGTH } from '@/lib/Constants';
+import { LABEL_MAX_LENGTH, WalletType } from '@/lib/Constants';
 import {
     labelAddress,
     labelKeyguardAccount,

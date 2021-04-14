@@ -25,16 +25,21 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { PageBody, SmallPage, PageHeader } from '@nimiq/vue-components';
-import LedgerUi from '../components/LedgerUi.vue';
 import StatusScreen from '../components/StatusScreen.vue';
 import GlobalClose from '../components/GlobalClose.vue';
+import LedgerUi from '../components/LedgerUi.vue';
 import IdenticonSelector from '../components/IdenticonSelector.vue';
 import { Static } from '../lib/StaticStore';
 import { ParsedSimpleRequest } from '../lib/RequestTypes';
 import { Address } from '../lib/PublicRequestTypes';
 import { WalletInfo } from '../lib/WalletInfo';
 import { AccountInfo } from '../lib/AccountInfo';
-import LedgerApi, { RequestType as LedgerApiRequestType } from '@nimiq/ledger-api';
+import LedgerApi, {
+    Coin,
+    getBip32Path,
+    parseBip32Path,
+    RequestTypeNimiq as LedgerApiRequestType,
+} from '@nimiq/ledger-api';
 import { WalletStore } from '../lib/WalletStore';
 import { ACCOUNT_MAX_ALLOWED_ADDRESS_GAP } from '../lib/Constants';
 import { labelAddress } from '../lib/LabelingMachine';
@@ -69,16 +74,22 @@ export default class AddAddressLedger extends Vue {
         let startIndex = 0;
         const newestAddress = Array.from(account.accounts.values()).pop();
         if (newestAddress) {
-            const newestIndex = LedgerApi.getKeyIdForBip32Path(newestAddress.path);
-            startIndex = (newestIndex !== null ? newestIndex : -1) + 1;
+            try {
+                startIndex = parseBip32Path(newestAddress.path).addressIndex + 1;
+            } catch (e) {
+                // Ignore and start at index 0. Should never happen.
+            }
         }
 
         const pathsToDerive = [];
         for (let keyId = startIndex; keyId < startIndex + ACCOUNT_MAX_ALLOWED_ADDRESS_GAP; ++keyId) {
-            pathsToDerive.push(LedgerApi.getBip32PathForKeyId(keyId));
+            pathsToDerive.push(getBip32Path({
+                coin: Coin.NIMIQ,
+                addressIndex: keyId,
+            }));
         }
 
-        const derivedAddressInfos = await LedgerApi.deriveAddresses(pathsToDerive, this.account.keyId);
+        const derivedAddressInfos = await LedgerApi.Nimiq.deriveAddresses(pathsToDerive, this.account.keyId);
         this.addressesToSelectFrom = derivedAddressInfos.map((addressInfo) => new AccountInfo(
             addressInfo.keyPath,
             labelAddress(addressInfo.address),

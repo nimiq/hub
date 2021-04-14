@@ -19,6 +19,8 @@ import {
     NimiqCheckoutRequest,
     MultiCurrencyCheckoutRequest,
     SignBtcTransactionRequest,
+    SetupSwapRequest,
+    RefundSwapRequest,
 } from './PublicRequestTypes';
 import {
     ParsedBasicRequest,
@@ -33,12 +35,15 @@ import {
     ParsedSignTransactionRequest,
     ParsedSimpleRequest,
     ParsedSignBtcTransactionRequest,
+    ParsedSetupSwapRequest,
+    ParsedRefundSwapRequest,
 } from './RequestTypes';
 import { ParsedNimiqDirectPaymentOptions } from './paymentOptions/NimiqPaymentOptions';
 import { ParsedEtherDirectPaymentOptions } from './paymentOptions/EtherPaymentOptions';
 import { ParsedBitcoinDirectPaymentOptions } from './paymentOptions/BitcoinPaymentOptions';
 import { Utf8Tools } from '@nimiq/utils';
 import Config from 'config';
+import { SwapAsset } from '@nimiq/fastspot-api';
 
 export class RequestParser {
     public static parse(
@@ -439,6 +444,77 @@ export class RequestParser {
                     output,
                     changeOutput,
                 } as ParsedSignBtcTransactionRequest;
+            case RequestType.SETUP_SWAP:
+                const setupSwapRequest = request as SetupSwapRequest;
+
+                // Validate and parse only what we use in the Hub
+
+                if (!['NIM', 'BTC'].includes(setupSwapRequest.fund.type)) {
+                    throw new Error('Funding object type must be "NIM" or "BTC"');
+                }
+
+                if (!['NIM', 'BTC'].includes(setupSwapRequest.redeem.type)) {
+                    throw new Error('Redeeming object type must be "NIM" or "BTC"');
+                }
+
+                if (setupSwapRequest.fund.type === setupSwapRequest.redeem.type) {
+                    throw new Error('Cannot swap between the same types');
+                }
+
+                const parsedSetupSwapRequest: ParsedSetupSwapRequest = {
+                    kind: RequestType.SETUP_SWAP,
+                    ...setupSwapRequest,
+
+                    fund: setupSwapRequest.fund.type === 'NIM' ? {
+                        ...setupSwapRequest.fund,
+                        type: SwapAsset[setupSwapRequest.fund.type],
+                        sender: Nimiq.Address.fromAny(setupSwapRequest.fund.sender),
+                    } : {
+                        ...setupSwapRequest.fund,
+                        type: SwapAsset[setupSwapRequest.fund.type],
+                    },
+
+                    redeem: setupSwapRequest.redeem.type === 'NIM' ? {
+                        ...setupSwapRequest.redeem,
+                        type: SwapAsset[setupSwapRequest.redeem.type],
+                        recipient: Nimiq.Address.fromAny(setupSwapRequest.redeem.recipient),
+                        extraData: typeof setupSwapRequest.redeem.extraData === 'string'
+                            ? Nimiq.BufferUtils.fromAny(setupSwapRequest.redeem.extraData)
+                            : setupSwapRequest.redeem.extraData,
+                    } : {
+                        ...setupSwapRequest.redeem,
+                        type: SwapAsset[setupSwapRequest.redeem.type],
+                    },
+                };
+                return parsedSetupSwapRequest;
+            case RequestType.REFUND_SWAP:
+                const refundSwapRequest = request as RefundSwapRequest;
+
+                // Validate and parse only what we use in the Hub
+
+                if (!['NIM', 'BTC'].includes(refundSwapRequest.refund.type)) {
+                    throw new Error('Refunding object type must be "NIM" or "BTC"');
+                }
+
+                const parsedRefundSwapRequest: ParsedRefundSwapRequest = {
+                    kind: RequestType.REFUND_SWAP,
+                    ...refundSwapRequest,
+                    walletId: refundSwapRequest.accountId,
+
+                    refund: refundSwapRequest.refund.type === 'NIM' ? {
+                        ...refundSwapRequest.refund,
+                        type: SwapAsset[refundSwapRequest.refund.type],
+                        sender: Nimiq.Address.fromAny(refundSwapRequest.refund.sender),
+                        recipient: Nimiq.Address.fromAny(refundSwapRequest.refund.recipient),
+                        extraData: typeof refundSwapRequest.refund.extraData === 'string'
+                            ? Nimiq.BufferUtils.fromAny(refundSwapRequest.refund.extraData)
+                            : refundSwapRequest.refund.extraData,
+                    } : {
+                        ...refundSwapRequest.refund,
+                        type: SwapAsset[refundSwapRequest.refund.type],
+                    },
+                };
+                return parsedRefundSwapRequest;
             default:
                 return null;
         }
@@ -568,6 +644,40 @@ export class RequestParser {
                     output: signBtcTransactionRequest.output,
                     changeOutput: signBtcTransactionRequest.changeOutput,
                 } as SignBtcTransactionRequest;
+            case RequestType.SETUP_SWAP:
+                const setupSwapRequest = request as ParsedSetupSwapRequest;
+
+                const swapSetupRequest: SetupSwapRequest = {
+                    ...setupSwapRequest,
+
+                    // @ts-ignore Type 'Address' is not assignable to type 'string'
+                    fund: setupSwapRequest.fund.type === 'NIM' ? {
+                        ...setupSwapRequest.fund,
+                        sender: setupSwapRequest.fund.sender.toUserFriendlyAddress(),
+                    } : setupSwapRequest.fund,
+
+                    // @ts-ignore Type 'Address' is not assignable to type 'string'
+                    redeem: setupSwapRequest.redeem.type === 'NIM' ? {
+                        ...setupSwapRequest.redeem,
+                        recipient: setupSwapRequest.redeem.recipient.toUserFriendlyAddress(),
+                    } : setupSwapRequest.redeem,
+                };
+                return swapSetupRequest;
+            case RequestType.REFUND_SWAP:
+                const parsedRefundSwapRequest = request as ParsedRefundSwapRequest;
+
+                const refundSwapRequest: RefundSwapRequest = {
+                    ...parsedRefundSwapRequest,
+                    accountId: parsedRefundSwapRequest.walletId,
+
+                    // @ts-ignore Type 'Address' is not assignable to type 'string'
+                    refund: parsedRefundSwapRequest.refund.type === 'NIM' ? {
+                        ...parsedRefundSwapRequest.refund,
+                        sender: parsedRefundSwapRequest.refund.sender.toUserFriendlyAddress(),
+                        recipient: parsedRefundSwapRequest.refund.recipient.toUserFriendlyAddress(),
+                    } : parsedRefundSwapRequest.refund,
+                };
+                return refundSwapRequest;
             default:
                 return null;
         }

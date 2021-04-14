@@ -4,12 +4,12 @@
 # Irfan Maranki, 2020
 # Sven <sven@nimiq.com>, 2020
 # Redexe <timo.niehoff@yahoo.de>, 2020
-# Daniel, 2020
 # Sören <hello@soerenschwert.de>, 2020
+# Daniel, 2020
 # 
 msgid ""
 msgstr ""
-"Last-Translator: Sören <hello@soerenschwert.de>, 2020\n"
+"Last-Translator: Daniel, 2020\n"
 "Language-Team: German (https://www.transifex.com/nimiq-foundation/teams/107400/de/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: de\n"
@@ -619,7 +619,7 @@ msgstr ""
 
 #: src/components/CurrencyInfo.vue:9
 msgid "No"
-msgstr "Nein"
+msgstr "Keine"
 
 #: src/components/NonNimiqCheckoutCard.vue:90
 msgid "No App found"

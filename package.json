@@ -21,9 +21,10 @@
     "dependencies": {
         "@nimiq/browser-warning": "^1.1.0",
         "@nimiq/electrum-client": "https://github.com/nimiq/electrum-client#build",
+        "@nimiq/fastspot-api": "^1.0.0",
         "@nimiq/iqons": "^1.5.2",
-        "@nimiq/keyguard-client": "https://gitpkg.now.sh/nimiq/keyguard?529e33f5f0ad31d79e0f73e5073147a7e5e7fd58&scripts.postinstall=cd%20client%20%26%26%20.%2Fbuild-gitpkg.sh",
-        "@nimiq/ledger-api": "^1.1.0",
+        "@nimiq/keyguard-client": "^1.4.0",
+        "@nimiq/ledger-api": "^2.0.0",
         "@nimiq/network-client": "^0.6.2",
         "@nimiq/rpc": "^0.4.1",
         "@nimiq/style": "^0.8.2",
@@ -59,7 +60,7 @@
         "jest": "^24.1.0",
         "script-ext-html-webpack-plugin": "^2.1.4",
         "ts-jest": "^24.0.0",
-        "typescript": "~3.7.5",
+        "typescript": "~3.8.0",
         "vue-template-compiler": "^2.6.11",
         "webpack-i18n-tools": "https://github.com/nimiq/webpack-i18n-tools#master",
         "write-file-webpack-plugin": "^4.5.1"

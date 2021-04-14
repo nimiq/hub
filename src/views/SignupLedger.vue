@@ -2,24 +2,25 @@
     <div class="container">
         <SmallPage>
             <LedgerUi v-if="state === constructor.State.LOADING
-                      || state === constructor.State.LEDGER_INTERACTION
-                      || state === constructor.State.FETCHING_ADDRESSES"
-                      @information-shown="_showLedger"></LedgerUi>
+                || state === constructor.State.LEDGER_INTERACTION
+                || state === constructor.State.FETCHING_ADDRESSES"
+                @information-shown="_showLedger"></LedgerUi>
             <transition name="transition-fade">
                 <StatusScreen v-if="state === constructor.State.LOADING
-                        || state === constructor.State.FETCHING_ADDRESSES
-                        || state === constructor.State.FETCHING_INCOMPLETE
-                        || state === constructor.State.FINISHED"
-                        :state="statusScreenState" :title="statusScreenTitle" :status="statusScreenStatus"
-                        :message="statusScreenMessage" :mainAction="statusScreenAction" @main-action="_continue"
-                        :class="{ 'grow-from-bottom-button': state === constructor.State.FINISHED && !hadAccounts }">
+                    || state === constructor.State.FETCHING_ADDRESSES
+                    || state === constructor.State.FETCHING_INCOMPLETE
+                    || state === constructor.State.FETCHING_FAILED
+                    || state === constructor.State.FINISHED"
+                    :state="statusScreenState" :title="statusScreenTitle" :status="statusScreenStatus"
+                    :message="statusScreenMessage" :mainAction="statusScreenAction" @main-action="_continue"
+                    :class="{ 'grow-from-bottom-button': state === constructor.State.FINISHED && !hadAccounts }">
                 </StatusScreen>
             </transition>
             <transition name="transition-fade">
                 <IdenticonSelector v-if="state === constructor.State.IDENTICON_SELECTION"
-                                   :accounts="accountsToSelectFrom"
-                                   :confirmAccountSelection="false"
-                                   @identicon-selected="_onAccountSelected"/>
+                    :accounts="accountsToSelectFrom"
+                    :confirmAccountSelection="false"
+                    @identicon-selected="_onAccountSelected"/>
             </transition>
             <transition name="transition-fade">
                 <div v-if="state === constructor.State.WALLET_SUMMARY
@@ -41,13 +42,13 @@ import { Component, Vue } from 'vue-property-decorator';
 import { AccountRing, PageBody, PageHeader, SmallPage } from '@nimiq/vue-components';
 import { Account } from '../lib/PublicRequestTypes';
 import LedgerApi, {
-    RequestType as LedgerApiRequestType,
+    RequestTypeNimiq as LedgerApiRequestType,
     StateType as LedgerApiStateType,
     EventType as LedgerApiEventType,
 } from '@nimiq/ledger-api';
-import LedgerUi from '../components/LedgerUi.vue';
 import StatusScreen from '../components/StatusScreen.vue';
 import GlobalClose from '../components/GlobalClose.vue';
+import LedgerUi from '../components/LedgerUi.vue';
 import IdenticonSelector from '../components/IdenticonSelector.vue';
 import WalletInfoCollector from '../lib/WalletInfoCollector';
 import { WalletInfo } from '../lib/WalletInfo';
@@ -67,6 +68,7 @@ export default class SignupLedger extends Vue {
         LEDGER_INTERACTION: 'ledger-interaction', // can be instructions to connect or also display of an error
         FETCHING_ADDRESSES: 'fetching-addresses',
         FETCHING_INCOMPLETE: 'fetching-incomplete',
+        FETCHING_FAILED: 'fetching-failed',
         IDENTICON_SELECTION: 'identicon-selection',
         WALLET_SUMMARY: 'wallet-summary',
         FINISHED: 'finished',
@@ -79,13 +81,16 @@ export default class SignupLedger extends Vue {
     private accountsToSelectFrom: AccountInfo[] = [];
     private hadAccounts: boolean = false;
     private cancelled: boolean = false;
-    private fetchingAddressesFailed: boolean = false;
+    private retryingToFetchAddresses: boolean = false;
     private fetchingAddressesIncomplete: boolean = false;
+    private fetchError: string = '';
 
     private get statusScreenState() {
         switch (this.state) {
             case SignupLedger.State.FETCHING_INCOMPLETE:
                 return StatusScreen.State.WARNING;
+            case SignupLedger.State.FETCHING_FAILED:
+                return StatusScreen.State.ERROR;
             case SignupLedger.State.FINISHED:
                 return StatusScreen.State.SUCCESS;
             default:
@@ -96,9 +101,11 @@ export default class SignupLedger extends Vue {
     private get statusScreenTitle() {
         switch (this.state) {
             case SignupLedger.State.FETCHING_ADDRESSES:
-                return this.$t('Fetching Addresses') as string;
+                return this.$t('Fetching your Addresses') as string;
             case SignupLedger.State.FETCHING_INCOMPLETE:
                 return this.$t('Your Addresses may be\nincomplete.') as string;
+            case SignupLedger.State.FETCHING_FAILED:
+                return this.$t('Fetching Addresses Failed') as string;
             case SignupLedger.State.FINISHED:
                 return this.hadAccounts
                     ? this.$t('You\'re logged in!') as string
@@ -110,7 +117,7 @@ export default class SignupLedger extends Vue {
 
     private get statusScreenStatus() {
         if (this.state !== SignupLedger.State.FETCHING_ADDRESSES) return '';
-        else if (this.fetchingAddressesFailed) return this.$t('Failed to fetch addresses. Retrying...') as string;
+        else if (this.retryingToFetchAddresses) return this.$t('Failed to fetch addresses. Retrying...') as string;
         else {
             const count = !this.walletInfo ? 0 : this.walletInfo.accounts.size;
             return count > 0
@@ -120,13 +127,25 @@ export default class SignupLedger extends Vue {
     }
 
     private get statusScreenMessage() {
-        if (this.state !== SignupLedger.State.FETCHING_INCOMPLETE) return '';
-        else return this.$t('Used addresses without balance might have been missed.') as string;
+        switch (this.state) {
+            case SignupLedger.State.FETCHING_INCOMPLETE:
+                return this.$t('Used addresses without balance might have been missed.') as string;
+            case SignupLedger.State.FETCHING_FAILED:
+                return this.$t('Syncing with the network failed: {error}', { error: this.fetchError }) as string;
+            default:
+                return '';
+        }
     }
 
     private get statusScreenAction() {
-        if (this.state !== SignupLedger.State.FETCHING_INCOMPLETE) return '';
-        else return this.$t('Continue') as string;
+        switch (this.state) {
+            case SignupLedger.State.FETCHING_INCOMPLETE:
+                return this.$t('Continue') as string;
+            case SignupLedger.State.FETCHING_FAILED:
+                return this.$t('Retry') as string;
+            default:
+                return '';
+        }
     }
 
     private async created() {
@@ -142,12 +161,20 @@ export default class SignupLedger extends Vue {
                         this._onWalletInfoUpdate(walletInfo, currentlyCheckedAccounts),
                     /* skipActivityCheck */ true,
                 );
-                this.fetchingAddressesFailed = false;
+                this.retryingToFetchAddresses = false;
                 this.fetchingAddressesIncomplete = !!collectionResult.receiptsError;
                 break;
             } catch (e) {
-                this.fetchingAddressesFailed = true;
-                if (tryCount >= 5) throw e;
+                if (tryCount >= 5) {
+                    this.fetchError = e.message || e;
+                    if (LedgerApi.currentState.type !== LedgerApiStateType.ERROR) {
+                        // For errors not coming from the LedgerApi, switch to the error screen. For Ledger errors, we
+                        // display the error in the LedgerUi.
+                        this.state = SignupLedger.State.FETCHING_FAILED;
+                    }
+                    return;
+                }
+                this.retryingToFetchAddresses = true;
                 console.warn('Error while collecting Ledger WalletInfo, retrying', e);
                 if (!LedgerApi.isBusy) continue;
                 // await Ledger request from current iteration to be cancelled to able to start the next one
@@ -161,7 +188,7 @@ export default class SignupLedger extends Vue {
     private destroyed() {
         LedgerApi.disconnect(
             /* cancelRequest */ true,
-            /* requestTypeToDisconnect */ LedgerApiRequestType.DERIVE_ADDRESSES,
+            /* requestTypesToDisconnect */ [LedgerApiRequestType.GET_WALLET_ID, LedgerApiRequestType.DERIVE_ADDRESSES],
         );
         this.cancelled = true;
     }
@@ -198,7 +225,9 @@ export default class SignupLedger extends Vue {
 
     private _continue() {
         if (this.cancelled) return;
-        if (this.fetchingAddressesIncomplete && this.state !== SignupLedger.State.FETCHING_INCOMPLETE) {
+        if (this.state === SignupLedger.State.FETCHING_FAILED) {
+            window.location.reload();
+        } else if (this.fetchingAddressesIncomplete && this.state !== SignupLedger.State.FETCHING_INCOMPLETE) {
             // warn user that his addresses might be incomplete
             this.state = SignupLedger.State.FETCHING_INCOMPLETE;
         } else if (this.walletInfo!.accounts.size > 0) {
@@ -229,7 +258,8 @@ export default class SignupLedger extends Vue {
             this.state = SignupLedger.State.LEDGER_INTERACTION;
             return;
         }
-        if (currentRequest.type !== LedgerApiRequestType.DERIVE_ADDRESSES || currentRequest.cancelled) return;
+        if (currentRequest.cancelled || (currentRequest.type !== LedgerApiRequestType.GET_WALLET_ID
+            && currentRequest.type !== LedgerApiRequestType.DERIVE_ADDRESSES)) return;
         if (LedgerApi.currentState.type === LedgerApiStateType.REQUEST_PROCESSING
             || LedgerApi.currentState.type === LedgerApiStateType.REQUEST_CANCELLING) {
             // When we actually fetch the accounts from the device, we want to show our own StatusScreen instead of

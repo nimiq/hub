@@ -1,7 +1,8 @@
 import { RpcServer, State } from '@nimiq/rpc';
 import { BrowserDetection } from '@nimiq/utils';
 import { WalletStore } from '@/lib/WalletStore';
-import { WalletInfoEntry, WalletInfo, WalletType } from '@/lib/WalletInfo';
+import { WalletInfoEntry, WalletInfo } from '@/lib/WalletInfo';
+import { WalletType } from './lib/Constants';
 import CookieJar from '@/lib/CookieJar';
 import Config from 'config';
 import {

@@ -1,9 +1,9 @@
-import { Currency, PaymentType, RequestType } from './PublicRequestTypes';
+import { Currency, PaymentType, RequestType, CashlinkTheme } from './PublicRequestTypes';
 import { ParsedPaymentOptions } from './paymentOptions/ParsedPaymentOptions';
 import { ParsedNimiqSpecifics, ParsedNimiqDirectPaymentOptions } from './paymentOptions/NimiqPaymentOptions';
 import { ParsedEtherSpecifics, ParsedEtherDirectPaymentOptions } from './paymentOptions/EtherPaymentOptions';
 import { ParsedBitcoinSpecifics, ParsedBitcoinDirectPaymentOptions } from './paymentOptions/BitcoinPaymentOptions';
-import { CashlinkTheme } from './PublicRequestTypes';
+import { SwapAsset } from '@nimiq/fastspot-api';
 
 export interface ParsedBasicRequest {
     kind: RequestType;
@@ -116,6 +116,108 @@ export interface ParsedAddBtcAddressesRequest extends ParsedSimpleRequest {
     firstIndex: number;
 }
 
+/**
+ * Swap
+ */
+
+export interface ParsedSetupSwapRequest extends ParsedBasicRequest {
+    swapId: string;
+
+    fund: {
+        type: SwapAsset.NIM,
+        sender: Nimiq.Address,
+        value: number, // Luna
+        fee: number, // Luna
+        // extraData: Uint8Array, // HTLC data
+        validityStartHeight: number,
+    } | {
+        type: SwapAsset.BTC,
+        inputs: Array<{
+            address: string,
+            transactionHash: string,
+            outputIndex: number,
+            outputScript: string,
+            value: number, // Sats
+        }>;
+        output: {
+            // address: string, // HTLC address
+            value: number, // Sats
+        };
+        changeOutput?: {
+            address: string,
+            value: number, // Sats
+        };
+        // htlcScript: Uint8Array,
+        refundAddress: string,
+    };
+
+    redeem: {
+        type: SwapAsset.NIM,
+        // sender: Nimiq.Address, // HTLC address
+        recipient: Nimiq.Address, // My address, must be redeem address of HTLC
+        value: number, // Luna
+        fee: number, // Luna
+        extraData?: Uint8Array,
+        validityStartHeight: number,
+        // htlcData: Uint8Array,
+    } | {
+        type: SwapAsset.BTC,
+        input: {
+            // transactionHash: string,
+            // outputIndex: number,
+            // outputScript: string,
+            value: number, // Sats
+            // witnessScript: string,
+        };
+        output: {
+            address: string, // My address, must be redeem address of HTLC
+            value: number, // Sats
+        };
+    };
+
+    // Data needed for display
+    fiatCurrency: string;
+    nimFiatRate: number;
+    btcFiatRate: number;
+    serviceFundingNetworkFee: number; // Luna or Sats, depending which one gets funded
+    serviceRedeemingNetworkFee: number; // Luna or Sats, depending which one gets redeemed
+    serviceExchangeFee: number; // Luna or Sats, depending which one gets funded
+    nimiqAddresses: Array<{
+        address: string,
+        balance: number, // Luna
+    }>;
+    bitcoinAccount: {
+        balance: number, // Sats
+    };
+}
+
+export interface ParsedRefundSwapRequest extends ParsedSimpleRequest {
+    refund: {
+        type: SwapAsset.NIM;
+        sender: Nimiq.Address; // HTLC address
+        recipient: Nimiq.Address; // My address, must be refund address of HTLC
+        value: number; // Luna
+        fee: number; // Luna
+        extraData?: Uint8Array;
+        validityStartHeight: number;
+    } | {
+        type: SwapAsset.BTC;
+        input: {
+            transactionHash: string,
+            outputIndex: number,
+            outputScript: string,
+            address: string, // HTLC address
+            value: number, // Sats
+            witnessScript: string,
+        };
+        output: {
+            address: string, // My address
+            value: number, // Sats
+        };
+        refundAddress: string; // My address, must be refund address of HTLC
+    };
+}
+
 // Discriminated Unions
 export type ParsedRpcRequest = ParsedSignTransactionRequest
                              | ParsedCreateCashlinkRequest
@@ -128,4 +230,6 @@ export type ParsedRpcRequest = ParsedSignTransactionRequest
                              | ParsedSignMessageRequest
                              | ParsedExportRequest
                              | ParsedSignBtcTransactionRequest
-                             | ParsedAddBtcAddressesRequest;
+                             | ParsedAddBtcAddressesRequest
+                             | ParsedSetupSwapRequest
+                             | ParsedRefundSwapRequest;

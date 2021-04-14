@@ -1,11 +1,11 @@
 import Vue from 'vue';
 import Vuex, { StoreOptions } from 'vuex';
 import { Result as KeyguardResult } from '@nimiq/keyguard-client';
-import { WalletInfo, WalletType } from '@/lib/WalletInfo';
+import { WalletInfo } from '@/lib/WalletInfo';
 import { WalletStore } from '@/lib/WalletStore';
 import { AccountInfo } from '@/lib/AccountInfo';
 import { labelLegacyAccountGroup } from '@/lib/LabelingMachine';
-import { LEGACY_GROUPING_ACCOUNT_ID } from '@/lib/Constants';
+import { LEGACY_GROUPING_ACCOUNT_ID, WalletType } from '@/lib/Constants';
 import { ContractInfo } from './lib/ContractInfo';
 
 Vue.use(Vuex);
@@ -124,9 +124,6 @@ const store: StoreOptions<RootState> = {
             return state.wallets.find((wallet) => wallet.contracts.some((contract) => {
                 return contract.address.toUserFriendlyAddress() === address;
             }));
-        },
-        findWalletByBtcAddress: (state) => (address: string): WalletInfo | undefined => {
-            return state.wallets.find((wallet) => wallet.findBtcAddressInfo(address));
         },
         findWalletByKeyId: (state) => (keyId: string): WalletInfo | undefined => {
             return state.wallets.find((wallet) => wallet.keyId === keyId);

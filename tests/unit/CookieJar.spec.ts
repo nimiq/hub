@@ -1,10 +1,11 @@
 import { setup } from './_setup';
-import { WalletType, WalletInfoEntry } from '@/lib/WalletInfo';
+import { WalletInfoEntry } from '@/lib/WalletInfo';
+import { WalletType } from '@/lib/Constants';
 import { AccountInfoEntry } from '@/lib/AccountInfo';
 import CookieJar from '@/lib/CookieJar';
 import { Utf8Tools } from '@nimiq/utils';
 import { setLanguage } from '@/i18n/i18n-setup';
-import { BtcAddressInfo, BtcAddressInfoEntry } from '@/lib/bitcoin/BtcAddressInfo';
+import { BtcAddressInfoEntry } from '@/lib/bitcoin/BtcAddressInfo';
 
 setup();
 

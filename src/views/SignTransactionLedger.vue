@@ -125,10 +125,10 @@ import {
     StopwatchIcon,
 } from '@nimiq/vue-components';
 import Network from '../components/Network.vue';
-import LedgerApi, { RequestType as LedgerApiRequestType } from '@nimiq/ledger-api';
-import LedgerUi from '../components/LedgerUi.vue';
+import LedgerApi, { RequestTypeNimiq as LedgerApiRequestType } from '@nimiq/ledger-api';
 import StatusScreen from '../components/StatusScreen.vue';
 import GlobalClose from '../components/GlobalClose.vue';
+import LedgerUi from '../components/LedgerUi.vue';
 import { Static } from '../lib/StaticStore';
 import { Getter } from 'vuex-class';
 import { State as RpcState } from '@nimiq/rpc';
@@ -322,7 +322,7 @@ export default class SignTransactionLedger extends Vue {
             }
 
             try {
-                signedTransaction = await LedgerApi.signTransaction({
+                signedTransaction = await LedgerApi.Nimiq.signTransaction({
                     ...transactionInfo,
                     validityStartHeight,
                 }, signer.path, senderAccount.keyId);
@@ -352,6 +352,9 @@ export default class SignTransactionLedger extends Vue {
         }
 
         this.shownAccountDetails = null;
+
+        // If user left this view in the mean time, don't continue
+        if (this.isDestroyed) return;
 
         // send transaction to network and finish
         let result;
@@ -386,7 +389,7 @@ export default class SignTransactionLedger extends Vue {
         if (this.request.kind !== RequestType.CHECKOUT) return null;
         const checkoutRequest = this.request as ParsedCheckoutRequest;
         return checkoutRequest.paymentOptions.find(
-            (option) => option.currency === Currency.NIM, // TODO: Also handle BTC payments
+            (option) => option.currency === Currency.NIM,
         ) as ParsedNimiqDirectPaymentOptions;
     }
 
@@ -603,11 +606,6 @@ export default class SignTransactionLedger extends Vue {
     .bottom-container > * {
         position: absolute;
         top: 0;
-    }
-
-    .ledger-ui {
-        width: 100%;
-        height: 100%;
     }
 
     .ledger-ui.animations-paused >>> * {

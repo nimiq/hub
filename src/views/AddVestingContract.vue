@@ -2,7 +2,7 @@
     <div class="container">
         <SmallPage class="add-vesting-contract">
             <PageHeader>{{ $t('Add Vesting Contract') }}</PageHeader>
-            <PageBody >
+            <PageBody>
                 <AddressInput @address="checkContract"/>
 
                 <div class="info-box">

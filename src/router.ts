@@ -60,15 +60,24 @@ const RequestError            = () => import(/*webpackChunkName: "request-error"
 const ErrorHandlerUnsupportedLedger = () => import(/*webpackChunkName: "unsupported-ledger"*/
     './views/ErrorHandlerUnsupportedLedger.vue');
 
-const SignBtcTransaction         = () => import(/*webpackChunkName: "sign-btc-transaction"*/
+const SignBtcTransaction        = () => import(/*webpackChunkName: "sign-btc-transaction"*/
     './views/SignBtcTransaction.vue');
-const SignBtcTransactionSuccess  = () => import(/*webpackChunkName: "sign-btc-transaction"*/
-    './views/SignBtcTransactionSuccess.vue');
+const SignBtcTransactionSuccess = () => import(/*webpackChunkName: "sign-btc-transaction"*/
+'./views/SignBtcTransactionSuccess.vue');
 
-const ActivateBitcoin         = () => import(/*webpackChunkName: "activate-btc"*/
-    './views/ActivateBitcoin.vue');
-const ActivateBitcoinSuccess  = () => import(/*webpackChunkName: "activate-btc"*/
-    './views/ActivateBitcoinSuccess.vue');
+const SignBtcTransactionLedger  = () => import(/*webpackChunkName: "sign-btc-transaction-ledger"*/
+    './views/SignBtcTransactionLedger.vue');
+
+const ActivateBitcoin         = () => import(/*webpackChunkName: "activate-btc"*/ './views/ActivateBitcoin.vue');
+const ActivateBitcoinSuccess  = () => import(/*webpackChunkName: "activate-btc"*/ './views/ActivateBitcoinSuccess.vue');
+
+const ActivateBitcoinLedger = () => import(/*webpackChunkName: "activate-btc-ledger"*/
+    './views/ActivateBitcoinLedger.vue');
+
+const SetupSwap               = () => import(/*webpackChunkName: "swap"*/ './views/SetupSwap.vue');
+const SetupSwapSuccess        = () => import(/*webpackChunkName: "swap"*/ './views/SetupSwapSuccess.vue');
+const RefundSwap               = () => import(/*webpackChunkName: "swap"*/ './views/RefundSwap.vue');
+const RefundSwapSuccess        = () => import(/*webpackChunkName: "swap"*/ './views/RefundSwapSuccess.vue');
 
 Vue.use(Router);
 
@@ -85,8 +94,8 @@ export function keyguardResponseRouter(
         case KeyguardCommand.REMOVE:
             resolve = `${RequestType.LOGOUT}-success`; break;
         case KeyguardCommand.SIGN_TRANSACTION:
-            // The SIGN_TRANSACTION Keyguard command is used by Accounts' SIGN_TRANSACTION, CHECKOUT and
-            // CASHLINK. Thus we return the user to the respective handler component
+            // The SIGN_TRANSACTION Keyguard command is used by Hub's SIGN_TRANSACTION, CHECKOUT,
+            // CASHLINK and REFUND_SWAP. Thus we return the user to the respective handler component
             resolve = originalRequestType === RequestType.CREATE_CASHLINK
                 ? RequestType.MANAGE_CASHLINK
                 : `${originalRequestType}-success`;
@@ -98,15 +107,17 @@ export function keyguardResponseRouter(
         case KeyguardCommand.DERIVE_ADDRESS:
             resolve = `${RequestType.ADD_ADDRESS}-selection`; break;
         case KeyguardCommand.SIGN_MESSAGE:
-            // The SIGN_MESSAGE Keyguard command is used by Accounts' SIGN_MESSAGE and
+            // The SIGN_MESSAGE Keyguard command is used by Hub's SIGN_MESSAGE and
             // NIMIQ_ID (future). Thus we return the user to the respective handler component
             resolve = `${originalRequestType}-success`; break;
         case KeyguardCommand.SIGN_BTC_TRANSACTION:
-            // The SIGN_BTC_TRANSACTION Keyguard command is used by Accounts' SIGN_BTC_TRANSACTION andCHECKOUT.
-            // Thus we return the user to the respective handler component
+            // The SIGN_BTC_TRANSACTION Keyguard command is used by Hub's SIGN_BTC_TRANSACTION, CHECKOUT
+            // and REFUND_SWAP. Thus we return the user to the respective handler component
             resolve = `${originalRequestType}-success`; break;
         case KeyguardCommand.DERIVE_BTC_XPUB:
             resolve = `${RequestType.ACTIVATE_BITCOIN}-success`; break;
+        case KeyguardCommand.SIGN_SWAP:
+            resolve = `${RequestType.SETUP_SWAP}-success`; break;
         default:
             throw new Error(`router.keyguardResponseRouter not defined for Keyguard command: ${command}`);
     }
@@ -301,6 +312,11 @@ export default new Router({
             name: RequestType.SIGN_BTC_TRANSACTION,
         },
         {
+            path: `/${RequestType.SIGN_BTC_TRANSACTION}/ledger`,
+            component: SignBtcTransactionLedger,
+            name: `${RequestType.SIGN_BTC_TRANSACTION}-ledger`,
+        },
+        {
             path: `/${RequestType.SIGN_BTC_TRANSACTION}/success`,
             component: SignBtcTransactionSuccess,
             name: `${RequestType.SIGN_BTC_TRANSACTION}-success`,
@@ -311,9 +327,34 @@ export default new Router({
             name: RequestType.ACTIVATE_BITCOIN,
         },
         {
+            path: `/${RequestType.ACTIVATE_BITCOIN}/ledger`,
+            component: ActivateBitcoinLedger,
+            name: `${RequestType.ACTIVATE_BITCOIN}-ledger`,
+        },
+        {
             path: `/${RequestType.ACTIVATE_BITCOIN}/success`,
             component: ActivateBitcoinSuccess,
             name: `${RequestType.ACTIVATE_BITCOIN}-success`,
+        },
+        {
+            path: `/${RequestType.SETUP_SWAP}`,
+            component: SetupSwap,
+            name: RequestType.SETUP_SWAP,
+        },
+        {
+            path: `/${RequestType.SETUP_SWAP}/success`,
+            component: SetupSwapSuccess,
+            name: `${RequestType.SETUP_SWAP}-success`,
+        },
+        {
+            path: `/${RequestType.REFUND_SWAP}`,
+            component: RefundSwap,
+            name: RequestType.REFUND_SWAP,
+        },
+        {
+            path: `/${RequestType.REFUND_SWAP}/success`,
+            component: RefundSwapSuccess,
+            name: `${RequestType.REFUND_SWAP}-success`,
         },
     ],
 });

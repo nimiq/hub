@@ -1,6 +1,7 @@
 // tslint:disable no-bitwise no-shadowed-variable
 
-import { WalletInfoEntry, WalletType } from './WalletInfo';
+import { WalletInfoEntry } from './WalletInfo';
+import { WalletType } from './Constants';
 import CookieJar from './CookieJar';
 import { WalletStore } from './WalletStore';
 

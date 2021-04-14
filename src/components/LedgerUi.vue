@@ -4,7 +4,9 @@
             <template slot="loading">
                 <transition name="transition-fade">
                     <LoadingSpinner v-if="illustration === constructor.Illustrations.LOADING"/>
-                    <div v-else class="ledger-device-container" :illustration="illustration"
+                    <div v-else class="ledger-device-container"
+                        :class="state.request && state.request.coin.toLowerCase()"
+                        :illustration="illustration"
                         :connect-animation-step="connectAnimationStep">
                         <div class="ledger-screen-confirm-address ledger-screen"></div>
                         <div class="ledger-screen-confirm-transaction ledger-screen"></div>
@@ -40,7 +42,18 @@
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import { LoadingSpinner } from '@nimiq/vue-components';
-import LedgerApi, { ErrorType, EventType, RequestType, State, StateType, TransportType } from '@nimiq/ledger-api';
+import LedgerApi, {
+    Coin,
+    ErrorState,
+    ErrorType,
+    EventType,
+    Request,
+    RequestTypeBitcoin,
+    RequestTypeNimiq,
+    State,
+    StateType,
+    TransportType,
+} from '@nimiq/ledger-api';
 import StatusScreen from '../components/StatusScreen.vue';
 
 @Component({ components: { StatusScreen, LoadingSpinner } })
@@ -71,8 +84,14 @@ class LedgerUi extends Vue {
     }
 
     private _connect() {
+        const { currentRequest } = LedgerApi;
+        if (!currentRequest) return;
         // Manual connection in the context of a user gesture.
-        LedgerApi.connect();
+        if (currentRequest.coin === Coin.NIMIQ) {
+            LedgerApi.connect(currentRequest.coin);
+        } else {
+            LedgerApi.connect(currentRequest.coin, currentRequest.network);
+        }
     }
 
     private get illustration() {
@@ -84,40 +103,48 @@ class LedgerUi extends Vue {
                 return LedgerUi.Illustrations.CONNECTING;
             case StateType.REQUEST_PROCESSING:
             case StateType.REQUEST_CANCELLING:
-                return this._getIllustrationForRequestType(this.state.request!.type);
+                return this._getIllustrationForRequest(this.state.request);
             case StateType.ERROR:
-                return this._getIllustrationForErrorType(this.state.error!.type);
+                return this._getIllustrationForErrorState(this.state);
         }
     }
 
-    private _getIllustrationForRequestType(requestType: RequestType): string {
-        switch (requestType) {
-            case RequestType.GET_WALLET_ID:
-            case RequestType.GET_ADDRESS:
-            case RequestType.GET_PUBLIC_KEY:
-            case RequestType.DERIVE_ADDRESSES:
+    private _getIllustrationForRequest(request: Request): string {
+        switch (request.type) {
+            case RequestTypeNimiq.GET_WALLET_ID:
+            case RequestTypeNimiq.GET_PUBLIC_KEY:
+            case RequestTypeNimiq.DERIVE_ADDRESSES:
+            // TODO instructions for u2f/WebAuthn confirmation on Ledger for fetching BTC public keys / addresses.
+            case RequestTypeBitcoin.GET_WALLET_ID:
+            case RequestTypeBitcoin.GET_EXTENDED_PUBLIC_KEY:
                 return LedgerUi.Illustrations.LOADING;
-            case RequestType.CONFIRM_ADDRESS:
-                return LedgerUi.Illustrations.CONFIRM_ADDRESS;
-            case RequestType.SIGN_TRANSACTION:
+            case RequestTypeNimiq.GET_ADDRESS:
+            case RequestTypeBitcoin.GET_ADDRESS_AND_PUBLIC_KEY:
+                return request.display ? LedgerUi.Illustrations.CONFIRM_ADDRESS : LedgerUi.Illustrations.LOADING;
+            case RequestTypeNimiq.SIGN_TRANSACTION:
+            case RequestTypeBitcoin.SIGN_TRANSACTION:
                 return LedgerUi.Illustrations.CONFIRM_TRANSACTION;
         }
     }
 
-    private _getIllustrationForErrorType(errorType: ErrorType): string {
-        switch (errorType) {
+    private _getIllustrationForErrorState(errorState: ErrorState): string {
+        switch (errorState.errorType) {
             case ErrorType.LOADING_DEPENDENCIES_FAILED:
                 return LedgerUi.Illustrations.LOADING;
-            case ErrorType.USER_INTERACTION_REQUIRED:
+            case ErrorType.WRONG_APP:
+            case ErrorType.USER_INTERACTION_REQUIRED: // keep animation running and ask user to use the connect button
             case ErrorType.CONNECTION_ABORTED: // keep animation running and ask user to use the connect button
                 return LedgerUi.Illustrations.CONNECTING;
             case ErrorType.REQUEST_ASSERTION_FAILED:
-                return this._getIllustrationForRequestType(this.state.request!.type);
+                return this._getIllustrationForRequest(
+                    (errorState as ErrorState<ErrorType.REQUEST_ASSERTION_FAILED>).request,
+                );
             case ErrorType.LEDGER_BUSY:
-                return this._getIllustrationForRequestType(LedgerApi.currentRequest!.type);
-            case ErrorType.NO_BROWSER_SUPPORT:
+                // show the illustration for already running request
+                return this._getIllustrationForRequest(LedgerApi.currentRequest!);
+            case ErrorType.BROWSER_UNSUPPORTED:
             case ErrorType.APP_OUTDATED:
-            case ErrorType.WRONG_LEDGER:
+            case ErrorType.WRONG_WALLET:
                 return LedgerUi.Illustrations.IDLE;
         }
     }
@@ -148,7 +175,7 @@ class LedgerUi extends Vue {
                 this._onStateLoading();
                 break;
             case StateType.REQUEST_PROCESSING:
-                this._onRequest(state);
+                this._onRequest(state.request);
                 break;
             case StateType.REQUEST_CANCELLING:
                 this._showInstructions('', this.$t('Please cancel the request on your Ledger') as string);
@@ -166,47 +193,58 @@ class LedgerUi extends Vue {
         this._showInstructions('', retryMessage);
     }
 
-    private _onRequest(state: State) {
-        const request = state.request!;
+    private _onRequest(request: Request) {
         switch (request.type) {
-            case RequestType.GET_WALLET_ID:
-            case RequestType.GET_PUBLIC_KEY:
-            case RequestType.GET_ADDRESS:
+            case RequestTypeNimiq.GET_WALLET_ID:
+            case RequestTypeNimiq.GET_PUBLIC_KEY:
+            // TODO instructions for u2f/WebAuthn confirmation on Ledger for fetching BTC public keys / addresses.
+            case RequestTypeBitcoin.GET_WALLET_ID:
                 // no instructions needed as not interactive
                 break;
-            case RequestType.DERIVE_ADDRESSES:
-                // not interactive, but takes ~6 seconds
-                this._showInstructions(this.$t('Fetching Addresses') as string);
+            case RequestTypeNimiq.GET_ADDRESS:
+            case RequestTypeBitcoin.GET_ADDRESS_AND_PUBLIC_KEY:
+                if (request.display) {
+                    this._showInstructions(
+                        this.$t('Confirm Address') as string,
+                        !request.expectedAddress
+                            ? this.$t('Confirm the address on your Ledger') as string
+                            : this.$t(
+                                'Confirm that the address on your Ledger matches {addressToConfirm}',
+                                { addressToConfirm: request.expectedAddress },
+                            ) as string,
+                    );
+                } // else no instructions needed as not interactive
                 break;
-            case RequestType.CONFIRM_ADDRESS:
-                this._showInstructions(
-                    this.$t('Confirm Address') as string,
-                    this.$t(
-                        'Confirm that the address on your Ledger matches {addressToConfirm}',
-                        { addressToConfirm: request.params.addressToConfirm! },
-                    ) as string,
-                );
+            case RequestTypeNimiq.DERIVE_ADDRESSES:
+            case RequestTypeBitcoin.GET_EXTENDED_PUBLIC_KEY:
+                // not interactive, but takes some seconds
+                this._showInstructions(this.$t('Fetching your Addresses') as string);
                 break;
-            case RequestType.SIGN_TRANSACTION:
+            case RequestTypeNimiq.SIGN_TRANSACTION:
+            case RequestTypeBitcoin.SIGN_TRANSACTION:
                 this._showInstructions(
                     this.$t('Confirm Transaction') as string,
                     this.$t('Confirm using your Ledger') as string,
                 );
                 break;
             default:
+                // @ts-ignore request has type never here as this case should never actually happen
                 throw new Error(`Unhandled request: ${request.type}`);
         }
     }
 
-    private _onError(state: State) {
-        const error = state.error!;
-        switch (error.type) {
+    private _onError(errorState: ErrorState) {
+        switch (errorState.errorType) {
             case ErrorType.LEDGER_BUSY:
                 this._showInstructions('', this.$t('Please cancel the previous request on your Ledger.') as string);
                 break;
             case ErrorType.LOADING_DEPENDENCIES_FAILED:
                 this.loadingFailed = true;
                 this._onStateLoading(); // show as still loading / retrying
+                break;
+            case ErrorType.WRONG_APP:
+                // No instructions to set here. The state change triggers the connection animation and instruction loop.
+                this.showConnectButton = false; // we're connected to the Ledger but the wrong app
                 break;
             case ErrorType.USER_INTERACTION_REQUIRED:
             case ErrorType.CONNECTION_ABORTED:
@@ -216,35 +254,39 @@ class LedgerUi extends Vue {
                 // and the api switches to the connecting state.
                 this.showConnectButton = true;
                 break;
-            case ErrorType.NO_BROWSER_SUPPORT:
+            case ErrorType.BROWSER_UNSUPPORTED:
                 this._showInstructions('', this.$t('Ledger not supported by browser.') as string);
                 break;
             case ErrorType.APP_OUTDATED:
-                this._showInstructions('', this.$t('Your Nimiq App is outdated. '
-                    + 'Please update your Ledger firmware and Nimiq App using Ledger Live.') as string);
+                const request = (errorState as ErrorState<ErrorType.APP_OUTDATED>).request;
+                this._showInstructions('', this.$t(
+                    'Your {app} app is outdated. Please update your Ledger firmware and {app} app using Ledger Live.',
+                    { app: request.requiredApp },
+                ) as string);
                 break;
-            case ErrorType.WRONG_LEDGER:
+            case ErrorType.WRONG_WALLET:
                 this._showInstructions(
                     '',
-                    this.$t('The connected Ledger is not the one this account belongs to.') as string,
+                    this.$t('The connected wallet or Ledger is not the one this account belongs to.') as string,
                 );
                 break;
             case ErrorType.REQUEST_ASSERTION_FAILED:
                 this._showInstructions(
                     this.$t('Request failed') as string,
-                    `${this.small ? this.$t('Request failed: ') as string : ''}${error.message}`,
+                    `${this.small ? this.$t('Request failed: ') as string : ''}${errorState.message}`,
                 );
                 break;
             default:
-                throw new Error(`Unhandled error: ${error.type} - ${error.message}`);
+                throw new Error(`Unhandled error: ${errorState.type} - ${errorState.message}`);
         }
     }
 
     private _cycleConnectInstructions() {
+        const app = LedgerApi.currentRequest ? LedgerApi.currentRequest.requiredApp : 'Nimiq';
         const instructions = [
             this.$t('1. Connect your Ledger Device') as string,
             this.$t('2. Enter your PIN') as string,
-            this.$t('3. Open the Nimiq App') as string,
+            this.$t('3. Open the {app} App', { app }) as string,
         ];
         if (this.showConnectButton) {
             instructions.push(this.$t('4. Click Connect') as string);
@@ -302,6 +344,7 @@ export default LedgerUi;
 <style scoped>
     .ledger-ui {
         width: 100%;
+        height: 100%;
         text-align: center;
         display: flex;
         flex-direction: column;
@@ -438,12 +481,20 @@ export default LedgerUi;
         height: 15.7%;
     }
 
-    .ledger-screen-dashboard {
+    .nimiq .ledger-screen-dashboard {
         background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 114 37.5"><path fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M103.5 16.2l2.7 2.7-2.7 2.8m-93 .1L7.8 19l2.7-2.8M40.2 14.5h3.6m26.4 0h3.6"/><text font-family="sans-serif" font-size="11.2" transform="translate(41.3 32.3)">Nimiq</text><path d="M27.3 14.8h-.6v1.9h.2c.7 0 2.2 0 2.2-.9 0-.8-1-1-1.8-1zm1.4-1.7c0-.8-.9-.9-1.5-.9h-.5V14h.1c.7 0 1.9 0 1.9-.9z"/><path d="M27.5 7.5a7 7 0 0 0-7 7c0 3.9 3.1 7 7 7s7-3.1 7-7a7 7 0 0 0-7-7zm3.3 8.4c-.1 1.4-1.2 1.7-2.6 1.9v1.4h-.9v-1.4h-.7v1.4h-.8v-1.4h-1.7l.2-1h.7c.3 0 .3-.2.3-.3v-3.8c0-.2-.2-.4-.5-.4h-.6v-.9H26V9.9h.8v1.5h.7V9.9h.9v1.4c1.1.1 2 .4 2.1 1.4 0 .8-.3 1.2-.8 1.5.7.2 1.2.6 1.1 1.7zm33.5-2l-3.1-5.3c-.2-.4-.6-.6-1.1-.6h-6.3c-.4 0-.9.2-1.1.6l-3.1 5.3c-.2.4-.2.8 0 1.2l3.1 5.3c.2.4.6.6 1.1.6h6.3c.4 0 .9-.2 1.1-.6l3.1-5.3c.3-.4.3-.8 0-1.2zm22.2-6.4a7 7 0 0 0-7 7c0 3.9 3.1 7 7 7s7-3.1 7-7a7 7 0 0 0-7-7zm0 11.5l-3-4 3 1.8 3-1.8-3 4zm0-2.8l-3-1.7 3-4.5 3 4.5-3 1.7z"/></svg>');
     }
 
-    .ledger-screen-app {
+    .bitcoin .ledger-screen-dashboard {
+        background-image: url('data:image/svg+xml,<svg fill="white" viewBox="0 0 114 37.5" xmlns="http://www.w3.org/2000/svg"><path d="M35 13.9l-3.1-5.3c-.2-.4-.6-.6-1.1-.6h-6.3c-.4 0-1 .2-1.1.6l-3.1 5.3c-.2.4-.2.8 0 1.2l3 5.3c.3.4.7.6 1.2.6h6.3c.4 0 .9-.2 1-.6l3.2-5.3c.3-.4.3-.8 0-1.2z"/><path d="M103.5 16.2l2.7 2.7-2.7 2.8m-93 .1L7.8 19l2.7-2.8m29.7-1.7h3.6m26.4 0h3.6" fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/><text x="40.2" y="32.3" font-family="sans-serif" font-size="11.2">Bitcoin</text><path d="M57 7.5a7 7 0 00-7 7c0 3.9 3 7 7 7s7-3.1 7-7a7 7 0 00-7-7zm-1.6 2.4h.8v1.5h.7V9.9h1v1.4c1 .1 2 .4 2 1.4 0 .8-.3 1.2-.8 1.5.7.2 1.2.6 1.1 1.7 0 1.4-1.2 1.7-2.6 1.9v1.4h-.9v-1.4H56v1.4h-.8v-1.4h-1.7l.2-1h.7c.3 0 .3-.2.3-.3v-3.8c0-.2-.2-.4-.5-.4h-.6v-.9h1.8zm.7 2.3V14h.1c.7 0 2 0 2-.9 0-.8-1-.9-1.6-.9zm0 2.6v1.9h.2c.7 0 2.2 0 2.2-.9 0-.8-1-1-1.8-1zM86.5 7.5a7 7 0 00-7 7c0 3.9 3.1 7 7 7s7-3.1 7-7a7 7 0 00-7-7zm0 2.5l3 4.5-3 1.7-3-1.7 3-4.5zm-3 5l3 1.8 3-1.8-3 4-3-4z"/></svg>');
+    }
+
+    .nimiq .ledger-screen-app {
         background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 114 37.5"><g fill="white" stroke-width=".4"><path d="M34.2 17.7l-5.4-9.3a2.1 2.1 0 0 0-1.9-1.1H16.2a2.1 2.1 0 0 0-1.9 1L9 17.8a2.1 2.1 0 0 0 0 2.1l5.3 9.3a2.1 2.1 0 0 0 1.9 1.1h10.7a2.1 2.1 0 0 0 1.9-1l5.4-9.4a2.1 2.1 0 0 0 0-2.1zM53.2 12h2.4v13.5h-1.8l-7.4-9.4v9.4h-2.3V12H46l7.3 9.5zM60.2 25.6V12h2.5v13.6zM78.7 12h2v13.5h-2.2v-8.4l-3.7 8.4h-1.6l-3.7-8.4v8.4h-2.1V12h2L74 22.6zM85.3 25.6V12h2.5v13.6zM104.5 22.4a5.7 5.7 0 0 1-2.9 2.8 7.5 7.5 0 0 0 1.1 1.4 13.6 13.6 0 0 0 1.5 1.4l-1.8 1.3a10.4 10.4 0 0 1-1.7-1.6 11.4 11.4 0 0 1-1.4-2h-.6a7 7 0 0 1-3.5-.8 5.6 5.6 0 0 1-2.3-2.5 8.4 8.4 0 0 1-.8-3.7 8 8 0 0 1 .8-3.7 5.7 5.7 0 0 1 2.3-2.4 7.8 7.8 0 0 1 7 0 5.6 5.6 0 0 1 2.3 2.4 8 8 0 0 1 .8 3.7 8.3 8.3 0 0 1-.8 3.7zm-8.8 0a4.2 4.2 0 0 0 6 0c.7-.8 1.1-2 1.1-3.7s-.4-2.8-1-3.7a4.2 4.2 0 0 0-6.1 0c-.8.9-1.1 2.1-1.1 3.7s.3 2.9 1 3.8z"/></g></svg>');
+    }
+
+    .bitcoin .ledger-screen-app {
+        background-image: url('data:image/svg+xml,<svg viewBox="0 0 114 37.5" xmlns="http://www.w3.org/2000/svg"><path d="M21.6 7.3A11.5 11.5 0 0010 18.8c0 6.4 5 11.4 11.5 11.4 6.4 0 11.4-5 11.4-11.4A11.5 11.5 0 0021.6 7.3zm-2.5 4h1.3v2.4h1.2v-2.5H23v2.3c1.8.2 3.2.7 3.4 2.3 0 1.3-.5 2-1.3 2.5 1.1.3 2 1 1.8 2.8-.2 2.3-2 2.7-4.3 3v2.4h-1.5v-2.3h-1.1v2.3h-1.3v-2.3H16l.3-1.7h1.2c.5 0 .5-.3.5-.5v-6.2c0-.3-.4-.6-.8-.6h-1v-1.5h3zm1.2 3.7v3h.1c1.2 0 3.1 0 3.1-1.5 0-1.3-1.4-1.5-2.4-1.5zm0 4.3v3h.3c1.1 0 3.6 0 3.6-1.4 0-1.3-1.6-1.6-3-1.6zm73.3 6.2v-6.7-1.4l-.1-1.3h2.2l.2 1.9h-.2q.4-1 1.3-1.6.9-.5 2-.5 3.4 0 3.4 3.9v5.7h-2.3V20q0-1.1-.5-1.7-.4-.5-1.3-.5-1 0-1.7.7t-.7 1.8v5.3zm-4.8 0v-9.4H91v9.4zm-.2-13.7h2.6v2.3h-2.6zM82 25.7q-1.5 0-2.6-.6-1-.6-1.6-1.7-.6-1.1-.6-2.6t.6-2.6q.6-1.1 1.6-1.7 1.1-.6 2.6-.6 1.4 0 2.5.6 1 .6 1.7 1.7.6 1 .6 2.6 0 1.5-.6 2.6-.6 1-1.7 1.7-1 .6-2.5.6zm0-1.8q1.2 0 1.8-.8.6-.8.6-2.3 0-1.5-.6-2.3-.6-.8-1.8-.8-1.2 0-1.8.8-.7.8-.7 2.3 0 1.5.7 2.3.6.8 1.8.8zm-9.4 1.8q-1.5 0-2.6-.6-1-.6-1.6-1.7-.6-1-.6-2.6 0-1.5.6-2.6t1.7-1.7q1.1-.6 2.6-.6 1 0 2 .3.9.3 1.5.9l-.7 1.6q-.6-.5-1.3-.7-.7-.3-1.3-.3-1.3 0-2 .8t-.7 2.3q0 1.5.7 2.3.7.8 2 .8.6 0 1.3-.3.7-.2 1.3-.7l.7 1.6q-.7.6-1.6.9-1 .3-2 .3zM60 17.9V16h6.6V18zm6.6 5.7v1.9l-.7.1h-.8q-1.6 0-2.5-.8-.8-1-.8-2.6v-8.4l2.3-.8v9q0 .7.2 1.1.2.4.6.5.3.2.7.2h.5l.5-.2zm-10.3 2V16h2.3v9.4zm-.1-13.8h2.6v2.3h-2.6zM43.7 25.5V12.3h5.8q2 0 3.3.9 1.1.9 1.1 2.5 0 1.1-.6 2t-1.7 1q1.3.2 2 1 .7 1 .7 2.2 0 1.7-1.2 2.7-1.2 1-3.4 1zm2.4-1.8h3.4q1.3 0 1.9-.5.6-.5.6-1.5t-.6-1.5-2-.5h-3.3zm0-5.8h3q1.3 0 2-.5.6-.5.6-1.4 0-1-.7-1.4-.6-.5-1.9-.5h-3z" fill="white" stroke-width=".4"/></svg>');
     }
 
     .ledger-screen-confirm-address {

@@ -9,7 +9,7 @@ import { BrowserDetection } from '@nimiq/utils';
 import { ParsedSimpleRequest } from '../lib/RequestTypes';
 import { Static } from '../lib/StaticStore';
 import { WalletStore } from '@/lib/WalletStore';
-import { WalletType } from '@/lib/WalletInfo';
+import { WalletType } from '../lib/Constants';
 import CookieJar from '../lib/CookieJar';
 import NotEnoughCookieSpace from '../components/NotEnoughCookieSpace.vue';
 
