@@ -87,7 +87,7 @@ msgstr ""
 msgid "Address Added"
 msgstr "Адреса додана"
 
-#: src/views/LoginSuccess.vue:97
+#: src/views/LoginSuccess.vue:103
 msgid "Address detection failed. Retrying..."
 msgstr "Помилка виявлення адреси. Повторна спроба..."
 
@@ -313,7 +313,7 @@ msgstr "Закрити"
 msgid "Collecting payment details"
 msgstr "Збір платіжних реквізитів"
 
-#: src/views/SetupSwapLedger.vue:986
+#: src/views/SetupSwapLedger.vue:950
 msgid "Confirm {outgoingOrIncoming} transaction on Ledger"
 msgstr ""
 
@@ -397,8 +397,8 @@ msgstr "Підключення до первинних вузлів..."
 msgid "Contacts are not affected."
 msgstr "Це не впливає на контакти."
 
-#: src/components/NotEnoughCookieSpace.vue:8 src/views/LoginSuccess.vue:152
-#: src/views/LoginSuccess.vue:180 src/views/SignupLedger.vue:143
+#: src/components/NotEnoughCookieSpace.vue:8 src/views/LoginSuccess.vue:158
+#: src/views/LoginSuccess.vue:186 src/views/SignupLedger.vue:143
 msgid "Continue"
 msgstr "Продовжити"
 
@@ -498,7 +498,7 @@ msgstr "комісія"
 msgid "Fee"
 msgstr "Комісія"
 
-#: src/views/LoginSuccess.vue:105 src/views/SignupLedger.vue:108
+#: src/views/LoginSuccess.vue:111 src/views/SignupLedger.vue:108
 msgid "Fetching Addresses Failed"
 msgstr "Не вдалося отримати адреси"
 
@@ -506,11 +506,11 @@ msgstr "Не вдалося отримати адреси"
 msgid "Fetching contract information..."
 msgstr "Завантаження контактних даних..."
 
-#: src/views/SetupSwapSuccess.vue:490
+#: src/views/SetupSwapSuccess.vue:486
 msgid "Fetching swap data failed: {error}"
 msgstr "Не вдалося отримати дані обміну: {error}"
 
-#: src/views/SetupSwapSuccess.vue:480
+#: src/views/SetupSwapSuccess.vue:476
 msgid "Fetching swap data..."
 msgstr "Отримання даних обміну..."
 
@@ -572,13 +572,13 @@ msgstr ""
 "Уявіть, що платити за допомогою\n"
 "криптовалюти буде легко"
 
-#: src/views/LoginSuccess.vue:163 src/views/SignupLedger.vue:124
+#: src/views/LoginSuccess.vue:169 src/views/SignupLedger.vue:124
 msgid ""
 "Imported {count} address so far... | Imported {count} addresses so far..."
 msgstr ""
 "Наразі імпортовано {count} адресу... | Наразі імпортовано {count} адрес..."
 
-#: src/views/SetupSwapLedger.vue:989
+#: src/views/SetupSwapLedger.vue:953
 msgid "incoming"
 msgstr ""
 
@@ -723,6 +723,7 @@ msgid "OASIS service fee"
 msgstr ""
 
 #: src/views/ErrorHandlerUnsupportedLedger.vue:4
+#: src/views/RefundSwapLedger.vue:339
 msgid "Ok"
 msgstr "Гаразд"
 
@@ -742,7 +743,7 @@ msgstr "Відкрити додаток гаманця"
 msgid "Orange"
 msgstr "Помаранчевий"
 
-#: src/views/SetupSwapLedger.vue:988
+#: src/views/SetupSwapLedger.vue:952
 msgid "outgoing"
 msgstr ""
 
@@ -794,7 +795,7 @@ msgstr "Будь ласка, надішліть переказ вручну"
 msgid "Prepare for update"
 msgstr "Розпочати оновлення"
 
-#: src/views/SetupSwapSuccess.vue:473
+#: src/views/SetupSwapSuccess.vue:469
 msgid "Preparing Swap"
 msgstr "Підготовлюється обмін"
 
@@ -813,6 +814,17 @@ msgstr "Секретні слова завантажено!"
 #: src/lib/LabelingMachine.ts:40
 msgid "Red"
 msgstr "Червоний"
+
+#: src/views/RefundSwapLedger.vue:309
+msgid "Refund Failed"
+msgstr ""
+
+#: src/views/RefundSwapLedger.vue:328
+msgid ""
+"Refunding this Swap is currently not supported on this device or browser. "
+"Please use the device and browser you originally created the Swap with. "
+"Otherwise please try again in the future."
+msgstr ""
 
 #: src/views/CashlinkManage.vue:10 src/views/CheckoutTransmission.vue:9
 msgid "Reload"
@@ -842,8 +854,8 @@ msgstr "Перезапустити платіж"
 msgid "Retrieving your old accounts..."
 msgstr "Завантаження старих рахунків..."
 
-#: src/views/BitcoinSyncBaseView.vue:68 src/views/LoginSuccess.vue:107
-#: src/views/SetupSwapSuccess.vue:498 src/views/SignupLedger.vue:145
+#: src/views/BitcoinSyncBaseView.vue:68 src/views/LoginSuccess.vue:113
+#: src/views/SetupSwapSuccess.vue:494 src/views/SignupLedger.vue:145
 msgid "Retry"
 msgstr "Повторити спробу"
 
@@ -876,7 +888,7 @@ msgstr "Поділитися"
 msgid "Sign Message"
 msgstr "Підписати повідомлення"
 
-#: src/views/SetupSwapSuccess.vue:482
+#: src/views/SetupSwapSuccess.vue:478
 msgid "Signing transactions..."
 msgstr "Підписання переказу..."
 
@@ -892,7 +904,7 @@ msgstr "Щось пішло не так"
 msgid "Something went wrong with your request. Please try again."
 msgstr "Щось пішло не так з запитом. Спробуйте ще раз."
 
-#: src/views/LoginSuccess.vue:148
+#: src/views/LoginSuccess.vue:154
 msgid "Space exceeded"
 msgstr "Недостатньо місця"
 
@@ -916,11 +928,11 @@ msgstr "Збереження ваших нових рахунків..."
 msgid "Swap fee"
 msgstr ""
 
-#: src/views/SetupSwapLedger.vue:850 src/views/SetupSwapSuccess.vue:469
+#: src/views/SetupSwapLedger.vue:814 src/views/SetupSwapSuccess.vue:465
 msgid "Swap Setup Failed"
 msgstr ""
 
-#: src/views/RefundSwapLedger.vue:306
+#: src/views/RefundSwapLedger.vue:307
 msgid "Syncing"
 msgstr ""
 
@@ -930,17 +942,17 @@ msgstr ""
 msgid "Syncing consensus..."
 msgstr "Встановлення консенсус..."
 
-#: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapLedger.vue:852
-#: src/views/SetupSwapSuccess.vue:471
+#: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapLedger.vue:816
+#: src/views/SetupSwapSuccess.vue:467
 #: src/views/SignBtcTransactionLedger.vue:117
 msgid "Syncing Failed"
 msgstr "Помилка синхронізації"
 
-#: src/views/RefundSwapLedger.vue:316
+#: src/views/RefundSwapLedger.vue:323
 msgid "Syncing with {currency} network failed: {error}"
 msgstr ""
 
-#: src/views/RefundSwapLedger.vue:311
+#: src/views/RefundSwapLedger.vue:317
 msgid "Syncing with {currency} network..."
 msgstr ""
 
@@ -948,11 +960,11 @@ msgstr ""
 msgid "Syncing with Bitcoin network failed: {error}"
 msgstr "Помилка синхронізації з мережею Біткоїн: {error}"
 
-#: src/views/BitcoinSyncBaseView.vue:58 src/views/SetupSwapLedger.vue:862
+#: src/views/BitcoinSyncBaseView.vue:58 src/views/SetupSwapLedger.vue:826
 msgid "Syncing with Bitcoin network..."
 msgstr "Синхронізація з мережею Біткоїн..."
 
-#: src/views/LoginSuccess.vue:106 src/views/SignupLedger.vue:134
+#: src/views/LoginSuccess.vue:112 src/views/SignupLedger.vue:134
 msgid "Syncing with the network failed: {error}"
 msgstr "Помилка синхронізації з мережею: {error}"
 
@@ -1073,7 +1085,7 @@ msgstr ""
 "На жаль, через обмеження оглядача Сафарі и не можете додати більше рахунків "
 "чи/та адрес. Будь ласка, видаліть неактивні рахунки щоб звільнити місце."
 
-#: src/views/LoginSuccess.vue:150
+#: src/views/LoginSuccess.vue:156
 msgid ""
 "Unfortunately, due to space restrictions of Safari and IOS, this account "
 "cannot be stored properly. Please free up space by logging out of other "
@@ -1113,7 +1125,7 @@ msgid ""
 "or Recovery Words."
 msgstr "Використовуючи файл-ключ або секретні слова."
 
-#: src/views/LoginSuccess.vue:179 src/views/SignupLedger.vue:132
+#: src/views/LoginSuccess.vue:185 src/views/SignupLedger.vue:132
 msgid "Used addresses without balance might have been missed."
 msgstr "Адреси з нульовим балансом можуть не відображатися."
 
@@ -1181,11 +1193,11 @@ msgstr ""
 "Ваш {app} додаток застарів. Будь ласка, оновіть ваш Ledger і {app} додаток "
 "використовуючи Ledger Live."
 
-#: src/views/LoginSuccess.vue:194
+#: src/views/LoginSuccess.vue:200
 msgid "Your Account is ready. | Your Accounts are ready."
 msgstr "Ваш рахунок готовий. | Ваші рахунки готові."
 
-#: src/views/LoginSuccess.vue:177 src/views/SignupLedger.vue:106
+#: src/views/LoginSuccess.vue:183 src/views/SignupLedger.vue:106
 msgid ""
 "Your Addresses may be\n"
 "incomplete."
@@ -1207,6 +1219,6 @@ msgstr ""
 msgid "Your message is signed."
 msgstr "Ваше повідомлення підписано."
 
-#: src/views/LoginSuccess.vue:188 src/views/SimpleSuccess.vue:31
+#: src/views/LoginSuccess.vue:194 src/views/SimpleSuccess.vue:31
 msgid "Your password was changed."
 msgstr "Пароль було змінено."

@@ -79,7 +79,7 @@ msgstr ""
 msgid "Address Added"
 msgstr ""
 
-#: src/views/LoginSuccess.vue:97
+#: src/views/LoginSuccess.vue:103
 msgid "Address detection failed. Retrying..."
 msgstr ""
 
@@ -398,8 +398,8 @@ msgid "Contacts are not affected."
 msgstr ""
 
 #: src/components/NotEnoughCookieSpace.vue:8
-#: src/views/LoginSuccess.vue:152
-#: src/views/LoginSuccess.vue:180
+#: src/views/LoginSuccess.vue:158
+#: src/views/LoginSuccess.vue:186
 #: src/views/SignupLedger.vue:143
 msgid "Continue"
 msgstr ""
@@ -502,7 +502,7 @@ msgstr ""
 msgid "Fee"
 msgstr ""
 
-#: src/views/LoginSuccess.vue:105
+#: src/views/LoginSuccess.vue:111
 #: src/views/SignupLedger.vue:108
 msgid "Fetching Addresses Failed"
 msgstr ""
@@ -578,7 +578,7 @@ msgid ""
 "crypto was easy"
 msgstr ""
 
-#: src/views/LoginSuccess.vue:163
+#: src/views/LoginSuccess.vue:169
 #: src/views/SignupLedger.vue:124
 msgid "Imported {count} address so far... | Imported {count} addresses so far..."
 msgstr ""
@@ -850,7 +850,7 @@ msgid "Retrieving your old accounts..."
 msgstr ""
 
 #: src/views/BitcoinSyncBaseView.vue:68
-#: src/views/LoginSuccess.vue:107
+#: src/views/LoginSuccess.vue:113
 #: src/views/SetupSwapSuccess.vue:494
 #: src/views/SignupLedger.vue:145
 msgid "Retry"
@@ -903,7 +903,7 @@ msgstr ""
 msgid "Something went wrong with your request. Please try again."
 msgstr ""
 
-#: src/views/LoginSuccess.vue:148
+#: src/views/LoginSuccess.vue:154
 msgid "Space exceeded"
 msgstr ""
 
@@ -967,7 +967,7 @@ msgstr ""
 msgid "Syncing with Bitcoin network..."
 msgstr ""
 
-#: src/views/LoginSuccess.vue:106
+#: src/views/LoginSuccess.vue:112
 #: src/views/SignupLedger.vue:134
 msgid "Syncing with the network failed: {error}"
 msgstr ""
@@ -1068,7 +1068,7 @@ msgstr ""
 msgid "Unfortunately, due to restrictions of Safari you cannot add more accounts and/or addresses. Please log out of unused accounts to free up space."
 msgstr ""
 
-#: src/views/LoginSuccess.vue:150
+#: src/views/LoginSuccess.vue:156
 msgid "Unfortunately, due to space restrictions of Safari and IOS, this account cannot be stored properly. Please free up space by logging out of other accounts."
 msgstr ""
 
@@ -1103,7 +1103,7 @@ msgid ""
 "or Recovery Words."
 msgstr ""
 
-#: src/views/LoginSuccess.vue:179
+#: src/views/LoginSuccess.vue:185
 #: src/views/SignupLedger.vue:132
 msgid "Used addresses without balance might have been missed."
 msgstr ""
@@ -1164,11 +1164,11 @@ msgstr ""
 msgid "Your {app} app is outdated. Please update your Ledger firmware and {app} app using Ledger Live."
 msgstr ""
 
-#: src/views/LoginSuccess.vue:194
+#: src/views/LoginSuccess.vue:200
 msgid "Your Account is ready. | Your Accounts are ready."
 msgstr ""
 
-#: src/views/LoginSuccess.vue:177
+#: src/views/LoginSuccess.vue:183
 #: src/views/SignupLedger.vue:106
 msgid ""
 "Your Addresses may be\n"
@@ -1189,7 +1189,7 @@ msgstr ""
 msgid "Your message is signed."
 msgstr ""
 
-#: src/views/LoginSuccess.vue:188
+#: src/views/LoginSuccess.vue:194
 #: src/views/SimpleSuccess.vue:31
 msgid "Your password was changed."
 msgstr ""
