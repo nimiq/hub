@@ -317,7 +317,7 @@ msgstr "Fermer"
 msgid "Collecting payment details"
 msgstr "Collection des détails du paiement"
 
-#: src/views/SetupSwapLedger.vue:950
+#: src/views/SetupSwapLedger.vue:955
 msgid "Confirm {outgoingOrIncoming} transaction on Ledger"
 msgstr "Confirmez la transaction {outgoingOrIncoming} sur votre Ledger"
 
@@ -511,11 +511,11 @@ msgstr "Échec de la récupération des adresses"
 msgid "Fetching contract information..."
 msgstr "Obtention d'informations sur les contrats..."
 
-#: src/views/SetupSwapSuccess.vue:486
+#: src/views/SetupSwapSuccess.vue:520
 msgid "Fetching swap data failed: {error}"
 msgstr "Échec de la récupération des données du swap : {error}"
 
-#: src/views/SetupSwapSuccess.vue:476
+#: src/views/SetupSwapSuccess.vue:510
 msgid "Fetching swap data..."
 msgstr "Récupérer des données du swap..."
 
@@ -584,7 +584,7 @@ msgstr ""
 "{count} adresse importée pour l'instant... | {count} adresses importées pour"
 " l'instant..."
 
-#: src/views/SetupSwapLedger.vue:953
+#: src/views/SetupSwapLedger.vue:958
 msgid "incoming"
 msgstr "entrante"
 
@@ -737,7 +737,7 @@ msgid "OASIS service fee"
 msgstr "Frais de service OASIS"
 
 #: src/views/ErrorHandlerUnsupportedLedger.vue:4
-#: src/views/RefundSwapLedger.vue:339
+#: src/views/RefundSwapLedger.vue:340
 msgid "Ok"
 msgstr "Ok"
 
@@ -757,7 +757,7 @@ msgstr "Ouvrir l'app Wallet"
 msgid "Orange"
 msgstr "Orange"
 
-#: src/views/SetupSwapLedger.vue:952
+#: src/views/SetupSwapLedger.vue:957
 msgid "outgoing"
 msgstr "sortante"
 
@@ -809,7 +809,7 @@ msgstr "Veuillez envoyer la transaction manuellement"
 msgid "Prepare for update"
 msgstr "Préparer la mise à jour"
 
-#: src/views/SetupSwapSuccess.vue:469
+#: src/views/SetupSwapSuccess.vue:503
 msgid "Preparing Swap"
 msgstr "Swap en préparation"
 
@@ -829,11 +829,11 @@ msgstr "Mots de Récupération exportés !"
 msgid "Red"
 msgstr "Rouge"
 
-#: src/views/RefundSwapLedger.vue:309
+#: src/views/RefundSwapLedger.vue:310
 msgid "Refund Failed"
 msgstr ""
 
-#: src/views/RefundSwapLedger.vue:328
+#: src/views/RefundSwapLedger.vue:329
 msgid ""
 "Refunding this Swap is currently not supported on this device or browser. "
 "Please use the device and browser you originally created the Swap with. "
@@ -869,7 +869,7 @@ msgid "Retrieving your old accounts..."
 msgstr "Récupération de vos anciens comptes..."
 
 #: src/views/BitcoinSyncBaseView.vue:68 src/views/LoginSuccess.vue:113
-#: src/views/SetupSwapSuccess.vue:494 src/views/SignupLedger.vue:145
+#: src/views/SetupSwapSuccess.vue:528 src/views/SignupLedger.vue:145
 msgid "Retry"
 msgstr "Réessayer"
 
@@ -902,7 +902,7 @@ msgstr "Partager"
 msgid "Sign Message"
 msgstr "Signer le message"
 
-#: src/views/SetupSwapSuccess.vue:478
+#: src/views/SetupSwapSuccess.vue:512
 msgid "Signing transactions..."
 msgstr "Signature des transactions..."
 
@@ -942,11 +942,11 @@ msgstr "Enregistrement de vos nouveaux comptes..."
 msgid "Swap fee"
 msgstr "Frais de swap"
 
-#: src/views/SetupSwapLedger.vue:814 src/views/SetupSwapSuccess.vue:465
+#: src/views/SetupSwapLedger.vue:819 src/views/SetupSwapSuccess.vue:499
 msgid "Swap Setup Failed"
 msgstr "Echec de la mise en place du swap"
 
-#: src/views/RefundSwapLedger.vue:307
+#: src/views/RefundSwapLedger.vue:308
 msgid "Syncing"
 msgstr "Synchronisation"
 
@@ -956,17 +956,17 @@ msgstr "Synchronisation"
 msgid "Syncing consensus..."
 msgstr "Synchronisation du consensus..."
 
-#: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapLedger.vue:816
-#: src/views/SetupSwapSuccess.vue:467
+#: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapLedger.vue:821
+#: src/views/SetupSwapSuccess.vue:501
 #: src/views/SignBtcTransactionLedger.vue:117
 msgid "Syncing Failed"
 msgstr "Synchronisation échouée"
 
-#: src/views/RefundSwapLedger.vue:323
+#: src/views/RefundSwapLedger.vue:324
 msgid "Syncing with {currency} network failed: {error}"
 msgstr "Synchronisation avec le réseau {currency} échoué : {error}"
 
-#: src/views/RefundSwapLedger.vue:317
+#: src/views/RefundSwapLedger.vue:318
 msgid "Syncing with {currency} network..."
 msgstr "Synchronisation avec le réseau {currency}..."
 
@@ -974,7 +974,7 @@ msgstr "Synchronisation avec le réseau {currency}..."
 msgid "Syncing with Bitcoin network failed: {error}"
 msgstr "La synchronisation avec le réseau Bitcoin a échoué : {error}"
 
-#: src/views/BitcoinSyncBaseView.vue:58 src/views/SetupSwapLedger.vue:826
+#: src/views/BitcoinSyncBaseView.vue:58 src/views/SetupSwapLedger.vue:831
 msgid "Syncing with Bitcoin network..."
 msgstr "Synchronisation avec le réseau Bitcoin..."
 

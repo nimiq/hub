@@ -313,7 +313,7 @@ msgstr "关闭"
 msgid "Collecting payment details"
 msgstr "收集付款明细"
 
-#: src/views/SetupSwapLedger.vue:950
+#: src/views/SetupSwapLedger.vue:955
 msgid "Confirm {outgoingOrIncoming} transaction on Ledger"
 msgstr "确认Ledger上的 {outgoingOrIncoming} 交易。"
 
@@ -506,11 +506,11 @@ msgstr "提取地址失败"
 msgid "Fetching contract information..."
 msgstr "正在获取合同信息..."
 
-#: src/views/SetupSwapSuccess.vue:486
+#: src/views/SetupSwapSuccess.vue:520
 msgid "Fetching swap data failed: {error}"
 msgstr "提取交换数据失败：{error}"
 
-#: src/views/SetupSwapSuccess.vue:476
+#: src/views/SetupSwapSuccess.vue:510
 msgid "Fetching swap data..."
 msgstr "正在获取交换数据..."
 
@@ -577,7 +577,7 @@ msgid ""
 "Imported {count} address so far... | Imported {count} addresses so far..."
 msgstr "目前已导入{count}个地址... | 目前已导入{count}个地址..."
 
-#: src/views/SetupSwapLedger.vue:953
+#: src/views/SetupSwapLedger.vue:958
 msgid "incoming"
 msgstr "转入"
 
@@ -720,7 +720,7 @@ msgid "OASIS service fee"
 msgstr "OASIS服务费"
 
 #: src/views/ErrorHandlerUnsupportedLedger.vue:4
-#: src/views/RefundSwapLedger.vue:339
+#: src/views/RefundSwapLedger.vue:340
 msgid "Ok"
 msgstr "Ok"
 
@@ -740,7 +740,7 @@ msgstr "打开钱包应用"
 msgid "Orange"
 msgstr "橙"
 
-#: src/views/SetupSwapLedger.vue:952
+#: src/views/SetupSwapLedger.vue:957
 msgid "outgoing"
 msgstr "转出"
 
@@ -792,7 +792,7 @@ msgstr "请手动发送交易"
 msgid "Prepare for update"
 msgstr "准备更新"
 
-#: src/views/SetupSwapSuccess.vue:469
+#: src/views/SetupSwapSuccess.vue:503
 msgid "Preparing Swap"
 msgstr "准备交换"
 
@@ -812,11 +812,11 @@ msgstr "恢复字已导出！"
 msgid "Red"
 msgstr "红"
 
-#: src/views/RefundSwapLedger.vue:309
+#: src/views/RefundSwapLedger.vue:310
 msgid "Refund Failed"
 msgstr ""
 
-#: src/views/RefundSwapLedger.vue:328
+#: src/views/RefundSwapLedger.vue:329
 msgid ""
 "Refunding this Swap is currently not supported on this device or browser. "
 "Please use the device and browser you originally created the Swap with. "
@@ -852,7 +852,7 @@ msgid "Retrieving your old accounts..."
 msgstr "正在检索您的旧帐户..."
 
 #: src/views/BitcoinSyncBaseView.vue:68 src/views/LoginSuccess.vue:113
-#: src/views/SetupSwapSuccess.vue:494 src/views/SignupLedger.vue:145
+#: src/views/SetupSwapSuccess.vue:528 src/views/SignupLedger.vue:145
 msgid "Retry"
 msgstr "重试"
 
@@ -885,7 +885,7 @@ msgstr "分享"
 msgid "Sign Message"
 msgstr "签名信息"
 
-#: src/views/SetupSwapSuccess.vue:478
+#: src/views/SetupSwapSuccess.vue:512
 msgid "Signing transactions..."
 msgstr "正在签署交易..."
 
@@ -925,11 +925,11 @@ msgstr "正在存储您的新帐户..."
 msgid "Swap fee"
 msgstr "交换费用"
 
-#: src/views/SetupSwapLedger.vue:814 src/views/SetupSwapSuccess.vue:465
+#: src/views/SetupSwapLedger.vue:819 src/views/SetupSwapSuccess.vue:499
 msgid "Swap Setup Failed"
 msgstr "交换设置失败"
 
-#: src/views/RefundSwapLedger.vue:307
+#: src/views/RefundSwapLedger.vue:308
 msgid "Syncing"
 msgstr "同步中"
 
@@ -939,17 +939,17 @@ msgstr "同步中"
 msgid "Syncing consensus..."
 msgstr "正在同步共识..."
 
-#: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapLedger.vue:816
-#: src/views/SetupSwapSuccess.vue:467
+#: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapLedger.vue:821
+#: src/views/SetupSwapSuccess.vue:501
 #: src/views/SignBtcTransactionLedger.vue:117
 msgid "Syncing Failed"
 msgstr "同步失败"
 
-#: src/views/RefundSwapLedger.vue:323
+#: src/views/RefundSwapLedger.vue:324
 msgid "Syncing with {currency} network failed: {error}"
 msgstr "与 {currency} 网络同步失败：{error}"
 
-#: src/views/RefundSwapLedger.vue:317
+#: src/views/RefundSwapLedger.vue:318
 msgid "Syncing with {currency} network..."
 msgstr "正在与 {currency} 网络同步..."
 
@@ -957,7 +957,7 @@ msgstr "正在与 {currency} 网络同步..."
 msgid "Syncing with Bitcoin network failed: {error}"
 msgstr "与比特币网络同步失败：{error}"
 
-#: src/views/BitcoinSyncBaseView.vue:58 src/views/SetupSwapLedger.vue:826
+#: src/views/BitcoinSyncBaseView.vue:58 src/views/SetupSwapLedger.vue:831
 msgid "Syncing with Bitcoin network..."
 msgstr "正在与比特币网络同步..."
 

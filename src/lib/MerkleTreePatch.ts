@@ -1,12 +1,15 @@
 export default function patchMerkleTree() {
-    // Monkey patch the Nimiq core MerkleTree class until it gets actually shipped with the Nimiq core web-offline package.
+    // Patch the Nimiq core MerkleTree class until it gets actually shipped with the Nimiq core web-offline package.
     if (typeof Nimiq.MerkleTree !== 'undefined') {
         console.warn('Nimiq.MerkleTree patch not required anymore and can be removed.');
     } else {
         type Hashable = Nimiq.Hash | Uint8Array | { hash: () => Nimiq.Hash } | { serialize: () => Uint8Array };
 
         class MerkleTree {
-            public static computeRoot(values: Hashable[], fnHash: typeof MerkleTree._hash = MerkleTree._hash): Nimiq.Hash {
+            public static computeRoot(
+                values: Hashable[],
+                fnHash = MerkleTree._hash,
+            ): Nimiq.Hash {
                 return MerkleTree._computeRoot(values, fnHash);
             }
 
@@ -48,4 +51,4 @@ export default function patchMerkleTree() {
 
         Nimiq.MerkleTree = MerkleTree;
     }
-};
+}

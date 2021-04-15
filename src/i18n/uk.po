@@ -313,7 +313,7 @@ msgstr "Закрити"
 msgid "Collecting payment details"
 msgstr "Збір платіжних реквізитів"
 
-#: src/views/SetupSwapLedger.vue:950
+#: src/views/SetupSwapLedger.vue:955
 msgid "Confirm {outgoingOrIncoming} transaction on Ledger"
 msgstr ""
 
@@ -506,11 +506,11 @@ msgstr "Не вдалося отримати адреси"
 msgid "Fetching contract information..."
 msgstr "Завантаження контактних даних..."
 
-#: src/views/SetupSwapSuccess.vue:486
+#: src/views/SetupSwapSuccess.vue:520
 msgid "Fetching swap data failed: {error}"
 msgstr "Не вдалося отримати дані обміну: {error}"
 
-#: src/views/SetupSwapSuccess.vue:476
+#: src/views/SetupSwapSuccess.vue:510
 msgid "Fetching swap data..."
 msgstr "Отримання даних обміну..."
 
@@ -578,7 +578,7 @@ msgid ""
 msgstr ""
 "Наразі імпортовано {count} адресу... | Наразі імпортовано {count} адрес..."
 
-#: src/views/SetupSwapLedger.vue:953
+#: src/views/SetupSwapLedger.vue:958
 msgid "incoming"
 msgstr ""
 
@@ -723,7 +723,7 @@ msgid "OASIS service fee"
 msgstr ""
 
 #: src/views/ErrorHandlerUnsupportedLedger.vue:4
-#: src/views/RefundSwapLedger.vue:339
+#: src/views/RefundSwapLedger.vue:340
 msgid "Ok"
 msgstr "Гаразд"
 
@@ -743,7 +743,7 @@ msgstr "Відкрити додаток гаманця"
 msgid "Orange"
 msgstr "Помаранчевий"
 
-#: src/views/SetupSwapLedger.vue:952
+#: src/views/SetupSwapLedger.vue:957
 msgid "outgoing"
 msgstr ""
 
@@ -795,7 +795,7 @@ msgstr "Будь ласка, надішліть переказ вручну"
 msgid "Prepare for update"
 msgstr "Розпочати оновлення"
 
-#: src/views/SetupSwapSuccess.vue:469
+#: src/views/SetupSwapSuccess.vue:503
 msgid "Preparing Swap"
 msgstr "Підготовлюється обмін"
 
@@ -815,11 +815,11 @@ msgstr "Секретні слова завантажено!"
 msgid "Red"
 msgstr "Червоний"
 
-#: src/views/RefundSwapLedger.vue:309
+#: src/views/RefundSwapLedger.vue:310
 msgid "Refund Failed"
 msgstr ""
 
-#: src/views/RefundSwapLedger.vue:328
+#: src/views/RefundSwapLedger.vue:329
 msgid ""
 "Refunding this Swap is currently not supported on this device or browser. "
 "Please use the device and browser you originally created the Swap with. "
@@ -855,7 +855,7 @@ msgid "Retrieving your old accounts..."
 msgstr "Завантаження старих рахунків..."
 
 #: src/views/BitcoinSyncBaseView.vue:68 src/views/LoginSuccess.vue:113
-#: src/views/SetupSwapSuccess.vue:494 src/views/SignupLedger.vue:145
+#: src/views/SetupSwapSuccess.vue:528 src/views/SignupLedger.vue:145
 msgid "Retry"
 msgstr "Повторити спробу"
 
@@ -888,7 +888,7 @@ msgstr "Поділитися"
 msgid "Sign Message"
 msgstr "Підписати повідомлення"
 
-#: src/views/SetupSwapSuccess.vue:478
+#: src/views/SetupSwapSuccess.vue:512
 msgid "Signing transactions..."
 msgstr "Підписання переказу..."
 
@@ -928,11 +928,11 @@ msgstr "Збереження ваших нових рахунків..."
 msgid "Swap fee"
 msgstr ""
 
-#: src/views/SetupSwapLedger.vue:814 src/views/SetupSwapSuccess.vue:465
+#: src/views/SetupSwapLedger.vue:819 src/views/SetupSwapSuccess.vue:499
 msgid "Swap Setup Failed"
 msgstr ""
 
-#: src/views/RefundSwapLedger.vue:307
+#: src/views/RefundSwapLedger.vue:308
 msgid "Syncing"
 msgstr ""
 
@@ -942,17 +942,17 @@ msgstr ""
 msgid "Syncing consensus..."
 msgstr "Встановлення консенсус..."
 
-#: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapLedger.vue:816
-#: src/views/SetupSwapSuccess.vue:467
+#: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapLedger.vue:821
+#: src/views/SetupSwapSuccess.vue:501
 #: src/views/SignBtcTransactionLedger.vue:117
 msgid "Syncing Failed"
 msgstr "Помилка синхронізації"
 
-#: src/views/RefundSwapLedger.vue:323
+#: src/views/RefundSwapLedger.vue:324
 msgid "Syncing with {currency} network failed: {error}"
 msgstr ""
 
-#: src/views/RefundSwapLedger.vue:317
+#: src/views/RefundSwapLedger.vue:318
 msgid "Syncing with {currency} network..."
 msgstr ""
 
@@ -960,7 +960,7 @@ msgstr ""
 msgid "Syncing with Bitcoin network failed: {error}"
 msgstr "Помилка синхронізації з мережею Біткоїн: {error}"
 
-#: src/views/BitcoinSyncBaseView.vue:58 src/views/SetupSwapLedger.vue:826
+#: src/views/BitcoinSyncBaseView.vue:58 src/views/SetupSwapLedger.vue:831
 msgid "Syncing with Bitcoin network..."
 msgstr "Синхронізація з мережею Біткоїн..."
 
