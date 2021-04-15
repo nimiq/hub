@@ -325,7 +325,6 @@ import SetupSwapSuccess, { SwapHtlcInfo } from './SetupSwapSuccess.vue';
 import StatusScreen from '../components/StatusScreen.vue';
 import GlobalClose from '../components/GlobalClose.vue';
 import LedgerUi from '../components/LedgerUi.vue';
-import Network from '../components/Network.vue';
 import LedgerApi, {
     EventType as LedgerApiEventType,
     State as LedgerApiState,
@@ -336,7 +335,6 @@ import LedgerApi, {
     TransactionInfoBitcoin as LedgerBitcoinTransactionInfo,
     Network as LedgerApiNetwork,
     getBip32Path,
-    parseBip32Path,
     Coin,
 } from '@nimiq/ledger-api';
 import {
@@ -356,6 +354,7 @@ import { loadBitcoinJS } from '../lib/bitcoin/BitcoinJSLoader';
 import { getElectrumClient } from '../lib/bitcoin/ElectrumClient';
 import { satoshisToCoins } from '../lib/bitcoin/BitcoinUtils';
 import { prepareBitcoinTransactionForLedgerSigning } from '../lib/bitcoin/BitcoinLedgerUtils';
+import LedgerSwapProxy from '../lib/LedgerSwapProxy';
 
 type BalanceBarEntry = {
     currency: SwapAsset,
@@ -384,13 +383,6 @@ type SigningInfo = {
     fee: number,
     currency: SwapAsset,
     currencyDecimals: number,
-};
-
-const ProxyExtraData = {
-    // HTLC Proxy Funding, abbreviated as 'HPFD', mapped to values outside of basic ascii range
-    FUND:  new Uint8Array([0, ...('HPFD'.split('').map((c) => c.charCodeAt(0) + 63))]),
-    // HTLC Proxy Redeeming, abbreviated as 'HPRD', mapped to values outside of basic ascii range
-    REDEEM: new Uint8Array([0, ...('HPRD'.split('').map((c) => c.charCodeAt(0) + 63))]),
 };
 
 @Component({components: {
@@ -422,7 +414,7 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
     private readonly LedgerApiStateType = LedgerApiStateType;
     private _setupSwapPromise!: Promise<SwapSetupInfo>;
     private nimiqLedgerAddressInfo?: { address: Nimiq.Address, label: string, balance: number, signerPath: string };
-    private _nimiqProxyKeyPromise?: Promise<Nimiq.KeyPair>;
+    private _nimiqSwapProxyPromise?: Promise<LedgerSwapProxy>;
     private ledgerInstructionsShown = false;
     private ledgerApiStateType: LedgerApiStateType = LedgerApi.currentState.type;
     private currentlySignedTransaction: LedgerNimiqTransactionInfo
@@ -433,7 +425,7 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
         const { fund, redeem, nimiqAddresses, walletId } = this.request;
 
         Promise.all([
-            // preload nimiq cryptography used in ledger api and createTx, sendToNetwork
+            // preload nimiq cryptography used in ledger api, LedgerSwapProxy and sendToNetwork
             fund.type === SwapAsset.NIM || redeem.type === SwapAsset.NIM ? loadNimiq() : null,
             // if we need to fund the proxy address, pre-initialize the nimiq network
             fund.type === SwapAsset.NIM ? this.nimiqNetwork.getNetworkClient() : null,
@@ -475,30 +467,31 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
             };
 
             // As the Ledger Nimiq app currently does not support signing HTLCs yet, we use a proxy in-memory key.
-            // This key gets derived from the Ledger public key at proxyKeyPath as entropy.
-            this._nimiqProxyKeyPromise = (async () => {
-                const { addressIndex } = parseBip32Path(signerPath);
-                const proxyKeyPath = getBip32Path({
-                    coin: Coin.NIMIQ,
-                    accountIndex: 2 ** 31 - 1, // max index allowed by bip32
-                    addressIndex: 2 ** 31 - 1 - addressIndex, // use a distinct proxy per address for improved privacy
-                });
-                const pubKeyAsEntropy = await LedgerApi.Nimiq.getPublicKey(proxyKeyPath, this._account.keyId);
-                const nimProxyKey = Nimiq.KeyPair.derive(new Nimiq.PrivateKey(pubKeyAsEntropy.serialize()));
+            this._nimiqSwapProxyPromise = (async () => {
+                const swapValidityStartHeight = this.request.fund.type === SwapAsset.NIM
+                    ? this.request.fund.validityStartHeight
+                    : this.request.redeem.type === SwapAsset.NIM
+                        ? this.request.redeem.validityStartHeight
+                        : (() => { throw new Error('Unexpected'); })(); // should never happen
+                // Retrieve the proxy for this swap from the Ledger
+                const nimiqSwapProxy = await LedgerSwapProxy.create(
+                    swapValidityStartHeight,
+                    signerPath,
+                    this._account.keyId,
+                );
 
                 // Replace nim address by the proxy's address. Don't replace request.nimiqAddresses which should contain
                 // the original address for display.
-                const proxyAddress = nimProxyKey.publicKey.toAddress();
                 if (fund.type === SwapAsset.NIM) {
-                    fund.sender = proxyAddress; // also defines the htlc refundAddress in SetupSwapSuccess
+                    fund.sender = nimiqSwapProxy.address; // also defines htlc refundAddress in SetupSwapSuccess
                 } else if (redeem.type === SwapAsset.NIM) {
-                    redeem.recipient = proxyAddress; // also defines the htlc redeemAddress in SetupSwapSuccess
+                    redeem.recipient = nimiqSwapProxy.address; // also defines htlc redeemAddress in SetupSwapSuccess
                 }
 
-                return nimProxyKey;
+                return nimiqSwapProxy;
             })();
             // Catch errors to avoid uncaught promise rejections but ignore them and keep errors displayed in LedgerUi.
-            this._nimiqProxyKeyPromise.catch(() => void 0);
+            this._nimiqSwapProxyPromise.catch(() => void 0);
         }
 
         this._onLedgerApiStateChange = this._onLedgerApiStateChange.bind(this);
@@ -524,14 +517,14 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
         if (!swapSetupInfo) return null;
 
         // Replace nim address by the proxy's address.
-        if (this._nimiqProxyKeyPromise) {
-            let nimProxyKey: Nimiq.KeyPair;
+        if (this._nimiqSwapProxyPromise) {
+            let nimiqSwapProxy: LedgerSwapProxy;
             try {
-                nimProxyKey = await this._nimiqProxyKeyPromise;
+                nimiqSwapProxy = await this._nimiqSwapProxyPromise;
             } catch (e) {
                 return null;
             }
-            const proxyAddress = nimProxyKey.publicKey.toAddress().serialize();
+            const proxyAddress = nimiqSwapProxy.address.serialize();
             if (swapSetupInfo.fund.type === SwapAsset.NIM) {
                 swapSetupInfo.fund.sender = proxyAddress;
                 swapSetupInfo.fund.senderType = Nimiq.Account.Type.BASIC;
@@ -549,8 +542,8 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
             // await first step of swap setup
             const swapSetupInfo = await this._setupSwapPromise;
             // Require user to connect and unlock his ledger which also shows that he intends to actually do the swap.
-            if (this._nimiqProxyKeyPromise) {
-                await this._nimiqProxyKeyPromise;
+            if (this._nimiqSwapProxyPromise) {
+                await this._nimiqSwapProxyPromise; // connects to Ledger within LedgerSwapProxy.create
             } else if (swapSetupInfo.fund.type === SwapAsset.BTC || swapSetupInfo.redeem.type === SwapAsset.BTC) {
                 await LedgerApi.Bitcoin.getWalletId(Config.bitcoinNetwork === BTC_NETWORK_TEST
                     ? LedgerApiNetwork.TESTNET
@@ -571,12 +564,12 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
         // Called from SetupSwapSuccess
         if (this._isDestroyed) return null;
         let swapSetupInfo: SwapSetupInfo;
-        let nimiqProxyKey: Nimiq.KeyPair | undefined;
+        let nimiqSwapProxy: LedgerSwapProxy | undefined;
         let Buffer: typeof import('buffer').Buffer | undefined;
         try {
-            [swapSetupInfo, nimiqProxyKey] = await Promise.all([
+            [swapSetupInfo, nimiqSwapProxy] = await Promise.all([
                 this._setupSwapPromise,
-                this._nimiqProxyKeyPromise,
+                this._nimiqSwapProxyPromise,
                 this.request.fund.type === SwapAsset.BTC || this.request.redeem.type === SwapAsset.BTC
                     ? loadBitcoinJS() : null,
             ]);
@@ -595,53 +588,40 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
         // Step 1: collect transaction infos to sign
 
         // Collect nimiq swap transaction info
-        let nimiqSwapTransactionInfo: Parameters<Network['createTx']>[0] | undefined; // signed by proxy, not Ledger
-        let nimiqProxyTransactionInfo: LedgerNimiqTransactionInfo & Parameters<Network['createTx']>[0] | undefined;
+        let nimiqSwapTransactionInfo: LedgerNimiqTransactionInfo | undefined; // signed by proxy, not Ledger
+        let nimiqProxyTransactionInfo: LedgerNimiqTransactionInfo | undefined;
         if (this.request.fund.type === SwapAsset.NIM
             && swapSetupInfo.fund.type === SwapAsset.NIM
             && htlcInfo.fund.type === SwapAsset.NIM
             && this.nimiqLedgerAddressInfo
-            && nimiqProxyKey) {
+            && nimiqSwapProxy) {
             nimiqSwapTransactionInfo = {
-                signerPubKey: nimiqProxyKey.publicKey,
-                sender: new Nimiq.Address(swapSetupInfo.fund.sender),
-                senderType: swapSetupInfo.fund.senderType,
-                recipient: Nimiq.Address.CONTRACT_CREATION, // htlc creation
-                recipientType: Nimiq.Account.Type.HTLC,
                 value: swapSetupInfo.fund.value,
                 fee: swapSetupInfo.fund.fee,
-                validityStartHeight: swapSetupInfo.fund.validityStartHeight,
-                // network: Config.network, // enable when signed by Ledger
-                flags: Nimiq.Transaction.Flag.CONTRACT_CREATION,
-                data: htlcInfo.fund.htlcData, // for proxy via createTx and getUnrelayedTransactions
-                // extraData: htlcInfo.fund.htlcData, // for LedgerApi; unset as Ledger does not sign this tx currently
+                network: Config.network,
+                ...nimiqSwapProxy.getHtlcCreationInfo(htlcInfo.fund.htlcData),
             };
             // funding tx from Ledger to proxy address
             nimiqProxyTransactionInfo = {
-                signerPubKey: nimiqProxyKey.publicKey, // anything, unused as signed by Ledger
                 sender: this.nimiqLedgerAddressInfo.address,
-                recipient: nimiqProxyKey.publicKey.toAddress(),
                 value: swapSetupInfo.fund.value,
-                validityStartHeight: swapSetupInfo.fund.validityStartHeight,
                 network: Config.network,
-                // data: ProxyExtraData.FUND, // for createTx and getUnrelayedTransactions; unset as signed by Ledger
-                extraData: ProxyExtraData.FUND, // for LedgerApi
+                ...nimiqSwapProxy.getFundingInfo(),
             };
         } else if (this.request.redeem.type === SwapAsset.NIM
             && swapSetupInfo.redeem.type === SwapAsset.NIM
             && htlcInfo.redeem.type === SwapAsset.NIM
             && this.nimiqLedgerAddressInfo
-            && nimiqProxyKey) {
+            && nimiqSwapProxy) {
             // The htlc redeem tx currently has to be signed by the proxy but doesn't have to forward funds through it.
             nimiqSwapTransactionInfo = {
-                signerPubKey: nimiqProxyKey.publicKey,
                 sender: Nimiq.Address.fromString(htlcInfo.redeem.htlcAddress),
                 senderType: Nimiq.Account.Type.HTLC,
                 recipient: this.nimiqLedgerAddressInfo.address,
                 value: swapSetupInfo.redeem.value,
                 fee: swapSetupInfo.redeem.fee,
                 validityStartHeight: swapSetupInfo.redeem.validityStartHeight,
-                // network: Config.network, // enable when signed by Ledger
+                network: Config.network,
             };
         }
 
@@ -732,21 +712,12 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
                 // actually hold funds.
                 const dummyTransaction = {
                     ...nimiqSwapTransactionInfo,
-                    sender: nimiqSwapTransactionInfo.sender instanceof Nimiq.Address
-                        ? nimiqSwapTransactionInfo.sender
-                        : new Nimiq.Address(nimiqSwapTransactionInfo.sender),
                     senderType: undefined, // Ledgers can't sign htlc senders yet
-                    recipient: nimiqSwapTransactionInfo.recipient instanceof Nimiq.Address
-                        ? nimiqSwapTransactionInfo.recipient
-                        : new Nimiq.Address(nimiqSwapTransactionInfo.recipient),
                 };
                 this.currentlySignedTransaction = dummyTransaction;
                 await LedgerApi.Nimiq.signTransaction(
                     dummyTransaction,
-                    // Any unused key path; We use the highest bip32 nimiq path here; but note that the signing address
-                    // is different from the proxy account even if the paths coincide as the proxy account is derived
-                    // from the public key. Note that in the case of a coinciding path, this signed tx should not be
-                    // exposed to not expose the public key.
+                    // Any unused key path; We use the highest bip32 nimiq path here.
                     getBip32Path({ coin: Coin.NIMIQ, accountIndex: 2 ** 31 - 1, addressIndex: 2 ** 31 - 1 }),
                     this._account.keyId,
                 );
@@ -781,17 +752,10 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
 
         // Step 3: sign transactions not signed by Ledger
 
-        // Sign Nim swap transaction by proxy
-        if (nimiqSwapTransactionInfo && nimiqProxyKey) {
-            signedNimiqSwapTransaction = await this.nimiqNetwork.createTx(nimiqSwapTransactionInfo);
-            signedNimiqSwapTransaction.proof = Nimiq.SignatureProof.singleSig(
-                nimiqProxyKey.publicKey,
-                Nimiq.Signature.create(
-                    nimiqProxyKey.privateKey,
-                    nimiqProxyKey.publicKey,
-                    signedNimiqSwapTransaction.serializeContent(),
-                ),
-            ).serialize();
+        // Sign Nim swap transaction by proxy. Note that as we just created the proxy, we should still have the salt and
+        // therefore the transaction can be signed with the local proxy key without Ledger involvement.
+        if (nimiqSwapTransactionInfo && nimiqSwapProxy) {
+            signedNimiqSwapTransaction = await nimiqSwapProxy.signTransaction(nimiqSwapTransactionInfo);
         }
 
         // Set euro settlement
