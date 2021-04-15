@@ -54,11 +54,12 @@ import { decodeBtcScript } from '../lib/bitcoin/BitcoinHtlcUtils';
 import LedgerSwapProxy, { LedgerSwapProxyMarker } from '../lib/LedgerSwapProxy';
 import { ERROR_CANCELED } from '../lib/Constants';
 import patchMerkleTree from '../lib/MerkleTreePatch';
+import { BitcoinTransactionInputType } from '@nimiq/keyguard-client';
 
 // Import only types to avoid bundling of KeyguardClient in Ledger request if not required.
 // (But note that currently, the KeyguardClient is still always bundled in the RpcApi).
-type KeyguardSignNimTransactionRequest = import('@nimiq/keyguard-client').SignTransactionRequest;
-type KeyguardSignBtcTransactionRequest = import('@nimiq/keyguard-client').SignBtcTransactionRequest;
+type KeyguardSignNimTransactionRequest = import('@nimiq/keyguard-client').SignTransactionRequestStandard;
+type KeyguardSignBtcTransactionRequest = import('@nimiq/keyguard-client').SignBtcTransactionRequestStandard;
 
 @Component({components: {StatusScreen, SmallPage, GlobalClose, LedgerUi}})
 export default class RefundSwapLedger extends RefundSwap {
@@ -249,6 +250,11 @@ export default class RefundSwapLedger extends RefundSwap {
             // Bitcoin request
             const { walletId: accountId } = this.request as ParsedRefundSwapRequest;
             const { appName, inputs: [htlcInput], recipientOutput: output } = request;
+
+            // Type guard to ensure inputs have a witnessScript
+            if (htlcInput.type !== BitcoinTransactionInputType.HTLC_REFUND) {
+                throw new Error('UNEXPECTED: Refund input does not have type \'htlc-refund\'');
+            }
 
             this.state = this.State.SYNCING;
             await loadBitcoinJS();

@@ -13,6 +13,7 @@ export async function prepareBitcoinTransactionForLedgerSigning(
         & { inputs: Array<
             Pick<
                 BitcoinTransactionInfo['inputs'][0],
+                // @ts-ignore
                 'transactionHash' | 'outputIndex' | 'keyPath' | 'witnessScript' | 'sequence'
             >
         > },
@@ -27,6 +28,7 @@ export async function prepareBitcoinTransactionForLedgerSigning(
         inputTransactions.push(...await Promise.all(batch.map((input) => fetchTransaction(input.transactionHash))));
     }
 
+    // @ts-ignore
     const inputs: LedgerBitcoinTransactionInfo['inputs'] = transactionInfo.inputs.map((input, i) => ({
         transaction: inputTransactions[i],
         index: input.outputIndex,

@@ -126,6 +126,7 @@ export default class SignBtcTransactionLedger extends SignBtcTransaction {
         let ledgerTransactionInfo: LedgerBitcoinTransactionInfo;
         try {
             this.state = this.State.SYNCING;
+            // @ts-ignore
             ledgerTransactionInfo = await prepareBitcoinTransactionForLedgerSigning(transactionInfo);
         } catch (e) {
             this.state = this.State.SYNCING_FAILED;

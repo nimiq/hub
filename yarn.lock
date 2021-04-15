@@ -985,25 +985,20 @@
   resolved "https://registry.yarnpkg.com/@nimiq/browser-warning/-/browser-warning-1.1.0.tgz#f600b0bf73a91e2195e1e344f6bcd603b4d3f18e"
   integrity sha512-18SdpZfnYTiwoPbBsTtnSqyIMSn6cupWwYoIIBQm5sPzh31ZlNrE/S3KkyGW8YShBGaCh39Z8XAMvuCIX/hNMg==
 
-"@nimiq/core-web@1.4.3":
-  version "1.4.3"
-  resolved "https://registry.yarnpkg.com/@nimiq/core-web/-/core-web-1.4.3.tgz#190d7390324623672fafbbc93841bcf215d2af01"
-  integrity sha512-47JMAx8bFcr2uev+QgX4saBUvRQo/8akQdpvf0z1F5N3I8FPyIfEWRjPW2Xu28C+MOdIZ/VkHL/YmMiGBBtEMA==
-
 "@nimiq/core-web@1.5.3":
   version "1.5.3"
   resolved "https://registry.yarnpkg.com/@nimiq/core-web/-/core-web-1.5.3.tgz#f0a4de59394f210f2c2d9cda8ee35c716847d40e"
   integrity sha512-W66SS9n3ygYgD52r1GJr1WtYYOkcZsqdtMmDCEwDvkrmeARnHs2sAvj77Wt4PQG8JA7GwK5svIJr6rGccCaekw==
 
+"@nimiq/core-web@1.5.8", "@nimiq/core-web@^1.5.8":
+  version "1.5.8"
+  resolved "https://registry.yarnpkg.com/@nimiq/core-web/-/core-web-1.5.8.tgz#da8abef84c6d293cbb9ca495a77f08daa08886b9"
+  integrity sha512-MNpFbGZetz2eZcHtJVa5tpmLjPf65mTcJBRQkOHS8kWE+f+Z++hdnwWUBQCEAph4oC6bsE5JSuU7VpwcogN7+w==
+
 "@nimiq/core-web@^1.5.6":
   version "1.5.6"
   resolved "https://registry.yarnpkg.com/@nimiq/core-web/-/core-web-1.5.6.tgz#3802f9ed996bbd84186b455d28bedc0b62ba20e7"
   integrity sha512-42tDJBoniJqAg3jYqb+5EzLQYY7/fl2UHMM3jfLpgDuYUgKAk4mHcJ9rP5cWCrkaWfR2z+ZMkaGiWdkrpxwBlQ==
-
-"@nimiq/core-web@^1.5.8":
-  version "1.5.8"
-  resolved "https://registry.yarnpkg.com/@nimiq/core-web/-/core-web-1.5.8.tgz#da8abef84c6d293cbb9ca495a77f08daa08886b9"
-  integrity sha512-MNpFbGZetz2eZcHtJVa5tpmLjPf65mTcJBRQkOHS8kWE+f+Z++hdnwWUBQCEAph4oC6bsE5JSuU7VpwcogN7+w==
 
 "@nimiq/core@^1.5.8":
   version "1.5.8"
@@ -1052,12 +1047,12 @@
     leveldown "^5.1.1"
     levelup "^4.1.0"
 
-"@nimiq/keyguard-client@^1.5.0-beta.0":
-  version "1.5.0-beta.0"
-  resolved "https://registry.yarnpkg.com/@nimiq/keyguard-client/-/keyguard-client-1.5.0-beta.0.tgz#010f2eacf58004f1554081ead89779d894c0b272"
-  integrity sha512-qhwsfF7vXlOI710tq11OCT7DhObxDx8YnA3BISbX86FIhBUOBzOCeHN5IycE/Q5cN90er5KelBrxRkirqj95hQ==
+"@nimiq/keyguard-client@^1.5.0-beta.1":
+  version "1.5.0-beta.1"
+  resolved "https://registry.yarnpkg.com/@nimiq/keyguard-client/-/keyguard-client-1.5.0-beta.1.tgz#84b1407659b2a94e360908d1a6d28cf0ae01df91"
+  integrity sha512-T+Y0ZAImUtLs6h09pgJmNPGI7NL+EY9czY3eHWW6f9lPPAirszcMUF7eiwhWhPbuvKz6Eyfx3zlSNGpTED5jUg==
   dependencies:
-    "@nimiq/core-web" "1.4.3"
+    "@nimiq/core-web" "1.5.8"
     "@nimiq/rpc" "^0.3.0"
 
 "@nimiq/ledger-api@^2.1.0":

@@ -279,6 +279,7 @@ export interface EuroHtlcSettlementInstructions {
         recipient: {
             name: string,
             iban: string,
+            bic: string,
         },
     } | {
         type: 'mock',

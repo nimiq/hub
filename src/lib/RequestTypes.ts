@@ -216,6 +216,7 @@ export interface ParsedSetupSwapRequest extends ParsedSimpleRequest {
             recipient: {
                 name: string,
                 iban: string,
+                bic: string,
             },
         } | {
             type: 'mock',
