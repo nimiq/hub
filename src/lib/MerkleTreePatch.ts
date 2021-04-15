@@ -46,6 +46,6 @@ export default function patchMerkleTree() {
             }
         }
 
-        Nimiq.Class.register(MerkleTree);
+        Nimiq.MerkleTree = MerkleTree;
     }
 };
