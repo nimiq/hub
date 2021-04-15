@@ -27,7 +27,7 @@ import { loadBitcoinJS } from '../lib/bitcoin/BitcoinJSLoader';
 import { getElectrumClient } from '../lib/bitcoin/ElectrumClient';
 import { decodeBtcScript } from '../lib/bitcoin/BitcoinHtlcUtils';
 import { WalletInfo } from '../lib/WalletInfo';
-import '../lib/MerkleTreePatch';
+import patchMerkleTree from '../lib/MerkleTreePatch';
 
 // Import only types to avoid bundling of KeyguardClient in Ledger request if not required.
 // (But note that currently, the KeyguardClient is still always bundled in the RpcApi).
@@ -393,6 +393,7 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
             }
 
             // Validate that transaction is valid
+            patchMerkleTree();
             if (!nimiqTransaction.verify()) {
                 this.$rpc.reject(new Error('NIM transaction is invalid'));
                 return;

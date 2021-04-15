@@ -2,7 +2,7 @@ import LedgerApi, { Coin, TransactionInfoNimiq, getBip32Path, parseBip32Path } f
 import { NetworkClient } from '@nimiq/network-client';
 import Config from 'config';
 import { loadNimiq } from './Helpers';
-import '../lib/MerkleTreePatch';
+import patchMerkleTree from '../lib/MerkleTreePatch';
 
 export const LedgerSwapProxyMarker = {
     // HTLC Proxy Funding, abbreviated as 'HPFD', mapped to values outside of basic ascii range
@@ -163,6 +163,7 @@ export default class LedgerSwapProxy {
         // See MultiSigWallet in core-js. Note that we don't have to aggregate the public keys as it's a 1 of 2 multi
         // sig, where a single signature suffices.
         const publicKeys = [localSignerPublicKey, ledgerSignerPublicKey].sort((a, b) => a.compare(b));
+        patchMerkleTree();
         const merkleRoot = Nimiq.MerkleTree.computeRoot(publicKeys);
         return Nimiq.Address.fromHash(merkleRoot);
     }
