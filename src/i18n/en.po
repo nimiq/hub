@@ -79,7 +79,7 @@ msgstr ""
 msgid "Address Added"
 msgstr ""
 
-#: src/views/LoginSuccess.vue:103
+#: src/views/LoginSuccess.vue:101
 msgid "Address detection failed. Retrying..."
 msgstr ""
 
@@ -308,7 +308,7 @@ msgstr ""
 msgid "Collecting payment details"
 msgstr ""
 
-#: src/views/SetupSwapLedger.vue:955
+#: src/views/SetupSwapLedger.vue:957
 msgid "Confirm {outgoingOrIncoming} transaction on Ledger"
 msgstr ""
 
@@ -398,8 +398,8 @@ msgid "Contacts are not affected."
 msgstr ""
 
 #: src/components/NotEnoughCookieSpace.vue:8
-#: src/views/LoginSuccess.vue:158
-#: src/views/LoginSuccess.vue:186
+#: src/views/LoginSuccess.vue:156
+#: src/views/LoginSuccess.vue:184
 #: src/views/SignupLedger.vue:143
 msgid "Continue"
 msgstr ""
@@ -502,7 +502,7 @@ msgstr ""
 msgid "Fee"
 msgstr ""
 
-#: src/views/LoginSuccess.vue:111
+#: src/views/LoginSuccess.vue:109
 #: src/views/SignupLedger.vue:108
 msgid "Fetching Addresses Failed"
 msgstr ""
@@ -578,12 +578,12 @@ msgid ""
 "crypto was easy"
 msgstr ""
 
-#: src/views/LoginSuccess.vue:169
+#: src/views/LoginSuccess.vue:167
 #: src/views/SignupLedger.vue:124
 msgid "Imported {count} address so far... | Imported {count} addresses so far..."
 msgstr ""
 
-#: src/views/SetupSwapLedger.vue:958
+#: src/views/SetupSwapLedger.vue:960
 msgid "incoming"
 msgstr ""
 
@@ -720,7 +720,7 @@ msgid "OASIS service fee"
 msgstr ""
 
 #: src/views/ErrorHandlerUnsupportedLedger.vue:4
-#: src/views/RefundSwapLedger.vue:340
+#: src/views/RefundSwapLedger.vue:346
 msgid "Ok"
 msgstr ""
 
@@ -740,7 +740,7 @@ msgstr ""
 msgid "Orange"
 msgstr ""
 
-#: src/views/SetupSwapLedger.vue:957
+#: src/views/SetupSwapLedger.vue:959
 msgid "outgoing"
 msgstr ""
 
@@ -812,11 +812,11 @@ msgstr ""
 msgid "Red"
 msgstr ""
 
-#: src/views/RefundSwapLedger.vue:310
+#: src/views/RefundSwapLedger.vue:316
 msgid "Refund Failed"
 msgstr ""
 
-#: src/views/RefundSwapLedger.vue:329
+#: src/views/RefundSwapLedger.vue:335
 msgid "Refunding this Swap is currently not supported on this device or browser. Please use the device and browser you originally created the Swap with. Otherwise please try again in the future."
 msgstr ""
 
@@ -850,7 +850,7 @@ msgid "Retrieving your old accounts..."
 msgstr ""
 
 #: src/views/BitcoinSyncBaseView.vue:68
-#: src/views/LoginSuccess.vue:113
+#: src/views/LoginSuccess.vue:111
 #: src/views/SetupSwapSuccess.vue:528
 #: src/views/SignupLedger.vue:145
 msgid "Retry"
@@ -903,7 +903,7 @@ msgstr ""
 msgid "Something went wrong with your request. Please try again."
 msgstr ""
 
-#: src/views/LoginSuccess.vue:154
+#: src/views/LoginSuccess.vue:152
 msgid "Space exceeded"
 msgstr ""
 
@@ -927,12 +927,12 @@ msgstr ""
 msgid "Swap fee"
 msgstr ""
 
-#: src/views/SetupSwapLedger.vue:819
+#: src/views/SetupSwapLedger.vue:821
 #: src/views/SetupSwapSuccess.vue:499
 msgid "Swap Setup Failed"
 msgstr ""
 
-#: src/views/RefundSwapLedger.vue:308
+#: src/views/RefundSwapLedger.vue:314
 msgid "Syncing"
 msgstr ""
 
@@ -944,17 +944,17 @@ msgid "Syncing consensus..."
 msgstr ""
 
 #: src/views/BitcoinSyncBaseView.vue:50
-#: src/views/SetupSwapLedger.vue:821
+#: src/views/SetupSwapLedger.vue:823
 #: src/views/SetupSwapSuccess.vue:501
 #: src/views/SignBtcTransactionLedger.vue:117
 msgid "Syncing Failed"
 msgstr ""
 
-#: src/views/RefundSwapLedger.vue:324
+#: src/views/RefundSwapLedger.vue:330
 msgid "Syncing with {currency} network failed: {error}"
 msgstr ""
 
-#: src/views/RefundSwapLedger.vue:318
+#: src/views/RefundSwapLedger.vue:324
 msgid "Syncing with {currency} network..."
 msgstr ""
 
@@ -963,11 +963,11 @@ msgid "Syncing with Bitcoin network failed: {error}"
 msgstr ""
 
 #: src/views/BitcoinSyncBaseView.vue:58
-#: src/views/SetupSwapLedger.vue:831
+#: src/views/SetupSwapLedger.vue:833
 msgid "Syncing with Bitcoin network..."
 msgstr ""
 
-#: src/views/LoginSuccess.vue:112
+#: src/views/LoginSuccess.vue:110
 #: src/views/SignupLedger.vue:134
 msgid "Syncing with the network failed: {error}"
 msgstr ""
@@ -1068,7 +1068,7 @@ msgstr ""
 msgid "Unfortunately, due to restrictions of Safari you cannot add more accounts and/or addresses. Please log out of unused accounts to free up space."
 msgstr ""
 
-#: src/views/LoginSuccess.vue:156
+#: src/views/LoginSuccess.vue:154
 msgid "Unfortunately, due to space restrictions of Safari and IOS, this account cannot be stored properly. Please free up space by logging out of other accounts."
 msgstr ""
 
@@ -1103,7 +1103,7 @@ msgid ""
 "or Recovery Words."
 msgstr ""
 
-#: src/views/LoginSuccess.vue:185
+#: src/views/LoginSuccess.vue:183
 #: src/views/SignupLedger.vue:132
 msgid "Used addresses without balance might have been missed."
 msgstr ""
@@ -1164,11 +1164,11 @@ msgstr ""
 msgid "Your {app} app is outdated. Please update your Ledger firmware and {app} app using Ledger Live."
 msgstr ""
 
-#: src/views/LoginSuccess.vue:200
+#: src/views/LoginSuccess.vue:198
 msgid "Your Account is ready. | Your Accounts are ready."
 msgstr ""
 
-#: src/views/LoginSuccess.vue:183
+#: src/views/LoginSuccess.vue:181
 #: src/views/SignupLedger.vue:106
 msgid ""
 "Your Addresses may be\n"
@@ -1189,7 +1189,7 @@ msgstr ""
 msgid "Your message is signed."
 msgstr ""
 
-#: src/views/LoginSuccess.vue:194
+#: src/views/LoginSuccess.vue:192
 #: src/views/SimpleSuccess.vue:31
 msgid "Your password was changed."
 msgstr ""
