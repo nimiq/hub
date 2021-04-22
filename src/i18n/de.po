@@ -83,7 +83,7 @@ msgstr "Zum Ledger hinzufügen"
 msgid "Add Vesting Contract"
 msgstr "Vesting-Vertrag hinzufügen"
 
-#: src/views/SetupSwapLedger.vue:269
+#: src/views/SetupSwapLedger.vue:276
 msgid "Address"
 msgstr "Adresse"
 
@@ -101,7 +101,7 @@ msgstr "Alle Beschriftungen gespeichert."
 
 #: src/components/BitcoinCheckoutCard.vue:26
 #: src/components/EthereumCheckoutCard.vue:25
-#: src/views/SetupSwapLedger.vue:262 src/views/SetupSwapLedger.vue:271
+#: src/views/SetupSwapLedger.vue:269 src/views/SetupSwapLedger.vue:278
 msgid "Amount"
 msgstr "Betrag"
 
@@ -182,7 +182,7 @@ msgstr "Gesichert"
 msgid "Balance:"
 msgstr "Saldo:"
 
-#: src/views/SetupSwapLedger.vue:106 src/views/SetupSwapLedger.vue:153
+#: src/views/SetupSwapLedger.vue:110 src/views/SetupSwapLedger.vue:160
 msgid "Bitcoin"
 msgstr "Bitcoin"
 
@@ -317,7 +317,7 @@ msgstr "Schließen"
 msgid "Collecting payment details"
 msgstr "Zahlungsdetails werden ermittelt"
 
-#: src/views/SetupSwapLedger.vue:957
+#: src/views/SetupSwapLedger.vue:964
 msgid "Confirm {outgoingOrIncoming} transaction on Ledger"
 msgstr "Bestätige {outgoingOrIncoming} Transaktion auf dem Ledger"
 
@@ -500,8 +500,8 @@ msgid "fee"
 msgstr "Gebühr"
 
 #: src/components/BitcoinCheckoutCard.vue:44
-#: src/components/CurrencyInfo.vue:15 src/views/SetupSwapLedger.vue:264
-#: src/views/SetupSwapLedger.vue:280
+#: src/components/CurrencyInfo.vue:15 src/views/SetupSwapLedger.vue:271
+#: src/views/SetupSwapLedger.vue:287
 msgid "Fee"
 msgstr "Gebühr"
 
@@ -585,7 +585,7 @@ msgid ""
 msgstr ""
 "{count} Adresse bisher importiert... | {count} Adressen bisher importiert..."
 
-#: src/views/SetupSwapLedger.vue:960
+#: src/views/SetupSwapLedger.vue:967
 msgid "incoming"
 msgstr "eingehende"
 
@@ -758,7 +758,7 @@ msgstr "Öffne die Wallet App"
 msgid "Orange"
 msgstr "Oranges"
 
-#: src/views/SetupSwapLedger.vue:959
+#: src/views/SetupSwapLedger.vue:966
 msgid "outgoing"
 msgstr "ausgehende"
 
@@ -944,7 +944,7 @@ msgstr "Neue Konten werden gespeichert..."
 msgid "Swap fee"
 msgstr "Tauschgebühr"
 
-#: src/views/SetupSwapLedger.vue:821 src/views/SetupSwapSuccess.vue:499
+#: src/views/SetupSwapLedger.vue:828 src/views/SetupSwapSuccess.vue:499
 msgid "Swap Setup Failed"
 msgstr "Tauschvorgang fehlgeschlagen"
 
@@ -958,7 +958,7 @@ msgstr "Synchronisiere"
 msgid "Syncing consensus..."
 msgstr "Konsensus wird synchronisiert..."
 
-#: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapLedger.vue:823
+#: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapLedger.vue:830
 #: src/views/SetupSwapSuccess.vue:501
 #: src/views/SignBtcTransactionLedger.vue:117
 msgid "Syncing Failed"
@@ -976,7 +976,7 @@ msgstr "Synchronisiere mit {currency}-Netzwerk..."
 msgid "Syncing with Bitcoin network failed: {error}"
 msgstr "Synchronisierung mit Bitcoin-Netzwerk fehlgeschlagen: {error}"
 
-#: src/views/BitcoinSyncBaseView.vue:58 src/views/SetupSwapLedger.vue:833
+#: src/views/BitcoinSyncBaseView.vue:58 src/views/SetupSwapLedger.vue:840
 msgid "Syncing with Bitcoin network..."
 msgstr "Synchronisiere mit dem Bitcoin-Netzwerk..."
 
@@ -1224,7 +1224,7 @@ msgstr ""
 "Deine Adressen sind\n"
 "möglicherweise unvollständig."
 
-#: src/views/SetupSwapLedger.vue:110
+#: src/views/SetupSwapLedger.vue:116
 msgid "Your Bank"
 msgstr "Deine Bank"
 

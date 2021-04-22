@@ -79,7 +79,7 @@ msgstr "添加到Ledger"
 msgid "Add Vesting Contract"
 msgstr "添加归属合同"
 
-#: src/views/SetupSwapLedger.vue:269
+#: src/views/SetupSwapLedger.vue:276
 msgid "Address"
 msgstr "地址"
 
@@ -97,7 +97,7 @@ msgstr "所有标签已保存"
 
 #: src/components/BitcoinCheckoutCard.vue:26
 #: src/components/EthereumCheckoutCard.vue:25
-#: src/views/SetupSwapLedger.vue:262 src/views/SetupSwapLedger.vue:271
+#: src/views/SetupSwapLedger.vue:269 src/views/SetupSwapLedger.vue:278
 msgid "Amount"
 msgstr "金额"
 
@@ -178,7 +178,7 @@ msgstr "已备份"
 msgid "Balance:"
 msgstr "金额："
 
-#: src/views/SetupSwapLedger.vue:106 src/views/SetupSwapLedger.vue:153
+#: src/views/SetupSwapLedger.vue:110 src/views/SetupSwapLedger.vue:160
 msgid "Bitcoin"
 msgstr "比特币"
 
@@ -313,7 +313,7 @@ msgstr "关闭"
 msgid "Collecting payment details"
 msgstr "收集付款明细"
 
-#: src/views/SetupSwapLedger.vue:957
+#: src/views/SetupSwapLedger.vue:964
 msgid "Confirm {outgoingOrIncoming} transaction on Ledger"
 msgstr "确认Ledger上的 {outgoingOrIncoming} 交易。"
 
@@ -493,8 +493,8 @@ msgid "fee"
 msgstr "费用"
 
 #: src/components/BitcoinCheckoutCard.vue:44
-#: src/components/CurrencyInfo.vue:15 src/views/SetupSwapLedger.vue:264
-#: src/views/SetupSwapLedger.vue:280
+#: src/components/CurrencyInfo.vue:15 src/views/SetupSwapLedger.vue:271
+#: src/views/SetupSwapLedger.vue:287
 msgid "Fee"
 msgstr "费用"
 
@@ -577,7 +577,7 @@ msgid ""
 "Imported {count} address so far... | Imported {count} addresses so far..."
 msgstr "目前已导入{count}个地址... | 目前已导入{count}个地址..."
 
-#: src/views/SetupSwapLedger.vue:960
+#: src/views/SetupSwapLedger.vue:967
 msgid "incoming"
 msgstr "转入"
 
@@ -740,7 +740,7 @@ msgstr "打开钱包应用"
 msgid "Orange"
 msgstr "橙"
 
-#: src/views/SetupSwapLedger.vue:959
+#: src/views/SetupSwapLedger.vue:966
 msgid "outgoing"
 msgstr "转出"
 
@@ -925,7 +925,7 @@ msgstr "正在存储您的新帐户..."
 msgid "Swap fee"
 msgstr "交换费用"
 
-#: src/views/SetupSwapLedger.vue:821 src/views/SetupSwapSuccess.vue:499
+#: src/views/SetupSwapLedger.vue:828 src/views/SetupSwapSuccess.vue:499
 msgid "Swap Setup Failed"
 msgstr "交换设置失败"
 
@@ -939,7 +939,7 @@ msgstr "同步中"
 msgid "Syncing consensus..."
 msgstr "正在同步共识..."
 
-#: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapLedger.vue:823
+#: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapLedger.vue:830
 #: src/views/SetupSwapSuccess.vue:501
 #: src/views/SignBtcTransactionLedger.vue:117
 msgid "Syncing Failed"
@@ -957,7 +957,7 @@ msgstr "正在与 {currency} 网络同步..."
 msgid "Syncing with Bitcoin network failed: {error}"
 msgstr "与比特币网络同步失败：{error}"
 
-#: src/views/BitcoinSyncBaseView.vue:58 src/views/SetupSwapLedger.vue:833
+#: src/views/BitcoinSyncBaseView.vue:58 src/views/SetupSwapLedger.vue:840
 msgid "Syncing with Bitcoin network..."
 msgstr "正在与比特币网络同步..."
 
@@ -1185,7 +1185,7 @@ msgstr ""
 "您的地址可能\n"
 "不完整"
 
-#: src/views/SetupSwapLedger.vue:110
+#: src/views/SetupSwapLedger.vue:116
 msgid "Your Bank"
 msgstr "您的银行"
 

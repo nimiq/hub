@@ -81,7 +81,7 @@ msgstr "Voeg toe aan Ledger"
 msgid "Add Vesting Contract"
 msgstr "Vestingcontract toevoegen"
 
-#: src/views/SetupSwapLedger.vue:269
+#: src/views/SetupSwapLedger.vue:276
 msgid "Address"
 msgstr "Adres"
 
@@ -99,7 +99,7 @@ msgstr "Alle labels opgeslagen."
 
 #: src/components/BitcoinCheckoutCard.vue:26
 #: src/components/EthereumCheckoutCard.vue:25
-#: src/views/SetupSwapLedger.vue:262 src/views/SetupSwapLedger.vue:271
+#: src/views/SetupSwapLedger.vue:269 src/views/SetupSwapLedger.vue:278
 msgid "Amount"
 msgstr "Bedrag"
 
@@ -180,7 +180,7 @@ msgstr "Geback-upt"
 msgid "Balance:"
 msgstr "Balans:"
 
-#: src/views/SetupSwapLedger.vue:106 src/views/SetupSwapLedger.vue:153
+#: src/views/SetupSwapLedger.vue:110 src/views/SetupSwapLedger.vue:160
 msgid "Bitcoin"
 msgstr "Bitcoin"
 
@@ -315,7 +315,7 @@ msgstr "Sluiten"
 msgid "Collecting payment details"
 msgstr "Betaalgegevens ophalen"
 
-#: src/views/SetupSwapLedger.vue:957
+#: src/views/SetupSwapLedger.vue:964
 msgid "Confirm {outgoingOrIncoming} transaction on Ledger"
 msgstr "Bevestig {outgoingOrIncoming} transactie op Ledger"
 
@@ -496,8 +496,8 @@ msgid "fee"
 msgstr "kosten"
 
 #: src/components/BitcoinCheckoutCard.vue:44
-#: src/components/CurrencyInfo.vue:15 src/views/SetupSwapLedger.vue:264
-#: src/views/SetupSwapLedger.vue:280
+#: src/components/CurrencyInfo.vue:15 src/views/SetupSwapLedger.vue:271
+#: src/views/SetupSwapLedger.vue:287
 msgid "Fee"
 msgstr "kosten"
 
@@ -582,7 +582,7 @@ msgstr ""
 "{count} adres geïmporteerd to dus ver... | {count} adressen geïmporteerd tot"
 " dus ver..."
 
-#: src/views/SetupSwapLedger.vue:960
+#: src/views/SetupSwapLedger.vue:967
 msgid "incoming"
 msgstr "inkomend"
 
@@ -754,7 +754,7 @@ msgstr "Open Wallet App"
 msgid "Orange"
 msgstr "Oranje"
 
-#: src/views/SetupSwapLedger.vue:959
+#: src/views/SetupSwapLedger.vue:966
 msgid "outgoing"
 msgstr "uitgaand"
 
@@ -943,7 +943,7 @@ msgstr "Je nieuwe accounts opslaan..."
 msgid "Swap fee"
 msgstr "Swap kosten"
 
-#: src/views/SetupSwapLedger.vue:821 src/views/SetupSwapSuccess.vue:499
+#: src/views/SetupSwapLedger.vue:828 src/views/SetupSwapSuccess.vue:499
 msgid "Swap Setup Failed"
 msgstr "Swap initialisatie mislukt"
 
@@ -957,7 +957,7 @@ msgstr "Synchroniseren"
 msgid "Syncing consensus..."
 msgstr "Consensus synchroniseren..."
 
-#: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapLedger.vue:823
+#: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapLedger.vue:830
 #: src/views/SetupSwapSuccess.vue:501
 #: src/views/SignBtcTransactionLedger.vue:117
 msgid "Syncing Failed"
@@ -975,7 +975,7 @@ msgstr "Synchroniseren met {currency} netwerk..."
 msgid "Syncing with Bitcoin network failed: {error}"
 msgstr "Synchroniseren met Bitcoin-netwerk mislukt: {error}"
 
-#: src/views/BitcoinSyncBaseView.vue:58 src/views/SetupSwapLedger.vue:833
+#: src/views/BitcoinSyncBaseView.vue:58 src/views/SetupSwapLedger.vue:840
 msgid "Syncing with Bitcoin network..."
 msgstr "Synchroniseren met Bitcoin netwerk..."
 
@@ -1224,7 +1224,7 @@ msgstr ""
 "Je adressen zijn misschien\n"
 "niet compleet."
 
-#: src/views/SetupSwapLedger.vue:110
+#: src/views/SetupSwapLedger.vue:116
 msgid "Your Bank"
 msgstr "Jouw bank"
 

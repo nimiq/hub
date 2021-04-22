@@ -81,7 +81,7 @@ msgstr "Добавить в Ledger"
 msgid "Add Vesting Contract"
 msgstr "Добавить вестинговый контракт"
 
-#: src/views/SetupSwapLedger.vue:269
+#: src/views/SetupSwapLedger.vue:276
 msgid "Address"
 msgstr "Адрес"
 
@@ -99,7 +99,7 @@ msgstr "Все ярлыки сохранены."
 
 #: src/components/BitcoinCheckoutCard.vue:26
 #: src/components/EthereumCheckoutCard.vue:25
-#: src/views/SetupSwapLedger.vue:262 src/views/SetupSwapLedger.vue:271
+#: src/views/SetupSwapLedger.vue:269 src/views/SetupSwapLedger.vue:278
 msgid "Amount"
 msgstr "Сумма"
 
@@ -180,7 +180,7 @@ msgstr "Резервная копия создана"
 msgid "Balance:"
 msgstr "Баланс:"
 
-#: src/views/SetupSwapLedger.vue:106 src/views/SetupSwapLedger.vue:153
+#: src/views/SetupSwapLedger.vue:110 src/views/SetupSwapLedger.vue:160
 msgid "Bitcoin"
 msgstr "Биткоин"
 
@@ -317,7 +317,7 @@ msgstr "Закрыть"
 msgid "Collecting payment details"
 msgstr "Собираем платёжные данные"
 
-#: src/views/SetupSwapLedger.vue:957
+#: src/views/SetupSwapLedger.vue:964
 msgid "Confirm {outgoingOrIncoming} transaction on Ledger"
 msgstr "Подтвердите {outgoingOrIncoming} транзакцию на Ledger"
 
@@ -502,8 +502,8 @@ msgid "fee"
 msgstr "комиссия"
 
 #: src/components/BitcoinCheckoutCard.vue:44
-#: src/components/CurrencyInfo.vue:15 src/views/SetupSwapLedger.vue:264
-#: src/views/SetupSwapLedger.vue:280
+#: src/components/CurrencyInfo.vue:15 src/views/SetupSwapLedger.vue:271
+#: src/views/SetupSwapLedger.vue:287
 msgid "Fee"
 msgstr "Комиссия"
 
@@ -586,7 +586,7 @@ msgid ""
 "Imported {count} address so far... | Imported {count} addresses so far..."
 msgstr "Импортирован {count} адрес... | Импортировано {count} адресов..."
 
-#: src/views/SetupSwapLedger.vue:960
+#: src/views/SetupSwapLedger.vue:967
 msgid "incoming"
 msgstr "входящую"
 
@@ -756,7 +756,7 @@ msgstr "Открыть Wallet App"
 msgid "Orange"
 msgstr "Оранжевый"
 
-#: src/views/SetupSwapLedger.vue:959
+#: src/views/SetupSwapLedger.vue:966
 msgid "outgoing"
 msgstr "исходящую"
 
@@ -942,7 +942,7 @@ msgstr "Сохранение ваших новых учетных записей
 msgid "Swap fee"
 msgstr "Комиссия за обмен"
 
-#: src/views/SetupSwapLedger.vue:821 src/views/SetupSwapSuccess.vue:499
+#: src/views/SetupSwapLedger.vue:828 src/views/SetupSwapSuccess.vue:499
 msgid "Swap Setup Failed"
 msgstr "Не удалось подготовить обмен"
 
@@ -956,7 +956,7 @@ msgstr "Синхронизация"
 msgid "Syncing consensus..."
 msgstr "Синхронизация консенсуса..."
 
-#: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapLedger.vue:823
+#: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapLedger.vue:830
 #: src/views/SetupSwapSuccess.vue:501
 #: src/views/SignBtcTransactionLedger.vue:117
 msgid "Syncing Failed"
@@ -974,7 +974,7 @@ msgstr "Синхронизируемся с сетью {currency}..."
 msgid "Syncing with Bitcoin network failed: {error}"
 msgstr "Не удалось синхронизироваться с сетью биткоина: {error}"
 
-#: src/views/BitcoinSyncBaseView.vue:58 src/views/SetupSwapLedger.vue:833
+#: src/views/BitcoinSyncBaseView.vue:58 src/views/SetupSwapLedger.vue:840
 msgid "Syncing with Bitcoin network..."
 msgstr "Синхронизация с сетью Биткойна"
 
@@ -1220,7 +1220,7 @@ msgstr ""
 "Ваши Адреса могут быть\n"
 "незавершены."
 
-#: src/views/SetupSwapLedger.vue:110
+#: src/views/SetupSwapLedger.vue:116
 msgid "Your Bank"
 msgstr "Ваш банк"
 
