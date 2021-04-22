@@ -63,8 +63,8 @@ export default class SetupSwap extends BitcoinSyncBaseView {
             fiatCurrency: this.request.fiatCurrency,
             fundingFiatRate: this.request.fundingFiatRate,
             redeemingFiatRate: this.request.redeemingFiatRate,
-            serviceFundingFee: this.request.serviceFundingFee,
-            serviceRedeemingFee: this.request.serviceRedeemingFee,
+            fundFees: this.request.fundFees,
+            redeemFees: this.request.redeemFees,
             serviceSwapFee: this.request.serviceSwapFee,
             ...(this.request.layout === 'slider' ? {
                 layout: 'slider',

@@ -97,19 +97,26 @@
             <PageBody v-if="request.layout === 'standard'" class="layout-standard">
                 <div class="address-infos">
                     <template v-for="fundingOrRedeemingInfo in [request.fund, request.redeem]">
-                        <div v-if="fundingOrRedeemingInfo.type === SwapAsset.NIM">
+                        <div v-if="fundingOrRedeemingInfo.type === SwapAsset.NIM"
+                            :key="fundingOrRedeemingInfo.type"
+                        >
                             <Identicon :address="nimiqLedgerAddressInfo.address.toUserFriendlyAddress()" />
                             <label>{{ nimiqLedgerAddressInfo.label }}</label>
                         </div>
-                        <div v-else-if="fundingOrRedeemingInfo.type === SwapAsset.BTC">
+                        <div v-else-if="fundingOrRedeemingInfo.type === SwapAsset.BTC"
+                            :key="fundingOrRedeemingInfo.type"
+                        >
                             <img src="/icon-btc.svg">
                             <label>{{ $t('Bitcoin') }}</label>
                         </div>
-                        <div v-else-if="fundingOrRedeemingInfo.type === SwapAsset.EUR">
+                        <div v-else-if="fundingOrRedeemingInfo.type === SwapAsset.EUR"
+                            :key="fundingOrRedeemingInfo.type"
+                        >
                             <img src="/icon-bank.svg">
                             <label>{{ request.fund.bankLabel || $t('Your Bank') }}</label>
                         </div>
-                        <ArrowRightIcon v-if="fundingOrRedeemingInfo === request.fund" />
+                        <ArrowRightIcon v-if="fundingOrRedeemingInfo === request.fund"
+                            :key="`${fundingOrRedeemingInfo.type}-arrow`" />
                     </template>
                 </div>
 
@@ -157,14 +164,14 @@
                 <div class="balance-bar">
                     <template v-for="({currency, background, oldFiatBalance, newFiatBalance}, i) in _balanceBarEntries">
                         <template v-if="_balanceBarEntries[i - 1] && _balanceBarEntries[i - 1].currency !== currency">
-                            <div class="separator"></div>
+                            <div class="separator" :key="`seperator-${i}`"></div>
                         </template>
                         <div class="bar" :style="{
                             flexGrow: newFiatBalance,
                             opacity: newFiatBalance !== oldFiatBalance ? 1 : .25,
                             background: background,
                             borderColor: background,
-                        }">
+                        }" :key="`bar-${i}`">
                             <div v-if="newFiatBalance > oldFiatBalance" class="change" :style="{
                                 width: `${(newFiatBalance - oldFiatBalance) / newFiatBalance * 100}%`,
                             }"></div>
@@ -834,7 +841,7 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
     }
 
     private get _fundingAmountInfo(): SwapAmountInfo {
-        const { fund: fundInfo, serviceFundingFee, bitcoinAccount, fundingFiatRate: fiatRate } = this.request;
+        const { fund: fundInfo, fundFees, bitcoinAccount, fundingFiatRate: fiatRate } = this.request;
         const { type: currency } = fundInfo;
         let currencyDecimals: number;
         let myAmount: number; // what we are paying including fees
@@ -865,13 +872,13 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
             default:
                 throw new Error(`Unsupported currency ${currency}`);
         }
-        const fees = myTransactionFee + serviceFundingFee;
+        const fees = myTransactionFee + fundFees.processing + fundFees.redeeming;
         const theirAmount = myAmount - fees; // what the other party receives excluding fees
         return { myAmount, theirAmount, myTransactionFee, fees, currency, currencyDecimals, newBalance, fiatRate };
     }
 
     private get _redeemingAmountInfo(): SwapAmountInfo {
-        const { redeem: redeemInfo, serviceRedeemingFee, bitcoinAccount, redeemingFiatRate: fiatRate } = this.request;
+        const { redeem: redeemInfo, redeemFees, bitcoinAccount, redeemingFiatRate: fiatRate } = this.request;
         const { type: currency } = redeemInfo;
         let currencyDecimals: number;
         let myAmount: number; // what we receive excluding fees
@@ -900,7 +907,7 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
             default:
                 throw new Error(`Unsupported currency ${currency}`);
         }
-        const fees = myTransactionFee + serviceRedeemingFee;
+        const fees = myTransactionFee + redeemFees.funding + redeemFees.processing;
         const theirAmount = myAmount + fees; // what the other party pays including fees
         return { myAmount, theirAmount, myTransactionFee, fees, currency, currencyDecimals, newBalance, fiatRate };
     }
