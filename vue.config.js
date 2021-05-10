@@ -1,4 +1,5 @@
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const SriPlugin = require('webpack-subresource-integrity');
 const WriteFileWebpackPlugin = require('write-file-webpack-plugin');
 const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
 const path = require('path');
@@ -27,6 +28,10 @@ console.log('Building for:', buildName);
 
 const configureWebpack = {
     plugins: [
+        new SriPlugin({
+            hashFuncNames: ['sha384'],
+            enabled: process.env.NODE_ENV === 'production',
+        }),
         new CopyWebpackPlugin([
             { from: 'node_modules/@nimiq/browser-warning/dist', to: './' },
             {
@@ -59,6 +64,7 @@ const configureWebpack = {
     // TODO: 'eval-source-map' temporarily removed for webpack-i18n-tools, will be fixed in future versions
     node: false,
     output: {
+        crossOriginLoading: 'anonymous',
         devtoolModuleFilenameTemplate: info => {
             let $filename = 'sources://' + info.resourcePath;
             if (info.resourcePath.match(/\.vue$/) && !info.query.match(/type=script/)) {
@@ -141,6 +147,7 @@ if (buildName === 'local' || buildName === 'testnet') {
 
 module.exports = {
     pages,
+    integrity: true,
     configureWebpack,
     chainWebpack: config => {
         // Do not put prefetch/preload links into the landing pages
