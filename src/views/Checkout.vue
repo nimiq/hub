@@ -8,6 +8,7 @@
                 'has-currency-info': initialCurrencies.length > 1,
             }"
             :entries="initialCurrencies"
+            :entryMargin="36"
             :animationDuration="500"
             :selected="selectedCurrency"
             :disabled="choosenCurrency !== null || availableCurrencies.length === 0"

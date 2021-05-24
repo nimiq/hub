@@ -454,6 +454,7 @@ export default NimiqCheckoutCard;
     .small-page {
         position: relative;
         width: 52.5rem;
+        margin: 0;
     }
 
     .status-screen {
