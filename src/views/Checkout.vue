@@ -149,7 +149,9 @@ class Checkout extends Vue {
     }
 
     private mounted() {
-        const disclaimer = (this.$refs.disclaimer as BottomOverlay).$el || this.$refs.disclaimer;
+        const disclaimer = this.$refs.disclaimer
+            ? (this.$refs.disclaimer as BottomOverlay).$el || this.$refs.disclaimer
+            : undefined;
         this.hasLongDisclaimer = !!disclaimer && disclaimer.textContent!.length > 250;
     }
 
