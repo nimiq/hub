@@ -352,6 +352,10 @@ export default Checkout;
             --ios-bottom-bar-height: 74px;
         }
 
+        .carousel.ios >>> .currency-info {
+            --currency-info-translate-y: -50px;
+        }
+
         .carousel >>> .confirmed .nq-card {
             height: var(--available-mobile-height);
         }
