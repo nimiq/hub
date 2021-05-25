@@ -81,7 +81,7 @@
                         />
                     </PageBody>
                     <PageFooter v-if="selected">
-                        <button class="nq-button light-blue use-app-button"
+                        <a class="nq-button light-blue use-app-button"
                             :disabled="appNotFound"
                             @click="checkBlur"
                             :href="paymentLink"
@@ -93,7 +93,7 @@
                             <template v-else>
                                 {{ $t('Open Wallet App') }}
                             </template>
-                        </button>
+                        </a>
                         <p class="nq-text-s" @click="manualPaymentDetailsOpen = true" >
                             {{ $t('Enter manually') }}<CaretRightSmallIcon/>
                         </p>
@@ -360,8 +360,7 @@ export default NonNimiqCheckoutCard;
         align-items: center;
     }
 
-    .page-footer button.nq-button {
-        line-height: 7.5rem;
+    .page-footer .nq-button {
         margin: 2rem 4.75rem 2rem;
         box-sizing: content-box;
         display: flex;
@@ -373,7 +372,7 @@ export default NonNimiqCheckoutCard;
         padding-bottom: var(--padding);
     }
 
-    .page-footer button.nq-button + p.nq-text-s {
+    .page-footer a.nq-button + p.nq-text-s {
         align-self: center;
         color:  rgba(31, 35, 72, 0.5);
         align-items: center;
@@ -382,7 +381,7 @@ export default NonNimiqCheckoutCard;
         cursor: pointer;
     }
 
-    .page-footer button.nq-button + p.nq-text-s > .nq-icon {
+    .page-footer a.nq-button + p.nq-text-s > .nq-icon {
         --icon-size: 1.2rem;
         height: var(--icon-size);
         width: var(--icon-size);
