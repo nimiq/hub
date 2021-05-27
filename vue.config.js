@@ -4,9 +4,10 @@ const WriteFileWebpackPlugin = require('write-file-webpack-plugin');
 const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
 const path = require('path');
 const fs = require('fs');
-const browserWarning = fs.readFileSync(__dirname + '/node_modules/@nimiq/browser-warning/dist/browser-warning.html.template');
+const createHash = require('crypto').createHash;
 // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const PoLoaderOptimizer = require('webpack-i18n-tools')();
+const coreVersion = require('@nimiq/core-web/package.json').version;
 
 const buildName = process.env.NODE_ENV === 'production'
     ? process.env.build
@@ -14,15 +15,25 @@ const buildName = process.env.NODE_ENV === 'production'
 
 if (!buildName) throw new Error('Please specify the build config with the `build` environment variable');
 
-const cdnDomain = buildName === 'mainnet'
-    ? 'https://cdn.nimiq.com'
-    : 'https://cdn.nimiq-testnet.com';
-
 const domain = buildName === 'mainnet'
     ? 'https://hub.nimiq.com'
     : buildName === 'testnet'
         ? 'https://hub.nimiq-testnet.com'
         : 'http://localhost:8080';
+
+const cdnDomain = buildName === 'mainnet'
+    ? 'https://cdn.nimiq.com'
+    : 'https://cdn.nimiq-testnet.com';
+
+const browserWarningTemplate = fs.readFileSync(
+    path.join(__dirname, 'node_modules/@nimiq/browser-warning/dist/browser-warning.html.template'));
+
+const browserWarningIntegrityHash = `sha384-${createHash('sha384')
+    .update(fs.readFileSync(path.join(__dirname, 'node_modules/@nimiq/browser-warning/dist/browser-warning.js')))
+    .digest('base64')}`;
+const coreIntegrityHash = `sha384-${createHash('sha384')
+    .update(fs.readFileSync(path.join(__dirname, 'node_modules/@nimiq/core-web/web-offline.js')))
+    .digest('base64')}`;
 
 console.log('Building for:', buildName);
 
@@ -86,10 +97,13 @@ const pages = {
         entry: 'src/main.ts',
         // the source template
         template: 'public/index.html',
-        // insert browser warning html templates
-        browserWarning,
-        cdnDomain,
+        // insert browser warning html template
+        browserWarningTemplate,
+        browserWarningIntegrityHash,
         domain,
+        cdnDomain,
+        coreVersion,
+        coreIntegrityHash,
         // output as dist/index.html
         filename: 'index.html',
         // chunks to include on this page, by default includes
@@ -112,10 +126,13 @@ const pages = {
         entry: 'src/cashlink.ts',
         // the source template
         template: 'public/cashlink.html',
-        // insert browser warning html templates
-        browserWarning,
-        cdnDomain,
+        // insert browser warning html template
+        browserWarningTemplate,
+        browserWarningIntegrityHash,
         domain,
+        cdnDomain,
+        coreVersion,
+        coreIntegrityHash,
         // output as dist/cashlink/index.html
         filename: 'cashlink/index.html',
         // chunks to include on this page, by default includes
@@ -131,6 +148,8 @@ if (buildName === 'local' || buildName === 'testnet') {
         // the source template
         template: 'demos/index.html',
         cdnDomain,
+        coreVersion,
+        coreIntegrityHash,
         // output as dist/demos.html
         filename: 'demos.html',
         // chunks to include on this page, by default includes
