@@ -34,6 +34,13 @@ const browserWarningIntegrityHash = `sha384-${createHash('sha384')
 const coreIntegrityHash = `sha384-${createHash('sha384')
     .update(fs.readFileSync(path.join(__dirname, 'node_modules/@nimiq/core-web/web-offline.js')))
     .digest('base64')}`;
+const bitcoinJsIntegrityHash = `sha384-${createHash('sha384')
+    .update(fs.readFileSync(path.join(__dirname, 'public/bitcoin/BitcoinJS.min.js')))
+    .digest('base64')}`;
+
+// Accesible within client code via process.env.VUE_APP_BITCOIN_JS_INTEGRITY_HASH,
+// see https://cli.vuejs.org/guide/mode-and-env.html#using-env-variables-in-client-side-code
+process.env.VUE_APP_BITCOIN_JS_INTEGRITY_HASH = bitcoinJsIntegrityHash;
 
 console.log('Building for:', buildName);
 
@@ -150,6 +157,7 @@ if (buildName === 'local' || buildName === 'testnet') {
         cdnDomain,
         coreVersion,
         coreIntegrityHash,
+        bitcoinJsIntegrityHash,
         // output as dist/demos.html
         filename: 'demos.html',
         // chunks to include on this page, by default includes
