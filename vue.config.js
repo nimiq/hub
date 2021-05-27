@@ -51,7 +51,11 @@ const configureWebpack = {
             enabled: process.env.NODE_ENV === 'production',
         }),
         new CopyWebpackPlugin([
-            { from: 'node_modules/@nimiq/browser-warning/dist', to: './' },
+            {
+                from: 'node_modules/@nimiq/browser-warning/dist/browser-warning.js*',
+                to: './',
+                flatten: true,
+            },
             {
                 from: 'node_modules/@nimiq/vue-components/dist/iqons.min.*.svg',
                 to: './img/',
