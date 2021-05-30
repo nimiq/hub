@@ -189,7 +189,11 @@ export class RequestParser {
                         } catch (err) {
                             throw new Error(`callbackUrl must be a valid URL: ${err}`);
                         }
-                        if (origin !== state.origin) {
+                        if (origin !== state.origin
+                            // Whitelist https://vendor.cryptopayment.link when the request was coming from just
+                            // https://cryptopayment.link
+                            && !(state.origin === 'https://cryptopayment.link'
+                                && origin === 'https://vendor.cryptopayment.link')) {
                             throw new Error('callbackUrl must have the same origin as caller Website. ' +
                                 checkoutRequest.callbackUrl +
                                 ' is not on caller origin ' +
