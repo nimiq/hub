@@ -14,7 +14,10 @@
             } : null"
             :vendorMarkup="paymentOptions.vendorMarkup"
             :networkFee="paymentOptions.fee"
-            :address="paymentOptions.protocolSpecific.recipient"
+            :address="typeof paymentOptions.protocolSpecific.recipient === 'object'
+                && 'toUserFriendlyAddress' in paymentOptions.protocolSpecific.recipient
+                ? paymentOptions.protocolSpecific.recipient.toUserFriendlyAddress()
+                : paymentOptions.protocolSpecific.recipient"
             :origin="rpcState.origin"
             :shopLogoUrl="request.shopLogoUrl"
             :startTime="request.time"

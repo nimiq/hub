@@ -127,7 +127,7 @@ import CurrencyInfo from './CurrencyInfo.vue';
     TransferIcon,
     UnderPaymentIcon,
 }})
-class NimiqCheckoutCard
+class CheckoutCardNimiq
     extends CheckoutCard<ParsedNimiqDirectPaymentOptions> {
     private static readonly BALANCE_CHECK_STORAGE_KEY = 'nimiq_checkout_last_balance_check';
     @State private wallets!: WalletInfo[];
@@ -152,7 +152,7 @@ class NimiqCheckoutCard
 
     protected async created() {
         if (this.paymentOptions.currency !== Currency.NIM) {
-            throw new Error('NimiqCheckoutCard did not get a NimiqPaymentOption.');
+            throw new Error('CheckoutCardNimiq did not get a NimiqPaymentOption.');
         }
         return await super.created();
     }
@@ -260,7 +260,7 @@ class NimiqCheckoutCard
             height: this.height,
             balances: Array.from(balances.entries()),
         };
-        window.sessionStorage.setItem(NimiqCheckoutCard.BALANCE_CHECK_STORAGE_KEY, JSON.stringify(cacheInput));
+        window.sessionStorage.setItem(CheckoutCardNimiq.BALANCE_CHECK_STORAGE_KEY, JSON.stringify(cacheInput));
 
         return balances;
     }
@@ -424,7 +424,7 @@ class NimiqCheckoutCard
     }
 
     private getLastBalanceUpdateHeight(): {timestamp: number, height: number, balances: Map<string, number>} | null {
-        const rawCache = window.sessionStorage.getItem(NimiqCheckoutCard.BALANCE_CHECK_STORAGE_KEY);
+        const rawCache = window.sessionStorage.getItem(CheckoutCardNimiq.BALANCE_CHECK_STORAGE_KEY);
         if (!rawCache) return null;
 
         try {
@@ -437,17 +437,17 @@ class NimiqCheckoutCard
                 balances: new Map(cache.balances),
             });
         } catch (e) {
-            window.sessionStorage.removeItem(NimiqCheckoutCard.BALANCE_CHECK_STORAGE_KEY);
+            window.sessionStorage.removeItem(CheckoutCardNimiq.BALANCE_CHECK_STORAGE_KEY);
             return null;
         }
     }
 }
 
-namespace NimiqCheckoutCard {
+namespace CheckoutCardNimiq {
     export const PaymentState = PublicPaymentState;
 }
 
-export default NimiqCheckoutCard;
+export default CheckoutCardNimiq;
 </script>
 
 <style scoped>

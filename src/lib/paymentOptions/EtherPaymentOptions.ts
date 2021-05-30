@@ -1,6 +1,6 @@
 import bigInt from 'big-integer';
 import { Currency, PaymentType, PaymentOptions } from '../PublicRequestTypes';
-import { ParsedPaymentOptions } from './ParsedPaymentOptions';
+import { ParsedPaymentOptions, PaymentOptionsParserFlags } from './ParsedPaymentOptions';
 import { toNonScientificNumberString, FormattableNumber } from '@nimiq/utils';
 
 export interface EtherSpecifics {
@@ -19,8 +19,8 @@ export type EtherDirectPaymentOptions = PaymentOptions<Currency.ETH, PaymentType
 export class ParsedEtherDirectPaymentOptions extends ParsedPaymentOptions<Currency.ETH, PaymentType.DIRECT> {
     public amount: bigInt.BigInteger;
 
-    public constructor(options: EtherDirectPaymentOptions) {
-        super(options);
+    public constructor(options: EtherDirectPaymentOptions, parserFlags: PaymentOptionsParserFlags = {}) {
+        super(options, parserFlags);
         this.amount = bigInt(options.amount); // note that bigInt resolves scientific notation like 2e3 automatically
 
         let gasLimit: number | undefined;
