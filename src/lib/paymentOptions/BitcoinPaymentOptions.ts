@@ -1,5 +1,5 @@
 import { Currency, PaymentType, PaymentOptions } from '../PublicRequestTypes';
-import { ParsedPaymentOptions } from './ParsedPaymentOptions';
+import { ParsedPaymentOptions, PaymentOptionsParserFlags } from './ParsedPaymentOptions';
 import { toNonScientificNumberString } from '@nimiq/utils';
 
 export interface BitcoinSpecifics {
@@ -18,8 +18,8 @@ export type BitcoinDirectPaymentOptions = PaymentOptions<Currency.BTC, PaymentTy
 export class ParsedBitcoinDirectPaymentOptions extends ParsedPaymentOptions<Currency.BTC, PaymentType.DIRECT> {
     public amount: number;
 
-    public constructor(options: BitcoinDirectPaymentOptions) {
-        super(options);
+    public constructor(options: BitcoinDirectPaymentOptions, parserFlags: PaymentOptionsParserFlags = {}) {
+        super(options, parserFlags);
         this.amount = parseInt(toNonScientificNumberString(options.amount), 10);
 
         let feePerByte: number | undefined;

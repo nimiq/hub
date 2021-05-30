@@ -1,6 +1,6 @@
 import { TX_VALIDITY_WINDOW, TX_MIN_VALIDITY_DURATION } from '../Constants';
 import { Currency, PaymentType, PaymentOptions } from '../PublicRequestTypes';
-import { ParsedPaymentOptions } from './ParsedPaymentOptions';
+import { ParsedPaymentOptions, PaymentOptionsParserFlags } from './ParsedPaymentOptions';
 import { toNonScientificNumberString, Utf8Tools } from '@nimiq/utils';
 
 export interface NimiqSpecifics {
@@ -29,8 +29,8 @@ export type NimiqDirectPaymentOptions = PaymentOptions<Currency.NIM, PaymentType
 export class ParsedNimiqDirectPaymentOptions extends ParsedPaymentOptions<Currency.NIM, PaymentType.DIRECT> {
     public amount: number;
 
-    public constructor(options: NimiqDirectPaymentOptions, allowUndefinedFees = false) {
-        super(options);
+    public constructor(options: NimiqDirectPaymentOptions, parserFlags: PaymentOptionsParserFlags = {}) {
+        super(options, parserFlags);
 
         this.amount = parseInt(toNonScientificNumberString(options.amount), 10);
 
@@ -104,7 +104,8 @@ export class ParsedNimiqDirectPaymentOptions extends ParsedPaymentOptions<Curren
         // feePerByte takes precedence over fee as it is the more meaningful value for the transaction and its speed.
         if (feePerByte === undefined) {
             if (fee === undefined) {
-                if (!allowUndefinedFees) {
+                if (!this.parserFlags.isUpdate) {
+                    // Do not enforce default fees on update which would overwrite our previous fee.
                     feePerByte = 0;
                     fee = 0;
                 }
@@ -118,6 +119,19 @@ export class ParsedNimiqDirectPaymentOptions extends ParsedPaymentOptions<Curren
         if (options.protocolSpecific.validityDuration !== undefined
             && options.protocolSpecific.validityDuration <= 0) {
             throw new Error('If provided, validityDuration must be a positive integer.');
+        }
+
+        // Check for required requested transaction properties which we can not guarantee for external payments. On
+        // properties which do not strictly need to be fulfilled like exact fee, validityDuration or sender without
+        // forceSender we are more lenient.
+        if (this.parserFlags.isHubPaymentDisabled && (
+            options.protocolSpecific.forceSender
+            || (recipientType !== undefined && recipientType !== Nimiq.Account.Type.BASIC)
+            || (flags !== undefined && flags !== Nimiq.Transaction.Flag.NONE)
+            || (extraData && !Utf8Tools.isValidUtf8(extraData)) // only allow string data
+        )) {
+            throw new Error('disableHubPayment was set but requested sender, recipientType, flags or extraData can not '
+                + 'be guaranteed for an external payment.');
         }
 
         this.protocolSpecific = {

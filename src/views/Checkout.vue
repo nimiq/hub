@@ -14,39 +14,21 @@
             :disabled="choosenCurrency !== null || availableCurrencies.length === 0"
             @select="selectedCurrency = $event">
             <template v-for="paymentOptions of request.paymentOptions" v-slot:[paymentOptions.currency]>
-                <NimiqCheckoutCard
-                    v-if="paymentOptions.currency === constructor.Currency.NIM"
+                <component
+                    :is="paymentOptions.currency === constructor.Currency.NIM
+                        ? (!request.disableHubPayment ? 'CheckoutCardNimiq' : 'CheckoutCardNimiqExternal')
+                        : paymentOptions.currency === constructor.Currency.BTC ? 'CheckoutCardBitcoin'
+                        : 'CheckoutCardEthereum'"
                     :paymentOptions="paymentOptions"
                     :key="paymentOptions.currency"
                     :class="{
                         confirmed: choosenCurrency === paymentOptions.currency,
-                        left: leftCard === constructor.Currency.NIM,
-                        right: rightCard === constructor.Currency.NIM
+                        left: leftCard === paymentOptions.currency,
+                        right: rightCard === paymentOptions.currency,
                     }"
                     @chosen="chooseCurrency"
-                    @expired="expired"/>
-                <EthereumCheckoutCard
-                    v-else-if="paymentOptions.currency === constructor.Currency.ETH"
-                    :paymentOptions="paymentOptions"
-                    :key="paymentOptions.currency"
-                    :class="{
-                        confirmed: choosenCurrency === paymentOptions.currency,
-                        left: leftCard === constructor.Currency.ETH,
-                        right: rightCard === constructor.Currency.ETH
-                    }"
-                    @chosen="chooseCurrency"
-                    @expired="expired"/>
-                <BitcoinCheckoutCard
-                    v-else-if="paymentOptions.currency === constructor.Currency.BTC"
-                    :paymentOptions="paymentOptions"
-                    :key="paymentOptions.currency"
-                    :class="{
-                        confirmed: choosenCurrency === paymentOptions.currency,
-                        left: leftCard === constructor.Currency.BTC,
-                        right: rightCard === constructor.Currency.BTC
-                    }"
-                    @chosen="chooseCurrency"
-                    @expired="expired"/>
+                    @expired="expired"
+                />
             </template>
         </Carousel>
 
@@ -73,9 +55,10 @@ import { Component, Vue, Watch } from 'vue-property-decorator';
 import { BottomOverlay, Carousel } from '@nimiq/vue-components';
 import { BrowserDetection } from '@nimiq/utils';
 import { ParsedCheckoutRequest } from '../lib/RequestTypes';
-import BitcoinCheckoutCard from '../components/BitcoinCheckoutCard.vue';
-import EthereumCheckoutCard from '../components/EthereumCheckoutCard.vue';
-import NimiqCheckoutCard from '../components/NimiqCheckoutCard.vue';
+import CheckoutCardBitcoin from '../components/CheckoutCardBitcoin.vue';
+import CheckoutCardEthereum from '../components/CheckoutCardEthereum.vue';
+import CheckoutCardNimiq from '../components/CheckoutCardNimiq.vue';
+import CheckoutCardNimiqExternal from '../components/CheckoutCardNimiqExternal.vue';
 import GlobalClose from '../components/GlobalClose.vue';
 import { Currency as PublicCurrency } from '../lib/PublicRequestTypes';
 import { State as RpcState } from '@nimiq/rpc';
@@ -86,9 +69,10 @@ import { HISTORY_KEY_SELECTED_CURRENCY } from '../lib/Constants';
     GlobalClose,
     BottomOverlay,
     Carousel,
-    BitcoinCheckoutCard,
-    EthereumCheckoutCard,
-    NimiqCheckoutCard,
+    CheckoutCardBitcoin,
+    CheckoutCardEthereum,
+    CheckoutCardNimiq,
+    CheckoutCardNimiqExternal,
 }})
 class Checkout extends Vue {
     private static DISCLAIMER_CLOSED_STORAGE_KEY = 'checkout-disclaimer-last-closed';

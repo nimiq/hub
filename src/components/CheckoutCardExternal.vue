@@ -40,7 +40,10 @@
                         } : null"
                         :vendorMarkup="paymentOptions.vendorMarkup"
                         :networkFee="paymentOptions.fee"
-                        :address="paymentOptions.protocolSpecific.recipient"
+                        :address="typeof paymentOptions.protocolSpecific.recipient === 'object'
+                            && 'toUserFriendlyAddress' in paymentOptions.protocolSpecific.recipient
+                            ? paymentOptions.protocolSpecific.recipient.toUserFriendlyAddress()
+                            : paymentOptions.protocolSpecific.recipient"
                         :origin="rpcState.origin"
                         :shopLogoUrl="request.shopLogoUrl"
                         :startTime="request.time"
@@ -81,7 +84,8 @@
                         />
                     </PageBody>
                     <PageFooter v-if="selected">
-                        <a class="nq-button light-blue use-app-button"
+                        <a v-if="!request.disableHubPayment"
+                            class="nq-button light-blue use-app-button"
                             :disabled="appNotFound"
                             @click="checkBlur"
                             :href="paymentLink"
@@ -154,7 +158,7 @@ import CheckoutManualPaymentDetails from './CheckoutManualPaymentDetails.vue';
     Amount,
     FiatAmount,
 }})
-class NonNimiqCheckoutCard<
+class CheckoutCardExternal<
     Parsed extends AvailableParsedPaymentOptions
 > extends CheckoutCard<Parsed> {
     protected currencyFullName: string = ''; // to be set by child class
@@ -179,7 +183,7 @@ class NonNimiqCheckoutCard<
     }
 
     protected get paymentLink(): string {
-        throw new Error('NonNimiqCheckoutCard.paymentLink() Needs to be implemented by child classes.');
+        throw new Error('CheckoutCardExternal.paymentLink() Needs to be implemented by child classes.');
     }
 
     protected async selectCurrency() {
@@ -223,11 +227,11 @@ class NonNimiqCheckoutCard<
     }
 }
 
-namespace NonNimiqCheckoutCard {
+namespace CheckoutCardExternal {
     export const PaymentState = PublicPaymentState;
 }
 
-export default NonNimiqCheckoutCard;
+export default CheckoutCardExternal;
 </script>
 
 <style scoped>

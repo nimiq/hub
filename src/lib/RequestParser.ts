@@ -99,6 +99,8 @@ export class RequestParser {
                     }
                 }
 
+                const disableHubPayment = 'disableHubPayment' in checkoutRequest && !!checkoutRequest.disableHubPayment;
+
                 let disableDisclaimer = !!checkoutRequest.disableDisclaimer;
                 if (disableDisclaimer && !includesOrigin(Config.privilegedOrigins, state.origin)) {
                     // warn and continue
@@ -109,6 +111,10 @@ export class RequestParser {
                 if (!checkoutRequest.version || checkoutRequest.version === 1) {
                     if (typeof checkoutRequest.value !== 'number' || checkoutRequest.value <= 0) {
                         throw new Error('value must be a number >0');
+                    }
+
+                    if (disableHubPayment) {
+                        throw new Error('disableHubPayment is not supported for v1 checkout.');
                     }
 
                     return {
@@ -133,6 +139,7 @@ export class RequestParser {
                                 validityDuration: checkoutRequest.validityDuration,
                             },
                         })],
+                        disableHubPayment,
                         disableDisclaimer,
                     } as ParsedCheckoutRequest;
                 }
@@ -233,7 +240,10 @@ export class RequestParser {
 
                                                 option.protocolSpecific.extraData = checkoutRequest.extraData;
                                             }
-                                            return new ParsedNimiqDirectPaymentOptions(option);
+                                            return new ParsedNimiqDirectPaymentOptions(
+                                                option,
+                                                { isHubPaymentDisabled: disableHubPayment },
+                                            );
                                         case Currency.ETH:
                                             return new ParsedEtherDirectPaymentOptions(option);
                                         case Currency.BTC:
@@ -245,6 +255,7 @@ export class RequestParser {
                                     throw new Error(`PaymentType ${(option as any).type} not supported`);
                             }
                         }),
+                        disableHubPayment,
                         disableDisclaimer,
                     } as ParsedCheckoutRequest;
                 }

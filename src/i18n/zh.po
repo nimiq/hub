@@ -27,7 +27,7 @@ msgstr "交换价值的 {percentage} "
 msgid "{totalFees} fees"
 msgstr "{totalFees} 费用"
 
-#: src/components/NonNimiqCheckoutCard.vue:64
+#: src/components/CheckoutCardExternal.vue:67
 msgid "+ network fee"
 msgstr "+网络费"
 
@@ -95,8 +95,9 @@ msgstr "地址检测失败。正在重试..."
 msgid "All labels saved."
 msgstr "所有标签已保存"
 
-#: src/components/BitcoinCheckoutCard.vue:26
-#: src/components/EthereumCheckoutCard.vue:25
+#: src/components/CheckoutCardBitcoin.vue:28
+#: src/components/CheckoutCardEthereum.vue:27
+#: src/components/CheckoutCardNimiqExternal.vue:30
 #: src/views/SetupSwapLedger.vue:269 src/views/SetupSwapLedger.vue:278
 msgid "Amount"
 msgstr "金额"
@@ -208,12 +209,12 @@ msgid ""
 " be processed."
 msgstr "通过添加交易费，您可以决定交易的处理速度"
 
-#: src/views/CashlinkManage.vue:11 src/views/Checkout.vue:182
+#: src/views/CashlinkManage.vue:11 src/views/Checkout.vue:169
 #: src/views/CheckoutTransmission.vue:10
 msgid "Cancel"
 msgstr "取消"
 
-#: src/views/Checkout.vue:181 src/views/SignTransactionLedger.vue:108
+#: src/views/Checkout.vue:168 src/views/SignTransactionLedger.vue:108
 msgid "Cancel payment"
 msgstr "取消付款"
 
@@ -265,7 +266,7 @@ msgstr "选择一个新地址"
 msgid "Choose an Address"
 msgstr "选择一个地址"
 
-#: src/components/NimiqCheckoutCard.vue:67
+#: src/components/CheckoutCardNimiq.vue:67
 msgid "Choose an Address to pay"
 msgstr "选择一个地址进行支付"
 
@@ -309,7 +310,7 @@ msgstr "点击连接"
 msgid "Close"
 msgstr "关闭"
 
-#: src/components/CheckoutCard.vue:122
+#: src/components/CheckoutCard.vue:123
 msgid "Collecting payment details"
 msgstr "收集付款明细"
 
@@ -387,7 +388,7 @@ msgstr "正在连接网络..."
 msgid "Connecting to Nimiq..."
 msgstr "正在连接到Nimiq ..."
 
-#: src/components/NimiqCheckoutCard.vue:275 src/views/CashlinkManage.vue:152
+#: src/components/CheckoutCardNimiq.vue:275 src/views/CashlinkManage.vue:152
 #: src/views/CheckoutTransmission.vue:71
 msgid "Contacting seed nodes..."
 msgstr "正在联系种子节点..."
@@ -454,12 +455,12 @@ msgstr "正在建立您的现金链接"
 msgid "Detecting vesting contracts..."
 msgstr "正在检测归属合同..."
 
-#: src/views/Checkout.vue:63
+#: src/views/Checkout.vue:46
 msgid "Disclaimer"
 msgstr "免责声明"
 
-#: src/components/CheckoutManualPaymentDetails.vue:28
-#: src/components/NonNimiqCheckoutCard.vue:70
+#: src/components/CheckoutCardExternal.vue:73
+#: src/components/CheckoutManualPaymentDetails.vue:31
 msgid "Don’t close this window until confirmation."
 msgstr "在确认之前，请不要关闭此窗口"
 
@@ -467,7 +468,7 @@ msgstr "在确认之前，请不要关闭此窗口"
 msgid "Done"
 msgstr "完成"
 
-#: src/components/NonNimiqCheckoutCard.vue:98
+#: src/components/CheckoutCardExternal.vue:101
 msgid "Enter manually"
 msgstr "手动输入"
 
@@ -492,7 +493,8 @@ msgstr "无法获取地址。正在重试..."
 msgid "fee"
 msgstr "费用"
 
-#: src/components/BitcoinCheckoutCard.vue:44
+#: src/components/CheckoutCardBitcoin.vue:45
+#: src/components/CheckoutCardNimiqExternal.vue:45
 #: src/components/CurrencyInfo.vue:15 src/views/SetupSwapLedger.vue:271
 #: src/views/SetupSwapLedger.vue:287
 msgid "Fee"
@@ -528,19 +530,19 @@ msgstr "结束"
 msgid "free"
 msgstr "免费"
 
-#: src/components/EthereumCheckoutCard.vue:44
+#: src/components/CheckoutCardEthereum.vue:45
 msgid "Gas Limit"
 msgstr "Gas限制"
 
-#: src/components/EthereumCheckoutCard.vue:33
+#: src/components/CheckoutCardEthereum.vue:34
 msgid "Gas Price"
 msgstr "Gas价格"
 
-#: src/components/NimiqCheckoutCard.vue:71
+#: src/components/CheckoutCardNimiq.vue:71
 msgid "Get NIM"
 msgstr "取得NIM"
 
-#: src/components/CheckoutCard.vue:171 src/views/RequestError.vue:31
+#: src/components/CheckoutCard.vue:172 src/views/RequestError.vue:31
 msgid "Go back"
 msgstr "返回"
 
@@ -564,7 +566,7 @@ msgstr "复活节快乐！"
 msgid "Here is your Nimiq Cashlink!"
 msgstr "这是您的Nimiq现金链接！"
 
-#: src/components/NimiqCheckoutCard.vue:50
+#: src/components/CheckoutCardNimiq.vue:50
 msgid ""
 "Imagine if paying with\n"
 "crypto was easy"
@@ -581,7 +583,7 @@ msgstr "目前已导入{count}个地址... | 目前已导入{count}个地址..."
 msgid "incoming"
 msgstr "转入"
 
-#: src/components/CheckoutCard.vue:190
+#: src/components/CheckoutCard.vue:191
 msgid "Incomplete payment"
 msgstr "付款未完成"
 
@@ -633,7 +635,7 @@ msgstr "登出"
 msgid "Logging out will delete custom settings and names for this account."
 msgstr "登出将会删除该帐户的自定义设置和名称"
 
-#: src/components/NimiqCheckoutCard.vue:59
+#: src/components/CheckoutCardNimiq.vue:59
 #: src/components/OnboardingMenu.vue:11
 msgid "Login"
 msgstr "登录"
@@ -649,6 +651,10 @@ msgstr "登录到现有帐户"
 #: src/views/OnboardingSelector.vue:100
 msgid "Login to fund your Cashlink"
 msgstr "登录以资助您的现金链接"
+
+#: src/components/CheckoutCardNimiqExternal.vue:52
+msgid "Message / Payment Reference"
+msgstr ""
 
 #: src/views/ErrorHandlerUnsupportedLedger.vue:42
 msgid "Message signing is not yet supported for Ledgers."
@@ -695,7 +701,7 @@ msgstr "Nimiq更新了！新设计将附带多样新功能"
 msgid "No"
 msgstr "不是"
 
-#: src/components/NonNimiqCheckoutCard.vue:90
+#: src/components/CheckoutCardExternal.vue:93
 msgid "No App found"
 msgstr "找不到应用"
 
@@ -707,7 +713,7 @@ msgstr ""
 "无需注册，无需安装。\n"
 "100%免费"
 
-#: src/components/NimiqCheckoutCard.vue:69
+#: src/components/CheckoutCardNimiq.vue:69
 msgid "None of your available addresses has sufficient balance."
 msgstr "您的可用地址皆没有足够的余额"
 
@@ -732,7 +738,7 @@ msgstr "一个帐户现在可以具有多个地址"
 msgid "Open the {app} App"
 msgstr "打开 {app} 应用程序"
 
-#: src/components/NonNimiqCheckoutCard.vue:94
+#: src/components/CheckoutCardExternal.vue:97
 msgid "Open Wallet App"
 msgstr "打开钱包应用"
 
@@ -748,7 +754,7 @@ msgstr "转出"
 msgid "Owner:"
 msgstr "所有者："
 
-#: src/components/NonNimiqCheckoutCard.vue:103
+#: src/components/CheckoutCardExternal.vue:106
 msgid "Pay with {currencyFullName}"
 msgstr "使用{currencyFullName}支付"
 
@@ -756,7 +762,7 @@ msgstr "使用{currencyFullName}支付"
 msgid "Pay with Nimiq"
 msgstr "使用Nimiq支付"
 
-#: src/components/CheckoutCard.vue:182
+#: src/components/CheckoutCard.vue:183
 msgid "Payment successful"
 msgstr "付款成功"
 
@@ -776,7 +782,7 @@ msgstr "请在您的Ledger上取消先前的请求"
 msgid "Please cancel the request on your Ledger"
 msgstr "请在您的Ledger上取消请求"
 
-#: src/components/CheckoutCard.vue:169
+#: src/components/CheckoutCard.vue:170
 msgid "Please go back and restart the process."
 msgstr "请返回并重新启动此流程"
 
@@ -784,7 +790,7 @@ msgstr "请返回并重新启动此流程"
 msgid "Please go back to the shop and restart the process."
 msgstr "请返回商店并重新启用此流程"
 
-#: src/components/NonNimiqCheckoutCard.vue:91
+#: src/components/CheckoutCardExternal.vue:94
 msgid "Please send the transaction manually"
 msgstr "请手动发送交易"
 
@@ -839,11 +845,11 @@ msgstr "请求失败"
 msgid "Request failed: "
 msgstr "请求失败:"
 
-#: src/components/NimiqCheckoutCard.vue:279
+#: src/components/CheckoutCardNimiq.vue:279
 msgid "Requesting balances..."
 msgstr "更新余额..."
 
-#: src/components/CheckoutCard.vue:194
+#: src/components/CheckoutCard.vue:195
 msgid "Restart Payment"
 msgstr "重新开始付款"
 
@@ -860,8 +866,8 @@ msgstr "重试"
 msgid "Save"
 msgstr "储存"
 
-#: src/components/CheckoutManualPaymentDetails.vue:24
-#: src/components/NonNimiqCheckoutCard.vue:49
+#: src/components/CheckoutCardExternal.vue:52
+#: src/components/CheckoutManualPaymentDetails.vue:27
 msgid "Send your transaction"
 msgstr "发送您的交易"
 
@@ -933,7 +939,7 @@ msgstr "交换设置失败"
 msgid "Syncing"
 msgstr "同步中"
 
-#: src/components/NimiqCheckoutCard.vue:277
+#: src/components/CheckoutCardNimiq.vue:277
 #: src/views/AddVestingContract.vue:11 src/views/CashlinkManage.vue:154
 #: src/views/CheckoutTransmission.vue:73
 msgid "Syncing consensus..."
@@ -980,7 +986,7 @@ msgid ""
 "automatically. ({oldLang} to {newLang})"
 msgstr "显示语言已更改。您要重新加载页面以更新所有翻译吗？否则，某些翻译可能不会自动更新。 （{oldLang}至{newLang}）"
 
-#: src/components/CheckoutCard.vue:168 src/views/SignTransactionLedger.vue:479
+#: src/components/CheckoutCard.vue:169 src/views/SignTransactionLedger.vue:479
 msgid "The offer expired."
 msgstr "报价已过期"
 
@@ -1010,7 +1016,7 @@ msgstr "这是您的账户及您的第一个地址。"
 msgid "This message will be stored in the Cashlink."
 msgstr "此信息将存储在现金链接中"
 
-#: src/views/Checkout.vue:64
+#: src/views/Checkout.vue:47
 msgid ""
 "This Nimiq interface is non-custodial and solely used to bridge the payment "
 "sender with the payment recipient directly (P2P). Payment and deliverable "
@@ -1060,7 +1066,7 @@ msgstr "交易已签署"
 msgid "Try again"
 msgstr "再试一次"
 
-#: src/components/NimiqCheckoutCard.vue:61
+#: src/components/CheckoutCardNimiq.vue:61
 msgid "Try it now"
 msgstr "现在再试一次"
 
@@ -1085,7 +1091,7 @@ msgstr "无标签"
 msgid "Unsupported Request"
 msgstr "不支持的请求"
 
-#: src/components/NimiqCheckoutCard.vue:309
+#: src/components/CheckoutCardNimiq.vue:309
 msgid "Updating balances"
 msgstr "更新余额"
 
@@ -1157,7 +1163,7 @@ msgstr "您被爱着"
 msgid "You received a Cashlink!"
 msgstr "您收到了一个现金链接！"
 
-#: src/components/CheckoutCard.vue:191
+#: src/components/CheckoutCard.vue:192
 msgid ""
 "You transferred an insufficient amount. Please contact the merchant for a "
 "refund. Restart to pay for your order."
