@@ -49,7 +49,7 @@ export default class CheckoutCardNimiqExternal
         if (protocolSpecific.extraData && protocolSpecific.extraData.byteLength
             && Utf8Tools.isValidUtf8(protocolSpecific.extraData)) {
             paymentDetails.push({
-                label: this.$t('Message / Payment Reference') as string,
+                label: this.$t('Payment Reference') as string,
                 value: Utf8Tools.utf8ByteArrayToString(protocolSpecific.extraData),
             });
         }

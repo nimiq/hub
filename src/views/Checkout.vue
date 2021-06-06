@@ -423,6 +423,7 @@ export default Checkout;
 
         .carousel >>> .payment-option:not(.confirmed) .nq-card > .nq-h1::after {
             --placeholder-width: 85%;
+            box-shadow: 0 0 0 5rem var(--nimiq-card-bg);
         }
 
         .carousel >>> .payment-option:not(.confirmed) .info-line .amounts::after,
@@ -455,7 +456,6 @@ export default Checkout;
             --placeholder-width: 90%;
         }
 
-        .carousel >>> .payment-option:not(.confirmed) .nq-card > .nq-h1::after,
         .carousel >>> .payment-option:not(.confirmed) .nq-card-body .label::after,
         .carousel >>> .payment-option:not(.confirmed) .nq-card-body .amounts .crypto::after,
         .carousel >>> .payment-option:not(.confirmed) .nq-card-footer .nq-link::after,
@@ -487,11 +487,6 @@ export default Checkout;
             border-top-color: var(--nimiq-card-bg);
         }
 
-        .carousel >>> > :not(.selected) .payment-option:not(.confirmed) .nq-button {
-            transition: box-shadow .5s var(--nimiq-ease);
-            box-shadow: none;
-        }
-
         .carousel >>> > :not(.selected) .payment-option:not(.confirmed) .arrow-runway {
             transition: opacity .5s var(--nimiq-ease);
             opacity: 0;
@@ -499,6 +494,15 @@ export default Checkout;
 
         .carousel >>> > :not(.selected) .payment-option:not(.confirmed) .arrow-runway * {
             animation: unset; /* disable animation in background to avoid unnecessary rendering layers */
+        }
+
+        .carousel >>> .payment-option:not(.confirmed) .nq-card > .nq-h1 {
+            overflow: hidden;
+        }
+
+        .carousel >>> > :not(.selected) .payment-option:not(.confirmed) .nq-button {
+            transition: box-shadow .5s var(--nimiq-ease);
+            box-shadow: none;
         }
 
         .carousel >>> .payment-option:not(.confirmed) video {

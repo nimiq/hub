@@ -80,7 +80,7 @@
                                 position: [1, 1, 0, 1, 1, Math.sqrt(2)],
                                 colorStops: [ [0, '#260133'], [1, '#1F2348'] ] // nimiq-blue
                             }"
-                            :size="200"
+                            :size="request.isPointOfSale ? 230 : 200"
                         />
                     </PageBody>
                     <PageFooter v-if="selected">
@@ -98,9 +98,9 @@
                                 {{ $t('Open Wallet App') }}
                             </template>
                         </a>
-                        <p class="nq-text-s" @click="manualPaymentDetailsOpen = true" >
+                        <a href="javascript:void(0)" class="nq-text-s nq-link" @click="manualPaymentDetailsOpen = true" >
                             {{ $t('Enter manually') }}<CaretRightSmallIcon/>
-                        </p>
+                        </a>
                     </PageFooter>
                     <PageFooter v-else>
                         <button class="nq-button light-blue" @click="selectCurrency">
@@ -289,15 +289,18 @@ export default CheckoutCardExternal;
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: space-around;
         padding-top: 0;
         padding-bottom: 0;
         text-align: center;
         overflow: hidden;
     }
 
-    .payment-option.confirmed .page-body {
-        padding-bottom: 1rem;
+    .payment-option .warning {
+        margin-top: 1.25rem;
+    }
+
+    .payment-option .qr-code {
+        margin: auto;
     }
 
     /* Hide payment info line contents until currency selected. Only show timer. */
@@ -376,19 +379,30 @@ export default CheckoutCardExternal;
         padding-bottom: var(--padding);
     }
 
-    .page-footer a.nq-button + p.nq-text-s {
+    .page-footer .nq-link {
         align-self: center;
         color:  rgba(31, 35, 72, 0.5);
         align-items: center;
         margin: 0 0 1rem;
         display: flex;
-        cursor: pointer;
+        text-decoration: none;
+        outline: none;
     }
 
-    .page-footer a.nq-button + p.nq-text-s > .nq-icon {
+    .page-footer .nq-link > .nq-icon {
         --icon-size: 1.2rem;
         height: var(--icon-size);
         width: var(--icon-size);
+        transition: transform .3s var(--nimiq-ease);
+    }
+
+    .page-footer .nq-link:focus {
+        text-decoration: underline;
+    }
+
+    .page-footer .nq-link:hover > .nq-icon,
+    .page-footer .nq-link:focus > .nq-icon {
+        transform: translateX(.25rem);
     }
 
     .use-app-button > span {
