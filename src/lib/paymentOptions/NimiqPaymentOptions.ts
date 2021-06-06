@@ -124,13 +124,13 @@ export class ParsedNimiqDirectPaymentOptions extends ParsedPaymentOptions<Curren
         // Check for required requested transaction properties which we can not guarantee for external payments. On
         // properties which do not strictly need to be fulfilled like exact fee, validityDuration or sender without
         // forceSender we are more lenient.
-        if (this.parserFlags.isHubPaymentDisabled && (
+        if (this.parserFlags.isPointOfSale && (
             options.protocolSpecific.forceSender
             || (recipientType !== undefined && recipientType !== Nimiq.Account.Type.BASIC)
             || (flags !== undefined && flags !== Nimiq.Transaction.Flag.NONE)
             || (extraData && !Utf8Tools.isValidUtf8(extraData)) // only allow string data
         )) {
-            throw new Error('disableHubPayment was set but requested sender, recipientType, flags or extraData can not '
+            throw new Error('isPointOfSale was set but requested sender, recipientType, flags or extraData can not '
                 + 'be guaranteed for an external payment.');
         }
 

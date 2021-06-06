@@ -181,10 +181,10 @@ export interface MultiCurrencyCheckoutRequest extends BasicRequest {
      */
     paymentOptions: AvailablePaymentOptions[];
     /**
-     * Option to disable paying directly from logged-in hub accounts. Instead, only payment information for paying with
-     * an external wallet is shown.
+     * Enable UI adaptions for the use as point of sale. Paying directly from logged-in hub accounts and buttons to open
+     * local wallets get disabled.
      */
-    disableHubPayment?: boolean;
+    isPointOfSale?: boolean;
     /**
      * Option to disable the disclaimer at the bottom of the checkout page. Only allowed for privileged origins.
      */

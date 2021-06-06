@@ -274,8 +274,7 @@ class Demo {
             }
             const forceSender = (document.getElementById('checkout-force-sender') as HTMLInputElement).checked;
 
-            const disableHubPayment = (document.getElementById(
-                'checkout-disable-hub-payment') as HTMLInputElement).checked;
+            const isPointOfSale = (document.getElementById('checkout-is-point-of-sale') as HTMLInputElement).checked;
 
             if (!multiCheckout) {
                 // v1 checkout: nim only
@@ -288,7 +287,7 @@ class Demo {
                     value: nimTxValue,
                     fee: nimTxFee,
                     extraData: Utf8Tools.stringToUtf8ByteArray(nimTxData),
-                    disableHubPayment,
+                    isPointOfSale,
                 };
             } else {
                 const now = Date.now();
@@ -301,7 +300,7 @@ class Demo {
                     time: now,
                     fiatCurrency: 'EUR',
                     fiatAmount: 24.99,
-                    disableHubPayment,
+                    isPointOfSale,
                     paymentOptions: [
                         {
                             currency: HubApi.Currency.BTC,

@@ -16,7 +16,7 @@
             <template v-for="paymentOptions of request.paymentOptions" v-slot:[paymentOptions.currency]>
                 <component
                     :is="paymentOptions.currency === constructor.Currency.NIM
-                        ? (!request.disableHubPayment ? 'CheckoutCardNimiq' : 'CheckoutCardNimiqExternal')
+                        ? (!request.isPointOfSale ? 'CheckoutCardNimiq' : 'CheckoutCardNimiqExternal')
                         : paymentOptions.currency === constructor.Currency.BTC ? 'CheckoutCardBitcoin'
                         : 'CheckoutCardEthereum'"
                     :paymentOptions="paymentOptions"
