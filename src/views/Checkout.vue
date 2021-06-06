@@ -75,6 +75,7 @@ import { HISTORY_KEY_SELECTED_CURRENCY } from '../lib/Constants';
     CheckoutCardNimiqExternal,
 }})
 class Checkout extends Vue {
+    private static LAST_USED_CURRENCIES_STORAGE_KEY = 'checkout-last-used-currencies';
     private static DISCLAIMER_CLOSED_STORAGE_KEY = 'checkout-disclaimer-last-closed';
     private static DISCLAIMER_CLOSED_EXPIRY = 24 * 60 * 60 * 1000; // One day
 
@@ -118,11 +119,13 @@ class Checkout extends Vue {
             || history.state[HISTORY_KEY_SELECTED_CURRENCY] === currency,
         );
         this.availableCurrencies = [ ...this.initialCurrencies ];
-        if (this.availableCurrencies.includes(PublicCurrency.NIM)) {
-            this.selectedCurrency = PublicCurrency.NIM;
-        } else {
-            this.selectedCurrency = this.availableCurrencies[0];
-        }
+
+        const currenciesByPreference = this.request.isPointOfSale
+            ? [PublicCurrency.BTC, PublicCurrency.ETH, ...this._getLastUsedCurrencies(), this.availableCurrencies[0]]
+            : [...this._getLastUsedCurrencies(), PublicCurrency.NIM, PublicCurrency.BTC, this.availableCurrencies[0]];
+        this.selectedCurrency = currenciesByPreference
+            .find((currency: PublicCurrency) => this.availableCurrencies.includes(currency))!;
+
         document.title = 'Nimiq Checkout';
         const lastDisclaimerClose = parseInt(window.localStorage[Checkout.DISCLAIMER_CLOSED_STORAGE_KEY], 10);
         this.disclaimerRecentlyClosed = !Number.isNaN(lastDisclaimerClose)
@@ -147,11 +150,28 @@ class Checkout extends Vue {
     private chooseCurrency(currency: PublicCurrency) {
         this.selectedCurrency = currency;
         this.choosenCurrency = currency;
+        this._setLastUsedCurrency(currency);
         (this.$refs.carousel as Carousel).updateDimensions();
     }
 
     private expired(currency: PublicCurrency) {
         this.availableCurrencies.splice(this.availableCurrencies.indexOf(currency), 1);
+    }
+
+    private _getLastUsedCurrencies(): PublicCurrency[] {
+        try {
+            const knownCurrencies = Object.values(PublicCurrency);
+            return JSON.parse(window.localStorage[Checkout.LAST_USED_CURRENCIES_STORAGE_KEY])
+                .filter((currency: PublicCurrency) => knownCurrencies.includes(currency));
+        } catch (e) {
+            return [];
+        }
+    }
+
+    private _setLastUsedCurrency(currency: PublicCurrency) {
+        window.localStorage[Checkout.LAST_USED_CURRENCIES_STORAGE_KEY] = JSON.stringify([
+            ...new Set([currency, ...this._getLastUsedCurrencies()]),
+        ]);
     }
 
     private _closeDisclaimerOverlay() {

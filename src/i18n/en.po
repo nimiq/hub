@@ -203,12 +203,12 @@ msgid "By adding a transation fee, you can influence how fast your transaction w
 msgstr ""
 
 #: src/views/CashlinkManage.vue:11
-#: src/views/Checkout.vue:169
+#: src/views/Checkout.vue:189
 #: src/views/CheckoutTransmission.vue:10
 msgid "Cancel"
 msgstr ""
 
-#: src/views/Checkout.vue:168
+#: src/views/Checkout.vue:188
 #: src/views/SignTransactionLedger.vue:108
 msgid "Cancel payment"
 msgstr ""
