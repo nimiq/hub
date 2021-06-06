@@ -84,7 +84,7 @@
                         />
                     </PageBody>
                     <PageFooter v-if="selected">
-                        <a v-if="!request.disableHubPayment"
+                        <a v-if="!request.isPointOfSale"
                             class="nq-button light-blue use-app-button"
                             :disabled="appNotFound"
                             @click="checkBlur"

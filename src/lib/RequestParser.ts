@@ -99,7 +99,7 @@ export class RequestParser {
                     }
                 }
 
-                const disableHubPayment = 'disableHubPayment' in checkoutRequest && !!checkoutRequest.disableHubPayment;
+                const isPointOfSale = 'isPointOfSale' in checkoutRequest && !!checkoutRequest.isPointOfSale;
 
                 let disableDisclaimer = !!checkoutRequest.disableDisclaimer;
                 if (disableDisclaimer && !includesOrigin(Config.privilegedOrigins, state.origin)) {
@@ -113,8 +113,8 @@ export class RequestParser {
                         throw new Error('value must be a number >0');
                     }
 
-                    if (disableHubPayment) {
-                        throw new Error('disableHubPayment is not supported for v1 checkout.');
+                    if (isPointOfSale) {
+                        throw new Error('isPointOfSale is not supported for v1 checkout.');
                     }
 
                     return {
@@ -139,7 +139,7 @@ export class RequestParser {
                                 validityDuration: checkoutRequest.validityDuration,
                             },
                         })],
-                        disableHubPayment,
+                        isPointOfSale,
                         disableDisclaimer,
                     } as ParsedCheckoutRequest;
                 }
@@ -246,7 +246,7 @@ export class RequestParser {
                                             }
                                             return new ParsedNimiqDirectPaymentOptions(
                                                 option,
-                                                { isHubPaymentDisabled: disableHubPayment },
+                                                { isPointOfSale },
                                             );
                                         case Currency.ETH:
                                             return new ParsedEtherDirectPaymentOptions(option);
@@ -259,7 +259,7 @@ export class RequestParser {
                                     throw new Error(`PaymentType ${(option as any).type} not supported`);
                             }
                         }),
-                        disableHubPayment,
+                        isPointOfSale,
                         disableDisclaimer,
                     } as ParsedCheckoutRequest;
                 }

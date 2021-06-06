@@ -13,7 +13,7 @@ import {
 
 export interface PaymentOptionsParserFlags {
     isUpdate?: boolean;
-    isHubPaymentDisabled?: boolean;
+    isPointOfSale?: boolean;
 }
 
 export interface ParsedPaymentOptions<C extends Currency, T extends PaymentType> {
