@@ -58,8 +58,7 @@
             <PageFooter>
                 <button class="nq-button-pill light-blue" @click="goToOnboarding">{{ $t('Login') }}</button>
                 <a :href="onboardingLink" target="_blank" class="safe-onboarding-link nq-link nq-light-blue">
-                    {{ $t('Try it now') }}
-                    <ArrowRightSmallIcon/>
+                    {{ $t('Try it now') }}<ArrowRightSmallIcon/>
                 </a>
             </PageFooter>
         </template>
@@ -501,15 +500,21 @@ export default CheckoutCardNimiq;
         font-size: 2rem;
         font-weight: bold;
         text-decoration: none;
+        outline: none;
     }
 
     .safe-onboarding-link .nq-icon {
-        margin-left: .25rem;
+        margin-left: .875rem;
         font-size: 1.5rem;
         transition: transform .3s var(--nimiq-ease);
     }
 
-    .safe-onboarding-link:hover .nq-icon {
+    .safe-onboarding-link:focus {
+        text-decoration: underline;
+    }
+
+    .safe-onboarding-link:hover .nq-icon,
+    .safe-onboarding-link:focus .nq-icon {
         transform: translateX(.25rem);
     }
 

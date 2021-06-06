@@ -267,7 +267,7 @@ msgstr ""
 msgid "Choose an Address"
 msgstr ""
 
-#: src/components/CheckoutCardNimiq.vue:67
+#: src/components/CheckoutCardNimiq.vue:66
 msgid "Choose an Address to pay"
 msgstr ""
 
@@ -391,7 +391,7 @@ msgstr ""
 msgid "Connecting to Nimiq..."
 msgstr ""
 
-#: src/components/CheckoutCardNimiq.vue:275
+#: src/components/CheckoutCardNimiq.vue:274
 #: src/views/CashlinkManage.vue:152
 #: src/views/CheckoutTransmission.vue:71
 msgid "Contacting seed nodes..."
@@ -549,7 +549,7 @@ msgstr ""
 msgid "Gas Price"
 msgstr ""
 
-#: src/components/CheckoutCardNimiq.vue:71
+#: src/components/CheckoutCardNimiq.vue:70
 msgid "Get NIM"
 msgstr ""
 
@@ -658,10 +658,6 @@ msgstr ""
 msgid "Login to fund your Cashlink"
 msgstr ""
 
-#: src/components/CheckoutCardNimiqExternal.vue:52
-msgid "Message / Payment Reference"
-msgstr ""
-
 #: src/views/ErrorHandlerUnsupportedLedger.vue:42
 msgid "Message signing is not yet supported for Ledgers."
 msgstr ""
@@ -717,7 +713,7 @@ msgid ""
 "100% free"
 msgstr ""
 
-#: src/components/CheckoutCardNimiq.vue:69
+#: src/components/CheckoutCardNimiq.vue:68
 msgid "None of your available addresses has sufficient balance."
 msgstr ""
 
@@ -764,6 +760,10 @@ msgstr ""
 
 #: src/views/OnboardingSelector.vue:98
 msgid "Pay with Nimiq"
+msgstr ""
+
+#: src/components/CheckoutCardNimiqExternal.vue:52
+msgid "Payment Reference"
 msgstr ""
 
 #: src/components/CheckoutCard.vue:183
@@ -847,7 +847,7 @@ msgstr ""
 msgid "Request failed: "
 msgstr ""
 
-#: src/components/CheckoutCardNimiq.vue:279
+#: src/components/CheckoutCardNimiq.vue:278
 msgid "Requesting balances..."
 msgstr ""
 
@@ -946,7 +946,7 @@ msgstr ""
 msgid "Syncing"
 msgstr ""
 
-#: src/components/CheckoutCardNimiq.vue:277
+#: src/components/CheckoutCardNimiq.vue:276
 #: src/views/AddVestingContract.vue:11
 #: src/views/CashlinkManage.vue:154
 #: src/views/CheckoutTransmission.vue:73
@@ -1090,7 +1090,7 @@ msgstr ""
 msgid "Unsupported Request"
 msgstr ""
 
-#: src/components/CheckoutCardNimiq.vue:309
+#: src/components/CheckoutCardNimiq.vue:308
 msgid "Updating balances"
 msgstr ""
 

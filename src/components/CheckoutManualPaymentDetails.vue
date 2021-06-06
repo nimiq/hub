@@ -36,6 +36,7 @@
                 :key="entry.label"
                 :label="entry.label"
                 :value="entry.value"
+                :small="paymentDetails.length > 3"
             />
         </PageBody>
     </SmallPage>
@@ -118,8 +119,8 @@ export default CheckoutManualPaymentDetails;
         padding-bottom: 2rem;
     }
 
-    .copyable-field >>> .nq-label {
-        margin-top: 2rem;
+    .copyable-field {
+        margin-top: .5rem;
     }
 
     .page-header >>> h1.nq-h1 {
