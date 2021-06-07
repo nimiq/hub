@@ -1,6 +1,7 @@
 import { Currency, PaymentType, PaymentOptions } from '../PublicRequestTypes';
 import { ParsedPaymentOptions, PaymentOptionsParserFlags } from './ParsedPaymentOptions';
 import { toNonScientificNumberString } from '@nimiq/utils';
+import { i18n } from '../../i18n/i18n-setup';
 
 export interface BitcoinSpecifics {
     fee?: number | string;
@@ -83,7 +84,7 @@ export class ParsedBitcoinDirectPaymentOptions extends ParsedPaymentOptions<Curr
     public get feeString(): string {
         if (this.protocolSpecific.feePerByte) {
             const fee = Math.ceil((this.protocolSpecific.feePerByte) * 100) / 100;
-            return fee !== 0 ? `Apply a network fee of at least ${fee} sat/byte.` : '';
+            return fee !== 0 ? i18n.t('Apply a network fee of at least {fee} sat/byte.', { fee }) as string : '';
         }
         return '';
     }

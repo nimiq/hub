@@ -75,6 +75,7 @@ msgstr ""
 msgid "Add Vesting Contract"
 msgstr ""
 
+#: src/components/CheckoutCard.vue:82
 #: src/views/SetupSwapLedger.vue:276
 msgid "Address"
 msgstr ""
@@ -91,9 +92,9 @@ msgstr ""
 msgid "All labels saved."
 msgstr ""
 
-#: src/components/CheckoutCardBitcoin.vue:28
+#: src/components/CheckoutCardBitcoin.vue:30
 #: src/components/CheckoutCardEthereum.vue:27
-#: src/components/CheckoutCardNimiqExternal.vue:30
+#: src/components/CheckoutCardNimiqExternal.vue:32
 #: src/views/SetupSwapLedger.vue:269
 #: src/views/SetupSwapLedger.vue:278
 msgid "Amount"
@@ -101,6 +102,14 @@ msgstr ""
 
 #: src/views/AddVestingContract.vue:40
 msgid "Amount/Step:"
+msgstr ""
+
+#: src/lib/paymentOptions/EtherPaymentOptions.ts:79
+msgid "Apply a gas price of at least {fee} gwei."
+msgstr ""
+
+#: src/lib/paymentOptions/BitcoinPaymentOptions.ts:87
+msgid "Apply a network fee of at least {fee} sat/byte."
 msgstr ""
 
 #: src/views/SetupSwapLedger.vue:47
@@ -207,12 +216,12 @@ msgid "By adding a transation fee, you can influence how fast your transaction w
 msgstr ""
 
 #: src/views/CashlinkManage.vue:11
-#: src/views/Checkout.vue:195
+#: src/views/Checkout.vue:199
 #: src/views/CheckoutTransmission.vue:10
 msgid "Cancel"
 msgstr ""
 
-#: src/views/Checkout.vue:194
+#: src/views/Checkout.vue:198
 #: src/views/SignTransactionLedger.vue:108
 msgid "Cancel payment"
 msgstr ""
@@ -454,7 +463,7 @@ msgid "Creating your Account"
 msgstr ""
 
 #: src/views/CashlinkManage.vue:195
-#: src/views/SignTransactionLedger.vue:472
+#: src/views/SignTransactionLedger.vue:475
 msgid "Creating your Cashlink"
 msgstr ""
 
@@ -500,8 +509,8 @@ msgstr ""
 msgid "fee"
 msgstr ""
 
-#: src/components/CheckoutCardBitcoin.vue:45
-#: src/components/CheckoutCardNimiqExternal.vue:45
+#: src/components/CheckoutCardBitcoin.vue:47
+#: src/components/CheckoutCardNimiqExternal.vue:47
 #: src/components/CurrencyInfo.vue:15
 #: src/views/SetupSwapLedger.vue:271
 #: src/views/SetupSwapLedger.vue:287
@@ -683,7 +692,7 @@ msgid "New Address added to your Account."
 msgstr ""
 
 #: src/views/CashlinkCreate.vue:55
-#: src/views/SignTransactionLedger.vue:277
+#: src/views/SignTransactionLedger.vue:280
 msgid "New Cashlink"
 msgstr ""
 
@@ -762,7 +771,7 @@ msgstr ""
 msgid "Pay with Nimiq"
 msgstr ""
 
-#: src/components/CheckoutCardNimiqExternal.vue:52
+#: src/components/CheckoutCardNimiqExternal.vue:54
 msgid "Payment Reference"
 msgstr ""
 
@@ -875,7 +884,7 @@ msgstr ""
 msgid "Send your transaction"
 msgstr ""
 
-#: src/views/SignTransactionLedger.vue:473
+#: src/views/SignTransactionLedger.vue:476
 msgid "Sending Transaction"
 msgstr ""
 
@@ -995,7 +1004,7 @@ msgid "The display language changed. Do you want to reload the page to update al
 msgstr ""
 
 #: src/components/CheckoutCard.vue:169
-#: src/views/SignTransactionLedger.vue:479
+#: src/views/SignTransactionLedger.vue:482
 msgid "The offer expired."
 msgstr ""
 
@@ -1057,12 +1066,12 @@ msgstr ""
 msgid "Transaction is expired"
 msgstr ""
 
-#: src/views/SignTransactionLedger.vue:477
+#: src/views/SignTransactionLedger.vue:480
 msgid "Transaction Sent"
 msgstr ""
 
 #: src/views/SignBtcTransactionLedger.vue:116
-#: src/views/SignTransactionLedger.vue:476
+#: src/views/SignTransactionLedger.vue:479
 msgid "Transaction Signed"
 msgstr ""
 

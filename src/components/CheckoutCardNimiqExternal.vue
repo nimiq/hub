@@ -18,7 +18,9 @@ export default class CheckoutCardNimiqExternal
             message: protocolSpecific.extraData && Utf8Tools.isValidUtf8(protocolSpecific.extraData)
                 ? Utf8Tools.utf8ByteArrayToString(protocolSpecific.extraData)
                 : undefined,
-            label: staticStore.request ? `Nimiq Checkout - ${staticStore.request.appName}` : undefined,
+            label: staticStore.request
+                ? `Crypto-Checkout powered by Nimiq - ${staticStore.request.appName}`
+                : undefined,
             type: NimiqRequestLinkType.URI,
         });
     }

@@ -79,7 +79,7 @@ export default class CheckoutCard<
         const recipient = this.paymentOptions.protocolSpecific.recipient;
         if (!recipient) return [];
         return [{
-            label: 'Address',
+            label: this.$t('Address') as string,
             value: recipient instanceof Nimiq.Address ? recipient.toUserFriendlyAddress() : recipient,
         }];
     }

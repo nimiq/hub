@@ -2,6 +2,7 @@ import bigInt from 'big-integer';
 import { Currency, PaymentType, PaymentOptions } from '../PublicRequestTypes';
 import { ParsedPaymentOptions, PaymentOptionsParserFlags } from './ParsedPaymentOptions';
 import { toNonScientificNumberString, FormattableNumber } from '@nimiq/utils';
+import { i18n } from '../../i18n/i18n-setup';
 
 export interface EtherSpecifics {
     gasLimit?: number | string;
@@ -75,7 +76,7 @@ export class ParsedEtherDirectPaymentOptions extends ParsedPaymentOptions<Curren
         if (this.protocolSpecific.gasPrice) {
             const fee = new FormattableNumber(this.protocolSpecific.gasPrice)
                 .moveDecimalSeparator(-9).toString({ maxDecimals: 2 });
-            return fee !== '0' ? `Apply a gas price of at least ${fee} gwei.` : '';
+            return fee !== '0' ? i18n.t('Apply a gas price of at least {fee} gwei.', { fee }) as string : '';
         }
         return '';
     }

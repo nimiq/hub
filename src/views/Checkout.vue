@@ -115,6 +115,11 @@ class Checkout extends Vue {
     private async created() {
         const $subtitle = document.querySelector('.logo .logo-subtitle')!;
         $subtitle.textContent = 'Checkout';
+        document.title = this.request.paymentOptions.length === 1
+            && this.request.paymentOptions[0].currency === PublicCurrency.NIM
+            ? 'Nimiq Checkout'
+            : 'Crypto-Checkout powered by Nimiq';
+
         this.initialCurrencies = this.request.paymentOptions.map((option) => option.currency).filter((currency) =>
             !history.state
             || !history.state[HISTORY_KEY_SELECTED_CURRENCY]
@@ -128,7 +133,6 @@ class Checkout extends Vue {
         this.selectedCurrency = currenciesByPreference
             .find((currency: PublicCurrency) => this.availableCurrencies.includes(currency))!;
 
-        document.title = 'Nimiq Checkout';
         const lastUsage = parseInt(window.localStorage[Checkout.LAST_USAGE_STORAGE_KEY], 10);
         const lastDisclaimerClose = parseInt(window.localStorage[Checkout.DISCLAIMER_CLOSED_STORAGE_KEY], 10);
         this.disclaimerRequired = !this.request.disableDisclaimer && (
