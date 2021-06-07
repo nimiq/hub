@@ -17,7 +17,9 @@ export default class CheckoutCardBitcoin
         return createBitcoinRequestLink(protocolSpecific.recipient, {
             amount: paymentOptions.amount,
             fee: protocolSpecific.fee,
-            label: staticStore.request ? `Nimiq Checkout - ${staticStore.request.appName}` : undefined,
+            label: staticStore.request
+                ? `Crypto-Checkout powered by Nimiq - ${staticStore.request.appName}`
+                : undefined,
         });
     }
 
@@ -27,9 +29,9 @@ export default class CheckoutCardBitcoin
         const paymentDetails = [ ...super.manualPaymentDetails, {
             label: this.$t('Amount') as string,
             value: {
+                BTC: paymentOptions.baseUnitAmount,
                 mBTC: new FormattableNumber(paymentOptions.amount)
                     .moveDecimalSeparator(-paymentOptions.decimals + 3).toString(),
-                BTC: paymentOptions.baseUnitAmount,
             },
         }];
         if (protocolSpecific.feePerByte || protocolSpecific.fee) {
