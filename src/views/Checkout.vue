@@ -37,7 +37,7 @@
 
         <transition name="transition-disclaimer">
             <component :is="screenFitsDisclaimer ? 'div' : 'BottomOverlay'"
-                v-if="(screenFitsDisclaimer || !disclaimerRecentlyClosed) && !request.disableDisclaimer"
+                v-if="(screenFitsDisclaimer || disclaimerRequired) && !request.disableDisclaimer"
                 ref="disclaimer"
                 class="disclaimer"
                 :class="{ 'long-disclaimer': hasLongDisclaimer }"
@@ -76,8 +76,10 @@ import { HISTORY_KEY_SELECTED_CURRENCY } from '../lib/Constants';
 }})
 class Checkout extends Vue {
     private static LAST_USED_CURRENCIES_STORAGE_KEY = 'checkout-last-used-currencies';
+    private static LAST_USAGE_STORAGE_KEY = 'ckeckout-last-usage';
+    private static LAST_USAGE_RECENT_THRESHOLD = 31 * 24 * 60 * 60 * 1000; // One month
     private static DISCLAIMER_CLOSED_STORAGE_KEY = 'checkout-disclaimer-last-closed';
-    private static DISCLAIMER_CLOSED_EXPIRY = 24 * 60 * 60 * 1000; // One day
+    private static DISCLAIMER_CLOSED_EXPIRY = 12 * 31 * 24 * 60 * 60 * 1000; // One year
 
     @Static private rpcState!: RpcState;
     @Static private request!: ParsedCheckoutRequest;
@@ -88,7 +90,7 @@ class Checkout extends Vue {
     private initialCurrencies: PublicCurrency[] = [];
     private availableCurrencies: PublicCurrency[] = [];
     private readonly isIOS: boolean = BrowserDetection.isIOS();
-    private disclaimerRecentlyClosed: boolean = false;
+    private disclaimerRequired: boolean = true;
     private hasLongDisclaimer: boolean = false;
     private screenFitsDisclaimer: boolean = true;
     private dimensionsUpdateTimeout: number = -1;
@@ -127,9 +129,12 @@ class Checkout extends Vue {
             .find((currency: PublicCurrency) => this.availableCurrencies.includes(currency))!;
 
         document.title = 'Nimiq Checkout';
+        const lastUsage = parseInt(window.localStorage[Checkout.LAST_USAGE_STORAGE_KEY], 10);
         const lastDisclaimerClose = parseInt(window.localStorage[Checkout.DISCLAIMER_CLOSED_STORAGE_KEY], 10);
-        this.disclaimerRecentlyClosed = !Number.isNaN(lastDisclaimerClose)
-            && Date.now() - lastDisclaimerClose < Checkout.DISCLAIMER_CLOSED_EXPIRY;
+        this.disclaimerRequired = !this.request.disableDisclaimer && (
+            Number.isNaN(lastUsage) || Date.now() - lastUsage > Checkout.LAST_USAGE_RECENT_THRESHOLD
+            || Number.isNaN(lastDisclaimerClose) || Date.now() - lastDisclaimerClose > Checkout.DISCLAIMER_CLOSED_EXPIRY
+        );
 
         this._onResize = this._onResize.bind(this);
         window.addEventListener('resize', this._onResize);
@@ -151,6 +156,7 @@ class Checkout extends Vue {
         this.selectedCurrency = currency;
         this.choosenCurrency = currency;
         this._setLastUsedCurrency(currency);
+        window.localStorage[Checkout.LAST_USAGE_STORAGE_KEY] = Date.now();
         (this.$refs.carousel as Carousel).updateDimensions();
     }
 
@@ -175,7 +181,7 @@ class Checkout extends Vue {
     }
 
     private _closeDisclaimerOverlay() {
-        this.disclaimerRecentlyClosed = true;
+        this.disclaimerRequired = false;
         // store when the disclaimer was closed
         window.localStorage[Checkout.DISCLAIMER_CLOSED_STORAGE_KEY] = Date.now();
     }
