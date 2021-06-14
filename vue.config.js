@@ -28,13 +28,13 @@ const cdnDomain = buildName === 'mainnet'
 const browserWarningTemplate = fs.readFileSync(
     path.join(__dirname, 'node_modules/@nimiq/browser-warning/dist/browser-warning.html.template'));
 
-const browserWarningIntegrityHash = `sha384-${createHash('sha384')
+const browserWarningIntegrityHash = `sha256-${createHash('sha256')
     .update(fs.readFileSync(path.join(__dirname, 'node_modules/@nimiq/browser-warning/dist/browser-warning.js')))
     .digest('base64')}`;
-const coreIntegrityHash = `sha384-${createHash('sha384')
+const coreIntegrityHash = `sha256-${createHash('sha256')
     .update(fs.readFileSync(path.join(__dirname, 'node_modules/@nimiq/core-web/web-offline.js')))
     .digest('base64')}`;
-const bitcoinJsIntegrityHash = `sha384-${createHash('sha384')
+const bitcoinJsIntegrityHash = `sha256-${createHash('sha256')
     .update(fs.readFileSync(path.join(__dirname, 'public/bitcoin/BitcoinJS.min.js')))
     .digest('base64')}`;
 
@@ -47,7 +47,7 @@ console.log('Building for:', buildName);
 const configureWebpack = {
     plugins: [
         new SriPlugin({
-            hashFuncNames: ['sha384'],
+            hashFuncNames: ['sha256'],
             enabled: process.env.NODE_ENV === 'production',
         }),
         new CopyWebpackPlugin([
