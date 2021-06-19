@@ -106,9 +106,9 @@ export default class ChooseAddress extends BitcoinSyncBaseView {
             await WalletStore.Instance.put(walletInfo);
             const unusedExternalAddresses = btcAddresses.external.filter((addressInfo) => !addressInfo.used);
             if (unusedExternalAddresses.length > 0) {
-                // We try to use the 7th unused address, because the first is reserved for swaps, and the next 5
-                // are reserved for copying in the Wallet. This way we hope to not have double-use of an address.
-                btcAddress = unusedExternalAddresses[Math.min(unusedExternalAddresses.length - 1, 6)].address;
+                // We try to use the 2nd unused address, because the first is reserved for swaps and not displayed
+                // in the wallet (cannot be validated by the user).
+                btcAddress = unusedExternalAddresses[Math.min(unusedExternalAddresses.length - 1, 1)].address;
             }
         }
 
