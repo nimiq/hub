@@ -32,7 +32,7 @@ export async function prepareBitcoinTransactionForLedgerSigning(
     const inputs: LedgerBitcoinTransactionInfo['inputs'] = transactionInfo.inputs.map((input, i) => ({
         transaction: inputTransactions[i],
         index: input.outputIndex,
-        keyPath: input.keyPath.replace(/m\//, ''),
+        keyPath: input.keyPath,
         customScript: input.witnessScript,
         sequence: input.sequence,
     }));
@@ -51,7 +51,7 @@ export async function prepareBitcoinTransactionForLedgerSigning(
     }];
     let changePath: string | undefined;
     if (transactionInfo.changeOutput) {
-        changePath = transactionInfo.changeOutput.keyPath.replace(/^m\//, '');
+        changePath = transactionInfo.changeOutput.keyPath;
         outputs.push({
             amount: transactionInfo.changeOutput.value,
             outputScript: BitcoinJS.address.toOutputScript(
@@ -61,5 +61,5 @@ export async function prepareBitcoinTransactionForLedgerSigning(
         });
     }
 
-    return { inputs, outputs, changePath, lockTime: transactionInfo.locktime };
+    return { inputs, outputs, changePath, locktime: transactionInfo.locktime };
 }
