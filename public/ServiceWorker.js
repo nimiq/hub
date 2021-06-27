@@ -18,6 +18,22 @@ self.addEventListener('fetch', event => {
     // See: https://developer.mozilla.org/en-US/docs/Web/Security/Same-origin_policy#Cross-origin_data_storage_access
     // @ts-ignore Property 'request' does not exist on type 'Event'.ts
     const requestHost = new URL(event.request.url).host;
+
+    let headers = event.request.headers;
+    // Check whether a resource specifies an integrity hash.
+    if (event.request.integrity != '') {
+        // Create a duplicate of the request headers, since these are read-only now.
+        headers = new Headers();
+        for (const [key, value] of event.request.headers.entries()) {
+            // Drop all headers that could trigger a "304 - Not modified" HTTP response.
+            // This helps to prevent Desktop Safari from being unable to verify the
+            // integrity of the fetched ressource due to a seemingly empty response... :-/
+            if (key != 'if-modified-since' && key != 'if-none-match') {
+                headers.set(key, value);
+            }
+        }
+    }
+
     if (requestHost === location.host) {
         // forward request
         // @ts-ignore Property 'respondWith' does not exist on type 'Event'.ts,
@@ -25,6 +41,8 @@ self.addEventListener('fetch', event => {
         event.respondWith(fetch(event.request, {
             // omit cookie transmission
             credentials: 'omit',
+            // override headers as they've might changed
+            headers: headers
         }));
     }
 });
