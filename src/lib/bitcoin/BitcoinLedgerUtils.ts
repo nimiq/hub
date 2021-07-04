@@ -7,15 +7,26 @@ import { loadBitcoinJS } from './BitcoinJSLoader';
 import type { Transaction as BitcoinJsTransaction } from 'bitcoinjs-lib';
 import type { BitcoinTransactionInfo } from '../../views/SignBtcTransaction.vue';
 import type { TransactionInfoBitcoin as LedgerBitcoinTransactionInfo } from '@nimiq/ledger-api';
+import { BitcoinTransactionInputType } from '@nimiq/keyguard-client';
 
+/**
+ * Prepare a bitcoin transaction for signing via the Ledger api by enriching it with complete input transactions and
+ * output scripts. This is a costly operation as it involves loading BitcoinJS and the electrum api and fetching
+ * transactions from the network.
+ * @param transactionInfo - Bitcoin transaction info with required input details reduced to transactionHash,
+ *   outputIndex, keyPath and optionally witnessScript and sequence.
+ * @returns Enriched transaction info that can be passed to LedgerApi.Bitcoin.signTransaction.
+ */
 export async function prepareBitcoinTransactionForLedgerSigning(
     transactionInfo: Omit<BitcoinTransactionInfo, 'inputs'>
         & { inputs: Array<
             Pick<
                 BitcoinTransactionInfo['inputs'][0],
-                // @ts-ignore
-                'transactionHash' | 'outputIndex' | 'keyPath' | 'witnessScript' | 'sequence'
-            >
+                'transactionHash' | 'outputIndex' | 'keyPath'
+            > & Partial<Pick<
+                Exclude<BitcoinTransactionInfo['inputs'][0], { type?: BitcoinTransactionInputType.STANDARD }>,
+                'witnessScript' | 'sequence'
+            > >
         > },
 ): Promise<LedgerBitcoinTransactionInfo> {
     const bitcoinJsPromise = loadBitcoinJS();
@@ -28,7 +39,6 @@ export async function prepareBitcoinTransactionForLedgerSigning(
         inputTransactions.push(...await Promise.all(batch.map((input) => fetchTransaction(input.transactionHash))));
     }
 
-    // @ts-ignore
     const inputs: LedgerBitcoinTransactionInfo['inputs'] = transactionInfo.inputs.map((input, i) => ({
         transaction: inputTransactions[i],
         index: input.outputIndex,
@@ -55,7 +65,7 @@ export async function prepareBitcoinTransactionForLedgerSigning(
         outputs.push({
             amount: transactionInfo.changeOutput.value,
             outputScript: BitcoinJS.address.toOutputScript(
-                transactionInfo.changeOutput.address!,
+                transactionInfo.changeOutput.address,
                 network,
             ).toString('hex'),
         });
