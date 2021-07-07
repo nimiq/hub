@@ -28,6 +28,13 @@
   resolved "https://registry.yarnpkg.com/@nimiq/rpc/-/rpc-0.4.0.tgz#d15f95c39d21c513172aa75c8f43ae555067cb50"
   integrity sha512-Zpv45kTnbhmr75xc8BK2o/K1gDBh3TcJwIuo95SWBoWmu4ntcKtHs744bfu6Lf49XGG8d+cFn2dPDDDIeoBfmw==
 
+"@nimiq/utils@^0.5.0":
+  version "0.5.1"
+  resolved "https://registry.yarnpkg.com/@nimiq/utils/-/utils-0.5.1.tgz#a5641e483e80b00066c3f2b0b85132974cf5c7e5"
+  integrity sha512-6p/oh6nzj/GVlcDn5WFJnSOoDgzGNoGLaR063wBvk+S672+p9sT4dhU2bCRWAY30cLhJsOL7X74QIus5weIpXA==
+  dependencies:
+    big-integer "^1.6.44"
+
 "@rollup/plugin-json@^4.1.0":
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/@rollup/plugin-json/-/plugin-json-4.1.0.tgz#54e09867ae6963c593844d8bd7a9c718294496f3"
@@ -128,7 +135,7 @@ base@^0.11.1:
     mixin-deep "^1.2.0"
     pascalcase "^0.1.1"
 
-big-integer@^1.6.48:
+big-integer@^1.6.44, big-integer@^1.6.48:
   version "1.6.48"
   resolved "https://registry.yarnpkg.com/big-integer/-/big-integer-1.6.48.tgz#8fd88bd1632cba4a1c8c3e3d7159f08bb95b4b9e"
   integrity sha512-j51egjPa7/i+RdiRuJbPdJ2FIUYYPhvYLjzoYbcMMm62ooO6F94fETG4MTs46zPAF9Brs04OajboA/qTGuz78w==
