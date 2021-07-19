@@ -28,7 +28,7 @@ type KeyguardDeriveBtcXPubResult = import('@nimiq/keyguard-client').DeriveBtcXPu
 export default class ActivateBitcoinLedger extends ActivateBitcoin {
     protected async _startBtcXpubRequest() {
         const bitcoinXPub = await LedgerApi.Bitcoin.getExtendedPublicKey(
-            BTC_ACCOUNT_KEY_PATH[Config.bitcoinAddressType][Config.bitcoinNetwork].replace(/^m\//, ''),
+            BTC_ACCOUNT_KEY_PATH[Config.bitcoinAddressType][Config.bitcoinNetwork],
         );
 
         // Mimic a keyguardResult to be able to reuse ActivateBitcoinSuccess

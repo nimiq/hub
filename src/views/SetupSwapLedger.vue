@@ -657,7 +657,6 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
             }
 
             bitcoinTransactionInfo = {
-                // @ts-ignore
                 inputs: swapSetupInfo.fund.inputs,
                 recipientOutput: {
                     ...swapSetupInfo.fund.recipientOutput,
@@ -675,7 +674,6 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
             && swapSetupInfo.redeem.type === SwapAsset.BTC
             && htlcInfo.redeem.type === SwapAsset.BTC) {
             bitcoinTransactionInfo = {
-                // @ts-ignore
                 inputs: [{ // the htlc is our single input
                     keyPath: swapSetupInfo.redeem.input.keyPath,
                     transactionHash: htlcInfo.redeem.transactionHash,
