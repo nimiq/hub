@@ -1039,6 +1039,13 @@
   dependencies:
     dom-parser "^0.1.5"
 
+"@nimiq/iqons@^1.6.0":
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/@nimiq/iqons/-/iqons-1.6.0.tgz#29829c57f1fbdf53f228146162579db4602017db"
+  integrity sha512-M1g/rFVmOoucgIPvb5cxOPz1GVUslBj5wz1YYZbLVS9FP4FrWoKUlnd3gQd4bfl4DIz3wT6QgEnI1gUgQ/QKQQ==
+  dependencies:
+    dom-parser "^0.1.5"
+
 "@nimiq/jungle-db@^0.9.20":
   version "0.9.22"
   resolved "https://registry.yarnpkg.com/@nimiq/jungle-db/-/jungle-db-0.9.22.tgz#a65ac962f777052a632552edff4a60f3e1e1cff1"
@@ -1122,11 +1129,20 @@
   dependencies:
     big-integer "^1.6.44"
 
+"@nimiq/utils@^0.8.1":
+  version "0.8.1"
+  resolved "https://registry.yarnpkg.com/@nimiq/utils/-/utils-0.8.1.tgz#4d9c10bdf7dd5bfd0732f8dee13974c14921654d"
+  integrity sha512-SfGxFDMoZumKrOS330eKuC/E3FWEYEzDLD6gbhkhtFZ4I2EoS5Qz+lFnNaWVpwWxfuDE8rBjZNSUrCzsSQIupA==
+  dependencies:
+    big-integer "^1.6.44"
+
 "@nimiq/vue-components@https://github.com/nimiq/vue-components#build/hub":
   version "0.1.0"
-  resolved "https://github.com/nimiq/vue-components#dcebcc1ec9dae6116c5dda5e23950871185c59bf"
+  resolved "https://github.com/nimiq/vue-components#d7c171780e542bbd7347e38d18402dcdabcfc000"
   dependencies:
+    "@nimiq/iqons" "^1.6.0"
     "@nimiq/style" "^0.8.2"
+    "@nimiq/utils" "^0.8.1"
     big-integer "^1.6.44"
     input-format "^0.2.8"
     qr-creator "^1.0.0"
