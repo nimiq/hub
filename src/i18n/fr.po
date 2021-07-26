@@ -2,12 +2,12 @@
 # Translators:
 # Talleyrand, 2020
 # Daniel, 2020
-# Matheo <matheo@nimiq.com>, 2021
 # Robinson BARAIS, 2021
+# Matheo <matheo@nimiq.com>, 2021
 # 
 msgid ""
 msgstr ""
-"Last-Translator: Robinson BARAIS, 2021\n"
+"Last-Translator: Matheo <matheo@nimiq.com>, 2021\n"
 "Language-Team: French (https://www.transifex.com/nimiq-foundation/teams/110181/fr/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: fr\n"
@@ -110,11 +110,11 @@ msgstr "Montant / Étape :"
 
 #: src/lib/paymentOptions/EtherPaymentOptions.ts:79
 msgid "Apply a gas price of at least {fee} gwei."
-msgstr ""
+msgstr "Appliquer un prix de gaz d'au moins {fee} gwei."
 
 #: src/lib/paymentOptions/BitcoinPaymentOptions.ts:87
 msgid "Apply a network fee of at least {fee} sat/byte."
-msgstr ""
+msgstr "Appliquer des frais de réseau d'au moins {fee} sat/octet."
 
 #: src/views/SetupSwapLedger.vue:47
 msgid "Atomic swaps require two BTC transactions."
@@ -785,7 +785,7 @@ msgstr "Payer avec Nimiq"
 
 #: src/components/CheckoutCardNimiqExternal.vue:54
 msgid "Payment Reference"
-msgstr ""
+msgstr "Référence de paiement"
 
 #: src/components/CheckoutCard.vue:183
 msgid "Payment successful"
