@@ -126,6 +126,9 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
                 if (error.message === 'The swap was already confirmed before.') {
                     return getSwap(this.request.swapId) as Promise<Swap>;
                 } else {
+                    if (error.message.includes('503')) {
+                        throw new Error(this.$t('503 Service unavailable - please try again later') as string)
+                    }
                     throw error;
                 }
             });
