@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "private": true,
     "scripts": {
-        "pre": "yarn i18n:extract && if [ ! -f public/bitcoin/BitcoinJS.min.js ]; then yarn build:bitcoinjs; fi",
+        "pre": "yarn i18n:extract && test -e public/bitcoin/BitcoinJS.min.js || yarn build:bitcoinjs",
         "serve": "yarn pre && vue-cli-service serve",
         "build": "yarn pre && vue-cli-service build --modern App",
         "build:ci": "yarn pre && build=testnet vue-cli-service build",
@@ -63,6 +63,7 @@
         "typescript": "~3.8.0",
         "vue-template-compiler": "^2.6.11",
         "webpack-i18n-tools": "https://github.com/nimiq/webpack-i18n-tools#master",
+        "webpack-subresource-integrity": "^1.5.2",
         "write-file-webpack-plugin": "^4.5.1"
     }
 }

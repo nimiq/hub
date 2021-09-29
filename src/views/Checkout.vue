@@ -149,7 +149,9 @@ class Checkout extends Vue {
     }
 
     private mounted() {
-        const disclaimer = (this.$refs.disclaimer as BottomOverlay).$el || this.$refs.disclaimer;
+        const disclaimer = this.$refs.disclaimer
+            ? (this.$refs.disclaimer as BottomOverlay).$el || this.$refs.disclaimer
+            : undefined;
         this.hasLongDisclaimer = !!disclaimer && disclaimer.textContent!.length > 250;
     }
 
@@ -348,6 +350,10 @@ export default Checkout;
         /* IOS specific */
         .carousel.ios >>> .nq-card {
             --ios-bottom-bar-height: 74px;
+        }
+
+        .carousel.ios >>> .currency-info {
+            --currency-info-translate-y: -50px;
         }
 
         .carousel >>> .confirmed .nq-card {

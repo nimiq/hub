@@ -9,8 +9,12 @@
     doesn't make sense because the hub requires a request. Note that the snippet is written in old-fashioned Javascript
     as required by the browser warnings and minified by hand as the HtmlWebpackPlugin only minifies html. -->
     <script>window.onBrowserWarning=function(){var caller=document.referrer||window.opener;return{hasShareButton:caller,shareUrl:caller}}</script>
-    <script type="text/javascript" src="/browser-warning.js" defer></script>
-    <script src="<%= htmlWebpackPlugin.options.cdnDomain %>/v<%= htmlWebpackPlugin.options.coreVersion %>/web-offline.js" defer></script>
+    <script defer type="text/javascript" src="/browser-warning.js"
+        integrity="<%= htmlWebpackPlugin.options.browserWarningIntegrityHash %>"
+        crossorigin="anonymous"></script>
+    <script defer src="<%= htmlWebpackPlugin.options.cdnDomain %>/v<%= htmlWebpackPlugin.options.coreVersion %>/web-offline.js"
+        integrity="<%= htmlWebpackPlugin.options.coreIntegrityHash %>"
+        crossorigin="anonymous"></script>
     <title>Nimiq</title>
     <meta name="robots" content="noindex">
     <meta name="description" content="Nimiq Hub provides a unified interface for all Nimiq accounts, addresses, and contracts.">
@@ -34,7 +38,7 @@
             </g></svg>
         </div>
     </div>
-    <%= htmlWebpackPlugin.options.browserWarning %>
+    <%= htmlWebpackPlugin.options.browserWarningTemplate %>
     <!-- built files will be auto injected -->
 </body>
 

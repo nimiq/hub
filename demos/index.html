@@ -165,9 +165,15 @@
 </div>
 
 <!-- needed for Sign Btc Transaction demo -->
-<script src="/bitcoin/BitcoinJS.min.js"></script>
+<script defer type="text/javascript"
+    src="/bitcoin/BitcoinJS.min.js"
+    integrity="<%= htmlWebpackPlugin.options.bitcoinJsIntegrityHash %>"
+    crossorigin="anonymous"></script>
 <!-- needed for WalletStore in Activate Btc demo -->
-<script src="<%= htmlWebpackPlugin.options.cdnDomain %>/v<%= htmlWebpackPlugin.options.coreVersion %>/web-offline.js" defer></script>
+<script defer type="text/javascript"
+    src="<%= htmlWebpackPlugin.options.cdnDomain %>/v<%= htmlWebpackPlugin.options.coreVersion %>/web-offline.js"
+    integrity="<%= htmlWebpackPlugin.options.coreIntegrityHash %>"
+    crossorigin="anonymous"></script>
 
 <!-- built files will be auto injected -->
 </body>

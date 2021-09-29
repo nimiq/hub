@@ -1,9 +1,10 @@
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const SriPlugin = require('webpack-subresource-integrity');
 const WriteFileWebpackPlugin = require('write-file-webpack-plugin');
 const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
 const path = require('path');
 const fs = require('fs');
-const browserWarning = fs.readFileSync(__dirname + '/node_modules/@nimiq/browser-warning/dist/browser-warning.html.template');
+const createHash = require('crypto').createHash;
 // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const PoLoaderOptimizer = require('webpack-i18n-tools')();
 const coreVersion = require('@nimiq/core-web/package.json').version;
@@ -14,22 +15,47 @@ const buildName = process.env.NODE_ENV === 'production'
 
 if (!buildName) throw new Error('Please specify the build config with the `build` environment variable');
 
-const cdnDomain = buildName === 'mainnet'
-    ? 'https://cdn.nimiq.com'
-    : 'https://cdn.nimiq-testnet.com';
-
 const domain = buildName === 'mainnet'
     ? 'https://hub.nimiq.com'
     : buildName === 'testnet'
         ? 'https://hub.nimiq-testnet.com'
         : 'http://localhost:8080';
 
+const cdnDomain = buildName === 'mainnet'
+    ? 'https://cdn.nimiq.com'
+    : 'https://cdn.nimiq-testnet.com';
+
+const browserWarningTemplate = fs.readFileSync(
+    path.join(__dirname, 'node_modules/@nimiq/browser-warning/dist/browser-warning.html.template'));
+
+const browserWarningIntegrityHash = `sha384-${createHash('sha384')
+    .update(fs.readFileSync(path.join(__dirname, 'node_modules/@nimiq/browser-warning/dist/browser-warning.js')))
+    .digest('base64')}`;
+const coreIntegrityHash = `sha384-${createHash('sha384')
+    .update(fs.readFileSync(path.join(__dirname, 'node_modules/@nimiq/core-web/web-offline.js')))
+    .digest('base64')}`;
+const bitcoinJsIntegrityHash = `sha384-${createHash('sha384')
+    .update(fs.readFileSync(path.join(__dirname, 'public/bitcoin/BitcoinJS.min.js')))
+    .digest('base64')}`;
+
+// Accesible within client code via process.env.VUE_APP_BITCOIN_JS_INTEGRITY_HASH,
+// see https://cli.vuejs.org/guide/mode-and-env.html#using-env-variables-in-client-side-code
+process.env.VUE_APP_BITCOIN_JS_INTEGRITY_HASH = bitcoinJsIntegrityHash;
+
 console.log('Building for:', buildName);
 
 const configureWebpack = {
     plugins: [
+        new SriPlugin({
+            hashFuncNames: ['sha384'],
+            enabled: process.env.NODE_ENV === 'production',
+        }),
         new CopyWebpackPlugin([
-            { from: 'node_modules/@nimiq/browser-warning/dist', to: './' },
+            {
+                from: 'node_modules/@nimiq/browser-warning/dist/browser-warning.js*',
+                to: './',
+                flatten: true,
+            },
             {
                 from: 'node_modules/@nimiq/vue-components/dist/iqons.min.*.svg',
                 to: './img/',
@@ -60,6 +86,7 @@ const configureWebpack = {
     // TODO: 'eval-source-map' temporarily removed for webpack-i18n-tools, will be fixed in future versions
     node: false,
     output: {
+        crossOriginLoading: 'anonymous',
         devtoolModuleFilenameTemplate: info => {
             let $filename = 'sources://' + info.resourcePath;
             if (info.resourcePath.match(/\.vue$/) && !info.query.match(/type=script/)) {
@@ -81,11 +108,13 @@ const pages = {
         entry: 'src/main.ts',
         // the source template
         template: 'public/index.html',
-        // insert browser warning html templates
-        browserWarning,
+        // insert browser warning html template
+        browserWarningTemplate,
+        browserWarningIntegrityHash,
         domain,
         cdnDomain,
         coreVersion,
+        coreIntegrityHash,
         // output as dist/index.html
         filename: 'index.html',
         // chunks to include on this page, by default includes
@@ -108,11 +137,13 @@ const pages = {
         entry: 'src/cashlink.ts',
         // the source template
         template: 'public/cashlink.html',
-        // insert browser warning html templates
-        browserWarning,
+        // insert browser warning html template
+        browserWarningTemplate,
+        browserWarningIntegrityHash,
         domain,
         cdnDomain,
         coreVersion,
+        coreIntegrityHash,
         // output as dist/cashlink/index.html
         filename: 'cashlink/index.html',
         // chunks to include on this page, by default includes
@@ -129,6 +160,8 @@ if (buildName === 'local' || buildName === 'testnet') {
         template: 'demos/index.html',
         cdnDomain,
         coreVersion,
+        coreIntegrityHash,
+        bitcoinJsIntegrityHash,
         // output as dist/demos.html
         filename: 'demos.html',
         // chunks to include on this page, by default includes
@@ -145,6 +178,7 @@ if (buildName === 'local' || buildName === 'testnet') {
 
 module.exports = {
     pages,
+    integrity: true,
     configureWebpack,
     chainWebpack: config => {
         // Do not put prefetch/preload links into the landing pages

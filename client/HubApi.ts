@@ -45,6 +45,7 @@ import {
 export default class HubApi<DB extends BehaviorType = BehaviorType.POPUP> { // DB: Default Behavior
     // Expose request behaviors and enums. Not exporting them via regular exports to avoid that users of the umd build
     // have to use bundle['default'] to access the default export.
+    public static readonly BehaviorType = BehaviorType;
     public static readonly RequestType = RequestType;
     public static readonly RedirectRequestBehavior = RedirectRequestBehavior;
     public static readonly PopupRequestBehavior = PopupRequestBehavior;

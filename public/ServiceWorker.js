@@ -18,13 +18,33 @@ self.addEventListener('fetch', event => {
     // See: https://developer.mozilla.org/en-US/docs/Web/Security/Same-origin_policy#Cross-origin_data_storage_access
     // @ts-ignore Property 'request' does not exist on type 'Event'.ts
     const requestHost = new URL(event.request.url).host;
-    if (requestHost === location.host) {
-        // forward request
-        // @ts-ignore Property 'respondWith' does not exist on type 'Event'.ts,
-        // Property 'request' does not exist on type 'Event'.ts
-        event.respondWith(fetch(event.request, {
-            // omit cookie transmission
-            credentials: 'omit',
-        }));
+    if (requestHost !== location.host) return;
+
+    let headers = event.request.headers;
+    // Check whether a resource specifies an integrity hash.
+    if (event.request.integrity) {
+        // Create a duplicate of the request headers, since these are read-only now.
+        headers = new Headers(event.request.headers);
+        // Drop all headers that could trigger a "304 - Not modified" HTTP response.
+        // This helps to prevent Desktop Safari from being unable to verify the
+        // integrity of the fetched resource due to a seemingly empty response... :-/
+        // Note that currently, the ServiceWorker is only installed for Safari, therefore
+        // we don't need to check for the browser here to apply this fix selectively for
+        // Safari only.
+        // TODO: check in the future whether Safari still needs this special treatment
+        headers.delete('If-Match');
+        headers.delete('If-None-Match');
+        headers.delete('If-Modified-Since');
+        headers.delete('If-Unmodified-Since');
     }
+
+    // forward request
+    // @ts-ignore Property 'respondWith' does not exist on type 'Event'.ts,
+    // Property 'request' does not exist on type 'Event'.ts
+    event.respondWith(fetch(event.request, {
+        // omit cookie transmission
+        credentials: 'omit',
+        // override headers as they might have changed
+        headers,
+    }));
 });
