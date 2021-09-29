@@ -206,6 +206,21 @@ export interface ParsedSetupSwapRequest extends ParsedSimpleRequest {
             address: string, // My address, must be redeem address of HTLC
             value: number, // Sats
         };
+    } | {
+        type: SwapAsset.EUR,
+        value: number; // Eurocents
+        fee: number; // Eurocents
+        bankLabel?: string;
+        settlement: {
+            type: 'sepa',
+            recipient: {
+                name: string,
+                iban: string,
+                bic: string,
+            },
+        } | {
+            type: 'mock',
+        };
     };
 
     // Data needed for display
@@ -213,8 +228,14 @@ export interface ParsedSetupSwapRequest extends ParsedSimpleRequest {
     fiatCurrency: string;
     fundingFiatRate: number;
     redeemingFiatRate: number;
-    serviceFundingFee: number; // Luna or Sats, depending which one gets funded
-    serviceRedeemingFee: number; // Luna or Sats, depending which one gets redeemed
+    fundFees: { // In the currency that gets funded
+        processing: number,
+        redeeming: number,
+    };
+    redeemFees: { // In the currency that gets redeemed
+        funding: number,
+        processing: number,
+    };
     serviceSwapFee: number; // Luna or Sats, depending which one gets funded
     nimiqAddresses?: Array<{
         address: string,

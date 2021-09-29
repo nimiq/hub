@@ -269,6 +269,23 @@ export interface BitcoinHtlcSettlementInstructions {
     };
 }
 
+export interface EuroHtlcSettlementInstructions {
+    type: 'EUR';
+    value: number; // Eurocents
+    fee: number; // Eurocents
+    bankLabel?: string;
+    settlement: {
+        type: 'sepa',
+        recipient: {
+            name: string,
+            iban: string,
+            bic: string,
+        },
+    } | {
+        type: 'mock',
+    };
+}
+
 export interface NimiqHtlcRefundInstructions {
     type: 'NIM';
     sender: string; // HTLC address
@@ -302,7 +319,8 @@ export type HtlcCreationInstructions =
 
 export type HtlcSettlementInstructions =
     NimiqHtlcSettlementInstructions
-    | BitcoinHtlcSettlementInstructions;
+    | BitcoinHtlcSettlementInstructions
+    | EuroHtlcSettlementInstructions;
 
 export type HtlcRefundInstructions =
     NimiqHtlcRefundInstructions
@@ -317,8 +335,14 @@ export interface SetupSwapRequest extends SimpleRequest {
     fiatCurrency: string;
     fundingFiatRate: number;
     redeemingFiatRate: number;
-    serviceFundingFee: number; // Luna or Sats, depending which one gets funded
-    serviceRedeemingFee: number; // Luna or Sats, depending which one gets redeemed
+    fundFees: { // In the currency that gets funded
+        processing: number,
+        redeeming: number,
+    };
+    redeemFees: { // In the currency that gets redeemed
+        funding: number,
+        processing: number,
+    };
     serviceSwapFee: number; // Luna or Sats, depending which one gets funded
     layout?: 'standard' | 'slider';
     nimiqAddresses?: Array<{

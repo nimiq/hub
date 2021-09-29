@@ -19,8 +19,9 @@ import type {
     BitcoinTransactionInfo as KeyguardBitcoinTransactionInfo,
 } from '@nimiq/keyguard-client';
 
+// BitcoinTransactionInfo with complete changeOutput
 export type BitcoinTransactionInfo = Omit<KeyguardBitcoinTransactionInfo, 'changeOutput'> & {
-    changeOutput?: BitcoinTransactionChangeOutput,
+    changeOutput?: Required<BitcoinTransactionChangeOutput>,
 };
 
 @Component({components: {StatusScreen, SmallPage, GlobalClose}}) // including components used in parent class
@@ -51,7 +52,7 @@ export default class SignBtcTransaction extends BitcoinSyncBaseView {
         }
 
         const inputs: BitcoinTransactionInput[] = [];
-        let changeOutput: BitcoinTransactionChangeOutput | undefined;
+        let changeOutput: Required<BitcoinTransactionChangeOutput> | undefined;
 
         try {
             // Note that the sync state will only be visible in the UI if the sync is not instant (if we actually sync)

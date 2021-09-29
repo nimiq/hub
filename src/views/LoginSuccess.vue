@@ -90,9 +90,7 @@ export default class LoginSuccess extends Vue {
                             collectionResult.walletInfo.wordsExported = collectionResult.walletInfo.wordsExported
                                 || keyResult.wordsExported;
 
-                            // @ts-ignore: TODO Update KeyguardClient to get updated types
                             if (keyResult.keyLabel) {
-                                // @ts-ignore: TODO Update KeyguardClient to get updated types
                                 collectionResult.walletInfo.label = keyResult.keyLabel;
                             }
 

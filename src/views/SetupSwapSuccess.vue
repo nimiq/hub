@@ -27,11 +27,11 @@ import { loadBitcoinJS } from '../lib/bitcoin/BitcoinJSLoader';
 import { getElectrumClient } from '../lib/bitcoin/ElectrumClient';
 import { decodeBtcScript } from '../lib/bitcoin/BitcoinHtlcUtils';
 import { WalletInfo } from '../lib/WalletInfo';
-import '../lib/MerkleTreePatch';
+import patchMerkleTree from '../lib/MerkleTreePatch';
 
 // Import only types to avoid bundling of KeyguardClient in Ledger request if not required.
 // (But note that currently, the KeyguardClient is still always bundled in the RpcApi).
-type KeyguardSimpleResult = import('@nimiq/keyguard-client').SimpleResult;
+type KeyguardSignSwapResult = import('@nimiq/keyguard-client').SignSwapResult;
 type KeyguardSignSwapTransactionsRequest = import('@nimiq/keyguard-client').SignSwapTransactionsRequest;
 export type SwapHtlcInfo = Pick<KeyguardSignSwapTransactionsRequest, 'fund' | 'redeem'>;
 
@@ -50,7 +50,7 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
     @Static protected request!: ParsedSetupSwapRequest;
     protected nimiqNetwork: Network = new Network();
     protected _isDestroyed: boolean = false;
-    @State private keyguardResult?: KeyguardSimpleResult;
+    @State private keyguardResult?: KeyguardSignSwapResult;
 
     protected async mounted() {
         Promise.all([
@@ -83,7 +83,7 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
             default: break;
         }
 
-        let redeemAddress: string | object = '';
+        let redeemAddress: string | { kty: string, crv: string, x: string } = '';
         switch (this.request.redeem.type) {
             case SwapAsset.NIM:
                 redeemAddress = this.request.redeem.recipient.toUserFriendlyAddress();
@@ -91,8 +91,14 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
             case SwapAsset.BTC:
                 redeemAddress = this.request.redeem.output.address;
                 break;
-            // case SwapAsset.EUR:
-            //     // Assemble recipient object
+            case SwapAsset.EUR:
+                // Assemble recipient object
+                redeemAddress = {
+                    kty: 'OKP',
+                    crv: 'Ed25519',
+                    x: this._getOasisRecipientPublicKey(),
+                };
+                break;
             default: break;
         }
 
@@ -105,10 +111,13 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
         try {
             confirmedSwap = await confirmSwap({
                 id: this.request.swapId,
-            } as PreSwap, {
+            } as PreSwap, this.request.redeem.type === SwapAsset.EUR ? {
+                asset: this.request.redeem.type,
+                ...(redeemAddress as { kty: string, crv: string, x: string }),
+            } : {
                 // Redeem
                 asset: this.request.redeem.type,
-                address: redeemAddress,
+                address: (redeemAddress as string),
             }, {
                 // Refund
                 asset: this.request.fund.type,
@@ -116,6 +125,8 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
             }, uid).catch((error) => {
                 if (error.message === 'The swap was already confirmed before.') {
                     return getSwap(this.request.swapId) as Promise<Swap>;
+                } else if (error.message.includes('503')) {
+                    throw new Error(this.$t('503 Service unavailable - please try again later') as string);
                 } else {
                     throw error;
                 }
@@ -132,7 +143,7 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
         if (this._isDestroyed) return;
 
         // Validate contract details
-        // TODO also validate timeouts?
+        // TODO: Validate timeouts if possible (e.g. not possible for NIM)
         let hashRoot: string | undefined;
         let nimiqHtlcHashAlgorithm: Nimiq.Hash.Algorithm | undefined;
 
@@ -201,14 +212,21 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
             }
         }
 
-        if (confirmedSwap.from.asset === SwapAsset.EUR /* || confirmedSwap.to.asset === SwapAsset.EUR */) {
-            // FIXME: Fetch contract from OASIS API and compare instead of trusting Fastspot
+        if (confirmedSwap.from.asset === SwapAsset.EUR || confirmedSwap.to.asset === SwapAsset.EUR) {
+            // TODO: Fetch contract from OASIS API and compare instead of trusting Fastspot
 
             if (hashRoot && confirmedSwap.hash !== hashRoot) {
                 this.$rpc.reject(new Error('HTLC hash roots do not match'));
                 return;
             }
             hashRoot = confirmedSwap.hash;
+
+            // TODO: Validate correct recipient public key
+        }
+
+        if (!hashRoot) {
+            this.$rpc.reject(new Error('UNEXPECTED: Could not extract swap hash from contracts'));
+            return;
         }
 
         // Construct htlc info
@@ -240,7 +258,7 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
 
             fundingHtlcInfo = {
                 type: SwapAsset.EUR,
-                hash: confirmedSwap.hash,
+                hash: hashRoot,
                 timeout: eurContract.timeout,
                 htlcId: eurHtlcData.address,
             };
@@ -311,16 +329,24 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
             }
         }
 
+        if (this.request.redeem.type === SwapAsset.EUR) {
+            const eurContract = confirmedSwap.contracts[SwapAsset.EUR] as Contract<SwapAsset.EUR>;
+            const eurHtlcData = eurContract.htlc;
+
+            redeemingHtlcInfo = {
+                type: SwapAsset.EUR,
+                hash: hashRoot,
+                timeout: eurContract.timeout,
+                htlcId: eurHtlcData.address,
+            };
+        }
+
         if (this._isDestroyed) return;
 
         if (!fundingHtlcInfo || !redeemingHtlcInfo) {
             this.$rpc.reject(new Error('Funding or redeeming HTLC info missing.'));
             return;
         }
-
-        // if (this.request.redeem.type === SwapAsset.EUR) {
-        //
-        // }
 
         // Sign transactions
         this.state = this.State.SIGNING_TRANSACTIONS;
@@ -369,6 +395,7 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
             }
 
             // Validate that transaction is valid
+            patchMerkleTree();
             if (!nimiqTransaction.verify()) {
                 this.$rpc.reject(new Error('NIM transaction is invalid'));
                 return;
@@ -397,6 +424,15 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
     protected async _shouldConfirmSwap() {
         // note that this method gets overwritten for SetupSwapLedger
         return this.keyguardResult && this.keyguardResult.success && !this._isDestroyed;
+    }
+
+    protected _getOasisRecipientPublicKey() {
+        // note that this method gets overwritten for SetupSwapLedger
+        if (!this.keyguardResult || !this.keyguardResult.eurPubKey) {
+            throw new Error('Cannot find OASIS recipient public key');
+        }
+        return Nimiq.BufferUtils.toBase64Url(Nimiq.BufferUtils.fromHex(this.keyguardResult.eurPubKey))
+            .replace(/\.*$/, ''); // OASIS cannot handle trailing filler dots
     }
 
     protected async _signSwapTransactions(htlcInfo: SwapHtlcInfo): Promise<{

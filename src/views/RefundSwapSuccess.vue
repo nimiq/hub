@@ -11,7 +11,7 @@ import Network from '../components/Network.vue';
 import { ParsedRefundSwapRequest } from '../lib/RequestTypes';
 import { SignedBtcTransaction, SignedTransaction } from '../lib/PublicRequestTypes';
 import { Static } from '../lib/StaticStore';
-import '../lib/MerkleTreePatch';
+import patchMerkleTree from '../lib/MerkleTreePatch';
 
 @Component({components: {Network}})
 export default class SignBtcTransactionSuccess extends Vue {
@@ -32,6 +32,7 @@ export default class SignBtcTransactionSuccess extends Vue {
             tx.proof = proof;
 
             // Validate that the transaction is valid
+            patchMerkleTree();
             if (!tx.verify()) {
                 this.$rpc.reject(new Error('NIM transaction is invalid'));
                 return;
