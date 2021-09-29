@@ -64,6 +64,7 @@ class Network extends Vue {
                 flags,
                 data || new Uint8Array(0),
                 signature ? Nimiq.SignatureProof.singleSig(signerPubKey, signature).serialize() : undefined,
+                6,
             );
         } else {
             return new Nimiq.BasicTransaction(
@@ -73,6 +74,7 @@ class Network extends Vue {
                 fee,
                 validityStartHeight,
                 signature,
+                6,
             );
         }
     }
