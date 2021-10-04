@@ -76,10 +76,11 @@ export default class CheckoutCard<
 
     protected get manualPaymentDetails(): Array<{ label: string, value: number | string | { [key: string]: any } }> {
         // can be extended by child classes with additional currency specific payment details
-        if (!this.paymentOptions.protocolSpecific.recipient) return [];
+        const recipient = this.paymentOptions.protocolSpecific.recipient;
+        if (!recipient) return [];
         return [{
-            label: 'Address',
-            value: this.paymentOptions.protocolSpecific.recipient,
+            label: this.$t('Address') as string,
+            value: recipient instanceof Nimiq.Address ? recipient.toUserFriendlyAddress() : recipient,
         }];
     }
 

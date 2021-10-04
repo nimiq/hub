@@ -76,6 +76,7 @@ export interface ParsedCheckoutRequest extends ParsedBasicRequest {
     fiatCurrency?: string;
     fiatAmount?: number;
     paymentOptions: AvailableParsedPaymentOptions[];
+    isPointOfSale: boolean;
     disableDisclaimer: boolean;
 }
 

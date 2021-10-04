@@ -16,6 +16,7 @@ export default {
     reportToSentry: true,
     checkoutWithoutNimOrigins: [
         'https://vendor.cryptopayment.link',
+        'https://cryptopayment.link',
     ],
 
     enableBitcoin: true,

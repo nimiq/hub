@@ -78,12 +78,8 @@ class Demo {
             await checkout(await generateCheckoutRequest());
         });
 
-        document.querySelector('button#checkout-with-account').addEventListener('click', async () => {
-            await checkout(await generateCheckoutRequest(true));
-        });
-
         document.querySelector('button#multi-checkout').addEventListener('click', async () => {
-            await checkout(await generateMultiCheckoutRequest());
+            await checkout(await generateCheckoutRequest(/* multiCheckout */ true));
         });
 
         const $returnLinkCheckbox = document.querySelector('#cashlink-return-link') as HTMLInputElement;
@@ -260,81 +256,90 @@ class Demo {
             };
         }
 
-        async function generateCheckoutRequest(useSelectedAddress?: boolean): Promise<CheckoutRequest> {
-            const value = parseInt((document.querySelector('#value') as HTMLInputElement).value, 10) || 1337;
-            const txFee = parseInt((document.querySelector('#fee') as HTMLInputElement).value, 10) || 0;
-            const txData = (document.querySelector('#data') as HTMLInputElement).value || '';
+        async function generateCheckoutRequest(multiCheckout?: boolean): Promise<CheckoutRequest> {
+            const nimTxValue = parseInt((document.querySelector('#value') as HTMLInputElement).value, 10) || 1337;
+            const nimTxFee = parseInt((document.querySelector('#fee') as HTMLInputElement).value, 10) || 0;
+            const nimTxData = (document.querySelector('#data') as HTMLInputElement).value || '';
 
             let sender: string | undefined;
+            const useSelectedAddress = (document.getElementById(
+                'checkout-use-selected-address') as HTMLInputElement).checked;
             if (useSelectedAddress) {
-                const $radio = document.querySelector('input[name="address"]:checked');
-                if (!$radio) {
+                const $addressRadio = document.querySelector('input[name="address"]:checked');
+                if (!$addressRadio) {
                     alert('You have no account to checkout with, create an account first (signup)');
                     throw new Error('No account found');
                 }
-                sender = ($radio as HTMLElement).dataset.address;
+                sender = ($addressRadio as HTMLElement).dataset.address;
             }
             const forceSender = (document.getElementById('checkout-force-sender') as HTMLInputElement).checked;
 
-            return {
-                appName: 'Hub Demos',
-                shopLogoUrl: `${location.origin}/nimiq.png`,
-                sender,
-                forceSender,
-                recipient: 'NQ63 U7XG 1YYE D6FA SXGG 3F5H X403 NBKN JLDU',
-                value,
-                fee: txFee,
-                extraData: Utf8Tools.stringToUtf8ByteArray(txData),
-            };
-        }
+            const isPointOfSale = (document.getElementById('checkout-is-point-of-sale') as HTMLInputElement).checked;
 
-        async function generateMultiCheckoutRequest(): Promise<CheckoutRequest> {
-            const now = Date.now();
-            return {
-                version: 2,
-                appName: 'Hub Demos',
-                shopLogoUrl: `${location.origin}/nimiq.png`,
-                callbackUrl: `${location.origin}/callback.html`,
-                csrf: 'dummy-csrf-token',
-                time: now,
-                fiatCurrency: 'EUR',
-                fiatAmount: 24.99,
-                paymentOptions: [
-                    {
-                        currency: HubApi.Currency.BTC,
-                        type: HubApi.PaymentType.DIRECT,
-                        amount: '.00029e8',
-                        vendorMarkup: .01,
-                        expires: now + 15 * 60000, // 15 minutes
-                        protocolSpecific: {
-                            feePerByte: 2, // 2 sat per byte
-                            recipient: '17w6ar5SqXFGr786WjGHB8xyu48eujHaBe', // Unicef
+            if (!multiCheckout) {
+                // v1 checkout: nim only
+                return {
+                    appName: 'Hub Demos',
+                    shopLogoUrl: `${location.origin}/nimiq.png`,
+                    sender,
+                    forceSender,
+                    recipient: 'NQ63 U7XG 1YYE D6FA SXGG 3F5H X403 NBKN JLDU',
+                    value: nimTxValue,
+                    fee: nimTxFee,
+                    extraData: Utf8Tools.stringToUtf8ByteArray(nimTxData),
+                    isPointOfSale,
+                };
+            } else {
+                const now = Date.now();
+                return {
+                    version: 2,
+                    appName: 'Hub Demos',
+                    shopLogoUrl: `${location.origin}/nimiq.png`,
+                    callbackUrl: `${location.origin}/callback.html`,
+                    csrf: 'dummy-csrf-token',
+                    time: now,
+                    fiatCurrency: 'EUR',
+                    fiatAmount: 24.99,
+                    isPointOfSale,
+                    paymentOptions: [
+                        {
+                            currency: HubApi.Currency.BTC,
+                            type: HubApi.PaymentType.DIRECT,
+                            amount: '.00029e8',
+                            vendorMarkup: .01,
+                            expires: now + 3 * 60000, // 15 minutes
+                            protocolSpecific: {
+                                feePerByte: 2, // 2 sat per byte
+                                recipient: '17w6ar5SqXFGr786WjGHB8xyu48eujHaBe', // Unicef
+                            },
                         },
-                    },
-                    {
-                        currency: HubApi.Currency.NIM,
-                        type: HubApi.PaymentType.DIRECT,
-                        amount: '20e5',
-                        vendorMarkup: 0,
-                        expires: now + 15 * 60000, // 15 minutes
-                        protocolSpecific: {
-                            fee: .005e5,
-                            extraData: 'Test MultiCheckout',
+                        {
+                            currency: HubApi.Currency.NIM,
+                            type: HubApi.PaymentType.DIRECT,
+                            amount: nimTxValue.toString(),
+                            vendorMarkup: 0,
+                            expires: now + 3 * 60000, // 15 minutes
+                            protocolSpecific: {
+                                sender,
+                                forceSender,
+                                fee: nimTxFee,
+                                extraData: nimTxData,
+                            },
                         },
-                    },
-                    {
-                        currency: HubApi.Currency.ETH,
-                        type: HubApi.PaymentType.DIRECT,
-                        amount: '.0091e18',
-                        expires: now + 15 * 60000, // 15 minutes
-                        protocolSpecific: {
-                            gasLimit: 21000,
-                            gasPrice: '2e9',
-                            recipient: '0xa4725d6477644286b354288b51122a808389be83', // the water project
+                        {
+                            currency: HubApi.Currency.ETH,
+                            type: HubApi.PaymentType.DIRECT,
+                            amount: '.0091e18',
+                            expires: now + 3 * 60000, // 15 minutes
+                            protocolSpecific: {
+                                gasLimit: 21000,
+                                gasPrice: '2e9',
+                                recipient: '0xa4725d6477644286b354288b51122a808389be83', // the water project
+                            },
                         },
-                    },
-                ],
-            };
+                    ],
+                };
+            }
         }
 
         async function checkout(txRequest: CheckoutRequest) {

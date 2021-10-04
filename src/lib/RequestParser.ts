@@ -99,6 +99,8 @@ export class RequestParser {
                     }
                 }
 
+                const isPointOfSale = 'isPointOfSale' in checkoutRequest && !!checkoutRequest.isPointOfSale;
+
                 let disableDisclaimer = !!checkoutRequest.disableDisclaimer;
                 if (disableDisclaimer && !includesOrigin(Config.privilegedOrigins, state.origin)) {
                     // warn and continue
@@ -109,6 +111,10 @@ export class RequestParser {
                 if (!checkoutRequest.version || checkoutRequest.version === 1) {
                     if (typeof checkoutRequest.value !== 'number' || checkoutRequest.value <= 0) {
                         throw new Error('value must be a number >0');
+                    }
+
+                    if (isPointOfSale) {
+                        throw new Error('isPointOfSale is not supported for v1 checkout.');
                     }
 
                     return {
@@ -133,6 +139,7 @@ export class RequestParser {
                                 validityDuration: checkoutRequest.validityDuration,
                             },
                         })],
+                        isPointOfSale,
                         disableDisclaimer,
                     } as ParsedCheckoutRequest;
                 }
@@ -182,7 +189,11 @@ export class RequestParser {
                         } catch (err) {
                             throw new Error(`callbackUrl must be a valid URL: ${err}`);
                         }
-                        if (origin !== state.origin) {
+                        if (origin !== state.origin
+                            // Whitelist https://vendor.cryptopayment.link when the request was coming from just
+                            // https://cryptopayment.link
+                            && !(state.origin === 'https://cryptopayment.link'
+                                && origin === 'https://vendor.cryptopayment.link')) {
                             throw new Error('callbackUrl must have the same origin as caller Website. ' +
                                 checkoutRequest.callbackUrl +
                                 ' is not on caller origin ' +
@@ -233,7 +244,10 @@ export class RequestParser {
 
                                                 option.protocolSpecific.extraData = checkoutRequest.extraData;
                                             }
-                                            return new ParsedNimiqDirectPaymentOptions(option);
+                                            return new ParsedNimiqDirectPaymentOptions(
+                                                option,
+                                                { isPointOfSale },
+                                            );
                                         case Currency.ETH:
                                             return new ParsedEtherDirectPaymentOptions(option);
                                         case Currency.BTC:
@@ -245,6 +259,7 @@ export class RequestParser {
                                     throw new Error(`PaymentType ${(option as any).type} not supported`);
                             }
                         }),
+                        isPointOfSale,
                         disableDisclaimer,
                     } as ParsedCheckoutRequest;
                 }

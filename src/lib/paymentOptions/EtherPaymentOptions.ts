@@ -1,7 +1,8 @@
 import bigInt from 'big-integer';
 import { Currency, PaymentType, PaymentOptions } from '../PublicRequestTypes';
-import { ParsedPaymentOptions } from './ParsedPaymentOptions';
+import { ParsedPaymentOptions, PaymentOptionsParserFlags } from './ParsedPaymentOptions';
 import { toNonScientificNumberString, FormattableNumber } from '@nimiq/utils';
+import { i18n } from '../../i18n/i18n-setup';
 
 export interface EtherSpecifics {
     gasLimit?: number | string;
@@ -19,8 +20,8 @@ export type EtherDirectPaymentOptions = PaymentOptions<Currency.ETH, PaymentType
 export class ParsedEtherDirectPaymentOptions extends ParsedPaymentOptions<Currency.ETH, PaymentType.DIRECT> {
     public amount: bigInt.BigInteger;
 
-    public constructor(options: EtherDirectPaymentOptions) {
-        super(options);
+    public constructor(options: EtherDirectPaymentOptions, parserFlags: PaymentOptionsParserFlags = {}) {
+        super(options, parserFlags);
         this.amount = bigInt(options.amount); // note that bigInt resolves scientific notation like 2e3 automatically
 
         let gasLimit: number | undefined;
@@ -75,7 +76,7 @@ export class ParsedEtherDirectPaymentOptions extends ParsedPaymentOptions<Curren
         if (this.protocolSpecific.gasPrice) {
             const fee = new FormattableNumber(this.protocolSpecific.gasPrice)
                 .moveDecimalSeparator(-9).toString({ maxDecimals: 2 });
-            return fee !== '0' ? `Apply a gas price of at least ${fee} gwei.` : '';
+            return fee !== '0' ? i18n.t('Apply a gas price of at least {fee} gwei.', { fee }) as string : '';
         }
         return '';
     }

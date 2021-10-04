@@ -19,7 +19,7 @@ msgstr ""
 msgid "{totalFees} fees"
 msgstr ""
 
-#: src/components/NonNimiqCheckoutCard.vue:64
+#: src/components/CheckoutCardExternal.vue:67
 msgid "+ network fee"
 msgstr ""
 
@@ -75,6 +75,7 @@ msgstr ""
 msgid "Add Vesting Contract"
 msgstr ""
 
+#: src/components/CheckoutCard.vue:82
 #: src/views/SetupSwapLedger.vue:276
 msgid "Address"
 msgstr ""
@@ -91,8 +92,9 @@ msgstr ""
 msgid "All labels saved."
 msgstr ""
 
-#: src/components/BitcoinCheckoutCard.vue:26
-#: src/components/EthereumCheckoutCard.vue:25
+#: src/components/CheckoutCardBitcoin.vue:30
+#: src/components/CheckoutCardEthereum.vue:27
+#: src/components/CheckoutCardNimiqExternal.vue:32
 #: src/views/SetupSwapLedger.vue:269
 #: src/views/SetupSwapLedger.vue:278
 msgid "Amount"
@@ -100,6 +102,14 @@ msgstr ""
 
 #: src/views/AddVestingContract.vue:40
 msgid "Amount/Step:"
+msgstr ""
+
+#: src/lib/paymentOptions/EtherPaymentOptions.ts:79
+msgid "Apply a gas price of at least {fee} gwei."
+msgstr ""
+
+#: src/lib/paymentOptions/BitcoinPaymentOptions.ts:87
+msgid "Apply a network fee of at least {fee} sat/byte."
 msgstr ""
 
 #: src/views/SetupSwapLedger.vue:47
@@ -206,12 +216,12 @@ msgid "By adding a transation fee, you can influence how fast your transaction w
 msgstr ""
 
 #: src/views/CashlinkManage.vue:11
-#: src/views/Checkout.vue:184
+#: src/views/Checkout.vue:199
 #: src/views/CheckoutTransmission.vue:10
 msgid "Cancel"
 msgstr ""
 
-#: src/views/Checkout.vue:183
+#: src/views/Checkout.vue:198
 #: src/views/SignTransactionLedger.vue:108
 msgid "Cancel payment"
 msgstr ""
@@ -266,7 +276,7 @@ msgstr ""
 msgid "Choose an Address"
 msgstr ""
 
-#: src/components/NimiqCheckoutCard.vue:67
+#: src/components/CheckoutCardNimiq.vue:66
 msgid "Choose an Address to pay"
 msgstr ""
 
@@ -308,7 +318,7 @@ msgstr ""
 msgid "Close"
 msgstr ""
 
-#: src/components/CheckoutCard.vue:122
+#: src/components/CheckoutCard.vue:123
 msgid "Collecting payment details"
 msgstr ""
 
@@ -390,7 +400,7 @@ msgstr ""
 msgid "Connecting to Nimiq..."
 msgstr ""
 
-#: src/components/NimiqCheckoutCard.vue:275
+#: src/components/CheckoutCardNimiq.vue:274
 #: src/views/CashlinkManage.vue:152
 #: src/views/CheckoutTransmission.vue:71
 msgid "Contacting seed nodes..."
@@ -453,7 +463,7 @@ msgid "Creating your Account"
 msgstr ""
 
 #: src/views/CashlinkManage.vue:195
-#: src/views/SignTransactionLedger.vue:472
+#: src/views/SignTransactionLedger.vue:475
 msgid "Creating your Cashlink"
 msgstr ""
 
@@ -461,12 +471,12 @@ msgstr ""
 msgid "Detecting vesting contracts..."
 msgstr ""
 
-#: src/views/Checkout.vue:63
+#: src/views/Checkout.vue:46
 msgid "Disclaimer"
 msgstr ""
 
-#: src/components/CheckoutManualPaymentDetails.vue:28
-#: src/components/NonNimiqCheckoutCard.vue:70
+#: src/components/CheckoutCardExternal.vue:73
+#: src/components/CheckoutManualPaymentDetails.vue:31
 msgid "Don’t close this window until confirmation."
 msgstr ""
 
@@ -474,7 +484,7 @@ msgstr ""
 msgid "Done"
 msgstr ""
 
-#: src/components/NonNimiqCheckoutCard.vue:98
+#: src/components/CheckoutCardExternal.vue:102
 msgid "Enter manually"
 msgstr ""
 
@@ -499,7 +509,8 @@ msgstr ""
 msgid "fee"
 msgstr ""
 
-#: src/components/BitcoinCheckoutCard.vue:44
+#: src/components/CheckoutCardBitcoin.vue:47
+#: src/components/CheckoutCardNimiqExternal.vue:47
 #: src/components/CurrencyInfo.vue:15
 #: src/views/SetupSwapLedger.vue:271
 #: src/views/SetupSwapLedger.vue:287
@@ -539,19 +550,19 @@ msgstr ""
 msgid "free"
 msgstr ""
 
-#: src/components/EthereumCheckoutCard.vue:44
+#: src/components/CheckoutCardEthereum.vue:45
 msgid "Gas Limit"
 msgstr ""
 
-#: src/components/EthereumCheckoutCard.vue:33
+#: src/components/CheckoutCardEthereum.vue:34
 msgid "Gas Price"
 msgstr ""
 
-#: src/components/NimiqCheckoutCard.vue:71
+#: src/components/CheckoutCardNimiq.vue:70
 msgid "Get NIM"
 msgstr ""
 
-#: src/components/CheckoutCard.vue:171
+#: src/components/CheckoutCard.vue:172
 #: src/views/RequestError.vue:31
 msgid "Go back"
 msgstr ""
@@ -576,7 +587,7 @@ msgstr ""
 msgid "Here is your Nimiq Cashlink!"
 msgstr ""
 
-#: src/components/NimiqCheckoutCard.vue:50
+#: src/components/CheckoutCardNimiq.vue:50
 msgid ""
 "Imagine if paying with\n"
 "crypto was easy"
@@ -591,7 +602,7 @@ msgstr ""
 msgid "incoming"
 msgstr ""
 
-#: src/components/CheckoutCard.vue:190
+#: src/components/CheckoutCard.vue:191
 msgid "Incomplete payment"
 msgstr ""
 
@@ -639,7 +650,7 @@ msgstr ""
 msgid "Logging out will delete custom settings and names for this account."
 msgstr ""
 
-#: src/components/NimiqCheckoutCard.vue:59
+#: src/components/CheckoutCardNimiq.vue:59
 #: src/components/OnboardingMenu.vue:11
 msgid "Login"
 msgstr ""
@@ -681,7 +692,7 @@ msgid "New Address added to your Account."
 msgstr ""
 
 #: src/views/CashlinkCreate.vue:55
-#: src/views/SignTransactionLedger.vue:277
+#: src/views/SignTransactionLedger.vue:280
 msgid "New Cashlink"
 msgstr ""
 
@@ -701,7 +712,7 @@ msgstr ""
 msgid "No"
 msgstr ""
 
-#: src/components/NonNimiqCheckoutCard.vue:90
+#: src/components/CheckoutCardExternal.vue:94
 msgid "No App found"
 msgstr ""
 
@@ -711,7 +722,7 @@ msgid ""
 "100% free"
 msgstr ""
 
-#: src/components/NimiqCheckoutCard.vue:69
+#: src/components/CheckoutCardNimiq.vue:68
 msgid "None of your available addresses has sufficient balance."
 msgstr ""
 
@@ -736,7 +747,7 @@ msgstr ""
 msgid "Open the {app} App"
 msgstr ""
 
-#: src/components/NonNimiqCheckoutCard.vue:94
+#: src/components/CheckoutCardExternal.vue:98
 msgid "Open Wallet App"
 msgstr ""
 
@@ -752,7 +763,7 @@ msgstr ""
 msgid "Owner:"
 msgstr ""
 
-#: src/components/NonNimiqCheckoutCard.vue:103
+#: src/components/CheckoutCardExternal.vue:107
 msgid "Pay with {currencyFullName}"
 msgstr ""
 
@@ -760,7 +771,11 @@ msgstr ""
 msgid "Pay with Nimiq"
 msgstr ""
 
-#: src/components/CheckoutCard.vue:182
+#: src/components/CheckoutCardNimiqExternal.vue:54
+msgid "Payment Reference"
+msgstr ""
+
+#: src/components/CheckoutCard.vue:183
 msgid "Payment successful"
 msgstr ""
 
@@ -780,7 +795,7 @@ msgstr ""
 msgid "Please cancel the request on your Ledger"
 msgstr ""
 
-#: src/components/CheckoutCard.vue:169
+#: src/components/CheckoutCard.vue:170
 msgid "Please go back and restart the process."
 msgstr ""
 
@@ -788,7 +803,7 @@ msgstr ""
 msgid "Please go back to the shop and restart the process."
 msgstr ""
 
-#: src/components/NonNimiqCheckoutCard.vue:91
+#: src/components/CheckoutCardExternal.vue:95
 msgid "Please send the transaction manually"
 msgstr ""
 
@@ -841,11 +856,11 @@ msgstr ""
 msgid "Request failed: "
 msgstr ""
 
-#: src/components/NimiqCheckoutCard.vue:279
+#: src/components/CheckoutCardNimiq.vue:278
 msgid "Requesting balances..."
 msgstr ""
 
-#: src/components/CheckoutCard.vue:194
+#: src/components/CheckoutCard.vue:195
 msgid "Restart Payment"
 msgstr ""
 
@@ -864,12 +879,12 @@ msgstr ""
 msgid "Save"
 msgstr ""
 
-#: src/components/CheckoutManualPaymentDetails.vue:24
-#: src/components/NonNimiqCheckoutCard.vue:49
+#: src/components/CheckoutCardExternal.vue:52
+#: src/components/CheckoutManualPaymentDetails.vue:27
 msgid "Send your transaction"
 msgstr ""
 
-#: src/views/SignTransactionLedger.vue:473
+#: src/views/SignTransactionLedger.vue:476
 msgid "Sending Transaction"
 msgstr ""
 
@@ -940,7 +955,7 @@ msgstr ""
 msgid "Syncing"
 msgstr ""
 
-#: src/components/NimiqCheckoutCard.vue:277
+#: src/components/CheckoutCardNimiq.vue:276
 #: src/views/AddVestingContract.vue:11
 #: src/views/CashlinkManage.vue:154
 #: src/views/CheckoutTransmission.vue:73
@@ -988,8 +1003,8 @@ msgstr ""
 msgid "The display language changed. Do you want to reload the page to update all translations? Otherwise, some translations might not be updated automatically. ({oldLang} to {newLang})"
 msgstr ""
 
-#: src/components/CheckoutCard.vue:168
-#: src/views/SignTransactionLedger.vue:479
+#: src/components/CheckoutCard.vue:169
+#: src/views/SignTransactionLedger.vue:482
 msgid "The offer expired."
 msgstr ""
 
@@ -1017,7 +1032,7 @@ msgstr ""
 msgid "This message will be stored in the Cashlink."
 msgstr ""
 
-#: src/views/Checkout.vue:64
+#: src/views/Checkout.vue:47
 msgid "This Nimiq interface is non-custodial and solely used to bridge the payment sender with the payment recipient directly (P2P). Payment and deliverable fulfillment for payment are sole responsibility of those two respective parties."
 msgstr ""
 
@@ -1051,12 +1066,12 @@ msgstr ""
 msgid "Transaction is expired"
 msgstr ""
 
-#: src/views/SignTransactionLedger.vue:477
+#: src/views/SignTransactionLedger.vue:480
 msgid "Transaction Sent"
 msgstr ""
 
 #: src/views/SignBtcTransactionLedger.vue:116
-#: src/views/SignTransactionLedger.vue:476
+#: src/views/SignTransactionLedger.vue:479
 msgid "Transaction Signed"
 msgstr ""
 
@@ -1064,7 +1079,7 @@ msgstr ""
 msgid "Try again"
 msgstr ""
 
-#: src/components/NimiqCheckoutCard.vue:61
+#: src/components/CheckoutCardNimiq.vue:61
 msgid "Try it now"
 msgstr ""
 
@@ -1084,7 +1099,7 @@ msgstr ""
 msgid "Unsupported Request"
 msgstr ""
 
-#: src/components/NimiqCheckoutCard.vue:309
+#: src/components/CheckoutCardNimiq.vue:308
 msgid "Updating balances"
 msgstr ""
 
@@ -1156,7 +1171,7 @@ msgstr ""
 msgid "You received a Cashlink!"
 msgstr ""
 
-#: src/components/CheckoutCard.vue:191
+#: src/components/CheckoutCard.vue:192
 msgid "You transferred an insufficient amount. Please contact the merchant for a refund. Restart to pay for your order."
 msgstr ""
 

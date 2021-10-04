@@ -1,11 +1,11 @@
 <script lang="ts">
 import { createEthereumRequestLink } from '@nimiq/utils';
 import { ParsedEtherDirectPaymentOptions } from '../lib/paymentOptions/EtherPaymentOptions';
-import NonNimiqCheckoutCard from './NonNimiqCheckoutCard.vue';
+import CheckoutCardExternal from './CheckoutCardExternal.vue';
 import { FormattableNumber } from '@nimiq/utils';
 
-export default class EtherCheckoutCard
-    extends NonNimiqCheckoutCard<ParsedEtherDirectPaymentOptions> {
+export default class CheckoutCardEthereum
+    extends CheckoutCardExternal<ParsedEtherDirectPaymentOptions> {
     protected currencyFullName = 'Ethereum';
     protected icon = 'icon-eth.svg';
 
@@ -21,28 +21,29 @@ export default class EtherCheckoutCard
     }
 
     protected get manualPaymentDetails() {
+        const paymentOptions = this.paymentOptions;
+        const protocolSpecific = paymentOptions.protocolSpecific;
         const paymentDetails = [ ...super.manualPaymentDetails, {
             label: this.$t('Amount') as string,
             value: {
-                ETH: new FormattableNumber(this.paymentOptions.amount)
-                    .moveDecimalSeparator(-this.paymentOptions.decimals).toString(),
+                ETH: paymentOptions.baseUnitAmount,
             },
         }];
-        if (this.paymentOptions.protocolSpecific.gasPrice) {
+        if (protocolSpecific.gasPrice) {
             paymentDetails.push({
                 label: this.$t('Gas Price') as string,
                 value: {
-                    GWEI: new FormattableNumber(this.paymentOptions.protocolSpecific.gasPrice)
+                    GWEI: new FormattableNumber(protocolSpecific.gasPrice)
                         .moveDecimalSeparator(-9).toString({ maxDecimals: 2 }),
-                    ETH: new FormattableNumber(this.paymentOptions.protocolSpecific.gasPrice)
-                        .moveDecimalSeparator(-this.paymentOptions.decimals).toString(),
+                    ETH: new FormattableNumber(protocolSpecific.gasPrice)
+                        .moveDecimalSeparator(-paymentOptions.decimals).toString(),
                 },
             });
         }
-        if (this.paymentOptions.protocolSpecific.gasLimit) {
+        if (protocolSpecific.gasLimit) {
             paymentDetails.push({
                 label: this.$t('Gas Limit') as string,
-                value: this.paymentOptions.protocolSpecific.gasLimit,
+                value: protocolSpecific.gasLimit,
             });
         }
         return paymentDetails;
