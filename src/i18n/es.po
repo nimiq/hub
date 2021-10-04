@@ -83,7 +83,7 @@ msgstr "Agregar a Ledger"
 msgid "Add Vesting Contract"
 msgstr "Agregar Contrato Vesting"
 
-#: src/views/SetupSwapLedger.vue:276
+#: src/components/CheckoutCard.vue:82 src/views/SetupSwapLedger.vue:276
 msgid "Address"
 msgstr "Dirección"
 
@@ -99,9 +99,9 @@ msgstr "Detección de dirección fallida. Reintentando..."
 msgid "All labels saved."
 msgstr "Todas las etiquetas se guardaron"
 
-#: src/components/CheckoutCardBitcoin.vue:28
+#: src/components/CheckoutCardBitcoin.vue:30
 #: src/components/CheckoutCardEthereum.vue:27
-#: src/components/CheckoutCardNimiqExternal.vue:30
+#: src/components/CheckoutCardNimiqExternal.vue:32
 #: src/views/SetupSwapLedger.vue:269 src/views/SetupSwapLedger.vue:278
 msgid "Amount"
 msgstr "Monto"
@@ -109,6 +109,14 @@ msgstr "Monto"
 #: src/views/AddVestingContract.vue:40
 msgid "Amount/Step:"
 msgstr "Monto/Paso:"
+
+#: src/lib/paymentOptions/EtherPaymentOptions.ts:79
+msgid "Apply a gas price of at least {fee} gwei."
+msgstr "Utilizar una cuota de gas de por lo menos {fee} gwei."
+
+#: src/lib/paymentOptions/BitcoinPaymentOptions.ts:87
+msgid "Apply a network fee of at least {fee} sat/byte."
+msgstr "Utilizar una cuota de red de por lo menos {fee} sat/byte."
 
 #: src/views/SetupSwapLedger.vue:47
 msgid "Atomic swaps require two BTC transactions."
@@ -215,12 +223,12 @@ msgstr ""
 "Al agregar una cuota de transacción, puede influenciar que tan rápido se "
 "procesará su transacción"
 
-#: src/views/CashlinkManage.vue:11 src/views/Checkout.vue:184
+#: src/views/CashlinkManage.vue:11 src/views/Checkout.vue:199
 #: src/views/CheckoutTransmission.vue:10
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: src/views/Checkout.vue:183 src/views/SignTransactionLedger.vue:108
+#: src/views/Checkout.vue:198 src/views/SignTransactionLedger.vue:108
 msgid "Cancel payment"
 msgstr "Cancelar pago"
 
@@ -272,7 +280,7 @@ msgstr "Elija una nueva Dirección"
 msgid "Choose an Address"
 msgstr "Elija una Dirección"
 
-#: src/components/CheckoutCardNimiq.vue:67
+#: src/components/CheckoutCardNimiq.vue:66
 msgid "Choose an Address to pay"
 msgstr "Elija una Dirección para pagar"
 
@@ -394,7 +402,7 @@ msgstr "Conectándose a la red..."
 msgid "Connecting to Nimiq..."
 msgstr "Conectándose a Nimiq..."
 
-#: src/components/CheckoutCardNimiq.vue:275 src/views/CashlinkManage.vue:152
+#: src/components/CheckoutCardNimiq.vue:274 src/views/CashlinkManage.vue:152
 #: src/views/CheckoutTransmission.vue:71
 msgid "Contacting seed nodes..."
 msgstr "Contactando nodos semilla..."
@@ -453,7 +461,7 @@ msgstr "Creando Cashlink"
 msgid "Creating your Account"
 msgstr "Creando su Cuenta"
 
-#: src/views/CashlinkManage.vue:195 src/views/SignTransactionLedger.vue:472
+#: src/views/CashlinkManage.vue:195 src/views/SignTransactionLedger.vue:475
 msgid "Creating your Cashlink"
 msgstr "Creando su Cashlink"
 
@@ -474,7 +482,7 @@ msgstr "No cierre esta ventana hasta obtener la confirmación."
 msgid "Done"
 msgstr "Listo"
 
-#: src/components/CheckoutCardExternal.vue:101
+#: src/components/CheckoutCardExternal.vue:102
 msgid "Enter manually"
 msgstr "Ingrese manualmente"
 
@@ -499,8 +507,8 @@ msgstr "Fallo al obtener direcciones. Reintentando..."
 msgid "fee"
 msgstr "cuota"
 
-#: src/components/CheckoutCardBitcoin.vue:45
-#: src/components/CheckoutCardNimiqExternal.vue:45
+#: src/components/CheckoutCardBitcoin.vue:47
+#: src/components/CheckoutCardNimiqExternal.vue:47
 #: src/components/CurrencyInfo.vue:15 src/views/SetupSwapLedger.vue:271
 #: src/views/SetupSwapLedger.vue:287
 msgid "Fee"
@@ -544,7 +552,7 @@ msgstr "Limite del Gas"
 msgid "Gas Price"
 msgstr "Precio del Gas"
 
-#: src/components/CheckoutCardNimiq.vue:71
+#: src/components/CheckoutCardNimiq.vue:70
 msgid "Get NIM"
 msgstr "Obtener NIM"
 
@@ -664,10 +672,6 @@ msgstr "Iniciar Sesión a cuenta existente"
 msgid "Login to fund your Cashlink"
 msgstr "Iniciar sesión para financiar su Cashlink"
 
-#: src/components/CheckoutCardNimiqExternal.vue:52
-msgid "Message / Payment Reference"
-msgstr ""
-
 #: src/views/ErrorHandlerUnsupportedLedger.vue:42
 msgid "Message signing is not yet supported for Ledgers."
 msgstr "Firmas de mensajes aún no esta soportado en Ledgers"
@@ -692,7 +696,7 @@ msgstr "Mis respaldos están a salvo."
 msgid "New Address added to your Account."
 msgstr "Nuevas Direcciones agregadas a su Cuenta."
 
-#: src/views/CashlinkCreate.vue:55 src/views/SignTransactionLedger.vue:277
+#: src/views/CashlinkCreate.vue:55 src/views/SignTransactionLedger.vue:280
 msgid "New Cashlink"
 msgstr "Cashlink Nuevo"
 
@@ -716,7 +720,7 @@ msgstr ""
 msgid "No"
 msgstr "No"
 
-#: src/components/CheckoutCardExternal.vue:93
+#: src/components/CheckoutCardExternal.vue:94
 msgid "No App found"
 msgstr "No se encontró ninguna Aplicación"
 
@@ -728,7 +732,7 @@ msgstr ""
 "Sin registrarse, sin instalación,\n"
 "100% gratis"
 
-#: src/components/CheckoutCardNimiq.vue:69
+#: src/components/CheckoutCardNimiq.vue:68
 msgid "None of your available addresses has sufficient balance."
 msgstr "Ninguna de sus direcciones disponibles tiene suficientes fondos."
 
@@ -753,7 +757,7 @@ msgstr "Una cuenta puede tener ahora multiples direcciones."
 msgid "Open the {app} App"
 msgstr "Abra la {app} App"
 
-#: src/components/CheckoutCardExternal.vue:97
+#: src/components/CheckoutCardExternal.vue:98
 msgid "Open Wallet App"
 msgstr "Abrir Aplicación Billetera"
 
@@ -769,13 +773,17 @@ msgstr "saliendo"
 msgid "Owner:"
 msgstr "Dueño."
 
-#: src/components/CheckoutCardExternal.vue:106
+#: src/components/CheckoutCardExternal.vue:107
 msgid "Pay with {currencyFullName}"
 msgstr "Pagar con {currencyFullName}"
 
 #: src/views/OnboardingSelector.vue:98
 msgid "Pay with Nimiq"
 msgstr "Pagar con Nimiq"
+
+#: src/components/CheckoutCardNimiqExternal.vue:54
+msgid "Payment Reference"
+msgstr "Referencia de Pago"
 
 #: src/components/CheckoutCard.vue:183
 msgid "Payment successful"
@@ -805,7 +813,7 @@ msgstr "Por favor vuelva y comience de nuevo el proceso."
 msgid "Please go back to the shop and restart the process."
 msgstr "Por favor vuelva a la tienda y comience de nuevo el proceso."
 
-#: src/components/CheckoutCardExternal.vue:94
+#: src/components/CheckoutCardExternal.vue:95
 msgid "Please send the transaction manually"
 msgstr "Por favor envíe la transacción manualmente"
 
@@ -864,7 +872,7 @@ msgstr "Petición fallida"
 msgid "Request failed: "
 msgstr "Petición fallida:"
 
-#: src/components/CheckoutCardNimiq.vue:279
+#: src/components/CheckoutCardNimiq.vue:278
 msgid "Requesting balances..."
 msgstr "Solicitando balances..."
 
@@ -890,7 +898,7 @@ msgstr "Guardar"
 msgid "Send your transaction"
 msgstr "Enviando su transacción"
 
-#: src/views/SignTransactionLedger.vue:473
+#: src/views/SignTransactionLedger.vue:476
 msgid "Sending Transaction"
 msgstr "Enviando Transacción"
 
@@ -958,7 +966,7 @@ msgstr "Configuración del Intercambio Fallida"
 msgid "Syncing"
 msgstr "Sincronizando"
 
-#: src/components/CheckoutCardNimiq.vue:277
+#: src/components/CheckoutCardNimiq.vue:276
 #: src/views/AddVestingContract.vue:11 src/views/CashlinkManage.vue:154
 #: src/views/CheckoutTransmission.vue:73
 msgid "Syncing consensus..."
@@ -1010,7 +1018,7 @@ msgstr ""
 "traducciones? De otra forma, algunas traducciones no podrían actualizarse "
 "automáticamente. ({oldLang} a {newLang})"
 
-#: src/components/CheckoutCard.vue:169 src/views/SignTransactionLedger.vue:479
+#: src/components/CheckoutCard.vue:169 src/views/SignTransactionLedger.vue:482
 msgid "The offer expired."
 msgstr "La oferta expiró"
 
@@ -1083,12 +1091,12 @@ msgstr "La transacción no se ha podido enviar"
 msgid "Transaction is expired"
 msgstr "Transacción ha expirado"
 
-#: src/views/SignTransactionLedger.vue:477
+#: src/views/SignTransactionLedger.vue:480
 msgid "Transaction Sent"
 msgstr "Transacción Enviada"
 
 #: src/views/SignBtcTransactionLedger.vue:116
-#: src/views/SignTransactionLedger.vue:476
+#: src/views/SignTransactionLedger.vue:479
 msgid "Transaction Signed"
 msgstr "Transacción Firmada"
 
@@ -1127,7 +1135,7 @@ msgstr "Sin Etiqueta"
 msgid "Unsupported Request"
 msgstr "Petición no soportada"
 
-#: src/components/CheckoutCardNimiq.vue:309
+#: src/components/CheckoutCardNimiq.vue:308
 msgid "Updating balances"
 msgstr "Actualizando balances"
 

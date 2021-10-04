@@ -85,7 +85,7 @@ msgstr "Добавить в Ledger"
 msgid "Add Vesting Contract"
 msgstr "Добавить вестинговый контракт"
 
-#: src/views/SetupSwapLedger.vue:276
+#: src/components/CheckoutCard.vue:82 src/views/SetupSwapLedger.vue:276
 msgid "Address"
 msgstr "Адрес"
 
@@ -101,9 +101,9 @@ msgstr "Не удалось обнаружить адрес. Повторная 
 msgid "All labels saved."
 msgstr "Все ярлыки сохранены."
 
-#: src/components/CheckoutCardBitcoin.vue:28
+#: src/components/CheckoutCardBitcoin.vue:30
 #: src/components/CheckoutCardEthereum.vue:27
-#: src/components/CheckoutCardNimiqExternal.vue:30
+#: src/components/CheckoutCardNimiqExternal.vue:32
 #: src/views/SetupSwapLedger.vue:269 src/views/SetupSwapLedger.vue:278
 msgid "Amount"
 msgstr "Сумма"
@@ -111,6 +111,14 @@ msgstr "Сумма"
 #: src/views/AddVestingContract.vue:40
 msgid "Amount/Step:"
 msgstr "Сумма/шаг:"
+
+#: src/lib/paymentOptions/EtherPaymentOptions.ts:79
+msgid "Apply a gas price of at least {fee} gwei."
+msgstr "Установите минимальную цену газа в {fee} gwei."
+
+#: src/lib/paymentOptions/BitcoinPaymentOptions.ts:87
+msgid "Apply a network fee of at least {fee} sat/byte."
+msgstr "Установите минимальную комиссию сети в {fee} sat/byte."
 
 #: src/views/SetupSwapLedger.vue:47
 msgid "Atomic swaps require two BTC transactions."
@@ -215,12 +223,12 @@ msgid ""
 " be processed."
 msgstr "Увеличьте размер комиссии, чтобы ускорить исполнение транзакции."
 
-#: src/views/CashlinkManage.vue:11 src/views/Checkout.vue:184
+#: src/views/CashlinkManage.vue:11 src/views/Checkout.vue:199
 #: src/views/CheckoutTransmission.vue:10
 msgid "Cancel"
 msgstr "Отмена"
 
-#: src/views/Checkout.vue:183 src/views/SignTransactionLedger.vue:108
+#: src/views/Checkout.vue:198 src/views/SignTransactionLedger.vue:108
 msgid "Cancel payment"
 msgstr "Отменить оплату"
 
@@ -272,7 +280,7 @@ msgstr "Выбрать новый Адрес"
 msgid "Choose an Address"
 msgstr "Выбрать Адрес"
 
-#: src/components/CheckoutCardNimiq.vue:67
+#: src/components/CheckoutCardNimiq.vue:66
 msgid "Choose an Address to pay"
 msgstr ""
 "Выберите Адрес \n"
@@ -397,7 +405,7 @@ msgstr "Подключаемся к сети..."
 msgid "Connecting to Nimiq..."
 msgstr "Подключаемся к Nimiq..."
 
-#: src/components/CheckoutCardNimiq.vue:275 src/views/CashlinkManage.vue:152
+#: src/components/CheckoutCardNimiq.vue:274 src/views/CashlinkManage.vue:152
 #: src/views/CheckoutTransmission.vue:71
 msgid "Contacting seed nodes..."
 msgstr "Устанавливаем связь с сид-узлами..."
@@ -458,7 +466,7 @@ msgstr "Создать Cashlink"
 msgid "Creating your Account"
 msgstr "Создаём Аккаунт"
 
-#: src/views/CashlinkManage.vue:195 src/views/SignTransactionLedger.vue:472
+#: src/views/CashlinkManage.vue:195 src/views/SignTransactionLedger.vue:475
 msgid "Creating your Cashlink"
 msgstr "Создаём ваш Cashlink"
 
@@ -481,7 +489,7 @@ msgstr ""
 msgid "Done"
 msgstr "Готово."
 
-#: src/components/CheckoutCardExternal.vue:101
+#: src/components/CheckoutCardExternal.vue:102
 msgid "Enter manually"
 msgstr "Введите вручную"
 
@@ -506,8 +514,8 @@ msgstr "Не удалось получить адреса. Повторная п
 msgid "fee"
 msgstr "комиссия"
 
-#: src/components/CheckoutCardBitcoin.vue:45
-#: src/components/CheckoutCardNimiqExternal.vue:45
+#: src/components/CheckoutCardBitcoin.vue:47
+#: src/components/CheckoutCardNimiqExternal.vue:47
 #: src/components/CurrencyInfo.vue:15 src/views/SetupSwapLedger.vue:271
 #: src/views/SetupSwapLedger.vue:287
 msgid "Fee"
@@ -551,7 +559,7 @@ msgstr "Лимит Gas"
 msgid "Gas Price"
 msgstr "Цена Gas"
 
-#: src/components/CheckoutCardNimiq.vue:71
+#: src/components/CheckoutCardNimiq.vue:70
 msgid "Get NIM"
 msgstr "Получить NIM"
 
@@ -672,10 +680,6 @@ msgstr "Войти в существующий аккаунт"
 msgid "Login to fund your Cashlink"
 msgstr "Авторизуйтесь, чтобы добавить средства на ваш Cashlink"
 
-#: src/components/CheckoutCardNimiqExternal.vue:52
-msgid "Message / Payment Reference"
-msgstr ""
-
 #: src/views/ErrorHandlerUnsupportedLedger.vue:42
 msgid "Message signing is not yet supported for Ledgers."
 msgstr "В настоящий момент Ledger не поддерживает подпись сообщений."
@@ -700,7 +704,7 @@ msgstr "Резервные Копии сохранены."
 msgid "New Address added to your Account."
 msgstr "Новые Адреса были добавлены к вашему Аккаунту."
 
-#: src/views/CashlinkCreate.vue:55 src/views/SignTransactionLedger.vue:277
+#: src/views/CashlinkCreate.vue:55 src/views/SignTransactionLedger.vue:280
 msgid "New Cashlink"
 msgstr "Новый Cashlink"
 
@@ -721,7 +725,7 @@ msgstr "Nimiq стал лучше! Новый дизайн также содер
 msgid "No"
 msgstr "Нет"
 
-#: src/components/CheckoutCardExternal.vue:93
+#: src/components/CheckoutCardExternal.vue:94
 msgid "No App found"
 msgstr "Приложение не найдено"
 
@@ -733,7 +737,7 @@ msgstr ""
 "Без регистрации, без установки,\n"
 "100% бесплатно"
 
-#: src/components/CheckoutCardNimiq.vue:69
+#: src/components/CheckoutCardNimiq.vue:68
 msgid "None of your available addresses has sufficient balance."
 msgstr "Баланс на ваших доступных счетах недостаточен."
 
@@ -758,7 +762,7 @@ msgstr "Теперь на одном аккаунте может быть сра
 msgid "Open the {app} App"
 msgstr "Открыть приложение {app}"
 
-#: src/components/CheckoutCardExternal.vue:97
+#: src/components/CheckoutCardExternal.vue:98
 msgid "Open Wallet App"
 msgstr "Открыть Wallet App"
 
@@ -774,13 +778,17 @@ msgstr "исходящая"
 msgid "Owner:"
 msgstr "Владелец:"
 
-#: src/components/CheckoutCardExternal.vue:106
+#: src/components/CheckoutCardExternal.vue:107
 msgid "Pay with {currencyFullName}"
 msgstr "Оплатить в {currencyFullName}"
 
 #: src/views/OnboardingSelector.vue:98
 msgid "Pay with Nimiq"
 msgstr "Оплатить в Nimiq"
+
+#: src/components/CheckoutCardNimiqExternal.vue:54
+msgid "Payment Reference"
+msgstr "Номер Платежа"
 
 #: src/components/CheckoutCard.vue:183
 msgid "Payment successful"
@@ -810,7 +818,7 @@ msgstr "Пожалуйста, вернитесь и начните сначал�
 msgid "Please go back to the shop and restart the process."
 msgstr "Пожалуйста, вернитесь в магазин и начните заново."
 
-#: src/components/CheckoutCardExternal.vue:94
+#: src/components/CheckoutCardExternal.vue:95
 msgid "Please send the transaction manually"
 msgstr "Пожалуйста, отправьте транзакцию вручную"
 
@@ -868,7 +876,7 @@ msgstr "Запрос не выполнен"
 msgid "Request failed: "
 msgstr "Запрос не выполнен:"
 
-#: src/components/CheckoutCardNimiq.vue:279
+#: src/components/CheckoutCardNimiq.vue:278
 msgid "Requesting balances..."
 msgstr "Запрос баланса..."
 
@@ -894,7 +902,7 @@ msgstr "Сохранить"
 msgid "Send your transaction"
 msgstr "Отправить транзакцию"
 
-#: src/views/SignTransactionLedger.vue:473
+#: src/views/SignTransactionLedger.vue:476
 msgid "Sending Transaction"
 msgstr "Отправка транзакции"
 
@@ -963,7 +971,7 @@ msgstr "Не удалось подготовить обмен"
 msgid "Syncing"
 msgstr "Синхронизация"
 
-#: src/components/CheckoutCardNimiq.vue:277
+#: src/components/CheckoutCardNimiq.vue:276
 #: src/views/AddVestingContract.vue:11 src/views/CashlinkManage.vue:154
 #: src/views/CheckoutTransmission.vue:73
 msgid "Syncing consensus..."
@@ -1013,7 +1021,7 @@ msgstr ""
 "изменения? В противном случае отдельные слова не будут переведены. "
 "({oldLang} to {newLang})"
 
-#: src/components/CheckoutCard.vue:169 src/views/SignTransactionLedger.vue:479
+#: src/components/CheckoutCard.vue:169 src/views/SignTransactionLedger.vue:482
 msgid "The offer expired."
 msgstr "Срок действия предложения истек."
 
@@ -1086,12 +1094,12 @@ msgstr "Невозможно передать транзакцию"
 msgid "Transaction is expired"
 msgstr "Срок действия транзакции истек"
 
-#: src/views/SignTransactionLedger.vue:477
+#: src/views/SignTransactionLedger.vue:480
 msgid "Transaction Sent"
 msgstr "Транзакция Отправлена"
 
 #: src/views/SignBtcTransactionLedger.vue:116
-#: src/views/SignTransactionLedger.vue:476
+#: src/views/SignTransactionLedger.vue:479
 msgid "Transaction Signed"
 msgstr "Транзакция Подписана"
 
@@ -1130,7 +1138,7 @@ msgstr "Без метки"
 msgid "Unsupported Request"
 msgstr "Неподдерживаемый запрос"
 
-#: src/components/CheckoutCardNimiq.vue:309
+#: src/components/CheckoutCardNimiq.vue:308
 msgid "Updating balances"
 msgstr "Обновление балансов"
 
