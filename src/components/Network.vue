@@ -53,19 +53,28 @@ class Network extends Vue {
             || recipientType !== Nimiq.Account.Type.BASIC
             || flags !== Nimiq.Transaction.Flag.NONE
         ) {
-            return new Nimiq.ExtendedTransaction(
+            const tx = new Nimiq.ExtendedTransaction(
                 sender,
                 senderType,
                 recipient,
                 recipientType,
-                value,
+                value || 1,
                 fee,
                 validityStartHeight,
-                flags,
+                Math.min(flags, Nimiq.Transaction.Flag.CONTRACT_CREATION),
                 data || new Uint8Array(0),
                 signature ? Nimiq.SignatureProof.singleSig(signerPubKey, signature).serialize() : undefined,
                 6,
             );
+
+            if (flags === 0b10) { // Signalling
+                // @ts-ignore Private property access
+                tx._value = 0;
+                // @ts-ignore Private property access
+                tx._flags = 0b10;
+            }
+
+            return tx;
         } else {
             return new Nimiq.BasicTransaction(
                 signerPubKey,
