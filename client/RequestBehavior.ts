@@ -1,7 +1,7 @@
 import { PostMessageRpcClient, RedirectRpcClient } from '@nimiq/rpc';
+import { BrowserDetection } from '@nimiq/utils';
 import { ResultByRequestType, RequestType } from '../src/lib/PublicRequestTypes';
 import translate from './i18n/i18n';
-import { BrowserDetection } from '@nimiq/utils';
 
 export abstract class RequestBehavior<B extends BehaviorType> {
     public static getAllowedOrigin(endpoint: string) {

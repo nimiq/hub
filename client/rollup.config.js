@@ -10,9 +10,12 @@ export default [
             file: 'dist/HubApi.umd.js',
             format: 'umd',
             name: 'HubApi',
-            globals: { '@nimiq/rpc': 'rpc' }
+            globals: {
+                '@nimiq/rpc': 'rpc',
+                '@nimiq/utils': 'utils'
+            }
         },
-        external: [ '@nimiq/rpc' ],
+        external: [ '@nimiq/rpc', '@nimiq/utils' ],
         plugins: [ json() ],
     },
     {
@@ -21,9 +24,12 @@ export default [
             file: 'dist/HubApi.es.js',
             format: 'es',
             name: 'HubApi',
-            globals: { '@nimiq/rpc': 'rpc' }
+            globals: {
+                '@nimiq/rpc': 'rpc',
+                '@nimiq/utils': 'utils'
+            }
         },
-        external: [ '@nimiq/rpc' ],
+        external: [ '@nimiq/rpc', '@nimiq/utils' ],
         plugins: [ json() ],
     },
     {
@@ -32,7 +38,10 @@ export default [
             file: 'dist/standalone/HubApi.standalone.umd.js',
             format: 'umd',
             name: 'HubApi',
-            globals: { '@nimiq/rpc': 'rpc' }
+            globals: {
+                '@nimiq/rpc': 'rpc',
+                '@nimiq/utils': 'utils'
+            }
         },
         plugins: [ resolve(), json(), terser() ],
     },
@@ -42,7 +51,10 @@ export default [
             file: 'dist/standalone/HubApi.standalone.es.js',
             format: 'es',
             name: 'HubApi',
-            globals: { '@nimiq/rpc': 'rpc' }
+            globals: {
+                '@nimiq/rpc': 'rpc',
+                '@nimiq/utils': 'utils'
+            }
         },
         plugins: [ resolve(), json(), terser() ],
     }
