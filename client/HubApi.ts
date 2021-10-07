@@ -42,7 +42,10 @@ import {
     RefundSwapRequest,
 } from '../src/lib/PublicRequestTypes';
 
-export default class HubApi<DB extends BehaviorType = BehaviorType.POPUP> { // DB: Default Behavior
+export default class HubApi<
+    DB extends BehaviorType = BehaviorType.POPUP,
+    IB extends BehaviorType = BehaviorType.IFRAME
+> { // DB: Default Behavior, IB: Iframe Behavior
     // Expose request behaviors and enums. Not exporting them via regular exports to avoid that users of the umd build
     // have to use bundle['default'] to access the default export.
     public static readonly BehaviorType = BehaviorType;
@@ -273,19 +276,19 @@ export default class HubApi<DB extends BehaviorType = BehaviorType.POPUP> { // D
     /**
      * Only accessible in iframe from Nimiq domains.
      */
-    public list<B extends BehaviorType = DB>(
+    public list<B extends BehaviorType = IB>(
         requestBehavior: RequestBehavior<B> = this._iframeBehavior as any,
     ): Promise<B extends BehaviorType.REDIRECT ? void : Account[]> {
         return this._request(requestBehavior, RequestType.LIST, []);
     }
 
-    public cashlinks<B extends BehaviorType = DB>(
+    public cashlinks<B extends BehaviorType = IB>(
         requestBehavior: RequestBehavior<B> = this._iframeBehavior as any,
     ): Promise<B extends BehaviorType.REDIRECT ? void : Cashlink[]> {
         return this._request(requestBehavior, RequestType.LIST_CASHLINKS, []);
     }
 
-    public addBtcAddresses<B extends BehaviorType = DB>(
+    public addBtcAddresses<B extends BehaviorType = IB>(
         request: AddBtcAddressesRequest,
         requestBehavior: RequestBehavior<B> = this._iframeBehavior as any,
     ): Promise<B extends BehaviorType.REDIRECT ? void : AddBtcAddressesResult> {
