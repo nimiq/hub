@@ -63,7 +63,7 @@ msgstr "无法执行的操作"
 msgid "Activate update"
 msgstr "激活更新"
 
-#: src/views/CashlinkCreate.vue:61
+#: src/views/CashlinkCreate.vue:66
 msgid "Add a message..."
 msgstr "添加消息..."
 
@@ -122,7 +122,7 @@ msgstr "应用至少 {fee} sat/byte 的网络费用"
 msgid "Atomic swaps require two BTC transactions."
 msgstr "原子交换需要两次的比特币交易"
 
-#: src/views/CashlinkManage.vue:158 src/views/CheckoutTransmission.vue:77
+#: src/views/CashlinkManage.vue:181 src/views/CheckoutTransmission.vue:77
 msgid "Awaiting receipt confirmation..."
 msgstr "正在等待收据确认..."
 
@@ -238,7 +238,7 @@ msgstr "现金链接已领取！"
 msgid "Cashlink created"
 msgstr "现金链接已创建"
 
-#: src/views/CashlinkManage.vue:193
+#: src/views/CashlinkManage.vue:216
 msgid "Cashlink created."
 msgstr "现金链接已创建"
 
@@ -318,6 +318,10 @@ msgstr "正在领取现金链接"
 msgid "Click Connect"
 msgstr "点击连接"
 
+#: src/views/CashlinkManage.vue:25
+msgid "Click to copy:"
+msgstr ""
+
 #: src/views/RequestError.vue:31
 msgid "Close"
 msgstr "关闭"
@@ -391,7 +395,7 @@ msgstr "连接你的Ledger Nano S或Nano X"
 msgid "Connecting to Keyguard..."
 msgstr "正在连接到键盘守卫 ..."
 
-#: src/views/CashlinkManage.vue:100 src/views/CheckoutTransmission.vue:36
+#: src/views/CashlinkManage.vue:122 src/views/CheckoutTransmission.vue:36
 #: src/views/LoginSuccess.vue:43
 msgid "Connecting to network..."
 msgstr "正在连接网络..."
@@ -400,7 +404,7 @@ msgstr "正在连接网络..."
 msgid "Connecting to Nimiq..."
 msgstr "正在连接到Nimiq ..."
 
-#: src/components/CheckoutCardNimiq.vue:274 src/views/CashlinkManage.vue:152
+#: src/components/CheckoutCardNimiq.vue:274 src/views/CashlinkManage.vue:175
 #: src/views/CheckoutTransmission.vue:71
 msgid "Contacting seed nodes..."
 msgstr "正在联系种子节点..."
@@ -423,14 +427,6 @@ msgstr "合同已添加"
 msgid "Contract Information"
 msgstr "合同信息"
 
-#: src/views/CashlinkManage.vue:32
-msgid "Copied"
-msgstr "已拷贝"
-
-#: src/views/CashlinkManage.vue:33
-msgid "Copy"
-msgstr "拷贝"
-
 #: src/views/CashlinkCreate.vue:40
 msgid "Create a Cashlink"
 msgstr "建立现金链接"
@@ -451,7 +447,7 @@ msgstr "建立一个帐户并取得你的资金"
 msgid "Create and scan QR codes to quickly share addresses."
 msgstr "建立并扫描QR码以快速共享地址"
 
-#: src/views/CashlinkCreate.vue:73
+#: src/views/CashlinkCreate.vue:78
 msgid "Create Cashlink"
 msgstr "建立现金链接"
 
@@ -459,7 +455,7 @@ msgstr "建立现金链接"
 msgid "Creating your Account"
 msgstr "正在建立你的帐户"
 
-#: src/views/CashlinkManage.vue:195 src/views/SignTransactionLedger.vue:475
+#: src/views/CashlinkManage.vue:218 src/views/SignTransactionLedger.vue:475
 msgid "Creating your Cashlink"
 msgstr "正在建立你的现金链接"
 
@@ -492,7 +488,7 @@ msgstr "输入归属合同的地址"
 msgid "Enter your PIN"
 msgstr "输入你的PIN"
 
-#: src/views/CashlinkCreate.vue:160
+#: src/views/CashlinkCreate.vue:168
 msgid "express"
 msgstr "快速"
 
@@ -538,7 +534,7 @@ msgstr "正在提取地址"
 msgid "Finish"
 msgstr "结束"
 
-#: src/views/CashlinkCreate.vue:150
+#: src/views/CashlinkCreate.vue:158
 msgid "free"
 msgstr "免费"
 
@@ -574,7 +570,7 @@ msgstr "生日快乐！"
 msgid "Happy Easter!"
 msgstr "复活节快乐！"
 
-#: src/views/CashlinkManage.vue:91
+#: src/views/CashlinkManage.vue:113
 msgid "Here is your Nimiq Cashlink!"
 msgstr "这是你的Nimiq现金链接！"
 
@@ -607,7 +603,7 @@ msgstr "靛蓝"
 msgid "Invalid request"
 msgstr "无效的请求"
 
-#: src/views/CashlinkCreate.vue:64
+#: src/views/CashlinkCreate.vue:69
 msgid ""
 "It won’t be part of the public Blockchain and might get lost after the "
 "Cashlink was claimed."
@@ -887,7 +883,7 @@ msgstr "发送你的交易"
 msgid "Sending Transaction"
 msgstr "发送交易"
 
-#: src/views/CashlinkManage.vue:156 src/views/CheckoutTransmission.vue:75
+#: src/views/CashlinkManage.vue:179 src/views/CheckoutTransmission.vue:75
 msgid "Sending transaction..."
 msgstr "发送交易..."
 
@@ -911,7 +907,7 @@ msgstr "正在签署交易..."
 msgid "Single Accounts"
 msgstr "单一账户"
 
-#: src/views/CashlinkManage.vue:194 src/views/CheckoutTransmission.vue:83
+#: src/views/CashlinkManage.vue:217 src/views/CheckoutTransmission.vue:83
 msgid "Something went wrong"
 msgstr "出了点问题"
 
@@ -927,7 +923,7 @@ msgstr "超出范围"
 msgid "Speed up your transaction"
 msgstr "加速你的交易"
 
-#: src/views/CashlinkCreate.vue:155
+#: src/views/CashlinkCreate.vue:163
 msgid "standard"
 msgstr "标准"
 
@@ -952,7 +948,7 @@ msgid "Syncing"
 msgstr "同步中"
 
 #: src/components/CheckoutCardNimiq.vue:276
-#: src/views/AddVestingContract.vue:11 src/views/CashlinkManage.vue:154
+#: src/views/AddVestingContract.vue:11 src/views/CashlinkManage.vue:177
 #: src/views/CheckoutTransmission.vue:73
 msgid "Syncing consensus..."
 msgstr "正在同步共识..."
@@ -1024,7 +1020,7 @@ msgstr "抱歉，这不是有效的现金链接"
 msgid "This is your account with your first address in it."
 msgstr "这是你账户中的第一个地址"
 
-#: src/views/CashlinkCreate.vue:63
+#: src/views/CashlinkCreate.vue:68
 msgid "This message will be stored in the Cashlink."
 msgstr "此信息将存储在现金链接中"
 
@@ -1057,11 +1053,11 @@ msgstr "欲更改Ledger的PIN码，请转到设备上的设置"
 msgid "Total fees"
 msgstr "总费用"
 
-#: src/views/CashlinkManage.vue:177 src/views/CheckoutTransmission.vue:61
+#: src/views/CashlinkManage.vue:200 src/views/CheckoutTransmission.vue:61
 msgid "Transaction could not be relayed"
 msgstr "交易无法转发"
 
-#: src/views/CashlinkManage.vue:175 src/views/CheckoutTransmission.vue:59
+#: src/views/CashlinkManage.vue:198 src/views/CheckoutTransmission.vue:59
 msgid "Transaction is expired"
 msgstr "交易已过期"
 

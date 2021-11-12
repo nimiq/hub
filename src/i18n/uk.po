@@ -63,7 +63,7 @@ msgstr "Дія неможлива"
 msgid "Activate update"
 msgstr "Активувати оновлення"
 
-#: src/views/CashlinkCreate.vue:61
+#: src/views/CashlinkCreate.vue:66
 msgid "Add a message..."
 msgstr "Напишіть повідомлення..."
 
@@ -122,7 +122,7 @@ msgstr ""
 msgid "Atomic swaps require two BTC transactions."
 msgstr ""
 
-#: src/views/CashlinkManage.vue:158 src/views/CheckoutTransmission.vue:77
+#: src/views/CashlinkManage.vue:181 src/views/CheckoutTransmission.vue:77
 msgid "Awaiting receipt confirmation..."
 msgstr "Очікування підтвердження..."
 
@@ -238,7 +238,7 @@ msgstr "Чек використано!"
 msgid "Cashlink created"
 msgstr "Чек створено"
 
-#: src/views/CashlinkManage.vue:193
+#: src/views/CashlinkManage.vue:216
 msgid "Cashlink created."
 msgstr "Чек створено."
 
@@ -318,6 +318,10 @@ msgstr "Чек застосовується"
 msgid "Click Connect"
 msgstr ""
 
+#: src/views/CashlinkManage.vue:25
+msgid "Click to copy:"
+msgstr ""
+
 #: src/views/RequestError.vue:31
 msgid "Close"
 msgstr "Закрити"
@@ -391,7 +395,7 @@ msgstr "Підключіть Ledger Nano S або Nano X."
 msgid "Connecting to Keyguard..."
 msgstr "Підключення до гаманця..."
 
-#: src/views/CashlinkManage.vue:100 src/views/CheckoutTransmission.vue:36
+#: src/views/CashlinkManage.vue:122 src/views/CheckoutTransmission.vue:36
 #: src/views/LoginSuccess.vue:43
 msgid "Connecting to network..."
 msgstr "Підключення до мережі..."
@@ -400,7 +404,7 @@ msgstr "Підключення до мережі..."
 msgid "Connecting to Nimiq..."
 msgstr "Підключення до Німік..."
 
-#: src/components/CheckoutCardNimiq.vue:274 src/views/CashlinkManage.vue:152
+#: src/components/CheckoutCardNimiq.vue:274 src/views/CashlinkManage.vue:175
 #: src/views/CheckoutTransmission.vue:71
 msgid "Contacting seed nodes..."
 msgstr "Підключення до первинних вузлів..."
@@ -423,14 +427,6 @@ msgstr "Договір додано."
 msgid "Contract Information"
 msgstr "Інформація про догорів"
 
-#: src/views/CashlinkManage.vue:32
-msgid "Copied"
-msgstr "Скопійовано"
-
-#: src/views/CashlinkManage.vue:33
-msgid "Copy"
-msgstr "Скопіювати"
-
 #: src/views/CashlinkCreate.vue:40
 msgid "Create a Cashlink"
 msgstr "Створити чек"
@@ -451,7 +447,7 @@ msgstr "Створіть рахунок і отримайте свої кошт�
 msgid "Create and scan QR codes to quickly share addresses."
 msgstr "Створюйте та скануйте QR-коди для швидкого обміну адресами."
 
-#: src/views/CashlinkCreate.vue:73
+#: src/views/CashlinkCreate.vue:78
 msgid "Create Cashlink"
 msgstr "Створити чек"
 
@@ -459,7 +455,7 @@ msgstr "Створити чек"
 msgid "Creating your Account"
 msgstr "Створення рахунку"
 
-#: src/views/CashlinkManage.vue:195 src/views/SignTransactionLedger.vue:475
+#: src/views/CashlinkManage.vue:218 src/views/SignTransactionLedger.vue:475
 msgid "Creating your Cashlink"
 msgstr "Чек створюється"
 
@@ -492,7 +488,7 @@ msgstr "Введіть адресу розподільного контракт�
 msgid "Enter your PIN"
 msgstr ""
 
-#: src/views/CashlinkCreate.vue:160
+#: src/views/CashlinkCreate.vue:168
 msgid "express"
 msgstr "швидкий"
 
@@ -538,7 +534,7 @@ msgstr "Завантаження адрес"
 msgid "Finish"
 msgstr "Кінець"
 
-#: src/views/CashlinkCreate.vue:150
+#: src/views/CashlinkCreate.vue:158
 msgid "free"
 msgstr "безплатно"
 
@@ -574,7 +570,7 @@ msgstr "З днем народження!"
 msgid "Happy Easter!"
 msgstr "Смачної Паски!"
 
-#: src/views/CashlinkManage.vue:91
+#: src/views/CashlinkManage.vue:113
 msgid "Here is your Nimiq Cashlink!"
 msgstr "Ось ваш чек!"
 
@@ -608,7 +604,7 @@ msgstr "Індиго"
 msgid "Invalid request"
 msgstr "Невірний запит"
 
-#: src/views/CashlinkCreate.vue:64
+#: src/views/CashlinkCreate.vue:69
 msgid ""
 "It won’t be part of the public Blockchain and might get lost after the "
 "Cashlink was claimed."
@@ -890,7 +886,7 @@ msgstr "Надішліть Ваш переказ"
 msgid "Sending Transaction"
 msgstr "Надсилання переказу"
 
-#: src/views/CashlinkManage.vue:156 src/views/CheckoutTransmission.vue:75
+#: src/views/CashlinkManage.vue:179 src/views/CheckoutTransmission.vue:75
 msgid "Sending transaction..."
 msgstr "Надсилання переказу..."
 
@@ -914,7 +910,7 @@ msgstr "Підписання переказу..."
 msgid "Single Accounts"
 msgstr "Одиничні рахунки"
 
-#: src/views/CashlinkManage.vue:194 src/views/CheckoutTransmission.vue:83
+#: src/views/CashlinkManage.vue:217 src/views/CheckoutTransmission.vue:83
 msgid "Something went wrong"
 msgstr "Щось пішло не так"
 
@@ -930,7 +926,7 @@ msgstr "Недостатньо місця"
 msgid "Speed up your transaction"
 msgstr "Пришвидшити переказ"
 
-#: src/views/CashlinkCreate.vue:155
+#: src/views/CashlinkCreate.vue:163
 msgid "standard"
 msgstr "звичний"
 
@@ -955,7 +951,7 @@ msgid "Syncing"
 msgstr ""
 
 #: src/components/CheckoutCardNimiq.vue:276
-#: src/views/AddVestingContract.vue:11 src/views/CashlinkManage.vue:154
+#: src/views/AddVestingContract.vue:11 src/views/CashlinkManage.vue:177
 #: src/views/CheckoutTransmission.vue:73
 msgid "Syncing consensus..."
 msgstr "Встановлення консенсус..."
@@ -1032,7 +1028,7 @@ msgstr "Невірний чек."
 msgid "This is your account with your first address in it."
 msgstr "Це ваш перший рахунок з першою адресою до нього."
 
-#: src/views/CashlinkCreate.vue:63
+#: src/views/CashlinkCreate.vue:68
 msgid "This message will be stored in the Cashlink."
 msgstr "Це повідомлення буде збережено в чеку."
 
@@ -1070,11 +1066,11 @@ msgstr ""
 msgid "Total fees"
 msgstr ""
 
-#: src/views/CashlinkManage.vue:177 src/views/CheckoutTransmission.vue:61
+#: src/views/CashlinkManage.vue:200 src/views/CheckoutTransmission.vue:61
 msgid "Transaction could not be relayed"
 msgstr "Неможливо передати переказ"
 
-#: src/views/CashlinkManage.vue:175 src/views/CheckoutTransmission.vue:59
+#: src/views/CashlinkManage.vue:198 src/views/CheckoutTransmission.vue:59
 msgid "Transaction is expired"
 msgstr "Переказ прострочено"
 
