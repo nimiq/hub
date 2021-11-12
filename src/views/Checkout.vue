@@ -16,7 +16,11 @@
             <template v-for="paymentOptions of request.paymentOptions" v-slot:[paymentOptions.currency]>
                 <component
                     :is="paymentOptions.currency === constructor.Currency.NIM
-                        ? (!request.isPointOfSale ? 'CheckoutCardNimiq' : 'CheckoutCardNimiqExternal')
+                        ? (request.isPointOfSale
+                            ? 'CheckoutCardNimiqExternal'
+                            : useExternalNimWallet
+                                ? 'CheckoutCardNimiqExternal'
+                                : 'CheckoutCardNimiq')
                         : paymentOptions.currency === constructor.Currency.BTC ? 'CheckoutCardBitcoin'
                         : 'CheckoutCardEthereum'"
                     :paymentOptions="paymentOptions"
@@ -28,6 +32,8 @@
                     }"
                     @chosen="chooseCurrency"
                     @expired="expired"
+                    @use-external-wallet="_onUseExternalWallet(paymentOptions.currency)"
+                    :preSelectCurrency="paymentOptions.currency === constructor.Currency.NIM && useExternalNimWallet"
                 />
             </template>
         </Carousel>
@@ -95,6 +101,7 @@ class Checkout extends Vue {
     private screenFitsDisclaimer: boolean = true;
     private dimensionsUpdateTimeout: number = -1;
     private globalCloseButtonLabel: string = '';
+    private useExternalNimWallet = false;
 
     @Watch('selectedCurrency')
     private updateUnselected() {
@@ -204,6 +211,10 @@ class Checkout extends Vue {
             150,
         );
     }
+
+    private _onUseExternalWallet(currency: PublicCurrency) {
+        if (currency === PublicCurrency.NIM) this.useExternalNimWallet = true;
+    }
 }
 
 namespace Checkout {
@@ -225,7 +236,7 @@ export default Checkout;
     .container >>> .nq-h1 {
         margin-top: 3.5rem;
         margin-bottom: 1rem;
-        line-height: 1;
+        line-height: 1.2;
         text-align: center;
     }
 

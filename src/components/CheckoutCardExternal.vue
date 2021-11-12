@@ -84,7 +84,7 @@
                         />
                     </PageBody>
                     <PageFooter v-if="selected">
-                        <a v-if="!request.isPointOfSale"
+                        <a v-if="!request.isPointOfSale && paymentOptions.currency !== 'nim'"
                             class="nq-button light-blue use-app-button"
                             :disabled="appNotFound"
                             @click="checkBlur"
@@ -121,7 +121,7 @@
 </template>
 
 <script lang="ts">
-import { Component } from 'vue-property-decorator';
+import { Component, Prop } from 'vue-property-decorator';
 import {
     Account,
     CaretRightSmallIcon,
@@ -161,6 +161,8 @@ import CheckoutManualPaymentDetails from './CheckoutManualPaymentDetails.vue';
 class CheckoutCardExternal<
     Parsed extends AvailableParsedPaymentOptions
 > extends CheckoutCard<Parsed> {
+    @Prop(Boolean) protected preSelectCurrency?: boolean;
+
     protected currencyFullName: string = ''; // to be set by child class
     protected appNotFound: boolean = false;
 
@@ -174,6 +176,9 @@ class CheckoutCardExternal<
         super.mounted();
         if (!this.currencyFullName) {
             this.currencyFullName = this.paymentOptions.currency; // just as a fallback in case not set by child class
+        }
+        if (this.preSelectCurrency) {
+            this.selectCurrency();
         }
     }
 
@@ -297,6 +302,7 @@ export default CheckoutCardExternal;
 
     .payment-option .warning {
         margin-top: 1.25rem;
+        margin-bottom: 0;
     }
 
     .payment-option .qr-code {

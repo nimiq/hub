@@ -57,9 +57,9 @@
             </PageBody>
             <PageFooter>
                 <button class="nq-button-pill light-blue" @click="goToOnboarding">{{ $t('Login') }}</button>
-                <a :href="onboardingLink" target="_blank" class="safe-onboarding-link nq-link nq-light-blue">
-                    {{ $t('Try it now') }}<ArrowRightSmallIcon/>
-                </a>
+                <button class="nq-button-s external-wallet" @click="$emit('use-external-wallet')">
+                    <QrCodeIcon/> {{ $t('Wallet App') }}
+                </button>
             </PageFooter>
         </template>
         <template v-else>
@@ -76,8 +76,14 @@
                 :disabledAddresses="paymentOptions.protocolSpecific.recipient
                     ? [paymentOptions.protocolSpecific.recipient.toUserFriendlyAddress()]
                     : []"
-                @account-selected="setAccountOrContract"
-                @login="() => goToOnboarding(false)"/>
+                :allowLogin="false"
+                @account-selected="setAccountOrContract"/>
+            <PageFooter class="minimal">
+                <button class="nq-button-pill light-blue" @click="() => goToOnboarding(false)">Login</button>
+                <button class="nq-button-s external-wallet" @click="$emit('use-external-wallet')">
+                    <QrCodeIcon/> {{ $t('Wallet App') }}
+                </button>
+            </PageFooter>
         </template>
     </SmallPage>
     <Network ref="network" :visible="false" @head-change="onHeadChange"/>
@@ -98,6 +104,7 @@ import {
     StopwatchIcon,
     TransferIcon,
     UnderPaymentIcon,
+    QrCodeIcon,
 } from '@nimiq/vue-components';
 import { AccountInfo } from '../lib/AccountInfo';
 import { TX_VALIDITY_WINDOW, WalletType } from '../lib/Constants';
@@ -125,6 +132,7 @@ import CurrencyInfo from './CurrencyInfo.vue';
     StopwatchIcon,
     TransferIcon,
     UnderPaymentIcon,
+    QrCodeIcon,
 }})
 class CheckoutCardNimiq
     extends CheckoutCard<ParsedNimiqDirectPaymentOptions> {
@@ -544,5 +552,20 @@ export default CheckoutCardNimiq;
         flex-direction: row;
         justify-content: space-between;
         padding: 3rem;
+    }
+
+    .page-footer.minimal {
+        padding: 0 3rem 3rem;
+    }
+
+    .page-footer .external-wallet {
+        display: flex;
+        align-items: center;
+    }
+
+    .page-footer .external-wallet .nq-icon {
+        width: 2.25rem;
+        height: 2.25rem;
+        margin: 0 1rem 0 0.5rem;
     }
 </style>
