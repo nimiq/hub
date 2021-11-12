@@ -22,40 +22,49 @@
                 <button class="nq-button-s close" @click="close">{{ $t('Done') }}</button>
                 <div class="cashlink-and-url">
                     <Account layout="column" :displayAsCashlink="true" :class="{'sending': !isTxSent, 'show-loader': !isManagementRequest}"/>
+                    <small>{{ $t('Click to copy:') }}</small>
                     <Copyable :text="link">
                         <div class="cashlink-url">{{link}}</div>
                     </Copyable>
                 </div>
             </PageBody>
             <PageFooter v-if="!this.request.skipSharing">
-                <button class="nq-button copy" :class="copied ? 'green' : 'light-blue'" @click="copy">
-                    <span v-if="copied"><CheckmarkSmallIcon /> {{ $t('Copied') }}</span>
-                    <span v-else>{{ $t('Copy') }}</span>
+                <button class="nq-button-s social-share qr-code" @click="qrOverlayOpen = true">
+                    <QrCodeIcon/>
                 </button>
                 <button v-if="nativeShareAvailable" class="nq-button share-mobile" @click="share">
                     {{ $t('Share') }}
                 </button>
                 <template v-else>
                     <a class="nq-button-s social-share telegram" target="_blank" :href="telegram">
-                        <svg width="29" height="25" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                            <path opacity=".6" d="M28.54.53c-.1-.31-.23-.4-.42-.47C27.7-.11 27 .14 27 .14S1.94 9.5.52 10.54c-.31.22-.42.35-.47.5-.25.74.52 1.06.52 1.06l6.46 2.19h.06L10.1 23s.28.59.61.78l.03.02.03.02.13.02h.02c.25 0 .66-.21 1.31-.9a56.7 56.7 0 013.4-3.22 90.48 90.48 0 015.64 4.27c.51.47.95.54 1.3.53.98-.04 1.25-1.16 1.25-1.16S28.41 4.26 28.56 1.7c0-.25.03-.4.03-.58 0-.24-.02-.48-.05-.6zM8.34 13.76v-.13c3.46-2.27 13.88-9.1 14.56-9.35.13-.04.21 0 .2.09-.32 1.12-11.88 11.8-11.88 11.8l-.06.12-.02-.01-.4 4.4-2.4-6.92z"/>
+                        <svg width="29" height="25" viewBox="0 0 29 25" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M28.54.53c-.1-.31-.23-.4-.42-.47C27.7-.11 27 .14 27 .14S1.94 9.5.52 10.54c-.31.22-.42.35-.47.5-.25.74.52 1.06.52 1.06l6.46 2.19h.06L10.1 23s.28.59.61.78l.03.02.03.02.13.02h.02c.25 0 .66-.21 1.31-.9a56.7 56.7 0 013.4-3.22 90.48 90.48 0 015.64 4.27c.51.47.95.54 1.3.53.98-.04 1.25-1.16 1.25-1.16S28.41 4.26 28.56 1.7c0-.25.03-.4.03-.58 0-.24-.02-.48-.05-.6zM8.34 13.76v-.13c3.46-2.27 13.88-9.1 14.56-9.35.13-.04.21 0 .2.09-.32 1.12-11.88 11.8-11.88 11.8l-.06.12-.02-.01-.4 4.4-2.4-6.92z"/>
                         </svg>
                     </a>
                     <a class="nq-button-s social-share" :href="mail">
-                        <svg width="28" height="24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                            <g opacity=".6">
+                        <svg width="28" height="24" viewBox="0 0 28 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <g>
                                 <path d="M13.9 11.36c.14.14.27.14.4 0l12.84-8.55c.27-.14.4-.4.27-.67A2.73 2.73 0 0024.73 0H2.67A2.73 2.73 0 000 2.14c0 .27.13.53.4.8l13.5 8.42z"/>
                                 <path d="M15.38 14.44c-.8.53-1.74.53-2.55 0L1.08 6.95c-.4-.13-.8 0-.94.27-.13.13-.13.27-.13.4v13.1a2.68 2.68 0 002.67 2.68h22.06a2.68 2.68 0 002.68-2.68V7.62c0-.4-.27-.67-.67-.67-.13 0-.27 0-.4.14l-10.96 7.35z"/>
                             </g>
                         </svg>
                     </a>
                     <a class="nq-button-s social-share" target="_blank" :href="whatsapp">
-                        <svg width="28" height="28" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                            <path opacity=".6" d="M14 0A14 14 0 000 14c0 2.82.82 5.65 2.45 8L.82 26.7c-.12.24 0 .48.11.6.12.11.35.23.59.11l5.01-1.53a13.91 13.91 0 0019.25-4.47c1.4-2.23 2.1-4.82 2.1-7.41C28 6.24 21.7 0 14 0zm8.4 19.65a4.57 4.57 0 01-4.08 2.47c-1.4-.12-2.8-.6-3.97-1.18a16.76 16.76 0 01-7-6.12c-2.22-2.94-2.33-5.76-.23-8.11a2.9 2.9 0 012.21-.6c.59.12 1.17.48 1.4 1.07l.47 1.06c.35.82.7 1.64.7 1.76.23.35.23.82 0 1.18-.35.58-.7 1.17-1.17 1.64a10.68 10.68 0 002.1 2.47 8.68 8.68 0 003.15 1.89c.35-.47.94-1.18 1.17-1.53a1.18 1.18 0 011.52-.47c.46.11 2.91 1.4 2.91 1.4.35.13.59.36.82.6.47.94.47 1.76 0 2.47z"/>
+                        <svg width="28" height="28" viewBox="0 0 28 28" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M14 0A14 14 0 000 14c0 2.82.82 5.65 2.45 8L.82 26.7c-.12.24 0 .48.11.6.12.11.35.23.59.11l5.01-1.53a13.91 13.91 0 0019.25-4.47c1.4-2.23 2.1-4.82 2.1-7.41C28 6.24 21.7 0 14 0zm8.4 19.65a4.57 4.57 0 01-4.08 2.47c-1.4-.12-2.8-.6-3.97-1.18a16.76 16.76 0 01-7-6.12c-2.22-2.94-2.33-5.76-.23-8.11a2.9 2.9 0 012.21-.6c.59.12 1.17.48 1.4 1.07l.47 1.06c.35.82.7 1.64.7 1.76.23.35.23.82 0 1.18-.35.58-.7 1.17-1.17 1.64a10.68 10.68 0 002.1 2.47 8.68 8.68 0 003.15 1.89c.35-.47.94-1.18 1.17-1.53a1.18 1.18 0 011.52-.47c.46.11 2.91 1.4 2.91 1.4.35.13.59.36.82.6.47.94.47 1.76 0 2.47z"/>
                         </svg>
                     </a>
                 </template>
             </PageFooter>
+
+            <transition name="fade">
+                <div v-if="qrOverlayOpen" class="qr-overlay" @click.self="qrOverlayOpen = false">
+                    <div class="nq-card">
+                        <CloseButton @click="qrOverlayOpen = false"/>
+                        <QrCode :data="link" fill="#1F2348"/>
+                    </div>
+                </div>
+            </transition>
         </SmallPage>
         <Network ref="network" :visible="false"/>
     </div>
@@ -66,7 +75,17 @@ import { Component, Vue } from 'vue-property-decorator';
 import { Static } from '../lib/StaticStore';
 import { Cashlink as PublicCashlink } from '../lib/PublicRequestTypes';
 import { ParsedCreateCashlinkRequest, ParsedManageCashlinkRequest } from '../lib/RequestTypes';
-import { SmallPage, PageBody, PageFooter, Account, CheckmarkSmallIcon, Copyable } from '@nimiq/vue-components';
+import {
+    CloseButton,
+    SmallPage,
+    PageBody,
+    PageFooter,
+    Account,
+    CheckmarkSmallIcon,
+    Copyable,
+    QrCode,
+    QrCodeIcon,
+} from '@nimiq/vue-components';
 import StatusScreen from '../components/StatusScreen.vue';
 import Network from '../components/Network.vue';
 import Cashlink from '../lib/Cashlink';
@@ -80,12 +99,15 @@ import { ERROR_CANCELED } from '../lib/Constants';
 @Component({components: {
     Account,
     CheckmarkSmallIcon,
+    CloseButton,
     PageBody,
     PageFooter,
     SmallPage,
     StatusScreen,
     Network,
     Copyable,
+    QrCode,
+    QrCodeIcon,
 }})
 export default class CashlinkManage extends Vue {
     private static readonly SHARE_PREFIX: string = i18n.t('Here is your Nimiq Cashlink!') as string;
@@ -102,6 +124,7 @@ export default class CashlinkManage extends Vue {
     private message: string = '';
     private retrievedCashlink: Cashlink | null = null;
     private copied: boolean = false;
+    private qrOverlayOpen = false;
 
     // @ts-ignore Property 'share' does not exist on type 'Navigator'
     private readonly nativeShareAvailable: boolean = (!!window.navigator && !!window.navigator.share);
@@ -259,6 +282,7 @@ export default class CashlinkManage extends Vue {
 <style scoped>
     .cashlink-manage {
         position: relative;
+        overflow: hidden;
     }
 
     .cashlink-manage:not(.fixed-height) {
@@ -335,6 +359,17 @@ export default class CashlinkManage extends Vue {
         opacity: .5;
     }
 
+    .cashlink-manage .cashlink-and-url .copyable {
+        padding: 0.75rem 1.5rem;
+        margin-top: 1rem;
+    }
+
+    .cashlink-manage .cashlink-and-url small {
+        font-size: 1.625rem;
+        opacity: 0.5;
+        font-weight: bold;
+    }
+
     .page-body {
         padding-top: 6rem;
         padding-bottom: 0;
@@ -379,12 +414,12 @@ export default class CashlinkManage extends Vue {
         width: 3.5rem;
         height: 3.5rem;
         transition: opacity .4s var(--nimiq-ease);
-        opacity: .7;
+        opacity: .5;
     }
 
     .social-share:hover svg,
     .social-share:focus svg {
-        opacity: .8;
+        opacity: .7;
     }
 
     .share-mobile {
@@ -400,5 +435,48 @@ export default class CashlinkManage extends Vue {
         background: none;
         background-color: rgba(31, 35, 72, 0.12); /* Based on Nimiq Blue */
         color: rgba(31, 35, 72, 1);
+    }
+
+    .qr-overlay {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        background: rgba(31, 35, 72, 0.85);
+    }
+
+    .qr-overlay .nq-card {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        padding: 2rem;
+        margin-left: -17rem;
+        margin-top: -19.5rem;
+    }
+
+    .qr-overlay .qr-code {
+        width: 30rem;
+    }
+
+    .qr-overlay .close-button {
+        display: block;
+        margin-left: auto;
+        margin-bottom: 2rem;
+    }
+
+    .fade-enter-active, .fade-leave-active {
+        transition: opacity .5s var(--nimiq-ease);
+    }
+    .fade-enter, .fade-leave-to {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    @media (max-width: 450px) {
+        .qr-overlay .nq-card {
+            /* Overwrite removed bottom radius of .nq-card on mobile */
+            border-radius: 1.25rem;
+        }
     }
 </style>
