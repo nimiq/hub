@@ -4,6 +4,7 @@ import type { ParsedNimiqSpecifics, ParsedNimiqDirectPaymentOptions } from './pa
 import type { ParsedEtherSpecifics, ParsedEtherDirectPaymentOptions } from './paymentOptions/EtherPaymentOptions';
 import type { ParsedBitcoinSpecifics, ParsedBitcoinDirectPaymentOptions } from './paymentOptions/BitcoinPaymentOptions';
 import type { SwapAsset } from '@nimiq/fastspot-api';
+import type { FiatApiSupportedFiatCurrency } from '@nimiq/utils';
 
 export interface ParsedBasicRequest {
     kind: RequestType;
@@ -100,6 +101,7 @@ export interface ParsedCreateCashlinkRequest extends ParsedBasicRequest {
     value?: number;
     message?: string;
     theme: CashlinkTheme;
+    fiatCurrency?: FiatApiSupportedFiatCurrency;
     returnLink: boolean;
     skipSharing: boolean;
 }

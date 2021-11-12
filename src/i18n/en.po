@@ -55,7 +55,7 @@ msgstr ""
 msgid "Activate update"
 msgstr ""
 
-#: src/views/CashlinkCreate.vue:61
+#: src/views/CashlinkCreate.vue:66
 msgid "Add a message..."
 msgstr ""
 
@@ -454,7 +454,7 @@ msgstr ""
 msgid "Create and scan QR codes to quickly share addresses."
 msgstr ""
 
-#: src/views/CashlinkCreate.vue:73
+#: src/views/CashlinkCreate.vue:78
 msgid "Create Cashlink"
 msgstr ""
 
@@ -496,7 +496,7 @@ msgstr ""
 msgid "Enter your PIN"
 msgstr ""
 
-#: src/views/CashlinkCreate.vue:160
+#: src/views/CashlinkCreate.vue:168
 msgid "express"
 msgstr ""
 
@@ -546,7 +546,7 @@ msgstr ""
 msgid "Finish"
 msgstr ""
 
-#: src/views/CashlinkCreate.vue:150
+#: src/views/CashlinkCreate.vue:158
 msgid "free"
 msgstr ""
 
@@ -614,7 +614,7 @@ msgstr ""
 msgid "Invalid request"
 msgstr ""
 
-#: src/views/CashlinkCreate.vue:64
+#: src/views/CashlinkCreate.vue:69
 msgid "It won’t be part of the public Blockchain and might get lost after the Cashlink was claimed."
 msgstr ""
 
@@ -930,7 +930,7 @@ msgstr ""
 msgid "Speed up your transaction"
 msgstr ""
 
-#: src/views/CashlinkCreate.vue:155
+#: src/views/CashlinkCreate.vue:163
 msgid "standard"
 msgstr ""
 
@@ -1028,7 +1028,7 @@ msgstr ""
 msgid "This is your account with your first address in it."
 msgstr ""
 
-#: src/views/CashlinkCreate.vue:63
+#: src/views/CashlinkCreate.vue:68
 msgid "This message will be stored in the Cashlink."
 msgstr ""
 

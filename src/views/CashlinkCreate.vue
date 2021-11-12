@@ -56,7 +56,12 @@
                                 :displayAsCashlink="true"/>
                         </div>
                         <hr/>
-                        <AmountWithFee ref="amountWithFee" :available-balance="availableBalance" v-model="liveAmountAndFee"/>
+                        <AmountWithFee ref="amountWithFee"
+                            :available-balance="availableBalance"
+                            v-model="liveAmountAndFee"
+                            :fiatAmount="fiatAmount"
+                            :fiatCurrency="request.fiatCurrency"
+                        />
                         <div class="message-with-tooltip">
                             <LabelInput class="message" :placeholder="$t('Add a message...')" :vanishing="true" :maxBytes="255" v-model="message" />
                             <Tooltip ref="tooltip" :container="$refs.createCashlinkTooltipTarget" autoWidth>
@@ -109,6 +114,7 @@ import {
     AmountWithFee,
     ArrowRightIcon,
     CloseButton,
+    FiatAmount,
     LabelInput,
     PageBody,
     PageFooter,
@@ -118,6 +124,7 @@ import {
     SmallPage,
     Tooltip,
 } from '@nimiq/vue-components';
+import { FiatApiSupportedCryptoCurrency, getExchangeRates } from '@nimiq/utils';
 
 @Component({components: {
     Account,
@@ -128,6 +135,7 @@ import {
     ArrowRightIcon,
     CloseButton,
     GlobalClose,
+    FiatAmount,
     LabelInput,
     PageBody,
     PageFooter,
@@ -203,6 +211,13 @@ class CashlinkCreate extends Vue {
     private optionsOpened = false;
     private openedDetails = CashlinkCreate.Details.NONE;
 
+    private fiatRate: number | null = null;
+
+    private get fiatAmount() {
+        if (!this.fiatRate) return this.request.fiatCurrency ? 0 : null;
+        return this.liveAmountAndFee.amount / 1e5 * this.fiatRate;
+    }
+
     private get availableBalance() {
         if (this.accountOrContractInfo && this.accountOrContractInfo.balance) {
             return this.accountOrContractInfo.balance;
@@ -267,6 +282,20 @@ class CashlinkCreate extends Vue {
             if (this.accountOrContractInfo && this.request.senderBalance) {
                 this.accountOrContractInfo.balance = this.request.senderBalance;
             }
+        }
+
+        if (this.request.fiatCurrency) {
+            const fiatCurrency = this.request.fiatCurrency;
+            const refreshFiatRate = () => {
+                getExchangeRates([FiatApiSupportedCryptoCurrency.NIM], [fiatCurrency]).then((prices) => {
+                    this.fiatRate = prices[FiatApiSupportedCryptoCurrency.NIM][fiatCurrency] || null;
+                }).catch((error) => {
+                    this.$captureException!(error);
+                    console.error(error);
+                });
+            };
+            refreshFiatRate();
+            window.setInterval(refreshFiatRate, 2 * 60 * 1000); // Refresh rate every 2 minutes
         }
     }
 

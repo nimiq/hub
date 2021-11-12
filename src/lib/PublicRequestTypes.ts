@@ -474,6 +474,7 @@ export interface Cashlink {
 export type CreateCashlinkRequest = BasicRequest & {
     value?: number,
     theme?: CashlinkTheme,
+    fiatCurrency?: string,
 } & (
     {} | {
         message: string,

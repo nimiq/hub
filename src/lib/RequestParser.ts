@@ -395,6 +395,7 @@ export class RequestParser {
                     value,
                     message,
                     theme,
+                    fiatCurrency: createCashlinkRequest.fiatCurrency,
                     returnLink,
                     skipSharing,
                 } as ParsedCreateCashlinkRequest;
@@ -666,6 +667,7 @@ export class RequestParser {
                     value: createCashlinkRequest.value,
                     message: createCashlinkRequest.message,
                     theme: createCashlinkRequest.theme,
+                    fiatCurrency: createCashlinkRequest.fiatCurrency,
                     returnLink: createCashlinkRequest.returnLink,
                     skipSharing: createCashlinkRequest.skipSharing,
                 } as CreateCashlinkRequest;

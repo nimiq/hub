@@ -1141,7 +1141,7 @@
 
 "@nimiq/vue-components@https://github.com/nimiq/vue-components#build/hub":
   version "0.1.0"
-  resolved "https://github.com/nimiq/vue-components#4397e2bdc7eeae09dec49bb8eb0cbadc09b45a0c"
+  resolved "https://github.com/nimiq/vue-components#05b9e90fd3a9f52354560e59b160dc158ecffe37"
   dependencies:
     "@nimiq/iqons" "^1.6.0"
     "@nimiq/style" "^0.8.2"
@@ -2433,9 +2433,9 @@ bfj@^6.1.1:
     tryer "^1.0.0"
 
 big-integer@^1.6.44:
-  version "1.6.49"
-  resolved "https://registry.yarnpkg.com/big-integer/-/big-integer-1.6.49.tgz#f6817d3ea5d4f3fb19e24df9f4b1b4471a8328ce"
-  integrity sha512-KJ7VhqH+f/BOt9a3yMwJNmcZjG53ijWMTjSAGMveQWyLwqIiwkjNP5PFgDob3Snnx86SjDj6I89fIbv0dkQeNw==
+  version "1.6.51"
+  resolved "https://registry.yarnpkg.com/big-integer/-/big-integer-1.6.51.tgz#0df92a5d9880560d3ff2d5fd20245c889d130686"
+  integrity sha512-GPEid2Y9QU1Exl1rpO9B2IPJGHPSupF5GnVIP0blYvNOMer2bTvSWs1jGOUg04hTmu67nmLsQ9TBo1puaotBHg==
 
 big-integer@^1.6.48:
   version "1.6.48"
