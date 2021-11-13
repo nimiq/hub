@@ -221,12 +221,12 @@ msgid ""
 " be processed."
 msgstr "Ви можете вплинути на швидкість обробки переказу, додавши комісію."
 
-#: src/views/CashlinkManage.vue:11 src/views/Checkout.vue:199
+#: src/views/CashlinkManage.vue:11 src/views/Checkout.vue:206
 #: src/views/CheckoutTransmission.vue:10
 msgid "Cancel"
 msgstr "Скасувати"
 
-#: src/views/Checkout.vue:198 src/views/SignTransactionLedger.vue:108
+#: src/views/Checkout.vue:205 src/views/SignTransactionLedger.vue:108
 msgid "Cancel payment"
 msgstr "Скасувати платіж"
 
@@ -404,7 +404,7 @@ msgstr "Підключення до мережі..."
 msgid "Connecting to Nimiq..."
 msgstr "Підключення до Німік..."
 
-#: src/components/CheckoutCardNimiq.vue:274 src/views/CashlinkManage.vue:175
+#: src/components/CheckoutCardNimiq.vue:282 src/views/CashlinkManage.vue:175
 #: src/views/CheckoutTransmission.vue:71
 msgid "Contacting seed nodes..."
 msgstr "Підключення до первинних вузлів..."
@@ -463,7 +463,7 @@ msgstr "Чек створюється"
 msgid "Detecting vesting contracts..."
 msgstr "Пошук розподільчих контрактів..."
 
-#: src/views/Checkout.vue:46
+#: src/views/Checkout.vue:52
 msgid "Disclaimer"
 msgstr "Застереження"
 
@@ -856,7 +856,7 @@ msgstr "Помилка запиту"
 msgid "Request failed: "
 msgstr "Помилка запиту:"
 
-#: src/components/CheckoutCardNimiq.vue:278
+#: src/components/CheckoutCardNimiq.vue:286
 msgid "Requesting balances..."
 msgstr "Завантаження балансу..."
 
@@ -950,7 +950,7 @@ msgstr ""
 msgid "Syncing"
 msgstr ""
 
-#: src/components/CheckoutCardNimiq.vue:276
+#: src/components/CheckoutCardNimiq.vue:284
 #: src/views/AddVestingContract.vue:11 src/views/CashlinkManage.vue:177
 #: src/views/CheckoutTransmission.vue:73
 msgid "Syncing consensus..."
@@ -1032,7 +1032,7 @@ msgstr "Це ваш перший рахунок з першою адресою �
 msgid "This message will be stored in the Cashlink."
 msgstr "Це повідомлення буде збережено в чеку."
 
-#: src/views/Checkout.vue:47
+#: src/views/Checkout.vue:53
 msgid ""
 "This Nimiq interface is non-custodial and solely used to bridge the payment "
 "sender with the payment recipient directly (P2P). Payment and deliverable "
@@ -1087,10 +1087,6 @@ msgstr "Переказ підписано"
 msgid "Try again"
 msgstr "Спробувати знову"
 
-#: src/components/CheckoutCardNimiq.vue:61
-msgid "Try it now"
-msgstr "Спробувати зараз"
-
 #: src/components/NotEnoughCookieSpace.vue:7
 msgid ""
 "Unfortunately, due to restrictions of Safari you cannot add more accounts "
@@ -1117,7 +1113,7 @@ msgstr "Без назви"
 msgid "Unsupported Request"
 msgstr "Невірний запит"
 
-#: src/components/CheckoutCardNimiq.vue:308
+#: src/components/CheckoutCardNimiq.vue:316
 msgid "Updating balances"
 msgstr "Оновлюємо баланс"
 
@@ -1150,6 +1146,11 @@ msgstr "Підтвердіть платіж"
 #: src/lib/LabelingMachine.ts:25 src/views/AddVestingContract.vue:137
 msgid "Vesting Contract"
 msgstr "Розподільний контракт"
+
+#: src/components/CheckoutCardNimiq.vue:61
+#: src/components/CheckoutCardNimiq.vue:84
+msgid "Wallet App"
+msgstr ""
 
 #: src/views/SignupSuccess.vue:87
 msgid ""

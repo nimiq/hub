@@ -223,12 +223,12 @@ msgstr ""
 "Al agregar una cuota de transacción, puede influenciar que tan rápido se "
 "procesará su transacción"
 
-#: src/views/CashlinkManage.vue:11 src/views/Checkout.vue:199
+#: src/views/CashlinkManage.vue:11 src/views/Checkout.vue:206
 #: src/views/CheckoutTransmission.vue:10
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: src/views/Checkout.vue:198 src/views/SignTransactionLedger.vue:108
+#: src/views/Checkout.vue:205 src/views/SignTransactionLedger.vue:108
 msgid "Cancel payment"
 msgstr "Cancelar pago"
 
@@ -406,7 +406,7 @@ msgstr "Conectándose a la red..."
 msgid "Connecting to Nimiq..."
 msgstr "Conectándose a Nimiq..."
 
-#: src/components/CheckoutCardNimiq.vue:274 src/views/CashlinkManage.vue:175
+#: src/components/CheckoutCardNimiq.vue:282 src/views/CashlinkManage.vue:175
 #: src/views/CheckoutTransmission.vue:71
 msgid "Contacting seed nodes..."
 msgstr "Contactando nodos semilla..."
@@ -465,7 +465,7 @@ msgstr "Creando su Cashlink"
 msgid "Detecting vesting contracts..."
 msgstr "Detectando contratos vesting..."
 
-#: src/views/Checkout.vue:46
+#: src/views/Checkout.vue:52
 msgid "Disclaimer"
 msgstr "Aviso Legal"
 
@@ -868,7 +868,7 @@ msgstr "Petición fallida"
 msgid "Request failed: "
 msgstr "Petición fallida:"
 
-#: src/components/CheckoutCardNimiq.vue:278
+#: src/components/CheckoutCardNimiq.vue:286
 msgid "Requesting balances..."
 msgstr "Solicitando balances..."
 
@@ -962,7 +962,7 @@ msgstr "Configuración del Intercambio Fallida"
 msgid "Syncing"
 msgstr "Sincronizando"
 
-#: src/components/CheckoutCardNimiq.vue:276
+#: src/components/CheckoutCardNimiq.vue:284
 #: src/views/AddVestingContract.vue:11 src/views/CashlinkManage.vue:177
 #: src/views/CheckoutTransmission.vue:73
 msgid "Syncing consensus..."
@@ -1046,7 +1046,7 @@ msgstr "Esta es su cuenta con su primer dirección dentro de ella."
 msgid "This message will be stored in the Cashlink."
 msgstr "Este mensaje sera almacenado en el Cashlink."
 
-#: src/views/Checkout.vue:47
+#: src/views/Checkout.vue:53
 msgid ""
 "This Nimiq interface is non-custodial and solely used to bridge the payment "
 "sender with the payment recipient directly (P2P). Payment and deliverable "
@@ -1100,10 +1100,6 @@ msgstr "Transacción Firmada"
 msgid "Try again"
 msgstr "Inténtelo de nuevo"
 
-#: src/components/CheckoutCardNimiq.vue:61
-msgid "Try it now"
-msgstr "Inténtelo ahora"
-
 #: src/components/NotEnoughCookieSpace.vue:7
 msgid ""
 "Unfortunately, due to restrictions of Safari you cannot add more accounts "
@@ -1131,7 +1127,7 @@ msgstr "Sin Etiqueta"
 msgid "Unsupported Request"
 msgstr "Petición no soportada"
 
-#: src/components/CheckoutCardNimiq.vue:308
+#: src/components/CheckoutCardNimiq.vue:316
 msgid "Updating balances"
 msgstr "Actualizando balances"
 
@@ -1166,6 +1162,11 @@ msgstr "Verifique Pago"
 #: src/lib/LabelingMachine.ts:25 src/views/AddVestingContract.vue:137
 msgid "Vesting Contract"
 msgstr "Contratos Vesting"
+
+#: src/components/CheckoutCardNimiq.vue:61
+#: src/components/CheckoutCardNimiq.vue:84
+msgid "Wallet App"
+msgstr ""
 
 #: src/views/SignupSuccess.vue:87
 msgid ""
