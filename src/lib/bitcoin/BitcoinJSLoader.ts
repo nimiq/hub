@@ -14,7 +14,7 @@ export async function loadBitcoinJS(): Promise<boolean> {
             script.addEventListener('error', reject);
             script.integrity = process.env.VUE_APP_BITCOIN_JS_INTEGRITY_HASH!; // defined in vue.config.js
             script.crossOrigin = 'anonymous';
-            script.src = '/bitcoin/BitcoinJS.min.js';
+            script.src = `${process.env.publicPath}bitcoin/BitcoinJS.min.js`;
             document.body.appendChild(script);
         })
     );

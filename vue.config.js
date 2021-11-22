@@ -1,3 +1,4 @@
+const webpack = require('webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const SriPlugin = require('webpack-subresource-integrity');
 const WriteFileWebpackPlugin = require('write-file-webpack-plugin');
@@ -9,6 +10,8 @@ const createHash = require('crypto').createHash;
 const PoLoaderOptimizer = require('webpack-i18n-tools')();
 const coreVersion = require('@nimiq/core-web/package.json').version;
 
+const publicPath = '/hub/';
+
 const buildName = process.env.NODE_ENV === 'production'
     ? process.env.build
     : 'local';
@@ -19,7 +22,7 @@ const domain = buildName === 'mainnet'
     ? 'https://hub.nimiq.com'
     : buildName === 'testnet'
         ? 'https://hub.nimiq-testnet.com'
-        : 'http://localhost:8080';
+        : 'http://localhost:9000/hub';
 
 const cdnDomain = buildName === 'mainnet'
     ? 'https://cdn.nimiq.com'
@@ -74,6 +77,11 @@ const configureWebpack = {
         new WriteFileWebpackPlugin(),
         new PoLoaderOptimizer(),
         // new BundleAnalyzerPlugin(),
+        new webpack.DefinePlugin({
+            'process.env': {
+                publicPath,
+            },
+        }),
     ],
     // Resolve config for yarn build
     resolve: {
@@ -108,6 +116,7 @@ const pages = {
         entry: 'src/main.ts',
         // the source template
         template: 'public/index.html',
+        publicPath,
         // insert browser warning html template
         browserWarningTemplate,
         browserWarningIntegrityHash,
@@ -126,58 +135,61 @@ const pages = {
         entry: 'src/iframe.ts',
         // the source template
         template: 'public/iframe.html',
+        publicPath,
         // output as dist/iframe.html
         filename: 'iframe.html',
         // chunks to include on this page, by default includes
         // extracted common chunks and vendor chunks.
         chunks: ['chunk-vendors', 'chunk-common', 'iframe']
     },
-    'cashlink-app': {
-        // entry for the page
-        entry: 'src/cashlink.ts',
-        // the source template
-        template: 'public/cashlink.html',
-        // insert browser warning html template
-        browserWarningTemplate,
-        browserWarningIntegrityHash,
-        domain,
-        cdnDomain,
-        coreVersion,
-        coreIntegrityHash,
-        // output as dist/cashlink/index.html
-        filename: 'cashlink/index.html',
-        // chunks to include on this page, by default includes
-        // extracted common chunks and vendor chunks.
-        chunks: ['chunk-vendors', 'chunk-common', 'cashlink-app']
-    },
+    // 'cashlink-app': {
+    //     // entry for the page
+    //     entry: 'src/cashlink.ts',
+    //     // the source template
+    //     template: 'public/cashlink.html',
+    //     publicPath,
+    //     // insert browser warning html template
+    //     browserWarningTemplate,
+    //     browserWarningIntegrityHash,
+    //     domain,
+    //     cdnDomain,
+    //     coreVersion,
+    //     coreIntegrityHash,
+    //     // output as dist/cashlink/index.html
+    //     filename: 'cashlink/index.html',
+    //     // chunks to include on this page, by default includes
+    //     // extracted common chunks and vendor chunks.
+    //     chunks: ['chunk-vendors', 'chunk-common', 'cashlink-app']
+    // },
 };
 
-if (buildName === 'local' || buildName === 'testnet') {
-    pages.demos = {
-        // entry for the page
-        entry: 'demos/Demo.ts',
-        // the source template
-        template: 'demos/index.html',
-        cdnDomain,
-        coreVersion,
-        coreIntegrityHash,
-        bitcoinJsIntegrityHash,
-        // output as dist/demos.html
-        filename: 'demos.html',
-        // chunks to include on this page, by default includes
-        // extracted common chunks and vendor chunks.
-        chunks: ['chunk-vendors', 'chunk-common', 'demos'],
-    };
-    pages.callback = {
-        entry: 'demos/callback.ts',
-        template: 'demos/callback.html',
-        filename: 'callback.html',
-        chunks: [],
-    };
-}
+// if (buildName === 'local' || buildName === 'testnet') {
+//     pages.demos = {
+//         // entry for the page
+//         entry: 'demos/Demo.ts',
+//         // the source template
+//         template: 'demos/index.html',
+//         cdnDomain,
+//         coreVersion,
+//         coreIntegrityHash,
+//         bitcoinJsIntegrityHash,
+//         // output as dist/demos.html
+//         filename: 'demos.html',
+//         // chunks to include on this page, by default includes
+//         // extracted common chunks and vendor chunks.
+//         chunks: ['chunk-vendors', 'chunk-common', 'demos'],
+//     };
+//     pages.callback = {
+//         entry: 'demos/callback.ts',
+//         template: 'demos/callback.html',
+//         filename: 'callback.html',
+//         chunks: [],
+//     };
+// }
 
 module.exports = {
     pages,
+    publicPath,
     integrity: true,
     configureWebpack,
     chainWebpack: config => {

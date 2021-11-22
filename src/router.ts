@@ -138,7 +138,7 @@ export const ERROR = 'error';
 
 export default new Router({
     mode: 'history',
-    base: process.env.BASE_URL,
+    base: `${process.env.publicPath || process.env.BASE_URL}`,
     routes: [
         {
             path: `/${ERROR}`,

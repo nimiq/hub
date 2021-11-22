@@ -169,7 +169,7 @@ export default class RpcApi {
         const localState = this._exportState();
         const client = new KeyguardClient(
             Config.keyguardEndpoint,
-            window.location.origin,
+            window.location.origin + `${process.env.publicPath}`,
             localState,
             undefined, // preserveRequests: keep default behavior, which is true for redirects but false for postMessage
             handleHistoryBack,
@@ -335,7 +335,7 @@ export default class RpcApi {
 
         this._startRoute();
 
-        if (location.pathname !== '/') {
+        if (location.pathname !== `${process.env.publicPath}`) {
             // Don't jump back to request's initial view on reload when navigated to a subsequent view.
             // E.g. if the user switches from Checkout to Import, don't jump back to Checkout on reload.
             return;

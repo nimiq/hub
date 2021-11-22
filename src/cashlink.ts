@@ -26,7 +26,7 @@ Vue.config.productionTip = false;
 
 // Set asset path relative to the public path defined in vue.config.json,
 // see https://cli.vuejs.org/guide/mode-and-env.html#using-env-variables-in-client-side-code
-setVueComponentsAssetPath(`${process.env.BASE_URL}js/`, `${process.env.BASE_URL}img/`);
+setVueComponentsAssetPath(`${process.env.publicPath || process.env.BASE_URL}js/`, `${process.env.publicPath || process.env.BASE_URL}img/`);
 
 startSentry(Vue);
 

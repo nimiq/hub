@@ -2,11 +2,11 @@ import { NETWORK_TEST } from '../lib/Constants';
 import { BTC_NETWORK_TEST, NATIVE_SEGWIT } from '../lib/bitcoin/BitcoinConstants';
 
 export default {
-    keyguardEndpoint: window.location.protocol + '//' + window.location.hostname + ':8000/src',
+    keyguardEndpoint: window.location.protocol + '//' + window.location.hostname + ':9000/keyguard',
     network: NETWORK_TEST,
     networkEndpoint: 'https://network.nimiq-testnet.com',
     privilegedOrigins: [ '*' ],
-    redirectTarget: window.location.protocol + '//' + window.location.hostname + ':8080/demos.html',
+    redirectTarget: window.location.protocol + '//' + window.location.hostname + ':9000/hub/demos.html',
     reportToSentry: false,
     checkoutWithoutNimOrigins: [ '*' ],
 
