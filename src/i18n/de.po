@@ -4,13 +4,13 @@
 # Irfan Maranki, 2020
 # Sven <sven@nimiq.com>, 2021
 # Redexe <timo.niehoff@yahoo.de>, 2021
-# Sören Schwert <hello@soerenschwert.de>, 2021
 # Daniel, 2021
 # Huriye <huriyegoek@gmx.de>, 2021
+# Sören Schwert <hello@soerenschwert.de>, 2021
 # 
 msgid ""
 msgstr ""
-"Last-Translator: Huriye <huriyegoek@gmx.de>, 2021\n"
+"Last-Translator: Sören Schwert <hello@soerenschwert.de>, 2021\n"
 "Language-Team: German (https://www.transifex.com/nimiq-foundation/teams/110181/de/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: de\n"
@@ -32,9 +32,9 @@ msgstr "{percentage} des Tauschwerts."
 msgid "{totalFees} fees"
 msgstr "{totalFees} Gebühren"
 
-#: src/components/CheckoutCardExternal.vue:67
-msgid "+ network fee"
-msgstr "+ Netzwerkgebühren"
+#: src/components/CheckoutCardExternal.vue:84
+msgid "+ {currency} network fee"
+msgstr "+ {currency} Netzwerkgebühren"
 
 #: src/views/CashlinkReceive.vue:110
 msgid "30 seconds, no email, no download."
@@ -46,7 +46,7 @@ msgstr "404 - kein Guthaben vorhanden"
 
 #: src/views/SetupSwapSuccess.vue:129
 msgid "503 Service unavailable - please try again later"
-msgstr ""
+msgstr "503 Service nicht verfügbar - bitte versuche es später nochmal"
 
 #: src/views/ExportSuccess.vue:60
 msgid "Account backed up!"
@@ -117,11 +117,11 @@ msgstr "Betrag/Schritt:"
 
 #: src/lib/paymentOptions/EtherPaymentOptions.ts:79
 msgid "Apply a gas price of at least {fee} gwei."
-msgstr ""
+msgstr "Setze eine Netzwerkgebühr von min. {fee} Gwei."
 
 #: src/lib/paymentOptions/BitcoinPaymentOptions.ts:87
 msgid "Apply a network fee of at least {fee} sat/byte."
-msgstr ""
+msgstr "Setze eine Netzwerkgebühr von min. {fee} sat/byte."
 
 #: src/views/SetupSwapLedger.vue:47
 msgid "Atomic swaps require two BTC transactions."
@@ -325,7 +325,7 @@ msgstr "Klicke auf Verbinden"
 
 #: src/views/CashlinkManage.vue:25
 msgid "Click to copy:"
-msgstr ""
+msgstr "Zum Kopieren klicken:"
 
 #: src/views/RequestError.vue:31
 msgid "Close"
@@ -475,7 +475,7 @@ msgstr "Vesting-Contracts werden gesucht..."
 msgid "Disclaimer"
 msgstr "Haftungsausschluss"
 
-#: src/components/CheckoutCardExternal.vue:73
+#: src/components/CheckoutCardExternal.vue:61
 #: src/components/CheckoutManualPaymentDetails.vue:31
 msgid "Don’t close this window until confirmation."
 msgstr "Schließe das Fenster erst nach Bestätigung."
@@ -484,7 +484,7 @@ msgstr "Schließe das Fenster erst nach Bestätigung."
 msgid "Done"
 msgstr "Fertig"
 
-#: src/components/CheckoutCardExternal.vue:102
+#: src/components/CheckoutCardExternal.vue:104
 msgid "Enter manually"
 msgstr "Manuell eingeben"
 
@@ -724,7 +724,7 @@ msgstr ""
 msgid "No"
 msgstr "Keine"
 
-#: src/components/CheckoutCardExternal.vue:94
+#: src/components/CheckoutCardExternal.vue:96
 msgid "No App found"
 msgstr "App nicht gefunden"
 
@@ -761,7 +761,7 @@ msgstr "Ein Konto kann jetzt mehrere Adressen haben."
 msgid "Open the {app} App"
 msgstr "Öffne die {app}-App"
 
-#: src/components/CheckoutCardExternal.vue:98
+#: src/components/CheckoutCardExternal.vue:100
 msgid "Open Wallet App"
 msgstr "Öffne die Wallet App"
 
@@ -777,7 +777,7 @@ msgstr "ausgehende"
 msgid "Owner:"
 msgstr "Eigentümer:"
 
-#: src/components/CheckoutCardExternal.vue:107
+#: src/components/CheckoutCardExternal.vue:109
 msgid "Pay with {currencyFullName}"
 msgstr "Bezahle mit {currencyFullName}"
 
@@ -817,7 +817,7 @@ msgstr "Bitte gehe zurück und starte den Prozess erneut."
 msgid "Please go back to the shop and restart the process."
 msgstr "Bitte gehe zurück zum Shop und starte den Vorgang erneut."
 
-#: src/components/CheckoutCardExternal.vue:95
+#: src/components/CheckoutCardExternal.vue:97
 msgid "Please send the transaction manually"
 msgstr "Bitte sende die Transaktion manuell"
 
@@ -847,7 +847,7 @@ msgstr "Rotes"
 
 #: src/views/RefundSwapLedger.vue:316
 msgid "Refund Failed"
-msgstr ""
+msgstr "Erstattung fehlgeschlagen"
 
 #: src/views/RefundSwapLedger.vue:335
 msgid ""
@@ -893,7 +893,7 @@ msgstr "Noch einmal"
 msgid "Save"
 msgstr "Speichern"
 
-#: src/components/CheckoutCardExternal.vue:52
+#: src/components/CheckoutCardExternal.vue:58
 #: src/components/CheckoutManualPaymentDetails.vue:27
 msgid "Send your transaction"
 msgstr "Transaktion senden"
@@ -1169,7 +1169,7 @@ msgstr "Vesting-Vertrag"
 #: src/components/CheckoutCardNimiq.vue:61
 #: src/components/CheckoutCardNimiq.vue:84
 msgid "Wallet App"
-msgstr ""
+msgstr "Wallet App"
 
 #: src/views/SignupSuccess.vue:87
 msgid ""

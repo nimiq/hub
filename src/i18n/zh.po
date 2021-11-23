@@ -2,10 +2,11 @@
 # Translators:
 # Daniel, 2020
 # Sven <sven@nimiq.com>, 2021
+# Sören Schwert <hello@soerenschwert.de>, 2021
 # 
 msgid ""
 msgstr ""
-"Last-Translator: Sven <sven@nimiq.com>, 2021\n"
+"Last-Translator: Sören Schwert <hello@soerenschwert.de>, 2021\n"
 "Language-Team: Chinese (https://www.transifex.com/nimiq-foundation/teams/110181/zh/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: zh\n"
@@ -27,9 +28,9 @@ msgstr "交换价值的 {percentage} "
 msgid "{totalFees} fees"
 msgstr "{totalFees} 费用"
 
-#: src/components/CheckoutCardExternal.vue:67
-msgid "+ network fee"
-msgstr "+网络费"
+#: src/components/CheckoutCardExternal.vue:84
+msgid "+ {currency} network fee"
+msgstr "+{currency}网络费"
 
 #: src/views/CashlinkReceive.vue:110
 msgid "30 seconds, no email, no download."
@@ -467,7 +468,7 @@ msgstr "正在检测归属合同..."
 msgid "Disclaimer"
 msgstr "免责声明"
 
-#: src/components/CheckoutCardExternal.vue:73
+#: src/components/CheckoutCardExternal.vue:61
 #: src/components/CheckoutManualPaymentDetails.vue:31
 msgid "Don’t close this window until confirmation."
 msgstr "在确认之前，请不要关闭此窗口"
@@ -476,7 +477,7 @@ msgstr "在确认之前，请不要关闭此窗口"
 msgid "Done"
 msgstr "完成"
 
-#: src/components/CheckoutCardExternal.vue:102
+#: src/components/CheckoutCardExternal.vue:104
 msgid "Enter manually"
 msgstr "手动输入"
 
@@ -705,7 +706,7 @@ msgstr "Nimiq更新了！新设计将附带多样新功能"
 msgid "No"
 msgstr "不是"
 
-#: src/components/CheckoutCardExternal.vue:94
+#: src/components/CheckoutCardExternal.vue:96
 msgid "No App found"
 msgstr "找不到应用"
 
@@ -742,7 +743,7 @@ msgstr "一个帐户现在可以具有多个地址"
 msgid "Open the {app} App"
 msgstr "打开 {app} 应用程序"
 
-#: src/components/CheckoutCardExternal.vue:98
+#: src/components/CheckoutCardExternal.vue:100
 msgid "Open Wallet App"
 msgstr "打开钱包应用"
 
@@ -758,7 +759,7 @@ msgstr "转出"
 msgid "Owner:"
 msgstr "所有者："
 
-#: src/components/CheckoutCardExternal.vue:107
+#: src/components/CheckoutCardExternal.vue:109
 msgid "Pay with {currencyFullName}"
 msgstr "使用{currencyFullName}支付"
 
@@ -798,7 +799,7 @@ msgstr "请返回并重新启动此流程"
 msgid "Please go back to the shop and restart the process."
 msgstr "请返回商店并重新启用此流程"
 
-#: src/components/CheckoutCardExternal.vue:95
+#: src/components/CheckoutCardExternal.vue:97
 msgid "Please send the transaction manually"
 msgstr "请手动发送交易"
 
@@ -874,7 +875,7 @@ msgstr "重试"
 msgid "Save"
 msgstr "储存"
 
-#: src/components/CheckoutCardExternal.vue:52
+#: src/components/CheckoutCardExternal.vue:58
 #: src/components/CheckoutManualPaymentDetails.vue:27
 msgid "Send your transaction"
 msgstr "发送你的交易"

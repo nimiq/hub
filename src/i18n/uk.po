@@ -2,10 +2,11 @@
 # Translators:
 # Daniel, 2021
 # Petro M <petro.matsyburka@outlook.com>, 2021
+# Sören Schwert <hello@soerenschwert.de>, 2021
 # 
 msgid ""
 msgstr ""
-"Last-Translator: Petro M <petro.matsyburka@outlook.com>, 2021\n"
+"Last-Translator: Sören Schwert <hello@soerenschwert.de>, 2021\n"
 "Language-Team: Ukrainian (https://www.transifex.com/nimiq-foundation/teams/110181/uk/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: uk\n"
@@ -27,9 +28,9 @@ msgstr ""
 msgid "{totalFees} fees"
 msgstr ""
 
-#: src/components/CheckoutCardExternal.vue:67
-msgid "+ network fee"
-msgstr "+ комісія мережі"
+#: src/components/CheckoutCardExternal.vue:84
+msgid "+ {currency} network fee"
+msgstr "+ {currency} комісія мережі"
 
 #: src/views/CashlinkReceive.vue:110
 msgid "30 seconds, no email, no download."
@@ -467,7 +468,7 @@ msgstr "Пошук розподільчих контрактів..."
 msgid "Disclaimer"
 msgstr "Застереження"
 
-#: src/components/CheckoutCardExternal.vue:73
+#: src/components/CheckoutCardExternal.vue:61
 #: src/components/CheckoutManualPaymentDetails.vue:31
 msgid "Don’t close this window until confirmation."
 msgstr "Не закривайте вікно поки не буде підтвердження."
@@ -476,7 +477,7 @@ msgstr "Не закривайте вікно поки не буде підтве
 msgid "Done"
 msgstr "Готово"
 
-#: src/components/CheckoutCardExternal.vue:102
+#: src/components/CheckoutCardExternal.vue:104
 msgid "Enter manually"
 msgstr "Ввести вручну"
 
@@ -710,7 +711,7 @@ msgstr "Німік стає кращим! Зустрічайте новий ди
 msgid "No"
 msgstr "Ні"
 
-#: src/components/CheckoutCardExternal.vue:94
+#: src/components/CheckoutCardExternal.vue:96
 msgid "No App found"
 msgstr "Додаток не знайдено"
 
@@ -745,7 +746,7 @@ msgstr "Тепер один рахунок може мати декілька а
 msgid "Open the {app} App"
 msgstr ""
 
-#: src/components/CheckoutCardExternal.vue:98
+#: src/components/CheckoutCardExternal.vue:100
 msgid "Open Wallet App"
 msgstr "Відкрити додаток гаманця"
 
@@ -761,7 +762,7 @@ msgstr ""
 msgid "Owner:"
 msgstr "Власник:"
 
-#: src/components/CheckoutCardExternal.vue:107
+#: src/components/CheckoutCardExternal.vue:109
 msgid "Pay with {currencyFullName}"
 msgstr "Сплатити за допомогою {currencyFullName}"
 
@@ -801,7 +802,7 @@ msgstr "Поверніться назад і розпочніть процес �
 msgid "Please go back to the shop and restart the process."
 msgstr "Поверніться назад у магазин і розпочніть процес з початку."
 
-#: src/components/CheckoutCardExternal.vue:95
+#: src/components/CheckoutCardExternal.vue:97
 msgid "Please send the transaction manually"
 msgstr "Будь ласка, надішліть переказ вручну"
 
@@ -877,7 +878,7 @@ msgstr "Повторити спробу"
 msgid "Save"
 msgstr "Зберегти"
 
-#: src/components/CheckoutCardExternal.vue:52
+#: src/components/CheckoutCardExternal.vue:58
 #: src/components/CheckoutManualPaymentDetails.vue:27
 msgid "Send your transaction"
 msgstr "Надішліть Ваш переказ"

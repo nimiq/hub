@@ -48,15 +48,32 @@
                         :shopLogoUrl="request.shopLogoUrl"
                         :startTime="request.time"
                         :endTime="paymentOptions.expires" />
-                    <h1 class="nq-h1" v-if="selected">
-                        {{ $t('Send your transaction') }}
-                    </h1>
-                    <PageBody v-if="!selected">
-                        <Account layout="column"
+                    <PageBody>
+                        <Account v-if="!selected" layout="column"
                             :image="request.shopLogoUrl"
-                            :label="rpcState.origin.split('://')[1]"/>
+                            :label="rpcState.origin.split('://')[1]"
+                        />
+                        <template v-else>
+                            <h1 class="nq-h1">
+                                {{ $t('Send your transaction') }}
+                            </h1>
+                            <p class="nq-notice warning">
+                                {{ $t('Don’t close this window until confirmation.') }}
+                            </p>
+                            <QrCode
+                                :data="paymentLink"
+                                :fill="{
+                                    type: 'radial-gradient',
+                                    position: [1, 1, 0, 1, 1, Math.sqrt(2)],
+                                    colorStops: [ [0, '#260133'], [1, '#1F2348'] ] // nimiq-blue
+                                }"
+                                :size="request.isPointOfSale ? 230 : 200"
+                            />
+                        </template>
+
                         <div class="amounts">
                             <Amount class="crypto nq-light-blue"
+                                :class="{'reduced-top': !request.isPointOfSale && paymentOptions.currency !== 'nim'}"
                                 :currency="paymentOptions.currency"
                                 :currencyDecimals="paymentOptions.decimals"
                                 :minDecimals="0"
@@ -64,24 +81,9 @@
                                 :amount="paymentOptions.amount"
                             />
                             <div v-if="paymentOptions.fee !== 0" class="fee">
-                                {{ $t('+ network fee') }}
+                                {{ $t('+ {currency} network fee', { currency: currencyFullName }) }}
                             </div>
                         </div>
-                    </PageBody>
-                    <PageBody v-else>
-                        <p class="nq-notice warning">
-                            {{ $t('Don’t close this window until confirmation.') }} <br />
-                            {{ paymentOptions.feeString }}
-                        </p>
-                        <QrCode
-                            :data="paymentLink"
-                            :fill="{
-                                type: 'radial-gradient',
-                                position: [1, 1, 0, 1, 1, Math.sqrt(2)],
-                                colorStops: [ [0, '#260133'], [1, '#1F2348'] ] // nimiq-blue
-                            }"
-                            :size="request.isPointOfSale ? 230 : 200"
-                        />
                     </PageBody>
                     <PageFooter v-if="selected">
                         <a v-if="!request.isPointOfSale && paymentOptions.currency !== 'nim'"
@@ -300,13 +302,20 @@ export default CheckoutCardExternal;
         overflow: hidden;
     }
 
+    .payment-option .page-body .nq-h1 {
+        margin-bottom: 0;
+        margin-top: 0;
+    }
+
     .payment-option .warning {
         margin-top: 1.25rem;
         margin-bottom: 0;
     }
 
     .payment-option .qr-code {
-        margin: auto;
+        margin: 2rem auto;
+        min-height: 0;
+        flex-grow: 1;
     }
 
     /* Hide payment info line contents until currency selected. Only show timer. */
@@ -360,7 +369,11 @@ export default CheckoutCardExternal;
         margin-top: 3.5rem;
         font-weight: 600;
         font-size: 5rem;
-        line-height: 5rem;
+        line-height: 1;
+    }
+
+    .payment-option .amounts .crypto.reduced-top {
+        margin-top: 2rem;
     }
 
     .payment-option .amounts .fee {

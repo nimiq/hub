@@ -19,8 +19,8 @@ msgstr ""
 msgid "{totalFees} fees"
 msgstr ""
 
-#: src/components/CheckoutCardExternal.vue:67
-msgid "+ network fee"
+#: src/components/CheckoutCardExternal.vue:84
+msgid "+ {currency} network fee"
 msgstr ""
 
 #: src/views/CashlinkReceive.vue:110
@@ -471,7 +471,7 @@ msgstr ""
 msgid "Disclaimer"
 msgstr ""
 
-#: src/components/CheckoutCardExternal.vue:73
+#: src/components/CheckoutCardExternal.vue:61
 #: src/components/CheckoutManualPaymentDetails.vue:31
 msgid "Don’t close this window until confirmation."
 msgstr ""
@@ -480,7 +480,7 @@ msgstr ""
 msgid "Done"
 msgstr ""
 
-#: src/components/CheckoutCardExternal.vue:102
+#: src/components/CheckoutCardExternal.vue:104
 msgid "Enter manually"
 msgstr ""
 
@@ -708,7 +708,7 @@ msgstr ""
 msgid "No"
 msgstr ""
 
-#: src/components/CheckoutCardExternal.vue:94
+#: src/components/CheckoutCardExternal.vue:96
 msgid "No App found"
 msgstr ""
 
@@ -743,7 +743,7 @@ msgstr ""
 msgid "Open the {app} App"
 msgstr ""
 
-#: src/components/CheckoutCardExternal.vue:98
+#: src/components/CheckoutCardExternal.vue:100
 msgid "Open Wallet App"
 msgstr ""
 
@@ -759,7 +759,7 @@ msgstr ""
 msgid "Owner:"
 msgstr ""
 
-#: src/components/CheckoutCardExternal.vue:107
+#: src/components/CheckoutCardExternal.vue:109
 msgid "Pay with {currencyFullName}"
 msgstr ""
 
@@ -799,7 +799,7 @@ msgstr ""
 msgid "Please go back to the shop and restart the process."
 msgstr ""
 
-#: src/components/CheckoutCardExternal.vue:95
+#: src/components/CheckoutCardExternal.vue:97
 msgid "Please send the transaction manually"
 msgstr ""
 
@@ -875,7 +875,7 @@ msgstr ""
 msgid "Save"
 msgstr ""
 
-#: src/components/CheckoutCardExternal.vue:52
+#: src/components/CheckoutCardExternal.vue:58
 #: src/components/CheckoutManualPaymentDetails.vue:27
 msgid "Send your transaction"
 msgstr ""

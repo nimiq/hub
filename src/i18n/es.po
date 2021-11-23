@@ -2,10 +2,11 @@
 # Translators:
 # Daniel, 2020
 # Ricardo Barquero Carranza <richy@nimiq.com>, 2021
+# Sören Schwert <hello@soerenschwert.de>, 2021
 # 
 msgid ""
 msgstr ""
-"Last-Translator: Ricardo Barquero Carranza <richy@nimiq.com>, 2021\n"
+"Last-Translator: Sören Schwert <hello@soerenschwert.de>, 2021\n"
 "Language-Team: Spanish (https://www.transifex.com/nimiq-foundation/teams/110181/es/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: es\n"
@@ -27,9 +28,9 @@ msgstr "{percentage} del valor del intercambio."
 msgid "{totalFees} fees"
 msgstr "{totalFees} en cuota"
 
-#: src/components/CheckoutCardExternal.vue:67
-msgid "+ network fee"
-msgstr "+ cuota de red"
+#: src/components/CheckoutCardExternal.vue:84
+msgid "+ {currency} network fee"
+msgstr "+ {currency} cuota de red"
 
 #: src/views/CashlinkReceive.vue:110
 msgid "30 seconds, no email, no download."
@@ -469,7 +470,7 @@ msgstr "Detectando contratos vesting..."
 msgid "Disclaimer"
 msgstr "Aviso Legal"
 
-#: src/components/CheckoutCardExternal.vue:73
+#: src/components/CheckoutCardExternal.vue:61
 #: src/components/CheckoutManualPaymentDetails.vue:31
 msgid "Don’t close this window until confirmation."
 msgstr "No cierre esta ventana hasta obtener la confirmación."
@@ -478,7 +479,7 @@ msgstr "No cierre esta ventana hasta obtener la confirmación."
 msgid "Done"
 msgstr "Listo"
 
-#: src/components/CheckoutCardExternal.vue:102
+#: src/components/CheckoutCardExternal.vue:104
 msgid "Enter manually"
 msgstr "Ingrese manualmente"
 
@@ -716,7 +717,7 @@ msgstr ""
 msgid "No"
 msgstr "No"
 
-#: src/components/CheckoutCardExternal.vue:94
+#: src/components/CheckoutCardExternal.vue:96
 msgid "No App found"
 msgstr "No se encontró ninguna Aplicación"
 
@@ -753,7 +754,7 @@ msgstr "Una cuenta puede tener ahora multiples direcciones."
 msgid "Open the {app} App"
 msgstr "Abra la {app} App"
 
-#: src/components/CheckoutCardExternal.vue:98
+#: src/components/CheckoutCardExternal.vue:100
 msgid "Open Wallet App"
 msgstr "Abrir Aplicación Billetera"
 
@@ -769,7 +770,7 @@ msgstr "saliendo"
 msgid "Owner:"
 msgstr "Dueño."
 
-#: src/components/CheckoutCardExternal.vue:107
+#: src/components/CheckoutCardExternal.vue:109
 msgid "Pay with {currencyFullName}"
 msgstr "Pagar con {currencyFullName}"
 
@@ -809,7 +810,7 @@ msgstr "Por favor vuelva y comience de nuevo el proceso."
 msgid "Please go back to the shop and restart the process."
 msgstr "Por favor vuelva a la tienda y comience de nuevo el proceso."
 
-#: src/components/CheckoutCardExternal.vue:95
+#: src/components/CheckoutCardExternal.vue:97
 msgid "Please send the transaction manually"
 msgstr "Por favor envíe la transacción manualmente"
 
@@ -889,7 +890,7 @@ msgstr "Reintentar"
 msgid "Save"
 msgstr "Guardar"
 
-#: src/components/CheckoutCardExternal.vue:52
+#: src/components/CheckoutCardExternal.vue:58
 #: src/components/CheckoutManualPaymentDetails.vue:27
 msgid "Send your transaction"
 msgstr "Enviando su transacción"
