@@ -751,6 +751,11 @@ msgstr "打开钱包应用"
 msgid "Orange"
 msgstr "橙"
 
+#: src/components/CheckoutCardNimiq.vue:61
+#: src/components/CheckoutCardNimiq.vue:84
+msgid "Other wallets"
+msgstr ""
+
 #: src/views/SetupSwapLedger.vue:964
 msgid "outgoing"
 msgstr "转出"
@@ -1131,11 +1136,6 @@ msgstr "验证付款"
 #: src/lib/LabelingMachine.ts:25 src/views/AddVestingContract.vue:137
 msgid "Vesting Contract"
 msgstr "归属合同"
-
-#: src/components/CheckoutCardNimiq.vue:61
-#: src/components/CheckoutCardNimiq.vue:84
-msgid "Wallet App"
-msgstr ""
 
 #: src/views/SignupSuccess.vue:87
 msgid ""

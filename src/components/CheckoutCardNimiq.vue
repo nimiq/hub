@@ -58,7 +58,7 @@
             <PageFooter>
                 <button class="nq-button-pill light-blue" @click="goToOnboarding">{{ $t('Login') }}</button>
                 <button class="nq-button-s external-wallet" @click="$emit('use-external-wallet')">
-                    <QrCodeIcon/> {{ $t('Wallet App') }}
+                    <QrCodeIcon/> {{ $t('Other wallets') }}
                 </button>
             </PageFooter>
         </template>
@@ -81,7 +81,7 @@
             <PageFooter class="minimal">
                 <button class="nq-button-pill light-blue" @click="() => goToOnboarding(false)">Login</button>
                 <button class="nq-button-s external-wallet" @click="$emit('use-external-wallet')">
-                    <QrCodeIcon/> {{ $t('Wallet App') }}
+                    <QrCodeIcon/> {{ $t('Other wallets') }}
                 </button>
             </PageFooter>
         </template>

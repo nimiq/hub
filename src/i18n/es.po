@@ -762,6 +762,11 @@ msgstr "Abrir Aplicación Billetera"
 msgid "Orange"
 msgstr "Naranja"
 
+#: src/components/CheckoutCardNimiq.vue:61
+#: src/components/CheckoutCardNimiq.vue:84
+msgid "Other wallets"
+msgstr "Otras billeteras"
+
 #: src/views/SetupSwapLedger.vue:964
 msgid "outgoing"
 msgstr "saliendo"
@@ -1163,11 +1168,6 @@ msgstr "Verifique Pago"
 #: src/lib/LabelingMachine.ts:25 src/views/AddVestingContract.vue:137
 msgid "Vesting Contract"
 msgstr "Contratos Vesting"
-
-#: src/components/CheckoutCardNimiq.vue:61
-#: src/components/CheckoutCardNimiq.vue:84
-msgid "Wallet App"
-msgstr ""
 
 #: src/views/SignupSuccess.vue:87
 msgid ""

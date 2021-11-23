@@ -769,6 +769,11 @@ msgstr "Öffne die Wallet App"
 msgid "Orange"
 msgstr "Oranges"
 
+#: src/components/CheckoutCardNimiq.vue:61
+#: src/components/CheckoutCardNimiq.vue:84
+msgid "Other wallets"
+msgstr "Andere Wallets"
+
 #: src/views/SetupSwapLedger.vue:964
 msgid "outgoing"
 msgstr "ausgehende"
@@ -1165,11 +1170,6 @@ msgstr "Überprüfe die Zahlung"
 #: src/lib/LabelingMachine.ts:25 src/views/AddVestingContract.vue:137
 msgid "Vesting Contract"
 msgstr "Vesting-Vertrag"
-
-#: src/components/CheckoutCardNimiq.vue:61
-#: src/components/CheckoutCardNimiq.vue:84
-msgid "Wallet App"
-msgstr "Wallet App"
 
 #: src/views/SignupSuccess.vue:87
 msgid ""

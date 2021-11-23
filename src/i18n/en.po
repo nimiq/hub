@@ -751,6 +751,11 @@ msgstr ""
 msgid "Orange"
 msgstr ""
 
+#: src/components/CheckoutCardNimiq.vue:61
+#: src/components/CheckoutCardNimiq.vue:84
+msgid "Other wallets"
+msgstr ""
+
 #: src/views/SetupSwapLedger.vue:964
 msgid "outgoing"
 msgstr ""
@@ -1126,11 +1131,6 @@ msgstr ""
 #: src/lib/LabelingMachine.ts:25
 #: src/views/AddVestingContract.vue:137
 msgid "Vesting Contract"
-msgstr ""
-
-#: src/components/CheckoutCardNimiq.vue:61
-#: src/components/CheckoutCardNimiq.vue:84
-msgid "Wallet App"
 msgstr ""
 
 #: src/views/SignupSuccess.vue:87
