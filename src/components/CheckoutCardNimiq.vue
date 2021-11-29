@@ -57,9 +57,10 @@
             </PageBody>
             <PageFooter>
                 <button class="nq-button-pill light-blue" @click="goToOnboarding">{{ $t('Login') }}</button>
-                <button class="nq-button-s external-wallet" @click="$emit('use-external-wallet')">
-                    <QrCodeIcon/> {{ $t('Other wallets') }}
-                </button>
+                <button v-if="request.version > 1"
+                    class="nq-button-s external-wallet"
+                    @click="$emit('use-external-wallet')"
+                ><QrCodeIcon/> {{ $t('Other wallets') }}</button>
             </PageFooter>
         </template>
         <template v-else>
@@ -80,9 +81,10 @@
                 @account-selected="setAccountOrContract"/>
             <PageFooter class="minimal">
                 <button class="nq-button-pill light-blue" @click="() => goToOnboarding(false)">Login</button>
-                <button class="nq-button-s external-wallet" @click="$emit('use-external-wallet')">
-                    <QrCodeIcon/> {{ $t('Other wallets') }}
-                </button>
+                <button v-if="request.version > 1"
+                    class="nq-button-s external-wallet"
+                    @click="$emit('use-external-wallet')"
+                ><QrCodeIcon/> {{ $t('Other wallets') }}</button>
             </PageFooter>
         </template>
     </SmallPage>

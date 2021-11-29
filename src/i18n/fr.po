@@ -283,7 +283,7 @@ msgstr "Choisir une nouvelle adresse"
 msgid "Choose an Address"
 msgstr "Choisir une adresse"
 
-#: src/components/CheckoutCardNimiq.vue:66
+#: src/components/CheckoutCardNimiq.vue:67
 msgid "Choose an Address to pay"
 msgstr "Choisir une adresse pour payer"
 
@@ -410,7 +410,7 @@ msgstr "Connexion au réseau..."
 msgid "Connecting to Nimiq..."
 msgstr "Connexion à Nimiq..."
 
-#: src/components/CheckoutCardNimiq.vue:282 src/views/CashlinkManage.vue:175
+#: src/components/CheckoutCardNimiq.vue:284 src/views/CashlinkManage.vue:175
 #: src/views/CheckoutTransmission.vue:71
 msgid "Contacting seed nodes..."
 msgstr "En train de contacter les seed nodes..."
@@ -552,7 +552,7 @@ msgstr "Limite de Gas"
 msgid "Gas Price"
 msgstr "Prix du Gas"
 
-#: src/components/CheckoutCardNimiq.vue:70
+#: src/components/CheckoutCardNimiq.vue:71
 msgid "Get NIM"
 msgstr "Obtenir des NIM"
 
@@ -735,7 +735,7 @@ msgstr ""
 "Pas d'inscription, pas d'installation,\n"
 "100% gratuit"
 
-#: src/components/CheckoutCardNimiq.vue:68
+#: src/components/CheckoutCardNimiq.vue:69
 msgid "None of your available addresses has sufficient balance."
 msgstr "Aucune de vos adresses disponibles n'a un solde suffisant."
 
@@ -768,8 +768,8 @@ msgstr "Ouvrir l'app Wallet"
 msgid "Orange"
 msgstr "Orange"
 
-#: src/components/CheckoutCardNimiq.vue:61
-#: src/components/CheckoutCardNimiq.vue:84
+#: src/components/CheckoutCardNimiq.vue:63
+#: src/components/CheckoutCardNimiq.vue:87
 msgid "Other wallets"
 msgstr ""
 
@@ -879,7 +879,7 @@ msgstr "Requête échouée"
 msgid "Request failed: "
 msgstr "Requête échouée :"
 
-#: src/components/CheckoutCardNimiq.vue:286
+#: src/components/CheckoutCardNimiq.vue:288
 msgid "Requesting balances..."
 msgstr "Récupération des soldes..."
 
@@ -973,7 +973,7 @@ msgstr "Echec de la mise en place du swap"
 msgid "Syncing"
 msgstr "Synchronisation"
 
-#: src/components/CheckoutCardNimiq.vue:284
+#: src/components/CheckoutCardNimiq.vue:286
 #: src/views/AddVestingContract.vue:11 src/views/CashlinkManage.vue:177
 #: src/views/CheckoutTransmission.vue:73
 msgid "Syncing consensus..."
@@ -1140,7 +1140,7 @@ msgstr "Non étiqueté"
 msgid "Unsupported Request"
 msgstr "Requête non supportée"
 
-#: src/components/CheckoutCardNimiq.vue:316
+#: src/components/CheckoutCardNimiq.vue:318
 msgid "Updating balances"
 msgstr "Mise à jour des soldes"
 

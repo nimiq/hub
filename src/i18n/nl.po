@@ -283,7 +283,7 @@ msgstr "Kies een nieuw adres"
 msgid "Choose an Address"
 msgstr "Kies een adres"
 
-#: src/components/CheckoutCardNimiq.vue:66
+#: src/components/CheckoutCardNimiq.vue:67
 msgid "Choose an Address to pay"
 msgstr "Kies een adres om mee te betalen"
 
@@ -408,7 +408,7 @@ msgstr "Verbinden met netwerk..."
 msgid "Connecting to Nimiq..."
 msgstr "Verbinden met Nimiq..."
 
-#: src/components/CheckoutCardNimiq.vue:282 src/views/CashlinkManage.vue:175
+#: src/components/CheckoutCardNimiq.vue:284 src/views/CashlinkManage.vue:175
 #: src/views/CheckoutTransmission.vue:71
 msgid "Contacting seed nodes..."
 msgstr " Seed nodes contacteren..."
@@ -550,7 +550,7 @@ msgstr "Gas limiet"
 msgid "Gas Price"
 msgstr "Gas prijs"
 
-#: src/components/CheckoutCardNimiq.vue:70
+#: src/components/CheckoutCardNimiq.vue:71
 msgid "Get NIM"
 msgstr "Verkrijg NIM"
 
@@ -732,7 +732,7 @@ msgstr ""
 "Geen registratie, geen installatie,\n"
 "100% gratis"
 
-#: src/components/CheckoutCardNimiq.vue:68
+#: src/components/CheckoutCardNimiq.vue:69
 msgid "None of your available addresses has sufficient balance."
 msgstr "Geen van je beschikbare adressen heeft voldoende saldo."
 
@@ -765,8 +765,8 @@ msgstr "Open Wallet App"
 msgid "Orange"
 msgstr "Oranje"
 
-#: src/components/CheckoutCardNimiq.vue:61
-#: src/components/CheckoutCardNimiq.vue:84
+#: src/components/CheckoutCardNimiq.vue:63
+#: src/components/CheckoutCardNimiq.vue:87
 msgid "Other wallets"
 msgstr ""
 
@@ -876,7 +876,7 @@ msgstr "Verzoek mislukt"
 msgid "Request failed: "
 msgstr "Verzoek mislukt:"
 
-#: src/components/CheckoutCardNimiq.vue:286
+#: src/components/CheckoutCardNimiq.vue:288
 msgid "Requesting balances..."
 msgstr "Balans opvragen..."
 
@@ -971,7 +971,7 @@ msgstr "Swap initialisatie mislukt"
 msgid "Syncing"
 msgstr "Synchroniseren"
 
-#: src/components/CheckoutCardNimiq.vue:284
+#: src/components/CheckoutCardNimiq.vue:286
 #: src/views/AddVestingContract.vue:11 src/views/CashlinkManage.vue:177
 #: src/views/CheckoutTransmission.vue:73
 msgid "Syncing consensus..."
@@ -1136,7 +1136,7 @@ msgstr "Ongelabeld"
 msgid "Unsupported Request"
 msgstr "Niet ondersteund verzoek"
 
-#: src/components/CheckoutCardNimiq.vue:316
+#: src/components/CheckoutCardNimiq.vue:318
 msgid "Updating balances"
 msgstr "Balans updaten"
 

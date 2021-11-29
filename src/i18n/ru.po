@@ -281,7 +281,7 @@ msgstr "Выбрать новый Адрес"
 msgid "Choose an Address"
 msgstr "Выбрать Адрес"
 
-#: src/components/CheckoutCardNimiq.vue:66
+#: src/components/CheckoutCardNimiq.vue:67
 msgid "Choose an Address to pay"
 msgstr ""
 "Выберите Адрес \n"
@@ -410,7 +410,7 @@ msgstr "Подключаемся к сети..."
 msgid "Connecting to Nimiq..."
 msgstr "Подключаемся к Nimiq..."
 
-#: src/components/CheckoutCardNimiq.vue:282 src/views/CashlinkManage.vue:175
+#: src/components/CheckoutCardNimiq.vue:284 src/views/CashlinkManage.vue:175
 #: src/views/CheckoutTransmission.vue:71
 msgid "Contacting seed nodes..."
 msgstr "Устанавливаем связь с сид-узлами..."
@@ -556,7 +556,7 @@ msgstr "Лимит Gas"
 msgid "Gas Price"
 msgstr "Цена Gas"
 
-#: src/components/CheckoutCardNimiq.vue:70
+#: src/components/CheckoutCardNimiq.vue:71
 msgid "Get NIM"
 msgstr "Получить NIM"
 
@@ -734,7 +734,7 @@ msgstr ""
 "Без регистрации, без установки,\n"
 "100% бесплатно"
 
-#: src/components/CheckoutCardNimiq.vue:68
+#: src/components/CheckoutCardNimiq.vue:69
 msgid "None of your available addresses has sufficient balance."
 msgstr "Баланс на ваших доступных счетах недостаточен."
 
@@ -767,8 +767,8 @@ msgstr "Открыть Wallet App"
 msgid "Orange"
 msgstr "Оранжевый"
 
-#: src/components/CheckoutCardNimiq.vue:61
-#: src/components/CheckoutCardNimiq.vue:84
+#: src/components/CheckoutCardNimiq.vue:63
+#: src/components/CheckoutCardNimiq.vue:87
 msgid "Other wallets"
 msgstr ""
 
@@ -878,7 +878,7 @@ msgstr "Запрос не выполнен"
 msgid "Request failed: "
 msgstr "Запрос не выполнен:"
 
-#: src/components/CheckoutCardNimiq.vue:286
+#: src/components/CheckoutCardNimiq.vue:288
 msgid "Requesting balances..."
 msgstr "Запрос баланса..."
 
@@ -973,7 +973,7 @@ msgstr "Не удалось подготовить обмен"
 msgid "Syncing"
 msgstr "Синхронизация"
 
-#: src/components/CheckoutCardNimiq.vue:284
+#: src/components/CheckoutCardNimiq.vue:286
 #: src/views/AddVestingContract.vue:11 src/views/CashlinkManage.vue:177
 #: src/views/CheckoutTransmission.vue:73
 msgid "Syncing consensus..."
@@ -1136,7 +1136,7 @@ msgstr "Без метки"
 msgid "Unsupported Request"
 msgstr "Неподдерживаемый запрос"
 
-#: src/components/CheckoutCardNimiq.vue:316
+#: src/components/CheckoutCardNimiq.vue:318
 msgid "Updating balances"
 msgstr "Обновление балансов"
 
