@@ -460,6 +460,8 @@ export enum CashlinkTheme {
     EASTER,
     GENERIC,
     BIRTHDAY,
+    // Temporary themes that might be retracted in the future
+    BLOCKCHANCE_2021 = 255,
 }
 
 export interface Cashlink {

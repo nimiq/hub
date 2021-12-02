@@ -138,7 +138,6 @@ import { Getter, Mutation } from 'vuex-class';
 import { NetworkClient, DetailedPlainTransaction } from '@nimiq/network-client';
 import Config from 'config';
 import { WalletInfo } from '../lib/WalletInfo';
-import { NETWORK_MAIN } from '../lib/Constants';
 import { CashlinkStore } from '../lib/CashlinkStore';
 import HubApi from '../../client/HubApi';
 
@@ -319,7 +318,14 @@ class CashlinkReceive extends Vue {
     }
 
     private get isDarkTheme(): boolean {
-        return !!this.cashlink && this.cashlink.theme === CashlinkTheme.LUNAR_NEW_YEAR;
+        const theme = this.cashlink ? this.cashlink.theme : CashlinkTheme.STANDARD;
+        switch (theme) {
+            case CashlinkTheme.LUNAR_NEW_YEAR:
+            case CashlinkTheme.BLOCKCHANCE_2021:
+                return true;
+            default:
+                return false;
+        }
     }
 
     private get hasMobileTheme(): boolean {
@@ -350,10 +356,12 @@ class CashlinkReceive extends Vue {
     }
 
     private get welcomeText(): string {
+        const theme = this.cashlink ? this.cashlink.theme : CashlinkTheme.STANDARD;
         if (this.cashlink && this.cashlink.hasEncodedTheme) {
-            return this.$t('Congrats, you received a Nimiq Gift Card.') as string;
+            return theme === CashlinkTheme.BLOCKCHANCE_2021
+                ? this.$t('Thank you for attending Blockchance, here is your first Cashlink.') as string
+                : this.$t('Congrats, you received a Nimiq Gift Card.') as string;
         } else {
-            const theme = this.cashlink ? this.cashlink.theme : CashlinkTheme.STANDARD;
             return theme === CashlinkTheme.STANDARD
                 ? this.$t('Congrats, you just opened a Nimiq Cashlink.') as string
                 : this.$t('Congrats, somebody gifted you a Nimiq Cashlink.') as string;
@@ -416,6 +424,10 @@ export default CashlinkReceive;
 
     .theme-background.birthday {
         object-position: 70% bottom;
+    }
+
+    .theme-background.blockchance-2021 {
+        object-position: left 30%;
     }
 
     .card-content {
@@ -765,6 +777,10 @@ export default CashlinkReceive;
 
         .theme-background.easter {
             object-position: 60% center;
+        }
+
+        .theme-background.blockchance-2021 {
+            object-position: 75% 0;
         }
 
         .small-page {

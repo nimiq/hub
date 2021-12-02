@@ -36,7 +36,7 @@ msgstr "+ {currency} комісія мережі"
 msgid "30 seconds, no email, no download."
 msgstr "30 секунд, без пошти, без скачування."
 
-#: src/views/CashlinkReceive.vue:207
+#: src/views/CashlinkReceive.vue:206
 msgid "404 - Cash not found"
 msgstr "404 - Коштів не знайдено"
 
@@ -231,7 +231,7 @@ msgstr "Скасувати"
 msgid "Cancel payment"
 msgstr "Скасувати платіж"
 
-#: src/views/CashlinkReceive.vue:259
+#: src/views/CashlinkReceive.vue:258
 msgid "Cashlink claimed!"
 msgstr "Чек використано!"
 
@@ -243,19 +243,19 @@ msgstr "Чек створено"
 msgid "Cashlink created."
 msgstr "Чек створено."
 
-#: src/views/CashlinkReceive.vue:307
+#: src/views/CashlinkReceive.vue:306
 msgid "Cashlink empty :("
 msgstr "Порожній чек :("
 
-#: src/views/CashlinkReceive.vue:300
+#: src/views/CashlinkReceive.vue:299
 msgid "Cashlink funding"
 msgstr "Чек поповнюється"
 
-#: src/views/CashlinkReceive.vue:304
+#: src/views/CashlinkReceive.vue:303
 msgid "Cashlink is empty"
 msgstr "Чек порожній"
 
-#: src/views/CashlinkReceive.vue:299
+#: src/views/CashlinkReceive.vue:298
 msgid "Cashlink not funded"
 msgstr "Чек не поповнено"
 
@@ -267,7 +267,7 @@ msgstr "Змінити"
 msgid "Check your Backup | Check your Backups"
 msgstr "Перевірте спосіб входу | Перевірте способи входу"
 
-#: src/views/CashlinkReceive.vue:297
+#: src/views/CashlinkReceive.vue:296
 msgid "Checking status"
 msgstr "Перевірка стану"
 
@@ -303,15 +303,15 @@ msgstr ""
 msgid "Choose Sender"
 msgstr "Виберіть відправника"
 
-#: src/views/CashlinkReceive.vue:298
+#: src/views/CashlinkReceive.vue:297
 msgid "Claim Cashlink"
 msgstr "Використати чек"
 
-#: src/views/CashlinkReceive.vue:348
+#: src/views/CashlinkReceive.vue:354
 msgid "Claim your Cash"
 msgstr "Забрати кошти"
 
-#: src/views/CashlinkReceive.vue:237
+#: src/views/CashlinkReceive.vue:236
 msgid "Claiming Cashlink"
 msgstr "Чек застосовується"
 
@@ -364,15 +364,15 @@ msgstr "Підтвердьте переказ"
 msgid "Confirm using your Ledger"
 msgstr "Підтвердьте використовуючи Ledger"
 
-#: src/views/CashlinkReceive.vue:359
+#: src/views/CashlinkReceive.vue:367
 msgid "Congrats, somebody gifted you a Nimiq Cashlink."
 msgstr "Вітаємо, хтось подарував вам чек на отримання Німік."
 
-#: src/views/CashlinkReceive.vue:358
+#: src/views/CashlinkReceive.vue:366
 msgid "Congrats, you just opened a Nimiq Cashlink."
 msgstr "Вітаємо, Ви щойно отримали чек Німік."
 
-#: src/views/CashlinkReceive.vue:354
+#: src/views/CashlinkReceive.vue:363
 msgid "Congrats, you received a Nimiq Gift Card."
 msgstr "Вітаємо! Ви отримали подарункову картку Німік."
 
@@ -401,7 +401,7 @@ msgstr "Підключення до гаманця..."
 msgid "Connecting to network..."
 msgstr "Підключення до мережі..."
 
-#: src/views/CashlinkReceive.vue:238
+#: src/views/CashlinkReceive.vue:237
 msgid "Connecting to Nimiq..."
 msgstr "Підключення до Німік..."
 
@@ -563,11 +563,11 @@ msgstr "Зрозуміло"
 msgid "Green"
 msgstr "Зелений"
 
-#: src/views/CashlinkReceive.vue:347
+#: src/views/CashlinkReceive.vue:353
 msgid "Happy birthday!"
 msgstr "З днем народження!"
 
-#: src/views/CashlinkReceive.vue:345
+#: src/views/CashlinkReceive.vue:351
 msgid "Happy Easter!"
 msgstr "Смачної Паски!"
 
@@ -992,6 +992,10 @@ msgstr "Помилка синхронізації з мережею: {error}"
 msgid "Teal"
 msgstr "Пірузовий"
 
+#: src/views/CashlinkReceive.vue:362
+msgid "Thank you for attending Blockchance, here is your first Cashlink."
+msgstr ""
+
 #: src/components/LedgerUi.vue:280
 msgid "The connected wallet or Ledger is not the one this account belongs to."
 msgstr "Підключений гаманець чи Ledger не належить даному рахунку."
@@ -1022,11 +1026,11 @@ msgstr ""
 msgid "There's much more. Read the full article"
 msgstr "І багато більшого. Прочитайте статтю"
 
-#: src/views/CashlinkReceive.vue:305
+#: src/views/CashlinkReceive.vue:304
 msgid "This Cashlink has already been claimed."
 msgstr "Чек уже використано."
 
-#: src/views/CashlinkReceive.vue:208
+#: src/views/CashlinkReceive.vue:207
 msgid "This is not a valid Cashlink, sorry."
 msgstr "Невірний чек."
 
@@ -1181,7 +1185,7 @@ msgstr "Жовтий"
 msgid "You are logged out."
 msgstr "Ви вийшли."
 
-#: src/views/CashlinkReceive.vue:343
+#: src/views/CashlinkReceive.vue:349
 msgid "You are loved"
 msgstr "Вас обожнюють"
 

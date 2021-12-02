@@ -27,7 +27,7 @@ msgstr ""
 msgid "30 seconds, no email, no download."
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:207
+#: src/views/CashlinkReceive.vue:206
 msgid "404 - Cash not found"
 msgstr ""
 
@@ -226,7 +226,7 @@ msgstr ""
 msgid "Cancel payment"
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:259
+#: src/views/CashlinkReceive.vue:258
 msgid "Cashlink claimed!"
 msgstr ""
 
@@ -238,19 +238,19 @@ msgstr ""
 msgid "Cashlink created."
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:307
+#: src/views/CashlinkReceive.vue:306
 msgid "Cashlink empty :("
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:300
+#: src/views/CashlinkReceive.vue:299
 msgid "Cashlink funding"
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:304
+#: src/views/CashlinkReceive.vue:303
 msgid "Cashlink is empty"
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:299
+#: src/views/CashlinkReceive.vue:298
 msgid "Cashlink not funded"
 msgstr ""
 
@@ -262,7 +262,7 @@ msgstr ""
 msgid "Check your Backup | Check your Backups"
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:297
+#: src/views/CashlinkReceive.vue:296
 msgid "Checking status"
 msgstr ""
 
@@ -298,15 +298,15 @@ msgstr ""
 msgid "Choose Sender"
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:298
+#: src/views/CashlinkReceive.vue:297
 msgid "Claim Cashlink"
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:348
+#: src/views/CashlinkReceive.vue:354
 msgid "Claim your Cash"
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:237
+#: src/views/CashlinkReceive.vue:236
 msgid "Claiming Cashlink"
 msgstr ""
 
@@ -360,15 +360,15 @@ msgstr ""
 msgid "Confirm using your Ledger"
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:359
+#: src/views/CashlinkReceive.vue:367
 msgid "Congrats, somebody gifted you a Nimiq Cashlink."
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:358
+#: src/views/CashlinkReceive.vue:366
 msgid "Congrats, you just opened a Nimiq Cashlink."
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:354
+#: src/views/CashlinkReceive.vue:363
 msgid "Congrats, you received a Nimiq Gift Card."
 msgstr ""
 
@@ -400,7 +400,7 @@ msgstr ""
 msgid "Connecting to network..."
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:238
+#: src/views/CashlinkReceive.vue:237
 msgid "Connecting to Nimiq..."
 msgstr ""
 
@@ -571,11 +571,11 @@ msgstr ""
 msgid "Green"
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:347
+#: src/views/CashlinkReceive.vue:353
 msgid "Happy birthday!"
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:345
+#: src/views/CashlinkReceive.vue:351
 msgid "Happy Easter!"
 msgstr ""
 
@@ -996,6 +996,10 @@ msgstr ""
 msgid "Teal"
 msgstr ""
 
+#: src/views/CashlinkReceive.vue:362
+msgid "Thank you for attending Blockchance, here is your first Cashlink."
+msgstr ""
+
 #: src/components/LedgerUi.vue:280
 msgid "The connected wallet or Ledger is not the one this account belongs to."
 msgstr ""
@@ -1017,11 +1021,11 @@ msgstr ""
 msgid "There's much more. Read the full article"
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:305
+#: src/views/CashlinkReceive.vue:304
 msgid "This Cashlink has already been claimed."
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:208
+#: src/views/CashlinkReceive.vue:207
 msgid "This is not a valid Cashlink, sorry."
 msgstr ""
 
@@ -1160,7 +1164,7 @@ msgstr ""
 msgid "You are logged out."
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:343
+#: src/views/CashlinkReceive.vue:349
 msgid "You are loved"
 msgstr ""
 

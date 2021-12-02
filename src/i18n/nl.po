@@ -38,7 +38,7 @@ msgstr "+ {currency} netwerk toeslag"
 msgid "30 seconds, no email, no download."
 msgstr "30 seconden, geen emails, geen downloads."
 
-#: src/views/CashlinkReceive.vue:207
+#: src/views/CashlinkReceive.vue:206
 msgid "404 - Cash not found"
 msgstr "404 - Geld niet gevonden"
 
@@ -235,7 +235,7 @@ msgstr "Annuleer"
 msgid "Cancel payment"
 msgstr "Annuleer betaling"
 
-#: src/views/CashlinkReceive.vue:259
+#: src/views/CashlinkReceive.vue:258
 msgid "Cashlink claimed!"
 msgstr "Cashlink geclaimd!"
 
@@ -247,19 +247,19 @@ msgstr "Cachlink aangemaakt"
 msgid "Cashlink created."
 msgstr "Cashlink aangemaakt."
 
-#: src/views/CashlinkReceive.vue:307
+#: src/views/CashlinkReceive.vue:306
 msgid "Cashlink empty :("
 msgstr "De Cashlink is leeg :("
 
-#: src/views/CashlinkReceive.vue:300
+#: src/views/CashlinkReceive.vue:299
 msgid "Cashlink funding"
 msgstr "Cashlink financieren"
 
-#: src/views/CashlinkReceive.vue:304
+#: src/views/CashlinkReceive.vue:303
 msgid "Cashlink is empty"
 msgstr "De Cashlink is leeg "
 
-#: src/views/CashlinkReceive.vue:299
+#: src/views/CashlinkReceive.vue:298
 msgid "Cashlink not funded"
 msgstr "De Cashlink is niet gefinancierd "
 
@@ -271,7 +271,7 @@ msgstr "Aanpassen"
 msgid "Check your Backup | Check your Backups"
 msgstr "Controleer je back-up | Controleer je back-ups"
 
-#: src/views/CashlinkReceive.vue:297
+#: src/views/CashlinkReceive.vue:296
 msgid "Checking status"
 msgstr "Status controleren"
 
@@ -305,15 +305,15 @@ msgstr "Kies een avatar. Stel een wachtwoord in. Klaar."
 msgid "Choose Sender"
 msgstr "Kies verzender"
 
-#: src/views/CashlinkReceive.vue:298
+#: src/views/CashlinkReceive.vue:297
 msgid "Claim Cashlink"
 msgstr "Claim Cashlink"
 
-#: src/views/CashlinkReceive.vue:348
+#: src/views/CashlinkReceive.vue:354
 msgid "Claim your Cash"
 msgstr "Claim je geld"
 
-#: src/views/CashlinkReceive.vue:237
+#: src/views/CashlinkReceive.vue:236
 msgid "Claiming Cashlink"
 msgstr "Cashlink aan het claimen"
 
@@ -367,15 +367,15 @@ msgstr "Bevestig transactie"
 msgid "Confirm using your Ledger"
 msgstr "Bevestig via je Ledger"
 
-#: src/views/CashlinkReceive.vue:359
+#: src/views/CashlinkReceive.vue:367
 msgid "Congrats, somebody gifted you a Nimiq Cashlink."
 msgstr "Gefeliciteerd, iemand heeft je een Nimiq Cashlink gegeven! "
 
-#: src/views/CashlinkReceive.vue:358
+#: src/views/CashlinkReceive.vue:366
 msgid "Congrats, you just opened a Nimiq Cashlink."
 msgstr "Gefeliciteerd, je hebt zojuist een Nimiq Cashlink geopend."
 
-#: src/views/CashlinkReceive.vue:354
+#: src/views/CashlinkReceive.vue:363
 msgid "Congrats, you received a Nimiq Gift Card."
 msgstr "Gefeliciteerd, je hebt een Nimiq cadeau kaart ontvangen."
 
@@ -404,7 +404,7 @@ msgstr "Verbinden met Keyguard..."
 msgid "Connecting to network..."
 msgstr "Verbinden met netwerk..."
 
-#: src/views/CashlinkReceive.vue:238
+#: src/views/CashlinkReceive.vue:237
 msgid "Connecting to Nimiq..."
 msgstr "Verbinden met Nimiq..."
 
@@ -566,11 +566,11 @@ msgstr "Begrepen"
 msgid "Green"
 msgstr "Groen"
 
-#: src/views/CashlinkReceive.vue:347
+#: src/views/CashlinkReceive.vue:353
 msgid "Happy birthday!"
 msgstr "Fijne verjaardag!"
 
-#: src/views/CashlinkReceive.vue:345
+#: src/views/CashlinkReceive.vue:351
 msgid "Happy Easter!"
 msgstr "Vrolijk Pasen!"
 
@@ -1007,6 +1007,10 @@ msgstr "Synchroniseren met het netwerk is mislukt: {error}"
 msgid "Teal"
 msgstr "Teal"
 
+#: src/views/CashlinkReceive.vue:362
+msgid "Thank you for attending Blockchance, here is your first Cashlink."
+msgstr ""
+
 #: src/components/LedgerUi.vue:280
 msgid "The connected wallet or Ledger is not the one this account belongs to."
 msgstr "Dit account behoort niet tot je aangesloten Ledger of wallet."
@@ -1037,11 +1041,11 @@ msgstr ""
 msgid "There's much more. Read the full article"
 msgstr "Er is nog veel meer. Lees het volledige artikel"
 
-#: src/views/CashlinkReceive.vue:305
+#: src/views/CashlinkReceive.vue:304
 msgid "This Cashlink has already been claimed."
 msgstr "Deze Cashlink is al geclaimd."
 
-#: src/views/CashlinkReceive.vue:208
+#: src/views/CashlinkReceive.vue:207
 msgid "This is not a valid Cashlink, sorry."
 msgstr "Sorry. Deze Cashlink is niet geldig."
 
@@ -1200,7 +1204,7 @@ msgstr "Geel"
 msgid "You are logged out."
 msgstr "Je bent uitgelogd."
 
-#: src/views/CashlinkReceive.vue:343
+#: src/views/CashlinkReceive.vue:349
 msgid "You are loved"
 msgstr "Je bent geliefd"
 
