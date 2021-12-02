@@ -65,10 +65,12 @@ class Cashlink {
         if (this._theme && (this._immutable || this.state !== CashlinkState.UNCHARGED)) {
             throw new Error('Cannot set theme, Cashlink is immutable');
         }
-        if (!Object.values(CashlinkTheme).includes(theme) || !Nimiq.NumberUtils.isUint8(theme)) {
-            throw new Error('Unsupported theme');
+        if (!Nimiq.NumberUtils.isUint8(theme)) {
+            throw new Error('Invalid Cashlink theme');
         }
-        this._theme = theme;
+        this._theme = !Object.values(CashlinkTheme).includes(theme)
+            ? CashlinkTheme.UNSPECIFIED // lenient fallback
+            : theme;
     }
 
     get hasEncodedTheme() {
