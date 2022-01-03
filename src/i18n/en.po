@@ -302,7 +302,7 @@ msgstr ""
 msgid "Claim Cashlink"
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:354
+#: src/views/CashlinkReceive.vue:347
 msgid "Claim your Cash"
 msgstr ""
 
@@ -360,15 +360,15 @@ msgstr ""
 msgid "Confirm using your Ledger"
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:367
+#: src/views/CashlinkReceive.vue:358
 msgid "Congrats, somebody gifted you a Nimiq Cashlink."
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:366
+#: src/views/CashlinkReceive.vue:357
 msgid "Congrats, you just opened a Nimiq Cashlink."
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:363
+#: src/views/CashlinkReceive.vue:353
 msgid "Congrats, you received a Nimiq Gift Card."
 msgstr ""
 
@@ -571,11 +571,11 @@ msgstr ""
 msgid "Green"
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:353
+#: src/views/CashlinkReceive.vue:346
 msgid "Happy birthday!"
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:351
+#: src/views/CashlinkReceive.vue:344
 msgid "Happy Easter!"
 msgstr ""
 
@@ -996,10 +996,6 @@ msgstr ""
 msgid "Teal"
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:362
-msgid "Thank you for attending Blockchance, here is your first Cashlink."
-msgstr ""
-
 #: src/components/LedgerUi.vue:280
 msgid "The connected wallet or Ledger is not the one this account belongs to."
 msgstr ""
@@ -1164,7 +1160,7 @@ msgstr ""
 msgid "You are logged out."
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:349
+#: src/views/CashlinkReceive.vue:342
 msgid "You are loved"
 msgstr ""
 

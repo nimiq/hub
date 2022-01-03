@@ -3,12 +3,12 @@
 # Talleyrand, 2020
 # Daniel, 2020
 # Matheo <matheo@nimiq.com>, 2021
-# Robinson BARAIS, 2021
 # Sören Schwert <hello@soerenschwert.de>, 2021
+# Robinson BARAIS, 2021
 # 
 msgid ""
 msgstr ""
-"Last-Translator: Sören Schwert <hello@soerenschwert.de>, 2021\n"
+"Last-Translator: Robinson BARAIS, 2021\n"
 "Language-Team: French (https://www.transifex.com/nimiq-foundation/teams/110181/fr/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: fr\n"
@@ -311,7 +311,7 @@ msgstr "Choisissez l'émetteur"
 msgid "Claim Cashlink"
 msgstr "Réclamer le Cashlink"
 
-#: src/views/CashlinkReceive.vue:354
+#: src/views/CashlinkReceive.vue:347
 msgid "Claim your Cash"
 msgstr "Réclamer votre argent"
 
@@ -369,15 +369,15 @@ msgstr "Confirmer la Transaction"
 msgid "Confirm using your Ledger"
 msgstr "Confirmez en utilisant votre Ledger"
 
-#: src/views/CashlinkReceive.vue:367
+#: src/views/CashlinkReceive.vue:358
 msgid "Congrats, somebody gifted you a Nimiq Cashlink."
 msgstr "Félicitations, quelqu'un vient de vous offrir un Cashlink Nimiq."
 
-#: src/views/CashlinkReceive.vue:366
+#: src/views/CashlinkReceive.vue:357
 msgid "Congrats, you just opened a Nimiq Cashlink."
 msgstr "Félicitations, vous venez d'ouvrir un Cashlink Nimiq."
 
-#: src/views/CashlinkReceive.vue:363
+#: src/views/CashlinkReceive.vue:353
 msgid "Congrats, you received a Nimiq Gift Card."
 msgstr "Félicitations, vous avez reçu une Carte Cadeau Nimiq."
 
@@ -568,11 +568,11 @@ msgstr "Compris"
 msgid "Green"
 msgstr "Vert"
 
-#: src/views/CashlinkReceive.vue:353
+#: src/views/CashlinkReceive.vue:346
 msgid "Happy birthday!"
 msgstr "Joyeux anniversaire !"
 
-#: src/views/CashlinkReceive.vue:351
+#: src/views/CashlinkReceive.vue:344
 msgid "Happy Easter!"
 msgstr "Joyeuses Pâques !"
 
@@ -771,7 +771,7 @@ msgstr "Orange"
 #: src/components/CheckoutCardNimiq.vue:63
 #: src/components/CheckoutCardNimiq.vue:87
 msgid "Other wallets"
-msgstr ""
+msgstr "Autres porte-monnaies"
 
 #: src/views/SetupSwapLedger.vue:964
 msgid "outgoing"
@@ -1009,10 +1009,6 @@ msgstr "La synchronisation avec le réseau a échoué : {error}"
 msgid "Teal"
 msgstr "Sarcelle"
 
-#: src/views/CashlinkReceive.vue:362
-msgid "Thank you for attending Blockchance, here is your first Cashlink."
-msgstr ""
-
 #: src/components/LedgerUi.vue:280
 msgid "The connected wallet or Ledger is not the one this account belongs to."
 msgstr ""
@@ -1206,7 +1202,7 @@ msgstr "Jaune"
 msgid "You are logged out."
 msgstr "Vous êtes déconnecté."
 
-#: src/views/CashlinkReceive.vue:349
+#: src/views/CashlinkReceive.vue:342
 msgid "You are loved"
 msgstr "Vous êtes aimé"
 

@@ -309,7 +309,7 @@ msgstr "Kies verzender"
 msgid "Claim Cashlink"
 msgstr "Claim Cashlink"
 
-#: src/views/CashlinkReceive.vue:354
+#: src/views/CashlinkReceive.vue:347
 msgid "Claim your Cash"
 msgstr "Claim je geld"
 
@@ -367,15 +367,15 @@ msgstr "Bevestig transactie"
 msgid "Confirm using your Ledger"
 msgstr "Bevestig via je Ledger"
 
-#: src/views/CashlinkReceive.vue:367
+#: src/views/CashlinkReceive.vue:358
 msgid "Congrats, somebody gifted you a Nimiq Cashlink."
 msgstr "Gefeliciteerd, iemand heeft je een Nimiq Cashlink gegeven! "
 
-#: src/views/CashlinkReceive.vue:366
+#: src/views/CashlinkReceive.vue:357
 msgid "Congrats, you just opened a Nimiq Cashlink."
 msgstr "Gefeliciteerd, je hebt zojuist een Nimiq Cashlink geopend."
 
-#: src/views/CashlinkReceive.vue:363
+#: src/views/CashlinkReceive.vue:353
 msgid "Congrats, you received a Nimiq Gift Card."
 msgstr "Gefeliciteerd, je hebt een Nimiq cadeau kaart ontvangen."
 
@@ -566,11 +566,11 @@ msgstr "Begrepen"
 msgid "Green"
 msgstr "Groen"
 
-#: src/views/CashlinkReceive.vue:353
+#: src/views/CashlinkReceive.vue:346
 msgid "Happy birthday!"
 msgstr "Fijne verjaardag!"
 
-#: src/views/CashlinkReceive.vue:351
+#: src/views/CashlinkReceive.vue:344
 msgid "Happy Easter!"
 msgstr "Vrolijk Pasen!"
 
@@ -1007,10 +1007,6 @@ msgstr "Synchroniseren met het netwerk is mislukt: {error}"
 msgid "Teal"
 msgstr "Teal"
 
-#: src/views/CashlinkReceive.vue:362
-msgid "Thank you for attending Blockchance, here is your first Cashlink."
-msgstr ""
-
 #: src/components/LedgerUi.vue:280
 msgid "The connected wallet or Ledger is not the one this account belongs to."
 msgstr "Dit account behoort niet tot je aangesloten Ledger of wallet."
@@ -1204,7 +1200,7 @@ msgstr "Geel"
 msgid "You are logged out."
 msgstr "Je bent uitgelogd."
 
-#: src/views/CashlinkReceive.vue:349
+#: src/views/CashlinkReceive.vue:342
 msgid "You are loved"
 msgstr "Je bent geliefd"
 

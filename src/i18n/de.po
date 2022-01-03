@@ -4,13 +4,13 @@
 # Irfan Maranki, 2020
 # Sven <sven@nimiq.com>, 2021
 # Redexe <timo.niehoff@yahoo.de>, 2021
+# Daniel, 2021
 # Huriye <huriyegoek@gmx.de>, 2021
 # Sören Schwert <hello@soerenschwert.de>, 2021
-# Daniel, 2021
 # 
 msgid ""
 msgstr ""
-"Last-Translator: Daniel, 2021\n"
+"Last-Translator: Sören Schwert <hello@soerenschwert.de>, 2021\n"
 "Language-Team: German (https://www.transifex.com/nimiq-foundation/teams/110181/de/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: de\n"
@@ -311,7 +311,7 @@ msgstr "Wähle Absender"
 msgid "Claim Cashlink"
 msgstr "Cashlink einlösen"
 
-#: src/views/CashlinkReceive.vue:354
+#: src/views/CashlinkReceive.vue:347
 msgid "Claim your Cash"
 msgstr "Löse deinen Cashlink ein"
 
@@ -370,15 +370,15 @@ msgstr "Transaktion bestätigen"
 msgid "Confirm using your Ledger"
 msgstr "Bestätige mittels deines Ledgers"
 
-#: src/views/CashlinkReceive.vue:367
+#: src/views/CashlinkReceive.vue:358
 msgid "Congrats, somebody gifted you a Nimiq Cashlink."
 msgstr "Glückwunsch! Jemand hat dir einen Nimiq Cashlink geschenkt. "
 
-#: src/views/CashlinkReceive.vue:366
+#: src/views/CashlinkReceive.vue:357
 msgid "Congrats, you just opened a Nimiq Cashlink."
 msgstr "Glückwunsch! Du hast gerade einen Nimiq Cashlink geöffnet. "
 
-#: src/views/CashlinkReceive.vue:363
+#: src/views/CashlinkReceive.vue:353
 msgid "Congrats, you received a Nimiq Gift Card."
 msgstr "Glückwunsch! Du hast eine Nimiq Geschenkkarte erhalten. "
 
@@ -570,11 +570,11 @@ msgstr "Alles klar"
 msgid "Green"
 msgstr "Grünes"
 
-#: src/views/CashlinkReceive.vue:353
+#: src/views/CashlinkReceive.vue:346
 msgid "Happy birthday!"
 msgstr "Herzlichen Glückwunsch zum Geburtstag!"
 
-#: src/views/CashlinkReceive.vue:351
+#: src/views/CashlinkReceive.vue:344
 msgid "Happy Easter!"
 msgstr "Frohe Ostern!"
 
@@ -633,9 +633,9 @@ msgid ""
 "Ledger accounts cannot be exported. Please refer to your 24 words backup you"
 " created when setting up your device."
 msgstr ""
-"Ledger-Konten können nicht exportiert werden. Bitte greife auf deine 24"
-"-Worte-Sicherung zurück, welche du erstellt hast, als du dein Ledger Gerät "
-"eingerichtet hast. "
+"Ledger-Konten können nicht exportiert werden. Bitte greife auf deine "
+"24-Worte-Sicherung zurück, welche du erstellt hast, als du dein Ledger Gerät"
+" eingerichtet hast. "
 
 #: src/components/LedgerUi.vue:268
 msgid "Ledger not supported by browser."
@@ -1008,11 +1008,6 @@ msgstr "Synchronisierung mit Netzwerk fehlgeschlagen: {error}"
 msgid "Teal"
 msgstr "Türkises"
 
-#: src/views/CashlinkReceive.vue:362
-msgid "Thank you for attending Blockchance, here is your first Cashlink."
-msgstr ""
-"Danke, dass du die Blockchance besuchst. Hier ist dein erster Cashlink."
-
 #: src/components/LedgerUi.vue:280
 msgid "The connected wallet or Ledger is not the one this account belongs to."
 msgstr "Das Konto gehört nicht zum verbundenen Ledger oder Wallet."
@@ -1204,7 +1199,7 @@ msgstr "Gelbes"
 msgid "You are logged out."
 msgstr "Du bist abgemeldet."
 
-#: src/views/CashlinkReceive.vue:349
+#: src/views/CashlinkReceive.vue:342
 msgid "You are loved"
 msgstr "Jemand denkt an dich"
 

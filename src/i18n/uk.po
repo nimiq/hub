@@ -307,7 +307,7 @@ msgstr "Виберіть відправника"
 msgid "Claim Cashlink"
 msgstr "Використати чек"
 
-#: src/views/CashlinkReceive.vue:354
+#: src/views/CashlinkReceive.vue:347
 msgid "Claim your Cash"
 msgstr "Забрати кошти"
 
@@ -364,15 +364,15 @@ msgstr "Підтвердьте переказ"
 msgid "Confirm using your Ledger"
 msgstr "Підтвердьте використовуючи Ledger"
 
-#: src/views/CashlinkReceive.vue:367
+#: src/views/CashlinkReceive.vue:358
 msgid "Congrats, somebody gifted you a Nimiq Cashlink."
 msgstr "Вітаємо, хтось подарував вам чек на отримання Німік."
 
-#: src/views/CashlinkReceive.vue:366
+#: src/views/CashlinkReceive.vue:357
 msgid "Congrats, you just opened a Nimiq Cashlink."
 msgstr "Вітаємо, Ви щойно отримали чек Німік."
 
-#: src/views/CashlinkReceive.vue:363
+#: src/views/CashlinkReceive.vue:353
 msgid "Congrats, you received a Nimiq Gift Card."
 msgstr "Вітаємо! Ви отримали подарункову картку Німік."
 
@@ -563,11 +563,11 @@ msgstr "Зрозуміло"
 msgid "Green"
 msgstr "Зелений"
 
-#: src/views/CashlinkReceive.vue:353
+#: src/views/CashlinkReceive.vue:346
 msgid "Happy birthday!"
 msgstr "З днем народження!"
 
-#: src/views/CashlinkReceive.vue:351
+#: src/views/CashlinkReceive.vue:344
 msgid "Happy Easter!"
 msgstr "Смачної Паски!"
 
@@ -992,10 +992,6 @@ msgstr "Помилка синхронізації з мережею: {error}"
 msgid "Teal"
 msgstr "Пірузовий"
 
-#: src/views/CashlinkReceive.vue:362
-msgid "Thank you for attending Blockchance, here is your first Cashlink."
-msgstr ""
-
 #: src/components/LedgerUi.vue:280
 msgid "The connected wallet or Ledger is not the one this account belongs to."
 msgstr "Підключений гаманець чи Ledger не належить даному рахунку."
@@ -1185,7 +1181,7 @@ msgstr "Жовтий"
 msgid "You are logged out."
 msgstr "Ви вийшли."
 
-#: src/views/CashlinkReceive.vue:349
+#: src/views/CashlinkReceive.vue:342
 msgid "You are loved"
 msgstr "Вас обожнюють"
 

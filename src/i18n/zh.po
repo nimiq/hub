@@ -307,7 +307,7 @@ msgstr "选择发件人"
 msgid "Claim Cashlink"
 msgstr "领取现金链接"
 
-#: src/views/CashlinkReceive.vue:354
+#: src/views/CashlinkReceive.vue:347
 msgid "Claim your Cash"
 msgstr "领取现金"
 
@@ -364,15 +364,15 @@ msgstr "确认交易"
 msgid "Confirm using your Ledger"
 msgstr "确认使用你的Ledger"
 
-#: src/views/CashlinkReceive.vue:367
+#: src/views/CashlinkReceive.vue:358
 msgid "Congrats, somebody gifted you a Nimiq Cashlink."
 msgstr "恭喜，有人给你Nimiq 现金链接"
 
-#: src/views/CashlinkReceive.vue:366
+#: src/views/CashlinkReceive.vue:357
 msgid "Congrats, you just opened a Nimiq Cashlink."
 msgstr "恭喜，你刚刚打开了Nimiq 现金链接"
 
-#: src/views/CashlinkReceive.vue:363
+#: src/views/CashlinkReceive.vue:353
 msgid "Congrats, you received a Nimiq Gift Card."
 msgstr "恭喜，你收到了Nimiq礼品卡"
 
@@ -563,11 +563,11 @@ msgstr "了解"
 msgid "Green"
 msgstr "绿"
 
-#: src/views/CashlinkReceive.vue:353
+#: src/views/CashlinkReceive.vue:346
 msgid "Happy birthday!"
 msgstr "生日快乐！"
 
-#: src/views/CashlinkReceive.vue:351
+#: src/views/CashlinkReceive.vue:344
 msgid "Happy Easter!"
 msgstr "复活节快乐！"
 
@@ -989,10 +989,6 @@ msgstr "与网络同步失败：{error}"
 msgid "Teal"
 msgstr "青"
 
-#: src/views/CashlinkReceive.vue:362
-msgid "Thank you for attending Blockchance, here is your first Cashlink."
-msgstr ""
-
 #: src/components/LedgerUi.vue:280
 msgid "The connected wallet or Ledger is not the one this account belongs to."
 msgstr "这个账户不属于你目前连接的钱包或Ledger"
@@ -1169,7 +1165,7 @@ msgstr "黄"
 msgid "You are logged out."
 msgstr "你已登出"
 
-#: src/views/CashlinkReceive.vue:349
+#: src/views/CashlinkReceive.vue:342
 msgid "You are loved"
 msgstr "你被爱着"
 
