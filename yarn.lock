@@ -7655,9 +7655,9 @@ node-libs-browser@^2.2.1:
     vm-browserify "^1.0.1"
 
 node-lmdb@^0.9.4:
-  version "0.9.4"
-  resolved "https://registry.yarnpkg.com/node-lmdb/-/node-lmdb-0.9.4.tgz#cde77d23445dc0528348ca0c8c39f552711939f8"
-  integrity sha512-tDpOdHLnEGEA4YqYg+oBYvQxRqeW3LoGFllZYNvUckZTc2kiqbz+JuNPuP4Cpw4xZI6i3dZb8opAFz2JMgs1Rg==
+  version "0.9.6"
+  resolved "https://registry.yarnpkg.com/node-lmdb/-/node-lmdb-0.9.6.tgz#b7bab03f8cf154a5df90f3a861239adb65ff3dbe"
+  integrity sha512-zpYvuTWoyGY/G9/0kLZyJlEnnvm4U1t7r1q1akX4vvwviuxGAysW9hN77YwbijvWN7cIC1GRp3ptMkJaUxXKHw==
   dependencies:
     nan "^2.14.1"
     node-gyp-build "^4.2.3"
