@@ -33,6 +33,13 @@ export async function getElectrumClient(waitForConsensus: boolean = true) {
 
         const options = Config.bitcoinNetwork === BTC_NETWORK_MAIN ? {
             extraSeedPeers: [{
+                host: 'electrumx.nimiq.network',
+                wssPath: 'electrumx',
+                ports: { wss: 443, ssl: 50002, tcp: null },
+                ip: '',
+                version: '',
+                highPriority: true,
+            }, {
                 host: 'c0a5duastc849ei53vug.bdnodes.net',
                 wssPath: 'electrumx',
                 ports: { wss: 443, ssl: 50002, tcp: null },
