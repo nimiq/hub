@@ -1,6 +1,6 @@
 <template>
     <NotEnoughCookieSpace v-if='notEnoughCookieSpace'/>
-    <div v-else class="container" :class="{'has-heading': headerText}">
+    <div v-else-if="shouldRender" class="container" :class="{'has-heading': headerText}">
         <div class="headline-container">
             <h1 v-if="headerText" class="uber-header">{{ headerText }}</h1>
             <p v-if="sublineText" class="nq-text subline-text"> {{ sublineText }}</p>
@@ -21,13 +21,15 @@ import { BrowserDetection } from '@nimiq/utils';
 import GlobalClose from '../components/GlobalClose.vue';
 import OnboardingMenu from '../components/OnboardingMenu.vue';
 import { ParsedOnboardRequest } from '@/lib/RequestTypes';
-import { RequestType } from '@/lib/PublicRequestTypes';
+import { Account, RequestType } from '@/lib/PublicRequestTypes';
 import { Static } from '@/lib/StaticStore';
 import { DEFAULT_KEY_PATH, ERROR_CANCELED } from '@/lib/Constants';
 import CookieHelper from '../lib/CookieHelper';
 import NotEnoughCookieSpace from '../components/NotEnoughCookieSpace.vue';
 import { BTC_ACCOUNT_KEY_PATH } from '../lib/bitcoin/BitcoinConstants';
 import Config from 'config';
+import CookieJar from '../lib/CookieJar';
+import { WalletStore } from '../lib/WalletStore';
 
 @Component({components: {GlobalClose, OnboardingMenu, NotEnoughCookieSpace}})
 export default class OnboardingSelector extends Vue {
@@ -35,8 +37,30 @@ export default class OnboardingSelector extends Vue {
     @Static private originalRouteName?: string;
 
     private notEnoughCookieSpace = false;
+    private shouldRender = true;
 
     public async created() {
+        // Check if cookie got deleted and repopulate it from IndexedDB, if that has accounts.
+        // In which case we short-circuit the request and return directly, updating the
+        // cookie in the process.
+        if (this.request.disableBack && (BrowserDetection.isIOS() || BrowserDetection.isSafari())) {
+            const cookieAccounts = await CookieJar.eat();
+            if (!cookieAccounts.length) {
+                const dbAccounts = await WalletStore.Instance.list();
+                if (dbAccounts.length) {
+                    this.shouldRender = false;
+
+                    const result = await Promise.all(
+                        dbAccounts.map(async (entry) => {
+                            const walletInfo = await WalletStore.Instance.get(entry.id);
+                            return walletInfo!.toAccountType();
+                        }),
+                    );
+                    this.$rpc.resolve(result);
+                }
+            }
+        }
+
         this.notEnoughCookieSpace = (BrowserDetection.isIOS() || BrowserDetection.isSafari())
             && !await CookieHelper.canFitNewWallets();
     }
