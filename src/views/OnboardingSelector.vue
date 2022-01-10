@@ -21,7 +21,7 @@ import { BrowserDetection } from '@nimiq/utils';
 import GlobalClose from '../components/GlobalClose.vue';
 import OnboardingMenu from '../components/OnboardingMenu.vue';
 import { ParsedOnboardRequest } from '@/lib/RequestTypes';
-import { Account, RequestType } from '@/lib/PublicRequestTypes';
+import { RequestType } from '@/lib/PublicRequestTypes';
 import { Static } from '@/lib/StaticStore';
 import { DEFAULT_KEY_PATH, ERROR_CANCELED } from '@/lib/Constants';
 import CookieHelper from '../lib/CookieHelper';
@@ -30,6 +30,7 @@ import { BTC_ACCOUNT_KEY_PATH } from '../lib/bitcoin/BitcoinConstants';
 import Config from 'config';
 import CookieJar from '../lib/CookieJar';
 import { WalletStore } from '../lib/WalletStore';
+import { WalletInfo } from '../lib/WalletInfo';
 
 @Component({components: {GlobalClose, OnboardingMenu, NotEnoughCookieSpace}})
 export default class OnboardingSelector extends Vue {
@@ -52,7 +53,7 @@ export default class OnboardingSelector extends Vue {
 
                     const result = await Promise.all(
                         dbAccounts.map(async (entry) => {
-                            const walletInfo = await WalletStore.Instance.get(entry.id);
+                            const walletInfo = WalletInfo.fromObject(entry);
                             return walletInfo!.toAccountType();
                         }),
                     );
