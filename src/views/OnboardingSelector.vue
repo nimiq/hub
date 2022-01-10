@@ -18,6 +18,7 @@
 import { Component, Vue } from 'vue-property-decorator';
 import KeyguardClient from '@nimiq/keyguard-client';
 import { BrowserDetection } from '@nimiq/utils';
+import { State as RpcState } from '@nimiq/rpc';
 import GlobalClose from '../components/GlobalClose.vue';
 import OnboardingMenu from '../components/OnboardingMenu.vue';
 import { ParsedOnboardRequest } from '@/lib/RequestTypes';
@@ -31,10 +32,12 @@ import Config from 'config';
 import CookieJar from '../lib/CookieJar';
 import { WalletStore } from '../lib/WalletStore';
 import { WalletInfo } from '../lib/WalletInfo';
+import { includesOrigin } from '../lib/Helpers';
 
 @Component({components: {GlobalClose, OnboardingMenu, NotEnoughCookieSpace}})
 export default class OnboardingSelector extends Vue {
     @Static private request!: ParsedOnboardRequest;
+    @Static private rpcState!: RpcState;
     @Static private originalRouteName?: string;
 
     private notEnoughCookieSpace = false;
@@ -47,11 +50,12 @@ export default class OnboardingSelector extends Vue {
          * non-first-party domain to the PWA and opens in a webview, it is still affected?). The IndexedDB in the
          * webview is still present then.
          *
-         * This deletion of the Hub cookie leads to the Wallet triggering the onboarding flow as a redirect
-         * (disableBack = true). This check uses this and short-circuits the onboarding request by simply responding
-         * with a full list of accounts, which also sets the cookie (through the `_reply` function in `RpcApi`).
+         * This deletion of the Hub cookie leads to the Wallet triggering the onboarding flow. This check uses this and
+         * short-circuits the onboarding request by simply responding with a full list of accounts, which also sets the
+         * cookie (through the `_reply` function in `RpcApi`).
          */
-        if (this.request.disableBack && (BrowserDetection.isIOS() || BrowserDetection.isSafari())) {
+        const isPrivileged = includesOrigin(Config.privilegedOrigins, this.rpcState.origin);
+        if (isPrivileged && (BrowserDetection.isIOS() || BrowserDetection.isSafari())) {
             const cookieAccounts = await CookieJar.eat();
             if (!cookieAccounts.length) {
                 const dbAccounts = await WalletStore.Instance.list();
