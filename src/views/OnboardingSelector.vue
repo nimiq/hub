@@ -41,9 +41,16 @@ export default class OnboardingSelector extends Vue {
     private shouldRender = true;
 
     public async created() {
-        // Check if cookie got deleted and repopulate it from IndexedDB, if that has accounts.
-        // In which case we short-circuit the request and return directly, updating the
-        // cookie in the process.
+        /**
+         * On iOS/Safari, especially when the Wallet is installed to homescreen, the Hub sometimes deletes its cookie,
+         * even before 7 days are over (it should not delete any data in a PWA context, but maybe because the Hub is a
+         * non-first-party domain to the PWA and opens in a webview, it is still affected?). The IndexedDB in the
+         * webview is still present then.
+         *
+         * This deletion of the Hub cookie leads to the Wallet triggering the onboarding flow as a redirect
+         * (disableBack = true). This check uses this and short-circuits the onboarding request by simply responding
+         * with a full list of accounts, which also sets the cookie (through the `_reply` function in `RpcApi`).
+         */
         if (this.request.disableBack && (BrowserDetection.isIOS() || BrowserDetection.isSafari())) {
             const cookieAccounts = await CookieJar.eat();
             if (!cookieAccounts.length) {
