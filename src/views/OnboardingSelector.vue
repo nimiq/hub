@@ -1,6 +1,6 @@
 <template>
     <NotEnoughCookieSpace v-if='notEnoughCookieSpace'/>
-    <div v-else class="container" :class="{'has-heading': headerText}">
+    <div v-else-if="shouldRender" class="container" :class="{'has-heading': headerText}">
         <div class="headline-container">
             <h1 v-if="headerText" class="uber-header">{{ headerText }}</h1>
             <p v-if="sublineText" class="nq-text subline-text"> {{ sublineText }}</p>
@@ -18,6 +18,7 @@
 import { Component, Vue } from 'vue-property-decorator';
 import KeyguardClient from '@nimiq/keyguard-client';
 import { BrowserDetection } from '@nimiq/utils';
+import { State as RpcState } from '@nimiq/rpc';
 import GlobalClose from '../components/GlobalClose.vue';
 import OnboardingMenu from '../components/OnboardingMenu.vue';
 import { ParsedOnboardRequest } from '@/lib/RequestTypes';
@@ -28,15 +29,50 @@ import CookieHelper from '../lib/CookieHelper';
 import NotEnoughCookieSpace from '../components/NotEnoughCookieSpace.vue';
 import { BTC_ACCOUNT_KEY_PATH } from '../lib/bitcoin/BitcoinConstants';
 import Config from 'config';
+import CookieJar from '../lib/CookieJar';
+import { WalletStore } from '../lib/WalletStore';
+import { WalletInfo } from '../lib/WalletInfo';
+import { includesOrigin } from '../lib/Helpers';
 
 @Component({components: {GlobalClose, OnboardingMenu, NotEnoughCookieSpace}})
 export default class OnboardingSelector extends Vue {
     @Static private request!: ParsedOnboardRequest;
+    @Static private rpcState!: RpcState;
     @Static private originalRouteName?: string;
 
     private notEnoughCookieSpace = false;
+    private shouldRender = true;
 
     public async created() {
+        /**
+         * On iOS/Safari, especially when the Wallet is installed to homescreen, the Hub sometimes deletes its cookie,
+         * even before 7 days are over (it should not delete any data in a PWA context, but maybe because the Hub is a
+         * non-first-party domain to the PWA and opens in a webview, it is still affected?). The IndexedDB in the
+         * webview is still present then.
+         *
+         * This deletion of the Hub cookie leads to the Wallet triggering the onboarding flow. This check uses this and
+         * short-circuits the onboarding request by simply responding with a full list of accounts, which also sets the
+         * cookie (through the `_reply` function in `RpcApi`).
+         */
+        const isPrivileged = includesOrigin(Config.privilegedOrigins, this.rpcState.origin);
+        if (isPrivileged && (BrowserDetection.isIOS() || BrowserDetection.isSafari())) {
+            const cookieAccounts = await CookieJar.eat();
+            if (!cookieAccounts.length) {
+                const dbAccounts = await WalletStore.Instance.list();
+                if (dbAccounts.length) {
+                    this.shouldRender = false;
+
+                    const result = await Promise.all(
+                        dbAccounts.map(async (entry) => {
+                            const walletInfo = WalletInfo.fromObject(entry);
+                            return walletInfo!.toAccountType();
+                        }),
+                    );
+                    this.$rpc.resolve(result);
+                }
+            }
+        }
+
         this.notEnoughCookieSpace = (BrowserDetection.isIOS() || BrowserDetection.isSafari())
             && !await CookieHelper.canFitNewWallets();
     }
