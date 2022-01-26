@@ -137,15 +137,15 @@ msgstr ""
 msgid "Back to {Wallet}"
 msgstr ""
 
-#: src/views/OnboardingSelector.vue:87
+#: src/views/OnboardingSelector.vue:123
 msgid "Back to Cashlink"
 msgstr ""
 
-#: src/views/OnboardingSelector.vue:81
+#: src/views/OnboardingSelector.vue:117
 msgid "Back to Checkout"
 msgstr ""
 
-#: src/views/OnboardingSelector.vue:83
+#: src/views/OnboardingSelector.vue:119
 msgid "Back to Choose Address"
 msgstr ""
 
@@ -170,7 +170,7 @@ msgstr ""
 msgid "Back to Nimiq Vote"
 msgstr ""
 
-#: src/views/OnboardingSelector.vue:85
+#: src/views/OnboardingSelector.vue:121
 msgid "Back to Sign Message"
 msgstr ""
 
@@ -614,7 +614,7 @@ msgstr ""
 msgid "It won’t be part of the public Blockchain and might get lost after the Cashlink was claimed."
 msgstr ""
 
-#: src/views/OnboardingSelector.vue:96
+#: src/views/OnboardingSelector.vue:132
 msgid "Join Nimiq"
 msgstr ""
 
@@ -659,7 +659,7 @@ msgstr ""
 msgid "Login to existing account"
 msgstr ""
 
-#: src/views/OnboardingSelector.vue:100
+#: src/views/OnboardingSelector.vue:136
 msgid "Login to fund your Cashlink"
 msgstr ""
 
@@ -712,7 +712,7 @@ msgstr ""
 msgid "No App found"
 msgstr ""
 
-#: src/views/OnboardingSelector.vue:109
+#: src/views/OnboardingSelector.vue:145
 msgid ""
 "No registration, no install,\n"
 "100% free"
@@ -768,7 +768,7 @@ msgstr ""
 msgid "Pay with {currencyFullName}"
 msgstr ""
 
-#: src/views/OnboardingSelector.vue:98
+#: src/views/OnboardingSelector.vue:134
 msgid "Pay with Nimiq"
 msgstr ""
 

@@ -1,12 +1,12 @@
 # 
 # Translators:
 # Daniel, 2020
-# Ricardo Barquero Carranza <richy@nimiq.com>, 2021
 # Sören Schwert <hello@soerenschwert.de>, 2021
+# Ricardo Barquero Carranza <richy@nimiq.com>, 2022
 # 
 msgid ""
 msgstr ""
-"Last-Translator: Sören Schwert <hello@soerenschwert.de>, 2021\n"
+"Last-Translator: Ricardo Barquero Carranza <richy@nimiq.com>, 2022\n"
 "Language-Team: Spanish (https://www.transifex.com/nimiq-foundation/teams/110181/es/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: es\n"
@@ -43,6 +43,7 @@ msgstr "404 - Dinero no fue encontrado"
 #: src/views/SetupSwapSuccess.vue:129
 msgid "503 Service unavailable - please try again later"
 msgstr ""
+"503 Servicio no se encuentra disponible - por favor intente de nuevo luego"
 
 #: src/views/ExportSuccess.vue:60
 msgid "Account backed up!"
@@ -143,15 +144,15 @@ msgstr "Volver al {Nimiq Miner}"
 msgid "Back to {Wallet}"
 msgstr "Volver a la {Wallet}"
 
-#: src/views/OnboardingSelector.vue:87
+#: src/views/OnboardingSelector.vue:123
 msgid "Back to Cashlink"
 msgstr "Volver a Cashlink"
 
-#: src/views/OnboardingSelector.vue:81
+#: src/views/OnboardingSelector.vue:117
 msgid "Back to Checkout"
 msgstr "Volver al Proceso de Pago"
 
-#: src/views/OnboardingSelector.vue:83
+#: src/views/OnboardingSelector.vue:119
 msgid "Back to Choose Address"
 msgstr "Volver a Elegir Dirección"
 
@@ -176,7 +177,7 @@ msgstr "Volver a las Tarjetas de Regalo Nimiq"
 msgid "Back to Nimiq Vote"
 msgstr "Volver a Votación Nimiq"
 
-#: src/views/OnboardingSelector.vue:85
+#: src/views/OnboardingSelector.vue:121
 msgid "Back to Sign Message"
 msgstr "Volver a Firmar Mensaje"
 
@@ -323,7 +324,7 @@ msgstr "Haga Click para Conectar"
 
 #: src/views/CashlinkManage.vue:25
 msgid "Click to copy:"
-msgstr ""
+msgstr "Click para copiar:"
 
 #: src/views/RequestError.vue:31
 msgid "Close"
@@ -616,7 +617,7 @@ msgstr ""
 "No será parte de la Cadena de Bloques publica y puede que se pierda luego de"
 " que el Cashlink sea reclamado."
 
-#: src/views/OnboardingSelector.vue:96
+#: src/views/OnboardingSelector.vue:132
 msgid "Join Nimiq"
 msgstr "Únase a Nimiq"
 
@@ -665,7 +666,7 @@ msgstr "¡Archivo de Sesión exportado!"
 msgid "Login to existing account"
 msgstr "Iniciar Sesión a cuenta existente"
 
-#: src/views/OnboardingSelector.vue:100
+#: src/views/OnboardingSelector.vue:136
 msgid "Login to fund your Cashlink"
 msgstr "Iniciar sesión para financiar su Cashlink"
 
@@ -721,7 +722,7 @@ msgstr "No"
 msgid "No App found"
 msgstr "No se encontró ninguna Aplicación"
 
-#: src/views/OnboardingSelector.vue:109
+#: src/views/OnboardingSelector.vue:145
 msgid ""
 "No registration, no install,\n"
 "100% free"
@@ -779,7 +780,7 @@ msgstr "Dueño."
 msgid "Pay with {currencyFullName}"
 msgstr "Pagar con {currencyFullName}"
 
-#: src/views/OnboardingSelector.vue:98
+#: src/views/OnboardingSelector.vue:134
 msgid "Pay with Nimiq"
 msgstr "Pagar con Nimiq"
 

@@ -145,15 +145,15 @@ msgstr "Вернуться в {Nimiq Miner}"
 msgid "Back to {Wallet}"
 msgstr "Вернуться в {Wallet}"
 
-#: src/views/OnboardingSelector.vue:87
+#: src/views/OnboardingSelector.vue:123
 msgid "Back to Cashlink"
 msgstr "Вернуться в Cashlink"
 
-#: src/views/OnboardingSelector.vue:81
+#: src/views/OnboardingSelector.vue:117
 msgid "Back to Checkout"
 msgstr "Вернуться к оформлению заказа"
 
-#: src/views/OnboardingSelector.vue:83
+#: src/views/OnboardingSelector.vue:119
 msgid "Back to Choose Address"
 msgstr "Вернуться к выбору адреса"
 
@@ -178,7 +178,7 @@ msgstr "Вернуться к созданию Nimiq Gift Card"
 msgid "Back to Nimiq Vote"
 msgstr "Вернуться в Nimiq Vote"
 
-#: src/views/OnboardingSelector.vue:85
+#: src/views/OnboardingSelector.vue:121
 msgid "Back to Sign Message"
 msgstr "Вернуться к созданию подписи сообщения"
 
@@ -621,7 +621,7 @@ msgstr ""
 "Это не станет частью публичного Блокчейна и может потеряться после того, как"
 " вы заберёте Cashlink."
 
-#: src/views/OnboardingSelector.vue:96
+#: src/views/OnboardingSelector.vue:132
 msgid "Join Nimiq"
 msgstr "Присоединиться к Nimiq"
 
@@ -673,7 +673,7 @@ msgstr "Файл Авторизации экспортирован!"
 msgid "Login to existing account"
 msgstr "Войти в существующий аккаунт"
 
-#: src/views/OnboardingSelector.vue:100
+#: src/views/OnboardingSelector.vue:136
 msgid "Login to fund your Cashlink"
 msgstr "Авторизуйтесь, чтобы добавить средства на ваш Cashlink"
 
@@ -726,7 +726,7 @@ msgstr "Нет"
 msgid "No App found"
 msgstr "Приложение не найдено"
 
-#: src/views/OnboardingSelector.vue:109
+#: src/views/OnboardingSelector.vue:145
 msgid ""
 "No registration, no install,\n"
 "100% free"
@@ -784,7 +784,7 @@ msgstr "Владелец:"
 msgid "Pay with {currencyFullName}"
 msgstr "Оплатить в {currencyFullName}"
 
-#: src/views/OnboardingSelector.vue:98
+#: src/views/OnboardingSelector.vue:134
 msgid "Pay with Nimiq"
 msgstr "Оплатить в Nimiq"
 

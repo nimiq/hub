@@ -1,12 +1,12 @@
 # 
 # Translators:
 # Daniel, 2020
-# Sven <sven@nimiq.com>, 2021
 # Sören Schwert <hello@soerenschwert.de>, 2021
+# Sven <sven@nimiq.com>, 2022
 # 
 msgid ""
 msgstr ""
-"Last-Translator: Sören Schwert <hello@soerenschwert.de>, 2021\n"
+"Last-Translator: Sven <sven@nimiq.com>, 2022\n"
 "Language-Team: Chinese (https://www.transifex.com/nimiq-foundation/teams/110181/zh/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: zh\n"
@@ -42,7 +42,7 @@ msgstr "404 - 找不到现金"
 
 #: src/views/SetupSwapSuccess.vue:129
 msgid "503 Service unavailable - please try again later"
-msgstr ""
+msgstr "503 服务不可用 - 请稍后再试"
 
 #: src/views/ExportSuccess.vue:60
 msgid "Account backed up!"
@@ -143,15 +143,15 @@ msgstr "返回 {Nimiq Miner}"
 msgid "Back to {Wallet}"
 msgstr "返回 {Wallet}"
 
-#: src/views/OnboardingSelector.vue:87
+#: src/views/OnboardingSelector.vue:123
 msgid "Back to Cashlink"
 msgstr "返回现金链接"
 
-#: src/views/OnboardingSelector.vue:81
+#: src/views/OnboardingSelector.vue:117
 msgid "Back to Checkout"
 msgstr "返回结账"
 
-#: src/views/OnboardingSelector.vue:83
+#: src/views/OnboardingSelector.vue:119
 msgid "Back to Choose Address"
 msgstr "返回选择地址"
 
@@ -176,7 +176,7 @@ msgstr "返回Nimiq礼品卡"
 msgid "Back to Nimiq Vote"
 msgstr "返回Nimiq投票"
 
-#: src/views/OnboardingSelector.vue:85
+#: src/views/OnboardingSelector.vue:121
 msgid "Back to Sign Message"
 msgstr "返回签名信息"
 
@@ -321,7 +321,7 @@ msgstr "点击连接"
 
 #: src/views/CashlinkManage.vue:25
 msgid "Click to copy:"
-msgstr ""
+msgstr "点击复制："
 
 #: src/views/RequestError.vue:31
 msgid "Close"
@@ -610,7 +610,7 @@ msgid ""
 "Cashlink was claimed."
 msgstr "它不会成为公共区块链的一部分，并且可能会在现金链接使用后丢失"
 
-#: src/views/OnboardingSelector.vue:96
+#: src/views/OnboardingSelector.vue:132
 msgid "Join Nimiq"
 msgstr "加入 Nimiq"
 
@@ -657,7 +657,7 @@ msgstr "登录文件已导出！"
 msgid "Login to existing account"
 msgstr "登录到现有帐户"
 
-#: src/views/OnboardingSelector.vue:100
+#: src/views/OnboardingSelector.vue:136
 msgid "Login to fund your Cashlink"
 msgstr "登录以资助你的现金链接"
 
@@ -710,7 +710,7 @@ msgstr "不是"
 msgid "No App found"
 msgstr "找不到应用"
 
-#: src/views/OnboardingSelector.vue:109
+#: src/views/OnboardingSelector.vue:145
 msgid ""
 "No registration, no install,\n"
 "100% free"
@@ -754,7 +754,7 @@ msgstr "橙"
 #: src/components/CheckoutCardNimiq.vue:63
 #: src/components/CheckoutCardNimiq.vue:87
 msgid "Other wallets"
-msgstr ""
+msgstr "其他钱包"
 
 #: src/views/SetupSwapLedger.vue:964
 msgid "outgoing"
@@ -768,7 +768,7 @@ msgstr "所有者："
 msgid "Pay with {currencyFullName}"
 msgstr "使用{currencyFullName}支付"
 
-#: src/views/OnboardingSelector.vue:98
+#: src/views/OnboardingSelector.vue:134
 msgid "Pay with Nimiq"
 msgstr "使用Nimiq支付"
 
