@@ -147,15 +147,15 @@ msgstr "Zurück zum {Nimiq Miner}"
 msgid "Back to {Wallet}"
 msgstr "Zurück zur {Wallet}"
 
-#: src/views/OnboardingSelector.vue:123
+#: src/views/OnboardingSelector.vue:127
 msgid "Back to Cashlink"
 msgstr "Zurück zum Cashlink"
 
-#: src/views/OnboardingSelector.vue:117
+#: src/views/OnboardingSelector.vue:121
 msgid "Back to Checkout"
 msgstr "Zurück zum Checkout"
 
-#: src/views/OnboardingSelector.vue:119
+#: src/views/OnboardingSelector.vue:123
 msgid "Back to Choose Address"
 msgstr "Zurück zur Adressauswahl"
 
@@ -180,7 +180,7 @@ msgstr "Zurück zur Geschenkkarte"
 msgid "Back to Nimiq Vote"
 msgstr "Zurück zur Abstimmung"
 
-#: src/views/OnboardingSelector.vue:121
+#: src/views/OnboardingSelector.vue:125
 msgid "Back to Sign Message"
 msgstr "Zurück zu Nachrichtensignierung"
 
@@ -620,7 +620,7 @@ msgstr ""
 "Es wird nicht Teil der öffentlichen Blockchain und kann verloren gehen "
 "nachdem der Cashlink eingelöst wurde. "
 
-#: src/views/OnboardingSelector.vue:132
+#: src/views/OnboardingSelector.vue:136
 msgid "Join Nimiq"
 msgstr "Bei Nimiq mitmachen"
 
@@ -672,7 +672,7 @@ msgstr "Login-Datei exportiert!"
 msgid "Login to existing account"
 msgstr "In vorhandenes Konto einloggen"
 
-#: src/views/OnboardingSelector.vue:136
+#: src/views/OnboardingSelector.vue:140
 msgid "Login to fund your Cashlink"
 msgstr "Einloggen, um Cashlink aufzuladen"
 
@@ -728,7 +728,7 @@ msgstr "Keine"
 msgid "No App found"
 msgstr "App nicht gefunden"
 
-#: src/views/OnboardingSelector.vue:145
+#: src/views/OnboardingSelector.vue:149
 msgid ""
 "No registration, no install,\n"
 "100% free"
@@ -786,7 +786,7 @@ msgstr "Eigentümer:"
 msgid "Pay with {currencyFullName}"
 msgstr "Bezahle mit {currencyFullName}"
 
-#: src/views/OnboardingSelector.vue:134
+#: src/views/OnboardingSelector.vue:138
 msgid "Pay with Nimiq"
 msgstr "Bezahle mit Nimiq"
 

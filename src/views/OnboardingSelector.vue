@@ -41,7 +41,7 @@ export default class OnboardingSelector extends Vue {
     @Static private originalRouteName?: string;
 
     private notEnoughCookieSpace = false;
-    private shouldRender = true;
+    private shouldRender: boolean | null = null;
 
     public async created() {
         /**
@@ -75,6 +75,10 @@ export default class OnboardingSelector extends Vue {
 
         this.notEnoughCookieSpace = (BrowserDetection.isIOS() || BrowserDetection.isSafari())
             && !await CookieHelper.canFitNewWallets();
+
+        if (this.shouldRender === null) {
+            this.shouldRender = true;
+        }
     }
 
     private signup() {

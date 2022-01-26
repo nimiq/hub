@@ -143,15 +143,15 @@ msgstr "返回 {Nimiq Miner}"
 msgid "Back to {Wallet}"
 msgstr "返回 {Wallet}"
 
-#: src/views/OnboardingSelector.vue:123
+#: src/views/OnboardingSelector.vue:127
 msgid "Back to Cashlink"
 msgstr "返回现金链接"
 
-#: src/views/OnboardingSelector.vue:117
+#: src/views/OnboardingSelector.vue:121
 msgid "Back to Checkout"
 msgstr "返回结账"
 
-#: src/views/OnboardingSelector.vue:119
+#: src/views/OnboardingSelector.vue:123
 msgid "Back to Choose Address"
 msgstr "返回选择地址"
 
@@ -176,7 +176,7 @@ msgstr "返回Nimiq礼品卡"
 msgid "Back to Nimiq Vote"
 msgstr "返回Nimiq投票"
 
-#: src/views/OnboardingSelector.vue:121
+#: src/views/OnboardingSelector.vue:125
 msgid "Back to Sign Message"
 msgstr "返回签名信息"
 
@@ -610,7 +610,7 @@ msgid ""
 "Cashlink was claimed."
 msgstr "它不会成为公共区块链的一部分，并且可能会在现金链接使用后丢失"
 
-#: src/views/OnboardingSelector.vue:132
+#: src/views/OnboardingSelector.vue:136
 msgid "Join Nimiq"
 msgstr "加入 Nimiq"
 
@@ -657,7 +657,7 @@ msgstr "登录文件已导出！"
 msgid "Login to existing account"
 msgstr "登录到现有帐户"
 
-#: src/views/OnboardingSelector.vue:136
+#: src/views/OnboardingSelector.vue:140
 msgid "Login to fund your Cashlink"
 msgstr "登录以资助你的现金链接"
 
@@ -710,7 +710,7 @@ msgstr "不是"
 msgid "No App found"
 msgstr "找不到应用"
 
-#: src/views/OnboardingSelector.vue:145
+#: src/views/OnboardingSelector.vue:149
 msgid ""
 "No registration, no install,\n"
 "100% free"
@@ -768,7 +768,7 @@ msgstr "所有者："
 msgid "Pay with {currencyFullName}"
 msgstr "使用{currencyFullName}支付"
 
-#: src/views/OnboardingSelector.vue:134
+#: src/views/OnboardingSelector.vue:138
 msgid "Pay with Nimiq"
 msgstr "使用Nimiq支付"
 
