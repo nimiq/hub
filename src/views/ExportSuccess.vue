@@ -59,7 +59,7 @@ export default class ExportSuccess extends Vue {
             if (this.keyguardResult.wordsExported) {
                 this.successMessage = this.$t('Account backed up!') as string;
             } else {
-                this.successMessage = this.$t('Login File exported!') as string;
+                this.successMessage = this.$t('Login File saved!') as string;
             }
         } else if (this.keyguardResult.wordsExported) {
             this.successMessage = this.$t('Recovery Words exported!') as string;
