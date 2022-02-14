@@ -195,7 +195,7 @@ export default class LoginSuccess extends Vue {
             return;
         }
 
-        this.title = this.$tc('Your Account is ready. | Your Accounts are ready.', result.length);
+        this.title = this.$tc('Welcome back! | Your Accounts are ready.', result.length);
         this.state = StatusScreen.State.SUCCESS;
         setTimeout(() => { this.$rpc.resolve(result); }, StatusScreen.SUCCESS_REDIRECT_DELAY);
     }
