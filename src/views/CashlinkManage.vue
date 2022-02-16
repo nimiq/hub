@@ -61,7 +61,11 @@
                 <div v-if="qrOverlayOpen" class="qr-overlay" @click.self="qrOverlayOpen = false">
                     <div class="nq-card">
                         <CloseButton @click="qrOverlayOpen = false"/>
-                        <QrCode :data="link" fill="#1F2348"/>
+                        <QrCode :data="link" fill="#1F2348" background="#fff" ref="qrCode"/>
+                        <button class="nq-button-s export-qr-code" @click="exportQrCode">
+                            <DownloadIcon/>
+                            {{ $t('Download') }}
+                        </button>
                     </div>
                 </div>
             </transition>
@@ -85,6 +89,7 @@ import {
     Copyable,
     QrCode,
     QrCodeIcon,
+    DownloadIcon,
 } from '@nimiq/vue-components';
 import StatusScreen from '../components/StatusScreen.vue';
 import Network from '../components/Network.vue';
@@ -108,9 +113,15 @@ import { ERROR_CANCELED } from '../lib/Constants';
     Copyable,
     QrCode,
     QrCodeIcon,
+    DownloadIcon,
 }})
 export default class CashlinkManage extends Vue {
     private static readonly SHARE_PREFIX: string = i18n.t('Here is your Nimiq Cashlink!') as string;
+
+    public $refs!: {
+        network: Network,
+        qrCode: QrCode,
+    };
 
     @Static private request!: ParsedManageCashlinkRequest | ParsedCreateCashlinkRequest;
     @Static private cashlink?: Cashlink;
@@ -130,7 +141,7 @@ export default class CashlinkManage extends Vue {
     private readonly nativeShareAvailable: boolean = (!!window.navigator && !!window.navigator.share);
 
     private async mounted() {
-        const network = this.$refs.network as Network;
+        const network = this.$refs.network;
 
         this.isManagementRequest = !this.cashlink; // freshly created cashlink or management request?
         let storedCashlink;
@@ -275,6 +286,19 @@ export default class CashlinkManage extends Vue {
 
     private cancel() {
         this.$rpc.reject(new Error(ERROR_CANCELED));
+    }
+
+    private async exportQrCode() {
+        const data = await this.$refs.qrCode.toDataUrl();
+
+        const link = document.createElement('a');
+        link.download = 'NimiqCashlink.png';
+        link.href = data;
+
+        document.body.appendChild(link);
+        link.click();
+
+        document.body.removeChild(link);
     }
 }
 </script>
@@ -463,6 +487,11 @@ export default class CashlinkManage extends Vue {
         display: block;
         margin-left: auto;
         margin-bottom: 2rem;
+    }
+
+    .qr-overlay .export-qr-code {
+        display: block;
+        margin: 2rem auto 0.75rem;
     }
 
     .fade-enter-active, .fade-leave-active {

@@ -116,7 +116,7 @@ msgstr ""
 msgid "Atomic swaps require two BTC transactions."
 msgstr ""
 
-#: src/views/CashlinkManage.vue:181
+#: src/views/CashlinkManage.vue:192
 #: src/views/CheckoutTransmission.vue:77
 msgid "Awaiting receipt confirmation..."
 msgstr ""
@@ -234,7 +234,7 @@ msgstr ""
 msgid "Cashlink created"
 msgstr ""
 
-#: src/views/CashlinkManage.vue:216
+#: src/views/CashlinkManage.vue:227
 msgid "Cashlink created."
 msgstr ""
 
@@ -394,7 +394,7 @@ msgstr ""
 msgid "Connecting to Keyguard..."
 msgstr ""
 
-#: src/views/CashlinkManage.vue:122
+#: src/views/CashlinkManage.vue:133
 #: src/views/CheckoutTransmission.vue:36
 #: src/views/LoginSuccess.vue:43
 msgid "Connecting to network..."
@@ -405,7 +405,7 @@ msgid "Connecting to Nimiq..."
 msgstr ""
 
 #: src/components/CheckoutCardNimiq.vue:284
-#: src/views/CashlinkManage.vue:175
+#: src/views/CashlinkManage.vue:186
 #: src/views/CheckoutTransmission.vue:71
 msgid "Contacting seed nodes..."
 msgstr ""
@@ -458,7 +458,7 @@ msgstr ""
 msgid "Creating your Account"
 msgstr ""
 
-#: src/views/CashlinkManage.vue:218
+#: src/views/CashlinkManage.vue:229
 #: src/views/SignTransactionLedger.vue:475
 msgid "Creating your Cashlink"
 msgstr ""
@@ -478,6 +478,10 @@ msgstr ""
 
 #: src/views/CashlinkManage.vue:22
 msgid "Done"
+msgstr ""
+
+#: src/views/CashlinkManage.vue:67
+msgid "Download"
 msgstr ""
 
 #: src/components/CheckoutCardExternal.vue:104
@@ -579,7 +583,7 @@ msgstr ""
 msgid "Happy Easter!"
 msgstr ""
 
-#: src/views/CashlinkManage.vue:113
+#: src/views/CashlinkManage.vue:119
 msgid "Here is your Nimiq Cashlink!"
 msgstr ""
 
@@ -889,7 +893,7 @@ msgstr ""
 msgid "Sending Transaction"
 msgstr ""
 
-#: src/views/CashlinkManage.vue:179
+#: src/views/CashlinkManage.vue:190
 #: src/views/CheckoutTransmission.vue:75
 msgid "Sending transaction..."
 msgstr ""
@@ -914,7 +918,7 @@ msgstr ""
 msgid "Single Accounts"
 msgstr ""
 
-#: src/views/CashlinkManage.vue:217
+#: src/views/CashlinkManage.vue:228
 #: src/views/CheckoutTransmission.vue:83
 msgid "Something went wrong"
 msgstr ""
@@ -958,7 +962,7 @@ msgstr ""
 
 #: src/components/CheckoutCardNimiq.vue:286
 #: src/views/AddVestingContract.vue:11
-#: src/views/CashlinkManage.vue:177
+#: src/views/CashlinkManage.vue:188
 #: src/views/CheckoutTransmission.vue:73
 msgid "Syncing consensus..."
 msgstr ""
@@ -1057,12 +1061,12 @@ msgstr ""
 msgid "Total fees"
 msgstr ""
 
-#: src/views/CashlinkManage.vue:200
+#: src/views/CashlinkManage.vue:211
 #: src/views/CheckoutTransmission.vue:61
 msgid "Transaction could not be relayed"
 msgstr ""
 
-#: src/views/CashlinkManage.vue:198
+#: src/views/CashlinkManage.vue:209
 #: src/views/CheckoutTransmission.vue:59
 msgid "Transaction is expired"
 msgstr ""

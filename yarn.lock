@@ -1141,7 +1141,7 @@
 
 "@nimiq/vue-components@https://github.com/nimiq/vue-components#build/hub":
   version "0.1.0"
-  resolved "https://github.com/nimiq/vue-components#05b9e90fd3a9f52354560e59b160dc158ecffe37"
+  resolved "https://github.com/nimiq/vue-components#67c1a1b2226b409d2f27f9ae2526fd2af9dd8c71"
   dependencies:
     "@nimiq/iqons" "^1.6.0"
     "@nimiq/style" "^0.8.2"
