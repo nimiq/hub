@@ -55,7 +55,7 @@
 <script lang="ts">
 import { Component } from 'vue-property-decorator';
 import { SmallPage, PageHeader, Amount } from '@nimiq/vue-components';
-import SignBtcTransaction, { BitcoinTransactionInfo } from './SignBtcTransaction.vue';
+import SignBtcTransaction, { StandardBitcoinTransactionInfo } from './SignBtcTransaction.vue';
 import StatusScreen from '../components/StatusScreen.vue';
 import GlobalClose from '../components/GlobalClose.vue';
 import LedgerUi from '../components/LedgerUi.vue';
@@ -119,7 +119,7 @@ export default class SignBtcTransactionLedger extends SignBtcTransaction {
         }
     }
 
-    protected async _signBtcTransaction(transactionInfo: BitcoinTransactionInfo, walletInfo: WalletInfo) {
+    protected async _signBtcTransaction(transactionInfo: StandardBitcoinTransactionInfo, walletInfo: WalletInfo) {
         // If user left this view in the mean time, don't continue signing the transaction
         if (this._isDestroyed) return;
 

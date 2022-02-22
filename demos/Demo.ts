@@ -18,7 +18,7 @@ import {
     SetupSwapRequest,
 } from '../src/lib/PublicRequestTypes';
 import { RedirectRequestBehavior, PopupRequestBehavior } from '../client/RequestBehavior';
-import { Utf8Tools } from '@nimiq/utils';
+import { FiatApiSupportedFiatCurrency, Utf8Tools } from '@nimiq/utils';
 import { WalletType } from '../src/lib/Constants';
 import { WalletStore } from '../src/lib/WalletStore';
 
@@ -494,6 +494,10 @@ class Demo {
                     value: Math.round(0.009 * 1e8),
                     label: 'Paul McCartney',
                 },
+                delay: 12,
+                fiatCurrency: FiatApiSupportedFiatCurrency.EUR,
+                fiatRate: 38662.93,
+                feePerByte: 68,
                 // changeOutput: {
                 //     keyPath: 'm/49\'/1\'/0\'/1/0',
                 //     address: '',

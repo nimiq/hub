@@ -138,6 +138,12 @@ export interface ParsedSignBtcTransactionRequest extends ParsedSimpleRequest {
         value: number,
     };
     locktime?: number;
+
+    // Data needed for display
+    fiatCurrency: string;
+    fiatRate: number;
+    delay: number;
+    feePerByte: number;
 }
 
 export interface ParsedAddBtcAddressesRequest extends ParsedSimpleRequest {
