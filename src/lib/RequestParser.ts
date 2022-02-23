@@ -522,7 +522,6 @@ export class RequestParser {
                     throw new Error('Invalid feePerByte');
                 }
 
-
                 const parsedSignBtcTransactionRequest: ParsedSignBtcTransactionRequest = {
                     kind: RequestType.SIGN_BTC_TRANSACTION,
                     walletId: signBtcTransactionRequest.accountId,
