@@ -60,6 +60,7 @@ export async function getElectrumClient(waitForConsensus: boolean = true) {
 
     if (waitForConsensus) {
         await client.waitForConsensusEstablished();
+        console.log('BTC Consensus established');
     }
 
     return client;
