@@ -19,7 +19,7 @@
         "i18n:sync": "yarn i18n:extract && yarn i18n:push ; yarn i18n:pull"
     },
     "dependencies": {
-        "@nimiq/browser-warning": "^1.1.0",
+        "@nimiq/browser-warning": "^1.1.1",
         "@nimiq/electrum-client": "https://github.com/nimiq/electrum-client#build",
         "@nimiq/fastspot-api": "^1.5.2",
         "@nimiq/iqons": "^1.5.2",
