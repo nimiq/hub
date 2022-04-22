@@ -656,7 +656,7 @@ msgid "Login"
 msgstr ""
 
 #: src/views/ExportSuccess.vue:62
-msgid "Login File exported!"
+msgid "Login File saved!"
 msgstr ""
 
 #: src/views/CashlinkReceive.vue:91
@@ -1137,6 +1137,10 @@ msgstr ""
 msgid "Vesting Contract"
 msgstr ""
 
+#: src/views/LoginSuccess.vue:198
+msgid "Welcome back! | Your Accounts are ready."
+msgstr ""
+
 #: src/views/SignupSuccess.vue:87
 msgid ""
 "Welcome to the\n"
@@ -1182,10 +1186,6 @@ msgstr ""
 
 #: src/components/LedgerUi.vue:272
 msgid "Your {app} app is outdated. Please update your Ledger firmware and {app} app using Ledger Live."
-msgstr ""
-
-#: src/views/LoginSuccess.vue:198
-msgid "Your Account is ready. | Your Accounts are ready."
 msgstr ""
 
 #: src/views/LoginSuccess.vue:181

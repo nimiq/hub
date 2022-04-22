@@ -124,7 +124,7 @@ msgstr "Utilizar una cuota de red de por lo menos {fee} sat/byte."
 msgid "Atomic swaps require two BTC transactions."
 msgstr "Los intercambios atómicos requieren dos transacciones BTC."
 
-#: src/views/CashlinkManage.vue:181 src/views/CheckoutTransmission.vue:77
+#: src/views/CashlinkManage.vue:192 src/views/CheckoutTransmission.vue:77
 msgid "Awaiting receipt confirmation..."
 msgstr "Aguardando confirmación del recibo..."
 
@@ -242,7 +242,7 @@ msgstr "¡Cashlink reclamado!"
 msgid "Cashlink created"
 msgstr "Cashlink creado"
 
-#: src/views/CashlinkManage.vue:216
+#: src/views/CashlinkManage.vue:227
 msgid "Cashlink created."
 msgstr "Cashlink creado."
 
@@ -399,7 +399,7 @@ msgstr "Conecte su Ledger Nano S o Nano X."
 msgid "Connecting to Keyguard..."
 msgstr "Conectándose al Keyguard..."
 
-#: src/views/CashlinkManage.vue:122 src/views/CheckoutTransmission.vue:36
+#: src/views/CashlinkManage.vue:133 src/views/CheckoutTransmission.vue:36
 #: src/views/LoginSuccess.vue:43
 msgid "Connecting to network..."
 msgstr "Conectándose a la red..."
@@ -408,7 +408,7 @@ msgstr "Conectándose a la red..."
 msgid "Connecting to Nimiq..."
 msgstr "Conectándose a Nimiq..."
 
-#: src/components/CheckoutCardNimiq.vue:284 src/views/CashlinkManage.vue:175
+#: src/components/CheckoutCardNimiq.vue:284 src/views/CashlinkManage.vue:186
 #: src/views/CheckoutTransmission.vue:71
 msgid "Contacting seed nodes..."
 msgstr "Contactando nodos semilla..."
@@ -459,7 +459,7 @@ msgstr "Creando Cashlink"
 msgid "Creating your Account"
 msgstr "Creando su Cuenta"
 
-#: src/views/CashlinkManage.vue:218 src/views/SignTransactionLedger.vue:475
+#: src/views/CashlinkManage.vue:229 src/views/SignTransactionLedger.vue:475
 msgid "Creating your Cashlink"
 msgstr "Creando su Cashlink"
 
@@ -479,6 +479,10 @@ msgstr "No cierre esta ventana hasta obtener la confirmación."
 #: src/views/CashlinkManage.vue:22
 msgid "Done"
 msgstr "Listo"
+
+#: src/views/CashlinkManage.vue:67
+msgid "Download"
+msgstr ""
 
 #: src/components/CheckoutCardExternal.vue:104
 msgid "Enter manually"
@@ -574,7 +578,7 @@ msgstr "¡Feliz Cumpleaños!"
 msgid "Happy Easter!"
 msgstr "¡Felices Pascuas!"
 
-#: src/views/CashlinkManage.vue:113
+#: src/views/CashlinkManage.vue:119
 msgid "Here is your Nimiq Cashlink!"
 msgstr "¡Aquí esta su Cashlink Nimiq!"
 
@@ -659,8 +663,8 @@ msgid "Login"
 msgstr "Iniciar Sesión"
 
 #: src/views/ExportSuccess.vue:62
-msgid "Login File exported!"
-msgstr "¡Archivo de Sesión exportado!"
+msgid "Login File saved!"
+msgstr ""
 
 #: src/views/CashlinkReceive.vue:91
 msgid "Login to existing account"
@@ -905,7 +909,7 @@ msgstr "Enviando su transacción"
 msgid "Sending Transaction"
 msgstr "Enviando Transacción"
 
-#: src/views/CashlinkManage.vue:179 src/views/CheckoutTransmission.vue:75
+#: src/views/CashlinkManage.vue:190 src/views/CheckoutTransmission.vue:75
 msgid "Sending transaction..."
 msgstr "Enviando Transacción..."
 
@@ -929,7 +933,7 @@ msgstr "Firmando transacciones..."
 msgid "Single Accounts"
 msgstr "Cuentas Individual"
 
-#: src/views/CashlinkManage.vue:217 src/views/CheckoutTransmission.vue:83
+#: src/views/CashlinkManage.vue:228 src/views/CheckoutTransmission.vue:83
 msgid "Something went wrong"
 msgstr "Algo salió mal"
 
@@ -970,7 +974,7 @@ msgid "Syncing"
 msgstr "Sincronizando"
 
 #: src/components/CheckoutCardNimiq.vue:286
-#: src/views/AddVestingContract.vue:11 src/views/CashlinkManage.vue:177
+#: src/views/AddVestingContract.vue:11 src/views/CashlinkManage.vue:188
 #: src/views/CheckoutTransmission.vue:73
 msgid "Syncing consensus..."
 msgstr "Sincronizando consenso...."
@@ -1086,11 +1090,11 @@ msgstr ""
 msgid "Total fees"
 msgstr "Total de cuotas"
 
-#: src/views/CashlinkManage.vue:200 src/views/CheckoutTransmission.vue:61
+#: src/views/CashlinkManage.vue:211 src/views/CheckoutTransmission.vue:61
 msgid "Transaction could not be relayed"
 msgstr "La transacción no se ha podido enviar"
 
-#: src/views/CashlinkManage.vue:198 src/views/CheckoutTransmission.vue:59
+#: src/views/CashlinkManage.vue:209 src/views/CheckoutTransmission.vue:59
 msgid "Transaction is expired"
 msgstr "Transacción ha expirado"
 
@@ -1170,6 +1174,10 @@ msgstr "Verifique Pago"
 msgid "Vesting Contract"
 msgstr "Contratos Vesting"
 
+#: src/views/LoginSuccess.vue:198
+msgid "Welcome back! | Your Accounts are ready."
+msgstr ""
+
 #: src/views/SignupSuccess.vue:87
 msgid ""
 "Welcome to the\n"
@@ -1225,10 +1233,6 @@ msgid ""
 msgstr ""
 "Su {app} app esta des-actualizada. Por favor actualice su Ledger y {app} app"
 " usando Ledger Live."
-
-#: src/views/LoginSuccess.vue:198
-msgid "Your Account is ready. | Your Accounts are ready."
-msgstr "Su Cuenta esta lista. | Sus Cuentas están listas."
 
 #: src/views/LoginSuccess.vue:181 src/views/SignupLedger.vue:106
 msgid ""
