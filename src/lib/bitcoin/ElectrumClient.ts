@@ -3,7 +3,7 @@ import { BTC_NETWORK_MAIN } from './BitcoinConstants';
 import { loadBitcoinJS } from './BitcoinJSLoader';
 
 // Import only types to avoid bundling of lazy-loaded libs.
-import type { ElectrumClient } from '@nimiq/electrum-client';
+import type { ElectrumClient, ElectrumClientOptions } from '@nimiq/electrum-client';
 import type { Transaction as BitcoinJsTransaction } from 'bitcoinjs-lib';
 
 let electrumClientPromise: Promise<ElectrumClient> | null = null;
@@ -31,9 +31,9 @@ export async function getElectrumClient(waitForConsensus: boolean = true) {
             }
         }
 
-        const options = Config.bitcoinNetwork === BTC_NETWORK_MAIN ? {
+        const options: Partial<ElectrumClientOptions> = Config.bitcoinNetwork === BTC_NETWORK_MAIN ? {
             extraSeedPeers: [{
-                host: 'electrumx.nimiq.network',
+                host: 'electrumx.nimiq.com',
                 wssPath: 'electrumx',
                 ports: { wss: 443, ssl: 50002, tcp: 50001 },
                 ip: '',
@@ -45,6 +45,10 @@ export async function getElectrumClient(waitForConsensus: boolean = true) {
                 ip: '',
                 version: '',
             }],
+            websocketProxy: {
+                tcp: 'wss://electrum.nimiq.com:50001',
+                ssl: 'wss://electrum.nimiq.com:50002',
+            },
         } : {};
 
         return new Client(options);
