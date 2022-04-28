@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="robots" content="noindex">
+    <script defer src="<%= htmlWebpackPlugin.options.cdnDomain %>/v<%= htmlWebpackPlugin.options.coreVersion %>/web-offline.js"
+      integrity="<%= htmlWebpackPlugin.options.coreIntegrityHash %>"
+      crossorigin="anonymous"></script>
+    <title>Nimiq Hub Export</title>
+
+    <style>
+      body {
+        font-family: 'Muli', sans-serif;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Hub Export</h1>
+
+    <h2>Cashlinks</h2>
+    <ul id="cashlinks">
+      <li>Loading...</li>
+    </ul>
+    <!-- built files will be auto injected -->
+  </body>
+</html>

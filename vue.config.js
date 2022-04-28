@@ -150,6 +150,17 @@ const pages = {
         // extracted common chunks and vendor chunks.
         chunks: ['chunk-vendors', 'chunk-common', 'cashlink-app']
     },
+    hubexport: {
+        // entry for the page
+        entry: 'src/export.ts',
+        // the source template
+        template: 'public/export.html',
+        cdnDomain,
+        coreVersion,
+        coreIntegrityHash,
+        // output as dist/iframe.html
+        filename: 'export.html',
+    },
 };
 
 if (buildName === 'local' || buildName === 'testnet') {
