@@ -26,7 +26,7 @@ if (!buildName) throw new Error('Please specify the build config with the `build
 const domain = buildName === 'mainnet'
     ? 'https://hub.nimiq.com'
     : buildName === 'testnet'
-        ? 'https://hub.nimiq-testnet.com'
+        ? 'https://hub.v2.nimiq-testnet.com'
         : 'http://localhost:8080';
 
 const cdnDomain = buildName === 'mainnet'
