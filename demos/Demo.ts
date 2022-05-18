@@ -29,8 +29,8 @@ declare global {
 
 class Demo {
     public static run() {
-        const keyguardOrigin = location.origin === 'https://hub.nimiq-testnet.com'
-            ? 'https://keyguard.nimiq-testnet.com'
+        const keyguardOrigin = location.origin === 'https://hub.v2.nimiq-testnet.com'
+            ? 'https://keyguard.v2.nimiq-testnet.com'
             : `${location.protocol}//${location.hostname}:8000`;
         const demo = new Demo(keyguardOrigin);
         // @ts-ignore (Property 'demo' does not exist on type 'Window')
