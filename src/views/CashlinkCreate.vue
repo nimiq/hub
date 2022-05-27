@@ -89,7 +89,7 @@
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import { Getter, Mutation, State } from 'vuex-class';
-import Cashlink from '../lib/Cashlink';
+import Cashlink, { CashlinkExtraData } from '../lib/Cashlink';
 import staticStore, { Static } from '../lib/StaticStore';
 import StatusScreen from '../components/StatusScreen.vue';
 import GlobalClose from '../components/GlobalClose.vue';
@@ -259,14 +259,17 @@ class CashlinkCreate extends Vue {
             this.balanceUpdatedPromise.then(() => this.loading = false);
         }
 
-        if (staticStore.cashlink) {
-            // If the Cashlink is restored in the static store after navigating back from the Keyguard or Ledger signing
-            // also restore the previously used values in the UI.
-            this.liveAmountAndFee.amount = staticStore.cashlink.value;
+        if (staticStore.cashlink || staticStore.keyguardRequest) {
+            // If a Cashlink or Keyguard request is restored in the static store after navigating back from
+            // the Keyguard or Ledger signing, restore the previously used values in the UI.
+            const cashlink = staticStore.cashlink;
+            const keyguardRequest = staticStore.keyguardRequest as KeyguardClient.SignTransactionRequestCashlink;
+
+            this.liveAmountAndFee.amount = (cashlink || keyguardRequest).value;
             this.feeLunaPerByte = this.feeLunaPerBytePreview =
-                Math.round(staticStore.cashlink.fee / CashlinkCreate.TRANSACTION_SIZE);
+                Math.round((cashlink || keyguardRequest).fee / CashlinkCreate.TRANSACTION_SIZE);
             this.liveAmountAndFee.fee = this.fee;
-            this.message = staticStore.cashlink.message;
+            this.message = (cashlink && cashlink.message) || keyguardRequest.cashlinkMessage || '';
             // Restore the sender from activeAccount. We don't await the balance update as we assume it to not have
             // changed.
             this.setSender(this.$store.state.activeWalletId, this.$store.state.activeUserFriendlyAddress);
@@ -410,28 +413,35 @@ class CashlinkCreate extends Vue {
             return;
         }
 
-        const cashlink = await Cashlink.create();
-        staticStore.cashlink = cashlink;
-        cashlink.networkClient = NetworkClient.Instance;
-        cashlink.value = this.liveAmountAndFee.amount;
-        cashlink.fee = this.fee;
-        cashlink.message = this.message;
-        if (this.request.theme) {
-            cashlink.theme = this.request.theme;
-        }
         const senderAccount = this.findWalletByAddress(this.accountOrContractInfo!.userFriendlyAddress, true)!;
 
         // proceed to transaction signing
         switch (senderAccount.type) {
             case WalletType.LEDGER:
+                const cashlink = await Cashlink.create(senderAccount.id);
+                staticStore.cashlink = cashlink;
+                cashlink.networkClient = NetworkClient.Instance;
+                cashlink.value = this.liveAmountAndFee.amount;
+                cashlink.fee = this.fee;
+                cashlink.message = this.message;
+                if (this.request.theme) {
+                    cashlink.theme = this.request.theme;
+                }
+
                 this.$router.push({name: `${RequestType.SIGN_TRANSACTION}-ledger`});
                 return;
             case WalletType.LEGACY:
             case WalletType.BIP39:
-                const fundingDetails = cashlink.getFundingDetails();
                 const validityStartHeight = NetworkClient.Instance.headInfo.height + 1;
 
-                const request: KeyguardClient.SignTransactionRequest = Object.assign({}, fundingDetails, {
+                const request: KeyguardClient.SignTransactionRequestCashlink = Object.assign({}, {
+                    layout: 'cashlink' as 'cashlink',
+                    value: this.liveAmountAndFee.amount,
+                    fee: this.fee,
+                    data: CashlinkExtraData.FUNDING,
+                    cashlinkKeyPath: 'm/44/242/209222120/228226923/1', // TODO: Generate address index from database
+                    cashlinkMessage: this.message,
+
                     shopOrigin: this.rpcState.origin,
                     appName: this.request.appName,
                     keyId: senderAccount.keyId,
@@ -442,9 +452,7 @@ class CashlinkCreate extends Vue {
                         ? (this.accountOrContractInfo as ContractInfo).type
                         : Nimiq.Account.Type.BASIC,
                     senderLabel: this.accountOrContractInfo!.label,
-                    recipient: fundingDetails.recipient.serialize(),
                     recipientType: Nimiq.Account.Type.BASIC,
-                    fee: this.fee,
                     validityStartHeight,
                 });
                 staticStore.keyguardRequest = request;

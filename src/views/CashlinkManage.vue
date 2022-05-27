@@ -77,7 +77,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { Static } from '../lib/StaticStore';
-import { Cashlink as PublicCashlink } from '../lib/PublicRequestTypes';
+import { Cashlink as PublicCashlink, CashlinkState } from '../lib/PublicRequestTypes';
 import { ParsedCreateCashlinkRequest, ParsedManageCashlinkRequest } from '../lib/RequestTypes';
 import {
     CloseButton,
@@ -125,8 +125,8 @@ export default class CashlinkManage extends Vue {
 
     @Static private request!: ParsedManageCashlinkRequest | ParsedCreateCashlinkRequest;
     @Static private cashlink?: Cashlink;
-    @Static private keyguardRequest?: KeyguardClient.SignTransactionRequest;
-    @State private keyguardResult?: KeyguardClient.SignTransactionResult;
+    @Static private keyguardRequest?: KeyguardClient.SignTransactionRequestCashlink;
+    @State private keyguardResult?: KeyguardClient.SignTransactionCashlinkResult;
 
     private isTxSent: boolean = false;
     private isManagementRequest: boolean = false;
@@ -146,12 +146,14 @@ export default class CashlinkManage extends Vue {
         this.isManagementRequest = !this.cashlink; // freshly created cashlink or management request?
         let storedCashlink;
         if ('cashlinkAddress' in this.request && !!this.request.cashlinkAddress) {
+            // Management request
             storedCashlink = await CashlinkStore.Instance.get(this.request.cashlinkAddress.toUserFriendlyAddress());
             if (!storedCashlink) {
                 this.$rpc.reject(new Error(`Could not find Cashlink for address ${this.request.cashlinkAddress}.`));
                 return;
             }
         } else if (this.cashlink) {
+            // Fresh Ledger-signed cashlink
             storedCashlink = await CashlinkStore.Instance.get(this.cashlink.address.toUserFriendlyAddress());
         } else {
             this.$rpc.reject(new Error('CashlinkManage expects the cashlink to display to be specified either via '
@@ -172,7 +174,32 @@ export default class CashlinkManage extends Vue {
         } else {
             // Cashlink can not have been sent yet because whenever it gets sent, it was also added to the store.
             this.isTxSent = false;
-            this.retrievedCashlink = this.cashlink!;
+            if (this.cashlink) {
+                this.retrievedCashlink = this.cashlink;
+            } else {
+                // Fresh Keyguard-signed cashlink
+                if (!this.keyguardResult || !this.keyguardRequest) {
+                    this.$rpc.reject(new Error('Unexpected: No valid Cashlink;'));
+                    return;
+                }
+
+                const cashlinkKeyPair = Nimiq.KeyPair.derive(
+                    new Nimiq.PrivateKey(
+                        this.keyguardResult.cashlinkPrivateKey,
+                    ),
+                );
+
+                this.retrievedCashlink = new Cashlink(
+                    cashlinkKeyPair,
+                    cashlinkKeyPair.publicKey.toAddress(),
+                    this.keyguardRequest.cashlinkKeyPath,
+                    this.keyguardRequest.value,
+                    this.keyguardRequest.fee,
+                    this.keyguardRequest.cashlinkMessage,
+                    CashlinkState.UNCHARGED,
+                    (this.request as ParsedCreateCashlinkRequest).theme,
+                );
+            }
         }
 
         if (!this.isTxSent) {
@@ -197,6 +224,9 @@ export default class CashlinkManage extends Vue {
 
             transactionToSend = transactionToSend || await network.createTx({
                 ...this.keyguardRequest,
+                recipient: Nimiq.PublicKey.derive(new Nimiq.PrivateKey(
+                    this.keyguardResult.cashlinkPrivateKey,
+                )).toAddress(),
                 signerPubKey: this.keyguardResult.publicKey,
                 signature: this.keyguardResult.signature,
             });

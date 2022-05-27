@@ -2,6 +2,7 @@ import { Utf8Tools } from '@nimiq/utils';
 import { DetailedPlainTransaction, NetworkClient } from '@nimiq/network-client';
 import { loadNimiq } from './Helpers';
 import { CashlinkState, CashlinkTheme } from './PublicRequestTypes';
+import { Options } from '@sentry/vue/dist/types';
 
 export const CashlinkExtraData = {
     FUNDING:  new Uint8Array([0, 130, 128, 146, 135]), // 'CASH'.split('').map(c => c.charCodeAt(0) + 63)
@@ -18,9 +19,27 @@ export interface CashlinkEntry {
     timestamp: number;
     theme?: CashlinkTheme;
     contactName?: string; /** unused for now */
+    keyPath?: string;
+    accountId?: string,
+}
+
+export interface CashlinkOptions {
+    accountId?: string;
+    keyPath?: string;
+    value?: number;
+    fee?: number;
+    message?: string;
+    state?: CashlinkState;
+    theme?: CashlinkTheme;
+    timestamp?: number;
+    contactName?: string; /** unused for now */
 }
 
 class Cashlink {
+    get keyPath() {
+        return this.options.keyPath;
+    }
+
     get value() {
         return this._value || 0;
     }
@@ -81,10 +100,16 @@ class Cashlink {
         this._networkClientResolver(client);
     }
 
-    public static async create(): Promise<Cashlink> {
+    get contactName() {
+        return this.options.contactName;
+    }
+
+    public static async create(accountId: string): Promise<Cashlink> {
         await loadNimiq();
         const keyPair = Nimiq.KeyPair.derive(Nimiq.PrivateKey.generate());
-        return new Cashlink(keyPair, keyPair.publicKey.toAddress());
+        return new Cashlink(keyPair, keyPair.publicKey.toAddress(), {
+            accountId,
+        });
     }
 
     public static async parse(str: string): Promise<Cashlink | null> {
@@ -111,11 +136,12 @@ class Cashlink {
             return new Cashlink(
                 keyPair,
                 keyPair.publicKey.toAddress(),
-                value,
-                undefined, // fee
-                message,
-                CashlinkState.UNKNOWN,
-                theme,
+                {
+                    value,
+                    message,
+                    state: CashlinkState.UNKNOWN,
+                    theme,
+                },
             );
         } catch (e) {
             console.error('Error parsing Cashlink:', e);
@@ -127,14 +153,17 @@ class Cashlink {
         return new Cashlink(
             Nimiq.KeyPair.unserialize(new Nimiq.SerialBuffer(object.keyPair)),
             Nimiq.Address.fromString(object.address),
-            object.value,
-            object.fee,
-            object.message,
-            object.state,
-            object.theme,
-            // @ts-ignore `timestamp` was called `date` before and was live in the mainnet.
-            object.timestamp || object.date,
-            object.contactName,
+            {
+                keyPath: object.keyPath,
+                value: object.value,
+                fee: object.fee,
+                message: object.message,
+                state: object.state,
+                theme: object.theme,
+                // @ts-ignore `timestamp` was called `date` before and was live in the mainnet.
+                timestamp: object.timestamp || object.date,
+                contactName: object.contactName,
+            },
         );
     }
 
@@ -143,6 +172,8 @@ class Cashlink {
      */
     public balance: number | null = null;
     public state: CashlinkState;
+    public timestamp: number;
+    public options: CashlinkOptions;
 
     private _getNetwork: () => Promise<NetworkClient>;
     private _networkClientResolver!: (client: NetworkClient) => void;
@@ -157,13 +188,7 @@ class Cashlink {
     constructor(
         public keyPair: Nimiq.KeyPair,
         public address: Nimiq.Address,
-        value?: number,
-        fee?: number,
-        message?: string,
-        state: CashlinkState = CashlinkState.UNCHARGED,
-        theme?: CashlinkTheme,
-        public timestamp: number = Math.floor(Date.now() / 1000),
-        public contactName?: string, /** unused for now */
+        options: CashlinkOptions = {},
     ) {
         const networkPromise = new Promise<NetworkClient>((resolve) => {
             // Safe resolver function for when the network client gets assigned
@@ -171,13 +196,15 @@ class Cashlink {
         });
         this._getNetwork = () => networkPromise;
 
-        if (value) this.value = value;
-        if (fee) this.fee = fee;
-        if (message) this.message = message;
-        if (theme) this.theme = theme;
-        this.state = state;
+        if (options.value) this.value = options.value;
+        if (options.fee) this.fee = options.fee;
+        if (options.message) this.message = options.message;
+        if (options.theme) this.theme = options.theme;
+        this.timestamp = options.timestamp || Math.floor(Date.now() / 1000);
+        this.state = options.state || CashlinkState.UNCHARGED;
+        this.options = options;
 
-        this._immutable = !!(value || message || theme);
+        this._immutable = !!(options.value || options.message || options.theme);
 
         this._getNetwork().then((network: NetworkClient) => {
             const userFriendlyAddress = this.address.toUserFriendlyAddress();
@@ -282,6 +309,7 @@ class Cashlink {
         const result: CashlinkEntry = {
             keyPair: new Uint8Array(this.keyPair.serialize()),
             address: this.address.toUserFriendlyAddress(),
+            keyPath: this.keyPath,
             value: this.value,
             message: this.message,
             state: this.state,

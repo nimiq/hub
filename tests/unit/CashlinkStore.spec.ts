@@ -26,10 +26,12 @@ const DUMMY_DATA = {
                 70, 207, 252, 77, 192, 84, 237, 202, 3, 46, 88, 64, 101, 200, 131, 19, 212,
                 105, 128, 49, 54, 99, 159, 166, 103, 196, 208, 178, 26, 244, 184, 234,
             ]))).publicKey.toAddress(),
-            1234554321,
-            123,
-            'Ein Cashlink test Cashlink',
-            CashlinkState.UNCLAIMED,
+            {
+                value: 1234554321,
+                fee: 123,
+                message: 'Ein Cashlink test Cashlink',
+                state: CashlinkState.UNCLAIMED,
+            },
         ),
         new Cashlink(
             Nimiq.KeyPair.derive(new Nimiq.PrivateKey(new Uint8Array([
@@ -40,13 +42,14 @@ const DUMMY_DATA = {
                 154, 176, 138, 78, 42, 184, 216, 152, 203, 236, 166, 111, 246, 63, 50, 14,
                 175, 84, 7, 65, 181, 2, 217, 44, 104, 255, 138, 63, 20, 196, 193, 125,
             ]))).publicKey.toAddress(),
-            5000000,
-            undefined,
-            'Ein Cashlink test Cashlink',
-            CashlinkState.CLAIMED,
-            Cashlink.DEFAULT_THEME,
-            Date.now(),
-            'Contact name',
+            {
+                value: 5000000,
+                message: 'Ein Cashlink test Cashlink',
+                state: CashlinkState.CLAIMED,
+                theme: Cashlink.DEFAULT_THEME,
+                timestamp: Date.now(),
+                contactName: 'Contact name',
+            }
         ),
     ].map((cashlink) => {
         // Anonymous functions cannot be compared by Jest, so we need to work around that
