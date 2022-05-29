@@ -55,6 +55,8 @@ const DUMMY_DATA = {
         cashlink._getNetwork = expect.any(Function);
         // @ts-ignore ignore private property access
         cashlink._networkClientResolver = expect.any(Function);
+        // @ts-ignore ignore private property access
+        cashlink._getUserAddresses = expect.any(Function);
         return cashlink;
     }),
 };

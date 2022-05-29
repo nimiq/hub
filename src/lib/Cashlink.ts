@@ -2,6 +2,7 @@ import { Utf8Tools } from '@nimiq/utils';
 import { DetailedPlainTransaction, NetworkClient } from '@nimiq/network-client';
 import { loadNimiq } from './Helpers';
 import { CashlinkState, CashlinkTheme } from './PublicRequestTypes';
+import { WalletInfo } from './WalletInfo';
 
 export const CashlinkExtraData = {
     FUNDING:  new Uint8Array([0, 130, 128, 146, 135]), // 'CASH'.split('').map(c => c.charCodeAt(0) + 63)
@@ -77,10 +78,6 @@ class Cashlink {
         return !!this._theme;
     }
 
-    set networkClient(client: NetworkClient) {
-        this._networkClientResolver(client);
-    }
-
     public static async create(): Promise<Cashlink> {
         await loadNimiq();
         const keyPair = Nimiq.KeyPair.derive(Nimiq.PrivateKey.generate());
@@ -143,14 +140,15 @@ class Cashlink {
      */
     public balance: number | null = null;
 
-    private _getNetwork: () => Promise<NetworkClient>;
+    private readonly _getNetwork: () => Promise<NetworkClient>;
     private _networkClientResolver!: (client: NetworkClient) => void;
-    private _immutable: boolean;
-    private _eventListeners: {[type: string]: Array<(data: any) => void>} = {};
+    private readonly _immutable: boolean;
+    private readonly _eventListeners: {[type: string]: Array<(data: any) => void>} = {};
     private _messageBytes: Uint8Array = new Uint8Array(0);
     private _value: number | null = null;
     private _fee: number | null = null;
     private _theme: CashlinkTheme = CashlinkTheme.UNSPECIFIED; // note that UNSPECIFIED equals to 0 and is thus falsy
+    private _getUserAddresses: () => Set<string>;
     private _knownTransactions: DetailedPlainTransaction[] = [];
 
     constructor(
@@ -165,10 +163,11 @@ class Cashlink {
         public contactName?: string, /** unused for now */
     ) {
         const networkPromise = new Promise<NetworkClient>((resolve) => {
-            // Safe resolver function for when the network client gets assigned
+            // Save resolver function for when the network client gets assigned
             this._networkClientResolver = resolve;
         });
         this._getNetwork = () => networkPromise;
+        this._getUserAddresses = () => new Set(); // dummy, actual method will be set via setDependencies
 
         if (value) this.value = value;
         if (fee) this.fee = fee;
@@ -200,6 +199,18 @@ class Cashlink {
         this.detectState();
     }
 
+    public setDependencies(
+        networkClient: NetworkClient,
+        userWallets: WalletInfo[] | (() => WalletInfo[]), // can be a method that returns up-to-date accounts
+    ) {
+        this._getUserAddresses = () => new Set(
+            (typeof userWallets === 'function' ? userWallets() : userWallets).flatMap((wallet) =>
+                [...wallet.accounts.values(), ...wallet.contracts].map((acc) => acc.address.toUserFriendlyAddress())),
+        );
+
+        this._networkClientResolver(networkClient);
+    }
+
     public async detectState() {
         await this._awaitConsensus();
 
@@ -209,12 +220,17 @@ class Cashlink {
             ...(await this._getNetwork()).relayedTransactions,
         ];
 
-        const address = this.address.toUserFriendlyAddress();
+        const cashlinkAddress = this.address.toUserFriendlyAddress();
+        const userAddresses = this._getUserAddresses();
 
+        // For funding, we don't care about the sender address. For claiming, we're only interested in our transactions
+        // as cashlink shouldn't be in CLAIMING state for other users' transactions. Instead, for us the state should
+        // remain UNCLAIMED if additional balance remains or directly switch to CLAIMED if there is no balance left for
+        // us, subtracting other users' pending claims.
         const pendingFundingTx = pendingTransactions.find(
-            (tx) => tx.recipient === address);
+            (tx) => tx.recipient === cashlinkAddress);
         const pendingClaimingTx = pendingTransactions.find(
-            (tx) => tx.sender === address);
+            (tx) => tx.sender === cashlinkAddress && userAddresses.has(tx.recipient!));
 
         // Only exit if the cashlink is CLAIMED and not currently funded or being funded.
         if (this.state === CashlinkState.CLAIMED && !balance && !pendingFundingTx) return;
@@ -222,13 +238,13 @@ class Cashlink {
         const knownTransactionReceipts = new Map(this._knownTransactions.map((tx) => [tx.hash, tx.blockHash!]));
 
         const transactionHistory = await (await this._getNetwork()).requestTransactionHistory(
-            address,
+            cashlinkAddress,
             knownTransactionReceipts,
         );
         this._knownTransactions = this._knownTransactions.concat(transactionHistory.newTransactions);
 
         const knownFundingTx = this._knownTransactions.find(
-            (tx) => tx.recipient === address);
+            (tx) => tx.recipient === cashlinkAddress);
 
         // Detect new state by a sequence of checks from UNCHARGED, CHARGING, UNCLAIMED, CLAIMING to CLAIMED states.
         // Note that cashlinks that already reached a later state in a previous detectState, can also go back to earlier
@@ -241,10 +257,12 @@ class Cashlink {
             newState = CashlinkState.UNCLAIMED;
         }
         if (pendingClaimingTx) {
+            // Being claimed by user.
             newState = CashlinkState.CLAIMING;
         }
         if (knownFundingTx && !balance && !pendingFundingTx && !pendingClaimingTx) {
             // Cashlink had been funded but no funds are left and it's not being recharged or still being claimed.
+            // Claimed by user or someone else.
             newState = CashlinkState.CLAIMED;
         }
 
