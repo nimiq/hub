@@ -139,10 +139,9 @@ class Cashlink {
     }
 
     /**
-     * Cashlink balance in luna
+     * Cashlink balance in luna, with pending outgoing transactions subtracted
      */
     public balance: number | null = null;
-    public state: CashlinkState;
 
     private _getNetwork: () => Promise<NetworkClient>;
     private _networkClientResolver!: (client: NetworkClient) => void;
@@ -160,7 +159,7 @@ class Cashlink {
         value?: number,
         fee?: number,
         message?: string,
-        state: CashlinkState = CashlinkState.UNCHARGED,
+        public state: CashlinkState = CashlinkState.UNCHARGED,
         theme?: CashlinkTheme,
         public timestamp: number = Math.floor(Date.now() / 1000),
         public contactName?: string, /** unused for now */
@@ -175,7 +174,6 @@ class Cashlink {
         if (fee) this.fee = fee;
         if (message) this.message = message;
         if (theme) this.theme = theme;
-        this.state = state;
 
         this._immutable = !!(value || message || theme);
 
@@ -205,7 +203,7 @@ class Cashlink {
     public async detectState() {
         await this._awaitConsensus();
 
-        const balance = await this._awaitBalance();
+        const balance = await this._awaitBalance(); // balance with pending outgoing transactions subtracted by nano-api
         const pendingTransactions = [
             ...(await this._getNetwork()).pendingTransactions,
             ...(await this._getNetwork()).relayedTransactions,
@@ -229,50 +227,25 @@ class Cashlink {
         );
         this._knownTransactions = this._knownTransactions.concat(transactionHistory.newTransactions);
 
-        let newState: CashlinkState = this.state;
-
         const knownFundingTx = this._knownTransactions.find(
             (tx) => tx.recipient === address);
-        const knownClaimingTx = this._knownTransactions.find(
-            (tx) => tx.sender === address);
 
-        switch (this.state) {
-            case CashlinkState.UNKNOWN:
-                if (!pendingFundingTx && !knownFundingTx) {
-                    newState = CashlinkState.UNCHARGED;
-                    break;
-                }
-            case CashlinkState.UNCHARGED:
-                if (pendingFundingTx) {
-                    newState = CashlinkState.CHARGING;
-                }
-            case CashlinkState.CHARGING:
-                if (!balance && !pendingFundingTx) {
-                    // Handle expired/replaced funding tx
-                    newState = CashlinkState.UNCHARGED;
-                    // Not break;ing here, because we need to see if the cashlink is already CLAIMED.
-                }
-                if (knownFundingTx) {
-                    newState = CashlinkState.UNCLAIMED;
-                } else break; // If no known transactions are found, no further checks are necessary
-            case CashlinkState.UNCLAIMED:
-                if (pendingClaimingTx) {
-                    newState = CashlinkState.CLAIMING;
-                }
-            case CashlinkState.CLAIMING:
-                if (balance) {
-                    // Handle recharged/reused cashlink
-                    if (!pendingClaimingTx) newState = CashlinkState.UNCLAIMED;
-                    break; // If a balance is detected on the cashlink, it cannot be in CLAIMED state.
-                }
-                if (knownClaimingTx) {
-                    newState = CashlinkState.CLAIMED;
-                }
-            case CashlinkState.CLAIMED:
-                // Detect cashlink re-use and chain rebranches
-                if (pendingFundingTx) newState = CashlinkState.CHARGING;
-                if (balance) newState = CashlinkState.UNCLAIMED;
-                if (pendingClaimingTx) newState = CashlinkState.CLAIMING;
+        // Detect new state by a sequence of checks from UNCHARGED, CHARGING, UNCLAIMED, CLAIMING to CLAIMED states.
+        // Note that cashlinks that already reached a later state in a previous detectState, can also go back to earlier
+        // states again, e.g. by pending funding/claiming txs expiring, blockchain rebranching or cashlink recharging.
+        let newState: CashlinkState = CashlinkState.UNCHARGED;
+        if (pendingFundingTx) {
+            newState = CashlinkState.CHARGING;
+        }
+        if (balance) {
+            newState = CashlinkState.UNCLAIMED;
+        }
+        if (pendingClaimingTx) {
+            newState = CashlinkState.CLAIMING;
+        }
+        if (knownFundingTx && !balance && !pendingFundingTx && !pendingClaimingTx) {
+            // Cashlink had been funded but no funds are left and it's not being recharged or still being claimed.
+            newState = CashlinkState.CLAIMED;
         }
 
         if (newState !== this.state) this._updateState(newState);
