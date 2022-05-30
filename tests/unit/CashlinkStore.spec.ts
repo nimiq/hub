@@ -27,7 +27,7 @@ const DUMMY_DATA = {
                 105, 128, 49, 54, 99, 159, 166, 103, 196, 208, 178, 26, 244, 184, 234,
             ]))).publicKey.toAddress(),
             1234554321,
-            123,
+            171,
             'Ein Cashlink test Cashlink',
             CashlinkState.UNCLAIMED,
         ),

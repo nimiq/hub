@@ -37,12 +37,33 @@ class Cashlink {
     set fee(fee: number) {
         if (this.state === CashlinkState.CLAIMED) {
             console.warn('Setting a fee will typically have no effect anymore as Cashlink is already claimed');
+        } else if (fee && fee < Cashlink.MIN_PAID_TRANSACTION_FEE) {
+            console.warn(`Fee of ${Nimiq.Policy.lunasToCoins(fee)} is too low to count as paid transaction`);
+        } else if (fee < this.suggestedFee) {
+            console.warn(`Fee of ${Nimiq.Policy.lunasToCoins(fee)} is smaller than suggested fee of `
+                + Nimiq.Policy.lunasToCoins(this.fee));
         }
         this._fee = fee;
     }
 
     get fee() {
-        return this._fee || 0;
+        return this._fee !== null ? this._fee : this.suggestedFee;
+    }
+
+    get suggestedFee() {
+        if (
+            // Cashlink balance was apparently specifically setup such that every claiming transaction can be a paid one
+            (this.balance && this.balance % (this.value + Cashlink.MIN_PAID_TRANSACTION_FEE) === 0)
+            // Many parallel claims are happening right now. Because free transactions per sender are limited to 10 per
+            // block (Mempool.FREE_TRANSACTIONS_PER_SENDER_MAX) we better send further transactions with a fee. Using
+            // 5 as cutoff instead of 10 as not all transactions might have been propagated by the network to us yet.
+            // Note that this._pendingTransactions could technically also include pending cashlink funding transactions
+            // which should not count towards pending claims but we can ignore this fact here.
+            || this._pendingTransactions.length >= 5
+        ) {
+            return Cashlink.MIN_PAID_TRANSACTION_FEE;
+        }
+        return 0;
     }
 
     get message() {
@@ -150,6 +171,7 @@ class Cashlink {
     private _theme: CashlinkTheme = CashlinkTheme.UNSPECIFIED; // note that UNSPECIFIED equals to 0 and is thus falsy
     private _getUserAddresses: () => Set<string>;
     private _knownTransactions: DetailedPlainTransaction[] = [];
+    private _pendingTransactions: Array<Partial<DetailedPlainTransaction>> = [];
 
     constructor(
         public keyPair: Nimiq.KeyPair,
@@ -215,10 +237,10 @@ class Cashlink {
         await this._awaitConsensus();
 
         const balance = await this._awaitBalance(); // balance with pending outgoing transactions subtracted by nano-api
-        const pendingTransactions = [
+        this._pendingTransactions = [
             ...(await this._getNetwork()).pendingTransactions,
             ...(await this._getNetwork()).relayedTransactions,
-        ];
+        ].filter((tx) => tx.sender === cashlinkAddress || tx.recipient === cashlinkAddress);
 
         const cashlinkAddress = this.address.toUserFriendlyAddress();
         const userAddresses = this._getUserAddresses();
@@ -227,9 +249,9 @@ class Cashlink {
         // as cashlink shouldn't be in CLAIMING state for other users' transactions. Instead, for us the state should
         // remain UNCLAIMED if additional balance remains or directly switch to CLAIMED if there is no balance left for
         // us, subtracting other users' pending claims.
-        const pendingFundingTx = pendingTransactions.find(
+        const pendingFundingTx = this._pendingTransactions.find(
             (tx) => tx.recipient === cashlinkAddress);
-        const pendingClaimingTx = pendingTransactions.find(
+        const pendingClaimingTx = this._pendingTransactions.find(
             (tx) => tx.sender === cashlinkAddress && userAddresses.has(tx.recipient!));
 
         // Only exit if the cashlink is CLAIMED and not currently funded or being funded.
@@ -280,8 +302,12 @@ class Cashlink {
             timestamp: this.timestamp,
         };
         if (includeOptional) {
-            result.fee = this.fee;
-            result.contactName = this.contactName;
+            if (this._fee !== null) {
+                result.fee = this._fee;
+            }
+            if (this.contactName) {
+                result.contactName = this.contactName;
+            }
         }
         return result;
     }
@@ -327,7 +353,7 @@ class Cashlink {
             layout: 'cashlink',
             recipient: this.address,
             value: this.value,
-            fee: this.fee,
+            fee: 0, // this.fee is meant for claiming transactions
             data: CashlinkExtraData.FUNDING,
             cashlinkMessage: this.message,
         };
@@ -336,22 +362,27 @@ class Cashlink {
     public async claim(
         recipientAddress: string,
         recipientType: Nimiq.Account.Type = Nimiq.Account.Type.BASIC,
-        fee: number = this.fee,
+        fee?: number,
     ): Promise<void> {
+        await Promise.all([
+            loadNimiq(),
+            this.state === CashlinkState.UNKNOWN ? this.detectState() : Promise.resolve(),
+        ]);
         if (this.state >= CashlinkState.CLAIMING) {
             throw new Error('Cannot claim, Cashlink has already been claimed');
         }
 
-        await loadNimiq();
-
+        // Get latest balance and fee
+        const balance = await this._awaitBalance();
+        fee = fee !== undefined ? fee : this.fee;
         // Only claim the amount specified in the cashlink (or the cashlink balance, if smaller)
-        const balance = Math.min(this.value, await this._awaitBalance());
-        if (!balance) {
-            throw new Error('Cannot claim, there is no balance in this link');
+        const totalClaimBalance = Math.min(this.value + fee, balance);
+        if (totalClaimBalance <= fee) {
+            throw new Error('Cannot claim, there is not enough balance in this link');
         }
         const recipient = Nimiq.Address.fromString(recipientAddress);
         const transaction = new Nimiq.ExtendedTransaction(this.address, Nimiq.Account.Type.BASIC,
-            recipient, recipientType, balance - fee, fee, await this._getBlockchainHeight(),
+            recipient, recipientType, totalClaimBalance - fee, fee, await this._getBlockchainHeight(),
             Nimiq.Transaction.Flag.NONE, CashlinkExtraData.CLAIMING);
 
         const keyPair = this.keyPair;
@@ -476,6 +507,10 @@ namespace Cashlink {
     export const DEFAULT_THEME = Date.now() < new Date('Tue, 13 Apr 2020 23:59:00 GMT-12').valueOf()
         ? CashlinkTheme.EASTER
         : CashlinkTheme.STANDARD;
+
+    // (size of extended tx + cashlink extra data) * Nimiq.Mempool.TRANSACTION_RELAY_FEE_MIN which is 1. We can't use
+    // TRANSACTION_RELAY_FEE_MIN as constant because Mempool is not included in Nimiq core offline build.
+    export const MIN_PAID_TRANSACTION_FEE = 171;
 }
 
 export default Cashlink;
