@@ -246,9 +246,7 @@ class Cashlink {
         const userAddresses = this._getUserAddresses();
 
         // For funding, we don't care about the sender address. For claiming, we're only interested in our transactions
-        // as cashlink shouldn't be in CLAIMING state for other users' transactions. Instead, for us the state should
-        // remain UNCLAIMED if additional balance remains or directly switch to CLAIMED if there is no balance left for
-        // us, subtracting other users' pending claims.
+        // as cashlink shouldn't be in CLAIMING or CLAIMED state for other users' transactions.
         const pendingFundingTx = this._pendingTransactions.find(
             (tx) => tx.recipient === cashlinkAddress);
         const pendingClaimingTx = this._pendingTransactions.find(
@@ -267,10 +265,15 @@ class Cashlink {
 
         const knownFundingTx = this._knownTransactions.find(
             (tx) => tx.recipient === cashlinkAddress);
+        const knownClaimingTx = this._knownTransactions.find(
+            (tx) => tx.sender === cashlinkAddress && userAddresses.has(tx.recipient));
 
         // Detect new state by a sequence of checks from UNCHARGED, CHARGING, UNCLAIMED, CLAIMING to CLAIMED states.
         // Note that cashlinks that already reached a later state in a previous detectState, can also go back to earlier
-        // states again, e.g. by pending funding/claiming txs expiring, blockchain rebranching or cashlink recharging.
+        // states again, e.g. by pending funding/claiming txs expiring, cashlink recharging or blockchain rebranching.
+        // Blockchain rebranching is however currently not handled as we don't evict transactions that were forked away
+        // from _knownTransactions. These transactions automatically end up in the mempool again though and should
+        // usually get confirmed again (but not necessarily, if mempool limits are exceeded).
         let newState: CashlinkState = CashlinkState.UNCHARGED;
         if (pendingFundingTx) {
             newState = CashlinkState.CHARGING;
@@ -282,9 +285,9 @@ class Cashlink {
             // Being claimed by user.
             newState = CashlinkState.CLAIMING;
         }
-        if (knownFundingTx && !balance && !pendingFundingTx && !pendingClaimingTx) {
-            // Cashlink had been funded but no funds are left and it's not being recharged or still being claimed.
-            // Claimed by user or someone else.
+        if (knownClaimingTx || (knownFundingTx && !balance && !pendingFundingTx && !pendingClaimingTx)) {
+            // User already claimed the cashlink and is not allowed to claim again or it had been funded but no funds
+            // are left and it's not being recharged or still being claimed. Was claimed by user or someone else.
             newState = CashlinkState.CLAIMED;
         }
 
