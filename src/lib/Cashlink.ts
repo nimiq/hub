@@ -156,6 +156,25 @@ class Cashlink {
         );
     }
 
+    private static readonly LAST_CLAIMED_MULTI_CASHLINKS_STORAGE_KEY = 'cashlink-last-claimed-multi-cashlinks';
+
+    private static _getLastClaimedMultiCashlinks(): Nimiq.Address[] {
+        try {
+            return JSON.parse(window.localStorage[Cashlink.LAST_CLAIMED_MULTI_CASHLINKS_STORAGE_KEY])
+                .map((addressBase64: string) => Nimiq.Address.fromBase64(addressBase64));
+        } catch (e) {
+            return [];
+        }
+    }
+
+    private static _setLastClaimedMultiCashlink(address: Nimiq.Address) {
+        // restrict to last 5 entries, store as base64 and omit trailing padding to save storage space
+        window.localStorage[Cashlink.LAST_CLAIMED_MULTI_CASHLINKS_STORAGE_KEY] = JSON.stringify([
+            address,
+            ...Cashlink._getLastClaimedMultiCashlinks(),
+        ].slice(0, 5).map((addr) => addr.toBase64().replace(/=+$/, '')));
+    }
+
     /**
      * Cashlink balance in luna, with pending outgoing transactions subtracted
      */
@@ -234,6 +253,11 @@ class Cashlink {
     }
 
     public async detectState() {
+        if (Cashlink._getLastClaimedMultiCashlinks().some((address) => address.equals(this.address))) {
+            this._updateState(CashlinkState.CLAIMED);
+            return;
+        }
+
         await this._awaitConsensus();
 
         const balance = await this._awaitBalance(); // balance with pending outgoing transactions subtracted by nano-api
@@ -291,7 +315,7 @@ class Cashlink {
             newState = CashlinkState.CLAIMED;
         }
 
-        if (newState !== this.state) this._updateState(newState);
+        this._updateState(newState);
     }
 
     public toObject(includeOptional: boolean = true): CashlinkEntry {
@@ -390,9 +414,12 @@ class Cashlink {
 
         const keyPair = this.keyPair;
         const signature = Nimiq.Signature.create(keyPair.privateKey, keyPair.publicKey, transaction.serializeContent());
-        const proof = Nimiq.SignatureProof.singleSig(keyPair.publicKey, signature).serialize();
+        transaction.proof = Nimiq.SignatureProof.singleSig(keyPair.publicKey, signature).serialize();
 
-        transaction.proof = proof;
+        if (balance > this.value) {
+            // its a multi-claimable cashlink
+            Cashlink._setLastClaimedMultiCashlink(this.address);
+        }
 
         return this._sendTransaction(transaction);
     }
@@ -495,6 +522,7 @@ class Cashlink {
     }
 
     private _updateState(state: CashlinkState) {
+        if (state === this.state) return;
         this.state = state;
         this.fire(Cashlink.Events.STATE_CHANGE, this.state);
     }
