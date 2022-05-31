@@ -275,9 +275,20 @@ class Cashlink {
             (tx) => tx.recipient === cashlinkAddress);
         const pendingClaimingTx = this._pendingTransactions.find(
             (tx) => tx.sender === cashlinkAddress && userAddresses.has(tx.recipient!));
+        let knownClaimingTx = this._knownTransactions.find( // for now based on old known transactions
+            (tx) => tx.sender === cashlinkAddress && userAddresses.has(tx.recipient));
 
-        // Only exit if the cashlink is CLAIMED and not currently funded or being funded.
-        if (this.state === CashlinkState.CLAIMED && !balance && !pendingFundingTx) return;
+        if (pendingClaimingTx) {
+            // Can exit early as if the user is currently claiming the cashlink, it can't be in CLAIMED state yet, as
+            // the transaction is still pending and we don't allow claiming if the cashlink was last in CLAIMED state
+            this._updateState(CashlinkState.CLAIMING);
+            return;
+        }
+        if (this.state === CashlinkState.CLAIMED && (knownClaimingTx || (!balance && !pendingFundingTx))) {
+            // Can exit early as either the user already claimed the cashlink and is not allowed to claim again or it is
+            // empty and not refilled and already reached CLAIMED state, i.e. is not just empty because it is UNCHARGED.
+            return;
+        }
 
         const knownTransactionReceipts = new Map(this._knownTransactions.map((tx) => [tx.hash, tx.blockHash!]));
 
@@ -289,7 +300,7 @@ class Cashlink {
 
         const knownFundingTx = this._knownTransactions.find(
             (tx) => tx.recipient === cashlinkAddress);
-        const knownClaimingTx = this._knownTransactions.find(
+        knownClaimingTx = knownClaimingTx || this._knownTransactions.find( // update with new transactions
             (tx) => tx.sender === cashlinkAddress && userAddresses.has(tx.recipient));
 
         // Detect new state by a sequence of checks from UNCHARGED, CHARGING, UNCLAIMED, CLAIMING to CLAIMED states.
@@ -305,10 +316,7 @@ class Cashlink {
         if (balance) {
             newState = CashlinkState.UNCLAIMED;
         }
-        if (pendingClaimingTx) {
-            // Being claimed by user.
-            newState = CashlinkState.CLAIMING;
-        }
+        // Skip check for pendingClaimingTx here for CLAIMING state as we already checked that above.
         if (knownClaimingTx || (knownFundingTx && !balance && !pendingFundingTx && !pendingClaimingTx)) {
             // User already claimed the cashlink and is not allowed to claim again or it had been funded but no funds
             // are left and it's not being recharged or still being claimed. Was claimed by user or someone else.
