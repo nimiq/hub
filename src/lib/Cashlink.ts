@@ -191,6 +191,7 @@ class Cashlink {
     private _getUserAddresses: () => Set<string>;
     private _knownTransactions: DetailedPlainTransaction[] = [];
     private _pendingTransactions: Array<Partial<DetailedPlainTransaction>> = [];
+    private _detectStateTimeout: number = -1;
 
     constructor(
         public keyPair: Nimiq.KeyPair,
@@ -258,33 +259,31 @@ class Cashlink {
             return;
         }
 
-        await this._awaitConsensus();
+        // Avoid double invocations from events triggered at the same time. Instead, wait a little bit for all events
+        // and their data to hopefully have processed on the network side, such that we don't work with outdated data.
+        if (this._detectStateTimeout !== -1) return;
+        await new Promise((resolve) => this._detectStateTimeout = window.setTimeout(resolve, 100));
+        this._detectStateTimeout = -1;
 
-        const balance = await this._awaitBalance(); // balance with pending outgoing transactions subtracted by nano-api
-        this._pendingTransactions = [
-            ...(await this._getNetwork()).pendingTransactions,
-            ...(await this._getNetwork()).relayedTransactions,
-        ].filter((tx) => tx.sender === cashlinkAddress || tx.recipient === cashlinkAddress);
+        await this._awaitConsensus();
 
         const cashlinkAddress = this.address.toUserFriendlyAddress();
         const userAddresses = this._getUserAddresses();
 
-        // For funding, we don't care about the sender address. For claiming, we're only interested in our transactions
-        // as cashlink shouldn't be in CLAIMING or CLAIMED state for other users' transactions.
-        const pendingFundingTx = this._pendingTransactions.find(
-            (tx) => tx.recipient === cashlinkAddress);
-        const pendingClaimingTx = this._pendingTransactions.find(
-            (tx) => tx.sender === cashlinkAddress && userAddresses.has(tx.recipient!));
-        let knownClaimingTx = this._knownTransactions.find( // for now based on old known transactions
+        let balance = await this._awaitBalance(); // balance with pending outgoing transactions subtracted by nano-api
+        let pendingFundingTx: Partial<DetailedPlainTransaction> | undefined;
+        let ourPendingClaimingTx: Partial<DetailedPlainTransaction> | undefined;
+        [this._pendingTransactions, pendingFundingTx, ourPendingClaimingTx] = await this._getPendingTransactions();
+        let ourKnownClaimingTx = this._knownTransactions.find( // for now based on old known transactions
             (tx) => tx.sender === cashlinkAddress && userAddresses.has(tx.recipient));
 
-        if (pendingClaimingTx) {
+        if (ourPendingClaimingTx) {
             // Can exit early as if the user is currently claiming the cashlink, it can't be in CLAIMED state yet, as
             // the transaction is still pending and we don't allow claiming if the cashlink was last in CLAIMED state
             this._updateState(CashlinkState.CLAIMING);
             return;
         }
-        if (this.state === CashlinkState.CLAIMED && (knownClaimingTx || (!balance && !pendingFundingTx))) {
+        if (this.state === CashlinkState.CLAIMED && (ourKnownClaimingTx || (!balance && !pendingFundingTx))) {
             // Can exit early as either the user already claimed the cashlink and is not allowed to claim again or it is
             // empty and not refilled and already reached CLAIMED state, i.e. is not just empty because it is UNCHARGED.
             return;
@@ -300,8 +299,19 @@ class Cashlink {
 
         const knownFundingTx = this._knownTransactions.find(
             (tx) => tx.recipient === cashlinkAddress);
-        knownClaimingTx = knownClaimingTx || this._knownTransactions.find( // update with new transactions
+        ourKnownClaimingTx = ourKnownClaimingTx || this._knownTransactions.find( // update with new transactions
             (tx) => tx.sender === cashlinkAddress && userAddresses.has(tx.recipient));
+        const anyKnownClaimingTx = ourKnownClaimingTx || this._knownTransactions.find(
+            (tx) => tx.sender === cashlinkAddress);
+
+        // Update balance and pending transactions after fetching transaction history as they might have changed in the
+        // meantime. This update is cheap and quick.
+        [balance, [this._pendingTransactions, pendingFundingTx, ourPendingClaimingTx]] = await Promise.all([
+            this._awaitBalance(),
+            this._getPendingTransactions(),
+        ]);
+        const anyPendingClaimingTx = ourPendingClaimingTx || this._pendingTransactions.find(
+            (tx) => tx.sender === cashlinkAddress);
 
         // Detect new state by a sequence of checks from UNCHARGED, CHARGING, UNCLAIMED, CLAIMING to CLAIMED states.
         // Note that cashlinks that already reached a later state in a previous detectState, can also go back to earlier
@@ -316,10 +326,18 @@ class Cashlink {
         if (balance) {
             newState = CashlinkState.UNCLAIMED;
         }
-        // Skip check for pendingClaimingTx here for CLAIMING state as we already checked that above.
-        if (knownClaimingTx || (knownFundingTx && !balance && !pendingFundingTx && !pendingClaimingTx)) {
+        if (ourPendingClaimingTx) {
+            // Re-check with updated ourPendingClaimingTx.
+            newState = CashlinkState.CLAIMING;
+        }
+        if (ourKnownClaimingTx
+            || (knownFundingTx && (anyPendingClaimingTx || anyKnownClaimingTx)
+                && !balance && !pendingFundingTx && !ourPendingClaimingTx)
+        ) {
             // User already claimed the cashlink and is not allowed to claim again or it had been funded but no funds
-            // are left and it's not being recharged or still being claimed. Was claimed by user or someone else.
+            // are left and it's not being recharged or still being claimed. Also checking whether we know at least one
+            // claiming tx instead of relying on empty balance to avoid CLAIMED state after funding if knownFundingTx is
+            // already known but balance update was not triggered yet.
             newState = CashlinkState.CLAIMED;
         }
 
@@ -502,6 +520,28 @@ class Cashlink {
     private async _getBlockchainHeight(): Promise<number> {
         await this._awaitConsensus();
         return (await this._getNetwork()).headInfo.height;
+    }
+
+    private async _getPendingTransactions(): Promise<[
+        Array<Partial<DetailedPlainTransaction>>,
+        Partial<DetailedPlainTransaction> | undefined,
+        Partial<DetailedPlainTransaction> | undefined,
+    ]> {
+        await this._awaitConsensus();
+        const network = await this._getNetwork();
+        const cashlinkAddress = this.address.toUserFriendlyAddress();
+        const userAddresses = this._getUserAddresses();
+        const pendingTransactions = [
+            ...network.pendingTransactions,
+            ...network.relayedTransactions,
+        ].filter((tx) => tx.sender === cashlinkAddress || tx.recipient === cashlinkAddress);
+
+        const pendingFundingTx = this._pendingTransactions.find(
+            (tx) => tx.recipient === cashlinkAddress);
+        const ourPendingClaimingTx = this._pendingTransactions.find(
+            (tx) => tx.sender === cashlinkAddress && userAddresses.has(tx.recipient!));
+
+        return [pendingTransactions, pendingFundingTx, ourPendingClaimingTx];
     }
 
     private async _onTransactionReceivedOrMined(transaction: DetailedPlainTransaction): Promise<void> {

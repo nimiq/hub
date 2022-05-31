@@ -81,7 +81,7 @@ const afterEachCallback = async () => {
 };
 
 function expectEqualIgnoringFeeAndContactName(a: any, b: any) {
-    const filterIgnoredKeys = (key: string) => key !== 'fee' && key !== '_fee' && key !== 'contactName';
+    const filterIgnoredKeys = (key: string) => !/^(_?fee|contactName|_detectStateTimeout)$/.test(key);
     const keysA = Object.keys(a).filter(filterIgnoredKeys);
     const keysB = Object.keys(b).filter(filterIgnoredKeys);
     expect(keysA).toEqual(keysB);
