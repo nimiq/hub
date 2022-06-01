@@ -1,5 +1,5 @@
 import { Utf8Tools } from '@nimiq/utils';
-import { DetailedPlainTransaction, NetworkClient } from '@nimiq/network-client';
+import { DetailedPlainTransaction, PlainTransaction, NetworkClient } from '@nimiq/network-client';
 import { loadNimiq } from './Helpers';
 import { CashlinkState, CashlinkTheme } from './PublicRequestTypes';
 import { WalletInfo } from './WalletInfo';
@@ -227,11 +227,14 @@ class Cashlink {
                 network.getBalance(userFriendlyAddress).then(this._onBalancesChanged.bind(this));
             }
 
-            // Only listen for 'received' and 'mined' events, because 'relayed' events trigger a
-            // balance change in the nano-api, too, which triggers the state detection already.
-            network.on(NetworkClient.Events.TRANSACTION_PENDING, this._onTransactionReceivedOrMined.bind(this));
-            network.on(NetworkClient.Events.TRANSACTION_MINED, this._onTransactionReceivedOrMined.bind(this));
+            // Register network event handlers.
+            // BALANCES_CHANGED: notifications for balance changes with pending outgoing txs subtracted by nano-api.
             network.on(NetworkClient.Events.BALANCES_CHANGED, this._onBalancesChanged.bind(this));
+            // TRANSACTION: covers TRANSACTION_PENDING (for pending incoming transactions which do not trigger a balance
+            // change), TRANSACTION_MINED (for previously pending outgoing tx which do not trigger a second balance
+            // change), TRANSACTION_EXPIRED (for treatment of expired pending transactions) and TRANSACTION_RELAYED
+            // (which we don't need because pending outgoing transactions already lead to a balance update) of old api.
+            network.on(NetworkClient.Events.TRANSACTION, this._onTransactionChanged.bind(this));
 
             // Triggers a BALANCES_CHANGED event if this is the first time this address is subscribed
             network.subscribe(userFriendlyAddress);
@@ -544,14 +547,10 @@ class Cashlink {
         return [pendingTransactions, pendingFundingTx, ourPendingClaimingTx];
     }
 
-    private async _onTransactionReceivedOrMined(transaction: DetailedPlainTransaction): Promise<void> {
-        if (transaction.recipient === this.address.toUserFriendlyAddress()
-            || transaction.sender === this.address.toUserFriendlyAddress()) {
-            // Always run state detection when a transaction comes in
-            // or an incoming or outgoing transaction was mined, as those
-            // events likely signal a state change of the cashlink.
-            this.detectState();
-        }
+    private _onTransactionChanged(transaction: PlainTransaction): void {
+        const cashlinkAddress = this.address.toUserFriendlyAddress();
+        if (transaction.recipient !== cashlinkAddress && transaction.sender !== cashlinkAddress) return;
+        this.detectState();
     }
 
     private _onBalancesChanged(balances: Map<string, number>) {
