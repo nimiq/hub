@@ -40,9 +40,12 @@
 
                     <div>
                         <Amount class="value nq-light-blue blur-target"
-                            :amount="cashlink.value"
+                            :amount="cashlink.balance
+                                ? Math.min(cashlink.value, cashlink.balance - cashlink.fee)
+                                : cashlink.value"
                             :minDecimals="0"
-                            :maxDecimals="5"/>
+                            :maxDecimals="5"
+                        />
 
                         <div v-if="cashlink.message" class="data nq-text blur-target">
                             {{ cashlink.message }}
@@ -78,7 +81,12 @@
 
                 <div>
                     <Amount class="value nq-light-blue"
-                        :amount="cashlink.value" :minDecimals="0" :maxDecimals="5" />
+                        :amount="cashlink.balance
+                            ? Math.min(cashlink.value, cashlink.balance - cashlink.fee)
+                            : cashlink.value"
+                        :minDecimals="0"
+                        :maxDecimals="5"
+                    />
 
                     <div v-if="cashlink.message" class="data nq-text">
                         {{ cashlink.message }}
