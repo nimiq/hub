@@ -295,6 +295,10 @@ class CashlinkReceive extends Vue {
     }
 
     private get buttonText(): string {
+        if (this.cashlink!.state !== CashlinkState.CLAIMED && this.statusState === StatusScreen.State.WARNING) {
+            // Reset warning screen if cashlink state reverted from CLAIMING state, e.g. by being refunded.
+            this.statusState = false;
+        }
         switch (this.cashlink!.state) {
             case CashlinkState.UNKNOWN: return this.$t('Checking status') as string;
             case CashlinkState.UNCHARGED: return this.$t('Cashlink not funded') as string;
