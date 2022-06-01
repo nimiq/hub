@@ -307,6 +307,11 @@ class CashlinkReceive extends Vue {
             case CashlinkState.CLAIMING: return this.$t('Claiming Cashlink') as string;
             default:
                 // CLAIMED state
+                if (this.statusState === StatusScreen.State.LOADING
+                    || this.statusState === StatusScreen.State.SUCCESS) {
+                    // keep previous message in background
+                    return this.$t('Claiming Cashlink') as string;
+                }
                 this.statusState = StatusScreen.State.WARNING;
                 this.statusTitle = this.$t('Cashlink is empty') as string;
                 this.statusMessage = this.$t('This Cashlink has already been claimed.') as string;

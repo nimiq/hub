@@ -238,7 +238,7 @@ msgstr ""
 msgid "Cashlink created."
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:313
+#: src/views/CashlinkReceive.vue:318
 msgid "Cashlink empty :("
 msgstr ""
 
@@ -246,7 +246,7 @@ msgstr ""
 msgid "Cashlink funding"
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:311
+#: src/views/CashlinkReceive.vue:316
 msgid "Cashlink is empty"
 msgstr ""
 
@@ -302,12 +302,13 @@ msgstr ""
 msgid "Claim Cashlink"
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:354
+#: src/views/CashlinkReceive.vue:359
 msgid "Claim your Cash"
 msgstr ""
 
 #: src/views/CashlinkReceive.vue:244
 #: src/views/CashlinkReceive.vue:307
+#: src/views/CashlinkReceive.vue:313
 msgid "Claiming Cashlink"
 msgstr ""
 
@@ -361,15 +362,15 @@ msgstr ""
 msgid "Confirm using your Ledger"
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:365
+#: src/views/CashlinkReceive.vue:370
 msgid "Congrats, somebody gifted you a Nimiq Cashlink."
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:364
+#: src/views/CashlinkReceive.vue:369
 msgid "Congrats, you just opened a Nimiq Cashlink."
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:360
+#: src/views/CashlinkReceive.vue:365
 msgid "Congrats, you received a Nimiq Gift Card."
 msgstr ""
 
@@ -576,11 +577,11 @@ msgstr ""
 msgid "Green"
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:353
+#: src/views/CashlinkReceive.vue:358
 msgid "Happy birthday!"
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:351
+#: src/views/CashlinkReceive.vue:356
 msgid "Happy Easter!"
 msgstr ""
 
@@ -1022,7 +1023,7 @@ msgstr ""
 msgid "There's much more. Read the full article"
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:312
+#: src/views/CashlinkReceive.vue:317
 msgid "This Cashlink has already been claimed."
 msgstr ""
 
@@ -1169,7 +1170,7 @@ msgstr ""
 msgid "You are logged out."
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:349
+#: src/views/CashlinkReceive.vue:354
 msgid "You are loved"
 msgstr ""
 
