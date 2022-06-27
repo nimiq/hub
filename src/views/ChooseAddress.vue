@@ -37,6 +37,7 @@
 import { Component } from 'vue-property-decorator';
 import { Getter, Mutation } from 'vuex-class';
 import { SmallPage, AccountSelector } from '@nimiq/vue-components';
+import Config from 'config';
 import BitcoinSyncBaseView from './BitcoinSyncBaseView.vue';
 import StatusScreen from '../components/StatusScreen.vue';
 import GlobalClose from '../components/GlobalClose.vue';
@@ -85,7 +86,7 @@ export default class ChooseAddress extends BitcoinSyncBaseView {
 
         let btcAddress: string | undefined;
 
-        if (this.request.returnBtcAddress && walletInfo.btcXPub) {
+        if (Config.enableBitcoin && this.request.returnBtcAddress && walletInfo.btcXPub) {
             this.state = this.State.SYNCING;
             // const startIndex = Math.max(Math.min(
             //     walletInfo.btcAddresses.external.findIndex((addressInfo) => !addressInfo.used),
