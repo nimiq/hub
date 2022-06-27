@@ -91,6 +91,10 @@ class IFrameApi {
         state: State,
         request: AddBtcAddressesRequest,
     ): Promise<AddBtcAddressesResult> {
+        if (!Config.enableBitcoin) {
+            throw new Error('Bitcoin is disabled');
+        }
+
         // Validate chain
         const chain = request.chain;
         if (!chain || (chain !== 'internal' && chain !== 'external')) {

@@ -123,6 +123,10 @@ export default class WalletInfoCollector {
         internal: BtcAddressInfo[],
         external: BtcAddressInfo[],
     }> {
+        if (!Config.enableBitcoin) {
+            throw new Error('Bitcoin is disabled');
+        }
+
         const [electrum] = await Promise.all([
             getElectrumClient(),
             loadBitcoinJS(),
@@ -233,12 +237,14 @@ export default class WalletInfoCollector {
             ACCOUNT_MAX_ALLOWED_ADDRESS_GAP, walletType, keyId, keyguardCookieEncryptionKey);
 
         try {
-            await loadBitcoinJS();
+            if (Config.enableBitcoin) {
+                await loadBitcoinJS();
+            }
             // Start BTC address detection
             const bitcoinAddresses: {
                 internal: BtcAddressInfo[],
                 external: BtcAddressInfo[],
-            } = bitcoinXPub ? {
+            } = Config.enableBitcoin && bitcoinXPub ? {
                 external: deriveAddressesFromXPub(
                     bitcoinXPub,
                     [EXTERNAL_INDEX],
