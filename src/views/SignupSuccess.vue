@@ -9,6 +9,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { SmallPage, CheckmarkIcon } from '@nimiq/vue-components';
+import Config from 'config';
 import { AccountInfo } from '../lib/AccountInfo';
 import { WalletInfo } from '../lib/WalletInfo';
 import { WalletType } from '../lib/Constants';
@@ -50,9 +51,11 @@ export default class SignupSuccess extends Vue {
         );
 
         // Derive initial BTC addresses
-        await loadBitcoinJS();
+        if (Config.enableBitcoin) {
+            await loadBitcoinJS();
+        }
         const bitcoinXPub = this.keyguardResult[0].bitcoinXPub;
-        const btcAddresses = bitcoinXPub
+        const btcAddresses = Config.enableBitcoin && bitcoinXPub
             ? {
                 internal:
                     deriveAddressesFromXPub(bitcoinXPub, [INTERNAL_INDEX], 0, BTC_ACCOUNT_MAX_ALLOWED_ADDRESS_GAP),

@@ -91,6 +91,7 @@ import { SmallPage, AccountSelector } from '@nimiq/vue-components';
 import { PageHeader, PageBody, PageFooter, Identicon, CaretRightSmallIcon } from '@nimiq/vue-components';
 // @ts-ignore Could not find a declaration file for module '@nimiq/iqons'.
 import { getBackgroundColorName } from '@nimiq/iqons';
+import Config from 'config';
 import BitcoinSyncBaseView from './BitcoinSyncBaseView.vue';
 import StatusScreen from '../components/StatusScreen.vue';
 import GlobalClose from '../components/GlobalClose.vue';
@@ -160,7 +161,7 @@ export default class ChooseAddress extends BitcoinSyncBaseView {
         let btcAddress: string | undefined;
         let usdcAddress: string | undefined;
 
-        if (this.request.returnBtcAddress && walletInfo.btcXPub) {
+        if (Config.enableBitcoin && this.request.returnBtcAddress && walletInfo.btcXPub) {
             this.state = this.State.SYNCING;
             // const startIndex = Math.max(Math.min(
             //     walletInfo.btcAddresses.external.findIndex((addressInfo) => !addressInfo.used),

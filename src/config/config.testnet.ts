@@ -18,7 +18,7 @@ export default {
         'https://checkout-service-staging-0.web.app',
     ],
 
-    enableBitcoin: true,
+    enableBitcoin: false,
     bitcoinNetwork: BTC_NETWORK_TEST,
     bitcoinAddressType: NATIVE_SEGWIT,
 
