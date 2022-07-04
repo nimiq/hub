@@ -5,6 +5,7 @@ import {
     CashlinkTheme,
     Currency,
     PaymentType,
+    KycProvider,
 } from './PublicRequestTypes';
 import type {
     BasicRequest,
@@ -562,6 +563,21 @@ export class RequestParser {
                     if (!setupSwapRequest.fund.validityStartHeight
                         || setupSwapRequest.fund.validityStartHeight < 1) {
                         throw new Error(`Invalid validity start height: ${setupSwapRequest.fund.validityStartHeight}`);
+                    }
+                }
+
+                if (setupSwapRequest.kyc) {
+                    switch (setupSwapRequest.kyc.provider) {
+                        case KycProvider.TEN31PASS:
+                            if (typeof setupSwapRequest.kyc.appId !== 'string' || !setupSwapRequest.kyc.appId) {
+                                throw new Error('Invalid TEN31 PASS app id');
+                            }
+                            if (typeof setupSwapRequest.kyc.userId !== 'string' || !setupSwapRequest.kyc.userId) {
+                                throw new Error('Invalid TEN31 PASS user id');
+                            }
+                            break;
+                        default:
+                            throw new Error(`Unsupported KYC provider: ${setupSwapRequest.kyc.provider}`);
                     }
                 }
 
