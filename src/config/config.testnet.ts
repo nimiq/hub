@@ -26,4 +26,7 @@ export default {
         apiEndpoint: 'https://api.test.fastspot.io/fast/v1',
         apiKey: 'd011aeea-41cf-4c05-a31d-436495bed9b7',
     },
+    TEN31Pass: {
+        endpoint: 'https://test.pass.ten31.com/',
+    },
 };

@@ -1,4 +1,4 @@
-import type { Currency, PaymentType, RequestType, CashlinkTheme } from './PublicRequestTypes';
+import type { Currency, PaymentType, RequestType, CashlinkTheme, KycProvider } from './PublicRequestTypes';
 import type { ParsedPaymentOptions } from './paymentOptions/ParsedPaymentOptions';
 import type { ParsedNimiqSpecifics, ParsedNimiqDirectPaymentOptions } from './paymentOptions/NimiqPaymentOptions';
 import type { ParsedEtherSpecifics, ParsedEtherDirectPaymentOptions } from './paymentOptions/EtherPaymentOptions';
@@ -246,6 +246,13 @@ export interface ParsedSetupSwapRequest extends ParsedSimpleRequest {
     }>;
     bitcoinAccount?: {
         balance: number, // Sats
+    };
+
+    // Optional KYC info for swapping at higher limits
+    kyc?: {
+        provider: KycProvider.TEN31PASS,
+        appId: string,
+        userId: string,
     };
 }
 

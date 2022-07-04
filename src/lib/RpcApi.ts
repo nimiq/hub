@@ -20,6 +20,7 @@ import {
     ObjectType,
     ResultByCommand,
 } from '@nimiq/keyguard-client';
+import Ten31PassApi from '@nimiq/ten31-pass-api';
 import { keyguardResponseRouter, REQUEST_ERROR } from '@/router';
 import { StaticStore } from '@/lib/StaticStore';
 import { WalletStore } from './WalletStore';
@@ -41,6 +42,7 @@ export default class RpcApi {
     private _staticStore: StaticStore;
     private _router: Router;
     private _keyguardClient: KeyguardClient;
+    private _ten31PassClient: Ten31PassApi;
 
     private _3rdPartyRequestWhitelist: RequestType[] = [
         RequestType.CHECKOUT,
@@ -57,6 +59,7 @@ export default class RpcApi {
         this._router = router;
         this._server = new RpcServer('*');
         this._keyguardClient = new KeyguardClient(Config.keyguardEndpoint);
+        this._ten31PassClient = new Ten31PassApi(Config.TEN31Pass.endpoint);
 
         // On reload recover any state exported to the current history entry. Note that if we came back from the
         // Keyguard by history back navigation and rejectOnBack was enabled for the request, the state provided to
@@ -138,7 +141,7 @@ export default class RpcApi {
             }
             // If we have an rpcState, export the entire state to the newly pushed history entry
             // to be available on reload.
-            // This is potentially redundand to the above condition but added as a precaution,
+            // This is potentially redundant to the above condition but added as a precaution,
             // especially considering the no-request case a few lines down within RpcApi.start().
             if (this._staticStore.rpcState) {
                 // A small timeout is needed, since Vue does push the new history state only after the afterEach
@@ -150,7 +153,17 @@ export default class RpcApi {
 
     public start() {
         this._keyguardClient.init().catch(console.error); // TODO: Provide better error handling here
-        if (this._store.state.keyguardResult) return;
+        const { response: ten31PassGrantResponse, recoveredState } = this._ten31PassClient.getRedirectGrantResponse()
+            || new Ten31PassApi(document.referrer).getRedirectGrantResponse() // check for a forwarded grant response
+            || {};
+        if (recoveredState) {
+            this._recoverState(recoveredState);
+        }
+        this._staticStore.ten31PassGrantResponse = ten31PassGrantResponse;
+        if (this._store.state.keyguardResult || ten31PassGrantResponse) {
+            // don't listen for commands; finish the one already in process
+            return;
+        }
 
         // If there is no request:
         // If no opener is set and there is a previous history entry and there is no data passed in the URL,
@@ -178,7 +191,7 @@ export default class RpcApi {
             // The Keyguard client rejects on history back only if handleHistoryBack is activated. If the Keyguard does
             // not reject it also does not provide us the localState to recover. For this case, we encode it manually in
             // the history, to retrieve it from there.
-            setHistoryStorage(RpcApi.HISTORY_KEY_RPC_STATE, this._exportState());
+            setHistoryStorage(RpcApi.HISTORY_KEY_RPC_STATE, localState);
         }
         return client;
     }
@@ -201,7 +214,15 @@ export default class RpcApi {
     }
 
     public get keyguardClient(): KeyguardClient {
+        // Export state to history to still be available on back navigation from a redirect by the client.
+        setHistoryStorage(RpcApi.HISTORY_KEY_RPC_STATE, this._exportState());
         return this._keyguardClient;
+    }
+
+    public get ten31PassClient(): Ten31PassApi {
+        // Export state to history to still be available on back navigation from a redirect by the client.
+        setHistoryStorage(RpcApi.HISTORY_KEY_RPC_STATE, this._exportState());
+        return this._ten31PassClient;
     }
 
     private async _reply(status: ResponseStatus, result: RpcResult | Error) {
@@ -236,7 +257,24 @@ export default class RpcApi {
             keyguardRequest: this._staticStore.keyguardRequest,
             originalRouteName: this._staticStore.originalRouteName,
             cashlink: this._staticStore.cashlink ? this._staticStore.cashlink.toObject() : undefined,
+            ten31PassGrantResponse: this._staticStore.ten31PassGrantResponse,
         };
+    }
+
+    private _recoverState(storedState: any) {
+        const rpcState = RpcState.fromJSON(storedState.rpcState);
+        const request = RequestParser.parse(storedState.request, rpcState, storedState.kind);
+        const keyguardRequest = storedState.keyguardRequest;
+        const originalRouteName = storedState.originalRouteName;
+        const cashlink = storedState.cashlink ? Cashlink.fromObject(storedState.cashlink) : undefined;
+        const ten31PassGrantResponse = storedState.ten31PassGrantResponse;
+
+        this._staticStore.rpcState = rpcState;
+        this._staticStore.request = request || undefined;
+        this._staticStore.keyguardRequest = keyguardRequest;
+        this._staticStore.originalRouteName = originalRouteName;
+        this._staticStore.cashlink = cashlink;
+        this._staticStore.ten31PassGrantResponse = ten31PassGrantResponse;
     }
 
     private _registerHubApis(requestTypes: RequestType[]) {
@@ -361,20 +399,6 @@ export default class RpcApi {
         }
 
         return params;
-    }
-
-    private _recoverState(storedState: any) {
-        const rpcState = RpcState.fromJSON(storedState.rpcState);
-        const request = RequestParser.parse(storedState.request, rpcState, storedState.kind);
-        const keyguardRequest = storedState.keyguardRequest;
-        const originalRouteName = storedState.originalRouteName;
-        const cashlink = storedState.cashlink ? Cashlink.fromObject(storedState.cashlink) : undefined;
-
-        this._staticStore.rpcState = rpcState;
-        this._staticStore.request = request || undefined;
-        this._staticStore.keyguardRequest = keyguardRequest;
-        this._staticStore.originalRouteName = originalRouteName;
-        this._staticStore.cashlink = cashlink;
     }
 
     private _registerKeyguardApis(commands: KeyguardCommand[]) {

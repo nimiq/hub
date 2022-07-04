@@ -2,14 +2,17 @@
 import { Component } from 'vue-property-decorator';
 import { Getter } from 'vuex-class';
 import { SmallPage } from '@nimiq/vue-components';
+import Config from 'config';
 import BitcoinSyncBaseView from './BitcoinSyncBaseView.vue';
 import StatusScreen from '../components/StatusScreen.vue';
 import GlobalClose from '../components/GlobalClose.vue';
+import { KycProvider } from '../lib/PublicRequestTypes';
 import { ParsedSetupSwapRequest } from '../lib/RequestTypes';
 import { Static } from '../lib/StaticStore';
 import { WalletInfo } from '../lib/WalletInfo';
 import { BtcAddressInfo } from '../lib/bitcoin/BtcAddressInfo';
 import { SwapAsset } from '@nimiq/fastspot-api';
+import { GrantResponse, ServiceRequest } from '@nimiq/ten31-pass-api';
 import { DEFAULT_KEY_PATH } from '../lib/Constants';
 
 // Import only types to avoid bundling of KeyguardClient in Ledger request if not required.
@@ -20,12 +23,78 @@ export type SwapSetupInfo = Pick<KeyguardSignSwapRequest, 'fund' | 'redeem'>;
 @Component({components: {StatusScreen, SmallPage, GlobalClose}}) // including components used in parent class
 export default class SetupSwap extends BitcoinSyncBaseView {
     @Static protected request!: ParsedSetupSwapRequest;
+    @Static protected ten31PassGrantResponse?: GrantResponse;
     @Getter protected findWallet!: (id: string) => WalletInfo | undefined;
     protected _account!: WalletInfo;
     protected _isDestroyed: boolean = false;
 
     protected async mounted() {
         // use mounted instead of created to ensure that SetupSwapLedger has the chance to run its created hook before.
+
+        // Request or validate grant response for KYC enabled swaps.
+        const s3ServiceId = Config.TEN31Pass.services.s3.serviceId;
+        const oasisServiceId = Config.TEN31Pass.services.oasis.serviceId;
+        if (this.request.kyc && this.request.kyc.provider === KycProvider.TEN31PASS && !this.ten31PassGrantResponse) {
+            // Request grants.
+            const serviceRequests: ServiceRequest[] = [{
+                serviceId: s3ServiceId,
+                usages: [{
+                    usageId: Config.TEN31Pass.services.s3.usageIds.swap,
+                    parameters: {
+                        from_amount: this.request.fund.type === SwapAsset.NIM ? this.request.fund.value
+                            : this.request.fund.type === SwapAsset.BTC ? this.request.fund.output.value
+                                : this.request.fund.value,
+                        from_asset: this.request.fund.type,
+                        to_amount: this.request.redeem.type === SwapAsset.NIM ? this.request.redeem.value
+                            : this.request.redeem.type === SwapAsset.BTC ? this.request.redeem.output.value
+                                : this.request.redeem.value,
+                        to_asset: this.request.redeem.type,
+                        id: this.request.swapId,
+                    },
+                }],
+            }];
+            if (this.request.fund.type === 'EUR') {
+                serviceRequests.push({
+                    serviceId: oasisServiceId,
+                    usages: [{
+                        usageId: Config.TEN31Pass.services.oasis.usageIds.clearing,
+                        parameters: {
+                            amount: this.request.fund.value,
+                        },
+                    }],
+                });
+            } else if (this.request.redeem.type === 'EUR') {
+                serviceRequests.push({
+                    serviceId: oasisServiceId,
+                    usages: [{
+                        usageId: Config.TEN31Pass.services.oasis.usageIds.settling,
+                        parameters: {
+                            amount: this.request.redeem.value,
+                        },
+                    }],
+                });
+            }
+            // Redirect to TEN31 PASS.
+            await this.$rpc.ten31PassClient.requestGrants(this.request.kyc.appId, serviceRequests, /* asPopup */ false);
+            return;
+        } else if (this.ten31PassGrantResponse) {
+            // Validate grant response
+            try {
+                const appGrant = await this.$rpc.ten31PassClient.getAppGrantInfo(this.ten31PassGrantResponse.app);
+                const s3Grant = this.ten31PassGrantResponse.services[s3ServiceId];
+                const oasisGrant = this.ten31PassGrantResponse.services[oasisServiceId];
+                if (!appGrant || !s3Grant
+                    || ((this.request.fund.type === 'EUR' || this.request.redeem.type === 'EUR') && !oasisGrant)) {
+                    throw new Error('TEN31 PASS didn\'t return expected grants.');
+                }
+                if (appGrant.user.id !== this.request.kyc!.userId) {
+                    throw new Error(`Unexpected TEN31 PASS user ${appGrant.user.displayName}.`);
+                }
+            } catch (e) {
+                this.$rpc.reject(e);
+                return;
+            }
+        }
 
         // existence checked by _hubApiHandler in RpcApi
         this._account = this.findWallet(this.request.walletId)!;
