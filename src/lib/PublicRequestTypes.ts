@@ -331,6 +331,10 @@ export type HtlcRefundInstructions =
     NimiqHtlcRefundInstructions
     | BitcoinHtlcRefundInstructions;
 
+export enum KycProvider {
+    TEN31PASS = 'ten31-pass',
+}
+
 export interface SetupSwapRequest extends SimpleRequest {
     swapId: string;
     fund: HtlcCreationInstructions;
@@ -356,6 +360,13 @@ export interface SetupSwapRequest extends SimpleRequest {
     }>;
     bitcoinAccount?: {
         balance: number, // Sats
+    };
+
+    // Optional KYC info for swapping at higher limits
+    kyc?: {
+        provider: KycProvider.TEN31PASS,
+        appId: string, // TEN31 Pass app id of calling app; this app must also implement forwarding of redirect response
+        userId: string,
     };
 }
 

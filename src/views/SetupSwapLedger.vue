@@ -351,8 +351,10 @@ import {
 // @ts-ignore Could not find a declaration file for module '@nimiq/iqons'.
 } from '@nimiq/iqons';
 import { SwapAsset } from '@nimiq/fastspot-api';
+import { GrantResponse } from '@nimiq/ten31-pass-api';
 import Config from 'config';
-import { SignedBtcTransaction } from '../lib/PublicRequestTypes';
+import { KycProvider, SignedBtcTransaction } from '../lib/PublicRequestTypes';
+import { Static } from '../lib/StaticStore';
 import { WalletInfo } from '../lib/WalletInfo';
 import { ERROR_CANCELED } from '../lib/Constants';
 import { BTC_NETWORK_TEST } from '../lib/bitcoin/BitcoinConstants';
@@ -415,6 +417,7 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
         };
     }
 
+    @Static protected ten31PassGrantResponse?: GrantResponse;
     @Getter protected findWallet!: (id: string) => WalletInfo | undefined;
     protected _account!: WalletInfo;
     private readonly SwapAsset = SwapAsset;
@@ -428,7 +431,7 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
         | Parameters<typeof prepareBitcoinTransactionForLedgerSigning>[0]
         | null = null;
 
-    protected async created() {
+    protected created() {
         const { fund, redeem, nimiqAddresses, walletId } = this.request;
 
         Promise.all([
@@ -472,6 +475,12 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
                     Pick<typeof nimiqLedgerAddressInfo, 'address' | 'label' | 'balance'>>,
                 signerPath,
             };
+
+            if (this.request.kyc && this.request.kyc.provider === KycProvider.TEN31PASS
+                && !this.ten31PassGrantResponse) {
+                // Return before connecting to Ledger because SetupSwap will redirect to TEN31 Pass
+                return;
+            }
 
             // As the Ledger Nimiq app currently does not support signing HTLCs yet, we use a proxy in-memory key.
             this._nimiqSwapProxyPromise = (async () => {
@@ -544,7 +553,8 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
     }
 
     protected async _shouldConfirmSwap() {
-        if (this._isDestroyed) return false;
+        if ((this.request.kyc && this.request.kyc.provider === KycProvider.TEN31PASS && !this.ten31PassGrantResponse)
+            || this._isDestroyed) return false;
         try {
             // await first step of swap setup
             const swapSetupInfo = await this._setupSwapPromise;

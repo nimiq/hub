@@ -4,6 +4,7 @@ import { ParsedRpcRequest } from './RequestTypes';
 import { RpcResult, RequestType } from './PublicRequestTypes';
 import { State as RpcState } from '@nimiq/rpc';
 import { Request as KeyguardRequest } from '@nimiq/keyguard-client';
+import { GrantResponse as Ten31GrantResponse } from '@nimiq/ten31-pass-api';
 import Cashlink from '../lib/Cashlink';
 
 export class StaticStore {
@@ -22,6 +23,7 @@ export class StaticStore {
     public originalRouteName?: string;
     public sideResult?: RpcResult | Error;
     public cashlink?: Cashlink;
+    public ten31PassGrantResponse?: Ten31GrantResponse;
 }
 
 // Decorator is capitalized to be consistent with vuex decorators
