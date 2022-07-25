@@ -15,7 +15,6 @@ import {
     BtcHtlcDetails,
     Contract,
 } from '@nimiq/fastspot-api';
-import { GrantResponse } from '@nimiq/ten31-pass-api';
 import StatusScreen from '../components/StatusScreen.vue';
 import GlobalClose from '../components/GlobalClose.vue';
 import Network from '../components/Network.vue';
@@ -49,7 +48,6 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
 
     @Getter protected findWallet!: (id: string) => WalletInfo | undefined;
     @Static protected request!: ParsedSetupSwapRequest;
-    @Static protected ten31PassGrantResponse?: GrantResponse;
     protected nimiqNetwork: Network = new Network();
     protected _isDestroyed: boolean = false;
     @State private keyguardResult?: KeyguardSignSwapResult;
@@ -425,9 +423,7 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
 
     protected async _shouldConfirmSwap() {
         // note that this method gets overwritten for SetupSwapLedger
-        return this.keyguardResult && this.keyguardResult.success
-            && (!this.request.kyc || this.request.kyc.provider !== KycProvider.TEN31PASS || this.ten31PassGrantResponse)
-            && !this._isDestroyed;
+        return this.keyguardResult && this.keyguardResult.success && !this._isDestroyed;
     }
 
     protected _getOasisRecipientPublicKey() {

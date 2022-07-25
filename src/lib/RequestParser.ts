@@ -567,17 +567,16 @@ export class RequestParser {
                 }
 
                 if (setupSwapRequest.kyc) {
-                    switch (setupSwapRequest.kyc.provider) {
-                        case KycProvider.TEN31PASS:
-                            if (typeof setupSwapRequest.kyc.appId !== 'string' || !setupSwapRequest.kyc.appId) {
-                                throw new Error('Invalid TEN31 PASS app id');
-                            }
-                            if (typeof setupSwapRequest.kyc.userId !== 'string' || !setupSwapRequest.kyc.userId) {
-                                throw new Error('Invalid TEN31 PASS user id');
-                            }
-                            break;
-                        default:
-                            throw new Error(`Unsupported KYC provider: ${setupSwapRequest.kyc.provider}`);
+                    if (setupSwapRequest.kyc.provider !== KycProvider.TEN31PASS) {
+                        throw new Error(`Unsupported KYC provider: ${setupSwapRequest.kyc.provider}`);
+                    }
+                    if (typeof setupSwapRequest.kyc.s3GrantToken !== 'string' || !setupSwapRequest.kyc.s3GrantToken) {
+                        throw new Error('Invalid TEN31 PASS S3 service grant');
+                    }
+                    if (setupSwapRequest.kyc.oasisGrantToken !== undefined && (
+                        typeof setupSwapRequest.kyc.oasisGrantToken !== 'string'
+                        || !setupSwapRequest.kyc.oasisGrantToken)) {
+                        throw new Error('Invalid TEN31 PASS OASIS service grant');
                     }
                 }
 
