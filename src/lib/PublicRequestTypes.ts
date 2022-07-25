@@ -332,7 +332,7 @@ export type HtlcRefundInstructions =
     | BitcoinHtlcRefundInstructions;
 
 export enum KycProvider {
-    TEN31PASS = 'ten31-pass',
+    TEN31PASS = 'TEN31 PASS',
 }
 
 export interface SetupSwapRequest extends SimpleRequest {
@@ -365,8 +365,8 @@ export interface SetupSwapRequest extends SimpleRequest {
     // Optional KYC info for swapping at higher limits
     kyc?: {
         provider: KycProvider.TEN31PASS,
-        appId: string, // TEN31 Pass app id of calling app; this app must also implement forwarding of redirect response
-        userId: string,
+        s3GrantToken: string,
+        oasisGrantToken?: string,
     };
 }
 
