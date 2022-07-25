@@ -21,11 +21,12 @@
     "dependencies": {
         "@nimiq/browser-warning": "^1.1.1",
         "@nimiq/electrum-client": "https://github.com/nimiq/electrum-client#build",
-        "@nimiq/fastspot-api": "^1.5.2",
+        "@nimiq/fastspot-api": "nimiq/fastspot-api#build/kyc",
         "@nimiq/iqons": "^1.5.2",
         "@nimiq/keyguard-client": "^1.5.0-beta.2",
         "@nimiq/ledger-api": "^2.2.0",
         "@nimiq/network-client": "^0.6.2",
+        "@nimiq/oasis-api": "^1.1.1",
         "@nimiq/rpc": "^0.4.1",
         "@nimiq/style": "^0.8.2",
         "@nimiq/utils": "^0.5.0",

@@ -1029,10 +1029,9 @@
   dependencies:
     bitcoinjs-lib "^5.1.10"
 
-"@nimiq/fastspot-api@^1.5.2":
-  version "1.5.2"
-  resolved "https://registry.yarnpkg.com/@nimiq/fastspot-api/-/fastspot-api-1.5.2.tgz#be8bce7b3948e89d7ae7cb2ea2dc1745c7fe19ba"
-  integrity sha512-zlrNeGwHraus7mr5JYT5gH6vmCm4mdRYQI4CmYbs2g9aM6C4XDpLpH61rptgeYqrXX22IeOWB2NhdeyPtsPD6w==
+"@nimiq/fastspot-api@nimiq/fastspot-api#build/kyc":
+  version "1.6.1"
+  resolved "https://codeload.github.com/nimiq/fastspot-api/tar.gz/3583c53769215f20cd3b1156456e678a6e882e7a"
 
 "@nimiq/iqons@^1.5.2":
   version "1.5.2"
@@ -1097,6 +1096,11 @@
   dependencies:
     "@nimiq/core-web" "1.5.3"
     "@nimiq/rpc-events" "^0.0.8"
+
+"@nimiq/oasis-api@^1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@nimiq/oasis-api/-/oasis-api-1.1.1.tgz#d1aa3d0f9afabf9116205809a0fc72d2e392bafa"
+  integrity sha512-jXNO7nvE0mzAyDCrucByv5AcyDWZjyqb9810YctysxqUtOxNG27hPkhomL+WW6nrnTVgvriJo3yaTFPTfLphKw==
 
 "@nimiq/rpc-events@^0.0.8":
   version "0.0.8"

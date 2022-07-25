@@ -15,6 +15,7 @@ import {
     BtcHtlcDetails,
     Contract,
 } from '@nimiq/fastspot-api';
+import { init as initOasisApi, exchangeAuthorizationToken } from '@nimiq/oasis-api';
 import StatusScreen from '../components/StatusScreen.vue';
 import GlobalClose from '../components/GlobalClose.vue';
 import Network from '../components/Network.vue';
@@ -109,6 +110,13 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
 
         let confirmedSwap: Swap;
         try {
+            const s3GrantToken = this.request.kyc ? this.request.kyc.s3GrantToken : undefined;
+            let oasisClearingAuthorizationToken: string | undefined;
+            if (this.request.kyc && this.request.kyc.oasisGrantToken && this.request.fund.type === SwapAsset.EUR) {
+                initOasisApi(Config.oasis.apiEndpoint);
+                oasisClearingAuthorizationToken = await exchangeAuthorizationToken(this.request.kyc.oasisGrantToken);
+            }
+
             confirmedSwap = await confirmSwap({
                 id: this.request.swapId,
             } as PreSwap, this.request.redeem.type === SwapAsset.EUR ? {
@@ -122,7 +130,7 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
                 // Refund
                 asset: this.request.fund.type,
                 address: refundAddress,
-            }, uid).catch((error) => {
+            }, uid, s3GrantToken, oasisClearingAuthorizationToken).catch((error) => {
                 if (error.message === 'The swap was already confirmed before.') {
                     return getSwap(this.request.swapId) as Promise<Swap>;
                 } else if (error.message.includes('503')) {
