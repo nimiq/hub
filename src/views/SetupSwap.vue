@@ -73,6 +73,8 @@ export default class SetupSwap extends BitcoinSyncBaseView {
             } : {
                 layout: 'standard',
             }),
+
+            kyc: this.request.kyc,
         };
 
         const client = this.$rpc.createKeyguardClient(true);
