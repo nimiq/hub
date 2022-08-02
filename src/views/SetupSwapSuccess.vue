@@ -106,10 +106,9 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
         // Generate UID to track account limits
         const walletInfo = this.findWallet(this.request.walletId);
         if (!walletInfo) throw new Error('UNEXPECTED: Cannot find walletId for swap signing');
-        const uid = await walletInfo.getUid();
-
         let confirmedSwap: Swap;
         try {
+            const uid = this.request.kyc ? this.request.kyc.userId : await walletInfo.getUid();
             const s3GrantToken = this.request.kyc ? this.request.kyc.s3GrantToken : undefined;
             let oasisClearingAuthorizationToken: string | undefined;
             if (this.request.kyc && this.request.kyc.oasisGrantToken && this.request.fund.type === SwapAsset.EUR) {
