@@ -569,6 +569,9 @@ export class RequestParser {
                     if (setupSwapRequest.kyc.provider !== 'TEN31 Pass') {
                         throw new Error(`Unsupported KYC provider: ${setupSwapRequest.kyc.provider}`);
                     }
+                    if (typeof setupSwapRequest.kyc.userId !== 'string' || !setupSwapRequest.kyc.userId) {
+                        throw new Error('Invalid TEN31 Pass user id');
+                    }
                     if (typeof setupSwapRequest.kyc.s3GrantToken !== 'string' || !setupSwapRequest.kyc.s3GrantToken) {
                         throw new Error('Invalid TEN31 Pass S3 service grant');
                     }

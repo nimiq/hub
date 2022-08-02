@@ -363,6 +363,7 @@ export interface SetupSwapRequest extends SimpleRequest {
     // Optional KYC info for swapping at higher limits
     kyc?: {
         provider: 'TEN31 Pass',
+        userId: string,
         s3GrantToken: string,
         oasisGrantToken?: string,
     };
