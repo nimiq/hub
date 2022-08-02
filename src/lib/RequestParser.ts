@@ -5,7 +5,6 @@ import {
     CashlinkTheme,
     Currency,
     PaymentType,
-    KycProvider,
 } from './PublicRequestTypes';
 import type {
     BasicRequest,
@@ -567,16 +566,16 @@ export class RequestParser {
                 }
 
                 if (setupSwapRequest.kyc) {
-                    if (setupSwapRequest.kyc.provider !== KycProvider.TEN31PASS) {
+                    if (setupSwapRequest.kyc.provider !== 'TEN31 Pass') {
                         throw new Error(`Unsupported KYC provider: ${setupSwapRequest.kyc.provider}`);
                     }
                     if (typeof setupSwapRequest.kyc.s3GrantToken !== 'string' || !setupSwapRequest.kyc.s3GrantToken) {
-                        throw new Error('Invalid TEN31 PASS S3 service grant');
+                        throw new Error('Invalid TEN31 Pass S3 service grant');
                     }
                     if (setupSwapRequest.kyc.oasisGrantToken !== undefined && (
                         typeof setupSwapRequest.kyc.oasisGrantToken !== 'string'
                         || !setupSwapRequest.kyc.oasisGrantToken)) {
-                        throw new Error('Invalid TEN31 PASS OASIS service grant');
+                        throw new Error('Invalid TEN31 Pass OASIS service grant');
                     }
                 }
 

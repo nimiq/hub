@@ -19,7 +19,7 @@ import { init as initOasisApi, exchangeAuthorizationToken } from '@nimiq/oasis-a
 import StatusScreen from '../components/StatusScreen.vue';
 import GlobalClose from '../components/GlobalClose.vue';
 import Network from '../components/Network.vue';
-import { KycProvider, SetupSwapResult, SignedBtcTransaction } from '../lib/PublicRequestTypes';
+import { SetupSwapResult, SignedBtcTransaction } from '../lib/PublicRequestTypes';
 import { Static } from '../lib/StaticStore';
 import { ParsedSetupSwapRequest } from '../lib/RequestTypes';
 import Config from 'config';

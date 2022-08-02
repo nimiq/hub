@@ -333,10 +333,6 @@ export type HtlcRefundInstructions =
     NimiqHtlcRefundInstructions
     | BitcoinHtlcRefundInstructions;
 
-export enum KycProvider {
-    TEN31PASS = 'TEN31 PASS',
-}
-
 export interface SetupSwapRequest extends SimpleRequest {
     swapId: string;
     fund: HtlcCreationInstructions;
@@ -366,7 +362,7 @@ export interface SetupSwapRequest extends SimpleRequest {
 
     // Optional KYC info for swapping at higher limits
     kyc?: {
-        provider: KycProvider.TEN31PASS,
+        provider: 'TEN31 Pass',
         s3GrantToken: string,
         oasisGrantToken?: string,
     };
