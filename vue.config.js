@@ -9,6 +9,14 @@ const createHash = require('crypto').createHash;
 const PoLoaderOptimizer = require('webpack-i18n-tools')();
 const coreVersion = require('@nimiq/core-web/package.json').version;
 
+const crypto = require('crypto');
+
+// Fix build for Node version with OpenSSL 3
+const origCreateHash = crypto.createHash;
+crypto.createHash = (alg, opts) => {
+    return origCreateHash(alg === 'md4' ? 'md5' : alg, opts);
+};
+
 const buildName = process.env.NODE_ENV === 'production'
     ? process.env.build
     : 'local';
