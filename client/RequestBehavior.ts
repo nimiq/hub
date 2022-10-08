@@ -208,8 +208,9 @@ export class PopupRequestBehavior extends RequestBehavior<BehaviorType.POPUP> {
         buttonStyle.width = '32px';
         buttonStyle.height = '32px';
         buttonStyle.opacity = '0.8';
-        button.addEventListener('click', () => {
+        button.addEventListener('click', (event) => {
             if (this.popup) this.popup.close();
+            event.stopPropagation();
         });
         appendChild(overlay, button);
 
