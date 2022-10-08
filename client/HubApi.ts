@@ -41,17 +41,20 @@ import {
     SetupSwapResult,
     RefundSwapRequest,
 } from '../src/lib/PublicRequestTypes';
+import { WalletType } from '../src/lib/Constants';
 
 export default class HubApi<
     DB extends BehaviorType = BehaviorType.POPUP,
     IB extends BehaviorType = BehaviorType.IFRAME
 > { // DB: Default Behavior, IB: Iframe Behavior
-    // Expose request behaviors and enums. Not exporting them via regular exports to avoid that users of the umd build
-    // have to use bundle['default'] to access the default export.
+    // Expose request behaviors and enum values. Not exporting them via regular exports to avoid that users of the umd
+    // build have to use bundle['default'] to access the default export.
+    // Additionally, the types of these are exported in the client's index.d.ts.
     public static readonly BehaviorType = BehaviorType;
     public static readonly RequestType = RequestType;
     public static readonly RedirectRequestBehavior = RedirectRequestBehavior;
     public static readonly PopupRequestBehavior = PopupRequestBehavior;
+    public static readonly AccountType = WalletType; // tslint:disable-line:variable-name
     public static readonly CashlinkState = CashlinkState;
     public static readonly CashlinkTheme = CashlinkTheme;
     public static readonly Currency = Currency;
