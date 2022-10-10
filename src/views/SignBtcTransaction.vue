@@ -12,11 +12,16 @@ import { Getter } from 'vuex-class';
 
 // Import only types to avoid bundling of KeyguardClient in Ledger request if not required.
 // (But note that currently, the KeyguardClient is still always bundled in the RpcApi).
-type KeyguardSignBtcTransactionRequest = import('@nimiq/keyguard-client').SignBtcTransactionRequest;
-type BitcoinTransactionInput = import('@nimiq/keyguard-client').BitcoinTransactionInput;
-type BitcoinTransactionChangeOutput = Required<import('@nimiq/keyguard-client').BitcoinTransactionChangeOutput>;
-export type BitcoinTransactionInfo = Omit<import('@nimiq/keyguard-client').BitcoinTransactionInfo, 'changeOutput'> & {
-    changeOutput?: BitcoinTransactionChangeOutput,
+import type {
+    SignBtcTransactionRequest as KeyguardSignBtcTransactionRequest,
+    BitcoinTransactionInput,
+    BitcoinTransactionChangeOutput,
+    BitcoinTransactionInfo as KeyguardBitcoinTransactionInfo,
+} from '@nimiq/keyguard-client';
+
+// BitcoinTransactionInfo with complete changeOutput
+export type BitcoinTransactionInfo = Omit<KeyguardBitcoinTransactionInfo, 'changeOutput'> & {
+    changeOutput?: Required<BitcoinTransactionChangeOutput>,
 };
 
 @Component({components: {StatusScreen, SmallPage, GlobalClose}}) // including components used in parent class
@@ -47,7 +52,7 @@ export default class SignBtcTransaction extends BitcoinSyncBaseView {
         }
 
         const inputs: BitcoinTransactionInput[] = [];
-        let changeOutput: BitcoinTransactionChangeOutput | undefined;
+        let changeOutput: Required<BitcoinTransactionChangeOutput> | undefined;
 
         try {
             // Note that the sync state will only be visible in the UI if the sync is not instant (if we actually sync)

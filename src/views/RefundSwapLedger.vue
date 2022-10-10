@@ -30,14 +30,14 @@ import StatusScreen from '../components/StatusScreen.vue';
 import GlobalClose from '../components/GlobalClose.vue';
 import LedgerUi from '../components/LedgerUi.vue';
 import Network from '../components/Network.vue';
-import LedgerApi, { getBip32Path, parseBip32Path, Coin } from '@nimiq/ledger-api';
+import { loadNimiq } from '../lib/Helpers';
 import { SwapAsset } from '@nimiq/fastspot-api';
 import Config from 'config';
 import {
     RequestType,
-    RpcResult,
     SignTransactionRequest,
     SignBtcTransactionRequest,
+    SignedTransaction,
     SignedBtcTransaction,
 } from '../lib/PublicRequestTypes';
 import {
@@ -50,30 +50,43 @@ import staticStore, { Static } from '../lib/StaticStore';
 import { WalletInfo } from '../lib/WalletInfo';
 import { BTC_NETWORK_TEST } from '../lib/bitcoin/BitcoinConstants';
 import { loadBitcoinJS } from '../lib/bitcoin/BitcoinJSLoader';
-import { decodeBtcScript } from '../lib/HtlcUtils';
+import { decodeBtcScript } from '../lib/bitcoin/BitcoinHtlcUtils';
+import LedgerSwapProxy, { LedgerSwapProxyMarker } from '../lib/LedgerSwapProxy';
+import { ERROR_CANCELED } from '../lib/Constants';
+import patchMerkleTree from '../lib/MerkleTreePatch';
+import { BitcoinTransactionInputType } from '@nimiq/keyguard-client';
 
 // Import only types to avoid bundling of KeyguardClient in Ledger request if not required.
 // (But note that currently, the KeyguardClient is still always bundled in the RpcApi).
-type KeyguardSignNimTransactionRequest = import('@nimiq/keyguard-client').SignTransactionRequest;
-type KeyguardSignBtcTransactionRequest = import('@nimiq/keyguard-client').SignBtcTransactionRequest;
-
-const ProxyExtraData = {
-    // HTLC Proxy Funding, abbreviated as 'HPFD', mapped to values outside of basic ascii range
-    FUND:  new Uint8Array([0, ...('HPFD'.split('').map((c) => c.charCodeAt(0) + 63))]),
-    // HTLC Proxy Redeeming, abbreviated as 'HPRD', mapped to values outside of basic ascii range
-    REDEEM: new Uint8Array([0, ...('HPRD'.split('').map((c) => c.charCodeAt(0) + 63))]),
-};
+type KeyguardSignNimTransactionRequest = import('@nimiq/keyguard-client').SignTransactionRequestStandard;
+type KeyguardSignBtcTransactionRequest = import('@nimiq/keyguard-client').SignBtcTransactionRequestStandard;
 
 @Component({components: {StatusScreen, SmallPage, GlobalClose, LedgerUi}})
 export default class RefundSwapLedger extends RefundSwap {
+    protected get State() {
+        return {
+            ...super.State,
+            LEDGER_HTLC_UNSUPPORTED: 'ledger-htlc-unsupported',
+        };
+    }
+
     @Static protected request!: ParsedRefundSwapRequest | ParsedSignTransactionRequest
         | ParsedSignBtcTransactionRequest;
-    @Static protected sideResult?: RpcResult | Error;
+    @Static protected sideResult?: SignedTransaction | SignedBtcTransaction | Error;
     @Getter private findWalletByAddress!: (address: string, includeContracts: boolean) => WalletInfo | undefined;
-    private ledgerInstructionsShown = false;
+    private ledgerInstructionsShown = false; // can happen for LedgerSwapProxy LederApi calls
 
     protected async created() {
         if (this.request.kind === RequestType.REFUND_SWAP) {
+            if ((this.request as ParsedRefundSwapRequest).refund.type === SwapAsset.NIM) {
+                Promise.all([
+                    // start syncing with the network for later retrieving transaction histories in LedgerSwapProxy
+                    (new Network()).getNetworkClient(),
+                    // preload nimiq cryptography used in LedgerSwapProxy, makeSignTransactionResult
+                    loadNimiq(),
+                ]).catch(() => void 0);
+            }
+
             // first entry point into the flow is handled by the parent class which then calls _signTransaction
             return;
         }
@@ -91,84 +104,69 @@ export default class RefundSwapLedger extends RefundSwap {
         if (this.request.kind === RequestType.SIGN_TRANSACTION) {
             // Nimiq transaction
 
-            this.state = this.State.SYNCING;
+            this.state = this.State.SYNCING; // proxy transaction history is synced in LedgerSwapProxy.createForRefund
 
             const request = this.request as ParsedSignTransactionRequest;
             const { sender: senderInfo, recipient, value, fee, data, validityStartHeight } = request;
             const sender = senderInfo instanceof Nimiq.Address ? senderInfo : senderInfo.address;
             // existence guaranteed as already checked previously in RefundSwap
             const ledgerAccount = this.findWalletByAddress(recipient.toUserFriendlyAddress(), true)!;
-            const { addressIndex: ledgerAddressIndex } = parseBip32Path(
-                ledgerAccount.findSignerForAddress(recipient)!.path,
-            );
 
-            const network = new Network();
-            network.getNetworkClient(); // init network
-
-            // For Ledgers, the HTLC is currently signed by a proxy address, see SetupSwapLedger
-            const proxyKeyPath = getBip32Path({
-                coin: Coin.NIMIQ,
-                accountIndex: 2 ** 31 - 1, // max index allowed by bip32
-                addressIndex: 2 ** 31 - 1 - ledgerAddressIndex, // use a distinct proxy per address for improved privacy
-            });
-            const pubKeyAsEntropy = await LedgerApi.Nimiq.getPublicKey(proxyKeyPath, ledgerAccount.keyId);
-            const proxyKey = Nimiq.KeyPair.derive(new Nimiq.PrivateKey(pubKeyAsEntropy.serialize()));
-            const proxyAddress = proxyKey.publicKey.toAddress();
-
-            let transaction: Nimiq.Transaction;
-
-            if (sender.equals(proxyAddress)) {
-                // Redeem funds from proxy.
-
-                transaction = await network.createTx({
-                    signerPubKey: proxyKey.publicKey,
+            let refundTransaction: Nimiq.Transaction;
+            try {
+                // Retrieve the proxy key for this swap from the Ledger
+                const swapProxy = await LedgerSwapProxy.createForRefund(
                     sender,
-                    recipient,
-                    value,
-                    fee,
-                    validityStartHeight,
-                    data: ProxyExtraData.REDEEM,
-                });
+                    ledgerAccount.findSignerForAddress(recipient)!.path,
+                    ledgerAccount.keyId,
+                );
 
-                transaction.proof = Nimiq.SignatureProof.singleSig(
-                    proxyKey.publicKey,
-                    Nimiq.Signature.create(
-                        proxyKey.privateKey,
-                        proxyKey.publicKey,
-                        transaction.serializeContent(),
-                    ),
-                ).serialize();
-            } else {
-                // Redeem funds from htlc.
-                // Htlc redeem tx currently has to be signed by the proxy but doesn't have to forward funds through it.
-
-                transaction = await network.createTx({
-                    signerPubKey: proxyKey.publicKey,
-                    sender,
-                    senderType: Nimiq.Account.Type.HTLC,
-                    recipient,
-                    value,
-                    fee,
-                    validityStartHeight,
-                    data,
-                });
-
-                // create htlc timeout resolve signature proof
-                const proof = new Nimiq.SerialBuffer(1 + Nimiq.SignatureProof.SINGLE_SIG_SIZE);
-                // FIXME: Use constant when HTLC is part of CoreJS web-offline build
-                proof.writeUint8(3 /* Nimiq.HashedTimeLockedContract.ProofType.TIMEOUT_RESOLVE */);
-                Nimiq.SignatureProof.singleSig(
-                    proxyKey.publicKey,
-                    Nimiq.Signature.create(
-                        proxyKey.privateKey,
-                        proxyKey.publicKey,
-                        transaction.serializeContent(),
-                    ),
-                ).serialize(proof);
-                transaction.proof = proof;
+                if (swapProxy.canSignLocally) {
+                    refundTransaction = await swapProxy.signTransaction({
+                        recipient, // Can directly send to recipient, the proxy just needs to sign.
+                        value,
+                        fee,
+                        validityStartHeight,
+                        // extraData: data, // data is the swap proxy marker which we don't want for redeeming from htlc
+                        network: Config.network,
+                        ...swapProxy.getRefundInfo(sender),
+                    });
+                } else if (sender.equals(swapProxy.address)) {
+                    // Refund from the proxy via the Ledger transaction we signed.
+                    refundTransaction = Nimiq.Transaction.fromAny(this.sideResult.serializedTx);
+                    // Convert the single sig proof of the signed transaction into the proxy multi sig proof.
+                    const {
+                        publicKey: ledgerSignerPublicKey,
+                        signature,
+                    } = Nimiq.SignatureProof.unserialize(new Nimiq.SerialBuffer(refundTransaction.proof));
+                    refundTransaction.proof = swapProxy.createSignatureProof(ledgerSignerPublicKey, signature)
+                        .serialize();
+                } else {
+                    // Refunding from the HTLC is currently not supported by the Ledger app
+                    this.state = this.State.LEDGER_HTLC_UNSUPPORTED;
+                    return;
+                }
+            } catch (e) {
+                this.$rpc.reject(e.message.toLowerCase().indexOf('cancelled') !== -1 ? new Error(ERROR_CANCELED) : e);
+                return;
             }
 
-            this.$rpc.resolve(await network.makeSignTransactionResult(transaction));
+            if (refundTransaction.senderType === Nimiq.Account.Type.HTLC) {
+                // create htlc timeout resolve transaction proof
+                const proof = new Nimiq.SerialBuffer(1 + refundTransaction.proof.length);
+                proof.writeUint8(Nimiq.HashedTimeLockedContract.ProofType.TIMEOUT_RESOLVE);
+                proof.write(refundTransaction.proof);
+                refundTransaction.proof = proof;
+            }
+
+            // Validate that the transaction is valid
+            patchMerkleTree();
+            if (!refundTransaction.verify()) {
+                this.$rpc.reject(new Error('NIM transaction is invalid'));
+                return;
+            }
+
+            this.$rpc.resolve(await (new Network()).makeSignTransactionResult(refundTransaction));
         } else if (this.request.kind === RequestType.SIGN_BTC_TRANSACTION) {
             // Bitcoin transaction
 
@@ -212,11 +210,14 @@ export default class RefundSwapLedger extends RefundSwap {
         // forward to SignTransactionLedger or SignBtcTransactionLedger
         if ('sender' in request) {
             // Nimiq request
-            const { keyId, sender, recipient, recipientLabel, value, fee, validityStartHeight, data } = request;
+            const { keyId, keyPath, sender, recipient, recipientLabel, value, fee, validityStartHeight } = request;
             const senderAddress = new Nimiq.Address(sender);
 
-            // For Ledgers, the HTLC is currently created by a proxy address, see SetupSwapLedger, which also needs to
-            // sign the refund transaction. Let the user just sign an unused dummy transaction for ux consistency.
+            // For Ledgers, the HTLC is currently created by a proxy address, see LedgerSwapProxy, which also needs to
+            // sign the refund transaction. The proxy accepts a local key and the Ledger as signers. Let the user
+            // confirm and sign the transaction on the Ledger which will then later be used if the local key is not
+            // available anymore. However, as the Ledger app currently can not sign HTLC transactions, we always let the
+            // user sign the proxy refund transaction instead.
             const signTransactionRequest: SignTransactionRequest = {
                 appName: request.appName,
                 sender: senderAddress.toUserFriendlyAddress(),
@@ -224,7 +225,7 @@ export default class RefundSwapLedger extends RefundSwap {
                 recipientLabel,
                 value,
                 fee,
-                extraData: data,
+                extraData: LedgerSwapProxyMarker.REDEEM,
                 validityStartHeight,
             };
             const parsedSignTransactionRequest = RequestParser.parse(
@@ -233,16 +234,12 @@ export default class RefundSwapLedger extends RefundSwap {
                 RequestType.SIGN_TRANSACTION,
             ) as ParsedSignTransactionRequest;
 
-            // Sign the dummy transaction from an unused keyPath which does not actually hold funds.
-            // We use the highest bip32 nimiq path here; but note that the signing address is different from the proxy
-            // account even if the paths coincide as the proxy account is derived from the public key. Note that in the
-            // case of a coinciding path, this signed tx should not be exposed to not expose the public key.
             parsedSignTransactionRequest.sender = {
                 address: senderAddress,
                 label: 'Swap HTLC',
                 // type: Nimiq.Account.Type.HTLC, // Ledgers currently can not sign actual htlc transactions
                 signerKeyId: keyId,
-                signerKeyPath: getBip32Path({ coin: Coin.NIMIQ, accountIndex: 2 ** 31 - 1, addressIndex: 2 ** 31 - 1 }),
+                signerKeyPath: keyPath,
             };
 
             // redirect to SignTransactionLedger
@@ -253,6 +250,11 @@ export default class RefundSwapLedger extends RefundSwap {
             // Bitcoin request
             const { walletId: accountId } = this.request as ParsedRefundSwapRequest;
             const { appName, inputs: [htlcInput], recipientOutput: output } = request;
+
+            // Type guard to ensure inputs have a witnessScript
+            if (htlcInput.type !== BitcoinTransactionInputType.HTLC_REFUND) {
+                throw new Error('UNEXPECTED: Refund input does not have type \'htlc-refund\'');
+            }
 
             this.state = this.State.SYNCING;
             await loadBitcoinJS();
@@ -301,9 +303,20 @@ export default class RefundSwapLedger extends RefundSwap {
         }
     }
 
+    protected get statusScreenState(): StatusScreen.State {
+        if (this.state !== this.State.LEDGER_HTLC_UNSUPPORTED) return super.statusScreenState;
+        return StatusScreen.State.ERROR;
+    }
+
     protected get statusScreenTitle() {
-        if (this.state !== this.State.SYNCING) return super.statusScreenTitle;
-        return this.$t('Syncing') as string;
+        switch (this.state) {
+            case this.State.SYNCING:
+                return this.$t('Syncing') as string;
+            case this.State.LEDGER_HTLC_UNSUPPORTED:
+                return this.$t('Refund Failed') as string;
+            default:
+                return super.statusScreenTitle;
+        }
     }
 
     protected get statusScreenStatus() {
@@ -312,16 +325,31 @@ export default class RefundSwapLedger extends RefundSwap {
     }
 
     protected get statusScreenMessage() {
-        if (this.state !== this.State.SYNCING_FAILED) return super.statusScreenMessage;
-        return this.$t('Syncing with {currency} network failed: {error}', {
-            currency: this._currencyName,
-            error: this.error,
-        }) as string;
+        switch (this.state) {
+            case this.State.SYNCING_FAILED:
+                return this.$t('Syncing with {currency} network failed: {error}', {
+                    currency: this._currencyName,
+                    error: this.error,
+                }) as string;
+            case this.State.LEDGER_HTLC_UNSUPPORTED:
+                return this.$t('Refunding this Swap is currently not supported on this device or browser. Please use '
+                    + 'the device and browser you originally created the Swap with. Otherwise please try again in the '
+                    + 'future.',
+                ) as string;
+            default:
+                return super.statusScreenMessage;
+        }
+    }
+
+    protected get statusScreenAction() {
+        if (this.state !== this.State.LEDGER_HTLC_UNSUPPORTED) return super.statusScreenAction;
+        return this.$t('Ok') as string;
     }
 
     protected get isGlobalCloseShown() {
         return this.request.kind === RequestType.REFUND_SWAP // before having signed
-            || this.state === this.State.SYNCING_FAILED;
+            || this.state === this.State.SYNCING_FAILED
+            || this.state === this.State.LEDGER_HTLC_UNSUPPORTED;
     }
 
     private get _currencyName() {
@@ -337,6 +365,14 @@ export default class RefundSwapLedger extends RefundSwap {
                 }
             default:
                 throw new Error('Failed to determine request currency');
+        }
+    }
+
+    protected _statusScreenActionHandler() {
+        if (this.state === this.State.LEDGER_HTLC_UNSUPPORTED) {
+            this.$rpc.reject(new Error(ERROR_CANCELED));
+        } else {
+            super._statusScreenActionHandler();
         }
     }
 }

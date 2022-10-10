@@ -53,6 +53,7 @@
 
     <h2>Choose Address</h2>
     <button id="choose-address" disabled>Choose address</button>
+    <button id="choose-address-and-btc" disabled>Choose address + BTC</button>
 </div>
 
 <div class="request">
@@ -69,7 +70,7 @@
 
     <div class="row">
         <label>Transaction fee (satoshi)</label>
-        <input id="fee" value="0">
+        <input id="fee" value="123">
     </div>
 
     <div class="row">
@@ -78,13 +79,14 @@
     </div>
 
     <div class="row">
-        <label>Validity start hight</label>
+        <label>Validity start height</label>
         <input id="validitystartheight" type="number" value="176450">
     </div>
 
+    <label><input type="checkbox" id="checkout-use-selected-address"> Selected Address as Checkout Sender</label>
+    <br><label><input type="checkbox" id="checkout-force-sender"> Force Sender (for NIM Only Checkout)</label>
+    <br><label><input type="checkbox" id="checkout-is-point-of-sale"> Is Point Of Sale Checkout</label>
     <br><button id="checkout" disabled>Checkout</button>
-    <br><button id="checkout-with-account" disabled>Checkout with selected address</button>
-        <label><input type="checkbox" id="checkout-force-sender"> Force Sender</label>
     <br><button id="multi-checkout" disabled>Multi Checkout</button>
     <br><button id="sign-transaction" disabled>Sign Transaction</button>
 </div>
@@ -164,9 +166,15 @@
 </div>
 
 <!-- needed for Sign Btc Transaction demo -->
-<script src="/bitcoin/BitcoinJS.min.js"></script>
+<script defer type="text/javascript"
+    src="/bitcoin/BitcoinJS.min.js"
+    integrity="<%= htmlWebpackPlugin.options.bitcoinJsIntegrityHash %>"
+    crossorigin="anonymous"></script>
 <!-- needed for WalletStore in Activate Btc demo -->
-<script src="<%= htmlWebpackPlugin.options.cdnDomain %>/v1.5.3/web-offline.js" defer></script>
+<script defer type="text/javascript"
+    src="<%= htmlWebpackPlugin.options.cdnDomain %>/v<%= htmlWebpackPlugin.options.coreVersion %>/web-offline.js"
+    integrity="<%= htmlWebpackPlugin.options.coreIntegrityHash %>"
+    crossorigin="anonymous"></script>
 
 <!-- built files will be auto injected -->
 </body>

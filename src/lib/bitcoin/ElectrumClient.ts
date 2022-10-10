@@ -3,8 +3,8 @@ import { BTC_NETWORK_MAIN } from './BitcoinConstants';
 import { loadBitcoinJS } from './BitcoinJSLoader';
 
 // Import only types to avoid bundling of lazy-loaded libs.
-type ElectrumClient = import('@nimiq/electrum-client').ElectrumClient;
-type BitcoinJsTransaction = import('bitcoinjs-lib').Transaction;
+import type { ElectrumClient, ElectrumClientOptions } from '@nimiq/electrum-client';
+import type { Transaction as BitcoinJsTransaction } from 'bitcoinjs-lib';
 
 let electrumClientPromise: Promise<ElectrumClient> | null = null;
 
@@ -31,11 +31,11 @@ export async function getElectrumClient(waitForConsensus: boolean = true) {
             }
         }
 
-        const options = Config.bitcoinNetwork === BTC_NETWORK_MAIN ? {
+        const options: Partial<ElectrumClientOptions> = Config.bitcoinNetwork === BTC_NETWORK_MAIN ? {
             extraSeedPeers: [{
-                host: 'c0a5duastc849ei53vug.bdnodes.net',
+                host: 'electrumx.nimiq.com',
                 wssPath: 'electrumx',
-                ports: { wss: 443, ssl: 50002, tcp: null },
+                ports: { wss: 443, ssl: 50002, tcp: 50001 },
                 ip: '',
                 version: '',
                 highPriority: true,
@@ -45,6 +45,10 @@ export async function getElectrumClient(waitForConsensus: boolean = true) {
                 ip: '',
                 version: '',
             }],
+            websocketProxy: {
+                tcp: 'wss://electrum.nimiq.com:50001',
+                ssl: 'wss://electrum.nimiq.com:50002',
+            },
         } : {};
 
         return new Client(options);
@@ -60,6 +64,7 @@ export async function getElectrumClient(waitForConsensus: boolean = true) {
 
     if (waitForConsensus) {
         await client.waitForConsensusEstablished();
+        console.log('BTC Consensus established');
     }
 
     return client;

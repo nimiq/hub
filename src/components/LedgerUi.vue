@@ -14,6 +14,7 @@
                         :connect-animation-step="connectAnimationStep">
                         <div class="ledger-screen-confirm-address ledger-screen"></div>
                         <div class="ledger-screen-confirm-transaction ledger-screen"></div>
+                        <div class="ledger-screen-confirm-message ledger-screen"></div>
                         <div class="ledger-screen-app ledger-screen"></div>
                         <div class="ledger-screen-dashboard ledger-screen"></div>
                         <div class="ledger-screen-pin ledger-screen">
@@ -129,6 +130,8 @@ class LedgerUi extends Vue {
             case RequestTypeNimiq.SIGN_TRANSACTION:
             case RequestTypeBitcoin.SIGN_TRANSACTION:
                 return LedgerUi.Illustrations.CONFIRM_TRANSACTION;
+            case RequestTypeBitcoin.SIGN_MESSAGE:
+                return LedgerUi.Illustrations.CONFIRM_MESSAGE;
         }
     }
 
@@ -350,6 +353,7 @@ namespace LedgerUi {
         CONNECTING = 'connecting',
         CONFIRM_ADDRESS = 'confirm-address',
         CONFIRM_TRANSACTION = 'confirm-transaction',
+        CONFIRM_MESSAGE = 'confirm-message',
     }
 }
 
@@ -525,6 +529,14 @@ export default LedgerUi;
     }
 
     .ledger-device-container[illustration="confirm-transaction"] .ledger-screen-confirm-transaction {
+        display: block;
+    }
+
+    .ledger-screen-confirm-message {
+        background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 114 37.5"><text font-family="sans-serif" font-size="11" transform="translate(36.5 16.5)"><tspan x="0" y="0">Confirm </tspan><tspan x="-3" y="12">Message</tspan></text><path fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13.2 21.2l-5.5-5.5m5.5.1l-5.5 5.5m98.5-5.5l-5.5 5.5-2.5-2.5"/></svg>');
+    }
+
+    .ledger-device-container[illustration="confirm-message"] .ledger-screen-confirm-message {
         display: block;
     }
 

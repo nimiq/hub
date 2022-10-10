@@ -14,7 +14,10 @@
             } : null"
             :vendorMarkup="paymentOptions.vendorMarkup"
             :networkFee="paymentOptions.fee"
-            :address="paymentOptions.protocolSpecific.recipient"
+            :address="typeof paymentOptions.protocolSpecific.recipient === 'object'
+                && 'toUserFriendlyAddress' in paymentOptions.protocolSpecific.recipient
+                ? paymentOptions.protocolSpecific.recipient.toUserFriendlyAddress()
+                : paymentOptions.protocolSpecific.recipient"
             :origin="rpcState.origin"
             :shopLogoUrl="request.shopLogoUrl"
             :startTime="request.time"
@@ -33,6 +36,7 @@
                 :key="entry.label"
                 :label="entry.label"
                 :value="entry.value"
+                :small="paymentDetails.length > 3"
             />
         </PageBody>
     </SmallPage>
@@ -115,8 +119,8 @@ export default CheckoutManualPaymentDetails;
         padding-bottom: 2rem;
     }
 
-    .copyable-field >>> .nq-label {
-        margin-top: 2rem;
+    .copyable-field {
+        margin-top: .5rem;
     }
 
     .page-header >>> h1.nq-h1 {

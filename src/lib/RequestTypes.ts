@@ -1,9 +1,10 @@
-import { Currency, PaymentType, RequestType, CashlinkTheme } from './PublicRequestTypes';
-import { ParsedPaymentOptions } from './paymentOptions/ParsedPaymentOptions';
-import { ParsedNimiqSpecifics, ParsedNimiqDirectPaymentOptions } from './paymentOptions/NimiqPaymentOptions';
-import { ParsedEtherSpecifics, ParsedEtherDirectPaymentOptions } from './paymentOptions/EtherPaymentOptions';
-import { ParsedBitcoinSpecifics, ParsedBitcoinDirectPaymentOptions } from './paymentOptions/BitcoinPaymentOptions';
-import { SwapAsset } from '@nimiq/fastspot-api';
+import type { Currency, PaymentType, RequestType, CashlinkTheme } from './PublicRequestTypes';
+import type { ParsedPaymentOptions } from './paymentOptions/ParsedPaymentOptions';
+import type { ParsedNimiqSpecifics, ParsedNimiqDirectPaymentOptions } from './paymentOptions/NimiqPaymentOptions';
+import type { ParsedEtherSpecifics, ParsedEtherDirectPaymentOptions } from './paymentOptions/EtherPaymentOptions';
+import type { ParsedBitcoinSpecifics, ParsedBitcoinDirectPaymentOptions } from './paymentOptions/BitcoinPaymentOptions';
+import type { SwapAsset } from '@nimiq/fastspot-api';
+import type { FiatApiSupportedFiatCurrency } from '@nimiq/utils';
 
 export interface ParsedBasicRequest {
     kind: RequestType;
@@ -16,6 +17,15 @@ export interface ParsedSimpleRequest extends ParsedBasicRequest {
 
 export interface ParsedOnboardRequest extends ParsedBasicRequest {
     disableBack: boolean;
+}
+
+export interface ParsedChooseAddressRequest extends ParsedBasicRequest {
+    returnBtcAddress: boolean;
+    minBalance: number;
+    disableContracts: boolean;
+    disableLegacyAccounts: boolean;
+    disableBip39Accounts: boolean;
+    disableLedgerAccounts: boolean;
 }
 
 export interface ParsedSignTransactionRequest extends ParsedBasicRequest {
@@ -67,6 +77,7 @@ export interface ParsedCheckoutRequest extends ParsedBasicRequest {
     fiatCurrency?: string;
     fiatAmount?: number;
     paymentOptions: AvailableParsedPaymentOptions[];
+    isPointOfSale: boolean;
     disableDisclaimer: boolean;
 }
 
@@ -90,6 +101,7 @@ export interface ParsedCreateCashlinkRequest extends ParsedBasicRequest {
     value?: number;
     message?: string;
     theme: CashlinkTheme;
+    fiatCurrency?: FiatApiSupportedFiatCurrency;
     returnLink: boolean;
     skipSharing: boolean;
 }
@@ -197,6 +209,21 @@ export interface ParsedSetupSwapRequest extends ParsedSimpleRequest {
             address: string, // My address, must be redeem address of HTLC
             value: number, // Sats
         };
+    } | {
+        type: SwapAsset.EUR,
+        value: number; // Eurocents
+        fee: number; // Eurocents
+        bankLabel?: string;
+        settlement: {
+            type: 'sepa',
+            recipient: {
+                name: string,
+                iban: string,
+                bic: string,
+            },
+        } | {
+            type: 'mock',
+        };
     };
 
     // Data needed for display
@@ -204,8 +231,14 @@ export interface ParsedSetupSwapRequest extends ParsedSimpleRequest {
     fiatCurrency: string;
     fundingFiatRate: number;
     redeemingFiatRate: number;
-    serviceFundingFee: number; // Luna or Sats, depending which one gets funded
-    serviceRedeemingFee: number; // Luna or Sats, depending which one gets redeemed
+    fundFees: { // In the currency that gets funded
+        processing: number,
+        redeeming: number,
+    };
+    redeemFees: { // In the currency that gets redeemed
+        funding: number,
+        processing: number,
+    };
     serviceSwapFee: number; // Luna or Sats, depending which one gets funded
     nimiqAddresses?: Array<{
         address: string,

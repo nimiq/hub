@@ -23,14 +23,15 @@ import { Static } from '../lib/StaticStore';
 import { ParsedSetupSwapRequest } from '../lib/RequestTypes';
 import Config from 'config';
 import { loadNimiq } from '../lib/Helpers';
-import { decodeNimHtlcData, decodeBtcScript } from '../lib/HtlcUtils';
 import { loadBitcoinJS } from '../lib/bitcoin/BitcoinJSLoader';
 import { getElectrumClient } from '../lib/bitcoin/ElectrumClient';
+import { decodeBtcScript } from '../lib/bitcoin/BitcoinHtlcUtils';
 import { WalletInfo } from '../lib/WalletInfo';
+import patchMerkleTree from '../lib/MerkleTreePatch';
 
 // Import only types to avoid bundling of KeyguardClient in Ledger request if not required.
 // (But note that currently, the KeyguardClient is still always bundled in the RpcApi).
-type KeyguardSimpleResult = import('@nimiq/keyguard-client').SimpleResult;
+type KeyguardSignSwapResult = import('@nimiq/keyguard-client').SignSwapResult;
 type KeyguardSignSwapTransactionsRequest = import('@nimiq/keyguard-client').SignSwapTransactionsRequest;
 export type SwapHtlcInfo = Pick<KeyguardSignSwapTransactionsRequest, 'fund' | 'redeem'>;
 
@@ -49,7 +50,7 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
     @Static protected request!: ParsedSetupSwapRequest;
     protected nimiqNetwork: Network = new Network();
     protected _isDestroyed: boolean = false;
-    @State private keyguardResult?: KeyguardSimpleResult;
+    @State private keyguardResult?: KeyguardSignSwapResult;
 
     protected async mounted() {
         Promise.all([
@@ -82,7 +83,7 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
             default: break;
         }
 
-        let redeemAddress: string | object = '';
+        let redeemAddress: string | { kty: string, crv: string, x: string } = '';
         switch (this.request.redeem.type) {
             case SwapAsset.NIM:
                 redeemAddress = this.request.redeem.recipient.toUserFriendlyAddress();
@@ -90,8 +91,14 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
             case SwapAsset.BTC:
                 redeemAddress = this.request.redeem.output.address;
                 break;
-            // case SwapAsset.EUR:
-            //     // Assemble recipient object
+            case SwapAsset.EUR:
+                // Assemble recipient object
+                redeemAddress = {
+                    kty: 'OKP',
+                    crv: 'Ed25519',
+                    x: this._getOasisRecipientPublicKey(),
+                };
+                break;
             default: break;
         }
 
@@ -104,10 +111,13 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
         try {
             confirmedSwap = await confirmSwap({
                 id: this.request.swapId,
-            } as PreSwap, {
+            } as PreSwap, this.request.redeem.type === SwapAsset.EUR ? {
+                asset: this.request.redeem.type,
+                ...(redeemAddress as { kty: string, crv: string, x: string }),
+            } : {
                 // Redeem
                 asset: this.request.redeem.type,
-                address: redeemAddress,
+                address: (redeemAddress as string),
             }, {
                 // Refund
                 asset: this.request.fund.type,
@@ -115,6 +125,8 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
             }, uid).catch((error) => {
                 if (error.message === 'The swap was already confirmed before.') {
                     return getSwap(this.request.swapId) as Promise<Swap>;
+                } else if (error.message.includes('503')) {
+                    throw new Error(this.$t('503 Service unavailable - please try again later') as string);
                 } else {
                     throw error;
                 }
@@ -131,41 +143,49 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
         if (this._isDestroyed) return;
 
         // Validate contract details
-        // TODO also validate timeouts?
+        // TODO: Validate timeouts if possible (e.g. not possible for NIM)
         let hashRoot: string | undefined;
+        let nimiqHtlcHashAlgorithm: Nimiq.Hash.Algorithm | undefined;
 
         if (confirmedSwap.from.asset === SwapAsset.NIM || confirmedSwap.to.asset === SwapAsset.NIM) {
             const { data: nimHtlcData } = confirmedSwap.contracts[SwapAsset.NIM]!.htlc as NimHtlcDetails;
-            const decodedNimHtlc = decodeNimHtlcData(nimHtlcData);
+            const decodedNimHtlc = Nimiq.HashedTimeLockedContract.dataToPlain(Nimiq.BufferUtils.fromHex(nimHtlcData));
 
-            // TODO: Decode via HashedTimeLockedContract instead of HtlcUtils when HTLC is part of CoreJS web-offline
-            // const htlcData = Nimiq.HashedTimeLockedContract.dataToPlain(this.keyguardRequest.redeem.htlcData);
-            // if (!('hashAlgorithm' in htlcData)) {
-            //     this.$rpc.reject(new Error('UNEXPECTED: Could not decode NIM htlcData'));
-            //     return;
-            // }
-            // const { hashAlgorithm, hashCount } = htlcData;
-            // const algorithm = Nimiq.Hash.Algorithm.fromString(hashAlgorithm);
+            if (!('hashRoot' in decodedNimHtlc && 'hashAlgorithm' in decodedNimHtlc && 'hashCount' in decodedNimHtlc
+                && 'sender' in decodedNimHtlc && 'recipient' in decodedNimHtlc)) {
+                this.$rpc.reject(new Error('Invalid Nimiq HTLC data'));
+                return;
+            }
+            const {
+                sender: decodedRefundAddress,
+                recipient: decodedRedeemAddress,
+                hashCount,
+            } = decodedNimHtlc;
+            hashRoot = decodedNimHtlc.hashRoot;
+            nimiqHtlcHashAlgorithm = (Nimiq.Hash.Algorithm as any).fromAny(decodedNimHtlc.hashAlgorithm);
+            const hashSize = Nimiq.Hash.SIZE.get(nimiqHtlcHashAlgorithm!);
 
-            hashRoot = decodedNimHtlc.hash;
-
-            const hashSize = Nimiq.Hash.SIZE.get(decodedNimHtlc.hashAlgorithm)!;
+            if (nimiqHtlcHashAlgorithm === Nimiq.Hash.Algorithm.ARGON2D) {
+                // argon2d is blacklisted for HTLCs
+                this.$rpc.reject(new Error('Disallowed HTLC hash algorithm argon2d'));
+                return;
+            }
             if (hashSize !== 32) {
                 // Hash must be 32 bytes, as otherwise it cannot work with the BTC HTLC
                 this.$rpc.reject(new Error('Disallowed HTLC hash length'));
                 return;
             }
-            if (decodedNimHtlc.hashCount !== 1) {
+            if (hashCount !== 1) {
                 // Hash count must be 1 for us to accept the swap
                 this.$rpc.reject(new Error('Disallowed HTLC hash count'));
                 return;
             }
 
-            if (confirmedSwap.from.asset === SwapAsset.NIM && refundAddress !== decodedNimHtlc.refundAddress) {
+            if (confirmedSwap.from.asset === SwapAsset.NIM && refundAddress !== decodedRefundAddress) {
                 this.$rpc.reject(new Error('Unknown HTLC refund address'));
                 return;
             }
-            if (confirmedSwap.to.asset === SwapAsset.NIM && redeemAddress !== decodedNimHtlc.redeemAddress) {
+            if (confirmedSwap.to.asset === SwapAsset.NIM && redeemAddress !== decodedRedeemAddress) {
                 this.$rpc.reject(new Error('Unknown HTLC redeem address'));
                 return;
             }
@@ -176,11 +196,11 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
             await loadBitcoinJS();
             const decodedBtcHtlc = await decodeBtcScript(btcHtlcScript);
 
-            if (hashRoot && decodedBtcHtlc.hash !== hashRoot) {
+            if (hashRoot && decodedBtcHtlc.hashRoot !== hashRoot) {
                 this.$rpc.reject(new Error('HTLC hash roots do not match'));
                 return;
             }
-            hashRoot = decodedBtcHtlc.hash;
+            hashRoot = decodedBtcHtlc.hashRoot;
 
             if (confirmedSwap.from.asset === SwapAsset.BTC && refundAddress !== decodedBtcHtlc.refundAddress) {
                 this.$rpc.reject(new Error('Unknown HTLC refund address'));
@@ -192,14 +212,21 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
             }
         }
 
-        if (confirmedSwap.from.asset === SwapAsset.EUR /* || confirmedSwap.to.asset === SwapAsset.EUR */) {
-            // FIXME: Fetch contract from OASIS API and compare instead of trusting Fastspot
+        if (confirmedSwap.from.asset === SwapAsset.EUR || confirmedSwap.to.asset === SwapAsset.EUR) {
+            // TODO: Fetch contract from OASIS API and compare instead of trusting Fastspot
 
             if (hashRoot && confirmedSwap.hash !== hashRoot) {
                 this.$rpc.reject(new Error('HTLC hash roots do not match'));
                 return;
             }
             hashRoot = confirmedSwap.hash;
+
+            // TODO: Validate correct recipient public key
+        }
+
+        if (!hashRoot) {
+            this.$rpc.reject(new Error('UNEXPECTED: Could not extract swap hash from contracts'));
+            return;
         }
 
         // Construct htlc info
@@ -231,7 +258,7 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
 
             fundingHtlcInfo = {
                 type: SwapAsset.EUR,
-                hash: confirmedSwap.hash,
+                hash: hashRoot,
                 timeout: eurContract.timeout,
                 htlcId: eurHtlcData.address,
             };
@@ -302,16 +329,24 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
             }
         }
 
+        if (this.request.redeem.type === SwapAsset.EUR) {
+            const eurContract = confirmedSwap.contracts[SwapAsset.EUR] as Contract<SwapAsset.EUR>;
+            const eurHtlcData = eurContract.htlc;
+
+            redeemingHtlcInfo = {
+                type: SwapAsset.EUR,
+                hash: hashRoot,
+                timeout: eurContract.timeout,
+                htlcId: eurHtlcData.address,
+            };
+        }
+
         if (this._isDestroyed) return;
 
         if (!fundingHtlcInfo || !redeemingHtlcInfo) {
             this.$rpc.reject(new Error('Funding or redeeming HTLC info missing.'));
             return;
         }
-
-        // if (this.request.redeem.type === SwapAsset.EUR) {
-        //
-        // }
 
         // Sign transactions
         this.state = this.State.SIGNING_TRANSACTIONS;
@@ -343,40 +378,28 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
         if (this._isDestroyed) return;
 
         if (nimiqTransaction) {
-            // If we have a Nimiq transaction, validate it (to make sure we are not returning an invalid tx)
-            // FIXME: unnecessary once we enable nimiqTransaction.verify() below
-            const signatureProof = Nimiq.SignatureProof.unserialize(new Nimiq.SerialBuffer(nimiqTransaction.proof));
-            if (!signatureProof.verify(null, nimiqTransaction.serializeContent())) {
-                this.$rpc.reject(new Error('NIM signature is invalid'));
-                return;
-            }
-
             // for redeeming nim transaction prepare a htlc proof with a dummy preImage and hashRoot
-            if (this.request.redeem.type === SwapAsset.NIM && redeemingHtlcInfo.type === SwapAsset.NIM) {
+            if (this.request.redeem.type === SwapAsset.NIM && redeemingHtlcInfo.type === SwapAsset.NIM
+                && nimiqHtlcHashAlgorithm) {
                 const dummyPreImage = '0000000000000000000000000000000000000000000000000000000000000000';
                 const dummyHashRoot = '66687aadf862bd776c8fc18b8e9f8e20089714856ee233b3902a591d0d5f2925'; // sha256
 
-                // FIXME: Enable decoding when HTLC is part of CoreJS web-offline build
-                const algorithm = redeemingHtlcInfo.htlcData[20 + 20] as Nimiq.Hash.Algorithm;
-                const hashCount = redeemingHtlcInfo.htlcData[20 + 20 + 32 + 1];
-
-                const proof = new Nimiq.SerialBuffer(3 + 2 * 32 + Nimiq.SignatureProof.SINGLE_SIG_SIZE);
-                // FIXME: Use constant when HTLC is part of CoreJS web-offline build
-                proof.writeUint8(1 /* Nimiq.HashedTimeLockedContract.ProofType.REGULAR_TRANSFER */);
-                proof.writeUint8(algorithm);
-                proof.writeUint8(hashCount);
+                const proof = new Nimiq.SerialBuffer(3 + 2 * 32 + nimiqTransaction.proof.length);
+                proof.writeUint8(Nimiq.HashedTimeLockedContract.ProofType.REGULAR_TRANSFER);
+                proof.writeUint8(nimiqHtlcHashAlgorithm);
+                proof.writeUint8(1); // hashCount must be 1 for our swaps
                 proof.write(Nimiq.BufferUtils.fromHex(dummyHashRoot));
                 proof.write(Nimiq.BufferUtils.fromHex(dummyPreImage));
                 proof.write(new Nimiq.SerialBuffer(nimiqTransaction.proof)); // Current proof is regular SignatureProof
                 nimiqTransaction.proof = proof;
             }
 
-            // FIXME: Enable validation when HTLC is part of CoreJS web-offline build
-            // // Validate that transaction is valid
-            // if (!nimiqTransaction.verify()) {
-            //     this.$rpc.reject(new Error('NIM transaction is invalid'));
-            //     return;
-            // }
+            // Validate that transaction is valid
+            patchMerkleTree();
+            if (!nimiqTransaction.verify()) {
+                this.$rpc.reject(new Error('NIM transaction is invalid'));
+                return;
+            }
         }
 
         // Construct Hub response
@@ -401,6 +424,15 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
     protected async _shouldConfirmSwap() {
         // note that this method gets overwritten for SetupSwapLedger
         return this.keyguardResult && this.keyguardResult.success && !this._isDestroyed;
+    }
+
+    protected _getOasisRecipientPublicKey() {
+        // note that this method gets overwritten for SetupSwapLedger
+        if (!this.keyguardResult || !this.keyguardResult.eurPubKey) {
+            throw new Error('Cannot find OASIS recipient public key');
+        }
+        return Nimiq.BufferUtils.toBase64Url(Nimiq.BufferUtils.fromHex(this.keyguardResult.eurPubKey))
+            .replace(/\.*$/, ''); // OASIS cannot handle trailing filler dots
     }
 
     protected async _signSwapTransactions(htlcInfo: SwapHtlcInfo): Promise<{

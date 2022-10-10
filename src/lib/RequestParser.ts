@@ -1,34 +1,38 @@
 import { isMilliseconds, includesOrigin } from './Helpers';
 import { State } from '@nimiq/rpc';
 import {
-    BasicRequest,
+    RequestType,
     CashlinkTheme,
+    Currency,
+    PaymentType,
+} from './PublicRequestTypes';
+import type {
+    BasicRequest,
     CheckoutRequest,
     CreateCashlinkRequest,
     ExportRequest,
     ManageCashlinkRequest,
     OnboardRequest,
+    ChooseAddressRequest,
     RenameRequest,
     RpcRequest,
     SignMessageRequest,
     SignTransactionRequest,
     SimpleRequest,
-    Currency,
-    PaymentType,
-    RequestType,
     NimiqCheckoutRequest,
     MultiCurrencyCheckoutRequest,
     SignBtcTransactionRequest,
     SetupSwapRequest,
     RefundSwapRequest,
 } from './PublicRequestTypes';
-import {
+import type {
     ParsedBasicRequest,
     ParsedCheckoutRequest,
     ParsedCreateCashlinkRequest,
     ParsedExportRequest,
     ParsedManageCashlinkRequest,
     ParsedOnboardRequest,
+    ParsedChooseAddressRequest,
     ParsedRenameRequest,
     ParsedRpcRequest,
     ParsedSignMessageRequest,
@@ -95,6 +99,8 @@ export class RequestParser {
                     }
                 }
 
+                const isPointOfSale = 'isPointOfSale' in checkoutRequest && !!checkoutRequest.isPointOfSale;
+
                 let disableDisclaimer = !!checkoutRequest.disableDisclaimer;
                 if (disableDisclaimer && !includesOrigin(Config.privilegedOrigins, state.origin)) {
                     // warn and continue
@@ -105,6 +111,10 @@ export class RequestParser {
                 if (!checkoutRequest.version || checkoutRequest.version === 1) {
                     if (typeof checkoutRequest.value !== 'number' || checkoutRequest.value <= 0) {
                         throw new Error('value must be a number >0');
+                    }
+
+                    if (isPointOfSale) {
+                        throw new Error('isPointOfSale is not supported for v1 checkout.');
                     }
 
                     return {
@@ -129,6 +139,7 @@ export class RequestParser {
                                 validityDuration: checkoutRequest.validityDuration,
                             },
                         })],
+                        isPointOfSale,
                         disableDisclaimer,
                     } as ParsedCheckoutRequest;
                 }
@@ -178,7 +189,11 @@ export class RequestParser {
                         } catch (err) {
                             throw new Error(`callbackUrl must be a valid URL: ${err}`);
                         }
-                        if (origin !== state.origin) {
+                        if (origin !== state.origin
+                            // Whitelist https://vendor.cryptopayment.link when the request was coming from just
+                            // https://cryptopayment.link
+                            && !(state.origin === 'https://cryptopayment.link'
+                                && origin === 'https://vendor.cryptopayment.link')) {
                             throw new Error('callbackUrl must have the same origin as caller Website. ' +
                                 checkoutRequest.callbackUrl +
                                 ' is not on caller origin ' +
@@ -229,7 +244,10 @@ export class RequestParser {
 
                                                 option.protocolSpecific.extraData = checkoutRequest.extraData;
                                             }
-                                            return new ParsedNimiqDirectPaymentOptions(option);
+                                            return new ParsedNimiqDirectPaymentOptions(
+                                                option,
+                                                { isPointOfSale },
+                                            );
                                         case Currency.ETH:
                                             return new ParsedEtherDirectPaymentOptions(option);
                                         case Currency.BTC:
@@ -241,6 +259,7 @@ export class RequestParser {
                                     throw new Error(`PaymentType ${(option as any).type} not supported`);
                             }
                         }),
+                        isPointOfSale,
                         disableDisclaimer,
                     } as ParsedCheckoutRequest;
                 }
@@ -253,8 +272,19 @@ export class RequestParser {
                     appName: onboardRequest.appName,
                     disableBack: !!onboardRequest.disableBack,
                 } as ParsedOnboardRequest;
-            case RequestType.SIGNUP:
             case RequestType.CHOOSE_ADDRESS:
+                const chooseAddressRequest = request as ChooseAddressRequest;
+                return {
+                    kind: requestType,
+                    appName: chooseAddressRequest.appName,
+                    returnBtcAddress: !!chooseAddressRequest.returnBtcAddress,
+                    minBalance: Number(chooseAddressRequest.minBalance) || 0,
+                    disableContracts: !!chooseAddressRequest.disableContracts,
+                    disableLegacyAccounts: !!chooseAddressRequest.disableLegacyAccounts,
+                    disableBip39Accounts: !!chooseAddressRequest.disableBip39Accounts,
+                    disableLedgerAccounts: !!chooseAddressRequest.disableLedgerAccounts,
+                } as ParsedChooseAddressRequest;
+            case RequestType.SIGNUP:
             case RequestType.LOGIN:
             case RequestType.MIGRATE:
             case RequestType.ADD_VESTING_CONTRACT:
@@ -365,6 +395,7 @@ export class RequestParser {
                     value,
                     message,
                     theme,
+                    fiatCurrency: createCashlinkRequest.fiatCurrency,
                     returnLink,
                     skipSharing,
                 } as ParsedCreateCashlinkRequest;
@@ -490,7 +521,7 @@ export class RequestParser {
                     throw new Error('Funding type is not supported');
                 }
 
-                if (!['NIM', 'BTC'/* , 'EUR' */].includes(setupSwapRequest.redeem.type)) {
+                if (!['NIM', 'BTC', 'EUR'].includes(setupSwapRequest.redeem.type)) {
                     throw new Error('Redeeming type is not supported');
                 }
 
@@ -558,7 +589,10 @@ export class RequestParser {
                         extraData: typeof setupSwapRequest.redeem.extraData === 'string'
                             ? Nimiq.BufferUtils.fromAny(setupSwapRequest.redeem.extraData)
                             : setupSwapRequest.redeem.extraData,
-                    } : {
+                    } : setupSwapRequest.redeem.type === 'BTC' ? {
+                        ...setupSwapRequest.redeem,
+                        type: SwapAsset[setupSwapRequest.redeem.type],
+                    } : { // EUR
                         ...setupSwapRequest.redeem,
                         type: SwapAsset[setupSwapRequest.redeem.type],
                     },
@@ -633,6 +667,7 @@ export class RequestParser {
                     value: createCashlinkRequest.value,
                     message: createCashlinkRequest.message,
                     theme: createCashlinkRequest.theme,
+                    fiatCurrency: createCashlinkRequest.fiatCurrency,
                     returnLink: createCashlinkRequest.returnLink,
                     skipSharing: createCashlinkRequest.skipSharing,
                 } as CreateCashlinkRequest;
@@ -680,8 +715,12 @@ export class RequestParser {
                     appName: onboardRequest.appName,
                     disableBack: onboardRequest.disableBack,
                 } as OnboardRequest;
-            case RequestType.SIGNUP:
             case RequestType.CHOOSE_ADDRESS:
+                const chooseAddressRequest = request as ParsedChooseAddressRequest;
+                return {
+                    ...chooseAddressRequest,
+                } as ChooseAddressRequest;
+            case RequestType.SIGNUP:
             case RequestType.LOGIN:
             case RequestType.MIGRATE:
             case RequestType.ADD_VESTING_CONTRACT:

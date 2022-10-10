@@ -57,10 +57,10 @@
             </PageBody>
             <PageFooter>
                 <button class="nq-button-pill light-blue" @click="goToOnboarding">{{ $t('Login') }}</button>
-                <a :href="onboardingLink" target="_blank" class="safe-onboarding-link nq-link nq-light-blue">
-                    {{ $t('Try it now') }}
-                    <ArrowRightSmallIcon/>
-                </a>
+                <button v-if="request.version > 1"
+                    class="nq-button-s external-wallet"
+                    @click="$emit('use-external-wallet')"
+                ><QrCodeIcon/> {{ $t('Other wallets') }}</button>
             </PageFooter>
         </template>
         <template v-else>
@@ -77,8 +77,15 @@
                 :disabledAddresses="paymentOptions.protocolSpecific.recipient
                     ? [paymentOptions.protocolSpecific.recipient.toUserFriendlyAddress()]
                     : []"
-                @account-selected="setAccountOrContract"
-                @login="() => goToOnboarding(false)"/>
+                :allowLogin="false"
+                @account-selected="setAccountOrContract"/>
+            <PageFooter class="minimal">
+                <button class="nq-button-pill light-blue" @click="() => goToOnboarding(false)">Login</button>
+                <button v-if="request.version > 1"
+                    class="nq-button-s external-wallet"
+                    @click="$emit('use-external-wallet')"
+                ><QrCodeIcon/> {{ $t('Other wallets') }}</button>
+            </PageFooter>
         </template>
     </SmallPage>
     <Network ref="network" :visible="false" @head-change="onHeadChange"/>
@@ -99,6 +106,7 @@ import {
     StopwatchIcon,
     TransferIcon,
     UnderPaymentIcon,
+    QrCodeIcon,
 } from '@nimiq/vue-components';
 import { AccountInfo } from '../lib/AccountInfo';
 import { TX_VALIDITY_WINDOW, WalletType } from '../lib/Constants';
@@ -126,8 +134,9 @@ import CurrencyInfo from './CurrencyInfo.vue';
     StopwatchIcon,
     TransferIcon,
     UnderPaymentIcon,
+    QrCodeIcon,
 }})
-class NimiqCheckoutCard
+class CheckoutCardNimiq
     extends CheckoutCard<ParsedNimiqDirectPaymentOptions> {
     private static readonly BALANCE_CHECK_STORAGE_KEY = 'nimiq_checkout_last_balance_check';
     @State private wallets!: WalletInfo[];
@@ -152,7 +161,7 @@ class NimiqCheckoutCard
 
     protected async created() {
         if (this.paymentOptions.currency !== Currency.NIM) {
-            throw new Error('NimiqCheckoutCard did not get a NimiqPaymentOption.');
+            throw new Error('CheckoutCardNimiq did not get a NimiqPaymentOption.');
         }
         return await super.created();
     }
@@ -260,7 +269,7 @@ class NimiqCheckoutCard
             height: this.height,
             balances: Array.from(balances.entries()),
         };
-        window.sessionStorage.setItem(NimiqCheckoutCard.BALANCE_CHECK_STORAGE_KEY, JSON.stringify(cacheInput));
+        window.sessionStorage.setItem(CheckoutCardNimiq.BALANCE_CHECK_STORAGE_KEY, JSON.stringify(cacheInput));
 
         return balances;
     }
@@ -424,7 +433,7 @@ class NimiqCheckoutCard
     }
 
     private getLastBalanceUpdateHeight(): {timestamp: number, height: number, balances: Map<string, number>} | null {
-        const rawCache = window.sessionStorage.getItem(NimiqCheckoutCard.BALANCE_CHECK_STORAGE_KEY);
+        const rawCache = window.sessionStorage.getItem(CheckoutCardNimiq.BALANCE_CHECK_STORAGE_KEY);
         if (!rawCache) return null;
 
         try {
@@ -437,23 +446,24 @@ class NimiqCheckoutCard
                 balances: new Map(cache.balances),
             });
         } catch (e) {
-            window.sessionStorage.removeItem(NimiqCheckoutCard.BALANCE_CHECK_STORAGE_KEY);
+            window.sessionStorage.removeItem(CheckoutCardNimiq.BALANCE_CHECK_STORAGE_KEY);
             return null;
         }
     }
 }
 
-namespace NimiqCheckoutCard {
+namespace CheckoutCardNimiq {
     export const PaymentState = PublicPaymentState;
 }
 
-export default NimiqCheckoutCard;
+export default CheckoutCardNimiq;
 </script>
 
 <style scoped>
     .small-page {
         position: relative;
         width: 52.5rem;
+        margin: 0;
     }
 
     .status-screen {
@@ -500,15 +510,21 @@ export default NimiqCheckoutCard;
         font-size: 2rem;
         font-weight: bold;
         text-decoration: none;
+        outline: none;
     }
 
     .safe-onboarding-link .nq-icon {
-        margin-left: .25rem;
+        margin-left: .875rem;
         font-size: 1.5rem;
         transition: transform .3s var(--nimiq-ease);
     }
 
-    .safe-onboarding-link:hover .nq-icon {
+    .safe-onboarding-link:focus {
+        text-decoration: underline;
+    }
+
+    .safe-onboarding-link:hover .nq-icon,
+    .safe-onboarding-link:focus .nq-icon {
         transform: translateX(.25rem);
     }
 
@@ -538,5 +554,20 @@ export default NimiqCheckoutCard;
         flex-direction: row;
         justify-content: space-between;
         padding: 3rem;
+    }
+
+    .page-footer.minimal {
+        padding: 0 3rem 3rem;
+    }
+
+    .page-footer .external-wallet {
+        display: flex;
+        align-items: center;
+    }
+
+    .page-footer .external-wallet .nq-icon {
+        width: 2.25rem;
+        height: 2.25rem;
+        margin: 0 1rem 0 0.5rem;
     }
 </style>

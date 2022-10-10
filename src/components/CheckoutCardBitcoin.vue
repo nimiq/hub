@@ -2,11 +2,11 @@
 import { createBitcoinRequestLink } from '@nimiq/utils';
 import staticStore from '../lib/StaticStore';
 import { ParsedBitcoinDirectPaymentOptions } from '../lib/paymentOptions/BitcoinPaymentOptions';
-import NonNimiqCheckoutCard from './NonNimiqCheckoutCard.vue';
+import CheckoutCardExternal from './CheckoutCardExternal.vue';
 import { FormattableNumber } from '@nimiq/utils';
 
-export default class BitcoinCheckoutCard
-    extends NonNimiqCheckoutCard<ParsedBitcoinDirectPaymentOptions> {
+export default class CheckoutCardBitcoin
+    extends CheckoutCardExternal<ParsedBitcoinDirectPaymentOptions> {
     protected currencyFullName = 'Bitcoin';
     protected icon = 'icon-btc.svg';
 
@@ -17,28 +17,31 @@ export default class BitcoinCheckoutCard
         return createBitcoinRequestLink(protocolSpecific.recipient, {
             amount: paymentOptions.amount,
             fee: protocolSpecific.fee,
-            label: staticStore.request ? `Nimiq Checkout - ${staticStore.request.appName}` : undefined,
+            label: staticStore.request
+                ? `Crypto-Checkout powered by Nimiq - ${staticStore.request.appName}`
+                : undefined,
         });
     }
 
     protected get manualPaymentDetails() {
+        const paymentOptions = this.paymentOptions;
+        const protocolSpecific = paymentOptions.protocolSpecific;
         const paymentDetails = [ ...super.manualPaymentDetails, {
             label: this.$t('Amount') as string,
             value: {
-                mBTC: new FormattableNumber(this.paymentOptions.amount)
-                    .moveDecimalSeparator(-this.paymentOptions.decimals + 3).toString(),
-                BTC: new FormattableNumber(this.paymentOptions.amount)
-                    .moveDecimalSeparator(-this.paymentOptions.decimals).toString(),
+                BTC: paymentOptions.baseUnitAmount,
+                mBTC: new FormattableNumber(paymentOptions.amount)
+                    .moveDecimalSeparator(-paymentOptions.decimals + 3).toString(),
             },
         }];
-        if (this.paymentOptions.protocolSpecific.feePerByte || this.paymentOptions.protocolSpecific.fee) {
+        if (protocolSpecific.feePerByte || protocolSpecific.fee) {
             const fees: { [key: string]: string | number } = {};
-            if (this.paymentOptions.protocolSpecific.feePerByte) {
-                fees['SAT/BYTE'] = Math.ceil(this.paymentOptions.protocolSpecific.feePerByte * 100) / 100; // rounded
+            if (protocolSpecific.feePerByte) {
+                fees['Sat/Byte'] = Math.ceil(protocolSpecific.feePerByte * 100) / 100; // rounded
             }
-            if (this.paymentOptions.protocolSpecific.fee) {
-                fees.BTC = new FormattableNumber(this.paymentOptions.protocolSpecific.fee)
-                    .moveDecimalSeparator(-this.paymentOptions.decimals).toString();
+            if (protocolSpecific.fee) {
+                fees.BTC = new FormattableNumber(protocolSpecific.fee)
+                    .moveDecimalSeparator(-paymentOptions.decimals).toString();
             }
             paymentDetails.push({
                 label: this.$t('Fee') as string,

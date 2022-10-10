@@ -90,6 +90,10 @@ export default class LoginSuccess extends Vue {
                             collectionResult.walletInfo.wordsExported = collectionResult.walletInfo.wordsExported
                                 || keyResult.wordsExported;
 
+                            if (keyResult.keyLabel) {
+                                collectionResult.walletInfo.label = keyResult.keyLabel;
+                            }
+
                             collectionResults.push(collectionResult);
 
                             break;
@@ -191,7 +195,7 @@ export default class LoginSuccess extends Vue {
             return;
         }
 
-        this.title = this.$tc('Your Account is ready. | Your Accounts are ready.', result.length);
+        this.title = this.$tc('Welcome back! | Your Accounts are ready.', result.length);
         this.state = StatusScreen.State.SUCCESS;
         setTimeout(() => { this.$rpc.resolve(result); }, StatusScreen.SUCCESS_REDIRECT_DELAY);
     }

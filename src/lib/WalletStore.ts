@@ -78,7 +78,7 @@ export class WalletStore extends Store<any, WalletInfoEntry> {
 
     public async list(): Promise<WalletInfoEntry[]> {
         this._storeName = WalletStore.DB_ACCOUNTS_STORE_NAME;
-        return super.list()  as Promise<WalletInfoEntry[]>;
+        return super.list() as Promise<WalletInfoEntry[]>;
     }
 
     protected upgrade(request: any, event: IDBVersionChangeEvent): void {

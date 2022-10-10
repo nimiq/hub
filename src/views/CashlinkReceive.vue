@@ -138,7 +138,6 @@ import { Getter, Mutation } from 'vuex-class';
 import { NetworkClient, DetailedPlainTransaction } from '@nimiq/network-client';
 import Config from 'config';
 import { WalletInfo } from '../lib/WalletInfo';
-import { NETWORK_MAIN } from '../lib/Constants';
 import { CashlinkStore } from '../lib/CashlinkStore';
 import HubApi from '../../client/HubApi';
 

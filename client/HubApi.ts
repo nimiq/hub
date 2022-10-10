@@ -11,6 +11,8 @@ import {
     BasicRequest,
     SimpleRequest,
     OnboardRequest,
+    ChooseAddressRequest,
+    ChooseAddressResult,
     CheckoutRequest,
     SignTransactionRequest,
     RenameRequest,
@@ -39,13 +41,20 @@ import {
     SetupSwapResult,
     RefundSwapRequest,
 } from '../src/lib/PublicRequestTypes';
+import { WalletType } from '../src/lib/Constants';
 
-export default class HubApi<DB extends BehaviorType = BehaviorType.POPUP> { // DB: Default Behavior
-    // Expose request behaviors and enums. Not exporting them via regular exports to avoid that users of the umd build
-    // have to use bundle['default'] to access the default export.
+export default class HubApi<
+    DB extends BehaviorType = BehaviorType.POPUP,
+    IB extends BehaviorType = BehaviorType.IFRAME
+> { // DB: Default Behavior, IB: Iframe Behavior
+    // Expose request behaviors and enum values. Not exporting them via regular exports to avoid that users of the umd
+    // build have to use bundle['default'] to access the default export.
+    // Additionally, the types of these are exported in the client's index.d.ts.
+    public static readonly BehaviorType = BehaviorType;
     public static readonly RequestType = RequestType;
     public static readonly RedirectRequestBehavior = RedirectRequestBehavior;
     public static readonly PopupRequestBehavior = PopupRequestBehavior;
+    public static readonly AccountType = WalletType; // tslint:disable-line:variable-name
     public static readonly CashlinkState = CashlinkState;
     public static readonly CashlinkTheme = CashlinkTheme;
     public static readonly Currency = Currency;
@@ -144,9 +153,9 @@ export default class HubApi<DB extends BehaviorType = BehaviorType.POPUP> { // D
     }
 
     public chooseAddress<B extends BehaviorType = DB>(
-        request: Promise<BasicRequest> | BasicRequest,
+        request: Promise<ChooseAddressRequest> | ChooseAddressRequest,
         requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
-    ): Promise<B extends BehaviorType.REDIRECT ? void : Address> {
+    ): Promise<B extends BehaviorType.REDIRECT ? void : ChooseAddressResult> {
         return this._request(requestBehavior, RequestType.CHOOSE_ADDRESS, [request]);
     }
 
@@ -270,19 +279,19 @@ export default class HubApi<DB extends BehaviorType = BehaviorType.POPUP> { // D
     /**
      * Only accessible in iframe from Nimiq domains.
      */
-    public list<B extends BehaviorType = DB>(
+    public list<B extends BehaviorType = IB>(
         requestBehavior: RequestBehavior<B> = this._iframeBehavior as any,
     ): Promise<B extends BehaviorType.REDIRECT ? void : Account[]> {
         return this._request(requestBehavior, RequestType.LIST, []);
     }
 
-    public cashlinks<B extends BehaviorType = DB>(
+    public cashlinks<B extends BehaviorType = IB>(
         requestBehavior: RequestBehavior<B> = this._iframeBehavior as any,
     ): Promise<B extends BehaviorType.REDIRECT ? void : Cashlink[]> {
         return this._request(requestBehavior, RequestType.LIST_CASHLINKS, []);
     }
 
-    public addBtcAddresses<B extends BehaviorType = DB>(
+    public addBtcAddresses<B extends BehaviorType = IB>(
         request: AddBtcAddressesRequest,
         requestBehavior: RequestBehavior<B> = this._iframeBehavior as any,
     ): Promise<B extends BehaviorType.REDIRECT ? void : AddBtcAddressesResult> {

@@ -1,11 +1,11 @@
-import { WalletType } from './Constants';
+import type { WalletType } from './Constants';
 
-type NimiqSpecifics = import('./paymentOptions/NimiqPaymentOptions').NimiqSpecifics;
-type NimiqDirectPaymentOptions = import('./paymentOptions/NimiqPaymentOptions').NimiqDirectPaymentOptions;
-type BitcoinSpecifics = import('./paymentOptions/BitcoinPaymentOptions').BitcoinSpecifics;
-type BitcoinDirectPaymentOptions = import('./paymentOptions/BitcoinPaymentOptions').BitcoinDirectPaymentOptions;
-type EtherSpecifics = import('./paymentOptions/EtherPaymentOptions').EtherSpecifics;
-type EtherDirectPaymentOptions = import('./paymentOptions/EtherPaymentOptions').EtherDirectPaymentOptions;
+import type { NimiqSpecifics } from './paymentOptions/NimiqPaymentOptions';
+import type { NimiqDirectPaymentOptions } from './paymentOptions/NimiqPaymentOptions';
+import type { BitcoinSpecifics } from './paymentOptions/BitcoinPaymentOptions';
+import type { BitcoinDirectPaymentOptions } from './paymentOptions/BitcoinPaymentOptions';
+import type { EtherSpecifics } from './paymentOptions/EtherPaymentOptions';
+import type { EtherDirectPaymentOptions } from './paymentOptions/EtherPaymentOptions';
 
 export enum RequestType {
     LIST = 'list',
@@ -47,6 +47,19 @@ export interface SimpleResult {
 
 export interface OnboardRequest extends BasicRequest {
     disableBack?: boolean;
+}
+
+export interface ChooseAddressRequest extends BasicRequest {
+    returnBtcAddress?: boolean;
+    minBalance?: number;
+    disableContracts?: boolean;
+    disableLegacyAccounts?: boolean;
+    disableBip39Accounts?: boolean;
+    disableLedgerAccounts?: boolean;
+}
+
+export interface ChooseAddressResult extends Address {
+    btcAddress?: string;
 }
 
 export interface SignTransactionRequest extends BasicRequest {
@@ -168,6 +181,11 @@ export interface MultiCurrencyCheckoutRequest extends BasicRequest {
      */
     paymentOptions: AvailablePaymentOptions[];
     /**
+     * Enable UI adaptions for the use as point of sale. Paying directly from logged-in hub accounts and buttons to open
+     * local wallets get disabled.
+     */
+    isPointOfSale?: boolean;
+    /**
      * Option to disable the disclaimer at the bottom of the checkout page. Only allowed for privileged origins.
      */
     disableDisclaimer?: boolean; // only allowed for privileged origins
@@ -256,6 +274,23 @@ export interface BitcoinHtlcSettlementInstructions {
     };
 }
 
+export interface EuroHtlcSettlementInstructions {
+    type: 'EUR';
+    value: number; // Eurocents
+    fee: number; // Eurocents
+    bankLabel?: string;
+    settlement: {
+        type: 'sepa',
+        recipient: {
+            name: string,
+            iban: string,
+            bic: string,
+        },
+    } | {
+        type: 'mock',
+    };
+}
+
 export interface NimiqHtlcRefundInstructions {
     type: 'NIM';
     sender: string; // HTLC address
@@ -289,7 +324,8 @@ export type HtlcCreationInstructions =
 
 export type HtlcSettlementInstructions =
     NimiqHtlcSettlementInstructions
-    | BitcoinHtlcSettlementInstructions;
+    | BitcoinHtlcSettlementInstructions
+    | EuroHtlcSettlementInstructions;
 
 export type HtlcRefundInstructions =
     NimiqHtlcRefundInstructions
@@ -304,8 +340,14 @@ export interface SetupSwapRequest extends SimpleRequest {
     fiatCurrency: string;
     fundingFiatRate: number;
     redeemingFiatRate: number;
-    serviceFundingFee: number; // Luna or Sats, depending which one gets funded
-    serviceRedeemingFee: number; // Luna or Sats, depending which one gets redeemed
+    fundFees: { // In the currency that gets funded
+        processing: number,
+        redeeming: number,
+    };
+    redeemFees: { // In the currency that gets redeemed
+        funding: number,
+        processing: number,
+    };
     serviceSwapFee: number; // Luna or Sats, depending which one gets funded
     layout?: 'standard' | 'slider';
     nimiqAddresses?: Array<{
@@ -418,6 +460,7 @@ export enum CashlinkTheme {
     EASTER,
     GENERIC,
     BIRTHDAY,
+    // Temporary themes that might be retracted in the future should be listed counting down from 255
 }
 
 export interface Cashlink {
@@ -432,6 +475,7 @@ export interface Cashlink {
 export type CreateCashlinkRequest = BasicRequest & {
     value?: number,
     theme?: CashlinkTheme,
+    fiatCurrency?: string,
 } & (
     {} | {
         message: string,
@@ -500,6 +544,7 @@ export type RpcRequest = SignTransactionRequest
                        | CheckoutRequest
                        | BasicRequest
                        | SimpleRequest
+                       | ChooseAddressRequest
                        | OnboardRequest
                        | RenameRequest
                        | SignMessageRequest
@@ -513,6 +558,7 @@ export type RpcResult = SignedTransaction
                       | Account
                       | Account[]
                       | SimpleResult
+                      | ChooseAddressResult
                       | Address
                       | Cashlink
                       | Cashlink[]

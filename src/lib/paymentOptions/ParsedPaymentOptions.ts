@@ -1,4 +1,4 @@
-type BigInteger = import('big-integer').BigInteger; // imports only the type without bundling
+import type { BigInteger } from 'big-integer'; // imports only the type without bundling
 import { FormattableNumber, toNonScientificNumberString } from '@nimiq/utils';
 import { isMilliseconds } from '../Helpers';
 import {
@@ -11,19 +11,26 @@ import {
     ParsedProtocolSpecificsForCurrency,
 } from '../RequestTypes';
 
+export interface PaymentOptionsParserFlags {
+    isUpdate?: boolean;
+    isPointOfSale?: boolean;
+}
+
 export interface ParsedPaymentOptions<C extends Currency, T extends PaymentType> {
     protocolSpecific: ParsedProtocolSpecificsForCurrency<C>;
     amount: number | BigInteger;
     vendorMarkup?: number;
     expires?: number;
     constructor: ParsedPaymentOptionsForCurrencyAndType<C, T>;
-    new(options: PaymentOptionsForCurrencyAndType<C, T>, allowUndefinedFees?: boolean):
+    new(options: PaymentOptionsForCurrencyAndType<C, T>, parserFlags: PaymentOptionsParserFlags):
         ParsedPaymentOptionsForCurrencyAndType<C, T>;
 }
 
 export abstract class ParsedPaymentOptions<C extends Currency, T extends PaymentType>
 implements ParsedPaymentOptions<C, T> {
-    protected constructor(options: PaymentOptionsForCurrencyAndType<C, T>) {
+    protected parserFlags: PaymentOptionsParserFlags;
+
+    protected constructor(options: PaymentOptionsForCurrencyAndType<C, T>, parserFlags: PaymentOptionsParserFlags) {
         // @ts-ignore: Accessing abstract properties currency and type
         if (options.currency !== this.currency || options.type !== this.type) {
             throw new Error(`Cannot parse given options as ${this.constructor.name}.`);
@@ -44,6 +51,7 @@ implements ParsedPaymentOptions<C, T> {
                 ? options.expires
                 : options.expires * 1000
             : undefined;
+        this.parserFlags = parserFlags;
     }
 
     public abstract get currency(): C;
@@ -59,8 +67,8 @@ implements ParsedPaymentOptions<C, T> {
         options: PaymentOptionsForCurrencyAndType<C, T>,
         ...additionalArgs: any[]
     ) {
-        // Parse to check validity. Do not enforce calculation of fees to not update them if they were undefined.
-        const parsedOptions = new this.constructor(options as any, /* allowUndefinedFees */ true);
+        // Parse to check validity.
+        const parsedOptions = new this.constructor(options as any, { ...this.parserFlags, isUpdate: true });
         this.amount = parsedOptions.amount; // amount must exist on all parsed options
         this.vendorMarkup = parsedOptions.vendorMarkup !== undefined ? parsedOptions.vendorMarkup : this.vendorMarkup;
         this.expires = parsedOptions.expires || this.expires;

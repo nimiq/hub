@@ -7,11 +7,13 @@ import fil from './fil.json';
 import fr from './fr.json';
 import nl from './nl.json';
 import pl from './pl.json';
+import pt from './pt.json';
 import ru from './ru.json';
+import tr from './tr.json';
 import uk from './uk.json';
 import zh from './zh.json';
 
-const translations: { [lang: string]: { [id: string]: string } } = { de, en, es, fil, fr, nl, pl, ru, uk, zh };
+const translations: { [lang: string]: { [id: string]: string } } = { de, en, es, fil, fr, nl, pl, pt, ru, tr, uk, zh };
 
 export default function translate(id: string, language?: string) {
     if (!language) {

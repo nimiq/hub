@@ -91,6 +91,7 @@ export default class AccountList extends Vue {
         padding: 3rem 3rem 2rem; /* by reduced padding the 3 line text might become 2 lines but that still looks ok */
     }
 
+    .choice,
     .choice.login:hover ~ .choice.signup,
     .choice.login:focus ~ .choice.signup,
     .choice.ledger:hover ~ .choice.signup,

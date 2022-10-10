@@ -8,44 +8,33 @@
                 'has-currency-info': initialCurrencies.length > 1,
             }"
             :entries="initialCurrencies"
+            :entryMargin="36"
             :animationDuration="500"
             :selected="selectedCurrency"
             :disabled="choosenCurrency !== null || availableCurrencies.length === 0"
             @select="selectedCurrency = $event">
             <template v-for="paymentOptions of request.paymentOptions" v-slot:[paymentOptions.currency]>
-                <NimiqCheckoutCard
-                    v-if="paymentOptions.currency === constructor.Currency.NIM"
+                <component
+                    :is="paymentOptions.currency === constructor.Currency.NIM
+                        ? (request.isPointOfSale
+                            ? 'CheckoutCardNimiqExternal'
+                            : useExternalNimWallet
+                                ? 'CheckoutCardNimiqExternal'
+                                : 'CheckoutCardNimiq')
+                        : paymentOptions.currency === constructor.Currency.BTC ? 'CheckoutCardBitcoin'
+                        : 'CheckoutCardEthereum'"
                     :paymentOptions="paymentOptions"
                     :key="paymentOptions.currency"
                     :class="{
                         confirmed: choosenCurrency === paymentOptions.currency,
-                        left: leftCard === constructor.Currency.NIM,
-                        right: rightCard === constructor.Currency.NIM
+                        left: leftCard === paymentOptions.currency,
+                        right: rightCard === paymentOptions.currency,
                     }"
                     @chosen="chooseCurrency"
-                    @expired="expired"/>
-                <EthereumCheckoutCard
-                    v-else-if="paymentOptions.currency === constructor.Currency.ETH"
-                    :paymentOptions="paymentOptions"
-                    :key="paymentOptions.currency"
-                    :class="{
-                        confirmed: choosenCurrency === paymentOptions.currency,
-                        left: leftCard === constructor.Currency.ETH,
-                        right: rightCard === constructor.Currency.ETH
-                    }"
-                    @chosen="chooseCurrency"
-                    @expired="expired"/>
-                <BitcoinCheckoutCard
-                    v-else-if="paymentOptions.currency === constructor.Currency.BTC"
-                    :paymentOptions="paymentOptions"
-                    :key="paymentOptions.currency"
-                    :class="{
-                        confirmed: choosenCurrency === paymentOptions.currency,
-                        left: leftCard === constructor.Currency.BTC,
-                        right: rightCard === constructor.Currency.BTC
-                    }"
-                    @chosen="chooseCurrency"
-                    @expired="expired"/>
+                    @expired="expired"
+                    @use-external-wallet="_onUseExternalWallet(paymentOptions.currency)"
+                    :preSelectCurrency="paymentOptions.currency === constructor.Currency.NIM && useExternalNimWallet"
+                />
             </template>
         </Carousel>
 
@@ -54,7 +43,7 @@
 
         <transition name="transition-disclaimer">
             <component :is="screenFitsDisclaimer ? 'div' : 'BottomOverlay'"
-                v-if="(screenFitsDisclaimer || !disclaimerRecentlyClosed) && !request.disableDisclaimer"
+                v-if="(screenFitsDisclaimer || disclaimerRequired) && !request.disableDisclaimer"
                 ref="disclaimer"
                 class="disclaimer"
                 :class="{ 'long-disclaimer': hasLongDisclaimer }"
@@ -72,9 +61,10 @@ import { Component, Vue, Watch } from 'vue-property-decorator';
 import { BottomOverlay, Carousel } from '@nimiq/vue-components';
 import { BrowserDetection } from '@nimiq/utils';
 import { ParsedCheckoutRequest } from '../lib/RequestTypes';
-import BitcoinCheckoutCard from '../components/BitcoinCheckoutCard.vue';
-import EthereumCheckoutCard from '../components/EthereumCheckoutCard.vue';
-import NimiqCheckoutCard from '../components/NimiqCheckoutCard.vue';
+import CheckoutCardBitcoin from '../components/CheckoutCardBitcoin.vue';
+import CheckoutCardEthereum from '../components/CheckoutCardEthereum.vue';
+import CheckoutCardNimiq from '../components/CheckoutCardNimiq.vue';
+import CheckoutCardNimiqExternal from '../components/CheckoutCardNimiqExternal.vue';
 import GlobalClose from '../components/GlobalClose.vue';
 import { Currency as PublicCurrency } from '../lib/PublicRequestTypes';
 import { State as RpcState } from '@nimiq/rpc';
@@ -85,13 +75,17 @@ import { HISTORY_KEY_SELECTED_CURRENCY } from '../lib/Constants';
     GlobalClose,
     BottomOverlay,
     Carousel,
-    BitcoinCheckoutCard,
-    EthereumCheckoutCard,
-    NimiqCheckoutCard,
+    CheckoutCardBitcoin,
+    CheckoutCardEthereum,
+    CheckoutCardNimiq,
+    CheckoutCardNimiqExternal,
 }})
 class Checkout extends Vue {
+    private static LAST_USED_CURRENCIES_STORAGE_KEY = 'checkout-last-used-currencies';
+    private static LAST_USAGE_STORAGE_KEY = 'ckeckout-last-usage';
+    private static LAST_USAGE_RECENT_THRESHOLD = 31 * 24 * 60 * 60 * 1000; // One month
     private static DISCLAIMER_CLOSED_STORAGE_KEY = 'checkout-disclaimer-last-closed';
-    private static DISCLAIMER_CLOSED_EXPIRY = 24 * 60 * 60 * 1000; // One day
+    private static DISCLAIMER_CLOSED_EXPIRY = 12 * 31 * 24 * 60 * 60 * 1000; // One year
 
     @Static private rpcState!: RpcState;
     @Static private request!: ParsedCheckoutRequest;
@@ -102,11 +96,12 @@ class Checkout extends Vue {
     private initialCurrencies: PublicCurrency[] = [];
     private availableCurrencies: PublicCurrency[] = [];
     private readonly isIOS: boolean = BrowserDetection.isIOS();
-    private disclaimerRecentlyClosed: boolean = false;
+    private disclaimerRequired: boolean = true;
     private hasLongDisclaimer: boolean = false;
     private screenFitsDisclaimer: boolean = true;
     private dimensionsUpdateTimeout: number = -1;
     private globalCloseButtonLabel: string = '';
+    private useExternalNimWallet = false;
 
     @Watch('selectedCurrency')
     private updateUnselected() {
@@ -127,21 +122,30 @@ class Checkout extends Vue {
     private async created() {
         const $subtitle = document.querySelector('.logo .logo-subtitle')!;
         $subtitle.textContent = 'Checkout';
+        document.title = this.request.paymentOptions.length === 1
+            && this.request.paymentOptions[0].currency === PublicCurrency.NIM
+            ? 'Nimiq Checkout'
+            : 'Crypto-Checkout powered by Nimiq';
+
         this.initialCurrencies = this.request.paymentOptions.map((option) => option.currency).filter((currency) =>
             !history.state
             || !history.state[HISTORY_KEY_SELECTED_CURRENCY]
             || history.state[HISTORY_KEY_SELECTED_CURRENCY] === currency,
         );
         this.availableCurrencies = [ ...this.initialCurrencies ];
-        if (this.availableCurrencies.includes(PublicCurrency.NIM)) {
-            this.selectedCurrency = PublicCurrency.NIM;
-        } else {
-            this.selectedCurrency = this.availableCurrencies[0];
-        }
-        document.title = 'Nimiq Checkout';
+
+        const currenciesByPreference = this.request.isPointOfSale
+            ? [PublicCurrency.BTC, PublicCurrency.ETH, ...this._getLastUsedCurrencies(), this.availableCurrencies[0]]
+            : [...this._getLastUsedCurrencies(), PublicCurrency.NIM, PublicCurrency.BTC, this.availableCurrencies[0]];
+        this.selectedCurrency = currenciesByPreference
+            .find((currency: PublicCurrency) => this.availableCurrencies.includes(currency))!;
+
+        const lastUsage = parseInt(window.localStorage[Checkout.LAST_USAGE_STORAGE_KEY], 10);
         const lastDisclaimerClose = parseInt(window.localStorage[Checkout.DISCLAIMER_CLOSED_STORAGE_KEY], 10);
-        this.disclaimerRecentlyClosed = !Number.isNaN(lastDisclaimerClose)
-            && Date.now() - lastDisclaimerClose < Checkout.DISCLAIMER_CLOSED_EXPIRY;
+        this.disclaimerRequired = !this.request.disableDisclaimer && (
+            Number.isNaN(lastUsage) || Date.now() - lastUsage > Checkout.LAST_USAGE_RECENT_THRESHOLD
+            || Number.isNaN(lastDisclaimerClose) || Date.now() - lastDisclaimerClose > Checkout.DISCLAIMER_CLOSED_EXPIRY
+        );
 
         this._onResize = this._onResize.bind(this);
         window.addEventListener('resize', this._onResize);
@@ -149,7 +153,9 @@ class Checkout extends Vue {
     }
 
     private mounted() {
-        const disclaimer = (this.$refs.disclaimer as BottomOverlay).$el || this.$refs.disclaimer;
+        const disclaimer = this.$refs.disclaimer
+            ? (this.$refs.disclaimer as BottomOverlay).$el || this.$refs.disclaimer
+            : undefined;
         this.hasLongDisclaimer = !!disclaimer && disclaimer.textContent!.length > 250;
     }
 
@@ -160,6 +166,8 @@ class Checkout extends Vue {
     private chooseCurrency(currency: PublicCurrency) {
         this.selectedCurrency = currency;
         this.choosenCurrency = currency;
+        this._setLastUsedCurrency(currency);
+        window.localStorage[Checkout.LAST_USAGE_STORAGE_KEY] = Date.now();
         (this.$refs.carousel as Carousel).updateDimensions();
     }
 
@@ -167,8 +175,24 @@ class Checkout extends Vue {
         this.availableCurrencies.splice(this.availableCurrencies.indexOf(currency), 1);
     }
 
+    private _getLastUsedCurrencies(): PublicCurrency[] {
+        try {
+            const knownCurrencies = Object.values(PublicCurrency);
+            return JSON.parse(window.localStorage[Checkout.LAST_USED_CURRENCIES_STORAGE_KEY])
+                .filter((currency: PublicCurrency) => knownCurrencies.includes(currency));
+        } catch (e) {
+            return [];
+        }
+    }
+
+    private _setLastUsedCurrency(currency: PublicCurrency) {
+        window.localStorage[Checkout.LAST_USED_CURRENCIES_STORAGE_KEY] = JSON.stringify([
+            ...new Set([currency, ...this._getLastUsedCurrencies()]),
+        ]);
+    }
+
     private _closeDisclaimerOverlay() {
-        this.disclaimerRecentlyClosed = true;
+        this.disclaimerRequired = false;
         // store when the disclaimer was closed
         window.localStorage[Checkout.DISCLAIMER_CLOSED_STORAGE_KEY] = Date.now();
     }
@@ -186,6 +210,10 @@ class Checkout extends Vue {
             () => (this.$refs.carousel as Carousel).updateDimensions(),
             150,
         );
+    }
+
+    private _onUseExternalWallet(currency: PublicCurrency) {
+        if (currency === PublicCurrency.NIM) this.useExternalNimWallet = true;
     }
 }
 
@@ -208,7 +236,7 @@ export default Checkout;
     .container >>> .nq-h1 {
         margin-top: 3.5rem;
         margin-bottom: 1rem;
-        line-height: 1;
+        line-height: 1.2;
         text-align: center;
     }
 
@@ -350,6 +378,10 @@ export default Checkout;
             --ios-bottom-bar-height: 74px;
         }
 
+        .carousel.ios >>> .currency-info {
+            --currency-info-translate-y: -50px;
+        }
+
         .carousel >>> .confirmed .nq-card {
             height: var(--available-mobile-height);
         }
@@ -432,6 +464,7 @@ export default Checkout;
 
         .carousel >>> .payment-option:not(.confirmed) .nq-card > .nq-h1::after {
             --placeholder-width: 85%;
+            box-shadow: 0 0 0 5rem var(--nimiq-card-bg);
         }
 
         .carousel >>> .payment-option:not(.confirmed) .info-line .amounts::after,
@@ -464,7 +497,6 @@ export default Checkout;
             --placeholder-width: 90%;
         }
 
-        .carousel >>> .payment-option:not(.confirmed) .nq-card > .nq-h1::after,
         .carousel >>> .payment-option:not(.confirmed) .nq-card-body .label::after,
         .carousel >>> .payment-option:not(.confirmed) .nq-card-body .amounts .crypto::after,
         .carousel >>> .payment-option:not(.confirmed) .nq-card-footer .nq-link::after,
@@ -496,11 +528,6 @@ export default Checkout;
             border-top-color: var(--nimiq-card-bg);
         }
 
-        .carousel >>> > :not(.selected) .payment-option:not(.confirmed) .nq-button {
-            transition: box-shadow .5s var(--nimiq-ease);
-            box-shadow: none;
-        }
-
         .carousel >>> > :not(.selected) .payment-option:not(.confirmed) .arrow-runway {
             transition: opacity .5s var(--nimiq-ease);
             opacity: 0;
@@ -508,6 +535,15 @@ export default Checkout;
 
         .carousel >>> > :not(.selected) .payment-option:not(.confirmed) .arrow-runway * {
             animation: unset; /* disable animation in background to avoid unnecessary rendering layers */
+        }
+
+        .carousel >>> .payment-option:not(.confirmed) .nq-card > .nq-h1 {
+            overflow: hidden;
+        }
+
+        .carousel >>> > :not(.selected) .payment-option:not(.confirmed) .nq-button {
+            transition: box-shadow .5s var(--nimiq-ease);
+            box-shadow: none;
         }
 
         .carousel >>> .payment-option:not(.confirmed) video {

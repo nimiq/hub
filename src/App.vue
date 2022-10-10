@@ -88,6 +88,10 @@ export default class App extends Vue {
         transform: rotateY(180deg) var(--safari-rotate-fix);
     }
 
+    .nq-button {
+        height: 6.5rem;
+    }
+
     @media (max-width: 450px) {
         #app > .container {
             margin-bottom: 0 !important;

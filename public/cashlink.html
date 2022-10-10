@@ -5,8 +5,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <!-- Use no custom browser warning share behavior here as cashlink can be opened just fine in other browser. -->
-    <script type="text/javascript" src="/browser-warning.js" defer></script>
-    <script src="<%= htmlWebpackPlugin.options.cdnDomain %>/v1.5.3/web-offline.js" defer></script>
+    <script defer type="text/javascript" src="/browser-warning.js"
+        integrity="<%= htmlWebpackPlugin.options.browserWarningIntegrityHash %>"
+        crossorigin="anonymous"></script>
+    <script defer src="<%= htmlWebpackPlugin.options.cdnDomain %>/v<%= htmlWebpackPlugin.options.coreVersion %>/web-offline.js"
+        integrity="<%= htmlWebpackPlugin.options.coreIntegrityHash %>"
+        crossorigin="anonymous"></script>
     <title>Nimiq Cashlink</title>
 
     <meta name="robots" content="noindex, follow">
@@ -36,7 +40,7 @@
             </g></svg>
         </div>
     </div>
-    <%= htmlWebpackPlugin.options.browserWarning %>
+    <%= htmlWebpackPlugin.options.browserWarningTemplate %>
     <!-- built files will be auto injected -->
 </body>
 </html>

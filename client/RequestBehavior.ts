@@ -1,4 +1,5 @@
 import { PostMessageRpcClient, RedirectRpcClient } from '@nimiq/rpc';
+import { BrowserDetection } from '@nimiq/utils';
 import { ResultByRequestType, RequestType } from '../src/lib/PublicRequestTypes';
 import translate from './i18n/i18n';
 
@@ -72,6 +73,10 @@ export class PopupRequestBehavior extends RequestBehavior<BehaviorType.POPUP> {
     private _popupFeatures: typeof PopupRequestBehavior.DEFAULT_FEATURES;
     private _options: typeof PopupRequestBehavior.DEFAULT_OPTIONS;
 
+    private shouldRetryRequest: boolean = false;
+    private popup: Window | undefined;
+    private client: PostMessageRpcClient | undefined;
+
     constructor(
         popupFeatures = PopupRequestBehavior.DEFAULT_FEATURES,
         options?: typeof PopupRequestBehavior.DEFAULT_OPTIONS,
@@ -91,25 +96,35 @@ export class PopupRequestBehavior extends RequestBehavior<BehaviorType.POPUP> {
     ): Promise<ResultByRequestType<R>> {
         const origin = RequestBehavior.getAllowedOrigin(endpoint);
 
-        const popup = this.createPopup(endpoint);
-
         // Add page overlay
-        const $overlay = this.appendOverlay(popup);
+        const $overlay = this.appendOverlay();
 
-        const client = new PostMessageRpcClient(popup, origin);
+        do {
+            this.shouldRetryRequest = false;
+            this.popup = this.createPopup(endpoint);
+            this.client = new PostMessageRpcClient(this.popup, origin);
 
-        try {
-            await client.init();
-            return await client.call(command, ...(await Promise.all(args)));
-        } catch (e) {
-            throw e;
-        } finally {
-            // Remove page overlay
-            this.removeOverlay($overlay);
+            try {
+                await this.client.init();
+                return await this.client.call(command, ...(await Promise.all(args)));
+            } catch (e) {
+                if (!this.shouldRetryRequest) throw e;
+            } finally {
+                if (!this.shouldRetryRequest) {
+                    // Remove page overlay
+                    this.removeOverlay($overlay);
 
-            client.close();
-            popup.close();
-        }
+                    this.client.close();
+                    this.popup.close();
+                }
+            }
+        } while (this.shouldRetryRequest);
+
+        // the code below should never be executed, unless unexpected things happend
+        if (this.popup) this.popup.close();
+        if (this.client) this.client.close();
+        if ($overlay) this.removeOverlay($overlay);
+        throw new Error('Unexpected error occurred');
     }
 
     public createPopup(url: string) {
@@ -120,7 +135,7 @@ export class PopupRequestBehavior extends RequestBehavior<BehaviorType.POPUP> {
         return popup;
     }
 
-    private appendOverlay(popup: Window): HTMLDivElement | null {
+    private appendOverlay(): HTMLDivElement | null {
         if (!this._options.overlay) return null;
 
         // Define DOM-method abstractions to allow better minification
@@ -147,7 +162,15 @@ export class PopupRequestBehavior extends RequestBehavior<BehaviorType.POPUP> {
         overlayStyle.opacity = '0';
         overlayStyle.transition = 'opacity 0.6s ease';
         overlayStyle.zIndex = '99999';
-        overlay.addEventListener('click', () => popup.focus());
+        overlay.addEventListener('click', () => {
+            if (BrowserDetection.isIOS()) {
+                this.shouldRetryRequest = true;
+                if (this.popup) this.popup.close();
+                if (this.client) this.client.close();
+            } else {
+                if (this.popup) this.popup.focus();
+            }
+        });
 
         // Top flex spacer
         appendChild(overlay, createElement('div'));
@@ -185,7 +208,10 @@ export class PopupRequestBehavior extends RequestBehavior<BehaviorType.POPUP> {
         buttonStyle.width = '32px';
         buttonStyle.height = '32px';
         buttonStyle.opacity = '0.8';
-        button.addEventListener('click', () => popup.close());
+        button.addEventListener('click', (event) => {
+            if (this.popup) this.popup.close();
+            event.stopPropagation();
+        });
         appendChild(overlay, button);
 
         // The 100ms delay is not just because the DOM element needs to be rendered before it

@@ -214,7 +214,10 @@ export default class SignTransactionLedger extends Vue {
             const checkoutRequest = this.request as ParsedCheckoutRequest;
             const $subtitle = document.querySelector('.logo .logo-subtitle')!;
             $subtitle.textContent = 'Checkout'; // reapply the checkout subtitle in case the page was reloaded
-            document.title = 'Nimiq Checkout';
+            document.title = checkoutRequest.paymentOptions.length === 1
+                && checkoutRequest.paymentOptions[0].currency === Currency.NIM
+                ? 'Nimiq Checkout'
+                : 'Crypto-Checkout powered by Nimiq';
 
             // Update checkout payment options. This is typically instant even after reload as CheckoutServerApi caches
             // the data previously fetched in checkout.

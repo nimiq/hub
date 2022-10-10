@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "private": true,
     "scripts": {
-        "pre": "yarn i18n:extract && if [ ! -f public/bitcoin/BitcoinJS.min.js ]; then yarn build:bitcoinjs; fi",
+        "pre": "yarn i18n:extract && test -e public/bitcoin/BitcoinJS.min.js || yarn build:bitcoinjs",
         "serve": "yarn pre && vue-cli-service serve",
         "build": "yarn pre && vue-cli-service build --modern App",
         "build:ci": "yarn pre && build=testnet vue-cli-service build",
@@ -14,24 +14,23 @@
         "pr": "yarn lint && yarn build:ci && yarn test && cd client && yarn lint && yarn build",
         "postinstall": "cd client && yarn",
         "i18n:extract": "node ./node_modules/webpack-i18n-tools/index.js ./src/i18n/en.po",
-        "i18n:pull": "tx pull --all --parallel --no-interactive --force",
+        "i18n:pull": "tx pull --all --force",
         "i18n:push": "tx push --source",
         "i18n:sync": "yarn i18n:extract && yarn i18n:push ; yarn i18n:pull"
     },
     "dependencies": {
-        "@nimiq/browser-warning": "^1.1.0",
+        "@nimiq/browser-warning": "^1.1.1",
         "@nimiq/electrum-client": "https://github.com/nimiq/electrum-client#build",
-        "@nimiq/fastspot-api": "^1.4.0",
+        "@nimiq/fastspot-api": "^1.5.2",
         "@nimiq/iqons": "^1.5.2",
-        "@nimiq/keyguard-client": "^1.4.2-beta.0",
-        "@nimiq/ledger-api": "^2.1.0",
+        "@nimiq/keyguard-client": "^1.5.0-beta.2",
+        "@nimiq/ledger-api": "^2.2.0",
         "@nimiq/network-client": "^0.6.2",
         "@nimiq/rpc": "^0.4.1",
         "@nimiq/style": "^0.8.2",
         "@nimiq/utils": "^0.5.0",
         "@nimiq/vue-components": "https://github.com/nimiq/vue-components#build/translations",
-        "@sentry/browser": "^5.12.1",
-        "@sentry/integrations": "^5.12.0",
+        "@sentry/vue": "^6.0.0",
         "big-integer": "^1.6.48",
         "vue": "^2.6.11",
         "vue-i18n": "^8.17.6",
@@ -42,8 +41,8 @@
     },
     "devDependencies": {
         "@babel/core": "^7.8.4",
-        "@nimiq/core": "^1.5.4",
-        "@nimiq/core-web": "^1.5.4",
+        "@nimiq/core": "^1.5.8",
+        "@nimiq/core-web": "^1.5.8",
         "@vue/babel-preset-app": "^3.4.1",
         "@vue/cli-plugin-typescript": "~4.2.2",
         "@vue/cli-plugin-unit-jest": "~4.2.2",
@@ -63,6 +62,7 @@
         "typescript": "~3.8.0",
         "vue-template-compiler": "^2.6.11",
         "webpack-i18n-tools": "https://github.com/nimiq/webpack-i18n-tools#master",
+        "webpack-subresource-integrity": "^1.5.2",
         "write-file-webpack-plugin": "^4.5.1"
     }
 }

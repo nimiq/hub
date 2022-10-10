@@ -1,11 +1,12 @@
 # 
 # Translators:
 # Daniel, 2020
-# Ricardo Barquero Carranza <richy@nimiq.com>, 2021
+# Sören Schwert <hello@soerenschwert.de>, 2021
+# Ricardo Barquero Carranza <richy@nimiq.com>, 2022
 # 
 msgid ""
 msgstr ""
-"Last-Translator: Ricardo Barquero Carranza <richy@nimiq.com>, 2021\n"
+"Last-Translator: Ricardo Barquero Carranza <richy@nimiq.com>, 2022\n"
 "Language-Team: Spanish (https://www.transifex.com/nimiq-foundation/teams/110181/es/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: es\n"
@@ -21,23 +22,28 @@ msgstr "Cuenta {color}"
 
 #: src/views/SetupSwapLedger.vue:57 src/views/SetupSwapLedger.vue:78
 msgid "{percentage} of swap value."
-msgstr ""
+msgstr "{percentage} del valor del intercambio."
 
 #: src/views/SetupSwapLedger.vue:30
 msgid "{totalFees} fees"
-msgstr ""
+msgstr "{totalFees} en cuota"
 
-#: src/components/NonNimiqCheckoutCard.vue:64
-msgid "+ network fee"
-msgstr "+ cuota de red"
+#: src/components/CheckoutCardExternal.vue:84
+msgid "+ {currency} network fee"
+msgstr "+ {currency} cuota de red"
 
 #: src/views/CashlinkReceive.vue:110
 msgid "30 seconds, no email, no download."
 msgstr "30 segundos, sin email, sin descargas."
 
-#: src/views/CashlinkReceive.vue:207
+#: src/views/CashlinkReceive.vue:206
 msgid "404 - Cash not found"
 msgstr "404 - Dinero no fue encontrado"
+
+#: src/views/SetupSwapSuccess.vue:129
+msgid "503 Service unavailable - please try again later"
+msgstr ""
+"503 Servicio no se encuentra disponible - por favor intente de nuevo luego"
 
 #: src/views/ExportSuccess.vue:60
 msgid "Account backed up!"
@@ -59,7 +65,7 @@ msgstr "Acción no es posible"
 msgid "Activate update"
 msgstr "Activar actualización"
 
-#: src/views/CashlinkCreate.vue:61
+#: src/views/CashlinkCreate.vue:66
 msgid "Add a message..."
 msgstr "Agregar mensaje..."
 
@@ -79,15 +85,15 @@ msgstr "Agregar a Ledger"
 msgid "Add Vesting Contract"
 msgstr "Agregar Contrato Vesting"
 
-#: src/views/SetupSwapLedger.vue:269
+#: src/components/CheckoutCard.vue:82 src/views/SetupSwapLedger.vue:276
 msgid "Address"
-msgstr ""
+msgstr "Dirección"
 
 #: src/views/AddAddressLedger.vue:16
 msgid "Address Added"
 msgstr "Dirección Agregada"
 
-#: src/views/LoginSuccess.vue:97
+#: src/views/LoginSuccess.vue:101
 msgid "Address detection failed. Retrying..."
 msgstr "Detección de dirección fallida. Reintentando..."
 
@@ -95,9 +101,10 @@ msgstr "Detección de dirección fallida. Reintentando..."
 msgid "All labels saved."
 msgstr "Todas las etiquetas se guardaron"
 
-#: src/components/BitcoinCheckoutCard.vue:26
-#: src/components/EthereumCheckoutCard.vue:25
-#: src/views/SetupSwapLedger.vue:262 src/views/SetupSwapLedger.vue:271
+#: src/components/CheckoutCardBitcoin.vue:30
+#: src/components/CheckoutCardEthereum.vue:27
+#: src/components/CheckoutCardNimiqExternal.vue:32
+#: src/views/SetupSwapLedger.vue:269 src/views/SetupSwapLedger.vue:278
 msgid "Amount"
 msgstr "Monto"
 
@@ -105,11 +112,19 @@ msgstr "Monto"
 msgid "Amount/Step:"
 msgstr "Monto/Paso:"
 
+#: src/lib/paymentOptions/EtherPaymentOptions.ts:79
+msgid "Apply a gas price of at least {fee} gwei."
+msgstr "Utilizar una cuota de gas de por lo menos {fee} gwei."
+
+#: src/lib/paymentOptions/BitcoinPaymentOptions.ts:87
+msgid "Apply a network fee of at least {fee} sat/byte."
+msgstr "Utilizar una cuota de red de por lo menos {fee} sat/byte."
+
 #: src/views/SetupSwapLedger.vue:47
 msgid "Atomic swaps require two BTC transactions."
-msgstr ""
+msgstr "Los intercambios atómicos requieren dos transacciones BTC."
 
-#: src/views/CashlinkManage.vue:158 src/views/CheckoutTransmission.vue:77
+#: src/views/CashlinkManage.vue:192 src/views/CheckoutTransmission.vue:77
 msgid "Awaiting receipt confirmation..."
 msgstr "Aguardando confirmación del recibo..."
 
@@ -129,15 +144,15 @@ msgstr "Volver al {Nimiq Miner}"
 msgid "Back to {Wallet}"
 msgstr "Volver a la {Wallet}"
 
-#: src/views/OnboardingSelector.vue:87
+#: src/views/OnboardingSelector.vue:127
 msgid "Back to Cashlink"
 msgstr "Volver a Cashlink"
 
-#: src/views/OnboardingSelector.vue:81
+#: src/views/OnboardingSelector.vue:121
 msgid "Back to Checkout"
 msgstr "Volver al Proceso de Pago"
 
-#: src/views/OnboardingSelector.vue:83
+#: src/views/OnboardingSelector.vue:123
 msgid "Back to Choose Address"
 msgstr "Volver a Elegir Dirección"
 
@@ -162,7 +177,7 @@ msgstr "Volver a las Tarjetas de Regalo Nimiq"
 msgid "Back to Nimiq Vote"
 msgstr "Volver a Votación Nimiq"
 
-#: src/views/OnboardingSelector.vue:85
+#: src/views/OnboardingSelector.vue:125
 msgid "Back to Sign Message"
 msgstr "Volver a Firmar Mensaje"
 
@@ -178,9 +193,9 @@ msgstr "Respaldada"
 msgid "Balance:"
 msgstr "Balance:"
 
-#: src/views/SetupSwapLedger.vue:106 src/views/SetupSwapLedger.vue:153
+#: src/views/SetupSwapLedger.vue:110 src/views/SetupSwapLedger.vue:160
 msgid "Bitcoin"
-msgstr ""
+msgstr "Bitcoin"
 
 #: src/views/ActivateBitcoinSuccess.vue:89
 msgid "Bitcoin activated"
@@ -200,7 +215,7 @@ msgstr "Marrón"
 
 #: src/views/SetupSwapLedger.vue:42
 msgid "BTC network fee"
-msgstr ""
+msgstr "Cuota de red de BTC"
 
 #: src/views/CashlinkCreate.vue:20
 msgid ""
@@ -210,16 +225,16 @@ msgstr ""
 "Al agregar una cuota de transacción, puede influenciar que tan rápido se "
 "procesará su transacción"
 
-#: src/views/CashlinkManage.vue:11 src/views/Checkout.vue:182
+#: src/views/CashlinkManage.vue:11 src/views/Checkout.vue:206
 #: src/views/CheckoutTransmission.vue:10
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: src/views/Checkout.vue:181 src/views/SignTransactionLedger.vue:108
+#: src/views/Checkout.vue:205 src/views/SignTransactionLedger.vue:108
 msgid "Cancel payment"
 msgstr "Cancelar pago"
 
-#: src/views/CashlinkReceive.vue:259
+#: src/views/CashlinkReceive.vue:258
 msgid "Cashlink claimed!"
 msgstr "¡Cashlink reclamado!"
 
@@ -227,23 +242,23 @@ msgstr "¡Cashlink reclamado!"
 msgid "Cashlink created"
 msgstr "Cashlink creado"
 
-#: src/views/CashlinkManage.vue:193
+#: src/views/CashlinkManage.vue:227
 msgid "Cashlink created."
 msgstr "Cashlink creado."
 
-#: src/views/CashlinkReceive.vue:307
+#: src/views/CashlinkReceive.vue:306
 msgid "Cashlink empty :("
 msgstr "Cashlink vacío :("
 
-#: src/views/CashlinkReceive.vue:300
+#: src/views/CashlinkReceive.vue:299
 msgid "Cashlink funding"
 msgstr "Financiando Cashlink"
 
-#: src/views/CashlinkReceive.vue:304
+#: src/views/CashlinkReceive.vue:303
 msgid "Cashlink is empty"
 msgstr "Cashlink esta vacío"
 
-#: src/views/CashlinkReceive.vue:299
+#: src/views/CashlinkReceive.vue:298
 msgid "Cashlink not funded"
 msgstr "Cashlink no financiado"
 
@@ -255,7 +270,7 @@ msgstr "Cambiar"
 msgid "Check your Backup | Check your Backups"
 msgstr "Revise su respaldo | Revise sus respaldos"
 
-#: src/views/CashlinkReceive.vue:297
+#: src/views/CashlinkReceive.vue:296
 msgid "Checking status"
 msgstr "Revisando estado"
 
@@ -267,7 +282,7 @@ msgstr "Elija una nueva Dirección"
 msgid "Choose an Address"
 msgstr "Elija una Dirección"
 
-#: src/components/NimiqCheckoutCard.vue:67
+#: src/components/CheckoutCardNimiq.vue:67
 msgid "Choose an Address to pay"
 msgstr "Elija una Dirección para pagar"
 
@@ -291,35 +306,39 @@ msgstr ""
 msgid "Choose Sender"
 msgstr "Elija remitente"
 
-#: src/views/CashlinkReceive.vue:298
+#: src/views/CashlinkReceive.vue:297
 msgid "Claim Cashlink"
 msgstr "Reclamar Cashlink"
 
-#: src/views/CashlinkReceive.vue:348
+#: src/views/CashlinkReceive.vue:347
 msgid "Claim your Cash"
 msgstr "Reclame su Dinero"
 
-#: src/views/CashlinkReceive.vue:237
+#: src/views/CashlinkReceive.vue:236
 msgid "Claiming Cashlink"
 msgstr "Reclamando Cashlink"
 
-#: src/components/LedgerUi.vue:300
+#: src/components/LedgerUi.vue:303
 msgid "Click Connect"
-msgstr ""
+msgstr "Haga Click para Conectar"
+
+#: src/views/CashlinkManage.vue:25
+msgid "Click to copy:"
+msgstr "Click para copiar:"
 
 #: src/views/RequestError.vue:31
 msgid "Close"
 msgstr "Cerrar"
 
-#: src/components/CheckoutCard.vue:122
+#: src/components/CheckoutCard.vue:123
 msgid "Collecting payment details"
 msgstr "Recolectando detalles de pago"
 
-#: src/views/SetupSwapLedger.vue:986
+#: src/views/SetupSwapLedger.vue:962
 msgid "Confirm {outgoingOrIncoming} transaction on Ledger"
-msgstr ""
+msgstr "Confirmar {outgoingOrIncoming} transacción en su Ledger"
 
-#: src/components/LedgerUi.vue:214
+#: src/components/LedgerUi.vue:217
 msgid "Confirm Address"
 msgstr "Confirmando Dirección"
 
@@ -329,48 +348,48 @@ msgstr "Confirmando Cashlink"
 
 #: src/views/SetupSwapLedger.vue:5
 msgid "Confirm Swap"
-msgstr ""
+msgstr "Confirme el Intercambio"
 
-#: src/components/LedgerUi.vue:217
+#: src/components/LedgerUi.vue:220
 msgid "Confirm that the address on your Ledger matches {addressToConfirm}"
 msgstr "Confirme que la dirección en su Ledger coincide {addressToConfirm}"
 
-#: src/components/LedgerUi.vue:216
+#: src/components/LedgerUi.vue:219
 msgid "Confirm the address on your Ledger"
 msgstr "Confirme la dirección en su Ledger"
 
-#: src/components/LedgerUi.vue:235 src/views/SignBtcTransactionLedger.vue:4
+#: src/components/LedgerUi.vue:238 src/views/SignBtcTransactionLedger.vue:4
 #: src/views/SignTransactionLedger.vue:34
 msgid "Confirm Transaction"
 msgstr "Confirme su Transacción"
 
-#: src/components/LedgerUi.vue:236
+#: src/components/LedgerUi.vue:239
 msgid "Confirm using your Ledger"
 msgstr "Confirme usando su Ledger"
 
-#: src/views/CashlinkReceive.vue:359
+#: src/views/CashlinkReceive.vue:358
 msgid "Congrats, somebody gifted you a Nimiq Cashlink."
 msgstr "Felicidades, alguien le regalo un Nimiq Cashlink."
 
-#: src/views/CashlinkReceive.vue:358
+#: src/views/CashlinkReceive.vue:357
 msgid "Congrats, you just opened a Nimiq Cashlink."
 msgstr "Felicidades, acaba de abrir un Nimiq Cashlink."
 
-#: src/views/CashlinkReceive.vue:354
+#: src/views/CashlinkReceive.vue:353
 msgid "Congrats, you received a Nimiq Gift Card."
 msgstr "Felicidades, ha recibido una Tarjeta de Regalo Nimiq."
 
-#: src/components/LedgerUi.vue:38
+#: src/components/LedgerUi.vue:39
 msgid "Connect"
 msgstr "Conectar"
 
-#: src/components/LedgerUi.vue:308 src/components/OnboardingMenu.vue:5
+#: src/components/LedgerUi.vue:311 src/components/OnboardingMenu.vue:5
 msgid "Connect Ledger"
 msgstr "Conectar Ledger"
 
-#: src/components/LedgerUi.vue:295
+#: src/components/LedgerUi.vue:298
 msgid "Connect your Ledger Device"
-msgstr ""
+msgstr "Conecte su Dispositivo Ledger"
 
 #: src/components/OnboardingMenu.vue:6
 msgid "Connect your Ledger Nano S or Nano X."
@@ -380,16 +399,16 @@ msgstr "Conecte su Ledger Nano S o Nano X."
 msgid "Connecting to Keyguard..."
 msgstr "Conectándose al Keyguard..."
 
-#: src/views/CashlinkManage.vue:100 src/views/CheckoutTransmission.vue:36
+#: src/views/CashlinkManage.vue:133 src/views/CheckoutTransmission.vue:36
 #: src/views/LoginSuccess.vue:43
 msgid "Connecting to network..."
 msgstr "Conectándose a la red..."
 
-#: src/views/CashlinkReceive.vue:238
+#: src/views/CashlinkReceive.vue:237
 msgid "Connecting to Nimiq..."
 msgstr "Conectándose a Nimiq..."
 
-#: src/components/NimiqCheckoutCard.vue:275 src/views/CashlinkManage.vue:152
+#: src/components/CheckoutCardNimiq.vue:284 src/views/CashlinkManage.vue:186
 #: src/views/CheckoutTransmission.vue:71
 msgid "Contacting seed nodes..."
 msgstr "Contactando nodos semilla..."
@@ -399,8 +418,8 @@ msgstr "Contactando nodos semilla..."
 msgid "Contacts are not affected."
 msgstr "Los contactos no se han afectado."
 
-#: src/components/NotEnoughCookieSpace.vue:8 src/views/LoginSuccess.vue:152
-#: src/views/LoginSuccess.vue:180 src/views/SignupLedger.vue:143
+#: src/components/NotEnoughCookieSpace.vue:8 src/views/LoginSuccess.vue:156
+#: src/views/LoginSuccess.vue:184 src/views/SignupLedger.vue:143
 msgid "Continue"
 msgstr "Continuar"
 
@@ -411,14 +430,6 @@ msgstr "Contrato agregado."
 #: src/views/AddVestingContract.vue:20
 msgid "Contract Information"
 msgstr "Información de Contrato"
-
-#: src/views/CashlinkManage.vue:32
-msgid "Copied"
-msgstr "Copiado"
-
-#: src/views/CashlinkManage.vue:33
-msgid "Copy"
-msgstr "Copiar"
 
 #: src/views/CashlinkCreate.vue:40
 msgid "Create a Cashlink"
@@ -440,7 +451,7 @@ msgstr "Cree una cuenta y reclame su dinero."
 msgid "Create and scan QR codes to quickly share addresses."
 msgstr "Cree y escanee códigos QR para compartir direcciones rápidamente."
 
-#: src/views/CashlinkCreate.vue:73
+#: src/views/CashlinkCreate.vue:78
 msgid "Create Cashlink"
 msgstr "Creando Cashlink"
 
@@ -448,7 +459,7 @@ msgstr "Creando Cashlink"
 msgid "Creating your Account"
 msgstr "Creando su Cuenta"
 
-#: src/views/CashlinkManage.vue:195 src/views/SignTransactionLedger.vue:472
+#: src/views/CashlinkManage.vue:229 src/views/SignTransactionLedger.vue:475
 msgid "Creating your Cashlink"
 msgstr "Creando su Cashlink"
 
@@ -456,12 +467,12 @@ msgstr "Creando su Cashlink"
 msgid "Detecting vesting contracts..."
 msgstr "Detectando contratos vesting..."
 
-#: src/views/Checkout.vue:63
+#: src/views/Checkout.vue:52
 msgid "Disclaimer"
 msgstr "Aviso Legal"
 
-#: src/components/CheckoutManualPaymentDetails.vue:28
-#: src/components/NonNimiqCheckoutCard.vue:70
+#: src/components/CheckoutCardExternal.vue:61
+#: src/components/CheckoutManualPaymentDetails.vue:31
 msgid "Don’t close this window until confirmation."
 msgstr "No cierre esta ventana hasta obtener la confirmación."
 
@@ -469,7 +480,11 @@ msgstr "No cierre esta ventana hasta obtener la confirmación."
 msgid "Done"
 msgstr "Listo"
 
-#: src/components/NonNimiqCheckoutCard.vue:98
+#: src/views/CashlinkManage.vue:67
+msgid "Download"
+msgstr ""
+
+#: src/components/CheckoutCardExternal.vue:104
 msgid "Enter manually"
 msgstr "Ingrese manualmente"
 
@@ -477,11 +492,11 @@ msgstr "Ingrese manualmente"
 msgid "Enter the address of a vesting contract."
 msgstr "Ingrese la dirección del contrato vesting"
 
-#: src/components/LedgerUi.vue:296
+#: src/components/LedgerUi.vue:299
 msgid "Enter your PIN"
-msgstr ""
+msgstr "Ingrese su PIN"
 
-#: src/views/CashlinkCreate.vue:160
+#: src/views/CashlinkCreate.vue:168
 msgid "express"
 msgstr "Exprés "
 
@@ -494,13 +509,14 @@ msgstr "Fallo al obtener direcciones. Reintentando..."
 msgid "fee"
 msgstr "cuota"
 
-#: src/components/BitcoinCheckoutCard.vue:44
-#: src/components/CurrencyInfo.vue:15 src/views/SetupSwapLedger.vue:264
-#: src/views/SetupSwapLedger.vue:280
+#: src/components/CheckoutCardBitcoin.vue:47
+#: src/components/CheckoutCardNimiqExternal.vue:47
+#: src/components/CurrencyInfo.vue:15 src/views/SetupSwapLedger.vue:271
+#: src/views/SetupSwapLedger.vue:287
 msgid "Fee"
 msgstr "Cuota"
 
-#: src/views/LoginSuccess.vue:105 src/views/SignupLedger.vue:108
+#: src/views/LoginSuccess.vue:109 src/views/SignupLedger.vue:108
 msgid "Fetching Addresses Failed"
 msgstr "Obtención de Direcciones Fallida"
 
@@ -508,15 +524,15 @@ msgstr "Obtención de Direcciones Fallida"
 msgid "Fetching contract information..."
 msgstr "Obteniendo información del contrato..."
 
-#: src/views/SetupSwapSuccess.vue:490
+#: src/views/SetupSwapSuccess.vue:522
 msgid "Fetching swap data failed: {error}"
 msgstr "Obtención de datos de intercambio fallida: {error}"
 
-#: src/views/SetupSwapSuccess.vue:480
+#: src/views/SetupSwapSuccess.vue:512
 msgid "Fetching swap data..."
 msgstr "Obteniendo datos del intercambio..."
 
-#: src/components/LedgerUi.vue:230 src/views/ActivateBitcoinSuccess.vue:87
+#: src/components/LedgerUi.vue:233 src/views/ActivateBitcoinSuccess.vue:87
 #: src/views/BitcoinSyncBaseView.vue:48 src/views/LoginSuccess.vue:42
 #: src/views/SignupLedger.vue:104
 msgid "Fetching your Addresses"
@@ -526,23 +542,23 @@ msgstr "Obteniendo sus Direcciones"
 msgid "Finish"
 msgstr "Finalizar"
 
-#: src/views/CashlinkCreate.vue:150
+#: src/views/CashlinkCreate.vue:158
 msgid "free"
 msgstr "gratis"
 
-#: src/components/EthereumCheckoutCard.vue:44
+#: src/components/CheckoutCardEthereum.vue:45
 msgid "Gas Limit"
 msgstr "Limite del Gas"
 
-#: src/components/EthereumCheckoutCard.vue:33
+#: src/components/CheckoutCardEthereum.vue:34
 msgid "Gas Price"
 msgstr "Precio del Gas"
 
-#: src/components/NimiqCheckoutCard.vue:71
+#: src/components/CheckoutCardNimiq.vue:71
 msgid "Get NIM"
 msgstr "Obtener NIM"
 
-#: src/components/CheckoutCard.vue:171 src/views/RequestError.vue:31
+#: src/components/CheckoutCard.vue:172 src/views/RequestError.vue:31
 msgid "Go back"
 msgstr "Volver"
 
@@ -554,19 +570,19 @@ msgstr "Lo tengo"
 msgid "Green"
 msgstr "Verde"
 
-#: src/views/CashlinkReceive.vue:347
+#: src/views/CashlinkReceive.vue:346
 msgid "Happy birthday!"
 msgstr "¡Feliz Cumpleaños!"
 
-#: src/views/CashlinkReceive.vue:345
+#: src/views/CashlinkReceive.vue:344
 msgid "Happy Easter!"
 msgstr "¡Felices Pascuas!"
 
-#: src/views/CashlinkManage.vue:91
+#: src/views/CashlinkManage.vue:119
 msgid "Here is your Nimiq Cashlink!"
 msgstr "¡Aquí esta su Cashlink Nimiq!"
 
-#: src/components/NimiqCheckoutCard.vue:50
+#: src/components/CheckoutCardNimiq.vue:50
 msgid ""
 "Imagine if paying with\n"
 "crypto was easy"
@@ -574,18 +590,18 @@ msgstr ""
 "Imagine si pagar con\n"
 "cripto fuera fácil"
 
-#: src/views/LoginSuccess.vue:163 src/views/SignupLedger.vue:124
+#: src/views/LoginSuccess.vue:167 src/views/SignupLedger.vue:124
 msgid ""
 "Imported {count} address so far... | Imported {count} addresses so far..."
 msgstr ""
 "Se han importando {count} dirección por ahora... | Se han importando {count}"
 " direcciones por ahora... "
 
-#: src/views/SetupSwapLedger.vue:989
+#: src/views/SetupSwapLedger.vue:965
 msgid "incoming"
-msgstr ""
+msgstr "entrando"
 
-#: src/components/CheckoutCard.vue:190
+#: src/components/CheckoutCard.vue:191
 msgid "Incomplete payment"
 msgstr "Pago incompleto"
 
@@ -597,7 +613,7 @@ msgstr "Indigo"
 msgid "Invalid request"
 msgstr "Petición inválida"
 
-#: src/views/CashlinkCreate.vue:64
+#: src/views/CashlinkCreate.vue:69
 msgid ""
 "It won’t be part of the public Blockchain and might get lost after the "
 "Cashlink was claimed."
@@ -605,7 +621,7 @@ msgstr ""
 "No será parte de la Cadena de Bloques publica y puede que se pierda luego de"
 " que el Cashlink sea reclamado."
 
-#: src/views/OnboardingSelector.vue:96
+#: src/views/OnboardingSelector.vue:136
 msgid "Join Nimiq"
 msgstr "Únase a Nimiq"
 
@@ -621,7 +637,7 @@ msgstr ""
 "Las Cuentas Ledger no pueden ser exportodas. Por favor refiérase a las 24 "
 "palabras de respaldo que creó cuando configuró su dispositivo."
 
-#: src/components/LedgerUi.vue:265
+#: src/components/LedgerUi.vue:268
 msgid "Ledger not supported by browser."
 msgstr "El navegador no soporta el uso de Ledger."
 
@@ -629,7 +645,7 @@ msgstr "El navegador no soporta el uso de Ledger."
 msgid "Legacy Account"
 msgstr "Cuenta Antigua"
 
-#: src/components/LedgerUi.vue:197
+#: src/components/LedgerUi.vue:200
 msgid "Loading failed, retrying..."
 msgstr "Carga fallida, reintentando..."
 
@@ -641,20 +657,20 @@ msgstr "Cerrar Sesión"
 msgid "Logging out will delete custom settings and names for this account."
 msgstr "Cerrar sesión borrará ajustes específicos y nombres de esta cuenta."
 
-#: src/components/NimiqCheckoutCard.vue:59
+#: src/components/CheckoutCardNimiq.vue:59
 #: src/components/OnboardingMenu.vue:11
 msgid "Login"
 msgstr "Iniciar Sesión"
 
 #: src/views/ExportSuccess.vue:62
-msgid "Login File exported!"
-msgstr "¡Archivo de Sesión exportado!"
+msgid "Login File saved!"
+msgstr ""
 
 #: src/views/CashlinkReceive.vue:91
 msgid "Login to existing account"
 msgstr "Iniciar Sesión a cuenta existente"
 
-#: src/views/OnboardingSelector.vue:100
+#: src/views/OnboardingSelector.vue:140
 msgid "Login to fund your Cashlink"
 msgstr "Iniciar sesión para financiar su Cashlink"
 
@@ -682,13 +698,13 @@ msgstr "Mis respaldos están a salvo."
 msgid "New Address added to your Account."
 msgstr "Nuevas Direcciones agregadas a su Cuenta."
 
-#: src/views/CashlinkCreate.vue:55 src/views/SignTransactionLedger.vue:277
+#: src/views/CashlinkCreate.vue:55 src/views/SignTransactionLedger.vue:280
 msgid "New Cashlink"
 msgstr "Cashlink Nuevo"
 
 #: src/views/SetupSwapLedger.vue:64
 msgid "NIM network fee"
-msgstr ""
+msgstr "Cuota de red de NIM"
 
 #: src/views/Migrate.vue:23
 msgid "Nimiq implements the ImageWallet standard with the Nimiq Login File."
@@ -706,11 +722,11 @@ msgstr ""
 msgid "No"
 msgstr "No"
 
-#: src/components/NonNimiqCheckoutCard.vue:90
+#: src/components/CheckoutCardExternal.vue:96
 msgid "No App found"
 msgstr "No se encontró ninguna Aplicación"
 
-#: src/views/OnboardingSelector.vue:109
+#: src/views/OnboardingSelector.vue:149
 msgid ""
 "No registration, no install,\n"
 "100% free"
@@ -718,7 +734,7 @@ msgstr ""
 "Sin registrarse, sin instalación,\n"
 "100% gratis"
 
-#: src/components/NimiqCheckoutCard.vue:69
+#: src/components/CheckoutCardNimiq.vue:69
 msgid "None of your available addresses has sufficient balance."
 msgstr "Ninguna de sus direcciones disponibles tiene suficientes fondos."
 
@@ -728,9 +744,10 @@ msgstr "Nada por actualizar."
 
 #: src/views/SetupSwapLedger.vue:52
 msgid "OASIS service fee"
-msgstr ""
+msgstr "Cuota de servicio de OASIS"
 
 #: src/views/ErrorHandlerUnsupportedLedger.vue:4
+#: src/views/RefundSwapLedger.vue:346
 msgid "Ok"
 msgstr "Ok"
 
@@ -738,11 +755,11 @@ msgstr "Ok"
 msgid "One account can now have multiple addresses."
 msgstr "Una cuenta puede tener ahora multiples direcciones."
 
-#: src/components/LedgerUi.vue:298
+#: src/components/LedgerUi.vue:301
 msgid "Open the {app} App"
-msgstr ""
+msgstr "Abra la {app} App"
 
-#: src/components/NonNimiqCheckoutCard.vue:94
+#: src/components/CheckoutCardExternal.vue:100
 msgid "Open Wallet App"
 msgstr "Abrir Aplicación Billetera"
 
@@ -750,23 +767,32 @@ msgstr "Abrir Aplicación Billetera"
 msgid "Orange"
 msgstr "Naranja"
 
-#: src/views/SetupSwapLedger.vue:988
+#: src/components/CheckoutCardNimiq.vue:63
+#: src/components/CheckoutCardNimiq.vue:87
+msgid "Other wallets"
+msgstr "Otras billeteras"
+
+#: src/views/SetupSwapLedger.vue:964
 msgid "outgoing"
-msgstr ""
+msgstr "saliendo"
 
 #: src/views/AddVestingContract.vue:22
 msgid "Owner:"
 msgstr "Dueño."
 
-#: src/components/NonNimiqCheckoutCard.vue:103
+#: src/components/CheckoutCardExternal.vue:109
 msgid "Pay with {currencyFullName}"
 msgstr "Pagar con {currencyFullName}"
 
-#: src/views/OnboardingSelector.vue:98
+#: src/views/OnboardingSelector.vue:138
 msgid "Pay with Nimiq"
 msgstr "Pagar con Nimiq"
 
-#: src/components/CheckoutCard.vue:182
+#: src/components/CheckoutCardNimiqExternal.vue:54
+msgid "Payment Reference"
+msgstr "Referencia de Pago"
+
+#: src/components/CheckoutCard.vue:183
 msgid "Payment successful"
 msgstr "Pago exitoso"
 
@@ -778,15 +804,15 @@ msgstr "Pago existoso"
 msgid "Pink"
 msgstr "Rosa"
 
-#: src/components/LedgerUi.vue:248
+#: src/components/LedgerUi.vue:251
 msgid "Please cancel the previous request on your Ledger."
 msgstr "Por favor cancele la petición anterior en su Ledger."
 
-#: src/components/LedgerUi.vue:186
+#: src/components/LedgerUi.vue:189
 msgid "Please cancel the request on your Ledger"
 msgstr "Por favor cancele la petición en su Ledger"
 
-#: src/components/CheckoutCard.vue:169
+#: src/components/CheckoutCard.vue:170
 msgid "Please go back and restart the process."
 msgstr "Por favor vuelva y comience de nuevo el proceso."
 
@@ -794,7 +820,7 @@ msgstr "Por favor vuelva y comience de nuevo el proceso."
 msgid "Please go back to the shop and restart the process."
 msgstr "Por favor vuelva a la tienda y comience de nuevo el proceso."
 
-#: src/components/NonNimiqCheckoutCard.vue:91
+#: src/components/CheckoutCardExternal.vue:97
 msgid "Please send the transaction manually"
 msgstr "Por favor envíe la transacción manualmente"
 
@@ -802,7 +828,7 @@ msgstr "Por favor envíe la transacción manualmente"
 msgid "Prepare for update"
 msgstr "Prepárese para la actualización"
 
-#: src/views/SetupSwapSuccess.vue:473
+#: src/views/SetupSwapSuccess.vue:505
 msgid "Preparing Swap"
 msgstr "Preparando intercambio"
 
@@ -822,6 +848,21 @@ msgstr "¡Las Palabras de Respaldo han sido exportadas!"
 msgid "Red"
 msgstr "Roja"
 
+#: src/views/RefundSwapLedger.vue:316
+msgid "Refund Failed"
+msgstr "Reembolso Fallido"
+
+#: src/views/RefundSwapLedger.vue:335
+msgid ""
+"Refunding this Swap is currently not supported on this device or browser. "
+"Please use the device and browser you originally created the Swap with. "
+"Otherwise please try again in the future."
+msgstr ""
+"El reembolso de este Intercambio no están soportados en este dispositivo o "
+"navegador. Por favor utilice el dispositivo o navegador que utilizo "
+"originalmente para crear el Intercambio. De otra forma intente de nuevo en "
+"el futuro."
+
 #: src/views/CashlinkManage.vue:10 src/views/CheckoutTransmission.vue:9
 msgid "Reload"
 msgstr "Recargar"
@@ -830,19 +871,19 @@ msgstr "Recargar"
 msgid "Rename Account"
 msgstr "Renombrar Cuenta"
 
-#: src/components/LedgerUi.vue:282
+#: src/components/LedgerUi.vue:285
 msgid "Request failed"
 msgstr "Petición fallida"
 
-#: src/components/LedgerUi.vue:283
+#: src/components/LedgerUi.vue:286
 msgid "Request failed: "
 msgstr "Petición fallida:"
 
-#: src/components/NimiqCheckoutCard.vue:279
+#: src/components/CheckoutCardNimiq.vue:288
 msgid "Requesting balances..."
 msgstr "Solicitando balances..."
 
-#: src/components/CheckoutCard.vue:194
+#: src/components/CheckoutCard.vue:195
 msgid "Restart Payment"
 msgstr "Reiniciar Pago"
 
@@ -850,8 +891,8 @@ msgstr "Reiniciar Pago"
 msgid "Retrieving your old accounts..."
 msgstr "Obteniendo sus cuentas viejas..."
 
-#: src/views/BitcoinSyncBaseView.vue:68 src/views/LoginSuccess.vue:107
-#: src/views/SetupSwapSuccess.vue:498 src/views/SignupLedger.vue:145
+#: src/views/BitcoinSyncBaseView.vue:68 src/views/LoginSuccess.vue:111
+#: src/views/SetupSwapSuccess.vue:530 src/views/SignupLedger.vue:145
 msgid "Retry"
 msgstr "Reintentar"
 
@@ -859,16 +900,16 @@ msgstr "Reintentar"
 msgid "Save"
 msgstr "Guardar"
 
-#: src/components/CheckoutManualPaymentDetails.vue:24
-#: src/components/NonNimiqCheckoutCard.vue:49
+#: src/components/CheckoutCardExternal.vue:58
+#: src/components/CheckoutManualPaymentDetails.vue:27
 msgid "Send your transaction"
 msgstr "Enviando su transacción"
 
-#: src/views/SignTransactionLedger.vue:473
+#: src/views/SignTransactionLedger.vue:476
 msgid "Sending Transaction"
 msgstr "Enviando Transacción"
 
-#: src/views/CashlinkManage.vue:156 src/views/CheckoutTransmission.vue:75
+#: src/views/CashlinkManage.vue:190 src/views/CheckoutTransmission.vue:75
 msgid "Sending transaction..."
 msgstr "Enviando Transacción..."
 
@@ -884,7 +925,7 @@ msgstr "Compartir"
 msgid "Sign Message"
 msgstr "Firmar Mensaje"
 
-#: src/views/SetupSwapSuccess.vue:482
+#: src/views/SetupSwapSuccess.vue:514
 msgid "Signing transactions..."
 msgstr "Firmando transacciones..."
 
@@ -892,7 +933,7 @@ msgstr "Firmando transacciones..."
 msgid "Single Accounts"
 msgstr "Cuentas Individual"
 
-#: src/views/CashlinkManage.vue:194 src/views/CheckoutTransmission.vue:83
+#: src/views/CashlinkManage.vue:228 src/views/CheckoutTransmission.vue:83
 msgid "Something went wrong"
 msgstr "Algo salió mal"
 
@@ -900,7 +941,7 @@ msgstr "Algo salió mal"
 msgid "Something went wrong with your request. Please try again."
 msgstr "Algo salió mal con su petición. Por favor intente de nuevo."
 
-#: src/views/LoginSuccess.vue:148
+#: src/views/LoginSuccess.vue:152
 msgid "Space exceeded"
 msgstr "Espacio excedido"
 
@@ -908,7 +949,7 @@ msgstr "Espacio excedido"
 msgid "Speed up your transaction"
 msgstr "Acelere su transacción"
 
-#: src/views/CashlinkCreate.vue:155
+#: src/views/CashlinkCreate.vue:163
 msgid "standard"
 msgstr "Estándar"
 
@@ -922,45 +963,45 @@ msgstr "Almacenando sus cuentas nuevas..."
 
 #: src/views/SetupSwapLedger.vue:73
 msgid "Swap fee"
-msgstr ""
+msgstr "Cuota de intercambio"
 
-#: src/views/SetupSwapLedger.vue:850 src/views/SetupSwapSuccess.vue:469
+#: src/views/SetupSwapLedger.vue:826 src/views/SetupSwapSuccess.vue:501
 msgid "Swap Setup Failed"
-msgstr ""
+msgstr "Configuración del Intercambio Fallida"
 
-#: src/views/RefundSwapLedger.vue:306
+#: src/views/RefundSwapLedger.vue:314
 msgid "Syncing"
-msgstr ""
+msgstr "Sincronizando"
 
-#: src/components/NimiqCheckoutCard.vue:277
-#: src/views/AddVestingContract.vue:11 src/views/CashlinkManage.vue:154
+#: src/components/CheckoutCardNimiq.vue:286
+#: src/views/AddVestingContract.vue:11 src/views/CashlinkManage.vue:188
 #: src/views/CheckoutTransmission.vue:73
 msgid "Syncing consensus..."
 msgstr "Sincronizando consenso...."
 
-#: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapLedger.vue:852
-#: src/views/SetupSwapSuccess.vue:471
+#: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapLedger.vue:828
+#: src/views/SetupSwapSuccess.vue:503
 #: src/views/SignBtcTransactionLedger.vue:117
 msgid "Syncing Failed"
 msgstr "Sincronización Fallida"
 
-#: src/views/RefundSwapLedger.vue:316
+#: src/views/RefundSwapLedger.vue:330
 msgid "Syncing with {currency} network failed: {error}"
-msgstr ""
+msgstr "Sincronización con la red de {currency} fallida: {error}"
 
-#: src/views/RefundSwapLedger.vue:311
+#: src/views/RefundSwapLedger.vue:324
 msgid "Syncing with {currency} network..."
-msgstr ""
+msgstr "Sincronizando con la red de {currency} ..."
 
 #: src/views/BitcoinSyncBaseView.vue:63
 msgid "Syncing with Bitcoin network failed: {error}"
 msgstr "Proceso de sincronización con la red Bitcoin falló: {error}"
 
-#: src/views/BitcoinSyncBaseView.vue:58 src/views/SetupSwapLedger.vue:862
+#: src/views/BitcoinSyncBaseView.vue:58 src/views/SetupSwapLedger.vue:838
 msgid "Syncing with Bitcoin network..."
 msgstr "Sincronizando con la red Bitcoin..."
 
-#: src/views/LoginSuccess.vue:106 src/views/SignupLedger.vue:134
+#: src/views/LoginSuccess.vue:110 src/views/SignupLedger.vue:134
 msgid "Syncing with the network failed: {error}"
 msgstr "Proceso de sincronización con la red falló: {error}"
 
@@ -968,13 +1009,13 @@ msgstr "Proceso de sincronización con la red falló: {error}"
 msgid "Teal"
 msgstr "Turquesa"
 
-#: src/components/LedgerUi.vue:277
+#: src/components/LedgerUi.vue:280
 msgid "The connected wallet or Ledger is not the one this account belongs to."
 msgstr ""
 "La billetera conectada o la Ledger no es la misma a la cual pertenece esta "
 "cuenta."
 
-#: src/i18n/i18n-setup.ts:63
+#: src/i18n/i18n-setup.ts:64
 msgid ""
 "The display language changed. Do you want to reload the page to update all "
 "translations? Otherwise, some translations might not be updated "
@@ -984,7 +1025,7 @@ msgstr ""
 "traducciones? De otra forma, algunas traducciones no podrían actualizarse "
 "automáticamente. ({oldLang} a {newLang})"
 
-#: src/components/CheckoutCard.vue:168 src/views/SignTransactionLedger.vue:479
+#: src/components/CheckoutCard.vue:169 src/views/SignTransactionLedger.vue:482
 msgid "The offer expired."
 msgstr "La oferta expiró"
 
@@ -1000,11 +1041,11 @@ msgstr ""
 msgid "There's much more. Read the full article"
 msgstr "Hay mucho mas. Lea el articulo completo"
 
-#: src/views/CashlinkReceive.vue:305
+#: src/views/CashlinkReceive.vue:304
 msgid "This Cashlink has already been claimed."
 msgstr "Este Cashlink ya ha sido reclamado."
 
-#: src/views/CashlinkReceive.vue:208
+#: src/views/CashlinkReceive.vue:207
 msgid "This is not a valid Cashlink, sorry."
 msgstr "Este no es un Cashlink válido, disculpe."
 
@@ -1012,11 +1053,11 @@ msgstr "Este no es un Cashlink válido, disculpe."
 msgid "This is your account with your first address in it."
 msgstr "Esta es su cuenta con su primer dirección dentro de ella."
 
-#: src/views/CashlinkCreate.vue:63
+#: src/views/CashlinkCreate.vue:68
 msgid "This message will be stored in the Cashlink."
 msgstr "Este mensaje sera almacenado en el Cashlink."
 
-#: src/views/Checkout.vue:64
+#: src/views/Checkout.vue:53
 msgid ""
 "This Nimiq interface is non-custodial and solely used to bridge the payment "
 "sender with the payment recipient directly (P2P). Payment and deliverable "
@@ -1033,7 +1074,7 @@ msgstr "Esta operación no esta soportada en Ledgers"
 
 #: src/views/SetupSwapLedger.vue:25
 msgid "This rate includes the swap fee."
-msgstr ""
+msgstr "Esta taza incluye la cuota del intercambio."
 
 #: src/views/Migrate.vue:6
 msgid "Time to grow"
@@ -1047,32 +1088,28 @@ msgstr ""
 
 #: src/views/SetupSwapLedger.vue:86
 msgid "Total fees"
-msgstr ""
+msgstr "Total de cuotas"
 
-#: src/views/CashlinkManage.vue:177 src/views/CheckoutTransmission.vue:61
+#: src/views/CashlinkManage.vue:211 src/views/CheckoutTransmission.vue:61
 msgid "Transaction could not be relayed"
 msgstr "La transacción no se ha podido enviar"
 
-#: src/views/CashlinkManage.vue:175 src/views/CheckoutTransmission.vue:59
+#: src/views/CashlinkManage.vue:209 src/views/CheckoutTransmission.vue:59
 msgid "Transaction is expired"
 msgstr "Transacción ha expirado"
 
-#: src/views/SignTransactionLedger.vue:477
+#: src/views/SignTransactionLedger.vue:480
 msgid "Transaction Sent"
 msgstr "Transacción Enviada"
 
 #: src/views/SignBtcTransactionLedger.vue:116
-#: src/views/SignTransactionLedger.vue:476
+#: src/views/SignTransactionLedger.vue:479
 msgid "Transaction Signed"
 msgstr "Transacción Firmada"
 
 #: src/views/Migrate.vue:93
 msgid "Try again"
 msgstr "Inténtelo de nuevo"
-
-#: src/components/NimiqCheckoutCard.vue:61
-msgid "Try it now"
-msgstr "Inténtelo ahora"
 
 #: src/components/NotEnoughCookieSpace.vue:7
 msgid ""
@@ -1083,7 +1120,7 @@ msgstr ""
 " pueden agregar mas cuentas y/o direcciones. Por favor libere espacio "
 "cerrando sesión en otras cuentas."
 
-#: src/views/LoginSuccess.vue:150
+#: src/views/LoginSuccess.vue:154
 msgid ""
 "Unfortunately, due to space restrictions of Safari and IOS, this account "
 "cannot be stored properly. Please free up space by logging out of other "
@@ -1101,7 +1138,7 @@ msgstr "Sin Etiqueta"
 msgid "Unsupported Request"
 msgstr "Petición no soportada"
 
-#: src/components/NimiqCheckoutCard.vue:309
+#: src/components/CheckoutCardNimiq.vue:318
 msgid "Updating balances"
 msgstr "Actualizando balances"
 
@@ -1125,7 +1162,7 @@ msgstr ""
 "Use su Archivo de Sesión\n"
 "o Palabras de Respaldo."
 
-#: src/views/LoginSuccess.vue:179 src/views/SignupLedger.vue:132
+#: src/views/LoginSuccess.vue:183 src/views/SignupLedger.vue:132
 msgid "Used addresses without balance might have been missed."
 msgstr "Puede que se ignoraran direcciones usadas sin balance."
 
@@ -1136,6 +1173,10 @@ msgstr "Verifique Pago"
 #: src/lib/LabelingMachine.ts:25 src/views/AddVestingContract.vue:137
 msgid "Vesting Contract"
 msgstr "Contratos Vesting"
+
+#: src/views/LoginSuccess.vue:198
+msgid "Welcome back! | Your Accounts are ready."
+msgstr ""
 
 #: src/views/SignupSuccess.vue:87
 msgid ""
@@ -1165,7 +1206,7 @@ msgstr "Amarillo"
 msgid "You are logged out."
 msgstr "Estas fuera de sesión."
 
-#: src/views/CashlinkReceive.vue:343
+#: src/views/CashlinkReceive.vue:342
 msgid "You are loved"
 msgstr "Te aman"
 
@@ -1173,7 +1214,7 @@ msgstr "Te aman"
 msgid "You received a Cashlink!"
 msgstr "¡Ha recibido un Cashlink!"
 
-#: src/components/CheckoutCard.vue:191
+#: src/components/CheckoutCard.vue:192
 msgid ""
 "You transferred an insufficient amount. Please contact the merchant for a "
 "refund. Restart to pay for your order."
@@ -1185,7 +1226,7 @@ msgstr ""
 msgid "You're logged in!"
 msgstr "¡Ha iniciado sesión!"
 
-#: src/components/LedgerUi.vue:269
+#: src/components/LedgerUi.vue:272
 msgid ""
 "Your {app} app is outdated. Please update your Ledger firmware and {app} app"
 " using Ledger Live."
@@ -1193,11 +1234,7 @@ msgstr ""
 "Su {app} app esta des-actualizada. Por favor actualice su Ledger y {app} app"
 " usando Ledger Live."
 
-#: src/views/LoginSuccess.vue:194
-msgid "Your Account is ready. | Your Accounts are ready."
-msgstr "Su Cuenta esta lista. | Sus Cuentas están listas."
-
-#: src/views/LoginSuccess.vue:177 src/views/SignupLedger.vue:106
+#: src/views/LoginSuccess.vue:181 src/views/SignupLedger.vue:106
 msgid ""
 "Your Addresses may be\n"
 "incomplete."
@@ -1205,9 +1242,9 @@ msgstr ""
 "Puede que sus Direcciones\n"
 "estén incompletas."
 
-#: src/views/SetupSwapLedger.vue:110
+#: src/views/SetupSwapLedger.vue:116
 msgid "Your Bank"
-msgstr ""
+msgstr "Su Banco"
 
 #: src/views/LogoutLedger.vue:13
 msgid ""
@@ -1221,6 +1258,6 @@ msgstr ""
 msgid "Your message is signed."
 msgstr "Su mensaje fue firmado."
 
-#: src/views/LoginSuccess.vue:188 src/views/SimpleSuccess.vue:31
+#: src/views/LoginSuccess.vue:192 src/views/SimpleSuccess.vue:31
 msgid "Your password was changed."
 msgstr "Su contraseña fue cambiada."
