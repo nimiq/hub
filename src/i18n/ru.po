@@ -94,7 +94,7 @@ msgstr "Адрес"
 msgid "Address Added"
 msgstr "Адрес добавлен"
 
-#: src/views/LoginSuccess.vue:101
+#: src/views/LoginSuccess.vue:102
 msgid "Address detection failed. Retrying..."
 msgstr "Не удалось обнаружить адрес. Повторная попытка..."
 
@@ -198,7 +198,7 @@ msgstr "Баланс:"
 msgid "Bitcoin"
 msgstr "Биткоин"
 
-#: src/views/ActivateBitcoinSuccess.vue:89
+#: src/views/ActivateBitcoinSuccess.vue:105
 msgid "Bitcoin activated"
 msgstr "Биткойн активирован"
 
@@ -420,8 +420,8 @@ msgstr "Устанавливаем связь с сид-узлами..."
 msgid "Contacts are not affected."
 msgstr "Контакты не будут затронуты."
 
-#: src/components/NotEnoughCookieSpace.vue:8 src/views/LoginSuccess.vue:156
-#: src/views/LoginSuccess.vue:184 src/views/SignupLedger.vue:143
+#: src/components/NotEnoughCookieSpace.vue:8 src/views/LoginSuccess.vue:157
+#: src/views/LoginSuccess.vue:185 src/views/SignupLedger.vue:143
 msgid "Continue"
 msgstr "Продолжить"
 
@@ -522,7 +522,7 @@ msgstr "комиссия"
 msgid "Fee"
 msgstr "Комиссия"
 
-#: src/views/LoginSuccess.vue:109 src/views/SignupLedger.vue:108
+#: src/views/LoginSuccess.vue:110 src/views/SignupLedger.vue:108
 msgid "Fetching Addresses Failed"
 msgstr "Не удалось загрузить адреса"
 
@@ -530,15 +530,15 @@ msgstr "Не удалось загрузить адреса"
 msgid "Fetching contract information..."
 msgstr "Загружаем информацию о контракте..."
 
-#: src/views/SetupSwapSuccess.vue:522
+#: src/views/SetupSwapSuccess.vue:523
 msgid "Fetching swap data failed: {error}"
 msgstr "Не удалось загрузить данные обмена: {error}"
 
-#: src/views/SetupSwapSuccess.vue:512
+#: src/views/SetupSwapSuccess.vue:513
 msgid "Fetching swap data..."
 msgstr "Загружаем данные обмена..."
 
-#: src/components/LedgerUi.vue:233 src/views/ActivateBitcoinSuccess.vue:87
+#: src/components/LedgerUi.vue:233 src/views/ActivateBitcoinSuccess.vue:103
 #: src/views/BitcoinSyncBaseView.vue:48 src/views/LoginSuccess.vue:42
 #: src/views/SignupLedger.vue:104
 msgid "Fetching your Addresses"
@@ -596,7 +596,7 @@ msgstr ""
 "Представьте, что оплата\n"
 "криптовалютой стала лёгкой и простой"
 
-#: src/views/LoginSuccess.vue:167 src/views/SignupLedger.vue:124
+#: src/views/LoginSuccess.vue:168 src/views/SignupLedger.vue:124
 msgid ""
 "Imported {count} address so far... | Imported {count} addresses so far..."
 msgstr "Импортирован {count} адрес... | Импортировано {count} адресов..."
@@ -832,7 +832,7 @@ msgstr "Пожалуйста, отправьте транзакцию вручн
 msgid "Prepare for update"
 msgstr "Подготовка к обновлению"
 
-#: src/views/SetupSwapSuccess.vue:505
+#: src/views/SetupSwapSuccess.vue:506
 msgid "Preparing Swap"
 msgstr "Подготавливаем обмен"
 
@@ -894,8 +894,8 @@ msgstr "Начать платёж заново"
 msgid "Retrieving your old accounts..."
 msgstr "Восстановление ваших старых учетных записей..."
 
-#: src/views/BitcoinSyncBaseView.vue:68 src/views/LoginSuccess.vue:111
-#: src/views/SetupSwapSuccess.vue:530 src/views/SignupLedger.vue:145
+#: src/views/BitcoinSyncBaseView.vue:68 src/views/LoginSuccess.vue:112
+#: src/views/SetupSwapSuccess.vue:531 src/views/SignupLedger.vue:145
 msgid "Retry"
 msgstr "Повторить"
 
@@ -928,7 +928,7 @@ msgstr "Поделиться"
 msgid "Sign Message"
 msgstr "Подписать сообщение"
 
-#: src/views/SetupSwapSuccess.vue:514
+#: src/views/SetupSwapSuccess.vue:515
 msgid "Signing transactions..."
 msgstr "Подписание транзакций..."
 
@@ -945,7 +945,7 @@ msgid "Something went wrong with your request. Please try again."
 msgstr ""
 "Произошла ошибка при отправке запроса. Пожалуйста, попробуйте еще раз."
 
-#: src/views/LoginSuccess.vue:152
+#: src/views/LoginSuccess.vue:153
 msgid "Space exceeded"
 msgstr "Превышен лимит доступного места"
 
@@ -969,7 +969,7 @@ msgstr "Сохранение ваших новых учетных записей
 msgid "Swap fee"
 msgstr "Комиссия за обмен"
 
-#: src/views/SetupSwapLedger.vue:826 src/views/SetupSwapSuccess.vue:501
+#: src/views/SetupSwapLedger.vue:826 src/views/SetupSwapSuccess.vue:502
 msgid "Swap Setup Failed"
 msgstr "Не удалось подготовить обмен"
 
@@ -984,7 +984,7 @@ msgid "Syncing consensus..."
 msgstr "Синхронизация консенсуса..."
 
 #: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapLedger.vue:828
-#: src/views/SetupSwapSuccess.vue:503
+#: src/views/SetupSwapSuccess.vue:504
 #: src/views/SignBtcTransactionLedger.vue:117
 msgid "Syncing Failed"
 msgstr "Синхронизация не удалась"
@@ -1005,7 +1005,7 @@ msgstr "Не удалось синхронизироваться с сетью �
 msgid "Syncing with Bitcoin network..."
 msgstr "Синхронизация с сетью Биткоин..."
 
-#: src/views/LoginSuccess.vue:110 src/views/SignupLedger.vue:134
+#: src/views/LoginSuccess.vue:111 src/views/SignupLedger.vue:134
 msgid "Syncing with the network failed: {error}"
 msgstr "Не удалось синхронизироваться с сетью: {error}"
 
@@ -1122,7 +1122,7 @@ msgstr ""
 "дополнительные аккаунты и / или адреса. Чтобы освободить место, выйдите из "
 "учетных записей, которые вы не используете."
 
-#: src/views/LoginSuccess.vue:154
+#: src/views/LoginSuccess.vue:155
 msgid ""
 "Unfortunately, due to space restrictions of Safari and IOS, this account "
 "cannot be stored properly. Please free up space by logging out of other "
@@ -1162,7 +1162,7 @@ msgid ""
 "or Recovery Words."
 msgstr "Используйте Файл Авторизации или Защитную Фразу."
 
-#: src/views/LoginSuccess.vue:183 src/views/SignupLedger.vue:132
+#: src/views/LoginSuccess.vue:184 src/views/SignupLedger.vue:132
 msgid "Used addresses without balance might have been missed."
 msgstr "Используемые адреса с нулевым балансом могли быть пропущены."
 
@@ -1174,7 +1174,7 @@ msgstr "Подтвердить платеж"
 msgid "Vesting Contract"
 msgstr "Вестинг-контракты"
 
-#: src/views/LoginSuccess.vue:198
+#: src/views/LoginSuccess.vue:199
 msgid "Welcome back! | Your Accounts are ready."
 msgstr ""
 
@@ -1234,7 +1234,7 @@ msgstr ""
 "Ваше приложение {app} устарело. Пожалуйста, обновите прошивку Ledger и "
 "приложение {app} через Ledger Live."
 
-#: src/views/LoginSuccess.vue:181 src/views/SignupLedger.vue:106
+#: src/views/LoginSuccess.vue:182 src/views/SignupLedger.vue:106
 msgid ""
 "Your Addresses may be\n"
 "incomplete."
@@ -1258,6 +1258,6 @@ msgstr ""
 msgid "Your message is signed."
 msgstr "Ваше сообщение подписано."
 
-#: src/views/LoginSuccess.vue:192 src/views/SimpleSuccess.vue:31
+#: src/views/LoginSuccess.vue:193 src/views/SimpleSuccess.vue:31
 msgid "Your password was changed."
 msgstr "Ваш пароль был изменён."

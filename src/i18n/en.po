@@ -84,7 +84,7 @@ msgstr ""
 msgid "Address Added"
 msgstr ""
 
-#: src/views/LoginSuccess.vue:101
+#: src/views/LoginSuccess.vue:102
 msgid "Address detection failed. Retrying..."
 msgstr ""
 
@@ -191,7 +191,7 @@ msgstr ""
 msgid "Bitcoin"
 msgstr ""
 
-#: src/views/ActivateBitcoinSuccess.vue:89
+#: src/views/ActivateBitcoinSuccess.vue:105
 msgid "Bitcoin activated"
 msgstr ""
 
@@ -416,8 +416,8 @@ msgid "Contacts are not affected."
 msgstr ""
 
 #: src/components/NotEnoughCookieSpace.vue:8
-#: src/views/LoginSuccess.vue:156
-#: src/views/LoginSuccess.vue:184
+#: src/views/LoginSuccess.vue:157
+#: src/views/LoginSuccess.vue:185
 #: src/views/SignupLedger.vue:143
 msgid "Continue"
 msgstr ""
@@ -517,7 +517,7 @@ msgstr ""
 msgid "Fee"
 msgstr ""
 
-#: src/views/LoginSuccess.vue:109
+#: src/views/LoginSuccess.vue:110
 #: src/views/SignupLedger.vue:108
 msgid "Fetching Addresses Failed"
 msgstr ""
@@ -526,16 +526,16 @@ msgstr ""
 msgid "Fetching contract information..."
 msgstr ""
 
-#: src/views/SetupSwapSuccess.vue:522
+#: src/views/SetupSwapSuccess.vue:523
 msgid "Fetching swap data failed: {error}"
 msgstr ""
 
-#: src/views/SetupSwapSuccess.vue:512
+#: src/views/SetupSwapSuccess.vue:513
 msgid "Fetching swap data..."
 msgstr ""
 
 #: src/components/LedgerUi.vue:233
-#: src/views/ActivateBitcoinSuccess.vue:87
+#: src/views/ActivateBitcoinSuccess.vue:103
 #: src/views/BitcoinSyncBaseView.vue:48
 #: src/views/LoginSuccess.vue:42
 #: src/views/SignupLedger.vue:104
@@ -593,7 +593,7 @@ msgid ""
 "crypto was easy"
 msgstr ""
 
-#: src/views/LoginSuccess.vue:167
+#: src/views/LoginSuccess.vue:168
 #: src/views/SignupLedger.vue:124
 msgid "Imported {count} address so far... | Imported {count} addresses so far..."
 msgstr ""
@@ -816,7 +816,7 @@ msgstr ""
 msgid "Prepare for update"
 msgstr ""
 
-#: src/views/SetupSwapSuccess.vue:505
+#: src/views/SetupSwapSuccess.vue:506
 msgid "Preparing Swap"
 msgstr ""
 
@@ -874,8 +874,8 @@ msgid "Retrieving your old accounts..."
 msgstr ""
 
 #: src/views/BitcoinSyncBaseView.vue:68
-#: src/views/LoginSuccess.vue:111
-#: src/views/SetupSwapSuccess.vue:530
+#: src/views/LoginSuccess.vue:112
+#: src/views/SetupSwapSuccess.vue:531
 #: src/views/SignupLedger.vue:145
 msgid "Retry"
 msgstr ""
@@ -910,7 +910,7 @@ msgstr ""
 msgid "Sign Message"
 msgstr ""
 
-#: src/views/SetupSwapSuccess.vue:514
+#: src/views/SetupSwapSuccess.vue:515
 msgid "Signing transactions..."
 msgstr ""
 
@@ -927,7 +927,7 @@ msgstr ""
 msgid "Something went wrong with your request. Please try again."
 msgstr ""
 
-#: src/views/LoginSuccess.vue:152
+#: src/views/LoginSuccess.vue:153
 msgid "Space exceeded"
 msgstr ""
 
@@ -952,7 +952,7 @@ msgid "Swap fee"
 msgstr ""
 
 #: src/views/SetupSwapLedger.vue:826
-#: src/views/SetupSwapSuccess.vue:501
+#: src/views/SetupSwapSuccess.vue:502
 msgid "Swap Setup Failed"
 msgstr ""
 
@@ -969,7 +969,7 @@ msgstr ""
 
 #: src/views/BitcoinSyncBaseView.vue:50
 #: src/views/SetupSwapLedger.vue:828
-#: src/views/SetupSwapSuccess.vue:503
+#: src/views/SetupSwapSuccess.vue:504
 #: src/views/SignBtcTransactionLedger.vue:117
 msgid "Syncing Failed"
 msgstr ""
@@ -991,7 +991,7 @@ msgstr ""
 msgid "Syncing with Bitcoin network..."
 msgstr ""
 
-#: src/views/LoginSuccess.vue:110
+#: src/views/LoginSuccess.vue:111
 #: src/views/SignupLedger.vue:134
 msgid "Syncing with the network failed: {error}"
 msgstr ""
@@ -1088,7 +1088,7 @@ msgstr ""
 msgid "Unfortunately, due to restrictions of Safari you cannot add more accounts and/or addresses. Please log out of unused accounts to free up space."
 msgstr ""
 
-#: src/views/LoginSuccess.vue:154
+#: src/views/LoginSuccess.vue:155
 msgid "Unfortunately, due to space restrictions of Safari and IOS, this account cannot be stored properly. Please free up space by logging out of other accounts."
 msgstr ""
 
@@ -1123,7 +1123,7 @@ msgid ""
 "or Recovery Words."
 msgstr ""
 
-#: src/views/LoginSuccess.vue:183
+#: src/views/LoginSuccess.vue:184
 #: src/views/SignupLedger.vue:132
 msgid "Used addresses without balance might have been missed."
 msgstr ""
@@ -1137,7 +1137,7 @@ msgstr ""
 msgid "Vesting Contract"
 msgstr ""
 
-#: src/views/LoginSuccess.vue:198
+#: src/views/LoginSuccess.vue:199
 msgid "Welcome back! | Your Accounts are ready."
 msgstr ""
 
@@ -1188,7 +1188,7 @@ msgstr ""
 msgid "Your {app} app is outdated. Please update your Ledger firmware and {app} app using Ledger Live."
 msgstr ""
 
-#: src/views/LoginSuccess.vue:181
+#: src/views/LoginSuccess.vue:182
 #: src/views/SignupLedger.vue:106
 msgid ""
 "Your Addresses may be\n"
@@ -1209,7 +1209,7 @@ msgstr ""
 msgid "Your message is signed."
 msgstr ""
 
-#: src/views/LoginSuccess.vue:192
+#: src/views/LoginSuccess.vue:193
 #: src/views/SimpleSuccess.vue:31
 msgid "Your password was changed."
 msgstr ""
