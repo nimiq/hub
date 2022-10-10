@@ -10,7 +10,7 @@ msgstr ""
 "Language-Team: Spanish (https://www.transifex.com/nimiq-foundation/teams/110181/es/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: es\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
 
 #: src/views/ChooseAddress.vue:7
 msgid "{appName} is asking for an address to use."
@@ -40,7 +40,7 @@ msgstr "30 segundos, sin email, sin descargas."
 msgid "404 - Cash not found"
 msgstr "404 - Dinero no fue encontrado"
 
-#: src/views/SetupSwapSuccess.vue:129
+#: src/views/SetupSwapSuccess.vue:136
 msgid "503 Service unavailable - please try again later"
 msgstr ""
 "503 Servicio no se encuentra disponible - por favor intente de nuevo luego"
@@ -85,7 +85,7 @@ msgstr "Agregar a Ledger"
 msgid "Add Vesting Contract"
 msgstr "Agregar Contrato Vesting"
 
-#: src/components/CheckoutCard.vue:82 src/views/SetupSwapLedger.vue:276
+#: src/components/CheckoutCard.vue:82 src/views/SetupSwapLedger.vue:292
 msgid "Address"
 msgstr "Dirección"
 
@@ -104,7 +104,7 @@ msgstr "Todas las etiquetas se guardaron"
 #: src/components/CheckoutCardBitcoin.vue:30
 #: src/components/CheckoutCardEthereum.vue:27
 #: src/components/CheckoutCardNimiqExternal.vue:32
-#: src/views/SetupSwapLedger.vue:269 src/views/SetupSwapLedger.vue:278
+#: src/views/SetupSwapLedger.vue:285 src/views/SetupSwapLedger.vue:294
 msgid "Amount"
 msgstr "Monto"
 
@@ -334,7 +334,7 @@ msgstr "Cerrar"
 msgid "Collecting payment details"
 msgstr "Recolectando detalles de pago"
 
-#: src/views/SetupSwapLedger.vue:962
+#: src/views/SetupSwapLedger.vue:984
 msgid "Confirm {outgoingOrIncoming} transaction on Ledger"
 msgstr "Confirmar {outgoingOrIncoming} transacción en su Ledger"
 
@@ -482,7 +482,7 @@ msgstr "Listo"
 
 #: src/views/CashlinkManage.vue:67
 msgid "Download"
-msgstr ""
+msgstr "Descargar"
 
 #: src/components/CheckoutCardExternal.vue:104
 msgid "Enter manually"
@@ -511,8 +511,8 @@ msgstr "cuota"
 
 #: src/components/CheckoutCardBitcoin.vue:47
 #: src/components/CheckoutCardNimiqExternal.vue:47
-#: src/components/CurrencyInfo.vue:15 src/views/SetupSwapLedger.vue:271
-#: src/views/SetupSwapLedger.vue:287
+#: src/components/CurrencyInfo.vue:15 src/views/SetupSwapLedger.vue:287
+#: src/views/SetupSwapLedger.vue:303
 msgid "Fee"
 msgstr "Cuota"
 
@@ -524,11 +524,11 @@ msgstr "Obtención de Direcciones Fallida"
 msgid "Fetching contract information..."
 msgstr "Obteniendo información del contrato..."
 
-#: src/views/SetupSwapSuccess.vue:522
+#: src/views/SetupSwapSuccess.vue:529
 msgid "Fetching swap data failed: {error}"
 msgstr "Obtención de datos de intercambio fallida: {error}"
 
-#: src/views/SetupSwapSuccess.vue:512
+#: src/views/SetupSwapSuccess.vue:519
 msgid "Fetching swap data..."
 msgstr "Obteniendo datos del intercambio..."
 
@@ -597,7 +597,7 @@ msgstr ""
 "Se han importando {count} dirección por ahora... | Se han importando {count}"
 " direcciones por ahora... "
 
-#: src/views/SetupSwapLedger.vue:965
+#: src/views/SetupSwapLedger.vue:987
 msgid "incoming"
 msgstr "entrando"
 
@@ -664,7 +664,7 @@ msgstr "Iniciar Sesión"
 
 #: src/views/ExportSuccess.vue:62
 msgid "Login File saved!"
-msgstr ""
+msgstr "¡Se ha guardado el Archivo de Sesión!"
 
 #: src/views/CashlinkReceive.vue:91
 msgid "Login to existing account"
@@ -772,7 +772,7 @@ msgstr "Naranja"
 msgid "Other wallets"
 msgstr "Otras billeteras"
 
-#: src/views/SetupSwapLedger.vue:964
+#: src/views/SetupSwapLedger.vue:986
 msgid "outgoing"
 msgstr "saliendo"
 
@@ -828,7 +828,7 @@ msgstr "Por favor envíe la transacción manualmente"
 msgid "Prepare for update"
 msgstr "Prepárese para la actualización"
 
-#: src/views/SetupSwapSuccess.vue:505
+#: src/views/SetupSwapSuccess.vue:512
 msgid "Preparing Swap"
 msgstr "Preparando intercambio"
 
@@ -892,7 +892,7 @@ msgid "Retrieving your old accounts..."
 msgstr "Obteniendo sus cuentas viejas..."
 
 #: src/views/BitcoinSyncBaseView.vue:68 src/views/LoginSuccess.vue:111
-#: src/views/SetupSwapSuccess.vue:530 src/views/SignupLedger.vue:145
+#: src/views/SetupSwapSuccess.vue:537 src/views/SignupLedger.vue:145
 msgid "Retry"
 msgstr "Reintentar"
 
@@ -925,7 +925,7 @@ msgstr "Compartir"
 msgid "Sign Message"
 msgstr "Firmar Mensaje"
 
-#: src/views/SetupSwapSuccess.vue:514
+#: src/views/SetupSwapSuccess.vue:521
 msgid "Signing transactions..."
 msgstr "Firmando transacciones..."
 
@@ -961,11 +961,15 @@ msgstr "Bloque Inicial:"
 msgid "Storing your new accounts..."
 msgstr "Almacenando sus cuentas nuevas..."
 
+#: src/views/SetupSwapLedger.vue:258
+msgid "Swap authorized"
+msgstr "Intercambio autorizado"
+
 #: src/views/SetupSwapLedger.vue:73
 msgid "Swap fee"
 msgstr "Cuota de intercambio"
 
-#: src/views/SetupSwapLedger.vue:826 src/views/SetupSwapSuccess.vue:501
+#: src/views/SetupSwapLedger.vue:848 src/views/SetupSwapSuccess.vue:508
 msgid "Swap Setup Failed"
 msgstr "Configuración del Intercambio Fallida"
 
@@ -979,8 +983,8 @@ msgstr "Sincronizando"
 msgid "Syncing consensus..."
 msgstr "Sincronizando consenso...."
 
-#: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapLedger.vue:828
-#: src/views/SetupSwapSuccess.vue:503
+#: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapLedger.vue:850
+#: src/views/SetupSwapSuccess.vue:510
 #: src/views/SignBtcTransactionLedger.vue:117
 msgid "Syncing Failed"
 msgstr "Sincronización Fallida"
@@ -997,7 +1001,7 @@ msgstr "Sincronizando con la red de {currency} ..."
 msgid "Syncing with Bitcoin network failed: {error}"
 msgstr "Proceso de sincronización con la red Bitcoin falló: {error}"
 
-#: src/views/BitcoinSyncBaseView.vue:58 src/views/SetupSwapLedger.vue:838
+#: src/views/BitcoinSyncBaseView.vue:58 src/views/SetupSwapLedger.vue:860
 msgid "Syncing with Bitcoin network..."
 msgstr "Sincronizando con la red Bitcoin..."
 
@@ -1176,7 +1180,7 @@ msgstr "Contratos Vesting"
 
 #: src/views/LoginSuccess.vue:198
 msgid "Welcome back! | Your Accounts are ready."
-msgstr ""
+msgstr "¡Bienvenido de vuelta! Tus cuentas están listas."
 
 #: src/views/SignupSuccess.vue:87
 msgid ""

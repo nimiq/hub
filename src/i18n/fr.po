@@ -12,7 +12,7 @@ msgstr ""
 "Language-Team: French (https://www.transifex.com/nimiq-foundation/teams/110181/fr/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: fr\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Plural-Forms: nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
 
 #: src/views/ChooseAddress.vue:7
 msgid "{appName} is asking for an address to use."
@@ -42,7 +42,7 @@ msgstr "30 secondes, sans email, sans téléchargement."
 msgid "404 - Cash not found"
 msgstr "404 - Argent introuvable"
 
-#: src/views/SetupSwapSuccess.vue:129
+#: src/views/SetupSwapSuccess.vue:136
 msgid "503 Service unavailable - please try again later"
 msgstr "503 Service indisponible - Merci de réessayer plus tard"
 
@@ -86,7 +86,7 @@ msgstr "Ajouter au Ledger"
 msgid "Add Vesting Contract"
 msgstr "Ajouter un contrat d'acquisition"
 
-#: src/components/CheckoutCard.vue:82 src/views/SetupSwapLedger.vue:276
+#: src/components/CheckoutCard.vue:82 src/views/SetupSwapLedger.vue:292
 msgid "Address"
 msgstr "Adresse"
 
@@ -105,7 +105,7 @@ msgstr "Tous les labels sont enregistrés."
 #: src/components/CheckoutCardBitcoin.vue:30
 #: src/components/CheckoutCardEthereum.vue:27
 #: src/components/CheckoutCardNimiqExternal.vue:32
-#: src/views/SetupSwapLedger.vue:269 src/views/SetupSwapLedger.vue:278
+#: src/views/SetupSwapLedger.vue:285 src/views/SetupSwapLedger.vue:294
 msgid "Amount"
 msgstr "Montant"
 
@@ -335,7 +335,7 @@ msgstr "Fermer"
 msgid "Collecting payment details"
 msgstr "Collection des détails du paiement"
 
-#: src/views/SetupSwapLedger.vue:962
+#: src/views/SetupSwapLedger.vue:984
 msgid "Confirm {outgoingOrIncoming} transaction on Ledger"
 msgstr "Confirmez la transaction {outgoingOrIncoming} sur votre Ledger"
 
@@ -513,8 +513,8 @@ msgstr "frais"
 
 #: src/components/CheckoutCardBitcoin.vue:47
 #: src/components/CheckoutCardNimiqExternal.vue:47
-#: src/components/CurrencyInfo.vue:15 src/views/SetupSwapLedger.vue:271
-#: src/views/SetupSwapLedger.vue:287
+#: src/components/CurrencyInfo.vue:15 src/views/SetupSwapLedger.vue:287
+#: src/views/SetupSwapLedger.vue:303
 msgid "Fee"
 msgstr "Frais"
 
@@ -526,11 +526,11 @@ msgstr "Échec de la récupération des adresses"
 msgid "Fetching contract information..."
 msgstr "Obtention d'informations sur les contrats..."
 
-#: src/views/SetupSwapSuccess.vue:522
+#: src/views/SetupSwapSuccess.vue:529
 msgid "Fetching swap data failed: {error}"
 msgstr "Échec de la récupération des données du swap : {error}"
 
-#: src/views/SetupSwapSuccess.vue:512
+#: src/views/SetupSwapSuccess.vue:519
 msgid "Fetching swap data..."
 msgstr "Récupérer des données du swap..."
 
@@ -599,7 +599,7 @@ msgstr ""
 "{count} adresse importée pour l'instant... | {count} adresses importées pour"
 " l'instant..."
 
-#: src/views/SetupSwapLedger.vue:965
+#: src/views/SetupSwapLedger.vue:987
 msgid "incoming"
 msgstr "entrante"
 
@@ -777,7 +777,7 @@ msgstr "Orange"
 msgid "Other wallets"
 msgstr "Autres porte-monnaies"
 
-#: src/views/SetupSwapLedger.vue:964
+#: src/views/SetupSwapLedger.vue:986
 msgid "outgoing"
 msgstr "sortante"
 
@@ -833,7 +833,7 @@ msgstr "Veuillez envoyer la transaction manuellement"
 msgid "Prepare for update"
 msgstr "Préparer la mise à jour"
 
-#: src/views/SetupSwapSuccess.vue:505
+#: src/views/SetupSwapSuccess.vue:512
 msgid "Preparing Swap"
 msgstr "Swap en préparation"
 
@@ -896,7 +896,7 @@ msgid "Retrieving your old accounts..."
 msgstr "Récupération de vos anciens comptes..."
 
 #: src/views/BitcoinSyncBaseView.vue:68 src/views/LoginSuccess.vue:111
-#: src/views/SetupSwapSuccess.vue:530 src/views/SignupLedger.vue:145
+#: src/views/SetupSwapSuccess.vue:537 src/views/SignupLedger.vue:145
 msgid "Retry"
 msgstr "Réessayer"
 
@@ -929,7 +929,7 @@ msgstr "Partager"
 msgid "Sign Message"
 msgstr "Signer le message"
 
-#: src/views/SetupSwapSuccess.vue:514
+#: src/views/SetupSwapSuccess.vue:521
 msgid "Signing transactions..."
 msgstr "Signature des transactions..."
 
@@ -965,11 +965,15 @@ msgstr "Bloc de départ :"
 msgid "Storing your new accounts..."
 msgstr "Enregistrement de vos nouveaux comptes..."
 
+#: src/views/SetupSwapLedger.vue:258
+msgid "Swap authorized"
+msgstr "Swap autorisé"
+
 #: src/views/SetupSwapLedger.vue:73
 msgid "Swap fee"
 msgstr "Frais de swap"
 
-#: src/views/SetupSwapLedger.vue:826 src/views/SetupSwapSuccess.vue:501
+#: src/views/SetupSwapLedger.vue:848 src/views/SetupSwapSuccess.vue:508
 msgid "Swap Setup Failed"
 msgstr "Echec de la mise en place du swap"
 
@@ -983,8 +987,8 @@ msgstr "Synchronisation"
 msgid "Syncing consensus..."
 msgstr "Synchronisation du consensus..."
 
-#: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapLedger.vue:828
-#: src/views/SetupSwapSuccess.vue:503
+#: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapLedger.vue:850
+#: src/views/SetupSwapSuccess.vue:510
 #: src/views/SignBtcTransactionLedger.vue:117
 msgid "Syncing Failed"
 msgstr "Synchronisation échouée"
@@ -1001,7 +1005,7 @@ msgstr "Synchronisation avec le réseau {currency}..."
 msgid "Syncing with Bitcoin network failed: {error}"
 msgstr "La synchronisation avec le réseau Bitcoin a échoué : {error}"
 
-#: src/views/BitcoinSyncBaseView.vue:58 src/views/SetupSwapLedger.vue:838
+#: src/views/BitcoinSyncBaseView.vue:58 src/views/SetupSwapLedger.vue:860
 msgid "Syncing with Bitcoin network..."
 msgstr "Synchronisation avec le réseau Bitcoin..."
 
