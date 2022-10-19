@@ -10,6 +10,7 @@ import {
     ParsedSignMessageRequest,
     ParsedSignTransactionRequest,
     ParsedSignPolygonTransactionRequest,
+    ParsedSignMultisigTransactionRequest,
     ParsedSignStakingRequest,
 } from './RequestTypes';
 import { RequestParser } from './RequestParser';
@@ -54,6 +55,10 @@ export default class RpcApi {
         RequestType.CREATE_CASHLINK,
         RequestType.MANAGE_CASHLINK,
         // RequestType.SIGN_POLYGON_TRANSACTION,
+    ];
+
+    private _permissionedRequests: RequestType[] = [
+        RequestType.SIGN_MULTISIG_TRANSACTION,
     ];
 
     constructor(store: Store<RootState>, staticStore: StaticStore, router: Router) {
@@ -276,9 +281,10 @@ export default class RpcApi {
     private async _hubApiHandler(requestType: RequestType, state: RpcState, arg: RpcRequest) {
         let request: ParsedRpcRequest | undefined;
 
-        if ( // Check that a non-whitelisted request comes from a privileged origin
+        if ( // Check that a non-whitelisted request comes from a privileged origin or is permissioned
             !this._3rdPartyRequestWhitelist.includes(requestType)
             && !includesOrigin(Config.privilegedOrigins, state.origin)
+            && !this._permissionedRequests.includes(requestType) // Permissioned requests are handled below
         ) {
             state.reply(ResponseStatus.ERROR, new Error(`${state.origin} is unauthorized to call ${requestType}`));
             return;
@@ -368,7 +374,25 @@ export default class RpcApi {
                 const parsedSignPolygonTransactionRequest = request as ParsedSignPolygonTransactionRequest;
                 const address = parsedSignPolygonTransactionRequest.request.from;
                 account = this._store.getters.findWalletByPolygonAddress(address);
+            } else if (this._permissionedRequests.includes(requestType)) {
+                accountRequired = true;
+
+                if (requestType === RequestType.SIGN_MULTISIG_TRANSACTION) {
+                    const address = (request as ParsedSignMultisigTransactionRequest).signer;
+                    if (address) {
+                        account = this._store.getters.findWalletByAddress(address.toUserFriendlyAddress(), false);
+                    }
+                }
+
+                if (account && !(
+                    account.permissions[state.origin]
+                    && account.permissions[state.origin].includes(requestType)
+                )) {
+                    this.reject(new Error('Method not allowed - requires permission'));
+                    return;
+                }
             }
+
             if (accountRequired && !account) {
                 this.reject(new Error(errorMsg));
                 return;
