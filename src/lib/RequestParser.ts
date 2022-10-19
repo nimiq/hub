@@ -23,6 +23,7 @@ import {
     SignPolygonTransactionRequest,
     SetupSwapRequest,
     RefundSwapRequest,
+    SignMultisigTransactionRequest,
 } from '../../client/PublicRequestTypes';
 import type {
     ParsedBasicRequest,
@@ -41,6 +42,7 @@ import type {
     ParsedSignPolygonTransactionRequest,
     ParsedSetupSwapRequest,
     ParsedRefundSwapRequest,
+    ParsedSignMultisigTransactionRequest,
 } from './RequestTypes';
 import { ParsedNimiqDirectPaymentOptions } from './paymentOptions/NimiqPaymentOptions';
 import { ParsedEtherDirectPaymentOptions } from './paymentOptions/EtherPaymentOptions';
@@ -690,6 +692,74 @@ export class RequestParser {
                     },
                 };
                 return parsedRefundSwapRequest;
+            case RequestType.SIGN_MULTISIG_TRANSACTION:
+                const signMultisigTxRequest = request as SignMultisigTransactionRequest;
+
+                // Most fields are validated by Keyguard, we mustly need to do type conversions if necessary
+
+                // TODO: Validate object and array fields, to not throw "tried to access <field> of undefined" errors
+
+                // if (
+                //     !signMultisigTxRequest.multisigConfig ||
+                //     typeof signMultisigTxRequest.multisigConfig !== 'object'
+                // ) {
+                //     throw new Error('multisigConfig must be an object');
+                // }
+
+                // if (
+                //     !signMultisigTxRequest.multisigConfig.secret
+                //     || typeof signMultisigTxRequest.multisigConfig.secret !== 'object'
+                // ) {
+                //     throw new Error('multisigConfig.secret must be an object');
+                // }
+
+                function parseBytes(bytes: Uint8Array | string | undefined, allowEmpty: true): Uint8Array | undefined;
+                function parseBytes(bytes: Uint8Array | string): Uint8Array;
+                function parseBytes(bytes?: Uint8Array | string, allowEmpty?: boolean) {
+                    if (!bytes && !allowEmpty) {
+                        throw new Error('bytes cannot be empty');
+                    }
+                    return typeof bytes === 'string' ? Utf8Tools.stringToUtf8ByteArray(bytes) : bytes;
+                }
+
+                const parsedSignMultisigTxRequest: ParsedSignMultisigTransactionRequest = {
+                    kind: RequestType.SIGN_TRANSACTION,
+                    appName: signMultisigTxRequest.appName,
+
+                    signer: Nimiq.Address.fromAny(signMultisigTxRequest.signer),
+
+                    sender: Nimiq.Address.fromString(signMultisigTxRequest.sender),
+                    senderLabel: signMultisigTxRequest.senderLabel,
+                    recipient: Nimiq.Address.fromString(signMultisigTxRequest.recipient),
+                    recipientType: signMultisigTxRequest.recipientType || Nimiq.Account.Type.BASIC,
+                    recipientLabel: signMultisigTxRequest.recipientLabel,
+                    value: signMultisigTxRequest.value,
+                    fee: signMultisigTxRequest.fee || 0,
+                    data: parseBytes(signMultisigTxRequest.extraData, true) || new Uint8Array(0),
+                    flags: signMultisigTxRequest.flags || Nimiq.Transaction.Flag.NONE,
+                    validityStartHeight: signMultisigTxRequest.validityStartHeight,
+
+                    multisigConfig: {
+                        publicKeys: signMultisigTxRequest.multisigConfig.publicKeys.map(parseBytes),
+                        numberOfSigners: signMultisigTxRequest.multisigConfig.numberOfSigners,
+                        signerPublicKeys: signMultisigTxRequest.multisigConfig.signerPublicKeys
+                            ? signMultisigTxRequest.multisigConfig.signerPublicKeys.map(parseBytes)
+                            : signMultisigTxRequest.multisigConfig.publicKeys.map(parseBytes),
+                        secret: 'aggregatedSecret' in signMultisigTxRequest.multisigConfig.secret
+                            ? {aggregatedSecret: parseBytes(
+                                signMultisigTxRequest.multisigConfig.secret.aggregatedSecret,
+                            ) }
+                            : {
+                                encryptedSecrets: signMultisigTxRequest.multisigConfig.secret.encryptedSecrets.map(
+                                    parseBytes,
+                                ),
+                                bScalar: parseBytes(signMultisigTxRequest.multisigConfig.secret.bScalar),
+                            },
+                        aggregatedCommitment: parseBytes(signMultisigTxRequest.multisigConfig.aggregatedCommitment),
+                    },
+                };
+
+                return parsedSignMultisigTxRequest;
             default:
                 return null;
         }
@@ -866,6 +936,27 @@ export class RequestParser {
                         recipient: refundSwapRequest.refund.recipient.toUserFriendlyAddress(),
                     } : refundSwapRequest.refund,
                 } as RefundSwapRequest;
+            case RequestType.SIGN_MULTISIG_TRANSACTION:
+                const signMultisigTxRequest = request as ParsedSignMultisigTransactionRequest;
+                const rawSignMultisigTxRequest: SignMultisigTransactionRequest = {
+                    appName: signMultisigTxRequest.appName,
+
+                    signer: signMultisigTxRequest.signer.toUserFriendlyAddress(),
+
+                    sender: signMultisigTxRequest.sender.toUserFriendlyAddress(),
+                    senderLabel: signMultisigTxRequest.senderLabel,
+                    recipient: signMultisigTxRequest.recipient.toUserFriendlyAddress(),
+                    recipientType: signMultisigTxRequest.recipientType,
+                    recipientLabel: signMultisigTxRequest.recipientLabel,
+                    value: signMultisigTxRequest.value,
+                    fee: signMultisigTxRequest.fee,
+                    extraData: signMultisigTxRequest.data,
+                    flags: signMultisigTxRequest.flags,
+                    validityStartHeight: signMultisigTxRequest.validityStartHeight,
+
+                    multisigConfig: signMultisigTxRequest.multisigConfig,
+                };
+                return rawSignMultisigTxRequest;
             default:
                 return null;
         }
