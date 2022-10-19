@@ -77,7 +77,7 @@ export interface ParsedSignMultisigTransactionRequest extends ParsedBasicRequest
     recipientLabel?: string;
     value: number;
     fee?: number;
-    extraData?: Uint8Array;
+    data?: Uint8Array;
     flags?: number;
     validityStartHeight: number; // FIXME To be made optional when hub has its own network
 
