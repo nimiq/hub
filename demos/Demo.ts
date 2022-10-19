@@ -16,11 +16,13 @@ import {
     CashlinkTheme,
     RequestType,
     SetupSwapRequest,
+    SignMultisigTransactionRequest,
 } from '../client/PublicRequestTypes';
 import { RedirectRequestBehavior, PopupRequestBehavior } from '../client/RequestBehavior';
 import { Utf8Tools } from '@nimiq/utils';
 import { WalletType } from '../src/lib/Constants';
 import { WalletStore } from '../src/lib/WalletStore';
+import { loadNimiq } from '../src/lib/Helpers';
 
 // BitcoinJS is defined as a global variable in BitcoinJS.min.js loaded by demos/index.html
 declare global {
@@ -702,8 +704,84 @@ class Demo {
             }
         });
 
-        document.querySelector('button#list-keyguard-keys').addEventListener('click', () => demo.listKeyguard());
-        document.querySelector('button#setup-legacy-accounts').addEventListener('click',
+        document.querySelector('button#sign-multisig-transaction')!.addEventListener('click', async () => {
+            const $radio = document.querySelector('input[name="address"]:checked');
+            if (!$radio) {
+                alert('You have no account to sign with, create an account first (signup)');
+                throw new Error('No account found');
+            }
+            const accountId = $radio.closest('ul')!.closest('li')!.querySelector('button')!.dataset.walletId!;
+            const account = (await demo.list()).find((wallet) => wallet.accountId === accountId)!;
+
+            const publicKey = (document.querySelector('#multisig-publickey') as HTMLInputElement).value;
+            if (publicKey.length !== 64) {
+                alert('Invalid public key. Enter your public key in HEX format');
+                throw new Error('Invalid public key');
+            }
+
+            const numberOfSigners = parseInt((document.querySelector('#multisig-signers') as HTMLInputElement).value);
+            const numberOfKeys = parseInt((document.querySelector('#multisig-participants') as HTMLInputElement).value);
+
+            const request = new Promise<SignMultisigTransactionRequest>(async resolve => {
+                // Generate multisig participants and combined address
+                await loadNimiq();
+
+                const myPublicKey = Nimiq.PublicKey.fromAny(publicKey);
+
+                const publicKeys = new Array(numberOfKeys - 1).fill(0).map(() => Nimiq.PublicKey.derive(Nimiq.PrivateKey.generate()));
+                publicKeys.push(myPublicKey);
+                publicKeys.reverse(); // Move my public key to the front, so when slicing the signerPublicKeys, mine is included
+
+                function calculateAddress(publicKeys, signersRequired) {
+                    publicKeys.sort((a, b) => a.compare(b));
+                    const combinations = [...Nimiq.ArrayUtils.k_combinations(publicKeys, signersRequired)];
+                    const multiSigKeys = combinations.map(combination => Nimiq.PublicKey.sum(combination));
+                    multiSigKeys.sort((a, b) => a.compare(b));
+                    const merkleRoot = Nimiq.MerkleTree.computeRoot(multiSigKeys);
+                    return Nimiq.Address.fromHash(merkleRoot);
+                }
+
+                const result: SignMultisigTransactionRequest = {
+                    appName: 'Hub Demos',
+
+                    signer: account.addresses[0].address,
+
+                    sender: calculateAddress(publicKeys, numberOfSigners).toUserFriendlyAddress(),
+                    senderLabel: 'Our Multisig Wallet',
+                    recipient: 'NQ82 HP54 C9D4 2FAG 69QD 6Q71 LURR 5187 0V3X',
+                    recipientLabel: 'Best Friend',
+                    value: parseInt((document.querySelector('#multisig-value') as HTMLInputElement).value) * 1e5,
+                    fee: 0,
+                    extraData: (document.querySelector('#multisig-data') as HTMLInputElement).value,
+                    // flags: 0,
+                    validityStartHeight: 0,
+
+                    multisigConfig: {
+                        publicKeys: publicKeys.map(key => key.toHex()),
+                        numberOfSigners,
+                        signerPublicKeys: publicKeys.slice(0, numberOfSigners).map(key => key.toHex()), // Can be omitted when all publicKeys need to sign
+                        secret: {
+                            aggregatedSecret: '0000000000000000000000000000000000000000000000000000000000000000',
+                        },
+                        aggregatedCommitment: '0000000000000000000000000000000000000000000000000000000000000000',
+                        userName: (document.querySelector('#multisig-username') as HTMLInputElement).value,
+                    },
+                };
+                resolve(result);
+            });
+
+            try {
+                const result = await demo.client.signMultisigTransaction(request, demo._defaultBehavior);
+                console.log('Result', result);
+                document.querySelector('#result')!.textContent = 'Transaction signed: ' + result!.signature;
+            } catch (e) {
+                console.error(e);
+                document.querySelector('#result')!.textContent = `Error: ${e.message || e}`;
+            }
+        });
+
+        document.querySelector('button#list-keyguard-keys')!.addEventListener('click', () => demo.listKeyguard());
+        document.querySelector('button#setup-legacy-accounts')!.addEventListener('click',
             () => demo.setupLegacyAccounts());
         document.querySelector('button#list-accounts')!.addEventListener('click', async () => demo.updateAccounts());
 
