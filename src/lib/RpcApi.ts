@@ -30,6 +30,7 @@ import { ERROR_CANCELED, WalletType } from './Constants';
 import { includesOrigin } from '@/lib/Helpers';
 import Config from 'config';
 import { setHistoryStorage, getHistoryStorage } from '@/lib/Helpers';
+import { WalletInfo } from './WalletInfo';
 
 export default class RpcApi {
     private static get HISTORY_KEY_RPC_STATE() {
@@ -67,6 +68,7 @@ export default class RpcApi {
 
         this._registerHubApis([
             RequestType.SIGN_TRANSACTION,
+            RequestType.SIGN_MULTISIG_TRANSACTION,
             RequestType.CREATE_CASHLINK,
             RequestType.MANAGE_CASHLINK,
             RequestType.CHECKOUT,
@@ -89,6 +91,7 @@ export default class RpcApi {
         ]);
         this._registerKeyguardApis([
             KeyguardCommand.SIGN_TRANSACTION,
+            KeyguardCommand.SIGN_MULTISIG_TRANSACTION,
             KeyguardCommand.CREATE,
             KeyguardCommand.IMPORT,
             KeyguardCommand.EXPORT,
@@ -280,7 +283,7 @@ export default class RpcApi {
             }
         }
 
-        let account;
+        let account: WalletInfo | null | undefined;
         // Simply testing if the property exists (with `'walletId' in request`) is not enough,
         // as `undefined` also counts as existing.
         if (request) {
