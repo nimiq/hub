@@ -3,6 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Nimiq Hub Demos</title>
+
+    <script defer src="<%= htmlWebpackPlugin.options.cdnDomain %>/v<%= htmlWebpackPlugin.options.coreVersion %>/web-offline.js"
+        integrity="<%= htmlWebpackPlugin.options.coreIntegrityHash %>"
+        crossorigin="anonymous"></script>
+
     <style>
         body {
             font-family: 'Muli', system-ui, sans-serif;
@@ -168,6 +173,34 @@
     <button id="sign-usdc-transaction" disabled>Sign USDC Tx</button>
     <button id="setup-swap" class="nim-to-usdc" disabled>Swap NIM -> USDC</button>
     <button id="setup-swap" class="usdc-to-nim" disabled>Swap USDC -> NIM</button> -->
+</div>
+
+<div class="request">
+    <h2>Multisig</h2>
+    <div class="row">
+        <label>My PublicKey</label>
+        <input id="multisig-publickey" value="" placeholder="REQUIRED!">
+    </div>
+    <div class="row">
+        <label>Amount (NIM)</label>
+        <input id="multisig-value" type="number" value="2000">
+    </div>
+    <div class="row">
+        <label>Data (ASCII)</label>
+        <input id="multisig-data" value="">
+    </div>
+    <div class="row">
+        <label>Config</label>
+        <input id="multisig-signers" type="number" value="2" style="width: 25px;"> of
+        <input id="multisig-participants" type="number" value="3" style="width: 25px;">
+    </div>
+    <div class="row">
+        <label>Username</label>
+        <input id="multisig-username" value="Antoine">
+    </div>
+
+    <br><small>(Uses account of selected address)</small>
+    <br><button id="sign-multisig-transaction" disabled>Sign Multisig Transaction</button>
 </div>
 
 <div class="request">
