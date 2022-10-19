@@ -33,6 +33,8 @@ export enum RequestType {
     REFUND_SWAP = 'refund-swap',
 }
 
+export type Bytes = Uint8Array | string;
+
 export interface BasicRequest {
     appName: string;
 }
@@ -69,7 +71,7 @@ export interface SignTransactionRequest extends BasicRequest {
     recipientLabel?: string;
     value: number;
     fee?: number;
-    extraData?: Uint8Array | string;
+    extraData?: Bytes;
     flags?: number;
     validityStartHeight: number; // FIXME To be made optional when hub has its own network
 }
@@ -83,7 +85,7 @@ export interface NimiqCheckoutRequest extends BasicRequest {
     recipientType?: Nimiq.Account.Type;
     value: number;
     fee?: number;
-    extraData?: Uint8Array | string;
+    extraData?: Bytes;
     flags?: number;
     validityDuration?: number;
     disableDisclaimer?: boolean; // only allowed for privileged origins
@@ -162,7 +164,7 @@ export interface MultiCurrencyCheckoutRequest extends BasicRequest {
      * The data to be included in the transaction. Ignored for `Currenct.BTC` and `Currency.ETH`.
      * @deprecated use NimiqDirectPaymentOptions.protocolSpecific.extraData instead.
      */
-    extraData?: Uint8Array | string;
+    extraData?: Bytes;
     /**
      * Current time in seconds or milliseconds
      */
@@ -256,7 +258,7 @@ export interface NimiqHtlcSettlementInstructions {
     recipient: string; // My address, must be redeem address of HTLC
     value: number; // Luna
     fee: number; // Luna
-    extraData?: Uint8Array | string;
+    extraData?: Bytes;
     validityStartHeight: number;
 }
 
@@ -297,7 +299,7 @@ export interface NimiqHtlcRefundInstructions {
     recipient: string; // My address, must be refund address of HTLC
     value: number; // Luna
     fee: number; // Luna
-    extraData?: Uint8Array | string;
+    extraData?: Bytes;
     validityStartHeight: number;
 }
 
