@@ -95,6 +95,7 @@ export class CookieDecoder {
                 fileExported,
                 wordsExported,
                 btcAddresses: { internal: [], external: [] },
+                permissions: {},
             };
 
             return walletInfoEntry;
@@ -130,6 +131,7 @@ export class CookieDecoder {
             wordsExported,
             btcXPub,
             btcAddresses: { internal: [], external: [] },
+            permissions: {},
         };
 
         return walletInfoEntry;
