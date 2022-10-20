@@ -167,9 +167,16 @@
 
 <div class="request">
     <h2>Multisig</h2>
+
+    <button id="connect-account" disabled>Connect Account</button>
+
     <div class="row">
-        <label>My PublicKey</label>
-        <input id="multisig-publickey" value="" placeholder="REQUIRED!">
+        <label>Signer*</label>
+        <input id="multisig-signer" value="" disabled placeholder="Connect Account to set">
+    </div>
+    <div class="row">
+        <label>PublicKey*</label>
+        <input id="multisig-publickey" value="" disabled placeholder="Connect Account to set">
     </div>
     <div class="row">
         <label>Amount (NIM)</label>

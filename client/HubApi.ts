@@ -42,6 +42,8 @@ import {
     RefundSwapRequest,
     SignMultisigTransactionRequest,
     PartialSignature,
+    ConnectAccountRequest,
+    ConnectedAccount,
 } from '../src/lib/PublicRequestTypes';
 import { WalletType } from '../src/lib/Constants';
 
@@ -201,6 +203,13 @@ export default class HubApi<
         requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
     ): Promise<B extends BehaviorType.REDIRECT ? void : PartialSignature> {
         return this._request(requestBehavior, RequestType.SIGN_MULTISIG_TRANSACTION, [request]);
+    }
+
+    public connectAccount<B extends BehaviorType = DB>(
+        request: Promise<ConnectAccountRequest> | ConnectAccountRequest,
+        requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
+    ): Promise<B extends BehaviorType.REDIRECT ? void : ConnectedAccount> {
+        return this._request(requestBehavior, RequestType.CONNECT_ACCOUNT, [request]);
     }
 
     /**
