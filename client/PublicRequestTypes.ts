@@ -611,7 +611,7 @@ export interface ConnectedAccount {
     encryptionKey: {
         format: 'spki',
         keyData: Uint8Array,
-        algorithm: RsaHashedImportParams,
+        algorithm: { name: string, hash: string },
         keyUsages: ['encrypt'],
     };
     account: {
