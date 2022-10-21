@@ -37,6 +37,9 @@ import { WalletInfo } from './WalletInfo';
 export default class RpcApi {
     public static PERMISSIONED_REQUESTS: RequestType[] = [
         RequestType.SIGN_MULTISIG_TRANSACTION,
+        // When adding new permissioned request types here,
+        // the ConnectAccount UI must be updated to be able
+        // to display these permissions to the user.
     ];
 
     private static get HISTORY_KEY_RPC_STATE() {
