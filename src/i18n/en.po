@@ -92,6 +92,10 @@ msgstr ""
 msgid "All labels saved."
 msgstr ""
 
+#: src/views/ConnectAccount.vue:8
+msgid "All private funds remain separate."
+msgstr ""
+
 #: src/components/CheckoutCardBitcoin.vue:30
 #: src/components/CheckoutCardEthereum.vue:27
 #: src/components/CheckoutCardNimiqExternal.vue:32
@@ -269,6 +273,10 @@ msgstr ""
 #: src/views/AddAccountSelection.vue:5
 #: src/views/AddAddressLedger.vue:13
 msgid "Choose a new Address"
+msgstr ""
+
+#: src/views/ConnectAccount.vue:5
+msgid "Choose an Account to log in"
 msgstr ""
 
 #: src/views/CashlinkReceive.vue:64
@@ -657,6 +665,10 @@ msgstr ""
 
 #: src/views/ExportSuccess.vue:62
 msgid "Login File saved!"
+msgstr ""
+
+#: src/views/ConnectAccountSuccess.vue:4
+msgid "Login successful"
 msgstr ""
 
 #: src/views/CashlinkReceive.vue:91
@@ -1194,6 +1206,10 @@ msgstr ""
 
 #: src/components/LedgerUi.vue:272
 msgid "Your {app} app is outdated. Please update your Ledger firmware and {app} app using Ledger Live."
+msgstr ""
+
+#: src/views/ConnectAccount.vue:7
+msgid "Your account will be used for approving only."
 msgstr ""
 
 #: src/views/LoginSuccess.vue:181
