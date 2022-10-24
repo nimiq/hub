@@ -214,8 +214,9 @@ export default class ChooseAddress extends BitcoinSyncBaseView {
         staticStore.originalRouteName = RequestType.CHOOSE_ADDRESS;
         if (useReplace) {
             this.$router.replace({name: RequestType.ONBOARD});
+        } else {
+            this.$router.push({name: RequestType.ONBOARD});
         }
-        this.$router.push({name: RequestType.ONBOARD});
     }
 
     private backgroundClass(address: string) {
