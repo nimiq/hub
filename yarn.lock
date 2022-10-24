@@ -1060,10 +1060,10 @@
     leveldown "^5.1.1"
     levelup "^4.1.0"
 
-"@nimiq/keyguard-client@^1.5.0-beta.3":
-  version "1.5.0-beta.3"
-  resolved "https://registry.yarnpkg.com/@nimiq/keyguard-client/-/keyguard-client-1.5.0-beta.3.tgz#a7ba6de46e33bc8c7185a4eafdc70d5f3e590056"
-  integrity sha512-xufnOGw6rM4PVevcIeGO8WkswYaQw+V8hGpTmdxHGwyQmXGPIFnVpeVtg6o9KKrqp5vzJx0KAwJp3inCqWjHrg==
+"@nimiq/keyguard-client@^1.6.0-beta.0":
+  version "1.6.0-beta.0"
+  resolved "https://registry.yarnpkg.com/@nimiq/keyguard-client/-/keyguard-client-1.6.0-beta.0.tgz#3f89bd5561d777f7788b3f2c0ba07b360678e824"
+  integrity sha512-hAxmEgoPdg6FMxgFdBDYXf3o5Q1LbZe3qzyAzIXGKY8aFCaxXEBbVdWNEtyUYzvUaDG8EcESQL70/tPUYyexBQ==
   dependencies:
     "@nimiq/core-web" "1.5.8"
     "@nimiq/rpc" "^0.3.0"
