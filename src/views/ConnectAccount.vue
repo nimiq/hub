@@ -78,14 +78,11 @@ export default class ConnectAccount extends Vue {
 
     private AccountType = AccountType;
 
-    private showAccountSelector = false;
+    private showAccountSelector = true;
 
     private async created() {
-        if (this.wallets.length === 1 && this.wallets[0].type !== WalletType.LEDGER) {
-            this.setWallet(this.wallets[0], false);
-        } else {
-            // If more than one wallet exists or the one wallet is an unsupported LEDGER wallet, show the selector
-            this.showAccountSelector = true;
+        if (this.wallets.length === 0) {
+            this.goToOnboarding();
         }
     }
 
@@ -136,10 +133,14 @@ export default class ConnectAccount extends Vue {
         client.connectAccount(request);
     }
 
-    private goToOnboarding() {
+    private goToOnboarding(useReplace?: boolean) {
         // Redirect to onboarding
         staticStore.originalRouteName = RequestType.CONNECT_ACCOUNT;
-        this.$router.push({name: RequestType.ONBOARD});
+        if (useReplace) {
+            this.$router.replace({name: RequestType.ONBOARD});
+        } else {
+            this.$router.push({name: RequestType.ONBOARD});
+        }
     }
 }
 </script>
