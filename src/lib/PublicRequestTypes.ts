@@ -359,6 +359,14 @@ export interface SetupSwapRequest extends SimpleRequest {
     bitcoinAccount?: {
         balance: number, // Sats
     };
+
+    // Optional KYC info for swapping at higher limits
+    kyc?: {
+        provider: 'TEN31 Pass',
+        userId: string,
+        s3GrantToken: string,
+        oasisGrantToken?: string,
+    };
 }
 
 export interface SetupSwapResult {

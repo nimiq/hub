@@ -138,7 +138,7 @@ export default class RpcApi {
             }
             // If we have an rpcState, export the entire state to the newly pushed history entry
             // to be available on reload.
-            // This is potentially redundand to the above condition but added as a precaution,
+            // This is potentially redundant to the above condition but added as a precaution,
             // especially considering the no-request case a few lines down within RpcApi.start().
             if (this._staticStore.rpcState) {
                 // A small timeout is needed, since Vue does push the new history state only after the afterEach
@@ -150,7 +150,7 @@ export default class RpcApi {
 
     public start() {
         this._keyguardClient.init().catch(console.error); // TODO: Provide better error handling here
-        if (this._store.state.keyguardResult) return;
+        if (this._store.state.keyguardResult) return; // don't listen for commands; finish the one already in process
 
         // If there is no request:
         // If no opener is set and there is a previous history entry and there is no data passed in the URL,
@@ -178,7 +178,7 @@ export default class RpcApi {
             // The Keyguard client rejects on history back only if handleHistoryBack is activated. If the Keyguard does
             // not reject it also does not provide us the localState to recover. For this case, we encode it manually in
             // the history, to retrieve it from there.
-            setHistoryStorage(RpcApi.HISTORY_KEY_RPC_STATE, this._exportState());
+            setHistoryStorage(RpcApi.HISTORY_KEY_RPC_STATE, localState);
         }
         return client;
     }
@@ -201,6 +201,8 @@ export default class RpcApi {
     }
 
     public get keyguardClient(): KeyguardClient {
+        // Export state to history to still be available on back navigation from a redirect by the client.
+        setHistoryStorage(RpcApi.HISTORY_KEY_RPC_STATE, this._exportState());
         return this._keyguardClient;
     }
 
@@ -237,6 +239,20 @@ export default class RpcApi {
             originalRouteName: this._staticStore.originalRouteName,
             cashlink: this._staticStore.cashlink ? this._staticStore.cashlink.toObject() : undefined,
         };
+    }
+
+    private _recoverState(storedState: any) {
+        const rpcState = RpcState.fromJSON(storedState.rpcState);
+        const request = RequestParser.parse(storedState.request, rpcState, storedState.kind);
+        const keyguardRequest = storedState.keyguardRequest;
+        const originalRouteName = storedState.originalRouteName;
+        const cashlink = storedState.cashlink ? Cashlink.fromObject(storedState.cashlink) : undefined;
+
+        this._staticStore.rpcState = rpcState;
+        this._staticStore.request = request || undefined;
+        this._staticStore.keyguardRequest = keyguardRequest;
+        this._staticStore.originalRouteName = originalRouteName;
+        this._staticStore.cashlink = cashlink;
     }
 
     private _registerHubApis(requestTypes: RequestType[]) {
@@ -361,20 +377,6 @@ export default class RpcApi {
         }
 
         return params;
-    }
-
-    private _recoverState(storedState: any) {
-        const rpcState = RpcState.fromJSON(storedState.rpcState);
-        const request = RequestParser.parse(storedState.request, rpcState, storedState.kind);
-        const keyguardRequest = storedState.keyguardRequest;
-        const originalRouteName = storedState.originalRouteName;
-        const cashlink = storedState.cashlink ? Cashlink.fromObject(storedState.cashlink) : undefined;
-
-        this._staticStore.rpcState = rpcState;
-        this._staticStore.request = request || undefined;
-        this._staticStore.keyguardRequest = keyguardRequest;
-        this._staticStore.originalRouteName = originalRouteName;
-        this._staticStore.cashlink = cashlink;
     }
 
     private _registerKeyguardApis(commands: KeyguardCommand[]) {

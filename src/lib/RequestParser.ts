@@ -565,6 +565,23 @@ export class RequestParser {
                     }
                 }
 
+                if (setupSwapRequest.kyc) {
+                    if (setupSwapRequest.kyc.provider !== 'TEN31 Pass') {
+                        throw new Error(`Unsupported KYC provider: ${setupSwapRequest.kyc.provider}`);
+                    }
+                    if (typeof setupSwapRequest.kyc.userId !== 'string' || !setupSwapRequest.kyc.userId) {
+                        throw new Error('Invalid TEN31 Pass user id');
+                    }
+                    if (typeof setupSwapRequest.kyc.s3GrantToken !== 'string' || !setupSwapRequest.kyc.s3GrantToken) {
+                        throw new Error('Invalid TEN31 Pass S3 service grant');
+                    }
+                    if (setupSwapRequest.kyc.oasisGrantToken !== undefined && (
+                        typeof setupSwapRequest.kyc.oasisGrantToken !== 'string'
+                        || !setupSwapRequest.kyc.oasisGrantToken)) {
+                        throw new Error('Invalid TEN31 Pass OASIS service grant');
+                    }
+                }
+
                 const parsedSetupSwapRequest: ParsedSetupSwapRequest = {
                     kind: RequestType.SETUP_SWAP,
                     walletId: setupSwapRequest.accountId,

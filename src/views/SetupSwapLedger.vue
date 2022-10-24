@@ -241,12 +241,28 @@
             <div class="bottom-container" :class="{
                 'full-height': state === State.SYNCING_FAILED || state === State.FETCHING_SWAP_DATA_FAILED,
             }">
+                <!-- Do not display the LedgerUi until hiding the swap authorization, to not start the connect animation
+                while the LedgerUi would be hidden behind the swap authorization. Do not do the same for Bitcoin address
+                SYNCING state because SYNCING can also occur again throughout the process (to fetch the BTC transaction
+                that funds the HTLC) in which case we do not want to hide the LedgerUi in the background while the
+                SYNCING StatusScreen is still fading in. -->
                 <LedgerUi small
+                    v-if="!swapAuthorizationShown"
                     @information-shown="ledgerInstructionsShown = true"
                     @no-information-shown="ledgerInstructionsShown = false"
                 />
                 <transition name="transition-fade">
-                    <div v-if="_currentSigningInfo && ledgerApiStateType === LedgerApiStateType.REQUEST_PROCESSING"
+                    <!-- swap authorization as separate StatusScreen instead of combining it with the one below to be
+                    able to nicely fade between the two instead of a direct switch of the icon, background gradient and
+                    the layout (regular vs small) when switching from swap authorization to another loading screen -->
+                    <StatusScreen v-if="swapAuthorizationShown" key="swap-authorization" :status="$t('Swap authorized')"
+                        class="swap-authorization"
+                    >
+                        <template #loading>
+                            <img class="swap-authorization-icon" />
+                        </template>
+                    </StatusScreen>
+                    <div v-else-if="_currentSigningInfo && ledgerApiStateType === LedgerApiStateType.REQUEST_PROCESSING"
                         class="signing-info nq-blue-bg"
                     >
                         <div class="signing-instructions">
@@ -422,13 +438,14 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
     private _setupSwapPromise!: Promise<SwapSetupInfo>;
     private nimiqLedgerAddressInfo?: { address: Nimiq.Address, label: string, balance: number, signerPath: string };
     private _nimiqSwapProxyPromise?: Promise<LedgerSwapProxy>;
+    private swapAuthorizationShown = false;
     private ledgerInstructionsShown = false;
     private ledgerApiStateType: LedgerApiStateType = LedgerApi.currentState.type;
     private currentlySignedTransaction: LedgerNimiqTransactionInfo
         | Parameters<typeof prepareBitcoinTransactionForLedgerSigning>[0]
         | null = null;
 
-    protected async created() {
+    protected created() {
         const { fund, redeem, nimiqAddresses, walletId } = this.request;
 
         Promise.all([
@@ -503,6 +520,11 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
 
         this._onLedgerApiStateChange = this._onLedgerApiStateChange.bind(this);
         LedgerApi.on(LedgerApiEventType.STATE_CHANGE, this._onLedgerApiStateChange);
+
+        if (this.request.kyc) {
+            this.swapAuthorizationShown = true;
+            setTimeout(() => this.swapAuthorizationShown = false, 2500);
+        }
     }
 
     protected destroyed() {
@@ -1401,6 +1423,16 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
 
     .ledger-ui >>> .loading-spinner {
         margin-top: -1.25rem; /* position at same position as StatusScreen's loading spinner */
+    }
+
+    .swap-authorization {
+        background-image: radial-gradient(100% 100% at 100% 100%, #4D4C96 0%, #5F4B8B 100%);
+    }
+
+    .swap-authorization-icon {
+        content: url('data:image/svg+xml,<svg width="16" height="16" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M6.9.3a1.41 1.41 0 0 0-2.16.57l-.48 1.17c-.2.47-.62.8-1.12.86l-1.25.17A1.41 1.41 0 0 0 .76 5l.49 1.16c.2.47.12 1-.19 1.4l-.77 1c-.56.75-.28 1.82.58 2.17l1.17.49c.47.19.8.62.86 1.12l.17 1.25A1.41 1.41 0 0 0 5 14.72l1.16-.48c.47-.2 1-.13 1.4.18l1 .77c.75.57 1.82.28 2.17-.58l.49-1.16c.19-.47.62-.8 1.12-.87l1.25-.16a1.41 1.41 0 0 0 1.12-1.94l-.48-1.17c-.2-.46-.13-1 .18-1.4l.77-1c.57-.74.28-1.81-.58-2.17l-1.16-.48c-.47-.2-.8-.62-.87-1.12l-.16-1.25A1.41 1.41 0 0 0 10.48.76l-1.17.49c-.46.2-1 .12-1.4-.19L6.9.3Zm4.03 6.25a.66.66 0 0 0-.92-.95L6.83 8.66l-1.35-1.3a.66.66 0 1 0-.92.95l1.81 1.76c.26.24.67.24.93 0l3.63-3.52Z" fill="white"/></svg>');
+        width: 7rem;
+        margin-top: -2rem;
     }
 
     .signing-info {

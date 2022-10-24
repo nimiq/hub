@@ -31,7 +31,7 @@ msgstr ""
 msgid "404 - Cash not found"
 msgstr ""
 
-#: src/views/SetupSwapSuccess.vue:129
+#: src/views/SetupSwapSuccess.vue:136
 msgid "503 Service unavailable - please try again later"
 msgstr ""
 
@@ -76,7 +76,7 @@ msgid "Add Vesting Contract"
 msgstr ""
 
 #: src/components/CheckoutCard.vue:82
-#: src/views/SetupSwapLedger.vue:276
+#: src/views/SetupSwapLedger.vue:292
 msgid "Address"
 msgstr ""
 
@@ -95,8 +95,8 @@ msgstr ""
 #: src/components/CheckoutCardBitcoin.vue:30
 #: src/components/CheckoutCardEthereum.vue:27
 #: src/components/CheckoutCardNimiqExternal.vue:32
-#: src/views/SetupSwapLedger.vue:269
-#: src/views/SetupSwapLedger.vue:278
+#: src/views/SetupSwapLedger.vue:285
+#: src/views/SetupSwapLedger.vue:294
 msgid "Amount"
 msgstr ""
 
@@ -326,7 +326,7 @@ msgstr ""
 msgid "Collecting payment details"
 msgstr ""
 
-#: src/views/SetupSwapLedger.vue:962
+#: src/views/SetupSwapLedger.vue:984
 msgid "Confirm {outgoingOrIncoming} transaction on Ledger"
 msgstr ""
 
@@ -512,8 +512,8 @@ msgstr ""
 #: src/components/CheckoutCardBitcoin.vue:47
 #: src/components/CheckoutCardNimiqExternal.vue:47
 #: src/components/CurrencyInfo.vue:15
-#: src/views/SetupSwapLedger.vue:271
 #: src/views/SetupSwapLedger.vue:287
+#: src/views/SetupSwapLedger.vue:303
 msgid "Fee"
 msgstr ""
 
@@ -526,11 +526,11 @@ msgstr ""
 msgid "Fetching contract information..."
 msgstr ""
 
-#: src/views/SetupSwapSuccess.vue:522
+#: src/views/SetupSwapSuccess.vue:529
 msgid "Fetching swap data failed: {error}"
 msgstr ""
 
-#: src/views/SetupSwapSuccess.vue:512
+#: src/views/SetupSwapSuccess.vue:519
 msgid "Fetching swap data..."
 msgstr ""
 
@@ -598,7 +598,7 @@ msgstr ""
 msgid "Imported {count} address so far... | Imported {count} addresses so far..."
 msgstr ""
 
-#: src/views/SetupSwapLedger.vue:965
+#: src/views/SetupSwapLedger.vue:987
 msgid "incoming"
 msgstr ""
 
@@ -760,7 +760,7 @@ msgstr ""
 msgid "Other wallets"
 msgstr ""
 
-#: src/views/SetupSwapLedger.vue:964
+#: src/views/SetupSwapLedger.vue:986
 msgid "outgoing"
 msgstr ""
 
@@ -816,7 +816,7 @@ msgstr ""
 msgid "Prepare for update"
 msgstr ""
 
-#: src/views/SetupSwapSuccess.vue:505
+#: src/views/SetupSwapSuccess.vue:512
 msgid "Preparing Swap"
 msgstr ""
 
@@ -875,7 +875,7 @@ msgstr ""
 
 #: src/views/BitcoinSyncBaseView.vue:68
 #: src/views/LoginSuccess.vue:111
-#: src/views/SetupSwapSuccess.vue:530
+#: src/views/SetupSwapSuccess.vue:537
 #: src/views/SignupLedger.vue:145
 msgid "Retry"
 msgstr ""
@@ -910,7 +910,7 @@ msgstr ""
 msgid "Sign Message"
 msgstr ""
 
-#: src/views/SetupSwapSuccess.vue:514
+#: src/views/SetupSwapSuccess.vue:521
 msgid "Signing transactions..."
 msgstr ""
 
@@ -947,12 +947,16 @@ msgstr ""
 msgid "Storing your new accounts..."
 msgstr ""
 
+#: src/views/SetupSwapLedger.vue:258
+msgid "Swap authorized"
+msgstr ""
+
 #: src/views/SetupSwapLedger.vue:73
 msgid "Swap fee"
 msgstr ""
 
-#: src/views/SetupSwapLedger.vue:826
-#: src/views/SetupSwapSuccess.vue:501
+#: src/views/SetupSwapLedger.vue:848
+#: src/views/SetupSwapSuccess.vue:508
 msgid "Swap Setup Failed"
 msgstr ""
 
@@ -968,8 +972,8 @@ msgid "Syncing consensus..."
 msgstr ""
 
 #: src/views/BitcoinSyncBaseView.vue:50
-#: src/views/SetupSwapLedger.vue:828
-#: src/views/SetupSwapSuccess.vue:503
+#: src/views/SetupSwapLedger.vue:850
+#: src/views/SetupSwapSuccess.vue:510
 #: src/views/SignBtcTransactionLedger.vue:117
 msgid "Syncing Failed"
 msgstr ""
@@ -987,7 +991,7 @@ msgid "Syncing with Bitcoin network failed: {error}"
 msgstr ""
 
 #: src/views/BitcoinSyncBaseView.vue:58
-#: src/views/SetupSwapLedger.vue:838
+#: src/views/SetupSwapLedger.vue:860
 msgid "Syncing with Bitcoin network..."
 msgstr ""
 
