@@ -50,6 +50,37 @@ export interface ParsedSignTransactionRequest extends ParsedBasicRequest {
     validityStartHeight: number; // FIXME To be made optional when hub has its own network
 }
 
+export interface ParsedMultisigInfo {
+    publicKeys: Uint8Array[];
+    numberOfSigners: number;
+    signerPublicKeys: Uint8Array[]; // Can be omitted when all publicKeys need to sign
+    secret: {
+        aggregatedSecret: Uint8Array;
+    } | {
+        encryptedSecrets: Uint8Array[];
+        bScalar: Uint8Array;
+    };
+    aggregatedCommitment: Uint8Array;
+    userName?: string;
+}
+
+export interface ParsedSignMultisigTransactionRequest extends ParsedBasicRequest {
+    signer: Nimiq.Address;
+
+    sender: Nimiq.Address;
+    senderLabel: string;
+    recipient: Nimiq.Address;
+    recipientType?: Nimiq.Account.Type;
+    recipientLabel?: string;
+    value: number;
+    fee?: number;
+    data?: Uint8Array;
+    flags?: number;
+    validityStartHeight: number; // FIXME To be made optional when hub has its own network
+
+    multisigConfig: ParsedMultisigInfo;
+}
+
 export type ParsedProtocolSpecificsForCurrency<C extends Currency> =
     C extends Currency.NIM ? ParsedNimiqSpecifics
     : C extends Currency.BTC ? ParsedBitcoinSpecifics
@@ -283,8 +314,16 @@ export interface ParsedRefundSwapRequest extends ParsedSimpleRequest {
     };
 }
 
+export interface ParsedConnectAccountRequest extends ParsedBasicRequest {
+    appLogoUrl: URL;
+    permissions: RequestType[];
+    requestedKeyPaths: string[];
+    challenge: string;
+}
+
 // Discriminated Unions
 export type ParsedRpcRequest = ParsedSignTransactionRequest
+                             | ParsedSignMultisigTransactionRequest
                              | ParsedCreateCashlinkRequest
                              | ParsedManageCashlinkRequest
                              | ParsedCheckoutRequest
@@ -297,4 +336,5 @@ export type ParsedRpcRequest = ParsedSignTransactionRequest
                              | ParsedSignBtcTransactionRequest
                              | ParsedAddBtcAddressesRequest
                              | ParsedSetupSwapRequest
-                             | ParsedRefundSwapRequest;
+                             | ParsedRefundSwapRequest
+                             | ParsedConnectAccountRequest;

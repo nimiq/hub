@@ -83,6 +83,14 @@ const SetupSwapLedger         = () => import(/*webpackChunkName: "swap-ledger"*/
 
 const RefundSwapLedger        = () => import(/*webpackChunkName: "refund-swap-ledger"*/ './views/RefundSwapLedger.vue');
 
+const SignMultisigTransaction         = () => import(/*webpackChunkName: "sign-multisig-transaction"*/ './views/SignMultisigTransaction.vue');
+const SignMultisigTransactionSuccess  = () => import(/*webpackChunkName: "sign-multisig-transaction"*/
+    './views/SignMultisigTransactionSuccess.vue');
+
+const ConnectAccount         = () => import(/*webpackChunkName: "connect-account"*/ './views/ConnectAccount.vue');
+const ConnectAccountSuccess  = () => import(/*webpackChunkName: "connect-account"*/
+    './views/ConnectAccountSuccess.vue');
+
 Vue.use(Router);
 
 export function keyguardResponseRouter(
@@ -104,6 +112,8 @@ export function keyguardResponseRouter(
                 ? RequestType.MANAGE_CASHLINK
                 : `${originalRequestType}-success`;
             break;
+        case KeyguardCommand.SIGN_MULTISIG_TRANSACTION:
+            resolve = `${RequestType.SIGN_MULTISIG_TRANSACTION}-success`; break;
         case KeyguardCommand.EXPORT:
             resolve = `${RequestType.EXPORT}-success`; break;
         case KeyguardCommand.CHANGE_PASSWORD:
@@ -122,6 +132,8 @@ export function keyguardResponseRouter(
             resolve = `${RequestType.ACTIVATE_BITCOIN}-success`; break;
         case KeyguardCommand.SIGN_SWAP:
             resolve = `${RequestType.SETUP_SWAP}-success`; break;
+        case KeyguardCommand.CONNECT_ACCOUNT:
+            resolve = `${RequestType.CONNECT_ACCOUNT}-success`; break;
         default:
             throw new Error(`router.keyguardResponseRouter not defined for Keyguard command: ${command}`);
     }
@@ -369,6 +381,26 @@ export default new Router({
             path: `/${RequestType.REFUND_SWAP}/ledger`,
             component: RefundSwapLedger,
             name: `${RequestType.REFUND_SWAP}-ledger`,
+        },
+        {
+            path: `/${RequestType.SIGN_MULTISIG_TRANSACTION}`,
+            component: SignMultisigTransaction,
+            name: RequestType.SIGN_MULTISIG_TRANSACTION,
+        },
+        {
+            path: `/${RequestType.SIGN_MULTISIG_TRANSACTION}/success`,
+            component: SignMultisigTransactionSuccess,
+            name: `${RequestType.SIGN_MULTISIG_TRANSACTION}-success`,
+        },
+        {
+            path: `/${RequestType.CONNECT_ACCOUNT}`,
+            component: ConnectAccount,
+            name: RequestType.CONNECT_ACCOUNT,
+        },
+        {
+            path: `/${RequestType.CONNECT_ACCOUNT}/success`,
+            component: ConnectAccountSuccess,
+            name: `${RequestType.CONNECT_ACCOUNT}-success`,
         },
     ],
 });

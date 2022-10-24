@@ -5,7 +5,7 @@ import {
     ContractInfoEntry,
     ContractInfoHelper,
 } from './ContractInfo';
-import { Account } from './PublicRequestTypes';
+import { Account, RequestType } from './PublicRequestTypes';
 import { labelKeyguardAccount } from './LabelingMachine';
 import WalletInfoCollector from './WalletInfoCollector';
 import { WalletStore } from '../lib/WalletStore';
@@ -32,7 +32,8 @@ export class WalletInfo {
         };
 
         return new WalletInfo(o.id, o.keyId, o.label, accounts, contracts, o.type,
-            o.keyMissing, o.fileExported, o.wordsExported, o.btcXPub, btcAddresses);
+            o.keyMissing, o.fileExported, o.wordsExported, o.btcXPub, btcAddresses,
+            o.permissions);
     }
 
     public static async objectToAccountType(o: WalletInfoEntry): Promise<Account> {
@@ -79,6 +80,7 @@ export class WalletInfo {
             internal: [],
             external: [],
         },
+        public permissions: Record<string, RequestType[]> = {},
     ) {}
 
     public get defaultLabel(): string {
@@ -194,6 +196,7 @@ export class WalletInfo {
                 internal: this.btcAddresses.internal.map((btcAddressInfo) => btcAddressInfo.toObject()),
                 external: this.btcAddresses.external.map((btcAddressInfo) => btcAddressInfo.toObject()),
             },
+            permissions: this.permissions,
         };
     }
 
@@ -234,8 +237,9 @@ export interface WalletInfoEntry {
     fileExported: boolean;
     wordsExported: boolean;
     btcXPub?: string;
-    btcAddresses: {
+    btcAddresses?: {
         internal: BtcAddressInfoEntry[],
         external: BtcAddressInfoEntry[],
     };
+    permissions?: Record<string, RequestType[]>;
 }
