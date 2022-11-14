@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>KG storage test (Hub window)</title>
+</head>
+<body>
+<h1>KG storage test (Hub window)</h1>
+<iframe width="500px" height="300px"></iframe><br>
+
+<script>
+    const keyguardOrigin = location.origin.replace('8080', '8000').replace('hub', 'keyguard');
+    document.getElementsByTagName('iframe')[0].src = `${keyguardOrigin}/demos/storage-test.html`;
+</script>
+</body>
+</html>
