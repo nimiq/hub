@@ -6,6 +6,7 @@ import type { BitcoinSpecifics } from './paymentOptions/BitcoinPaymentOptions';
 import type { BitcoinDirectPaymentOptions } from './paymentOptions/BitcoinPaymentOptions';
 import type { EtherSpecifics } from './paymentOptions/EtherPaymentOptions';
 import type { EtherDirectPaymentOptions } from './paymentOptions/EtherPaymentOptions';
+import { FiatApiSupportedFiatCurrency } from '@nimiq/utils';
 
 export enum RequestType {
     LIST = 'list',
@@ -524,6 +525,12 @@ export interface SignBtcTransactionRequest extends SimpleRequest {
         value: number,
     };
     locktime?: number;
+
+    // Data needed for display in a standard BTC transaction
+    fiatCurrency?: FiatApiSupportedFiatCurrency;
+    fiatRate?: number;
+    delay?: number;
+    feePerByte?: number;
 }
 
 export interface SignedBtcTransaction {

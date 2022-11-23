@@ -500,6 +500,28 @@ export class RequestParser {
                     throw new Error('Invalid locktime');
                 }
 
+                const delay = signBtcTransactionRequest.delay;
+                if (!delay || delay < 1 || delay >= 100) {
+                    throw new Error('Invalid delay');
+                }
+
+                const fiatRate = signBtcTransactionRequest.fiatRate;
+                if (!fiatRate || !Nimiq.NumberUtils.isUint32(fiatRate)) {
+                    throw new Error('Invalid fiatRate');
+                }
+
+                const fiatCurrency = signBtcTransactionRequest.fiatCurrency;
+                if (!fiatCurrency) {
+                    throw new Error('Invalid fiatCurrency');
+                } else if (typeof fiatCurrency !== 'string' || !/^[a-z]{3}$/i.test(fiatCurrency)) {
+                    throw new Error(`Invalid fiatCurrency code ${fiatCurrency}`);
+                }
+
+                const feePerByte = signBtcTransactionRequest.feePerByte;
+                if (!feePerByte || !Nimiq.NumberUtils.isUint32(feePerByte)) {
+                    throw new Error('Invalid feePerByte');
+                }
+
                 const parsedSignBtcTransactionRequest: ParsedSignBtcTransactionRequest = {
                     kind: RequestType.SIGN_BTC_TRANSACTION,
                     walletId: signBtcTransactionRequest.accountId,
@@ -508,6 +530,11 @@ export class RequestParser {
                     output,
                     changeOutput,
                     locktime,
+
+                    delay,
+                    fiatCurrency: fiatCurrency.toUpperCase(),
+                    fiatRate,
+                    feePerByte,
                 };
                 return parsedSignBtcTransactionRequest;
             case RequestType.SETUP_SWAP:
@@ -768,6 +795,10 @@ export class RequestParser {
                     output: signBtcTransactionRequest.output,
                     changeOutput: signBtcTransactionRequest.changeOutput,
                     locktime: signBtcTransactionRequest.locktime,
+                    fiatCurrency: signBtcTransactionRequest.fiatCurrency,
+                    fiatRate: signBtcTransactionRequest.fiatRate,
+                    delay: signBtcTransactionRequest.delay,
+                    feePerByte: signBtcTransactionRequest.feePerByte,
                 } as SignBtcTransactionRequest;
             case RequestType.SETUP_SWAP:
                 const setupSwapRequest = request as ParsedSetupSwapRequest;

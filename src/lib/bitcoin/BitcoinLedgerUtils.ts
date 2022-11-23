@@ -5,9 +5,13 @@ import { loadBitcoinJS } from './BitcoinJSLoader';
 
 // Import only types to avoid bundling
 import type { Transaction as BitcoinJsTransaction } from 'bitcoinjs-lib';
-import type { BitcoinTransactionInfo } from '../../views/SignBtcTransaction.vue';
 import type { TransactionInfoBitcoin as LedgerBitcoinTransactionInfo } from '@nimiq/ledger-api';
-import { BitcoinTransactionInputType } from '@nimiq/keyguard-client';
+import { BitcoinTransactionChangeOutput, BitcoinTransactionInfo, BitcoinTransactionInputType } from '@nimiq/keyguard-client';
+
+// StandardBitcoinTransactionInfo with complete changeOutput
+export type StandardBitcoinTransactionInfo = Pick<BitcoinTransactionInfo, 'inputs' | 'recipientOutput' | 'locktime'> & {
+    changeOutput?: Required<BitcoinTransactionChangeOutput>,
+};
 
 /**
  * Prepare a bitcoin transaction for signing via the Ledger api by enriching it with complete input transactions and
@@ -18,13 +22,13 @@ import { BitcoinTransactionInputType } from '@nimiq/keyguard-client';
  * @returns Enriched transaction info that can be passed to LedgerApi.Bitcoin.signTransaction.
  */
 export async function prepareBitcoinTransactionForLedgerSigning(
-    transactionInfo: Omit<BitcoinTransactionInfo, 'inputs'>
+    transactionInfo: Omit<StandardBitcoinTransactionInfo, 'inputs'>
         & { inputs: Array<
             Pick<
-                BitcoinTransactionInfo['inputs'][0],
+                StandardBitcoinTransactionInfo['inputs'][0],
                 'transactionHash' | 'outputIndex' | 'keyPath'
             > & Partial<Pick<
-                Exclude<BitcoinTransactionInfo['inputs'][0], { type?: BitcoinTransactionInputType.STANDARD }>,
+                Exclude<StandardBitcoinTransactionInfo['inputs'][0], { type?: BitcoinTransactionInputType.STANDARD }>,
                 'witnessScript' | 'sequence'
             > >
         > },

@@ -16,11 +16,14 @@ import type {
     SignBtcTransactionRequest as KeyguardSignBtcTransactionRequest,
     BitcoinTransactionInput,
     BitcoinTransactionChangeOutput,
-    BitcoinTransactionInfo as KeyguardBitcoinTransactionInfo,
+    BitcoinTransactionInfo,
+    SignBtcTransactionRequestStandard,
 } from '@nimiq/keyguard-client';
 
-// BitcoinTransactionInfo with complete changeOutput
-export type BitcoinTransactionInfo = Omit<KeyguardBitcoinTransactionInfo, 'changeOutput'> & {
+// StandardBitcoinTransactionInfo with complete changeOutput
+export type StandardBitcoinTransactionInfo = Pick<BitcoinTransactionInfo, 'inputs' | 'recipientOutput' | 'locktime'> &
+    // Data needed for display
+    Pick<SignBtcTransactionRequestStandard, 'fiatCurrency' | 'fiatRate' | 'delay' | 'feePerByte'> & {
     changeOutput?: Required<BitcoinTransactionChangeOutput>,
 };
 
@@ -108,10 +111,14 @@ export default class SignBtcTransaction extends BitcoinSyncBaseView {
             changeOutput,
             recipientOutput: this.request.output,
             locktime: this.request.locktime,
+            delay: this.request.delay,
+            fiatCurrency: this.request.fiatCurrency,
+            fiatRate: this.request.fiatRate,
+            feePerByte: this.request.feePerByte,
         }, walletInfo);
     }
 
-    protected _signBtcTransaction(transactionInfo: BitcoinTransactionInfo, walletInfo: WalletInfo) {
+    protected _signBtcTransaction(transactionInfo: StandardBitcoinTransactionInfo, walletInfo: WalletInfo) {
         // note that this method gets overwritten for SignBtcTransactionLedger
 
         const request: KeyguardSignBtcTransactionRequest = {
