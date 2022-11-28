@@ -9,6 +9,8 @@ import { WalletType } from '../lib/Constants';
 import { WalletInfo } from '../lib/WalletInfo';
 import { WalletStore } from '../lib/WalletStore';
 import { Static } from '../lib/StaticStore';
+import { setHistoryStorage, getHistoryStorage } from '../lib/Helpers';
+import store from '../store';
 import StatusScreen from '../components/StatusScreen.vue';
 import GlobalClose from '../components/GlobalClose.vue';
 import { deriveAddressesFromXPub } from '../lib/bitcoin/BitcoinUtils';
@@ -36,6 +38,13 @@ export default class ActivateBitcoinSuccess extends BitcoinSyncBaseView {
             if (!walletInfo) {
                 throw new Error('UNEXPECTED: accountId not found anymore in ActivateBitcoinSuccess '
                     + `(${this.request.walletId})`);
+            }
+
+            if (this.keyguardResult) {
+                // Cache keyguardResult to be available on reloads, in case it was set manually in ActivateBitcoinLedger
+                setHistoryStorage('keyguardResult', this.keyguardResult);
+            } else {
+                store.commit('setKeyguardResult', getHistoryStorage('keyguardResult'));
             }
 
             this.state = walletInfo.type === WalletType.LEDGER
