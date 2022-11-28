@@ -27,24 +27,28 @@ export default class ActivateBitcoin extends Vue {
     private notEnoughCookieSpace = false;
 
     public async created() {
-        const walletInfo = this.findWallet(this.request.walletId)!;
+        try {
+            const walletInfo = this.findWallet(this.request.walletId)!;
 
-        if (walletInfo.type === WalletType.LEGACY) {
-            throw new Error('Cannot enable Bitcoin for legacy accounts');
+            if (walletInfo.type === WalletType.LEGACY) {
+                throw new Error('Cannot enable Bitcoin for legacy accounts');
+            }
+
+            if (BrowserDetection.isIOS() || BrowserDetection.isSafari()) {
+                // Dummy xpub, to test space in cookie
+                const walletInfoEntry = {
+                    ...walletInfo.toObject(),
+                    btcXPub: 'xpub6H1LXWLaKsWFhvm6RVpEL9P4KfRZSW7abD2ttkWP3SSQvnyA8FSVqNTEcYFgJS2UaFcxupHiYkro49S8yGasTvXEYBVPamhGW6cFJodrTHy',
+                };
+
+                this.notEnoughCookieSpace = !(await CookieHelper.canFitNewWallets([walletInfoEntry]));
+                if (this.notEnoughCookieSpace) return; // show error UI and don't continue
+            }
+
+            await this._startBtcXpubRequest(walletInfo.keyId); // is async for ActivateBitcoinLedger
+        } catch (e) {
+            this.$rpc.reject(e);
         }
-
-        if (BrowserDetection.isIOS() || BrowserDetection.isSafari()) {
-            // Dummy xpub, to test space in cookie
-            const walletInfoEntry = {
-                ...walletInfo.toObject(),
-                btcXPub: 'xpub6H1LXWLaKsWFhvm6RVpEL9P4KfRZSW7abD2ttkWP3SSQvnyA8FSVqNTEcYFgJS2UaFcxupHiYkro49S8yGasTvXEYBVPamhGW6cFJodrTHy',
-            };
-
-            this.notEnoughCookieSpace = !(await CookieHelper.canFitNewWallets([walletInfoEntry]));
-            if (this.notEnoughCookieSpace) return;
-        }
-
-        this._startBtcXpubRequest(walletInfo.keyId);
     }
 
     protected _startBtcXpubRequest(keyId: string) {

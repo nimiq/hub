@@ -30,43 +30,50 @@ export default class ActivateBitcoinSuccess extends BitcoinSyncBaseView {
     @Getter private findWallet!: (id: string) => WalletInfo | undefined;
 
     private async created() {
-        const walletInfo = this.findWallet(this.request.walletId);
+        try {
+            const walletInfo = this.findWallet(this.request.walletId);
 
-        if (!walletInfo) {
-            throw new Error(`UNEXPECTED: accountId not found anymore in ActivateBitcoinSuccess (${this.request.walletId})`);
+            if (!walletInfo) {
+                throw new Error('UNEXPECTED: accountId not found anymore in ActivateBitcoinSuccess '
+                    + `(${this.request.walletId})`);
+            }
+
+            this.state = walletInfo.type === WalletType.LEDGER
+                ? this.State.TRANSITION_SYNCING // set ui state from which to transition to SYNCING state
+                : this.State.SYNCING;
+            this.useDarkSyncStatusScreen = walletInfo.type === WalletType.LEDGER;
+
+            await loadBitcoinJS();
+
+            const btcAddresses = {
+                external: deriveAddressesFromXPub(
+                    this.keyguardResult.bitcoinXPub,
+                    [EXTERNAL_INDEX],
+                    0,
+                    BTC_ACCOUNT_MAX_ALLOWED_ADDRESS_GAP,
+                ),
+                internal: deriveAddressesFromXPub(
+                    this.keyguardResult.bitcoinXPub,
+                    [INTERNAL_INDEX],
+                    0,
+                    BTC_ACCOUNT_MAX_ALLOWED_ADDRESS_GAP,
+                ),
+            };
+
+            walletInfo.btcXPub = this.keyguardResult.bitcoinXPub;
+            walletInfo.btcAddresses = btcAddresses;
+
+            const [result] = await Promise.all([
+                walletInfo.toAccountType(),
+                WalletStore.Instance.put(walletInfo),
+            ]);
+
+            this.state = this.State.FINISHED;
+            setTimeout(() => this.$rpc.resolve(result), StatusScreen.SUCCESS_REDIRECT_DELAY);
+        } catch (e) {
+            this.state = this.State.SYNCING_FAILED;
+            this.error = e.message || e;
         }
-
-        this.state = walletInfo.type === WalletType.LEDGER
-            ? this.State.TRANSITION_SYNCING // set ui state from which to transition to SYNCING state
-            : this.State.SYNCING;
-        this.useDarkSyncStatusScreen = walletInfo.type === WalletType.LEDGER;
-
-        await loadBitcoinJS();
-
-        const btcAddresses = {
-            external: deriveAddressesFromXPub(
-                this.keyguardResult.bitcoinXPub,
-                [EXTERNAL_INDEX],
-                0,
-                BTC_ACCOUNT_MAX_ALLOWED_ADDRESS_GAP,
-            ),
-            internal: deriveAddressesFromXPub(
-                this.keyguardResult.bitcoinXPub,
-                [INTERNAL_INDEX],
-                0,
-                BTC_ACCOUNT_MAX_ALLOWED_ADDRESS_GAP,
-            ),
-        };
-
-        walletInfo.btcXPub = this.keyguardResult.bitcoinXPub;
-        walletInfo.btcAddresses = btcAddresses;
-
-        WalletStore.Instance.put(walletInfo);
-
-        const result = await walletInfo.toAccountType();
-
-        this.state = this.State.FINISHED;
-        setTimeout(() => { this.$rpc.resolve(result); }, StatusScreen.SUCCESS_REDIRECT_DELAY);
     }
 
     private mounted() {
