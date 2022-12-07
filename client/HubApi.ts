@@ -70,15 +70,17 @@ export default class HubApi<
     }
 
     private static get DEFAULT_ENDPOINT() {
-        const originArray = location.origin.split('.');
-        originArray.shift();
-        const tld = originArray.join('.');
+        const mainDomainMatch = location.hostname.match(/(?:[^.]+\.[^.]+|localhost)$/);
+        const mainDomain = mainDomainMatch ? mainDomainMatch[0] : location.hostname;
 
-        switch (tld) {
+        switch (mainDomain) {
             case 'nimiq.com':
-                return 'https://hub.nimiq.com';
             case 'nimiq-testnet.com':
-                return 'https://hub.nimiq-testnet.com';
+                return `https://hub.${mainDomain}`;
+            case 'bs-local.com':
+                // BrowserStack's localhost tunnel bs-local.com for iOS debugging in BrowserStack, see
+                // https://www.browserstack.com/docs/live/local-testing/ios-troubleshooting-guide
+                return 'http://bs-local.com:8080';
             default:
                 return 'http://localhost:8080';
         }
