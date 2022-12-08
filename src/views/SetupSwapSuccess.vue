@@ -446,6 +446,7 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
         const keyguardRequest: KeyguardSignSwapTransactionsRequest = {
             ...htlcInfo,
             swapId: this.request.swapId,
+            tmpCookieEncryptionKey: this.keyguardResult!.tmpCookieEncryptionKey,
         };
 
         const client = this.$rpc.createKeyguardClient();

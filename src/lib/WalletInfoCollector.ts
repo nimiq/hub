@@ -54,9 +54,11 @@ export default class WalletInfoCollector {
         onUpdate: (walletInfo: WalletInfo, currentlyCheckedAccounts: BasicAccountInfo[]) => void = () => {},
         skipActivityCheck = false,
         bitcoinXPub?: string,
+        keyguardCookieEncryptionKey?: Uint8Array,
     ): Promise<WalletCollectionResultKeyguard> {
         return WalletInfoCollector._collectLedgerOrBip39WalletInfo(WalletType.BIP39, initialAccounts, onUpdate,
-            skipActivityCheck, keyId, bitcoinXPub) as Promise<WalletCollectionResultKeyguard>;
+            skipActivityCheck, keyId, bitcoinXPub, keyguardCookieEncryptionKey,
+        ) as Promise<WalletCollectionResultKeyguard>;
     }
 
     public static async collectLedgerWalletInfo(
@@ -108,8 +110,7 @@ export default class WalletInfoCollector {
                         // make sure to create a keyguardClient to be able to remove the key
                         WalletInfoCollector._initializeKeyguardClient();
                     } else {
-                        // Simply return as legacy keys don't neccessarily need to be released.
-                        // Only a temporary flag in the keyguard session storage is left over by not releasing.
+                        // Simply return as legacy keys don't necessarily need to be released.
                         return;
                     }
                 }
@@ -204,6 +205,7 @@ export default class WalletInfoCollector {
         skipActivityCheck: boolean,
         keyId?: string,
         bitcoinXPub?: string,
+        keyguardCookieEncryptionKey?: Uint8Array,
     ): Promise<WalletCollectionResultKeyguard | WalletCollectionResultLedger> {
         if (walletType !== WalletType.LEDGER && walletType !== WalletType.BIP39) {
             throw new Error('Unsupported wallet type');
@@ -219,7 +221,7 @@ export default class WalletInfoCollector {
         // Kick off first round of account derivation
         let startIndex = 0;
         let derivedAccountsPromise = WalletInfoCollector._deriveAccounts(startIndex,
-            ACCOUNT_MAX_ALLOWED_ADDRESS_GAP, walletType, keyId);
+            ACCOUNT_MAX_ALLOWED_ADDRESS_GAP, walletType, keyId, keyguardCookieEncryptionKey);
 
         try {
             await loadBitcoinJS();
@@ -289,7 +291,7 @@ export default class WalletInfoCollector {
                 // implementation strictly following the specification would stop the search at index 19.
                 startIndex += ACCOUNT_MAX_ALLOWED_ADDRESS_GAP;
                 derivedAccountsPromise = WalletInfoCollector._deriveAccounts(startIndex,
-                    ACCOUNT_MAX_ALLOWED_ADDRESS_GAP, walletType, keyId);
+                    ACCOUNT_MAX_ALLOWED_ADDRESS_GAP, walletType, keyId, keyguardCookieEncryptionKey);
 
                 // Already add addresses that are in the initialAccounts
                 foundAccounts = derivedAccounts.filter((derived) =>
@@ -411,14 +413,20 @@ export default class WalletInfoCollector {
         );
     }
 
-    private static async _deriveAccounts(startIndex: number, count: number, walletType: WalletType, keyId?: string)
-        : Promise<BasicAccountInfo[]> {
+    private static async _deriveAccounts(
+        startIndex: number,
+        count: number,
+        walletType: WalletType,
+        keyId?: string,
+        keyguardCookieEncryptionKey?: Uint8Array,
+    ): Promise<BasicAccountInfo[]> {
         switch (walletType) {
             case WalletType.LEGACY:
                 throw new Error('Legacy Wallets can not derive accounts.');
             case WalletType.BIP39:
                 if (!keyId) throw new Error('keyId required for Keyguard account derivation.');
-                return WalletInfoCollector._deriveKeyguardAccounts(startIndex, count, keyId);
+                return WalletInfoCollector._deriveKeyguardAccounts(startIndex, count, keyId,
+                    keyguardCookieEncryptionKey);
             case WalletType.LEDGER:
                 return WalletInfoCollector._deriveLedgerAccounts(startIndex, count);
             default:
@@ -426,13 +434,18 @@ export default class WalletInfoCollector {
         }
     }
 
-    private static async _deriveKeyguardAccounts(startIndex: number, count: number, keyId: string)
-        : Promise<BasicAccountInfo[]> {
+    private static async _deriveKeyguardAccounts(
+        startIndex: number,
+        count: number,
+        keyId: string,
+        keyguardCookieEncryptionKey?: Uint8Array,
+    ): Promise<BasicAccountInfo[]> {
         const pathsToDerive = [];
         for (let index = startIndex; index < startIndex + count; ++index) {
             pathsToDerive.push(`${ACCOUNT_BIP32_BASE_PATH_KEYGUARD}${index}'`);
         }
-        const derivedAddresses = await WalletInfoCollector._keyguardClient!.deriveAddresses(keyId, pathsToDerive);
+        const derivedAddresses = await WalletInfoCollector._keyguardClient!.deriveAddresses(keyId, pathsToDerive,
+            keyguardCookieEncryptionKey);
         const userFriendlyAddresses = derivedAddresses.map((derivedAddress) =>
             new Nimiq.Address(derivedAddress.address).toUserFriendlyAddress());
         const accounts = [];

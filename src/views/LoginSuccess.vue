@@ -71,6 +71,7 @@ export default class LoginSuccess extends Vue {
                                     this.onUpdate.bind(this),
                                     this.keyguardResult.length === 1,
                                     keyResult.bitcoinXPub,
+                                    keyResult.tmpCookieEncryptionKey,
                                 );
                             } else {
                                 collectionResult = await WalletInfoCollector.collectLegacyWalletInfo(
