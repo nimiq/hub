@@ -661,6 +661,40 @@ class Demo {
             }
         });
 
+        document.querySelector('button#activate-usdc')!.addEventListener('click', async () => {
+            const $radio = document.querySelector('input[name="address"]:checked');
+            if (!$radio) {
+                alert('You have no account to activate USDC for, create an account first (signup)');
+                throw new Error('No account found');
+            }
+            const accountId = $radio.closest('ul')!.closest('li')!.querySelector('button')!.dataset.walletId!;
+
+            const wallet = await WalletStore.Instance.get(accountId);
+            if (!wallet) throw new Error('Account not found');
+
+            if (wallet.polygonAddresses?.length) {
+                if (!confirm('USDC support is already activated for the selected account. Do you want to clear the '
+                    + 'account\'s Polygon metadata and re-activate USDC support?')) {
+                    document.querySelector('#result')!.textContent = 'Activation cancelled';
+                    return;
+                }
+                wallet.polygonAddresses = [];
+                await WalletStore.Instance.put(wallet);
+            }
+
+            try {
+                const result = await demo.client.activatePolygon({
+                    appName: 'Hub Demos',
+                    accountId,
+                }, demo._defaultBehavior);
+                console.log('Result', result);
+                document.querySelector('#result')!.textContent = 'Activated USDC: ' + JSON.stringify(result);
+            } catch (e) {
+                console.error(e);
+                document.querySelector('#result')!.textContent = `Error: ${e.message || e}`;
+            }
+        });
+
         document.querySelector('button#list-keyguard-keys').addEventListener('click', () => demo.listKeyguard());
         document.querySelector('button#setup-legacy-accounts').addEventListener('click',
             () => demo.setupLegacyAccounts());
