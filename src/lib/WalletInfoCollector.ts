@@ -409,7 +409,6 @@ export default class WalletInfoCollector {
             new Map<string, AccountInfo>(),
             [],
             walletType,
-            false,
         );
     }
 

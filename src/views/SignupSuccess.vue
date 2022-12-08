@@ -22,6 +22,7 @@ import { i18n } from '../i18n/i18n-setup';
 import { deriveAddressesFromXPub } from '../lib/bitcoin/BitcoinUtils';
 import { loadBitcoinJS } from '../lib/bitcoin/BitcoinJSLoader';
 import { INTERNAL_INDEX, EXTERNAL_INDEX, BTC_ACCOUNT_MAX_ALLOWED_ADDRESS_GAP } from '../lib/bitcoin/BitcoinConstants';
+import { PolygonAddressInfo } from '../lib/polygon/PolygonAddressInfo';
 
 @Component({components: {SmallPage, StatusScreen, CheckmarkIcon}})
 export default class SignupSuccess extends Vue {
@@ -72,8 +73,12 @@ export default class SignupSuccess extends Vue {
             false, // keyMissing
             this.keyguardResult[0].fileExported,
             this.keyguardResult[0].wordsExported,
-            this.keyguardResult[0].bitcoinXPub,
+            bitcoinXPub,
             btcAddresses,
+            this.keyguardResult[0].polygonAddresses ? [new PolygonAddressInfo(
+                this.keyguardResult[0].polygonAddresses[0].keyPath,
+                this.keyguardResult[0].polygonAddresses[0].address,
+            )] : [],
         );
 
         await WalletStore.Instance.put(walletInfo);

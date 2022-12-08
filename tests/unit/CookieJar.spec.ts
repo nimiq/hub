@@ -59,6 +59,10 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
             balance: 10000,
         } as BtcAddressInfoEntry],
         external: [] },
+        polygonAddresses: [{
+            address: DUMMY_ADDRESS_S1,
+            path: `m/44'/699'/0'/0/0`, // Test that this path is ignored during encoding/decoding
+        }],
     },
     {
         id: '1ee3d926a49d',
@@ -90,6 +94,7 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         wordsExported: false,
         // btcXPub: undefined,
         btcAddresses: { internal: [], external: [] },
+        polygonAddresses: [],
     },
     {
         id: '2978bf29b377',
@@ -111,6 +116,7 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         fileExported: false,
         wordsExported: true,
         btcAddresses: { internal: [], external: [] },
+        polygonAddresses: [],
     },
     {
         id: '78bf29b377e7',
@@ -141,6 +147,7 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         wordsExported: true,
         // btcXPub: undefined,
         btcAddresses: { internal: [], external: [] },
+        polygonAddresses: [],
     },
     {
         id: 'a5832a3b9489',
@@ -164,6 +171,7 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         btcXPub: 'tpubD6NzVbkrYhZ4WLczPJWReQycCJdd6YVWXubbVUFnJ5KgU5MDQrD998ZJLNGbhd2pq7ZtDiPYTfJ7iBenLVQpYgSQqPjUsQeJX'
             + 'H8VQ8xA67D',
         btcAddresses: { internal: [], external: [] },
+        polygonAddresses: [],
     },
     {
         id: 'd515aa19c4f7',
@@ -194,6 +202,7 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         fileExported: true,
         wordsExported: false,
         btcAddresses: { internal: [], external: [] },
+        polygonAddresses: [],
     },
 ];
 
@@ -228,6 +237,10 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         btcXPub: 'xpub6H1LXWLaKsWFhvm6RVpEL9P4KfRZSW7abD2ttkWP3SSQvnyA8FSVqNTEcYFgJS2UaFcxupHiYkro49S8yGasTvXEYBVPamhGW'
             + '6cFJodrTHy',
         btcAddresses: { internal: [], external: [] },
+        polygonAddresses: [{
+            address: DUMMY_ADDRESS_S1,
+            path: 'not public',
+        }],
     },
     {
         id: '1ee3d926a49d',
@@ -259,6 +272,7 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         wordsExported: false,
         // btcXPub: undefined,
         btcAddresses: { internal: [], external: [] },
+        polygonAddresses: [],
     },
     {
         id: '2978bf29b377',
@@ -280,6 +294,7 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         fileExported: false,
         wordsExported: true,
         btcAddresses: { internal: [], external: [] },
+        polygonAddresses: [],
     },
     {
         id: '78bf29b377e7',
@@ -310,6 +325,7 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         wordsExported: true,
         // btcXPub: undefined,
         btcAddresses: { internal: [], external: [] },
+        polygonAddresses: [],
     },
     {
         id: 'a5832a3b9489',
@@ -333,6 +349,7 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         btcXPub: 'tpubD6NzVbkrYhZ4WLczPJWReQycCJdd6YVWXubbVUFnJ5KgU5MDQrD998ZJLNGbhd2pq7ZtDiPYTfJ7iBenLVQpYgSQqPjUsQeJX'
             + 'H8VQ8xA67D',
         btcAddresses: { internal: [], external: [] },
+        polygonAddresses: [],
     },
     {
         id: 'd515aa19c4f7',
@@ -363,6 +380,7 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         fileExported: true,
         wordsExported: false,
         btcAddresses: { internal: [], external: [] },
+        polygonAddresses: [],
     },
 ];
 
@@ -378,8 +396,9 @@ const BYTES = [
      *  wordsExported = false,
      *  hasContracts = false,
      *  hasXPub = true,
+     *  hasPolygon = true,
      */
-    0b00010001,
+    0b00110001,
     0x0f, 0xe6, 0x06, 0x7b, 0x13, 0x8f, // wallet id
     // wallet label (omitted)
     2, // number of accounts
@@ -400,6 +419,10 @@ const BYTES = [
     59, 65, 69, 112, 29, 173, 210, 22, 21, 72, 168, 176, 120, 230, 94, 158, 2, 42, 71, 20, 36, 218, 94, 101, 116, 153,
     209, 255, 81, 203, 67, 196, 116, 129, 160, 59, 30, 119, 249, 81, 254, 100, 206, 201, 245, 164, 143, 112, 17, 24,
     211, 162, 104,
+
+    // Polygon
+    1, // number of Polygon addresses
+    51, 71, 19, 87, 173, 20, 186, 75, 28, 253, 125, 148, 90, 165, 116, 22, 53, 112, 220, 196, // Polygon address
 
     // wallet 2 (LEDGER)
     75, // wallet label length (18), wallet type (3)

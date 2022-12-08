@@ -29,6 +29,7 @@ import WalletInfoCollector, { BasicAccountInfo } from '../lib/WalletInfoCollecto
 import { WalletCollectionResultKeyguard } from '../lib/WalletInfoCollector';
 import CookieHelper from '../lib/CookieHelper';
 import { ERROR_COOKIE_SPACE, WalletType } from '../lib/Constants';
+import { PolygonAddressInfo } from '../lib/polygon/PolygonAddressInfo';
 
 @Component({components: {StatusScreen, SmallPage}})
 export default class LoginSuccess extends Vue {
@@ -73,6 +74,15 @@ export default class LoginSuccess extends Vue {
                                     keyResult.bitcoinXPub,
                                     keyResult.tmpCookieEncryptionKey,
                                 );
+
+                                // Because we only use one Polygon address for now, we are not including it in the
+                                // address detection above.
+                                collectionResult.walletInfo.polygonAddresses = keyResult.polygonAddresses
+                                    ? [new PolygonAddressInfo(
+                                        keyResult.polygonAddresses[0].keyPath,
+                                        keyResult.polygonAddresses[0].address,
+                                    )]
+                                    : [];
                             } else {
                                 collectionResult = await WalletInfoCollector.collectLegacyWalletInfo(
                                     keyResult.keyId,

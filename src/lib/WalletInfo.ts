@@ -1,5 +1,6 @@
 import { AccountInfo, AccountInfoEntry } from './AccountInfo';
 import { BtcAddressInfo, BtcAddressInfoEntry } from './bitcoin/BtcAddressInfo';
+import { PolygonAddressEntry, PolygonAddressInfo } from './polygon/PolygonAddressInfo';
 import {
     ContractInfo,
     ContractInfoEntry,
@@ -31,8 +32,12 @@ export class WalletInfo {
                 .map((btcAddressInfoEntry) => BtcAddressInfo.fromObject(btcAddressInfoEntry)),
         };
 
+        const polygonAddresses = o.polygonAddresses.map(
+            (polygonAddressEntry) => PolygonAddressInfo.fromObject(polygonAddressEntry),
+        );
+
         return new WalletInfo(o.id, o.keyId, o.label, accounts, contracts, o.type,
-            o.keyMissing, o.fileExported, o.wordsExported, o.btcXPub, btcAddresses);
+            o.keyMissing, o.fileExported, o.wordsExported, o.btcXPub, btcAddresses, polygonAddresses);
     }
 
     public static async objectToAccountType(o: WalletInfoEntry): Promise<Account> {
@@ -53,6 +58,7 @@ export class WalletInfo {
                 internal: o.btcAddresses.internal.map((entry) => BtcAddressInfo.objectToBtcAddressType(entry)),
                 external: o.btcAddresses.external.map((entry) => BtcAddressInfo.objectToBtcAddressType(entry)),
             },
+            polygonAddresses: o.polygonAddresses.map((entry) => PolygonAddressInfo.objectToPolygonAddressType(entry)),
             uid: o.keyId
                 ? await makeUid(o.keyId, AddressUtils.toUserFriendlyAddress(accountInfoEntries[0].address))
                 : '',
@@ -79,6 +85,7 @@ export class WalletInfo {
             internal: [],
             external: [],
         },
+        public polygonAddresses: PolygonAddressInfo[] = [],
     ) {}
 
     public get defaultLabel(): string {
@@ -179,6 +186,7 @@ export class WalletInfo {
             accountEntries.set(userFriendlyAddress, accountInfo.toObject());
         });
         const contractEntries = this.contracts.map((contract) => contract.toObject());
+
         return {
             id: this.id,
             keyId: this.keyId,
@@ -194,6 +202,7 @@ export class WalletInfo {
                 internal: this.btcAddresses.internal.map((btcAddressInfo) => btcAddressInfo.toObject()),
                 external: this.btcAddresses.external.map((btcAddressInfo) => btcAddressInfo.toObject()),
             },
+            polygonAddresses: this.polygonAddresses.map((polygonAddressInfo) => polygonAddressInfo.toObject()),
         };
     }
 
@@ -210,6 +219,7 @@ export class WalletInfo {
                 internal: this.btcAddresses.internal.map((btcAddressInfo) => btcAddressInfo.toBtcAddressType()),
                 external: this.btcAddresses.external.map((btcAddressInfo) => btcAddressInfo.toBtcAddressType()),
             },
+            polygonAddresses: this.polygonAddresses.map((address) => address.toPolygonAddressType()),
             uid: await this.getUid(),
         };
     }
@@ -238,4 +248,5 @@ export interface WalletInfoEntry {
         internal: BtcAddressInfoEntry[],
         external: BtcAddressInfoEntry[],
     };
+    polygonAddresses: PolygonAddressEntry[];
 }

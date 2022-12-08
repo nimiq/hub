@@ -28,6 +28,7 @@ import { DEFAULT_KEY_PATH, ERROR_CANCELED } from '@/lib/Constants';
 import CookieHelper from '../lib/CookieHelper';
 import NotEnoughCookieSpace from '../components/NotEnoughCookieSpace.vue';
 import { BTC_ACCOUNT_KEY_PATH } from '../lib/bitcoin/BitcoinConstants';
+import { POLYGON_ACCOUNT_PATH } from '../lib/polygon/PolygonConstants';
 import Config from 'config';
 import CookieJar from '../lib/CookieJar';
 import { WalletStore } from '../lib/WalletStore';
@@ -87,6 +88,7 @@ export default class OnboardingSelector extends Vue {
             defaultKeyPath: DEFAULT_KEY_PATH,
             enableBackArrow: true,
             bitcoinXPubPath: BTC_ACCOUNT_KEY_PATH[Config.bitcoinAddressType][Config.bitcoinNetwork],
+            polygonAccountPath: POLYGON_ACCOUNT_PATH,
         };
         const client = this.$rpc.createKeyguardClient();
         client.create(request);
@@ -98,6 +100,7 @@ export default class OnboardingSelector extends Vue {
             requestedKeyPaths: [DEFAULT_KEY_PATH],
             enableBackArrow: true,
             bitcoinXPubPath: BTC_ACCOUNT_KEY_PATH[Config.bitcoinAddressType][Config.bitcoinNetwork],
+            polygonAccountPath: POLYGON_ACCOUNT_PATH,
         };
         const client = this.$rpc.createKeyguardClient();
         client.import(request);
