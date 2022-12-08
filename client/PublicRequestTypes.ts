@@ -447,6 +447,7 @@ export interface Account {
         internal: string[],
         external: string[],
     };
+    polygonAddresses: string[];
     uid: string;
 }
 

@@ -28,7 +28,9 @@ class CookieJar {
         + 63 // address label (not included if default label, but not checked during renaming)
         + 20 // address
         +  1 // xpub type
-        + 78 // xpub length
+        + 78 // xpub
+        +  1 // number of Polygon addresses
+        + 20 // Polygon address
     ;
 
     public static XPUB_TYPES = [
@@ -87,6 +89,7 @@ class CookieJar {
             const dummyAddressHumanReadable = 'NQ86 6D3H 6MVD 2JV4 N77V FNA5 M9BL 2QSP 1P64';
             const dummyAddressSerialized = new Uint8Array([51, 71, 19, 87, 173, 20, 186, 75, 28, 253, 125,
                                                            148, 90, 165, 116, 22, 53, 112, 220, 196]);
+
             const dummyWallet = {
                 id: '0fe6067b138f',
                 keyId: 'D+YGexOP0yDjr3Uf6WwO9a2/WjhNbZFLrRwdLfuvz9c=',
@@ -108,6 +111,10 @@ class CookieJar {
                 wordsExported: false,
                 btcXPub: 'xpub6H1LXWLaKsWFhvm6RVpEL9P4KfRZSW7abD2ttkWP3SSQvnyA8FSVqNTEcYFgJS2UaFcxupHiYkro49S8yGasTvXEYBVPamhGW6cFJodrTHy',
                 btcAddresses: { internal: [], external: [] },
+                polygonAddresses: [{
+                    path: 'm/44\'/699\'/0\'/0/0',
+                    address: dummyAddressSerialized,
+                }],
             };
             sizeNeeded += this.encodeWallet(dummyWallet).length;
         } else {
@@ -190,6 +197,7 @@ class CookieJar {
                 | (wallet.wordsExported ? CookieJar.StatusFlags.WORDS_EXPORTED : CookieJar.StatusFlags.NONE)
                 | (wallet.contracts.length ? CookieJar.StatusFlags.HAS_CONTRACTS : CookieJar.StatusFlags.NONE)
                 | (wallet.btcXPub ? CookieJar.StatusFlags.HAS_XPUB : CookieJar.StatusFlags.NONE)
+                | (wallet.polygonAddresses.length ? CookieJar.StatusFlags.HAS_POLYGON : CookieJar.StatusFlags.NONE)
         ;
         bytes.push(statusByte);
 
@@ -238,6 +246,16 @@ class CookieJar {
         this.encodeContracts(wallet.contracts, bytes);
 
         this.encodeXPub(wallet.btcXPub, bytes);
+
+        if (wallet.polygonAddresses.length) {
+            // Encode number of Polygon addresses
+            bytes.push(wallet.polygonAddresses.length);
+
+            // Encode Polygon addresses
+            for (const polygonAddress of wallet.polygonAddresses) {
+                bytes.push.apply(bytes, Array.from(polygonAddress.address));
+            }
+        }
 
         return bytes;
     }
@@ -330,6 +348,7 @@ namespace CookieJar {
         WORDS_EXPORTED = 1 << 2,
         HAS_CONTRACTS  = 1 << 3,
         HAS_XPUB       = 1 << 4,
+        HAS_POLYGON    = 1 << 5,
     }
 }
 

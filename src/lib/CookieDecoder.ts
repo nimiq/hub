@@ -15,6 +15,7 @@ import {
 import { ContractInfoEntry, VestingContractInfoEntry } from './ContractInfo';
 import AddressUtils from './AddressUtils';
 import { encodeBase58 } from './bitcoin/Base58';
+import { PolygonAddressEntry } from './polygon/PolygonAddressInfo';
 
 export class CookieDecoder {
     public static decode(str: string): WalletInfoEntry[] {
@@ -58,16 +59,12 @@ export class CookieDecoder {
 
         // Status byte
         const statusByte = this.readByte(bytes);
-        const keyMissing =
-            (statusByte & CookieJar.StatusFlags.KEY_MISSING) === CookieJar.StatusFlags.KEY_MISSING;
-        const fileExported =
-            (statusByte & CookieJar.StatusFlags.FILE_EXPORTED) === CookieJar.StatusFlags.FILE_EXPORTED;
-        const wordsExported =
-            (statusByte & CookieJar.StatusFlags.WORDS_EXPORTED) === CookieJar.StatusFlags.WORDS_EXPORTED;
-        const hasContracts =
-            (statusByte & CookieJar.StatusFlags.HAS_CONTRACTS) === CookieJar.StatusFlags.HAS_CONTRACTS;
-        const hasXPub =
-            (statusByte & CookieJar.StatusFlags.HAS_XPUB) === CookieJar.StatusFlags.HAS_XPUB;
+        const keyMissing = (statusByte & CookieJar.StatusFlags.KEY_MISSING) > 0;
+        const fileExported = (statusByte & CookieJar.StatusFlags.FILE_EXPORTED) > 0;
+        const wordsExported = (statusByte & CookieJar.StatusFlags.WORDS_EXPORTED) > 0;
+        const hasContracts = (statusByte & CookieJar.StatusFlags.HAS_CONTRACTS) > 0;
+        const hasXPub = (statusByte & CookieJar.StatusFlags.HAS_XPUB) > 0;
+        const hasPolygon = (statusByte & CookieJar.StatusFlags.HAS_POLYGON) > 0;
 
         // Wallet ID
         let id: string = '';
@@ -95,6 +92,7 @@ export class CookieDecoder {
                 fileExported,
                 wordsExported,
                 btcAddresses: { internal: [], external: [] },
+                polygonAddresses: [],
             };
 
             return walletInfoEntry;
@@ -110,6 +108,8 @@ export class CookieDecoder {
         const contracts = hasContracts ? this.decodeContracts(bytes) : [];
 
         const btcXPub = hasXPub ? this.decodeXPub(bytes) : undefined;
+
+        const polygonAddresses = hasPolygon ? this.decodePolygonAddresses(bytes) : [];
 
         const firstAccount = accounts.values().next().value;
         const walletLabel = walletLabelBytes.length > 0
@@ -130,6 +130,7 @@ export class CookieDecoder {
             wordsExported,
             btcXPub,
             btcAddresses: { internal: [], external: [] },
+            polygonAddresses,
         };
 
         return walletInfoEntry;
@@ -245,6 +246,19 @@ export class CookieDecoder {
         const prefixBytes = prefix.match(/.{2}/g)!.map((byte) => parseInt(byte, 16));
 
         return encodeBase58(prefixBytes.concat(xpubBytes));
+    }
+
+    private static decodePolygonAddresses(bytes: number[]): PolygonAddressEntry[] {
+        const numberOfAddresses = this.readByte(bytes);
+        const entries: PolygonAddressEntry[] = [];
+        for (let i = 0; i < numberOfAddresses; i++) {
+            const serialized = new Uint8Array(this.readBytes(bytes, 20));
+            entries.push({
+                path: 'not public',
+                address: serialized,
+            });
+        }
+        return entries;
     }
 
     private static legacyCookie(version: number, bytes: number[]): WalletInfoEntry[] {
