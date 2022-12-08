@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "esnext",
+    "target": "es2019", // Highest version supported by Webpack 4
     "module": "esnext",
     "strict": true,
     "jsx": "preserve",
@@ -23,15 +23,7 @@
       "config": [
         "src/config/config.local.ts"
       ]
-    },
-    "lib": [
-      "es2017",
-      "esnext",
-      "dom",
-      "dom.iterable",
-      "scripthost",
-      "esnext.bigint"
-    ]
+    }
   },
   "include": [
     "types/Nimiq.d.ts",
