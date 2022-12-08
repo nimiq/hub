@@ -197,7 +197,7 @@ class CookieJar {
                 | (wallet.wordsExported ? CookieJar.StatusFlags.WORDS_EXPORTED : CookieJar.StatusFlags.NONE)
                 | (wallet.contracts.length ? CookieJar.StatusFlags.HAS_CONTRACTS : CookieJar.StatusFlags.NONE)
                 | (wallet.btcXPub ? CookieJar.StatusFlags.HAS_XPUB : CookieJar.StatusFlags.NONE)
-                | (wallet.polygonAddresses.length ? CookieJar.StatusFlags.HAS_POLYGON : CookieJar.StatusFlags.NONE)
+                | (wallet.polygonAddresses?.length ? CookieJar.StatusFlags.HAS_POLYGON : CookieJar.StatusFlags.NONE)
         ;
         bytes.push(statusByte);
 
@@ -247,7 +247,7 @@ class CookieJar {
 
         this.encodeXPub(wallet.btcXPub, bytes);
 
-        if (wallet.polygonAddresses.length) {
+        if (wallet.polygonAddresses?.length) {
             // Encode number of Polygon addresses
             bytes.push(wallet.polygonAddresses.length);
 

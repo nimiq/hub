@@ -25,6 +25,9 @@ export class WalletInfo {
         // Polyfill BTC address lists for pre-BTC wallets
         if (!o.btcAddresses) o.btcAddresses = { internal: [], external: [] };
 
+        // Polyfill Polygon address list for pre-Polygon wallets
+        if (!o.polygonAddresses) o.polygonAddresses = [];
+
         const btcAddresses = {
             internal: o.btcAddresses.internal
                 .map((btcAddressInfoEntry) => BtcAddressInfo.fromObject(btcAddressInfoEntry)),
@@ -43,6 +46,9 @@ export class WalletInfo {
     public static async objectToAccountType(o: WalletInfoEntry): Promise<Account> {
         // Polyfill BTC address lists for pre-BTC wallets
         if (!o.btcAddresses) o.btcAddresses = { internal: [], external: [] };
+
+        // Polyfill Polygon address list for pre-Polygon wallets
+        if (!o.polygonAddresses) o.polygonAddresses = [];
 
         const accountInfoEntries = Array.from(o.accounts.values());
 
@@ -244,9 +250,9 @@ export interface WalletInfoEntry {
     fileExported: boolean;
     wordsExported: boolean;
     btcXPub?: string;
-    btcAddresses: {
+    btcAddresses?: {
         internal: BtcAddressInfoEntry[],
         external: BtcAddressInfoEntry[],
     };
-    polygonAddresses: PolygonAddressEntry[];
+    polygonAddresses?: PolygonAddressEntry[];
 }
