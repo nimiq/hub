@@ -29,6 +29,7 @@ export enum RequestType {
     SIGN_BTC_TRANSACTION = 'sign-btc-transaction',
     ADD_BTC_ADDRESSES = 'add-btc-addresses',
     ACTIVATE_BITCOIN = 'activate-bitcoin',
+    ACTIVATE_POLYGON = 'activate-polygon',
     SETUP_SWAP = 'setup-swap',
     REFUND_SWAP = 'refund-swap',
 }
@@ -604,6 +605,7 @@ export type ResultByRequestType<T> =
     T extends RequestType.CREATE_CASHLINK | RequestType.MANAGE_CASHLINK ? Cashlink :
     T extends RequestType.SIGN_BTC_TRANSACTION ? SignedBtcTransaction :
     T extends RequestType.ACTIVATE_BITCOIN ? Account :
+    T extends RequestType.ACTIVATE_POLYGON ? Account :
     T extends RequestType.ADD_BTC_ADDRESSES ? AddBtcAddressesResult :
     T extends RequestType.SETUP_SWAP ? SetupSwapResult :
     never;

@@ -84,6 +84,7 @@ export default class RpcApi {
             RequestType.CHOOSE_ADDRESS,
             RequestType.SIGN_BTC_TRANSACTION,
             RequestType.ACTIVATE_BITCOIN,
+            RequestType.ACTIVATE_POLYGON,
             RequestType.SETUP_SWAP,
             RequestType.REFUND_SWAP,
         ]);
@@ -98,6 +99,7 @@ export default class RpcApi {
             KeyguardCommand.SIGN_MESSAGE,
             KeyguardCommand.SIGN_BTC_TRANSACTION,
             KeyguardCommand.DERIVE_BTC_XPUB,
+            KeyguardCommand.DERIVE_POLYGON_ADDRESS,
             KeyguardCommand.SIGN_SWAP,
         ]);
 

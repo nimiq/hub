@@ -74,6 +74,9 @@ const ActivateBitcoinSuccess  = () => import(/*webpackChunkName: "activate-btc"*
 const ActivateBitcoinLedger = () => import(/*webpackChunkName: "activate-btc-ledger"*/
     './views/ActivateBitcoinLedger.vue');
 
+const ActivatePolygon         = () => import(/*webpackChunkName: "activate-polygon"*/ './views/ActivatePolygon.vue');
+const ActivatePolygonSuccess  = () => import(/*webpackChunkName: "activate-polygon"*/ './views/ActivatePolygonSuccess.vue');
+
 const SetupSwap               = () => import(/*webpackChunkName: "swap"*/ './views/SetupSwap.vue');
 const SetupSwapSuccess        = () => import(/*webpackChunkName: "swap"*/ './views/SetupSwapSuccess.vue');
 const RefundSwap              = () => import(/*webpackChunkName: "swap"*/ './views/RefundSwap.vue');
@@ -120,6 +123,8 @@ export function keyguardResponseRouter(
             resolve = `${originalRequestType}-success`; break;
         case KeyguardCommand.DERIVE_BTC_XPUB:
             resolve = `${RequestType.ACTIVATE_BITCOIN}-success`; break;
+        case KeyguardCommand.DERIVE_POLYGON_ADDRESS:
+            resolve = `${RequestType.ACTIVATE_POLYGON}-success`; break;
         case KeyguardCommand.SIGN_SWAP:
             resolve = `${RequestType.SETUP_SWAP}-success`; break;
         default:
@@ -339,6 +344,16 @@ export default new Router({
             path: `/${RequestType.ACTIVATE_BITCOIN}/ledger`,
             component: ActivateBitcoinLedger,
             name: `${RequestType.ACTIVATE_BITCOIN}-ledger`,
+        },
+        {
+            path: `/${RequestType.ACTIVATE_POLYGON}`,
+            component: ActivatePolygon,
+            name: RequestType.ACTIVATE_POLYGON,
+        },
+        {
+            path: `/${RequestType.ACTIVATE_POLYGON}/success`,
+            component: ActivatePolygonSuccess,
+            name: `${RequestType.ACTIVATE_POLYGON}-success`,
         },
         {
             path: `/${RequestType.SETUP_SWAP}`,
