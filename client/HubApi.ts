@@ -80,7 +80,7 @@ export default class HubApi<
             case 'bs-local.com':
                 // BrowserStack's localhost tunnel bs-local.com for iOS debugging in BrowserStack, see
                 // https://www.browserstack.com/docs/live/local-testing/ios-troubleshooting-guide
-                return 'http://bs-local.com:8080';
+                return `${window.location.protocol}//bs-local.com:8080`;
             default:
                 return 'http://localhost:8080';
         }
