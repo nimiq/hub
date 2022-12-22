@@ -582,6 +582,11 @@ export interface SignPolygonTransactionRequest extends BasicRequest {
     gasLimit: number;
     maxFeePerGas: number;
     maxPriorityFeePerGas: number;
+    /**
+     * The sender's nonce in the token contract, required when calling the
+     * contract function `executeWithApproval`.
+     */
+    tokenApprovalNonce?: number;
 }
 
 export interface SignedPolygonTransaction {
