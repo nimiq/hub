@@ -590,8 +590,8 @@ export interface SignPolygonTransactionRequest extends BasicRequest {
 }
 
 export interface SignedPolygonTransaction {
-    serializedTx: string; // HEX
-    hash: string; // HEX
+    message: Record<string, any>;
+    signature: string; // HEX
 }
 
 export type RpcRequest = SignTransactionRequest

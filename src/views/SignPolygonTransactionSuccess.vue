@@ -12,8 +12,8 @@ export default class SignPolygonTransactionSuccess extends Vue {
 
     private async mounted() {
         const result: SignedPolygonTransaction = {
-            serializedTx: this.keyguardResult.raw,
-            hash: this.keyguardResult.transactionHash,
+            message: this.keyguardResult.message,
+            signature: this.keyguardResult.signature,
         };
 
         this.$rpc.resolve(result);
