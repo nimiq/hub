@@ -53,7 +53,9 @@ export function decodeBase58(text: string): number[] {
     while (i < text.length) {
         const c = text[i];
         if (!(c in ALPHABET_MAP)) {
-            throw new Error('Base58.decode received unacceptable input. Character \'' + c + '\' is not in the Base58 alphabet.');
+            throw new Error(
+                'Base58.decode received unacceptable input. Character \'' + c + '\' is not in the Base58 alphabet.',
+            );
         }
         let j = 0;
         while (j < bytes.length) {

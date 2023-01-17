@@ -109,6 +109,7 @@ class CookieJar {
                 keyMissing: true,
                 fileExported: false,
                 wordsExported: false,
+                // tslint:disable-next-line:max-line-length
                 btcXPub: 'xpub6H1LXWLaKsWFhvm6RVpEL9P4KfRZSW7abD2ttkWP3SSQvnyA8FSVqNTEcYFgJS2UaFcxupHiYkro49S8yGasTvXEYBVPamhGW6cFJodrTHy',
                 btcAddresses: { internal: [], external: [] },
                 polygonAddresses: [{

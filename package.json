@@ -58,6 +58,7 @@
         "buffer": "5.6.0",
         "common-shakeify": "^0.6.2",
         "copy-webpack-plugin": "^4.5.2",
+        "dtslint": "^4.2.1",
         "fake-indexeddb": "^2.0.5",
         "jest": "^24.1.0",
         "script-ext-html-webpack-plugin": "^2.1.4",
