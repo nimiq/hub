@@ -19,7 +19,10 @@ async function main() {
         const $li = document.createElement('li');
 
         const $p = document.createElement('p');
-        $p.textContent = `${entry.value / 1e5} NIM - ${new Date(entry.timestamp * 1e3).toDateString()}${entry.message ? ` - ${entry.message}` : ''}`;
+        $p.textContent = `
+            ${entry.value / 1e5} NIM -
+            ${new Date(entry.timestamp * 1e3).toDateString()}${entry.message ? ` - ${entry.message}` : ''}
+        `;
         $li.appendChild($p);
 
         const $a = document.createElement('a');

@@ -38,6 +38,7 @@ export default class ActivateBitcoin extends Vue {
                 // Dummy xpub, to test space in cookie
                 const walletInfoEntry = {
                     ...walletInfo.toObject(),
+                    // tslint:disable-next-line:max-line-length
                     btcXPub: 'xpub6H1LXWLaKsWFhvm6RVpEL9P4KfRZSW7abD2ttkWP3SSQvnyA8FSVqNTEcYFgJS2UaFcxupHiYkro49S8yGasTvXEYBVPamhGW6cFJodrTHy',
                 };
 

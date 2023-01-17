@@ -3,6 +3,7 @@ import { encodeBase58, decodeBase58 } from '../../src/lib/bitcoin/Base58';
 
 setup();
 
+// tslint:disable:max-line-length
 const VECTORS = [
     // From https://github.com/bitcoin/bitcoin/blob/master/src/test/data/base58_encode_decode.json
     ['', ''],
@@ -28,6 +29,7 @@ const VECTORS = [
     ['0488b21e02944aacd000000000d3ee452c90cf42f9e070433301d078cd2b47611dcf6981127020b9fed63bedba03e3e9319a43c574b284fc9797531233278b43b740576cd2cc67c7b316adeb6c409565f5ef', 'xpub6ArrMKgs6b4KxXe72Azj8g8fuoUYhFCytFHh5EqyWSzvrsHH4kLLFhRe1k2QMki9qp5TzE88f7Es8YgjAfPywpw3ZUY4XjBoajSashdz42a'],
     ['0488b21e037527852d80000000ca3d7a2939c2cd9bc2f546de7e0240795920fc3b3d00c91a3092941e88f6ef03024385f9ff0634fec2265501cefe9611b979c3a25eed349b4fd94e70ca2209d75c89e6d789', 'xpub6CWiJoiwxPQni3DFbrQNHWq8kwrL2J1HuBN7zm4xKPCZRmEshc7Dojz4zMah7E4o2GEEbD6HgfG7sQid186Fw9x9akMNKw2mu1PjqacTJB2'],
 ];
+// tslint:enable:max-line-length
 
 describe('Base58', () => {
     it('can correctly encode bytes into base58', () => {

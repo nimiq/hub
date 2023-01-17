@@ -75,7 +75,8 @@ const ActivateBitcoinLedger = () => import(/*webpackChunkName: "activate-btc-led
     './views/ActivateBitcoinLedger.vue');
 
 const ActivatePolygon         = () => import(/*webpackChunkName: "activate-polygon"*/ './views/ActivatePolygon.vue');
-const ActivatePolygonSuccess  = () => import(/*webpackChunkName: "activate-polygon"*/ './views/ActivatePolygonSuccess.vue');
+const ActivatePolygonSuccess  = () => import(/*webpackChunkName: "activate-polygon"*/
+    './views/ActivatePolygonSuccess.vue');
 const SignPolygonTransaction        = () => import(/*webpackChunkName: "sign-polygon-transaction"*/
     './views/SignPolygonTransaction.vue');
 const SignPolygonTransactionSuccess = () => import(/*webpackChunkName: "sign-polygon-transaction"*/
