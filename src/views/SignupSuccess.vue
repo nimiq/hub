@@ -89,7 +89,7 @@ export default class SignupSuccess extends Vue {
         // Artificially delay, to display loading status
         await new Promise((res) => setTimeout(res, 2000));
 
-        this.title = this.$t('Welcome to the\nNimiq Blockchain.') as string;
+        this.title = this.$t('Welcome to the\nNimiq Wallet') as string;
         this.state = StatusScreen.State.SUCCESS;
 
         const result: Account[] = [await walletInfo.toAccountType()];

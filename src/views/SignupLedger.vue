@@ -109,7 +109,7 @@ export default class SignupLedger extends Vue {
             case SignupLedger.State.FINISHED:
                 return this.hadAccounts
                     ? this.$t('You\'re logged in!') as string
-                    : this.$t('Welcome to the Nimiq Blockchain.') as string;
+                    : this.$t('Welcome to the\nNimiq Wallet') as string;
             default:
                 return '';
         }
