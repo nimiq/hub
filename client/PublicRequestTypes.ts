@@ -1,3 +1,5 @@
+import type { RelayRequest } from '@opengsn/common/dist/EIP712/RelayRequest';
+
 import {
     NimiqSpecifics,
     NimiqDirectPaymentOptions,
@@ -566,22 +568,8 @@ export interface AddBtcAddressesResult {
  * Polygon
  */
 
-export interface SignPolygonTransactionRequest extends BasicRequest {
+export interface SignPolygonTransactionRequest extends BasicRequest, RelayRequest {
     recipientLabel?: string;
-    from: string;
-    to: string;
-    nonce: number;
-    data: Uint8Array | string;
-    value: number;
-    chainId: number;
-    type: 2;
-    accessList?: Array<{
-        address: string;
-        storageKeys: string[];
-    }>;
-    gasLimit: number;
-    maxFeePerGas: number;
-    maxPriorityFeePerGas: number;
     /**
      * The sender's nonce in the token contract, required when calling the
      * contract function `executeWithApproval`.
