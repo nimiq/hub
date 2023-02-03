@@ -351,7 +351,7 @@ export default class RpcApi {
             } else if (requestType === RequestType.SIGN_POLYGON_TRANSACTION) {
                 accountRequired = true;
                 const parsedSignPolygonTransactionRequest = request as ParsedSignPolygonTransactionRequest;
-                const address = parsedSignPolygonTransactionRequest.from;
+                const address = parsedSignPolygonTransactionRequest.request.from;
                 account = this._store.getters.findWalletByPolygonAddress(address);
             }
             if (accountRequired && !account) {

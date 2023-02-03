@@ -20,10 +20,10 @@ export default class SignPolygonTransaction extends Vue {
         let keyPath: string;
         let keyLabel: string;
 
-        if (typeof this.request.from === 'string') {
+        if (typeof this.request.request.from === 'string') {
             // existence checked in RpcApi
-            const senderAccount = this.findWalletByPolygonAddress(this.request.from)!;
-            const signer = senderAccount.polygonAddresses.find((ai) => ai.address === this.request.from)!;
+            const senderAccount = this.findWalletByPolygonAddress(this.request.request.from)!;
+            const signer = senderAccount.polygonAddresses.find((ai) => ai.address === this.request.request.from)!;
 
             keyId = senderAccount.keyId;
             keyPath = signer.path;
@@ -33,7 +33,7 @@ export default class SignPolygonTransaction extends Vue {
                 signerKeyId: keyId,
                 signerKeyPath: keyPath,
                 walletLabel: keyLabel,
-            } = this.request.from);
+            } = this.request.request.from);
         }
 
         const request: KeyguardClient.SignPolygonTransactionRequest = {

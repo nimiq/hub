@@ -1,3 +1,4 @@
+import type { RelayRequest } from '@opengsn/common/dist/EIP712/RelayRequest';
 import type { Currency, PaymentType, RequestType, CashlinkTheme } from '../../client/PublicRequestTypes';
 import type { ParsedPaymentOptions } from './paymentOptions/ParsedPaymentOptions';
 import type { ParsedNimiqSpecifics, ParsedNimiqDirectPaymentOptions } from './paymentOptions/NimiqPaymentOptions';
@@ -149,22 +150,9 @@ export interface ParsedAddBtcAddressesRequest extends ParsedSimpleRequest {
  * Polygon
  */
 
-export interface ParsedSignPolygonTransactionRequest extends ParsedBasicRequest {
+export interface ParsedSignPolygonTransactionRequest extends ParsedBasicRequest, RelayRequest {
     recipientLabel?: string;
-    from: string;
-    to: string;
-    nonce: number;
-    data: Uint8Array | string;
-    value: number;
-    chainId: number;
-    type: 2;
-    accessList?: Array<{
-        address: string;
-        storageKeys: string[];
-    }>;
-    gasLimit: number;
-    maxFeePerGas: number;
-    maxPriorityFeePerGas: number;
+    tokenApprovalNonce?: number;
 }
 
 /**
