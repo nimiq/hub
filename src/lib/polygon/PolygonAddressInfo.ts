@@ -1,7 +1,6 @@
-import { bytesToHex } from '@nimiq/electrum-client/electrum-ws/helpers';
 import { utils } from 'ethers';
 
-const { getAddress } = utils;
+const { getAddress, hexlify } = utils;
 
 export class PolygonAddressInfo {
     public static fromObject(o: PolygonAddressEntry): PolygonAddressInfo {
@@ -13,7 +12,7 @@ export class PolygonAddressInfo {
     }
 
     public static objectToPolygonAddressType(o: PolygonAddressEntry): string {
-        return getAddress(`0x${bytesToHex(o.address)}`);
+        return getAddress(hexlify(o.address));
     }
 
     public constructor(

@@ -76,6 +76,10 @@ const ActivateBitcoinLedger = () => import(/*webpackChunkName: "activate-btc-led
 
 const ActivatePolygon         = () => import(/*webpackChunkName: "activate-polygon"*/ './views/ActivatePolygon.vue');
 const ActivatePolygonSuccess  = () => import(/*webpackChunkName: "activate-polygon"*/ './views/ActivatePolygonSuccess.vue');
+const SignPolygonTransaction        = () => import(/*webpackChunkName: "sign-polygon-transaction"*/
+    './views/SignPolygonTransaction.vue');
+const SignPolygonTransactionSuccess = () => import(/*webpackChunkName: "sign-polygon-transaction"*/
+'./views/SignPolygonTransactionSuccess.vue');
 
 const SetupSwap               = () => import(/*webpackChunkName: "swap"*/ './views/SetupSwap.vue');
 const SetupSwapSuccess        = () => import(/*webpackChunkName: "swap"*/ './views/SetupSwapSuccess.vue');
@@ -125,6 +129,8 @@ export function keyguardResponseRouter(
             resolve = `${RequestType.ACTIVATE_BITCOIN}-success`; break;
         case KeyguardCommand.DERIVE_POLYGON_ADDRESS:
             resolve = `${RequestType.ACTIVATE_POLYGON}-success`; break;
+        case KeyguardCommand.SIGN_POLYGON_TRANSACTION:
+            resolve = `${RequestType.SIGN_POLYGON_TRANSACTION}-success`; break;
         case KeyguardCommand.SIGN_SWAP:
             resolve = `${RequestType.SETUP_SWAP}-success`; break;
         default:
@@ -354,6 +360,16 @@ export default new Router({
             path: `/${RequestType.ACTIVATE_POLYGON}/success`,
             component: ActivatePolygonSuccess,
             name: `${RequestType.ACTIVATE_POLYGON}-success`,
+        },
+        {
+            path: `/${RequestType.SIGN_POLYGON_TRANSACTION}`,
+            component: SignPolygonTransaction,
+            name: RequestType.SIGN_POLYGON_TRANSACTION,
+        },
+        {
+            path: `/${RequestType.SIGN_POLYGON_TRANSACTION}/success`,
+            component: SignPolygonTransactionSuccess,
+            name: `${RequestType.SIGN_POLYGON_TRANSACTION}-success`,
         },
         {
             path: `/${RequestType.SETUP_SWAP}`,

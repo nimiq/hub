@@ -125,6 +125,9 @@ const store: StoreOptions<RootState> = {
                 return contract.address.toUserFriendlyAddress() === address;
             }));
         },
+        findWalletByPolygonAddress: (state) => (address: string): WalletInfo | undefined => {
+            return state.wallets.find((wallet) => wallet.polygonAddresses.some((ai) => ai.address === address));
+        },
         findWalletByKeyId: (state) => (keyId: string): WalletInfo | undefined => {
             return state.wallets.find((wallet) => wallet.keyId === keyId);
         },
