@@ -5,7 +5,8 @@ index 9b5a2d0..9bf7b4a 100644
 @@ -1,5 +1,5 @@
  /// <reference types="node" />
 -import EventEmitter from "events";
+-import type { DeviceModel } from "@ledgerhq/devices";
 +import { EventEmitter } from "events";
- import type { DeviceModel } from "@ledgerhq/devices";
++import { DeviceModel } from "@ledgerhq/devices";
  import { TransportError, StatusCodes, getAltStatusMessage, TransportStatusError } from "@ledgerhq/errors";
  export { TransportError, TransportStatusError, StatusCodes, getAltStatusMessage, };
