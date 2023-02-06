@@ -4,7 +4,7 @@ import { SmallPage } from '@nimiq/vue-components';
 import BitcoinSyncBaseView from './BitcoinSyncBaseView.vue';
 import StatusScreen from '../components/StatusScreen.vue';
 import GlobalClose from '../components/GlobalClose.vue';
-import { RequestType } from '../lib/PublicRequestTypes';
+import { RequestType } from '../../client/PublicRequestTypes';
 import { ParsedSignBtcTransactionRequest } from '../lib/RequestTypes';
 import { Static } from '../lib/StaticStore';
 import { WalletInfo } from '../lib/WalletInfo';

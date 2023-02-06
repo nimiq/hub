@@ -77,7 +77,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { Static } from '../lib/StaticStore';
-import { Cashlink as PublicCashlink } from '../lib/PublicRequestTypes';
+import { Cashlink as PublicCashlink } from '../../client/PublicRequestTypes';
 import { ParsedCreateCashlinkRequest, ParsedManageCashlinkRequest } from '../lib/RequestTypes';
 import {
     CloseButton,

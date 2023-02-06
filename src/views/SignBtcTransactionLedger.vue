@@ -64,8 +64,8 @@ import LedgerApi, {
     TransactionInfoBitcoin as LedgerBitcoinTransactionInfo,
     RequestTypeBitcoin as LedgerApiRequestType,
 } from '@nimiq/ledger-api';
-import { RequestType } from '../lib/PublicRequestTypes';
-import { SignedBtcTransaction } from '../lib/PublicRequestTypes';
+import { RequestType } from '../../client/PublicRequestTypes';
+import { SignedBtcTransaction } from '../../client/PublicRequestTypes';
 import { ERROR_CANCELED } from '../lib/Constants';
 import { WalletInfo } from '../lib/WalletInfo';
 import { loadBitcoinJS } from '../lib/bitcoin/BitcoinJSLoader';

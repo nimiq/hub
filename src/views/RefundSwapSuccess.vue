@@ -9,7 +9,7 @@ import KeyguardClient from '@nimiq/keyguard-client';
 import { SwapAsset } from '@nimiq/fastspot-api';
 import Network from '../components/Network.vue';
 import { ParsedRefundSwapRequest } from '../lib/RequestTypes';
-import { SignedBtcTransaction, SignedTransaction } from '../lib/PublicRequestTypes';
+import { SignedBtcTransaction, SignedTransaction } from '../../client/PublicRequestTypes';
 import { Static } from '../lib/StaticStore';
 import patchMerkleTree from '../lib/MerkleTreePatch';
 

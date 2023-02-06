@@ -11,7 +11,7 @@ import {
     RequestType,
     AddBtcAddressesRequest,
     AddBtcAddressesResult,
-} from './lib/PublicRequestTypes';
+} from '../client/PublicRequestTypes';
 import Cashlink from './lib/Cashlink';
 import { CashlinkStore } from './lib/CashlinkStore';
 import { loadBitcoinJS } from './lib/bitcoin/BitcoinJSLoader';

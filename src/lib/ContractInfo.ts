@@ -1,4 +1,4 @@
-import { VestingContract, HashedTimeLockedContract, Contract } from './PublicRequestTypes';
+import { VestingContract, HashedTimeLockedContract, Contract } from '../../client/PublicRequestTypes';
 import AddressUtils from './AddressUtils';
 import { labelAddress } from './LabelingMachine';
 

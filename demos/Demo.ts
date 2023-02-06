@@ -16,7 +16,7 @@ import {
     CashlinkTheme,
     RequestType,
     SetupSwapRequest,
-} from '../src/lib/PublicRequestTypes';
+} from '../client/PublicRequestTypes';
 import { RedirectRequestBehavior, PopupRequestBehavior } from '../client/RequestBehavior';
 import { Utf8Tools } from '@nimiq/utils';
 import { WalletType } from '../src/lib/Constants';

@@ -39,7 +39,7 @@ import {
     SignBtcTransactionRequest,
     SignedTransaction,
     SignedBtcTransaction,
-} from '../lib/PublicRequestTypes';
+} from '../../client/PublicRequestTypes';
 import {
     ParsedRefundSwapRequest,
     ParsedSignTransactionRequest,

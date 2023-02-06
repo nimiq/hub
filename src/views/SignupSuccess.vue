@@ -14,7 +14,7 @@ import { WalletInfo } from '../lib/WalletInfo';
 import { WalletType } from '../lib/Constants';
 import { State, Action } from 'vuex-class';
 import { WalletStore } from '@/lib/WalletStore';
-import { Account } from '../lib/PublicRequestTypes';
+import { Account } from '../../client/PublicRequestTypes';
 import StatusScreen from '@/components/StatusScreen.vue';
 import KeyguardClient from '@nimiq/keyguard-client';
 import { labelAddress, labelKeyguardAccount } from '@/lib/LabelingMachine';

@@ -1,4 +1,4 @@
-import type { Currency, PaymentType, RequestType, CashlinkTheme } from './PublicRequestTypes';
+import type { Currency, PaymentType, RequestType, CashlinkTheme } from '../../client/PublicRequestTypes';
 import type { ParsedPaymentOptions } from './paymentOptions/ParsedPaymentOptions';
 import type { ParsedNimiqSpecifics, ParsedNimiqDirectPaymentOptions } from './paymentOptions/NimiqPaymentOptions';
 import type { ParsedEtherSpecifics, ParsedEtherDirectPaymentOptions } from './paymentOptions/EtherPaymentOptions';

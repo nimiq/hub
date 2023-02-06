@@ -40,7 +40,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { AccountRing, PageBody, PageHeader, SmallPage } from '@nimiq/vue-components';
-import { Account } from '../lib/PublicRequestTypes';
+import { Account } from '../../client/PublicRequestTypes';
 import LedgerApi, {
     RequestTypeNimiq as LedgerApiRequestType,
     StateType as LedgerApiStateType,

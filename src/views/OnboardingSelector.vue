@@ -22,7 +22,7 @@ import { State as RpcState } from '@nimiq/rpc';
 import GlobalClose from '../components/GlobalClose.vue';
 import OnboardingMenu from '../components/OnboardingMenu.vue';
 import { ParsedOnboardRequest } from '@/lib/RequestTypes';
-import { RequestType } from '@/lib/PublicRequestTypes';
+import { RequestType } from '../../client/PublicRequestTypes';
 import { Static } from '@/lib/StaticStore';
 import { DEFAULT_KEY_PATH, ERROR_CANCELED } from '@/lib/Constants';
 import CookieHelper from '../lib/CookieHelper';

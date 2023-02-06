@@ -2,11 +2,7 @@
  * Sorted by context and alphabetically
  */
 
-export enum WalletType {
-    LEGACY = 1,
-    BIP39 = 2,
-    LEDGER = 3,
-}
+export { AccountType, WalletType } from '../../client/PublicRequestTypes';
 
 // Addresses
 export const DEFAULT_KEY_PATH = `m/44'/242'/0'/0'`;

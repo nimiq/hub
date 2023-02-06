@@ -17,7 +17,7 @@ import StatusScreen from '../components/StatusScreen.vue';
 import GlobalClose from '../components/GlobalClose.vue';
 import { Static } from '../lib/StaticStore';
 import { ParsedBasicRequest } from '../lib/RequestTypes';
-import { RequestType } from '../lib/PublicRequestTypes';
+import { RequestType } from '../../client/PublicRequestTypes';
 import { ERROR_CANCELED } from '../lib/Constants';
 
 @Component({components: {SmallPage, StatusScreen, GlobalClose}})
@@ -55,4 +55,3 @@ export default class ErrorHandlerUnsupportedLedger extends Vue {
     }
 }
 </script>
-

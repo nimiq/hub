@@ -1,11 +1,11 @@
-import type { WalletType } from './Constants';
-
-import type { NimiqSpecifics } from './paymentOptions/NimiqPaymentOptions';
-import type { NimiqDirectPaymentOptions } from './paymentOptions/NimiqPaymentOptions';
-import type { BitcoinSpecifics } from './paymentOptions/BitcoinPaymentOptions';
-import type { BitcoinDirectPaymentOptions } from './paymentOptions/BitcoinPaymentOptions';
-import type { EtherSpecifics } from './paymentOptions/EtherPaymentOptions';
-import type { EtherDirectPaymentOptions } from './paymentOptions/EtherPaymentOptions';
+import {
+    NimiqSpecifics,
+    NimiqDirectPaymentOptions,
+    BitcoinSpecifics,
+    BitcoinDirectPaymentOptions,
+    EtherSpecifics,
+    EtherDirectPaymentOptions,
+} from './PublicPaymentOptions';
 
 export enum RequestType {
     LIST = 'list',
@@ -34,6 +34,17 @@ export enum RequestType {
 }
 
 export type Bytes = Uint8Array | string;
+
+export enum AccountType {
+    LEGACY = 1,
+    BIP39 = 2,
+    LEDGER = 3,
+}
+
+export {
+    /** @deprecated Use AccountType instead */
+    AccountType as WalletType,
+};
 
 export interface BasicRequest {
     appName: string;
@@ -427,7 +438,7 @@ export type Contract = VestingContract | HashedTimeLockedContract;
 export interface Account {
     accountId: string;
     label: string;
-    type: WalletType;
+    type: AccountType;
     fileExported: boolean;
     wordsExported: boolean;
     addresses: Address[];

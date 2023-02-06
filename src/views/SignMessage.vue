@@ -29,7 +29,7 @@ import { Getter, Mutation } from 'vuex-class';
 import { SmallPage, AccountSelector, ArrowRightIcon } from '@nimiq/vue-components';
 import GlobalClose from '../components/GlobalClose.vue';
 import { ParsedSignMessageRequest } from '../lib/RequestTypes';
-import { RequestType } from '../lib/PublicRequestTypes';
+import { RequestType } from '../../client/PublicRequestTypes';
 import staticStore, { Static } from '../lib/StaticStore';
 import { WalletInfo } from '@/lib/WalletInfo';
 import KeyguardClient from '@nimiq/keyguard-client';
