@@ -1404,7 +1404,7 @@
   resolved "https://registry.yarnpkg.com/@nimiq/core-web/-/core-web-1.5.3.tgz#f0a4de59394f210f2c2d9cda8ee35c716847d40e"
   integrity sha512-W66SS9n3ygYgD52r1GJr1WtYYOkcZsqdtMmDCEwDvkrmeARnHs2sAvj77Wt4PQG8JA7GwK5svIJr6rGccCaekw==
 
-"@nimiq/core-web@1.5.8", "@nimiq/core-web@^1.5.7", "@nimiq/core-web@^1.5.8":
+"@nimiq/core-web@^1.5.7", "@nimiq/core-web@^1.5.8":
   version "1.5.8"
   resolved "https://registry.yarnpkg.com/@nimiq/core-web/-/core-web-1.5.8.tgz#da8abef84c6d293cbb9ca495a77f08daa08886b9"
   integrity sha512-MNpFbGZetz2eZcHtJVa5tpmLjPf65mTcJBRQkOHS8kWE+f+Z++hdnwWUBQCEAph4oC6bsE5JSuU7VpwcogN7+w==
@@ -1462,9 +1462,9 @@
     leveldown "^5.1.1"
     levelup "^4.1.0"
 
-"@nimiq/keyguard-client@link:../keyguard/client":
-  version "0.0.0"
-  uid ""
+"@nimiq/keyguard-client@https://gitpkg.now.sh/nimiq/keyguard?37df9864ae2f73d9fee93a0d28ad42dfc83824e0&scripts.postinstall=cd%20client%20%26%26%20.%2Fbuild-gitpkg.sh":
+  version "1.0.0"
+  resolved "https://gitpkg.now.sh/nimiq/keyguard?37df9864ae2f73d9fee93a0d28ad42dfc83824e0&scripts.postinstall=cd%20client%20%26%26%20.%2Fbuild-gitpkg.sh#e628d02848e843ea3258aea8192c5b15a263dfc2"
 
 "@nimiq/ledger-api@^2.2.0":
   version "2.2.0"
@@ -1511,11 +1511,6 @@
   version "0.1.5"
   resolved "https://registry.yarnpkg.com/@nimiq/rpc/-/rpc-0.1.5.tgz#53919b0a3a9abcdfebee0e865f4c663f72a8b8c2"
   integrity sha512-oTRThXzpbQOY8jz8h+2KXucWzW40nVfYBWROKXKBrSozhTG0nR+rzCbEm4ZyTC26b4RnmB6y4nYabUXi7gNWcA==
-
-"@nimiq/rpc@^0.3.0":
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/@nimiq/rpc/-/rpc-0.3.0.tgz#654c05acccc193b7d79fb09b2faf2114945ff872"
-  integrity sha512-je7fv+wP4nLEgTcZwu3FaGre22qkZ9AYGbStglVaJAxOH+3CvDnnOIa9IjGFaCEhtRQKRaQEvFqa5vN4IVnH+Q==
 
 "@nimiq/rpc@^0.4.1":
   version "0.4.1"
