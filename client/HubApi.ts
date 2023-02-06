@@ -7,6 +7,7 @@ import {
 } from './RequestBehavior';
 import { RedirectRpcClient } from '@nimiq/rpc';
 import {
+    AccountType,
     RequestType,
     BasicRequest,
     SimpleRequest,
@@ -40,8 +41,7 @@ import {
     SetupSwapRequest,
     SetupSwapResult,
     RefundSwapRequest,
-} from '../src/lib/PublicRequestTypes';
-import { WalletType } from '../src/lib/Constants';
+} from './PublicRequestTypes';
 
 export default class HubApi<
     DB extends BehaviorType = BehaviorType.POPUP,
@@ -54,7 +54,7 @@ export default class HubApi<
     public static readonly RequestType = RequestType;
     public static readonly RedirectRequestBehavior = RedirectRequestBehavior;
     public static readonly PopupRequestBehavior = PopupRequestBehavior;
-    public static readonly AccountType = WalletType; // tslint:disable-line:variable-name
+    public static readonly AccountType = AccountType;
     public static readonly CashlinkState = CashlinkState;
     public static readonly CashlinkTheme = CashlinkTheme;
     public static readonly Currency = Currency;

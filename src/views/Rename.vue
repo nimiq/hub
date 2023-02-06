@@ -32,7 +32,7 @@
     import { AccountRing, AccountList, SmallPage, PageHeader, PageBody, PageFooter } from '@nimiq/vue-components';
     import Input from '../components/Input.vue';
     import { ParsedRenameRequest } from '../lib/RequestTypes';
-    import { Account } from '../lib/PublicRequestTypes';
+    import { Account } from '../../client/PublicRequestTypes';
     import StatusScreen from '../components/StatusScreen.vue';
     import GlobalClose from '../components/GlobalClose.vue';
     import { WalletInfo } from '../lib/WalletInfo';

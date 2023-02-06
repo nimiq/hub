@@ -31,7 +31,7 @@ import LedgerUi from '../components/LedgerUi.vue';
 import IdenticonSelector from '../components/IdenticonSelector.vue';
 import { Static } from '../lib/StaticStore';
 import { ParsedSimpleRequest } from '../lib/RequestTypes';
-import { Address } from '../lib/PublicRequestTypes';
+import { Address } from '../../client/PublicRequestTypes';
 import { WalletInfo } from '../lib/WalletInfo';
 import { AccountInfo } from '../lib/AccountInfo';
 import LedgerApi, {

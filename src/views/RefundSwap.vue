@@ -6,7 +6,7 @@ import BitcoinSyncBaseView from './BitcoinSyncBaseView.vue';
 import { BitcoinTransactionInputType } from '@nimiq/keyguard-client';
 import StatusScreen from '../components/StatusScreen.vue';
 import GlobalClose from '../components/GlobalClose.vue';
-import { RequestType } from '../lib/PublicRequestTypes';
+import { RequestType } from '../../client/PublicRequestTypes';
 import {
     ParsedRefundSwapRequest,
     ParsedSignTransactionRequest,

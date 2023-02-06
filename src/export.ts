@@ -1,7 +1,7 @@
 import Cashlink from './lib/Cashlink';
 import { CashlinkStore } from './lib/CashlinkStore';
 import { loadNimiq } from './lib/Helpers';
-import { CashlinkState } from './lib/PublicRequestTypes';
+import { CashlinkState } from '../client/PublicRequestTypes';
 
 async function main() {
     await loadNimiq();

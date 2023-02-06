@@ -368,7 +368,7 @@ import {
 } from '@nimiq/iqons';
 import { SwapAsset } from '@nimiq/fastspot-api';
 import Config from 'config';
-import { SignedBtcTransaction } from '../lib/PublicRequestTypes';
+import { SignedBtcTransaction } from '../../client/PublicRequestTypes';
 import { WalletInfo } from '../lib/WalletInfo';
 import { ERROR_CANCELED } from '../lib/Constants';
 import { BTC_NETWORK_TEST } from '../lib/bitcoin/BitcoinConstants';

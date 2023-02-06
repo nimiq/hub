@@ -5,7 +5,7 @@ import {
     ContractInfoEntry,
     ContractInfoHelper,
 } from './ContractInfo';
-import { Account } from './PublicRequestTypes';
+import { Account } from '../../client/PublicRequestTypes';
 import { labelKeyguardAccount } from './LabelingMachine';
 import WalletInfoCollector from './WalletInfoCollector';
 import { WalletStore } from '../lib/WalletStore';

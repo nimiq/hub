@@ -113,7 +113,7 @@ import StatusScreen from '@/components/StatusScreen.vue';
 import KeyguardClient from '@nimiq/keyguard-client';
 import { labelLegacyAccount } from '@/lib/LabelingMachine';
 import staticStore, { Static } from '@/lib/StaticStore';
-import { SimpleRequest, Account } from '@/lib/PublicRequestTypes';
+import { SimpleRequest, Account } from '../../client/PublicRequestTypes';
 import { State } from 'vuex-class';
 import { i18n } from '../i18n/i18n-setup';
 

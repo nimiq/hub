@@ -66,7 +66,7 @@ import CheckoutCardEthereum from '../components/CheckoutCardEthereum.vue';
 import CheckoutCardNimiq from '../components/CheckoutCardNimiq.vue';
 import CheckoutCardNimiqExternal from '../components/CheckoutCardNimiqExternal.vue';
 import GlobalClose from '../components/GlobalClose.vue';
-import { Currency as PublicCurrency } from '../lib/PublicRequestTypes';
+import { Currency as PublicCurrency } from '../../client/PublicRequestTypes';
 import { State as RpcState } from '@nimiq/rpc';
 import { Static } from '../lib/StaticStore';
 import { HISTORY_KEY_SELECTED_CURRENCY } from '../lib/Constants';

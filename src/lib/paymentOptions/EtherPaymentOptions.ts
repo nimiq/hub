@@ -1,21 +1,14 @@
 import bigInt from 'big-integer';
-import { Currency, PaymentType, PaymentOptions } from '../PublicRequestTypes';
+import { EtherSpecifics, EtherDirectPaymentOptions } from '../../../client/PublicPaymentOptions';
+import { Currency, PaymentType } from '../../../client/PublicRequestTypes';
 import { ParsedPaymentOptions, PaymentOptionsParserFlags } from './ParsedPaymentOptions';
 import { toNonScientificNumberString, FormattableNumber } from '@nimiq/utils';
 import { i18n } from '../../i18n/i18n-setup';
-
-export interface EtherSpecifics {
-    gasLimit?: number | string;
-    gasPrice?: string;
-    recipient?: string;
-}
 
 export type ParsedEtherSpecifics = Pick<EtherSpecifics, 'recipient'> & {
     gasLimit?: number;
     gasPrice?: bigInt.BigInteger;
 };
-
-export type EtherDirectPaymentOptions = PaymentOptions<Currency.ETH, PaymentType.DIRECT>;
 
 export class ParsedEtherDirectPaymentOptions extends ParsedPaymentOptions<Currency.ETH, PaymentType.DIRECT> {
     public amount: bigInt.BigInteger;

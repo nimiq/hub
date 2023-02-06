@@ -40,7 +40,7 @@ import { SmallPage, AccountSelector } from '@nimiq/vue-components';
 import BitcoinSyncBaseView from './BitcoinSyncBaseView.vue';
 import StatusScreen from '../components/StatusScreen.vue';
 import GlobalClose from '../components/GlobalClose.vue';
-import { ChooseAddressResult, RequestType } from '../lib/PublicRequestTypes';
+import { ChooseAddressResult, RequestType } from '../../client/PublicRequestTypes';
 import { ParsedChooseAddressRequest } from '../lib/RequestTypes';
 import staticStore, { Static } from '../lib/StaticStore';
 import { WalletInfo } from '../lib/WalletInfo';

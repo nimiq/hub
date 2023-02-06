@@ -19,7 +19,7 @@ import LedgerUi from '../components/LedgerUi.vue';
 import LedgerApi from '@nimiq/ledger-api';
 import Config from 'config';
 import store from '../store';
-import { RequestType } from '../lib/PublicRequestTypes';
+import { RequestType } from '../../client/PublicRequestTypes';
 import { BTC_ACCOUNT_KEY_PATH } from '../lib/bitcoin/BitcoinConstants';
 
 type KeyguardDeriveBtcXPubResult = import('@nimiq/keyguard-client').DeriveBtcXPubResult;

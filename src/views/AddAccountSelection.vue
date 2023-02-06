@@ -29,7 +29,7 @@ import { State } from 'vuex-class';
 import { WalletStore } from '../lib/WalletStore';
 import { DerivedAddress } from '@nimiq/keyguard-client';
 import { ParsedSimpleRequest } from '../lib/RequestTypes';
-import { Address } from '../lib/PublicRequestTypes';
+import { Address } from '../../client/PublicRequestTypes';
 import { Static } from '../lib/StaticStore';
 
 @Component({components: {SmallPage, PageHeader, StatusScreen, GlobalClose, IdenticonSelector, CheckmarkIcon}})

@@ -5,8 +5,6 @@ import {
     CashlinkTheme,
     Currency,
     PaymentType,
-} from './PublicRequestTypes';
-import type {
     BasicRequest,
     CheckoutRequest,
     CreateCashlinkRequest,
@@ -24,7 +22,7 @@ import type {
     SignBtcTransactionRequest,
     SetupSwapRequest,
     RefundSwapRequest,
-} from './PublicRequestTypes';
+} from '../../client/PublicRequestTypes';
 import type {
     ParsedBasicRequest,
     ParsedCheckoutRequest,
