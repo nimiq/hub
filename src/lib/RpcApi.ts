@@ -9,6 +9,7 @@ import {
     ParsedCheckoutRequest,
     ParsedSignMessageRequest,
     ParsedSignTransactionRequest,
+    ParsedSignPolygonTransactionRequest,
 } from './RequestTypes';
 import { RequestParser } from './RequestParser';
 import { Currency, RequestType, RpcRequest, RpcResult } from '../../client/PublicRequestTypes';
@@ -49,6 +50,7 @@ export default class RpcApi {
         RequestType.CHOOSE_ADDRESS,
         RequestType.CREATE_CASHLINK,
         RequestType.MANAGE_CASHLINK,
+        // RequestType.SIGN_POLYGON_TRANSACTION,
     ];
 
     constructor(store: Store<RootState>, staticStore: StaticStore, router: Router) {
@@ -85,6 +87,7 @@ export default class RpcApi {
             RequestType.SIGN_BTC_TRANSACTION,
             RequestType.ACTIVATE_BITCOIN,
             RequestType.ACTIVATE_POLYGON,
+            RequestType.SIGN_POLYGON_TRANSACTION,
             RequestType.SETUP_SWAP,
             RequestType.REFUND_SWAP,
         ]);
@@ -100,6 +103,7 @@ export default class RpcApi {
             KeyguardCommand.SIGN_BTC_TRANSACTION,
             KeyguardCommand.DERIVE_BTC_XPUB,
             KeyguardCommand.DERIVE_POLYGON_ADDRESS,
+            KeyguardCommand.SIGN_POLYGON_TRANSACTION,
             KeyguardCommand.SIGN_SWAP,
         ]);
 
@@ -344,6 +348,11 @@ export default class RpcApi {
                         );
                     }
                 }
+            } else if (requestType === RequestType.SIGN_POLYGON_TRANSACTION) {
+                accountRequired = true;
+                const parsedSignPolygonTransactionRequest = request as ParsedSignPolygonTransactionRequest;
+                const address = parsedSignPolygonTransactionRequest.from;
+                account = this._store.getters.findWalletByPolygonAddress(address);
             }
             if (accountRequired && !account) {
                 this.reject(new Error(errorMsg));

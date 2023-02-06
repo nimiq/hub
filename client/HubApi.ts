@@ -32,6 +32,8 @@ import {
     SignedBtcTransaction,
     AddBtcAddressesRequest,
     AddBtcAddressesResult,
+    SignPolygonTransactionRequest,
+    SignedPolygonTransaction,
     Cashlink,
     CashlinkState,
     CashlinkTheme,
@@ -180,6 +182,13 @@ export default class HubApi<
         requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
     ): Promise<B extends BehaviorType.REDIRECT ? void : SignedBtcTransaction> {
         return this._request(requestBehavior, RequestType.SIGN_BTC_TRANSACTION, [request]);
+    }
+
+    public signPolygonTransaction<B extends BehaviorType = DB>(
+        request: Promise<SignPolygonTransactionRequest> | SignPolygonTransactionRequest,
+        requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
+    ): Promise<B extends BehaviorType.REDIRECT ? void : SignedPolygonTransaction> {
+        return this._request(requestBehavior, RequestType.SIGN_POLYGON_TRANSACTION, [request]);
     }
 
     public setupSwap<B extends BehaviorType = DB>(

@@ -20,6 +20,7 @@ import {
     NimiqCheckoutRequest,
     MultiCurrencyCheckoutRequest,
     SignBtcTransactionRequest,
+    SignPolygonTransactionRequest,
     SetupSwapRequest,
     RefundSwapRequest,
 } from '../../client/PublicRequestTypes';
@@ -37,6 +38,7 @@ import type {
     ParsedSignTransactionRequest,
     ParsedSimpleRequest,
     ParsedSignBtcTransactionRequest,
+    ParsedSignPolygonTransactionRequest,
     ParsedSetupSwapRequest,
     ParsedRefundSwapRequest,
 } from './RequestTypes';
@@ -509,6 +511,13 @@ export class RequestParser {
                     locktime,
                 };
                 return parsedSignBtcTransactionRequest;
+            case RequestType.SIGN_POLYGON_TRANSACTION:
+                const signPolygonTransactionRequest = request as SignPolygonTransactionRequest;
+
+                return {
+                    kind: RequestType.SIGN_POLYGON_TRANSACTION,
+                    ...signPolygonTransactionRequest,
+                } as ParsedSignPolygonTransactionRequest;
             case RequestType.SETUP_SWAP:
                 const setupSwapRequest = request as SetupSwapRequest;
 
@@ -786,6 +795,11 @@ export class RequestParser {
                     changeOutput: signBtcTransactionRequest.changeOutput,
                     locktime: signBtcTransactionRequest.locktime,
                 } as SignBtcTransactionRequest;
+            case RequestType.SIGN_POLYGON_TRANSACTION:
+                const signPolygonTransactionRequest = request as ParsedSignPolygonTransactionRequest;
+                return {
+                    ...signPolygonTransactionRequest,
+                } as SignPolygonTransactionRequest;
             case RequestType.SETUP_SWAP:
                 const setupSwapRequest = request as ParsedSetupSwapRequest;
                 return {

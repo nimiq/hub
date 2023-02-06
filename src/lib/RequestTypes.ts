@@ -146,6 +146,28 @@ export interface ParsedAddBtcAddressesRequest extends ParsedSimpleRequest {
 }
 
 /**
+ * Polygon
+ */
+
+export interface ParsedSignPolygonTransactionRequest extends ParsedBasicRequest {
+    recipientLabel?: string;
+    from: string;
+    to: string;
+    nonce: number;
+    data: Uint8Array | string;
+    value: number;
+    chainId: number;
+    type: 2;
+    accessList?: Array<{
+        address: string;
+        storageKeys: string[];
+    }>;
+    gasLimit: number;
+    maxFeePerGas: number;
+    maxPriorityFeePerGas: number;
+}
+
+/**
  * Swap
  */
 
@@ -296,5 +318,6 @@ export type ParsedRpcRequest = ParsedSignTransactionRequest
                              | ParsedExportRequest
                              | ParsedSignBtcTransactionRequest
                              | ParsedAddBtcAddressesRequest
+                             | ParsedSignPolygonTransactionRequest
                              | ParsedSetupSwapRequest
                              | ParsedRefundSwapRequest;

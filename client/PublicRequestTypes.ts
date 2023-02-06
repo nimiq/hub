@@ -28,6 +28,7 @@ export enum RequestType {
     MANAGE_CASHLINK = 'manage-cashlink',
     SIGN_BTC_TRANSACTION = 'sign-btc-transaction',
     ADD_BTC_ADDRESSES = 'add-btc-addresses',
+    SIGN_POLYGON_TRANSACTION = 'sign-polygon-transaction',
     ACTIVATE_BITCOIN = 'activate-bitcoin',
     ACTIVATE_POLYGON = 'activate-polygon',
     SETUP_SWAP = 'setup-swap',
@@ -561,6 +562,33 @@ export interface AddBtcAddressesResult {
     addresses: string[];
 }
 
+/**
+ * Polygon
+ */
+
+export interface SignPolygonTransactionRequest extends BasicRequest {
+    recipientLabel?: string;
+    from: string;
+    to: string;
+    nonce: number;
+    data: Uint8Array | string;
+    value: number;
+    chainId: number;
+    type: 2;
+    accessList?: Array<{
+        address: string;
+        storageKeys: string[];
+    }>;
+    gasLimit: number;
+    maxFeePerGas: number;
+    maxPriorityFeePerGas: number;
+}
+
+export interface SignedPolygonTransaction {
+    serializedTx: string; // HEX
+    hash: string; // HEX
+}
+
 export type RpcRequest = SignTransactionRequest
                        | CreateCashlinkRequest
                        | ManageCashlinkRequest
@@ -574,6 +602,7 @@ export type RpcRequest = SignTransactionRequest
                        | ExportRequest
                        | SignBtcTransactionRequest
                        | AddBtcAddressesRequest
+                       | SignPolygonTransactionRequest
                        | SetupSwapRequest
                        | RefundSwapRequest;
 
@@ -589,6 +618,7 @@ export type RpcResult = SignedTransaction
                       | ExportResult
                       | SignedBtcTransaction
                       | AddBtcAddressesResult
+                      | SignedPolygonTransaction
                       | SetupSwapResult;
 
 export type ResultByRequestType<T> =
@@ -604,6 +634,7 @@ export type ResultByRequestType<T> =
     T extends RequestType.EXPORT ? ExportResult :
     T extends RequestType.CREATE_CASHLINK | RequestType.MANAGE_CASHLINK ? Cashlink :
     T extends RequestType.SIGN_BTC_TRANSACTION ? SignedBtcTransaction :
+    T extends RequestType.SIGN_POLYGON_TRANSACTION ? SignedPolygonTransaction :
     T extends RequestType.ACTIVATE_BITCOIN ? Account :
     T extends RequestType.ACTIVATE_POLYGON ? Account :
     T extends RequestType.ADD_BTC_ADDRESSES ? AddBtcAddressesResult :
