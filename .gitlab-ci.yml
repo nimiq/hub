@@ -6,7 +6,7 @@ stages:
 
 # include private configs for the remaining stages
 include:
-  - project: "it/ci-config"
+  - project: "mirrors/ci-config"
     file: "/testnet/deploy_webapp.yml"
 
 variables:
@@ -26,7 +26,7 @@ variables:
 
 build:
   stage: build
-  image: node:12
+  image: node:16
   artifacts:
     paths:
       - dist/
@@ -44,7 +44,7 @@ build:
 
 test:
   stage: test
-  image: node:12
+  image: node:16
   cache:
     key: node-cache
     paths:
@@ -53,4 +53,3 @@ test:
     - yarn lint
     - yarn test
   allow_failure: true
-
