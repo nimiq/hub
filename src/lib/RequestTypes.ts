@@ -250,6 +250,7 @@ export interface ParsedSetupSwapRequest extends ParsedSimpleRequest {
         processing: number,
     };
     serviceSwapFee: number; // Luna or Sats, depending which one gets funded
+    direction?: 'left-to-right' | 'right-to-left';
     nimiqAddresses?: Array<{
         address: string,
         balance: number, // Luna

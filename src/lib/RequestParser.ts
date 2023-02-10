@@ -538,6 +538,16 @@ export class RequestParser {
                 }
 
                 if (setupSwapRequest.layout === 'slider') {
+                    if (
+                        typeof setupSwapRequest.direction !== 'string'
+                        || (
+                            setupSwapRequest.direction !== 'left-to-right'
+                            && setupSwapRequest.direction !== 'right-to-left'
+                        )
+                    ) {
+                        throw new Error('When using the "slider" layout, direction must be provided');
+                    }
+
                     if (!Array.isArray(setupSwapRequest.nimiqAddresses)) {
                         throw new Error('When using the "slider" layout, `nimAddresses` must be an array');
                     }

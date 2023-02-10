@@ -68,7 +68,9 @@ export default class SetupSwap extends BitcoinSyncBaseView {
             serviceSwapFee: this.request.serviceSwapFee,
             ...(this.request.layout === 'slider' ? {
                 layout: 'slider',
-                nimiqAddresses: this.request.nimiqAddresses!, // existence ensured by RequestParser
+                 // Existences ensured by RequestParser
+                direction: this.request.direction!,
+                nimiqAddresses: this.request.nimiqAddresses!,
                 bitcoinAccount: this.request.bitcoinAccount!,
             } : {
                 layout: 'standard',
