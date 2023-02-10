@@ -367,6 +367,7 @@ export interface SetupSwapRequest extends SimpleRequest {
     };
     serviceSwapFee: number; // Luna or Sats, depending which one gets funded
     layout?: 'standard' | 'slider';
+    direction?: 'left-to-right' | 'right-to-left';
     nimiqAddresses?: Array<{
         address: string,
         balance: number, // Luna
