@@ -190,7 +190,12 @@ export interface ParsedSetupSwapRequest extends ParsedSimpleRequest {
         locktime?: number,
         // htlcScript: Uint8Array,
         refundAddress: string,
-    } | {
+    } | ({
+        type: SwapAsset.USDC,
+        approval?: {
+            tokenNonce: number,
+        },
+    } & RelayRequest) | {
         type: SwapAsset.EUR,
         value: number, // Eurocents
         fee: number, // Eurocents
@@ -219,7 +224,11 @@ export interface ParsedSetupSwapRequest extends ParsedSimpleRequest {
             address: string, // My address, must be redeem address of HTLC
             value: number, // Sats
         };
-    } | {
+    } | ({
+        type: SwapAsset.USDC,
+        amount: number,
+        fee: number,
+    } & RelayRequest) | {
         type: SwapAsset.EUR,
         value: number; // Eurocents
         fee: number; // Eurocents
@@ -258,6 +267,10 @@ export interface ParsedSetupSwapRequest extends ParsedSimpleRequest {
     bitcoinAccount?: {
         balance: number, // Sats
     };
+    polygonAddresses?: Array<{
+        address: string,
+        balance: number, // Luna
+    }>;
 
     // Optional KYC info for swapping at higher limits
     kyc?: {

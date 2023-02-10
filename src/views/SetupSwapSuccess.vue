@@ -14,12 +14,13 @@ import {
     NimHtlcDetails,
     BtcHtlcDetails,
     Contract,
+UsdcHtlcDetails,
 } from '@nimiq/fastspot-api';
 import { init as initOasisApi, exchangeAuthorizationToken } from '@nimiq/oasis-api';
 import StatusScreen from '../components/StatusScreen.vue';
 import GlobalClose from '../components/GlobalClose.vue';
 import Network from '../components/Network.vue';
-import { SetupSwapResult, SignedBtcTransaction } from '../../client/PublicRequestTypes';
+import { SetupSwapResult, SignedBtcTransaction, SignedPolygonTransaction } from '../../client/PublicRequestTypes';
 import { Static } from '../lib/StaticStore';
 import { ParsedSetupSwapRequest } from '../lib/RequestTypes';
 import Config from 'config';
@@ -29,6 +30,7 @@ import { getElectrumClient } from '../lib/bitcoin/ElectrumClient';
 import { decodeBtcScript } from '../lib/bitcoin/BitcoinHtlcUtils';
 import { WalletInfo } from '../lib/WalletInfo';
 import patchMerkleTree from '../lib/MerkleTreePatch';
+import SignPolygonTransaction from './SignPolygonTransaction.vue';
 
 // Import only types to avoid bundling of KeyguardClient in Ledger request if not required.
 // (But note that currently, the KeyguardClient is still always bundled in the RpcApi).
@@ -81,6 +83,9 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
             case SwapAsset.BTC:
                 refundAddress = this.request.fund.refundAddress;
                 break;
+            case SwapAsset.USDC:
+                refundAddress = this.request.fund.request.from;
+                break;
             default: break;
         }
 
@@ -91,6 +96,9 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
                 break;
             case SwapAsset.BTC:
                 redeemAddress = this.request.redeem.output.address;
+                break;
+            case SwapAsset.USDC:
+                redeemAddress = this.request.redeem.request.from;
                 break;
             case SwapAsset.EUR:
                 // Assemble recipient object
@@ -219,6 +227,42 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
             }
         }
 
+        if (confirmedSwap.from.asset === SwapAsset.USDC || confirmedSwap.to.asset === SwapAsset.USDC) {
+            const contract = confirmedSwap.contracts[SwapAsset.USDC] as Contract<SwapAsset.USDC>;
+            const htlc = contract.htlc as UsdcHtlcDetails;
+
+            const contractData = {
+                id: contract.htlc.address,
+                token: '',
+                amount: contract.amount,
+                refundAddress: contract.refundAddress,
+                recipientAddress: contract.redeemAddress,
+                hash: confirmedSwap.hash,
+                timeout: contract.timeout,
+                fee: 0,
+                chainTokenFee: 0,
+            };
+
+            if (htlc.data) {
+                // TODO: Load ethersJS and decode contract data
+            }
+
+            if (hashRoot && contractData.hash !== hashRoot) {
+                this.$rpc.reject(new Error('HTLC hash roots do not match'));
+                return;
+            }
+            hashRoot = contractData.hash;
+
+            if (confirmedSwap.from.asset === SwapAsset.USDC && refundAddress !== contractData.refundAddress) {
+                this.$rpc.reject(new Error('Unknown HTLC refund address'));
+                return;
+            }
+            if (confirmedSwap.to.asset === SwapAsset.USDC && redeemAddress !== contractData.recipientAddress) {
+                this.$rpc.reject(new Error('Unknown HTLC redeem address'));
+                return;
+            }
+        }
+
         if (confirmedSwap.from.asset === SwapAsset.EUR || confirmedSwap.to.asset === SwapAsset.EUR) {
             // TODO: Fetch contract from OASIS API and compare instead of trusting Fastspot
 
@@ -256,6 +300,20 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
             fundingHtlcInfo = {
                 type: SwapAsset.BTC,
                 htlcScript: Nimiq.BufferUtils.fromHex(btcHtlcData.script),
+            };
+        }
+
+        if (this.request.fund.type === SwapAsset.USDC) {
+            const usdcHtlcData = confirmedSwap.contracts[SwapAsset.USDC]!.htlc as UsdcHtlcDetails;
+
+            if (!usdcHtlcData.data) {
+                // TODO: Create data with ethersJS
+                throw new Error('Missing `data` field in confirmed USDC contract');
+            }
+
+            fundingHtlcInfo = {
+                type: SwapAsset.USDC,
+                htlcData: usdcHtlcData.data,
             };
         }
 
@@ -336,6 +394,18 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
             }
         }
 
+        if (this.request.redeem.type === SwapAsset.USDC) {
+            const usdcContract = confirmedSwap.contracts[SwapAsset.USDC] as Contract<SwapAsset.USDC>;
+            const usdcHtlcData = usdcContract.htlc as UsdcHtlcDetails;
+
+            redeemingHtlcInfo = {
+                type: SwapAsset.USDC,
+                hash: confirmedSwap.hash,
+                timeout: usdcContract.timeout,
+                htlcId: usdcHtlcData.address,
+            };
+        }
+
         if (this.request.redeem.type === SwapAsset.EUR) {
             const eurContract = confirmedSwap.contracts[SwapAsset.EUR] as Contract<SwapAsset.EUR>;
             const eurHtlcData = eurContract.htlc;
@@ -360,6 +430,7 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
         let nimiqTransaction: Nimiq.Transaction | undefined;
         let nimiqProxyTransaction: Nimiq.Transaction | undefined;
         let bitcoinTransaction: SignedBtcTransaction | undefined;
+        let polygonTransaction: SignedPolygonTransaction | undefined;
         let refundTransaction: string | undefined;
         let euroSettlement: string | undefined;
         try {
@@ -373,6 +444,7 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
                 nimProxy: nimiqProxyTransaction,
                 btc: bitcoinTransaction,
                 eur: euroSettlement,
+                usdc: polygonTransaction,
                 refundTx: refundTransaction,
             } = signingResult);
         } catch (error) {
@@ -417,6 +489,7 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
                 ? await this.nimiqNetwork.makeSignTransactionResult(nimiqProxyTransaction)
                 : undefined,
             btc: bitcoinTransaction,
+            usdc: polygonTransaction,
             eur: euroSettlement,
             refundTx: refundTransaction,
         };
@@ -446,6 +519,7 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
         nim?: Nimiq.Transaction,
         nimProxy?: Nimiq.Transaction, // only in SetupSwapLedger
         btc?: SignedBtcTransaction,
+        usdc?: SignedPolygonTransaction,
         eur?: string,
         refundTx?: string,
     } | null> {
@@ -460,6 +534,7 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
         const {
             nim: nimiqSignatureResult,
             btc: bitcoinTransaction,
+            usdc: polygonTransaction,
             eur: euroSettlement,
             refundTx,
         } = await client.signSwapTransactions(keyguardRequest);
@@ -493,6 +568,7 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
                 serializedTx: bitcoinTransaction.raw,
                 hash: bitcoinTransaction.transactionHash,
             } : undefined,
+            usdc: polygonTransaction,
             eur: euroSettlement,
             refundTx,
         };
