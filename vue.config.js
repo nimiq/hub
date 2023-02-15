@@ -105,8 +105,21 @@ const configureWebpack = {
         devtoolFallbackModuleFilenameTemplate: 'webpack:///[resource-path]?[hash]',
     },
     externals: {
-        'bitcoinjs-lib': 'BitcoinJS',
-        'buffer': 'BitcoinJS',
+        // We use a pre-built bundle for BitcoinJS (see public/bitcoin/BitcoinJS.min.js), also including a polyfill for
+        // node's 'buffer'. BitcoinJS is bundled separately via browserify for handling of polyfills of node natives.
+        // Everywhere we use BitcoinJS, we load it first on demand via BitcoinJSLoader which exposes BitcoinJS as global
+        // variable. To instruct webpack to not bundle BitcoinJS and Buffer but use the global BitcoinJS(.Buffer), we
+        // mark them as external here via the option 'root' which means it should use the value specified in the
+        // following expression (see documentation at https://v4.webpack.js.org/configuration/externals/). However,
+        // because we load BitcoinJS only asynchronously on demand, we have to apply a hack to avoid Webpack caching the
+        // dependency while it's still undefined. Instead, we ensure the export is always re-evaluated to the current
+        // global variable BitcoinJS by overwriting the exports of the cached module as getter. Note that we access the
+        // module as arguments[0] in the expression, because it's named differently in the minified production code and
+        // the served development version. To see how this plays together with the webpack runtime, have a look at how
+        // the dependency is emitted in the generated code and __webpack_require__'s implementation:
+        // https://devtools.tech/blog/understanding-webpacks-require---rid---7VvMusDzMPVh17YyHdyL
+        'bitcoinjs-lib': 'root Object.defineProperty(arguments[0], \'exports\', { get: () => BitcoinJS }).exports',
+        'buffer': 'root Object.defineProperty(arguments[0], \'exports\', { get: () => BitcoinJS }).exports',
     },
 };
 

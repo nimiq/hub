@@ -525,11 +525,11 @@ export class RequestParser {
 
                 // Validate and parse only what we use in the Hub
 
-                if (!['NIM', 'BTC', 'EUR'].includes(setupSwapRequest.fund.type)) {
+                if (!['NIM', 'BTC', 'USDC', 'EUR'].includes(setupSwapRequest.fund.type)) {
                     throw new Error('Funding type is not supported');
                 }
 
-                if (!['NIM', 'BTC', 'EUR'].includes(setupSwapRequest.redeem.type)) {
+                if (!['NIM', 'BTC', 'USDC', 'EUR'].includes(setupSwapRequest.redeem.type)) {
                     throw new Error('Redeeming type is not supported');
                 }
 
@@ -538,8 +538,22 @@ export class RequestParser {
                 }
 
                 if (setupSwapRequest.layout === 'slider') {
+                    if (
+                        typeof setupSwapRequest.direction !== 'string'
+                        || (
+                            setupSwapRequest.direction !== 'left-to-right'
+                            && setupSwapRequest.direction !== 'right-to-left'
+                        )
+                    ) {
+                        throw new Error('When using the "slider" layout, direction must be provided');
+                    }
+
                     if (!Array.isArray(setupSwapRequest.nimiqAddresses)) {
                         throw new Error('When using the "slider" layout, `nimAddresses` must be an array');
+                    }
+
+                    if (!Array.isArray(setupSwapRequest.polygonAddresses)) {
+                        throw new Error('When using the "slider" layout, `polygonAddresses` must be an array');
                     }
 
                     if (!setupSwapRequest.bitcoinAccount) {
@@ -550,10 +564,20 @@ export class RequestParser {
                         ? Nimiq.Address.fromAny(setupSwapRequest.fund.sender)
                         : setupSwapRequest.redeem.type === 'NIM'
                             ? Nimiq.Address.fromAny(setupSwapRequest.redeem.recipient)
-                            : '';
+                            : undefined;
                     if (nimiqAddress && !setupSwapRequest.nimiqAddresses.some(
                         ({ address }) => Nimiq.Address.fromAny(address).equals(nimiqAddress))) {
                         throw new Error('The address details of the NIM address doing the swap must be provided');
+                    }
+
+                    const polygonAddress = setupSwapRequest.fund.type === 'USDC'
+                        ? setupSwapRequest.fund.request.from
+                        : setupSwapRequest.redeem.type === 'USDC'
+                            ? setupSwapRequest.redeem.request.from
+                            : undefined;
+                    if (polygonAddress && !setupSwapRequest.polygonAddresses.some(
+                        ({ address }) => address === polygonAddress)) {
+                        throw new Error('The address details of the USDC address doing the swap must be provided');
                     }
                 }
 
@@ -602,6 +626,9 @@ export class RequestParser {
                     } : setupSwapRequest.fund.type === 'BTC' ? {
                         ...setupSwapRequest.fund,
                         type: SwapAsset[setupSwapRequest.fund.type],
+                    } : setupSwapRequest.fund.type === 'USDC' ? {
+                        ...setupSwapRequest.fund,
+                        type: SwapAsset[setupSwapRequest.fund.type],
                     } : { // EUR
                         ...setupSwapRequest.fund,
                         type: SwapAsset[setupSwapRequest.fund.type],
@@ -615,6 +642,9 @@ export class RequestParser {
                             ? Nimiq.BufferUtils.fromAny(setupSwapRequest.redeem.extraData)
                             : setupSwapRequest.redeem.extraData,
                     } : setupSwapRequest.redeem.type === 'BTC' ? {
+                        ...setupSwapRequest.redeem,
+                        type: SwapAsset[setupSwapRequest.redeem.type],
+                    } : setupSwapRequest.redeem.type === 'USDC' ? {
                         ...setupSwapRequest.redeem,
                         type: SwapAsset[setupSwapRequest.redeem.type],
                     } : { // EUR

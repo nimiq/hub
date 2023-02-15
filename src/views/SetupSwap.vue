@@ -11,6 +11,7 @@ import { WalletInfo } from '../lib/WalletInfo';
 import { BtcAddressInfo } from '../lib/bitcoin/BtcAddressInfo';
 import { SwapAsset } from '@nimiq/fastspot-api';
 import { DEFAULT_KEY_PATH } from '../lib/Constants';
+import { threadId } from 'worker_threads';
 
 // Import only types to avoid bundling of KeyguardClient in Ledger request if not required.
 // (But note that currently, the KeyguardClient is still always bundled in the RpcApi).
@@ -68,8 +69,11 @@ export default class SetupSwap extends BitcoinSyncBaseView {
             serviceSwapFee: this.request.serviceSwapFee,
             ...(this.request.layout === 'slider' ? {
                 layout: 'slider',
-                nimiqAddresses: this.request.nimiqAddresses!, // existence ensured by RequestParser
+                 // Existences ensured by RequestParser
+                direction: this.request.direction!,
+                nimiqAddresses: this.request.nimiqAddresses!,
                 bitcoinAccount: this.request.bitcoinAccount!,
+                polygonAddresses: this.request.polygonAddresses!,
             } : {
                 layout: 'standard',
             }),
@@ -179,6 +183,23 @@ export default class SetupSwap extends BitcoinSyncBaseView {
             };
         }
 
+        if (this.request.fund.type === SwapAsset.USDC) {
+            const senderAddress = this.request.fund.request.from;
+            const signer = this._account.polygonAddresses.find((ai) => ai.address === senderAddress);
+
+            if (!signer) {
+                throw new Error(`Unknown sender ${senderAddress}`);
+            }
+
+            fundingInfo = {
+                type: SwapAsset.USDC,
+                keyPath: signer.path,
+                request: this.request.fund.request,
+                relayData: this.request.fund.relayData,
+                approval: this.request.fund.approval,
+            };
+        }
+
         if (this.request.fund.type === SwapAsset.EUR) {
             fundingInfo = {
                 type: SwapAsset.EUR,
@@ -231,6 +252,24 @@ export default class SetupSwap extends BitcoinSyncBaseView {
                     ...this.request.redeem.output,
                     keyPath: addressInfo.path,
                 },
+            };
+        }
+
+        if (this.request.redeem.type === SwapAsset.USDC) {
+            const senderAddress = this.request.redeem.request.from;
+            const signer = this._account.polygonAddresses.find((ai) => ai.address === senderAddress);
+
+            if (!signer) {
+                throw new Error(`Unknown sender ${senderAddress}`);
+            }
+
+            redeemingInfo = {
+                type: SwapAsset.USDC,
+                keyPath: signer.path,
+                request: this.request.redeem.request,
+                relayData: this.request.redeem.relayData,
+                amount: this.request.redeem.amount,
+                fee: this.request.redeem.fee,
             };
         }
 

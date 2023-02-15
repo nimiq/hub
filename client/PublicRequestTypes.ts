@@ -261,6 +261,17 @@ export interface BitcoinHtlcCreationInstructions {
     locktime?: number;
 }
 
+export interface PolygonHtlcCreationInstructions extends RelayRequest {
+    type: 'USDC';
+    /**
+     * The sender's nonce in the token contract, required when calling the
+     * contract function `openWithApproval`.
+     */
+    approval?: {
+        tokenNonce: number,
+    };
+}
+
 export interface EuroHtlcCreationInstructions {
     type: 'EUR';
     value: number; // Eurocents
@@ -289,6 +300,12 @@ export interface BitcoinHtlcSettlementInstructions {
         address: string, // My address, must be redeem address of HTLC
         value: number, // Sats
     };
+}
+
+export interface PolygonHtlcSettlementInstructions extends RelayRequest {
+    type: 'USDC';
+    amount: number;
+    fee: number;
 }
 
 export interface EuroHtlcSettlementInstructions {
@@ -337,11 +354,13 @@ export interface BitcoinHtlcRefundInstructions {
 export type HtlcCreationInstructions =
     NimiqHtlcCreationInstructions
     | BitcoinHtlcCreationInstructions
+    | PolygonHtlcCreationInstructions
     | EuroHtlcCreationInstructions;
 
 export type HtlcSettlementInstructions =
     NimiqHtlcSettlementInstructions
     | BitcoinHtlcSettlementInstructions
+    | PolygonHtlcSettlementInstructions
     | EuroHtlcSettlementInstructions;
 
 export type HtlcRefundInstructions =
@@ -367,6 +386,7 @@ export interface SetupSwapRequest extends SimpleRequest {
     };
     serviceSwapFee: number; // Luna or Sats, depending which one gets funded
     layout?: 'standard' | 'slider';
+    direction?: 'left-to-right' | 'right-to-left';
     nimiqAddresses?: Array<{
         address: string,
         balance: number, // Luna
@@ -374,6 +394,10 @@ export interface SetupSwapRequest extends SimpleRequest {
     bitcoinAccount?: {
         balance: number, // Sats
     };
+    polygonAddresses?: Array<{
+        address: string,
+        balance: number, // Luna
+    }>;
 
     // Optional KYC info for swapping at higher limits
     kyc?: {
@@ -388,6 +412,7 @@ export interface SetupSwapResult {
     nim?: SignedTransaction;
     nimProxy?: SignedTransaction;
     btc?: SignedBtcTransaction;
+    usdc?: SignedPolygonTransaction;
     eur?: string; // When funding EUR: empty string, when redeeming EUR: JWS of the settlement instructions
     refundTx?: string;
 }
@@ -574,7 +599,9 @@ export interface SignPolygonTransactionRequest extends BasicRequest, RelayReques
      * The sender's nonce in the token contract, required when calling the
      * contract function `executeWithApproval`.
      */
-    tokenApprovalNonce?: number;
+    approval?: {
+        tokenNonce: number,
+    };
 }
 
 export interface SignedPolygonTransaction {
