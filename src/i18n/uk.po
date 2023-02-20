@@ -41,7 +41,7 @@ msgstr "30 секунд, без пошти, без скачування."
 msgid "404 - Cash not found"
 msgstr "404 - Коштів не знайдено"
 
-#: src/views/SetupSwapSuccess.vue:136
+#: src/views/SetupSwapSuccess.vue:144
 msgid "503 Service unavailable - please try again later"
 msgstr "503 Сервіс недоступний - будь ласка спробуйте пізніше"
 
@@ -93,7 +93,7 @@ msgstr "Адреса"
 msgid "Address Added"
 msgstr "Адреса додана"
 
-#: src/views/LoginSuccess.vue:102
+#: src/views/LoginSuccess.vue:112
 msgid "Address detection failed. Retrying..."
 msgstr "Помилка виявлення адреси. Повторна спроба..."
 
@@ -112,11 +112,11 @@ msgstr "Сума"
 msgid "Amount/Step:"
 msgstr "Сума/Крок:"
 
-#: src/lib/paymentOptions/EtherPaymentOptions.ts:79
+#: src/lib/paymentOptions/EtherPaymentOptions.ts:72
 msgid "Apply a gas price of at least {fee} gwei."
 msgstr "Встановіть мінімальну ціну на газу в {fee} gwei."
 
-#: src/lib/paymentOptions/BitcoinPaymentOptions.ts:87
+#: src/lib/paymentOptions/BitcoinPaymentOptions.ts:80
 msgid "Apply a network fee of at least {fee} sat/byte."
 msgstr "Встановіть мінімальну комісію мережі в {fee} sat/byte."
 
@@ -144,15 +144,15 @@ msgstr "Повернутися до {Nimiq Miner}"
 msgid "Back to {Wallet}"
 msgstr "Повернутися до {Wallet}"
 
-#: src/views/OnboardingSelector.vue:127
+#: src/views/OnboardingSelector.vue:130
 msgid "Back to Cashlink"
 msgstr "Повернутися до чеку"
 
-#: src/views/OnboardingSelector.vue:121
+#: src/views/OnboardingSelector.vue:124
 msgid "Back to Checkout"
 msgstr "Повернутися до оплати"
 
-#: src/views/OnboardingSelector.vue:123
+#: src/views/OnboardingSelector.vue:126
 msgid "Back to Choose Address"
 msgstr "Повернутися до вибору рахунку"
 
@@ -177,7 +177,7 @@ msgstr "Повернутися до подарункових сертифіка�
 msgid "Back to Nimiq Vote"
 msgstr "Повернутися до голосування Німік"
 
-#: src/views/OnboardingSelector.vue:125
+#: src/views/OnboardingSelector.vue:128
 msgid "Back to Sign Message"
 msgstr "Повернутися до підпису повідомлення"
 
@@ -398,7 +398,7 @@ msgid "Connecting to Keyguard..."
 msgstr "Підключення до гаманця..."
 
 #: src/views/CashlinkManage.vue:133 src/views/CheckoutTransmission.vue:36
-#: src/views/LoginSuccess.vue:43
+#: src/views/LoginSuccess.vue:44
 msgid "Connecting to network..."
 msgstr "Підключення до мережі..."
 
@@ -416,8 +416,8 @@ msgstr "Підключення до первинних вузлів..."
 msgid "Contacts are not affected."
 msgstr "Це не впливає на контакти."
 
-#: src/components/NotEnoughCookieSpace.vue:8 src/views/LoginSuccess.vue:157
-#: src/views/LoginSuccess.vue:185 src/views/SignupLedger.vue:143
+#: src/components/NotEnoughCookieSpace.vue:8 src/views/LoginSuccess.vue:167
+#: src/views/LoginSuccess.vue:195 src/views/SignupLedger.vue:143
 msgid "Continue"
 msgstr "Продовжити"
 
@@ -453,7 +453,7 @@ msgstr "Створюйте та скануйте QR-коди для швидко
 msgid "Create Cashlink"
 msgstr "Створити чек"
 
-#: src/views/SignupSuccess.vue:32
+#: src/views/SignupSuccess.vue:33
 msgid "Creating your Account"
 msgstr "Створення рахунку"
 
@@ -514,7 +514,7 @@ msgstr "комісія"
 msgid "Fee"
 msgstr "Комісія"
 
-#: src/views/LoginSuccess.vue:110 src/views/SignupLedger.vue:108
+#: src/views/LoginSuccess.vue:120 src/views/SignupLedger.vue:108
 msgid "Fetching Addresses Failed"
 msgstr "Не вдалося отримати адреси"
 
@@ -522,16 +522,18 @@ msgstr "Не вдалося отримати адреси"
 msgid "Fetching contract information..."
 msgstr "Завантаження контактних даних..."
 
-#: src/views/SetupSwapSuccess.vue:530
+#: src/views/SetupSwapSuccess.vue:606
 msgid "Fetching swap data failed: {error}"
 msgstr "Не вдалося отримати дані обміну: {error}"
 
-#: src/views/SetupSwapSuccess.vue:520
+#: src/views/SetupSwapSuccess.vue:596
 msgid "Fetching swap data..."
 msgstr "Отримання даних обміну..."
 
 #: src/components/LedgerUi.vue:233 src/views/ActivateBitcoinSuccess.vue:103
-#: src/views/BitcoinSyncBaseView.vue:48 src/views/LoginSuccess.vue:42
+#: src/views/ActivatePolygonSuccess.vue:110
+#: src/views/ActivatePolygonSuccess.vue:114
+#: src/views/BitcoinSyncBaseView.vue:48 src/views/LoginSuccess.vue:43
 #: src/views/SignupLedger.vue:104
 msgid "Fetching your Addresses"
 msgstr "Завантаження адрес"
@@ -588,7 +590,7 @@ msgstr ""
 "Уявіть, що платити за допомогою\n"
 "криптовалюти буде легко"
 
-#: src/views/LoginSuccess.vue:168 src/views/SignupLedger.vue:124
+#: src/views/LoginSuccess.vue:178 src/views/SignupLedger.vue:124
 msgid ""
 "Imported {count} address so far... | Imported {count} addresses so far..."
 msgstr ""
@@ -618,7 +620,7 @@ msgstr ""
 "Воно не стане частиною загальнодоступного блокчейну і може загубитися після "
 "того як чек було використано."
 
-#: src/views/OnboardingSelector.vue:136
+#: src/views/OnboardingSelector.vue:139
 msgid "Join Nimiq"
 msgstr "Приєднатися до Nimiq"
 
@@ -667,7 +669,7 @@ msgstr "Файл-ключ збережено!"
 msgid "Login to existing account"
 msgstr "Увійти на існуючий рахунок."
 
-#: src/views/OnboardingSelector.vue:140
+#: src/views/OnboardingSelector.vue:143
 msgid "Login to fund your Cashlink"
 msgstr "Увійдіть щоб поповнити чек."
 
@@ -720,7 +722,7 @@ msgstr "Ні"
 msgid "No App found"
 msgstr "Додаток не знайдено"
 
-#: src/views/OnboardingSelector.vue:149
+#: src/views/OnboardingSelector.vue:152
 msgid ""
 "No registration, no install,\n"
 "100% free"
@@ -776,7 +778,7 @@ msgstr "Власник:"
 msgid "Pay with {currencyFullName}"
 msgstr "Сплатити за допомогою {currencyFullName}"
 
-#: src/views/OnboardingSelector.vue:138
+#: src/views/OnboardingSelector.vue:141
 msgid "Pay with Nimiq"
 msgstr "Сплатити Німіком"
 
@@ -820,7 +822,7 @@ msgstr "Будь ласка, надішліть переказ вручну"
 msgid "Prepare for update"
 msgstr "Розпочати оновлення"
 
-#: src/views/SetupSwapSuccess.vue:513
+#: src/views/SetupSwapSuccess.vue:589
 msgid "Preparing Swap"
 msgstr "Підготовлюється обмін"
 
@@ -882,8 +884,9 @@ msgstr "Перезапустити платіж"
 msgid "Retrieving your old accounts..."
 msgstr "Завантаження старих рахунків..."
 
-#: src/views/BitcoinSyncBaseView.vue:68 src/views/LoginSuccess.vue:112
-#: src/views/SetupSwapSuccess.vue:538 src/views/SignupLedger.vue:145
+#: src/views/ActivatePolygonSuccess.vue:138
+#: src/views/BitcoinSyncBaseView.vue:68 src/views/LoginSuccess.vue:122
+#: src/views/SetupSwapSuccess.vue:614 src/views/SignupLedger.vue:145
 msgid "Retry"
 msgstr "Повторити спробу"
 
@@ -916,7 +919,7 @@ msgstr "Поділитися"
 msgid "Sign Message"
 msgstr "Підписати повідомлення"
 
-#: src/views/SetupSwapSuccess.vue:522
+#: src/views/SetupSwapSuccess.vue:598
 msgid "Signing transactions..."
 msgstr "Підписання переказу..."
 
@@ -932,7 +935,7 @@ msgstr "Щось пішло не так"
 msgid "Something went wrong with your request. Please try again."
 msgstr "Щось пішло не так з запитом. Спробуйте ще раз."
 
-#: src/views/LoginSuccess.vue:153
+#: src/views/LoginSuccess.vue:163
 msgid "Space exceeded"
 msgstr "Недостатньо місця"
 
@@ -960,7 +963,7 @@ msgstr "Обмін авторизовано"
 msgid "Swap fee"
 msgstr "Комісія за обмін"
 
-#: src/views/SetupSwapLedger.vue:848 src/views/SetupSwapSuccess.vue:509
+#: src/views/SetupSwapLedger.vue:848 src/views/SetupSwapSuccess.vue:585
 msgid "Swap Setup Failed"
 msgstr "Помилка налаштування обміну"
 
@@ -974,8 +977,9 @@ msgstr "Синхронізація"
 msgid "Syncing consensus..."
 msgstr "Встановлення консенсус..."
 
+#: src/views/ActivatePolygonSuccess.vue:112
 #: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapLedger.vue:850
-#: src/views/SetupSwapSuccess.vue:511
+#: src/views/SetupSwapSuccess.vue:587
 #: src/views/SignBtcTransactionLedger.vue:117
 msgid "Syncing Failed"
 msgstr "Помилка синхронізації"
@@ -996,7 +1000,15 @@ msgstr "Помилка синхронізації з мережею Біткої
 msgid "Syncing with Bitcoin network..."
 msgstr "Синхронізація з мережею Біткоїн..."
 
-#: src/views/LoginSuccess.vue:111 src/views/SignupLedger.vue:134
+#: src/views/ActivatePolygonSuccess.vue:133
+msgid "Syncing with Polygon network failed: {error}"
+msgstr ""
+
+#: src/views/ActivatePolygonSuccess.vue:128
+msgid "Syncing with Polygon network..."
+msgstr ""
+
+#: src/views/LoginSuccess.vue:121 src/views/SignupLedger.vue:134
 msgid "Syncing with the network failed: {error}"
 msgstr "Помилка синхронізації з мережею: {error}"
 
@@ -1113,7 +1125,7 @@ msgstr ""
 "На жаль, через обмеження оглядача Сафарі и не можете додати більше рахунків "
 "чи/та адрес. Будь ласка, видаліть неактивні рахунки щоб звільнити місце."
 
-#: src/views/LoginSuccess.vue:155
+#: src/views/LoginSuccess.vue:165
 msgid ""
 "Unfortunately, due to space restrictions of Safari and IOS, this account "
 "cannot be stored properly. Please free up space by logging out of other "
@@ -1147,13 +1159,17 @@ msgstr "Завантажуємо ваші рахунки"
 msgid "Updating your balances"
 msgstr "Завантажуємо баланс на рахунках"
 
+#: src/views/ActivatePolygonSuccess.vue:116
+msgid "USDC activated"
+msgstr ""
+
 #: src/components/OnboardingMenu.vue:12
 msgid ""
 "Use your Login File\n"
 "or Recovery Words."
 msgstr "Використовуючи файл-ключ або секретні слова."
 
-#: src/views/LoginSuccess.vue:184 src/views/SignupLedger.vue:132
+#: src/views/LoginSuccess.vue:194 src/views/SignupLedger.vue:132
 msgid "Used addresses without balance might have been missed."
 msgstr "Адреси з нульовим балансом можуть не відображатися."
 
@@ -1165,21 +1181,15 @@ msgstr "Підтвердіть платіж"
 msgid "Vesting Contract"
 msgstr "Розподільний контракт"
 
-#: src/views/LoginSuccess.vue:199
+#: src/views/LoginSuccess.vue:209
 msgid "Welcome back! | Your Accounts are ready."
 msgstr "З поверненням! | Ваш рахунок готовий."
 
-#: src/views/SignupSuccess.vue:87
+#: src/views/SignupLedger.vue:112 src/views/SignupSuccess.vue:92
 msgid ""
 "Welcome to the\n"
-"Nimiq Blockchain."
+"Nimiq Wallet"
 msgstr ""
-"Вітаємо в\n"
-"блокчейні Німік."
-
-#: src/views/SignupLedger.vue:112
-msgid "Welcome to the Nimiq Blockchain."
-msgstr "Вітаємо в блокчейні Німік."
 
 #: src/CashlinkApp.vue:9
 msgid "What is Nimiq?"
@@ -1225,7 +1235,7 @@ msgstr ""
 "Ваш {app} додаток застарів. Будь ласка, оновіть ваш Ledger і {app} додаток "
 "використовуючи Ledger Live."
 
-#: src/views/LoginSuccess.vue:182 src/views/SignupLedger.vue:106
+#: src/views/LoginSuccess.vue:192 src/views/SignupLedger.vue:106
 msgid ""
 "Your Addresses may be\n"
 "incomplete."
@@ -1247,6 +1257,6 @@ msgstr ""
 msgid "Your message is signed."
 msgstr "Ваше повідомлення підписано."
 
-#: src/views/LoginSuccess.vue:193 src/views/SimpleSuccess.vue:31
+#: src/views/LoginSuccess.vue:203 src/views/SimpleSuccess.vue:31
 msgid "Your password was changed."
 msgstr "Пароль було змінено."

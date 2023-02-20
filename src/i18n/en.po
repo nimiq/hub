@@ -1134,7 +1134,7 @@ msgid "Updating your balances"
 msgstr ""
 
 #: src/views/ActivatePolygonSuccess.vue:116
-msgid "USDC on Polygon activated"
+msgid "USDC activated"
 msgstr ""
 
 #: src/components/OnboardingMenu.vue:12

@@ -40,7 +40,7 @@ msgstr "30 segundos, sin email, sin descargas."
 msgid "404 - Cash not found"
 msgstr "404 - Dinero no fue encontrado"
 
-#: src/views/SetupSwapSuccess.vue:136
+#: src/views/SetupSwapSuccess.vue:144
 msgid "503 Service unavailable - please try again later"
 msgstr ""
 "503 Servicio no se encuentra disponible - por favor intente de nuevo luego"
@@ -93,7 +93,7 @@ msgstr "Dirección"
 msgid "Address Added"
 msgstr "Dirección Agregada"
 
-#: src/views/LoginSuccess.vue:102
+#: src/views/LoginSuccess.vue:112
 msgid "Address detection failed. Retrying..."
 msgstr "Detección de dirección fallida. Reintentando..."
 
@@ -112,11 +112,11 @@ msgstr "Monto"
 msgid "Amount/Step:"
 msgstr "Monto/Paso:"
 
-#: src/lib/paymentOptions/EtherPaymentOptions.ts:79
+#: src/lib/paymentOptions/EtherPaymentOptions.ts:72
 msgid "Apply a gas price of at least {fee} gwei."
 msgstr "Utilizar una cuota de gas de por lo menos {fee} gwei."
 
-#: src/lib/paymentOptions/BitcoinPaymentOptions.ts:87
+#: src/lib/paymentOptions/BitcoinPaymentOptions.ts:80
 msgid "Apply a network fee of at least {fee} sat/byte."
 msgstr "Utilizar una cuota de red de por lo menos {fee} sat/byte."
 
@@ -144,15 +144,15 @@ msgstr "Volver al {Nimiq Miner}"
 msgid "Back to {Wallet}"
 msgstr "Volver a la {Wallet}"
 
-#: src/views/OnboardingSelector.vue:127
+#: src/views/OnboardingSelector.vue:130
 msgid "Back to Cashlink"
 msgstr "Volver a Cashlink"
 
-#: src/views/OnboardingSelector.vue:121
+#: src/views/OnboardingSelector.vue:124
 msgid "Back to Checkout"
 msgstr "Volver al Proceso de Pago"
 
-#: src/views/OnboardingSelector.vue:123
+#: src/views/OnboardingSelector.vue:126
 msgid "Back to Choose Address"
 msgstr "Volver a Elegir Dirección"
 
@@ -177,7 +177,7 @@ msgstr "Volver a las Tarjetas de Regalo Nimiq"
 msgid "Back to Nimiq Vote"
 msgstr "Volver a Votación Nimiq"
 
-#: src/views/OnboardingSelector.vue:125
+#: src/views/OnboardingSelector.vue:128
 msgid "Back to Sign Message"
 msgstr "Volver a Firmar Mensaje"
 
@@ -400,7 +400,7 @@ msgid "Connecting to Keyguard..."
 msgstr "Conectándose al Keyguard..."
 
 #: src/views/CashlinkManage.vue:133 src/views/CheckoutTransmission.vue:36
-#: src/views/LoginSuccess.vue:43
+#: src/views/LoginSuccess.vue:44
 msgid "Connecting to network..."
 msgstr "Conectándose a la red..."
 
@@ -418,8 +418,8 @@ msgstr "Contactando nodos semilla..."
 msgid "Contacts are not affected."
 msgstr "Los contactos no se han afectado."
 
-#: src/components/NotEnoughCookieSpace.vue:8 src/views/LoginSuccess.vue:157
-#: src/views/LoginSuccess.vue:185 src/views/SignupLedger.vue:143
+#: src/components/NotEnoughCookieSpace.vue:8 src/views/LoginSuccess.vue:167
+#: src/views/LoginSuccess.vue:195 src/views/SignupLedger.vue:143
 msgid "Continue"
 msgstr "Continuar"
 
@@ -455,7 +455,7 @@ msgstr "Cree y escanee códigos QR para compartir direcciones rápidamente."
 msgid "Create Cashlink"
 msgstr "Creando Cashlink"
 
-#: src/views/SignupSuccess.vue:32
+#: src/views/SignupSuccess.vue:33
 msgid "Creating your Account"
 msgstr "Creando su Cuenta"
 
@@ -516,7 +516,7 @@ msgstr "cuota"
 msgid "Fee"
 msgstr "Cuota"
 
-#: src/views/LoginSuccess.vue:110 src/views/SignupLedger.vue:108
+#: src/views/LoginSuccess.vue:120 src/views/SignupLedger.vue:108
 msgid "Fetching Addresses Failed"
 msgstr "Obtención de Direcciones Fallida"
 
@@ -524,16 +524,18 @@ msgstr "Obtención de Direcciones Fallida"
 msgid "Fetching contract information..."
 msgstr "Obteniendo información del contrato..."
 
-#: src/views/SetupSwapSuccess.vue:530
+#: src/views/SetupSwapSuccess.vue:606
 msgid "Fetching swap data failed: {error}"
 msgstr "Obtención de datos de intercambio fallida: {error}"
 
-#: src/views/SetupSwapSuccess.vue:520
+#: src/views/SetupSwapSuccess.vue:596
 msgid "Fetching swap data..."
 msgstr "Obteniendo datos del intercambio..."
 
 #: src/components/LedgerUi.vue:233 src/views/ActivateBitcoinSuccess.vue:103
-#: src/views/BitcoinSyncBaseView.vue:48 src/views/LoginSuccess.vue:42
+#: src/views/ActivatePolygonSuccess.vue:110
+#: src/views/ActivatePolygonSuccess.vue:114
+#: src/views/BitcoinSyncBaseView.vue:48 src/views/LoginSuccess.vue:43
 #: src/views/SignupLedger.vue:104
 msgid "Fetching your Addresses"
 msgstr "Obteniendo sus Direcciones"
@@ -590,7 +592,7 @@ msgstr ""
 "Imagine si pagar con\n"
 "cripto fuera fácil"
 
-#: src/views/LoginSuccess.vue:168 src/views/SignupLedger.vue:124
+#: src/views/LoginSuccess.vue:178 src/views/SignupLedger.vue:124
 msgid ""
 "Imported {count} address so far... | Imported {count} addresses so far..."
 msgstr ""
@@ -621,7 +623,7 @@ msgstr ""
 "No será parte de la Cadena de Bloques publica y puede que se pierda luego de"
 " que el Cashlink sea reclamado."
 
-#: src/views/OnboardingSelector.vue:136
+#: src/views/OnboardingSelector.vue:139
 msgid "Join Nimiq"
 msgstr "Únase a Nimiq"
 
@@ -670,7 +672,7 @@ msgstr "¡Se ha guardado el Archivo de Sesión!"
 msgid "Login to existing account"
 msgstr "Iniciar Sesión a cuenta existente"
 
-#: src/views/OnboardingSelector.vue:140
+#: src/views/OnboardingSelector.vue:143
 msgid "Login to fund your Cashlink"
 msgstr "Iniciar sesión para financiar su Cashlink"
 
@@ -726,7 +728,7 @@ msgstr "No"
 msgid "No App found"
 msgstr "No se encontró ninguna Aplicación"
 
-#: src/views/OnboardingSelector.vue:149
+#: src/views/OnboardingSelector.vue:152
 msgid ""
 "No registration, no install,\n"
 "100% free"
@@ -784,7 +786,7 @@ msgstr "Dueño."
 msgid "Pay with {currencyFullName}"
 msgstr "Pagar con {currencyFullName}"
 
-#: src/views/OnboardingSelector.vue:138
+#: src/views/OnboardingSelector.vue:141
 msgid "Pay with Nimiq"
 msgstr "Pagar con Nimiq"
 
@@ -828,7 +830,7 @@ msgstr "Por favor envíe la transacción manualmente"
 msgid "Prepare for update"
 msgstr "Prepárese para la actualización"
 
-#: src/views/SetupSwapSuccess.vue:513
+#: src/views/SetupSwapSuccess.vue:589
 msgid "Preparing Swap"
 msgstr "Preparando intercambio"
 
@@ -891,8 +893,9 @@ msgstr "Reiniciar Pago"
 msgid "Retrieving your old accounts..."
 msgstr "Obteniendo sus cuentas viejas..."
 
-#: src/views/BitcoinSyncBaseView.vue:68 src/views/LoginSuccess.vue:112
-#: src/views/SetupSwapSuccess.vue:538 src/views/SignupLedger.vue:145
+#: src/views/ActivatePolygonSuccess.vue:138
+#: src/views/BitcoinSyncBaseView.vue:68 src/views/LoginSuccess.vue:122
+#: src/views/SetupSwapSuccess.vue:614 src/views/SignupLedger.vue:145
 msgid "Retry"
 msgstr "Reintentar"
 
@@ -925,7 +928,7 @@ msgstr "Compartir"
 msgid "Sign Message"
 msgstr "Firmar Mensaje"
 
-#: src/views/SetupSwapSuccess.vue:522
+#: src/views/SetupSwapSuccess.vue:598
 msgid "Signing transactions..."
 msgstr "Firmando transacciones..."
 
@@ -941,7 +944,7 @@ msgstr "Algo salió mal"
 msgid "Something went wrong with your request. Please try again."
 msgstr "Algo salió mal con su petición. Por favor intente de nuevo."
 
-#: src/views/LoginSuccess.vue:153
+#: src/views/LoginSuccess.vue:163
 msgid "Space exceeded"
 msgstr "Espacio excedido"
 
@@ -969,7 +972,7 @@ msgstr "Intercambio autorizado"
 msgid "Swap fee"
 msgstr "Cuota de intercambio"
 
-#: src/views/SetupSwapLedger.vue:848 src/views/SetupSwapSuccess.vue:509
+#: src/views/SetupSwapLedger.vue:848 src/views/SetupSwapSuccess.vue:585
 msgid "Swap Setup Failed"
 msgstr "Configuración del Intercambio Fallida"
 
@@ -983,8 +986,9 @@ msgstr "Sincronizando"
 msgid "Syncing consensus..."
 msgstr "Sincronizando consenso...."
 
+#: src/views/ActivatePolygonSuccess.vue:112
 #: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapLedger.vue:850
-#: src/views/SetupSwapSuccess.vue:511
+#: src/views/SetupSwapSuccess.vue:587
 #: src/views/SignBtcTransactionLedger.vue:117
 msgid "Syncing Failed"
 msgstr "Sincronización Fallida"
@@ -1005,7 +1009,15 @@ msgstr "Proceso de sincronización con la red Bitcoin falló: {error}"
 msgid "Syncing with Bitcoin network..."
 msgstr "Sincronizando con la red Bitcoin..."
 
-#: src/views/LoginSuccess.vue:111 src/views/SignupLedger.vue:134
+#: src/views/ActivatePolygonSuccess.vue:133
+msgid "Syncing with Polygon network failed: {error}"
+msgstr ""
+
+#: src/views/ActivatePolygonSuccess.vue:128
+msgid "Syncing with Polygon network..."
+msgstr ""
+
+#: src/views/LoginSuccess.vue:121 src/views/SignupLedger.vue:134
 msgid "Syncing with the network failed: {error}"
 msgstr "Proceso de sincronización con la red falló: {error}"
 
@@ -1124,7 +1136,7 @@ msgstr ""
 " pueden agregar mas cuentas y/o direcciones. Por favor libere espacio "
 "cerrando sesión en otras cuentas."
 
-#: src/views/LoginSuccess.vue:155
+#: src/views/LoginSuccess.vue:165
 msgid ""
 "Unfortunately, due to space restrictions of Safari and IOS, this account "
 "cannot be stored properly. Please free up space by logging out of other "
@@ -1158,6 +1170,10 @@ msgstr "Actualizando sus Cuentas"
 msgid "Updating your balances"
 msgstr "Actualizando sus balances"
 
+#: src/views/ActivatePolygonSuccess.vue:116
+msgid "USDC activated"
+msgstr ""
+
 #: src/components/OnboardingMenu.vue:12
 msgid ""
 "Use your Login File\n"
@@ -1166,7 +1182,7 @@ msgstr ""
 "Use su Archivo de Sesión\n"
 "o Palabras de Respaldo."
 
-#: src/views/LoginSuccess.vue:184 src/views/SignupLedger.vue:132
+#: src/views/LoginSuccess.vue:194 src/views/SignupLedger.vue:132
 msgid "Used addresses without balance might have been missed."
 msgstr "Puede que se ignoraran direcciones usadas sin balance."
 
@@ -1178,21 +1194,15 @@ msgstr "Verifique Pago"
 msgid "Vesting Contract"
 msgstr "Contratos Vesting"
 
-#: src/views/LoginSuccess.vue:199
+#: src/views/LoginSuccess.vue:209
 msgid "Welcome back! | Your Accounts are ready."
 msgstr "¡Bienvenido de vuelta! Tus cuentas están listas."
 
-#: src/views/SignupSuccess.vue:87
+#: src/views/SignupLedger.vue:112 src/views/SignupSuccess.vue:92
 msgid ""
 "Welcome to the\n"
-"Nimiq Blockchain."
+"Nimiq Wallet"
 msgstr ""
-"Bienvenido a la \n"
-"Cadena de Bloques Nimiq."
-
-#: src/views/SignupLedger.vue:112
-msgid "Welcome to the Nimiq Blockchain."
-msgstr "Bienvenido a la Cadena de Bloques Nimiq"
 
 #: src/CashlinkApp.vue:9
 msgid "What is Nimiq?"
@@ -1238,7 +1248,7 @@ msgstr ""
 "Su {app} app esta des-actualizada. Por favor actualice su Ledger y {app} app"
 " usando Ledger Live."
 
-#: src/views/LoginSuccess.vue:182 src/views/SignupLedger.vue:106
+#: src/views/LoginSuccess.vue:192 src/views/SignupLedger.vue:106
 msgid ""
 "Your Addresses may be\n"
 "incomplete."
@@ -1262,6 +1272,6 @@ msgstr ""
 msgid "Your message is signed."
 msgstr "Su mensaje fue firmado."
 
-#: src/views/LoginSuccess.vue:193 src/views/SimpleSuccess.vue:31
+#: src/views/LoginSuccess.vue:203 src/views/SimpleSuccess.vue:31
 msgid "Your password was changed."
 msgstr "Su contraseña fue cambiada."
