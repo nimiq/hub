@@ -113,7 +113,7 @@ export default class ActivatePolygonSuccess extends Vue {
             case this.State.TRANSITION_SYNCING:
                 return this.$t('Fetching your Addresses') as string;
             case this.State.FINISHED:
-                return this.$t('USDC on Polygon activated') as string;
+                return this.$t('USDC activated') as string;
             default:
                 return '';
         }
