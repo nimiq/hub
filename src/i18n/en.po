@@ -6,10 +6,6 @@ msgstr ""
 msgid "{appName} is asking for an address to use."
 msgstr ""
 
-#: src/lib/LabelingMachine.ts:13
-msgid "{color} Account"
-msgstr ""
-
 #: src/views/SetupSwapLedger.vue:57
 #: src/views/SetupSwapLedger.vue:78
 msgid "{percentage} of swap value."
@@ -199,12 +195,20 @@ msgstr ""
 msgid "Blocks/Step:"
 msgstr ""
 
-#: src/lib/LabelingMachine.ts:43
-msgid "Blue"
+#: src/lib/LabelingMachine.ts:31
+msgid "Blue Account"
 msgstr ""
 
-#: src/lib/LabelingMachine.ts:48
-msgid "Brown"
+#: src/lib/LabelingMachine.ts:13
+msgid "Blue Address"
+msgstr ""
+
+#: src/lib/LabelingMachine.ts:36
+msgid "Brown Account"
+msgstr ""
+
+#: src/lib/LabelingMachine.ts:18
+msgid "Brown Address"
 msgstr ""
 
 #: src/views/SetupSwapLedger.vue:42
@@ -573,8 +577,12 @@ msgstr ""
 msgid "Got it"
 msgstr ""
 
-#: src/lib/LabelingMachine.ts:47
-msgid "Green"
+#: src/lib/LabelingMachine.ts:35
+msgid "Green Account"
+msgstr ""
+
+#: src/lib/LabelingMachine.ts:17
+msgid "Green Address"
 msgstr ""
 
 #: src/views/CashlinkReceive.vue:346
@@ -608,8 +616,12 @@ msgstr ""
 msgid "Incomplete payment"
 msgstr ""
 
-#: src/lib/LabelingMachine.ts:42
-msgid "Indigo"
+#: src/lib/LabelingMachine.ts:30
+msgid "Indigo Account"
+msgstr ""
+
+#: src/lib/LabelingMachine.ts:12
+msgid "Indigo Address"
 msgstr ""
 
 #: src/views/RequestError.vue:6
@@ -624,7 +636,7 @@ msgstr ""
 msgid "Join Nimiq"
 msgstr ""
 
-#: src/lib/LabelingMachine.ts:17
+#: src/lib/LabelingMachine.ts:42
 msgid "Ledger Account"
 msgstr ""
 
@@ -636,7 +648,7 @@ msgstr ""
 msgid "Ledger not supported by browser."
 msgstr ""
 
-#: src/lib/LabelingMachine.ts:21
+#: src/lib/LabelingMachine.ts:46
 msgid "Legacy Account"
 msgstr ""
 
@@ -753,8 +765,12 @@ msgstr ""
 msgid "Open Wallet App"
 msgstr ""
 
-#: src/lib/LabelingMachine.ts:39
-msgid "Orange"
+#: src/lib/LabelingMachine.ts:27
+msgid "Orange Account"
+msgstr ""
+
+#: src/lib/LabelingMachine.ts:9
+msgid "Orange Address"
 msgstr ""
 
 #: src/components/CheckoutCardNimiq.vue:63
@@ -790,8 +806,12 @@ msgstr ""
 msgid "Payment successful."
 msgstr ""
 
-#: src/lib/LabelingMachine.ts:46
-msgid "Pink"
+#: src/lib/LabelingMachine.ts:34
+msgid "Pink Account"
+msgstr ""
+
+#: src/lib/LabelingMachine.ts:16
+msgid "Pink Address"
 msgstr ""
 
 #: src/components/LedgerUi.vue:251
@@ -826,16 +846,24 @@ msgstr ""
 msgid "Processing your payment"
 msgstr ""
 
-#: src/lib/LabelingMachine.ts:44
-msgid "Purple"
+#: src/lib/LabelingMachine.ts:32
+msgid "Purple Account"
+msgstr ""
+
+#: src/lib/LabelingMachine.ts:14
+msgid "Purple Address"
 msgstr ""
 
 #: src/views/ExportSuccess.vue:65
 msgid "Recovery Words exported!"
 msgstr ""
 
-#: src/lib/LabelingMachine.ts:40
-msgid "Red"
+#: src/lib/LabelingMachine.ts:28
+msgid "Red Account"
+msgstr ""
+
+#: src/lib/LabelingMachine.ts:10
+msgid "Red Address"
 msgstr ""
 
 #: src/views/RefundSwapLedger.vue:316
@@ -917,7 +945,7 @@ msgstr ""
 msgid "Signing transactions..."
 msgstr ""
 
-#: src/lib/LabelingMachine.ts:33
+#: src/lib/LabelingMachine.ts:58
 msgid "Single Accounts"
 msgstr ""
 
@@ -1012,8 +1040,12 @@ msgstr ""
 msgid "Syncing with the network failed: {error}"
 msgstr ""
 
-#: src/lib/LabelingMachine.ts:45
-msgid "Teal"
+#: src/lib/LabelingMachine.ts:33
+msgid "Teal Account"
+msgstr ""
+
+#: src/lib/LabelingMachine.ts:15
+msgid "Teal Address"
 msgstr ""
 
 #: src/components/LedgerUi.vue:280
@@ -1152,7 +1184,7 @@ msgstr ""
 msgid "Verify Payment"
 msgstr ""
 
-#: src/lib/LabelingMachine.ts:25
+#: src/lib/LabelingMachine.ts:50
 #: src/views/AddVestingContract.vue:137
 msgid "Vesting Contract"
 msgstr ""
@@ -1176,8 +1208,12 @@ msgstr ""
 msgid "Whoops, something went wrong"
 msgstr ""
 
-#: src/lib/LabelingMachine.ts:41
-msgid "Yellow"
+#: src/lib/LabelingMachine.ts:29
+msgid "Yellow Account"
+msgstr ""
+
+#: src/lib/LabelingMachine.ts:11
+msgid "Yellow Address"
 msgstr ""
 
 #: src/views/LogoutLedger.vue:19

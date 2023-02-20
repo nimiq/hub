@@ -17,10 +17,6 @@ msgstr ""
 msgid "{appName} is asking for an address to use."
 msgstr "{appName} запитує адресу для використання."
 
-#: src/lib/LabelingMachine.ts:13
-msgid "{color} Account"
-msgstr "{color} рахунок"
-
 #: src/views/SetupSwapLedger.vue:57 src/views/SetupSwapLedger.vue:78
 msgid "{percentage} of swap value."
 msgstr "{percentage} обмінної вартості."
@@ -205,13 +201,21 @@ msgstr "Біткоїн активовано"
 msgid "Blocks/Step:"
 msgstr "Блок/Крок:"
 
-#: src/lib/LabelingMachine.ts:43
-msgid "Blue"
-msgstr "Голубий"
+#: src/lib/LabelingMachine.ts:31
+msgid "Blue Account"
+msgstr ""
 
-#: src/lib/LabelingMachine.ts:48
-msgid "Brown"
-msgstr "Коричневий"
+#: src/lib/LabelingMachine.ts:13
+msgid "Blue Address"
+msgstr ""
+
+#: src/lib/LabelingMachine.ts:36
+msgid "Brown Account"
+msgstr ""
+
+#: src/lib/LabelingMachine.ts:18
+msgid "Brown Address"
+msgstr ""
 
 #: src/views/SetupSwapLedger.vue:42
 msgid "BTC network fee"
@@ -566,9 +570,13 @@ msgstr "Назад"
 msgid "Got it"
 msgstr "Зрозуміло"
 
-#: src/lib/LabelingMachine.ts:47
-msgid "Green"
-msgstr "Зелений"
+#: src/lib/LabelingMachine.ts:35
+msgid "Green Account"
+msgstr ""
+
+#: src/lib/LabelingMachine.ts:17
+msgid "Green Address"
+msgstr ""
 
 #: src/views/CashlinkReceive.vue:346
 msgid "Happy birthday!"
@@ -604,9 +612,13 @@ msgstr "вхідний"
 msgid "Incomplete payment"
 msgstr "Незавершений платіж"
 
-#: src/lib/LabelingMachine.ts:42
-msgid "Indigo"
-msgstr "Індиго"
+#: src/lib/LabelingMachine.ts:30
+msgid "Indigo Account"
+msgstr ""
+
+#: src/lib/LabelingMachine.ts:12
+msgid "Indigo Address"
+msgstr ""
 
 #: src/views/RequestError.vue:6
 msgid "Invalid request"
@@ -624,7 +636,7 @@ msgstr ""
 msgid "Join Nimiq"
 msgstr "Приєднатися до Nimiq"
 
-#: src/lib/LabelingMachine.ts:17
+#: src/lib/LabelingMachine.ts:42
 msgid "Ledger Account"
 msgstr "Рахунок Ledger."
 
@@ -640,7 +652,7 @@ msgstr ""
 msgid "Ledger not supported by browser."
 msgstr "Ledger не підтримується на цьому веб-оглядачі."
 
-#: src/lib/LabelingMachine.ts:21
+#: src/lib/LabelingMachine.ts:46
 msgid "Legacy Account"
 msgstr "Рахунок старого зразка"
 
@@ -757,9 +769,13 @@ msgstr "Відкрити {app} додаток"
 msgid "Open Wallet App"
 msgstr "Відкрити додаток гаманця"
 
-#: src/lib/LabelingMachine.ts:39
-msgid "Orange"
-msgstr "Помаранчевий"
+#: src/lib/LabelingMachine.ts:27
+msgid "Orange Account"
+msgstr ""
+
+#: src/lib/LabelingMachine.ts:9
+msgid "Orange Address"
+msgstr ""
 
 #: src/components/CheckoutCardNimiq.vue:63
 #: src/components/CheckoutCardNimiq.vue:87
@@ -794,9 +810,13 @@ msgstr "Оплата успішна"
 msgid "Payment successful."
 msgstr "Успішна оплата."
 
-#: src/lib/LabelingMachine.ts:46
-msgid "Pink"
-msgstr "Рожевий"
+#: src/lib/LabelingMachine.ts:34
+msgid "Pink Account"
+msgstr ""
+
+#: src/lib/LabelingMachine.ts:16
+msgid "Pink Address"
+msgstr ""
 
 #: src/components/LedgerUi.vue:251
 msgid "Please cancel the previous request on your Ledger."
@@ -830,17 +850,25 @@ msgstr "Підготовлюється обмін"
 msgid "Processing your payment"
 msgstr "Платіж обробляється"
 
-#: src/lib/LabelingMachine.ts:44
-msgid "Purple"
-msgstr "Пурпуровий"
+#: src/lib/LabelingMachine.ts:32
+msgid "Purple Account"
+msgstr ""
+
+#: src/lib/LabelingMachine.ts:14
+msgid "Purple Address"
+msgstr ""
 
 #: src/views/ExportSuccess.vue:65
 msgid "Recovery Words exported!"
 msgstr "Секретні слова завантажено!"
 
-#: src/lib/LabelingMachine.ts:40
-msgid "Red"
-msgstr "Червоний"
+#: src/lib/LabelingMachine.ts:28
+msgid "Red Account"
+msgstr ""
+
+#: src/lib/LabelingMachine.ts:10
+msgid "Red Address"
+msgstr ""
 
 #: src/views/RefundSwapLedger.vue:316
 msgid "Refund Failed"
@@ -923,7 +951,7 @@ msgstr "Підписати повідомлення"
 msgid "Signing transactions..."
 msgstr "Підписання переказу..."
 
-#: src/lib/LabelingMachine.ts:33
+#: src/lib/LabelingMachine.ts:58
 msgid "Single Accounts"
 msgstr "Одиничні рахунки"
 
@@ -1012,9 +1040,13 @@ msgstr ""
 msgid "Syncing with the network failed: {error}"
 msgstr "Помилка синхронізації з мережею: {error}"
 
-#: src/lib/LabelingMachine.ts:45
-msgid "Teal"
-msgstr "Пірузовий"
+#: src/lib/LabelingMachine.ts:33
+msgid "Teal Account"
+msgstr ""
+
+#: src/lib/LabelingMachine.ts:15
+msgid "Teal Address"
+msgstr ""
 
 #: src/components/LedgerUi.vue:280
 msgid "The connected wallet or Ledger is not the one this account belongs to."
@@ -1177,7 +1209,7 @@ msgstr "Адреси з нульовим балансом можуть не ві
 msgid "Verify Payment"
 msgstr "Підтвердіть платіж"
 
-#: src/lib/LabelingMachine.ts:25 src/views/AddVestingContract.vue:137
+#: src/lib/LabelingMachine.ts:50 src/views/AddVestingContract.vue:137
 msgid "Vesting Contract"
 msgstr "Розподільний контракт"
 
@@ -1199,9 +1231,13 @@ msgstr "Що таке Німік?"
 msgid "Whoops, something went wrong"
 msgstr "Упс, щось пішло не так"
 
-#: src/lib/LabelingMachine.ts:41
-msgid "Yellow"
-msgstr "Жовтий"
+#: src/lib/LabelingMachine.ts:29
+msgid "Yellow Account"
+msgstr ""
+
+#: src/lib/LabelingMachine.ts:11
+msgid "Yellow Address"
+msgstr ""
 
 #: src/views/LogoutLedger.vue:19 src/views/LogoutSuccess.vue:4
 msgid "You are logged out."

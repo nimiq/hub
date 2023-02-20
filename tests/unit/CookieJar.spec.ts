@@ -40,7 +40,7 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
                 DUMMY_ADDRESS_HR2,
                 {
                     path: 'm/44\'/242\'/0\'/5\'',
-                    label: 'Divine Wizarding Parakeet',
+                    label: 'Orange Address',
                     address: DUMMY_ADDRESS_S2,
                 },
             ],
@@ -127,7 +127,7 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
                 DUMMY_ADDRESS_HR1,
                 {
                     path: 'm/44\'/242\'/0\'/0\'',
-                    label: 'Marine Chirping Inliner',
+                    label: 'Teal Address',
                     address: DUMMY_ADDRESS_S1,
                 },
             ],
@@ -158,7 +158,7 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
                 BURN_ADDRESS_HR,
                 {
                     path: 'm/44\'/242\'/0\'/0\'',
-                    label: 'Inline Meat-Loving Sorcerer',
+                    label: 'Indigo Address',
                     address: BURN_ADDRESS_S,
                 },
             ],
@@ -224,7 +224,7 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
                 DUMMY_ADDRESS_HR2,
                 {
                     path: 'not public',
-                    label: 'Divine Wizarding Parakeet',
+                    label: 'Orange Address',
                     address: DUMMY_ADDRESS_S2,
                 },
             ],
@@ -305,7 +305,7 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
                 DUMMY_ADDRESS_HR1,
                 {
                     path: 'not public',
-                    label: 'Marine Chirping Inliner',
+                    label: 'Teal Address',
                     address: DUMMY_ADDRESS_S1,
                 },
             ],
@@ -336,7 +336,7 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
                 BURN_ADDRESS_HR,
                 {
                     path: 'not public',
-                    label: 'Inline Meat-Loving Sorcerer',
+                    label: 'Indigo Address',
                     address: BURN_ADDRESS_S,
                 },
             ],
