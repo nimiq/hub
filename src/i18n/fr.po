@@ -18,10 +18,6 @@ msgstr ""
 msgid "{appName} is asking for an address to use."
 msgstr "{appName} demande quelle adresse utiliser."
 
-#: src/lib/LabelingMachine.ts:13
-msgid "{color} Account"
-msgstr "Compte {color}"
-
 #: src/views/SetupSwapLedger.vue:57 src/views/SetupSwapLedger.vue:78
 msgid "{percentage} of swap value."
 msgstr "{percentage} de la valeur du swap."
@@ -206,13 +202,21 @@ msgstr "Bitcoin activé"
 msgid "Blocks/Step:"
 msgstr "Blocs / étape :"
 
-#: src/lib/LabelingMachine.ts:43
-msgid "Blue"
-msgstr "Bleu"
+#: src/lib/LabelingMachine.ts:31
+msgid "Blue Account"
+msgstr ""
 
-#: src/lib/LabelingMachine.ts:48
-msgid "Brown"
-msgstr "Marron"
+#: src/lib/LabelingMachine.ts:13
+msgid "Blue Address"
+msgstr ""
+
+#: src/lib/LabelingMachine.ts:36
+msgid "Brown Account"
+msgstr ""
+
+#: src/lib/LabelingMachine.ts:18
+msgid "Brown Address"
+msgstr ""
 
 #: src/views/SetupSwapLedger.vue:42
 msgid "BTC network fee"
@@ -570,9 +574,13 @@ msgstr "Retour"
 msgid "Got it"
 msgstr "Compris"
 
-#: src/lib/LabelingMachine.ts:47
-msgid "Green"
-msgstr "Vert"
+#: src/lib/LabelingMachine.ts:35
+msgid "Green Account"
+msgstr ""
+
+#: src/lib/LabelingMachine.ts:17
+msgid "Green Address"
+msgstr ""
 
 #: src/views/CashlinkReceive.vue:346
 msgid "Happy birthday!"
@@ -609,9 +617,13 @@ msgstr "entrante"
 msgid "Incomplete payment"
 msgstr "Paiement incomplet"
 
-#: src/lib/LabelingMachine.ts:42
-msgid "Indigo"
-msgstr "Indigo"
+#: src/lib/LabelingMachine.ts:30
+msgid "Indigo Account"
+msgstr ""
+
+#: src/lib/LabelingMachine.ts:12
+msgid "Indigo Address"
+msgstr ""
 
 #: src/views/RequestError.vue:6
 msgid "Invalid request"
@@ -629,7 +641,7 @@ msgstr ""
 msgid "Join Nimiq"
 msgstr "Rejoindre Nimiq"
 
-#: src/lib/LabelingMachine.ts:17
+#: src/lib/LabelingMachine.ts:42
 msgid "Ledger Account"
 msgstr "Compte Ledger"
 
@@ -646,7 +658,7 @@ msgstr ""
 msgid "Ledger not supported by browser."
 msgstr "Ledger non supporté par votre navigateur."
 
-#: src/lib/LabelingMachine.ts:21
+#: src/lib/LabelingMachine.ts:46
 msgid "Legacy Account"
 msgstr "Compte Legacy"
 
@@ -770,9 +782,13 @@ msgstr "Ouvrez l'app {app}"
 msgid "Open Wallet App"
 msgstr "Ouvrir l'app Wallet"
 
-#: src/lib/LabelingMachine.ts:39
-msgid "Orange"
-msgstr "Orange"
+#: src/lib/LabelingMachine.ts:27
+msgid "Orange Account"
+msgstr ""
+
+#: src/lib/LabelingMachine.ts:9
+msgid "Orange Address"
+msgstr ""
 
 #: src/components/CheckoutCardNimiq.vue:63
 #: src/components/CheckoutCardNimiq.vue:87
@@ -807,9 +823,13 @@ msgstr "Paiement réussi"
 msgid "Payment successful."
 msgstr "Paiement réussi."
 
-#: src/lib/LabelingMachine.ts:46
-msgid "Pink"
-msgstr "Rose"
+#: src/lib/LabelingMachine.ts:34
+msgid "Pink Account"
+msgstr ""
+
+#: src/lib/LabelingMachine.ts:16
+msgid "Pink Address"
+msgstr ""
 
 #: src/components/LedgerUi.vue:251
 msgid "Please cancel the previous request on your Ledger."
@@ -843,17 +863,25 @@ msgstr "Swap en préparation"
 msgid "Processing your payment"
 msgstr "Traitement de votre paiement"
 
-#: src/lib/LabelingMachine.ts:44
-msgid "Purple"
-msgstr "Violet"
+#: src/lib/LabelingMachine.ts:32
+msgid "Purple Account"
+msgstr ""
+
+#: src/lib/LabelingMachine.ts:14
+msgid "Purple Address"
+msgstr ""
 
 #: src/views/ExportSuccess.vue:65
 msgid "Recovery Words exported!"
 msgstr "Mots de Récupération exportés !"
 
-#: src/lib/LabelingMachine.ts:40
-msgid "Red"
-msgstr "Rouge"
+#: src/lib/LabelingMachine.ts:28
+msgid "Red Account"
+msgstr ""
+
+#: src/lib/LabelingMachine.ts:10
+msgid "Red Address"
+msgstr ""
 
 #: src/views/RefundSwapLedger.vue:316
 msgid "Refund Failed"
@@ -936,7 +964,7 @@ msgstr "Signer le message"
 msgid "Signing transactions..."
 msgstr "Signature des transactions..."
 
-#: src/lib/LabelingMachine.ts:33
+#: src/lib/LabelingMachine.ts:58
 msgid "Single Accounts"
 msgstr "Comptes Legacy"
 
@@ -1025,9 +1053,13 @@ msgstr ""
 msgid "Syncing with the network failed: {error}"
 msgstr "La synchronisation avec le réseau a échoué : {error}"
 
-#: src/lib/LabelingMachine.ts:45
-msgid "Teal"
-msgstr "Sarcelle"
+#: src/lib/LabelingMachine.ts:33
+msgid "Teal Account"
+msgstr ""
+
+#: src/lib/LabelingMachine.ts:15
+msgid "Teal Address"
+msgstr ""
 
 #: src/components/LedgerUi.vue:280
 msgid "The connected wallet or Ledger is not the one this account belongs to."
@@ -1194,7 +1226,7 @@ msgstr "Les adresses utilisées sans solde peuvent avoir été manquées."
 msgid "Verify Payment"
 msgstr "Vérifier le paiement"
 
-#: src/lib/LabelingMachine.ts:25 src/views/AddVestingContract.vue:137
+#: src/lib/LabelingMachine.ts:50 src/views/AddVestingContract.vue:137
 msgid "Vesting Contract"
 msgstr "Contrat d'acquisition"
 
@@ -1216,9 +1248,13 @@ msgstr "Qu'est ce que Nimiq ?"
 msgid "Whoops, something went wrong"
 msgstr "Oups, quelque chose s'est mal passé"
 
-#: src/lib/LabelingMachine.ts:41
-msgid "Yellow"
-msgstr "Jaune"
+#: src/lib/LabelingMachine.ts:29
+msgid "Yellow Account"
+msgstr ""
+
+#: src/lib/LabelingMachine.ts:11
+msgid "Yellow Address"
+msgstr ""
 
 #: src/views/LogoutLedger.vue:19 src/views/LogoutSuccess.vue:4
 msgid "You are logged out."

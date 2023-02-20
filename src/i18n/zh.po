@@ -16,10 +16,6 @@ msgstr ""
 msgid "{appName} is asking for an address to use."
 msgstr "{appName}要求使用地址"
 
-#: src/lib/LabelingMachine.ts:13
-msgid "{color} Account"
-msgstr "{color} 帐户"
-
 #: src/views/SetupSwapLedger.vue:57 src/views/SetupSwapLedger.vue:78
 msgid "{percentage} of swap value."
 msgstr "交换价值的 {percentage} "
@@ -204,13 +200,21 @@ msgstr "比特币已激活"
 msgid "Blocks/Step:"
 msgstr "区块/步骤："
 
-#: src/lib/LabelingMachine.ts:43
-msgid "Blue"
-msgstr "蓝"
+#: src/lib/LabelingMachine.ts:31
+msgid "Blue Account"
+msgstr ""
 
-#: src/lib/LabelingMachine.ts:48
-msgid "Brown"
-msgstr "棕"
+#: src/lib/LabelingMachine.ts:13
+msgid "Blue Address"
+msgstr ""
+
+#: src/lib/LabelingMachine.ts:36
+msgid "Brown Account"
+msgstr ""
+
+#: src/lib/LabelingMachine.ts:18
+msgid "Brown Address"
+msgstr ""
 
 #: src/views/SetupSwapLedger.vue:42
 msgid "BTC network fee"
@@ -565,9 +569,13 @@ msgstr "返回"
 msgid "Got it"
 msgstr "了解"
 
-#: src/lib/LabelingMachine.ts:47
-msgid "Green"
-msgstr "绿"
+#: src/lib/LabelingMachine.ts:35
+msgid "Green Account"
+msgstr ""
+
+#: src/lib/LabelingMachine.ts:17
+msgid "Green Address"
+msgstr ""
 
 #: src/views/CashlinkReceive.vue:346
 msgid "Happy birthday!"
@@ -602,9 +610,13 @@ msgstr "转入"
 msgid "Incomplete payment"
 msgstr "付款未完成"
 
-#: src/lib/LabelingMachine.ts:42
-msgid "Indigo"
-msgstr "靛蓝"
+#: src/lib/LabelingMachine.ts:30
+msgid "Indigo Account"
+msgstr ""
+
+#: src/lib/LabelingMachine.ts:12
+msgid "Indigo Address"
+msgstr ""
 
 #: src/views/RequestError.vue:6
 msgid "Invalid request"
@@ -620,7 +632,7 @@ msgstr "它不会成为公共区块链的一部分，并且可能会在现金链
 msgid "Join Nimiq"
 msgstr "加入 Nimiq"
 
-#: src/lib/LabelingMachine.ts:17
+#: src/lib/LabelingMachine.ts:42
 msgid "Ledger Account"
 msgstr "Ledger 帐户"
 
@@ -634,7 +646,7 @@ msgstr "Ledger帐户无法导出。请参考设置设备时创建的24字备份"
 msgid "Ledger not supported by browser."
 msgstr "此浏览器不支持Ledger"
 
-#: src/lib/LabelingMachine.ts:21
+#: src/lib/LabelingMachine.ts:46
 msgid "Legacy Account"
 msgstr "传统账户"
 
@@ -753,9 +765,13 @@ msgstr "打开 {app} 应用程序"
 msgid "Open Wallet App"
 msgstr "打开钱包应用"
 
-#: src/lib/LabelingMachine.ts:39
-msgid "Orange"
-msgstr "橙"
+#: src/lib/LabelingMachine.ts:27
+msgid "Orange Account"
+msgstr ""
+
+#: src/lib/LabelingMachine.ts:9
+msgid "Orange Address"
+msgstr ""
 
 #: src/components/CheckoutCardNimiq.vue:63
 #: src/components/CheckoutCardNimiq.vue:87
@@ -790,9 +806,13 @@ msgstr "付款成功"
 msgid "Payment successful."
 msgstr "付款成功"
 
-#: src/lib/LabelingMachine.ts:46
-msgid "Pink"
-msgstr "粉红"
+#: src/lib/LabelingMachine.ts:34
+msgid "Pink Account"
+msgstr ""
+
+#: src/lib/LabelingMachine.ts:16
+msgid "Pink Address"
+msgstr ""
 
 #: src/components/LedgerUi.vue:251
 msgid "Please cancel the previous request on your Ledger."
@@ -826,17 +846,25 @@ msgstr "准备交换"
 msgid "Processing your payment"
 msgstr "正在进行你的付款"
 
-#: src/lib/LabelingMachine.ts:44
-msgid "Purple"
-msgstr "紫"
+#: src/lib/LabelingMachine.ts:32
+msgid "Purple Account"
+msgstr ""
+
+#: src/lib/LabelingMachine.ts:14
+msgid "Purple Address"
+msgstr ""
 
 #: src/views/ExportSuccess.vue:65
 msgid "Recovery Words exported!"
 msgstr "恢复字已导出！"
 
-#: src/lib/LabelingMachine.ts:40
-msgid "Red"
-msgstr "红"
+#: src/lib/LabelingMachine.ts:28
+msgid "Red Account"
+msgstr ""
+
+#: src/lib/LabelingMachine.ts:10
+msgid "Red Address"
+msgstr ""
 
 #: src/views/RefundSwapLedger.vue:316
 msgid "Refund Failed"
@@ -916,7 +944,7 @@ msgstr "签名信息"
 msgid "Signing transactions..."
 msgstr "正在签署交易..."
 
-#: src/lib/LabelingMachine.ts:33
+#: src/lib/LabelingMachine.ts:58
 msgid "Single Accounts"
 msgstr "单一账户"
 
@@ -1005,9 +1033,13 @@ msgstr ""
 msgid "Syncing with the network failed: {error}"
 msgstr "与网络同步失败：{error}"
 
-#: src/lib/LabelingMachine.ts:45
-msgid "Teal"
-msgstr "青"
+#: src/lib/LabelingMachine.ts:33
+msgid "Teal Account"
+msgstr ""
+
+#: src/lib/LabelingMachine.ts:15
+msgid "Teal Address"
+msgstr ""
 
 #: src/components/LedgerUi.vue:280
 msgid "The connected wallet or Ledger is not the one this account belongs to."
@@ -1157,7 +1189,7 @@ msgstr "已使用地址若没有余额可能会丢失"
 msgid "Verify Payment"
 msgstr "验证付款"
 
-#: src/lib/LabelingMachine.ts:25 src/views/AddVestingContract.vue:137
+#: src/lib/LabelingMachine.ts:50 src/views/AddVestingContract.vue:137
 msgid "Vesting Contract"
 msgstr "归属合同"
 
@@ -1179,9 +1211,13 @@ msgstr "Nimiq是什么？"
 msgid "Whoops, something went wrong"
 msgstr "糟糕，出了点问题"
 
-#: src/lib/LabelingMachine.ts:41
-msgid "Yellow"
-msgstr "黄"
+#: src/lib/LabelingMachine.ts:29
+msgid "Yellow Account"
+msgstr ""
+
+#: src/lib/LabelingMachine.ts:11
+msgid "Yellow Address"
+msgstr ""
 
 #: src/views/LogoutLedger.vue:19 src/views/LogoutSuccess.vue:4
 msgid "You are logged out."
