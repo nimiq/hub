@@ -60,7 +60,11 @@ export default class AddAccountSelection extends Vue {
         const wallet = (await WalletStore.Instance.get(this.request.walletId))!;
 
         if (!selectedAccount.label) {
-            selectedAccount.label = selectedAccount.defaultLabel;
+            const label = selectedAccount.defaultLabel;
+            // Add the correct counter number to the default label
+            const addressCountWithTheSameDefaultLabel = [...wallet.accounts.values()]
+                .filter((accountInfo) => accountInfo.defaultLabel === label).length;
+            selectedAccount.label = `${label} ${addressCountWithTheSameDefaultLabel + 1}`;
         }
 
         wallet.accounts.set(selectedAccount.userFriendlyAddress, selectedAccount);

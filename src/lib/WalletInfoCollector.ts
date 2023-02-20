@@ -196,6 +196,7 @@ export default class WalletInfoCollector {
 
     private static _keyguardClient?: KeyguardClient; // TODO avoid the need to create another KeyguardClient here
     private static _networkInitializationPromise?: Promise<void>;
+    private static _nimColoredAddressLabelCounts: Record<string, number> = {};
 
     private static async _collectLedgerOrBip39WalletInfo(
         walletType: WalletType,
@@ -489,9 +490,12 @@ export default class WalletInfoCollector {
         for (const newAccount of newAccounts) {
             const existingAccountInfo = walletInfo.accounts.get(newAccount.address);
             const balance = balances ? balances.get(newAccount.address) : undefined;
+            const label = labelAddress(newAccount.address);
+            const labelCounter = (this._nimColoredAddressLabelCounts[label] || 0) + 1;
+            this._nimColoredAddressLabelCounts[label] = labelCounter;
             const accountInfo = existingAccountInfo || new AccountInfo(
                 newAccount.path,
-                labelAddress(newAccount.address),
+                `${label} ${labelCounter}`,
                 Nimiq.Address.fromString(newAccount.address),
             );
             if (balance !== undefined) accountInfo.balance = balance;

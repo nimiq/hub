@@ -244,6 +244,7 @@
     .account-details .close-button .nq-icon {
         opacity: .2;
         transition: opacity .3s cubic-bezier(0.25, 0, 0, 1);
+        display: block;
     }
 
     .account-details .close-button .nq-icon:hover,
