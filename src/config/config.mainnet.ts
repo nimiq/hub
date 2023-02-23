@@ -1,5 +1,6 @@
 import { NETWORK_MAIN } from '../lib/Constants';
 import { BTC_NETWORK_MAIN, NATIVE_SEGWIT } from '../lib/bitcoin/BitcoinConstants';
+import { POLYGON_NETWORK_MAIN } from '../lib/polygon/PolygonConstants';
 
 export default {
     keyguardEndpoint: 'https://keyguard.nimiq.com',
@@ -22,6 +23,9 @@ export default {
     enableBitcoin: true,
     bitcoinNetwork: BTC_NETWORK_MAIN,
     bitcoinAddressType: NATIVE_SEGWIT,
+
+    // enablePolygon: true,
+    polygonNetwork: POLYGON_NETWORK_MAIN,
 
     fastspot: {
         apiEndpoint: 'https://api.go.fastspot.io/fast/v1',

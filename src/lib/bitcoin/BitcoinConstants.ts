@@ -19,7 +19,7 @@ export const BTC_ACCOUNT_KEY_PATH = {
         MAIN: `m/84'/0'/0'`,
         TEST: `m/84'/1'/0'`,
     },
-};
+} as const;
 
 export const BTC_ACCOUNT_MAX_ALLOWED_ADDRESS_GAP = 10; // FIXME: Set to the standard 20 after testing
 
@@ -61,6 +61,6 @@ export const BIP84_ADDRESS_PREFIX = {
     // See https://en.bitcoin.it/wiki/List_of_address_prefixes
     MAIN: 'bc',
     TEST: 'tb',
-};
+} as const;
 
 export const ERROR_NO_XPUB = 'NO_XPUB';

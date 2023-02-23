@@ -17,7 +17,7 @@ import KeyguardClient from '@nimiq/keyguard-client';
 import { DEFAULT_KEY_PATH } from '../lib/Constants';
 import { WalletInfo } from '../lib/WalletInfo';
 import { BTC_ACCOUNT_KEY_PATH } from '../lib/bitcoin/BitcoinConstants';
-import { POLYGON_ACCOUNT_PATH } from '../lib/polygon/PolygonConstants';
+import { POLYGON_ACCOUNT_KEY_PATH } from '../lib/polygon/PolygonConstants';
 import Config from 'config';
 
 @Component
@@ -52,7 +52,7 @@ export default class ErrorHandler extends Vue {
                 requestedKeyPaths: [DEFAULT_KEY_PATH],
                 isKeyLost: true,
                 bitcoinXPubPath: BTC_ACCOUNT_KEY_PATH[Config.bitcoinAddressType][Config.bitcoinNetwork],
-                polygonAccountPath: POLYGON_ACCOUNT_PATH,
+                polygonAccountPath: POLYGON_ACCOUNT_KEY_PATH[Config.polygonNetwork],
             };
 
             const client = this.$rpc.createKeyguardClient();
@@ -80,7 +80,7 @@ export default class ErrorHandler extends Vue {
                         expectedKeyId: walletInfo.keyId,
                         wordsOnly: true,
                         bitcoinXPubPath: BTC_ACCOUNT_KEY_PATH[Config.bitcoinAddressType][Config.bitcoinNetwork],
-                        polygonAccountPath: POLYGON_ACCOUNT_PATH,
+                        polygonAccountPath: POLYGON_ACCOUNT_KEY_PATH[Config.polygonNetwork],
                     };
 
                     const client = this.$rpc.createKeyguardClient();
