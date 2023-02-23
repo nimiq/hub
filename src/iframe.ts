@@ -53,7 +53,7 @@ class IFrameApi {
         if (wallets.length > 0) {
             return Promise.all(wallets
                 .filter((wallet) => !wallet.keyMissing)
-                .map((wallet) => WalletInfo.objectToAccountType(wallet)));
+                .map((wallet) => WalletInfo.objectToAccountType(wallet, RequestType.LIST)));
         }
 
         // If no wallets exist, see if the Keyguard has keys

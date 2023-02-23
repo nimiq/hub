@@ -82,6 +82,7 @@ import Network from '../components/Network.vue';
 import { WalletInfo } from '../lib/WalletInfo';
 import { WalletStore } from '../lib/WalletStore';
 import { VestingContractInfo } from '../lib/ContractInfo';
+import { RequestType } from '../../client/PublicRequestTypes';
 
 @Component({components: {
         SmallPage,
@@ -169,7 +170,7 @@ export default class AddVestingContract extends Vue {
     }
 
     private async done() {
-        const result = await this.wallet!.toAccountType();
+        const result = await this.wallet!.toAccountType(RequestType.ADD_VESTING_CONTRACT);
         this.$rpc.resolve(result);
     }
 }

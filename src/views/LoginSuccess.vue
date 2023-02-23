@@ -46,7 +46,7 @@ export default class LoginSuccess extends Vue {
     private action: string = '';
     private receiptsError: Error | null = null;
     private result: Account[] | null = null;
-    private resolve = () => {}; // tslint:disable-line:no-empty
+    private resolve = (...args: any[]) => {}; // tslint:disable-line:no-empty
 
     private async mounted() {
         const collectionResults: WalletCollectionResultKeyguard[] = [];
@@ -186,7 +186,9 @@ export default class LoginSuccess extends Vue {
             this.$addWalletAndSetActive(walletInfo);
         }
 
-        const result: Account[] = await Promise.all(this.walletInfos.map((walletInfo) => walletInfo.toAccountType()));
+        const result: Account[] = await Promise.all(
+            this.walletInfos.map((walletInfo) => walletInfo.toAccountType(RequestType.LOGIN)),
+        );
 
         if (this.receiptsError) {
             this.title = this.$t('Your Addresses may be\nincomplete.') as string;

@@ -23,6 +23,7 @@ import { deriveAddressesFromXPub } from '../lib/bitcoin/BitcoinUtils';
 import { loadBitcoinJS } from '../lib/bitcoin/BitcoinJSLoader';
 import { INTERNAL_INDEX, EXTERNAL_INDEX, BTC_ACCOUNT_MAX_ALLOWED_ADDRESS_GAP } from '../lib/bitcoin/BitcoinConstants';
 import { PolygonAddressInfo } from '../lib/polygon/PolygonAddressInfo';
+import { RequestType } from '../../client/PublicRequestTypes';
 
 @Component({components: {SmallPage, StatusScreen, CheckmarkIcon}})
 export default class SignupSuccess extends Vue {
@@ -92,7 +93,7 @@ export default class SignupSuccess extends Vue {
         this.title = this.$t('Welcome to the\nNimiq Wallet') as string;
         this.state = StatusScreen.State.SUCCESS;
 
-        const result: Account[] = [await walletInfo.toAccountType()];
+        const result: Account[] = [await walletInfo.toAccountType(RequestType.SIGNUP)];
         setTimeout(() => this.$rpc.resolve(result), StatusScreen.SUCCESS_REDIRECT_DELAY);
     }
 }
