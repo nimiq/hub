@@ -31,6 +31,7 @@ import store from '../store';
 import StatusScreen from '../components/StatusScreen.vue';
 import GlobalClose from '../components/GlobalClose.vue';
 import { PolygonAddressInfo } from '../lib/polygon/PolygonAddressInfo';
+import { RequestType } from '../../client/PublicRequestTypes';
 
 @Component({components: {StatusScreen, SmallPage, GlobalClose}}) // including components used in parent class
 export default class ActivatePolygonSuccess extends Vue {
@@ -79,7 +80,7 @@ export default class ActivatePolygonSuccess extends Vue {
             )];
 
             const [result] = await Promise.all([
-                walletInfo.toAccountType(),
+                walletInfo.toAccountType(RequestType.ACTIVATE_POLYGON),
                 WalletStore.Instance.put(walletInfo),
             ]);
 

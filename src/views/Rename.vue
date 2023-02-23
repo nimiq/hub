@@ -39,6 +39,7 @@
     import { WalletType } from '../lib/Constants';
     import { WalletStore } from '@/lib/WalletStore';
     import { Static } from '../lib/StaticStore';
+    import { RequestType } from '../../client/PublicRequestTypes';
 
     /*
         In Case some sort auf Authentication with the wallet is desireable, there are 2 options:
@@ -126,7 +127,7 @@
         }
 
         private async done() {
-            const result: Account = await this.wallet!.toAccountType();
+            const result: Account = await this.wallet!.toAccountType(RequestType.RENAME);
             this.$rpc.resolve(result);
         }
     }

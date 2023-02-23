@@ -478,6 +478,7 @@ export interface Account {
     };
     polygonAddresses: string[];
     uid: string;
+    requestType: RequestType;
 }
 
 export interface ExportRequest extends SimpleRequest {

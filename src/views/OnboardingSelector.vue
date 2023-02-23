@@ -66,7 +66,7 @@ export default class OnboardingSelector extends Vue {
                     const result = await Promise.all(
                         dbAccounts.map(async (entry) => {
                             const walletInfo = WalletInfo.fromObject(entry);
-                            return walletInfo!.toAccountType();
+                            return walletInfo!.toAccountType(RequestType.ONBOARD);
                         }),
                     );
                     this.$rpc.resolve(result);

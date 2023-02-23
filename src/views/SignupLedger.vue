@@ -40,7 +40,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { AccountRing, PageBody, PageHeader, SmallPage } from '@nimiq/vue-components';
-import { Account } from '../../client/PublicRequestTypes';
+import { Account, RequestType } from '../../client/PublicRequestTypes';
 import LedgerApi, {
     RequestTypeNimiq as LedgerApiRequestType,
     StateType as LedgerApiStateType,
@@ -243,7 +243,9 @@ export default class SignupLedger extends Vue {
         // Add wallet to vuex
         this.$addWalletAndSetActive(this.walletInfo!);
 
-        const result: Account[] = [await this.walletInfo!.toAccountType()];
+        const result: Account[] = [
+            await this.walletInfo!.toAccountType(this.hadAccounts ? RequestType.LOGIN : RequestType.SIGNUP),
+        ];
 
         this.state = SignupLedger.State.FINISHED;
         setTimeout(() => {

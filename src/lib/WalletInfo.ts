@@ -6,7 +6,7 @@ import {
     ContractInfoEntry,
     ContractInfoHelper,
 } from './ContractInfo';
-import { Account } from '../../client/PublicRequestTypes';
+import { Account, RequestType } from '../../client/PublicRequestTypes';
 import { labelKeyguardAccount } from './LabelingMachine';
 import WalletInfoCollector from './WalletInfoCollector';
 import { WalletStore } from '../lib/WalletStore';
@@ -43,7 +43,7 @@ export class WalletInfo {
             o.keyMissing, o.fileExported, o.wordsExported, o.btcXPub, btcAddresses, polygonAddresses);
     }
 
-    public static async objectToAccountType(o: WalletInfoEntry): Promise<Account> {
+    public static async objectToAccountType(o: WalletInfoEntry, requestType: RequestType): Promise<Account> {
         // Polyfill BTC address lists for pre-BTC wallets
         if (!o.btcAddresses) o.btcAddresses = { internal: [], external: [] };
 
@@ -68,6 +68,7 @@ export class WalletInfo {
             uid: o.keyId
                 ? await makeUid(o.keyId, AddressUtils.toUserFriendlyAddress(accountInfoEntries[0].address))
                 : '',
+            requestType,
         };
     }
 
@@ -212,7 +213,7 @@ export class WalletInfo {
         };
     }
 
-    public async toAccountType(): Promise<Account> {
+    public async toAccountType(requestType: RequestType): Promise<Account> {
         return {
             accountId: this.id,
             label: this.label,
@@ -227,6 +228,7 @@ export class WalletInfo {
             },
             polygonAddresses: this.polygonAddresses.map((address) => address.toPolygonAddressType()),
             uid: await this.getUid(),
+            requestType,
         };
     }
 
