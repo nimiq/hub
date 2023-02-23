@@ -1,5 +1,6 @@
 import { NETWORK_TEST } from '../lib/Constants';
 import { BTC_NETWORK_TEST, NATIVE_SEGWIT } from '../lib/bitcoin/BitcoinConstants';
+import { POLYGON_NETWORK_TEST } from '../lib/polygon/PolygonConstants';
 
 export default {
     keyguardEndpoint: 'https://keyguard.nimiq-testnet.com',
@@ -21,6 +22,9 @@ export default {
     enableBitcoin: true,
     bitcoinNetwork: BTC_NETWORK_TEST,
     bitcoinAddressType: NATIVE_SEGWIT,
+
+    // enablePolygon: true,
+    polygonNetwork: POLYGON_NETWORK_TEST,
 
     fastspot: {
         apiEndpoint: 'https://api.test.fastspot.io/fast/v1',

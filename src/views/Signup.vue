@@ -13,7 +13,7 @@ import { DEFAULT_KEY_PATH } from '@/lib/Constants';
 import CookieHelper from '../lib/CookieHelper';
 import NotEnoughCookieSpace from '../components/NotEnoughCookieSpace.vue';
 import { BTC_ACCOUNT_KEY_PATH } from '../lib/bitcoin/BitcoinConstants';
-import { POLYGON_ACCOUNT_PATH } from '../lib/polygon/PolygonConstants';
+import { POLYGON_ACCOUNT_KEY_PATH } from '../lib/polygon/PolygonConstants';
 import Config from 'config';
 
 @Component({components: {NotEnoughCookieSpace}})
@@ -36,7 +36,7 @@ export default class Signup extends Vue {
                 ? true
                 : false,
             bitcoinXPubPath: BTC_ACCOUNT_KEY_PATH[Config.bitcoinAddressType][Config.bitcoinNetwork],
-            polygonAccountPath: POLYGON_ACCOUNT_PATH,
+            polygonAccountPath: POLYGON_ACCOUNT_KEY_PATH[Config.polygonNetwork],
         };
         const client = this.$rpc.createKeyguardClient(true);
         client.create(request);
