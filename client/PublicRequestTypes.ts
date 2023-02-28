@@ -305,7 +305,6 @@ export interface BitcoinHtlcSettlementInstructions {
 export interface PolygonHtlcSettlementInstructions extends RelayRequest {
     type: 'USDC';
     amount: number;
-    fee: number;
 }
 
 export interface EuroHtlcSettlementInstructions {
