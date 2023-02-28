@@ -187,7 +187,7 @@ msgstr ""
 msgid "Bitcoin"
 msgstr ""
 
-#: src/views/ActivateBitcoinSuccess.vue:105
+#: src/views/ActivateBitcoinSuccess.vue:106
 msgid "Bitcoin activated"
 msgstr ""
 
@@ -394,7 +394,7 @@ msgid "Connect your Ledger Nano S or Nano X."
 msgstr ""
 
 #: src/views/Migrate.vue:143
-#: src/views/Migrate.vue:283
+#: src/views/Migrate.vue:285
 msgid "Connecting to Keyguard..."
 msgstr ""
 
@@ -421,7 +421,7 @@ msgstr ""
 
 #: src/components/NotEnoughCookieSpace.vue:8
 #: src/views/LoginSuccess.vue:167
-#: src/views/LoginSuccess.vue:195
+#: src/views/LoginSuccess.vue:197
 #: src/views/SignupLedger.vue:143
 msgid "Continue"
 msgstr ""
@@ -458,7 +458,7 @@ msgstr ""
 msgid "Create Cashlink"
 msgstr ""
 
-#: src/views/SignupSuccess.vue:33
+#: src/views/SignupSuccess.vue:34
 msgid "Creating your Account"
 msgstr ""
 
@@ -539,9 +539,9 @@ msgid "Fetching swap data..."
 msgstr ""
 
 #: src/components/LedgerUi.vue:233
-#: src/views/ActivateBitcoinSuccess.vue:103
-#: src/views/ActivatePolygonSuccess.vue:110
-#: src/views/ActivatePolygonSuccess.vue:114
+#: src/views/ActivateBitcoinSuccess.vue:104
+#: src/views/ActivatePolygonSuccess.vue:111
+#: src/views/ActivatePolygonSuccess.vue:115
 #: src/views/BitcoinSyncBaseView.vue:48
 #: src/views/LoginSuccess.vue:43
 #: src/views/SignupLedger.vue:104
@@ -701,7 +701,7 @@ msgstr ""
 msgid "My Backups are safe."
 msgstr ""
 
-#: src/views/AddAccountSelection.vue:78
+#: src/views/AddAccountSelection.vue:82
 msgid "New Address added to your Account."
 msgstr ""
 
@@ -903,7 +903,7 @@ msgstr ""
 msgid "Retrieving your old accounts..."
 msgstr ""
 
-#: src/views/ActivatePolygonSuccess.vue:138
+#: src/views/ActivatePolygonSuccess.vue:139
 #: src/views/BitcoinSyncBaseView.vue:68
 #: src/views/LoginSuccess.vue:122
 #: src/views/SetupSwapSuccess.vue:614
@@ -1002,7 +1002,7 @@ msgstr ""
 msgid "Syncing consensus..."
 msgstr ""
 
-#: src/views/ActivatePolygonSuccess.vue:112
+#: src/views/ActivatePolygonSuccess.vue:113
 #: src/views/BitcoinSyncBaseView.vue:50
 #: src/views/SetupSwapLedger.vue:850
 #: src/views/SetupSwapSuccess.vue:587
@@ -1027,11 +1027,11 @@ msgstr ""
 msgid "Syncing with Bitcoin network..."
 msgstr ""
 
-#: src/views/ActivatePolygonSuccess.vue:133
+#: src/views/ActivatePolygonSuccess.vue:134
 msgid "Syncing with Polygon network failed: {error}"
 msgstr ""
 
-#: src/views/ActivatePolygonSuccess.vue:128
+#: src/views/ActivatePolygonSuccess.vue:129
 msgid "Syncing with Polygon network..."
 msgstr ""
 
@@ -1157,7 +1157,7 @@ msgid "Updating Keyguard..."
 msgstr ""
 
 #: src/views/Migrate.vue:142
-#: src/views/Migrate.vue:282
+#: src/views/Migrate.vue:284
 msgid "Updating your Accounts"
 msgstr ""
 
@@ -1165,7 +1165,7 @@ msgstr ""
 msgid "Updating your balances"
 msgstr ""
 
-#: src/views/ActivatePolygonSuccess.vue:116
+#: src/views/ActivatePolygonSuccess.vue:117
 msgid "USDC activated"
 msgstr ""
 
@@ -1175,7 +1175,7 @@ msgid ""
 "or Recovery Words."
 msgstr ""
 
-#: src/views/LoginSuccess.vue:194
+#: src/views/LoginSuccess.vue:196
 #: src/views/SignupLedger.vue:132
 msgid "Used addresses without balance might have been missed."
 msgstr ""
@@ -1185,16 +1185,16 @@ msgid "Verify Payment"
 msgstr ""
 
 #: src/lib/LabelingMachine.ts:50
-#: src/views/AddVestingContract.vue:137
+#: src/views/AddVestingContract.vue:138
 msgid "Vesting Contract"
 msgstr ""
 
-#: src/views/LoginSuccess.vue:209
+#: src/views/LoginSuccess.vue:211
 msgid "Welcome back! | Your Accounts are ready."
 msgstr ""
 
 #: src/views/SignupLedger.vue:112
-#: src/views/SignupSuccess.vue:92
+#: src/views/SignupSuccess.vue:93
 msgid ""
 "Welcome to the\n"
 "Nimiq Wallet"
@@ -1204,7 +1204,7 @@ msgstr ""
 msgid "What is Nimiq?"
 msgstr ""
 
-#: src/views/Migrate.vue:273
+#: src/views/Migrate.vue:275
 msgid "Whoops, something went wrong"
 msgstr ""
 
@@ -1241,7 +1241,7 @@ msgstr ""
 msgid "Your {app} app is outdated. Please update your Ledger firmware and {app} app using Ledger Live."
 msgstr ""
 
-#: src/views/LoginSuccess.vue:192
+#: src/views/LoginSuccess.vue:194
 #: src/views/SignupLedger.vue:106
 msgid ""
 "Your Addresses may be\n"
@@ -1262,7 +1262,7 @@ msgstr ""
 msgid "Your message is signed."
 msgstr ""
 
-#: src/views/LoginSuccess.vue:203
+#: src/views/LoginSuccess.vue:205
 #: src/views/SimpleSuccess.vue:31
 msgid "Your password was changed."
 msgstr ""

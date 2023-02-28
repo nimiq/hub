@@ -23,7 +23,7 @@
         "@nimiq/electrum-client": "https://github.com/nimiq/electrum-client#build",
         "@nimiq/fastspot-api": "^1.7.0",
         "@nimiq/iqons": "^1.5.2",
-        "@nimiq/keyguard-client": "https://gitpkg.now.sh/nimiq/keyguard?88d597775f8b93cc32229dc7890043062954e171&scripts.postinstall=cd%20client%20%26%26%20.%2Fbuild-gitpkg.sh",
+        "@nimiq/keyguard-client": "https://gitpkg.now.sh/nimiq/keyguard?085a687ff1d1bc0bd615fb125b94ef760b7b685d&scripts.postinstall=cd%20client%20%26%26%20.%2Fbuild-gitpkg.sh",
         "@nimiq/ledger-api": "^2.2.0",
         "@nimiq/network-client": "^0.6.2",
         "@nimiq/oasis-api": "^1.1.1",
