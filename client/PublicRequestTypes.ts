@@ -350,6 +350,11 @@ export interface BitcoinHtlcRefundInstructions {
     refundAddress: string; // My address, must be refund address of HTLC
 }
 
+export interface PolygonHtlcRefundInstructions extends RelayRequest {
+    type: 'USDC';
+    amount: number;
+}
+
 export type HtlcCreationInstructions =
     NimiqHtlcCreationInstructions
     | BitcoinHtlcCreationInstructions
@@ -364,7 +369,8 @@ export type HtlcSettlementInstructions =
 
 export type HtlcRefundInstructions =
     NimiqHtlcRefundInstructions
-    | BitcoinHtlcRefundInstructions;
+    | BitcoinHtlcRefundInstructions
+    | PolygonHtlcRefundInstructions;
 
 export interface SetupSwapRequest extends SimpleRequest {
     swapId: string;

@@ -662,8 +662,8 @@ export class RequestParser {
                 // Only basic parsing and validation. Refund transaction specific data will be validated by the Keyguard
                 // or subsequent Ledger transaction signing requests.
 
-                if (!['NIM', 'BTC'].includes(refundSwapRequest.refund.type)) {
-                    throw new Error('Refunding object type must be "NIM" or "BTC"');
+                if (!['NIM', 'BTC', 'USDC'].includes(refundSwapRequest.refund.type)) {
+                    throw new Error('Refunding object type must be "NIM", "BTC", or "USDC"');
                 }
 
                 const parsedRefundSwapRequest: ParsedRefundSwapRequest = {
@@ -679,7 +679,10 @@ export class RequestParser {
                         extraData: typeof refundSwapRequest.refund.extraData === 'string'
                             ? Nimiq.BufferUtils.fromAny(refundSwapRequest.refund.extraData)
                             : refundSwapRequest.refund.extraData,
-                    } : {
+                    } : refundSwapRequest.refund.type === 'BTC' ? {
+                        ...refundSwapRequest.refund,
+                        type: SwapAsset[refundSwapRequest.refund.type],
+                    } : { // USDC
                         ...refundSwapRequest.refund,
                         type: SwapAsset[refundSwapRequest.refund.type],
                     },

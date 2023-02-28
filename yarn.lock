@@ -1502,9 +1502,9 @@
     leveldown "^5.1.1"
     levelup "^4.1.0"
 
-"@nimiq/keyguard-client@https://gitpkg.now.sh/nimiq/keyguard?88d597775f8b93cc32229dc7890043062954e171&scripts.postinstall=patch%20..%2F..%2F%40ledgerhq%2Fhw-transport%2Flib%2FTransport.d.ts%20..%2F..%2F..%2Fpatches%2F%40ledgerhq%2Bhw-transport%2B6.28.1.patch%20%26%26%20cd%20client%20%26%26%20.%2Fbuild-gitpkg.sh":
+"@nimiq/keyguard-client@https://gitpkg.now.sh/nimiq/keyguard?085a687ff1d1bc0bd615fb125b94ef760b7b685d&scripts.postinstall=patch%20..%2F..%2F%40ledgerhq%2Fhw-transport%2Flib%2FTransport.d.ts%20..%2F..%2F..%2Fpatches%2F%40ledgerhq%2Bhw-transport%2B6.28.1.patch%20%26%26%20cd%20client%20%26%26%20.%2Fbuild-gitpkg.sh":
   version "1.0.0"
-  resolved "https://gitpkg.now.sh/nimiq/keyguard?88d597775f8b93cc32229dc7890043062954e171&scripts.postinstall=patch%20..%2F..%2F%40ledgerhq%2Fhw-transport%2Flib%2FTransport.d.ts%20..%2F..%2F..%2Fpatches%2F%40ledgerhq%2Bhw-transport%2B6.28.1.patch%20%26%26%20cd%20client%20%26%26%20.%2Fbuild-gitpkg.sh#7a12a4cea05ba185cd9ac076cbbef3f21a4cc268"
+  resolved "https://gitpkg.now.sh/nimiq/keyguard?085a687ff1d1bc0bd615fb125b94ef760b7b685d&scripts.postinstall=patch%20..%2F..%2F%40ledgerhq%2Fhw-transport%2Flib%2FTransport.d.ts%20..%2F..%2F..%2Fpatches%2F%40ledgerhq%2Bhw-transport%2B6.28.1.patch%20%26%26%20cd%20client%20%26%26%20.%2Fbuild-gitpkg.sh#443d812d53cd6e18000109df6e85abcee57fd644"
 
 "@nimiq/ledger-api@^2.3.0":
   version "2.3.0"

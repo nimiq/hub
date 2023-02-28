@@ -303,7 +303,10 @@ export interface ParsedRefundSwapRequest extends ParsedSimpleRequest {
             value: number, // Sats
         };
         refundAddress: string; // My address, must be refund address of HTLC
-    };
+    } | ({
+        type: SwapAsset.USDC,
+        amount: number,
+    } & RelayRequest);
 }
 
 // Discriminated Unions
