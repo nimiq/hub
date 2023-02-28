@@ -227,7 +227,6 @@ export interface ParsedSetupSwapRequest extends ParsedSimpleRequest {
     } | ({
         type: SwapAsset.USDC,
         amount: number,
-        fee: number,
     } & RelayRequest) | {
         type: SwapAsset.EUR,
         value: number; // Eurocents

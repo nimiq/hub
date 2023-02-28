@@ -269,7 +269,6 @@ export default class SetupSwap extends BitcoinSyncBaseView {
                 request: this.request.redeem.request,
                 relayData: this.request.redeem.relayData,
                 amount: this.request.redeem.amount,
-                fee: this.request.redeem.fee,
             };
         }
 
