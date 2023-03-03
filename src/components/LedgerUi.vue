@@ -130,6 +130,7 @@ class LedgerUi extends Vue {
             case RequestTypeNimiq.SIGN_TRANSACTION:
             case RequestTypeBitcoin.SIGN_TRANSACTION:
                 return LedgerUi.Illustrations.CONFIRM_TRANSACTION;
+            case RequestTypeNimiq.SIGN_MESSAGE:
             case RequestTypeBitcoin.SIGN_MESSAGE:
                 return LedgerUi.Illustrations.CONFIRM_MESSAGE;
         }

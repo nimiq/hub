@@ -310,7 +310,7 @@ msgstr ""
 msgid "Claiming Cashlink"
 msgstr ""
 
-#: src/components/LedgerUi.vue:303
+#: src/components/LedgerUi.vue:304
 msgid "Click Connect"
 msgstr ""
 
@@ -330,7 +330,7 @@ msgstr ""
 msgid "Confirm {outgoingOrIncoming} transaction on Ledger"
 msgstr ""
 
-#: src/components/LedgerUi.vue:217
+#: src/components/LedgerUi.vue:218
 msgid "Confirm Address"
 msgstr ""
 
@@ -342,21 +342,21 @@ msgstr ""
 msgid "Confirm Swap"
 msgstr ""
 
-#: src/components/LedgerUi.vue:220
+#: src/components/LedgerUi.vue:221
 msgid "Confirm that the address on your Ledger matches {addressToConfirm}"
 msgstr ""
 
-#: src/components/LedgerUi.vue:219
+#: src/components/LedgerUi.vue:220
 msgid "Confirm the address on your Ledger"
 msgstr ""
 
-#: src/components/LedgerUi.vue:238
+#: src/components/LedgerUi.vue:239
 #: src/views/SignBtcTransactionLedger.vue:4
 #: src/views/SignTransactionLedger.vue:34
 msgid "Confirm Transaction"
 msgstr ""
 
-#: src/components/LedgerUi.vue:239
+#: src/components/LedgerUi.vue:240
 msgid "Confirm using your Ledger"
 msgstr ""
 
@@ -376,12 +376,12 @@ msgstr ""
 msgid "Connect"
 msgstr ""
 
-#: src/components/LedgerUi.vue:311
+#: src/components/LedgerUi.vue:312
 #: src/components/OnboardingMenu.vue:5
 msgid "Connect Ledger"
 msgstr ""
 
-#: src/components/LedgerUi.vue:298
+#: src/components/LedgerUi.vue:299
 msgid "Connect your Ledger Device"
 msgstr ""
 
@@ -492,7 +492,7 @@ msgstr ""
 msgid "Enter the address of a vesting contract."
 msgstr ""
 
-#: src/components/LedgerUi.vue:299
+#: src/components/LedgerUi.vue:300
 msgid "Enter your PIN"
 msgstr ""
 
@@ -534,7 +534,7 @@ msgstr ""
 msgid "Fetching swap data..."
 msgstr ""
 
-#: src/components/LedgerUi.vue:233
+#: src/components/LedgerUi.vue:234
 #: src/views/ActivateBitcoinSuccess.vue:103
 #: src/views/BitcoinSyncBaseView.vue:48
 #: src/views/LoginSuccess.vue:42
@@ -630,7 +630,7 @@ msgstr ""
 msgid "Ledger accounts cannot be exported. Please refer to your 24 words backup you created when setting up your device."
 msgstr ""
 
-#: src/components/LedgerUi.vue:268
+#: src/components/LedgerUi.vue:269
 msgid "Ledger not supported by browser."
 msgstr ""
 
@@ -638,7 +638,7 @@ msgstr ""
 msgid "Legacy Account"
 msgstr ""
 
-#: src/components/LedgerUi.vue:200
+#: src/components/LedgerUi.vue:201
 msgid "Loading failed, retrying..."
 msgstr ""
 
@@ -743,7 +743,7 @@ msgstr ""
 msgid "One account can now have multiple addresses."
 msgstr ""
 
-#: src/components/LedgerUi.vue:301
+#: src/components/LedgerUi.vue:302
 msgid "Open the {app} App"
 msgstr ""
 
@@ -792,11 +792,11 @@ msgstr ""
 msgid "Pink"
 msgstr ""
 
-#: src/components/LedgerUi.vue:251
+#: src/components/LedgerUi.vue:252
 msgid "Please cancel the previous request on your Ledger."
 msgstr ""
 
-#: src/components/LedgerUi.vue:189
+#: src/components/LedgerUi.vue:190
 msgid "Please cancel the request on your Ledger"
 msgstr ""
 
@@ -853,11 +853,11 @@ msgstr ""
 msgid "Rename Account"
 msgstr ""
 
-#: src/components/LedgerUi.vue:285
+#: src/components/LedgerUi.vue:286
 msgid "Request failed"
 msgstr ""
 
-#: src/components/LedgerUi.vue:286
+#: src/components/LedgerUi.vue:287
 msgid "Request failed: "
 msgstr ""
 
@@ -1004,7 +1004,7 @@ msgstr ""
 msgid "Teal"
 msgstr ""
 
-#: src/components/LedgerUi.vue:280
+#: src/components/LedgerUi.vue:281
 msgid "The connected wallet or Ledger is not the one this account belongs to."
 msgstr ""
 
@@ -1188,7 +1188,7 @@ msgstr ""
 msgid "You're logged in!"
 msgstr ""
 
-#: src/components/LedgerUi.vue:272
+#: src/components/LedgerUi.vue:273
 msgid "Your {app} app is outdated. Please update your Ledger firmware and {app} app using Ledger Live."
 msgstr ""
 
