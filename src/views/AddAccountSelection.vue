@@ -64,7 +64,8 @@ export default class AddAccountSelection extends Vue {
             // Add the correct counter number to the default label
             const addressCountWithTheSameDefaultLabel = [...wallet.accounts.values()]
                 .filter((accountInfo) => accountInfo.defaultLabel === label).length;
-            selectedAccount.label = `${label} ${addressCountWithTheSameDefaultLabel + 1}`;
+            const labelCounter = addressCountWithTheSameDefaultLabel + 1;
+            selectedAccount.label = `${label}${labelCounter === 1 ? '' : ` ${labelCounter}`}`;
         }
 
         wallet.accounts.set(selectedAccount.userFriendlyAddress, selectedAccount);
