@@ -193,7 +193,7 @@ msgstr "Сума:"
 msgid "Bitcoin"
 msgstr "Біткоїн"
 
-#: src/views/ActivateBitcoinSuccess.vue:105
+#: src/views/ActivateBitcoinSuccess.vue:106
 msgid "Bitcoin activated"
 msgstr "Біткоїн активовано"
 
@@ -397,7 +397,7 @@ msgstr "Підключіть ваш Ledger пристрій"
 msgid "Connect your Ledger Nano S or Nano X."
 msgstr "Підключіть Ledger Nano S або Nano X."
 
-#: src/views/Migrate.vue:143 src/views/Migrate.vue:283
+#: src/views/Migrate.vue:143 src/views/Migrate.vue:285
 msgid "Connecting to Keyguard..."
 msgstr "Підключення до гаманця..."
 
@@ -421,7 +421,7 @@ msgid "Contacts are not affected."
 msgstr "Це не впливає на контакти."
 
 #: src/components/NotEnoughCookieSpace.vue:8 src/views/LoginSuccess.vue:167
-#: src/views/LoginSuccess.vue:195 src/views/SignupLedger.vue:143
+#: src/views/LoginSuccess.vue:197 src/views/SignupLedger.vue:143
 msgid "Continue"
 msgstr "Продовжити"
 
@@ -457,7 +457,7 @@ msgstr "Створюйте та скануйте QR-коди для швидко
 msgid "Create Cashlink"
 msgstr "Створити чек"
 
-#: src/views/SignupSuccess.vue:33
+#: src/views/SignupSuccess.vue:34
 msgid "Creating your Account"
 msgstr "Створення рахунку"
 
@@ -534,9 +534,9 @@ msgstr "Не вдалося отримати дані обміну: {error}"
 msgid "Fetching swap data..."
 msgstr "Отримання даних обміну..."
 
-#: src/components/LedgerUi.vue:233 src/views/ActivateBitcoinSuccess.vue:103
-#: src/views/ActivatePolygonSuccess.vue:110
-#: src/views/ActivatePolygonSuccess.vue:114
+#: src/components/LedgerUi.vue:233 src/views/ActivateBitcoinSuccess.vue:104
+#: src/views/ActivatePolygonSuccess.vue:111
+#: src/views/ActivatePolygonSuccess.vue:115
 #: src/views/BitcoinSyncBaseView.vue:48 src/views/LoginSuccess.vue:43
 #: src/views/SignupLedger.vue:104
 msgid "Fetching your Addresses"
@@ -705,7 +705,7 @@ msgstr "Більше адрес"
 msgid "My Backups are safe."
 msgstr "Мої секретні слова у безпеці."
 
-#: src/views/AddAccountSelection.vue:78
+#: src/views/AddAccountSelection.vue:83
 msgid "New Address added to your Account."
 msgstr "Нову адресу було додатно до рахунку."
 
@@ -912,7 +912,7 @@ msgstr "Перезапустити платіж"
 msgid "Retrieving your old accounts..."
 msgstr "Завантаження старих рахунків..."
 
-#: src/views/ActivatePolygonSuccess.vue:138
+#: src/views/ActivatePolygonSuccess.vue:139
 #: src/views/BitcoinSyncBaseView.vue:68 src/views/LoginSuccess.vue:122
 #: src/views/SetupSwapSuccess.vue:614 src/views/SignupLedger.vue:145
 msgid "Retry"
@@ -1005,7 +1005,7 @@ msgstr "Синхронізація"
 msgid "Syncing consensus..."
 msgstr "Встановлення консенсус..."
 
-#: src/views/ActivatePolygonSuccess.vue:112
+#: src/views/ActivatePolygonSuccess.vue:113
 #: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapLedger.vue:850
 #: src/views/SetupSwapSuccess.vue:587
 #: src/views/SignBtcTransactionLedger.vue:117
@@ -1028,11 +1028,11 @@ msgstr "Помилка синхронізації з мережею Біткої
 msgid "Syncing with Bitcoin network..."
 msgstr "Синхронізація з мережею Біткоїн..."
 
-#: src/views/ActivatePolygonSuccess.vue:133
+#: src/views/ActivatePolygonSuccess.vue:134
 msgid "Syncing with Polygon network failed: {error}"
 msgstr ""
 
-#: src/views/ActivatePolygonSuccess.vue:128
+#: src/views/ActivatePolygonSuccess.vue:129
 msgid "Syncing with Polygon network..."
 msgstr ""
 
@@ -1183,7 +1183,7 @@ msgstr "Оновлюємо баланс"
 msgid "Updating Keyguard..."
 msgstr "Оновлюємо додаток..."
 
-#: src/views/Migrate.vue:142 src/views/Migrate.vue:282
+#: src/views/Migrate.vue:142 src/views/Migrate.vue:284
 msgid "Updating your Accounts"
 msgstr "Завантажуємо ваші рахунки"
 
@@ -1191,7 +1191,7 @@ msgstr "Завантажуємо ваші рахунки"
 msgid "Updating your balances"
 msgstr "Завантажуємо баланс на рахунках"
 
-#: src/views/ActivatePolygonSuccess.vue:116
+#: src/views/ActivatePolygonSuccess.vue:117
 msgid "USDC activated"
 msgstr ""
 
@@ -1201,7 +1201,7 @@ msgid ""
 "or Recovery Words."
 msgstr "Використовуючи файл-ключ або секретні слова."
 
-#: src/views/LoginSuccess.vue:194 src/views/SignupLedger.vue:132
+#: src/views/LoginSuccess.vue:196 src/views/SignupLedger.vue:132
 msgid "Used addresses without balance might have been missed."
 msgstr "Адреси з нульовим балансом можуть не відображатися."
 
@@ -1209,15 +1209,15 @@ msgstr "Адреси з нульовим балансом можуть не ві
 msgid "Verify Payment"
 msgstr "Підтвердіть платіж"
 
-#: src/lib/LabelingMachine.ts:50 src/views/AddVestingContract.vue:137
+#: src/lib/LabelingMachine.ts:50 src/views/AddVestingContract.vue:138
 msgid "Vesting Contract"
 msgstr "Розподільний контракт"
 
-#: src/views/LoginSuccess.vue:209
+#: src/views/LoginSuccess.vue:211
 msgid "Welcome back! | Your Accounts are ready."
 msgstr "З поверненням! | Ваш рахунок готовий."
 
-#: src/views/SignupLedger.vue:112 src/views/SignupSuccess.vue:92
+#: src/views/SignupLedger.vue:112 src/views/SignupSuccess.vue:93
 msgid ""
 "Welcome to the\n"
 "Nimiq Wallet"
@@ -1227,7 +1227,7 @@ msgstr ""
 msgid "What is Nimiq?"
 msgstr "Що таке Німік?"
 
-#: src/views/Migrate.vue:273
+#: src/views/Migrate.vue:275
 msgid "Whoops, something went wrong"
 msgstr "Упс, щось пішло не так"
 
@@ -1271,7 +1271,7 @@ msgstr ""
 "Ваш {app} додаток застарів. Будь ласка, оновіть ваш Ledger і {app} додаток "
 "використовуючи Ledger Live."
 
-#: src/views/LoginSuccess.vue:192 src/views/SignupLedger.vue:106
+#: src/views/LoginSuccess.vue:194 src/views/SignupLedger.vue:106
 msgid ""
 "Your Addresses may be\n"
 "incomplete."
@@ -1293,6 +1293,6 @@ msgstr ""
 msgid "Your message is signed."
 msgstr "Ваше повідомлення підписано."
 
-#: src/views/LoginSuccess.vue:203 src/views/SimpleSuccess.vue:31
+#: src/views/LoginSuccess.vue:205 src/views/SimpleSuccess.vue:31
 msgid "Your password was changed."
 msgstr "Пароль було змінено."

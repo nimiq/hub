@@ -192,7 +192,7 @@ msgstr "金额："
 msgid "Bitcoin"
 msgstr "比特币"
 
-#: src/views/ActivateBitcoinSuccess.vue:105
+#: src/views/ActivateBitcoinSuccess.vue:106
 msgid "Bitcoin activated"
 msgstr "比特币已激活"
 
@@ -396,7 +396,7 @@ msgstr "连接你的Ledger装置"
 msgid "Connect your Ledger Nano S or Nano X."
 msgstr "连接你的Ledger Nano S或Nano X"
 
-#: src/views/Migrate.vue:143 src/views/Migrate.vue:283
+#: src/views/Migrate.vue:143 src/views/Migrate.vue:285
 msgid "Connecting to Keyguard..."
 msgstr "正在连接到键盘守卫 ..."
 
@@ -420,7 +420,7 @@ msgid "Contacts are not affected."
 msgstr "联系人不受影响"
 
 #: src/components/NotEnoughCookieSpace.vue:8 src/views/LoginSuccess.vue:167
-#: src/views/LoginSuccess.vue:195 src/views/SignupLedger.vue:143
+#: src/views/LoginSuccess.vue:197 src/views/SignupLedger.vue:143
 msgid "Continue"
 msgstr "继续"
 
@@ -456,7 +456,7 @@ msgstr "建立并扫描QR码以快速共享地址"
 msgid "Create Cashlink"
 msgstr "建立现金链接"
 
-#: src/views/SignupSuccess.vue:33
+#: src/views/SignupSuccess.vue:34
 msgid "Creating your Account"
 msgstr "正在建立你的帐户"
 
@@ -533,9 +533,9 @@ msgstr "提取交换数据失败：{error}"
 msgid "Fetching swap data..."
 msgstr "正在获取交换数据..."
 
-#: src/components/LedgerUi.vue:233 src/views/ActivateBitcoinSuccess.vue:103
-#: src/views/ActivatePolygonSuccess.vue:110
-#: src/views/ActivatePolygonSuccess.vue:114
+#: src/components/LedgerUi.vue:233 src/views/ActivateBitcoinSuccess.vue:104
+#: src/views/ActivatePolygonSuccess.vue:111
+#: src/views/ActivatePolygonSuccess.vue:115
 #: src/views/BitcoinSyncBaseView.vue:48 src/views/LoginSuccess.vue:43
 #: src/views/SignupLedger.vue:104
 msgid "Fetching your Addresses"
@@ -699,7 +699,7 @@ msgstr "更多头像"
 msgid "My Backups are safe."
 msgstr "我的备份很安全"
 
-#: src/views/AddAccountSelection.vue:78
+#: src/views/AddAccountSelection.vue:83
 msgid "New Address added to your Account."
 msgstr "新地址已添加到你的帐户"
 
@@ -905,7 +905,7 @@ msgstr "重新开始付款"
 msgid "Retrieving your old accounts..."
 msgstr "正在检索你的旧帐户..."
 
-#: src/views/ActivatePolygonSuccess.vue:138
+#: src/views/ActivatePolygonSuccess.vue:139
 #: src/views/BitcoinSyncBaseView.vue:68 src/views/LoginSuccess.vue:122
 #: src/views/SetupSwapSuccess.vue:614 src/views/SignupLedger.vue:145
 msgid "Retry"
@@ -998,7 +998,7 @@ msgstr "同步中"
 msgid "Syncing consensus..."
 msgstr "正在同步共识..."
 
-#: src/views/ActivatePolygonSuccess.vue:112
+#: src/views/ActivatePolygonSuccess.vue:113
 #: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapLedger.vue:850
 #: src/views/SetupSwapSuccess.vue:587
 #: src/views/SignBtcTransactionLedger.vue:117
@@ -1021,11 +1021,11 @@ msgstr "与比特币网络同步失败：{error}"
 msgid "Syncing with Bitcoin network..."
 msgstr "正在与比特币网络同步..."
 
-#: src/views/ActivatePolygonSuccess.vue:133
+#: src/views/ActivatePolygonSuccess.vue:134
 msgid "Syncing with Polygon network failed: {error}"
 msgstr ""
 
-#: src/views/ActivatePolygonSuccess.vue:128
+#: src/views/ActivatePolygonSuccess.vue:129
 msgid "Syncing with Polygon network..."
 msgstr ""
 
@@ -1161,7 +1161,7 @@ msgstr "更新余额"
 msgid "Updating Keyguard..."
 msgstr "正在更新键盘守卫..."
 
-#: src/views/Migrate.vue:142 src/views/Migrate.vue:282
+#: src/views/Migrate.vue:142 src/views/Migrate.vue:284
 msgid "Updating your Accounts"
 msgstr "更新你的帐户"
 
@@ -1169,7 +1169,7 @@ msgstr "更新你的帐户"
 msgid "Updating your balances"
 msgstr "更新你的余额"
 
-#: src/views/ActivatePolygonSuccess.vue:116
+#: src/views/ActivatePolygonSuccess.vue:117
 msgid "USDC activated"
 msgstr ""
 
@@ -1181,7 +1181,7 @@ msgstr ""
 "使用你的登录文件\n"
 "或恢复字登录"
 
-#: src/views/LoginSuccess.vue:194 src/views/SignupLedger.vue:132
+#: src/views/LoginSuccess.vue:196 src/views/SignupLedger.vue:132
 msgid "Used addresses without balance might have been missed."
 msgstr "已使用地址若没有余额可能会丢失"
 
@@ -1189,15 +1189,15 @@ msgstr "已使用地址若没有余额可能会丢失"
 msgid "Verify Payment"
 msgstr "验证付款"
 
-#: src/lib/LabelingMachine.ts:50 src/views/AddVestingContract.vue:137
+#: src/lib/LabelingMachine.ts:50 src/views/AddVestingContract.vue:138
 msgid "Vesting Contract"
 msgstr "归属合同"
 
-#: src/views/LoginSuccess.vue:209
+#: src/views/LoginSuccess.vue:211
 msgid "Welcome back! | Your Accounts are ready."
 msgstr ""
 
-#: src/views/SignupLedger.vue:112 src/views/SignupSuccess.vue:92
+#: src/views/SignupLedger.vue:112 src/views/SignupSuccess.vue:93
 msgid ""
 "Welcome to the\n"
 "Nimiq Wallet"
@@ -1207,7 +1207,7 @@ msgstr ""
 msgid "What is Nimiq?"
 msgstr "Nimiq是什么？"
 
-#: src/views/Migrate.vue:273
+#: src/views/Migrate.vue:275
 msgid "Whoops, something went wrong"
 msgstr "糟糕，出了点问题"
 
@@ -1247,7 +1247,7 @@ msgid ""
 " using Ledger Live."
 msgstr "你的{app}应用已过时。 请使用Ledger Live更新你的Ledger固件和{app}应用"
 
-#: src/views/LoginSuccess.vue:192 src/views/SignupLedger.vue:106
+#: src/views/LoginSuccess.vue:194 src/views/SignupLedger.vue:106
 msgid ""
 "Your Addresses may be\n"
 "incomplete."
@@ -1271,6 +1271,6 @@ msgstr ""
 msgid "Your message is signed."
 msgstr "你的信息已签署"
 
-#: src/views/LoginSuccess.vue:203 src/views/SimpleSuccess.vue:31
+#: src/views/LoginSuccess.vue:205 src/views/SimpleSuccess.vue:31
 msgid "Your password was changed."
 msgstr "你的密码已更改"

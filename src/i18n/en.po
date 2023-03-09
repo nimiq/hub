@@ -701,7 +701,7 @@ msgstr ""
 msgid "My Backups are safe."
 msgstr ""
 
-#: src/views/AddAccountSelection.vue:82
+#: src/views/AddAccountSelection.vue:83
 msgid "New Address added to your Account."
 msgstr ""
 

@@ -3,12 +3,12 @@
 # BlockchainShay <Shaylish@live.nl>, 2020
 # Jim <jimvendrig10@gmail.com>, 2021
 # Daniel, 2021
-# Stefan, 2021
 # Sören Schwert <hello@soerenschwert.de>, 2021
+# Stefan, 2023
 # 
 msgid ""
 msgstr ""
-"Last-Translator: Sören Schwert <hello@soerenschwert.de>, 2021\n"
+"Last-Translator: Stefan, 2023\n"
 "Language-Team: Dutch (https://www.transifex.com/nimiq-foundation/teams/110181/nl/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: nl\n"
@@ -17,10 +17,6 @@ msgstr ""
 #: src/views/ChooseAddress.vue:7
 msgid "{appName} is asking for an address to use."
 msgstr "{appName} vraagt een adres om te gebruiken."
-
-#: src/lib/LabelingMachine.ts:13
-msgid "{color} Account"
-msgstr "Account {color}"
 
 #: src/views/SetupSwapLedger.vue:57 src/views/SetupSwapLedger.vue:78
 msgid "{percentage} of swap value."
@@ -44,7 +40,7 @@ msgstr "404 - Geld niet gevonden"
 
 #: src/views/SetupSwapSuccess.vue:144
 msgid "503 Service unavailable - please try again later"
-msgstr ""
+msgstr "503 Service niet beschikbaar - probeer het later opnieuw"
 
 #: src/views/ExportSuccess.vue:60
 msgid "Account backed up!"
@@ -115,11 +111,11 @@ msgstr "Bedrag/Stap:"
 
 #: src/lib/paymentOptions/EtherPaymentOptions.ts:72
 msgid "Apply a gas price of at least {fee} gwei."
-msgstr ""
+msgstr "Hanteer een gasprijs van minimaal {fee} gwei."
 
 #: src/lib/paymentOptions/BitcoinPaymentOptions.ts:80
 msgid "Apply a network fee of at least {fee} sat/byte."
-msgstr ""
+msgstr "Pas een netwerktarief toe van minimaal {fee} sat/byte."
 
 #: src/views/SetupSwapLedger.vue:47
 msgid "Atomic swaps require two BTC transactions."
@@ -198,7 +194,7 @@ msgstr "Balans:"
 msgid "Bitcoin"
 msgstr "Bitcoin"
 
-#: src/views/ActivateBitcoinSuccess.vue:105
+#: src/views/ActivateBitcoinSuccess.vue:106
 msgid "Bitcoin activated"
 msgstr "Bitcoin geactiveerd"
 
@@ -206,13 +202,21 @@ msgstr "Bitcoin geactiveerd"
 msgid "Blocks/Step:"
 msgstr "Blocks/Stap:"
 
-#: src/lib/LabelingMachine.ts:43
-msgid "Blue"
-msgstr "Blauw"
+#: src/lib/LabelingMachine.ts:31
+msgid "Blue Account"
+msgstr "Blauw Account"
 
-#: src/lib/LabelingMachine.ts:48
-msgid "Brown"
-msgstr "Bruin"
+#: src/lib/LabelingMachine.ts:13
+msgid "Blue Address"
+msgstr "Blauw Adres"
+
+#: src/lib/LabelingMachine.ts:36
+msgid "Brown Account"
+msgstr "Bruin Account"
+
+#: src/lib/LabelingMachine.ts:18
+msgid "Brown Address"
+msgstr "Bruin Adres"
 
 #: src/views/SetupSwapLedger.vue:42
 msgid "BTC network fee"
@@ -323,7 +327,7 @@ msgstr "Klik Verbinden"
 
 #: src/views/CashlinkManage.vue:25
 msgid "Click to copy:"
-msgstr ""
+msgstr "Klik om te kopiëren:"
 
 #: src/views/RequestError.vue:31
 msgid "Close"
@@ -395,7 +399,7 @@ msgstr "Ledger apparaat verbinden"
 msgid "Connect your Ledger Nano S or Nano X."
 msgstr "Verbind je Ledger Nano S of Nano X."
 
-#: src/views/Migrate.vue:143 src/views/Migrate.vue:283
+#: src/views/Migrate.vue:143 src/views/Migrate.vue:285
 msgid "Connecting to Keyguard..."
 msgstr "Verbinden met Keyguard..."
 
@@ -419,7 +423,7 @@ msgid "Contacts are not affected."
 msgstr "Contacten zijn niet aangepast."
 
 #: src/components/NotEnoughCookieSpace.vue:8 src/views/LoginSuccess.vue:167
-#: src/views/LoginSuccess.vue:195 src/views/SignupLedger.vue:143
+#: src/views/LoginSuccess.vue:197 src/views/SignupLedger.vue:143
 msgid "Continue"
 msgstr "Doorgaan"
 
@@ -455,7 +459,7 @@ msgstr "Maak en scan QR codes om adressen snel te delen."
 msgid "Create Cashlink"
 msgstr "Maak een Cashlink"
 
-#: src/views/SignupSuccess.vue:33
+#: src/views/SignupSuccess.vue:34
 msgid "Creating your Account"
 msgstr "Account aan het maken "
 
@@ -482,7 +486,7 @@ msgstr "Klaar"
 
 #: src/views/CashlinkManage.vue:67
 msgid "Download"
-msgstr ""
+msgstr "Download"
 
 #: src/components/CheckoutCardExternal.vue:104
 msgid "Enter manually"
@@ -532,9 +536,9 @@ msgstr "Ophalen van Swap data is mislukt: {error}"
 msgid "Fetching swap data..."
 msgstr "Swap data ophalen..."
 
-#: src/components/LedgerUi.vue:233 src/views/ActivateBitcoinSuccess.vue:103
-#: src/views/ActivatePolygonSuccess.vue:110
-#: src/views/ActivatePolygonSuccess.vue:114
+#: src/components/LedgerUi.vue:233 src/views/ActivateBitcoinSuccess.vue:104
+#: src/views/ActivatePolygonSuccess.vue:111
+#: src/views/ActivatePolygonSuccess.vue:115
 #: src/views/BitcoinSyncBaseView.vue:48 src/views/LoginSuccess.vue:43
 #: src/views/SignupLedger.vue:104
 msgid "Fetching your Addresses"
@@ -568,9 +572,13 @@ msgstr "Ga terug"
 msgid "Got it"
 msgstr "Begrepen"
 
-#: src/lib/LabelingMachine.ts:47
-msgid "Green"
-msgstr "Groen"
+#: src/lib/LabelingMachine.ts:35
+msgid "Green Account"
+msgstr "Groen Account"
+
+#: src/lib/LabelingMachine.ts:17
+msgid "Green Address"
+msgstr "Groen Adres"
 
 #: src/views/CashlinkReceive.vue:346
 msgid "Happy birthday!"
@@ -607,9 +615,13 @@ msgstr "inkomend"
 msgid "Incomplete payment"
 msgstr "Betaling niet compleet"
 
-#: src/lib/LabelingMachine.ts:42
-msgid "Indigo"
-msgstr "Indigo"
+#: src/lib/LabelingMachine.ts:30
+msgid "Indigo Account"
+msgstr "Indigo Account"
+
+#: src/lib/LabelingMachine.ts:12
+msgid "Indigo Address"
+msgstr "Indigo Adres"
 
 #: src/views/RequestError.vue:6
 msgid "Invalid request"
@@ -627,7 +639,7 @@ msgstr ""
 msgid "Join Nimiq"
 msgstr "Sluit je aan bij Nimiq"
 
-#: src/lib/LabelingMachine.ts:17
+#: src/lib/LabelingMachine.ts:42
 msgid "Ledger Account"
 msgstr "Ledger account"
 
@@ -643,7 +655,7 @@ msgstr ""
 msgid "Ledger not supported by browser."
 msgstr "Ledger niet ondersteund door de browser."
 
-#: src/lib/LabelingMachine.ts:21
+#: src/lib/LabelingMachine.ts:46
 msgid "Legacy Account"
 msgstr "Legacy account"
 
@@ -668,7 +680,7 @@ msgstr "Login"
 
 #: src/views/ExportSuccess.vue:62
 msgid "Login File saved!"
-msgstr ""
+msgstr "Login File opgeslagen!"
 
 #: src/views/CashlinkReceive.vue:91
 msgid "Login to existing account"
@@ -698,7 +710,7 @@ msgstr "Meer avatars"
 msgid "My Backups are safe."
 msgstr "Mijn back-ups zijn veilig."
 
-#: src/views/AddAccountSelection.vue:78
+#: src/views/AddAccountSelection.vue:83
 msgid "New Address added to your Account."
 msgstr "Nieuw adres is toegevoegd aan je account."
 
@@ -767,14 +779,18 @@ msgstr "{app} App openen"
 msgid "Open Wallet App"
 msgstr "Open Wallet App"
 
-#: src/lib/LabelingMachine.ts:39
-msgid "Orange"
-msgstr "Oranje"
+#: src/lib/LabelingMachine.ts:27
+msgid "Orange Account"
+msgstr "Oranje Account"
+
+#: src/lib/LabelingMachine.ts:9
+msgid "Orange Address"
+msgstr "Oranje Adres"
 
 #: src/components/CheckoutCardNimiq.vue:63
 #: src/components/CheckoutCardNimiq.vue:87
 msgid "Other wallets"
-msgstr ""
+msgstr "Andere wallets"
 
 #: src/views/SetupSwapLedger.vue:986
 msgid "outgoing"
@@ -794,7 +810,7 @@ msgstr "Betaal met Nimiq"
 
 #: src/components/CheckoutCardNimiqExternal.vue:54
 msgid "Payment Reference"
-msgstr ""
+msgstr "Betalingskenmerk"
 
 #: src/components/CheckoutCard.vue:183
 msgid "Payment successful"
@@ -804,9 +820,13 @@ msgstr "Betaling succesvol"
 msgid "Payment successful."
 msgstr "Betaling succesvol."
 
-#: src/lib/LabelingMachine.ts:46
-msgid "Pink"
-msgstr "Roze"
+#: src/lib/LabelingMachine.ts:34
+msgid "Pink Account"
+msgstr "Roze Account"
+
+#: src/lib/LabelingMachine.ts:16
+msgid "Pink Address"
+msgstr "Roze Adres"
 
 #: src/components/LedgerUi.vue:251
 msgid "Please cancel the previous request on your Ledger."
@@ -840,17 +860,25 @@ msgstr "Swap voorbereiden"
 msgid "Processing your payment"
 msgstr "Je betaling verwerken"
 
-#: src/lib/LabelingMachine.ts:44
-msgid "Purple"
-msgstr "Paars"
+#: src/lib/LabelingMachine.ts:32
+msgid "Purple Account"
+msgstr "Paars Account"
+
+#: src/lib/LabelingMachine.ts:14
+msgid "Purple Address"
+msgstr "Paars Adres"
 
 #: src/views/ExportSuccess.vue:65
 msgid "Recovery Words exported!"
 msgstr "Herstelwoorden zijn geëxporteerd!"
 
-#: src/lib/LabelingMachine.ts:40
-msgid "Red"
-msgstr "Rood"
+#: src/lib/LabelingMachine.ts:28
+msgid "Red Account"
+msgstr "Rood Account"
+
+#: src/lib/LabelingMachine.ts:10
+msgid "Red Address"
+msgstr "Rood Adres"
 
 #: src/views/RefundSwapLedger.vue:316
 msgid "Refund Failed"
@@ -894,7 +922,7 @@ msgstr "Betaling opnieuw starten"
 msgid "Retrieving your old accounts..."
 msgstr "Oude accounts ophalen..."
 
-#: src/views/ActivatePolygonSuccess.vue:138
+#: src/views/ActivatePolygonSuccess.vue:139
 #: src/views/BitcoinSyncBaseView.vue:68 src/views/LoginSuccess.vue:122
 #: src/views/SetupSwapSuccess.vue:614 src/views/SignupLedger.vue:145
 msgid "Retry"
@@ -933,7 +961,7 @@ msgstr "Bericht ondertekenen"
 msgid "Signing transactions..."
 msgstr "Transacties ondertekenen..."
 
-#: src/lib/LabelingMachine.ts:33
+#: src/lib/LabelingMachine.ts:58
 msgid "Single Accounts"
 msgstr "Enkele accounts"
 
@@ -968,7 +996,7 @@ msgstr "Je nieuwe accounts opslaan..."
 
 #: src/views/SetupSwapLedger.vue:258
 msgid "Swap authorized"
-msgstr ""
+msgstr "Swap geautoriseerd"
 
 #: src/views/SetupSwapLedger.vue:73
 msgid "Swap fee"
@@ -988,7 +1016,7 @@ msgstr "Synchroniseren"
 msgid "Syncing consensus..."
 msgstr "Consensus synchroniseren..."
 
-#: src/views/ActivatePolygonSuccess.vue:112
+#: src/views/ActivatePolygonSuccess.vue:113
 #: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapLedger.vue:850
 #: src/views/SetupSwapSuccess.vue:587
 #: src/views/SignBtcTransactionLedger.vue:117
@@ -1011,21 +1039,25 @@ msgstr "Synchroniseren met Bitcoin-netwerk mislukt: {error}"
 msgid "Syncing with Bitcoin network..."
 msgstr "Synchroniseren met Bitcoin netwerk..."
 
-#: src/views/ActivatePolygonSuccess.vue:133
+#: src/views/ActivatePolygonSuccess.vue:134
 msgid "Syncing with Polygon network failed: {error}"
-msgstr ""
+msgstr "Synchroniseren met Polygon-netwerk mislukt: {error}"
 
-#: src/views/ActivatePolygonSuccess.vue:128
+#: src/views/ActivatePolygonSuccess.vue:129
 msgid "Syncing with Polygon network..."
-msgstr ""
+msgstr "Synchroniseren met Polygon-netwerk..."
 
 #: src/views/LoginSuccess.vue:121 src/views/SignupLedger.vue:134
 msgid "Syncing with the network failed: {error}"
 msgstr "Synchroniseren met het netwerk is mislukt: {error}"
 
-#: src/lib/LabelingMachine.ts:45
-msgid "Teal"
-msgstr "Teal"
+#: src/lib/LabelingMachine.ts:33
+msgid "Teal Account"
+msgstr "Groen Account"
+
+#: src/lib/LabelingMachine.ts:15
+msgid "Teal Address"
+msgstr "Groen Adres"
 
 #: src/components/LedgerUi.vue:280
 msgid "The connected wallet or Ledger is not the one this account belongs to."
@@ -1164,7 +1196,7 @@ msgstr "Balans updaten"
 msgid "Updating Keyguard..."
 msgstr "Keyguard updaten..."
 
-#: src/views/Migrate.vue:142 src/views/Migrate.vue:282
+#: src/views/Migrate.vue:142 src/views/Migrate.vue:284
 msgid "Updating your Accounts"
 msgstr "Je accounts updaten"
 
@@ -1172,9 +1204,9 @@ msgstr "Je accounts updaten"
 msgid "Updating your balances"
 msgstr "Je balans updaten"
 
-#: src/views/ActivatePolygonSuccess.vue:116
+#: src/views/ActivatePolygonSuccess.vue:117
 msgid "USDC activated"
-msgstr ""
+msgstr "USDC geactiveerd"
 
 #: src/components/OnboardingMenu.vue:12
 msgid ""
@@ -1184,7 +1216,7 @@ msgstr ""
 "Gebruik je Login File\n"
 "of je herstelwoorden."
 
-#: src/views/LoginSuccess.vue:194 src/views/SignupLedger.vue:132
+#: src/views/LoginSuccess.vue:196 src/views/SignupLedger.vue:132
 msgid "Used addresses without balance might have been missed."
 msgstr "Gebruikte adressen zonder balans kunnen niet aanwezig zijn."
 
@@ -1192,31 +1224,37 @@ msgstr "Gebruikte adressen zonder balans kunnen niet aanwezig zijn."
 msgid "Verify Payment"
 msgstr "Controleer de betaling"
 
-#: src/lib/LabelingMachine.ts:25 src/views/AddVestingContract.vue:137
+#: src/lib/LabelingMachine.ts:50 src/views/AddVestingContract.vue:138
 msgid "Vesting Contract"
 msgstr "Vestingcontract"
 
-#: src/views/LoginSuccess.vue:209
+#: src/views/LoginSuccess.vue:211
 msgid "Welcome back! | Your Accounts are ready."
-msgstr ""
+msgstr "Welkom terug! | Je rekeningen staan klaar."
 
-#: src/views/SignupLedger.vue:112 src/views/SignupSuccess.vue:92
+#: src/views/SignupLedger.vue:112 src/views/SignupSuccess.vue:93
 msgid ""
 "Welcome to the\n"
 "Nimiq Wallet"
 msgstr ""
+"Welkom bij de\n"
+"Nimiq Wallet"
 
 #: src/CashlinkApp.vue:9
 msgid "What is Nimiq?"
 msgstr "Wat is Nimiq?"
 
-#: src/views/Migrate.vue:273
+#: src/views/Migrate.vue:275
 msgid "Whoops, something went wrong"
 msgstr "Whoops, er is iets misgegaan"
 
-#: src/lib/LabelingMachine.ts:41
-msgid "Yellow"
-msgstr "Geel"
+#: src/lib/LabelingMachine.ts:29
+msgid "Yellow Account"
+msgstr "Geel Account"
+
+#: src/lib/LabelingMachine.ts:11
+msgid "Yellow Address"
+msgstr "Geel Adres"
 
 #: src/views/LogoutLedger.vue:19 src/views/LogoutSuccess.vue:4
 msgid "You are logged out."
@@ -1250,7 +1288,7 @@ msgstr ""
 "Je {app} app is verouderd. Werk je Ledger-firmware en {app} app bij met "
 "Ledger Live."
 
-#: src/views/LoginSuccess.vue:192 src/views/SignupLedger.vue:106
+#: src/views/LoginSuccess.vue:194 src/views/SignupLedger.vue:106
 msgid ""
 "Your Addresses may be\n"
 "incomplete."
@@ -1272,6 +1310,6 @@ msgstr "Je Ledger is nodig om opnieuw in te loggen."
 msgid "Your message is signed."
 msgstr "Je bericht is ondertekend."
 
-#: src/views/LoginSuccess.vue:203 src/views/SimpleSuccess.vue:31
+#: src/views/LoginSuccess.vue:205 src/views/SimpleSuccess.vue:31
 msgid "Your password was changed."
 msgstr "Je wachtwoord is gewijzigd."
