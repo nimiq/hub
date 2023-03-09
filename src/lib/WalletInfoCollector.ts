@@ -495,7 +495,7 @@ export default class WalletInfoCollector {
             this._nimColoredAddressLabelCounts[label] = labelCounter;
             const accountInfo = existingAccountInfo || new AccountInfo(
                 newAccount.path,
-                `${label} ${labelCounter}`,
+                `${label}${labelCounter === 1 ? '' : ` ${labelCounter}`}`,
                 Nimiq.Address.fromString(newAccount.address),
             );
             if (balance !== undefined) accountInfo.balance = balance;
