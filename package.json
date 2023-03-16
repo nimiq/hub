@@ -23,7 +23,7 @@
         "@nimiq/electrum-client": "https://github.com/nimiq/electrum-client#build",
         "@nimiq/fastspot-api": "^1.7.0",
         "@nimiq/iqons": "^1.5.2",
-        "@nimiq/keyguard-client": "https://gitpkg.now.sh/nimiq/keyguard?085a687ff1d1bc0bd615fb125b94ef760b7b685d&scripts.postinstall=patch%20..%2F..%2F%40ledgerhq%2Fhw-transport%2Flib%2FTransport.d.ts%20..%2F..%2F..%2Fpatches%2F%40ledgerhq%2Bhw-transport%2B6.28.1.patch%20%26%26%20cd%20client%20%26%26%20.%2Fbuild-gitpkg.sh",
+        "@nimiq/keyguard-client": "https://gitpkg.now.sh/nimiq/keyguard?dac2c68dda5a8a5b4dd3e05465d3f1e9d7a539d5&scripts.postinstall=cd%20client%20%26%26%20.%2Fbuild-gitpkg.sh",
         "@nimiq/ledger-api": "^2.3.0",
         "@nimiq/network-client": "^0.6.2",
         "@nimiq/oasis-api": "^1.1.1",
