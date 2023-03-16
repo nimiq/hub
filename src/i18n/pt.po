@@ -319,7 +319,7 @@ msgstr "Reivindicar o seu Dinheiro"
 msgid "Claiming Cashlink"
 msgstr "A reivindicar Cashlink"
 
-#: src/components/LedgerUi.vue:303
+#: src/components/LedgerUi.vue:304
 msgid "Click Connect"
 msgstr "Clique para Conectar"
 
@@ -339,7 +339,7 @@ msgstr "A reunir detalhes de pagamento"
 msgid "Confirm {outgoingOrIncoming} transaction on Ledger"
 msgstr "Confirmar {outgoingOrIncoming} transação no Ledger"
 
-#: src/components/LedgerUi.vue:217
+#: src/components/LedgerUi.vue:218
 msgid "Confirm Address"
 msgstr "Confirmar Endereço"
 
@@ -351,21 +351,21 @@ msgstr "Confirmar Cashlink"
 msgid "Confirm Swap"
 msgstr "Confirmar Troca"
 
-#: src/components/LedgerUi.vue:220
+#: src/components/LedgerUi.vue:221
 msgid "Confirm that the address on your Ledger matches {addressToConfirm}"
 msgstr ""
 "Confirmar que o endereço no seu Ledger corresponde ao {addressToConfirm}"
 
-#: src/components/LedgerUi.vue:219
+#: src/components/LedgerUi.vue:220
 msgid "Confirm the address on your Ledger"
 msgstr "Confirmar o endereço no seu Ledger"
 
-#: src/components/LedgerUi.vue:238 src/views/SignBtcTransactionLedger.vue:4
+#: src/components/LedgerUi.vue:239 src/views/SignBtcTransactionLedger.vue:4
 #: src/views/SignTransactionLedger.vue:34
 msgid "Confirm Transaction"
 msgstr "Confirmar Transação"
 
-#: src/components/LedgerUi.vue:239
+#: src/components/LedgerUi.vue:240
 msgid "Confirm using your Ledger"
 msgstr "Confirmar usando o seu Ledger"
 
@@ -385,11 +385,11 @@ msgstr "Parabéns, recebeu um Gift Card da Nimiq."
 msgid "Connect"
 msgstr "Conectar"
 
-#: src/components/LedgerUi.vue:311 src/components/OnboardingMenu.vue:5
+#: src/components/LedgerUi.vue:312 src/components/OnboardingMenu.vue:5
 msgid "Connect Ledger"
 msgstr "Conectar Ledger"
 
-#: src/components/LedgerUi.vue:298
+#: src/components/LedgerUi.vue:299
 msgid "Connect your Ledger Device"
 msgstr "Conectar o seu dispositivo Ledger"
 
@@ -494,7 +494,7 @@ msgstr "Inserir manualmente"
 msgid "Enter the address of a vesting contract."
 msgstr "Insira o endereço de um contrato de aquisição."
 
-#: src/components/LedgerUi.vue:299
+#: src/components/LedgerUi.vue:300
 msgid "Enter your PIN"
 msgstr "Insira o seu PIN"
 
@@ -534,7 +534,7 @@ msgstr "Falha na procura de dados de troca: {error}"
 msgid "Fetching swap data..."
 msgstr "À procura de dados de troca"
 
-#: src/components/LedgerUi.vue:233 src/views/ActivateBitcoinSuccess.vue:104
+#: src/components/LedgerUi.vue:234 src/views/ActivateBitcoinSuccess.vue:104
 #: src/views/ActivatePolygonSuccess.vue:111
 #: src/views/ActivatePolygonSuccess.vue:115
 #: src/views/BitcoinSyncBaseView.vue:48 src/views/LoginSuccess.vue:43
@@ -649,7 +649,7 @@ msgstr ""
 "Contas Ledger não podem ser exportadas. Por favor consulte o seu backup de "
 "24 palavras criado quando configurou o seu dispositivo."
 
-#: src/components/LedgerUi.vue:268
+#: src/components/LedgerUi.vue:269
 msgid "Ledger not supported by browser."
 msgstr "Ledger não suportado pelo browser."
 
@@ -657,7 +657,7 @@ msgstr "Ledger não suportado pelo browser."
 msgid "Legacy Account"
 msgstr "Conta Legacy"
 
-#: src/components/LedgerUi.vue:200
+#: src/components/LedgerUi.vue:201
 msgid "Loading failed, retrying..."
 msgstr "Falha ao carregar, a tentar novamente..."
 
@@ -769,7 +769,7 @@ msgstr "Ok"
 msgid "One account can now have multiple addresses."
 msgstr "Agora uma conta pode ter vários endereços."
 
-#: src/components/LedgerUi.vue:301
+#: src/components/LedgerUi.vue:302
 msgid "Open the {app} App"
 msgstr "Abrir a aplicação {app}."
 
@@ -826,11 +826,11 @@ msgstr "Conta rosa"
 msgid "Pink Address"
 msgstr "Endereço rosa"
 
-#: src/components/LedgerUi.vue:251
+#: src/components/LedgerUi.vue:252
 msgid "Please cancel the previous request on your Ledger."
 msgstr "Por favor cancele o pedido anterior no seu Ledger."
 
-#: src/components/LedgerUi.vue:189
+#: src/components/LedgerUi.vue:190
 msgid "Please cancel the request on your Ledger"
 msgstr "Por favor cancele o pedido no seu Ledger"
 
@@ -900,11 +900,11 @@ msgstr "Recarregar"
 msgid "Rename Account"
 msgstr "Renomear Conta"
 
-#: src/components/LedgerUi.vue:285
+#: src/components/LedgerUi.vue:286
 msgid "Request failed"
 msgstr "Pedido falhou"
 
-#: src/components/LedgerUi.vue:286
+#: src/components/LedgerUi.vue:287
 msgid "Request failed: "
 msgstr "Pedido falhou:"
 
@@ -1056,7 +1056,7 @@ msgstr "Conta verde-azulada"
 msgid "Teal Address"
 msgstr "Endereço verde-azulado"
 
-#: src/components/LedgerUi.vue:280
+#: src/components/LedgerUi.vue:281
 msgid "The connected wallet or Ledger is not the one this account belongs to."
 msgstr ""
 "A carteira conectada ou Ledger não é a mesma a que esta conta pertence."
@@ -1276,7 +1276,7 @@ msgstr ""
 msgid "You're logged in!"
 msgstr "Você entrou!"
 
-#: src/components/LedgerUi.vue:272
+#: src/components/LedgerUi.vue:273
 msgid ""
 "Your {app} app is outdated. Please update your Ledger firmware and {app} app"
 " using Ledger Live."
