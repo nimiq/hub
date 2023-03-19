@@ -12,7 +12,7 @@
         "test:unit": "vue-cli-service test:unit",
         "test": "yarn test:unit",
         "pr": "yarn lint && yarn build:ci && yarn test && cd client && yarn lint && yarn build",
-        "postinstall": "cd client && yarn && patch-package",
+        "postinstall": "patch-package && cd client && yarn",
         "i18n:extract": "node ./node_modules/webpack-i18n-tools/index.js ./src/i18n/en.po",
         "i18n:pull": "tx pull --all --force --minimum-perc 90",
         "i18n:push": "tx push --source",
