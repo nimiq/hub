@@ -47,6 +47,8 @@ export const HISTORY_KEY_SELECTED_CURRENCY = 'selected-currency';
 export const FIAT_API_PROVIDER = FiatApiProvider.CoinGecko;
 
 export const StakingTransactionType = {
+    UNSTAKE: 1,
+
     CREATE_STAKER: 5,
     STAKE: 6,
     UPDATE_STAKER: 7,
