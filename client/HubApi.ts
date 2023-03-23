@@ -43,6 +43,7 @@ import {
     SetupSwapRequest,
     SetupSwapResult,
     RefundSwapRequest,
+    SignStakingRequest,
 } from './PublicRequestTypes';
 
 export default class HubApi<
@@ -168,6 +169,13 @@ export default class HubApi<
         requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
     ): Promise<B extends BehaviorType.REDIRECT ? void : SignedTransaction> {
         return this._request(requestBehavior, RequestType.SIGN_TRANSACTION, [request]);
+    }
+
+    public signStaking<B extends BehaviorType = DB>(
+        request: Promise<SignStakingRequest> | SignStakingRequest,
+        requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
+    ): Promise<B extends BehaviorType.REDIRECT ? void : SignedTransaction> {
+        return this._request(requestBehavior, RequestType.SIGN_STAKING, [request]);
     }
 
     public signMessage<B extends BehaviorType = DB>(

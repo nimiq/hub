@@ -16,6 +16,7 @@ import {
     RpcRequest,
     SignMessageRequest,
     SignTransactionRequest,
+    SignStakingRequest,
     SimpleRequest,
     NimiqCheckoutRequest,
     MultiCurrencyCheckoutRequest,
@@ -36,6 +37,7 @@ import type {
     ParsedRpcRequest,
     ParsedSignMessageRequest,
     ParsedSignTransactionRequest,
+    ParsedSignStakingRequest,
     ParsedSimpleRequest,
     ParsedSignBtcTransactionRequest,
     ParsedSignPolygonTransactionRequest,
@@ -59,13 +61,14 @@ export class RequestParser {
 
         switch (requestType) {
             case RequestType.SIGN_TRANSACTION:
+            case RequestType.SIGN_STAKING:
                 const signTransactionRequest = request as SignTransactionRequest;
 
                 if (!signTransactionRequest.value) throw new Error('value is required');
                 if (!signTransactionRequest.validityStartHeight) throw new Error('validityStartHeight is required');
 
                 return {
-                    kind: RequestType.SIGN_TRANSACTION,
+                    kind: requestType,
                     appName: signTransactionRequest.appName,
                     sender: Nimiq.Address.fromString(signTransactionRequest.sender),
                     recipient: Nimiq.Address.fromString(signTransactionRequest.recipient),
@@ -78,6 +81,11 @@ export class RequestParser {
                         : signTransactionRequest.extraData || new Uint8Array(0),
                     flags: signTransactionRequest.flags || Nimiq.Transaction.Flag.NONE,
                     validityStartHeight: signTransactionRequest.validityStartHeight,
+
+                    ...(requestType === RequestType.SIGN_STAKING ? {
+                        type: (signTransactionRequest as any as SignStakingRequest).type,
+                        delegation: (signTransactionRequest as any as SignStakingRequest).delegation,
+                    } : {}),
                 } as ParsedSignTransactionRequest;
             case RequestType.CHECKOUT:
                 const checkoutRequest = request as CheckoutRequest;
@@ -717,6 +725,7 @@ export class RequestParser {
         : RpcRequest | null {
         switch (request.kind) {
             case RequestType.SIGN_TRANSACTION:
+            case RequestType.SIGN_STAKING:
                 const signTransactionRequest = request as ParsedSignTransactionRequest;
                 return {
                     appName: signTransactionRequest.appName,
@@ -732,6 +741,11 @@ export class RequestParser {
                     extraData: signTransactionRequest.data,
                     flags: signTransactionRequest.flags,
                     validityStartHeight: signTransactionRequest.validityStartHeight,
+
+                    ...(request.kind === RequestType.SIGN_STAKING ? {
+                        type: (signTransactionRequest as any as ParsedSignStakingRequest).type,
+                        delegation: (signTransactionRequest as any as ParsedSignStakingRequest).delegation,
+                    } : {}),
                 } as SignTransactionRequest;
             case RequestType.CREATE_CASHLINK:
                 const createCashlinkRequest = request as ParsedCreateCashlinkRequest;
