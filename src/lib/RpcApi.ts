@@ -10,6 +10,7 @@ import {
     ParsedSignMessageRequest,
     ParsedSignTransactionRequest,
     ParsedSignPolygonTransactionRequest,
+    ParsedSignStakingRequest,
 } from './RequestTypes';
 import { RequestParser } from './RequestParser';
 import { Currency, RequestType, RpcRequest, RpcResult } from '../../client/PublicRequestTypes';
@@ -27,7 +28,7 @@ import { WalletStore } from './WalletStore';
 import Cashlink from '@/lib/Cashlink';
 import CookieJar from '@/lib/CookieJar';
 import { captureException } from '@sentry/browser';
-import { ERROR_CANCELED, WalletType } from './Constants';
+import { ERROR_CANCELED, StakingTransactionType, WalletType } from './Constants';
 import { includesOrigin } from '@/lib/Helpers';
 import Config from 'config';
 import { setHistoryStorage, getHistoryStorage } from '@/lib/Helpers';
@@ -320,9 +321,13 @@ export default class RpcApi {
             } else if (requestType === RequestType.SIGN_TRANSACTION || requestType === RequestType.SIGN_STAKING) {
                 accountRequired = true;
                 const parsedSignTransactionRequest = request as ParsedSignTransactionRequest;
-                const address = parsedSignTransactionRequest.sender instanceof Nimiq.Address
-                    ? parsedSignTransactionRequest.sender
-                    : parsedSignTransactionRequest.sender.address;
+                const isUnstaking = requestType === RequestType.SIGN_STAKING
+                    && (request as ParsedSignStakingRequest).type === StakingTransactionType.UNSTAKE;
+                const address = isUnstaking
+                    ? parsedSignTransactionRequest.recipient
+                    : parsedSignTransactionRequest.sender instanceof Nimiq.Address
+                        ? parsedSignTransactionRequest.sender
+                        : parsedSignTransactionRequest.sender.address;
                 account = this._store.getters.findWalletByAddress(address.toUserFriendlyAddress(), true);
             } else if (requestType === RequestType.SIGN_MESSAGE) {
                 accountRequired = false; // Sign message allows user to select an account

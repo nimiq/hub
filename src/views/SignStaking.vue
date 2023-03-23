@@ -7,6 +7,7 @@ import KeyguardClient from '@nimiq/keyguard-client';
 import staticStore, { Static } from '../lib/StaticStore';
 import { WalletInfo } from '../lib/WalletInfo';
 import { Getter } from 'vuex-class';
+import { StakingTransactionType } from '../lib/Constants';
 
 @Component
 export default class SignStaking extends Vue {
@@ -18,32 +19,58 @@ export default class SignStaking extends Vue {
 
         let senderAddress: Nimiq.Address;
         let senderLabel: string | undefined;
-        let senderType: Nimiq.Account.Type | undefined;
+        let senderType: Nimiq.Account.Type | 3 /* Staking */;
         let keyId: string;
         let keyPath: string;
         let keyLabel: string | undefined;
+        let recipientAddress: Nimiq.Address;
+        let recipientLabel: string | undefined;
+        let recipientType: Nimiq.Account.Type | 3 /* Staking */;
 
-        if (this.request.sender instanceof Nimiq.Address) {
+        const isUnstaking = this.request.type === StakingTransactionType.UNSTAKE;
+
+        if (isUnstaking) {
             // existence checked in RpcApi
-            const senderAccount = this.findWalletByAddress(this.request.sender.toUserFriendlyAddress(), true)!;
-            const senderContract = senderAccount.findContractByAddress(this.request.sender);
-            const signer = senderAccount.findSignerForAddress(this.request.sender)!;
+            const wallet = this.findWalletByAddress(this.request.recipient.toUserFriendlyAddress(), false)!;
+            const signer = wallet.findSignerForAddress(this.request.recipient)!;
 
-            senderAddress = this.request.sender;
-            senderLabel = (senderContract || signer).label;
-            senderType = senderContract ? senderContract.type : Nimiq.Account.Type.BASIC;
-            keyId = senderAccount.keyId;
+            senderAddress = this.request.sender as Nimiq.Address;
+            senderLabel = this.$t('Staking Contract') as string;
+            senderType = 3; // Staking
+            keyId = wallet.keyId;
             keyPath = signer.path;
-            keyLabel = senderAccount.labelForKeyguard;
+            keyLabel = wallet.labelForKeyguard;
+            recipientAddress = signer.address;
+            recipientLabel = signer.label;
+            recipientType = Nimiq.Account.Type.BASIC;
         } else {
-            ({
-                address: senderAddress,
-                label: senderLabel,
-                type: senderType,
-                signerKeyId: keyId,
-                signerKeyPath: keyPath,
-                walletLabel: keyLabel,
-            } = this.request.sender);
+            if (this.request.sender instanceof Nimiq.Address) {
+                // existence checked in RpcApi
+                const wallet = this.findWalletByAddress(this.request.sender.toUserFriendlyAddress(), false)!;
+                const signer = wallet.findSignerForAddress(this.request.sender)!;
+
+                senderAddress = this.request.sender;
+                senderLabel = signer.label;
+                senderType = Nimiq.Account.Type.BASIC;
+                keyId = wallet.keyId;
+                keyPath = signer.path;
+                keyLabel = wallet.labelForKeyguard;
+            } else {
+                ({
+                    address: senderAddress,
+                    label: senderLabel,
+                    type: senderType,
+                    signerKeyId: keyId,
+                    signerKeyPath: keyPath,
+                    walletLabel: keyLabel,
+                } = {
+                    type: Nimiq.Account.Type.BASIC,
+                    ...this.request.sender,
+                });
+            }
+            recipientAddress = this.request.recipient;
+            recipientLabel = this.request.recipientLabel;
+            recipientType = this.request.recipientType;
         }
 
         const request: KeyguardClient.SignStakingRequest = {
@@ -55,10 +82,10 @@ export default class SignStaking extends Vue {
 
             sender: senderAddress.serialize(),
             senderLabel,
-            senderType: senderType || Nimiq.Account.Type.BASIC,
-            recipient: this.request.recipient.serialize(),
-            recipientType: this.request.recipientType,
-            recipientLabel: this.request.recipientLabel,
+            senderType,
+            recipient: recipientAddress.serialize(),
+            recipientType,
+            recipientLabel,
             value: this.request.value,
             fee: this.request.fee,
             validityStartHeight: this.request.validityStartHeight,

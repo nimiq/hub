@@ -983,6 +983,10 @@ msgstr ""
 msgid "Speed up your transaction"
 msgstr ""
 
+#: src/views/SignStaking.vue:38
+msgid "Staking Contract"
+msgstr ""
+
 #: src/views/CashlinkCreate.vue:163
 msgid "standard"
 msgstr ""

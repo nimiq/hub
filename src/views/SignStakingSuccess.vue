@@ -9,7 +9,7 @@ import { SignedTransaction } from '../../client/PublicRequestTypes';
 import { State } from 'vuex-class';
 import { Static } from '../lib/StaticStore';
 import KeyguardClient from '@nimiq/keyguard-client';
-import { StakingSignallingTypes } from '../lib/Constants';
+import { StakingSignallingTypes, StakingTransactionType } from '../lib/Constants';
 
 @Component({components: {Network}})
 export default class SignStakingSuccess extends Vue {
@@ -22,6 +22,9 @@ export default class SignStakingSuccess extends Vue {
             this.keyguardRequest,
             this.keyguardResult,
             StakingSignallingTypes.includes(this.keyguardRequest.type) ? { value: 0, flags: 0b10 } : {},
+            this.keyguardRequest.type === StakingTransactionType.UNSTAKE
+                ? { proofPrefix: new Uint8Array([StakingTransactionType.UNSTAKE])}
+                : {},
         ));
         const result: SignedTransaction = await (this.$refs.network as Network).makeSignTransactionResult(tx);
 
