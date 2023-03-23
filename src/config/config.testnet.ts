@@ -4,15 +4,15 @@ import { BTC_NETWORK_TEST, NATIVE_SEGWIT } from '../lib/bitcoin/BitcoinConstants
 import { POLYGON_NETWORK_TEST } from '../lib/polygon/PolygonConstants';
 
 export default {
-    keyguardEndpoint: 'https://keyguard.v2.nimiq-testnet.com',
+    keyguardEndpoint: process.env.VUE_APP_KEYGUARD_URL,
     ledgerApiNimiqVersion: 'legacy' as LedgerApiNimiqVersion.LEGACY,
     network: NETWORK_TEST,
     networkEndpoint: 'https://network.nimiq-testnet.com',
     privilegedOrigins: [
-        'https://wallet.v2.nimiq-testnet.com',
-        'https://hub.v2.nimiq-testnet.com', // For testing with the deployed demos.html page
+        process.env.VUE_APP_WALLET_URL,
+        process.env.VUE_APP_HUB_URL, // For testing with the deployed demos.html page
     ],
-    redirectTarget: 'https://wallet.v2.nimiq-testnet.com',
+    redirectTarget: process.env.VUE_APP_WALLET_URL,
     reportToSentry: false,
     checkoutWithoutNimOrigins: [
         'https://checkout-service-staging-0.web.app',
