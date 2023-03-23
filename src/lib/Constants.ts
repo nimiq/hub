@@ -44,9 +44,9 @@ export const HISTORY_KEY_SELECTED_CURRENCY = 'selected-currency';
 export const StakingTransactionType = {
     UNSTAKE: 1,
 
-    CREATE_STAKER: 5,
-    STAKE: 6,
-    UPDATE_STAKER: 7,
+    CREATE_STAKER: 6,
+    STAKE: 7,
+    UPDATE_STAKER: 8,
 };
 
 export const StakingSignallingTypes = [
