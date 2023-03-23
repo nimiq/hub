@@ -234,7 +234,7 @@ export interface SignedTransaction {
         signature: Uint8Array;
 
         sender: string; // Userfriendly address
-        senderType: Nimiq.Account.Type;
+        senderType: Nimiq.Account.Type | 3;
         recipient: string; // Userfriendly address
         recipientType: Nimiq.Account.Type | 3;
         value: number; // Luna

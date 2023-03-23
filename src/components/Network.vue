@@ -27,9 +27,10 @@ class Network extends Vue {
         data,
         signerPubKey,
         signature,
+        proofPrefix = new Uint8Array(0),
     }: {
         sender: Nimiq.Address | Uint8Array,
-        senderType?: Nimiq.Account.Type,
+        senderType?: Nimiq.Account.Type | 3 /* Staking */,
         recipient: Nimiq.Address | Uint8Array,
         recipientType?: Nimiq.Account.Type,
         value: number,
@@ -39,6 +40,7 @@ class Network extends Vue {
         data?: Uint8Array,
         signerPubKey: Nimiq.PublicKey | Uint8Array,
         signature?: Nimiq.Signature | Uint8Array,
+        proofPrefix?: Uint8Array,
     }): Promise<Nimiq.Transaction> {
         if (!(sender instanceof Nimiq.Address)) sender = new Nimiq.Address(sender);
         if (!(recipient instanceof Nimiq.Address)) recipient = new Nimiq.Address(recipient);
@@ -53,8 +55,16 @@ class Network extends Vue {
             || recipientType !== Nimiq.Account.Type.BASIC
             || flags !== Nimiq.Transaction.Flag.NONE
         ) {
+            let proof: Nimiq.SerialBuffer | undefined;
+            if (signature) {
+                proof = new Nimiq.SerialBuffer(proofPrefix.length + Nimiq.SignatureProof.SINGLE_SIG_SIZE);
+                proof.write(proofPrefix);
+                proof.write(Nimiq.SignatureProof.singleSig(signerPubKey, signature).serialize());
+            }
+
             const tx = new Nimiq.ExtendedTransaction(
                 sender,
+                // @ts-ignore Staking type not yet supported
                 senderType,
                 recipient,
                 recipientType,
@@ -63,7 +73,7 @@ class Network extends Vue {
                 validityStartHeight,
                 Math.min(flags, Nimiq.Transaction.Flag.CONTRACT_CREATION),
                 data || new Uint8Array(0),
-                signature ? Nimiq.SignatureProof.singleSig(signerPubKey, signature).serialize() : undefined,
+                proof,
                 6,
             );
 
@@ -88,14 +98,18 @@ class Network extends Vue {
         }
     }
 
-    public async makeSignTransactionResult(tx: Nimiq.Transaction): Promise<SignedTransaction> {
+    public async makeSignTransactionResult(
+        tx: Omit<Nimiq.Transaction, 'senderType'> & { senderType: Nimiq.Account.Type | 3 },
+    ): Promise<SignedTransaction> {
         await loadNimiq(); // needed for hash computation
 
-        const parsedProof = (Nimiq.Account as any).TYPE_MAP.get(tx.senderType).proofToPlain(tx.proof) as ReturnType<
-            typeof Nimiq.BasicAccount.proofToPlain
-            | typeof Nimiq.HashedTimeLockedContract.proofToPlain
-            | typeof Nimiq.VestingContract.proofToPlain
-        >;
+        const parsedProof = (tx.senderType === 3
+            ? (Nimiq.Account as any).TYPE_MAP.get(Nimiq.Account.Type.BASIC).proofToPlain(tx.proof.subarray(1))
+            : (Nimiq.Account as any).TYPE_MAP.get(tx.senderType).proofToPlain(tx.proof)) as ReturnType<
+                typeof Nimiq.BasicAccount.proofToPlain
+                | typeof Nimiq.HashedTimeLockedContract.proofToPlain
+                | typeof Nimiq.VestingContract.proofToPlain
+            >;
         const signerPublicKeyHex = 'publicKey' in parsedProof
             ? parsedProof.publicKey
             : 'creatorPublicKey' in parsedProof
