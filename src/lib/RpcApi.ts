@@ -46,6 +46,7 @@ export default class RpcApi {
     private _3rdPartyRequestWhitelist: RequestType[] = [
         RequestType.CHECKOUT,
         RequestType.SIGN_TRANSACTION,
+        RequestType.SIGN_STAKING,
         RequestType.SIGN_MESSAGE,
         RequestType.CHOOSE_ADDRESS,
         RequestType.CREATE_CASHLINK,
@@ -69,6 +70,7 @@ export default class RpcApi {
 
         this._registerHubApis([
             RequestType.SIGN_TRANSACTION,
+            RequestType.SIGN_STAKING,
             RequestType.CREATE_CASHLINK,
             RequestType.MANAGE_CASHLINK,
             RequestType.CHECKOUT,
@@ -93,6 +95,7 @@ export default class RpcApi {
         ]);
         this._registerKeyguardApis([
             KeyguardCommand.SIGN_TRANSACTION,
+            KeyguardCommand.SIGN_STAKING,
             KeyguardCommand.CREATE,
             KeyguardCommand.IMPORT,
             KeyguardCommand.EXPORT,
@@ -314,7 +317,7 @@ export default class RpcApi {
                 accountRequired = true;
                 account = await WalletStore.Instance.get((request as ParsedSimpleRequest).walletId);
                 errorMsg = 'AccountId not found';
-            } else if (requestType === RequestType.SIGN_TRANSACTION) {
+            } else if (requestType === RequestType.SIGN_TRANSACTION || requestType === RequestType.SIGN_STAKING) {
                 accountRequired = true;
                 const parsedSignTransactionRequest = request as ParsedSignTransactionRequest;
                 const address = parsedSignTransactionRequest.sender instanceof Nimiq.Address

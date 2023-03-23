@@ -51,6 +51,11 @@ export interface ParsedSignTransactionRequest extends ParsedBasicRequest {
     validityStartHeight: number; // FIXME To be made optional when hub has its own network
 }
 
+export interface ParsedSignStakingRequest extends ParsedSignTransactionRequest {
+    type: number;
+    delegation?: string;
+}
+
 export type ParsedProtocolSpecificsForCurrency<C extends Currency> =
     C extends Currency.NIM ? ParsedNimiqSpecifics
     : C extends Currency.BTC ? ParsedBitcoinSpecifics
@@ -311,6 +316,7 @@ export interface ParsedRefundSwapRequest extends ParsedSimpleRequest {
 
 // Discriminated Unions
 export type ParsedRpcRequest = ParsedSignTransactionRequest
+                             | ParsedSignStakingRequest
                              | ParsedCreateCashlinkRequest
                              | ParsedManageCashlinkRequest
                              | ParsedCheckoutRequest
