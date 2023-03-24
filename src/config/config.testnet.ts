@@ -8,6 +8,7 @@ export default {
     ledgerApiNimiqVersion: 'legacy' as LedgerApiNimiqVersion.LEGACY,
     network: NETWORK_TEST,
     networkEndpoint: 'https://network.nimiq-testnet.com',
+    seedNodes: [process.env.VUE_APP_SEED_NODE_MULTIADDR],
     privilegedOrigins: [
         process.env.VUE_APP_WALLET_URL,
         process.env.VUE_APP_HUB_URL, // For testing with the deployed demos.html page

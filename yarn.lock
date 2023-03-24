@@ -1969,13 +1969,10 @@
     call-me-maybe "^1.0.1"
     glob-to-regexp "^0.3.0"
 
-"@nimiq/albatross-wasm@npm:@nimiq/core@next":
-  version "2.0.0-next.rc.0"
-  resolved "https://registry.yarnpkg.com/@nimiq/core/-/core-2.0.0-next.rc.0.tgz#402dbbf4bf40a815e4c2a323df7ebe253be18063"
-  integrity sha512-mExuJIO9VIuH/MO/Od0o357hcUQ5hxdRzReTieGP1XO7tD/X+saHDsCWfCM+SowWyrbqzOBtEDzWmRpAktQzzg==
-  dependencies:
-    comlink "^4.4.1"
-    websocket "^1.0.34"
+"@nimiq/albatross-wasm@npm:@nimiq/core-web@next":
+  version "2.0.0-beta.0"
+  resolved "https://registry.yarnpkg.com/@nimiq/core-web/-/core-web-2.0.0-beta.0.tgz#b54133660f010371674a0e72d4ec7b5539a1a20a"
+  integrity sha512-zNPlNYRUbQHYmK5la10hwX3NZOHwBHLa2dgla+R8LzRJEGMpkpmiNPLaISXD2wH5p2m42x4AFgbmqbM0FDpX2w==
 
 "@nimiq/browser-warning@^1.1.1":
   version "1.1.1"
