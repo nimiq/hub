@@ -74,7 +74,7 @@ class Network extends Vue {
                 Math.min(flags, Nimiq.Transaction.Flag.CONTRACT_CREATION),
                 data || new Uint8Array(0),
                 proof,
-                6,
+                5,
             );
 
             if (flags === 0b10) { // Signalling
@@ -93,7 +93,7 @@ class Network extends Vue {
                 fee,
                 validityStartHeight,
                 signature,
-                6,
+                5,
             );
         }
     }
