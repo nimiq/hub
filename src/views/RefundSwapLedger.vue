@@ -53,7 +53,6 @@ import { loadBitcoinJS } from '../lib/bitcoin/BitcoinJSLoader';
 import { decodeBtcScript } from '../lib/bitcoin/BitcoinHtlcUtils';
 import LedgerSwapProxy, { LedgerSwapProxyMarker } from '../lib/LedgerSwapProxy';
 import { ERROR_CANCELED } from '../lib/Constants';
-import patchMerkleTree from '../lib/MerkleTreePatch';
 import { BitcoinTransactionInputType } from '@nimiq/keyguard-client';
 
 // Import only types to avoid bundling of KeyguardClient in Ledger request if not required.
@@ -160,7 +159,6 @@ export default class RefundSwapLedger extends RefundSwap {
             }
 
             // Validate that the transaction is valid
-            patchMerkleTree();
             if (!refundTransaction.verify()) {
                 this.$rpc.reject(new Error('NIM transaction is invalid'));
                 return;
