@@ -1,5 +1,5 @@
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const SriPlugin = require('webpack-subresource-integrity');
+// const SriPlugin = require('webpack-subresource-integrity');
 const WriteFileWebpackPlugin = require('write-file-webpack-plugin');
 const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
 const path = require('path');
@@ -54,10 +54,9 @@ console.log('Building for:', buildName);
 
 const configureWebpack = {
     plugins: [
-        new SriPlugin({
-            hashFuncNames: ['sha256'],
-            enabled: process.env.NODE_ENV === 'production',
-        }),
+        // ...(process.env.NODE_ENV === 'production' ? [new SriPlugin({
+        //     hashFuncNames: ['sha256'],
+        // })] : []),
         new CopyWebpackPlugin([
             {
                 from: 'node_modules/@nimiq/browser-warning/dist/browser-warning.js*',
