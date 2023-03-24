@@ -1,4 +1,4 @@
-import { NetworkClient } from '@nimiq/network-client';
+import { NetworkClient } from './NetworkClient';
 import { KeyguardClient, SimpleResult as KeyguardSimpleResult } from '@nimiq/keyguard-client';
 import { AccountInfo } from '@/lib/AccountInfo';
 import { WalletStore } from '@/lib/WalletStore';
@@ -333,7 +333,7 @@ export default class WalletInfoCollector {
                                 hasActivity = true;
                             }
                         } catch (error) {
-                            if (!error.message.startsWith(ERROR_TRANSACTION_RECEIPTS)) {
+                            if (!(error as Error).message.startsWith(ERROR_TRANSACTION_RECEIPTS)) {
                                 throw error;
                             }
                             receiptsError = error;
@@ -383,7 +383,7 @@ export default class WalletInfoCollector {
         WalletInfoCollector._networkInitializationPromise = WalletInfoCollector._networkInitializationPromise
             || (NetworkClient.hasInstance()
                     ? NetworkClient.Instance.init() // initialize in case it's not initialized yet
-                    : NetworkClient.createInstance(Config.networkEndpoint).init()
+                    : NetworkClient.createInstance().init()
             );
         WalletInfoCollector._networkInitializationPromise
             .catch(() => delete WalletInfoCollector._networkInitializationPromise);
@@ -525,9 +525,9 @@ export default class WalletInfoCollector {
                 labelVestingContract(),
                 Nimiq.Address.fromString(contract.address),
                 Nimiq.Address.fromString(contract.owner),
-                contract.start,
+                contract.startTime,
                 Nimiq.Policy.coinsToSatoshis(contract.stepAmount),
-                contract.stepBlocks,
+                contract.timeStep,
                 Nimiq.Policy.coinsToSatoshis(contract.totalAmount),
             ));
 
