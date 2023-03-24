@@ -1,0 +1,13 @@
+diff --git a/node_modules/webpack/lib/wasm/WebAssemblyParser.js b/node_modules/webpack/lib/wasm/WebAssemblyParser.js
+index eb49fb1..ce7b73f 100644
+--- a/node_modules/webpack/lib/wasm/WebAssemblyParser.js
++++ b/node_modules/webpack/lib/wasm/WebAssemblyParser.js
+@@ -16,7 +16,7 @@ const WebAssemblyExportImportedDependency = require("../dependencies/WebAssembly
+ 
+ /** @typedef {import("../Module")} Module */
+ 
+-const JS_COMPAT_TYPES = new Set(["i32", "f32", "f64"]);
++const JS_COMPAT_TYPES = new Set(["i32", "f32", "i64", "f64"]);
+ 
+ /**
+  * @param {t.Signature} signature the func signature
