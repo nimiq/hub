@@ -46,8 +46,8 @@ export class NetworkClient {
     private networkToAlbatross(network: string) {
         switch (network) {
             case 'main': return 'albatross';
-            case 'test': return 'devalbatross';
-            // case 'dev': return 'devalbatross';
+            case 'test': return 'testalbatross';
+            case 'dev': return 'devalbatross';
             default: throw new Error(`Unknown network: ${network}`);
         }
     }
