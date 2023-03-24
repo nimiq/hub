@@ -27,7 +27,7 @@ msgstr ""
 msgid "404 - Cash not found"
 msgstr ""
 
-#: src/views/SetupSwapSuccess.vue:144
+#: src/views/SetupSwapSuccess.vue:143
 msgid "503 Service unavailable - please try again later"
 msgstr ""
 
@@ -458,7 +458,7 @@ msgstr ""
 msgid "Create Cashlink"
 msgstr ""
 
-#: src/views/SignupSuccess.vue:34
+#: src/views/SignupSuccess.vue:35
 msgid "Creating your Account"
 msgstr ""
 
@@ -530,11 +530,11 @@ msgstr ""
 msgid "Fetching contract information..."
 msgstr ""
 
-#: src/views/SetupSwapSuccess.vue:606
+#: src/views/SetupSwapSuccess.vue:604
 msgid "Fetching swap data failed: {error}"
 msgstr ""
 
-#: src/views/SetupSwapSuccess.vue:596
+#: src/views/SetupSwapSuccess.vue:594
 msgid "Fetching swap data..."
 msgstr ""
 
@@ -749,7 +749,7 @@ msgid "OASIS service fee"
 msgstr ""
 
 #: src/views/ErrorHandlerUnsupportedLedger.vue:4
-#: src/views/RefundSwapLedger.vue:346
+#: src/views/RefundSwapLedger.vue:344
 msgid "Ok"
 msgstr ""
 
@@ -838,7 +838,7 @@ msgstr ""
 msgid "Prepare for update"
 msgstr ""
 
-#: src/views/SetupSwapSuccess.vue:589
+#: src/views/SetupSwapSuccess.vue:587
 msgid "Preparing Swap"
 msgstr ""
 
@@ -866,11 +866,11 @@ msgstr ""
 msgid "Red Address"
 msgstr ""
 
-#: src/views/RefundSwapLedger.vue:316
+#: src/views/RefundSwapLedger.vue:314
 msgid "Refund Failed"
 msgstr ""
 
-#: src/views/RefundSwapLedger.vue:335
+#: src/views/RefundSwapLedger.vue:333
 msgid "Refunding this Swap is currently not supported on this device or browser. Please use the device and browser you originally created the Swap with. Otherwise please try again in the future."
 msgstr ""
 
@@ -906,7 +906,7 @@ msgstr ""
 #: src/views/ActivatePolygonSuccess.vue:139
 #: src/views/BitcoinSyncBaseView.vue:68
 #: src/views/LoginSuccess.vue:122
-#: src/views/SetupSwapSuccess.vue:614
+#: src/views/SetupSwapSuccess.vue:612
 #: src/views/SignupLedger.vue:145
 msgid "Retry"
 msgstr ""
@@ -941,7 +941,7 @@ msgstr ""
 msgid "Sign Message"
 msgstr ""
 
-#: src/views/SetupSwapSuccess.vue:598
+#: src/views/SetupSwapSuccess.vue:596
 msgid "Signing transactions..."
 msgstr ""
 
@@ -991,11 +991,11 @@ msgid "Swap fee"
 msgstr ""
 
 #: src/views/SetupSwapLedger.vue:848
-#: src/views/SetupSwapSuccess.vue:585
+#: src/views/SetupSwapSuccess.vue:583
 msgid "Swap Setup Failed"
 msgstr ""
 
-#: src/views/RefundSwapLedger.vue:314
+#: src/views/RefundSwapLedger.vue:312
 msgid "Syncing"
 msgstr ""
 
@@ -1009,16 +1009,16 @@ msgstr ""
 #: src/views/ActivatePolygonSuccess.vue:113
 #: src/views/BitcoinSyncBaseView.vue:50
 #: src/views/SetupSwapLedger.vue:850
-#: src/views/SetupSwapSuccess.vue:587
+#: src/views/SetupSwapSuccess.vue:585
 #: src/views/SignBtcTransactionLedger.vue:117
 msgid "Syncing Failed"
 msgstr ""
 
-#: src/views/RefundSwapLedger.vue:330
+#: src/views/RefundSwapLedger.vue:328
 msgid "Syncing with {currency} network failed: {error}"
 msgstr ""
 
-#: src/views/RefundSwapLedger.vue:324
+#: src/views/RefundSwapLedger.vue:322
 msgid "Syncing with {currency} network..."
 msgstr ""
 
@@ -1198,7 +1198,7 @@ msgid "Welcome back! | Your Accounts are ready."
 msgstr ""
 
 #: src/views/SignupLedger.vue:112
-#: src/views/SignupSuccess.vue:93
+#: src/views/SignupSuccess.vue:96
 msgid ""
 "Welcome to the\n"
 "Nimiq Wallet"
