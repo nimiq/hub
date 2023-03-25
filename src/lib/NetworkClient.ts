@@ -2,35 +2,38 @@ import type { Client, PlainVestingAccount } from '@nimiq/albatross-wasm';
 import Config from 'config';
 
 export class NetworkClient {
-    public static Instance: NetworkClient;
+    private static _instance?: NetworkClient;
 
-    public static hasInstance() {
-        return Boolean(this.Instance);
+    public static get Instance() {
+        if (!this._instance) this._instance = new NetworkClient();
+        return this._instance;
     }
 
-    public static createInstance() {
-        this.Instance = new NetworkClient();
-        return this.Instance;
-    }
-
-    private _client?: Client;
+    private _clientPromise?: Promise<Client>;
 
     // constructor() {}
 
     public async init() {
-        const Nimiq = (await import('@nimiq/albatross-wasm')).default;
-        const clientConfig = new Nimiq.ClientConfiguration();
-        clientConfig.network(this.networkToAlbatross(Config.network));
-        clientConfig.seedNodes(Config.seedNodes);
-        this._client = await clientConfig.instantiateClient();
+        const initPromise = this._clientPromise || (this._clientPromise = new Promise(async (resolve) => {
+            const { ClientConfiguration } = await import('@nimiq/albatross-wasm');
+            const clientConfig = new ClientConfiguration();
+            clientConfig.network(this.networkToAlbatross(Config.network));
+            clientConfig.seedNodes(Config.seedNodes);
+            clientConfig.logLevel('debug');
+            resolve(await clientConfig.instantiateClient());
+        }));
+
+        await initPromise;
     }
 
     public async requestTransactionReceipts(address: string, limit?: number) {
-        return this.client.getTransactionReceiptsByAddress(address, limit);
+        const client = await this.client;
+        return client.getTransactionReceiptsByAddress(address, limit);
     }
 
     public async getBalance(addresses: string[]) {
-        const accounts = await this.client.getAccounts(addresses);
+        const client = await this.client;
+        const accounts = await client.getAccounts(addresses);
         return new Map(accounts.map((account, i) => [addresses[i], account.balance]));
     }
 
@@ -39,8 +42,8 @@ export class NetworkClient {
     }
 
     private get client() {
-        if (!this._client) throw new Error('NetworkClient not initialized');
-        return this._client;
+        if (!this._clientPromise) throw new Error('NetworkClient not initialized');
+        return this._clientPromise;
     }
 
     private networkToAlbatross(network: string) {
