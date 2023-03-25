@@ -389,10 +389,7 @@ export default class WalletInfoCollector {
 
     private static _initializeDependencies(walletType: WalletType): void {
         WalletInfoCollector._networkInitializationPromise = WalletInfoCollector._networkInitializationPromise
-            || (NetworkClient.hasInstance()
-                    ? NetworkClient.Instance.init() // initialize in case it's not initialized yet
-                    : NetworkClient.createInstance().init()
-            );
+            || NetworkClient.Instance.init(); // initialize in case it's not initialized yet
         WalletInfoCollector._networkInitializationPromise
             .catch(() => delete WalletInfoCollector._networkInitializationPromise);
         if (walletType === WalletType.BIP39) this._initializeKeyguardClient();
