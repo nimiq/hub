@@ -43,7 +43,10 @@ export class NetworkClient {
 
     private get client() {
         if (!this._clientPromise) throw new Error('NetworkClient not initialized');
-        return this._clientPromise;
+        return this._clientPromise.then(async (client) => {
+            await client.waitForConsensusEstablished();
+            return client;
+        });
     }
 
     private networkToAlbatross(network: string) {
