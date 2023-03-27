@@ -1,4 +1,4 @@
-import type { Client, PlainVestingAccount } from '@nimiq/albatross-wasm';
+import type { Client, PlainVestingContract } from '@nimiq/albatross-wasm';
 import Config from 'config';
 
 export class NetworkClient {
@@ -38,7 +38,7 @@ export class NetworkClient {
     }
 
     public async getGenesisVestingContracts() {
-        return [] as Array<PlainVestingAccount & { address: string }>; // TODO
+        return [] as Array<PlainVestingContract & { address: string }>; // TODO
     }
 
     private get client() {

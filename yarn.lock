@@ -1970,9 +1970,9 @@
     glob-to-regexp "^0.3.0"
 
 "@nimiq/albatross-wasm@npm:@nimiq/core-web@next":
-  version "2.0.0-beta.1"
-  resolved "https://registry.yarnpkg.com/@nimiq/core-web/-/core-web-2.0.0-beta.1.tgz#d64fde66723a6652df16e6c587385edbc951da6b"
-  integrity sha512-6UvgdXvMtxFEkw+V1x2P02YwbF8EhjWYyS0WeEN0nt6tgxYSrY1kCvUvidI+qoTnDxavkfoIqUe0Jf6edrr0JQ==
+  version "2.0.0-alpha.1"
+  resolved "https://registry.yarnpkg.com/@nimiq/core-web/-/core-web-2.0.0-alpha.1.tgz#bb779c47e9401faedd38c22ea7fbbde1007c7cbb"
+  integrity sha512-q5a4WWc2Ii917vfp+kT+FwKQfgs9OESY9x7rzTT4Q5IPegkQdnNp2KLysKXA4IJecRI3acz9ffwWY9vWwskR5w==
 
 "@nimiq/browser-warning@^1.1.1":
   version "1.1.1"
