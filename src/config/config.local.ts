@@ -8,7 +8,7 @@ export default {
     ledgerApiNimiqVersion: 'legacy' as LedgerApiNimiqVersion.LEGACY,
     network: NETWORK_TEST,
     networkEndpoint: 'https://network.nimiq-testnet.com',
-    seedNodes: ['/dns4/seed1.v2.nimiq-testnet.com/tcp/8443/ws'],
+    seedNodes: ['/dns4/seed1.pos.nimiq-testnet.com/tcp/8443/wss'],
     privilegedOrigins: [ '*' ],
     redirectTarget: window.location.protocol + '//' + window.location.hostname + ':8080/demos.html',
     reportToSentry: false,
