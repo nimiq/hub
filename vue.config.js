@@ -57,7 +57,7 @@ const configureWebpack = {
         // ...(process.env.NODE_ENV === 'production' ? [new SriPlugin({
         //     hashFuncNames: ['sha256'],
         // })] : []),
-        new CopyWebpackPlugin([
+        new CopyWebpackPlugin({ patterns: [
             {
                 from: 'node_modules/@nimiq/browser-warning/dist/browser-warning.js*',
                 to: './',
@@ -77,7 +77,13 @@ const configureWebpack = {
                     return path.replace('.min', '');
                 },
             },
-        ]),
+            {
+                from: 'node_modules/@nimiq/albatross-wasm',
+                to({ context, absoluteFilename }) {
+                    return `./albatross-client/${path.relative(context, absoluteFilename)}`;
+                },
+            },
+        ]}),
         new WriteFileWebpackPlugin(),
         new PoLoaderOptimizer(),
         // new BundleAnalyzerPlugin(),
