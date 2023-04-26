@@ -1,5 +1,18 @@
-import type { Client, PlainVestingContract } from '@nimiq/albatross-wasm';
+import type {
+    Client as AlbatrossClient,
+    ClientConfiguration as AlbatrossClientConfiguration,
+    PlainVestingContract,
+} from '@nimiq/albatross-wasm';
 import Config from 'config';
+
+declare global {
+    interface Window {
+        loadAlbatross: () => Promise<{
+            Client: typeof AlbatrossClient,
+            ClientConfiguration: typeof AlbatrossClientConfiguration,
+        }>;
+    }
+}
 
 export class NetworkClient {
     private static _instance?: NetworkClient;
@@ -9,18 +22,18 @@ export class NetworkClient {
         return this._instance;
     }
 
-    private _clientPromise?: Promise<Client>;
+    private _clientPromise?: Promise<AlbatrossClient>;
 
     // constructor() {}
 
     public async init() {
         const initPromise = this._clientPromise || (this._clientPromise = new Promise(async (resolve) => {
-            const { ClientConfiguration } = await import('@nimiq/albatross-wasm');
+            const { Client, ClientConfiguration } = await window.loadAlbatross();
             const clientConfig = new ClientConfiguration();
             clientConfig.network(this.networkToAlbatross(Config.network));
             clientConfig.seedNodes(Config.seedNodes);
             clientConfig.logLevel('debug');
-            resolve(await clientConfig.instantiateClient());
+            resolve(Client.create(clientConfig.build()));
         }));
 
         await initPromise;
