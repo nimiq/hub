@@ -21,6 +21,18 @@
     <meta name="url" content="<%= htmlWebpackPlugin.options.domain %>">
     <link href="/blocking.css" rel="stylesheet">
     <link rel="icon" href="<%= htmlWebpackPlugin.options.domain %>/favicon.ico">
+
+    <script type="module">
+        import init, { Client, ClientConfiguration } from '/albatross-client/web/index.js';
+
+        window.loadAlbatross = async function() {
+            await init();
+            return {
+                Client,
+                ClientConfiguration,
+            };
+        }
+    </script>
 </head>
 
 <body>
