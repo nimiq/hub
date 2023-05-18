@@ -18,10 +18,10 @@
     esutils "^2.0.2"
     js-tokens "^4.0.0"
 
-"@nimiq/core-web@^1.5.8":
-  version "1.5.8"
-  resolved "https://registry.yarnpkg.com/@nimiq/core-web/-/core-web-1.5.8.tgz#da8abef84c6d293cbb9ca495a77f08daa08886b9"
-  integrity sha512-MNpFbGZetz2eZcHtJVa5tpmLjPf65mTcJBRQkOHS8kWE+f+Z++hdnwWUBQCEAph4oC6bsE5JSuU7VpwcogN7+w==
+"@nimiq/core-web@^1.6.1":
+  version "1.6.1"
+  resolved "https://registry.yarnpkg.com/@nimiq/core-web/-/core-web-1.6.1.tgz#97cb5b43b257c7f6f6808ef603e9bf686377241f"
+  integrity sha512-WYw2brIxUXa/SQ0JRp0RXWQKzBFhROXrEjF9Eh+tRlC+NrI2ObwRQkwJCbP2qmPtYldIimfyECmsDVHFoyLXjQ==
 
 "@nimiq/fastspot-api@^1.7.0":
   version "1.7.0"
