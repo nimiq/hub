@@ -1843,14 +1843,9 @@
   dependencies:
     dom-parser "^0.1.5"
 
-"@nimiq/keyguard-client@^1.8.0":
-  version "1.8.0"
-  resolved "https://registry.yarnpkg.com/@nimiq/keyguard-client/-/keyguard-client-1.8.0.tgz#59e9097365c28fa71f354360872893dfc5c9e1af"
-  integrity sha512-KmU+QpLOPNGhchSSEgpXU0psz7RwLGOZ3lL++xTI1Fru5YwhGLlJ2JJGa3/mpfMxU3V5uM39qDC2Cigd50AnvQ==
-  dependencies:
-    "@nimiq/albatross-wasm" "npm:@nimiq/core@^2.0.0"
-    "@nimiq/rpc" "^0.3.0"
-    "@opengsn/common" "^2.2.5"
+"@nimiq/keyguard-client@https://gitpkg.now.sh/nimiq/keyguard?scripts.postinstall=cd%20client%20%26%26%20.%2Fbuild-gitpkg.sh&a62aa9f557e2ac4c0d7306828e423230f423a0f1":
+  version "1.0.0"
+  resolved "https://gitpkg.now.sh/nimiq/keyguard?scripts.postinstall=cd%20client%20%26%26%20.%2Fbuild-gitpkg.sh&a62aa9f557e2ac4c0d7306828e423230f423a0f1#b821554c4e4751e93cd9e287cd3617812e2a3ea2"
 
 "@nimiq/ledger-api@^3.1.1":
   version "3.1.1"
@@ -1877,11 +1872,6 @@
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/@nimiq/oasis-api/-/oasis-api-1.1.1.tgz#d1aa3d0f9afabf9116205809a0fc72d2e392bafa"
   integrity sha512-jXNO7nvE0mzAyDCrucByv5AcyDWZjyqb9810YctysxqUtOxNG27hPkhomL+WW6nrnTVgvriJo3yaTFPTfLphKw==
-
-"@nimiq/rpc@^0.3.0":
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/@nimiq/rpc/-/rpc-0.3.0.tgz#654c05acccc193b7d79fb09b2faf2114945ff872"
-  integrity sha512-je7fv+wP4nLEgTcZwu3FaGre22qkZ9AYGbStglVaJAxOH+3CvDnnOIa9IjGFaCEhtRQKRaQEvFqa5vN4IVnH+Q==
 
 "@nimiq/rpc@^0.4.1":
   version "0.4.1"
