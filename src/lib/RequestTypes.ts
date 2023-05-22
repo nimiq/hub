@@ -341,8 +341,16 @@ export interface ParsedRefundSwapRequest extends ParsedSimpleRequest {
     } & RelayRequest);
 }
 
+export interface ParsedConnectAccountRequest extends ParsedBasicRequest {
+    appLogoUrl: URL;
+    permissions: RequestType[];
+    requestedKeyPaths: string[];
+    challenge: string;
+}
+
 // Discriminated Unions
 export type ParsedRpcRequest = ParsedSignTransactionRequest
+                             | ParsedSignMultisigTransactionRequest
                              | ParsedCreateCashlinkRequest
                              | ParsedManageCashlinkRequest
                              | ParsedCheckoutRequest
@@ -356,4 +364,5 @@ export type ParsedRpcRequest = ParsedSignTransactionRequest
                              | ParsedAddBtcAddressesRequest
                              | ParsedSignPolygonTransactionRequest
                              | ParsedSetupSwapRequest
-                             | ParsedRefundSwapRequest;
+                             | ParsedRefundSwapRequest
+                             | ParsedConnectAccountRequest;
