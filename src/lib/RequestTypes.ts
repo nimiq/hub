@@ -57,7 +57,7 @@ export interface ParsedSignTransactionRequest extends ParsedBasicRequest {
 export interface ParsedMultisigInfo {
     publicKeys: Uint8Array[];
     numberOfSigners: number;
-    signerPublicKeys?: Uint8Array[]; // Can be omitted when all publicKeys need to sign
+    signerPublicKeys: Uint8Array[]; // Can be omitted when all publicKeys need to sign
     secret: {
         aggregatedSecret: Uint8Array;
     } | {
