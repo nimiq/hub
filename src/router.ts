@@ -91,6 +91,11 @@ const SetupSwapLedger         = () => import(/*webpackChunkName: "swap-ledger"*/
 
 const RefundSwapLedger        = () => import(/*webpackChunkName: "refund-swap-ledger"*/ './views/RefundSwapLedger.vue');
 
+const SignMultisigTransaction         = () => import(/*webpackChunkName: "sign-multisig-transaction"*/
+    './views/SignMultisigTransaction.vue');
+const SignMultisigTransactionSuccess  = () => import(/*webpackChunkName: "sign-multisig-transaction"*/
+    './views/SignMultisigTransactionSuccess.vue');
+
 Vue.use(Router);
 
 export function keyguardResponseRouter(
@@ -401,6 +406,16 @@ export default new Router({
             path: `/${RequestType.REFUND_SWAP}/ledger`,
             component: RefundSwapLedger,
             name: `${RequestType.REFUND_SWAP}-ledger`,
+        },
+        {
+            path: `/${RequestType.SIGN_MULTISIG_TRANSACTION}`,
+            component: SignMultisigTransaction,
+            name: RequestType.SIGN_MULTISIG_TRANSACTION,
+        },
+        {
+            path: `/${RequestType.SIGN_MULTISIG_TRANSACTION}/success`,
+            component: SignMultisigTransactionSuccess,
+            name: `${RequestType.SIGN_MULTISIG_TRANSACTION}-success`,
         },
     ],
 });
