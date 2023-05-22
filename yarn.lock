@@ -1488,9 +1488,9 @@
     btoa "^1.1.2"
     node-lmdb "^0.9.6"
 
-"@nimiq/keyguard-client@https://gitpkg.now.sh/nimiq/keyguard?dac2c68dda5a8a5b4dd3e05465d3f1e9d7a539d5&scripts.postinstall=cd%20client%20%26%26%20.%2Fbuild-gitpkg.sh":
+"@nimiq/keyguard-client@https://gitpkg.now.sh/nimiq/keyguard?da83212c4ae39e753a6ced52547642548b44533d&scripts.postinstall=cd%20client%20%26%26%20.%2Fbuild-gitpkg.sh":
   version "1.0.0"
-  resolved "https://gitpkg.now.sh/nimiq/keyguard?dac2c68dda5a8a5b4dd3e05465d3f1e9d7a539d5&scripts.postinstall=cd%20client%20%26%26%20.%2Fbuild-gitpkg.sh#d6db0cb123fc4b54efd1369206e620ff3a9ed0ea"
+  resolved "https://gitpkg.now.sh/nimiq/keyguard?da83212c4ae39e753a6ced52547642548b44533d&scripts.postinstall=cd%20client%20%26%26%20.%2Fbuild-gitpkg.sh#5d62a28522731fad21b1befa56c0ae1a1c77ac26"
 
 "@nimiq/ledger-api@^2.3.0":
   version "2.3.0"
