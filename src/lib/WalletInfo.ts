@@ -40,7 +40,8 @@ export class WalletInfo {
         );
 
         return new WalletInfo(o.id, o.keyId, o.label, accounts, contracts, o.type,
-            o.keyMissing, o.fileExported, o.wordsExported, o.btcXPub, btcAddresses, polygonAddresses);
+            o.keyMissing, o.fileExported, o.wordsExported, o.btcXPub, btcAddresses, polygonAddresses,
+            o.permissions);
     }
 
     public static async objectToAccountType(o: WalletInfoEntry, requestType: RequestType): Promise<Account> {
@@ -93,6 +94,7 @@ export class WalletInfo {
             external: [],
         },
         public polygonAddresses: PolygonAddressInfo[] = [],
+        public permissions: Record<string, RequestType[]> = {},
     ) {}
 
     public get defaultLabel(): string {
@@ -210,6 +212,7 @@ export class WalletInfo {
                 external: this.btcAddresses.external.map((btcAddressInfo) => btcAddressInfo.toObject()),
             },
             polygonAddresses: this.polygonAddresses.map((polygonAddressInfo) => polygonAddressInfo.toObject()),
+            permissions: this.permissions,
         };
     }
 
@@ -257,4 +260,5 @@ export interface WalletInfoEntry {
         external: BtcAddressInfoEntry[],
     };
     polygonAddresses?: PolygonAddressEntry[];
+    permissions?: Record<string, RequestType[]>;
 }
