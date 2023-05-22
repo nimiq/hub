@@ -766,6 +766,7 @@ export class RequestParser {
                                     (bytes) => parseBytes(bytes),
                                 ),
                                 bScalar: parseBytes(signMultisigTxRequest.multisigConfig.secret.bScalar),
+                                keyParams: signMultisigTxRequest.multisigConfig.secret.keyParams,
                             },
                         aggregatedCommitment: parseBytes(signMultisigTxRequest.multisigConfig.aggregatedCommitment),
                         userName: signMultisigTxRequest.multisigConfig.userName,
