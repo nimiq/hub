@@ -1126,6 +1126,10 @@ msgstr ""
 msgid "Total fees"
 msgstr ""
 
+#: src/views/SignMultisigTransactionSuccess.vue:4
+msgid "Transaction approved"
+msgstr ""
+
 #: src/views/CashlinkManage.vue:211
 #: src/views/CheckoutTransmission.vue:61
 msgid "Transaction could not be relayed"
