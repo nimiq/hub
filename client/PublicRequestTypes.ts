@@ -242,6 +242,12 @@ export interface SignedTransaction {
     };
 }
 
+export interface EncryptionKeyParams {
+    kdf: string;
+    iterations: number;
+    keySize: number;
+}
+
 export interface MultisigInfo {
     publicKeys: Bytes[];
     numberOfSigners: number;
@@ -251,6 +257,7 @@ export interface MultisigInfo {
     } | {
         encryptedSecrets: Bytes[];
         bScalar: Bytes;
+        keyParams: EncryptionKeyParams;
     };
     aggregatedCommitment: Bytes;
     userName?: string;
@@ -612,6 +619,7 @@ export interface ConnectedAccount {
         keyData: Uint8Array,
         algorithm: { name: string, hash: string },
         keyUsages: ['encrypt'],
+        keyParams: EncryptionKeyParams,
     };
     account: {
         label: string;
