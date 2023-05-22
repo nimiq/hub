@@ -62,6 +62,11 @@ export interface ParsedMultisigInfo {
     } | {
         encryptedSecrets: Uint8Array[];
         bScalar: Uint8Array;
+        keyParams: {
+            kdf: string;
+            iterations: number;
+            keySize: number;
+        };
     };
     aggregatedCommitment: Uint8Array;
     userName?: string;
