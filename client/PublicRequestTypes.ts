@@ -17,6 +17,7 @@ export enum RequestType {
     CHECKOUT = 'checkout',
     SIGN_MESSAGE = 'sign-message',
     SIGN_TRANSACTION = 'sign-transaction',
+    SIGN_MULTISIG_TRANSACTION = 'sign-multisig-transaction',
     SIGN_STAKING = 'sign-staking',
     ONBOARD = 'onboard',
     SIGNUP = 'signup',
@@ -250,6 +251,37 @@ export interface SignedTransaction {
     };
 }
 
+export interface MultisigInfo {
+    publicKeys: Bytes[];
+    numberOfSigners: number;
+    signerPublicKeys?: Bytes[]; // Can be omitted when all publicKeys need to sign
+    secret: {
+        aggregatedSecret: Bytes;
+    } | {
+        encryptedSecrets: Bytes[];
+        bScalar: Bytes;
+    };
+    aggregatedCommitment: Bytes;
+    userName?: string;
+}
+
+export interface SignMultisigTransactionRequest extends BasicRequest {
+    signer: string; // Address
+
+    sender: string;
+    senderLabel: string;
+    recipient: string;
+    recipientType?: Nimiq.Account.Type;
+    recipientLabel?: string;
+    value: number;
+    fee?: number;
+    extraData?: Bytes;
+    flags?: number;
+    validityStartHeight: number; // FIXME To be made optional when hub has its own network
+
+    multisigConfig: MultisigInfo;
+}
+
 export interface NimiqHtlcCreationInstructions {
     type: 'NIM';
     sender: string; // My address, must be redeem address of HTLC, or if contract, its owner must be redeem address
@@ -469,6 +501,8 @@ export interface SignedMessage {
     signature: Uint8Array;
 }
 
+export type PartialSignature = SignedMessage;
+
 export interface Address {
     address: string; // Userfriendly address
     label: string;
@@ -670,6 +704,7 @@ export interface SignedPolygonTransaction {
 }
 
 export type RpcRequest = SignTransactionRequest
+                       | SignMultisigTransactionRequest
                        | SignStakingRequest
                        | CreateCashlinkRequest
                        | ManageCashlinkRequest
@@ -689,6 +724,7 @@ export type RpcRequest = SignTransactionRequest
 
 export type RpcResult = SignedTransaction
                       | SignedTransaction[]
+                      | PartialSignature
                       | Account
                       | Account[]
                       | SimpleResult
