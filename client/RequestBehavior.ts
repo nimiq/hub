@@ -101,10 +101,10 @@ export class PopupRequestBehavior extends RequestBehavior<BehaviorType.POPUP> {
 
         do {
             this.shouldRetryRequest = false;
-            this.popup = this.createPopup(endpoint);
-            this.client = new PostMessageRpcClient(this.popup, origin);
-
             try {
+                this.popup = this.createPopup(endpoint);
+                this.client = new PostMessageRpcClient(this.popup, origin);
+
                 await this.client.init();
                 return await this.client.call(command, ...(await Promise.all(args)));
             } catch (e) {
@@ -114,8 +114,8 @@ export class PopupRequestBehavior extends RequestBehavior<BehaviorType.POPUP> {
                     // Remove page overlay
                     this.removeOverlay($overlay);
 
-                    this.client.close();
-                    this.popup.close();
+                    if (this.client) this.client.close();
+                    if (this.popup) this.popup.close();
                 }
             }
         } while (this.shouldRetryRequest);
