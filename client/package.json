@@ -41,7 +41,7 @@
     "build": "rm -rf build && rm -rf dist && tsc && rollup -c",
     "lint": "tslint --project tsconfig.json",
     "lintfix": "yarn lint --fix",
-    "i18n:pull": "tx pull --all --parallel --no-interactive --force --minimum-perc 95",
+    "i18n:pull": "tx pull --all --force",
     "i18n:push": "tx push --source"
   }
 }

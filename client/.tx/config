@@ -1,9 +1,9 @@
 [main]
 host = https://www.transifex.com
 
-[nimiq-hub.client-en-po]
-file_filter = i18n/<lang>.json
-minimum_perc = 0
-source_file = i18n/en.json
-source_lang = en
-type = KEYVALUEJSON
+[o:nimiq-foundation:p:nimiq-hub:r:client-en-po]
+file_filter  = i18n/<lang>.json
+source_file  = i18n/en.json
+source_lang  = en
+type         = KEYVALUEJSON
+minimum_perc = 90
