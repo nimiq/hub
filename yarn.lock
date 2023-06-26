@@ -1546,6 +1546,11 @@
   resolved "https://registry.yarnpkg.com/@nimiq/style/-/style-0.8.2.tgz#140ab7cbe71a9b1db6e0bca34ba880cfff64037a"
   integrity sha512-nQjMQjmU3ZuYRMG+8uADM/fVv6Taq70qKdPGuRR/gLUJZMg/2qxZaGHDikg4kVNLFbo9pjzjotJDMqtNwlVSew==
 
+"@nimiq/style@^0.8.5":
+  version "0.8.5"
+  resolved "https://registry.yarnpkg.com/@nimiq/style/-/style-0.8.5.tgz#36a8bd8f58d55ee3e8ea5b249e51a116638e3b90"
+  integrity sha512-il2+hrodQ7iL4ARPwfGmGvrEYgtMHAoQSbcyapxEQEG7vDYj5r+ssuhKB+oYmdRUxA1/HvyGDnWG3XenKvQyIA==
+
 "@nimiq/utils@^0.5.0":
   version "0.5.0"
   resolved "https://registry.yarnpkg.com/@nimiq/utils/-/utils-0.5.0.tgz#10e0e234d95e878e57130ebb32ff3d7224a5101b"
@@ -1553,22 +1558,23 @@
   dependencies:
     big-integer "^1.6.44"
 
-"@nimiq/utils@^0.8.2":
-  version "0.8.3"
-  resolved "https://registry.yarnpkg.com/@nimiq/utils/-/utils-0.8.3.tgz#e088ad4ec874d2f6ec10437700f23197fd2e7600"
-  integrity sha512-fDZR3z/l7G39XbtkbnMvyxkrw/o1DKahxg3Scdn+Ib0/s98H1Uk8P3JJ1DZd+D0bApuCMcQRJnCiJ61r9LUNgg==
+"@nimiq/utils@^0.9.1":
+  version "0.9.1"
+  resolved "https://registry.yarnpkg.com/@nimiq/utils/-/utils-0.9.1.tgz#74b59394b1bbda9fb17efa4affd0edb555f3514e"
+  integrity sha512-YuN2mHefo8law/W4F4I2pAZ+kf5vKnI345ExmAP0Hfefu2Y0fPEoULewEelDwvl9YXxmT+vHKCVH0DHK4508dw==
   dependencies:
     big-integer "^1.6.44"
 
 "@nimiq/vue-components@https://github.com/nimiq/vue-components#build/hub":
   version "0.1.0"
-  resolved "https://github.com/nimiq/vue-components#e1fd7d89a5e7ea386141e1748d93e9791d8de562"
+  resolved "https://github.com/nimiq/vue-components#8199bd47a55303a89b4ccfc55f3bee75bd5fe76a"
   dependencies:
     "@nimiq/iqons" "^1.6.0"
-    "@nimiq/style" "^0.8.2"
-    "@nimiq/utils" "^0.8.2"
+    "@nimiq/style" "^0.8.5"
+    "@nimiq/utils" "^0.9.1"
     big-integer "^1.6.44"
     input-format "^0.2.8"
+    js-sha3 "^0.8.0"
     qr-creator "^1.0.0"
     qr-scanner "^1.4.2"
     vue "^2.6.11"

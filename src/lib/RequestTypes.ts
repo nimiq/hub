@@ -22,6 +22,7 @@ export interface ParsedOnboardRequest extends ParsedBasicRequest {
 
 export interface ParsedChooseAddressRequest extends ParsedBasicRequest {
     returnBtcAddress: boolean;
+    returnUsdcAddress: boolean;
     minBalance: number;
     disableContracts: boolean;
     disableLegacyAccounts: boolean;
