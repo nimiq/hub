@@ -278,6 +278,7 @@ export class RequestParser {
                     kind: requestType,
                     appName: chooseAddressRequest.appName,
                     returnBtcAddress: !!chooseAddressRequest.returnBtcAddress,
+                    returnUsdcAddress: !!chooseAddressRequest.returnUsdcAddress,
                     minBalance: Number(chooseAddressRequest.minBalance) || 0,
                     disableContracts: !!chooseAddressRequest.disableContracts,
                     disableLegacyAccounts: !!chooseAddressRequest.disableLegacyAccounts,

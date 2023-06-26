@@ -15,6 +15,7 @@
                 :disableBip39Accounts="request.disableBip39Accounts"
                 :disableLedgerAccounts="request.disableLedgerAccounts"
                 :highlightBitcoinAccounts="request.returnBtcAddress"
+                :highlightUsdcAccounts="request.returnUsdcAddress"
                 @account-selected="accountSelected"
                 @login="() => goToOnboarding(false)"/>
 
@@ -37,6 +38,8 @@
 import { Component } from 'vue-property-decorator';
 import { Getter, Mutation } from 'vuex-class';
 import { SmallPage, AccountSelector } from '@nimiq/vue-components';
+// @ts-ignore Could not find a declaration file for module '@nimiq/iqons'.
+import { getBackgroundColorName } from '@nimiq/iqons';
 import BitcoinSyncBaseView from './BitcoinSyncBaseView.vue';
 import StatusScreen from '../components/StatusScreen.vue';
 import GlobalClose from '../components/GlobalClose.vue';
@@ -84,6 +87,7 @@ export default class ChooseAddress extends BitcoinSyncBaseView {
         });
 
         let btcAddress: string | undefined;
+        let usdcAddress: string | undefined;
 
         if (this.request.returnBtcAddress && walletInfo.btcXPub) {
             this.state = this.State.SYNCING;
@@ -112,10 +116,21 @@ export default class ChooseAddress extends BitcoinSyncBaseView {
             }
         }
 
+        if (this.request.returnUsdcAddress && walletInfo.polygonAddresses.length) {
+            usdcAddress = walletInfo.polygonAddresses[0].address;
+        }
+
         const result: ChooseAddressResult = {
             address: accountOrContractInfo.userFriendlyAddress,
             label: accountOrContractInfo.label,
             btcAddress,
+            usdcAddress,
+            meta: {
+                account: {
+                    label: walletInfo.label,
+                    color: getBackgroundColorName(walletInfo.accounts.keys().next().value).toLowerCase(),
+                },
+            },
         };
 
         this.$rpc.resolve(result);
