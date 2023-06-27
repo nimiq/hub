@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Last-Translator: Oleksandr Turchyn <oleksandr.turchyn@outlook.com>, 2023\n"
-"Language-Team: Ukrainian (https://www.transifex.com/nimiq-foundation/teams/110181/uk/)\n"
+"Language-Team: Ukrainian (https://app.transifex.com/nimiq-foundation/teams/110181/uk/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: uk\n"
 "Plural-Forms: nplurals=4; plural=(n % 1 == 0 && n % 10 == 1 && n % 100 != 11 ? 0 : n % 1 == 0 && n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? 1 : n % 1 == 0 && (n % 10 ==0 || (n % 10 >=5 && n % 10 <=9) || (n % 100 >=11 && n % 100 <=14 )) ? 2: 3);\n"
@@ -37,7 +37,7 @@ msgstr "30 секунд, без пошти, без скачування."
 msgid "404 - Cash not found"
 msgstr "404 - Коштів не знайдено"
 
-#: src/views/SetupSwapSuccess.vue:144
+#: src/views/SetupSwapSuccess.vue:142
 msgid "503 Service unavailable - please try again later"
 msgstr "503 Сервіс недоступний - будь ласка спробуйте пізніше"
 
@@ -203,19 +203,19 @@ msgstr "Блок/Крок:"
 
 #: src/lib/LabelingMachine.ts:31
 msgid "Blue Account"
-msgstr ""
+msgstr "Синій рахунок"
 
 #: src/lib/LabelingMachine.ts:13
 msgid "Blue Address"
-msgstr ""
+msgstr "Синя адреса"
 
 #: src/lib/LabelingMachine.ts:36
 msgid "Brown Account"
-msgstr ""
+msgstr "Коричневий рахунок"
 
 #: src/lib/LabelingMachine.ts:18
 msgid "Brown Address"
-msgstr ""
+msgstr "Коричнева адреса"
 
 #: src/views/SetupSwapLedger.vue:42
 msgid "BTC network fee"
@@ -526,11 +526,11 @@ msgstr "Не вдалося отримати адреси"
 msgid "Fetching contract information..."
 msgstr "Завантаження контактних даних..."
 
-#: src/views/SetupSwapSuccess.vue:606
+#: src/views/SetupSwapSuccess.vue:603
 msgid "Fetching swap data failed: {error}"
 msgstr "Не вдалося отримати дані обміну: {error}"
 
-#: src/views/SetupSwapSuccess.vue:596
+#: src/views/SetupSwapSuccess.vue:593
 msgid "Fetching swap data..."
 msgstr "Отримання даних обміну..."
 
@@ -572,11 +572,11 @@ msgstr "Зрозуміло"
 
 #: src/lib/LabelingMachine.ts:35
 msgid "Green Account"
-msgstr ""
+msgstr "Зелений рахунок"
 
 #: src/lib/LabelingMachine.ts:17
 msgid "Green Address"
-msgstr ""
+msgstr "Зелена адреса"
 
 #: src/views/CashlinkReceive.vue:346
 msgid "Happy birthday!"
@@ -614,11 +614,11 @@ msgstr "Незавершений платіж"
 
 #: src/lib/LabelingMachine.ts:30
 msgid "Indigo Account"
-msgstr ""
+msgstr "Індиго рахунок"
 
 #: src/lib/LabelingMachine.ts:12
 msgid "Indigo Address"
-msgstr ""
+msgstr "Індиго адреса"
 
 #: src/views/RequestError.vue:6
 msgid "Invalid request"
@@ -753,7 +753,7 @@ msgid "OASIS service fee"
 msgstr "Комісія за послуги OASIS"
 
 #: src/views/ErrorHandlerUnsupportedLedger.vue:4
-#: src/views/RefundSwapLedger.vue:346
+#: src/views/RefundSwapLedger.vue:344
 msgid "Ok"
 msgstr "Гаразд"
 
@@ -771,11 +771,11 @@ msgstr "Відкрити додаток гаманця"
 
 #: src/lib/LabelingMachine.ts:27
 msgid "Orange Account"
-msgstr ""
+msgstr "Помаранчевий рахунок"
 
 #: src/lib/LabelingMachine.ts:9
 msgid "Orange Address"
-msgstr ""
+msgstr "Помаранчева адреса"
 
 #: src/components/CheckoutCardNimiq.vue:63
 #: src/components/CheckoutCardNimiq.vue:87
@@ -812,11 +812,11 @@ msgstr "Успішна оплата."
 
 #: src/lib/LabelingMachine.ts:34
 msgid "Pink Account"
-msgstr ""
+msgstr "Рожевий рахунок"
 
 #: src/lib/LabelingMachine.ts:16
 msgid "Pink Address"
-msgstr ""
+msgstr "Рожева адреса"
 
 #: src/components/LedgerUi.vue:252
 msgid "Please cancel the previous request on your Ledger."
@@ -842,7 +842,7 @@ msgstr "Будь ласка, надішліть переказ вручну"
 msgid "Prepare for update"
 msgstr "Розпочати оновлення"
 
-#: src/views/SetupSwapSuccess.vue:589
+#: src/views/SetupSwapSuccess.vue:586
 msgid "Preparing Swap"
 msgstr "Підготовлюється обмін"
 
@@ -852,11 +852,11 @@ msgstr "Платіж обробляється"
 
 #: src/lib/LabelingMachine.ts:32
 msgid "Purple Account"
-msgstr ""
+msgstr "Фіолетовий рахунок"
 
 #: src/lib/LabelingMachine.ts:14
 msgid "Purple Address"
-msgstr ""
+msgstr "Фіолетова адреса"
 
 #: src/views/ExportSuccess.vue:65
 msgid "Recovery Words exported!"
@@ -864,17 +864,17 @@ msgstr "Секретні слова завантажено!"
 
 #: src/lib/LabelingMachine.ts:28
 msgid "Red Account"
-msgstr ""
+msgstr "Червоний рахунок"
 
 #: src/lib/LabelingMachine.ts:10
 msgid "Red Address"
-msgstr ""
+msgstr "Червона адреса"
 
-#: src/views/RefundSwapLedger.vue:316
+#: src/views/RefundSwapLedger.vue:314
 msgid "Refund Failed"
 msgstr "Помилка відшкодування коштів"
 
-#: src/views/RefundSwapLedger.vue:335
+#: src/views/RefundSwapLedger.vue:333
 msgid ""
 "Refunding this Swap is currently not supported on this device or browser. "
 "Please use the device and browser you originally created the Swap with. "
@@ -914,7 +914,7 @@ msgstr "Завантаження старих рахунків..."
 
 #: src/views/ActivatePolygonSuccess.vue:139
 #: src/views/BitcoinSyncBaseView.vue:68 src/views/LoginSuccess.vue:122
-#: src/views/SetupSwapSuccess.vue:614 src/views/SignupLedger.vue:145
+#: src/views/SetupSwapSuccess.vue:611 src/views/SignupLedger.vue:145
 msgid "Retry"
 msgstr "Повторити спробу"
 
@@ -947,7 +947,7 @@ msgstr "Поділитися"
 msgid "Sign Message"
 msgstr "Підписати повідомлення"
 
-#: src/views/SetupSwapSuccess.vue:598
+#: src/views/SetupSwapSuccess.vue:595
 msgid "Signing transactions..."
 msgstr "Підписання переказу..."
 
@@ -991,11 +991,11 @@ msgstr "Обмін авторизовано"
 msgid "Swap fee"
 msgstr "Комісія за обмін"
 
-#: src/views/SetupSwapLedger.vue:848 src/views/SetupSwapSuccess.vue:585
+#: src/views/SetupSwapLedger.vue:848 src/views/SetupSwapSuccess.vue:582
 msgid "Swap Setup Failed"
 msgstr "Помилка налаштування обміну"
 
-#: src/views/RefundSwapLedger.vue:314
+#: src/views/RefundSwapLedger.vue:312
 msgid "Syncing"
 msgstr "Синхронізація"
 
@@ -1007,16 +1007,16 @@ msgstr "Встановлення консенсус..."
 
 #: src/views/ActivatePolygonSuccess.vue:113
 #: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapLedger.vue:850
-#: src/views/SetupSwapSuccess.vue:587
+#: src/views/SetupSwapSuccess.vue:584
 #: src/views/SignBtcTransactionLedger.vue:117
 msgid "Syncing Failed"
 msgstr "Помилка синхронізації"
 
-#: src/views/RefundSwapLedger.vue:330
+#: src/views/RefundSwapLedger.vue:328
 msgid "Syncing with {currency} network failed: {error}"
 msgstr "Помилка синхронізації з {currency} мережею: {error}"
 
-#: src/views/RefundSwapLedger.vue:324
+#: src/views/RefundSwapLedger.vue:322
 msgid "Syncing with {currency} network..."
 msgstr "Синхронізація з {currency} мережею..."
 
@@ -1030,11 +1030,11 @@ msgstr "Синхронізація з мережею Біткоїн..."
 
 #: src/views/ActivatePolygonSuccess.vue:134
 msgid "Syncing with Polygon network failed: {error}"
-msgstr ""
+msgstr "Не вдалося синхронізуватися з мережею Polygon: {error}"
 
 #: src/views/ActivatePolygonSuccess.vue:129
 msgid "Syncing with Polygon network..."
-msgstr ""
+msgstr "Синхронізація з мережею Polygon..."
 
 #: src/views/LoginSuccess.vue:121 src/views/SignupLedger.vue:134
 msgid "Syncing with the network failed: {error}"
@@ -1042,11 +1042,11 @@ msgstr "Помилка синхронізації з мережею: {error}"
 
 #: src/lib/LabelingMachine.ts:33
 msgid "Teal Account"
-msgstr ""
+msgstr "Бірюзовий рахунок"
 
 #: src/lib/LabelingMachine.ts:15
 msgid "Teal Address"
-msgstr ""
+msgstr "Бірюзова адреса"
 
 #: src/components/LedgerUi.vue:281
 msgid "The connected wallet or Ledger is not the one this account belongs to."
@@ -1193,7 +1193,7 @@ msgstr "Завантажуємо баланс на рахунках"
 
 #: src/views/ActivatePolygonSuccess.vue:117
 msgid "USDC activated"
-msgstr ""
+msgstr "USDC активовано"
 
 #: src/components/OnboardingMenu.vue:12
 msgid ""
@@ -1222,6 +1222,8 @@ msgid ""
 "Welcome to the\n"
 "Nimiq Wallet"
 msgstr ""
+"Ласкаво просимо до\n"
+"Nimiq гаманця"
 
 #: src/CashlinkApp.vue:9
 msgid "What is Nimiq?"
@@ -1233,11 +1235,11 @@ msgstr "Упс, щось пішло не так"
 
 #: src/lib/LabelingMachine.ts:29
 msgid "Yellow Account"
-msgstr ""
+msgstr "Жовтий рахунок"
 
 #: src/lib/LabelingMachine.ts:11
 msgid "Yellow Address"
-msgstr ""
+msgstr "Жовта адреса"
 
 #: src/views/LogoutLedger.vue:19 src/views/LogoutSuccess.vue:4
 msgid "You are logged out."

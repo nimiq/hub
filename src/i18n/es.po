@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Last-Translator: Ricardo Barquero Carranza <richy@nimiq.com>, 2023\n"
-"Language-Team: Spanish (https://www.transifex.com/nimiq-foundation/teams/110181/es/)\n"
+"Language-Team: Spanish (https://app.transifex.com/nimiq-foundation/teams/110181/es/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: es\n"
 "Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
@@ -36,7 +36,7 @@ msgstr "30 segundos, sin email, sin descargas."
 msgid "404 - Cash not found"
 msgstr "404 - Dinero no fue encontrado"
 
-#: src/views/SetupSwapSuccess.vue:144
+#: src/views/SetupSwapSuccess.vue:142
 msgid "503 Service unavailable - please try again later"
 msgstr ""
 "503 Servicio no se encuentra disponible - por favor intente de nuevo luego"
@@ -528,11 +528,11 @@ msgstr "Obtención de Direcciones Fallida"
 msgid "Fetching contract information..."
 msgstr "Obteniendo información del contrato..."
 
-#: src/views/SetupSwapSuccess.vue:606
+#: src/views/SetupSwapSuccess.vue:603
 msgid "Fetching swap data failed: {error}"
 msgstr "Obtención de datos de intercambio fallida: {error}"
 
-#: src/views/SetupSwapSuccess.vue:596
+#: src/views/SetupSwapSuccess.vue:593
 msgid "Fetching swap data..."
 msgstr "Obteniendo datos del intercambio..."
 
@@ -761,7 +761,7 @@ msgid "OASIS service fee"
 msgstr "Cuota de servicio de OASIS"
 
 #: src/views/ErrorHandlerUnsupportedLedger.vue:4
-#: src/views/RefundSwapLedger.vue:346
+#: src/views/RefundSwapLedger.vue:344
 msgid "Ok"
 msgstr "Ok"
 
@@ -850,7 +850,7 @@ msgstr "Por favor envíe la transacción manualmente"
 msgid "Prepare for update"
 msgstr "Prepárese para la actualización"
 
-#: src/views/SetupSwapSuccess.vue:589
+#: src/views/SetupSwapSuccess.vue:586
 msgid "Preparing Swap"
 msgstr "Preparando intercambio"
 
@@ -878,11 +878,11 @@ msgstr "Cuenta Roja"
 msgid "Red Address"
 msgstr "Dirección Roja"
 
-#: src/views/RefundSwapLedger.vue:316
+#: src/views/RefundSwapLedger.vue:314
 msgid "Refund Failed"
 msgstr "Reembolso Fallido"
 
-#: src/views/RefundSwapLedger.vue:335
+#: src/views/RefundSwapLedger.vue:333
 msgid ""
 "Refunding this Swap is currently not supported on this device or browser. "
 "Please use the device and browser you originally created the Swap with. "
@@ -923,7 +923,7 @@ msgstr "Obteniendo sus cuentas viejas..."
 
 #: src/views/ActivatePolygonSuccess.vue:139
 #: src/views/BitcoinSyncBaseView.vue:68 src/views/LoginSuccess.vue:122
-#: src/views/SetupSwapSuccess.vue:614 src/views/SignupLedger.vue:145
+#: src/views/SetupSwapSuccess.vue:611 src/views/SignupLedger.vue:145
 msgid "Retry"
 msgstr "Reintentar"
 
@@ -956,7 +956,7 @@ msgstr "Compartir"
 msgid "Sign Message"
 msgstr "Firmar Mensaje"
 
-#: src/views/SetupSwapSuccess.vue:598
+#: src/views/SetupSwapSuccess.vue:595
 msgid "Signing transactions..."
 msgstr "Firmando transacciones..."
 
@@ -1000,11 +1000,11 @@ msgstr "Intercambio autorizado"
 msgid "Swap fee"
 msgstr "Cuota de intercambio"
 
-#: src/views/SetupSwapLedger.vue:848 src/views/SetupSwapSuccess.vue:585
+#: src/views/SetupSwapLedger.vue:848 src/views/SetupSwapSuccess.vue:582
 msgid "Swap Setup Failed"
 msgstr "Configuración del Intercambio Fallida"
 
-#: src/views/RefundSwapLedger.vue:314
+#: src/views/RefundSwapLedger.vue:312
 msgid "Syncing"
 msgstr "Sincronizando"
 
@@ -1016,16 +1016,16 @@ msgstr "Sincronizando consenso...."
 
 #: src/views/ActivatePolygonSuccess.vue:113
 #: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapLedger.vue:850
-#: src/views/SetupSwapSuccess.vue:587
+#: src/views/SetupSwapSuccess.vue:584
 #: src/views/SignBtcTransactionLedger.vue:117
 msgid "Syncing Failed"
 msgstr "Sincronización Fallida"
 
-#: src/views/RefundSwapLedger.vue:330
+#: src/views/RefundSwapLedger.vue:328
 msgid "Syncing with {currency} network failed: {error}"
 msgstr "Sincronización con la red de {currency} fallida: {error}"
 
-#: src/views/RefundSwapLedger.vue:324
+#: src/views/RefundSwapLedger.vue:322
 msgid "Syncing with {currency} network..."
 msgstr "Sincronizando con la red de {currency} ..."
 

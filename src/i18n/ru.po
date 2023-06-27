@@ -5,11 +5,12 @@
 # Oscar_6, 2021
 # Пётр Павлович, 2021
 # Sören Schwert <hello@soerenschwert.de>, 2021
+# Alexander Ivanov <saiv46.dev+transifex@gmail.com>, 2023
 # 
 msgid ""
 msgstr ""
-"Last-Translator: Sören Schwert <hello@soerenschwert.de>, 2021\n"
-"Language-Team: Russian (https://www.transifex.com/nimiq-foundation/teams/110181/ru/)\n"
+"Last-Translator: Alexander Ivanov <saiv46.dev+transifex@gmail.com>, 2023\n"
+"Language-Team: Russian (https://app.transifex.com/nimiq-foundation/teams/110181/ru/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: ru\n"
 "Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);\n"
@@ -17,10 +18,6 @@ msgstr ""
 #: src/views/ChooseAddress.vue:7
 msgid "{appName} is asking for an address to use."
 msgstr "{appName} запрашивает адрес для использования."
-
-#: src/lib/LabelingMachine.ts:13
-msgid "{color} Account"
-msgstr "{color} Аккаунт"
 
 #: src/views/SetupSwapLedger.vue:57 src/views/SetupSwapLedger.vue:78
 msgid "{percentage} of swap value."
@@ -42,9 +39,9 @@ msgstr "30 секунд, нет электронной почты, нет з�
 msgid "404 - Cash not found"
 msgstr "404 - Кэш не найден"
 
-#: src/views/SetupSwapSuccess.vue:144
+#: src/views/SetupSwapSuccess.vue:142
 msgid "503 Service unavailable - please try again later"
-msgstr ""
+msgstr "503 Сервис недоступен - попробуйте позже"
 
 #: src/views/ExportSuccess.vue:60
 msgid "Account backed up!"
@@ -198,7 +195,7 @@ msgstr "Баланс:"
 msgid "Bitcoin"
 msgstr "Биткоин"
 
-#: src/views/ActivateBitcoinSuccess.vue:105
+#: src/views/ActivateBitcoinSuccess.vue:106
 msgid "Bitcoin activated"
 msgstr "Биткойн активирован"
 
@@ -206,13 +203,21 @@ msgstr "Биткойн активирован"
 msgid "Blocks/Step:"
 msgstr "Блоков/шаг:"
 
-#: src/lib/LabelingMachine.ts:43
-msgid "Blue"
-msgstr "Синий"
+#: src/lib/LabelingMachine.ts:31
+msgid "Blue Account"
+msgstr "Синий Аккаунт"
 
-#: src/lib/LabelingMachine.ts:48
-msgid "Brown"
-msgstr "Коричневый"
+#: src/lib/LabelingMachine.ts:13
+msgid "Blue Address"
+msgstr "Синий Адрес"
+
+#: src/lib/LabelingMachine.ts:36
+msgid "Brown Account"
+msgstr "Коричневый Аккаунт"
+
+#: src/lib/LabelingMachine.ts:18
+msgid "Brown Address"
+msgstr "Коричневый Адрес"
 
 #: src/views/SetupSwapLedger.vue:42
 msgid "BTC network fee"
@@ -283,9 +288,7 @@ msgstr "Выбрать Адрес"
 
 #: src/components/CheckoutCardNimiq.vue:67
 msgid "Choose an Address to pay"
-msgstr ""
-"Выберите Адрес \n"
-"для совершения платежа"
+msgstr "Выберите Адрес для оплаты"
 
 #: src/views/SignMessage.vue:12
 msgid "Choose an Address to sign"
@@ -319,13 +322,13 @@ msgstr "Заберите ваши деньги"
 msgid "Claiming Cashlink"
 msgstr "Забираем Cashlink"
 
-#: src/components/LedgerUi.vue:303
+#: src/components/LedgerUi.vue:304
 msgid "Click Connect"
 msgstr "Нажмите «Подключиться»"
 
 #: src/views/CashlinkManage.vue:25
 msgid "Click to copy:"
-msgstr ""
+msgstr "Нажмите для копирования:"
 
 #: src/views/RequestError.vue:31
 msgid "Close"
@@ -339,7 +342,7 @@ msgstr "Собираем платёжные данные"
 msgid "Confirm {outgoingOrIncoming} transaction on Ledger"
 msgstr "Подтвердите {outgoingOrIncoming} транзакцию на Ledger"
 
-#: src/components/LedgerUi.vue:217
+#: src/components/LedgerUi.vue:218
 msgid "Confirm Address"
 msgstr "Подтвердить Адрес"
 
@@ -351,21 +354,21 @@ msgstr "Подтвердить Cashlink"
 msgid "Confirm Swap"
 msgstr "Подтвердить обмен"
 
-#: src/components/LedgerUi.vue:220
+#: src/components/LedgerUi.vue:221
 msgid "Confirm that the address on your Ledger matches {addressToConfirm}"
 msgstr ""
 "Подтвердите, что адрес на вашем Ledger соответствует {addressToConfirm}"
 
-#: src/components/LedgerUi.vue:219
+#: src/components/LedgerUi.vue:220
 msgid "Confirm the address on your Ledger"
 msgstr "Подтвердите адрес на своем Ledger"
 
-#: src/components/LedgerUi.vue:238 src/views/SignBtcTransactionLedger.vue:4
+#: src/components/LedgerUi.vue:239 src/views/SignBtcTransactionLedger.vue:4
 #: src/views/SignTransactionLedger.vue:34
 msgid "Confirm Transaction"
 msgstr "Подтвердить Транзакцию"
 
-#: src/components/LedgerUi.vue:239
+#: src/components/LedgerUi.vue:240
 msgid "Confirm using your Ledger"
 msgstr "Используйте свой Ledger для подтверждения"
 
@@ -385,11 +388,11 @@ msgstr "Вы получили Nimiq Gift Card. Поздравляем!"
 msgid "Connect"
 msgstr "Подключить"
 
-#: src/components/LedgerUi.vue:311 src/components/OnboardingMenu.vue:5
+#: src/components/LedgerUi.vue:312 src/components/OnboardingMenu.vue:5
 msgid "Connect Ledger"
 msgstr "Подключить Ledger"
 
-#: src/components/LedgerUi.vue:298
+#: src/components/LedgerUi.vue:299
 msgid "Connect your Ledger Device"
 msgstr "Подключите свой Ledger"
 
@@ -397,7 +400,7 @@ msgstr "Подключите свой Ledger"
 msgid "Connect your Ledger Nano S or Nano X."
 msgstr "Подключите ваш Ledger Nano S или Ledger Nano X."
 
-#: src/views/Migrate.vue:143 src/views/Migrate.vue:283
+#: src/views/Migrate.vue:143 src/views/Migrate.vue:285
 msgid "Connecting to Keyguard..."
 msgstr "Подключаемся к Keyguard..."
 
@@ -421,7 +424,7 @@ msgid "Contacts are not affected."
 msgstr "Контакты не будут затронуты."
 
 #: src/components/NotEnoughCookieSpace.vue:8 src/views/LoginSuccess.vue:167
-#: src/views/LoginSuccess.vue:195 src/views/SignupLedger.vue:143
+#: src/views/LoginSuccess.vue:197 src/views/SignupLedger.vue:143
 msgid "Continue"
 msgstr "Продолжить"
 
@@ -459,7 +462,7 @@ msgstr ""
 msgid "Create Cashlink"
 msgstr "Создать Cashlink"
 
-#: src/views/SignupSuccess.vue:33
+#: src/views/SignupSuccess.vue:34
 msgid "Creating your Account"
 msgstr "Создаём Аккаунт"
 
@@ -488,7 +491,7 @@ msgstr "Готово."
 
 #: src/views/CashlinkManage.vue:67
 msgid "Download"
-msgstr ""
+msgstr "Скачать"
 
 #: src/components/CheckoutCardExternal.vue:104
 msgid "Enter manually"
@@ -498,7 +501,7 @@ msgstr "Введите вручную"
 msgid "Enter the address of a vesting contract."
 msgstr "Введите адрес вестингового контракта"
 
-#: src/components/LedgerUi.vue:299
+#: src/components/LedgerUi.vue:300
 msgid "Enter your PIN"
 msgstr "Введите свой PIN"
 
@@ -530,17 +533,17 @@ msgstr "Не удалось загрузить адреса"
 msgid "Fetching contract information..."
 msgstr "Загружаем информацию о контракте..."
 
-#: src/views/SetupSwapSuccess.vue:606
+#: src/views/SetupSwapSuccess.vue:603
 msgid "Fetching swap data failed: {error}"
 msgstr "Не удалось загрузить данные обмена: {error}"
 
-#: src/views/SetupSwapSuccess.vue:596
+#: src/views/SetupSwapSuccess.vue:593
 msgid "Fetching swap data..."
 msgstr "Загружаем данные обмена..."
 
-#: src/components/LedgerUi.vue:233 src/views/ActivateBitcoinSuccess.vue:103
-#: src/views/ActivatePolygonSuccess.vue:110
-#: src/views/ActivatePolygonSuccess.vue:114
+#: src/components/LedgerUi.vue:234 src/views/ActivateBitcoinSuccess.vue:104
+#: src/views/ActivatePolygonSuccess.vue:111
+#: src/views/ActivatePolygonSuccess.vue:115
 #: src/views/BitcoinSyncBaseView.vue:48 src/views/LoginSuccess.vue:43
 #: src/views/SignupLedger.vue:104
 msgid "Fetching your Addresses"
@@ -574,9 +577,13 @@ msgstr "Назад"
 msgid "Got it"
 msgstr "Понятно"
 
-#: src/lib/LabelingMachine.ts:47
-msgid "Green"
-msgstr "Зелёный"
+#: src/lib/LabelingMachine.ts:35
+msgid "Green Account"
+msgstr "Зелёный Аккаунт"
+
+#: src/lib/LabelingMachine.ts:17
+msgid "Green Address"
+msgstr "Зелёный Адрес"
 
 #: src/views/CashlinkReceive.vue:346
 msgid "Happy birthday!"
@@ -611,9 +618,13 @@ msgstr "входящая"
 msgid "Incomplete payment"
 msgstr "Незавершённый платёж"
 
-#: src/lib/LabelingMachine.ts:42
-msgid "Indigo"
-msgstr "Темно-синий"
+#: src/lib/LabelingMachine.ts:30
+msgid "Indigo Account"
+msgstr "Индиго Аккаунт"
+
+#: src/lib/LabelingMachine.ts:12
+msgid "Indigo Address"
+msgstr "Индиго Адрес"
 
 #: src/views/RequestError.vue:6
 msgid "Invalid request"
@@ -631,7 +642,7 @@ msgstr ""
 msgid "Join Nimiq"
 msgstr "Присоединиться к Nimiq"
 
-#: src/lib/LabelingMachine.ts:17
+#: src/lib/LabelingMachine.ts:42
 msgid "Ledger Account"
 msgstr "Аккаунт Ledger"
 
@@ -644,15 +655,15 @@ msgstr ""
 "Защитную Фразу из 24 слов, которую вы создали при настройке вашего "
 "устройства."
 
-#: src/components/LedgerUi.vue:268
+#: src/components/LedgerUi.vue:269
 msgid "Ledger not supported by browser."
 msgstr "Ledger не поддерживается данным браузером."
 
-#: src/lib/LabelingMachine.ts:21
+#: src/lib/LabelingMachine.ts:46
 msgid "Legacy Account"
 msgstr "Legacy-Аккаунт"
 
-#: src/components/LedgerUi.vue:200
+#: src/components/LedgerUi.vue:201
 msgid "Loading failed, retrying..."
 msgstr "Ошибка загрузки. Повторная попытка..."
 
@@ -673,7 +684,7 @@ msgstr "Авторизация"
 
 #: src/views/ExportSuccess.vue:62
 msgid "Login File saved!"
-msgstr ""
+msgstr "Файл Авторизации сохранён!"
 
 #: src/views/CashlinkReceive.vue:91
 msgid "Login to existing account"
@@ -703,7 +714,7 @@ msgstr "Больше Аватаров"
 msgid "My Backups are safe."
 msgstr "Резервные Копии сохранены."
 
-#: src/views/AddAccountSelection.vue:78
+#: src/views/AddAccountSelection.vue:83
 msgid "New Address added to your Account."
 msgstr "Новые Адреса были добавлены к вашему Аккаунту."
 
@@ -753,7 +764,7 @@ msgid "OASIS service fee"
 msgstr "Комиссия сервиса OASIS"
 
 #: src/views/ErrorHandlerUnsupportedLedger.vue:4
-#: src/views/RefundSwapLedger.vue:346
+#: src/views/RefundSwapLedger.vue:344
 msgid "Ok"
 msgstr "Ок"
 
@@ -761,7 +772,7 @@ msgstr "Ок"
 msgid "One account can now have multiple addresses."
 msgstr "Теперь на одном аккаунте может быть сразу несколько адресов."
 
-#: src/components/LedgerUi.vue:301
+#: src/components/LedgerUi.vue:302
 msgid "Open the {app} App"
 msgstr "Открыть приложение {app}"
 
@@ -769,14 +780,18 @@ msgstr "Открыть приложение {app}"
 msgid "Open Wallet App"
 msgstr "Открыть Wallet App"
 
-#: src/lib/LabelingMachine.ts:39
-msgid "Orange"
-msgstr "Оранжевый"
+#: src/lib/LabelingMachine.ts:27
+msgid "Orange Account"
+msgstr "Оранжевый Аккаунт"
+
+#: src/lib/LabelingMachine.ts:9
+msgid "Orange Address"
+msgstr "Оранжевый Адрес"
 
 #: src/components/CheckoutCardNimiq.vue:63
 #: src/components/CheckoutCardNimiq.vue:87
 msgid "Other wallets"
-msgstr ""
+msgstr "Другие кошельки"
 
 #: src/views/SetupSwapLedger.vue:986
 msgid "outgoing"
@@ -796,7 +811,7 @@ msgstr "Оплатить в Nimiq"
 
 #: src/components/CheckoutCardNimiqExternal.vue:54
 msgid "Payment Reference"
-msgstr "Номер Платежа"
+msgstr "Примечание Платежа"
 
 #: src/components/CheckoutCard.vue:183
 msgid "Payment successful"
@@ -806,15 +821,19 @@ msgstr "Платёж прошел успешно"
 msgid "Payment successful."
 msgstr "Платёж прошел успешно."
 
-#: src/lib/LabelingMachine.ts:46
-msgid "Pink"
-msgstr "Розовый"
+#: src/lib/LabelingMachine.ts:34
+msgid "Pink Account"
+msgstr "Розовый Аккаунт"
 
-#: src/components/LedgerUi.vue:251
+#: src/lib/LabelingMachine.ts:16
+msgid "Pink Address"
+msgstr "Розовый Адрес"
+
+#: src/components/LedgerUi.vue:252
 msgid "Please cancel the previous request on your Ledger."
 msgstr "Пожалуйста, отмените предыдущий запрос на вашем Ledger."
 
-#: src/components/LedgerUi.vue:189
+#: src/components/LedgerUi.vue:190
 msgid "Please cancel the request on your Ledger"
 msgstr "Пожалуйста, отмените запрос на вашем Ledger"
 
@@ -834,7 +853,7 @@ msgstr "Пожалуйста, отправьте транзакцию вручн
 msgid "Prepare for update"
 msgstr "Подготовка к обновлению"
 
-#: src/views/SetupSwapSuccess.vue:589
+#: src/views/SetupSwapSuccess.vue:586
 msgid "Preparing Swap"
 msgstr "Подготавливаем обмен"
 
@@ -842,23 +861,31 @@ msgstr "Подготавливаем обмен"
 msgid "Processing your payment"
 msgstr "Платеж в обработке"
 
-#: src/lib/LabelingMachine.ts:44
-msgid "Purple"
-msgstr "Фиолетовый"
+#: src/lib/LabelingMachine.ts:32
+msgid "Purple Account"
+msgstr "Фиолетовый Аккаунт"
+
+#: src/lib/LabelingMachine.ts:14
+msgid "Purple Address"
+msgstr "Фиолетовый Адрес"
 
 #: src/views/ExportSuccess.vue:65
 msgid "Recovery Words exported!"
 msgstr "Защитная Фраза экспортирована!"
 
-#: src/lib/LabelingMachine.ts:40
-msgid "Red"
-msgstr "Красный"
+#: src/lib/LabelingMachine.ts:28
+msgid "Red Account"
+msgstr "Красный Аккаунт"
 
-#: src/views/RefundSwapLedger.vue:316
+#: src/lib/LabelingMachine.ts:10
+msgid "Red Address"
+msgstr "Красный Адрес"
+
+#: src/views/RefundSwapLedger.vue:314
 msgid "Refund Failed"
 msgstr "Возврат средств не выполнен"
 
-#: src/views/RefundSwapLedger.vue:335
+#: src/views/RefundSwapLedger.vue:333
 msgid ""
 "Refunding this Swap is currently not supported on this device or browser. "
 "Please use the device and browser you originally created the Swap with. "
@@ -876,11 +903,11 @@ msgstr "Перезагрузить"
 msgid "Rename Account"
 msgstr "Переименовать Аккаунт"
 
-#: src/components/LedgerUi.vue:285
+#: src/components/LedgerUi.vue:286
 msgid "Request failed"
 msgstr "Запрос не выполнен"
 
-#: src/components/LedgerUi.vue:286
+#: src/components/LedgerUi.vue:287
 msgid "Request failed: "
 msgstr "Запрос не выполнен:"
 
@@ -896,9 +923,9 @@ msgstr "Начать платёж заново"
 msgid "Retrieving your old accounts..."
 msgstr "Восстановление ваших старых учетных записей..."
 
-#: src/views/ActivatePolygonSuccess.vue:138
+#: src/views/ActivatePolygonSuccess.vue:139
 #: src/views/BitcoinSyncBaseView.vue:68 src/views/LoginSuccess.vue:122
-#: src/views/SetupSwapSuccess.vue:614 src/views/SignupLedger.vue:145
+#: src/views/SetupSwapSuccess.vue:611 src/views/SignupLedger.vue:145
 msgid "Retry"
 msgstr "Повторить"
 
@@ -931,11 +958,11 @@ msgstr "Поделиться"
 msgid "Sign Message"
 msgstr "Подписать сообщение"
 
-#: src/views/SetupSwapSuccess.vue:598
+#: src/views/SetupSwapSuccess.vue:595
 msgid "Signing transactions..."
 msgstr "Подписание транзакций..."
 
-#: src/lib/LabelingMachine.ts:33
+#: src/lib/LabelingMachine.ts:58
 msgid "Single Accounts"
 msgstr "Одиночные Адреса"
 
@@ -970,17 +997,17 @@ msgstr "Сохранение ваших новых учетных записей
 
 #: src/views/SetupSwapLedger.vue:258
 msgid "Swap authorized"
-msgstr ""
+msgstr "Обмен авторизован"
 
 #: src/views/SetupSwapLedger.vue:73
 msgid "Swap fee"
 msgstr "Комиссия за обмен"
 
-#: src/views/SetupSwapLedger.vue:848 src/views/SetupSwapSuccess.vue:585
+#: src/views/SetupSwapLedger.vue:848 src/views/SetupSwapSuccess.vue:582
 msgid "Swap Setup Failed"
 msgstr "Не удалось подготовить обмен"
 
-#: src/views/RefundSwapLedger.vue:314
+#: src/views/RefundSwapLedger.vue:312
 msgid "Syncing"
 msgstr "Синхронизация"
 
@@ -990,18 +1017,18 @@ msgstr "Синхронизация"
 msgid "Syncing consensus..."
 msgstr "Синхронизация консенсуса..."
 
-#: src/views/ActivatePolygonSuccess.vue:112
+#: src/views/ActivatePolygonSuccess.vue:113
 #: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapLedger.vue:850
-#: src/views/SetupSwapSuccess.vue:587
+#: src/views/SetupSwapSuccess.vue:584
 #: src/views/SignBtcTransactionLedger.vue:117
 msgid "Syncing Failed"
 msgstr "Синхронизация не удалась"
 
-#: src/views/RefundSwapLedger.vue:330
+#: src/views/RefundSwapLedger.vue:328
 msgid "Syncing with {currency} network failed: {error}"
 msgstr "Не удалось синхронизироваться с сетью {currency}: {error}"
 
-#: src/views/RefundSwapLedger.vue:324
+#: src/views/RefundSwapLedger.vue:322
 msgid "Syncing with {currency} network..."
 msgstr "Синхронизируемся с сетью {currency}..."
 
@@ -1013,23 +1040,27 @@ msgstr "Не удалось синхронизироваться с сетью �
 msgid "Syncing with Bitcoin network..."
 msgstr "Синхронизация с сетью Биткоин..."
 
-#: src/views/ActivatePolygonSuccess.vue:133
+#: src/views/ActivatePolygonSuccess.vue:134
 msgid "Syncing with Polygon network failed: {error}"
-msgstr ""
+msgstr "Ошибка синхронизации с сетью Polygon: {error}"
 
-#: src/views/ActivatePolygonSuccess.vue:128
+#: src/views/ActivatePolygonSuccess.vue:129
 msgid "Syncing with Polygon network..."
-msgstr ""
+msgstr "Синхронизация с сетью Polygon..."
 
 #: src/views/LoginSuccess.vue:121 src/views/SignupLedger.vue:134
 msgid "Syncing with the network failed: {error}"
 msgstr "Не удалось синхронизироваться с сетью: {error}"
 
-#: src/lib/LabelingMachine.ts:45
-msgid "Teal"
-msgstr "Бирюзовый"
+#: src/lib/LabelingMachine.ts:33
+msgid "Teal Account"
+msgstr "Бирюзовый Аккаунт"
 
-#: src/components/LedgerUi.vue:280
+#: src/lib/LabelingMachine.ts:15
+msgid "Teal Address"
+msgstr "Бирюзовый Адрес"
+
+#: src/components/LedgerUi.vue:281
 msgid "The connected wallet or Ledger is not the one this account belongs to."
 msgstr "Подключенный кошелек/Ledger привязан к другому аккаунту."
 
@@ -1164,7 +1195,7 @@ msgstr "Обновление балансов"
 msgid "Updating Keyguard..."
 msgstr "Обновление Keyguard..."
 
-#: src/views/Migrate.vue:142 src/views/Migrate.vue:282
+#: src/views/Migrate.vue:142 src/views/Migrate.vue:284
 msgid "Updating your Accounts"
 msgstr "Обновление ваших Аккаунтов"
 
@@ -1172,9 +1203,9 @@ msgstr "Обновление ваших Аккаунтов"
 msgid "Updating your balances"
 msgstr "Обновление ваших балансов"
 
-#: src/views/ActivatePolygonSuccess.vue:116
+#: src/views/ActivatePolygonSuccess.vue:117
 msgid "USDC activated"
-msgstr ""
+msgstr "USDC активирован"
 
 #: src/components/OnboardingMenu.vue:12
 msgid ""
@@ -1182,7 +1213,7 @@ msgid ""
 "or Recovery Words."
 msgstr "Используйте Файл Авторизации или Защитную Фразу."
 
-#: src/views/LoginSuccess.vue:194 src/views/SignupLedger.vue:132
+#: src/views/LoginSuccess.vue:196 src/views/SignupLedger.vue:132
 msgid "Used addresses without balance might have been missed."
 msgstr "Используемые адреса с нулевым балансом могли быть пропущены."
 
@@ -1190,31 +1221,37 @@ msgstr "Используемые адреса с нулевым балансом
 msgid "Verify Payment"
 msgstr "Подтвердить платеж"
 
-#: src/lib/LabelingMachine.ts:25 src/views/AddVestingContract.vue:137
+#: src/lib/LabelingMachine.ts:50 src/views/AddVestingContract.vue:138
 msgid "Vesting Contract"
 msgstr "Вестинг-контракты"
 
-#: src/views/LoginSuccess.vue:209
+#: src/views/LoginSuccess.vue:211
 msgid "Welcome back! | Your Accounts are ready."
-msgstr ""
+msgstr "Добро пожаловать! | Ваши Аккаунты готовы."
 
-#: src/views/SignupLedger.vue:112 src/views/SignupSuccess.vue:92
+#: src/views/SignupLedger.vue:112 src/views/SignupSuccess.vue:93
 msgid ""
 "Welcome to the\n"
 "Nimiq Wallet"
 msgstr ""
+"Добро пожаловать\n"
+"в Кошелёк Nimiq"
 
 #: src/CashlinkApp.vue:9
 msgid "What is Nimiq?"
 msgstr "Что такое Nimiq?"
 
-#: src/views/Migrate.vue:273
+#: src/views/Migrate.vue:275
 msgid "Whoops, something went wrong"
 msgstr "Ой! Что-то пошло не так"
 
-#: src/lib/LabelingMachine.ts:41
-msgid "Yellow"
-msgstr "Жёлтый"
+#: src/lib/LabelingMachine.ts:29
+msgid "Yellow Account"
+msgstr "Желтый Аккаунт"
+
+#: src/lib/LabelingMachine.ts:11
+msgid "Yellow Address"
+msgstr "Желтый Адрес"
 
 #: src/views/LogoutLedger.vue:19 src/views/LogoutSuccess.vue:4
 msgid "You are logged out."
@@ -1240,7 +1277,7 @@ msgstr ""
 msgid "You're logged in!"
 msgstr "Вы авторизованы!"
 
-#: src/components/LedgerUi.vue:272
+#: src/components/LedgerUi.vue:273
 msgid ""
 "Your {app} app is outdated. Please update your Ledger firmware and {app} app"
 " using Ledger Live."
@@ -1248,7 +1285,7 @@ msgstr ""
 "Ваше приложение {app} устарело. Пожалуйста, обновите прошивку Ledger и "
 "приложение {app} через Ledger Live."
 
-#: src/views/LoginSuccess.vue:192 src/views/SignupLedger.vue:106
+#: src/views/LoginSuccess.vue:194 src/views/SignupLedger.vue:106
 msgid ""
 "Your Addresses may be\n"
 "incomplete."
@@ -1272,6 +1309,6 @@ msgstr ""
 msgid "Your message is signed."
 msgstr "Ваше сообщение подписано."
 
-#: src/views/LoginSuccess.vue:203 src/views/SimpleSuccess.vue:31
+#: src/views/LoginSuccess.vue:205 src/views/SimpleSuccess.vue:31
 msgid "Your password was changed."
 msgstr "Ваш пароль был изменён."
