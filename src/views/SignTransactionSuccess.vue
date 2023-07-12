@@ -21,6 +21,9 @@ export default class SignTransactionSuccess extends Vue {
         }, this.keyguardResult, this.keyguardRequest));
         const result: SignedTransaction = await (this.$refs.network as Network).makeSignTransactionResult(tx);
 
+        // Overwrite serializedTx with Albatross serialization format
+        result.serializedTx = Nimiq.BufferUtils.toHex(this.keyguardResult.serializedTx);
+
         this.$rpc.resolve(result);
     }
 }
