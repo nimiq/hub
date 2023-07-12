@@ -49,9 +49,9 @@ export const FIAT_API_PROVIDER = FiatApiProvider.CoinGecko;
 export const StakingTransactionType = {
     UNSTAKE: 1,
 
-    CREATE_STAKER: 6,
-    STAKE: 7,
-    UPDATE_STAKER: 8,
+    CREATE_STAKER: 5,
+    STAKE: 6,
+    UPDATE_STAKER: 7,
 };
 
 export const StakingSignallingTypes = [
