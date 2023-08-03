@@ -74,6 +74,7 @@ export interface SignTransactionRequest extends BasicRequest {
 export interface SignStakingRequest extends SignTransactionRequest {
     type: number;
     delegation?: string;
+    newInactiveBalance?: number;
 }
 export interface NimiqCheckoutRequest extends BasicRequest {
     version?: 1;

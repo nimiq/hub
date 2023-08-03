@@ -94,6 +94,7 @@ export default class SignStaking extends Vue {
 
             type: this.request.type,
             delegation: this.request.delegation,
+            newInactiveBalance: this.request.newInactiveBalance,
         };
 
         staticStore.keyguardRequest = request;
