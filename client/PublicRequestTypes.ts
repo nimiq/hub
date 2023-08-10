@@ -641,6 +641,7 @@ export type RpcRequest = SignTransactionRequest
                        | RefundSwapRequest;
 
 export type RpcResult = SignedTransaction
+                      | SignedTransaction[]
                       | Account
                       | Account[]
                       | SimpleResult
@@ -662,7 +663,7 @@ export type ResultByRequestType<T> =
     T extends RequestType.LIST_CASHLINKS ? Cashlink[] :
     T extends RequestType.CHOOSE_ADDRESS | RequestType.ADD_ADDRESS ? Address :
     T extends RequestType.SIGN_TRANSACTION ? SignedTransaction :
-    T extends RequestType.SIGN_STAKING ? SignedTransaction :
+    T extends RequestType.SIGN_STAKING ? SignedTransaction[] :
     T extends RequestType.CHECKOUT ? SignedTransaction | SimpleResult :
     T extends RequestType.SIGN_MESSAGE ? SignedMessage :
     T extends RequestType.LOGOUT | RequestType.CHANGE_PASSWORD ? SimpleResult :
