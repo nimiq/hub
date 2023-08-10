@@ -2041,9 +2041,9 @@
     btoa "^1.1.2"
     node-lmdb "^0.10.1"
 
-"@nimiq/keyguard-client@https://gitpkg.vercel.app/nimiq/keyguard?scripts.postinstall=cd%20client%20%26%26%20.%2Fbuild-gitpkg.sh&2b94687a6f09cddc901850dbdcb8759f60c33501":
+"@nimiq/keyguard-client@https://gitpkg.vercel.app/nimiq/keyguard?scripts.postinstall=cd%20client%20%26%26%20.%2Fbuild-gitpkg.sh&479c45c7edbf9b7167d2f2c5c4055b09127b1c19":
   version "1.0.0"
-  resolved "https://gitpkg.vercel.app/nimiq/keyguard?scripts.postinstall=cd%20client%20%26%26%20.%2Fbuild-gitpkg.sh&2b94687a6f09cddc901850dbdcb8759f60c33501#b791150b76ed7cad893fa9b364673308bf0c30ed"
+  resolved "https://gitpkg.vercel.app/nimiq/keyguard?scripts.postinstall=cd%20client%20%26%26%20.%2Fbuild-gitpkg.sh&479c45c7edbf9b7167d2f2c5c4055b09127b1c19#42ebeee7f590b230a3220fac31ac0f5ccaa67667"
 
 "@nimiq/ledger-api@^3.0.0":
   version "3.0.0"
