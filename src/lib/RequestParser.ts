@@ -746,7 +746,8 @@ export class RequestParser {
                     ...(request.kind === RequestType.SIGN_STAKING ? {
                         type: (signTransactionRequest as any as ParsedSignStakingRequest).type,
                         delegation: (signTransactionRequest as any as ParsedSignStakingRequest).delegation,
-                        newInactiveBalance: (signTransactionRequest as any as ParsedSignStakingRequest).newInactiveBalance,
+                        newInactiveBalance: (signTransactionRequest as any as ParsedSignStakingRequest)
+                            .newInactiveBalance,
                     } : {}),
                 } as SignTransactionRequest;
             case RequestType.CREATE_CASHLINK:
