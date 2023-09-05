@@ -408,7 +408,8 @@ msgstr ""
 msgid "Connecting to Nimiq..."
 msgstr ""
 
-#: src/components/CheckoutCardNimiq.vue:284
+#: src/components/CheckoutCardNimiq.vue:283
+#: src/components/CheckoutCardNimiq.vue:288
 #: src/views/CashlinkManage.vue:186
 #: src/views/CheckoutTransmission.vue:71
 msgid "Contacting seed nodes..."
@@ -891,7 +892,7 @@ msgstr ""
 msgid "Request failed: "
 msgstr ""
 
-#: src/components/CheckoutCardNimiq.vue:288
+#: src/components/CheckoutCardNimiq.vue:292
 msgid "Requesting balances..."
 msgstr ""
 
@@ -999,7 +1000,7 @@ msgstr ""
 msgid "Syncing"
 msgstr ""
 
-#: src/components/CheckoutCardNimiq.vue:286
+#: src/components/CheckoutCardNimiq.vue:290
 #: src/views/AddVestingContract.vue:11
 #: src/views/CashlinkManage.vue:188
 #: src/views/CheckoutTransmission.vue:73
@@ -1152,7 +1153,7 @@ msgstr ""
 msgid "Unsupported Request"
 msgstr ""
 
-#: src/components/CheckoutCardNimiq.vue:318
+#: src/components/CheckoutCardNimiq.vue:324
 msgid "Updating balances"
 msgstr ""
 
