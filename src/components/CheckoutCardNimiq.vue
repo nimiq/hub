@@ -89,7 +89,6 @@
             </PageFooter>
         </template>
     </SmallPage>
-    <Network ref="network" :visible="false" @head-change="onHeadChange"/>
 </div>
 </template>
 
@@ -117,7 +116,7 @@ import staticStore from '../lib/StaticStore';
 import { WalletInfo } from '../lib/WalletInfo';
 import { WalletStore } from '../lib/WalletStore';
 import { ParsedNimiqDirectPaymentOptions } from '../lib/paymentOptions/NimiqPaymentOptions';
-import Network from './Network.vue';
+import { NetworkClient } from '../lib/NetworkClient';
 import StatusScreen from './StatusScreen.vue';
 import CheckoutCard from './CheckoutCard.vue';
 import CurrencyInfo from './CurrencyInfo.vue';
@@ -125,7 +124,6 @@ import CurrencyInfo from './CurrencyInfo.vue';
 @Component({components: {
     AccountSelector,
     CurrencyInfo,
-    Network,
     PageBody,
     PageFooter,
     SmallPage,
@@ -159,6 +157,7 @@ class CheckoutCardNimiq
     private height: number = 0;
     private delayedShowStatusScreen: boolean = this.showStatusScreen;
     private _delayedHideStatusScreenTimeout: number = -1;
+    private network!: NetworkClient;
 
     protected async created() {
         if (this.paymentOptions.currency !== Currency.NIM) {
@@ -169,7 +168,10 @@ class CheckoutCardNimiq
 
     protected async mounted() {
         super.mounted();
-        // Requires Network child component to be rendered
+
+        this.network = NetworkClient.Instance;
+        await this.network.init();
+
         this.addConsensusListeners();
         this.updateBalancePromise = this.getBalances().then((balances) => {
             this.balancesUpdating = false;
@@ -237,8 +239,7 @@ class CheckoutCardNimiq
         const addresses = accountsAndContracts.map((accountOrContract) => accountOrContract.userFriendlyAddress);
 
         // Get balances through pico consensus, also triggers head-change event
-        const network = (this.$refs.network as Network);
-        const balances: Map<string, number> = await network.getBalances(addresses);
+        const balances: Map<string, number> = await this.network.getBalance(addresses);
 
         // Update accounts/contracts with their balances
         // (The accounts are still references to themselves in the wallets' accounts maps)
@@ -249,9 +250,9 @@ class CheckoutCardNimiq
             if ('type' in accountOrContract && accountOrContract.type === Nimiq.Account.Type.VESTING) {
                 // Calculate available amount for vesting contract
                 accountOrContract.balance = (accountOrContract as VestingContractInfo)
-                    .calculateAvailableAmount(this.height, Nimiq.Policy.coinsToSatoshis(balance));
+                    .calculateAvailableAmount(this.height, balance);
             } else {
-                accountOrContract.balance = Nimiq.Policy.coinsToSatoshis(balance);
+                accountOrContract.balance = balance;
             }
         }
 
@@ -279,14 +280,19 @@ class CheckoutCardNimiq
         this.height = head.height;
     }
 
-    private addConsensusListeners() {
-        const network = (this.$refs.network as Network);
-        network.$on(Network.Events.API_READY,
-            () => this.statusScreenStatus = this.$t('Contacting seed nodes...') as string);
-        network.$on(Network.Events.CONSENSUS_SYNCING,
-            () => this.statusScreenStatus = this.$t('Syncing consensus...') as string);
-        network.$on(Network.Events.CONSENSUS_ESTABLISHED,
-            () => this.statusScreenStatus = this.$t('Requesting balances...') as string);
+    private async addConsensusListeners() {
+        this.statusScreenStatus = this.$t('Contacting seed nodes...') as string;
+
+        const client = await this.network.innerClient!;
+        client.addConsensusChangedListener((consensus) => {
+            if (consensus === 'connecting') {
+                this.statusScreenStatus = this.$t('Contacting seed nodes...') as string;
+            } else if (consensus === 'syncing') {
+                this.statusScreenStatus = this.$t('Syncing consensus...') as string;
+            } else if (consensus === 'established') {
+                this.statusScreenStatus = this.$t('Requesting balances...') as string;
+            }
+        });
     }
 
     private async setAccountOrContract(walletId: string, address: string, isFromRequest = false) {
