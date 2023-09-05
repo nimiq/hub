@@ -54,6 +54,10 @@ export class NetworkClient {
         return [] as Array<PlainVestingContract & { address: string }>; // TODO
     }
 
+    public get innerClient() {
+        return this._clientPromise!;
+    }
+
     private get client() {
         if (!this._clientPromise) throw new Error('NetworkClient not initialized');
         return this._clientPromise.then(async (client) => {
