@@ -409,7 +409,7 @@ export interface SetupSwapRequest extends SimpleRequest {
     };
     polygonAddresses?: Array<{
         address: string,
-        balance: number, // Luna
+        usdcBalance: number, // In USDC's smallest unit
     }>;
 
     // Optional KYC info for swapping at higher limits
