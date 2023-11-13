@@ -275,7 +275,7 @@ class CheckoutCardNimiq
         return balances;
     }
 
-    private onHeadChange(head: Nimiq.BlockHeader | {height: number}) {
+    private onHeadChange(head: {height: number}) {
         this.height = head.height;
     }
 
@@ -291,6 +291,10 @@ class CheckoutCardNimiq
             } else if (consensus === 'established') {
                 this.statusScreenStatus = this.$t('Requesting balances...') as string;
             }
+        });
+        client.addHeadChangedListener(async (hash) => {
+            const block = await client.getBlock(hash);
+            this.onHeadChange(block);
         });
     }
 
