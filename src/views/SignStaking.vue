@@ -94,6 +94,7 @@ export default class SignStaking extends Vue {
 
             type: this.request.type,
             delegation: this.request.delegation,
+            reactivateAllStake: this.request.reactivateAllStake,
             newInactiveBalance: this.request.newInactiveBalance,
         };
 

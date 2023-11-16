@@ -85,6 +85,7 @@ export class RequestParser {
                     ...(requestType === RequestType.SIGN_STAKING ? {
                         type: (signTransactionRequest as any as SignStakingRequest).type,
                         delegation: (signTransactionRequest as any as SignStakingRequest).delegation,
+                        reactivateAllStake: (signTransactionRequest as any as SignStakingRequest).reactivateAllStake,
                         newInactiveBalance: (signTransactionRequest as any as SignStakingRequest).newInactiveBalance,
                     } : {}),
                 } as ParsedSignTransactionRequest;
@@ -746,6 +747,8 @@ export class RequestParser {
                     ...(request.kind === RequestType.SIGN_STAKING ? {
                         type: (signTransactionRequest as any as ParsedSignStakingRequest).type,
                         delegation: (signTransactionRequest as any as ParsedSignStakingRequest).delegation,
+                        reactivateAllStake: (signTransactionRequest as any as ParsedSignStakingRequest)
+                            .reactivateAllStake,
                         newInactiveBalance: (signTransactionRequest as any as ParsedSignStakingRequest)
                             .newInactiveBalance,
                     } : {}),

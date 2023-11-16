@@ -1975,9 +1975,9 @@
     glob-to-regexp "^0.3.0"
 
 "@nimiq/albatross-wasm@npm:@nimiq/core-web@next":
-  version "2.0.0-alpha.15"
-  resolved "https://registry.yarnpkg.com/@nimiq/core-web/-/core-web-2.0.0-alpha.15.tgz#ac0c8ab92c76ec4f60edcc62074bcd56352d5c25"
-  integrity sha512-jWCvaBEW1K1q2MxqnkkHcbui0XwEvoylU/wdR32QR7cXAVgbKVKgdCBvn64ypbK2U1StX+TgFsG8cb7xDWaGFA==
+  version "2.0.0-alpha.17"
+  resolved "https://registry.yarnpkg.com/@nimiq/core-web/-/core-web-2.0.0-alpha.17.tgz#4cdfeb896ed98879566b4a87846d6c6c17796121"
+  integrity sha512-mPKhhrLXE/sRdBMxiEWtokTy889tkPILHg14wBzVuCwarjuH6CGxLWY64G2Mr6+kRXJpL95s7/zvaaMeCE1b3A==
   dependencies:
     comlink "^4.4.1"
     websocket "^1.0.34"
@@ -2042,9 +2042,9 @@
     btoa "^1.1.2"
     node-lmdb "^0.10.1"
 
-"@nimiq/keyguard-client@https://gitpkg.vercel.app/nimiq/keyguard?scripts.postinstall=cd%20client%20%26%26%20.%2Fbuild-gitpkg.sh&479c45c7edbf9b7167d2f2c5c4055b09127b1c19":
+"@nimiq/keyguard-client@https://gitpkg.vercel.app/nimiq/keyguard?scripts.postinstall=cd%20client%20%26%26%20.%2Fbuild-gitpkg.sh&fb889616bb9221792a6cb2b0194a33cb0835da96":
   version "1.0.0"
-  resolved "https://gitpkg.vercel.app/nimiq/keyguard?scripts.postinstall=cd%20client%20%26%26%20.%2Fbuild-gitpkg.sh&479c45c7edbf9b7167d2f2c5c4055b09127b1c19#42ebeee7f590b230a3220fac31ac0f5ccaa67667"
+  resolved "https://gitpkg.vercel.app/nimiq/keyguard?scripts.postinstall=cd%20client%20%26%26%20.%2Fbuild-gitpkg.sh&fb889616bb9221792a6cb2b0194a33cb0835da96#a016613e0ec5248a1a10acfbaa0147e6a42486d8"
 
 "@nimiq/ledger-api@^3.0.0":
   version "3.0.0"

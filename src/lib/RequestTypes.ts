@@ -56,6 +56,7 @@ export interface ParsedSignTransactionRequest extends ParsedBasicRequest {
 export interface ParsedSignStakingRequest extends ParsedSignTransactionRequest {
     type: number;
     delegation?: string;
+    reactivateAllStake?: boolean;
     newInactiveBalance?: number;
 }
 
