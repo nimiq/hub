@@ -1153,7 +1153,7 @@ msgstr ""
 msgid "Unsupported Request"
 msgstr ""
 
-#: src/components/CheckoutCardNimiq.vue:324
+#: src/components/CheckoutCardNimiq.vue:328
 msgid "Updating balances"
 msgstr ""
 

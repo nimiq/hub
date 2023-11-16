@@ -33,7 +33,7 @@ export default class HubApi<DB extends BehaviorType = BehaviorType.POPUP, IB ext
     } ? SimpleResult | SignedTransaction : SignedTransaction>;
     chooseAddress<B extends BehaviorType = DB>(request: Promise<ChooseAddressRequest> | ChooseAddressRequest, requestBehavior?: RequestBehavior<B>): Promise<B extends BehaviorType.REDIRECT ? void : ChooseAddressResult>;
     signTransaction<B extends BehaviorType = DB>(request: Promise<SignTransactionRequest> | SignTransactionRequest, requestBehavior?: RequestBehavior<B>): Promise<B extends BehaviorType.REDIRECT ? void : SignedTransaction>;
-    signStaking<B extends BehaviorType = DB>(request: Promise<SignStakingRequest> | SignStakingRequest, requestBehavior?: RequestBehavior<B>): Promise<B extends BehaviorType.REDIRECT ? void : SignedTransaction[]>;
+    signStaking<B extends BehaviorType = DB>(request: Promise<SignStakingRequest> | SignStakingRequest, requestBehavior?: RequestBehavior<B>): Promise<B extends BehaviorType.REDIRECT ? void : SignedTransaction>;
     signMessage<B extends BehaviorType = DB>(request: Promise<SignMessageRequest> | SignMessageRequest, requestBehavior?: RequestBehavior<B>): Promise<B extends BehaviorType.REDIRECT ? void : SignedMessage>;
     signBtcTransaction<B extends BehaviorType = DB>(request: Promise<SignBtcTransactionRequest> | SignBtcTransactionRequest, requestBehavior?: RequestBehavior<B>): Promise<B extends BehaviorType.REDIRECT ? void : SignedBtcTransaction>;
     signPolygonTransaction<B extends BehaviorType = DB>(request: Promise<SignPolygonTransactionRequest> | SignPolygonTransactionRequest, requestBehavior?: RequestBehavior<B>): Promise<B extends BehaviorType.REDIRECT ? void : SignedPolygonTransaction>;
