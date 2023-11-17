@@ -154,7 +154,12 @@ export interface ParsedAddBtcAddressesRequest extends ParsedSimpleRequest {
 
 export interface ParsedSignPolygonTransactionRequest extends ParsedBasicRequest, RelayRequest {
     recipientLabel?: string;
-    tokenApprovalNonce?: number;
+    approval?: {
+        tokenNonce: number,
+    };
+    permit?: {
+        tokenNonce: number,
+    };
 }
 
 /**

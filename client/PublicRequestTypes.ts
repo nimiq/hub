@@ -612,9 +612,16 @@ export interface SignPolygonTransactionRequest extends BasicRequest, RelayReques
     recipientLabel?: string;
     /**
      * The sender's nonce in the token contract, required when calling the
-     * contract function `executeWithApproval`.
+     * contract function `transferWithApproval` for bridged USDC.e.
      */
     approval?: {
+        tokenNonce: number,
+    };
+    /**
+     * The sender's nonce in the token contract, required when calling the
+     * contract function `transferWithPermit` for native USDC.
+     */
+    permit?: {
         tokenNonce: number,
     };
 }
