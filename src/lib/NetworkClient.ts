@@ -50,6 +50,17 @@ export class NetworkClient {
         return new Map(accounts.map((account, i) => [addresses[i], account.balance]));
     }
 
+    public async getStake(addresses: string[]) {
+        const client = await this.client;
+        const accounts = await client.getStakers(addresses);
+        return new Map(accounts.map((account, i) => [
+            addresses[i],
+            account
+                ? account.balance + account.inactiveBalance
+                : 0,
+        ]));
+    }
+
     public async getGenesisVestingContracts() {
         return [] as Array<PlainVestingContract & { address: string }>; // TODO
     }
