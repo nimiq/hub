@@ -95,7 +95,8 @@ export default class WalletInfoCollector {
             const balances = await WalletInfoCollector._getBalances([singleAccount]);
             WalletInfoCollector._addAccounts(walletInfo, singleAccountAsArray, balances);
             onUpdate(walletInfo, []);
-            hasActivity = balances.get(singleAccount.address)! > 0
+            const balance = balances.get(singleAccount.address)!;
+            hasActivity = balance.balance > 0 || balance.stake > 0
                 || (await WalletInfoCollector._networkInitializationPromise!
                     .then(() => NetworkClient.Instance.requestTransactionReceipts(singleAccount.address, 1)))
                     .length > 0;
@@ -319,7 +320,7 @@ export default class WalletInfoCollector {
                 const balances = await WalletInfoCollector._getBalances(accountsToCheck);
                 for (const account of accountsToCheck) {
                     const balance = balances.get(account.address);
-                    if (balance !== undefined && balance !== 0) {
+                    if (!!balance && (balance.balance !== 0 || balance.stake !== 0)) {
                         foundAccounts.push(account);
                         hasActivity = true;
                     }
@@ -486,20 +487,29 @@ export default class WalletInfoCollector {
         ).map((address) => ({ path: address.keyPath, address: address.address }));
     }
 
-    private static async _getBalances(accounts: BasicAccountInfo[]): Promise<Map<string, number>> {
+    private static async _getBalances(
+        accounts: BasicAccountInfo[],
+    ): Promise<Map<string, {balance: number, stake: number}>> {
         const userFriendlyAddresses = accounts.map((account) => account.address);
         await WalletInfoCollector._networkInitializationPromise;
-        const balances = await NetworkClient.Instance.getBalance(userFriendlyAddresses);
+        const result = new Map<string, {balance: number, stake: number}>();
+        const [balances, stakes] = await Promise.all([
+            NetworkClient.Instance.getBalance(userFriendlyAddresses),
+            NetworkClient.Instance.getStake(userFriendlyAddresses),
+        ]);
         for (const [address, balance] of balances) {
-            balances.set(address, Nimiq.Policy.coinsToSatoshis(balance));
+            result.set(address, {
+                balance,
+                stake: stakes.get(address) || 0,
+            });
         }
-        return balances;
+        return result;
     }
 
     private static _addAccounts(
         walletInfo: WalletInfo,
         newAccounts: BasicAccountInfo[],
-        balances?: Map<string, number>,
+        balances?: Map<string, {balance: number, stake: number}>,
     ): void {
         for (const newAccount of newAccounts) {
             const existingAccountInfo = walletInfo.accounts.get(newAccount.address);
@@ -512,7 +522,7 @@ export default class WalletInfoCollector {
                 `${label}${labelCounter === 1 ? '' : ` ${labelCounter}`}`,
                 Nimiq.Address.fromString(newAccount.address),
             );
-            if (balance !== undefined) accountInfo.balance = balance;
+            if (!!balance) accountInfo.balance = balance.balance;
             walletInfo.accounts.set(newAccount.address, accountInfo);
         }
     }
