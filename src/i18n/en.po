@@ -287,6 +287,10 @@ msgstr ""
 msgid "Choose an Account"
 msgstr ""
 
+#: src/views/ConnectAccount.vue:5
+msgid "Choose an Account to log in"
+msgstr ""
+
 #: src/views/CashlinkReceive.vue:64
 #: src/views/ChooseAddress.vue:18
 #: src/views/ChooseAddress.vue:5
@@ -690,7 +694,12 @@ msgstr ""
 msgid "Login File saved!"
 msgstr ""
 
+#: src/views/ConnectAccountSuccess.vue:4
+msgid "Login successful"
+msgstr ""
+
 #: src/views/ChooseAddress.vue:67
+#: src/views/ConnectAccount.vue:40
 msgid "Login to another account"
 msgstr ""
 

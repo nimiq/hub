@@ -13,6 +13,10 @@ msgstr ""
 "Language: zh\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
+#: src/views/ChooseAddress.vue:14
+msgid "{appName} is asking for an account to use."
+msgstr ""
+
 #: src/views/ChooseAddress.vue:7
 msgid "{appName} is asking for an address to use."
 msgstr "{appName}要求使用地址"
@@ -96,6 +100,10 @@ msgstr "地址检测失败。正在重试..."
 #: src/views/Rename.vue:22
 msgid "All labels saved."
 msgstr "所有标签已保存"
+
+#: src/views/ConnectAccount.vue:8
+msgid "All private funds remain separate."
+msgstr ""
 
 #: src/components/CheckoutCardBitcoin.vue:30
 #: src/components/CheckoutCardEthereum.vue:27
@@ -280,7 +288,16 @@ msgstr "检查状态"
 msgid "Choose a new Address"
 msgstr "选择一个新地址"
 
-#: src/views/CashlinkReceive.vue:64 src/views/ChooseAddress.vue:4
+#: src/views/ChooseAddress.vue:12
+msgid "Choose an Account"
+msgstr ""
+
+#: src/views/ConnectAccount.vue:5
+msgid "Choose an Account to log in"
+msgstr ""
+
+#: src/views/CashlinkReceive.vue:64 src/views/ChooseAddress.vue:18
+#: src/views/ChooseAddress.vue:5
 msgid "Choose an Address"
 msgstr "选择一个地址"
 
@@ -307,6 +324,10 @@ msgstr ""
 #: src/views/CashlinkCreate.vue:10
 msgid "Choose Sender"
 msgstr "选择发件人"
+
+#: src/views/ChooseAddress.vue:20
+msgid "Choose which Nimiq address to use."
+msgstr ""
 
 #: src/views/CashlinkReceive.vue:297
 msgid "Claim Cashlink"
@@ -671,6 +692,14 @@ msgstr "登录"
 #: src/views/ExportSuccess.vue:62
 msgid "Login File saved!"
 msgstr "登录文件已保存！"
+
+#: src/views/ConnectAccountSuccess.vue:4
+msgid "Login successful"
+msgstr ""
+
+#: src/views/ChooseAddress.vue:67 src/views/ConnectAccount.vue:40
+msgid "Login to another account"
+msgstr ""
 
 #: src/views/CashlinkReceive.vue:91
 msgid "Login to existing account"
@@ -1112,6 +1141,10 @@ msgstr "欲更改Ledger的PIN码，请转到设备上的设置"
 msgid "Total fees"
 msgstr "总费用"
 
+#: src/views/SignMultisigTransactionSuccess.vue:4
+msgid "Transaction approved"
+msgstr ""
+
 #: src/views/CashlinkManage.vue:211 src/views/CheckoutTransmission.vue:61
 msgid "Transaction could not be relayed"
 msgstr "交易无法转发"
@@ -1249,6 +1282,10 @@ msgid ""
 "Your {app} app is outdated. Please update your Ledger firmware and {app} app"
 " using Ledger Live."
 msgstr "你的{app}应用已过时。 请使用Ledger Live更新你的Ledger固件和{app}应用"
+
+#: src/views/ConnectAccount.vue:7
+msgid "Your account will be used for approving only."
+msgstr ""
 
 #: src/views/LoginSuccess.vue:194 src/views/SignupLedger.vue:106
 msgid ""

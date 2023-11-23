@@ -13,6 +13,10 @@ msgstr ""
 "Language: uk\n"
 "Plural-Forms: nplurals=4; plural=(n % 1 == 0 && n % 10 == 1 && n % 100 != 11 ? 0 : n % 1 == 0 && n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? 1 : n % 1 == 0 && (n % 10 ==0 || (n % 10 >=5 && n % 10 <=9) || (n % 100 >=11 && n % 100 <=14 )) ? 2: 3);\n"
 
+#: src/views/ChooseAddress.vue:14
+msgid "{appName} is asking for an account to use."
+msgstr ""
+
 #: src/views/ChooseAddress.vue:7
 msgid "{appName} is asking for an address to use."
 msgstr "{appName} запитує адресу для використання."
@@ -96,6 +100,10 @@ msgstr "Помилка виявлення адреси. Повторна спр�
 #: src/views/Rename.vue:22
 msgid "All labels saved."
 msgstr "Усі назви збережено."
+
+#: src/views/ConnectAccount.vue:8
+msgid "All private funds remain separate."
+msgstr ""
 
 #: src/components/CheckoutCardBitcoin.vue:30
 #: src/components/CheckoutCardEthereum.vue:27
@@ -280,7 +288,16 @@ msgstr "Перевірка стану"
 msgid "Choose a new Address"
 msgstr "Виберіть нову адресу"
 
-#: src/views/CashlinkReceive.vue:64 src/views/ChooseAddress.vue:4
+#: src/views/ChooseAddress.vue:12
+msgid "Choose an Account"
+msgstr ""
+
+#: src/views/ConnectAccount.vue:5
+msgid "Choose an Account to log in"
+msgstr ""
+
+#: src/views/CashlinkReceive.vue:64 src/views/ChooseAddress.vue:18
+#: src/views/ChooseAddress.vue:5
 msgid "Choose an Address"
 msgstr "Виберіть адресу"
 
@@ -307,6 +324,10 @@ msgstr ""
 #: src/views/CashlinkCreate.vue:10
 msgid "Choose Sender"
 msgstr "Виберіть відправника"
+
+#: src/views/ChooseAddress.vue:20
+msgid "Choose which Nimiq address to use."
+msgstr ""
 
 #: src/views/CashlinkReceive.vue:297
 msgid "Claim Cashlink"
@@ -676,6 +697,14 @@ msgstr "Увійти"
 #: src/views/ExportSuccess.vue:62
 msgid "Login File saved!"
 msgstr "Файл-ключ збережено!"
+
+#: src/views/ConnectAccountSuccess.vue:4
+msgid "Login successful"
+msgstr ""
+
+#: src/views/ChooseAddress.vue:67 src/views/ConnectAccount.vue:40
+msgid "Login to another account"
+msgstr ""
 
 #: src/views/CashlinkReceive.vue:91
 msgid "Login to existing account"
@@ -1128,6 +1157,10 @@ msgstr ""
 msgid "Total fees"
 msgstr "Загальна комісія"
 
+#: src/views/SignMultisigTransactionSuccess.vue:4
+msgid "Transaction approved"
+msgstr ""
+
 #: src/views/CashlinkManage.vue:211 src/views/CheckoutTransmission.vue:61
 msgid "Transaction could not be relayed"
 msgstr "Неможливо передати переказ"
@@ -1272,6 +1305,10 @@ msgid ""
 msgstr ""
 "Ваш {app} додаток застарів. Будь ласка, оновіть ваш Ledger і {app} додаток "
 "використовуючи Ledger Live."
+
+#: src/views/ConnectAccount.vue:7
+msgid "Your account will be used for approving only."
+msgstr ""
 
 #: src/views/LoginSuccess.vue:194 src/views/SignupLedger.vue:106
 msgid ""

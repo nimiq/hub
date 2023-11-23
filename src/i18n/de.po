@@ -6,16 +6,20 @@
 # Redexe <timo.niehoff@yahoo.de>, 2021
 # Huriye <huriyegoek@gmx.de>, 2021
 # Sören Schwert <hello@soerenschwert.de>, 2021
-# Daniel, 2023
 # Michael <jiggaaa20@gmail.com>, 2023
+# Daniel, 2023
 # 
 msgid ""
 msgstr ""
-"Last-Translator: Michael <jiggaaa20@gmail.com>, 2023\n"
+"Last-Translator: Daniel, 2023\n"
 "Language-Team: German (https://app.transifex.com/nimiq-foundation/teams/110181/de/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: de\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: src/views/ChooseAddress.vue:14
+msgid "{appName} is asking for an account to use."
+msgstr ""
 
 #: src/views/ChooseAddress.vue:7
 msgid "{appName} is asking for an address to use."
@@ -100,6 +104,10 @@ msgstr "Adressenerkennung fehlgeschlagen. Versuche erneut..."
 #: src/views/Rename.vue:22
 msgid "All labels saved."
 msgstr "Alle Beschriftungen gespeichert."
+
+#: src/views/ConnectAccount.vue:8
+msgid "All private funds remain separate."
+msgstr ""
 
 #: src/components/CheckoutCardBitcoin.vue:30
 #: src/components/CheckoutCardEthereum.vue:27
@@ -286,7 +294,16 @@ msgstr "Überprüfe Status"
 msgid "Choose a new Address"
 msgstr "Wähle eine neue Adresse"
 
-#: src/views/CashlinkReceive.vue:64 src/views/ChooseAddress.vue:4
+#: src/views/ChooseAddress.vue:12
+msgid "Choose an Account"
+msgstr ""
+
+#: src/views/ConnectAccount.vue:5
+msgid "Choose an Account to log in"
+msgstr ""
+
+#: src/views/CashlinkReceive.vue:64 src/views/ChooseAddress.vue:18
+#: src/views/ChooseAddress.vue:5
 msgid "Choose an Address"
 msgstr "Wähle eine Adresse"
 
@@ -311,6 +328,10 @@ msgstr "Wähle einen Avatar. Erstelle ein Passwort. Fertig."
 #: src/views/CashlinkCreate.vue:10
 msgid "Choose Sender"
 msgstr "Wähle Absender"
+
+#: src/views/ChooseAddress.vue:20
+msgid "Choose which Nimiq address to use."
+msgstr ""
 
 #: src/views/CashlinkReceive.vue:297
 msgid "Claim Cashlink"
@@ -686,6 +707,14 @@ msgstr "Einloggen"
 #: src/views/ExportSuccess.vue:62
 msgid "Login File saved!"
 msgstr "Login Datei gespeichert!"
+
+#: src/views/ConnectAccountSuccess.vue:4
+msgid "Login successful"
+msgstr ""
+
+#: src/views/ChooseAddress.vue:67 src/views/ConnectAccount.vue:40
+msgid "Login to another account"
+msgstr ""
 
 #: src/views/CashlinkReceive.vue:91
 msgid "Login to existing account"
@@ -1147,6 +1176,10 @@ msgstr ""
 msgid "Total fees"
 msgstr "Gesamtgebühren"
 
+#: src/views/SignMultisigTransactionSuccess.vue:4
+msgid "Transaction approved"
+msgstr ""
+
 #: src/views/CashlinkManage.vue:211 src/views/CheckoutTransmission.vue:61
 msgid "Transaction could not be relayed"
 msgstr "Die Transaktion konnte nicht weitergeleitet werden"
@@ -1293,6 +1326,10 @@ msgid ""
 msgstr ""
 "Deine {app}-App ist veraltet. Bitte aktualisiere die Ledger-Firmware und "
 "{app}-App mittels Ledger Live."
+
+#: src/views/ConnectAccount.vue:7
+msgid "Your account will be used for approving only."
+msgstr ""
 
 #: src/views/LoginSuccess.vue:194 src/views/SignupLedger.vue:106
 msgid ""

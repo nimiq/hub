@@ -14,6 +14,10 @@ msgstr ""
 "Language: nl\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+#: src/views/ChooseAddress.vue:14
+msgid "{appName} is asking for an account to use."
+msgstr ""
+
 #: src/views/ChooseAddress.vue:7
 msgid "{appName} is asking for an address to use."
 msgstr "{appName} vraagt een adres om te gebruiken."
@@ -97,6 +101,10 @@ msgstr "Adresherkenning mislukt. Probeer het opnieuw... "
 #: src/views/Rename.vue:22
 msgid "All labels saved."
 msgstr "Alle labels opgeslagen."
+
+#: src/views/ConnectAccount.vue:8
+msgid "All private funds remain separate."
+msgstr ""
 
 #: src/components/CheckoutCardBitcoin.vue:30
 #: src/components/CheckoutCardEthereum.vue:27
@@ -283,7 +291,16 @@ msgstr "Status controleren"
 msgid "Choose a new Address"
 msgstr "Kies een nieuw adres"
 
-#: src/views/CashlinkReceive.vue:64 src/views/ChooseAddress.vue:4
+#: src/views/ChooseAddress.vue:12
+msgid "Choose an Account"
+msgstr ""
+
+#: src/views/ConnectAccount.vue:5
+msgid "Choose an Account to log in"
+msgstr ""
+
+#: src/views/CashlinkReceive.vue:64 src/views/ChooseAddress.vue:18
+#: src/views/ChooseAddress.vue:5
 msgid "Choose an Address"
 msgstr "Kies een adres"
 
@@ -308,6 +325,10 @@ msgstr "Kies een avatar. Stel een wachtwoord in. Klaar."
 #: src/views/CashlinkCreate.vue:10
 msgid "Choose Sender"
 msgstr "Kies verzender"
+
+#: src/views/ChooseAddress.vue:20
+msgid "Choose which Nimiq address to use."
+msgstr ""
 
 #: src/views/CashlinkReceive.vue:297
 msgid "Claim Cashlink"
@@ -681,6 +702,14 @@ msgstr "Login"
 #: src/views/ExportSuccess.vue:62
 msgid "Login File saved!"
 msgstr "Login File opgeslagen!"
+
+#: src/views/ConnectAccountSuccess.vue:4
+msgid "Login successful"
+msgstr ""
+
+#: src/views/ChooseAddress.vue:67 src/views/ConnectAccount.vue:40
+msgid "Login to another account"
+msgstr ""
 
 #: src/views/CashlinkReceive.vue:91
 msgid "Login to existing account"
@@ -1140,6 +1169,10 @@ msgstr ""
 msgid "Total fees"
 msgstr "Totale kosten"
 
+#: src/views/SignMultisigTransactionSuccess.vue:4
+msgid "Transaction approved"
+msgstr ""
+
 #: src/views/CashlinkManage.vue:211 src/views/CheckoutTransmission.vue:61
 msgid "Transaction could not be relayed"
 msgstr "Transactie kon niet worden doorgestuurd"
@@ -1287,6 +1320,10 @@ msgid ""
 msgstr ""
 "Je {app} app is verouderd. Werk je Ledger-firmware en {app} app bij met "
 "Ledger Live."
+
+#: src/views/ConnectAccount.vue:7
+msgid "Your account will be used for approving only."
+msgstr ""
 
 #: src/views/LoginSuccess.vue:194 src/views/SignupLedger.vue:106
 msgid ""
