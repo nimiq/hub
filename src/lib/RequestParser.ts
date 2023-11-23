@@ -5,6 +5,9 @@ import {
     CashlinkTheme,
     Currency,
     PaymentType,
+    ConnectAccountRequest,
+} from '../../client/PublicRequestTypes';
+import type {
     BasicRequest,
     CheckoutRequest,
     CreateCashlinkRequest,
@@ -45,6 +48,7 @@ import type {
     ParsedSetupSwapRequest,
     ParsedRefundSwapRequest,
     ParsedSignMultisigTransactionRequest,
+    ParsedConnectAccountRequest,
 } from './RequestTypes';
 import { ParsedNimiqDirectPaymentOptions } from './paymentOptions/NimiqPaymentOptions';
 import { ParsedEtherDirectPaymentOptions } from './paymentOptions/EtherPaymentOptions';
@@ -52,6 +56,7 @@ import { ParsedBitcoinDirectPaymentOptions } from './paymentOptions/BitcoinPayme
 import { Utf8Tools } from '@nimiq/utils';
 import Config from 'config';
 import { SwapAsset } from '@nimiq/fastspot-api';
+import RpcApi from './RpcApi';
 
 export class RequestParser {
     public static parse(
@@ -767,17 +772,24 @@ export class RequestParser {
                 //     throw new Error('multisigConfig.secret must be an object');
                 // }
 
-                function parseBytes(bytes: Uint8Array | string | undefined, allowEmpty: true): Uint8Array | undefined;
-                function parseBytes(bytes: Uint8Array | string): Uint8Array;
-                function parseBytes(bytes?: Uint8Array | string, allowEmpty?: boolean) {
-                    if (!bytes && !allowEmpty) {
+                function parseMessage(msg?: Uint8Array | string) {
+                    if (!msg) return undefined;
+                    if (msg instanceof Uint8Array) return msg;
+                    if (typeof msg === 'string') return Utf8Tools.stringToUtf8ByteArray(msg);
+                    throw new Error('extraData must be a string or an Uint8Array');
+                }
+
+                function parseBytes(bytes?: Uint8Array | string) {
+                    if (!bytes || !bytes.length) {
                         throw new Error('bytes cannot be empty');
                     }
-                    return typeof bytes === 'string' ? Utf8Tools.stringToUtf8ByteArray(bytes) : bytes;
+                    if (bytes instanceof Uint8Array) return bytes;
+                    if (typeof bytes === 'string') return Nimiq.BufferUtils.fromAny(bytes);
+                    throw new Error('bytes must be a string or an Uint8Array');
                 }
 
                 const parsedSignMultisigTxRequest: ParsedSignMultisigTransactionRequest = {
-                    kind: RequestType.SIGN_TRANSACTION,
+                    kind: RequestType.SIGN_MULTISIG_TRANSACTION,
                     appName: signMultisigTxRequest.appName,
 
                     signer: Nimiq.Address.fromAny(signMultisigTxRequest.signer),
@@ -789,31 +801,70 @@ export class RequestParser {
                     recipientLabel: signMultisigTxRequest.recipientLabel,
                     value: signMultisigTxRequest.value,
                     fee: signMultisigTxRequest.fee || 0,
-                    data: parseBytes(signMultisigTxRequest.extraData, true) || new Uint8Array(0),
+                    data: parseMessage(signMultisigTxRequest.extraData) || new Uint8Array(0),
                     flags: signMultisigTxRequest.flags || Nimiq.Transaction.Flag.NONE,
                     validityStartHeight: signMultisigTxRequest.validityStartHeight,
 
                     multisigConfig: {
-                        publicKeys: signMultisigTxRequest.multisigConfig.publicKeys.map(parseBytes),
+                        publicKeys: signMultisigTxRequest.multisigConfig.publicKeys.map((bytes) => parseBytes(bytes)),
                         numberOfSigners: signMultisigTxRequest.multisigConfig.numberOfSigners,
                         signerPublicKeys: signMultisigTxRequest.multisigConfig.signerPublicKeys
-                            ? signMultisigTxRequest.multisigConfig.signerPublicKeys.map(parseBytes)
-                            : signMultisigTxRequest.multisigConfig.publicKeys.map(parseBytes),
+                            ? signMultisigTxRequest.multisigConfig.signerPublicKeys.map((bytes) => parseBytes(bytes))
+                            : signMultisigTxRequest.multisigConfig.publicKeys.map((bytes) => parseBytes(bytes)),
                         secret: 'aggregatedSecret' in signMultisigTxRequest.multisigConfig.secret
                             ? {aggregatedSecret: parseBytes(
                                 signMultisigTxRequest.multisigConfig.secret.aggregatedSecret,
                             ) }
                             : {
                                 encryptedSecrets: signMultisigTxRequest.multisigConfig.secret.encryptedSecrets.map(
-                                    parseBytes,
+                                    (bytes) => parseBytes(bytes),
                                 ),
                                 bScalar: parseBytes(signMultisigTxRequest.multisigConfig.secret.bScalar),
                             },
                         aggregatedCommitment: parseBytes(signMultisigTxRequest.multisigConfig.aggregatedCommitment),
+                        userName: signMultisigTxRequest.multisigConfig.userName,
                     },
                 };
 
                 return parsedSignMultisigTxRequest;
+            case RequestType.CONNECT_ACCOUNT:
+                const connectAccountRequest = request as ConnectAccountRequest;
+                if (typeof connectAccountRequest.challenge !== 'string') {
+                    throw new Error('challenge must be a string');
+                }
+
+                if (connectAccountRequest.appLogoUrl) {
+                    let origin;
+                    try {
+                        origin = new URL(connectAccountRequest.appLogoUrl).origin;
+                    } catch (err) {
+                        throw new Error(`appLogoUrl must be a valid URL: ${err}`);
+                    }
+                    if (origin !== state.origin) {
+                        throw new Error(
+                            'appLogoUrl must have same origin as caller website. Image at ' +
+                            connectAccountRequest.appLogoUrl +
+                            ' is not on caller origin ' +
+                            state.origin,
+                        );
+                    }
+                }
+
+                for (const permission of connectAccountRequest.permissions) {
+                    if (!RpcApi.PERMISSIONED_REQUESTS.includes(permission)) {
+                        throw new Error(`Invalid permission requested: ${permission}`);
+                    }
+                }
+
+                const parsedConnectAccountRequest: ParsedConnectAccountRequest = {
+                    kind: RequestType.CONNECT_ACCOUNT,
+                    appName: connectAccountRequest.appName,
+                    appLogoUrl: new URL(connectAccountRequest.appLogoUrl),
+                    permissions: connectAccountRequest.permissions,
+                    requestedKeyPaths: connectAccountRequest.requestedKeyPaths,
+                    challenge: connectAccountRequest.challenge,
+                };
+                return parsedConnectAccountRequest;
             default:
                 return null;
         }
@@ -1021,6 +1072,17 @@ export class RequestParser {
                     multisigConfig: signMultisigTxRequest.multisigConfig,
                 };
                 return rawSignMultisigTxRequest;
+            case RequestType.CONNECT_ACCOUNT:
+                const connectAccountRequest = request as ParsedConnectAccountRequest;
+
+                const rawConnectAccountRequest: ConnectAccountRequest = {
+                    appName: connectAccountRequest.appName,
+                    appLogoUrl: connectAccountRequest.appLogoUrl.href,
+                    permissions: connectAccountRequest.permissions,
+                    requestedKeyPaths: connectAccountRequest.requestedKeyPaths,
+                    challenge: connectAccountRequest.challenge,
+                };
+                return rawConnectAccountRequest;
             default:
                 return null;
         }
