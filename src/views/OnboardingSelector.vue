@@ -136,7 +136,7 @@ export default class OnboardingSelector extends Vue {
     private get headerText() {
         switch (this.originalRouteName) {
             case undefined:
-                return this.$t('Join Nimiq') as string;
+                return this.$t('Welcome to the Nimiq Wallet') as string;
             case RequestType.CHECKOUT:
                 return this.$t('Pay with Nimiq') as string;
             case RequestType.CREATE_CASHLINK:
@@ -149,7 +149,7 @@ export default class OnboardingSelector extends Vue {
     private get sublineText() {
         switch (this.originalRouteName) {
             case undefined:
-                return this.$t('No registration, no install,\n100% free') as string;
+                return this.$t('A 100% free and self-custodial web wallet for NIM, BTC and USDC.') as string;
             default:
                 return undefined;
         }
@@ -186,9 +186,11 @@ export default class OnboardingSelector extends Vue {
     .subline-text {
         font-size: 2rem;
         font-weight: 600;
-        color: rgba(31, 35, 72, 0.6);
+        color: var(--nimiq-blue);
         white-space: pre-line;
         text-align: center;
+        word-wrap: balance;
+        max-width: 40rem;
     }
 
     .center {

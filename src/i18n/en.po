@@ -35,6 +35,10 @@ msgstr ""
 msgid "503 Service unavailable - please try again later"
 msgstr ""
 
+#: src/views/OnboardingSelector.vue:152
+msgid "A 100% free and self-custodial web wallet for NIM, BTC and USDC."
+msgstr ""
+
 #: src/views/ExportSuccess.vue:60
 msgid "Account backed up!"
 msgstr ""
@@ -645,10 +649,6 @@ msgstr ""
 msgid "It won’t be part of the public Blockchain and might get lost after the Cashlink was claimed."
 msgstr ""
 
-#: src/views/OnboardingSelector.vue:139
-msgid "Join Nimiq"
-msgstr ""
-
 #: src/lib/LabelingMachine.ts:42
 msgid "Ledger Account"
 msgstr ""
@@ -745,12 +745,6 @@ msgstr ""
 
 #: src/components/CheckoutCardExternal.vue:96
 msgid "No App found"
-msgstr ""
-
-#: src/views/OnboardingSelector.vue:152
-msgid ""
-"No registration, no install,\n"
-"100% free"
 msgstr ""
 
 #: src/components/CheckoutCardNimiq.vue:69
@@ -1215,6 +1209,10 @@ msgstr ""
 msgid ""
 "Welcome to the\n"
 "Nimiq Wallet"
+msgstr ""
+
+#: src/views/OnboardingSelector.vue:139
+msgid "Welcome to the Nimiq Wallet"
 msgstr ""
 
 #: src/CashlinkApp.vue:9

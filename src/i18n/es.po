@@ -1,16 +1,20 @@
 # 
 # Translators:
-# Daniel, 2020
 # Sören Schwert <hello@soerenschwert.de>, 2021
 # Ricardo Barquero Carranza <richy@nimiq.com>, 2023
+# Daniel, 2023
 # 
 msgid ""
 msgstr ""
-"Last-Translator: Ricardo Barquero Carranza <richy@nimiq.com>, 2023\n"
+"Last-Translator: Daniel, 2023\n"
 "Language-Team: Spanish (https://app.transifex.com/nimiq-foundation/teams/110181/es/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: es\n"
 "Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
+
+#: src/views/ChooseAddress.vue:14
+msgid "{appName} is asking for an account to use."
+msgstr ""
 
 #: src/views/ChooseAddress.vue:7
 msgid "{appName} is asking for an address to use."
@@ -41,6 +45,10 @@ msgid "503 Service unavailable - please try again later"
 msgstr ""
 "503 Servicio no se encuentra disponible - por favor intente de nuevo luego"
 
+#: src/views/OnboardingSelector.vue:152
+msgid "A 100% free and self-custodial web wallet for NIM, BTC and USDC."
+msgstr ""
+
 #: src/views/ExportSuccess.vue:60
 msgid "Account backed up!"
 msgstr "¡Cuenta respaldada!"
@@ -55,7 +63,7 @@ msgstr "¡Cuenta Actualizada!"
 
 #: src/components/NotEnoughCookieSpace.vue:6
 msgid "Action not possible"
-msgstr "Acción no es posible"
+msgstr "Acción no posible"
 
 #: src/views/Migrate.vue:81
 msgid "Activate update"
@@ -282,7 +290,12 @@ msgstr "Revisando estado"
 msgid "Choose a new Address"
 msgstr "Elija una nueva Dirección"
 
-#: src/views/CashlinkReceive.vue:64 src/views/ChooseAddress.vue:4
+#: src/views/ChooseAddress.vue:12
+msgid "Choose an Account"
+msgstr ""
+
+#: src/views/CashlinkReceive.vue:64 src/views/ChooseAddress.vue:18
+#: src/views/ChooseAddress.vue:5
 msgid "Choose an Address"
 msgstr "Elija una Dirección"
 
@@ -309,6 +322,10 @@ msgstr ""
 #: src/views/CashlinkCreate.vue:10
 msgid "Choose Sender"
 msgstr "Elija remitente"
+
+#: src/views/ChooseAddress.vue:20
+msgid "Choose which Nimiq address to use."
+msgstr ""
 
 #: src/views/CashlinkReceive.vue:297
 msgid "Claim Cashlink"
@@ -635,10 +652,6 @@ msgstr ""
 "No será parte de la Cadena de Bloques publica y puede que se pierda luego de"
 " que el Cashlink sea reclamado."
 
-#: src/views/OnboardingSelector.vue:139
-msgid "Join Nimiq"
-msgstr "Únase a Nimiq"
-
 #: src/lib/LabelingMachine.ts:42
 msgid "Ledger Account"
 msgstr "Cuenta Ledger"
@@ -679,6 +692,10 @@ msgstr "Iniciar Sesión"
 #: src/views/ExportSuccess.vue:62
 msgid "Login File saved!"
 msgstr "¡Se ha guardado el Archivo de Sesión!"
+
+#: src/views/ChooseAddress.vue:67
+msgid "Login to another account"
+msgstr ""
 
 #: src/views/CashlinkReceive.vue:91
 msgid "Login to existing account"
@@ -739,14 +756,6 @@ msgstr "No"
 #: src/components/CheckoutCardExternal.vue:96
 msgid "No App found"
 msgstr "No se encontró ninguna Aplicación"
-
-#: src/views/OnboardingSelector.vue:152
-msgid ""
-"No registration, no install,\n"
-"100% free"
-msgstr ""
-"Sin registrarse, sin instalación,\n"
-"100% gratis"
 
 #: src/components/CheckoutCardNimiq.vue:69
 msgid "None of your available addresses has sufficient balance."
@@ -1237,6 +1246,10 @@ msgid ""
 msgstr ""
 "Bienvenido a la\n"
 "Billetera Nimiq"
+
+#: src/views/OnboardingSelector.vue:139
+msgid "Welcome to the Nimiq Wallet"
+msgstr ""
 
 #: src/CashlinkApp.vue:9
 msgid "What is Nimiq?"

@@ -10,6 +10,10 @@ msgstr ""
 "Language: pt\n"
 "Plural-Forms: nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
 
+#: src/views/ChooseAddress.vue:14
+msgid "{appName} is asking for an account to use."
+msgstr ""
+
 #: src/views/ChooseAddress.vue:7
 msgid "{appName} is asking for an address to use."
 msgstr "{appName} está a pedir um endereço para usar."
@@ -37,6 +41,10 @@ msgstr "404 - Dinheiro não encontrado"
 #: src/views/SetupSwapSuccess.vue:142
 msgid "503 Service unavailable - please try again later"
 msgstr "503 Serviço indisponível - por favor tente novamente mais tarde"
+
+#: src/views/OnboardingSelector.vue:152
+msgid "A 100% free and self-custodial web wallet for NIM, BTC and USDC."
+msgstr ""
 
 #: src/views/ExportSuccess.vue:60
 msgid "Account backed up!"
@@ -279,7 +287,12 @@ msgstr "A verificar o status"
 msgid "Choose a new Address"
 msgstr "Escolher um novo Endereço"
 
-#: src/views/CashlinkReceive.vue:64 src/views/ChooseAddress.vue:4
+#: src/views/ChooseAddress.vue:12
+msgid "Choose an Account"
+msgstr ""
+
+#: src/views/CashlinkReceive.vue:64 src/views/ChooseAddress.vue:18
+#: src/views/ChooseAddress.vue:5
 msgid "Choose an Address"
 msgstr "Escolher um Endereço"
 
@@ -306,6 +319,10 @@ msgstr ""
 #: src/views/CashlinkCreate.vue:10
 msgid "Choose Sender"
 msgstr "Escolha o Remetente"
+
+#: src/views/ChooseAddress.vue:20
+msgid "Choose which Nimiq address to use."
+msgstr ""
 
 #: src/views/CashlinkReceive.vue:297
 msgid "Claim Cashlink"
@@ -633,10 +650,6 @@ msgstr ""
 "Não fará parte da Blockchain pública e pode perder-se depois de reivindicar "
 "o Cashlink."
 
-#: src/views/OnboardingSelector.vue:139
-msgid "Join Nimiq"
-msgstr "Adira à Nimiq"
-
 #: src/lib/LabelingMachine.ts:42
 msgid "Ledger Account"
 msgstr "Conta Ledger"
@@ -679,6 +692,10 @@ msgstr "Login"
 #: src/views/ExportSuccess.vue:62
 msgid "Login File saved!"
 msgstr "Ficheiro de Login guardado!"
+
+#: src/views/ChooseAddress.vue:67
+msgid "Login to another account"
+msgstr ""
 
 #: src/views/CashlinkReceive.vue:91
 msgid "Login to existing account"
@@ -739,14 +756,6 @@ msgstr "Sem"
 #: src/components/CheckoutCardExternal.vue:96
 msgid "No App found"
 msgstr "Aplicação não encontrada"
-
-#: src/views/OnboardingSelector.vue:152
-msgid ""
-"No registration, no install,\n"
-"100% free"
-msgstr ""
-"Sem registo, sem instalação,\n"
-"100% gratuito"
 
 #: src/components/CheckoutCardNimiq.vue:69
 msgid "None of your available addresses has sufficient balance."
@@ -1235,6 +1244,10 @@ msgid ""
 msgstr ""
 "Bem-vindo à\n"
 "Carteira da Nimiq"
+
+#: src/views/OnboardingSelector.vue:139
+msgid "Welcome to the Nimiq Wallet"
+msgstr ""
 
 #: src/CashlinkApp.vue:9
 msgid "What is Nimiq?"
