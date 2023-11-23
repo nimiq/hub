@@ -28,6 +28,7 @@ export interface ParsedChooseAddressRequest extends ParsedBasicRequest {
     disableLegacyAccounts: boolean;
     disableBip39Accounts: boolean;
     disableLedgerAccounts: boolean;
+    ui?: number;
 }
 
 export interface ParsedSignTransactionRequest extends ParsedBasicRequest {

@@ -74,6 +74,7 @@ export interface ChooseAddressRequest extends BasicRequest {
     disableLegacyAccounts?: boolean;
     disableBip39Accounts?: boolean;
     disableLedgerAccounts?: boolean;
+    ui?: number;
 }
 
 export interface ChooseAddressResult extends Address {

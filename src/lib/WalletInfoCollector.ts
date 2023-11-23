@@ -119,7 +119,7 @@ export default class WalletInfoCollector {
         };
     }
 
-    public static async detectBitcoinAddresses(xpub: string, startIndex = 0): Promise<{
+    public static async detectBitcoinAddresses(xpub: string, startIndex = 0, onlyUnusedExternal = Infinity): Promise<{
         internal: BtcAddressInfo[],
         external: BtcAddressInfo[],
     }> {
@@ -147,7 +147,7 @@ export default class WalletInfoCollector {
 
         const addresses: [BtcAddressInfo[], BtcAddressInfo[]] = [[], []];
 
-        for (const INDEX of [EXTERNAL_INDEX, INTERNAL_INDEX]) {
+        addressTypeLoop: for (const INDEX of [EXTERNAL_INDEX, INTERNAL_INDEX]) {
             const baseKey = extendedKey.derive(INDEX);
             const basePath = `${BTC_ACCOUNT_KEY_PATH[xPubType][Config.bitcoinNetwork]}/${INDEX}`;
 
@@ -177,6 +177,14 @@ export default class WalletInfoCollector {
                     used,
                     balance,
                 ));
+
+                if (INDEX === EXTERNAL_INDEX && !used) {
+                    // Found an unused external address, reducing remaining counter
+                    onlyUnusedExternal -= 1;
+
+                    // When all found, break outer loop and return
+                    if (onlyUnusedExternal <= 0) break addressTypeLoop;
+                }
 
                 if (used) {
                     gap = 0;

@@ -2,6 +2,10 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 
+#: src/views/ChooseAddress.vue:14
+msgid "{appName} is asking for an account to use."
+msgstr ""
+
 #: src/views/ChooseAddress.vue:7
 msgid "{appName} is asking for an address to use."
 msgstr ""
@@ -275,8 +279,13 @@ msgstr ""
 msgid "Choose a new Address"
 msgstr ""
 
+#: src/views/ChooseAddress.vue:12
+msgid "Choose an Account"
+msgstr ""
+
 #: src/views/CashlinkReceive.vue:64
-#: src/views/ChooseAddress.vue:4
+#: src/views/ChooseAddress.vue:18
+#: src/views/ChooseAddress.vue:5
 msgid "Choose an Address"
 msgstr ""
 
@@ -300,6 +309,10 @@ msgstr ""
 
 #: src/views/CashlinkCreate.vue:10
 msgid "Choose Sender"
+msgstr ""
+
+#: src/views/ChooseAddress.vue:20
+msgid "Choose which Nimiq address to use."
 msgstr ""
 
 #: src/views/CashlinkReceive.vue:297
@@ -671,6 +684,10 @@ msgstr ""
 
 #: src/views/ExportSuccess.vue:62
 msgid "Login File saved!"
+msgstr ""
+
+#: src/views/ChooseAddress.vue:67
+msgid "Login to another account"
 msgstr ""
 
 #: src/views/CashlinkReceive.vue:91

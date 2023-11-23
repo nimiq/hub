@@ -162,7 +162,7 @@ class Demo {
 
         document.querySelector('button#choose-address').addEventListener('click', async () => {
             try {
-                const result = await demo.client.chooseAddress({ appName: 'Hub Demos' }, demo._defaultBehavior);
+                const result = await demo.client.chooseAddress({ appName: 'Hub Demos', ui: 2 }, demo._defaultBehavior);
                 console.log('Result', result);
                 document.querySelector('#result').textContent = `Address was chosen: ${result ? result.address : '-'}`;
             } catch (e) {
@@ -173,7 +173,7 @@ class Demo {
 
         document.querySelector('button#choose-address-and-btc').addEventListener('click', async () => {
             try {
-                const result = await demo.client.chooseAddress({ appName: 'Hub Demos', returnBtcAddress: true }, demo._defaultBehavior);
+                const result = await demo.client.chooseAddress({ appName: 'Hub Demos', returnBtcAddress: true, ui: 2 }, demo._defaultBehavior);
                 console.log('Result', result);
                 document.querySelector('#result').textContent = `Address was chosen: ${result ? result.address : '-'}`;
             } catch (e) {

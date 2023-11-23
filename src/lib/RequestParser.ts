@@ -284,6 +284,7 @@ export class RequestParser {
                     disableLegacyAccounts: !!chooseAddressRequest.disableLegacyAccounts,
                     disableBip39Accounts: !!chooseAddressRequest.disableBip39Accounts,
                     disableLedgerAccounts: !!chooseAddressRequest.disableLedgerAccounts,
+                    ui: chooseAddressRequest.ui,
                 } as ParsedChooseAddressRequest;
             case RequestType.SIGNUP:
             case RequestType.LOGIN:
