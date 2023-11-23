@@ -23,14 +23,16 @@
     <link rel="icon" href="<%= htmlWebpackPlugin.options.domain %>/favicon.ico">
 
     <script type="module">
-        import init, { Client, ClientConfiguration } from '/albatross-client/web/index.js';
+        import init, * as Nimiq from '/albatross-client/web/index.js';
+
+        /** @type {Promise<Nimiq> | undefined} */
+        let initPromise;
 
         window.loadAlbatross = async function() {
-            await init();
-            return {
-                Client,
-                ClientConfiguration,
-            };
+            return initPromise || (initPromise = new Promise(async resolve => {
+                await init();
+                resolve(Nimiq);
+            }));
         }
     </script>
 </head>
