@@ -38,6 +38,7 @@ export enum RequestType {
     ACTIVATE_POLYGON = 'activate-polygon',
     SETUP_SWAP = 'setup-swap',
     REFUND_SWAP = 'refund-swap',
+    CONNECT_ACCOUNT = 'connect-account',
 }
 
 export type Bytes = Uint8Array | string;
@@ -621,6 +622,28 @@ export interface ManageCashlinkRequest extends BasicRequest {
     cashlinkAddress: string;
 }
 
+export interface ConnectAccountRequest extends BasicRequest {
+    appLogoUrl: string;
+    permissions: RequestType[];
+    requestedKeyPaths: string[];
+    challenge: string;
+}
+
+export interface ConnectedAccount {
+    signatures: SignedMessage[];
+    encryptionKey: {
+        format: 'spki',
+        keyData: Uint8Array,
+        algorithm: RsaHashedImportParams,
+        keyUsages: ['encrypt'],
+    };
+    account: {
+        label: string;
+        type: string;
+        // permissions: RequestType[];
+    };
+}
+
 /**
  * Bitcoin
  */
@@ -720,7 +743,8 @@ export type RpcRequest = SignTransactionRequest
                        | AddBtcAddressesRequest
                        | SignPolygonTransactionRequest
                        | SetupSwapRequest
-                       | RefundSwapRequest;
+                       | RefundSwapRequest
+                       | ConnectAccountRequest;
 
 export type RpcResult = SignedTransaction
                       | SignedTransaction[]
@@ -737,7 +761,8 @@ export type RpcResult = SignedTransaction
                       | SignedBtcTransaction
                       | AddBtcAddressesResult
                       | SignedPolygonTransaction
-                      | SetupSwapResult;
+                      | SetupSwapResult
+                      | ConnectedAccount;
 
 export type ResultByRequestType<T> =
     T extends RequestType.RENAME ? Account :
@@ -747,6 +772,7 @@ export type ResultByRequestType<T> =
     T extends RequestType.CHOOSE_ADDRESS ? ChooseAddressResult :
     T extends RequestType.ADD_ADDRESS ? Address :
     T extends RequestType.SIGN_TRANSACTION ? SignedTransaction :
+    T extends RequestType.SIGN_MULTISIG_TRANSACTION ? PartialSignature :
     T extends RequestType.SIGN_STAKING ? SignedTransaction[] :
     T extends RequestType.CHECKOUT ? SignedTransaction | SimpleResult :
     T extends RequestType.SIGN_MESSAGE ? SignedMessage :
@@ -759,4 +785,5 @@ export type ResultByRequestType<T> =
     T extends RequestType.ACTIVATE_POLYGON ? Account :
     T extends RequestType.ADD_BTC_ADDRESSES ? AddBtcAddressesResult :
     T extends RequestType.SETUP_SWAP ? SetupSwapResult :
+    T extends RequestType.CONNECT_ACCOUNT ? ConnectedAccount :
     never;

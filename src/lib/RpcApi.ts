@@ -36,6 +36,10 @@ import { setHistoryStorage, getHistoryStorage } from '@/lib/Helpers';
 import { WalletInfo } from './WalletInfo';
 
 export default class RpcApi {
+    public static PERMISSIONED_REQUESTS: RequestType[] = [
+        RequestType.SIGN_MULTISIG_TRANSACTION,
+    ];
+
     private static get HISTORY_KEY_RPC_STATE() {
         return 'rpc-api-exported-state';
     }
@@ -55,10 +59,7 @@ export default class RpcApi {
         RequestType.CREATE_CASHLINK,
         RequestType.MANAGE_CASHLINK,
         // RequestType.SIGN_POLYGON_TRANSACTION,
-    ];
-
-    private _permissionedRequests: RequestType[] = [
-        RequestType.SIGN_MULTISIG_TRANSACTION,
+        RequestType.CONNECT_ACCOUNT,
     ];
 
     constructor(store: Store<RootState>, staticStore: StaticStore, router: Router) {
@@ -100,6 +101,7 @@ export default class RpcApi {
             RequestType.SIGN_POLYGON_TRANSACTION,
             RequestType.SETUP_SWAP,
             RequestType.REFUND_SWAP,
+            RequestType.CONNECT_ACCOUNT,
         ]);
         this._registerKeyguardApis([
             KeyguardCommand.SIGN_TRANSACTION,
@@ -117,6 +119,7 @@ export default class RpcApi {
             KeyguardCommand.DERIVE_POLYGON_ADDRESS,
             KeyguardCommand.SIGN_POLYGON_TRANSACTION,
             KeyguardCommand.SIGN_SWAP,
+            KeyguardCommand.CONNECT_ACCOUNT,
         ]);
 
         this._router.beforeEach((to: Route, from: Route, next: (arg?: string | false | Route) => void) => {
@@ -284,7 +287,7 @@ export default class RpcApi {
         if ( // Check that a non-whitelisted request comes from a privileged origin or is permissioned
             !this._3rdPartyRequestWhitelist.includes(requestType)
             && !includesOrigin(Config.privilegedOrigins, state.origin)
-            && !this._permissionedRequests.includes(requestType) // Permissioned requests are handled below
+            && !RpcApi.PERMISSIONED_REQUESTS.includes(requestType) // Permissioned requests are handled below
         ) {
             state.reply(ResponseStatus.ERROR, new Error(`${state.origin} is unauthorized to call ${requestType}`));
             return;
@@ -374,7 +377,7 @@ export default class RpcApi {
                 const parsedSignPolygonTransactionRequest = request as ParsedSignPolygonTransactionRequest;
                 const address = parsedSignPolygonTransactionRequest.request.from;
                 account = this._store.getters.findWalletByPolygonAddress(address);
-            } else if (this._permissionedRequests.includes(requestType)) {
+            } else if (RpcApi.PERMISSIONED_REQUESTS.includes(requestType)) {
                 accountRequired = true;
 
                 if (requestType === RequestType.SIGN_MULTISIG_TRANSACTION) {
