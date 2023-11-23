@@ -17,6 +17,7 @@ import {
     RequestType,
     SetupSwapRequest,
     SignMultisigTransactionRequest,
+    ConnectAccountRequest,
 } from '../client/PublicRequestTypes';
 import { RedirectRequestBehavior, PopupRequestBehavior } from '../client/RequestBehavior';
 import { Utf8Tools } from '@nimiq/utils';
@@ -704,15 +705,36 @@ class Demo {
             }
         });
 
+        document.querySelector('button#connect-account')!.addEventListener('click', async () => {
+            const request: ConnectAccountRequest = {
+                appName: 'Hub Demos',
+                appLogoUrl: `${location.origin}/nimiq.png`,
+                permissions: [RequestType.SIGN_MULTISIG_TRANSACTION],
+                requestedKeyPaths: [`m/44'/242'/0'/0'`],
+                challenge: 'sign-this-to-proof-yourself',
+            };
+
+            try {
+                const result = await demo.client.connectAccount(request, demo._defaultBehavior);
+                console.log('Result', result);
+                document.querySelector('#result')!.textContent = 'Account connected: ' + result!.account.label;
+                (document.querySelector('#multisig-signer') as HTMLInputElement).value = result!.signatures[0].signer;
+                (document.querySelector('#multisig-publickey') as HTMLInputElement).value = Nimiq.BufferUtils.toHex(new Nimiq.SerialBuffer(result!.signatures[0].signerPublicKey));
+            } catch (e) {
+                console.error(e);
+                document.querySelector('#result')!.textContent = `Error: ${e.message || e}`;
+            }
+        });
+
         document.querySelector('button#sign-multisig-transaction')!.addEventListener('click', async () => {
             const $radio = document.querySelector('input[name="address"]:checked');
             if (!$radio) {
-                alert('You have no account to sign with, create an account first (signup)');
+                alert('You have no account to activate USDC for, create an account first (signup)');
                 throw new Error('No account found');
             }
             const accountId = $radio.closest('ul')!.closest('li')!.querySelector('button')!.dataset.walletId!;
             const account = (await demo.list()).find((wallet) => wallet.accountId === accountId)!;
-
+            
             const publicKey = (document.querySelector('#multisig-publickey') as HTMLInputElement).value;
             if (publicKey.length !== 64) {
                 alert('Invalid public key. Enter your public key in HEX format');
@@ -741,10 +763,10 @@ class Demo {
                     return Nimiq.Address.fromHash(merkleRoot);
                 }
 
-                const result: SignMultisigTransactionRequest = {
+                const asyncRequest: SignMultisigTransactionRequest = {
                     appName: 'Hub Demos',
 
-                    signer: account.addresses[0].address,
+                    signer,
 
                     sender: calculateAddress(publicKeys, numberOfSigners).toUserFriendlyAddress(),
                     senderLabel: 'Our Multisig Wallet',
@@ -754,7 +776,7 @@ class Demo {
                     fee: 0,
                     extraData: (document.querySelector('#multisig-data') as HTMLInputElement).value,
                     // flags: 0,
-                    validityStartHeight: 0,
+                    validityStartHeight: 1,
 
                     multisigConfig: {
                         publicKeys: publicKeys.map(key => key.toHex()),
@@ -767,13 +789,13 @@ class Demo {
                         userName: (document.querySelector('#multisig-username') as HTMLInputElement).value,
                     },
                 };
-                resolve(result);
+                resolve(asyncRequest);
             });
 
             try {
                 const result = await demo.client.signMultisigTransaction(request, demo._defaultBehavior);
                 console.log('Result', result);
-                document.querySelector('#result')!.textContent = 'Transaction signed: ' + result!.signature;
+                document.querySelector('#result')!.textContent = 'Transaction signed: ' + Nimiq.BufferUtils.toHex(new Nimiq.SerialBuffer(result!.signature));
             } catch (e) {
                 console.error(e);
                 document.querySelector('#result')!.textContent = `Error: ${e.message || e}`;
