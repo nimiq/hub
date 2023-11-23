@@ -1,16 +1,9 @@
-import type {
-    Client as AlbatrossClient,
-    ClientConfiguration as AlbatrossClientConfiguration,
-    PlainVestingContract,
-} from '@nimiq/albatross-wasm';
+import type * as Nimiq from '@nimiq/albatross-wasm';
 import Config from 'config';
 
 declare global {
     interface Window {
-        loadAlbatross: () => Promise<{
-            Client: typeof AlbatrossClient,
-            ClientConfiguration: typeof AlbatrossClientConfiguration,
-        }>;
+        loadAlbatross: () => Promise<typeof Nimiq>;
     }
 }
 
@@ -22,7 +15,7 @@ export class NetworkClient {
         return this._instance;
     }
 
-    private _clientPromise?: Promise<AlbatrossClient>;
+    private _clientPromise?: Promise<Nimiq.Client>;
 
     // constructor() {}
 
@@ -62,7 +55,7 @@ export class NetworkClient {
     }
 
     public async getGenesisVestingContracts() {
-        return [] as Array<PlainVestingContract & { address: string }>; // TODO
+        return [] as Array<Nimiq.PlainVestingContract & { address: string }>; // TODO
     }
 
     public get innerClient() {
