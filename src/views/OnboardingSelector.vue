@@ -189,7 +189,7 @@ export default class OnboardingSelector extends Vue {
         color: var(--nimiq-blue);
         white-space: pre-line;
         text-align: center;
-        word-wrap: balance;
+        text-wrap: balance;
         max-width: 40rem;
     }
 

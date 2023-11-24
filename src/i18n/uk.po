@@ -1224,17 +1224,15 @@ msgstr "Підтвердіть платіж"
 msgid "Vesting Contract"
 msgstr "Розподільний контракт"
 
+#: src/views/SignupLedger.vue:112 src/views/SignupSuccess.vue:93
+msgid ""
+"Wallet successfully\n"
+"created"
+msgstr ""
+
 #: src/views/LoginSuccess.vue:211
 msgid "Welcome back! | Your Accounts are ready."
 msgstr "З поверненням! | Ваш рахунок готовий."
-
-#: src/views/SignupLedger.vue:112 src/views/SignupSuccess.vue:93
-msgid ""
-"Welcome to the\n"
-"Nimiq Wallet"
-msgstr ""
-"Ласкаво просимо до\n"
-"Nimiq гаманця"
 
 #: src/views/OnboardingSelector.vue:139
 msgid "Welcome to the Nimiq Wallet"

@@ -1203,17 +1203,15 @@ msgstr "验证付款"
 msgid "Vesting Contract"
 msgstr "归属合同"
 
+#: src/views/SignupLedger.vue:112 src/views/SignupSuccess.vue:93
+msgid ""
+"Wallet successfully\n"
+"created"
+msgstr ""
+
 #: src/views/LoginSuccess.vue:211
 msgid "Welcome back! | Your Accounts are ready."
 msgstr "欢迎回来！您的账户已准备好。"
-
-#: src/views/SignupLedger.vue:112 src/views/SignupSuccess.vue:93
-msgid ""
-"Welcome to the\n"
-"Nimiq Wallet"
-msgstr ""
-"欢迎来到\n"
-"Nimiq 钱包"
 
 #: src/views/OnboardingSelector.vue:139
 msgid "Welcome to the Nimiq Wallet"

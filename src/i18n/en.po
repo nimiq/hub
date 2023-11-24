@@ -1200,15 +1200,15 @@ msgstr ""
 msgid "Vesting Contract"
 msgstr ""
 
-#: src/views/LoginSuccess.vue:211
-msgid "Welcome back! | Your Accounts are ready."
-msgstr ""
-
 #: src/views/SignupLedger.vue:112
 #: src/views/SignupSuccess.vue:93
 msgid ""
-"Welcome to the\n"
-"Nimiq Wallet"
+"Wallet successfully\n"
+"created"
+msgstr ""
+
+#: src/views/LoginSuccess.vue:211
+msgid "Welcome back! | Your Accounts are ready."
 msgstr ""
 
 #: src/views/OnboardingSelector.vue:139

@@ -1234,17 +1234,15 @@ msgstr "Подтвердить платеж"
 msgid "Vesting Contract"
 msgstr "Вестинг-контракты"
 
+#: src/views/SignupLedger.vue:112 src/views/SignupSuccess.vue:93
+msgid ""
+"Wallet successfully\n"
+"created"
+msgstr ""
+
 #: src/views/LoginSuccess.vue:211
 msgid "Welcome back! | Your Accounts are ready."
 msgstr "Добро пожаловать! | Ваши Аккаунты готовы."
-
-#: src/views/SignupLedger.vue:112 src/views/SignupSuccess.vue:93
-msgid ""
-"Welcome to the\n"
-"Nimiq Wallet"
-msgstr ""
-"Добро пожаловать\n"
-"в Кошелёк Nimiq"
 
 #: src/views/OnboardingSelector.vue:139
 msgid "Welcome to the Nimiq Wallet"

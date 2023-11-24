@@ -1242,17 +1242,15 @@ msgstr "Überprüfe die Zahlung"
 msgid "Vesting Contract"
 msgstr "Vesting-Vertrag"
 
+#: src/views/SignupLedger.vue:112 src/views/SignupSuccess.vue:93
+msgid ""
+"Wallet successfully\n"
+"created"
+msgstr ""
+
 #: src/views/LoginSuccess.vue:211
 msgid "Welcome back! | Your Accounts are ready."
 msgstr "Willkommen zurück! | Deine Konten sind bereit."
-
-#: src/views/SignupLedger.vue:112 src/views/SignupSuccess.vue:93
-msgid ""
-"Welcome to the\n"
-"Nimiq Wallet"
-msgstr ""
-"Willkommen in der\n"
-"Nimiq Wallet"
 
 #: src/views/OnboardingSelector.vue:139
 msgid "Welcome to the Nimiq Wallet"
