@@ -96,6 +96,10 @@ msgstr ""
 msgid "All labels saved."
 msgstr ""
 
+#: src/views/ConnectAccount.vue:8
+msgid "All private funds remain separate."
+msgstr ""
+
 #: src/components/CheckoutCardBitcoin.vue:30
 #: src/components/CheckoutCardEthereum.vue:27
 #: src/components/CheckoutCardNimiqExternal.vue:32
@@ -1120,6 +1124,10 @@ msgstr ""
 msgid "Total fees"
 msgstr ""
 
+#: src/views/SignMultisigTransactionSuccess.vue:4
+msgid "Transaction approved"
+msgstr ""
+
 #: src/views/CashlinkManage.vue:211
 #: src/views/CheckoutTransmission.vue:61
 msgid "Transaction could not be relayed"
@@ -1254,6 +1262,10 @@ msgstr ""
 
 #: src/components/LedgerUi.vue:273
 msgid "Your {app} app is outdated. Please update your Ledger firmware and {app} app using Ledger Live."
+msgstr ""
+
+#: src/views/ConnectAccount.vue:7
+msgid "Your account will be used for approving only."
 msgstr ""
 
 #: src/views/LoginSuccess.vue:194
