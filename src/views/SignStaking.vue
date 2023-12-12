@@ -4,10 +4,9 @@
 import { Component, Vue } from 'vue-property-decorator';
 import { ParsedSignStakingRequest } from '../lib/RequestTypes';
 import KeyguardClient from '@nimiq/keyguard-client';
-import staticStore, { Static } from '../lib/StaticStore';
+import { Static } from '../lib/StaticStore';
 import { WalletInfo } from '../lib/WalletInfo';
 import { Getter } from 'vuex-class';
-import { StakingTransactionType } from '../lib/Constants';
 
 @Component
 export default class SignStaking extends Vue {
@@ -15,62 +14,55 @@ export default class SignStaking extends Vue {
     @Getter private findWalletByAddress!: (address: string, includeContracts: boolean) => WalletInfo | undefined;
 
     public async created() {
-        // Forward user through Hub to Keyguard
+        // Determine signer and forward user to Keyguard
 
-        let senderAddress: Nimiq.Address;
-        let senderLabel: string | undefined;
-        let senderType: Nimiq.Account.Type | 3 /* Staking */;
+        let senderLabel = this.request.senderLabel;
         let keyId: string;
         let keyPath: string;
         let keyLabel: string | undefined;
-        let recipientAddress: Nimiq.Address;
-        let recipientLabel: string | undefined;
-        let recipientType: Nimiq.Account.Type | 3 /* Staking */;
+        let recipientLabel = this.request.recipientLabel;
 
-        const isUnstaking = this.request.type === StakingTransactionType.UNSTAKE;
+        const Albatross = await window.loadAlbatross();
+        const transaction = Albatross.Transaction.fromAny(Nimiq.BufferUtils.toHex(this.request.transaction)).toPlain();
 
-        if (isUnstaking) {
-            // existence checked in RpcApi
-            const wallet = this.findWalletByAddress(this.request.recipient.toUserFriendlyAddress(), false)!;
-            const signer = wallet.findSignerForAddress(this.request.recipient)!;
+        console.log(transaction);
 
-            senderAddress = this.request.sender as Nimiq.Address;
-            senderLabel = this.$t('Staking Contract') as string;
-            senderType = 3; // Staking
+        // @ts-ignore Wrong type definition
+        if (transaction.senderType === 3) {
+            const signerAddress = transaction.recipient;
+            const wallet = this.findWalletByAddress(signerAddress, false);
+            const signer = wallet?.findSignerForAddress(Nimiq.Address.fromUserFriendlyAddress(signerAddress));
+            if (!wallet || !signer) throw new Error('Signer not found');
+
+            // @ts-ignore Wrong type definition
+            if (transaction.recipientType !== 0) {
+                    throw new Error('Recipient must be a basic account when sender is staking contract');
+            }
+
             keyId = wallet.keyId;
             keyPath = signer.path;
             keyLabel = wallet.labelForKeyguard;
-            recipientAddress = signer.address;
+            senderLabel = this.request.senderLabel || this.$t('Staking Contract') as string;
             recipientLabel = signer.label;
-            recipientType = Nimiq.Account.Type.BASIC;
-        } else {
-            if (this.request.sender instanceof Nimiq.Address) {
-                // existence checked in RpcApi
-                const wallet = this.findWalletByAddress(this.request.sender.toUserFriendlyAddress(), false)!;
-                const signer = wallet.findSignerForAddress(this.request.sender)!;
+        // @ts-ignore Wrong type
+        } else if (transaction.recipientType === 3) {
+            const signerAddress = transaction.sender;
+            const wallet = this.findWalletByAddress(signerAddress, false);
+            const signer = wallet?.findSignerForAddress(Nimiq.Address.fromUserFriendlyAddress(signerAddress));
+            if (!wallet || !signer) throw new Error('Signer not found');
 
-                senderAddress = this.request.sender;
-                senderLabel = signer.label;
-                senderType = Nimiq.Account.Type.BASIC;
-                keyId = wallet.keyId;
-                keyPath = signer.path;
-                keyLabel = wallet.labelForKeyguard;
-            } else {
-                ({
-                    address: senderAddress,
-                    label: senderLabel,
-                    type: senderType,
-                    signerKeyId: keyId,
-                    signerKeyPath: keyPath,
-                    walletLabel: keyLabel,
-                } = {
-                    type: Nimiq.Account.Type.BASIC,
-                    ...this.request.sender,
-                });
+            // @ts-ignore Wrong type definition
+            if (transaction.senderType !== 0) {
+                throw new Error('Sender must be a basic account when recipient is staking contract');
             }
-            recipientAddress = this.request.recipient;
-            recipientLabel = this.request.recipientLabel;
-            recipientType = this.request.recipientType;
+
+            keyId = wallet.keyId;
+            keyPath = signer.path;
+            keyLabel = wallet.labelForKeyguard;
+            senderLabel = signer.label;
+            recipientLabel = this.request.recipientLabel || this.$t('Staking Contract') as string;
+        } else {
+            throw new Error('Sender or recipient must be the staking contract');
         }
 
         const request: KeyguardClient.SignStakingRequest = {
@@ -80,25 +72,11 @@ export default class SignStaking extends Vue {
             keyPath,
             keyLabel,
 
-            sender: senderAddress.serialize(),
             senderLabel,
-            senderType,
-            recipient: recipientAddress.serialize(),
-            recipientType,
             recipientLabel,
-            value: this.request.value,
-            fee: this.request.fee,
-            validityStartHeight: this.request.validityStartHeight,
-            data: this.request.data,
-            flags: this.request.flags,
 
-            type: this.request.type,
-            delegation: this.request.delegation,
-            reactivateAllStake: this.request.reactivateAllStake,
-            newInactiveBalance: this.request.newInactiveBalance,
+            transaction: Albatross.Transaction.fromPlain(transaction).serialize(),
         };
-
-        staticStore.keyguardRequest = request;
 
         const client = this.$rpc.createKeyguardClient(true);
         client.signStaking(request);

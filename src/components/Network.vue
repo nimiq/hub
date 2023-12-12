@@ -122,6 +122,7 @@ class Network extends Vue {
                 : (() => { throw new Error('Unsupported transaction proof'); })();
 
         const result: SignedTransaction = {
+            transaction: tx.serialize(),
             serializedTx: Nimiq.BufferUtils.toHex(tx.serialize()),
             hash: tx.hash().toHex(),
 
