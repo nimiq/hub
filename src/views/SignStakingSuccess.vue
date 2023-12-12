@@ -10,13 +10,14 @@ export default class SignStakingSuccess extends Vue {
     @State private keyguardResult!: KeyguardClient.SignStakingResult;
 
     private async mounted() {
-        const { Transaction } = await window.loadAlbatross();
+        const Albatross = await window.loadAlbatross();
 
-        const hex = bytesToHex(this.keyguardResult.serializedTx);
-        const tx = Transaction.fromAny(hex);
+        const hex = bytesToHex(this.keyguardResult.transaction);
+        const tx = Albatross.Transaction.fromAny(hex);
         const plain = tx.toPlain();
 
         const result: SignedTransaction = {
+            transaction: this.keyguardResult.transaction,
             serializedTx: hex,
             hash: plain.transactionHash,
             raw: {
@@ -26,14 +27,10 @@ export default class SignStakingSuccess extends Vue {
                 proof: tx.proof,
                 signerPublicKey: 'publicKey' in plain.proof
                     ? hexToBytes(plain.proof.publicKey)
-                    : 'creatorPublicKey' in plain.proof
-                        ? hexToBytes(plain.proof.creatorPublicKey)
-                        : new Uint8Array(0),
+                    : new Uint8Array(0),
                 signature: 'signature' in plain.proof
                     ? hexToBytes(plain.proof.signature)
-                    : 'creatorSignature' in plain.proof
-                        ? hexToBytes(plain.proof.creatorSignature)
-                        : new Uint8Array(0),
+                    : new Uint8Array(0),
                 extraData: tx.data,
                 networkId: tx.networkId,
             },

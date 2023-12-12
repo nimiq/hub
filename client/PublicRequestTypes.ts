@@ -101,17 +101,10 @@ export interface SignTransactionRequest extends BasicRequest {
     validityStartHeight: number; // FIXME To be made optional when hub has its own network
 }
 
-export interface SignStakingRequest extends SignTransactionRequest {
-    type: number;
-
-    // For createStaker and updateStaker transactions
-    delegation?: string;
-
-    // For updateStaker transactions
-    reactivateAllStake?: boolean;
-
-    // For inactivateStake transactions
-    newInactiveBalance?: number;
+export interface SignStakingRequest extends BasicRequest {
+    senderLabel?: string;
+    recipientLabel?: string;
+    transaction: Uint8Array;
 }
 
 export interface NimiqCheckoutRequest extends BasicRequest {
@@ -234,6 +227,7 @@ export interface MultiCurrencyCheckoutRequest extends BasicRequest {
 export type CheckoutRequest = NimiqCheckoutRequest | MultiCurrencyCheckoutRequest;
 
 export interface SignedTransaction {
+    transaction: Uint8Array;
     serializedTx: string; // HEX
     hash: string; // HEX
 
