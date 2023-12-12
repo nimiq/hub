@@ -71,11 +71,10 @@ export interface SignTransactionRequest extends BasicRequest {
     flags?: number;
     validityStartHeight: number;
 }
-export interface SignStakingRequest extends SignTransactionRequest {
-    type: number;
-    delegation?: string;
-    reactivateAllStake?: boolean;
-    newInactiveBalance?: number;
+export interface SignStakingRequest extends BasicRequest {
+    senderLabel?: string;
+    recipientLabel?: string;
+    transaction: Uint8Array;
 }
 export interface NimiqCheckoutRequest extends BasicRequest {
     version?: 1;
@@ -175,6 +174,7 @@ export interface MultiCurrencyCheckoutRequest extends BasicRequest {
 }
 export declare type CheckoutRequest = NimiqCheckoutRequest | MultiCurrencyCheckoutRequest;
 export interface SignedTransaction {
+    transaction: Uint8Array;
     serializedTx: string;
     hash: string;
     raw: {

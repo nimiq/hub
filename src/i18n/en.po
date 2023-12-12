@@ -121,7 +121,6 @@ msgid "Atomic swaps require two BTC transactions."
 msgstr ""
 
 #: src/views/CashlinkManage.vue:192
-#: src/views/CheckoutTransmission.vue:77
 msgid "Awaiting receipt confirmation..."
 msgstr ""
 
@@ -414,7 +413,7 @@ msgid "Connecting to Keyguard..."
 msgstr ""
 
 #: src/views/CashlinkManage.vue:133
-#: src/views/CheckoutTransmission.vue:36
+#: src/views/CheckoutTransmission.vue:42
 #: src/views/LoginSuccess.vue:44
 msgid "Connecting to network..."
 msgstr ""
@@ -425,7 +424,7 @@ msgstr ""
 
 #: src/components/CheckoutCardNimiq.vue:285
 #: src/views/CashlinkManage.vue:186
-#: src/views/CheckoutTransmission.vue:71
+#: src/views/CheckoutTransmission.vue:120
 msgid "Contacting seed nodes..."
 msgstr ""
 
@@ -815,7 +814,7 @@ msgstr ""
 msgid "Payment successful"
 msgstr ""
 
-#: src/views/CheckoutTransmission.vue:82
+#: src/views/CheckoutTransmission.vue:128
 msgid "Payment successful."
 msgstr ""
 
@@ -855,7 +854,7 @@ msgstr ""
 msgid "Preparing Swap"
 msgstr ""
 
-#: src/views/CheckoutTransmission.vue:84
+#: src/views/CheckoutTransmission.vue:130
 msgid "Processing your payment"
 msgstr ""
 
@@ -938,7 +937,7 @@ msgid "Sending Transaction"
 msgstr ""
 
 #: src/views/CashlinkManage.vue:190
-#: src/views/CheckoutTransmission.vue:75
+#: src/views/CheckoutTransmission.vue:122
 msgid "Sending transaction..."
 msgstr ""
 
@@ -967,7 +966,7 @@ msgid "Single Accounts"
 msgstr ""
 
 #: src/views/CashlinkManage.vue:228
-#: src/views/CheckoutTransmission.vue:83
+#: src/views/CheckoutTransmission.vue:129
 msgid "Something went wrong"
 msgstr ""
 
@@ -983,7 +982,8 @@ msgstr ""
 msgid "Speed up your transaction"
 msgstr ""
 
-#: src/views/SignStaking.vue:38
+#: src/views/SignStaking.vue:45
+#: src/views/SignStaking.vue:63
 msgid "Staking Contract"
 msgstr ""
 
@@ -1019,7 +1019,7 @@ msgstr ""
 #: src/components/CheckoutCardNimiq.vue:287
 #: src/views/AddVestingContract.vue:11
 #: src/views/CashlinkManage.vue:188
-#: src/views/CheckoutTransmission.vue:73
+#: src/views/CheckoutTransmission.vue:121
 msgid "Syncing consensus..."
 msgstr ""
 
@@ -1131,12 +1131,12 @@ msgid "Total fees"
 msgstr ""
 
 #: src/views/CashlinkManage.vue:211
-#: src/views/CheckoutTransmission.vue:61
+#: src/views/CheckoutTransmission.vue:111
 msgid "Transaction could not be relayed"
 msgstr ""
 
 #: src/views/CashlinkManage.vue:209
-#: src/views/CheckoutTransmission.vue:59
+#: src/views/CheckoutTransmission.vue:109
 msgid "Transaction is expired"
 msgstr ""
 

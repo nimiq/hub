@@ -17,6 +17,7 @@ export default class SignTransactionSuccess extends Vue {
         const plain = tx.toPlain();
 
         const result: SignedTransaction = {
+            transaction: this.keyguardResult.serializedTx,
             serializedTx: hex,
             hash: plain.transactionHash,
             raw: {
