@@ -139,7 +139,7 @@ class Cashlink {
     }
 
     /**
-     * Cashlink balance in luna
+     * Cashlink balance in Luna
      */
     public balance: number | null = null;
     public state: CashlinkState;
