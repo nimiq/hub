@@ -318,17 +318,27 @@ export default class RpcApi {
                 accountRequired = true;
                 account = await WalletStore.Instance.get((request as ParsedSimpleRequest).walletId);
                 errorMsg = 'AccountId not found';
-            } else if (requestType === RequestType.SIGN_TRANSACTION || requestType === RequestType.SIGN_STAKING) {
+            } else if (requestType === RequestType.SIGN_TRANSACTION) {
                 accountRequired = true;
                 const parsedSignTransactionRequest = request as ParsedSignTransactionRequest;
-                const isUnstaking = requestType === RequestType.SIGN_STAKING
-                    && (request as ParsedSignStakingRequest).type === StakingTransactionType.UNSTAKE;
-                const address = isUnstaking
-                    ? parsedSignTransactionRequest.recipient
-                    : parsedSignTransactionRequest.sender instanceof Nimiq.Address
-                        ? parsedSignTransactionRequest.sender
-                        : parsedSignTransactionRequest.sender.address;
+                const address = parsedSignTransactionRequest.sender instanceof Nimiq.Address
+                    ? parsedSignTransactionRequest.sender
+                    : parsedSignTransactionRequest.sender.address;
                 account = this._store.getters.findWalletByAddress(address.toUserFriendlyAddress(), true);
+            } else if (requestType === RequestType.SIGN_STAKING) {
+                accountRequired = false;
+
+                // TODO
+                // The RequestParser is not async, so we cannot load and parse the transation from its
+                // Uint8Array representation there, so the parsed request cannot contain the plain transaction,
+                // and we have to do the parsing and validation in SignStaking.vue instead.
+
+                // const parsedSignStakingRequest = request as ParsedSignStakingRequest;
+                // // Only support signing staking transactions by the tx's sender or recipient
+                // const address = parsedSignStakingRequest.transaction.senderType === 'staking'
+                //     ? parsedSignStakingRequest.transaction.recipient
+                //     : parsedSignStakingRequest.transaction.sender;
+                // account = this._store.getters.findWalletByAddress(address, true);
             } else if (requestType === RequestType.SIGN_MESSAGE) {
                 accountRequired = false; // Sign message allows user to select an account
                 const address = (request as ParsedSignMessageRequest).signer;
