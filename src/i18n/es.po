@@ -1,12 +1,12 @@
 # 
 # Translators:
 # Sören Schwert <hello@soerenschwert.de>, 2021
-# Ricardo Barquero Carranza <richy@nimiq.com>, 2023
 # Daniel, 2023
+# Ricardo Barquero Carranza <richy@nimiq.com>, 2023
 # 
 msgid ""
 msgstr ""
-"Last-Translator: Daniel, 2023\n"
+"Last-Translator: Ricardo Barquero Carranza <richy@nimiq.com>, 2023\n"
 "Language-Team: Spanish (https://app.transifex.com/nimiq-foundation/teams/110181/es/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: es\n"
@@ -14,7 +14,7 @@ msgstr ""
 
 #: src/views/ChooseAddress.vue:14
 msgid "{appName} is asking for an account to use."
-msgstr ""
+msgstr "{appName} esta solicitando una cuenta para utilizar."
 
 #: src/views/ChooseAddress.vue:7
 msgid "{appName} is asking for an address to use."
@@ -48,6 +48,7 @@ msgstr ""
 #: src/views/OnboardingSelector.vue:152
 msgid "A 100% free and self-custodial web wallet for NIM, BTC and USDC."
 msgstr ""
+"Una billetera web 100% gratis de custodia personal para NIM, BTC y USDC."
 
 #: src/views/ExportSuccess.vue:60
 msgid "Account backed up!"
@@ -292,7 +293,7 @@ msgstr "Elija una nueva Dirección"
 
 #: src/views/ChooseAddress.vue:12
 msgid "Choose an Account"
-msgstr ""
+msgstr "Seleccione una Cuenta"
 
 #: src/views/CashlinkReceive.vue:64 src/views/ChooseAddress.vue:18
 #: src/views/ChooseAddress.vue:5
@@ -325,7 +326,7 @@ msgstr "Elija remitente"
 
 #: src/views/ChooseAddress.vue:20
 msgid "Choose which Nimiq address to use."
-msgstr ""
+msgstr "Seleccione la dirección Nimiq que desea utilizar."
 
 #: src/views/CashlinkReceive.vue:297
 msgid "Claim Cashlink"
@@ -695,7 +696,7 @@ msgstr "¡Se ha guardado el Archivo de Sesión!"
 
 #: src/views/ChooseAddress.vue:67
 msgid "Login to another account"
-msgstr ""
+msgstr "Ingrese con otra cuenta."
 
 #: src/views/CashlinkReceive.vue:91
 msgid "Login to existing account"
@@ -1240,6 +1241,8 @@ msgid ""
 "Wallet successfully\n"
 "created"
 msgstr ""
+"Billeterea creada\n"
+"exitosamente"
 
 #: src/views/LoginSuccess.vue:211
 msgid "Welcome back! | Your Accounts are ready."
@@ -1247,7 +1250,7 @@ msgstr "¡Bienvenido de vuelta! Tus cuentas están listas."
 
 #: src/views/OnboardingSelector.vue:139
 msgid "Welcome to the Nimiq Wallet"
-msgstr ""
+msgstr "Bienvenido a la Billetera Nimiq"
 
 #: src/CashlinkApp.vue:9
 msgid "What is Nimiq?"
