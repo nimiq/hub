@@ -1613,10 +1613,10 @@
     btoa "^1.1.2"
     node-lmdb "^0.9.6"
 
-"@nimiq/keyguard-client@^1.5.3":
-  version "1.5.3"
-  resolved "https://registry.yarnpkg.com/@nimiq/keyguard-client/-/keyguard-client-1.5.3.tgz#b245e5cd0a5ed4c4846b8a38f80f115e20b0b258"
-  integrity sha512-xEG8dQwUZqSjeD0kVkWcr6ypqpEzNrewAH2wQEq20eJAUluP7TsWRH1ui+gEDD+78g01V7UO/JG26ytim2uz5Q==
+"@nimiq/keyguard-client@^1.5.4":
+  version "1.5.4"
+  resolved "https://registry.yarnpkg.com/@nimiq/keyguard-client/-/keyguard-client-1.5.4.tgz#0842386e1c36e2b203cae94ac62ffafd48ee79fa"
+  integrity sha512-E4sQys66nSPCiMRm2NN9ibm0RZCA9VbyP7UApSEBShBCHkCCSYp1zjfuPm9+v4VKwA7yw+pEDZ5RE7Mlf2OdIQ==
   dependencies:
     "@nimiq/core-web" "1.5.8"
     "@nimiq/rpc" "^0.3.0"

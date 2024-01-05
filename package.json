@@ -23,7 +23,7 @@
         "@nimiq/electrum-client": "https://github.com/nimiq/electrum-client#build",
         "@nimiq/fastspot-api": "^1.7.0",
         "@nimiq/iqons": "^1.5.2",
-        "@nimiq/keyguard-client": "^1.5.3",
+        "@nimiq/keyguard-client": "^1.5.4",
         "@nimiq/ledger-api": "^2.3.0",
         "@nimiq/network-client": "^0.6.2",
         "@nimiq/oasis-api": "^1.1.1",
