@@ -41,7 +41,7 @@ msgstr "30秒，无需邮件，无需下载"
 msgid "404 - Cash not found"
 msgstr "404 - 找不到现金"
 
-#: src/views/SetupSwapSuccess.vue:142
+#: src/views/SetupSwapSuccess.vue:145
 msgid "503 Service unavailable - please try again later"
 msgstr "503 服务不可用 - 请稍后再试"
 
@@ -204,6 +204,10 @@ msgstr "比特币"
 #: src/views/ActivateBitcoinSuccess.vue:106
 msgid "Bitcoin activated"
 msgstr "比特币已激活"
+
+#: src/views/SetupSwapSuccess.vue:627
+msgid "Bitcoin HTLC invalid: {error}"
+msgstr ""
 
 #: src/views/AddVestingContract.vue:36
 msgid "Blocks/Step:"
@@ -539,15 +543,19 @@ msgstr "费用"
 msgid "Fetching Addresses Failed"
 msgstr "提取地址失败"
 
+#: src/views/SetupSwapSuccess.vue:616
+msgid "Fetching Bitcoin HTLC..."
+msgstr ""
+
 #: src/views/AddVestingContract.vue:16
 msgid "Fetching contract information..."
 msgstr "正在获取合同信息..."
 
-#: src/views/SetupSwapSuccess.vue:603
+#: src/views/SetupSwapSuccess.vue:624
 msgid "Fetching swap data failed: {error}"
 msgstr "提取交换数据失败：{error}"
 
-#: src/views/SetupSwapSuccess.vue:593
+#: src/views/SetupSwapSuccess.vue:612
 msgid "Fetching swap data..."
 msgstr "正在获取交换数据..."
 
@@ -848,7 +856,7 @@ msgstr "请手动发送交易"
 msgid "Prepare for update"
 msgstr "准备更新"
 
-#: src/views/SetupSwapSuccess.vue:586
+#: src/views/SetupSwapSuccess.vue:605
 msgid "Preparing Swap"
 msgstr "准备交换"
 
@@ -916,8 +924,8 @@ msgid "Retrieving your old accounts..."
 msgstr "正在检索你的旧帐户..."
 
 #: src/views/ActivatePolygonSuccess.vue:139
-#: src/views/BitcoinSyncBaseView.vue:68 src/views/LoginSuccess.vue:122
-#: src/views/SetupSwapSuccess.vue:611 src/views/SignupLedger.vue:145
+#: src/views/BitcoinSyncBaseView.vue:72 src/views/LoginSuccess.vue:122
+#: src/views/SetupSwapSuccess.vue:634 src/views/SignupLedger.vue:145
 msgid "Retry"
 msgstr "重试"
 
@@ -950,7 +958,7 @@ msgstr "分享"
 msgid "Sign Message"
 msgstr "签名信息"
 
-#: src/views/SetupSwapSuccess.vue:595
+#: src/views/SetupSwapSuccess.vue:614
 msgid "Signing transactions..."
 msgstr "正在签署交易..."
 
@@ -994,7 +1002,7 @@ msgstr "兑换已授权"
 msgid "Swap fee"
 msgstr "交换费用"
 
-#: src/views/SetupSwapLedger.vue:848 src/views/SetupSwapSuccess.vue:582
+#: src/views/SetupSwapLedger.vue:848 src/views/SetupSwapSuccess.vue:601
 msgid "Swap Setup Failed"
 msgstr "交换设置失败"
 
@@ -1010,7 +1018,7 @@ msgstr "正在同步共识..."
 
 #: src/views/ActivatePolygonSuccess.vue:113
 #: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapLedger.vue:850
-#: src/views/SetupSwapSuccess.vue:584
+#: src/views/SetupSwapSuccess.vue:603
 #: src/views/SignBtcTransactionLedger.vue:117
 msgid "Syncing Failed"
 msgstr "同步失败"
@@ -1023,7 +1031,7 @@ msgstr "与 {currency} 网络同步失败：{error}"
 msgid "Syncing with {currency} network..."
 msgstr "正在与 {currency} 网络同步..."
 
-#: src/views/BitcoinSyncBaseView.vue:63
+#: src/views/BitcoinSyncBaseView.vue:65
 msgid "Syncing with Bitcoin network failed: {error}"
 msgstr "与比特币网络同步失败：{error}"
 
@@ -1194,6 +1202,10 @@ msgstr ""
 #: src/views/LoginSuccess.vue:196 src/views/SignupLedger.vue:132
 msgid "Used addresses without balance might have been missed."
 msgstr "已使用地址若没有余额可能会丢失"
+
+#: src/views/SetupSwapSuccess.vue:370
+msgid "Value mismatch (expected {expected} sats, found {found} sats)"
+msgstr ""
 
 #: src/views/SignTransactionLedger.vue:31
 msgid "Verify Payment"

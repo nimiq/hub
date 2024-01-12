@@ -44,6 +44,8 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
             FETCHING_SWAP_DATA: 'fetching-swap-data',
             FETCHING_SWAP_DATA_FAILED: 'fetching-swap-data-failed',
             SIGNING_TRANSACTIONS: 'signing-transactions',
+            FETCHING_BITCOIN_TX: 'fetching-bitcoin-tx',
+            BITCOIN_TX_MISMATCH: 'bitcoin-tx-mismatch',
         };
     }
 
@@ -51,6 +53,7 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
     @Static protected request!: ParsedSetupSwapRequest;
     protected nimiqNetwork: Network = new Network();
     protected _isDestroyed: boolean = false;
+    protected btcMismatchError: string = '';
     @State private keyguardResult?: KeyguardSignSwapResult;
 
     protected async mounted() {
@@ -350,9 +353,12 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
                     output: PlainOutput,
                 }>(async (resolve, reject) => {
                     try {
-                        function listener(tx: BtcTransactionDetails) {
+                        const listener = (tx: BtcTransactionDetails) => {
                             const htlcOutput = tx.outputs.find((out) => out.address === btcHtlcData.address);
-                            if (htlcOutput && htlcOutput.value === confirmedSwap.to.amount) {
+                            if (!htlcOutput) {
+                                return false;
+                            }
+                            if (htlcOutput.value === confirmedSwap.to.amount) {
                                 resolve({
                                     transaction: tx,
                                     output: htlcOutput,
@@ -360,10 +366,21 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
                                 electrum.removeListener(handle);
                                 return true;
                             }
+                            this.state = this.State.BITCOIN_TX_MISMATCH;
+                            this.btcMismatchError = this.$t(
+                                'Value mismatch (expected {expected} sats, found {found} sats)',
+                                {
+                                    expected: confirmedSwap.to.amount,
+                                    found: htlcOutput.value,
+                                },
+                            ) as string;
                             return false;
                         }
 
                         const electrum = await getElectrumClient();
+                        await electrum.waitForConsensusEstablished();
+
+                        this.state = this.State.FETCHING_BITCOIN_TX;
 
                         // First subscribe to new transactions
                         const handle = electrum.addTransactionListener(listener, [btcHtlcData.address]);
@@ -386,7 +403,7 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
                 };
             } catch (error) {
                 console.error(error);
-                this.state =  this.State.SYNCING_FAILED;
+                this.state = this.State.SYNCING_FAILED;
                 this.error = error.message || error;
                 return;
             }
@@ -572,7 +589,9 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
     }
 
     protected get statusScreenState(): StatusScreen.State {
-        if (this.state === this.State.FETCHING_SWAP_DATA_FAILED) return StatusScreen.State.ERROR;
+        if (this.state === this.State.FETCHING_SWAP_DATA_FAILED || this.state === this.State.BITCOIN_TX_MISMATCH) {
+            return StatusScreen.State.ERROR;
+        }
         return super.statusScreenState;
     }
 
@@ -593,6 +612,8 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
                 return this.$t('Fetching swap data...') as string;
             case this.State.SIGNING_TRANSACTIONS:
                 return this.$t('Signing transactions...') as string;
+            case this.State.FETCHING_BITCOIN_TX:
+                return this.$t('Fetching Bitcoin HTLC...') as string;
             default:
                 return super.statusScreenStatus;
         }
@@ -602,17 +623,23 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
         if (this.state === this.State.FETCHING_SWAP_DATA_FAILED) {
             return this.$t('Fetching swap data failed: {error}', { error: this.error }) as string;
         }
+        if (this.state === this.State.BITCOIN_TX_MISMATCH) {
+            return this.$t('Bitcoin HTLC invalid: {error}', { error: this.btcMismatchError }) as string;
+        }
         return super.statusScreenMessage;
     }
 
     protected get statusScreenAction() {
-        if (this.state !== this.State.FETCHING_SWAP_DATA_FAILED
-            && this.state !== this.State.SYNCING_FAILED) return '';
-        return this.$t('Retry') as string;
+        if (this.state === this.State.FETCHING_SWAP_DATA_FAILED || this.state === this.State.BITCOIN_TX_MISMATCH) {
+            return this.$t('Retry') as string;
+        }
+        return super.statusScreenAction;
     }
 
     protected get isGlobalCloseShown() {
-        return this.state === this.State.FETCHING_SWAP_DATA_FAILED || super.isGlobalCloseShown;
+        return this.state === this.State.FETCHING_SWAP_DATA_FAILED
+            || this.state === this.State.BITCOIN_TX_MISMATCH
+            || super.isGlobalCloseShown;
     }
 }
 </script>

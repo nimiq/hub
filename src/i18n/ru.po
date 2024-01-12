@@ -43,7 +43,7 @@ msgstr "30 секунд, нет электронной почты, нет з�
 msgid "404 - Cash not found"
 msgstr "404 - Кэш не найден"
 
-#: src/views/SetupSwapSuccess.vue:142
+#: src/views/SetupSwapSuccess.vue:145
 msgid "503 Service unavailable - please try again later"
 msgstr "503 Сервис недоступен - попробуйте позже"
 
@@ -206,6 +206,10 @@ msgstr "Биткоин"
 #: src/views/ActivateBitcoinSuccess.vue:106
 msgid "Bitcoin activated"
 msgstr "Биткойн активирован"
+
+#: src/views/SetupSwapSuccess.vue:627
+msgid "Bitcoin HTLC invalid: {error}"
+msgstr ""
 
 #: src/views/AddVestingContract.vue:36
 msgid "Blocks/Step:"
@@ -546,15 +550,19 @@ msgstr "Комиссия"
 msgid "Fetching Addresses Failed"
 msgstr "Не удалось загрузить адреса"
 
+#: src/views/SetupSwapSuccess.vue:616
+msgid "Fetching Bitcoin HTLC..."
+msgstr ""
+
 #: src/views/AddVestingContract.vue:16
 msgid "Fetching contract information..."
 msgstr "Загружаем информацию о контракте..."
 
-#: src/views/SetupSwapSuccess.vue:603
+#: src/views/SetupSwapSuccess.vue:624
 msgid "Fetching swap data failed: {error}"
 msgstr "Не удалось загрузить данные обмена: {error}"
 
-#: src/views/SetupSwapSuccess.vue:593
+#: src/views/SetupSwapSuccess.vue:612
 msgid "Fetching swap data..."
 msgstr "Загружаем данные обмена..."
 
@@ -862,7 +870,7 @@ msgstr "Пожалуйста, отправьте транзакцию вручн
 msgid "Prepare for update"
 msgstr "Подготовка к обновлению"
 
-#: src/views/SetupSwapSuccess.vue:586
+#: src/views/SetupSwapSuccess.vue:605
 msgid "Preparing Swap"
 msgstr "Подготавливаем обмен"
 
@@ -933,8 +941,8 @@ msgid "Retrieving your old accounts..."
 msgstr "Восстановление ваших старых учетных записей..."
 
 #: src/views/ActivatePolygonSuccess.vue:139
-#: src/views/BitcoinSyncBaseView.vue:68 src/views/LoginSuccess.vue:122
-#: src/views/SetupSwapSuccess.vue:611 src/views/SignupLedger.vue:145
+#: src/views/BitcoinSyncBaseView.vue:72 src/views/LoginSuccess.vue:122
+#: src/views/SetupSwapSuccess.vue:634 src/views/SignupLedger.vue:145
 msgid "Retry"
 msgstr "Повторить"
 
@@ -967,7 +975,7 @@ msgstr "Поделиться"
 msgid "Sign Message"
 msgstr "Подписать сообщение"
 
-#: src/views/SetupSwapSuccess.vue:595
+#: src/views/SetupSwapSuccess.vue:614
 msgid "Signing transactions..."
 msgstr "Подписание транзакций..."
 
@@ -1012,7 +1020,7 @@ msgstr "Обмен авторизован"
 msgid "Swap fee"
 msgstr "Комиссия за обмен"
 
-#: src/views/SetupSwapLedger.vue:848 src/views/SetupSwapSuccess.vue:582
+#: src/views/SetupSwapLedger.vue:848 src/views/SetupSwapSuccess.vue:601
 msgid "Swap Setup Failed"
 msgstr "Не удалось подготовить обмен"
 
@@ -1028,7 +1036,7 @@ msgstr "Синхронизация консенсуса..."
 
 #: src/views/ActivatePolygonSuccess.vue:113
 #: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapLedger.vue:850
-#: src/views/SetupSwapSuccess.vue:584
+#: src/views/SetupSwapSuccess.vue:603
 #: src/views/SignBtcTransactionLedger.vue:117
 msgid "Syncing Failed"
 msgstr "Синхронизация не удалась"
@@ -1041,7 +1049,7 @@ msgstr "Не удалось синхронизироваться с сетью {
 msgid "Syncing with {currency} network..."
 msgstr "Синхронизируемся с сетью {currency}..."
 
-#: src/views/BitcoinSyncBaseView.vue:63
+#: src/views/BitcoinSyncBaseView.vue:65
 msgid "Syncing with Bitcoin network failed: {error}"
 msgstr "Не удалось синхронизироваться с сетью Биткоин: {error}"
 
@@ -1225,6 +1233,10 @@ msgstr "Используйте Файл Авторизации или Защит
 #: src/views/LoginSuccess.vue:196 src/views/SignupLedger.vue:132
 msgid "Used addresses without balance might have been missed."
 msgstr "Используемые адреса с нулевым балансом могли быть пропущены."
+
+#: src/views/SetupSwapSuccess.vue:370
+msgid "Value mismatch (expected {expected} sats, found {found} sats)"
+msgstr ""
 
 #: src/views/SignTransactionLedger.vue:31
 msgid "Verify Payment"
