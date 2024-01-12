@@ -375,7 +375,7 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
                                 },
                             ) as string;
                             return false;
-                        }
+                        };
 
                         const electrum = await getElectrumClient();
                         await electrum.waitForConsensusEstablished();
