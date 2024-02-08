@@ -89,8 +89,18 @@ export class RequestParser {
                 //     Nimiq.BufferUtils.toHex(signStakingRequest.transaction),
                 // );
 
-                if (!(signStakingRequest.transaction instanceof Uint8Array)) {
-                    throw new Error('transaction must be a Uint8Array');
+                const transactions = Array.isArray(signStakingRequest.transaction)
+                    ? signStakingRequest.transaction
+                    : [signStakingRequest.transaction];
+
+                if (transactions.length === 0) {
+                    throw new Error('transaction array must not be empty');
+                }
+
+                for (const transaction of transactions) {
+                    if (!(transaction instanceof Uint8Array)) {
+                        throw new Error('transaction must be a Uint8Array');
+                    }
                 }
 
                 return {
@@ -99,7 +109,7 @@ export class RequestParser {
                     senderLabel: signStakingRequest.senderLabel,
                     recipientLabel: signStakingRequest.recipientLabel,
                     // transaction: transaction.toPlain(),
-                    transaction: signStakingRequest.transaction,
+                    transactions,
                 } as ParsedSignStakingRequest;
             case RequestType.CHECKOUT:
                 const checkoutRequest = request as CheckoutRequest;
@@ -766,7 +776,7 @@ export class RequestParser {
                     senderLabel: signStakingRequest.senderLabel,
                     recipientLabel: signStakingRequest.recipientLabel,
                     // transaction: transaction.serialize(),
-                    transaction: signStakingRequest.transaction,
+                    transaction: signStakingRequest.transactions,
                 } as SignStakingRequest;
             case RequestType.CREATE_CASHLINK:
                 const createCashlinkRequest = request as ParsedCreateCashlinkRequest;

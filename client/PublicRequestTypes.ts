@@ -104,7 +104,7 @@ export interface SignTransactionRequest extends BasicRequest {
 export interface SignStakingRequest extends BasicRequest {
     senderLabel?: string;
     recipientLabel?: string;
-    transaction: Uint8Array;
+    transaction: Uint8Array | Uint8Array[];
 }
 
 export interface NimiqCheckoutRequest extends BasicRequest {
@@ -687,6 +687,7 @@ export type RpcRequest = SignTransactionRequest
                        | RefundSwapRequest;
 
 export type RpcResult = SignedTransaction
+                      | SignedTransaction[]
                       | Account
                       | Account[]
                       | SimpleResult
@@ -709,7 +710,7 @@ export type ResultByRequestType<T> =
     T extends RequestType.CHOOSE_ADDRESS ? ChooseAddressResult :
     T extends RequestType.ADD_ADDRESS ? Address :
     T extends RequestType.SIGN_TRANSACTION ? SignedTransaction :
-    T extends RequestType.SIGN_STAKING ? SignedTransaction :
+    T extends RequestType.SIGN_STAKING ? SignedTransaction[] :
     T extends RequestType.CHECKOUT ? SignedTransaction | SimpleResult :
     T extends RequestType.SIGN_MESSAGE ? SignedMessage :
     T extends RequestType.LOGOUT | RequestType.CHANGE_PASSWORD ? SimpleResult :

@@ -14,7 +14,7 @@ export default class SignStaking extends Vue {
     @Getter private findWalletByAddress!: (address: string, includeContracts: boolean) => WalletInfo | undefined;
 
     public async created() {
-        // Determine signer and forward user to Keyguard
+        // Determine signer by last transaction and forward user to Keyguard
 
         let senderLabel = this.request.senderLabel;
         let keyId: string;
@@ -23,7 +23,9 @@ export default class SignStaking extends Vue {
         let recipientLabel = this.request.recipientLabel;
 
         const Albatross = await window.loadAlbatross();
-        const transaction = Albatross.Transaction.fromAny(Nimiq.BufferUtils.toHex(this.request.transaction)).toPlain();
+        const transaction = Albatross.Transaction.fromAny(Nimiq.BufferUtils.toHex(
+            this.request.transactions[this.request.transactions.length - 1],
+        )).toPlain();
 
         console.log(transaction);
 
@@ -75,7 +77,7 @@ export default class SignStaking extends Vue {
             senderLabel,
             recipientLabel,
 
-            transaction: Albatross.Transaction.fromPlain(transaction).serialize(),
+            transaction: this.request.transactions,
         };
 
         const client = this.$rpc.createKeyguardClient(true);
