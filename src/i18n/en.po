@@ -982,8 +982,8 @@ msgstr ""
 msgid "Speed up your transaction"
 msgstr ""
 
-#: src/views/SignStaking.vue:45
-#: src/views/SignStaking.vue:63
+#: src/views/SignStaking.vue:47
+#: src/views/SignStaking.vue:65
 msgid "Staking Contract"
 msgstr ""
 
