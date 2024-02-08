@@ -56,7 +56,7 @@ export interface ParsedSignStakingRequest extends ParsedBasicRequest {
     senderLabel?: string;
     recipientLabel?: string;
     // transaction: AlbatrossPlainTransaction;
-    transaction: Uint8Array;
+    transactions: Uint8Array[];
 }
 
 export type ParsedProtocolSpecificsForCurrency<C extends Currency> =
