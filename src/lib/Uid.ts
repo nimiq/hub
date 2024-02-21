@@ -1,6 +1,6 @@
 /**
  * The UID is used for the purpose of tracking Fastspot swap limits per user. It is generated from
- * two deterministic values. The keyId of an account and its first NIM address, wich are always the same.
+ * two deterministic values. The keyId of an account and its first NIM address, which are always the same.
  *
  * The `keyId` is never passed to outside the Hub, so can be seen as a secret value. This way
  * it is impossible for anyone who gets access to the UID alone to determine the user's address.

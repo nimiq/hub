@@ -108,7 +108,7 @@ export default class RpcApi {
         ]);
 
         this._router.beforeEach((to: Route, from: Route, next: (arg?: string | false | Route) => void) => {
-            // There is an intial redirect from '/' to '/' which does not need to be handled at all.
+            // There is an initial redirect from '/' to '/' which does not need to be handled at all.
             if (to.name === REQUEST_ERROR || (to.path === '/' && from.path === '/')) {
                 next();
                 return;
@@ -138,7 +138,7 @@ export default class RpcApi {
         });
 
         this._router.afterEach((to: Route, from: Route) => {
-            // There is an intial redirect from '/' to '/' which does not need to be handled at all.
+            // There is an initial redirect from '/' to '/' which does not need to be handled at all.
             if (to.path === '/' && from.path === '/') {
                 return;
             }

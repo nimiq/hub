@@ -130,7 +130,7 @@ export default class CheckoutServerApi {
             return {
                 time: Date.now(),
 
-                // Change these to true and PAID for simulating a successfull payment
+                // Change these to true and PAID for simulating a successful payment
                 payment_accepted: false,
                 payment_state: PaymentState.NOT_FOUND,
             };

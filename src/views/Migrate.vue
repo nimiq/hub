@@ -232,7 +232,7 @@ export default class Migrate extends Vue {
 
         this.status = this.$t('Storing your new accounts...') as string;
         // For the wallet ID derivation to work, the ID derivation and storing of new wallets needs
-        // to happen serially, e.g. synchroneous.
+        // to happen serially, e.g. synchronous.
         const walletInfos: WalletInfo[] = [];
         for (const keyInfo of legacyAccounts) {
             const accountInfo = this.legacyKeyInfoObject2AccountInfo(keyInfo);
