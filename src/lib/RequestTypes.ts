@@ -160,6 +160,8 @@ export interface ParsedSignPolygonTransactionRequest extends ParsedBasicRequest,
     permit?: {
         tokenNonce: number,
     };
+    amount?: number;
+    senderLabel?: string;
 }
 
 /**

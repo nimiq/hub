@@ -624,6 +624,17 @@ export interface SignPolygonTransactionRequest extends BasicRequest, RelayReques
     permit?: {
         tokenNonce: number,
     };
+
+    /**
+     * The amount of USDC to transfer. Required when calling the contract
+     * methods 'redeem' and 'redeemWithSecretInData' for HTLCs.
+     */
+    amount?: number;
+    /**
+     * The label of the sending address. Required when calling the contract
+     * methods 'redeem' and 'redeemWithSecretInData' for HTLCs.
+     */
+    senderLabel?: string;
 }
 
 export interface SignedPolygonTransaction {
