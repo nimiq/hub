@@ -3,12 +3,12 @@
 # BlockchainShay <Shaylish@live.nl>, 2020
 # Jim <jimvendrig10@gmail.com>, 2021
 # Daniel, 2021
-# Sören Schwert <hello@soerenschwert.de>, 2021
 # Stefan, 2023
+# Sören Schwert <hello@soerenschwert.de>, 2024
 # 
 msgid ""
 msgstr ""
-"Last-Translator: Stefan, 2023\n"
+"Last-Translator: Sören Schwert <hello@soerenschwert.de>, 2024\n"
 "Language-Team: Dutch (https://app.transifex.com/nimiq-foundation/teams/110181/nl/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: nl\n"
@@ -236,8 +236,8 @@ msgstr "BTC netwerkkosten"
 
 #: src/views/CashlinkCreate.vue:20
 msgid ""
-"By adding a transation fee, you can influence how fast your transaction will"
-" be processed."
+"By adding a transaction fee, you can influence how fast your transaction "
+"will be processed."
 msgstr ""
 "Door een transactievergoeding toe te voegen kan je de snelheid van je "
 "transactie beïnvloeden. "

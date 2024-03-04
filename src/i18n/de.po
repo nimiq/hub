@@ -5,13 +5,13 @@
 # Sven <sven@nimiq.com>, 2021
 # Redexe <timo.niehoff@yahoo.de>, 2021
 # Huriye <huriyegoek@gmx.de>, 2021
-# Sören Schwert <hello@soerenschwert.de>, 2021
 # Michael <jiggaaa20@gmail.com>, 2023
 # Daniel, 2023
+# Sören Schwert <hello@soerenschwert.de>, 2024
 # 
 msgid ""
 msgstr ""
-"Last-Translator: Daniel, 2023\n"
+"Last-Translator: Sören Schwert <hello@soerenschwert.de>, 2024\n"
 "Language-Team: German (https://app.transifex.com/nimiq-foundation/teams/110181/de/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: de\n"
@@ -239,8 +239,8 @@ msgstr "BTC-Netzwerkgebühren"
 
 #: src/views/CashlinkCreate.vue:20
 msgid ""
-"By adding a transation fee, you can influence how fast your transaction will"
-" be processed."
+"By adding a transaction fee, you can influence how fast your transaction "
+"will be processed."
 msgstr ""
 "Indem du eine Transaktionsgebühr hinzufügst, kannst du beeinflussen, wie "
 "schnell deine Transaktion verarbeitet wird."

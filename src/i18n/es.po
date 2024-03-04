@@ -1,12 +1,12 @@
 # 
 # Translators:
-# Sören Schwert <hello@soerenschwert.de>, 2021
 # Daniel, 2023
 # Ricardo Barquero Carranza <richy@nimiq.com>, 2023
+# Sören Schwert <hello@soerenschwert.de>, 2024
 # 
 msgid ""
 msgstr ""
-"Last-Translator: Ricardo Barquero Carranza <richy@nimiq.com>, 2023\n"
+"Last-Translator: Sören Schwert <hello@soerenschwert.de>, 2024\n"
 "Language-Team: Spanish (https://app.transifex.com/nimiq-foundation/teams/110181/es/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: es\n"
@@ -236,8 +236,8 @@ msgstr "Cuota de red de BTC"
 
 #: src/views/CashlinkCreate.vue:20
 msgid ""
-"By adding a transation fee, you can influence how fast your transaction will"
-" be processed."
+"By adding a transaction fee, you can influence how fast your transaction "
+"will be processed."
 msgstr ""
 "Al agregar una cuota de transacción, puede influenciar que tan rápido se "
 "procesará su transacción"

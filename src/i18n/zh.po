@@ -1,13 +1,13 @@
 # 
 # Translators:
 # Daniel, 2020
-# Sören Schwert <hello@soerenschwert.de>, 2021
 # Sven <sven@nimiq.com>, 2022
 # Sam, 2023
+# Sören Schwert <hello@soerenschwert.de>, 2024
 # 
 msgid ""
 msgstr ""
-"Last-Translator: Sam, 2023\n"
+"Last-Translator: Sören Schwert <hello@soerenschwert.de>, 2024\n"
 "Language-Team: Chinese (https://app.transifex.com/nimiq-foundation/teams/110181/zh/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: zh\n"
@@ -235,8 +235,8 @@ msgstr "比特币网络费用"
 
 #: src/views/CashlinkCreate.vue:20
 msgid ""
-"By adding a transation fee, you can influence how fast your transaction will"
-" be processed."
+"By adding a transaction fee, you can influence how fast your transaction "
+"will be processed."
 msgstr "通过添加交易费用，你可以提高交易的处理速度"
 
 #: src/views/CashlinkManage.vue:11 src/views/Checkout.vue:206

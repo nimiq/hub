@@ -3,12 +3,12 @@
 # Talleyrand, 2020
 # Daniel, 2020
 # Matheo <matheo@nimiq.com>, 2023
-# Robinson BARAIS, 2023
-# Sören Schwert <hello@soerenschwert.de>, 2023
+# Robinson BARAIS, 2024
+# Sören Schwert <hello@soerenschwert.de>, 2024
 # 
 msgid ""
 msgstr ""
-"Last-Translator: Sören Schwert <hello@soerenschwert.de>, 2023\n"
+"Last-Translator: Sören Schwert <hello@soerenschwert.de>, 2024\n"
 "Language-Team: French (https://app.transifex.com/nimiq-foundation/teams/110181/fr/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: fr\n"
@@ -209,7 +209,7 @@ msgstr "Bitcoin activé"
 
 #: src/views/SetupSwapSuccess.vue:627
 msgid "Bitcoin HTLC invalid: {error}"
-msgstr ""
+msgstr "HTLC Bitcoin invalide : {error}"
 
 #: src/views/AddVestingContract.vue:36
 msgid "Blocks/Step:"
@@ -237,8 +237,8 @@ msgstr "Frais de réseau BTC"
 
 #: src/views/CashlinkCreate.vue:20
 msgid ""
-"By adding a transation fee, you can influence how fast your transaction will"
-" be processed."
+"By adding a transaction fee, you can influence how fast your transaction "
+"will be processed."
 msgstr ""
 "En ajoutant des frais de transaction, vous pouvez influencer à quelle "
 "vitesse la transaction sera traitée."
@@ -550,7 +550,7 @@ msgstr "Échec de la récupération des adresses"
 
 #: src/views/SetupSwapSuccess.vue:616
 msgid "Fetching Bitcoin HTLC..."
-msgstr ""
+msgstr "Récupération du contrat HTLC Bitcoin..."
 
 #: src/views/AddVestingContract.vue:16
 msgid "Fetching contract information..."
@@ -1243,6 +1243,7 @@ msgstr "Les adresses utilisées sans solde peuvent avoir été manquées."
 #: src/views/SetupSwapSuccess.vue:370
 msgid "Value mismatch (expected {expected} sats, found {found} sats)"
 msgstr ""
+"Inadéquation de la valeur (attendue {expected} sats, trouvée {found} sats)"
 
 #: src/views/SignTransactionLedger.vue:31
 msgid "Verify Payment"

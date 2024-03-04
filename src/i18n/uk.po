@@ -2,12 +2,12 @@
 # Translators:
 # Daniel, 2021
 # Petro M <petro.matsyburka@outlook.com>, 2021
-# Sören Schwert <hello@soerenschwert.de>, 2021
-# Oleksandr Turchyn <oleksandr.turchyn@outlook.com>, 2023
+# Oleksandr Turchyn <oleksandr.turchyn@outlook.com>, 2024
+# Sören Schwert <hello@soerenschwert.de>, 2024
 # 
 msgid ""
 msgstr ""
-"Last-Translator: Oleksandr Turchyn <oleksandr.turchyn@outlook.com>, 2023\n"
+"Last-Translator: Sören Schwert <hello@soerenschwert.de>, 2024\n"
 "Language-Team: Ukrainian (https://app.transifex.com/nimiq-foundation/teams/110181/uk/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: uk\n"
@@ -15,7 +15,7 @@ msgstr ""
 
 #: src/views/ChooseAddress.vue:14
 msgid "{appName} is asking for an account to use."
-msgstr ""
+msgstr "{appName} запитує рахунок для використання."
 
 #: src/views/ChooseAddress.vue:7
 msgid "{appName} is asking for an address to use."
@@ -48,6 +48,8 @@ msgstr "503 Сервіс недоступний - будь ласка спроб
 #: src/views/OnboardingSelector.vue:152
 msgid "A 100% free and self-custodial web wallet for NIM, BTC and USDC."
 msgstr ""
+"100% безкоштовний веб-гаманець для NIM, BTC та USDC з функцією "
+"самозбереження."
 
 #: src/views/ExportSuccess.vue:60
 msgid "Account backed up!"
@@ -207,7 +209,7 @@ msgstr "Біткоїн активовано"
 
 #: src/views/SetupSwapSuccess.vue:627
 msgid "Bitcoin HTLC invalid: {error}"
-msgstr ""
+msgstr "Bitcoin HTLC невірний: {error}"
 
 #: src/views/AddVestingContract.vue:36
 msgid "Blocks/Step:"
@@ -235,8 +237,8 @@ msgstr "Комісія BTC мережі"
 
 #: src/views/CashlinkCreate.vue:20
 msgid ""
-"By adding a transation fee, you can influence how fast your transaction will"
-" be processed."
+"By adding a transaction fee, you can influence how fast your transaction "
+"will be processed."
 msgstr "Ви можете вплинути на швидкість обробки переказу, додавши комісію."
 
 #: src/views/CashlinkManage.vue:11 src/views/Checkout.vue:206
@@ -294,7 +296,7 @@ msgstr "Виберіть нову адресу"
 
 #: src/views/ChooseAddress.vue:12
 msgid "Choose an Account"
-msgstr ""
+msgstr "Оберіть рахунок"
 
 #: src/views/CashlinkReceive.vue:64 src/views/ChooseAddress.vue:18
 #: src/views/ChooseAddress.vue:5
@@ -327,7 +329,7 @@ msgstr "Виберіть відправника"
 
 #: src/views/ChooseAddress.vue:20
 msgid "Choose which Nimiq address to use."
-msgstr ""
+msgstr "Виберіть, яку адресу Nimiq використовувати."
 
 #: src/views/CashlinkReceive.vue:297
 msgid "Claim Cashlink"
@@ -545,7 +547,7 @@ msgstr "Не вдалося отримати адреси"
 
 #: src/views/SetupSwapSuccess.vue:616
 msgid "Fetching Bitcoin HTLC..."
-msgstr ""
+msgstr "Отримання Bitcoin HTLC..."
 
 #: src/views/AddVestingContract.vue:16
 msgid "Fetching contract information..."
@@ -700,7 +702,7 @@ msgstr "Файл-ключ збережено!"
 
 #: src/views/ChooseAddress.vue:67
 msgid "Login to another account"
-msgstr ""
+msgstr "Увійти до іншого рахунку"
 
 #: src/views/CashlinkReceive.vue:91
 msgid "Login to existing account"
@@ -1226,7 +1228,7 @@ msgstr "Адреси з нульовим балансом можуть не ві
 
 #: src/views/SetupSwapSuccess.vue:370
 msgid "Value mismatch (expected {expected} sats, found {found} sats)"
-msgstr ""
+msgstr "Невідповідність значень (очікувалося {expected}, знайдено {found})"
 
 #: src/views/SignTransactionLedger.vue:31
 msgid "Verify Payment"
@@ -1241,6 +1243,8 @@ msgid ""
 "Wallet successfully\n"
 "created"
 msgstr ""
+"Гаманець успішно\n"
+"створено"
 
 #: src/views/LoginSuccess.vue:211
 msgid "Welcome back! | Your Accounts are ready."
@@ -1248,7 +1252,7 @@ msgstr "З поверненням! | Ваш рахунок готовий."
 
 #: src/views/OnboardingSelector.vue:139
 msgid "Welcome to the Nimiq Wallet"
-msgstr ""
+msgstr "Ласкаво просимо до гаманця Nimiq"
 
 #: src/CashlinkApp.vue:9
 msgid "What is Nimiq?"

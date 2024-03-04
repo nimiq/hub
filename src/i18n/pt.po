@@ -1,10 +1,11 @@
 # 
 # Translators:
 # Inês Marques Gomes, 2023
+# Sören Schwert <hello@soerenschwert.de>, 2024
 # 
 msgid ""
 msgstr ""
-"Last-Translator: Inês Marques Gomes, 2023\n"
+"Last-Translator: Sören Schwert <hello@soerenschwert.de>, 2024\n"
 "Language-Team: Portuguese (https://app.transifex.com/nimiq-foundation/teams/110181/pt/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: pt\n"
@@ -232,8 +233,8 @@ msgstr "taxa de rede BTC"
 
 #: src/views/CashlinkCreate.vue:20
 msgid ""
-"By adding a transation fee, you can influence how fast your transaction will"
-" be processed."
+"By adding a transaction fee, you can influence how fast your transaction "
+"will be processed."
 msgstr ""
 "Ao adicionar uma taxa de transação, pode influenciar a rapidez que a sua "
 "transação vai ser processada."

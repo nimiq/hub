@@ -228,7 +228,7 @@ msgid "BTC network fee"
 msgstr ""
 
 #: src/views/CashlinkCreate.vue:20
-msgid "By adding a transation fee, you can influence how fast your transaction will be processed."
+msgid "By adding a transaction fee, you can influence how fast your transaction will be processed."
 msgstr ""
 
 #: src/views/CashlinkManage.vue:11

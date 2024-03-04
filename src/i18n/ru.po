@@ -4,12 +4,12 @@
 # Vad <vjuruss@gmail.com>, 2021
 # Oscar_6, 2021
 # Пётр Павлович, 2021
-# Sören Schwert <hello@soerenschwert.de>, 2021
 # Alexander Ivanov <saiv46.dev+transifex@gmail.com>, 2023
+# Sören Schwert <hello@soerenschwert.de>, 2024
 # 
 msgid ""
 msgstr ""
-"Last-Translator: Alexander Ivanov <saiv46.dev+transifex@gmail.com>, 2023\n"
+"Last-Translator: Sören Schwert <hello@soerenschwert.de>, 2024\n"
 "Language-Team: Russian (https://app.transifex.com/nimiq-foundation/teams/110181/ru/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: ru\n"
@@ -237,8 +237,8 @@ msgstr "Комиссия сети BTC"
 
 #: src/views/CashlinkCreate.vue:20
 msgid ""
-"By adding a transation fee, you can influence how fast your transaction will"
-" be processed."
+"By adding a transaction fee, you can influence how fast your transaction "
+"will be processed."
 msgstr "Увеличьте размер комиссии, чтобы ускорить исполнение транзакции."
 
 #: src/views/CashlinkManage.vue:11 src/views/Checkout.vue:206
