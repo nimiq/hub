@@ -55,7 +55,10 @@ export default class SignBtcTransactionSuccess extends Vue {
             return;
         }
 
-        if ('message' in this.keyguardResult && this.request.refund.type === SwapAsset.USDC) {
+        if (
+            'message' in this.keyguardResult
+            && (this.request.refund.type === SwapAsset.USDC_MATIC || this.request.refund.type === SwapAsset.USDC)
+        ) {
             const result: SignedPolygonTransaction = {
                 message: this.keyguardResult.message,
                 signature: this.keyguardResult.signature,

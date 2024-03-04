@@ -271,12 +271,12 @@ export interface BitcoinHtlcCreationInstructions {
 }
 
 export interface PolygonHtlcCreationInstructions extends RelayRequest {
-    type: 'USDC';
+    type: 'USDC_MATIC';
     /**
      * The sender's nonce in the token contract, required when calling the
-     * contract function `openWithApproval`.
+     * contract function `openWithPermit`.
      */
-    approval?: {
+    permit?: {
         tokenNonce: number,
     };
 }
@@ -312,7 +312,7 @@ export interface BitcoinHtlcSettlementInstructions {
 }
 
 export interface PolygonHtlcSettlementInstructions extends RelayRequest {
-    type: 'USDC';
+    type: 'USDC_MATIC';
     amount: number;
 }
 
@@ -360,7 +360,7 @@ export interface BitcoinHtlcRefundInstructions {
 }
 
 export interface PolygonHtlcRefundInstructions extends RelayRequest {
-    type: 'USDC';
+    type: 'USDC_MATIC' | 'USDC';
     amount: number;
 }
 

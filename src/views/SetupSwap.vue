@@ -11,7 +11,6 @@ import { WalletInfo } from '../lib/WalletInfo';
 import { BtcAddressInfo } from '../lib/bitcoin/BtcAddressInfo';
 import { SwapAsset } from '@nimiq/fastspot-api';
 import { DEFAULT_KEY_PATH } from '../lib/Constants';
-import { threadId } from 'worker_threads';
 
 // Import only types to avoid bundling of KeyguardClient in Ledger request if not required.
 // (But note that currently, the KeyguardClient is still always bundled in the RpcApi).
@@ -183,7 +182,7 @@ export default class SetupSwap extends BitcoinSyncBaseView {
             };
         }
 
-        if (this.request.fund.type === SwapAsset.USDC) {
+        if (this.request.fund.type === SwapAsset.USDC_MATIC) {
             const senderAddress = this.request.fund.request.from;
             const signer = this._account.polygonAddresses.find((ai) => ai.address === senderAddress);
 
@@ -192,11 +191,11 @@ export default class SetupSwap extends BitcoinSyncBaseView {
             }
 
             fundingInfo = {
-                type: SwapAsset.USDC,
+                type: SwapAsset.USDC_MATIC,
                 keyPath: signer.path,
                 request: this.request.fund.request,
                 relayData: this.request.fund.relayData,
-                approval: this.request.fund.approval,
+                permit: this.request.fund.permit,
             };
         }
 
@@ -255,7 +254,7 @@ export default class SetupSwap extends BitcoinSyncBaseView {
             };
         }
 
-        if (this.request.redeem.type === SwapAsset.USDC) {
+        if (this.request.redeem.type === SwapAsset.USDC_MATIC) {
             const senderAddress = this.request.redeem.request.from;
             const signer = this._account.polygonAddresses.find((ai) => ai.address === senderAddress);
 
@@ -264,7 +263,7 @@ export default class SetupSwap extends BitcoinSyncBaseView {
             }
 
             redeemingInfo = {
-                type: SwapAsset.USDC,
+                type: SwapAsset.USDC_MATIC,
                 keyPath: signer.path,
                 request: this.request.redeem.request,
                 relayData: this.request.redeem.relayData,

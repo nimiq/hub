@@ -122,7 +122,7 @@ export default class RefundSwap extends BitcoinSyncBaseView {
             this._signTransaction(signRequest);
         }
 
-        if (refundInfo.type === SwapAsset.USDC) {
+        if (refundInfo.type === SwapAsset.USDC_MATIC || refundInfo.type === SwapAsset.USDC) {
             const signer = account.polygonAddresses.find((ai) => ai.address === refundInfo.request.from);
 
             if (!signer) {

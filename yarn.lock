@@ -1520,10 +1520,10 @@
   dependencies:
     bitcoinjs-lib "^5.1.10"
 
-"@nimiq/fastspot-api@^1.7.0":
-  version "1.7.0"
-  resolved "https://registry.yarnpkg.com/@nimiq/fastspot-api/-/fastspot-api-1.7.0.tgz#eea496f4898139c51971f0b177583c6cc6b06611"
-  integrity sha512-k7vSjYdjAiAQar+21v681Zrp9kN9uHMUw7/dyG2D/IrXqNPHkD133JyrzxPBga+myW411SUR4mtdPQRPQm3d/A==
+"@nimiq/fastspot-api@^1.8.0":
+  version "1.8.0"
+  resolved "https://registry.yarnpkg.com/@nimiq/fastspot-api/-/fastspot-api-1.8.0.tgz#705a9e79e425c3e6536d8994fd0b39d88af1b268"
+  integrity sha512-qNkibJnxS8ndOn4tuy1m3lSNKybBYApo+wy1ajTKcQ0lHo3VfLY0sAJ+WRE7diVWCa7iumu6wsFVudyc3k8/NQ==
 
 "@nimiq/iqons@^1.5.2", "@nimiq/iqons@^1.6.0":
   version "1.6.0"
@@ -1541,10 +1541,10 @@
     btoa "^1.1.2"
     node-lmdb "^0.9.6"
 
-"@nimiq/keyguard-client@^1.5.4":
-  version "1.5.4"
-  resolved "https://registry.yarnpkg.com/@nimiq/keyguard-client/-/keyguard-client-1.5.4.tgz#0842386e1c36e2b203cae94ac62ffafd48ee79fa"
-  integrity sha512-E4sQys66nSPCiMRm2NN9ibm0RZCA9VbyP7UApSEBShBCHkCCSYp1zjfuPm9+v4VKwA7yw+pEDZ5RE7Mlf2OdIQ==
+"@nimiq/keyguard-client@^1.6.0":
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/@nimiq/keyguard-client/-/keyguard-client-1.6.0.tgz#e2cb22c1af5ae68dac74e5ead9e69aeaba2ffc8b"
+  integrity sha512-DDi+PycBtiTJO5Jwk3mHZzBP2FHARNCIR+9C6+uhw6kRlT/pcDS+vE6GeTGOwZsRGOtowLG3d9n43xWoPOOcGQ==
   dependencies:
     "@nimiq/core-web" "1.5.8"
     "@nimiq/rpc" "^0.3.0"

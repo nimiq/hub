@@ -84,7 +84,7 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
             case SwapAsset.BTC:
                 refundAddress = this.request.fund.refundAddress;
                 break;
-            case SwapAsset.USDC:
+            case SwapAsset.USDC_MATIC:
                 refundAddress = this.request.fund.request.from;
                 break;
             default: break;
@@ -98,7 +98,7 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
             case SwapAsset.BTC:
                 redeemAddress = this.request.redeem.output.address;
                 break;
-            case SwapAsset.USDC:
+            case SwapAsset.USDC_MATIC:
                 redeemAddress = this.request.redeem.request.from;
                 break;
             case SwapAsset.EUR:
@@ -228,8 +228,8 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
             }
         }
 
-        if (confirmedSwap.from.asset === SwapAsset.USDC || confirmedSwap.to.asset === SwapAsset.USDC) {
-            const contract = confirmedSwap.contracts[SwapAsset.USDC] as Contract<SwapAsset.USDC>;
+        if (confirmedSwap.from.asset === SwapAsset.USDC_MATIC || confirmedSwap.to.asset === SwapAsset.USDC_MATIC) {
+            const contract = confirmedSwap.contracts[SwapAsset.USDC_MATIC] as Contract<SwapAsset.USDC_MATIC>;
             const htlc = contract.htlc as UsdcHtlcDetails;
 
             const contractData = {
@@ -254,11 +254,11 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
             }
             hashRoot = contractData.hash;
 
-            if (confirmedSwap.from.asset === SwapAsset.USDC && refundAddress !== contractData.refundAddress) {
+            if (confirmedSwap.from.asset === SwapAsset.USDC_MATIC && refundAddress !== contractData.refundAddress) {
                 this.$rpc.reject(new Error('Unknown HTLC refund address'));
                 return;
             }
-            if (confirmedSwap.to.asset === SwapAsset.USDC && redeemAddress !== contractData.recipientAddress) {
+            if (confirmedSwap.to.asset === SwapAsset.USDC_MATIC && redeemAddress !== contractData.recipientAddress) {
                 this.$rpc.reject(new Error('Unknown HTLC redeem address'));
                 return;
             }
@@ -304,8 +304,8 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
             };
         }
 
-        if (this.request.fund.type === SwapAsset.USDC) {
-            const usdcHtlcData = confirmedSwap.contracts[SwapAsset.USDC]!.htlc as UsdcHtlcDetails;
+        if (this.request.fund.type === SwapAsset.USDC_MATIC) {
+            const usdcHtlcData = confirmedSwap.contracts[SwapAsset.USDC_MATIC]!.htlc as UsdcHtlcDetails;
 
             if (!usdcHtlcData.data) {
                 // TODO: Create data with ethersJS
@@ -313,7 +313,7 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
             }
 
             fundingHtlcInfo = {
-                type: SwapAsset.USDC,
+                type: SwapAsset.USDC_MATIC,
                 htlcData: usdcHtlcData.data,
             };
         }
@@ -409,12 +409,12 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
             }
         }
 
-        if (this.request.redeem.type === SwapAsset.USDC) {
-            const usdcContract = confirmedSwap.contracts[SwapAsset.USDC] as Contract<SwapAsset.USDC>;
+        if (this.request.redeem.type === SwapAsset.USDC_MATIC) {
+            const usdcContract = confirmedSwap.contracts[SwapAsset.USDC_MATIC] as Contract<SwapAsset.USDC_MATIC>;
             const usdcHtlcData = usdcContract.htlc as UsdcHtlcDetails;
 
             redeemingHtlcInfo = {
-                type: SwapAsset.USDC,
+                type: SwapAsset.USDC_MATIC,
                 hash: confirmedSwap.hash,
                 timeout: usdcContract.timeout,
                 htlcId: usdcHtlcData.address,

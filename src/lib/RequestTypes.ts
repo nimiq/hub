@@ -198,8 +198,8 @@ export interface ParsedSetupSwapRequest extends ParsedSimpleRequest {
         // htlcScript: Uint8Array,
         refundAddress: string,
     } | ({
-        type: SwapAsset.USDC,
-        approval?: {
+        type: SwapAsset.USDC_MATIC,
+        permit?: {
             tokenNonce: number,
         },
     } & RelayRequest) | {
@@ -232,7 +232,7 @@ export interface ParsedSetupSwapRequest extends ParsedSimpleRequest {
             value: number, // Sats
         };
     } | ({
-        type: SwapAsset.USDC,
+        type: SwapAsset.USDC_MATIC,
         amount: number,
     } & RelayRequest) | {
         type: SwapAsset.EUR,
@@ -311,7 +311,7 @@ export interface ParsedRefundSwapRequest extends ParsedSimpleRequest {
         };
         refundAddress: string; // My address, must be refund address of HTLC
     } | ({
-        type: SwapAsset.USDC,
+        type: SwapAsset.USDC_MATIC | SwapAsset.USDC,
         amount: number,
     } & RelayRequest);
 }
