@@ -120,7 +120,7 @@ export class PopupRequestBehavior extends RequestBehavior<BehaviorType.POPUP> {
             }
         } while (this.shouldRetryRequest);
 
-        // the code below should never be executed, unless unexpected things happend
+        // the code below should never be executed, unless unexpected things happened
         if (this.popup) this.popup.close();
         if (this.client) this.client.close();
         if ($overlay) this.removeOverlay($overlay);

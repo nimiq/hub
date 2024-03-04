@@ -185,7 +185,7 @@ export interface MultiCurrencyCheckoutRequest extends BasicRequest {
      */
     csrf?: string;
     /**
-     * The data to be included in the transaction. Ignored for `Currenct.BTC` and `Currency.ETH`.
+     * The data to be included in the transaction. Ignored for `Currency.BTC` and `Currency.ETH`.
      * @deprecated use NimiqDirectPaymentOptions.protocolSpecific.extraData instead.
      */
     extraData?: Bytes;

@@ -250,7 +250,7 @@ class CashlinkReceive extends Vue {
         try {
             await CashlinkStore.Instance.put(this.cashlink!);
         } catch (err) {
-            // Ignore, because cashlink has been claimed sucessfully and will show up in the Safe
+            // Ignore, because cashlink has been claimed successfully and will show up in the Safe
         }
 
         // Show success screen and redirect to Safe

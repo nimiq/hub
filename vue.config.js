@@ -46,7 +46,7 @@ const bitcoinJsIntegrityHash = `sha256-${createHash('sha256')
     .update(fs.readFileSync(path.join(__dirname, 'public/bitcoin/BitcoinJS.min.js')))
     .digest('base64')}`;
 
-// Accesible within client code via process.env.VUE_APP_BITCOIN_JS_INTEGRITY_HASH,
+// Accessible within client code via process.env.VUE_APP_BITCOIN_JS_INTEGRITY_HASH,
 // see https://cli.vuejs.org/guide/mode-and-env.html#using-env-variables-in-client-side-code
 process.env.VUE_APP_BITCOIN_JS_INTEGRITY_HASH = bitcoinJsIntegrityHash;
 

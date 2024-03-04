@@ -70,7 +70,7 @@ export default class SignMessage extends Vue {
         const walletInfo = this.findWallet(walletId);
         if (!walletInfo) {
             // We can also return an error here and when checking the address below,
-            // but it would enable malicous sites to query for stored walletIds and addresses.
+            // but it would enable malicious sites to query for stored walletIds and addresses.
             // Instead we quietly ignore any unavailable pre-set walletId and address and give
             // the user the option to chose as if it was not pre-set.
             this.showAccountSelector = true;

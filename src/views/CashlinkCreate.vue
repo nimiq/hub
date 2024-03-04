@@ -17,7 +17,7 @@
                         <SmallPage v-if="optionsOpened" class="overlay fee" key="fee">
                             <PageBody>
                                 <h1 class="nq-h1">{{ $t('Speed up your transaction') }}</h1>
-                                <p class="nq-text">{{ $t('By adding a transation fee, you can influence how fast your transaction will be processed.') }}</p>
+                                <p class="nq-text">{{ $t('By adding a transaction fee, you can influence how fast your transaction will be processed.') }}</p>
                                 <SelectBar name="fee" ref="fee" :options="constructor.FEE_OPTIONS" :selectedValue="feeLunaPerByte" @changed="updateFeePreview"/>
                                 <Amount :amount="feePreview" :minDecimals="0" :maxDecimals="5" />
                             </PageBody>
@@ -337,7 +337,7 @@ class CashlinkCreate extends Vue {
                 return acc;
             }, [] as Array<AccountInfo | ContractInfo>);
 
-            // Reduce userfriendly addresses from that
+            // Reduce user-friendly addresses from that
             addresses = accountsAndContracts.map((accountOrContract) => accountOrContract.userFriendlyAddress);
         } else {
             const wallet = this.findWalletByAddress(this.request.senderAddress.toUserFriendlyAddress(), true);
@@ -687,7 +687,7 @@ export default CashlinkCreate;
 
     /* these elements are too small to make a notable difference in the blurred background */
     .create-cashlink.blurred > .page-body >>> .arrow, /* arrow between the identicons */
-    .create-cashlink.blurred > .page-body hr, /* line seperating identicons and amount */
+    .create-cashlink.blurred > .page-body hr, /* line separating identicons and amount */
     .create-cashlink.blurred > .page-header >>> a , /* back button */
     .create-cashlink.blurred > .page-header >>> h1 > a { /* back button */
         opacity: 0;
