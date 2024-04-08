@@ -124,7 +124,7 @@ import {
     SmallPage,
     Tooltip,
 } from '@nimiq/vue-components';
-import { FiatApiSupportedCryptoCurrency, getExchangeRates } from '@nimiq/utils';
+import { FiatApiSupportedCryptoCurrency, getExchangeRates, setCoingeckoApiUrl } from '@nimiq/utils';
 
 @Component({components: {
     Account,
@@ -286,6 +286,7 @@ class CashlinkCreate extends Vue {
 
         if (this.request.fiatCurrency) {
             const fiatCurrency = this.request.fiatCurrency;
+            setCoingeckoApiUrl('https://nq-coingecko-proxy.deno.dev/api/v3');
             const refreshFiatRate = () => {
                 getExchangeRates([FiatApiSupportedCryptoCurrency.NIM], [fiatCurrency]).then((prices) => {
                     this.fiatRate = prices[FiatApiSupportedCryptoCurrency.NIM][fiatCurrency] || null;
