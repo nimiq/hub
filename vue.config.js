@@ -79,9 +79,7 @@ const configureWebpack = {
             },
             {
                 from: 'node_modules/@nimiq/albatross-wasm',
-                to({ context, absoluteFilename }) {
-                    return `./albatross-client/${path.relative(context, absoluteFilename)}`;
-                },
+                to: './albatross-client/',
             },
         ]}),
         new WriteFileWebpackPlugin(),
