@@ -6,7 +6,10 @@ export default {
     keyguardEndpoint: process.env.VUE_APP_KEYGUARD_URL,
     network: NETWORK_TEST,
     networkEndpoint: 'https://network.nimiq-testnet.com',
-    seedNodes: [process.env.VUE_APP_SEED_NODE_MULTIADDR],
+    seedNodes: [
+        process.env.VUE_APP_SEED_NODE_MULTIADDR,
+        '/dns4/faucet.pos.nimiq-testnet.com/tcp/8443/wss',
+    ],
     privilegedOrigins: [
         process.env.VUE_APP_WALLET_URL,
         process.env.VUE_APP_HUB_URL, // For testing with the deployed demos.html page
