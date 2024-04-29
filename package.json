@@ -20,7 +20,7 @@
         "i18n:sync": "yarn i18n:extract && yarn i18n:push ; yarn i18n:pull"
     },
     "dependencies": {
-        "@nimiq/albatross-wasm": "npm:@nimiq/core-web@next",
+        "@nimiq/albatross-wasm": "https://gitpkg.now.sh/nimiq/core-rs-albatross/web-client/dist?5c66ba9108ad53abde22c9e39056a1bad111cb6c",
         "@nimiq/browser-warning": "^1.1.1",
         "@nimiq/electrum-client": "https://github.com/nimiq/electrum-client#build",
         "@nimiq/fastspot-api": "^1.10.2",
