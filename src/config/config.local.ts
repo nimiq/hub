@@ -6,7 +6,10 @@ export default {
     keyguardEndpoint: window.location.protocol + '//' + window.location.hostname + ':8000/src',
     network: NETWORK_TEST,
     networkEndpoint: 'https://network.nimiq-testnet.com',
-    seedNodes: ['/dns4/seed1.pos.nimiq-testnet.com/tcp/8443/wss'],
+    seedNodes: [
+        '/dns4/seed1.pos.nimiq-testnet.com/tcp/8443/wss',
+        '/dns4/faucet.pos.nimiq-testnet.com/tcp/8443/wss',
+    ],
     privilegedOrigins: [ '*' ],
     redirectTarget: window.location.protocol + '//' + window.location.hostname + ':8080/demos.html',
     reportToSentry: false,
