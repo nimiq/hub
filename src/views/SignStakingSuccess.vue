@@ -10,11 +10,11 @@ export default class SignStakingSuccess extends Vue {
     @State private keyguardResult!: KeyguardClient.SignStakingResult[];
 
     private async mounted() {
-        const Albatross = await window.loadAlbatross();
+        const { Transaction } = await window.loadAlbatross();
 
         const result: SignedTransaction[] = this.keyguardResult.map((signedTransaction) => {
             const hex = bytesToHex(signedTransaction.transaction);
-            const tx = Albatross.Transaction.fromAny(hex);
+            const tx = Transaction.fromAny(hex);
             const plain = tx.toPlain();
 
             return {
