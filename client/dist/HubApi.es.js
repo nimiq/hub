@@ -14,7 +14,7 @@ var es = {
 };
 
 var fil = {
-	"popup-overlay": "Nag-bukas ang isang pop-up.\nMaaring i-click kahit saan para ibalik ito sa harap."
+	"popup-overlay": "Nag-bukas ang isang pop-up.\nMaaring pindutin kahit saan para ibalik ito sa harap."
 };
 
 var fr = {
@@ -116,9 +116,9 @@ class PopupRequestBehavior extends RequestBehavior {
         const $overlay = this.appendOverlay();
         do {
             this.shouldRetryRequest = false;
-            this.popup = this.createPopup(endpoint);
-            this.client = new PostMessageRpcClient(this.popup, origin);
             try {
+                this.popup = this.createPopup(endpoint);
+                this.client = new PostMessageRpcClient(this.popup, origin);
                 await this.client.init();
                 return await this.client.call(command, ...(await Promise.all(args)));
             }
@@ -130,12 +130,14 @@ class PopupRequestBehavior extends RequestBehavior {
                 if (!this.shouldRetryRequest) {
                     // Remove page overlay
                     this.removeOverlay($overlay);
-                    this.client.close();
-                    this.popup.close();
+                    if (this.client)
+                        this.client.close();
+                    if (this.popup)
+                        this.popup.close();
                 }
             }
         } while (this.shouldRetryRequest);
-        // the code below should never be executed, unless unexpected things happend
+        // the code below should never be executed, unless unexpected things happened
         if (this.popup)
             this.popup.close();
         if (this.client)
