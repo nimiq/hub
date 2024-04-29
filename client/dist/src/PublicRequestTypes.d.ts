@@ -51,14 +51,23 @@ export interface OnboardRequest extends BasicRequest {
 }
 export interface ChooseAddressRequest extends BasicRequest {
     returnBtcAddress?: boolean;
+    returnUsdcAddress?: boolean;
     minBalance?: number;
     disableContracts?: boolean;
     disableLegacyAccounts?: boolean;
     disableBip39Accounts?: boolean;
     disableLedgerAccounts?: boolean;
+    ui?: number;
 }
 export interface ChooseAddressResult extends Address {
     btcAddress?: string;
+    usdcAddress?: string;
+    meta: {
+        account: {
+            label: string;
+            color: string;
+        };
+    };
 }
 export interface SignTransactionRequest extends BasicRequest {
     sender: string;
@@ -141,7 +150,7 @@ export interface MultiCurrencyCheckoutRequest extends BasicRequest {
      */
     csrf?: string;
     /**
-     * The data to be included in the transaction. Ignored for `Currenct.BTC` and `Currency.ETH`.
+     * The data to be included in the transaction. Ignored for `Currency.BTC` and `Currency.ETH`.
      * @deprecated use NimiqDirectPaymentOptions.protocolSpecific.extraData instead.
      */
     extraData?: Bytes;
@@ -221,12 +230,12 @@ export interface BitcoinHtlcCreationInstructions {
     locktime?: number;
 }
 export interface PolygonHtlcCreationInstructions extends RelayRequest {
-    type: 'USDC';
+    type: 'USDC_MATIC';
     /**
      * The sender's nonce in the token contract, required when calling the
-     * contract function `openWithApproval`.
+     * contract function `openWithPermit`.
      */
-    approval?: {
+    permit?: {
         tokenNonce: number;
     };
 }
@@ -255,7 +264,7 @@ export interface BitcoinHtlcSettlementInstructions {
     };
 }
 export interface PolygonHtlcSettlementInstructions extends RelayRequest {
-    type: 'USDC';
+    type: 'USDC_MATIC';
     amount: number;
 }
 export interface EuroHtlcSettlementInstructions {
@@ -299,7 +308,7 @@ export interface BitcoinHtlcRefundInstructions {
     refundAddress: string;
 }
 export interface PolygonHtlcRefundInstructions extends RelayRequest {
-    type: 'USDC';
+    type: 'USDC_MATIC' | 'USDC';
     amount: number;
 }
 export declare type HtlcCreationInstructions = NimiqHtlcCreationInstructions | BitcoinHtlcCreationInstructions | PolygonHtlcCreationInstructions | EuroHtlcCreationInstructions;
@@ -332,7 +341,7 @@ export interface SetupSwapRequest extends SimpleRequest {
     };
     polygonAddresses?: Array<{
         address: string;
-        balance: number;
+        usdcBalance: number;
     }>;
     kyc?: {
         provider: 'TEN31 Pass';
@@ -500,11 +509,28 @@ export interface SignPolygonTransactionRequest extends BasicRequest, RelayReques
     recipientLabel?: string;
     /**
      * The sender's nonce in the token contract, required when calling the
-     * contract function `executeWithApproval`.
+     * contract function `swapWithApproval` for bridged USDC.e.
      */
     approval?: {
         tokenNonce: number;
     };
+    /**
+     * The sender's nonce in the token contract, required when calling the
+     * contract function `transferWithPermit` for native USDC.
+     */
+    permit?: {
+        tokenNonce: number;
+    };
+    /**
+     * The amount of USDC to transfer. Required when calling the contract
+     * methods 'redeem' and 'redeemWithSecretInData' for HTLCs.
+     */
+    amount?: number;
+    /**
+     * The label of the sending address. Required when calling the contract
+     * methods 'redeem' and 'redeemWithSecretInData' for HTLCs.
+     */
+    senderLabel?: string;
 }
 export interface SignedPolygonTransaction {
     message: Record<string, any>;
@@ -512,4 +538,4 @@ export interface SignedPolygonTransaction {
 }
 export declare type RpcRequest = SignTransactionRequest | SignStakingRequest | CreateCashlinkRequest | ManageCashlinkRequest | CheckoutRequest | BasicRequest | SimpleRequest | ChooseAddressRequest | OnboardRequest | RenameRequest | SignMessageRequest | ExportRequest | SignBtcTransactionRequest | AddBtcAddressesRequest | SignPolygonTransactionRequest | SetupSwapRequest | RefundSwapRequest;
 export declare type RpcResult = SignedTransaction | SignedTransaction[] | Account | Account[] | SimpleResult | ChooseAddressResult | Address | Cashlink | Cashlink[] | SignedMessage | ExportResult | SignedBtcTransaction | AddBtcAddressesResult | SignedPolygonTransaction | SetupSwapResult;
-export declare type ResultByRequestType<T> = T extends RequestType.RENAME ? Account : T extends RequestType.ONBOARD | RequestType.SIGNUP | RequestType.LOGIN | RequestType.MIGRATE | RequestType.LIST ? Account[] : T extends RequestType.LIST_CASHLINKS ? Cashlink[] : T extends RequestType.CHOOSE_ADDRESS | RequestType.ADD_ADDRESS ? Address : T extends RequestType.SIGN_TRANSACTION ? SignedTransaction : T extends RequestType.SIGN_STAKING ? SignedTransaction[] : T extends RequestType.CHECKOUT ? SignedTransaction | SimpleResult : T extends RequestType.SIGN_MESSAGE ? SignedMessage : T extends RequestType.LOGOUT | RequestType.CHANGE_PASSWORD ? SimpleResult : T extends RequestType.EXPORT ? ExportResult : T extends RequestType.CREATE_CASHLINK | RequestType.MANAGE_CASHLINK ? Cashlink : T extends RequestType.SIGN_BTC_TRANSACTION ? SignedBtcTransaction : T extends RequestType.SIGN_POLYGON_TRANSACTION ? SignedPolygonTransaction : T extends RequestType.ACTIVATE_BITCOIN ? Account : T extends RequestType.ACTIVATE_POLYGON ? Account : T extends RequestType.ADD_BTC_ADDRESSES ? AddBtcAddressesResult : T extends RequestType.SETUP_SWAP ? SetupSwapResult : never;
+export declare type ResultByRequestType<T> = T extends RequestType.RENAME ? Account : T extends RequestType.ONBOARD | RequestType.SIGNUP | RequestType.LOGIN | RequestType.MIGRATE | RequestType.LIST ? Account[] : T extends RequestType.LIST_CASHLINKS ? Cashlink[] : T extends RequestType.CHOOSE_ADDRESS ? ChooseAddressResult : T extends RequestType.ADD_ADDRESS ? Address : T extends RequestType.SIGN_TRANSACTION ? SignedTransaction : T extends RequestType.SIGN_STAKING ? SignedTransaction[] : T extends RequestType.CHECKOUT ? SignedTransaction | SimpleResult : T extends RequestType.SIGN_MESSAGE ? SignedMessage : T extends RequestType.LOGOUT | RequestType.CHANGE_PASSWORD ? SimpleResult : T extends RequestType.EXPORT ? ExportResult : T extends RequestType.CREATE_CASHLINK | RequestType.MANAGE_CASHLINK ? Cashlink : T extends RequestType.SIGN_BTC_TRANSACTION ? SignedBtcTransaction : T extends RequestType.SIGN_POLYGON_TRANSACTION ? SignedPolygonTransaction : T extends RequestType.ACTIVATE_BITCOIN ? Account : T extends RequestType.ACTIVATE_POLYGON ? Account : T extends RequestType.ADD_BTC_ADDRESSES ? AddBtcAddressesResult : T extends RequestType.SETUP_SWAP ? SetupSwapResult : never;
