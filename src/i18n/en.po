@@ -1215,7 +1215,7 @@ msgid "Vesting Contract"
 msgstr ""
 
 #: src/views/SignupLedger.vue:112
-#: src/views/SignupSuccess.vue:93
+#: src/views/SignupSuccess.vue:96
 msgid ""
 "Wallet successfully\n"
 "created"
