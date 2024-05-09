@@ -6,12 +6,12 @@
 # Redexe <timo.niehoff@yahoo.de>, 2021
 # Huriye <huriyegoek@gmx.de>, 2021
 # Michael <jiggaaa20@gmail.com>, 2023
-# Daniel, 2023
 # Sören Schwert <hello@soerenschwert.de>, 2024
+# Daniel, 2024
 # 
 msgid ""
 msgstr ""
-"Last-Translator: Sören Schwert <hello@soerenschwert.de>, 2024\n"
+"Last-Translator: Daniel, 2024\n"
 "Language-Team: German (https://app.transifex.com/nimiq-foundation/teams/110181/de/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: de\n"
@@ -319,12 +319,6 @@ msgstr "Wähle eine Adresse zum Signieren"
 msgid "Choose an Avatar"
 msgstr "Wähle einen Avatar"
 
-#: src/components/OnboardingMenu.vue:18
-msgid ""
-"Choose an Avatar.\n"
-"Set a password. Done."
-msgstr "Wähle einen Avatar. Erstelle ein Passwort. Fertig."
-
 #: src/views/CashlinkCreate.vue:10
 msgid "Choose Sender"
 msgstr "Wähle Absender"
@@ -421,8 +415,8 @@ msgid "Connect your Ledger Device"
 msgstr "Dein Ledger-Gerät verbinden"
 
 #: src/components/OnboardingMenu.vue:6
-msgid "Connect your Ledger Nano S or Nano X."
-msgstr "Verbinde deinen Ledger Nano S oder Nano X."
+msgid "Connect your Ledger hardware wallet."
+msgstr "Verbinde deine Ledger-Hardware-Wallet."
 
 #: src/views/Migrate.vue:143 src/views/Migrate.vue:285
 msgid "Connecting to Keyguard..."
@@ -967,6 +961,10 @@ msgstr "Sende Transaktion"
 #: src/views/CashlinkManage.vue:190 src/views/CheckoutTransmission.vue:75
 msgid "Sending transaction..."
 msgstr "Sende Transaktion..."
+
+#: src/components/OnboardingMenu.vue:18
+msgid "Set a password. Get the Login file. Done."
+msgstr "Wähle ein Passwort. Erhalte eine Login-Datei. Fertig."
 
 #: src/views/CashlinkCreate.vue:25
 msgid "Set fee"

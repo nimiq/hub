@@ -309,12 +309,6 @@ msgstr ""
 msgid "Choose an Avatar"
 msgstr ""
 
-#: src/components/OnboardingMenu.vue:18
-msgid ""
-"Choose an Avatar.\n"
-"Set a password. Done."
-msgstr ""
-
 #: src/views/CashlinkCreate.vue:10
 msgid "Choose Sender"
 msgstr ""
@@ -411,7 +405,7 @@ msgid "Connect your Ledger Device"
 msgstr ""
 
 #: src/components/OnboardingMenu.vue:6
-msgid "Connect your Ledger Nano S or Nano X."
+msgid "Connect your Ledger hardware wallet."
 msgstr ""
 
 #: src/views/Migrate.vue:143
@@ -946,6 +940,10 @@ msgstr ""
 #: src/views/CashlinkManage.vue:190
 #: src/views/CheckoutTransmission.vue:75
 msgid "Sending transaction..."
+msgstr ""
+
+#: src/components/OnboardingMenu.vue:18
+msgid "Set a password. Get the Login file. Done."
 msgstr ""
 
 #: src/views/CashlinkCreate.vue:25

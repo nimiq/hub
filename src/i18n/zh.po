@@ -313,14 +313,6 @@ msgstr "选择一个地址进行签名"
 msgid "Choose an Avatar"
 msgstr "选择一个头像"
 
-#: src/components/OnboardingMenu.vue:18
-msgid ""
-"Choose an Avatar.\n"
-"Set a password. Done."
-msgstr ""
-"选择一个头像，\n"
-"设置密码，完成！"
-
 #: src/views/CashlinkCreate.vue:10
 msgid "Choose Sender"
 msgstr "选择发件人"
@@ -415,8 +407,8 @@ msgid "Connect your Ledger Device"
 msgstr "连接你的Ledger装置"
 
 #: src/components/OnboardingMenu.vue:6
-msgid "Connect your Ledger Nano S or Nano X."
-msgstr "连接你的Ledger Nano S或Nano X"
+msgid "Connect your Ledger hardware wallet."
+msgstr ""
 
 #: src/views/Migrate.vue:143 src/views/Migrate.vue:285
 msgid "Connecting to Keyguard..."
@@ -945,6 +937,10 @@ msgstr "发送交易"
 #: src/views/CashlinkManage.vue:190 src/views/CheckoutTransmission.vue:75
 msgid "Sending transaction..."
 msgstr "发送交易..."
+
+#: src/components/OnboardingMenu.vue:18
+msgid "Set a password. Get the Login file. Done."
+msgstr ""
 
 #: src/views/CashlinkCreate.vue:25
 msgid "Set fee"

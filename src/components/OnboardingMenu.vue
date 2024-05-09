@@ -3,7 +3,7 @@
         <button class="choice ledger" tabindex="3" @click="ledger">
             <LedgerIcon/>
             <h2 class="nq-h2">{{ $t('Connect Ledger') }}</h2>
-            <p class="text">{{ $t('Connect your Ledger Nano\u00a0S or Nano\u00a0X.') }}</p>
+            <p class="text">{{ $t('Connect your Ledger hardware wallet.') }}</p>
         </button>
 
         <button class="choice login" tabindex="2" @click="login">
@@ -15,7 +15,7 @@
         <button class="choice signup" tabindex="1" @click="signup">
             <PlusCircleIcon/>
             <h2 class="nq-h2">{{ $t('Create Account') }}</h2>
-            <p class="text">{{ $t('Choose an Avatar.\nSet a password. Done.') }}</p>
+            <p class="text">{{ $t('Set a password. Get the Login file. Done.') }}</p>
         </button>
 
         <div class="background-container">
