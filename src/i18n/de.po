@@ -19,7 +19,7 @@ msgstr ""
 
 #: src/views/ChooseAddress.vue:14
 msgid "{appName} is asking for an account to use."
-msgstr ""
+msgstr "Welches Konto möchtest du in {appName} verwenden?"
 
 #: src/views/ChooseAddress.vue:7
 msgid "{appName} is asking for an address to use."
@@ -52,6 +52,8 @@ msgstr "503 Service nicht verfügbar - bitte versuche es später nochmal"
 #: src/views/OnboardingSelector.vue:152
 msgid "A 100% free and self-custodial web wallet for NIM, BTC and USDC."
 msgstr ""
+"Eine 100% konstenlose Web-Wallet für NIM, BTC und USDC, bei der allein du "
+"Zugriff auf deine Coins hast."
 
 #: src/views/ExportSuccess.vue:60
 msgid "Account backed up!"
@@ -211,7 +213,7 @@ msgstr "Bitcoin aktiviert"
 
 #: src/views/SetupSwapSuccess.vue:627
 msgid "Bitcoin HTLC invalid: {error}"
-msgstr ""
+msgstr "Bitcoin-HTLC ungültig: {error}"
 
 #: src/views/AddVestingContract.vue:36
 msgid "Blocks/Step:"
@@ -300,7 +302,7 @@ msgstr "Wähle eine neue Adresse"
 
 #: src/views/ChooseAddress.vue:12
 msgid "Choose an Account"
-msgstr ""
+msgstr "Wähle ein Konto"
 
 #: src/views/CashlinkReceive.vue:64 src/views/ChooseAddress.vue:18
 #: src/views/ChooseAddress.vue:5
@@ -325,7 +327,7 @@ msgstr "Wähle Absender"
 
 #: src/views/ChooseAddress.vue:20
 msgid "Choose which Nimiq address to use."
-msgstr ""
+msgstr "Wähle, welche Nimiq-Adresse du verwenden möchtest."
 
 #: src/views/CashlinkReceive.vue:297
 msgid "Claim Cashlink"
@@ -546,7 +548,7 @@ msgstr "Laden der Adressen fehlgeschlagen"
 
 #: src/views/SetupSwapSuccess.vue:616
 msgid "Fetching Bitcoin HTLC..."
-msgstr ""
+msgstr "Rufe den Bitcoin-HTLC ab..."
 
 #: src/views/AddVestingContract.vue:16
 msgid "Fetching contract information..."
@@ -704,7 +706,7 @@ msgstr "Login Datei gespeichert!"
 
 #: src/views/ChooseAddress.vue:67
 msgid "Login to another account"
-msgstr ""
+msgstr "Melde dich in einem anderen Konto an"
 
 #: src/views/CashlinkReceive.vue:91
 msgid "Login to existing account"
@@ -1242,7 +1244,7 @@ msgstr "Verwendete Adressen ohne Guthaben wurden möglicherweise übersprungen."
 
 #: src/views/SetupSwapSuccess.vue:370
 msgid "Value mismatch (expected {expected} sats, found {found} sats)"
-msgstr ""
+msgstr "Unerwarteter Betrag ({found} sats statt {expected} sats)"
 
 #: src/views/SignTransactionLedger.vue:31
 msgid "Verify Payment"
@@ -1256,7 +1258,7 @@ msgstr "Vesting-Vertrag"
 msgid ""
 "Wallet successfully\n"
 "created"
-msgstr ""
+msgstr "Wallet erfolgreich eingerichtet"
 
 #: src/views/LoginSuccess.vue:211
 msgid "Welcome back! | Your Accounts are ready."
@@ -1264,7 +1266,7 @@ msgstr "Willkommen zurück! | Deine Konten sind bereit."
 
 #: src/views/OnboardingSelector.vue:139
 msgid "Welcome to the Nimiq Wallet"
-msgstr ""
+msgstr "Willkommen in der Nimiq Wallet"
 
 #: src/CashlinkApp.vue:9
 msgid "What is Nimiq?"

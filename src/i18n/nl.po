@@ -1,14 +1,14 @@
 # 
 # Translators:
 # BlockchainShay <Shaylish@live.nl>, 2020
+# Daniel, 2020
 # Jim <jimvendrig10@gmail.com>, 2021
-# Daniel, 2021
-# Stefan, 2023
 # Sören Schwert <hello@soerenschwert.de>, 2024
+# Stefan, 2024
 # 
 msgid ""
 msgstr ""
-"Last-Translator: Sören Schwert <hello@soerenschwert.de>, 2024\n"
+"Last-Translator: Stefan, 2024\n"
 "Language-Team: Dutch (https://app.transifex.com/nimiq-foundation/teams/110181/nl/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: nl\n"
@@ -16,7 +16,7 @@ msgstr ""
 
 #: src/views/ChooseAddress.vue:14
 msgid "{appName} is asking for an account to use."
-msgstr ""
+msgstr "{appName} vraagt om een account om te gebruiken."
 
 #: src/views/ChooseAddress.vue:7
 msgid "{appName} is asking for an address to use."
@@ -48,7 +48,7 @@ msgstr "503 Service niet beschikbaar - probeer het later opnieuw"
 
 #: src/views/OnboardingSelector.vue:152
 msgid "A 100% free and self-custodial web wallet for NIM, BTC and USDC."
-msgstr ""
+msgstr "Een 100% gratis en self-custodial wallet voor NIM, BTC en USDC."
 
 #: src/views/ExportSuccess.vue:60
 msgid "Account backed up!"
@@ -208,7 +208,7 @@ msgstr "Bitcoin geactiveerd"
 
 #: src/views/SetupSwapSuccess.vue:627
 msgid "Bitcoin HTLC invalid: {error}"
-msgstr ""
+msgstr "Ongeldige Bitcoin HTLC: {error}"
 
 #: src/views/AddVestingContract.vue:36
 msgid "Blocks/Step:"
@@ -297,7 +297,7 @@ msgstr "Kies een nieuw adres"
 
 #: src/views/ChooseAddress.vue:12
 msgid "Choose an Account"
-msgstr ""
+msgstr "Kies een account"
 
 #: src/views/CashlinkReceive.vue:64 src/views/ChooseAddress.vue:18
 #: src/views/ChooseAddress.vue:5
@@ -322,7 +322,7 @@ msgstr "Kies verzender"
 
 #: src/views/ChooseAddress.vue:20
 msgid "Choose which Nimiq address to use."
-msgstr ""
+msgstr "Kies welk Nimiq adres je wilt gebruiken."
 
 #: src/views/CashlinkReceive.vue:297
 msgid "Claim Cashlink"
@@ -541,7 +541,7 @@ msgstr "Ophalen van adressen is mislukt"
 
 #: src/views/SetupSwapSuccess.vue:616
 msgid "Fetching Bitcoin HTLC..."
-msgstr ""
+msgstr "Bitcoin HTLC ophalen..."
 
 #: src/views/AddVestingContract.vue:16
 msgid "Fetching contract information..."
@@ -699,7 +699,7 @@ msgstr "Login File opgeslagen!"
 
 #: src/views/ChooseAddress.vue:67
 msgid "Login to another account"
-msgstr ""
+msgstr "Login op een ander account"
 
 #: src/views/CashlinkReceive.vue:91
 msgid "Login to existing account"
@@ -1238,6 +1238,7 @@ msgstr "Gebruikte adressen zonder balans kunnen niet aanwezig zijn."
 #: src/views/SetupSwapSuccess.vue:370
 msgid "Value mismatch (expected {expected} sats, found {found} sats)"
 msgstr ""
+"Waarde komt niet overeen (verwachtte {expected} sats, gevonden {found} sats)"
 
 #: src/views/SignTransactionLedger.vue:31
 msgid "Verify Payment"
@@ -1252,6 +1253,8 @@ msgid ""
 "Wallet successfully\n"
 "created"
 msgstr ""
+"Wallet succesvol\n"
+"aangemaakt"
 
 #: src/views/LoginSuccess.vue:211
 msgid "Welcome back! | Your Accounts are ready."
@@ -1259,7 +1262,7 @@ msgstr "Welkom terug! | Je rekeningen staan klaar."
 
 #: src/views/OnboardingSelector.vue:139
 msgid "Welcome to the Nimiq Wallet"
-msgstr ""
+msgstr "Welkom in de Nimiq Wallet"
 
 #: src/CashlinkApp.vue:9
 msgid "What is Nimiq?"
