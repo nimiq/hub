@@ -10,7 +10,7 @@
   "types": "types/index.d.ts",
   "dependencies": {
     "@nimiq/core-web": "^1.6.1",
-    "@nimiq/fastspot-api": "^1.8.0",
+    "@nimiq/fastspot-api": "https://github.com/nimiq/fastspot-api#3a7c4b68529d7ec9ba8955a399412eaae946c528",
     "@nimiq/rpc": "^0.4.0",
     "@nimiq/utils": "^0.5.0",
     "@opengsn/common": "^2.2.5",
