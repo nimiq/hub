@@ -208,6 +208,15 @@ export default class SetupSwap extends BitcoinSyncBaseView {
             };
         }
 
+        if (this.request.fund.type === SwapAsset.CRC) {
+            fundingInfo = {
+                type: SwapAsset.CRC,
+                amount: this.request.fund.value,
+                fee: this.request.fund.fee,
+                recipientLabel: this.request.fund.recipientLabel,
+            };
+        }
+
         if (this.request.redeem.type === SwapAsset.NIM) {
             const signer = this._account.findSignerForAddress(this.request.redeem.recipient);
             if (!signer) {
