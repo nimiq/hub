@@ -1975,9 +1975,9 @@
     glob-to-regexp "^0.3.0"
 
 "@nimiq/albatross-wasm@npm:@nimiq/core@next":
-  version "2.0.0-next.22.0"
-  resolved "https://registry.yarnpkg.com/@nimiq/core/-/core-2.0.0-next.22.0.tgz#23d591f37cac65a59f88e2ae4c4d051c43350236"
-  integrity sha512-d7ot5m1cciP1+PYv3hglHoZ+kKhUBNqCqByTaTYlCMeUQTnGJ8g2JowBtr3Lz1SOlyHN0QPqiLSd5K+CyiImcQ==
+  version "2.0.0-next.22.3"
+  resolved "https://registry.yarnpkg.com/@nimiq/core/-/core-2.0.0-next.22.3.tgz#d46143a0eaf2ab8ee8067014f6a9c15840f44eee"
+  integrity sha512-sYMZiTwpmg3U32DJ3VefZJL/Y/+bwC0aulK7k+/w0IMNRyBn4ajb4BkJGTq9HEsxbK/KDjm+Y4gpM7afjNS4Sg==
   dependencies:
     comlink "^4.4.1"
     websocket "^1.0.34"
