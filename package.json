@@ -30,7 +30,7 @@
         "@nimiq/oasis-api": "^1.1.1",
         "@nimiq/rpc": "^0.4.1",
         "@nimiq/style": "^0.8.2",
-        "@nimiq/utils": "^0.5.2",
+        "@nimiq/utils": "^0.11.1",
         "@nimiq/vue-components": "https://github.com/nimiq/vue-components#build/hub",
         "@opengsn/common": "^2.2.5",
         "@sentry/vue": "^6.0.0",

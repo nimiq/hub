@@ -101,7 +101,7 @@ import { RequestType } from '../../client/PublicRequestTypes';
 import { NetworkClient } from '@nimiq/network-client';
 import { WalletStore } from '../lib/WalletStore';
 import { WalletInfo } from '../lib/WalletInfo';
-import { WalletType } from '../lib/Constants';
+import { WalletType, FIAT_API_PROVIDER } from '../lib/Constants';
 import { ContractInfo, VestingContractInfo } from '../lib/ContractInfo';
 import { i18n } from '../i18n/i18n-setup';
 import KeyguardClient from '@nimiq/keyguard-client';
@@ -124,7 +124,7 @@ import {
     SmallPage,
     Tooltip,
 } from '@nimiq/vue-components';
-import { FiatApiSupportedCryptoCurrency, getExchangeRates, setCoingeckoApiUrl } from '@nimiq/utils';
+import { CryptoCurrency, getExchangeRates } from '@nimiq/utils';
 
 @Component({components: {
     Account,
@@ -286,10 +286,13 @@ class CashlinkCreate extends Vue {
 
         if (this.request.fiatCurrency) {
             const fiatCurrency = this.request.fiatCurrency;
-            setCoingeckoApiUrl('https://nq-coingecko-proxy.deno.dev/api/v3');
             const refreshFiatRate = () => {
-                getExchangeRates([FiatApiSupportedCryptoCurrency.NIM], [fiatCurrency]).then((prices) => {
-                    this.fiatRate = prices[FiatApiSupportedCryptoCurrency.NIM][fiatCurrency] || null;
+                getExchangeRates(
+                    [CryptoCurrency.NIM],
+                    [fiatCurrency],
+                    FIAT_API_PROVIDER,
+                ).then((prices) => {
+                    this.fiatRate = prices[CryptoCurrency.NIM][fiatCurrency] || null;
                 }).catch((error) => {
                     this.$captureException!(error);
                     console.error(error);

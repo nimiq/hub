@@ -38,6 +38,7 @@
                             amount: request.fiatAmount,
                             currency: request.fiatCurrency,
                         } : null"
+                        :fiatApiProvider="constructor.FIAT_API_PROVIDER"
                         :vendorMarkup="paymentOptions.vendorMarkup"
                         :networkFee="paymentOptions.fee"
                         :address="typeof paymentOptions.protocolSpecific.recipient === 'object'

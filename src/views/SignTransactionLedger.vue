@@ -14,6 +14,7 @@
                     amount: request.fiatAmount,
                     currency: request.fiatCurrency,
                 } : null"
+                :fiatApiProvider="constructor.FIAT_API_PROVIDER"
                 :vendorMarkup="checkoutPaymentOptions.vendorMarkup"
                 :networkFee="checkoutPaymentOptions.fee"
                 :address="checkoutPaymentOptions.protocolSpecific.recipient
@@ -135,7 +136,13 @@ import { State as RpcState } from '@nimiq/rpc';
 import { ParsedCreateCashlinkRequest, ParsedCheckoutRequest, ParsedSignTransactionRequest } from '../lib/RequestTypes';
 import { Currency, RequestType } from '../../client/PublicRequestTypes';
 import { WalletInfo } from '../lib/WalletInfo';
-import { CASHLINK_FUNDING_DATA, ERROR_CANCELED, ERROR_REQUEST_TIMED_OUT, TX_VALIDITY_WINDOW } from '../lib/Constants';
+import {
+    CASHLINK_FUNDING_DATA,
+    ERROR_CANCELED,
+    ERROR_REQUEST_TIMED_OUT,
+    TX_VALIDITY_WINDOW,
+    FIAT_API_PROVIDER,
+} from '../lib/Constants';
 import { ParsedNimiqDirectPaymentOptions } from '../lib/paymentOptions/NimiqPaymentOptions';
 import { Utf8Tools } from '@nimiq/utils';
 import Config from 'config';
@@ -174,6 +181,7 @@ export default class SignTransactionLedger extends Vue {
         FINISHED: 'finished',
         EXPIRED: 'expired',
     };
+    private static readonly FIAT_API_PROVIDER = FIAT_API_PROVIDER;
 
     @Static private rpcState!: RpcState;
     @Static private request!: ParsedSignTransactionRequest | ParsedCheckoutRequest | ParsedCreateCashlinkRequest;

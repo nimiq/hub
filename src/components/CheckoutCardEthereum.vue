@@ -1,5 +1,5 @@
 <script lang="ts">
-import { createEthereumRequestLink } from '@nimiq/utils';
+import { Currency, createEthereumRequestLink } from '@nimiq/utils';
 import { ParsedEtherDirectPaymentOptions } from '../lib/paymentOptions/EtherPaymentOptions';
 import CheckoutCardExternal from './CheckoutCardExternal.vue';
 import { FormattableNumber } from '@nimiq/utils';
@@ -13,7 +13,7 @@ export default class CheckoutCardEthereum
         const paymentOptions = this.paymentOptions;
         const protocolSpecific = paymentOptions.protocolSpecific;
         if (!protocolSpecific.recipient) return '#';
-        return createEthereumRequestLink(protocolSpecific.recipient, {
+        return createEthereumRequestLink(protocolSpecific.recipient, Currency.ETH, {
             amount: paymentOptions.amount,
             gasLimit: protocolSpecific.gasLimit,
             gasPrice: protocolSpecific.gasPrice,

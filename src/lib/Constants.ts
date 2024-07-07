@@ -2,6 +2,8 @@
  * Sorted by context and alphabetically
  */
 
+import { Provider as FiatApiProvider } from '@nimiq/utils';
+
 export { AccountType, WalletType } from '../../client/PublicRequestTypes';
 
 // Addresses
@@ -40,3 +42,6 @@ export const MOBILE_MAX_WIDTH = 600; // px
 
 // History state
 export const HISTORY_KEY_SELECTED_CURRENCY = 'selected-currency';
+
+// Fiat Api
+export const FIAT_API_PROVIDER = FiatApiProvider.CoinGecko;

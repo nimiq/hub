@@ -6,12 +6,14 @@ import { Static } from '../lib/StaticStore';
 import StatusScreen from './StatusScreen.vue';
 import CheckoutServerApi, { GetStateResponse } from '../lib/CheckoutServerApi';
 import { PaymentInfoLine } from '@nimiq/vue-components';
-import { ERROR_REQUEST_TIMED_OUT, HISTORY_KEY_SELECTED_CURRENCY } from '../lib/Constants';
+import { ERROR_REQUEST_TIMED_OUT, HISTORY_KEY_SELECTED_CURRENCY, FIAT_API_PROVIDER } from '../lib/Constants';
 import { PaymentState } from '../../client/PublicRequestTypes';
 
 export default class CheckoutCard<
     Parsed extends AvailableParsedPaymentOptions,
 > extends Vue {
+    private static readonly FIAT_API_PROVIDER = FIAT_API_PROVIDER; // used in templates of child classes
+
     protected optionTimeout: number = -1;
 
     @Prop(Object) protected paymentOptions!: Parsed;

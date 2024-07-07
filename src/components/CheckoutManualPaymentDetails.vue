@@ -12,6 +12,7 @@
                 amount: request.fiatAmount,
                 currency: request.fiatCurrency,
             } : null"
+            :fiatApiProvider="constructor.FIAT_API_PROVIDER"
             :vendorMarkup="paymentOptions.vendorMarkup"
             :networkFee="paymentOptions.fee"
             :address="typeof paymentOptions.protocolSpecific.recipient === 'object'
@@ -52,6 +53,7 @@ import {
     PaymentInfoLine,
 } from '@nimiq/vue-components';
 import { State as RpcState } from '@nimiq/rpc';
+import { FIAT_API_PROVIDER } from '../lib/Constants';
 import { Static } from '../lib/StaticStore';
 import { AvailableParsedPaymentOptions, ParsedCheckoutRequest } from '../lib/RequestTypes';
 import CheckoutServerApi from '../lib/CheckoutServerApi';
@@ -66,6 +68,8 @@ import CheckoutServerApi from '../lib/CheckoutServerApi';
 class CheckoutManualPaymentDetails<
     Parsed extends AvailableParsedPaymentOptions,
 > extends Vue {
+    private static readonly FIAT_API_PROVIDER = FIAT_API_PROVIDER;
+
     @Prop({
         type: Array,
         required: true,
