@@ -249,6 +249,11 @@ module.exports = {
             }]);
     },
 
+    // Add dependencies here which should be transpiled by babel-loader via @vue/cli-plugin-babel. This is needed as our
+    // Webpack version is too old to process some modern js syntax in the listed dependencies.
+    // When changing to Webpack 5, some or all can probably be removed.
+    transpileDependencies: [],
+
     // For iOS debugging in BrowserStack, BrowserStack's localhost tunnel bs-local.com needs to be used, see
     // https://www.browserstack.com/docs/live/local-testing/ios-troubleshooting-guide. However, on bs-local.com features
     // only available on https like crypto.subtle or service workers do not work unless served as https. The Wallet also
