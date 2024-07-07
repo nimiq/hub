@@ -13,6 +13,7 @@
         "test": "yarn test:unit",
         "pr": "yarn lint && yarn build:ci && yarn test && cd client && yarn lint && yarn build",
         "postinstall": "patch-package && cd client && yarn",
+        "update-browserslist": "yarn update-browserslist-db",
         "i18n:extract": "node ./node_modules/webpack-i18n-tools/index.js ./src/i18n/en.po",
         "i18n:pull": "tx pull --all --force --minimum-perc 90",
         "i18n:push": "tx push --source",
