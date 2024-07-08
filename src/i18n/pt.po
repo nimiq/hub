@@ -408,7 +408,7 @@ msgstr "Conectar o teu dispositivo Ledger"
 
 #: src/components/OnboardingMenu.vue:6
 msgid "Connect your Ledger hardware wallet."
-msgstr ""
+msgstr "Conecta a tua hardware wallet ao Ledger."
 
 #: src/views/Migrate.vue:143 src/views/Migrate.vue:285
 msgid "Connecting to Keyguard..."
@@ -953,7 +953,7 @@ msgstr "A enviar transação..."
 
 #: src/components/OnboardingMenu.vue:18
 msgid "Set a password. Get the Login file. Done."
-msgstr ""
+msgstr "Define uma palavra passe. Recebe o Ficheiro de Login. Feito."
 
 #: src/views/CashlinkCreate.vue:25
 msgid "Set fee"

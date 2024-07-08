@@ -3,12 +3,12 @@
 # Talleyrand, 2020
 # Daniel, 2020
 # Matheo <matheo@nimiq.com>, 2023
-# Robinson BARAIS, 2024
 # Sören Schwert <hello@soerenschwert.de>, 2024
+# Robinson BARAIS, 2024
 # 
 msgid ""
 msgstr ""
-"Last-Translator: Sören Schwert <hello@soerenschwert.de>, 2024\n"
+"Last-Translator: Robinson BARAIS, 2024\n"
 "Language-Team: French (https://app.transifex.com/nimiq-foundation/teams/110181/fr/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: fr\n"
@@ -413,7 +413,7 @@ msgstr "Connectez votre Ledger"
 
 #: src/components/OnboardingMenu.vue:6
 msgid "Connect your Ledger hardware wallet."
-msgstr ""
+msgstr "Connectez votre wallet physique Ledger."
 
 #: src/views/Migrate.vue:143 src/views/Migrate.vue:285
 msgid "Connecting to Keyguard..."
@@ -960,7 +960,7 @@ msgstr "Envoi de la transaction en cours..."
 
 #: src/components/OnboardingMenu.vue:18
 msgid "Set a password. Get the Login file. Done."
-msgstr ""
+msgstr "Définir un mot de passe. Obtenir le fichier de connexion. Terminé."
 
 #: src/views/CashlinkCreate.vue:25
 msgid "Set fee"
