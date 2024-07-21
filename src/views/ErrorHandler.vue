@@ -28,6 +28,7 @@ export default class ErrorHandler extends Vue {
 
     @Getter private findWalletByAddress!: (address: string, includeContracts: boolean) => WalletInfo | undefined;
     @Getter private findWalletByKeyId!: (keyId: string) => WalletInfo | undefined;
+    @Getter private findWalletByPolygonAddress!: (address: string) => WalletInfo | undefined;
 
     public async created() {
         if (!(this.keyguardResult instanceof Error)) return;
@@ -108,11 +109,10 @@ export default class ErrorHandler extends Vue {
     }
 
     private async getWalletForThisRequest(): Promise<WalletInfo | undefined | null> {
-        if ((this.request as ParsedSimpleRequest).walletId) {
+        if ('walletId' in this.request) {
             // The walletId is already in the Hub request
-            return WalletStore.Instance.get((this.request as ParsedSimpleRequest).walletId);
-        } else if ((this.request as ParsedSignTransactionRequest).sender
-            || (this.request as ParsedSignMessageRequest).signer) {
+            return WalletStore.Instance.get(this.request.walletId);
+        } else if ('sender' in this.request || 'signer' in this.request) {
             // Hub request was SignTransaction/Checkout/SignMessage.
             // The wallet can be found by the (optional) sender/signer address in the Hub request
             const messageSigner = (this.request as ParsedSignMessageRequest).signer;
@@ -125,6 +125,8 @@ export default class ErrorHandler extends Vue {
             || this.request.kind === RequestType.SIGN_MESSAGE) {
             // The keyId of the selected address is in the keyguardRequest
             return this.findWalletByKeyId((this.keyguardRequest as KeyguardClient.SignMessageRequest).keyId);
+        } else if ('request' in this.request) {
+            return this.findWalletByPolygonAddress(this.request.request.from);
         } else {
             // This really should not happen.
             // Executing this code would mean i.e. a CreateRequest fired KEY_NOT_FOUND which it does not throw
