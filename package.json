@@ -22,7 +22,7 @@
     "dependencies": {
         "@nimiq/browser-warning": "^1.1.1",
         "@nimiq/electrum-client": "https://github.com/nimiq/electrum-client#build",
-        "@nimiq/fastspot-api": "^1.8.0",
+        "@nimiq/fastspot-api": "https://github.com/nimiq/fastspot-api#3a7c4b68529d7ec9ba8955a399412eaae946c528",
         "@nimiq/iqons": "^1.5.2",
         "@nimiq/keyguard-client": "^1.6.0",
         "@nimiq/ledger-api": "^2.3.0",
