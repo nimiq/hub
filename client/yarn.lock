@@ -235,10 +235,9 @@
     comlink "^4.4.1"
     websocket "^1.0.34"
 
-"@nimiq/fastspot-api@^1.10.2":
-  version "1.10.2"
-  resolved "https://registry.yarnpkg.com/@nimiq/fastspot-api/-/fastspot-api-1.10.2.tgz#ae2cbe5b41359875bece9ce0957209ca1b486d21"
-  integrity sha512-rPy3DhWlqTOj4k9/YMS2mizjR1rLsQzqWzMnJ+xDEGprgb6/jhDBZs/CW+jONccRQWrvuyBYTrrxdLgn3imKjQ==
+"@nimiq/fastspot-api@https://github.com/nimiq/fastspot-api#3a7c4b68529d7ec9ba8955a399412eaae946c528":
+  version "1.9.0"
+  resolved "https://github.com/nimiq/fastspot-api#3a7c4b68529d7ec9ba8955a399412eaae946c528"
 
 "@nimiq/rpc@^0.4.0":
   version "0.4.0"
