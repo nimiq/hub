@@ -74,7 +74,9 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
 
         // Confirm swap to Fastspot and get contract details
         this.state = this.State.FETCHING_SWAP_DATA;
+        console.log('Confirming swap', this.request.swapId, Config.fastspot.apiEndpoint);
         initFastspotApi(Config.fastspot.apiEndpoint, Config.fastspot.apiKey);
+        console.log('Fastspot API initialized');
 
         let refundAddress = '';
         switch (this.request.fund.type) {
@@ -101,6 +103,7 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
             case SwapAsset.USDC_MATIC:
                 redeemAddress = this.request.redeem.request.from;
                 break;
+            case SwapAsset.CRC:
             case SwapAsset.EUR:
                 // Assemble recipient object
                 redeemAddress = {
@@ -118,16 +121,19 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
         let confirmedSwap: Swap;
         try {
             const uid = this.request.kyc ? this.request.kyc.userId : await walletInfo.getUid();
+            console.log('UID:', uid);
             const s3GrantToken = this.request.kyc ? this.request.kyc.s3GrantToken : undefined;
+            console.log('S3 grant token:', s3GrantToken);
             let oasisClearingAuthorizationToken: string | undefined;
             if (this.request.kyc && this.request.kyc.oasisGrantToken && this.request.fund.type === SwapAsset.EUR) {
                 initOasisApi(Config.oasis.apiEndpoint);
                 oasisClearingAuthorizationToken = await exchangeAuthorizationToken(this.request.kyc.oasisGrantToken);
             }
 
+            console.log('Confirming swap', this.request.swapId, uid, refundAddress, redeemAddress, s3GrantToken, oasisClearingAuthorizationToken);
             confirmedSwap = await confirmSwap({
                 id: this.request.swapId,
-            } as PreSwap, this.request.redeem.type === SwapAsset.EUR ? {
+            } as PreSwap, this.request.redeem.type === SwapAsset.EUR || this.request.redeem.type === SwapAsset.CRC ? {
                 asset: this.request.redeem.type,
                 ...(redeemAddress as { kty: string, crv: string, x: string }),
             } : {
@@ -144,6 +150,7 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
                 } else if (error.message.includes('503')) {
                     throw new Error(this.$t('503 Service unavailable - please try again later') as string);
                 } else {
+                    console.error('oh no');
                     throw error;
                 }
             });
@@ -276,6 +283,18 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
             // TODO: Validate correct recipient public key
         }
 
+        if (confirmedSwap.from.asset === SwapAsset.CRC || confirmedSwap.to.asset === SwapAsset.CRC) {
+            // TODO: Fetch contract from OASIS API and compare instead of trusting Fastspot
+
+            if (hashRoot && confirmedSwap.hash !== hashRoot) {
+                this.$rpc.reject(new Error('HTLC hash roots do not match'));
+                return;
+            }
+            hashRoot = confirmedSwap.hash;
+
+            // TODO: Validate correct recipient public key
+        }
+
         if (!hashRoot) {
             this.$rpc.reject(new Error('UNEXPECTED: Could not extract swap hash from contracts'));
             return;
@@ -327,6 +346,18 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
                 hash: hashRoot,
                 timeout: eurContract.timeout,
                 htlcId: eurHtlcData.address,
+            };
+        }
+
+        if (this.request.fund.type === SwapAsset.CRC) {
+            const crcContract = confirmedSwap.contracts[SwapAsset.CRC] as Contract<SwapAsset.CRC>;
+            const crcHtlcData = crcContract.htlc;
+
+            fundingHtlcInfo = {
+                type: SwapAsset.CRC,
+                hash: hashRoot,
+                timeout: crcContract.timeout,
+                htlcId: crcHtlcData.address,
             };
         }
 
@@ -433,6 +464,18 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
             };
         }
 
+        if (this.request.redeem.type === SwapAsset.CRC) {
+            const crcContract = confirmedSwap.contracts[SwapAsset.CRC] as Contract<SwapAsset.CRC>;
+            const crcHtlcData = crcContract.htlc;
+
+            redeemingHtlcInfo = {
+                type: SwapAsset.CRC,
+                hash: hashRoot,
+                timeout: crcContract.timeout,
+                htlcId: crcHtlcData.address,
+            };
+        }
+
         if (this._isDestroyed) return;
 
         if (!fundingHtlcInfo || !redeemingHtlcInfo) {
@@ -448,6 +491,7 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
         let polygonTransaction: SignedPolygonTransaction | undefined;
         let refundTransaction: string | undefined;
         let euroSettlement: string | undefined;
+        let crcSettlement: string | undefined;
         try {
             const signingResult = await this._signSwapTransactions({
                 fund: fundingHtlcInfo,
@@ -459,6 +503,7 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
                 nimProxy: nimiqProxyTransaction,
                 btc: bitcoinTransaction,
                 eur: euroSettlement,
+                crc: crcSettlement,
                 usdc: polygonTransaction,
                 refundTx: refundTransaction,
             } = signingResult);
@@ -505,6 +550,7 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
             btc: bitcoinTransaction,
             usdc: polygonTransaction,
             eur: euroSettlement,
+            crc: crcSettlement,
             refundTx: refundTransaction,
         };
 
@@ -522,10 +568,10 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
 
     protected _getOasisRecipientPublicKey() {
         // note that this method gets overwritten for SetupSwapLedger
-        if (!this.keyguardResult || !this.keyguardResult.eurPubKey) {
+        if (!this.keyguardResult || !this.keyguardResult.fiatPubKey) {
             throw new Error('Cannot find OASIS recipient public key');
         }
-        return Nimiq.BufferUtils.toBase64Url(Nimiq.BufferUtils.fromHex(this.keyguardResult.eurPubKey))
+        return Nimiq.BufferUtils.toBase64Url(Nimiq.BufferUtils.fromHex(this.keyguardResult.fiatPubKey))
             .replace(/\.*$/, ''); // OASIS cannot handle trailing filler dots
     }
 
@@ -535,6 +581,7 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
         btc?: SignedBtcTransaction,
         usdc?: SignedPolygonTransaction,
         eur?: string,
+        crc?: string,
         refundTx?: string,
     } | null> {
         // Note that this method gets overwritten for SetupSwapLedger
@@ -550,6 +597,7 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
             btc: bitcoinTransaction,
             usdc: polygonTransaction,
             eur: euroSettlement,
+            crc: crcSettlement,
             refundTx,
         } = await client.signSwapTransactions(keyguardRequest);
 
@@ -584,6 +632,7 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
             } : undefined,
             usdc: polygonTransaction,
             eur: euroSettlement,
+            crc: crcSettlement,
             refundTx,
         };
     }

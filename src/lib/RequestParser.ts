@@ -527,11 +527,11 @@ export class RequestParser {
 
                 // Validate and parse only what we use in the Hub
 
-                if (!['NIM', 'BTC', 'USDC_MATIC', 'EUR'].includes(setupSwapRequest.fund.type)) {
+                if (!['NIM', 'BTC', 'USDC_MATIC', 'EUR', 'CRC'].includes(setupSwapRequest.fund.type)) {
                     throw new Error('Funding type is not supported');
                 }
 
-                if (!['NIM', 'BTC', 'USDC_MATIC', 'EUR'].includes(setupSwapRequest.redeem.type)) {
+                if (!['NIM', 'BTC', 'USDC_MATIC', 'EUR', 'CRC'].includes(setupSwapRequest.redeem.type)) {
                     throw new Error('Redeeming type is not supported');
                 }
 
@@ -631,7 +631,10 @@ export class RequestParser {
                     } : setupSwapRequest.fund.type === 'USDC_MATIC' ? {
                         ...setupSwapRequest.fund,
                         type: SwapAsset[setupSwapRequest.fund.type],
-                    } : { // EUR
+                    } : setupSwapRequest.fund.type === 'EUR' ? {
+                        ...setupSwapRequest.fund,
+                        type: SwapAsset[setupSwapRequest.fund.type],
+                    } : { // CRC
                         ...setupSwapRequest.fund,
                         type: SwapAsset[setupSwapRequest.fund.type],
                     },
@@ -649,7 +652,10 @@ export class RequestParser {
                     } : setupSwapRequest.redeem.type === 'USDC_MATIC' ? {
                         ...setupSwapRequest.redeem,
                         type: SwapAsset[setupSwapRequest.redeem.type],
-                    } : { // EUR
+                    } : setupSwapRequest.redeem.type === 'EUR' ? {
+                        ...setupSwapRequest.redeem,
+                        type: SwapAsset[setupSwapRequest.redeem.type],
+                    } : { // CRC
                         ...setupSwapRequest.redeem,
                         type: SwapAsset[setupSwapRequest.redeem.type],
                     },

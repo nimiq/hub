@@ -208,6 +208,15 @@ export default class SetupSwap extends BitcoinSyncBaseView {
             };
         }
 
+        if (this.request.fund.type === SwapAsset.CRC) {
+            fundingInfo = {
+                type: SwapAsset.CRC,
+                amount: this.request.fund.value,
+                fee: this.request.fund.fee,
+                senderLabel: this.request.fund.senderLabel,
+            };
+        }
+
         if (this.request.redeem.type === SwapAsset.NIM) {
             const signer = this._account.findSignerForAddress(this.request.redeem.recipient);
             if (!signer) {
@@ -279,6 +288,17 @@ export default class SetupSwap extends BitcoinSyncBaseView {
                 amount: this.request.redeem.value,
                 fee: this.request.redeem.fee,
                 bankLabel: this.request.redeem.bankLabel,
+            };
+        }
+
+        if (this.request.redeem.type === SwapAsset.CRC) {
+            redeemingInfo = {
+                type: SwapAsset.CRC,
+                keyPath: DEFAULT_KEY_PATH,
+                settlement: this.request.redeem.settlement,
+                amount: this.request.redeem.value,
+                fee: this.request.redeem.fee,
+                phoneNumber: this.request.redeem.phoneNumber,
             };
         }
 
