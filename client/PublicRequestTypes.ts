@@ -309,7 +309,7 @@ export interface SinpeMovilHtlcCreationInstructions {
     type: 'CRC';
     value: number; // CRC cents
     fee: number; // CRC cents
-    recipientLabel?: string;
+    senderLabel?: string;
 }
 
 export interface NimiqHtlcSettlementInstructions {
