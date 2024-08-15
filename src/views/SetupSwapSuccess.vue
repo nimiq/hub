@@ -74,9 +74,7 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
 
         // Confirm swap to Fastspot and get contract details
         this.state = this.State.FETCHING_SWAP_DATA;
-        console.log('Confirming swap', this.request.swapId, Config.fastspot.apiEndpoint);
         initFastspotApi(Config.fastspot.apiEndpoint, Config.fastspot.apiKey);
-        console.log('Fastspot API initialized');
 
         let refundAddress = '';
         switch (this.request.fund.type) {
@@ -130,7 +128,6 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
                 oasisClearingAuthorizationToken = await exchangeAuthorizationToken(this.request.kyc.oasisGrantToken);
             }
 
-            console.log('Confirming swap', this.request.swapId, uid, refundAddress, redeemAddress, s3GrantToken, oasisClearingAuthorizationToken);
             confirmedSwap = await confirmSwap({
                 id: this.request.swapId,
             } as PreSwap, this.request.redeem.type === SwapAsset.EUR || this.request.redeem.type === SwapAsset.CRC ? {
@@ -150,7 +147,6 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
                 } else if (error.message.includes('503')) {
                     throw new Error(this.$t('503 Service unavailable - please try again later') as string);
                 } else {
-                    console.error('oh no');
                     throw error;
                 }
             });

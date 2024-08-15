@@ -1978,11 +1978,6 @@
   resolved "https://registry.yarnpkg.com/@nimiq/core-web/-/core-web-1.5.3.tgz#f0a4de59394f210f2c2d9cda8ee35c716847d40e"
   integrity sha512-W66SS9n3ygYgD52r1GJr1WtYYOkcZsqdtMmDCEwDvkrmeARnHs2sAvj77Wt4PQG8JA7GwK5svIJr6rGccCaekw==
 
-"@nimiq/core-web@1.5.8":
-  version "1.5.8"
-  resolved "https://registry.yarnpkg.com/@nimiq/core-web/-/core-web-1.5.8.tgz#da8abef84c6d293cbb9ca495a77f08daa08886b9"
-  integrity sha512-MNpFbGZetz2eZcHtJVa5tpmLjPf65mTcJBRQkOHS8kWE+f+Z++hdnwWUBQCEAph4oC6bsE5JSuU7VpwcogN7+w==
-
 "@nimiq/core-web@^1.6.0", "@nimiq/core-web@^1.6.1":
   version "1.6.1"
   resolved "https://registry.yarnpkg.com/@nimiq/core-web/-/core-web-1.6.1.tgz#97cb5b43b257c7f6f6808ef603e9bf686377241f"
@@ -2032,14 +2027,9 @@
     btoa "^1.1.2"
     node-lmdb "^0.9.6"
 
-"@nimiq/keyguard-client@^1.6.0":
-  version "1.6.0"
-  resolved "https://registry.yarnpkg.com/@nimiq/keyguard-client/-/keyguard-client-1.6.0.tgz#e2cb22c1af5ae68dac74e5ead9e69aeaba2ffc8b"
-  integrity sha512-DDi+PycBtiTJO5Jwk3mHZzBP2FHARNCIR+9C6+uhw6kRlT/pcDS+vE6GeTGOwZsRGOtowLG3d9n43xWoPOOcGQ==
-  dependencies:
-    "@nimiq/core-web" "1.5.8"
-    "@nimiq/rpc" "^0.3.0"
-    "@opengsn/common" "^2.2.5"
+"@nimiq/keyguard-client@https://gitpkg.vercel.app/nimiq/keyguard?scripts.postinstall=cd%20client%20%26%26%20.%2Fbuild-gitpkg.sh&cb20092889dd9fd815366531e7400b8cd60c51af":
+  version "1.0.0"
+  resolved "https://gitpkg.vercel.app/nimiq/keyguard?scripts.postinstall=cd%20client%20%26%26%20.%2Fbuild-gitpkg.sh&cb20092889dd9fd815366531e7400b8cd60c51af#2842141e0ac29c7eafee2748616924f5052c8f59"
 
 "@nimiq/ledger-api@^2.3.0":
   version "2.3.0"
@@ -2084,11 +2074,6 @@
   version "0.1.5"
   resolved "https://registry.yarnpkg.com/@nimiq/rpc/-/rpc-0.1.5.tgz#53919b0a3a9abcdfebee0e865f4c663f72a8b8c2"
   integrity sha512-oTRThXzpbQOY8jz8h+2KXucWzW40nVfYBWROKXKBrSozhTG0nR+rzCbEm4ZyTC26b4RnmB6y4nYabUXi7gNWcA==
-
-"@nimiq/rpc@^0.3.0":
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/@nimiq/rpc/-/rpc-0.3.0.tgz#654c05acccc193b7d79fb09b2faf2114945ff872"
-  integrity sha512-je7fv+wP4nLEgTcZwu3FaGre22qkZ9AYGbStglVaJAxOH+3CvDnnOIa9IjGFaCEhtRQKRaQEvFqa5vN4IVnH+Q==
 
 "@nimiq/rpc@^0.4.1":
   version "0.4.1"
