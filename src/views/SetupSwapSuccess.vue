@@ -16,7 +16,7 @@ import {
     Contract,
     Erc20HtlcDetails,
 } from '@nimiq/fastspot-api';
-import { init as initOasisApi, exchangeAuthorizationToken } from '@nimiq/oasis-api';
+import { exchangeAuthorizationToken } from '@nimiq/oasis-api';
 import StatusScreen from '../components/StatusScreen.vue';
 import GlobalClose from '../components/GlobalClose.vue';
 import Network from '../components/Network.vue';
@@ -124,8 +124,10 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
             console.log('S3 grant token:', s3GrantToken);
             let oasisClearingAuthorizationToken: string | undefined;
             if (this.request.kyc && this.request.kyc.oasisGrantToken && this.request.fund.type === SwapAsset.EUR) {
-                initOasisApi(Config.oasis.apiEndpoint);
-                oasisClearingAuthorizationToken = await exchangeAuthorizationToken(this.request.kyc.oasisGrantToken);
+                oasisClearingAuthorizationToken = await exchangeAuthorizationToken(
+                    Config.oasis.apiEndpoint,
+                    this.request.kyc.oasisGrantToken,
+                );
             }
 
             confirmedSwap = await confirmSwap({

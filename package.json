@@ -27,7 +27,7 @@
         "@nimiq/iqons": "^1.5.2",
         "@nimiq/keyguard-client": "https://gitpkg.vercel.app/nimiq/keyguard?scripts.postinstall=cd%20client%20%26%26%20.%2Fbuild-gitpkg.sh&cb20092889dd9fd815366531e7400b8cd60c51af",
         "@nimiq/ledger-api": "^3.1.1",
-        "@nimiq/oasis-api": "^1.1.1",
+        "@nimiq/oasis-api": "github:nimiq/oasis-api-js#fbd74179a5b9590f8e6dfe9b08ca47122db2ce1e",
         "@nimiq/rpc": "^0.4.1",
         "@nimiq/style": "^0.8.2",
         "@nimiq/utils": "^0.11.1",

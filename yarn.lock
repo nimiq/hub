@@ -1867,10 +1867,9 @@
     buffer "^6.0.3"
     readable-stream "^4.4.2"
 
-"@nimiq/oasis-api@^1.1.1":
+"@nimiq/oasis-api@github:nimiq/oasis-api-js#fbd74179a5b9590f8e6dfe9b08ca47122db2ce1e":
   version "1.1.1"
-  resolved "https://registry.yarnpkg.com/@nimiq/oasis-api/-/oasis-api-1.1.1.tgz#d1aa3d0f9afabf9116205809a0fc72d2e392bafa"
-  integrity sha512-jXNO7nvE0mzAyDCrucByv5AcyDWZjyqb9810YctysxqUtOxNG27hPkhomL+WW6nrnTVgvriJo3yaTFPTfLphKw==
+  resolved "https://codeload.github.com/nimiq/oasis-api-js/tar.gz/fbd74179a5b9590f8e6dfe9b08ca47122db2ce1e"
 
 "@nimiq/rpc@^0.4.1":
   version "0.4.1"
