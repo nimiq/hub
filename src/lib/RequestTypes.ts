@@ -209,6 +209,11 @@ export interface ParsedSetupSwapRequest extends ParsedSimpleRequest {
         value: number, // Eurocents
         fee: number, // Eurocents
         bankLabel?: string,
+    } | {
+        type: SwapAsset.CRC,
+        value: number, // CRC cents
+        fee: number, // CRC cents
+        senderLabel?: string,
     };
 
     redeem: {
@@ -248,6 +253,17 @@ export interface ParsedSetupSwapRequest extends ParsedSimpleRequest {
                 iban: string,
                 bic: string,
             },
+        } | {
+            type: 'mock',
+        };
+    } | {
+        type: SwapAsset.CRC,
+        value: number; // CRC cents
+        fee: number; // CRC cents
+        recipientLabel?: string;
+        settlement: {
+            type: 'sinpemovil',
+            phoneNumber: string,
         } | {
             type: 'mock',
         };

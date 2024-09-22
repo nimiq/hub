@@ -232,10 +232,9 @@
   resolved "https://registry.yarnpkg.com/@nimiq/core-web/-/core-web-1.6.1.tgz#97cb5b43b257c7f6f6808ef603e9bf686377241f"
   integrity sha512-WYw2brIxUXa/SQ0JRp0RXWQKzBFhROXrEjF9Eh+tRlC+NrI2ObwRQkwJCbP2qmPtYldIimfyECmsDVHFoyLXjQ==
 
-"@nimiq/fastspot-api@^1.8.0":
-  version "1.8.0"
-  resolved "https://registry.yarnpkg.com/@nimiq/fastspot-api/-/fastspot-api-1.8.0.tgz#705a9e79e425c3e6536d8994fd0b39d88af1b268"
-  integrity sha512-qNkibJnxS8ndOn4tuy1m3lSNKybBYApo+wy1ajTKcQ0lHo3VfLY0sAJ+WRE7diVWCa7iumu6wsFVudyc3k8/NQ==
+"@nimiq/fastspot-api@https://github.com/nimiq/fastspot-api#3a7c4b68529d7ec9ba8955a399412eaae946c528":
+  version "1.9.0"
+  resolved "https://github.com/nimiq/fastspot-api#3a7c4b68529d7ec9ba8955a399412eaae946c528"
 
 "@nimiq/rpc@^0.4.0":
   version "0.4.0"

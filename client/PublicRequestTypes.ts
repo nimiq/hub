@@ -288,6 +288,13 @@ export interface EuroHtlcCreationInstructions {
     bankLabel?: string;
 }
 
+export interface SinpeMovilHtlcCreationInstructions {
+    type: 'CRC';
+    value: number; // CRC cents
+    fee: number; // CRC cents
+    senderLabel?: string;
+}
+
 export interface NimiqHtlcSettlementInstructions {
     type: 'NIM';
     recipient: string; // My address, must be redeem address of HTLC
@@ -333,6 +340,19 @@ export interface EuroHtlcSettlementInstructions {
     };
 }
 
+export interface SinpeMovilHtlcSettlementInstructions {
+    type: 'CRC';
+    value: number; // CRC cents
+    fee: number; // CRC cents
+    recipientLabel?: string;
+    settlement: {
+        type: 'sinpemovil',
+        phoneNumber: string,
+    } | {
+        type: 'mock',
+    };
+}
+
 export interface NimiqHtlcRefundInstructions {
     type: 'NIM';
     sender: string; // HTLC address
@@ -368,13 +388,15 @@ export type HtlcCreationInstructions =
     NimiqHtlcCreationInstructions
     | BitcoinHtlcCreationInstructions
     | PolygonHtlcCreationInstructions
-    | EuroHtlcCreationInstructions;
+    | EuroHtlcCreationInstructions
+    | SinpeMovilHtlcCreationInstructions;
 
 export type HtlcSettlementInstructions =
     NimiqHtlcSettlementInstructions
     | BitcoinHtlcSettlementInstructions
     | PolygonHtlcSettlementInstructions
-    | EuroHtlcSettlementInstructions;
+    | EuroHtlcSettlementInstructions
+    | SinpeMovilHtlcSettlementInstructions;
 
 export type HtlcRefundInstructions =
     NimiqHtlcRefundInstructions
@@ -428,6 +450,7 @@ export interface SetupSwapResult {
     btc?: SignedBtcTransaction;
     usdc?: SignedPolygonTransaction;
     eur?: string; // When funding EUR: empty string, when redeeming EUR: JWS of the settlement instructions
+    crc?: string; // When funding CRC: empty string, when redeeming CRC: JWS of the settlement instructions
     refundTx?: string;
 }
 
