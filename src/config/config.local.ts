@@ -1,15 +1,15 @@
-import { NETWORK_TEST } from '../lib/Constants';
+import { NETWORK_MAIN } from '../lib/Constants';
 import { BTC_NETWORK_TEST, NATIVE_SEGWIT } from '../lib/bitcoin/BitcoinConstants';
 import { POLYGON_NETWORK_TEST } from '../lib/polygon/PolygonConstants';
 
 export default {
     keyguardEndpoint: window.location.protocol + '//' + window.location.hostname + ':8000/src',
-    network: NETWORK_TEST,
-    networkEndpoint: 'https://network.nimiq-testnet.com',
-    privilegedOrigins: [ '*' ],
+    network: NETWORK_MAIN,
+    networkEndpoint: 'https://network.nimiq.com',
+    privilegedOrigins: [],
     redirectTarget: window.location.protocol + '//' + window.location.hostname + ':8080/demos.html',
     reportToSentry: false,
-    checkoutWithoutNimOrigins: [ '*' ],
+    checkoutWithoutNimOrigins: [],
 
     enableBitcoin: true,
     bitcoinNetwork: BTC_NETWORK_TEST,
