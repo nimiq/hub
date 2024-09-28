@@ -77,9 +77,10 @@ export interface ParsedSignMultisigTransactionRequest extends ParsedBasicRequest
     signer: Nimiq.Address;
 
     sender: Nimiq.Address;
+    senderType: Nimiq.Account.Type;
     senderLabel: string;
     recipient: Nimiq.Address;
-    recipientType?: Nimiq.Account.Type;
+    recipientType: Nimiq.Account.Type;
     recipientLabel?: string;
     value: number;
     fee?: number;

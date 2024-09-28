@@ -277,6 +277,7 @@ export interface SignMultisigTransactionRequest extends BasicRequest {
     signer: string; // Address
 
     sender: string;
+    senderType?: Nimiq.Account.Type;
     senderLabel: string;
     recipient: string;
     recipientType?: Nimiq.Account.Type;

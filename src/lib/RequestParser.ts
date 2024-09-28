@@ -795,6 +795,7 @@ export class RequestParser {
                     signer: Nimiq.Address.fromAny(signMultisigTxRequest.signer),
 
                     sender: Nimiq.Address.fromString(signMultisigTxRequest.sender),
+                    senderType: signMultisigTxRequest.senderType || Nimiq.Account.Type.BASIC,
                     senderLabel: signMultisigTxRequest.senderLabel,
                     recipient: Nimiq.Address.fromString(signMultisigTxRequest.recipient),
                     recipientType: signMultisigTxRequest.recipientType || Nimiq.Account.Type.BASIC,
@@ -1060,6 +1061,7 @@ export class RequestParser {
                     signer: signMultisigTxRequest.signer.toUserFriendlyAddress(),
 
                     sender: signMultisigTxRequest.sender.toUserFriendlyAddress(),
+                    senderType: signMultisigTxRequest.senderType,
                     senderLabel: signMultisigTxRequest.senderLabel,
                     recipient: signMultisigTxRequest.recipient.toUserFriendlyAddress(),
                     recipientType: signMultisigTxRequest.recipientType,
