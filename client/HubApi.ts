@@ -43,6 +43,10 @@ import {
     SetupSwapRequest,
     SetupSwapResult,
     RefundSwapRequest,
+    SignMultisigTransactionRequest,
+    PartialSignature,
+    ConnectAccountRequest,
+    ConnectedAccount,
 } from './PublicRequestTypes';
 
 export default class HubApi<
@@ -205,6 +209,20 @@ export default class HubApi<
         ? void
         : SignedTransaction | SignedBtcTransaction | SignedPolygonTransaction> {
         return this._request(requestBehavior, RequestType.REFUND_SWAP, [request]);
+    }
+
+    public signMultisigTransaction<B extends BehaviorType = DB>(
+        request: Promise<SignMultisigTransactionRequest> | SignMultisigTransactionRequest,
+        requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
+    ): Promise<B extends BehaviorType.REDIRECT ? void : PartialSignature> {
+        return this._request(requestBehavior, RequestType.SIGN_MULTISIG_TRANSACTION, [request]);
+    }
+
+    public connectAccount<B extends BehaviorType = DB>(
+        request: Promise<ConnectAccountRequest> | ConnectAccountRequest,
+        requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
+    ): Promise<B extends BehaviorType.REDIRECT ? void : ConnectedAccount> {
+        return this._request(requestBehavior, RequestType.CONNECT_ACCOUNT, [request]);
     }
 
     /**
