@@ -224,7 +224,7 @@ export default class WalletInfoCollector {
         WalletInfoCollector._initializeDependencies(walletType);
 
         if (!keyId && walletType === WalletType.LEDGER) {
-            keyId = await LedgerApi.Nimiq.getWalletId();
+            keyId = await LedgerApi.Nimiq.getWalletId(Config.ledgerApiNimiqVersion);
         }
 
         // Kick off first round of account derivation
@@ -474,10 +474,13 @@ export default class WalletInfoCollector {
                 addressIndex: index,
             }));
         }
-        return (await LedgerApi.Nimiq.deriveAddresses(pathsToDerive)).map((address) => ({
-            path: address.keyPath,
-            address: address.address,
-        }));
+        return (
+            await LedgerApi.Nimiq.deriveAddresses(
+                pathsToDerive,
+                /* expectedWalletId */ undefined,
+                Config.ledgerApiNimiqVersion,
+            )
+        ).map((address) => ({ path: address.keyPath, address: address.address }));
     }
 
     private static async _getBalances(accounts: BasicAccountInfo[]): Promise<Map<string, number>> {

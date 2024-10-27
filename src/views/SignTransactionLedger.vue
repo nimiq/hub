@@ -126,7 +126,7 @@ import {
     StopwatchIcon,
 } from '@nimiq/vue-components';
 import Network from '../components/Network.vue';
-import LedgerApi, { RequestTypeNimiq as LedgerApiRequestType } from '@nimiq/ledger-api';
+import LedgerApi, { RequestTypeNimiq as LedgerApiRequestType, Network as LedgerApiNetwork } from '@nimiq/ledger-api';
 import StatusScreen from '../components/StatusScreen.vue';
 import GlobalClose from '../components/GlobalClose.vue';
 import LedgerUi from '../components/LedgerUi.vue';
@@ -349,7 +349,7 @@ export default class SignTransactionLedger extends Vue {
             recipient,
             value,
             fee: fee || 0,
-            network: Config.network,
+            network: Config.network as LedgerApiNetwork,
             extraData: data,
             flags,
         };
@@ -366,10 +366,12 @@ export default class SignTransactionLedger extends Vue {
             }
 
             try {
-                signedTransaction = await LedgerApi.Nimiq.signTransaction({
-                    ...transactionInfo,
-                    validityStartHeight,
-                }, signerKeyPath, signerKeyId);
+                signedTransaction = await LedgerApi.Nimiq.signTransaction(
+                    { ...transactionInfo, validityStartHeight },
+                    signerKeyPath,
+                    signerKeyId,
+                    Config.ledgerApiNimiqVersion,
+                );
             } catch (e) {
                 if (this.isDestroyed) return; // user is not on this view anymore
                 // If cancelled and not expired, handle the exception. Otherwise just keep the ledger ui / expiry error

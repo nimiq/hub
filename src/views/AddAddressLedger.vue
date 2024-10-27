@@ -25,6 +25,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { PageBody, SmallPage, PageHeader } from '@nimiq/vue-components';
+import Config from 'config';
 import StatusScreen from '../components/StatusScreen.vue';
 import GlobalClose from '../components/GlobalClose.vue';
 import LedgerUi from '../components/LedgerUi.vue';
@@ -89,7 +90,11 @@ export default class AddAddressLedger extends Vue {
             }));
         }
 
-        const derivedAddressInfos = await LedgerApi.Nimiq.deriveAddresses(pathsToDerive, this.account.keyId);
+        const derivedAddressInfos = await LedgerApi.Nimiq.deriveAddresses(
+            pathsToDerive,
+            this.account.keyId,
+            Config.ledgerApiNimiqVersion,
+        );
         this.addressesToSelectFrom = derivedAddressInfos.map((addressInfo) => new AccountInfo(
             addressInfo.keyPath,
             labelAddress(addressInfo.address),

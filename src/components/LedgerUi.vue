@@ -59,6 +59,7 @@ import LedgerApi, {
     StateType,
     TransportType,
 } from '@nimiq/ledger-api';
+import Config from 'config';
 import StatusScreen from '../components/StatusScreen.vue';
 
 @Component({ components: { StatusScreen, LoadingSpinner } })
@@ -94,7 +95,7 @@ class LedgerUi extends Vue {
         if (!currentRequest) return;
         // Manual connection in the context of a user gesture.
         if (currentRequest.coin === Coin.NIMIQ) {
-            LedgerApi.connect(currentRequest.coin);
+            LedgerApi.connect(currentRequest.coin, Config.ledgerApiNimiqVersion);
         } else {
             LedgerApi.connect(currentRequest.coin, currentRequest.network);
         }

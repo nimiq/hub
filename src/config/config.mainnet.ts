@@ -1,9 +1,11 @@
+import type { NimiqVersion as LedgerApiNimiqVersion } from '@nimiq/ledger-api'; // import type only to avoid bundling
 import { NETWORK_MAIN } from '../lib/Constants';
 import { BTC_NETWORK_MAIN, NATIVE_SEGWIT } from '../lib/bitcoin/BitcoinConstants';
 import { POLYGON_NETWORK_MAIN } from '../lib/polygon/PolygonConstants';
 
 export default {
     keyguardEndpoint: 'https://keyguard.nimiq.com',
+    ledgerApiNimiqVersion: 'legacy' as LedgerApiNimiqVersion.LEGACY,
     network: NETWORK_MAIN,
     networkEndpoint: 'https://network.nimiq.com',
     privilegedOrigins: [

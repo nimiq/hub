@@ -25,7 +25,7 @@
         "@nimiq/fastspot-api": "^1.8.0",
         "@nimiq/iqons": "^1.5.2",
         "@nimiq/keyguard-client": "^1.6.0",
-        "@nimiq/ledger-api": "^2.3.0",
+        "@nimiq/ledger-api": "^3.0.0",
         "@nimiq/network-client": "^0.6.2",
         "@nimiq/oasis-api": "^1.1.1",
         "@nimiq/rpc": "^0.4.1",

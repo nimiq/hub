@@ -441,7 +441,7 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
     private swapAuthorizationShown = false;
     private ledgerInstructionsShown = false;
     private ledgerApiStateType: LedgerApiStateType = LedgerApi.currentState.type;
-    private currentlySignedTransaction: LedgerNimiqTransactionInfo
+    private currentlySignedTransaction: LedgerNimiqTransactionInfo<typeof Config.ledgerApiNimiqVersion>
         | Parameters<typeof prepareBitcoinTransactionForLedgerSigning>[0]
         | null = null;
 
@@ -622,8 +622,9 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
         // Step 1: collect transaction infos to sign
 
         // Collect nimiq swap transaction info
-        let nimiqSwapTransactionInfo: LedgerNimiqTransactionInfo | undefined; // signed by proxy, not Ledger
-        let nimiqProxyTransactionInfo: LedgerNimiqTransactionInfo | undefined;
+        // Note: nimiqSwapTransactionInfo is signed by proxy, not Ledger.
+        let nimiqSwapTransactionInfo: LedgerNimiqTransactionInfo<typeof Config.ledgerApiNimiqVersion> | undefined;
+        let nimiqProxyTransactionInfo: LedgerNimiqTransactionInfo<typeof Config.ledgerApiNimiqVersion> | undefined;
         if (this.request.fund.type === SwapAsset.NIM
             && swapSetupInfo.fund.type === SwapAsset.NIM
             && htlcInfo.fund.type === SwapAsset.NIM
@@ -632,14 +633,14 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
             nimiqSwapTransactionInfo = {
                 value: swapSetupInfo.fund.value,
                 fee: swapSetupInfo.fund.fee,
-                network: Config.network,
+                network: Config.network as LedgerApiNetwork,
                 ...nimiqSwapProxy.getHtlcCreationInfo(htlcInfo.fund.htlcData),
             };
             // funding tx from Ledger to proxy address
             nimiqProxyTransactionInfo = {
                 sender: this.nimiqLedgerAddressInfo.address,
                 value: swapSetupInfo.fund.value,
-                network: Config.network,
+                network: Config.network as LedgerApiNetwork,
                 ...nimiqSwapProxy.getFundingInfo(),
             };
         } else if (this.request.redeem.type === SwapAsset.NIM
@@ -655,7 +656,7 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
                 value: swapSetupInfo.redeem.value,
                 fee: swapSetupInfo.redeem.fee,
                 validityStartHeight: swapSetupInfo.redeem.validityStartHeight,
-                network: Config.network,
+                network: Config.network as LedgerApiNetwork,
             };
         }
 
@@ -736,6 +737,7 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
                         nimiqProxyTransactionInfo,
                         this.nimiqLedgerAddressInfo.signerPath,
                         this._account.keyId,
+                        Config.ledgerApiNimiqVersion,
                     );
                 }
                 // ignore broadcast errors. The Wallet will also try to send the tx
@@ -754,6 +756,7 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
                     // Any unused key path; We use the highest bip32 nimiq path here.
                     getBip32Path({ coin: Coin.NIMIQ, accountIndex: 2 ** 31 - 1, addressIndex: 2 ** 31 - 1 }),
                     this._account.keyId,
+                    Config.ledgerApiNimiqVersion,
                 );
             }
 

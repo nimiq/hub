@@ -329,7 +329,7 @@ msgstr ""
 msgid "Claiming Cashlink"
 msgstr ""
 
-#: src/components/LedgerUi.vue:304
+#: src/components/LedgerUi.vue:305
 msgid "Click Connect"
 msgstr ""
 
@@ -345,11 +345,11 @@ msgstr ""
 msgid "Collecting payment details"
 msgstr ""
 
-#: src/views/SetupSwapLedger.vue:984
+#: src/views/SetupSwapLedger.vue:987
 msgid "Confirm {outgoingOrIncoming} transaction on Ledger"
 msgstr ""
 
-#: src/components/LedgerUi.vue:218
+#: src/components/LedgerUi.vue:219
 msgid "Confirm Address"
 msgstr ""
 
@@ -361,21 +361,21 @@ msgstr ""
 msgid "Confirm Swap"
 msgstr ""
 
-#: src/components/LedgerUi.vue:221
+#: src/components/LedgerUi.vue:222
 msgid "Confirm that the address on your Ledger matches {addressToConfirm}"
 msgstr ""
 
-#: src/components/LedgerUi.vue:220
+#: src/components/LedgerUi.vue:221
 msgid "Confirm the address on your Ledger"
 msgstr ""
 
-#: src/components/LedgerUi.vue:239
+#: src/components/LedgerUi.vue:240
 #: src/views/SignBtcTransactionLedger.vue:4
 #: src/views/SignTransactionLedger.vue:35
 msgid "Confirm Transaction"
 msgstr ""
 
-#: src/components/LedgerUi.vue:240
+#: src/components/LedgerUi.vue:241
 msgid "Confirm using your Ledger"
 msgstr ""
 
@@ -395,12 +395,12 @@ msgstr ""
 msgid "Connect"
 msgstr ""
 
-#: src/components/LedgerUi.vue:312
+#: src/components/LedgerUi.vue:313
 #: src/components/OnboardingMenu.vue:5
 msgid "Connect Ledger"
 msgstr ""
 
-#: src/components/LedgerUi.vue:299
+#: src/components/LedgerUi.vue:300
 msgid "Connect your Ledger Device"
 msgstr ""
 
@@ -478,7 +478,7 @@ msgid "Creating your Account"
 msgstr ""
 
 #: src/views/CashlinkManage.vue:229
-#: src/views/SignTransactionLedger.vue:483
+#: src/views/SignTransactionLedger.vue:485
 msgid "Creating your Cashlink"
 msgstr ""
 
@@ -511,7 +511,7 @@ msgstr ""
 msgid "Enter the address of a vesting contract."
 msgstr ""
 
-#: src/components/LedgerUi.vue:300
+#: src/components/LedgerUi.vue:301
 msgid "Enter your PIN"
 msgstr ""
 
@@ -557,7 +557,7 @@ msgstr ""
 msgid "Fetching swap data..."
 msgstr ""
 
-#: src/components/LedgerUi.vue:234
+#: src/components/LedgerUi.vue:235
 #: src/views/ActivateBitcoinSuccess.vue:104
 #: src/views/ActivatePolygonSuccess.vue:111
 #: src/views/ActivatePolygonSuccess.vue:115
@@ -627,7 +627,7 @@ msgstr ""
 msgid "Imported {count} address so far... | Imported {count} addresses so far..."
 msgstr ""
 
-#: src/views/SetupSwapLedger.vue:987
+#: src/views/SetupSwapLedger.vue:990
 msgid "incoming"
 msgstr ""
 
@@ -659,7 +659,7 @@ msgstr ""
 msgid "Ledger accounts cannot be exported. Please refer to your 24 words backup you created when setting up your device."
 msgstr ""
 
-#: src/components/LedgerUi.vue:269
+#: src/components/LedgerUi.vue:270
 msgid "Ledger not supported by browser."
 msgstr ""
 
@@ -667,7 +667,7 @@ msgstr ""
 msgid "Legacy Account"
 msgstr ""
 
-#: src/components/LedgerUi.vue:201
+#: src/components/LedgerUi.vue:202
 msgid "Loading failed, retrying..."
 msgstr ""
 
@@ -762,7 +762,7 @@ msgid "OASIS service fee"
 msgstr ""
 
 #: src/views/ErrorHandlerUnsupportedLedger.vue:4
-#: src/views/RefundSwapLedger.vue:344
+#: src/views/RefundSwapLedger.vue:346
 msgid "Ok"
 msgstr ""
 
@@ -770,7 +770,7 @@ msgstr ""
 msgid "One account can now have multiple addresses."
 msgstr ""
 
-#: src/components/LedgerUi.vue:302
+#: src/components/LedgerUi.vue:303
 msgid "Open the {app} App"
 msgstr ""
 
@@ -791,7 +791,7 @@ msgstr ""
 msgid "Other wallets"
 msgstr ""
 
-#: src/views/SetupSwapLedger.vue:986
+#: src/views/SetupSwapLedger.vue:989
 msgid "outgoing"
 msgstr ""
 
@@ -827,11 +827,11 @@ msgstr ""
 msgid "Pink Address"
 msgstr ""
 
-#: src/components/LedgerUi.vue:252
+#: src/components/LedgerUi.vue:253
 msgid "Please cancel the previous request on your Ledger."
 msgstr ""
 
-#: src/components/LedgerUi.vue:190
+#: src/components/LedgerUi.vue:191
 msgid "Please cancel the request on your Ledger"
 msgstr ""
 
@@ -879,11 +879,11 @@ msgstr ""
 msgid "Red Address"
 msgstr ""
 
-#: src/views/RefundSwapLedger.vue:314
+#: src/views/RefundSwapLedger.vue:316
 msgid "Refund Failed"
 msgstr ""
 
-#: src/views/RefundSwapLedger.vue:333
+#: src/views/RefundSwapLedger.vue:335
 msgid "Refunding this Swap is currently not supported on this device or browser. Please use the device and browser you originally created the Swap with. Otherwise please try again in the future."
 msgstr ""
 
@@ -896,11 +896,11 @@ msgstr ""
 msgid "Rename Account"
 msgstr ""
 
-#: src/components/LedgerUi.vue:286
+#: src/components/LedgerUi.vue:287
 msgid "Request failed"
 msgstr ""
 
-#: src/components/LedgerUi.vue:287
+#: src/components/LedgerUi.vue:288
 msgid "Request failed: "
 msgstr ""
 
@@ -933,7 +933,7 @@ msgstr ""
 msgid "Send your transaction"
 msgstr ""
 
-#: src/views/SignTransactionLedger.vue:484
+#: src/views/SignTransactionLedger.vue:486
 msgid "Sending Transaction"
 msgstr ""
 
@@ -1003,12 +1003,12 @@ msgstr ""
 msgid "Swap fee"
 msgstr ""
 
-#: src/views/SetupSwapLedger.vue:848
+#: src/views/SetupSwapLedger.vue:851
 #: src/views/SetupSwapSuccess.vue:601
 msgid "Swap Setup Failed"
 msgstr ""
 
-#: src/views/RefundSwapLedger.vue:312
+#: src/views/RefundSwapLedger.vue:314
 msgid "Syncing"
 msgstr ""
 
@@ -1021,17 +1021,17 @@ msgstr ""
 
 #: src/views/ActivatePolygonSuccess.vue:113
 #: src/views/BitcoinSyncBaseView.vue:50
-#: src/views/SetupSwapLedger.vue:850
+#: src/views/SetupSwapLedger.vue:853
 #: src/views/SetupSwapSuccess.vue:603
 #: src/views/SignBtcTransactionLedger.vue:117
 msgid "Syncing Failed"
 msgstr ""
 
-#: src/views/RefundSwapLedger.vue:328
+#: src/views/RefundSwapLedger.vue:330
 msgid "Syncing with {currency} network failed: {error}"
 msgstr ""
 
-#: src/views/RefundSwapLedger.vue:322
+#: src/views/RefundSwapLedger.vue:324
 msgid "Syncing with {currency} network..."
 msgstr ""
 
@@ -1040,7 +1040,7 @@ msgid "Syncing with Bitcoin network failed: {error}"
 msgstr ""
 
 #: src/views/BitcoinSyncBaseView.vue:58
-#: src/views/SetupSwapLedger.vue:860
+#: src/views/SetupSwapLedger.vue:863
 msgid "Syncing with Bitcoin network..."
 msgstr ""
 
@@ -1065,7 +1065,7 @@ msgstr ""
 msgid "Teal Address"
 msgstr ""
 
-#: src/components/LedgerUi.vue:281
+#: src/components/LedgerUi.vue:282
 msgid "The connected wallet or Ledger is not the one this account belongs to."
 msgstr ""
 
@@ -1074,7 +1074,7 @@ msgid "The display language changed. Do you want to reload the page to update al
 msgstr ""
 
 #: src/components/CheckoutCard.vue:171
-#: src/views/SignTransactionLedger.vue:490
+#: src/views/SignTransactionLedger.vue:492
 msgid "The offer expired."
 msgstr ""
 
@@ -1136,12 +1136,12 @@ msgstr ""
 msgid "Transaction is expired"
 msgstr ""
 
-#: src/views/SignTransactionLedger.vue:488
+#: src/views/SignTransactionLedger.vue:490
 msgid "Transaction Sent"
 msgstr ""
 
 #: src/views/SignBtcTransactionLedger.vue:116
-#: src/views/SignTransactionLedger.vue:487
+#: src/views/SignTransactionLedger.vue:489
 msgid "Transaction Signed"
 msgstr ""
 
@@ -1262,7 +1262,7 @@ msgstr ""
 msgid "You're logged in!"
 msgstr ""
 
-#: src/components/LedgerUi.vue:273
+#: src/components/LedgerUi.vue:274
 msgid "Your {app} app is outdated. Please update your Ledger firmware and {app} app using Ledger Live."
 msgstr ""
 

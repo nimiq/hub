@@ -60,6 +60,8 @@ import { BitcoinTransactionInputType } from '@nimiq/keyguard-client';
 type KeyguardSignNimTransactionRequest = import('@nimiq/keyguard-client').SignTransactionRequestStandard;
 type KeyguardSignBtcTransactionRequest = import('@nimiq/keyguard-client').SignBtcTransactionRequestStandard;
 
+type LedgerApiNetwork = import('@nimiq/ledger-api').Network;
+
 @Component({components: {StatusScreen, SmallPage, GlobalClose, LedgerUi}})
 export default class RefundSwapLedger extends RefundSwap {
     protected get State() {
@@ -127,7 +129,7 @@ export default class RefundSwapLedger extends RefundSwap {
                         fee,
                         validityStartHeight,
                         // extraData: data, // data is the swap proxy marker which we don't want for redeeming from htlc
-                        network: Config.network,
+                        network: Config.network as LedgerApiNetwork,
                         ...swapProxy.getRefundInfo(sender),
                     });
                 } else if (sender.equals(swapProxy.address)) {

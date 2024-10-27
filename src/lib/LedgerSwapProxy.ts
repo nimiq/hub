@@ -30,7 +30,11 @@ export default class LedgerSwapProxy {
             ledgerKeyPath,
             ledgerKeyId,
         );
-        const ledgerSignerPublicKey = await LedgerApi.Nimiq.getPublicKey(ledgerKeyPath, ledgerKeyId);
+        const ledgerSignerPublicKey = await LedgerApi.Nimiq.getPublicKey(
+            ledgerKeyPath,
+            ledgerKeyId,
+            Config.ledgerApiNimiqVersion,
+        );
         const proxyAddress = LedgerSwapProxy._computeMultiSigAddress(localSignerKey.publicKey, ledgerSignerPublicKey);
         return new LedgerSwapProxy(proxyAddress, swapValidityStartHeight, localSignerKey,
             ledgerSignerPublicKey, ledgerKeyPath, ledgerKeyId);
@@ -62,7 +66,11 @@ export default class LedgerSwapProxy {
             ledgerKeyPath,
             ledgerKeyId,
         );
-        const ledgerSignerPublicKey = await LedgerApi.Nimiq.getPublicKey(ledgerKeyPath, ledgerKeyId);
+        const ledgerSignerPublicKey = await LedgerApi.Nimiq.getPublicKey(
+            ledgerKeyPath,
+            ledgerKeyId,
+            Config.ledgerApiNimiqVersion,
+        );
         if (LedgerSwapProxy._computeMultiSigAddress(localSignerKey.publicKey, ledgerSignerPublicKey)
             .equals(proxyAddress)) {
             return new LedgerSwapProxy(proxyAddress, validityStartHeight, localSignerKey,
@@ -114,7 +122,7 @@ export default class LedgerSwapProxy {
             addressIndex: 2 ** 31 - 1 - ledgerAddressIndex,
         });
         const [entropySourcePublicKey] = await Promise.all([
-            LedgerApi.Nimiq.getPublicKey(entropySourcePublicKeyPath, ledgerKeyId),
+            LedgerApi.Nimiq.getPublicKey(entropySourcePublicKeyPath, ledgerKeyId, Config.ledgerApiNimiqVersion),
             loadNimiq(),
         ]);
 
@@ -148,7 +156,7 @@ export default class LedgerSwapProxy {
             addressIndex: 2 ** 31 - 1 - ledgerAddressIndex, // use a distinct proxy per address for improved privacy
         });
         const [entropySourcePublicKey] = await Promise.all([
-            LedgerApi.Nimiq.getPublicKey(entropySourcePublicKeyPath, ledgerKeyId),
+            LedgerApi.Nimiq.getPublicKey(entropySourcePublicKeyPath, ledgerKeyId, Config.ledgerApiNimiqVersion),
             loadNimiq(),
         ]);
 
@@ -215,7 +223,7 @@ export default class LedgerSwapProxy {
     }
 
     public getFundingInfo(): Pick<
-        TransactionInfoNimiq,
+        TransactionInfoNimiq<typeof Config.ledgerApiNimiqVersion>,
         'recipient' | 'recipientType' | 'validityStartHeight' | 'extraData'
     > {
         return {
@@ -229,7 +237,7 @@ export default class LedgerSwapProxy {
     }
 
     public getHtlcCreationInfo(htlcData: Uint8Array): Pick<
-        TransactionInfoNimiq,
+        TransactionInfoNimiq<typeof Config.ledgerApiNimiqVersion>,
         'sender' | 'senderType' | 'recipient' | 'recipientType' | 'validityStartHeight' | 'flags' | 'extraData'
     > {
         const decodedHtlcScript = Nimiq.HashedTimeLockedContract.dataToPlain(htlcData);
@@ -248,7 +256,7 @@ export default class LedgerSwapProxy {
     }
 
     public getRefundInfo(refundSender: Nimiq.Address): Pick<
-        TransactionInfoNimiq,
+        TransactionInfoNimiq<typeof Config.ledgerApiNimiqVersion>,
         'sender' | 'senderType' | 'extraData'
     > {
         if (refundSender.equals(this.address)) {
@@ -278,7 +286,7 @@ export default class LedgerSwapProxy {
         flags = Nimiq.Transaction.Flag.NONE,
         extraData,
         network,
-    }: TransactionInfoNimiq): Promise<Nimiq.Transaction> {
+    }: TransactionInfoNimiq<typeof Config.ledgerApiNimiqVersion>): Promise<Nimiq.Transaction> {
         await loadNimiq();
 
         // Always create an ExtendedTransaction because all transactions that will typically be signed by the proxy will
@@ -308,13 +316,22 @@ export default class LedgerSwapProxy {
             // Sign with the Ledger as backup.
             this._ledgerSignerPublicKey = this._ledgerSignerPublicKey
                 // should never actually happen
-                || await LedgerApi.Nimiq.getPublicKey(this._ledgerKeyPath, this._ledgerKeyId);
+                || await LedgerApi.Nimiq.getPublicKey(
+                    this._ledgerKeyPath,
+                    this._ledgerKeyId,
+                    Config.ledgerApiNimiqVersion,
+                );
             if (transaction.senderType !== Nimiq.Account.Type.BASIC
                 || transaction.recipientType !== Nimiq.Account.Type.BASIC) {
                 throw new Error('Contract transactions can currently not be signed by the Ledger.');
             }
             const { signature } = Nimiq.SignatureProof.unserialize(new Nimiq.SerialBuffer(
-                (await LedgerApi.Nimiq.signTransaction(transaction, this._ledgerKeyPath, this._ledgerKeyId)).proof,
+                (await LedgerApi.Nimiq.signTransaction(
+                    transaction,
+                    this._ledgerKeyPath,
+                    this._ledgerKeyId,
+                    Config.ledgerApiNimiqVersion,
+                )).proof,
             ));
             transaction.proof = this.createSignatureProof(this._ledgerSignerPublicKey!, signature).serialize();
         }
