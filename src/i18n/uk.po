@@ -29,7 +29,7 @@ msgstr "{percentage} обмінної вартості."
 msgid "{totalFees} fees"
 msgstr "{totalFees} комісія"
 
-#: src/components/CheckoutCardExternal.vue:84
+#: src/components/CheckoutCardExternal.vue:85
 msgid "+ {currency} network fee"
 msgstr "+ {currency} комісія мережі"
 
@@ -91,7 +91,7 @@ msgstr "Додати до Ledger"
 msgid "Add Vesting Contract"
 msgstr "Додайте розподільчий контракт"
 
-#: src/components/CheckoutCard.vue:82 src/views/SetupSwapLedger.vue:292
+#: src/components/CheckoutCard.vue:84 src/views/SetupSwapLedger.vue:292
 msgid "Address"
 msgstr "Адреса"
 
@@ -246,7 +246,7 @@ msgstr "Ви можете вплинути на швидкість обробк�
 msgid "Cancel"
 msgstr "Скасувати"
 
-#: src/views/Checkout.vue:205 src/views/SignTransactionLedger.vue:108
+#: src/views/Checkout.vue:205 src/views/SignTransactionLedger.vue:109
 msgid "Cancel payment"
 msgstr "Скасувати платіж"
 
@@ -303,7 +303,7 @@ msgstr "Оберіть рахунок"
 msgid "Choose an Address"
 msgstr "Виберіть адресу"
 
-#: src/components/CheckoutCardNimiq.vue:67
+#: src/components/CheckoutCardNimiq.vue:68
 msgid "Choose an Address to pay"
 msgstr "Виберіть адресу щоб оплати"
 
@@ -347,7 +347,7 @@ msgstr "Натисніть, щоб скопіювати:"
 msgid "Close"
 msgstr "Закрити"
 
-#: src/components/CheckoutCard.vue:123
+#: src/components/CheckoutCard.vue:125
 msgid "Collecting payment details"
 msgstr "Збір платіжних реквізитів"
 
@@ -359,7 +359,7 @@ msgstr "Підтвердьте {outgoingOrIncoming} транзакцію на Le
 msgid "Confirm Address"
 msgstr "Підтвердьте адрес"
 
-#: src/views/SignTransactionLedger.vue:33
+#: src/views/SignTransactionLedger.vue:34
 msgid "Confirm Cashlink"
 msgstr "Підтвердьте чек"
 
@@ -376,7 +376,7 @@ msgid "Confirm the address on your Ledger"
 msgstr "Підтвердьте адресу у Ledger"
 
 #: src/components/LedgerUi.vue:239 src/views/SignBtcTransactionLedger.vue:4
-#: src/views/SignTransactionLedger.vue:34
+#: src/views/SignTransactionLedger.vue:35
 msgid "Confirm Transaction"
 msgstr "Підтвердьте переказ"
 
@@ -425,7 +425,7 @@ msgstr "Підключення до мережі..."
 msgid "Connecting to Nimiq..."
 msgstr "Підключення до Німік..."
 
-#: src/components/CheckoutCardNimiq.vue:284 src/views/CashlinkManage.vue:186
+#: src/components/CheckoutCardNimiq.vue:285 src/views/CashlinkManage.vue:186
 #: src/views/CheckoutTransmission.vue:71
 msgid "Contacting seed nodes..."
 msgstr "Підключення до первинних вузлів..."
@@ -476,7 +476,7 @@ msgstr "Створити чек"
 msgid "Creating your Account"
 msgstr "Створення рахунку"
 
-#: src/views/CashlinkManage.vue:229 src/views/SignTransactionLedger.vue:475
+#: src/views/CashlinkManage.vue:229 src/views/SignTransactionLedger.vue:483
 msgid "Creating your Cashlink"
 msgstr "Чек створюється"
 
@@ -488,8 +488,8 @@ msgstr "Пошук розподільчих контрактів..."
 msgid "Disclaimer"
 msgstr "Застереження"
 
-#: src/components/CheckoutCardExternal.vue:61
-#: src/components/CheckoutManualPaymentDetails.vue:31
+#: src/components/CheckoutCardExternal.vue:62
+#: src/components/CheckoutManualPaymentDetails.vue:32
 msgid "Don’t close this window until confirmation."
 msgstr "Не закривайте вікно поки не буде підтвердження."
 
@@ -501,7 +501,7 @@ msgstr "Готово"
 msgid "Download"
 msgstr "Завантажити"
 
-#: src/components/CheckoutCardExternal.vue:104
+#: src/components/CheckoutCardExternal.vue:105
 msgid "Enter manually"
 msgstr "Ввести вручну"
 
@@ -522,7 +522,7 @@ msgid "Failed to fetch addresses. Retrying..."
 msgstr "Не вдалося отримати адреси. Повторна спроба..."
 
 #: src/views/SignBtcTransactionLedger.vue:30
-#: src/views/SignTransactionLedger.vue:71
+#: src/views/SignTransactionLedger.vue:72
 msgid "fee"
 msgstr "комісія"
 
@@ -577,11 +577,11 @@ msgstr "Ліміт Gas"
 msgid "Gas Price"
 msgstr "Ціна Gas"
 
-#: src/components/CheckoutCardNimiq.vue:71
+#: src/components/CheckoutCardNimiq.vue:72
 msgid "Get NIM"
 msgstr "Отримати NIM"
 
-#: src/components/CheckoutCard.vue:172 src/views/RequestError.vue:31
+#: src/components/CheckoutCard.vue:174 src/views/RequestError.vue:31
 msgid "Go back"
 msgstr "Назад"
 
@@ -609,7 +609,7 @@ msgstr "Смачної Паски!"
 msgid "Here is your Nimiq Cashlink!"
 msgstr "Ось ваш чек!"
 
-#: src/components/CheckoutCardNimiq.vue:50
+#: src/components/CheckoutCardNimiq.vue:51
 msgid ""
 "Imagine if paying with\n"
 "crypto was easy"
@@ -627,7 +627,7 @@ msgstr ""
 msgid "incoming"
 msgstr "вхідний"
 
-#: src/components/CheckoutCard.vue:191
+#: src/components/CheckoutCard.vue:193
 msgid "Incomplete payment"
 msgstr "Незавершений платіж"
 
@@ -683,7 +683,7 @@ msgstr "Вийти"
 msgid "Logging out will delete custom settings and names for this account."
 msgstr "Вихід з рахунку видалить Ваші особисті налаштування."
 
-#: src/components/CheckoutCardNimiq.vue:59
+#: src/components/CheckoutCardNimiq.vue:60
 #: src/components/OnboardingMenu.vue:11
 msgid "Login"
 msgstr "Увійти"
@@ -728,7 +728,7 @@ msgstr "Мої секретні слова у безпеці."
 msgid "New Address added to your Account."
 msgstr "Нову адресу було додатно до рахунку."
 
-#: src/views/CashlinkCreate.vue:55 src/views/SignTransactionLedger.vue:280
+#: src/views/CashlinkCreate.vue:55 src/views/SignTransactionLedger.vue:288
 msgid "New Cashlink"
 msgstr "Новий чек"
 
@@ -749,11 +749,11 @@ msgstr "Німік стає кращим! Зустрічайте новий ди
 msgid "No"
 msgstr "Ні"
 
-#: src/components/CheckoutCardExternal.vue:96
+#: src/components/CheckoutCardExternal.vue:97
 msgid "No App found"
 msgstr "Додаток не знайдено"
 
-#: src/components/CheckoutCardNimiq.vue:69
+#: src/components/CheckoutCardNimiq.vue:70
 msgid "None of your available addresses has sufficient balance."
 msgstr "Жодний з доступних рахунків не має достатньо коштів."
 
@@ -778,7 +778,7 @@ msgstr "Тепер один рахунок може мати декілька а
 msgid "Open the {app} App"
 msgstr "Відкрити {app} додаток"
 
-#: src/components/CheckoutCardExternal.vue:100
+#: src/components/CheckoutCardExternal.vue:101
 msgid "Open Wallet App"
 msgstr "Відкрити додаток гаманця"
 
@@ -790,8 +790,8 @@ msgstr "Помаранчевий рахунок"
 msgid "Orange Address"
 msgstr "Помаранчева адреса"
 
-#: src/components/CheckoutCardNimiq.vue:63
-#: src/components/CheckoutCardNimiq.vue:87
+#: src/components/CheckoutCardNimiq.vue:64
+#: src/components/CheckoutCardNimiq.vue:88
 msgid "Other wallets"
 msgstr "Інші гаманці"
 
@@ -803,7 +803,7 @@ msgstr "вихідний"
 msgid "Owner:"
 msgstr "Власник:"
 
-#: src/components/CheckoutCardExternal.vue:109
+#: src/components/CheckoutCardExternal.vue:110
 msgid "Pay with {currencyFullName}"
 msgstr "Сплатити за допомогою {currencyFullName}"
 
@@ -815,7 +815,7 @@ msgstr "Сплатити Німіком"
 msgid "Payment Reference"
 msgstr "Платіжні реквізити"
 
-#: src/components/CheckoutCard.vue:183
+#: src/components/CheckoutCard.vue:185
 msgid "Payment successful"
 msgstr "Оплата успішна"
 
@@ -839,15 +839,15 @@ msgstr "Будь ласка, скасуйте попередній запит у
 msgid "Please cancel the request on your Ledger"
 msgstr "Будь ласка, скасуйте запит у Ledger"
 
-#: src/components/CheckoutCard.vue:170
+#: src/components/CheckoutCard.vue:172
 msgid "Please go back and restart the process."
 msgstr "Поверніться назад і розпочніть процес з початку."
 
-#: src/views/SignTransactionLedger.vue:90
+#: src/views/SignTransactionLedger.vue:91
 msgid "Please go back to the shop and restart the process."
 msgstr "Поверніться назад у магазин і розпочніть процес з початку."
 
-#: src/components/CheckoutCardExternal.vue:97
+#: src/components/CheckoutCardExternal.vue:98
 msgid "Please send the transaction manually"
 msgstr "Будь ласка, надішліть переказ вручну"
 
@@ -913,11 +913,11 @@ msgstr "Помилка запиту"
 msgid "Request failed: "
 msgstr "Помилка запиту:"
 
-#: src/components/CheckoutCardNimiq.vue:288
+#: src/components/CheckoutCardNimiq.vue:289
 msgid "Requesting balances..."
 msgstr "Завантаження балансу..."
 
-#: src/components/CheckoutCard.vue:195
+#: src/components/CheckoutCard.vue:197
 msgid "Restart Payment"
 msgstr "Перезапустити платіж"
 
@@ -935,12 +935,12 @@ msgstr "Повторити спробу"
 msgid "Save"
 msgstr "Зберегти"
 
-#: src/components/CheckoutCardExternal.vue:58
-#: src/components/CheckoutManualPaymentDetails.vue:27
+#: src/components/CheckoutCardExternal.vue:59
+#: src/components/CheckoutManualPaymentDetails.vue:28
 msgid "Send your transaction"
 msgstr "Надішліть Ваш переказ"
 
-#: src/views/SignTransactionLedger.vue:476
+#: src/views/SignTransactionLedger.vue:484
 msgid "Sending Transaction"
 msgstr "Надсилання переказу"
 
@@ -1016,7 +1016,7 @@ msgstr "Помилка налаштування обміну"
 msgid "Syncing"
 msgstr "Синхронізація"
 
-#: src/components/CheckoutCardNimiq.vue:286
+#: src/components/CheckoutCardNimiq.vue:287
 #: src/views/AddVestingContract.vue:11 src/views/CashlinkManage.vue:188
 #: src/views/CheckoutTransmission.vue:73
 msgid "Syncing consensus..."
@@ -1079,7 +1079,7 @@ msgstr ""
 "переклади? В іншому випадку деякі переклади можуть не оновитися автоматично."
 " (з {oldLang} на {newLang})"
 
-#: src/components/CheckoutCard.vue:169 src/views/SignTransactionLedger.vue:482
+#: src/components/CheckoutCard.vue:171 src/views/SignTransactionLedger.vue:490
 msgid "The offer expired."
 msgstr "Пропозиція прострочена."
 
@@ -1153,12 +1153,12 @@ msgstr "Неможливо передати переказ"
 msgid "Transaction is expired"
 msgstr "Переказ прострочено"
 
-#: src/views/SignTransactionLedger.vue:480
+#: src/views/SignTransactionLedger.vue:488
 msgid "Transaction Sent"
 msgstr "Переказ надіслано"
 
 #: src/views/SignBtcTransactionLedger.vue:116
-#: src/views/SignTransactionLedger.vue:479
+#: src/views/SignTransactionLedger.vue:487
 msgid "Transaction Signed"
 msgstr "Переказ підписано"
 
@@ -1192,7 +1192,7 @@ msgstr "Без назви"
 msgid "Unsupported Request"
 msgstr "Невірний запит"
 
-#: src/components/CheckoutCardNimiq.vue:318
+#: src/components/CheckoutCardNimiq.vue:319
 msgid "Updating balances"
 msgstr "Оновлюємо баланс"
 
@@ -1209,8 +1209,8 @@ msgid "Updating your balances"
 msgstr "Завантажуємо баланс на рахунках"
 
 #: src/views/ActivatePolygonSuccess.vue:117
-msgid "USDC activated"
-msgstr "USDC активовано"
+msgid "USDC/USDT activated"
+msgstr "USDC/USDT активовано"
 
 #: src/components/OnboardingMenu.vue:12
 msgid ""
@@ -1226,7 +1226,7 @@ msgstr "Адреси з нульовим балансом можуть не ві
 msgid "Value mismatch (expected {expected} sats, found {found} sats)"
 msgstr "Невідповідність значень (очікувалося {expected}, знайдено {found})"
 
-#: src/views/SignTransactionLedger.vue:31
+#: src/views/SignTransactionLedger.vue:32
 msgid "Verify Payment"
 msgstr "Підтвердіть платіж"
 
@@ -1278,7 +1278,7 @@ msgstr "Вас обожнюють"
 msgid "You received a Cashlink!"
 msgstr "Ви отримали переказ!"
 
-#: src/components/CheckoutCard.vue:192
+#: src/components/CheckoutCard.vue:194
 msgid ""
 "You transferred an insufficient amount. Please contact the merchant for a "
 "refund. Restart to pay for your order."

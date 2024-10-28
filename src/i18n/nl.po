@@ -3,12 +3,12 @@
 # BlockchainShay <Shaylish@live.nl>, 2020
 # Daniel, 2020
 # Jim <jimvendrig10@gmail.com>, 2021
-# Sören Schwert <hello@soerenschwert.de>, 2024
 # Stefan, 2024
+# Sören Schwert <hello@soerenschwert.de>, 2024
 # 
 msgid ""
 msgstr ""
-"Last-Translator: Stefan, 2024\n"
+"Last-Translator: Sören Schwert <hello@soerenschwert.de>, 2024\n"
 "Language-Team: Dutch (https://app.transifex.com/nimiq-foundation/teams/110181/nl/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: nl\n"
@@ -30,7 +30,7 @@ msgstr "{percentage} van swap bedrag."
 msgid "{totalFees} fees"
 msgstr "{totalFees} kosten"
 
-#: src/components/CheckoutCardExternal.vue:84
+#: src/components/CheckoutCardExternal.vue:85
 msgid "+ {currency} network fee"
 msgstr "+ {currency} netwerk toeslag"
 
@@ -90,7 +90,7 @@ msgstr "Voeg toe aan Ledger"
 msgid "Add Vesting Contract"
 msgstr "Vestingcontract toevoegen"
 
-#: src/components/CheckoutCard.vue:82 src/views/SetupSwapLedger.vue:292
+#: src/components/CheckoutCard.vue:84 src/views/SetupSwapLedger.vue:292
 msgid "Address"
 msgstr "Adres"
 
@@ -247,7 +247,7 @@ msgstr ""
 msgid "Cancel"
 msgstr "Annuleer"
 
-#: src/views/Checkout.vue:205 src/views/SignTransactionLedger.vue:108
+#: src/views/Checkout.vue:205 src/views/SignTransactionLedger.vue:109
 msgid "Cancel payment"
 msgstr "Annuleer betaling"
 
@@ -304,7 +304,7 @@ msgstr "Kies een account"
 msgid "Choose an Address"
 msgstr "Kies een adres"
 
-#: src/components/CheckoutCardNimiq.vue:67
+#: src/components/CheckoutCardNimiq.vue:68
 msgid "Choose an Address to pay"
 msgstr "Kies een adres om mee te betalen"
 
@@ -348,7 +348,7 @@ msgstr "Klik om te kopiëren:"
 msgid "Close"
 msgstr "Sluiten"
 
-#: src/components/CheckoutCard.vue:123
+#: src/components/CheckoutCard.vue:125
 msgid "Collecting payment details"
 msgstr "Betaalgegevens ophalen"
 
@@ -360,7 +360,7 @@ msgstr "Bevestig {outgoingOrIncoming} transactie op Ledger"
 msgid "Confirm Address"
 msgstr "Bevestig adres"
 
-#: src/views/SignTransactionLedger.vue:33
+#: src/views/SignTransactionLedger.vue:34
 msgid "Confirm Cashlink"
 msgstr "Bevestig Cashlink"
 
@@ -378,7 +378,7 @@ msgid "Confirm the address on your Ledger"
 msgstr "Bevestig het adres op je Ledger"
 
 #: src/components/LedgerUi.vue:239 src/views/SignBtcTransactionLedger.vue:4
-#: src/views/SignTransactionLedger.vue:34
+#: src/views/SignTransactionLedger.vue:35
 msgid "Confirm Transaction"
 msgstr "Bevestig transactie"
 
@@ -427,7 +427,7 @@ msgstr "Verbinden met netwerk..."
 msgid "Connecting to Nimiq..."
 msgstr "Verbinden met Nimiq..."
 
-#: src/components/CheckoutCardNimiq.vue:284 src/views/CashlinkManage.vue:186
+#: src/components/CheckoutCardNimiq.vue:285 src/views/CashlinkManage.vue:186
 #: src/views/CheckoutTransmission.vue:71
 msgid "Contacting seed nodes..."
 msgstr " Seed nodes contacteren..."
@@ -478,7 +478,7 @@ msgstr "Maak een Cashlink"
 msgid "Creating your Account"
 msgstr "Account aan het maken "
 
-#: src/views/CashlinkManage.vue:229 src/views/SignTransactionLedger.vue:475
+#: src/views/CashlinkManage.vue:229 src/views/SignTransactionLedger.vue:483
 msgid "Creating your Cashlink"
 msgstr "Cashlink aan het maken"
 
@@ -490,8 +490,8 @@ msgstr "Vesting contracten detecteren..."
 msgid "Disclaimer"
 msgstr "Disclaimer"
 
-#: src/components/CheckoutCardExternal.vue:61
-#: src/components/CheckoutManualPaymentDetails.vue:31
+#: src/components/CheckoutCardExternal.vue:62
+#: src/components/CheckoutManualPaymentDetails.vue:32
 msgid "Don’t close this window until confirmation."
 msgstr "Sluit dit scherm niet voor de bevestiging."
 
@@ -503,7 +503,7 @@ msgstr "Klaar"
 msgid "Download"
 msgstr "Download"
 
-#: src/components/CheckoutCardExternal.vue:104
+#: src/components/CheckoutCardExternal.vue:105
 msgid "Enter manually"
 msgstr "Handmatig invoeren"
 
@@ -524,7 +524,7 @@ msgid "Failed to fetch addresses. Retrying..."
 msgstr "Adres binnenhalen is mislukt. Nieuwe poging..."
 
 #: src/views/SignBtcTransactionLedger.vue:30
-#: src/views/SignTransactionLedger.vue:71
+#: src/views/SignTransactionLedger.vue:72
 msgid "fee"
 msgstr "kosten"
 
@@ -579,11 +579,11 @@ msgstr "Gas limiet"
 msgid "Gas Price"
 msgstr "Gas prijs"
 
-#: src/components/CheckoutCardNimiq.vue:71
+#: src/components/CheckoutCardNimiq.vue:72
 msgid "Get NIM"
 msgstr "Verkrijg NIM"
 
-#: src/components/CheckoutCard.vue:172 src/views/RequestError.vue:31
+#: src/components/CheckoutCard.vue:174 src/views/RequestError.vue:31
 msgid "Go back"
 msgstr "Ga terug"
 
@@ -611,7 +611,7 @@ msgstr "Vrolijk Pasen!"
 msgid "Here is your Nimiq Cashlink!"
 msgstr "Hier is je Nimiq Cashlink!"
 
-#: src/components/CheckoutCardNimiq.vue:50
+#: src/components/CheckoutCardNimiq.vue:51
 msgid ""
 "Imagine if paying with\n"
 "crypto was easy"
@@ -630,7 +630,7 @@ msgstr ""
 msgid "incoming"
 msgstr "inkomend"
 
-#: src/components/CheckoutCard.vue:191
+#: src/components/CheckoutCard.vue:193
 msgid "Incomplete payment"
 msgstr "Betaling niet compleet"
 
@@ -688,7 +688,7 @@ msgstr ""
 "Uitloggen zal je persoonlijke instellingen en namen verwijderen voor dit "
 "account."
 
-#: src/components/CheckoutCardNimiq.vue:59
+#: src/components/CheckoutCardNimiq.vue:60
 #: src/components/OnboardingMenu.vue:11
 msgid "Login"
 msgstr "Login"
@@ -733,7 +733,7 @@ msgstr "Mijn back-ups zijn veilig."
 msgid "New Address added to your Account."
 msgstr "Nieuw adres is toegevoegd aan je account."
 
-#: src/views/CashlinkCreate.vue:55 src/views/SignTransactionLedger.vue:280
+#: src/views/CashlinkCreate.vue:55 src/views/SignTransactionLedger.vue:288
 msgid "New Cashlink"
 msgstr "Nieuwe Cashlink"
 
@@ -757,11 +757,11 @@ msgstr ""
 msgid "No"
 msgstr "Nee"
 
-#: src/components/CheckoutCardExternal.vue:96
+#: src/components/CheckoutCardExternal.vue:97
 msgid "No App found"
 msgstr "Geen app gevonden"
 
-#: src/components/CheckoutCardNimiq.vue:69
+#: src/components/CheckoutCardNimiq.vue:70
 msgid "None of your available addresses has sufficient balance."
 msgstr "Geen van je beschikbare adressen heeft voldoende saldo."
 
@@ -786,7 +786,7 @@ msgstr "Eén account kan nu meerdere adressen hebben."
 msgid "Open the {app} App"
 msgstr "{app} App openen"
 
-#: src/components/CheckoutCardExternal.vue:100
+#: src/components/CheckoutCardExternal.vue:101
 msgid "Open Wallet App"
 msgstr "Open Wallet App"
 
@@ -798,8 +798,8 @@ msgstr "Oranje Account"
 msgid "Orange Address"
 msgstr "Oranje Adres"
 
-#: src/components/CheckoutCardNimiq.vue:63
-#: src/components/CheckoutCardNimiq.vue:87
+#: src/components/CheckoutCardNimiq.vue:64
+#: src/components/CheckoutCardNimiq.vue:88
 msgid "Other wallets"
 msgstr "Andere wallets"
 
@@ -811,7 +811,7 @@ msgstr "uitgaand"
 msgid "Owner:"
 msgstr "Eigenaar:"
 
-#: src/components/CheckoutCardExternal.vue:109
+#: src/components/CheckoutCardExternal.vue:110
 msgid "Pay with {currencyFullName}"
 msgstr "Betalen met {currencyFullName}"
 
@@ -823,7 +823,7 @@ msgstr "Betaal met Nimiq"
 msgid "Payment Reference"
 msgstr "Betalingskenmerk"
 
-#: src/components/CheckoutCard.vue:183
+#: src/components/CheckoutCard.vue:185
 msgid "Payment successful"
 msgstr "Betaling succesvol"
 
@@ -847,15 +847,15 @@ msgstr "Annuleer alstublieft de vorige aanvraag op je Ledger."
 msgid "Please cancel the request on your Ledger"
 msgstr "Annuleer alstublieft de aanvraag op je Ledger"
 
-#: src/components/CheckoutCard.vue:170
+#: src/components/CheckoutCard.vue:172
 msgid "Please go back and restart the process."
 msgstr "Ga alstublieft terug en start het proces opnieuw."
 
-#: src/views/SignTransactionLedger.vue:90
+#: src/views/SignTransactionLedger.vue:91
 msgid "Please go back to the shop and restart the process."
 msgstr "Ga alstublieft terug naar de winkel en start het proces opnieuw."
 
-#: src/components/CheckoutCardExternal.vue:97
+#: src/components/CheckoutCardExternal.vue:98
 msgid "Please send the transaction manually"
 msgstr "Stuur de transactie alstublieft handmatig"
 
@@ -921,11 +921,11 @@ msgstr "Verzoek mislukt"
 msgid "Request failed: "
 msgstr "Verzoek mislukt:"
 
-#: src/components/CheckoutCardNimiq.vue:288
+#: src/components/CheckoutCardNimiq.vue:289
 msgid "Requesting balances..."
 msgstr "Balans opvragen..."
 
-#: src/components/CheckoutCard.vue:195
+#: src/components/CheckoutCard.vue:197
 msgid "Restart Payment"
 msgstr "Betaling opnieuw starten"
 
@@ -943,12 +943,12 @@ msgstr "Probeer opnieuw"
 msgid "Save"
 msgstr "Opslaan"
 
-#: src/components/CheckoutCardExternal.vue:58
-#: src/components/CheckoutManualPaymentDetails.vue:27
+#: src/components/CheckoutCardExternal.vue:59
+#: src/components/CheckoutManualPaymentDetails.vue:28
 msgid "Send your transaction"
 msgstr "Verstuur je transactie"
 
-#: src/views/SignTransactionLedger.vue:476
+#: src/views/SignTransactionLedger.vue:484
 msgid "Sending Transaction"
 msgstr "Transactie versturen"
 
@@ -1025,7 +1025,7 @@ msgstr "Swap initialisatie mislukt"
 msgid "Syncing"
 msgstr "Synchroniseren"
 
-#: src/components/CheckoutCardNimiq.vue:286
+#: src/components/CheckoutCardNimiq.vue:287
 #: src/views/AddVestingContract.vue:11 src/views/CashlinkManage.vue:188
 #: src/views/CheckoutTransmission.vue:73
 msgid "Syncing consensus..."
@@ -1088,7 +1088,7 @@ msgstr ""
 "updaten? Anders kan het zijn dat niet alle vertalingen geupdate zijn. "
 "({oldLang} naar {newLang})"
 
-#: src/components/CheckoutCard.vue:169 src/views/SignTransactionLedger.vue:482
+#: src/components/CheckoutCard.vue:171 src/views/SignTransactionLedger.vue:490
 msgid "The offer expired."
 msgstr "Het aanbod is verlopen."
 
@@ -1163,12 +1163,12 @@ msgstr "Transactie kon niet worden doorgestuurd"
 msgid "Transaction is expired"
 msgstr "Transactie is verlopen"
 
-#: src/views/SignTransactionLedger.vue:480
+#: src/views/SignTransactionLedger.vue:488
 msgid "Transaction Sent"
 msgstr "Transactie verstuurd "
 
 #: src/views/SignBtcTransactionLedger.vue:116
-#: src/views/SignTransactionLedger.vue:479
+#: src/views/SignTransactionLedger.vue:487
 msgid "Transaction Signed"
 msgstr "Transactie ondertekend"
 
@@ -1203,7 +1203,7 @@ msgstr "Ongelabeld"
 msgid "Unsupported Request"
 msgstr "Niet ondersteund verzoek"
 
-#: src/components/CheckoutCardNimiq.vue:318
+#: src/components/CheckoutCardNimiq.vue:319
 msgid "Updating balances"
 msgstr "Balans updaten"
 
@@ -1220,8 +1220,8 @@ msgid "Updating your balances"
 msgstr "Je balans updaten"
 
 #: src/views/ActivatePolygonSuccess.vue:117
-msgid "USDC activated"
-msgstr "USDC geactiveerd"
+msgid "USDC/USDT activated"
+msgstr "USDC/USDT geactiveerd"
 
 #: src/components/OnboardingMenu.vue:12
 msgid ""
@@ -1240,7 +1240,7 @@ msgid "Value mismatch (expected {expected} sats, found {found} sats)"
 msgstr ""
 "Waarde komt niet overeen (verwachtte {expected} sats, gevonden {found} sats)"
 
-#: src/views/SignTransactionLedger.vue:31
+#: src/views/SignTransactionLedger.vue:32
 msgid "Verify Payment"
 msgstr "Controleer de betaling"
 
@@ -1292,7 +1292,7 @@ msgstr "Je bent geliefd"
 msgid "You received a Cashlink!"
 msgstr "Je hebt een Cashlink ontvangen!"
 
-#: src/components/CheckoutCard.vue:192
+#: src/components/CheckoutCard.vue:194
 msgid ""
 "You transferred an insufficient amount. Please contact the merchant for a "
 "refund. Restart to pay for your order."

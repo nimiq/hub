@@ -1183,7 +1183,7 @@ msgid "Updating your balances"
 msgstr ""
 
 #: src/views/ActivatePolygonSuccess.vue:117
-msgid "USDC activated"
+msgid "USDC/USDT activated"
 msgstr ""
 
 #: src/components/OnboardingMenu.vue:12
