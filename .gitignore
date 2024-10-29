@@ -1,6 +1,8 @@
 .DS_Store
 node_modules
 dist
+client/dist
+client/build
 
 # only yarn
 package-lock.json

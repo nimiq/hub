@@ -22,9 +22,9 @@
     "dependencies": {
         "@nimiq/browser-warning": "^1.1.1",
         "@nimiq/electrum-client": "https://github.com/nimiq/electrum-client#build",
-        "@nimiq/fastspot-api": "^1.8.0",
+        "@nimiq/fastspot-api": "^1.10.2",
         "@nimiq/iqons": "^1.5.2",
-        "@nimiq/keyguard-client": "^1.6.0",
+        "@nimiq/keyguard-client": "https://gitpkg.vercel.app/nimiq/keyguard?scripts.postinstall=cd%20client%20%26%26%20.%2Fbuild-gitpkg.sh&38dfefaef131cfe12524ff3aba28e37a0fe09c33",
         "@nimiq/ledger-api": "^3.0.0",
         "@nimiq/network-client": "^0.6.2",
         "@nimiq/oasis-api": "^1.1.1",
