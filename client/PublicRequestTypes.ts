@@ -271,12 +271,20 @@ export interface BitcoinHtlcCreationInstructions {
 }
 
 export interface PolygonHtlcCreationInstructions extends RelayRequest {
-    type: 'USDC_MATIC';
+    type: 'USDC_MATIC' | 'USDT_MATIC';
     /**
      * The sender's nonce in the token contract, required when calling the
      * contract function `openWithPermit`.
      */
     permit?: {
+        tokenNonce: number,
+    };
+
+    /**
+     * The sender's nonce in the token contract, required when calling the
+     * contract function `openWithApproval`.
+     */
+    approval?: {
         tokenNonce: number,
     };
 }
@@ -312,7 +320,7 @@ export interface BitcoinHtlcSettlementInstructions {
 }
 
 export interface PolygonHtlcSettlementInstructions extends RelayRequest {
-    type: 'USDC_MATIC';
+    type: 'USDC_MATIC' | 'USDT_MATIC';
     amount: number;
 }
 
@@ -360,8 +368,12 @@ export interface BitcoinHtlcRefundInstructions {
 }
 
 export interface PolygonHtlcRefundInstructions extends RelayRequest {
-    type: 'USDC_MATIC' | 'USDC';
+    type: 'USDC_MATIC' | 'USDC' | 'USDT_MATIC';
     amount: number;
+    /**
+     * The token contract address. Required for calling the bridged HTLC contract.
+     */
+    token: string;
 }
 
 export type HtlcCreationInstructions =
@@ -411,6 +423,7 @@ export interface SetupSwapRequest extends SimpleRequest {
     polygonAddresses?: Array<{
         address: string,
         usdcBalance: number, // In USDC's smallest unit
+        usdtBalance: number, // In USDT's smallest unit
     }>;
 
     // Optional KYC info for swapping at higher limits
@@ -427,6 +440,7 @@ export interface SetupSwapResult {
     nimProxy?: SignedTransaction;
     btc?: SignedBtcTransaction;
     usdc?: SignedPolygonTransaction;
+    usdt?: SignedPolygonTransaction;
     eur?: string; // When funding EUR: empty string, when redeeming EUR: JWS of the settlement instructions
     refundTx?: string;
 }
@@ -612,7 +626,7 @@ export interface SignPolygonTransactionRequest extends BasicRequest, RelayReques
     recipientLabel?: string;
     /**
      * The sender's nonce in the token contract, required when calling the
-     * contract function `swapWithApproval` for bridged USDC.e.
+     * contract function `swapWithApproval` for bridged USDC.e and `transferWithApproval` for bridged USDT.
      */
     approval?: {
         tokenNonce: number,
@@ -626,7 +640,7 @@ export interface SignPolygonTransactionRequest extends BasicRequest, RelayReques
     };
 
     /**
-     * The amount of USDC to transfer. Required when calling the contract
+     * The amount of USDC/T to transfer. Required when calling the contract
      * methods 'redeem' and 'redeemWithSecretInData' for HTLCs.
      */
     amount?: number;
@@ -635,6 +649,10 @@ export interface SignPolygonTransactionRequest extends BasicRequest, RelayReques
      * methods 'redeem' and 'redeemWithSecretInData' for HTLCs.
      */
     senderLabel?: string;
+    /**
+     * The token contract address. Required for calling the bridged HTLC contract.
+     */
+    token?: string;
 }
 
 export interface SignedPolygonTransaction {

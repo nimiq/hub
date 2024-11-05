@@ -527,16 +527,23 @@ export class RequestParser {
 
                 // Validate and parse only what we use in the Hub
 
-                if (!['NIM', 'BTC', 'USDC_MATIC', 'EUR'].includes(setupSwapRequest.fund.type)) {
+                if (!['NIM', 'BTC', 'USDC_MATIC', 'USDT_MATIC', 'EUR'].includes(setupSwapRequest.fund.type)) {
                     throw new Error('Funding type is not supported');
                 }
 
-                if (!['NIM', 'BTC', 'USDC_MATIC', 'EUR'].includes(setupSwapRequest.redeem.type)) {
+                if (!['NIM', 'BTC', 'USDC_MATIC', 'USDT_MATIC', 'EUR'].includes(setupSwapRequest.redeem.type)) {
                     throw new Error('Redeeming type is not supported');
                 }
 
                 if (setupSwapRequest.fund.type === setupSwapRequest.redeem.type) {
                     throw new Error('Cannot swap between the same types');
+                }
+
+                if (
+                    (setupSwapRequest.fund.type === 'USDC_MATIC' && setupSwapRequest.redeem.type === 'USDT_MATIC')
+                    || (setupSwapRequest.fund.type === 'USDT_MATIC' && setupSwapRequest.redeem.type === 'USDC_MATIC')
+                ) {
+                    throw new Error('Cannot swap between USDC and USDT');
                 }
 
                 if (setupSwapRequest.layout === 'slider') {
@@ -573,13 +580,15 @@ export class RequestParser {
                     }
 
                     const polygonAddress = setupSwapRequest.fund.type === SwapAsset.USDC_MATIC
+                        || setupSwapRequest.fund.type === SwapAsset.USDT_MATIC
                         ? setupSwapRequest.fund.request.from
                         : setupSwapRequest.redeem.type === SwapAsset.USDC_MATIC
+                            || setupSwapRequest.redeem.type === SwapAsset.USDT_MATIC
                             ? setupSwapRequest.redeem.request.from
                             : undefined;
                     if (polygonAddress && !setupSwapRequest.polygonAddresses.some(
                         ({ address }) => address === polygonAddress)) {
-                        throw new Error('The address details of the USDC address doing the swap must be provided');
+                        throw new Error('The address details of the Polgyon address doing the swap must be provided');
                     }
                 }
 
@@ -616,44 +625,53 @@ export class RequestParser {
                     }
                 }
 
+                const fund: ParsedSetupSwapRequest['fund'] | null = setupSwapRequest.fund.type === 'NIM' ? {
+                    ...setupSwapRequest.fund,
+                    type: SwapAsset[setupSwapRequest.fund.type],
+                    sender: Nimiq.Address.fromAny(setupSwapRequest.fund.sender),
+                } : setupSwapRequest.fund.type === 'BTC' ? {
+                    ...setupSwapRequest.fund,
+                    type: SwapAsset[setupSwapRequest.fund.type],
+                } : setupSwapRequest.fund.type === 'USDC_MATIC' || setupSwapRequest.fund.type === 'USDT_MATIC' ? {
+                    ...setupSwapRequest.fund,
+                    type: SwapAsset[setupSwapRequest.fund.type],
+                } : setupSwapRequest.fund.type === 'EUR' ? {
+                    ...setupSwapRequest.fund,
+                    type: SwapAsset[setupSwapRequest.fund.type],
+                } : null;
+
+                if (!fund) {
+                    throw new Error('Unsupported funding object type');
+                }
+
+                const redeem: ParsedSetupSwapRequest['redeem'] | null = setupSwapRequest.redeem.type === 'NIM' ? {
+                    ...setupSwapRequest.redeem,
+                    type: SwapAsset[setupSwapRequest.redeem.type],
+                    recipient: Nimiq.Address.fromAny(setupSwapRequest.redeem.recipient),
+                    extraData: typeof setupSwapRequest.redeem.extraData === 'string'
+                        ? Nimiq.BufferUtils.fromAny(setupSwapRequest.redeem.extraData)
+                        : setupSwapRequest.redeem.extraData,
+                } : setupSwapRequest.redeem.type === 'BTC' ? {
+                    ...setupSwapRequest.redeem,
+                    type: SwapAsset[setupSwapRequest.redeem.type],
+                } : setupSwapRequest.redeem.type === 'USDC_MATIC' || setupSwapRequest.redeem.type === 'USDT_MATIC' ? {
+                    ...setupSwapRequest.redeem,
+                    type: SwapAsset[setupSwapRequest.redeem.type],
+                } : setupSwapRequest.redeem.type === 'EUR' ? {
+                    ...setupSwapRequest.redeem,
+                    type: SwapAsset[setupSwapRequest.redeem.type],
+                } : null;
+
+                if (!redeem) {
+                    throw new Error('Unsupported redeeming object type');
+                }
+
                 const parsedSetupSwapRequest: ParsedSetupSwapRequest = {
                     kind: RequestType.SETUP_SWAP,
                     walletId: setupSwapRequest.accountId,
                     ...setupSwapRequest,
-
-                    fund: setupSwapRequest.fund.type === 'NIM' ? {
-                        ...setupSwapRequest.fund,
-                        type: SwapAsset[setupSwapRequest.fund.type],
-                        sender: Nimiq.Address.fromAny(setupSwapRequest.fund.sender),
-                    } : setupSwapRequest.fund.type === 'BTC' ? {
-                        ...setupSwapRequest.fund,
-                        type: SwapAsset[setupSwapRequest.fund.type],
-                    } : setupSwapRequest.fund.type === 'USDC_MATIC' ? {
-                        ...setupSwapRequest.fund,
-                        type: SwapAsset[setupSwapRequest.fund.type],
-                    } : { // EUR
-                        ...setupSwapRequest.fund,
-                        type: SwapAsset[setupSwapRequest.fund.type],
-                    },
-
-                    redeem: setupSwapRequest.redeem.type === 'NIM' ? {
-                        ...setupSwapRequest.redeem,
-                        type: SwapAsset[setupSwapRequest.redeem.type],
-                        recipient: Nimiq.Address.fromAny(setupSwapRequest.redeem.recipient),
-                        extraData: typeof setupSwapRequest.redeem.extraData === 'string'
-                            ? Nimiq.BufferUtils.fromAny(setupSwapRequest.redeem.extraData)
-                            : setupSwapRequest.redeem.extraData,
-                    } : setupSwapRequest.redeem.type === 'BTC' ? {
-                        ...setupSwapRequest.redeem,
-                        type: SwapAsset[setupSwapRequest.redeem.type],
-                    } : setupSwapRequest.redeem.type === 'USDC_MATIC' ? {
-                        ...setupSwapRequest.redeem,
-                        type: SwapAsset[setupSwapRequest.redeem.type],
-                    } : { // EUR
-                        ...setupSwapRequest.redeem,
-                        type: SwapAsset[setupSwapRequest.redeem.type],
-                    },
-
+                    fund,
+                    redeem,
                     layout: setupSwapRequest.layout || 'standard',
                 };
 
@@ -664,8 +682,8 @@ export class RequestParser {
                 // Only basic parsing and validation. Refund transaction specific data will be validated by the Keyguard
                 // or subsequent Ledger transaction signing requests.
 
-                if (!['NIM', 'BTC', 'USDC', 'USDC_MATIC'].includes(refundSwapRequest.refund.type)) {
-                    throw new Error('Refunding object type must be "NIM", "BTC", "USDC", or "USDC_MATIC"');
+                if (!['NIM', 'BTC', 'USDC', 'USDC_MATIC', 'USDT_MATIC'].includes(refundSwapRequest.refund.type)) {
+                    throw new Error('Refunding object type must be "NIM", "BTC", "USDC", "USDC_MATIC" or "USDT_MATIC"');
                 }
 
                 const parsedRefundSwapRequest: ParsedRefundSwapRequest = {
@@ -684,7 +702,7 @@ export class RequestParser {
                     } : refundSwapRequest.refund.type === 'BTC' ? {
                         ...refundSwapRequest.refund,
                         type: SwapAsset[refundSwapRequest.refund.type],
-                    } : { // USDC
+                    } : { // USDC/T
                         ...refundSwapRequest.refund,
                         type: SwapAsset[refundSwapRequest.refund.type],
                     },

@@ -162,6 +162,7 @@ export interface ParsedSignPolygonTransactionRequest extends ParsedBasicRequest,
     };
     amount?: number;
     senderLabel?: string;
+    token?: string;
 }
 
 /**
@@ -200,8 +201,11 @@ export interface ParsedSetupSwapRequest extends ParsedSimpleRequest {
         // htlcScript: Uint8Array,
         refundAddress: string,
     } | ({
-        type: SwapAsset.USDC_MATIC,
+        type: SwapAsset.USDC_MATIC | SwapAsset.USDT_MATIC,
         permit?: {
+            tokenNonce: number,
+        },
+        approval?: {
             tokenNonce: number,
         },
     } & RelayRequest) | {
@@ -234,7 +238,7 @@ export interface ParsedSetupSwapRequest extends ParsedSimpleRequest {
             value: number, // Sats
         };
     } | ({
-        type: SwapAsset.USDC_MATIC,
+        type: SwapAsset.USDC_MATIC | SwapAsset.USDT_MATIC,
         amount: number,
     } & RelayRequest) | {
         type: SwapAsset.EUR,
@@ -278,6 +282,7 @@ export interface ParsedSetupSwapRequest extends ParsedSimpleRequest {
     polygonAddresses?: Array<{
         address: string,
         usdcBalance: number, // In USDC's smallest unit
+        usdtBalance: number, // In USDT's smallest unit
     }>;
 
     // Optional KYC info for swapping at higher limits
@@ -313,8 +318,9 @@ export interface ParsedRefundSwapRequest extends ParsedSimpleRequest {
         };
         refundAddress: string; // My address, must be refund address of HTLC
     } | ({
-        type: SwapAsset.USDC_MATIC | SwapAsset.USDC,
+        type: SwapAsset.USDC_MATIC | SwapAsset.USDC | SwapAsset.USDT_MATIC,
         amount: number,
+        token: string,
     } & RelayRequest);
 }
 

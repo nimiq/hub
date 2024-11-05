@@ -1987,27 +1987,17 @@
   resolved "https://registry.yarnpkg.com/@nimiq/core-web/-/core-web-1.5.3.tgz#f0a4de59394f210f2c2d9cda8ee35c716847d40e"
   integrity sha512-W66SS9n3ygYgD52r1GJr1WtYYOkcZsqdtMmDCEwDvkrmeARnHs2sAvj77Wt4PQG8JA7GwK5svIJr6rGccCaekw==
 
-"@nimiq/core-web@1.5.8":
-  version "1.5.8"
-  resolved "https://registry.yarnpkg.com/@nimiq/core-web/-/core-web-1.5.8.tgz#da8abef84c6d293cbb9ca495a77f08daa08886b9"
-  integrity sha512-MNpFbGZetz2eZcHtJVa5tpmLjPf65mTcJBRQkOHS8kWE+f+Z++hdnwWUBQCEAph4oC6bsE5JSuU7VpwcogN7+w==
-
-"@nimiq/core-web@^1.6.1":
-  version "1.6.1"
-  resolved "https://registry.yarnpkg.com/@nimiq/core-web/-/core-web-1.6.1.tgz#97cb5b43b257c7f6f6808ef603e9bf686377241f"
-  integrity sha512-WYw2brIxUXa/SQ0JRp0RXWQKzBFhROXrEjF9Eh+tRlC+NrI2ObwRQkwJCbP2qmPtYldIimfyECmsDVHFoyLXjQ==
-
-"@nimiq/core-web@^1.6.2":
+"@nimiq/core-web@1.6.3", "@nimiq/core-web@^1.6.2", "@nimiq/core-web@^1.6.3":
   version "1.6.3"
   resolved "https://registry.yarnpkg.com/@nimiq/core-web/-/core-web-1.6.3.tgz#b4a8f8c5d289850b20cb4009766af5b1cafd6e20"
   integrity sha512-D6RrJi2cRU81odNpmwczhUBvOQ47+/Db1svrTkH/G4xNd72lr9MS5nMdfpUz+rBRnSprljrzW2mdUtZ6W9bPaA==
 
-"@nimiq/core@^1.6.1":
-  version "1.6.1"
-  resolved "https://registry.yarnpkg.com/@nimiq/core/-/core-1.6.1.tgz#5865c480dd3edbae5c91dccd16d369c5cb931556"
-  integrity sha512-F4Zso0CdCcZvDIhiCCZVnfZZIcHDtxm45emvItGdd1dM3jgoM/kiR1aQ4btvtZiNqjoNNlyK+zuIGW+/Lbnz2g==
+"@nimiq/core@^1.6.3":
+  version "1.6.3"
+  resolved "https://registry.yarnpkg.com/@nimiq/core/-/core-1.6.3.tgz#3aa28ddd438f33d893133d5b51bc2c9a00326e0d"
+  integrity sha512-UNUJNMhaS4VY0lTqx6Elw2CjDeqV9c+xl+QqavUrUbqeYawhs8aIZ2rzysstV5s3oPGaRE5YEDrWQXu9Qyhz9w==
   dependencies:
-    "@nimiq/jungle-db" "^0.10.0"
+    "@nimiq/jungle-db" "^0.11.0"
     atob "^2.0.3"
     bindings "^1.3.0"
     btoa "^1.1.2"
@@ -2016,7 +2006,7 @@
     json5 "^2.1.0"
     lodash.merge "^4.6.2"
     minimist "^1.2.8"
-    nan "^2.16.0"
+    nan "^2.19.0"
     node-deb "^0.10.7"
     ws "^7.0.1"
 
@@ -2026,10 +2016,10 @@
   dependencies:
     bitcoinjs-lib "^5.1.10"
 
-"@nimiq/fastspot-api@^1.8.0":
-  version "1.8.0"
-  resolved "https://registry.yarnpkg.com/@nimiq/fastspot-api/-/fastspot-api-1.8.0.tgz#705a9e79e425c3e6536d8994fd0b39d88af1b268"
-  integrity sha512-qNkibJnxS8ndOn4tuy1m3lSNKybBYApo+wy1ajTKcQ0lHo3VfLY0sAJ+WRE7diVWCa7iumu6wsFVudyc3k8/NQ==
+"@nimiq/fastspot-api@^1.10.2":
+  version "1.10.2"
+  resolved "https://registry.yarnpkg.com/@nimiq/fastspot-api/-/fastspot-api-1.10.2.tgz#ae2cbe5b41359875bece9ce0957209ca1b486d21"
+  integrity sha512-rPy3DhWlqTOj4k9/YMS2mizjR1rLsQzqWzMnJ+xDEGprgb6/jhDBZs/CW+jONccRQWrvuyBYTrrxdLgn3imKjQ==
 
 "@nimiq/iqons@^1.5.2", "@nimiq/iqons@^1.6.0":
   version "1.6.0"
@@ -2038,21 +2028,21 @@
   dependencies:
     dom-parser "^0.1.5"
 
-"@nimiq/jungle-db@^0.10.0":
-  version "0.10.0"
-  resolved "https://registry.yarnpkg.com/@nimiq/jungle-db/-/jungle-db-0.10.0.tgz#0b6d4e9502c15a4a45e519666fd60eb0ca586ba3"
-  integrity sha512-yCP/hTfUwommYhc7X/V0w4zGTIC/n8M7FPmyDEYrhDRVD5sYrH1KVysnm2M660HAFBjUVWN+3axAwn4n3f+khg==
+"@nimiq/jungle-db@^0.11.0":
+  version "0.11.0"
+  resolved "https://registry.yarnpkg.com/@nimiq/jungle-db/-/jungle-db-0.11.0.tgz#a4c03c7e9814bc06f4343692f7e14aabdef3e1ee"
+  integrity sha512-Unt3tonnIP1WouwdhOjI2fIVRTAtaCqB5LroftYwchA+JV7f7WrKV8ABThW86QBueOnIZn0ItO03TnIzThHWUw==
   dependencies:
     atob "^2.0.3"
     btoa "^1.1.2"
-    node-lmdb "^0.9.6"
+    node-lmdb "^0.10.1"
 
-"@nimiq/keyguard-client@^1.6.0":
-  version "1.6.0"
-  resolved "https://registry.yarnpkg.com/@nimiq/keyguard-client/-/keyguard-client-1.6.0.tgz#e2cb22c1af5ae68dac74e5ead9e69aeaba2ffc8b"
-  integrity sha512-DDi+PycBtiTJO5Jwk3mHZzBP2FHARNCIR+9C6+uhw6kRlT/pcDS+vE6GeTGOwZsRGOtowLG3d9n43xWoPOOcGQ==
+"@nimiq/keyguard-client@^1.7.1":
+  version "1.7.1"
+  resolved "https://registry.yarnpkg.com/@nimiq/keyguard-client/-/keyguard-client-1.7.1.tgz#4d0772d81099653f264892eaf3ec811c0aa8bfff"
+  integrity sha512-EESuT/5SQ+LBvD0qDuOt3OizsfcXjvkhMEL4NnKjuHjEUSWO8aXsBQhVKP4R+zRPrJpPbZnsqROP5N6CDz7KAg==
   dependencies:
-    "@nimiq/core-web" "1.5.8"
+    "@nimiq/core-web" "1.6.3"
     "@nimiq/rpc" "^0.3.0"
     "@opengsn/common" "^2.2.5"
 
@@ -9736,10 +9726,15 @@ mz@^2.4.0:
     object-assign "^4.0.1"
     thenify-all "^1.0.0"
 
-nan@^2.12.1, nan@^2.13.2, nan@^2.14.0, nan@^2.14.1, nan@^2.16.0:
+nan@^2.12.1, nan@^2.13.2, nan@^2.14.0:
   version "2.17.0"
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.17.0.tgz#c0150a2368a182f033e9aa5195ec76ea41a199cb"
   integrity sha512-2ZTgtl0nJsO0KQCjEpxcIr5D+Yv90plTitZt9JBfQvVJDS5seMl3FOvsh3+9CoYWXf/1l5OaZzzF6nDm4cagaQ==
+
+nan@^2.19.0:
+  version "2.22.0"
+  resolved "https://registry.yarnpkg.com/nan/-/nan-2.22.0.tgz#31bc433fc33213c97bad36404bb68063de604de3"
+  integrity sha512-nbajikzWTMwsW+eSsNm3QwlOs7het9gGJU5dDZzRTQGk03vyBOauxgI4VakDzE0PtsGTmXPsXTbbjVhRwR5mpw==
 
 nano-json-stream-parser@^0.1.2:
   version "0.1.2"
@@ -9843,10 +9838,15 @@ node-forge@^0.10.0:
   resolved "https://registry.yarnpkg.com/node-forge/-/node-forge-0.10.0.tgz#32dea2afb3e9926f02ee5ce8794902691a676bf3"
   integrity sha512-PPmu8eEeG9saEUvI97fm4OYxXVB6bFvyNTyiUOBichBpFG8A1Ljw3bY62+5oOjDEMHRnd0Y7HQ+x7uzxOzC6JA==
 
-node-gyp-build@^4.2.0, node-gyp-build@^4.2.3, node-gyp-build@^4.3.0:
+node-gyp-build@^4.2.0, node-gyp-build@^4.3.0:
   version "4.6.0"
   resolved "https://registry.yarnpkg.com/node-gyp-build/-/node-gyp-build-4.6.0.tgz#0c52e4cbf54bbd28b709820ef7b6a3c2d6209055"
   integrity sha512-NTZVKn9IylLwUzaKjkas1e4u2DLNcV4rdYagA4PWdPwW87Bi7z+BznyKSRwS/761tV/lzCGXplWsiaMjLqP2zQ==
+
+node-gyp-build@^4.8.1:
+  version "4.8.2"
+  resolved "https://registry.yarnpkg.com/node-gyp-build/-/node-gyp-build-4.8.2.tgz#4f802b71c1ab2ca16af830e6c1ea7dd1ad9496fa"
+  integrity sha512-IRUxE4BVsHWXkV/SFOut4qTlagw2aM8T5/vnTsmrHJvVoKueJHRc/JaFND7QDDc61kLYUJ6qlZM3sqTSyx2dTw==
 
 node-int64@^0.4.0:
   version "0.4.0"
@@ -9882,13 +9882,13 @@ node-libs-browser@^2.2.1:
     util "^0.11.0"
     vm-browserify "^1.0.1"
 
-node-lmdb@^0.9.6:
-  version "0.9.7"
-  resolved "https://registry.yarnpkg.com/node-lmdb/-/node-lmdb-0.9.7.tgz#f518be2fd5922f445f9d11537753a5e938f1c5a1"
-  integrity sha512-RyYSB3kTByjp1yCKE474yuoBxi/+8kKvjYFOVuDBVoS31D6JvzjwMgNnQrMwoHSbZ6RwucW7jmF93Cm9ltziJQ==
+node-lmdb@^0.10.1:
+  version "0.10.1"
+  resolved "https://registry.yarnpkg.com/node-lmdb/-/node-lmdb-0.10.1.tgz#e3e0e8e601fe0ea86e819c489c3185038de8ac51"
+  integrity sha512-hrao55cGl/gp0ybJa0bH8P28DeDoi2V1gWvwXcdPClO1YFymnqIOL3qmDqIjbVQViE7c5XwGHb4/sacmYZMK0A==
   dependencies:
-    nan "^2.14.1"
-    node-gyp-build "^4.2.3"
+    nan "^2.19.0"
+    node-gyp-build "^4.8.1"
 
 node-modules-regexp@^1.0.0:
   version "1.0.0"
