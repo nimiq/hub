@@ -24,7 +24,7 @@
         "@nimiq/electrum-client": "https://github.com/nimiq/electrum-client#build",
         "@nimiq/fastspot-api": "^1.10.2",
         "@nimiq/iqons": "^1.5.2",
-        "@nimiq/keyguard-client": "https://gitpkg.vercel.app/nimiq/keyguard?scripts.postinstall=cd%20client%20%26%26%20.%2Fbuild-gitpkg.sh&3be7f01c13d981d79296dc225b46a4fcb42c3a6c",
+        "@nimiq/keyguard-client": "^1.7.1",
         "@nimiq/ledger-api": "^3.0.0",
         "@nimiq/network-client": "^0.6.2",
         "@nimiq/oasis-api": "^1.1.1",
@@ -44,8 +44,8 @@
         "vuex-class": "^0.3.2"
     },
     "devDependencies": {
-        "@nimiq/core": "^1.6.1",
-        "@nimiq/core-web": "^1.6.1",
+        "@nimiq/core": "^1.6.3",
+        "@nimiq/core-web": "^1.6.3",
         "@vue/cli-plugin-babel": "~4.5.19",
         "@vue/cli-plugin-typescript": "~4.5.19",
         "@vue/cli-plugin-unit-jest": "~4.5.19",
