@@ -645,6 +645,10 @@ export interface SignPolygonTransactionRequest extends BasicRequest, RelayReques
      * methods 'redeem' and 'redeemWithSecretInData' for HTLCs.
      */
     senderLabel?: string;
+    /**
+     * The token contract address. Required for calling the bridged HTLC contract.
+     */
+    token?: string,
 }
 
 export interface SignedPolygonTransaction {
