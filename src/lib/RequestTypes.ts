@@ -162,6 +162,7 @@ export interface ParsedSignPolygonTransactionRequest extends ParsedBasicRequest,
     };
     amount?: number;
     senderLabel?: string;
+    token?: string;
 }
 
 /**
@@ -319,6 +320,7 @@ export interface ParsedRefundSwapRequest extends ParsedSimpleRequest {
     } | ({
         type: SwapAsset.USDC_MATIC | SwapAsset.USDC | SwapAsset.USDT_MATIC,
         amount: number,
+        token: string,
     } & RelayRequest);
 }
 

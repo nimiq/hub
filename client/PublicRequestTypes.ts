@@ -370,6 +370,10 @@ export interface BitcoinHtlcRefundInstructions {
 export interface PolygonHtlcRefundInstructions extends RelayRequest {
     type: 'USDC_MATIC' | 'USDC' | 'USDT_MATIC';
     amount: number;
+    /**
+     * The token contract address. Required for calling the bridged HTLC contract.
+     */
+    token: string;
 }
 
 export type HtlcCreationInstructions =
@@ -648,7 +652,7 @@ export interface SignPolygonTransactionRequest extends BasicRequest, RelayReques
     /**
      * The token contract address. Required for calling the bridged HTLC contract.
      */
-    token?: string,
+    token?: string;
 }
 
 export interface SignedPolygonTransaction {
