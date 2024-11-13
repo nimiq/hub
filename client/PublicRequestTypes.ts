@@ -456,8 +456,8 @@ export interface SignMessageRequest extends BasicRequest {
 
 export interface SignedMessage {
     signer: string; // Userfriendly address
-    signerPublicKey: Uint8Array;
-    signature: Uint8Array;
+    signerPublicKey: number[];
+    signature: number[];
 }
 
 export interface Address {

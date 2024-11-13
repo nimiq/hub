@@ -75,8 +75,8 @@ The method returns a `SignedMessage` object containing the following properties:
 ```javascript
 interface SignedMessage {
     signer: string;               // Userfriendly address
-    signerPublicKey: Uint8Array;  // The public key of the signer
-    signature: Uint8Array;        // Signature for the message
+    signerPublicKey: number[];  // The public key of the signer
+    signature: number[];        // Signature for the message
 }
 ```
 
@@ -103,8 +103,8 @@ Verifying a signed message with the [Nimiq Core library](https://www.npmjs.com/p
 could go like this:
 
 ```javascript
-const signature = new Nimiq.Signature(signedMessage.signature);
-const publicKey = new Nimiq.PublicKey(signedMessage.signerPublicKey);
+const signature = new Nimiq.Signature(new Uint8Array(signedMessage.signature));
+const publicKey = new Nimiq.PublicKey(new Uint8Array(signedMessage.signerPublicKey));
 
 // For string messages:
 const data = HubApi.MSG_PREFIX

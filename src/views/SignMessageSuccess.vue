@@ -25,8 +25,8 @@ export default class SignMessageSuccess extends Vue {
     private mounted() {
         const result: SignedMessage = {
             signer: new Nimiq.Address(this.keyguardRequest.signer).toUserFriendlyAddress(),
-            signerPublicKey: this.keyguardResult.publicKey,
-            signature: this.keyguardResult.signature,
+            signerPublicKey: Array.from(this.keyguardResult.publicKey),
+            signature: Array.from(this.keyguardResult.signature),
         };
 
         setTimeout(() => this.$rpc.resolve(result), StatusScreen.SUCCESS_REDIRECT_DELAY);
