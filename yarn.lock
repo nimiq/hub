@@ -1808,9 +1808,9 @@
     glob-to-regexp "^0.3.0"
 
 "@nimiq/albatross-wasm@npm:@nimiq/core@next":
-  version "2.0.0-next.rc.3"
-  resolved "https://registry.yarnpkg.com/@nimiq/core/-/core-2.0.0-next.rc.3.tgz#d61b8ad7494b722ac54c7de7b3ca13281ecc7fc2"
-  integrity sha512-p0dNr+8yyDXE192b8p3m06q0QizemjNbHrbIuGS77+Bfbkm6zHkk9IB3603IhvpNJVHPOmOGniKgkioGRzwNHw==
+  version "2.0.0-next.rc.4"
+  resolved "https://registry.yarnpkg.com/@nimiq/core/-/core-2.0.0-next.rc.4.tgz#a353f4507f2f10e3be741f920cff921c9474dea7"
+  integrity sha512-qSBy/Mg0rbqAstEnrgzGhqeQpmQdOjCZPWmBV5uFxAMAAYl9nrABaXWQXo3Jvemvx5VQE9pz5/ma3I8Z0ROy1g==
   dependencies:
     comlink "^4.4.1"
     websocket "^1.0.34"
@@ -1825,7 +1825,7 @@
   resolved "https://registry.yarnpkg.com/@nimiq/core-web/-/core-web-1.5.3.tgz#f0a4de59394f210f2c2d9cda8ee35c716847d40e"
   integrity sha512-W66SS9n3ygYgD52r1GJr1WtYYOkcZsqdtMmDCEwDvkrmeARnHs2sAvj77Wt4PQG8JA7GwK5svIJr6rGccCaekw==
 
-"@nimiq/core-web@1.6.3", "@nimiq/core-web@^1.6.2", "@nimiq/core-web@^1.6.3":
+"@nimiq/core-web@^1.6.2", "@nimiq/core-web@^1.6.3":
   version "1.6.3"
   resolved "https://registry.yarnpkg.com/@nimiq/core-web/-/core-web-1.6.3.tgz#b4a8f8c5d289850b20cb4009766af5b1cafd6e20"
   integrity sha512-D6RrJi2cRU81odNpmwczhUBvOQ47+/Db1svrTkH/G4xNd72lr9MS5nMdfpUz+rBRnSprljrzW2mdUtZ6W9bPaA==
