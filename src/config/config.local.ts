@@ -5,8 +5,9 @@ import { POLYGON_NETWORK_TEST } from '../lib/polygon/PolygonConstants';
 
 export default {
     keyguardEndpoint: window.location.protocol + '//' + window.location.hostname + ':8000/src',
-    ledgerApiNimiqVersion: 'legacy' as LedgerApiNimiqVersion.LEGACY,
+    ledgerApiNimiqVersion: 'albatross' as LedgerApiNimiqVersion.ALBATROSS,
     network: NETWORK_TEST,
+    nimiqNetworkId: 5,
     networkEndpoint: 'https://network.nimiq-testnet.com',
     seedNodes: [
         '/dns4/seed1.pos.nimiq-testnet.com/tcp/8443/wss',

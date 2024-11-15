@@ -1,6 +1,5 @@
 import { Utf8Tools } from '@nimiq/utils';
-import { DetailedPlainTransaction, NetworkClient } from '@nimiq/network-client';
-import { loadNimiq } from './Helpers';
+import { NetworkClient } from './NetworkClient';
 import { CashlinkState, CashlinkTheme } from '../../client/PublicRequestTypes';
 
 export const CashlinkExtraData = {
@@ -81,19 +80,17 @@ class Cashlink {
         this._networkClientResolver(client);
     }
 
-    public static async create(): Promise<Cashlink> {
-        await loadNimiq();
+    public static create(): Cashlink {
         const keyPair = Nimiq.KeyPair.derive(Nimiq.PrivateKey.generate());
         return new Cashlink(keyPair, keyPair.publicKey.toAddress());
     }
 
-    public static async parse(str: string): Promise<Cashlink | null> {
+    public static parse(str: string): Cashlink | null {
         if (!str) return null;
         try {
             str = str.replace(/~/g, '').replace(/=*$/, (match) => new Array(match.length).fill('.').join(''));
             const buf = Nimiq.BufferUtils.fromBase64Url(str);
-            await loadNimiq();
-            const keyPair = Nimiq.KeyPair.derive(Nimiq.PrivateKey.unserialize(buf));
+            const keyPair = Nimiq.KeyPair.derive(Nimiq.PrivateKey.deserialize(buf));
             const value = buf.readUint64();
             let message: string;
             if (buf.readPos === buf.byteLength) {
@@ -125,7 +122,7 @@ class Cashlink {
 
     public static fromObject(object: CashlinkEntry): Cashlink {
         return new Cashlink(
-            Nimiq.KeyPair.unserialize(new Nimiq.SerialBuffer(object.keyPair)),
+            Nimiq.KeyPair.deserialize(new Nimiq.SerialBuffer(object.keyPair)),
             Nimiq.Address.fromString(object.address),
             object.value,
             object.fee,
@@ -152,7 +149,7 @@ class Cashlink {
     private _value: number | null = null;
     private _fee: number | null = null;
     private _theme: CashlinkTheme = CashlinkTheme.UNSPECIFIED; // note that UNSPECIFIED equals to 0 and is thus falsy
-    private _knownTransactions: DetailedPlainTransaction[] = [];
+    private _knownTransactions: Nimiq.PlainTransactionDetails[] = [];
 
     constructor(
         public keyPair: Nimiq.KeyPair,
@@ -179,23 +176,23 @@ class Cashlink {
 
         this._immutable = !!(value || message || theme);
 
-        this._getNetwork().then((network: NetworkClient) => {
+        this._getNetwork().then(async (network: NetworkClient) => {
             const userFriendlyAddress = this.address.toUserFriendlyAddress();
 
-            // When not yet established, the balance will be updated by the nano-api as soon
-            // as we have consensus, because subscribing (below) triggers a balance check.
-            if (network.consensusState === 'established') {
-                network.getBalance(userFriendlyAddress).then(this._onBalancesChanged.bind(this));
+            if (await network.isConsensusEstablished()) {
+                network.getBalance([userFriendlyAddress]).then(this._onBalancesChanged.bind(this));
+                this.detectState();
+            } else {
+                network.awaitConsensus().then(() => {
+                    network.getBalance([userFriendlyAddress]).then(this._onBalancesChanged.bind(this));
+                    this.detectState();
+                });
             }
 
-            // Only listen for 'received' and 'mined' events, because 'relayed' events trigger a
-            // balance change in the nano-api, too, which triggers the state detection already.
-            network.on(NetworkClient.Events.TRANSACTION_PENDING, this._onTransactionReceivedOrMined.bind(this));
-            network.on(NetworkClient.Events.TRANSACTION_MINED, this._onTransactionReceivedOrMined.bind(this));
-            network.on(NetworkClient.Events.BALANCES_CHANGED, this._onBalancesChanged.bind(this));
-
-            // Triggers a BALANCES_CHANGED event if this is the first time this address is subscribed
-            network.subscribe(userFriendlyAddress);
+            (await network.innerClient).addTransactionListener(
+                this._onTransactionReceivedOrMined.bind(this),
+                [this.address],
+            );
         });
 
         // Run initial state detection (awaits consensus in detectState())
@@ -206,48 +203,31 @@ class Cashlink {
         await this._awaitConsensus();
 
         const balance = await this._awaitBalance();
-        const pendingTransactions = [
-            ...(await this._getNetwork()).pendingTransactions,
-            ...(await this._getNetwork()).relayedTransactions,
-        ];
-
         const address = this.address.toUserFriendlyAddress();
 
-        const pendingFundingTx = pendingTransactions.find(
-            (tx) => tx.recipient === address);
-        const pendingClaimingTx = pendingTransactions.find(
-            (tx) => tx.sender === address);
+        // Only exit if the cashlink is CLAIMED and has no balance
+        if (this.state === CashlinkState.CLAIMED && !balance) return;
 
-        // Only exit if the cashlink is CLAIMED and not currently funded or being funded.
-        if (this.state === CashlinkState.CLAIMED && !balance && !pendingFundingTx) return;
-
-        const knownTransactionReceipts = new Map(this._knownTransactions.map((tx) => [tx.hash, tx.blockHash!]));
-
-        const transactionHistory = await (await this._getNetwork()).requestTransactionHistory(
+        const transactionHistory = await (await this._getNetwork()).getTransactionsByAddress(
             address,
-            knownTransactionReceipts,
+            this._knownTransactions,
         );
-        this._knownTransactions = this._knownTransactions.concat(transactionHistory.newTransactions);
+        this._knownTransactions = transactionHistory;
 
         let newState: CashlinkState = this.state;
 
-        const knownFundingTx = this._knownTransactions.find(
-            (tx) => tx.recipient === address);
-        const knownClaimingTx = this._knownTransactions.find(
-            (tx) => tx.sender === address);
+        const knownFundingTx = this._knownTransactions.find((tx) => tx.recipient === address);
+        const knownClaimingTx = this._knownTransactions.find((tx) => tx.sender === address);
 
         switch (this.state) {
             case CashlinkState.UNKNOWN:
-                if (!pendingFundingTx && !knownFundingTx) {
+                if (!knownFundingTx) {
                     newState = CashlinkState.UNCHARGED;
                     break;
                 }
             case CashlinkState.UNCHARGED:
-                if (pendingFundingTx) {
-                    newState = CashlinkState.CHARGING;
-                }
             case CashlinkState.CHARGING:
-                if (!balance && !pendingFundingTx) {
+                if (!balance) {
                     // Handle expired/replaced funding tx
                     newState = CashlinkState.UNCHARGED;
                     // Not break;ing here, because we need to see if the cashlink is already CLAIMED.
@@ -256,13 +236,10 @@ class Cashlink {
                     newState = CashlinkState.UNCLAIMED;
                 } else break; // If no known transactions are found, no further checks are necessary
             case CashlinkState.UNCLAIMED:
-                if (pendingClaimingTx) {
-                    newState = CashlinkState.CLAIMING;
-                }
             case CashlinkState.CLAIMING:
                 if (balance) {
                     // Handle recharged/reused cashlink
-                    if (!pendingClaimingTx) newState = CashlinkState.UNCLAIMED;
+                    newState = CashlinkState.UNCLAIMED;
                     break; // If a balance is detected on the cashlink, it cannot be in CLAIMED state.
                 }
                 if (knownClaimingTx) {
@@ -270,9 +247,7 @@ class Cashlink {
                 }
             case CashlinkState.CLAIMED:
                 // Detect cashlink re-use and chain rebranches
-                if (pendingFundingTx) newState = CashlinkState.CHARGING;
                 if (balance) newState = CashlinkState.UNCLAIMED;
-                if (pendingClaimingTx) newState = CashlinkState.CLAIMING;
         }
 
         if (newState !== this.state) this._updateState(newState);
@@ -280,7 +255,7 @@ class Cashlink {
 
     public toObject(includeOptional: boolean = true): CashlinkEntry {
         const result: CashlinkEntry = {
-            keyPair: new Uint8Array(this.keyPair.serialize()),
+            keyPair: this.keyPair.serialize(),
             address: this.address.toUserFriendlyAddress(),
             value: this.value,
             message: this.message,
@@ -304,7 +279,7 @@ class Cashlink {
             /*theme*/ (this._theme ? 1 : 0),
         );
 
-        this.keyPair.privateKey.serialize(buf);
+        buf.write(this.keyPair.privateKey.serialize());
         buf.writeUint64(this.value);
         if (this._messageBytes.byteLength || this._theme) {
             buf.writeUint8(this._messageBytes.byteLength);
@@ -344,14 +319,12 @@ class Cashlink {
 
     public async claim(
         recipientAddress: string,
-        recipientType: Nimiq.Account.Type = Nimiq.Account.Type.BASIC,
+        recipientType: Nimiq.AccountType = Nimiq.AccountType.Basic,
         fee: number = this.fee,
     ): Promise<void> {
         if (this.state >= CashlinkState.CLAIMING) {
             throw new Error('Cannot claim, Cashlink has already been claimed');
         }
-
-        await loadNimiq();
 
         // Only claim the amount specified in the cashlink (or the cashlink balance, if smaller)
         const balance = Math.min(this.value, await this._awaitBalance());
@@ -359,9 +332,14 @@ class Cashlink {
             throw new Error('Cannot claim, there is no balance in this link');
         }
         const recipient = Nimiq.Address.fromString(recipientAddress);
-        const transaction = new Nimiq.ExtendedTransaction(this.address, Nimiq.Account.Type.BASIC,
-            recipient, recipientType, balance - fee, fee, await this._getBlockchainHeight(),
-            Nimiq.Transaction.Flag.NONE, CashlinkExtraData.CLAIMING);
+        const transaction = new Nimiq.Transaction(
+            this.address, Nimiq.AccountType.Basic, new Uint8Array(0),
+            recipient, recipientType, CashlinkExtraData.CLAIMING,
+            BigInt(balance - fee), BigInt(fee),
+            0 /* Nimiq.Transaction.Flag.NONE */,
+            await this._getBlockchainHeight(),
+            await (await this._getNetwork()).getNetworkId(),
+        );
 
         const keyPair = this.keyPair;
         const signature = Nimiq.Signature.create(keyPair.privateKey, keyPair.publicKey, transaction.serializeContent());
@@ -398,14 +376,7 @@ class Cashlink {
     }
 
     private async _awaitConsensus(): Promise<void> {
-        if ((await this._getNetwork()).consensusState === 'established') return;
-        return new Promise(async (resolve) => {
-            const handler = async () => {
-                (await this._getNetwork()).off(NetworkClient.Events.CONSENSUS_ESTABLISHED, handler);
-                resolve();
-            };
-            (await this._getNetwork()).on(NetworkClient.Events.CONSENSUS_ESTABLISHED, handler);
-        });
+        await (await this._getNetwork()).awaitConsensus();
     }
 
     private async _awaitBalance(): Promise<number> {
@@ -422,13 +393,13 @@ class Cashlink {
     private async _sendTransaction(transaction: Nimiq.Transaction): Promise<void> {
         await this._awaitConsensus();
         try {
-            const proof = Nimiq.SignatureProof.unserialize(new Nimiq.SerialBuffer(transaction.proof));
+            const proof = Nimiq.SignatureProof.deserialize(new Nimiq.SerialBuffer(transaction.proof));
             await (await this._getNetwork()).relayTransaction({
                 sender: transaction.sender.toUserFriendlyAddress(),
                 senderPubKey: proof.publicKey.serialize(),
                 recipient: transaction.recipient.toUserFriendlyAddress(),
-                value: Nimiq.Policy.lunasToCoins(transaction.value),
-                fee: Nimiq.Policy.lunasToCoins(transaction.fee),
+                value: Number(transaction.value),
+                fee: Number(transaction.fee),
                 validityStartHeight: transaction.validityStartHeight,
                 signature: proof.signature.serialize(),
                 extraData: transaction.data,
@@ -441,12 +412,19 @@ class Cashlink {
 
     private async _getBlockchainHeight(): Promise<number> {
         await this._awaitConsensus();
-        return (await this._getNetwork()).headInfo.height;
+        return (await (await this._getNetwork()).innerClient).getHeadHeight();
     }
 
-    private async _onTransactionReceivedOrMined(transaction: DetailedPlainTransaction): Promise<void> {
-        if (transaction.recipient === this.address.toUserFriendlyAddress()
-            || transaction.sender === this.address.toUserFriendlyAddress()) {
+    private async _onTransactionReceivedOrMined(transaction: Nimiq.PlainTransactionDetails): Promise<void> {
+        if (
+            transaction.recipient === this.address.toUserFriendlyAddress()
+            || transaction.sender === this.address.toUserFriendlyAddress()
+        ) {
+            this._knownTransactions.push(transaction);
+
+            await (await this._getNetwork()).getBalance([this.address.toUserFriendlyAddress()])
+                .then(this._onBalancesChanged.bind(this));
+
             // Always run state detection when a transaction comes in
             // or an incoming or outgoing transaction was mined, as those
             // events likely signal a state change of the cashlink.
@@ -456,17 +434,9 @@ class Cashlink {
 
     private _onBalancesChanged(balances: Map<string, number>) {
         const address = this.address.toUserFriendlyAddress();
-
         if (!balances.has(address)) return;
-
-        this.balance = Nimiq.Policy.coinsToLunas(balances.get(address)!);
+        this.balance = balances.get(address)!;
         this.fire(Cashlink.Events.BALANCE_CHANGE, this.balance);
-        // Always run state detection when the balance changes,
-        // to catch state changes even when the transaction events
-        // have not been recognized (can happen when an incoming
-        // transaction gets mined before it's pending state is
-        // broadcasted to this client).
-        this.detectState();
     }
 
     private _updateState(state: CashlinkState) {

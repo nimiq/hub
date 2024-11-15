@@ -66,7 +66,7 @@ export class PermissionStore {
         const result: PermissionEntry = await PermissionStore._requestAsPromise(request);
         return result ? {
             ...result,
-            addresses: result.addresses.map((address) => Nimiq.Address.unserialize(new Nimiq.SerialBuffer(address))),
+            addresses: result.addresses.map((address) => new Nimiq.Address(address)),
         } : result;
     }
 
@@ -108,7 +108,7 @@ export class PermissionStore {
         const result: PermissionEntry[] = await PermissionStore._readAllFromCursor(request);
         return result ? result.map((entry) => ({
             ...entry,
-            addresses: entry.addresses.map((address) => Nimiq.Address.unserialize(new Nimiq.SerialBuffer(address))),
+            addresses: entry.addresses.map((address) => new Nimiq.Address(address)),
         })) : result;
     }
 

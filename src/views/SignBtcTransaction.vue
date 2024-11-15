@@ -16,13 +16,8 @@ import type {
     SignBtcTransactionRequest as KeyguardSignBtcTransactionRequest,
     BitcoinTransactionInput,
     BitcoinTransactionChangeOutput,
-    BitcoinTransactionInfo as KeyguardBitcoinTransactionInfo,
 } from '@nimiq/keyguard-client';
-
-// BitcoinTransactionInfo with complete changeOutput
-export type BitcoinTransactionInfo = Omit<KeyguardBitcoinTransactionInfo, 'changeOutput'> & {
-    changeOutput?: Required<BitcoinTransactionChangeOutput>,
-};
+import type { BitcoinTransactionInfo } from '../lib/bitcoin/BitcoinUtils';
 
 @Component({components: {StatusScreen, SmallPage, GlobalClose}}) // including components used in parent class
 export default class SignBtcTransaction extends BitcoinSyncBaseView {

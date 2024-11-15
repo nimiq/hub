@@ -544,9 +544,9 @@ export default class WalletInfoCollector {
                 Nimiq.Address.fromString(contract.address),
                 Nimiq.Address.fromString(contract.owner),
                 contract.startTime,
-                Nimiq.Policy.coinsToSatoshis(contract.stepAmount),
+                contract.stepAmount,
                 contract.timeStep,
-                Nimiq.Policy.coinsToSatoshis(contract.totalAmount),
+                contract.totalAmount,
             ));
 
         const potentialVestingOwnerAddress = Nimiq.Address.fromString(potentialOwner.address);

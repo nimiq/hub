@@ -29,9 +29,7 @@ const domain = buildName === 'mainnet'
         ? process.env.VUE_APP_HUB_URL
         : 'http://localhost:8080';
 
-const cdnDomain = buildName === 'mainnet'
-    ? 'https://cdn.nimiq.com'
-    : 'https://cdn.nimiq-testnet.com';
+const cdnDomain = 'https://cdn.nimiq-testnet.com';
 
 const browserWarningTemplate = fs.readFileSync(
     path.join(__dirname, 'node_modules/@nimiq/browser-warning/dist/browser-warning.html.template'));

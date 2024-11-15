@@ -1,3 +1,4 @@
+import type * as Nimiq from '@nimiq/core';
 import type { RelayRequest } from '@opengsn/common/dist/EIP712/RelayRequest';
 import { NimiqSpecifics, NimiqDirectPaymentOptions, BitcoinSpecifics, BitcoinDirectPaymentOptions, EtherSpecifics, EtherDirectPaymentOptions } from './PublicPaymentOptions';
 export declare enum RequestType {
@@ -72,7 +73,7 @@ export interface ChooseAddressResult extends Address {
 export interface SignTransactionRequest extends BasicRequest {
     sender: string;
     recipient: string;
-    recipientType?: Nimiq.Account.Type | 3;
+    recipientType?: Nimiq.AccountType;
     recipientLabel?: string;
     value: number;
     fee?: number;
@@ -91,7 +92,7 @@ export interface NimiqCheckoutRequest extends BasicRequest {
     sender?: string;
     forceSender?: boolean;
     recipient: string;
-    recipientType?: Nimiq.Account.Type;
+    recipientType?: Nimiq.AccountType;
     value: number;
     fee?: number;
     extraData?: Bytes;
@@ -190,9 +191,9 @@ export interface SignedTransaction {
         signerPublicKey: Uint8Array;
         signature: Uint8Array;
         sender: string;
-        senderType: Nimiq.Account.Type | 3;
+        senderType: Nimiq.AccountType;
         recipient: string;
-        recipientType: Nimiq.Account.Type | 3;
+        recipientType: Nimiq.AccountType;
         value: number;
         fee: number;
         validityStartHeight: number;
@@ -388,17 +389,17 @@ export interface Address {
     label: string;
 }
 export interface VestingContract {
-    type: Nimiq.Account.Type.VESTING;
+    type: Nimiq.AccountType.Vesting;
     address: string;
     label: string;
     owner: string;
-    start: number;
+    startTime: number;
     stepAmount: number;
-    stepBlocks: number;
+    timeStep: number;
     totalAmount: number;
 }
 export interface HashedTimeLockedContract {
-    type: Nimiq.Account.Type.HTLC;
+    type: Nimiq.AccountType.HTLC;
     address: string;
     label: string;
     sender: string;

@@ -40,12 +40,12 @@ export interface ParsedSignTransactionRequest extends ParsedBasicRequest {
         address: Nimiq.Address,
         label?: string,
         walletLabel?: string,
-        type?: Nimiq.Account.Type,
+        type?: Nimiq.AccountType,
         signerKeyId: string,
         signerKeyPath: string,
     };
     recipient: Nimiq.Address;
-    recipientType: Nimiq.Account.Type;
+    recipientType: Nimiq.AccountType;
     recipientLabel?: string;
     value: number;
     fee: number;
@@ -57,7 +57,7 @@ export interface ParsedSignTransactionRequest extends ParsedBasicRequest {
 export interface ParsedSignStakingRequest extends ParsedBasicRequest {
     senderLabel?: string;
     recipientLabel?: string;
-    // transaction: AlbatrossPlainTransaction;
+    // transactions: AlbatrossPlainTransaction[];
     transactions: Uint8Array[];
 }
 

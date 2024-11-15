@@ -1820,22 +1820,17 @@
   resolved "https://registry.yarnpkg.com/@nimiq/browser-warning/-/browser-warning-1.1.1.tgz#c989fb0990f17e1429fff6dda7e23903b002bfff"
   integrity sha512-MGT9Yykci7gjaP95jwz3LwykLtGiWxJnKU3OL4bTPMVPwn8vGeOjTOyMhm5/wFg0V1uM0gQedOtP4g2RMuSf7A==
 
-"@nimiq/core-web@1.5.3":
-  version "1.5.3"
-  resolved "https://registry.yarnpkg.com/@nimiq/core-web/-/core-web-1.5.3.tgz#f0a4de59394f210f2c2d9cda8ee35c716847d40e"
-  integrity sha512-W66SS9n3ygYgD52r1GJr1WtYYOkcZsqdtMmDCEwDvkrmeARnHs2sAvj77Wt4PQG8JA7GwK5svIJr6rGccCaekw==
-
 "@nimiq/core-web@^1.6.2", "@nimiq/core-web@^1.6.3":
-  version "1.6.3"
-  resolved "https://registry.yarnpkg.com/@nimiq/core-web/-/core-web-1.6.3.tgz#b4a8f8c5d289850b20cb4009766af5b1cafd6e20"
-  integrity sha512-D6RrJi2cRU81odNpmwczhUBvOQ47+/Db1svrTkH/G4xNd72lr9MS5nMdfpUz+rBRnSprljrzW2mdUtZ6W9bPaA==
+  version "1.6.4"
+  resolved "https://registry.yarnpkg.com/@nimiq/core-web/-/core-web-1.6.4.tgz#2ab36ab6f7d4062c3d534e6da831c2ccaae959de"
+  integrity sha512-D0jVukuL+zsUXicS4cCZEPlBzlzBe0D1sNWecEhaSjTR1iMa9f+fA9l08wlQtRVw96Z6yHRgQokWVnO1GcWI7Q==
 
 "@nimiq/core@^1.6.3":
-  version "1.6.3"
-  resolved "https://registry.yarnpkg.com/@nimiq/core/-/core-1.6.3.tgz#3aa28ddd438f33d893133d5b51bc2c9a00326e0d"
-  integrity sha512-UNUJNMhaS4VY0lTqx6Elw2CjDeqV9c+xl+QqavUrUbqeYawhs8aIZ2rzysstV5s3oPGaRE5YEDrWQXu9Qyhz9w==
+  version "1.6.4"
+  resolved "https://registry.yarnpkg.com/@nimiq/core/-/core-1.6.4.tgz#4c39783cc03fbacdf7bc0cb2c2e9774671e7f555"
+  integrity sha512-sv+SQVDJj34IPKrasbK7VCGZVe+FI6xmhH3HJJka2DfH7rgwZ+QnjGxwx+yL68HwFF/09Zp6BBDtt6MEsRD2uw==
   dependencies:
-    "@nimiq/jungle-db" "^0.11.0"
+    "@nimiq/jungle-db" "^0.11.1"
     atob "^2.0.3"
     bindings "^1.3.0"
     btoa "^1.1.2"
@@ -1866,23 +1861,22 @@
   dependencies:
     dom-parser "^0.1.5"
 
-"@nimiq/jungle-db@^0.11.0":
-  version "0.11.0"
-  resolved "https://registry.yarnpkg.com/@nimiq/jungle-db/-/jungle-db-0.11.0.tgz#a4c03c7e9814bc06f4343692f7e14aabdef3e1ee"
-  integrity sha512-Unt3tonnIP1WouwdhOjI2fIVRTAtaCqB5LroftYwchA+JV7f7WrKV8ABThW86QBueOnIZn0ItO03TnIzThHWUw==
+"@nimiq/jungle-db@^0.11.1":
+  version "0.11.1"
+  resolved "https://registry.yarnpkg.com/@nimiq/jungle-db/-/jungle-db-0.11.1.tgz#01b85039f158542c8f83e330f51c332f8717b155"
+  integrity sha512-4t1eATxAMOjTNRAF0t6dADY4pHQ6owB3CG4g33/m43+eLx5IFaYKvCJ5uuT2FRqTG5hnqyCNbSZrE8cBurFt4A==
   dependencies:
     atob "^2.0.3"
     btoa "^1.1.2"
     node-lmdb "^0.10.1"
 
-"@nimiq/keyguard-client@https://gitpkg.vercel.app/nimiq/keyguard?scripts.postinstall=cd%20client%20%26%26%20.%2Fbuild-gitpkg.sh&3eca28cc8a269da7722c3f8615c24595115ee251":
+"@nimiq/keyguard-client@https://gitpkg.vercel.app/nimiq/keyguard?scripts.postinstall=cd%20client%20%26%26%20.%2Fbuild-gitpkg.sh&80eebcc939ee110bb2bafe2d7ef9b988fea7344a":
   version "1.0.0"
-  resolved "https://gitpkg.vercel.app/nimiq/keyguard?scripts.postinstall=cd%20client%20%26%26%20.%2Fbuild-gitpkg.sh&3eca28cc8a269da7722c3f8615c24595115ee251#ed073317007a7299fa0fc1eedfce3ca5c3557b82"
+  resolved "https://gitpkg.vercel.app/nimiq/keyguard?scripts.postinstall=cd%20client%20%26%26%20.%2Fbuild-gitpkg.sh&80eebcc939ee110bb2bafe2d7ef9b988fea7344a#37ce24f83374b23197a3f49fe2c4df54f8343c26"
 
-"@nimiq/ledger-api@^3.0.0":
+"@nimiq/ledger-api@github:nimiq/ledger-api#a7179c2d207c1deaeb2ab777ce6ad994e59f9c5f":
   version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@nimiq/ledger-api/-/ledger-api-3.0.0.tgz#3ea78e8acc8045ac1e62b81ac708b2d5d5e9194c"
-  integrity sha512-iU3DQWg5GlAQ/1nt4R2S0Udwwa+XOQPkbGKp72PZS+woRc4VEziB0DQtI5HeZsJvzJtB/UcDCYJhNa3p1I6HVA==
+  resolved "https://codeload.github.com/nimiq/ledger-api/tar.gz/a7179c2d207c1deaeb2ab777ce6ad994e59f9c5f"
   dependencies:
     "@ledgerhq/hw-app-btc" "^10.0.9"
     "@ledgerhq/hw-transport" "^6.29.0"
@@ -1900,30 +1894,10 @@
     buffer "^6.0.3"
     readable-stream "^4.4.2"
 
-"@nimiq/network-client@^0.6.2":
-  version "0.6.2"
-  resolved "https://registry.yarnpkg.com/@nimiq/network-client/-/network-client-0.6.2.tgz#82ee73cc6d3ee6cd510cc9478cce9af8cc3689ad"
-  integrity sha512-UyZ5J/7fQ9E1JYmmFfW7yz6VIkaCB7KLVrE7t/xnyJO3n380yN10Z30o2AcLtLoJelqw4it2lAqepeVqmbVLZQ==
-  dependencies:
-    "@nimiq/core-web" "1.5.3"
-    "@nimiq/rpc-events" "^0.0.8"
-
 "@nimiq/oasis-api@^1.1.1":
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/@nimiq/oasis-api/-/oasis-api-1.1.1.tgz#d1aa3d0f9afabf9116205809a0fc72d2e392bafa"
   integrity sha512-jXNO7nvE0mzAyDCrucByv5AcyDWZjyqb9810YctysxqUtOxNG27hPkhomL+WW6nrnTVgvriJo3yaTFPTfLphKw==
-
-"@nimiq/rpc-events@^0.0.8":
-  version "0.0.8"
-  resolved "https://registry.yarnpkg.com/@nimiq/rpc-events/-/rpc-events-0.0.8.tgz#bb03bb98e6450de3b858260c73dfabca0e4cbce8"
-  integrity sha512-2KYmey23WD1yV/61N+ZdUmHsxXhhie9kZOwDf1PqKbYBEHHJaoqyQb1fEptja6yyVlnZc5tv806JhHWBjJNCVA==
-  dependencies:
-    "@nimiq/rpc" "^0.1.4"
-
-"@nimiq/rpc@^0.1.4":
-  version "0.1.5"
-  resolved "https://registry.yarnpkg.com/@nimiq/rpc/-/rpc-0.1.5.tgz#53919b0a3a9abcdfebee0e865f4c663f72a8b8c2"
-  integrity sha512-oTRThXzpbQOY8jz8h+2KXucWzW40nVfYBWROKXKBrSozhTG0nR+rzCbEm4ZyTC26b4RnmB6y4nYabUXi7gNWcA==
 
 "@nimiq/rpc@^0.4.1":
   version "0.4.1"
@@ -9606,9 +9580,9 @@ node-gyp-build@^4.2.0, node-gyp-build@^4.3.0:
   integrity sha512-NTZVKn9IylLwUzaKjkas1e4u2DLNcV4rdYagA4PWdPwW87Bi7z+BznyKSRwS/761tV/lzCGXplWsiaMjLqP2zQ==
 
 node-gyp-build@^4.8.1:
-  version "4.8.2"
-  resolved "https://registry.yarnpkg.com/node-gyp-build/-/node-gyp-build-4.8.2.tgz#4f802b71c1ab2ca16af830e6c1ea7dd1ad9496fa"
-  integrity sha512-IRUxE4BVsHWXkV/SFOut4qTlagw2aM8T5/vnTsmrHJvVoKueJHRc/JaFND7QDDc61kLYUJ6qlZM3sqTSyx2dTw==
+  version "4.8.3"
+  resolved "https://registry.yarnpkg.com/node-gyp-build/-/node-gyp-build-4.8.3.tgz#9187216d24dbee29e44eb20d2ebf62a296bbea1a"
+  integrity sha512-EMS95CMJzdoSKoIiXo8pxKoL8DYxwIZXYlLmgPb8KUv794abpnLK6ynsCAWNliOjREKruYKdzbh76HHYUHX7nw==
 
 node-int64@^0.4.0:
   version "0.4.0"

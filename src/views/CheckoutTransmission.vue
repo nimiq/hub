@@ -20,12 +20,10 @@
 import { Component, Vue } from 'vue-property-decorator';
 import { State } from 'vuex-class';
 import { SmallPage } from '@nimiq/vue-components';
-import type * as Nimiq from '@nimiq/albatross-wasm';
 import StatusScreen from '../components/StatusScreen.vue';
 import KeyguardClient from '@nimiq/keyguard-client';
 import { i18n } from '../i18n/i18n-setup';
 import { ERROR_CANCELED } from '../lib/Constants';
-import { bytesToHex, hexToBytes } from '../lib/BufferUtils';
 import { SignedTransaction } from '../../client/PublicRequestTypes';
 import { NetworkClient } from '../lib/NetworkClient';
 
@@ -49,10 +47,8 @@ export default class CheckoutTransmission extends Vue {
     }
 
     private async mounted() {
-        const { Transaction } = await window.loadAlbatross();
-
-        const hex = bytesToHex(this.keyguardResult.serializedTx);
-        const tx = Transaction.fromAny(hex);
+        const hex = Nimiq.BufferUtils.toHex(this.keyguardResult.serializedTx);
+        const tx = Nimiq.Transaction.fromAny(hex);
 
         try {
             await NetworkClient.Instance.init();
@@ -87,14 +83,14 @@ export default class CheckoutTransmission extends Vue {
                     recipientType: tx.recipientType,
                     proof: tx.proof,
                     signerPublicKey: 'publicKey' in plain.proof
-                        ? hexToBytes(plain.proof.publicKey)
+                        ? Nimiq.BufferUtils.fromHex(plain.proof.publicKey)
                         : 'creatorPublicKey' in plain.proof
-                            ? hexToBytes(plain.proof.creatorPublicKey)
+                            ? Nimiq.BufferUtils.fromHex(plain.proof.creatorPublicKey)
                             : new Uint8Array(0),
                     signature: 'signature' in plain.proof
-                        ? hexToBytes(plain.proof.signature)
+                        ? Nimiq.BufferUtils.fromHex(plain.proof.signature)
                         : 'creatorSignature' in plain.proof
-                            ? hexToBytes(plain.proof.creatorSignature)
+                            ? Nimiq.BufferUtils.fromHex(plain.proof.creatorSignature)
                             : new Uint8Array(0),
                     extraData: tx.data,
                     networkId: tx.networkId,

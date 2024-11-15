@@ -21,7 +21,6 @@ import { Component, Vue } from 'vue-property-decorator';
 import { LoadingSpinner } from '@nimiq/vue-components';
 import CashlinkReceive from './views/CashlinkReceive.vue';
 import { CashlinkTheme } from '../client/PublicRequestTypes';
-import { loadNimiq } from './lib/Helpers';
 
 import '@nimiq/style/nimiq-style.min.css';
 import '@nimiq/vue-components/dist/NimiqVueComponents.css';
@@ -32,10 +31,7 @@ export default class CashlinkApp extends Vue {
     private isDarkTheme = false;
 
     public async created() {
-        await Promise.all([
-            this.$store.dispatch('initWallets'),
-            loadNimiq(),
-        ]);
+        await this.$store.dispatch('initWallets');
         this.loading = false;
     }
 

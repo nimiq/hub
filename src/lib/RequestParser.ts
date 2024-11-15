@@ -71,21 +71,21 @@ export class RequestParser {
                     appName: signTransactionRequest.appName,
                     sender: Nimiq.Address.fromString(signTransactionRequest.sender),
                     recipient: Nimiq.Address.fromString(signTransactionRequest.recipient),
-                    recipientType: signTransactionRequest.recipientType || Nimiq.Account.Type.BASIC,
+                    recipientType: signTransactionRequest.recipientType || Nimiq.AccountType.Basic,
                     recipientLabel: signTransactionRequest.recipientLabel,
                     value: signTransactionRequest.value,
                     fee: signTransactionRequest.fee || 0,
                     data: typeof signTransactionRequest.extraData === 'string'
                         ? Utf8Tools.stringToUtf8ByteArray(signTransactionRequest.extraData)
                         : signTransactionRequest.extraData || new Uint8Array(0),
-                    flags: signTransactionRequest.flags || Nimiq.Transaction.Flag.NONE,
+                    flags: signTransactionRequest.flags || 0 /* Nimiq.Transaction.Flag.NONE */,
                     validityStartHeight: signTransactionRequest.validityStartHeight,
                 } as ParsedSignTransactionRequest;
             case RequestType.SIGN_STAKING:
                 const signStakingRequest = request as SignStakingRequest;
 
-                // const Albatross = await window.loadAlbatross();
-                // const transaction = Albatross.Transaction.fromAny(
+                // TODO Parse transactions
+                // const transaction = Nimiq.Transaction.fromAny(
                 //     Nimiq.BufferUtils.toHex(signStakingRequest.transaction),
                 // );
 
@@ -163,11 +163,11 @@ export class RequestParser {
                             protocolSpecific: {
                                 extraData: checkoutRequest.extraData,
                                 recipient: checkoutRequest.recipient,
-                                recipientType: checkoutRequest.recipientType || Nimiq.Account.Type.BASIC,
+                                recipientType: checkoutRequest.recipientType || Nimiq.AccountType.Basic,
                                 sender: checkoutRequest.sender,
                                 forceSender: !!checkoutRequest.forceSender,
                                 fee: checkoutRequest.fee || 0,
-                                flags: checkoutRequest.flags || Nimiq.Transaction.Flag.NONE,
+                                flags: checkoutRequest.flags || 0 /* Nimiq.Transaction.Flag.NONE */,
                                 validityDuration: checkoutRequest.validityDuration,
                             },
                         })],
@@ -768,8 +768,8 @@ export class RequestParser {
             case RequestType.SIGN_STAKING:
                 const signStakingRequest = request as ParsedSignStakingRequest;
 
-                // const Albatross = await window.loadAlbatross();
-                // const transaction = Albatross.Transaction.fromPlain(signStakingRequest.transaction);
+                // TODO: Parse transactions
+                // const transaction = Nimiq.Transaction.fromPlain(signStakingRequest.transaction);
 
                 return {
                     appName: signStakingRequest.appName,

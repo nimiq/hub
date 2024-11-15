@@ -5,8 +5,9 @@ import { POLYGON_NETWORK_MAIN } from '../lib/polygon/PolygonConstants';
 
 export default {
     keyguardEndpoint: 'https://keyguard.nimiq.com',
-    ledgerApiNimiqVersion: 'legacy' as LedgerApiNimiqVersion.LEGACY,
+    ledgerApiNimiqVersion: 'albatross' as LedgerApiNimiqVersion.ALBATROSS,
     network: NETWORK_MAIN,
+    nimiqNetworkId: 24,
     networkEndpoint: 'https://network.nimiq.com',
     seedNodes: [],
     privilegedOrigins: [

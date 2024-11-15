@@ -33,7 +33,7 @@ export default class SetupSwap extends BitcoinSyncBaseView {
         try {
             const swapSetupInfo = await this._collectSwapSetupInfo();
             if (this._isDestroyed || !swapSetupInfo) return; // destroyed or failed and is displaying an error
-            this._setupSwap(swapSetupInfo);
+            await this._setupSwap(swapSetupInfo);
         } catch (e) {
             this.error = e.message || e;
             if (this.state === this.State.SYNCING_FAILED // keep the error message displayed and offer to retry
@@ -108,7 +108,7 @@ export default class SetupSwap extends BitcoinSyncBaseView {
                 type: SwapAsset.NIM,
                 keyPath: signer.path,
                 sender: (senderContract || signer).address.serialize(),
-                senderType: senderContract ? senderContract.type : Nimiq.Account.Type.BASIC,
+                senderType: senderContract ? senderContract.type : Nimiq.AccountType.Basic,
                 senderLabel: (senderContract || signer).label,
                 value: this.request.fund.value,
                 fee: this.request.fund.fee,

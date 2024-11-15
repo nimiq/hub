@@ -126,7 +126,11 @@ import {
     StopwatchIcon,
 } from '@nimiq/vue-components';
 import Network from '../components/Network.vue';
-import LedgerApi, { RequestTypeNimiq as LedgerApiRequestType, Network as LedgerApiNetwork } from '@nimiq/ledger-api';
+import LedgerApi, {
+    RequestTypeNimiq as LedgerApiRequestType,
+    Network as LedgerApiNetwork,
+    AccountTypeNimiq,
+} from '@nimiq/ledger-api';
 import StatusScreen from '../components/StatusScreen.vue';
 import GlobalClose from '../components/GlobalClose.vue';
 import LedgerUi from '../components/LedgerUi.vue';
@@ -149,6 +153,7 @@ import Config from 'config';
 import Cashlink from '../lib/Cashlink';
 import { CashlinkStore } from '../lib/CashlinkStore';
 import CheckoutServerApi from '../lib/CheckoutServerApi';
+import { NetworkClient } from '../lib/NetworkClient';
 
 interface AccountDetailsData {
     address: string;
@@ -197,6 +202,7 @@ export default class SignTransactionLedger extends Vue {
 
     private async mounted() {
         const network = this.$refs.network as Network;
+        await NetworkClient.Instance.init();
 
         // collect payment information
         let sender: ParsedSignTransactionRequest['sender'];
@@ -260,7 +266,7 @@ export default class SignTransactionLedger extends Vue {
             };
 
             // Usually instant as synced in checkout. Only on reload we have to resync.
-            validityStartHeightPromise = network.getBlockchainHeight().then((blockchainHeight) =>
+            validityStartHeightPromise = NetworkClient.Instance.getHeight().then((blockchainHeight) =>
                 blockchainHeight + 1 // The next block is the earliest for which tx are accepted by standard miners
                 - TX_VALIDITY_WINDOW
                 + checkoutPaymentOptions.protocolSpecific.validityDuration,
@@ -281,7 +287,7 @@ export default class SignTransactionLedger extends Vue {
             ({ recipient, value, fee } = this.cashlink!.getFundingDetails());
             validityStartHeightPromise = network.getBlockchainHeight().then((blockchainHeight) => blockchainHeight + 1);
             data = CASHLINK_FUNDING_DATA;
-            flags = Nimiq.Transaction.Flag.NONE;
+            flags = 0 /* Nimiq.Transaction.Flag.NONE */;
 
             this.recipientDetails = {
                 address: this.cashlink.address.toUserFriendlyAddress(),
@@ -303,7 +309,7 @@ export default class SignTransactionLedger extends Vue {
         }
 
         let senderAddress: Nimiq.Address;
-        let senderType: Nimiq.Account.Type | undefined;
+        let senderType: Nimiq.AccountType | undefined;
         let signerKeyId: string;
         let signerKeyPath: string;
 
@@ -315,7 +321,7 @@ export default class SignTransactionLedger extends Vue {
             const signer = senderAccount.findSignerForAddress(sender)!;
 
             senderAddress = sender;
-            senderType = senderContract ? senderContract.type : Nimiq.Account.Type.BASIC;
+            senderType = senderContract ? senderContract.type : Nimiq.AccountType.Basic;
             signerKeyId = senderAccount.keyId;
             signerKeyPath = signer.path;
 
@@ -347,8 +353,8 @@ export default class SignTransactionLedger extends Vue {
             sender: senderAddress,
             senderType,
             recipient,
-            value,
-            fee: fee || 0,
+            value: BigInt(value),
+            fee: BigInt(fee || 0),
             network: Config.network as LedgerApiNetwork,
             extraData: data,
             flags,
@@ -367,7 +373,11 @@ export default class SignTransactionLedger extends Vue {
 
             try {
                 signedTransaction = await LedgerApi.Nimiq.signTransaction(
-                    { ...transactionInfo, validityStartHeight },
+                    {
+                        ...transactionInfo,
+                        validityStartHeight,
+                        senderType: transactionInfo.senderType as AccountTypeNimiq | undefined,
+                    },
                     signerKeyPath,
                     signerKeyId,
                     Config.ledgerApiNimiqVersion,
@@ -457,7 +467,7 @@ export default class SignTransactionLedger extends Vue {
         }
 
         // tslint:disable-next-line no-bitwise
-        if ((flags & Nimiq.Transaction.Flag.CONTRACT_CREATION) > 0) {
+        if ((flags & 1 /* Nimiq.Transaction.Flag.CONTRACT_CREATION */) > 0) {
             // TODO: Decode contract creation transactions
             // return ...
         }

@@ -5,8 +5,9 @@ import { POLYGON_NETWORK_TEST } from '../lib/polygon/PolygonConstants';
 
 export default {
     keyguardEndpoint: process.env.VUE_APP_KEYGUARD_URL,
-    ledgerApiNimiqVersion: 'legacy' as LedgerApiNimiqVersion.LEGACY,
+    ledgerApiNimiqVersion: 'albatross' as LedgerApiNimiqVersion.ALBATROSS,
     network: NETWORK_TEST,
+    nimiqNetworkId: 5,
     networkEndpoint: 'https://network.nimiq-testnet.com',
     seedNodes: [
         process.env.VUE_APP_SEED_NODE_MULTIADDR,

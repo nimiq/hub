@@ -1,5 +1,3 @@
-import { loadNimiq } from './Helpers';
-
 /**
  * The UID is used for the purpose of tracking Fastspot swap limits per user. It is generated from
  * two deterministic values. The keyId of an account and its first NIM address, which are always the same.
@@ -20,7 +18,6 @@ async function sha256(buffer: Uint8Array): Promise<Uint8Array> {
         return new Uint8Array(await window.crypto.subtle.digest('SHA-256', buffer));
     } catch (error) {
         if (window.top === window) { // Not an iframe or popup
-            await loadNimiq();
             return Nimiq.Hash.computeSha256(buffer);
         } else {
             throw error;

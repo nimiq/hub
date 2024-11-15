@@ -187,7 +187,7 @@ export default class Migrate extends Vue {
         // Update legacyAccounts array
         this.legacyAccounts.forEach((account) => {
             const balance = balances.get(account.userFriendlyAddress);
-            account.balance = balance !== undefined ? Nimiq.Policy.coinsToSatoshis(balance) : balance;
+            account.balance = balance;
         });
         this.storeAccountsCache();
     }

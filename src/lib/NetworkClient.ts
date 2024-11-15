@@ -1,18 +1,11 @@
-import type * as Nimiq from '@nimiq/albatross-wasm';
 import Config from 'config';
-
-declare global {
-    interface Window {
-        loadAlbatross: () => Promise<typeof Nimiq>;
-    }
-}
+import { NETWORK_TEST, NETWORK_MAIN, NETWORK_DEV, ERROR_INVALID_NETWORK } from './Constants';
 
 export class NetworkClient {
     private static _instance?: NetworkClient;
 
     public static get Instance() {
-        if (!this._instance) this._instance = new NetworkClient();
-        return this._instance;
+        return this._instance || (this._instance = new NetworkClient());
     }
 
     private _clientPromise?: Promise<Nimiq.Client>;
@@ -21,12 +14,11 @@ export class NetworkClient {
 
     public async init() {
         const initPromise = this._clientPromise || (this._clientPromise = new Promise(async (resolve) => {
-            const { Client, ClientConfiguration } = await window.loadAlbatross();
-            const clientConfig = new ClientConfiguration();
+            const clientConfig = new Nimiq.ClientConfiguration();
             clientConfig.network(this.networkToAlbatross(Config.network));
             clientConfig.seedNodes(Config.seedNodes);
             clientConfig.logLevel('debug');
-            resolve(Client.create(clientConfig.build()));
+            resolve(Nimiq.Client.create(clientConfig.build()));
         }));
 
         await initPromise;
@@ -35,6 +27,25 @@ export class NetworkClient {
     public async requestTransactionReceipts(address: string, limit?: number) {
         const client = await this.client;
         return client.getTransactionReceiptsByAddress(address, limit);
+    }
+
+    public async getTransactionsByAddress(
+        address: string | Nimiq.Address,
+        // sinceBlockHeight?: number,
+        knownTransactionDetails?: Nimiq.PlainTransactionDetails[],
+        // startAt?: string,
+        limit?: number,
+        // minPeers?: number,
+    ) {
+        const client = await this.client;
+        return client.getTransactionsByAddress(
+            address,
+            undefined /* sinceBlockHeight */,
+            knownTransactionDetails,
+            undefined /* startAt */,
+            limit,
+            undefined /* minPeers */,
+        );
     }
 
     public async getBalance(addresses: string[]) {
@@ -54,8 +65,57 @@ export class NetworkClient {
         ]));
     }
 
+    public async getHeight() {
+        const client = await this.client;
+        return client.getHeadHeight();
+    }
+
+    public async getNetworkId() {
+        const client = await this.client;
+        return client.getNetworkId();
+    }
+
+    public async awaitConsensus() {
+        await this.client;
+    }
+
+    public async isConsensusEstablished() {
+        return (await this.client).isConsensusEstablished();
+    }
+
     public async getGenesisVestingContracts() {
         return [] as Array<Nimiq.PlainVestingContract & { address: string }>; // TODO
+    }
+
+    public async relayTransaction(obj: {
+        sender: string;
+        senderPubKey: Uint8Array;
+        recipient: string;
+        value: number;
+        fee: number;
+        validityStartHeight: number;
+        signature: Uint8Array;
+        extraData?: string | Uint8Array;
+    }) {
+        const client = await this.client;
+
+        const tx = Nimiq.TransactionBuilder.newBasicWithData(
+            Nimiq.Address.fromString(obj.sender),
+            Nimiq.Address.fromString(obj.recipient),
+            typeof obj.extraData === 'string'
+                ? Nimiq.BufferUtils.fromAny(obj.extraData)
+                : (obj.extraData || new Uint8Array(0)),
+            BigInt(obj.value),
+            BigInt(obj.fee),
+            obj.validityStartHeight,
+            await client.getNetworkId(),
+        );
+        tx.proof = Nimiq.SignatureProof.singleSig(
+            new Nimiq.PublicKey(obj.senderPubKey),
+            Nimiq.Signature.deserialize(obj.signature),
+        ).serialize();
+
+        return client.sendTransaction(tx);
     }
 
     public get innerClient() {
@@ -72,10 +132,10 @@ export class NetworkClient {
 
     private networkToAlbatross(network: string) {
         switch (network) {
-            case 'main': return 'albatross';
-            case 'test': return 'testalbatross';
-            case 'dev': return 'devalbatross';
-            default: throw new Error(`Unknown network: ${network}`);
+            case NETWORK_MAIN: return 'mainalbatross';
+            case NETWORK_TEST: return 'testalbatross';
+            case NETWORK_DEV: return 'devalbatross';
+            default: throw new Error(ERROR_INVALID_NETWORK);
         }
     }
 }

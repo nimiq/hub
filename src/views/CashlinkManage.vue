@@ -165,7 +165,7 @@ export default class CashlinkManage extends Vue {
             // might be that the sending failed and the user reloaded the page, in which case we try sending again.
             transactionToSend = network.getUnrelayedTransactions({
                 recipient: storedCashlink.address,
-                value: storedCashlink.value,
+                value: BigInt(storedCashlink.value),
             })[0];
             this.isTxSent = !transactionToSend;
             this.retrievedCashlink = storedCashlink;
@@ -195,7 +195,7 @@ export default class CashlinkManage extends Vue {
             // Store cashlink in database first to be safe when browser crashes during sending
             await CashlinkStore.Instance.put(this.retrievedCashlink);
 
-            transactionToSend = transactionToSend || await network.createTx({
+            transactionToSend = transactionToSend || network.createTx({
                 ...this.keyguardRequest,
                 signerPubKey: this.keyguardResult.publicKey,
                 signature: this.keyguardResult.signature,

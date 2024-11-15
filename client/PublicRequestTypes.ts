@@ -1,3 +1,4 @@
+import type * as Nimiq from '@nimiq/core';
 import type { RelayRequest } from '@opengsn/common/dist/EIP712/RelayRequest';
 
 import {
@@ -92,7 +93,7 @@ export interface ChooseAddressResult extends Address {
 export interface SignTransactionRequest extends BasicRequest {
     sender: string;
     recipient: string;
-    recipientType?: Nimiq.Account.Type | 3;
+    recipientType?: Nimiq.AccountType;
     recipientLabel?: string;
     value: number;
     fee?: number;
@@ -113,7 +114,7 @@ export interface NimiqCheckoutRequest extends BasicRequest {
     sender?: string;
     forceSender?: boolean;
     recipient: string;
-    recipientType?: Nimiq.Account.Type;
+    recipientType?: Nimiq.AccountType;
     value: number;
     fee?: number;
     extraData?: Bytes;
@@ -236,9 +237,9 @@ export interface SignedTransaction {
         signature: Uint8Array;
 
         sender: string; // Userfriendly address
-        senderType: Nimiq.Account.Type | 3;
+        senderType: Nimiq.AccountType;
         recipient: string; // Userfriendly address
-        recipientType: Nimiq.Account.Type | 3;
+        recipientType: Nimiq.AccountType;
         value: number; // Luna
         fee: number; // Luna
         validityStartHeight: number;
@@ -474,19 +475,19 @@ export interface Address {
 }
 
 export interface VestingContract {
-    type: Nimiq.Account.Type.VESTING;
+    type: Nimiq.AccountType.Vesting;
     address: string; // Userfriendly address
     label: string;
 
     owner: string; // Userfriendly address
-    start: number;
+    startTime: number;
     stepAmount: number;
-    stepBlocks: number;
+    timeStep: number;
     totalAmount: number;
 }
 
 export interface HashedTimeLockedContract {
-    type: Nimiq.Account.Type.HTLC;
+    type: Nimiq.AccountType.HTLC;
     address: string; // Userfriendly address
     label: string;
 

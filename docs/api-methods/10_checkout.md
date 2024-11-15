@@ -77,7 +77,7 @@ const signedTransaction = await hubApi.checkout(options);
 | `forceSender` | boolean | no | Whether to force the submitted sender address. If this option is `true`, an exception is thrown when either the sender address does not exist or does not have sufficient balance. When `false` (default), the user will be shown the address selector instead. (Only relevant in connection with the `sender` option.) |
 | `validityDuration` | number | no | The duration (in number of blocks) that the signed transaction should be valid for. The maximum and default is 120. |
 | `flags` | number | no | A [`Nimiq.Transaction.Flag`](https://nimiq-network.github.io/developer-reference/chapters/transactions.html#extended-transaction), only required if the transaction should create a contract. |
-| `recipientType` | number | no | The [`Nimiq.Account.Type`](https://nimiq-network.github.io/developer-reference/chapters/accounts-and-contracts.html#contracts) of the recipient. Only required if the transaction should create a contract. |
+| `recipientType` | number | no | The [`Nimiq.AccountType`](https://nimiq-network.github.io/developer-reference/chapters/accounts-and-contracts.html#contracts) of the recipient. Only required if the transaction should create a contract. |
 
 ## Result
 
@@ -93,10 +93,10 @@ interface SignedTransaction {
         signature: Uint8Array;             // Serialized signature of the signer
 
         sender: string;                    // Human-readable address of sender
-        senderType: Nimiq.Account.Type;    // 0, 1, 2 - see recipientType above
+        senderType: Nimiq.AccountType;    // 0, 1, 2, 3 - see recipientType above
 
         recipient: string;                 // Human-readable address of recipient
-        recipientType: Nimiq.Account.Type; // 0, 1, 2 - see above
+        recipientType: Nimiq.AccountType; // 0, 1, 2, 3 - see above
 
         value: number;
         fee: number;

@@ -227,10 +227,13 @@
     "@ethersproject/properties" "^5.7.0"
     "@ethersproject/strings" "^5.7.0"
 
-"@nimiq/core-web@^1.6.3":
-  version "1.6.3"
-  resolved "https://registry.yarnpkg.com/@nimiq/core-web/-/core-web-1.6.3.tgz#b4a8f8c5d289850b20cb4009766af5b1cafd6e20"
-  integrity sha512-D6RrJi2cRU81odNpmwczhUBvOQ47+/Db1svrTkH/G4xNd72lr9MS5nMdfpUz+rBRnSprljrzW2mdUtZ6W9bPaA==
+"@nimiq/core@next":
+  version "2.0.0-next.rc.4"
+  resolved "https://registry.yarnpkg.com/@nimiq/core/-/core-2.0.0-next.rc.4.tgz#a353f4507f2f10e3be741f920cff921c9474dea7"
+  integrity sha512-qSBy/Mg0rbqAstEnrgzGhqeQpmQdOjCZPWmBV5uFxAMAAYl9nrABaXWQXo3Jvemvx5VQE9pz5/ma3I8Z0ROy1g==
+  dependencies:
+    comlink "^4.4.1"
+    websocket "^1.0.34"
 
 "@nimiq/fastspot-api@^1.10.2":
   version "1.10.2"
@@ -991,6 +994,11 @@ combined-stream@^1.0.6, combined-stream@~1.0.6:
   dependencies:
     delayed-stream "~1.0.0"
 
+comlink@^4.4.1:
+  version "4.4.2"
+  resolved "https://registry.yarnpkg.com/comlink/-/comlink-4.4.2.tgz#cbbcd82742fbebc06489c28a183eedc5c60a2bca"
+  integrity sha512-OxGdvBmJuNKSCMO4NTl1L47VRp6xn2wG4F/2hYzB6tiCb709otOxtEYCSvK80PtjODfXXZu8ds+Nw5kVCjqd2g==
+
 commander@^2.12.1, commander@^2.19.0:
   version "2.20.0"
   resolved "https://registry.yarnpkg.com/commander/-/commander-2.20.0.tgz#d58bb2b5c1ee8f87b0d340027e9e94e222c5a422"
@@ -1322,7 +1330,7 @@ es-errors@^1.3.0:
   resolved "https://registry.yarnpkg.com/es-errors/-/es-errors-1.3.0.tgz#05f75a25dab98e4fb1dcd5e1472c0546d5057c8f"
   integrity sha512-Zf5H2Kxt2xjTvbJvP2ZWLEICxA6j+hAmMzIlypy4xcBg1vKVnx89Wy0GbS+kf5cwCVFFzdCFh2XSCFNULS6csw==
 
-es5-ext@^0.10.35, es5-ext@^0.10.50, es5-ext@^0.10.62, es5-ext@~0.10.14:
+es5-ext@^0.10.35, es5-ext@^0.10.50, es5-ext@^0.10.62, es5-ext@^0.10.63, es5-ext@~0.10.14:
   version "0.10.64"
   resolved "https://registry.yarnpkg.com/es5-ext/-/es5-ext-0.10.64.tgz#12e4ffb48f1ba2ea777f1fcdd1918ef73ea21714"
   integrity sha512-p2snDhiLaXe6dahss1LddxqEm+SkuDvV8dnIQG0MWjyHpcMNfXKPE+/Cc0y+PhxJX3A4xGNeFCj5oc0BUh6deg==
@@ -4219,6 +4227,18 @@ websocket@^1.0.32:
     bufferutil "^4.0.1"
     debug "^2.2.0"
     es5-ext "^0.10.50"
+    typedarray-to-buffer "^3.1.5"
+    utf-8-validate "^5.0.2"
+    yaeti "^0.0.6"
+
+websocket@^1.0.34:
+  version "1.0.35"
+  resolved "https://registry.yarnpkg.com/websocket/-/websocket-1.0.35.tgz#374197207d7d4cc4c36cbf8a1bb886ee52a07885"
+  integrity sha512-/REy6amwPZl44DDzvRCkaI1q1bIiQB0mEFQLUrhz3z2EK91cp3n72rAjUlrTP0zV22HJIUOVHQGPxhFRjxjt+Q==
+  dependencies:
+    bufferutil "^4.0.1"
+    debug "^2.2.0"
+    es5-ext "^0.10.63"
     typedarray-to-buffer "^3.1.5"
     utf-8-validate "^5.0.2"
     yaeti "^0.0.6"

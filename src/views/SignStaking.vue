@@ -22,8 +22,7 @@ export default class SignStaking extends Vue {
         let keyLabel: string | undefined;
         let recipientLabel = this.request.recipientLabel;
 
-        const { Transaction } = await window.loadAlbatross();
-        const transaction = Transaction.fromAny(Nimiq.BufferUtils.toHex(
+        const transaction = Nimiq.Transaction.fromAny(Nimiq.BufferUtils.toHex(
             this.request.transactions[this.request.transactions.length - 1],
         )).toPlain();
 

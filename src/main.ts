@@ -31,52 +31,69 @@ Vue.config.productionTip = false;
 // see https://cli.vuejs.org/guide/mode-and-env.html#using-env-variables-in-client-side-code
 setVueComponentsAssetPath(`${process.env.BASE_URL}js/`, `${process.env.BASE_URL}img/`);
 
-const rpcApi = new RpcApi(store, staticStore, router);
-Vue.prototype.$rpc = rpcApi; // rpcApi is started in App.vue->created()
+async function main() {
+    // Load the main Nimiq WASM module and make it available globally.
+    // This must happen before creating the RpcApi instance, because it can try to recover state in its
+    // constructor, which in turn uses the RequestParser, which needs the Nimiq module.
+    window.Nimiq = await window.loadAlbatross();
 
-startSentry(Vue);
+    const rpcApi = new RpcApi(store, staticStore, router);
+    Vue.prototype.$rpc = rpcApi; // rpcApi is started in App.vue->created()
 
-// Kick off loading the language file
-setLanguage(detectLanguage());
+    startSentry(Vue);
 
-const app = new Vue({
-    data: { loading: true },
-    router,
-    store,
-    i18n,
-    render: (h) => h(App),
-}).$mount('#app');
+    // Kick off loading the language file
+    setLanguage(detectLanguage());
 
-let _loadingTimeout: number = -1;
-router.beforeEach((to, from, next) => {
-    if (_loadingTimeout === -1) {
-        // Only show loader when lazy-loading takes longer than 500ms
-        _loadingTimeout = window.setTimeout(() => app.loading = true, 500);
-    }
-    next();
-});
+    const app = new Vue({
+        data: { loading: true },
+        router,
+        store,
+        i18n,
+        render: (h) => h(App),
+    }).$mount('#app');
 
-// This router navigation guard is to prevent switching
-// to the new route before the language file finished loading.
-router.beforeResolve((to, from, next) => {
-    if (to.path === '/') {
-        // The root path doesn't require any translations, therefore we can continue right away. Also, this fixes what
-        // seems to be a race condition between the beforeEach in the RpcApi and this beforeResolve, see issue #422
+    let _loadingTimeout: number = -1;
+    router.beforeEach((to, from, next) => {
+        if (_loadingTimeout === -1) {
+            // Only show loader when lazy-loading takes longer than 500ms
+            _loadingTimeout = window.setTimeout(() => app.loading = true, 500);
+        }
         next();
-        return;
-    }
-    setLanguage(detectLanguage()).then(() => next());
-});
+    });
 
-router.afterEach(() => {
-    window.clearTimeout(_loadingTimeout);
-    _loadingTimeout = -1;
-    app.loading = false;
-});
+    // This router navigation guard is to prevent switching
+    // to the new route before the language file finished loading.
+    router.beforeResolve((to, from, next) => {
+        if (to.path === '/') {
+            // The root path doesn't require any translations, therefore we can continue right away. Also, this fixes
+            // what seems to be a race condition between the beforeEach in the RpcApi and this beforeResolve, see
+            // issue #422
+            next();
+            return;
+        }
+        setLanguage(detectLanguage()).then(() => next());
+    });
+
+    router.afterEach(() => {
+        window.clearTimeout(_loadingTimeout);
+        _loadingTimeout = -1;
+        app.loading = false;
+    });
+}
+
+main();
 
 // Types
 declare module 'vue/types/vue' {
     interface Vue {
         $rpc: RpcApi;
+    }
+}
+
+declare global {
+    interface Window {
+        loadAlbatross: () => Promise<typeof Nimiq>;
+        Nimiq: typeof Nimiq;
     }
 }

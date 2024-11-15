@@ -36,9 +36,9 @@ const DUMMY: WalletInfo[] = [ // IDs must be alphabetically ordered, as the Wall
             Nimiq.Address.fromUserFriendlyAddress('NQ07 0000 0000 0000 0000 0000 0000 0000 0000'),
             Nimiq.Address.fromUserFriendlyAddress('NQ07 0000 0000 0000 0000 0000 0000 0000 0000'),
             Nimiq.Address.fromUserFriendlyAddress('NQ07 0000 0000 0000 0000 0000 0000 0000 0000'),
-            new Nimiq.Hash(Nimiq.BufferUtils
+            Nimiq.BufferUtils
                 .fromHex('0000000000000000000000000000000000000000000000000000000000000000')
-                .subarray(0, 32)),
+                .subarray(0, 32),
             1, 120, 3000e5,
         )], WalletType.LEDGER),
 ];

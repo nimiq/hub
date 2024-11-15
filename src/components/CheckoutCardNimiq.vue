@@ -247,10 +247,10 @@ class CheckoutCardNimiq
             const balance = balances.get(accountOrContract.userFriendlyAddress);
             if (balance === undefined) continue;
 
-            if ('type' in accountOrContract && accountOrContract.type === Nimiq.Account.Type.VESTING) {
+            if ('type' in accountOrContract && accountOrContract.type === Nimiq.AccountType.Vesting) {
                 // Calculate available amount for vesting contract
                 accountOrContract.balance = (accountOrContract as VestingContractInfo)
-                    .calculateAvailableAmount(this.height, balance);
+                    .calculateAvailableAmount(balance);
             } else {
                 accountOrContract.balance = balance;
             }
@@ -392,15 +392,15 @@ class CheckoutCardNimiq
                     keyLabel: senderAccount.labelForKeyguard,
 
                     sender: (senderContract || signer).address.serialize(),
-                    senderType: senderContract ? senderContract.type : Nimiq.Account.Type.BASIC,
+                    senderType: senderContract ? senderContract.type : Nimiq.AccountType.Basic,
                     senderLabel: (senderContract || signer).label,
                     recipient: this.paymentOptions.protocolSpecific.recipient!.serialize(),
                     recipientType: this.paymentOptions.protocolSpecific.recipientType,
+                    recipientData: this.paymentOptions.protocolSpecific.extraData,
                     // recipientLabel: '', // Checkout is using the shopOrigin instead
                     value: this.paymentOptions.amount,
                     fee: this.paymentOptions.fee,
                     validityStartHeight,
-                    data: this.paymentOptions.protocolSpecific.extraData,
                     flags: this.paymentOptions.protocolSpecific.flags,
 
                     fiatAmount: this.request.fiatAmount,

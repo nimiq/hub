@@ -135,11 +135,12 @@ import Cashlink from '../lib/Cashlink';
 import { CashlinkState, BasicRequest, CashlinkTheme } from '../../client/PublicRequestTypes';
 import { AccountInfo } from '../lib/AccountInfo';
 import { Getter, Mutation } from 'vuex-class';
-import { NetworkClient, DetailedPlainTransaction } from '@nimiq/network-client';
 import Config from 'config';
 import { WalletInfo } from '../lib/WalletInfo';
 import { CashlinkStore } from '../lib/CashlinkStore';
 import HubApi from '../../client/HubApi';
+import { NetworkClient } from '../lib/NetworkClient';
+import { PlainTransactionDetails } from '@nimiq/albatross-wasm';
 
 @Component({components: {
     SmallPage,
@@ -198,7 +199,7 @@ class CashlinkReceive extends Vue {
 
     public async mounted() {
         // Load Cashlink from URL
-        this.cashlink = await Cashlink.parse(window.location.hash.substring(1));
+        this.cashlink = Cashlink.parse(window.location.hash.substring(1));
 
         // Fail if no Cashlink was found
         if (!this.cashlink) {
@@ -217,9 +218,6 @@ class CashlinkReceive extends Vue {
         if (!this.hasWallets) return;
 
         // Start network to check Cashlink status
-        if (!NetworkClient.hasInstance()) {
-            NetworkClient.createInstance(Config.networkEndpoint);
-        }
         await NetworkClient.Instance.init();
 
         // Assign network to Cashlink
@@ -241,10 +239,11 @@ class CashlinkReceive extends Vue {
         this.cashlink!.claim(this.activeAccount!.userFriendlyAddress);
 
         // Set up transaction-relayed listener, so we know when the tx has been sent
-        await new Promise((resolve, reject) => {
-            NetworkClient.Instance.on(NetworkClient.Events.TRANSACTION_RELAYED, (tx: DetailedPlainTransaction) => {
+        await new Promise<void>(async (resolve, reject) => {
+            const client = await NetworkClient.Instance.innerClient;
+            client.addTransactionListener((tx) => {
                 if (tx.sender === this.cashlink!.address.toUserFriendlyAddress()) resolve();
-            });
+            }, [this.cashlink!.address]);
         });
 
         try {
