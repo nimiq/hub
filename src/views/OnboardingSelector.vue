@@ -180,7 +180,8 @@ export default class OnboardingSelector extends Vue {
 
     .uber-header {
         font-size: 5rem;
-        margin: 0;
+        margin: 0 5rem;
+        text-align: center;
     }
 
     .subline-text {
