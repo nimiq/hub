@@ -1,0 +1,94 @@
+diff --git a/node_modules/@nimiq/ledger-api/dist/high-level-api/lazy-chunk-request-nimiq.es.js b/node_modules/@nimiq/ledger-api/dist/high-level-api/lazy-chunk-request-nimiq.es.js
+index 5d2f324..abab1bc 100644
+--- a/node_modules/@nimiq/ledger-api/dist/high-level-api/lazy-chunk-request-nimiq.es.js
++++ b/node_modules/@nimiq/ledger-api/dist/high-level-api/lazy-chunk-request-nimiq.es.js
+@@ -21,8 +21,8 @@ async function loadNimiq(nimiqVersion, inlcudeNimiqLegacyCryptography, preloadWa
+ const isNimiqAlbatrossHub = typeof loadAlbatross !== 'undefined' && (
+ // Running on Hub domain.
+ /^hub\.(?:pos\.)?nimiq(?:-testnet)?\.com$/.test(window.location.hostname)
+-    // Or running on localhost:8081 or BrowserStack's bs-local.com:8081 which is where Hub dev versions are run.
+-    || /^(?:localhost|bs-local\.com):8081$/.test(window.location.host));
++    // Or running on localhost:8080 or BrowserStack's bs-local.com:8080 which is where Hub dev versions are run.
++    || /^(?:localhost|bs-local\.com):8080$/.test(window.location.host));
+ const nimiqCoreBasePath = isNimiqAlbatrossHub
+     // On a Nimiq Hub with Albatross support, use the Hub's copy of the core (copied from @nimiq/albatross-wasm in the
+     // Hub's vue.config.js, which is an alias for @nimiq/core@next), same as the Hub itself is doing, to avoid using and
+@@ -46,7 +46,7 @@ async function loadNimiqAlbatrossCore(preloadWasm = true) {
+             // exact same files as loaded by the Hub, i.e. there is no double loading happening as files will be already
+             // cached. Also, calling init again when the wasm is already initialized, does not unnecessarily initialize
+             // or fetch anything again.
+-            const Nimiq = await import(`${nimiqCoreBasePath}main-wasm/index.js`);
++            const Nimiq = await import(/* webpackIgnore: true */ `${nimiqCoreBasePath}main-wasm/index.js`);
+             const { default: init } = Nimiq;
+             await init();
+             return Nimiq;
+diff --git a/node_modules/@nimiq/ledger-api/dist/high-level-api/requests/nimiq/request-nimiq.d.ts b/node_modules/@nimiq/ledger-api/dist/high-level-api/requests/nimiq/request-nimiq.d.ts
+index 97d9408..4e8d712 100644
+--- a/node_modules/@nimiq/ledger-api/dist/high-level-api/requests/nimiq/request-nimiq.d.ts
++++ b/node_modules/@nimiq/ledger-api/dist/high-level-api/requests/nimiq/request-nimiq.d.ts
+@@ -1,7 +1,7 @@
+ import Request, { CoinAppConnection } from '../request';
+ import { Coin, RequestTypeNimiq } from '../../constants';
+ import { NimiqVersion } from '../../../lib/constants';
+-import { type Nimiq } from '../../../lib/load-nimiq';
++import type { Nimiq } from '../../../lib/load-nimiq';
+ type Transport = import('@ledgerhq/hw-transport').default;
+ type LowLevelApiConstructor = typeof import('../../../low-level-api/low-level-api').default;
+ type LowLevelApi = InstanceType<LowLevelApiConstructor>;
+diff --git a/node_modules/@nimiq/ledger-api/dist/high-level-api/requests/nimiq/request-sign-transaction-nimiq.d.ts b/node_modules/@nimiq/ledger-api/dist/high-level-api/requests/nimiq/request-sign-transaction-nimiq.d.ts
+index 2d82c5c..928b258 100644
+--- a/node_modules/@nimiq/ledger-api/dist/high-level-api/requests/nimiq/request-sign-transaction-nimiq.d.ts
++++ b/node_modules/@nimiq/ledger-api/dist/high-level-api/requests/nimiq/request-sign-transaction-nimiq.d.ts
+@@ -1,7 +1,7 @@
+ import RequestWithKeyPathNimiq from './request-with-key-path-nimiq';
+ import { RequestTypeNimiq, Network, AccountTypeNimiq } from '../../constants';
+ import { NimiqVersion } from '../../../lib/constants';
+-import { type NimiqPrimitive } from '../../../lib/load-nimiq';
++import type { NimiqPrimitive } from '../../../lib/load-nimiq';
+ type Transport = import('@ledgerhq/hw-transport').default;
+ export type TransactionInfoNimiq<Version extends NimiqVersion> = {
+     sender: NimiqPrimitive<'Address', Version>;
+diff --git a/node_modules/@nimiq/ledger-api/dist/lib/load-nimiq.d.ts b/node_modules/@nimiq/ledger-api/dist/lib/load-nimiq.d.ts
+index 21e723b..be9606b 100644
+--- a/node_modules/@nimiq/ledger-api/dist/lib/load-nimiq.d.ts
++++ b/node_modules/@nimiq/ledger-api/dist/lib/load-nimiq.d.ts
+@@ -1,8 +1,14 @@
+ import { NimiqVersion } from '../lib/constants';
+ export type Nimiq<Version extends NimiqVersion> = Version extends NimiqVersion.ALBATROSS ? typeof import('@nimiq/albatross-wasm') : typeof import('@nimiq/core-web');
+ type CommonPrimitives = Extract<keyof typeof import('@nimiq/albatross-wasm'), keyof typeof import('@nimiq/core-web')>;
+-export type NimiqPrimitive<Primitive extends CommonPrimitives, Version extends NimiqVersion> = InstanceType<Nimiq<Version>[Primitive]>;
++// Our old typescript version does not support InstanceType for child classes of abstract classes yet, therefore we do
++// it with a workaround, see https://stackoverflow.com/a/52350147.
++type InstanceTypeIgnoringAbstract<T extends { prototype: any }> = T extends new (...args: any) => infer R ? R :
++    T extends { prototype: infer R } ? R : never;
++export type NimiqPrimitive<Primitive extends CommonPrimitives, Version extends NimiqVersion> = InstanceTypeIgnoringAbstract<Nimiq<Version>[Primitive]>;
+ export declare function isNimiqLegacy(core: Nimiq<NimiqVersion>): core is Nimiq<NimiqVersion.LEGACY>;
++// @ts-ignore: Expression produces a union type that is too complex to represent. Seems like old typescript versions are
++//  unfolding the union in an inefficient manner, resulting in many union entries.
+ export declare function isNimiqLegacyPrimitive<Primitive extends CommonPrimitives = never>(primitive: NimiqPrimitive<Primitive, NimiqVersion>): primitive is NimiqPrimitive<Primitive, NimiqVersion.LEGACY>;
+ export declare function loadNimiq<Version extends NimiqVersion>(nimiqVersion: Version, inlcudeNimiqLegacyCryptography: boolean, preloadWasm?: boolean): Promise<Nimiq<Version>>;
+ declare module './load-nimiq' {
+diff --git a/node_modules/@nimiq/ledger-api/dist/low-level-api/low-level-api.es.js b/node_modules/@nimiq/ledger-api/dist/low-level-api/low-level-api.es.js
+index c49da3f..4984515 100644
+--- a/node_modules/@nimiq/ledger-api/dist/low-level-api/low-level-api.es.js
++++ b/node_modules/@nimiq/ledger-api/dist/low-level-api/low-level-api.es.js
+@@ -24,8 +24,8 @@ async function loadNimiq(nimiqVersion, inlcudeNimiqLegacyCryptography, preloadWa
+ const isNimiqAlbatrossHub = typeof loadAlbatross !== 'undefined' && (
+ // Running on Hub domain.
+ /^hub\.(?:pos\.)?nimiq(?:-testnet)?\.com$/.test(window.location.hostname)
+-    // Or running on localhost:8081 or BrowserStack's bs-local.com:8081 which is where Hub dev versions are run.
+-    || /^(?:localhost|bs-local\.com):8081$/.test(window.location.host));
++    // Or running on localhost:8080 or BrowserStack's bs-local.com:8080 which is where Hub dev versions are run.
++    || /^(?:localhost|bs-local\.com):8080$/.test(window.location.host));
+ const nimiqCoreBasePath = isNimiqAlbatrossHub
+     // On a Nimiq Hub with Albatross support, use the Hub's copy of the core (copied from @nimiq/albatross-wasm in the
+     // Hub's vue.config.js, which is an alias for @nimiq/core@next), same as the Hub itself is doing, to avoid using and
+@@ -49,7 +49,7 @@ async function loadNimiqAlbatrossCore(preloadWasm = true) {
+             // exact same files as loaded by the Hub, i.e. there is no double loading happening as files will be already
+             // cached. Also, calling init again when the wasm is already initialized, does not unnecessarily initialize
+             // or fetch anything again.
+-            const Nimiq = await import(`${nimiqCoreBasePath}main-wasm/index.js`);
++            const Nimiq = await import(/* webpackIgnore: true */ `${nimiqCoreBasePath}main-wasm/index.js`);
+             const { default: init } = Nimiq;
+             await init();
+             return Nimiq;
