@@ -108,6 +108,7 @@ export class RequestParser {
                 }
 
                 return {
+                    ...request, // Pass-through all other properties
                     kind: requestType,
                     appName: signStakingRequest.appName,
                     senderLabel: signStakingRequest.senderLabel,
@@ -771,6 +772,7 @@ export class RequestParser {
             case RequestType.SIGN_STAKING:
                 const signStakingRequest = request as ParsedSignStakingRequest;
                 return {
+                    ...request, // Pass-through all other properties
                     appName: signStakingRequest.appName,
                     senderLabel: signStakingRequest.senderLabel,
                     recipientLabel: signStakingRequest.recipientLabel,
