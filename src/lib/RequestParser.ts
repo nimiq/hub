@@ -104,6 +104,7 @@ export class RequestParser {
                 }
 
                 return {
+                    ...request, // Pass-through all other properties
                     kind: requestType,
                     appName: signStakingRequest.appName,
                     senderLabel: signStakingRequest.senderLabel,
@@ -772,6 +773,7 @@ export class RequestParser {
                 // const transaction = Nimiq.Transaction.fromPlain(signStakingRequest.transaction);
 
                 return {
+                    ...request, // Pass-through all other properties
                     appName: signStakingRequest.appName,
                     senderLabel: signStakingRequest.senderLabel,
                     recipientLabel: signStakingRequest.recipientLabel,
