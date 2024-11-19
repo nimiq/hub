@@ -5,9 +5,9 @@ import { loadBitcoinJS } from './BitcoinJSLoader';
 
 // Import only types to avoid bundling
 import type { Transaction as BitcoinJsTransaction } from 'bitcoinjs-lib';
-import type { BitcoinTransactionInfo } from '../../views/SignBtcTransaction.vue';
+import type { BitcoinTransactionInfo } from './BitcoinUtils';
 import type { TransactionInfoBitcoin as LedgerBitcoinTransactionInfo } from '@nimiq/ledger-api';
-import { BitcoinTransactionInputType } from '@nimiq/keyguard-client';
+import type { BitcoinTransactionInputType } from '@nimiq/keyguard-client';
 
 /**
  * Prepare a bitcoin transaction for signing via the Ledger api by enriching it with complete input transactions and

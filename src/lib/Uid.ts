@@ -14,7 +14,15 @@ export async function makeUid(keyId: string, firstAddress: string): Promise<stri
  * method is also used in the iframe.
  */
 async function sha256(buffer: Uint8Array): Promise<Uint8Array> {
-    return new Uint8Array(await window.crypto.subtle.digest('SHA-256', buffer));
+    try {
+        return new Uint8Array(await window.crypto.subtle.digest('SHA-256', buffer));
+    } catch (error) {
+        if (window.top === window) { // Not an iframe or popup
+            return Nimiq.Hash.computeSha256(buffer);
+        } else {
+            throw error;
+        }
+    }
 }
 
 /**

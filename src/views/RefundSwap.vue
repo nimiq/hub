@@ -58,14 +58,14 @@ export default class RefundSwap extends BitcoinSyncBaseView {
 
                 keyPath: signer.path,
                 sender: sender.serialize(), // HTLC address
-                senderType: Nimiq.Account.Type.HTLC,
+                senderType: Nimiq.AccountType.HTLC,
                 senderLabel: 'Swap HTLC',
                 // My address, must be refund address of HTLC. Send to signer as recipient might be a contract.
                 recipient: signer.address.serialize(),
                 recipientLabel: signer.label,
+                recipientData: data,
                 value, // Luna
                 fee, // Luna
-                data,
                 validityStartHeight,
             };
 

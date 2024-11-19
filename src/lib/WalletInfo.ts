@@ -110,8 +110,8 @@ export class WalletInfo {
     public findContractsByOwner(address: Nimiq.Address): ContractInfo[] {
         return this.contracts.filter((contract) => {
             switch (contract.type) {
-                case Nimiq.Account.Type.VESTING: return contract.owner.equals(address);
-                case Nimiq.Account.Type.HTLC:
+                case Nimiq.AccountType.Vesting: return contract.owner.equals(address);
+                case Nimiq.AccountType.HTLC:
                     return contract.sender.equals(address)
                         || contract.recipient.equals(address);
                 default: return false;
@@ -125,7 +125,7 @@ export class WalletInfo {
         // address belongs to a contract
         const contract = this.findContractByAddress(address);
         if (!contract) return null;
-        if (contract.type !== Nimiq.Account.Type.VESTING) {
+        if (contract.type !== Nimiq.AccountType.Vesting) {
             throw new Error('Currently only Vesting contracts are supported');
         }
         return this.accounts.get(contract.owner.toUserFriendlyAddress()) || null;

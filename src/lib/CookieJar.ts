@@ -161,10 +161,10 @@ class CookieJar {
         return label;
     }
 
-    private static checkContractDefaultLabel(type: Nimiq.Account.Type, label: string): string {
+    private static checkContractDefaultLabel(type: Nimiq.AccountType, label: string): string {
         switch (type) {
-            case Nimiq.Account.Type.VESTING: return label === labelVestingContract() ? '' : label;
-            case Nimiq.Account.Type.HTLC: return label === labelHashedTimeLockedContract() ? '' : label;
+            case Nimiq.AccountType.Vesting: return label === labelVestingContract() ? '' : label;
+            case Nimiq.AccountType.HTLC: return label === labelHashedTimeLockedContract() ? '' : label;
             default: return label;
         }
     }
@@ -280,15 +280,15 @@ class CookieJar {
             bytes.push.apply(bytes, Array.from(contract.address));
 
             switch (contract.type) {
-                case Nimiq.Account.Type.VESTING:
+                case Nimiq.AccountType.Vesting:
                     const data = contract as VestingContractInfoEntry;
                     bytes.push.apply(bytes, Array.from(data.owner));
-                    bytes.push.apply(bytes, this.toBase256(data.start, 4)); // Uint32
+                    bytes.push.apply(bytes, this.toBase256(data.startTime, 8)); // Uint64
+                    bytes.push.apply(bytes, this.toBase256(data.timeStep, 8)); // Uint64
                     bytes.push.apply(bytes, this.toBase256(data.stepAmount, 8)); // Uint64
-                    bytes.push.apply(bytes, this.toBase256(data.stepBlocks, 4)); // Uint32
                     bytes.push.apply(bytes, this.toBase256(data.totalAmount, 8)); // Uint64
                     break;
-                case Nimiq.Account.Type.HTLC:
+                case Nimiq.AccountType.HTLC:
                     throw new Error('HTLC encoding is not yet implemented');
                 default:
                     // @ts-ignore Property 'type' does not exist on type 'never'.

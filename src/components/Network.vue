@@ -2,36 +2,37 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { SignedTransaction } from '../../client/PublicRequestTypes';
-import { NetworkClient, DetailedPlainTransaction } from '@nimiq/network-client';
 import Config from 'config';
-import { loadNimiq, setHistoryStorage, getHistoryStorage } from '../lib/Helpers';
+import { SignedTransaction } from '../../client/PublicRequestTypes';
+import { setHistoryStorage, getHistoryStorage } from '../lib/Helpers';
 import { labelVestingContract } from '../lib/LabelingMachine';
 import { VestingContractInfo } from '../lib/ContractInfo';
+import { NetworkClient } from '../lib/NetworkClient';
 
 @Component
 class Network extends Vue {
-    private static _hasOrSyncsOnTopOfConsensus = false;
+    private boundListeners: number[] = [];
 
-    private boundListeners: Array<[NetworkClient.Events, (...args: any[]) => void]> = [];
-
-    public async createTx({
+    public createTx({
         sender,
-        senderType = Nimiq.Account.Type.BASIC,
+        senderType = Nimiq.AccountType.Basic,
+        senderData,
         recipient,
-        recipientType = Nimiq.Account.Type.BASIC,
+        recipientType = Nimiq.AccountType.Basic,
         value,
         fee = 0,
         validityStartHeight,
-        flags = Nimiq.Transaction.Flag.NONE,
+        flags = 0 /* Nimiq.Transaction.Flag.NONE */,
         data,
         signerPubKey,
         signature,
+        proofPrefix = new Uint8Array(0),
     }: {
         sender: Nimiq.Address | Uint8Array,
-        senderType?: Nimiq.Account.Type,
+        senderType?: Nimiq.AccountType,
+        senderData?: Uint8Array,
         recipient: Nimiq.Address | Uint8Array,
-        recipientType?: Nimiq.Account.Type,
+        recipientType?: Nimiq.AccountType,
         value: number,
         fee?: number,
         validityStartHeight: number,
@@ -39,66 +40,75 @@ class Network extends Vue {
         data?: Uint8Array,
         signerPubKey: Nimiq.PublicKey | Uint8Array,
         signature?: Nimiq.Signature | Uint8Array,
-    }): Promise<Nimiq.Transaction> {
+        proofPrefix?: Uint8Array,
+    }): Nimiq.Transaction {
         if (!(sender instanceof Nimiq.Address)) sender = new Nimiq.Address(sender);
         if (!(recipient instanceof Nimiq.Address)) recipient = new Nimiq.Address(recipient);
         if (!(signerPubKey instanceof Nimiq.PublicKey)) signerPubKey = new Nimiq.PublicKey(signerPubKey);
-        if (signature && !(signature instanceof Nimiq.Signature)) signature = new Nimiq.Signature(signature);
-
-        await loadNimiq();
+        if (signature && !(signature instanceof Nimiq.Signature)) signature = Nimiq.Signature.deserialize(signature);
 
         if (
             (data && data.length > 0)
-            || senderType !== Nimiq.Account.Type.BASIC
-            || recipientType !== Nimiq.Account.Type.BASIC
-            || flags !== Nimiq.Transaction.Flag.NONE
+            || senderType !== Nimiq.AccountType.Basic
+            || recipientType !== Nimiq.AccountType.Basic
+            || flags !== 0 /* Nimiq.Transaction.Flag.NONE */
         ) {
-            return new Nimiq.ExtendedTransaction(
+            let proof: Nimiq.SerialBuffer | undefined;
+            if (signature) {
+                // 32 publicKey + 1 empty merkle path + 64 signature
+                proof = new Nimiq.SerialBuffer(proofPrefix.length + 32 + 1 + 64);
+                proof.write(proofPrefix);
+                proof.write(Nimiq.SignatureProof.singleSig(signerPubKey, signature).serialize());
+            }
+
+            const tx = new Nimiq.Transaction(
                 sender,
+                // @ts-ignore Staking type not yet supported
                 senderType,
+                senderData,
                 recipient,
                 recipientType,
-                value,
-                fee,
-                validityStartHeight,
-                flags,
                 data || new Uint8Array(0),
-                signature ? Nimiq.SignatureProof.singleSig(signerPubKey, signature).serialize() : undefined,
-            );
-        } else {
-            return new Nimiq.BasicTransaction(
-                signerPubKey,
-                recipient,
-                value,
-                fee,
+                BigInt(value),
+                BigInt(fee),
+                flags,
                 validityStartHeight,
-                signature,
+                Config.nimiqNetworkId,
             );
+            if (proof) tx.proof = proof;
+            return tx;
+        } else {
+            const tx = Nimiq.TransactionBuilder.newBasic(
+                signerPubKey.toAddress(),
+                recipient,
+                BigInt(value),
+                BigInt(fee),
+                validityStartHeight,
+                Config.nimiqNetworkId,
+            );
+            if (signature) tx.proof = Nimiq.SignatureProof.singleSig(signerPubKey, signature).serialize();
+            return tx;
         }
     }
 
-    public async makeSignTransactionResult(tx: Nimiq.Transaction): Promise<SignedTransaction> {
-        await loadNimiq(); // needed for hash computation
+    public makeSignTransactionResult(tx: Nimiq.Transaction): SignedTransaction {
+        const plain = tx.toPlain();
 
-        const parsedProof = (Nimiq.Account as any).TYPE_MAP.get(tx.senderType).proofToPlain(tx.proof) as ReturnType<
-            typeof Nimiq.BasicAccount.proofToPlain
-            | typeof Nimiq.HashedTimeLockedContract.proofToPlain
-            | typeof Nimiq.VestingContract.proofToPlain
-        >;
-        const signerPublicKeyHex = 'publicKey' in parsedProof
-            ? parsedProof.publicKey
-            : 'creatorPublicKey' in parsedProof
-                ? parsedProof.creatorPublicKey
+        const signerPublicKeyHex = 'publicKey' in plain.proof
+            ? plain.proof.publicKey
+            : 'creatorPublicKey' in plain.proof
+                ? plain.proof.creatorPublicKey
                 : (() => { throw new Error('Unsupported transaction proof'); })();
-        const signatureHex = 'signature' in parsedProof
-            ? parsedProof.signature
-            : 'creatorSignature' in parsedProof
-                ? parsedProof.creatorSignature
+        const signatureHex = 'signature' in plain.proof
+            ? plain.proof.signature
+            : 'creatorSignature' in plain.proof
+                ? plain.proof.creatorSignature
                 : (() => { throw new Error('Unsupported transaction proof'); })();
 
         const result: SignedTransaction = {
-            serializedTx: Nimiq.BufferUtils.toHex(tx.serialize()),
-            hash: tx.hash().toHex(),
+            transaction: tx.serialize(),
+            serializedTx: tx.toHex(),
+            hash: plain.transactionHash,
 
             raw: {
                 signerPublicKey: Nimiq.BufferUtils.fromHex(signerPublicKeyHex),
@@ -110,8 +120,8 @@ class Network extends Vue {
                 recipient: tx.recipient.toUserFriendlyAddress(),
                 recipientType: tx.recipientType,
 
-                value: tx.value,
-                fee: tx.fee,
+                value: Number(tx.value),
+                fee: Number(tx.fee),
                 validityStartHeight: tx.validityStartHeight,
 
                 extraData: tx.data,
@@ -129,27 +139,24 @@ class Network extends Vue {
      * fires its 'transaction-relayed' event for that transaction.
      */
     public async sendToNetwork(tx: Nimiq.Transaction): Promise<SignedTransaction> {
-        await loadNimiq(); // needed for hash computation
-
         // Store the transaction in the history state to be able to resend the transaction when the user reloads the
         // window in case it failed to relay it to the network. Not using localstorage or sessionstorage as the
         // transaction should not be broadcast anymore when user closes page, accepting that it failed to send.
         let unrelayedTransactionMap = getHistoryStorage(Network.HISTORY_KEY_UNRELAYED_TRANSACTIONS) || {};
-        const base64Hash = tx.hash().toBase64();
+        const base64Hash = Nimiq.BufferUtils.toBase64(Nimiq.BufferUtils.fromHex(tx.hash()));
         unrelayedTransactionMap[base64Hash] = tx.serialize();
         setHistoryStorage(Network.HISTORY_KEY_UNRELAYED_TRANSACTIONS, unrelayedTransactionMap);
 
-        const signedTx = await this.makeSignTransactionResult(tx);
+        const signedTx = this.makeSignTransactionResult(tx);
         const client = await this.getNetworkClient();
 
         const txObjToSend = Object.assign({}, signedTx.raw, {
             senderPubKey: signedTx.raw.signerPublicKey,
-            value: Nimiq.Policy.satoshisToCoins(signedTx.raw.value),
-            fee: Nimiq.Policy.satoshisToCoins(signedTx.raw.fee),
+            value: signedTx.raw.value,
+            fee: signedTx.raw.fee,
         });
 
-        const plainTx = await client.relayTransaction(txObjToSend) as
-            ReturnType<Nimiq.Client.TransactionDetails['toPlain']>;
+        const plainTx = await client.relayTransaction(txObjToSend);
 
         if (plainTx.state === 'expired') {
             throw new Error(Network.Errors.TRANSACTION_EXPIRED);
@@ -168,11 +175,11 @@ class Network extends Vue {
 
     public getUnrelayedTransactions(filter?: {
         sender?: Nimiq.Address,
-        senderType?: Nimiq.Account.Type,
+        senderType?: Nimiq.AccountType,
         recipient?: Nimiq.Address,
-        recipientType?: Nimiq.Account.Type,
-        value?: number,
-        fee?: number,
+        recipientType?: Nimiq.AccountType,
+        value?: BigInt,
+        fee?: BigInt,
         validityStartHeight?: number,
         flags?: number,
         data?: Uint8Array,
@@ -181,9 +188,9 @@ class Network extends Vue {
         const serializedTransactions: Uint8Array[]
             = Object.values(getHistoryStorage(Network.HISTORY_KEY_UNRELAYED_TRANSACTIONS));
         const transactions = serializedTransactions.map((serializedTx: Uint8Array) =>
-            Nimiq.Transaction.unserialize(new Nimiq.SerialBuffer(serializedTx)));
+            Nimiq.Transaction.fromAny(serializedTx));
         if (!filter) return transactions;
-        return transactions.filter((tx: Nimiq.Transaction) =>
+        return transactions.filter((tx) =>
             (filter.sender === undefined || tx.sender.equals(filter.sender))
             && (filter.senderType === undefined || tx.senderType === filter.senderType)
             && (filter.recipient === undefined || tx.recipient.equals(filter.recipient))
@@ -198,11 +205,7 @@ class Network extends Vue {
 
     public async getBlockchainHeight(): Promise<number> {
         const client = await this.getNetworkClient();
-        if (Network._hasOrSyncsOnTopOfConsensus) return client.headInfo.height;
-        return new Promise((resolve) => this.$once(Network.Events.CONSENSUS_ESTABLISHED, () =>
-            // At the time of the consensus event, the new head is not populated yet. Therefore, instead of accessing
-            // client.headInfo we wait for the HEAD_CHANGE which is triggered immediately after CONSENSUS_ESTABLISHED
-            this.$once(Network.Events.HEAD_CHANGE, (head: { height: number }) => resolve(head.height))));
+        return client.getHeight();
     }
 
     public async getBalances(addresses: string[]): Promise<Map<string, number>> {
@@ -218,97 +221,42 @@ class Network extends Vue {
             labelVestingContract(),
             Nimiq.Address.fromString(contract.address),
             Nimiq.Address.fromString(contract.owner),
-            contract.start,
-            Nimiq.Policy.coinsToSatoshis(contract.stepAmount),
-            contract.stepBlocks,
-            Nimiq.Policy.coinsToSatoshis(contract.totalAmount),
+            contract.startTime,
+            contract.stepAmount,
+            contract.timeStep,
+            contract.totalAmount,
         ));
     }
 
     public async getNetworkClient(): Promise<NetworkClient> {
-        if (!NetworkClient.hasInstance()) {
-            NetworkClient.createInstance(Config.networkEndpoint);
-        }
         // Make sure the client is initialized
-        await NetworkClient.Instance.init();
-
-        if (this.boundListeners.length === 0) {
-            this._registerNetworkListener(NetworkClient.Events.API_READY,
-                () => this.$emit(Network.Events.API_READY));
-            this._registerNetworkListener(NetworkClient.Events.API_FAIL,
-                (e: Error) => this.$emit(Network.Events.API_FAIL, e));
-            this._registerNetworkListener(NetworkClient.Events.CONSENSUS_SYNCING,
-                () => this.$emit(Network.Events.CONSENSUS_SYNCING));
-            this._registerNetworkListener(NetworkClient.Events.CONSENSUS_ESTABLISHED,
-                () => this.$emit(Network.Events.CONSENSUS_ESTABLISHED));
-            this._registerNetworkListener(NetworkClient.Events.CONSENSUS_LOST,
-                () => this.$emit(Network.Events.CONSENSUS_LOST));
-            this._registerNetworkListener(NetworkClient.Events.PEERS_CHANGED,
-                (count: number) => this.$emit(Network.Events.PEERS_CHANGED, count));
-            this._registerNetworkListener(NetworkClient.Events.BALANCES_CHANGED,
-                (balances: Map<string, number>) => this.$emit(Network.Events.BALANCES_CHANGED, balances));
-            this._registerNetworkListener(NetworkClient.Events.TRANSACTION_PENDING,
-                (txInfo: Partial<DetailedPlainTransaction>) => this.$emit(Network.Events.TRANSACTION_PENDING, txInfo));
-            this._registerNetworkListener(NetworkClient.Events.TRANSACTION_EXPIRED,
-                (hash: string) => this.$emit(Network.Events.TRANSACTION_EXPIRED, hash));
-            this._registerNetworkListener(NetworkClient.Events.TRANSACTION_MINED,
-                (txInfo: DetailedPlainTransaction) => this.$emit(Network.Events.TRANSACTION_MINED, txInfo));
-            this._registerNetworkListener(NetworkClient.Events.TRANSACTION_RELAYED,
-                (txInfo: Partial<DetailedPlainTransaction>) => this.$emit(Network.Events.TRANSACTION_RELAYED, txInfo));
-            this._registerNetworkListener(NetworkClient.Events.HEAD_CHANGE,
-                (headInfo: {height: number, globalHashrate: number}) =>
-                    this.$emit(Network.Events.HEAD_CHANGE, headInfo));
-
-            this._fireInitialEvents();
+        try {
+            await NetworkClient.Instance.init();
+            this.$emit(Network.Events.API_READY);
+        } catch (error) {
+            this.$emit(Network.Events.API_FAIL);
+            throw error;
         }
+
+        const client = await NetworkClient.Instance.innerClient;
+
+        if (await client.isConsensusEstablished()) {
+            this.$emit(Network.Events.CONSENSUS_ESTABLISHED);
+        } else {
+            this.$emit(Network.Events.CONSENSUS_SYNCING);
+        }
+        this.boundListeners.push(await client.addConsensusChangedListener((state) => {
+            if (state === 'syncing') this.$emit(Network.Events.CONSENSUS_SYNCING);
+            if (state === 'established') this.$emit(Network.Events.CONSENSUS_ESTABLISHED);
+        }));
 
         return NetworkClient.Instance;
     }
 
-    private created() {
-        this.$on(Network.Events.CONSENSUS_ESTABLISHED, () => {
-            Network._hasOrSyncsOnTopOfConsensus = true;
-        });
-        this.$on(Network.Events.CONSENSUS_LOST, () => {
-            Network._hasOrSyncsOnTopOfConsensus = false;
-        });
-    }
-
     private destroyed() {
-        if (!NetworkClient.hasInstance()) return;
-        for (const [event, listener] of this.boundListeners) {
-            NetworkClient.Instance.off(event, listener);
+        for (const handle of this.boundListeners) {
+            NetworkClient.Instance.innerClient.then((client) => client && client.removeListener(handle));
         }
-    }
-
-    private _registerNetworkListener(event: NetworkClient.Events, listener: (...args: any[]) => void) {
-        if (!NetworkClient.hasInstance()) console.warn('Using default instance with default endpoint.');
-        NetworkClient.Instance.on(event, listener);
-        this.boundListeners.push([event, listener]);
-    }
-
-    private _fireInitialEvents() {
-        if (!NetworkClient.hasInstance()) return;
-        const networkClient = NetworkClient.Instance;
-        if (networkClient.apiLoadingState === 'ready') this.$emit(Network.Events.API_READY);
-        else if (networkClient.apiLoadingState === 'failed') this.$emit(Network.Events.API_FAIL);
-
-        if (networkClient.consensusState === 'syncing') this.$emit(Network.Events.CONSENSUS_SYNCING);
-        else if (networkClient.consensusState === 'established') this.$emit(Network.Events.CONSENSUS_ESTABLISHED);
-        else if (networkClient.consensusState === 'lost') this.$emit(Network.Events.CONSENSUS_LOST);
-        Network._hasOrSyncsOnTopOfConsensus = Network._hasOrSyncsOnTopOfConsensus
-            || networkClient.consensusState === 'established';
-
-        if (networkClient.peerCount !== 0) this.$emit(Network.Events.PEERS_CHANGED, networkClient.peerCount);
-
-        if (networkClient.balances.size !== 0) this.$emit(Network.Events.BALANCES_CHANGED, networkClient.balances);
-
-        for (const tx of networkClient.pendingTransactions) this.$emit(Network.Events.TRANSACTION_PENDING, tx);
-        for (const txHash of networkClient.expiredTransactions) this.$emit(Network.Events.TRANSACTION_EXPIRED, txHash);
-        for (const tx of networkClient.minedTransactions) this.$emit(Network.Events.TRANSACTION_MINED, tx);
-        for (const tx of networkClient.relayedTransactions) this.$emit(Network.Events.TRANSACTION_RELAYED, tx);
-
-        if (networkClient.headInfo.height !== 0) this.$emit(Network.Events.HEAD_CHANGE, networkClient.headInfo);
     }
 }
 
@@ -318,14 +266,8 @@ namespace Network {
         API_FAIL = 'api-fail',
         CONSENSUS_SYNCING = 'consensus-syncing',
         CONSENSUS_ESTABLISHED = 'consensus-established',
-        CONSENSUS_LOST = 'consensus-lost',
-        PEERS_CHANGED = 'peer-count',
-        BALANCES_CHANGED = 'balances',
         TRANSACTION_PENDING = 'transaction-pending',
-        TRANSACTION_EXPIRED = 'transaction-expired',
-        TRANSACTION_MINED = 'transaction-mined',
         TRANSACTION_RELAYED = 'transaction-relayed',
-        HEAD_CHANGE = 'head-change',
     }
 
     export const enum Errors {

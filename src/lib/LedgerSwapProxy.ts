@@ -1,7 +1,12 @@
-import LedgerApi, { Coin, TransactionInfoNimiq, getBip32Path, parseBip32Path } from '@nimiq/ledger-api';
-import { NetworkClient } from '@nimiq/network-client';
+import LedgerApi, {
+    Coin,
+    TransactionInfoNimiq,
+    getBip32Path,
+    parseBip32Path,
+    AccountTypeNimiq,
+} from '@nimiq/ledger-api';
+import { NetworkClient } from './NetworkClient';
 import Config from 'config';
-import { loadNimiq } from './Helpers';
 
 export const LedgerSwapProxyMarker = {
     // HTLC Proxy Funding, abbreviated as 'HPFD', mapped to values outside of basic ascii range
@@ -123,7 +128,6 @@ export default class LedgerSwapProxy {
         });
         const [entropySourcePublicKey] = await Promise.all([
             LedgerApi.Nimiq.getPublicKey(entropySourcePublicKeyPath, ledgerKeyId, Config.ledgerApiNimiqVersion),
-            loadNimiq(),
         ]);
 
         if (!localStorage[LEDGER_SWAP_PROXY_SALT_STORAGE_KEY]) {
@@ -157,7 +161,6 @@ export default class LedgerSwapProxy {
         });
         const [entropySourcePublicKey] = await Promise.all([
             LedgerApi.Nimiq.getPublicKey(entropySourcePublicKeyPath, ledgerKeyId, Config.ledgerApiNimiqVersion),
-            loadNimiq(),
         ]);
 
         return Nimiq.KeyPair.derive(new Nimiq.PrivateKey(entropySourcePublicKey.serialize()));
@@ -170,15 +173,12 @@ export default class LedgerSwapProxy {
         // See MultiSigWallet in core-js. Note that we don't have to aggregate the public keys as it's a 1 of 2 multi
         // sig, where a single signature suffices.
         const publicKeys = [localSignerPublicKey, ledgerSignerPublicKey].sort((a, b) => a.compare(b));
-        const merkleRoot = Nimiq.MerkleTree.computeRoot(publicKeys);
-        return Nimiq.Address.fromHash(merkleRoot);
+        const merkleRoot = Nimiq.MerkleTree.computeRoot(publicKeys.map((key) => key.serialize()));
+        return Nimiq.Address.fromAny(merkleRoot);
     }
 
     private static async _fetchFundingTransaction(htlcOrProxyAddress: Nimiq.Address)
-        : Promise<ReturnType<Nimiq.Client.TransactionDetails['toPlain']>> {
-        if (!NetworkClient.hasInstance()) {
-            NetworkClient.createInstance(Config.networkEndpoint);
-        }
+        : Promise<Nimiq.PlainTransactionDetails> {
         const networkClient = NetworkClient.Instance;
         await networkClient.init(); // Make sure the client is initialized
 
@@ -191,7 +191,8 @@ export default class LedgerSwapProxy {
     }
 
     private static _getOriginalLocalSignerPublicKey(proxyFundingDataHex: string): Nimiq.PublicKey | null {
-        const expectedDataHexLength = (LedgerSwapProxyMarker.FUND.length + Nimiq.PublicKey.SIZE) * 2; //  * 2 for hex
+        const expectedDataHexLength =
+            (LedgerSwapProxyMarker.FUND.length + 32 /* Nimiq.PublicKey.SIZE */) * 2; // * 2 for hex
         if (proxyFundingDataHex.length !== expectedDataHexLength
             || !proxyFundingDataHex.startsWith(Nimiq.BufferUtils.toHex(LedgerSwapProxyMarker.FUND))) return null;
         return new Nimiq.PublicKey(Nimiq.BufferUtils.fromHex(
@@ -224,13 +225,13 @@ export default class LedgerSwapProxy {
 
     public getFundingInfo(): Pick<
         TransactionInfoNimiq<typeof Config.ledgerApiNimiqVersion>,
-        'recipient' | 'recipientType' | 'validityStartHeight' | 'extraData'
+        'recipient' | 'recipientType' | 'validityStartHeight' | 'recipientData'
     > {
         return {
             recipient: this.address,
-            recipientType: Nimiq.Account.Type.BASIC,
+            recipientType: 0 /* BASIC */,
             validityStartHeight: this._swapValidityStartHeight,
-            extraData: this._ledgerSignerPublicKey
+            recipientData: this._ledgerSignerPublicKey
                 ? new Uint8Array([...LedgerSwapProxyMarker.FUND, ...this._localSignerPublicKey.serialize()])
                 : LedgerSwapProxyMarker.FUND, // legacy proxy
         };
@@ -238,7 +239,7 @@ export default class LedgerSwapProxy {
 
     public getHtlcCreationInfo(htlcData: Uint8Array): Pick<
         TransactionInfoNimiq<typeof Config.ledgerApiNimiqVersion>,
-        'sender' | 'senderType' | 'recipient' | 'recipientType' | 'validityStartHeight' | 'flags' | 'extraData'
+        'sender' | 'senderType' | 'recipient' | 'recipientType' | 'validityStartHeight' | 'flags' | 'recipientData'
     > {
         const decodedHtlcScript = Nimiq.HashedTimeLockedContract.dataToPlain(htlcData);
         if (!('sender' in decodedHtlcScript) || !Nimiq.Address.fromAny(decodedHtlcScript.sender).equals(this.address)) {
@@ -246,64 +247,76 @@ export default class LedgerSwapProxy {
         }
         return {
             sender: this.address,
-            senderType: Nimiq.Account.Type.BASIC,
-            recipient: Nimiq.Address.CONTRACT_CREATION,
-            recipientType: Nimiq.Account.Type.HTLC,
+            senderType: Nimiq.AccountType.Basic as unknown as AccountTypeNimiq,
+            recipient: new Nimiq.Address(new Uint8Array(20)),
+            recipientType: Nimiq.AccountType.HTLC as unknown as AccountTypeNimiq,
             validityStartHeight: this._swapValidityStartHeight,
-            flags: Nimiq.Transaction.Flag.CONTRACT_CREATION,
-            extraData: htlcData,
+            flags: 1 /* CONTRACT_CREATION */,
+            recipientData: htlcData,
         };
     }
 
     public getRefundInfo(refundSender: Nimiq.Address): Pick<
         TransactionInfoNimiq<typeof Config.ledgerApiNimiqVersion>,
-        'sender' | 'senderType' | 'extraData'
+        'sender' | 'senderType' | 'recipientData'
     > {
         if (refundSender.equals(this.address)) {
             // refunding from proxy
             return {
                 sender: refundSender,
-                senderType: Nimiq.Account.Type.BASIC,
-                extraData: LedgerSwapProxyMarker.REDEEM,
+                senderType: 0 /* Basic */,
+                recipientData: LedgerSwapProxyMarker.REDEEM,
             };
         } else {
             // refunding from htlc
             return {
                 sender: refundSender,
-                senderType: Nimiq.Account.Type.HTLC,
+                senderType: 2 /* HTLC */,
             };
         }
     }
 
     public async signTransaction({
         sender,
-        senderType = Nimiq.Account.Type.BASIC,
+        senderType = 0 /* Basic */,
         recipient,
-        recipientType = Nimiq.Account.Type.BASIC,
+        recipientType = 0 /* Basic */,
         value,
-        fee = 0,
+        fee = BigInt(0),
         validityStartHeight,
-        flags = Nimiq.Transaction.Flag.NONE,
-        extraData,
+        flags = 0 /* NONE */,
+        recipientData,
         network,
     }: TransactionInfoNimiq<typeof Config.ledgerApiNimiqVersion>): Promise<Nimiq.Transaction> {
-        await loadNimiq();
-
         // Always create an ExtendedTransaction because all transactions that will typically be signed by the proxy will
         // be ExtendedTransactions because they include extraData or have sender- or recipientType HTLC.
-        const transaction = new Nimiq.ExtendedTransaction(
+        let transaction = new Nimiq.Transaction(
             sender,
             senderType,
+            new Uint8Array(0),
             recipient,
             recipientType,
+            recipientData || new Uint8Array(0),
             value,
             fee,
-            validityStartHeight,
             flags,
-            extraData || new Uint8Array(0),
-            undefined,
-            network ? Nimiq.GenesisConfig.CONFIGS[network].NETWORK_ID : undefined,
+            validityStartHeight,
+            Config.nimiqNetworkId,
         );
+        if (
+            transaction.recipientType === Nimiq.AccountType.HTLC
+            && transaction.flags === 1 /* Nimiq.Transaction.Flag.CONTRACT_CREATION */
+        ) {
+            // Calculate the contract address of the HTLC that gets created and recreate the transaction
+            // with that address as the recipient:
+            const contractAddress = new Nimiq.Address(Nimiq.BufferUtils.fromHex(transaction.hash()));
+            transaction = new Nimiq.Transaction(
+                transaction.sender, transaction.senderType, transaction.senderData,
+                contractAddress, transaction.recipientType, transaction.data,
+                transaction.value, transaction.fee,
+                transaction.flags, transaction.validityStartHeight, transaction.networkId,
+            );
+        }
 
         if (this._localSignerPrivateKey) {
             const signature = Nimiq.Signature.create(
@@ -321,18 +334,21 @@ export default class LedgerSwapProxy {
                     this._ledgerKeyId,
                     Config.ledgerApiNimiqVersion,
                 );
-            if (transaction.senderType !== Nimiq.Account.Type.BASIC
-                || transaction.recipientType !== Nimiq.Account.Type.BASIC) {
+            if (transaction.senderType !== Nimiq.AccountType.Basic
+                || transaction.recipientType !== Nimiq.AccountType.Basic) {
                 throw new Error('Contract transactions can currently not be signed by the Ledger.');
             }
-            const { signature } = Nimiq.SignatureProof.unserialize(new Nimiq.SerialBuffer(
+            const { signature } = Nimiq.SignatureProof.deserialize(
                 (await LedgerApi.Nimiq.signTransaction(
-                    transaction,
+                    transaction as Nimiq.Transaction & {
+                        senderType: AccountTypeNimiq,
+                        recipientType: AccountTypeNimiq,
+                    },
                     this._ledgerKeyPath,
                     this._ledgerKeyId,
                     Config.ledgerApiNimiqVersion,
                 )).proof,
-            ));
+            );
             transaction.proof = this.createSignatureProof(this._ledgerSignerPublicKey!, signature).serialize();
         }
 
@@ -340,7 +356,7 @@ export default class LedgerSwapProxy {
     }
 
     public createSignatureProof(signer: Nimiq.PublicKey, signature: Nimiq.Signature): Nimiq.SignatureProof {
-        if (!signer.equals(this._localSignerPublicKey) && !signer.equals(this._ledgerSignerPublicKey)) {
+        if (!signer.equals(this._localSignerPublicKey) && !signer.equals(this._ledgerSignerPublicKey!)) {
             throw new Error('Invalid proxy signer.');
         }
         if (!this._ledgerSignerPublicKey) {

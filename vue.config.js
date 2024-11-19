@@ -1,5 +1,5 @@
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const SriPlugin = require('webpack-subresource-integrity');
+// const SriPlugin = require('webpack-subresource-integrity');
 const WriteFileWebpackPlugin = require('write-file-webpack-plugin');
 const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
 const path = require('path');
@@ -26,12 +26,10 @@ if (!buildName) throw new Error('Please specify the build config with the `build
 const domain = buildName === 'mainnet'
     ? 'https://hub.nimiq.com'
     : buildName === 'testnet'
-        ? 'https://hub.nimiq-testnet.com'
+        ? process.env.VUE_APP_HUB_URL
         : 'http://localhost:8080';
 
-const cdnDomain = buildName === 'mainnet'
-    ? 'https://cdn.nimiq.com'
-    : 'https://cdn.nimiq-testnet.com';
+const cdnDomain = 'https://cdn.nimiq-testnet.com';
 
 const browserWarningTemplate = fs.readFileSync(
     path.join(__dirname, 'node_modules/@nimiq/browser-warning/dist/browser-warning.html.template'));
@@ -54,11 +52,10 @@ console.log('Building for:', buildName);
 
 const configureWebpack = {
     plugins: [
-        new SriPlugin({
-            hashFuncNames: ['sha256'],
-            enabled: process.env.NODE_ENV === 'production',
-        }),
-        new CopyWebpackPlugin([
+        // ...(process.env.NODE_ENV === 'production' ? [new SriPlugin({
+        //     hashFuncNames: ['sha256'],
+        // })] : []),
+        new CopyWebpackPlugin({ patterns: [
             {
                 from: 'node_modules/@nimiq/browser-warning/dist/browser-warning.js*',
                 to: './',
@@ -78,7 +75,11 @@ const configureWebpack = {
                     return path.replace('.min', '');
                 },
             },
-        ]),
+            {
+                from: 'node_modules/@nimiq/albatross-wasm',
+                to: './albatross-client/',
+            },
+        ]}),
         new WriteFileWebpackPlugin(),
         new PoLoaderOptimizer(),
         // new BundleAnalyzerPlugin(),

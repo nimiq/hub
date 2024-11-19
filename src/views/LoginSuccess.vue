@@ -65,7 +65,7 @@ export default class LoginSuccess extends Vue {
                         try {
                             tryCount += 1;
                             let collectionResult: WalletCollectionResultKeyguard;
-                            if (keyResult.keyType === WalletType.BIP39) {
+                            if (keyResult.keyType === WalletType.BIP39 as number) {
                                 collectionResult = await WalletInfoCollector.collectBip39WalletInfo(
                                     keyResult.keyId,
                                     keyguardResultAccounts,

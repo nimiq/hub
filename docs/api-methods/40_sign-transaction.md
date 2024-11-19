@@ -102,7 +102,7 @@ const signedTransaction = await hubApi.signTransaction(options);
 | `fee` | number | no | Transaction fee in luna. Default: 0 |
 | `extraData` | string or Uint8Array | no | Extra data that should be sent with the transaction. |
 | `flags` | number | no | A [`Nimiq.Transaction.Flag`](https://nimiq-network.github.io/developer-reference/chapters/transactions.html#extended-transaction), only required if the transaction should create a contract. |
-| `recipientType` | number | no | The [`Nimiq.Account.Type`](https://nimiq-network.github.io/developer-reference/chapters/accounts-and-contracts.html#contracts) of the recipient. Only required if the transaction should create a contract. |
+| `recipientType` | number | no | The [`Nimiq.AccountType`](https://nimiq-network.github.io/developer-reference/chapters/accounts-and-contracts.html#contracts) of the recipient. Only required if the transaction should create a contract. |
 
 ## Result
 
@@ -118,10 +118,10 @@ interface SignedTransaction {
         signature: Uint8Array;             // Serialized signature of the signer
 
         sender: string;                    // Human-readable address of sender
-        senderType: Nimiq.Account.Type;    // 0, 1, 2 - see recipientType above
+        senderType: Nimiq.AccountType;    // 0, 1, 2, 3 - see recipientType above
 
         recipient: string;                 // Human-readable address of recipient
-        recipientType: Nimiq.Account.Type; // 0, 1, 2 - see above
+        recipientType: Nimiq.AccountType; // 0, 1, 2, 3 - see above
 
         value: number;
         fee: number;

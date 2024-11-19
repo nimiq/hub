@@ -28,12 +28,21 @@ Vue.config.productionTip = false;
 // see https://cli.vuejs.org/guide/mode-and-env.html#using-env-variables-in-client-side-code
 setVueComponentsAssetPath(`${process.env.BASE_URL}js/`, `${process.env.BASE_URL}img/`);
 
-startSentry(Vue);
+async function main() {
+    // Load the main Nimiq WASM module and make it available globally.
+    // This must happen before creating the RpcApi instance, because it can try to recover state in its
+    // constructor, which in turn uses the RequestParser, which needs the Nimiq module.
+    window.Nimiq = await window.loadAlbatross();
 
-setLanguage(detectLanguage()).then(() => {
-    const app = new Vue({
-        store,
-        i18n,
-        render: (h) => h(App),
-    }).$mount('#app');
-});
+    startSentry(Vue);
+
+    setLanguage(detectLanguage()).then(() => {
+        const app = new Vue({
+            store,
+            i18n,
+            render: (h) => h(App),
+        }).$mount('#app');
+    });
+}
+
+main();

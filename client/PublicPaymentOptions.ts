@@ -1,3 +1,4 @@
+import type * as Nimiq from '@nimiq/core';
 import { PaymentOptions, Currency, PaymentType } from './PublicRequestTypes';
 
 export interface NimiqSpecifics {
@@ -9,7 +10,7 @@ export interface NimiqSpecifics {
     sender?: string;
     forceSender?: boolean;
     recipient?: string;
-    recipientType?: Nimiq.Account.Type;
+    recipientType?: Nimiq.AccountType;
 }
 
 export type NimiqDirectPaymentOptions = PaymentOptions<Currency.NIM, PaymentType.DIRECT>;

@@ -1,3 +1,4 @@
+import type * as Nimiq from '@nimiq/core';
 import type { RelayRequest } from '@opengsn/common/dist/EIP712/RelayRequest';
 
 import {
@@ -16,6 +17,7 @@ export enum RequestType {
     CHECKOUT = 'checkout',
     SIGN_MESSAGE = 'sign-message',
     SIGN_TRANSACTION = 'sign-transaction',
+    SIGN_STAKING = 'sign-staking',
     ONBOARD = 'onboard',
     SIGNUP = 'signup',
     LOGIN = 'login',
@@ -91,7 +93,7 @@ export interface ChooseAddressResult extends Address {
 export interface SignTransactionRequest extends BasicRequest {
     sender: string;
     recipient: string;
-    recipientType?: Nimiq.Account.Type;
+    recipientType?: Nimiq.AccountType;
     recipientLabel?: string;
     value: number;
     fee?: number;
@@ -100,13 +102,19 @@ export interface SignTransactionRequest extends BasicRequest {
     validityStartHeight: number; // FIXME To be made optional when hub has its own network
 }
 
+export interface SignStakingRequest extends BasicRequest {
+    senderLabel?: string;
+    recipientLabel?: string;
+    transaction: Uint8Array | Uint8Array[];
+}
+
 export interface NimiqCheckoutRequest extends BasicRequest {
     version?: 1;
     shopLogoUrl?: string;
     sender?: string;
     forceSender?: boolean;
     recipient: string;
-    recipientType?: Nimiq.Account.Type;
+    recipientType?: Nimiq.AccountType;
     value: number;
     fee?: number;
     extraData?: Bytes;
@@ -220,6 +228,7 @@ export interface MultiCurrencyCheckoutRequest extends BasicRequest {
 export type CheckoutRequest = NimiqCheckoutRequest | MultiCurrencyCheckoutRequest;
 
 export interface SignedTransaction {
+    transaction: Uint8Array;
     serializedTx: string; // HEX
     hash: string; // HEX
 
@@ -228,9 +237,9 @@ export interface SignedTransaction {
         signature: Uint8Array;
 
         sender: string; // Userfriendly address
-        senderType: Nimiq.Account.Type;
+        senderType: Nimiq.AccountType;
         recipient: string; // Userfriendly address
-        recipientType: Nimiq.Account.Type;
+        recipientType: Nimiq.AccountType;
         value: number; // Luna
         fee: number; // Luna
         validityStartHeight: number;
@@ -466,19 +475,19 @@ export interface Address {
 }
 
 export interface VestingContract {
-    type: Nimiq.Account.Type.VESTING;
+    type: Nimiq.AccountType.Vesting;
     address: string; // Userfriendly address
     label: string;
 
     owner: string; // Userfriendly address
-    start: number;
+    startTime: number;
     stepAmount: number;
-    stepBlocks: number;
+    timeStep: number;
     totalAmount: number;
 }
 
 export interface HashedTimeLockedContract {
-    type: Nimiq.Account.Type.HTLC;
+    type: Nimiq.AccountType.HTLC;
     address: string; // Userfriendly address
     label: string;
 
@@ -661,6 +670,7 @@ export interface SignedPolygonTransaction {
 }
 
 export type RpcRequest = SignTransactionRequest
+                       | SignStakingRequest
                        | CreateCashlinkRequest
                        | ManageCashlinkRequest
                        | CheckoutRequest
@@ -678,6 +688,7 @@ export type RpcRequest = SignTransactionRequest
                        | RefundSwapRequest;
 
 export type RpcResult = SignedTransaction
+                      | SignedTransaction[]
                       | Account
                       | Account[]
                       | SimpleResult
@@ -700,6 +711,7 @@ export type ResultByRequestType<T> =
     T extends RequestType.CHOOSE_ADDRESS ? ChooseAddressResult :
     T extends RequestType.ADD_ADDRESS ? Address :
     T extends RequestType.SIGN_TRANSACTION ? SignedTransaction :
+    T extends RequestType.SIGN_STAKING ? SignedTransaction[] :
     T extends RequestType.CHECKOUT ? SignedTransaction | SimpleResult :
     T extends RequestType.SIGN_MESSAGE ? SignedMessage :
     T extends RequestType.LOGOUT | RequestType.CHANGE_PASSWORD ? SimpleResult :

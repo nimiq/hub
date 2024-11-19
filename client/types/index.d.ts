@@ -1,6 +1,3 @@
-// Import @nimiq/core-web types from relative path within user's node_modules
-/// <reference path="../../core-web/namespace.d.ts" />
-
 export { default } from '../dist/src/HubApi';
 
 // export public request types, RequestBehavior types and Account types for convenience of the HupApi user

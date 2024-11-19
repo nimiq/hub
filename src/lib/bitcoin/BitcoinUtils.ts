@@ -12,6 +12,15 @@ import {
     BTC_ACCOUNT_MAX_ALLOWED_ADDRESS_GAP,
 } from './BitcoinConstants';
 import { BtcAddressInfo } from './BtcAddressInfo';
+import type {
+    BitcoinTransactionChangeOutput,
+    BitcoinTransactionInfo as KeyguardBitcoinTransactionInfo,
+} from '@nimiq/keyguard-client';
+
+// BitcoinTransactionInfo with complete changeOutput
+export type BitcoinTransactionInfo = Omit<KeyguardBitcoinTransactionInfo, 'changeOutput'> & {
+    changeOutput?: Required<BitcoinTransactionChangeOutput>,
+};
 
 export function getBtcNetwork(addressType = Config.bitcoinAddressType) {
     let network: BitcoinJS.Network;

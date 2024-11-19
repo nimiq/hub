@@ -47,7 +47,6 @@ export class WalletStore extends Store<any, WalletInfoEntry> {
         const saltedKeyIdBytes = new Uint8Array(keyIdBytes.length + salt.length);
         saltedKeyIdBytes.set(keyIdBytes, 0);
         saltedKeyIdBytes.set(salt, keyIdBytes.length);
-        await Nimiq.WasmHelper.doImport();
         const keyIdHash = Nimiq.Hash.computeBlake2b(saltedKeyIdBytes);
 
         for (let i = 0; i <= (keyIdHash.length - WalletStore.WALLET_ID_LENGTH); i++) {

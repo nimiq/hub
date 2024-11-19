@@ -94,18 +94,16 @@ import staticStore, { Static } from '../lib/StaticStore';
 import StatusScreen from '../components/StatusScreen.vue';
 import GlobalClose from '../components/GlobalClose.vue';
 import { State as RpcState } from '@nimiq/rpc';
-import { loadNimiq } from '../lib/Helpers';
 import { AccountInfo } from '../lib/AccountInfo';
 import { ParsedCreateCashlinkRequest } from '../lib/RequestTypes';
 import { RequestType } from '../../client/PublicRequestTypes';
-import { NetworkClient } from '@nimiq/network-client';
+import { NetworkClient } from '../lib/NetworkClient';
 import { WalletStore } from '../lib/WalletStore';
 import { WalletInfo } from '../lib/WalletInfo';
 import { WalletType, FIAT_API_PROVIDER } from '../lib/Constants';
 import { ContractInfo, VestingContractInfo } from '../lib/ContractInfo';
 import { i18n } from '../i18n/i18n-setup';
 import KeyguardClient from '@nimiq/keyguard-client';
-import Config from 'config';
 import {
     Account,
     AccountDetails,
@@ -193,7 +191,6 @@ class CashlinkCreate extends Vue {
         userFriendlyAddress: string,
     }) => any;
 
-    private nimiqLoadedPromise?: Promise<void>;
     private balanceUpdatedPromise?: Promise<void>;
     private loading: boolean = false;
 
@@ -247,13 +244,8 @@ class CashlinkCreate extends Vue {
             this.message = this.request.message;
         }
 
-        if (!NetworkClient.hasInstance()) {
-            NetworkClient.createInstance(Config.networkEndpoint);
-        }
-
         this.loading = !staticStore.cashlink && (!this.request.senderAddress || !this.request.senderBalance);
 
-        this.nimiqLoadedPromise = loadNimiq();
         this.balanceUpdatedPromise = this.updateBalances();
         if (this.loading) {
             this.balanceUpdatedPromise.then(() => this.loading = false);
@@ -363,15 +355,12 @@ class CashlinkCreate extends Vue {
             const balance = balances.get(accountOrContract.userFriendlyAddress);
             if (balance === undefined) continue;
 
-            if ('type' in accountOrContract && accountOrContract.type === Nimiq.Account.Type.VESTING) {
+            if ('type' in accountOrContract && accountOrContract.type === Nimiq.AccountType.Vesting) {
                 // Calculate available amount for vesting contract
                 accountOrContract.balance =
-                    (accountOrContract as VestingContractInfo).calculateAvailableAmount(
-                        NetworkClient.Instance.headInfo.height,
-                        Nimiq.Policy.coinsToSatoshis(balance),
-                    );
+                    (accountOrContract as VestingContractInfo).calculateAvailableAmount(balance);
             } else {
-                accountOrContract.balance = Nimiq.Policy.coinsToSatoshis(balance);
+                accountOrContract.balance = balance;
             }
         }
         // Store updated wallets
@@ -405,7 +394,7 @@ class CashlinkCreate extends Vue {
     private async sendTransaction() {
         const loadingTimeout = window.setTimeout(() => this.loading = true, 10);
 
-        await Promise.all([this.balanceUpdatedPromise, this.nimiqLoadedPromise]);
+        await this.balanceUpdatedPromise;
 
         window.clearTimeout(loadingTimeout);
 
@@ -414,7 +403,7 @@ class CashlinkCreate extends Vue {
             return;
         }
 
-        const cashlink = await Cashlink.create();
+        const cashlink = Cashlink.create();
         staticStore.cashlink = cashlink;
         cashlink.networkClient = NetworkClient.Instance;
         cashlink.value = this.liveAmountAndFee.amount;
@@ -433,7 +422,7 @@ class CashlinkCreate extends Vue {
             case WalletType.LEGACY:
             case WalletType.BIP39:
                 const fundingDetails = cashlink.getFundingDetails();
-                const validityStartHeight = NetworkClient.Instance.headInfo.height + 1;
+                const validityStartHeight = await NetworkClient.Instance.getHeight() + 1;
 
                 const request: KeyguardClient.SignTransactionRequest = Object.assign({}, fundingDetails, {
                     shopOrigin: this.rpcState.origin,
@@ -442,12 +431,10 @@ class CashlinkCreate extends Vue {
                     keyPath: senderAccount.findSignerForAddress(this.accountOrContractInfo!.address)!.path,
                     keyLabel: senderAccount.labelForKeyguard,
                     sender: this.accountOrContractInfo!.address.serialize(),
-                    senderType: (this.accountOrContractInfo as ContractInfo).type
-                        ? (this.accountOrContractInfo as ContractInfo).type
-                        : Nimiq.Account.Type.BASIC,
+                    senderType: (this.accountOrContractInfo as ContractInfo).type || Nimiq.AccountType.Basic,
                     senderLabel: this.accountOrContractInfo!.label,
                     recipient: fundingDetails.recipient.serialize(),
-                    recipientType: Nimiq.Account.Type.BASIC,
+                    recipientType: Nimiq.AccountType.Basic as any, // TODO: Update with new Keyguard Client
                     fee: this.fee,
                     validityStartHeight,
                 });

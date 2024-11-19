@@ -13,12 +13,12 @@ export default class SignTransaction extends Vue {
     @Static private request!: ParsedSignTransactionRequest;
     @Getter private findWalletByAddress!: (address: string, includeContracts: boolean) => WalletInfo | undefined;
 
-    public async created() {
+    public created() {
         // Forward user through Hub to Keyguard
 
         let senderAddress: Nimiq.Address;
         let senderLabel: string | undefined;
-        let senderType: Nimiq.Account.Type | undefined;
+        let senderType: Nimiq.AccountType | undefined;
         let keyId: string;
         let keyPath: string;
         let keyLabel: string | undefined;
@@ -31,7 +31,7 @@ export default class SignTransaction extends Vue {
 
             senderAddress = this.request.sender;
             senderLabel = (senderContract || signer).label;
-            senderType = senderContract ? senderContract.type : Nimiq.Account.Type.BASIC;
+            senderType = senderContract ? senderContract.type : Nimiq.AccountType.Basic;
             keyId = senderAccount.keyId;
             keyPath = signer.path;
             keyLabel = senderAccount.labelForKeyguard;
@@ -56,14 +56,14 @@ export default class SignTransaction extends Vue {
 
             sender: senderAddress.serialize(),
             senderLabel,
-            senderType: senderType || Nimiq.Account.Type.BASIC,
+            senderType: senderType || Nimiq.AccountType.Basic,
             recipient: this.request.recipient.serialize(),
             recipientType: this.request.recipientType,
             recipientLabel: this.request.recipientLabel,
+            recipientData: this.request.data,
             value: this.request.value,
             fee: this.request.fee,
             validityStartHeight: this.request.validityStartHeight,
-            data: this.request.data,
             flags: this.request.flags,
         };
 

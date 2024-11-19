@@ -5,9 +5,16 @@ import { POLYGON_NETWORK_TEST } from '../lib/polygon/PolygonConstants';
 
 export default {
     keyguardEndpoint: 'https://keyguard.nimiq-testnet.com',
-    ledgerApiNimiqVersion: 'legacy' as LedgerApiNimiqVersion.LEGACY,
+    ledgerApiNimiqVersion: 'albatross' as LedgerApiNimiqVersion.ALBATROSS,
     network: NETWORK_TEST,
+    nimiqNetworkId: 5,
     networkEndpoint: 'https://network.nimiq-testnet.com',
+    seedNodes: [
+        '/dns4/seed1.pos.nimiq-testnet.com/tcp/8443/wss',
+        '/dns4/seed2.pos.nimiq-testnet.com/tcp/8443/wss',
+        '/dns4/seed3.pos.nimiq-testnet.com/tcp/8443/wss',
+        '/dns4/seed4.pos.nimiq-testnet.com/tcp/8443/wss',
+    ],
     privilegedOrigins: [
         'https://safe.nimiq-testnet.com',
         'https://wallet.nimiq-testnet.com',

@@ -12,15 +12,29 @@
     <script defer type="text/javascript" src="/browser-warning.js"
         integrity="<%= htmlWebpackPlugin.options.browserWarningIntegrityHash %>"
         crossorigin="anonymous"></script>
-    <script defer src="<%= htmlWebpackPlugin.options.cdnDomain %>/v<%= htmlWebpackPlugin.options.coreVersion %>/web-offline.js"
+    <!-- <script defer src="<%= htmlWebpackPlugin.options.cdnDomain %>/v<%= htmlWebpackPlugin.options.coreVersion %>/web-offline.js"
         integrity="<%= htmlWebpackPlugin.options.coreIntegrityHash %>"
-        crossorigin="anonymous"></script>
+        crossorigin="anonymous"></script> -->
     <title>Nimiq</title>
     <meta name="robots" content="noindex">
     <meta name="description" content="Nimiq Hub provides a unified interface for all Nimiq accounts, addresses, and contracts.">
     <meta name="url" content="<%= htmlWebpackPlugin.options.domain %>">
     <link href="/blocking.css" rel="stylesheet">
     <link rel="icon" href="<%= htmlWebpackPlugin.options.domain %>/favicon.ico">
+
+    <script type="module">
+        import init, * as Nimiq from '/albatross-client/web/index.js';
+
+        /** @type {Promise<Nimiq> | undefined} */
+        let initPromise;
+
+        window.loadAlbatross = async function() {
+            return initPromise || (initPromise = new Promise(async resolve => {
+                await init();
+                resolve(Nimiq);
+            }));
+        }
+    </script>
 </head>
 
 <body>

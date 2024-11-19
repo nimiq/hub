@@ -29,12 +29,12 @@
                             <Amount :amount="contract.balance" :minDecimals="0"/>
                         </div>
                         <div class="row">
-                            <strong>{{ $t('Start Block:') }}</strong>
-                            <span>{{ contract.start }}</span>
+                            <strong>{{ $t('Start Time:') }}</strong>
+                            <span>{{ new Date(contract.startTime).toLocaleString() }}</span>
                         </div>
                         <div class="row">
-                            <strong>{{ $t('Blocks/Step:') }}</strong>
-                            <span>{{ contract.stepBlocks }}</span>
+                            <strong>{{ $t('Time/Step:') }}</strong>
+                            <span>{{ contract.timeStep / 1000 }} seconds</span>
                         </div>
                         <div class="row">
                             <strong>{{ $t('Amount/Step:') }}</strong>
@@ -58,8 +58,6 @@
         </SmallPage>
 
         <GlobalClose :hidden="contractStored"/>
-
-        <Network ref="$network"/>
     </div>
 </template>
 
@@ -75,14 +73,13 @@ import {
     CircleSpinner,
     Amount,
 } from '@nimiq/vue-components';
-import { NetworkClient } from '@nimiq/network-client';
 import StatusScreen from '../components/StatusScreen.vue';
 import GlobalClose from '../components/GlobalClose.vue';
-import Network from '../components/Network.vue';
 import { WalletInfo } from '../lib/WalletInfo';
 import { WalletStore } from '../lib/WalletStore';
 import { VestingContractInfo } from '../lib/ContractInfo';
 import { RequestType } from '../../client/PublicRequestTypes';
+import { NetworkClient } from '../lib/NetworkClient';
 
 @Component({components: {
         SmallPage,
@@ -94,7 +91,6 @@ import { RequestType } from '../../client/PublicRequestTypes';
         PageFooter,
         StatusScreen,
         GlobalClose,
-        Network,
     }})
 export default class AddVestingContract extends Vue {
     @Getter private findWalletByAddress!: (address: string, includeContracts: boolean) => WalletInfo | undefined;
@@ -107,8 +103,9 @@ export default class AddVestingContract extends Vue {
     private contractStored: boolean = false;
 
     private async mounted() {
-        const client = await (this.$refs.$network as Network).getNetworkClient();
-        client.on(NetworkClient.Events.CONSENSUS, (state) => {
+        await NetworkClient.Instance.init();
+        const client = await NetworkClient.Instance.innerClient;
+        client.addConsensusChangedListener((state) => {
             this.hasConsensus = state === 'established';
         });
     }
@@ -116,15 +113,16 @@ export default class AddVestingContract extends Vue {
     private async checkContract(address: string) {
         this.checkingContract = true;
 
-        const client = await (this.$refs.$network as Network).getNetworkClient();
-        const account = (await client.getAccounts(address))[0] as any as {
+        const client = await NetworkClient.Instance.innerClient;
+        await client.waitForConsensusEstablished();
+        const account = (await client.getAccounts([address]))[0] as any as {
             type: string,
             balance: number,
             owner: string,
-            vestingStart: number,
-            vestingStepAmount: number,
-            vestingStepBlocks: number,
-            vestingTotalAmount: number,
+            startTime: number;
+            timeStep: number;
+            stepAmount: number;
+            totalAmount: number;
         };
 
         if (account.type !== 'vesting') {
@@ -138,10 +136,10 @@ export default class AddVestingContract extends Vue {
             this.$t('Vesting Contract') as string,
             Nimiq.Address.fromUserFriendlyAddress(address),
             Nimiq.Address.fromUserFriendlyAddress(account.owner),
-            account.vestingStart,
-            account.vestingStepAmount,
-            account.vestingStepBlocks,
-            account.vestingTotalAmount,
+            account.startTime,
+            account.stepAmount,
+            account.timeStep,
+            account.totalAmount,
             account.balance,
         );
 

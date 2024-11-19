@@ -55,7 +55,7 @@
 <script lang="ts">
 import { Component } from 'vue-property-decorator';
 import { SmallPage, PageHeader, Amount } from '@nimiq/vue-components';
-import SignBtcTransaction, { BitcoinTransactionInfo } from './SignBtcTransaction.vue';
+import SignBtcTransaction from './SignBtcTransaction.vue';
 import StatusScreen from '../components/StatusScreen.vue';
 import GlobalClose from '../components/GlobalClose.vue';
 import LedgerUi from '../components/LedgerUi.vue';
@@ -70,6 +70,7 @@ import { ERROR_CANCELED } from '../lib/Constants';
 import { WalletInfo } from '../lib/WalletInfo';
 import { loadBitcoinJS } from '../lib/bitcoin/BitcoinJSLoader';
 import { prepareBitcoinTransactionForLedgerSigning } from '../lib/bitcoin/BitcoinLedgerUtils';
+import { BitcoinTransactionInfo } from '../lib/bitcoin/BitcoinUtils';
 
 @Component({components: {StatusScreen, SmallPage, PageHeader, Amount, GlobalClose, LedgerUi, LabelAvatar}})
 export default class SignBtcTransactionLedger extends SignBtcTransaction {

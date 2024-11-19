@@ -47,9 +47,9 @@ export class ParsedNimiqDirectPaymentOptions extends ParsedPaymentOptions<Curren
             }
         }
 
-        let recipientType: Nimiq.Account.Type | undefined;
+        let recipientType: Nimiq.AccountType | undefined;
         if (options.protocolSpecific.recipientType !== undefined) {
-            if (!Object.values(Nimiq.Account.Type).includes(options.protocolSpecific.recipientType)) {
+            if (!Object.values(Nimiq.AccountType).includes(options.protocolSpecific.recipientType)) {
                 throw new Error('If provided, recipientType must be a valid Nimiq account type');
             }
             recipientType = options.protocolSpecific.recipientType;
@@ -78,8 +78,8 @@ export class ParsedNimiqDirectPaymentOptions extends ParsedPaymentOptions<Curren
         }
 
         const requiresExtendedTransaction = extraData && extraData.byteLength > 0
-            || (recipientType !== undefined && recipientType !== Nimiq.Account.Type.BASIC)
-            || (flags !== undefined && flags !== Nimiq.Transaction.Flag.NONE);
+            || (recipientType !== undefined && recipientType !== Nimiq.AccountType.Basic)
+            || (flags !== undefined && flags !== 0 /* Nimiq.Transaction.Flag.NONE */);
         // Note that the transaction size can be bigger than this, for example if the sender type the user wants
         // to use requires an extended transaction or if an extended transaction includes a multi signature proof.
         // The size is therefore just an estimate. In the majority of cases the estimate will be accurate though
@@ -113,8 +113,8 @@ export class ParsedNimiqDirectPaymentOptions extends ParsedPaymentOptions<Curren
         // forceSender we are more lenient.
         if (this.parserFlags.isPointOfSale && (
             options.protocolSpecific.forceSender
-            || (recipientType !== undefined && recipientType !== Nimiq.Account.Type.BASIC)
-            || (flags !== undefined && flags !== Nimiq.Transaction.Flag.NONE)
+            || (recipientType !== undefined && recipientType !== Nimiq.AccountType.Basic)
+            || (flags !== undefined && flags !== 0 /* Nimiq.Transaction.Flag.NONE */)
             || (extraData && !Utf8Tools.isValidUtf8(extraData)) // only allow string data
         )) {
             throw new Error('isPointOfSale was set but requested sender, recipientType, flags or extraData can not '
@@ -127,7 +127,7 @@ export class ParsedNimiqDirectPaymentOptions extends ParsedPaymentOptions<Curren
             fee,
             feePerByte,
             extraData,
-            flags: flags || Nimiq.Transaction.Flag.NONE,
+            flags: flags || 0 /* Nimiq.Transaction.Flag.NONE */,
             recipient,
             recipientType,
             validityDuration: !options.protocolSpecific.validityDuration

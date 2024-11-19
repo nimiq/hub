@@ -10,6 +10,10 @@ const SignTransactionSuccess  = () => import(/*webpackChunkName: "sign-transacti
 const SignTransactionLedger   = () => import(/*webpackChunkName: "sign-transaction-ledger"*/
     './views/SignTransactionLedger.vue');
 
+const SignStaking         = () => import(/*webpackChunkName: "sign-staking"*/ './views/SignStaking.vue');
+const SignStakingSuccess  = () => import(/*webpackChunkName: "sign-staking"*/
+    './views/SignStakingSuccess.vue');
+
 const CashlinkCreate          = () => import(/*webpackChunkName: "cashlink" */ './views/CashlinkCreate.vue');
 const CashlinkManage          = () => import(/*webpackChunkName: "cashlink" */ './views/CashlinkManage.vue');
 
@@ -112,6 +116,8 @@ export function keyguardResponseRouter(
                 ? RequestType.MANAGE_CASHLINK
                 : `${originalRequestType}-success`;
             break;
+        case KeyguardCommand.SIGN_STAKING:
+            resolve = `${originalRequestType}-success`; break;
         case KeyguardCommand.EXPORT:
             resolve = `${RequestType.EXPORT}-success`; break;
         case KeyguardCommand.CHANGE_PASSWORD:
@@ -176,6 +182,16 @@ export default new Router({
             path: `/${RequestType.SIGN_TRANSACTION}/ledger`,
             component: SignTransactionLedger,
             name: `${RequestType.SIGN_TRANSACTION}-ledger`,
+        },
+        {
+            path: `/${RequestType.SIGN_STAKING}`,
+            component: SignStaking,
+            name: RequestType.SIGN_STAKING,
+        },
+        {
+            path: `/${RequestType.SIGN_STAKING}/success`,
+            component: SignStakingSuccess,
+            name: `${RequestType.SIGN_STAKING}-success`,
         },
         {
             path: `/cashlink/create`,

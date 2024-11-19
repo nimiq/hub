@@ -1,9 +1,4 @@
-import Config from 'config';
 import {
-    NETWORK_TEST,
-    NETWORK_DEV,
-    NETWORK_MAIN,
-    ERROR_INVALID_NETWORK,
     MOBILE_MAX_WIDTH,
 } from './Constants';
 
@@ -19,31 +14,6 @@ export function setHistoryStorage(key: string, data: any) {
 export function getHistoryStorage(key: string): any | undefined {
     return history.state ? history.state[key] : undefined;
 }
-
-export const loadNimiq = async () => {
-    await Nimiq.WasmHelper.doImport();
-    let genesisConfigInitialized = true;
-    try {
-        Nimiq.GenesisConfig.NETWORK_ID; // tslint:disable-line:no-unused-expression
-    } catch (e) {
-        genesisConfigInitialized = false;
-    }
-    if (!genesisConfigInitialized) {
-        switch (Config.network) {
-            case NETWORK_TEST:
-                Nimiq.GenesisConfig.test();
-                break;
-            case NETWORK_MAIN:
-                Nimiq.GenesisConfig.main();
-                break;
-            case NETWORK_DEV:
-                Nimiq.GenesisConfig.dev();
-                break;
-            default:
-                throw new Error(ERROR_INVALID_NETWORK);
-        }
-    }
-};
 
 export function includesOrigin(list: string[], origin: string) {
     return list.includes(origin) || list.includes('*');

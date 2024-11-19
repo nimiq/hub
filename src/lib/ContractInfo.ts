@@ -5,9 +5,9 @@ import { labelAddress } from './LabelingMachine';
 export class ContractInfoHelper {
     public static fromObject(o: ContractInfoEntry): VestingContractInfo | HashedTimeLockedContractInfo {
         switch (o.type) {
-            case Nimiq.Account.Type.VESTING:
+            case Nimiq.AccountType.Vesting:
                 return VestingContractInfo.fromObject(o);
-            case Nimiq.Account.Type.HTLC:
+            case Nimiq.AccountType.HTLC:
                 return HashedTimeLockedContractInfo.fromObject(o);
             // @ts-ignore Property 'type' does not exist on type 'never'.
             default: throw new Error('Unknown contract type: ' + o.type);
@@ -17,9 +17,9 @@ export class ContractInfoHelper {
     // Used in iframe
     public static objectToContractType(o: ContractInfoEntry): VestingContract | HashedTimeLockedContract {
         switch (o.type) {
-            case 1 /* Nimiq.Account.Type.VESTING */:
+            case Nimiq.AccountType.Vesting:
                 return VestingContractInfo.objectToContractType(o);
-            case 2 /* Nimiq.Account.Type.HTLC */:
+            case Nimiq.AccountType.HTLC:
                 return HashedTimeLockedContractInfo.objectToContractType(o);
             // @ts-ignore Property 'type' does not exist on type 'never'.
             default: throw new Error('Unknown contract type: ' + o.type);
@@ -33,9 +33,9 @@ export class VestingContractInfo {
             o.label,
             new Nimiq.Address(o.address),
             new Nimiq.Address(o.owner),
-            o.start,
+            o.startTime,
             o.stepAmount,
-            o.stepBlocks,
+            o.timeStep,
             o.totalAmount,
             o.balance,
         );
@@ -44,27 +44,27 @@ export class VestingContractInfo {
     // Used in iframe
     public static objectToContractType(o: VestingContractInfoEntry): VestingContract {
         return {
-            type: 1 /* Nimiq.Account.Type.VESTING */,
+            type: Nimiq.AccountType.Vesting,
             label: o.label,
             address: AddressUtils.toUserFriendlyAddress(o.address),
             owner: AddressUtils.toUserFriendlyAddress(o.owner),
-            start: o.start,
+            startTime: o.startTime,
             stepAmount: o.stepAmount,
-            stepBlocks: o.stepBlocks,
+            timeStep: o.timeStep,
             totalAmount: o.totalAmount,
         };
     }
 
-    public type = Nimiq.Account.Type.VESTING;
+    public type: Nimiq.AccountType.Vesting = Nimiq.AccountType.Vesting;
     public walletId?: string;
 
     public constructor(
         public label: string,
         public address: Nimiq.Address,
         public owner: Nimiq.Address,
-        public start: number,
+        public startTime: number,
         public stepAmount: number,
-        public stepBlocks: number,
+        public timeStep: number,
         public totalAmount: number,
         public balance?: number,
     ) {}
@@ -81,11 +81,11 @@ export class VestingContractInfo {
         return {
             type: this.type,
             label: this.label,
-            address: new Uint8Array(this.address.serialize()),
-            owner: new Uint8Array(this.owner.serialize()),
-            start: this.start,
+            address: this.address.serialize(),
+            owner: this.owner.serialize(),
+            startTime: this.startTime,
             stepAmount: this.stepAmount,
-            stepBlocks: this.stepBlocks,
+            timeStep: this.timeStep,
             totalAmount: this.totalAmount,
             balance: this.balance,
         };
@@ -97,9 +97,9 @@ export class VestingContractInfo {
             label: this.label,
             address: this.userFriendlyAddress,
             owner: this.owner.toUserFriendlyAddress(),
-            start: this.start,
+            startTime: this.startTime,
             stepAmount: this.stepAmount,
-            stepBlocks: this.stepBlocks,
+            timeStep: this.timeStep,
             totalAmount: this.totalAmount,
         };
     }
@@ -136,10 +136,10 @@ export class VestingContractInfo {
      * and currentBalance. The withdrawn amount is simply subtracted from the released amount:
      *      <previous result> - (this.totalAmount - currentBalance)
      */
-    public calculateAvailableAmount(height: number, currentBalance = this.totalAmount) {
+    public calculateAvailableAmount(currentBalance = this.totalAmount) {
         return Math.min(
             this.totalAmount,
-            Math.max(0, Math.floor((height - this.start) / this.stepBlocks)) * this.stepAmount,
+            Math.max(0, Math.floor((Date.now() - this.startTime) / this.timeStep)) * this.stepAmount,
         ) - (this.totalAmount - currentBalance);
     }
 }
@@ -151,7 +151,7 @@ export class HashedTimeLockedContractInfo {
             new Nimiq.Address(o.address),
             new Nimiq.Address(o.sender),
             new Nimiq.Address(o.recipient),
-            new Nimiq.Hash(o.hashRoot),
+            o.hashRoot,
             o.hashCount,
             o.timeout,
             o.totalAmount,
@@ -162,7 +162,7 @@ export class HashedTimeLockedContractInfo {
     // Used in iframe
     public static objectToContractType(o: HashedTimeLockedContractInfoEntry): HashedTimeLockedContract {
         return {
-            type: 2 /* Nimiq.Account.Type.HTLC */,
+            type: Nimiq.AccountType.HTLC,
             label: o.label,
             address: AddressUtils.toUserFriendlyAddress(o.address),
             sender: AddressUtils.toUserFriendlyAddress(o.sender),
@@ -177,7 +177,7 @@ export class HashedTimeLockedContractInfo {
         };
     }
 
-    public type = Nimiq.Account.Type.HTLC;
+    public type: Nimiq.AccountType.HTLC = Nimiq.AccountType.HTLC;
     public walletId?: string;
 
     public constructor(
@@ -185,7 +185,7 @@ export class HashedTimeLockedContractInfo {
         public address: Nimiq.Address,
         public sender: Nimiq.Address,
         public recipient: Nimiq.Address,
-        public hashRoot: Nimiq.Hash,
+        public hashRoot: Uint8Array,
         public hashCount: number,
         public timeout: number,
         public totalAmount: number,
@@ -204,10 +204,10 @@ export class HashedTimeLockedContractInfo {
         return {
             type: this.type,
             label: this.label,
-            address: new Uint8Array(this.address.serialize()),
-            sender: new Uint8Array(this.sender.serialize()),
-            recipient: new Uint8Array(this.recipient.serialize()),
-            hashRoot: new Uint8Array(this.hashRoot.serialize()),
+            address: this.address.serialize(),
+            sender: this.sender.serialize(),
+            recipient: this.recipient.serialize(),
+            hashRoot: this.hashRoot,
             hashCount: this.hashCount,
             timeout: this.timeout,
             totalAmount: this.totalAmount,
@@ -217,12 +217,12 @@ export class HashedTimeLockedContractInfo {
 
     public toContractType(): HashedTimeLockedContract {
         return {
-            type: Nimiq.Account.Type.HTLC,
+            type: Nimiq.AccountType.HTLC,
             label: this.label,
             address: this.userFriendlyAddress,
             sender: this.sender.toUserFriendlyAddress(),
             recipient: this.recipient.toUserFriendlyAddress(),
-            hashRoot: this.hashRoot.toHex(),
+            hashRoot: Nimiq.BufferUtils.toHex(this.hashRoot),
             hashCount: this.hashCount,
             timeout: this.timeout,
             totalAmount: this.totalAmount,
@@ -236,19 +236,19 @@ export type ContractInfo = VestingContractInfo | HashedTimeLockedContractInfo;
  * Database Types
  */
 export interface VestingContractInfoEntry {
-    type: Nimiq.Account.Type.VESTING;
+    type: Nimiq.AccountType.Vesting;
     label: string;
     address: Uint8Array;
     owner: Uint8Array;
-    start: number;
+    startTime: number;
     stepAmount: number;
-    stepBlocks: number;
+    timeStep: number;
     totalAmount: number;
     balance?: number;
 }
 
 export interface HashedTimeLockedContractInfoEntry {
-    type: Nimiq.Account.Type.HTLC;
+    type: Nimiq.AccountType.HTLC;
     label: string;
     address: Uint8Array;
     sender: Uint8Array;

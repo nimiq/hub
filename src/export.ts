@@ -1,11 +1,8 @@
 import Cashlink from './lib/Cashlink';
 import { CashlinkStore } from './lib/CashlinkStore';
-import { loadNimiq } from './lib/Helpers';
 import { CashlinkState } from '../client/PublicRequestTypes';
 
 async function main() {
-    await loadNimiq();
-
     const store = CashlinkStore.Instance;
 
     const cashlinkEntries = await store.list();

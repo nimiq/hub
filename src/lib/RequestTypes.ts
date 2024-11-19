@@ -6,6 +6,7 @@ import type { ParsedEtherSpecifics, ParsedEtherDirectPaymentOptions } from './pa
 import type { ParsedBitcoinSpecifics, ParsedBitcoinDirectPaymentOptions } from './paymentOptions/BitcoinPaymentOptions';
 import type { SwapAsset } from '@nimiq/fastspot-api';
 import type { FiatCurrency } from '@nimiq/utils';
+// import type { PlainTransaction as AlbatrossPlainTransaction } from '@nimiq/albatross-wasm';
 
 export interface ParsedBasicRequest {
     kind: RequestType;
@@ -39,18 +40,25 @@ export interface ParsedSignTransactionRequest extends ParsedBasicRequest {
         address: Nimiq.Address,
         label?: string,
         walletLabel?: string,
-        type?: Nimiq.Account.Type,
+        type?: Nimiq.AccountType,
         signerKeyId: string,
         signerKeyPath: string,
     };
     recipient: Nimiq.Address;
-    recipientType: Nimiq.Account.Type;
+    recipientType: Nimiq.AccountType;
     recipientLabel?: string;
     value: number;
     fee: number;
     data: Uint8Array;
     flags: number;
     validityStartHeight: number; // FIXME To be made optional when hub has its own network
+}
+
+export interface ParsedSignStakingRequest extends ParsedBasicRequest {
+    senderLabel?: string;
+    recipientLabel?: string;
+    // transactions: AlbatrossPlainTransaction[];
+    transactions: Uint8Array[];
 }
 
 export type ParsedProtocolSpecificsForCurrency<C extends Currency> =
@@ -326,6 +334,7 @@ export interface ParsedRefundSwapRequest extends ParsedSimpleRequest {
 
 // Discriminated Unions
 export type ParsedRpcRequest = ParsedSignTransactionRequest
+                             | ParsedSignStakingRequest
                              | ParsedCreateCashlinkRequest
                              | ParsedManageCashlinkRequest
                              | ParsedCheckoutRequest

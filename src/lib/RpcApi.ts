@@ -10,6 +10,7 @@ import {
     ParsedSignMessageRequest,
     ParsedSignTransactionRequest,
     ParsedSignPolygonTransactionRequest,
+    ParsedSignStakingRequest,
 } from './RequestTypes';
 import { RequestParser } from './RequestParser';
 import { Currency, RequestType, RpcRequest, RpcResult } from '../../client/PublicRequestTypes';
@@ -27,7 +28,7 @@ import { WalletStore } from './WalletStore';
 import Cashlink from '@/lib/Cashlink';
 import CookieJar from '@/lib/CookieJar';
 import { captureException } from '@sentry/browser';
-import { ERROR_CANCELED, WalletType } from './Constants';
+import { ERROR_CANCELED, StakingTransactionType, WalletType } from './Constants';
 import { includesOrigin } from '@/lib/Helpers';
 import Config from 'config';
 import { setHistoryStorage, getHistoryStorage } from '@/lib/Helpers';
@@ -46,6 +47,7 @@ export default class RpcApi {
     private _3rdPartyRequestWhitelist: RequestType[] = [
         RequestType.CHECKOUT,
         RequestType.SIGN_TRANSACTION,
+        RequestType.SIGN_STAKING,
         RequestType.SIGN_MESSAGE,
         RequestType.CHOOSE_ADDRESS,
         RequestType.CREATE_CASHLINK,
@@ -69,6 +71,7 @@ export default class RpcApi {
 
         this._registerHubApis([
             RequestType.SIGN_TRANSACTION,
+            RequestType.SIGN_STAKING,
             RequestType.CREATE_CASHLINK,
             RequestType.MANAGE_CASHLINK,
             RequestType.CHECKOUT,
@@ -93,6 +96,7 @@ export default class RpcApi {
         ]);
         this._registerKeyguardApis([
             KeyguardCommand.SIGN_TRANSACTION,
+            KeyguardCommand.SIGN_STAKING,
             KeyguardCommand.CREATE,
             KeyguardCommand.IMPORT,
             KeyguardCommand.EXPORT,
@@ -321,6 +325,20 @@ export default class RpcApi {
                     ? parsedSignTransactionRequest.sender
                     : parsedSignTransactionRequest.sender.address;
                 account = this._store.getters.findWalletByAddress(address.toUserFriendlyAddress(), true);
+            } else if (requestType === RequestType.SIGN_STAKING) {
+                accountRequired = false;
+
+                // TODO
+                // The RequestParser is not async, so we cannot load and parse the transation from its
+                // Uint8Array representation there, so the parsed request cannot contain the plain transaction,
+                // and we have to do the parsing and validation in SignStaking.vue instead.
+
+                // const parsedSignStakingRequest = request as ParsedSignStakingRequest;
+                // // Only support signing staking transactions by the tx's sender or recipient
+                // const address = parsedSignStakingRequest.transaction.senderType === 'staking'
+                //     ? parsedSignStakingRequest.transaction.recipient
+                //     : parsedSignStakingRequest.transaction.sender;
+                // account = this._store.getters.findWalletByAddress(address, true);
             } else if (requestType === RequestType.SIGN_MESSAGE) {
                 accountRequired = false; // Sign message allows user to select an account
                 const address = (request as ParsedSignMessageRequest).signer;

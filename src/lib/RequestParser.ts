@@ -16,6 +16,7 @@ import {
     RpcRequest,
     SignMessageRequest,
     SignTransactionRequest,
+    SignStakingRequest,
     SimpleRequest,
     NimiqCheckoutRequest,
     MultiCurrencyCheckoutRequest,
@@ -36,6 +37,7 @@ import type {
     ParsedRpcRequest,
     ParsedSignMessageRequest,
     ParsedSignTransactionRequest,
+    ParsedSignStakingRequest,
     ParsedSimpleRequest,
     ParsedSignBtcTransactionRequest,
     ParsedSignPolygonTransactionRequest,
@@ -65,20 +67,50 @@ export class RequestParser {
                 if (!signTransactionRequest.validityStartHeight) throw new Error('validityStartHeight is required');
 
                 return {
-                    kind: RequestType.SIGN_TRANSACTION,
+                    kind: requestType,
                     appName: signTransactionRequest.appName,
                     sender: Nimiq.Address.fromString(signTransactionRequest.sender),
                     recipient: Nimiq.Address.fromString(signTransactionRequest.recipient),
-                    recipientType: signTransactionRequest.recipientType || Nimiq.Account.Type.BASIC,
+                    recipientType: signTransactionRequest.recipientType || Nimiq.AccountType.Basic,
                     recipientLabel: signTransactionRequest.recipientLabel,
                     value: signTransactionRequest.value,
                     fee: signTransactionRequest.fee || 0,
                     data: typeof signTransactionRequest.extraData === 'string'
                         ? Utf8Tools.stringToUtf8ByteArray(signTransactionRequest.extraData)
                         : signTransactionRequest.extraData || new Uint8Array(0),
-                    flags: signTransactionRequest.flags || Nimiq.Transaction.Flag.NONE,
+                    flags: signTransactionRequest.flags || 0 /* Nimiq.Transaction.Flag.NONE */,
                     validityStartHeight: signTransactionRequest.validityStartHeight,
                 } as ParsedSignTransactionRequest;
+            case RequestType.SIGN_STAKING:
+                const signStakingRequest = request as SignStakingRequest;
+
+                // TODO Parse transactions
+                // const transaction = Nimiq.Transaction.fromAny(
+                //     Nimiq.BufferUtils.toHex(signStakingRequest.transaction),
+                // );
+
+                const transactions = Array.isArray(signStakingRequest.transaction)
+                    ? signStakingRequest.transaction
+                    : [signStakingRequest.transaction];
+
+                if (transactions.length === 0) {
+                    throw new Error('transaction array must not be empty');
+                }
+
+                for (const transaction of transactions) {
+                    if (!(transaction instanceof Uint8Array)) {
+                        throw new Error('transaction must be a Uint8Array');
+                    }
+                }
+
+                return {
+                    kind: requestType,
+                    appName: signStakingRequest.appName,
+                    senderLabel: signStakingRequest.senderLabel,
+                    recipientLabel: signStakingRequest.recipientLabel,
+                    // transaction: transaction.toPlain(),
+                    transactions,
+                } as ParsedSignStakingRequest;
             case RequestType.CHECKOUT:
                 const checkoutRequest = request as CheckoutRequest;
 
@@ -131,11 +163,11 @@ export class RequestParser {
                             protocolSpecific: {
                                 extraData: checkoutRequest.extraData,
                                 recipient: checkoutRequest.recipient,
-                                recipientType: checkoutRequest.recipientType || Nimiq.Account.Type.BASIC,
+                                recipientType: checkoutRequest.recipientType || Nimiq.AccountType.Basic,
                                 sender: checkoutRequest.sender,
                                 forceSender: !!checkoutRequest.forceSender,
                                 fee: checkoutRequest.fee || 0,
-                                flags: checkoutRequest.flags || Nimiq.Transaction.Flag.NONE,
+                                flags: checkoutRequest.flags || 0 /* Nimiq.Transaction.Flag.NONE */,
                                 validityDuration: checkoutRequest.validityDuration,
                             },
                         })],
@@ -733,6 +765,19 @@ export class RequestParser {
                     flags: signTransactionRequest.flags,
                     validityStartHeight: signTransactionRequest.validityStartHeight,
                 } as SignTransactionRequest;
+            case RequestType.SIGN_STAKING:
+                const signStakingRequest = request as ParsedSignStakingRequest;
+
+                // TODO: Parse transactions
+                // const transaction = Nimiq.Transaction.fromPlain(signStakingRequest.transaction);
+
+                return {
+                    appName: signStakingRequest.appName,
+                    senderLabel: signStakingRequest.senderLabel,
+                    recipientLabel: signStakingRequest.recipientLabel,
+                    // transaction: transaction.serialize(),
+                    transaction: signStakingRequest.transactions,
+                } as SignStakingRequest;
             case RequestType.CREATE_CASHLINK:
                 const createCashlinkRequest = request as ParsedCreateCashlinkRequest;
                 // Note that there is no need to export autoTruncateMessage as the message already got truncated

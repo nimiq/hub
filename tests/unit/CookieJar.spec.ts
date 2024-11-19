@@ -15,12 +15,12 @@ const DUMMY_ADDRESS_HRV = 'NQ76 E5NX K4S8 9RS9 65FC DQ8C H5ML SCYG 81XJ'; // Ves
 const DUMMY_ADDRESS1: Nimiq.Address = Nimiq.Address.fromUserFriendlyAddress(DUMMY_ADDRESS_HR1);
 const DUMMY_ADDRESS2: Nimiq.Address = Nimiq.Address.fromUserFriendlyAddress(DUMMY_ADDRESS_HR2);
 const DUMMY_ADDRESSV: Nimiq.Address = Nimiq.Address.fromUserFriendlyAddress(DUMMY_ADDRESS_HRV);
-const DUMMY_ADDRESS_S1 = new Uint8Array(DUMMY_ADDRESS1.serialize());
-const DUMMY_ADDRESS_S2 = new Uint8Array(DUMMY_ADDRESS2.serialize());
-const DUMMY_ADDRESS_SV = new Uint8Array(DUMMY_ADDRESSV.serialize());
+const DUMMY_ADDRESS_S1 = DUMMY_ADDRESS1.serialize();
+const DUMMY_ADDRESS_S2 = DUMMY_ADDRESS2.serialize();
+const DUMMY_ADDRESS_SV = DUMMY_ADDRESSV.serialize();
 const BURN_ADDRESS_HR  = 'NQ07 0000 0000 0000 0000 0000 0000 0000 0000';
 const BURN_ADDRESS  = Nimiq.Address.fromUserFriendlyAddress(BURN_ADDRESS_HR);
-const BURN_ADDRESS_S = new Uint8Array(BURN_ADDRESS.serialize());
+const BURN_ADDRESS_S = BURN_ADDRESS.serialize();
 
 const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
     {
@@ -79,13 +79,13 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
             ],
         ]),
         contracts: [{
-            type: Nimiq.Account.Type.VESTING,
+            type: Nimiq.AccountType.Vesting,
             label: 'Vesting Contract',
             address: DUMMY_ADDRESS_SV,
             owner: BURN_ADDRESS_S,
-            start: 0,
+            startTime: 0,
             stepAmount: 419229878121,
-            stepBlocks: 2880,
+            timeStep: 2880 * 60e3,
             totalAmount: 2515379268724,
         }],
         type: WalletType.LEDGER,
@@ -188,13 +188,13 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
             ],
         ]),
         contracts: [{
-            type: Nimiq.Account.Type.VESTING,
+            type: Nimiq.AccountType.Vesting,
             label: 'Custom Label',
             address: DUMMY_ADDRESS_SV,
             owner: DUMMY_ADDRESS_S2,
-            start: 400000,
+            startTime: 400000 * 60e3,
             stepAmount: 419229878121,
-            stepBlocks: 28800,
+            timeStep: 28800 * 60e3,
             totalAmount: 2515379268724,
         }],
         type: WalletType.LEGACY,
@@ -257,13 +257,13 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
             ],
         ]),
         contracts: [{
-            type: Nimiq.Account.Type.VESTING,
+            type: Nimiq.AccountType.Vesting,
             label: 'Vesting Contract',
             address: DUMMY_ADDRESS_SV,
             owner: BURN_ADDRESS_S,
-            start: 0,
+            startTime: 0,
             stepAmount: 419229878121,
-            stepBlocks: 2880,
+            timeStep: 2880 * 60e3,
             totalAmount: 2515379268724,
         }],
         type: WalletType.LEDGER,
@@ -366,13 +366,13 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
             ],
         ]),
         contracts: [{
-            type: Nimiq.Account.Type.VESTING,
+            type: Nimiq.AccountType.Vesting,
             label: 'Custom Label',
             address: DUMMY_ADDRESS_SV,
             owner: DUMMY_ADDRESS_S2,
-            start: 400000,
+            startTime: 400000 * 60e3,
             stepAmount: 419229878121,
-            stepBlocks: 28800,
+            timeStep: 28800 * 60e3,
             totalAmount: 2515379268724,
         }],
         type: WalletType.LEGACY,
