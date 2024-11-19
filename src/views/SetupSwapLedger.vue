@@ -734,6 +734,7 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
                     ...nimiqProxyTransactionInfo,
                     senderType: nimiqProxyTransactionInfo.senderType as Nimiq.AccountType | undefined,
                     recipientType: nimiqProxyTransactionInfo.recipientType as Nimiq.AccountType | undefined,
+                    data: nimiqProxyTransactionInfo.recipientData,
                 })[0];
                 if (!signedNimiqProxyTransaction) {
                     signedNimiqProxyTransaction = await LedgerApi.Nimiq.signTransaction(

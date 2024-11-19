@@ -129,6 +129,7 @@ import Network from '../components/Network.vue';
 import LedgerApi, {
     RequestTypeNimiq as LedgerApiRequestType,
     Network as LedgerApiNetwork,
+    TransactionInfoNimiq,
     AccountTypeNimiq,
 } from '@nimiq/ledger-api';
 import StatusScreen from '../components/StatusScreen.vue';
@@ -210,12 +211,12 @@ export default class SignTransactionLedger extends Vue {
         let value: number;
         let fee: number;
         let validityStartHeightPromise: Promise<number>;
-        let data: Uint8Array | undefined;
+        let recipientData: Uint8Array | undefined;
         let flags: number;
         if (this.request.kind === RequestType.SIGN_TRANSACTION) {
             // direct sign transaction request invocation
             const signTransactionRequest = this.request as ParsedSignTransactionRequest;
-            ({ sender, recipient, value, fee, data, flags } = signTransactionRequest);
+            ({ sender, recipient, value, fee, data: recipientData, flags } = signTransactionRequest);
             validityStartHeightPromise = Promise.resolve(signTransactionRequest.validityStartHeight);
 
             const recipientUserFriendlyAddress = signTransactionRequest.recipient.toUserFriendlyAddress();
@@ -257,7 +258,7 @@ export default class SignTransactionLedger extends Vue {
 
             sender = Nimiq.Address.fromString(this.$store.state.activeUserFriendlyAddress);
             ({ amount: value, fee } = checkoutPaymentOptions);
-            ({ recipient, flags, extraData: data } = checkoutPaymentOptions.protocolSpecific);
+            ({ recipient, flags, extraData: recipientData } = checkoutPaymentOptions.protocolSpecific);
 
             this.recipientDetails = {
                 address: recipient.toUserFriendlyAddress(),
@@ -286,7 +287,7 @@ export default class SignTransactionLedger extends Vue {
             sender = Nimiq.Address.fromString(this.$store.state.activeUserFriendlyAddress);
             ({ recipient, value, fee } = this.cashlink!.getFundingDetails());
             validityStartHeightPromise = network.getBlockchainHeight().then((blockchainHeight) => blockchainHeight + 1);
-            data = CASHLINK_FUNDING_DATA;
+            recipientData = CASHLINK_FUNDING_DATA;
             flags = 0 /* Nimiq.Transaction.Flag.NONE */;
 
             this.recipientDetails = {
@@ -349,19 +350,28 @@ export default class SignTransactionLedger extends Vue {
         // If user left this view in the mean time, don't continue signing / sending the transaction
         if (this.isDestroyed) return;
 
-        const transactionInfo = {
+        const transactionInfo: Omit<
+            TransactionInfoNimiq<typeof Config.ledgerApiNimiqVersion>,
+            'validityStartHeight' | 'senderType' | 'recipientType'
+        > & {
+            senderType?: Nimiq.AccountType,
+            recipientType?: Nimiq.AccountType,
+        } = {
             sender: senderAddress,
             senderType,
             recipient,
             value: BigInt(value),
             fee: BigInt(fee || 0),
             network: Config.network as LedgerApiNetwork,
-            extraData: data,
+            recipientData,
             flags,
         };
 
         // Check whether transaction was already signed but not successfully sent before user reloaded the page.
-        let signedTransaction = network.getUnrelayedTransactions(transactionInfo)[0];
+        let signedTransaction = network.getUnrelayedTransactions({
+            ...transactionInfo,
+            data: transactionInfo.recipientData,
+        })[0];
         if (!signedTransaction) {
             let validityStartHeight;
             try {
@@ -377,6 +387,7 @@ export default class SignTransactionLedger extends Vue {
                         ...transactionInfo,
                         validityStartHeight,
                         senderType: transactionInfo.senderType as AccountTypeNimiq | undefined,
+                        recipientType: transactionInfo.recipientType as AccountTypeNimiq | undefined,
                     },
                     signerKeyPath,
                     signerKeyId,
