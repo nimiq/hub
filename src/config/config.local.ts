@@ -11,14 +11,16 @@ export default {
     networkEndpoint: 'https://network.nimiq-testnet.com',
     seedNodes: [
         '/dns4/seed1.pos.nimiq-testnet.com/tcp/8443/wss',
-        '/dns4/faucet.pos.nimiq-testnet.com/tcp/8443/wss',
+        '/dns4/seed2.pos.nimiq-testnet.com/tcp/8443/wss',
+        '/dns4/seed3.pos.nimiq-testnet.com/tcp/8443/wss',
+        '/dns4/seed4.pos.nimiq-testnet.com/tcp/8443/wss',
     ],
     privilegedOrigins: [ '*' ],
     redirectTarget: window.location.protocol + '//' + window.location.hostname + ':8080/demos.html',
     reportToSentry: false,
     checkoutWithoutNimOrigins: [ '*' ],
 
-    enableBitcoin: false,
+    enableBitcoin: true,
     bitcoinNetwork: BTC_NETWORK_TEST,
     bitcoinAddressType: NATIVE_SEGWIT,
 

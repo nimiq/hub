@@ -4,26 +4,31 @@ import { BTC_NETWORK_TEST, NATIVE_SEGWIT } from '../lib/bitcoin/BitcoinConstants
 import { POLYGON_NETWORK_TEST } from '../lib/polygon/PolygonConstants';
 
 export default {
-    keyguardEndpoint: process.env.VUE_APP_KEYGUARD_URL,
+    keyguardEndpoint: 'https://keyguard.nimiq-testnet.com',
     ledgerApiNimiqVersion: 'albatross' as LedgerApiNimiqVersion.ALBATROSS,
     network: NETWORK_TEST,
     nimiqNetworkId: 5,
     networkEndpoint: 'https://network.nimiq-testnet.com',
     seedNodes: [
-        process.env.VUE_APP_SEED_NODE_MULTIADDR,
-        '/dns4/faucet.pos.nimiq-testnet.com/tcp/8443/wss',
+        '/dns4/seed1.pos.nimiq-testnet.com/tcp/8443/wss',
+        '/dns4/seed2.pos.nimiq-testnet.com/tcp/8443/wss',
+        '/dns4/seed3.pos.nimiq-testnet.com/tcp/8443/wss',
+        '/dns4/seed4.pos.nimiq-testnet.com/tcp/8443/wss',
     ],
     privilegedOrigins: [
-        process.env.VUE_APP_WALLET_URL,
-        process.env.VUE_APP_HUB_URL, // For testing with the deployed demos.html page
+        'https://safe.nimiq-testnet.com',
+        'https://wallet.nimiq-testnet.com',
+        'https://hub.nimiq-testnet.com', // For testing with the deployed demos.html page
+        'https://www.nimiq-testnet.com', // To allow gift cards app to request returnLink for Cashlinks
+        'https://nimiq-testnet.com', // To allow gift cards app to request returnLink for Cashlinks
     ],
-    redirectTarget: process.env.VUE_APP_WALLET_URL,
+    redirectTarget: 'https://wallet.nimiq-testnet.com',
     reportToSentry: false,
     checkoutWithoutNimOrigins: [
         'https://checkout-service-staging-0.web.app',
     ],
 
-    enableBitcoin: false,
+    enableBitcoin: true,
     bitcoinNetwork: BTC_NETWORK_TEST,
     bitcoinAddressType: NATIVE_SEGWIT,
 
