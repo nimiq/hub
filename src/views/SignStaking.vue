@@ -28,15 +28,13 @@ export default class SignStaking extends Vue {
 
         console.log(transaction);
 
-        // @ts-ignore Wrong type definition
-        if (transaction.senderType === 3) {
+        if (transaction.senderType === 'staking') {
             const signerAddress = transaction.recipient;
             const wallet = this.findWalletByAddress(signerAddress, false);
             const signer = wallet?.findSignerForAddress(Nimiq.Address.fromUserFriendlyAddress(signerAddress));
             if (!wallet || !signer) throw new Error('Signer not found');
 
-            // @ts-ignore Wrong type definition
-            if (transaction.recipientType !== 0) {
+            if (transaction.recipientType !== 'basic') {
                     throw new Error('Recipient must be a basic account when sender is staking contract');
             }
 
@@ -45,15 +43,13 @@ export default class SignStaking extends Vue {
             keyLabel = wallet.labelForKeyguard;
             senderLabel = this.request.senderLabel || this.$t('Staking Contract') as string;
             recipientLabel = signer.label;
-        // @ts-ignore Wrong type
-        } else if (transaction.recipientType === 3) {
+        } else if (transaction.recipientType === 'staking') {
             const signerAddress = transaction.sender;
             const wallet = this.findWalletByAddress(signerAddress, false);
             const signer = wallet?.findSignerForAddress(Nimiq.Address.fromUserFriendlyAddress(signerAddress));
             if (!wallet || !signer) throw new Error('Signer not found');
 
-            // @ts-ignore Wrong type definition
-            if (transaction.senderType !== 0) {
+            if (transaction.senderType !== 'basic') {
                 throw new Error('Sender must be a basic account when recipient is staking contract');
             }
 
