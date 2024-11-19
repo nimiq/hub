@@ -1,9 +1,9 @@
 import LedgerApi, {
     Coin,
-    TransactionInfoNimiq,
+    AccountTypeNimiq as LedgerApiAccountTypeNimiq,
+    TransactionInfoNimiq as LedgerApiTransactionInfoNimiq,
     getBip32Path,
     parseBip32Path,
-    AccountTypeNimiq,
 } from '@nimiq/ledger-api';
 import { NetworkClient } from './NetworkClient';
 import Config from 'config';
@@ -224,7 +224,7 @@ export default class LedgerSwapProxy {
     }
 
     public getFundingInfo(): Pick<
-        TransactionInfoNimiq<typeof Config.ledgerApiNimiqVersion>,
+        LedgerApiTransactionInfoNimiq<typeof Config.ledgerApiNimiqVersion>,
         'recipient' | 'recipientType' | 'validityStartHeight' | 'recipientData'
     > {
         return {
@@ -238,7 +238,7 @@ export default class LedgerSwapProxy {
     }
 
     public getHtlcCreationInfo(htlcData: Uint8Array): Pick<
-        TransactionInfoNimiq<typeof Config.ledgerApiNimiqVersion>,
+        LedgerApiTransactionInfoNimiq<typeof Config.ledgerApiNimiqVersion>,
         'sender' | 'senderType' | 'recipient' | 'recipientType' | 'validityStartHeight' | 'flags' | 'recipientData'
     > {
         const decodedHtlcScript = Nimiq.HashedTimeLockedContract.dataToPlain(htlcData);
@@ -247,9 +247,9 @@ export default class LedgerSwapProxy {
         }
         return {
             sender: this.address,
-            senderType: Nimiq.AccountType.Basic as unknown as AccountTypeNimiq,
+            senderType: Nimiq.AccountType.Basic as unknown as LedgerApiAccountTypeNimiq,
             recipient: new Nimiq.Address(new Uint8Array(20)),
-            recipientType: Nimiq.AccountType.HTLC as unknown as AccountTypeNimiq,
+            recipientType: Nimiq.AccountType.HTLC as unknown as LedgerApiAccountTypeNimiq,
             validityStartHeight: this._swapValidityStartHeight,
             flags: 1 /* CONTRACT_CREATION */,
             recipientData: htlcData,
@@ -257,7 +257,7 @@ export default class LedgerSwapProxy {
     }
 
     public getRefundInfo(refundSender: Nimiq.Address): Pick<
-        TransactionInfoNimiq<typeof Config.ledgerApiNimiqVersion>,
+        LedgerApiTransactionInfoNimiq<typeof Config.ledgerApiNimiqVersion>,
         'sender' | 'senderType' | 'recipientData'
     > {
         if (refundSender.equals(this.address)) {
@@ -287,7 +287,7 @@ export default class LedgerSwapProxy {
         flags = 0 /* NONE */,
         recipientData,
         network,
-    }: TransactionInfoNimiq<typeof Config.ledgerApiNimiqVersion>): Promise<Nimiq.Transaction> {
+    }: LedgerApiTransactionInfoNimiq<typeof Config.ledgerApiNimiqVersion>): Promise<Nimiq.Transaction> {
         // Always create an ExtendedTransaction because all transactions that will typically be signed by the proxy will
         // be ExtendedTransactions because they include extraData or have sender- or recipientType HTLC.
         let transaction = new Nimiq.Transaction(
@@ -341,8 +341,8 @@ export default class LedgerSwapProxy {
             const { signature } = Nimiq.SignatureProof.deserialize(
                 (await LedgerApi.Nimiq.signTransaction(
                     transaction as Nimiq.Transaction & {
-                        senderType: AccountTypeNimiq,
-                        recipientType: AccountTypeNimiq,
+                        senderType: LedgerApiAccountTypeNimiq,
+                        recipientType: LedgerApiAccountTypeNimiq,
                     },
                     this._ledgerKeyPath,
                     this._ledgerKeyId,

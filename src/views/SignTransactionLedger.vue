@@ -129,8 +129,8 @@ import Network from '../components/Network.vue';
 import LedgerApi, {
     RequestTypeNimiq as LedgerApiRequestType,
     Network as LedgerApiNetwork,
-    TransactionInfoNimiq,
-    AccountTypeNimiq,
+    AccountTypeNimiq as LedgerApiAccountTypeNimiq,
+    TransactionInfoNimiq as LedgerApiTransactionInfoNimiq,
 } from '@nimiq/ledger-api';
 import StatusScreen from '../components/StatusScreen.vue';
 import GlobalClose from '../components/GlobalClose.vue';
@@ -351,7 +351,7 @@ export default class SignTransactionLedger extends Vue {
         if (this.isDestroyed) return;
 
         const transactionInfo: Omit<
-            TransactionInfoNimiq<typeof Config.ledgerApiNimiqVersion>,
+            LedgerApiTransactionInfoNimiq<typeof Config.ledgerApiNimiqVersion>,
             'validityStartHeight' | 'senderType' | 'recipientType'
         > & {
             senderType?: Nimiq.AccountType,
@@ -386,8 +386,8 @@ export default class SignTransactionLedger extends Vue {
                     {
                         ...transactionInfo,
                         validityStartHeight,
-                        senderType: transactionInfo.senderType as AccountTypeNimiq | undefined,
-                        recipientType: transactionInfo.recipientType as AccountTypeNimiq | undefined,
+                        senderType: transactionInfo.senderType as LedgerApiAccountTypeNimiq | undefined,
+                        recipientType: transactionInfo.recipientType as LedgerApiAccountTypeNimiq | undefined,
                     },
                     signerKeyPath,
                     signerKeyId,

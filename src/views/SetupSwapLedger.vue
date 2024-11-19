@@ -354,12 +354,12 @@ import LedgerApi, {
     StateType as LedgerApiStateType,
     RequestTypeNimiq as LedgerApiRequestTypeNimiq,
     RequestTypeBitcoin as LedgerApiRequestTypeBitcoin,
+    AccountTypeNimiq as LedgerApiAccountTypeNimiq,
     TransactionInfoNimiq as LedgerNimiqTransactionInfo,
-    TransactionInfoBitcoin as LedgerBitcoinTransactionInfo,
+    TransactionInfoBitcoin as LedgerBitcoinTransactionInfo, // other naming scheme, to resemble BitcoinTransactionInfo
     Network as LedgerApiNetwork,
     getBip32Path,
     Coin,
-    AccountTypeNimiq,
 } from '@nimiq/ledger-api';
 import {
     getBackgroundColorName as getIdenticonBackgroundColorName,
@@ -650,7 +650,7 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
             // The htlc redeem tx currently has to be signed by the proxy but doesn't have to forward funds through it.
             nimiqSwapTransactionInfo = {
                 sender: Nimiq.Address.fromString(htlcInfo.redeem.htlcAddress),
-                senderType: Nimiq.AccountType.HTLC as unknown as AccountTypeNimiq.HTLC,
+                senderType: Nimiq.AccountType.HTLC as unknown as LedgerApiAccountTypeNimiq.HTLC,
                 recipient: this.nimiqLedgerAddressInfo.address,
                 value: BigInt(swapSetupInfo.redeem.value),
                 fee: BigInt(swapSetupInfo.redeem.fee),
