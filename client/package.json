@@ -9,7 +9,7 @@
   "private": false,
   "types": "types/index.d.ts",
   "dependencies": {
-    "@nimiq/core": "next",
+    "@nimiq/core": "^2.0.0",
     "@nimiq/fastspot-api": "^1.10.2",
     "@nimiq/rpc": "^0.4.0",
     "@nimiq/utils": "^0.5.0",

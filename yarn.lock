@@ -1807,10 +1807,10 @@
     call-me-maybe "^1.0.1"
     glob-to-regexp "^0.3.0"
 
-"@nimiq/albatross-wasm@npm:@nimiq/core@next":
-  version "2.0.0-next.rc.5"
-  resolved "https://registry.yarnpkg.com/@nimiq/core/-/core-2.0.0-next.rc.5.tgz#eed8a533e609f387cd6fa9d8759b3068f5192b84"
-  integrity sha512-vXqsBv8Yacbnu+O9/3KPk9JcM1w0xq3LrHpwb6uXop1rIpe2+p55B1MT/1EvwNcHce8hQk/ghtC1Vau4fyhELQ==
+"@nimiq/albatross-wasm@npm:@nimiq/core@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@nimiq/core/-/core-2.0.0.tgz#ed1509f7914b52ee4ba42eddb0eb596f867dd76f"
+  integrity sha512-cr388Q3NiSBpIDA7zAlLwlyMf/+qp+p6ytCNah3fzXluC2l8JGrpDqNT1ezzchjZTbj1hjJE7gcyUSzzpPDvnQ==
   dependencies:
     comlink "^4.4.1"
     websocket "^1.0.34"
@@ -1870,13 +1870,19 @@
     btoa "^1.1.2"
     node-lmdb "^0.10.1"
 
-"@nimiq/keyguard-client@https://gitpkg.vercel.app/nimiq/keyguard?scripts.postinstall=cd%20client%20%26%26%20.%2Fbuild-gitpkg.sh&1d86049db432a202f0a8ce72e8227cf21a0590c2":
-  version "1.0.0"
-  resolved "https://gitpkg.vercel.app/nimiq/keyguard?scripts.postinstall=cd%20client%20%26%26%20.%2Fbuild-gitpkg.sh&1d86049db432a202f0a8ce72e8227cf21a0590c2#9df01a1389d6c750fe05c88dab464bfb454d18ee"
+"@nimiq/keyguard-client@^1.8.0":
+  version "1.8.0"
+  resolved "https://registry.yarnpkg.com/@nimiq/keyguard-client/-/keyguard-client-1.8.0.tgz#59e9097365c28fa71f354360872893dfc5c9e1af"
+  integrity sha512-KmU+QpLOPNGhchSSEgpXU0psz7RwLGOZ3lL++xTI1Fru5YwhGLlJ2JJGa3/mpfMxU3V5uM39qDC2Cigd50AnvQ==
+  dependencies:
+    "@nimiq/albatross-wasm" "npm:@nimiq/core@^2.0.0"
+    "@nimiq/rpc" "^0.3.0"
+    "@opengsn/common" "^2.2.5"
 
-"@nimiq/ledger-api@github:nimiq/ledger-api#d3252dc4034534b6431d4f002a63c3036a9d90e9":
-  version "3.0.0"
-  resolved "https://codeload.github.com/nimiq/ledger-api/tar.gz/d3252dc4034534b6431d4f002a63c3036a9d90e9"
+"@nimiq/ledger-api@^3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@nimiq/ledger-api/-/ledger-api-3.1.0.tgz#17170a9c94dd10e8f39c347b0672c4ca7164c0b6"
+  integrity sha512-6mld0KCDfyiKMPcnawKh/KTR5KWqHTHIgcuG7L0/Ueu3kmbWI/ILCJNEHCYphdevG65IHozp9c19AKsQxTut/w==
   dependencies:
     "@ledgerhq/hw-app-btc" "^10.0.9"
     "@ledgerhq/hw-transport" "^6.29.0"
@@ -1886,7 +1892,7 @@
     "@ledgerhq/hw-transport-webauthn" "^5.36.0-deprecated"
     "@ledgerhq/hw-transport-webhid" "^6.27.20"
     "@ledgerhq/hw-transport-webusb" "^6.27.20"
-    "@nimiq/albatross-wasm" "npm:@nimiq/core@next"
+    "@nimiq/albatross-wasm" "npm:@nimiq/core@^2.0.0"
     "@nimiq/core-web" "^1.6.2"
     "@types/ledgerhq__hw-transport-u2f" "^4.21.4"
     "@types/w3c-web-usb" "^1.0.6"
@@ -1898,6 +1904,11 @@
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/@nimiq/oasis-api/-/oasis-api-1.1.1.tgz#d1aa3d0f9afabf9116205809a0fc72d2e392bafa"
   integrity sha512-jXNO7nvE0mzAyDCrucByv5AcyDWZjyqb9810YctysxqUtOxNG27hPkhomL+WW6nrnTVgvriJo3yaTFPTfLphKw==
+
+"@nimiq/rpc@^0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@nimiq/rpc/-/rpc-0.3.0.tgz#654c05acccc193b7d79fb09b2faf2114945ff872"
+  integrity sha512-je7fv+wP4nLEgTcZwu3FaGre22qkZ9AYGbStglVaJAxOH+3CvDnnOIa9IjGFaCEhtRQKRaQEvFqa5vN4IVnH+Q==
 
 "@nimiq/rpc@^0.4.1":
   version "0.4.1"
