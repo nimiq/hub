@@ -29,7 +29,7 @@ export default class SignBtcTransactionSuccess extends Vue {
             }));
 
             const proof = new Nimiq.SerialBuffer(1 + tx.proof.length);
-            proof.writeUint8(3 /* Nimiq.HashedTimeLockedContract.ProofType.TIMEOUT_RESOLVE */);
+            proof.writeUint8(2 /* Nimiq.HashedTimeLockedContract.ProofType.TIMEOUT_RESOLVE */);
             proof.write(new Nimiq.SerialBuffer(tx.proof)); // Current tx.proof is a regular SignatureProof
             tx.proof = proof;
 

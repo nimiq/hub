@@ -156,7 +156,7 @@ export default class RefundSwapLedger extends RefundSwap {
             if (refundTransaction.senderType === Nimiq.AccountType.HTLC) {
                 // create htlc timeout resolve transaction proof
                 const proof = new Nimiq.SerialBuffer(1 + refundTransaction.proof.length);
-                proof.writeUint8(3 /* Nimiq.HashedTimeLockedContract.ProofType.TIMEOUT_RESOLVE */);
+                proof.writeUint8(2 /* Nimiq.HashedTimeLockedContract.ProofType.TIMEOUT_RESOLVE */);
                 proof.write(refundTransaction.proof);
                 refundTransaction.proof = proof;
             }
