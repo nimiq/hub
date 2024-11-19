@@ -326,19 +326,15 @@ export default class RpcApi {
                     : parsedSignTransactionRequest.sender.address;
                 account = this._store.getters.findWalletByAddress(address.toUserFriendlyAddress(), true);
             } else if (requestType === RequestType.SIGN_STAKING) {
-                accountRequired = false;
-
-                // TODO
-                // The RequestParser is not async, so we cannot load and parse the transation from its
-                // Uint8Array representation there, so the parsed request cannot contain the plain transaction,
-                // and we have to do the parsing and validation in SignStaking.vue instead.
-
-                // const parsedSignStakingRequest = request as ParsedSignStakingRequest;
-                // // Only support signing staking transactions by the tx's sender or recipient
-                // const address = parsedSignStakingRequest.transaction.senderType === 'staking'
-                //     ? parsedSignStakingRequest.transaction.recipient
-                //     : parsedSignStakingRequest.transaction.sender;
-                // account = this._store.getters.findWalletByAddress(address, true);
+                accountRequired = true;
+                // Only support signing staking transactions by the tx's sender or recipient. Note that sending to or
+                // from contracts is not allowed according to RequestParser.
+                const { transactions } = request as ParsedSignStakingRequest;
+                const finalTransaction = transactions[transactions.length - 1];
+                const address = finalTransaction.senderType === 'basic'
+                    ? finalTransaction.sender
+                    : finalTransaction.recipient;
+                account = this._store.getters.findWalletByAddress(address, true);
             } else if (requestType === RequestType.SIGN_MESSAGE) {
                 accountRequired = false; // Sign message allows user to select an account
                 const address = (request as ParsedSignMessageRequest).signer;

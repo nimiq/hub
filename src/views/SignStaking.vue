@@ -22,44 +22,25 @@ export default class SignStaking extends Vue {
         let keyLabel: string | undefined;
         let recipientLabel = this.request.recipientLabel;
 
-        const transaction = Nimiq.Transaction.fromAny(Nimiq.BufferUtils.toHex(
-            this.request.transactions[this.request.transactions.length - 1],
-        )).toPlain();
+        const finalTransaction = this.request.transactions[this.request.transactions.length - 1];
+        console.log(finalTransaction);
 
-        console.log(transaction);
+        const signerSide = finalTransaction.senderType === 'basic' ? 'sender' as const : 'recipient' as const;
+        const signerAddress = finalTransaction[signerSide];
+        // We know that these exist as their existence was already checked in RpcApi.ts. Don't have to handle contracts
+        // as such are disallowed by RequestParser.
+        const account = this.findWalletByAddress(signerAddress, false)!;
+        const signer = account.findSignerForAddress(Nimiq.Address.fromUserFriendlyAddress(signerAddress))!;
 
-        if (transaction.senderType === 'staking') {
-            const signerAddress = transaction.recipient;
-            const wallet = this.findWalletByAddress(signerAddress, false);
-            const signer = wallet?.findSignerForAddress(Nimiq.Address.fromUserFriendlyAddress(signerAddress));
-            if (!wallet || !signer) throw new Error('Signer not found');
-
-            if (transaction.recipientType !== 'basic') {
-                    throw new Error('Recipient must be a basic account when sender is staking contract');
-            }
-
-            keyId = wallet.keyId;
-            keyPath = signer.path;
-            keyLabel = wallet.labelForKeyguard;
+        keyId = account.keyId;
+        keyPath = signer.path;
+        keyLabel = account.labelForKeyguard;
+        if (signerSide === 'recipient') {
             senderLabel = this.request.senderLabel || this.$t('Staking Contract') as string;
             recipientLabel = signer.label;
-        } else if (transaction.recipientType === 'staking') {
-            const signerAddress = transaction.sender;
-            const wallet = this.findWalletByAddress(signerAddress, false);
-            const signer = wallet?.findSignerForAddress(Nimiq.Address.fromUserFriendlyAddress(signerAddress));
-            if (!wallet || !signer) throw new Error('Signer not found');
-
-            if (transaction.senderType !== 'basic') {
-                throw new Error('Sender must be a basic account when recipient is staking contract');
-            }
-
-            keyId = wallet.keyId;
-            keyPath = signer.path;
-            keyLabel = wallet.labelForKeyguard;
+        } else {
             senderLabel = signer.label;
             recipientLabel = this.request.recipientLabel || this.$t('Staking Contract') as string;
-        } else {
-            throw new Error('Sender or recipient must be the staking contract');
         }
 
         const request: KeyguardClient.SignStakingRequest = {
@@ -72,7 +53,8 @@ export default class SignStaking extends Vue {
             senderLabel,
             recipientLabel,
 
-            transaction: this.request.transactions,
+            transaction: this.request.transactions
+                .map((plainTransaction) => Nimiq.Transaction.fromPlain(plainTransaction).serialize()),
         };
 
         const client = this.$rpc.createKeyguardClient(true);

@@ -84,22 +84,26 @@ export class RequestParser {
             case RequestType.SIGN_STAKING:
                 const signStakingRequest = request as SignStakingRequest;
 
-                // TODO Parse transactions
-                // const transaction = Nimiq.Transaction.fromAny(
-                //     Nimiq.BufferUtils.toHex(signStakingRequest.transaction),
-                // );
-
-                const transactions = Array.isArray(signStakingRequest.transaction)
+                // TODO more complete transaction parsing, for example how they relate to each other.
+                const transactions = (Array.isArray(signStakingRequest.transaction)
                     ? signStakingRequest.transaction
-                    : [signStakingRequest.transaction];
+                    : [signStakingRequest.transaction]
+                ).map((serializedTransaction) => {
+                    if (!(serializedTransaction instanceof Uint8Array)) {
+                        throw new Error('transaction must be of type Uint8Array | Uint8Array[]');
+                    }
+                    return Nimiq.Transaction.fromAny(serializedTransaction).toPlain();
+                });
 
-                if (transactions.length === 0) {
-                    throw new Error('transaction array must not be empty');
+                if (transactions.length !== 1 && transactions.length !== 2) {
+                    throw new Error('Expected one or two staking transactions to sign');
                 }
 
                 for (const transaction of transactions) {
-                    if (!(transaction instanceof Uint8Array)) {
-                        throw new Error('transaction must be a Uint8Array');
+                    if (!(['staking', 'basic'] as const)
+                        .every((type) => transaction.senderType === type || transaction.recipientType === type)) {
+                            throw new Error('Either sender or recipient needs to be of type staking, and the other ' +
+                                'of type basic.');
                     }
                 }
 
@@ -108,7 +112,6 @@ export class RequestParser {
                     appName: signStakingRequest.appName,
                     senderLabel: signStakingRequest.senderLabel,
                     recipientLabel: signStakingRequest.recipientLabel,
-                    // transaction: transaction.toPlain(),
                     transactions,
                 } as ParsedSignStakingRequest;
             case RequestType.CHECKOUT:
@@ -767,16 +770,12 @@ export class RequestParser {
                 } as SignTransactionRequest;
             case RequestType.SIGN_STAKING:
                 const signStakingRequest = request as ParsedSignStakingRequest;
-
-                // TODO: Parse transactions
-                // const transaction = Nimiq.Transaction.fromPlain(signStakingRequest.transaction);
-
                 return {
                     appName: signStakingRequest.appName,
                     senderLabel: signStakingRequest.senderLabel,
                     recipientLabel: signStakingRequest.recipientLabel,
-                    // transaction: transaction.serialize(),
-                    transaction: signStakingRequest.transactions,
+                    transaction: signStakingRequest.transactions
+                        .map((plainTransaction) => Nimiq.Transaction.fromPlain(plainTransaction).serialize()),
                 } as SignStakingRequest;
             case RequestType.CREATE_CASHLINK:
                 const createCashlinkRequest = request as ParsedCreateCashlinkRequest;

@@ -6,7 +6,7 @@ import type { ParsedEtherSpecifics, ParsedEtherDirectPaymentOptions } from './pa
 import type { ParsedBitcoinSpecifics, ParsedBitcoinDirectPaymentOptions } from './paymentOptions/BitcoinPaymentOptions';
 import type { SwapAsset } from '@nimiq/fastspot-api';
 import type { FiatCurrency } from '@nimiq/utils';
-// import type { PlainTransaction as AlbatrossPlainTransaction } from '@nimiq/albatross-wasm';
+import type { PlainTransaction } from '@nimiq/albatross-wasm';
 
 export interface ParsedBasicRequest {
     kind: RequestType;
@@ -57,8 +57,7 @@ export interface ParsedSignTransactionRequest extends ParsedBasicRequest {
 export interface ParsedSignStakingRequest extends ParsedBasicRequest {
     senderLabel?: string;
     recipientLabel?: string;
-    // transactions: AlbatrossPlainTransaction[];
-    transactions: Uint8Array[];
+    transactions: PlainTransaction[];
 }
 
 export type ParsedProtocolSpecificsForCurrency<C extends Currency> =
