@@ -47,7 +47,7 @@ msgstr ""
 msgid "Account Created"
 msgstr ""
 
-#: src/views/Migrate.vue:267
+#: src/views/Migrate.vue:266
 msgid "Accounts updated!"
 msgstr ""
 
@@ -340,7 +340,7 @@ msgstr ""
 msgid "Collecting payment details"
 msgstr ""
 
-#: src/views/SetupSwapLedger.vue:991
+#: src/views/SetupSwapLedger.vue:990
 msgid "Confirm {outgoingOrIncoming} transaction on Ledger"
 msgstr ""
 
@@ -403,8 +403,8 @@ msgstr ""
 msgid "Connect your Ledger hardware wallet."
 msgstr ""
 
-#: src/views/Migrate.vue:144
-#: src/views/Migrate.vue:286
+#: src/views/Migrate.vue:143
+#: src/views/Migrate.vue:285
 msgid "Connecting to Keyguard..."
 msgstr ""
 
@@ -478,7 +478,7 @@ msgstr ""
 msgid "Creating your Cashlink"
 msgstr ""
 
-#: src/views/Migrate.vue:231
+#: src/views/Migrate.vue:230
 msgid "Detecting vesting contracts..."
 msgstr ""
 
@@ -511,7 +511,7 @@ msgstr ""
 msgid "Enter your PIN"
 msgstr ""
 
-#: src/views/CashlinkCreate.vue:167
+#: src/views/CashlinkCreate.vue:166
 msgid "express"
 msgstr ""
 
@@ -567,7 +567,7 @@ msgstr ""
 msgid "Finish"
 msgstr ""
 
-#: src/views/CashlinkCreate.vue:157
+#: src/views/CashlinkCreate.vue:156
 msgid "free"
 msgstr ""
 
@@ -623,7 +623,7 @@ msgstr ""
 msgid "Imported {count} address so far... | Imported {count} addresses so far..."
 msgstr ""
 
-#: src/views/SetupSwapLedger.vue:994
+#: src/views/SetupSwapLedger.vue:993
 msgid "incoming"
 msgstr ""
 
@@ -749,7 +749,7 @@ msgstr ""
 msgid "None of your available addresses has sufficient balance."
 msgstr ""
 
-#: src/views/Migrate.vue:225
+#: src/views/Migrate.vue:224
 msgid "Nothing to update."
 msgstr ""
 
@@ -787,7 +787,7 @@ msgstr ""
 msgid "Other wallets"
 msgstr ""
 
-#: src/views/SetupSwapLedger.vue:993
+#: src/views/SetupSwapLedger.vue:992
 msgid "outgoing"
 msgstr ""
 
@@ -908,7 +908,7 @@ msgstr ""
 msgid "Restart Payment"
 msgstr ""
 
-#: src/views/Migrate.vue:220
+#: src/views/Migrate.vue:219
 msgid "Retrieving your old accounts..."
 msgstr ""
 
@@ -984,7 +984,7 @@ msgstr ""
 msgid "Staking Contract"
 msgstr ""
 
-#: src/views/CashlinkCreate.vue:162
+#: src/views/CashlinkCreate.vue:161
 msgid "standard"
 msgstr ""
 
@@ -992,7 +992,7 @@ msgstr ""
 msgid "Start Time:"
 msgstr ""
 
-#: src/views/Migrate.vue:234
+#: src/views/Migrate.vue:233
 msgid "Storing your new accounts..."
 msgstr ""
 
@@ -1004,7 +1004,7 @@ msgstr ""
 msgid "Swap fee"
 msgstr ""
 
-#: src/views/SetupSwapLedger.vue:855
+#: src/views/SetupSwapLedger.vue:854
 #: src/views/SetupSwapSuccess.vue:642
 msgid "Swap Setup Failed"
 msgstr ""
@@ -1022,7 +1022,7 @@ msgstr ""
 
 #: src/views/ActivatePolygonSuccess.vue:113
 #: src/views/BitcoinSyncBaseView.vue:50
-#: src/views/SetupSwapLedger.vue:857
+#: src/views/SetupSwapLedger.vue:856
 #: src/views/SetupSwapSuccess.vue:644
 #: src/views/SignBtcTransactionLedger.vue:118
 msgid "Syncing Failed"
@@ -1041,7 +1041,7 @@ msgid "Syncing with Bitcoin network failed: {error}"
 msgstr ""
 
 #: src/views/BitcoinSyncBaseView.vue:58
-#: src/views/SetupSwapLedger.vue:867
+#: src/views/SetupSwapLedger.vue:866
 msgid "Syncing with Bitcoin network..."
 msgstr ""
 
@@ -1174,12 +1174,12 @@ msgstr ""
 msgid "Updating balances"
 msgstr ""
 
-#: src/views/Migrate.vue:263
+#: src/views/Migrate.vue:262
 msgid "Updating Keyguard..."
 msgstr ""
 
-#: src/views/Migrate.vue:143
-#: src/views/Migrate.vue:285
+#: src/views/Migrate.vue:142
+#: src/views/Migrate.vue:284
 msgid "Updating your Accounts"
 msgstr ""
 
@@ -1234,7 +1234,7 @@ msgstr ""
 msgid "What is Nimiq?"
 msgstr ""
 
-#: src/views/Migrate.vue:276
+#: src/views/Migrate.vue:275
 msgid "Whoops, something went wrong"
 msgstr ""
 
