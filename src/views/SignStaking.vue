@@ -44,6 +44,8 @@ export default class SignStaking extends Vue {
         }
 
         const request: KeyguardClient.SignStakingRequest = {
+            ...this.request, // Pass-through all request parameters
+
             appName: this.request.appName,
 
             keyId,
