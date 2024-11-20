@@ -340,7 +340,7 @@ msgstr ""
 msgid "Collecting payment details"
 msgstr ""
 
-#: src/views/SetupSwapLedger.vue:990
+#: src/views/SetupSwapLedger.vue:991
 msgid "Confirm {outgoingOrIncoming} transaction on Ledger"
 msgstr ""
 
@@ -474,7 +474,7 @@ msgid "Creating your Account"
 msgstr ""
 
 #: src/views/CashlinkManage.vue:229
-#: src/views/SignTransactionLedger.vue:722
+#: src/views/SignTransactionLedger.vue:720
 msgid "Creating your Cashlink"
 msgstr ""
 
@@ -623,7 +623,7 @@ msgstr ""
 msgid "Imported {count} address so far... | Imported {count} addresses so far..."
 msgstr ""
 
-#: src/views/SetupSwapLedger.vue:993
+#: src/views/SetupSwapLedger.vue:994
 msgid "incoming"
 msgstr ""
 
@@ -721,7 +721,7 @@ msgid "New Address added to your Account."
 msgstr ""
 
 #: src/views/CashlinkCreate.vue:55
-#: src/views/SignTransactionLedger.vue:324
+#: src/views/SignTransactionLedger.vue:327
 msgid "New Cashlink"
 msgstr ""
 
@@ -787,7 +787,7 @@ msgstr ""
 msgid "Other wallets"
 msgstr ""
 
-#: src/views/SetupSwapLedger.vue:992
+#: src/views/SetupSwapLedger.vue:993
 msgid "outgoing"
 msgstr ""
 
@@ -929,7 +929,7 @@ msgstr ""
 msgid "Send your transaction"
 msgstr ""
 
-#: src/views/SignTransactionLedger.vue:723
+#: src/views/SignTransactionLedger.vue:721
 msgid "Sending Transaction"
 msgstr ""
 
@@ -979,8 +979,8 @@ msgstr ""
 msgid "Speed up your transaction"
 msgstr ""
 
-#: src/views/SignStaking.vue:42
-#: src/views/SignStaking.vue:46
+#: src/views/SignStaking.vue:39
+#: src/views/SignStaking.vue:43
 msgid "Staking Contract"
 msgstr ""
 
@@ -1004,7 +1004,7 @@ msgstr ""
 msgid "Swap fee"
 msgstr ""
 
-#: src/views/SetupSwapLedger.vue:854
+#: src/views/SetupSwapLedger.vue:855
 #: src/views/SetupSwapSuccess.vue:642
 msgid "Swap Setup Failed"
 msgstr ""
@@ -1022,7 +1022,7 @@ msgstr ""
 
 #: src/views/ActivatePolygonSuccess.vue:113
 #: src/views/BitcoinSyncBaseView.vue:50
-#: src/views/SetupSwapLedger.vue:856
+#: src/views/SetupSwapLedger.vue:857
 #: src/views/SetupSwapSuccess.vue:644
 #: src/views/SignBtcTransactionLedger.vue:118
 msgid "Syncing Failed"
@@ -1041,7 +1041,7 @@ msgid "Syncing with Bitcoin network failed: {error}"
 msgstr ""
 
 #: src/views/BitcoinSyncBaseView.vue:58
-#: src/views/SetupSwapLedger.vue:866
+#: src/views/SetupSwapLedger.vue:867
 msgid "Syncing with Bitcoin network..."
 msgstr ""
 
@@ -1075,7 +1075,7 @@ msgid "The display language changed. Do you want to reload the page to update al
 msgstr ""
 
 #: src/components/CheckoutCard.vue:171
-#: src/views/SignTransactionLedger.vue:729
+#: src/views/SignTransactionLedger.vue:727
 msgid "The offer expired."
 msgstr ""
 
@@ -1141,12 +1141,12 @@ msgstr ""
 msgid "Transaction is expired"
 msgstr ""
 
-#: src/views/SignTransactionLedger.vue:727
+#: src/views/SignTransactionLedger.vue:725
 msgid "Transaction Sent"
 msgstr ""
 
 #: src/views/SignBtcTransactionLedger.vue:117
-#: src/views/SignTransactionLedger.vue:726
+#: src/views/SignTransactionLedger.vue:724
 msgid "Transaction Signed"
 msgstr ""
 

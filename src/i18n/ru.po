@@ -242,7 +242,7 @@ msgstr "Увеличьте размер комиссии, чтобы ускор�
 msgid "Cancel"
 msgstr "Отмена"
 
-#: src/views/Checkout.vue:205 src/views/SignTransactionLedger.vue:109
+#: src/views/Checkout.vue:205 src/views/SignTransactionLedger.vue:107
 msgid "Cancel payment"
 msgstr "Отменить оплату"
 
@@ -347,7 +347,7 @@ msgstr "Закрыть"
 msgid "Collecting payment details"
 msgstr "Собираем платёжные данные"
 
-#: src/views/SetupSwapLedger.vue:990
+#: src/views/SetupSwapLedger.vue:991
 msgid "Confirm {outgoingOrIncoming} transaction on Ledger"
 msgstr "Подтвердите {outgoingOrIncoming} транзакцию на Ledger"
 
@@ -476,7 +476,7 @@ msgstr "Создать Cashlink"
 msgid "Creating your Account"
 msgstr "Создаём Аккаунт"
 
-#: src/views/CashlinkManage.vue:229 src/views/SignTransactionLedger.vue:495
+#: src/views/CashlinkManage.vue:229 src/views/SignTransactionLedger.vue:720
 msgid "Creating your Cashlink"
 msgstr "Создаём ваш Cashlink"
 
@@ -524,7 +524,7 @@ msgid "Failed to fetch addresses. Retrying..."
 msgstr "Не удалось получить адреса. Повторная попытка..."
 
 #: src/views/SignBtcTransactionLedger.vue:30
-#: src/views/SignTransactionLedger.vue:72
+#: src/views/SignTransactionLedger.vue:70
 msgid "fee"
 msgstr "комиссия"
 
@@ -624,7 +624,7 @@ msgid ""
 "Imported {count} address so far... | Imported {count} addresses so far..."
 msgstr "Импортирован {count} адрес... | Импортировано {count} адресов..."
 
-#: src/views/SetupSwapLedger.vue:993
+#: src/views/SetupSwapLedger.vue:994
 msgid "incoming"
 msgstr "входящая"
 
@@ -732,7 +732,7 @@ msgstr "Резервные Копии сохранены."
 msgid "New Address added to your Account."
 msgstr "Новые Адреса были добавлены к вашему Аккаунту."
 
-#: src/views/CashlinkCreate.vue:55 src/views/SignTransactionLedger.vue:294
+#: src/views/CashlinkCreate.vue:55 src/views/SignTransactionLedger.vue:327
 msgid "New Cashlink"
 msgstr "Новый Cashlink"
 
@@ -799,7 +799,7 @@ msgstr "Оранжевый Адрес"
 msgid "Other wallets"
 msgstr "Другие кошельки"
 
-#: src/views/SetupSwapLedger.vue:992
+#: src/views/SetupSwapLedger.vue:993
 msgid "outgoing"
 msgstr "исходящая"
 
@@ -847,7 +847,7 @@ msgstr "Пожалуйста, отмените запрос на вашем Ledg
 msgid "Please go back and restart the process."
 msgstr "Пожалуйста, вернитесь и начните сначала."
 
-#: src/views/SignTransactionLedger.vue:91
+#: src/views/SignTransactionLedger.vue:89
 msgid "Please go back to the shop and restart the process."
 msgstr "Пожалуйста, вернитесь в магазин и начните заново."
 
@@ -944,7 +944,7 @@ msgstr "Сохранить"
 msgid "Send your transaction"
 msgstr "Отправить транзакцию"
 
-#: src/views/SignTransactionLedger.vue:496
+#: src/views/SignTransactionLedger.vue:721
 msgid "Sending Transaction"
 msgstr "Отправка транзакции"
 
@@ -993,7 +993,7 @@ msgstr "Превышен лимит доступного места"
 msgid "Speed up your transaction"
 msgstr "Ускорьте обработку вашей транзакции"
 
-#: src/views/SignStaking.vue:46 src/views/SignStaking.vue:64
+#: src/views/SignStaking.vue:39 src/views/SignStaking.vue:43
 msgid "Staking Contract"
 msgstr ""
 
@@ -1017,7 +1017,7 @@ msgstr "Обмен авторизован"
 msgid "Swap fee"
 msgstr "Комиссия за обмен"
 
-#: src/views/SetupSwapLedger.vue:854 src/views/SetupSwapSuccess.vue:642
+#: src/views/SetupSwapLedger.vue:855 src/views/SetupSwapSuccess.vue:642
 msgid "Swap Setup Failed"
 msgstr "Не удалось подготовить обмен"
 
@@ -1032,7 +1032,7 @@ msgid "Syncing consensus..."
 msgstr "Синхронизация консенсуса..."
 
 #: src/views/ActivatePolygonSuccess.vue:113
-#: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapLedger.vue:856
+#: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapLedger.vue:857
 #: src/views/SetupSwapSuccess.vue:644
 #: src/views/SignBtcTransactionLedger.vue:118
 msgid "Syncing Failed"
@@ -1050,7 +1050,7 @@ msgstr "Синхронизируемся с сетью {currency}..."
 msgid "Syncing with Bitcoin network failed: {error}"
 msgstr "Не удалось синхронизироваться с сетью Биткоин: {error}"
 
-#: src/views/BitcoinSyncBaseView.vue:58 src/views/SetupSwapLedger.vue:866
+#: src/views/BitcoinSyncBaseView.vue:58 src/views/SetupSwapLedger.vue:867
 msgid "Syncing with Bitcoin network..."
 msgstr "Синхронизация с сетью Биткоин..."
 
@@ -1088,7 +1088,7 @@ msgstr ""
 "изменения? В противном случае отдельные слова не будут переведены. "
 "({oldLang} to {newLang})"
 
-#: src/components/CheckoutCard.vue:171 src/views/SignTransactionLedger.vue:502
+#: src/components/CheckoutCard.vue:171 src/views/SignTransactionLedger.vue:727
 msgid "The offer expired."
 msgstr "Срок действия предложения истек."
 
@@ -1165,12 +1165,12 @@ msgstr "Невозможно передать транзакцию"
 msgid "Transaction is expired"
 msgstr "Срок действия транзакции истек"
 
-#: src/views/SignTransactionLedger.vue:500
+#: src/views/SignTransactionLedger.vue:725
 msgid "Transaction Sent"
 msgstr "Транзакция Отправлена"
 
 #: src/views/SignBtcTransactionLedger.vue:117
-#: src/views/SignTransactionLedger.vue:499
+#: src/views/SignTransactionLedger.vue:724
 msgid "Transaction Signed"
 msgstr "Транзакция Подписана"
 

@@ -240,7 +240,7 @@ msgstr ""
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: src/views/Checkout.vue:205 src/views/SignTransactionLedger.vue:109
+#: src/views/Checkout.vue:205 src/views/SignTransactionLedger.vue:107
 msgid "Cancel payment"
 msgstr "Cancelar pagamento"
 
@@ -345,7 +345,7 @@ msgstr "Fechar"
 msgid "Collecting payment details"
 msgstr "A reunir detalhes de pagamento"
 
-#: src/views/SetupSwapLedger.vue:990
+#: src/views/SetupSwapLedger.vue:991
 msgid "Confirm {outgoingOrIncoming} transaction on Ledger"
 msgstr "Confirmar {outgoingOrIncoming} transação no Ledger"
 
@@ -472,7 +472,7 @@ msgstr "Criar Cashlink"
 msgid "Creating your Account"
 msgstr "A criar a tua Conta"
 
-#: src/views/CashlinkManage.vue:229 src/views/SignTransactionLedger.vue:495
+#: src/views/CashlinkManage.vue:229 src/views/SignTransactionLedger.vue:720
 msgid "Creating your Cashlink"
 msgstr "A criar o teu Cashlink"
 
@@ -518,7 +518,7 @@ msgid "Failed to fetch addresses. Retrying..."
 msgstr "Falhou a procura de endereços. A tentar novamente..."
 
 #: src/views/SignBtcTransactionLedger.vue:30
-#: src/views/SignTransactionLedger.vue:72
+#: src/views/SignTransactionLedger.vue:70
 msgid "fee"
 msgstr "taxa"
 
@@ -620,7 +620,7 @@ msgstr ""
 "{count} endereço importado até agora... | {count} endereços importados até "
 "agora..."
 
-#: src/views/SetupSwapLedger.vue:993
+#: src/views/SetupSwapLedger.vue:994
 msgid "incoming"
 msgstr "entrada"
 
@@ -726,7 +726,7 @@ msgstr "Os meus Backups estão seguros."
 msgid "New Address added to your Account."
 msgstr "Novo Endereço adicionado à tua Conta."
 
-#: src/views/CashlinkCreate.vue:55 src/views/SignTransactionLedger.vue:294
+#: src/views/CashlinkCreate.vue:55 src/views/SignTransactionLedger.vue:327
 msgid "New Cashlink"
 msgstr "Novo Cashlink"
 
@@ -796,7 +796,7 @@ msgstr "Endereço Laranja"
 msgid "Other wallets"
 msgstr "Outras wallets"
 
-#: src/views/SetupSwapLedger.vue:992
+#: src/views/SetupSwapLedger.vue:993
 msgid "outgoing"
 msgstr "saída"
 
@@ -844,7 +844,7 @@ msgstr "Por favor cancela o pedido no teu Ledger"
 msgid "Please go back and restart the process."
 msgstr "Por favor volta atrás e recomeça o processo."
 
-#: src/views/SignTransactionLedger.vue:91
+#: src/views/SignTransactionLedger.vue:89
 msgid "Please go back to the shop and restart the process."
 msgstr "Por favor volta para a loja e recomeça o processo."
 
@@ -941,7 +941,7 @@ msgstr "Guardar"
 msgid "Send your transaction"
 msgstr "Envia a tua transação"
 
-#: src/views/SignTransactionLedger.vue:496
+#: src/views/SignTransactionLedger.vue:721
 msgid "Sending Transaction"
 msgstr "A enviar transação"
 
@@ -989,7 +989,7 @@ msgstr "Espaço excedido"
 msgid "Speed up your transaction"
 msgstr "Acelere a tua transação"
 
-#: src/views/SignStaking.vue:46 src/views/SignStaking.vue:64
+#: src/views/SignStaking.vue:39 src/views/SignStaking.vue:43
 msgid "Staking Contract"
 msgstr ""
 
@@ -1013,7 +1013,7 @@ msgstr "Troca autorizada"
 msgid "Swap fee"
 msgstr "Taxa de troca"
 
-#: src/views/SetupSwapLedger.vue:854 src/views/SetupSwapSuccess.vue:642
+#: src/views/SetupSwapLedger.vue:855 src/views/SetupSwapSuccess.vue:642
 msgid "Swap Setup Failed"
 msgstr "Falhou a Configuração da Troca"
 
@@ -1028,7 +1028,7 @@ msgid "Syncing consensus..."
 msgstr "A sincronizar consenso"
 
 #: src/views/ActivatePolygonSuccess.vue:113
-#: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapLedger.vue:856
+#: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapLedger.vue:857
 #: src/views/SetupSwapSuccess.vue:644
 #: src/views/SignBtcTransactionLedger.vue:118
 msgid "Syncing Failed"
@@ -1046,7 +1046,7 @@ msgstr "A sincronizar com a rede {currency}"
 msgid "Syncing with Bitcoin network failed: {error}"
 msgstr "A sincronização com a rede Bitcoin falhou: {error}"
 
-#: src/views/BitcoinSyncBaseView.vue:58 src/views/SetupSwapLedger.vue:866
+#: src/views/BitcoinSyncBaseView.vue:58 src/views/SetupSwapLedger.vue:867
 msgid "Syncing with Bitcoin network..."
 msgstr "A sincronizar com a rede Bitcoin..."
 
@@ -1084,7 +1084,7 @@ msgstr ""
 "as traduções? Se não o fizeres, algumas traduções podem não ser atualizadas "
 "automaticamente. ({oldLang} to {newLang})"
 
-#: src/components/CheckoutCard.vue:171 src/views/SignTransactionLedger.vue:502
+#: src/components/CheckoutCard.vue:171 src/views/SignTransactionLedger.vue:727
 msgid "The offer expired."
 msgstr "A oferta expirou."
 
@@ -1163,12 +1163,12 @@ msgstr "Não foi possível transmitir a transação"
 msgid "Transaction is expired"
 msgstr "A transação expirou"
 
-#: src/views/SignTransactionLedger.vue:500
+#: src/views/SignTransactionLedger.vue:725
 msgid "Transaction Sent"
 msgstr "Transação Enviada"
 
 #: src/views/SignBtcTransactionLedger.vue:117
-#: src/views/SignTransactionLedger.vue:499
+#: src/views/SignTransactionLedger.vue:724
 msgid "Transaction Signed"
 msgstr "Transação Assinada"
 
