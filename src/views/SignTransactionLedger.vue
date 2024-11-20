@@ -106,7 +106,7 @@
 
         <GlobalClose :buttonLabel="request.kind === 'checkout' ? $t('Cancel payment') : '' /* use default */"
             :onClose="_close" :hidden="state !== constructor.State.OVERVIEW" />
-        <Network ref="network" :visible="false"/>
+        <Network ref="network" />
     </div>
 </template>
 
@@ -157,7 +157,6 @@ import Config from 'config';
 import Cashlink from '../lib/Cashlink';
 import { CashlinkStore } from '../lib/CashlinkStore';
 import CheckoutServerApi from '../lib/CheckoutServerApi';
-import { NetworkClient } from '../lib/NetworkClient';
 
 interface AccountDetailsData {
     address: string;
@@ -209,7 +208,11 @@ export default class SignTransactionLedger extends Vue {
 
     private async mounted() {
         const network = this.$refs.network as Network;
-        await NetworkClient.Instance.init();
+        if (this.request.kind === RequestType.CHECKOUT || this.request.kind === RequestType.CREATE_CASHLINK) {
+            // Pre-connect to network when we know we'll need it. Does not need to be awaited, as the methods on network
+            // that actually need to be connected, themselves ensure to be connected.
+            network.getNetworkClient().catch(() => {}); // tslint:disable-line no-empty
+        }
 
         // If user left this view in the meantime, don't continue
         if (this.isDestroyed) return;
@@ -296,7 +299,7 @@ export default class SignTransactionLedger extends Vue {
             };
 
             // Usually instant as synced in checkout. Only on reload we have to resync.
-            validityStartHeightPromise = NetworkClient.Instance.getHeight().then((blockchainHeight) =>
+            validityStartHeightPromise = network.getBlockchainHeight().then((blockchainHeight) =>
                 blockchainHeight + 1 // The next block is the earliest for which tx are accepted by standard miners
                 - TX_VALIDITY_WINDOW
                 + checkoutPaymentOptions.protocolSpecific.validityDuration,
