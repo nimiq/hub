@@ -233,7 +233,7 @@ msgid "Cancel"
 msgstr ""
 
 #: src/views/Checkout.vue:205
-#: src/views/SignTransactionLedger.vue:109
+#: src/views/SignTransactionLedger.vue:107
 msgid "Cancel payment"
 msgstr ""
 
@@ -474,7 +474,7 @@ msgid "Creating your Account"
 msgstr ""
 
 #: src/views/CashlinkManage.vue:229
-#: src/views/SignTransactionLedger.vue:495
+#: src/views/SignTransactionLedger.vue:722
 msgid "Creating your Cashlink"
 msgstr ""
 
@@ -520,7 +520,7 @@ msgid "Failed to fetch addresses. Retrying..."
 msgstr ""
 
 #: src/views/SignBtcTransactionLedger.vue:30
-#: src/views/SignTransactionLedger.vue:72
+#: src/views/SignTransactionLedger.vue:70
 msgid "fee"
 msgstr ""
 
@@ -721,7 +721,7 @@ msgid "New Address added to your Account."
 msgstr ""
 
 #: src/views/CashlinkCreate.vue:55
-#: src/views/SignTransactionLedger.vue:294
+#: src/views/SignTransactionLedger.vue:324
 msgid "New Cashlink"
 msgstr ""
 
@@ -835,7 +835,7 @@ msgstr ""
 msgid "Please go back and restart the process."
 msgstr ""
 
-#: src/views/SignTransactionLedger.vue:91
+#: src/views/SignTransactionLedger.vue:89
 msgid "Please go back to the shop and restart the process."
 msgstr ""
 
@@ -929,7 +929,7 @@ msgstr ""
 msgid "Send your transaction"
 msgstr ""
 
-#: src/views/SignTransactionLedger.vue:496
+#: src/views/SignTransactionLedger.vue:723
 msgid "Sending Transaction"
 msgstr ""
 
@@ -979,8 +979,8 @@ msgstr ""
 msgid "Speed up your transaction"
 msgstr ""
 
+#: src/views/SignStaking.vue:42
 #: src/views/SignStaking.vue:46
-#: src/views/SignStaking.vue:64
 msgid "Staking Contract"
 msgstr ""
 
@@ -1075,7 +1075,7 @@ msgid "The display language changed. Do you want to reload the page to update al
 msgstr ""
 
 #: src/components/CheckoutCard.vue:171
-#: src/views/SignTransactionLedger.vue:502
+#: src/views/SignTransactionLedger.vue:729
 msgid "The offer expired."
 msgstr ""
 
@@ -1141,12 +1141,12 @@ msgstr ""
 msgid "Transaction is expired"
 msgstr ""
 
-#: src/views/SignTransactionLedger.vue:500
+#: src/views/SignTransactionLedger.vue:727
 msgid "Transaction Sent"
 msgstr ""
 
 #: src/views/SignBtcTransactionLedger.vue:117
-#: src/views/SignTransactionLedger.vue:499
+#: src/views/SignTransactionLedger.vue:726
 msgid "Transaction Signed"
 msgstr ""
 

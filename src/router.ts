@@ -194,6 +194,11 @@ export default new Router({
             name: `${RequestType.SIGN_STAKING}-success`,
         },
         {
+            path: `/${RequestType.SIGN_STAKING}/ledger`,
+            component: SignTransactionLedger,
+            name: `${RequestType.SIGN_STAKING}-ledger`,
+        },
+        {
             path: `/cashlink/create`,
             component: CashlinkCreate,
             name: RequestType.CREATE_CASHLINK,
