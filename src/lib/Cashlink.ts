@@ -90,7 +90,8 @@ class Cashlink {
         try {
             str = str.replace(/~/g, '').replace(/=*$/, (match) => new Array(match.length).fill('.').join(''));
             const buf = Nimiq.BufferUtils.fromBase64Url(str);
-            const keyPair = Nimiq.KeyPair.derive(Nimiq.PrivateKey.deserialize(buf));
+            const privateKeyBytes = buf.read(Nimiq.PrivateKey.SIZE);
+            const keyPair = Nimiq.KeyPair.derive(Nimiq.PrivateKey.deserialize(privateKeyBytes));
             const value = buf.readUint64();
             let message: string;
             if (buf.readPos === buf.byteLength) {
@@ -304,7 +305,7 @@ class Cashlink {
         recipient: Nimiq.Address,
         value: number,
         fee: number,
-        data: Uint8Array,
+        recipientData: Uint8Array,
         cashlinkMessage: string,
     } {
         return {
@@ -312,7 +313,7 @@ class Cashlink {
             recipient: this.address,
             value: this.value,
             fee: this.fee,
-            data: CashlinkExtraData.FUNDING,
+            recipientData: CashlinkExtraData.FUNDING,
             cashlinkMessage: this.message,
         };
     }

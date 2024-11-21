@@ -23,7 +23,7 @@ class Network extends Vue {
         fee = 0,
         validityStartHeight,
         flags = 0 /* Nimiq.Transaction.Flag.NONE */,
-        data,
+        recipientData,
         signerPubKey,
         signature,
         proofPrefix = new Uint8Array(0),
@@ -37,7 +37,7 @@ class Network extends Vue {
         fee?: number,
         validityStartHeight: number,
         flags?: number,
-        data?: Uint8Array,
+        recipientData?: Uint8Array,
         signerPubKey: Nimiq.PublicKey | Uint8Array,
         signature?: Nimiq.Signature | Uint8Array,
         proofPrefix?: Uint8Array,
@@ -48,27 +48,26 @@ class Network extends Vue {
         if (signature && !(signature instanceof Nimiq.Signature)) signature = Nimiq.Signature.deserialize(signature);
 
         if (
-            (data && data.length > 0)
+            (recipientData && recipientData.length > 0)
             || senderType !== Nimiq.AccountType.Basic
             || recipientType !== Nimiq.AccountType.Basic
             || flags !== 0 /* Nimiq.Transaction.Flag.NONE */
         ) {
             let proof: Nimiq.SerialBuffer | undefined;
             if (signature) {
-                // 32 publicKey + 1 empty merkle path + 64 signature
-                proof = new Nimiq.SerialBuffer(proofPrefix.length + 32 + 1 + 64);
+                // 1 type + 32 publicKey + 1 empty merkle path + 64 signature
+                proof = new Nimiq.SerialBuffer(proofPrefix.length + 1 + 32 + 1 + 64);
                 proof.write(proofPrefix);
                 proof.write(Nimiq.SignatureProof.singleSig(signerPubKey, signature).serialize());
             }
 
             const tx = new Nimiq.Transaction(
                 sender,
-                // @ts-ignore Staking type not yet supported
                 senderType,
                 senderData,
                 recipient,
                 recipientType,
-                data || new Uint8Array(0),
+                recipientData || new Uint8Array(0),
                 BigInt(value),
                 BigInt(fee),
                 flags,

@@ -26,6 +26,7 @@ export default class SignBtcTransactionSuccess extends Vue {
                 signerPubKey: this.keyguardResult.publicKey,
             }, this.keyguardResult, this.request.refund, {
                 senderType: Nimiq.AccountType.HTLC,
+                recipientData: this.request.refund.extraData,
             }));
 
             const proof = new Nimiq.SerialBuffer(1 + tx.proof.length);
