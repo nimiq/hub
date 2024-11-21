@@ -1879,10 +1879,10 @@
     "@nimiq/rpc" "^0.3.0"
     "@opengsn/common" "^2.2.5"
 
-"@nimiq/ledger-api@^3.1.0":
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/@nimiq/ledger-api/-/ledger-api-3.1.0.tgz#17170a9c94dd10e8f39c347b0672c4ca7164c0b6"
-  integrity sha512-6mld0KCDfyiKMPcnawKh/KTR5KWqHTHIgcuG7L0/Ueu3kmbWI/ILCJNEHCYphdevG65IHozp9c19AKsQxTut/w==
+"@nimiq/ledger-api@^3.1.1":
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/@nimiq/ledger-api/-/ledger-api-3.1.1.tgz#a399423e24efaa06da564f410cf637e01eea26f7"
+  integrity sha512-j5PIYbSqARLNl9Ih0JGdR/jo0nyFydoug/wsPRoHVzdmUcXTIZ6NerA9tzW3HoeDEzBtMMMyNJQZwkEFHxhEEQ==
   dependencies:
     "@ledgerhq/hw-app-btc" "^10.0.9"
     "@ledgerhq/hw-transport" "^6.29.0"
@@ -12645,9 +12645,9 @@ tslib@^1.8.0, tslib@^1.8.1, tslib@^1.9.0, tslib@^1.9.3:
   integrity sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==
 
 tslib@^2.1.0:
-  version "2.8.0"
-  resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.8.0.tgz#d124c86c3c05a40a91e6fdea4021bd31d377971b"
-  integrity sha512-jWVzBLplnCmoaTr13V9dYbiQ99wvZRd0vNWaDRg+aVYRcjDF3nDksxFDE/+fkXnKhpnUUkmx5pK/v8mCtLVqZA==
+  version "2.8.1"
+  resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.8.1.tgz#612efe4ed235d567e8aba5f2a5fab70280ade83f"
+  integrity sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==
 
 tslint@5.14.0:
   version "5.14.0"
