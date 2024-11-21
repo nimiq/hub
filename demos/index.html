@@ -180,11 +180,20 @@
     src="/bitcoin/BitcoinJS.min.js"
     integrity="<%= htmlWebpackPlugin.options.bitcoinJsIntegrityHash %>"
     crossorigin="anonymous"></script>
-<!-- needed for WalletStore in Activate Btc demo -->
-<!-- <script defer type="text/javascript"
-    src="<%= htmlWebpackPlugin.options.cdnDomain %>/v<%= htmlWebpackPlugin.options.coreVersion %>/web-offline.js"
-    integrity="<%= htmlWebpackPlugin.options.coreIntegrityHash %>"
-    crossorigin="anonymous"></script> -->
+
+<script type="module">
+    import init, * as Nimiq from '/albatross-client/web/index.js';
+
+    /** @type {Promise<Nimiq> | undefined} */
+    let initPromise;
+
+    window.loadAlbatross = async function() {
+        return initPromise || (initPromise = new Promise(async resolve => {
+            await init();
+            resolve(Nimiq);
+        }));
+    }
+</script>
 
 <!-- built files will be auto injected -->
 </body>

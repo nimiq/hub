@@ -8,9 +8,6 @@
     <script defer type="text/javascript" src="/browser-warning.js"
         integrity="<%= htmlWebpackPlugin.options.browserWarningIntegrityHash %>"
         crossorigin="anonymous"></script>
-    <!-- <script defer src="<%= htmlWebpackPlugin.options.cdnDomain %>/v<%= htmlWebpackPlugin.options.coreVersion %>/web-offline.js"
-        integrity="<%= htmlWebpackPlugin.options.coreIntegrityHash %>"
-        crossorigin="anonymous"></script> -->
     <title>Nimiq Cashlink</title>
 
     <meta name="robots" content="noindex, follow">
@@ -23,6 +20,20 @@
 
     <link href="/blocking.css" rel="stylesheet">
     <link rel="icon" href="<%= htmlWebpackPlugin.options.domain %>/favicon.ico">
+
+    <script type="module">
+        import init, * as Nimiq from '/albatross-client/web/index.js';
+
+        /** @type {Promise<Nimiq> | undefined} */
+        let initPromise;
+
+        window.loadAlbatross = async function() {
+            return initPromise || (initPromise = new Promise(async resolve => {
+                await init();
+                resolve(Nimiq);
+            }));
+        }
+    </script>
 </head>
 
 <body>

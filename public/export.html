@@ -4,9 +4,6 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="robots" content="noindex">
-    <!-- <script defer src="<%= htmlWebpackPlugin.options.cdnDomain %>/v<%= htmlWebpackPlugin.options.coreVersion %>/web-offline.js"
-      integrity="<%= htmlWebpackPlugin.options.coreIntegrityHash %>"
-      crossorigin="anonymous"></script> -->
     <title>Nimiq Hub Export</title>
 
     <style>
@@ -14,6 +11,20 @@
         font-family: 'Muli', sans-serif;
       }
     </style>
+
+    <script type="module">
+        import init, * as Nimiq from '/albatross-client/web/index.js';
+
+        /** @type {Promise<Nimiq> | undefined} */
+        let initPromise;
+
+        window.loadAlbatross = async function() {
+            return initPromise || (initPromise = new Promise(async resolve => {
+                await init();
+                resolve(Nimiq);
+            }));
+        }
+    </script>
   </head>
   <body>
     <h1>Hub Export</h1>

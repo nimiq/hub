@@ -7,7 +7,6 @@ const fs = require('fs');
 const createHash = require('crypto').createHash;
 // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const PoLoaderOptimizer = require('webpack-i18n-tools')();
-const coreVersion = require('@nimiq/core-web/package.json').version;
 
 const crypto = require('crypto');
 
@@ -36,9 +35,6 @@ const browserWarningTemplate = fs.readFileSync(
 
 const browserWarningIntegrityHash = `sha256-${createHash('sha256')
     .update(fs.readFileSync(path.join(__dirname, 'node_modules/@nimiq/browser-warning/dist/browser-warning.js')))
-    .digest('base64')}`;
-const coreIntegrityHash = `sha256-${createHash('sha256')
-    .update(fs.readFileSync(path.join(__dirname, 'node_modules/@nimiq/core-web/web-offline.js')))
     .digest('base64')}`;
 const bitcoinJsIntegrityHash = `sha256-${createHash('sha256')
     .update(fs.readFileSync(path.join(__dirname, 'public/bitcoin/BitcoinJS.min.js')))
@@ -135,8 +131,6 @@ const pages = {
         browserWarningIntegrityHash,
         domain,
         cdnDomain,
-        coreVersion,
-        coreIntegrityHash,
         // output as dist/index.html
         filename: 'index.html',
         // chunks to include on this page, by default includes
@@ -164,8 +158,6 @@ const pages = {
         browserWarningIntegrityHash,
         domain,
         cdnDomain,
-        coreVersion,
-        coreIntegrityHash,
         // output as dist/cashlink/index.html
         filename: 'cashlink/index.html',
         // chunks to include on this page, by default includes
@@ -178,8 +170,6 @@ const pages = {
         // the source template
         template: 'public/export.html',
         cdnDomain,
-        coreVersion,
-        coreIntegrityHash,
         // output as dist/iframe.html
         filename: 'export.html',
     },
@@ -192,8 +182,6 @@ if (buildName === 'local' || buildName === 'testnet') {
         // the source template
         template: 'demos/index.html',
         cdnDomain,
-        coreVersion,
-        coreIntegrityHash,
         bitcoinJsIntegrityHash,
         // output as dist/demos.html
         filename: 'demos.html',
