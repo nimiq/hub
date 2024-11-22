@@ -500,18 +500,20 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
                 const dummyPreImage = '0000000000000000000000000000000000000000000000000000000000000000';
                 const dummyHashRoot = '66687aadf862bd776c8fc18b8e9f8e20089714856ee233b3902a591d0d5f2925'; // sha256
 
-                const proof = new Nimiq.SerialBuffer(3 + 2 * 32 + nimiqTransaction.proof.length);
+                const proof = new Nimiq.SerialBuffer(4 + 2 * 32 + nimiqTransaction.proof.length);
                 proof.writeUint8(0 /* Nimiq.HashedTimeLockedContract.ProofType.REGULAR_TRANSFER */);
-                proof.writeUint8({
-                    blake2b: 0,
-                    sha256: 1,
-                    sha512: 2,
-                }[nimiqHtlcHashAlgorithm]);
                 proof.writeUint8(1); // hashCount must be 1 for our swaps
+                proof.writeUint8({
+                    blake2b: 1,
+                    sha256: 3,
+                    sha512: 4,
+                }[nimiqHtlcHashAlgorithm]);
                 proof.write(Nimiq.BufferUtils.fromHex(dummyHashRoot));
+                proof.writeUint8(32); // PreImage size
                 proof.write(Nimiq.BufferUtils.fromHex(dummyPreImage));
                 proof.write(new Nimiq.SerialBuffer(nimiqTransaction.proof)); // Current proof is regular SignatureProof
                 nimiqTransaction.proof = proof;
+                console.log(Nimiq.BufferUtils.toHex(proof));
             }
 
             // Validate that transaction is valid
@@ -596,15 +598,6 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
                 signerPubKey: nimiqSignatureResult.publicKey,
                 signature: nimiqSignatureResult.signature,
             });
-            // Calculate the contract address of the HTLC that gets created and recreate the transaction
-            // with that address as the recipient:
-            const contractAddress = new Nimiq.Address(Nimiq.BufferUtils.fromHex(nimiqTransaction.hash()));
-            nimiqTransaction = new Nimiq.Transaction(
-                nimiqTransaction.sender, nimiqTransaction.senderType, nimiqTransaction.senderData,
-                contractAddress, nimiqTransaction.recipientType, nimiqTransaction.data,
-                nimiqTransaction.value, nimiqTransaction.fee,
-                nimiqTransaction.flags, nimiqTransaction.validityStartHeight, nimiqTransaction.networkId,
-            );
         } else if (this.request.redeem.type === SwapAsset.NIM && htlcInfo.redeem.type === SwapAsset.NIM
             && nimiqSignatureResult) {
             nimiqTransaction = this.nimiqNetwork.createTx({

@@ -290,7 +290,7 @@ export default class LedgerSwapProxy {
     }: LedgerApiTransactionInfoNimiq<typeof Config.ledgerApiNimiqVersion>): Promise<Nimiq.Transaction> {
         // Always create an ExtendedTransaction because all transactions that will typically be signed by the proxy will
         // be ExtendedTransactions because they include extraData or have sender- or recipientType HTLC.
-        let transaction = new Nimiq.Transaction(
+        const transaction = new Nimiq.Transaction(
             sender,
             senderType,
             new Uint8Array(0),
@@ -303,20 +303,6 @@ export default class LedgerSwapProxy {
             validityStartHeight,
             Config.nimiqNetworkId,
         );
-        if (
-            transaction.recipientType === Nimiq.AccountType.HTLC
-            && transaction.flags === 1 /* Nimiq.Transaction.Flag.CONTRACT_CREATION */
-        ) {
-            // Calculate the contract address of the HTLC that gets created and recreate the transaction
-            // with that address as the recipient:
-            const contractAddress = new Nimiq.Address(Nimiq.BufferUtils.fromHex(transaction.hash()));
-            transaction = new Nimiq.Transaction(
-                transaction.sender, transaction.senderType, transaction.senderData,
-                contractAddress, transaction.recipientType, transaction.data,
-                transaction.value, transaction.fee,
-                transaction.flags, transaction.validityStartHeight, transaction.networkId,
-            );
-        }
 
         if (this._localSignerPrivateKey) {
             const signature = Nimiq.Signature.create(
