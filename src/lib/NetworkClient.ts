@@ -135,7 +135,7 @@ export class NetworkClient {
             case NETWORK_MAIN: return 'mainalbatross';
             case NETWORK_TEST: return 'testalbatross';
             case NETWORK_DEV: return 'devalbatross';
-            default: throw new Error(ERROR_INVALID_NETWORK);
+            default: throw new Error(`${ERROR_INVALID_NETWORK}: ${network}`);
         }
     }
 }
