@@ -38,6 +38,8 @@ class IFrameApi {
     }
 
     public static async list(): Promise<Account[]> {
+        window.Nimiq = await window.loadAlbatross();
+
         let wallets: WalletInfoEntry[];
         if (BrowserDetection.isIOS() || BrowserDetection.isSafari()) {
             /*
