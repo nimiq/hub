@@ -201,10 +201,8 @@ export default class RpcApi {
         const ignoredErrorTypes = [ KeyguardErrors.Types.INVALID_REQUEST.toString() ];
         const ignoredErrors = [ ERROR_CANCELED, 'Request aborted', 'WalletId not found', 'Address not found' ];
         if (ignoredErrorTypes.indexOf(error.name) < 0 && ignoredErrors.indexOf(error.message) < 0) {
-            if (Config.reportToSentry) {
-                console.debug('Request:', JSON.stringify(this._staticStore.request));
-                captureException(error);
-            }
+            console.debug('Request:', JSON.stringify(this._staticStore.request));
+            captureException(error);
         }
 
         this._reply(ResponseStatus.ERROR, error);

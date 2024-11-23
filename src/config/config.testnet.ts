@@ -8,7 +8,6 @@ export default {
     ledgerApiNimiqVersion: 'albatross' as LedgerApiNimiqVersion.ALBATROSS,
     network: NETWORK_TEST,
     nimiqNetworkId: 5,
-    networkEndpoint: 'https://network.nimiq-testnet.com',
     seedNodes: [
         '/dns4/seed1.pos.nimiq-testnet.com/tcp/8443/wss',
         '/dns4/seed2.pos.nimiq-testnet.com/tcp/8443/wss',
@@ -23,7 +22,7 @@ export default {
         'https://nimiq-testnet.com', // To allow gift cards app to request returnLink for Cashlinks
     ],
     redirectTarget: 'https://wallet.nimiq-testnet.com',
-    reportToSentry: false,
+    reportToSentry: true,
     checkoutWithoutNimOrigins: [
         'https://checkout-service-staging-0.web.app',
     ],

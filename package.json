@@ -20,8 +20,8 @@
         "i18n:sync": "yarn i18n:extract && yarn i18n:push ; yarn i18n:pull"
     },
     "dependencies": {
-        "@nimiq/core": "^2.0.3",
         "@nimiq/browser-warning": "^1.1.1",
+        "@nimiq/core": "^2.0.3",
         "@nimiq/electrum-client": "https://github.com/nimiq/electrum-client#build",
         "@nimiq/fastspot-api": "^1.10.2",
         "@nimiq/iqons": "^1.5.2",
@@ -33,7 +33,7 @@
         "@nimiq/utils": "^0.11.1",
         "@nimiq/vue-components": "https://github.com/nimiq/vue-components#build/hub",
         "@opengsn/common": "^2.2.5",
-        "@sentry/vue": "^6.0.0",
+        "@sentry/vue": "^8.40.0",
         "big-integer": "^1.6.48",
         "ethers": "^5.7.2",
         "vue": "^2.6.11",

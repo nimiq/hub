@@ -317,9 +317,7 @@ class CheckoutCardNimiq
                 // Gracefully fail by not selecting the address but returning to the address selection instead.
                 console.log('request:', JSON.stringify(this.request));
                 console.log('paymentOptions:', JSON.stringify(this.paymentOptions));
-                if (this.$captureException) {
-                    this.$captureException(new Error('UNEXPECTED Checkout: Sender and Recipient are identical.'));
-                }
+                this.$captureException(new Error('UNEXPECTED Checkout: Sender and Recipient are identical.'));
                 return;
             }
         }

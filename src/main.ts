@@ -40,7 +40,7 @@ async function main() {
     const rpcApi = new RpcApi(store, staticStore, router);
     Vue.prototype.$rpc = rpcApi; // rpcApi is started in App.vue->created()
 
-    startSentry(Vue);
+    startSentry();
 
     // Kick off loading the language file
     setLanguage(detectLanguage());

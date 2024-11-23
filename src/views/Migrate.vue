@@ -275,9 +275,7 @@ export default class Migrate extends Vue {
         this.title = this.$t('Whoops, something went wrong') as string;
         this.message = `${error.name}: ${error.message}`;
         this.state = StatusScreen.State.ERROR;
-        if (this.$captureException) {
-            this.$captureException(error);
-        }
+        this.$captureException(error);
     }
 
     private tryAgain() {

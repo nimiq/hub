@@ -286,7 +286,7 @@ class CashlinkCreate extends Vue {
                 ).then((prices) => {
                     this.fiatRate = prices[CryptoCurrency.NIM][fiatCurrency] || null;
                 }).catch((error) => {
-                    this.$captureException!(error);
+                    this.$captureException(error);
                     console.error(error);
                 });
             };

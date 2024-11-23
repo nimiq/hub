@@ -8,7 +8,6 @@ export default {
     ledgerApiNimiqVersion: 'albatross' as LedgerApiNimiqVersion.ALBATROSS,
     network: NETWORK_TEST,
     nimiqNetworkId: 5,
-    networkEndpoint: 'https://network.nimiq-testnet.com',
     seedNodes: [
         '/dns4/seed1.pos.nimiq-testnet.com/tcp/8443/wss',
         '/dns4/seed2.pos.nimiq-testnet.com/tcp/8443/wss',
