@@ -1,207 +1,201 @@
 # 
 # Translators:
-# Johannes Demuth <johannes.demuth@outlook.com>, 2020
-# Irfan Maranki, 2020
-# Sven <sven@nimiq.com>, 2021
-# Redexe <timo.niehoff@yahoo.de>, 2021
-# Huriye <huriyegoek@gmx.de>, 2021
-# Michael <jiggaaa20@gmail.com>, 2023
-# Daniel, 2024
+# Francis RV, 2023
 # Sören Schwert <hello@soerenschwert.de>, 2024
 # 
 msgid ""
 msgstr ""
 "Last-Translator: Sören Schwert <hello@soerenschwert.de>, 2024\n"
-"Language-Team: German (https://app.transifex.com/nimiq-foundation/teams/110181/de/)\n"
+"Language-Team: Filipino (https://app.transifex.com/nimiq-foundation/teams/110181/fil/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Language: de\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: fil\n"
+"Plural-Forms: nplurals=2; plural=(n == 1 || n==2 || n==3) || (n % 10 != 4 || n % 10 != 6 || n % 10 != 9);\n"
 
 #: src/views/ChooseAddress.vue:14
 msgid "{appName} is asking for an account to use."
-msgstr "Welches Konto möchtest du in {appName} verwenden?"
+msgstr ""
 
 #: src/views/ChooseAddress.vue:7
 msgid "{appName} is asking for an address to use."
-msgstr "{appName} fragt nach einer Adresse, die verwendet werden soll."
+msgstr "{appName} ay nanghihingi ng adres para ito'y gamitin."
 
 #: src/views/SetupSwapLedger.vue:57 src/views/SetupSwapLedger.vue:78
 msgid "{percentage} of swap value."
-msgstr "{percentage} des Tauschwerts."
+msgstr "{percentage} ng palitan ng halaga."
 
 #: src/views/SetupSwapLedger.vue:30
 msgid "{totalFees} fees"
-msgstr "{totalFees} Gebühren"
+msgstr "{totalFees} bayad"
 
 #: src/components/CheckoutCardExternal.vue:85
 msgid "+ {currency} network fee"
-msgstr "+ {currency} Netzwerkgebühren"
+msgstr "+ {currency} bayad para sa network"
 
 #: src/views/CashlinkReceive.vue:110
 msgid "30 seconds, no email, no download."
-msgstr "30 Sekunden, keine E-Mail, kein Download."
+msgstr "sa loob ng 30 na segundo, walang email, walang download."
 
 #: src/views/CashlinkReceive.vue:207
 msgid "404 - Cash not found"
-msgstr "404 - kein Guthaben vorhanden"
+msgstr "404 - Hindi mahanap ang pera"
 
 #: src/views/SetupSwapSuccess.vue:145
 msgid "503 Service unavailable - please try again later"
-msgstr "503 Service nicht verfügbar - bitte versuche es später nochmal"
+msgstr "503 Service unavailable - subukan ulit mamaya"
 
 #: src/views/OnboardingSelector.vue:152
 msgid "A 100% free and self-custodial web wallet for NIM, BTC and USDC."
 msgstr ""
-"Eine 100% konstenlose Web-Wallet für NIM, BTC und USDC, bei der allein du "
-"Zugriff auf deine Coins hast."
 
 #: src/views/ExportSuccess.vue:60
 msgid "Account backed up!"
-msgstr "Sicherung vom Konto erstellt!"
+msgstr "Ang Account ay na-backup na!"
 
 #: src/views/SignupLedger.vue:28
 msgid "Account Created"
-msgstr "Konto erstellt"
+msgstr "Nilikhang Account "
 
 #: src/views/Migrate.vue:266
 msgid "Accounts updated!"
-msgstr "Konten aktualisiert!"
+msgstr "Accounts updated!"
 
 #: src/components/NotEnoughCookieSpace.vue:6
 msgid "Action not possible"
-msgstr "Aktion nicht möglich"
+msgstr "Hindi posible umaksyon"
 
 #: src/views/Migrate.vue:81
 msgid "Activate update"
-msgstr "Update aktivieren"
+msgstr "Buhayin ang update"
 
 #: src/views/CashlinkCreate.vue:66
 msgid "Add a message..."
-msgstr "Nachricht hinzufügen..."
+msgstr "Lagyan ng mensahe"
 
 #: src/views/AddVestingContract.vue:51
 msgid "Add contract"
-msgstr "Vertrag hinzufügen"
+msgstr "Magdagdag ng kontrata"
 
 #: src/views/AddAccountSelection.vue:4
 msgid "Add to account"
-msgstr "Dem Konto hinzufügen"
+msgstr "Magdagdag sa account"
 
 #: src/views/AddAddressLedger.vue:11
 msgid "Add to Ledger"
-msgstr "Zum Ledger hinzufügen"
+msgstr "Magdagdag sa Ledger"
 
 #: src/views/AddVestingContract.vue:4
 msgid "Add Vesting Contract"
-msgstr "Vesting-Vertrag hinzufügen"
+msgstr "Magdagdag sa Vesting Contract"
 
 #: src/components/CheckoutCard.vue:84 src/views/SetupSwapLedger.vue:292
 msgid "Address"
-msgstr "Adresse"
+msgstr "Adres"
 
 #: src/views/AddAddressLedger.vue:16
 msgid "Address Added"
-msgstr "Adresse hinzugefügt"
+msgstr "Naidagdag na Adres"
 
 #: src/views/LoginSuccess.vue:129
 msgid "Address detection failed. Retrying..."
-msgstr "Adressenerkennung fehlgeschlagen. Versuche erneut..."
+msgstr "Nabigo ang pagtuklas ng adres. Sinusubukan ulit..."
 
 #: src/views/Rename.vue:22
 msgid "All labels saved."
-msgstr "Alle Beschriftungen gespeichert."
+msgstr "Nai-saved ang lahat ng mga etiketa."
 
 #: src/components/CheckoutCardBitcoin.vue:30
 #: src/components/CheckoutCardEthereum.vue:27
 #: src/components/CheckoutCardNimiqExternal.vue:32
 #: src/views/SetupSwapLedger.vue:285 src/views/SetupSwapLedger.vue:294
 msgid "Amount"
-msgstr "Betrag"
+msgstr "Halaga"
 
 #: src/views/AddVestingContract.vue:40
 msgid "Amount/Step:"
-msgstr "Betrag/Schritt:"
+msgstr "Halaga/Hakbang:"
 
 #: src/lib/paymentOptions/EtherPaymentOptions.ts:72
 msgid "Apply a gas price of at least {fee} gwei."
-msgstr "Setze eine Netzwerkgebühr von min. {fee} Gwei."
+msgstr "Maglagay ng presyo ng gas ng higit kumulang {fee} gwei."
 
 #: src/lib/paymentOptions/BitcoinPaymentOptions.ts:80
 msgid "Apply a network fee of at least {fee} sat/byte."
-msgstr "Setze eine Netzwerkgebühr von min. {fee} sat/byte."
+msgstr "Maglagay ng bayad sa network ng higit kumulang {fee} sat/byte."
 
 #: src/views/SetupSwapLedger.vue:47
 msgid "Atomic swaps require two BTC transactions."
-msgstr "Ein Tausch benötigt zwei BTC-Transaktionen."
+msgstr ""
+"Ang mga palitan nang pa-atomiko ay nangangailangan ng dalawang mga "
+"transaksyon sa BTC."
 
 #: src/views/CashlinkManage.vue:192
 msgid "Awaiting receipt confirmation..."
-msgstr "Warte auf Empfangsbestätigung..."
+msgstr "Naghihintay ng kumpirmasyon ng resibo..."
 
 #: src/components/GlobalClose.vue:40
 msgid "Back to {appName}"
-msgstr "Zurück zu {appName}"
+msgstr "Balik sa {appName}"
 
 #: src/components/GlobalClose.vue:35
 msgid "Back to {Nimiq Faucet}"
-msgstr "Zurück zur {Nimiq Faucet}"
+msgstr "Balik sa {Nimiq Faucet}"
 
 #: src/components/GlobalClose.vue:34
 msgid "Back to {Nimiq Miner}"
-msgstr "Zurück zum {Nimiq Miner}"
+msgstr "Balik sa {Nimiq Miner}"
 
 #: src/components/GlobalClose.vue:33
 msgid "Back to {Wallet}"
-msgstr "Zurück zur {Wallet}"
+msgstr "Balik sa {Wallet}"
 
 #: src/views/OnboardingSelector.vue:130
 msgid "Back to Cashlink"
-msgstr "Zurück zum Cashlink"
+msgstr "Balik sa Cashlink"
 
 #: src/views/OnboardingSelector.vue:124
 msgid "Back to Checkout"
-msgstr "Zurück zum Checkout"
+msgstr "Balik sa Checkout"
 
 #: src/views/OnboardingSelector.vue:126
 msgid "Back to Choose Address"
-msgstr "Zurück zur Adressauswahl"
+msgstr "Bumalik sa Pilian ng Adres"
 
 #: src/components/GlobalClose.vue:39
 msgid "Back to CryptoPayment.link"
-msgstr "Zurück zu CryptoPayment.link"
+msgstr "Balik sa CryptoPayment.link"
 
 #: src/components/GlobalClose.vue:36
 msgid "Back to Donation Button Creator"
-msgstr "Zurück zum Spendenbuttongenerator"
+msgstr "Balik sa Donation Button Creator"
 
 #. Nimiq Safe
 #: src/components/GlobalClose.vue:32
 msgid "Back to my accounts"
-msgstr "Zurück zu meinen Konten"
+msgstr "Bumalik sa aking mga account"
 
 #: src/components/GlobalClose.vue:37
 msgid "Back to Nimiq Gift Card"
-msgstr "Zurück zur Geschenkkarte"
+msgstr "Balik sa Nimiq Gift Card"
 
 #: src/components/GlobalClose.vue:38
 msgid "Back to Nimiq Vote"
-msgstr "Zurück zur Abstimmung"
+msgstr "Balik sa Nimiq Vote"
 
 #: src/views/OnboardingSelector.vue:128
 msgid "Back to Sign Message"
-msgstr "Zurück zu Nachrichtensignierung"
+msgstr "Balik sa Sign Message"
 
 #: src/views/Migrate.vue:67
 msgid "Back Up"
-msgstr "Sichern"
+msgstr "Mag-backup"
 
 #: src/views/Migrate.vue:67
 msgid "Backed Up"
-msgstr "Gesichert"
+msgstr "Na-backup"
 
 #: src/views/AddVestingContract.vue:28
 msgid "Balance:"
-msgstr "Saldo:"
+msgstr "Balanse:"
 
 #: src/views/SetupSwapLedger.vue:110 src/views/SetupSwapLedger.vue:160
 msgid "Bitcoin"
@@ -209,224 +203,225 @@ msgstr "Bitcoin"
 
 #: src/views/ActivateBitcoinSuccess.vue:106
 msgid "Bitcoin activated"
-msgstr "Bitcoin aktiviert"
+msgstr "Bitcoin activated"
 
 #: src/views/SetupSwapSuccess.vue:662
 msgid "Bitcoin HTLC invalid: {error}"
-msgstr "Bitcoin-HTLC ungültig: {error}"
+msgstr ""
 
 #: src/lib/LabelingMachine.ts:31
 msgid "Blue Account"
-msgstr "Blaues Konto"
+msgstr "Asul na Account"
 
 #: src/lib/LabelingMachine.ts:13
 msgid "Blue Address"
-msgstr "Blaue Adresse"
+msgstr "Asul na Adres"
 
 #: src/lib/LabelingMachine.ts:36
 msgid "Brown Account"
-msgstr "Braunes Konto"
+msgstr "Kayumangging Account"
 
 #: src/lib/LabelingMachine.ts:18
 msgid "Brown Address"
-msgstr "Braune Adresse"
+msgstr "Kayumangging Adres"
 
 #: src/views/SetupSwapLedger.vue:42
 msgid "BTC network fee"
-msgstr "BTC-Netzwerkgebühren"
+msgstr "Bayad sa network ng BTC"
 
 #: src/views/CashlinkCreate.vue:20
 msgid ""
 "By adding a transaction fee, you can influence how fast your transaction "
 "will be processed."
 msgstr ""
-"Indem du eine Transaktionsgebühr hinzufügst, kannst du beeinflussen, wie "
-"schnell deine Transaktion verarbeitet wird."
+"Sa pamamagitan ng pagdaragdag ng bayarin sa transaksyon, maiimpluwensyahan "
+"mo kung gaano kabilis maproseso ang iyong transaksyon."
 
 #: src/views/CashlinkManage.vue:11 src/views/Checkout.vue:206
 #: src/views/CheckoutTransmission.vue:10
 msgid "Cancel"
-msgstr "Abbrechen"
+msgstr "Ikansela"
 
 #: src/views/Checkout.vue:205 src/views/SignTransactionLedger.vue:107
 msgid "Cancel payment"
-msgstr "Zahlung abbrechen"
+msgstr "Ikansela ang pagbabayad"
 
 #: src/views/CashlinkReceive.vue:257
 msgid "Cashlink claimed!"
-msgstr "Cashlink eingelöst!"
+msgstr "Naangkin na ang Cashlink!"
 
 #: src/views/CashlinkManage.vue:20
 msgid "Cashlink created"
-msgstr "Cashlink erstellt"
+msgstr "Nilikha ang cashlink"
 
 #: src/views/CashlinkManage.vue:227
 msgid "Cashlink created."
-msgstr "Cashlink erstellt."
+msgstr "Nalikha na ang Cashlink."
 
 #: src/views/CashlinkReceive.vue:305
 msgid "Cashlink empty :("
-msgstr "Cashlink ist leer :("
+msgstr "walang laman ang Cashlink :("
 
 #: src/views/CashlinkReceive.vue:298
 msgid "Cashlink funding"
-msgstr "Cashlink-Aufladung"
+msgstr "pagpopondo ng Cashlink"
 
 #: src/views/CashlinkReceive.vue:302
 msgid "Cashlink is empty"
-msgstr "Cashlink ist leer"
+msgstr "walang laman ang Cashlink"
 
 #: src/views/CashlinkReceive.vue:297
 msgid "Cashlink not funded"
-msgstr "Cashlink nicht aufgeladen"
+msgstr "hindi pinopondohan ang Cashlink"
 
 #: src/views/CashlinkReceive.vue:29
 msgid "Change"
-msgstr "Ändern"
+msgstr "Magbago"
 
 #: src/views/Migrate.vue:48
 msgid "Check your Backup | Check your Backups"
-msgstr "Überprüfe dein Backup | Überprüfe deine Backups"
+msgstr "Suriin ang iyong Pag-backup | Suriin ang iyong mga Pag-backup"
 
 #: src/views/CashlinkReceive.vue:295
 msgid "Checking status"
-msgstr "Überprüfe Status"
+msgstr "Sinusuri ang katayuan"
 
 #: src/views/AddAccountSelection.vue:5 src/views/AddAddressLedger.vue:13
 msgid "Choose a new Address"
-msgstr "Wähle eine neue Adresse"
+msgstr "Pumili ng isang bagong Adres"
 
 #: src/views/ChooseAddress.vue:12
 msgid "Choose an Account"
-msgstr "Wähle ein Konto"
+msgstr ""
 
 #: src/views/CashlinkReceive.vue:64 src/views/ChooseAddress.vue:18
 #: src/views/ChooseAddress.vue:5
 msgid "Choose an Address"
-msgstr "Wähle eine Adresse"
+msgstr "Pumili ng isang Adres"
 
 #: src/components/CheckoutCardNimiq.vue:68
 msgid "Choose an Address to pay"
-msgstr "Wähle eine Adresse zum Bezahlen"
+msgstr "Pumili ng isang Adres na babayaran"
 
 #: src/views/SignMessage.vue:12
 msgid "Choose an Address to sign"
-msgstr "Wähle eine Adresse zum Signieren"
+msgstr "Pumili ng isang Adres upang mag-sign"
 
 #: src/components/IdenticonSelector.vue:6
 msgid "Choose an Avatar"
-msgstr "Wähle einen Avatar"
+msgstr "Pumili ng isang Avatar"
 
 #: src/views/CashlinkCreate.vue:10
 msgid "Choose Sender"
-msgstr "Wähle Absender"
+msgstr "Piliin ang Nagpadala"
 
 #: src/views/ChooseAddress.vue:20
 msgid "Choose which Nimiq address to use."
-msgstr "Wähle, welche Nimiq-Adresse du verwenden möchtest."
+msgstr ""
 
 #: src/views/CashlinkReceive.vue:296
 msgid "Claim Cashlink"
-msgstr "Cashlink einlösen"
+msgstr "I-claim ang Cashlink"
 
 #: src/views/CashlinkReceive.vue:346
 msgid "Claim your Cash"
-msgstr "Löse deinen Cashlink ein"
+msgstr "I-claim ang Cashlink"
 
 #: src/views/CashlinkReceive.vue:234
 msgid "Claiming Cashlink"
-msgstr "Cashlink wird eingelöst"
+msgstr "Inaangkin ang Cashlink"
 
 #: src/components/LedgerUi.vue:305
 msgid "Click Connect"
-msgstr "Klicke auf Verbinden"
+msgstr "Pindutin ang Connect"
 
 #: src/views/CashlinkManage.vue:25
 msgid "Click to copy:"
-msgstr "Zum Kopieren klicken:"
+msgstr "Pindutin para kopyahin\\:"
 
 #: src/views/RequestError.vue:31
 msgid "Close"
-msgstr "Schließen"
+msgstr "Isarado"
 
 #: src/components/CheckoutCard.vue:125
 msgid "Collecting payment details"
-msgstr "Zahlungsdetails werden ermittelt"
+msgstr "Pagkolekta ng mga detalye sa pagbabayad"
 
 #: src/views/SetupSwapLedger.vue:991
 msgid "Confirm {outgoingOrIncoming} transaction on Ledger"
-msgstr "Bestätige {outgoingOrIncoming} Transaktion auf dem Ledger"
+msgstr "Kumpirmahin ang transaksyong {outgoingOrIncoming} sa Ledger"
 
 #: src/components/LedgerUi.vue:219
 msgid "Confirm Address"
-msgstr "Adresse bestätigen"
+msgstr ""
+"Kumpirmahin ang Address\n"
+" "
 
 #: src/views/SignTransactionLedger.vue:34
 msgid "Confirm Cashlink"
-msgstr "Cashlink bestätigen"
+msgstr "Kumpirmahin ang Cashlink"
 
 #: src/views/SetupSwapLedger.vue:5
 msgid "Confirm Swap"
-msgstr "Tausch bestätigen"
+msgstr "Kumpirmahin ang Pagpalit"
 
 #: src/components/LedgerUi.vue:222
 msgid "Confirm that the address on your Ledger matches {addressToConfirm}"
 msgstr ""
-"Bestätige, dass die Adresse auf deinem Ledger übereinstimmt mit "
-"{addressToConfirm}"
+"Kumpirmahin na ang address sa iyong mga tugma sa Ledger {addressToConfirm}"
 
 #: src/components/LedgerUi.vue:221
 msgid "Confirm the address on your Ledger"
-msgstr "Überprüfe die Adresse auf deinem Ledger"
+msgstr "Kumpirmahin ang adres sa iyong Ledger"
 
 #: src/components/LedgerUi.vue:240 src/views/SignBtcTransactionLedger.vue:4
 #: src/views/SignTransactionLedger.vue:35
 msgid "Confirm Transaction"
-msgstr "Transaktion bestätigen"
+msgstr "Kumpirmahin ang Transaksyon"
 
 #: src/components/LedgerUi.vue:241
 msgid "Confirm using your Ledger"
-msgstr "Bestätige mittels deines Ledgers"
+msgstr "Kumpirmahing ginagamit ang iyong Ledger"
 
 #: src/views/CashlinkReceive.vue:357
 msgid "Congrats, somebody gifted you a Nimiq Cashlink."
-msgstr "Glückwunsch! Jemand hat dir einen Nimiq Cashlink geschenkt. "
+msgstr "Congrats, may nagbigay sa iyo ng isang Nimiq Cashlink."
 
 #: src/views/CashlinkReceive.vue:356
 msgid "Congrats, you just opened a Nimiq Cashlink."
-msgstr "Glückwunsch! Du hast gerade einen Nimiq Cashlink geöffnet. "
+msgstr "Congrats, nagbukas ka lang ng isang Nimiq Cashlink."
 
 #: src/views/CashlinkReceive.vue:352
 msgid "Congrats, you received a Nimiq Gift Card."
-msgstr "Glückwunsch! Du hast eine Nimiq Geschenkkarte erhalten. "
+msgstr "Congrats, nakatanggap ka ng isang Nimiq Gift Card."
 
 #: src/components/LedgerUi.vue:39
 msgid "Connect"
-msgstr "Verbinden"
+msgstr "Kumonekta"
 
 #: src/components/LedgerUi.vue:313 src/components/OnboardingMenu.vue:5
 msgid "Connect Ledger"
-msgstr "Ledger verbinden"
+msgstr "Ikonekta ang Ledger"
 
 #: src/components/LedgerUi.vue:300
 msgid "Connect your Ledger Device"
-msgstr "Dein Ledger-Gerät verbinden"
+msgstr "Ikonekta ang iyong Ledger Device"
 
 #: src/components/OnboardingMenu.vue:6
 msgid "Connect your Ledger hardware wallet."
-msgstr "Verbinde deine Ledger-Hardware-Wallet."
+msgstr ""
 
 #: src/views/Migrate.vue:143 src/views/Migrate.vue:285
 msgid "Connecting to Keyguard..."
-msgstr "Verbinde zum Keyguard..."
+msgstr "Kumokonekta sa Keyguard ..."
 
 #: src/views/CashlinkManage.vue:133 src/views/CheckoutTransmission.vue:40
 msgid "Connecting to network..."
-msgstr "Verbinde zum Netzwerk..."
+msgstr "Kumokonekta sa network ..."
 
 #: src/views/CashlinkReceive.vue:235
 msgid "Connecting to Nimiq..."
-msgstr "Verbinde zu Nimiq..."
+msgstr "Kumokonekta sa Nimiq ..."
 
 #: src/views/LoginSuccess.vue:50
 msgid "Connecting..."
@@ -436,17 +431,17 @@ msgstr ""
 #: src/components/CheckoutCardNimiq.vue:289 src/views/CashlinkManage.vue:186
 #: src/views/CheckoutTransmission.vue:116
 msgid "Contacting seed nodes..."
-msgstr "Kontaktiere Seed Nodes..."
+msgstr "Pakikipag-ugnay sa mga node ng binhi ..."
 
 #. for safe and wallet add a note regarding contacts
 #: src/views/LogoutLedger.vue:9
 msgid "Contacts are not affected."
-msgstr "Kontakte sind nicht betroffen."
+msgstr "Ang mga contact ay hindi apektado."
 
 #: src/components/NotEnoughCookieSpace.vue:8 src/views/LoginSuccess.vue:186
 #: src/views/LoginSuccess.vue:220 src/views/SignupLedger.vue:143
 msgid "Continue"
-msgstr "Fortsetzen"
+msgstr "Magpatuloy"
 
 #: src/views/LoginSuccess.vue:11
 msgid "Continue to Wallet"
@@ -454,44 +449,45 @@ msgstr ""
 
 #: src/views/AddVestingContract.vue:56
 msgid "Contract added."
-msgstr "Vertrag hinzugefügt."
+msgstr "Idinagdag ang kontrata."
 
 #: src/views/AddVestingContract.vue:20
 msgid "Contract Information"
-msgstr "Vertragsdetails"
+msgstr "Impormasyon sa Kontrata"
 
 #: src/views/CashlinkCreate.vue:40
 msgid "Create a Cashlink"
-msgstr "Erstelle einen Cashlink"
+msgstr "Lumikha ng isang Cashlink"
 
 #: src/views/CashlinkReceive.vue:89
 msgid "Create account"
-msgstr "Konto erstellen"
+msgstr "Lumikha ng account"
 
 #: src/components/OnboardingMenu.vue:17
 msgid "Create Account"
-msgstr "Konto erstellen"
+msgstr "Lumikha ng account"
 
 #: src/views/CashlinkReceive.vue:109
 msgid "Create an account and claim your money."
-msgstr "Erstelle ein Konto und erhalte dein Geld. "
+msgstr "Lumikha ng isang account at i-claim ang iyong pera."
 
 #: src/views/Migrate.vue:32
 msgid "Create and scan QR codes to quickly share addresses."
 msgstr ""
-"Erstelle und scanne QR-Codes, um schnell Adressen mit anderen zu teilen."
+"Lumikha at mag-scan ng mga QR code upang mabilis na magbahagi ng mga "
+"address."
 
 #: src/views/CashlinkCreate.vue:78
 msgid "Create Cashlink"
-msgstr "Cashlink erstellen"
+msgstr "Lumikha ng Cashlink"
 
 #: src/views/SignupSuccess.vue:35
 msgid "Creating your Account"
-msgstr "Konto wird erstellt"
+msgstr "Lumilikha ng iyong Account"
 
 #: src/views/CashlinkManage.vue:229 src/views/SignTransactionLedger.vue:722
 msgid "Creating your Cashlink"
-msgstr "Cashlink wird erstellt"
+msgstr "Lumilikha ng iyong Cashlink"
 
 #: src/views/LoginSuccess.vue:66
 msgid "Detecting addresses..."
@@ -499,76 +495,76 @@ msgstr ""
 
 #: src/views/Migrate.vue:230
 msgid "Detecting vesting contracts..."
-msgstr "Vesting-Contracts werden gesucht..."
+msgstr "Nakikita ang mga kontrata sa vesting ..."
 
 #: src/views/Checkout.vue:52
 msgid "Disclaimer"
-msgstr "Haftungsausschluss"
+msgstr "Pagwawaksi"
 
 #: src/components/CheckoutCardExternal.vue:62
 #: src/components/CheckoutManualPaymentDetails.vue:32
 msgid "Don’t close this window until confirmation."
-msgstr "Schließe das Fenster erst nach Bestätigung."
+msgstr "Huwag isara ang window na ito hanggang sa kumpirmahin."
 
 #: src/views/CashlinkManage.vue:22
 msgid "Done"
-msgstr "Fertig"
+msgstr "Tapos na"
 
 #: src/views/CashlinkManage.vue:67
 msgid "Download"
-msgstr "Download"
+msgstr "I-download"
 
 #: src/components/CheckoutCardExternal.vue:105
 msgid "Enter manually"
-msgstr "Manuell eingeben"
+msgstr "Manu-manong ipasok"
 
 #: src/views/AddVestingContract.vue:45
 msgid "Enter the address of a vesting contract."
-msgstr "Gib die Adresse eines Vesting-Vertrages ein."
+msgstr "Ipasok ang address ng isang vesting contract."
 
 #: src/components/LedgerUi.vue:301
 msgid "Enter your PIN"
-msgstr "Gib deine PIN ein"
+msgstr "Ipasok ang iyong PIN"
 
 #: src/views/CashlinkCreate.vue:166
 msgid "express"
-msgstr "express"
+msgstr "ipahayag"
 
 #: src/views/SignupLedger.vue:120
 msgid "Failed to fetch addresses. Retrying..."
-msgstr "Adressen konnten nicht geladen werden. Versuche erneut..."
+msgstr "Nabigong kumuha ng mga address. Sinusubukang muli ..."
 
 #: src/views/SignBtcTransactionLedger.vue:30
 #: src/views/SignTransactionLedger.vue:70
 msgid "fee"
-msgstr "Gebühr"
+msgstr "bayad"
 
 #: src/components/CheckoutCardBitcoin.vue:47
 #: src/components/CheckoutCardNimiqExternal.vue:47
 #: src/components/CurrencyInfo.vue:15 src/views/SetupSwapLedger.vue:287
 #: src/views/SetupSwapLedger.vue:303
 msgid "Fee"
-msgstr "Gebühr"
+msgstr "Bayad"
 
 #: src/views/LoginSuccess.vue:139 src/views/SignupLedger.vue:108
 msgid "Fetching Addresses Failed"
-msgstr "Laden der Adressen fehlgeschlagen"
+msgstr "Nabigo ang Pagkuha ng Mga Address"
 
 #: src/views/SetupSwapSuccess.vue:651
 msgid "Fetching Bitcoin HTLC..."
-msgstr "Rufe den Bitcoin-HTLC ab..."
+msgstr ""
 
 #: src/views/AddVestingContract.vue:16
 msgid "Fetching contract information..."
-msgstr "Lade Vertragsadressen"
+msgstr "Kinukuha ang impormasyon sa kontrata ..."
 
 #: src/views/SetupSwapSuccess.vue:659
 msgid "Fetching swap data failed: {error}"
-msgstr "Laden der Tausch-Daten fehlgeschlagen: {error}"
+msgstr "Nabigo ang pagkuha ng data ng pagpapalit: {error}"
 
 #: src/views/SetupSwapSuccess.vue:647
 msgid "Fetching swap data..."
-msgstr "Lade Tausch-Daten..."
+msgstr "Kinukuha ang data ng pagpapalit ..."
 
 #: src/components/LedgerUi.vue:235 src/views/ActivateBitcoinSuccess.vue:104
 #: src/views/ActivatePolygonSuccess.vue:111
@@ -576,217 +572,218 @@ msgstr "Lade Tausch-Daten..."
 #: src/views/BitcoinSyncBaseView.vue:48 src/views/LoginSuccess.vue:49
 #: src/views/SignupLedger.vue:104
 msgid "Fetching your Addresses"
-msgstr "Lade deine Adressen"
+msgstr "Kinukuha ang iyong mga Adres"
 
 #: src/views/SignupLedger.vue:31
 msgid "Finish"
-msgstr "Abschließen"
+msgstr "Tapos na"
 
 #: src/views/CashlinkCreate.vue:156
 msgid "free"
-msgstr "gratis"
+msgstr "libre"
 
 #: src/components/CheckoutCardEthereum.vue:45
 msgid "Gas Limit"
-msgstr "Gas-Limit"
+msgstr "Hangganan ng Gas"
 
 #: src/components/CheckoutCardEthereum.vue:34
 msgid "Gas Price"
-msgstr "Gas-Preis"
+msgstr "Hangganan ng Gas"
 
 #: src/components/CheckoutCardNimiq.vue:72
 msgid "Get NIM"
-msgstr "Hol dir NIM"
+msgstr "Kunin NIM"
 
 #: src/components/CheckoutCard.vue:174 src/views/RequestError.vue:31
 msgid "Go back"
-msgstr "Zurück"
+msgstr "Bumalik ka"
 
 #: src/views/CashlinkReceive.vue:16
 msgid "Got it"
-msgstr "Alles klar"
+msgstr "Nakuha ko"
 
 #: src/lib/LabelingMachine.ts:35
 msgid "Green Account"
-msgstr "Grünes Konto"
+msgstr "Berdeng Account"
 
 #: src/lib/LabelingMachine.ts:17
 msgid "Green Address"
-msgstr "Grüne Adresse"
+msgstr "Berdeng Adres"
 
 #: src/views/CashlinkReceive.vue:345
 msgid "Happy birthday!"
-msgstr "Herzlichen Glückwunsch zum Geburtstag!"
+msgstr "Maligayang kaarawan!"
 
 #: src/views/CashlinkReceive.vue:343
 msgid "Happy Easter!"
-msgstr "Frohe Ostern!"
+msgstr "Maligayang Pasko ng Pagkabuhay!"
 
 #: src/views/CashlinkManage.vue:119
 msgid "Here is your Nimiq Cashlink!"
-msgstr "Hier ist dein Nimiq Cashlink!"
+msgstr "Narito ang iyong Nimiq Cashlink!"
 
 #: src/components/CheckoutCardNimiq.vue:51
 msgid ""
 "Imagine if paying with\n"
 "crypto was easy"
 msgstr ""
-"Stell Dir vor, bezahlen mit\n"
-"Krypto wäre einfach"
+"Isipin kung nagbabayad\n"
+"madali ang crypto"
 
 #: src/views/LoginSuccess.vue:199 src/views/SignupLedger.vue:124
 msgid ""
 "Imported {count} address so far... | Imported {count} addresses so far..."
 msgstr ""
-"{count} Adresse bisher importiert... | {count} Adressen bisher importiert..."
+"Na-import ang {count} address sa ngayon ... | Na-import ang {count} mga "
+"address sa ngayon ..."
 
 #: src/views/SetupSwapLedger.vue:994
 msgid "incoming"
-msgstr "eingehende"
+msgstr "papasok"
 
 #: src/components/CheckoutCard.vue:193
 msgid "Incomplete payment"
-msgstr "Unvollständige Bezahlung"
+msgstr "Hindi kumpletong pagbabayad"
 
 #: src/lib/LabelingMachine.ts:30
 msgid "Indigo Account"
-msgstr "Indigoblaues Konto"
+msgstr "Lila na Account"
 
 #: src/lib/LabelingMachine.ts:12
 msgid "Indigo Address"
-msgstr "Indigoblaue Adresse"
+msgstr "Lila na Adres"
 
 #: src/views/RequestError.vue:6
 msgid "Invalid request"
-msgstr "Ungültige Anfrage"
+msgstr "Di-wastong Hiling"
 
 #: src/views/CashlinkCreate.vue:69
 msgid ""
 "It won’t be part of the public Blockchain and might get lost after the "
 "Cashlink was claimed."
 msgstr ""
-"Es wird nicht Teil der öffentlichen Blockchain und kann verloren gehen "
-"nachdem der Cashlink eingelöst wurde. "
+"Hindi ito magiging bahagi ng pampublikong Blockchain at maaaring mawala "
+"pagkatapos na angkinin ang Cashlink."
 
 #: src/lib/LabelingMachine.ts:42
 msgid "Ledger Account"
-msgstr "Ledger-Konto"
+msgstr "Account sa Ledger"
 
 #: src/views/ErrorHandlerUnsupportedLedger.vue:44
 msgid ""
 "Ledger accounts cannot be exported. Please refer to your 24 words backup you"
 " created when setting up your device."
 msgstr ""
-"Ledger-Konten können nicht exportiert werden. Bitte greife auf deine "
-"24-Worte-Sicherung zurück, welche du erstellt hast, als du dein Ledger Gerät"
-" eingerichtet hast. "
+"Hindi mai-export ang mga Ledger account. Mangyaring mag-refer sa iyong 24 na"
+" salita backup na nilikha mo kapag nagse-set up ng iyong aparato."
 
 #: src/components/LedgerUi.vue:270
 msgid "Ledger not supported by browser."
-msgstr "Ledger wird von deinem Browser nicht unterstützt."
+msgstr "Hindi sinusuportahan ng browser ang Ledger."
 
 #: src/lib/LabelingMachine.ts:46
 msgid "Legacy Account"
-msgstr "Legacy-Konto"
+msgstr "Legacy Account"
 
 #: src/components/LedgerUi.vue:202
 msgid "Loading failed, retrying..."
-msgstr "Laden fehlgeschlagen, versuche erneut..."
+msgstr "Nabigo ang paglo-load, muling sinusubukan ..."
 
 #: src/views/LogoutLedger.vue:14
 msgid "Log Out"
-msgstr "Ausloggen"
+msgstr "Mag-log Out"
 
 #: src/views/LogoutLedger.vue:7
 msgid "Logging out will delete custom settings and names for this account."
 msgstr ""
-"Beim Ausloggen werden benutzerdefinierte Einstellungen und Beschriftungen "
-"für dieses Konto gelöscht. "
+"Tatanggalin ng pag-log out ang mga pasadyang setting at pangalan para sa "
+"account na ito."
 
 #: src/components/CheckoutCardNimiq.vue:60
 #: src/components/OnboardingMenu.vue:11
 msgid "Login"
-msgstr "Einloggen"
+msgstr "Mag log in"
 
 #: src/views/ExportSuccess.vue:62
 msgid "Login File saved!"
-msgstr "Login Datei gespeichert!"
+msgstr "Na-save na ang Login File!"
 
 #: src/views/ChooseAddress.vue:67
 msgid "Login to another account"
-msgstr "Melde dich in einem anderen Konto an"
+msgstr ""
 
 #: src/views/CashlinkReceive.vue:91
 msgid "Login to existing account"
-msgstr "In vorhandenes Konto einloggen"
+msgstr "Mag-login sa mayroon nang account"
 
 #: src/views/OnboardingSelector.vue:143
 msgid "Login to fund your Cashlink"
-msgstr "Einloggen, um Cashlink aufzuladen"
+msgstr "Mag-login upang pondohan ang iyong Cashlink"
 
 #: src/views/ErrorHandlerUnsupportedLedger.vue:42
 msgid "Message signing is not yet supported for Ledgers."
-msgstr "Nachrichten-Signierung funktioniert noch nicht für Ledger-Geräte."
+msgstr "Ang pag-sign ng mensahe ay hindi pa suportado para sa Ledgers."
 
 #: src/views/LogoutLedger.vue:4
 msgid "Mind the loss of settings"
-msgstr "Nicht vergessen, dass Einstellungen gelöscht werden"
+msgstr "Isip ang pagkawala ng mga setting"
 
 #: src/components/IdenticonSelector.vue:12
 msgid "Mixing colors"
-msgstr "Farbauswahl"
+msgstr "Paghahalo ng mga kulay"
 
 #: src/components/IdenticonSelector.vue:24
 msgid "More Avatars"
-msgstr "Mehr Avatare"
+msgstr "Marami pang Mga Avatar"
 
 #: src/views/Migrate.vue:78
 msgid "My Backups are safe."
-msgstr "Meine Backups sind an einem sicheren Ort."
+msgstr "Ang aking mga Backup ay ligtas."
 
 #: src/views/AddAccountSelection.vue:83
 msgid "New Address added to your Account."
-msgstr "Neue Adresse zum Konto hinzugefügt."
+msgstr "Nagdagdag ng bagong Address sa iyong Account."
 
 #: src/views/CashlinkCreate.vue:55 src/views/SignTransactionLedger.vue:327
 msgid "New Cashlink"
-msgstr "Neuer Cashlink"
+msgstr "Bagong Cashlink"
 
 #: src/views/SetupSwapLedger.vue:64
 msgid "NIM network fee"
-msgstr "NIM-Netzwerkgebühren"
+msgstr "Bayad sa network ng NIM"
 
 #: src/views/Migrate.vue:23
 msgid "Nimiq implements the ImageWallet standard with the Nimiq Login File."
 msgstr ""
-"Nimiq implementiert den ImageWallet-Standard mit der Nimiq Login-Datei."
+"Ipinatutupad ni Nimiq ang pamantayan ng ImageWallet gamit ang Nimiq Login "
+"File."
 
 #: src/views/Migrate.vue:8
 msgid ""
 "Nimiq just got better! The new design comes with a batch of new features."
 msgstr ""
-"Nimiq ist jetzt noch besser! Das neue Design bietet eine Reihe neuer "
-"Funktionen."
+"Naging gumaling lang si Nimiq! Ang bagong disenyo ay may kasamang isang "
+"pangkat ng mga bagong tampok."
 
 #: src/components/CurrencyInfo.vue:9
 msgid "No"
-msgstr "Keine"
+msgstr "Hindi"
 
 #: src/components/CheckoutCardExternal.vue:97
 msgid "No App found"
-msgstr "App nicht gefunden"
+msgstr "Walang nahanap na App"
 
 #: src/components/CheckoutCardNimiq.vue:70
 msgid "None of your available addresses has sufficient balance."
-msgstr "Keine deiner Adressen verfügt über ausreichendes Guthaben."
+msgstr "Wala sa iyong mga magagamit na address ang may sapat na balanse."
 
 #: src/views/Migrate.vue:224
 msgid "Nothing to update."
-msgstr "Nichts zu aktualisieren."
+msgstr "Wala ng maiupdate."
 
 #: src/views/SetupSwapLedger.vue:52
 msgid "OASIS service fee"
-msgstr "OASIS-Servicegebühr"
+msgstr "Bayad sa serbisyo ng OASIS"
 
 #: src/views/ErrorHandlerUnsupportedLedger.vue:4
 #: src/views/RefundSwapLedger.vue:349
@@ -795,120 +792,120 @@ msgstr "Ok"
 
 #: src/views/Migrate.vue:18
 msgid "One account can now have multiple addresses."
-msgstr "Ein Konto kann jetzt mehrere Adressen haben."
+msgstr "Ang isang account ay maaari nang magkaroon ng maraming mga address."
 
 #: src/components/LedgerUi.vue:303
 msgid "Open the {app} App"
-msgstr "Öffne die {app}-App"
+msgstr "Buksan ang {app} App"
 
 #: src/components/CheckoutCardExternal.vue:101
 msgid "Open Wallet App"
-msgstr "Öffne die Wallet App"
+msgstr "Buksan ang Wallet App"
 
 #: src/lib/LabelingMachine.ts:27
 msgid "Orange Account"
-msgstr "Oranges Konto"
+msgstr "Kahel na Account"
 
 #: src/lib/LabelingMachine.ts:9
 msgid "Orange Address"
-msgstr "Orange Adresse"
+msgstr "Kahel na Adres"
 
 #: src/components/CheckoutCardNimiq.vue:64
 #: src/components/CheckoutCardNimiq.vue:88
 msgid "Other wallets"
-msgstr "Andere Wallets"
+msgstr "Mga ibang pitaka"
 
 #: src/views/SetupSwapLedger.vue:993
 msgid "outgoing"
-msgstr "ausgehende"
+msgstr "palabas"
 
 #: src/views/AddVestingContract.vue:22
 msgid "Owner:"
-msgstr "Eigentümer:"
+msgstr "May-ari:"
 
 #: src/components/CheckoutCardExternal.vue:110
 msgid "Pay with {currencyFullName}"
-msgstr "Bezahle mit {currencyFullName}"
+msgstr "Magbayad gamit ang {currencyFullName}"
 
 #: src/views/OnboardingSelector.vue:141
 msgid "Pay with Nimiq"
-msgstr "Bezahle mit Nimiq"
+msgstr "Bayaran kay Nimiq"
 
 #: src/components/CheckoutCardNimiqExternal.vue:54
 msgid "Payment Reference"
-msgstr "Ödeme referansı"
+msgstr "Reperens ng Binayad"
 
 #: src/components/CheckoutCard.vue:185
 msgid "Payment successful"
-msgstr "Zahlung erfolgreich"
+msgstr "Matagumpay ang transaksiyon"
 
 #: src/views/CheckoutTransmission.vue:124
 msgid "Payment successful."
-msgstr "Zahlung erfolgreich."
+msgstr "Matagumpay ang transaksiyon"
 
 #: src/lib/LabelingMachine.ts:34
 msgid "Pink Account"
-msgstr "Pinkes Konto"
+msgstr "Rosas na Account"
 
 #: src/lib/LabelingMachine.ts:16
 msgid "Pink Address"
-msgstr "Pinke Adresse"
+msgstr "Rosas na Adres"
 
 #: src/components/LedgerUi.vue:253
 msgid "Please cancel the previous request on your Ledger."
-msgstr "Bitte breche die vorherige Anfrage auf deinem Ledger ab."
+msgstr "Mangyaring kanselahin ang nakaraang kahilingan sa iyong Ledger."
 
 #: src/components/LedgerUi.vue:191
 msgid "Please cancel the request on your Ledger"
-msgstr "Bitte breche die Anfrage auf deinem Ledger ab"
+msgstr "Mangyaring kanselahin ang kahilingan sa iyong Ledger"
 
 #: src/components/CheckoutCard.vue:172
 msgid "Please go back and restart the process."
-msgstr "Bitte gehe zurück und starte den Prozess erneut."
+msgstr "Mangyaring bumalik at muling simulan ang proseso."
 
 #: src/views/SignTransactionLedger.vue:89
 msgid "Please go back to the shop and restart the process."
-msgstr "Bitte gehe zurück zum Shop und starte den Vorgang erneut."
+msgstr "Mangyaring bumalik at muling simulan ang proseso."
 
 #: src/components/CheckoutCardExternal.vue:98
 msgid "Please send the transaction manually"
-msgstr "Bitte sende die Transaktion manuell"
+msgstr "Mangyaring ipadala ang transaksyon nang manu-mano"
 
 #: src/views/Migrate.vue:42
 msgid "Prepare for update"
-msgstr "Update vorbereiten"
+msgstr "Maghanda para sa pag-update"
 
 #: src/views/SetupSwapSuccess.vue:640
 msgid "Preparing Swap"
-msgstr "Tausch wird vorbereitet"
+msgstr "Paghahanda ng Pagpalit"
 
 #: src/views/CheckoutTransmission.vue:126
 msgid "Processing your payment"
-msgstr "Zahlung wird verarbeitet"
+msgstr "Pinoproseso ang iyong bayad"
 
 #: src/lib/LabelingMachine.ts:32
 msgid "Purple Account"
-msgstr "Lila Konto"
+msgstr "Ubeng Account"
 
 #: src/lib/LabelingMachine.ts:14
 msgid "Purple Address"
-msgstr "Lila Adresse"
+msgstr "Ubeng Adres"
 
 #: src/views/ExportSuccess.vue:65
 msgid "Recovery Words exported!"
-msgstr "Wiederherstellungswörter exportiert!"
+msgstr "Na-export ang mga salitang pang-backup!"
 
 #: src/lib/LabelingMachine.ts:28
 msgid "Red Account"
-msgstr "Rotes Konto"
+msgstr "Pulang Account"
 
 #: src/lib/LabelingMachine.ts:10
 msgid "Red Address"
-msgstr "Rote Adresse"
+msgstr "Pulang Adres"
 
 #: src/views/RefundSwapLedger.vue:319
 msgid "Refund Failed"
-msgstr "Erstattung fehlgeschlagen"
+msgstr "Hindi umusad ang pag-refund"
 
 #: src/views/RefundSwapLedger.vue:338
 msgid ""
@@ -916,85 +913,84 @@ msgid ""
 "Please use the device and browser you originally created the Swap with. "
 "Otherwise please try again in the future."
 msgstr ""
-"Die Rückerstattung dieses Tauschs wird derzeit auf diesem Gerät oder Browser"
-" nicht unterstützt. Bitte verwende das Gerät und den Browser, mit dem du den"
-" Tausch ursprünglich erstellt hast. Andernfalls versuche es bitte in Zukunft"
-" erneut."
+"Hindi suportado ang browser o kagamitan na ito sa pag-refund ng palitan. "
+"Maaring gamitin lang ang kagamitan o browser kung saan mo unang ginawan ng "
+"Swap. O kaya'y subukan ulit ito sa susunod."
 
 #: src/views/CashlinkManage.vue:10 src/views/CheckoutTransmission.vue:9
 msgid "Reload"
-msgstr "Neu laden"
+msgstr "Reload"
 
 #: src/views/Rename.vue:4
 msgid "Rename Account"
-msgstr "Konto umbennen"
+msgstr "Palitan ang pangalan ng Account"
 
 #: src/components/LedgerUi.vue:287
 msgid "Request failed"
-msgstr "Anfrage fehlgeschlagen"
+msgstr "Nabigong kahilingan"
 
 #: src/components/LedgerUi.vue:288
 msgid "Request failed: "
-msgstr "Anfrage fehlgeschlagen:"
+msgstr "Nabigong kahilingan:"
 
 #: src/components/CheckoutCardNimiq.vue:293
 msgid "Requesting balances..."
-msgstr "Ermittle Guthaben..."
+msgstr "Humihiling ng mga balanse ..."
 
 #: src/components/CheckoutCard.vue:197
 msgid "Restart Payment"
-msgstr "Zahlung neu starten"
+msgstr "I-restart ang Pagbabayad"
 
 #: src/views/Migrate.vue:219
 msgid "Retrieving your old accounts..."
-msgstr "Rufe alte Konten ab..."
+msgstr "Kinukuha ang iyong mga lumang account ..."
 
 #: src/views/ActivatePolygonSuccess.vue:139
 #: src/views/BitcoinSyncBaseView.vue:72 src/views/LoginSuccess.vue:141
 #: src/views/SetupSwapSuccess.vue:669 src/views/SignupLedger.vue:145
 msgid "Retry"
-msgstr "Noch einmal"
+msgstr "Subukang muli"
 
 #: src/views/Rename.vue:18
 msgid "Save"
-msgstr "Speichern"
+msgstr "Save"
 
 #: src/components/CheckoutCardExternal.vue:59
 #: src/components/CheckoutManualPaymentDetails.vue:28
 msgid "Send your transaction"
-msgstr "Transaktion senden"
+msgstr "Ipadala ang iyong transaksyon"
 
 #: src/views/SignTransactionLedger.vue:723
 msgid "Sending Transaction"
-msgstr "Sende Transaktion"
+msgstr "Pagpapadala ng Transaksyon"
 
 #: src/views/CashlinkManage.vue:190 src/views/CheckoutTransmission.vue:118
 msgid "Sending transaction..."
-msgstr "Sende Transaktion..."
+msgstr "Nagpapadala ng transaksyon ..."
 
 #: src/components/OnboardingMenu.vue:18
 msgid "Set a password. Get the Login file. Done."
-msgstr "Wähle ein Passwort. Erhalte eine Login-Datei. Fertig."
+msgstr ""
 
 #: src/views/CashlinkCreate.vue:25
 msgid "Set fee"
-msgstr "Gebühr festlegen"
+msgstr "Itakda ang bayad"
 
 #: src/views/CashlinkManage.vue:36
 msgid "Share"
-msgstr "Teilen"
+msgstr "Magbahagi"
 
 #: src/views/SignMessage.vue:5
 msgid "Sign Message"
-msgstr "Nachricht signieren"
+msgstr "Mensahe sa Pag-sign"
 
 #: src/views/SetupSwapSuccess.vue:649
 msgid "Signing transactions..."
-msgstr "Signiere Transaktionen..."
+msgstr "Pag-sign ng mga transaksyon ..."
 
 #: src/lib/LabelingMachine.ts:58
 msgid "Single Accounts"
-msgstr "Einzeladresskonten"
+msgstr "Mga Single Account"
 
 #: src/views/LoginSuccess.vue:15
 msgid "Skip"
@@ -1002,20 +998,19 @@ msgstr ""
 
 #: src/views/CashlinkManage.vue:228 src/views/CheckoutTransmission.vue:125
 msgid "Something went wrong"
-msgstr "Etwas ist schief gelaufen"
+msgstr "May nangyaring mali"
 
 #: src/views/RequestError.vue:7
 msgid "Something went wrong with your request. Please try again."
-msgstr ""
-"Bei deiner Anfrage ist ein Fehler aufgetreten. Bitte versuche es erneut."
+msgstr "Nagkaproblema sa iyong hiling. Ulitin mo ulit."
 
 #: src/views/LoginSuccess.vue:182
 msgid "Space exceeded"
-msgstr "Speicher ausgeschöpft"
+msgstr "Lumagpas sa puwang"
 
 #: src/views/CashlinkCreate.vue:19
 msgid "Speed up your transaction"
-msgstr "Beschleunige deine Transaktion"
+msgstr "Bilisan ang iyong transaksyon"
 
 #: src/views/SignStaking.vue:39 src/views/SignStaking.vue:43
 msgid "Staking Contract"
@@ -1023,7 +1018,7 @@ msgstr ""
 
 #: src/views/CashlinkCreate.vue:161
 msgid "standard"
-msgstr "Standard"
+msgstr "standard"
 
 #: src/views/AddVestingContract.vue:32
 msgid "Start Time:"
@@ -1031,36 +1026,36 @@ msgstr ""
 
 #: src/views/Migrate.vue:233
 msgid "Storing your new accounts..."
-msgstr "Neue Konten werden gespeichert..."
+msgstr "Ang pag-iimbak ng iyong mga bagong account ..."
 
 #: src/views/SetupSwapLedger.vue:258
 msgid "Swap authorized"
-msgstr "Tausch autorisiert"
+msgstr "Ang palitan ay pinahintulutan"
 
 #: src/views/SetupSwapLedger.vue:73
 msgid "Swap fee"
-msgstr "Tauschgebühr"
+msgstr "Pagpalit ng bayad"
 
 #: src/views/SetupSwapLedger.vue:855 src/views/SetupSwapSuccess.vue:636
 msgid "Swap Setup Failed"
-msgstr "Tauschvorgang fehlgeschlagen"
+msgstr "Nabigo ang Pag-setup ng Ipagpalit"
 
 #: src/views/RefundSwapLedger.vue:317
 msgid "Syncing"
-msgstr "Synchronisiere"
+msgstr "Nagsi-sync"
 
 #: src/components/CheckoutCardNimiq.vue:291
 #: src/views/AddVestingContract.vue:11 src/views/CashlinkManage.vue:188
 #: src/views/CheckoutTransmission.vue:117
 msgid "Syncing consensus..."
-msgstr "Konsensus wird synchronisiert..."
+msgstr "Nagsi-sync ng pinagkasunduan ..."
 
 #: src/views/ActivatePolygonSuccess.vue:113
 #: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapLedger.vue:857
 #: src/views/SetupSwapSuccess.vue:638
 #: src/views/SignBtcTransactionLedger.vue:118
 msgid "Syncing Failed"
-msgstr "Synchronisierung fehlgeschlagen"
+msgstr "Nabigo ang pag-sync"
 
 #: src/views/LoginSuccess.vue:65
 msgid "Syncing to network..."
@@ -1068,44 +1063,45 @@ msgstr ""
 
 #: src/views/RefundSwapLedger.vue:333
 msgid "Syncing with {currency} network failed: {error}"
-msgstr "Synchronisierung mit {currency}-Netzwerk fehlgeschlagen: {error}"
+msgstr "Nabigo ang pag-sync sa network na {currency}: {error}"
 
 #: src/views/RefundSwapLedger.vue:327
 msgid "Syncing with {currency} network..."
-msgstr "Synchronisiere mit {currency}-Netzwerk..."
+msgstr "Nagsi-sync sa network na {currency} ..."
 
 #: src/views/BitcoinSyncBaseView.vue:65
 msgid "Syncing with Bitcoin network failed: {error}"
-msgstr "Synchronisierung mit Bitcoin-Netzwerk fehlgeschlagen: {error}"
+msgstr "Nabigo ang pag-sync sa network ng Bitcoin: {error}"
 
 #: src/views/BitcoinSyncBaseView.vue:58 src/views/SetupSwapLedger.vue:867
 msgid "Syncing with Bitcoin network..."
-msgstr "Synchronisiere mit dem Bitcoin-Netzwerk..."
+msgstr "Nagsi-sync sa network ng Bitcoin ..."
 
 #: src/views/ActivatePolygonSuccess.vue:134
 msgid "Syncing with Polygon network failed: {error}"
-msgstr ""
-"Die Synchronisierung mit dem Polygon-Netzwerk ist fehlgeschlagen: {error}"
+msgstr "Nabigo ang pag-sync sa network ng Polygon: {error}"
 
 #: src/views/ActivatePolygonSuccess.vue:129
 msgid "Syncing with Polygon network..."
-msgstr "Synchronisierung mit dem Polygon-Netzwerk..."
+msgstr "Nagsi-sync sa network ng Polygon ..."
 
 #: src/views/LoginSuccess.vue:140 src/views/SignupLedger.vue:134
 msgid "Syncing with the network failed: {error}"
-msgstr "Synchronisierung mit Netzwerk fehlgeschlagen: {error}"
+msgstr "Nabigo ang pag-sync sa network: {error}"
 
 #: src/lib/LabelingMachine.ts:33
 msgid "Teal Account"
-msgstr "Türkises Konto"
+msgstr "Teal na Account"
 
 #: src/lib/LabelingMachine.ts:15
 msgid "Teal Address"
-msgstr "Türkise Adresse"
+msgstr "Teal na Adres"
 
 #: src/components/LedgerUi.vue:282
 msgid "The connected wallet or Ledger is not the one this account belongs to."
-msgstr "Das Konto gehört nicht zum verbundenen Ledger oder Wallet."
+msgstr ""
+"Ang nakakonektang wallet o Ledger ay hindi ang pagmamay-ari ng account na "
+"ito."
 
 #: src/i18n/i18n-setup.ts:64
 msgid ""
@@ -1113,41 +1109,41 @@ msgid ""
 "translations? Otherwise, some translations might not be updated "
 "automatically. ({oldLang} to {newLang})"
 msgstr ""
-"Die Anzeigesprache wurde geändert. Möchtest du die Seite neu laden, um alle "
-"Übersetzungen zu aktualisieren? Andernfalls werden einige Übersetzungen "
-"möglicherweise nicht automatisch aktualisiert. ({oldLang} bis {newLang})"
+"Ang display wika ay nagbago. Nais mo bang i-reload ang pahina upang ma-"
+"update ang lahat ng mga pagsasalin? Kung hindi man, ang ilang mga pagsasalin"
+" ay maaaring hindi awtomatikong nai-update. ({oldLang} hanggang {newLang})"
 
 #: src/components/CheckoutCard.vue:171 src/views/SignTransactionLedger.vue:729
 msgid "The offer expired."
-msgstr "Das Angebot ist abgelaufen."
+msgstr "Nag-expire na ang alok."
 
 #: src/views/Migrate.vue:50
 msgid ""
 "The update is easy, fast and secure. Still – it’s a good time to check on "
 "your Recovery Words."
 msgstr ""
-"Das Update ist einfach, schnell und sicher. Trotzdem ist jetzt ein guter "
-"Zeitpunkt, sicherzustellen dass du deine Wiederherstellungswörter hast."
+"Ang pag-update ay madali, mabilis at ligtas. Pa rin - magandang panahon "
+"upang suriin ang iyong mga salitang pang-backup."
 
 #: src/views/Migrate.vue:37
 msgid "There's much more. Read the full article"
-msgstr "Aber es gibt noch viel mehr. Lies den vollständigen Artikel"
+msgstr "Marami pa. Basahin ang buong artikulo"
 
 #: src/views/CashlinkReceive.vue:303
 msgid "This Cashlink has already been claimed."
-msgstr "Dieser Cashlink wurde bereits benutzt."
+msgstr "Ang Cashlink na ito ay na-claim na."
 
 #: src/views/CashlinkReceive.vue:208
 msgid "This is not a valid Cashlink, sorry."
-msgstr "Dies ist leider kein gültiger Cashlink."
+msgstr "Hindi ito wastong Cashlink, paumanhin."
 
 #: src/views/SignupLedger.vue:30
 msgid "This is your account with your first address in it."
-msgstr "Dies ist dein Konto mit deiner ersten Adresse."
+msgstr "Ito ang iyong account na mayroong iyong unang adres dito."
 
 #: src/views/CashlinkCreate.vue:68
 msgid "This message will be stored in the Cashlink."
-msgstr "Diese Nachricht wird im Cashlink gespeichert."
+msgstr "Itatago ang mensaheng ito sa Cashlink."
 
 #: src/views/Checkout.vue:53
 msgid ""
@@ -1156,22 +1152,23 @@ msgid ""
 "fulfillment for payment are sole responsibility of those two respective "
 "parties."
 msgstr ""
-"Diese Nimiq Benutzerschnittstelle hält deine Geldmittel zu keinem Zeitpunkt "
-"sondern verbindet Zahlungssender und -empfänger direkt (P2P). Die Bezahlung "
-"sowie Lieferung für die Bezahlung liegen einzig in der Verantwortung dieser "
-"zwei Teilnehmer."
+"Ang interface ng Nimiq na ito ay hindi tagapag-ingat at nag-iisa lamang "
+"ginagamit upang tulay ang nagpadala ng pagbabayad na may tatanggap ng "
+"pagbabayad nang direkta (P2P). Ang pagbabayad at maihahatid na katuparan "
+"para sa pagbabayad ay solong responsibilidad ng dalawang magkatawang "
+"partido."
 
 #: src/views/ErrorHandlerUnsupportedLedger.vue:49
 msgid "This operation is not supported for Ledgers."
-msgstr "Dieser Vorgang wird für Ledger nicht unterstützt."
+msgstr "Ang operasyon na ito ay hindi suportado para sa Ledgers."
 
 #: src/views/SetupSwapLedger.vue:25
 msgid "This rate includes the swap fee."
-msgstr "Dieser Kurs beinhaltet die Tauschgebühr."
+msgstr "Kasama sa rate na ito ang swap fee."
 
 #: src/views/Migrate.vue:6
 msgid "Time to grow"
-msgstr "Zeit für Verbessungen"
+msgstr "Oras na lumago"
 
 #: src/views/AddVestingContract.vue:36
 msgid "Time/Step:"
@@ -1181,42 +1178,42 @@ msgstr ""
 msgid ""
 "To change the PIN of your Ledger please go to the settings on your device."
 msgstr ""
-"Um die PIN deines Ledgers zu ändern, nutze bitte die Einstellungen direkt "
-"auf deinem Gerät."
+"Upang baguhin ang PIN ng iyong Ledger mangyaring pumunta sa mga setting sa "
+"iyong aparato."
 
 #: src/views/SetupSwapLedger.vue:86
 msgid "Total fees"
-msgstr "Gesamtgebühren"
+msgstr "Kabuuang bayarin"
 
 #: src/views/CashlinkManage.vue:211 src/views/CheckoutTransmission.vue:107
 msgid "Transaction could not be relayed"
-msgstr "Die Transaktion konnte nicht weitergeleitet werden"
+msgstr "Hindi mailagay ang transaksyon"
 
 #: src/views/CashlinkManage.vue:209 src/views/CheckoutTransmission.vue:105
 msgid "Transaction is expired"
-msgstr "Transaktion ist abgelaufen"
+msgstr "Nag-expire na ang transaksyon"
 
 #: src/views/SignTransactionLedger.vue:727
 msgid "Transaction Sent"
-msgstr "Transaktion gesendet"
+msgstr "Naipadala ang Transaksyon"
 
 #: src/views/SignBtcTransactionLedger.vue:117
 #: src/views/SignTransactionLedger.vue:726
 msgid "Transaction Signed"
-msgstr "Transaktion signiert"
+msgstr "Nilagdaan ang Transaksyon"
 
 #: src/views/Migrate.vue:93
 msgid "Try again"
-msgstr "Versuch es noch einmal"
+msgstr "Subukang muli"
 
 #: src/components/NotEnoughCookieSpace.vue:7
 msgid ""
 "Unfortunately, due to restrictions of Safari you cannot add more accounts "
 "and/or addresses. Please log out of unused accounts to free up space."
 msgstr ""
-"Aufgrund von Einschränkungen des Safari-Browsers kannst du leider keine "
-"weiteren Konten und/oder Adressen hinzufügen. Bitte melde dich von nicht "
-"verwendeten Konten ab, um Speicherplatz freizugeben."
+"Sa kasamaang palad, dahil sa mga paghihigpit ng Safari hindi ka maaaring "
+"magdagdag ng higit pang mga account at / o mga address. Mangyaring mag-log "
+"out sa mga hindi nagamit na account upang magbakante ng puwang."
 
 #: src/views/LoginSuccess.vue:184
 msgid ""
@@ -1224,65 +1221,67 @@ msgid ""
 "cannot be stored properly. Please free up space by logging out of other "
 "accounts."
 msgstr ""
-"Leider kann dieses Konto aufgrund von Speicherplatzbeschränkungen des "
-"Safari-Browsers sowie von IOS nicht ordnungsgemäß gespeichert werden. Bitte "
-"gebe Speicherplatz frei indem du dich von anderen Konten abmeldest."
+"Sa kasamaang palad, dahil sa mga paghihigpit sa puwang ng Safari at IOS, ang"
+" account na ito ay hindi maimbak nang maayos. Mangyaring magbakante ng "
+"puwang sa pamamagitan ng pag-log out sa iba pang mga account."
 
 #: src/views/SignBtcTransactionLedger.vue:9
 msgid "Unlabeled"
-msgstr "Unbenannt"
+msgstr "Walang label"
 
 #: src/views/ErrorHandlerUnsupportedLedger.vue:36
 msgid "Unsupported Request"
-msgstr "Nicht unterstützte Anfrage"
+msgstr "Hindi suportadong Kahilingan"
 
 #: src/components/CheckoutCardNimiq.vue:329
 msgid "Updating balances"
-msgstr "Aktualisiere Guthaben"
+msgstr "Ina-update ang mga balanse"
 
 #: src/views/Migrate.vue:262
 msgid "Updating Keyguard..."
-msgstr "Aktualisiere Keygurad..."
+msgstr "Ina-update ang Keyguard ..."
 
 #: src/views/Migrate.vue:142 src/views/Migrate.vue:284
 msgid "Updating your Accounts"
-msgstr "Aktualisiere deine Konten"
+msgstr "Ina-update ang iyong mga Account"
 
 #: src/views/CashlinkCreate.vue:6
 msgid "Updating your balances"
-msgstr "Aktualisiere deine Guthaben"
+msgstr "Ina-update ang iyong mga balanse"
 
 #: src/views/ActivatePolygonSuccess.vue:117
 msgid "USDC/USDT activated"
-msgstr "USDC/USDT aktiviert"
+msgstr "na-activate na ang USDC/USDT"
 
 #: src/components/OnboardingMenu.vue:12
 msgid ""
 "Use your Login File\n"
 "or Recovery Words."
-msgstr "Benutze deine Login-Datei oder deine Wie­der­her­stellungswörter."
+msgstr ""
+"Gamitin ang iyong Login File\n"
+"o mga salitang pang-backup."
 
 #: src/views/LoginSuccess.vue:219 src/views/SignupLedger.vue:132
 msgid "Used addresses without balance might have been missed."
-msgstr "Verwendete Adressen ohne Guthaben wurden möglicherweise übersprungen."
+msgstr "Ang mga ginamit na adres na walang balanse ay maaaring napalampas."
 
 #: src/views/SetupSwapSuccess.vue:388
 msgid "Value mismatch (expected {expected} sats, found {found} sats)"
-msgstr "Unerwarteter Betrag ({found} sats statt {expected} sats)"
+msgstr ""
 
 #: src/views/SignTransactionLedger.vue:32
 msgid "Verify Payment"
-msgstr "Überprüfe die Zahlung"
+msgstr "Patunayan ang Pagbabayad"
 
 #: src/lib/LabelingMachine.ts:50 src/views/AddVestingContract.vue:136
 msgid "Vesting Contract"
-msgstr "Vesting-Vertrag"
+msgstr "Kontrata ng Vesting"
 
 #: src/views/SignupLedger.vue:112 src/views/SignupSuccess.vue:96
 msgid ""
 "Wallet successfully\n"
 "created"
-msgstr "Wallet erfolgreich eingerichtet"
+msgstr ""
 
 #: src/views/LoginSuccess.vue:241
 msgid "Welcome back!"
@@ -1290,85 +1289,84 @@ msgstr ""
 
 #: src/views/LoginSuccess.vue:234
 msgid "Welcome back! | Your Accounts are ready."
-msgstr "Willkommen zurück! | Deine Konten sind bereit."
+msgstr "Maligayang pagbabalik! | Nakahanda na ang mga Account mo."
 
 #: src/views/OnboardingSelector.vue:139
 msgid "Welcome to the Nimiq Wallet"
-msgstr "Willkommen in der Nimiq Wallet"
+msgstr ""
 
 #: src/CashlinkApp.vue:9
 msgid "What is Nimiq?"
-msgstr "Was ist Nimiq?"
+msgstr "Ano ang Nimiq?"
 
 #: src/views/Migrate.vue:275
 msgid "Whoops, something went wrong"
-msgstr "Ups, etwas ist schief gelaufen"
+msgstr "Whoops, may nangyari na mali"
 
 #: src/lib/LabelingMachine.ts:29
 msgid "Yellow Account"
-msgstr "Gelbes Konto"
+msgstr "Dilaw na Account"
 
 #: src/lib/LabelingMachine.ts:11
 msgid "Yellow Address"
-msgstr "Gelbe Adresse"
+msgstr "Dilaw na Adres"
 
 #: src/views/LogoutLedger.vue:19 src/views/LogoutSuccess.vue:4
 msgid "You are logged out."
-msgstr "Du bist abgemeldet."
+msgstr "Naka-log out ka."
 
 #: src/views/CashlinkReceive.vue:341
 msgid "You are loved"
-msgstr "Jemand denkt an dich"
+msgstr "Mahal ka"
 
 #: src/views/CashlinkReceive.vue:21
 msgid "You received a Cashlink!"
-msgstr "Du hast einen Cashlink erhalten!"
+msgstr "Nakatanggap ka ng isang Cashlink!"
 
 #: src/components/CheckoutCard.vue:194
 msgid ""
 "You transferred an insufficient amount. Please contact the merchant for a "
 "refund. Restart to pay for your order."
 msgstr ""
-"Du hast einen unzureichenden Betrag überwiesen. Bitte kontaktiere den "
-"Händler für eine Rückerstattung. Starte neu, um deine Bestellung zu "
-"bezahlen."
+"Naglipat ka ng hindi sapat na halaga. Mangyaring makipag-ugnay sa merchant "
+"para sa isang refund. I-restart upang mabayaran ang iyong order."
 
 #: src/views/SignupLedger.vue:111
 msgid "You're logged in!"
-msgstr "Du bist eingeloggt!"
+msgstr "Naka-log in ka na!"
 
 #: src/components/LedgerUi.vue:274
 msgid ""
 "Your {app} app is outdated. Please update your Ledger firmware and {app} app"
 " using Ledger Live."
 msgstr ""
-"Deine {app}-App ist veraltet. Bitte aktualisiere die Ledger-Firmware und "
-"{app}-App mittels Ledger Live."
+"Ang iyong {app} app ay luma na. Mangyaring i-update ang iyong Ledger "
+"firmware at {app} app gamit ang Ledger Live."
 
 #: src/views/LoginSuccess.vue:217 src/views/SignupLedger.vue:106
 msgid ""
 "Your Addresses may be\n"
 "incomplete."
 msgstr ""
-"Deine Adressen sind\n"
-"möglicherweise unvollständig."
+"Ang iyong mga Address ay maaaring\n"
+"hindi kumpleto"
 
 #: src/views/SetupSwapLedger.vue:116
 msgid "Your Bank"
-msgstr "Deine Bank"
+msgstr "Ang iyong Bangko"
 
 #: src/views/LogoutLedger.vue:13
 msgid ""
 "Your Ledger is\n"
 "required to log in again."
 msgstr ""
-"Bitte melde dich mit\n"
-"deinem Ledger erneut an."
+"Ang iyong Ledger ay\n"
+"kinakailangan upang mag-log in muli."
 
 #: src/views/SignMessageSuccess.vue:4
 msgid "Your message is signed."
-msgstr "Deine Nachricht wurde signiert."
+msgstr "Ang iyong mensahe ay naka-sign."
 
 #: src/views/LoginSuccess.vue:228 src/views/SimpleSuccess.vue:31
 msgid "Your password was changed."
-msgstr "Dein Passwort wurde geändert."
+msgstr "Ang iyong password ay binago."

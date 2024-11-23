@@ -95,7 +95,7 @@ msgstr "Endereço"
 msgid "Address Added"
 msgstr "Endereço Adicionado"
 
-#: src/views/LoginSuccess.vue:112
+#: src/views/LoginSuccess.vue:129
 msgid "Address detection failed. Retrying..."
 msgstr "Falha na deteção do endereço. A tentar novamente..."
 
@@ -203,7 +203,7 @@ msgstr "Bitcoin"
 msgid "Bitcoin activated"
 msgstr "Bitcoin ativada"
 
-#: src/views/SetupSwapSuccess.vue:668
+#: src/views/SetupSwapSuccess.vue:662
 msgid "Bitcoin HTLC invalid: {error}"
 msgstr "HTLC da Bitcoin inválido: {error}"
 
@@ -412,13 +412,16 @@ msgid "Connecting to Keyguard..."
 msgstr "A conectar ao Keyguard..."
 
 #: src/views/CashlinkManage.vue:133 src/views/CheckoutTransmission.vue:40
-#: src/views/LoginSuccess.vue:44
 msgid "Connecting to network..."
 msgstr "A conectar à rede"
 
 #: src/views/CashlinkReceive.vue:235
 msgid "Connecting to Nimiq..."
 msgstr "A conectar à Nimiq..."
+
+#: src/views/LoginSuccess.vue:50
+msgid "Connecting..."
+msgstr ""
 
 #: src/components/CheckoutCardNimiq.vue:284
 #: src/components/CheckoutCardNimiq.vue:289 src/views/CashlinkManage.vue:186
@@ -431,10 +434,14 @@ msgstr "A contactar os seed nodes..."
 msgid "Contacts are not affected."
 msgstr "Os contactos não são afetados."
 
-#: src/components/NotEnoughCookieSpace.vue:8 src/views/LoginSuccess.vue:167
-#: src/views/LoginSuccess.vue:197 src/views/SignupLedger.vue:143
+#: src/components/NotEnoughCookieSpace.vue:8 src/views/LoginSuccess.vue:186
+#: src/views/LoginSuccess.vue:220 src/views/SignupLedger.vue:143
 msgid "Continue"
 msgstr "Continuar"
+
+#: src/views/LoginSuccess.vue:11
+msgid "Continue to Wallet"
+msgstr ""
 
 #: src/views/AddVestingContract.vue:56
 msgid "Contract added."
@@ -472,9 +479,13 @@ msgstr "Criar Cashlink"
 msgid "Creating your Account"
 msgstr "A criar a tua Conta"
 
-#: src/views/CashlinkManage.vue:229 src/views/SignTransactionLedger.vue:720
+#: src/views/CashlinkManage.vue:229 src/views/SignTransactionLedger.vue:722
 msgid "Creating your Cashlink"
 msgstr "A criar o teu Cashlink"
+
+#: src/views/LoginSuccess.vue:66
+msgid "Detecting addresses..."
+msgstr ""
 
 #: src/views/Migrate.vue:230
 msgid "Detecting vesting contracts..."
@@ -529,11 +540,11 @@ msgstr "taxa"
 msgid "Fee"
 msgstr "Taxa"
 
-#: src/views/LoginSuccess.vue:120 src/views/SignupLedger.vue:108
+#: src/views/LoginSuccess.vue:139 src/views/SignupLedger.vue:108
 msgid "Fetching Addresses Failed"
 msgstr "Falha na procura de Endereços"
 
-#: src/views/SetupSwapSuccess.vue:657
+#: src/views/SetupSwapSuccess.vue:651
 msgid "Fetching Bitcoin HTLC..."
 msgstr "À procura de HTLC da Bitcoin"
 
@@ -541,18 +552,18 @@ msgstr "À procura de HTLC da Bitcoin"
 msgid "Fetching contract information..."
 msgstr "À procura de informações de contrato"
 
-#: src/views/SetupSwapSuccess.vue:665
+#: src/views/SetupSwapSuccess.vue:659
 msgid "Fetching swap data failed: {error}"
 msgstr "Falha na procura de dados de troca: {error}"
 
-#: src/views/SetupSwapSuccess.vue:653
+#: src/views/SetupSwapSuccess.vue:647
 msgid "Fetching swap data..."
 msgstr "À procura de dados de troca"
 
 #: src/components/LedgerUi.vue:235 src/views/ActivateBitcoinSuccess.vue:104
 #: src/views/ActivatePolygonSuccess.vue:111
 #: src/views/ActivatePolygonSuccess.vue:115
-#: src/views/BitcoinSyncBaseView.vue:48 src/views/LoginSuccess.vue:43
+#: src/views/BitcoinSyncBaseView.vue:48 src/views/LoginSuccess.vue:49
 #: src/views/SignupLedger.vue:104
 msgid "Fetching your Addresses"
 msgstr "À procura dos teus Endereços"
@@ -613,7 +624,7 @@ msgstr ""
 "Imagina se pagar com\n"
 "criptomoedas fosse fácil"
 
-#: src/views/LoginSuccess.vue:178 src/views/SignupLedger.vue:124
+#: src/views/LoginSuccess.vue:199 src/views/SignupLedger.vue:124
 msgid ""
 "Imported {count} address so far... | Imported {count} addresses so far..."
 msgstr ""
@@ -856,7 +867,7 @@ msgstr "Por favor envia a transação manualmente"
 msgid "Prepare for update"
 msgstr "Preparar para atualização"
 
-#: src/views/SetupSwapSuccess.vue:646
+#: src/views/SetupSwapSuccess.vue:640
 msgid "Preparing Swap"
 msgstr "A preparar Troca"
 
@@ -927,8 +938,8 @@ msgid "Retrieving your old accounts..."
 msgstr "A recuperar as tuas contas antigas..."
 
 #: src/views/ActivatePolygonSuccess.vue:139
-#: src/views/BitcoinSyncBaseView.vue:72 src/views/LoginSuccess.vue:122
-#: src/views/SetupSwapSuccess.vue:675 src/views/SignupLedger.vue:145
+#: src/views/BitcoinSyncBaseView.vue:72 src/views/LoginSuccess.vue:141
+#: src/views/SetupSwapSuccess.vue:669 src/views/SignupLedger.vue:145
 msgid "Retry"
 msgstr "Repetir"
 
@@ -941,7 +952,7 @@ msgstr "Guardar"
 msgid "Send your transaction"
 msgstr "Envia a tua transação"
 
-#: src/views/SignTransactionLedger.vue:721
+#: src/views/SignTransactionLedger.vue:723
 msgid "Sending Transaction"
 msgstr "A enviar transação"
 
@@ -965,13 +976,17 @@ msgstr "Partilhar"
 msgid "Sign Message"
 msgstr "Assinar Mensagem"
 
-#: src/views/SetupSwapSuccess.vue:655
+#: src/views/SetupSwapSuccess.vue:649
 msgid "Signing transactions..."
 msgstr "A assinar transações..."
 
 #: src/lib/LabelingMachine.ts:58
 msgid "Single Accounts"
 msgstr "Contas únicas"
+
+#: src/views/LoginSuccess.vue:15
+msgid "Skip"
+msgstr ""
 
 #: src/views/CashlinkManage.vue:228 src/views/CheckoutTransmission.vue:125
 msgid "Something went wrong"
@@ -981,7 +996,7 @@ msgstr "Algo deu errado"
 msgid "Something went wrong with your request. Please try again."
 msgstr "Algo deu errado no teu pedido. Por favor tenta novamente."
 
-#: src/views/LoginSuccess.vue:163
+#: src/views/LoginSuccess.vue:182
 msgid "Space exceeded"
 msgstr "Espaço excedido"
 
@@ -1013,7 +1028,7 @@ msgstr "Troca autorizada"
 msgid "Swap fee"
 msgstr "Taxa de troca"
 
-#: src/views/SetupSwapLedger.vue:855 src/views/SetupSwapSuccess.vue:642
+#: src/views/SetupSwapLedger.vue:855 src/views/SetupSwapSuccess.vue:636
 msgid "Swap Setup Failed"
 msgstr "Falhou a Configuração da Troca"
 
@@ -1029,10 +1044,14 @@ msgstr "A sincronizar consenso"
 
 #: src/views/ActivatePolygonSuccess.vue:113
 #: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapLedger.vue:857
-#: src/views/SetupSwapSuccess.vue:644
+#: src/views/SetupSwapSuccess.vue:638
 #: src/views/SignBtcTransactionLedger.vue:118
 msgid "Syncing Failed"
 msgstr "A sincronização falhou"
+
+#: src/views/LoginSuccess.vue:65
+msgid "Syncing to network..."
+msgstr ""
 
 #: src/views/RefundSwapLedger.vue:333
 msgid "Syncing with {currency} network failed: {error}"
@@ -1058,7 +1077,7 @@ msgstr "A sincronização com a rede Polygon falhou: {error}"
 msgid "Syncing with Polygon network..."
 msgstr "A sincronizar com a rede Polygon"
 
-#: src/views/LoginSuccess.vue:121 src/views/SignupLedger.vue:134
+#: src/views/LoginSuccess.vue:140 src/views/SignupLedger.vue:134
 msgid "Syncing with the network failed: {error}"
 msgstr "A sincronização com a rede falhou: {error}"
 
@@ -1084,7 +1103,7 @@ msgstr ""
 "as traduções? Se não o fizeres, algumas traduções podem não ser atualizadas "
 "automaticamente. ({oldLang} to {newLang})"
 
-#: src/components/CheckoutCard.vue:171 src/views/SignTransactionLedger.vue:727
+#: src/components/CheckoutCard.vue:171 src/views/SignTransactionLedger.vue:729
 msgid "The offer expired."
 msgstr "A oferta expirou."
 
@@ -1163,12 +1182,12 @@ msgstr "Não foi possível transmitir a transação"
 msgid "Transaction is expired"
 msgstr "A transação expirou"
 
-#: src/views/SignTransactionLedger.vue:725
+#: src/views/SignTransactionLedger.vue:727
 msgid "Transaction Sent"
 msgstr "Transação Enviada"
 
 #: src/views/SignBtcTransactionLedger.vue:117
-#: src/views/SignTransactionLedger.vue:724
+#: src/views/SignTransactionLedger.vue:726
 msgid "Transaction Signed"
 msgstr "Transação Assinada"
 
@@ -1185,7 +1204,7 @@ msgstr ""
 "contas e/ou endereços. Por favor encerra a sessão das contas não utilizadas "
 "para libertar espaço."
 
-#: src/views/LoginSuccess.vue:165
+#: src/views/LoginSuccess.vue:184
 msgid ""
 "Unfortunately, due to space restrictions of Safari and IOS, this account "
 "cannot be stored properly. Please free up space by logging out of other "
@@ -1231,7 +1250,7 @@ msgstr ""
 "Usa o seu Ficheiro de Login\n"
 "ou Palavra de Recuperação."
 
-#: src/views/LoginSuccess.vue:196 src/views/SignupLedger.vue:132
+#: src/views/LoginSuccess.vue:219 src/views/SignupLedger.vue:132
 msgid "Used addresses without balance might have been missed."
 msgstr "Endereços usados sem saldo podem ter sido perdidos."
 
@@ -1256,7 +1275,11 @@ msgstr ""
 "Wallet criada\n"
 "com sucesso"
 
-#: src/views/LoginSuccess.vue:211
+#: src/views/LoginSuccess.vue:241
+msgid "Welcome back!"
+msgstr ""
+
+#: src/views/LoginSuccess.vue:234
 msgid "Welcome back! | Your Accounts are ready."
 msgstr "Bem-vindo de volta! As tuas Contas estão prontas."
 
@@ -1312,7 +1335,7 @@ msgstr ""
 "A tua aplicação {app} está desatualizada. Por favor atualiza o teu Ledger "
 "firmware e a aplicação {app} usando o Ledger Live."
 
-#: src/views/LoginSuccess.vue:194 src/views/SignupLedger.vue:106
+#: src/views/LoginSuccess.vue:217 src/views/SignupLedger.vue:106
 msgid ""
 "Your Addresses may be\n"
 "incomplete."
@@ -1336,6 +1359,6 @@ msgstr ""
 msgid "Your message is signed."
 msgstr "A tua mensagem está assinada."
 
-#: src/views/LoginSuccess.vue:205 src/views/SimpleSuccess.vue:31
+#: src/views/LoginSuccess.vue:228 src/views/SimpleSuccess.vue:31
 msgid "Your password was changed."
 msgstr "A sua palavra passe foi alterada."
