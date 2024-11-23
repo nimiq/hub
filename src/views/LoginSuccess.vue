@@ -8,7 +8,12 @@
                 :lightBlue="true"
                 :mainAction="action"
                 @main-action="resolve"
+                :alternativeAction="$t('Continue to Wallet')"
+                @alternative-action="skip"
                 :message="message" />
+            <div v-if="canSkip" class="skip-box">
+                <button @click="skip" class="skip nq-button-s inverse">{{ $t('Skip') }}</button>
+            </div>
         </SmallPage>
     </div>
 </template>
@@ -30,6 +35,7 @@ import { WalletCollectionResultKeyguard } from '../lib/WalletInfoCollector';
 import CookieHelper from '../lib/CookieHelper';
 import { ERROR_COOKIE_SPACE, WalletType } from '../lib/Constants';
 import { PolygonAddressInfo } from '../lib/polygon/PolygonAddressInfo';
+import { NetworkClient } from '../lib/NetworkClient';
 
 @Component({components: {StatusScreen, SmallPage}})
 export default class LoginSuccess extends Vue {
@@ -41,23 +47,34 @@ export default class LoginSuccess extends Vue {
     private walletInfos: WalletInfo[] = [];
     private state: StatusScreen.State = StatusScreen.State.LOADING;
     private title: string = this.$root.$t('Fetching your Addresses') as string;
-    private status: string = this.$root.$t('Connecting to network...') as string;
+    private status: string = this.$root.$t('Connecting...') as string;
     private message: string = '';
     private action: string = '';
     private receiptsError: Error | null = null;
     private result: Account[] | null = null;
+    private canSkip = true;
+
     private resolve = (...args: any[]) => {}; // tslint:disable-line:no-empty
 
     private async mounted() {
         const collectionResults: WalletCollectionResultKeyguard[] = [];
 
+        await NetworkClient.Instance.init();
+        NetworkClient.Instance.innerClient.then((client) => {
+            client.addConsensusChangedListener((state) => {
+                if (state === 'syncing') this.status = this.$root.$t('Syncing to network...') as string;
+                if (state === 'established') this.status = this.$root.$t('Detecting addresses...') as string;
+            });
+        });
+
         try {
             await Promise.all(
                 this.keyguardResult.map(async (keyResult) => {
                     // The Keyguard always returns (at least) one derived Address,
-                    const keyguardResultAccounts = keyResult.addresses.map((addressObj) => ({
+                    const keyguardResultAccounts = keyResult.addresses.map((addressObj, index) => ({
                         address: new Nimiq.Address(addressObj.address).toUserFriendlyAddress(),
                         path: addressObj.keyPath,
+                        index,
                     }));
 
                     let tryCount = 0;
@@ -110,12 +127,14 @@ export default class LoginSuccess extends Vue {
                             break;
                         } catch (e) {
                             this.status = this.$root.$t('Address detection failed. Retrying...') as string;
-                            if (tryCount >= 5) throw e;
+                            if (tryCount >= 3) throw e;
+                            console.error(e);
                         }
                     }
                 }),
             );
         } catch (e) {
+            this.canSkip = false;
             this.state = StatusScreen.State.ERROR;
             this.title = this.$t('Fetching Addresses Failed') as string;
             this.message = this.$t('Syncing with the network failed: {error}', { error: e.message || e }) as string;
@@ -175,11 +194,15 @@ export default class LoginSuccess extends Vue {
 
     private onUpdate(walletInfo: WalletInfo, currentlyCheckedAccounts: BasicAccountInfo[]) {
         const count = !walletInfo ? 0 : walletInfo.accounts.size;
+        this.canSkip = count > 0;
+        if (count <= 1) return;
         this.status = this.$tc('Imported {count} address so far... | Imported {count} addresses so far...', count);
     }
 
     private async done() {
         if (!this.walletInfos.length) throw new Error('WalletInfo not ready.');
+
+        this.canSkip = false;
 
         // Add wallets to vuex
         for (const walletInfo of this.walletInfos) {
@@ -212,5 +235,33 @@ export default class LoginSuccess extends Vue {
         this.state = StatusScreen.State.SUCCESS;
         setTimeout(() => { this.$rpc.resolve(result); }, StatusScreen.SUCCESS_REDIRECT_DELAY);
     }
+
+    private async skip() {
+        this.canSkip = false;
+        this.title = this.$t('Welcome back!') as string;
+        this.state = StatusScreen.State.SUCCESS;
+        const result: Account[] = await Promise.all(
+            this.walletInfos.map((walletInfo) => walletInfo.toAccountType(RequestType.LOGIN)),
+        );
+        setTimeout(() => { this.$rpc.resolve(result); }, StatusScreen.SUCCESS_REDIRECT_DELAY);
+    }
 }
 </script>
+
+<style scoped>
+.small-page {
+    position: relative;
+}
+
+.status-screen {
+    z-index: unset;
+}
+
+.skip-box {
+    position: absolute;
+    bottom: 2rem;
+    left: 0;
+    width: 100%;
+    text-align: center;
+}
+</style>
