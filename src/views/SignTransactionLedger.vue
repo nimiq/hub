@@ -687,6 +687,7 @@ export default class SignTransactionLedger extends Vue {
                 }
             }
         } else { // recipientType === Nimiq.AccountType.Staking
+            // @ts-ignore Missmatch with Nimiq.PlainTransactionDetails from fastspot-api
             switch (senderData.type) {
                 case 'remove-stake': {
                     return 'Unstake';
@@ -696,6 +697,7 @@ export default class SignTransactionLedger extends Vue {
                     return 'Delete validator';
                 }
                 default: {
+                    // @ts-ignore Missmatch with Nimiq.PlainTransactionDetails from fastspot-api
                     return `Unrecognized outgoing staking data: ${senderData.type} - ${senderData.raw}`;
                 }
             }

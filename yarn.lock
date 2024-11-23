@@ -1807,10 +1807,10 @@
     call-me-maybe "^1.0.1"
     glob-to-regexp "^0.3.0"
 
-"@nimiq/albatross-wasm@npm:@nimiq/core@^2.0.0", "@nimiq/core@^2.0.1":
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/@nimiq/core/-/core-2.0.1.tgz#44d947058962c597a18e52d8e7b49c6c7492d138"
-  integrity sha512-4YPfuxMkWgiLrEyC/ufbWnhccTe5i31s8ROwV/SV3Qd+dgaaxrHk0BWM8YmrFMfkDOj8lakenXq/4wzzqbtJ2Q==
+"@nimiq/albatross-wasm@npm:@nimiq/core@^2.0.0", "@nimiq/core@^2.0.3":
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/@nimiq/core/-/core-2.0.3.tgz#d14ae22c27128740113cdb1f22f8d8ca67a73eff"
+  integrity sha512-+5cVCaYNcQsh3XOvvJFZPi3TvXNCZQfiuLlxqSWwHnaJsQ4C1g9GNhQQELLUomLiZvtEIqR4Qs7cUF/zw7gHGQ==
   dependencies:
     comlink "^4.4.1"
     websocket "^1.0.34"
