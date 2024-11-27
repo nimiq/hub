@@ -34,7 +34,7 @@ async function main() {
     // constructor, which in turn uses the RequestParser, which needs the Nimiq module.
     window.Nimiq = await window.loadAlbatross();
 
-    startSentry(Vue);
+    startSentry();
 
     setLanguage(detectLanguage()).then(() => {
         const app = new Vue({
