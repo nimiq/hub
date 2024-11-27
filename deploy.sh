@@ -11,6 +11,10 @@ BLUE='\033[0;34m'
 CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 
+# App name
+APP_NAME="hub"
+APP_NAME_CAPITALIZED="Hub"
+
 # Function to display usage message
 show_usage() {
     local error_msg="$1"
@@ -59,11 +63,11 @@ DEPLOY_ONLY=false
 SAME_AS=""
 
 # Define deploy servers for different environments
-MAINNET_SERVERS=("deploy_hub@web-1" "deploy_hub@web-2" "deploy_hub@web-3" "deploy_hub@web-4")
-TESTNET_SERVERS=("deploy_hub@testnet-web1")
+MAINNET_SERVERS=("deploy_${APP_NAME}@web-1" "deploy_${APP_NAME}@web-2" "deploy_${APP_NAME}@web-3" "deploy_${APP_NAME}@web-4")
+TESTNET_SERVERS=("deploy_${APP_NAME}@testnet-web1")
 DEPLOY_SERVERS=()
 
-DEPLOYMENT_REPO="deployment-hub"
+DEPLOYMENT_REPO="deployment-${APP_NAME}"
 
 # Initial argument handling
 if [[ "$1" =~ ^--same-as= ]]; then
@@ -229,8 +233,8 @@ do_ssh_deployment() {
 
     echo -e "${GREEN}Deployment complete!${NC}"
     echo -e "${YELLOW}> Please verify that the deployment went through successfully.${NC}"
-    echo -e "${YELLOW}> Please also verify that the hub is working correctly on $BUILD_ENV and is correctly using the new version $VERSION.${NC}"
-    echo -e "${YELLOW}> https://$([ "$BUILD_ENV" = "mainnet" ] && echo "hub.nimiq.com" || echo "hub.nimiq-testnet.com")${NC}"
+    echo -e "${YELLOW}> Please also verify that the $APP_NAME is working correctly on $BUILD_ENV and is correctly using the new version $VERSION.${NC}"
+    echo -e "${YELLOW}> https://$([ "$BUILD_ENV" = "mainnet" ] && echo "$APP_NAME.nimiq.com" || echo "$APP_NAME.nimiq-testnet.com")${NC}"
 }
 
 # If deploy-only flag is set, skip to deployment
@@ -242,7 +246,7 @@ fi
 
 # Check if new version is greater than all existing tags in current repo
 if [ -z "$SAME_AS" ]; then
-    echo -e "${BLUE}Checking version against existing tags in hub repo...${NC}"
+    echo -e "${BLUE}Checking version against existing tags in ${APP_NAME} repo...${NC}"
     EXISTING_TAGS=$(git tag | grep "^v[0-9]" | sed 's/^v//')
     for tag in $EXISTING_TAGS; do
         if ! version_gt "$VERSION" "$tag"; then
@@ -312,7 +316,7 @@ run_command "yarn update-browserslist" "Failed to update browsers list"
 
 # Function to create commit/tag message
 create_message() {
-    local message="Nimiq Hub v$VERSION
+    local message="Nimiq $APP_NAME_CAPITALIZED v$VERSION
 
 $COMMIT_MSG"
 
