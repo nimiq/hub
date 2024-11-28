@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # Exit on error
-set -e
+set -eu
+set -o pipefail
 
 # Color definitions
 RED='\033[0;31m'
@@ -61,6 +62,7 @@ SYNC_TRANSLATIONS=true
 BUILD_ENV=""
 DEPLOY_ONLY=false
 SAME_AS=""
+VERSION_PROVIDED_BY_USER=false
 
 # Define deploy servers for different environments
 MAINNET_SERVERS=("deploy_${APP_NAME}@web-1" "deploy_${APP_NAME}@web-2" "deploy_${APP_NAME}@web-3" "deploy_${APP_NAME}@web-4")
@@ -309,10 +311,10 @@ echo -e "${CYAN}Updating browsers support list...${NC}"
 run_command "yarn update-browserslist" "Failed to update browsers list"
 
 # Check for uncommitted changes
-# if [[ `git status --porcelain` ]]; then
-#     echo -e "${RED}ERROR: The repository has uncommitted changes. Commit them first, then run again.${NC}"
-#     exit 1
-# fi
+if [[ `git status --porcelain` ]]; then
+    echo -e "${RED}ERROR: The repository has uncommitted changes. Commit them first, then run again.${NC}"
+    exit 1
+fi
 
 # Function to create commit/tag message
 create_message() {
@@ -350,7 +352,7 @@ echo -e "${BLUE}Deploying to $DEPLOYMENT_REPO...${NC}"
 run_command "cd \"$DEPLOYMENT_REPO\" || exit 1" "Failed to change to deployment directory"
 
 # Checkout appropriate branch and pull latest changes
-DEPLOY_BRANCH=$([ "$BUILD_ENV" = "mainnet" ] && echo "mainnet" || echo "testnet")
+DEPLOY_BRANCH=$([ "$BUILD_ENV" = "mainnet" ] && echo "master" || echo "testnet")
 echo -e "${CYAN}Checking out $DEPLOY_BRANCH branch...${NC}"
 run_command "git checkout $DEPLOY_BRANCH" "Failed to checkout branch"
 run_command "git pull" "Failed to pull latest changes"
