@@ -59,15 +59,75 @@ export default class LoginSuccess extends Vue {
     private async mounted() {
         const collectionResults: WalletCollectionResultKeyguard[] = [];
 
-        await NetworkClient.Instance.init();
-        NetworkClient.Instance.innerClient.then((client) => {
-            client.addConsensusChangedListener((state) => {
-                if (state === 'syncing') this.status = this.$root.$t('Syncing to network...') as string;
-                if (state === 'established') this.status = this.$root.$t('Detecting addresses...') as string;
+        // Add retry mechanism for network initialization
+        let networkInitTryCount = 0;
+        while (true) {
+            try {
+                networkInitTryCount += 1;
+                await NetworkClient.Instance.init();
+                break;
+            } catch (e) {
+                if (networkInitTryCount >= 3) throw e;
+                console.error('Network initialization failed, retrying...', e);
+                await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second before retrying
+            }
+        }
+
+        // Initialize consensus check promise before using it
+        const consensusEstablishedPromise = new Promise<void>((resolve, reject) => {
+            let consensusCheckCount = 0;
+            let isResolved = false;
+
+            // Set up consensus change listener first
+            NetworkClient.Instance.innerClient.then((client) => {
+                client.addConsensusChangedListener((state) => {
+                    if (state === 'syncing') {
+                        this.status = this.$root.$t('Syncing to network...').toString();
+                    } else if (state === 'established') {
+                        this.status = this.$root.$t('Detecting addresses...').toString();
+                        if (!isResolved) {
+                            isResolved = true;
+                            resolve();
+                        }
+                    }
+                });
             });
+
+            const checkConsensus = async () => {
+                try {
+                    const client = await NetworkClient.Instance.innerClient;
+                    consensusCheckCount += 1;
+
+                    if (await client.isConsensusEstablished()) {
+                        if (!isResolved) {
+                            isResolved = true;
+                            resolve();
+                        }
+                    } else if (consensusCheckCount >= 12) { // Increased from 3 to 12 attempts
+                        reject(new Error('Failed to establish consensus after several attempts. Please check your internet connection and try again.'));
+                    } else {
+                        // Exponential backoff: wait longer between each retry
+                        const timeout = Math.min(15000, 5000 * Math.pow(1.5, consensusCheckCount - 1));
+                        setTimeout(checkConsensus, timeout);
+                    }
+                } catch (e) {
+                    if (consensusCheckCount >= 12) {
+                        reject(e);
+                    } else {
+                        const timeout = Math.min(15000, 5000 * Math.pow(1.5, consensusCheckCount - 1));
+                        setTimeout(checkConsensus, timeout);
+                    }
+                }
+            };
+
+            // Start checking consensus
+            checkConsensus();
         });
 
         try {
+            // Wait for consensus to be established before proceeding
+            await consensusEstablishedPromise;
+
             await Promise.all(
                 this.keyguardResult.map(async (keyResult) => {
                     // The Keyguard always returns (at least) one derived Address,
@@ -126,9 +186,12 @@ export default class LoginSuccess extends Vue {
 
                             break;
                         } catch (e) {
-                            this.status = this.$root.$t('Address detection failed. Retrying...') as string;
-                            if (tryCount >= 3) throw e;
-                            console.error(e);
+                            this.status = this.$root.$t('Address detection failed. Retrying...').toString();
+                            if (tryCount >= 12) throw new Error('Failed to detect addresses after several attempts. Please check your internet connection and try again.');
+                            console.error('Address detection failed, retrying...', e);
+                            // Exponential backoff for retries
+                            const timeout = Math.min(15000, 2000 * Math.pow(1.5, tryCount - 1));
+                            await new Promise(resolve => setTimeout(resolve, timeout));
                         }
                     }
                 }),
