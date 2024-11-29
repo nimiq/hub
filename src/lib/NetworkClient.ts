@@ -48,21 +48,25 @@ export class NetworkClient {
         );
     }
 
-    public async getBalance(addresses: string[]) {
-        const client = await this.client;
-        const accounts = await client.getAccounts(addresses);
-        return new Map(accounts.map((account, i) => [addresses[i], account.balance]));
+    public async getBalance(addresses: string[], options?: Partial<{signal: AbortSignal}>) {
+        return this.abortable(async () => {
+            const client = await this.client;
+            const accounts = await client.getAccounts(addresses);
+            return new Map(accounts.map((account, i) => [addresses[i], account.balance]));
+        }, options?.signal);
     }
 
-    public async getStake(addresses: string[]) {
-        const client = await this.client;
-        const accounts = await client.getStakers(addresses);
-        return new Map(accounts.map((account, i) => [
-            addresses[i],
-            account
-                ? account.balance + account.inactiveBalance
-                : 0,
-        ]));
+    public async getStake(addresses: string[], options?: Partial<{signal: AbortSignal}>) {
+        return this.abortable(async () => {
+            const client = await this.client;
+            const accounts = await client.getStakers(addresses);
+            return new Map(accounts.map((account, i) => [
+                addresses[i],
+                account
+                    ? account.balance + account.inactiveBalance
+                    : 0,
+            ]));
+        }, options?.signal);
     }
 
     public async getHeight() {
@@ -137,5 +141,18 @@ export class NetworkClient {
             case NETWORK_DEV: return 'devalbatross';
             default: throw new Error(`${ERROR_INVALID_NETWORK}: ${network}`);
         }
+    }
+
+    private abortable<T>(callback: () => Promise<T>, signal?: AbortSignal) {
+        if (!signal) return callback();
+
+        return new Promise<T>((resolve, reject) => {
+            if (signal.aborted) return reject(new Error('aborted'));
+            const abortListener = () => reject(new Error('aborted'));
+            signal.addEventListener('abort', abortListener, { once: true });
+            callback().then(resolve, reject).finally(() => {
+                signal.removeEventListener('abort', abortListener);
+            });
+        });
     }
 }
