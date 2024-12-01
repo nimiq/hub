@@ -6,7 +6,7 @@
     <meta name="robots" content="noindex">
     <title>Nimiq Hub IFrame</title>
     <script type="module">
-      import init, * as Nimiq from '/albatross-client/web/index.js';
+      import init, * as Nimiq from '/nimiq/v<%= htmlWebpackPlugin.options.coreVersion %>/web/index.js';
 
       /** @type {Promise<Nimiq> | undefined} */
       let initPromise;
