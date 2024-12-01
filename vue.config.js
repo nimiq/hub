@@ -72,7 +72,7 @@ const configureWebpack = {
                 },
             },
             {
-                from: 'node_modules/@nimiq/albatross-wasm',
+                from: 'node_modules/@nimiq/core',
                 to: './albatross-client/',
             },
         ]}),
