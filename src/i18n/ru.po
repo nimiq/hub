@@ -99,7 +99,7 @@ msgstr "Адрес"
 msgid "Address Added"
 msgstr "Адрес добавлен"
 
-#: src/views/LoginSuccess.vue:129
+#: src/views/LoginSuccess.vue:123
 msgid "Address detection failed. Retrying..."
 msgstr "Не удалось обнаружить адрес. Повторная попытка..."
 
@@ -409,7 +409,7 @@ msgstr "Подключите свой Ledger"
 msgid "Connect your Ledger hardware wallet."
 msgstr ""
 
-#: src/views/Migrate.vue:143 src/views/Migrate.vue:285
+#: src/views/Migrate.vue:143 src/views/Migrate.vue:283
 msgid "Connecting to Keyguard..."
 msgstr "Подключаемся к Keyguard..."
 
@@ -421,7 +421,7 @@ msgstr "Подключаемся к сети..."
 msgid "Connecting to Nimiq..."
 msgstr "Подключаемся к Nimiq..."
 
-#: src/views/LoginSuccess.vue:50
+#: src/views/LoginSuccess.vue:45
 msgid "Connecting..."
 msgstr ""
 
@@ -436,14 +436,10 @@ msgstr "Устанавливаем связь с сид-узлами..."
 msgid "Contacts are not affected."
 msgstr "Контакты не будут затронуты."
 
-#: src/components/NotEnoughCookieSpace.vue:8 src/views/LoginSuccess.vue:186
-#: src/views/LoginSuccess.vue:220 src/views/SignupLedger.vue:143
+#: src/components/NotEnoughCookieSpace.vue:8 src/views/LoginSuccess.vue:179
+#: src/views/LoginSuccess.vue:210 src/views/SignupLedger.vue:143
 msgid "Continue"
 msgstr "Продолжить"
-
-#: src/views/LoginSuccess.vue:11
-msgid "Continue to Wallet"
-msgstr ""
 
 #: src/views/AddVestingContract.vue:56
 msgid "Contract added."
@@ -487,7 +483,7 @@ msgstr "Создаём Аккаунт"
 msgid "Creating your Cashlink"
 msgstr "Создаём ваш Cashlink"
 
-#: src/views/LoginSuccess.vue:66
+#: src/views/LoginSuccess.vue:60
 msgid "Detecting addresses..."
 msgstr ""
 
@@ -546,7 +542,7 @@ msgstr "комиссия"
 msgid "Fee"
 msgstr "Комиссия"
 
-#: src/views/LoginSuccess.vue:139 src/views/SignupLedger.vue:108
+#: src/views/LoginSuccess.vue:132 src/views/SignupLedger.vue:108
 msgid "Fetching Addresses Failed"
 msgstr "Не удалось загрузить адреса"
 
@@ -569,7 +565,7 @@ msgstr "Загружаем данные обмена..."
 #: src/components/LedgerUi.vue:235 src/views/ActivateBitcoinSuccess.vue:104
 #: src/views/ActivatePolygonSuccess.vue:111
 #: src/views/ActivatePolygonSuccess.vue:115
-#: src/views/BitcoinSyncBaseView.vue:48 src/views/LoginSuccess.vue:49
+#: src/views/BitcoinSyncBaseView.vue:48 src/views/LoginSuccess.vue:44
 #: src/views/SignupLedger.vue:104
 msgid "Fetching your Addresses"
 msgstr "Загружаем ваши адреса"
@@ -630,7 +626,7 @@ msgstr ""
 "Представьте, что оплата\n"
 "криптовалютой стала лёгкой и простой"
 
-#: src/views/LoginSuccess.vue:199 src/views/SignupLedger.vue:124
+#: src/views/LoginSuccess.vue:191 src/views/SignupLedger.vue:124
 msgid ""
 "Imported {count} address so far... | Imported {count} addresses so far..."
 msgstr "Импортирован {count} адрес... | Импортировано {count} адресов..."
@@ -941,7 +937,7 @@ msgid "Retrieving your old accounts..."
 msgstr "Восстановление ваших старых учетных записей..."
 
 #: src/views/ActivatePolygonSuccess.vue:139
-#: src/views/BitcoinSyncBaseView.vue:72 src/views/LoginSuccess.vue:141
+#: src/views/BitcoinSyncBaseView.vue:72 src/views/LoginSuccess.vue:134
 #: src/views/SetupSwapSuccess.vue:669 src/views/SignupLedger.vue:145
 msgid "Retry"
 msgstr "Повторить"
@@ -987,10 +983,6 @@ msgstr "Подписание транзакций..."
 msgid "Single Accounts"
 msgstr "Одиночные Адреса"
 
-#: src/views/LoginSuccess.vue:15
-msgid "Skip"
-msgstr ""
-
 #: src/views/CashlinkManage.vue:228 src/views/CheckoutTransmission.vue:125
 msgid "Something went wrong"
 msgstr "Что-то пошло не так"
@@ -1000,7 +992,7 @@ msgid "Something went wrong with your request. Please try again."
 msgstr ""
 "Произошла ошибка при отправке запроса. Пожалуйста, попробуйте еще раз."
 
-#: src/views/LoginSuccess.vue:182
+#: src/views/LoginSuccess.vue:175
 msgid "Space exceeded"
 msgstr "Превышен лимит доступного места"
 
@@ -1053,7 +1045,7 @@ msgstr "Синхронизация консенсуса..."
 msgid "Syncing Failed"
 msgstr "Синхронизация не удалась"
 
-#: src/views/LoginSuccess.vue:65
+#: src/views/LoginSuccess.vue:59
 msgid "Syncing to network..."
 msgstr ""
 
@@ -1081,7 +1073,7 @@ msgstr "Ошибка синхронизации с сетью Polygon: {error}"
 msgid "Syncing with Polygon network..."
 msgstr "Синхронизация с сетью Polygon..."
 
-#: src/views/LoginSuccess.vue:140 src/views/SignupLedger.vue:134
+#: src/views/LoginSuccess.vue:133 src/views/SignupLedger.vue:134
 msgid "Syncing with the network failed: {error}"
 msgstr "Не удалось синхронизироваться с сетью: {error}"
 
@@ -1206,7 +1198,7 @@ msgstr ""
 "дополнительные аккаунты и / или адреса. Чтобы освободить место, выйдите из "
 "учетных записей, которые вы не используете."
 
-#: src/views/LoginSuccess.vue:184
+#: src/views/LoginSuccess.vue:177
 msgid ""
 "Unfortunately, due to space restrictions of Safari and IOS, this account "
 "cannot be stored properly. Please free up space by logging out of other "
@@ -1224,7 +1216,7 @@ msgstr "Без метки"
 msgid "Unsupported Request"
 msgstr "Неподдерживаемый запрос"
 
-#: src/components/CheckoutCardNimiq.vue:329
+#: src/components/CheckoutCardNimiq.vue:327
 msgid "Updating balances"
 msgstr "Обновление балансов"
 
@@ -1232,7 +1224,7 @@ msgstr "Обновление балансов"
 msgid "Updating Keyguard..."
 msgstr "Обновление Keyguard..."
 
-#: src/views/Migrate.vue:142 src/views/Migrate.vue:284
+#: src/views/Migrate.vue:142 src/views/Migrate.vue:282
 msgid "Updating your Accounts"
 msgstr "Обновление ваших Аккаунтов"
 
@@ -1250,7 +1242,7 @@ msgid ""
 "or Recovery Words."
 msgstr "Используйте Файл Авторизации или Защитную Фразу."
 
-#: src/views/LoginSuccess.vue:219 src/views/SignupLedger.vue:132
+#: src/views/LoginSuccess.vue:209 src/views/SignupLedger.vue:132
 msgid "Used addresses without balance might have been missed."
 msgstr "Используемые адреса с нулевым балансом могли быть пропущены."
 
@@ -1272,11 +1264,7 @@ msgid ""
 "created"
 msgstr ""
 
-#: src/views/LoginSuccess.vue:241
-msgid "Welcome back!"
-msgstr ""
-
-#: src/views/LoginSuccess.vue:234
+#: src/views/LoginSuccess.vue:224
 msgid "Welcome back! | Your Accounts are ready."
 msgstr "Добро пожаловать! | Ваши Аккаунты готовы."
 
@@ -1332,7 +1320,7 @@ msgstr ""
 "Ваше приложение {app} устарело. Пожалуйста, обновите прошивку Ledger и "
 "приложение {app} через Ledger Live."
 
-#: src/views/LoginSuccess.vue:217 src/views/SignupLedger.vue:106
+#: src/views/LoginSuccess.vue:207 src/views/SignupLedger.vue:106
 msgid ""
 "Your Addresses may be\n"
 "incomplete."
@@ -1356,6 +1344,6 @@ msgstr ""
 msgid "Your message is signed."
 msgstr "Ваше сообщение подписано."
 
-#: src/views/LoginSuccess.vue:228 src/views/SimpleSuccess.vue:31
+#: src/views/LoginSuccess.vue:218 src/views/SimpleSuccess.vue:31
 msgid "Your password was changed."
 msgstr "Ваш пароль был изменён."

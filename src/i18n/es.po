@@ -98,7 +98,7 @@ msgstr "Dirección"
 msgid "Address Added"
 msgstr "Dirección Agregada"
 
-#: src/views/LoginSuccess.vue:129
+#: src/views/LoginSuccess.vue:123
 msgid "Address detection failed. Retrying..."
 msgstr "Detección de dirección fallida. Reintentando..."
 
@@ -409,7 +409,7 @@ msgstr "Conecte su Dispositivo Ledger"
 msgid "Connect your Ledger hardware wallet."
 msgstr ""
 
-#: src/views/Migrate.vue:143 src/views/Migrate.vue:285
+#: src/views/Migrate.vue:143 src/views/Migrate.vue:283
 msgid "Connecting to Keyguard..."
 msgstr "Conectándose al Keyguard..."
 
@@ -421,7 +421,7 @@ msgstr "Conectándose a la red..."
 msgid "Connecting to Nimiq..."
 msgstr "Conectándose a Nimiq..."
 
-#: src/views/LoginSuccess.vue:50
+#: src/views/LoginSuccess.vue:45
 msgid "Connecting..."
 msgstr ""
 
@@ -436,14 +436,10 @@ msgstr "Contactando nodos semilla..."
 msgid "Contacts are not affected."
 msgstr "Los contactos no se han afectado."
 
-#: src/components/NotEnoughCookieSpace.vue:8 src/views/LoginSuccess.vue:186
-#: src/views/LoginSuccess.vue:220 src/views/SignupLedger.vue:143
+#: src/components/NotEnoughCookieSpace.vue:8 src/views/LoginSuccess.vue:179
+#: src/views/LoginSuccess.vue:210 src/views/SignupLedger.vue:143
 msgid "Continue"
 msgstr "Continuar"
-
-#: src/views/LoginSuccess.vue:11
-msgid "Continue to Wallet"
-msgstr ""
 
 #: src/views/AddVestingContract.vue:56
 msgid "Contract added."
@@ -485,7 +481,7 @@ msgstr "Creando su Cuenta"
 msgid "Creating your Cashlink"
 msgstr "Creando su Cashlink"
 
-#: src/views/LoginSuccess.vue:66
+#: src/views/LoginSuccess.vue:60
 msgid "Detecting addresses..."
 msgstr ""
 
@@ -542,7 +538,7 @@ msgstr "cuota"
 msgid "Fee"
 msgstr "Cuota"
 
-#: src/views/LoginSuccess.vue:139 src/views/SignupLedger.vue:108
+#: src/views/LoginSuccess.vue:132 src/views/SignupLedger.vue:108
 msgid "Fetching Addresses Failed"
 msgstr "Obtención de Direcciones Fallida"
 
@@ -565,7 +561,7 @@ msgstr "Obteniendo datos del intercambio..."
 #: src/components/LedgerUi.vue:235 src/views/ActivateBitcoinSuccess.vue:104
 #: src/views/ActivatePolygonSuccess.vue:111
 #: src/views/ActivatePolygonSuccess.vue:115
-#: src/views/BitcoinSyncBaseView.vue:48 src/views/LoginSuccess.vue:49
+#: src/views/BitcoinSyncBaseView.vue:48 src/views/LoginSuccess.vue:44
 #: src/views/SignupLedger.vue:104
 msgid "Fetching your Addresses"
 msgstr "Obteniendo sus Direcciones"
@@ -626,7 +622,7 @@ msgstr ""
 "Imagine si pagar con\n"
 "cripto fuera fácil"
 
-#: src/views/LoginSuccess.vue:199 src/views/SignupLedger.vue:124
+#: src/views/LoginSuccess.vue:191 src/views/SignupLedger.vue:124
 msgid ""
 "Imported {count} address so far... | Imported {count} addresses so far..."
 msgstr ""
@@ -940,7 +936,7 @@ msgid "Retrieving your old accounts..."
 msgstr "Obteniendo sus cuentas viejas..."
 
 #: src/views/ActivatePolygonSuccess.vue:139
-#: src/views/BitcoinSyncBaseView.vue:72 src/views/LoginSuccess.vue:141
+#: src/views/BitcoinSyncBaseView.vue:72 src/views/LoginSuccess.vue:134
 #: src/views/SetupSwapSuccess.vue:669 src/views/SignupLedger.vue:145
 msgid "Retry"
 msgstr "Reintentar"
@@ -986,10 +982,6 @@ msgstr "Firmando transacciones..."
 msgid "Single Accounts"
 msgstr "Cuentas Individual"
 
-#: src/views/LoginSuccess.vue:15
-msgid "Skip"
-msgstr ""
-
 #: src/views/CashlinkManage.vue:228 src/views/CheckoutTransmission.vue:125
 msgid "Something went wrong"
 msgstr "Algo salió mal"
@@ -998,7 +990,7 @@ msgstr "Algo salió mal"
 msgid "Something went wrong with your request. Please try again."
 msgstr "Algo salió mal con su petición. Por favor intente de nuevo."
 
-#: src/views/LoginSuccess.vue:182
+#: src/views/LoginSuccess.vue:175
 msgid "Space exceeded"
 msgstr "Espacio excedido"
 
@@ -1051,7 +1043,7 @@ msgstr "Sincronizando consenso...."
 msgid "Syncing Failed"
 msgstr "Sincronización Fallida"
 
-#: src/views/LoginSuccess.vue:65
+#: src/views/LoginSuccess.vue:59
 msgid "Syncing to network..."
 msgstr ""
 
@@ -1079,7 +1071,7 @@ msgstr "La sincronización con la red Polygon ha fallado:: {error}"
 msgid "Syncing with Polygon network..."
 msgstr "Sincronizando con la red Polygon..."
 
-#: src/views/LoginSuccess.vue:140 src/views/SignupLedger.vue:134
+#: src/views/LoginSuccess.vue:133 src/views/SignupLedger.vue:134
 msgid "Syncing with the network failed: {error}"
 msgstr "Proceso de sincronización con la red falló: {error}"
 
@@ -1206,7 +1198,7 @@ msgstr ""
 " pueden agregar mas cuentas y/o direcciones. Por favor libere espacio "
 "cerrando sesión en otras cuentas."
 
-#: src/views/LoginSuccess.vue:184
+#: src/views/LoginSuccess.vue:177
 msgid ""
 "Unfortunately, due to space restrictions of Safari and IOS, this account "
 "cannot be stored properly. Please free up space by logging out of other "
@@ -1224,7 +1216,7 @@ msgstr "Sin Etiqueta"
 msgid "Unsupported Request"
 msgstr "Petición no soportada"
 
-#: src/components/CheckoutCardNimiq.vue:329
+#: src/components/CheckoutCardNimiq.vue:327
 msgid "Updating balances"
 msgstr "Actualizando balances"
 
@@ -1232,7 +1224,7 @@ msgstr "Actualizando balances"
 msgid "Updating Keyguard..."
 msgstr "Actualizando Keyguard..."
 
-#: src/views/Migrate.vue:142 src/views/Migrate.vue:284
+#: src/views/Migrate.vue:142 src/views/Migrate.vue:282
 msgid "Updating your Accounts"
 msgstr "Actualizando sus Cuentas"
 
@@ -1252,7 +1244,7 @@ msgstr ""
 "Use su Archivo de Sesión\n"
 "o Palabras de Respaldo."
 
-#: src/views/LoginSuccess.vue:219 src/views/SignupLedger.vue:132
+#: src/views/LoginSuccess.vue:209 src/views/SignupLedger.vue:132
 msgid "Used addresses without balance might have been missed."
 msgstr "Puede que se ignoraran direcciones usadas sin balance."
 
@@ -1276,11 +1268,7 @@ msgstr ""
 "Billeterea creada\n"
 "exitosamente"
 
-#: src/views/LoginSuccess.vue:241
-msgid "Welcome back!"
-msgstr ""
-
-#: src/views/LoginSuccess.vue:234
+#: src/views/LoginSuccess.vue:224
 msgid "Welcome back! | Your Accounts are ready."
 msgstr "¡Bienvenido de vuelta! | Tus cuentas están listas."
 
@@ -1336,7 +1324,7 @@ msgstr ""
 "Su {app} app esta des-actualizada. Por favor actualice su Ledger y {app} app"
 " usando Ledger Live."
 
-#: src/views/LoginSuccess.vue:217 src/views/SignupLedger.vue:106
+#: src/views/LoginSuccess.vue:207 src/views/SignupLedger.vue:106
 msgid ""
 "Your Addresses may be\n"
 "incomplete."
@@ -1360,6 +1348,6 @@ msgstr ""
 msgid "Your message is signed."
 msgstr "Su mensaje fue firmado."
 
-#: src/views/LoginSuccess.vue:228 src/views/SimpleSuccess.vue:31
+#: src/views/LoginSuccess.vue:218 src/views/SimpleSuccess.vue:31
 msgid "Your password was changed."
 msgstr "Su contraseña fue cambiada."
