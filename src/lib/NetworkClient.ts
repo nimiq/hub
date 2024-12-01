@@ -26,7 +26,9 @@ export class NetworkClient {
 
     public async requestTransactionReceipts(address: string, limit?: number) {
         const client = await this.client;
-        return client.getTransactionReceiptsByAddress(address, limit);
+        // Require only one history peer when not in mainnet
+        const minPeers = Config.network === NETWORK_MAIN ? undefined : 1;
+        return client.getTransactionReceiptsByAddress(address, limit, /* startAt */ undefined, minPeers);
     }
 
     public async getTransactionsByAddress(
@@ -38,13 +40,15 @@ export class NetworkClient {
         // minPeers?: number,
     ) {
         const client = await this.client;
+        // Require only one history peer when not in mainnet
+        const minPeers = Config.network === NETWORK_MAIN ? undefined : 1;
         return client.getTransactionsByAddress(
             address,
             undefined /* sinceBlockHeight */,
             knownTransactionDetails,
             undefined /* startAt */,
             limit,
-            undefined /* minPeers */,
+            minPeers,
         );
     }
 
