@@ -8,12 +8,7 @@
                 :lightBlue="true"
                 :mainAction="action"
                 @main-action="resolve"
-                :alternativeAction="$t('Continue to Wallet')"
-                @alternative-action="skip"
                 :message="message" />
-            <div v-if="canSkip" class="skip-box">
-                <button @click="skip" class="skip nq-button-s inverse">{{ $t('Skip') }}</button>
-            </div>
         </SmallPage>
     </div>
 </template>
@@ -52,7 +47,6 @@ export default class LoginSuccess extends Vue {
     private action: string = '';
     private receiptsError: Error | null = null;
     private result: Account[] | null = null;
-    private canSkip = true;
 
     private resolve = (...args: any[]) => {}; // tslint:disable-line:no-empty
 
@@ -134,7 +128,6 @@ export default class LoginSuccess extends Vue {
                 }),
             );
         } catch (e) {
-            this.canSkip = false;
             this.state = StatusScreen.State.ERROR;
             this.title = this.$t('Fetching Addresses Failed') as string;
             this.message = this.$t('Syncing with the network failed: {error}', { error: e.message || e }) as string;
@@ -194,15 +187,12 @@ export default class LoginSuccess extends Vue {
 
     private onUpdate(walletInfo: WalletInfo, currentlyCheckedAccounts: BasicAccountInfo[]) {
         const count = !walletInfo ? 0 : walletInfo.accounts.size;
-        this.canSkip = count > 0;
         if (count <= 1) return;
         this.status = this.$tc('Imported {count} address so far... | Imported {count} addresses so far...', count);
     }
 
     private async done() {
         if (!this.walletInfos.length) throw new Error('WalletInfo not ready.');
-
-        this.canSkip = false;
 
         // Add wallets to vuex
         for (const walletInfo of this.walletInfos) {
@@ -235,33 +225,5 @@ export default class LoginSuccess extends Vue {
         this.state = StatusScreen.State.SUCCESS;
         setTimeout(() => { this.$rpc.resolve(result); }, StatusScreen.SUCCESS_REDIRECT_DELAY);
     }
-
-    private async skip() {
-        this.canSkip = false;
-        this.title = this.$t('Welcome back!') as string;
-        this.state = StatusScreen.State.SUCCESS;
-        const result: Account[] = await Promise.all(
-            this.walletInfos.map((walletInfo) => walletInfo.toAccountType(RequestType.LOGIN)),
-        );
-        setTimeout(() => { this.$rpc.resolve(result); }, StatusScreen.SUCCESS_REDIRECT_DELAY);
-    }
 }
 </script>
-
-<style scoped>
-.small-page {
-    position: relative;
-}
-
-.status-screen {
-    z-index: unset;
-}
-
-.skip-box {
-    position: absolute;
-    bottom: 2rem;
-    left: 0;
-    width: 100%;
-    text-align: center;
-}
-</style>
