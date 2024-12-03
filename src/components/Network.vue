@@ -214,7 +214,7 @@ class Network extends Vue {
 
     public async getGenesisVestingContracts(): Promise<VestingContractInfo[]> {
         const client = await this.getNetworkClient();
-        const contracts = await client.getGenesisVestingContracts();
+        const contracts = client.getGenesisVestingContracts();
 
         return contracts.map((contract) => new VestingContractInfo(
             labelVestingContract(),
