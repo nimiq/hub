@@ -1807,7 +1807,7 @@
     call-me-maybe "^1.0.1"
     glob-to-regexp "^0.3.0"
 
-"@nimiq/albatross-wasm@npm:@nimiq/core@^2.0.0", "@nimiq/core@^2.0.5":
+"@nimiq/albatross-wasm@npm:@nimiq/core@^2.0.0":
   version "2.0.5"
   resolved "https://registry.yarnpkg.com/@nimiq/core/-/core-2.0.5.tgz#055407407eb5a3016183460b61c552936d3f989c"
   integrity sha512-fqTXjPqU3+uCa0W/3X//grMzu96eyyFdJR+aaZ5jlZrEah/Pb/ERjHuTgsC3y0TBBuYT8ohTDHktvs+p8MKPPA==
@@ -1824,6 +1824,14 @@
   version "1.6.4"
   resolved "https://registry.yarnpkg.com/@nimiq/core-web/-/core-web-1.6.4.tgz#2ab36ab6f7d4062c3d534e6da831c2ccaae959de"
   integrity sha512-D0jVukuL+zsUXicS4cCZEPlBzlzBe0D1sNWecEhaSjTR1iMa9f+fA9l08wlQtRVw96Z6yHRgQokWVnO1GcWI7Q==
+
+"@nimiq/core@^2.0.5":
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/@nimiq/core/-/core-2.0.5.tgz#055407407eb5a3016183460b61c552936d3f989c"
+  integrity sha512-fqTXjPqU3+uCa0W/3X//grMzu96eyyFdJR+aaZ5jlZrEah/Pb/ERjHuTgsC3y0TBBuYT8ohTDHktvs+p8MKPPA==
+  dependencies:
+    comlink "^4.4.1"
+    websocket "^1.0.34"
 
 "@nimiq/electrum-client@https://github.com/nimiq/electrum-client#build":
   version "0.1.0"
@@ -9453,9 +9461,9 @@ nanobench@^2.1.1:
     pretty-hrtime "^1.0.2"
 
 nanoid@^3.3.7:
-  version "3.3.7"
-  resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.3.7.tgz#d0c301a691bc8d54efa0a2226ccf3fe2fd656bd8"
-  integrity sha512-eSRppjcPIatRIMC1U6UngP8XFcz8MQWGQdt1MTBQ7NaAmvXDfvNxbvWV3x2y6CdEUciCSsDHDQZbhYaB8QEo2g==
+  version "3.3.8"
+  resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.3.8.tgz#b1be3030bee36aaff18bacb375e5cce521684baf"
+  integrity sha512-WNLf5Sd8oZxOm+TzppcYk8gVOgP+l58xNy58D0nbUnOxOWRWvlcCV4kUF7ltmI6PsrLl/BgKEyS4mqsGChFN0w==
 
 nanomatch@^1.2.9:
   version "1.2.13"
