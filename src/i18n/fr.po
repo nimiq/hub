@@ -49,7 +49,8 @@ msgstr "503 Service indisponible - Merci de réessayer plus tard"
 #: src/views/OnboardingSelector.vue:152
 msgid "A 100% free and self-custodial web wallet for NIM, BTC and USDC."
 msgstr ""
-"Un wallet web 100 % gratuit et autogéré pour le NIM, le BTC et l'USDC."
+"Un Wallet web 100 % gratuit et autonome pour le NIM, le BTC, l'USDT et "
+"l'USDC."
 
 #: src/views/ExportSuccess.vue:60
 msgid "Account backed up!"
