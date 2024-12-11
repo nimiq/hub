@@ -10,7 +10,7 @@ index b05f20b..b609e35 100644
 +    // TODO either automatically adapt the version, based on @nimiq/core's package.json (here in the patch, or in the
 +    //  the Ledger API itself), or ideally make the dependency an external one in the Ledger API, and try to inject it
 +    //  in vue.config.js.
-+    ? '/nimiq/v2.0.5/web/'
++    ? '/nimiq/v2.0.5-history-fix/web/'
      // In other cases load @nimiq/core-web@next from jsdelivr. Load from cdn to avoid bundling a copy of core if it's
      // not needed. This way, we also don't need to handle the wasm file in the rollup config.
      : 'https://cdn.jsdelivr.net/npm/@nimiq/core@next/web/';
@@ -81,7 +81,7 @@ index 5b18143..6a45b5f 100644
 +    // TODO either automatically adapt the version, based on @nimiq/core's package.json (here in the patch, or in the
 +    //  the Ledger API itself), or ideally make the dependency an external one in the Ledger API, and try to inject it
 +    //  in vue.config.js.
-+    ? '/nimiq/v2.0.5/web/'
++    ? '/nimiq/v2.0.5-history-fix/web/'
      // In other cases load @nimiq/core-web@next from jsdelivr. Load from cdn to avoid bundling a copy of core if it's
      // not needed. This way, we also don't need to handle the wasm file in the rollup config.
      : 'https://cdn.jsdelivr.net/npm/@nimiq/core@next/web/';

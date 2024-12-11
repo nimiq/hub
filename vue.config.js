@@ -8,15 +8,15 @@ const createHash = require('crypto').createHash;
 // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const PoLoaderOptimizer = require('webpack-i18n-tools')();
 
-let coreVersion = '';
-try {
-    // Will fail until @nimiq/core export map is updated to also make the package.json file available
-    coreVersion = require('@nimiq/core/package.json').version;
-} catch (e) {
-    // Fallback to reading the package.json file directly
-    pkgJson = require('fs').readFileSync(path.join(__dirname, 'node_modules/@nimiq/core/package.json'));
-    coreVersion = JSON.parse(pkgJson).version;
-}
+let coreVersion = '2.0.5-history-fix';
+// try {
+//     // Will fail until @nimiq/core export map is updated to also make the package.json file available
+//     coreVersion = require('@nimiq/core/package.json').version;
+// } catch (e) {
+//     // Fallback to reading the package.json file directly
+//     pkgJson = require('fs').readFileSync(path.join(__dirname, 'node_modules/@nimiq/core/package.json'));
+//     coreVersion = JSON.parse(pkgJson).version;
+// }
 
 if (!coreVersion) throw new Error('Could not determine @nimiq/core version');
 
@@ -81,10 +81,10 @@ const configureWebpack = {
                     return path.replace('.min', '');
                 },
             },
-            {
-                from: 'node_modules/@nimiq/core',
-                to: `./nimiq/v${coreVersion}/`,
-            },
+            // {
+            //     from: 'node_modules/@nimiq/core',
+            //     to: `./nimiq/v${coreVersion}/`,
+            // },
         ]}),
         new WriteFileWebpackPlugin(),
         new PoLoaderOptimizer(),
