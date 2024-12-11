@@ -636,6 +636,8 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
                 return this.$t('Swap Setup Failed') as string;
             case this.State.SYNCING_FAILED:
                 return this.$t('Syncing Failed') as string;
+            case this.State.BITCOIN_TX_MISMATCH:
+                return this.$t('Bitcoin HTLC invalid') as string;
             default:
                 return this.$t('Preparing Swap') as string;
         }
@@ -655,13 +657,14 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
     }
 
     protected get statusScreenMessage() {
-        if (this.state === this.State.FETCHING_SWAP_DATA_FAILED) {
-            return this.$t('Fetching swap data failed: {error}', { error: this.error }) as string;
+        switch (this.state) {
+            case this.State.FETCHING_SWAP_DATA_FAILED:
+                return this.$t('Fetching swap data failed: {error}', { error: this.error }) as string;
+            case this.State.BITCOIN_TX_MISMATCH:
+                return this.btcMismatchError;
+            default:
+                return super.statusScreenMessage;
         }
-        if (this.state === this.State.BITCOIN_TX_MISMATCH) {
-            return this.$t('Bitcoin HTLC invalid: {error}', { error: this.btcMismatchError }) as string;
-        }
-        return super.statusScreenMessage;
     }
 
     protected get statusScreenAction() {

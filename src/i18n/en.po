@@ -80,7 +80,7 @@ msgid "Add Vesting Contract"
 msgstr ""
 
 #: src/components/CheckoutCard.vue:84
-#: src/views/SetupSwapLedger.vue:292
+#: src/views/SetupSwapLedger.vue:290
 msgid "Address"
 msgstr ""
 
@@ -99,8 +99,8 @@ msgstr ""
 #: src/components/CheckoutCardBitcoin.vue:30
 #: src/components/CheckoutCardEthereum.vue:27
 #: src/components/CheckoutCardNimiqExternal.vue:32
-#: src/views/SetupSwapLedger.vue:285
-#: src/views/SetupSwapLedger.vue:294
+#: src/views/SetupSwapLedger.vue:283
+#: src/views/SetupSwapLedger.vue:292
 msgid "Amount"
 msgstr ""
 
@@ -198,8 +198,9 @@ msgstr ""
 msgid "Bitcoin activated"
 msgstr ""
 
-#: src/views/SetupSwapSuccess.vue:662
-msgid "Bitcoin HTLC invalid: {error}"
+#: src/views/SetupSwapLedger.vue:858
+#: src/views/SetupSwapSuccess.vue:640
+msgid "Bitcoin HTLC invalid"
 msgstr ""
 
 #: src/lib/LabelingMachine.ts:31
@@ -340,7 +341,7 @@ msgstr ""
 msgid "Collecting payment details"
 msgstr ""
 
-#: src/views/SetupSwapLedger.vue:991
+#: src/views/SetupSwapLedger.vue:999
 msgid "Confirm {outgoingOrIncoming} transaction on Ledger"
 msgstr ""
 
@@ -534,8 +535,8 @@ msgstr ""
 #: src/components/CheckoutCardBitcoin.vue:47
 #: src/components/CheckoutCardNimiqExternal.vue:47
 #: src/components/CurrencyInfo.vue:15
-#: src/views/SetupSwapLedger.vue:287
-#: src/views/SetupSwapLedger.vue:303
+#: src/views/SetupSwapLedger.vue:285
+#: src/views/SetupSwapLedger.vue:301
 msgid "Fee"
 msgstr ""
 
@@ -544,7 +545,8 @@ msgstr ""
 msgid "Fetching Addresses Failed"
 msgstr ""
 
-#: src/views/SetupSwapSuccess.vue:651
+#: src/views/SetupSwapLedger.vue:870
+#: src/views/SetupSwapSuccess.vue:653
 msgid "Fetching Bitcoin HTLC..."
 msgstr ""
 
@@ -552,11 +554,11 @@ msgstr ""
 msgid "Fetching contract information..."
 msgstr ""
 
-#: src/views/SetupSwapSuccess.vue:659
+#: src/views/SetupSwapSuccess.vue:662
 msgid "Fetching swap data failed: {error}"
 msgstr ""
 
-#: src/views/SetupSwapSuccess.vue:647
+#: src/views/SetupSwapSuccess.vue:649
 msgid "Fetching swap data..."
 msgstr ""
 
@@ -630,7 +632,7 @@ msgstr ""
 msgid "Imported {count} address so far... | Imported {count} addresses so far..."
 msgstr ""
 
-#: src/views/SetupSwapLedger.vue:994
+#: src/views/SetupSwapLedger.vue:1002
 msgid "incoming"
 msgstr ""
 
@@ -794,7 +796,7 @@ msgstr ""
 msgid "Other wallets"
 msgstr ""
 
-#: src/views/SetupSwapLedger.vue:993
+#: src/views/SetupSwapLedger.vue:1001
 msgid "outgoing"
 msgstr ""
 
@@ -854,7 +856,7 @@ msgstr ""
 msgid "Prepare for update"
 msgstr ""
 
-#: src/views/SetupSwapSuccess.vue:640
+#: src/views/SetupSwapSuccess.vue:642
 msgid "Preparing Swap"
 msgstr ""
 
@@ -922,7 +924,7 @@ msgstr ""
 #: src/views/ActivatePolygonSuccess.vue:139
 #: src/views/BitcoinSyncBaseView.vue:72
 #: src/views/LoginSuccess.vue:134
-#: src/views/SetupSwapSuccess.vue:669
+#: src/views/SetupSwapSuccess.vue:672
 #: src/views/SignupLedger.vue:145
 msgid "Retry"
 msgstr ""
@@ -961,7 +963,7 @@ msgstr ""
 msgid "Sign Message"
 msgstr ""
 
-#: src/views/SetupSwapSuccess.vue:649
+#: src/views/SetupSwapSuccess.vue:651
 msgid "Signing transactions..."
 msgstr ""
 
@@ -1003,7 +1005,7 @@ msgstr ""
 msgid "Storing your new accounts..."
 msgstr ""
 
-#: src/views/SetupSwapLedger.vue:258
+#: src/views/SetupSwapLedger.vue:256
 msgid "Swap authorized"
 msgstr ""
 
@@ -1011,7 +1013,7 @@ msgstr ""
 msgid "Swap fee"
 msgstr ""
 
-#: src/views/SetupSwapLedger.vue:855
+#: src/views/SetupSwapLedger.vue:854
 #: src/views/SetupSwapSuccess.vue:636
 msgid "Swap Setup Failed"
 msgstr ""
@@ -1029,7 +1031,7 @@ msgstr ""
 
 #: src/views/ActivatePolygonSuccess.vue:113
 #: src/views/BitcoinSyncBaseView.vue:50
-#: src/views/SetupSwapLedger.vue:857
+#: src/views/SetupSwapLedger.vue:856
 #: src/views/SetupSwapSuccess.vue:638
 #: src/views/SignBtcTransactionLedger.vue:118
 msgid "Syncing Failed"
@@ -1052,7 +1054,7 @@ msgid "Syncing with Bitcoin network failed: {error}"
 msgstr ""
 
 #: src/views/BitcoinSyncBaseView.vue:58
-#: src/views/SetupSwapLedger.vue:867
+#: src/views/SetupSwapLedger.vue:868
 msgid "Syncing with Bitcoin network..."
 msgstr ""
 
@@ -1163,6 +1165,10 @@ msgstr ""
 
 #: src/views/Migrate.vue:93
 msgid "Try again"
+msgstr ""
+
+#: src/views/SetupSwapLedger.vue:860
+msgid "Unexpected error"
 msgstr ""
 
 #: src/components/NotEnoughCookieSpace.vue:7

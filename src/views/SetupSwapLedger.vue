@@ -238,14 +238,12 @@
                 </div>
             </PageBody>
 
-            <div class="bottom-container" :class="{
-                'full-height': state === State.SYNCING_FAILED || state === State.FETCHING_SWAP_DATA_FAILED,
-            }">
+            <div class="bottom-container" :class="{ 'full-height': statusScreenState === StatusScreenState.ERROR }">
                 <!-- Do not display the LedgerUi until hiding the swap authorization, to not start the connect animation
                 while the LedgerUi would be hidden behind the swap authorization. Do not do the same for Bitcoin address
-                SYNCING state because SYNCING can also occur again throughout the process (to fetch the BTC transaction
-                that funds the HTLC) in which case we do not want to hide the LedgerUi in the background while the
-                SYNCING StatusScreen is still fading in. -->
+                SYNCING and FETCHING_BITCOIN_TX states because those can also occur again throughout the process (to
+                fetch the BTC transaction that funds the HTLC) in which case we do not want to hide the LedgerUi in the
+                background while the SYNCING StatusScreen is still fading in. -->
                 <LedgerUi small
                     v-if="!swapAuthorizationShown"
                     @information-shown="ledgerInstructionsShown = true"
@@ -311,15 +309,14 @@
                             />
                         </div>
                     </div>
-                    <StatusScreen v-else-if="state === State.SYNCING_FAILED || state === State.FETCHING_SWAP_DATA_FAILED
-                        || !ledgerInstructionsShown"
+                    <StatusScreen v-else-if="statusScreenState === StatusScreenState.ERROR || !ledgerInstructionsShown"
                         :state="statusScreenState"
                         :title="statusScreenTitle"
                         :status="statusScreenStatus"
                         :message="statusScreenMessage"
                         :mainAction="statusScreenAction"
                         @main-action="_statusScreenActionHandler"
-                        :small="state !== State.SYNCING_FAILED && state !== State.FETCHING_SWAP_DATA_FAILED"
+                        :small="statusScreenState !== StatusScreenState.ERROR"
                     />
                 </transition>
             </div>
@@ -435,6 +432,7 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
     protected _account!: WalletInfo;
     private readonly SwapAsset = SwapAsset;
     private readonly LedgerApiStateType = LedgerApiStateType;
+    private readonly StatusScreenState = StatusScreen.State;
     private _setupSwapPromise!: Promise<SwapSetupInfo>;
     private nimiqLedgerAddressInfo?: { address: Nimiq.Address, label: string, balance: number, signerPath: string };
     private _nimiqSwapProxyPromise?: Promise<LedgerSwapProxy>;
@@ -850,21 +848,31 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
     // Getters for displaying information
 
     protected get statusScreenTitle() {
+        if (this.statusScreenState !== StatusScreen.State.ERROR) return ''; // don't display a title in small ui state
         switch (this.state) {
             case this.State.FETCHING_SWAP_DATA_FAILED:
                 return this.$t('Swap Setup Failed') as string;
             case this.State.SYNCING_FAILED:
                 return this.$t('Syncing Failed') as string;
+            case this.State.BITCOIN_TX_MISMATCH:
+                return this.$t('Bitcoin HTLC invalid') as string;
             default:
-                return ''; // don't display a title in small ui state
+                return this.$t('Unexpected error') as string;
         }
     }
 
     protected get statusScreenStatus() {
-        // Other than SetupSwapSuccess do no show a status for FETCHING_SWAP_DATA and SIGNING_TRANSACTIONS as during
-        // these states typically the LedgerUi is / was just active and the StatusScreen will fade.
-        if (this.state !== this.State.SYNCING) return '';
-        return this.$t('Syncing with Bitcoin network...') as string;
+        if (this.statusScreenState !== StatusScreen.State.LOADING) return ''; // the status is only relevant for LOADING
+        switch (this.state) {
+            case this.State.SYNCING:
+                return this.$t('Syncing with Bitcoin network...') as string;
+            case this.State.FETCHING_BITCOIN_TX:
+                return this.$t('Fetching Bitcoin HTLC...') as string;
+            default:
+                // Different to SetupSwapSuccess do not show a status for FETCHING_SWAP_DATA and SIGNING_TRANSACTIONS as
+                // during these states typically the LedgerUi is / was just active and the StatusScreen will fade.
+                return '';
+        }
     }
 
     private get _fundingAmountInfo(): SwapAmountInfo {
