@@ -65,10 +65,9 @@ export default class LoginSuccess extends Vue {
             await Promise.all(
                 this.keyguardResult.map(async (keyResult) => {
                     // The Keyguard always returns (at least) one derived Address,
-                    const keyguardResultAccounts = keyResult.addresses.map((addressObj, index) => ({
+                    const keyguardResultAccounts = keyResult.addresses.map((addressObj) => ({
                         address: new Nimiq.Address(addressObj.address).toUserFriendlyAddress(),
                         path: addressObj.keyPath,
-                        index,
                     }));
 
                     let tryCount = 0;
@@ -187,7 +186,6 @@ export default class LoginSuccess extends Vue {
 
     private onUpdate(walletInfo: WalletInfo, currentlyCheckedAccounts: BasicAccountInfo[]) {
         const count = !walletInfo ? 0 : walletInfo.accounts.size;
-        if (count <= 1) return;
         this.status = this.$tc('Imported {count} address so far... | Imported {count} addresses so far...', count);
     }
 
