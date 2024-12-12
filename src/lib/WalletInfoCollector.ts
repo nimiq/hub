@@ -295,18 +295,19 @@ export default class WalletInfoCollector {
             do {
                 const derivedAccounts = await derivedAccountsPromise;
 
-                // // already start deriving next accounts
-                // // By always advancing in groups of MAX_ALLOWED_GAP addresses per round, it often happens that more
-                // // addresses are derived and checked for activity than the BIP44 address gap limit
-                // // (https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki#address-gap-limit) stipulates,
-                // // because whenever an active address in a group of addresses is found, the next full group is also
-                // // derived. Thus the actual gap limit of this implementation is up to (2 x MAX_ALLOWED_GAP) - 1.
-                // // We argue that this is good UX for users, as potentially more of their active addresses are found,
-                // // even if they haven't strictly followed to the standard - at only a relatively small cost to the
-                // // network. For example, if the user adds the accounts derived with indices 0, 19, 39 to his wallet but
-                // // then only ends up using accounts 0 and 39, the account at index 19 will not be found anymore on
-                // // reimport. With the current implementation however, at least the account 39 would be found, while an
-                // // implementation strictly following the specification would stop the search at index 19.
+                // already start deriving next accounts
+                // By always advancing in groups of MAX_ALLOWED_GAP addresses per round, it often happens that more
+                // addresses are derived and checked for activity than the BIP44 address gap limit
+                // (https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki#address-gap-limit) stipulates,
+                // because whenever an active address in a group of addresses is found, the next full group is also
+                // derived. Thus the actual gap limit of this implementation is up to (2 x MAX_ALLOWED_GAP) - 1.
+                // We argue that this is good UX for users, as potentially more of their active addresses are found,
+                // even if they haven't strictly followed to the standard - at only a relatively small cost to the
+                // network. For example, if the user adds the accounts derived with indices 0, 19, 39 to his wallet but
+                // then only ends up using accounts 0 and 39, the account at index 19 will not be found anymore on
+                // reimport. With the current implementation however, at least the account 39 would be found, while an
+                // implementation strictly following the specification would stop the search at index 19.
+
                 // startIndex += ACCOUNT_MAX_ALLOWED_ADDRESS_GAP;
                 // derivedAccountsPromise = WalletInfoCollector._deriveAccounts(startIndex,
                 //     ACCOUNT_MAX_ALLOWED_ADDRESS_GAP, walletType, keyId, keyguardCookieEncryptionKey);
