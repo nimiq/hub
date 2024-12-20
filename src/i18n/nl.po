@@ -973,8 +973,13 @@ msgid "Share"
 msgstr "Delen"
 
 #: src/views/SignMessage.vue:5
+#: src/views/SignMessageLedger.vue:5
 msgid "Sign Message"
 msgstr "Bericht ondertekenen"
+
+#: src/views/SignMessageLedger.vue:17
+msgid "Signer"
+msgstr "Ondertekenaar"
 
 #: src/views/SetupSwapSuccess.vue:649
 msgid "Signing transactions..."
