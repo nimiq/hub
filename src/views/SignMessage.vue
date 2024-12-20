@@ -92,7 +92,7 @@ export default class SignMessage extends Vue {
             });
         }
 
-        // proceed to transaction signing
+        // proceed to message signing
         switch (walletInfo.type) {
             case WalletType.LEDGER:
                 this.$router.push({name: `${RequestType.SIGN_MESSAGE}-ledger`});
