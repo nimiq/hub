@@ -985,6 +985,7 @@ msgid "Share"
 msgstr "Delen"
 
 #: src/views/SignMessage.vue:5
+#: src/views/SignMessageLedger.vue:5
 msgid "Sign Message"
 msgstr "Bericht ondertekenen"
 

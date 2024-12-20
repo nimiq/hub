@@ -989,6 +989,7 @@ msgid "Share"
 msgstr "Magbahagi"
 
 #: src/views/SignMessage.vue:5
+#: src/views/SignMessageLedger.vue:5
 msgid "Sign Message"
 msgstr "Mensahe sa Pag-sign"
 

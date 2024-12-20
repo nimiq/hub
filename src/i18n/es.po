@@ -983,6 +983,7 @@ msgid "Share"
 msgstr "Compartir"
 
 #: src/views/SignMessage.vue:5
+#: src/views/SignMessageLedger.vue:5
 msgid "Sign Message"
 msgstr "Firmar Mensaje"
 

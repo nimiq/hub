@@ -973,6 +973,7 @@ msgid "Share"
 msgstr ""
 
 #: src/views/SignMessage.vue:5
+#: src/views/SignMessageLedger.vue:5
 msgid "Sign Message"
 msgstr ""
 

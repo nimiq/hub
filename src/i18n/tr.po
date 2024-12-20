@@ -976,6 +976,7 @@ msgid "Share"
 msgstr "Paylaş"
 
 #: src/views/SignMessage.vue:5
+#: src/views/SignMessageLedger.vue:5
 msgid "Sign Message"
 msgstr "Mesajı imzala"
 
