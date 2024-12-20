@@ -1,9 +1,9 @@
-# 
+#
 # Translators:
 # Huriye <huriyegoek@gmx.de>, 2021
 # Uğur Sefa Karcı, 2023
 # Sören Schwert <hello@soerenschwert.de>, 2024
-# 
+#
 msgid ""
 msgstr ""
 "Last-Translator: Sören Schwert <hello@soerenschwert.de>, 2024\n"
@@ -979,6 +979,10 @@ msgstr "Paylaş"
 #: src/views/SignMessageLedger.vue:5
 msgid "Sign Message"
 msgstr "Mesajı imzala"
+
+#: src/views/SignMessageLedger.vue:17
+msgid "Signer"
+msgstr "Signer"
 
 #: src/views/SetupSwapSuccess.vue:651
 msgid "Signing transactions..."

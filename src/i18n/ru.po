@@ -1,4 +1,4 @@
-# 
+#
 # Translators:
 # Daniel, 2020
 # Vad <vjuruss@gmail.com>, 2021
@@ -6,7 +6,7 @@
 # Пётр Павлович, 2021
 # Alexander Ivanov <saiv46.dev+transifex@gmail.com>, 2023
 # Sören Schwert <hello@soerenschwert.de>, 2024
-# 
+#
 msgid ""
 msgstr ""
 "Last-Translator: Sören Schwert <hello@soerenschwert.de>, 2024\n"
@@ -987,6 +987,10 @@ msgstr "Поделиться"
 #: src/views/SignMessageLedger.vue:5
 msgid "Sign Message"
 msgstr "Подписать сообщение"
+
+#: src/views/SignMessageLedger.vue:17
+msgid "Signer"
+msgstr "Отправитель"
 
 #: src/views/SetupSwapSuccess.vue:651
 msgid "Signing transactions..."

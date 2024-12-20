@@ -1,11 +1,11 @@
-# 
+#
 # Translators:
 # BlockchainShay <Shaylish@live.nl>, 2020
 # Daniel, 2020
 # Jim <jimvendrig10@gmail.com>, 2021
 # Stefan, 2024
 # Sören Schwert <hello@soerenschwert.de>, 2024
-# 
+#
 msgid ""
 msgstr ""
 "Last-Translator: Sören Schwert <hello@soerenschwert.de>, 2024\n"
@@ -988,6 +988,10 @@ msgstr "Delen"
 #: src/views/SignMessageLedger.vue:5
 msgid "Sign Message"
 msgstr "Bericht ondertekenen"
+
+#: src/views/SignMessageLedger.vue:17
+msgid "Signer"
+msgstr "Ondertekenaar"
 
 #: src/views/SetupSwapSuccess.vue:651
 msgid "Signing transactions..."

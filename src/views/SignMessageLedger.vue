@@ -14,7 +14,7 @@
                     </div>
                     <div class="account-text">
                         <div class="label" id="signer-label">{{ activeAccount.defaultLabel }}</div>
-                        <span class="label-right" data-i18n="sign-msg-signer">Signer</span>
+                        <span class="label-right">{{ $t('Signer') }}</span>
                     </div>
                 </div>
 

@@ -1,9 +1,9 @@
-# 
+#
 # Translators:
 # Ricardo Barquero Carranza <richy@nimiq.com>, 2023
 # Daniel, 2024
 # Sören Schwert <hello@soerenschwert.de>, 2024
-# 
+#
 msgid ""
 msgstr ""
 "Last-Translator: Sören Schwert <hello@soerenschwert.de>, 2024\n"
@@ -986,6 +986,10 @@ msgstr "Compartir"
 #: src/views/SignMessageLedger.vue:5
 msgid "Sign Message"
 msgstr "Firmar Mensaje"
+
+#: src/views/SignMessageLedger.vue:17
+msgid "Signer"
+msgstr "Firmador"
 
 #: src/views/SetupSwapSuccess.vue:651
 msgid "Signing transactions..."

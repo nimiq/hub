@@ -977,6 +977,10 @@ msgstr ""
 msgid "Sign Message"
 msgstr ""
 
+#: src/views/SignMessageLedger.vue:17
+msgid "Signer"
+msgstr ""
+
 #: src/views/SetupSwapSuccess.vue:651
 msgid "Signing transactions..."
 msgstr ""
