@@ -968,6 +968,10 @@ msgstr "Paylaş"
 msgid "Sign Message"
 msgstr "Mesajı imzala"
 
+#: src/views/SignMessageLedger.vue:17
+msgid "Signer"
+msgstr "Signer"
+
 #: src/views/SetupSwapSuccess.vue:649
 msgid "Signing transactions..."
 msgstr "İşlemler imzalanıyor..."

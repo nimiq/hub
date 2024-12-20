@@ -980,6 +980,10 @@ msgstr "Partager"
 msgid "Sign Message"
 msgstr "Signer le message"
 
+#: src/views/SignMessageLedger.vue:17
+msgid "Signer"
+msgstr "Signataire"
+
 #: src/views/SetupSwapSuccess.vue:649
 msgid "Signing transactions..."
 msgstr "Signature des transactions..."

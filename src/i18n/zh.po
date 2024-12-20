@@ -959,6 +959,10 @@ msgstr "分享"
 msgid "Sign Message"
 msgstr "签名信息"
 
+#: src/views/SignMessageLedger.vue:17
+msgid "Signer"
+msgstr "签署者"
+
 #: src/views/SetupSwapSuccess.vue:649
 msgid "Signing transactions..."
 msgstr "正在签署交易..."

@@ -969,6 +969,10 @@ msgstr "Поділитися"
 msgid "Sign Message"
 msgstr "Підписати повідомлення"
 
+#: src/views/SignMessageLedger.vue:17
+msgid "Signer"
+msgstr "Підписант"
+
 #: src/views/SetupSwapSuccess.vue:649
 msgid "Signing transactions..."
 msgstr "Підписання переказу..."

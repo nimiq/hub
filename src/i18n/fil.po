@@ -981,6 +981,10 @@ msgstr "Magbahagi"
 msgid "Sign Message"
 msgstr "Mensahe sa Pag-sign"
 
+#: src/views/SignMessageLedger.vue:17
+msgid "Signer"
+msgstr "Signer"
+
 #: src/views/SetupSwapSuccess.vue:649
 msgid "Signing transactions..."
 msgstr "Pag-sign ng mga transaksyon ..."
