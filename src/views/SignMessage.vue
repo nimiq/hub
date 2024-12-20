@@ -14,7 +14,6 @@
             <AccountSelector
                 :wallets="processedWallets"
                 disableContracts
-                disableLedgerAccounts
                 @account-selected="setAccount"
                 @login="() => goToOnboarding(false)"/>
         </SmallPage>
@@ -55,14 +54,14 @@ export default class SignMessage extends Vue {
     private async created() {
         if (this.request.signer) {
             const wallet = this.findWalletByAddress(this.request.signer.toUserFriendlyAddress(), false);
-            if (wallet && wallet.type !== WalletType.LEDGER) {
+            if (wallet) {
                 this.setAccount(wallet.id, this.request.signer.toUserFriendlyAddress(), true);
                 return;
             }
         }
 
-        // If account not specified / found or is an unsupported Ledger account let the user pick another account.
-        // Don't automatically reject to not directly leak the information whether an account exists / is a Ledger.
+        // If account not specified / found let the user pick another account.
+        // Don't automatically reject to not directly leak the information whether an account exists.
         this.showAccountSelector = true;
     }
 
@@ -93,23 +92,32 @@ export default class SignMessage extends Vue {
             });
         }
 
-        // Forward to Keyguard
-        const request: KeyguardClient.SignMessageRequest = {
-            appName: this.request.appName,
+        // proceed to transaction signing
+        switch (walletInfo.type) {
+            case WalletType.LEDGER:
+                this.$router.push({name: `${RequestType.SIGN_MESSAGE}-ledger`});
+                return;
+            case WalletType.LEGACY:
+            case WalletType.BIP39:
+                // Forward to Keyguard
+                const request: KeyguardClient.SignMessageRequest = {
+                    appName: this.request.appName,
 
-            keyId: walletInfo.keyId,
-            keyPath: accountInfo.path,
+                    keyId: walletInfo.keyId,
+                    keyPath: accountInfo.path,
 
-            message: this.request.message,
+                    message: this.request.message,
 
-            signer: accountInfo.address.serialize(),
-            signerLabel: accountInfo.label,
-        };
+                    signer: accountInfo.address.serialize(),
+                    signerLabel: accountInfo.label,
+                };
 
-        staticStore.keyguardRequest = request;
+                staticStore.keyguardRequest = request;
 
-        const client = this.$rpc.createKeyguardClient(isFromRequest);
-        client.signMessage(request);
+                const client = this.$rpc.createKeyguardClient(isFromRequest);
+                client.signMessage(request);
+                return;
+        }
     }
 
     private goToOnboarding(useReplace?: boolean) {
