@@ -990,7 +990,7 @@ msgstr "Подписать сообщение"
 
 #: src/views/SignMessageLedger.vue:17
 msgid "Signer"
-msgstr "Отправитель"
+msgstr "подписант"
 
 #: src/views/SetupSwapSuccess.vue:651
 msgid "Signing transactions..."

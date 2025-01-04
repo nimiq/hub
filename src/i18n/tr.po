@@ -982,7 +982,7 @@ msgstr "Mesajı imzala"
 
 #: src/views/SignMessageLedger.vue:17
 msgid "Signer"
-msgstr ""
+msgstr "İmzalayan"
 
 #: src/views/SetupSwapSuccess.vue:651
 msgid "Signing transactions..."
