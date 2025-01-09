@@ -8,12 +8,12 @@
             <PageBody>
                 <textarea id="message" readonly="readonly" :value="request.message"></textarea>
 
-                <div class="account">
+                <div v-if="signerInfo" class="account">
                     <div class="identicon" id="signer-identicon">
-                        <Identicon :address="activeAccount.userFriendlyAddress"></Identicon>
+                        <Identicon :address="signerInfo.userFriendlyAddress"></Identicon>
                     </div>
                     <div class="account-text">
-                        <div class="label" id="signer-label">{{ activeAccount.label }}</div>
+                        <div class="label" id="signer-label">{{ signerInfo.label }}</div>
                         <span class="label-right">{{ $t('Signer') }}</span>
                     </div>
                 </div>
@@ -35,6 +35,7 @@ import { Getter } from 'vuex-class';
 import { SmallPage, PageBody, PageHeader, Identicon } from '@nimiq/vue-components';
 import GlobalClose from '../components/GlobalClose.vue';
 import LedgerUi from '../components/LedgerUi.vue';
+import { RequestType } from '../../client/PublicRequestTypes';
 import { ParsedSignMessageRequest } from '../lib/RequestTypes';
 import { Static } from '../lib/StaticStore';
 import { WalletInfo } from '../lib/WalletInfo';
@@ -45,26 +46,52 @@ import LedgerApi from '@nimiq/ledger-api';
 export default class SignMessageLedger extends Vue {
     @Static protected request!: ParsedSignMessageRequest;
 
-    @Getter private activeWallet!: WalletInfo | undefined;
-    @Getter private activeAccount!: AccountInfo | undefined;
+    @Getter private findWalletByAddress!: (address: string, includeContracts: boolean) => WalletInfo | undefined;
+    @Getter private activeWallet: WalletInfo | undefined;
+    @Getter private activeAccount: AccountInfo | undefined;
+
+    private signerInfo: AccountInfo | null = null;
 
     private async created() {
-        const walletInfo = this.activeWallet;
-        const accountInfo = this.activeAccount;
+        let walletInfo: WalletInfo | undefined;
+        let accountInfo: AccountInfo | undefined;
+
+        if (this.request.signer) {
+            // It's a request which specifies an address for a Ledger account, for which the RpcApi redirected to
+            // SignMessageLedger. The address should be known to the Hub given by the fact that RpcApi detected it as
+            // a Ledger address.
+            const signerAddress = this.request.signer.toUserFriendlyAddress();
+            walletInfo = this.findWalletByAddress(signerAddress, false);
+            accountInfo = walletInfo?.accounts.get(signerAddress);
+        } else {
+            // It's a request which does not specify a signer address. Instead, the user selected an address in
+            // SignMessage, which set the address as active address and redirected to SignMessageLedger.
+            walletInfo = this.activeWallet;
+            accountInfo = this.activeAccount;
+        }
+        if (!walletInfo || !accountInfo) {
+            // This case should not happen, as either the RpcApi redirected here because it knows that the address is a
+            // Ledger address, or SignMessage redirected here after the user selected one of the addresses known to the
+            // Hub. Note that both, the request and active address, also survive reloads.
+            // Let the user choose an address.
+            this.$router.replace({ name: RequestType.SIGN_MESSAGE });
+            return;
+        }
+        this.signerInfo = accountInfo;
 
         try {
-            const signedMessage = await LedgerApi.Nimiq.signMessage(
+            const { signer, signature } = await LedgerApi.Nimiq.signMessage(
                 this.request.message,
-                accountInfo!.path,
+                accountInfo.path,
                 undefined,
-                walletInfo!.keyId,
+                walletInfo.keyId,
                 Config.ledgerApiNimiqVersion,
             );
 
             const result = {
-                signer: signedMessage.signer.toAddress().toUserFriendlyAddress(),
-                signerPublicKey: signedMessage.signer.serialize(),
-                signature: signedMessage.signature.serialize(),
+                signer: signer.toAddress().toUserFriendlyAddress(),
+                signerPublicKey: signer.serialize(),
+                signature: signature.serialize(),
             };
 
             this.$rpc.resolve(result);

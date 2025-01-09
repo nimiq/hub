@@ -52,6 +52,11 @@ export default class SignMessage extends Vue {
     private showAccountSelector = false;
 
     private async created() {
+        // A SignMessageRequest ends up here, if the request does not specify a signer address or if the specified
+        // signer address is not known to the Hub (in those cases the user is offered to select an address), or if it
+        // belongs to a Keyguard account (in which case the Hub redirects to the Keyguard). A SignMessageRequest that
+        // specifies a signer address known to the Hub and belonging to a Ledger account opens SignMessageLedger
+        // directly, instead of SignMessage.
         if (this.request.signer) {
             const wallet = this.findWalletByAddress(this.request.signer.toUserFriendlyAddress(), false);
             if (wallet) {
@@ -85,7 +90,8 @@ export default class SignMessage extends Vue {
         }
 
         if (this.showAccountSelector) {
-            // set active account if user selected the account himself
+            // Set the active account if user selected the account himself. This is also the way the selected address is
+            // communicated to SignMessageLedger.
             this.$setActiveAccount({
                 walletId: walletInfo.id,
                 userFriendlyAddress: accountInfo.userFriendlyAddress,
