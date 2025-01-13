@@ -78,7 +78,7 @@ export class RequestParser {
                     data: typeof signTransactionRequest.extraData === 'string'
                         ? Utf8Tools.stringToUtf8ByteArray(signTransactionRequest.extraData)
                         : signTransactionRequest.extraData || new Uint8Array(0),
-                    flags: signTransactionRequest.flags || 0 /* Nimiq.Transaction.Flag.NONE */,
+                    flags: signTransactionRequest.flags || Nimiq.TransactionFlag.None,
                     validityStartHeight: signTransactionRequest.validityStartHeight,
                 } as ParsedSignTransactionRequest;
             case RequestType.SIGN_STAKING:
@@ -171,7 +171,7 @@ export class RequestParser {
                                 sender: checkoutRequest.sender,
                                 forceSender: !!checkoutRequest.forceSender,
                                 fee: checkoutRequest.fee || 0,
-                                flags: checkoutRequest.flags || 0 /* Nimiq.Transaction.Flag.NONE */,
+                                flags: checkoutRequest.flags || Nimiq.TransactionFlag.None,
                                 validityDuration: checkoutRequest.validityDuration,
                             },
                         })],

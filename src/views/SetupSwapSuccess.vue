@@ -594,7 +594,7 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
                 recipient: new Nimiq.Address(new Uint8Array(20)),
                 recipientType: Nimiq.AccountType.HTLC,
                 recipientData: htlcInfo.fund.htlcData,
-                flags: 1 /* Nimiq.Transaction.Flag.CONTRACT_CREATION */,
+                flags: Nimiq.TransactionFlag.ContractCreation,
                 signerPubKey: nimiqSignatureResult.publicKey,
                 signature: nimiqSignatureResult.signature,
             });

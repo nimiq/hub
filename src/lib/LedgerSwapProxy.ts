@@ -192,7 +192,7 @@ export default class LedgerSwapProxy {
 
     private static _getOriginalLocalSignerPublicKey(proxyFundingDataHex: string): Nimiq.PublicKey | null {
         const expectedDataHexLength =
-            (LedgerSwapProxyMarker.FUND.length + 32 /* Nimiq.PublicKey.SIZE */) * 2; // * 2 for hex
+            (LedgerSwapProxyMarker.FUND.length + Nimiq.PublicKey.SIZE) * 2; // * 2 for hex
         if (proxyFundingDataHex.length !== expectedDataHexLength
             || !proxyFundingDataHex.startsWith(Nimiq.BufferUtils.toHex(LedgerSwapProxyMarker.FUND))) return null;
         return new Nimiq.PublicKey(Nimiq.BufferUtils.fromHex(
