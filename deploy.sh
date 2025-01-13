@@ -295,7 +295,7 @@ while [ $i -lt $ARGS_LENGTH ]; do
         DEPLOY_ONLY=true
         unset 'ARGS[$i]'
     fi
-    ((i++))
+    ((i++)) || true
 done
 
 # Reconstruct args array without the processed flags
