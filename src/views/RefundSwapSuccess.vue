@@ -27,12 +27,8 @@ export default class SignBtcTransactionSuccess extends Vue {
             }, this.keyguardResult, this.request.refund, {
                 senderType: Nimiq.AccountType.HTLC,
                 recipientData: this.request.refund.extraData,
+                proofPrefix: new Uint8Array([2 /* Nimiq.HashedTimeLockedContract.ProofType.TIMEOUT_RESOLVE */]),
             }));
-
-            const proof = new Nimiq.SerialBuffer(1 + tx.proof.length);
-            proof.writeUint8(2 /* Nimiq.HashedTimeLockedContract.ProofType.TIMEOUT_RESOLVE */);
-            proof.write(new Nimiq.SerialBuffer(tx.proof)); // Current tx.proof is a regular SignatureProof
-            tx.proof = proof;
 
             // Validate that the transaction is valid
             try {
