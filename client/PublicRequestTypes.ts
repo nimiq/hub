@@ -260,16 +260,14 @@ export interface EncryptionKeyParams {
 
 export interface MultisigInfo {
     publicKeys: Bytes[];
-    numberOfSigners: number;
-    signerPublicKeys?: Bytes[]; // Can be omitted when all publicKeys need to sign
-    secret: {
-        aggregatedSecret: Bytes;
-    } | {
-        encryptedSecrets: Bytes[];
-        bScalar: Bytes;
+    signers: Array<{
+        publicKey: Bytes;
+        commitments: Bytes[];
+    }>;
+    secrets: Bytes[] | {
+        encrypted: Bytes[];
         keyParams: EncryptionKeyParams;
     };
-    aggregatedCommitment: Bytes;
     userName?: string;
 }
 
@@ -277,10 +275,10 @@ export interface SignMultisigTransactionRequest extends BasicRequest {
     signer: string; // Address
 
     sender: string;
-    senderType?: Nimiq.Account.Type;
+    senderType?: Nimiq.AccountType;
     senderLabel: string;
     recipient: string;
-    recipientType?: Nimiq.Account.Type;
+    recipientType?: Nimiq.AccountType;
     recipientLabel?: string;
     value: number;
     fee?: number;

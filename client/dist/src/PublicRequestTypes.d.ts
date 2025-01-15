@@ -8,6 +8,7 @@ export declare enum RequestType {
     CHECKOUT = "checkout",
     SIGN_MESSAGE = "sign-message",
     SIGN_TRANSACTION = "sign-transaction",
+    SIGN_MULTISIG_TRANSACTION = "sign-multisig-transaction",
     SIGN_STAKING = "sign-staking",
     ONBOARD = "onboard",
     SIGNUP = "signup",
@@ -27,7 +28,8 @@ export declare enum RequestType {
     ACTIVATE_BITCOIN = "activate-bitcoin",
     ACTIVATE_POLYGON = "activate-polygon",
     SETUP_SWAP = "setup-swap",
-    REFUND_SWAP = "refund-swap"
+    REFUND_SWAP = "refund-swap",
+    CONNECT_ACCOUNT = "connect-account"
 }
 export declare type Bytes = Uint8Array | string;
 export declare enum AccountType {
@@ -202,6 +204,38 @@ export interface SignedTransaction {
         networkId: number;
         proof: Uint8Array;
     };
+}
+export interface EncryptionKeyParams {
+    kdf: string;
+    iterations: number;
+    keySize: number;
+}
+export interface MultisigInfo {
+    publicKeys: Bytes[];
+    signers: Array<{
+        publicKey: Bytes;
+        commitments: Bytes[];
+    }>;
+    secrets: Bytes[] | {
+        encrypted: Bytes[];
+        keyParams: EncryptionKeyParams;
+    };
+    userName?: string;
+}
+export interface SignMultisigTransactionRequest extends BasicRequest {
+    signer: string;
+    sender: string;
+    senderType?: Nimiq.AccountType;
+    senderLabel: string;
+    recipient: string;
+    recipientType?: Nimiq.AccountType;
+    recipientLabel?: string;
+    value: number;
+    fee?: number;
+    extraData?: Bytes;
+    flags?: number;
+    validityStartHeight: number;
+    multisigConfig: MultisigInfo;
 }
 export interface NimiqHtlcCreationInstructions {
     type: 'NIM';
@@ -384,6 +418,7 @@ export interface SignedMessage {
     signerPublicKey: Uint8Array;
     signature: Uint8Array;
 }
+export declare type PartialSignature = SignedMessage;
 export interface Address {
     address: string;
     label: string;
@@ -481,6 +516,29 @@ export declare type CreateCashlinkRequest = BasicRequest & {
 export interface ManageCashlinkRequest extends BasicRequest {
     cashlinkAddress: string;
 }
+export interface ConnectAccountRequest extends BasicRequest {
+    appLogoUrl: string;
+    permissions: RequestType[];
+    requestedKeyPaths: string[];
+    challenge: string;
+}
+export interface ConnectedAccount {
+    signatures: SignedMessage[];
+    encryptionKey: {
+        format: 'spki';
+        keyData: Uint8Array;
+        algorithm: {
+            name: string;
+            hash: string;
+        };
+        keyUsages: ['encrypt'];
+        keyParams: EncryptionKeyParams;
+    };
+    account: {
+        label: string;
+        type: string;
+    };
+}
 /**
  * Bitcoin
  */
@@ -554,6 +612,6 @@ export interface SignedPolygonTransaction {
     message: Record<string, any>;
     signature: string;
 }
-export declare type RpcRequest = SignTransactionRequest | SignStakingRequest | CreateCashlinkRequest | ManageCashlinkRequest | CheckoutRequest | BasicRequest | SimpleRequest | ChooseAddressRequest | OnboardRequest | RenameRequest | SignMessageRequest | ExportRequest | SignBtcTransactionRequest | AddBtcAddressesRequest | SignPolygonTransactionRequest | SetupSwapRequest | RefundSwapRequest;
-export declare type RpcResult = SignedTransaction | SignedTransaction[] | Account | Account[] | SimpleResult | ChooseAddressResult | Address | Cashlink | Cashlink[] | SignedMessage | ExportResult | SignedBtcTransaction | AddBtcAddressesResult | SignedPolygonTransaction | SetupSwapResult;
-export declare type ResultByRequestType<T> = T extends RequestType.RENAME ? Account : T extends RequestType.ONBOARD | RequestType.SIGNUP | RequestType.LOGIN | RequestType.MIGRATE | RequestType.LIST ? Account[] : T extends RequestType.LIST_CASHLINKS ? Cashlink[] : T extends RequestType.CHOOSE_ADDRESS ? ChooseAddressResult : T extends RequestType.ADD_ADDRESS ? Address : T extends RequestType.SIGN_TRANSACTION ? SignedTransaction : T extends RequestType.SIGN_STAKING ? SignedTransaction[] : T extends RequestType.CHECKOUT ? SignedTransaction | SimpleResult : T extends RequestType.SIGN_MESSAGE ? SignedMessage : T extends RequestType.LOGOUT | RequestType.CHANGE_PASSWORD ? SimpleResult : T extends RequestType.EXPORT ? ExportResult : T extends RequestType.CREATE_CASHLINK | RequestType.MANAGE_CASHLINK ? Cashlink : T extends RequestType.SIGN_BTC_TRANSACTION ? SignedBtcTransaction : T extends RequestType.SIGN_POLYGON_TRANSACTION ? SignedPolygonTransaction : T extends RequestType.ACTIVATE_BITCOIN ? Account : T extends RequestType.ACTIVATE_POLYGON ? Account : T extends RequestType.ADD_BTC_ADDRESSES ? AddBtcAddressesResult : T extends RequestType.SETUP_SWAP ? SetupSwapResult : never;
+export declare type RpcRequest = SignTransactionRequest | SignMultisigTransactionRequest | SignStakingRequest | CreateCashlinkRequest | ManageCashlinkRequest | CheckoutRequest | BasicRequest | SimpleRequest | ChooseAddressRequest | OnboardRequest | RenameRequest | SignMessageRequest | ExportRequest | SignBtcTransactionRequest | AddBtcAddressesRequest | SignPolygonTransactionRequest | SetupSwapRequest | RefundSwapRequest | ConnectAccountRequest;
+export declare type RpcResult = SignedTransaction | SignedTransaction[] | PartialSignature | Account | Account[] | SimpleResult | ChooseAddressResult | Address | Cashlink | Cashlink[] | SignedMessage | ExportResult | SignedBtcTransaction | AddBtcAddressesResult | SignedPolygonTransaction | SetupSwapResult | ConnectedAccount;
+export declare type ResultByRequestType<T> = T extends RequestType.RENAME ? Account : T extends RequestType.ONBOARD | RequestType.SIGNUP | RequestType.LOGIN | RequestType.MIGRATE | RequestType.LIST ? Account[] : T extends RequestType.LIST_CASHLINKS ? Cashlink[] : T extends RequestType.CHOOSE_ADDRESS ? ChooseAddressResult : T extends RequestType.ADD_ADDRESS ? Address : T extends RequestType.SIGN_TRANSACTION ? SignedTransaction : T extends RequestType.SIGN_MULTISIG_TRANSACTION ? PartialSignature : T extends RequestType.SIGN_STAKING ? SignedTransaction[] : T extends RequestType.CHECKOUT ? SignedTransaction | SimpleResult : T extends RequestType.SIGN_MESSAGE ? SignedMessage : T extends RequestType.LOGOUT | RequestType.CHANGE_PASSWORD ? SimpleResult : T extends RequestType.EXPORT ? ExportResult : T extends RequestType.CREATE_CASHLINK | RequestType.MANAGE_CASHLINK ? Cashlink : T extends RequestType.SIGN_BTC_TRANSACTION ? SignedBtcTransaction : T extends RequestType.SIGN_POLYGON_TRANSACTION ? SignedPolygonTransaction : T extends RequestType.ACTIVATE_BITCOIN ? Account : T extends RequestType.ACTIVATE_POLYGON ? Account : T extends RequestType.ADD_BTC_ADDRESSES ? AddBtcAddressesResult : T extends RequestType.SETUP_SWAP ? SetupSwapResult : T extends RequestType.CONNECT_ACCOUNT ? ConnectedAccount : never;
