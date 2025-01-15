@@ -91,7 +91,7 @@ msgstr "Додати до Ledger"
 msgid "Add Vesting Contract"
 msgstr "Додайте розподільчий контракт"
 
-#: src/components/CheckoutCard.vue:84 src/views/SetupSwapLedger.vue:292
+#: src/components/CheckoutCard.vue:84 src/views/SetupSwapLedger.vue:290
 msgid "Address"
 msgstr "Адреса"
 
@@ -110,7 +110,7 @@ msgstr "Усі назви збережено."
 #: src/components/CheckoutCardBitcoin.vue:30
 #: src/components/CheckoutCardEthereum.vue:27
 #: src/components/CheckoutCardNimiqExternal.vue:32
-#: src/views/SetupSwapLedger.vue:285 src/views/SetupSwapLedger.vue:294
+#: src/views/SetupSwapLedger.vue:283 src/views/SetupSwapLedger.vue:292
 msgid "Amount"
 msgstr "Сума"
 
@@ -207,9 +207,9 @@ msgstr "Біткоїн"
 msgid "Bitcoin activated"
 msgstr "Біткоїн активовано"
 
-#: src/views/SetupSwapSuccess.vue:662
-msgid "Bitcoin HTLC invalid: {error}"
-msgstr "Bitcoin HTLC невірний: {error}"
+#: src/views/SetupSwapLedger.vue:858 src/views/SetupSwapSuccess.vue:640
+msgid "Bitcoin HTLC invalid"
+msgstr ""
 
 #: src/lib/LabelingMachine.ts:31
 msgid "Blue Account"
@@ -347,7 +347,7 @@ msgstr "Закрити"
 msgid "Collecting payment details"
 msgstr "Збір платіжних реквізитів"
 
-#: src/views/SetupSwapLedger.vue:991
+#: src/views/SetupSwapLedger.vue:999
 msgid "Confirm {outgoingOrIncoming} transaction on Ledger"
 msgstr "Підтвердьте {outgoingOrIncoming} транзакцію на Ledger"
 
@@ -532,8 +532,8 @@ msgstr "комісія"
 
 #: src/components/CheckoutCardBitcoin.vue:47
 #: src/components/CheckoutCardNimiqExternal.vue:47
-#: src/components/CurrencyInfo.vue:15 src/views/SetupSwapLedger.vue:287
-#: src/views/SetupSwapLedger.vue:303
+#: src/components/CurrencyInfo.vue:15 src/views/SetupSwapLedger.vue:285
+#: src/views/SetupSwapLedger.vue:301
 msgid "Fee"
 msgstr "Комісія"
 
@@ -541,7 +541,7 @@ msgstr "Комісія"
 msgid "Fetching Addresses Failed"
 msgstr "Не вдалося отримати адреси"
 
-#: src/views/SetupSwapSuccess.vue:651
+#: src/views/SetupSwapLedger.vue:870 src/views/SetupSwapSuccess.vue:653
 msgid "Fetching Bitcoin HTLC..."
 msgstr "Отримання Bitcoin HTLC..."
 
@@ -549,11 +549,11 @@ msgstr "Отримання Bitcoin HTLC..."
 msgid "Fetching contract information..."
 msgstr "Завантаження контактних даних..."
 
-#: src/views/SetupSwapSuccess.vue:659
+#: src/views/SetupSwapSuccess.vue:662
 msgid "Fetching swap data failed: {error}"
 msgstr "Не вдалося отримати дані обміну: {error}"
 
-#: src/views/SetupSwapSuccess.vue:647
+#: src/views/SetupSwapSuccess.vue:649
 msgid "Fetching swap data..."
 msgstr "Отримання даних обміну..."
 
@@ -627,7 +627,7 @@ msgid ""
 msgstr ""
 "Наразі імпортовано {count} адресу... | Наразі імпортовано {count} адрес..."
 
-#: src/views/SetupSwapLedger.vue:994
+#: src/views/SetupSwapLedger.vue:1002
 msgid "incoming"
 msgstr "вхідний"
 
@@ -799,7 +799,7 @@ msgstr "Помаранчева адреса"
 msgid "Other wallets"
 msgstr "Інші гаманці"
 
-#: src/views/SetupSwapLedger.vue:993
+#: src/views/SetupSwapLedger.vue:1001
 msgid "outgoing"
 msgstr "вихідний"
 
@@ -859,7 +859,7 @@ msgstr "Будь ласка, надішліть переказ вручну"
 msgid "Prepare for update"
 msgstr "Розпочати оновлення"
 
-#: src/views/SetupSwapSuccess.vue:640
+#: src/views/SetupSwapSuccess.vue:642
 msgid "Preparing Swap"
 msgstr "Підготовлюється обмін"
 
@@ -931,7 +931,7 @@ msgstr "Завантаження старих рахунків..."
 
 #: src/views/ActivatePolygonSuccess.vue:139
 #: src/views/BitcoinSyncBaseView.vue:72 src/views/LoginSuccess.vue:134
-#: src/views/SetupSwapSuccess.vue:669 src/views/SignupLedger.vue:145
+#: src/views/SetupSwapSuccess.vue:672 src/views/SignupLedger.vue:145
 msgid "Retry"
 msgstr "Повторити спробу"
 
@@ -968,7 +968,7 @@ msgstr "Поділитися"
 msgid "Sign Message"
 msgstr "Підписати повідомлення"
 
-#: src/views/SetupSwapSuccess.vue:649
+#: src/views/SetupSwapSuccess.vue:651
 msgid "Signing transactions..."
 msgstr "Підписання переказу..."
 
@@ -1008,7 +1008,7 @@ msgstr ""
 msgid "Storing your new accounts..."
 msgstr "Збереження ваших нових рахунків..."
 
-#: src/views/SetupSwapLedger.vue:258
+#: src/views/SetupSwapLedger.vue:256
 msgid "Swap authorized"
 msgstr "Обмін авторизовано"
 
@@ -1016,7 +1016,7 @@ msgstr "Обмін авторизовано"
 msgid "Swap fee"
 msgstr "Комісія за обмін"
 
-#: src/views/SetupSwapLedger.vue:855 src/views/SetupSwapSuccess.vue:636
+#: src/views/SetupSwapLedger.vue:854 src/views/SetupSwapSuccess.vue:636
 msgid "Swap Setup Failed"
 msgstr "Помилка налаштування обміну"
 
@@ -1031,7 +1031,7 @@ msgid "Syncing consensus..."
 msgstr "Встановлення консенсус..."
 
 #: src/views/ActivatePolygonSuccess.vue:113
-#: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapLedger.vue:857
+#: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapLedger.vue:856
 #: src/views/SetupSwapSuccess.vue:638
 #: src/views/SignBtcTransactionLedger.vue:118
 msgid "Syncing Failed"
@@ -1053,7 +1053,7 @@ msgstr "Синхронізація з {currency} мережею..."
 msgid "Syncing with Bitcoin network failed: {error}"
 msgstr "Помилка синхронізації з мережею Біткоїн: {error}"
 
-#: src/views/BitcoinSyncBaseView.vue:58 src/views/SetupSwapLedger.vue:867
+#: src/views/BitcoinSyncBaseView.vue:58 src/views/SetupSwapLedger.vue:868
 msgid "Syncing with Bitcoin network..."
 msgstr "Синхронізація з мережею Біткоїн..."
 
@@ -1181,6 +1181,10 @@ msgstr "Переказ підписано"
 #: src/views/Migrate.vue:93
 msgid "Try again"
 msgstr "Спробувати знову"
+
+#: src/views/SetupSwapLedger.vue:860
+msgid "Unexpected error"
+msgstr ""
 
 #: src/components/NotEnoughCookieSpace.vue:7
 msgid ""

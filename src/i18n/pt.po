@@ -87,7 +87,7 @@ msgstr "Adicionar ao Ledger"
 msgid "Add Vesting Contract"
 msgstr "Adicionar Contrato de Vesting"
 
-#: src/components/CheckoutCard.vue:84 src/views/SetupSwapLedger.vue:292
+#: src/components/CheckoutCard.vue:84 src/views/SetupSwapLedger.vue:290
 msgid "Address"
 msgstr "Endereço"
 
@@ -106,7 +106,7 @@ msgstr "Todos os marcadores foram guardados."
 #: src/components/CheckoutCardBitcoin.vue:30
 #: src/components/CheckoutCardEthereum.vue:27
 #: src/components/CheckoutCardNimiqExternal.vue:32
-#: src/views/SetupSwapLedger.vue:285 src/views/SetupSwapLedger.vue:294
+#: src/views/SetupSwapLedger.vue:283 src/views/SetupSwapLedger.vue:292
 msgid "Amount"
 msgstr "Quantia"
 
@@ -203,9 +203,9 @@ msgstr "Bitcoin"
 msgid "Bitcoin activated"
 msgstr "Bitcoin ativada"
 
-#: src/views/SetupSwapSuccess.vue:662
-msgid "Bitcoin HTLC invalid: {error}"
-msgstr "HTLC da Bitcoin inválido: {error}"
+#: src/views/SetupSwapLedger.vue:858 src/views/SetupSwapSuccess.vue:640
+msgid "Bitcoin HTLC invalid"
+msgstr ""
 
 #: src/lib/LabelingMachine.ts:31
 msgid "Blue Account"
@@ -345,7 +345,7 @@ msgstr "Fechar"
 msgid "Collecting payment details"
 msgstr "A reunir detalhes de pagamento"
 
-#: src/views/SetupSwapLedger.vue:991
+#: src/views/SetupSwapLedger.vue:999
 msgid "Confirm {outgoingOrIncoming} transaction on Ledger"
 msgstr "Confirmar {outgoingOrIncoming} transação no Ledger"
 
@@ -531,8 +531,8 @@ msgstr "taxa"
 
 #: src/components/CheckoutCardBitcoin.vue:47
 #: src/components/CheckoutCardNimiqExternal.vue:47
-#: src/components/CurrencyInfo.vue:15 src/views/SetupSwapLedger.vue:287
-#: src/views/SetupSwapLedger.vue:303
+#: src/components/CurrencyInfo.vue:15 src/views/SetupSwapLedger.vue:285
+#: src/views/SetupSwapLedger.vue:301
 msgid "Fee"
 msgstr "Taxa"
 
@@ -540,7 +540,7 @@ msgstr "Taxa"
 msgid "Fetching Addresses Failed"
 msgstr "Falha na procura de Endereços"
 
-#: src/views/SetupSwapSuccess.vue:651
+#: src/views/SetupSwapLedger.vue:870 src/views/SetupSwapSuccess.vue:653
 msgid "Fetching Bitcoin HTLC..."
 msgstr "À procura de HTLC da Bitcoin"
 
@@ -548,11 +548,11 @@ msgstr "À procura de HTLC da Bitcoin"
 msgid "Fetching contract information..."
 msgstr "À procura de informações de contrato"
 
-#: src/views/SetupSwapSuccess.vue:659
+#: src/views/SetupSwapSuccess.vue:662
 msgid "Fetching swap data failed: {error}"
 msgstr "Falha na procura de dados de troca: {error}"
 
-#: src/views/SetupSwapSuccess.vue:647
+#: src/views/SetupSwapSuccess.vue:649
 msgid "Fetching swap data..."
 msgstr "À procura de dados de troca"
 
@@ -627,7 +627,7 @@ msgstr ""
 "{count} endereço importado até agora... | {count} endereços importados até "
 "agora..."
 
-#: src/views/SetupSwapLedger.vue:994
+#: src/views/SetupSwapLedger.vue:1002
 msgid "incoming"
 msgstr "entrada"
 
@@ -803,7 +803,7 @@ msgstr "Endereço Laranja"
 msgid "Other wallets"
 msgstr "Outras wallets"
 
-#: src/views/SetupSwapLedger.vue:993
+#: src/views/SetupSwapLedger.vue:1001
 msgid "outgoing"
 msgstr "saída"
 
@@ -863,7 +863,7 @@ msgstr "Por favor envia a transação manualmente"
 msgid "Prepare for update"
 msgstr "Preparar para atualização"
 
-#: src/views/SetupSwapSuccess.vue:640
+#: src/views/SetupSwapSuccess.vue:642
 msgid "Preparing Swap"
 msgstr "A preparar Troca"
 
@@ -935,7 +935,7 @@ msgstr "A recuperar as tuas contas antigas..."
 
 #: src/views/ActivatePolygonSuccess.vue:139
 #: src/views/BitcoinSyncBaseView.vue:72 src/views/LoginSuccess.vue:134
-#: src/views/SetupSwapSuccess.vue:669 src/views/SignupLedger.vue:145
+#: src/views/SetupSwapSuccess.vue:672 src/views/SignupLedger.vue:145
 msgid "Retry"
 msgstr "Repetir"
 
@@ -972,7 +972,7 @@ msgstr "Partilhar"
 msgid "Sign Message"
 msgstr "Assinar Mensagem"
 
-#: src/views/SetupSwapSuccess.vue:649
+#: src/views/SetupSwapSuccess.vue:651
 msgid "Signing transactions..."
 msgstr "A assinar transações..."
 
@@ -1012,7 +1012,7 @@ msgstr ""
 msgid "Storing your new accounts..."
 msgstr "A guardar as tuas novas contas..."
 
-#: src/views/SetupSwapLedger.vue:258
+#: src/views/SetupSwapLedger.vue:256
 msgid "Swap authorized"
 msgstr "Troca autorizada"
 
@@ -1020,7 +1020,7 @@ msgstr "Troca autorizada"
 msgid "Swap fee"
 msgstr "Taxa de troca"
 
-#: src/views/SetupSwapLedger.vue:855 src/views/SetupSwapSuccess.vue:636
+#: src/views/SetupSwapLedger.vue:854 src/views/SetupSwapSuccess.vue:636
 msgid "Swap Setup Failed"
 msgstr "Falhou a Configuração da Troca"
 
@@ -1035,7 +1035,7 @@ msgid "Syncing consensus..."
 msgstr "A sincronizar consenso"
 
 #: src/views/ActivatePolygonSuccess.vue:113
-#: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapLedger.vue:857
+#: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapLedger.vue:856
 #: src/views/SetupSwapSuccess.vue:638
 #: src/views/SignBtcTransactionLedger.vue:118
 msgid "Syncing Failed"
@@ -1057,7 +1057,7 @@ msgstr "A sincronizar com a rede {currency}"
 msgid "Syncing with Bitcoin network failed: {error}"
 msgstr "A sincronização com a rede Bitcoin falhou: {error}"
 
-#: src/views/BitcoinSyncBaseView.vue:58 src/views/SetupSwapLedger.vue:867
+#: src/views/BitcoinSyncBaseView.vue:58 src/views/SetupSwapLedger.vue:868
 msgid "Syncing with Bitcoin network..."
 msgstr "A sincronizar com a rede Bitcoin..."
 
@@ -1186,6 +1186,10 @@ msgstr "Transação Assinada"
 #: src/views/Migrate.vue:93
 msgid "Try again"
 msgstr "Tenta novamente"
+
+#: src/views/SetupSwapLedger.vue:860
+msgid "Unexpected error"
+msgstr ""
 
 #: src/components/NotEnoughCookieSpace.vue:7
 msgid ""

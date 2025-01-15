@@ -87,7 +87,7 @@ msgstr "Magdagdag sa Ledger"
 msgid "Add Vesting Contract"
 msgstr "Magdagdag sa Vesting Contract"
 
-#: src/components/CheckoutCard.vue:84 src/views/SetupSwapLedger.vue:292
+#: src/components/CheckoutCard.vue:84 src/views/SetupSwapLedger.vue:290
 msgid "Address"
 msgstr "Adres"
 
@@ -106,7 +106,7 @@ msgstr "Nai-saved ang lahat ng mga etiketa."
 #: src/components/CheckoutCardBitcoin.vue:30
 #: src/components/CheckoutCardEthereum.vue:27
 #: src/components/CheckoutCardNimiqExternal.vue:32
-#: src/views/SetupSwapLedger.vue:285 src/views/SetupSwapLedger.vue:294
+#: src/views/SetupSwapLedger.vue:283 src/views/SetupSwapLedger.vue:292
 msgid "Amount"
 msgstr "Halaga"
 
@@ -205,8 +205,8 @@ msgstr "Bitcoin"
 msgid "Bitcoin activated"
 msgstr "Bitcoin activated"
 
-#: src/views/SetupSwapSuccess.vue:662
-msgid "Bitcoin HTLC invalid: {error}"
+#: src/views/SetupSwapLedger.vue:858 src/views/SetupSwapSuccess.vue:640
+msgid "Bitcoin HTLC invalid"
 msgstr ""
 
 #: src/lib/LabelingMachine.ts:31
@@ -347,7 +347,7 @@ msgstr "Isarado"
 msgid "Collecting payment details"
 msgstr "Pagkolekta ng mga detalye sa pagbabayad"
 
-#: src/views/SetupSwapLedger.vue:991
+#: src/views/SetupSwapLedger.vue:999
 msgid "Confirm {outgoingOrIncoming} transaction on Ledger"
 msgstr "Kumpirmahin ang transaksyong {outgoingOrIncoming} sa Ledger"
 
@@ -537,8 +537,8 @@ msgstr "bayad"
 
 #: src/components/CheckoutCardBitcoin.vue:47
 #: src/components/CheckoutCardNimiqExternal.vue:47
-#: src/components/CurrencyInfo.vue:15 src/views/SetupSwapLedger.vue:287
-#: src/views/SetupSwapLedger.vue:303
+#: src/components/CurrencyInfo.vue:15 src/views/SetupSwapLedger.vue:285
+#: src/views/SetupSwapLedger.vue:301
 msgid "Fee"
 msgstr "Bayad"
 
@@ -546,7 +546,7 @@ msgstr "Bayad"
 msgid "Fetching Addresses Failed"
 msgstr "Nabigo ang Pagkuha ng Mga Address"
 
-#: src/views/SetupSwapSuccess.vue:651
+#: src/views/SetupSwapLedger.vue:870 src/views/SetupSwapSuccess.vue:653
 msgid "Fetching Bitcoin HTLC..."
 msgstr ""
 
@@ -554,11 +554,11 @@ msgstr ""
 msgid "Fetching contract information..."
 msgstr "Kinukuha ang impormasyon sa kontrata ..."
 
-#: src/views/SetupSwapSuccess.vue:659
+#: src/views/SetupSwapSuccess.vue:662
 msgid "Fetching swap data failed: {error}"
 msgstr "Nabigo ang pagkuha ng data ng pagpapalit: {error}"
 
-#: src/views/SetupSwapSuccess.vue:647
+#: src/views/SetupSwapSuccess.vue:649
 msgid "Fetching swap data..."
 msgstr "Kinukuha ang data ng pagpapalit ..."
 
@@ -633,7 +633,7 @@ msgstr ""
 "Na-import ang {count} address sa ngayon ... | Na-import ang {count} mga "
 "address sa ngayon ..."
 
-#: src/views/SetupSwapLedger.vue:994
+#: src/views/SetupSwapLedger.vue:1002
 msgid "incoming"
 msgstr "papasok"
 
@@ -811,7 +811,7 @@ msgstr "Kahel na Adres"
 msgid "Other wallets"
 msgstr "Mga ibang pitaka"
 
-#: src/views/SetupSwapLedger.vue:993
+#: src/views/SetupSwapLedger.vue:1001
 msgid "outgoing"
 msgstr "palabas"
 
@@ -871,7 +871,7 @@ msgstr "Mangyaring ipadala ang transaksyon nang manu-mano"
 msgid "Prepare for update"
 msgstr "Maghanda para sa pag-update"
 
-#: src/views/SetupSwapSuccess.vue:640
+#: src/views/SetupSwapSuccess.vue:642
 msgid "Preparing Swap"
 msgstr "Paghahanda ng Pagpalit"
 
@@ -943,7 +943,7 @@ msgstr "Kinukuha ang iyong mga lumang account ..."
 
 #: src/views/ActivatePolygonSuccess.vue:139
 #: src/views/BitcoinSyncBaseView.vue:72 src/views/LoginSuccess.vue:134
-#: src/views/SetupSwapSuccess.vue:669 src/views/SignupLedger.vue:145
+#: src/views/SetupSwapSuccess.vue:672 src/views/SignupLedger.vue:145
 msgid "Retry"
 msgstr "Subukang muli"
 
@@ -980,7 +980,7 @@ msgstr "Magbahagi"
 msgid "Sign Message"
 msgstr "Mensahe sa Pag-sign"
 
-#: src/views/SetupSwapSuccess.vue:649
+#: src/views/SetupSwapSuccess.vue:651
 msgid "Signing transactions..."
 msgstr "Pag-sign ng mga transaksyon ..."
 
@@ -1020,7 +1020,7 @@ msgstr ""
 msgid "Storing your new accounts..."
 msgstr "Ang pag-iimbak ng iyong mga bagong account ..."
 
-#: src/views/SetupSwapLedger.vue:258
+#: src/views/SetupSwapLedger.vue:256
 msgid "Swap authorized"
 msgstr "Ang palitan ay pinahintulutan"
 
@@ -1028,7 +1028,7 @@ msgstr "Ang palitan ay pinahintulutan"
 msgid "Swap fee"
 msgstr "Pagpalit ng bayad"
 
-#: src/views/SetupSwapLedger.vue:855 src/views/SetupSwapSuccess.vue:636
+#: src/views/SetupSwapLedger.vue:854 src/views/SetupSwapSuccess.vue:636
 msgid "Swap Setup Failed"
 msgstr "Nabigo ang Pag-setup ng Ipagpalit"
 
@@ -1043,7 +1043,7 @@ msgid "Syncing consensus..."
 msgstr "Nagsi-sync ng pinagkasunduan ..."
 
 #: src/views/ActivatePolygonSuccess.vue:113
-#: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapLedger.vue:857
+#: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapLedger.vue:856
 #: src/views/SetupSwapSuccess.vue:638
 #: src/views/SignBtcTransactionLedger.vue:118
 msgid "Syncing Failed"
@@ -1065,7 +1065,7 @@ msgstr "Nagsi-sync sa network na {currency} ..."
 msgid "Syncing with Bitcoin network failed: {error}"
 msgstr "Nabigo ang pag-sync sa network ng Bitcoin: {error}"
 
-#: src/views/BitcoinSyncBaseView.vue:58 src/views/SetupSwapLedger.vue:867
+#: src/views/BitcoinSyncBaseView.vue:58 src/views/SetupSwapLedger.vue:868
 msgid "Syncing with Bitcoin network..."
 msgstr "Nagsi-sync sa network ng Bitcoin ..."
 
@@ -1197,6 +1197,10 @@ msgstr "Nilagdaan ang Transaksyon"
 #: src/views/Migrate.vue:93
 msgid "Try again"
 msgstr "Subukang muli"
+
+#: src/views/SetupSwapLedger.vue:860
+msgid "Unexpected error"
+msgstr ""
 
 #: src/components/NotEnoughCookieSpace.vue:7
 msgid ""
