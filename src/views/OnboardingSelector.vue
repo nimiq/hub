@@ -16,6 +16,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
+import { Getter } from 'vuex-class';
 import KeyguardClient from '@nimiq/keyguard-client';
 import { BrowserDetection } from '@nimiq/utils';
 import { State as RpcState } from '@nimiq/rpc';
@@ -40,6 +41,8 @@ export default class OnboardingSelector extends Vue {
     @Static private request!: ParsedOnboardRequest;
     @Static private rpcState!: RpcState;
     @Static private originalRouteName?: string;
+
+    @Getter private hasWallets!: boolean;
 
     private notEnoughCookieSpace = false;
     private shouldRender: boolean | null = null;
@@ -111,7 +114,9 @@ export default class OnboardingSelector extends Vue {
     }
 
     private close() {
-        if (this.isSecondaryOnboarding) {
+        if (this.isSecondaryOnboarding
+            // In the case we don't have wallets while signing a message, we close the hub
+            && (this.originalRouteName !== RequestType.SIGN_MESSAGE || this.hasWallets)) {
             window.history.back();
         } else {
             this.$rpc.reject(new Error(ERROR_CANCELED));
@@ -125,6 +130,7 @@ export default class OnboardingSelector extends Vue {
             case RequestType.CHOOSE_ADDRESS:
                 return this.$t('Back to Choose Address') as string;
             case RequestType.SIGN_MESSAGE:
+                if (!this.hasWallets) return ''; // use default label
                 return this.$t('Back to Sign Message') as string;
             case RequestType.CREATE_CASHLINK:
                 return this.$t('Back to Cashlink') as string;
