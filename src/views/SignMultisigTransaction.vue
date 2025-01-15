@@ -53,7 +53,7 @@ export default class SignMultisigTransaction extends Vue {
             value: this.request.value,
             fee: this.request.fee || 0,
             validityStartHeight: this.request.validityStartHeight,
-            data: this.request.data,
+            recipientData: this.request.data,
             flags: this.request.flags,
 
             multisigConfig: this.request.multisigConfig,

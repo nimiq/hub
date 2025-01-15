@@ -1940,9 +1940,9 @@
   dependencies:
     dom-parser "^0.1.5"
 
-"@nimiq/keyguard-client@https://gitpkg.now.sh/nimiq/keyguard?scripts.postinstall=cd%20client%20%26%26%20.%2Fbuild-gitpkg.sh&a62aa9f557e2ac4c0d7306828e423230f423a0f1":
+"@nimiq/keyguard-client@https://gitpkg.now.sh/nimiq/keyguard?scripts.postinstall=cd%20client%20%26%26%20.%2Fbuild-gitpkg.sh&fbbcf067a5043d9d56bd24c5a2ac79f63355fac1":
   version "1.0.0"
-  resolved "https://gitpkg.now.sh/nimiq/keyguard?scripts.postinstall=cd%20client%20%26%26%20.%2Fbuild-gitpkg.sh&a62aa9f557e2ac4c0d7306828e423230f423a0f1#b821554c4e4751e93cd9e287cd3617812e2a3ea2"
+  resolved "https://gitpkg.now.sh/nimiq/keyguard?scripts.postinstall=cd%20client%20%26%26%20.%2Fbuild-gitpkg.sh&fbbcf067a5043d9d56bd24c5a2ac79f63355fac1#69723c531cb46fd97466bf35d6cfadd612836ff6"
 
 "@nimiq/ledger-api@^3.1.1":
   version "3.1.1"

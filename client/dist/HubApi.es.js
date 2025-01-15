@@ -293,6 +293,7 @@ var RequestType;
     RequestType["CHECKOUT"] = "checkout";
     RequestType["SIGN_MESSAGE"] = "sign-message";
     RequestType["SIGN_TRANSACTION"] = "sign-transaction";
+    RequestType["SIGN_MULTISIG_TRANSACTION"] = "sign-multisig-transaction";
     RequestType["SIGN_STAKING"] = "sign-staking";
     RequestType["ONBOARD"] = "onboard";
     RequestType["SIGNUP"] = "signup";
@@ -313,6 +314,7 @@ var RequestType;
     RequestType["ACTIVATE_POLYGON"] = "activate-polygon";
     RequestType["SETUP_SWAP"] = "setup-swap";
     RequestType["REFUND_SWAP"] = "refund-swap";
+    RequestType["CONNECT_ACCOUNT"] = "connect-account";
 })(RequestType || (RequestType = {}));
 var AccountType;
 (function (AccountType) {
@@ -437,6 +439,12 @@ class HubApi {
     }
     refundSwap(request, requestBehavior = this._defaultBehavior) {
         return this._request(requestBehavior, RequestType.REFUND_SWAP, [request]);
+    }
+    signMultisigTransaction(request, requestBehavior = this._defaultBehavior) {
+        return this._request(requestBehavior, RequestType.SIGN_MULTISIG_TRANSACTION, [request]);
+    }
+    connectAccount(request, requestBehavior = this._defaultBehavior) {
+        return this._request(requestBehavior, RequestType.CONNECT_ACCOUNT, [request]);
     }
     /**
      * Account Management

@@ -17,7 +17,6 @@ import StatusScreen from '../components/StatusScreen.vue';
 import { SmallPage, CheckmarkIcon } from '@nimiq/vue-components';
 import { WalletInfo } from '../lib/WalletInfo';
 import { WalletType } from '../lib/Constants';
-import { loadNimiq } from '../lib/Helpers';
 import { ParsedConnectAccountRequest } from '../lib/RequestTypes';
 import { WalletStore } from '../lib/WalletStore';
 
@@ -32,8 +31,6 @@ export default class ConnectAccountSuccess extends Vue {
     private async mounted() {
         const startTime = Date.now();
 
-        const nimiqPromise = loadNimiq(); // Required for deriving address from public key
-
         const wallet = this.findWalletByKeyId(this.keyguardRequest.keyId)!;
 
         const walletTypeName: Record<WalletType, string> = {
@@ -47,8 +44,6 @@ export default class ConnectAccountSuccess extends Vue {
         walletPermissions.push(...this.request.permissions);
         wallet.permissions[this.rpcState.origin] = walletPermissions;
         await WalletStore.Instance.put(wallet);
-
-        await nimiqPromise;
 
         const result: ConnectedAccount = {
             signatures: this.keyguardResult.signatures.map(({signature, publicKey}) => ({
