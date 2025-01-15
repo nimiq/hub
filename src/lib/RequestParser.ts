@@ -795,35 +795,31 @@ export class RequestParser {
                     signer: Nimiq.Address.fromAny(signMultisigTxRequest.signer),
 
                     sender: Nimiq.Address.fromString(signMultisigTxRequest.sender),
-                    senderType: signMultisigTxRequest.senderType || Nimiq.Account.Type.BASIC,
+                    senderType: signMultisigTxRequest.senderType || Nimiq.AccountType.Basic,
                     senderLabel: signMultisigTxRequest.senderLabel,
                     recipient: Nimiq.Address.fromString(signMultisigTxRequest.recipient),
-                    recipientType: signMultisigTxRequest.recipientType || Nimiq.Account.Type.BASIC,
+                    recipientType: signMultisigTxRequest.recipientType || Nimiq.AccountType.Basic,
                     recipientLabel: signMultisigTxRequest.recipientLabel,
                     value: signMultisigTxRequest.value,
                     fee: signMultisigTxRequest.fee || 0,
                     data: parseMessage(signMultisigTxRequest.extraData) || new Uint8Array(0),
-                    flags: signMultisigTxRequest.flags || Nimiq.Transaction.Flag.NONE,
+                    flags: signMultisigTxRequest.flags || Nimiq.TransactionFlag.None,
                     validityStartHeight: signMultisigTxRequest.validityStartHeight,
 
                     multisigConfig: {
                         publicKeys: signMultisigTxRequest.multisigConfig.publicKeys.map((bytes) => parseBytes(bytes)),
-                        numberOfSigners: signMultisigTxRequest.multisigConfig.numberOfSigners,
-                        signerPublicKeys: signMultisigTxRequest.multisigConfig.signerPublicKeys
-                            ? signMultisigTxRequest.multisigConfig.signerPublicKeys.map((bytes) => parseBytes(bytes))
-                            : signMultisigTxRequest.multisigConfig.publicKeys.map((bytes) => parseBytes(bytes)),
-                        secret: 'aggregatedSecret' in signMultisigTxRequest.multisigConfig.secret
-                            ? {aggregatedSecret: parseBytes(
-                                signMultisigTxRequest.multisigConfig.secret.aggregatedSecret,
-                            ) }
+                        signers: signMultisigTxRequest.multisigConfig.signers.map((signer) => ({
+                            publicKey: parseBytes(signer.publicKey),
+                            commitments: signer.commitments.map((bytes) => parseBytes(bytes)),
+                        })),
+                        secrets: Array.isArray(signMultisigTxRequest.multisigConfig.secrets)
+                            ? signMultisigTxRequest.multisigConfig.secrets.map((bytes) => parseBytes(bytes))
                             : {
-                                encryptedSecrets: signMultisigTxRequest.multisigConfig.secret.encryptedSecrets.map(
+                                encrypted: signMultisigTxRequest.multisigConfig.secrets.encrypted.map(
                                     (bytes) => parseBytes(bytes),
                                 ),
-                                bScalar: parseBytes(signMultisigTxRequest.multisigConfig.secret.bScalar),
-                                keyParams: signMultisigTxRequest.multisigConfig.secret.keyParams,
+                                keyParams: signMultisigTxRequest.multisigConfig.secrets.keyParams,
                             },
-                        aggregatedCommitment: parseBytes(signMultisigTxRequest.multisigConfig.aggregatedCommitment),
                         userName: signMultisigTxRequest.multisigConfig.userName,
                     },
                 };
@@ -836,7 +832,7 @@ export class RequestParser {
                 }
 
                 if (connectAccountRequest.appLogoUrl) {
-                    let origin;
+                    let origin: string;
                     try {
                         origin = new URL(connectAccountRequest.appLogoUrl).origin;
                     } catch (err) {

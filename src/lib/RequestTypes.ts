@@ -56,20 +56,18 @@ export interface ParsedSignTransactionRequest extends ParsedBasicRequest {
 
 export interface ParsedMultisigInfo {
     publicKeys: Uint8Array[];
-    numberOfSigners: number;
-    signerPublicKeys: Uint8Array[]; // Can be omitted when all publicKeys need to sign
-    secret: {
-        aggregatedSecret: Uint8Array;
-    } | {
-        encryptedSecrets: Uint8Array[];
-        bScalar: Uint8Array;
+    signers: Array<{
+        publicKey: Uint8Array;
+        commitments: Uint8Array[];
+    }>;
+    secrets: Uint8Array[] | {
+        encrypted: Uint8Array[];
         keyParams: {
             kdf: string;
             iterations: number;
             keySize: number;
         };
     };
-    aggregatedCommitment: Uint8Array;
     userName?: string;
 }
 
@@ -77,10 +75,10 @@ export interface ParsedSignMultisigTransactionRequest extends ParsedBasicRequest
     signer: Nimiq.Address;
 
     sender: Nimiq.Address;
-    senderType: Nimiq.Account.Type;
+    senderType: Nimiq.AccountType;
     senderLabel: string;
     recipient: Nimiq.Address;
-    recipientType: Nimiq.Account.Type;
+    recipientType: Nimiq.AccountType;
     recipientLabel?: string;
     value: number;
     fee?: number;
