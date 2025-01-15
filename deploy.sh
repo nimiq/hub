@@ -488,7 +488,7 @@ echo -e "${BLUE}Deploying to $DEPLOYMENT_REPO...${NC}"
 run_command "cd \"$DEPLOYMENT_REPO\" || exit 1" "Failed to change to deployment directory"
 
 # Checkout appropriate branch and pull latest changes
-DEPLOY_BRANCH=$([ "$BUILD_ENV" = "mainnet" ] && echo "mainnet" || echo "testnet")
+DEPLOY_BRANCH=$([ "$BUILD_ENV" = "mainnet" ] && echo "master" || echo "testnet")
 echo -e "${CYAN}Checking out $DEPLOY_BRANCH branch...${NC}"
 run_command "git checkout $DEPLOY_BRANCH" "Failed to checkout branch"
 run_command "git pull" "Failed to pull latest changes"
