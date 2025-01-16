@@ -1,23 +1,33 @@
 import type { NimiqVersion as LedgerApiNimiqVersion } from '@nimiq/ledger-api'; // import type only to avoid bundling
-import { NETWORK_TEST } from '../lib/Constants';
+import { NETWORK_MAIN } from '../lib/Constants';
 import { BTC_NETWORK_TEST, NATIVE_SEGWIT } from '../lib/bitcoin/BitcoinConstants';
 import { POLYGON_NETWORK_TEST } from '../lib/polygon/PolygonConstants';
 
 export default {
     keyguardEndpoint: window.location.protocol + '//' + window.location.hostname + ':8000/src',
     ledgerApiNimiqVersion: 'albatross' as LedgerApiNimiqVersion.ALBATROSS,
-    network: NETWORK_TEST,
-    nimiqNetworkId: 5,
+    network: NETWORK_MAIN,
+    nimiqNetworkId: 24,
     seedNodes: [
-        '/dns4/seed1.pos.nimiq-testnet.com/tcp/8443/wss',
-        '/dns4/seed2.pos.nimiq-testnet.com/tcp/8443/wss',
-        '/dns4/seed3.pos.nimiq-testnet.com/tcp/8443/wss',
-        '/dns4/seed4.pos.nimiq-testnet.com/tcp/8443/wss',
+        '/dns4/aurora.seed.nimiq.com/tcp/443/wss',
+        '/dns4/catalyst.seed.nimiq.network/tcp/443/wss',
+        '/dns4/cipher.seed.nimiq-network.com/tcp/443/wss',
+        '/dns4/eclipse.seed.nimiq.cloud/tcp/443/wss',
+        '/dns4/lumina.seed.nimiq.systems/tcp/443/wss',
+        '/dns4/nebula.seed.nimiq.com/tcp/443/wss',
+        '/dns4/nexus.seed.nimiq.network/tcp/443/wss',
+        '/dns4/polaris.seed.nimiq-network.com/tcp/443/wss',
+        '/dns4/photon.seed.nimiq.cloud/tcp/443/wss',
+        '/dns4/pulsar.seed.nimiq.systems/tcp/443/wss',
+        '/dns4/quasar.seed.nimiq.com/tcp/443/wss',
+        '/dns4/solstice.seed.nimiq.network/tcp/443/wss',
+        '/dns4/vortex.seed.nimiq.cloud/tcp/443/wss',
+        '/dns4/zenith.seed.nimiq.systems/tcp/443/wss',
     ],
-    privilegedOrigins: [ '*' ],
+    privilegedOrigins: ['http://localhost:8080'],
     redirectTarget: window.location.protocol + '//' + window.location.hostname + ':8080/demos.html',
     reportToSentry: false,
-    checkoutWithoutNimOrigins: [ '*' ],
+    checkoutWithoutNimOrigins: [],
 
     enableBitcoin: true,
     bitcoinNetwork: BTC_NETWORK_TEST,
