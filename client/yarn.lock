@@ -235,9 +235,9 @@
     comlink "^4.4.1"
     websocket "^1.0.34"
 
-"@nimiq/fastspot-api@https://github.com/nimiq/fastspot-api#3a7c4b68529d7ec9ba8955a399412eaae946c528":
+"@nimiq/fastspot-api@https://github.com/nimiq/fastspot-api#build/crc":
   version "1.9.0"
-  resolved "https://github.com/nimiq/fastspot-api#3a7c4b68529d7ec9ba8955a399412eaae946c528"
+  resolved "https://github.com/nimiq/fastspot-api#0dd9a51024a8eadba7c374ee4e19d6f54e1a6a11"
 
 "@nimiq/rpc@^0.4.0":
   version "0.4.0"

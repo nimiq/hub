@@ -1807,7 +1807,7 @@
     call-me-maybe "^1.0.1"
     glob-to-regexp "^0.3.0"
 
-"@nimiq/albatross-wasm@npm:@nimiq/core@^2.0.0", "@nimiq/core@^2.0.6":
+"@nimiq/albatross-wasm@npm:@nimiq/core@^2.0.0":
   version "2.0.6"
   resolved "https://registry.yarnpkg.com/@nimiq/core/-/core-2.0.6.tgz#ae48ab288abdf52c4fdbdcafcf1b5fb7794db887"
   integrity sha512-6jCoYdFBqnYJ1vZDtMa1Hfezg8zHXpdMhXI31TItLVbnJVbb9wYqtt4UJR/CXCvGlHVtRgztIiilqlHHFe38FA==
@@ -1825,15 +1825,23 @@
   resolved "https://registry.yarnpkg.com/@nimiq/core-web/-/core-web-1.6.4.tgz#2ab36ab6f7d4062c3d534e6da831c2ccaae959de"
   integrity sha512-D0jVukuL+zsUXicS4cCZEPlBzlzBe0D1sNWecEhaSjTR1iMa9f+fA9l08wlQtRVw96Z6yHRgQokWVnO1GcWI7Q==
 
+"@nimiq/core@^2.0.6":
+  version "2.0.6"
+  resolved "https://registry.yarnpkg.com/@nimiq/core/-/core-2.0.6.tgz#ae48ab288abdf52c4fdbdcafcf1b5fb7794db887"
+  integrity sha512-6jCoYdFBqnYJ1vZDtMa1Hfezg8zHXpdMhXI31TItLVbnJVbb9wYqtt4UJR/CXCvGlHVtRgztIiilqlHHFe38FA==
+  dependencies:
+    comlink "^4.4.1"
+    websocket "^1.0.34"
+
 "@nimiq/electrum-client@https://github.com/nimiq/electrum-client#build":
   version "0.1.0"
   resolved "https://github.com/nimiq/electrum-client#61c5b97d9bcd3ff0f49703dd5bdc30c711dd506c"
   dependencies:
     bitcoinjs-lib "^5.1.10"
 
-"@nimiq/fastspot-api@https://github.com/nimiq/fastspot-api#3a7c4b68529d7ec9ba8955a399412eaae946c528":
+"@nimiq/fastspot-api@https://github.com/nimiq/fastspot-api#build/crc":
   version "1.9.0"
-  resolved "https://github.com/nimiq/fastspot-api#3a7c4b68529d7ec9ba8955a399412eaae946c528"
+  resolved "https://github.com/nimiq/fastspot-api#0dd9a51024a8eadba7c374ee4e19d6f54e1a6a11"
 
 "@nimiq/iqons@^1.5.2", "@nimiq/iqons@^1.6.0":
   version "1.6.0"
