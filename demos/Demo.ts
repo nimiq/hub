@@ -23,7 +23,6 @@ import { RedirectRequestBehavior, PopupRequestBehavior } from '../client/Request
 import { Utf8Tools } from '@nimiq/utils';
 import { WalletType } from '../src/lib/Constants';
 import { WalletStore } from '../src/lib/WalletStore';
-import { loadNimiq } from '../src/lib/Helpers';
 
 // BitcoinJS is defined as a global variable in BitcoinJS.min.js loaded by demos/index.html
 declare global {
@@ -715,11 +714,14 @@ class Demo {
             };
 
             try {
-                const result = await demo.client.connectAccount(request, demo._defaultBehavior);
+                const [Nimiq, result] = await Promise.all([
+                    window.loadAlbatross(),
+                    demo.client.connectAccount(request, demo._defaultBehavior),
+                ]);
                 console.log('Result', result);
                 document.querySelector('#result')!.textContent = 'Account connected: ' + result!.account.label;
                 (document.querySelector('#multisig-signer') as HTMLInputElement).value = result!.signatures[0].signer;
-                (document.querySelector('#multisig-publickey') as HTMLInputElement).value = Nimiq.BufferUtils.toHex(new Nimiq.SerialBuffer(result!.signatures[0].signerPublicKey));
+                (document.querySelector('#multisig-publickey') as HTMLInputElement).value = Nimiq.BufferUtils.toHex(result!.signatures[0].signerPublicKey);
             } catch (e) {
                 console.error(e);
                 document.querySelector('#result')!.textContent = `Error: ${e.message || e}`;
@@ -727,75 +729,105 @@ class Demo {
         });
 
         document.querySelector('button#sign-multisig-transaction')!.addEventListener('click', async () => {
-            const $radio = document.querySelector('input[name="address"]:checked');
-            if (!$radio) {
-                alert('You have no account to activate USDC for, create an account first (signup)');
-                throw new Error('No account found');
-            }
-            const accountId = $radio.closest('ul')!.closest('li')!.querySelector('button')!.dataset.walletId!;
-            const account = (await demo.list()).find((wallet) => wallet.accountId === accountId)!;
-            
-            const publicKey = (document.querySelector('#multisig-publickey') as HTMLInputElement).value;
-            if (publicKey.length !== 64) {
+            const myPublicKeyHex = (document.querySelector('#multisig-publickey') as HTMLInputElement).value;
+            if (myPublicKeyHex.length !== 64) {
                 alert('Invalid public key. Enter your public key in HEX format');
                 throw new Error('Invalid public key');
             }
 
+            const transactionValue = parseInt((document.querySelector('#multisig-value') as HTMLInputElement).value)
+                * 1e5;
+            const transactionData = (document.querySelector('#multisig-data') as HTMLInputElement).value;
             const numberOfSigners = parseInt((document.querySelector('#multisig-signers') as HTMLInputElement).value);
             const numberOfKeys = parseInt((document.querySelector('#multisig-participants') as HTMLInputElement).value);
+            const userName = (document.querySelector('#multisig-username') as HTMLInputElement).value;
 
-            const request = new Promise<SignMultisigTransactionRequest>(async resolve => {
-                // Generate multisig participants and combined address
-                await loadNimiq();
+            // TODO until the primitives required for multisigs are available in the regular @nimiq/core package, we use
+            //  a temporary build. This should be removed when the required primitives are available in @nimiq/core. As
+            //  an alternative, the commitments and public key aggregation from legacy core-js should be compatible, or
+            //  also https://github.com/nimiq/nimiq-multisig-app/tree/master/wasm/server/pkg could be used as a more
+            //  complete and more modern alternative. However, as that is not open source yet, it can not be used by
+            //  external people yet, and also not via gitpkg.now.sh or jsdelivr. We'd have to build it as a local
+            //  package and add the package's .tgz to the Hub repo, which I currently opted to not do.
+            const {
+                default: initWasm,
+                PrivateKey,
+                PublicKey,
+                Address,
+                CommitmentPair,
+                BufferUtils,
+            } = await import(/* webpackIgnore: true */ 'https://cdn.jsdelivr.net/gh/nimiq/core-rs-albatross@06999e1626b3312a906a0a490339d7feb781811b'
+                + '/web-client/dist/web/index.js');
+            await initWasm();
 
-                const myPublicKey = Nimiq.PublicKey.fromAny(publicKey);
+            // One key difference between the multisig implementation in Nimiq PoW's core-js and Musig2 in Nimiq PoS's
+            // core-rs-albatross is that Musig2 uses multiple commitments per signer, specified via MUSIG2_PARAMETER_V.
+            // Other details like the aggregation of public keys and the calculation of Multisig addresses are identical
+            // between core-js and core-rs-albatross. In fact, multisigs created with core-js can be used with Musig2 by
+            // simply creating multiple commitments.
+            const MUSIG2_PARAMETER_V = 2;
+            const generateCommitmentPairs = () => Array.from(
+                { length: MUSIG2_PARAMETER_V },
+                () => CommitmentPair.generate(),
+            );
 
-                const publicKeys = new Array(numberOfKeys - 1).fill(0).map(() => Nimiq.PublicKey.derive(Nimiq.PrivateKey.generate()));
-                publicKeys.push(myPublicKey);
-                publicKeys.reverse(); // Move my public key to the front, so when slicing the signerPublicKeys, mine is included
+            // Collect owner public keys of potential signers of the multisig.
+            const myPublicKey = PublicKey.fromHex(myPublicKeyHex);
+            const publicKeys = [myPublicKey]; // my pubkey first, so it's included in the signer subset
+            for (let i = 1; i < numberOfKeys; i++) {
+                const privateKey = PrivateKey.generate();
+                const publicKey = PublicKey.derive(privateKey);
+                publicKeys.push(publicKey);
+            }
+            // Calculate the multisig address from the public keys.
+            const multiSigAddress = Address.fromPublicKeys(publicKeys, numberOfSigners);
 
-                function calculateAddress(publicKeys, signersRequired) {
-                    publicKeys.sort((a, b) => a.compare(b));
-                    const combinations = [...Nimiq.ArrayUtils.k_combinations(publicKeys, signersRequired)];
-                    const multiSigKeys = combinations.map(combination => Nimiq.PublicKey.sum(combination));
-                    multiSigKeys.sort((a, b) => a.compare(b));
-                    const merkleRoot = Nimiq.MerkleTree.computeRoot(multiSigKeys);
-                    return Nimiq.Address.fromHash(merkleRoot);
-                }
+            // Collect commitments for the subset of publicKeys that sign the transaction
+            const myCommitmentPairs = generateCommitmentPairs();
+            const signers = [{
+                publicKey: myPublicKey,
+                commitments: myCommitmentPairs.map(({ commitment }) => commitment),
+            }];
+            for (let i = 1; i < numberOfSigners; i++) {
+                const publicKey = publicKeys[i];
+                const commitments = generateCommitmentPairs().map(({ commitment }) => commitment);
+                signers.push({ publicKey, commitments });
+            }
 
-                const asyncRequest: SignMultisigTransactionRequest = {
-                    appName: 'Hub Demos',
+            // Partially sign the transaction with our key.
+            // This demo does not cover creating partial signatures for the other signers and aggregating the final
+            // transaction signature.
+            const request: SignMultisigTransactionRequest = {
+                appName: 'Hub Demos',
 
-                    signer,
+                signer: myPublicKey.toAddress().toUserFriendlyAddress(),
 
-                    sender: calculateAddress(publicKeys, numberOfSigners).toUserFriendlyAddress(),
-                    senderLabel: 'Our Multisig Wallet',
-                    recipient: 'NQ82 HP54 C9D4 2FAG 69QD 6Q71 LURR 5187 0V3X',
-                    recipientLabel: 'Best Friend',
-                    value: parseInt((document.querySelector('#multisig-value') as HTMLInputElement).value) * 1e5,
-                    fee: 0,
-                    extraData: (document.querySelector('#multisig-data') as HTMLInputElement).value,
-                    // flags: 0,
-                    validityStartHeight: 1,
+                sender: multiSigAddress.toUserFriendlyAddress(),
+                senderLabel: 'Our Multisig Wallet',
+                recipient: 'NQ82 HP54 C9D4 2FAG 69QD 6Q71 LURR 5187 0V3X',
+                recipientLabel: 'Best Friend',
+                value: transactionValue,
+                // fee: 0,
+                extraData: transactionData,
+                // flags: 0,
+                validityStartHeight: 1,
 
-                    multisigConfig: {
-                        publicKeys: publicKeys.map(key => key.toHex()),
-                        numberOfSigners,
-                        signerPublicKeys: publicKeys.slice(0, numberOfSigners).map(key => key.toHex()), // Can be omitted when all publicKeys need to sign
-                        secret: {
-                            aggregatedSecret: '0000000000000000000000000000000000000000000000000000000000000000',
-                        },
-                        aggregatedCommitment: '0000000000000000000000000000000000000000000000000000000000000000',
-                        userName: (document.querySelector('#multisig-username') as HTMLInputElement).value,
-                    },
-                };
-                resolve(asyncRequest);
-            });
+                multisigConfig: {
+                    publicKeys: publicKeys.map((publicKey) => publicKey.toHex()),
+                    signers: signers.map(({ publicKey, commitments }) => ({
+                        publicKey: publicKey.toHex(),
+                        commitments: commitments.map((commitment) => commitment.toHex()),
+                    })),
+                    secrets: myCommitmentPairs.map(({ secret }) => secret.toHex()),
+                    userName,
+                },
+            };
 
             try {
                 const result = await demo.client.signMultisigTransaction(request, demo._defaultBehavior);
                 console.log('Result', result);
-                document.querySelector('#result')!.textContent = 'Transaction signed: ' + Nimiq.BufferUtils.toHex(new Nimiq.SerialBuffer(result!.signature));
+                document.querySelector('#result')!.textContent = 'Transaction signed: '
+                    + BufferUtils.toHex(result!.signature);
             } catch (e) {
                 console.error(e);
                 document.querySelector('#result')!.textContent = `Error: ${e.message || e}`;
