@@ -40,26 +40,15 @@ class Demo {
         // @ts-ignore (Property 'demo' does not exist on type 'Window')
         window.demo = demo;
 
-        [
-            RequestType.ADD_ADDRESS,
-            RequestType.CHANGE_PASSWORD,
-            RequestType.CHECKOUT,
-            RequestType.CHOOSE_ADDRESS,
-            RequestType.EXPORT,
-            RequestType.LOGIN,
-            RequestType.LOGOUT,
-            RequestType.MIGRATE,
-            RequestType.ONBOARD,
-            RequestType.RENAME,
-            RequestType.SIGNUP,
-            RequestType.SIGN_MESSAGE,
-            RequestType.SIGN_TRANSACTION,
-        ].forEach((requestType) => {
+        Object.values(RequestType).forEach((requestType) => {
             demo.client.on(requestType, (result: RpcResult, state: State) => {
                 console.log('Hub result', result);
                 console.log('State', state);
 
                 document.querySelector('#result')!.textContent = JSON.stringify(result);
+                if (requestType === RequestType.CONNECT_ACCOUNT) {
+                    setConnectResult(result as ConnectedAccount);
+                }
             }, (error: Error, state: State) => {
                 console.error('Hub error', error);
                 console.log('State', state);
@@ -722,16 +711,22 @@ class Demo {
                 ]);
                 console.log('Result', result);
                 document.querySelector('#result')!.textContent = 'Account connected: ' + result!.account.label;
-                (document.querySelector('#multisig-publickey') as HTMLInputElement).value = Nimiq.BufferUtils.toHex(result!.signatures[0].signerPublicKey);
-                (document.querySelector('#multisig-encryption-key') as HTMLInputElement).value = JSON.stringify(
-                    result!.encryptionKey,
-                    (key, value) => key === 'keyData' ? Nimiq.BufferUtils.toHex(value) : value,
-                );
+                await setConnectResult(result!);
             } catch (e) {
                 console.error(e);
                 document.querySelector('#result')!.textContent = `Error: ${e.message || e}`;
             }
         });
+
+        async function setConnectResult(result: ConnectedAccount) {
+            const Nimiq = await window.loadAlbatross();
+            (document.querySelector('#connected-publickey') as HTMLInputElement).value =
+                Nimiq.BufferUtils.toHex(result.signatures[0].signerPublicKey);
+            (document.querySelector('#connected-encryption-key') as HTMLInputElement).value = JSON.stringify(
+                result.encryptionKey,
+                (key, value) => key === 'keyData' ? Nimiq.BufferUtils.toHex(value) : value,
+            );
+        }
 
         document.querySelector('button#sign-multisig-transaction')!.addEventListener('click', async () => {
             // TODO until the primitives required for multisigs are available in the regular @nimiq/core package, we use
@@ -752,14 +747,14 @@ class Demo {
                 + '/web-client/dist/web/index.js');
             await initWasm();
 
-            const myPublicKeyHex = (document.querySelector('#multisig-publickey') as HTMLInputElement).value;
+            const myPublicKeyHex = (document.querySelector('#connected-publickey') as HTMLInputElement).value;
             if (myPublicKeyHex.length !== 64) {
                 alert('Invalid public key. Enter your public key in HEX format');
                 throw new Error('Invalid public key');
             }
 
+            const encryptionKeyJson = (document.querySelector('#connected-encryption-key') as HTMLInputElement).value;
             const encryptCommitmentSecrets = (document.querySelector('#multisig-checkbox-encrypt') as HTMLInputElement).checked;
-            const encryptionKeyJson = (document.querySelector('#multisig-encryption-key') as HTMLInputElement).value;
             if (encryptCommitmentSecrets && !encryptionKeyJson) {
                 alert('Encryption key must be set, if encryption is enabled.');
                 throw new Error('Encryption key missing');
