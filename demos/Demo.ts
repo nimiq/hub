@@ -45,7 +45,10 @@ class Demo {
                 console.log('Hub result', result);
                 console.log('State', state);
 
-                document.querySelector('#result')!.textContent = JSON.stringify(result);
+                document.querySelector('#result')!.textContent = JSON.stringify(
+                    result,
+                    (key, value) => value instanceof Uint8Array || value instanceof ArrayBuffer ? toHex(value) : value,
+                );
                 if (requestType === RequestType.CONNECT_ACCOUNT) {
                     setConnectResult(result as ConnectedAccount);
                 }
@@ -729,20 +732,19 @@ class Demo {
                 if (demo.isRedirectResult(result)) return;
                 console.log('Result', result);
                 document.querySelector('#result')!.textContent = 'Account connected: ' + result.account.label;
-                await setConnectResult(result);
+                setConnectResult(result);
             } catch (e) {
                 console.error(e);
                 document.querySelector('#result')!.textContent = `Error: ${e.message || e}`;
             }
         });
 
-        async function setConnectResult(result: ConnectedAccount) {
-            const Nimiq = await window.loadAlbatross();
+        function setConnectResult(result: ConnectedAccount) {
             (document.querySelector('#connected-publickey') as HTMLInputElement).value =
-                Nimiq.BufferUtils.toHex(result.signatures[0].signerPublicKey);
+                toHex(result.signatures[0].signerPublicKey);
             (document.querySelector('#connected-encryption-key') as HTMLInputElement).value = JSON.stringify(
                 result.encryptionKey,
-                (key, value) => key === 'keyData' ? Nimiq.BufferUtils.toHex(value) : value,
+                (key, value) => key === 'keyData' ? toHex(value) : value,
             );
         }
 
@@ -839,7 +841,7 @@ class Demo {
                         encryptionKey.key.algorithm,
                         encryptionKey.key,
                         secret.serialize(),
-                    )))).map((encryptedSecret) => BufferUtils.toHex(new Uint8Array(encryptedSecret))),
+                    )))).map((encryptedSecret) => toHex(encryptedSecret)),
                     keyParams: encryptionKey.keyParams,
                 }
                 : myCommitmentPairs.map(({ secret }) => secret.toHex());
@@ -877,8 +879,7 @@ class Demo {
                 const result = await demo.client.signMultisigTransaction(request, demo._defaultBehavior);
                 if (demo.isRedirectResult(result)) return;
                 console.log('Result', result);
-                document.querySelector('#result')!.textContent = 'Transaction signed: '
-                    + BufferUtils.toHex(result.signature);
+                document.querySelector('#result')!.textContent = 'Transaction signed: ' + toHex(result.signature);
             } catch (e) {
                 console.error(e);
                 document.querySelector('#result')!.textContent = `Error: ${e.message || e}`;
@@ -1216,3 +1217,16 @@ class Demo {
 } // class Demo
 
 Demo.run();
+
+function toHex(buffer: Uint8Array | ArrayBuffer) {
+    const hexAlphabet = '0123456789abcdef';
+    const uint8Array = buffer instanceof ArrayBuffer ? new Uint8Array(buffer) : buffer;
+    let hex = '';
+    for (let i = 0; i < uint8Array.length; i++) {
+        const code = uint8Array[i];
+        hex += hexAlphabet[code >>> 4];
+        hex += hexAlphabet[code & 0x0F];
+    }
+    return hex;
+}
+
