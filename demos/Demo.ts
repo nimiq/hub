@@ -18,6 +18,8 @@ import {
     SetupSwapRequest,
     SignMultisigTransactionRequest,
     ConnectAccountRequest,
+    ConnectedAccount,
+    EncryptionKeyParams,
 } from '../client/PublicRequestTypes';
 import { RedirectRequestBehavior, PopupRequestBehavior } from '../client/RequestBehavior';
 import { Utf8Tools } from '@nimiq/utils';
@@ -720,8 +722,11 @@ class Demo {
                 ]);
                 console.log('Result', result);
                 document.querySelector('#result')!.textContent = 'Account connected: ' + result!.account.label;
-                (document.querySelector('#multisig-signer') as HTMLInputElement).value = result!.signatures[0].signer;
                 (document.querySelector('#multisig-publickey') as HTMLInputElement).value = Nimiq.BufferUtils.toHex(result!.signatures[0].signerPublicKey);
+                (document.querySelector('#multisig-encryption-key') as HTMLInputElement).value = JSON.stringify(
+                    result!.encryptionKey,
+                    (key, value) => key === 'keyData' ? Nimiq.BufferUtils.toHex(value) : value,
+                );
             } catch (e) {
                 console.error(e);
                 document.querySelector('#result')!.textContent = `Error: ${e.message || e}`;
@@ -729,19 +734,6 @@ class Demo {
         });
 
         document.querySelector('button#sign-multisig-transaction')!.addEventListener('click', async () => {
-            const myPublicKeyHex = (document.querySelector('#multisig-publickey') as HTMLInputElement).value;
-            if (myPublicKeyHex.length !== 64) {
-                alert('Invalid public key. Enter your public key in HEX format');
-                throw new Error('Invalid public key');
-            }
-
-            const transactionValue = parseInt((document.querySelector('#multisig-value') as HTMLInputElement).value)
-                * 1e5;
-            const transactionData = (document.querySelector('#multisig-data') as HTMLInputElement).value;
-            const numberOfSigners = parseInt((document.querySelector('#multisig-signers') as HTMLInputElement).value);
-            const numberOfKeys = parseInt((document.querySelector('#multisig-participants') as HTMLInputElement).value);
-            const userName = (document.querySelector('#multisig-username') as HTMLInputElement).value;
-
             // TODO until the primitives required for multisigs are available in the regular @nimiq/core package, we use
             //  a temporary build. This should be removed when the required primitives are available in @nimiq/core. As
             //  an alternative, the commitments and public key aggregation from legacy core-js should be compatible, or
@@ -760,13 +752,48 @@ class Demo {
                 + '/web-client/dist/web/index.js');
             await initWasm();
 
+            const myPublicKeyHex = (document.querySelector('#multisig-publickey') as HTMLInputElement).value;
+            if (myPublicKeyHex.length !== 64) {
+                alert('Invalid public key. Enter your public key in HEX format');
+                throw new Error('Invalid public key');
+            }
+
+            const encryptCommitmentSecrets = (document.querySelector('#multisig-checkbox-encrypt') as HTMLInputElement).checked;
+            const encryptionKeyJson = (document.querySelector('#multisig-encryption-key') as HTMLInputElement).value;
+            if (encryptCommitmentSecrets && !encryptionKeyJson) {
+                alert('Encryption key must be set, if encryption is enabled.');
+                throw new Error('Encryption key missing');
+            }
+            let encryptionKey: { key: CryptoKey, keyParams: EncryptionKeyParams } | null = null;
+            if (encryptCommitmentSecrets) {
+                const encryptionKeyInfo = JSON.parse(
+                    encryptionKeyJson,
+                    (key, value) => key === 'keyData' ? BufferUtils.fromHex(value) : value,
+                ) as ConnectedAccount['encryptionKey'];
+                const key = await window.crypto.subtle.importKey(
+                    encryptionKeyInfo.format,
+                    encryptionKeyInfo.keyData,
+                    encryptionKeyInfo.algorithm,
+                    true, // public key is fine to be extractable
+                    encryptionKeyInfo.keyUsages,
+                );
+                encryptionKey = { key, keyParams: encryptionKeyInfo.keyParams };
+            }
+
+            const transactionValue = parseInt((document.querySelector('#multisig-value') as HTMLInputElement).value)
+                * 1e5;
+            const transactionData = (document.querySelector('#multisig-data') as HTMLInputElement).value;
+            const numberOfSigners = parseInt((document.querySelector('#multisig-signers') as HTMLInputElement).value);
+            const numberOfKeys = parseInt((document.querySelector('#multisig-participants') as HTMLInputElement).value);
+            const userName = (document.querySelector('#multisig-username') as HTMLInputElement).value;
+
             // One key difference between the multisig implementation in Nimiq PoW's core-js and Musig2 in Nimiq PoS's
             // core-rs-albatross is that Musig2 uses multiple commitments per signer, specified via MUSIG2_PARAMETER_V.
             // Other details like the aggregation of public keys and the calculation of Multisig addresses are identical
             // between core-js and core-rs-albatross. In fact, multisigs created with core-js can be used with Musig2 by
             // simply creating multiple commitments.
             const MUSIG2_PARAMETER_V = 2;
-            const generateCommitmentPairs = () => Array.from(
+            const generateCommitmentPairs = () => Array.from<unknown, InstanceType<typeof CommitmentPair>>(
                 { length: MUSIG2_PARAMETER_V },
                 () => CommitmentPair.generate(),
             );
@@ -793,6 +820,16 @@ class Demo {
                 const commitments = generateCommitmentPairs().map(({ commitment }) => commitment);
                 signers.push({ publicKey, commitments });
             }
+            const myCommitmentSecrets = encryptionKey
+                ? {
+                    encrypted: (await Promise.all(myCommitmentPairs.map(({ secret }) => window.crypto.subtle.encrypt(
+                        encryptionKey.key.algorithm,
+                        encryptionKey.key,
+                        secret.serialize(),
+                    )))).map((encryptedSecret) => BufferUtils.toHex(new Uint8Array(encryptedSecret))),
+                    keyParams: encryptionKey.keyParams,
+                }
+                : myCommitmentPairs.map(({ secret }) => secret.toHex());
 
             // Partially sign the transaction with our key.
             // This demo does not cover creating partial signatures for the other signers and aggregating the final
@@ -818,7 +855,7 @@ class Demo {
                         publicKey: publicKey.toHex(),
                         commitments: commitments.map((commitment) => commitment.toHex()),
                     })),
-                    secrets: myCommitmentPairs.map(({ secret }) => secret.toHex()),
+                    secrets: myCommitmentSecrets,
                     userName,
                 },
             };

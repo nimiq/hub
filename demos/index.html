@@ -181,12 +181,12 @@
     <button id="connect-account" disabled>Connect Account</button>
 
     <div class="row">
-        <label>Signer*</label>
-        <input id="multisig-signer" value="" disabled placeholder="Connect Account to set">
-    </div>
-    <div class="row">
         <label>PublicKey*</label>
         <input id="multisig-publickey" value="" disabled placeholder="Connect Account to set">
+    </div>
+    <div class="row">
+        <label>Encryption Key</label>
+        <input id="multisig-encryption-key" value="" disabled placeholder="Connect Account to set">
     </div>
     <div class="row">
         <label>Amount (NIM)</label>
@@ -205,8 +205,12 @@
         <label>Username</label>
         <input id="multisig-username" value="Antoine">
     </div>
+    <label class="row">
+        <input id="multisig-checkbox-encrypt" type="checkbox" checked>
+        Encrypt my commitment secrets
+    </label>
 
-    <br><small>(Uses account of selected address)</small>
+    <br><small>(Uses connected account)</small>
     <br><button id="sign-multisig-transaction" disabled>Sign Multisig Transaction</button>
 </div>
 
