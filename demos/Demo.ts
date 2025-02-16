@@ -141,7 +141,8 @@ class Demo {
                     };
                 }
 
-                const result = await demo.client.createCashlink(request, demo._defaultBehavior as PopupRequestBehavior);
+                const result = await demo.client.createCashlink(request, demo._defaultBehavior);
+                if (demo.isRedirectResult(result)) return;
                 console.log('Result', result);
                 document.querySelector('#result')!.textContent = `Cashlink created${result.link
                     ? `: ${result.link}`
@@ -156,6 +157,7 @@ class Demo {
         document.querySelector('button#choose-address')!.addEventListener('click', async () => {
             try {
                 const result = await demo.client.chooseAddress({ appName: 'Hub Demos', ui: 2 }, demo._defaultBehavior);
+                if (demo.isRedirectResult(result)) return;
                 console.log('Result', result);
                 document.querySelector('#result')!.textContent = `Address was chosen: ${result ? result.address : '-'}`;
             } catch (e) {
@@ -167,6 +169,7 @@ class Demo {
         document.querySelector('button#choose-address-and-btc')!.addEventListener('click', async () => {
             try {
                 const result = await demo.client.chooseAddress({ appName: 'Hub Demos', returnBtcAddress: true, ui: 2 }, demo._defaultBehavior);
+                if (demo.isRedirectResult(result)) return;
                 console.log('Result', result);
                 document.querySelector('#result')!.textContent = `Address was chosen: ${result ? result.address : '-'}`;
             } catch (e) {
@@ -184,6 +187,7 @@ class Demo {
                     }),
                     demo._defaultBehavior,
                 );
+                if (demo.isRedirectResult(result)) return;
                 console.log('Result', result);
                 document.querySelector('#result')!.textContent = 'TX signed';
             } catch (e) {
@@ -195,6 +199,7 @@ class Demo {
         document.querySelector('button#onboard')!.addEventListener('click', async () => {
             try {
                 const result = await demo.client.onboard({ appName: 'Hub Demos' }, demo._defaultBehavior);
+                if (demo.isRedirectResult(result)) return;
                 console.log('Result', result);
                 document.querySelector('#result')!.textContent = 'Onboarding completed!';
             } catch (e) {
@@ -206,6 +211,7 @@ class Demo {
         document.querySelector('button#create')!.addEventListener('click', async () => {
             try {
                 const result = await demo.client.signup({ appName: 'Hub Demos' }, demo._defaultBehavior);
+                if (demo.isRedirectResult(result)) return;
                 console.log('Result', result);
                 document.querySelector('#result')!.textContent = 'New account & address created';
             } catch (e) {
@@ -217,6 +223,7 @@ class Demo {
         document.querySelector('button#login')!.addEventListener('click', async () => {
             try {
                 const result = await demo.client.login({ appName: 'Hub Demos' }, demo._defaultBehavior);
+                if (demo.isRedirectResult(result)) return;
                 console.log('Result', result);
                 document.querySelector('#result')!.textContent = 'Account imported';
             } catch (e) {
@@ -338,6 +345,7 @@ class Demo {
         async function checkout(txRequest: CheckoutRequest) {
             try {
                 const result = await demo.client.checkout(txRequest, demo._defaultBehavior);
+                if (demo.isRedirectResult(result)) return;
                 console.log('Result', result);
                 document.querySelector('#result')!.textContent = 'TX signed';
             } catch (e) {
@@ -354,6 +362,7 @@ class Demo {
             };
             try {
                 const result = await demo.client.signMessage(request, demo._defaultBehavior);
+                if (demo.isRedirectResult(result)) return;
                 console.log('Result', result);
                 document.querySelector('#result')!.textContent = 'MSG signed: ' + request.message;
             } catch (e) {
@@ -378,6 +387,7 @@ class Demo {
 
             try {
                 const result = await demo.client.signMessage(request, demo._defaultBehavior);
+                if (demo.isRedirectResult(result)) return;
                 console.log('Result', result);
                 document.querySelector('#result')!.textContent = 'MSG signed: ' + request.message;
             } catch (e) {
@@ -398,6 +408,7 @@ class Demo {
 
             try {
                 const result = await demo.client.signMessage(request, demo._defaultBehavior);
+                if (demo.isRedirectResult(result)) return;
                 console.log('Result', result);
                 document.querySelector('#result')!.textContent = 'MSG signed: ' + request.message;
             } catch (e) {
@@ -409,6 +420,7 @@ class Demo {
         document.querySelector('button#migrate')!.addEventListener('click', async () => {
             try {
                 const result = await demo.client.migrate(demo._defaultBehavior);
+                if (demo.isRedirectResult(result)) return;
                 console.log('Result', result);
                 document.querySelector('#result')!.textContent = 'Migrated';
             } catch (e) {
@@ -444,6 +456,7 @@ class Demo {
                     appName: 'Hub Demos',
                     accountId,
                 }, demo._defaultBehavior);
+                if (demo.isRedirectResult(result)) return;
                 console.log('Result', result);
                 document.querySelector('#result')!.textContent = 'Activated account: ' + JSON.stringify(result);
             } catch (e) {
@@ -494,7 +507,8 @@ class Demo {
                 // },
             };
             try {
-                const result = await demo.client.signBtcTransaction(txRequest, demo._defaultBehavior as PopupRequestBehavior);
+                const result = await demo.client.signBtcTransaction(txRequest, demo._defaultBehavior);
+                if (demo.isRedirectResult(result)) return;
                 console.log('Result', result);
                 document.querySelector('#result')!.textContent = 'Signed: ' + result.serializedTx;
             } catch (e) {
@@ -571,7 +585,8 @@ class Demo {
                 },
             };
             try {
-                const result = await demo.client.setupSwap(request, demo._defaultBehavior as PopupRequestBehavior);
+                const result = await demo.client.setupSwap(request, demo._defaultBehavior);
+                if (demo.isRedirectResult(result)) return;
                 console.log('Result', result);
                 document.querySelector('#result')!.innerHTML = `Signed successfully!<br>NIM:&nbsp;${result.nim!.serializedTx}<br>BTC:&nbsp;${result.btc!.serializedTx}`;
             } catch (e) {
@@ -652,7 +667,8 @@ class Demo {
                 },
             };
             try {
-                const result = await demo.client.setupSwap(request, demo._defaultBehavior as PopupRequestBehavior);
+                const result = await demo.client.setupSwap(request, demo._defaultBehavior);
+                if (demo.isRedirectResult(result)) return;
                 console.log('Result', result);
                 document.querySelector('#result')!.innerHTML = `Signed successfully!<br>NIM:&nbsp;${result.nim!.serializedTx}<br>BTC:&nbsp;${result.btc!.serializedTx}`;
             } catch (e) {
@@ -687,6 +703,7 @@ class Demo {
                     appName: 'Hub Demos',
                     accountId,
                 }, demo._defaultBehavior);
+                if (demo.isRedirectResult(result)) return;
                 console.log('Result', result);
                 document.querySelector('#result')!.textContent = 'Activated USDC: ' + JSON.stringify(result);
             } catch (e) {
@@ -709,9 +726,10 @@ class Demo {
                     window.loadAlbatross(),
                     demo.client.connectAccount(request, demo._defaultBehavior),
                 ]);
+                if (demo.isRedirectResult(result)) return;
                 console.log('Result', result);
-                document.querySelector('#result')!.textContent = 'Account connected: ' + result!.account.label;
-                await setConnectResult(result!);
+                document.querySelector('#result')!.textContent = 'Account connected: ' + result.account.label;
+                await setConnectResult(result);
             } catch (e) {
                 console.error(e);
                 document.querySelector('#result')!.textContent = `Error: ${e.message || e}`;
@@ -857,9 +875,10 @@ class Demo {
 
             try {
                 const result = await demo.client.signMultisigTransaction(request, demo._defaultBehavior);
+                if (demo.isRedirectResult(result)) return;
                 console.log('Result', result);
                 document.querySelector('#result')!.textContent = 'Transaction signed: '
-                    + BufferUtils.toHex(result!.signature);
+                    + BufferUtils.toHex(result.signature);
             } catch (e) {
                 console.error(e);
                 document.querySelector('#result')!.textContent = `Error: ${e.message || e}`;
@@ -903,6 +922,7 @@ class Demo {
                 this._createChangePasswordRequest(accountId),
                 this._defaultBehavior,
             );
+            if (this.isRedirectResult(result)) return;
             console.log('Result', result);
             document.querySelector('#result')!.textContent = 'Successfully changed Password';
         } catch (e) {
@@ -924,6 +944,7 @@ class Demo {
                 this._createAddAccountRequest(accountId),
                 this._defaultBehavior,
             );
+            if (this.isRedirectResult(result)) return;
             console.log('Result', result);
             document.querySelector('#result')!.textContent = 'Account added';
         } catch (e) {
@@ -945,6 +966,7 @@ class Demo {
                 this._createRenameRequest(accountId, account),
                 this._defaultBehavior,
             );
+            if (this.isRedirectResult(result)) return;
             console.log('Result', result);
             document.querySelector('#result')!.textContent = 'Done renaming account';
         } catch (e) {
@@ -1076,6 +1098,10 @@ class Demo {
         }
     }
 
+    public isRedirectResult(result: RpcResult | void): result is void {
+        return result === undefined && this._defaultBehavior instanceof RedirectRequestBehavior;
+    }
+
     public async startIframeClient(baseUrl: string): Promise<PostMessageRpcClient> {
         if (this._iframeClient) return this._iframeClient;
         const $iframe = await Demo._createIframe(baseUrl);
@@ -1122,7 +1148,8 @@ class Demo {
 
     public async logout(accountId: string): Promise<SimpleResult> {
         try {
-            const result = await this.client.logout(this._createLogoutRequest(accountId), this._defaultBehavior as PopupRequestBehavior);
+            const result = await this.client.logout(this._createLogoutRequest(accountId), this._defaultBehavior);
+            if (this.isRedirectResult(result)) return;
             console.log('Result', result);
             document.querySelector('#result')!.textContent = 'Account removed';
             return result;
@@ -1165,7 +1192,8 @@ class Demo {
 
     private async _export(request: ExportRequest) {
         try {
-            const result = await this.client.export(request, this._defaultBehavior as PopupRequestBehavior);
+            const result = await this.client.export(request, this._defaultBehavior);
+            if (this.isRedirectResult(result)) return;
             console.log('Result', result);
             if (result.fileExported) {
                 document.querySelector('#result')!.textContent = result.wordsExported
