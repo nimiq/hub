@@ -36,7 +36,7 @@ msgstr "+ {para birimi} ağ ücreti"
 msgid "30 seconds, no email, no download."
 msgstr "30 saniye, e-mail yok, indirme yok."
 
-#: src/views/CashlinkReceive.vue:207
+#: src/views/CashlinkReceive.vue:206
 msgid "404 - Cash not found"
 msgstr "404 - Bakiye bulunamadı "
 
@@ -243,7 +243,7 @@ msgstr "İptal et"
 msgid "Cancel payment"
 msgstr "Ödemeyi iptal et"
 
-#: src/views/CashlinkReceive.vue:257
+#: src/views/CashlinkReceive.vue:256
 msgid "Cashlink claimed!"
 msgstr "Cashlink talep edildi!"
 
@@ -255,19 +255,19 @@ msgstr "Cashlink oluşturuldu"
 msgid "Cashlink created."
 msgstr "Cashlink oluşturuldu."
 
-#: src/views/CashlinkReceive.vue:305
+#: src/views/CashlinkReceive.vue:304
 msgid "Cashlink empty :("
 msgstr "Cashlink boş :("
 
-#: src/views/CashlinkReceive.vue:298
+#: src/views/CashlinkReceive.vue:297
 msgid "Cashlink funding"
 msgstr "Cashlink yüklemesi"
 
-#: src/views/CashlinkReceive.vue:302
+#: src/views/CashlinkReceive.vue:301
 msgid "Cashlink is empty"
 msgstr "Cashlink boş"
 
-#: src/views/CashlinkReceive.vue:297
+#: src/views/CashlinkReceive.vue:296
 msgid "Cashlink not funded"
 msgstr "Cashlink'e bir şey yüklenmemiş"
 
@@ -279,7 +279,7 @@ msgstr "Değiştir"
 msgid "Check your Backup | Check your Backups"
 msgstr "Yeklemeni kontrol et | Yedeklemelerini kontrol et"
 
-#: src/views/CashlinkReceive.vue:295
+#: src/views/CashlinkReceive.vue:294
 msgid "Checking status"
 msgstr "Durum kontrol ediliyor"
 
@@ -316,15 +316,15 @@ msgstr "Göndereni seç"
 msgid "Choose which Nimiq address to use."
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:296
+#: src/views/CashlinkReceive.vue:295
 msgid "Claim Cashlink"
 msgstr "Cashlink'i Talep Edin"
 
-#: src/views/CashlinkReceive.vue:346
+#: src/views/CashlinkReceive.vue:345
 msgid "Claim your Cash"
 msgstr "Nakit Paranızı Talep Edin"
 
-#: src/views/CashlinkReceive.vue:234
+#: src/views/CashlinkReceive.vue:233
 msgid "Claiming Cashlink"
 msgstr "Cashlink Talep Ediliyor"
 
@@ -377,15 +377,15 @@ msgstr "İşlemi onayla"
 msgid "Confirm using your Ledger"
 msgstr "Ledger'in ile onayla"
 
-#: src/views/CashlinkReceive.vue:357
+#: src/views/CashlinkReceive.vue:356
 msgid "Congrats, somebody gifted you a Nimiq Cashlink."
 msgstr "Tebrikler, birisi sana bir Nimiq Cashlink'i hediye etti."
 
-#: src/views/CashlinkReceive.vue:356
+#: src/views/CashlinkReceive.vue:355
 msgid "Congrats, you just opened a Nimiq Cashlink."
 msgstr "Tebrikler, bir Nimiq Cashlink'i açtın."
 
-#: src/views/CashlinkReceive.vue:352
+#: src/views/CashlinkReceive.vue:351
 msgid "Congrats, you received a Nimiq Gift Card."
 msgstr "Tebrikler, bir Nimiq hediye çeki aldın."
 
@@ -413,7 +413,7 @@ msgstr "Keyguard'a bağlanıyor..."
 msgid "Connecting to network..."
 msgstr "Ağa bağlanıyor..."
 
-#: src/views/CashlinkReceive.vue:235
+#: src/views/CashlinkReceive.vue:234
 msgid "Connecting to Nimiq..."
 msgstr "Nimiq'e bağlanıyor..."
 
@@ -598,11 +598,11 @@ msgstr "Yeşil Hesap"
 msgid "Green Address"
 msgstr "Yeşil Adres"
 
-#: src/views/CashlinkReceive.vue:345
+#: src/views/CashlinkReceive.vue:344
 msgid "Happy birthday!"
 msgstr "Mutlu yıllar!"
 
-#: src/views/CashlinkReceive.vue:343
+#: src/views/CashlinkReceive.vue:342
 msgid "Happy Easter!"
 msgstr "Mutlu Paskalyalar!"
 
@@ -1106,11 +1106,11 @@ msgstr ""
 msgid "There's much more. Read the full article"
 msgstr "Çok daha fazlası var. Tüm makaleyi oku"
 
-#: src/views/CashlinkReceive.vue:303
+#: src/views/CashlinkReceive.vue:302
 msgid "This Cashlink has already been claimed."
 msgstr "Bu Cashlink daha önce kullanılmıştır."
 
-#: src/views/CashlinkReceive.vue:208
+#: src/views/CashlinkReceive.vue:207
 msgid "This is not a valid Cashlink, sorry."
 msgstr "Bu Cashlink geçerli değil, üzgünüz."
 
@@ -1283,7 +1283,7 @@ msgstr "Sarı Adres"
 msgid "You are logged out."
 msgstr "Çıkış yaptın."
 
-#: src/views/CashlinkReceive.vue:341
+#: src/views/CashlinkReceive.vue:340
 msgid "You are loved"
 msgstr "Seviliyorsun"
 

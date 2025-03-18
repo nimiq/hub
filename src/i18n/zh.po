@@ -37,7 +37,7 @@ msgstr "+{currency}网络费"
 msgid "30 seconds, no email, no download."
 msgstr "30秒，无需邮件，无需下载"
 
-#: src/views/CashlinkReceive.vue:207
+#: src/views/CashlinkReceive.vue:206
 msgid "404 - Cash not found"
 msgstr "404 - 找不到现金"
 
@@ -244,7 +244,7 @@ msgstr "取消"
 msgid "Cancel payment"
 msgstr "取消付款"
 
-#: src/views/CashlinkReceive.vue:257
+#: src/views/CashlinkReceive.vue:256
 msgid "Cashlink claimed!"
 msgstr "现金链接已领取！"
 
@@ -256,19 +256,19 @@ msgstr "现金链接已创建"
 msgid "Cashlink created."
 msgstr "现金链接已创建"
 
-#: src/views/CashlinkReceive.vue:305
+#: src/views/CashlinkReceive.vue:304
 msgid "Cashlink empty :("
 msgstr "现金链接为空 :("
 
-#: src/views/CashlinkReceive.vue:298
+#: src/views/CashlinkReceive.vue:297
 msgid "Cashlink funding"
 msgstr "现金链接资金"
 
-#: src/views/CashlinkReceive.vue:302
+#: src/views/CashlinkReceive.vue:301
 msgid "Cashlink is empty"
 msgstr "现金链接为空 "
 
-#: src/views/CashlinkReceive.vue:297
+#: src/views/CashlinkReceive.vue:296
 msgid "Cashlink not funded"
 msgstr "现金链接没有资金"
 
@@ -280,7 +280,7 @@ msgstr "更改"
 msgid "Check your Backup | Check your Backups"
 msgstr "检查你的备份 | 检查你的备份"
 
-#: src/views/CashlinkReceive.vue:295
+#: src/views/CashlinkReceive.vue:294
 msgid "Checking status"
 msgstr "检查状态"
 
@@ -317,15 +317,15 @@ msgstr "选择发件人"
 msgid "Choose which Nimiq address to use."
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:296
+#: src/views/CashlinkReceive.vue:295
 msgid "Claim Cashlink"
 msgstr "领取现金链接"
 
-#: src/views/CashlinkReceive.vue:346
+#: src/views/CashlinkReceive.vue:345
 msgid "Claim your Cash"
 msgstr "领取现金"
 
-#: src/views/CashlinkReceive.vue:234
+#: src/views/CashlinkReceive.vue:233
 msgid "Claiming Cashlink"
 msgstr "正在领取现金链接"
 
@@ -378,15 +378,15 @@ msgstr "确认交易"
 msgid "Confirm using your Ledger"
 msgstr "确认使用你的Ledger"
 
-#: src/views/CashlinkReceive.vue:357
+#: src/views/CashlinkReceive.vue:356
 msgid "Congrats, somebody gifted you a Nimiq Cashlink."
 msgstr "恭喜，有人给你Nimiq 现金链接"
 
-#: src/views/CashlinkReceive.vue:356
+#: src/views/CashlinkReceive.vue:355
 msgid "Congrats, you just opened a Nimiq Cashlink."
 msgstr "恭喜，你刚刚打开了Nimiq 现金链接"
 
-#: src/views/CashlinkReceive.vue:352
+#: src/views/CashlinkReceive.vue:351
 msgid "Congrats, you received a Nimiq Gift Card."
 msgstr "恭喜，你收到了Nimiq礼品卡"
 
@@ -414,7 +414,7 @@ msgstr "正在连接到键盘守卫 ..."
 msgid "Connecting to network..."
 msgstr "正在连接网络..."
 
-#: src/views/CashlinkReceive.vue:235
+#: src/views/CashlinkReceive.vue:234
 msgid "Connecting to Nimiq..."
 msgstr "正在连接到Nimiq ..."
 
@@ -599,11 +599,11 @@ msgstr "绿色账户"
 msgid "Green Address"
 msgstr "绿色地址"
 
-#: src/views/CashlinkReceive.vue:345
+#: src/views/CashlinkReceive.vue:344
 msgid "Happy birthday!"
 msgstr "生日快乐！"
 
-#: src/views/CashlinkReceive.vue:343
+#: src/views/CashlinkReceive.vue:342
 msgid "Happy Easter!"
 msgstr "复活节快乐！"
 
@@ -1092,11 +1092,11 @@ msgstr "此更新非常容易，快速和安全。不过－现在是你检查恢
 msgid "There's much more. Read the full article"
 msgstr "还有更多信息，请阅读全文"
 
-#: src/views/CashlinkReceive.vue:303
+#: src/views/CashlinkReceive.vue:302
 msgid "This Cashlink has already been claimed."
 msgstr "此现金链接已被领取"
 
-#: src/views/CashlinkReceive.vue:208
+#: src/views/CashlinkReceive.vue:207
 msgid "This is not a valid Cashlink, sorry."
 msgstr "抱歉，这不是有效的现金链接"
 
@@ -1265,7 +1265,7 @@ msgstr "黄色地址"
 msgid "You are logged out."
 msgstr "你已登出"
 
-#: src/views/CashlinkReceive.vue:341
+#: src/views/CashlinkReceive.vue:340
 msgid "You are loved"
 msgstr "你被爱着"
 

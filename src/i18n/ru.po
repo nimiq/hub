@@ -39,7 +39,7 @@ msgstr "+ {currency} комиссия сети"
 msgid "30 seconds, no email, no download."
 msgstr "30 секунд, нет электронной почты, нет загрузки."
 
-#: src/views/CashlinkReceive.vue:207
+#: src/views/CashlinkReceive.vue:206
 msgid "404 - Cash not found"
 msgstr "404 - Кэш не найден"
 
@@ -246,7 +246,7 @@ msgstr "Отмена"
 msgid "Cancel payment"
 msgstr "Отменить оплату"
 
-#: src/views/CashlinkReceive.vue:257
+#: src/views/CashlinkReceive.vue:256
 msgid "Cashlink claimed!"
 msgstr "Cashlink получен!"
 
@@ -258,19 +258,19 @@ msgstr "Cashlink  создан"
 msgid "Cashlink created."
 msgstr "Cashlink создан."
 
-#: src/views/CashlinkReceive.vue:305
+#: src/views/CashlinkReceive.vue:304
 msgid "Cashlink empty :("
 msgstr "Cashlink пуст :("
 
-#: src/views/CashlinkReceive.vue:298
+#: src/views/CashlinkReceive.vue:297
 msgid "Cashlink funding"
 msgstr "Cashlink пополняется"
 
-#: src/views/CashlinkReceive.vue:302
+#: src/views/CashlinkReceive.vue:301
 msgid "Cashlink is empty"
 msgstr "Cashlink пуст"
 
-#: src/views/CashlinkReceive.vue:297
+#: src/views/CashlinkReceive.vue:296
 msgid "Cashlink not funded"
 msgstr "Cashlink не содержит средств"
 
@@ -282,7 +282,7 @@ msgstr "Изменить"
 msgid "Check your Backup | Check your Backups"
 msgstr "Проверьте Резервную Копию | Проверьте Резервные Копии"
 
-#: src/views/CashlinkReceive.vue:295
+#: src/views/CashlinkReceive.vue:294
 msgid "Checking status"
 msgstr "Проверяем статус "
 
@@ -319,15 +319,15 @@ msgstr "Выберите Получателя"
 msgid "Choose which Nimiq address to use."
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:296
+#: src/views/CashlinkReceive.vue:295
 msgid "Claim Cashlink"
 msgstr "Забрать Cashlink"
 
-#: src/views/CashlinkReceive.vue:346
+#: src/views/CashlinkReceive.vue:345
 msgid "Claim your Cash"
 msgstr "Заберите ваши деньги"
 
-#: src/views/CashlinkReceive.vue:234
+#: src/views/CashlinkReceive.vue:233
 msgid "Claiming Cashlink"
 msgstr "Забираем Cashlink"
 
@@ -381,15 +381,15 @@ msgstr "Подтвердить Транзакцию"
 msgid "Confirm using your Ledger"
 msgstr "Используйте свой Ledger для подтверждения"
 
-#: src/views/CashlinkReceive.vue:357
+#: src/views/CashlinkReceive.vue:356
 msgid "Congrats, somebody gifted you a Nimiq Cashlink."
 msgstr "Ура! Кто-то отправил вам Nimiq Cashlink."
 
-#: src/views/CashlinkReceive.vue:356
+#: src/views/CashlinkReceive.vue:355
 msgid "Congrats, you just opened a Nimiq Cashlink."
 msgstr "Вы открыли Nimiq Cashlink. Поздравляем! "
 
-#: src/views/CashlinkReceive.vue:352
+#: src/views/CashlinkReceive.vue:351
 msgid "Congrats, you received a Nimiq Gift Card."
 msgstr "Вы получили Nimiq Gift Card. Поздравляем!"
 
@@ -417,7 +417,7 @@ msgstr "Подключаемся к Keyguard..."
 msgid "Connecting to network..."
 msgstr "Подключаемся к сети..."
 
-#: src/views/CashlinkReceive.vue:235
+#: src/views/CashlinkReceive.vue:234
 msgid "Connecting to Nimiq..."
 msgstr "Подключаемся к Nimiq..."
 
@@ -606,11 +606,11 @@ msgstr "Зелёный Аккаунт"
 msgid "Green Address"
 msgstr "Зелёный Адрес"
 
-#: src/views/CashlinkReceive.vue:345
+#: src/views/CashlinkReceive.vue:344
 msgid "Happy birthday!"
 msgstr "С днём рождения!"
 
-#: src/views/CashlinkReceive.vue:343
+#: src/views/CashlinkReceive.vue:342
 msgid "Happy Easter!"
 msgstr "Счастливой Пасхи!"
 
@@ -1115,11 +1115,11 @@ msgstr ""
 msgid "There's much more. Read the full article"
 msgstr "Но это далеко не всё! Читайте статью полностью"
 
-#: src/views/CashlinkReceive.vue:303
+#: src/views/CashlinkReceive.vue:302
 msgid "This Cashlink has already been claimed."
 msgstr "Cashlink уже кто-то забрал."
 
-#: src/views/CashlinkReceive.vue:208
+#: src/views/CashlinkReceive.vue:207
 msgid "This is not a valid Cashlink, sorry."
 msgstr "Извините! Это неправильный Cashlink."
 
@@ -1296,7 +1296,7 @@ msgstr "Желтый Адрес"
 msgid "You are logged out."
 msgstr "Вы вышли из учётной записи."
 
-#: src/views/CashlinkReceive.vue:341
+#: src/views/CashlinkReceive.vue:340
 msgid "You are loved"
 msgstr "Вас любят!"
 

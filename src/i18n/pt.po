@@ -35,7 +35,7 @@ msgstr "+ {currency} de taxa de rede"
 msgid "30 seconds, no email, no download."
 msgstr "30 segundos ,sem e-mail, sem download."
 
-#: src/views/CashlinkReceive.vue:207
+#: src/views/CashlinkReceive.vue:206
 msgid "404 - Cash not found"
 msgstr "404 - Dinheiro não encontrado"
 
@@ -244,7 +244,7 @@ msgstr "Cancelar"
 msgid "Cancel payment"
 msgstr "Cancelar pagamento"
 
-#: src/views/CashlinkReceive.vue:257
+#: src/views/CashlinkReceive.vue:256
 msgid "Cashlink claimed!"
 msgstr "Cashlink reivindicado!"
 
@@ -256,19 +256,19 @@ msgstr "Cashlink criado"
 msgid "Cashlink created."
 msgstr "Cashlink criado."
 
-#: src/views/CashlinkReceive.vue:305
+#: src/views/CashlinkReceive.vue:304
 msgid "Cashlink empty :("
 msgstr "Cashlink vazio :("
 
-#: src/views/CashlinkReceive.vue:298
+#: src/views/CashlinkReceive.vue:297
 msgid "Cashlink funding"
 msgstr "Cashlink financiado"
 
-#: src/views/CashlinkReceive.vue:302
+#: src/views/CashlinkReceive.vue:301
 msgid "Cashlink is empty"
 msgstr "Cashlink está em branco"
 
-#: src/views/CashlinkReceive.vue:297
+#: src/views/CashlinkReceive.vue:296
 msgid "Cashlink not funded"
 msgstr "Cashlink não financiado"
 
@@ -280,7 +280,7 @@ msgstr "Alterar"
 msgid "Check your Backup | Check your Backups"
 msgstr "Verifica o teu Backup | Verifica os teus Backups"
 
-#: src/views/CashlinkReceive.vue:295
+#: src/views/CashlinkReceive.vue:294
 msgid "Checking status"
 msgstr "A verificar o status"
 
@@ -317,15 +317,15 @@ msgstr "Escolhe o Remetente"
 msgid "Choose which Nimiq address to use."
 msgstr "Escolhe que endereço Nimiq usar."
 
-#: src/views/CashlinkReceive.vue:296
+#: src/views/CashlinkReceive.vue:295
 msgid "Claim Cashlink"
 msgstr "Reivindicar Cashlink"
 
-#: src/views/CashlinkReceive.vue:346
+#: src/views/CashlinkReceive.vue:345
 msgid "Claim your Cash"
 msgstr "Reivindicar o teu Dinheiro"
 
-#: src/views/CashlinkReceive.vue:234
+#: src/views/CashlinkReceive.vue:233
 msgid "Claiming Cashlink"
 msgstr "A reivindicar Cashlink"
 
@@ -379,15 +379,15 @@ msgstr "Confirmar Transação"
 msgid "Confirm using your Ledger"
 msgstr "Confirmar usando o teu Ledger"
 
-#: src/views/CashlinkReceive.vue:357
+#: src/views/CashlinkReceive.vue:356
 msgid "Congrats, somebody gifted you a Nimiq Cashlink."
 msgstr "Parabéns, alguém te ofereceu um Cashlink da Nimiq."
 
-#: src/views/CashlinkReceive.vue:356
+#: src/views/CashlinkReceive.vue:355
 msgid "Congrats, you just opened a Nimiq Cashlink."
 msgstr "Parabéns, acabaste de abrir um Cashlink da Nimiq."
 
-#: src/views/CashlinkReceive.vue:352
+#: src/views/CashlinkReceive.vue:351
 msgid "Congrats, you received a Nimiq Gift Card."
 msgstr "Parabéns, recebeste um Gift Card da Nimiq."
 
@@ -415,7 +415,7 @@ msgstr "A conectar ao Keyguard..."
 msgid "Connecting to network..."
 msgstr "A conectar à rede"
 
-#: src/views/CashlinkReceive.vue:235
+#: src/views/CashlinkReceive.vue:234
 msgid "Connecting to Nimiq..."
 msgstr "A conectar à Nimiq..."
 
@@ -600,11 +600,11 @@ msgstr "Conta Verde"
 msgid "Green Address"
 msgstr "Endereço Verde"
 
-#: src/views/CashlinkReceive.vue:345
+#: src/views/CashlinkReceive.vue:344
 msgid "Happy birthday!"
 msgstr "Parabéns!"
 
-#: src/views/CashlinkReceive.vue:343
+#: src/views/CashlinkReceive.vue:342
 msgid "Happy Easter!"
 msgstr "Boa Páscoa!"
 
@@ -1111,11 +1111,11 @@ msgstr ""
 msgid "There's much more. Read the full article"
 msgstr "Há muito mais. Lê o artigo completo"
 
-#: src/views/CashlinkReceive.vue:303
+#: src/views/CashlinkReceive.vue:302
 msgid "This Cashlink has already been claimed."
 msgstr "Este Cashlink já foi reivindicado."
 
-#: src/views/CashlinkReceive.vue:208
+#: src/views/CashlinkReceive.vue:207
 msgid "This is not a valid Cashlink, sorry."
 msgstr "Este Cashlink não é válido, desculpa."
 
@@ -1299,7 +1299,7 @@ msgstr "Endereço Amarelo"
 msgid "You are logged out."
 msgstr "Estás desconectado."
 
-#: src/views/CashlinkReceive.vue:341
+#: src/views/CashlinkReceive.vue:340
 msgid "You are loved"
 msgstr "Tu és amado"
 

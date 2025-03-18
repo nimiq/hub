@@ -35,7 +35,7 @@ msgstr "+ {currency} bayad para sa network"
 msgid "30 seconds, no email, no download."
 msgstr "sa loob ng 30 na segundo, walang email, walang download."
 
-#: src/views/CashlinkReceive.vue:207
+#: src/views/CashlinkReceive.vue:206
 msgid "404 - Cash not found"
 msgstr "404 - Hindi mahanap ang pera"
 
@@ -246,7 +246,7 @@ msgstr "Ikansela"
 msgid "Cancel payment"
 msgstr "Ikansela ang pagbabayad"
 
-#: src/views/CashlinkReceive.vue:257
+#: src/views/CashlinkReceive.vue:256
 msgid "Cashlink claimed!"
 msgstr "Naangkin na ang Cashlink!"
 
@@ -258,19 +258,19 @@ msgstr "Nilikha ang cashlink"
 msgid "Cashlink created."
 msgstr "Nalikha na ang Cashlink."
 
-#: src/views/CashlinkReceive.vue:305
+#: src/views/CashlinkReceive.vue:304
 msgid "Cashlink empty :("
 msgstr "walang laman ang Cashlink :("
 
-#: src/views/CashlinkReceive.vue:298
+#: src/views/CashlinkReceive.vue:297
 msgid "Cashlink funding"
 msgstr "pagpopondo ng Cashlink"
 
-#: src/views/CashlinkReceive.vue:302
+#: src/views/CashlinkReceive.vue:301
 msgid "Cashlink is empty"
 msgstr "walang laman ang Cashlink"
 
-#: src/views/CashlinkReceive.vue:297
+#: src/views/CashlinkReceive.vue:296
 msgid "Cashlink not funded"
 msgstr "hindi pinopondohan ang Cashlink"
 
@@ -282,7 +282,7 @@ msgstr "Magbago"
 msgid "Check your Backup | Check your Backups"
 msgstr "Suriin ang iyong Pag-backup | Suriin ang iyong mga Pag-backup"
 
-#: src/views/CashlinkReceive.vue:295
+#: src/views/CashlinkReceive.vue:294
 msgid "Checking status"
 msgstr "Sinusuri ang katayuan"
 
@@ -319,15 +319,15 @@ msgstr "Piliin ang Nagpadala"
 msgid "Choose which Nimiq address to use."
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:296
+#: src/views/CashlinkReceive.vue:295
 msgid "Claim Cashlink"
 msgstr "I-claim ang Cashlink"
 
-#: src/views/CashlinkReceive.vue:346
+#: src/views/CashlinkReceive.vue:345
 msgid "Claim your Cash"
 msgstr "I-claim ang Cashlink"
 
-#: src/views/CashlinkReceive.vue:234
+#: src/views/CashlinkReceive.vue:233
 msgid "Claiming Cashlink"
 msgstr "Inaangkin ang Cashlink"
 
@@ -383,15 +383,15 @@ msgstr "Kumpirmahin ang Transaksyon"
 msgid "Confirm using your Ledger"
 msgstr "Kumpirmahing ginagamit ang iyong Ledger"
 
-#: src/views/CashlinkReceive.vue:357
+#: src/views/CashlinkReceive.vue:356
 msgid "Congrats, somebody gifted you a Nimiq Cashlink."
 msgstr "Congrats, may nagbigay sa iyo ng isang Nimiq Cashlink."
 
-#: src/views/CashlinkReceive.vue:356
+#: src/views/CashlinkReceive.vue:355
 msgid "Congrats, you just opened a Nimiq Cashlink."
 msgstr "Congrats, nagbukas ka lang ng isang Nimiq Cashlink."
 
-#: src/views/CashlinkReceive.vue:352
+#: src/views/CashlinkReceive.vue:351
 msgid "Congrats, you received a Nimiq Gift Card."
 msgstr "Congrats, nakatanggap ka ng isang Nimiq Gift Card."
 
@@ -419,7 +419,7 @@ msgstr "Kumokonekta sa Keyguard ..."
 msgid "Connecting to network..."
 msgstr "Kumokonekta sa network ..."
 
-#: src/views/CashlinkReceive.vue:235
+#: src/views/CashlinkReceive.vue:234
 msgid "Connecting to Nimiq..."
 msgstr "Kumokonekta sa Nimiq ..."
 
@@ -606,11 +606,11 @@ msgstr "Berdeng Account"
 msgid "Green Address"
 msgstr "Berdeng Adres"
 
-#: src/views/CashlinkReceive.vue:345
+#: src/views/CashlinkReceive.vue:344
 msgid "Happy birthday!"
 msgstr "Maligayang kaarawan!"
 
-#: src/views/CashlinkReceive.vue:343
+#: src/views/CashlinkReceive.vue:342
 msgid "Happy Easter!"
 msgstr "Maligayang Pasko ng Pagkabuhay!"
 
@@ -1121,11 +1121,11 @@ msgstr ""
 msgid "There's much more. Read the full article"
 msgstr "Marami pa. Basahin ang buong artikulo"
 
-#: src/views/CashlinkReceive.vue:303
+#: src/views/CashlinkReceive.vue:302
 msgid "This Cashlink has already been claimed."
 msgstr "Ang Cashlink na ito ay na-claim na."
 
-#: src/views/CashlinkReceive.vue:208
+#: src/views/CashlinkReceive.vue:207
 msgid "This is not a valid Cashlink, sorry."
 msgstr "Hindi ito wastong Cashlink, paumanhin."
 
@@ -1307,7 +1307,7 @@ msgstr "Dilaw na Adres"
 msgid "You are logged out."
 msgstr "Naka-log out ka."
 
-#: src/views/CashlinkReceive.vue:341
+#: src/views/CashlinkReceive.vue:340
 msgid "You are loved"
 msgstr "Mahal ka"
 
