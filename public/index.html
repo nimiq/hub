@@ -20,7 +20,7 @@
     <link rel="icon" href="<%= htmlWebpackPlugin.options.domain %>/favicon.ico">
 
     <script type="module">
-        import init, * as Nimiq from '/nimiq/v<%= htmlWebpackPlugin.options.coreVersion %>/web/index.js';
+        import init, * as Nimiq from '/nimiq/web/index.js';
 
         /** @type {Promise<Nimiq> | undefined} */
         let initPromise;

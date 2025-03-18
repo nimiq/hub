@@ -6,7 +6,7 @@ import type { ParsedEtherSpecifics, ParsedEtherDirectPaymentOptions } from './pa
 import type { ParsedBitcoinSpecifics, ParsedBitcoinDirectPaymentOptions } from './paymentOptions/BitcoinPaymentOptions';
 import type { SwapAsset } from '@nimiq/fastspot-api';
 import type { FiatCurrency } from '@nimiq/utils';
-import type { PlainTransaction } from '@nimiq/albatross-wasm';
+import type { PlainTransaction } from '@nimiq/core';
 
 export interface ParsedBasicRequest {
     kind: RequestType;
