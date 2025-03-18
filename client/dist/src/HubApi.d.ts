@@ -1,5 +1,5 @@
 import { PopupRequestBehavior, RequestBehavior, RedirectRequestBehavior, BehaviorType } from './RequestBehavior';
-import { AccountType, RequestType, BasicRequest, SimpleRequest, OnboardRequest, ChooseAddressRequest, ChooseAddressResult, CheckoutRequest, SignTransactionRequest, RenameRequest, SignMessageRequest, ExportRequest, ResultByRequestType, Account, Address, SignedTransaction, SimpleResult, ExportResult, SignedMessage, CreateCashlinkRequest, ManageCashlinkRequest, SignBtcTransactionRequest, SignedBtcTransaction, AddBtcAddressesRequest, AddBtcAddressesResult, SignPolygonTransactionRequest, SignedPolygonTransaction, Cashlink, CashlinkState, CashlinkTheme, Currency, PaymentType, PaymentState, SetupSwapRequest, SetupSwapResult, RefundSwapRequest, SignStakingRequest } from './PublicRequestTypes';
+import { AccountType, RequestType, BasicRequest, SimpleRequest, OnboardRequest, ChooseAddressRequest, ChooseAddressResult, CheckoutRequest, SignTransactionRequest, RenameRequest, SignMessageRequest, ExportRequest, ResultByRequestType, Account, Address, SignedTransaction, SimpleResult, ExportResult, SignedMessage, CreateCashlinkRequest, ManageCashlinkRequest, SignBtcTransactionRequest, SignedBtcTransaction, AddBtcAddressesRequest, AddBtcAddressesResult, SignPolygonTransactionRequest, SignedPolygonTransaction, Cashlink, CashlinkState, CashlinkTheme, Currency, PaymentType, PaymentState, SetupSwapRequest, SetupSwapResult, RefundSwapRequest, SignMultisigTransactionRequest, PartialSignature, SignStakingRequest, ConnectAccountRequest, ConnectedAccount } from './PublicRequestTypes';
 export default class HubApi<DB extends BehaviorType = BehaviorType.POPUP, IB extends BehaviorType = BehaviorType.IFRAME> {
     static readonly BehaviorType: typeof BehaviorType;
     static readonly RequestType: typeof RequestType;
@@ -39,6 +39,8 @@ export default class HubApi<DB extends BehaviorType = BehaviorType.POPUP, IB ext
     signPolygonTransaction<B extends BehaviorType = DB>(request: Promise<SignPolygonTransactionRequest> | SignPolygonTransactionRequest, requestBehavior?: RequestBehavior<B>): Promise<B extends BehaviorType.REDIRECT ? void : SignedPolygonTransaction>;
     setupSwap<B extends BehaviorType = DB>(request: Promise<SetupSwapRequest> | SetupSwapRequest, requestBehavior?: RequestBehavior<B>): Promise<B extends BehaviorType.REDIRECT ? void : SetupSwapResult>;
     refundSwap<B extends BehaviorType = DB>(request: Promise<RefundSwapRequest> | RefundSwapRequest, requestBehavior?: RequestBehavior<B>): Promise<B extends BehaviorType.REDIRECT ? void : SignedTransaction | SignedBtcTransaction | SignedPolygonTransaction>;
+    signMultisigTransaction<B extends BehaviorType = DB>(request: Promise<SignMultisigTransactionRequest> | SignMultisigTransactionRequest, requestBehavior?: RequestBehavior<B>): Promise<B extends BehaviorType.REDIRECT ? void : PartialSignature>;
+    connectAccount<B extends BehaviorType = DB>(request: Promise<ConnectAccountRequest> | ConnectAccountRequest, requestBehavior?: RequestBehavior<B>): Promise<B extends BehaviorType.REDIRECT ? void : ConnectedAccount>;
     /**
      * Account Management
      *

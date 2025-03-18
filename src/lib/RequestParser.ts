@@ -5,6 +5,9 @@ import {
     CashlinkTheme,
     Currency,
     PaymentType,
+    ConnectAccountRequest,
+} from '../../client/PublicRequestTypes';
+import type {
     BasicRequest,
     CheckoutRequest,
     CreateCashlinkRequest,
@@ -24,6 +27,7 @@ import {
     SignPolygonTransactionRequest,
     SetupSwapRequest,
     RefundSwapRequest,
+    SignMultisigTransactionRequest,
 } from '../../client/PublicRequestTypes';
 import type {
     ParsedBasicRequest,
@@ -43,6 +47,8 @@ import type {
     ParsedSignPolygonTransactionRequest,
     ParsedSetupSwapRequest,
     ParsedRefundSwapRequest,
+    ParsedSignMultisigTransactionRequest,
+    ParsedConnectAccountRequest,
 } from './RequestTypes';
 import { ParsedNimiqDirectPaymentOptions } from './paymentOptions/NimiqPaymentOptions';
 import { ParsedEtherDirectPaymentOptions } from './paymentOptions/EtherPaymentOptions';
@@ -50,6 +56,7 @@ import { ParsedBitcoinDirectPaymentOptions } from './paymentOptions/BitcoinPayme
 import { Utf8Tools } from '@nimiq/utils';
 import Config from 'config';
 import { SwapAsset } from '@nimiq/fastspot-api';
+import RpcApi from './RpcApi';
 
 export class RequestParser {
     public static parse(
@@ -744,6 +751,118 @@ export class RequestParser {
                     },
                 };
                 return parsedRefundSwapRequest;
+            case RequestType.SIGN_MULTISIG_TRANSACTION:
+                const signMultisigTxRequest = request as SignMultisigTransactionRequest;
+
+                // Most fields are validated by Keyguard, we mustly need to do type conversions if necessary
+
+                // TODO: Validate object and array fields, to not throw "tried to access <field> of undefined" errors
+
+                // if (
+                //     !signMultisigTxRequest.multisigConfig ||
+                //     typeof signMultisigTxRequest.multisigConfig !== 'object'
+                // ) {
+                //     throw new Error('multisigConfig must be an object');
+                // }
+
+                // if (
+                //     !signMultisigTxRequest.multisigConfig.secret
+                //     || typeof signMultisigTxRequest.multisigConfig.secret !== 'object'
+                // ) {
+                //     throw new Error('multisigConfig.secret must be an object');
+                // }
+
+                function parseMessage(msg?: Uint8Array | string) {
+                    if (!msg) return undefined;
+                    if (msg instanceof Uint8Array) return msg;
+                    if (typeof msg === 'string') return Utf8Tools.stringToUtf8ByteArray(msg);
+                    throw new Error('extraData must be a string or an Uint8Array');
+                }
+
+                function parseBytes(bytes?: Uint8Array | string) {
+                    if (!bytes || !bytes.length) {
+                        throw new Error('bytes cannot be empty');
+                    }
+                    if (bytes instanceof Uint8Array) return bytes;
+                    if (typeof bytes === 'string') return Nimiq.BufferUtils.fromAny(bytes);
+                    throw new Error('bytes must be a string or an Uint8Array');
+                }
+
+                const parsedSignMultisigTxRequest: ParsedSignMultisigTransactionRequest = {
+                    kind: RequestType.SIGN_MULTISIG_TRANSACTION,
+                    appName: signMultisigTxRequest.appName,
+
+                    signer: Nimiq.Address.fromAny(signMultisigTxRequest.signer),
+
+                    sender: Nimiq.Address.fromString(signMultisigTxRequest.sender),
+                    senderType: signMultisigTxRequest.senderType || Nimiq.AccountType.Basic,
+                    senderLabel: signMultisigTxRequest.senderLabel,
+                    recipient: Nimiq.Address.fromString(signMultisigTxRequest.recipient),
+                    recipientType: signMultisigTxRequest.recipientType || Nimiq.AccountType.Basic,
+                    recipientLabel: signMultisigTxRequest.recipientLabel,
+                    value: signMultisigTxRequest.value,
+                    fee: signMultisigTxRequest.fee || 0,
+                    data: parseMessage(signMultisigTxRequest.extraData) || new Uint8Array(0),
+                    flags: signMultisigTxRequest.flags || Nimiq.TransactionFlag.None,
+                    validityStartHeight: signMultisigTxRequest.validityStartHeight,
+
+                    multisigConfig: {
+                        publicKeys: signMultisigTxRequest.multisigConfig.publicKeys.map((bytes) => parseBytes(bytes)),
+                        signers: signMultisigTxRequest.multisigConfig.signers.map((signer) => ({
+                            publicKey: parseBytes(signer.publicKey),
+                            commitments: signer.commitments.map((bytes) => parseBytes(bytes)),
+                        })),
+                        secrets: Array.isArray(signMultisigTxRequest.multisigConfig.secrets)
+                            ? signMultisigTxRequest.multisigConfig.secrets.map((bytes) => parseBytes(bytes))
+                            : {
+                                encrypted: signMultisigTxRequest.multisigConfig.secrets.encrypted.map(
+                                    (bytes) => parseBytes(bytes),
+                                ),
+                                keyParams: signMultisigTxRequest.multisigConfig.secrets.keyParams,
+                            },
+                        userName: signMultisigTxRequest.multisigConfig.userName,
+                    },
+                };
+
+                return parsedSignMultisigTxRequest;
+            case RequestType.CONNECT_ACCOUNT:
+                const connectAccountRequest = request as ConnectAccountRequest;
+                if (typeof connectAccountRequest.challenge !== 'string') {
+                    throw new Error('challenge must be a string');
+                }
+
+                if (connectAccountRequest.appLogoUrl) {
+                    let origin: string;
+                    try {
+                        origin = new URL(connectAccountRequest.appLogoUrl).origin;
+                    } catch (err) {
+                        throw new Error(`appLogoUrl must be a valid URL: ${err}`);
+                    }
+                    if (origin !== state.origin) {
+                        throw new Error(
+                            'appLogoUrl must have same origin as caller website. Image at ' +
+                            connectAccountRequest.appLogoUrl +
+                            ' is not on caller origin ' +
+                            state.origin,
+                        );
+                    }
+                }
+
+                for (const permission of connectAccountRequest.permissions) {
+                    if (!RpcApi.PERMISSIONED_REQUESTS.includes(permission)) {
+                        throw new Error(`Invalid permission requested: ${permission}`);
+                    }
+                }
+
+                const parsedConnectAccountRequest: ParsedConnectAccountRequest = {
+                    kind: RequestType.CONNECT_ACCOUNT,
+                    appName: connectAccountRequest.appName,
+                    appLogoUrl: new URL(connectAccountRequest.appLogoUrl),
+                    permissions: connectAccountRequest.permissions,
+                    requestedKeyPaths: connectAccountRequest.requestedKeyPaths,
+                    challenge: connectAccountRequest.challenge,
+                };
+                return parsedConnectAccountRequest;
             default:
                 return null;
         }
@@ -930,6 +1049,39 @@ export class RequestParser {
                         recipient: refundSwapRequest.refund.recipient.toUserFriendlyAddress(),
                     } : refundSwapRequest.refund,
                 } as RefundSwapRequest;
+            case RequestType.SIGN_MULTISIG_TRANSACTION:
+                const signMultisigTxRequest = request as ParsedSignMultisigTransactionRequest;
+                const rawSignMultisigTxRequest: SignMultisigTransactionRequest = {
+                    appName: signMultisigTxRequest.appName,
+
+                    signer: signMultisigTxRequest.signer.toUserFriendlyAddress(),
+
+                    sender: signMultisigTxRequest.sender.toUserFriendlyAddress(),
+                    senderType: signMultisigTxRequest.senderType,
+                    senderLabel: signMultisigTxRequest.senderLabel,
+                    recipient: signMultisigTxRequest.recipient.toUserFriendlyAddress(),
+                    recipientType: signMultisigTxRequest.recipientType,
+                    recipientLabel: signMultisigTxRequest.recipientLabel,
+                    value: signMultisigTxRequest.value,
+                    fee: signMultisigTxRequest.fee,
+                    extraData: signMultisigTxRequest.data,
+                    flags: signMultisigTxRequest.flags,
+                    validityStartHeight: signMultisigTxRequest.validityStartHeight,
+
+                    multisigConfig: signMultisigTxRequest.multisigConfig,
+                };
+                return rawSignMultisigTxRequest;
+            case RequestType.CONNECT_ACCOUNT:
+                const connectAccountRequest = request as ParsedConnectAccountRequest;
+
+                const rawConnectAccountRequest: ConnectAccountRequest = {
+                    appName: connectAccountRequest.appName,
+                    appLogoUrl: connectAccountRequest.appLogoUrl.href,
+                    permissions: connectAccountRequest.permissions,
+                    requestedKeyPaths: connectAccountRequest.requestedKeyPaths,
+                    challenge: connectAccountRequest.challenge,
+                };
+                return rawConnectAccountRequest;
             default:
                 return null;
         }
