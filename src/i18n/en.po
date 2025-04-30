@@ -35,7 +35,7 @@ msgstr ""
 msgid "503 Service unavailable - please try again later"
 msgstr ""
 
-#: src/views/OnboardingSelector.vue:152
+#: src/views/OnboardingSelector.vue:158
 msgid "A 100% free and self-custodial web wallet for NIM, BTC and USDC."
 msgstr ""
 
@@ -140,15 +140,15 @@ msgstr ""
 msgid "Back to {Wallet}"
 msgstr ""
 
-#: src/views/OnboardingSelector.vue:130
+#: src/views/OnboardingSelector.vue:136
 msgid "Back to Cashlink"
 msgstr ""
 
-#: src/views/OnboardingSelector.vue:124
+#: src/views/OnboardingSelector.vue:129
 msgid "Back to Checkout"
 msgstr ""
 
-#: src/views/OnboardingSelector.vue:126
+#: src/views/OnboardingSelector.vue:131
 msgid "Back to Choose Address"
 msgstr ""
 
@@ -173,7 +173,7 @@ msgstr ""
 msgid "Back to Nimiq Vote"
 msgstr ""
 
-#: src/views/OnboardingSelector.vue:128
+#: src/views/OnboardingSelector.vue:134
 msgid "Back to Sign Message"
 msgstr ""
 
@@ -701,7 +701,7 @@ msgstr ""
 msgid "Login to existing account"
 msgstr ""
 
-#: src/views/OnboardingSelector.vue:143
+#: src/views/OnboardingSelector.vue:149
 msgid "Login to fund your Cashlink"
 msgstr ""
 
@@ -808,7 +808,7 @@ msgstr ""
 msgid "Pay with {currencyFullName}"
 msgstr ""
 
-#: src/views/OnboardingSelector.vue:141
+#: src/views/OnboardingSelector.vue:147
 msgid "Pay with Nimiq"
 msgstr ""
 
@@ -1243,7 +1243,7 @@ msgstr ""
 msgid "Welcome back! | Your Accounts are ready."
 msgstr ""
 
-#: src/views/OnboardingSelector.vue:139
+#: src/views/OnboardingSelector.vue:145
 msgid "Welcome to the Nimiq Wallet"
 msgstr ""
 

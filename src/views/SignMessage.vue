@@ -53,6 +53,11 @@ export default class SignMessage extends Vue {
     private showAccountSelector = false;
 
     private async created() {
+        if (!this.processedWallets.length) {
+            this.goToOnboarding(true);
+            return;
+        }
+
         if (this.request.signer) {
             const wallet = this.findWalletByAddress(this.request.signer.toUserFriendlyAddress(), false);
             if (wallet && wallet.type !== WalletType.LEDGER) {
