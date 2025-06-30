@@ -1,4 +1,5 @@
 module.exports = {
+  testEnvironment: 'jsdom',
   moduleFileExtensions: [
     'js',
     'json',
@@ -7,7 +8,7 @@ module.exports = {
     'vue'
   ],
   transform: {
-    '^.+\\.vue$': 'vue-jest',
+    '^.+\\.vue$': '@vue/vue2-jest',
     '.+\\.(css|styl|less|sass|scss|png|jpg|ttf|woff|woff2)$': 'jest-transform-stub',
     '^.+\\.tsx?$': 'ts-jest',
     '^.+\\.po$': '<rootDir>/tests/PoTransformer.js',
@@ -22,5 +23,9 @@ module.exports = {
   testMatch: [
     '**/tests/unit/**/*.spec.(js|ts)|**/__tests__/*.(js|ts)'
   ],
-  testURL: 'http://localhost/'
+  testURL: 'http://localhost/',
+  modulePathIgnorePatterns: [
+    '<rootDir>/dist/',
+    '<rootDir>/deployment-hub/'
+  ]
 }
