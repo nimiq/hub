@@ -36,7 +36,7 @@ export interface ParsedSignTransactionRequest extends ParsedBasicRequest {
     // The sender object is currently only for internal use in RefundSwapLedger and can not be set in public request.
     // Note that the object does not get exported to the history state in RpcApi and therefore does not survive reloads.
     // However, the RefundSwapLedger handler is built in a way that it starts over on reloads to avoid the problem.
-    sender: Nimiq.Address | {
+    sender?: Nimiq.Address | {
         address: Nimiq.Address,
         label?: string,
         walletLabel?: string,
