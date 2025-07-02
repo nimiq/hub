@@ -9,7 +9,6 @@
     "resolveJsonModule": true,
     "experimentalDecorators": true,
     "esModuleInterop": true,
-    "skipLibCheck": true,
     "sourceMap": true,
     "baseUrl": ".",
     "types": [
