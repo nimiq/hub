@@ -19,7 +19,7 @@ import { ParsedSignMultisigTransactionRequest } from '../lib/RequestTypes';
 @Component({components: {StatusScreen, SmallPage, CheckmarkIcon}})
 export default class SignMultisigTransactionSuccess extends Vue {
     @Static private request!: ParsedSignMultisigTransactionRequest;
-    @State private keyguardResult!: KeyguardClient.SignMultisigTransactionResult;
+    @State private keyguardResult!: KeyguardClient.SignatureResult;
 
     private async mounted() {
         const result: PartialSignature = {

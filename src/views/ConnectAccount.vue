@@ -121,6 +121,7 @@ export default class ConnectAccount extends Vue {
             keyLabel: wallet.labelForKeyguard,
 
             appLogoUrl: this.request.appLogoUrl.href,
+            // @ts-ignore `permissions` have been removed in the Keyguard, but they are still used in the Hub
             permissions,
             requestedKeyPaths: this.request.requestedKeyPaths,
             challenge: this.request.challenge,

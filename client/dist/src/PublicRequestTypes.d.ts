@@ -205,7 +205,7 @@ export interface SignedTransaction {
         proof: Uint8Array;
     };
 }
-export interface EncryptionKeyParams {
+export interface RsaKeyParams {
     kdf: string;
     iterations: number;
     keySize: number;
@@ -218,7 +218,7 @@ export interface MultisigInfo {
     }>;
     secrets: Bytes[] | {
         encrypted: Bytes[];
-        keyParams: EncryptionKeyParams;
+        keyParams: RsaKeyParams;
     };
     userName?: string;
 }
@@ -532,7 +532,7 @@ export interface ConnectedAccount {
             hash: string;
         };
         keyUsages: ['encrypt'];
-        keyParams: EncryptionKeyParams;
+        keyParams: RsaKeyParams;
     };
     account: {
         label: string;

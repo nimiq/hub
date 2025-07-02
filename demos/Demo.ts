@@ -19,7 +19,7 @@ import {
     SignMultisigTransactionRequest,
     ConnectAccountRequest,
     ConnectedAccount,
-    EncryptionKeyParams,
+    RsaKeyParams,
 } from '../client/PublicRequestTypes';
 import { RedirectRequestBehavior, PopupRequestBehavior } from '../client/RequestBehavior';
 import { Utf8Tools } from '@nimiq/utils';
@@ -779,7 +779,7 @@ class Demo {
                 alert('Encryption key must be set, if encryption is enabled.');
                 throw new Error('Encryption key missing');
             }
-            let encryptionKey: { key: CryptoKey, keyParams: EncryptionKeyParams } | null = null;
+            let encryptionKey: { key: CryptoKey, keyParams: RsaKeyParams } | null = null;
             if (encryptCommitmentSecrets) {
                 const encryptionKeyInfo = JSON.parse(
                     encryptionKeyJson,
@@ -1229,4 +1229,3 @@ function toHex(buffer: Uint8Array | ArrayBuffer) {
     }
     return hex;
 }
-
