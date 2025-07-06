@@ -1,11 +1,11 @@
 # 
 # Translators:
-# Inês Marques Gomes, 2024
 # Sören Schwert <hello@soerenschwert.de>, 2024
+# Inês Marques Gomes, 2025
 # 
 msgid ""
 msgstr ""
-"Last-Translator: Sören Schwert <hello@soerenschwert.de>, 2024\n"
+"Last-Translator: Inês Marques Gomes, 2025\n"
 "Language-Team: Portuguese (https://app.transifex.com/nimiq-foundation/teams/110181/pt/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: pt\n"
@@ -95,13 +95,17 @@ msgstr "Endereço"
 msgid "Address Added"
 msgstr "Endereço Adicionado"
 
-#: src/views/LoginSuccess.vue:123
+#: src/views/LoginSuccess.vue:122
 msgid "Address detection failed. Retrying..."
 msgstr "Falha na deteção do endereço. A tentar novamente..."
 
 #: src/views/Rename.vue:22
 msgid "All labels saved."
 msgstr "Todos os marcadores foram guardados."
+
+#: src/views/ConnectAccount.vue:8
+msgid "All private funds remain separate."
+msgstr "Todos os fundos privados permanecem separados."
 
 #: src/components/CheckoutCardBitcoin.vue:30
 #: src/components/CheckoutCardEthereum.vue:27
@@ -292,6 +296,10 @@ msgstr "Escolhe um novo Endereço"
 msgid "Choose an Account"
 msgstr "Escolhe uma Conta"
 
+#: src/views/ConnectAccount.vue:5
+msgid "Choose an Account to log in"
+msgstr "Escolha uma Conta para fazer login"
+
 #: src/views/CashlinkReceive.vue:64 src/views/ChooseAddress.vue:18
 #: src/views/ChooseAddress.vue:5
 msgid "Choose an Address"
@@ -434,8 +442,8 @@ msgstr "A contactar os seed nodes..."
 msgid "Contacts are not affected."
 msgstr "Os contactos não são afetados."
 
-#: src/components/NotEnoughCookieSpace.vue:8 src/views/LoginSuccess.vue:179
-#: src/views/LoginSuccess.vue:210 src/views/SignupLedger.vue:143
+#: src/components/NotEnoughCookieSpace.vue:8 src/views/LoginSuccess.vue:178
+#: src/views/LoginSuccess.vue:208 src/views/SignupLedger.vue:143
 msgid "Continue"
 msgstr "Continuar"
 
@@ -536,7 +544,7 @@ msgstr "taxa"
 msgid "Fee"
 msgstr "Taxa"
 
-#: src/views/LoginSuccess.vue:132 src/views/SignupLedger.vue:108
+#: src/views/LoginSuccess.vue:131 src/views/SignupLedger.vue:108
 msgid "Fetching Addresses Failed"
 msgstr "Falha na procura de Endereços"
 
@@ -620,7 +628,7 @@ msgstr ""
 "Imagina se pagar com\n"
 "criptomoedas fosse fácil"
 
-#: src/views/LoginSuccess.vue:191 src/views/SignupLedger.vue:124
+#: src/views/LoginSuccess.vue:189 src/views/SignupLedger.vue:124
 msgid ""
 "Imported {count} address so far... | Imported {count} addresses so far..."
 msgstr ""
@@ -697,7 +705,11 @@ msgstr "Iniciar sessão"
 msgid "Login File saved!"
 msgstr "Ficheiro de Login guardado!"
 
-#: src/views/ChooseAddress.vue:67
+#: src/views/ConnectAccountSuccess.vue:4
+msgid "Login successful"
+msgstr "Login feito com sucesso"
+
+#: src/views/ChooseAddress.vue:67 src/views/ConnectAccount.vue:40
 msgid "Login to another account"
 msgstr "Iniciar sessão noutra conta"
 
@@ -934,7 +946,7 @@ msgid "Retrieving your old accounts..."
 msgstr "A recuperar as tuas contas antigas..."
 
 #: src/views/ActivatePolygonSuccess.vue:139
-#: src/views/BitcoinSyncBaseView.vue:72 src/views/LoginSuccess.vue:134
+#: src/views/BitcoinSyncBaseView.vue:72 src/views/LoginSuccess.vue:133
 #: src/views/SetupSwapSuccess.vue:672 src/views/SignupLedger.vue:145
 msgid "Retry"
 msgstr "Repetir"
@@ -988,7 +1000,7 @@ msgstr "Algo deu errado"
 msgid "Something went wrong with your request. Please try again."
 msgstr "Algo deu errado no teu pedido. Por favor tenta novamente."
 
-#: src/views/LoginSuccess.vue:175
+#: src/views/LoginSuccess.vue:174
 msgid "Space exceeded"
 msgstr "Espaço excedido"
 
@@ -1069,7 +1081,7 @@ msgstr "A sincronização com a rede Polygon falhou: {error}"
 msgid "Syncing with Polygon network..."
 msgstr "A sincronizar com a rede Polygon"
 
-#: src/views/LoginSuccess.vue:133 src/views/SignupLedger.vue:134
+#: src/views/LoginSuccess.vue:132 src/views/SignupLedger.vue:134
 msgid "Syncing with the network failed: {error}"
 msgstr "A sincronização com a rede falhou: {error}"
 
@@ -1166,6 +1178,10 @@ msgstr ""
 msgid "Total fees"
 msgstr "Taxas totais"
 
+#: src/views/SignMultisigTransactionSuccess.vue:4
+msgid "Transaction approved"
+msgstr "Transação aprovada"
+
 #: src/views/CashlinkManage.vue:211 src/views/CheckoutTransmission.vue:107
 msgid "Transaction could not be relayed"
 msgstr "Não foi possível transmitir a transação"
@@ -1200,7 +1216,7 @@ msgstr ""
 "contas e/ou endereços. Por favor encerra a sessão das contas não utilizadas "
 "para libertar espaço."
 
-#: src/views/LoginSuccess.vue:177
+#: src/views/LoginSuccess.vue:176
 msgid ""
 "Unfortunately, due to space restrictions of Safari and IOS, this account "
 "cannot be stored properly. Please free up space by logging out of other "
@@ -1246,7 +1262,7 @@ msgstr ""
 "Usa o seu Ficheiro de Login\n"
 "ou Palavra de Recuperação."
 
-#: src/views/LoginSuccess.vue:209 src/views/SignupLedger.vue:132
+#: src/views/LoginSuccess.vue:207 src/views/SignupLedger.vue:132
 msgid "Used addresses without balance might have been missed."
 msgstr "Endereços usados sem saldo podem ter sido perdidos."
 
@@ -1271,7 +1287,7 @@ msgstr ""
 "Wallet criada\n"
 "com sucesso"
 
-#: src/views/LoginSuccess.vue:224
+#: src/views/LoginSuccess.vue:222
 msgid "Welcome back! | Your Accounts are ready."
 msgstr "Bem-vindo de volta! As tuas Contas estão prontas."
 
@@ -1327,7 +1343,11 @@ msgstr ""
 "A tua aplicação {app} está desatualizada. Por favor atualiza o teu Ledger "
 "firmware e a aplicação {app} usando o Ledger Live."
 
-#: src/views/LoginSuccess.vue:207 src/views/SignupLedger.vue:106
+#: src/views/ConnectAccount.vue:7
+msgid "Your account will be used for approving only."
+msgstr "A sua conta apenas vai ser usada para aprovação."
+
+#: src/views/LoginSuccess.vue:205 src/views/SignupLedger.vue:106
 msgid ""
 "Your Addresses may be\n"
 "incomplete."
@@ -1351,6 +1371,6 @@ msgstr ""
 msgid "Your message is signed."
 msgstr "A tua mensagem está assinada."
 
-#: src/views/LoginSuccess.vue:218 src/views/SimpleSuccess.vue:31
+#: src/views/LoginSuccess.vue:216 src/views/SimpleSuccess.vue:31
 msgid "Your password was changed."
 msgstr "A sua palavra passe foi alterada."

@@ -99,13 +99,17 @@ msgstr "Адреса"
 msgid "Address Added"
 msgstr "Адреса додана"
 
-#: src/views/LoginSuccess.vue:123
+#: src/views/LoginSuccess.vue:122
 msgid "Address detection failed. Retrying..."
 msgstr "Помилка виявлення адреси. Повторна спроба..."
 
 #: src/views/Rename.vue:22
 msgid "All labels saved."
 msgstr "Усі назви збережено."
+
+#: src/views/ConnectAccount.vue:8
+msgid "All private funds remain separate."
+msgstr ""
 
 #: src/components/CheckoutCardBitcoin.vue:30
 #: src/components/CheckoutCardEthereum.vue:27
@@ -294,6 +298,10 @@ msgstr "Виберіть нову адресу"
 msgid "Choose an Account"
 msgstr "Оберіть рахунок"
 
+#: src/views/ConnectAccount.vue:5
+msgid "Choose an Account to log in"
+msgstr ""
+
 #: src/views/CashlinkReceive.vue:64 src/views/ChooseAddress.vue:18
 #: src/views/ChooseAddress.vue:5
 msgid "Choose an Address"
@@ -435,8 +443,8 @@ msgstr "Підключення до первинних вузлів..."
 msgid "Contacts are not affected."
 msgstr "Це не впливає на контакти."
 
-#: src/components/NotEnoughCookieSpace.vue:8 src/views/LoginSuccess.vue:179
-#: src/views/LoginSuccess.vue:210 src/views/SignupLedger.vue:143
+#: src/components/NotEnoughCookieSpace.vue:8 src/views/LoginSuccess.vue:178
+#: src/views/LoginSuccess.vue:208 src/views/SignupLedger.vue:143
 msgid "Continue"
 msgstr "Продовжити"
 
@@ -537,7 +545,7 @@ msgstr "комісія"
 msgid "Fee"
 msgstr "Комісія"
 
-#: src/views/LoginSuccess.vue:132 src/views/SignupLedger.vue:108
+#: src/views/LoginSuccess.vue:131 src/views/SignupLedger.vue:108
 msgid "Fetching Addresses Failed"
 msgstr "Не вдалося отримати адреси"
 
@@ -621,7 +629,7 @@ msgstr ""
 "Уявіть, що платити за допомогою\n"
 "криптовалюти буде легко"
 
-#: src/views/LoginSuccess.vue:191 src/views/SignupLedger.vue:124
+#: src/views/LoginSuccess.vue:189 src/views/SignupLedger.vue:124
 msgid ""
 "Imported {count} address so far... | Imported {count} addresses so far..."
 msgstr ""
@@ -696,7 +704,11 @@ msgstr "Увійти"
 msgid "Login File saved!"
 msgstr "Файл-ключ збережено!"
 
-#: src/views/ChooseAddress.vue:67
+#: src/views/ConnectAccountSuccess.vue:4
+msgid "Login successful"
+msgstr ""
+
+#: src/views/ChooseAddress.vue:67 src/views/ConnectAccount.vue:40
 msgid "Login to another account"
 msgstr "Увійти до іншого рахунку"
 
@@ -930,7 +942,7 @@ msgid "Retrieving your old accounts..."
 msgstr "Завантаження старих рахунків..."
 
 #: src/views/ActivatePolygonSuccess.vue:139
-#: src/views/BitcoinSyncBaseView.vue:72 src/views/LoginSuccess.vue:134
+#: src/views/BitcoinSyncBaseView.vue:72 src/views/LoginSuccess.vue:133
 #: src/views/SetupSwapSuccess.vue:672 src/views/SignupLedger.vue:145
 msgid "Retry"
 msgstr "Повторити спробу"
@@ -984,7 +996,7 @@ msgstr "Щось пішло не так"
 msgid "Something went wrong with your request. Please try again."
 msgstr "Щось пішло не так з запитом. Спробуйте ще раз."
 
-#: src/views/LoginSuccess.vue:175
+#: src/views/LoginSuccess.vue:174
 msgid "Space exceeded"
 msgstr "Недостатньо місця"
 
@@ -1065,7 +1077,7 @@ msgstr "Не вдалося синхронізуватися з мережею P
 msgid "Syncing with Polygon network..."
 msgstr "Синхронізація з мережею Polygon..."
 
-#: src/views/LoginSuccess.vue:133 src/views/SignupLedger.vue:134
+#: src/views/LoginSuccess.vue:132 src/views/SignupLedger.vue:134
 msgid "Syncing with the network failed: {error}"
 msgstr "Помилка синхронізації з мережею: {error}"
 
@@ -1161,6 +1173,10 @@ msgstr ""
 msgid "Total fees"
 msgstr "Загальна комісія"
 
+#: src/views/SignMultisigTransactionSuccess.vue:4
+msgid "Transaction approved"
+msgstr ""
+
 #: src/views/CashlinkManage.vue:211 src/views/CheckoutTransmission.vue:107
 msgid "Transaction could not be relayed"
 msgstr "Неможливо передати переказ"
@@ -1194,7 +1210,7 @@ msgstr ""
 "На жаль, через обмеження оглядача Сафарі и не можете додати більше рахунків "
 "чи/та адрес. Будь ласка, видаліть неактивні рахунки щоб звільнити місце."
 
-#: src/views/LoginSuccess.vue:177
+#: src/views/LoginSuccess.vue:176
 msgid ""
 "Unfortunately, due to space restrictions of Safari and IOS, this account "
 "cannot be stored properly. Please free up space by logging out of other "
@@ -1238,7 +1254,7 @@ msgid ""
 "or Recovery Words."
 msgstr "Використовуючи файл-ключ або секретні слова."
 
-#: src/views/LoginSuccess.vue:209 src/views/SignupLedger.vue:132
+#: src/views/LoginSuccess.vue:207 src/views/SignupLedger.vue:132
 msgid "Used addresses without balance might have been missed."
 msgstr "Адреси з нульовим балансом можуть не відображатися."
 
@@ -1262,7 +1278,7 @@ msgstr ""
 "Гаманець успішно\n"
 "створено"
 
-#: src/views/LoginSuccess.vue:224
+#: src/views/LoginSuccess.vue:222
 msgid "Welcome back! | Your Accounts are ready."
 msgstr "З поверненням! | Ваш рахунок готовий."
 
@@ -1318,7 +1334,11 @@ msgstr ""
 "Ваш {app} додаток застарів. Будь ласка, оновіть ваш Ledger і {app} додаток "
 "використовуючи Ledger Live."
 
-#: src/views/LoginSuccess.vue:207 src/views/SignupLedger.vue:106
+#: src/views/ConnectAccount.vue:7
+msgid "Your account will be used for approving only."
+msgstr ""
+
+#: src/views/LoginSuccess.vue:205 src/views/SignupLedger.vue:106
 msgid ""
 "Your Addresses may be\n"
 "incomplete."
@@ -1340,6 +1360,6 @@ msgstr ""
 msgid "Your message is signed."
 msgstr "Ваше повідомлення підписано."
 
-#: src/views/LoginSuccess.vue:218 src/views/SimpleSuccess.vue:31
+#: src/views/LoginSuccess.vue:216 src/views/SimpleSuccess.vue:31
 msgid "Your password was changed."
 msgstr "Пароль було змінено."

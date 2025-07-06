@@ -99,13 +99,17 @@ msgstr "Адрес"
 msgid "Address Added"
 msgstr "Адрес добавлен"
 
-#: src/views/LoginSuccess.vue:123
+#: src/views/LoginSuccess.vue:122
 msgid "Address detection failed. Retrying..."
 msgstr "Не удалось обнаружить адрес. Повторная попытка..."
 
 #: src/views/Rename.vue:22
 msgid "All labels saved."
 msgstr "Все ярлыки сохранены."
+
+#: src/views/ConnectAccount.vue:8
+msgid "All private funds remain separate."
+msgstr ""
 
 #: src/components/CheckoutCardBitcoin.vue:30
 #: src/components/CheckoutCardEthereum.vue:27
@@ -294,6 +298,10 @@ msgstr "Выбрать новый Адрес"
 msgid "Choose an Account"
 msgstr ""
 
+#: src/views/ConnectAccount.vue:5
+msgid "Choose an Account to log in"
+msgstr ""
+
 #: src/views/CashlinkReceive.vue:64 src/views/ChooseAddress.vue:18
 #: src/views/ChooseAddress.vue:5
 msgid "Choose an Address"
@@ -436,8 +444,8 @@ msgstr "Устанавливаем связь с сид-узлами..."
 msgid "Contacts are not affected."
 msgstr "Контакты не будут затронуты."
 
-#: src/components/NotEnoughCookieSpace.vue:8 src/views/LoginSuccess.vue:179
-#: src/views/LoginSuccess.vue:210 src/views/SignupLedger.vue:143
+#: src/components/NotEnoughCookieSpace.vue:8 src/views/LoginSuccess.vue:178
+#: src/views/LoginSuccess.vue:208 src/views/SignupLedger.vue:143
 msgid "Continue"
 msgstr "Продолжить"
 
@@ -542,7 +550,7 @@ msgstr "комиссия"
 msgid "Fee"
 msgstr "Комиссия"
 
-#: src/views/LoginSuccess.vue:132 src/views/SignupLedger.vue:108
+#: src/views/LoginSuccess.vue:131 src/views/SignupLedger.vue:108
 msgid "Fetching Addresses Failed"
 msgstr "Не удалось загрузить адреса"
 
@@ -626,7 +634,7 @@ msgstr ""
 "Представьте, что оплата\n"
 "криптовалютой стала лёгкой и простой"
 
-#: src/views/LoginSuccess.vue:191 src/views/SignupLedger.vue:124
+#: src/views/LoginSuccess.vue:189 src/views/SignupLedger.vue:124
 msgid ""
 "Imported {count} address so far... | Imported {count} addresses so far..."
 msgstr "Импортирован {count} адрес... | Импортировано {count} адресов..."
@@ -703,7 +711,11 @@ msgstr "Авторизация"
 msgid "Login File saved!"
 msgstr "Файл Авторизации сохранён!"
 
-#: src/views/ChooseAddress.vue:67
+#: src/views/ConnectAccountSuccess.vue:4
+msgid "Login successful"
+msgstr ""
+
+#: src/views/ChooseAddress.vue:67 src/views/ConnectAccount.vue:40
 msgid "Login to another account"
 msgstr ""
 
@@ -937,7 +949,7 @@ msgid "Retrieving your old accounts..."
 msgstr "Восстановление ваших старых учетных записей..."
 
 #: src/views/ActivatePolygonSuccess.vue:139
-#: src/views/BitcoinSyncBaseView.vue:72 src/views/LoginSuccess.vue:134
+#: src/views/BitcoinSyncBaseView.vue:72 src/views/LoginSuccess.vue:133
 #: src/views/SetupSwapSuccess.vue:672 src/views/SignupLedger.vue:145
 msgid "Retry"
 msgstr "Повторить"
@@ -992,7 +1004,7 @@ msgid "Something went wrong with your request. Please try again."
 msgstr ""
 "Произошла ошибка при отправке запроса. Пожалуйста, попробуйте еще раз."
 
-#: src/views/LoginSuccess.vue:175
+#: src/views/LoginSuccess.vue:174
 msgid "Space exceeded"
 msgstr "Превышен лимит доступного места"
 
@@ -1073,7 +1085,7 @@ msgstr "Ошибка синхронизации с сетью Polygon: {error}"
 msgid "Syncing with Polygon network..."
 msgstr "Синхронизация с сетью Polygon..."
 
-#: src/views/LoginSuccess.vue:133 src/views/SignupLedger.vue:134
+#: src/views/LoginSuccess.vue:132 src/views/SignupLedger.vue:134
 msgid "Syncing with the network failed: {error}"
 msgstr "Не удалось синхронизироваться с сетью: {error}"
 
@@ -1168,6 +1180,10 @@ msgstr "Для смены PIN-кода на вашем Ledger, перейдит�
 msgid "Total fees"
 msgstr "Всего комиссии"
 
+#: src/views/SignMultisigTransactionSuccess.vue:4
+msgid "Transaction approved"
+msgstr ""
+
 #: src/views/CashlinkManage.vue:211 src/views/CheckoutTransmission.vue:107
 msgid "Transaction could not be relayed"
 msgstr "Невозможно передать транзакцию"
@@ -1202,7 +1218,7 @@ msgstr ""
 "дополнительные аккаунты и / или адреса. Чтобы освободить место, выйдите из "
 "учетных записей, которые вы не используете."
 
-#: src/views/LoginSuccess.vue:177
+#: src/views/LoginSuccess.vue:176
 msgid ""
 "Unfortunately, due to space restrictions of Safari and IOS, this account "
 "cannot be stored properly. Please free up space by logging out of other "
@@ -1246,7 +1262,7 @@ msgid ""
 "or Recovery Words."
 msgstr "Используйте Файл Авторизации или Защитную Фразу."
 
-#: src/views/LoginSuccess.vue:209 src/views/SignupLedger.vue:132
+#: src/views/LoginSuccess.vue:207 src/views/SignupLedger.vue:132
 msgid "Used addresses without balance might have been missed."
 msgstr "Используемые адреса с нулевым балансом могли быть пропущены."
 
@@ -1268,7 +1284,7 @@ msgid ""
 "created"
 msgstr ""
 
-#: src/views/LoginSuccess.vue:224
+#: src/views/LoginSuccess.vue:222
 msgid "Welcome back! | Your Accounts are ready."
 msgstr "Добро пожаловать! | Ваши Аккаунты готовы."
 
@@ -1324,7 +1340,11 @@ msgstr ""
 "Ваше приложение {app} устарело. Пожалуйста, обновите прошивку Ledger и "
 "приложение {app} через Ledger Live."
 
-#: src/views/LoginSuccess.vue:207 src/views/SignupLedger.vue:106
+#: src/views/ConnectAccount.vue:7
+msgid "Your account will be used for approving only."
+msgstr ""
+
+#: src/views/LoginSuccess.vue:205 src/views/SignupLedger.vue:106
 msgid ""
 "Your Addresses may be\n"
 "incomplete."
@@ -1348,6 +1368,6 @@ msgstr ""
 msgid "Your message is signed."
 msgstr "Ваше сообщение подписано."
 
-#: src/views/LoginSuccess.vue:218 src/views/SimpleSuccess.vue:31
+#: src/views/LoginSuccess.vue:216 src/views/SimpleSuccess.vue:31
 msgid "Your password was changed."
 msgstr "Ваш пароль был изменён."

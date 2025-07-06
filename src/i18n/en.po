@@ -88,7 +88,7 @@ msgstr ""
 msgid "Address Added"
 msgstr ""
 
-#: src/views/LoginSuccess.vue:123
+#: src/views/LoginSuccess.vue:122
 msgid "Address detection failed. Retrying..."
 msgstr ""
 
@@ -443,8 +443,8 @@ msgid "Contacts are not affected."
 msgstr ""
 
 #: src/components/NotEnoughCookieSpace.vue:8
-#: src/views/LoginSuccess.vue:179
-#: src/views/LoginSuccess.vue:210
+#: src/views/LoginSuccess.vue:178
+#: src/views/LoginSuccess.vue:208
 #: src/views/SignupLedger.vue:143
 msgid "Continue"
 msgstr ""
@@ -548,7 +548,7 @@ msgstr ""
 msgid "Fee"
 msgstr ""
 
-#: src/views/LoginSuccess.vue:132
+#: src/views/LoginSuccess.vue:131
 #: src/views/SignupLedger.vue:108
 msgid "Fetching Addresses Failed"
 msgstr ""
@@ -635,7 +635,7 @@ msgid ""
 "crypto was easy"
 msgstr ""
 
-#: src/views/LoginSuccess.vue:191
+#: src/views/LoginSuccess.vue:189
 #: src/views/SignupLedger.vue:124
 msgid "Imported {count} address so far... | Imported {count} addresses so far..."
 msgstr ""
@@ -936,7 +936,7 @@ msgstr ""
 
 #: src/views/ActivatePolygonSuccess.vue:139
 #: src/views/BitcoinSyncBaseView.vue:72
-#: src/views/LoginSuccess.vue:134
+#: src/views/LoginSuccess.vue:133
 #: src/views/SetupSwapSuccess.vue:672
 #: src/views/SignupLedger.vue:145
 msgid "Retry"
@@ -993,7 +993,7 @@ msgstr ""
 msgid "Something went wrong with your request. Please try again."
 msgstr ""
 
-#: src/views/LoginSuccess.vue:175
+#: src/views/LoginSuccess.vue:174
 msgid "Space exceeded"
 msgstr ""
 
@@ -1079,7 +1079,7 @@ msgstr ""
 msgid "Syncing with Polygon network..."
 msgstr ""
 
-#: src/views/LoginSuccess.vue:133
+#: src/views/LoginSuccess.vue:132
 #: src/views/SignupLedger.vue:134
 msgid "Syncing with the network failed: {error}"
 msgstr ""
@@ -1192,7 +1192,7 @@ msgstr ""
 msgid "Unfortunately, due to restrictions of Safari you cannot add more accounts and/or addresses. Please log out of unused accounts to free up space."
 msgstr ""
 
-#: src/views/LoginSuccess.vue:177
+#: src/views/LoginSuccess.vue:176
 msgid "Unfortunately, due to space restrictions of Safari and IOS, this account cannot be stored properly. Please free up space by logging out of other accounts."
 msgstr ""
 
@@ -1231,7 +1231,7 @@ msgid ""
 "or Recovery Words."
 msgstr ""
 
-#: src/views/LoginSuccess.vue:209
+#: src/views/LoginSuccess.vue:207
 #: src/views/SignupLedger.vue:132
 msgid "Used addresses without balance might have been missed."
 msgstr ""
@@ -1256,7 +1256,7 @@ msgid ""
 "created"
 msgstr ""
 
-#: src/views/LoginSuccess.vue:224
+#: src/views/LoginSuccess.vue:222
 msgid "Welcome back! | Your Accounts are ready."
 msgstr ""
 
@@ -1309,7 +1309,7 @@ msgstr ""
 msgid "Your account will be used for approving only."
 msgstr ""
 
-#: src/views/LoginSuccess.vue:207
+#: src/views/LoginSuccess.vue:205
 #: src/views/SignupLedger.vue:106
 msgid ""
 "Your Addresses may be\n"
@@ -1330,7 +1330,7 @@ msgstr ""
 msgid "Your message is signed."
 msgstr ""
 
-#: src/views/LoginSuccess.vue:218
+#: src/views/LoginSuccess.vue:216
 #: src/views/SimpleSuccess.vue:31
 msgid "Your password was changed."
 msgstr ""

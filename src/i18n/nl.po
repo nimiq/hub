@@ -98,13 +98,17 @@ msgstr "Adres"
 msgid "Address Added"
 msgstr "Adres toegevoegd"
 
-#: src/views/LoginSuccess.vue:123
+#: src/views/LoginSuccess.vue:122
 msgid "Address detection failed. Retrying..."
 msgstr "Adresherkenning mislukt. Probeer het opnieuw... "
 
 #: src/views/Rename.vue:22
 msgid "All labels saved."
 msgstr "Alle labels opgeslagen."
+
+#: src/views/ConnectAccount.vue:8
+msgid "All private funds remain separate."
+msgstr ""
 
 #: src/components/CheckoutCardBitcoin.vue:30
 #: src/components/CheckoutCardEthereum.vue:27
@@ -295,6 +299,10 @@ msgstr "Kies een nieuw adres"
 msgid "Choose an Account"
 msgstr "Kies een account"
 
+#: src/views/ConnectAccount.vue:5
+msgid "Choose an Account to log in"
+msgstr ""
+
 #: src/views/CashlinkReceive.vue:64 src/views/ChooseAddress.vue:18
 #: src/views/ChooseAddress.vue:5
 msgid "Choose an Address"
@@ -437,8 +445,8 @@ msgstr " Seed nodes contacteren..."
 msgid "Contacts are not affected."
 msgstr "Contacten zijn niet aangepast."
 
-#: src/components/NotEnoughCookieSpace.vue:8 src/views/LoginSuccess.vue:179
-#: src/views/LoginSuccess.vue:210 src/views/SignupLedger.vue:143
+#: src/components/NotEnoughCookieSpace.vue:8 src/views/LoginSuccess.vue:178
+#: src/views/LoginSuccess.vue:208 src/views/SignupLedger.vue:143
 msgid "Continue"
 msgstr "Doorgaan"
 
@@ -539,7 +547,7 @@ msgstr "kosten"
 msgid "Fee"
 msgstr "kosten"
 
-#: src/views/LoginSuccess.vue:132 src/views/SignupLedger.vue:108
+#: src/views/LoginSuccess.vue:131 src/views/SignupLedger.vue:108
 msgid "Fetching Addresses Failed"
 msgstr "Ophalen van adressen is mislukt"
 
@@ -623,7 +631,7 @@ msgstr ""
 "Stel je voor dat betalen met \n"
 "cryptovaluta makkelijk was"
 
-#: src/views/LoginSuccess.vue:191 src/views/SignupLedger.vue:124
+#: src/views/LoginSuccess.vue:189 src/views/SignupLedger.vue:124
 msgid ""
 "Imported {count} address so far... | Imported {count} addresses so far..."
 msgstr ""
@@ -701,7 +709,11 @@ msgstr "Login"
 msgid "Login File saved!"
 msgstr "Login File opgeslagen!"
 
-#: src/views/ChooseAddress.vue:67
+#: src/views/ConnectAccountSuccess.vue:4
+msgid "Login successful"
+msgstr ""
+
+#: src/views/ChooseAddress.vue:67 src/views/ConnectAccount.vue:40
 msgid "Login to another account"
 msgstr "Login op een ander account"
 
@@ -938,7 +950,7 @@ msgid "Retrieving your old accounts..."
 msgstr "Oude accounts ophalen..."
 
 #: src/views/ActivatePolygonSuccess.vue:139
-#: src/views/BitcoinSyncBaseView.vue:72 src/views/LoginSuccess.vue:134
+#: src/views/BitcoinSyncBaseView.vue:72 src/views/LoginSuccess.vue:133
 #: src/views/SetupSwapSuccess.vue:672 src/views/SignupLedger.vue:145
 msgid "Retry"
 msgstr "Probeer opnieuw"
@@ -993,7 +1005,7 @@ msgid "Something went wrong with your request. Please try again."
 msgstr ""
 "Er is iets verkeerd gegaan met je aanvraag. Probeer het alstublieft opnieuw."
 
-#: src/views/LoginSuccess.vue:175
+#: src/views/LoginSuccess.vue:174
 msgid "Space exceeded"
 msgstr "Ruimte overschreden"
 
@@ -1074,7 +1086,7 @@ msgstr "Synchroniseren met Polygon-netwerk mislukt: {error}"
 msgid "Syncing with Polygon network..."
 msgstr "Synchroniseren met Polygon-netwerk..."
 
-#: src/views/LoginSuccess.vue:133 src/views/SignupLedger.vue:134
+#: src/views/LoginSuccess.vue:132 src/views/SignupLedger.vue:134
 msgid "Syncing with the network failed: {error}"
 msgstr "Synchroniseren met het netwerk is mislukt: {error}"
 
@@ -1171,6 +1183,10 @@ msgstr ""
 msgid "Total fees"
 msgstr "Totale kosten"
 
+#: src/views/SignMultisigTransactionSuccess.vue:4
+msgid "Transaction approved"
+msgstr ""
+
 #: src/views/CashlinkManage.vue:211 src/views/CheckoutTransmission.vue:107
 msgid "Transaction could not be relayed"
 msgstr "Transactie kon niet worden doorgestuurd"
@@ -1205,7 +1221,7 @@ msgstr ""
 " toevoegen. Log alstublieft uit bij de ongebruikte accounts om ruimte vrij "
 "te maken."
 
-#: src/views/LoginSuccess.vue:177
+#: src/views/LoginSuccess.vue:176
 msgid ""
 "Unfortunately, due to space restrictions of Safari and IOS, this account "
 "cannot be stored properly. Please free up space by logging out of other "
@@ -1251,7 +1267,7 @@ msgstr ""
 "Gebruik je Login File\n"
 "of je herstelwoorden."
 
-#: src/views/LoginSuccess.vue:209 src/views/SignupLedger.vue:132
+#: src/views/LoginSuccess.vue:207 src/views/SignupLedger.vue:132
 msgid "Used addresses without balance might have been missed."
 msgstr "Gebruikte adressen zonder balans kunnen niet aanwezig zijn."
 
@@ -1276,7 +1292,7 @@ msgstr ""
 "Wallet succesvol\n"
 "aangemaakt"
 
-#: src/views/LoginSuccess.vue:224
+#: src/views/LoginSuccess.vue:222
 msgid "Welcome back! | Your Accounts are ready."
 msgstr "Welkom terug! | Je rekeningen staan klaar."
 
@@ -1332,7 +1348,11 @@ msgstr ""
 "Je {app} app is verouderd. Werk je Ledger-firmware en {app} app bij met "
 "Ledger Live."
 
-#: src/views/LoginSuccess.vue:207 src/views/SignupLedger.vue:106
+#: src/views/ConnectAccount.vue:7
+msgid "Your account will be used for approving only."
+msgstr ""
+
+#: src/views/LoginSuccess.vue:205 src/views/SignupLedger.vue:106
 msgid ""
 "Your Addresses may be\n"
 "incomplete."
@@ -1354,6 +1374,6 @@ msgstr "Je Ledger is nodig om opnieuw in te loggen."
 msgid "Your message is signed."
 msgstr "Je bericht is ondertekend."
 
-#: src/views/LoginSuccess.vue:218 src/views/SimpleSuccess.vue:31
+#: src/views/LoginSuccess.vue:216 src/views/SimpleSuccess.vue:31
 msgid "Your password was changed."
 msgstr "Je wachtwoord is gewijzigd."

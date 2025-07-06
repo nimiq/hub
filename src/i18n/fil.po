@@ -95,13 +95,17 @@ msgstr "Adres"
 msgid "Address Added"
 msgstr "Naidagdag na Adres"
 
-#: src/views/LoginSuccess.vue:123
+#: src/views/LoginSuccess.vue:122
 msgid "Address detection failed. Retrying..."
 msgstr "Nabigo ang pagtuklas ng adres. Sinusubukan ulit..."
 
 #: src/views/Rename.vue:22
 msgid "All labels saved."
 msgstr "Nai-saved ang lahat ng mga etiketa."
+
+#: src/views/ConnectAccount.vue:8
+msgid "All private funds remain separate."
+msgstr ""
 
 #: src/components/CheckoutCardBitcoin.vue:30
 #: src/components/CheckoutCardEthereum.vue:27
@@ -294,6 +298,10 @@ msgstr "Pumili ng isang bagong Adres"
 msgid "Choose an Account"
 msgstr ""
 
+#: src/views/ConnectAccount.vue:5
+msgid "Choose an Account to log in"
+msgstr ""
+
 #: src/views/CashlinkReceive.vue:64 src/views/ChooseAddress.vue:18
 #: src/views/ChooseAddress.vue:5
 msgid "Choose an Address"
@@ -438,8 +446,8 @@ msgstr "Pakikipag-ugnay sa mga node ng binhi ..."
 msgid "Contacts are not affected."
 msgstr "Ang mga contact ay hindi apektado."
 
-#: src/components/NotEnoughCookieSpace.vue:8 src/views/LoginSuccess.vue:179
-#: src/views/LoginSuccess.vue:210 src/views/SignupLedger.vue:143
+#: src/components/NotEnoughCookieSpace.vue:8 src/views/LoginSuccess.vue:178
+#: src/views/LoginSuccess.vue:208 src/views/SignupLedger.vue:143
 msgid "Continue"
 msgstr "Magpatuloy"
 
@@ -542,7 +550,7 @@ msgstr "bayad"
 msgid "Fee"
 msgstr "Bayad"
 
-#: src/views/LoginSuccess.vue:132 src/views/SignupLedger.vue:108
+#: src/views/LoginSuccess.vue:131 src/views/SignupLedger.vue:108
 msgid "Fetching Addresses Failed"
 msgstr "Nabigo ang Pagkuha ng Mga Address"
 
@@ -626,7 +634,7 @@ msgstr ""
 "Isipin kung nagbabayad\n"
 "madali ang crypto"
 
-#: src/views/LoginSuccess.vue:191 src/views/SignupLedger.vue:124
+#: src/views/LoginSuccess.vue:189 src/views/SignupLedger.vue:124
 msgid ""
 "Imported {count} address so far... | Imported {count} addresses so far..."
 msgstr ""
@@ -704,7 +712,11 @@ msgstr "Mag log in"
 msgid "Login File saved!"
 msgstr "Na-save na ang Login File!"
 
-#: src/views/ChooseAddress.vue:67
+#: src/views/ConnectAccountSuccess.vue:4
+msgid "Login successful"
+msgstr ""
+
+#: src/views/ChooseAddress.vue:67 src/views/ConnectAccount.vue:40
 msgid "Login to another account"
 msgstr ""
 
@@ -942,7 +954,7 @@ msgid "Retrieving your old accounts..."
 msgstr "Kinukuha ang iyong mga lumang account ..."
 
 #: src/views/ActivatePolygonSuccess.vue:139
-#: src/views/BitcoinSyncBaseView.vue:72 src/views/LoginSuccess.vue:134
+#: src/views/BitcoinSyncBaseView.vue:72 src/views/LoginSuccess.vue:133
 #: src/views/SetupSwapSuccess.vue:672 src/views/SignupLedger.vue:145
 msgid "Retry"
 msgstr "Subukang muli"
@@ -996,7 +1008,7 @@ msgstr "May nangyaring mali"
 msgid "Something went wrong with your request. Please try again."
 msgstr "Nagkaproblema sa iyong hiling. Ulitin mo ulit."
 
-#: src/views/LoginSuccess.vue:175
+#: src/views/LoginSuccess.vue:174
 msgid "Space exceeded"
 msgstr "Lumagpas sa puwang"
 
@@ -1077,7 +1089,7 @@ msgstr "Nabigo ang pag-sync sa network ng Polygon: {error}"
 msgid "Syncing with Polygon network..."
 msgstr "Nagsi-sync sa network ng Polygon ..."
 
-#: src/views/LoginSuccess.vue:133 src/views/SignupLedger.vue:134
+#: src/views/LoginSuccess.vue:132 src/views/SignupLedger.vue:134
 msgid "Syncing with the network failed: {error}"
 msgstr "Nabigo ang pag-sync sa network: {error}"
 
@@ -1177,6 +1189,10 @@ msgstr ""
 msgid "Total fees"
 msgstr "Kabuuang bayarin"
 
+#: src/views/SignMultisigTransactionSuccess.vue:4
+msgid "Transaction approved"
+msgstr ""
+
 #: src/views/CashlinkManage.vue:211 src/views/CheckoutTransmission.vue:107
 msgid "Transaction could not be relayed"
 msgstr "Hindi mailagay ang transaksyon"
@@ -1211,7 +1227,7 @@ msgstr ""
 "magdagdag ng higit pang mga account at / o mga address. Mangyaring mag-log "
 "out sa mga hindi nagamit na account upang magbakante ng puwang."
 
-#: src/views/LoginSuccess.vue:177
+#: src/views/LoginSuccess.vue:176
 msgid ""
 "Unfortunately, due to space restrictions of Safari and IOS, this account "
 "cannot be stored properly. Please free up space by logging out of other "
@@ -1257,7 +1273,7 @@ msgstr ""
 "Gamitin ang iyong Login File\n"
 "o mga salitang pang-backup."
 
-#: src/views/LoginSuccess.vue:209 src/views/SignupLedger.vue:132
+#: src/views/LoginSuccess.vue:207 src/views/SignupLedger.vue:132
 msgid "Used addresses without balance might have been missed."
 msgstr "Ang mga ginamit na adres na walang balanse ay maaaring napalampas."
 
@@ -1279,7 +1295,7 @@ msgid ""
 "created"
 msgstr ""
 
-#: src/views/LoginSuccess.vue:224
+#: src/views/LoginSuccess.vue:222
 msgid "Welcome back! | Your Accounts are ready."
 msgstr "Maligayang pagbabalik! | Nakahanda na ang mga Account mo."
 
@@ -1335,7 +1351,11 @@ msgstr ""
 "Ang iyong {app} app ay luma na. Mangyaring i-update ang iyong Ledger "
 "firmware at {app} app gamit ang Ledger Live."
 
-#: src/views/LoginSuccess.vue:207 src/views/SignupLedger.vue:106
+#: src/views/ConnectAccount.vue:7
+msgid "Your account will be used for approving only."
+msgstr ""
+
+#: src/views/LoginSuccess.vue:205 src/views/SignupLedger.vue:106
 msgid ""
 "Your Addresses may be\n"
 "incomplete."
@@ -1359,6 +1379,6 @@ msgstr ""
 msgid "Your message is signed."
 msgstr "Ang iyong mensahe ay naka-sign."
 
-#: src/views/LoginSuccess.vue:218 src/views/SimpleSuccess.vue:31
+#: src/views/LoginSuccess.vue:216 src/views/SimpleSuccess.vue:31
 msgid "Your password was changed."
 msgstr "Ang iyong password ay binago."
