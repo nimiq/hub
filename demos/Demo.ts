@@ -16,6 +16,10 @@ import {
     CashlinkTheme,
     RequestType,
     SetupSwapRequest,
+    SignMultisigTransactionRequest,
+    ConnectAccountRequest,
+    ConnectedAccount,
+    RsaKeyParams,
 } from '../client/PublicRequestTypes';
 import { RedirectRequestBehavior, PopupRequestBehavior } from '../client/RequestBehavior';
 import { Utf8Tools } from '@nimiq/utils';
@@ -36,36 +40,28 @@ class Demo {
         // @ts-ignore (Property 'demo' does not exist on type 'Window')
         window.demo = demo;
 
-        [
-            RequestType.ADD_ADDRESS,
-            RequestType.CHANGE_PASSWORD,
-            RequestType.CHECKOUT,
-            RequestType.CHOOSE_ADDRESS,
-            RequestType.EXPORT,
-            RequestType.LOGIN,
-            RequestType.LOGOUT,
-            RequestType.MIGRATE,
-            RequestType.ONBOARD,
-            RequestType.RENAME,
-            RequestType.SIGNUP,
-            RequestType.SIGN_MESSAGE,
-            RequestType.SIGN_TRANSACTION,
-        ].forEach((requestType) => {
+        Object.values(RequestType).forEach((requestType) => {
             demo.client.on(requestType, (result: RpcResult, state: State) => {
                 console.log('Hub result', result);
                 console.log('State', state);
 
-                document.querySelector('#result').textContent = JSON.stringify(result);
+                document.querySelector('#result')!.textContent = JSON.stringify(
+                    result,
+                    (key, value) => value instanceof Uint8Array || value instanceof ArrayBuffer ? toHex(value) : value,
+                );
+                if (requestType === RequestType.CONNECT_ACCOUNT) {
+                    setConnectResult(result as ConnectedAccount);
+                }
             }, (error: Error, state: State) => {
                 console.error('Hub error', error);
                 console.log('State', state);
 
-                document.querySelector('#result').textContent = `Error: ${error.message || error}`;
+                document.querySelector('#result')!.textContent = `Error: ${error.message || error}`;
             });
         });
         demo.client.checkRedirectResponse();
 
-        document.querySelectorAll('input[name="popup-vs-redirect"]').forEach((input: HTMLInputElement) => {
+        document.querySelectorAll('input[name="popup-vs-redirect"]').forEach((input) => {
             input.addEventListener('change', (event) => {
                 const value = (event.target as HTMLInputElement).value;
                 demo.setClientBehavior(value);
@@ -74,11 +70,11 @@ class Demo {
         demo.setClientBehavior(
             (document.querySelector('input[name="popup-vs-redirect"]:checked') as HTMLInputElement).value);
 
-        document.querySelector('button#checkout').addEventListener('click', async () => {
+        document.querySelector('button#checkout')!.addEventListener('click', async () => {
             await checkout(await generateCheckoutRequest());
         });
 
-        document.querySelector('button#multi-checkout').addEventListener('click', async () => {
+        document.querySelector('button#multi-checkout')!.addEventListener('click', async () => {
             await checkout(await generateCheckoutRequest(/* multiCheckout */ true));
         });
 
@@ -98,7 +94,7 @@ class Demo {
             themeSelector.add(option);
         });
 
-        document.querySelector('button#create-cashlink').addEventListener('click', async () => {
+        document.querySelector('button#create-cashlink')!.addEventListener('click', async () => {
             try {
                 let value: number | undefined =
                     parseInt((document.querySelector('#cashlink-value') as HTMLInputElement).value);
@@ -148,41 +144,44 @@ class Demo {
                     };
                 }
 
-                const result = await demo.client.createCashlink(request, demo._defaultBehavior as PopupRequestBehavior);
+                const result = await demo.client.createCashlink(request, demo._defaultBehavior);
+                if (demo.isRedirectResult(result)) return;
                 console.log('Result', result);
-                document.querySelector('#result').textContent = `Cashlink created${result.link
+                document.querySelector('#result')!.textContent = `Cashlink created${result.link
                     ? `: ${result.link}`
                     : ''
                 }`;
             } catch (e) {
                 console.error(e);
-                document.querySelector('#result').textContent = `Error: ${e.message || e}`;
+                document.querySelector('#result')!.textContent = `Error: ${e.message || e}`;
             }
         });
 
-        document.querySelector('button#choose-address').addEventListener('click', async () => {
+        document.querySelector('button#choose-address')!.addEventListener('click', async () => {
             try {
                 const result = await demo.client.chooseAddress({ appName: 'Hub Demos', ui: 2 }, demo._defaultBehavior);
+                if (demo.isRedirectResult(result)) return;
                 console.log('Result', result);
-                document.querySelector('#result').textContent = `Address was chosen: ${result ? result.address : '-'}`;
+                document.querySelector('#result')!.textContent = `Address was chosen: ${result ? result.address : '-'}`;
             } catch (e) {
                 console.error(e);
-                document.querySelector('#result').textContent = `Error: ${e.message || e}`;
+                document.querySelector('#result')!.textContent = `Error: ${e.message || e}`;
             }
         });
 
-        document.querySelector('button#choose-address-and-btc').addEventListener('click', async () => {
+        document.querySelector('button#choose-address-and-btc')!.addEventListener('click', async () => {
             try {
                 const result = await demo.client.chooseAddress({ appName: 'Hub Demos', returnBtcAddress: true, ui: 2 }, demo._defaultBehavior);
+                if (demo.isRedirectResult(result)) return;
                 console.log('Result', result);
-                document.querySelector('#result').textContent = `Address was chosen: ${result ? result.address : '-'}`;
+                document.querySelector('#result')!.textContent = `Address was chosen: ${result ? result.address : '-'}`;
             } catch (e) {
                 console.error(e);
-                document.querySelector('#result').textContent = `Error: ${e.message || e}`;
+                document.querySelector('#result')!.textContent = `Error: ${e.message || e}`;
             }
         });
 
-        document.querySelector('button#sign-transaction').addEventListener('click', async () => {
+        document.querySelector('button#sign-transaction')!.addEventListener('click', async () => {
             const txRequest = generateSignTransactionRequest();
             try {
                 const result = await demo.client.signTransaction(
@@ -191,44 +190,48 @@ class Demo {
                     }),
                     demo._defaultBehavior,
                 );
+                if (demo.isRedirectResult(result)) return;
                 console.log('Result', result);
-                document.querySelector('#result').textContent = 'TX signed';
+                document.querySelector('#result')!.textContent = 'TX signed';
             } catch (e) {
                 console.error(e);
-                document.querySelector('#result').textContent = `Error: ${e.message || e}`;
+                document.querySelector('#result')!.textContent = `Error: ${e.message || e}`;
             }
         });
 
-        document.querySelector('button#onboard').addEventListener('click', async () => {
+        document.querySelector('button#onboard')!.addEventListener('click', async () => {
             try {
                 const result = await demo.client.onboard({ appName: 'Hub Demos' }, demo._defaultBehavior);
+                if (demo.isRedirectResult(result)) return;
                 console.log('Result', result);
-                document.querySelector('#result').textContent = 'Onboarding completed!';
+                document.querySelector('#result')!.textContent = 'Onboarding completed!';
             } catch (e) {
                 console.error(e);
-                document.querySelector('#result').textContent = `Error: ${e.message || e}`;
+                document.querySelector('#result')!.textContent = `Error: ${e.message || e}`;
             }
         });
 
-        document.querySelector('button#create').addEventListener('click', async () => {
+        document.querySelector('button#create')!.addEventListener('click', async () => {
             try {
                 const result = await demo.client.signup({ appName: 'Hub Demos' }, demo._defaultBehavior);
+                if (demo.isRedirectResult(result)) return;
                 console.log('Result', result);
-                document.querySelector('#result').textContent = 'New account & address created';
+                document.querySelector('#result')!.textContent = 'New account & address created';
             } catch (e) {
                 console.error(e);
-                document.querySelector('#result').textContent = `Error: ${e.message || e}`;
+                document.querySelector('#result')!.textContent = `Error: ${e.message || e}`;
             }
         });
 
-        document.querySelector('button#login').addEventListener('click', async () => {
+        document.querySelector('button#login')!.addEventListener('click', async () => {
             try {
                 const result = await demo.client.login({ appName: 'Hub Demos' }, demo._defaultBehavior);
+                if (demo.isRedirectResult(result)) return;
                 console.log('Result', result);
-                document.querySelector('#result').textContent = 'Account imported';
+                document.querySelector('#result')!.textContent = 'Account imported';
             } catch (e) {
                 console.error(e);
-                document.querySelector('#result').textContent = `Error: ${e.message || e}`;
+                document.querySelector('#result')!.textContent = `Error: ${e.message || e}`;
             }
         });
 
@@ -238,7 +241,7 @@ class Demo {
                 alert('You have no account to send a tx from, create an account first (signup)');
                 throw new Error('No account found');
             }
-            const sender = ($radio as HTMLElement).dataset.address;
+            const sender = ($radio as HTMLElement).dataset.address!;
             const value = parseInt((document.querySelector('#value') as HTMLInputElement).value, 10) || 1337;
             const fee = parseInt((document.querySelector('#fee') as HTMLInputElement).value, 10) || 0;
             const txData = (document.querySelector('#data') as HTMLInputElement).value || '';
@@ -345,31 +348,33 @@ class Demo {
         async function checkout(txRequest: CheckoutRequest) {
             try {
                 const result = await demo.client.checkout(txRequest, demo._defaultBehavior);
+                if (demo.isRedirectResult(result)) return;
                 console.log('Result', result);
-                document.querySelector('#result').textContent = 'TX signed';
+                document.querySelector('#result')!.textContent = 'TX signed';
             } catch (e) {
                 console.error(e);
-                document.querySelector('#result').textContent = `Error: ${e.message || e}`;
+                document.querySelector('#result')!.textContent = `Error: ${e.message || e}`;
             }
         }
 
-        document.querySelector('button#sign-message').addEventListener('click', async () => {
+        document.querySelector('button#sign-message')!.addEventListener('click', async () => {
             const request: SignMessageRequest = {
                 appName: 'Hub Demos',
                 // signer: 'NQ63 U7XG 1YYE D6FA SXGG 3F5H X403 NBKN JLDU',
-                message: (document.querySelector('#message') as HTMLInputElement).value || undefined,
+                message: (document.querySelector('#message') as HTMLInputElement).value || '',
             };
             try {
                 const result = await demo.client.signMessage(request, demo._defaultBehavior);
+                if (demo.isRedirectResult(result)) return;
                 console.log('Result', result);
-                document.querySelector('#result').textContent = 'MSG signed: ' + request.message;
+                document.querySelector('#result')!.textContent = 'MSG signed: ' + request.message;
             } catch (e) {
                 console.error(e);
-                document.querySelector('#result').textContent = `Error: ${e.message || e}`;
+                document.querySelector('#result')!.textContent = `Error: ${e.message || e}`;
             }
         });
 
-        document.querySelector('button#sign-message-with-account').addEventListener('click', async () => {
+        document.querySelector('button#sign-message-with-account')!.addEventListener('click', async () => {
             const $radio = document.querySelector('input[name="address"]:checked');
             if (!$radio) {
                 alert('You have no account to sign a message by, create an account first (signup)');
@@ -380,20 +385,21 @@ class Demo {
             const request: SignMessageRequest = {
                 appName: 'Hub Demos',
                 signer,
-                message: (document.querySelector('#message') as HTMLInputElement).value || undefined,
+                message: (document.querySelector('#message') as HTMLInputElement).value || '',
             };
 
             try {
                 const result = await demo.client.signMessage(request, demo._defaultBehavior);
+                if (demo.isRedirectResult(result)) return;
                 console.log('Result', result);
-                document.querySelector('#result').textContent = 'MSG signed: ' + request.message;
+                document.querySelector('#result')!.textContent = 'MSG signed: ' + request.message;
             } catch (e) {
                 console.error(e);
-                document.querySelector('#result').textContent = `Error: ${e.message || e}`;
+                document.querySelector('#result')!.textContent = `Error: ${e.message || e}`;
             }
         });
 
-        document.querySelector('button#sign-message-with-tabs').addEventListener('click', async () => {
+        document.querySelector('button#sign-message-with-tabs')!.addEventListener('click', async () => {
             const $radio = document.querySelector('input[name="address"]:checked');
             const signer = $radio && ($radio as HTMLElement).dataset.address || undefined;
 
@@ -405,22 +411,24 @@ class Demo {
 
             try {
                 const result = await demo.client.signMessage(request, demo._defaultBehavior);
+                if (demo.isRedirectResult(result)) return;
                 console.log('Result', result);
-                document.querySelector('#result').textContent = 'MSG signed: ' + request.message;
+                document.querySelector('#result')!.textContent = 'MSG signed: ' + request.message;
             } catch (e) {
                 console.error(e);
-                document.querySelector('#result').textContent = `Error: ${e.message || e}`;
+                document.querySelector('#result')!.textContent = `Error: ${e.message || e}`;
             }
         });
 
-        document.querySelector('button#migrate').addEventListener('click', async () => {
+        document.querySelector('button#migrate')!.addEventListener('click', async () => {
             try {
                 const result = await demo.client.migrate(demo._defaultBehavior);
+                if (demo.isRedirectResult(result)) return;
                 console.log('Result', result);
-                document.querySelector('#result').textContent = 'Migrated';
+                document.querySelector('#result')!.textContent = 'Migrated';
             } catch (e) {
                 console.error(e);
-                document.querySelector('#result').textContent = `Error: ${e.message || e}`;
+                document.querySelector('#result')!.textContent = `Error: ${e.message || e}`;
             }
         });
 
@@ -451,6 +459,7 @@ class Demo {
                     appName: 'Hub Demos',
                     accountId,
                 }, demo._defaultBehavior);
+                if (demo.isRedirectResult(result)) return;
                 console.log('Result', result);
                 document.querySelector('#result')!.textContent = 'Activated account: ' + JSON.stringify(result);
             } catch (e) {
@@ -459,7 +468,7 @@ class Demo {
             }
         });
 
-        document.querySelector('button#sign-btc-transaction').addEventListener('click', async () => {
+        document.querySelector('button#sign-btc-transaction')!.addEventListener('click', async () => {
             const $radio = document.querySelector('input[name="address"]:checked');
             if (!$radio) {
                 alert('You have no account to send a tx from, create an account first (signup)');
@@ -501,32 +510,32 @@ class Demo {
                 // },
             };
             try {
-                const result = await demo.client.signBtcTransaction(txRequest, demo._defaultBehavior as PopupRequestBehavior);
+                const result = await demo.client.signBtcTransaction(txRequest, demo._defaultBehavior);
+                if (demo.isRedirectResult(result)) return;
                 console.log('Result', result);
-                document.querySelector('#result').textContent = 'Signed: ' + result.serializedTx;
+                document.querySelector('#result')!.textContent = 'Signed: ' + result.serializedTx;
             } catch (e) {
                 console.error(e);
-                document.querySelector('#result').textContent = `Error: ${e.message || e}`;
+                document.querySelector('#result')!.textContent = `Error: ${e.message || e}`;
             }
         });
 
-        document.querySelector('button#setup-swap.nim-to-btc').addEventListener('click', async () => {
-            // const $radio = document.querySelector('input[name="address"]:checked');
-            // if (!$radio) {
-            //     alert('You have no account to send a tx from, create an account first (signup)');
-            //     throw new Error('No account found');
-            // }
-            // const accountId = $radio.closest('ul').closest('li').querySelector('button').dataset.walletId;
-            const accountId = '44012bb58ff5';
+        document.querySelector('button#setup-swap.nim-to-btc')!.addEventListener('click', async () => {
+            const $radio = document.querySelector('input[name="address"]:checked');
+            if (!$radio) {
+                alert('You have no account to swap with, create an account first (signup)');
+                throw new Error('No account found');
+            }
+            const accountId = $radio.closest('ul')!.closest('li')!.querySelector('button')!.dataset.walletId!;
 
             const account = (await demo.list()).find((wallet) => wallet.accountId === accountId);
             if (!account) {
-                alert('Account for the demo swap not found. Currently only Sören has this account.');
+                alert('Account not found.');
                 throw new Error('Account not found');
             }
 
             if (account.type === WalletType.LEGACY) {
-                alert('Cannot sign BTC transactions with a legacy account');
+                alert('Cannot swap with a legacy account');
                 throw new Error('Cannot use legacy account');
             }
 
@@ -538,21 +547,18 @@ class Demo {
 
             const request: SetupSwapRequest = {
                 appName: 'Hub Demos',
+                accountId,
+                swapId: 'example-swap-id',
                 fund: {
                     type: 'NIM',
                     sender: account.addresses[0].address,
                     value: 2709.79904 * 1e5,
                     fee: 0,
-                    extraData: 'anlssPDlYuJ5R8hvRtmP3EVjywhona4vd7BI3MCOFNcxBOoUIitb4QMZNYm9TPJr6LpTyq2WJSLYwtBr6jaor6LrJjgvNFcr4gEAEWWF',
                     validityStartHeight: 1140000,
                 },
                 redeem: {
                     type: 'BTC',
                     input: {
-                        transactionHash: 'ef4aaf6087d0cc48ff09355d715c257078467ca4d9dd75a20824e70a78fb43cc',
-                        outputIndex: 0,
-                        outputScript: BitcoinJS.address.toOutputScript('tb1q0hzaqgespv4a67wrc843gkjd5s668l6arm820utp32m9nss90ejq83klw7', BitcoinJS.networks.testnet).toString('hex'),
-                        witnessScript: '6382012088a820193589bd4cf26be8ba53caad962522d8c2d06bea36a8afa2eb26382f34572be28876a91484eb9bcbd90ce7d3360992259e4b9b818215a96088ac67044934565fb17576a91457f4babc23d2369572394cf80f28daeb9c3b58f188ac68',
                         value: Math.round(0.001004 * 1e8),
                     },
                     output: {
@@ -562,10 +568,17 @@ class Demo {
                 },
 
                 fiatCurrency: 'eur',
-                nimFiatRate: 0.00267,
-                btcFiatRate: 8662.93,
-                serviceNetworkFee: 10.73171 * 1e5,
-                serviceExchangeFee: 5.40878 * 1e5,
+                fundingFiatRate: 0.00267,
+                redeemingFiatRate: 8662.93,
+                fundFees: {
+                    redeeming: 10.73171 * 1e5,
+                    processing: 0,
+                },
+                redeemFees: {
+                    funding: 0,
+                    processing: 0,
+                },
+                serviceSwapFee: 5.40878 * 1e5,
                 nimiqAddresses: account.addresses.map((address) => ({
                     address: address.address,
                     balance: Math.round(Math.random() * 10000 + 3000) * 1e5,
@@ -575,32 +588,32 @@ class Demo {
                 },
             };
             try {
-                const result = await demo.client.setupSwap(request, demo._defaultBehavior as PopupRequestBehavior);
+                const result = await demo.client.setupSwap(request, demo._defaultBehavior);
+                if (demo.isRedirectResult(result)) return;
                 console.log('Result', result);
-                document.querySelector('#result').innerHTML = `Signed successfully!<br>NIM:&nbsp;${result.nim.serializedTx}<br>BTC:&nbsp;${result.btc.serializedTx}`;
+                document.querySelector('#result')!.innerHTML = `Signed successfully!<br>NIM:&nbsp;${result.nim!.serializedTx}<br>BTC:&nbsp;${result.btc!.serializedTx}`;
             } catch (e) {
                 console.error(e);
-                document.querySelector('#result').textContent = `Error: ${e.message || e}`;
+                document.querySelector('#result')!.textContent = `Error: ${e.message || e}`;
             }
         });
 
-        document.querySelector('button#setup-swap.btc-to-nim').addEventListener('click', async () => {
-            // const $radio = document.querySelector('input[name="address"]:checked');
-            // if (!$radio) {
-            //     alert('You have no account to send a tx from, create an account first (signup)');
-            //     throw new Error('No account found');
-            // }
-            // const accountId = $radio.closest('ul').closest('li').querySelector('button').dataset.walletId;
-            const accountId = '44012bb58ff5';
+        document.querySelector('button#setup-swap.btc-to-nim')!.addEventListener('click', async () => {
+            const $radio = document.querySelector('input[name="address"]:checked');
+            if (!$radio) {
+                alert('You have no account to swap with, create an account first (signup)');
+                throw new Error('No account found');
+            }
+            const accountId = $radio.closest('ul')!.closest('li')!.querySelector('button')!.dataset.walletId!;
 
             const account = (await demo.list()).find((wallet) => wallet.accountId === accountId);
             if (!account) {
-                alert('Account for the demo swap not found. Currently only Sören has this account.');
+                alert('Account not found.');
                 throw new Error('Account not found');
             }
 
             if (account.type === WalletType.LEGACY) {
-                alert('Cannot sign BTC transactions with a legacy account');
+                alert('Cannot swap with a legacy account');
                 throw new Error('Cannot use legacy account');
             }
 
@@ -612,6 +625,8 @@ class Demo {
 
             const request: SetupSwapRequest = {
                 appName: 'Hub Demos',
+                accountId,
+                swapId: 'example-swap-id',
                 fund: {
                     type: 'BTC',
                     inputs: [{
@@ -622,27 +637,30 @@ class Demo {
                         value: 0.00076136 * 1e8,
                     }],
                     output: {
-                        address: 'tb1qkg69q2pmq8yncjusk2h77vru99rk8n6pcxdxzzzseupaqc2x64ts4uhrj8',
                         value: 0.00075736 * 1e8,
                     },
                     refundAddress: refundAddress,
-                    htlcScript: '6382012088a8204b268b25df99a2edb5d9fb59d4ad56402f429a47c751069918a9790743c16b788876a9146ec1c15aa31a3fe4da55ed81fc264a56bae75c7888ac6704cb53565fb17576a91484eb9bcbd90ce7d3360992259e4b9b818215a96088ac68',
                 },
                 redeem: {
                     type: 'NIM',
-                    sender: 'NQ32 71G4 AQ88 RVA4 4XYC CH39 V2AG HTAM S0YL',
                     recipient: account.addresses[0].address,
                     value: 2000 * 1e5,
                     fee: 0,
                     validityStartHeight: 1140135,
-                    htlcData: 'aJ2uL3ewSNzAjhTXMQTqFCIrW+FqeWyw8OVi4nlHyG9G2Y/cRWPLCANLJosl35mi7bXZ+1nUrVZAL0KaR8dRBpkYqXkHQ8FreAEAEWYf',
                 },
 
                 fiatCurrency: 'eur',
-                nimFiatRate: 0.00267,
-                btcFiatRate: 8662.93,
-                serviceNetworkFee: 0.000004 * 1e8,
-                serviceExchangeFee: Math.round(0.00000151168 * 1e8),
+                redeemingFiatRate: 0.00267,
+                fundingFiatRate: 8662.93,
+                fundFees: {
+                    redeeming: 0.000004 * 1e8,
+                    processing: 0,
+                },
+                redeemFees: {
+                    funding: 0,
+                    processing: 0,
+                },
+                serviceSwapFee: Math.round(0.00000151168 * 1e8),
                 nimiqAddresses: account.addresses.map((address) => ({
                     address: address.address,
                     balance: Math.round(Math.random() * 5000) * 1e5,
@@ -652,12 +670,13 @@ class Demo {
                 },
             };
             try {
-                const result = await demo.client.setupSwap(request, demo._defaultBehavior as PopupRequestBehavior);
+                const result = await demo.client.setupSwap(request, demo._defaultBehavior);
+                if (demo.isRedirectResult(result)) return;
                 console.log('Result', result);
-                document.querySelector('#result').innerHTML = `Signed successfully!<br>NIM:&nbsp;${result.nim.serializedTx}<br>BTC:&nbsp;${result.btc.serializedTx}`;
+                document.querySelector('#result')!.innerHTML = `Signed successfully!<br>NIM:&nbsp;${result.nim!.serializedTx}<br>BTC:&nbsp;${result.btc!.serializedTx}`;
             } catch (e) {
                 console.error(e);
-                document.querySelector('#result').textContent = `Error: ${e.message || e}`;
+                document.querySelector('#result')!.textContent = `Error: ${e.message || e}`;
             }
         });
 
@@ -687,6 +706,7 @@ class Demo {
                     appName: 'Hub Demos',
                     accountId,
                 }, demo._defaultBehavior);
+                if (demo.isRedirectResult(result)) return;
                 console.log('Result', result);
                 document.querySelector('#result')!.textContent = 'Activated USDC: ' + JSON.stringify(result);
             } catch (e) {
@@ -695,10 +715,181 @@ class Demo {
             }
         });
 
-        document.querySelector('button#list-keyguard-keys').addEventListener('click', () => demo.listKeyguard());
-        document.querySelector('button#setup-legacy-accounts').addEventListener('click',
+        document.querySelector('button#connect-account')!.addEventListener('click', async () => {
+            const request: ConnectAccountRequest = {
+                appName: 'Hub Demos',
+                appLogoUrl: `${location.origin}/nimiq.png`,
+                permissions: [RequestType.SIGN_MULTISIG_TRANSACTION],
+                requestedKeyPaths: [`m/44'/242'/0'/0'`],
+                challenge: 'sign-this-to-proof-yourself',
+            };
+
+            try {
+                const [Nimiq, result] = await Promise.all([
+                    window.loadAlbatross(),
+                    demo.client.connectAccount(request, demo._defaultBehavior),
+                ]);
+                if (demo.isRedirectResult(result)) return;
+                console.log('Result', result);
+                document.querySelector('#result')!.textContent = 'Account connected: ' + result.account.label;
+                setConnectResult(result);
+            } catch (e) {
+                console.error(e);
+                document.querySelector('#result')!.textContent = `Error: ${e.message || e}`;
+            }
+        });
+
+        function setConnectResult(result: ConnectedAccount) {
+            (document.querySelector('#connected-publickey') as HTMLInputElement).value =
+                toHex(result.signatures[0].signerPublicKey);
+            (document.querySelector('#connected-encryption-key') as HTMLInputElement).value = JSON.stringify(
+                result.encryptionKey,
+                (key, value) => key === 'keyData' ? toHex(value) : value,
+            );
+        }
+
+        document.querySelector('button#sign-multisig-transaction')!.addEventListener('click', async () => {
+            // TODO until the primitives required for multisigs are available in the regular @nimiq/core package, we use
+            //  a temporary build. This should be removed when the required primitives are available in @nimiq/core. As
+            //  an alternative, the commitments and public key aggregation from legacy core-js should be compatible, or
+            //  also https://github.com/nimiq/nimiq-multisig-app/tree/master/wasm/server/pkg could be used as a more
+            //  complete and more modern alternative. However, as that is not open source yet, it can not be used by
+            //  external people yet, and also not via gitpkg.now.sh or jsdelivr. We'd have to build it as a local
+            //  package and add the package's .tgz to the Hub repo, which I currently opted to not do.
+            const {
+                default: initWasm,
+                PrivateKey,
+                PublicKey,
+                Address,
+                CommitmentPair,
+                BufferUtils,
+            } = await import(/* webpackIgnore: true */ 'https://cdn.jsdelivr.net/gh/nimiq/core-rs-albatross@06999e1626b3312a906a0a490339d7feb781811b'
+                + '/web-client/dist/web/index.js');
+            await initWasm();
+
+            const myPublicKeyHex = (document.querySelector('#connected-publickey') as HTMLInputElement).value;
+            if (myPublicKeyHex.length !== 64) {
+                alert('Invalid public key. Enter your public key in HEX format');
+                throw new Error('Invalid public key');
+            }
+
+            const encryptionKeyJson = (document.querySelector('#connected-encryption-key') as HTMLInputElement).value;
+            const encryptCommitmentSecrets = (document.querySelector('#multisig-checkbox-encrypt') as HTMLInputElement).checked;
+            if (encryptCommitmentSecrets && !encryptionKeyJson) {
+                alert('Encryption key must be set, if encryption is enabled.');
+                throw new Error('Encryption key missing');
+            }
+            let encryptionKey: { key: CryptoKey, keyParams: RsaKeyParams } | null = null;
+            if (encryptCommitmentSecrets) {
+                const encryptionKeyInfo = JSON.parse(
+                    encryptionKeyJson,
+                    (key, value) => key === 'keyData' ? BufferUtils.fromHex(value) : value,
+                ) as ConnectedAccount['encryptionKey'];
+                const key = await window.crypto.subtle.importKey(
+                    encryptionKeyInfo.format,
+                    encryptionKeyInfo.keyData,
+                    encryptionKeyInfo.algorithm,
+                    true, // public key is fine to be extractable
+                    encryptionKeyInfo.keyUsages,
+                );
+                encryptionKey = { key, keyParams: encryptionKeyInfo.keyParams };
+            }
+
+            const transactionValue = parseInt((document.querySelector('#multisig-value') as HTMLInputElement).value)
+                * 1e5;
+            const transactionData = (document.querySelector('#multisig-data') as HTMLInputElement).value;
+            const numberOfSigners = parseInt((document.querySelector('#multisig-signers') as HTMLInputElement).value);
+            const numberOfKeys = parseInt((document.querySelector('#multisig-participants') as HTMLInputElement).value);
+            const userName = (document.querySelector('#multisig-username') as HTMLInputElement).value;
+
+            // One key difference between the multisig implementation in Nimiq PoW's core-js and Musig2 in Nimiq PoS's
+            // core-rs-albatross is that Musig2 uses multiple commitments per signer, specified via MUSIG2_PARAMETER_V.
+            // Other details like the aggregation of public keys and the calculation of Multisig addresses are identical
+            // between core-js and core-rs-albatross. In fact, multisigs created with core-js can be used with Musig2 by
+            // simply creating multiple commitments.
+            const MUSIG2_PARAMETER_V = 2;
+            const generateCommitmentPairs = () => Array.from<unknown, InstanceType<typeof CommitmentPair>>(
+                { length: MUSIG2_PARAMETER_V },
+                () => CommitmentPair.generate(),
+            );
+
+            // Collect owner public keys of potential signers of the multisig.
+            const myPublicKey = PublicKey.fromHex(myPublicKeyHex);
+            const publicKeys = [myPublicKey]; // my pubkey first, so it's included in the signer subset
+            for (let i = 1; i < numberOfKeys; i++) {
+                const privateKey = PrivateKey.generate();
+                const publicKey = PublicKey.derive(privateKey);
+                publicKeys.push(publicKey);
+            }
+            // Calculate the multisig address from the public keys.
+            const multiSigAddress = Address.fromPublicKeys(publicKeys, numberOfSigners);
+
+            // Collect commitments for the subset of publicKeys that sign the transaction
+            const myCommitmentPairs = generateCommitmentPairs();
+            const signers = [{
+                publicKey: myPublicKey,
+                commitments: myCommitmentPairs.map(({ commitment }) => commitment),
+            }];
+            for (let i = 1; i < numberOfSigners; i++) {
+                const publicKey = publicKeys[i];
+                const commitments = generateCommitmentPairs().map(({ commitment }) => commitment);
+                signers.push({ publicKey, commitments });
+            }
+            const myCommitmentSecrets = encryptionKey
+                ? {
+                    encrypted: (await Promise.all(myCommitmentPairs.map(({ secret }) => window.crypto.subtle.encrypt(
+                        encryptionKey.key.algorithm,
+                        encryptionKey.key,
+                        secret.serialize(),
+                    )))).map((encryptedSecret) => toHex(encryptedSecret)),
+                    keyParams: encryptionKey.keyParams,
+                }
+                : myCommitmentPairs.map(({ secret }) => secret.toHex());
+
+            // Partially sign the transaction with our key.
+            // This demo does not cover creating partial signatures for the other signers and aggregating the final
+            // transaction signature.
+            const request: SignMultisigTransactionRequest = {
+                appName: 'Hub Demos',
+
+                signer: myPublicKey.toAddress().toUserFriendlyAddress(),
+
+                sender: multiSigAddress.toUserFriendlyAddress(),
+                senderLabel: 'Our Multisig Wallet',
+                recipient: 'NQ82 HP54 C9D4 2FAG 69QD 6Q71 LURR 5187 0V3X',
+                recipientLabel: 'Best Friend',
+                value: transactionValue,
+                // fee: 0,
+                extraData: transactionData,
+                // flags: 0,
+                validityStartHeight: 1,
+
+                multisigConfig: {
+                    publicKeys: publicKeys.map((publicKey) => publicKey.toHex()),
+                    signers: signers.map(({ publicKey, commitments }) => ({
+                        publicKey: publicKey.toHex(),
+                        commitments: commitments.map((commitment) => commitment.toHex()),
+                    })),
+                    secrets: myCommitmentSecrets,
+                    userName,
+                },
+            };
+
+            try {
+                const result = await demo.client.signMultisigTransaction(request, demo._defaultBehavior);
+                if (demo.isRedirectResult(result)) return;
+                console.log('Result', result);
+                document.querySelector('#result')!.textContent = 'Transaction signed: ' + toHex(result.signature);
+            } catch (e) {
+                console.error(e);
+                document.querySelector('#result')!.textContent = `Error: ${e.message || e}`;
+            }
+        });
+
+        document.querySelector('button#list-keyguard-keys')!.addEventListener('click', () => demo.listKeyguard());
+        document.querySelector('button#setup-legacy-accounts')!.addEventListener('click',
             () => demo.setupLegacyAccounts());
-        document.querySelector('button#list-accounts').addEventListener('click', async () => demo.updateAccounts());
+        document.querySelector('button#list-accounts')!.addEventListener('click', async () => demo.updateAccounts());
 
         document.querySelectorAll('button').forEach((button) => button.disabled = false);
         (document.querySelector('button#list-accounts') as HTMLButtonElement).click();
@@ -732,11 +923,12 @@ class Demo {
                 this._createChangePasswordRequest(accountId),
                 this._defaultBehavior,
             );
+            if (this.isRedirectResult(result)) return;
             console.log('Result', result);
-            document.querySelector('#result').textContent = 'Successfully changed Password';
+            document.querySelector('#result')!.textContent = 'Successfully changed Password';
         } catch (e) {
             console.error(e);
-            document.querySelector('#result').textContent = `Error: ${e.message || e}`;
+            document.querySelector('#result')!.textContent = `Error: ${e.message || e}`;
         }
     }
 
@@ -753,11 +945,12 @@ class Demo {
                 this._createAddAccountRequest(accountId),
                 this._defaultBehavior,
             );
+            if (this.isRedirectResult(result)) return;
             console.log('Result', result);
-            document.querySelector('#result').textContent = 'Account added';
+            document.querySelector('#result')!.textContent = 'Account added';
         } catch (e) {
             console.error(e);
-            document.querySelector('#result').textContent = `Error: ${e.message || e}`;
+            document.querySelector('#result')!.textContent = `Error: ${e.message || e}`;
         }
     }
 
@@ -774,11 +967,12 @@ class Demo {
                 this._createRenameRequest(accountId, account),
                 this._defaultBehavior,
             );
+            if (this.isRedirectResult(result)) return;
             console.log('Result', result);
-            document.querySelector('#result').textContent = 'Done renaming account';
+            document.querySelector('#result')!.textContent = 'Done renaming account';
         } catch (e) {
             console.error(e);
-            document.querySelector('#result').textContent = `Error: ${e.message || e}`;
+            document.querySelector('#result')!.textContent = `Error: ${e.message || e}`;
         }
     }
 
@@ -792,7 +986,7 @@ class Demo {
 
     public async updateAccounts() {
         const cashlinks = await this.cashlinks();
-        let $ul = document.querySelector('#cashlinks');
+        let $ul = document.querySelector('#cashlinks')!;
         let cashlinksHtml = '';
 
         cashlinks.forEach((cashlink) => {
@@ -814,7 +1008,7 @@ class Demo {
         const wallets = await this.list();
         console.log('Accounts in Manager:', wallets);
 
-        $ul = document.querySelector('#accounts');
+        $ul = document.querySelector('#accounts')!;
         let html = '';
 
         wallets.forEach((wallet) => {
@@ -823,7 +1017,7 @@ class Demo {
                         <button class="export-file" data-wallet-id="${wallet.accountId}">File</button>
                         <button class="export-words" data-wallet-id="${wallet.accountId}">Words</button>
                         <button class="change-password" data-wallet-id="${wallet.accountId}">Ch. Pass.</button>
-                        ${wallet.type !== 0
+                        ${wallet.type !== WalletType.LEGACY
                             ? `<button class="add-account" data-wallet-id="${wallet.accountId}">+ Addr</button>`
                             : ''}
                         <button class="rename" data-wallet-id="${wallet.accountId}">Rename</button>
@@ -869,31 +1063,31 @@ class Demo {
             (document.querySelector('input[name="address"]') as HTMLInputElement).checked = true;
         }
         document.querySelectorAll('button.export').forEach((element) => {
-            element.addEventListener('click', async () => this.export((element as HTMLElement).dataset.walletId));
+            element.addEventListener('click', async () => this.export((element as HTMLElement).dataset.walletId!));
         });
         document.querySelectorAll('button.export-file').forEach((element) => {
-            element.addEventListener('click', async () => this.exportFile((element as HTMLElement).dataset.walletId));
+            element.addEventListener('click', async () => this.exportFile((element as HTMLElement).dataset.walletId!));
         });
         document.querySelectorAll('button.export-words').forEach((element) => {
-            element.addEventListener('click', async () => this.exportWords((element as HTMLElement).dataset.walletId));
+            element.addEventListener('click', async () => this.exportWords((element as HTMLElement).dataset.walletId!));
         });
         document.querySelectorAll('button.change-password').forEach((element) => {
             element.addEventListener('click',
-                async () => this.changePassword((element as HTMLElement).dataset.walletId));
+                async () => this.changePassword((element as HTMLElement).dataset.walletId!));
         });
         document.querySelectorAll('button.rename').forEach((element) => {
             element.addEventListener('click',
                 async () => this.rename(
-                    (element as HTMLElement).dataset.walletId,
-                    (element as HTMLElement).dataset.address,
+                    (element as HTMLElement).dataset.walletId!,
+                    (element as HTMLElement).dataset.address!,
                 ),
             );
         });
         document.querySelectorAll('button.add-account').forEach((element) => {
-            element.addEventListener('click', async () => this.addAccount((element as HTMLElement).dataset.walletId));
+            element.addEventListener('click', async () => this.addAccount((element as HTMLElement).dataset.walletId!));
         });
         document.querySelectorAll('button.logout').forEach((element) => {
-            element.addEventListener('click', async () => this.logout((element as HTMLElement).dataset.walletId));
+            element.addEventListener('click', async () => this.logout((element as HTMLElement).dataset.walletId!));
         });
     }
 
@@ -903,6 +1097,10 @@ class Demo {
         } else if (behavior === 'redirect') {
             this._defaultBehavior = new RedirectRequestBehavior();
         }
+    }
+
+    public isRedirectResult(result: RpcResult | void): result is void {
+        return result === undefined && this._defaultBehavior instanceof RedirectRequestBehavior;
     }
 
     public async startIframeClient(baseUrl: string): Promise<PostMessageRpcClient> {
@@ -915,7 +1113,7 @@ class Demo {
     }
 
     public async startPopupClient(url: string, windowName: string): Promise<PostMessageRpcClient> {
-        const $popup = window.open(url, windowName);
+        const $popup = window.open(url, windowName)!;
         const popupClient = new PostMessageRpcClient($popup, '*');
         await popupClient.init();
         return popupClient;
@@ -925,7 +1123,7 @@ class Demo {
         const client = await this.startIframeClient(this._keyguardBaseUrl);
         const keys = await client.call('list');
         console.log('Keys in Keyguard:', keys);
-        document.querySelector('#result').textContent = 'Keys listed in console';
+        document.querySelector('#result')!.textContent = 'Keys listed in console';
         return keys;
     }
 
@@ -938,7 +1136,7 @@ class Demo {
         // @ts-ignore Property '_target' is private and only accessible within class 'PostMessageRpcClient'.
         client._target.close();
         console.log('Legacy Account setup:', result);
-        document.querySelector('#result').textContent = 'Legacy account stored';
+        document.querySelector('#result')!.textContent = 'Legacy account stored';
     }
 
     public async list(): Promise<Account[]> {
@@ -951,13 +1149,15 @@ class Demo {
 
     public async logout(accountId: string): Promise<SimpleResult> {
         try {
-            const result = await this.client.logout(this._createLogoutRequest(accountId), this._defaultBehavior as PopupRequestBehavior);
+            const result = await this.client.logout(this._createLogoutRequest(accountId), this._defaultBehavior);
+            if (this.isRedirectResult(result)) return;
             console.log('Result', result);
-            document.querySelector('#result').textContent = 'Account removed';
+            document.querySelector('#result')!.textContent = 'Account removed';
             return result;
         } catch (e) {
             console.error(e);
-            document.querySelector('#result').textContent = `Error: ${e.message || e}`;
+            document.querySelector('#result')!.textContent = `Error: ${e.message || e}`;
+            throw e;
         }
     }
 
@@ -993,20 +1193,21 @@ class Demo {
 
     private async _export(request: ExportRequest) {
         try {
-            const result = await this.client.export(request, this._defaultBehavior as PopupRequestBehavior);
+            const result = await this.client.export(request, this._defaultBehavior);
+            if (this.isRedirectResult(result)) return;
             console.log('Result', result);
             if (result.fileExported) {
-                document.querySelector('#result').textContent = result.wordsExported
+                document.querySelector('#result')!.textContent = result.wordsExported
                     ? 'Export sucessful'
                     : 'File exported';
             } else {
-                document.querySelector('#result').textContent = result.wordsExported
+                document.querySelector('#result')!.textContent = result.wordsExported
                     ? 'Words exported'
                     : 'nothing exported';
             }
         } catch (e) {
             console.error(e);
-            document.querySelector('#result').textContent = `Error: ${e.message || e}`;
+            document.querySelector('#result')!.textContent = `Error: ${e.message || e}`;
         }
     }
 
@@ -1016,3 +1217,15 @@ class Demo {
 } // class Demo
 
 Demo.run();
+
+function toHex(buffer: Uint8Array | ArrayBuffer) {
+    const hexAlphabet = '0123456789abcdef';
+    const uint8Array = buffer instanceof ArrayBuffer ? new Uint8Array(buffer) : buffer;
+    let hex = '';
+    for (let i = 0; i < uint8Array.length; i++) {
+        const code = uint8Array[i];
+        hex += hexAlphabet[code >>> 4];
+        hex += hexAlphabet[code & 0x0F];
+    }
+    return hex;
+}

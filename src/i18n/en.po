@@ -96,6 +96,10 @@ msgstr ""
 msgid "All labels saved."
 msgstr ""
 
+#: src/views/ConnectAccount.vue:8
+msgid "All private funds remain separate."
+msgstr ""
+
 #: src/components/CheckoutCardBitcoin.vue:30
 #: src/components/CheckoutCardEthereum.vue:27
 #: src/components/CheckoutCardNimiqExternal.vue:32
@@ -285,6 +289,10 @@ msgstr ""
 
 #: src/views/ChooseAddress.vue:12
 msgid "Choose an Account"
+msgstr ""
+
+#: src/views/ConnectAccount.vue:5
+msgid "Choose an Account to log in"
 msgstr ""
 
 #: src/views/CashlinkReceive.vue:64
@@ -693,7 +701,12 @@ msgstr ""
 msgid "Login File saved!"
 msgstr ""
 
+#: src/views/ConnectAccountSuccess.vue:4
+msgid "Login successful"
+msgstr ""
+
 #: src/views/ChooseAddress.vue:67
+#: src/views/ConnectAccount.vue:40
 msgid "Login to another account"
 msgstr ""
 
@@ -1144,6 +1157,10 @@ msgstr ""
 msgid "Total fees"
 msgstr ""
 
+#: src/views/SignMultisigTransactionSuccess.vue:4
+msgid "Transaction approved"
+msgstr ""
+
 #: src/views/CashlinkManage.vue:211
 #: src/views/CheckoutTransmission.vue:107
 msgid "Transaction could not be relayed"
@@ -1286,6 +1303,10 @@ msgstr ""
 
 #: src/components/LedgerUi.vue:274
 msgid "Your {app} app is outdated. Please update your Ledger firmware and {app} app using Ledger Live."
+msgstr ""
+
+#: src/views/ConnectAccount.vue:7
+msgid "Your account will be used for approving only."
 msgstr ""
 
 #: src/views/LoginSuccess.vue:207

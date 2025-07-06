@@ -1,7 +1,7 @@
 <template>
     <div class="container pad-bottom">
         <SmallPage>
-            <StatusScreen state="success" :title="$t('Your message is signed.')"/>
+            <StatusScreen state="success" :title="$t('Transaction approved')"/>
         </SmallPage>
     </div>
 </template>
@@ -9,20 +9,21 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { State } from 'vuex-class';
-import { SignedMessage } from '../../client/PublicRequestTypes';
 import KeyguardClient from '@nimiq/keyguard-client';
-import { Static } from '@/lib/StaticStore';
-import StatusScreen from '../components/StatusScreen.vue';
 import { SmallPage, CheckmarkIcon } from '@nimiq/vue-components';
+import { PartialSignature } from '../../client/PublicRequestTypes';
+import { Static } from '../lib/StaticStore';
+import StatusScreen from '../components/StatusScreen.vue';
+import { ParsedSignMultisigTransactionRequest } from '../lib/RequestTypes';
 
 @Component({components: {StatusScreen, SmallPage, CheckmarkIcon}})
-export default class SignMessageSuccess extends Vue {
-    @Static private keyguardRequest!: KeyguardClient.SignMessageRequest;
+export default class SignMultisigTransactionSuccess extends Vue {
+    @Static private request!: ParsedSignMultisigTransactionRequest;
     @State private keyguardResult!: KeyguardClient.SignatureResult;
 
-    private mounted() {
-        const result: SignedMessage = {
-            signer: new Nimiq.Address(this.keyguardRequest.signer).toUserFriendlyAddress(),
+    private async mounted() {
+        const result: PartialSignature = {
+            signer: this.request.signer.toUserFriendlyAddress(),
             signerPublicKey: this.keyguardResult.publicKey,
             signature: this.keyguardResult.signature,
         };

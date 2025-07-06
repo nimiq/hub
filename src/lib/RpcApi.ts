@@ -10,6 +10,7 @@ import {
     ParsedSignMessageRequest,
     ParsedSignTransactionRequest,
     ParsedSignPolygonTransactionRequest,
+    ParsedSignMultisigTransactionRequest,
     ParsedSignStakingRequest,
 } from './RequestTypes';
 import { RequestParser } from './RequestParser';
@@ -32,8 +33,16 @@ import { ERROR_CANCELED, StakingTransactionType, WalletType } from './Constants'
 import { includesOrigin } from '@/lib/Helpers';
 import Config from 'config';
 import { setHistoryStorage, getHistoryStorage } from '@/lib/Helpers';
+import { WalletInfo } from './WalletInfo';
 
 export default class RpcApi {
+    public static PERMISSIONED_REQUESTS: RequestType[] = [
+        RequestType.SIGN_MULTISIG_TRANSACTION,
+        // When adding new permissioned request types here,
+        // the ConnectAccount UI must be updated to be able
+        // to display these permissions to the user.
+    ];
+
     private static get HISTORY_KEY_RPC_STATE() {
         return 'rpc-api-exported-state';
     }
@@ -53,6 +62,7 @@ export default class RpcApi {
         RequestType.CREATE_CASHLINK,
         RequestType.MANAGE_CASHLINK,
         // RequestType.SIGN_POLYGON_TRANSACTION,
+        RequestType.CONNECT_ACCOUNT,
     ];
 
     constructor(store: Store<RootState>, staticStore: StaticStore, router: Router) {
@@ -71,6 +81,7 @@ export default class RpcApi {
 
         this._registerHubApis([
             RequestType.SIGN_TRANSACTION,
+            RequestType.SIGN_MULTISIG_TRANSACTION,
             RequestType.SIGN_STAKING,
             RequestType.CREATE_CASHLINK,
             RequestType.MANAGE_CASHLINK,
@@ -93,9 +104,11 @@ export default class RpcApi {
             RequestType.SIGN_POLYGON_TRANSACTION,
             RequestType.SETUP_SWAP,
             RequestType.REFUND_SWAP,
+            RequestType.CONNECT_ACCOUNT,
         ]);
         this._registerKeyguardApis([
             KeyguardCommand.SIGN_TRANSACTION,
+            KeyguardCommand.SIGN_MULTISIG_TRANSACTION,
             KeyguardCommand.SIGN_STAKING,
             KeyguardCommand.CREATE,
             KeyguardCommand.IMPORT,
@@ -109,6 +122,7 @@ export default class RpcApi {
             KeyguardCommand.DERIVE_POLYGON_ADDRESS,
             KeyguardCommand.SIGN_POLYGON_TRANSACTION,
             KeyguardCommand.SIGN_SWAP,
+            KeyguardCommand.CONNECT_ACCOUNT,
         ]);
 
         this._router.beforeEach((to: Route, from: Route, next: (arg?: string | false | Route) => void) => {
@@ -273,9 +287,10 @@ export default class RpcApi {
     private async _hubApiHandler(requestType: RequestType, state: RpcState, arg: RpcRequest) {
         let request: ParsedRpcRequest | undefined;
 
-        if ( // Check that a non-whitelisted request comes from a privileged origin
+        if ( // Check that a non-whitelisted request comes from a privileged origin or is permissioned
             !this._3rdPartyRequestWhitelist.includes(requestType)
             && !includesOrigin(Config.privilegedOrigins, state.origin)
+            && !RpcApi.PERMISSIONED_REQUESTS.includes(requestType) // Permissioned requests are handled below
         ) {
             state.reply(ResponseStatus.ERROR, new Error(`${state.origin} is unauthorized to call ${requestType}`));
             return;
@@ -304,7 +319,7 @@ export default class RpcApi {
             }
         }
 
-        let account;
+        let account: WalletInfo | null | undefined;
         // Simply testing if the property exists (with `'walletId' in request`) is not enough,
         // as `undefined` also counts as existing.
         if (request) {
@@ -365,7 +380,25 @@ export default class RpcApi {
                 const parsedSignPolygonTransactionRequest = request as ParsedSignPolygonTransactionRequest;
                 const address = parsedSignPolygonTransactionRequest.request.from;
                 account = this._store.getters.findWalletByPolygonAddress(address);
+            } else if (RpcApi.PERMISSIONED_REQUESTS.includes(requestType)) {
+                accountRequired = true;
+
+                if (requestType === RequestType.SIGN_MULTISIG_TRANSACTION) {
+                    const address = (request as ParsedSignMultisigTransactionRequest).signer;
+                    if (address) {
+                        account = this._store.getters.findWalletByAddress(address.toUserFriendlyAddress(), false);
+                    }
+                }
+
+                if (account && !(
+                    account.permissions[state.origin]
+                    && account.permissions[state.origin].includes(requestType)
+                )) {
+                    this.reject(new Error('Method not allowed - requires permission'));
+                    return;
+                }
             }
+
             if (accountRequired && !account) {
                 this.reject(new Error(errorMsg));
                 return;
