@@ -82,9 +82,9 @@ describe('WalletStore', () => {
             WalletStore.Instance.get(DUMMY[1].id),
             WalletStore.Instance.get(DUMMY[2].id),
         ]);
-        expect(key0).toEqual(DUMMY[0]);
-        expect(key1).toEqual(DUMMY[1]);
-        expect(key2).toEqual(DUMMY[2]);
+        expect(key0?.equals(DUMMY[0])).toBe(true);
+        expect(key1?.equals(DUMMY[1])).toBe(true);
+        expect(key2?.equals(DUMMY[2])).toBe(true);
     });
 
     it('can list keys', async () => {
@@ -120,7 +120,7 @@ describe('WalletStore', () => {
 
         // check that the key info has been stored correctly
         let keyInfo = await WalletStore.Instance.get(DUMMY[1].id);
-        expect(keyInfo).toEqual(DUMMY[1]);
+        expect(keyInfo?.equals(DUMMY[1])).toBe(true);
 
         keyInfo!.contracts.pop();
         keyInfo!.accounts.set('m/1\'', new AccountInfo('m/1\'', 'Test', DUMMY_ADDRESS));

@@ -33,6 +33,13 @@ export class BtcAddressInfo {
     public toBtcAddressType(): string {
         return this.address;
     }
+
+    public equals(other: BtcAddressInfo): boolean {
+        return this.path === other.path
+            && this.address === other.address
+            && this.used === other.used
+            && this.balance === other.balance;
+    }
 }
 
 /*

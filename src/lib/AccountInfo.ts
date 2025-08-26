@@ -52,6 +52,14 @@ export class AccountInfo {
             label: this.label,
         };
     }
+
+    public equals(other: AccountInfo): boolean {
+        if (this === other) return true;
+        return this.path === other.path
+            && this.label === other.label
+            && this.address.equals(other.address)
+            && this.balance === other.balance;
+    }
 }
 
 /*
