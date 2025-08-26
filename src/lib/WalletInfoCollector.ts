@@ -542,7 +542,7 @@ export default class WalletInfoCollector {
         }
 
         await WalletInfoCollector._networkInitializationPromise;
-        const genesisVestingContracts = (await NetworkClient.Instance.getGenesisVestingContracts())
+        const genesisVestingContracts = NetworkClient.Instance.getGenesisVestingContracts()
             .map((contract) => new VestingContractInfo(
                 labelVestingContract(),
                 Nimiq.Address.fromString(contract.address),
