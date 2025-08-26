@@ -3,8 +3,6 @@ import { KeyguardClient, SimpleResult as KeyguardSimpleResult } from '@nimiq/key
 import { AccountInfo } from '@/lib/AccountInfo';
 import { WalletStore } from '@/lib/WalletStore';
 import { WalletInfo } from '@/lib/WalletInfo';
-// TODO import only when needed
-import LedgerApi, { Coin, getBip32Path, RequestTypeNimiq as LedgerApiRequestType } from '@nimiq/ledger-api';
 import { ACCOUNT_BIP32_BASE_PATH_KEYGUARD, ACCOUNT_MAX_ALLOWED_ADDRESS_GAP } from '@/lib/Constants';
 import Config from 'config';
 import { ERROR_TRANSACTION_RECEIPTS, WalletType } from '../lib/Constants';
@@ -229,6 +227,7 @@ export default class WalletInfoCollector {
         WalletInfoCollector._initializeDependencies(walletType);
 
         if (!keyId && walletType === WalletType.LEDGER) {
+            const { default: LedgerApi } = await import('@nimiq/ledger-api');
             keyId = await LedgerApi.Nimiq.getWalletId(Config.ledgerApiNimiqVersion);
         }
 
@@ -377,6 +376,10 @@ export default class WalletInfoCollector {
             // cancel derivation of addresses that we don't need anymore if we're finished or an exception occurred
             if (walletType === WalletType.LEDGER) {
                 derivedAccountsPromise.catch(() => undefined); // to avoid uncaught promise rejection on cancel
+                const {
+                    default: LedgerApi,
+                    RequestTypeNimiq: LedgerApiRequestType,
+                } = await import('@nimiq/ledger-api');
                 LedgerApi.disconnect(
                     /* cancelRequest */ true,
                     /* requestTypesToDisconnect */ [
@@ -472,6 +475,7 @@ export default class WalletInfoCollector {
 
     private static async _deriveLedgerAccounts(startIndex: number, count: number): Promise<BasicAccountInfo[]> {
         const pathsToDerive: string[] = [];
+        const { default: LedgerApi, Coin, getBip32Path } = await import('@nimiq/ledger-api');
         for (let index = startIndex; index < startIndex + count; ++index) {
             pathsToDerive.push(getBip32Path({
                 coin: Coin.NIMIQ,
