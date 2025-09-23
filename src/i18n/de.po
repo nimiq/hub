@@ -1001,10 +1001,6 @@ msgstr "Nachricht signieren"
 msgid "Signer"
 msgstr "Unterzeichner"
 
-#: src/views/SignMessageLedger.vue:17
-msgid "Signer"
-msgstr "Unterzeichner"
-
 #: src/views/SetupSwapSuccess.vue:651
 msgid "Signing transactions..."
 msgstr "Signiere Transaktionen..."
