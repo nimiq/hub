@@ -56,6 +56,9 @@ const Migrate                 = () => import(/*webpackChunkName: "migrate"*/ './
 const SignMessage             = () => import(/*webpackChunkName: "sign-message"*/ './views/SignMessage.vue');
 const SignMessageSuccess      = () => import(/*webpackChunkName: "sign-message"*/ './views/SignMessageSuccess.vue');
 
+const SignMessageLedger       = () => import(/*webpackChunkName: "sign-message-ledger"*/
+    './views/SignMessageLedger.vue');
+
 const SimpleSuccess           = () => import(/*webpackChunkName: "common"*/ './views/SimpleSuccess.vue');
 const ErrorHandler            = () => import(/*webpackChunkName: "common"*/ './views/ErrorHandler.vue');
 
@@ -353,8 +356,8 @@ export default new Router({
         },
         {
             path: `/${RequestType.SIGN_MESSAGE}/ledger`,
-            component: ErrorHandlerUnsupportedLedger,
-            // not specifying a name here to not trigger automatic routing to this view in RpcApi.ts
+            component: SignMessageLedger,
+            name: `${RequestType.SIGN_MESSAGE}-ledger`,
         },
         {
             path: `/${RequestType.SIGN_BTC_TRANSACTION}`,

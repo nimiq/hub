@@ -977,8 +977,13 @@ msgid "Share"
 msgstr "Поділитися"
 
 #: src/views/SignMessage.vue:5
+#: src/views/SignMessageLedger.vue:5
 msgid "Sign Message"
 msgstr "Підписати повідомлення"
+
+#: src/views/SignMessageLedger.vue:17
+msgid "Signer"
+msgstr "Підписант"
 
 #: src/views/SetupSwapSuccess.vue:651
 msgid "Signing transactions..."
