@@ -13,7 +13,7 @@
                         <Identicon :address="activeAccount.userFriendlyAddress"></Identicon>
                     </div>
                     <div class="account-text">
-                        <div class="label" id="signer-label">{{ activeAccount.defaultLabel }}</div>
+                        <div class="label" id="signer-label">{{ activeAccount.label }}</div>
                         <span class="label-right">{{ $t('Signer') }}</span>
                     </div>
                 </div>
