@@ -37,8 +37,8 @@ import GlobalClose from '../components/GlobalClose.vue';
 import LedgerUi from '../components/LedgerUi.vue';
 import { ParsedSignMessageRequest } from '../lib/RequestTypes';
 import { Static } from '../lib/StaticStore';
-import { WalletInfo } from '@/lib/WalletInfo';
-import { AccountInfo } from '@/lib/AccountInfo';
+import { WalletInfo } from '../lib/WalletInfo';
+import { AccountInfo } from '../lib/AccountInfo';
 import LedgerApi from '@nimiq/ledger-api';
 
 @Component({ components: { SmallPage, GlobalClose, LedgerUi, PageBody, PageHeader, Identicon } })
