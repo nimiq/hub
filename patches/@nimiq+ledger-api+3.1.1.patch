@@ -2,15 +2,12 @@ diff --git a/node_modules/@nimiq/ledger-api/dist/high-level-api/lazy-chunk-reque
 index b05f20b..b609e35 100644
 --- a/node_modules/@nimiq/ledger-api/dist/high-level-api/lazy-chunk-request-nimiq.es.js
 +++ b/node_modules/@nimiq/ledger-api/dist/high-level-api/lazy-chunk-request-nimiq.es.js
-@@ -27,7 +27,10 @@ const nimiqCoreBasePath = isNimiqAlbatrossHub
+@@ -27,7 +27,7 @@ const nimiqCoreBasePath = isNimiqAlbatrossHub
      // On a Nimiq Hub with Albatross support, use the Hub's copy of the core (copied from @nimiq/albatross-wasm in the
      // Hub's vue.config.js, which is an alias for @nimiq/core@next), same as the Hub itself is doing, to avoid using and
      // loading an additional version.
 -    ? '/albatross-client/web/'
-+    // TODO either automatically adapt the version, based on @nimiq/core's package.json (here in the patch, or in the
-+    //  the Ledger API itself), or ideally make the dependency an external one in the Ledger API, and try to inject it
-+    //  in vue.config.js.
-+    ? '/nimiq/v2.0.5-history-fix/web/'
++    ? '/nimiq/web/'
      // In other cases load @nimiq/core-web@next from jsdelivr. Load from cdn to avoid bundling a copy of core if it's
      // not needed. This way, we also don't need to handle the wasm file in the rollup config.
      : 'https://cdn.jsdelivr.net/npm/@nimiq/core@next/web/';
@@ -73,15 +70,12 @@ diff --git a/node_modules/@nimiq/ledger-api/dist/low-level-api/low-level-api.es.
 index 5b18143..6a45b5f 100644
 --- a/node_modules/@nimiq/ledger-api/dist/low-level-api/low-level-api.es.js
 +++ b/node_modules/@nimiq/ledger-api/dist/low-level-api/low-level-api.es.js
-@@ -30,7 +30,10 @@ const nimiqCoreBasePath = isNimiqAlbatrossHub
+@@ -30,7 +30,7 @@ const nimiqCoreBasePath = isNimiqAlbatrossHub
      // On a Nimiq Hub with Albatross support, use the Hub's copy of the core (copied from @nimiq/albatross-wasm in the
      // Hub's vue.config.js, which is an alias for @nimiq/core@next), same as the Hub itself is doing, to avoid using and
      // loading an additional version.
 -    ? '/albatross-client/web/'
-+    // TODO either automatically adapt the version, based on @nimiq/core's package.json (here in the patch, or in the
-+    //  the Ledger API itself), or ideally make the dependency an external one in the Ledger API, and try to inject it
-+    //  in vue.config.js.
-+    ? '/nimiq/v2.0.5-history-fix/web/'
++    ? '/nimiq/web/'
      // In other cases load @nimiq/core-web@next from jsdelivr. Load from cdn to avoid bundling a copy of core if it's
      // not needed. This way, we also don't need to handle the wasm file in the rollup config.
      : 'https://cdn.jsdelivr.net/npm/@nimiq/core@next/web/';

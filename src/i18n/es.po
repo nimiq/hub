@@ -36,7 +36,7 @@ msgstr "+ {currency} cuota de red"
 msgid "30 seconds, no email, no download."
 msgstr "30 segundos, sin email, sin descargas."
 
-#: src/views/CashlinkReceive.vue:207
+#: src/views/CashlinkReceive.vue:206
 msgid "404 - Cash not found"
 msgstr "404 - Dinero no fue encontrado"
 
@@ -90,7 +90,7 @@ msgstr "Agregar a Ledger"
 msgid "Add Vesting Contract"
 msgstr "Agregar Contrato Vesting"
 
-#: src/components/CheckoutCard.vue:84 src/views/SetupSwapLedger.vue:292
+#: src/components/CheckoutCard.vue:84 src/views/SetupSwapLedger.vue:290
 msgid "Address"
 msgstr "Dirección"
 
@@ -98,7 +98,7 @@ msgstr "Dirección"
 msgid "Address Added"
 msgstr "Dirección Agregada"
 
-#: src/views/LoginSuccess.vue:123
+#: src/views/LoginSuccess.vue:122
 msgid "Address detection failed. Retrying..."
 msgstr "Detección de dirección fallida. Reintentando..."
 
@@ -106,10 +106,14 @@ msgstr "Detección de dirección fallida. Reintentando..."
 msgid "All labels saved."
 msgstr "Todas las etiquetas se guardaron"
 
+#: src/views/ConnectAccount.vue:8
+msgid "All private funds remain separate."
+msgstr ""
+
 #: src/components/CheckoutCardBitcoin.vue:30
 #: src/components/CheckoutCardEthereum.vue:27
 #: src/components/CheckoutCardNimiqExternal.vue:32
-#: src/views/SetupSwapLedger.vue:285 src/views/SetupSwapLedger.vue:294
+#: src/views/SetupSwapLedger.vue:283 src/views/SetupSwapLedger.vue:292
 msgid "Amount"
 msgstr "Monto"
 
@@ -206,8 +210,8 @@ msgstr "Bitcoin"
 msgid "Bitcoin activated"
 msgstr "Bitcoin activado"
 
-#: src/views/SetupSwapSuccess.vue:662
-msgid "Bitcoin HTLC invalid: {error}"
+#: src/views/SetupSwapLedger.vue:858 src/views/SetupSwapSuccess.vue:640
+msgid "Bitcoin HTLC invalid"
 msgstr ""
 
 #: src/lib/LabelingMachine.ts:31
@@ -247,7 +251,7 @@ msgstr "Cancelar"
 msgid "Cancel payment"
 msgstr "Cancelar pago"
 
-#: src/views/CashlinkReceive.vue:257
+#: src/views/CashlinkReceive.vue:256
 msgid "Cashlink claimed!"
 msgstr "¡Cashlink reclamado!"
 
@@ -259,19 +263,19 @@ msgstr "Cashlink creado"
 msgid "Cashlink created."
 msgstr "Cashlink creado."
 
-#: src/views/CashlinkReceive.vue:305
+#: src/views/CashlinkReceive.vue:304
 msgid "Cashlink empty :("
 msgstr "Cashlink vacío :("
 
-#: src/views/CashlinkReceive.vue:298
+#: src/views/CashlinkReceive.vue:297
 msgid "Cashlink funding"
 msgstr "Financiando Cashlink"
 
-#: src/views/CashlinkReceive.vue:302
+#: src/views/CashlinkReceive.vue:301
 msgid "Cashlink is empty"
 msgstr "Cashlink esta vacío"
 
-#: src/views/CashlinkReceive.vue:297
+#: src/views/CashlinkReceive.vue:296
 msgid "Cashlink not funded"
 msgstr "Cashlink no financiado"
 
@@ -283,7 +287,7 @@ msgstr "Cambiar"
 msgid "Check your Backup | Check your Backups"
 msgstr "Revise su respaldo | Revise sus respaldos"
 
-#: src/views/CashlinkReceive.vue:295
+#: src/views/CashlinkReceive.vue:294
 msgid "Checking status"
 msgstr "Revisando estado"
 
@@ -294,6 +298,10 @@ msgstr "Elija una nueva Dirección"
 #: src/views/ChooseAddress.vue:12
 msgid "Choose an Account"
 msgstr "Seleccione una Cuenta"
+
+#: src/views/ConnectAccount.vue:5
+msgid "Choose an Account to log in"
+msgstr ""
 
 #: src/views/CashlinkReceive.vue:64 src/views/ChooseAddress.vue:18
 #: src/views/ChooseAddress.vue:5
@@ -320,15 +328,15 @@ msgstr "Elija remitente"
 msgid "Choose which Nimiq address to use."
 msgstr "Seleccione la dirección Nimiq que desea utilizar."
 
-#: src/views/CashlinkReceive.vue:296
+#: src/views/CashlinkReceive.vue:295
 msgid "Claim Cashlink"
 msgstr "Reclamar Cashlink"
 
-#: src/views/CashlinkReceive.vue:346
+#: src/views/CashlinkReceive.vue:345
 msgid "Claim your Cash"
 msgstr "Reclame su Dinero"
 
-#: src/views/CashlinkReceive.vue:234
+#: src/views/CashlinkReceive.vue:233
 msgid "Claiming Cashlink"
 msgstr "Reclamando Cashlink"
 
@@ -348,7 +356,7 @@ msgstr "Cerrar"
 msgid "Collecting payment details"
 msgstr "Recolectando detalles de pago"
 
-#: src/views/SetupSwapLedger.vue:991
+#: src/views/SetupSwapLedger.vue:999
 msgid "Confirm {outgoingOrIncoming} transaction on Ledger"
 msgstr "Confirmar {outgoingOrIncoming} transacción en su Ledger"
 
@@ -381,15 +389,15 @@ msgstr "Confirme su Transacción"
 msgid "Confirm using your Ledger"
 msgstr "Confirme usando su Ledger"
 
-#: src/views/CashlinkReceive.vue:357
+#: src/views/CashlinkReceive.vue:356
 msgid "Congrats, somebody gifted you a Nimiq Cashlink."
 msgstr "Felicidades, alguien le regalo un Nimiq Cashlink."
 
-#: src/views/CashlinkReceive.vue:356
+#: src/views/CashlinkReceive.vue:355
 msgid "Congrats, you just opened a Nimiq Cashlink."
 msgstr "Felicidades, acaba de abrir un Nimiq Cashlink."
 
-#: src/views/CashlinkReceive.vue:352
+#: src/views/CashlinkReceive.vue:351
 msgid "Congrats, you received a Nimiq Gift Card."
 msgstr "Felicidades, ha recibido una Tarjeta de Regalo Nimiq."
 
@@ -417,7 +425,7 @@ msgstr "Conectándose al Keyguard..."
 msgid "Connecting to network..."
 msgstr "Conectándose a la red..."
 
-#: src/views/CashlinkReceive.vue:235
+#: src/views/CashlinkReceive.vue:234
 msgid "Connecting to Nimiq..."
 msgstr "Conectándose a Nimiq..."
 
@@ -436,8 +444,8 @@ msgstr "Contactando nodos semilla..."
 msgid "Contacts are not affected."
 msgstr "Los contactos no se han afectado."
 
-#: src/components/NotEnoughCookieSpace.vue:8 src/views/LoginSuccess.vue:179
-#: src/views/LoginSuccess.vue:210 src/views/SignupLedger.vue:143
+#: src/components/NotEnoughCookieSpace.vue:8 src/views/LoginSuccess.vue:178
+#: src/views/LoginSuccess.vue:208 src/views/SignupLedger.vue:143
 msgid "Continue"
 msgstr "Continuar"
 
@@ -533,16 +541,16 @@ msgstr "cuota"
 
 #: src/components/CheckoutCardBitcoin.vue:47
 #: src/components/CheckoutCardNimiqExternal.vue:47
-#: src/components/CurrencyInfo.vue:15 src/views/SetupSwapLedger.vue:287
-#: src/views/SetupSwapLedger.vue:303
+#: src/components/CurrencyInfo.vue:15 src/views/SetupSwapLedger.vue:285
+#: src/views/SetupSwapLedger.vue:301
 msgid "Fee"
 msgstr "Cuota"
 
-#: src/views/LoginSuccess.vue:132 src/views/SignupLedger.vue:108
+#: src/views/LoginSuccess.vue:131 src/views/SignupLedger.vue:108
 msgid "Fetching Addresses Failed"
 msgstr "Obtención de Direcciones Fallida"
 
-#: src/views/SetupSwapSuccess.vue:651
+#: src/views/SetupSwapLedger.vue:870 src/views/SetupSwapSuccess.vue:653
 msgid "Fetching Bitcoin HTLC..."
 msgstr ""
 
@@ -550,11 +558,11 @@ msgstr ""
 msgid "Fetching contract information..."
 msgstr "Obteniendo información del contrato..."
 
-#: src/views/SetupSwapSuccess.vue:659
+#: src/views/SetupSwapSuccess.vue:662
 msgid "Fetching swap data failed: {error}"
 msgstr "Obtención de datos de intercambio fallida: {error}"
 
-#: src/views/SetupSwapSuccess.vue:647
+#: src/views/SetupSwapSuccess.vue:649
 msgid "Fetching swap data..."
 msgstr "Obteniendo datos del intercambio..."
 
@@ -602,11 +610,11 @@ msgstr "Cuenta Verde"
 msgid "Green Address"
 msgstr "Cuenta Verde"
 
-#: src/views/CashlinkReceive.vue:345
+#: src/views/CashlinkReceive.vue:344
 msgid "Happy birthday!"
 msgstr "¡Feliz Cumpleaños!"
 
-#: src/views/CashlinkReceive.vue:343
+#: src/views/CashlinkReceive.vue:342
 msgid "Happy Easter!"
 msgstr "¡Felices Pascuas!"
 
@@ -622,14 +630,14 @@ msgstr ""
 "Imagine si pagar con\n"
 "cripto fuera fácil"
 
-#: src/views/LoginSuccess.vue:191 src/views/SignupLedger.vue:124
+#: src/views/LoginSuccess.vue:189 src/views/SignupLedger.vue:124
 msgid ""
 "Imported {count} address so far... | Imported {count} addresses so far..."
 msgstr ""
 "Se han importando {count} dirección por ahora... | Se han importando {count}"
 " direcciones por ahora... "
 
-#: src/views/SetupSwapLedger.vue:994
+#: src/views/SetupSwapLedger.vue:1002
 msgid "incoming"
 msgstr "entrando"
 
@@ -698,7 +706,11 @@ msgstr "Iniciar Sesión"
 msgid "Login File saved!"
 msgstr "¡Se ha guardado el Archivo de Sesión!"
 
-#: src/views/ChooseAddress.vue:67
+#: src/views/ConnectAccountSuccess.vue:4
+msgid "Login successful"
+msgstr ""
+
+#: src/views/ChooseAddress.vue:67 src/views/ConnectAccount.vue:40
 msgid "Login to another account"
 msgstr "Ingrese con otra cuenta."
 
@@ -804,7 +816,7 @@ msgstr "Dirección Naranja"
 msgid "Other wallets"
 msgstr "Otras billeteras"
 
-#: src/views/SetupSwapLedger.vue:993
+#: src/views/SetupSwapLedger.vue:1001
 msgid "outgoing"
 msgstr "saliendo"
 
@@ -864,7 +876,7 @@ msgstr "Por favor envíe la transacción manualmente"
 msgid "Prepare for update"
 msgstr "Prepárese para la actualización"
 
-#: src/views/SetupSwapSuccess.vue:640
+#: src/views/SetupSwapSuccess.vue:642
 msgid "Preparing Swap"
 msgstr "Preparando intercambio"
 
@@ -936,8 +948,8 @@ msgid "Retrieving your old accounts..."
 msgstr "Obteniendo sus cuentas viejas..."
 
 #: src/views/ActivatePolygonSuccess.vue:139
-#: src/views/BitcoinSyncBaseView.vue:72 src/views/LoginSuccess.vue:134
-#: src/views/SetupSwapSuccess.vue:669 src/views/SignupLedger.vue:145
+#: src/views/BitcoinSyncBaseView.vue:72 src/views/LoginSuccess.vue:133
+#: src/views/SetupSwapSuccess.vue:672 src/views/SignupLedger.vue:145
 msgid "Retry"
 msgstr "Reintentar"
 
@@ -979,7 +991,7 @@ msgstr "Firmar Mensaje"
 msgid "Signer"
 msgstr "Firmador"
 
-#: src/views/SetupSwapSuccess.vue:649
+#: src/views/SetupSwapSuccess.vue:651
 msgid "Signing transactions..."
 msgstr "Firmando transacciones..."
 
@@ -995,7 +1007,7 @@ msgstr "Algo salió mal"
 msgid "Something went wrong with your request. Please try again."
 msgstr "Algo salió mal con su petición. Por favor intente de nuevo."
 
-#: src/views/LoginSuccess.vue:175
+#: src/views/LoginSuccess.vue:174
 msgid "Space exceeded"
 msgstr "Espacio excedido"
 
@@ -1019,7 +1031,7 @@ msgstr ""
 msgid "Storing your new accounts..."
 msgstr "Almacenando sus cuentas nuevas..."
 
-#: src/views/SetupSwapLedger.vue:258
+#: src/views/SetupSwapLedger.vue:256
 msgid "Swap authorized"
 msgstr "Intercambio autorizado"
 
@@ -1027,7 +1039,7 @@ msgstr "Intercambio autorizado"
 msgid "Swap fee"
 msgstr "Cuota de intercambio"
 
-#: src/views/SetupSwapLedger.vue:855 src/views/SetupSwapSuccess.vue:636
+#: src/views/SetupSwapLedger.vue:854 src/views/SetupSwapSuccess.vue:636
 msgid "Swap Setup Failed"
 msgstr "Configuración del Intercambio Fallida"
 
@@ -1042,7 +1054,7 @@ msgid "Syncing consensus..."
 msgstr "Sincronizando consenso...."
 
 #: src/views/ActivatePolygonSuccess.vue:113
-#: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapLedger.vue:857
+#: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapLedger.vue:856
 #: src/views/SetupSwapSuccess.vue:638
 #: src/views/SignBtcTransactionLedger.vue:118
 msgid "Syncing Failed"
@@ -1064,7 +1076,7 @@ msgstr "Sincronizando con la red de {currency} ..."
 msgid "Syncing with Bitcoin network failed: {error}"
 msgstr "Proceso de sincronización con la red Bitcoin falló: {error}"
 
-#: src/views/BitcoinSyncBaseView.vue:58 src/views/SetupSwapLedger.vue:867
+#: src/views/BitcoinSyncBaseView.vue:58 src/views/SetupSwapLedger.vue:868
 msgid "Syncing with Bitcoin network..."
 msgstr "Sincronizando con la red Bitcoin..."
 
@@ -1076,7 +1088,7 @@ msgstr "La sincronización con la red Polygon ha fallado:: {error}"
 msgid "Syncing with Polygon network..."
 msgstr "Sincronizando con la red Polygon..."
 
-#: src/views/LoginSuccess.vue:133 src/views/SignupLedger.vue:134
+#: src/views/LoginSuccess.vue:132 src/views/SignupLedger.vue:134
 msgid "Syncing with the network failed: {error}"
 msgstr "Proceso de sincronización con la red falló: {error}"
 
@@ -1120,11 +1132,11 @@ msgstr ""
 msgid "There's much more. Read the full article"
 msgstr "Hay mucho mas. Lea el articulo completo"
 
-#: src/views/CashlinkReceive.vue:303
+#: src/views/CashlinkReceive.vue:302
 msgid "This Cashlink has already been claimed."
 msgstr "Este Cashlink ya ha sido reclamado."
 
-#: src/views/CashlinkReceive.vue:208
+#: src/views/CashlinkReceive.vue:207
 msgid "This is not a valid Cashlink, sorry."
 msgstr "Este no es un Cashlink válido, disculpe."
 
@@ -1173,6 +1185,10 @@ msgstr ""
 msgid "Total fees"
 msgstr "Total de cuotas"
 
+#: src/views/SignMultisigTransactionSuccess.vue:4
+msgid "Transaction approved"
+msgstr ""
+
 #: src/views/CashlinkManage.vue:211 src/views/CheckoutTransmission.vue:107
 msgid "Transaction could not be relayed"
 msgstr "La transacción no se ha podido enviar"
@@ -1194,6 +1210,10 @@ msgstr "Transacción Firmada"
 msgid "Try again"
 msgstr "Inténtelo de nuevo"
 
+#: src/views/SetupSwapLedger.vue:860
+msgid "Unexpected error"
+msgstr ""
+
 #: src/components/NotEnoughCookieSpace.vue:7
 msgid ""
 "Unfortunately, due to restrictions of Safari you cannot add more accounts "
@@ -1203,7 +1223,7 @@ msgstr ""
 " pueden agregar mas cuentas y/o direcciones. Por favor libere espacio "
 "cerrando sesión en otras cuentas."
 
-#: src/views/LoginSuccess.vue:177
+#: src/views/LoginSuccess.vue:176
 msgid ""
 "Unfortunately, due to space restrictions of Safari and IOS, this account "
 "cannot be stored properly. Please free up space by logging out of other "
@@ -1249,7 +1269,7 @@ msgstr ""
 "Use su Archivo de Sesión\n"
 "o Palabras de Respaldo."
 
-#: src/views/LoginSuccess.vue:209 src/views/SignupLedger.vue:132
+#: src/views/LoginSuccess.vue:207 src/views/SignupLedger.vue:132
 msgid "Used addresses without balance might have been missed."
 msgstr "Puede que se ignoraran direcciones usadas sin balance."
 
@@ -1273,7 +1293,7 @@ msgstr ""
 "Billeterea creada\n"
 "exitosamente"
 
-#: src/views/LoginSuccess.vue:224
+#: src/views/LoginSuccess.vue:222
 msgid "Welcome back! | Your Accounts are ready."
 msgstr "¡Bienvenido de vuelta! | Tus cuentas están listas."
 
@@ -1301,7 +1321,7 @@ msgstr "Dirección Amarilla"
 msgid "You are logged out."
 msgstr "Estas fuera de sesión."
 
-#: src/views/CashlinkReceive.vue:341
+#: src/views/CashlinkReceive.vue:340
 msgid "You are loved"
 msgstr "Te aman"
 
@@ -1329,7 +1349,11 @@ msgstr ""
 "Su {app} app esta des-actualizada. Por favor actualice su Ledger y {app} app"
 " usando Ledger Live."
 
-#: src/views/LoginSuccess.vue:207 src/views/SignupLedger.vue:106
+#: src/views/ConnectAccount.vue:7
+msgid "Your account will be used for approving only."
+msgstr ""
+
+#: src/views/LoginSuccess.vue:205 src/views/SignupLedger.vue:106
 msgid ""
 "Your Addresses may be\n"
 "incomplete."
@@ -1353,6 +1377,6 @@ msgstr ""
 msgid "Your message is signed."
 msgstr "Su mensaje fue firmado."
 
-#: src/views/LoginSuccess.vue:218 src/views/SimpleSuccess.vue:31
+#: src/views/LoginSuccess.vue:216 src/views/SimpleSuccess.vue:31
 msgid "Your password was changed."
 msgstr "Su contraseña fue cambiada."

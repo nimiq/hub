@@ -337,7 +337,7 @@ class Cashlink {
             this.address, Nimiq.AccountType.Basic, new Uint8Array(0),
             recipient, recipientType, CashlinkExtraData.CLAIMING,
             BigInt(balance - fee), BigInt(fee),
-            0 /* Nimiq.Transaction.Flag.NONE */,
+            Nimiq.TransactionFlag.None,
             await this._getBlockchainHeight(),
             await (await this._getNetwork()).getNetworkId(),
         );

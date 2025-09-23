@@ -22,7 +22,7 @@ class Network extends Vue {
         value,
         fee = 0,
         validityStartHeight,
-        flags = 0 /* Nimiq.Transaction.Flag.NONE */,
+        flags = Nimiq.TransactionFlag.None,
         recipientData,
         signerPubKey,
         signature,
@@ -51,12 +51,11 @@ class Network extends Vue {
             (recipientData && recipientData.length > 0)
             || senderType !== Nimiq.AccountType.Basic
             || recipientType !== Nimiq.AccountType.Basic
-            || flags !== 0 /* Nimiq.Transaction.Flag.NONE */
+            || flags !== Nimiq.TransactionFlag.None
         ) {
             let proof: Nimiq.SerialBuffer | undefined;
             if (signature) {
-                // 1 type + 32 publicKey + 1 empty merkle path + 64 signature
-                proof = new Nimiq.SerialBuffer(proofPrefix.length + 1 + 32 + 1 + 64);
+                proof = new Nimiq.SerialBuffer(proofPrefix.length + Nimiq.SignatureProof.SINGLE_SIG_SIZE);
                 proof.write(proofPrefix);
                 proof.write(Nimiq.SignatureProof.singleSig(signerPubKey, signature).serialize());
             }

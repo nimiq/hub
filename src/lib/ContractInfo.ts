@@ -1,4 +1,4 @@
-import { VestingContract, HashedTimeLockedContract, Contract } from '../../client/PublicRequestTypes';
+import { VestingContract, HashedTimeLockedContract } from '../../client/PublicRequestTypes';
 import AddressUtils from './AddressUtils';
 import { labelAddress } from './LabelingMachine';
 
@@ -142,6 +142,19 @@ export class VestingContractInfo {
             Math.max(0, Math.floor((Date.now() - this.startTime) / this.timeStep)) * this.stepAmount,
         ) - (this.totalAmount - currentBalance);
     }
+
+    public equals(other: ContractInfo): boolean {
+        if (!(other instanceof VestingContractInfo)) return false;
+        if (this === other) return true;
+        return this.label === other.label
+            && this.address.equals(other.address)
+            && this.owner.equals(other.owner)
+            && this.startTime === other.startTime
+            && this.stepAmount === other.stepAmount
+            && this.timeStep === other.timeStep
+            && this.totalAmount === other.totalAmount
+            && this.balance === other.balance;
+    }
 }
 
 export class HashedTimeLockedContractInfo {
@@ -227,6 +240,20 @@ export class HashedTimeLockedContractInfo {
             timeout: this.timeout,
             totalAmount: this.totalAmount,
         };
+    }
+
+    public equals(other: ContractInfo): boolean {
+        if (!(other instanceof HashedTimeLockedContractInfo)) return false;
+        if (this === other) return true;
+        return this.label === other.label
+            && this.address.equals(other.address)
+            && this.sender.equals(other.sender)
+            && this.recipient.equals(other.recipient)
+            && Nimiq.BufferUtils.equals(this.hashRoot, other.hashRoot)
+            && this.hashCount === other.hashCount
+            && this.timeout === other.timeout
+            && this.totalAmount === other.totalAmount
+            && this.balance === other.balance;
     }
 }
 

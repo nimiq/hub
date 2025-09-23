@@ -6,6 +6,7 @@ import CookieJar from '@/lib/CookieJar';
 import { Utf8Tools } from '@nimiq/utils';
 import { setLanguage } from '@/i18n/i18n-setup';
 import { BtcAddressInfoEntry } from '@/lib/bitcoin/BtcAddressInfo';
+import { RequestType } from '../../client/PublicRequestTypes';
 
 setup();
 
@@ -63,6 +64,11 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
             address: DUMMY_ADDRESS_S1,
             path: `m/44'/699'/0'/0/0`, // Test that this path is ignored during encoding/decoding
         }],
+        permissions: {
+            'example.com': [
+                RequestType.SIGN_MULTISIG_TRANSACTION,
+            ],
+        },
     },
     {
         id: '1ee3d926a49d',
@@ -93,8 +99,9 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         fileExported: true,
         wordsExported: false,
         // btcXPub: undefined,
-        btcAddresses: { internal: [], external: [] },
-        polygonAddresses: [],
+        // btcAddresses: { internal: [], external: [] },
+        // polygonAddresses: [],
+        // permissions: {},
     },
     {
         id: '2978bf29b377',
@@ -115,8 +122,9 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         keyMissing: true,
         fileExported: false,
         wordsExported: true,
-        btcAddresses: { internal: [], external: [] },
-        polygonAddresses: [],
+        // btcAddresses: { internal: [], external: [] },
+        // polygonAddresses: [],
+        // permissions: {},
     },
     {
         id: '78bf29b377e7',
@@ -146,8 +154,9 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         fileExported: true,
         wordsExported: true,
         // btcXPub: undefined,
-        btcAddresses: { internal: [], external: [] },
-        polygonAddresses: [],
+        // btcAddresses: { internal: [], external: [] },
+        // polygonAddresses: [],
+        // permissions: {},
     },
     {
         id: 'a5832a3b9489',
@@ -170,8 +179,9 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         wordsExported: false,
         btcXPub: 'tpubD6NzVbkrYhZ4WLczPJWReQycCJdd6YVWXubbVUFnJ5KgU5MDQrD998ZJLNGbhd2pq7ZtDiPYTfJ7iBenLVQpYgSQqPjUsQeJX'
             + 'H8VQ8xA67D',
-        btcAddresses: { internal: [], external: [] },
-        polygonAddresses: [],
+        // btcAddresses: { internal: [], external: [] },
+        // polygonAddresses: [],
+        // permissions: {},
     },
     {
         id: 'd515aa19c4f7',
@@ -201,8 +211,9 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         keyMissing: false,
         fileExported: true,
         wordsExported: false,
-        btcAddresses: { internal: [], external: [] },
-        polygonAddresses: [],
+        // btcAddresses: { internal: [], external: [] },
+        // polygonAddresses: [],
+        // permissions: {},
     },
 ];
 
@@ -241,6 +252,7 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
             address: DUMMY_ADDRESS_S1,
             path: 'not public',
         }],
+        permissions: {},
     },
     {
         id: '1ee3d926a49d',
@@ -273,6 +285,7 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         // btcXPub: undefined,
         btcAddresses: { internal: [], external: [] },
         polygonAddresses: [],
+        permissions: {},
     },
     {
         id: '2978bf29b377',
@@ -295,6 +308,7 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         wordsExported: true,
         btcAddresses: { internal: [], external: [] },
         polygonAddresses: [],
+        permissions: {},
     },
     {
         id: '78bf29b377e7',
@@ -326,6 +340,7 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         // btcXPub: undefined,
         btcAddresses: { internal: [], external: [] },
         polygonAddresses: [],
+        permissions: {},
     },
     {
         id: 'a5832a3b9489',
@@ -350,6 +365,7 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
             + 'H8VQ8xA67D',
         btcAddresses: { internal: [], external: [] },
         polygonAddresses: [],
+        permissions: {},
     },
     {
         id: 'd515aa19c4f7',
@@ -381,6 +397,7 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         wordsExported: false,
         btcAddresses: { internal: [], external: [] },
         polygonAddresses: [],
+        permissions: {},
     },
 ];
 
@@ -452,9 +469,9 @@ const BYTES = [
         // contract label (omitted)
         113, 109, 233, 147, 72, 78, 116, 147, 21, 236, 110, 16, 200, 150, 180, 211, 63, 4, 7, 210, // contract address
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // owner address
-        0, 0, 0, 0, // start
+        0, 0, 0, 0, 0, 0, 0, 0, // start time
+        0, 0, 0, 0, 10, 76, 184, 0, // time step
         0, 0, 0, 97, 156, 12, 71, 105, // step amount
-        0, 0, 11, 64, // step blocks
         0, 0, 2, 73, 168, 73, 172, 116, // total amount
 
     // wallet 3 (LEGACY)
@@ -534,9 +551,9 @@ const BYTES = [
         67, 117, 115, 116, 111, 109, 32, 76, 97, 98, 101, 108, // contract label
         113, 109, 233, 147, 72, 78, 116, 147, 21, 236, 110, 16, 200, 150, 180, 211, 63, 4, 7, 210, // contract address
         101, 254, 174, 109, 147, 234, 215, 10, 22, 16, 67, 70, 109, 90, 53, 154, 43, 22, 180, 254, // owner address
-        0, 6, 26, 128, // start
+        0, 0, 0, 5, 150, 130, 240, 0, // start time
+        0, 0, 0, 0, 102, 255, 48, 0, // time step
         0, 0, 0, 97, 156, 12, 71, 105, // step amount
-        0, 0, 112, 128, // step blocks
         0, 0, 2, 73, 168, 73, 172, 116, // total amount
 ];
 

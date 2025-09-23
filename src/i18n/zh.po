@@ -37,7 +37,7 @@ msgstr "+{currency}网络费"
 msgid "30 seconds, no email, no download."
 msgstr "30秒，无需邮件，无需下载"
 
-#: src/views/CashlinkReceive.vue:207
+#: src/views/CashlinkReceive.vue:206
 msgid "404 - Cash not found"
 msgstr "404 - 找不到现金"
 
@@ -89,7 +89,7 @@ msgstr "添加到Ledger"
 msgid "Add Vesting Contract"
 msgstr "添加归属合同"
 
-#: src/components/CheckoutCard.vue:84 src/views/SetupSwapLedger.vue:292
+#: src/components/CheckoutCard.vue:84 src/views/SetupSwapLedger.vue:290
 msgid "Address"
 msgstr "地址"
 
@@ -97,7 +97,7 @@ msgstr "地址"
 msgid "Address Added"
 msgstr "地址已添加"
 
-#: src/views/LoginSuccess.vue:123
+#: src/views/LoginSuccess.vue:122
 msgid "Address detection failed. Retrying..."
 msgstr "地址检测失败。正在重试..."
 
@@ -105,10 +105,14 @@ msgstr "地址检测失败。正在重试..."
 msgid "All labels saved."
 msgstr "所有标签已保存"
 
+#: src/views/ConnectAccount.vue:8
+msgid "All private funds remain separate."
+msgstr ""
+
 #: src/components/CheckoutCardBitcoin.vue:30
 #: src/components/CheckoutCardEthereum.vue:27
 #: src/components/CheckoutCardNimiqExternal.vue:32
-#: src/views/SetupSwapLedger.vue:285 src/views/SetupSwapLedger.vue:294
+#: src/views/SetupSwapLedger.vue:283 src/views/SetupSwapLedger.vue:292
 msgid "Amount"
 msgstr "金额"
 
@@ -205,8 +209,8 @@ msgstr "比特币"
 msgid "Bitcoin activated"
 msgstr "比特币已激活"
 
-#: src/views/SetupSwapSuccess.vue:662
-msgid "Bitcoin HTLC invalid: {error}"
+#: src/views/SetupSwapLedger.vue:858 src/views/SetupSwapSuccess.vue:640
+msgid "Bitcoin HTLC invalid"
 msgstr ""
 
 #: src/lib/LabelingMachine.ts:31
@@ -244,7 +248,7 @@ msgstr "取消"
 msgid "Cancel payment"
 msgstr "取消付款"
 
-#: src/views/CashlinkReceive.vue:257
+#: src/views/CashlinkReceive.vue:256
 msgid "Cashlink claimed!"
 msgstr "现金链接已领取！"
 
@@ -256,19 +260,19 @@ msgstr "现金链接已创建"
 msgid "Cashlink created."
 msgstr "现金链接已创建"
 
-#: src/views/CashlinkReceive.vue:305
+#: src/views/CashlinkReceive.vue:304
 msgid "Cashlink empty :("
 msgstr "现金链接为空 :("
 
-#: src/views/CashlinkReceive.vue:298
+#: src/views/CashlinkReceive.vue:297
 msgid "Cashlink funding"
 msgstr "现金链接资金"
 
-#: src/views/CashlinkReceive.vue:302
+#: src/views/CashlinkReceive.vue:301
 msgid "Cashlink is empty"
 msgstr "现金链接为空 "
 
-#: src/views/CashlinkReceive.vue:297
+#: src/views/CashlinkReceive.vue:296
 msgid "Cashlink not funded"
 msgstr "现金链接没有资金"
 
@@ -280,7 +284,7 @@ msgstr "更改"
 msgid "Check your Backup | Check your Backups"
 msgstr "检查你的备份 | 检查你的备份"
 
-#: src/views/CashlinkReceive.vue:295
+#: src/views/CashlinkReceive.vue:294
 msgid "Checking status"
 msgstr "检查状态"
 
@@ -290,6 +294,10 @@ msgstr "选择一个新地址"
 
 #: src/views/ChooseAddress.vue:12
 msgid "Choose an Account"
+msgstr ""
+
+#: src/views/ConnectAccount.vue:5
+msgid "Choose an Account to log in"
 msgstr ""
 
 #: src/views/CashlinkReceive.vue:64 src/views/ChooseAddress.vue:18
@@ -317,15 +325,15 @@ msgstr "选择发件人"
 msgid "Choose which Nimiq address to use."
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:296
+#: src/views/CashlinkReceive.vue:295
 msgid "Claim Cashlink"
 msgstr "领取现金链接"
 
-#: src/views/CashlinkReceive.vue:346
+#: src/views/CashlinkReceive.vue:345
 msgid "Claim your Cash"
 msgstr "领取现金"
 
-#: src/views/CashlinkReceive.vue:234
+#: src/views/CashlinkReceive.vue:233
 msgid "Claiming Cashlink"
 msgstr "正在领取现金链接"
 
@@ -345,7 +353,7 @@ msgstr "关闭"
 msgid "Collecting payment details"
 msgstr "收集付款明细"
 
-#: src/views/SetupSwapLedger.vue:991
+#: src/views/SetupSwapLedger.vue:999
 msgid "Confirm {outgoingOrIncoming} transaction on Ledger"
 msgstr "确认Ledger上的{outgoingOrIncoming}交易"
 
@@ -378,15 +386,15 @@ msgstr "确认交易"
 msgid "Confirm using your Ledger"
 msgstr "确认使用你的Ledger"
 
-#: src/views/CashlinkReceive.vue:357
+#: src/views/CashlinkReceive.vue:356
 msgid "Congrats, somebody gifted you a Nimiq Cashlink."
 msgstr "恭喜，有人给你Nimiq 现金链接"
 
-#: src/views/CashlinkReceive.vue:356
+#: src/views/CashlinkReceive.vue:355
 msgid "Congrats, you just opened a Nimiq Cashlink."
 msgstr "恭喜，你刚刚打开了Nimiq 现金链接"
 
-#: src/views/CashlinkReceive.vue:352
+#: src/views/CashlinkReceive.vue:351
 msgid "Congrats, you received a Nimiq Gift Card."
 msgstr "恭喜，你收到了Nimiq礼品卡"
 
@@ -414,7 +422,7 @@ msgstr "正在连接到键盘守卫 ..."
 msgid "Connecting to network..."
 msgstr "正在连接网络..."
 
-#: src/views/CashlinkReceive.vue:235
+#: src/views/CashlinkReceive.vue:234
 msgid "Connecting to Nimiq..."
 msgstr "正在连接到Nimiq ..."
 
@@ -433,8 +441,8 @@ msgstr "正在联系种子节点..."
 msgid "Contacts are not affected."
 msgstr "联系人不受影响"
 
-#: src/components/NotEnoughCookieSpace.vue:8 src/views/LoginSuccess.vue:179
-#: src/views/LoginSuccess.vue:210 src/views/SignupLedger.vue:143
+#: src/components/NotEnoughCookieSpace.vue:8 src/views/LoginSuccess.vue:178
+#: src/views/LoginSuccess.vue:208 src/views/SignupLedger.vue:143
 msgid "Continue"
 msgstr "继续"
 
@@ -530,16 +538,16 @@ msgstr "费用"
 
 #: src/components/CheckoutCardBitcoin.vue:47
 #: src/components/CheckoutCardNimiqExternal.vue:47
-#: src/components/CurrencyInfo.vue:15 src/views/SetupSwapLedger.vue:287
-#: src/views/SetupSwapLedger.vue:303
+#: src/components/CurrencyInfo.vue:15 src/views/SetupSwapLedger.vue:285
+#: src/views/SetupSwapLedger.vue:301
 msgid "Fee"
 msgstr "费用"
 
-#: src/views/LoginSuccess.vue:132 src/views/SignupLedger.vue:108
+#: src/views/LoginSuccess.vue:131 src/views/SignupLedger.vue:108
 msgid "Fetching Addresses Failed"
 msgstr "提取地址失败"
 
-#: src/views/SetupSwapSuccess.vue:651
+#: src/views/SetupSwapLedger.vue:870 src/views/SetupSwapSuccess.vue:653
 msgid "Fetching Bitcoin HTLC..."
 msgstr ""
 
@@ -547,11 +555,11 @@ msgstr ""
 msgid "Fetching contract information..."
 msgstr "正在获取合同信息..."
 
-#: src/views/SetupSwapSuccess.vue:659
+#: src/views/SetupSwapSuccess.vue:662
 msgid "Fetching swap data failed: {error}"
 msgstr "提取交换数据失败：{error}"
 
-#: src/views/SetupSwapSuccess.vue:647
+#: src/views/SetupSwapSuccess.vue:649
 msgid "Fetching swap data..."
 msgstr "正在获取交换数据..."
 
@@ -599,11 +607,11 @@ msgstr "绿色账户"
 msgid "Green Address"
 msgstr "绿色地址"
 
-#: src/views/CashlinkReceive.vue:345
+#: src/views/CashlinkReceive.vue:344
 msgid "Happy birthday!"
 msgstr "生日快乐！"
 
-#: src/views/CashlinkReceive.vue:343
+#: src/views/CashlinkReceive.vue:342
 msgid "Happy Easter!"
 msgstr "复活节快乐！"
 
@@ -619,12 +627,12 @@ msgstr ""
 "试想如果使用\n"
 "加密很容易"
 
-#: src/views/LoginSuccess.vue:191 src/views/SignupLedger.vue:124
+#: src/views/LoginSuccess.vue:189 src/views/SignupLedger.vue:124
 msgid ""
 "Imported {count} address so far... | Imported {count} addresses so far..."
 msgstr "目前已导入{count}个地址... | 目前已导入{count}个地址..."
 
-#: src/views/SetupSwapLedger.vue:994
+#: src/views/SetupSwapLedger.vue:1002
 msgid "incoming"
 msgstr "转入"
 
@@ -689,7 +697,11 @@ msgstr "登录"
 msgid "Login File saved!"
 msgstr "登录文件已保存！"
 
-#: src/views/ChooseAddress.vue:67
+#: src/views/ConnectAccountSuccess.vue:4
+msgid "Login successful"
+msgstr ""
+
+#: src/views/ChooseAddress.vue:67 src/views/ConnectAccount.vue:40
 msgid "Login to another account"
 msgstr ""
 
@@ -792,7 +804,7 @@ msgstr "橙色地址"
 msgid "Other wallets"
 msgstr "其他钱包"
 
-#: src/views/SetupSwapLedger.vue:993
+#: src/views/SetupSwapLedger.vue:1001
 msgid "outgoing"
 msgstr "转出"
 
@@ -852,7 +864,7 @@ msgstr "请手动发送交易"
 msgid "Prepare for update"
 msgstr "准备更新"
 
-#: src/views/SetupSwapSuccess.vue:640
+#: src/views/SetupSwapSuccess.vue:642
 msgid "Preparing Swap"
 msgstr "准备交换"
 
@@ -920,8 +932,8 @@ msgid "Retrieving your old accounts..."
 msgstr "正在检索你的旧帐户..."
 
 #: src/views/ActivatePolygonSuccess.vue:139
-#: src/views/BitcoinSyncBaseView.vue:72 src/views/LoginSuccess.vue:134
-#: src/views/SetupSwapSuccess.vue:669 src/views/SignupLedger.vue:145
+#: src/views/BitcoinSyncBaseView.vue:72 src/views/LoginSuccess.vue:133
+#: src/views/SetupSwapSuccess.vue:672 src/views/SignupLedger.vue:145
 msgid "Retry"
 msgstr "重试"
 
@@ -963,7 +975,7 @@ msgstr "签名信息"
 msgid "Signer"
 msgstr "签署者"
 
-#: src/views/SetupSwapSuccess.vue:649
+#: src/views/SetupSwapSuccess.vue:651
 msgid "Signing transactions..."
 msgstr "正在签署交易..."
 
@@ -979,7 +991,7 @@ msgstr "出了点问题"
 msgid "Something went wrong with your request. Please try again."
 msgstr "你的请求出了点问题，请再试一次"
 
-#: src/views/LoginSuccess.vue:175
+#: src/views/LoginSuccess.vue:174
 msgid "Space exceeded"
 msgstr "超出范围"
 
@@ -1003,7 +1015,7 @@ msgstr ""
 msgid "Storing your new accounts..."
 msgstr "正在存储你的新帐户..."
 
-#: src/views/SetupSwapLedger.vue:258
+#: src/views/SetupSwapLedger.vue:256
 msgid "Swap authorized"
 msgstr "兑换已授权"
 
@@ -1011,7 +1023,7 @@ msgstr "兑换已授权"
 msgid "Swap fee"
 msgstr "交换费用"
 
-#: src/views/SetupSwapLedger.vue:855 src/views/SetupSwapSuccess.vue:636
+#: src/views/SetupSwapLedger.vue:854 src/views/SetupSwapSuccess.vue:636
 msgid "Swap Setup Failed"
 msgstr "交换设置失败"
 
@@ -1026,7 +1038,7 @@ msgid "Syncing consensus..."
 msgstr "正在同步共识..."
 
 #: src/views/ActivatePolygonSuccess.vue:113
-#: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapLedger.vue:857
+#: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapLedger.vue:856
 #: src/views/SetupSwapSuccess.vue:638
 #: src/views/SignBtcTransactionLedger.vue:118
 msgid "Syncing Failed"
@@ -1048,7 +1060,7 @@ msgstr "正在与 {currency} 网络同步..."
 msgid "Syncing with Bitcoin network failed: {error}"
 msgstr "与比特币网络同步失败：{error}"
 
-#: src/views/BitcoinSyncBaseView.vue:58 src/views/SetupSwapLedger.vue:867
+#: src/views/BitcoinSyncBaseView.vue:58 src/views/SetupSwapLedger.vue:868
 msgid "Syncing with Bitcoin network..."
 msgstr "正在与比特币网络同步..."
 
@@ -1060,7 +1072,7 @@ msgstr "同步 Polygon 网络失败：{error}"
 msgid "Syncing with Polygon network..."
 msgstr "正在同步 Polygon 网络..."
 
-#: src/views/LoginSuccess.vue:133 src/views/SignupLedger.vue:134
+#: src/views/LoginSuccess.vue:132 src/views/SignupLedger.vue:134
 msgid "Syncing with the network failed: {error}"
 msgstr "与网络同步失败：{error}"
 
@@ -1097,11 +1109,11 @@ msgstr "此更新非常容易，快速和安全。不过－现在是你检查恢
 msgid "There's much more. Read the full article"
 msgstr "还有更多信息，请阅读全文"
 
-#: src/views/CashlinkReceive.vue:303
+#: src/views/CashlinkReceive.vue:302
 msgid "This Cashlink has already been claimed."
 msgstr "此现金链接已被领取"
 
-#: src/views/CashlinkReceive.vue:208
+#: src/views/CashlinkReceive.vue:207
 msgid "This is not a valid Cashlink, sorry."
 msgstr "抱歉，这不是有效的现金链接"
 
@@ -1146,6 +1158,10 @@ msgstr "欲更改Ledger的PIN码，请转到设备上的设置"
 msgid "Total fees"
 msgstr "总费用"
 
+#: src/views/SignMultisigTransactionSuccess.vue:4
+msgid "Transaction approved"
+msgstr ""
+
 #: src/views/CashlinkManage.vue:211 src/views/CheckoutTransmission.vue:107
 msgid "Transaction could not be relayed"
 msgstr "交易无法转发"
@@ -1167,13 +1183,17 @@ msgstr "交易已签署"
 msgid "Try again"
 msgstr "再试一次"
 
+#: src/views/SetupSwapLedger.vue:860
+msgid "Unexpected error"
+msgstr ""
+
 #: src/components/NotEnoughCookieSpace.vue:7
 msgid ""
 "Unfortunately, due to restrictions of Safari you cannot add more accounts "
 "and/or addresses. Please log out of unused accounts to free up space."
 msgstr "很遗憾地，由于Safari的限制，你无法添加更多帐户和/或地址。请登出未使用的帐户以释放空间。"
 
-#: src/views/LoginSuccess.vue:177
+#: src/views/LoginSuccess.vue:176
 msgid ""
 "Unfortunately, due to space restrictions of Safari and IOS, this account "
 "cannot be stored properly. Please free up space by logging out of other "
@@ -1216,7 +1236,7 @@ msgstr ""
 "使用你的登录文件\n"
 "或恢复字登录"
 
-#: src/views/LoginSuccess.vue:209 src/views/SignupLedger.vue:132
+#: src/views/LoginSuccess.vue:207 src/views/SignupLedger.vue:132
 msgid "Used addresses without balance might have been missed."
 msgstr "已使用地址若没有余额可能会丢失"
 
@@ -1238,7 +1258,7 @@ msgid ""
 "created"
 msgstr ""
 
-#: src/views/LoginSuccess.vue:224
+#: src/views/LoginSuccess.vue:222
 msgid "Welcome back! | Your Accounts are ready."
 msgstr "欢迎回来！您的账户已准备好。"
 
@@ -1266,7 +1286,7 @@ msgstr "黄色地址"
 msgid "You are logged out."
 msgstr "你已登出"
 
-#: src/views/CashlinkReceive.vue:341
+#: src/views/CashlinkReceive.vue:340
 msgid "You are loved"
 msgstr "你被爱着"
 
@@ -1290,7 +1310,11 @@ msgid ""
 " using Ledger Live."
 msgstr "你的{app}应用已过时。 请使用Ledger Live更新你的Ledger固件和{app}应用"
 
-#: src/views/LoginSuccess.vue:207 src/views/SignupLedger.vue:106
+#: src/views/ConnectAccount.vue:7
+msgid "Your account will be used for approving only."
+msgstr ""
+
+#: src/views/LoginSuccess.vue:205 src/views/SignupLedger.vue:106
 msgid ""
 "Your Addresses may be\n"
 "incomplete."
@@ -1314,6 +1338,6 @@ msgstr ""
 msgid "Your message is signed."
 msgstr "你的信息已签署"
 
-#: src/views/LoginSuccess.vue:218 src/views/SimpleSuccess.vue:31
+#: src/views/LoginSuccess.vue:216 src/views/SimpleSuccess.vue:31
 msgid "Your password was changed."
 msgstr "你的密码已更改"

@@ -35,7 +35,7 @@ msgstr "+ {currency} bayad para sa network"
 msgid "30 seconds, no email, no download."
 msgstr "sa loob ng 30 na segundo, walang email, walang download."
 
-#: src/views/CashlinkReceive.vue:207
+#: src/views/CashlinkReceive.vue:206
 msgid "404 - Cash not found"
 msgstr "404 - Hindi mahanap ang pera"
 
@@ -87,7 +87,7 @@ msgstr "Magdagdag sa Ledger"
 msgid "Add Vesting Contract"
 msgstr "Magdagdag sa Vesting Contract"
 
-#: src/components/CheckoutCard.vue:84 src/views/SetupSwapLedger.vue:292
+#: src/components/CheckoutCard.vue:84 src/views/SetupSwapLedger.vue:290
 msgid "Address"
 msgstr "Adres"
 
@@ -95,7 +95,7 @@ msgstr "Adres"
 msgid "Address Added"
 msgstr "Naidagdag na Adres"
 
-#: src/views/LoginSuccess.vue:123
+#: src/views/LoginSuccess.vue:122
 msgid "Address detection failed. Retrying..."
 msgstr "Nabigo ang pagtuklas ng adres. Sinusubukan ulit..."
 
@@ -103,10 +103,14 @@ msgstr "Nabigo ang pagtuklas ng adres. Sinusubukan ulit..."
 msgid "All labels saved."
 msgstr "Nai-saved ang lahat ng mga etiketa."
 
+#: src/views/ConnectAccount.vue:8
+msgid "All private funds remain separate."
+msgstr ""
+
 #: src/components/CheckoutCardBitcoin.vue:30
 #: src/components/CheckoutCardEthereum.vue:27
 #: src/components/CheckoutCardNimiqExternal.vue:32
-#: src/views/SetupSwapLedger.vue:285 src/views/SetupSwapLedger.vue:294
+#: src/views/SetupSwapLedger.vue:283 src/views/SetupSwapLedger.vue:292
 msgid "Amount"
 msgstr "Halaga"
 
@@ -205,8 +209,8 @@ msgstr "Bitcoin"
 msgid "Bitcoin activated"
 msgstr "Bitcoin activated"
 
-#: src/views/SetupSwapSuccess.vue:662
-msgid "Bitcoin HTLC invalid: {error}"
+#: src/views/SetupSwapLedger.vue:858 src/views/SetupSwapSuccess.vue:640
+msgid "Bitcoin HTLC invalid"
 msgstr ""
 
 #: src/lib/LabelingMachine.ts:31
@@ -246,7 +250,7 @@ msgstr "Ikansela"
 msgid "Cancel payment"
 msgstr "Ikansela ang pagbabayad"
 
-#: src/views/CashlinkReceive.vue:257
+#: src/views/CashlinkReceive.vue:256
 msgid "Cashlink claimed!"
 msgstr "Naangkin na ang Cashlink!"
 
@@ -258,19 +262,19 @@ msgstr "Nilikha ang cashlink"
 msgid "Cashlink created."
 msgstr "Nalikha na ang Cashlink."
 
-#: src/views/CashlinkReceive.vue:305
+#: src/views/CashlinkReceive.vue:304
 msgid "Cashlink empty :("
 msgstr "walang laman ang Cashlink :("
 
-#: src/views/CashlinkReceive.vue:298
+#: src/views/CashlinkReceive.vue:297
 msgid "Cashlink funding"
 msgstr "pagpopondo ng Cashlink"
 
-#: src/views/CashlinkReceive.vue:302
+#: src/views/CashlinkReceive.vue:301
 msgid "Cashlink is empty"
 msgstr "walang laman ang Cashlink"
 
-#: src/views/CashlinkReceive.vue:297
+#: src/views/CashlinkReceive.vue:296
 msgid "Cashlink not funded"
 msgstr "hindi pinopondohan ang Cashlink"
 
@@ -282,7 +286,7 @@ msgstr "Magbago"
 msgid "Check your Backup | Check your Backups"
 msgstr "Suriin ang iyong Pag-backup | Suriin ang iyong mga Pag-backup"
 
-#: src/views/CashlinkReceive.vue:295
+#: src/views/CashlinkReceive.vue:294
 msgid "Checking status"
 msgstr "Sinusuri ang katayuan"
 
@@ -292,6 +296,10 @@ msgstr "Pumili ng isang bagong Adres"
 
 #: src/views/ChooseAddress.vue:12
 msgid "Choose an Account"
+msgstr ""
+
+#: src/views/ConnectAccount.vue:5
+msgid "Choose an Account to log in"
 msgstr ""
 
 #: src/views/CashlinkReceive.vue:64 src/views/ChooseAddress.vue:18
@@ -319,15 +327,15 @@ msgstr "Piliin ang Nagpadala"
 msgid "Choose which Nimiq address to use."
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:296
+#: src/views/CashlinkReceive.vue:295
 msgid "Claim Cashlink"
 msgstr "I-claim ang Cashlink"
 
-#: src/views/CashlinkReceive.vue:346
+#: src/views/CashlinkReceive.vue:345
 msgid "Claim your Cash"
 msgstr "I-claim ang Cashlink"
 
-#: src/views/CashlinkReceive.vue:234
+#: src/views/CashlinkReceive.vue:233
 msgid "Claiming Cashlink"
 msgstr "Inaangkin ang Cashlink"
 
@@ -347,7 +355,7 @@ msgstr "Isarado"
 msgid "Collecting payment details"
 msgstr "Pagkolekta ng mga detalye sa pagbabayad"
 
-#: src/views/SetupSwapLedger.vue:991
+#: src/views/SetupSwapLedger.vue:999
 msgid "Confirm {outgoingOrIncoming} transaction on Ledger"
 msgstr "Kumpirmahin ang transaksyong {outgoingOrIncoming} sa Ledger"
 
@@ -383,15 +391,15 @@ msgstr "Kumpirmahin ang Transaksyon"
 msgid "Confirm using your Ledger"
 msgstr "Kumpirmahing ginagamit ang iyong Ledger"
 
-#: src/views/CashlinkReceive.vue:357
+#: src/views/CashlinkReceive.vue:356
 msgid "Congrats, somebody gifted you a Nimiq Cashlink."
 msgstr "Congrats, may nagbigay sa iyo ng isang Nimiq Cashlink."
 
-#: src/views/CashlinkReceive.vue:356
+#: src/views/CashlinkReceive.vue:355
 msgid "Congrats, you just opened a Nimiq Cashlink."
 msgstr "Congrats, nagbukas ka lang ng isang Nimiq Cashlink."
 
-#: src/views/CashlinkReceive.vue:352
+#: src/views/CashlinkReceive.vue:351
 msgid "Congrats, you received a Nimiq Gift Card."
 msgstr "Congrats, nakatanggap ka ng isang Nimiq Gift Card."
 
@@ -419,7 +427,7 @@ msgstr "Kumokonekta sa Keyguard ..."
 msgid "Connecting to network..."
 msgstr "Kumokonekta sa network ..."
 
-#: src/views/CashlinkReceive.vue:235
+#: src/views/CashlinkReceive.vue:234
 msgid "Connecting to Nimiq..."
 msgstr "Kumokonekta sa Nimiq ..."
 
@@ -438,8 +446,8 @@ msgstr "Pakikipag-ugnay sa mga node ng binhi ..."
 msgid "Contacts are not affected."
 msgstr "Ang mga contact ay hindi apektado."
 
-#: src/components/NotEnoughCookieSpace.vue:8 src/views/LoginSuccess.vue:179
-#: src/views/LoginSuccess.vue:210 src/views/SignupLedger.vue:143
+#: src/components/NotEnoughCookieSpace.vue:8 src/views/LoginSuccess.vue:178
+#: src/views/LoginSuccess.vue:208 src/views/SignupLedger.vue:143
 msgid "Continue"
 msgstr "Magpatuloy"
 
@@ -537,16 +545,16 @@ msgstr "bayad"
 
 #: src/components/CheckoutCardBitcoin.vue:47
 #: src/components/CheckoutCardNimiqExternal.vue:47
-#: src/components/CurrencyInfo.vue:15 src/views/SetupSwapLedger.vue:287
-#: src/views/SetupSwapLedger.vue:303
+#: src/components/CurrencyInfo.vue:15 src/views/SetupSwapLedger.vue:285
+#: src/views/SetupSwapLedger.vue:301
 msgid "Fee"
 msgstr "Bayad"
 
-#: src/views/LoginSuccess.vue:132 src/views/SignupLedger.vue:108
+#: src/views/LoginSuccess.vue:131 src/views/SignupLedger.vue:108
 msgid "Fetching Addresses Failed"
 msgstr "Nabigo ang Pagkuha ng Mga Address"
 
-#: src/views/SetupSwapSuccess.vue:651
+#: src/views/SetupSwapLedger.vue:870 src/views/SetupSwapSuccess.vue:653
 msgid "Fetching Bitcoin HTLC..."
 msgstr ""
 
@@ -554,11 +562,11 @@ msgstr ""
 msgid "Fetching contract information..."
 msgstr "Kinukuha ang impormasyon sa kontrata ..."
 
-#: src/views/SetupSwapSuccess.vue:659
+#: src/views/SetupSwapSuccess.vue:662
 msgid "Fetching swap data failed: {error}"
 msgstr "Nabigo ang pagkuha ng data ng pagpapalit: {error}"
 
-#: src/views/SetupSwapSuccess.vue:647
+#: src/views/SetupSwapSuccess.vue:649
 msgid "Fetching swap data..."
 msgstr "Kinukuha ang data ng pagpapalit ..."
 
@@ -606,11 +614,11 @@ msgstr "Berdeng Account"
 msgid "Green Address"
 msgstr "Berdeng Adres"
 
-#: src/views/CashlinkReceive.vue:345
+#: src/views/CashlinkReceive.vue:344
 msgid "Happy birthday!"
 msgstr "Maligayang kaarawan!"
 
-#: src/views/CashlinkReceive.vue:343
+#: src/views/CashlinkReceive.vue:342
 msgid "Happy Easter!"
 msgstr "Maligayang Pasko ng Pagkabuhay!"
 
@@ -626,14 +634,14 @@ msgstr ""
 "Isipin kung nagbabayad\n"
 "madali ang crypto"
 
-#: src/views/LoginSuccess.vue:191 src/views/SignupLedger.vue:124
+#: src/views/LoginSuccess.vue:189 src/views/SignupLedger.vue:124
 msgid ""
 "Imported {count} address so far... | Imported {count} addresses so far..."
 msgstr ""
 "Na-import ang {count} address sa ngayon ... | Na-import ang {count} mga "
 "address sa ngayon ..."
 
-#: src/views/SetupSwapLedger.vue:994
+#: src/views/SetupSwapLedger.vue:1002
 msgid "incoming"
 msgstr "papasok"
 
@@ -704,7 +712,11 @@ msgstr "Mag log in"
 msgid "Login File saved!"
 msgstr "Na-save na ang Login File!"
 
-#: src/views/ChooseAddress.vue:67
+#: src/views/ConnectAccountSuccess.vue:4
+msgid "Login successful"
+msgstr ""
+
+#: src/views/ChooseAddress.vue:67 src/views/ConnectAccount.vue:40
 msgid "Login to another account"
 msgstr ""
 
@@ -811,7 +823,7 @@ msgstr "Kahel na Adres"
 msgid "Other wallets"
 msgstr "Mga ibang pitaka"
 
-#: src/views/SetupSwapLedger.vue:993
+#: src/views/SetupSwapLedger.vue:1001
 msgid "outgoing"
 msgstr "palabas"
 
@@ -871,7 +883,7 @@ msgstr "Mangyaring ipadala ang transaksyon nang manu-mano"
 msgid "Prepare for update"
 msgstr "Maghanda para sa pag-update"
 
-#: src/views/SetupSwapSuccess.vue:640
+#: src/views/SetupSwapSuccess.vue:642
 msgid "Preparing Swap"
 msgstr "Paghahanda ng Pagpalit"
 
@@ -942,8 +954,8 @@ msgid "Retrieving your old accounts..."
 msgstr "Kinukuha ang iyong mga lumang account ..."
 
 #: src/views/ActivatePolygonSuccess.vue:139
-#: src/views/BitcoinSyncBaseView.vue:72 src/views/LoginSuccess.vue:134
-#: src/views/SetupSwapSuccess.vue:669 src/views/SignupLedger.vue:145
+#: src/views/BitcoinSyncBaseView.vue:72 src/views/LoginSuccess.vue:133
+#: src/views/SetupSwapSuccess.vue:672 src/views/SignupLedger.vue:145
 msgid "Retry"
 msgstr "Subukang muli"
 
@@ -985,7 +997,7 @@ msgstr "Mensahe sa Pag-sign"
 msgid "Signer"
 msgstr "Signer"
 
-#: src/views/SetupSwapSuccess.vue:649
+#: src/views/SetupSwapSuccess.vue:651
 msgid "Signing transactions..."
 msgstr "Pag-sign ng mga transaksyon ..."
 
@@ -1001,7 +1013,7 @@ msgstr "May nangyaring mali"
 msgid "Something went wrong with your request. Please try again."
 msgstr "Nagkaproblema sa iyong hiling. Ulitin mo ulit."
 
-#: src/views/LoginSuccess.vue:175
+#: src/views/LoginSuccess.vue:174
 msgid "Space exceeded"
 msgstr "Lumagpas sa puwang"
 
@@ -1025,7 +1037,7 @@ msgstr ""
 msgid "Storing your new accounts..."
 msgstr "Ang pag-iimbak ng iyong mga bagong account ..."
 
-#: src/views/SetupSwapLedger.vue:258
+#: src/views/SetupSwapLedger.vue:256
 msgid "Swap authorized"
 msgstr "Ang palitan ay pinahintulutan"
 
@@ -1033,7 +1045,7 @@ msgstr "Ang palitan ay pinahintulutan"
 msgid "Swap fee"
 msgstr "Pagpalit ng bayad"
 
-#: src/views/SetupSwapLedger.vue:855 src/views/SetupSwapSuccess.vue:636
+#: src/views/SetupSwapLedger.vue:854 src/views/SetupSwapSuccess.vue:636
 msgid "Swap Setup Failed"
 msgstr "Nabigo ang Pag-setup ng Ipagpalit"
 
@@ -1048,7 +1060,7 @@ msgid "Syncing consensus..."
 msgstr "Nagsi-sync ng pinagkasunduan ..."
 
 #: src/views/ActivatePolygonSuccess.vue:113
-#: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapLedger.vue:857
+#: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapLedger.vue:856
 #: src/views/SetupSwapSuccess.vue:638
 #: src/views/SignBtcTransactionLedger.vue:118
 msgid "Syncing Failed"
@@ -1070,7 +1082,7 @@ msgstr "Nagsi-sync sa network na {currency} ..."
 msgid "Syncing with Bitcoin network failed: {error}"
 msgstr "Nabigo ang pag-sync sa network ng Bitcoin: {error}"
 
-#: src/views/BitcoinSyncBaseView.vue:58 src/views/SetupSwapLedger.vue:867
+#: src/views/BitcoinSyncBaseView.vue:58 src/views/SetupSwapLedger.vue:868
 msgid "Syncing with Bitcoin network..."
 msgstr "Nagsi-sync sa network ng Bitcoin ..."
 
@@ -1082,7 +1094,7 @@ msgstr "Nabigo ang pag-sync sa network ng Polygon: {error}"
 msgid "Syncing with Polygon network..."
 msgstr "Nagsi-sync sa network ng Polygon ..."
 
-#: src/views/LoginSuccess.vue:133 src/views/SignupLedger.vue:134
+#: src/views/LoginSuccess.vue:132 src/views/SignupLedger.vue:134
 msgid "Syncing with the network failed: {error}"
 msgstr "Nabigo ang pag-sync sa network: {error}"
 
@@ -1126,11 +1138,11 @@ msgstr ""
 msgid "There's much more. Read the full article"
 msgstr "Marami pa. Basahin ang buong artikulo"
 
-#: src/views/CashlinkReceive.vue:303
+#: src/views/CashlinkReceive.vue:302
 msgid "This Cashlink has already been claimed."
 msgstr "Ang Cashlink na ito ay na-claim na."
 
-#: src/views/CashlinkReceive.vue:208
+#: src/views/CashlinkReceive.vue:207
 msgid "This is not a valid Cashlink, sorry."
 msgstr "Hindi ito wastong Cashlink, paumanhin."
 
@@ -1182,6 +1194,10 @@ msgstr ""
 msgid "Total fees"
 msgstr "Kabuuang bayarin"
 
+#: src/views/SignMultisigTransactionSuccess.vue:4
+msgid "Transaction approved"
+msgstr ""
+
 #: src/views/CashlinkManage.vue:211 src/views/CheckoutTransmission.vue:107
 msgid "Transaction could not be relayed"
 msgstr "Hindi mailagay ang transaksyon"
@@ -1203,6 +1219,10 @@ msgstr "Nilagdaan ang Transaksyon"
 msgid "Try again"
 msgstr "Subukang muli"
 
+#: src/views/SetupSwapLedger.vue:860
+msgid "Unexpected error"
+msgstr ""
+
 #: src/components/NotEnoughCookieSpace.vue:7
 msgid ""
 "Unfortunately, due to restrictions of Safari you cannot add more accounts "
@@ -1212,7 +1232,7 @@ msgstr ""
 "magdagdag ng higit pang mga account at / o mga address. Mangyaring mag-log "
 "out sa mga hindi nagamit na account upang magbakante ng puwang."
 
-#: src/views/LoginSuccess.vue:177
+#: src/views/LoginSuccess.vue:176
 msgid ""
 "Unfortunately, due to space restrictions of Safari and IOS, this account "
 "cannot be stored properly. Please free up space by logging out of other "
@@ -1258,7 +1278,7 @@ msgstr ""
 "Gamitin ang iyong Login File\n"
 "o mga salitang pang-backup."
 
-#: src/views/LoginSuccess.vue:209 src/views/SignupLedger.vue:132
+#: src/views/LoginSuccess.vue:207 src/views/SignupLedger.vue:132
 msgid "Used addresses without balance might have been missed."
 msgstr "Ang mga ginamit na adres na walang balanse ay maaaring napalampas."
 
@@ -1280,7 +1300,7 @@ msgid ""
 "created"
 msgstr ""
 
-#: src/views/LoginSuccess.vue:224
+#: src/views/LoginSuccess.vue:222
 msgid "Welcome back! | Your Accounts are ready."
 msgstr "Maligayang pagbabalik! | Nakahanda na ang mga Account mo."
 
@@ -1308,7 +1328,7 @@ msgstr "Dilaw na Adres"
 msgid "You are logged out."
 msgstr "Naka-log out ka."
 
-#: src/views/CashlinkReceive.vue:341
+#: src/views/CashlinkReceive.vue:340
 msgid "You are loved"
 msgstr "Mahal ka"
 
@@ -1336,7 +1356,11 @@ msgstr ""
 "Ang iyong {app} app ay luma na. Mangyaring i-update ang iyong Ledger "
 "firmware at {app} app gamit ang Ledger Live."
 
-#: src/views/LoginSuccess.vue:207 src/views/SignupLedger.vue:106
+#: src/views/ConnectAccount.vue:7
+msgid "Your account will be used for approving only."
+msgstr ""
+
+#: src/views/LoginSuccess.vue:205 src/views/SignupLedger.vue:106
 msgid ""
 "Your Addresses may be\n"
 "incomplete."
@@ -1360,6 +1384,6 @@ msgstr ""
 msgid "Your message is signed."
 msgstr "Ang iyong mensahe ay naka-sign."
 
-#: src/views/LoginSuccess.vue:218 src/views/SimpleSuccess.vue:31
+#: src/views/LoginSuccess.vue:216 src/views/SimpleSuccess.vue:31
 msgid "Your password was changed."
 msgstr "Ang iyong password ay binago."

@@ -140,7 +140,6 @@ import { WalletInfo } from '../lib/WalletInfo';
 import { CashlinkStore } from '../lib/CashlinkStore';
 import HubApi from '../../client/HubApi';
 import { NetworkClient } from '../lib/NetworkClient';
-import { PlainTransactionDetails } from '@nimiq/albatross-wasm';
 
 @Component({components: {
     SmallPage,

@@ -17,6 +17,7 @@ export class NetworkClient {
             const clientConfig = new Nimiq.ClientConfiguration();
             clientConfig.network(this.networkToAlbatross(Config.network));
             clientConfig.seedNodes(Config.seedNodes);
+            clientConfig.syncMode('pico');
             clientConfig.logLevel('debug');
             resolve(Nimiq.Client.create(clientConfig.build()));
         }));

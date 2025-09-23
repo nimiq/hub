@@ -84,7 +84,13 @@ function expectEqualIgnoringFeeAndContactName(a: any, b: any) {
     const keysB = Object.keys(b).filter(filterIgnoredKeys);
     expect(keysA).toEqual(keysB);
     for (const key of keysA) {
-        expect(a[key]).toEqual(b[key]);
+        if (key === 'keyPair' || key === 'address') {
+            // These are pointers into Rust WASM memory and as such cannot be compared as objects,
+            // so we compare their hex representation instead.
+            expect(a[key].toHex()).toEqual(b[key].toHex());
+        } else {
+            expect(a[key]).toEqual(b[key]);
+        }
     }
 }
 

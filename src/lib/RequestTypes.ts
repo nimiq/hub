@@ -6,7 +6,7 @@ import type { ParsedEtherSpecifics, ParsedEtherDirectPaymentOptions } from './pa
 import type { ParsedBitcoinSpecifics, ParsedBitcoinDirectPaymentOptions } from './paymentOptions/BitcoinPaymentOptions';
 import type { SwapAsset } from '@nimiq/fastspot-api';
 import type { FiatCurrency } from '@nimiq/utils';
-import type { PlainTransaction } from '@nimiq/albatross-wasm';
+import type { PlainTransaction } from '@nimiq/core';
 
 export interface ParsedBasicRequest {
     kind: RequestType;
@@ -52,6 +52,41 @@ export interface ParsedSignTransactionRequest extends ParsedBasicRequest {
     data: Uint8Array;
     flags: number;
     validityStartHeight: number; // FIXME To be made optional when hub has its own network
+}
+
+export interface ParsedMultisigInfo {
+    publicKeys: Uint8Array[];
+    signers: Array<{
+        publicKey: Uint8Array;
+        commitments: Uint8Array[];
+    }>;
+    secrets: Uint8Array[] | {
+        encrypted: Uint8Array[];
+        keyParams: {
+            kdf: string;
+            iterations: number;
+            keySize: number;
+        };
+    };
+    userName?: string;
+}
+
+export interface ParsedSignMultisigTransactionRequest extends ParsedBasicRequest {
+    signer: Nimiq.Address;
+
+    sender: Nimiq.Address;
+    senderType: Nimiq.AccountType;
+    senderLabel: string;
+    recipient: Nimiq.Address;
+    recipientType: Nimiq.AccountType;
+    recipientLabel?: string;
+    value: number;
+    fee?: number;
+    data?: Uint8Array;
+    flags?: number;
+    validityStartHeight: number; // FIXME To be made optional when hub has its own network
+
+    multisigConfig: ParsedMultisigInfo;
 }
 
 export interface ParsedSignStakingRequest extends ParsedBasicRequest {
@@ -331,8 +366,16 @@ export interface ParsedRefundSwapRequest extends ParsedSimpleRequest {
     } & RelayRequest);
 }
 
+export interface ParsedConnectAccountRequest extends ParsedBasicRequest {
+    appLogoUrl: URL;
+    permissions: RequestType[];
+    requestedKeyPaths: string[];
+    challenge: string;
+}
+
 // Discriminated Unions
 export type ParsedRpcRequest = ParsedSignTransactionRequest
+                             | ParsedSignMultisigTransactionRequest
                              | ParsedSignStakingRequest
                              | ParsedCreateCashlinkRequest
                              | ParsedManageCashlinkRequest
@@ -347,4 +390,5 @@ export type ParsedRpcRequest = ParsedSignTransactionRequest
                              | ParsedAddBtcAddressesRequest
                              | ParsedSignPolygonTransactionRequest
                              | ParsedSetupSwapRequest
-                             | ParsedRefundSwapRequest;
+                             | ParsedRefundSwapRequest
+                             | ParsedConnectAccountRequest;

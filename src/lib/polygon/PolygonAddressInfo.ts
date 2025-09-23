@@ -32,6 +32,12 @@ export class PolygonAddressInfo {
     public toPolygonAddressType(): string {
         return this.address;
     }
+
+    public equals(other: PolygonAddressInfo): boolean {
+        return this.path === other.path
+            && this.address.toLowerCase() === other.address.toLowerCase()
+            && this.balance === other.balance;
+    }
 }
 
 /*

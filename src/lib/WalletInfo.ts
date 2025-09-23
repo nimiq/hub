@@ -40,7 +40,8 @@ export class WalletInfo {
         );
 
         return new WalletInfo(o.id, o.keyId, o.label, accounts, contracts, o.type,
-            o.keyMissing, o.fileExported, o.wordsExported, o.btcXPub, btcAddresses, polygonAddresses);
+            o.keyMissing, o.fileExported, o.wordsExported, o.btcXPub, btcAddresses, polygonAddresses,
+            o.permissions);
     }
 
     public static async objectToAccountType(o: WalletInfoEntry, requestType: RequestType): Promise<Account> {
@@ -93,6 +94,7 @@ export class WalletInfo {
             external: [],
         },
         public polygonAddresses: PolygonAddressInfo[] = [],
+        public permissions: Record<string, RequestType[]> = {},
     ) {}
 
     public get defaultLabel(): string {
@@ -210,6 +212,7 @@ export class WalletInfo {
                 external: this.btcAddresses.external.map((btcAddressInfo) => btcAddressInfo.toObject()),
             },
             polygonAddresses: this.polygonAddresses.map((polygonAddressInfo) => polygonAddressInfo.toObject()),
+            permissions: this.permissions,
         };
     }
 
@@ -236,6 +239,60 @@ export class WalletInfo {
         return this._uid
             || (this._uid = await makeUid(this.keyId, Array.from(this.accounts.values())[0].userFriendlyAddress));
     }
+
+    public equals(other: WalletInfo): boolean {
+        if (this === other) return true;
+        if (this.id !== other.id) return false;
+        if (this.keyId !== other.keyId) return false;
+        if (this.label !== other.label) return false;
+        if (this.type !== other.type) return false;
+        if (this.keyMissing !== other.keyMissing) return false;
+        if (this.fileExported !== other.fileExported) return false;
+        if (this.wordsExported !== other.wordsExported) return false;
+        if (this.btcXPub !== other.btcXPub) return false;
+
+        if (this.accounts.size !== other.accounts.size) return false;
+        for (const [address, accountInfo] of this.accounts) {
+            const otherAccountInfo = other.accounts.get(address);
+            if (!otherAccountInfo || !accountInfo.equals(otherAccountInfo)) return false;
+        }
+
+        if (this.contracts.length !== other.contracts.length) return false;
+        for (let i = 0; i < this.contracts.length; i++) {
+            if (!this.contracts[i].equals(other.contracts[i])) return false;
+        }
+
+        if (this.btcAddresses.internal.length !== other.btcAddresses.internal.length) return false;
+        for (let i = 0; i < this.btcAddresses.internal.length; i++) {
+            if (!this.btcAddresses.internal[i].equals(other.btcAddresses.internal[i])) return false;
+        }
+
+        if (this.btcAddresses.external.length !== other.btcAddresses.external.length) return false;
+        for (let i = 0; i < this.btcAddresses.external.length; i++) {
+            if (!this.btcAddresses.external[i].equals(other.btcAddresses.external[i])) return false;
+        }
+
+        if (this.polygonAddresses.length !== other.polygonAddresses.length) return false;
+        for (let i = 0; i < this.polygonAddresses.length; i++) {
+            if (!this.polygonAddresses[i].equals(other.polygonAddresses[i])) return false;
+        }
+
+        const thisPermissionKeys = Object.keys(this.permissions).sort();
+        const otherPermissionKeys = Object.keys(other.permissions).sort();
+        if (thisPermissionKeys.length !== otherPermissionKeys.length) return false;
+        for (let i = 0; i < thisPermissionKeys.length; i++) {
+            const key = thisPermissionKeys[i];
+            if (key !== otherPermissionKeys[i]) return false;
+            const thisRequestTypes = this.permissions[key].slice().sort();
+            const otherRequestTypes = other.permissions[key].slice().sort();
+            if (thisRequestTypes.length !== otherRequestTypes.length) return false;
+            for (let j = 0; j < thisRequestTypes.length; j++) {
+                if (thisRequestTypes[j] !== otherRequestTypes[j]) return false;
+            }
+        }
+
+        return true;
+    }
 }
 
 /*
@@ -257,4 +314,5 @@ export interface WalletInfoEntry {
         external: BtcAddressInfoEntry[],
     };
     polygonAddresses?: PolygonAddressEntry[];
+    permissions?: Record<string, RequestType[]>;
 }

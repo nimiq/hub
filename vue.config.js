@@ -8,18 +8,6 @@ const createHash = require('crypto').createHash;
 // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const PoLoaderOptimizer = require('webpack-i18n-tools')();
 
-let coreVersion = '2.0.5-history-fix';
-// try {
-//     // Will fail until @nimiq/core export map is updated to also make the package.json file available
-//     coreVersion = require('@nimiq/core/package.json').version;
-// } catch (e) {
-//     // Fallback to reading the package.json file directly
-//     pkgJson = require('fs').readFileSync(path.join(__dirname, 'node_modules/@nimiq/core/package.json'));
-//     coreVersion = JSON.parse(pkgJson).version;
-// }
-
-if (!coreVersion) throw new Error('Could not determine @nimiq/core version');
-
 const crypto = require('crypto');
 
 // Fix build for Node version with OpenSSL 3
@@ -81,10 +69,10 @@ const configureWebpack = {
                     return path.replace('.min', '');
                 },
             },
-            // {
-            //     from: 'node_modules/@nimiq/core',
-            //     to: `./nimiq/v${coreVersion}/`,
-            // },
+            {
+                from: 'node_modules/@nimiq/core',
+                to: `./nimiq/`,
+            },
         ]}),
         new WriteFileWebpackPlugin(),
         new PoLoaderOptimizer(),
@@ -140,7 +128,6 @@ const pages = {
         browserWarningTemplate,
         browserWarningIntegrityHash,
         domain,
-        coreVersion,
         // output as dist/index.html
         filename: 'index.html',
         // chunks to include on this page, by default includes
@@ -152,7 +139,6 @@ const pages = {
         entry: 'src/iframe.ts',
         // the source template
         template: 'public/iframe.html',
-        coreVersion,
         // output as dist/iframe.html
         filename: 'iframe.html',
         // chunks to include on this page, by default includes
@@ -168,7 +154,6 @@ const pages = {
         browserWarningTemplate,
         browserWarningIntegrityHash,
         domain,
-        coreVersion,
         // output as dist/cashlink/index.html
         filename: 'cashlink/index.html',
         // chunks to include on this page, by default includes
@@ -180,7 +165,6 @@ const pages = {
         entry: 'src/export.ts',
         // the source template
         template: 'public/export.html',
-        coreVersion,
         // output as dist/iframe.html
         filename: 'export.html',
     },
@@ -192,7 +176,6 @@ if (buildName === 'local' || buildName === 'testnet') {
         entry: 'demos/Demo.ts',
         // the source template
         template: 'demos/index.html',
-        coreVersion,
         bitcoinJsIntegrityHash,
         // output as dist/demos.html
         filename: 'demos.html',

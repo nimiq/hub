@@ -320,7 +320,7 @@ export default class SignTransactionLedger extends Vue {
             ({ recipient, value, fee } = this.cashlink!.getFundingDetails());
             validityStartHeightPromise = network.getBlockchainHeight().then((blockchainHeight) => blockchainHeight + 1);
             recipientData = CASHLINK_FUNDING_DATA;
-            flags = 0 /* Nimiq.Transaction.Flag.NONE */;
+            flags = Nimiq.TransactionFlag.None;
 
             this.recipientDetails = {
                 address: this.cashlink.address.toUserFriendlyAddress(),
@@ -583,7 +583,7 @@ export default class SignTransactionLedger extends Vue {
         }
 
         // tslint:disable-next-line no-bitwise
-        if ((flags & 1 /* Nimiq.Transaction.Flag.CONTRACT_CREATION */) > 0) {
+        if ((flags & Nimiq.TransactionFlag.ContractCreation) > 0) {
             // TODO: Decode contract creation transactions
             // return ...
         }
