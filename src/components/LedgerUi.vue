@@ -207,7 +207,6 @@ class LedgerUi extends Vue {
         switch (request.type) {
             case RequestTypeNimiq.GET_WALLET_ID:
             case RequestTypeNimiq.GET_PUBLIC_KEY:
-            // TODO instructions for u2f/WebAuthn confirmation on Ledger for fetching BTC public keys / addresses.
             case RequestTypeBitcoin.GET_WALLET_ID:
                 // no instructions needed as not interactive
                 this._showInstructions(null);
@@ -238,6 +237,13 @@ class LedgerUi extends Vue {
             case RequestTypeBitcoin.SIGN_TRANSACTION:
                 this._showInstructions(
                     this.$t('Confirm Transaction') as string,
+                    this.$t('Confirm using your Ledger') as string,
+                );
+                break;
+            case RequestTypeNimiq.SIGN_MESSAGE:
+            case RequestTypeBitcoin.SIGN_MESSAGE:
+                this._showInstructions(
+                    this.$t('Confirm Message') as string,
                     this.$t('Confirm using your Ledger') as string,
                 );
                 break;

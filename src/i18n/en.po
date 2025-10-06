@@ -361,6 +361,10 @@ msgstr ""
 msgid "Confirm Cashlink"
 msgstr ""
 
+#: src/components/LedgerUi.vue:246
+msgid "Confirm Message"
+msgstr ""
+
 #: src/views/SetupSwapLedger.vue:5
 msgid "Confirm Swap"
 msgstr ""
