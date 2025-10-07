@@ -1,12 +1,12 @@
 <template>
     <div class="container">
-        <SmallPage id="sign-message">
+        <SmallPage>
             <PageHeader>
                 {{ $t('Sign Message') }}
             </PageHeader>
 
             <PageBody>
-                <textarea id="message" readonly="readonly" :value="request.message"></textarea>
+                <textarea class="message" readonly="readonly" :value="request.message"></textarea>
 
                 <div v-if="signerInfo" class="account">
                     <div class="identicon" id="signer-identicon">
@@ -103,7 +103,7 @@ export default class SignMessageLedger extends Vue {
 </script>
 
 <style scoped>
-.small-page#sign-message .page-body {
+.page-body {
     display: flex;
     flex-direction: column;
     padding-left: 1rem;
@@ -115,7 +115,7 @@ export default class SignMessageLedger extends Vue {
     display: flex;
     flex-direction: row;
     align-items: center;
-    padding: 3rem 2rem;
+    padding: 2.75rem 2rem 2.5rem;
 }
 
 .account .identicon {
@@ -147,7 +147,7 @@ export default class SignMessageLedger extends Vue {
     margin-left: 2rem;
 }
 
-#message {
+.message {
     font-size: 1.75rem;
     line-height: 1.2;
     color: rgba(31, 35, 72, .7);
@@ -167,5 +167,6 @@ export default class SignMessageLedger extends Vue {
 
 .bottom-container {
     height: 23rem;
+    margin: -.75rem -1rem 0;
 }
 </style>
