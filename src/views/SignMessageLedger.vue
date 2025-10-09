@@ -64,6 +64,7 @@ export default class SignMessageLedger extends Vue {
 
     private state: string = SignMessageLedger.State.OVERVIEW;
     private signerInfo: AccountInfo | null = null;
+    private isDestroyed: boolean = false;
 
     private async created() {
         let walletInfo: WalletInfo | undefined;
@@ -111,8 +112,13 @@ export default class SignMessageLedger extends Vue {
             await new Promise((resolve) => setTimeout(resolve, StatusScreen.SUCCESS_REDIRECT_DELAY));
             this.$rpc.resolve(result);
         } catch (e) {
+            if (this.isDestroyed) return;
             this.$rpc.reject(e);
         }
+    }
+
+    private destroyed() {
+        this.isDestroyed = true;
     }
 }
 </script>
