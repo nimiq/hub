@@ -17,14 +17,20 @@
                         <span class="label-right">{{ $t('Signer') }}</span>
                     </div>
                 </div>
-
-                <div class="bottom-container">
-                    <LedgerUi small></LedgerUi>
-                </div>
             </PageBody>
+
+            <div class="bottom-container" :class="{ 'full-height': state !== constructor.State.OVERVIEW }">
+                <LedgerUi small></LedgerUi>
+                <transition name="transition-fade">
+                    <StatusScreen v-if="state !== constructor.State.OVERVIEW"
+                        state="success"
+                        :title="$t('Your message is signed.')"
+                    />
+                </transition>
+            </div>
         </SmallPage>
 
-        <GlobalClose />
+        <GlobalClose :hidden="state !== constructor.State.OVERVIEW" />
     </div>
 </template>
 
@@ -32,24 +38,31 @@
 import Config from 'config';
 import { Component, Vue } from 'vue-property-decorator';
 import { Getter } from 'vuex-class';
-import { SmallPage, PageBody, PageHeader, Identicon } from '@nimiq/vue-components';
-import GlobalClose from '../components/GlobalClose.vue';
+import LedgerApi from '@nimiq/ledger-api';
+import { SmallPage, PageHeader, PageBody, Identicon } from '@nimiq/vue-components';
 import LedgerUi from '../components/LedgerUi.vue';
+import StatusScreen from '../components/StatusScreen.vue';
+import GlobalClose from '../components/GlobalClose.vue';
 import { RequestType } from '../../client/PublicRequestTypes';
 import { ParsedSignMessageRequest } from '../lib/RequestTypes';
 import { Static } from '../lib/StaticStore';
 import { WalletInfo } from '../lib/WalletInfo';
 import { AccountInfo } from '../lib/AccountInfo';
-import LedgerApi from '@nimiq/ledger-api';
 
-@Component({ components: { SmallPage, GlobalClose, LedgerUi, PageBody, PageHeader, Identicon } })
+@Component({ components: { SmallPage, PageHeader, PageBody, Identicon, LedgerUi, StatusScreen, GlobalClose } })
 export default class SignMessageLedger extends Vue {
+    private static readonly State = {
+        OVERVIEW: 'overview',
+        FINISHED: 'finished',
+    };
+
     @Static protected request!: ParsedSignMessageRequest;
 
     @Getter private findWalletByAddress!: (address: string, includeContracts: boolean) => WalletInfo | undefined;
     @Getter private activeWallet: WalletInfo | undefined;
     @Getter private activeAccount: AccountInfo | undefined;
 
+    private state: string = SignMessageLedger.State.OVERVIEW;
     private signerInfo: AccountInfo | null = null;
 
     private async created() {
@@ -94,6 +107,8 @@ export default class SignMessageLedger extends Vue {
                 signature: signature.serialize(),
             };
 
+            this.state = SignMessageLedger.State.FINISHED;
+            await new Promise((resolve) => setTimeout(resolve, StatusScreen.SUCCESS_REDIRECT_DELAY));
             this.$rpc.resolve(result);
         } catch (e) {
             this.$rpc.reject(e);
@@ -103,19 +118,37 @@ export default class SignMessageLedger extends Vue {
 </script>
 
 <style scoped>
+.small-page {
+    position: relative;
+    padding-bottom: 23rem; /* bottom padding for bottom-container */
+}
+
 .page-body {
     display: flex;
     flex-direction: column;
-    padding-left: 1rem;
-    padding-right: 1rem;
-    padding-bottom: 0;
+    padding: 0 1rem 0;
+}
+
+.message {
+    width: 100%;
+    padding: 1.5rem;
+    flex-grow: 1;
+    font-size: 1.75rem;
+    line-height: 1.2;
+    font-family: 'Fira Mono', monospace;
+    color: rgba(31, 35, 72, .7); /* Based on Nimiq Blue */
+    background-color: rgba(31, 35, 72, .05); /* Based on Nimiq Blue */
+    border: solid 1px rgba(31, 35, 72, .1); /* Based on Nimiq Blue */
+    border-radius: 0.5rem;
+    outline: none;
+    resize: none;
 }
 
 .account {
     display: flex;
     flex-direction: row;
     align-items: center;
-    padding: 2.75rem 2rem 2.5rem;
+    padding: 2.75rem 2rem 1.75rem;
 }
 
 .account .identicon {
@@ -131,8 +164,7 @@ export default class SignMessageLedger extends Vue {
     justify-content: space-between;
     flex-grow: 1;
     font-size: 2rem;
-    max-width: calc(100% - 5.625rem - 2rem);
-    /* .identicon width and margin-right */
+    max-width: calc(100% - 5.625rem - 2rem); /* .identicon width and margin-right */
 }
 
 .account .label {
@@ -147,26 +179,24 @@ export default class SignMessageLedger extends Vue {
     margin-left: 2rem;
 }
 
-.message {
-    font-size: 1.75rem;
-    line-height: 1.2;
-    color: rgba(31, 35, 72, .7);
-    /* Based on Nimiq Blue */
-    background-color: rgba(31, 35, 72, .05);
-    /* Based on Nimiq Blue */
-    border: solid 1px rgba(31, 35, 72, .1);
-    /* Based on Nimiq Blue */
-    border-radius: 0.5rem;
-    outline: none;
+.bottom-container {
+    position: absolute;
     width: 100%;
-    padding: 1.5rem;
-    flex-grow: 1;
-    resize: none;
-    font-family: 'Fira Mono', monospace;
+    height: 23rem;
+    bottom: 0;
+    transition: height .4s;
 }
 
-.bottom-container {
-    height: 23rem;
-    margin: -.75rem -1rem 0;
+.bottom-container.full-height {
+    height: 100%;
+}
+
+.bottom-container > * {
+    position: absolute;
+    top: 0;
+}
+
+.status-screen {
+    transition: opacity .4s;
 }
 </style>
