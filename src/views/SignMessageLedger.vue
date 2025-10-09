@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <SmallPage>
-            <PageHeader>
+            <PageHeader :backArrow="_showBackButton" @back="_back">
                 {{ $t('Sign Message') }}
             </PageHeader>
 
@@ -38,7 +38,11 @@
 import Config from 'config';
 import { Component, Vue } from 'vue-property-decorator';
 import { Getter } from 'vuex-class';
-import LedgerApi from '@nimiq/ledger-api';
+import LedgerApi, {
+    EventType as LedgerApiEventType,
+    StateType as LedgerApiStateType,
+    State as LedgerApiState,
+} from '@nimiq/ledger-api';
 import { SmallPage, PageHeader, PageBody, Identicon } from '@nimiq/vue-components';
 import LedgerUi from '../components/LedgerUi.vue';
 import StatusScreen from '../components/StatusScreen.vue';
@@ -94,6 +98,22 @@ export default class SignMessageLedger extends Vue {
         this.signerInfo = accountInfo;
 
         try {
+            // If the Ledger is already busy with a previous request, cancel that previous request.
+            if (LedgerApi.currentRequest) {
+                this._cancelLedgerRequest();
+                await new Promise((resolve) => {
+                    const checkState = (state: LedgerApiState) => {
+                        if (state.type === LedgerApiStateType.REQUEST_PROCESSING
+                            || state.type === LedgerApiStateType.REQUEST_CANCELLING) return;
+                        LedgerApi.off(LedgerApiEventType.STATE_CHANGE, checkState);
+                        resolve();
+                    };
+                    LedgerApi.on(LedgerApiEventType.STATE_CHANGE, checkState);
+                    checkState(LedgerApi.currentState);
+                });
+            }
+
+            if (this.isDestroyed) return;
             const { signer, signature } = await LedgerApi.Nimiq.signMessage(
                 this.request.message,
                 accountInfo.path,
@@ -119,6 +139,20 @@ export default class SignMessageLedger extends Vue {
 
     private destroyed() {
         this.isDestroyed = true;
+        this._cancelLedgerRequest();
+    }
+
+    private get _showBackButton() {
+        // Show a back button if the signer was chosen by the user and not by the request.
+        return !this.request.signer;
+    }
+
+    private _back() {
+        window.history.back();
+    }
+
+    private _cancelLedgerRequest() {
+        LedgerApi.disconnect(/* cancelRequest */ true);
     }
 }
 </script>
