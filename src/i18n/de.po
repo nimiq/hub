@@ -1,4 +1,4 @@
-#
+# 
 # Translators:
 # Johannes Demuth <johannes.demuth@outlook.com>, 2020
 # Irfan Maranki, 2020
@@ -6,12 +6,12 @@
 # Redexe <timo.niehoff@yahoo.de>, 2021
 # Huriye <huriyegoek@gmx.de>, 2021
 # Michael <jiggaaa20@gmail.com>, 2023
-# Daniel, 2024
 # Sören Schwert <hello@soerenschwert.de>, 2024
-#
+# Daniel, 2025
+# 
 msgid ""
 msgstr ""
-"Last-Translator: Sören Schwert <hello@soerenschwert.de>, 2024\n"
+"Last-Translator: Daniel, 2025\n"
 "Language-Team: German (https://app.transifex.com/nimiq-foundation/teams/110181/de/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: de\n"
@@ -52,7 +52,7 @@ msgstr "503 Service nicht verfügbar - bitte versuche es später nochmal"
 #: src/views/OnboardingSelector.vue:152
 msgid "A 100% free and self-custodial web wallet for NIM, BTC and USDC."
 msgstr ""
-"Eine 100% konstenlose Web-Wallet für NIM, BTC und USDC, bei der allein du "
+"Eine 100% kostenlose Web-Wallet für NIM, BTC und USDC, bei der allein du "
 "Zugriff auf deine Coins hast."
 
 #: src/views/ExportSuccess.vue:60
@@ -345,7 +345,7 @@ msgstr "Löse deinen Cashlink ein"
 msgid "Claiming Cashlink"
 msgstr "Cashlink wird eingelöst"
 
-#: src/components/LedgerUi.vue:305
+#: src/components/LedgerUi.vue:311
 msgid "Click Connect"
 msgstr "Klicke auf Verbinden"
 
@@ -365,7 +365,7 @@ msgstr "Zahlungsdetails werden ermittelt"
 msgid "Confirm {outgoingOrIncoming} transaction on Ledger"
 msgstr "Bestätige {outgoingOrIncoming} Transaktion auf dem Ledger"
 
-#: src/components/LedgerUi.vue:219
+#: src/components/LedgerUi.vue:218
 msgid "Confirm Address"
 msgstr "Adresse bestätigen"
 
@@ -373,26 +373,30 @@ msgstr "Adresse bestätigen"
 msgid "Confirm Cashlink"
 msgstr "Cashlink bestätigen"
 
+#: src/components/LedgerUi.vue:246
+msgid "Confirm Message"
+msgstr "Nachricht bestätigen"
+
 #: src/views/SetupSwapLedger.vue:5
 msgid "Confirm Swap"
 msgstr "Tausch bestätigen"
 
-#: src/components/LedgerUi.vue:222
+#: src/components/LedgerUi.vue:221
 msgid "Confirm that the address on your Ledger matches {addressToConfirm}"
 msgstr ""
 "Bestätige, dass die Adresse auf deinem Ledger übereinstimmt mit "
 "{addressToConfirm}"
 
-#: src/components/LedgerUi.vue:221
+#: src/components/LedgerUi.vue:220
 msgid "Confirm the address on your Ledger"
 msgstr "Überprüfe die Adresse auf deinem Ledger"
 
-#: src/components/LedgerUi.vue:240 src/views/SignBtcTransactionLedger.vue:4
+#: src/components/LedgerUi.vue:239 src/views/SignBtcTransactionLedger.vue:4
 #: src/views/SignTransactionLedger.vue:35
 msgid "Confirm Transaction"
 msgstr "Transaktion bestätigen"
 
-#: src/components/LedgerUi.vue:241
+#: src/components/LedgerUi.vue:240 src/components/LedgerUi.vue:247
 msgid "Confirm using your Ledger"
 msgstr "Bestätige mittels deines Ledgers"
 
@@ -412,11 +416,11 @@ msgstr "Glückwunsch! Du hast eine Nimiq Geschenkkarte erhalten. "
 msgid "Connect"
 msgstr "Verbinden"
 
-#: src/components/LedgerUi.vue:313 src/components/OnboardingMenu.vue:5
+#: src/components/LedgerUi.vue:319 src/components/OnboardingMenu.vue:5
 msgid "Connect Ledger"
 msgstr "Ledger verbinden"
 
-#: src/components/LedgerUi.vue:300
+#: src/components/LedgerUi.vue:306
 msgid "Connect your Ledger Device"
 msgstr "Dein Ledger-Gerät verbinden"
 
@@ -530,7 +534,7 @@ msgstr "Manuell eingeben"
 msgid "Enter the address of a vesting contract."
 msgstr "Gib die Adresse eines Vesting-Vertrages ein."
 
-#: src/components/LedgerUi.vue:301
+#: src/components/LedgerUi.vue:307
 msgid "Enter your PIN"
 msgstr "Gib deine PIN ein"
 
@@ -574,7 +578,7 @@ msgstr "Laden der Tausch-Daten fehlgeschlagen: {error}"
 msgid "Fetching swap data..."
 msgstr "Lade Tausch-Daten..."
 
-#: src/components/LedgerUi.vue:235 src/views/ActivateBitcoinSuccess.vue:104
+#: src/components/LedgerUi.vue:234 src/views/ActivateBitcoinSuccess.vue:104
 #: src/views/ActivatePolygonSuccess.vue:111
 #: src/views/ActivatePolygonSuccess.vue:115
 #: src/views/BitcoinSyncBaseView.vue:48 src/views/LoginSuccess.vue:44
@@ -685,7 +689,7 @@ msgstr ""
 "24-Worte-Sicherung zurück, welche du erstellt hast, als du dein Ledger Gerät"
 " eingerichtet hast. "
 
-#: src/components/LedgerUi.vue:270
+#: src/components/LedgerUi.vue:276
 msgid "Ledger not supported by browser."
 msgstr "Ledger wird von deinem Browser nicht unterstützt."
 
@@ -805,7 +809,7 @@ msgstr "Ok"
 msgid "One account can now have multiple addresses."
 msgstr "Ein Konto kann jetzt mehrere Adressen haben."
 
-#: src/components/LedgerUi.vue:303
+#: src/components/LedgerUi.vue:309
 msgid "Open the {app} App"
 msgstr "Öffne die {app}-App"
 
@@ -862,7 +866,7 @@ msgstr "Pinkes Konto"
 msgid "Pink Address"
 msgstr "Pinke Adresse"
 
-#: src/components/LedgerUi.vue:253
+#: src/components/LedgerUi.vue:259
 msgid "Please cancel the previous request on your Ledger."
 msgstr "Bitte breche die vorherige Anfrage auf deinem Ledger ab."
 
@@ -937,11 +941,11 @@ msgstr "Neu laden"
 msgid "Rename Account"
 msgstr "Konto umbennen"
 
-#: src/components/LedgerUi.vue:287
+#: src/components/LedgerUi.vue:293
 msgid "Request failed"
 msgstr "Anfrage fehlgeschlagen"
 
-#: src/components/LedgerUi.vue:288
+#: src/components/LedgerUi.vue:294
 msgid "Request failed: "
 msgstr "Anfrage fehlgeschlagen:"
 
@@ -992,8 +996,7 @@ msgstr "Gebühr festlegen"
 msgid "Share"
 msgstr "Teilen"
 
-#: src/views/SignMessage.vue:5
-#: src/views/SignMessageLedger.vue:5
+#: src/views/SignMessage.vue:5 src/views/SignMessageLedger.vue:5
 msgid "Sign Message"
 msgstr "Nachricht signieren"
 
@@ -1112,7 +1115,7 @@ msgstr "Türkises Konto"
 msgid "Teal Address"
 msgstr "Türkise Adresse"
 
-#: src/components/LedgerUi.vue:282
+#: src/components/LedgerUi.vue:288
 msgid "The connected wallet or Ledger is not the one this account belongs to."
 msgstr "Das Konto gehört nicht zum verbundenen Ledger oder Wallet."
 
@@ -1350,7 +1353,7 @@ msgstr ""
 msgid "You're logged in!"
 msgstr "Du bist eingeloggt!"
 
-#: src/components/LedgerUi.vue:274
+#: src/components/LedgerUi.vue:280
 msgid ""
 "Your {app} app is outdated. Please update your Ledger firmware and {app} app"
 " using Ledger Live."
@@ -1382,7 +1385,7 @@ msgstr ""
 "Bitte melde dich mit\n"
 "deinem Ledger erneut an."
 
-#: src/views/SignMessageSuccess.vue:4
+#: src/views/SignMessageLedger.vue:27 src/views/SignMessageSuccess.vue:4
 msgid "Your message is signed."
 msgstr "Deine Nachricht wurde signiert."
 

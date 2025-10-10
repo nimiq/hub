@@ -1,12 +1,12 @@
-#
+# 
 # Translators:
 # Ricardo Barquero Carranza <richy@nimiq.com>, 2023
-# Daniel, 2024
 # Sören Schwert <hello@soerenschwert.de>, 2024
-#
+# Daniel, 2025
+# 
 msgid ""
 msgstr ""
-"Last-Translator: Sören Schwert <hello@soerenschwert.de>, 2024\n"
+"Last-Translator: Daniel, 2025\n"
 "Language-Team: Spanish (https://app.transifex.com/nimiq-foundation/teams/110181/es/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: es\n"
@@ -340,7 +340,7 @@ msgstr "Reclame su Dinero"
 msgid "Claiming Cashlink"
 msgstr "Reclamando Cashlink"
 
-#: src/components/LedgerUi.vue:305
+#: src/components/LedgerUi.vue:311
 msgid "Click Connect"
 msgstr "Haga Click para Conectar"
 
@@ -360,32 +360,36 @@ msgstr "Recolectando detalles de pago"
 msgid "Confirm {outgoingOrIncoming} transaction on Ledger"
 msgstr "Confirmar {outgoingOrIncoming} transacción en su Ledger"
 
-#: src/components/LedgerUi.vue:219
+#: src/components/LedgerUi.vue:218
 msgid "Confirm Address"
-msgstr "Confirmando Dirección"
+msgstr "Confirme la Dirección"
 
 #: src/views/SignTransactionLedger.vue:34
 msgid "Confirm Cashlink"
-msgstr "Confirmando Cashlink"
+msgstr "Confirme el Cashlink"
+
+#: src/components/LedgerUi.vue:246
+msgid "Confirm Message"
+msgstr "Confirme el Mensaje"
 
 #: src/views/SetupSwapLedger.vue:5
 msgid "Confirm Swap"
 msgstr "Confirme el Intercambio"
 
-#: src/components/LedgerUi.vue:222
+#: src/components/LedgerUi.vue:221
 msgid "Confirm that the address on your Ledger matches {addressToConfirm}"
 msgstr "Confirme que la dirección en su Ledger coincide {addressToConfirm}"
 
-#: src/components/LedgerUi.vue:221
+#: src/components/LedgerUi.vue:220
 msgid "Confirm the address on your Ledger"
 msgstr "Confirme la dirección en su Ledger"
 
-#: src/components/LedgerUi.vue:240 src/views/SignBtcTransactionLedger.vue:4
+#: src/components/LedgerUi.vue:239 src/views/SignBtcTransactionLedger.vue:4
 #: src/views/SignTransactionLedger.vue:35
 msgid "Confirm Transaction"
 msgstr "Confirme su Transacción"
 
-#: src/components/LedgerUi.vue:241
+#: src/components/LedgerUi.vue:240 src/components/LedgerUi.vue:247
 msgid "Confirm using your Ledger"
 msgstr "Confirme usando su Ledger"
 
@@ -405,11 +409,11 @@ msgstr "Felicidades, ha recibido una Tarjeta de Regalo Nimiq."
 msgid "Connect"
 msgstr "Conectar"
 
-#: src/components/LedgerUi.vue:313 src/components/OnboardingMenu.vue:5
+#: src/components/LedgerUi.vue:319 src/components/OnboardingMenu.vue:5
 msgid "Connect Ledger"
 msgstr "Conectar Ledger"
 
-#: src/components/LedgerUi.vue:300
+#: src/components/LedgerUi.vue:306
 msgid "Connect your Ledger Device"
 msgstr "Conecte su Dispositivo Ledger"
 
@@ -522,7 +526,7 @@ msgstr "Ingrese manualmente"
 msgid "Enter the address of a vesting contract."
 msgstr "Ingrese la dirección del contrato vesting"
 
-#: src/components/LedgerUi.vue:301
+#: src/components/LedgerUi.vue:307
 msgid "Enter your PIN"
 msgstr "Ingrese su PIN"
 
@@ -566,7 +570,7 @@ msgstr "Obtención de datos de intercambio fallida: {error}"
 msgid "Fetching swap data..."
 msgstr "Obteniendo datos del intercambio..."
 
-#: src/components/LedgerUi.vue:235 src/views/ActivateBitcoinSuccess.vue:104
+#: src/components/LedgerUi.vue:234 src/views/ActivateBitcoinSuccess.vue:104
 #: src/views/ActivatePolygonSuccess.vue:111
 #: src/views/ActivatePolygonSuccess.vue:115
 #: src/views/BitcoinSyncBaseView.vue:48 src/views/LoginSuccess.vue:44
@@ -677,7 +681,7 @@ msgstr ""
 "Las Cuentas Ledger no pueden ser exportodas. Por favor refiérase a las 24 "
 "palabras de respaldo que creó cuando configuró su dispositivo."
 
-#: src/components/LedgerUi.vue:270
+#: src/components/LedgerUi.vue:276
 msgid "Ledger not supported by browser."
 msgstr "El navegador no soporta el uso de Ledger."
 
@@ -795,7 +799,7 @@ msgstr "Ok"
 msgid "One account can now have multiple addresses."
 msgstr "Una cuenta puede tener ahora multiples direcciones."
 
-#: src/components/LedgerUi.vue:303
+#: src/components/LedgerUi.vue:309
 msgid "Open the {app} App"
 msgstr "Abra la {app} App"
 
@@ -852,7 +856,7 @@ msgstr "Cuenta Rosa"
 msgid "Pink Address"
 msgstr "Dirección Rosa "
 
-#: src/components/LedgerUi.vue:253
+#: src/components/LedgerUi.vue:259
 msgid "Please cancel the previous request on your Ledger."
 msgstr "Por favor cancele la petición anterior en su Ledger."
 
@@ -927,11 +931,11 @@ msgstr "Recargar"
 msgid "Rename Account"
 msgstr "Renombrar Cuenta"
 
-#: src/components/LedgerUi.vue:287
+#: src/components/LedgerUi.vue:293
 msgid "Request failed"
 msgstr "Petición fallida"
 
-#: src/components/LedgerUi.vue:288
+#: src/components/LedgerUi.vue:294
 msgid "Request failed: "
 msgstr "Petición fallida:"
 
@@ -982,8 +986,7 @@ msgstr "Insertar cuota"
 msgid "Share"
 msgstr "Compartir"
 
-#: src/views/SignMessage.vue:5
-#: src/views/SignMessageLedger.vue:5
+#: src/views/SignMessage.vue:5 src/views/SignMessageLedger.vue:5
 msgid "Sign Message"
 msgstr "Firmar Mensaje"
 
@@ -1100,7 +1103,7 @@ msgstr "Cuenta Verde Azulado"
 msgid "Teal Address"
 msgstr "Dirección Verde Azulado"
 
-#: src/components/LedgerUi.vue:282
+#: src/components/LedgerUi.vue:288
 msgid "The connected wallet or Ledger is not the one this account belongs to."
 msgstr ""
 "La billetera conectada o la Ledger no es la misma a la cual pertenece esta "
@@ -1341,7 +1344,7 @@ msgstr ""
 msgid "You're logged in!"
 msgstr "¡Ha iniciado sesión!"
 
-#: src/components/LedgerUi.vue:274
+#: src/components/LedgerUi.vue:280
 msgid ""
 "Your {app} app is outdated. Please update your Ledger firmware and {app} app"
 " using Ledger Live."
@@ -1373,7 +1376,7 @@ msgstr ""
 "Se Requiere su Ledger\n"
 "para iniciar sesión de nuevo."
 
-#: src/views/SignMessageSuccess.vue:4
+#: src/views/SignMessageLedger.vue:27 src/views/SignMessageSuccess.vue:4
 msgid "Your message is signed."
 msgstr "Su mensaje fue firmado."
 

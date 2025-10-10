@@ -1,13 +1,13 @@
-#
+# 
 # Translators:
-# Daniel, 2021
 # Petro M <petro.matsyburka@outlook.com>, 2021
 # Oleksandr Turchyn <oleksandr.turchyn@outlook.com>, 2024
 # Sören Schwert <hello@soerenschwert.de>, 2024
-#
+# Daniel, 2025
+# 
 msgid ""
 msgstr ""
-"Last-Translator: Sören Schwert <hello@soerenschwert.de>, 2024\n"
+"Last-Translator: Daniel, 2025\n"
 "Language-Team: Ukrainian (https://app.transifex.com/nimiq-foundation/teams/110181/uk/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: uk\n"
@@ -339,7 +339,7 @@ msgstr "Забрати кошти"
 msgid "Claiming Cashlink"
 msgstr "Чек застосовується"
 
-#: src/components/LedgerUi.vue:305
+#: src/components/LedgerUi.vue:311
 msgid "Click Connect"
 msgstr "Натисніть Підключитися"
 
@@ -359,7 +359,7 @@ msgstr "Збір платіжних реквізитів"
 msgid "Confirm {outgoingOrIncoming} transaction on Ledger"
 msgstr "Підтвердьте {outgoingOrIncoming} транзакцію на Ledger"
 
-#: src/components/LedgerUi.vue:219
+#: src/components/LedgerUi.vue:218
 msgid "Confirm Address"
 msgstr "Підтвердьте адрес"
 
@@ -367,24 +367,28 @@ msgstr "Підтвердьте адрес"
 msgid "Confirm Cashlink"
 msgstr "Підтвердьте чек"
 
+#: src/components/LedgerUi.vue:246
+msgid "Confirm Message"
+msgstr ""
+
 #: src/views/SetupSwapLedger.vue:5
 msgid "Confirm Swap"
 msgstr "Підтвердьте обмін"
 
-#: src/components/LedgerUi.vue:222
+#: src/components/LedgerUi.vue:221
 msgid "Confirm that the address on your Ledger matches {addressToConfirm}"
 msgstr "Переконайтеся, що адреса у Ledger відповідає {addressToConfirm}"
 
-#: src/components/LedgerUi.vue:221
+#: src/components/LedgerUi.vue:220
 msgid "Confirm the address on your Ledger"
 msgstr "Підтвердьте адресу у Ledger"
 
-#: src/components/LedgerUi.vue:240 src/views/SignBtcTransactionLedger.vue:4
+#: src/components/LedgerUi.vue:239 src/views/SignBtcTransactionLedger.vue:4
 #: src/views/SignTransactionLedger.vue:35
 msgid "Confirm Transaction"
 msgstr "Підтвердьте переказ"
 
-#: src/components/LedgerUi.vue:241
+#: src/components/LedgerUi.vue:240 src/components/LedgerUi.vue:247
 msgid "Confirm using your Ledger"
 msgstr "Підтвердьте використовуючи Ledger"
 
@@ -404,11 +408,11 @@ msgstr "Вітаємо! Ви отримали подарункову картк�
 msgid "Connect"
 msgstr "Підключити"
 
-#: src/components/LedgerUi.vue:313 src/components/OnboardingMenu.vue:5
+#: src/components/LedgerUi.vue:319 src/components/OnboardingMenu.vue:5
 msgid "Connect Ledger"
 msgstr "Підключити Ledger"
 
-#: src/components/LedgerUi.vue:300
+#: src/components/LedgerUi.vue:306
 msgid "Connect your Ledger Device"
 msgstr "Підключіть ваш Ledger пристрій"
 
@@ -521,7 +525,7 @@ msgstr "Ввести вручну"
 msgid "Enter the address of a vesting contract."
 msgstr "Введіть адресу розподільного контракту."
 
-#: src/components/LedgerUi.vue:301
+#: src/components/LedgerUi.vue:307
 msgid "Enter your PIN"
 msgstr "Введіть ваш PIN-код"
 
@@ -565,7 +569,7 @@ msgstr "Не вдалося отримати дані обміну: {error}"
 msgid "Fetching swap data..."
 msgstr "Отримання даних обміну..."
 
-#: src/components/LedgerUi.vue:235 src/views/ActivateBitcoinSuccess.vue:104
+#: src/components/LedgerUi.vue:234 src/views/ActivateBitcoinSuccess.vue:104
 #: src/views/ActivatePolygonSuccess.vue:111
 #: src/views/ActivatePolygonSuccess.vue:115
 #: src/views/BitcoinSyncBaseView.vue:48 src/views/LoginSuccess.vue:44
@@ -675,7 +679,7 @@ msgstr ""
 "Ledger рахунки не можуть бути завантажені. Будь ласка укажіть 24-ри секретні"
 " слова, які ви вказали під час створення рахунку."
 
-#: src/components/LedgerUi.vue:270
+#: src/components/LedgerUi.vue:276
 msgid "Ledger not supported by browser."
 msgstr "Ledger не підтримується на цьому веб-оглядачі."
 
@@ -790,7 +794,7 @@ msgstr "Гаразд"
 msgid "One account can now have multiple addresses."
 msgstr "Тепер один рахунок може мати декілька адрес."
 
-#: src/components/LedgerUi.vue:303
+#: src/components/LedgerUi.vue:309
 msgid "Open the {app} App"
 msgstr "Відкрити {app} додаток"
 
@@ -847,7 +851,7 @@ msgstr "Рожевий рахунок"
 msgid "Pink Address"
 msgstr "Рожева адреса"
 
-#: src/components/LedgerUi.vue:253
+#: src/components/LedgerUi.vue:259
 msgid "Please cancel the previous request on your Ledger."
 msgstr "Будь ласка, скасуйте попередній запит у Ledger."
 
@@ -921,11 +925,11 @@ msgstr "Перезавантажити"
 msgid "Rename Account"
 msgstr "Перейменувати рахунок"
 
-#: src/components/LedgerUi.vue:287
+#: src/components/LedgerUi.vue:293
 msgid "Request failed"
 msgstr "Помилка запиту"
 
-#: src/components/LedgerUi.vue:288
+#: src/components/LedgerUi.vue:294
 msgid "Request failed: "
 msgstr "Помилка запиту:"
 
@@ -976,8 +980,7 @@ msgstr "Укажіть комісію"
 msgid "Share"
 msgstr "Поділитися"
 
-#: src/views/SignMessage.vue:5
-#: src/views/SignMessageLedger.vue:5
+#: src/views/SignMessage.vue:5 src/views/SignMessageLedger.vue:5
 msgid "Sign Message"
 msgstr "Підписати повідомлення"
 
@@ -1094,7 +1097,7 @@ msgstr "Бірюзовий рахунок"
 msgid "Teal Address"
 msgstr "Бірюзова адреса"
 
-#: src/components/LedgerUi.vue:282
+#: src/components/LedgerUi.vue:288
 msgid "The connected wallet or Ledger is not the one this account belongs to."
 msgstr "Підключений гаманець чи Ledger не належить даному рахунку."
 
@@ -1331,7 +1334,7 @@ msgstr ""
 msgid "You're logged in!"
 msgstr "Ви увійшли!"
 
-#: src/components/LedgerUi.vue:274
+#: src/components/LedgerUi.vue:280
 msgid ""
 "Your {app} app is outdated. Please update your Ledger firmware and {app} app"
 " using Ledger Live."
@@ -1361,7 +1364,7 @@ msgstr ""
 "Щоб увійти знову потрібно\n"
 "використати Ledger."
 
-#: src/views/SignMessageSuccess.vue:4
+#: src/views/SignMessageLedger.vue:27 src/views/SignMessageSuccess.vue:4
 msgid "Your message is signed."
 msgstr "Ваше повідомлення підписано."
 

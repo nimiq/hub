@@ -1,8 +1,8 @@
-#
+# 
 # Translators:
 # Francis RV, 2023
 # Sören Schwert <hello@soerenschwert.de>, 2024
-#
+# 
 msgid ""
 msgstr ""
 "Last-Translator: Sören Schwert <hello@soerenschwert.de>, 2024\n"
@@ -339,7 +339,7 @@ msgstr "I-claim ang Cashlink"
 msgid "Claiming Cashlink"
 msgstr "Inaangkin ang Cashlink"
 
-#: src/components/LedgerUi.vue:305
+#: src/components/LedgerUi.vue:311
 msgid "Click Connect"
 msgstr "Pindutin ang Connect"
 
@@ -359,7 +359,7 @@ msgstr "Pagkolekta ng mga detalye sa pagbabayad"
 msgid "Confirm {outgoingOrIncoming} transaction on Ledger"
 msgstr "Kumpirmahin ang transaksyong {outgoingOrIncoming} sa Ledger"
 
-#: src/components/LedgerUi.vue:219
+#: src/components/LedgerUi.vue:218
 msgid "Confirm Address"
 msgstr ""
 "Kumpirmahin ang Address\n"
@@ -369,25 +369,29 @@ msgstr ""
 msgid "Confirm Cashlink"
 msgstr "Kumpirmahin ang Cashlink"
 
+#: src/components/LedgerUi.vue:246
+msgid "Confirm Message"
+msgstr ""
+
 #: src/views/SetupSwapLedger.vue:5
 msgid "Confirm Swap"
 msgstr "Kumpirmahin ang Pagpalit"
 
-#: src/components/LedgerUi.vue:222
+#: src/components/LedgerUi.vue:221
 msgid "Confirm that the address on your Ledger matches {addressToConfirm}"
 msgstr ""
 "Kumpirmahin na ang address sa iyong mga tugma sa Ledger {addressToConfirm}"
 
-#: src/components/LedgerUi.vue:221
+#: src/components/LedgerUi.vue:220
 msgid "Confirm the address on your Ledger"
 msgstr "Kumpirmahin ang adres sa iyong Ledger"
 
-#: src/components/LedgerUi.vue:240 src/views/SignBtcTransactionLedger.vue:4
+#: src/components/LedgerUi.vue:239 src/views/SignBtcTransactionLedger.vue:4
 #: src/views/SignTransactionLedger.vue:35
 msgid "Confirm Transaction"
 msgstr "Kumpirmahin ang Transaksyon"
 
-#: src/components/LedgerUi.vue:241
+#: src/components/LedgerUi.vue:240 src/components/LedgerUi.vue:247
 msgid "Confirm using your Ledger"
 msgstr "Kumpirmahing ginagamit ang iyong Ledger"
 
@@ -407,11 +411,11 @@ msgstr "Congrats, nakatanggap ka ng isang Nimiq Gift Card."
 msgid "Connect"
 msgstr "Kumonekta"
 
-#: src/components/LedgerUi.vue:313 src/components/OnboardingMenu.vue:5
+#: src/components/LedgerUi.vue:319 src/components/OnboardingMenu.vue:5
 msgid "Connect Ledger"
 msgstr "Ikonekta ang Ledger"
 
-#: src/components/LedgerUi.vue:300
+#: src/components/LedgerUi.vue:306
 msgid "Connect your Ledger Device"
 msgstr "Ikonekta ang iyong Ledger Device"
 
@@ -526,7 +530,7 @@ msgstr "Manu-manong ipasok"
 msgid "Enter the address of a vesting contract."
 msgstr "Ipasok ang address ng isang vesting contract."
 
-#: src/components/LedgerUi.vue:301
+#: src/components/LedgerUi.vue:307
 msgid "Enter your PIN"
 msgstr "Ipasok ang iyong PIN"
 
@@ -570,7 +574,7 @@ msgstr "Nabigo ang pagkuha ng data ng pagpapalit: {error}"
 msgid "Fetching swap data..."
 msgstr "Kinukuha ang data ng pagpapalit ..."
 
-#: src/components/LedgerUi.vue:235 src/views/ActivateBitcoinSuccess.vue:104
+#: src/components/LedgerUi.vue:234 src/views/ActivateBitcoinSuccess.vue:104
 #: src/views/ActivatePolygonSuccess.vue:111
 #: src/views/ActivatePolygonSuccess.vue:115
 #: src/views/BitcoinSyncBaseView.vue:48 src/views/LoginSuccess.vue:44
@@ -681,7 +685,7 @@ msgstr ""
 "Hindi mai-export ang mga Ledger account. Mangyaring mag-refer sa iyong 24 na"
 " salita backup na nilikha mo kapag nagse-set up ng iyong aparato."
 
-#: src/components/LedgerUi.vue:270
+#: src/components/LedgerUi.vue:276
 msgid "Ledger not supported by browser."
 msgstr "Hindi sinusuportahan ng browser ang Ledger."
 
@@ -802,7 +806,7 @@ msgstr "Ok"
 msgid "One account can now have multiple addresses."
 msgstr "Ang isang account ay maaari nang magkaroon ng maraming mga address."
 
-#: src/components/LedgerUi.vue:303
+#: src/components/LedgerUi.vue:309
 msgid "Open the {app} App"
 msgstr "Buksan ang {app} App"
 
@@ -859,7 +863,7 @@ msgstr "Rosas na Account"
 msgid "Pink Address"
 msgstr "Rosas na Adres"
 
-#: src/components/LedgerUi.vue:253
+#: src/components/LedgerUi.vue:259
 msgid "Please cancel the previous request on your Ledger."
 msgstr "Mangyaring kanselahin ang nakaraang kahilingan sa iyong Ledger."
 
@@ -933,11 +937,11 @@ msgstr "Reload"
 msgid "Rename Account"
 msgstr "Palitan ang pangalan ng Account"
 
-#: src/components/LedgerUi.vue:287
+#: src/components/LedgerUi.vue:293
 msgid "Request failed"
 msgstr "Nabigong kahilingan"
 
-#: src/components/LedgerUi.vue:288
+#: src/components/LedgerUi.vue:294
 msgid "Request failed: "
 msgstr "Nabigong kahilingan:"
 
@@ -988,8 +992,7 @@ msgstr "Itakda ang bayad"
 msgid "Share"
 msgstr "Magbahagi"
 
-#: src/views/SignMessage.vue:5
-#: src/views/SignMessageLedger.vue:5
+#: src/views/SignMessage.vue:5 src/views/SignMessageLedger.vue:5
 msgid "Sign Message"
 msgstr "Mensahe sa Pag-sign"
 
@@ -1106,7 +1109,7 @@ msgstr "Teal na Account"
 msgid "Teal Address"
 msgstr "Teal na Adres"
 
-#: src/components/LedgerUi.vue:282
+#: src/components/LedgerUi.vue:288
 msgid "The connected wallet or Ledger is not the one this account belongs to."
 msgstr ""
 "Ang nakakonektang wallet o Ledger ay hindi ang pagmamay-ari ng account na "
@@ -1348,7 +1351,7 @@ msgstr ""
 msgid "You're logged in!"
 msgstr "Naka-log in ka na!"
 
-#: src/components/LedgerUi.vue:274
+#: src/components/LedgerUi.vue:280
 msgid ""
 "Your {app} app is outdated. Please update your Ledger firmware and {app} app"
 " using Ledger Live."
@@ -1380,7 +1383,7 @@ msgstr ""
 "Ang iyong Ledger ay\n"
 "kinakailangan upang mag-log in muli."
 
-#: src/views/SignMessageSuccess.vue:4
+#: src/views/SignMessageLedger.vue:27 src/views/SignMessageSuccess.vue:4
 msgid "Your message is signed."
 msgstr "Ang iyong mensahe ay naka-sign."
 
