@@ -1,10 +1,10 @@
-# 
+#
 # Translators:
 # Daniel, 2020
 # Sven <sven@nimiq.com>, 2022
 # Sam, 2023
 # Sören Schwert <hello@soerenschwert.de>, 2024
-# 
+#
 msgid ""
 msgstr ""
 "Last-Translator: Sören Schwert <hello@soerenschwert.de>, 2024\n"
@@ -967,8 +967,13 @@ msgid "Share"
 msgstr "分享"
 
 #: src/views/SignMessage.vue:5
+#: src/views/SignMessageLedger.vue:5
 msgid "Sign Message"
 msgstr "签名信息"
+
+#: src/views/SignMessageLedger.vue:17
+msgid "Signer"
+msgstr "签署者"
 
 #: src/views/SetupSwapSuccess.vue:651
 msgid "Signing transactions..."

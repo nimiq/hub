@@ -361,6 +361,10 @@ msgstr ""
 msgid "Confirm Cashlink"
 msgstr ""
 
+#: src/components/LedgerUi.vue:246
+msgid "Confirm Message"
+msgstr ""
+
 #: src/views/SetupSwapLedger.vue:5
 msgid "Confirm Swap"
 msgstr ""
@@ -973,7 +977,12 @@ msgid "Share"
 msgstr ""
 
 #: src/views/SignMessage.vue:5
+#: src/views/SignMessageLedger.vue:5
 msgid "Sign Message"
+msgstr ""
+
+#: src/views/SignMessageLedger.vue:17
+msgid "Signer"
 msgstr ""
 
 #: src/views/SetupSwapSuccess.vue:651

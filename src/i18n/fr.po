@@ -1,11 +1,11 @@
-# 
+#
 # Translators:
 # Talleyrand, 2020
 # Daniel, 2020
 # Matheo <matheo@nimiq.com>, 2023
 # Sören Schwert <hello@soerenschwert.de>, 2024
 # Robinson BARAIS, 2025
-# 
+#
 msgid ""
 msgstr ""
 "Last-Translator: Robinson BARAIS, 2025\n"
@@ -988,8 +988,13 @@ msgid "Share"
 msgstr "Partager"
 
 #: src/views/SignMessage.vue:5
+#: src/views/SignMessageLedger.vue:5
 msgid "Sign Message"
 msgstr "Signer le message"
+
+#: src/views/SignMessageLedger.vue:17
+msgid "Signer"
+msgstr "Signataire"
 
 #: src/views/SetupSwapSuccess.vue:651
 msgid "Signing transactions..."

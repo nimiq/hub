@@ -1,4 +1,4 @@
-# 
+#
 # Translators:
 # Johannes Demuth <johannes.demuth@outlook.com>, 2020
 # Irfan Maranki, 2020
@@ -8,7 +8,7 @@
 # Michael <jiggaaa20@gmail.com>, 2023
 # Daniel, 2024
 # Sören Schwert <hello@soerenschwert.de>, 2024
-# 
+#
 msgid ""
 msgstr ""
 "Last-Translator: Sören Schwert <hello@soerenschwert.de>, 2024\n"
@@ -993,8 +993,13 @@ msgid "Share"
 msgstr "Teilen"
 
 #: src/views/SignMessage.vue:5
+#: src/views/SignMessageLedger.vue:5
 msgid "Sign Message"
 msgstr "Nachricht signieren"
+
+#: src/views/SignMessageLedger.vue:17
+msgid "Signer"
+msgstr "Unterzeichner"
 
 #: src/views/SetupSwapSuccess.vue:651
 msgid "Signing transactions..."

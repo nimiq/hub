@@ -14,7 +14,6 @@
             <AccountSelector
                 :wallets="processedWallets"
                 disableContracts
-                disableLedgerAccounts
                 @account-selected="setAccount"
                 @login="() => goToOnboarding(false)"/>
         </SmallPage>
@@ -53,16 +52,21 @@ export default class SignMessage extends Vue {
     private showAccountSelector = false;
 
     private async created() {
+        // A SignMessageRequest ends up here, if the request does not specify a signer address or if the specified
+        // signer address is not known to the Hub (in those cases the user is offered to select an address), or if it
+        // belongs to a Keyguard account (in which case the Hub redirects to the Keyguard). A SignMessageRequest that
+        // specifies a signer address known to the Hub and belonging to a Ledger account opens SignMessageLedger
+        // directly, instead of SignMessage.
         if (this.request.signer) {
             const wallet = this.findWalletByAddress(this.request.signer.toUserFriendlyAddress(), false);
-            if (wallet && wallet.type !== WalletType.LEDGER) {
+            if (wallet) {
                 this.setAccount(wallet.id, this.request.signer.toUserFriendlyAddress(), true);
                 return;
             }
         }
 
-        // If account not specified / found or is an unsupported Ledger account let the user pick another account.
-        // Don't automatically reject to not directly leak the information whether an account exists / is a Ledger.
+        // If account not specified / found let the user pick another account.
+        // Don't automatically reject to not directly leak the information whether an account exists.
         this.showAccountSelector = true;
     }
 
@@ -86,30 +90,40 @@ export default class SignMessage extends Vue {
         }
 
         if (this.showAccountSelector) {
-            // set active account if user selected the account himself
+            // Set the active account if user selected the account himself. This is also the way the selected address is
+            // communicated to SignMessageLedger.
             this.$setActiveAccount({
                 walletId: walletInfo.id,
                 userFriendlyAddress: accountInfo.userFriendlyAddress,
             });
         }
 
-        // Forward to Keyguard
-        const request: KeyguardClient.SignMessageRequest = {
-            appName: this.request.appName,
+        // proceed to message signing
+        switch (walletInfo.type) {
+            case WalletType.LEDGER:
+                this.$router.push({name: `${RequestType.SIGN_MESSAGE}-ledger`});
+                return;
+            case WalletType.LEGACY:
+            case WalletType.BIP39:
+                // Forward to Keyguard
+                const request: KeyguardClient.SignMessageRequest = {
+                    appName: this.request.appName,
 
-            keyId: walletInfo.keyId,
-            keyPath: accountInfo.path,
+                    keyId: walletInfo.keyId,
+                    keyPath: accountInfo.path,
 
-            message: this.request.message,
+                    message: this.request.message,
 
-            signer: accountInfo.address.serialize(),
-            signerLabel: accountInfo.label,
-        };
+                    signer: accountInfo.address.serialize(),
+                    signerLabel: accountInfo.label,
+                };
 
-        staticStore.keyguardRequest = request;
+                staticStore.keyguardRequest = request;
 
-        const client = this.$rpc.createKeyguardClient(isFromRequest);
-        client.signMessage(request);
+                const client = this.$rpc.createKeyguardClient(isFromRequest);
+                client.signMessage(request);
+                return;
+        }
     }
 
     private goToOnboarding(useReplace?: boolean) {

@@ -1,8 +1,8 @@
-# 
+#
 # Translators:
 # Sören Schwert <hello@soerenschwert.de>, 2024
 # Inês Marques Gomes, 2025
-# 
+#
 msgid ""
 msgstr ""
 "Last-Translator: Inês Marques Gomes, 2025\n"
@@ -981,8 +981,13 @@ msgid "Share"
 msgstr "Partilhar"
 
 #: src/views/SignMessage.vue:5
+#: src/views/SignMessageLedger.vue:5
 msgid "Sign Message"
 msgstr "Assinar Mensagem"
+
+#: src/views/SignMessageLedger.vue:17
+msgid "Signer"
+msgstr "Signatário"
 
 #: src/views/SetupSwapSuccess.vue:651
 msgid "Signing transactions..."

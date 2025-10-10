@@ -1,10 +1,10 @@
-# 
+#
 # Translators:
 # Daniel, 2021
 # Petro M <petro.matsyburka@outlook.com>, 2021
 # Oleksandr Turchyn <oleksandr.turchyn@outlook.com>, 2024
 # Sören Schwert <hello@soerenschwert.de>, 2024
-# 
+#
 msgid ""
 msgstr ""
 "Last-Translator: Sören Schwert <hello@soerenschwert.de>, 2024\n"
@@ -977,8 +977,13 @@ msgid "Share"
 msgstr "Поділитися"
 
 #: src/views/SignMessage.vue:5
+#: src/views/SignMessageLedger.vue:5
 msgid "Sign Message"
 msgstr "Підписати повідомлення"
+
+#: src/views/SignMessageLedger.vue:17
+msgid "Signer"
+msgstr "Підписант"
 
 #: src/views/SetupSwapSuccess.vue:651
 msgid "Signing transactions..."
