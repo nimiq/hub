@@ -182,7 +182,7 @@ class Demo {
         });
 
         document.querySelector('button#sign-transaction')!.addEventListener('click', async () => {
-            const txRequest = generateSignTransactionRequest();
+            const txRequest = generateSignTransactionRequest(true);
             try {
                 const result = await demo.client.signTransaction(
                     new Promise<SignTransactionRequest>((resolve) => {
@@ -191,6 +191,23 @@ class Demo {
                     demo._defaultBehavior,
                 );
                 if (demo.isRedirectResult(result)) return;
+                console.log('Result', result);
+                document.querySelector('#result')!.textContent = 'TX signed';
+            } catch (e) {
+                console.error(e);
+                document.querySelector('#result')!.textContent = `Error: ${e.message || e}`;
+            }
+        });
+
+        document.querySelector('button#sign-transaction-without-sender')!.addEventListener('click', async () => {
+            const txRequest = generateSignTransactionRequest(false);
+            try {
+                const result = await demo.client.signTransaction(
+                    new Promise<SignTransactionRequest>((resolve) => {
+                        window.setTimeout(() => resolve(txRequest), 2000);
+                    }),
+                    demo._defaultBehavior,
+                );
                 console.log('Result', result);
                 document.querySelector('#result')!.textContent = 'TX signed';
             } catch (e) {
@@ -235,13 +252,16 @@ class Demo {
             }
         });
 
-        function generateSignTransactionRequest(): SignTransactionRequest {
-            const $radio = document.querySelector('input[name="address"]:checked');
-            if (!$radio) {
-                alert('You have no account to send a tx from, create an account first (signup)');
-                throw new Error('No account found');
+        function generateSignTransactionRequest(withSender: boolean): SignTransactionRequest {
+            let sender: string | undefined;
+            if (withSender) {
+                const $radio = document.querySelector('input[name="address"]:checked');
+                if (!$radio) {
+                    alert('You have no account to send a tx from, create an account first (signup)');
+                    throw new Error('No account found');
+                }
+                sender = ($radio as HTMLElement).dataset.address!;
             }
-            const sender = ($radio as HTMLElement).dataset.address!;
             const value = parseInt((document.querySelector('#value') as HTMLInputElement).value, 10) || 1337;
             const fee = parseInt((document.querySelector('#fee') as HTMLInputElement).value, 10) || 0;
             const txData = (document.querySelector('#data') as HTMLInputElement).value || '';
