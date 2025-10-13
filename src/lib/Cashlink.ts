@@ -73,6 +73,11 @@ class Cashlink {
             // purposes.
             return this.value;
         }
+        if (this.balance <= this.fee) {
+            // The (remaining) balance is too little to even cover the fees, or can cover only the fees. Offer the
+            // balance as dust (to be claimed with no fees).
+            return this.balance;
+        }
         if (this.balance < this.value + this.fee) {
             // The (remaining) balance is not enough to cover the full amount specified. Offer what's available.
             return this.balance - this.fee;
@@ -447,11 +452,16 @@ class Cashlink {
 
         // Get latest balance and claimAmount
         const balance = await this._awaitBalance();
-        const fee = this.fee;
-        if (balance <= fee) {
-            throw new Error('Cannot claim, there is not enough balance in this link');
-        }
         const claimAmount = this.claimableAmount;
+        let fee = this.fee;
+        if (balance < claimAmount + fee) {
+            if (balance >= claimAmount) {
+                // Try to claim potential dust with lower/no fee.
+                fee = balance - claimAmount;
+            } else {
+                throw new Error('Cannot claim, there is not enough balance in this link');
+            }
+        }
         const recipient = Nimiq.Address.fromString(recipientAddress);
         const transaction = new Nimiq.ExtendedTransaction(this.address, Nimiq.Account.Type.BASIC,
             recipient, recipientType, claimAmount, fee, await this._getBlockchainHeight(), Nimiq.Transaction.Flag.NONE,
