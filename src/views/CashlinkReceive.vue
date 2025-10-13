@@ -40,9 +40,7 @@
 
                     <div>
                         <Amount class="value nq-light-blue blur-target"
-                            :amount="cashlink.balance
-                                ? Math.min(cashlink.value, cashlink.balance - cashlink.fee)
-                                : cashlink.value"
+                            :amount="cashlink.claimableAmount"
                             :minDecimals="0"
                             :maxDecimals="5"
                         />
@@ -81,9 +79,7 @@
 
                 <div>
                     <Amount class="value nq-light-blue"
-                        :amount="cashlink.balance
-                            ? Math.min(cashlink.value, cashlink.balance - cashlink.fee)
-                            : cashlink.value"
+                        :amount="cashlink.claimableAmount"
                         :minDecimals="0"
                         :maxDecimals="5"
                     />
@@ -296,7 +292,7 @@ class CashlinkReceive extends Vue {
 
     private get buttonText(): string {
         if (this.cashlink!.state !== CashlinkState.CLAIMED && this.statusState === StatusScreen.State.WARNING) {
-            // Reset warning screen if cashlink state reverted from CLAIMING state, e.g. by being refunded.
+            // Reset warning screen if cashlink state reverted from CLAIMED state, e.g. by being refunded.
             this.statusState = false;
         }
         switch (this.cashlink!.state) {

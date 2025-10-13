@@ -66,6 +66,22 @@ class Cashlink {
         return 0;
     }
 
+    get claimableAmount() {
+        if (!this.balance) {
+            // The balance is not known yet, the Cashlink has not been funded yet, or has already been fully claimed.
+            // Return the amount specified in the Cashlink, that would regularly be available, for display and checking
+            // purposes.
+            return this.value;
+        }
+        if (this.balance < this.value + this.fee) {
+            // The (remaining) balance is not enough to cover the full amount specified. Offer what's available.
+            return this.balance - this.fee;
+        }
+        // The full specified amount can be claimed. The cashlink balance might even be higher than that, namely for
+        // Cashlinks intended to be claimable multiple times, but the UI should only allow claiming the specified amount
+        return this.value;
+    }
+
     get message() {
         return Utf8Tools.utf8ByteArrayToString(this._messageBytes);
     }
@@ -160,7 +176,9 @@ class Cashlink {
 
     private static _getLastClaimedMultiCashlinks(): Nimiq.Address[] {
         try {
-            return JSON.parse(window.localStorage[Cashlink.LAST_CLAIMED_MULTI_CASHLINKS_STORAGE_KEY])
+            const storedLastClaimedMultiCashlinks = localStorage[Cashlink.LAST_CLAIMED_MULTI_CASHLINKS_STORAGE_KEY];
+            if (!storedLastClaimedMultiCashlinks) return [];
+            return JSON.parse(storedLastClaimedMultiCashlinks)
                 .map((addressBase64: string) => Nimiq.Address.fromBase64(addressBase64));
         } catch (e) {
             return [];
@@ -418,7 +436,6 @@ class Cashlink {
     public async claim(
         recipientAddress: string,
         recipientType: Nimiq.Account.Type = Nimiq.Account.Type.BASIC,
-        fee?: number,
     ): Promise<void> {
         await Promise.all([
             loadNimiq(),
@@ -428,24 +445,23 @@ class Cashlink {
             throw new Error('Cannot claim, Cashlink has already been claimed');
         }
 
-        // Get latest balance and fee
+        // Get latest balance and claimAmount
         const balance = await this._awaitBalance();
-        fee = fee !== undefined ? fee : this.fee;
-        // Only claim the amount specified in the cashlink (or the cashlink balance, if smaller)
-        const totalClaimBalance = Math.min(this.value + fee, balance);
-        if (totalClaimBalance <= fee) {
+        const fee = this.fee;
+        if (balance <= fee) {
             throw new Error('Cannot claim, there is not enough balance in this link');
         }
+        const claimAmount = this.claimableAmount;
         const recipient = Nimiq.Address.fromString(recipientAddress);
         const transaction = new Nimiq.ExtendedTransaction(this.address, Nimiq.Account.Type.BASIC,
-            recipient, recipientType, totalClaimBalance - fee, fee, await this._getBlockchainHeight(),
-            Nimiq.Transaction.Flag.NONE, CashlinkExtraData.CLAIMING);
+            recipient, recipientType, claimAmount, fee, await this._getBlockchainHeight(), Nimiq.Transaction.Flag.NONE,
+            CashlinkExtraData.CLAIMING);
 
         const keyPair = this.keyPair;
         const signature = Nimiq.Signature.create(keyPair.privateKey, keyPair.publicKey, transaction.serializeContent());
         transaction.proof = Nimiq.SignatureProof.singleSig(keyPair.publicKey, signature).serialize();
 
-        if (balance > this.value) {
+        if (balance > claimAmount + fee) {
             // its a multi-claimable cashlink
             Cashlink._setLastClaimedMultiCashlink(this.address);
         }
@@ -539,9 +555,9 @@ class Cashlink {
             ...network.relayedTransactions,
         ].filter((tx) => tx.sender === cashlinkAddress || tx.recipient === cashlinkAddress);
 
-        const pendingFundingTx = this._pendingTransactions.find(
+        const pendingFundingTx = pendingTransactions.find(
             (tx) => tx.recipient === cashlinkAddress);
-        const ourPendingClaimingTx = this._pendingTransactions.find(
+        const ourPendingClaimingTx = pendingTransactions.find(
             (tx) => tx.sender === cashlinkAddress && userAddresses.has(tx.recipient!));
 
         return [pendingTransactions, pendingFundingTx, ourPendingClaimingTx];
