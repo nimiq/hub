@@ -100,6 +100,7 @@ import KeyguardClient from '@nimiq/keyguard-client';
 import { Clipboard } from '@nimiq/utils';
 import { i18n } from '../i18n/i18n-setup';
 import { ERROR_CANCELED } from '../lib/Constants';
+import { WalletInfo } from '../lib/WalletInfo';
 
 @Component({components: {
     Account,
@@ -127,6 +128,7 @@ export default class CashlinkManage extends Vue {
     @Static private cashlink?: Cashlink;
     @Static private keyguardRequest?: KeyguardClient.SignTransactionRequest;
     @State private keyguardResult?: KeyguardClient.SignTransactionResult;
+    @State private wallets!: WalletInfo[];
 
     private isTxSent: boolean = false;
     private isManagementRequest: boolean = false;
@@ -190,7 +192,7 @@ export default class CashlinkManage extends Vue {
                 () => this.status = this.$t('Sending transaction...') as string);
             network.$on(Network.Events.TRANSACTION_PENDING,
                 () => this.status = this.$t('Awaiting receipt confirmation...') as string);
-            this.retrievedCashlink.networkClient = await network.getNetworkClient();
+            this.retrievedCashlink.setDependencies(await network.getNetworkClient(), this.wallets);
 
             // Store cashlink in database first to be safe when browser crashes during sending
             await CashlinkStore.Instance.put(this.retrievedCashlink);

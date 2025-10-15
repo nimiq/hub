@@ -27,7 +27,7 @@ const DUMMY_DATA = {
                 105, 128, 49, 54, 99, 159, 166, 103, 196, 208, 178, 26, 244, 184, 234,
             ]))).publicKey.toAddress(),
             1234554321,
-            123,
+            171,
             'Ein Cashlink test Cashlink',
             CashlinkState.UNCLAIMED,
         ),
@@ -55,6 +55,8 @@ const DUMMY_DATA = {
         cashlink._getNetwork = expect.any(Function);
         // @ts-ignore ignore private property access
         cashlink._networkClientResolver = expect.any(Function);
+        // @ts-ignore ignore private property access
+        cashlink._getUserAddresses = expect.any(Function);
         return cashlink;
     }),
 };
@@ -79,7 +81,7 @@ const afterEachCallback = async () => {
 };
 
 function expectEqualIgnoringFeeAndContactName(a: any, b: any) {
-    const filterIgnoredKeys = (key: string) => key !== 'fee' && key !== '_fee' && key !== 'contactName';
+    const filterIgnoredKeys = (key: string) => !/^(_?fee|contactName|_detectStateTimeout)$/.test(key);
     const keysA = Object.keys(a).filter(filterIgnoredKeys);
     const keysB = Object.keys(b).filter(filterIgnoredKeys);
     expect(keysA).toEqual(keysB);

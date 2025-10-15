@@ -23,11 +23,11 @@ msgstr ""
 msgid "+ {currency} network fee"
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:110
+#: src/views/CashlinkReceive.vue:114
 msgid "30 seconds, no email, no download."
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:206
+#: src/views/CashlinkReceive.vue:211
 msgid "404 - Cash not found"
 msgstr ""
 
@@ -124,7 +124,7 @@ msgstr ""
 msgid "Atomic swaps require two BTC transactions."
 msgstr ""
 
-#: src/views/CashlinkManage.vue:192
+#: src/views/CashlinkManage.vue:194
 msgid "Awaiting receipt confirmation..."
 msgstr ""
 
@@ -242,7 +242,7 @@ msgstr ""
 msgid "Cancel payment"
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:256
+#: src/views/CashlinkReceive.vue:258
 msgid "Cashlink claimed!"
 msgstr ""
 
@@ -250,23 +250,23 @@ msgstr ""
 msgid "Cashlink created"
 msgstr ""
 
-#: src/views/CashlinkManage.vue:227
+#: src/views/CashlinkManage.vue:229
 msgid "Cashlink created."
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:304
+#: src/views/CashlinkReceive.vue:312
 msgid "Cashlink empty :("
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:297
+#: src/views/CashlinkReceive.vue:299
 msgid "Cashlink funding"
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:301
+#: src/views/CashlinkReceive.vue:310
 msgid "Cashlink is empty"
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:296
+#: src/views/CashlinkReceive.vue:298
 msgid "Cashlink not funded"
 msgstr ""
 
@@ -278,7 +278,7 @@ msgstr ""
 msgid "Check your Backup | Check your Backups"
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:294
+#: src/views/CashlinkReceive.vue:297
 msgid "Checking status"
 msgstr ""
 
@@ -295,7 +295,7 @@ msgstr ""
 msgid "Choose an Account to log in"
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:64
+#: src/views/CashlinkReceive.vue:65
 #: src/views/ChooseAddress.vue:18
 #: src/views/ChooseAddress.vue:5
 msgid "Choose an Address"
@@ -321,15 +321,17 @@ msgstr ""
 msgid "Choose which Nimiq address to use."
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:295
+#: src/views/CashlinkReceive.vue:300
 msgid "Claim Cashlink"
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:345
+#: src/views/CashlinkReceive.vue:353
 msgid "Claim your Cash"
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:233
+#: src/views/CashlinkReceive.vue:237
+#: src/views/CashlinkReceive.vue:301
+#: src/views/CashlinkReceive.vue:307
 msgid "Claiming Cashlink"
 msgstr ""
 
@@ -388,15 +390,15 @@ msgstr ""
 msgid "Confirm using your Ledger"
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:356
+#: src/views/CashlinkReceive.vue:364
 msgid "Congrats, somebody gifted you a Nimiq Cashlink."
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:355
+#: src/views/CashlinkReceive.vue:363
 msgid "Congrats, you just opened a Nimiq Cashlink."
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:351
+#: src/views/CashlinkReceive.vue:359
 msgid "Congrats, you received a Nimiq Gift Card."
 msgstr ""
 
@@ -422,12 +424,12 @@ msgstr ""
 msgid "Connecting to Keyguard..."
 msgstr ""
 
-#: src/views/CashlinkManage.vue:133
+#: src/views/CashlinkManage.vue:135
 #: src/views/CheckoutTransmission.vue:40
 msgid "Connecting to network..."
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:234
+#: src/views/CashlinkReceive.vue:238
 msgid "Connecting to Nimiq..."
 msgstr ""
 
@@ -437,7 +439,7 @@ msgstr ""
 
 #: src/components/CheckoutCardNimiq.vue:284
 #: src/components/CheckoutCardNimiq.vue:289
-#: src/views/CashlinkManage.vue:186
+#: src/views/CashlinkManage.vue:188
 #: src/views/CheckoutTransmission.vue:116
 msgid "Contacting seed nodes..."
 msgstr ""
@@ -466,7 +468,7 @@ msgstr ""
 msgid "Create a Cashlink"
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:89
+#: src/views/CashlinkReceive.vue:93
 msgid "Create account"
 msgstr ""
 
@@ -474,7 +476,7 @@ msgstr ""
 msgid "Create Account"
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:109
+#: src/views/CashlinkReceive.vue:113
 msgid "Create an account and claim your money."
 msgstr ""
 
@@ -490,7 +492,7 @@ msgstr ""
 msgid "Creating your Account"
 msgstr ""
 
-#: src/views/CashlinkManage.vue:229
+#: src/views/CashlinkManage.vue:231
 #: src/views/SignTransactionLedger.vue:722
 msgid "Creating your Cashlink"
 msgstr ""
@@ -622,15 +624,15 @@ msgstr ""
 msgid "Green Address"
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:344
+#: src/views/CashlinkReceive.vue:352
 msgid "Happy birthday!"
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:342
+#: src/views/CashlinkReceive.vue:350
 msgid "Happy Easter!"
 msgstr ""
 
-#: src/views/CashlinkManage.vue:119
+#: src/views/CashlinkManage.vue:120
 msgid "Here is your Nimiq Cashlink!"
 msgstr ""
 
@@ -715,7 +717,7 @@ msgstr ""
 msgid "Login to another account"
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:91
+#: src/views/CashlinkReceive.vue:95
 msgid "Login to existing account"
 msgstr ""
 
@@ -960,7 +962,7 @@ msgstr ""
 msgid "Sending Transaction"
 msgstr ""
 
-#: src/views/CashlinkManage.vue:190
+#: src/views/CashlinkManage.vue:192
 #: src/views/CheckoutTransmission.vue:118
 msgid "Sending transaction..."
 msgstr ""
@@ -994,7 +996,7 @@ msgstr ""
 msgid "Single Accounts"
 msgstr ""
 
-#: src/views/CashlinkManage.vue:228
+#: src/views/CashlinkManage.vue:230
 #: src/views/CheckoutTransmission.vue:125
 msgid "Something went wrong"
 msgstr ""
@@ -1047,7 +1049,7 @@ msgstr ""
 
 #: src/components/CheckoutCardNimiq.vue:291
 #: src/views/AddVestingContract.vue:11
-#: src/views/CashlinkManage.vue:188
+#: src/views/CashlinkManage.vue:190
 #: src/views/CheckoutTransmission.vue:117
 msgid "Syncing consensus..."
 msgstr ""
@@ -1123,11 +1125,11 @@ msgstr ""
 msgid "There's much more. Read the full article"
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:302
+#: src/views/CashlinkReceive.vue:311
 msgid "This Cashlink has already been claimed."
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:207
+#: src/views/CashlinkReceive.vue:212
 msgid "This is not a valid Cashlink, sorry."
 msgstr ""
 
@@ -1171,12 +1173,12 @@ msgstr ""
 msgid "Transaction approved"
 msgstr ""
 
-#: src/views/CashlinkManage.vue:211
+#: src/views/CashlinkManage.vue:213
 #: src/views/CheckoutTransmission.vue:107
 msgid "Transaction could not be relayed"
 msgstr ""
 
-#: src/views/CashlinkManage.vue:209
+#: src/views/CashlinkManage.vue:211
 #: src/views/CheckoutTransmission.vue:105
 msgid "Transaction is expired"
 msgstr ""
@@ -1295,7 +1297,7 @@ msgstr ""
 msgid "You are logged out."
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:340
+#: src/views/CashlinkReceive.vue:348
 msgid "You are loved"
 msgstr ""
 

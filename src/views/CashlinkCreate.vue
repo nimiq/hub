@@ -65,7 +65,7 @@
                         <div class="message-with-tooltip">
                             <LabelInput class="message" :placeholder="$t('Add a message...')" :vanishing="true" :maxBytes="255" v-model="message" />
                             <Tooltip ref="tooltip" :container="$refs.createCashlinkTooltipTarget" autoWidth>
-                                {{ $t('This message will be stored in the Cashlink.') }}
+                                {{ $t('This message will be stored in the Cashlink.') }}
                                 {{ $t('It won’t be part of the public Blockchain and might get lost after the Cashlink was claimed.') }}
                             </Tooltip>
                         </div>
@@ -158,7 +158,7 @@ class CashlinkCreate extends Vue {
         }, {
             color: 'nq-green-bg',
             value: 1,
-            get text() { return i18n.t('standard') as string; },
+            get text() { return i18n.t('standard') as string; },
             index: 1,
         }, {
             color: 'nq-gold-bg',
@@ -405,7 +405,7 @@ class CashlinkCreate extends Vue {
 
         const cashlink = Cashlink.create();
         staticStore.cashlink = cashlink;
-        cashlink.networkClient = NetworkClient.Instance;
+        cashlink.setDependencies(NetworkClient.Instance, this.wallets);
         cashlink.value = this.liveAmountAndFee.amount;
         cashlink.fee = this.fee;
         cashlink.message = this.message;
