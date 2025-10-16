@@ -25,7 +25,6 @@ export interface CashlinkEntry {
     message: string;
     timestamp: number;
     theme?: CashlinkTheme;
-    contactName?: string; /** unused for now */
 }
 
 class Cashlink {
@@ -158,7 +157,6 @@ class Cashlink {
             object.theme,
             // @ts-ignore `timestamp` was called `date` before and was live in the mainnet.
             object.timestamp || object.date,
-            object.contactName,
         );
     }
 
@@ -215,7 +213,6 @@ class Cashlink {
         public state: CashlinkState = CashlinkState.UNKNOWN,
         theme?: CashlinkTheme,
         public timestamp: number = Math.floor(Date.now() / 1000),
-        public contactName?: string, /** unused for now */
     ) {
         const networkPromise = new Promise<NetworkClient>((resolve) => {
             // Save resolver function for when the network client gets assigned
@@ -376,9 +373,6 @@ class Cashlink {
         if (includeOptional) {
             if (this._fee !== null) {
                 result.fee = this._fee;
-            }
-            if (this.contactName) {
-                result.contactName = this.contactName;
             }
         }
         return result;
