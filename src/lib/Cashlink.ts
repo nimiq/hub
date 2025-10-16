@@ -224,24 +224,24 @@ class Cashlink {
         this._immutable = !!(value || message || theme);
 
         this._getNetwork().then(async (network: NetworkClient) => {
-            const userFriendlyAddress = this.address.toUserFriendlyAddress();
-
             if (!(await network.isConsensusEstablished())) {
                 await network.awaitConsensus();
             }
-            network.getBalance([userFriendlyAddress]).then(this._onBalancesChanged.bind(this));
 
-            const innerClient = await network.innerClient;
-            // Subscribe to transactions for the cashlink address.
-            // TODO the Nimiq PoS network client currently only supports subscribing to transactions getting included in
-            //  the chain. Should it in the future support subscribing to other transaction states, do that, too.
-            innerClient.addTransactionListener(
-                this._onTransactionChanged.bind(this),
-                [this.address],
-            );
+            await Promise.all([
+                this._updateBalance(),
+                // Subscribe to transactions for the cashlink address.
+                // TODO the Nimiq PoS network client currently only supports subscribing to transactions getting
+                //  included in the chain. Should it in the future support subscribing to other transaction states, do
+                //  that, too.
+                network.innerClient.then((innerClient) => innerClient.addTransactionListener(
+                    this._onTransactionChanged.bind(this),
+                    [this.address],
+                )),
+            ]);
         });
 
-        // Run initial state detection (awaits consensus in detectState())
+        // Run initial state detection (awaits consensus and balance in detectState())
         this.detectState();
     }
 
@@ -576,17 +576,19 @@ class Cashlink {
             && !this._chainTransactions.some((tx) => tx.transactionHash === transaction.transactionHash)) {
             this._chainTransactions.push(transaction);
         }
-        const network = await this._getNetwork();
-        await network.getBalance([this.address.toUserFriendlyAddress()])
-            .then(this._onBalancesChanged.bind(this));
-        this.detectState();
+        await this._updateBalance();
+        await this.detectState();
     }
 
-    private _onBalancesChanged(balances: Map<string, number>) {
-        const address = this.address.toUserFriendlyAddress();
-        if (!balances.has(address)) return;
-        this.balance = balances.get(address)!;
-        this.fire(Cashlink.Events.BALANCE_CHANGE, this.balance);
+    private async _updateBalance() {
+        const network = await this._getNetwork();
+        const cashlinkAddress = this.address.toUserFriendlyAddress();
+        const balances = await network.getBalance([cashlinkAddress]);
+        const balance = balances.get(cashlinkAddress);
+        if (balance === undefined || balance === this.balance) return;
+
+        this.balance = balance;
+        this.fire(Cashlink.Events.BALANCE_CHANGE, balance);
     }
 
     private _updateState(state: CashlinkState) {
