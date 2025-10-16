@@ -587,7 +587,9 @@ export async function createTransactionRequest(
         // tokenContract.allowance(fromAddress, transferAddress) as Promise<BigNumber>,
         transferContract.getNonce(fromAddress) as Promise<BigNumber>,
         calculateFee(tokenAddress, method, forceRelay),
-        getUsdcBalance(fromAddress),
+        tokenAddress === Config.polygon.usdc.tokenContract
+            ? getUsdcBalance(fromAddress)
+            : getUsdtBridgedBalance(fromAddress),
     ]);
 
     // Ensure we send only what's possible with the updated fee
