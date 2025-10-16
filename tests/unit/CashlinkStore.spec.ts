@@ -45,7 +45,6 @@ const DUMMY_DATA = {
             CashlinkState.CLAIMED,
             Cashlink.DEFAULT_THEME,
             Date.now(),
-            'Contact name',
         ),
     ].map((cashlink) => {
         // Anonymous functions cannot be compared by Jest, so we need to work around that
@@ -80,7 +79,7 @@ const afterEachCallback = async () => {
 };
 
 function expectEqualIgnoringOptionalProperties(a: any, b: any) {
-    const filterIgnoredKeys = (key: string) => !/^(_?fee|contactName|state|_detectStateTimeout)$/.test(key);
+    const filterIgnoredKeys = (key: string) => !/^(_?fee|state|_detectStateTimeout)$/.test(key);
     const keysA = Object.keys(a).filter(filterIgnoredKeys);
     const keysB = Object.keys(b).filter(filterIgnoredKeys);
     expect(keysA).toEqual(keysB);
