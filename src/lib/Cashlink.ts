@@ -1,6 +1,6 @@
 import { Utf8Tools } from '@nimiq/utils';
 import { NetworkClient } from './NetworkClient';
-import { CashlinkState, CashlinkTheme } from '../../client/PublicRequestTypes';
+import { CashlinkTheme } from '../../client/PublicRequestTypes';
 import { WalletInfo } from './WalletInfo';
 
 export const CashlinkExtraData = {
@@ -8,13 +8,21 @@ export const CashlinkExtraData = {
     CLAIMING: new Uint8Array([0, 139, 136, 141, 138]), // 'LINK'.split('').map(c => c.charCodeAt(0) + 63)
 };
 
+export enum CashlinkState {
+    UNKNOWN = -1,
+    UNCHARGED = 0,
+    CHARGING = 1,
+    UNCLAIMED = 2,
+    CLAIMING = 3,
+    CLAIMED = 4,
+}
+
 export interface CashlinkEntry {
     address: string;
     keyPair: Uint8Array;
     value: number;
     fee?: number;
     message: string;
-    state: CashlinkState;
     timestamp: number;
     theme?: CashlinkTheme;
     contactName?: string; /** unused for now */
@@ -146,7 +154,7 @@ class Cashlink {
             object.value,
             object.fee,
             object.message,
-            object.state,
+            CashlinkState.UNKNOWN,
             object.theme,
             // @ts-ignore `timestamp` was called `date` before and was live in the mainnet.
             object.timestamp || object.date,
@@ -362,7 +370,6 @@ class Cashlink {
             address: this.address.toUserFriendlyAddress(),
             value: this.value,
             message: this.message,
-            state: this.state,
             theme: this._theme,
             timestamp: this.timestamp,
         };

@@ -84,7 +84,6 @@ class IFrameApi {
             address: cashlink.address,
             message: cashlink.message,
             value: cashlink.value,
-            status: cashlink.state,
             theme: cashlink.theme || Cashlink.DEFAULT_THEME,
         }));
     }

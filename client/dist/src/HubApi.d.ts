@@ -1,12 +1,11 @@
 import { PopupRequestBehavior, RequestBehavior, RedirectRequestBehavior, BehaviorType } from './RequestBehavior';
-import { AccountType, RequestType, BasicRequest, SimpleRequest, OnboardRequest, ChooseAddressRequest, ChooseAddressResult, CheckoutRequest, SignTransactionRequest, RenameRequest, SignMessageRequest, ExportRequest, ResultByRequestType, Account, Address, SignedTransaction, SimpleResult, ExportResult, SignedMessage, CreateCashlinkRequest, ManageCashlinkRequest, SignBtcTransactionRequest, SignedBtcTransaction, AddBtcAddressesRequest, AddBtcAddressesResult, SignPolygonTransactionRequest, SignedPolygonTransaction, Cashlink, CashlinkState, CashlinkTheme, Currency, PaymentType, PaymentState, SetupSwapRequest, SetupSwapResult, RefundSwapRequest, SignMultisigTransactionRequest, PartialSignature, SignStakingRequest, ConnectAccountRequest, ConnectedAccount } from './PublicRequestTypes';
+import { AccountType, RequestType, BasicRequest, SimpleRequest, OnboardRequest, ChooseAddressRequest, ChooseAddressResult, CheckoutRequest, SignTransactionRequest, RenameRequest, SignMessageRequest, ExportRequest, ResultByRequestType, Account, Address, SignedTransaction, SimpleResult, ExportResult, SignedMessage, CreateCashlinkRequest, ManageCashlinkRequest, SignBtcTransactionRequest, SignedBtcTransaction, AddBtcAddressesRequest, AddBtcAddressesResult, SignPolygonTransactionRequest, SignedPolygonTransaction, Cashlink, CashlinkTheme, Currency, PaymentType, PaymentState, SetupSwapRequest, SetupSwapResult, RefundSwapRequest, SignMultisigTransactionRequest, PartialSignature, SignStakingRequest, ConnectAccountRequest, ConnectedAccount } from './PublicRequestTypes';
 export default class HubApi<DB extends BehaviorType = BehaviorType.POPUP, IB extends BehaviorType = BehaviorType.IFRAME> {
     static readonly BehaviorType: typeof BehaviorType;
     static readonly RequestType: typeof RequestType;
     static readonly RedirectRequestBehavior: typeof RedirectRequestBehavior;
     static readonly PopupRequestBehavior: typeof PopupRequestBehavior;
     static readonly AccountType: typeof AccountType;
-    static readonly CashlinkState: typeof CashlinkState;
     static readonly CashlinkTheme: typeof CashlinkTheme;
     static readonly Currency: typeof Currency;
     static readonly PaymentType: typeof PaymentType;

@@ -1,6 +1,5 @@
 import Cashlink from './lib/Cashlink';
 import { CashlinkStore } from './lib/CashlinkStore';
-import { CashlinkState } from '../client/PublicRequestTypes';
 
 async function main() {
     const store = CashlinkStore.Instance;

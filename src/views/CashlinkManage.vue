@@ -241,7 +241,6 @@ export default class CashlinkManage extends Vue {
             address: this.retrievedCashlink!.address.toUserFriendlyAddress(),
             message: this.retrievedCashlink!.message,
             value: this.retrievedCashlink!.value,
-            status: this.retrievedCashlink!.state,
             theme: this.retrievedCashlink!.theme,
         };
         if ('returnLink' in this.request && this.request.returnLink) {
