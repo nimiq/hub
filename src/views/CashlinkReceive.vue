@@ -135,8 +135,8 @@ import {
 import StatusScreen from '../components/StatusScreen.vue';
 import CashlinkSparkle from '../components/CashlinkSparkle.vue';
 import CircleSpinner from '../components/CircleSpinner.vue';
-import Cashlink from '../lib/Cashlink';
-import { CashlinkState, BasicRequest, CashlinkTheme } from '../../client/PublicRequestTypes';
+import Cashlink, { CashlinkState } from '../lib/Cashlink';
+import { BasicRequest, CashlinkTheme } from '../../client/PublicRequestTypes';
 import { AccountInfo } from '../lib/AccountInfo';
 import { Getter, Mutation, State } from 'vuex-class';
 import Config from 'config';

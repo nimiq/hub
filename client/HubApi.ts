@@ -35,7 +35,6 @@ import {
     SignPolygonTransactionRequest,
     SignedPolygonTransaction,
     Cashlink,
-    CashlinkState,
     CashlinkTheme,
     Currency,
     PaymentType,
@@ -62,7 +61,6 @@ export default class HubApi<
     public static readonly RedirectRequestBehavior = RedirectRequestBehavior;
     public static readonly PopupRequestBehavior = PopupRequestBehavior;
     public static readonly AccountType = AccountType;
-    public static readonly CashlinkState = CashlinkState;
     public static readonly CashlinkTheme = CashlinkTheme;
     public static readonly Currency = Currency;
     public static readonly PaymentType = PaymentType;

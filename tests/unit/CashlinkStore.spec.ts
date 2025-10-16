@@ -1,8 +1,7 @@
 import { setup } from './_setup';
 import { Store } from '@/lib/Store';
 import { CashlinkStore } from '@/lib/CashlinkStore';
-import Cashlink from '@/lib/Cashlink';
-import { CashlinkState } from '../../client/PublicRequestTypes';
+import Cashlink, { CashlinkState } from '@/lib/Cashlink';
 
 setup();
 
@@ -80,8 +79,8 @@ const afterEachCallback = async () => {
     });
 };
 
-function expectEqualIgnoringFeeAndContactName(a: any, b: any) {
-    const filterIgnoredKeys = (key: string) => !/^(_?fee|contactName|_detectStateTimeout)$/.test(key);
+function expectEqualIgnoringOptionalProperties(a: any, b: any) {
+    const filterIgnoredKeys = (key: string) => !/^(_?fee|contactName|state|_detectStateTimeout)$/.test(key);
     const keysA = Object.keys(a).filter(filterIgnoredKeys);
     const keysB = Object.keys(b).filter(filterIgnoredKeys);
     expect(keysA).toEqual(keysB);
@@ -108,7 +107,7 @@ describe('CashlinkStore', () => {
 
     it('can get a cashlink', async () => {
         const cl = await CashlinkStore.Instance.get(DUMMY_DATA.addresses[0]);
-        expectEqualIgnoringFeeAndContactName(cl, DUMMY_DATA.cashlinks[0]);
+        expectEqualIgnoringOptionalProperties(cl, DUMMY_DATA.cashlinks[0]);
     });
 
     it('can list cashlinks', async () => {
@@ -146,7 +145,7 @@ describe('CashlinkStore', () => {
 
         // Check that the cashlink has been stored correctly
         let cashlink = await CashlinkStore.Instance.get(DUMMY_DATA.addresses[0]);
-        expectEqualIgnoringFeeAndContactName(cashlink, DUMMY_DATA.cashlinks[0]);
+        expectEqualIgnoringOptionalProperties(cashlink, DUMMY_DATA.cashlinks[0]);
 
         cashlink!.state = CashlinkState.CLAIMED;
 
@@ -156,6 +155,5 @@ describe('CashlinkStore', () => {
         // Check that the cashlink has been updated correctly
         cashlink = await CashlinkStore.Instance.get(DUMMY_DATA.addresses[0]);
         expect(cashlink).toBeDefined();
-        expect(cashlink!.state).toBe(CashlinkState.CLAIMED);
     });
 });

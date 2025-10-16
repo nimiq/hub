@@ -546,14 +546,6 @@ export interface ExportResult {
 export interface RenameRequest extends SimpleRequest {
     address?: string;
 }
-export declare enum CashlinkState {
-    UNKNOWN = -1,
-    UNCHARGED = 0,
-    CHARGING = 1,
-    UNCLAIMED = 2,
-    CLAIMING = 3,
-    CLAIMED = 4
-}
 export declare enum CashlinkTheme {
     UNSPECIFIED = 0,// Equivalent to theme being omitted
     STANDARD = 1,
@@ -567,7 +559,6 @@ export interface Cashlink {
     address: string;
     message: string;
     value: number;
-    status: CashlinkState;
     theme: CashlinkTheme;
     link?: string;
 }
