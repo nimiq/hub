@@ -195,7 +195,7 @@ class Cashlink {
     private _fee: number | null = null;
     private _theme: CashlinkTheme = CashlinkTheme.UNSPECIFIED; // note that UNSPECIFIED equals to 0 and is thus falsy
     private _getUserAddresses: () => Set<string>;
-    private _knownTransactions: Nimiq.PlainTransactionDetails[] = [];
+    private _chainTransactions: Nimiq.PlainTransactionDetails[] = []; // transactions already included on chain
     private _detectStateTimeout: number = -1;
 
     constructor(
@@ -279,7 +279,7 @@ class Cashlink {
         let pendingFundingTx: Partial<Nimiq.PlainTransactionDetails> | undefined;
         let ourPendingClaimingTx: Partial<Nimiq.PlainTransactionDetails> | undefined;
         [pendingTransactions, pendingFundingTx, ourPendingClaimingTx] = await this._getPendingTransactions();
-        let ourKnownClaimingTx = this._knownTransactions.find( // for now based on old known transactions
+        let ourChainClaimingTx = this._chainTransactions.find( // for now based on previously known transactions
             (tx) => tx.sender === cashlinkAddress && userAddresses.has(tx.recipient));
 
         if (ourPendingClaimingTx) {
@@ -288,7 +288,7 @@ class Cashlink {
             this._updateState(CashlinkState.CLAIMING);
             return;
         }
-        if (this.state === CashlinkState.CLAIMED && (ourKnownClaimingTx || (!balance && !pendingFundingTx))) {
+        if (this.state === CashlinkState.CLAIMED && (ourChainClaimingTx || (!balance && !pendingFundingTx))) {
             // Can exit early as either the user already claimed the cashlink and is not allowed to claim again or it is
             // empty and not refilled and already reached CLAIMED state, i.e. is not just empty because it is UNCHARGED.
             return;
@@ -297,15 +297,26 @@ class Cashlink {
         const network = await this._getNetwork();
         const transactionHistory = await network.getTransactionsByAddress(
             cashlinkAddress,
-            this._knownTransactions,
+            // Pass our known chain transactions, such that they don't have to be fetched again (and won't be returned
+            // again) if they are still included in the chain, or get their latest state if they are not on the chain
+            // anymore due to rebranching (returning them for example as new/pending/expired; not entirely sure though).
+            this._chainTransactions,
         );
-        this._knownTransactions = transactionHistory;
+        // Add new transactions and update previously known transactions, avoiding duplicates.
+        this._chainTransactions = [...new Map([
+            ...this._chainTransactions,
+            ...transactionHistory,
+        ].map((transaction) => [transaction.transactionHash, transaction])).values()]
+            // Filter out transactions that are not included in the chain yet / anymore. Pending transactions will be
+            // added later via _onTransactionChanged once included in the chain. This also handles previously included
+            // transactions, which might not be included anymore due to rebranching.
+            .filter((transaction) => transaction.state === 'included' || transaction.state === 'confirmed');
 
-        const knownFundingTx = this._knownTransactions.find(
+        const chainFundingTx = this._chainTransactions.find(
             (tx) => tx.recipient === cashlinkAddress);
-        ourKnownClaimingTx = ourKnownClaimingTx || this._knownTransactions.find( // update with new transactions
+        ourChainClaimingTx = ourChainClaimingTx || this._chainTransactions.find( // update with new transactions
             (tx) => tx.sender === cashlinkAddress && userAddresses.has(tx.recipient));
-        const anyKnownClaimingTx = ourKnownClaimingTx || this._knownTransactions.find(
+        const anyChainClaimingTx = ourChainClaimingTx || this._chainTransactions.find(
             (tx) => tx.sender === cashlinkAddress);
 
         // Update balance and pending transactions after fetching transaction history as they might have changed in the
@@ -320,9 +331,6 @@ class Cashlink {
         // Detect new state by a sequence of checks from UNCHARGED, CHARGING, UNCLAIMED, CLAIMING to CLAIMED states.
         // Note that cashlinks that already reached a later state in a previous detectState, can also go back to earlier
         // states again, e.g. by pending funding/claiming txs expiring, cashlink recharging or blockchain rebranching.
-        // Blockchain rebranching is however currently not handled as we don't evict transactions that were forked away
-        // from _knownTransactions. These transactions automatically end up in the mempool again though and should
-        // usually get confirmed again (but not necessarily, if mempool limits are exceeded).
         let newState: CashlinkState = CashlinkState.UNCHARGED;
         if (pendingFundingTx) {
             newState = CashlinkState.CHARGING;
@@ -334,13 +342,13 @@ class Cashlink {
             // Re-check with updated ourPendingClaimingTx.
             newState = CashlinkState.CLAIMING;
         }
-        if (ourKnownClaimingTx
-            || (knownFundingTx && (anyPendingClaimingTx || anyKnownClaimingTx)
+        if (ourChainClaimingTx
+            || (chainFundingTx && (anyPendingClaimingTx || anyChainClaimingTx)
                 && !balance && !pendingFundingTx && !ourPendingClaimingTx)
         ) {
             // User already claimed the cashlink and is not allowed to claim again or it had been funded but no funds
             // are left and it's not being recharged or still being claimed. Also checking whether we know at least one
-            // claiming tx instead of relying on empty balance to avoid CLAIMED state after funding if knownFundingTx is
+            // claiming tx instead of relying on empty balance to avoid CLAIMED state after funding if chainFundingTx is
             // already known but balance update was not triggered yet.
             newState = CashlinkState.CLAIMED;
         }
@@ -564,7 +572,10 @@ class Cashlink {
     private async _onTransactionChanged(transaction: Nimiq.PlainTransactionDetails): Promise<void> {
         const cashlinkAddress = this.address.toUserFriendlyAddress();
         if (transaction.recipient !== cashlinkAddress && transaction.sender !== cashlinkAddress) return;
-        this._knownTransactions.push(transaction);
+        if ((transaction.state === 'included' || transaction.state === 'confirmed')
+            && !this._chainTransactions.some((tx) => tx.transactionHash === transaction.transactionHash)) {
+            this._chainTransactions.push(transaction);
+        }
         const network = await this._getNetwork();
         await network.getBalance([this.address.toUserFriendlyAddress()])
             .then(this._onBalancesChanged.bind(this));
