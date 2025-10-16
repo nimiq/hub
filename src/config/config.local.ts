@@ -40,6 +40,7 @@ export default {
         usdt_bridged: {
             tokenContract: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
             transferContract: '0x98E69a6927747339d5E543586FC0262112eBe4BD',
+            cashlinkContract: '0x3c870b039bf82d2f883b6e89d41d06d26b9f4486',
             earliestHistoryScanHeight: 63189500, // Block when USDT was added to the Wallet
         },
         openGsnRelayHubContract: '0x6C28AfC105e65782D9Ea6F2cA68df84C9e7d750d',
