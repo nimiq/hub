@@ -470,7 +470,10 @@ class Cashlink {
             Cashlink._setLastClaimedMultiCashlink(this.address);
         }
 
-        return this._sendTransaction(transaction);
+        await this._sendTransaction(transaction);
+        if (this.state < CashlinkState.CLAIMING) {
+            this._updateState(CashlinkState.CLAIMING);
+        }
     }
 
     public on(type: Cashlink.Events, callback: (data: any) => void): void {
