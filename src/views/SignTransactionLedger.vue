@@ -317,7 +317,9 @@ export default class SignTransactionLedger extends Vue {
                 return;
             }
             sender = Nimiq.Address.fromString(this.$store.state.activeUserFriendlyAddress);
-            ({ recipient, value, fee } = this.cashlink!.getFundingDetails());
+            ({ address: recipient, value } = this.cashlink!);
+            fee = 0; // fund Cashlink with no fees; cashlink.fee is for claiming
+
             validityStartHeightPromise = network.getBlockchainHeight().then((blockchainHeight) => blockchainHeight + 1);
             recipientData = CASHLINK_FUNDING_DATA;
             flags = Nimiq.TransactionFlag.None;
@@ -549,7 +551,8 @@ export default class SignTransactionLedger extends Vue {
         if (this.checkoutPaymentOptions) {
             ({ amount, fee } = this.checkoutPaymentOptions);
         } else if (this.cashlink) {
-            ({ value: amount, fee } = this.cashlink);
+            amount = this.cashlink.value;
+            fee = 0; // fund Cashlink with no fees; cashlink.fee is for claiming
         } else if ('value' in this.request && 'fee' in this.request) { // SIGN_TRANSACTION request
             ({ value: amount, fee } = this.request);
         } else { // SIGN_STAKING request

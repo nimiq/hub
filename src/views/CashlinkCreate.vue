@@ -90,6 +90,7 @@
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import { Getter, Mutation, State } from 'vuex-class';
 import Cashlink from '../lib/Cashlink';
+import CashlinkInteractive from '../lib/CashlinkInteractive';
 import staticStore, { Static } from '../lib/StaticStore';
 import StatusScreen from '../components/StatusScreen.vue';
 import GlobalClose from '../components/GlobalClose.vue';
@@ -403,7 +404,7 @@ class CashlinkCreate extends Vue {
             return;
         }
 
-        const cashlink = Cashlink.create();
+        const cashlink = new CashlinkInteractive(Cashlink.create());
         staticStore.cashlink = cashlink;
         cashlink.setDependencies(NetworkClient.Instance, this.wallets);
         cashlink.value = this.liveAmountAndFee.amount;
