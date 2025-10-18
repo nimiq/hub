@@ -1,7 +1,7 @@
 import { setup } from './_setup';
 import { Store } from '@/lib/Store';
 import { CashlinkStore } from '@/lib/CashlinkStore';
-import Cashlink, { CashlinkState } from '@/lib/Cashlink';
+import Cashlink from '@/lib/Cashlink';
 
 setup();
 
@@ -28,7 +28,6 @@ const DUMMY_DATA = {
             1234554321,
             171,
             'Ein Cashlink test Cashlink',
-            CashlinkState.UNCLAIMED,
         ),
         new Cashlink(
             Nimiq.KeyPair.derive(new Nimiq.PrivateKey(new Uint8Array([
@@ -42,21 +41,10 @@ const DUMMY_DATA = {
             5000000,
             undefined,
             'Ein Cashlink test Cashlink',
-            CashlinkState.CLAIMED,
             Cashlink.DEFAULT_THEME,
             Date.now(),
         ),
-    ].map((cashlink) => {
-        // Anonymous functions cannot be compared by Jest, so we need to work around that
-        // (https://stackoverflow.com/a/48204295/4204380)
-        // @ts-ignore ignore private property access
-        cashlink._getNetwork = expect.any(Function);
-        // @ts-ignore ignore private property access
-        cashlink._networkClientResolver = expect.any(Function);
-        // @ts-ignore ignore private property access
-        cashlink._getUserAddresses = expect.any(Function);
-        return cashlink;
-    }),
+    ],
 };
 
 const beforeEachCallback = async () => {
@@ -145,8 +133,6 @@ describe('CashlinkStore', () => {
         // Check that the cashlink has been stored correctly
         let cashlink = await CashlinkStore.Instance.get(DUMMY_DATA.addresses[0]);
         expectEqualIgnoringOptionalProperties(cashlink, DUMMY_DATA.cashlinks[0]);
-
-        cashlink!.state = CashlinkState.CLAIMED;
 
         // Update the cashlink
         await CashlinkStore.Instance.put(cashlink!);

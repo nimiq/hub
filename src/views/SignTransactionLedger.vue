@@ -154,6 +154,7 @@ import { ParsedNimiqDirectPaymentOptions } from '../lib/paymentOptions/NimiqPaym
 import { Utf8Tools } from '@nimiq/utils';
 import Config from 'config';
 import Cashlink from '../lib/Cashlink';
+import { CashlinkExtraData } from '../lib/CashlinkInteractive';
 import { CashlinkStore } from '../lib/CashlinkStore';
 import CheckoutServerApi from '../lib/CheckoutServerApi';
 
@@ -623,7 +624,8 @@ export default class SignTransactionLedger extends Vue {
                             return new Error('Ledger Cashlink Signing expects the Cashlink to sign to be in the '
                                 + 'static store.'); // see CashlinkCreate
                         }
-                        ({ recipient, value, fee, recipientData } = this.cashlink.getFundingDetails());
+                        ({ address: recipient, value, fee } = this.cashlink);
+                        recipientData = CashlinkExtraData.FUNDING;
                     }
                     // For checkout, the payment info might not include a recipient yet, see mounted.
                     if (!recipient) return new Error('Failed to fetch checkout recipient.');

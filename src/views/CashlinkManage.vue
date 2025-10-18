@@ -94,6 +94,7 @@ import {
 import StatusScreen from '../components/StatusScreen.vue';
 import Network from '../components/Network.vue';
 import Cashlink from '../lib/Cashlink';
+import CashlinkInteractive from '../lib/CashlinkInteractive';
 import { CashlinkStore } from '../lib/CashlinkStore';
 import { State } from 'vuex-class';
 import KeyguardClient from '@nimiq/keyguard-client';
@@ -135,7 +136,7 @@ export default class CashlinkManage extends Vue {
     private status: string = i18n.t('Connecting to network...') as string;
     private state: StatusScreen.State = StatusScreen.State.LOADING;
     private message: string = '';
-    private retrievedCashlink: Cashlink | null = null;
+    private retrievedCashlink: CashlinkInteractive | null = null;
     private copied: boolean = false;
     private qrOverlayOpen = false;
 
@@ -170,11 +171,11 @@ export default class CashlinkManage extends Vue {
                 value: BigInt(storedCashlink.value),
             })[0];
             this.isTxSent = !transactionToSend;
-            this.retrievedCashlink = storedCashlink;
+            this.retrievedCashlink = new CashlinkInteractive(storedCashlink);
         } else {
             // Cashlink can not have been sent yet because whenever it gets sent, it was also added to the store.
             this.isTxSent = false;
-            this.retrievedCashlink = this.cashlink!;
+            this.retrievedCashlink = new CashlinkInteractive(this.cashlink!);
         }
 
         if (!this.isTxSent) {

@@ -2,7 +2,7 @@ import Config from 'config';
 import { NETWORK_DEV, NETWORK_TEST } from './Constants';
 import { WalletStore } from './WalletStore';
 import { CashlinkStore } from './CashlinkStore';
-import Cashlink, { CashlinkEntry } from './Cashlink';
+import CashlinkInteractive from './CashlinkInteractive';
 
 // Same localStorage key and value format as in the Nimiq Wallet.
 const TESTNET_VERSION_LOCALSTORAGE_KEY = 'testnet-version';
@@ -49,7 +49,7 @@ async function _clearOutdatedTestnetData(): Promise<void> {
     }
 
     // Remove the record of claimed multi-cashlinks, such that the Cashlink state gets re-detected on the new chain.
-    Cashlink.clearLastClaimedMultiCashlinks();
+    CashlinkInteractive.clearLastClaimedMultiCashlinks();
 
     window.localStorage.setItem(TESTNET_VERSION_LOCALSTORAGE_KEY, currentTestnetVersion);
     console.info(`Reset outdated testnet data for version ${storedTestnetVersion}`);

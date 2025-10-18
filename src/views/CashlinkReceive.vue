@@ -135,7 +135,8 @@ import {
 import StatusScreen from '../components/StatusScreen.vue';
 import CashlinkSparkle from '../components/CashlinkSparkle.vue';
 import CircleSpinner from '../components/CircleSpinner.vue';
-import Cashlink, { CashlinkState } from '../lib/Cashlink';
+import Cashlink from '../lib/Cashlink';
+import CashlinkInteractive, { CashlinkState } from '../lib/CashlinkInteractive';
 import { BasicRequest, CashlinkTheme } from '../../client/PublicRequestTypes';
 import { AccountInfo } from '../lib/AccountInfo';
 import { Getter, Mutation, State } from 'vuex-class';
@@ -173,7 +174,7 @@ class CashlinkReceive extends Vue {
     @Mutation('setActiveAccount') private $setActiveAccount!:
         (payload: {walletId: string, userFriendlyAddress: string}) => any;
 
-    private cashlink: Cashlink | null = null;
+    private cashlink: CashlinkInteractive | null = null;
     private selectedAddress: AccountInfo | null = null;
     private isAccountSelectorOpened: boolean = false;
     private isMobile: boolean = false;
@@ -203,15 +204,16 @@ class CashlinkReceive extends Vue {
 
     public async mounted() {
         // Load Cashlink from URL
-        this.cashlink = Cashlink.parse(window.location.hash.substring(1));
+        const parsedCashlink = Cashlink.parse(window.location.hash.substring(1));
 
         // Fail if no Cashlink was found
-        if (!this.cashlink) {
+        if (!parsedCashlink) {
             this.statusState = StatusScreen.State.WARNING;
             this.statusTitle = this.$t('404 - Cash not found') as string;
             this.statusMessage = this.$t('This is not a valid Cashlink, sorry.') as string;
             return;
         }
+        this.cashlink = new CashlinkInteractive(parsedCashlink);
 
         if (this.cashlink.theme) {
             this.$emit(CashlinkReceive.Events.THEME_CHANGED, this.cashlink.theme, this.isDarkTheme);
