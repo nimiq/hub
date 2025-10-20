@@ -53,7 +53,7 @@ export default class ErrorHandler extends Vue {
                 requestedKeyPaths: [DEFAULT_KEY_PATH],
                 isKeyLost: true,
                 bitcoinXPubPath: BTC_ACCOUNT_KEY_PATH[Config.bitcoinAddressType][Config.bitcoinNetwork],
-                polygonAccountPath: POLYGON_ACCOUNT_KEY_PATH[Config.polygonNetwork],
+                polygonAccountPath: POLYGON_ACCOUNT_KEY_PATH[Config.polygon.network],
             };
 
             const client = this.$rpc.createKeyguardClient();
@@ -81,7 +81,7 @@ export default class ErrorHandler extends Vue {
                         expectedKeyId: walletInfo.keyId,
                         wordsOnly: true,
                         bitcoinXPubPath: BTC_ACCOUNT_KEY_PATH[Config.bitcoinAddressType][Config.bitcoinNetwork],
-                        polygonAccountPath: POLYGON_ACCOUNT_KEY_PATH[Config.polygonNetwork],
+                        polygonAccountPath: POLYGON_ACCOUNT_KEY_PATH[Config.polygon.network],
                     };
 
                     const client = this.$rpc.createKeyguardClient();
