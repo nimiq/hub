@@ -1896,7 +1896,7 @@
     call-me-maybe "^1.0.1"
     glob-to-regexp "^0.3.0"
 
-"@nimiq/albatross-wasm@npm:@nimiq/core@^2.0.0":
+"@nimiq/albatross-wasm@npm:@nimiq/core@^2.0.0", "@nimiq/core@^2.1.1":
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/@nimiq/core/-/core-2.1.1.tgz#75b1ff1114aea049db3e6c2aecf6c44c1b660f35"
   integrity sha512-GOgWG5Uo9TPQld13EbVVKCBAL411LrqBd5qOXrrv0Qr52uq6GmY9AjbchUyMahtpFFOisX7Zvdtz8agYBNuS2A==
@@ -1913,14 +1913,6 @@
   version "1.6.4"
   resolved "https://registry.yarnpkg.com/@nimiq/core-web/-/core-web-1.6.4.tgz#2ab36ab6f7d4062c3d534e6da831c2ccaae959de"
   integrity sha512-D0jVukuL+zsUXicS4cCZEPlBzlzBe0D1sNWecEhaSjTR1iMa9f+fA9l08wlQtRVw96Z6yHRgQokWVnO1GcWI7Q==
-
-"@nimiq/core@^2.1.1":
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/@nimiq/core/-/core-2.1.1.tgz#75b1ff1114aea049db3e6c2aecf6c44c1b660f35"
-  integrity sha512-GOgWG5Uo9TPQld13EbVVKCBAL411LrqBd5qOXrrv0Qr52uq6GmY9AjbchUyMahtpFFOisX7Zvdtz8agYBNuS2A==
-  dependencies:
-    comlink "^4.4.1"
-    websocket "^1.0.34"
 
 "@nimiq/electrum-client@https://github.com/nimiq/electrum-client#build":
   version "0.1.0"
@@ -12494,6 +12486,11 @@ strip-json-comments@^3.1.1:
   version "3.1.1"
   resolved "https://registry.yarnpkg.com/strip-json-comments/-/strip-json-comments-3.1.1.tgz#31f1281b3832630434831c310c01cccda8cbe006"
   integrity sha512-6fPc+R4ihwqP6N/aIv2f1gMH8lOVtWQHoqC4yK6oSDVVocumAsfCqjkXnqiYMhmMwS/mEHLp7Vehlt3ql6lEig==
+
+sturdy-websocket@^0.2.1:
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/sturdy-websocket/-/sturdy-websocket-0.2.1.tgz#20a58fd53372ef96eaa08f3c61c91a10b07c7c05"
+  integrity sha512-NnzSOEKyv4I83qbuKw9ROtJrrT6Z/Xt7I0HiP/e6H6GnpeTDvzwGIGeJ8slai+VwODSHQDooW2CAilJwT9SpRg==
 
 stylehacks@^4.0.0:
   version "4.0.1"

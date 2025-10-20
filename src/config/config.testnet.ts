@@ -31,8 +31,25 @@ export default {
     bitcoinNetwork: BTC_NETWORK_TEST,
     bitcoinAddressType: NATIVE_SEGWIT,
 
-    // enablePolygon: true,
-    polygonNetwork: POLYGON_NETWORK_TEST,
+    polygon: {
+        network: POLYGON_NETWORK_TEST,
+        networkId: 80002,
+        rpcEndpoint: 'wss://polygon-amoy.g.alchemy.com/v2/#ALCHEMY_API_KEY#',
+        rpcMaxBlockRange: 648_000, // 15 days - Maximum supported range by Alchemy?
+        usdc: {
+            tokenContract: '0x41E94Eb019C0762f9Bfcf9Fb1E58725BfB0e7582',
+            transferContract: '', // v1
+            earliestHistoryScanHeight: 13320830, // Block when Wallet was switched to Amoy testnet
+        },
+        usdt_bridged: {
+            tokenContract: '0x1616d425Cd540B256475cBfb604586C8598eC0FB',
+            transferContract: '',
+            earliestHistoryScanHeight: 13320830, // Block when USDT was added to the Wallet
+        },
+        openGsnRelayHubContract: '',
+        uniswapQuoterContract: '',
+        wpolContract: '0xA5733b3A8e62A8faF43b0376d5fAF46E89B3033E',
+    },
 
     fastspot: {
         apiEndpoint: 'https://api.test.fastspot.io/fast/v1',

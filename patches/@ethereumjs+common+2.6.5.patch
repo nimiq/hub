@@ -1,0 +1,24 @@
+diff --git a/node_modules/@ethereumjs/common/dist/types.d.ts b/node_modules/@ethereumjs/common/dist/types.d.ts
+index 29f8842..e5c0625 100644
+--- a/node_modules/@ethereumjs/common/dist/types.d.ts
++++ b/node_modules/@ethereumjs/common/dist/types.d.ts
+@@ -35,14 +35,14 @@ export interface Chain {
+         casper?: any;
+     };
+ }
+-declare type StoragePair = [key: PrefixedHexString, value: PrefixedHexString];
++declare type StoragePair = [/*key:*/ PrefixedHexString, /*value:*/ PrefixedHexString];
+ export declare type AccountState = [
+-    balance: PrefixedHexString,
+-    code: PrefixedHexString,
+-    storage: Array<StoragePair>
++    /*balance:*/ PrefixedHexString,
++    /*code:*/ PrefixedHexString,
++    /*storage:*/ Array<StoragePair>
+ ];
+ export interface GenesisState {
+-    [key: PrefixedHexString]: PrefixedHexString | AccountState;
++    [key: string]: PrefixedHexString | AccountState;
+ }
+ export interface eipsType {
+     [key: number]: any;
