@@ -63,7 +63,7 @@ export default class ActivatePolygon extends Vue {
         const keyguardRequest: DerivePolygonAddressRequest = {
             appName: this.request.appName,
             keyId,
-            polygonAccountPath: POLYGON_ACCOUNT_KEY_PATH[Config.polygonNetwork],
+            polygonAccountPath: POLYGON_ACCOUNT_KEY_PATH[Config.polygon.network],
         };
 
         const client = this.$rpc.createKeyguardClient(true);

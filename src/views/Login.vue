@@ -31,7 +31,7 @@ export default class Login extends Vue {
             appName: this.request.appName,
             requestedKeyPaths: [DEFAULT_KEY_PATH],
             bitcoinXPubPath: BTC_ACCOUNT_KEY_PATH[Config.bitcoinAddressType][Config.bitcoinNetwork],
-            polygonAccountPath: POLYGON_ACCOUNT_KEY_PATH[Config.polygonNetwork],
+            polygonAccountPath: POLYGON_ACCOUNT_KEY_PATH[Config.polygon.network],
         };
 
         const client = this.$rpc.createKeyguardClient(true);

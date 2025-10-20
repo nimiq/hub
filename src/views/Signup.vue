@@ -36,7 +36,7 @@ export default class Signup extends Vue {
                 ? true
                 : false,
             bitcoinXPubPath: BTC_ACCOUNT_KEY_PATH[Config.bitcoinAddressType][Config.bitcoinNetwork],
-            polygonAccountPath: POLYGON_ACCOUNT_KEY_PATH[Config.polygonNetwork],
+            polygonAccountPath: POLYGON_ACCOUNT_KEY_PATH[Config.polygon.network],
         };
         const client = this.$rpc.createKeyguardClient(true);
         client.create(request);
