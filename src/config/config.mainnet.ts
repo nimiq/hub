@@ -42,8 +42,25 @@ export default {
     bitcoinNetwork: BTC_NETWORK_MAIN,
     bitcoinAddressType: NATIVE_SEGWIT,
 
-    // enablePolygon: true,
-    polygonNetwork: POLYGON_NETWORK_MAIN,
+    polygon: {
+        network: POLYGON_NETWORK_MAIN,
+        networkId: 137,
+        rpcEndpoint: 'wss://polygon-mainnet.g.alchemy.com/v2/#ALCHEMY_API_KEY#',
+        rpcMaxBlockRange: 648_000, // 15 days - Maximum supported range by Alchemy?
+        usdc: {
+            tokenContract: '0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359',
+            transferContract: '0x3157d422cd1be13AC4a7cb00957ed717e648DFf2',
+            earliestHistoryScanHeight: 45319261, // Native USDC contract creation block
+        },
+        usdt_bridged: {
+            tokenContract: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
+            transferContract: '0x98E69a6927747339d5E543586FC0262112eBe4BD',
+            earliestHistoryScanHeight: 63189500, // Block when USDT was added to the Wallet
+        },
+        openGsnRelayHubContract: '0x6C28AfC105e65782D9Ea6F2cA68df84C9e7d750d',
+        uniswapQuoterContract: '0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6',
+        wpolContract: '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270',
+    },
 
     fastspot: {
         apiEndpoint: 'https://api.go.fastspot.io/fast/v1',
