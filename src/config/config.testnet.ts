@@ -1,7 +1,7 @@
 import type { NimiqVersion as LedgerApiNimiqVersion } from '@nimiq/ledger-api'; // import type only to avoid bundling
 import { NETWORK_TEST } from '../lib/Constants';
 import { BTC_NETWORK_TEST, NATIVE_SEGWIT } from '../lib/bitcoin/BitcoinConstants';
-import { POLYGON_NETWORK_TEST } from '../lib/polygon/PolygonConstants';
+import { POLYGON_NETWORK_MAIN } from '../lib/polygon/PolygonConstants';
 
 export default {
     keyguardEndpoint: 'https://keyguard.nimiq-testnet.com',
@@ -32,23 +32,26 @@ export default {
     bitcoinAddressType: NATIVE_SEGWIT,
 
     polygon: {
-        network: POLYGON_NETWORK_TEST,
-        networkId: 80002,
-        rpcEndpoint: 'wss://polygon-amoy.g.alchemy.com/v2/#ALCHEMY_API_KEY#',
+        // Notably, we use the Polygon mainnet even in local/development and testnet builds, because our contracts for
+        // gas-abstraction aren't available on testnet yet, because of lack of official USDC and USDT testnet contracts,
+        // and thus lack of liquidity on testnet Uniswap for gas-abstracted transactions.
+        network: POLYGON_NETWORK_MAIN,
+        networkId: 137,
+        rpcEndpoint: 'wss://polygon-mainnet.g.alchemy.com/v2/#ALCHEMY_API_KEY#',
         rpcMaxBlockRange: 648_000, // 15 days - Maximum supported range by Alchemy?
         usdc: {
-            tokenContract: '0x41E94Eb019C0762f9Bfcf9Fb1E58725BfB0e7582',
-            transferContract: '', // v1
-            earliestHistoryScanHeight: 13320830, // Block when Wallet was switched to Amoy testnet
+            tokenContract: '0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359',
+            transferContract: '0x3157d422cd1be13AC4a7cb00957ed717e648DFf2',
+            earliestHistoryScanHeight: 45319261, // Native USDC contract creation block
         },
         usdt_bridged: {
-            tokenContract: '0x1616d425Cd540B256475cBfb604586C8598eC0FB',
-            transferContract: '',
-            earliestHistoryScanHeight: 13320830, // Block when USDT was added to the Wallet
+            tokenContract: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
+            transferContract: '0x98E69a6927747339d5E543586FC0262112eBe4BD',
+            earliestHistoryScanHeight: 63189500, // Block when USDT was added to the Wallet
         },
-        openGsnRelayHubContract: '',
-        uniswapQuoterContract: '',
-        wpolContract: '0xA5733b3A8e62A8faF43b0376d5fAF46E89B3033E',
+        openGsnRelayHubContract: '0x6C28AfC105e65782D9Ea6F2cA68df84C9e7d750d',
+        uniswapQuoterContract: '0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6',
+        wpolContract: '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270',
     },
 
     fastspot: {
