@@ -624,7 +624,8 @@ export default class SignTransactionLedger extends Vue {
                             return new Error('Ledger Cashlink Signing expects the Cashlink to sign to be in the '
                                 + 'static store.'); // see CashlinkCreate
                         }
-                        ({ address: recipient, value, fee } = this.cashlink);
+                        ({ value, fee } = this.cashlink);
+                        recipient = Nimiq.Address.fromUserFriendlyAddress(this.cashlink.address);
                         recipientData = CashlinkExtraData.FUNDING;
                     }
                     // For checkout, the payment info might not include a recipient yet, see mounted.

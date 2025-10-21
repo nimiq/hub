@@ -245,7 +245,7 @@ class CashlinkReceive extends Vue {
         const innerNetworkClient = await NetworkClient.Instance.innerClient;
         await new Promise<void>((resolve) => {
             innerNetworkClient.addTransactionListener((tx) => {
-                if (tx.sender === this.cashlink!.address.toUserFriendlyAddress()) resolve();
+                if (tx.sender === this.cashlink!.address) resolve();
             }, [this.cashlink!.address]);
         });
 

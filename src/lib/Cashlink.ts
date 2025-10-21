@@ -15,7 +15,7 @@ export type CashlinkEntry = {
     currency?: CashlinkCurrency; // Only set for currencies other than NIM, unless specifically requested for NIM, too.
     // Newer cashlink entries only encode the private key anymore to save space and be generic to different kinds of
     // private keys.
-    privateKey: Uint8Array;
+    secret: Uint8Array;
 });
 
 class Cashlink<C extends CashlinkCurrency = CashlinkCurrency> {
@@ -80,8 +80,10 @@ class Cashlink<C extends CashlinkCurrency = CashlinkCurrency> {
 
     public static create<C extends CashlinkCurrency = CashlinkCurrency.NIM>(currency: C = CashlinkCurrency.NIM as C)
         : Cashlink<C> {
-        const keyPair = Nimiq.KeyPair.derive(Nimiq.PrivateKey.generate());
-        return new Cashlink(currency, keyPair, keyPair.publicKey.toAddress());
+        const secret = new Uint8Array(Cashlink.SECRET_SIZE);
+        window.crypto.getRandomValues(secret);
+        const address = Cashlink._deriveAddress(currency, secret);
+        return new Cashlink(currency, secret, address);
     }
 
     public static parse(str: string): Cashlink | null {
@@ -89,8 +91,7 @@ class Cashlink<C extends CashlinkCurrency = CashlinkCurrency> {
         try {
             str = str.replace(/~/g, '').replace(/=*$/, (match) => new Array(match.length).fill('.').join(''));
             const buf = Nimiq.BufferUtils.fromBase64Url(str);
-            const privateKeyBytes = buf.read(Nimiq.PrivateKey.SIZE);
-            const keyPair = Nimiq.KeyPair.derive(Nimiq.PrivateKey.deserialize(privateKeyBytes));
+            const secret = buf.read(Cashlink.SECRET_SIZE);
             const value = buf.readUint64();
             let message: string = '';
             if (buf.readPos < buf.byteLength) {
@@ -113,8 +114,8 @@ class Cashlink<C extends CashlinkCurrency = CashlinkCurrency> {
 
             return new Cashlink(
                 currency,
-                keyPair,
-                keyPair.publicKey.toAddress(),
+                secret,
+                Cashlink._deriveAddress(currency, secret),
                 value,
                 undefined, // fee
                 message,
@@ -130,9 +131,10 @@ class Cashlink<C extends CashlinkCurrency = CashlinkCurrency> {
         return new Cashlink(
             'currency' in object && object.currency !== undefined ? object.currency : CashlinkCurrency.NIM,
             'keyPair' in object
-                ? Nimiq.KeyPair.deserialize(new Nimiq.SerialBuffer(object.keyPair))
-                : Nimiq.KeyPair.derive(Nimiq.PrivateKey.deserialize(object.privateKey)),
-            Nimiq.Address.fromString(object.address),
+                // Legacy Cashlink entry encoding a Nimiq key pair.
+                ? Nimiq.KeyPair.deserialize(object.keyPair).privateKey.serialize()
+                : object.secret,
+            object.address,
             object.value,
             object.fee,
             object.message,
@@ -140,6 +142,19 @@ class Cashlink<C extends CashlinkCurrency = CashlinkCurrency> {
             // @ts-ignore `timestamp` was called `date` before and was live in the mainnet.
             object.timestamp || object.date,
         );
+    }
+
+    private static _deriveAddress(currency: CashlinkCurrency, secret: Uint8Array): string {
+        switch (currency) {
+            case CashlinkCurrency.NIM: {
+                const privateKey = Nimiq.PrivateKey.deserialize(secret);
+                const publicKey = Nimiq.PublicKey.derive(privateKey);
+                return publicKey.toAddress().toUserFriendlyAddress();
+            }
+            default:
+                const _exhaustiveCheck: never = currency; // Check to notice unsupported currency at compilation time.
+                return _exhaustiveCheck;
+        }
     }
 
     private _value: number | null = null; // amount in the smallest unit of the Cashlink's currency
@@ -150,14 +165,16 @@ class Cashlink<C extends CashlinkCurrency = CashlinkCurrency> {
 
     constructor(
         public readonly currency: C,
-        public keyPair: Nimiq.KeyPair,
-        public address: Nimiq.Address,
+        public secret: Uint8Array,
+        public address: string,
         value?: number,
         fee?: number,
         message?: string,
         theme?: CashlinkTheme,
         public timestamp: number = Math.floor(Date.now() / 1000),
     ) {
+        if (this.secret.byteLength !== Cashlink.SECRET_SIZE) throw new Error('Invalid Cashlink secret');
+
         if (value) this.value = value;
         if (fee) this.fee = fee;
         if (message) this.message = message;
@@ -168,8 +185,8 @@ class Cashlink<C extends CashlinkCurrency = CashlinkCurrency> {
 
     public toObject(includeOptional: boolean = true): CashlinkEntry {
         const result: CashlinkEntry = {
-            privateKey: this.keyPair.privateKey.serialize(),
-            address: this.address.toUserFriendlyAddress(),
+            secret: this.secret,
+            address: this.address,
             value: this.value,
             message: this.message,
             theme: this._theme,
@@ -192,6 +209,8 @@ class Cashlink<C extends CashlinkCurrency = CashlinkCurrency> {
         // TODO when switching to Cashlinks on cash.link, also change the format of the Cashlinks:
         //  - add a version byte as first byte, which would then allow for breaking changes of the encoding scheme and
         //    could potentially already encode which optional parameters are set in a more efficient manner.
+        //  - as we probably won't really need the 8 available bytes for the amount, it can also be considered encoding
+        //    the version there.
         //  - order optional values by likelyhood that they are set, because in the current encoding scheme, prior
         //    optional values have to also be encoded if a following optional value is set.
         //  - consider making the currency required?
@@ -204,7 +223,7 @@ class Cashlink<C extends CashlinkCurrency = CashlinkCurrency> {
         const hasToEncodeMessage = !!this._messageBytes.byteLength || hasToEncodeTheme;
 
         const buf = new Nimiq.SerialBuffer(
-            /*key*/ this.keyPair.privateKey.serializedSize +
+            /*key*/ Cashlink.SECRET_SIZE +
             /*value*/ 8 +
             // optional parameters
             /*message*/ (hasToEncodeMessage ? /*length*/ 1 + /*message bytes*/ this._messageBytes.byteLength : 0) +
@@ -212,7 +231,7 @@ class Cashlink<C extends CashlinkCurrency = CashlinkCurrency> {
             /*currency*/ (hasToEncodeCurrency ? 1 : 0),
         );
 
-        buf.write(this.keyPair.privateKey.serialize());
+        buf.write(this.secret);
         buf.writeUint64(this.value);
         if (hasToEncodeMessage) {
             buf.writeUint8(this._messageBytes.byteLength);
@@ -237,6 +256,7 @@ class Cashlink<C extends CashlinkCurrency = CashlinkCurrency> {
 }
 
 namespace Cashlink {
+    export const SECRET_SIZE = 32;
     // To be updated with the seasons.
     export const DEFAULT_THEME = Date.now() < new Date('Tue, 13 Apr 2020 23:59:00 GMT-12').valueOf()
         ? CashlinkTheme.EASTER
