@@ -433,6 +433,12 @@ export class RequestParser {
                 }
                 const skipSharing = !!createCashlinkRequest.returnLink && !!createCashlinkRequest.skipSharing;
 
+                // Parse currency, default to NIM for backward compatibility
+                const createCurrency = createCashlinkRequest.currency || Currency.NIM;
+                if (!Object.values(Currency).includes(createCurrency)) {
+                    throw new Error('Invalid Cashlink currency');
+                }
+
                 return {
                     kind: RequestType.CREATE_CASHLINK,
                     appName: createCashlinkRequest.appName,
@@ -444,13 +450,22 @@ export class RequestParser {
                     fiatCurrency: createCashlinkRequest.fiatCurrency,
                     returnLink,
                     skipSharing,
+                    currency: createCurrency,
                 } as ParsedCreateCashlinkRequest;
             case RequestType.MANAGE_CASHLINK:
                 const manageCashlinkRequest = request as ManageCashlinkRequest;
+
+                // Parse currency, default to NIM for backward compatibility
+                const manageCurrency = manageCashlinkRequest.currency || Currency.NIM;
+                if (!Object.values(Currency).includes(manageCurrency)) {
+                    throw new Error('Invalid Cashlink currency');
+                }
+
                 return {
                     kind: RequestType.MANAGE_CASHLINK,
                     appName: manageCashlinkRequest.appName,
                     cashlinkAddress: Nimiq.Address.fromString(manageCashlinkRequest.cashlinkAddress),
+                    currency: manageCurrency,
                 } as ParsedManageCashlinkRequest;
             case RequestType.SIGN_BTC_TRANSACTION:
                 const signBtcTransactionRequest = request as SignBtcTransactionRequest;

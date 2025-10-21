@@ -24,10 +24,12 @@ msgid "+ {currency} network fee"
 msgstr ""
 
 #: src/views/CashlinkReceive.vue:114
+#: src/views/UsdtCashlinkReceive.vue:112
 msgid "30 seconds, no email, no download."
 msgstr ""
 
 #: src/views/CashlinkReceive.vue:212
+#: src/views/UsdtCashlinkReceive.vue:202
 msgid "404 - Cash not found"
 msgstr ""
 
@@ -60,6 +62,7 @@ msgid "Activate update"
 msgstr ""
 
 #: src/views/CashlinkCreate.vue:66
+#: src/views/UsdtCashlinkCreate.vue:76
 msgid "Add a message..."
 msgstr ""
 
@@ -232,12 +235,13 @@ msgid "By adding a transaction fee, you can influence how fast your transaction 
 msgstr ""
 
 #: src/views/CashlinkManage.vue:11
-#: src/views/Checkout.vue:206
+#: src/views/Checkout.vue:207
 #: src/views/CheckoutTransmission.vue:10
+#: src/views/UsdtCashlinkManage.vue:11
 msgid "Cancel"
 msgstr ""
 
-#: src/views/Checkout.vue:205
+#: src/views/Checkout.vue:206
 #: src/views/SignTransactionLedger.vue:107
 msgid "Cancel payment"
 msgstr ""
@@ -255,22 +259,27 @@ msgid "Cashlink created."
 msgstr ""
 
 #: src/views/CashlinkReceive.vue:314
+#: src/views/UsdtCashlinkReceive.vue:319
 msgid "Cashlink empty :("
 msgstr ""
 
 #: src/views/CashlinkReceive.vue:301
+#: src/views/UsdtCashlinkReceive.vue:312
 msgid "Cashlink funding"
 msgstr ""
 
 #: src/views/CashlinkReceive.vue:312
+#: src/views/UsdtCashlinkReceive.vue:316
 msgid "Cashlink is empty"
 msgstr ""
 
 #: src/views/CashlinkReceive.vue:300
+#: src/views/UsdtCashlinkReceive.vue:311
 msgid "Cashlink not funded"
 msgstr ""
 
 #: src/views/CashlinkReceive.vue:29
+#: src/views/UsdtCashlinkReceive.vue:29
 msgid "Change"
 msgstr ""
 
@@ -279,6 +288,7 @@ msgid "Check your Backup | Check your Backups"
 msgstr ""
 
 #: src/views/CashlinkReceive.vue:299
+#: src/views/UsdtCashlinkReceive.vue:309
 msgid "Checking status"
 msgstr ""
 
@@ -298,6 +308,7 @@ msgstr ""
 #: src/views/CashlinkReceive.vue:65
 #: src/views/ChooseAddress.vue:18
 #: src/views/ChooseAddress.vue:5
+#: src/views/UsdtCashlinkReceive.vue:63
 msgid "Choose an Address"
 msgstr ""
 
@@ -314,6 +325,7 @@ msgid "Choose an Avatar"
 msgstr ""
 
 #: src/views/CashlinkCreate.vue:10
+#: src/views/UsdtCashlinkCreate.vue:10
 msgid "Choose Sender"
 msgstr ""
 
@@ -325,8 +337,16 @@ msgstr ""
 msgid "Claim Cashlink"
 msgstr ""
 
+#: src/views/UsdtCashlinkReceive.vue:310
+msgid "Claim USDT Cashlink"
+msgstr ""
+
 #: src/views/CashlinkReceive.vue:355
 msgid "Claim your Cash"
+msgstr ""
+
+#: src/views/UsdtCashlinkReceive.vue:360
+msgid "Claim your USDT"
 msgstr ""
 
 #: src/views/CashlinkReceive.vue:239
@@ -335,11 +355,20 @@ msgstr ""
 msgid "Claiming Cashlink"
 msgstr ""
 
+#: src/views/UsdtCashlinkReceive.vue:267
+msgid "Claiming failed"
+msgstr ""
+
+#: src/views/UsdtCashlinkReceive.vue:239
+msgid "Claiming USDT Cashlink"
+msgstr ""
+
 #: src/components/LedgerUi.vue:311
 msgid "Click Connect"
 msgstr ""
 
 #: src/views/CashlinkManage.vue:25
+#: src/views/UsdtCashlinkManage.vue:28
 msgid "Click to copy:"
 msgstr ""
 
@@ -433,6 +462,10 @@ msgstr ""
 msgid "Connecting to Nimiq..."
 msgstr ""
 
+#: src/views/UsdtCashlinkReceive.vue:240
+msgid "Connecting to Polygon..."
+msgstr ""
+
 #: src/views/LoginSuccess.vue:45
 msgid "Connecting..."
 msgstr ""
@@ -465,10 +498,12 @@ msgid "Contract Information"
 msgstr ""
 
 #: src/views/CashlinkCreate.vue:40
+#: src/views/UsdtCashlinkCreate.vue:48
 msgid "Create a Cashlink"
 msgstr ""
 
 #: src/views/CashlinkReceive.vue:93
+#: src/views/UsdtCashlinkReceive.vue:91
 msgid "Create account"
 msgstr ""
 
@@ -477,6 +512,7 @@ msgid "Create Account"
 msgstr ""
 
 #: src/views/CashlinkReceive.vue:113
+#: src/views/UsdtCashlinkReceive.vue:111
 msgid "Create an account and claim your money."
 msgstr ""
 
@@ -485,6 +521,7 @@ msgid "Create and scan QR codes to quickly share addresses."
 msgstr ""
 
 #: src/views/CashlinkCreate.vue:78
+#: src/views/UsdtCashlinkCreate.vue:87
 msgid "Create Cashlink"
 msgstr ""
 
@@ -493,8 +530,12 @@ msgid "Creating your Account"
 msgstr ""
 
 #: src/views/CashlinkManage.vue:232
-#: src/views/SignTransactionLedger.vue:725
+#: src/views/SignTransactionLedger.vue:726
 msgid "Creating your Cashlink"
+msgstr ""
+
+#: src/views/UsdtCashlinkManage.vue:210
+msgid "Creating your USDT Cashlink"
 msgstr ""
 
 #: src/views/LoginSuccess.vue:60
@@ -515,10 +556,12 @@ msgid "Don’t close this window until confirmation."
 msgstr ""
 
 #: src/views/CashlinkManage.vue:22
+#: src/views/UsdtCashlinkManage.vue:24
 msgid "Done"
 msgstr ""
 
 #: src/views/CashlinkManage.vue:67
+#: src/views/UsdtCashlinkManage.vue:70
 msgid "Download"
 msgstr ""
 
@@ -553,6 +596,10 @@ msgstr ""
 #: src/views/SetupSwapLedger.vue:285
 #: src/views/SetupSwapLedger.vue:301
 msgid "Fee"
+msgstr ""
+
+#: src/views/UsdtCashlinkCreate.vue:28
+msgid "Fee for relaying the USDT transaction on Polygon network."
 msgstr ""
 
 #: src/views/LoginSuccess.vue:131
@@ -613,6 +660,8 @@ msgid "Go back"
 msgstr ""
 
 #: src/views/CashlinkReceive.vue:16
+#: src/views/UsdtCashlinkCreate.vue:32
+#: src/views/UsdtCashlinkReceive.vue:16
 msgid "Got it"
 msgstr ""
 
@@ -625,15 +674,21 @@ msgid "Green Address"
 msgstr ""
 
 #: src/views/CashlinkReceive.vue:354
+#: src/views/UsdtCashlinkReceive.vue:359
 msgid "Happy birthday!"
 msgstr ""
 
 #: src/views/CashlinkReceive.vue:352
+#: src/views/UsdtCashlinkReceive.vue:357
 msgid "Happy Easter!"
 msgstr ""
 
 #: src/views/CashlinkManage.vue:121
 msgid "Here is your Nimiq Cashlink!"
+msgstr ""
+
+#: src/views/UsdtCashlinkManage.vue:122
+msgid "Here is your USDT Cashlink!"
 msgstr ""
 
 #: src/components/CheckoutCardNimiq.vue:51
@@ -718,6 +773,7 @@ msgid "Login to another account"
 msgstr ""
 
 #: src/views/CashlinkReceive.vue:95
+#: src/views/UsdtCashlinkReceive.vue:93
 msgid "Login to existing account"
 msgstr ""
 
@@ -750,7 +806,8 @@ msgid "New Address added to your Account."
 msgstr ""
 
 #: src/views/CashlinkCreate.vue:55
-#: src/views/SignTransactionLedger.vue:329
+#: src/views/SignTransactionLedger.vue:330
+#: src/views/UsdtCashlinkCreate.vue:63
 msgid "New Cashlink"
 msgstr ""
 
@@ -880,6 +937,10 @@ msgstr ""
 msgid "Preparing Swap"
 msgstr ""
 
+#: src/views/UsdtCashlinkManage.vue:131
+msgid "Preparing transaction..."
+msgstr ""
+
 #: src/views/CheckoutTransmission.vue:126
 msgid "Processing your payment"
 msgstr ""
@@ -914,6 +975,7 @@ msgstr ""
 
 #: src/views/CashlinkManage.vue:10
 #: src/views/CheckoutTransmission.vue:9
+#: src/views/UsdtCashlinkManage.vue:10
 msgid "Reload"
 msgstr ""
 
@@ -958,12 +1020,13 @@ msgstr ""
 msgid "Send your transaction"
 msgstr ""
 
-#: src/views/SignTransactionLedger.vue:726
+#: src/views/SignTransactionLedger.vue:727
 msgid "Sending Transaction"
 msgstr ""
 
 #: src/views/CashlinkManage.vue:193
 #: src/views/CheckoutTransmission.vue:118
+#: src/views/UsdtCashlinkManage.vue:178
 msgid "Sending transaction..."
 msgstr ""
 
@@ -976,6 +1039,7 @@ msgid "Set fee"
 msgstr ""
 
 #: src/views/CashlinkManage.vue:36
+#: src/views/UsdtCashlinkManage.vue:39
 msgid "Share"
 msgstr ""
 
@@ -996,8 +1060,14 @@ msgstr ""
 msgid "Single Accounts"
 msgstr ""
 
+#: src/views/UsdtCashlinkReceive.vue:366
+#: src/views/UsdtCashlinkReceive.vue:368
+msgid "Someone sent you USDT on Polygon!"
+msgstr ""
+
 #: src/views/CashlinkManage.vue:231
 #: src/views/CheckoutTransmission.vue:125
+#: src/views/UsdtCashlinkManage.vue:209
 msgid "Something went wrong"
 msgstr ""
 
@@ -1113,7 +1183,7 @@ msgid "The display language changed. Do you want to reload the page to update al
 msgstr ""
 
 #: src/components/CheckoutCard.vue:171
-#: src/views/SignTransactionLedger.vue:732
+#: src/views/SignTransactionLedger.vue:733
 msgid "The offer expired."
 msgstr ""
 
@@ -1133,11 +1203,16 @@ msgstr ""
 msgid "This is not a valid Cashlink, sorry."
 msgstr ""
 
+#: src/views/UsdtCashlinkReceive.vue:203
+msgid "This is not a valid USDT Cashlink, sorry."
+msgstr ""
+
 #: src/views/SignupLedger.vue:30
 msgid "This is your account with your first address in it."
 msgstr ""
 
 #: src/views/CashlinkCreate.vue:68
+#: src/views/UsdtCashlinkCreate.vue:78
 msgid "This message will be stored in the Cashlink."
 msgstr ""
 
@@ -1151,6 +1226,10 @@ msgstr ""
 
 #: src/views/SetupSwapLedger.vue:25
 msgid "This rate includes the swap fee."
+msgstr ""
+
+#: src/views/UsdtCashlinkReceive.vue:317
+msgid "This USDT Cashlink has already been claimed."
 msgstr ""
 
 #: src/views/Migrate.vue:6
@@ -1178,17 +1257,21 @@ msgstr ""
 msgid "Transaction could not be relayed"
 msgstr ""
 
+#: src/views/UsdtCashlinkCreate.vue:27
+msgid "Transaction Fee"
+msgstr ""
+
 #: src/views/CashlinkManage.vue:212
 #: src/views/CheckoutTransmission.vue:105
 msgid "Transaction is expired"
 msgstr ""
 
-#: src/views/SignTransactionLedger.vue:730
+#: src/views/SignTransactionLedger.vue:731
 msgid "Transaction Sent"
 msgstr ""
 
 #: src/views/SignBtcTransactionLedger.vue:117
-#: src/views/SignTransactionLedger.vue:729
+#: src/views/SignTransactionLedger.vue:730
 msgid "Transaction Signed"
 msgstr ""
 
@@ -1230,11 +1313,24 @@ msgid "Updating your Accounts"
 msgstr ""
 
 #: src/views/CashlinkCreate.vue:6
+#: src/views/UsdtCashlinkCreate.vue:6
 msgid "Updating your balances"
 msgstr ""
 
 #: src/views/ActivatePolygonSuccess.vue:117
 msgid "USDC/USDT activated"
+msgstr ""
+
+#: src/views/UsdtCashlinkReceive.vue:261
+msgid "USDT Cashlink claimed!"
+msgstr ""
+
+#: src/views/UsdtCashlinkManage.vue:21
+msgid "USDT Cashlink created"
+msgstr ""
+
+#: src/views/UsdtCashlinkManage.vue:208
+msgid "USDT Cashlink created."
 msgstr ""
 
 #: src/components/OnboardingMenu.vue:12
@@ -1277,6 +1373,7 @@ msgid "Welcome to the Nimiq Wallet"
 msgstr ""
 
 #: src/CashlinkApp.vue:9
+#: src/UsdtCashlinkApp.vue:9
 msgid "What is Nimiq?"
 msgstr ""
 
@@ -1298,11 +1395,16 @@ msgid "You are logged out."
 msgstr ""
 
 #: src/views/CashlinkReceive.vue:350
+#: src/views/UsdtCashlinkReceive.vue:355
 msgid "You are loved"
 msgstr ""
 
 #: src/views/CashlinkReceive.vue:21
 msgid "You received a Cashlink!"
+msgstr ""
+
+#: src/views/UsdtCashlinkReceive.vue:21
+msgid "You received a USDT Cashlink!"
 msgstr ""
 
 #: src/components/CheckoutCard.vue:194

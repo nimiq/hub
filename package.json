@@ -32,7 +32,7 @@
         "@nimiq/rpc": "^0.4.1",
         "@nimiq/style": "^0.8.2",
         "@nimiq/utils": "^0.11.1",
-        "@nimiq/vue-components": "https://github.com/nimiq/vue-components#build/hub",
+        "@nimiq/vue-components": "../vue-components",
         "@opengsn/common": "^2.2.5",
         "@sentry/vue": "^8.40.0",
         "big-integer": "^1.6.48",
@@ -72,5 +72,6 @@
         "webpack-i18n-tools": "https://github.com/nimiq/webpack-i18n-tools#master",
         "webpack-subresource-integrity": "^1.5.2",
         "write-file-webpack-plugin": "^4.5.1"
-    }
+    },
+    "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }

@@ -20,6 +20,7 @@ import {
     ConnectAccountRequest,
     ConnectedAccount,
     RsaKeyParams,
+    Currency,
 } from '../client/PublicRequestTypes';
 import { RedirectRequestBehavior, PopupRequestBehavior } from '../client/RequestBehavior';
 import { Utf8Tools } from '@nimiq/utils';
@@ -148,6 +149,34 @@ class Demo {
                 if (demo.isRedirectResult(result)) return;
                 console.log('Result', result);
                 document.querySelector('#result')!.textContent = `Cashlink created${result.link
+                    ? `: ${result.link}`
+                    : ''
+                }`;
+            } catch (e) {
+                console.error(e);
+                document.querySelector('#result')!.textContent = `Error: ${e.message || e}`;
+            }
+        });
+
+        // USDT Cashlink demo
+        document.querySelector('button#create-usdt-cashlink')!.addEventListener('click', async () => {
+            try {
+                // USDT amounts are in cents (6 decimals), e.g., 50000000 = 50.00 USDT
+                const value = 50000000; // 50.00 USDT
+
+                const request: CreateCashlinkRequest = {
+                    appName: 'Hub Demos',
+                    value,
+                    message: 'USDT Cashlink test message',
+                    currency: Currency.USDT,
+                    returnLink: true,
+                    skipSharing: false,
+                };
+
+                const result = await demo.client.createCashlink(request, demo._defaultBehavior);
+                if (demo.isRedirectResult(result)) return;
+                console.log('USDT Cashlink Result', result);
+                document.querySelector('#result')!.textContent = `USDT Cashlink created${result.link
                     ? `: ${result.link}`
                     : ''
                 }`;

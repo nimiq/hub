@@ -5,6 +5,7 @@ import { RpcResult, RequestType } from '../../client/PublicRequestTypes';
 import { State as RpcState } from '@nimiq/rpc';
 import { Request as KeyguardRequest } from '@nimiq/keyguard-client';
 import Cashlink from '../lib/Cashlink';
+import UsdtCashlink from '../lib/UsdtCashlink';
 
 export class StaticStore {
     private static instance: StaticStore;
@@ -22,6 +23,7 @@ export class StaticStore {
     public originalRouteName?: string;
     public sideResult?: RpcResult | Error;
     public cashlink?: Cashlink;
+    public usdtCashlink?: UsdtCashlink; // For USDT cashlink flows
 }
 
 // Decorator is capitalized to be consistent with vuex decorators

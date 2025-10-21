@@ -134,6 +134,7 @@ export enum Currency {
     NIM = 'nim',
     BTC = 'btc',
     ETH = 'eth',
+    USDT = 'usdt',
 }
 
 export type ProtocolSpecificsForCurrency<C extends Currency> =
@@ -599,12 +600,14 @@ export interface Cashlink {
     value: number;
     theme: CashlinkTheme;
     link?: string;
+    currency?: Currency; // Defaults to NIM for backward compatibility
 }
 
 export type CreateCashlinkRequest = BasicRequest & {
     value?: number,
     theme?: CashlinkTheme,
     fiatCurrency?: string,
+    currency?: Currency, // Defaults to NIM, routes to appropriate cashlink implementation
 } & (
     {} | {
         message: string,
@@ -625,6 +628,7 @@ export type CreateCashlinkRequest = BasicRequest & {
 
 export interface ManageCashlinkRequest extends BasicRequest {
     cashlinkAddress: string;
+    currency?: Currency; // Defaults to NIM, routes to appropriate cashlink implementation
 }
 
 export interface ConnectAccountRequest extends BasicRequest {

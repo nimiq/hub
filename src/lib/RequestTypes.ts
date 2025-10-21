@@ -149,10 +149,12 @@ export interface ParsedCreateCashlinkRequest extends ParsedBasicRequest {
     fiatCurrency?: FiatCurrency;
     returnLink: boolean;
     skipSharing: boolean;
+    currency: Currency; // Defaults to Currency.NIM in parser
 }
 
 export interface ParsedManageCashlinkRequest extends ParsedBasicRequest {
     cashlinkAddress: Nimiq.Address;
+    currency: Currency; // Defaults to Currency.NIM in parser
 }
 
 /**

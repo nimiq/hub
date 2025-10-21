@@ -1,7 +1,8 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import { RequestType } from '../client/PublicRequestTypes';
+import { RequestType, Currency } from '../client/PublicRequestTypes';
 import { KeyguardCommand } from '@nimiq/keyguard-client';
+import staticStore from './lib/StaticStore';
 
 const SignTransaction         = () => import(/*webpackChunkName: "sign-transaction"*/ './views/SignTransaction.vue');
 const SignTransactionSuccess  = () => import(/*webpackChunkName: "sign-transaction"*/
@@ -16,6 +17,10 @@ const SignStakingSuccess  = () => import(/*webpackChunkName: "sign-staking"*/
 
 const CashlinkCreate          = () => import(/*webpackChunkName: "cashlink" */ './views/CashlinkCreate.vue');
 const CashlinkManage          = () => import(/*webpackChunkName: "cashlink" */ './views/CashlinkManage.vue');
+
+const UsdtCashlinkCreate      = () => import(/*webpackChunkName: "usdt-cashlink" */ './views/UsdtCashlinkCreate.vue');
+const UsdtCashlinkManage      = () => import(/*webpackChunkName: "usdt-cashlink" */ './views/UsdtCashlinkManage.vue');
+const UsdtCashlinkApp         = () => import(/*webpackChunkName: "usdt-cashlink" */ './UsdtCashlinkApp.vue');
 
 const Checkout                = () => import(/*webpackChunkName: "checkout"*/ './views/Checkout.vue');
 const CheckoutTransmission    = () => import(/*webpackChunkName: "checkout"*/ './views/CheckoutTransmission.vue');
@@ -218,11 +223,34 @@ export default new Router({
             path: `/cashlink/create`,
             component: CashlinkCreate,
             name: RequestType.CREATE_CASHLINK,
+            beforeEnter: (to, from, next) => {
+                // Check if request is for USDT cashlink
+                const request = staticStore.request;
+                if (request && 'currency' in request && request.currency === Currency.USDT) {
+                    // Route to USDT cashlink create component
+                    to.matched[0].components.default = UsdtCashlinkCreate;
+                }
+                next();
+            },
         },
         {
             path: `/cashlink/manage`,
             component: CashlinkManage,
             name: RequestType.MANAGE_CASHLINK,
+            beforeEnter: (to, from, next) => {
+                // Check if request is for USDT cashlink
+                const request = staticStore.request;
+                if (request && 'currency' in request && request.currency === Currency.USDT) {
+                    // Route to USDT cashlink manage component
+                    to.matched[0].components.default = UsdtCashlinkManage;
+                }
+                next();
+            },
+        },
+        {
+            path: `/usdt-cashlink`,
+            component: UsdtCashlinkApp,
+            name: 'usdt-cashlink-receive',
         },
         {
             path: `/${RequestType.CHECKOUT}`,

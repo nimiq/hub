@@ -72,10 +72,14 @@ implements ParsedPaymentOptions<C, T> {
         this.amount = parsedOptions.amount; // amount must exist on all parsed options
         this.vendorMarkup = parsedOptions.vendorMarkup !== undefined ? parsedOptions.vendorMarkup : this.vendorMarkup;
         this.expires = parsedOptions.expires || this.expires;
-        for (const key of
-            Object.keys(parsedOptions.protocolSpecific) as Array<keyof typeof parsedOptions.protocolSpecific>) {
-            if (parsedOptions.protocolSpecific[key] === undefined) continue;
-            this.protocolSpecific[key] = parsedOptions.protocolSpecific[key];
+        const protocolSpecific = parsedOptions.protocolSpecific;
+        if (protocolSpecific && typeof protocolSpecific === 'object') {
+            // Type assertion needed because TypeScript can't narrow conditional types well
+            const specificOptions = protocolSpecific as Record<string, any>;
+            for (const key of Object.keys(specificOptions) as Array<keyof typeof specificOptions>) {
+                if (specificOptions[key] === undefined) continue;
+                (this.protocolSpecific as any)[key] = specificOptions[key];
+            }
         }
     }
 
