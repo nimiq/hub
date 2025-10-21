@@ -5,6 +5,7 @@ const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
 const path = require('path');
 const fs = require('fs');
 const createHash = require('crypto').createHash;
+const dotenv = require('dotenv');
 // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const PoLoaderOptimizer = require('webpack-i18n-tools')();
 
@@ -41,6 +42,17 @@ const bitcoinJsIntegrityHash = `sha256-${createHash('sha256')
 // Accessible within client code via process.env.VUE_APP_BITCOIN_JS_INTEGRITY_HASH,
 // see https://cli.vuejs.org/guide/mode-and-env.html#using-env-variables-in-client-side-code
 process.env.VUE_APP_BITCOIN_JS_INTEGRITY_HASH = bitcoinJsIntegrityHash;
+
+// For production builds, still include .env.development.local in process.env if it's a build with the local/development
+// config. For development builds (i.e. yarn serve), they are included automatically, see:
+// https://cli.vuejs.org/guide/mode-and-env.html#environment-variables
+if (process.env.NODE_ENV === 'production' && buildName === 'local') {
+    const devEnvironmentVariables = dotenv.parse(fs.readFileSync(path.join(__dirname, '.env.development.local')));
+    for (const [key, value] of Object.entries(devEnvironmentVariables)) {
+        if (!key.startsWith('VUE_APP_')) continue;
+        process.env[key] = value;
+    }
+}
 
 console.log('Building for:', buildName);
 

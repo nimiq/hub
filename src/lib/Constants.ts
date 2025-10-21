@@ -30,6 +30,11 @@ export const NETWORK_TEST: NetworkType = 'test';
 export const NETWORK_MAIN: NetworkType = 'main';
 export const NETWORK_DEV: NetworkType = 'dev';
 
+// Build environment
+export const ENV_TEST = 'test';
+export const ENV_MAIN = 'main';
+export const ENV_DEV = 'dev';
+
 // Errors
 export const ERROR_CANCELED = 'CANCELED';
 export const ERROR_INVALID_NETWORK = 'Invalid network name';

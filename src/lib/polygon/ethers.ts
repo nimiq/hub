@@ -21,10 +21,7 @@ import {
     RelayServerInfo,
 } from './OpenGSN';
 import { getPoolAddress, getUsdPrice } from './Uniswap';
-
-// TODO put this into a local .env file. In any case it should not be added to source control, as it has no CORS
-//  protection enabled.
-const ALCHEMY_DEV_API_KEY = '';
+import { replaceKey } from '../KeyReplacer';
 
 export type Transaction = {
     token?: string,
@@ -91,8 +88,10 @@ export async function getPolygonClient(): Promise<PolygonClient> {
     });
 
     let provider: providers.BaseProvider;
-    const ethers = await loadEthersLibrary();
-    const rpcEndpoint = Config.polygon.rpcEndpoint.replace(/#[^#]+#/, ALCHEMY_DEV_API_KEY);
+    const [ethers, rpcEndpoint] = await Promise.all([
+        loadEthersLibrary(),
+        replaceKey(Config.polygon.rpcEndpoint),
+    ]);
     if (rpcEndpoint.substring(0, 4) === 'http') {
         provider = new ethers.providers.StaticJsonRpcProvider(
             rpcEndpoint,
