@@ -1,16 +1,22 @@
 import { Utf8Tools } from '@nimiq/utils';
 import { CashlinkCurrency, CashlinkTheme } from '../../client/PublicRequestTypes';
 
-export interface CashlinkEntry {
-    currency?: CashlinkCurrency; // Only set for currencies other than NIM, unless specifically requested for NIM, too.
+export type CashlinkEntry = {
     address: string;
-    keyPair: Uint8Array;
     value: number;
     fee?: number;
     message: string;
     timestamp: number;
     theme?: CashlinkTheme;
-}
+} & ({
+    // Legacy cashlink entries encode the keyPair
+    keyPair: Uint8Array;
+} | {
+    currency?: CashlinkCurrency; // Only set for currencies other than NIM, unless specifically requested for NIM, too.
+    // Newer cashlink entries only encode the private key anymore to save space and be generic to different kinds of
+    // private keys.
+    privateKey: Uint8Array;
+});
 
 class Cashlink<C extends CashlinkCurrency = CashlinkCurrency> {
     get value() {
@@ -122,8 +128,10 @@ class Cashlink<C extends CashlinkCurrency = CashlinkCurrency> {
 
     public static fromObject(object: CashlinkEntry): Cashlink {
         return new Cashlink(
-            object.currency !== undefined ? object.currency : CashlinkCurrency.NIM,
-            Nimiq.KeyPair.deserialize(new Nimiq.SerialBuffer(object.keyPair)),
+            'currency' in object && object.currency !== undefined ? object.currency : CashlinkCurrency.NIM,
+            'keyPair' in object
+                ? Nimiq.KeyPair.deserialize(new Nimiq.SerialBuffer(object.keyPair))
+                : Nimiq.KeyPair.derive(Nimiq.PrivateKey.deserialize(object.privateKey)),
             Nimiq.Address.fromString(object.address),
             object.value,
             object.fee,
@@ -160,7 +168,7 @@ class Cashlink<C extends CashlinkCurrency = CashlinkCurrency> {
 
     public toObject(includeOptional: boolean = true): CashlinkEntry {
         const result: CashlinkEntry = {
-            keyPair: this.keyPair.serialize(),
+            privateKey: this.keyPair.privateKey.serialize(),
             address: this.address.toUserFriendlyAddress(),
             value: this.value,
             message: this.message,
