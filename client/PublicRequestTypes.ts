@@ -584,8 +584,17 @@ export enum CashlinkTheme {
     // Temporary themes that might be retracted in the future should be listed counting down from 255
 }
 
+export enum CashlinkCurrency {
+    NIM = 0,
+    // not supported yet
+    // BTC = 1,
+    // USDC = 2, // on Polygon network
+    // USDT = 3, // on Polygon network
+}
+
 export interface Cashlink {
-    address: string; // Userfriendly address
+    currency: CashlinkCurrency;
+    address: string; // normalized address
     message: string;
     value: number;
     theme: CashlinkTheme;

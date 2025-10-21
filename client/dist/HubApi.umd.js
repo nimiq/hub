@@ -354,6 +354,14 @@
         CashlinkTheme[CashlinkTheme["BIRTHDAY"] = 6] = "BIRTHDAY";
         // Temporary themes that might be retracted in the future should be listed counting down from 255
     })(CashlinkTheme || (CashlinkTheme = {}));
+    var CashlinkCurrency;
+    (function (CashlinkCurrency) {
+        CashlinkCurrency[CashlinkCurrency["NIM"] = 0] = "NIM";
+        // not supported yet
+        // BTC = 1,
+        // USDC = 2, // on Polygon network
+        // USDT = 3, // on Polygon network
+    })(CashlinkCurrency || (CashlinkCurrency = {}));
 
     class HubApi {
         constructor(endpoint = HubApi.DEFAULT_ENDPOINT, defaultBehavior) {
@@ -507,6 +515,7 @@
     HubApi.RedirectRequestBehavior = RedirectRequestBehavior;
     HubApi.PopupRequestBehavior = PopupRequestBehavior;
     HubApi.AccountType = AccountType;
+    HubApi.CashlinkCurrency = CashlinkCurrency;
     HubApi.CashlinkTheme = CashlinkTheme;
     HubApi.Currency = Currency;
     HubApi.PaymentType = PaymentType;

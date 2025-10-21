@@ -481,7 +481,11 @@ export declare enum CashlinkTheme {
     GENERIC = 5,
     BIRTHDAY = 6
 }
+export declare enum CashlinkCurrency {
+    NIM = 0
+}
 export interface Cashlink {
+    currency: CashlinkCurrency;
     address: string;
     message: string;
     value: number;

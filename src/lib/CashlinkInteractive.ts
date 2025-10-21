@@ -1,7 +1,7 @@
 import Cashlink from './Cashlink';
 import { NetworkClient } from './NetworkClient';
 import { WalletInfo } from './WalletInfo';
-import { CashlinkTheme } from '../../client/PublicRequestTypes';
+import { CashlinkCurrency, CashlinkTheme } from '../../client/PublicRequestTypes';
 
 export const CashlinkExtraData = {
     FUNDING:  new Uint8Array([0, 130, 128, 146, 135]), // 'CASH'.split('').map(c => c.charCodeAt(0) + 63)
@@ -17,7 +17,7 @@ export enum CashlinkState {
     CLAIMED = 4,
 }
 
-class CashlinkInteractive extends Cashlink {
+class CashlinkInteractive<C extends CashlinkCurrency = CashlinkCurrency> extends Cashlink<C> {
     get claimableAmount() {
         if (!this.balance) {
             // The balance is not known yet, the Cashlink has not been funded yet, or has already been fully claimed.
@@ -74,7 +74,7 @@ class CashlinkInteractive extends Cashlink {
     }
 
     /**
-     * Cashlink balance in luna
+     * Cashlink balance in the smallest unit of the Cashlink's currency
      */
     public balance: number | null = null;
     public state: CashlinkState = CashlinkState.UNKNOWN;
@@ -87,9 +87,10 @@ class CashlinkInteractive extends Cashlink {
     private readonly _eventListeners: {[type: string]: Array<(data: any) => void>} = {};
 
     constructor(
-        cashlink: Cashlink,
+        cashlink: Cashlink<C>,
     );
     constructor(
+        currency: C,
         keyPair: Nimiq.KeyPair,
         address: Nimiq.Address,
         value?: number,
@@ -99,7 +100,8 @@ class CashlinkInteractive extends Cashlink {
         timestamp?: number,
     );
     constructor(
-        cashlinkOrKeyPair: Cashlink | Nimiq.KeyPair,
+        cashlinkOrCurrency: Cashlink<C> | C,
+        keyPair?: Nimiq.KeyPair,
         address?: Nimiq.Address,
         value?: number,
         fee?: number,
@@ -111,15 +113,16 @@ class CashlinkInteractive extends Cashlink {
         // the constructor when a class contains initialized properties, parameter properties, or private identifiers.",
         // even if the prior code doesn't try to access the instance via this.
         super(
-            cashlinkOrKeyPair instanceof Cashlink ? cashlinkOrKeyPair.keyPair : cashlinkOrKeyPair,
-            cashlinkOrKeyPair instanceof Cashlink ? cashlinkOrKeyPair.address : address!,
-            cashlinkOrKeyPair instanceof Cashlink ? cashlinkOrKeyPair.value : value,
-            cashlinkOrKeyPair instanceof Cashlink ? cashlinkOrKeyPair.fee : fee,
-            cashlinkOrKeyPair instanceof Cashlink ? cashlinkOrKeyPair.message : message,
-            cashlinkOrKeyPair instanceof Cashlink
-                ? (cashlinkOrKeyPair.hasEncodedTheme ? cashlinkOrKeyPair.theme : undefined)
+            cashlinkOrCurrency instanceof Cashlink ? cashlinkOrCurrency.currency : cashlinkOrCurrency,
+            cashlinkOrCurrency instanceof Cashlink ? cashlinkOrCurrency.keyPair : keyPair!,
+            cashlinkOrCurrency instanceof Cashlink ? cashlinkOrCurrency.address : address!,
+            cashlinkOrCurrency instanceof Cashlink ? cashlinkOrCurrency.value : value,
+            cashlinkOrCurrency instanceof Cashlink ? cashlinkOrCurrency.fee : fee,
+            cashlinkOrCurrency instanceof Cashlink ? cashlinkOrCurrency.message : message,
+            cashlinkOrCurrency instanceof Cashlink
+                ? (cashlinkOrCurrency.hasEncodedTheme ? cashlinkOrCurrency.theme : undefined)
                 : theme,
-            cashlinkOrKeyPair instanceof Cashlink ? cashlinkOrKeyPair.timestamp : timestamp,
+            cashlinkOrCurrency instanceof Cashlink ? cashlinkOrCurrency.timestamp : timestamp,
         );
 
         const networkPromise = new Promise<NetworkClient>((resolve) => {

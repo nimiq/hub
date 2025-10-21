@@ -239,6 +239,7 @@ export default class CashlinkManage extends Vue {
 
     private close() {
         const result: PublicCashlink = {
+            currency: this.retrievedCashlink!.currency,
             address: this.retrievedCashlink!.address.toUserFriendlyAddress(),
             message: this.retrievedCashlink!.message,
             value: this.retrievedCashlink!.value,
