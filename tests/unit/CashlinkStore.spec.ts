@@ -19,28 +19,28 @@ const DUMMY_DATA = {
     cashlinks: [
         new Cashlink(
             CashlinkCurrency.NIM,
+            new Uint8Array([
+                70, 207, 252, 77, 192, 84, 237, 202, 3, 46, 88, 64, 101, 200, 131, 19, 212,
+                105, 128, 49, 54, 99, 159, 166, 103, 196, 208, 178, 26, 244, 184, 234,
+            ]),
             Nimiq.KeyPair.derive(new Nimiq.PrivateKey(new Uint8Array([
                 70, 207, 252, 77, 192, 84, 237, 202, 3, 46, 88, 64, 101, 200, 131, 19, 212,
                 105, 128, 49, 54, 99, 159, 166, 103, 196, 208, 178, 26, 244, 184, 234,
-            ]))),
-            Nimiq.KeyPair.derive(new Nimiq.PrivateKey(new Uint8Array([
-                70, 207, 252, 77, 192, 84, 237, 202, 3, 46, 88, 64, 101, 200, 131, 19, 212,
-                105, 128, 49, 54, 99, 159, 166, 103, 196, 208, 178, 26, 244, 184, 234,
-            ]))).publicKey.toAddress(),
+            ]))).publicKey.toAddress().toUserFriendlyAddress(),
             1234554321,
             171,
             'Ein Cashlink test Cashlink',
         ),
         new Cashlink(
             CashlinkCurrency.NIM,
+            new Uint8Array([
+                154, 176, 138, 78, 42, 184, 216, 152, 203, 236, 166, 111, 246, 63, 50, 14,
+                175, 84, 7, 65, 181, 2, 217, 44, 104, 255, 138, 63, 20, 196, 193, 125,
+            ]),
             Nimiq.KeyPair.derive(new Nimiq.PrivateKey(new Uint8Array([
                 154, 176, 138, 78, 42, 184, 216, 152, 203, 236, 166, 111, 246, 63, 50, 14,
                 175, 84, 7, 65, 181, 2, 217, 44, 104, 255, 138, 63, 20, 196, 193, 125,
-            ]))),
-            Nimiq.KeyPair.derive(new Nimiq.PrivateKey(new Uint8Array([
-                154, 176, 138, 78, 42, 184, 216, 152, 203, 236, 166, 111, 246, 63, 50, 14,
-                175, 84, 7, 65, 181, 2, 217, 44, 104, 255, 138, 63, 20, 196, 193, 125,
-            ]))).publicKey.toAddress(),
+            ]))).publicKey.toAddress().toUserFriendlyAddress(),
             5000000,
             undefined,
             'Ein Cashlink test Cashlink',
@@ -75,7 +75,7 @@ function expectEqualIgnoringOptionalProperties(a: any, b: any) {
     const keysB = Object.keys(b).filter(filterIgnoredKeys);
     expect(keysA).toEqual(keysB);
     for (const key of keysA) {
-        if (key === 'keyPair' || key === 'address') {
+        if (key === 'keyPair') {
             // These are pointers into Rust WASM memory and as such cannot be compared as objects,
             // so we compare their hex representation instead.
             expect(a[key].toHex()).toEqual(b[key].toHex());

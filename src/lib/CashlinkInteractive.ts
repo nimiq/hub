@@ -48,29 +48,22 @@ class CashlinkInteractive<C extends CashlinkCurrency = CashlinkCurrency> extends
 
     private static readonly LAST_CLAIMED_MULTI_CASHLINKS_STORAGE_KEY = 'cashlink-last-claimed-multi-cashlinks';
 
-    private static _getLastClaimedMultiCashlinks(): Nimiq.Address[] {
+    private static _getLastClaimedMultiCashlinks(): /* cashlink addresses */ string[] {
         try {
             const storedLastClaimedMultiCashlinks = localStorage[this.LAST_CLAIMED_MULTI_CASHLINKS_STORAGE_KEY];
             if (!storedLastClaimedMultiCashlinks) return [];
-            return JSON.parse(storedLastClaimedMultiCashlinks).map((addressBase64: string) => {
-                const addressBytes = Nimiq.BufferUtils.fromBase64(addressBase64);
-                return new Nimiq.Address(addressBytes);
-            });
+            return JSON.parse(storedLastClaimedMultiCashlinks);
         } catch (e) {
             return [];
         }
     }
 
-    private static _setLastClaimedMultiCashlink(address: Nimiq.Address) {
-        // restrict to last 5 entries, store as base64 and omit trailing padding to save storage space
+    private static _setLastClaimedMultiCashlink(address: string) {
+        // restrict to last 5 entries to save storage space
         window.localStorage[this.LAST_CLAIMED_MULTI_CASHLINKS_STORAGE_KEY] = JSON.stringify([
             address,
             ...this._getLastClaimedMultiCashlinks(),
-        ].slice(0, 5).map((addr) => {
-            const addressBytes = addr.serialize();
-            const addressBase64 = Nimiq.BufferUtils.toBase64(addressBytes);
-            return addressBase64.replace(/=+$/, '');
-        }));
+        ].slice(0, 5));
     }
 
     /**
@@ -91,8 +84,8 @@ class CashlinkInteractive<C extends CashlinkCurrency = CashlinkCurrency> extends
     );
     constructor(
         currency: C,
-        keyPair: Nimiq.KeyPair,
-        address: Nimiq.Address,
+        secret: Uint8Array,
+        address: string,
         value?: number,
         fee?: number,
         message?: string,
@@ -101,8 +94,8 @@ class CashlinkInteractive<C extends CashlinkCurrency = CashlinkCurrency> extends
     );
     constructor(
         cashlinkOrCurrency: Cashlink<C> | C,
-        keyPair?: Nimiq.KeyPair,
-        address?: Nimiq.Address,
+        secret?: Uint8Array,
+        address?: string,
         value?: number,
         fee?: number,
         message?: string,
@@ -114,7 +107,7 @@ class CashlinkInteractive<C extends CashlinkCurrency = CashlinkCurrency> extends
         // even if the prior code doesn't try to access the instance via this.
         super(
             cashlinkOrCurrency instanceof Cashlink ? cashlinkOrCurrency.currency : cashlinkOrCurrency,
-            cashlinkOrCurrency instanceof Cashlink ? cashlinkOrCurrency.keyPair : keyPair!,
+            cashlinkOrCurrency instanceof Cashlink ? cashlinkOrCurrency.secret : secret!,
             cashlinkOrCurrency instanceof Cashlink ? cashlinkOrCurrency.address : address!,
             cashlinkOrCurrency instanceof Cashlink ? cashlinkOrCurrency.value : value,
             cashlinkOrCurrency instanceof Cashlink ? cashlinkOrCurrency.fee : fee,
@@ -167,8 +160,7 @@ class CashlinkInteractive<C extends CashlinkCurrency = CashlinkCurrency> extends
     }
 
     public async detectState() {
-        if ((this.constructor as typeof CashlinkInteractive)._getLastClaimedMultiCashlinks()
-            .some((address) => address.equals(this.address))) {
+        if ((this.constructor as typeof CashlinkInteractive)._getLastClaimedMultiCashlinks().includes(this.address)) {
             this._updateState(CashlinkState.CLAIMED);
             return;
         }
@@ -181,7 +173,6 @@ class CashlinkInteractive<C extends CashlinkCurrency = CashlinkCurrency> extends
 
         await this._awaitConsensus();
 
-        const cashlinkAddress = this.address.toUserFriendlyAddress();
         const userAddresses = this._getUserAddresses();
 
         let balance = await this._awaitBalance();
@@ -190,7 +181,7 @@ class CashlinkInteractive<C extends CashlinkCurrency = CashlinkCurrency> extends
         let ourPendingClaimingTx: Partial<Nimiq.PlainTransactionDetails> | undefined;
         [pendingTransactions, pendingFundingTx, ourPendingClaimingTx] = await this._getPendingTransactions();
         let ourChainClaimingTx = this._chainTransactions.find( // for now based on previously known transactions
-            (tx) => tx.sender === cashlinkAddress && userAddresses.has(tx.recipient));
+            (tx) => tx.sender === this.address && userAddresses.has(tx.recipient));
 
         if (ourPendingClaimingTx) {
             // Can exit early as if the user is currently claiming the cashlink, it can't be in CLAIMED state yet, as
@@ -206,7 +197,7 @@ class CashlinkInteractive<C extends CashlinkCurrency = CashlinkCurrency> extends
 
         const network = await this._getNetwork();
         const transactionHistory = await network.getTransactionsByAddress(
-            cashlinkAddress,
+            this.address,
             // Pass our known chain transactions, such that they don't have to be fetched again (and won't be returned
             // again) if they are still included in the chain, or get their latest state if they are not on the chain
             // anymore due to rebranching (returning them for example as new/pending/expired; not entirely sure though).
@@ -223,11 +214,11 @@ class CashlinkInteractive<C extends CashlinkCurrency = CashlinkCurrency> extends
             .filter((transaction) => transaction.state === 'included' || transaction.state === 'confirmed');
 
         const chainFundingTx = this._chainTransactions.find(
-            (tx) => tx.recipient === cashlinkAddress);
+            (tx) => tx.recipient === this.address);
         ourChainClaimingTx = ourChainClaimingTx || this._chainTransactions.find( // update with new transactions
-            (tx) => tx.sender === cashlinkAddress && userAddresses.has(tx.recipient));
+            (tx) => tx.sender === this.address && userAddresses.has(tx.recipient));
         const anyChainClaimingTx = ourChainClaimingTx || this._chainTransactions.find(
-            (tx) => tx.sender === cashlinkAddress);
+            (tx) => tx.sender === this.address);
 
         // Update balance and pending transactions after fetching transaction history as they might have changed in the
         // meantime. This update is cheap and quick.
@@ -236,7 +227,7 @@ class CashlinkInteractive<C extends CashlinkCurrency = CashlinkCurrency> extends
             this._getPendingTransactions(),
         ]);
         const anyPendingClaimingTx = ourPendingClaimingTx || pendingTransactions.find(
-            (tx) => tx.sender === cashlinkAddress);
+            (tx) => tx.sender === this.address);
 
         // Detect new state by a sequence of checks from UNCHARGED, CHARGING, UNCLAIMED, CLAIMING to CLAIMED states.
         // Note that cashlinks that already reached a later state in a previous detectState, can also go back to earlier
@@ -276,7 +267,7 @@ class CashlinkInteractive<C extends CashlinkCurrency = CashlinkCurrency> extends
     } {
         return {
             layout: 'cashlink',
-            recipient: this.address,
+            recipient: Nimiq.Address.fromUserFriendlyAddress(this.address),
             value: this.value,
             fee: 0, // this.fee is meant for claiming transactions
             recipientData: CashlinkExtraData.FUNDING,
@@ -313,7 +304,7 @@ class CashlinkInteractive<C extends CashlinkCurrency = CashlinkCurrency> extends
         }
         const recipient = Nimiq.Address.fromString(recipientAddress);
         const transaction = new Nimiq.Transaction(
-            this.address, Nimiq.AccountType.Basic, new Uint8Array(0),
+            Nimiq.Address.fromUserFriendlyAddress(this.address), Nimiq.AccountType.Basic, new Uint8Array(0),
             recipient, recipientType, CashlinkExtraData.CLAIMING,
             BigInt(claimAmount), BigInt(fee),
             Nimiq.TransactionFlag.None,
@@ -321,9 +312,10 @@ class CashlinkInteractive<C extends CashlinkCurrency = CashlinkCurrency> extends
             networkId,
         );
 
-        const keyPair = this.keyPair;
-        const signature = Nimiq.Signature.create(keyPair.privateKey, keyPair.publicKey, transaction.serializeContent());
-        transaction.proof = Nimiq.SignatureProof.singleSig(keyPair.publicKey, signature).serialize();
+        const privateKey = Nimiq.PrivateKey.deserialize(this.secret);
+        const publicKey = Nimiq.PublicKey.derive(privateKey);
+        const signature = Nimiq.Signature.create(privateKey, publicKey, transaction.serializeContent());
+        transaction.proof = Nimiq.SignatureProof.singleSig(publicKey, signature).serialize();
 
         if (balance > claimAmount + fee) {
             // Remember multi-claimable Cashlink as claimed.
@@ -417,24 +409,22 @@ class CashlinkInteractive<C extends CashlinkCurrency = CashlinkCurrency> extends
         //     this._getNetwork(),
         //     this._awaitConsensus(),
         // ]);
-        // const cashlinkAddress = this.address.toUserFriendlyAddress();
         // const userAddresses = this._getUserAddresses();
         // const pendingTransactions = [
         //     ...network.pendingTransactions,
         //     ...network.relayedTransactions,
-        // ].filter((tx) => tx.sender === cashlinkAddress || tx.recipient === cashlinkAddress);
+        // ].filter((tx) => tx.sender === this.address || tx.recipient === this.address);
         //
         // const pendingFundingTx = pendingTransactions.find(
-        //     (tx) => tx.recipient === cashlinkAddress);
+        //     (tx) => tx.recipient === this.address);
         // const ourPendingClaimingTx = pendingTransactions.find(
-        //     (tx) => tx.sender === cashlinkAddress && userAddresses.has(tx.recipient!));
+        //     (tx) => tx.sender === this.address && userAddresses.has(tx.recipient!));
         //
         // return [pendingTransactions, pendingFundingTx, ourPendingClaimingTx];
     }
 
     private async _onTransactionChanged(transaction: Nimiq.PlainTransactionDetails): Promise<void> {
-        const cashlinkAddress = this.address.toUserFriendlyAddress();
-        if (transaction.recipient !== cashlinkAddress && transaction.sender !== cashlinkAddress) return;
+        if (transaction.recipient !== this.address && transaction.sender !== this.address) return;
         if ((transaction.state === 'included' || transaction.state === 'confirmed')
             && !this._chainTransactions.some((tx) => tx.transactionHash === transaction.transactionHash)) {
             this._chainTransactions.push(transaction);
@@ -445,9 +435,8 @@ class CashlinkInteractive<C extends CashlinkCurrency = CashlinkCurrency> extends
 
     private async _updateBalance() {
         const network = await this._getNetwork();
-        const cashlinkAddress = this.address.toUserFriendlyAddress();
-        const balances = await network.getBalance([cashlinkAddress]);
-        const balance = balances.get(cashlinkAddress);
+        const balances = await network.getBalance([this.address]);
+        const balance = balances.get(this.address);
         if (balance === undefined || balance === this.balance) return;
 
         this.balance = balance;

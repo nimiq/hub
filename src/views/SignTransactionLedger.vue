@@ -317,7 +317,8 @@ export default class SignTransactionLedger extends Vue {
                 return;
             }
             sender = Nimiq.Address.fromString(this.$store.state.activeUserFriendlyAddress);
-            ({ address: recipient, value } = this.cashlink!);
+            recipient = Nimiq.Address.fromString(this.cashlink.address);
+            value = this.cashlink.value;
             fee = 0; // fund Cashlink with no fees; cashlink.fee is for claiming
 
             validityStartHeightPromise = network.getBlockchainHeight().then((blockchainHeight) => blockchainHeight + 1);
@@ -325,7 +326,7 @@ export default class SignTransactionLedger extends Vue {
             flags = Nimiq.TransactionFlag.None;
 
             this.recipientDetails = {
-                address: this.cashlink.address.toUserFriendlyAddress(),
+                address: this.cashlink.address,
                 label: this.$t('New Cashlink') as string,
                 isCashlink: true,
             };

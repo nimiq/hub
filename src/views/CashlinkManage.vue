@@ -155,7 +155,7 @@ export default class CashlinkManage extends Vue {
                 return;
             }
         } else if (this.cashlink) {
-            storedCashlink = await CashlinkStore.Instance.get(this.cashlink.address.toUserFriendlyAddress());
+            storedCashlink = await CashlinkStore.Instance.get(this.cashlink.address);
         } else {
             this.$rpc.reject(new Error('CashlinkManage expects the cashlink to display to be specified either via '
                 + 'request.cashlinkAddress or the cashlink in the static store.'));
@@ -167,7 +167,7 @@ export default class CashlinkManage extends Vue {
             // Cashlink is typically already sent as the sending happens right after storing the Cashlink. However, it
             // might be that the sending failed and the user reloaded the page, in which case we try sending again.
             transactionToSend = network.getUnrelayedTransactions({
-                recipient: storedCashlink.address,
+                recipient: Nimiq.Address.fromUserFriendlyAddress(storedCashlink.address),
                 value: BigInt(storedCashlink.value),
             })[0];
             this.isTxSent = !transactionToSend;
@@ -240,7 +240,7 @@ export default class CashlinkManage extends Vue {
     private close() {
         const result: PublicCashlink = {
             currency: this.retrievedCashlink!.currency,
-            address: this.retrievedCashlink!.address.toUserFriendlyAddress(),
+            address: this.retrievedCashlink!.address,
             message: this.retrievedCashlink!.message,
             value: this.retrievedCashlink!.value,
             theme: this.retrievedCashlink!.theme,
