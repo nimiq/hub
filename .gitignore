@@ -24,4 +24,5 @@ package-lock.json
 *.sw*
 
 deployment-hub
+.cursor
 CLAUDE.md
