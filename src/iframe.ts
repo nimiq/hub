@@ -8,6 +8,7 @@ import Config from 'config';
 import {
     Account,
     Cashlink as PublicCashlink,
+    CashlinkCurrency,
     RequestType,
     AddBtcAddressesRequest,
     AddBtcAddressesResult,
@@ -87,6 +88,7 @@ class IFrameApi {
         await clearOutdatedTestnetData();
         const cashlinksEntries = await CashlinkStore.Instance.list();
         return cashlinksEntries.map((cashlink) => ({
+            currency: cashlink.currency !== undefined ? cashlink.currency : CashlinkCurrency.NIM,
             address: cashlink.address,
             message: cashlink.message,
             value: cashlink.value,

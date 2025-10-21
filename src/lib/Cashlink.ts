@@ -1,7 +1,8 @@
 import { Utf8Tools } from '@nimiq/utils';
-import { CashlinkTheme } from '../../client/PublicRequestTypes';
+import { CashlinkCurrency, CashlinkTheme } from '../../client/PublicRequestTypes';
 
 export interface CashlinkEntry {
+    currency?: CashlinkCurrency; // Only set for currencies other than NIM, unless specifically requested for NIM, too.
     address: string;
     keyPair: Uint8Array;
     value: number;
@@ -11,7 +12,7 @@ export interface CashlinkEntry {
     theme?: CashlinkTheme;
 }
 
-class Cashlink {
+class Cashlink<C extends CashlinkCurrency = CashlinkCurrency> {
     get value() {
         return this._value || 0;
     }
@@ -71,9 +72,10 @@ class Cashlink {
         return this._immutable;
     }
 
-    public static create(): Cashlink {
+    public static create<C extends CashlinkCurrency = CashlinkCurrency.NIM>(currency: C = CashlinkCurrency.NIM as C)
+        : Cashlink<C> {
         const keyPair = Nimiq.KeyPair.derive(Nimiq.PrivateKey.generate());
-        return new Cashlink(keyPair, keyPair.publicKey.toAddress());
+        return new Cashlink(currency, keyPair, keyPair.publicKey.toAddress());
     }
 
     public static parse(str: string): Cashlink | null {
@@ -84,10 +86,8 @@ class Cashlink {
             const privateKeyBytes = buf.read(Nimiq.PrivateKey.SIZE);
             const keyPair = Nimiq.KeyPair.derive(Nimiq.PrivateKey.deserialize(privateKeyBytes));
             const value = buf.readUint64();
-            let message: string;
-            if (buf.readPos === buf.byteLength) {
-                message = '';
-            } else {
+            let message: string = '';
+            if (buf.readPos < buf.byteLength) {
                 const messageLength = buf.readUint8();
                 const messageBytes = buf.read(messageLength);
                 message = Utf8Tools.utf8ByteArrayToString(messageBytes);
@@ -95,9 +95,18 @@ class Cashlink {
             let theme: CashlinkTheme | undefined;
             if (buf.readPos < buf.byteLength) {
                 theme = buf.readUint8();
+                // Do not validate theme as Cashlinks are allowed to specify themes which are not supported anymore.
+            }
+            let currency: CashlinkCurrency = CashlinkCurrency.NIM;
+            if (buf.readPos < buf.byteLength) {
+                currency = buf.readUint8();
+                if (!CashlinkCurrency[currency]) {
+                    throw new Error(`Unsupported Cashlink currency ${currency}`);
+                }
             }
 
             return new Cashlink(
+                currency,
                 keyPair,
                 keyPair.publicKey.toAddress(),
                 value,
@@ -113,6 +122,7 @@ class Cashlink {
 
     public static fromObject(object: CashlinkEntry): Cashlink {
         return new Cashlink(
+            object.currency !== undefined ? object.currency : CashlinkCurrency.NIM,
             Nimiq.KeyPair.deserialize(new Nimiq.SerialBuffer(object.keyPair)),
             Nimiq.Address.fromString(object.address),
             object.value,
@@ -124,13 +134,14 @@ class Cashlink {
         );
     }
 
-    private _value: number | null = null;
-    private _fee: number | null = null;
+    private _value: number | null = null; // amount in the smallest unit of the Cashlink's currency
+    private _fee: number | null = null; // fee in the smallest unit of the Cashlink's currency
     private _messageBytes: Uint8Array = new Uint8Array(0);
     private _theme: CashlinkTheme = CashlinkTheme.UNSPECIFIED; // note that UNSPECIFIED equals to 0 and is thus falsy
     private readonly _immutable: boolean;
 
     constructor(
+        public readonly currency: C,
         public keyPair: Nimiq.KeyPair,
         public address: Nimiq.Address,
         value?: number,
@@ -156,7 +167,12 @@ class Cashlink {
             theme: this._theme,
             timestamp: this.timestamp,
         };
+        if (this.currency !== CashlinkCurrency.NIM) {
+            // Only currencies different to NIM, which is the default, have to be specified.
+            result.currency = this.currency;
+        }
         if (includeOptional) {
+            result.currency = this.currency; // include currency even for NIM, which is optional
             if (this._fee !== null) {
                 result.fee = this._fee;
             }
@@ -165,22 +181,40 @@ class Cashlink {
     }
 
     public render() {
+        // TODO when switching to Cashlinks on cash.link, also change the format of the Cashlinks:
+        //  - add a version byte as first byte, which would then allow for breaking changes of the encoding scheme and
+        //    could potentially already encode which optional parameters are set in a more efficient manner.
+        //  - order optional values by likelyhood that they are set, because in the current encoding scheme, prior
+        //    optional values have to also be encoded if a following optional value is set.
+        //  - consider making the currency required?
+
+        // If a subsequent optional parameter has to be encoded, all prior optional parameters have to be encoded as
+        // well for deterministic parsing. For example, if the currency has to be encoded, the theme and message
+        // (length) have to be encoded as well.
+        const hasToEncodeCurrency = this.currency !== CashlinkCurrency.NIM;
+        const hasToEncodeTheme = !!this._theme || hasToEncodeCurrency;
+        const hasToEncodeMessage = !!this._messageBytes.byteLength || hasToEncodeTheme;
+
         const buf = new Nimiq.SerialBuffer(
             /*key*/ this.keyPair.privateKey.serializedSize +
             /*value*/ 8 +
-            /*message length*/ (this._messageBytes.byteLength || this._theme ? 1 : 0) +
-            /*message*/ this._messageBytes.byteLength +
-            /*theme*/ (this._theme ? 1 : 0),
+            // optional parameters
+            /*message*/ (hasToEncodeMessage ? /*length*/ 1 + /*message bytes*/ this._messageBytes.byteLength : 0) +
+            /*theme*/ (hasToEncodeTheme ? 1 : 0) +
+            /*currency*/ (hasToEncodeCurrency ? 1 : 0),
         );
 
         buf.write(this.keyPair.privateKey.serialize());
         buf.writeUint64(this.value);
-        if (this._messageBytes.byteLength || this._theme) {
+        if (hasToEncodeMessage) {
             buf.writeUint8(this._messageBytes.byteLength);
             buf.write(this._messageBytes);
         }
-        if (this._theme) {
+        if (hasToEncodeTheme) {
             buf.writeUint8(this._theme);
+        }
+        if (hasToEncodeCurrency) {
+            buf.writeUint8(this.currency);
         }
 
         let result = Nimiq.BufferUtils.toBase64Url(buf);
