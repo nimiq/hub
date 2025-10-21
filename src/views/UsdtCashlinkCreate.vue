@@ -5,19 +5,11 @@
             <transition name="transition-fade">
                 <StatusScreen v-if="loading" :title="$t('Updating your balances')" lightBlue key="loading"/>
 
-                <div v-else-if="!selectedPolygonAddress" class="create-cashlink-choose-sender" key="choose-sender">
+                <div v-else-if="!accountInfo" class="create-cashlink-choose-sender" key="choose-sender">
                     <PageHeader>
                         {{ $t('Choose Sender') }}
                     </PageHeader>
-                    <div class="mock-account-selector">
-                        <div v-for="account in mockPolygonAccounts" :key="account.address"
-                            class="mock-account-item"
-                            @click="setSender(account.address)">
-                            <div class="mock-account-identicon">💎</div>
-                            <div class="mock-account-label">{{ account.label }}</div>
-                            <div class="mock-account-balance">{{ formatUsdtAmount(account.usdtBalance) }} USDT</div>
-                        </div>
-                    </div>
+                    <AccountSelector :wallets="processedWallets" :min-balance="request.value || 1" @account-selected="setSender" @login="login"/>
                 </div>
 
                 <div v-else class="create-cashlink" key="create" :class="{ blurred: optionsOpened || openedDetails !== Details.NONE }">
@@ -100,6 +92,7 @@
 // Replace mock data and functions with actual Polygon/wallet store integration
 
 import { Component, Vue, Watch } from 'vue-property-decorator';
+import { Getter, Mutation, State } from 'vuex-class';
 import { Static } from '../lib/StaticStore';
 import staticStore from '../lib/StaticStore';
 import StatusScreen from '../components/StatusScreen.vue';
@@ -107,15 +100,17 @@ import GlobalClose from '../components/GlobalClose.vue';
 import { ParsedCreateCashlinkRequest } from '../lib/RequestTypes';
 import { RequestType } from '../../client/PublicRequestTypes';
 import UsdtCashlink from '../lib/UsdtCashlink';
+import { AccountInfo } from '../lib/AccountInfo';
+import { WalletInfo } from '../lib/WalletInfo';
 import {
-    getMockPolygonAccounts,
     mockSignUsdtCashlink,
     mockEstimateUsdtFee,
-    MockPolygonAccount,
+    mockGetUsdtBalance,
 } from '../lib/polygon/MockPolygonHelpers';
 import {
     Account,
     AccountDetails,
+    AccountSelector,
     AmountWithFee,
     ArrowRightIcon,
     CloseButton,
@@ -131,6 +126,7 @@ import {
 @Component({components: {
     Account,
     AccountDetails,
+    AccountSelector,
     AmountWithFee,
     ArrowRightIcon,
     CloseButton,
@@ -152,11 +148,23 @@ class UsdtCashlinkCreate extends Vue {
 
     @Static private request!: ParsedCreateCashlinkRequest;
 
-    // TODO [USDT-CASHLINK]: Replace with actual wallet store integration
-    private mockPolygonAccounts: MockPolygonAccount[] = [];
+    @State private wallets!: WalletInfo[];
+    @Getter private processedWallets!: WalletInfo[];
+    @Getter private findWalletByAddress!: (address: string, includeContracts: boolean) => WalletInfo | undefined;
+    @Getter private findWallet!: (id: string) => WalletInfo | undefined;
+    @Getter private activeAccount?: AccountInfo;
+
+    @Mutation('addWallet') private $addWallet!: (walletInfo: WalletInfo) => any;
+    @Mutation('setActiveAccount') private $setActiveAccount!: (payload: {
+        walletId: string,
+        userFriendlyAddress: string,
+    }) => any;
+
+    // TODO [USDT-CASHLINK]: Replace mock balance with actual USDT balance from Polygon network
     private selectedPolygonAddress: string | null = null;
     private selectedPolygonLabel: string = '';
     private selectedPolygonBalance: number = 0;
+    private accountInfo: AccountInfo | null = null;
 
     private loading: boolean = false;
     private liveAmountAndFee: {amount: number, fee: number, isValid: boolean} = {
@@ -179,9 +187,17 @@ class UsdtCashlinkCreate extends Vue {
     }
 
     public async created() {
-        // TODO [USDT-CASHLINK]: Replace with actual wallet fetching
-        // Should: fetch wallets from store, filter for polygon addresses, get USDT balances
-        this.mockPolygonAccounts = getMockPolygonAccounts();
+        // If there are no existing accounts, redirect to Onboarding
+        if (this.wallets.length === 0) {
+            this.login(true);
+            return;
+        }
+
+        // If there is no wallet to the address provided in the request, remove it to let the user choose another
+        if (this.request.senderAddress
+            && !this.findWalletByAddress(this.request.senderAddress.toUserFriendlyAddress(), false)) {
+            this.request.senderAddress = undefined;
+        }
 
         if (this.request.value) {
             this.liveAmountAndFee.amount = this.request.value;
@@ -200,37 +216,64 @@ class UsdtCashlinkCreate extends Vue {
 
         this.liveAmountAndFee.fee = this.mockFee;
 
+        this.loading = !staticStore.usdtCashlink && !this.request.senderAddress;
+
         // If there's a cashlink in static store (returning from keyguard), restore it
         if (staticStore.usdtCashlink) {
             this.liveAmountAndFee.amount = staticStore.usdtCashlink.value;
             this.liveAmountAndFee.fee = staticStore.usdtCashlink.fee;
             this.message = staticStore.usdtCashlink.message;
 
-            // Try to restore sender
-            const sender = this.mockPolygonAccounts.find((acc) =>
-                acc.address === staticStore.usdtCashlink!.address);
-            if (sender) {
-                this.setSender(sender.address);
+            // Restore sender from active account
+            if (this.$store.state.activeUserFriendlyAddress) {
+                await this.setSender(this.$store.state.activeWalletId, this.$store.state.activeUserFriendlyAddress);
             }
-        } else if (this.mockPolygonAccounts.length === 1) {
-            // Auto-select if only one account
-            this.setSender(this.mockPolygonAccounts[0].address);
-            this.loading = false;
-        } else {
-            this.loading = false;
+        } else if (this.request.senderAddress) {
+            // Use the sender address provided in the request
+            await this.setSender(null, this.request.senderAddress.toUserFriendlyAddress());
         }
+
+        this.loading = false;
     }
 
-    private setSender(address: string) {
-        const account = this.mockPolygonAccounts.find((acc) => acc.address === address);
-        if (!account) {
-            this.$rpc.reject(new Error('Address not found'));
+    private async setSender(walletId: string | null, address: string) {
+        const wallet = walletId
+            ? this.findWallet(walletId)
+            : this.findWalletByAddress(address, false);
+        if (!wallet) {
+            const errorMsg = walletId ? 'UNEXPECTED: WalletId not found!' : 'Address not found';
+            this.$rpc.reject(new Error(errorMsg));
             return;
         }
 
-        this.selectedPolygonAddress = account.address;
-        this.selectedPolygonLabel = account.label || 'USDT Account';
-        this.selectedPolygonBalance = account.usdtBalance;
+        this.accountInfo = wallet.accounts.get(address) || null;
+        if (!this.accountInfo) {
+            this.$rpc.reject(new Error('Account not found'));
+            return;
+        }
+
+        // TODO [USDT-CASHLINK]: Get actual Polygon address from account
+        // For now, use mock polygon address or the account's actual polygon address if available
+        this.selectedPolygonAddress = this.accountInfo.polygonAddress || '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb';
+        this.selectedPolygonLabel = this.accountInfo.label;
+
+        // TODO [USDT-CASHLINK]: Fetch actual USDT balance from Polygon network
+        // For now, use mock balance
+        this.selectedPolygonBalance = await mockGetUsdtBalance(this.selectedPolygonAddress);
+
+        this.$setActiveAccount({
+            walletId: wallet.id,
+            userFriendlyAddress: address,
+        });
+    }
+
+    private login(useReplace = false) {
+        staticStore.originalRouteName = RequestType.CREATE_CASHLINK;
+        if (useReplace) {
+            this.$router.replace({name: RequestType.ONBOARD});
+        } else {
+            this.$router.push({name: RequestType.ONBOARD});
+        }
     }
 
     private formatUsdtAmount(cents: number): string {
@@ -294,18 +337,19 @@ class UsdtCashlinkCreate extends Vue {
 
     private reset() {
         this.liveAmountAndFee.isValid = false;
+        this.accountInfo = null;
         this.selectedPolygonAddress = null;
         this.selectedPolygonLabel = '';
         this.selectedPolygonBalance = 0;
     }
 
-    @Watch('selectedPolygonAddress')
+    @Watch('accountInfo')
     @Watch('openedDetails')
     @Watch('optionsOpened')
-    private focus(newValue: string | null | UsdtCashlinkCreate.Details | boolean) {
+    private focus(newValue: AccountInfo | null | UsdtCashlinkCreate.Details | boolean) {
         if ((typeof newValue === 'boolean' && newValue === false)
             || (typeof newValue === 'number' && newValue === UsdtCashlinkCreate.Details.NONE)
-            || (typeof newValue === 'string' && newValue !== null)) {
+            || (typeof newValue === 'object' && newValue !== null)) {
             Vue.nextTick(() => this.$refs.amountWithFee!.focus());
         }
     }

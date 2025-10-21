@@ -164,7 +164,7 @@ class Demo {
                 // USDT amounts are in cents (6 decimals), e.g., 50000000 = 50.00 USDT
                 const value = 50000000; // 50.00 USDT
 
-                const request: CreateCashlinkRequest = {
+                let request: CreateCashlinkRequest = {
                     appName: 'Hub Demos',
                     value,
                     message: 'USDT Cashlink test message',
@@ -172,6 +172,16 @@ class Demo {
                     returnLink: true,
                     skipSharing: false,
                 };
+
+                // Include sender address if an account is selected
+                const $addressRadio = document.querySelector('input[name="address"]:checked');
+                if ($addressRadio) {
+                    request = {
+                        ...request,
+                        senderAddress: ($addressRadio as HTMLInputElement).dataset.address,
+                        senderBalance: 100000000, // Mock 100 USDT balance
+                    };
+                }
 
                 const result = await demo.client.createCashlink(request, demo._defaultBehavior);
                 if (demo.isRedirectResult(result)) return;
