@@ -83,7 +83,7 @@
 import { Component, Vue } from 'vue-property-decorator';
 import { Static } from '../lib/StaticStore';
 import staticStore from '../lib/StaticStore';
-import { Cashlink as PublicCashlink, Currency } from '../../client/PublicRequestTypes';
+import { Cashlink as PublicCashlink, CashlinkCurrency } from '../../client/PublicRequestTypes';
 import { ParsedCreateCashlinkRequest, ParsedManageCashlinkRequest } from '../lib/RequestTypes';
 import {
     CloseButton,
@@ -221,12 +221,11 @@ export default class UsdtCashlinkManage extends Vue {
 
     private close() {
         const result: PublicCashlink = {
+            currency: this.retrievedCashlink!.currency,
             address: this.retrievedCashlink!.address,
             message: this.retrievedCashlink!.message,
             value: this.retrievedCashlink!.value,
-            status: this.retrievedCashlink!.state,
             theme: this.retrievedCashlink!.theme,
-            currency: Currency.USDT,
         };
         if ('returnLink' in this.request && this.request.returnLink) {
             result.link = this.link;

@@ -14,13 +14,13 @@ import {
     CreateCashlinkRequest,
     SignBtcTransactionRequest,
     CashlinkTheme,
+    CashlinkCurrency,
     RequestType,
     SetupSwapRequest,
     SignMultisigTransactionRequest,
     ConnectAccountRequest,
     ConnectedAccount,
     RsaKeyParams,
-    Currency,
 } from '../client/PublicRequestTypes';
 import { RedirectRequestBehavior, PopupRequestBehavior } from '../client/RequestBehavior';
 import { Utf8Tools } from '@nimiq/utils';
@@ -168,7 +168,7 @@ class Demo {
                     appName: 'Hub Demos',
                     value,
                     message: 'USDT Cashlink test message',
-                    currency: Currency.USDT,
+                    currency: CashlinkCurrency.USDT,
                     returnLink: true,
                     skipSharing: false,
                 };

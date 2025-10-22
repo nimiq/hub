@@ -3,6 +3,7 @@ import { State } from '@nimiq/rpc';
 import {
     RequestType,
     CashlinkTheme,
+    CashlinkCurrency,
     Currency,
     PaymentType,
     ConnectAccountRequest,
@@ -434,8 +435,10 @@ export class RequestParser {
                 const skipSharing = !!createCashlinkRequest.returnLink && !!createCashlinkRequest.skipSharing;
 
                 // Parse currency, default to NIM for backward compatibility
-                const createCurrency = createCashlinkRequest.currency || Currency.NIM;
-                if (!Object.values(Currency).includes(createCurrency)) {
+                const createCurrency = createCashlinkRequest.currency !== undefined
+                    ? createCashlinkRequest.currency
+                    : CashlinkCurrency.NIM;
+                if (!Object.values(CashlinkCurrency).includes(createCurrency)) {
                     throw new Error('Invalid Cashlink currency');
                 }
 
@@ -456,8 +459,10 @@ export class RequestParser {
                 const manageCashlinkRequest = request as ManageCashlinkRequest;
 
                 // Parse currency, default to NIM for backward compatibility
-                const manageCurrency = manageCashlinkRequest.currency || Currency.NIM;
-                if (!Object.values(Currency).includes(manageCurrency)) {
+                const manageCurrency = manageCashlinkRequest.currency !== undefined
+                    ? manageCashlinkRequest.currency
+                    : CashlinkCurrency.NIM;
+                if (!Object.values(CashlinkCurrency).includes(manageCurrency)) {
                     throw new Error('Invalid Cashlink currency');
                 }
 

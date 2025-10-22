@@ -1,4 +1,5 @@
-import { CashlinkState, CashlinkTheme } from '../../client/PublicRequestTypes';
+import { CashlinkTheme, CashlinkCurrency } from '../../client/PublicRequestTypes';
+import { CashlinkState } from './CashlinkInteractive';
 
 // TODO [USDT-CASHLINK]: This is a MOCK implementation for UI development
 // Replace with actual Polygon/OpenGSN integration when backend is ready
@@ -14,10 +15,10 @@ export interface UsdtCashlinkEntry {
     value: number; // USDT amount in cents (6 decimals), e.g., 50000000 = 50.00 USDT
     fee?: number; // Fee in USDT cents
     message: string;
-    state: CashlinkState;
     timestamp: number;
     theme?: CashlinkTheme;
     contactName?: string;
+    currency?: CashlinkCurrency; // Always USDT for this type
 }
 
 class UsdtCashlink {
@@ -81,7 +82,7 @@ class UsdtCashlink {
         const mockAddress = '0x' + Array.from({ length: 40 }, () =>
             Math.floor(Math.random() * 16).toString(16)).join('');
 
-        return new UsdtCashlink(mockPrivateKey, mockAddress);
+        return new UsdtCashlink(CashlinkCurrency.USDT, mockPrivateKey, mockAddress);
     }
 
     public static parse(str: string): UsdtCashlink | null {
@@ -111,11 +112,15 @@ class UsdtCashlink {
             const message = decoded.length > 100 ? decoded.substring(100, 200) : 'Mock USDT Cashlink';
 
             return new UsdtCashlink(
+                CashlinkCurrency.USDT,
                 mockPrivateKey,
                 mockAddress,
                 value,
                 undefined,
                 message,
+                undefined, // theme
+                undefined, // timestamp
+                undefined, // contactName
                 CashlinkState.UNKNOWN,
             );
         } catch (e) {
@@ -126,15 +131,16 @@ class UsdtCashlink {
 
     public static fromObject(object: UsdtCashlinkEntry): UsdtCashlink {
         return new UsdtCashlink(
+            CashlinkCurrency.USDT,
             object.privateKey,
             object.address,
             object.value,
             object.fee,
             object.message,
-            object.state,
             object.theme,
             object.timestamp,
             object.contactName,
+            CashlinkState.UNKNOWN, // State managed separately, start as UNKNOWN
         );
     }
 
@@ -152,15 +158,16 @@ class UsdtCashlink {
     private _theme: CashlinkTheme = CashlinkTheme.UNSPECIFIED;
 
     constructor(
+        public readonly currency: CashlinkCurrency,
         public privateKey: string,
         public address: string,
         value?: number,
         fee?: number,
         message?: string,
-        state: CashlinkState = CashlinkState.UNCHARGED,
         theme?: CashlinkTheme,
         public timestamp: number = Math.floor(Date.now() / 1000),
         public contactName?: string,
+        state: CashlinkState = CashlinkState.UNCHARGED,
     ) {
         if (value) this.value = value;
         if (fee) this.fee = fee;
@@ -223,13 +230,14 @@ class UsdtCashlink {
             address: this.address,
             value: this.value,
             message: this.message,
-            state: this.state,
-            theme: this._theme,
             timestamp: this.timestamp,
         };
+        // Always include currency for USDT (not the default)
+        result.currency = this.currency;
         if (includeOptional) {
             result.fee = this.fee;
             result.contactName = this.contactName;
+            if (this._theme) result.theme = this._theme;
         }
         return result;
     }
