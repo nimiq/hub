@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import { RequestType, Currency } from '../client/PublicRequestTypes';
+import { RequestType, CashlinkCurrency } from '../client/PublicRequestTypes';
 import { KeyguardCommand } from '@nimiq/keyguard-client';
 import staticStore from './lib/StaticStore';
 
@@ -226,7 +226,7 @@ export default new Router({
             beforeEnter: (to, from, next) => {
                 // Check if request is for USDT cashlink
                 const request = staticStore.request;
-                if (request && 'currency' in request && request.currency === Currency.USDT) {
+                if (request && 'currency' in request && request.currency === CashlinkCurrency.USDT) {
                     // Route to USDT cashlink create component
                     to.matched[0].components.default = UsdtCashlinkCreate;
                 }
@@ -240,7 +240,7 @@ export default new Router({
             beforeEnter: (to, from, next) => {
                 // Check if request is for USDT cashlink
                 const request = staticStore.request;
-                if (request && 'currency' in request && request.currency === Currency.USDT) {
+                if (request && 'currency' in request && request.currency === CashlinkCurrency.USDT) {
                     // Route to USDT cashlink manage component
                     to.matched[0].components.default = UsdtCashlinkManage;
                 }

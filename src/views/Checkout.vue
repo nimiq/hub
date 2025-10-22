@@ -108,8 +108,7 @@ class Checkout extends Vue {
         const entries = this.request.paymentOptions.map((paymentOptions) => paymentOptions.currency);
         if (entries.length === 1) return;
 
-        // Note: Checkout only supports NIM, BTC, ETH (not USDT)
-        const indexSelected = entries.indexOf(this.selectedCurrency! as any);
+        const indexSelected = entries.indexOf(this.selectedCurrency!);
         if (entries.length === 2) {
             // We have two cards. Determine whether the non selected is to the left or to the right.
             this.leftCard = indexSelected === 1 ? entries[0] : null;
