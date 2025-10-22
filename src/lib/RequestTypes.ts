@@ -1,4 +1,11 @@
-import type { Currency, PaymentType, RequestType, CashlinkTheme, RelayRequest } from '../../client/PublicRequestTypes';
+import type {
+    Currency,
+    PaymentType,
+    RequestType,
+    CashlinkTheme,
+    CashlinkCurrency,
+    RelayRequest,
+} from '../../client/PublicRequestTypes';
 import type { ParsedPaymentOptions } from './paymentOptions/ParsedPaymentOptions';
 import type { ParsedNimiqSpecifics, ParsedNimiqDirectPaymentOptions } from './paymentOptions/NimiqPaymentOptions';
 import type { ParsedEtherSpecifics, ParsedEtherDirectPaymentOptions } from './paymentOptions/EtherPaymentOptions';
@@ -178,12 +185,12 @@ export interface ParsedCreateCashlinkRequest extends ParsedBasicRequest {
     fiatCurrency?: FiatCurrency;
     returnLink: boolean;
     skipSharing: boolean;
-    currency: Currency; // Defaults to Currency.NIM in parser
+    currency: CashlinkCurrency; // Defaults to CashlinkCurrency.NIM in parser
 }
 
 export interface ParsedManageCashlinkRequest extends ParsedBasicRequest {
     cashlinkAddress: Nimiq.Address;
-    currency: Currency; // Defaults to Currency.NIM in parser
+    currency: CashlinkCurrency; // Defaults to CashlinkCurrency.NIM in parser
 }
 
 /**

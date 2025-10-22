@@ -252,14 +252,19 @@ class UsdtCashlinkCreate extends Vue {
             return;
         }
 
-        // TODO [USDT-CASHLINK]: Get actual Polygon address from account
-        // For now, use mock polygon address or the account's actual polygon address if available
-        this.selectedPolygonAddress = this.accountInfo.polygonAddress || '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb';
+        // TODO [USDT-CASHLINK]: Get actual Polygon address from wallet
+        // For now, use wallet's first polygon address or fallback to mock
+        if (wallet.polygonAddresses && wallet.polygonAddresses.length > 0) {
+            this.selectedPolygonAddress = wallet.polygonAddresses[0].address;
+        } else {
+            // Fallback to mock address if wallet doesn't have polygon addresses yet
+            this.selectedPolygonAddress = '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb';
+        }
         this.selectedPolygonLabel = this.accountInfo.label;
 
         // TODO [USDT-CASHLINK]: Fetch actual USDT balance from Polygon network
         // For now, use mock balance
-        this.selectedPolygonBalance = await mockGetUsdtBalance(this.selectedPolygonAddress);
+        this.selectedPolygonBalance = await mockGetUsdtBalance(this.selectedPolygonAddress!);
 
         this.$setActiveAccount({
             walletId: wallet.id,
@@ -323,15 +328,6 @@ class UsdtCashlinkCreate extends Vue {
             this.$rpc.reject(error as Error);
         } finally {
             this.loading = false;
-        }
-    }
-
-    private login(useReplace = false) {
-        staticStore.originalRouteName = RequestType.CREATE_CASHLINK;
-        if (useReplace) {
-            this.$router.replace({name: RequestType.ONBOARD});
-        } else {
-            this.$router.push({name: RequestType.ONBOARD});
         }
     }
 
