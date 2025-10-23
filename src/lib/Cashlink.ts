@@ -1,6 +1,5 @@
 import { Utf8Tools } from '@nimiq/utils';
 import { CashlinkCurrency, CashlinkTheme } from '../../client/PublicRequestTypes';
-import { ethers } from 'ethers';
 
 export type CashlinkEntry = {
     address: string;
@@ -79,8 +78,9 @@ class Cashlink<C extends CashlinkCurrency = CashlinkCurrency> {
         return this._immutable;
     }
 
-    public static async create<C extends CashlinkCurrency = CashlinkCurrency.NIM>(currency: C = CashlinkCurrency.NIM as C)
-        : Promise<Cashlink<C>> {
+    public static async create<C extends CashlinkCurrency = CashlinkCurrency.NIM>(
+        currency: C = CashlinkCurrency.NIM as C,
+    ): Promise<Cashlink<C>> {
         const secret = new Uint8Array(Cashlink.SECRET_SIZE);
         window.crypto.getRandomValues(secret);
         const address = await Cashlink._deriveAddress(currency, secret);

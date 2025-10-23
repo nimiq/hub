@@ -139,8 +139,11 @@ class CashlinkInteractive<C extends CashlinkCurrency = CashlinkCurrency> extends
             const currency: CashlinkCurrency = this.currency;
             switch (currency) {
                 case CashlinkCurrency.NIM:
-                    const accounts = wallets.flatMap((wallet) => [...wallet.accounts.values(), ...wallet.contracts]);
-                    return new Set(accounts.map((account) => account.address.toUserFriendlyAddress()));
+                    const nimAccounts = wallets.flatMap((wallet) => [...wallet.accounts.values(), ...wallet.contracts]);
+                    return new Set(nimAccounts.map((account) => account.address.toUserFriendlyAddress()));
+                case CashlinkCurrency.USDT:
+                    const usdtAccounts = wallets.flatMap((wallet) => [...wallet.polygonAddresses]);
+                    return new Set(usdtAccounts.map((account) => account.toPolygonAddressType()));
                 default:
                     const _exhaustiveCheck: never = currency; // Check to notice unsupported currency at compile time
                     return _exhaustiveCheck;
