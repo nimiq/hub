@@ -154,8 +154,8 @@ import { ParsedNimiqDirectPaymentOptions } from '../lib/paymentOptions/NimiqPaym
 import { Utf8Tools } from '@nimiq/utils';
 import Config from 'config';
 import Cashlink from '../lib/Cashlink';
-import { CashlinkExtraData } from '../lib/CashlinkInteractive';
 import { CashlinkStore } from '../lib/CashlinkStore';
+import { CashlinkExtraDataNimiq } from '../lib/CashlinkCurrencyHandlerNimiq';
 import CheckoutServerApi from '../lib/CheckoutServerApi';
 
 // Placeholder validity start height for the transactions the Hub creates itself, i.e. for checkout and cashlink
@@ -626,7 +626,7 @@ export default class SignTransactionLedger extends Vue {
                         }
                         ({ value, fee } = this.cashlink);
                         recipient = Nimiq.Address.fromUserFriendlyAddress(this.cashlink.address);
-                        recipientData = CashlinkExtraData.FUNDING;
+                        recipientData = CashlinkExtraDataNimiq.FUNDING;
                     }
                     // For checkout, the payment info might not include a recipient yet, see mounted.
                     if (!recipient) return new Error('Failed to fetch checkout recipient.');

@@ -406,7 +406,7 @@ class CashlinkCreate extends Vue {
 
         const cashlink = new CashlinkInteractive(Cashlink.create());
         staticStore.cashlink = cashlink;
-        cashlink.setDependencies(NetworkClient.Instance, this.wallets);
+        cashlink.setUserWallets(this.wallets);
         cashlink.value = this.liveAmountAndFee.amount;
         cashlink.fee = this.fee;
         cashlink.message = this.message;
@@ -422,7 +422,7 @@ class CashlinkCreate extends Vue {
                 return;
             case WalletType.LEGACY:
             case WalletType.BIP39:
-                const fundingDetails = cashlink.getFundingDetails();
+                const fundingDetails = await cashlink.getFundingDetails();
                 const validityStartHeight = await NetworkClient.Instance.getHeight() + 1;
 
                 const request: KeyguardClient.SignTransactionRequest = Object.assign({}, fundingDetails, {
