@@ -20,6 +20,7 @@ import { LoadingSpinner } from '@nimiq/vue-components';
 
 import '@nimiq/style/nimiq-style.min.css';
 import '@nimiq/vue-components/dist/NimiqVueComponents.css';
+import { loadBitcoinJS } from './lib/bitcoin/BitcoinJSLoader';
 
 @Component({components: {LoadingSpinner}})
 export default class App extends Vue {
@@ -28,6 +29,7 @@ export default class App extends Vue {
     public async created() {
         await this.$store.dispatch('initWallets');
         this.$rpc.start();
+        await loadBitcoinJS();
     }
 
     private get isLoaded() {
