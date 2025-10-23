@@ -76,8 +76,19 @@ export class CashlinkCurrencyHandlerStablecoin implements ICashlinkCurrencyHandl
     }
 
     public async getCashlinkFundingDetails(): Promise<{
+        layout: 'cashlink',
+        recipient: string,
+        value: number,
+        cashlinkMessage: string,
+        tokenContract: string,
     }> {
-        throw new Error('not implemented');
+        return {
+            layout: 'cashlink',
+            recipient: this.cashlink.address,
+            value: this.cashlink.value,
+            cashlinkMessage: this.cashlink.message,
+            tokenContract: Config.polygon.usdt_bridged.tokenContract,
+        };
     }
 
     public async claimCashlink(recipient: string): Promise<CashlinkTransaction> {
