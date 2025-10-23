@@ -24,7 +24,7 @@
         "@nimiq/electrum-client": "https://github.com/nimiq/electrum-client#build",
         "@nimiq/fastspot-api": "^1.10.2",
         "@nimiq/iqons": "^1.5.2",
-        "@nimiq/keyguard-client": "^1.11.1",
+        "@nimiq/keyguard-client": "https://gitpkg.vercel.app/nimiq/keyguard?scripts.postinstall=cd%20client%20%26%26%20.%2Fbuild-gitpkg.sh&47216de757405b2dab7adba888c183af85269a10",
         "@nimiq/ledger-api": "^4.0.1",
         "@nimiq/oasis-api": "^1.1.1",
         "@nimiq/rpc": "^0.4.1",
