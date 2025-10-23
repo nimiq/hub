@@ -49,7 +49,7 @@ describe('Cashlink', () => {
         });
     });
 
-    it('can be rendered as a link and be parsed from it', () => {
+    it('can be rendered as a link and be parsed from it', async () => {
         const optionalData: Array<[/*message*/ string, /*theme*/ CashlinkTheme | undefined]> = [
             ['', undefined],
             [MESSAGE, undefined],
@@ -58,7 +58,7 @@ describe('Cashlink', () => {
         ];
         for (const [message, theme] of optionalData) {
             const cashlink = new Cashlink(CashlinkCurrency.NIM, SECRET, ADDRESS, VALUE, undefined, message, theme);
-            expect(Cashlink.parse(cashlink.render())).toMatchObject({
+            expect(await Cashlink.parse(cashlink.render())).toMatchObject({
                 currency: CashlinkCurrency.NIM,
                 secret: SECRET,
                 address: ADDRESS,
@@ -70,8 +70,8 @@ describe('Cashlink', () => {
         }
     });
 
-    it('accepts links which explicitly specify the default currency', () => {
-        expect(Cashlink.parse(renderLink(/*NIM*/ 0))).toMatchObject({
+    it('accepts links which explicitly specify the default currency', async () => {
+        expect(await Cashlink.parse(renderLink(/*NIM*/ 0))).toMatchObject({
             currency: CashlinkCurrency.NIM,
             secret: SECRET,
             address: ADDRESS,
@@ -79,15 +79,15 @@ describe('Cashlink', () => {
         });
     });
 
-    it('rejects links of unsupported currencies', () => {
+    it('rejects links of unsupported currencies', async () => {
         const consoleError = jest.spyOn(console, 'error').mockImplementation(() => undefined);
-        expect(Cashlink.parse(renderLink(255))).toBeNull();
+        expect(await Cashlink.parse(renderLink(255))).toBeNull();
         consoleError.mockRestore();
     });
 
-    it('rejects links with excess data', () => {
+    it('rejects links with excess data', async () => {
         const consoleError = jest.spyOn(console, 'error').mockImplementation(() => undefined);
-        expect(Cashlink.parse(renderLink(/*NIM*/ 0, new Uint8Array([0])))).toBeNull();
+        expect(await Cashlink.parse(renderLink(/*NIM*/ 0, new Uint8Array([0])))).toBeNull();
         consoleError.mockRestore();
     });
 });

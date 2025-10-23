@@ -1,20 +1,31 @@
 import { CashlinkCurrency } from '../../client/PublicRequestTypes';
 import type Cashlink from './Cashlink';
 import { CashlinkCurrencyHandlerNimiq } from './CashlinkCurrencyHandlerNimiq';
+import type { CashlinkCurrencyHandlerStablecoin } from './CashlinkCurrencyHandlerStablecoin';
 import type { WalletInfo } from './WalletInfo';
 
 export type CashlinkCurrencyHandlerForCurrency<C extends CashlinkCurrency> = {
     [CashlinkCurrency.NIM]: CashlinkCurrencyHandlerNimiq,
+    [CashlinkCurrency.USDT]: CashlinkCurrencyHandlerStablecoin,
 }[C];
 
+// A Cashlink of a single currency, typed as the union of the Cashlink types of all currencies, such that checking its
+// currency narrows its type, which is not the case for a Cashlink<CashlinkCurrency>.
+export type CashlinkOfSomeCurrency = { [C in CashlinkCurrency]: Cashlink<C> }[CashlinkCurrency];
+
 export function createCurrencyHandlerForCashlink<C extends CashlinkCurrency>(cashlink: Cashlink<C>)
-    : CashlinkCurrencyHandlerForCurrency<C> {
-    const currency: CashlinkCurrency = cashlink.currency;
-    switch (currency) {
+    : CashlinkCurrencyHandlerForCurrency<C>;
+export function createCurrencyHandlerForCashlink(cashlink: CashlinkOfSomeCurrency)
+    : CashlinkCurrencyHandlerForCurrency<CashlinkCurrency> {
+    switch (cashlink.currency) {
         case CashlinkCurrency.NIM:
             return new CashlinkCurrencyHandlerNimiq(cashlink);
+        case CashlinkCurrency.USDT:
+            // TODO Create the handler, once handlers are lazy loaded. A static import of it would bundle the Polygon
+            //  libraries into every page that handles Cashlinks.
+            throw new Error('USDT Cashlinks are not supported yet');
         default:
-            const _exhaustiveCheck: never = currency; // Check to notice unsupported currency at compilation time.
+            const _exhaustiveCheck: never = cashlink; // Check to notice unsupported currency at compilation time.
             return _exhaustiveCheck;
     }
 }

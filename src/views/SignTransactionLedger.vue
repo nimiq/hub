@@ -141,7 +141,7 @@ import {
     ParsedCheckoutRequest,
     SignTransactionRequestLayout,
 } from '../lib/RequestTypes';
-import { Currency, RequestType, SignedTransaction } from '../../client/PublicRequestTypes';
+import { CashlinkCurrency, Currency, RequestType, SignedTransaction } from '../../client/PublicRequestTypes';
 import { patchLegacyRequestSenderType } from '../lib/SignTransactionRequestParsing';
 import { WalletInfo } from '../lib/WalletInfo';
 import {
@@ -153,9 +153,8 @@ import {
 import { ParsedNimiqDirectPaymentOptions } from '../lib/paymentOptions/NimiqPaymentOptions';
 import { Utf8Tools } from '@nimiq/utils';
 import Config from 'config';
-import Cashlink from '../lib/Cashlink';
 import { CashlinkStore } from '../lib/CashlinkStore';
-import { createCurrencyHandlerForCashlink } from '../lib/CashlinkCurrencyHandler';
+import { CashlinkOfSomeCurrency, createCurrencyHandlerForCashlink } from '../lib/CashlinkCurrencyHandler';
 import CheckoutServerApi from '../lib/CheckoutServerApi';
 
 // Placeholder validity start height for the transactions the Hub creates itself, i.e. for checkout and cashlink
@@ -221,7 +220,7 @@ export default class SignTransactionLedger extends Vue {
         | ParsedSignStakingRequest
         | ParsedCheckoutRequest
         | ParsedCreateCashlinkRequest;
-    @Static private cashlink?: Cashlink;
+    @Static private cashlink?: CashlinkOfSomeCurrency;
     @Getter private findWalletByAddress!: (address: string, includeContracts: boolean) => WalletInfo | undefined;
 
     private state: string = SignTransactionLedger.State.OVERVIEW;
@@ -623,6 +622,9 @@ export default class SignTransactionLedger extends Vue {
                         if (!this.cashlink) {
                             return new Error('Ledger Cashlink Signing expects the Cashlink to sign to be in the '
                                 + 'static store.'); // see CashlinkCreate
+                        }
+                        if (this.cashlink.currency !== CashlinkCurrency.NIM) {
+                            return new Error('Ledger Cashlink Signing only supports NIM Cashlinks.');
                         }
                         ({ recipient, recipientData, value, fee } = createCurrencyHandlerForCashlink(this.cashlink)
                             .getCashlinkFundingDetails());

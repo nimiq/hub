@@ -201,7 +201,7 @@ class CashlinkReceive extends Vue {
 
     public async mounted() {
         // Load Cashlink from URL
-        this.cashlink = Cashlink.parse(window.location.hash.substring(1));
+        this.cashlink = await Cashlink.parse(window.location.hash.substring(1));
 
         // Fail if no Cashlink was found
         if (!this.cashlink) {

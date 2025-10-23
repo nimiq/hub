@@ -1,3 +1,4 @@
+// TODO move into ethers-js webpack chunk
 import { utils } from 'ethers';
 
 const { getAddress, hexlify } = utils;

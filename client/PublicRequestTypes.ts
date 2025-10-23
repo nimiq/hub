@@ -686,7 +686,7 @@ export enum CashlinkCurrency {
     // not supported yet
     // BTC = 'btc',
     // USDC = 'usdc', // on Polygon network
-    // USDT = 'usdt', // on Polygon network
+    USDT = 'usdt', // on Polygon network
 }
 
 export interface Cashlink {
