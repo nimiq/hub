@@ -20,7 +20,6 @@ const CashlinkManage          = () => import(/*webpackChunkName: "cashlink" */ '
 
 const UsdtCashlinkCreate      = () => import(/*webpackChunkName: "usdt-cashlink" */ './views/UsdtCashlinkCreate.vue');
 const UsdtCashlinkManage      = () => import(/*webpackChunkName: "usdt-cashlink" */ './views/UsdtCashlinkManage.vue');
-const UsdtCashlinkApp         = () => import(/*webpackChunkName: "usdt-cashlink" */ './UsdtCashlinkApp.vue');
 
 const Checkout                = () => import(/*webpackChunkName: "checkout"*/ './views/Checkout.vue');
 const CheckoutTransmission    = () => import(/*webpackChunkName: "checkout"*/ './views/CheckoutTransmission.vue');
@@ -134,6 +133,9 @@ export function keyguardResponseRouter(
                 ? RequestType.MANAGE_CASHLINK
                 : `${originalRequestType}-success`;
             break;
+        case KeyguardCommand.SIGN_USDT_CASHLINK:
+            // Will be redirected to UsdtCashlinkManage in beforeEnter below
+            resolve = RequestType.MANAGE_CASHLINK; break;
         case KeyguardCommand.SIGN_MULTISIG_TRANSACTION:
             resolve = `${RequestType.SIGN_MULTISIG_TRANSACTION}-success`; break;
         case KeyguardCommand.SIGN_STAKING:
@@ -247,11 +249,6 @@ export default new Router({
                 }
                 next();
             },
-        },
-        {
-            path: `/usdt-cashlink`,
-            component: UsdtCashlinkApp,
-            name: 'usdt-cashlink-receive',
         },
         {
             path: `/${RequestType.CHECKOUT}`,

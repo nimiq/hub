@@ -174,6 +174,21 @@ const pages = {
         // extracted common chunks and vendor chunks.
         chunks: ['chunk-vendors', 'chunk-common', 'cashlink-app']
     },
+    'usdt-cashlink-app': {
+        // entry for the page
+        entry: 'src/usdtCashlink.ts',
+        // the source template
+        template: 'public/usdt-cashlink.html',
+        // insert browser warning html template
+        browserWarningTemplate,
+        browserWarningIntegrityHash,
+        domain,
+        // output as dist/cashlink/index.html
+        filename: 'usdt-cashlink/index.html',
+        // chunks to include on this page, by default includes
+        // extracted common chunks and vendor chunks.
+        chunks: ['chunk-vendors', 'chunk-common', 'usdt-cashlink-app']
+    },
     hubexport: {
         // entry for the page
         entry: 'src/export.ts',
@@ -217,6 +232,8 @@ module.exports = {
         config.plugins.delete('preload-iframe');
         config.plugins.delete('prefetch-cashlink-app');
         config.plugins.delete('preload-cashlink-app');
+        config.plugins.delete('prefetch-usdt-cashlink-app');
+        config.plugins.delete('preload-usdt-cashlink-app');
         config.plugins.delete('prefetch-demos');
         config.plugins.delete('preload-demos');
         config.plugins.delete('prefetch-callback');
