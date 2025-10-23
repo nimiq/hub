@@ -147,7 +147,7 @@ export interface ParsedExportRequest extends ParsedSimpleRequest {
 }
 
 export interface ParsedCreateCashlinkRequest extends ParsedBasicRequest {
-    senderAddress?: Nimiq.Address;
+    senderAddress?: Nimiq.Address | string;
     senderBalance?: number;
     value?: number;
     message?: string;

@@ -391,9 +391,24 @@ export class RequestParser {
                 } as ParsedSignMessageRequest;
             case RequestType.CREATE_CASHLINK:
                 const createCashlinkRequest = request as CreateCashlinkRequest;
-                const senderAddress = 'senderAddress' in createCashlinkRequest && !!createCashlinkRequest.senderAddress
-                    ? Nimiq.Address.fromString(createCashlinkRequest.senderAddress)
-                    : undefined;
+                let senderAddress;
+                switch (createCashlinkRequest.currency) {
+                    case CashlinkCurrency.USDT:
+                        // TODO
+                        senderAddress = 'senderAddress' in createCashlinkRequest
+                            && !!createCashlinkRequest.senderAddress
+                            ? createCashlinkRequest.senderAddress
+                            : undefined;
+                        break;
+                    case CashlinkCurrency.NIM:
+                    default:
+                        senderAddress = 'senderAddress' in createCashlinkRequest
+                            && !!createCashlinkRequest.senderAddress
+                            ? Nimiq.Address.fromString(createCashlinkRequest.senderAddress)
+                            : undefined;
+                        break;
+                }
+
                 const senderBalance = 'senderBalance' in createCashlinkRequest
                     ? createCashlinkRequest.senderBalance
                     : undefined;
@@ -924,7 +939,9 @@ export class RequestParser {
                 return {
                     appName: createCashlinkRequest.appName,
                     senderAddress: createCashlinkRequest.senderAddress
-                            ? createCashlinkRequest.senderAddress.toUserFriendlyAddress()
+                            ? createCashlinkRequest.currency === CashlinkCurrency.NIM
+                                ? (createCashlinkRequest.senderAddress as Nimiq.Address).toUserFriendlyAddress()
+                                : createCashlinkRequest.senderAddress
                             : undefined,
                     senderBalance: createCashlinkRequest.senderBalance,
                     value: createCashlinkRequest.value,
@@ -933,6 +950,7 @@ export class RequestParser {
                     fiatCurrency: createCashlinkRequest.fiatCurrency,
                     returnLink: createCashlinkRequest.returnLink,
                     skipSharing: createCashlinkRequest.skipSharing,
+                    currency: createCashlinkRequest.currency,
                 } as CreateCashlinkRequest;
             case RequestType.MANAGE_CASHLINK:
                 const manageCashlinkRequest = request as ParsedManageCashlinkRequest;

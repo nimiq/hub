@@ -97,8 +97,9 @@ import { Static } from '../lib/StaticStore';
 import staticStore from '../lib/StaticStore';
 import StatusScreen from '../components/StatusScreen.vue';
 import GlobalClose from '../components/GlobalClose.vue';
+import { State as RpcState } from '@nimiq/rpc';
 import { ParsedCreateCashlinkRequest } from '../lib/RequestTypes';
-import { RequestType } from '../../client/PublicRequestTypes';
+import { CashlinkCurrency, RequestType } from '../../client/PublicRequestTypes';
 import UsdtCashlink from '../lib/UsdtCashlink';
 import { AccountInfo } from '../lib/AccountInfo';
 import { WalletInfo } from '../lib/WalletInfo';
@@ -122,6 +123,11 @@ import {
     SmallPage,
     Tooltip,
 } from '@nimiq/vue-components';
+import CashlinkInteractive from '@/lib/CashlinkInteractive';
+import Cashlink from '@/lib/Cashlink';
+import KeyguardClient from '@nimiq/keyguard-client';
+import { createTransactionRequest, sendTransaction } from '@/lib/polygon/ethers';
+import { ForwardRequest } from '@opengsn/common/dist/EIP712/ForwardRequest';
 
 @Component({components: {
     Account,
@@ -147,10 +153,11 @@ class UsdtCashlinkCreate extends Vue {
     };
 
     @Static private request!: ParsedCreateCashlinkRequest;
+    @Static private rpcState!: RpcState;
 
     @State private wallets!: WalletInfo[];
     @Getter private processedWallets!: WalletInfo[];
-    @Getter private findWalletByAddress!: (address: string, includeContracts: boolean) => WalletInfo | undefined;
+    @Getter private findWalletByPolygonAddress!: (address: string) => WalletInfo | undefined;
     @Getter private findWallet!: (id: string) => WalletInfo | undefined;
     @Getter private activeAccount?: AccountInfo;
 
@@ -194,8 +201,8 @@ class UsdtCashlinkCreate extends Vue {
         }
 
         // If there is no wallet to the address provided in the request, remove it to let the user choose another
-        if (this.request.senderAddress
-            && !this.findWalletByAddress(this.request.senderAddress.toUserFriendlyAddress(), false)) {
+        if (this.request.senderAddress && typeof this.request.senderAddress === 'string'
+            && !this.findWalletByPolygonAddress(this.request.senderAddress)) {
             this.request.senderAddress = undefined;
         }
 
@@ -205,13 +212,6 @@ class UsdtCashlinkCreate extends Vue {
 
         if (this.request.message) {
             this.message = this.request.message;
-        }
-
-        // Fetch mock fee
-        try {
-            this.mockFee = await mockEstimateUsdtFee();
-        } catch (e) {
-            console.error('Error estimating fee:', e);
         }
 
         this.liveAmountAndFee.fee = this.mockFee;
@@ -228,9 +228,9 @@ class UsdtCashlinkCreate extends Vue {
             if (this.$store.state.activeUserFriendlyAddress) {
                 await this.setSender(this.$store.state.activeWalletId, this.$store.state.activeUserFriendlyAddress);
             }
-        } else if (this.request.senderAddress) {
+        } else if (this.request.senderAddress && typeof this.request.senderAddress === 'string') {
             // Use the sender address provided in the request
-            await this.setSender(null, this.request.senderAddress.toUserFriendlyAddress());
+            await this.setSender(null, this.request.senderAddress);
         }
 
         this.loading = false;
@@ -239,7 +239,7 @@ class UsdtCashlinkCreate extends Vue {
     private async setSender(walletId: string | null, address: string) {
         const wallet = walletId
             ? this.findWallet(walletId)
-            : this.findWalletByAddress(address, false);
+            : this.findWalletByPolygonAddress(address);
         if (!wallet) {
             const errorMsg = walletId ? 'UNEXPECTED: WalletId not found!' : 'Address not found';
             this.$rpc.reject(new Error(errorMsg));
@@ -296,39 +296,96 @@ class UsdtCashlinkCreate extends Vue {
 
         this.loading = true;
 
-        try {
-            const usdtCashlink = UsdtCashlink.create();
-            staticStore.usdtCashlink = usdtCashlink;
-
-            usdtCashlink.value = this.liveAmountAndFee.amount;
-            usdtCashlink.fee = this.mockFee;
-            usdtCashlink.message = this.message;
+        try { // ???
+            const cashlink = new CashlinkInteractive(await Cashlink.create(CashlinkCurrency.USDT));
+            staticStore.cashlink = cashlink;
+            cashlink.setUserWallets(this.wallets);
+            cashlink.value = this.liveAmountAndFee.amount;
+            cashlink.fee = 0; // not available yet
+            cashlink.message = this.message;
             if (this.request.theme) {
-                usdtCashlink.theme = this.request.theme;
+                cashlink.theme = this.request.theme;
+            }
+            let keyId: string;
+            let keyLabel: string;
+            let keyPath: string;
+
+            if (typeof this.request.senderAddress === 'string') {
+                // existence checked in RpcApi // Likely not true here, should be added
+                const senderAccount = this.findWalletByPolygonAddress(this.request.senderAddress)!;
+                const signer = senderAccount.polygonAddresses.find((ai) => ai.address === this.request.senderAddress)!;
+
+                keyId = senderAccount.keyId;
+                keyPath = signer.path;
+                keyLabel = senderAccount.labelForKeyguard!;
+            } else {
+                // TODO
+                return;
             }
 
-            console.log('[MOCK] Created USDT Cashlink:', usdtCashlink.toObject());
+            const fundingDetails = await cashlink.getFundingDetails();
 
-            // Mock signing
-            await mockSignUsdtCashlink({
-                keyId: this.selectedPolygonAddress!,
-                keyPath: 'm/44\'/60\'/0\'/0/0',
-                keyLabel: this.selectedPolygonLabel,
-                senderLabel: this.selectedPolygonLabel,
-                cashlinkMessage: this.message,
-                amount: usdtCashlink.value,
-                fee: usdtCashlink.fee,
-                recipient: usdtCashlink.address,
-            });
+            const {
+                relayRequest,
+                permit,
+                approval,
+                relay,
+            } = await createTransactionRequest(
+                fundingDetails.tokenContract,
+                this.request.senderAddress,
+                fundingDetails.recipient,
+                fundingDetails.value,
+                // relay??
+            );
 
-            // Navigate to manage view
-            this.$router.push({ name: RequestType.MANAGE_CASHLINK });
-        } catch (error) {
-            console.error('Error creating USDT Cashlink:', error);
-            this.$rpc.reject(error as Error);
-        } finally {
-            this.loading = false;
+            const relayUrl = relay.url; // maybe needs storing if it is not in the returned signed tx.
+
+            const request = {
+                ...relayRequest,
+                appName: this.request.appName,
+                keyId,
+                keyPath,
+                keyLabel,
+
+                ...(permit ? {
+                    permit: {
+                        tokenNonce: permit.tokenNonce,
+                    },
+                } : null),
+
+                ...(approval ? {
+                    approval: {
+                        tokenNonce: approval.tokenNonce,
+                    },
+                } : null),
+            } as KeyguardClient.SignPolygonTransactionRequest;
+            // } as SignUsdtCashlinkRequest;
+
+            staticStore.keyguardRequest = request;
+            const client = this.$rpc.createKeyguardClient(true);
+            client.signPolygonTransaction(request);
+            // client.signUsdtCashlink(request);
+
+            // -> signCashlinkCreateSuccess:
+            // const { relayData, ...relayRequest } = signedTransaction.message;
+            // // send via relay
+            // let result = await  sendTransaction(
+            //     fundingDetails.tokenContract,
+            //     { request: relayRequest as ForwardRequest, relayData },
+            //     signedTransaction.signature,
+            //     relayUrl!,
+            // );
+        } catch (e) { // ??
+
         }
+        //     // Navigate to manage view
+        //     this.$router.push({ name: RequestType.MANAGE_CASHLINK });
+        // } catch (error) {
+        //     console.error('Error creating USDT Cashlink:', error);
+        //     this.$rpc.reject(error as Error);
+        // } finally {
+        //     this.loading = false;
+        // }
     }
 
     private reset() {
