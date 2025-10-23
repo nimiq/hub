@@ -223,10 +223,7 @@ class CashlinkReceive extends Vue {
         // which requires this page to be reloaded anyway.
         if (!this.hasWallets) return;
 
-        // Start network to check Cashlink status
-        await NetworkClient.Instance.init();
-
-        this.cashlink.setDependencies(NetworkClient.Instance, this.wallets);
+        this.cashlink.setUserWallets(this.wallets);
     }
 
     public destroyed() {
