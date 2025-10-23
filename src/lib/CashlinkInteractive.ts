@@ -1,3 +1,5 @@
+// TODO make detectState private
+// TODO lazy load handlers
 import Cashlink from './Cashlink';
 import {
     createCurrencyHandlerForCashlink,
