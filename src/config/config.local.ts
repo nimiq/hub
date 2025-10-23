@@ -20,7 +20,7 @@ export default {
     reportToSentry: false,
     checkoutWithoutNimOrigins: [ '*' ],
 
-    enableBitcoin: true,
+    enableBitcoin: false,
     bitcoinNetwork: BTC_NETWORK_TEST,
     bitcoinAddressType: NATIVE_SEGWIT,
 

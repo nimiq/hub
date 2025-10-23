@@ -6,7 +6,7 @@ import {
     CashlinkCurrencyHandlerForCurrency,
     CashlinkTransaction,
 } from './CashlinkCurrencyHandler';
-import { WalletInfo } from './WalletInfo';
+import type { WalletInfo } from './WalletInfo';
 import { CashlinkCurrency, CashlinkTheme } from '../../client/PublicRequestTypes';
 
 export enum CashlinkState {
