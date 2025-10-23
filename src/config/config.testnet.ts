@@ -1,11 +1,9 @@
-import type { NimiqVersion as LedgerApiNimiqVersion } from '@nimiq/ledger-api'; // import type only to avoid bundling
 import { ENV_TEST, NETWORK_TEST } from '../lib/Constants';
 import { BTC_NETWORK_TEST, NATIVE_SEGWIT } from '../lib/bitcoin/BitcoinConstants';
 import { POLYGON_NETWORK_MAIN } from '../lib/polygon/PolygonConstants';
 
 export default {
     keyguardEndpoint: 'https://keyguard.nimiq-testnet.com',
-    ledgerApiNimiqVersion: 'albatross' as LedgerApiNimiqVersion.ALBATROSS,
     environment: ENV_TEST,
     network: NETWORK_TEST,
     nimiqNetworkId: 5,

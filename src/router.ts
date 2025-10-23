@@ -8,8 +8,8 @@ const SignTransaction         = () => import(/*webpackChunkName: "sign-transacti
 const SignTransactionSuccess  = () => import(/*webpackChunkName: "sign-transaction"*/
     './views/SignTransactionSuccess.vue');
 
-const SignTransactionLedger   = () => import(/*webpackChunkName: "sign-transaction-ledger"*/
-    './views/SignTransactionLedger.vue');
+// const SignTransactionLedger   = () => import(/*webpackChunkName: "sign-transaction-ledger"*/
+//     './views/SignTransactionLedger.vue');
 
 const SignStaking         = () => import(/*webpackChunkName: "sign-staking"*/ './views/SignStaking.vue');
 const SignStakingSuccess  = () => import(/*webpackChunkName: "sign-staking"*/
@@ -30,7 +30,7 @@ const ChooseAddress           = () => import(/*webpackChunkName: "choose-address
 const Signup                  = () => import(/*webpackChunkName: "onboarding"*/ './views/Signup.vue');
 const SignupSuccess           = () => import(/*webpackChunkName: "onboarding"*/ './views/SignupSuccess.vue');
 
-const SignupLedger            = () => import(/*webpackChunkName: "add-ledger"*/ './views/SignupLedger.vue');
+// const SignupLedger            = () => import(/*webpackChunkName: "add-ledger"*/ './views/SignupLedger.vue');
 
 const Login                   = () => import(/*webpackChunkName: "onboarding"*/ './views/Login.vue');
 const LoginSuccess            = () => import(/*webpackChunkName: "onboarding"*/ './views/LoginSuccess.vue');
@@ -43,12 +43,12 @@ const ChangePassword          = () => import(/*webpackChunkName: "change-passwor
 const Logout                  = () => import(/*webpackChunkName: "logout"*/ './views/Logout.vue');
 const LogoutSuccess           = () => import(/*webpackChunkName: "logout"*/ './views/LogoutSuccess.vue');
 
-const LogoutLedger            = () => import(/*webpackChunkName: "logout-ledger"*/ './views/LogoutLedger.vue');
+// const LogoutLedger            = () => import(/*webpackChunkName: "logout-ledger"*/ './views/LogoutLedger.vue');
 
 const AddAccount              = () => import(/*webpackChunkName: "add-account"*/ './views/AddAccount.vue');
 const AddAccountSelection     = () => import(/*webpackChunkName: "add-account"*/ './views/AddAccountSelection.vue');
 
-const AddAddressLedger        = () => import(/*webpackChunkName: "add-ledger"*/ './views/AddAddressLedger.vue');
+// const AddAddressLedger        = () => import(/*webpackChunkName: "add-ledger"*/ './views/AddAddressLedger.vue');
 
 const OnboardingSelector      = () => import(/*webpackChunkName: "onboarding"*/ './views/OnboardingSelector.vue');
 
@@ -61,30 +61,30 @@ const Migrate                 = () => import(/*webpackChunkName: "migrate"*/ './
 const SignMessage             = () => import(/*webpackChunkName: "sign-message"*/ './views/SignMessage.vue');
 const SignMessageSuccess      = () => import(/*webpackChunkName: "sign-message"*/ './views/SignMessageSuccess.vue');
 
-const SignMessageLedger       = () => import(/*webpackChunkName: "sign-message-ledger"*/
-    './views/SignMessageLedger.vue');
+// const SignMessageLedger       = () => import(/*webpackChunkName: "sign-message-ledger"*/
+//     './views/SignMessageLedger.vue');
 
 const SimpleSuccess           = () => import(/*webpackChunkName: "common"*/ './views/SimpleSuccess.vue');
 const ErrorHandler            = () => import(/*webpackChunkName: "common"*/ './views/ErrorHandler.vue');
 
 const RequestError            = () => import(/*webpackChunkName: "request-error"*/ './views/RequestError.vue');
 
-const ErrorHandlerUnsupportedLedger = () => import(/*webpackChunkName: "unsupported-ledger"*/
-    './views/ErrorHandlerUnsupportedLedger.vue');
+// const ErrorHandlerUnsupportedLedger = () => import(/*webpackChunkName: "unsupported-ledger"*/
+//     './views/ErrorHandlerUnsupportedLedger.vue');
 
 const SignBtcTransaction        = () => import(/*webpackChunkName: "sign-btc-transaction"*/
     './views/SignBtcTransaction.vue');
 const SignBtcTransactionSuccess = () => import(/*webpackChunkName: "sign-btc-transaction"*/
 './views/SignBtcTransactionSuccess.vue');
 
-const SignBtcTransactionLedger  = () => import(/*webpackChunkName: "sign-btc-transaction-ledger"*/
-    './views/SignBtcTransactionLedger.vue');
+// const SignBtcTransactionLedger  = () => import(/*webpackChunkName: "sign-btc-transaction-ledger"*/
+//     './views/SignBtcTransactionLedger.vue');
 
 const ActivateBitcoin         = () => import(/*webpackChunkName: "activate-btc"*/ './views/ActivateBitcoin.vue');
 const ActivateBitcoinSuccess  = () => import(/*webpackChunkName: "activate-btc"*/ './views/ActivateBitcoinSuccess.vue');
 
-const ActivateBitcoinLedger = () => import(/*webpackChunkName: "activate-btc-ledger"*/
-    './views/ActivateBitcoinLedger.vue');
+// const ActivateBitcoinLedger = () => import(/*webpackChunkName: "activate-btc-ledger"*/
+//     './views/ActivateBitcoinLedger.vue');
 
 const ActivatePolygon         = () => import(/*webpackChunkName: "activate-polygon"*/ './views/ActivatePolygon.vue');
 const ActivatePolygonSuccess  = () => import(/*webpackChunkName: "activate-polygon"*/
@@ -99,9 +99,10 @@ const SetupSwapSuccess        = () => import(/*webpackChunkName: "swap"*/ './vie
 const RefundSwap              = () => import(/*webpackChunkName: "swap"*/ './views/RefundSwap.vue');
 const RefundSwapSuccess       = () => import(/*webpackChunkName: "swap"*/ './views/RefundSwapSuccess.vue');
 
-const SetupSwapLedger         = () => import(/*webpackChunkName: "swap-ledger"*/ './views/SetupSwapLedger.vue');
+// const SetupSwapLedger         = () => import(/*webpackChunkName: "swap-ledger"*/ './views/SetupSwapLedger.vue');
 
-const RefundSwapLedger        = () => import(/*webpackChunkName: "refund-swap-ledger"*/ './views/RefundSwapLedger.vue');
+// const RefundSwapLedger        = () => import(/*webpackChunkName: "refund-swap-ledger"*/
+//      './views/RefundSwapLedger.vue');
 
 const SignMultisigTransaction         = () => import(/*webpackChunkName: "sign-multisig-transaction"*/
     './views/SignMultisigTransaction.vue');
@@ -199,11 +200,11 @@ export default new Router({
             component: SignTransactionSuccess,
             name: `${RequestType.SIGN_TRANSACTION}-success`,
         },
-        {
-            path: `/${RequestType.SIGN_TRANSACTION}/ledger`,
-            component: SignTransactionLedger,
-            name: `${RequestType.SIGN_TRANSACTION}-ledger`,
-        },
+        // {
+        //     path: `/${RequestType.SIGN_TRANSACTION}/ledger`,
+        //     component: SignTransactionLedger,
+        //     name: `${RequestType.SIGN_TRANSACTION}-ledger`,
+        // },
         {
             path: `/${RequestType.SIGN_STAKING}`,
             component: SignStaking,
@@ -214,11 +215,11 @@ export default new Router({
             component: SignStakingSuccess,
             name: `${RequestType.SIGN_STAKING}-success`,
         },
-        {
-            path: `/${RequestType.SIGN_STAKING}/ledger`,
-            component: SignTransactionLedger,
-            name: `${RequestType.SIGN_STAKING}-ledger`,
-        },
+        // {
+        //     path: `/${RequestType.SIGN_STAKING}/ledger`,
+        //     component: SignTransactionLedger,
+        //     name: `${RequestType.SIGN_STAKING}-ledger`,
+        // },
         {
             path: `/cashlink/create`,
             component: CashlinkCreate,
@@ -277,11 +278,11 @@ export default new Router({
             component: SignupSuccess,
             name: `${RequestType.SIGNUP}-success`,
         },
-        {
-            path: `/${RequestType.SIGNUP}/ledger`,
-            component: SignupLedger,
-            name: `${RequestType.SIGNUP}-ledger`,
-        },
+        // {
+        //     path: `/${RequestType.SIGNUP}/ledger`,
+        //     component: SignupLedger,
+        //     name: `${RequestType.SIGNUP}-ledger`,
+        // },
         {
             path: `/${RequestType.LOGIN}`,
             component: Login,
@@ -302,11 +303,11 @@ export default new Router({
             component: ExportSuccess,
             name: `${RequestType.EXPORT}-success`,
         },
-        {
-            path: `/${RequestType.EXPORT}/ledger`,
-            component: ErrorHandlerUnsupportedLedger,
-            name: `${RequestType.EXPORT}-ledger`,
-        },
+        // {
+        //     path: `/${RequestType.EXPORT}/ledger`,
+        //     component: ErrorHandlerUnsupportedLedger,
+        //     name: `${RequestType.EXPORT}-ledger`,
+        // },
         {
             path: `/${RequestType.CHANGE_PASSWORD}`,
             component: ChangePassword,
@@ -317,11 +318,11 @@ export default new Router({
             component: SimpleSuccess,
             name: `${RequestType.CHANGE_PASSWORD}-success`,
         },
-        {
-            path: `/${RequestType.CHANGE_PASSWORD}/ledger`,
-            component: ErrorHandlerUnsupportedLedger,
-            name: `${RequestType.CHANGE_PASSWORD}-ledger`,
-        },
+        // {
+        //     path: `/${RequestType.CHANGE_PASSWORD}/ledger`,
+        //     component: ErrorHandlerUnsupportedLedger,
+        //     name: `${RequestType.CHANGE_PASSWORD}-ledger`,
+        // },
         {
             path: `/${RequestType.LOGOUT}`,
             component: Logout,
@@ -332,11 +333,11 @@ export default new Router({
             component: LogoutSuccess,
             name: `${RequestType.LOGOUT}-success`,
         },
-        {
-            path: `/${RequestType.LOGOUT}/ledger`,
-            component: LogoutLedger,
-            name: `${RequestType.LOGOUT}-ledger`,
-        },
+        // {
+        //     path: `/${RequestType.LOGOUT}/ledger`,
+        //     component: LogoutLedger,
+        //     name: `${RequestType.LOGOUT}-ledger`,
+        // },
         {
             path: `/${RequestType.ADD_ADDRESS}`,
             component: AddAccount,
@@ -347,11 +348,11 @@ export default new Router({
             component: AddAccountSelection,
             name: `${RequestType.ADD_ADDRESS}-selection`,
         },
-        {
-            path: `/${RequestType.ADD_ADDRESS}/ledger`,
-            component: AddAddressLedger,
-            name: `${RequestType.ADD_ADDRESS}-ledger`,
-        },
+        // {
+        //     path: `/${RequestType.ADD_ADDRESS}/ledger`,
+        //     component: AddAddressLedger,
+        //     name: `${RequestType.ADD_ADDRESS}-ledger`,
+        // },
         {
             path: `/${RequestType.RENAME}`,
             component: Rename,
@@ -382,11 +383,11 @@ export default new Router({
             component: SignMessageSuccess,
             name: `${RequestType.SIGN_MESSAGE}-success`,
         },
-        {
-            path: `/${RequestType.SIGN_MESSAGE}/ledger`,
-            component: SignMessageLedger,
-            name: `${RequestType.SIGN_MESSAGE}-ledger`,
-        },
+        // {
+        //     path: `/${RequestType.SIGN_MESSAGE}/ledger`,
+        //     component: SignMessageLedger,
+        //     name: `${RequestType.SIGN_MESSAGE}-ledger`,
+        // },
         {
             path: `/${RequestType.SIGN_BTC_TRANSACTION}`,
             component: SignBtcTransaction,
@@ -397,11 +398,11 @@ export default new Router({
             component: SignBtcTransactionSuccess,
             name: `${RequestType.SIGN_BTC_TRANSACTION}-success`,
         },
-        {
-            path: `/${RequestType.SIGN_BTC_TRANSACTION}/ledger`,
-            component: SignBtcTransactionLedger,
-            name: `${RequestType.SIGN_BTC_TRANSACTION}-ledger`,
-        },
+        // {
+        //     path: `/${RequestType.SIGN_BTC_TRANSACTION}/ledger`,
+        //     component: SignBtcTransactionLedger,
+        //     name: `${RequestType.SIGN_BTC_TRANSACTION}-ledger`,
+        // },
         {
             path: `/${RequestType.ACTIVATE_BITCOIN}`,
             component: ActivateBitcoin,
@@ -412,11 +413,11 @@ export default new Router({
             component: ActivateBitcoinSuccess,
             name: `${RequestType.ACTIVATE_BITCOIN}-success`,
         },
-        {
-            path: `/${RequestType.ACTIVATE_BITCOIN}/ledger`,
-            component: ActivateBitcoinLedger,
-            name: `${RequestType.ACTIVATE_BITCOIN}-ledger`,
-        },
+        // {
+        //     path: `/${RequestType.ACTIVATE_BITCOIN}/ledger`,
+        //     component: ActivateBitcoinLedger,
+        //     name: `${RequestType.ACTIVATE_BITCOIN}-ledger`,
+        // },
         {
             path: `/${RequestType.ACTIVATE_POLYGON}`,
             component: ActivatePolygon,
@@ -447,11 +448,11 @@ export default new Router({
             component: SetupSwapSuccess,
             name: `${RequestType.SETUP_SWAP}-success`,
         },
-        {
-            path: `/${RequestType.SETUP_SWAP}/ledger`,
-            component: SetupSwapLedger,
-            name: `${RequestType.SETUP_SWAP}-ledger`,
-        },
+        // {
+        //     path: `/${RequestType.SETUP_SWAP}/ledger`,
+        //     component: SetupSwapLedger,
+        //     name: `${RequestType.SETUP_SWAP}-ledger`,
+        // },
         {
             path: `/${RequestType.REFUND_SWAP}`,
             component: RefundSwap,
@@ -462,11 +463,11 @@ export default new Router({
             component: RefundSwapSuccess,
             name: `${RequestType.REFUND_SWAP}-success`,
         },
-        {
-            path: `/${RequestType.REFUND_SWAP}/ledger`,
-            component: RefundSwapLedger,
-            name: `${RequestType.REFUND_SWAP}-ledger`,
-        },
+        // {
+        //     path: `/${RequestType.REFUND_SWAP}/ledger`,
+        //     component: RefundSwapLedger,
+        //     name: `${RequestType.REFUND_SWAP}-ledger`,
+        // },
         {
             path: `/${RequestType.SIGN_MULTISIG_TRANSACTION}`,
             component: SignMultisigTransaction,

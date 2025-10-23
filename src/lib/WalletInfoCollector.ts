@@ -226,10 +226,10 @@ export default class WalletInfoCollector {
         // Kick off loading dependencies
         WalletInfoCollector._initializeDependencies(walletType);
 
-        if (!keyId && walletType === WalletType.LEDGER) {
-            const { default: LedgerApi } = await import('@nimiq/ledger-api');
-            keyId = await LedgerApi.Nimiq.getWalletId(Config.ledgerApiNimiqVersion);
-        }
+        // if (!keyId && walletType === WalletType.LEDGER) {
+        //     const { default: LedgerApi } = await import('@nimiq/ledger-api');
+        //     keyId = await LedgerApi.Nimiq.getWalletId(Config.ledgerApiNimiqVersion);
+        // }
 
         // Kick off first round of account derivation
         let startIndex = 0;
@@ -376,17 +376,17 @@ export default class WalletInfoCollector {
             // cancel derivation of addresses that we don't need anymore if we're finished or an exception occurred
             if (walletType === WalletType.LEDGER) {
                 derivedAccountsPromise.catch(() => undefined); // to avoid uncaught promise rejection on cancel
-                const {
-                    default: LedgerApi,
-                    RequestTypeNimiq: LedgerApiRequestType,
-                } = await import('@nimiq/ledger-api');
-                LedgerApi.disconnect(
-                    /* cancelRequest */ true,
-                    /* requestTypesToDisconnect */ [
-                        LedgerApiRequestType.GET_WALLET_ID,
-                        LedgerApiRequestType.DERIVE_ADDRESSES,
-                    ],
-                );
+                // const {
+                //     default: LedgerApi,
+                //     RequestTypeNimiq: LedgerApiRequestType,
+                // } = await import('@nimiq/ledger-api');
+                // LedgerApi.disconnect(
+                //     /* cancelRequest */ true,
+                //     /* requestTypesToDisconnect */ [
+                //         LedgerApiRequestType.GET_WALLET_ID,
+                //         LedgerApiRequestType.DERIVE_ADDRESSES,
+                //     ],
+                // );
             }
         }
     }
@@ -442,8 +442,8 @@ export default class WalletInfoCollector {
                 if (!keyId) throw new Error('keyId required for Keyguard account derivation.');
                 return WalletInfoCollector._deriveKeyguardAccounts(startIndex, count, keyId,
                     keyguardCookieEncryptionKey);
-            case WalletType.LEDGER:
-                return WalletInfoCollector._deriveLedgerAccounts(startIndex, count);
+            // case WalletType.LEDGER:
+            //     return WalletInfoCollector._deriveLedgerAccounts(startIndex, count);
             default:
                 throw new Error('Unsupported walletType.');
         }
@@ -473,23 +473,23 @@ export default class WalletInfoCollector {
         return accounts;
     }
 
-    private static async _deriveLedgerAccounts(startIndex: number, count: number): Promise<BasicAccountInfo[]> {
-        const pathsToDerive: string[] = [];
-        const { default: LedgerApi, Coin, getBip32Path } = await import('@nimiq/ledger-api');
-        for (let index = startIndex; index < startIndex + count; ++index) {
-            pathsToDerive.push(getBip32Path({
-                coin: Coin.NIMIQ,
-                addressIndex: index,
-            }));
-        }
-        return (
-            await LedgerApi.Nimiq.deriveAddresses(
-                pathsToDerive,
-                /* expectedWalletId */ undefined,
-                Config.ledgerApiNimiqVersion,
-            )
-        ).map((address) => ({ path: address.keyPath, address: address.address }));
-    }
+    // private static async _deriveLedgerAccounts(startIndex: number, count: number): Promise<BasicAccountInfo[]> {
+    //     const pathsToDerive: string[] = [];
+    //     const { default: LedgerApi, Coin, getBip32Path } = await import('@nimiq/ledger-api');
+    //     for (let index = startIndex; index < startIndex + count; ++index) {
+    //         pathsToDerive.push(getBip32Path({
+    //             coin: Coin.NIMIQ,
+    //             addressIndex: index,
+    //         }));
+    //     }
+    //     return (
+    //         await LedgerApi.Nimiq.deriveAddresses(
+    //             pathsToDerive,
+    //             /* expectedWalletId */ undefined,
+    //             Config.ledgerApiNimiqVersion,
+    //         )
+    //     ).map((address) => ({ path: address.keyPath, address: address.address }));
+    // }
 
     private static async _getBalances(
         accounts: BasicAccountInfo[],
