@@ -1,9 +1,11 @@
 import { CashlinkCurrency } from '../../client/PublicRequestTypes';
 import CashlinkInteractive from './CashlinkInteractive';
 import { CashlinkCurrencyHandlerNimiq } from './CashlinkCurrencyHandlerNimiq';
+import { CashlinkCurrencyHandlerStablecoin } from './CashlinkCurrencyHandlerStablecoin';
 
 export type CashlinkCurrencyHandlerForCurrency<C extends CashlinkCurrency> = {
     [CashlinkCurrency.NIM]: CashlinkCurrencyHandlerNimiq,
+    [CashlinkCurrency.USDT]: CashlinkCurrencyHandlerStablecoin,
 }[C];
 
 export function createCurrencyHandlerForCashlink<C extends CashlinkCurrency>(cashlink: CashlinkInteractive<C>)
@@ -11,7 +13,13 @@ export function createCurrencyHandlerForCashlink<C extends CashlinkCurrency>(cas
     const currency: CashlinkCurrency = cashlink.currency;
     switch (currency) {
         case CashlinkCurrency.NIM:
-            return new CashlinkCurrencyHandlerNimiq(cashlink);
+            return new CashlinkCurrencyHandlerNimiq(
+                cashlink as CashlinkInteractive<CashlinkCurrency.NIM>,
+            ) as CashlinkCurrencyHandlerForCurrency<C>;
+        case CashlinkCurrency.USDT:
+            return new CashlinkCurrencyHandlerStablecoin(
+                cashlink as CashlinkInteractive<CashlinkCurrency.USDT>,
+            ) as CashlinkCurrencyHandlerForCurrency<C>;
         default:
             const _exhaustiveCheck: never = currency; // Check to notice unsupported currency at compilation time.
             return _exhaustiveCheck;
