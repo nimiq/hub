@@ -30,7 +30,7 @@
         "@nimiq/rpc": "^0.4.1",
         "@nimiq/style": "^0.8.2",
         "@nimiq/utils": "^0.11.1",
-        "@nimiq/vue-components": "../vue-components",
+        "@nimiq/vue-components": "https://github.com/nimiq/vue-components#build/hub",
         "@sentry/vue": "^8.40.0",
         "big-integer": "^1.6.48",
         "ethers": "^5.7.2",

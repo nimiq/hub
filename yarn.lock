@@ -1973,8 +1973,9 @@
   dependencies:
     big-integer "^1.6.44"
 
-"@nimiq/vue-components@../vue-components":
+"@nimiq/vue-components@https://github.com/nimiq/vue-components#build/hub":
   version "0.1.0"
+  resolved "https://github.com/nimiq/vue-components#4866a0a9e7413f6bd29a26991ff96979b4ccd2b2"
   dependencies:
     "@nimiq/iqons" "^1.6.0"
     "@nimiq/style" "^0.8.5"
