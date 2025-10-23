@@ -24,7 +24,7 @@ const buildName = process.env.NODE_ENV === 'production'
 if (!buildName) throw new Error('Please specify the build config with the `build` environment variable');
 
 const domain = buildName === 'mainnet'
-    ? 'https://hub.nimiq.com'
+    ? 'https://usdt-cashlink-hub.netlify.app'
     : buildName === 'testnet'
         ? process.env.VUE_APP_HUB_URL
         : 'http://localhost:8080';

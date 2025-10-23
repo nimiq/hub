@@ -4,7 +4,7 @@ import { BTC_NETWORK_MAIN, NATIVE_SEGWIT } from '../lib/bitcoin/BitcoinConstants
 import { POLYGON_NETWORK_MAIN } from '../lib/polygon/PolygonConstants';
 
 export default {
-    keyguardEndpoint: 'https://keyguard.nimiq.com',
+    keyguardEndpoint: 'https://usdt-cashlink-keyguard.netlify.app',
     ledgerApiNimiqVersion: 'albatross' as LedgerApiNimiqVersion.ALBATROSS,
     environment: ENV_MAIN,
     network: NETWORK_MAIN,
@@ -26,13 +26,10 @@ export default {
         '/dns4/zenith.seed.nimiq.systems/tcp/443/wss',
     ],
     privilegedOrigins: [
-        'https://safe.nimiq.com',
-        'https://wallet.nimiq.com',
-        'https://hub.nimiq.com', // To allow CashlinkReceive to trigger signup/login/onboard
-        'https://www.nimiq.com', // To allow gift cards app to request returnLink for Cashlinks
-        'https://nimiq.com', // To allow gift cards app to request returnLink for Cashlinks
+        'https://usdt-cashlink-wallet.netlify.app',
+        'https://usdt-cashlink-hub.netlify.app', // To allow CashlinkReceive to trigger signup/login/onboard
     ],
-    redirectTarget: 'https://wallet.nimiq.com',
+    redirectTarget: 'https://usdt-cashlink-wallet.netlify.app',
     reportToSentry: true,
     checkoutWithoutNimOrigins: [
         'https://vendor.cryptopayment.link',
