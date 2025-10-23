@@ -54,7 +54,7 @@ export class CashlinkCurrencyHandlerStablecoin implements ICashlinkCurrencyHandl
             usdtBridgedTransfer,
             Config.polygon.usdt_bridged.earliestHistoryScanHeight,
             this._chainTransactions,
-        )
+        );
         // Add new transactions and update previously known transactions, avoiding duplicates.
         this._chainTransactions = [...new Map([
             ...this._chainTransactions,
@@ -68,12 +68,12 @@ export class CashlinkCurrencyHandlerStablecoin implements ICashlinkCurrencyHandl
     }
 
     public async getPendingTransactions(): Promise<CashlinkTransaction[]> {
-
+        return [];
     }
 
     public async registerTransactionListener(onTransactionAddedOrUpdated: (transaction: CashlinkTransaction) => void)
         : Promise</* unregister */ () => void> {
-
+        throw new Error('not implemented');
     }
 
     public getUserAddresses(wallets: WalletInfo[]): Set<string> {
@@ -82,9 +82,8 @@ export class CashlinkCurrencyHandlerStablecoin implements ICashlinkCurrencyHandl
     }
 
     public async getCashlinkFundingDetails(): Promise<{
-
     }> {
-
+        throw new Error('not implemented');
     }
 
     public async claimCashlink(recipient: string, balance: number, claimAmount: number): Promise<CashlinkTransaction> {
