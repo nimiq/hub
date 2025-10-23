@@ -193,7 +193,7 @@ export default class CashlinkManage extends Vue {
                 () => this.status = this.$t('Sending transaction...') as string);
             network.$on(Network.Events.TRANSACTION_PENDING,
                 () => this.status = this.$t('Awaiting receipt confirmation...') as string);
-            this.retrievedCashlink.setDependencies(await network.getNetworkClient(), this.wallets);
+            this.retrievedCashlink.setUserWallets(this.wallets);
 
             // Store cashlink in database first to be safe when browser crashes during sending
             await CashlinkStore.Instance.put(this.retrievedCashlink);
