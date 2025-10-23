@@ -233,6 +233,7 @@ class CashlinkCreate extends Vue {
         // If there is no wallet to the address provided in the request,
         // remove it to let the user potentially choose another.
         if (this.request.senderAddress
+            && typeof this.request.senderAddress !== 'string'
             && !this.findWalletByAddress(this.request.senderAddress.toUserFriendlyAddress(), true)) {
             this.request.senderAddress = undefined;
         }
@@ -263,7 +264,7 @@ class CashlinkCreate extends Vue {
             // Restore the sender from activeAccount. We don't await the balance update as we assume it to not have
             // changed.
             this.setSender(this.$store.state.activeWalletId, this.$store.state.activeUserFriendlyAddress);
-        } else if (this.request.senderAddress) {
+        } else if (this.request.senderAddress && typeof this.request.senderAddress !== 'string') {
             if (!this.request.senderBalance) {
                 await this.balanceUpdatedPromise;
             }
@@ -327,16 +328,7 @@ class CashlinkCreate extends Vue {
         let addresses: string[] = [];
         let accountsAndContracts: Array<AccountInfo | ContractInfo> = [];
 
-        if (!this.request.senderAddress) { // No senderAddress in the request
-            accountsAndContracts = wallets.reduce((acc, wallet) => {
-                acc.push(...wallet.accounts.values());
-                acc.push(...wallet.contracts);
-                return acc;
-            }, [] as Array<AccountInfo | ContractInfo>);
-
-            // Reduce user-friendly addresses from that
-            addresses = accountsAndContracts.map((accountOrContract) => accountOrContract.userFriendlyAddress);
-        } else {
+        if (this.request.senderAddress && typeof this.request.senderAddress !== 'string') {
             const wallet = this.findWalletByAddress(this.request.senderAddress.toUserFriendlyAddress(), true);
             if (!wallet) {
                 this.$rpc.reject(new Error('Address not found!'));
@@ -348,6 +340,16 @@ class CashlinkCreate extends Vue {
 
             accountsAndContracts.push(accountOrContractInfo);
             addresses.push(accountOrContractInfo.userFriendlyAddress);
+        } else {
+            // No senderAddress in the request
+            accountsAndContracts = wallets.reduce((acc, wallet) => {
+                acc.push(...wallet.accounts.values());
+                acc.push(...wallet.contracts);
+                return acc;
+            }, [] as Array<AccountInfo | ContractInfo>);
+
+            // Reduce user-friendly addresses from that
+            addresses = accountsAndContracts.map((accountOrContract) => accountOrContract.userFriendlyAddress);
         }
 
         const balances = await NetworkClient.Instance.getBalance(addresses);
