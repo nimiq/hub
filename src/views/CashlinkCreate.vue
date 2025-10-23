@@ -404,7 +404,7 @@ class CashlinkCreate extends Vue {
             return;
         }
 
-        const cashlink = new CashlinkInteractive(Cashlink.create());
+        const cashlink = new CashlinkInteractive(await Cashlink.create());
         staticStore.cashlink = cashlink;
         cashlink.setUserWallets(this.wallets);
         cashlink.value = this.liveAmountAndFee.amount;

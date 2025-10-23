@@ -59,8 +59,8 @@ export interface PolygonClient {
     ethers: typeof ethers;
 }
 
-// TODO fire events on change
-const networkState: {
+// TODO better fire events on change
+export const networkState: {
     consensus: 'connecting' | 'syncing' | 'established',
     outdatedHeight: number,
 } = {

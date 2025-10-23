@@ -1,5 +1,6 @@
 import { Utf8Tools } from '@nimiq/utils';
 import { CashlinkCurrency, CashlinkTheme } from '../../client/PublicRequestTypes';
+import { ethers } from 'ethers';
 
 export type CashlinkEntry = {
     address: string;
@@ -78,15 +79,15 @@ class Cashlink<C extends CashlinkCurrency = CashlinkCurrency> {
         return this._immutable;
     }
 
-    public static create<C extends CashlinkCurrency = CashlinkCurrency.NIM>(currency: C = CashlinkCurrency.NIM as C)
-        : Cashlink<C> {
+    public static async create<C extends CashlinkCurrency = CashlinkCurrency.NIM>(currency: C = CashlinkCurrency.NIM as C)
+        : Promise<Cashlink<C>> {
         const secret = new Uint8Array(Cashlink.SECRET_SIZE);
         window.crypto.getRandomValues(secret);
-        const address = Cashlink._deriveAddress(currency, secret);
+        const address = await Cashlink._deriveAddress(currency, secret);
         return new Cashlink(currency, secret, address);
     }
 
-    public static parse(str: string): Cashlink | null {
+    public static async parse(str: string): Promise<Cashlink | null> {
         if (!str) return null;
         try {
             str = str.replace(/~/g, '').replace(/=*$/, (match) => new Array(match.length).fill('.').join(''));
@@ -112,10 +113,11 @@ class Cashlink<C extends CashlinkCurrency = CashlinkCurrency> {
                 }
             }
 
+            const address = await Cashlink._deriveAddress(currency, secret);
             return new Cashlink(
                 currency,
                 secret,
-                Cashlink._deriveAddress(currency, secret),
+                address,
                 value,
                 undefined, // fee
                 message,
@@ -144,12 +146,18 @@ class Cashlink<C extends CashlinkCurrency = CashlinkCurrency> {
         );
     }
 
-    private static _deriveAddress(currency: CashlinkCurrency, secret: Uint8Array): string {
+    private static async _deriveAddress(currency: CashlinkCurrency, secret: Uint8Array): Promise<string> {
         switch (currency) {
             case CashlinkCurrency.NIM: {
                 const privateKey = Nimiq.PrivateKey.deserialize(secret);
                 const publicKey = Nimiq.PublicKey.derive(privateKey);
                 return publicKey.toAddress().toUserFriendlyAddress();
+            }
+            case CashlinkCurrency.USDT: {
+                const ethers = await import(/* webpackChunkName: "ethers-js" */ 'ethers');
+                const mnemonic = Nimiq.MnemonicUtils.entropyToMnemonic(secret);
+                const polygonWallet = ethers.Wallet.fromMnemonic(mnemonic.join(' '), 'm');
+                return polygonWallet.address;
             }
             default:
                 const _exhaustiveCheck: never = currency; // Check to notice unsupported currency at compilation time.
