@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!-- Use no custom browser warning share behavior here as cashlink can be opened just fine in other browser. -->
+    <script defer type="text/javascript" src="/browser-warning.js"
+        integrity="<%= htmlWebpackPlugin.options.browserWarningIntegrityHash %>"
+        crossorigin="anonymous"></script>
+    <title>USDT Cashlink</title>
+
+    <meta name="robots" content="noindex, follow">
+    <meta name="description" content="Here is your USDT Cashlink!">
+
+    <!-- sharing -->
+    <meta name="twitter:image" content="<%= htmlWebpackPlugin.options.domain %>/cashlink-icon.png" />
+    <meta name="twitter:author" content="@nimiq" />
+    <meta property="og:image" content="<%= htmlWebpackPlugin.options.domain %>/cashlink-icon.png" />
+
+    <link href="/blocking.css" rel="stylesheet">
+    <link rel="icon" href="<%= htmlWebpackPlugin.options.domain %>/favicon.ico">
+
+    <script type="module">
+        import init, * as Nimiq from '/nimiq/web/index.js';
+
+        /** @type {Promise<Nimiq> | undefined} */
+        let initPromise;
+
+        window.loadAlbatross = async function() {
+            return initPromise || (initPromise = new Promise(async resolve => {
+                await init();
+                resolve(Nimiq);
+            }));
+        }
+    </script>
+</head>
+
+<body>
+    <div id="app">
+        <header class="logo">
+            <span class="nq-icon nimiq-logo"></span>
+            <span class="logo-wordmark">Nimiq</span>
+            <span class="logo-subtitle"></span>
+        </header>
+        <div class="loading hide-on-browser-warning">
+            <!-- Loading spinner SVG -->
+            <svg height="48" width="54" color="inherit" class="loading-spinner"><g id="loading-spinner">
+                <path class="big-hex" d="M51.9,21.9L41.3,3.6c-0.8-1.3-2.2-2.1-3.7-2.1H16.4c-1.5,0-2.9,0.8-3.7,2.1L2.1,21.9c-0.8,1.3-0.8,2.9,0,4.2 l10.6,18.3c0.8,1.3,2.2,2.1,3.7,2.1h21.3c1.5,0,2.9-0.8,3.7-2.1l10.6-18.3C52.7,24.8,52.7,23.2,51.9,21.9z" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.4" stroke-dasharray="92.5 60"/>
+                <path class="small-hex" d="M51.9,21.9L41.3,3.6c-0.8-1.3-2.2-2.1-3.7-2.1H16.4c-1.5,0-2.9,0.8-3.7,2.1L2.1,21.9c-0.8,1.3-0.8,2.9,0,4.2 l10.6,18.3c0.8,1.3,2.2,2.1,3.7,2.1h21.3c1.5,0,2.9-0.8,3.7-2.1l10.6-18.3C52.7,24.8,52.7,23.2,51.9,21.9z" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-dasharray="47.5 105"/>
+            </g></svg>
+        </div>
+    </div>
+    <%= htmlWebpackPlugin.options.browserWarningTemplate %>
+    <!-- built files will be auto injected -->
+</body>
+</html>
