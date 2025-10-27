@@ -1,6 +1,7 @@
 import Config from 'config';
 import type { TypedDataField } from 'ethers';
 import { TypedRequestData } from '@opengsn/common/dist/EIP712/TypedRequestData';
+import type { RelayRequest } from '@opengsn/common/dist/EIP712/RelayRequest';
 import { CashlinkCurrency } from '../../client/PublicRequestTypes';
 import { ICashlinkCurrencyHandler, CashlinkTransaction } from './CashlinkCurrencyHandler';
 import type Cashlink from './Cashlink';
@@ -11,7 +12,12 @@ import {
     getUsdtBridgedBalance,
     calculateFee,
     getTransactionHistory,
-    Transaction, createTransactionRequest, sendTransaction,
+    registerTransactionListener,
+    subscribe,
+    Transaction,
+    TransactionState,
+    createTransactionRequest,
+    sendTransaction,
 } from './polygon/ethers';
 import { Key } from './polygon/signing/Key';
 import { PolygonKey } from './polygon/signing/PolygonKey';
@@ -68,12 +74,24 @@ export class CashlinkCurrencyHandlerStablecoin implements ICashlinkCurrencyHandl
     }
 
     public async getPendingTransactions(): Promise<CashlinkTransaction[]> {
+        // Polygon network doesn't emit logs for pending transactions
         return [];
     }
 
     public async registerTransactionListener(onTransactionAddedOrUpdated: (transaction: CashlinkTransaction) => void)
         : Promise</* unregister */ () => void> {
-        throw new Error('not implemented');
+        const unregister = registerTransactionListener((transaction) => {
+            if (transaction.sender !== this.cashlink.address && transaction.recipient !== this.cashlink.address) {
+                return;
+            }
+            if ((transaction.state === TransactionState.MINED || transaction.state === TransactionState.CONFIRMED)
+                && !this._chainTransactions.some((tx) => tx.transactionHash === transaction.transactionHash)) {
+                this._chainTransactions.push(transaction);
+            }
+            onTransactionAddedOrUpdated(this._transactionToSimplifiedCashlinkTransaction(transaction));
+        });
+        subscribe([this.cashlink.address]);
+        return unregister;
     }
 
     public getUserAddresses(wallets: WalletInfo[]): Set<string> {
@@ -81,19 +99,31 @@ export class CashlinkCurrencyHandlerStablecoin implements ICashlinkCurrencyHandl
         return new Set(polygonAddresses.map((polygonAddress) => polygonAddress.address));
     }
 
-    public async getCashlinkFundingDetails(): Promise<{
-        layout: 'cashlink',
-        recipient: string,
-        value: number,
+    public async getCashlinkFundingDetails(fromAddress: string): Promise<{
+        request: RelayRequest['request'],
+        relayData: RelayRequest['relayData'],
+        approval: { tokenNonce: number },
         cashlinkMessage: string,
-        tokenContract: string,
+        relayUrl: string,
     }> {
+        // Via the cashlink contract, as the Keyguard only signs USDT cashlink fundings to it.
+        const txRequest = await createTransactionRequest(
+            Config.polygon.usdt_bridged.tokenContract,
+            fromAddress,
+            this.cashlink.address,
+            this.cashlink.value,
+            undefined, // forceRelay
+            Config.polygon.usdt_bridged.cashlinkContract,
+        );
+        if (!txRequest.approval) {
+            throw new Error('USDT cashlink funding requires approval data');
+        }
         return {
-            layout: 'cashlink',
-            recipient: this.cashlink.address,
-            value: this.cashlink.value,
+            request: txRequest.relayRequest.request,
+            relayData: txRequest.relayRequest.relayData,
+            approval: txRequest.approval,
             cashlinkMessage: this.cashlink.message,
-            tokenContract: Config.polygon.usdt_bridged.tokenContract,
+            relayUrl: txRequest.relay.url,
         };
     }
 

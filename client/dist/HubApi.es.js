@@ -358,7 +358,7 @@ var CashlinkCurrency;
     // not supported yet
     // BTC = 'btc',
     // USDC = 'usdc', // on Polygon network
-    // USDT = 'usdt', // on Polygon network
+    CashlinkCurrency["USDT"] = "usdt";
 })(CashlinkCurrency || (CashlinkCurrency = {}));
 
 class HubApi {

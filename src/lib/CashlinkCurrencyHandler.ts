@@ -53,6 +53,6 @@ export interface ICashlinkCurrencyHandler<C extends CashlinkCurrency> {
     registerTransactionListener(onTransactionAddedOrUpdated: (transaction: CashlinkTransaction) => void)
         : Promise</* unregister */ () => void>;
     getUserAddresses(wallets: WalletInfo[]): Set<string>;
-    getCashlinkFundingDetails(): unknown; // return type is specific to the currency
+    getCashlinkFundingDetails(...args: unknown[]): unknown; // parameters and return type are specific to the currency
     claimCashlink(recipient: string, balance: number, claimAmount: number): Promise<CashlinkTransaction>;
 }

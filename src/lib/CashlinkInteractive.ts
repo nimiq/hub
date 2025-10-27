@@ -5,6 +5,7 @@ import {
     createCurrencyHandlerForCashlink,
     CashlinkCurrencyHandlerForCurrency,
     CashlinkTransaction,
+    ICashlinkCurrencyHandler,
 } from './CashlinkCurrencyHandler';
 import {
     getLastClaimedMultiCashlinks,
@@ -169,9 +170,11 @@ class CashlinkInteractive<C extends CashlinkCurrency = CashlinkCurrency> extends
         await this.detectState(); // run with updated balances
     }
 
-    public async getFundingDetails()
-        : Promise<ReturnType<CashlinkCurrencyHandlerForCurrency<C>['getCashlinkFundingDetails']>> {
-        return this._currencyHandler.getCashlinkFundingDetails() as any;
+    public getFundingDetails(...args: Parameters<CashlinkCurrencyHandlerForCurrency<C>['getCashlinkFundingDetails']>)
+        : Promise<ReturnType<CashlinkCurrencyHandlerForCurrency<C>['getCashlinkFundingDetails']>>;
+    public async getFundingDetails(...args: unknown[]): Promise<unknown> {
+        const currencyHandler: ICashlinkCurrencyHandler<CashlinkCurrency> = this._currencyHandler;
+        return currencyHandler.getCashlinkFundingDetails(...args);
     }
 
     public async claim(recipient: string): Promise<CashlinkTransaction> {

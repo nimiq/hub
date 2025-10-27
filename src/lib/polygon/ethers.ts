@@ -56,6 +56,7 @@ export interface PolygonClient {
     usdcTransfer: Contract;
     usdtBridgedToken: Contract;
     usdtBridgedTransfer: Contract;
+    usdtBridgedCashlink: Contract;
     ethers: typeof ethers;
 }
 
@@ -74,8 +75,19 @@ function consensusEstablishedHandler(height: number) {
     networkState.consensus = 'established';
 }
 
+type TransactionCallback = (transaction: Transaction) => void;
+const transactionListeners: TransactionCallback[] = [];
+
+export function registerTransactionListener(callback: TransactionCallback): () => void {
+    transactionListeners.push(callback);
+    return () => {
+        const index = transactionListeners.indexOf(callback);
+        if (index !== -1) transactionListeners.splice(index, 1);
+    };
+}
+
 function onTransaction(transaction: Transaction) {
-    // TODO fire an event
+    transactionListeners.forEach((cb) => cb(transaction));
 }
 
 let clientPromise: Promise<PolygonClient> | null = null;
@@ -139,6 +151,8 @@ export async function getPolygonClient(): Promise<PolygonClient> {
         Config.polygon.usdt_bridged.tokenContract, USDT_BRIDGED_TOKEN_CONTRACT_ABI, provider);
     const usdtBridgedTransfer = new ethers.Contract(
         Config.polygon.usdt_bridged.transferContract, USDT_BRIDGED_TRANSFER_CONTRACT_ABI, provider);
+    const usdtBridgedCashlink = new ethers.Contract(
+        Config.polygon.usdt_bridged.cashlinkContract, USDT_BRIDGED_TRANSFER_CONTRACT_ABI, provider);
 
     resolver!({
         provider,
@@ -146,6 +160,7 @@ export async function getPolygonClient(): Promise<PolygonClient> {
         usdcTransfer,
         usdtBridgedToken,
         usdtBridgedTransfer,
+        usdtBridgedCashlink,
         ethers,
     });
 
@@ -224,11 +239,12 @@ const subscribedAddresses = new Set<string>();
 
 let currentUsdcSubscriptionFilter: EventFilter | undefined;
 let currentUsdtBridgedSubscriptionFilter: EventFilter | undefined;
-function subscribe(addresses: string[]) {
+export function subscribe(addresses: string[]) {
+    addresses.forEach((addr) => subscribedAddresses.add(addr));
+
     getPolygonClient().then((client) => {
         // Only subscribe to incoming logs
         // TODO track outgoing transfers, too. See launchPolygon for syntax.
-        // TODO add addresses to subscribedAddresses
         const newUsdcFilterIncoming = client.usdcToken.filters.Transfer(null, [...subscribedAddresses]);
         client.usdcToken.on(newUsdcFilterIncoming, transactionListener);
         if (currentUsdcSubscriptionFilter) {
@@ -552,18 +568,23 @@ export async function createTransactionRequest(
     recipient: string,
     amount: number,
     forceRelay?: RelayServerInfo,
+    targetContract?: string, // Optional: override default transfer contract (e.g., for cashlink contract)
 ) {
     const client = await getPolygonClient();
 
     const tokenContract = tokenAddress === Config.polygon.usdc.tokenContract
         ? client.usdcToken
         : client.usdtBridgedToken;
-    const transferAddress = tokenAddress === Config.polygon.usdc.tokenContract
+    const transferAddress = targetContract || (tokenAddress === Config.polygon.usdc.tokenContract
         ? Config.polygon.usdc.transferContract
-        : Config.polygon.usdt_bridged.transferContract;
-    const transferContract = tokenAddress === Config.polygon.usdc.tokenContract
-        ? client.usdcTransfer
-        : client.usdtBridgedTransfer;
+        : Config.polygon.usdt_bridged.transferContract);
+    const transferContract = targetContract
+        ? (targetContract === Config.polygon.usdt_bridged.cashlinkContract
+            ? client.usdtBridgedCashlink
+            : client.usdtBridgedTransfer)
+        : (tokenAddress === Config.polygon.usdc.tokenContract
+            ? client.usdcTransfer
+            : client.usdtBridgedTransfer);
 
     type Methods = 'transfer' | 'transferWithPermit' | 'transferWithApproval';
     const method: Methods = tokenAddress === Config.polygon.usdc.tokenContract

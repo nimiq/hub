@@ -18,7 +18,7 @@
                             <PageBody>
                                 <h1 class="nq-h1">{{ $t('Transaction Fee') }}</h1>
                                 <p class="nq-text">{{ $t('Fee for relaying the USDT transaction on Polygon network.') }}</p>
-                                <div class="fee-display-amount">{{ formatUsdtAmount(mockFee) }} USDT</div>
+                                <div class="fee-display-amount">{{ formatUsdtAmount(estimatedFee) }} USDT</div>
                             </PageBody>
                             <PageFooter>
                                 <button class="nq-button light-blue" @click="optionsOpened = false">{{ $t('Got it') }}</button>
@@ -88,26 +88,16 @@
 </template>
 
 <script lang="ts">
-// TODO [USDT-CASHLINK]: This component uses MOCK implementations for UI development
-// Replace mock data and functions with actual Polygon/wallet store integration
-
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import { Getter, Mutation, State } from 'vuex-class';
 import { Static } from '../lib/StaticStore';
 import staticStore from '../lib/StaticStore';
 import StatusScreen from '../components/StatusScreen.vue';
 import GlobalClose from '../components/GlobalClose.vue';
-import { State as RpcState } from '@nimiq/rpc';
 import { ParsedCreateCashlinkRequest } from '../lib/RequestTypes';
 import { CashlinkCurrency, RequestType } from '../../client/PublicRequestTypes';
-import UsdtCashlink from '../lib/UsdtCashlink';
 import { AccountInfo } from '../lib/AccountInfo';
 import { WalletInfo } from '../lib/WalletInfo';
-import {
-    mockSignUsdtCashlink,
-    mockEstimateUsdtFee,
-    mockGetUsdtBalance,
-} from '../lib/polygon/MockPolygonHelpers';
 import {
     Account,
     AccountDetails,
@@ -123,11 +113,11 @@ import {
     SmallPage,
     Tooltip,
 } from '@nimiq/vue-components';
-import CashlinkInteractive from '@/lib/CashlinkInteractive';
 import Cashlink from '@/lib/Cashlink';
+import { createCurrencyHandlerForCashlink } from '@/lib/CashlinkCurrencyHandler';
 import KeyguardClient from '@nimiq/keyguard-client';
-import { createTransactionRequest, sendTransaction } from '@/lib/polygon/ethers';
-import { ForwardRequest } from '@opengsn/common/dist/EIP712/ForwardRequest';
+import { calculateFee, getUsdtBridgedBalance } from '@/lib/polygon/ethers';
+import Config from 'config';
 
 @Component({components: {
     Account,
@@ -153,7 +143,6 @@ class UsdtCashlinkCreate extends Vue {
     };
 
     @Static private request!: ParsedCreateCashlinkRequest;
-    @Static private rpcState!: RpcState;
 
     @State private wallets!: WalletInfo[];
     @Getter private processedWallets!: WalletInfo[];
@@ -167,7 +156,6 @@ class UsdtCashlinkCreate extends Vue {
         userFriendlyAddress: string,
     }) => any;
 
-    // TODO [USDT-CASHLINK]: Replace mock balance with actual USDT balance from Polygon network
     private selectedPolygonAddress: string | null = null;
     private selectedPolygonLabel: string = '';
     private selectedPolygonBalance: number = 0;
@@ -179,7 +167,7 @@ class UsdtCashlinkCreate extends Vue {
         fee: 0,
         isValid: false,
     };
-    private mockFee: number = 500000; // 0.50 USDT in cents
+    private estimatedFee: number = 0;
     private message = '';
     private optionsOpened = false;
     private openedDetails = UsdtCashlinkCreate.Details.NONE;
@@ -214,15 +202,13 @@ class UsdtCashlinkCreate extends Vue {
             this.message = this.request.message;
         }
 
-        this.liveAmountAndFee.fee = this.mockFee;
-
-        this.loading = !staticStore.usdtCashlink && !this.request.senderAddress;
+        this.loading = !staticStore.cashlink && !this.request.senderAddress;
 
         // If there's a cashlink in static store (returning from keyguard), restore it
-        if (staticStore.usdtCashlink) {
-            this.liveAmountAndFee.amount = staticStore.usdtCashlink.value;
-            this.liveAmountAndFee.fee = staticStore.usdtCashlink.fee;
-            this.message = staticStore.usdtCashlink.message;
+        if (staticStore.cashlink && staticStore.cashlink.currency === CashlinkCurrency.USDT) {
+            this.liveAmountAndFee.amount = staticStore.cashlink.value;
+            this.liveAmountAndFee.fee = staticStore.cashlink.fee;
+            this.message = staticStore.cashlink.message;
 
             // Restore sender from active account
             if (this.$store.state.activeUserFriendlyAddress) {
@@ -252,19 +238,18 @@ class UsdtCashlinkCreate extends Vue {
             return;
         }
 
-        // TODO [USDT-CASHLINK]: Get actual Polygon address from wallet
-        // For now, use wallet's first polygon address or fallback to mock
         if (wallet.polygonAddresses && wallet.polygonAddresses.length > 0) {
             this.selectedPolygonAddress = wallet.polygonAddresses[0].address;
         } else {
-            // Fallback to mock address if wallet doesn't have polygon addresses yet
-            this.selectedPolygonAddress = '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb';
+            this.$rpc.reject(new Error('Account does not have a Polygon address. Please activate Polygon first.'));
+            return;
         }
         this.selectedPolygonLabel = this.accountInfo.label;
 
-        // TODO [USDT-CASHLINK]: Fetch actual USDT balance from Polygon network
-        // For now, use mock balance
-        this.selectedPolygonBalance = await mockGetUsdtBalance(this.selectedPolygonAddress!);
+        this.selectedPolygonBalance = await getUsdtBridgedBalance(this.selectedPolygonAddress);
+        const feeInfo = await calculateFee(Config.polygon.usdt_bridged.tokenContract, 'transferWithApproval');
+        this.estimatedFee = feeInfo.fee.toNumber();
+        this.liveAmountAndFee.fee = this.estimatedFee;
 
         this.$setActiveAccount({
             walletId: wallet.id,
@@ -286,106 +271,46 @@ class UsdtCashlinkCreate extends Vue {
     }
 
     private async sendTransaction() {
-        // TODO [USDT-CASHLINK]: Replace with actual keyguard signing
-        // Expected: Call KeyguardClient.signUsdtCashlink(request)
-        // Return: SignedPolygonTransaction
-
         if (!this.liveAmountAndFee.isValid || this.liveAmountAndFee.amount === 0) {
             return;
         }
 
         this.loading = true;
 
-        try { // ???
-            const cashlink = new CashlinkInteractive(await Cashlink.create(CashlinkCurrency.USDT));
+        try {
+            const cashlink = await Cashlink.create(CashlinkCurrency.USDT);
             staticStore.cashlink = cashlink;
-            cashlink.setUserWallets(this.wallets);
             cashlink.value = this.liveAmountAndFee.amount;
-            cashlink.fee = 0; // not available yet
+            cashlink.fee = this.estimatedFee;
             cashlink.message = this.message;
             if (this.request.theme) {
                 cashlink.theme = this.request.theme;
             }
-            let keyId: string;
-            let keyLabel: string;
-            let keyPath: string;
 
-            if (typeof this.request.senderAddress === 'string') {
-                // existence checked in RpcApi // Likely not true here, should be added
-                const senderAccount = this.findWalletByPolygonAddress(this.request.senderAddress)!;
-                const signer = senderAccount.polygonAddresses.find((ai) => ai.address === this.request.senderAddress)!;
+            const senderWallet = this.findWalletByPolygonAddress(this.selectedPolygonAddress!)!;
+            const senderPolygonAddress = senderWallet.polygonAddresses
+                .find((polygonAddress) => polygonAddress.address === this.selectedPolygonAddress)!;
+            const fundingDetails = await createCurrencyHandlerForCashlink(cashlink)
+                .getCashlinkFundingDetails(this.selectedPolygonAddress!);
 
-                keyId = senderAccount.keyId;
-                keyPath = signer.path;
-                keyLabel = senderAccount.labelForKeyguard!;
-            } else {
-                // TODO
-                return;
-            }
-
-            const fundingDetails = await cashlink.getFundingDetails();
-
-            const {
-                relayRequest,
-                permit,
-                approval,
-                relay,
-            } = await createTransactionRequest(
-                fundingDetails.tokenContract,
-                this.request.senderAddress,
-                fundingDetails.recipient,
-                fundingDetails.value,
-                // relay??
-            );
-
-            const relayUrl = relay.url; // maybe needs storing if it is not in the returned signed tx.
-
-            const request = {
-                ...relayRequest,
+            // The relay URL is not for the Keyguard, but for relaying the signed request, see UsdtCashlinkManage.
+            const keyguardRequest: KeyguardClient.SignUsdtCashlinkRequest & { relayUrl: string } = {
+                ...fundingDetails,
                 appName: this.request.appName,
-                keyId,
-                keyPath,
-                keyLabel,
-
-                ...(permit ? {
-                    permit: {
-                        tokenNonce: permit.tokenNonce,
-                    },
-                } : null),
-
-                ...(approval ? {
-                    approval: {
-                        tokenNonce: approval.tokenNonce,
-                    },
-                } : null),
-            } as KeyguardClient.SignPolygonTransactionRequest;
-            // } as SignUsdtCashlinkRequest;
-
-            staticStore.keyguardRequest = request;
-            const client = this.$rpc.createKeyguardClient(true);
-            client.signPolygonTransaction(request);
-            // client.signUsdtCashlink(request);
-
-            // -> signCashlinkCreateSuccess:
-            // const { relayData, ...relayRequest } = signedTransaction.message;
-            // // send via relay
-            // let result = await  sendTransaction(
-            //     fundingDetails.tokenContract,
-            //     { request: relayRequest as ForwardRequest, relayData },
-            //     signedTransaction.signature,
-            //     relayUrl!,
-            // );
-        } catch (e) { // ??
-
+                keyId: senderWallet.keyId,
+                keyPath: senderPolygonAddress.path,
+                keyLabel: senderWallet.labelForKeyguard!,
+                senderLabel: this.selectedPolygonLabel,
+            };
+            staticStore.keyguardRequest = keyguardRequest;
+            const client = this.$rpc.createKeyguardClient();
+            client.signUsdtCashlink(keyguardRequest);
+        } catch (error) {
+            console.error('Error creating USDT Cashlink:', error);
+            this.$rpc.reject(error as Error);
+        } finally {
+            this.loading = false;
         }
-        //     // Navigate to manage view
-        //     this.$router.push({ name: RequestType.MANAGE_CASHLINK });
-        // } catch (error) {
-        //     console.error('Error creating USDT Cashlink:', error);
-        //     this.$rpc.reject(error as Error);
-        // } finally {
-        //     this.loading = false;
-        // }
     }
 
     private reset() {
