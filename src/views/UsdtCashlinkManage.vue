@@ -1,8 +1,8 @@
 <template>
     <div class="container pad-bottom">
-        <SmallPage class="cashlink-manage" v-if="retrievedCashlink" :class="{ 'fixed-height': this.request.skipSharing }">
+        <SmallPage class="cashlink-manage" v-if="retrievedCashlink" :class="{ 'fixed-height': skipSharing }">
             <transition name="transition-fade">
-                <StatusScreen v-if="!isTxSent || this.request.skipSharing"
+                <StatusScreen v-if="!isTxSent || skipSharing"
                     :state="state"
                     :title="title"
                     :status="status"
@@ -15,7 +15,7 @@
                 />
             </transition>
 
-            <PageBody v-if="!this.request.skipSharing">
+            <PageBody v-if="!skipSharing">
                 <transition name="transition-fade">
                     <div v-if="isTxSent" class="nq-green cashlink-status">
                         <CheckmarkSmallIcon/>{{ $t('USDT Cashlink created') }}
@@ -31,7 +31,7 @@
                     </Copyable>
                 </div>
             </PageBody>
-            <PageFooter v-if="!this.request.skipSharing">
+            <PageFooter v-if="!skipSharing">
                 <button class="nq-button-s social-share qr-code" @click="qrOverlayOpen = true">
                     <QrCodeIcon/>
                 </button>
@@ -77,9 +77,6 @@
 </template>
 
 <script lang="ts">
-// TODO [USDT-CASHLINK]: This component uses MOCK implementations for UI development
-// Replace mock relay with actual OpenGSN relay integration when backend is ready
-
 import { Component, Vue } from 'vue-property-decorator';
 import { Static } from '../lib/StaticStore';
 import staticStore from '../lib/StaticStore';
@@ -98,12 +95,13 @@ import {
     DownloadIcon,
 } from '@nimiq/vue-components';
 import StatusScreen from '../components/StatusScreen.vue';
-import UsdtCashlink from '../lib/UsdtCashlink';
-import { UsdtCashlinkStore } from '../lib/UsdtCashlinkStore';
+import CashlinkInteractive from '../lib/CashlinkInteractive';
+import { CashlinkStore } from '../lib/CashlinkStore';
 import { Clipboard } from '@nimiq/utils';
 import { i18n } from '../i18n/i18n-setup';
 import { ERROR_CANCELED } from '../lib/Constants';
-import { mockRelayUsdtTransaction } from '../lib/polygon/MockPolygonHelpers';
+import { State } from 'vuex-class';
+import KeyguardClient from '@nimiq/keyguard-client';
 
 @Component({components: {
     Account,
@@ -126,78 +124,85 @@ export default class UsdtCashlinkManage extends Vue {
     };
 
     @Static private request!: ParsedManageCashlinkRequest | ParsedCreateCashlinkRequest;
+    @Static private keyguardRequest?: any;
+    @State private keyguardResult?: KeyguardClient.SignedPolygonTransaction;
 
     private isTxSent: boolean = false;
     private status: string = i18n.t('Preparing transaction...') as string;
     private state: StatusScreen.State = StatusScreen.State.LOADING;
     private message: string = '';
-    private retrievedCashlink: UsdtCashlink | null = null;
+    private retrievedCashlink: CashlinkInteractive | null = null;
     private copied: boolean = false;
     private qrOverlayOpen = false;
 
     // @ts-ignore Property 'share' does not exist on type 'Navigator'
     private readonly nativeShareAvailable: boolean = (!!window.navigator && !!window.navigator.share);
 
-    private async mounted() {
-        // TODO [USDT-CASHLINK]: Replace with actual transaction relay logic
-        // Expected flow:
-        // 1. Get signed transaction from staticStore (returned from Keyguard)
-        // 2. Send to OpenGSN relay
-        // 3. Relay submits to Polygon network
-        // 4. Wait for transaction confirmation
-        // 5. Update cashlink state
+    private get skipSharing(): boolean {
+        return 'skipSharing' in this.request && !!this.request.skipSharing;
+    }
 
-        let storedCashlink: UsdtCashlink | undefined;
+    private async mounted() {
+        const Cashlink = (await import('../lib/Cashlink')).default;
+        let storedBaseCashlink: typeof Cashlink.prototype | null = null;
+        const isManagementRequest = !staticStore.cashlink;
 
         if ('cashlinkAddress' in this.request && !!this.request.cashlinkAddress) {
             // Management request (viewing existing cashlink)
-            const found = await UsdtCashlinkStore.Instance.get(this.request.cashlinkAddress.toUserFriendlyAddress());
-            if (!found) {
+            storedBaseCashlink = await CashlinkStore.Instance.get(this.request.cashlinkAddress.toUserFriendlyAddress());
+            if (!storedBaseCashlink || storedBaseCashlink.currency !== CashlinkCurrency.USDT) {
                 const addr = this.request.cashlinkAddress;
                 this.$rpc.reject(new Error(`Could not find USDT Cashlink for address ${addr}.`));
                 return;
             }
-            storedCashlink = found;
             this.isTxSent = true;
-        } else if (staticStore.usdtCashlink) {
+        } else if (staticStore.cashlink && staticStore.cashlink.currency === CashlinkCurrency.USDT) {
             // Creation request (just created cashlink)
-            const maybeCashlink = await UsdtCashlinkStore.Instance.get(staticStore.usdtCashlink.address);
-            storedCashlink = maybeCashlink || undefined;
-            this.isTxSent = !!storedCashlink; // Already sent if it's in the store
+            storedBaseCashlink = await CashlinkStore.Instance.get(staticStore.cashlink.address);
+            this.isTxSent = !!storedBaseCashlink; // Already sent if it's in the store
         } else {
-            this.$rpc.reject(new Error('UsdtCashlinkManage expects the cashlink to display.'));
+            this.$rpc.reject(new Error('UsdtCashlinkManage expects a USDT cashlink to display.'));
             return;
         }
 
-        this.retrievedCashlink = storedCashlink || staticStore.usdtCashlink!;
+        this.retrievedCashlink = storedBaseCashlink
+            ? new CashlinkInteractive(storedBaseCashlink)
+            : staticStore.cashlink!;
 
         if (!this.isTxSent) {
             // Need to relay the transaction
-            console.log('[MOCK] Relaying USDT Cashlink transaction...');
+            if (!this.keyguardResult || !this.keyguardRequest) {
+                this.$rpc.reject(new Error('Unexpected: No valid keyguard result for USDT Cashlink'));
+                return;
+            }
 
             this.status = this.$t('Sending transaction...') as string;
 
             // Store cashlink first
-            await UsdtCashlinkStore.Instance.put(this.retrievedCashlink);
+            await CashlinkStore.Instance.put(this.retrievedCashlink);
 
             try {
-                // Mock relay - simulate 3 second delay
-                await new Promise((resolve) => setTimeout(resolve, 3000));
+                const { sendTransaction } = await import('../lib/polygon/ethers');
 
-                // Update cashlink state
-                this.retrievedCashlink.state = this.retrievedCashlink.state === 0 ? 1 : this.retrievedCashlink.state;
+                // Send the signed transaction to the network via OpenGSN relay
+                await sendTransaction(
+                    (await import('config')).default.polygon.usdt_bridged.tokenContract,
+                    this.keyguardRequest.request,
+                    this.keyguardResult.signature,
+                    this.keyguardRequest.relay.url,
+                );
 
                 this.isTxSent = true;
-                console.log('[MOCK] USDT Cashlink transaction sent successfully');
+                console.log('USDT Cashlink transaction sent successfully');
             } catch (error) {
-                console.error('[MOCK] Error relaying transaction:', error);
+                console.error('Error relaying transaction:', error);
                 this.state = StatusScreen.State.WARNING;
                 this.message = (error as Error).message;
                 return;
             }
         }
 
-        if ('skipSharing' in this.request && this.request.skipSharing) {
+        if (this.skipSharing) {
             this.state = StatusScreen.State.SUCCESS;
             window.setTimeout(() => this.close(), StatusScreen.SUCCESS_REDIRECT_DELAY);
         }
@@ -495,4 +500,3 @@ export default class UsdtCashlinkManage extends Vue {
         }
     }
 </style>
-

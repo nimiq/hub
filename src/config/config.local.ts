@@ -30,8 +30,8 @@ export default {
         // and thus lack of liquidity on testnet Uniswap for gas-abstracted transactions.
         network: POLYGON_NETWORK_MAIN,
         networkId: 137,
-        rpcEndpoint: 'wss://polygon-mainnet.g.alchemy.com/v2/#ALCHEMY_API_KEY#',
-        rpcMaxBlockRange: 648_000, // 15 days - Maximum supported range by Alchemy?
+        rpcEndpoint: 'https://polygon-rpc.com',
+        rpcMaxBlockRange: 2_000, // ~1 hour - Reduced for public RPC endpoints
         usdc: {
             tokenContract: '0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359',
             transferContract: '0x3157d422cd1be13AC4a7cb00957ed717e648DFf2',

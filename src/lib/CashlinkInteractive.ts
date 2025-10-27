@@ -73,7 +73,8 @@ class CashlinkInteractive<C extends CashlinkCurrency = CashlinkCurrency> extends
     public balance: number | null = null;
     public state: CashlinkState = CashlinkState.UNKNOWN;
 
-    private _currencyHandler: CashlinkCurrencyHandlerForCurrency<C>;
+    private _currencyHandler!: CashlinkCurrencyHandlerForCurrency<C>;
+    private _handlerReady!: Promise<void>;
     private _getUserAddresses: () => Set<string>;
     private _confirmedTransactions: CashlinkTransaction[] = []; // transactions already included on chain
     private _detectStateTimeout: number = -1;
@@ -118,17 +119,20 @@ class CashlinkInteractive<C extends CashlinkCurrency = CashlinkCurrency> extends
             cashlinkOrCurrency instanceof Cashlink ? cashlinkOrCurrency.timestamp : timestamp,
         );
 
-        this._currencyHandler = createCurrencyHandlerForCashlink(this);
         this._getUserAddresses = () => new Set(); // dummy; actual method will be set via setUserWallets
 
-        // Start network updates in background.
-        this._currencyHandler.awaitConsensus().then(() => Promise.all([
-            this._updateBalance(),
-            this._currencyHandler.registerTransactionListener(this._onTransactionChanged.bind(this)),
-        ]));
+        // Initialize currency handler asynchronously
+        this._handlerReady = this._initHandler();
 
-        // Run initial state detection (awaits consensus and balance in detectState())
-        this.detectState();
+        // Start network updates in background (after handler is ready)
+        this._handlerReady.then(() => {
+            this._currencyHandler.awaitConsensus().then(() => Promise.all([
+                this._updateBalance(),
+                this._currencyHandler.registerTransactionListener(this._onTransactionChanged.bind(this)),
+            ]));
+            // Run initial state detection (awaits consensus and balance in detectState())
+            this.detectState();
+        });
     }
 
     public setUserWallets(
@@ -141,6 +145,9 @@ class CashlinkInteractive<C extends CashlinkCurrency = CashlinkCurrency> extends
                 case CashlinkCurrency.NIM:
                     const accounts = wallets.flatMap((wallet) => [...wallet.accounts.values(), ...wallet.contracts]);
                     return new Set(accounts.map((account) => account.address.toUserFriendlyAddress()));
+                case CashlinkCurrency.USDT:
+                    // For USDT cashlinks, return empty set (Polygon addresses handled differently)
+                    return new Set();
                 default:
                     const _exhaustiveCheck: never = currency; // Check to notice unsupported currency at compile time
                     return _exhaustiveCheck;
@@ -160,6 +167,7 @@ class CashlinkInteractive<C extends CashlinkCurrency = CashlinkCurrency> extends
     }
 
     public async detectState() {
+        await this._handlerReady;
         if ((this.constructor as typeof CashlinkInteractive)._getLastClaimedMultiCashlinks().includes(this.address)) {
             this._updateState(CashlinkState.CLAIMED);
             return;
@@ -240,12 +248,15 @@ class CashlinkInteractive<C extends CashlinkCurrency = CashlinkCurrency> extends
         this._updateState(newState);
     }
 
-    public async getFundingDetails()
+    public async getFundingDetails(...args: any[])
         : Promise<ReturnType<CashlinkCurrencyHandlerForCurrency<C>['getCashlinkFundingDetails']>> {
-        return this._currencyHandler.getCashlinkFundingDetails() as any;
+        await this._handlerReady;
+        // @ts-ignore - Type mismatch between NIM (no args) and USDT (fromAddress arg) handlers
+        return this._currencyHandler.getCashlinkFundingDetails(...args) as any;
     }
 
     public async claim(recipient: string): Promise<CashlinkTransaction> {
+        await this._handlerReady;
         if (this.state === CashlinkState.UNKNOWN) {
             await this.detectState();
         }
@@ -299,13 +310,14 @@ class CashlinkInteractive<C extends CashlinkCurrency = CashlinkCurrency> extends
         /* a pending funding tx */ CashlinkTransaction | undefined,
         /* a pending claiming tx to us */ CashlinkTransaction | undefined,
     ]> {
+        await this._handlerReady;
         const userAddresses = this._getUserAddresses();
         const pendingTransactions = await this._currencyHandler.getPendingTransactions();
 
         const pendingFundingTx = pendingTransactions.find(
-            (tx) => tx.recipient === this.address);
+            (tx: CashlinkTransaction) => tx.recipient === this.address);
         const ourPendingClaimingTx = pendingTransactions.find(
-            (tx) => tx.sender === this.address && userAddresses.has(tx.recipient!));
+            (tx: CashlinkTransaction) => tx.sender === this.address && userAddresses.has(tx.recipient!));
 
         return [pendingTransactions, pendingFundingTx, ourPendingClaimingTx];
     }
@@ -320,6 +332,7 @@ class CashlinkInteractive<C extends CashlinkCurrency = CashlinkCurrency> extends
     }
 
     private async _updateBalance() {
+        await this._handlerReady;
         const balance = await this._currencyHandler.getBalance();
         if (balance === undefined || balance === this.balance) return;
 
@@ -331,6 +344,10 @@ class CashlinkInteractive<C extends CashlinkCurrency = CashlinkCurrency> extends
         if (state === this.state) return;
         this.state = state;
         this.fire(CashlinkInteractive.Events.STATE_CHANGE, this.state);
+    }
+
+    private async _initHandler() {
+        this._currencyHandler = await createCurrencyHandlerForCashlink(this);
     }
 }
 

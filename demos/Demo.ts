@@ -179,7 +179,7 @@ class Demo {
                     request = {
                         ...request,
                         senderAddress: ($addressRadio as HTMLInputElement).dataset.address,
-                        senderBalance: 100000000, // Mock 100 USDT balance
+                        // Note: senderBalance is optional; real balance will be fetched from Polygon network in hub
                     };
                 }
 

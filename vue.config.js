@@ -99,7 +99,14 @@ const configureWebpack = {
     // Fix sourcemaps (https://www.mistergoodcat.com/post/the-joy-that-is-source-maps-with-vuejs-and-typescript)
     devtool: 'source-map', // exact mapping; slow to build; small; enabled code minification and extracted maps
     // TODO: 'eval-source-map' temporarily removed for webpack-i18n-tools, will be fixed in future versions
-    node: false,
+    node: {
+        // Disable most Node polyfills, but enable stream for ethers.js crypto dependencies
+        stream: true,
+        // Disable others
+        fs: false,
+        net: false,
+        tls: false,
+    },
     output: {
         crossOriginLoading: 'anonymous',
         devtoolModuleFilenameTemplate: info => {

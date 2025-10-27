@@ -482,7 +482,8 @@ export declare enum CashlinkTheme {
     BIRTHDAY = 6
 }
 export declare enum CashlinkCurrency {
-    NIM = 0
+    NIM = 0,
+    USDT = 3
 }
 export interface Cashlink {
     currency: CashlinkCurrency;
@@ -496,6 +497,7 @@ export declare type CreateCashlinkRequest = BasicRequest & {
     value?: number;
     theme?: CashlinkTheme;
     fiatCurrency?: string;
+    currency?: CashlinkCurrency;
 } & ({} | {
     message: string;
     autoTruncateMessage?: boolean;
@@ -510,6 +512,7 @@ export declare type CreateCashlinkRequest = BasicRequest & {
 });
 export interface ManageCashlinkRequest extends BasicRequest {
     cashlinkAddress: string;
+    currency?: CashlinkCurrency;
 }
 export interface ConnectAccountRequest extends BasicRequest {
     appLogoUrl: string;

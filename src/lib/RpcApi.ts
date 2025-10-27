@@ -76,7 +76,7 @@ export default class RpcApi {
         // Keyguard by history back navigation and rejectOnBack was enabled for the request, the state provided to
         // _keyguardErrorHandler will overwrite the state here.
         if (getHistoryStorage(RpcApi.HISTORY_KEY_RPC_STATE)) {
-            this._recoverState(getHistoryStorage(RpcApi.HISTORY_KEY_RPC_STATE));
+            this._recoverState(getHistoryStorage(RpcApi.HISTORY_KEY_RPC_STATE)).catch(console.error);
         }
 
         this._registerHubApis([
@@ -263,12 +263,13 @@ export default class RpcApi {
         };
     }
 
-    private _recoverState(storedState: any) {
+    private async _recoverState(storedState: any) {
         const rpcState = RpcState.fromJSON(storedState.rpcState);
         const request = RequestParser.parse(storedState.request, rpcState, storedState.kind);
         const keyguardRequest = storedState.keyguardRequest;
         const originalRouteName = storedState.originalRouteName;
-        const cashlink = storedState.cashlink ? Cashlink.fromObject(storedState.cashlink) : undefined;
+        const baseCashlink = storedState.cashlink ? Cashlink.fromObject(storedState.cashlink) : undefined;
+        const cashlink = baseCashlink ? new (await import('./CashlinkInteractive')).default(baseCashlink) : undefined;
 
         this._staticStore.rpcState = rpcState;
         this._staticStore.request = request || undefined;
@@ -445,13 +446,13 @@ export default class RpcApi {
         }
     }
 
-    private _keyguardSuccessHandler<C extends KeyguardCommand>(
+    private async _keyguardSuccessHandler<C extends KeyguardCommand>(
         command: C,
         result: ResultByCommand<C>,
         state?: ObjectType | null,
     ) {
         // Recover state
-        this._recoverState(state);
+        await this._recoverState(state);
 
         // Set result
         this._store.commit('setKeyguardResult', result);
@@ -465,9 +466,9 @@ export default class RpcApi {
         this._startRoute();
     }
 
-    private _keyguardErrorHandler(command: KeyguardCommand, error: Error, state: any) {
+    private async _keyguardErrorHandler(command: KeyguardCommand, error: Error, state: any) {
         // Recover state
-        this._recoverState(state);
+        await this._recoverState(state);
 
         // Set result
         this._store.commit('setKeyguardResult', error);

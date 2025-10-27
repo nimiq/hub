@@ -31,8 +31,6 @@ export default class UsdtCashlinkApp extends Vue {
     private isDarkTheme = false;
 
     public async created() {
-        // TODO [USDT-CASHLINK]: Initialize Polygon wallet/account store if needed
-        // For now, just set loading to false
         await this.$store.dispatch('initWallets');
         this.loading = false;
     }

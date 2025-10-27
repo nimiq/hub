@@ -1940,10 +1940,8 @@
   dependencies:
     dom-parser "^0.1.5"
 
-"@nimiq/keyguard-client@^1.9.0":
+"@nimiq/keyguard-client@../keyguard/client":
   version "1.9.0"
-  resolved "https://registry.yarnpkg.com/@nimiq/keyguard-client/-/keyguard-client-1.9.0.tgz#98d98a8cce3933655d03fc5b3744485c2b85b1dd"
-  integrity sha512-5ELVz3paOqVuDgOHKUn/h6M1RntZ5Emwkbi6FaU/x4+refDSzWe68qVyOuYhHQFO0AIGhRRXRqBMpXbIHMeWWQ==
   dependencies:
     "@nimiq/core" "^2.1.1"
     "@nimiq/rpc" "^0.3.0"
