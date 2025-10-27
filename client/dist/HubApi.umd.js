@@ -361,7 +361,7 @@
         // not supported yet
         // BTC = 1,
         // USDC = 2, // on Polygon network
-        // USDT = 3, // on Polygon network
+        CashlinkCurrency[CashlinkCurrency["USDT"] = 3] = "USDT";
     })(CashlinkCurrency || (CashlinkCurrency = {}));
 
     class HubApi {

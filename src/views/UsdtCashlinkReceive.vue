@@ -17,22 +17,22 @@
                     @main-action="redirectToWallet"
                 />
             </transition>
-            <div v-if="cashlink && hasPolygonAccounts" class="card-content has-account" :class="{ 'account-selector-shown': !!isAccountSelectorOpened }">
+            <div v-if="cashlink && hasWallets" class="card-content has-account" :class="{ 'account-selector-shown': !!isAccountSelectorOpened }">
                 <PageHeader class="blur-target">{{ $t('You received a USDT Cashlink!') }}</PageHeader>
                 <PageBody>
-                    <div class="accounts" :class="{'single-address': mockPolygonAccounts.length === 1}">
+                    <div class="accounts" :class="{'single-address': addressCount === 1}">
                         <Account class="cashlink-account blur-target" layout="column"
                             :displayAsCashlink="true"
                             label="USDT Cashlink"/>
                         <ArrowRightIcon class="arrow-right blur-target"/>
-                        <div v-if="mockPolygonAccounts.length > 1 && activeAccount" class="recipient-button blur-target">
+                        <div v-if="addressCount > 1 && activeAccount" class="recipient-button blur-target">
                             <button class="nq-button-s" @click="isAccountSelectorOpened = true;">{{ $t('Change') }}</button>
                             <Account layout="column"
-                                :address="activeAccount.address"
+                                :address="activeAccount.userFriendlyAddress"
                                 :label="activeAccount.label"/>
                         </div>
                         <Account v-else-if="activeAccount" layout="column"
-                            :address="activeAccount.address"
+                            :address="activeAccount.userFriendlyAddress"
                             :label="activeAccount.label"/>
                     </div>
 
@@ -61,18 +61,16 @@
                     <div v-if="isAccountSelectorOpened" class="overlay">
                         <CloseButton class="top-right" @click="isAccountSelectorOpened = false" />
                         <PageHeader>{{ $t('Choose an Address') }}</PageHeader>
-                        <div class="mock-account-selector-overlay">
-                            <div v-for="account in mockPolygonAccounts" :key="account.address"
-                                class="mock-account-item"
-                                @click="accountSelected(account)">
-                                <div class="mock-account-label">{{ account.label }}</div>
-                                <div class="mock-account-address">{{ account.address }}</div>
-                            </div>
-                        </div>
+                        <AccountSelector
+                            :wallets="processedWallets"
+                            :disableContracts="true"
+                            @account-selected="accountSelected"
+                            @login="callHub('login')"
+                        />
                     </div>
                 </transition>
             </div>
-            <div v-if="cashlink && !hasPolygonAccounts" class="card-content no-account">
+            <div v-if="cashlink && !hasWallets" class="card-content no-account">
                 <div class="top-spacer"><!-- top flex spacer --></div>
 
                 <CashlinkSparkle/>
@@ -97,14 +95,14 @@
             </div>
         </SmallPage>
 
-        <div v-if="(cashlink && !hasPolygonAccounts) || isMobile" class="outside-container">
+        <div v-if="(cashlink && !hasWallets) || isMobile" class="outside-container">
             <img v-if="themeBackground && isMobile"
                  :src="`/img/cashlink-themes/${themeBackground}${hasMobileTheme ? '-mobile' : ''}.svg`"
                  class="theme-background theme-background-mobile"
                  :class="themeBackground"
                  @load="$event.target.style.opacity = 1"
             >
-            <div v-if="cashlink && !hasPolygonAccounts" class="welcome-text">
+            <div v-if="cashlink && !hasWallets" class="welcome-text">
                 <h1 class="nq-h1">{{ welcomeHeadline }}</h1>
                 <p class="nq-text">
                     {{ welcomeText }}
@@ -117,9 +115,6 @@
 </template>
 
 <script lang="ts">
-// TODO [USDT-CASHLINK]: This component uses MOCK implementations for UI development
-// Replace with actual Polygon network and wallet store integration
-
 import { Component, Vue } from 'vue-property-decorator';
 import {
     SmallPage,
@@ -130,17 +125,20 @@ import {
     CaretRightSmallIcon,
     CloseButton,
     Account,
+    AccountSelector,
 } from '@nimiq/vue-components';
 import StatusScreen from '../components/StatusScreen.vue';
 import CashlinkSparkle from '../components/CashlinkSparkle.vue';
 import CircleSpinner from '../components/CircleSpinner.vue';
-import UsdtCashlink from '../lib/UsdtCashlink';
-import { BasicRequest, CashlinkTheme } from '../../client/PublicRequestTypes';
+import CashlinkInteractive from '../lib/CashlinkInteractive';
+import { BasicRequest, CashlinkTheme, CashlinkCurrency } from '../../client/PublicRequestTypes';
 import { CashlinkState } from '../lib/CashlinkInteractive';
+import { AccountInfo } from '../lib/AccountInfo';
+import { Getter, Mutation } from 'vuex-class';
 import Config from 'config';
-import { UsdtCashlinkStore } from '../lib/UsdtCashlinkStore';
+import { WalletInfo } from '../lib/WalletInfo';
+import { CashlinkStore } from '../lib/CashlinkStore';
 import HubApi from '../../client/HubApi';
-import { getMockPolygonAccounts, MockPolygonAccount } from '../lib/polygon/MockPolygonHelpers';
 
 @Component({components: {
     SmallPage,
@@ -154,6 +152,7 @@ import { getMockPolygonAccounts, MockPolygonAccount } from '../lib/polygon/MockP
     CaretRightSmallIcon,
     CloseButton,
     Account,
+    AccountSelector,
 }})
 class UsdtCashlinkReceive extends Vue {
     private static MOBILE_BREAKPOINT = 450;
@@ -161,11 +160,15 @@ class UsdtCashlinkReceive extends Vue {
         THEME_CHANGED: 'theme-change',
     };
 
-    // TODO [USDT-CASHLINK]: Replace with actual Vuex getters for wallets/accounts
-    private mockPolygonAccounts: MockPolygonAccount[] = [];
-    private activeAccount: MockPolygonAccount | null = null;
+    @Getter private addressCount!: number;
+    @Getter private hasWallets!: boolean;
+    @Getter private activeAccount?: AccountInfo;
+    @Getter private processedWallets!: WalletInfo[];
 
-    private cashlink: UsdtCashlink | null = null;
+    @Mutation('setActiveAccount') private $setActiveAccount!:
+        (payload: {walletId: string, userFriendlyAddress: string}) => any;
+
+    private cashlink: CashlinkInteractive | null = null;
     private isAccountSelectorOpened: boolean = false;
     private isClaiming: boolean = false;
     private isMobile: boolean = false;
@@ -195,37 +198,29 @@ class UsdtCashlinkReceive extends Vue {
 
     public async mounted() {
         // Load USDT Cashlink from URL
-        this.cashlink = UsdtCashlink.parse(window.location.hash.substring(1));
+        const CashlinkModule = await import('../lib/Cashlink');
+        const parsedCashlink = await CashlinkModule.default.parse(window.location.hash.substring(1));
 
-        // Fail if no Cashlink was found
-        if (!this.cashlink) {
+        // Fail if no Cashlink was found or if it's not a USDT cashlink
+        if (!parsedCashlink || parsedCashlink.currency !== CashlinkCurrency.USDT) {
             this.statusState = StatusScreen.State.WARNING;
             this.statusTitle = this.$t('404 - Cash not found') as string;
             this.statusMessage = this.$t('This is not a valid USDT Cashlink, sorry.') as string;
             return;
         }
 
+        this.cashlink = new CashlinkInteractive(parsedCashlink);
+
         if (this.cashlink.theme) {
             this.$emit(UsdtCashlinkReceive.Events.THEME_CHANGED, this.cashlink.theme, this.isDarkTheme);
         }
 
-        // TODO [USDT-CASHLINK]: Load actual wallets/accounts from store
-        this.mockPolygonAccounts = getMockPolygonAccounts();
-        if (this.mockPolygonAccounts.length > 0) {
-            this.activeAccount = this.mockPolygonAccounts[0];
-        }
+        // When user has no wallets, skip cashlink init
+        if (!this.hasWallets) return;
 
-        // When user has no polygon accounts, skip cashlink init
-        if (!this.hasPolygonAccounts) return;
-
-        // TODO [USDT-CASHLINK]: Connect to Polygon network and check cashlink status
-        // Mock: simulate state detection after delay
-        setTimeout(() => {
-            if (this.cashlink) {
-                this.cashlink.state = CashlinkState.UNCLAIMED;
-                this.cashlink.balance = this.cashlink.value;
-            }
-        }, 2000);
+        // Set dependencies for the cashlink to connect to network
+        const wallets = this.$store.state.wallets;
+        this.cashlink.setUserWallets(wallets);
     }
 
     public destroyed() {
@@ -233,26 +228,31 @@ class UsdtCashlinkReceive extends Vue {
     }
 
     private async claim() {
-        // TODO [USDT-CASHLINK]: Replace with actual claim transaction
-        // Should sign and relay USDT transfer from cashlink to recipient
-
         this.statusState = StatusScreen.State.LOADING;
         this.statusTitle = this.$t('Claiming USDT Cashlink') as string;
         this.statusStatus = this.$t('Connecting to Polygon...') as string;
 
         this.isClaiming = true;
 
-        console.log('[MOCK] Claiming USDT Cashlink to:', this.activeAccount!.address);
+        // Get Polygon address from active account
+        const activeWallet = this.$store.state.wallets.find((w: WalletInfo) =>
+            w.id === this.$store.state.activeWalletId);
+        if (!activeWallet || !activeWallet.polygonAddresses || !activeWallet.polygonAddresses.length) {
+            this.statusState = StatusScreen.State.WARNING;
+            this.statusTitle = this.$t('No Polygon address') as string;
+            this.statusMessage = this.$t('Please activate Polygon for this account first.') as string;
+            return;
+        }
+
+        const recipientPolygonAddress = activeWallet.polygonAddresses[0].address;
 
         try {
-            await this.cashlink!.claim(this.activeAccount!.address);
-
-            // Mock: wait for transaction
-            await new Promise((resolve) => setTimeout(resolve, 3000));
+            // Claim the cashlink (this will sign and relay the transaction)
+            await this.cashlink!.claim(recipientPolygonAddress);
 
             // Store claimed cashlink
             try {
-                await UsdtCashlinkStore.Instance.put(this.cashlink!);
+                await CashlinkStore.Instance.put(this.cashlink!);
             } catch (err) {
                 console.error('Error storing claimed cashlink:', err);
             }
@@ -270,8 +270,8 @@ class UsdtCashlinkReceive extends Vue {
         }
     }
 
-    private accountSelected(account: MockPolygonAccount) {
-        this.activeAccount = account;
+    private accountSelected(walletId: string, userFriendlyAddress: string) {
+        this.$setActiveAccount({ walletId, userFriendlyAddress });
         this.isAccountSelectorOpened = false;
     }
 
@@ -292,10 +292,6 @@ class UsdtCashlinkReceive extends Vue {
 
     private redirectToWallet() {
         window.location.href = Config.redirectTarget;
-    }
-
-    private get hasPolygonAccounts(): boolean {
-        return this.mockPolygonAccounts.length > 0;
     }
 
     private get isCashlinkStateKnown(): boolean {
@@ -363,11 +359,7 @@ class UsdtCashlinkReceive extends Vue {
     }
 
     private get welcomeText(): string {
-        if (this.cashlink && this.cashlink.hasEncodedTheme) {
-            return this.$t('Someone sent you USDT on Polygon!') as string;
-        } else {
-            return this.$t('Someone sent you USDT on Polygon!') as string;
-        }
+        return this.$t('Someone sent you USDT on Polygon!') as string;
     }
 
     private formatUsdtAmount(cents: number): string {
@@ -647,38 +639,12 @@ export default UsdtCashlinkReceive;
         background: rgba(255, 255, 255, .875);
     }
 
-    .mock-account-selector-overlay {
-        padding: 2rem 4rem;
-        display: flex;
-        flex-direction: column;
-        gap: 1.5rem;
-        overflow-y: auto;
+    .account-selector {
+        margin-top: -3rem;
     }
 
-    .mock-account-item {
-        padding: 2rem;
-        background: white;
-        border-radius: 0.5rem;
-        box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.07);
-        cursor: pointer;
-        transition: transform 0.2s var(--nimiq-ease), box-shadow 0.2s var(--nimiq-ease);
-    }
-
-    .mock-account-item:hover {
-        transform: translateY(-0.25rem);
-        box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.1);
-    }
-
-    .mock-account-label {
-        font-size: 2rem;
-        font-weight: 600;
-        margin-bottom: 0.5rem;
-    }
-
-    .mock-account-address {
-        font-size: 1.5rem;
-        opacity: 0.6;
-        font-family: 'Fira Mono', monospace;
+    .account-selector >>> .amount {
+        display: none !important;
     }
 
     .blur-target {

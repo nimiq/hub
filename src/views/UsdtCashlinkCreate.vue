@@ -18,7 +18,7 @@
                             <PageBody>
                                 <h1 class="nq-h1">{{ $t('Transaction Fee') }}</h1>
                                 <p class="nq-text">{{ $t('Fee for relaying the USDT transaction on Polygon network.') }}</p>
-                                <div class="fee-display-amount">{{ formatUsdtAmount(mockFee) }} USDT</div>
+                                <div class="fee-display-amount">{{ formatUsdtAmount(estimatedFee) }} USDT</div>
                             </PageBody>
                             <PageFooter>
                                 <button class="nq-button light-blue" @click="optionsOpened = false">{{ $t('Got it') }}</button>
@@ -27,12 +27,11 @@
                         </SmallPage>
 
                         <SmallPage v-if="openedDetails !== Details.NONE" class="overlay" key="details">
-                            <div class="account-details">
-                                <h2 class="nq-h2">{{ selectedPolygonLabel }}</h2>
-                                <div class="detail-address">{{ selectedPolygonAddress }}</div>
-                                <div class="detail-balance">{{ formatUsdtAmount(selectedPolygonBalance) }} USDT</div>
-                            </div>
-                            <CloseButton class="top-right" @click="openedDetails = Details.NONE" />
+                            <AccountDetails
+                                :address="accountInfo.userFriendlyAddress"
+                                :label="accountInfo.label"
+                                :balance="availableBalance"
+                                @close="openedDetails = Details.NONE"/>
                         </SmallPage>
                     </transition>
 
@@ -88,9 +87,6 @@
 </template>
 
 <script lang="ts">
-// TODO [USDT-CASHLINK]: This component uses MOCK implementations for UI development
-// Replace mock data and functions with actual Polygon/wallet store integration
-
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import { Getter, Mutation, State } from 'vuex-class';
 import { Static } from '../lib/StaticStore';
@@ -98,15 +94,12 @@ import staticStore from '../lib/StaticStore';
 import StatusScreen from '../components/StatusScreen.vue';
 import GlobalClose from '../components/GlobalClose.vue';
 import { ParsedCreateCashlinkRequest } from '../lib/RequestTypes';
-import { RequestType } from '../../client/PublicRequestTypes';
-import UsdtCashlink from '../lib/UsdtCashlink';
+import { RequestType, CashlinkCurrency } from '../../client/PublicRequestTypes';
+import CashlinkInteractive from '../lib/CashlinkInteractive';
 import { AccountInfo } from '../lib/AccountInfo';
 import { WalletInfo } from '../lib/WalletInfo';
-import {
-    mockSignUsdtCashlink,
-    mockEstimateUsdtFee,
-    mockGetUsdtBalance,
-} from '../lib/polygon/MockPolygonHelpers';
+import { State as RpcState } from '@nimiq/rpc';
+import KeyguardClient from '@nimiq/keyguard-client';
 import {
     Account,
     AccountDetails,
@@ -147,6 +140,7 @@ class UsdtCashlinkCreate extends Vue {
     };
 
     @Static private request!: ParsedCreateCashlinkRequest;
+    @Static private rpcState!: RpcState;
 
     @State private wallets!: WalletInfo[];
     @Getter private processedWallets!: WalletInfo[];
@@ -160,7 +154,6 @@ class UsdtCashlinkCreate extends Vue {
         userFriendlyAddress: string,
     }) => any;
 
-    // TODO [USDT-CASHLINK]: Replace mock balance with actual USDT balance from Polygon network
     private selectedPolygonAddress: string | null = null;
     private selectedPolygonLabel: string = '';
     private selectedPolygonBalance: number = 0;
@@ -172,7 +165,7 @@ class UsdtCashlinkCreate extends Vue {
         fee: 0,
         isValid: false,
     };
-    private mockFee: number = 500000; // 0.50 USDT in cents
+    private estimatedFee: number = 0;
     private message = '';
     private optionsOpened = false;
     private openedDetails = UsdtCashlinkCreate.Details.NONE;
@@ -207,22 +200,13 @@ class UsdtCashlinkCreate extends Vue {
             this.message = this.request.message;
         }
 
-        // Fetch mock fee
-        try {
-            this.mockFee = await mockEstimateUsdtFee();
-        } catch (e) {
-            console.error('Error estimating fee:', e);
-        }
-
-        this.liveAmountAndFee.fee = this.mockFee;
-
-        this.loading = !staticStore.usdtCashlink && !this.request.senderAddress;
+        this.loading = !staticStore.cashlink && !this.request.senderAddress;
 
         // If there's a cashlink in static store (returning from keyguard), restore it
-        if (staticStore.usdtCashlink) {
-            this.liveAmountAndFee.amount = staticStore.usdtCashlink.value;
-            this.liveAmountAndFee.fee = staticStore.usdtCashlink.fee;
-            this.message = staticStore.usdtCashlink.message;
+        if (staticStore.cashlink && staticStore.cashlink.currency === CashlinkCurrency.USDT) {
+            this.liveAmountAndFee.amount = staticStore.cashlink.value;
+            this.liveAmountAndFee.fee = staticStore.cashlink.fee;
+            this.message = staticStore.cashlink.message;
 
             // Restore sender from active account
             if (this.$store.state.activeUserFriendlyAddress) {
@@ -252,19 +236,27 @@ class UsdtCashlinkCreate extends Vue {
             return;
         }
 
-        // TODO [USDT-CASHLINK]: Get actual Polygon address from wallet
-        // For now, use wallet's first polygon address or fallback to mock
+        // Get Polygon address from wallet
         if (wallet.polygonAddresses && wallet.polygonAddresses.length > 0) {
             this.selectedPolygonAddress = wallet.polygonAddresses[0].address;
         } else {
-            // Fallback to mock address if wallet doesn't have polygon addresses yet
-            this.selectedPolygonAddress = '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb';
+            this.$rpc.reject(new Error('Account does not have a Polygon address. Please activate Polygon first.'));
+            return;
         }
         this.selectedPolygonLabel = this.accountInfo.label;
 
-        // TODO [USDT-CASHLINK]: Fetch actual USDT balance from Polygon network
-        // For now, use mock balance
-        this.selectedPolygonBalance = await mockGetUsdtBalance(this.selectedPolygonAddress!);
+        // Fetch actual USDT balance from Polygon network
+        const { getUsdtBridgedBalance } = await import('../lib/polygon/ethers');
+        this.selectedPolygonBalance = await getUsdtBridgedBalance(this.selectedPolygonAddress);
+
+        // Fetch actual fee estimate
+        const { calculateFee } = await import('../lib/polygon/ethers');
+        const feeInfo = await calculateFee(
+            (await import('config')).default.polygon.usdt_bridged.tokenContract,
+            'transferWithApproval',
+        );
+        this.estimatedFee = feeInfo.fee.toNumber();
+        this.liveAmountAndFee.fee = this.estimatedFee;
 
         this.$setActiveAccount({
             walletId: wallet.id,
@@ -286,10 +278,6 @@ class UsdtCashlinkCreate extends Vue {
     }
 
     private async sendTransaction() {
-        // TODO [USDT-CASHLINK]: Replace with actual keyguard signing
-        // Expected: Call KeyguardClient.signUsdtCashlink(request)
-        // Return: SignedPolygonTransaction
-
         if (!this.liveAmountAndFee.isValid || this.liveAmountAndFee.amount === 0) {
             return;
         }
@@ -297,32 +285,38 @@ class UsdtCashlinkCreate extends Vue {
         this.loading = true;
 
         try {
-            const usdtCashlink = UsdtCashlink.create();
-            staticStore.usdtCashlink = usdtCashlink;
+            // Create USDT cashlink
+            const baseCashlink = await (await import('../lib/Cashlink')).default.create(CashlinkCurrency.USDT);
+            const cashlink = new CashlinkInteractive(baseCashlink);
+            staticStore.cashlink = cashlink;
+            cashlink.setUserWallets(this.wallets);
 
-            usdtCashlink.value = this.liveAmountAndFee.amount;
-            usdtCashlink.fee = this.mockFee;
-            usdtCashlink.message = this.message;
+            cashlink.value = this.liveAmountAndFee.amount;
+            cashlink.fee = this.estimatedFee;
+            cashlink.message = this.message;
             if (this.request.theme) {
-                usdtCashlink.theme = this.request.theme;
+                cashlink.theme = this.request.theme;
             }
 
-            console.log('[MOCK] Created USDT Cashlink:', usdtCashlink.toObject());
+            const senderWallet = this.findWalletByAddress(this.accountInfo!.userFriendlyAddress, false)!;
 
-            // Mock signing
-            await mockSignUsdtCashlink({
-                keyId: this.selectedPolygonAddress!,
-                keyPath: 'm/44\'/60\'/0\'/0/0',
-                keyLabel: this.selectedPolygonLabel,
-                senderLabel: this.selectedPolygonLabel,
-                cashlinkMessage: this.message,
-                amount: usdtCashlink.value,
-                fee: usdtCashlink.fee,
-                recipient: usdtCashlink.address,
-            });
+            // Get funding details from the cashlink handler (pass user's polygon address)
+            const fundingDetails = await cashlink.getFundingDetails(this.selectedPolygonAddress!);
 
-            // Navigate to manage view
-            this.$router.push({ name: RequestType.MANAGE_CASHLINK });
+            // Create keyguard request for USDT cashlink signing
+            const keyguardRequest = {
+                ...fundingDetails,
+                shopOrigin: this.rpcState.origin,
+                appName: this.request.appName,
+                keyId: senderWallet.keyId,
+                keyPath: senderWallet.polygonAddresses![0].path,
+                keyLabel: senderWallet.labelForKeyguard,
+                senderLabel: this.accountInfo!.label,
+            };
+
+            staticStore.keyguardRequest = keyguardRequest as any;
+            const client = this.$rpc.createKeyguardClient();
+            (client as any).signUsdtCashlink(keyguardRequest);
         } catch (error) {
             console.error('Error creating USDT Cashlink:', error);
             this.$rpc.reject(error as Error);
@@ -383,48 +377,6 @@ export default UsdtCashlinkCreate;
         transition: opacity .3s;
         display: flex;
         flex-direction: column;
-    }
-
-    /* Mock account selector styles - mimics AccountSelector component */
-    .mock-account-selector {
-        padding: 2rem;
-        display: flex;
-        flex-direction: column;
-        gap: 1.5rem;
-        overflow-y: auto;
-    }
-
-    .mock-account-item {
-        display: flex;
-        align-items: center;
-        padding: 2rem;
-        background: white;
-        border-radius: 0.5rem;
-        box-shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.07);
-        cursor: pointer;
-        transition: transform 0.2s var(--nimiq-ease), box-shadow 0.2s var(--nimiq-ease);
-    }
-
-    .mock-account-item:hover {
-        transform: translateY(-0.25rem);
-        box-shadow: 0 1rem 2.5rem rgba(0, 0, 0, 0.1);
-    }
-
-    .mock-account-identicon {
-        font-size: 4rem;
-        margin-right: 2rem;
-    }
-
-    .mock-account-label {
-        flex-grow: 1;
-        font-size: 2.25rem;
-        font-weight: 600;
-    }
-
-    .mock-account-balance {
-        font-size: 2rem;
-        font-weight: bold;
-        color: var(--nimiq-green);
     }
 
     .page-footer .nq-button {
@@ -538,11 +490,7 @@ export default UsdtCashlinkCreate;
     }
 
     .overlay .account-details {
-        background: white;
-        border-radius: 0.5rem;
-        padding: 3rem;
-        margin: 4rem;
-        max-width: 40rem;
+        background: none;
     }
 
     .overlay.fee .page-body {
@@ -641,20 +589,5 @@ export default UsdtCashlinkCreate;
     .create-cashlink .cashlink >>> .label {
         opacity: .5;
         line-height: 1.5;
-    }
-
-    .detail-address {
-        font-family: 'Fira Mono', monospace;
-        font-size: 1.5rem;
-        opacity: 0.6;
-        margin: 1rem 0;
-        word-break: break-all;
-    }
-
-    .detail-balance {
-        font-size: 2.5rem;
-        font-weight: bold;
-        color: var(--nimiq-green);
-        margin-top: 2rem;
     }
 </style>

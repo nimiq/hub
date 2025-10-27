@@ -4,6 +4,7 @@ import { TypedRequestData } from '@opengsn/common/dist/EIP712/TypedRequestData';
 import { CashlinkCurrency } from '../../client/PublicRequestTypes';
 import { ICashlinkCurrencyHandler, CashlinkTransaction } from './CashlinkCurrencyHandler';
 import CashlinkInteractive from './CashlinkInteractive';
+import { loadBitcoinJS } from './bitcoin/BitcoinJSLoader';
 import {
     networkState,
     getPolygonClient,
@@ -11,17 +12,23 @@ import {
     getUsdtBridgedBalance,
     calculateFee,
     getTransactionHistory,
-    Transaction, createTransactionRequest, sendTransaction,
+    Transaction,
+    TransactionState,
+    createTransactionRequest,
+    sendTransaction,
 } from './polygon/ethers';
-import { Key } from './polygon/signing/Key';
-import { PolygonKey } from './polygon/signing/PolygonKey';
 import { USDT_BRIDGED_TOKEN_CONTRACT_ABI, USDT_BRIDGED_TRANSFER_CONTRACT_ABI } from './polygon/ContractABIs';
 
 export class CashlinkCurrencyHandlerStablecoin implements ICashlinkCurrencyHandler<CashlinkCurrency.USDT> {
     public readonly currency = CashlinkCurrency.USDT;
     private _chainTransactions: Transaction[] = []; // transactions already included on chain
+    private _bitcoinJsLoaded: Promise<void> | null = null;
 
-    public constructor(public readonly cashlink: CashlinkInteractive<CashlinkCurrency.USDT>) {}
+    public constructor(public readonly cashlink: CashlinkInteractive<CashlinkCurrency.USDT>) {
+        // BitcoinJS should already be loaded by the factory function,
+        // but keep this for safety in case the constructor is called directly
+        this._bitcoinJsLoaded = Promise.resolve();
+    }
 
     public async awaitConsensus(): Promise<void> {
         if (networkState.consensus === 'established') return;
@@ -53,7 +60,7 @@ export class CashlinkCurrencyHandlerStablecoin implements ICashlinkCurrencyHandl
             usdtBridgedTransfer,
             Config.polygon.usdt_bridged.earliestHistoryScanHeight,
             this._chainTransactions,
-        )
+        );
         // Add new transactions and update previously known transactions, avoiding duplicates.
         this._chainTransactions = [...new Map([
             ...this._chainTransactions,
@@ -67,21 +74,68 @@ export class CashlinkCurrencyHandlerStablecoin implements ICashlinkCurrencyHandl
     }
 
     public async getPendingTransactions(): Promise<CashlinkTransaction[]> {
-
+        // Polygon network doesn't emit logs for pending transactions
+        return [];
     }
 
     public async registerTransactionListener(onTransactionAddedOrUpdated: (transaction: CashlinkTransaction) => void)
         : Promise</* unregister */ () => void> {
-
+        const { registerTransactionListener } = await import('./polygon/ethers');
+        return registerTransactionListener((transaction) => {
+            // Filter for this cashlink's address
+            if (transaction.sender !== this.cashlink.address
+                && transaction.recipient !== this.cashlink.address) {
+                return;
+            }
+            // Update chain transactions cache
+            if (transaction.state === TransactionState.MINED || transaction.state === TransactionState.CONFIRMED) {
+                if (!this._chainTransactions.some((tx) => tx.transactionHash === transaction.transactionHash)) {
+                    this._chainTransactions.push(transaction);
+                }
+            }
+            // Notify listener
+            onTransactionAddedOrUpdated(this._transactionToSimplifiedCashlinkTransaction(transaction));
+        });
     }
 
-    public async getCashlinkFundingDetails(): Promise<{
-
+    public async getCashlinkFundingDetails(fromAddress: string): Promise<{
+        request: any,
+        relayData: any,
+        approval: { tokenNonce: number },
+        cashlinkMessage: string,
     }> {
+        const { createTransactionRequest: createTxRequest } = await import('./polygon/ethers');
 
+        // Create transaction request using CASHLINK contract (not transfer contract)
+        const txRequest = await createTxRequest(
+            Config.polygon.usdt_bridged.tokenContract,
+            fromAddress,
+            this.cashlink.address, // Cashlink address as recipient
+            this.cashlink.value,
+            undefined, // forceRelay
+            Config.polygon.usdt_bridged.cashlinkContract, // Use cashlink contract
+        );
+
+        if (!txRequest.approval) {
+            throw new Error('USDT cashlink funding requires approval data');
+        }
+
+        return {
+            request: txRequest.relayRequest.request,
+            relayData: txRequest.relayRequest.relayData,
+            approval: txRequest.approval,
+            cashlinkMessage: this.cashlink.message,
+        };
     }
 
     public async claimCashlink(recipient: string): Promise<CashlinkTransaction> {
+        // Ensure BitcoinJS is loaded before importing Key/PolygonKey (which depend on it)
+        await this._bitcoinJsLoaded;
+
+        // Lazy load to avoid triggering BitcoinJS dependency at module load time
+        const { Key } = await import('./polygon/signing/Key');
+        const { PolygonKey } = await import('./polygon/signing/PolygonKey');
+
         const entropy = new Nimiq.Entropy(this.cashlink.secret);
         const key = new Key(entropy);
         const polygonKey = new PolygonKey(key);
@@ -110,6 +164,10 @@ export class CashlinkCurrencyHandlerStablecoin implements ICashlinkCurrencyHandl
             data: txrequest.relayRequest.request.data,
             value: txrequest.relayRequest.request.value,
         });
+
+        if (!txrequest.approval) {
+            throw new Error('USDT cashlink claiming requires approval data');
+        }
 
         // Sign approval for the necessary amount
         const { sigR, sigS, sigV } = await polygonKey.signUsdtApproval(

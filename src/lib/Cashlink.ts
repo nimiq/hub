@@ -79,8 +79,9 @@ class Cashlink<C extends CashlinkCurrency = CashlinkCurrency> {
         return this._immutable;
     }
 
-    public static async create<C extends CashlinkCurrency = CashlinkCurrency.NIM>(currency: C = CashlinkCurrency.NIM as C)
-        : Promise<Cashlink<C>> {
+    public static async create<C extends CashlinkCurrency = CashlinkCurrency.NIM>(
+        currency: C = CashlinkCurrency.NIM as C,
+    ): Promise<Cashlink<C>> {
         const secret = new Uint8Array(Cashlink.SECRET_SIZE);
         window.crypto.getRandomValues(secret);
         const address = await Cashlink._deriveAddress(currency, secret);
@@ -154,9 +155,9 @@ class Cashlink<C extends CashlinkCurrency = CashlinkCurrency> {
                 return publicKey.toAddress().toUserFriendlyAddress();
             }
             case CashlinkCurrency.USDT: {
-                const ethers = await import(/* webpackChunkName: "ethers-js" */ 'ethers');
+                const ethersLib = await import(/* webpackChunkName: "ethers-js" */ 'ethers');
                 const mnemonic = Nimiq.MnemonicUtils.entropyToMnemonic(secret);
-                const polygonWallet = ethers.Wallet.fromMnemonic(mnemonic.join(' '), 'm');
+                const polygonWallet = ethersLib.Wallet.fromMnemonic(mnemonic.join(' '), 'm');
                 return polygonWallet.address;
             }
             default:

@@ -157,6 +157,10 @@ export function keyguardResponseRouter(
             resolve = `${RequestType.ACTIVATE_POLYGON}-success`; break;
         case KeyguardCommand.SIGN_POLYGON_TRANSACTION:
             resolve = `${RequestType.SIGN_POLYGON_TRANSACTION}-success`; break;
+        case 'sign-usdt-cashlink' as any:
+            // USDT Cashlink creation returns to manage view
+            resolve = RequestType.MANAGE_CASHLINK;
+            break;
         case KeyguardCommand.SIGN_SWAP:
             resolve = `${RequestType.SETUP_SWAP}-success`; break;
         case KeyguardCommand.CONNECT_ACCOUNT:
