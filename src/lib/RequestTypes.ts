@@ -77,6 +77,7 @@ export interface ParsedSignMultisigTransactionRequest extends ParsedBasicRequest
     sender: Nimiq.Address;
     senderType: Nimiq.AccountType;
     senderLabel: string;
+    senderData?: Uint8Array;
     recipient: Nimiq.Address;
     recipientType: Nimiq.AccountType;
     recipientLabel?: string;

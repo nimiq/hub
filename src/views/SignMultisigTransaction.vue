@@ -47,6 +47,7 @@ export default class SignMultisigTransaction extends Vue {
             sender: this.request.sender.serialize(),
             senderLabel: this.request.senderLabel,
             senderType: this.request.senderType,
+            senderData: this.request.senderData,
             recipient: this.request.recipient.serialize(),
             recipientType: this.request.recipientType,
             recipientLabel: this.request.recipientLabel,
