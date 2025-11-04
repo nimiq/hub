@@ -104,6 +104,10 @@ export default class RefundSwapLedger extends RefundSwap {
 
             const request = this.request as ParsedSignTransactionRequest;
             const { sender: senderInfo, recipient, value, fee, data, validityStartHeight } = request;
+            if (!senderInfo) {
+                this.$rpc.reject(new Error('Ledger Swap Refunding expects a sender in the request.'));
+                return;
+            }
             const sender = senderInfo instanceof Nimiq.Address ? senderInfo : senderInfo.address;
             // existence guaranteed as already checked previously in RefundSwap
             const ledgerAccount = this.findWalletByAddress(recipient.toUserFriendlyAddress(), true)!;
