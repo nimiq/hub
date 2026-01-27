@@ -1896,7 +1896,7 @@
     call-me-maybe "^1.0.1"
     glob-to-regexp "^0.3.0"
 
-"@nimiq/albatross-wasm@npm:@nimiq/core@^2.0.0":
+"@nimiq/albatross-wasm@npm:@nimiq/core@^2.0.0", "@nimiq/core@^2.1.1":
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/@nimiq/core/-/core-2.1.1.tgz#75b1ff1114aea049db3e6c2aecf6c44c1b660f35"
   integrity sha512-GOgWG5Uo9TPQld13EbVVKCBAL411LrqBd5qOXrrv0Qr52uq6GmY9AjbchUyMahtpFFOisX7Zvdtz8agYBNuS2A==
@@ -1913,14 +1913,6 @@
   version "1.6.4"
   resolved "https://registry.yarnpkg.com/@nimiq/core-web/-/core-web-1.6.4.tgz#2ab36ab6f7d4062c3d534e6da831c2ccaae959de"
   integrity sha512-D0jVukuL+zsUXicS4cCZEPlBzlzBe0D1sNWecEhaSjTR1iMa9f+fA9l08wlQtRVw96Z6yHRgQokWVnO1GcWI7Q==
-
-"@nimiq/core@^2.1.1":
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/@nimiq/core/-/core-2.1.1.tgz#75b1ff1114aea049db3e6c2aecf6c44c1b660f35"
-  integrity sha512-GOgWG5Uo9TPQld13EbVVKCBAL411LrqBd5qOXrrv0Qr52uq6GmY9AjbchUyMahtpFFOisX7Zvdtz8agYBNuS2A==
-  dependencies:
-    comlink "^4.4.1"
-    websocket "^1.0.34"
 
 "@nimiq/electrum-client@https://github.com/nimiq/electrum-client#build":
   version "0.1.0"
@@ -1940,10 +1932,10 @@
   dependencies:
     dom-parser "^0.1.5"
 
-"@nimiq/keyguard-client@^1.9.0":
-  version "1.9.0"
-  resolved "https://registry.yarnpkg.com/@nimiq/keyguard-client/-/keyguard-client-1.9.0.tgz#98d98a8cce3933655d03fc5b3744485c2b85b1dd"
-  integrity sha512-5ELVz3paOqVuDgOHKUn/h6M1RntZ5Emwkbi6FaU/x4+refDSzWe68qVyOuYhHQFO0AIGhRRXRqBMpXbIHMeWWQ==
+"@nimiq/keyguard-client@^1.10.0":
+  version "1.10.0"
+  resolved "https://registry.yarnpkg.com/@nimiq/keyguard-client/-/keyguard-client-1.10.0.tgz#7d2a8933cd574d8f2dbe4adde1e3402ec56666a9"
+  integrity sha512-yn9wL/Z0Zzwn5O8CvIkCfz6bEVRhzfZ/bY2hSNmdCFnIfNfCfVPE9D/ENtLWmngI59xJeugduVXnw9PAoy5nNA==
   dependencies:
     "@nimiq/core" "^2.1.1"
     "@nimiq/rpc" "^0.3.0"

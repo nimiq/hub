@@ -77,6 +77,7 @@ export default class SignupSuccess extends Vue {
             false, // keyMissing
             this.keyguardResult[0].fileExported,
             this.keyguardResult[0].wordsExported,
+            this.keyguardResult[0].backupCodesExported,
             bitcoinXPub,
             btcAddresses,
             this.keyguardResult[0].polygonAddresses ? [new PolygonAddressInfo(

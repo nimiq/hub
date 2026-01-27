@@ -109,6 +109,7 @@ class CookieJar {
                 keyMissing: true,
                 fileExported: false,
                 wordsExported: false,
+                backupCodesExported: false,
                 // tslint:disable-next-line:max-line-length
                 btcXPub: 'xpub6H1LXWLaKsWFhvm6RVpEL9P4KfRZSW7abD2ttkWP3SSQvnyA8FSVqNTEcYFgJS2UaFcxupHiYkro49S8yGasTvXEYBVPamhGW6cFJodrTHy',
                 btcAddresses: { internal: [], external: [] },
@@ -191,11 +192,13 @@ class CookieJar {
         bytes.push((labelBytes.length << 2) | wallet.type);
 
         // Status
-        let statusByte: number = 0;
-        statusByte = statusByte
+        const statusByte = CookieJar.StatusFlags.NONE
                 | (wallet.keyMissing ? CookieJar.StatusFlags.KEY_MISSING : CookieJar.StatusFlags.NONE)
                 | (wallet.fileExported ? CookieJar.StatusFlags.FILE_EXPORTED : CookieJar.StatusFlags.NONE)
                 | (wallet.wordsExported ? CookieJar.StatusFlags.WORDS_EXPORTED : CookieJar.StatusFlags.NONE)
+                | (wallet.backupCodesExported
+                    ? CookieJar.StatusFlags.BACKUP_CODES_EXPORTED
+                    : CookieJar.StatusFlags.NONE)
                 | (wallet.contracts.length ? CookieJar.StatusFlags.HAS_CONTRACTS : CookieJar.StatusFlags.NONE)
                 | (wallet.btcXPub ? CookieJar.StatusFlags.HAS_XPUB : CookieJar.StatusFlags.NONE)
                 | (wallet.polygonAddresses?.length ? CookieJar.StatusFlags.HAS_POLYGON : CookieJar.StatusFlags.NONE)
@@ -343,13 +346,14 @@ class CookieJar {
 
 namespace CookieJar {
     export enum StatusFlags {
-        NONE           = 0,
-        KEY_MISSING    = 1 << 0,
-        FILE_EXPORTED  = 1 << 1,
-        WORDS_EXPORTED = 1 << 2,
-        HAS_CONTRACTS  = 1 << 3,
-        HAS_XPUB       = 1 << 4,
-        HAS_POLYGON    = 1 << 5,
+        NONE                  = 0,
+        KEY_MISSING           = 1 << 0,
+        FILE_EXPORTED         = 1 << 1,
+        WORDS_EXPORTED        = 1 << 2,
+        HAS_CONTRACTS         = 1 << 3,
+        HAS_XPUB              = 1 << 4,
+        HAS_POLYGON           = 1 << 5,
+        BACKUP_CODES_EXPORTED = 1 << 6,
     }
 }
 

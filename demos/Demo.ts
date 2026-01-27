@@ -1016,6 +1016,7 @@ class Demo {
                         <button class="export" data-wallet-id="${wallet.accountId}">Export</button>
                         <button class="export-file" data-wallet-id="${wallet.accountId}">File</button>
                         <button class="export-words" data-wallet-id="${wallet.accountId}">Words</button>
+                        <button class="export-backup-codes" data-wallet-id="${wallet.accountId}">B. Codes</button>
                         <button class="change-password" data-wallet-id="${wallet.accountId}">Ch. Pass.</button>
                         ${wallet.type !== WalletType.LEGACY
                             ? `<button class="add-account" data-wallet-id="${wallet.accountId}">+ Addr</button>`
@@ -1070,6 +1071,9 @@ class Demo {
         });
         document.querySelectorAll('button.export-words').forEach((element) => {
             element.addEventListener('click', async () => this.exportWords((element as HTMLElement).dataset.walletId!));
+        });
+        document.querySelectorAll('button.export-backup-codes').forEach((element) => {
+            element.addEventListener('click', async () => this.exportBackupCodes((element as HTMLElement).dataset.walletId!));
         });
         document.querySelectorAll('button.change-password').forEach((element) => {
             element.addEventListener('click',
@@ -1191,20 +1195,31 @@ class Demo {
         });
     }
 
+    public exportBackupCodes(accountId: string) {
+        this._export({
+            appName: 'Hub Demos',
+            accountId,
+            backupCodesOnly: true,
+        });
+    }
+
     private async _export(request: ExportRequest) {
         try {
             const result = await this.client.export(request, this._defaultBehavior);
             if (this.isRedirectResult(result)) return;
             console.log('Result', result);
-            if (result.fileExported) {
-                document.querySelector('#result')!.textContent = result.wordsExported
-                    ? 'Export sucessful'
-                    : 'File exported';
-            } else {
-                document.querySelector('#result')!.textContent = result.wordsExported
-                    ? 'Words exported'
-                    : 'nothing exported';
+            let resultText = 'Nothing exported';
+            if (result.fileExported && result.wordsExported) {
+                // combined flow
+                resultText = 'Export succesful (file + words)';
+            } else if (result.fileExported) {
+                resultText = 'File exported';
+            } else if (result.wordsExported) {
+                resultText = 'Words exported';
+            } else if (result.backupCodesExported) {
+                resultText = 'Backup Codes exported';
             }
+            document.querySelector('#result')!.textContent = resultText;
         } catch (e) {
             console.error(e);
             document.querySelector('#result')!.textContent = `Error: ${e.message || e}`;

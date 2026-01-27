@@ -40,8 +40,8 @@ export class WalletInfo {
         );
 
         return new WalletInfo(o.id, o.keyId, o.label, accounts, contracts, o.type,
-            o.keyMissing, o.fileExported, o.wordsExported, o.btcXPub, btcAddresses, polygonAddresses,
-            o.permissions);
+            o.keyMissing, o.fileExported, o.wordsExported, o.backupCodesExported, o.btcXPub, btcAddresses,
+            polygonAddresses, o.permissions);
     }
 
     public static async objectToAccountType(o: WalletInfoEntry, requestType: RequestType): Promise<Account> {
@@ -59,6 +59,7 @@ export class WalletInfo {
             type: o.type,
             fileExported: o.fileExported,
             wordsExported: o.wordsExported,
+            backupCodesExported: !!o.backupCodesExported,
             addresses: accountInfoEntries.map((entry) => AccountInfo.objectToAddressType(entry)),
             contracts: o.contracts.map((contract) => ContractInfoHelper.objectToContractType(contract)),
             btcAddresses: {
@@ -85,6 +86,7 @@ export class WalletInfo {
         public keyMissing: boolean = false,
         public fileExported: boolean = false,
         public wordsExported: boolean = false,
+        public backupCodesExported: boolean = false,
         public btcXPub?: string,
         public btcAddresses: {
             internal: BtcAddressInfo[],
@@ -206,6 +208,7 @@ export class WalletInfo {
             keyMissing: this.keyMissing,
             fileExported: this.fileExported,
             wordsExported: this.wordsExported,
+            backupCodesExported: this.backupCodesExported,
             btcXPub: this.btcXPub,
             btcAddresses: {
                 internal: this.btcAddresses.internal.map((btcAddressInfo) => btcAddressInfo.toObject()),
@@ -223,6 +226,7 @@ export class WalletInfo {
             type: this.type,
             fileExported: this.fileExported,
             wordsExported: this.wordsExported,
+            backupCodesExported: this.backupCodesExported,
             addresses: Array.from(this.accounts.values()).map((address) => address.toAddressType()),
             contracts: this.contracts.map((contract) => contract.toContractType()),
             btcAddresses: {
@@ -249,6 +253,7 @@ export class WalletInfo {
         if (this.keyMissing !== other.keyMissing) return false;
         if (this.fileExported !== other.fileExported) return false;
         if (this.wordsExported !== other.wordsExported) return false;
+        if (this.backupCodesExported !== other.backupCodesExported) return false;
         if (this.btcXPub !== other.btcXPub) return false;
 
         if (this.accounts.size !== other.accounts.size) return false;
@@ -308,6 +313,8 @@ export interface WalletInfoEntry {
     keyMissing: boolean;
     fileExported: boolean;
     wordsExported: boolean;
+    // The following were added over time, and might be undefined on older persisted entries in the WalletStore:
+    backupCodesExported?: boolean;
     btcXPub?: string;
     btcAddresses?: {
         internal: BtcAddressInfoEntry[],

@@ -362,6 +362,7 @@ export class RequestParser {
                     walletId: exportRequest.accountId,
                     fileOnly: exportRequest.fileOnly,
                     wordsOnly: exportRequest.wordsOnly,
+                    backupCodesOnly: exportRequest.backupCodesOnly,
                 } as ParsedExportRequest;
             case RequestType.RENAME:
                 const renameRequest = request as RenameRequest;
@@ -988,6 +989,7 @@ export class RequestParser {
                     accountId: exportRequest.walletId,
                     fileOnly: exportRequest.fileOnly,
                     wordsOnly: exportRequest.wordsOnly,
+                    backupCodesOnly: exportRequest.backupCodesOnly,
                 } as ExportRequest;
             case RequestType.RENAME:
                 const renameRequest = request as ParsedRenameRequest;

@@ -34,19 +34,24 @@ export default class ExportSuccess extends Vue {
         if (wallet) {
             wallet.fileExported = wallet.fileExported || this.keyguardResult.fileExported;
             wallet.wordsExported = wallet.wordsExported || this.keyguardResult.wordsExported;
+            wallet.backupCodesExported = wallet.backupCodesExported || this.keyguardResult.backupCodesExported;
 
             result = {
                 fileExported: wallet.fileExported,
                 wordsExported: wallet.wordsExported,
+                backupCodesExported: wallet.backupCodesExported,
             };
         } else {
             result = {
                 fileExported: this.keyguardResult.fileExported,
                 wordsExported: this.keyguardResult.wordsExported,
+                backupCodesExported: this.keyguardResult.backupCodesExported,
             };
         }
 
-        if (!this.keyguardResult.fileExported && !this.keyguardResult.wordsExported) {
+        if (!this.keyguardResult.fileExported
+            && !this.keyguardResult.wordsExported
+            && !this.keyguardResult.backupCodesExported) {
             this.$rpc.resolve(result);
             return;
         }
@@ -56,13 +61,15 @@ export default class ExportSuccess extends Vue {
         }
 
         if (this.keyguardResult.fileExported) {
-            if (this.keyguardResult.wordsExported) {
+            if (this.keyguardResult.wordsExported || this.keyguardResult.backupCodesExported) {
                 this.successMessage = this.$t('Account backed up!') as string;
             } else {
                 this.successMessage = this.$t('Login File saved!') as string;
             }
         } else if (this.keyguardResult.wordsExported) {
             this.successMessage = this.$t('Recovery Words exported!') as string;
+        } else if (this.keyguardResult.backupCodesExported) {
+            this.successMessage = this.$t('Backup Codes exported!') as string;
         }
         this.statusScreenState = StatusScreen.State.SUCCESS;
 

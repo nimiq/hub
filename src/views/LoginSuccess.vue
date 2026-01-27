@@ -101,18 +101,19 @@ export default class LoginSuccess extends Vue {
                                     this.keyguardResult.length === 1,
                                 );
                             }
+                            const { receiptsError, walletInfo } = collectionResult;
 
-                            if (collectionResult.receiptsError) {
-                                this.receiptsError = collectionResult.receiptsError;
+                            if (receiptsError) {
+                                this.receiptsError = receiptsError;
                             }
 
-                            collectionResult.walletInfo.fileExported = collectionResult.walletInfo.fileExported
-                                || keyResult.fileExported;
-                            collectionResult.walletInfo.wordsExported = collectionResult.walletInfo.wordsExported
-                                || keyResult.wordsExported;
+                            walletInfo.fileExported = walletInfo.fileExported || keyResult.fileExported;
+                            walletInfo.wordsExported = walletInfo.wordsExported || keyResult.wordsExported;
+                            walletInfo.backupCodesExported = walletInfo.backupCodesExported
+                                || keyResult.backupCodesExported;
 
                             if (keyResult.keyLabel) {
-                                collectionResult.walletInfo.label = keyResult.keyLabel;
+                                walletInfo.label = keyResult.keyLabel;
                             }
 
                             collectionResults.push(collectionResult);

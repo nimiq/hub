@@ -51,6 +51,7 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         keyMissing: true,
         fileExported: false,
         wordsExported: false,
+        backupCodesExported: false,
         btcXPub: 'xpub6H1LXWLaKsWFhvm6RVpEL9P4KfRZSW7abD2ttkWP3SSQvnyA8FSVqNTEcYFgJS2UaFcxupHiYkro49S8yGasTvXEYBVPamhGW'
             + '6cFJodrTHy',
         btcAddresses: { internal: [{ // Test that this address is ignored by the CookieJar and not encoded/decoded
@@ -98,6 +99,7 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         keyMissing: true,
         fileExported: true,
         wordsExported: false,
+        // backupCodesExported: undefined
         // btcXPub: undefined,
         // btcAddresses: { internal: [], external: [] },
         // polygonAddresses: [],
@@ -122,6 +124,7 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         keyMissing: true,
         fileExported: false,
         wordsExported: true,
+        backupCodesExported: true,
         // btcAddresses: { internal: [], external: [] },
         // polygonAddresses: [],
         // permissions: {},
@@ -153,6 +156,7 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         keyMissing: false,
         fileExported: true,
         wordsExported: true,
+        // backupCodesExported: undefined,
         // btcXPub: undefined,
         // btcAddresses: { internal: [], external: [] },
         // polygonAddresses: [],
@@ -177,6 +181,7 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         keyMissing: false,
         fileExported: false,
         wordsExported: false,
+        backupCodesExported: false,
         btcXPub: 'tpubD6NzVbkrYhZ4WLczPJWReQycCJdd6YVWXubbVUFnJ5KgU5MDQrD998ZJLNGbhd2pq7ZtDiPYTfJ7iBenLVQpYgSQqPjUsQeJX'
             + 'H8VQ8xA67D',
         // btcAddresses: { internal: [], external: [] },
@@ -211,6 +216,7 @@ const DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         keyMissing: false,
         fileExported: true,
         wordsExported: false,
+        backupCodesExported: true,
         // btcAddresses: { internal: [], external: [] },
         // polygonAddresses: [],
         // permissions: {},
@@ -245,6 +251,7 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         keyMissing: true,
         fileExported: false,
         wordsExported: false,
+        backupCodesExported: false,
         btcXPub: 'xpub6H1LXWLaKsWFhvm6RVpEL9P4KfRZSW7abD2ttkWP3SSQvnyA8FSVqNTEcYFgJS2UaFcxupHiYkro49S8yGasTvXEYBVPamhGW'
             + '6cFJodrTHy',
         btcAddresses: { internal: [], external: [] },
@@ -282,6 +289,7 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         keyMissing: true,
         fileExported: true,
         wordsExported: false,
+        backupCodesExported: false,
         // btcXPub: undefined,
         btcAddresses: { internal: [], external: [] },
         polygonAddresses: [],
@@ -306,6 +314,7 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         keyMissing: true,
         fileExported: false,
         wordsExported: true,
+        backupCodesExported: true,
         btcAddresses: { internal: [], external: [] },
         polygonAddresses: [],
         permissions: {},
@@ -337,6 +346,7 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         keyMissing: false,
         fileExported: true,
         wordsExported: true,
+        backupCodesExported: false,
         // btcXPub: undefined,
         btcAddresses: { internal: [], external: [] },
         polygonAddresses: [],
@@ -361,6 +371,7 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         keyMissing: false,
         fileExported: false,
         wordsExported: false,
+        backupCodesExported: false,
         btcXPub: 'tpubD6NzVbkrYhZ4WLczPJWReQycCJdd6YVWXubbVUFnJ5KgU5MDQrD998ZJLNGbhd2pq7ZtDiPYTfJ7iBenLVQpYgSQqPjUsQeJX'
             + 'H8VQ8xA67D',
         btcAddresses: { internal: [], external: [] },
@@ -395,6 +406,7 @@ const OUT_DUMMY_WALLET_OBJECTS: WalletInfoEntry[] = [
         keyMissing: false,
         fileExported: true,
         wordsExported: false,
+        backupCodesExported: true,
         btcAddresses: { internal: [], external: [] },
         polygonAddresses: [],
         permissions: {},
@@ -414,6 +426,7 @@ const BYTES = [
      *  hasContracts = false,
      *  hasXPub = true,
      *  hasPolygon = true,
+     *  backupCodesExported = false,
      */
     0b00110001,
     0x0f, 0xe6, 0x06, 0x7b, 0x13, 0x8f, // wallet id
@@ -450,6 +463,8 @@ const BYTES = [
      *  wordsExported = false,
      *  hasContracts = true,
      *  hasXPub = false,
+     *  hasPolygon = false,
+     *  backupCodesExported = false,
      */
     0b00001011,
     0x1e, 0xe3, 0xd9, 0x26, 0xa4, 0x9d, // wallet id
@@ -476,7 +491,17 @@ const BYTES = [
 
     // wallet 3 (LEGACY)
     41, // account label length (10), wallet type (1)
-    0b00000101, // Status byte: keyMissing = true, fileExported = false, wordsExported = true, hasContracts = false
+    /**
+     * Status byte, least to most significant bit:
+     *  keyMissing = true,
+     *  fileExported = false,
+     *  wordsExported = true,
+     *  hasContracts = false,
+     *  hasXPub = false,
+     *  hasPolygon = false,
+     *  backupCodesExported = true,
+     */
+    0b01000101,
     0x29, 0x78, 0xbf, 0x29, 0xb3, 0x77, // wallet id
 
         // account
@@ -492,6 +517,8 @@ const BYTES = [
      *  wordsExported = true,
      *  hasContracts = false,
      *  hasXPub = false,
+     *  hasPolygon = false,
+     *  backupCodesExported = false,
      */
     0b00000110,
     0x78, 0xbf, 0x29, 0xb3, 0x77, 0xe7, // wallet id
@@ -517,6 +544,8 @@ const BYTES = [
      *  wordsExported = false,
      *  hasContracts = false,
      *  hasXPub = true,
+     *  hasPolygon = false,
+     *  backupCodesExported = false,
      */
     0b00010000,
     0xa5, 0x83, 0x2a, 0x3b, 0x94, 0x89, // wallet id
@@ -536,7 +565,17 @@ const BYTES = [
 
     // wallet 6 (LEGACY)
     41, // account label length (10), wallet type (1)
-    0b00001010, // Status byte: keyMissing = false, fileExported = true, wordsExported = false, hasContracts = true
+    /**
+     * Status byte, least to most significant bit:
+     *  keyMissing = false,
+     *  fileExported = true,
+     *  wordsExported = false,
+     *  hasContracts = true,
+     *  hasXPub = false,
+     *  hasPolygon = false,
+     *  backupCodesExported = true,
+     */
+    0b01001010,
     0xd5, 0x15, 0xaa, 0x19, 0xc4, 0xf7, // wallet id
 
         // account

@@ -62,6 +62,7 @@ export class CookieDecoder {
         const keyMissing = (statusByte & CookieJar.StatusFlags.KEY_MISSING) > 0;
         const fileExported = (statusByte & CookieJar.StatusFlags.FILE_EXPORTED) > 0;
         const wordsExported = (statusByte & CookieJar.StatusFlags.WORDS_EXPORTED) > 0;
+        const backupCodesExported = (statusByte & CookieJar.StatusFlags.BACKUP_CODES_EXPORTED) > 0;
         const hasContracts = (statusByte & CookieJar.StatusFlags.HAS_CONTRACTS) > 0;
         const hasXPub = (statusByte & CookieJar.StatusFlags.HAS_XPUB) > 0;
         const hasPolygon = (statusByte & CookieJar.StatusFlags.HAS_POLYGON) > 0;
@@ -91,6 +92,7 @@ export class CookieDecoder {
                 keyMissing,
                 fileExported,
                 wordsExported,
+                backupCodesExported,
                 btcAddresses: { internal: [], external: [] },
                 polygonAddresses: [],
                 permissions: {},
@@ -129,6 +131,7 @@ export class CookieDecoder {
             keyMissing,
             fileExported,
             wordsExported,
+            backupCodesExported,
             btcXPub,
             btcAddresses: { internal: [], external: [] },
             polygonAddresses,

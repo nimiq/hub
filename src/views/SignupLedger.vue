@@ -205,8 +205,11 @@ export default class SignupLedger extends Vue {
     ) {
         this.walletInfo = walletInfo;
         if (this.cancelled) return;
+        // Keyguard backups are neither available nor desirable for Ledger accounts. Just set all exported flags to true
+        // to avoid prompts for creating a backup.
         this.walletInfo.fileExported = true;
         this.walletInfo.wordsExported = true;
+        this.walletInfo.backupCodesExported = true;
         if (walletInfo.accounts.size > 0) {
             await WalletStore.Instance.put(walletInfo);
         }

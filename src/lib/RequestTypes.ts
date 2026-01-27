@@ -139,6 +139,7 @@ export interface ParsedRenameRequest extends ParsedSimpleRequest {
 export interface ParsedExportRequest extends ParsedSimpleRequest {
     fileOnly?: boolean;
     wordsOnly?: boolean;
+    backupCodesOnly?: boolean;
 }
 
 export interface ParsedCreateCashlinkRequest extends ParsedBasicRequest {

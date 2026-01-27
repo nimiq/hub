@@ -20,6 +20,7 @@ export default class Export extends Vue {
             keyLabel: wallet.labelForKeyguard,
             fileOnly: this.request.fileOnly,
             wordsOnly: this.request.wordsOnly,
+            backupCodesOnly: this.request.backupCodesOnly,
         };
 
         const client = this.$rpc.createKeyguardClient(true);

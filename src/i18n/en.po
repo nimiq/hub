@@ -39,7 +39,7 @@ msgstr ""
 msgid "A 100% free and self-custodial web wallet for NIM, BTC and USDC."
 msgstr ""
 
-#: src/views/ExportSuccess.vue:60
+#: src/views/ExportSuccess.vue:65
 msgid "Account backed up!"
 msgstr ""
 
@@ -88,7 +88,7 @@ msgstr ""
 msgid "Address Added"
 msgstr ""
 
-#: src/views/LoginSuccess.vue:122
+#: src/views/LoginSuccess.vue:123
 msgid "Address detection failed. Retrying..."
 msgstr ""
 
@@ -187,6 +187,10 @@ msgstr ""
 
 #: src/views/Migrate.vue:67
 msgid "Backed Up"
+msgstr ""
+
+#: src/views/ExportSuccess.vue:72
+msgid "Backup Codes exported!"
 msgstr ""
 
 #: src/views/AddVestingContract.vue:28
@@ -450,8 +454,8 @@ msgid "Contacts are not affected."
 msgstr ""
 
 #: src/components/NotEnoughCookieSpace.vue:8
-#: src/views/LoginSuccess.vue:178
-#: src/views/LoginSuccess.vue:208
+#: src/views/LoginSuccess.vue:179
+#: src/views/LoginSuccess.vue:209
 #: src/views/SignupLedger.vue:143
 msgid "Continue"
 msgstr ""
@@ -555,7 +559,7 @@ msgstr ""
 msgid "Fee"
 msgstr ""
 
-#: src/views/LoginSuccess.vue:131
+#: src/views/LoginSuccess.vue:132
 #: src/views/SignupLedger.vue:108
 msgid "Fetching Addresses Failed"
 msgstr ""
@@ -642,7 +646,7 @@ msgid ""
 "crypto was easy"
 msgstr ""
 
-#: src/views/LoginSuccess.vue:189
+#: src/views/LoginSuccess.vue:190
 #: src/views/SignupLedger.vue:124
 msgid "Imported {count} address so far... | Imported {count} addresses so far..."
 msgstr ""
@@ -704,7 +708,7 @@ msgstr ""
 msgid "Login"
 msgstr ""
 
-#: src/views/ExportSuccess.vue:62
+#: src/views/ExportSuccess.vue:67
 msgid "Login File saved!"
 msgstr ""
 
@@ -892,7 +896,7 @@ msgstr ""
 msgid "Purple Address"
 msgstr ""
 
-#: src/views/ExportSuccess.vue:65
+#: src/views/ExportSuccess.vue:70
 msgid "Recovery Words exported!"
 msgstr ""
 
@@ -943,7 +947,7 @@ msgstr ""
 
 #: src/views/ActivatePolygonSuccess.vue:139
 #: src/views/BitcoinSyncBaseView.vue:72
-#: src/views/LoginSuccess.vue:133
+#: src/views/LoginSuccess.vue:134
 #: src/views/SetupSwapSuccess.vue:672
 #: src/views/SignupLedger.vue:145
 msgid "Retry"
@@ -1005,7 +1009,7 @@ msgstr ""
 msgid "Something went wrong with your request. Please try again."
 msgstr ""
 
-#: src/views/LoginSuccess.vue:174
+#: src/views/LoginSuccess.vue:175
 msgid "Space exceeded"
 msgstr ""
 
@@ -1091,7 +1095,7 @@ msgstr ""
 msgid "Syncing with Polygon network..."
 msgstr ""
 
-#: src/views/LoginSuccess.vue:132
+#: src/views/LoginSuccess.vue:133
 #: src/views/SignupLedger.vue:134
 msgid "Syncing with the network failed: {error}"
 msgstr ""
@@ -1204,7 +1208,7 @@ msgstr ""
 msgid "Unfortunately, due to restrictions of Safari you cannot add more accounts and/or addresses. Please log out of unused accounts to free up space."
 msgstr ""
 
-#: src/views/LoginSuccess.vue:176
+#: src/views/LoginSuccess.vue:177
 msgid "Unfortunately, due to space restrictions of Safari and IOS, this account cannot be stored properly. Please free up space by logging out of other accounts."
 msgstr ""
 
@@ -1243,7 +1247,7 @@ msgid ""
 "or Recovery Words."
 msgstr ""
 
-#: src/views/LoginSuccess.vue:207
+#: src/views/LoginSuccess.vue:208
 #: src/views/SignupLedger.vue:132
 msgid "Used addresses without balance might have been missed."
 msgstr ""
@@ -1262,13 +1266,13 @@ msgid "Vesting Contract"
 msgstr ""
 
 #: src/views/SignupLedger.vue:112
-#: src/views/SignupSuccess.vue:96
+#: src/views/SignupSuccess.vue:97
 msgid ""
 "Wallet successfully\n"
 "created"
 msgstr ""
 
-#: src/views/LoginSuccess.vue:222
+#: src/views/LoginSuccess.vue:223
 msgid "Welcome back! | Your Accounts are ready."
 msgstr ""
 
@@ -1321,7 +1325,7 @@ msgstr ""
 msgid "Your account will be used for approving only."
 msgstr ""
 
-#: src/views/LoginSuccess.vue:205
+#: src/views/LoginSuccess.vue:206
 #: src/views/SignupLedger.vue:106
 msgid ""
 "Your Addresses may be\n"
@@ -1343,7 +1347,7 @@ msgstr ""
 msgid "Your message is signed."
 msgstr ""
 
-#: src/views/LoginSuccess.vue:216
+#: src/views/LoginSuccess.vue:217
 #: src/views/SimpleSuccess.vue:31
 msgid "Your password was changed."
 msgstr ""

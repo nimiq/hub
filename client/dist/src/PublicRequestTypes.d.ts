@@ -452,6 +452,7 @@ export interface Account {
     type: AccountType;
     fileExported: boolean;
     wordsExported: boolean;
+    backupCodesExported: boolean;
     addresses: Address[];
     contracts: Contract[];
     btcAddresses: {
@@ -465,10 +466,12 @@ export interface Account {
 export interface ExportRequest extends SimpleRequest {
     fileOnly?: boolean;
     wordsOnly?: boolean;
+    backupCodesOnly?: boolean;
 }
 export interface ExportResult {
     fileExported: boolean;
     wordsExported: boolean;
+    backupCodesExported: boolean;
 }
 export interface RenameRequest extends SimpleRequest {
     address?: string;
