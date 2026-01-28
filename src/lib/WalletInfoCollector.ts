@@ -15,7 +15,6 @@ import {
 } from './LabelingMachine';
 import { VestingContractInfo } from './ContractInfo';
 import { BtcAddressInfo } from './bitcoin/BtcAddressInfo';
-import { loadBitcoinJS } from './bitcoin/BitcoinJSLoader';
 import { getElectrumClient } from './bitcoin/ElectrumClient';
 import { Receipt as BtcReceipt } from '@nimiq/electrum-client';
 import {
@@ -126,15 +125,18 @@ export default class WalletInfoCollector {
             throw new Error('Bitcoin is disabled');
         }
 
-        const [electrum] = await Promise.all([
+        const [
+            { bip32: BitcoinJs_bip32 }, // tslint:disable-line variable-name
+            electrum,
+        ] = await Promise.all([
+            import('bitcoinjs-lib'),
             getElectrumClient(),
-            loadBitcoinJS(),
-        ]);
+        ] as const);
 
         const xPubType = ['ypub', 'upub'].includes(xpub.substr(0, 4)) ? NESTED_SEGWIT : NATIVE_SEGWIT;
 
         const network = getBtcNetwork(xPubType);
-        const extendedKey = BitcoinJS.bip32.fromBase58(xpub, network);
+        const extendedKey = BitcoinJs_bip32.fromBase58(xpub, network);
 
         /**
          * According to https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki#account-discovery
@@ -237,9 +239,6 @@ export default class WalletInfoCollector {
             ACCOUNT_MAX_ALLOWED_ADDRESS_GAP, walletType, keyId, keyguardCookieEncryptionKey);
 
         try {
-            if (Config.enableBitcoin) {
-                await loadBitcoinJS();
-            }
             // Start BTC address detection
             const bitcoinAddresses: {
                 internal: BtcAddressInfo[],

@@ -1,20 +1,21 @@
-import { BIP84_ADDRESS_PREFIX } from './BitcoinConstants';
-import { loadBitcoinJS } from './BitcoinJSLoader';
 import Config from 'config';
+import { BIP84_ADDRESS_PREFIX } from './BitcoinConstants';
 
 export async function decodeBtcScript(script: string) {
-    // note that buffer is marked as external module in vue.config.js and internally, the buffer bundled
-    // with BitcoinJS is used, therefore we retrieve it after having BitcoinJS loaded.
-    // TODO change this when we don't prebuild BitcoinJS anymore
-    await loadBitcoinJS();
-    const Buffer = await import('buffer').then((module) => module.Buffer);
+    const [
+        { address: BitcoinJs_address, script: BitcoinJs_script }, // tslint:disable-line variable-name
+        { Buffer },
+    ] = await Promise.all([
+        import('bitcoinjs-lib'),
+        import('buffer'),
+    ] as const);
 
     const error = new Error('Invalid BTC HTLC script');
 
     if (!script || typeof script !== 'string' || !script.length) throw error;
-    const chunks = BitcoinJS.script.decompile(Buffer.from(script, 'hex'));
+    const chunks = BitcoinJs_script.decompile(Buffer.from(script, 'hex'));
     if (!chunks) throw error;
-    const asm = BitcoinJS.script.toASM(chunks).split(' ');
+    const asm = BitcoinJs_script.toASM(chunks).split(' ');
 
     let branchesVerifiedIndividually = false;
 
@@ -45,7 +46,7 @@ export async function decodeBtcScript(script: string) {
     // Check timeout
     // Bitcoin HTLC timeouts are backdated 1 hour, to account for Bitcoin's
     // minimum age for valid transaction locktimes (6 blocks).
-    const timeoutTimestamp = BitcoinJS.script.number.decode(Buffer.from(asm[++i], 'hex')) + (60 * 60);
+    const timeoutTimestamp = BitcoinJs_script.number.decode(Buffer.from(asm[++i], 'hex')) + (60 * 60);
     if (asm[++i] !== 'OP_CHECKLOCKTIMEVERIFY' || asm[++i] !== 'OP_DROP') throw error;
 
     // Check refund address
@@ -64,10 +65,10 @@ export async function decodeBtcScript(script: string) {
     if (asm.length !== ++i) throw error;
     /* eslint-enable no-plusplus */
 
-    const refundAddress = BitcoinJS.address
+    const refundAddress = BitcoinJs_address
         .toBech32(Buffer.from(refundAddressBytes, 'hex'), 0, BIP84_ADDRESS_PREFIX[Config.bitcoinNetwork]);
 
-    const redeemAddress = BitcoinJS.address
+    const redeemAddress = BitcoinJs_address
         .toBech32(Buffer.from(redeemAddressBytes, 'hex'), 0, BIP84_ADDRESS_PREFIX[Config.bitcoinNetwork]);
 
     return {

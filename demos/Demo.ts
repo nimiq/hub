@@ -26,11 +26,6 @@ import { Utf8Tools } from '@nimiq/utils';
 import { WalletType } from '../src/lib/Constants';
 import { WalletStore } from '../src/lib/WalletStore';
 
-// BitcoinJS is defined as a global variable in BitcoinJS.min.js loaded by demos/index.html
-declare global {
-    const BitcoinJS: typeof import('bitcoinjs-lib');
-}
-
 class Demo {
     public static run() {
         const keyguardOrigin = location.origin === 'https://hub.v2.nimiq-testnet.com'
@@ -469,6 +464,8 @@ class Demo {
         });
 
         document.querySelector('button#sign-btc-transaction')!.addEventListener('click', async () => {
+            const { address: BitcoinJs_address, networks: BitcoinJs_networks } = await import('bitcoinjs-lib');
+
             const $radio = document.querySelector('input[name="address"]:checked');
             if (!$radio) {
                 alert('You have no account to send a tx from, create an account first (signup)');
@@ -495,7 +492,7 @@ class Demo {
                     address: senderAddress,
                     transactionHash: 'ef4aaf6087d0cc48ff09355d715c257078467ca4d9dd75a20824e70a78fb43cc',
                     outputIndex: 0,
-                    outputScript: BitcoinJS.address.toOutputScript(senderAddress, BitcoinJS.networks.testnet).toString('hex'),
+                    outputScript: BitcoinJs_address.toOutputScript(senderAddress, BitcoinJs_networks.testnet).toString('hex'),
                     value: Math.round(0.010 * 1e8),
                 }],
                 output: {
@@ -599,6 +596,8 @@ class Demo {
         });
 
         document.querySelector('button#setup-swap.btc-to-nim')!.addEventListener('click', async () => {
+            const { address: BitcoinJs_address, networks: BitcoinJs_networks } = await import('bitcoinjs-lib');
+
             const $radio = document.querySelector('input[name="address"]:checked');
             if (!$radio) {
                 alert('You have no account to swap with, create an account first (signup)');
@@ -633,7 +632,7 @@ class Demo {
                         address: refundAddress,
                         transactionHash: 'ef4aaf6087d0cc48ff09355d715c257078467ca4d9dd75a20824e70a78fb43cc',
                         outputIndex: 0,
-                        outputScript: BitcoinJS.address.toOutputScript(refundAddress, BitcoinJS.networks.testnet).toString('hex'),
+                        outputScript: BitcoinJs_address.toOutputScript(refundAddress, BitcoinJs_networks.testnet).toString('hex'),
                         value: 0.00076136 * 1e8,
                     }],
                     output: {

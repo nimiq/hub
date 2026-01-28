@@ -48,7 +48,6 @@ import { RequestParser } from '../lib/RequestParser';
 import staticStore, { Static } from '../lib/StaticStore';
 import { WalletInfo } from '../lib/WalletInfo';
 import { BTC_NETWORK_TEST } from '../lib/bitcoin/BitcoinConstants';
-import { loadBitcoinJS } from '../lib/bitcoin/BitcoinJSLoader';
 import { decodeBtcScript } from '../lib/bitcoin/BitcoinHtlcUtils';
 import LedgerSwapProxy, { LedgerSwapProxyMarker } from '../lib/LedgerSwapProxy';
 import { ERROR_CANCELED } from '../lib/Constants';
@@ -173,13 +172,15 @@ export default class RefundSwapLedger extends RefundSwap {
         } else if (this.request.kind === RequestType.SIGN_BTC_TRANSACTION) {
             // Bitcoin transaction
 
+            // tslint:disable-next-line variable-name
+            const { Transaction: BitcoinJs_Transaction, script: BitcoinJs_script } = await import('bitcoinjs-lib');
+
             if (!('serializedTx' in this.sideResult && !!this.sideResult.serializedTx)) {
                 this.$rpc.reject(new Error('Unexpected: Bitcoin transaction not signed'));
                 return;
             }
 
-            await loadBitcoinJS(); // normally it's already loaded at this point, if user didn't reload the page.
-            const signedBitcoinTransaction = BitcoinJS.Transaction.fromHex(this.sideResult.serializedTx);
+            const signedBitcoinTransaction = BitcoinJs_Transaction.fromHex(this.sideResult.serializedTx);
 
             // set htlc witness for redeeming the BTC htlc
 
@@ -188,14 +189,14 @@ export default class RefundSwapLedger extends RefundSwap {
             // createTransaction.js creation of the witness towards the end of createTransaction)
             const [inputSignature, signerPubKey] = htlcInput.witness;
 
-            const witnessBytes = BitcoinJS.script.fromASM([
+            const witnessBytes = BitcoinJs_script.fromASM([
                 inputSignature.toString('hex'),
                 signerPubKey.toString('hex'),
                 'OP_0', // OP_0 (false) activates the refund branch in the HTLC script
                 (this.request as ParsedSignBtcTransactionRequest).inputs[0].witnessScript,
             ].join(' '));
 
-            const witnessStack = BitcoinJS.script.toStack(witnessBytes);
+            const witnessStack = BitcoinJs_script.toStack(witnessBytes);
             signedBitcoinTransaction.setWitness(0, witnessStack);
 
             const result: SignedBtcTransaction = {
@@ -251,6 +252,15 @@ export default class RefundSwapLedger extends RefundSwap {
             this.$router.replace({ name: `${RequestType.SIGN_TRANSACTION}-ledger` });
         } else {
             // Bitcoin request
+
+            const [
+                { address: BitcoinJs_address, networks: BitcoinJs_networks }, // tslint:disable-line variable-name
+                { Buffer },
+            ] = await Promise.all([
+                import('bitcoinjs-lib'),
+                import('buffer'),
+            ] as const);
+
             const { walletId: accountId } = this.request as ParsedRefundSwapRequest;
             const { appName, inputs: [htlcInput], recipientOutput: output } = request;
 
@@ -260,15 +270,10 @@ export default class RefundSwapLedger extends RefundSwap {
             }
 
             this.state = this.State.SYNCING;
-            await loadBitcoinJS();
-            // note that buffer is marked as external module in vue.config.js and internally, the buffer bundled with
-            // BitcoinJS is used, therefore we retrieve it after having BitcoinJS loaded.
-            // TODO change this when we don't prebuild BitcoinJS anymore
-            const Buffer = await import('buffer').then((module) => module.Buffer);
             const bitcoinNetwork = Config.bitcoinNetwork === BTC_NETWORK_TEST
-                ? BitcoinJS.networks.testnet
-                : BitcoinJS.networks.bitcoin;
-            const htlcAddress = BitcoinJS.address.fromOutputScript(
+                ? BitcoinJs_networks.testnet
+                : BitcoinJs_networks.bitcoin;
+            const htlcAddress = BitcoinJs_address.fromOutputScript(
                 Buffer.from(Nimiq.BufferUtils.fromAny(htlcInput.outputScript)),
                 bitcoinNetwork,
             );

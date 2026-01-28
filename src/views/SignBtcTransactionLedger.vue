@@ -68,7 +68,6 @@ import { RequestType } from '../../client/PublicRequestTypes';
 import { SignedBtcTransaction } from '../../client/PublicRequestTypes';
 import { ERROR_CANCELED } from '../lib/Constants';
 import { WalletInfo } from '../lib/WalletInfo';
-import { loadBitcoinJS } from '../lib/bitcoin/BitcoinJSLoader';
 import { prepareBitcoinTransactionForLedgerSigning } from '../lib/bitcoin/BitcoinLedgerUtils';
 import { BitcoinTransactionInfo } from '../lib/bitcoin/BitcoinUtils';
 
@@ -89,8 +88,8 @@ export default class SignBtcTransactionLedger extends SignBtcTransaction {
 
     protected async created() {
         if (this.request.kind !== RequestType.SIGN_BTC_TRANSACTION) return; // see parent class
-        // preload BitcoinJS
-        loadBitcoinJS();
+        // preload bitcoinjs-lib
+        import('bitcoinjs-lib');
         // Note that vue-class-component transforms the inheritance into a merge of vue mixins where each class retains
         // its lifecycle hooks, therefore we don't need to call super.created() here.
         const { inputs, output, changeOutput } = this.request;
@@ -121,6 +120,9 @@ export default class SignBtcTransactionLedger extends SignBtcTransaction {
     }
 
     protected async _signBtcTransaction(transactionInfo: BitcoinTransactionInfo, walletInfo: WalletInfo) {
+        // tslint:disable-next-line variable-name
+        const { Transaction: BitcoinJs_Transaction } = await import('bitcoinjs-lib');
+
         // If user left this view in the mean time, don't continue signing the transaction
         if (this._isDestroyed) return;
 
@@ -156,8 +158,7 @@ export default class SignBtcTransactionLedger extends SignBtcTransaction {
         // If user left this view in the mean time, don't resolve
         if (this._isDestroyed) return;
 
-        await loadBitcoinJS();
-        const signedTransaction = BitcoinJS.Transaction.fromHex(signedTransactionHex);
+        const signedTransaction = BitcoinJs_Transaction.fromHex(signedTransactionHex);
 
         const result: SignedBtcTransaction = {
             serializedTx: signedTransactionHex,

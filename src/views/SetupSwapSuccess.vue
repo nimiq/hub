@@ -24,7 +24,6 @@ import { SetupSwapResult, SignedBtcTransaction, SignedPolygonTransaction } from 
 import { Static } from '../lib/StaticStore';
 import { ParsedSetupSwapRequest } from '../lib/RequestTypes';
 import Config from 'config';
-import { loadBitcoinJS } from '../lib/bitcoin/BitcoinJSLoader';
 import { getElectrumClient } from '../lib/bitcoin/ElectrumClient';
 import { decodeBtcScript } from '../lib/bitcoin/BitcoinHtlcUtils';
 import { WalletInfo } from '../lib/WalletInfo';
@@ -58,12 +57,12 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
     protected async mounted() {
         Promise.all([
             // no need to preload the Nimiq library, it's available by default
-            // if BTC is involved preload BitcoinJS
+            // if BTC is involved preload bitcoinjs-lib
             this.request.fund.type === SwapAsset.BTC || this.request.redeem.type === SwapAsset.BTC
-                ? loadBitcoinJS() : null,
+                ? import('bitcoinjs-lib') : null,
             // if we need to fetch the tx from the network, preload the electrum client
             this.request.redeem.type === SwapAsset.BTC ? getElectrumClient() : null,
-        ]).catch(() => void 0);
+        ] as const).catch(() => void 0);
 
         // use mounted instead of created to ensure that SetupSwapLedger has the chance to run its created hook before.
         if (!await this._shouldConfirmSwap()) {
@@ -214,7 +213,6 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
 
         if (confirmedSwap.from.asset === SwapAsset.BTC || confirmedSwap.to.asset === SwapAsset.BTC) {
             const { script: btcHtlcScript } = confirmedSwap.contracts[SwapAsset.BTC]!.htlc as BtcHtlcDetails;
-            await loadBitcoinJS();
             const decodedBtcHtlc = await decodeBtcScript(btcHtlcScript);
 
             if (hashRoot && decodedBtcHtlc.hashRoot !== hashRoot) {

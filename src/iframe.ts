@@ -14,7 +14,6 @@ import {
 } from '../client/PublicRequestTypes';
 import Cashlink from './lib/Cashlink';
 import { CashlinkStore } from './lib/CashlinkStore';
-import { loadBitcoinJS } from './lib/bitcoin/BitcoinJSLoader';
 import {
     ERROR_NO_XPUB,
     EXTERNAL_INDEX, INTERNAL_INDEX,
@@ -133,8 +132,6 @@ class IFrameApi {
         if (!wallet.btcXPub) {
             throw new Error(ERROR_NO_XPUB);
         }
-
-        await loadBitcoinJS();
 
         const xPubType = ['ypub', 'upub'].includes(wallet.btcXPub.substr(0, 4)) ? NESTED_SEGWIT : NATIVE_SEGWIT;
 

@@ -1,10 +1,9 @@
 import Config from 'config';
 import { BTC_NETWORK_MAIN } from './BitcoinConstants';
-import { loadBitcoinJS } from './BitcoinJSLoader';
 
 // Import only types to avoid bundling of lazy-loaded libs.
 import type { ElectrumClient, ElectrumClientOptions } from '@nimiq/electrum-client';
-import type { Transaction as BitcoinJsTransaction } from 'bitcoinjs-lib';
+import type { Transaction as BitcoinJs_Transaction } from 'bitcoinjs-lib';
 
 let electrumClientPromise: Promise<ElectrumClient> | null = null;
 
@@ -14,11 +13,6 @@ let electrumClientPromise: Promise<ElectrumClient> | null = null;
  */
 export async function getElectrumClient(waitForConsensus: boolean = true) {
     electrumClientPromise = electrumClientPromise || (async () => {
-        // @nimiq/electrum-client already depends on a globally available BitcoinJS,
-        // so we need to load it first.
-        // TODO (pre)load electrum client in parallel
-        await loadBitcoinJS();
-
         const { GenesisConfig, Network, ElectrumClient: Client } = await import(
             /*webpackChunkName: "electrum-client"*/ '@nimiq/electrum-client');
 
@@ -70,7 +64,7 @@ export async function getElectrumClient(waitForConsensus: boolean = true) {
     return client;
 }
 
-export async function fetchTransaction(transactionHash: string): Promise<BitcoinJsTransaction> {
+export async function fetchTransaction(transactionHash: string): Promise<BitcoinJs_Transaction> {
     const [electrum, transactionFromPlain] = await Promise.all([
         getElectrumClient(),
         import(/*webpackChunkName: "electrum-client"*/ '@nimiq/electrum-client')

@@ -21,7 +21,6 @@ import KeyguardClient from '@nimiq/keyguard-client';
 import { labelAddress, labelKeyguardAccount } from '@/lib/LabelingMachine';
 import { i18n } from '../i18n/i18n-setup';
 import { deriveAddressesFromXPub } from '../lib/bitcoin/BitcoinUtils';
-import { loadBitcoinJS } from '../lib/bitcoin/BitcoinJSLoader';
 import { INTERNAL_INDEX, EXTERNAL_INDEX, BTC_ACCOUNT_MAX_ALLOWED_ADDRESS_GAP } from '../lib/bitcoin/BitcoinConstants';
 import { PolygonAddressInfo } from '../lib/polygon/PolygonAddressInfo';
 import { RequestType } from '../../client/PublicRequestTypes';
@@ -51,9 +50,6 @@ export default class SignupSuccess extends Vue {
         );
 
         // Derive initial BTC addresses
-        if (Config.enableBitcoin) {
-            await loadBitcoinJS();
-        }
         const bitcoinXPub = this.keyguardResult[0].bitcoinXPub;
         const btcAddresses = Config.enableBitcoin && bitcoinXPub
             ? {

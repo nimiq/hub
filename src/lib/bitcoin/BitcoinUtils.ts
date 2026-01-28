@@ -1,5 +1,11 @@
 import Config from 'config';
 import {
+    bip32 as BitcoinJs_bip32,
+    networks as BitcoinJs_networks,
+    payments as BitcoinJs_payments,
+} from 'bitcoinjs-lib';
+import type { Network as BitcoinJs_Network, BIP32Interface as BitcoinJs_Bip32Interface } from 'bitcoinjs-lib';
+import {
     BTC_NETWORK_MAIN,
     BTC_NETWORK_TEST,
     NESTED_SEGWIT,
@@ -21,13 +27,13 @@ export type BitcoinTransactionInfo = Omit<KeyguardBitcoinTransactionInfo, 'chang
 };
 
 export function getBtcNetwork(addressType = Config.bitcoinAddressType) {
-    let network: BitcoinJS.Network;
+    let network: BitcoinJs_Network;
     switch (Config.bitcoinNetwork) {
         case BTC_NETWORK_MAIN:
-            network = BitcoinJS.networks.bitcoin;
+            network = BitcoinJs_networks.bitcoin;
             break;
         case BTC_NETWORK_TEST:
-            network = BitcoinJS.networks.testnet;
+            network = BitcoinJs_networks.testnet;
             break;
         default:
             throw new Error('Invalid bitcoinNetwork configuration');
@@ -43,14 +49,14 @@ export function getBtcNetwork(addressType = Config.bitcoinAddressType) {
 export function publicKeyToPayment(publicKey: Buffer, addressType = Config.bitcoinAddressType) {
     switch (addressType) {
         case NESTED_SEGWIT:
-            return BitcoinJS.payments.p2sh({
-                redeem: BitcoinJS.payments.p2wpkh({
+            return BitcoinJs_payments.p2sh({
+                redeem: BitcoinJs_payments.p2wpkh({
                     pubkey: publicKey,
                     network: getBtcNetwork(),
                 }),
             });
         case NATIVE_SEGWIT:
-            return BitcoinJS.payments.p2wpkh({
+            return BitcoinJs_payments.p2wpkh({
                 pubkey: publicKey,
                 network: getBtcNetwork(),
             });
@@ -64,16 +70,16 @@ export function satoshisToCoins(satoshis: number) {
 }
 
 export function deriveAddressesFromXPub(
-    xpub: BitcoinJS.BIP32Interface | string,
+    xpub: BitcoinJs_Bip32Interface | string,
     derivationPath: number[],
     startIndex = 0,
     count = BTC_ACCOUNT_MAX_ALLOWED_ADDRESS_GAP,
     addressType = Config.bitcoinAddressType,
 ): BtcAddressInfo[] {
-    let extendedKey: BitcoinJS.BIP32Interface;
+    let extendedKey: BitcoinJs_Bip32Interface;
     if (typeof xpub === 'string') {
         const network = getBtcNetwork(addressType);
-        extendedKey = BitcoinJS.bip32.fromBase58(xpub, network);
+        extendedKey = BitcoinJs_bip32.fromBase58(xpub, network);
     } else {
         extendedKey = xpub;
     }

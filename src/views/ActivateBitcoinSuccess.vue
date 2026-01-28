@@ -15,7 +15,6 @@ import StatusScreen from '../components/StatusScreen.vue';
 import GlobalClose from '../components/GlobalClose.vue';
 import { deriveAddressesFromXPub } from '../lib/bitcoin/BitcoinUtils';
 import { BTC_ACCOUNT_MAX_ALLOWED_ADDRESS_GAP, EXTERNAL_INDEX, INTERNAL_INDEX } from '../lib/bitcoin/BitcoinConstants';
-import { loadBitcoinJS } from '../lib/bitcoin/BitcoinJSLoader';
 import { RequestType } from '../../client/PublicRequestTypes';
 
 @Component({components: {StatusScreen, SmallPage, GlobalClose}}) // including components used in parent class
@@ -52,8 +51,6 @@ export default class ActivateBitcoinSuccess extends BitcoinSyncBaseView {
                 ? this.State.TRANSITION_SYNCING // set ui state from which to transition to SYNCING state
                 : this.State.SYNCING;
             this.useDarkSyncStatusScreen = walletInfo.type === WalletType.LEDGER;
-
-            await loadBitcoinJS();
 
             const btcAddresses = {
                 external: deriveAddressesFromXPub(

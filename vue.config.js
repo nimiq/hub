@@ -1,6 +1,8 @@
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 // const SriPlugin = require('webpack-subresource-integrity');
 const WriteFileWebpackPlugin = require('write-file-webpack-plugin');
+const ProvidePlugin = require('webpack').ProvidePlugin;
+const DefinePlugin = require('webpack').DefinePlugin;
 const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
 const path = require('path');
 const fs = require('fs');
@@ -34,13 +36,6 @@ const browserWarningTemplate = fs.readFileSync(
 const browserWarningIntegrityHash = `sha256-${createHash('sha256')
     .update(fs.readFileSync(path.join(__dirname, 'node_modules/@nimiq/browser-warning/dist/browser-warning.js')))
     .digest('base64')}`;
-const bitcoinJsIntegrityHash = `sha256-${createHash('sha256')
-    .update(fs.readFileSync(path.join(__dirname, 'public/bitcoin/BitcoinJS.min.js')))
-    .digest('base64')}`;
-
-// Accessible within client code via process.env.VUE_APP_BITCOIN_JS_INTEGRITY_HASH,
-// see https://cli.vuejs.org/guide/mode-and-env.html#using-env-variables-in-client-side-code
-process.env.VUE_APP_BITCOIN_JS_INTEGRITY_HASH = bitcoinJsIntegrityHash;
 
 console.log('Building for:', buildName);
 
@@ -76,12 +71,27 @@ const configureWebpack = {
         ]}),
         new WriteFileWebpackPlugin(),
         new PoLoaderOptimizer(),
+        new ProvidePlugin({
+            // Polyfill node's global Buffer by automatically importing/requiring it from module 'buffer'. The global
+            // Buffer is for example used by bitcoinjs-lib > tiny-secp256k1.
+            Buffer: ['buffer', 'Buffer']
+        }),
+        new DefinePlugin({
+            // Polyfill node's global object by replacing it with globalThis. It is for example used by bitcoinjs-lib >
+            // randombytes.
+            // Note that this definition of DefinePlugin is in addition to the default definitions of e.g. process.env
+            // by vue-cli, and does not replace those.
+            'global': 'globalThis',
+        }),
         // new BundleAnalyzerPlugin(),
     ],
     // Resolve config for yarn build
     resolve: {
         alias: {
-            config: path.join(__dirname, `src/config/config.${buildName}.ts`)
+            config: path.join(__dirname, `src/config/config.${buildName}.ts`),
+            // Polyfill node's builtin stream module via readable-stream, which is essentially node's stream put into an
+            // npm package. stream is for example used by bitcoinjs-lib > create-hash > cipher-base
+            stream: 'readable-stream',
         }
     },
     // Fix sourcemaps (https://www.mistergoodcat.com/post/the-joy-that-is-source-maps-with-vuejs-and-typescript)
@@ -98,23 +108,6 @@ const configureWebpack = {
             return $filename;
         },
         devtoolFallbackModuleFilenameTemplate: 'webpack:///[resource-path]?[hash]',
-    },
-    externals: {
-        // We use a pre-built bundle for BitcoinJS (see public/bitcoin/BitcoinJS.min.js), also including a polyfill for
-        // node's 'buffer'. BitcoinJS is bundled separately via browserify for handling of polyfills of node natives.
-        // Everywhere we use BitcoinJS, we load it first on demand via BitcoinJSLoader which exposes BitcoinJS as global
-        // variable. To instruct webpack to not bundle BitcoinJS and Buffer but use the global BitcoinJS(.Buffer), we
-        // mark them as external here via the option 'root' which means it should use the value specified in the
-        // following expression (see documentation at https://v4.webpack.js.org/configuration/externals/). However,
-        // because we load BitcoinJS only asynchronously on demand, we have to apply a hack to avoid Webpack caching the
-        // dependency while it's still undefined. Instead, we ensure the export is always re-evaluated to the current
-        // global variable BitcoinJS by overwriting the exports of the cached module as getter. Note that we access the
-        // module as arguments[0] in the expression, because it's named differently in the minified production code and
-        // the served development version. To see how this plays together with the webpack runtime, have a look at how
-        // the dependency is emitted in the generated code and __webpack_require__'s implementation:
-        // https://devtools.tech/blog/understanding-webpacks-require---rid---7VvMusDzMPVh17YyHdyL
-        'bitcoinjs-lib': 'root Object.defineProperty(arguments[0], \'exports\', { get: () => BitcoinJS }).exports',
-        'buffer': 'root Object.defineProperty(arguments[0], \'exports\', { get: () => BitcoinJS }).exports',
     },
 };
 
@@ -176,7 +169,6 @@ if (buildName === 'local' || buildName === 'testnet') {
         entry: 'demos/Demo.ts',
         // the source template
         template: 'demos/index.html',
-        bitcoinJsIntegrityHash,
         // output as dist/demos.html
         filename: 'demos.html',
         // chunks to include on this page, by default includes
