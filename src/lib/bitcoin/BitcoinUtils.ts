@@ -4,8 +4,6 @@ import {
     BTC_NETWORK_TEST,
     NESTED_SEGWIT,
     NATIVE_SEGWIT,
-    BIP49_ADDRESS_VERSIONS,
-    BIP84_ADDRESS_PREFIX,
     SATOSHIS_PER_COIN,
     EXTENDED_KEY_PREFIXES,
     BTC_ACCOUNT_KEY_PATH,
@@ -59,32 +57,6 @@ export function publicKeyToPayment(publicKey: Buffer, addressType = Config.bitco
         default:
             throw new Error('Invalid address type');
     }
-}
-
-export function parseBipFromDerivationPath(path: string) {
-    if (path.startsWith('m/49\'/')) return NESTED_SEGWIT;
-    if (path.startsWith('m/84\'/')) return NATIVE_SEGWIT;
-    throw new Error(`Could not parse BIP from derivation path: ${path}`);
-}
-
-export function validateAddress(address: string) {
-    try {
-        const parsedAddress = BitcoinJS.address.fromBase58Check(address);
-        return BIP49_ADDRESS_VERSIONS[Config.bitcoinNetwork].includes(parsedAddress.version);
-    } catch (error) {
-        // Ignore, try Bech32 format below
-    }
-
-    try {
-        const parsedAddress = BitcoinJS.address.fromBech32(address);
-        return BIP84_ADDRESS_PREFIX[Config.bitcoinNetwork] === parsedAddress.prefix;
-    } catch (error) {
-        return false;
-    }
-}
-
-export function coinsToSatoshis(coins: number) {
-    return Math.round(coins * SATOSHIS_PER_COIN);
 }
 
 export function satoshisToCoins(satoshis: number) {
