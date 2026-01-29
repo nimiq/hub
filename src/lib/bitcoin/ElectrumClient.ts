@@ -3,7 +3,7 @@ import { BTC_NETWORK_MAIN } from './BitcoinConstants';
 
 // Import only types to avoid bundling of lazy-loaded libs.
 import type { ElectrumClient, ElectrumClientOptions } from '@nimiq/electrum-client';
-import type { Transaction as BitcoinJs_Transaction } from 'bitcoinjs-lib';
+import type { Transaction as BitcoinJsTransaction } from 'bitcoinjs-lib';
 
 let electrumClientPromise: Promise<ElectrumClient> | null = null;
 
@@ -64,7 +64,7 @@ export async function getElectrumClient(waitForConsensus: boolean = true) {
     return client;
 }
 
-export async function fetchTransaction(transactionHash: string): Promise<BitcoinJs_Transaction> {
+export async function fetchTransaction(transactionHash: string): Promise<BitcoinJsTransaction> {
     const [electrum, transactionFromPlain] = await Promise.all([
         getElectrumClient(),
         import(/*webpackChunkName: "electrum-client"*/ '@nimiq/electrum-client')

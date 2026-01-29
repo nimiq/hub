@@ -1,5 +1,5 @@
 import Config from 'config';
-import type { Network as BitcoinJs_Network, BIP32Interface as BitcoinJs_Bip32Interface } from 'bitcoinjs-lib';
+import type { Network as BitcoinJsNetwork, BIP32Interface as BitcoinJsBip32Interface } from 'bitcoinjs-lib';
 import {
     BTC_NETWORK_MAIN,
     BTC_NETWORK_TEST,
@@ -22,14 +22,14 @@ export type BitcoinTransactionInfo = Omit<KeyguardBitcoinTransactionInfo, 'chang
 };
 
 export async function getBtcNetwork(addressType = Config.bitcoinAddressType) {
-    const { networks: BitcoinJs_networks } = await import('bitcoinjs-lib'); // tslint:disable-line variable-name
-    let network: BitcoinJs_Network;
+    const networks = await import('bitcoinjs-lib/src/networks');
+    let network: BitcoinJsNetwork;
     switch (Config.bitcoinNetwork) {
         case BTC_NETWORK_MAIN:
-            network = BitcoinJs_networks.bitcoin;
+            network = networks.bitcoin;
             break;
         case BTC_NETWORK_TEST:
-            network = BitcoinJs_networks.testnet;
+            network = networks.testnet;
             break;
         default:
             throw new Error('Invalid bitcoinNetwork configuration');
@@ -44,22 +44,22 @@ export async function getBtcNetwork(addressType = Config.bitcoinAddressType) {
 
 export async function publicKeyToPayment(publicKey: Buffer, addressType = Config.bitcoinAddressType) {
     const [
-        { payments: BitcoinJs_payments }, // tslint:disable-line variable-name
+        { p2sh, p2wpkh },
         network,
     ] = await Promise.all([
-        import('bitcoinjs-lib'),
+        import('bitcoinjs-lib/src/payments'),
         getBtcNetwork(),
     ] as const);
     switch (addressType) {
         case NESTED_SEGWIT:
-            return BitcoinJs_payments.p2sh({
-                redeem: BitcoinJs_payments.p2wpkh({
+            return p2sh({
+                redeem: p2wpkh({
                     pubkey: publicKey,
                     network,
                 }),
             });
         case NATIVE_SEGWIT:
-            return BitcoinJs_payments.p2wpkh({
+            return p2wpkh({
                 pubkey: publicKey,
                 network,
             });
@@ -73,22 +73,22 @@ export function satoshisToCoins(satoshis: number) {
 }
 
 export async function deriveAddressesFromXPub(
-    xpub: BitcoinJs_Bip32Interface | string,
+    xpub: BitcoinJsBip32Interface | string,
     derivationPath: number[],
     startIndex = 0,
     count = BTC_ACCOUNT_MAX_ALLOWED_ADDRESS_GAP,
     addressType = Config.bitcoinAddressType,
 ): Promise<BtcAddressInfo[]> {
-    let extendedKey: BitcoinJs_Bip32Interface;
+    let extendedKey: BitcoinJsBip32Interface;
     if (typeof xpub === 'string') {
         const [
-            { bip32: BitcoinJs_bip32 }, // tslint:disable-line variable-name
+            { fromBase58: bip32FromBase58 },
             network,
         ] = await Promise.all([
-            import('bitcoinjs-lib'),
+            import('bip32'),
             getBtcNetwork(addressType),
         ] as const);
-        extendedKey = BitcoinJs_bip32.fromBase58(xpub, network);
+        extendedKey = bip32FromBase58(xpub, network);
     } else {
         extendedKey = xpub;
     }

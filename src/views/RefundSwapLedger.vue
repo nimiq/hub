@@ -172,15 +172,20 @@ export default class RefundSwapLedger extends RefundSwap {
         } else if (this.request.kind === RequestType.SIGN_BTC_TRANSACTION) {
             // Bitcoin transaction
 
-            // tslint:disable-next-line variable-name
-            const { Transaction: BitcoinJs_Transaction, script: BitcoinJs_script } = await import('bitcoinjs-lib');
+            const [
+                { Transaction: BitcoinJsTransaction },
+                { fromASM: scriptFromAsm, toStack: scriptToStack },
+            ] = await Promise.all([
+                import('bitcoinjs-lib/src/transaction'),
+                import('bitcoinjs-lib/src/script'),
+            ] as const);
 
             if (!('serializedTx' in this.sideResult && !!this.sideResult.serializedTx)) {
                 this.$rpc.reject(new Error('Unexpected: Bitcoin transaction not signed'));
                 return;
             }
 
-            const signedBitcoinTransaction = BitcoinJs_Transaction.fromHex(this.sideResult.serializedTx);
+            const signedBitcoinTransaction = BitcoinJsTransaction.fromHex(this.sideResult.serializedTx);
 
             // set htlc witness for redeeming the BTC htlc
 
@@ -189,14 +194,14 @@ export default class RefundSwapLedger extends RefundSwap {
             // createTransaction.js creation of the witness towards the end of createTransaction)
             const [inputSignature, signerPubKey] = htlcInput.witness;
 
-            const witnessBytes = BitcoinJs_script.fromASM([
+            const witnessBytes = scriptFromAsm([
                 inputSignature.toString('hex'),
                 signerPubKey.toString('hex'),
                 'OP_0', // OP_0 (false) activates the refund branch in the HTLC script
                 (this.request as ParsedSignBtcTransactionRequest).inputs[0].witnessScript,
             ].join(' '));
 
-            const witnessStack = BitcoinJs_script.toStack(witnessBytes);
+            const witnessStack = scriptToStack(witnessBytes);
             signedBitcoinTransaction.setWitness(0, witnessStack);
 
             const result: SignedBtcTransaction = {
@@ -254,10 +259,12 @@ export default class RefundSwapLedger extends RefundSwap {
             // Bitcoin request
 
             const [
-                { address: BitcoinJs_address, networks: BitcoinJs_networks }, // tslint:disable-line variable-name
+                { fromOutputScript: addressFromOutputScript },
+                networks,
                 { Buffer },
             ] = await Promise.all([
-                import('bitcoinjs-lib'),
+                import('bitcoinjs-lib/src/address'),
+                import('bitcoinjs-lib/src/networks'),
                 import('buffer'),
             ] as const);
 
@@ -270,10 +277,8 @@ export default class RefundSwapLedger extends RefundSwap {
             }
 
             this.state = this.State.SYNCING;
-            const bitcoinNetwork = Config.bitcoinNetwork === BTC_NETWORK_TEST
-                ? BitcoinJs_networks.testnet
-                : BitcoinJs_networks.bitcoin;
-            const htlcAddress = BitcoinJs_address.fromOutputScript(
+            const bitcoinNetwork = Config.bitcoinNetwork === BTC_NETWORK_TEST ? networks.testnet : networks.bitcoin;
+            const htlcAddress = addressFromOutputScript(
                 Buffer.from(Nimiq.BufferUtils.fromAny(htlcInput.outputScript)),
                 bitcoinNetwork,
             );

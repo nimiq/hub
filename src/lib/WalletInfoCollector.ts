@@ -128,16 +128,16 @@ export default class WalletInfoCollector {
         const xPubType = ['ypub', 'upub'].includes(xpub.substr(0, 4)) ? NESTED_SEGWIT : NATIVE_SEGWIT;
 
         const [
-            { bip32: BitcoinJs_bip32 }, // tslint:disable-line variable-name
+            { fromBase58: bip32FromBase58 },
             electrum,
             network,
         ] = await Promise.all([
-            import('bitcoinjs-lib'),
+            import('bip32'),
             getElectrumClient(),
             getBtcNetwork(xPubType),
         ] as const);
 
-        const extendedKey = BitcoinJs_bip32.fromBase58(xpub, network);
+        const extendedKey = bip32FromBase58(xpub, network);
 
         /**
          * According to https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki#account-discovery

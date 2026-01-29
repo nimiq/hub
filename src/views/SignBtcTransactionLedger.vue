@@ -88,8 +88,8 @@ export default class SignBtcTransactionLedger extends SignBtcTransaction {
 
     protected async created() {
         if (this.request.kind !== RequestType.SIGN_BTC_TRANSACTION) return; // see parent class
-        // preload bitcoinjs-lib
-        import('bitcoinjs-lib');
+        // preload bitcoinjs-lib/src/transaction
+        import('bitcoinjs-lib/src/transaction').catch(() => void 0);
         // Note that vue-class-component transforms the inheritance into a merge of vue mixins where each class retains
         // its lifecycle hooks, therefore we don't need to call super.created() here.
         const { inputs, output, changeOutput } = this.request;
@@ -120,8 +120,7 @@ export default class SignBtcTransactionLedger extends SignBtcTransaction {
     }
 
     protected async _signBtcTransaction(transactionInfo: BitcoinTransactionInfo, walletInfo: WalletInfo) {
-        // tslint:disable-next-line variable-name
-        const { Transaction: BitcoinJs_Transaction } = await import('bitcoinjs-lib');
+        const { Transaction: BitcoinJsTransaction } = await import('bitcoinjs-lib/src/transaction');
 
         // If user left this view in the mean time, don't continue signing the transaction
         if (this._isDestroyed) return;
@@ -158,7 +157,7 @@ export default class SignBtcTransactionLedger extends SignBtcTransaction {
         // If user left this view in the mean time, don't resolve
         if (this._isDestroyed) return;
 
-        const signedTransaction = BitcoinJs_Transaction.fromHex(signedTransactionHex);
+        const signedTransaction = BitcoinJsTransaction.fromHex(signedTransactionHex);
 
         const result: SignedBtcTransaction = {
             serializedTx: signedTransactionHex,

@@ -374,7 +374,7 @@ import { getElectrumClient } from '../lib/bitcoin/ElectrumClient';
 import { satoshisToCoins } from '../lib/bitcoin/BitcoinUtils';
 import { prepareBitcoinTransactionForLedgerSigning } from '../lib/bitcoin/BitcoinLedgerUtils';
 import LedgerSwapProxy from '../lib/LedgerSwapProxy';
-import type { Transaction as BitcoinJs_Transaction } from 'bitcoinjs-lib';
+import type { Transaction as BitcoinJsTransaction } from 'bitcoinjs-lib';
 
 type BalanceBarEntry = {
     currency: SwapAsset,
@@ -450,13 +450,17 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
             // no need to preload the Nimiq library, it's available by default
             // if we need to fund the proxy address, pre-initialize the nimiq network
             fund.type === SwapAsset.NIM ? this.nimiqNetwork.getNetworkClient() : null,
-            // preload BitcoinJa used in _signSwapTransactions
-            fund.type === SwapAsset.BTC || redeem.type === SwapAsset.BTC ? import('bitcoinjs-lib') : null,
-            // preload Buffer used in _signSwapTransactions
-            fund.type === SwapAsset.BTC ? import('buffer') : null,
-            // preload the electrum client used in prepareBitcoinTransactionForLedgerSigning
-            fund.type === SwapAsset.BTC || redeem.type === SwapAsset.BTC ? getElectrumClient() : null,
-        ] as const).catch(() => void 0);
+            // preload bitcoinjs-lib/src/transaction and electrum used in BTC funding and redeeming
+            ...(fund.type === SwapAsset.BTC || redeem.type === SwapAsset.BTC
+                ? [import('bitcoinjs-lib/src/transaction'), getElectrumClient()]
+                : []),
+            // preload bitcoinjs-lib/src/networks, bitcoinjs-lib/src/payments and Buffer used in BTC funding
+            ...(fund.type === SwapAsset.BTC
+                ? [import('bitcoinjs-lib/src/networks'), import('bitcoinjs-lib/src/payments'), import('buffer')]
+                : []),
+            // preload bitcoinjs-lib/src/script used in BTC redeeming
+            redeem.type === SwapAsset.BTC ? import('bitcoinjs-lib/src/script') : null,
+        ] as Array<Promise<unknown>>).catch(() => void 0);
 
         this._setupSwapPromise = new Promise((resolve) => this._setupSwap = resolve);
 
@@ -657,16 +661,16 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
             && swapSetupInfo.fund.type === SwapAsset.BTC
             && htlcInfo.fund.type === SwapAsset.BTC) {
             const [
-                { networks: BitcoinJs_networks, payments: BitcoinJs_payments }, // tslint:disable-line variable-name
+                networks,
+                { p2wsh },
                 { Buffer },
             ] = await Promise.all([
-                import('bitcoinjs-lib'),
+                import('bitcoinjs-lib/src/networks'),
+                import('bitcoinjs-lib/src/payments'),
                 import('buffer'),
             ] as const);
-            const bitcoinNetwork = Config.bitcoinNetwork === BTC_NETWORK_TEST
-                ? BitcoinJs_networks.testnet
-                : BitcoinJs_networks.bitcoin;
-            const htlcAddress = BitcoinJs_payments.p2wsh({
+            const bitcoinNetwork = Config.bitcoinNetwork === BTC_NETWORK_TEST ? networks.testnet : networks.bitcoin;
+            const htlcAddress = p2wsh({
                 witness: [Buffer.from(htlcInfo.fund.htlcScript)],
                 network: bitcoinNetwork,
             }).address;
@@ -716,7 +720,7 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
         let signedNimiqSwapTransaction: Nimiq.Transaction | undefined;
         let signedNimiqProxyTransaction: Nimiq.Transaction | undefined;
         let nimiqSendPromise: Promise<any> = Promise.resolve();
-        let signedBitcoinTransaction: BitcoinJs_Transaction | undefined;
+        let signedBitcoinTransaction: BitcoinJsTransaction | undefined;
         let euroSettlement: string | undefined;
         try {
             if (this._isDestroyed) return null;
@@ -779,9 +783,9 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
                 this.ledgerApiStateType = LedgerApiStateType.IDLE;
                 this.currentlySignedTransaction = bitcoinTransactionInfo;
 
-                // tslint:disable-next-line variable-name no-shadowed-variable
-                const { Transaction: BitcoinJs_Transaction } = await import('bitcoinjs-lib');
-                signedBitcoinTransaction = BitcoinJs_Transaction.fromHex(
+                // tslint:disable-next-line no-shadowed-variable
+                const { Transaction: BitcoinJsTransaction } = await import('bitcoinjs-lib/src/transaction');
+                signedBitcoinTransaction = BitcoinJsTransaction.fromHex(
                     await LedgerApi.Bitcoin.signTransaction(preparedBitcoinTransactionInfo));
             }
         } catch (e) {
@@ -810,14 +814,14 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
         if (swapSetupInfo.redeem.type === SwapAsset.BTC
             && htlcInfo.redeem.type === SwapAsset.BTC
             && signedBitcoinTransaction) {
-            const { script: BitcoinJs_script } = await import('bitcoinjs-lib'); // tslint:disable-line variable-name
+            const { fromASM: scriptFromAsm, toStack: scriptToStack } = await import('bitcoinjs-lib/src/script');
 
             const htlcInput = signedBitcoinTransaction.ins[0];
             // get signature and signer pub key from default witness generated by ledgerjs (see @ledgerhq/hw-app-btc
             // createTransaction.js creation of the witness towards the end of createTransaction)
             const [inputSignature, signerPubKey] = htlcInput.witness;
 
-            const witnessBytes = BitcoinJs_script.fromASM([
+            const witnessBytes = scriptFromAsm([
                 inputSignature.toString('hex'),
                 signerPubKey.toString('hex'),
                 // Use zero-bytes as a dummy secret which are replaced in the wallet once the swap secret is known
@@ -826,7 +830,7 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
                 Nimiq.BufferUtils.toHex(htlcInfo.redeem.htlcScript),
             ].join(' '));
 
-            const witnessStack = BitcoinJs_script.toStack(witnessBytes);
+            const witnessStack = scriptToStack(witnessBytes);
             signedBitcoinTransaction.setWitness(0, witnessStack);
         }
 

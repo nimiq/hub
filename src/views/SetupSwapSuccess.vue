@@ -57,12 +57,13 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
     protected async mounted() {
         Promise.all([
             // no need to preload the Nimiq library, it's available by default
-            // if BTC is involved preload bitcoinjs-lib
-            this.request.fund.type === SwapAsset.BTC || this.request.redeem.type === SwapAsset.BTC
-                ? import('bitcoinjs-lib') : null,
+            // if BTC is involved preload bitcoinjs-lib used in decodeBtcScript
+            ...(this.request.fund.type === SwapAsset.BTC || this.request.redeem.type === SwapAsset.BTC
+                ? [import('bitcoinjs-lib/src/address'), import('bitcoinjs-lib/src/script')]
+                : []),
             // if we need to fetch the tx from the network, preload the electrum client
             this.request.redeem.type === SwapAsset.BTC ? getElectrumClient() : null,
-        ] as const).catch(() => void 0);
+        ] as Array<Promise<unknown>>).catch(() => void 0);
 
         // use mounted instead of created to ensure that SetupSwapLedger has the chance to run its created hook before.
         if (!await this._shouldConfirmSwap()) {

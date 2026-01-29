@@ -27,6 +27,7 @@
   },
   "include": [
     "types/Nimiq.d.ts",
+    "types/bitcoinjs-lib.d.ts",
     "types/SymbolDispose.d.ts",
     "src/**/*.ts",
     "src/**/*.tsx",

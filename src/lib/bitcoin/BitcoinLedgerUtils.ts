@@ -3,7 +3,7 @@ import { BTC_NETWORK_TEST } from './BitcoinConstants';
 import { fetchTransaction } from './ElectrumClient';
 
 // Import only types to avoid bundling
-import type { Transaction as BitcoinJs_Transaction } from 'bitcoinjs-lib';
+import type { Transaction as BitcoinJsTransaction } from 'bitcoinjs-lib';
 import type { BitcoinTransactionInfo } from './BitcoinUtils';
 import type { TransactionInfoBitcoin as LedgerBitcoinTransactionInfo } from '@nimiq/ledger-api';
 import type { BitcoinTransactionInputType } from '@nimiq/keyguard-client';
@@ -28,11 +28,14 @@ export async function prepareBitcoinTransactionForLedgerSigning(
             > >
         > },
 ): Promise<LedgerBitcoinTransactionInfo> {
-    const bitcoinJsPromise = import('bitcoinjs-lib');
+    const bitcoinJsPromise = Promise.all([
+        import('bitcoinjs-lib/src/address'),
+        import('bitcoinjs-lib/src/networks'),
+    ] as const);
 
     // Fetch whole input transactions for computation of Ledger's trusted inputs.
     // Fetch them in batches of 10 to avoid too many network requests at once.
-    const inputTransactions: BitcoinJs_Transaction[] = [];
+    const inputTransactions: BitcoinJsTransaction[] = [];
     for (let i = 0; i < transactionInfo.inputs.length; i += 10) {
         const batch = transactionInfo.inputs.slice(i, i + 10);
         inputTransactions.push(...await Promise.all(batch.map((input) => fetchTransaction(input.transactionHash))));
@@ -47,27 +50,21 @@ export async function prepareBitcoinTransactionForLedgerSigning(
     }));
 
     // Prepare outputs and pre-calculate output scripts
-    // tslint:disable-next-line variable-name
-    const { address: BitcoinJs_address, networks: BitcoinJs_networks } = await bitcoinJsPromise;
-    const network = Config.bitcoinNetwork === BTC_NETWORK_TEST
-        ? BitcoinJs_networks.testnet
-        : BitcoinJs_networks.bitcoin;
+    const [
+        { toOutputScript: addressToOutputScript },
+        networks,
+    ] = await bitcoinJsPromise;
+    const network = Config.bitcoinNetwork === BTC_NETWORK_TEST ? networks.testnet : networks.bitcoin;
     const outputs: LedgerBitcoinTransactionInfo['outputs']  = [{
         amount: transactionInfo.recipientOutput.value,
-        outputScript: BitcoinJs_address.toOutputScript(
-            transactionInfo.recipientOutput.address,
-            network,
-        ).toString('hex'),
+        outputScript: addressToOutputScript(transactionInfo.recipientOutput.address, network).toString('hex'),
     }];
     let changePath: string | undefined;
     if (transactionInfo.changeOutput) {
         changePath = transactionInfo.changeOutput.keyPath;
         outputs.push({
             amount: transactionInfo.changeOutput.value,
-            outputScript: BitcoinJs_address.toOutputScript(
-                transactionInfo.changeOutput.address,
-                network,
-            ).toString('hex'),
+            outputScript: addressToOutputScript(transactionInfo.changeOutput.address, network).toString('hex'),
         });
     }
 

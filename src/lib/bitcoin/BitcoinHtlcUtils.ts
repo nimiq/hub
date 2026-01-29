@@ -3,19 +3,21 @@ import { BIP84_ADDRESS_PREFIX } from './BitcoinConstants';
 
 export async function decodeBtcScript(script: string) {
     const [
-        { address: BitcoinJs_address, script: BitcoinJs_script }, // tslint:disable-line variable-name
+        { toBech32: addressToBech32 },
+        { decompile: scriptDecompile, toASM: scriptToAsm, number: { decode: scriptDecodeNumber } },
         { Buffer },
     ] = await Promise.all([
-        import('bitcoinjs-lib'),
+        import('bitcoinjs-lib/src/address'),
+        import('bitcoinjs-lib/src/script'),
         import('buffer'),
     ] as const);
 
     const error = new Error('Invalid BTC HTLC script');
 
     if (!script || typeof script !== 'string' || !script.length) throw error;
-    const chunks = BitcoinJs_script.decompile(Buffer.from(script, 'hex'));
+    const chunks = scriptDecompile(Buffer.from(script, 'hex'));
     if (!chunks) throw error;
-    const asm = BitcoinJs_script.toASM(chunks).split(' ');
+    const asm = scriptToAsm(chunks).split(' ');
 
     let branchesVerifiedIndividually = false;
 
@@ -46,7 +48,7 @@ export async function decodeBtcScript(script: string) {
     // Check timeout
     // Bitcoin HTLC timeouts are backdated 1 hour, to account for Bitcoin's
     // minimum age for valid transaction locktimes (6 blocks).
-    const timeoutTimestamp = BitcoinJs_script.number.decode(Buffer.from(asm[++i], 'hex')) + (60 * 60);
+    const timeoutTimestamp = scriptDecodeNumber(Buffer.from(asm[++i], 'hex')) + (60 * 60);
     if (asm[++i] !== 'OP_CHECKLOCKTIMEVERIFY' || asm[++i] !== 'OP_DROP') throw error;
 
     // Check refund address
@@ -65,11 +67,9 @@ export async function decodeBtcScript(script: string) {
     if (asm.length !== ++i) throw error;
     /* eslint-enable no-plusplus */
 
-    const refundAddress = BitcoinJs_address
-        .toBech32(Buffer.from(refundAddressBytes, 'hex'), 0, BIP84_ADDRESS_PREFIX[Config.bitcoinNetwork]);
-
-    const redeemAddress = BitcoinJs_address
-        .toBech32(Buffer.from(redeemAddressBytes, 'hex'), 0, BIP84_ADDRESS_PREFIX[Config.bitcoinNetwork]);
+    const addressPrefix = BIP84_ADDRESS_PREFIX[Config.bitcoinNetwork];
+    const refundAddress = addressToBech32(Buffer.from(refundAddressBytes, 'hex'), 0, addressPrefix);
+    const redeemAddress = addressToBech32(Buffer.from(redeemAddressBytes, 'hex'), 0, addressPrefix);
 
     return {
         refundAddress,
