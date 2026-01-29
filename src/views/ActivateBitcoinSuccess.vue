@@ -14,7 +14,7 @@ import store from '../store';
 import StatusScreen from '../components/StatusScreen.vue';
 import GlobalClose from '../components/GlobalClose.vue';
 import { deriveAddressesFromXPub } from '../lib/bitcoin/BitcoinUtils';
-import { BTC_ACCOUNT_MAX_ALLOWED_ADDRESS_GAP, EXTERNAL_INDEX, INTERNAL_INDEX } from '../lib/bitcoin/BitcoinConstants';
+import { EXTERNAL_INDEX, INTERNAL_INDEX } from '../lib/bitcoin/BitcoinConstants';
 import { RequestType } from '../../client/PublicRequestTypes';
 
 @Component({components: {StatusScreen, SmallPage, GlobalClose}}) // including components used in parent class
@@ -52,20 +52,9 @@ export default class ActivateBitcoinSuccess extends BitcoinSyncBaseView {
                 : this.State.SYNCING;
             this.useDarkSyncStatusScreen = walletInfo.type === WalletType.LEDGER;
 
-            const btcAddresses = {
-                external: deriveAddressesFromXPub(
-                    this.keyguardResult.bitcoinXPub,
-                    [EXTERNAL_INDEX],
-                    0,
-                    BTC_ACCOUNT_MAX_ALLOWED_ADDRESS_GAP,
-                ),
-                internal: deriveAddressesFromXPub(
-                    this.keyguardResult.bitcoinXPub,
-                    [INTERNAL_INDEX],
-                    0,
-                    BTC_ACCOUNT_MAX_ALLOWED_ADDRESS_GAP,
-                ),
-            };
+            const btcAddresses = await Promise.all([EXTERNAL_INDEX, INTERNAL_INDEX]
+                .map((index) => deriveAddressesFromXPub(this.keyguardResult.bitcoinXPub, [index])))
+                .then(([external, internal]) => ({ external, internal }));
 
             walletInfo.btcXPub = this.keyguardResult.bitcoinXPub;
             walletInfo.btcAddresses = btcAddresses;

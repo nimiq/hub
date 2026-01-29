@@ -21,7 +21,7 @@ import KeyguardClient from '@nimiq/keyguard-client';
 import { labelAddress, labelKeyguardAccount } from '@/lib/LabelingMachine';
 import { i18n } from '../i18n/i18n-setup';
 import { deriveAddressesFromXPub } from '../lib/bitcoin/BitcoinUtils';
-import { INTERNAL_INDEX, EXTERNAL_INDEX, BTC_ACCOUNT_MAX_ALLOWED_ADDRESS_GAP } from '../lib/bitcoin/BitcoinConstants';
+import { INTERNAL_INDEX, EXTERNAL_INDEX } from '../lib/bitcoin/BitcoinConstants';
 import { PolygonAddressInfo } from '../lib/polygon/PolygonAddressInfo';
 import { RequestType } from '../../client/PublicRequestTypes';
 
@@ -51,17 +51,9 @@ export default class SignupSuccess extends Vue {
 
         // Derive initial BTC addresses
         const bitcoinXPub = this.keyguardResult[0].bitcoinXPub;
-        const btcAddresses = Config.enableBitcoin && bitcoinXPub
-            ? {
-                internal:
-                    deriveAddressesFromXPub(bitcoinXPub, [INTERNAL_INDEX], 0, BTC_ACCOUNT_MAX_ALLOWED_ADDRESS_GAP),
-                external:
-                    deriveAddressesFromXPub(bitcoinXPub, [EXTERNAL_INDEX], 0, BTC_ACCOUNT_MAX_ALLOWED_ADDRESS_GAP),
-            }
-            : {
-                internal: [],
-                external: [],
-            };
+        const btcAddresses = await Promise.all([EXTERNAL_INDEX, INTERNAL_INDEX]
+            .map((index) => Config.enableBitcoin && bitcoinXPub ? deriveAddressesFromXPub(bitcoinXPub, [index]) : []))
+            .then(([external, internal]) => ({ external, internal }));
 
         const walletInfo = new WalletInfo(
             await WalletStore.Instance.deriveId(this.keyguardResult[0].keyId),

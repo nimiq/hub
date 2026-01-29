@@ -135,13 +135,13 @@ class IFrameApi {
 
         const xPubType = ['ypub', 'upub'].includes(wallet.btcXPub.substr(0, 4)) ? NESTED_SEGWIT : NATIVE_SEGWIT;
 
-        const addresses = deriveAddressesFromXPub(
+        const addresses = (await deriveAddressesFromXPub(
             wallet.btcXPub,
             [chain === 'external' ? EXTERNAL_INDEX : INTERNAL_INDEX],
             firstIndex,
             BTC_ACCOUNT_MAX_ALLOWED_ADDRESS_GAP,
             xPubType,
-        ).map((addressInfo) => addressInfo.address);
+        )).map((addressInfo) => addressInfo.address);
 
         return {
             addresses,

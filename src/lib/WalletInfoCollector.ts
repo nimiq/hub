@@ -125,17 +125,18 @@ export default class WalletInfoCollector {
             throw new Error('Bitcoin is disabled');
         }
 
+        const xPubType = ['ypub', 'upub'].includes(xpub.substr(0, 4)) ? NESTED_SEGWIT : NATIVE_SEGWIT;
+
         const [
             { bip32: BitcoinJs_bip32 }, // tslint:disable-line variable-name
             electrum,
+            network,
         ] = await Promise.all([
             import('bitcoinjs-lib'),
             getElectrumClient(),
+            getBtcNetwork(xPubType),
         ] as const);
 
-        const xPubType = ['ypub', 'upub'].includes(xpub.substr(0, 4)) ? NESTED_SEGWIT : NATIVE_SEGWIT;
-
-        const network = getBtcNetwork(xPubType);
         const extendedKey = BitcoinJs_bip32.fromBase58(xpub, network);
 
         /**
@@ -162,7 +163,7 @@ export default class WalletInfoCollector {
             while (gap < BTC_ACCOUNT_MAX_ALLOWED_ADDRESS_GAP) {
                 const pubKey = baseKey.derive(i).publicKey;
 
-                const address = publicKeyToPayment(pubKey, xPubType).address;
+                const address = (await publicKeyToPayment(pubKey, xPubType)).address;
                 if (!address) throw new Error(`Cannot create external address for ${xpub} index ${i}`);
 
                 // Check address balance
@@ -240,26 +241,9 @@ export default class WalletInfoCollector {
 
         try {
             // Start BTC address detection
-            const bitcoinAddresses: {
-                internal: BtcAddressInfo[],
-                external: BtcAddressInfo[],
-            } = Config.enableBitcoin && bitcoinXPub ? {
-                external: deriveAddressesFromXPub(
-                    bitcoinXPub,
-                    [EXTERNAL_INDEX],
-                    0,
-                    BTC_ACCOUNT_MAX_ALLOWED_ADDRESS_GAP,
-                ),
-                internal: deriveAddressesFromXPub(
-                    bitcoinXPub,
-                    [INTERNAL_INDEX],
-                    0,
-                    BTC_ACCOUNT_MAX_ALLOWED_ADDRESS_GAP,
-                ),
-            } : {
-                external: [],
-                internal: [],
-            };
+            const bitcoinAddresses = await Promise.all([EXTERNAL_INDEX, INTERNAL_INDEX]
+                .map((idx) => Config.enableBitcoin && bitcoinXPub ? deriveAddressesFromXPub(bitcoinXPub, [idx]) : []))
+                .then(([external, internal]) => ({ external, internal }));
 
             // Get or create the walletInfo instance and derive the first set of derived accounts
             const [walletInfo, firstSetOfDerivedAccounts] = await Promise.all([

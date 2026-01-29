@@ -1,9 +1,4 @@
 import Config from 'config';
-import {
-    bip32 as BitcoinJs_bip32,
-    networks as BitcoinJs_networks,
-    payments as BitcoinJs_payments,
-} from 'bitcoinjs-lib';
 import type { Network as BitcoinJs_Network, BIP32Interface as BitcoinJs_Bip32Interface } from 'bitcoinjs-lib';
 import {
     BTC_NETWORK_MAIN,
@@ -26,7 +21,8 @@ export type BitcoinTransactionInfo = Omit<KeyguardBitcoinTransactionInfo, 'chang
     changeOutput?: Required<BitcoinTransactionChangeOutput>,
 };
 
-export function getBtcNetwork(addressType = Config.bitcoinAddressType) {
+export async function getBtcNetwork(addressType = Config.bitcoinAddressType) {
+    const { networks: BitcoinJs_networks } = await import('bitcoinjs-lib'); // tslint:disable-line variable-name
     let network: BitcoinJs_Network;
     switch (Config.bitcoinNetwork) {
         case BTC_NETWORK_MAIN:
@@ -46,19 +42,26 @@ export function getBtcNetwork(addressType = Config.bitcoinAddressType) {
     };
 }
 
-export function publicKeyToPayment(publicKey: Buffer, addressType = Config.bitcoinAddressType) {
+export async function publicKeyToPayment(publicKey: Buffer, addressType = Config.bitcoinAddressType) {
+    const [
+        { payments: BitcoinJs_payments }, // tslint:disable-line variable-name
+        network,
+    ] = await Promise.all([
+        import('bitcoinjs-lib'),
+        getBtcNetwork(),
+    ] as const);
     switch (addressType) {
         case NESTED_SEGWIT:
             return BitcoinJs_payments.p2sh({
                 redeem: BitcoinJs_payments.p2wpkh({
                     pubkey: publicKey,
-                    network: getBtcNetwork(),
+                    network,
                 }),
             });
         case NATIVE_SEGWIT:
             return BitcoinJs_payments.p2wpkh({
                 pubkey: publicKey,
-                network: getBtcNetwork(),
+                network,
             });
         default:
             throw new Error('Invalid address type');
@@ -69,16 +72,22 @@ export function satoshisToCoins(satoshis: number) {
     return satoshis / SATOSHIS_PER_COIN;
 }
 
-export function deriveAddressesFromXPub(
+export async function deriveAddressesFromXPub(
     xpub: BitcoinJs_Bip32Interface | string,
     derivationPath: number[],
     startIndex = 0,
     count = BTC_ACCOUNT_MAX_ALLOWED_ADDRESS_GAP,
     addressType = Config.bitcoinAddressType,
-): BtcAddressInfo[] {
+): Promise<BtcAddressInfo[]> {
     let extendedKey: BitcoinJs_Bip32Interface;
     if (typeof xpub === 'string') {
-        const network = getBtcNetwork(addressType);
+        const [
+            { bip32: BitcoinJs_bip32 }, // tslint:disable-line variable-name
+            network,
+        ] = await Promise.all([
+            import('bitcoinjs-lib'),
+            getBtcNetwork(addressType),
+        ] as const);
         extendedKey = BitcoinJs_bip32.fromBase58(xpub, network);
     } else {
         extendedKey = xpub;
@@ -93,20 +102,22 @@ export function deriveAddressesFromXPub(
         + (derivationPath.length > 0 ? '/' : '')
         + derivationPath.join('/');
 
-    const addresses: BtcAddressInfo[] = [];
+    const addressPromises: Array<Promise<BtcAddressInfo>> = [];
 
     for (let i = startIndex; i < startIndex + count; i++) {
         const pubKey = baseKey.derive(i).publicKey;
 
-        const address = publicKeyToPayment(pubKey, addressType).address;
-        if (!address) throw new Error(`Cannot create external address for ${extendedKey.toBase58()} index ${i}`);
+        const addressPromise = publicKeyToPayment(pubKey, addressType).then(({ address }) => {
+            if (!address) throw new Error(`Cannot create external address for ${extendedKey.toBase58()} index ${i}`);
+            return new BtcAddressInfo(
+                `${path}/${i}`,
+                address,
+                false,
+            );
+        });
 
-        addresses.push(new BtcAddressInfo(
-            `${path}/${i}`,
-            address,
-            false,
-        ));
+        addressPromises.push(addressPromise);
     }
 
-    return addresses;
+    return Promise.all(addressPromises);
 }
