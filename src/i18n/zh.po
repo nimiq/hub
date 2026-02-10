@@ -33,11 +33,11 @@ msgstr "{totalFees} 费用"
 msgid "+ {currency} network fee"
 msgstr "+{currency}网络费"
 
-#: src/views/CashlinkReceive.vue:110
+#: src/views/CashlinkReceive.vue:114
 msgid "30 seconds, no email, no download."
 msgstr "30秒，无需邮件，无需下载"
 
-#: src/views/CashlinkReceive.vue:206
+#: src/views/CashlinkReceive.vue:211
 msgid "404 - Cash not found"
 msgstr "404 - 找不到现金"
 
@@ -49,7 +49,7 @@ msgstr "503 服务不可用 - 请稍后再试"
 msgid "A 100% free and self-custodial web wallet for NIM, BTC and USDC."
 msgstr ""
 
-#: src/views/ExportSuccess.vue:60
+#: src/views/ExportSuccess.vue:65
 msgid "Account backed up!"
 msgstr "账户已备份！"
 
@@ -97,7 +97,7 @@ msgstr "地址"
 msgid "Address Added"
 msgstr "地址已添加"
 
-#: src/views/LoginSuccess.vue:122
+#: src/views/LoginSuccess.vue:123
 msgid "Address detection failed. Retrying..."
 msgstr "地址检测失败。正在重试..."
 
@@ -132,7 +132,7 @@ msgstr "应用至少 {fee} sat/byte 的网络费用"
 msgid "Atomic swaps require two BTC transactions."
 msgstr "原子交换需要两次的比特币交易"
 
-#: src/views/CashlinkManage.vue:192
+#: src/views/CashlinkManage.vue:194
 msgid "Awaiting receipt confirmation..."
 msgstr "正在等待收据确认..."
 
@@ -197,6 +197,10 @@ msgstr "备份"
 msgid "Backed Up"
 msgstr "已备份"
 
+#: src/views/ExportSuccess.vue:72
+msgid "Backup Codes exported!"
+msgstr ""
+
 #: src/views/AddVestingContract.vue:28
 msgid "Balance:"
 msgstr "金额："
@@ -248,7 +252,7 @@ msgstr "取消"
 msgid "Cancel payment"
 msgstr "取消付款"
 
-#: src/views/CashlinkReceive.vue:256
+#: src/views/CashlinkReceive.vue:258
 msgid "Cashlink claimed!"
 msgstr "现金链接已领取！"
 
@@ -256,23 +260,23 @@ msgstr "现金链接已领取！"
 msgid "Cashlink created"
 msgstr "现金链接已创建"
 
-#: src/views/CashlinkManage.vue:227
+#: src/views/CashlinkManage.vue:229
 msgid "Cashlink created."
 msgstr "现金链接已创建"
 
-#: src/views/CashlinkReceive.vue:304
+#: src/views/CashlinkReceive.vue:312
 msgid "Cashlink empty :("
 msgstr "现金链接为空 :("
 
-#: src/views/CashlinkReceive.vue:297
+#: src/views/CashlinkReceive.vue:299
 msgid "Cashlink funding"
 msgstr "现金链接资金"
 
-#: src/views/CashlinkReceive.vue:301
+#: src/views/CashlinkReceive.vue:310
 msgid "Cashlink is empty"
 msgstr "现金链接为空 "
 
-#: src/views/CashlinkReceive.vue:296
+#: src/views/CashlinkReceive.vue:298
 msgid "Cashlink not funded"
 msgstr "现金链接没有资金"
 
@@ -284,7 +288,7 @@ msgstr "更改"
 msgid "Check your Backup | Check your Backups"
 msgstr "检查你的备份 | 检查你的备份"
 
-#: src/views/CashlinkReceive.vue:294
+#: src/views/CashlinkReceive.vue:297
 msgid "Checking status"
 msgstr "检查状态"
 
@@ -300,7 +304,7 @@ msgstr ""
 msgid "Choose an Account to log in"
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:64 src/views/ChooseAddress.vue:18
+#: src/views/CashlinkReceive.vue:65 src/views/ChooseAddress.vue:18
 #: src/views/ChooseAddress.vue:5
 msgid "Choose an Address"
 msgstr "选择一个地址"
@@ -325,15 +329,16 @@ msgstr "选择发件人"
 msgid "Choose which Nimiq address to use."
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:295
+#: src/views/CashlinkReceive.vue:300
 msgid "Claim Cashlink"
 msgstr "领取现金链接"
 
-#: src/views/CashlinkReceive.vue:345
+#: src/views/CashlinkReceive.vue:353
 msgid "Claim your Cash"
 msgstr "领取现金"
 
-#: src/views/CashlinkReceive.vue:233
+#: src/views/CashlinkReceive.vue:237 src/views/CashlinkReceive.vue:301
+#: src/views/CashlinkReceive.vue:307
 msgid "Claiming Cashlink"
 msgstr "正在领取现金链接"
 
@@ -390,15 +395,15 @@ msgstr "确认交易"
 msgid "Confirm using your Ledger"
 msgstr "确认使用你的Ledger"
 
-#: src/views/CashlinkReceive.vue:356
+#: src/views/CashlinkReceive.vue:364
 msgid "Congrats, somebody gifted you a Nimiq Cashlink."
 msgstr "恭喜，有人给你Nimiq 现金链接"
 
-#: src/views/CashlinkReceive.vue:355
+#: src/views/CashlinkReceive.vue:363
 msgid "Congrats, you just opened a Nimiq Cashlink."
 msgstr "恭喜，你刚刚打开了Nimiq 现金链接"
 
-#: src/views/CashlinkReceive.vue:351
+#: src/views/CashlinkReceive.vue:359
 msgid "Congrats, you received a Nimiq Gift Card."
 msgstr "恭喜，你收到了Nimiq礼品卡"
 
@@ -422,11 +427,11 @@ msgstr ""
 msgid "Connecting to Keyguard..."
 msgstr "正在连接到键盘守卫 ..."
 
-#: src/views/CashlinkManage.vue:133 src/views/CheckoutTransmission.vue:40
+#: src/views/CashlinkManage.vue:135 src/views/CheckoutTransmission.vue:40
 msgid "Connecting to network..."
 msgstr "正在连接网络..."
 
-#: src/views/CashlinkReceive.vue:234
+#: src/views/CashlinkReceive.vue:238
 msgid "Connecting to Nimiq..."
 msgstr "正在连接到Nimiq ..."
 
@@ -435,7 +440,7 @@ msgid "Connecting..."
 msgstr ""
 
 #: src/components/CheckoutCardNimiq.vue:284
-#: src/components/CheckoutCardNimiq.vue:289 src/views/CashlinkManage.vue:186
+#: src/components/CheckoutCardNimiq.vue:289 src/views/CashlinkManage.vue:188
 #: src/views/CheckoutTransmission.vue:116
 msgid "Contacting seed nodes..."
 msgstr "正在联系种子节点..."
@@ -445,8 +450,8 @@ msgstr "正在联系种子节点..."
 msgid "Contacts are not affected."
 msgstr "联系人不受影响"
 
-#: src/components/NotEnoughCookieSpace.vue:8 src/views/LoginSuccess.vue:178
-#: src/views/LoginSuccess.vue:208 src/views/SignupLedger.vue:143
+#: src/components/NotEnoughCookieSpace.vue:8 src/views/LoginSuccess.vue:179
+#: src/views/LoginSuccess.vue:209 src/views/SignupLedger.vue:143
 msgid "Continue"
 msgstr "继续"
 
@@ -462,7 +467,7 @@ msgstr "合同信息"
 msgid "Create a Cashlink"
 msgstr "建立现金链接"
 
-#: src/views/CashlinkReceive.vue:89
+#: src/views/CashlinkReceive.vue:93
 msgid "Create account"
 msgstr "建立账户"
 
@@ -470,7 +475,7 @@ msgstr "建立账户"
 msgid "Create Account"
 msgstr "建立账户"
 
-#: src/views/CashlinkReceive.vue:109
+#: src/views/CashlinkReceive.vue:113
 msgid "Create an account and claim your money."
 msgstr "建立一个帐户并取得你的资金"
 
@@ -486,7 +491,7 @@ msgstr "建立现金链接"
 msgid "Creating your Account"
 msgstr "正在建立你的帐户"
 
-#: src/views/CashlinkManage.vue:229 src/views/SignTransactionLedger.vue:722
+#: src/views/CashlinkManage.vue:231 src/views/SignTransactionLedger.vue:722
 msgid "Creating your Cashlink"
 msgstr "正在建立你的现金链接"
 
@@ -547,7 +552,7 @@ msgstr "费用"
 msgid "Fee"
 msgstr "费用"
 
-#: src/views/LoginSuccess.vue:131 src/views/SignupLedger.vue:108
+#: src/views/LoginSuccess.vue:132 src/views/SignupLedger.vue:108
 msgid "Fetching Addresses Failed"
 msgstr "提取地址失败"
 
@@ -611,15 +616,15 @@ msgstr "绿色账户"
 msgid "Green Address"
 msgstr "绿色地址"
 
-#: src/views/CashlinkReceive.vue:344
+#: src/views/CashlinkReceive.vue:352
 msgid "Happy birthday!"
 msgstr "生日快乐！"
 
-#: src/views/CashlinkReceive.vue:342
+#: src/views/CashlinkReceive.vue:350
 msgid "Happy Easter!"
 msgstr "复活节快乐！"
 
-#: src/views/CashlinkManage.vue:119
+#: src/views/CashlinkManage.vue:120
 msgid "Here is your Nimiq Cashlink!"
 msgstr "这是你的Nimiq现金链接！"
 
@@ -631,7 +636,7 @@ msgstr ""
 "试想如果使用\n"
 "加密很容易"
 
-#: src/views/LoginSuccess.vue:189 src/views/SignupLedger.vue:124
+#: src/views/LoginSuccess.vue:190 src/views/SignupLedger.vue:124
 msgid ""
 "Imported {count} address so far... | Imported {count} addresses so far..."
 msgstr "目前已导入{count}个地址... | 目前已导入{count}个地址..."
@@ -697,7 +702,7 @@ msgstr "登出将会删除该帐户的自定义设置和名称"
 msgid "Login"
 msgstr "登录"
 
-#: src/views/ExportSuccess.vue:62
+#: src/views/ExportSuccess.vue:67
 msgid "Login File saved!"
 msgstr "登录文件已保存！"
 
@@ -709,7 +714,7 @@ msgstr ""
 msgid "Login to another account"
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:91
+#: src/views/CashlinkReceive.vue:95
 msgid "Login to existing account"
 msgstr "登录到现有帐户"
 
@@ -884,7 +889,7 @@ msgstr "紫色账户"
 msgid "Purple Address"
 msgstr "紫色地址"
 
-#: src/views/ExportSuccess.vue:65
+#: src/views/ExportSuccess.vue:70
 msgid "Recovery Words exported!"
 msgstr "恢复字已导出！"
 
@@ -936,7 +941,7 @@ msgid "Retrieving your old accounts..."
 msgstr "正在检索你的旧帐户..."
 
 #: src/views/ActivatePolygonSuccess.vue:139
-#: src/views/BitcoinSyncBaseView.vue:72 src/views/LoginSuccess.vue:133
+#: src/views/BitcoinSyncBaseView.vue:72 src/views/LoginSuccess.vue:134
 #: src/views/SetupSwapSuccess.vue:672 src/views/SignupLedger.vue:145
 msgid "Retry"
 msgstr "重试"
@@ -954,7 +959,7 @@ msgstr "发送你的交易"
 msgid "Sending Transaction"
 msgstr "发送交易"
 
-#: src/views/CashlinkManage.vue:190 src/views/CheckoutTransmission.vue:118
+#: src/views/CashlinkManage.vue:192 src/views/CheckoutTransmission.vue:118
 msgid "Sending transaction..."
 msgstr "发送交易..."
 
@@ -986,7 +991,7 @@ msgstr "正在签署交易..."
 msgid "Single Accounts"
 msgstr "单一账户"
 
-#: src/views/CashlinkManage.vue:228 src/views/CheckoutTransmission.vue:125
+#: src/views/CashlinkManage.vue:230 src/views/CheckoutTransmission.vue:125
 msgid "Something went wrong"
 msgstr "出了点问题"
 
@@ -994,7 +999,7 @@ msgstr "出了点问题"
 msgid "Something went wrong with your request. Please try again."
 msgstr "你的请求出了点问题，请再试一次"
 
-#: src/views/LoginSuccess.vue:174
+#: src/views/LoginSuccess.vue:175
 msgid "Space exceeded"
 msgstr "超出范围"
 
@@ -1035,7 +1040,7 @@ msgid "Syncing"
 msgstr "同步中"
 
 #: src/components/CheckoutCardNimiq.vue:291
-#: src/views/AddVestingContract.vue:11 src/views/CashlinkManage.vue:188
+#: src/views/AddVestingContract.vue:11 src/views/CashlinkManage.vue:190
 #: src/views/CheckoutTransmission.vue:117
 msgid "Syncing consensus..."
 msgstr "正在同步共识..."
@@ -1075,7 +1080,7 @@ msgstr "同步 Polygon 网络失败：{error}"
 msgid "Syncing with Polygon network..."
 msgstr "正在同步 Polygon 网络..."
 
-#: src/views/LoginSuccess.vue:132 src/views/SignupLedger.vue:134
+#: src/views/LoginSuccess.vue:133 src/views/SignupLedger.vue:134
 msgid "Syncing with the network failed: {error}"
 msgstr "与网络同步失败：{error}"
 
@@ -1112,11 +1117,11 @@ msgstr "此更新非常容易，快速和安全。不过－现在是你检查恢
 msgid "There's much more. Read the full article"
 msgstr "还有更多信息，请阅读全文"
 
-#: src/views/CashlinkReceive.vue:302
+#: src/views/CashlinkReceive.vue:311
 msgid "This Cashlink has already been claimed."
 msgstr "此现金链接已被领取"
 
-#: src/views/CashlinkReceive.vue:207
+#: src/views/CashlinkReceive.vue:212
 msgid "This is not a valid Cashlink, sorry."
 msgstr "抱歉，这不是有效的现金链接"
 
@@ -1165,11 +1170,11 @@ msgstr "总费用"
 msgid "Transaction approved"
 msgstr ""
 
-#: src/views/CashlinkManage.vue:211 src/views/CheckoutTransmission.vue:107
+#: src/views/CashlinkManage.vue:213 src/views/CheckoutTransmission.vue:107
 msgid "Transaction could not be relayed"
 msgstr "交易无法转发"
 
-#: src/views/CashlinkManage.vue:209 src/views/CheckoutTransmission.vue:105
+#: src/views/CashlinkManage.vue:211 src/views/CheckoutTransmission.vue:105
 msgid "Transaction is expired"
 msgstr "交易已过期"
 
@@ -1196,7 +1201,7 @@ msgid ""
 "and/or addresses. Please log out of unused accounts to free up space."
 msgstr "很遗憾地，由于Safari的限制，你无法添加更多帐户和/或地址。请登出未使用的帐户以释放空间。"
 
-#: src/views/LoginSuccess.vue:176
+#: src/views/LoginSuccess.vue:177
 msgid ""
 "Unfortunately, due to space restrictions of Safari and IOS, this account "
 "cannot be stored properly. Please free up space by logging out of other "
@@ -1239,7 +1244,7 @@ msgstr ""
 "使用你的登录文件\n"
 "或恢复字登录"
 
-#: src/views/LoginSuccess.vue:207 src/views/SignupLedger.vue:132
+#: src/views/LoginSuccess.vue:208 src/views/SignupLedger.vue:132
 msgid "Used addresses without balance might have been missed."
 msgstr "已使用地址若没有余额可能会丢失"
 
@@ -1255,13 +1260,13 @@ msgstr "验证付款"
 msgid "Vesting Contract"
 msgstr "归属合同"
 
-#: src/views/SignupLedger.vue:112 src/views/SignupSuccess.vue:96
+#: src/views/SignupLedger.vue:112 src/views/SignupSuccess.vue:97
 msgid ""
 "Wallet successfully\n"
 "created"
 msgstr ""
 
-#: src/views/LoginSuccess.vue:222
+#: src/views/LoginSuccess.vue:223
 msgid "Welcome back! | Your Accounts are ready."
 msgstr "欢迎回来！您的账户已准备好。"
 
@@ -1289,7 +1294,7 @@ msgstr "黄色地址"
 msgid "You are logged out."
 msgstr "你已登出"
 
-#: src/views/CashlinkReceive.vue:340
+#: src/views/CashlinkReceive.vue:348
 msgid "You are loved"
 msgstr "你被爱着"
 
@@ -1317,7 +1322,7 @@ msgstr "你的{app}应用已过时。 请使用Ledger Live更新你的Ledger固�
 msgid "Your account will be used for approving only."
 msgstr ""
 
-#: src/views/LoginSuccess.vue:205 src/views/SignupLedger.vue:106
+#: src/views/LoginSuccess.vue:206 src/views/SignupLedger.vue:106
 msgid ""
 "Your Addresses may be\n"
 "incomplete."
@@ -1341,6 +1346,6 @@ msgstr ""
 msgid "Your message is signed."
 msgstr "你的信息已签署"
 
-#: src/views/LoginSuccess.vue:216 src/views/SimpleSuccess.vue:31
+#: src/views/LoginSuccess.vue:217 src/views/SimpleSuccess.vue:31
 msgid "Your password was changed."
 msgstr "你的密码已更改"

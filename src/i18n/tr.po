@@ -33,11 +33,11 @@ msgstr "Ücret: {totalFees} "
 msgid "+ {currency} network fee"
 msgstr "+ {para birimi} ağ ücreti"
 
-#: src/views/CashlinkReceive.vue:110
+#: src/views/CashlinkReceive.vue:114
 msgid "30 seconds, no email, no download."
 msgstr "30 saniye, e-mail yok, indirme yok."
 
-#: src/views/CashlinkReceive.vue:206
+#: src/views/CashlinkReceive.vue:211
 msgid "404 - Cash not found"
 msgstr "404 - Bakiye bulunamadı "
 
@@ -49,7 +49,7 @@ msgstr "503 Bu hizmet şu an verilemiyor - lütfen daha sonra tekrar dene"
 msgid "A 100% free and self-custodial web wallet for NIM, BTC and USDC."
 msgstr ""
 
-#: src/views/ExportSuccess.vue:60
+#: src/views/ExportSuccess.vue:65
 msgid "Account backed up!"
 msgstr "Hesap yedeklendi!"
 
@@ -97,7 +97,7 @@ msgstr "Adres"
 msgid "Address Added"
 msgstr "Adres eklendi"
 
-#: src/views/LoginSuccess.vue:122
+#: src/views/LoginSuccess.vue:123
 msgid "Address detection failed. Retrying..."
 msgstr "Adres tespiti başarısız. Tekrar deneniyor..."
 
@@ -132,7 +132,7 @@ msgstr "En az {fee} sat/byte ağ ücreti gerekli."
 msgid "Atomic swaps require two BTC transactions."
 msgstr "Atomik takaslar iki BTC işlemleri gerektiriyor."
 
-#: src/views/CashlinkManage.vue:192
+#: src/views/CashlinkManage.vue:194
 msgid "Awaiting receipt confirmation..."
 msgstr "Makbuz onayı bekleniyor..."
 
@@ -197,6 +197,10 @@ msgstr "Yedekleme"
 msgid "Backed Up"
 msgstr "Yedeklendi"
 
+#: src/views/ExportSuccess.vue:72
+msgid "Backup Codes exported!"
+msgstr ""
+
 #: src/views/AddVestingContract.vue:28
 msgid "Balance:"
 msgstr "Bakiye:"
@@ -248,7 +252,7 @@ msgstr "İptal et"
 msgid "Cancel payment"
 msgstr "Ödemeyi iptal et"
 
-#: src/views/CashlinkReceive.vue:256
+#: src/views/CashlinkReceive.vue:258
 msgid "Cashlink claimed!"
 msgstr "Cashlink talep edildi!"
 
@@ -256,23 +260,23 @@ msgstr "Cashlink talep edildi!"
 msgid "Cashlink created"
 msgstr "Cashlink oluşturuldu"
 
-#: src/views/CashlinkManage.vue:227
+#: src/views/CashlinkManage.vue:229
 msgid "Cashlink created."
 msgstr "Cashlink oluşturuldu."
 
-#: src/views/CashlinkReceive.vue:304
+#: src/views/CashlinkReceive.vue:312
 msgid "Cashlink empty :("
 msgstr "Cashlink boş :("
 
-#: src/views/CashlinkReceive.vue:297
+#: src/views/CashlinkReceive.vue:299
 msgid "Cashlink funding"
 msgstr "Cashlink yüklemesi"
 
-#: src/views/CashlinkReceive.vue:301
+#: src/views/CashlinkReceive.vue:310
 msgid "Cashlink is empty"
 msgstr "Cashlink boş"
 
-#: src/views/CashlinkReceive.vue:296
+#: src/views/CashlinkReceive.vue:298
 msgid "Cashlink not funded"
 msgstr "Cashlink'e bir şey yüklenmemiş"
 
@@ -284,7 +288,7 @@ msgstr "Değiştir"
 msgid "Check your Backup | Check your Backups"
 msgstr "Yeklemeni kontrol et | Yedeklemelerini kontrol et"
 
-#: src/views/CashlinkReceive.vue:294
+#: src/views/CashlinkReceive.vue:297
 msgid "Checking status"
 msgstr "Durum kontrol ediliyor"
 
@@ -300,7 +304,7 @@ msgstr ""
 msgid "Choose an Account to log in"
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:64 src/views/ChooseAddress.vue:18
+#: src/views/CashlinkReceive.vue:65 src/views/ChooseAddress.vue:18
 #: src/views/ChooseAddress.vue:5
 msgid "Choose an Address"
 msgstr "Bir adres seç"
@@ -325,15 +329,16 @@ msgstr "Göndereni seç"
 msgid "Choose which Nimiq address to use."
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:295
+#: src/views/CashlinkReceive.vue:300
 msgid "Claim Cashlink"
 msgstr "Cashlink'i Talep Edin"
 
-#: src/views/CashlinkReceive.vue:345
+#: src/views/CashlinkReceive.vue:353
 msgid "Claim your Cash"
 msgstr "Nakit Paranızı Talep Edin"
 
-#: src/views/CashlinkReceive.vue:233
+#: src/views/CashlinkReceive.vue:237 src/views/CashlinkReceive.vue:301
+#: src/views/CashlinkReceive.vue:307
 msgid "Claiming Cashlink"
 msgstr "Cashlink Talep Ediliyor"
 
@@ -390,15 +395,15 @@ msgstr "İşlemi onayla"
 msgid "Confirm using your Ledger"
 msgstr "Ledger'in ile onayla"
 
-#: src/views/CashlinkReceive.vue:356
+#: src/views/CashlinkReceive.vue:364
 msgid "Congrats, somebody gifted you a Nimiq Cashlink."
 msgstr "Tebrikler, birisi sana bir Nimiq Cashlink'i hediye etti."
 
-#: src/views/CashlinkReceive.vue:355
+#: src/views/CashlinkReceive.vue:363
 msgid "Congrats, you just opened a Nimiq Cashlink."
 msgstr "Tebrikler, bir Nimiq Cashlink'i açtın."
 
-#: src/views/CashlinkReceive.vue:351
+#: src/views/CashlinkReceive.vue:359
 msgid "Congrats, you received a Nimiq Gift Card."
 msgstr "Tebrikler, bir Nimiq hediye çeki aldın."
 
@@ -422,11 +427,11 @@ msgstr ""
 msgid "Connecting to Keyguard..."
 msgstr "Keyguard'a bağlanıyor..."
 
-#: src/views/CashlinkManage.vue:133 src/views/CheckoutTransmission.vue:40
+#: src/views/CashlinkManage.vue:135 src/views/CheckoutTransmission.vue:40
 msgid "Connecting to network..."
 msgstr "Ağa bağlanıyor..."
 
-#: src/views/CashlinkReceive.vue:234
+#: src/views/CashlinkReceive.vue:238
 msgid "Connecting to Nimiq..."
 msgstr "Nimiq'e bağlanıyor..."
 
@@ -435,7 +440,7 @@ msgid "Connecting..."
 msgstr ""
 
 #: src/components/CheckoutCardNimiq.vue:284
-#: src/components/CheckoutCardNimiq.vue:289 src/views/CashlinkManage.vue:186
+#: src/components/CheckoutCardNimiq.vue:289 src/views/CashlinkManage.vue:188
 #: src/views/CheckoutTransmission.vue:116
 msgid "Contacting seed nodes..."
 msgstr "Tohum düğümleriyle iletişim kuruluyor..."
@@ -445,8 +450,8 @@ msgstr "Tohum düğümleriyle iletişim kuruluyor..."
 msgid "Contacts are not affected."
 msgstr "Bağlantılar etkilenmemektedir."
 
-#: src/components/NotEnoughCookieSpace.vue:8 src/views/LoginSuccess.vue:178
-#: src/views/LoginSuccess.vue:208 src/views/SignupLedger.vue:143
+#: src/components/NotEnoughCookieSpace.vue:8 src/views/LoginSuccess.vue:179
+#: src/views/LoginSuccess.vue:209 src/views/SignupLedger.vue:143
 msgid "Continue"
 msgstr "Devam et"
 
@@ -462,7 +467,7 @@ msgstr "Sözleşme bilgileri"
 msgid "Create a Cashlink"
 msgstr "Cashlink oluştur"
 
-#: src/views/CashlinkReceive.vue:89
+#: src/views/CashlinkReceive.vue:93
 msgid "Create account"
 msgstr "Hesap oluştur"
 
@@ -470,7 +475,7 @@ msgstr "Hesap oluştur"
 msgid "Create Account"
 msgstr "Hesap Oluştur"
 
-#: src/views/CashlinkReceive.vue:109
+#: src/views/CashlinkReceive.vue:113
 msgid "Create an account and claim your money."
 msgstr "Bir hesap oluştur ve paranı al."
 
@@ -486,7 +491,7 @@ msgstr "Cashlink oluştur"
 msgid "Creating your Account"
 msgstr "Hesabını oluştur"
 
-#: src/views/CashlinkManage.vue:229 src/views/SignTransactionLedger.vue:722
+#: src/views/CashlinkManage.vue:231 src/views/SignTransactionLedger.vue:722
 msgid "Creating your Cashlink"
 msgstr "Cashlink'ini oluştur"
 
@@ -547,7 +552,7 @@ msgstr "ücret"
 msgid "Fee"
 msgstr "ücret"
 
-#: src/views/LoginSuccess.vue:131 src/views/SignupLedger.vue:108
+#: src/views/LoginSuccess.vue:132 src/views/SignupLedger.vue:108
 msgid "Fetching Addresses Failed"
 msgstr "Adreslerin yüklenmesi başarılamadı."
 
@@ -611,15 +616,15 @@ msgstr "Yeşil Hesap"
 msgid "Green Address"
 msgstr "Yeşil Adres"
 
-#: src/views/CashlinkReceive.vue:344
+#: src/views/CashlinkReceive.vue:352
 msgid "Happy birthday!"
 msgstr "Mutlu yıllar!"
 
-#: src/views/CashlinkReceive.vue:342
+#: src/views/CashlinkReceive.vue:350
 msgid "Happy Easter!"
 msgstr "Mutlu Paskalyalar!"
 
-#: src/views/CashlinkManage.vue:119
+#: src/views/CashlinkManage.vue:120
 msgid "Here is your Nimiq Cashlink!"
 msgstr "İşte Nimiq Cashlink'in!"
 
@@ -631,7 +636,7 @@ msgstr ""
 "Kripto ile ödeme yapmanın\n"
 "kolay olduğunu bir düşün"
 
-#: src/views/LoginSuccess.vue:189 src/views/SignupLedger.vue:124
+#: src/views/LoginSuccess.vue:190 src/views/SignupLedger.vue:124
 msgid ""
 "Imported {count} address so far... | Imported {count} addresses so far..."
 msgstr ""
@@ -704,7 +709,7 @@ msgstr ""
 msgid "Login"
 msgstr "Giriş yap"
 
-#: src/views/ExportSuccess.vue:62
+#: src/views/ExportSuccess.vue:67
 msgid "Login File saved!"
 msgstr "Giriş dosyası kaydedildi!"
 
@@ -716,7 +721,7 @@ msgstr ""
 msgid "Login to another account"
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:91
+#: src/views/CashlinkReceive.vue:95
 msgid "Login to existing account"
 msgstr "Var olan hesaba giriş yap"
 
@@ -891,7 +896,7 @@ msgstr "Mor Hesap"
 msgid "Purple Address"
 msgstr "Mor Adres"
 
-#: src/views/ExportSuccess.vue:65
+#: src/views/ExportSuccess.vue:70
 msgid "Recovery Words exported!"
 msgstr "Kurtarma kelimeleri dışa aktarıldı!"
 
@@ -946,7 +951,7 @@ msgid "Retrieving your old accounts..."
 msgstr "Eski hesapların alınıyor..."
 
 #: src/views/ActivatePolygonSuccess.vue:139
-#: src/views/BitcoinSyncBaseView.vue:72 src/views/LoginSuccess.vue:133
+#: src/views/BitcoinSyncBaseView.vue:72 src/views/LoginSuccess.vue:134
 #: src/views/SetupSwapSuccess.vue:672 src/views/SignupLedger.vue:145
 msgid "Retry"
 msgstr "Tekrar dene"
@@ -964,7 +969,7 @@ msgstr "İşlemini yolla"
 msgid "Sending Transaction"
 msgstr "İşlem yollanıyor"
 
-#: src/views/CashlinkManage.vue:190 src/views/CheckoutTransmission.vue:118
+#: src/views/CashlinkManage.vue:192 src/views/CheckoutTransmission.vue:118
 msgid "Sending transaction..."
 msgstr "İşlem yollanıyor..."
 
@@ -996,7 +1001,7 @@ msgstr "İşlemler imzalanıyor..."
 msgid "Single Accounts"
 msgstr "Tek hesaplar"
 
-#: src/views/CashlinkManage.vue:228 src/views/CheckoutTransmission.vue:125
+#: src/views/CashlinkManage.vue:230 src/views/CheckoutTransmission.vue:125
 msgid "Something went wrong"
 msgstr "Bir şeyler ters gitti"
 
@@ -1004,7 +1009,7 @@ msgstr "Bir şeyler ters gitti"
 msgid "Something went wrong with your request. Please try again."
 msgstr "İsteğin ile alakalı bir şeyler ters gitti. Lütfen tekrar dene."
 
-#: src/views/LoginSuccess.vue:174
+#: src/views/LoginSuccess.vue:175
 msgid "Space exceeded"
 msgstr "Hafıza tükendi"
 
@@ -1045,7 +1050,7 @@ msgid "Syncing"
 msgstr "Eşzamanlanıyor"
 
 #: src/components/CheckoutCardNimiq.vue:291
-#: src/views/AddVestingContract.vue:11 src/views/CashlinkManage.vue:188
+#: src/views/AddVestingContract.vue:11 src/views/CashlinkManage.vue:190
 #: src/views/CheckoutTransmission.vue:117
 msgid "Syncing consensus..."
 msgstr "Tam mutabakat eşzamanlanıyor..."
@@ -1085,7 +1090,7 @@ msgstr "Polygon ağı ile senkronizasyon başarısız oldu: {hata}"
 msgid "Syncing with Polygon network..."
 msgstr "Polygon ağı ile senkronize ediliyor..."
 
-#: src/views/LoginSuccess.vue:132 src/views/SignupLedger.vue:134
+#: src/views/LoginSuccess.vue:133 src/views/SignupLedger.vue:134
 msgid "Syncing with the network failed: {error}"
 msgstr "Ağ ile eşzamanlama başarısız: {error}"
 
@@ -1127,11 +1132,11 @@ msgstr ""
 msgid "There's much more. Read the full article"
 msgstr "Çok daha fazlası var. Tüm makaleyi oku"
 
-#: src/views/CashlinkReceive.vue:302
+#: src/views/CashlinkReceive.vue:311
 msgid "This Cashlink has already been claimed."
 msgstr "Bu Cashlink daha önce kullanılmıştır."
 
-#: src/views/CashlinkReceive.vue:207
+#: src/views/CashlinkReceive.vue:212
 msgid "This is not a valid Cashlink, sorry."
 msgstr "Bu Cashlink geçerli değil, üzgünüz."
 
@@ -1182,11 +1187,11 @@ msgstr "Toplam ücret"
 msgid "Transaction approved"
 msgstr ""
 
-#: src/views/CashlinkManage.vue:211 src/views/CheckoutTransmission.vue:107
+#: src/views/CashlinkManage.vue:213 src/views/CheckoutTransmission.vue:107
 msgid "Transaction could not be relayed"
 msgstr "İşlem aktarılamadı"
 
-#: src/views/CashlinkManage.vue:209 src/views/CheckoutTransmission.vue:105
+#: src/views/CashlinkManage.vue:211 src/views/CheckoutTransmission.vue:105
 msgid "Transaction is expired"
 msgstr "işlemin süresi doldu"
 
@@ -1215,7 +1220,7 @@ msgstr ""
 "Safari kısıtlamalarından dolayı maalesef daha fazla hesap ve/veya adres "
 "ekleyemezsin. Lütfen kullanılmayan hesaplardan yer açmak için çıkış yap."
 
-#: src/views/LoginSuccess.vue:176
+#: src/views/LoginSuccess.vue:177
 msgid ""
 "Unfortunately, due to space restrictions of Safari and IOS, this account "
 "cannot be stored properly. Please free up space by logging out of other "
@@ -1258,7 +1263,7 @@ msgid ""
 "or Recovery Words."
 msgstr "Giriş dosyanı veya kurtarma kelimelerini kullan."
 
-#: src/views/LoginSuccess.vue:207 src/views/SignupLedger.vue:132
+#: src/views/LoginSuccess.vue:208 src/views/SignupLedger.vue:132
 msgid "Used addresses without balance might have been missed."
 msgstr "Bakiyesiz kullanılmış adresler atlanmış olabilir."
 
@@ -1274,13 +1279,13 @@ msgstr "Ödemeyi doğrula"
 msgid "Vesting Contract"
 msgstr "Vesting sözleşmesi"
 
-#: src/views/SignupLedger.vue:112 src/views/SignupSuccess.vue:96
+#: src/views/SignupLedger.vue:112 src/views/SignupSuccess.vue:97
 msgid ""
 "Wallet successfully\n"
 "created"
 msgstr ""
 
-#: src/views/LoginSuccess.vue:222
+#: src/views/LoginSuccess.vue:223
 msgid "Welcome back! | Your Accounts are ready."
 msgstr "Tekrar hoş geldiniz! | Hesaplarınız hazır."
 
@@ -1308,7 +1313,7 @@ msgstr "Sarı Adres"
 msgid "You are logged out."
 msgstr "Çıkış yaptın."
 
-#: src/views/CashlinkReceive.vue:340
+#: src/views/CashlinkReceive.vue:348
 msgid "You are loved"
 msgstr "Seviliyorsun"
 
@@ -1340,7 +1345,7 @@ msgstr ""
 msgid "Your account will be used for approving only."
 msgstr ""
 
-#: src/views/LoginSuccess.vue:205 src/views/SignupLedger.vue:106
+#: src/views/LoginSuccess.vue:206 src/views/SignupLedger.vue:106
 msgid ""
 "Your Addresses may be\n"
 "incomplete."
@@ -1362,6 +1367,6 @@ msgstr "Lütfen Ledger'ına tekrar giriş yap."
 msgid "Your message is signed."
 msgstr "Mesajın imzalandı."
 
-#: src/views/LoginSuccess.vue:216 src/views/SimpleSuccess.vue:31
+#: src/views/LoginSuccess.vue:217 src/views/SimpleSuccess.vue:31
 msgid "Your password was changed."
 msgstr "Şifren değiştirildi."
