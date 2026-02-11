@@ -9,7 +9,7 @@
         <button class="choice login" tabindex="2" @click="login">
             <LoginIcon/>
             <h2 class="nq-h2">{{ $t('Login') }}</h2>
-            <p class="text">{{ $t('Use your Login File\nor Recovery Words.') }}</p>
+            <p class="text">{{ $t('Use your Login File\nor a backup.') }}</p>
         </button>
 
         <button class="choice signup" tabindex="1" @click="signup">
