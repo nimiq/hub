@@ -1271,10 +1271,8 @@ msgstr "USDC/USDT ativado"
 #: src/components/OnboardingMenu.vue:12
 msgid ""
 "Use your Login File\n"
-"or Recovery Words."
+"or a backup."
 msgstr ""
-"Usa o seu Ficheiro de Login\n"
-"ou Palavra de Recuperação."
 
 #: src/views/LoginSuccess.vue:208 src/views/SignupLedger.vue:132
 msgid "Used addresses without balance might have been missed."

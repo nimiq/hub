@@ -1239,10 +1239,8 @@ msgstr "USDC/USDT 已激活"
 #: src/components/OnboardingMenu.vue:12
 msgid ""
 "Use your Login File\n"
-"or Recovery Words."
+"or a backup."
 msgstr ""
-"使用你的登录文件\n"
-"或恢复字登录"
 
 #: src/views/LoginSuccess.vue:208 src/views/SignupLedger.vue:132
 msgid "Used addresses without balance might have been missed."

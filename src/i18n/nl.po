@@ -2,13 +2,13 @@
 # Translators:
 # BlockchainShay <Shaylish@live.nl>, 2020
 # Jim <jimvendrig10@gmail.com>, 2021
-# Stefan, 2024
 # Sören Schwert <hello@soerenschwert.de>, 2024
 # Daniel, 2025
+# Stefan, 2026
 # 
 msgid ""
 msgstr ""
-"Last-Translator: Daniel, 2025\n"
+"Last-Translator: Stefan, 2026\n"
 "Language-Team: Dutch (https://app.transifex.com/nimiq-foundation/teams/110181/nl/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: nl\n"
@@ -108,7 +108,7 @@ msgstr "Alle labels opgeslagen."
 
 #: src/views/ConnectAccount.vue:8
 msgid "All private funds remain separate."
-msgstr ""
+msgstr "Alle saldo's blijven gescheiden."
 
 #: src/components/CheckoutCardBitcoin.vue:30
 #: src/components/CheckoutCardEthereum.vue:27
@@ -200,7 +200,7 @@ msgstr "Geback-upt"
 
 #: src/views/ExportSuccess.vue:72
 msgid "Backup Codes exported!"
-msgstr ""
+msgstr "Back-up codes geëxporteerd!"
 
 #: src/views/AddVestingContract.vue:28
 msgid "Balance:"
@@ -216,7 +216,7 @@ msgstr "Bitcoin geactiveerd"
 
 #: src/views/SetupSwapLedger.vue:858 src/views/SetupSwapSuccess.vue:640
 msgid "Bitcoin HTLC invalid"
-msgstr ""
+msgstr "Ongeldige Bitcoin HTLC"
 
 #: src/lib/LabelingMachine.ts:31
 msgid "Blue Account"
@@ -305,7 +305,7 @@ msgstr "Kies een account"
 
 #: src/views/ConnectAccount.vue:5
 msgid "Choose an Account to log in"
-msgstr ""
+msgstr "Kies een account om in te loggen"
 
 #: src/views/CashlinkReceive.vue:65 src/views/ChooseAddress.vue:18
 #: src/views/ChooseAddress.vue:5
@@ -375,7 +375,7 @@ msgstr "Bevestig Cashlink"
 
 #: src/components/LedgerUi.vue:246
 msgid "Confirm Message"
-msgstr ""
+msgstr "Bevestig bericht"
 
 #: src/views/SetupSwapLedger.vue:5
 msgid "Confirm Swap"
@@ -441,7 +441,7 @@ msgstr "Verbinden met Nimiq..."
 
 #: src/views/LoginSuccess.vue:45
 msgid "Connecting..."
-msgstr ""
+msgstr "Verbinden..."
 
 #: src/components/CheckoutCardNimiq.vue:284
 #: src/components/CheckoutCardNimiq.vue:289 src/views/CashlinkManage.vue:188
@@ -501,7 +501,7 @@ msgstr "Cashlink aan het maken"
 
 #: src/views/LoginSuccess.vue:60
 msgid "Detecting addresses..."
-msgstr ""
+msgstr "Adressen detecteren..."
 
 #: src/views/Migrate.vue:230
 msgid "Detecting vesting contracts..."
@@ -720,7 +720,7 @@ msgstr "Login File opgeslagen!"
 
 #: src/views/ConnectAccountSuccess.vue:4
 msgid "Login successful"
-msgstr ""
+msgstr "Succesvol ingelogd"
 
 #: src/views/ChooseAddress.vue:67 src/views/ConnectAccount.vue:40
 msgid "Login to another account"
@@ -1028,7 +1028,7 @@ msgstr "Versnel je transactie"
 
 #: src/views/SignStaking.vue:39 src/views/SignStaking.vue:43
 msgid "Staking Contract"
-msgstr ""
+msgstr "Staking Contract"
 
 #: src/views/CashlinkCreate.vue:161
 msgid "standard"
@@ -1036,7 +1036,7 @@ msgstr "Standaard "
 
 #: src/views/AddVestingContract.vue:32
 msgid "Start Time:"
-msgstr ""
+msgstr "Start tijd:"
 
 #: src/views/Migrate.vue:233
 msgid "Storing your new accounts..."
@@ -1073,7 +1073,7 @@ msgstr "Synchroniseren mislukt"
 
 #: src/views/LoginSuccess.vue:59
 msgid "Syncing to network..."
-msgstr ""
+msgstr "Synchroniseren met netwerk..."
 
 #: src/views/RefundSwapLedger.vue:333
 msgid "Syncing with {currency} network failed: {error}"
@@ -1183,7 +1183,7 @@ msgstr "Tijd om te groeien."
 
 #: src/views/AddVestingContract.vue:36
 msgid "Time/Step:"
-msgstr ""
+msgstr "Tijd/Stap:"
 
 #: src/views/ErrorHandlerUnsupportedLedger.vue:47
 msgid ""
@@ -1198,7 +1198,7 @@ msgstr "Totale kosten"
 
 #: src/views/SignMultisigTransactionSuccess.vue:4
 msgid "Transaction approved"
-msgstr ""
+msgstr "Transactie goedgekeurd"
 
 #: src/views/CashlinkManage.vue:213 src/views/CheckoutTransmission.vue:107
 msgid "Transaction could not be relayed"
@@ -1223,7 +1223,7 @@ msgstr "Probeer het opnieuw"
 
 #: src/views/SetupSwapLedger.vue:860
 msgid "Unexpected error"
-msgstr ""
+msgstr "Onverwachte fout"
 
 #: src/components/NotEnoughCookieSpace.vue:7
 msgid ""
@@ -1275,10 +1275,8 @@ msgstr "USDC/USDT geactiveerd"
 #: src/components/OnboardingMenu.vue:12
 msgid ""
 "Use your Login File\n"
-"or Recovery Words."
+"or a backup."
 msgstr ""
-"Gebruik je Login File\n"
-"of je herstelwoorden."
 
 #: src/views/LoginSuccess.vue:208 src/views/SignupLedger.vue:132
 msgid "Used addresses without balance might have been missed."
@@ -1363,7 +1361,7 @@ msgstr ""
 
 #: src/views/ConnectAccount.vue:7
 msgid "Your account will be used for approving only."
-msgstr ""
+msgstr "Je account wordt alleen gebruikt voor goedkeuring."
 
 #: src/views/LoginSuccess.vue:206 src/views/SignupLedger.vue:106
 msgid ""

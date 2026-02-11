@@ -1281,10 +1281,8 @@ msgstr "na-activate na ang USDC/USDT"
 #: src/components/OnboardingMenu.vue:12
 msgid ""
 "Use your Login File\n"
-"or Recovery Words."
+"or a backup."
 msgstr ""
-"Gamitin ang iyong Login File\n"
-"o mga salitang pang-backup."
 
 #: src/views/LoginSuccess.vue:208 src/views/SignupLedger.vue:132
 msgid "Used addresses without balance might have been missed."

@@ -1244,7 +1244,7 @@ msgstr ""
 #: src/components/OnboardingMenu.vue:12
 msgid ""
 "Use your Login File\n"
-"or Recovery Words."
+"or a backup."
 msgstr ""
 
 #: src/views/LoginSuccess.vue:208

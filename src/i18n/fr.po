@@ -4,11 +4,11 @@
 # Matheo <matheo@nimiq.com>, 2023
 # Sören Schwert <hello@soerenschwert.de>, 2024
 # Daniel, 2025
-# Robinson BARAIS, 2025
+# Robinson BARAIS, 2026
 # 
 msgid ""
 msgstr ""
-"Last-Translator: Robinson BARAIS, 2025\n"
+"Last-Translator: Robinson BARAIS, 2026\n"
 "Language-Team: French (https://app.transifex.com/nimiq-foundation/teams/110181/fr/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: fr\n"
@@ -202,7 +202,7 @@ msgstr "Sauvegardé"
 
 #: src/views/ExportSuccess.vue:72
 msgid "Backup Codes exported!"
-msgstr ""
+msgstr "Codes de sauvegarde exportés !"
 
 #: src/views/AddVestingContract.vue:28
 msgid "Balance:"
@@ -1279,8 +1279,8 @@ msgstr "USDC/USDT activé"
 #: src/components/OnboardingMenu.vue:12
 msgid ""
 "Use your Login File\n"
-"or Recovery Words."
-msgstr "Utilisez votre Fichier de Connexion ou les Mots de Récupération."
+"or a backup."
+msgstr ""
 
 #: src/views/LoginSuccess.vue:208 src/views/SignupLedger.vue:132
 msgid "Used addresses without balance might have been missed."
