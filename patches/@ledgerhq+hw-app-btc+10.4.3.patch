@@ -1,0 +1,168 @@
+diff --git a/node_modules/@ledgerhq/hw-app-btc/lib-es/BtcNew.js b/node_modules/@ledgerhq/hw-app-btc/lib-es/BtcNew.js
+index 210e478..1375340 100644
+--- a/node_modules/@ledgerhq/hw-app-btc/lib-es/BtcNew.js
++++ b/node_modules/@ledgerhq/hw-app-btc/lib-es/BtcNew.js
+@@ -7,7 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
+         step((generator = generator.apply(thisArg, _arguments || [])).next());
+     });
+ };
+-import { crypto } from "bitcoinjs-lib";
++import * as crypto from "bitcoinjs-lib/src/crypto";
+ import { pointCompress } from "tiny-secp256k1";
+ import { getXpubComponents, hardenedPathOf, pathArrayToString, pathStringToArray, pubkeyFromXpub, } from "./bip32";
+ import { BufferReader } from "./buffertools";
+diff --git a/node_modules/@ledgerhq/hw-app-btc/lib-es/newops/accounttype.js b/node_modules/@ledgerhq/hw-app-btc/lib-es/newops/accounttype.js
+index 17992fa..28e7ab6 100644
+--- a/node_modules/@ledgerhq/hw-app-btc/lib-es/newops/accounttype.js
++++ b/node_modules/@ledgerhq/hw-app-btc/lib-es/newops/accounttype.js
+@@ -1,4 +1,4 @@
+-import { crypto } from "bitcoinjs-lib";
++import * as crypto from "bitcoinjs-lib/src/crypto";
+ import { pointAddScalar } from "tiny-secp256k1";
+ import { BufferWriter } from "../buffertools";
+ import { HASH_SIZE, OP_CHECKSIG, OP_DUP, OP_EQUAL, OP_EQUALVERIFY, OP_HASH160 } from "../constants";
+diff --git a/node_modules/@ledgerhq/hw-app-btc/lib-es/newops/clientCommands.js b/node_modules/@ledgerhq/hw-app-btc/lib-es/newops/clientCommands.js
+index 71032cf..a212dc8 100644
+--- a/node_modules/@ledgerhq/hw-app-btc/lib-es/newops/clientCommands.js
++++ b/node_modules/@ledgerhq/hw-app-btc/lib-es/newops/clientCommands.js
+@@ -1,4 +1,4 @@
+-import { crypto } from "bitcoinjs-lib";
++import * as crypto from "bitcoinjs-lib/src/crypto";
+ import { BufferReader } from "../buffertools";
+ import { createVarint } from "../varint";
+ import { hashLeaf, Merkle } from "./merkle";
+diff --git a/node_modules/@ledgerhq/hw-app-btc/lib-es/newops/merkle.js b/node_modules/@ledgerhq/hw-app-btc/lib-es/newops/merkle.js
+index 05b8f83..4f28971 100644
+--- a/node_modules/@ledgerhq/hw-app-btc/lib-es/newops/merkle.js
++++ b/node_modules/@ledgerhq/hw-app-btc/lib-es/newops/merkle.js
+@@ -1,4 +1,4 @@
+-import { crypto } from "bitcoinjs-lib";
++import * as crypto from "bitcoinjs-lib/src/crypto";
+ /**
+  * This class implements the merkle tree used by Ledger Bitcoin app v2+,
+  * which is documented at
+diff --git a/node_modules/@ledgerhq/hw-app-btc/lib-es/newops/policy.js b/node_modules/@ledgerhq/hw-app-btc/lib-es/newops/policy.js
+index 2e9b72d..bde7c68 100644
+--- a/node_modules/@ledgerhq/hw-app-btc/lib-es/newops/policy.js
++++ b/node_modules/@ledgerhq/hw-app-btc/lib-es/newops/policy.js
+@@ -1,4 +1,4 @@
+-import { crypto } from "bitcoinjs-lib";
++import * as crypto from "bitcoinjs-lib/src/crypto";
+ import { pathArrayToString } from "../bip32";
+ import { BufferWriter } from "../buffertools";
+ import { hashLeaf, Merkle } from "./merkle";
+diff --git a/node_modules/@ledgerhq/hw-app-btc/lib/BtcNew.js b/node_modules/@ledgerhq/hw-app-btc/lib/BtcNew.js
+index fe02ea3..52342b7 100644
+--- a/node_modules/@ledgerhq/hw-app-btc/lib/BtcNew.js
++++ b/node_modules/@ledgerhq/hw-app-btc/lib/BtcNew.js
+@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
+ };
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.isPathNormal = void 0;
+-const bitcoinjs_lib_1 = require("bitcoinjs-lib");
++const bitcoinjs_lib_1 = { crypto: require("bitcoinjs-lib/src/crypto") };
+ const tiny_secp256k1_1 = require("tiny-secp256k1");
+ const bip32_1 = require("./bip32");
+ const buffertools_1 = require("./buffertools");
+diff --git a/node_modules/@ledgerhq/hw-app-btc/lib/newops/accounttype.js b/node_modules/@ledgerhq/hw-app-btc/lib/newops/accounttype.js
+index 473ca20..caa151a 100644
+--- a/node_modules/@ledgerhq/hw-app-btc/lib/newops/accounttype.js
++++ b/node_modules/@ledgerhq/hw-app-btc/lib/newops/accounttype.js
+@@ -1,7 +1,7 @@
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.p2wpkh = exports.p2wpkhWrapped = exports.p2tr = exports.p2pkh = void 0;
+-const bitcoinjs_lib_1 = require("bitcoinjs-lib");
++const bitcoinjs_lib_1 = { crypto: require("bitcoinjs-lib/src/crypto") };
+ const tiny_secp256k1_1 = require("tiny-secp256k1");
+ const buffertools_1 = require("../buffertools");
+ const constants_1 = require("../constants");
+diff --git a/node_modules/@ledgerhq/hw-app-btc/lib/newops/clientCommands.js b/node_modules/@ledgerhq/hw-app-btc/lib/newops/clientCommands.js
+index d15eb90..fadfa87 100644
+--- a/node_modules/@ledgerhq/hw-app-btc/lib/newops/clientCommands.js
++++ b/node_modules/@ledgerhq/hw-app-btc/lib/newops/clientCommands.js
+@@ -1,7 +1,7 @@
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.ClientCommandInterpreter = exports.GetMoreElementsCommand = exports.GetMerkleLeafIndexCommand = exports.GetMerkleLeafProofCommand = exports.GetPreimageCommand = exports.YieldCommand = void 0;
+-const bitcoinjs_lib_1 = require("bitcoinjs-lib");
++const bitcoinjs_lib_1 = { crypto: require("bitcoinjs-lib/src/crypto") };
+ const buffertools_1 = require("../buffertools");
+ const varint_1 = require("../varint");
+ const merkle_1 = require("./merkle");
+diff --git a/node_modules/@ledgerhq/hw-app-btc/lib/newops/merkle.js b/node_modules/@ledgerhq/hw-app-btc/lib/newops/merkle.js
+index e9b40e1..90e06f5 100644
+--- a/node_modules/@ledgerhq/hw-app-btc/lib/newops/merkle.js
++++ b/node_modules/@ledgerhq/hw-app-btc/lib/newops/merkle.js
+@@ -1,7 +1,7 @@
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.hashLeaf = exports.Merkle = void 0;
+-const bitcoinjs_lib_1 = require("bitcoinjs-lib");
++const bitcoinjs_lib_1 = { crypto: require("bitcoinjs-lib/src/crypto") };
+ /**
+  * This class implements the merkle tree used by Ledger Bitcoin app v2+,
+  * which is documented at
+diff --git a/node_modules/@ledgerhq/hw-app-btc/lib/newops/policy.js b/node_modules/@ledgerhq/hw-app-btc/lib/newops/policy.js
+index be7759f..5ea89fc 100644
+--- a/node_modules/@ledgerhq/hw-app-btc/lib/newops/policy.js
++++ b/node_modules/@ledgerhq/hw-app-btc/lib/newops/policy.js
+@@ -1,7 +1,7 @@
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.createKey = exports.WalletPolicy = void 0;
+-const bitcoinjs_lib_1 = require("bitcoinjs-lib");
++const bitcoinjs_lib_1 = { crypto: require("bitcoinjs-lib/src/crypto") };
+ const bip32_1 = require("../bip32");
+ const buffertools_1 = require("../buffertools");
+ const merkle_1 = require("./merkle");
+diff --git a/node_modules/@ledgerhq/hw-app-btc/src/BtcNew.ts b/node_modules/@ledgerhq/hw-app-btc/src/BtcNew.ts
+index 8809e7f..cb5fdf8 100644
+--- a/node_modules/@ledgerhq/hw-app-btc/src/BtcNew.ts
++++ b/node_modules/@ledgerhq/hw-app-btc/src/BtcNew.ts
+@@ -1,4 +1,4 @@
+-import { crypto } from "bitcoinjs-lib";
++import * as crypto from "bitcoinjs-lib/src/crypto";
+ import { pointCompress } from "tiny-secp256k1";
+ import {
+   getXpubComponents,
+diff --git a/node_modules/@ledgerhq/hw-app-btc/src/newops/accounttype.ts b/node_modules/@ledgerhq/hw-app-btc/src/newops/accounttype.ts
+index 52d73c7..bd0dbef 100644
+--- a/node_modules/@ledgerhq/hw-app-btc/src/newops/accounttype.ts
++++ b/node_modules/@ledgerhq/hw-app-btc/src/newops/accounttype.ts
+@@ -1,4 +1,4 @@
+-import { crypto } from "bitcoinjs-lib";
++import * as crypto from "bitcoinjs-lib/src/crypto";
+ import { pointAddScalar } from "tiny-secp256k1";
+ import { BufferWriter } from "../buffertools";
+ import { HASH_SIZE, OP_CHECKSIG, OP_DUP, OP_EQUAL, OP_EQUALVERIFY, OP_HASH160 } from "../constants";
+diff --git a/node_modules/@ledgerhq/hw-app-btc/src/newops/clientCommands.ts b/node_modules/@ledgerhq/hw-app-btc/src/newops/clientCommands.ts
+index 519d85c..0c21151 100644
+--- a/node_modules/@ledgerhq/hw-app-btc/src/newops/clientCommands.ts
++++ b/node_modules/@ledgerhq/hw-app-btc/src/newops/clientCommands.ts
+@@ -1,4 +1,4 @@
+-import { crypto } from "bitcoinjs-lib";
++import * as crypto from "bitcoinjs-lib/src/crypto";
+ import { BufferReader } from "../buffertools";
+ import { createVarint } from "../varint";
+ import { hashLeaf, Merkle } from "./merkle";
+diff --git a/node_modules/@ledgerhq/hw-app-btc/src/newops/merkle.ts b/node_modules/@ledgerhq/hw-app-btc/src/newops/merkle.ts
+index 5d3afbd..c3b41b3 100644
+--- a/node_modules/@ledgerhq/hw-app-btc/src/newops/merkle.ts
++++ b/node_modules/@ledgerhq/hw-app-btc/src/newops/merkle.ts
+@@ -1,4 +1,4 @@
+-import { crypto } from "bitcoinjs-lib";
++import * as crypto from "bitcoinjs-lib/src/crypto";
+ 
+ /**
+  * This class implements the merkle tree used by Ledger Bitcoin app v2+,
+diff --git a/node_modules/@ledgerhq/hw-app-btc/src/newops/policy.ts b/node_modules/@ledgerhq/hw-app-btc/src/newops/policy.ts
+index b66644d..1063873 100644
+--- a/node_modules/@ledgerhq/hw-app-btc/src/newops/policy.ts
++++ b/node_modules/@ledgerhq/hw-app-btc/src/newops/policy.ts
+@@ -1,4 +1,4 @@
+-import { crypto } from "bitcoinjs-lib";
++import * as crypto from "bitcoinjs-lib/src/crypto";
+ import { pathArrayToString } from "../bip32";
+ import { BufferWriter } from "../buffertools";
+ import { hashLeaf, Merkle } from "./merkle";
