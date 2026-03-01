@@ -1,5 +1,5 @@
 diff --git a/node_modules/@ledgerhq/hw-transport/lib/Transport.d.ts b/node_modules/@ledgerhq/hw-transport/lib/Transport.d.ts
-index 9099450..8b9df11 100644
+index 9099450..a80b50c 100644
 --- a/node_modules/@ledgerhq/hw-transport/lib/Transport.d.ts
 +++ b/node_modules/@ledgerhq/hw-transport/lib/Transport.d.ts
 @@ -3,8 +3,13 @@

@@ -1,0 +1,154 @@
+diff --git a/node_modules/@nimiq/ledger-api/dist/high-level-api/lazy-chunk-load-nimiq.es.js b/node_modules/@nimiq/ledger-api/dist/high-level-api/lazy-chunk-load-nimiq.es.js
+index ef25492..f2f2ba7 100644
+--- a/node_modules/@nimiq/ledger-api/dist/high-level-api/lazy-chunk-load-nimiq.es.js
++++ b/node_modules/@nimiq/ledger-api/dist/high-level-api/lazy-chunk-load-nimiq.es.js
+@@ -47,7 +47,10 @@ async function loadNimiqAlbatrossCore(preloadWasm = true) {
+             // exact same files as loaded by the Hub, i.e. there is no double loading happening as files will be already
+             // cached. Also, calling init again when the wasm is already initialized, does not unnecessarily initialize
+             // or fetch anything again.
+-            const Nimiq = await import(`${nimiqCoreBasePath}main-wasm/index.js`);
++
++            // Avoid the Hub's Webpack trying to process and bundle the dynamically loaded Albatross core, which is
++            // intended to be loaded from the copy created in vue.config.js.
++            const Nimiq = await import(/* webpackIgnore: true */ `${nimiqCoreBasePath}main-wasm/index.js`);
+             const { default: init } = Nimiq;
+             await init();
+             return Nimiq;
+diff --git a/node_modules/@nimiq/ledger-api/dist/high-level-api/requests/bitcoin/request-bitcoin.d.ts b/node_modules/@nimiq/ledger-api/dist/high-level-api/requests/bitcoin/request-bitcoin.d.ts
+index 1ea6b96..d0a5acc 100644
+--- a/node_modules/@nimiq/ledger-api/dist/high-level-api/requests/bitcoin/request-bitcoin.d.ts
++++ b/node_modules/@nimiq/ledger-api/dist/high-level-api/requests/bitcoin/request-bitcoin.d.ts
+@@ -17,5 +17,5 @@ export default abstract class RequestBitcoin<T> extends Request<T> {
+     protected _getLowLevelApi(transport: Transport): Promise<LowLevelApi>;
+     protected _loadDependencies(): Promise<{
+         LowLevelApi: LowLevelApiConstructor;
+-    } & Awaited<ReturnType<Request<T>['_loadDependencies']>>>;
++    } & any>;
+ }
+diff --git a/node_modules/@nimiq/ledger-api/dist/high-level-api/requests/bitcoin/request-get-extended-public-key-bitcoin.d.ts b/node_modules/@nimiq/ledger-api/dist/high-level-api/requests/bitcoin/request-get-extended-public-key-bitcoin.d.ts
+index 9f79fc4..e2d57d3 100644
+--- a/node_modules/@nimiq/ledger-api/dist/high-level-api/requests/bitcoin/request-get-extended-public-key-bitcoin.d.ts
++++ b/node_modules/@nimiq/ledger-api/dist/high-level-api/requests/bitcoin/request-get-extended-public-key-bitcoin.d.ts
+@@ -11,6 +11,6 @@ export default class RequestGetExtendedPublicKeyBitcoin extends RequestBitcoin<s
+     protected _loadDependencies(): Promise<{
+         bip32FromBase58: typeof import('bip32').fromBase58;
+         bitcoinJsNetworks: typeof import('bitcoinjs-lib').networks;
+-    } & Awaited<ReturnType<RequestBitcoin<string>['_loadDependencies']>>>;
++    } & any>;
+ }
+ export {};
+diff --git a/node_modules/@nimiq/ledger-api/dist/high-level-api/requests/bitcoin/request-sign-transaction-bitcoin.d.ts b/node_modules/@nimiq/ledger-api/dist/high-level-api/requests/bitcoin/request-sign-transaction-bitcoin.d.ts
+index 6bda387..9a52539 100644
+--- a/node_modules/@nimiq/ledger-api/dist/high-level-api/requests/bitcoin/request-sign-transaction-bitcoin.d.ts
++++ b/node_modules/@nimiq/ledger-api/dist/high-level-api/requests/bitcoin/request-sign-transaction-bitcoin.d.ts
+@@ -33,6 +33,6 @@ export default class RequestSignTransactionBitcoin extends RequestBitcoin<string
+     protected _loadDependencies(): Promise<{
+         addressToOutputScript?: typeof import('bitcoinjs-lib').address.toOutputScript;
+         bitcoinJsNetworks?: typeof import('bitcoinjs-lib').networks;
+-    } & Awaited<ReturnType<RequestBitcoin<string>['_loadDependencies']>>>;
++    } & any>;
+ }
+ export {};
+diff --git a/node_modules/@nimiq/ledger-api/dist/high-level-api/requests/nimiq/request-get-public-key-nimiq.d.ts b/node_modules/@nimiq/ledger-api/dist/high-level-api/requests/nimiq/request-get-public-key-nimiq.d.ts
+index fbb6823..f14983b 100644
+--- a/node_modules/@nimiq/ledger-api/dist/high-level-api/requests/nimiq/request-get-public-key-nimiq.d.ts
++++ b/node_modules/@nimiq/ledger-api/dist/high-level-api/requests/nimiq/request-get-public-key-nimiq.d.ts
+@@ -1,7 +1,7 @@
+ import RequestWithKeyPathNimiq from './request-with-key-path-nimiq';
+ import { RequestTypeNimiq } from '../../constants';
+ import { NimiqVersion } from '../../../shared/constants';
+-import { type Nimiq, type NimiqPrimitive } from '../../../shared/load-nimiq';
++import type { Nimiq, NimiqPrimitive } from '../../../shared/load-nimiq';
+ type Transport = import('@ledgerhq/hw-transport').default;
+ export default class RequestGetPublicKeyNimiq<Version extends NimiqVersion> extends RequestWithKeyPathNimiq<Version, NimiqPrimitive<'PublicKey', Version>> {
+     readonly type: RequestTypeNimiq.GET_PUBLIC_KEY;
+@@ -9,6 +9,6 @@ export default class RequestGetPublicKeyNimiq<Version extends NimiqVersion> exte
+     call(transport: Transport): Promise<NimiqPrimitive<'PublicKey', Version>>;
+     protected _loadDependencies(): Promise<{
+         Nimiq: Nimiq<Version>;
+-    } & Awaited<ReturnType<RequestWithKeyPathNimiq<any, any>['_loadDependencies']>>>;
++    } & any>;
+ }
+ export {};
+diff --git a/node_modules/@nimiq/ledger-api/dist/high-level-api/requests/nimiq/request-nimiq.d.ts b/node_modules/@nimiq/ledger-api/dist/high-level-api/requests/nimiq/request-nimiq.d.ts
+index 9ff5494..9af825a 100644
+--- a/node_modules/@nimiq/ledger-api/dist/high-level-api/requests/nimiq/request-nimiq.d.ts
++++ b/node_modules/@nimiq/ledger-api/dist/high-level-api/requests/nimiq/request-nimiq.d.ts
+@@ -16,5 +16,5 @@ export default abstract class RequestNimiq<Version extends NimiqVersion, T> exte
+     protected _getLowLevelApi(transport: Transport): Promise<LowLevelApi>;
+     protected _loadDependencies(): Promise<{
+         LowLevelApi: LowLevelApiConstructor;
+-    } & Awaited<ReturnType<Request<T>['_loadDependencies']>>>;
++    } & any>;
+ }
+diff --git a/node_modules/@nimiq/ledger-api/dist/high-level-api/requests/nimiq/request-sign-message-nimiq.d.ts b/node_modules/@nimiq/ledger-api/dist/high-level-api/requests/nimiq/request-sign-message-nimiq.d.ts
+index dcca450..2e94b9a 100644
+--- a/node_modules/@nimiq/ledger-api/dist/high-level-api/requests/nimiq/request-sign-message-nimiq.d.ts
++++ b/node_modules/@nimiq/ledger-api/dist/high-level-api/requests/nimiq/request-sign-message-nimiq.d.ts
+@@ -1,7 +1,7 @@
+ import RequestWithKeyPathNimiq from './request-with-key-path-nimiq';
+ import { RequestTypeNimiq } from '../../constants';
+ import { NimiqVersion } from '../../../shared/constants';
+-import { type Nimiq, type NimiqPrimitive } from '../../../shared/load-nimiq';
++import type { Nimiq, NimiqPrimitive } from '../../../shared/load-nimiq';
+ type Transport = import('@ledgerhq/hw-transport').default;
+ export type MessageSignatureInfoNimiq<Version extends NimiqVersion> = {
+     signer: NimiqPrimitive<'PublicKey', Version>;
+@@ -19,6 +19,6 @@ export default class RequestSignMessageNimiq<Version extends NimiqVersion> exten
+     call(transport: Transport): Promise<MessageSignatureInfoNimiq<Version>>;
+     protected _loadDependencies(): Promise<{
+         Nimiq: Nimiq<Version>;
+-    } & Awaited<ReturnType<RequestWithKeyPathNimiq<any, any>['_loadDependencies']>>>;
++    } & any>;
+ }
+ export {};
+diff --git a/node_modules/@nimiq/ledger-api/dist/high-level-api/requests/nimiq/request-sign-transaction-nimiq.d.ts b/node_modules/@nimiq/ledger-api/dist/high-level-api/requests/nimiq/request-sign-transaction-nimiq.d.ts
+index 112da66..216170a 100644
+--- a/node_modules/@nimiq/ledger-api/dist/high-level-api/requests/nimiq/request-sign-transaction-nimiq.d.ts
++++ b/node_modules/@nimiq/ledger-api/dist/high-level-api/requests/nimiq/request-sign-transaction-nimiq.d.ts
+@@ -1,7 +1,7 @@
+ import RequestWithKeyPathNimiq from './request-with-key-path-nimiq';
+ import { RequestTypeNimiq, Network, AccountTypeNimiq } from '../../constants';
+ import { NimiqVersion } from '../../../shared/constants';
+-import { type Nimiq, type NimiqPrimitive } from '../../../shared/load-nimiq';
++import type { Nimiq, NimiqPrimitive } from '../../../shared/load-nimiq';
+ type Transport = import('@ledgerhq/hw-transport').default;
+ export type TransactionInfoNimiq<Version extends NimiqVersion> = {
+     sender: NimiqPrimitive<'Address', Version>;
+@@ -31,6 +31,6 @@ export default class RequestSignTransactionNimiq<Version extends NimiqVersion> e
+     call(transport: Transport): Promise<NimiqPrimitive<'Transaction', Version>>;
+     protected _loadDependencies(): Promise<{
+         Nimiq: Nimiq<Version>;
+-    } & Awaited<ReturnType<RequestWithKeyPathNimiq<any, any>['_loadDependencies']>>>;
++    } & any>;
+ }
+ export {};
+diff --git a/node_modules/@nimiq/ledger-api/dist/low-level-api/low-level-api.es.js b/node_modules/@nimiq/ledger-api/dist/low-level-api/low-level-api.es.js
+index 714ec7d..416ef9e 100644
+--- a/node_modules/@nimiq/ledger-api/dist/low-level-api/low-level-api.es.js
++++ b/node_modules/@nimiq/ledger-api/dist/low-level-api/low-level-api.es.js
+@@ -51,7 +51,10 @@ async function loadNimiqAlbatrossCore(preloadWasm = true) {
+             // exact same files as loaded by the Hub, i.e. there is no double loading happening as files will be already
+             // cached. Also, calling init again when the wasm is already initialized, does not unnecessarily initialize
+             // or fetch anything again.
+-            const Nimiq = await import(`${nimiqCoreBasePath}main-wasm/index.js`);
++
++            // Avoid the Hub's Webpack trying to process and bundle the dynamically loaded Albatross core, which is
++            // intended to be loaded from the copy created in vue.config.js.
++            const Nimiq = await import(/* webpackIgnore: true */ `${nimiqCoreBasePath}main-wasm/index.js`);
+             const { default: init } = Nimiq;
+             await init();
+             return Nimiq;
+diff --git a/node_modules/@nimiq/ledger-api/dist/shared/load-nimiq.d.ts b/node_modules/@nimiq/ledger-api/dist/shared/load-nimiq.d.ts
+index fab5012..060a7f9 100644
+--- a/node_modules/@nimiq/ledger-api/dist/shared/load-nimiq.d.ts
++++ b/node_modules/@nimiq/ledger-api/dist/shared/load-nimiq.d.ts
+@@ -8,6 +8,8 @@ type InstanceTypeIgnoringPrivateConstructor<T extends {
+ } ? R : never;
+ export type NimiqPrimitive<Primitive extends CommonPrimitives, Version extends NimiqVersion> = InstanceTypeIgnoringPrivateConstructor<Nimiq<Version>[Primitive]>;
+ export declare function isNimiqLegacy(core: Nimiq<NimiqVersion>): core is Nimiq<NimiqVersion.LEGACY>;
++// @ts-ignore: Expression produces a union type that is too complex to represent. Seems like old typescript versions are
++//  unfolding the union in an inefficient manner, resulting in many union entries.
+ export declare function isNimiqLegacyPrimitive<Primitive extends CommonPrimitives = never>(primitive: NimiqPrimitive<Primitive, NimiqVersion>): primitive is NimiqPrimitive<Primitive, NimiqVersion.LEGACY>;
+ export declare function loadNimiq<Version extends NimiqVersion>(nimiqVersion: Version, inlcudeNimiqLegacyCryptography: boolean, preloadWasm?: boolean): Promise<Nimiq<Version>>;
+ declare module './load-nimiq' {

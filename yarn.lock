@@ -1887,7 +1887,17 @@
     call-me-maybe "^1.0.1"
     glob-to-regexp "^0.3.0"
 
-"@nimiq/albatross-wasm@npm:@nimiq/core@^2.0.0", "@nimiq/core@^2.1.1":
+"@nimiq/browser-warning@^1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@nimiq/browser-warning/-/browser-warning-1.1.1.tgz#c989fb0990f17e1429fff6dda7e23903b002bfff"
+  integrity sha512-MGT9Yykci7gjaP95jwz3LwykLtGiWxJnKU3OL4bTPMVPwn8vGeOjTOyMhm5/wFg0V1uM0gQedOtP4g2RMuSf7A==
+
+"@nimiq/core-web@^1.6.4":
+  version "1.6.4"
+  resolved "https://registry.yarnpkg.com/@nimiq/core-web/-/core-web-1.6.4.tgz#2ab36ab6f7d4062c3d534e6da831c2ccaae959de"
+  integrity sha512-D0jVukuL+zsUXicS4cCZEPlBzlzBe0D1sNWecEhaSjTR1iMa9f+fA9l08wlQtRVw96Z6yHRgQokWVnO1GcWI7Q==
+
+"@nimiq/core@^2.1.1":
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/@nimiq/core/-/core-2.1.1.tgz#75b1ff1114aea049db3e6c2aecf6c44c1b660f35"
   integrity sha512-GOgWG5Uo9TPQld13EbVVKCBAL411LrqBd5qOXrrv0Qr52uq6GmY9AjbchUyMahtpFFOisX7Zvdtz8agYBNuS2A==
@@ -1895,15 +1905,13 @@
     comlink "^4.4.1"
     websocket "^1.0.34"
 
-"@nimiq/browser-warning@^1.1.1":
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/@nimiq/browser-warning/-/browser-warning-1.1.1.tgz#c989fb0990f17e1429fff6dda7e23903b002bfff"
-  integrity sha512-MGT9Yykci7gjaP95jwz3LwykLtGiWxJnKU3OL4bTPMVPwn8vGeOjTOyMhm5/wFg0V1uM0gQedOtP4g2RMuSf7A==
-
-"@nimiq/core-web@^1.6.2":
-  version "1.6.4"
-  resolved "https://registry.yarnpkg.com/@nimiq/core-web/-/core-web-1.6.4.tgz#2ab36ab6f7d4062c3d534e6da831c2ccaae959de"
-  integrity sha512-D0jVukuL+zsUXicS4cCZEPlBzlzBe0D1sNWecEhaSjTR1iMa9f+fA9l08wlQtRVw96Z6yHRgQokWVnO1GcWI7Q==
+"@nimiq/core@^2.2.2":
+  version "2.2.2"
+  resolved "https://registry.yarnpkg.com/@nimiq/core/-/core-2.2.2.tgz#eaa4f6f97dea7382c68bff5b9c834ae0a7ccb9cc"
+  integrity sha512-fujsUnuWh8FIuZDeQR5s8wvPBpE3Adm0XH7ycpFcaixCti6z5YwG4ef5AXKAJD7RBHYyVzF9bkoqCWMN+bA8PA==
+  dependencies:
+    comlink "^4.4.1"
+    websocket "^1.0.34"
 
 "@nimiq/electrum-client@https://github.com/nimiq/electrum-client#build":
   version "0.1.0"
@@ -1932,10 +1940,10 @@
     "@nimiq/rpc" "^0.3.0"
     "@opengsn/common" "^2.2.5"
 
-"@nimiq/ledger-api@^3.1.1":
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/@nimiq/ledger-api/-/ledger-api-3.1.1.tgz#a399423e24efaa06da564f410cf637e01eea26f7"
-  integrity sha512-j5PIYbSqARLNl9Ih0JGdR/jo0nyFydoug/wsPRoHVzdmUcXTIZ6NerA9tzW3HoeDEzBtMMMyNJQZwkEFHxhEEQ==
+"@nimiq/ledger-api@^4.0.0":
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/@nimiq/ledger-api/-/ledger-api-4.0.0.tgz#de73e1a84a98cef1d89722e68fb5d990b79525d0"
+  integrity sha512-eWUa1jGq4M10b5HYltlqWGj8iFyck+uS+7B3JGrFdOSxt9qGq3RfmpxjkTTYxybklUFlOVwkJJhjfyVLF7IxZQ==
   dependencies:
     "@ledgerhq/hw-app-btc" "^10.0.9"
     "@ledgerhq/hw-transport" "^6.29.0"
@@ -1945,13 +1953,14 @@
     "@ledgerhq/hw-transport-webauthn" "^5.36.0-deprecated"
     "@ledgerhq/hw-transport-webhid" "^6.27.20"
     "@ledgerhq/hw-transport-webusb" "^6.27.20"
-    "@nimiq/albatross-wasm" "npm:@nimiq/core@^2.0.0"
-    "@nimiq/core-web" "^1.6.2"
+    "@nimiq/core" "^2.2.2"
+    "@nimiq/core-web" "^1.6.4"
     "@types/ledgerhq__hw-transport-u2f" "^4.21.4"
     "@types/w3c-web-usb" "^1.0.6"
+    bip32 "^2.0.6"
     bitcoinjs-lib "^5.2.0"
-    buffer "^6.0.3"
-    readable-stream "^4.4.2"
+    patch-package "^8.0.1"
+    postinstall-postinstall "^2.1.0"
 
 "@nimiq/oasis-api@^1.1.1":
   version "1.1.1"
@@ -3822,7 +3831,7 @@ bip32-path@^0.4.2:
   resolved "https://registry.yarnpkg.com/bip32-path/-/bip32-path-0.4.2.tgz#5db0416ad6822712f077836e2557b8697c0c7c99"
   integrity sha512-ZBMCELjJfcNMkz5bDuJ1WrYvjlhEF5k6mQ8vUr4N7MbVRsXei7ZOg8VhhwMfNiW68NWmLkgkc6WvTickrLGprQ==
 
-bip32@^2.0.4:
+bip32@^2.0.4, bip32@^2.0.6:
   version "2.0.6"
   resolved "https://registry.yarnpkg.com/bip32/-/bip32-2.0.6.tgz#6a81d9f98c4cd57d05150c60d8f9e75121635134"
   integrity sha512-HpV5OMLLGTjSVblmrtYRfFFKuQB+GArM0+XP8HGWfJ5vxYBqo+DesvJwOdC2WJ3bCkZShGf0QIfoIpeomVzVdA==
@@ -4486,7 +4495,7 @@ ci-info@^2.0.0:
   resolved "https://registry.yarnpkg.com/ci-info/-/ci-info-2.0.0.tgz#67a9e964be31a51e15e5010d58e6f12834002f46"
   integrity sha512-5tK7EtrZ0N+OLFMthtqOj4fI2Jeb88C4CAZPu25LDVUgXJ0A3Js4PMGqrn0JU1W0Mh1/Z8wZzYPxqUrXeBboCQ==
 
-ci-info@^3.2.0:
+ci-info@^3.2.0, ci-info@^3.7.0:
   version "3.9.0"
   resolved "https://registry.yarnpkg.com/ci-info/-/ci-info-3.9.0.tgz#4279a62028a7b1f262f3473fc9605f5e218c59b4"
   integrity sha512-NIxF55hv4nSqQswkAeiOi1r83xy8JldOFDTWiug55KBu9Jnblncd2U6ViHmYgHf01TPZS77NJBhBMKdWj9HQMQ==
@@ -6745,6 +6754,15 @@ fs-constants@^1.0.0:
   resolved "https://registry.yarnpkg.com/fs-constants/-/fs-constants-1.0.0.tgz#6be0de9be998ce16af8afc24497b9ee9b7ccd9ad"
   integrity sha512-y6OAwoSIf7FyjMIv94u+b5rdheZEjzR63GTyZJm5qh4Bi+2YgwLCcI/fPFZkL5PSixOt6ZNKm+w+Hfp/Bciwow==
 
+fs-extra@^10.0.0:
+  version "10.1.0"
+  resolved "https://registry.yarnpkg.com/fs-extra/-/fs-extra-10.1.0.tgz#02873cfbc4084dde127eaa5f9905eef2325d1abf"
+  integrity sha512-oRXApq54ETRj4eMiFzGnHWGy+zo5raudjuxN0b8H7s/RU2oW0Wvsx9O0ACRN/kRq9E8Vu/ReskGB5o3ji+FzHQ==
+  dependencies:
+    graceful-fs "^4.2.0"
+    jsonfile "^6.0.1"
+    universalify "^2.0.0"
+
 fs-extra@^4.0.2:
   version "4.0.3"
   resolved "https://registry.yarnpkg.com/fs-extra/-/fs-extra-4.0.3.tgz#0d852122e5bc5beb453fb028e9c0c9bf36340c94"
@@ -8717,6 +8735,17 @@ json-stable-stringify@^1.0.1:
   dependencies:
     jsonify "^0.0.1"
 
+json-stable-stringify@^1.0.2:
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/json-stable-stringify/-/json-stable-stringify-1.3.0.tgz#8903cfac42ea1a0f97f35d63a4ce0518f0cc6a70"
+  integrity sha512-qtYiSSFlwot9XHtF9bD9c7rwKjr+RecWT//ZnPvSmEjpV5mmPOCN4j8UjY5hbjNkOwZ/jQv3J6R1/pL7RwgMsg==
+  dependencies:
+    call-bind "^1.0.8"
+    call-bound "^1.0.4"
+    isarray "^2.0.5"
+    jsonify "^0.0.1"
+    object-keys "^1.1.1"
+
 json-stringify-safe@~5.0.1:
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/json-stringify-safe/-/json-stringify-safe-5.0.1.tgz#1296a2d58fd45f19a0f6ce01d65701e2c735b6eb"
@@ -10111,6 +10140,26 @@ patch-package@^6.5.1:
     tmp "^0.0.33"
     yaml "^1.10.2"
 
+patch-package@^8.0.1:
+  version "8.0.1"
+  resolved "https://registry.yarnpkg.com/patch-package/-/patch-package-8.0.1.tgz#79d02f953f711e06d1f8949c8a13e5d3d7ba1a60"
+  integrity sha512-VsKRIA8f5uqHQ7NGhwIna6Bx6D9s/1iXlA1hthBVBEbkq+t4kXD0HHt+rJhf/Z+Ci0F/HCB2hvn0qLdLG+Qxlw==
+  dependencies:
+    "@yarnpkg/lockfile" "^1.1.0"
+    chalk "^4.1.2"
+    ci-info "^3.7.0"
+    cross-spawn "^7.0.3"
+    find-yarn-workspace-root "^2.0.0"
+    fs-extra "^10.0.0"
+    json-stable-stringify "^1.0.2"
+    klaw-sync "^6.0.0"
+    minimist "^1.2.6"
+    open "^7.4.2"
+    semver "^7.5.3"
+    slash "^2.0.0"
+    tmp "^0.2.4"
+    yaml "^2.2.2"
+
 path-browserify@0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/path-browserify/-/path-browserify-0.0.1.tgz#e6c4ddd7ed3aa27c68a20cc4e50e1a4ee83bbc4a"
@@ -10955,17 +11004,6 @@ readable-stream@^3.0.2, readable-stream@^3.0.6, readable-stream@^3.1.1, readable
     inherits "^2.0.3"
     string_decoder "^1.1.1"
     util-deprecate "^1.0.1"
-
-readable-stream@^4.4.2:
-  version "4.5.2"
-  resolved "https://registry.yarnpkg.com/readable-stream/-/readable-stream-4.5.2.tgz#9e7fc4c45099baeed934bff6eb97ba6cf2729e09"
-  integrity sha512-yjavECdqeZ3GLXNgRXgeQEdz9fvDDkNKyHnbHRFtOr7/LcfgBcmct7t/ET+HaCTqfh06OzoAxrkN/IfjJBVe+g==
-  dependencies:
-    abort-controller "^3.0.0"
-    buffer "^6.0.3"
-    events "^3.3.0"
-    process "^0.11.10"
-    string_decoder "^1.3.0"
 
 readable-stream@^4.7.0:
   version "4.7.0"
@@ -12329,6 +12367,11 @@ tmp@^0.2.1:
   integrity sha512-76SUhtfqR2Ijn+xllcI5P1oyannHNHByD80W1q447gU3mp9G9PSpGdWmjUOHRDPiHYacIk66W7ubDTuPF3BEtQ==
   dependencies:
     rimraf "^3.0.0"
+
+tmp@^0.2.4:
+  version "0.2.5"
+  resolved "https://registry.yarnpkg.com/tmp/-/tmp-0.2.5.tgz#b06bcd23f0f3c8357b426891726d16015abfd8f8"
+  integrity sha512-voyz6MApa1rQGUxT3E+BK7/ROe8itEx7vD8/HEvt4xwXucvQ5G5oeEiHkmHZJuBO21RpOf+YYm9MOivj709jow==
 
 tmpl@1.0.x:
   version "1.0.5"
@@ -13982,6 +14025,11 @@ yaml@^1.10.2, yaml@^1.7.2:
   version "1.10.2"
   resolved "https://registry.yarnpkg.com/yaml/-/yaml-1.10.2.tgz#2301c5ffbf12b467de8da2333a459e29e7920e4b"
   integrity sha512-r3vXyErRCYJ7wg28yvBY5VSoAF8ZvlcW9/BwUzEtUsjvX/DKs24dIkuwjtuprwJJHsbyUbLApepYTR1BN4uHrg==
+
+yaml@^2.2.2:
+  version "2.8.2"
+  resolved "https://registry.yarnpkg.com/yaml/-/yaml-2.8.2.tgz#5694f25eca0ce9c3e7a9d9e00ce0ddabbd9e35c5"
+  integrity sha512-mplynKqc1C2hTVYxd0PU2xQAc22TI1vShAYGksCCfxbn/dFwnHTNi1bvYsBTkhdUNtGIf5xNOg938rrSSYvS9A==
 
 yargs-parser@20.x, yargs-parser@^20.2.2:
   version "20.2.9"

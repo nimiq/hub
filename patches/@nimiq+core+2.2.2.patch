@@ -1,0 +1,34 @@
+diff --git a/node_modules/@nimiq/core/types/wasm/bundler.d.ts b/node_modules/@nimiq/core/types/wasm/bundler.d.ts
+index 7647496..95aae90 100644
+--- a/node_modules/@nimiq/core/types/wasm/bundler.d.ts
++++ b/node_modules/@nimiq/core/types/wasm/bundler.d.ts
+@@ -1,5 +1,12 @@
+ /* tslint:disable */
+ /* eslint-disable */
++
++declare global {
++    interface SymbolConstructor {
++        dispose: symbol;
++    }
++}
++
+ /**
+  * Available peer service flags
+  */
+diff --git a/node_modules/@nimiq/core/types/wasm/web.d.ts b/node_modules/@nimiq/core/types/wasm/web.d.ts
+index badfab1..24aaa93 100644
+--- a/node_modules/@nimiq/core/types/wasm/web.d.ts
++++ b/node_modules/@nimiq/core/types/wasm/web.d.ts
+@@ -1,5 +1,12 @@
+ /* tslint:disable */
+ /* eslint-disable */
++
++declare global {
++    interface SymbolConstructor {
++        dispose: symbol;
++    }
++}
++
+ /**
+  * Available peer service flags
+  */

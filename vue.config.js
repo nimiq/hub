@@ -92,6 +92,9 @@ const configureWebpack = {
             // Polyfill node's builtin stream module via readable-stream, which is essentially node's stream put into an
             // npm package. stream is for example used by bitcoinjs-lib > create-hash > cipher-base
             stream: 'readable-stream',
+            // Help our old webpack version find the appropriate module files.
+            '@ledgerhq/devices/ble': '@ledgerhq/devices/lib-es/ble',
+            '@ledgerhq/devices/hid-framing': '@ledgerhq/devices/lib-es/hid-framing',
         }
     },
     // Fix sourcemaps (https://www.mistergoodcat.com/post/the-joy-that-is-source-maps-with-vuejs-and-typescript)
