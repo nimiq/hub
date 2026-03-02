@@ -1914,8 +1914,8 @@
     websocket "^1.0.34"
 
 "@nimiq/electrum-client@https://github.com/nimiq/electrum-client#build":
-  version "0.1.0"
-  resolved "https://github.com/nimiq/electrum-client#61c5b97d9bcd3ff0f49703dd5bdc30c711dd506c"
+  version "0.3.0"
+  resolved "https://github.com/nimiq/electrum-client#04d8a29e92c63f65b6ccdd7585c173d24df8fe98"
   dependencies:
     bitcoinjs-lib "^5.1.10"
 
