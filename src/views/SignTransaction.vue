@@ -22,8 +22,38 @@ export default class SignTransaction extends Vue {
         let keyId: string;
         let keyPath: string;
         let keyLabel: string | undefined;
+        let recipientLabel: string | undefined = this.request.recipientLabel;
 
-        if (this.request.sender instanceof Nimiq.Address) {
+        // For staking transactions, determine signer by last transaction (like SignStaking does)
+        if (this.request.isStakingRequest && this.request.transactions && this.request.transactions.length > 0) {
+            const finalTransaction = this.request.transactions[this.request.transactions.length - 1];
+            const signerSide = (finalTransaction as any).senderType === 'basic'
+                ? 'sender' as const
+                : 'recipient' as const;
+            const signerAddress = (finalTransaction as any)[signerSide];
+
+            // Don't have to handle contracts as such are disallowed by RequestParser
+            const account = this.findWalletByAddress(signerAddress, false)!;
+            const signer = account.findSignerForAddress(Nimiq.Address.fromUserFriendlyAddress(signerAddress))!;
+
+            keyId = account.keyId;
+            keyPath = signer.path;
+            keyLabel = account.labelForKeyguard;
+
+            if (signerSide === 'recipient') {
+                senderLabel = this.request.senderLabel || 'Staking Contract';
+                recipientLabel = signer.label;
+            } else {
+                senderLabel = signer.label;
+                recipientLabel = this.request.recipientLabel || 'Staking Contract';
+            }
+
+            // For staking, senderAddress is always from the first transaction
+            senderAddress = this.request.sender instanceof Nimiq.Address
+                ? this.request.sender
+                : (this.request.sender as any).address;
+            senderType = Nimiq.AccountType.Basic; // Will be overridden per transaction
+        } else if (this.request.sender instanceof Nimiq.Address) {
             // existence checked in RpcApi
             const senderAccount = this.findWalletByAddress(this.request.sender.toUserFriendlyAddress(), true)!;
             const senderContract = senderAccount.findContractByAddress(this.request.sender);
@@ -46,31 +76,135 @@ export default class SignTransaction extends Vue {
             } = this.request.sender);
         }
 
-        const request: KeyguardClient.SignTransactionRequest = {
-            layout: 'standard',
-            appName: this.request.appName,
+        let keyguardRequest: KeyguardClient.SignTransactionRequest;
 
-            keyId,
-            keyPath,
-            keyLabel,
+        // Check if this is a multi-transaction request
+        if (this.request.transactions && this.request.transactions.length > 0) {
+            // Multi-transaction format
+            // Transactions can be ParsedTransactionData[] (from TransactionData[])
+            // or PlainTransaction[] (from Uint8Array[])
 
-            sender: senderAddress.serialize(),
-            senderLabel,
-            senderType: senderType || Nimiq.AccountType.Basic,
-            recipient: this.request.recipient.serialize(),
-            recipientType: this.request.recipientType,
-            recipientLabel: this.request.recipientLabel,
-            recipientData: this.request.data,
-            value: this.request.value,
-            fee: this.request.fee,
-            validityStartHeight: this.request.validityStartHeight,
-            flags: this.request.flags,
-        };
+            // If we have serialized transactions
+            if (this.request.serializedTransactions) {
+                // For staking transactions, re-serialize from PlainTransaction (like SignStaking does)
+                const transactions = this.request.isStakingRequest && this.request.transactions
+                    ? (this.request.transactions as any[]).map((plainTx: any) =>
+                        Nimiq.Transaction.fromPlain(plainTx).serialize())
+                    : this.request.serializedTransactions;
 
-        staticStore.keyguardRequest = request;
+                keyguardRequest = {
+                    layout: 'standard',
+                    appName: this.request.appName,
 
-        const client = this.$rpc.createKeyguardClient(true);
-        client.signTransaction(request);
+                    keyId,
+                    keyPath,
+                    keyLabel,
+
+                    // For staking transactions, don't include sender field (like SignStaking)
+                    // For non-staking, include it
+                    ...(this.request.isStakingRequest ? {} : {
+                        sender: senderAddress.serialize(),
+                    }),
+                    senderLabel,
+                    recipientLabel,
+
+                    // For staking: re-serialized from PlainTransaction
+                    // For non-staking: original serialized bytes
+                    transactions,
+
+                    // Pass through staking-specific fields (like SignStaking does)
+                    ...(this.request.isStakingRequest ? {
+                        validatorAddress: this.request.validatorAddress,
+                        validatorImageUrl: this.request.validatorImageUrl,
+                        amount: this.request.amount,
+                    } : {}),
+                };
+            } else {
+                // Otherwise, convert ParsedTransactionData or PlainTransaction to TransactionData
+                const firstTx = this.request.transactions[0];
+
+                // Check if transactions are PlainTransaction[] (from serialized) or ParsedTransactionData[]
+                const isPlainTransaction = typeof (firstTx as any).recipient === 'string';
+
+                // Cast to any to avoid union type issues with map()
+                const txArray = this.request.transactions as any[];
+
+                keyguardRequest = {
+                    layout: 'standard',
+                    appName: this.request.appName,
+
+                    keyId,
+                    keyPath,
+                    keyLabel,
+
+                    recipientLabel,
+
+                    transactions: txArray.map((tx: any) => {
+                        if (isPlainTransaction) {
+                            // PlainTransaction from serialized format
+                            return {
+                                sender: senderAddress.serialize(),
+                                senderType: tx.senderType || senderType || Nimiq.AccountType.Basic,
+                                senderLabel: tx.senderLabel || senderLabel,
+                                recipient: tx.recipient, // Already a string
+                                recipientType: tx.recipientType === 'basic' ? Nimiq.AccountType.Basic
+                                    : tx.recipientType === 'vesting' ? Nimiq.AccountType.Vesting
+                                    : tx.recipientType === 'htlc' ? Nimiq.AccountType.HTLC
+                                    : tx.recipientType === 'staking' ? Nimiq.AccountType.Staking
+                                    : Nimiq.AccountType.Basic,
+                                recipientLabel: tx.recipientLabel,
+                                recipientData: tx.data,
+                                value: tx.value,
+                                fee: tx.fee,
+                                validityStartHeight: tx.validityStartHeight,
+                                flags: tx.flags,
+                            };
+                        } else {
+                            // ParsedTransactionData from TransactionData format
+                            return {
+                                sender: senderAddress.serialize(),
+                                senderType: tx.senderType || senderType || Nimiq.AccountType.Basic,
+                                senderLabel: tx.senderLabel || senderLabel,
+                                recipient: tx.recipient.serialize(), // Nimiq.Address object
+                                recipientType: tx.recipientType,
+                                recipientLabel: tx.recipientLabel,
+                                recipientData: tx.data,
+                                value: tx.value,
+                                fee: tx.fee,
+                                validityStartHeight: tx.validityStartHeight,
+                                flags: tx.flags,
+                            };
+                        }
+                    }),
+                };
+            }
+        } else {
+            // Single transaction format (backward compatible)
+            keyguardRequest = {
+                layout: 'standard',
+                appName: this.request.appName,
+
+                keyId,
+                keyPath,
+                keyLabel,
+
+                sender: senderAddress.serialize(),
+                senderLabel,
+                senderType: senderType || Nimiq.AccountType.Basic,
+                recipient: this.request.recipient.serialize(),
+                recipientType: this.request.recipientType,
+                recipientLabel,
+                recipientData: this.request.data,
+                value: this.request.value,
+                fee: this.request.fee,
+                validityStartHeight: this.request.validityStartHeight,
+                flags: this.request.flags,
+            };
+        }
+
+        staticStore.keyguardRequest = keyguardRequest;
+        const keyguardClient = this.$rpc.createKeyguardClient(true);
+        keyguardClient.signTransaction(keyguardRequest);
     }
 }
 </script>

@@ -70,24 +70,144 @@ export class RequestParser {
             case RequestType.SIGN_TRANSACTION:
                 const signTransactionRequest = request as SignTransactionRequest;
 
-                if (!signTransactionRequest.value) throw new Error('value is required');
-                if (!signTransactionRequest.validityStartHeight) throw new Error('validityStartHeight is required');
+                // Check if it's a multi-transaction request
+                if ('transactions' in signTransactionRequest && signTransactionRequest.transactions) {
+                    // Multi-transaction format
+                    if (signTransactionRequest.transactions.length === 0) {
+                        throw new Error('transactions array must not be empty');
+                    }
 
-                return {
-                    kind: requestType,
-                    appName: signTransactionRequest.appName,
-                    sender: Nimiq.Address.fromString(signTransactionRequest.sender),
-                    recipient: Nimiq.Address.fromString(signTransactionRequest.recipient),
-                    recipientType: signTransactionRequest.recipientType || Nimiq.AccountType.Basic,
-                    recipientLabel: signTransactionRequest.recipientLabel,
-                    value: signTransactionRequest.value,
-                    fee: signTransactionRequest.fee || 0,
-                    data: typeof signTransactionRequest.extraData === 'string'
-                        ? Utf8Tools.stringToUtf8ByteArray(signTransactionRequest.extraData)
-                        : signTransactionRequest.extraData || new Uint8Array(0),
-                    flags: signTransactionRequest.flags || Nimiq.TransactionFlag.None,
-                    validityStartHeight: signTransactionRequest.validityStartHeight,
-                } as ParsedSignTransactionRequest;
+                    const firstTx = signTransactionRequest.transactions[0];
+
+                    // Check if transactions are serialized (Uint8Array[]) or data objects (TransactionData[])
+                    if (firstTx instanceof Uint8Array) {
+                        // Serialized transactions format (like signStaking)
+                        const serializedTransactions = signTransactionRequest.transactions as Uint8Array[];
+
+                        const plainTransactions = serializedTransactions.map((serializedTx) => {
+                            if (!(serializedTx instanceof Uint8Array)) {
+                                throw new Error('All transactions must be of type Uint8Array');
+                            }
+                            return Nimiq.Transaction.fromAny(serializedTx).toPlain();
+                        });
+
+                        // Check if these are staking transactions
+                        const isStakingTransactions = plainTransactions.every((tx) =>
+                            tx.senderType === 'staking' || tx.recipientType === 'staking',
+                        );
+
+                        // For staking transactions, validate constraints (like SignStaking does)
+                        if (isStakingTransactions) {
+                            if (plainTransactions.length < 1 || plainTransactions.length > 3) {
+                                throw new Error('Expected one to three staking transactions to sign');
+                            }
+
+                            for (const transaction of plainTransactions) {
+                                if (!(['staking', 'basic'] as const)
+                                    .every((type) => transaction.senderType === type
+                                        || transaction.recipientType === type)) {
+                                    throw new Error('Either sender or recipient needs to be of type staking, ' +
+                                        'and the other of type basic.');
+                                }
+                            }
+                        }
+
+                        // Use first transaction for compatibility fields
+                        const firstPlainTx = plainTransactions[0];
+
+                        // Convert string account type to enum
+                        const recipientType = firstPlainTx.recipientType === 'basic' ? Nimiq.AccountType.Basic
+                            : firstPlainTx.recipientType === 'vesting' ? Nimiq.AccountType.Vesting
+                            : firstPlainTx.recipientType === 'htlc' ? Nimiq.AccountType.HTLC
+                            : firstPlainTx.recipientType === 'staking' ? Nimiq.AccountType.Staking
+                            : Nimiq.AccountType.Basic;
+
+                        return {
+                            kind: requestType,
+                            appName: signTransactionRequest.appName,
+                            sender: Nimiq.Address.fromString(signTransactionRequest.sender),
+                            recipient: Nimiq.Address.fromString(firstPlainTx.recipient),
+                            recipientType,
+                            recipientLabel: signTransactionRequest.recipientLabel,
+                            value: firstPlainTx.value,
+                            fee: firstPlainTx.fee,
+                            // For serialized transactions, data field is just for backward compatibility
+                            data: new Uint8Array(0),
+                            flags: firstPlainTx.flags,
+                            validityStartHeight: firstPlainTx.validityStartHeight,
+                            transactions: plainTransactions,
+                            // Store original serialized transactions
+                            // For staking: SignTransaction.vue will re-serialize from PlainTransaction
+                            // For non-staking: SignTransaction.vue will use these bytes directly
+                            serializedTransactions,
+                            senderLabel: signTransactionRequest.senderLabel,
+                            isStakingRequest: isStakingTransactions, // Flag for SignTransaction.vue
+                            // Pass through staking-specific fields (for Keyguard display)
+                            validatorAddress: (signTransactionRequest as any).validatorAddress,
+                            validatorImageUrl: (signTransactionRequest as any).validatorImageUrl,
+                            amount: (signTransactionRequest as any).amount,
+                        } as ParsedSignTransactionRequest;
+                    } else {
+                        // Transaction data objects format
+                        type TransactionData = import('../../client/PublicRequestTypes').TransactionData;
+                        const transactionDataArray = signTransactionRequest.transactions as TransactionData[];
+                        const firstTxData = transactionDataArray[0];
+
+                        return {
+                            kind: requestType,
+                            appName: signTransactionRequest.appName,
+                            sender: Nimiq.Address.fromString(signTransactionRequest.sender),
+                            recipient: Nimiq.Address.fromString(firstTxData.recipient),
+                            recipientType: firstTxData.recipientType || Nimiq.AccountType.Basic,
+                            recipientLabel: signTransactionRequest.recipientLabel,
+                            value: firstTxData.value,
+                            fee: firstTxData.fee || 0,
+                            data: typeof firstTxData.extraData === 'string'
+                                ? Utf8Tools.stringToUtf8ByteArray(firstTxData.extraData)
+                                : firstTxData.extraData || new Uint8Array(0),
+                            flags: firstTxData.flags || Nimiq.TransactionFlag.None,
+                            validityStartHeight: firstTxData.validityStartHeight,
+                            transactions: transactionDataArray.map((tx) => ({
+                                recipient: Nimiq.Address.fromString(tx.recipient),
+                                recipientType: tx.recipientType || Nimiq.AccountType.Basic,
+                                recipientLabel: tx.recipientLabel,
+                                value: tx.value,
+                                fee: tx.fee || 0,
+                                data: typeof tx.extraData === 'string'
+                                    ? Utf8Tools.stringToUtf8ByteArray(tx.extraData)
+                                    : tx.extraData || new Uint8Array(0),
+                                flags: tx.flags || Nimiq.TransactionFlag.None,
+                                validityStartHeight: tx.validityStartHeight,
+                                // Staking-specific fields
+                                senderType: tx.senderType,
+                                senderLabel: tx.senderLabel,
+                            })),
+                            senderLabel: signTransactionRequest.senderLabel,
+                        } as ParsedSignTransactionRequest;
+                    }
+                } else {
+                    // Single transaction format (backward compatible)
+                    type SingleRequest = import('../../client/PublicRequestTypes').SignTransactionRequestSingle;
+                    const singleRequest = signTransactionRequest as SingleRequest;
+                    if (!singleRequest.value) throw new Error('value is required');
+                    if (!singleRequest.validityStartHeight) throw new Error('validityStartHeight is required');
+
+                    return {
+                        kind: requestType,
+                        appName: singleRequest.appName,
+                        sender: Nimiq.Address.fromString(singleRequest.sender),
+                        recipient: Nimiq.Address.fromString(singleRequest.recipient),
+                        recipientType: singleRequest.recipientType || Nimiq.AccountType.Basic,
+                        recipientLabel: singleRequest.recipientLabel,
+                        value: singleRequest.value,
+                        fee: singleRequest.fee || 0,
+                        data: typeof singleRequest.extraData === 'string'
+                            ? Utf8Tools.stringToUtf8ByteArray(singleRequest.extraData)
+                            : singleRequest.extraData || new Uint8Array(0),
+                        flags: singleRequest.flags || Nimiq.TransactionFlag.None,
+                        validityStartHeight: singleRequest.validityStartHeight,
+                    } as ParsedSignTransactionRequest;
+                }
             case RequestType.SIGN_STAKING:
                 const signStakingRequest = request as SignStakingRequest;
 
@@ -102,8 +222,8 @@ export class RequestParser {
                     return Nimiq.Transaction.fromAny(serializedTransaction).toPlain();
                 });
 
-                if (transactions.length !== 1 && transactions.length !== 2) {
-                    throw new Error('Expected one or two staking transactions to sign');
+                if (transactions.length < 1 || transactions.length > 3) {
+                    throw new Error('Expected one to three staking transactions to sign');
                 }
 
                 for (const transaction of transactions) {
@@ -875,6 +995,48 @@ export class RequestParser {
         switch (request.kind) {
             case RequestType.SIGN_TRANSACTION:
                 const signTransactionRequest = request as ParsedSignTransactionRequest;
+
+                // Check if this is a multi-transaction request
+                if (signTransactionRequest.transactions && signTransactionRequest.serializedTransactions) {
+                    // Multi-transaction format with serialized transactions
+                    return {
+                        appName: signTransactionRequest.appName,
+                        sender: signTransactionRequest.sender instanceof Nimiq.Address
+                            ? signTransactionRequest.sender.toUserFriendlyAddress()
+                            : signTransactionRequest.sender.address.toUserFriendlyAddress(),
+                        senderLabel: signTransactionRequest.senderLabel,
+                        recipientLabel: signTransactionRequest.recipientLabel,
+                        transactions: signTransactionRequest.serializedTransactions,
+                    } as SignTransactionRequest;
+                } else if (signTransactionRequest.transactions) {
+                    // Multi-transaction format with transaction data objects
+                    // Cast to any[] to avoid TypeScript union type issues with map
+                    const txArray = signTransactionRequest.transactions as any[];
+                    return {
+                        appName: signTransactionRequest.appName,
+                        sender: signTransactionRequest.sender instanceof Nimiq.Address
+                            ? signTransactionRequest.sender.toUserFriendlyAddress()
+                            : signTransactionRequest.sender.address.toUserFriendlyAddress(),
+                        senderLabel: signTransactionRequest.senderLabel,
+                        recipientLabel: signTransactionRequest.recipientLabel,
+                        transactions: txArray.map((tx: any) => ({
+                            recipient: typeof tx.recipient === 'string'
+                                ? tx.recipient
+                                : tx.recipient.toUserFriendlyAddress(),
+                            recipientType: tx.recipientType,
+                            recipientLabel: tx.recipientLabel,
+                            value: tx.value,
+                            fee: tx.fee,
+                            extraData: tx.data,
+                            flags: tx.flags,
+                            validityStartHeight: tx.validityStartHeight,
+                            senderType: tx.senderType,
+                            senderLabel: tx.senderLabel,
+                        })),
+                    } as SignTransactionRequest;
+                }
+
+                // Single transaction format (backward compatible)
                 return {
                     appName: signTransactionRequest.appName,
                     sender: signTransactionRequest.sender instanceof Nimiq.Address

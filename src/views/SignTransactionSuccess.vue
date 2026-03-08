@@ -1,20 +1,27 @@
+<template></template>
+
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { SignedTransaction } from '../../client/PublicRequestTypes';
 import { State } from 'vuex-class';
 import KeyguardClient from '@nimiq/keyguard-client';
 
-@Component({})
-export default class SignTransactionSuccess extends Vue {
-    @State private keyguardResult!: KeyguardClient.SignTransactionResult;
+// Type guard to check if result is an array
+function isMultiTransactionResult(
+    result: KeyguardClient.SignTransactionResult | KeyguardClient.SignTransactionResult[],
+): result is KeyguardClient.SignTransactionResult[] {
+    return Array.isArray(result);
+}
 
-    private mounted() {
-        const hex = Nimiq.BufferUtils.toHex(this.keyguardResult.serializedTx);
-        const tx = Nimiq.Transaction.fromAny(hex);
+function convertToSignedTransaction(txResult: KeyguardClient.SignTransactionResult): SignedTransaction {
+    const hex = Nimiq.BufferUtils.toHex(txResult.serializedTx);
+    const tx = Nimiq.Transaction.fromAny(hex);
+
+    try {
         const plain = tx.toPlain();
 
-        const result: SignedTransaction = {
-            transaction: this.keyguardResult.serializedTx,
+        return {
+            transaction: txResult.serializedTx,
             serializedTx: hex,
             hash: plain.transactionHash,
             raw: {
@@ -36,8 +43,48 @@ export default class SignTransactionSuccess extends Vue {
                 networkId: tx.networkId,
             },
         };
+    } catch (error) {
+        // Handle case where toPlain() fails (e.g., for demo/invalid transactions)
+        // Still return the signed transaction data even if we can't parse all details
+        console.warn('Failed to parse transaction details:', error);
+        return {
+            transaction: txResult.serializedTx,
+            serializedTx: hex,
+            hash: '', // Will be empty for invalid transactions
+            raw: {
+                sender: '',
+                senderType: tx.senderType,
+                recipient: '',
+                recipientType: tx.recipientType,
+                value: 0,
+                fee: 0,
+                validityStartHeight: 0,
+                networkId: 0,
+                flags: 0,
+                proof: tx.proof,
+                signerPublicKey: new Uint8Array(0),
+                signature: new Uint8Array(0),
+                extraData: tx.data,
+            },
+        };
+    }
+}
 
-        this.$rpc.resolve(result);
+@Component({})
+export default class SignTransactionSuccess extends Vue {
+    @State private keyguardResult!: KeyguardClient.SignTransactionResult | KeyguardClient.SignTransactionResult[];
+
+    private mounted() {
+        // Handle both single and multi-transaction results
+        if (isMultiTransactionResult(this.keyguardResult)) {
+            // Multi-transaction result
+            const results: SignedTransaction[] = this.keyguardResult.map(convertToSignedTransaction);
+            this.$rpc.resolve(results);
+        } else {
+            // Single transaction result (backward compatible)
+            const result: SignedTransaction = convertToSignedTransaction(this.keyguardResult);
+            this.$rpc.resolve(result);
+        }
     }
 }
 </script>

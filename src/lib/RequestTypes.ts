@@ -31,6 +31,20 @@ export interface ParsedChooseAddressRequest extends ParsedBasicRequest {
     ui?: number;
 }
 
+export interface ParsedTransactionData {
+    recipient: Nimiq.Address;
+    recipientType: Nimiq.AccountType;
+    recipientLabel?: string;
+    value: number;
+    fee: number;
+    data: Uint8Array;
+    flags: number;
+    validityStartHeight: number;
+    // Optional fields for staking transactions
+    senderType?: Nimiq.AccountType;
+    senderLabel?: string;
+}
+
 export interface ParsedSignTransactionRequest extends ParsedBasicRequest {
     // The sender object is currently only for internal use in RefundSwapLedger and can not be set in public request.
     // Note that the object does not get exported to the history state in RpcApi and therefore does not survive reloads.
@@ -43,6 +57,7 @@ export interface ParsedSignTransactionRequest extends ParsedBasicRequest {
         signerKeyId: string,
         signerKeyPath: string,
     };
+    // Fields for single transaction (backward compatible)
     recipient: Nimiq.Address;
     recipientType: Nimiq.AccountType;
     recipientLabel?: string;
@@ -51,6 +66,17 @@ export interface ParsedSignTransactionRequest extends ParsedBasicRequest {
     data: Uint8Array;
     flags: number;
     validityStartHeight: number; // FIXME To be made optional when hub has its own network
+    // Optional fields for multiple/staking transactions
+    senderLabel?: string;
+    transactions?: ParsedTransactionData[] | PlainTransaction[];
+    // Store original serialized transactions when they were provided in Uint8Array[] format
+    serializedTransactions?: Uint8Array[];
+    // Flag to indicate if this is a staking request (for special handling)
+    isStakingRequest?: boolean;
+    // Staking-specific fields (passed through to Keyguard for display)
+    validatorAddress?: string;
+    validatorImageUrl?: string;
+    amount?: number;
 }
 
 export interface ParsedMultisigInfo {
