@@ -254,7 +254,7 @@ msgstr ""
 msgid "Cashlink created"
 msgstr ""
 
-#: src/views/CashlinkManage.vue:229
+#: src/views/CashlinkManage.vue:233
 msgid "Cashlink created."
 msgstr ""
 
@@ -496,7 +496,7 @@ msgstr ""
 msgid "Creating your Account"
 msgstr ""
 
-#: src/views/CashlinkManage.vue:231
+#: src/views/CashlinkManage.vue:235
 #: src/views/SignTransactionLedger.vue:722
 msgid "Creating your Cashlink"
 msgstr ""
@@ -791,7 +791,7 @@ msgid "OASIS service fee"
 msgstr ""
 
 #: src/views/ErrorHandlerUnsupportedLedger.vue:4
-#: src/views/RefundSwapLedger.vue:359
+#: src/views/RefundSwapLedger.vue:360
 msgid "Ok"
 msgstr ""
 
@@ -908,11 +908,11 @@ msgstr ""
 msgid "Red Address"
 msgstr ""
 
-#: src/views/RefundSwapLedger.vue:329
+#: src/views/RefundSwapLedger.vue:330
 msgid "Refund Failed"
 msgstr ""
 
-#: src/views/RefundSwapLedger.vue:348
+#: src/views/RefundSwapLedger.vue:349
 msgid "Refunding this Swap is currently not supported on this device or browser. Please use the device and browser you originally created the Swap with. Otherwise please try again in the future."
 msgstr ""
 
@@ -1000,7 +1000,7 @@ msgstr ""
 msgid "Single Accounts"
 msgstr ""
 
-#: src/views/CashlinkManage.vue:230
+#: src/views/CashlinkManage.vue:234
 #: src/views/CheckoutTransmission.vue:125
 msgid "Something went wrong"
 msgstr ""
@@ -1047,7 +1047,7 @@ msgstr ""
 msgid "Swap Setup Failed"
 msgstr ""
 
-#: src/views/RefundSwapLedger.vue:327
+#: src/views/RefundSwapLedger.vue:328
 msgid "Syncing"
 msgstr ""
 
@@ -1070,11 +1070,11 @@ msgstr ""
 msgid "Syncing to network..."
 msgstr ""
 
-#: src/views/RefundSwapLedger.vue:343
+#: src/views/RefundSwapLedger.vue:344
 msgid "Syncing with {currency} network failed: {error}"
 msgstr ""
 
-#: src/views/RefundSwapLedger.vue:337
+#: src/views/RefundSwapLedger.vue:338
 msgid "Syncing with {currency} network..."
 msgstr ""
 
@@ -1177,12 +1177,12 @@ msgstr ""
 msgid "Transaction approved"
 msgstr ""
 
-#: src/views/CashlinkManage.vue:213
+#: src/views/CashlinkManage.vue:217
 #: src/views/CheckoutTransmission.vue:107
 msgid "Transaction could not be relayed"
 msgstr ""
 
-#: src/views/CashlinkManage.vue:211
+#: src/views/CashlinkManage.vue:215
 #: src/views/CheckoutTransmission.vue:105
 msgid "Transaction is expired"
 msgstr ""

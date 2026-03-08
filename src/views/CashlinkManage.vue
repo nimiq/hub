@@ -197,8 +197,12 @@ export default class CashlinkManage extends Vue {
             // Store cashlink in database first to be safe when browser crashes during sending
             await CashlinkStore.Instance.put(this.retrievedCashlink);
 
+            // Cashlink layout only supports single transactions, safe to cast
+            const singleTxRequest = this.keyguardRequest as Exclude<
+                KeyguardClient.SignTransactionRequest, { transactions: any }
+            >;
             transactionToSend = transactionToSend || network.createTx({
-                ...this.keyguardRequest,
+                ...singleTxRequest,
                 signerPubKey: this.keyguardResult.publicKey,
                 signature: this.keyguardResult.signature,
             });

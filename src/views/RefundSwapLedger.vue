@@ -269,7 +269,8 @@ export default class RefundSwapLedger extends RefundSwap {
             ] as const);
 
             const { walletId: accountId } = this.request as ParsedRefundSwapRequest;
-            const { appName, inputs: [htlcInput], recipientOutput: output } = request;
+            const btcRequest = request as KeyguardSignBtcTransactionRequest;
+            const { appName, inputs: [htlcInput], recipientOutput: output } = btcRequest;
 
             // Type guard to ensure inputs have a witnessScript
             if (htlcInput.type !== BitcoinTransactionInputType.HTLC_REFUND) {

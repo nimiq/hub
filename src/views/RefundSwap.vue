@@ -166,7 +166,7 @@ export default class RefundSwap extends BitcoinSyncBaseView {
             client.signBtcTransaction(request);
         } else {
             // Polygon request
-            client.signPolygonTransaction(request);
+            client.signPolygonTransaction(request as KeyguardSignPolygonTransactionRequest);
         }
     }
 }
