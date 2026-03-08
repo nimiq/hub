@@ -26,6 +26,14 @@ import { Utf8Tools } from '@nimiq/utils';
 import { WalletType } from '../src/lib/Constants';
 import { WalletStore } from '../src/lib/WalletStore';
 
+// BitcoinJS is defined as a global variable in BitcoinJS.min.js loaded by demos/index.html
+declare global {
+    const BitcoinJS: typeof import('bitcoinjs-lib');
+    interface Window {
+        loadAlbatross(): Promise<typeof import('@nimiq/core')>;
+    }
+}
+
 class Demo {
     public static run() {
         const keyguardOrigin = location.origin === 'https://hub.v2.nimiq-testnet.com'
@@ -194,6 +202,41 @@ class Demo {
             }
         });
 
+        document.querySelector('button#sign-multi-transaction')!.addEventListener('click', async () => {
+            const txRequest = generateSignMultiTransactionRequest();
+            try {
+                const result = await demo.client.signTransaction(txRequest, demo._defaultBehavior);
+                if (demo.isRedirectResult(result)) return;
+                console.log('Result', result);
+                if (Array.isArray(result)) {
+                    document.querySelector('#result')!.textContent = `${result.length} transactions signed`;
+                } else {
+                    document.querySelector('#result')!.textContent = 'TX signed';
+                }
+            } catch (e) {
+                console.error(e);
+                document.querySelector('#result')!.textContent = `Error: ${e.message || e}`;
+            }
+        });
+
+        document.querySelector('button#sign-staking-multi-transaction')!.addEventListener('click', async () => {
+            const txRequest = await generateStakingMultiTransactionRequest();
+            try {
+                const result = await demo.client.signTransaction(txRequest, demo._defaultBehavior);
+                if (demo.isRedirectResult(result)) return;
+                console.log('Result', result);
+                if (Array.isArray(result)) {
+                    document.querySelector('#result')!.textContent =
+                        `${result.length} staking transactions signed (deactivate, retire, unstake)`;
+                } else {
+                    document.querySelector('#result')!.textContent = 'Staking TX signed';
+                }
+            } catch (e) {
+                console.error(e);
+                document.querySelector('#result')!.textContent = `Error: ${e.message || e}`;
+            }
+        });
+
         document.querySelector('button#onboard')!.addEventListener('click', async () => {
             try {
                 const result = await demo.client.onboard({ appName: 'Hub Demos' }, demo._defaultBehavior);
@@ -251,6 +294,118 @@ class Demo {
                 fee,
                 extraData: Utf8Tools.stringToUtf8ByteArray(txData),
                 validityStartHeight: parseInt(validityStartHeight, 10),
+            };
+        }
+
+        function generateSignMultiTransactionRequest(): SignTransactionRequest {
+            const $radio = document.querySelector('input[name="address"]:checked');
+            if (!$radio) {
+                alert('You have no account to send a tx from, create an account first (signup)');
+                throw new Error('No account found');
+            }
+            const sender = ($radio as HTMLElement).dataset.address!;
+            const baseFee = parseInt((document.querySelector('#fee') as HTMLInputElement).value, 10) || 100;
+            const validityStartHeight = parseInt((document.querySelector('#validitystartheight') as HTMLInputElement).value || '1234', 10);
+
+            // Sample recipients for multi-transaction demo
+            const recipients = [
+                'NQ63 U7XG 1YYE D6FA SXGG 3F5H X403 NBKN JLDU',
+                'NQ46 2RM7 QE4T 82KR 61Q9 9B7E R38G LBVM N6KY',
+                'NQ70 APBA 9GCC FL44 D82R UJCD DS4B Y824 3LYJ',
+            ];
+
+            return {
+                appName: 'Hub Demos',
+                sender,
+                recipientLabel: 'Alice',
+                transactions: recipients.map((recipient, index) => ({
+                    recipient,
+                    value: 100000000 + (index * 10000000), // 1 NIM + increments
+                    fee: baseFee + (index * 10),
+                    validityStartHeight: validityStartHeight + index,
+                    extraData: Utf8Tools.stringToUtf8ByteArray(`Multi-tx demo ${index + 1}`),
+                })),
+            };
+        }
+
+        async function generateStakingMultiTransactionRequest(): Promise<SignTransactionRequest> {
+            const $radio = document.querySelector('input[name="address"]:checked');
+            if (!$radio) {
+                alert('You have no account to send a tx from, create an account first (signup)');
+                throw new Error('No account found');
+            }
+            const sender = ($radio as HTMLElement).dataset.address!;
+            const validityStartHeight = parseInt((document.querySelector('#validitystartheight') as HTMLInputElement).value || '1234', 10);
+
+            // Load Nimiq library
+            const Nimiq = await window.loadAlbatross();
+
+            // Demo recipients for simulated multi-transaction staking flow
+            // Using the same recipients as in the regular multi-transaction demo (known valid addresses)
+            const recipients = [
+                'NQ63 U7XG 1YYE D6FA SXGG 3F5H X403 NBKN JLDU',
+                'NQ46 2RM7 QE4T 82KR 61Q9 9B7E R38G LBVM N6KY',
+                'NQ70 APBA 9GCC FL44 D82R UJCD DS4B Y824 3LYJ',
+            ];
+
+            // Parse sender address
+            const senderAddress = Nimiq.Address.fromString(sender);
+
+            // Network ID for testnet (5 for test-albatross, 1 for mainnet)
+            const networkId = 5;
+
+            // Create actual serialized transactions using Nimiq library
+            const serializedTransactions = [
+                // Transaction 1: Deactivate stake (demo)
+                new Nimiq.Transaction(
+                    senderAddress, // sender
+                    Nimiq.AccountType.Basic, // senderType
+                    new Uint8Array(0), // senderData
+                    Nimiq.Address.fromString(recipients[0]), // recipient
+                    Nimiq.AccountType.Basic, // recipientType
+                    Utf8Tools.stringToUtf8ByteArray('Deactivate stake (demo)'), // recipientData (extraData)
+                    50000000n, // value (0.5 NIM)
+                    100n, // fee
+                    Nimiq.TransactionFlag.None, // flag
+                    validityStartHeight, // validityStartHeight
+                    networkId, // networkId
+                ).serialize(),
+                // Transaction 2: Retire stake (demo)
+                new Nimiq.Transaction(
+                    senderAddress,
+                    Nimiq.AccountType.Basic,
+                    new Uint8Array(0),
+                    Nimiq.Address.fromString(recipients[1]),
+                    Nimiq.AccountType.Basic,
+                    Utf8Tools.stringToUtf8ByteArray('Retire stake (demo)'),
+                    50000000n, // 0.5 NIM
+                    100n, // fee
+                    Nimiq.TransactionFlag.None,
+                    validityStartHeight + 10, // Slightly later
+                    networkId,
+                ).serialize(),
+                // Transaction 3: Unstake complete (demo)
+                new Nimiq.Transaction(
+                    senderAddress,
+                    Nimiq.AccountType.Basic,
+                    new Uint8Array(0),
+                    Nimiq.Address.fromString(recipients[2]),
+                    Nimiq.AccountType.Basic,
+                    Utf8Tools.stringToUtf8ByteArray('Unstake complete (demo)'),
+                    50000000n, // 0.5 NIM
+                    100n, // fee
+                    Nimiq.TransactionFlag.None,
+                    validityStartHeight + 20,
+                    networkId,
+                ).serialize(),
+            ];
+
+            // Return request with serialized transactions
+            return {
+                appName: 'Hub Demos',
+                sender,
+                recipientLabel: 'Staking Demo Recipients',
+                transactions: serializedTransactions,
             };
         }
 
