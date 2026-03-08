@@ -171,7 +171,7 @@ export default class HubApi<
     public signTransaction<B extends BehaviorType = DB>(
         request: Promise<SignTransactionRequest> | SignTransactionRequest,
         requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
-    ): Promise<B extends BehaviorType.REDIRECT ? void : SignedTransaction> {
+    ): Promise<B extends BehaviorType.REDIRECT ? void : SignedTransaction | SignedTransaction[]> {
         return this._request(requestBehavior, RequestType.SIGN_TRANSACTION, [request]);
     }
 

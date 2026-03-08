@@ -117,7 +117,23 @@ export interface ChooseAddressResult extends Address {
     };
 }
 
-export interface SignTransactionRequest extends BasicRequest {
+// Transaction data without sender address (sender address is at request level)
+export interface TransactionData {
+    recipient: string;
+    recipientType?: Nimiq.AccountType;
+    recipientLabel?: string;
+    value: number;
+    fee?: number;
+    extraData?: Bytes;
+    flags?: number;
+    validityStartHeight: number; // FIXME To be made optional when hub has its own network
+    // Optional fields for staking transactions
+    senderType?: Nimiq.AccountType;
+    senderLabel?: string;
+}
+
+// Single transaction request (backward compatible - inline fields)
+export interface SignTransactionRequestSingle extends BasicRequest {
     sender: string;
     recipient: string;
     recipientType?: Nimiq.AccountType;
@@ -128,6 +144,16 @@ export interface SignTransactionRequest extends BasicRequest {
     flags?: number;
     validityStartHeight: number; // FIXME To be made optional when hub has its own network
 }
+
+// Multi-transaction request (array format)
+export interface SignTransactionRequestMulti extends BasicRequest {
+    sender: string;
+    senderLabel?: string; // Label for sender (for staking transactions)
+    recipientLabel?: string; // Label for first recipient (for UI display)
+    transactions: TransactionData[] | Uint8Array[]; // Data objects or serialized transactions
+}
+
+export type SignTransactionRequest = SignTransactionRequestSingle | SignTransactionRequestMulti;
 
 export interface SignStakingRequest extends BasicRequest {
     senderLabel?: string;
@@ -783,7 +809,7 @@ export type RpcRequest = SignTransactionRequest
                        | ConnectAccountRequest;
 
 export type RpcResult = SignedTransaction
-                      | SignedTransaction[]
+                      | SignedTransaction[] // Can be returned by SIGN_TRANSACTION (multi-tx) or SIGN_STAKING
                       | PartialSignature
                       | Account
                       | Account[]
@@ -807,7 +833,7 @@ export type ResultByRequestType<T> =
     T extends RequestType.LIST_CASHLINKS ? Cashlink[] :
     T extends RequestType.CHOOSE_ADDRESS ? ChooseAddressResult :
     T extends RequestType.ADD_ADDRESS ? Address :
-    T extends RequestType.SIGN_TRANSACTION ? SignedTransaction :
+    T extends RequestType.SIGN_TRANSACTION ? SignedTransaction | SignedTransaction[] :
     T extends RequestType.SIGN_MULTISIG_TRANSACTION ? PartialSignature :
     T extends RequestType.SIGN_STAKING ? SignedTransaction[] :
     T extends RequestType.CHECKOUT ? SignedTransaction | SimpleResult :
