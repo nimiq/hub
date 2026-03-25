@@ -42,15 +42,22 @@ export class ParsedBitcoinDirectPaymentOptions extends ParsedPaymentOptions<Curr
             fee = feePerByte * 250; // 250 is the estimated size for a standard tx with two inputs and one output
         }
 
-        if (options.protocolSpecific.recipient && typeof options.protocolSpecific.recipient !== 'string') {
-            // TODO add btc address validation here?
-            throw new Error('If a recipient is provided it must be a string');
+        const recipient = options.protocolSpecific.recipient;
+        if (recipient) {
+            if (typeof recipient !== 'string') {
+                throw new Error('If a recipient is provided it must be a string');
+            }
+            // Basic address sanitization to avoid passing malicious addresses encoding other parameters like
+            // "?amount=5" to payment request links.
+            if (!/^[a-z0-9]+$/i.test(recipient)) {
+                throw new Error(`Invalid recipient address: ${recipient}`);
+            }
         }
 
         this.protocolSpecific = {
             fee,
             feePerByte,
-            recipient: options.protocolSpecific.recipient,
+            recipient,
         };
     }
 

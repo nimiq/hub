@@ -33,15 +33,20 @@ export class ParsedEtherDirectPaymentOptions extends ParsedPaymentOptions<Curren
             gasPrice = bigInt(options.protocolSpecific.gasPrice);
         }
 
-        if (options.protocolSpecific.recipient && typeof options.protocolSpecific.recipient !== 'string') {
-            // TODO add eth address validation here?
-            throw new Error('If a recipient is provided it must be of type string');
+        const recipient = options.protocolSpecific.recipient;
+        if (recipient) {
+            if (typeof recipient !== 'string') {
+                throw new Error('If a recipient is provided it must be of type string');
+            }
+            if (!/^0x[a-f0-9]{40}$/i.test(recipient)) {
+                throw new Error(`Invalid recipient address: ${recipient}`);
+            }
         }
 
         this.protocolSpecific = {
             gasLimit,
             gasPrice,
-            recipient: options.protocolSpecific.recipient,
+            recipient,
         };
     }
 
