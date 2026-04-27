@@ -148,9 +148,17 @@ export interface SignTransactionRequestSingle extends BasicRequest {
 // Multi-transaction request (array format)
 export interface SignTransactionRequestMulti extends BasicRequest {
     sender: string;
-    senderLabel?: string; // Label for sender (for staking transactions)
-    recipientLabel?: string; // Label for first recipient (for UI display)
-    transactions: TransactionData[] | Uint8Array[]; // Data objects or serialized transactions
+    senderLabel?: string;
+    recipientLabel?: string;
+    transactions: TransactionData[] | Uint8Array[];
+    validatorAddress?: string;
+    validatorImageUrl?: string;
+    amount?: number;
+    // `'switch-validator'` switches the Keyguard view from the multi-tx list to a stacked
+    // from→to validator card layout, and requires fromValidator* metadata below.
+    layout?: 'switch-validator';
+    fromValidatorAddress?: string;
+    fromValidatorImageUrl?: string;
 }
 
 export type SignTransactionRequest = SignTransactionRequestSingle | SignTransactionRequestMulti;
@@ -159,6 +167,11 @@ export interface SignStakingRequest extends BasicRequest {
     senderLabel?: string;
     recipientLabel?: string;
     transaction: Uint8Array | Uint8Array[];
+    validatorAddress?: string;
+    fromValidatorAddress?: string;
+    validatorImageUrl?: string;
+    fromValidatorImageUrl?: string;
+    amount?: number;
 }
 
 export interface NimiqCheckoutRequest extends BasicRequest {

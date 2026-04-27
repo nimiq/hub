@@ -23,7 +23,6 @@ export default class SignStaking extends Vue {
         let recipientLabel = this.request.recipientLabel;
 
         const finalTransaction = this.request.transactions[this.request.transactions.length - 1];
-        console.log(finalTransaction);
 
         const signerSide = finalTransaction.senderType === 'basic' ? 'sender' as const : 'recipient' as const;
         const signerAddress = finalTransaction[signerSide];
@@ -39,7 +38,13 @@ export default class SignStaking extends Vue {
             senderLabel = this.request.senderLabel || this.$t('Staking Contract') as string;
             recipientLabel = signer.label;
         } else {
-            senderLabel = signer.label;
+            // update-staker carries the previous validator's name as senderLabel so Keyguard
+            // can render "from → to". Other staking flows have no such label, so fall back to
+            // the signer's account label (the user).
+            const isUpdateStaker = finalTransaction.data.type === 'update-staker';
+            senderLabel = isUpdateStaker && this.request.senderLabel
+                ? this.request.senderLabel
+                : signer.label;
             recipientLabel = this.request.recipientLabel || this.$t('Staking Contract') as string;
         }
 

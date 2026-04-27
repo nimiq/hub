@@ -43,6 +43,11 @@ export default class SignTransaction extends Vue {
             if (signerSide === 'recipient') {
                 senderLabel = this.request.senderLabel || 'Staking Contract';
                 recipientLabel = signer.label;
+            } else if (this.request.layout === 'switch-validator') {
+                // The from/to validator names live in sender/recipientLabel; do not overwrite
+                // them with the signer's wallet label (Keyguard renders these on the cards).
+                senderLabel = this.request.senderLabel;
+                recipientLabel = this.request.recipientLabel;
             } else {
                 senderLabel = signer.label;
                 recipientLabel = this.request.recipientLabel || 'Staking Contract';
@@ -92,33 +97,55 @@ export default class SignTransaction extends Vue {
                         Nimiq.Transaction.fromPlain(plainTx).serialize())
                     : this.request.serializedTransactions;
 
-                keyguardRequest = {
-                    layout: 'standard',
-                    appName: this.request.appName,
+                if (this.request.layout === 'switch-validator') {
+                    keyguardRequest = {
+                        layout: 'switch-validator',
+                        appName: this.request.appName,
 
-                    keyId,
-                    keyPath,
-                    keyLabel,
+                        keyId,
+                        keyPath,
+                        keyLabel,
 
-                    // For staking transactions, don't include sender field (like SignStaking)
-                    // For non-staking, include it
-                    ...(this.request.isStakingRequest ? {} : {
-                        sender: senderAddress.serialize(),
-                    }),
-                    senderLabel,
-                    recipientLabel,
+                        senderLabel,
+                        recipientLabel,
 
-                    // For staking: re-serialized from PlainTransaction
-                    // For non-staking: original serialized bytes
-                    transactions,
+                        transactions,
 
-                    // Pass through staking-specific fields (like SignStaking does)
-                    ...(this.request.isStakingRequest ? {
-                        validatorAddress: this.request.validatorAddress,
+                        validatorAddress: this.request.validatorAddress!,
                         validatorImageUrl: this.request.validatorImageUrl,
-                        amount: this.request.amount,
-                    } : {}),
-                };
+                        fromValidatorAddress: this.request.fromValidatorAddress!,
+                        fromValidatorImageUrl: this.request.fromValidatorImageUrl,
+                        amount: this.request.amount!,
+                    };
+                } else {
+                    keyguardRequest = {
+                        layout: 'standard',
+                        appName: this.request.appName,
+
+                        keyId,
+                        keyPath,
+                        keyLabel,
+
+                        // For staking transactions, don't include sender field (like SignStaking)
+                        // For non-staking, include it
+                        ...(this.request.isStakingRequest ? {} : {
+                            sender: senderAddress.serialize(),
+                        }),
+                        senderLabel,
+                        recipientLabel,
+
+                        // For staking: re-serialized from PlainTransaction
+                        // For non-staking: original serialized bytes
+                        transactions,
+
+                        // Pass through staking-specific fields (like SignStaking does)
+                        ...(this.request.isStakingRequest ? {
+                            validatorAddress: this.request.validatorAddress,
+                            validatorImageUrl: this.request.validatorImageUrl,
+                            amount: this.request.amount,
+                        } : {}),
+                    };
+                }
             } else {
                 // Otherwise, convert ParsedTransactionData or PlainTransaction to TransactionData
                 const firstTx = this.request.transactions[0];

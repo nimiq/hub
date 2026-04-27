@@ -77,6 +77,9 @@ export interface ParsedSignTransactionRequest extends ParsedBasicRequest {
     validatorAddress?: string;
     validatorImageUrl?: string;
     amount?: number;
+    layout?: 'switch-validator';
+    fromValidatorAddress?: string;
+    fromValidatorImageUrl?: string;
 }
 
 export interface ParsedMultisigInfo {
@@ -119,6 +122,11 @@ export interface ParsedSignStakingRequest extends ParsedBasicRequest {
     senderLabel?: string;
     recipientLabel?: string;
     transactions: PlainTransaction[];
+    validatorAddress?: string;
+    fromValidatorAddress?: string;
+    validatorImageUrl?: string;
+    fromValidatorImageUrl?: string;
+    amount?: number;
 }
 
 export type ParsedProtocolSpecificsForCurrency<C extends Currency> =

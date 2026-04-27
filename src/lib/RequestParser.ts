@@ -19,6 +19,7 @@ import type {
     RpcRequest,
     SignMessageRequest,
     SignTransactionRequest,
+    SignTransactionRequestMulti,
     SignStakingRequest,
     SimpleRequest,
     NimiqCheckoutRequest,
@@ -122,6 +123,22 @@ export class RequestParser {
                             : firstPlainTx.recipientType === 'staking' ? Nimiq.AccountType.Staking
                             : Nimiq.AccountType.Basic;
 
+                        const multiTxRequest = signTransactionRequest as SignTransactionRequestMulti;
+                        if (multiTxRequest.layout === 'switch-validator') {
+                            if (plainTransactions.length !== 2) {
+                                throw new Error('switch-validator requires exactly two transactions');
+                            }
+                            const firstData = plainTransactions[0].data as { type?: string } | undefined;
+                            const secondData = plainTransactions[1].data as { type?: string } | undefined;
+                            if (firstData?.type !== 'set-active-stake'
+                                || secondData?.type !== 'update-staker') {
+                                throw new Error(
+                                    'switch-validator transactions must be '
+                                    + 'set-active-stake followed by update-staker',
+                                );
+                            }
+                        }
+
                         return {
                             kind: requestType,
                             appName: signTransactionRequest.appName,
@@ -142,10 +159,12 @@ export class RequestParser {
                             serializedTransactions,
                             senderLabel: signTransactionRequest.senderLabel,
                             isStakingRequest: isStakingTransactions, // Flag for SignTransaction.vue
-                            // Pass through staking-specific fields (for Keyguard display)
-                            validatorAddress: (signTransactionRequest as any).validatorAddress,
-                            validatorImageUrl: (signTransactionRequest as any).validatorImageUrl,
-                            amount: (signTransactionRequest as any).amount,
+                            validatorAddress: multiTxRequest.validatorAddress,
+                            validatorImageUrl: multiTxRequest.validatorImageUrl,
+                            amount: multiTxRequest.amount,
+                            layout: multiTxRequest.layout,
+                            fromValidatorAddress: multiTxRequest.fromValidatorAddress,
+                            fromValidatorImageUrl: multiTxRequest.fromValidatorImageUrl,
                         } as ParsedSignTransactionRequest;
                     } else {
                         // Transaction data objects format

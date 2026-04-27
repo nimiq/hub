@@ -123,12 +123,23 @@ export interface SignTransactionRequestMulti extends BasicRequest {
     senderLabel?: string;
     recipientLabel?: string;
     transactions: TransactionData[] | Uint8Array[];
+    validatorAddress?: string;
+    validatorImageUrl?: string;
+    amount?: number;
+    layout?: 'switch-validator';
+    fromValidatorAddress?: string;
+    fromValidatorImageUrl?: string;
 }
 export type SignTransactionRequest = SignTransactionRequestSingle | SignTransactionRequestMulti;
 export interface SignStakingRequest extends BasicRequest {
     senderLabel?: string;
     recipientLabel?: string;
     transaction: Uint8Array | Uint8Array[];
+    validatorAddress?: string;
+    fromValidatorAddress?: string;
+    validatorImageUrl?: string;
+    fromValidatorImageUrl?: string;
+    amount?: number;
 }
 export interface NimiqCheckoutRequest extends BasicRequest {
     version?: 1;
