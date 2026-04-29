@@ -137,6 +137,31 @@ export class RequestParser {
                                     + 'set-active-stake followed by update-staker',
                                 );
                             }
+                        } else if (multiTxRequest.layout === 'unstaking') {
+                            if (plainTransactions.length !== 3) {
+                                throw new Error('unstaking requires exactly three transactions');
+                            }
+                            const firstData = plainTransactions[0].data as { type?: string } | undefined;
+                            const secondData = plainTransactions[1].data as { type?: string } | undefined;
+                            if (firstData?.type !== 'set-active-stake'
+                                || secondData?.type !== 'retire-stake') {
+                                throw new Error(
+                                    'unstaking transactions must be set-active-stake, retire-stake, '
+                                    + 'remove-stake (in order)',
+                                );
+                            }
+                            // The third tx is `remove-stake`, an OUTGOING-staking tx whose recipient
+                            // is the user's basic wallet — its data has no parseable `type`.
+                            if (plainTransactions[2].senderType !== 'staking'
+                                || plainTransactions[2].recipientType !== 'basic') {
+                                throw new Error(
+                                    'third unstaking transaction must be remove-stake '
+                                    + '(staking → basic)',
+                                );
+                            }
+                            if (!multiTxRequest.validatorAddress) {
+                                throw new Error('unstaking requires validatorAddress');
+                            }
                         }
 
                         return {

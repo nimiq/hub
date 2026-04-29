@@ -43,9 +43,9 @@ export default class SignTransaction extends Vue {
             if (signerSide === 'recipient') {
                 senderLabel = this.request.senderLabel || 'Staking Contract';
                 recipientLabel = signer.label;
-            } else if (this.request.layout === 'switch-validator') {
-                // The from/to validator names live in sender/recipientLabel; do not overwrite
-                // them with the signer's wallet label (Keyguard renders these on the cards).
+            } else if (this.request.layout === 'switch-validator' || this.request.layout === 'unstaking') {
+                // For custom multi-tx layouts the labels are rendered on cards (validator and/or
+                // user-account); do not overwrite with the signer's wallet label.
                 senderLabel = this.request.senderLabel;
                 recipientLabel = this.request.recipientLabel;
             } else {
@@ -117,6 +117,23 @@ export default class SignTransaction extends Vue {
                         fromValidatorImageUrl: this.request.fromValidatorImageUrl,
                         amount: this.request.amount!,
                     };
+                } else if (this.request.layout === 'unstaking') {
+                    keyguardRequest = {
+                        layout: 'unstaking',
+                        appName: this.request.appName,
+
+                        keyId,
+                        keyPath,
+                        keyLabel,
+
+                        senderLabel,
+                        recipientLabel,
+
+                        transactions,
+
+                        validatorAddress: this.request.validatorAddress!,
+                        validatorImageUrl: this.request.validatorImageUrl,
+                    } as any; // Published @nimiq/keyguard-client types not yet republished with 'unstaking'.
                 } else {
                     keyguardRequest = {
                         layout: 'standard',
