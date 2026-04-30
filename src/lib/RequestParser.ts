@@ -149,20 +149,23 @@ export class RequestParser {
                             }
                             const firstData = plainTransactions[0].data as { type?: string } | undefined;
                             const secondData = plainTransactions[1].data as { type?: string } | undefined;
+                            const thirdSenderData = plainTransactions[2]
+                                .senderData as { type?: string } | undefined;
                             if (firstData?.type !== 'set-active-stake'
-                                || secondData?.type !== 'retire-stake') {
+                                || secondData?.type !== 'retire-stake'
+                                || thirdSenderData?.type !== 'remove-stake') {
                                 throw new Error(
                                     'unstaking transactions must be set-active-stake, retire-stake, '
                                     + 'remove-stake (in order)',
                                 );
                             }
-                            // The third tx is `remove-stake`, an OUTGOING-staking tx whose recipient
-                            // is the user's basic wallet — its data has no parseable `type`.
-                            if (plainTransactions[2].senderType !== 'staking'
-                                || plainTransactions[2].recipientType !== 'basic') {
+                            // Bind all three transactions to the same staker so a caller can't
+                            // redirect the unbonded NIM to an attacker by setting tx2.recipient
+                            // to an arbitrary address while keeping benign labels.
+                            if (plainTransactions[0].sender !== plainTransactions[1].sender
+                                || plainTransactions[2].recipient !== plainTransactions[0].sender) {
                                 throw new Error(
-                                    'third unstaking transaction must be remove-stake '
-                                    + '(staking → basic)',
+                                    'unstaking transactions must be bound to the same staker',
                                 );
                             }
                             if (!multiTxRequest.validatorAddress) {
