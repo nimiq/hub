@@ -137,6 +137,12 @@ export class RequestParser {
                                     + 'set-active-stake followed by update-staker',
                                 );
                             }
+                            if (!multiTxRequest.validatorAddress) {
+                                throw new Error('switch-validator requires validatorAddress');
+                            }
+                            if (!multiTxRequest.fromValidatorAddress) {
+                                throw new Error('switch-validator requires fromValidatorAddress');
+                            }
                         } else if (multiTxRequest.layout === 'unstaking') {
                             if (plainTransactions.length !== 3) {
                                 throw new Error('unstaking requires exactly three transactions');
