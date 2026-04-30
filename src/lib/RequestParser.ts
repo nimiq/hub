@@ -1057,6 +1057,12 @@ export class RequestParser {
                         senderLabel: signTransactionRequest.senderLabel,
                         recipientLabel: signTransactionRequest.recipientLabel,
                         transactions: signTransactionRequest.serializedTransactions,
+                        layout: signTransactionRequest.layout,
+                        validatorAddress: signTransactionRequest.validatorAddress,
+                        validatorImageUrl: signTransactionRequest.validatorImageUrl,
+                        fromValidatorAddress: signTransactionRequest.fromValidatorAddress,
+                        fromValidatorImageUrl: signTransactionRequest.fromValidatorImageUrl,
+                        amount: signTransactionRequest.amount,
                     } as SignTransactionRequest;
                 } else if (signTransactionRequest.transactions) {
                     // Multi-transaction format with transaction data objects
@@ -1083,6 +1089,12 @@ export class RequestParser {
                             senderType: tx.senderType,
                             senderLabel: tx.senderLabel,
                         })),
+                        layout: signTransactionRequest.layout,
+                        validatorAddress: signTransactionRequest.validatorAddress,
+                        validatorImageUrl: signTransactionRequest.validatorImageUrl,
+                        fromValidatorAddress: signTransactionRequest.fromValidatorAddress,
+                        fromValidatorImageUrl: signTransactionRequest.fromValidatorImageUrl,
+                        amount: signTransactionRequest.amount,
                     } as SignTransactionRequest;
                 }
 
