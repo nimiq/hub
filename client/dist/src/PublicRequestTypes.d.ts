@@ -125,7 +125,6 @@ export interface SignTransactionRequestMulti extends BasicRequest {
     transactions: TransactionData[] | Uint8Array[];
     validatorAddress?: string;
     validatorImageUrl?: string;
-    amount?: number;
     layout?: 'switch-validator' | 'unstaking';
     fromValidatorAddress?: string;
     fromValidatorImageUrl?: string;

@@ -153,11 +153,10 @@ export interface SignTransactionRequestMulti extends BasicRequest {
     transactions: TransactionData[] | Uint8Array[];
     validatorAddress?: string;
     validatorImageUrl?: string;
-    amount?: number;
     // `'switch-validator'` switches the Keyguard view from the multi-tx list to a stacked
     // from→to validator card layout, and requires fromValidator* metadata below.
-    // `'unstaking'` switches to a validator → user-wallet stacked layout with the unstake amount,
-    // and requires `validatorAddress` plus exactly 3 transactions
+    // `'unstaking'` switches to a validator → user-wallet stacked layout, and requires
+    // `validatorAddress` plus exactly 3 transactions
     // (set-active-stake, retire-stake, remove-stake).
     layout?: 'switch-validator' | 'unstaking';
     fromValidatorAddress?: string;

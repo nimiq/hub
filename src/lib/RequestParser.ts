@@ -192,7 +192,6 @@ export class RequestParser {
                             isStakingRequest: isStakingTransactions, // Flag for SignTransaction.vue
                             validatorAddress: multiTxRequest.validatorAddress,
                             validatorImageUrl: multiTxRequest.validatorImageUrl,
-                            amount: multiTxRequest.amount,
                             layout: multiTxRequest.layout,
                             fromValidatorAddress: multiTxRequest.fromValidatorAddress,
                             fromValidatorImageUrl: multiTxRequest.fromValidatorImageUrl,
@@ -1062,7 +1061,6 @@ export class RequestParser {
                         validatorImageUrl: signTransactionRequest.validatorImageUrl,
                         fromValidatorAddress: signTransactionRequest.fromValidatorAddress,
                         fromValidatorImageUrl: signTransactionRequest.fromValidatorImageUrl,
-                        amount: signTransactionRequest.amount,
                     } as SignTransactionRequest;
                 } else if (signTransactionRequest.transactions) {
                     // Multi-transaction format with transaction data objects
@@ -1094,7 +1092,6 @@ export class RequestParser {
                         validatorImageUrl: signTransactionRequest.validatorImageUrl,
                         fromValidatorAddress: signTransactionRequest.fromValidatorAddress,
                         fromValidatorImageUrl: signTransactionRequest.fromValidatorImageUrl,
-                        amount: signTransactionRequest.amount,
                     } as SignTransactionRequest;
                 }
 

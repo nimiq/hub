@@ -76,7 +76,6 @@ export interface ParsedSignTransactionRequest extends ParsedBasicRequest {
     // Staking-specific fields (passed through to Keyguard for display)
     validatorAddress?: string;
     validatorImageUrl?: string;
-    amount?: number;
     layout?: 'switch-validator' | 'unstaking';
     fromValidatorAddress?: string;
     fromValidatorImageUrl?: string;

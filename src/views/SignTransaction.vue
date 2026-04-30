@@ -115,7 +115,6 @@ export default class SignTransaction extends Vue {
                         validatorImageUrl: this.request.validatorImageUrl,
                         fromValidatorAddress: this.request.fromValidatorAddress!,
                         fromValidatorImageUrl: this.request.fromValidatorImageUrl,
-                        amount: this.request.amount!,
                     };
                 } else if (this.request.layout === 'unstaking') {
                     keyguardRequest = {
@@ -159,7 +158,6 @@ export default class SignTransaction extends Vue {
                         ...(this.request.isStakingRequest ? {
                             validatorAddress: this.request.validatorAddress,
                             validatorImageUrl: this.request.validatorImageUrl,
-                            amount: this.request.amount,
                         } : {}),
                     };
                 }
