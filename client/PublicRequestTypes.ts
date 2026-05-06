@@ -1,5 +1,4 @@
 import type * as Nimiq from '@nimiq/core';
-import type { RelayRequest } from '@opengsn/common/dist/EIP712/RelayRequest';
 
 import {
     NimiqSpecifics,
@@ -42,6 +41,32 @@ export enum RequestType {
 }
 
 export type Bytes = Uint8Array | string;
+
+type HexString = string;
+type IntString = string;
+type PolygonAddress = string;
+
+export interface RelayRequest {
+    request: {
+        from: PolygonAddress;
+        to: PolygonAddress;
+        data: HexString;
+        value: IntString;
+        nonce: IntString;
+        gas: IntString;
+        validUntil: IntString;
+    };
+    relayData: {
+        gasPrice: IntString;
+        pctRelayFee: IntString;
+        baseRelayFee: IntString;
+        relayWorker: PolygonAddress;
+        paymaster: PolygonAddress;
+        paymasterData: HexString;
+        clientId: IntString;
+        forwarder: PolygonAddress;
+    };
+}
 
 export enum AccountType {
     LEGACY = 1,

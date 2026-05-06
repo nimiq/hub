@@ -18,6 +18,7 @@
     "no-console": false,
     "max-classes-per-file": [3],
     "curly": [true, "ignore-same-line"],
+    "array-type": [true, "array-simple"],
     "variable-name": [true, "ban-keywords", "check-format", "allow-leading-underscore"],
     "whitespace": [true,
       "check-branch",
