@@ -61,12 +61,12 @@ function translate(id, language) {
 }
 
 class RequestBehavior {
-    constructor(type) {
-        this._type = type;
-    }
     static getAllowedOrigin(endpoint) {
         const url = new URL(endpoint);
         return url.origin;
+    }
+    constructor(type) {
+        this._type = type;
     }
     async request(endpoint, command, args) {
         throw new Error('Not implemented');
@@ -79,6 +79,9 @@ var BehaviorType;
     BehaviorType[BehaviorType["IFRAME"] = 2] = "IFRAME";
 })(BehaviorType || (BehaviorType = {}));
 class RedirectRequestBehavior extends RequestBehavior {
+    static withLocalState(localState) {
+        return new RedirectRequestBehavior(undefined, localState);
+    }
     constructor(returnUrl, localState) {
         super(BehaviorType.REDIRECT);
         const location = window.location;
@@ -88,9 +91,6 @@ class RedirectRequestBehavior extends RequestBehavior {
         if (typeof this._localState.__command !== 'undefined') {
             throw new Error('Invalid localState: Property \'__command\' is reserved');
         }
-    }
-    static withLocalState(localState) {
-        return new RedirectRequestBehavior(undefined, localState);
     }
     async request(endpoint, command, args) {
         const origin = RequestBehavior.getAllowedOrigin(endpoint);
@@ -362,15 +362,6 @@ var CashlinkTheme;
 })(CashlinkTheme || (CashlinkTheme = {}));
 
 class HubApi {
-    constructor(endpoint = HubApi.DEFAULT_ENDPOINT, defaultBehavior) {
-        this._endpoint = endpoint;
-        this._defaultBehavior = defaultBehavior || new PopupRequestBehavior(`left=${window.innerWidth / 2 - 400},top=75,width=800,height=850,location=yes,dependent=yes`);
-        // If no default behavior specified, use a default behavior with increased window height for checkout.
-        this._checkoutDefaultBehavior = defaultBehavior || new PopupRequestBehavior(`left=${window.innerWidth / 2 - 400},top=50,width=800,height=895,location=yes,dependent=yes`);
-        this._iframeBehavior = new IFrameRequestBehavior();
-        // Check for RPC results in the URL
-        this._redirectClient = new RedirectRpcClient('', RequestBehavior.getAllowedOrigin(this._endpoint));
-    }
     /** @deprecated */
     static get PaymentMethod() {
         console.warn('PaymentMethod has been renamed to PaymentType. Access via HubApi.PaymentMethod will soon '
@@ -391,6 +382,15 @@ class HubApi {
             default:
                 return 'http://localhost:8080';
         }
+    }
+    constructor(endpoint = HubApi.DEFAULT_ENDPOINT, defaultBehavior) {
+        this._endpoint = endpoint;
+        this._defaultBehavior = defaultBehavior || new PopupRequestBehavior(`left=${window.innerWidth / 2 - 400},top=75,width=800,height=850,location=yes,dependent=yes`);
+        // If no default behavior specified, use a default behavior with increased window height for checkout.
+        this._checkoutDefaultBehavior = defaultBehavior || new PopupRequestBehavior(`left=${window.innerWidth / 2 - 400},top=50,width=800,height=895,location=yes,dependent=yes`);
+        this._iframeBehavior = new IFrameRequestBehavior();
+        // Check for RPC results in the URL
+        this._redirectClient = new RedirectRpcClient('', RequestBehavior.getAllowedOrigin(this._endpoint));
     }
     checkRedirectResponse() {
         return this._redirectClient.init();
@@ -520,4 +520,4 @@ HubApi.PaymentType = PaymentType;
 HubApi.PaymentState = PaymentState;
 HubApi.MSG_PREFIX = '\x16Nimiq Signed Message:\n';
 
-export default HubApi;
+export { HubApi as default };

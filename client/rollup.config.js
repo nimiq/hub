@@ -1,7 +1,7 @@
 // rollup.config.js
-import resolve from 'rollup-plugin-node-resolve';
 import json from '@rollup/plugin-json';
-import { terser } from 'rollup-plugin-terser';
+import { nodeResolve } from '@rollup/plugin-node-resolve';
+import terser from '@rollup/plugin-terser';
 
 export default [
     {
@@ -43,7 +43,7 @@ export default [
                 '@nimiq/utils': 'utils'
             }
         },
-        plugins: [ resolve(), json(), terser() ],
+        plugins: [ nodeResolve(), json(), terser() ],
     },
     {
         input: 'build/HubApi.js',
@@ -56,6 +56,6 @@ export default [
                 '@nimiq/utils': 'utils'
             }
         },
-        plugins: [ resolve(), json(), terser() ],
+        plugins: [ nodeResolve(), json(), terser() ],
     }
 ];

@@ -11,16 +11,16 @@ export interface NimiqSpecifics {
     recipient?: string;
     recipientType?: Nimiq.AccountType;
 }
-export declare type NimiqDirectPaymentOptions = PaymentOptions<Currency.NIM, PaymentType.DIRECT>;
+export type NimiqDirectPaymentOptions = PaymentOptions<Currency.NIM, PaymentType.DIRECT>;
 export interface BitcoinSpecifics {
     fee?: number | string;
     feePerByte?: number | string;
     recipient?: string;
 }
-export declare type BitcoinDirectPaymentOptions = PaymentOptions<Currency.BTC, PaymentType.DIRECT>;
+export type BitcoinDirectPaymentOptions = PaymentOptions<Currency.BTC, PaymentType.DIRECT>;
 export interface EtherSpecifics {
     gasLimit?: number | string;
     gasPrice?: string;
     recipient?: string;
 }
-export declare type EtherDirectPaymentOptions = PaymentOptions<Currency.ETH, PaymentType.DIRECT>;
+export type EtherDirectPaymentOptions = PaymentOptions<Currency.ETH, PaymentType.DIRECT>;

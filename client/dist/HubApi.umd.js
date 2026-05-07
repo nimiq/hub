@@ -1,8 +1,8 @@
 (function (global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('@nimiq/rpc'), require('@nimiq/utils')) :
     typeof define === 'function' && define.amd ? define(['@nimiq/rpc', '@nimiq/utils'], factory) :
-    (global = global || self, global.HubApi = factory(global.rpc, global.utils));
-}(this, function (rpc, utils) { 'use strict';
+    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.HubApi = factory(global.rpc, global.utils));
+})(this, (function (rpc, utils) { 'use strict';
 
     var de = {
     	"popup-overlay": "Ein Popup hat sich geöffnet,\nklicke hier, um zurück zum Popup zu kommen."
@@ -64,12 +64,12 @@
     }
 
     class RequestBehavior {
-        constructor(type) {
-            this._type = type;
-        }
         static getAllowedOrigin(endpoint) {
             const url = new URL(endpoint);
             return url.origin;
+        }
+        constructor(type) {
+            this._type = type;
         }
         async request(endpoint, command, args) {
             throw new Error('Not implemented');
@@ -82,6 +82,9 @@
         BehaviorType[BehaviorType["IFRAME"] = 2] = "IFRAME";
     })(BehaviorType || (BehaviorType = {}));
     class RedirectRequestBehavior extends RequestBehavior {
+        static withLocalState(localState) {
+            return new RedirectRequestBehavior(undefined, localState);
+        }
         constructor(returnUrl, localState) {
             super(BehaviorType.REDIRECT);
             const location = window.location;
@@ -91,9 +94,6 @@
             if (typeof this._localState.__command !== 'undefined') {
                 throw new Error('Invalid localState: Property \'__command\' is reserved');
             }
-        }
-        static withLocalState(localState) {
-            return new RedirectRequestBehavior(undefined, localState);
         }
         async request(endpoint, command, args) {
             const origin = RequestBehavior.getAllowedOrigin(endpoint);
@@ -365,15 +365,6 @@
     })(CashlinkTheme || (CashlinkTheme = {}));
 
     class HubApi {
-        constructor(endpoint = HubApi.DEFAULT_ENDPOINT, defaultBehavior) {
-            this._endpoint = endpoint;
-            this._defaultBehavior = defaultBehavior || new PopupRequestBehavior(`left=${window.innerWidth / 2 - 400},top=75,width=800,height=850,location=yes,dependent=yes`);
-            // If no default behavior specified, use a default behavior with increased window height for checkout.
-            this._checkoutDefaultBehavior = defaultBehavior || new PopupRequestBehavior(`left=${window.innerWidth / 2 - 400},top=50,width=800,height=895,location=yes,dependent=yes`);
-            this._iframeBehavior = new IFrameRequestBehavior();
-            // Check for RPC results in the URL
-            this._redirectClient = new rpc.RedirectRpcClient('', RequestBehavior.getAllowedOrigin(this._endpoint));
-        }
         /** @deprecated */
         static get PaymentMethod() {
             console.warn('PaymentMethod has been renamed to PaymentType. Access via HubApi.PaymentMethod will soon '
@@ -394,6 +385,15 @@
                 default:
                     return 'http://localhost:8080';
             }
+        }
+        constructor(endpoint = HubApi.DEFAULT_ENDPOINT, defaultBehavior) {
+            this._endpoint = endpoint;
+            this._defaultBehavior = defaultBehavior || new PopupRequestBehavior(`left=${window.innerWidth / 2 - 400},top=75,width=800,height=850,location=yes,dependent=yes`);
+            // If no default behavior specified, use a default behavior with increased window height for checkout.
+            this._checkoutDefaultBehavior = defaultBehavior || new PopupRequestBehavior(`left=${window.innerWidth / 2 - 400},top=50,width=800,height=895,location=yes,dependent=yes`);
+            this._iframeBehavior = new IFrameRequestBehavior();
+            // Check for RPC results in the URL
+            this._redirectClient = new rpc.RedirectRpcClient('', RequestBehavior.getAllowedOrigin(this._endpoint));
         }
         checkRedirectResponse() {
             return this._redirectClient.init();
