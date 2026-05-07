@@ -508,7 +508,7 @@ export declare enum CashlinkState {
     CLAIMED = 4
 }
 export declare enum CashlinkTheme {
-    UNSPECIFIED = 0,
+    UNSPECIFIED = 0,// Equivalent to theme being omitted
     STANDARD = 1,
     CHRISTMAS = 2,
     LUNAR_NEW_YEAR = 3,
