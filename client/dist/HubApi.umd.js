@@ -53,6 +53,7 @@
     };
 
     // Import the languages you want to support. Note that the language files are not lazy loaded on purpose, as they are
+    // pretty small.
     const translations = { de, en, es, fil, fr, nl, pl, pt, ru, tr, uk, zh };
     function translate(id, language) {
         if (!language) {
