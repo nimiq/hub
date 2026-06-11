@@ -80,6 +80,21 @@ export class WalletStore extends Store<any, WalletInfoEntry> {
         return super.list() as Promise<WalletInfoEntry[]>;
     }
 
+    /**
+     * Clear the cached NIM balances of all accounts and contracts of all wallets, for example after a testnet reset,
+     * such that they get re-fetched on demand.
+     */
+    public async clearBalances(): Promise<void> {
+        const walletInfoEntries = await this.list();
+        for (const walletInfoEntry of walletInfoEntries) {
+            for (const accountOrContractEntry of [...walletInfoEntry.accounts.values(), ...walletInfoEntry.contracts]) {
+                delete accountOrContractEntry.balance;
+            }
+            this._storeName = WalletStore.DB_ACCOUNTS_STORE_NAME;
+            await super.put(walletInfoEntry);
+        }
+    }
+
     protected upgrade(request: any, event: IDBVersionChangeEvent): void {
         const db = request.result;
         if (event.oldVersion < 1) {

@@ -6,6 +6,7 @@ import router from './router';
 import store from './store';
 import staticStore from '@/lib/StaticStore';
 import RpcApi from '@/lib/RpcApi';
+import { clearOutdatedTestnetData } from '@/lib/TestnetUtils';
 import { startSentry } from './lib/Sentry';
 import { i18n, setLanguage, detectLanguage } from './i18n/i18n-setup';
 
@@ -35,7 +36,11 @@ async function main() {
     // Load the main Nimiq WASM module and make it available globally.
     // This must happen before creating the RpcApi instance, because it can try to recover state in its
     // constructor, which in turn uses the RequestParser, which needs the Nimiq module.
-    window.Nimiq = await window.loadAlbatross();
+    // In parallel, clear outdated testnet data, which must happen before the stores are read.
+    [window.Nimiq] = await Promise.all([
+        window.loadAlbatross(),
+        clearOutdatedTestnetData(),
+    ]);
 
     const rpcApi = new RpcApi(store, staticStore, router);
     Vue.prototype.$rpc = rpcApi; // rpcApi is started in App.vue->created()

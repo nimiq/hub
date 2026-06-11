@@ -14,6 +14,7 @@ import {
 } from '../client/PublicRequestTypes';
 import Cashlink from './lib/Cashlink';
 import { CashlinkStore } from './lib/CashlinkStore';
+import { clearOutdatedTestnetData } from './lib/TestnetUtils';
 import {
     ERROR_NO_XPUB,
     EXTERNAL_INDEX, INTERNAL_INDEX,
@@ -49,6 +50,9 @@ class IFrameApi {
             await setLanguage(detectLanguage());
             wallets = await CookieJar.eat();
         } else {
+            // Clear outdated testnet data before reading the wallets. Not necessary for the CookieJar above, as no
+            // balances are encoded in the cookie.
+            await clearOutdatedTestnetData();
             wallets = await WalletStore.Instance.list();
         }
         if (wallets.length > 0) {
@@ -78,6 +82,9 @@ class IFrameApi {
         // TODO: Use Storage Access API on iOS/Safari to access IndexedDB in the iframe.
         if (BrowserDetection.isIOS() || BrowserDetection.isSafari()) return [];
 
+        // Clear outdated testnet data, to not serve Cashlinks which are not valid anymore on the new chain after a
+        // testnet reset.
+        await clearOutdatedTestnetData();
         const cashlinksEntries = await CashlinkStore.Instance.list();
         return cashlinksEntries.map((cashlink) => ({
             address: cashlink.address,

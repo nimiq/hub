@@ -8,6 +8,8 @@ export default {
     ledgerApiNimiqVersion: 'albatross' as LedgerApiNimiqVersion.ALBATROSS,
     network: NETWORK_TEST,
     nimiqNetworkId: 5,
+    // See https://github.com/nimiq/core-rs-albatross/blob/albatross/genesis/src/genesis/test-albatross.toml
+    genesisDate: new Date('2024-11-13T20:00:00Z'),
     seedNodes: [
         '/dns4/seed1.pos.nimiq-testnet.com/tcp/8443/wss',
         '/dns4/seed2.pos.nimiq-testnet.com/tcp/8443/wss',

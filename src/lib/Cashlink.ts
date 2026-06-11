@@ -154,6 +154,10 @@ class Cashlink {
         );
     }
 
+    public static clearLastClaimedMultiCashlinks() {
+        window.localStorage.removeItem(Cashlink.LAST_CLAIMED_MULTI_CASHLINKS_STORAGE_KEY);
+    }
+
     private static readonly LAST_CLAIMED_MULTI_CASHLINKS_STORAGE_KEY = 'cashlink-last-claimed-multi-cashlinks';
 
     private static _getLastClaimedMultiCashlinks(): Nimiq.Address[] {
