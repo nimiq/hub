@@ -1,4 +1,3 @@
-# 
 # Translators:
 # Francis RV, 2023
 # Sören Schwert <hello@soerenschwert.de>, 2024
@@ -209,11 +208,11 @@ msgstr "Balanse:"
 msgid "Bitcoin"
 msgstr "Bitcoin"
 
-#: src/views/ActivateBitcoinSuccess.vue:106
+#: src/views/ActivateBitcoinSuccess.vue:92
 msgid "Bitcoin activated"
 msgstr "Bitcoin activated"
 
-#: src/views/SetupSwapLedger.vue:858 src/views/SetupSwapSuccess.vue:640
+#: src/views/SetupSwapLedger.vue:865 src/views/SetupSwapSuccess.vue:639
 msgid "Bitcoin HTLC invalid"
 msgstr ""
 
@@ -360,7 +359,7 @@ msgstr "Isarado"
 msgid "Collecting payment details"
 msgstr "Pagkolekta ng mga detalye sa pagbabayad"
 
-#: src/views/SetupSwapLedger.vue:999
+#: src/views/SetupSwapLedger.vue:1006
 msgid "Confirm {outgoingOrIncoming} transaction on Ledger"
 msgstr "Kumpirmahin ang transaksyong {outgoingOrIncoming} sa Ledger"
 
@@ -494,7 +493,7 @@ msgstr ""
 msgid "Create Cashlink"
 msgstr "Lumikha ng Cashlink"
 
-#: src/views/SignupSuccess.vue:35
+#: src/views/SignupSuccess.vue:34
 msgid "Creating your Account"
 msgstr "Lumilikha ng iyong Account"
 
@@ -563,7 +562,7 @@ msgstr "Bayad"
 msgid "Fetching Addresses Failed"
 msgstr "Nabigo ang Pagkuha ng Mga Address"
 
-#: src/views/SetupSwapLedger.vue:870 src/views/SetupSwapSuccess.vue:653
+#: src/views/SetupSwapLedger.vue:877 src/views/SetupSwapSuccess.vue:652
 msgid "Fetching Bitcoin HTLC..."
 msgstr ""
 
@@ -571,15 +570,15 @@ msgstr ""
 msgid "Fetching contract information..."
 msgstr "Kinukuha ang impormasyon sa kontrata ..."
 
-#: src/views/SetupSwapSuccess.vue:662
+#: src/views/SetupSwapSuccess.vue:661
 msgid "Fetching swap data failed: {error}"
 msgstr "Nabigo ang pagkuha ng data ng pagpapalit: {error}"
 
-#: src/views/SetupSwapSuccess.vue:649
+#: src/views/SetupSwapSuccess.vue:648
 msgid "Fetching swap data..."
 msgstr "Kinukuha ang data ng pagpapalit ..."
 
-#: src/components/LedgerUi.vue:234 src/views/ActivateBitcoinSuccess.vue:104
+#: src/components/LedgerUi.vue:234 src/views/ActivateBitcoinSuccess.vue:90
 #: src/views/ActivatePolygonSuccess.vue:111
 #: src/views/ActivatePolygonSuccess.vue:115
 #: src/views/BitcoinSyncBaseView.vue:48 src/views/LoginSuccess.vue:44
@@ -650,7 +649,7 @@ msgstr ""
 "Na-import ang {count} address sa ngayon ... | Na-import ang {count} mga "
 "address sa ngayon ..."
 
-#: src/views/SetupSwapLedger.vue:1002
+#: src/views/SetupSwapLedger.vue:1009
 msgid "incoming"
 msgstr "papasok"
 
@@ -803,7 +802,7 @@ msgid "OASIS service fee"
 msgstr "Bayad sa serbisyo ng OASIS"
 
 #: src/views/ErrorHandlerUnsupportedLedger.vue:4
-#: src/views/RefundSwapLedger.vue:349
+#: src/views/RefundSwapLedger.vue:359
 msgid "Ok"
 msgstr "Ok"
 
@@ -832,7 +831,7 @@ msgstr "Kahel na Adres"
 msgid "Other wallets"
 msgstr "Mga ibang pitaka"
 
-#: src/views/SetupSwapLedger.vue:1001
+#: src/views/SetupSwapLedger.vue:1008
 msgid "outgoing"
 msgstr "palabas"
 
@@ -892,7 +891,7 @@ msgstr "Mangyaring ipadala ang transaksyon nang manu-mano"
 msgid "Prepare for update"
 msgstr "Maghanda para sa pag-update"
 
-#: src/views/SetupSwapSuccess.vue:642
+#: src/views/SetupSwapSuccess.vue:641
 msgid "Preparing Swap"
 msgstr "Paghahanda ng Pagpalit"
 
@@ -920,11 +919,11 @@ msgstr "Pulang Account"
 msgid "Red Address"
 msgstr "Pulang Adres"
 
-#: src/views/RefundSwapLedger.vue:319
+#: src/views/RefundSwapLedger.vue:329
 msgid "Refund Failed"
 msgstr "Hindi umusad ang pag-refund"
 
-#: src/views/RefundSwapLedger.vue:338
+#: src/views/RefundSwapLedger.vue:348
 msgid ""
 "Refunding this Swap is currently not supported on this device or browser. "
 "Please use the device and browser you originally created the Swap with. "
@@ -964,7 +963,7 @@ msgstr "Kinukuha ang iyong mga lumang account ..."
 
 #: src/views/ActivatePolygonSuccess.vue:139
 #: src/views/BitcoinSyncBaseView.vue:72 src/views/LoginSuccess.vue:134
-#: src/views/SetupSwapSuccess.vue:672 src/views/SignupLedger.vue:145
+#: src/views/SetupSwapSuccess.vue:671 src/views/SignupLedger.vue:145
 msgid "Retry"
 msgstr "Subukang muli"
 
@@ -1005,7 +1004,7 @@ msgstr "Mensahe sa Pag-sign"
 msgid "Signer"
 msgstr ""
 
-#: src/views/SetupSwapSuccess.vue:651
+#: src/views/SetupSwapSuccess.vue:650
 msgid "Signing transactions..."
 msgstr "Pag-sign ng mga transaksyon ..."
 
@@ -1053,11 +1052,11 @@ msgstr "Ang palitan ay pinahintulutan"
 msgid "Swap fee"
 msgstr "Pagpalit ng bayad"
 
-#: src/views/SetupSwapLedger.vue:854 src/views/SetupSwapSuccess.vue:636
+#: src/views/SetupSwapLedger.vue:861 src/views/SetupSwapSuccess.vue:635
 msgid "Swap Setup Failed"
 msgstr "Nabigo ang Pag-setup ng Ipagpalit"
 
-#: src/views/RefundSwapLedger.vue:317
+#: src/views/RefundSwapLedger.vue:327
 msgid "Syncing"
 msgstr "Nagsi-sync"
 
@@ -1068,9 +1067,9 @@ msgid "Syncing consensus..."
 msgstr "Nagsi-sync ng pinagkasunduan ..."
 
 #: src/views/ActivatePolygonSuccess.vue:113
-#: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapLedger.vue:856
-#: src/views/SetupSwapSuccess.vue:638
-#: src/views/SignBtcTransactionLedger.vue:118
+#: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapLedger.vue:863
+#: src/views/SetupSwapSuccess.vue:637
+#: src/views/SignBtcTransactionLedger.vue:117
 msgid "Syncing Failed"
 msgstr "Nabigo ang pag-sync"
 
@@ -1078,11 +1077,11 @@ msgstr "Nabigo ang pag-sync"
 msgid "Syncing to network..."
 msgstr ""
 
-#: src/views/RefundSwapLedger.vue:333
+#: src/views/RefundSwapLedger.vue:343
 msgid "Syncing with {currency} network failed: {error}"
 msgstr "Nabigo ang pag-sync sa network na {currency}: {error}"
 
-#: src/views/RefundSwapLedger.vue:327
+#: src/views/RefundSwapLedger.vue:337
 msgid "Syncing with {currency} network..."
 msgstr "Nagsi-sync sa network na {currency} ..."
 
@@ -1090,7 +1089,7 @@ msgstr "Nagsi-sync sa network na {currency} ..."
 msgid "Syncing with Bitcoin network failed: {error}"
 msgstr "Nabigo ang pag-sync sa network ng Bitcoin: {error}"
 
-#: src/views/BitcoinSyncBaseView.vue:58 src/views/SetupSwapLedger.vue:868
+#: src/views/BitcoinSyncBaseView.vue:58 src/views/SetupSwapLedger.vue:875
 msgid "Syncing with Bitcoin network..."
 msgstr "Nagsi-sync sa network ng Bitcoin ..."
 
@@ -1218,7 +1217,7 @@ msgstr "Nag-expire na ang transaksyon"
 msgid "Transaction Sent"
 msgstr "Naipadala ang Transaksyon"
 
-#: src/views/SignBtcTransactionLedger.vue:117
+#: src/views/SignBtcTransactionLedger.vue:116
 #: src/views/SignTransactionLedger.vue:726
 msgid "Transaction Signed"
 msgstr "Nilagdaan ang Transaksyon"
@@ -1227,7 +1226,7 @@ msgstr "Nilagdaan ang Transaksyon"
 msgid "Try again"
 msgstr "Subukang muli"
 
-#: src/views/SetupSwapLedger.vue:860
+#: src/views/SetupSwapLedger.vue:867
 msgid "Unexpected error"
 msgstr ""
 
@@ -1288,7 +1287,7 @@ msgstr ""
 msgid "Used addresses without balance might have been missed."
 msgstr "Ang mga ginamit na adres na walang balanse ay maaaring napalampas."
 
-#: src/views/SetupSwapSuccess.vue:388
+#: src/views/SetupSwapSuccess.vue:387
 msgid "Value mismatch (expected {expected} sats, found {found} sats)"
 msgstr ""
 
@@ -1300,7 +1299,7 @@ msgstr "Patunayan ang Pagbabayad"
 msgid "Vesting Contract"
 msgstr "Kontrata ng Vesting"
 
-#: src/views/SignupLedger.vue:112 src/views/SignupSuccess.vue:97
+#: src/views/SignupLedger.vue:112 src/views/SignupSuccess.vue:85
 msgid ""
 "Wallet successfully\n"
 "created"

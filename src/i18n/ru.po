@@ -1,4 +1,3 @@
-# 
 # Translators:
 # Vad <vjuruss@gmail.com>, 2021
 # Oscar_6, 2021
@@ -211,11 +210,11 @@ msgstr "Баланс:"
 msgid "Bitcoin"
 msgstr "Биткоин"
 
-#: src/views/ActivateBitcoinSuccess.vue:106
+#: src/views/ActivateBitcoinSuccess.vue:92
 msgid "Bitcoin activated"
 msgstr "Биткойн активирован"
 
-#: src/views/SetupSwapLedger.vue:858 src/views/SetupSwapSuccess.vue:640
+#: src/views/SetupSwapLedger.vue:865 src/views/SetupSwapSuccess.vue:639
 msgid "Bitcoin HTLC invalid"
 msgstr ""
 
@@ -360,7 +359,7 @@ msgstr "Закрыть"
 msgid "Collecting payment details"
 msgstr "Собираем платёжные данные"
 
-#: src/views/SetupSwapLedger.vue:999
+#: src/views/SetupSwapLedger.vue:1006
 msgid "Confirm {outgoingOrIncoming} transaction on Ledger"
 msgstr "Подтвердите {outgoingOrIncoming} транзакцию на Ledger"
 
@@ -492,7 +491,7 @@ msgstr ""
 msgid "Create Cashlink"
 msgstr "Создать Cashlink"
 
-#: src/views/SignupSuccess.vue:35
+#: src/views/SignupSuccess.vue:34
 msgid "Creating your Account"
 msgstr "Создаём Аккаунт"
 
@@ -563,7 +562,7 @@ msgstr "Комиссия"
 msgid "Fetching Addresses Failed"
 msgstr "Не удалось загрузить адреса"
 
-#: src/views/SetupSwapLedger.vue:870 src/views/SetupSwapSuccess.vue:653
+#: src/views/SetupSwapLedger.vue:877 src/views/SetupSwapSuccess.vue:652
 msgid "Fetching Bitcoin HTLC..."
 msgstr ""
 
@@ -571,15 +570,15 @@ msgstr ""
 msgid "Fetching contract information..."
 msgstr "Загружаем информацию о контракте..."
 
-#: src/views/SetupSwapSuccess.vue:662
+#: src/views/SetupSwapSuccess.vue:661
 msgid "Fetching swap data failed: {error}"
 msgstr "Не удалось загрузить данные обмена: {error}"
 
-#: src/views/SetupSwapSuccess.vue:649
+#: src/views/SetupSwapSuccess.vue:648
 msgid "Fetching swap data..."
 msgstr "Загружаем данные обмена..."
 
-#: src/components/LedgerUi.vue:234 src/views/ActivateBitcoinSuccess.vue:104
+#: src/components/LedgerUi.vue:234 src/views/ActivateBitcoinSuccess.vue:90
 #: src/views/ActivatePolygonSuccess.vue:111
 #: src/views/ActivatePolygonSuccess.vue:115
 #: src/views/BitcoinSyncBaseView.vue:48 src/views/LoginSuccess.vue:44
@@ -648,7 +647,7 @@ msgid ""
 "Imported {count} address so far... | Imported {count} addresses so far..."
 msgstr "Импортирован {count} адрес... | Импортировано {count} адресов..."
 
-#: src/views/SetupSwapLedger.vue:1002
+#: src/views/SetupSwapLedger.vue:1009
 msgid "incoming"
 msgstr "входящая"
 
@@ -798,7 +797,7 @@ msgid "OASIS service fee"
 msgstr "Комиссия сервиса OASIS"
 
 #: src/views/ErrorHandlerUnsupportedLedger.vue:4
-#: src/views/RefundSwapLedger.vue:349
+#: src/views/RefundSwapLedger.vue:359
 msgid "Ok"
 msgstr "Ок"
 
@@ -827,7 +826,7 @@ msgstr "Оранжевый Адрес"
 msgid "Other wallets"
 msgstr "Другие кошельки"
 
-#: src/views/SetupSwapLedger.vue:1001
+#: src/views/SetupSwapLedger.vue:1008
 msgid "outgoing"
 msgstr "исходящая"
 
@@ -887,7 +886,7 @@ msgstr "Пожалуйста, отправьте транзакцию вручн
 msgid "Prepare for update"
 msgstr "Подготовка к обновлению"
 
-#: src/views/SetupSwapSuccess.vue:642
+#: src/views/SetupSwapSuccess.vue:641
 msgid "Preparing Swap"
 msgstr "Подготавливаем обмен"
 
@@ -915,11 +914,11 @@ msgstr "Красный Аккаунт"
 msgid "Red Address"
 msgstr "Красный Адрес"
 
-#: src/views/RefundSwapLedger.vue:319
+#: src/views/RefundSwapLedger.vue:329
 msgid "Refund Failed"
 msgstr "Возврат средств не выполнен"
 
-#: src/views/RefundSwapLedger.vue:338
+#: src/views/RefundSwapLedger.vue:348
 msgid ""
 "Refunding this Swap is currently not supported on this device or browser. "
 "Please use the device and browser you originally created the Swap with. "
@@ -959,7 +958,7 @@ msgstr "Восстановление ваших старых учетных за
 
 #: src/views/ActivatePolygonSuccess.vue:139
 #: src/views/BitcoinSyncBaseView.vue:72 src/views/LoginSuccess.vue:134
-#: src/views/SetupSwapSuccess.vue:672 src/views/SignupLedger.vue:145
+#: src/views/SetupSwapSuccess.vue:671 src/views/SignupLedger.vue:145
 msgid "Retry"
 msgstr "Повторить"
 
@@ -1000,7 +999,7 @@ msgstr "Подписать сообщение"
 msgid "Signer"
 msgstr "подписант"
 
-#: src/views/SetupSwapSuccess.vue:651
+#: src/views/SetupSwapSuccess.vue:650
 msgid "Signing transactions..."
 msgstr "Подписание транзакций..."
 
@@ -1049,11 +1048,11 @@ msgstr "Обмен авторизован"
 msgid "Swap fee"
 msgstr "Комиссия за обмен"
 
-#: src/views/SetupSwapLedger.vue:854 src/views/SetupSwapSuccess.vue:636
+#: src/views/SetupSwapLedger.vue:861 src/views/SetupSwapSuccess.vue:635
 msgid "Swap Setup Failed"
 msgstr "Не удалось подготовить обмен"
 
-#: src/views/RefundSwapLedger.vue:317
+#: src/views/RefundSwapLedger.vue:327
 msgid "Syncing"
 msgstr "Синхронизация"
 
@@ -1064,9 +1063,9 @@ msgid "Syncing consensus..."
 msgstr "Синхронизация консенсуса..."
 
 #: src/views/ActivatePolygonSuccess.vue:113
-#: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapLedger.vue:856
-#: src/views/SetupSwapSuccess.vue:638
-#: src/views/SignBtcTransactionLedger.vue:118
+#: src/views/BitcoinSyncBaseView.vue:50 src/views/SetupSwapLedger.vue:863
+#: src/views/SetupSwapSuccess.vue:637
+#: src/views/SignBtcTransactionLedger.vue:117
 msgid "Syncing Failed"
 msgstr "Синхронизация не удалась"
 
@@ -1074,11 +1073,11 @@ msgstr "Синхронизация не удалась"
 msgid "Syncing to network..."
 msgstr ""
 
-#: src/views/RefundSwapLedger.vue:333
+#: src/views/RefundSwapLedger.vue:343
 msgid "Syncing with {currency} network failed: {error}"
 msgstr "Не удалось синхронизироваться с сетью {currency}: {error}"
 
-#: src/views/RefundSwapLedger.vue:327
+#: src/views/RefundSwapLedger.vue:337
 msgid "Syncing with {currency} network..."
 msgstr "Синхронизируемся с сетью {currency}..."
 
@@ -1086,7 +1085,7 @@ msgstr "Синхронизируемся с сетью {currency}..."
 msgid "Syncing with Bitcoin network failed: {error}"
 msgstr "Не удалось синхронизироваться с сетью Биткоин: {error}"
 
-#: src/views/BitcoinSyncBaseView.vue:58 src/views/SetupSwapLedger.vue:868
+#: src/views/BitcoinSyncBaseView.vue:58 src/views/SetupSwapLedger.vue:875
 msgid "Syncing with Bitcoin network..."
 msgstr "Синхронизация с сетью Биткоин..."
 
@@ -1209,7 +1208,7 @@ msgstr "Срок действия транзакции истек"
 msgid "Transaction Sent"
 msgstr "Транзакция Отправлена"
 
-#: src/views/SignBtcTransactionLedger.vue:117
+#: src/views/SignBtcTransactionLedger.vue:116
 #: src/views/SignTransactionLedger.vue:726
 msgid "Transaction Signed"
 msgstr "Транзакция Подписана"
@@ -1218,7 +1217,7 @@ msgstr "Транзакция Подписана"
 msgid "Try again"
 msgstr "Попробуйте еще раз"
 
-#: src/views/SetupSwapLedger.vue:860
+#: src/views/SetupSwapLedger.vue:867
 msgid "Unexpected error"
 msgstr ""
 
@@ -1279,7 +1278,7 @@ msgstr ""
 msgid "Used addresses without balance might have been missed."
 msgstr "Используемые адреса с нулевым балансом могли быть пропущены."
 
-#: src/views/SetupSwapSuccess.vue:388
+#: src/views/SetupSwapSuccess.vue:387
 msgid "Value mismatch (expected {expected} sats, found {found} sats)"
 msgstr ""
 
@@ -1291,7 +1290,7 @@ msgstr "Подтвердить платеж"
 msgid "Vesting Contract"
 msgstr "Вестинг-контракты"
 
-#: src/views/SignupLedger.vue:112 src/views/SignupSuccess.vue:97
+#: src/views/SignupLedger.vue:112 src/views/SignupSuccess.vue:85
 msgid ""
 "Wallet successfully\n"
 "created"
