@@ -1913,6 +1913,14 @@
     comlink "^4.4.1"
     websocket "^1.0.34"
 
+"@nimiq/core@^2.6.1":
+  version "2.6.1"
+  resolved "https://registry.yarnpkg.com/@nimiq/core/-/core-2.6.1.tgz#00b8f362725c5372a882d643ab351d26b65ffcfc"
+  integrity sha512-Wye2o2oSB8tpWwYzTEw8Mtte7SWM/cJ8NsBBb0lAYLL9OGx6lgBV0HOkruQWNBw9DBIPWrRo2oy4nVTQcy770A==
+  dependencies:
+    comlink "^4.4.1"
+    websocket "^1.0.34"
+
 "@nimiq/electrum-client@https://github.com/nimiq/electrum-client#build":
   version "0.3.0"
   resolved "https://github.com/nimiq/electrum-client#04d8a29e92c63f65b6ccdd7585c173d24df8fe98"

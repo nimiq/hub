@@ -52,10 +52,10 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
-"@nimiq/core@^2.4.0":
-  version "2.4.0"
-  resolved "https://registry.yarnpkg.com/@nimiq/core/-/core-2.4.0.tgz#7019d98aeb90d3392fe28dc96e6de405e8ff051d"
-  integrity sha512-tkcvQTTy0tbOLEBQDOxDAcCv7KRS+riuEcd4gWulwyRU2rLziiTKOXD1WNszikHFKQ6S3zmbq1RQpJGTjQVBIg==
+"@nimiq/core@^2.6.1":
+  version "2.6.1"
+  resolved "https://registry.yarnpkg.com/@nimiq/core/-/core-2.6.1.tgz#00b8f362725c5372a882d643ab351d26b65ffcfc"
+  integrity sha512-Wye2o2oSB8tpWwYzTEw8Mtte7SWM/cJ8NsBBb0lAYLL9OGx6lgBV0HOkruQWNBw9DBIPWrRo2oy4nVTQcy770A==
   dependencies:
     comlink "^4.4.1"
     websocket "^1.0.34"
