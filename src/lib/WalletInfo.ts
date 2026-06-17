@@ -146,34 +146,39 @@ export class WalletInfo {
 
         if (addressInfo || !deriveIfNotFound) return addressInfo;
 
-        return new Promise<BtcAddressInfo | null>(async (resolve, reject) => {
-            try {
-                // Derive new addresses starting from the last used index
-                let index = Math.min(this.btcAddresses.external.length, this.btcAddresses.internal.length) - 1;
-                let lastExternalUsed = 0;
-                let lastInternalUsed = 0;
-                for (; index >= 0; index--) {
-                    if (!lastExternalUsed && this.btcAddresses.external[index].used) lastExternalUsed = index;
-                    if (!lastInternalUsed && this.btcAddresses.internal[index].used) lastInternalUsed = index;
-                    if (lastExternalUsed && lastInternalUsed) break;
-                }
-                const externalStart = lastExternalUsed + 1;
-                const internalStart = lastInternalUsed + 1;
-                const [external, internal] = await Promise.all([
-                    WalletInfoCollector.detectBitcoinAddresses(this.btcXPub!, EXTERNAL_INDEX, externalStart),
-                    WalletInfoCollector.detectBitcoinAddresses(this.btcXPub!, INTERNAL_INDEX, internalStart),
-                ]);
+        // Address not yet known; detect and store additional addresses from the network, then look again.
+        return this.syncBtcAddresses().then(() => this.findBtcAddressInfo(address, false));
+    }
 
-                external.forEach((info, offset) => { this.btcAddresses.external[externalStart + offset] = info; });
-                internal.forEach((info, offset) => { this.btcAddresses.internal[internalStart + offset] = info; });
+    /**
+     * Detect this wallet's Bitcoin addresses on the network, continuing after the chain's last used address.
+     * The newly synced addresses are persisted so that any address handed out (e.g. an external address returned by
+     * ChooseAddress) is stored and can later be linked back to this wallet.
+     * @param chains - The BIP44 chains to sync: EXTERNAL_INDEX and/or INTERNAL_INDEX (both by default).
+     */
+    public async syncBtcAddresses(
+        chains: Array<typeof EXTERNAL_INDEX | typeof INTERNAL_INDEX> = [EXTERNAL_INDEX, INTERNAL_INDEX],
+    ): Promise<{
+        internal: BtcAddressInfo[],
+        external: BtcAddressInfo[],
+    }> {
+        await Promise.all(chains.map(async (chain) => {
+            const addresses = chain === EXTERNAL_INDEX ? this.btcAddresses.external : this.btcAddresses.internal;
 
-                await WalletStore.Instance.put(this);
+            // Derive new addresses starting after this chain's last used index
+            let lastUsed = addresses.length - 1;
+            while (lastUsed >= 0 && !addresses[lastUsed].used) lastUsed--;
+            const start = lastUsed + 1;
 
-                resolve(this.findBtcAddressInfo(address, false) as BtcAddressInfo | null);
-            } catch (e) {
-                reject(e);
-            }
-        });
+            const detected = await WalletInfoCollector.detectBitcoinAddresses(this.btcXPub!, chain, start);
+
+            // Overwrite/extend the stored addresses from the start index onward (arrays are never shrunk).
+            detected.forEach((info, offset) => { addresses[start + offset] = info; });
+        }));
+
+        await WalletStore.Instance.put(this);
+
+        return this.btcAddresses;
     }
 
     public setContract(updatedContract: ContractInfo) {
