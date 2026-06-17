@@ -130,12 +130,14 @@ export default class WalletInfoCollector {
      * @param chain - The BIP44 chain to scan: EXTERNAL_INDEX or INTERNAL_INDEX.
      * @param startIndex - The address index to start scanning from.
      * @param maxUnusedAddresses - Stop after encountering this many unused addresses.
+     * @param addressInfosToSkip - Already-known addresses to skip: not re-derived or queried and omitted from result.
      */
     public static async detectBitcoinAddresses(
         xpub: string,
         chain: typeof EXTERNAL_INDEX | typeof INTERNAL_INDEX,
         startIndex = 0,
         maxUnusedAddresses = Infinity,
+        addressInfosToSkip: BtcAddressInfo[] = [],
     ): Promise<BtcAddressInfo[]> {
         if (!Config.enableBitcoin) {
             throw new Error('Bitcoin is disabled');
@@ -158,34 +160,39 @@ export default class WalletInfoCollector {
         const baseKey = extendedKey.derive(chain);
         const basePath = `${BTC_ACCOUNT_KEY_PATH[xPubType][Config.bitcoinNetwork]}/${chain}`;
 
+        const addressInfosToSkipByPath = new Map(addressInfosToSkip.map((info) => [info.path, info] as const));
+
         const addresses: BtcAddressInfo[] = [];
 
         let gap = 0;
         let i = startIndex;
 
         while (gap < BTC_ACCOUNT_MAX_ALLOWED_ADDRESS_GAP) {
-            const pubKey = baseKey.derive(i).publicKey;
+            const path = `${basePath}/${i}`;
+            const addressInfoToSkip = addressInfosToSkipByPath.get(path);
 
-            const address = (await publicKeyToPayment(pubKey, xPubType)).address;
-            if (!address) throw new Error(`Cannot create address for ${xpub} chain ${chain} index ${i}`);
+            let used: boolean;
+            if (addressInfoToSkip) {
+                used = addressInfoToSkip.used;
+            } else {
+                const pubKey = baseKey.derive(i).publicKey;
 
-            // Check address balance
-            const balances = await electrum.getBalance(address);
-            const balance = balances.confirmed + balances.unconfirmed;
+                const address = (await publicKeyToPayment(pubKey, xPubType)).address;
+                if (!address) throw new Error(`Cannot create address for ${xpub} chain ${chain} index ${i}`);
 
-            // If no balance, then check tx activity
-            const receipts = !balance
-                ? await electrum.getTransactionReceiptsByAddress(address)
-                : [] as BtcReceipt[];
+                // Check address balance
+                const balances = await electrum.getBalance(address);
+                const balance = balances.confirmed + balances.unconfirmed;
 
-            const used = balance > 0 || receipts.length > 0;
+                // If no balance, then check tx activity
+                const receipts = !balance
+                    ? await electrum.getTransactionReceiptsByAddress(address)
+                    : [] as BtcReceipt[];
 
-            addresses.push(new BtcAddressInfo(
-                `${basePath}/${i}`,
-                address,
-                used,
-                balance,
-            ));
+                used = balance > 0 || receipts.length > 0;
+
+                addresses.push(new BtcAddressInfo(path, address, used, balance));
+            }
 
             if (used) {
                 gap = 0;

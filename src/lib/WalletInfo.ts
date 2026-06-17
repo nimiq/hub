@@ -158,6 +158,7 @@ export class WalletInfo {
      */
     public async syncBtcAddresses(
         chains: Array<typeof EXTERNAL_INDEX | typeof INTERNAL_INDEX> = [EXTERNAL_INDEX, INTERNAL_INDEX],
+        skipKnownUsedAddresses = false,
     ): Promise<{
         internal: BtcAddressInfo[],
         external: BtcAddressInfo[],
@@ -165,15 +166,27 @@ export class WalletInfo {
         await Promise.all(chains.map(async (chain) => {
             const addresses = chain === EXTERNAL_INDEX ? this.btcAddresses.external : this.btcAddresses.internal;
 
-            // Derive new addresses starting after this chain's last used index
-            let lastUsed = addresses.length - 1;
-            while (lastUsed >= 0 && !addresses[lastUsed].used) lastUsed--;
-            const start = lastUsed + 1;
+            let start: number;
+            let addressInfosToSkip: BtcAddressInfo[];
+            if (skipKnownUsedAddresses) {
+                // Complete re-scan to pick up addresses that became used since the last sync, but skip re-querying the
+                // ones already known to be used.
+                start = 0;
+                addressInfosToSkip = addresses.filter((info) => info.used);
+            } else {
+                // Derive new addresses starting after this chain's last used index.
+                let lastUsed = addresses.length - 1;
+                while (lastUsed >= 0 && !addresses[lastUsed].used) lastUsed--;
+                start = lastUsed + 1;
+                addressInfosToSkip = [];
+            }
 
-            const detected = await WalletInfoCollector.detectBitcoinAddresses(this.btcXPub!, chain, start);
+            const detected = await WalletInfoCollector.detectBitcoinAddresses(
+                this.btcXPub!, chain, start, /* maxUnusedAddresses */ Infinity, addressInfosToSkip,
+            );
 
-            // Overwrite/extend the stored addresses from the start index onward (arrays are never shrunk).
-            detected.forEach((info, offset) => { addresses[start + offset] = info; });
+            // Overwrite/extend the stored addresses at each entry's derivation index.
+            detected.forEach((info) => { addresses[info.index] = info; });
         }));
 
         await WalletStore.Instance.put(this);

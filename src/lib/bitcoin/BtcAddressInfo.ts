@@ -21,6 +21,10 @@ export class BtcAddressInfo {
         public balance?: number,
     ) {}
 
+    public get index(): number {
+        return Number(this.path.substring(this.path.lastIndexOf('/') + 1));
+    }
+
     public toObject(): BtcAddressInfoEntry {
         return {
             path: this.path,
