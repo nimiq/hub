@@ -104,6 +104,7 @@ import { ContractInfo } from '../lib/ContractInfo';
 import WalletInfoCollector from '../lib/WalletInfoCollector';
 import { WalletStore } from '../lib/WalletStore';
 import { BtcAddressInfo } from '../lib/bitcoin/BtcAddressInfo';
+import { EXTERNAL_INDEX } from '../lib/bitcoin/BitcoinConstants';
 import { AccountType } from '../lib/Constants';
 import LoginFileIcon from '../components/icons/LoginFileIcon.vue';
 import LedgerIcon from '../components/icons/LedgerIcon.vue';
@@ -163,26 +164,20 @@ export default class ChooseAddress extends BitcoinSyncBaseView {
 
         if (Config.enableBitcoin && this.request.returnBtcAddress && walletInfo.btcXPub) {
             this.state = this.State.SYNCING;
-            // const startIndex = Math.max(Math.min(
-            //     walletInfo.btcAddresses.external.findIndex((addressInfo) => !addressInfo.used),
-            //     walletInfo.btcAddresses.internal.findIndex((addressInfo) => !addressInfo.used),
-            // ), 0);
-            let btcAddresses: {
-                internal: BtcAddressInfo[];
-                external: BtcAddressInfo[];
-            };
+            let externalAddresses: BtcAddressInfo[];
             try {
-                btcAddresses = await WalletInfoCollector.detectBitcoinAddresses(
+                externalAddresses = await WalletInfoCollector.detectBitcoinAddresses(
                     walletInfo.btcXPub,
+                    EXTERNAL_INDEX,
                     /* startIndex */ 0,
-                    /* onlyUnusedExternal */ 2,
+                    /* maxUnusedAddresses */ 2,
                 );
             } catch (error) {
                 this.state = this.State.SYNCING_FAILED;
                 this.error = error.message;
                 return;
             }
-            const unusedExternalAddresses = btcAddresses.external.filter((addressInfo) => !addressInfo.used);
+            const unusedExternalAddresses = externalAddresses.filter((addressInfo) => !addressInfo.used);
             if (unusedExternalAddresses.length > 0) {
                 // We try to use the 2nd unused address, because the first is reserved for swaps and not displayed
                 // in the wallet (cannot be validated by the user).

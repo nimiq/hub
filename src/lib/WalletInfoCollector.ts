@@ -118,15 +118,25 @@ export default class WalletInfoCollector {
     }
 
     /**
+     * Detect addresses of a single BIP44 chain (external/receive or internal/change) advancing until
+     * BTC_ACCOUNT_MAX_ALLOWED_ADDRESS_GAP consecutive unused addresses.
+     *
+     * Note: BIP44 account discovery (https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki#account-discovery)
+     * only requires scanning external addresses, as internal (change) addresses are funded from the wallet's own
+     * external addresses and would thus be discovered when parsing the external tx history.
+     * However, here when scanning the external addresses, we only check for receipts missing information about involved
+     * internal addresses. Therefore, we do run a full activity search also for internal addresses.
      * @param xpub
-     * @param startIndex
-     * @param onlyUnusedExternal - Skip detection of external addresses beyond this number of unused addresses, and
-     *  detection of internal addresses as a whole.
+     * @param chain - The BIP44 chain to scan: EXTERNAL_INDEX or INTERNAL_INDEX.
+     * @param startIndex - The address index to start scanning from.
+     * @param maxUnusedAddresses - Stop after encountering this many unused addresses.
      */
-    public static async detectBitcoinAddresses(xpub: string, startIndex = 0, onlyUnusedExternal = Infinity): Promise<{
-        internal: BtcAddressInfo[],
-        external: BtcAddressInfo[],
-    }> {
+    public static async detectBitcoinAddresses(
+        xpub: string,
+        chain: typeof EXTERNAL_INDEX | typeof INTERNAL_INDEX,
+        startIndex = 0,
+        maxUnusedAddresses = Infinity,
+    ): Promise<BtcAddressInfo[]> {
         if (!Config.enableBitcoin) {
             throw new Error('Bitcoin is disabled');
         }
@@ -145,71 +155,50 @@ export default class WalletInfoCollector {
 
         const extendedKey = bip32FromBase58(xpub, network);
 
-        /**
-         * According to https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki#account-discovery
-         * wallets should only scan external addresses for activity, as internal addresses can only receive
-         * transactions from external addresses of the same wallet anyway and will thus be discovered when
-         * parsing the external tx history. Since we only check for receipts in this address detection step,
-         * we cannot find out which internal addresses specifically have been used yet.
-         * Therefore, we do run a full activity search also for internal addresses, unless onlyUnusedExternal
-         * is specified.
-         */
+        const baseKey = extendedKey.derive(chain);
+        const basePath = `${BTC_ACCOUNT_KEY_PATH[xPubType][Config.bitcoinNetwork]}/${chain}`;
 
-        const addresses: [BtcAddressInfo[], BtcAddressInfo[]] = [[], []];
+        const addresses: BtcAddressInfo[] = [];
 
-        addressTypeLoop: for (const INDEX of [EXTERNAL_INDEX, INTERNAL_INDEX]) {
-            const baseKey = extendedKey.derive(INDEX);
-            const basePath = `${BTC_ACCOUNT_KEY_PATH[xPubType][Config.bitcoinNetwork]}/${INDEX}`;
+        let gap = 0;
+        let i = startIndex;
 
-            let gap = 0;
-            let i = startIndex;
+        while (gap < BTC_ACCOUNT_MAX_ALLOWED_ADDRESS_GAP) {
+            const pubKey = baseKey.derive(i).publicKey;
 
-            while (gap < BTC_ACCOUNT_MAX_ALLOWED_ADDRESS_GAP) {
-                const pubKey = baseKey.derive(i).publicKey;
+            const address = (await publicKeyToPayment(pubKey, xPubType)).address;
+            if (!address) throw new Error(`Cannot create address for ${xpub} chain ${chain} index ${i}`);
 
-                const address = (await publicKeyToPayment(pubKey, xPubType)).address;
-                if (!address) throw new Error(`Cannot create external address for ${xpub} index ${i}`);
+            // Check address balance
+            const balances = await electrum.getBalance(address);
+            const balance = balances.confirmed + balances.unconfirmed;
 
-                // Check address balance
-                const balances = await electrum.getBalance(address);
-                const balance = balances.confirmed + balances.unconfirmed;
+            // If no balance, then check tx activity
+            const receipts = !balance
+                ? await electrum.getTransactionReceiptsByAddress(address)
+                : [] as BtcReceipt[];
 
-                // If no balance, then check tx activity
-                const receipts = !balance
-                    ? await electrum.getTransactionReceiptsByAddress(address)
-                    : [] as BtcReceipt[];
+            const used = balance > 0 || receipts.length > 0;
 
-                const used = balance > 0 || receipts.length > 0;
+            addresses.push(new BtcAddressInfo(
+                `${basePath}/${i}`,
+                address,
+                used,
+                balance,
+            ));
 
-                addresses[INDEX].push(new BtcAddressInfo(
-                    `${basePath}/${i}`,
-                    address,
-                    used,
-                    balance,
-                ));
-
-                if (INDEX === EXTERNAL_INDEX && !used) {
-                    // Found an unused external address, reducing remaining counter
-                    onlyUnusedExternal -= 1;
-
-                    // When all found, break outer loop and return
-                    if (onlyUnusedExternal <= 0) break addressTypeLoop;
-                }
-
-                if (used) {
-                    gap = 0;
-                } else {
-                    gap += 1;
-                }
-
-                i += 1;
+            if (used) {
+                gap = 0;
+            } else {
+                gap += 1;
+                maxUnusedAddresses -= 1;
+                if (maxUnusedAddresses <= 0) break;
             }
+
+            i += 1;
         }
 
-        return {
-            internal: addresses[INTERNAL_INDEX],
-            external: addresses[EXTERNAL_INDEX],
-        };
+        return addresses;
     }
 
     private static _keyguardClient?: KeyguardClient; // TODO avoid the need to create another KeyguardClient here

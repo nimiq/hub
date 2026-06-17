@@ -1,5 +1,6 @@
 import { AccountInfo, AccountInfoEntry } from './AccountInfo';
 import { BtcAddressInfo, BtcAddressInfoEntry } from './bitcoin/BtcAddressInfo';
+import { EXTERNAL_INDEX, INTERNAL_INDEX } from './bitcoin/BitcoinConstants';
 import { PolygonAddressEntry, PolygonAddressInfo } from './polygon/PolygonAddressInfo';
 import {
     ContractInfo,
@@ -156,20 +157,15 @@ export class WalletInfo {
                     if (!lastInternalUsed && this.btcAddresses.internal[index].used) lastInternalUsed = index;
                     if (lastExternalUsed && lastInternalUsed) break;
                 }
-                index = Math.min(lastExternalUsed, lastInternalUsed);
+                const externalStart = lastExternalUsed + 1;
+                const internalStart = lastInternalUsed + 1;
+                const [external, internal] = await Promise.all([
+                    WalletInfoCollector.detectBitcoinAddresses(this.btcXPub!, EXTERNAL_INDEX, externalStart),
+                    WalletInfoCollector.detectBitcoinAddresses(this.btcXPub!, INTERNAL_INDEX, internalStart),
+                ]);
 
-                const newAddresses = await WalletInfoCollector.detectBitcoinAddresses(this.btcXPub!, index + 1);
-
-                let i = index + 1;
-                for (const external of newAddresses.external) {
-                    this.btcAddresses.external[i] = external;
-                    i += 1;
-                }
-                i = index + 1;
-                for (const internal of newAddresses.internal) {
-                    this.btcAddresses.internal[i] = internal;
-                    i += 1;
-                }
+                external.forEach((info, offset) => { this.btcAddresses.external[externalStart + offset] = info; });
+                internal.forEach((info, offset) => { this.btcAddresses.internal[internalStart + offset] = info; });
 
                 await WalletStore.Instance.put(this);
 

@@ -24,8 +24,8 @@ export const BTC_ACCOUNT_KEY_PATH = {
 export const BTC_ACCOUNT_MAX_ALLOWED_ADDRESS_GAP = 10; // FIXME: Set to the standard 20 after testing
 
 // https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki#change
-export const EXTERNAL_INDEX = 0;
-export const INTERNAL_INDEX = 1;
+export const EXTERNAL_INDEX: 0 = 0;
+export const INTERNAL_INDEX: 1 = 1;
 
 export const EXTENDED_KEY_PREFIXES = {
     // See https://github.com/satoshilabs/slips/blob/master/slip-0132.md#registered-hd-version-bytes
