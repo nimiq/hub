@@ -117,6 +117,12 @@ export default class WalletInfoCollector {
         };
     }
 
+    /**
+     * @param xpub
+     * @param startIndex
+     * @param onlyUnusedExternal - Skip detection of external addresses beyond this number of unused addresses, and
+     *  detection of internal addresses as a whole.
+     */
     public static async detectBitcoinAddresses(xpub: string, startIndex = 0, onlyUnusedExternal = Infinity): Promise<{
         internal: BtcAddressInfo[],
         external: BtcAddressInfo[],
@@ -145,10 +151,8 @@ export default class WalletInfoCollector {
          * transactions from external addresses of the same wallet anyway and will thus be discovered when
          * parsing the external tx history. Since we only check for receipts in this address detection step,
          * we cannot find out which internal addresses specifically have been used yet.
-         * At the end of the detection, we will simply return the same number of internal addresses as we
-         * return external ones, and the wallet can then find out which of those have been used by checking
-         * the actual transactions against the internal addresses. The wallet can then derive additional
-         * internal addresses via the iframe request if necessary.
+         * Therefore, we do run a full activity search also for internal addresses, unless onlyUnusedExternal
+         * is specified.
          */
 
         const addresses: [BtcAddressInfo[], BtcAddressInfo[]] = [[], []];
