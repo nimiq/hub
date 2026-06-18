@@ -101,8 +101,6 @@ import staticStore, { Static } from '../lib/StaticStore';
 import { WalletInfo } from '../lib/WalletInfo';
 import { AccountInfo } from '../lib/AccountInfo';
 import { ContractInfo } from '../lib/ContractInfo';
-import WalletInfoCollector from '../lib/WalletInfoCollector';
-import { WalletStore } from '../lib/WalletStore';
 import { BtcAddressInfo } from '../lib/bitcoin/BtcAddressInfo';
 import { EXTERNAL_INDEX } from '../lib/bitcoin/BitcoinConstants';
 import { AccountType } from '../lib/Constants';
@@ -166,12 +164,11 @@ export default class ChooseAddress extends BitcoinSyncBaseView {
             this.state = this.State.SYNCING;
             let externalAddresses: BtcAddressInfo[];
             try {
-                externalAddresses = await WalletInfoCollector.detectBitcoinAddresses(
-                    walletInfo.btcXPub,
-                    EXTERNAL_INDEX,
-                    /* startIndex */ 0,
-                    /* maxUnusedAddresses */ 2,
-                );
+                // Detect and persist this wallet's external addresses
+                externalAddresses = (await walletInfo.syncBitcoinAddresses(
+                    [EXTERNAL_INDEX],
+                    { resyncKnownUnusedAddresses: true, maxUnusedAddresses: 2 },
+                )).external;
             } catch (error) {
                 this.state = this.State.SYNCING_FAILED;
                 this.error = error.message;

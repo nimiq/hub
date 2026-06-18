@@ -156,12 +156,14 @@ export class WalletInfo {
      * @param chains - The BIP44 chains to sync: EXTERNAL_INDEX and/or INTERNAL_INDEX (both by default).
      * @param options.resyncKnownUsedAddresses - Re-query already-known used addresses instead of skipping them.
      * @param options.resyncKnownUnusedAddresses - Re-query already-known unused addresses instead of skipping them.
+     * @param options.maxUnusedAddresses - Stop after encountering this many unused addresses.
      */
     public async syncBitcoinAddresses(
         chains: Array<typeof EXTERNAL_INDEX | typeof INTERNAL_INDEX> = [EXTERNAL_INDEX, INTERNAL_INDEX],
-        { resyncKnownUsedAddresses = false, resyncKnownUnusedAddresses = false }: {
+        { resyncKnownUsedAddresses = false, resyncKnownUnusedAddresses = false, maxUnusedAddresses = Infinity }: {
             resyncKnownUsedAddresses?: boolean,
             resyncKnownUnusedAddresses?: boolean,
+            maxUnusedAddresses?: number,
         } = {},
     ): Promise<{
         internal: BtcAddressInfo[],
@@ -186,7 +188,11 @@ export class WalletInfo {
             }
 
             const detected = await WalletInfoCollector.detectBitcoinAddresses(
-                this.btcXPub!, chain, start, /* maxUnusedAddresses */ Infinity, addressInfosToSkip,
+                this.btcXPub!,
+                chain,
+                start,
+                maxUnusedAddresses,
+                addressInfosToSkip,
             );
 
             // Overwrite/extend the stored addresses at each entry's derivation index.
