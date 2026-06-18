@@ -147,18 +147,22 @@ export class WalletInfo {
         if (addressInfo || !deriveIfNotFound) return addressInfo;
 
         // Address not yet known; detect and store additional addresses from the network, then look again.
-        return this.syncBtcAddresses().then(() => this.findBtcAddressInfo(address, false));
+        return this.syncBitcoinAddresses().then(() => this.findBtcAddressInfo(address, false));
     }
 
     /**
-     * Detect this wallet's Bitcoin addresses on the network, continuing after the chain's last used address.
-     * The newly synced addresses are persisted so that any address handed out (e.g. an external address returned by
-     * ChooseAddress) is stored and can later be linked back to this wallet.
+     * Detect this wallet's Bitcoin addresses on the network and persist them, so that any address handed out
+     * (e.g. an external address returned by ChooseAddress) is stored and can later be linked back to this wallet.
      * @param chains - The BIP44 chains to sync: EXTERNAL_INDEX and/or INTERNAL_INDEX (both by default).
+     * @param options.resyncKnownUsedAddresses - Re-query already-known used addresses instead of skipping them.
+     * @param options.resyncKnownUnusedAddresses - Re-query already-known unused addresses instead of skipping them.
      */
-    public async syncBtcAddresses(
+    public async syncBitcoinAddresses(
         chains: Array<typeof EXTERNAL_INDEX | typeof INTERNAL_INDEX> = [EXTERNAL_INDEX, INTERNAL_INDEX],
-        skipKnownUsedAddresses = false,
+        { resyncKnownUsedAddresses = false, resyncKnownUnusedAddresses = false }: {
+            resyncKnownUsedAddresses?: boolean,
+            resyncKnownUnusedAddresses?: boolean,
+        } = {},
     ): Promise<{
         internal: BtcAddressInfo[],
         external: BtcAddressInfo[],
@@ -168,17 +172,17 @@ export class WalletInfo {
 
             let start: number;
             let addressInfosToSkip: BtcAddressInfo[];
-            if (skipKnownUsedAddresses) {
-                // Complete re-scan to pick up addresses that became used since the last sync, but skip re-querying the
-                // ones already known to be used.
-                start = 0;
-                addressInfosToSkip = addresses.filter((info) => info.used);
-            } else {
-                // Derive new addresses starting after this chain's last used index.
+            if (!resyncKnownUsedAddresses && !resyncKnownUnusedAddresses) {
+                // Default: derive new addresses starting after this chain's last used index.
                 let lastUsed = addresses.length - 1;
                 while (lastUsed >= 0 && !addresses[lastUsed].used) lastUsed--;
                 start = lastUsed + 1;
                 addressInfosToSkip = [];
+            } else {
+                // Complete re-scan to update also known addresses that have been requested to be synced again.
+                start = 0;
+                addressInfosToSkip = addresses.filter((info) =>
+                    !(info.used ? resyncKnownUsedAddresses : resyncKnownUnusedAddresses));
             }
 
             const detected = await WalletInfoCollector.detectBitcoinAddresses(
