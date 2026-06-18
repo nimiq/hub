@@ -12,8 +12,6 @@ export class BtcAddressInfo {
         return o.address;
     }
 
-    public walletId?: string;
-
     public constructor(
         public path: string,
         public address: string,
