@@ -53,7 +53,13 @@ export default class RpcApi {
     private _router: Router;
     private _keyguardClient: KeyguardClient;
 
+    /**
+     * Request types allowed to be used by third party applications.
+     * Note that this is deliberately limited to request that do not expose or require internal accountIds.
+     */
     private _3rdPartyRequestWhitelist: RequestType[] = [
+        // Do not allow ONBOARD because it exposes internal accountIds.
+        // RequestType.ONBOARD,
         RequestType.CHECKOUT,
         RequestType.SIGN_TRANSACTION,
         RequestType.SIGN_STAKING,
@@ -62,7 +68,22 @@ export default class RpcApi {
         RequestType.CREATE_CASHLINK,
         RequestType.MANAGE_CASHLINK,
         RequestType.CONNECT_ACCOUNT,
+        // Request for sending a gas-abstracted USDC or USDT transaction on Polygon, without the need for the user to
+        // hold Polygon. See sendPolygonTransaction in hub.ts in github.com/nimiq/wallet for how to build the request
+        // data.
         RequestType.SIGN_POLYGON_TRANSACTION,
+        // While SIGN_TRANSACTION and SIGN_POLYGON_TRANSACTION are whitelisted, SIGN_BTC_TRANSACTION is not, as it
+        // identifies the account via its internal accountId, not by sender. Additionally, SIGN_BTC_TRANSACTION is not
+        // very compatible with the information received from CHOOSE_ADDRESS due to the UTXO model: ChooseAddress only
+        // returns a single unused BTC address. Once it's, CHOOSE_ADDRESS will return a different address next time, and
+        // once the user sends funds away from the address, any remaining change usually goes to different address. This
+        // makes the address returned by ChooseAddress unsuited for the wallet use case. ChooseAddress could be changed
+        // to return the full xpub (with the user's consent), and SIGN_BTC_TRANSACTION could identify the account by
+        // senders or xpub, but this still leaves a lot of additional work to be done for the third party app. It would
+        // have to sync BTC UTXOs, so currently we're not doing that either. Long term it could be considered that the
+        // Hub could do the UTXO handling and support sending BTC in SIGN_BTC_TRANSACTION or CHECKOUT without having to
+        // specify the inputs.
+        // RequestType.SIGN_BTC_TRANSACTION,
     ];
 
     constructor(store: Store<RootState>, staticStore: StaticStore, router: Router) {
