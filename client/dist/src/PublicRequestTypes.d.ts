@@ -122,6 +122,7 @@ export interface SignTransactionRequestMulti extends BasicRequest {
     sender: string;
     senderLabel?: string;
     recipientLabel?: string;
+    stakerLabel?: string;
     transactions: TransactionData[] | Uint8Array[];
     validatorAddress?: string;
     validatorImageUrl?: string;

@@ -74,6 +74,7 @@ export interface ParsedSignTransactionRequest extends ParsedBasicRequest {
     // Flag to indicate if this is a staking request (for special handling)
     isStakingRequest?: boolean;
     // Staking-specific fields (passed through to Keyguard for display)
+    stakerLabel?: string;
     validatorAddress?: string;
     validatorImageUrl?: string;
     layout?: 'switch-validator' | 'unstaking';

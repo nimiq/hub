@@ -108,6 +108,7 @@ export default class SignTransaction extends Vue {
 
                         senderLabel,
                         recipientLabel,
+                        stakerLabel: this.request.stakerLabel,
 
                         transactions,
 

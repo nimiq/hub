@@ -150,6 +150,9 @@ export interface SignTransactionRequestMulti extends BasicRequest {
     sender: string;
     senderLabel?: string;
     recipientLabel?: string;
+    // For `'switch-validator'`, senderLabel and recipientLabel name the validators being
+    // switched between, so the staking address is labelled separately.
+    stakerLabel?: string;
     transactions: TransactionData[] | Uint8Array[];
     validatorAddress?: string;
     validatorImageUrl?: string;

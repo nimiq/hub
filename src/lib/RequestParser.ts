@@ -192,6 +192,7 @@ export class RequestParser {
                             // For non-staking: SignTransaction.vue will use these bytes directly
                             serializedTransactions,
                             senderLabel: signTransactionRequest.senderLabel,
+                            stakerLabel: multiTxRequest.stakerLabel,
                             isStakingRequest: isStakingTransactions, // Flag for SignTransaction.vue
                             validatorAddress: multiTxRequest.validatorAddress,
                             validatorImageUrl: multiTxRequest.validatorImageUrl,
@@ -1058,6 +1059,7 @@ export class RequestParser {
                             : signTransactionRequest.sender.address.toUserFriendlyAddress(),
                         senderLabel: signTransactionRequest.senderLabel,
                         recipientLabel: signTransactionRequest.recipientLabel,
+                        stakerLabel: signTransactionRequest.stakerLabel,
                         transactions: signTransactionRequest.serializedTransactions,
                         layout: signTransactionRequest.layout,
                         validatorAddress: signTransactionRequest.validatorAddress,
@@ -1090,6 +1092,7 @@ export class RequestParser {
                             senderType: tx.senderType,
                             senderLabel: tx.senderLabel,
                         })),
+                        stakerLabel: signTransactionRequest.stakerLabel,
                         layout: signTransactionRequest.layout,
                         validatorAddress: signTransactionRequest.validatorAddress,
                         validatorImageUrl: signTransactionRequest.validatorImageUrl,
