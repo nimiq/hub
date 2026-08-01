@@ -111,7 +111,9 @@ export default class SignTransaction extends Vue {
 
                         transactions,
 
-                        validatorAddress: this.request.validatorAddress!,
+                        // The validator being switched to is not passed on: the Keyguard reads it
+                        // from the signed update-staker transaction, so that what it displays is
+                        // what gets signed.
                         validatorImageUrl: this.request.validatorImageUrl,
                         fromValidatorAddress: this.request.fromValidatorAddress!,
                         fromValidatorImageUrl: this.request.fromValidatorImageUrl,
@@ -132,7 +134,7 @@ export default class SignTransaction extends Vue {
 
                         validatorAddress: this.request.validatorAddress!,
                         validatorImageUrl: this.request.validatorImageUrl,
-                    } as any; // Published @nimiq/keyguard-client types not yet republished with 'unstaking'.
+                    };
                 } else {
                     keyguardRequest = {
                         layout: 'standard',
