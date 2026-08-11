@@ -52,10 +52,10 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
-"@nimiq/core@^2.7.0":
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/@nimiq/core/-/core-2.7.0.tgz#0f1520c3e50d3a22faa2f179722ab5a930525aa7"
-  integrity sha512-uPSgz7BwoBk3o7xb0E9KoertwCZyrfmU6M3Yczw74DjCDR9vEBzEXvCkIehwiyFQ6UpaFzwBIg7/ElHe6c0kVQ==
+"@nimiq/core@^2.20.0":
+  version "2.20.0"
+  resolved "https://registry.yarnpkg.com/@nimiq/core/-/core-2.20.0.tgz#c923cfbfedc53d00d3be235e6c1b281e10c51323"
+  integrity sha512-JJYQJRVoI61rulUbeMH83HPv3o+vfaivjk93t50YbYTo5QY4zx/yrpmX1Xsvjk3i2nszaC6iql22g7CPd4tUSQ==
   dependencies:
     comlink "^4.4.1"
     vite-plugin-wasm "^3.5.0"

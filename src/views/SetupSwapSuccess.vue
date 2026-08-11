@@ -517,7 +517,7 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
 
             // Validate that transaction is valid
             try {
-                nimiqTransaction.verify();
+                nimiqTransaction.verify(Nimiq.Policy.MAX_SUPPORTED_VERSION, Config.nimiqNetworkId);
             } catch (e) {
                 this.$rpc.reject(new Error('NIM transaction is invalid'));
                 return;

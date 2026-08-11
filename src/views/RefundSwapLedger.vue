@@ -162,7 +162,7 @@ export default class RefundSwapLedger extends RefundSwap {
 
             // Validate that the transaction is valid
             try {
-                refundTransaction.verify();
+                refundTransaction.verify(Nimiq.Policy.MAX_SUPPORTED_VERSION, Config.nimiqNetworkId);
             } catch (e) {
                 this.$rpc.reject(new Error('NIM transaction is invalid'));
                 return;

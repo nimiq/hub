@@ -11,6 +11,7 @@ import Network from '../components/Network.vue';
 import { ParsedRefundSwapRequest } from '../lib/RequestTypes';
 import { SignedBtcTransaction, SignedPolygonTransaction, SignedTransaction } from '../../client/PublicRequestTypes';
 import { Static } from '../lib/StaticStore';
+import Config from 'config';
 
 @Component({components: {Network}})
 export default class SignBtcTransactionSuccess extends Vue {
@@ -32,7 +33,7 @@ export default class SignBtcTransactionSuccess extends Vue {
 
             // Validate that the transaction is valid
             try {
-                tx.verify();
+                tx.verify(Nimiq.Policy.MAX_SUPPORTED_VERSION, Config.nimiqNetworkId);
             } catch (e) {
                 this.$rpc.reject(new Error('NIM transaction is invalid'));
                 return;
