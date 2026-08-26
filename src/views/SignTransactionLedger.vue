@@ -269,6 +269,13 @@ export default class SignTransactionLedger extends Vue {
                 : this.recipientDetails;
             stakingContractDetails.address = signStakingRequest.validatorAddress || stakingContractDetails.address;
             stakingContractDetails.image = signStakingRequest.validatorImageUrl;
+
+            // For update-staker, render the sender as the old validator instead of as the user's address (the actual
+            // sender).
+            if (finalTransaction.data.type === 'update-staker') {
+                this.senderDetails.address = signStakingRequest.fromValidatorAddress || this.senderDetails.address;
+                this.senderDetails.image = signStakingRequest.fromValidatorImageUrl;
+            }
         } else if (this.request.kind === RequestType.CHECKOUT) {
             // Coming from checkout
             const checkoutRequest = this.request as ParsedCheckoutRequest;
@@ -386,10 +393,7 @@ export default class SignTransactionLedger extends Vue {
             }
 
             // We know that these exist as their existence was already checked in RpcApi.ts
-            const userAddressDetails = userAddress.toUserFriendlyAddress() === this.senderDetails.address
-                ? this.senderDetails
-                : this.recipientDetails;
-            const userAccount = this.findWalletByAddress(userAddressDetails.address, true)!;
+            const userAccount = this.findWalletByAddress(userAddress.toUserFriendlyAddress(), true)!;
             const userAccountContract = userAccount.findContractByAddress(userAddress);
             const userAccountSigner = userAccount.findSignerForAddress(userAddress)!;
 
@@ -399,10 +403,18 @@ export default class SignTransactionLedger extends Vue {
                 ? userAccountContract.type
                 : Nimiq.AccountType.Basic;
 
-            userAddressDetails.label = userAddressDetails.label || (userAccountContract || userAccountSigner).label;
-            userAddressDetails.walletLabel = userAddressDetails.walletLabel || userAccount.label;
-            userAddressDetails.balance = userAddressDetails.balance
-                || (userAccountContract || userAccountSigner).balance;
+            // In the UI, the user can represent the sender (typical case), recipient (for unstaking) or none of those
+            // (for update-staker / switch-validator). If one of those is rendered as the user details, enrich them with
+            // the wallet label and balance.
+            const userAddressDetails = [this.senderDetails, this.recipientDetails]
+                .find(({ address }) => address === userAddress.toUserFriendlyAddress());
+            if (userAddressDetails) {
+                userAddressDetails.label = userAddressDetails.label
+                    || (userAccountContract || userAccountSigner).label;
+                userAddressDetails.walletLabel = userAddressDetails.walletLabel || userAccount.label;
+                userAddressDetails.balance = userAddressDetails.balance
+                    || (userAccountContract || userAccountSigner).balance;
+            }
         }
 
         // Collect transaction infos to pass to LedgerApi
