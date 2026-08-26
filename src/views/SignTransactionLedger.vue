@@ -40,6 +40,7 @@
                 <Account layout="column"
                     :address="senderDetails.address"
                     :label="senderDetails.label || senderDetails.address"
+                    :image="senderDetails.image"
                     @click.native="shownAccountDetails = senderDetails"
                     class="blur-target">
                 </Account>
@@ -217,6 +218,11 @@ export default class SignTransactionLedger extends Vue {
         // If user left this view in the meantime, don't continue
         if (this.isDestroyed) return;
 
+        this.senderDetails = {
+            address: '',
+            label: 'senderLabel' in this.request ? this.request.senderLabel : undefined,
+        };
+
         // Collect payment information
         let sender: Nimiq.Address;
         let recipient: Nimiq.Address;
@@ -256,6 +262,13 @@ export default class SignTransactionLedger extends Vue {
                 address: finalTransaction.recipient,
                 label: signStakingRequest.recipientLabel,
             };
+
+            // Render the staking contract as the validator that is being staked with.
+            const stakingContractDetails = finalTransaction.senderType === 'staking'
+                ? this.senderDetails
+                : this.recipientDetails;
+            stakingContractDetails.address = signStakingRequest.validatorAddress || stakingContractDetails.address;
+            stakingContractDetails.image = signStakingRequest.validatorImageUrl;
         } else if (this.request.kind === RequestType.CHECKOUT) {
             // Coming from checkout
             const checkoutRequest = this.request as ParsedCheckoutRequest;
@@ -341,18 +354,15 @@ export default class SignTransactionLedger extends Vue {
             return;
         }
 
-        this.senderDetails = {
-            address: sender.toUserFriendlyAddress(),
-            label: 'senderLabel' in this.request ? this.request.senderLabel : undefined,
-        };
+        this.senderDetails.address = this.senderDetails.address || sender.toUserFriendlyAddress();
 
+        // Find signer key and refine labels based on signer info.
         let signerKeyId: string;
         let signerKeyPath: string;
         let senderType: Nimiq.AccountType | undefined;
-
-        // Find signer key and refine labels based on signer info.
         if ('sender' in this.request && !(this.request.sender instanceof Nimiq.Address)) {
             // It's a sign transaction request with sender info object.
+            // Note that the sender object is currently only for internal use in RefundSwapLedger.
             ({
                 type: senderType,
                 signerKeyId,
