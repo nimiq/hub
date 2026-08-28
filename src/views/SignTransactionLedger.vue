@@ -228,6 +228,10 @@ export default class SignTransactionLedger extends Vue {
         if (this.request.kind === RequestType.SIGN_TRANSACTION) {
             // Direct sign transaction request invocation
             const signTransactionRequest = this.request as ParsedSignTransactionRequest;
+            if (!signTransactionRequest.sender) {
+                this.$rpc.reject(new Error('Ledger Transaction Signing expects a sender in the request.'));
+                return;
+            }
             ({ recipient, value, fee, data: recipientData, flags } = signTransactionRequest);
             sender = signTransactionRequest.sender instanceof Nimiq.Address
                 ? signTransactionRequest.sender
@@ -351,7 +355,7 @@ export default class SignTransactionLedger extends Vue {
         let senderType: Nimiq.AccountType | undefined;
 
         // Find signer key and refine labels based on signer info.
-        if ('sender' in this.request && !(this.request.sender instanceof Nimiq.Address)) {
+        if ('sender' in this.request && this.request.sender && !(this.request.sender instanceof Nimiq.Address)) {
             // It's a sign transaction request with sender info object.
             ({
                 type: senderType,

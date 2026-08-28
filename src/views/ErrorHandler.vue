@@ -117,10 +117,13 @@ export default class ErrorHandler extends Vue {
             // The wallet can be found by the (optional) sender/signer address in the Hub request
             const messageSigner = (this.request as ParsedSignMessageRequest).signer;
             const transactionSender = (this.request as ParsedSignTransactionRequest).sender;
-            const address = messageSigner || (transactionSender instanceof Nimiq.Address
-                ? transactionSender
-                : transactionSender.address);
-            return this.findWalletByAddress(address.toUserFriendlyAddress(), true);
+            const maybeAddress = messageSigner || transactionSender;
+            if (maybeAddress) {
+                const address = maybeAddress instanceof Nimiq.Address
+                    ? maybeAddress
+                    : maybeAddress.address;
+                return this.findWalletByAddress(address.toUserFriendlyAddress(), true);
+            }
         } else if (this.request.kind === RequestType.CHECKOUT
             || this.request.kind === RequestType.SIGN_MESSAGE) {
             // The keyId of the selected address is in the keyguardRequest

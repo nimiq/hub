@@ -428,7 +428,6 @@ class CheckoutCardNimiq
     }
 
     private get hasEligibleAddress(): boolean {
-
         const recipientAddress = this.paymentOptions.protocolSpecific.recipient
             ? this.paymentOptions.protocolSpecific.recipient.toUserFriendlyAddress()
             : '';
