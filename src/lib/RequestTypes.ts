@@ -61,12 +61,12 @@ export interface ParsedSignTransactionRequest extends ParsedBasicRequest {
     };
     layout: SignTransactionRequestLayout; // also triggers layout-specific validation
     transactions: Nimiq.Transaction[]; // a legacy single-transaction request is wrapped into a one-element array
-    // For the standard layout, labels are only parsed when a single transaction is requested. For the staking
-    // layouts, senderLabel and recipientLabel name the (from- and to-)validators.
+    // For the standard layout, labels are only parsed when a single transaction is requested. For switch-validator,
+    // senderLabel and recipientLabel name the (from- and to-)validators. For unstaking, senderLabel names the
+    // validator, while recipientLabel is not parsed: the payout recipient is the user's own address, which
+    // SignTransaction.vue labels from the user's account data.
     senderLabel?: string;
     recipientLabel?: string;
-    // switch-validator only: labels the user's staking address (senderLabel / recipientLabel name the validators).
-    stakerLabel?: string;
     // For switch-validator, derived from the signed update-staker transaction's newDelegation. For unstaking, parsed
     // from the request's required validatorAddress.
     validatorAddress?: Nimiq.Address;

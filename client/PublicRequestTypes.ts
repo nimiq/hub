@@ -165,11 +165,9 @@ export interface SignTransactionRequestSwitchValidator extends BasicRequest {
     layout: 'switch-validator';
     sender: string;
     transactions: Array<TransactionInfo | Uint8Array>;
-    // senderLabel and recipientLabel name the validators being switched between. The staking address is labeled
-    // separately via stakerLabel.
+    // senderLabel and recipientLabel name the validators being switched between.
     senderLabel?: string;
     recipientLabel?: string;
-    stakerLabel?: string;
     // No validatorAddress: the validator being switched to is derived from the signed update-staker
     // transaction's newDelegation, so that what is displayed is what gets signed.
     validatorImageUrl?: string;
@@ -185,7 +183,6 @@ export interface SignTransactionRequestUnstaking extends BasicRequest {
     sender: string;
     transactions: Array<TransactionInfo | Uint8Array>;
     senderLabel?: string; // labels the validator
-    recipientLabel?: string; // labels the user
     validatorAddress: string;
     validatorImageUrl?: string;
 }

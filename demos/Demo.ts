@@ -403,7 +403,6 @@ class Demo {
             return {
                 appName: 'Hub Demos',
                 sender,
-                recipientLabel: 'Staking Demo Recipients',
                 transactions: serializedTransactions,
             };
         }

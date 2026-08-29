@@ -144,7 +144,12 @@ export function parseSignTransactionRequest(request: SignTransactionRequest): Pa
             // sender is the user's own account, for which the label is resolved from the WalletStore in the views. A
             // requested label is not accepted for it, as it would let a caller relabel the user's own account, for
             // example as a well-known account, on the confirmation screens.
-            if ('recipientLabel' in request && transactions.length === 1) {
+            // No label is accepted for the recipient either, if the recipient is the user's own address. This is
+            // the case for outgoing staking transactions, e.g. remove-stake or delete-validator, which are sent
+            // from the staking contract and pay out to the request sender, see the sender binding above. The views
+            // label that side from the user's account data instead.
+            if ('recipientLabel' in request && transactions.length === 1
+                && !transactions[0].recipient.equals(requestSender)) {
                 parsed.recipientLabel = parseLabel(request.recipientLabel, 'recipientLabel');
             }
             break;
@@ -227,7 +232,6 @@ export function parseSignTransactionRequest(request: SignTransactionRequest): Pa
 
             parsed.senderLabel = parseLabel(switchValidatorRequest.senderLabel, 'senderLabel');
             parsed.recipientLabel = parseLabel(switchValidatorRequest.recipientLabel, 'recipientLabel');
-            parsed.stakerLabel = parseLabel(switchValidatorRequest.stakerLabel, 'stakerLabel');
             parsed.fromValidatorAddress = parseAddress(
                 switchValidatorRequest.fromValidatorAddress,
                 'fromValidatorAddress',
@@ -369,7 +373,8 @@ export function parseSignTransactionRequest(request: SignTransactionRequest): Pa
             }
 
             parsed.senderLabel = parseLabel(unstakingRequest.senderLabel, 'senderLabel');
-            parsed.recipientLabel = parseLabel(unstakingRequest.recipientLabel, 'recipientLabel');
+            // No recipientLabel: the payout recipient is the user's own address (enforced above), which a caller
+            // must not be able to relabel; the Hub labels it from the user's account data.
             parsed.validatorAddress = parseAddress(unstakingRequest.validatorAddress, 'validatorAddress', false);
             if (unstakingRequest.validatorImageUrl) {
                 parsed.validatorImageUrl = parseUrl(unstakingRequest.validatorImageUrl, 'validatorImageUrl');
@@ -402,7 +407,6 @@ export function rawSignTransactionRequest(request: ParsedSignTransactionRequest)
         appName: request.appName,
         sender: senderAddress.toUserFriendlyAddress(),
         senderLabel: request.senderLabel,
-        recipientLabel: request.recipientLabel,
         transactions: request.transactions.map((tx) => tx.serialize()),
     };
     switch (request.layout) {
@@ -410,7 +414,7 @@ export function rawSignTransactionRequest(request: ParsedSignTransactionRequest)
             return {
                 ...common,
                 layout: SignTransactionRequestLayout.SWITCH_VALIDATOR,
-                stakerLabel: request.stakerLabel,
+                recipientLabel: request.recipientLabel,
                 // No validatorAddress: it is re-derived from the signed update-staker transaction's newDelegation
                 // on re-parse.
                 validatorImageUrl: request.validatorImageUrl ? request.validatorImageUrl.toString() : undefined,
@@ -423,6 +427,8 @@ export function rawSignTransactionRequest(request: ParsedSignTransactionRequest)
             return {
                 ...common,
                 layout: SignTransactionRequestLayout.UNSTAKING,
+                // No recipientLabel: for the unstaking layout it is not part of the public request, see
+                // SignTransactionRequestUnstaking in PublicRequestTypes.ts.
                 validatorAddress: request.validatorAddress!.toUserFriendlyAddress(),
                 validatorImageUrl: request.validatorImageUrl ? request.validatorImageUrl.toString() : undefined,
             };
@@ -430,6 +436,7 @@ export function rawSignTransactionRequest(request: ParsedSignTransactionRequest)
             return {
                 ...common,
                 layout: SignTransactionRequestLayout.STANDARD,
+                recipientLabel: request.recipientLabel,
             };
         default:
             throw new Error('Invalid selected layout');

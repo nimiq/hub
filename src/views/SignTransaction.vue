@@ -61,7 +61,6 @@ export default class SignTransaction extends Vue {
             common = {
                 ...common,
                 senderLabel: this.request.senderLabel, // labels the from-validator, not the user
-                recipientLabel: this.request.recipientLabel,
                 validatorImageUrl: this.request.validatorImageUrl
                     ? this.request.validatorImageUrl.toString()
                     : undefined,
@@ -72,7 +71,8 @@ export default class SignTransaction extends Vue {
                     ...common,
                     layout: 'switch-validator',
 
-                    stakerLabel: this.request.stakerLabel, // labels the user address
+                    recipientLabel: this.request.recipientLabel, // labels the validator being switched to
+                    stakerLabel: storeSenderLabel, // labels the user address
 
                     fromValidatorAddress: this.request.fromValidatorAddress!.toUserFriendlyAddress(),
                     fromValidatorImageUrl: this.request.fromValidatorImageUrl
@@ -83,6 +83,10 @@ export default class SignTransaction extends Vue {
                 keyguardRequest = {
                     ...common,
                     layout: 'unstaking',
+
+                    // The unstaked funds are paid out to the user's own address (bound to the request sender at parse
+                    // time), so its label comes from the user's account data, not from the request.
+                    recipientLabel: storeSenderLabel,
 
                     validatorAddress: this.request.validatorAddress!.toUserFriendlyAddress(),
                 };
@@ -96,18 +100,22 @@ export default class SignTransaction extends Vue {
             };
         } else {
             // Standard layout with a single transaction. The Keyguard supports the labels only for this case.
-            const [transaction] = common.transactions;
+            const [serializedTransaction] = common.transactions;
+            // The user's own account is the transaction's sender, apart from outgoing staking transactions, e.g.
+            // remove-stake or delete-validator, which are sent from the staking contract and pay out to the request
+            // sender, to which the parsing binds them, see parseSignTransactionRequest.
+            const isUserTheRecipient = this.request.transactions[0].recipient.equals(requestSender);
 
             keyguardRequest = {
                 ...common,
                 layout: 'standard',
 
-                // The sender is the user's own account; its label comes from the user's account data and can not be
-                // set in the request, see SignTransactionRequestStandard.
-                senderLabel: storeSenderLabel,
-                recipientLabel: this.request.recipientLabel,
+                // The user's own account is labeled from the user's account data; a label for it can not be set in
+                // the request, see SignTransactionRequestStandard and parseSignTransactionRequest.
+                senderLabel: isUserTheRecipient ? undefined : storeSenderLabel,
+                recipientLabel: isUserTheRecipient ? storeSenderLabel : this.request.recipientLabel,
 
-                transactions: [transaction], // the single transaction request type requires a tuple with a single entry
+                transactions: [serializedTransaction], // single transaction request type needs tuple with single entry
             };
         }
 

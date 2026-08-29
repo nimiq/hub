@@ -269,6 +269,10 @@ export default class SignTransactionLedger extends Vue {
             recipient = sender;
             value = fee = flags = Number.NaN;
 
+            // Render the transaction's sender, which for outgoing staking transactions, e.g. remove-stake, is the
+            // staking contract instead of the user's address, see the sender binding in the request parsing.
+            // This way, the user's account details below get applied to the side the user is actually on.
+            this.senderDetails.address = signTransactionRequest.transactions[0].sender.toUserFriendlyAddress();
             this.recipientDetails = {
                 address: signTransactionRequest.transactions[0].recipient.toUserFriendlyAddress(),
                 label: signTransactionRequest.recipientLabel,
@@ -436,8 +440,9 @@ export default class SignTransactionLedger extends Vue {
             const userAddressDetails = [this.senderDetails, this.recipientDetails]
                 .find(({ address }) => address === userAddress.toUserFriendlyAddress());
             if (userAddressDetails) {
-                userAddressDetails.label = userAddressDetails.label
-                    || (userAccountContract || userAccountSigner).label;
+                // The label of the user's own address always comes from the user's account data, overwriting a
+                // requested label, which a caller must not be able to set for it.
+                userAddressDetails.label = (userAccountContract || userAccountSigner).label;
                 userAddressDetails.walletLabel = userAddressDetails.walletLabel || userAccount.label;
                 userAddressDetails.balance = userAddressDetails.balance
                     || (userAccountContract || userAccountSigner).balance;
