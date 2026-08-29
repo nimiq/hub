@@ -31,24 +31,26 @@ export interface ParsedChooseAddressRequest extends ParsedBasicRequest {
     ui?: number;
 }
 
-export interface ParsedTransactionData {
-    recipient: Nimiq.Address;
-    recipientType: Nimiq.AccountType;
-    recipientLabel?: string;
-    value: number;
-    fee: number;
-    data: Uint8Array;
-    flags: number;
-    validityStartHeight: number;
-    // Optional fields for staking transactions
-    senderType?: Nimiq.AccountType;
-    senderLabel?: string;
+// Note: the Keyguard additionally has 'checkout' and 'cashlink' layouts; those are separate Hub request types (CHECKOUT
+// / CREATE_CASHLINK) and not part of SIGN_TRANSACTION. This also makes the additional check that multiple transactions
+// are only supported for standard, switch-validator and unstaking layouts (SignTransactionApi.js parseRequest) a super-
+// fluous check here, which doesn't hurt though.
+export enum SignTransactionRequestLayout {
+    STANDARD = 'standard',
+    SWITCH_VALIDATOR = 'switch-validator',
+    UNSTAKING = 'unstaking',
 }
 
 export interface ParsedSignTransactionRequest extends ParsedBasicRequest {
-    // The sender object is currently only for internal use in RefundSwapLedger and can not be set in public request.
-    // Note that the object does not get exported to the history state in RpcApi and therefore does not survive reloads.
-    // However, the RefundSwapLedger handler is built in a way that it starts over on reloads to avoid the problem.
+    // Request-level sender address which determines the signer for all transactions. For the legacy single-transaction
+    // public request format, the sender's account type is not part of the request; the parsed transaction is then built
+    // with senderType basic and the actual type (basic, or vesting / HTLC contract) is resolved from the WalletStore in
+    // the views, which build the Keyguard request / Ledger transaction from the parsed transaction's fields plus the
+    // resolved senderType.
+    // The sender object form is currently only for internal use in RefundSwapLedger and can not be set in a public
+    // request. Note that the object does not get exported to the history state in RpcApi and therefore does not
+    // survive reloads. However, the RefundSwapLedger handler is built in a way that it starts over on reloads to
+    // avoid the problem.
     sender: Nimiq.Address | {
         address: Nimiq.Address,
         label?: string,
@@ -57,29 +59,21 @@ export interface ParsedSignTransactionRequest extends ParsedBasicRequest {
         signerKeyId: string,
         signerKeyPath: string,
     };
-    // Fields for single transaction (backward compatible)
-    recipient: Nimiq.Address;
-    recipientType: Nimiq.AccountType;
-    recipientLabel?: string;
-    value: number;
-    fee: number;
-    data: Uint8Array;
-    flags: number;
-    validityStartHeight: number; // FIXME To be made optional when hub has its own network
-    // Optional fields for multiple/staking transactions
+    layout: SignTransactionRequestLayout; // also triggers layout-specific validation
+    transactions: Nimiq.Transaction[]; // a legacy single-transaction request is wrapped into a one-element array
+    // For the standard layout, labels are only parsed when a single transaction is requested. For the staking
+    // layouts, senderLabel and recipientLabel name the (from- and to-)validators.
     senderLabel?: string;
-    transactions?: ParsedTransactionData[] | PlainTransaction[];
-    // Store original serialized transactions when they were provided in Uint8Array[] format
-    serializedTransactions?: Uint8Array[];
-    // Flag to indicate if this is a staking request (for special handling)
-    isStakingRequest?: boolean;
-    // Staking-specific fields (passed through to Keyguard for display)
+    recipientLabel?: string;
+    // switch-validator only: labels the user's staking address (senderLabel / recipientLabel name the validators).
     stakerLabel?: string;
-    validatorAddress?: string;
-    validatorImageUrl?: string;
-    layout?: 'switch-validator' | 'unstaking';
-    fromValidatorAddress?: string;
-    fromValidatorImageUrl?: string;
+    // For switch-validator, derived from the signed update-staker transaction's newDelegation. For unstaking, parsed
+    // from the request's required validatorAddress.
+    validatorAddress?: Nimiq.Address;
+    validatorImageUrl?: URL;
+    // switch-validator only
+    fromValidatorAddress?: Nimiq.Address;
+    fromValidatorImageUrl?: URL;
 }
 
 export interface ParsedMultisigInfo {

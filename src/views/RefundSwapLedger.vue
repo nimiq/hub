@@ -102,8 +102,9 @@ export default class RefundSwapLedger extends RefundSwap {
             this.state = this.State.SYNCING; // proxy transaction history is synced in LedgerSwapProxy.createForRefund
 
             const request = this.request as ParsedSignTransactionRequest;
-            const { sender: senderInfo, recipient, value, fee, data, validityStartHeight } = request;
-            const sender = senderInfo instanceof Nimiq.Address ? senderInfo : senderInfo.address;
+            const [transaction] = request.transactions;
+            const { recipient, value, fee, validityStartHeight } = transaction;
+            const sender = request.sender instanceof Nimiq.Address ? request.sender : request.sender.address;
             // existence guaranteed as already checked previously in RefundSwap
             const ledgerAccount = this.findWalletByAddress(recipient.toUserFriendlyAddress(), true)!;
 

@@ -117,19 +117,22 @@ export interface ChooseAddressResult extends Address {
     };
 }
 
-// Transaction data without sender address (sender address is at request level)
-export interface TransactionData {
-    recipient: string;
-    recipientType?: Nimiq.AccountType;
-    recipientLabel?: string;
-    value: number;
-    fee?: number;
-    extraData?: Bytes;
+/**
+ * Info for a single transaction entry of a request's `transactions` array. Mirrors the Keyguard's TransactionInfo (see
+ * Keyguard client/src/PublicRequest.ts), except that entries carry no sender address: the request-level `sender`
+ * determines the signer for all transactions and is inherited by all entries. As in the Keyguard, entries carry no
+ * labels; for requests with a single transaction, labels can be set at the request level.
+ */
+export interface TransactionInfo {
+    senderType?: Nimiq.AccountType; // Defaults to Nimiq.AccountType.Basic
+    senderData?: Bytes;
+    recipient: string; // A user-friendly or hex address, or the pseudo recipient `'CONTRACT_CREATION'`
+    recipientType?: Nimiq.AccountType; // Defaults to Nimiq.AccountType.Basic
+    recipientData?: Bytes;
+    value: number; // Luna
+    fee?: number; // Luna, defaults to 0
     flags?: number;
     validityStartHeight: number; // FIXME To be made optional when hub has its own network
-    // Optional fields for staking transactions
-    senderType?: Nimiq.AccountType;
-    senderLabel?: string;
 }
 
 // Single transaction request (backward compatible - inline fields)
@@ -145,28 +148,52 @@ export interface SignTransactionRequestSingle extends BasicRequest {
     validityStartHeight: number; // FIXME To be made optional when hub has its own network
 }
 
-// Multi-transaction request (array format)
-export interface SignTransactionRequestMulti extends BasicRequest {
+export interface SignTransactionRequestStandard extends BasicRequest {
+    layout?: 'standard';
+    sender: string; // inherited for all TransactionInfo entries
+    transactions: Array<TransactionInfo | Uint8Array>;
+    // Only applied for requests with a single transaction; for multiple transactions, plain addresses are displayed
+    // (same as in the Keyguard). Note that there is no senderLabel: the sender is the user's own account, for which the
+    // label is taken from the user's account data.
+    recipientLabel?: string;
+}
+
+// `'switch-validator'` is a simplified multi-transaction request representing a switch from an old validator to a new
+// validator that is rendered via a special layout in the Keyguard. It requires exactly two transactions in order:
+// set-active-stake, update-staker (enforced at parse time).
+export interface SignTransactionRequestSwitchValidator extends BasicRequest {
+    layout: 'switch-validator';
     sender: string;
+    transactions: Array<TransactionInfo | Uint8Array>;
+    // senderLabel and recipientLabel name the validators being switched between. The staking address is labeled
+    // separately via stakerLabel.
     senderLabel?: string;
     recipientLabel?: string;
-    // For `'switch-validator'`, senderLabel and recipientLabel name the validators being
-    // switched between, so the staking address is labelled separately.
     stakerLabel?: string;
-    transactions: TransactionData[] | Uint8Array[];
-    validatorAddress?: string;
+    // No validatorAddress: the validator being switched to is derived from the signed update-staker
+    // transaction's newDelegation, so that what is displayed is what gets signed.
     validatorImageUrl?: string;
-    // `'switch-validator'` switches the Keyguard view from the multi-tx list to a stacked
-    // from→to validator card layout, and requires fromValidator* metadata below.
-    // `'unstaking'` switches to a validator → user-wallet stacked layout, and requires
-    // `validatorAddress` plus exactly 3 transactions
-    // (set-active-stake, retire-stake, remove-stake).
-    layout?: 'switch-validator' | 'unstaking';
-    fromValidatorAddress?: string;
+    fromValidatorAddress: string;
     fromValidatorImageUrl?: string;
 }
 
-export type SignTransactionRequest = SignTransactionRequestSingle | SignTransactionRequestMulti;
+// `'unstaking'` is a simplified multi-transaction request representing unstaking of staked funds to the user's address
+// that is rendered via a special layout in the Keyguard. It requires exactly three transactions in order:
+// set-active-stake, retire-stake, remove-stake (enforced at parse time).
+export interface SignTransactionRequestUnstaking extends BasicRequest {
+    layout: 'unstaking';
+    sender: string;
+    transactions: Array<TransactionInfo | Uint8Array>;
+    senderLabel?: string; // labels the validator
+    recipientLabel?: string; // labels the user
+    validatorAddress: string;
+    validatorImageUrl?: string;
+}
+
+export type SignTransactionRequest = SignTransactionRequestSingle
+    | SignTransactionRequestStandard
+    | SignTransactionRequestSwitchValidator
+    | SignTransactionRequestUnstaking;
 
 export interface SignStakingRequest extends BasicRequest {
     senderLabel?: string;
@@ -851,6 +878,8 @@ export type ResultByRequestType<T> =
     T extends RequestType.LIST_CASHLINKS ? Cashlink[] :
     T extends RequestType.CHOOSE_ADDRESS ? ChooseAddressResult :
     T extends RequestType.ADD_ADDRESS ? Address :
+    // SIGN_TRANSACTION returns a single SignedTransaction iff a single transaction was signed (also for a
+    // one-element transactions array), and an array for multiple transactions.
     T extends RequestType.SIGN_TRANSACTION ? SignedTransaction | SignedTransaction[] :
     T extends RequestType.SIGN_MULTISIG_TRANSACTION ? PartialSignature :
     T extends RequestType.SIGN_STAKING ? SignedTransaction[] :

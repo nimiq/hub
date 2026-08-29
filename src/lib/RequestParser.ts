@@ -19,7 +19,6 @@ import type {
     RpcRequest,
     SignMessageRequest,
     SignTransactionRequest,
-    SignTransactionRequestMulti,
     SignStakingRequest,
     SimpleRequest,
     NimiqCheckoutRequest,
@@ -56,6 +55,7 @@ import { ParsedEtherDirectPaymentOptions } from './paymentOptions/EtherPaymentOp
 import { ParsedBitcoinDirectPaymentOptions } from './paymentOptions/BitcoinPaymentOptions';
 import { Utf8Tools } from '@nimiq/utils';
 import Config from 'config';
+import { parseSignTransactionRequest, rawSignTransactionRequest } from './SignTransactionRequestParsing';
 import { SwapAsset } from '@nimiq/fastspot-api';
 import RpcApi from './RpcApi';
 
@@ -69,198 +69,7 @@ export class RequestParser {
 
         switch (requestType) {
             case RequestType.SIGN_TRANSACTION:
-                const signTransactionRequest = request as SignTransactionRequest;
-
-                // Check if it's a multi-transaction request
-                if ('transactions' in signTransactionRequest && signTransactionRequest.transactions) {
-                    // Multi-transaction format
-                    if (signTransactionRequest.transactions.length === 0) {
-                        throw new Error('transactions array must not be empty');
-                    }
-
-                    const firstTx = signTransactionRequest.transactions[0];
-
-                    // Check if transactions are serialized (Uint8Array[]) or data objects (TransactionData[])
-                    if (firstTx instanceof Uint8Array) {
-                        // Serialized transactions format (like signStaking)
-                        const serializedTransactions = signTransactionRequest.transactions as Uint8Array[];
-
-                        const plainTransactions = serializedTransactions.map((serializedTx) => {
-                            if (!(serializedTx instanceof Uint8Array)) {
-                                throw new Error('All transactions must be of type Uint8Array');
-                            }
-                            return Nimiq.Transaction.fromAny(serializedTx).toPlain();
-                        });
-
-                        // Check if these are staking transactions
-                        const isStakingTransactions = plainTransactions.every((tx) =>
-                            tx.senderType === 'staking' || tx.recipientType === 'staking',
-                        );
-
-                        // For staking transactions, validate constraints (like SignStaking does)
-                        if (isStakingTransactions) {
-                            if (plainTransactions.length < 1 || plainTransactions.length > 3) {
-                                throw new Error('Expected one to three staking transactions to sign');
-                            }
-
-                            for (const transaction of plainTransactions) {
-                                if (!(['staking', 'basic'] as const)
-                                    .every((type) => transaction.senderType === type
-                                        || transaction.recipientType === type)) {
-                                    throw new Error('Either sender or recipient needs to be of type staking, ' +
-                                        'and the other of type basic.');
-                                }
-                            }
-                        }
-
-                        // Use first transaction for compatibility fields
-                        const firstPlainTx = plainTransactions[0];
-
-                        // Convert string account type to enum
-                        const recipientType = firstPlainTx.recipientType === 'basic' ? Nimiq.AccountType.Basic
-                            : firstPlainTx.recipientType === 'vesting' ? Nimiq.AccountType.Vesting
-                            : firstPlainTx.recipientType === 'htlc' ? Nimiq.AccountType.HTLC
-                            : firstPlainTx.recipientType === 'staking' ? Nimiq.AccountType.Staking
-                            : Nimiq.AccountType.Basic;
-
-                        const multiTxRequest = signTransactionRequest as SignTransactionRequestMulti;
-                        if (multiTxRequest.layout === 'switch-validator') {
-                            if (plainTransactions.length !== 2) {
-                                throw new Error('switch-validator requires exactly two transactions');
-                            }
-                            const firstData = plainTransactions[0].data as { type?: string } | undefined;
-                            const secondData = plainTransactions[1].data as { type?: string } | undefined;
-                            if (firstData?.type !== 'set-active-stake'
-                                || secondData?.type !== 'update-staker') {
-                                throw new Error(
-                                    'switch-validator transactions must be '
-                                    + 'set-active-stake followed by update-staker',
-                                );
-                            }
-                            if (!multiTxRequest.validatorAddress) {
-                                throw new Error('switch-validator requires validatorAddress');
-                            }
-                            if (!multiTxRequest.fromValidatorAddress) {
-                                throw new Error('switch-validator requires fromValidatorAddress');
-                            }
-                        } else if (multiTxRequest.layout === 'unstaking') {
-                            if (plainTransactions.length !== 3) {
-                                throw new Error('unstaking requires exactly three transactions');
-                            }
-                            const firstData = plainTransactions[0].data as { type?: string } | undefined;
-                            const secondData = plainTransactions[1].data as { type?: string } | undefined;
-                            const thirdSenderData = plainTransactions[2]
-                                .senderData as { type?: string } | undefined;
-                            if (firstData?.type !== 'set-active-stake'
-                                || secondData?.type !== 'retire-stake'
-                                || thirdSenderData?.type !== 'remove-stake') {
-                                throw new Error(
-                                    'unstaking transactions must be set-active-stake, retire-stake, '
-                                    + 'remove-stake (in order)',
-                                );
-                            }
-                            // Bind all three transactions to the same staker so a caller can't
-                            // redirect the unbonded NIM to an attacker by setting tx2.recipient
-                            // to an arbitrary address while keeping benign labels.
-                            if (plainTransactions[0].sender !== plainTransactions[1].sender
-                                || plainTransactions[2].recipient !== plainTransactions[0].sender) {
-                                throw new Error(
-                                    'unstaking transactions must be bound to the same staker',
-                                );
-                            }
-                            if (!multiTxRequest.validatorAddress) {
-                                throw new Error('unstaking requires validatorAddress');
-                            }
-                        }
-
-                        return {
-                            kind: requestType,
-                            appName: signTransactionRequest.appName,
-                            sender: Nimiq.Address.fromString(signTransactionRequest.sender),
-                            recipient: Nimiq.Address.fromString(firstPlainTx.recipient),
-                            recipientType,
-                            recipientLabel: signTransactionRequest.recipientLabel,
-                            value: firstPlainTx.value,
-                            fee: firstPlainTx.fee,
-                            // For serialized transactions, data field is just for backward compatibility
-                            data: new Uint8Array(0),
-                            flags: firstPlainTx.flags,
-                            validityStartHeight: firstPlainTx.validityStartHeight,
-                            transactions: plainTransactions,
-                            // Store original serialized transactions
-                            // For staking: SignTransaction.vue will re-serialize from PlainTransaction
-                            // For non-staking: SignTransaction.vue will use these bytes directly
-                            serializedTransactions,
-                            senderLabel: signTransactionRequest.senderLabel,
-                            stakerLabel: multiTxRequest.stakerLabel,
-                            isStakingRequest: isStakingTransactions, // Flag for SignTransaction.vue
-                            validatorAddress: multiTxRequest.validatorAddress,
-                            validatorImageUrl: multiTxRequest.validatorImageUrl,
-                            layout: multiTxRequest.layout,
-                            fromValidatorAddress: multiTxRequest.fromValidatorAddress,
-                            fromValidatorImageUrl: multiTxRequest.fromValidatorImageUrl,
-                        } as ParsedSignTransactionRequest;
-                    } else {
-                        // Transaction data objects format
-                        type TransactionData = import('../../client/PublicRequestTypes').TransactionData;
-                        const transactionDataArray = signTransactionRequest.transactions as TransactionData[];
-                        const firstTxData = transactionDataArray[0];
-
-                        return {
-                            kind: requestType,
-                            appName: signTransactionRequest.appName,
-                            sender: Nimiq.Address.fromString(signTransactionRequest.sender),
-                            recipient: Nimiq.Address.fromString(firstTxData.recipient),
-                            recipientType: firstTxData.recipientType || Nimiq.AccountType.Basic,
-                            recipientLabel: signTransactionRequest.recipientLabel,
-                            value: firstTxData.value,
-                            fee: firstTxData.fee || 0,
-                            data: typeof firstTxData.extraData === 'string'
-                                ? Utf8Tools.stringToUtf8ByteArray(firstTxData.extraData)
-                                : firstTxData.extraData || new Uint8Array(0),
-                            flags: firstTxData.flags || Nimiq.TransactionFlag.None,
-                            validityStartHeight: firstTxData.validityStartHeight,
-                            transactions: transactionDataArray.map((tx) => ({
-                                recipient: Nimiq.Address.fromString(tx.recipient),
-                                recipientType: tx.recipientType || Nimiq.AccountType.Basic,
-                                recipientLabel: tx.recipientLabel,
-                                value: tx.value,
-                                fee: tx.fee || 0,
-                                data: typeof tx.extraData === 'string'
-                                    ? Utf8Tools.stringToUtf8ByteArray(tx.extraData)
-                                    : tx.extraData || new Uint8Array(0),
-                                flags: tx.flags || Nimiq.TransactionFlag.None,
-                                validityStartHeight: tx.validityStartHeight,
-                                // Staking-specific fields
-                                senderType: tx.senderType,
-                                senderLabel: tx.senderLabel,
-                            })),
-                            senderLabel: signTransactionRequest.senderLabel,
-                        } as ParsedSignTransactionRequest;
-                    }
-                } else {
-                    // Single transaction format (backward compatible)
-                    type SingleRequest = import('../../client/PublicRequestTypes').SignTransactionRequestSingle;
-                    const singleRequest = signTransactionRequest as SingleRequest;
-                    if (!singleRequest.value) throw new Error('value is required');
-                    if (!singleRequest.validityStartHeight) throw new Error('validityStartHeight is required');
-
-                    return {
-                        kind: requestType,
-                        appName: singleRequest.appName,
-                        sender: Nimiq.Address.fromString(singleRequest.sender),
-                        recipient: Nimiq.Address.fromString(singleRequest.recipient),
-                        recipientType: singleRequest.recipientType || Nimiq.AccountType.Basic,
-                        recipientLabel: singleRequest.recipientLabel,
-                        value: singleRequest.value,
-                        fee: singleRequest.fee || 0,
-                        data: typeof singleRequest.extraData === 'string'
-                            ? Utf8Tools.stringToUtf8ByteArray(singleRequest.extraData)
-                            : singleRequest.extraData || new Uint8Array(0),
-                        flags: singleRequest.flags || Nimiq.TransactionFlag.None,
-                        validityStartHeight: singleRequest.validityStartHeight,
-                    } as ParsedSignTransactionRequest;
-                }
+                return parseSignTransactionRequest(request as SignTransactionRequest);
             case RequestType.SIGN_STAKING:
                 const signStakingRequest = request as SignStakingRequest;
 
@@ -1047,76 +856,7 @@ export class RequestParser {
         : RpcRequest | null {
         switch (request.kind) {
             case RequestType.SIGN_TRANSACTION:
-                const signTransactionRequest = request as ParsedSignTransactionRequest;
-
-                // Check if this is a multi-transaction request
-                if (signTransactionRequest.transactions && signTransactionRequest.serializedTransactions) {
-                    // Multi-transaction format with serialized transactions
-                    return {
-                        appName: signTransactionRequest.appName,
-                        sender: signTransactionRequest.sender instanceof Nimiq.Address
-                            ? signTransactionRequest.sender.toUserFriendlyAddress()
-                            : signTransactionRequest.sender.address.toUserFriendlyAddress(),
-                        senderLabel: signTransactionRequest.senderLabel,
-                        recipientLabel: signTransactionRequest.recipientLabel,
-                        stakerLabel: signTransactionRequest.stakerLabel,
-                        transactions: signTransactionRequest.serializedTransactions,
-                        layout: signTransactionRequest.layout,
-                        validatorAddress: signTransactionRequest.validatorAddress,
-                        validatorImageUrl: signTransactionRequest.validatorImageUrl,
-                        fromValidatorAddress: signTransactionRequest.fromValidatorAddress,
-                        fromValidatorImageUrl: signTransactionRequest.fromValidatorImageUrl,
-                    } as SignTransactionRequest;
-                } else if (signTransactionRequest.transactions) {
-                    // Multi-transaction format with transaction data objects
-                    // Cast to any[] to avoid TypeScript union type issues with map
-                    const txArray = signTransactionRequest.transactions as any[];
-                    return {
-                        appName: signTransactionRequest.appName,
-                        sender: signTransactionRequest.sender instanceof Nimiq.Address
-                            ? signTransactionRequest.sender.toUserFriendlyAddress()
-                            : signTransactionRequest.sender.address.toUserFriendlyAddress(),
-                        senderLabel: signTransactionRequest.senderLabel,
-                        recipientLabel: signTransactionRequest.recipientLabel,
-                        transactions: txArray.map((tx: any) => ({
-                            recipient: typeof tx.recipient === 'string'
-                                ? tx.recipient
-                                : tx.recipient.toUserFriendlyAddress(),
-                            recipientType: tx.recipientType,
-                            recipientLabel: tx.recipientLabel,
-                            value: tx.value,
-                            fee: tx.fee,
-                            extraData: tx.data,
-                            flags: tx.flags,
-                            validityStartHeight: tx.validityStartHeight,
-                            senderType: tx.senderType,
-                            senderLabel: tx.senderLabel,
-                        })),
-                        stakerLabel: signTransactionRequest.stakerLabel,
-                        layout: signTransactionRequest.layout,
-                        validatorAddress: signTransactionRequest.validatorAddress,
-                        validatorImageUrl: signTransactionRequest.validatorImageUrl,
-                        fromValidatorAddress: signTransactionRequest.fromValidatorAddress,
-                        fromValidatorImageUrl: signTransactionRequest.fromValidatorImageUrl,
-                    } as SignTransactionRequest;
-                }
-
-                // Single transaction format (backward compatible)
-                return {
-                    appName: signTransactionRequest.appName,
-                    sender: signTransactionRequest.sender instanceof Nimiq.Address
-                        ? signTransactionRequest.sender.toUserFriendlyAddress()
-                        // Note: additional sender information is lost and does not survive reloads, see RequestTypes.ts
-                        : signTransactionRequest.sender.address.toUserFriendlyAddress(),
-                    recipient: signTransactionRequest.recipient.toUserFriendlyAddress(),
-                    recipientType: signTransactionRequest.recipientType,
-                    recipientLabel: signTransactionRequest.recipientLabel,
-                    value: signTransactionRequest.value,
-                    fee: signTransactionRequest.fee,
-                    extraData: signTransactionRequest.data,
-                    flags: signTransactionRequest.flags,
-                    validityStartHeight: signTransactionRequest.validityStartHeight,
-                } as SignTransactionRequest;
+                return rawSignTransactionRequest(request as ParsedSignTransactionRequest);
             case RequestType.SIGN_STAKING:
                 const signStakingRequest = request as ParsedSignStakingRequest;
                 return {

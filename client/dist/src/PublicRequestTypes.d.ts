@@ -95,17 +95,22 @@ export interface ChooseAddressResult extends Address {
         };
     };
 }
-export interface TransactionData {
+/**
+ * Info for a single transaction entry of a request's `transactions` array. Mirrors the Keyguard's TransactionInfo (see
+ * Keyguard client/src/PublicRequest.ts), except that entries carry no sender address: the request-level `sender`
+ * determines the signer for all transactions and is inherited by all entries. As in the Keyguard, entries carry no
+ * labels; for requests with a single transaction, labels can be set at the request level.
+ */
+export interface TransactionInfo {
+    senderType?: Nimiq.AccountType;
+    senderData?: Bytes;
     recipient: string;
     recipientType?: Nimiq.AccountType;
-    recipientLabel?: string;
+    recipientData?: Bytes;
     value: number;
     fee?: number;
-    extraData?: Bytes;
     flags?: number;
     validityStartHeight: number;
-    senderType?: Nimiq.AccountType;
-    senderLabel?: string;
 }
 export interface SignTransactionRequestSingle extends BasicRequest {
     sender: string;
@@ -118,19 +123,33 @@ export interface SignTransactionRequestSingle extends BasicRequest {
     flags?: number;
     validityStartHeight: number;
 }
-export interface SignTransactionRequestMulti extends BasicRequest {
+export interface SignTransactionRequestStandard extends BasicRequest {
+    layout?: 'standard';
     sender: string;
+    transactions: Array<TransactionInfo | Uint8Array>;
+    recipientLabel?: string;
+}
+export interface SignTransactionRequestSwitchValidator extends BasicRequest {
+    layout: 'switch-validator';
+    sender: string;
+    transactions: Array<TransactionInfo | Uint8Array>;
     senderLabel?: string;
     recipientLabel?: string;
     stakerLabel?: string;
-    transactions: TransactionData[] | Uint8Array[];
-    validatorAddress?: string;
     validatorImageUrl?: string;
-    layout?: 'switch-validator' | 'unstaking';
-    fromValidatorAddress?: string;
+    fromValidatorAddress: string;
     fromValidatorImageUrl?: string;
 }
-export type SignTransactionRequest = SignTransactionRequestSingle | SignTransactionRequestMulti;
+export interface SignTransactionRequestUnstaking extends BasicRequest {
+    layout: 'unstaking';
+    sender: string;
+    transactions: Array<TransactionInfo | Uint8Array>;
+    senderLabel?: string;
+    recipientLabel?: string;
+    validatorAddress: string;
+    validatorImageUrl?: string;
+}
+export type SignTransactionRequest = SignTransactionRequestSingle | SignTransactionRequestStandard | SignTransactionRequestSwitchValidator | SignTransactionRequestUnstaking;
 export interface SignStakingRequest extends BasicRequest {
     senderLabel?: string;
     recipientLabel?: string;

@@ -317,13 +317,12 @@ class Demo {
             return {
                 appName: 'Hub Demos',
                 sender,
-                recipientLabel: 'Alice',
                 transactions: recipients.map((recipient, index) => ({
                     recipient,
                     value: 100000000 + (index * 10000000), // 1 NIM + increments
                     fee: baseFee + (index * 10),
                     validityStartHeight: validityStartHeight + index,
-                    extraData: Utf8Tools.stringToUtf8ByteArray(`Multi-tx demo ${index + 1}`),
+                    recipientData: Utf8Tools.stringToUtf8ByteArray(`Multi-tx demo ${index + 1}`),
                 })),
             };
         }
