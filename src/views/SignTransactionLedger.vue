@@ -170,6 +170,15 @@ interface AccountDetailsData {
     isCashlink?: boolean;
 }
 
+interface StakingValidatorInfo {
+    validatorAddress?: string;
+    validatorImageUrl?: string;
+    // Only set for update-staker transactions, for which the sender is rendered as the old validator.
+    fromValidatorAddress?: string;
+    fromValidatorImageUrl?: string;
+    // Labels are provided via senderLabel and/or recipientLabel on the request.
+}
+
 @Component({components: {
     Account,
     PageBody,
@@ -212,12 +221,13 @@ export default class SignTransactionLedger extends Vue {
     private async mounted() {
         if (this.request.kind === RequestType.SIGN_TRANSACTION) {
             const signTransactionRequest = this.request as ParsedSignTransactionRequest;
-            if (signTransactionRequest.layout !== SignTransactionRequestLayout.STANDARD
-                || signTransactionRequest.transactions.length > 1) {
-                // Multi-transaction requests and the staking layouts are not supported for Ledger accounts yet.
-                // Ledger staking flows currently go through SIGN_STAKING requests instead.
-                this.$rpc.reject(new Error(
-                    'Multi-transaction sign-transaction requests are not yet supported for Ledger accounts'));
+            if (signTransactionRequest.layout === SignTransactionRequestLayout.STANDARD
+                && signTransactionRequest.transactions.length > 1) {
+                // Multi-transaction requests with the standard layout are not supported for Ledger accounts yet. The
+                // staking layouts (switch-validator, unstaking), whose transaction counts are fixed by the request
+                // parsing, are supported and rendered like SIGN_STAKING requests, see stakingValidatorInfo.
+                this.$rpc.reject(new Error('Multi-transaction sign-transaction requests with the standard layout are '
+                    + 'not yet supported for Ledger accounts'));
                 return;
             }
         }
@@ -236,6 +246,9 @@ export default class SignTransactionLedger extends Vue {
             address: '',
             label: 'senderLabel' in this.request ? this.request.senderLabel : undefined,
         };
+
+        // The request's transactions to sign and display, for SIGN_TRANSACTION and SIGN_STAKING requests.
+        const transactions = this.transactions;
 
         // Collect payment information
         let sender: Nimiq.Address;
@@ -269,44 +282,28 @@ export default class SignTransactionLedger extends Vue {
             recipient = sender;
             value = fee = flags = Number.NaN;
 
-            // Render the transaction's sender, which for outgoing staking transactions, e.g. remove-stake, is the
-            // staking contract instead of the user's address, see the sender binding in the request parsing.
-            // This way, the user's account details below get applied to the side the user is actually on.
-            this.senderDetails.address = signTransactionRequest.transactions[0].sender.toUserFriendlyAddress();
-            this.recipientDetails = {
-                address: signTransactionRequest.transactions[0].recipient.toUserFriendlyAddress(),
-                label: signTransactionRequest.recipientLabel,
-            };
+            if (signTransactionRequest.layout === SignTransactionRequestLayout.STANDARD) {
+                // Standard layout with a single transaction (multiple transactions are rejected above). The staking
+                // layouts are rendered based on their final transaction in the shared staking flow block below.
+                const [transaction] = signTransactionRequest.transactions;
+                this.senderDetails.address = transaction.sender.toUserFriendlyAddress(); // might be not the user
+                this.recipientDetails = {
+                    address: transaction.recipient.toUserFriendlyAddress(),
+                    label: signTransactionRequest.recipientLabel,
+                };
+            }
         } else if (this.request.kind === RequestType.SIGN_STAKING) {
             // Direct sign staking request invocation
-            const signStakingRequest = this.request as ParsedSignStakingRequest;
-            // Display the transaction info based on the final transaction. Only extract the info to be displayed, not
-            // the other info to create a transaction, as we can create it from the plain transaction infos directly.
-            const finalTransaction = signStakingRequest.transactions[signStakingRequest.transactions.length - 1];
-            sender = Nimiq.Address.fromString(finalTransaction.sender);
+            // Display the transaction info based on the final transaction.
+            const finalTransaction = transactions![transactions!.length - 1];
+            sender = finalTransaction.sender;
 
-            // Set other values only for correct type checking. They won't be used for request type SIGN_STAKING.
+            // Set other values only for correct type checking. They won't be used for request type SIGN_STAKING as the
+            // transactions to sign are built from the request's transactions directly, see transactions.
             recipient = sender;
             value = fee = flags = Number.NaN;
 
-            this.recipientDetails = {
-                address: finalTransaction.recipient,
-                label: signStakingRequest.recipientLabel,
-            };
-
-            // Render the staking contract as the validator that is being staked with.
-            const stakingContractDetails = finalTransaction.senderType === 'staking'
-                ? this.senderDetails
-                : this.recipientDetails;
-            stakingContractDetails.address = signStakingRequest.validatorAddress || stakingContractDetails.address;
-            stakingContractDetails.image = signStakingRequest.validatorImageUrl;
-
-            // For update-staker, render the sender as the old validator instead of as the user's address (the actual
-            // sender).
-            if (finalTransaction.data.type === 'update-staker') {
-                this.senderDetails.address = signStakingRequest.fromValidatorAddress || this.senderDetails.address;
-                this.senderDetails.image = signStakingRequest.fromValidatorImageUrl;
-            }
+            // The account details are rendered in the shared staking flow block below.
         } else if (this.request.kind === RequestType.CHECKOUT) {
             // Coming from checkout
             const checkoutRequest = this.request as ParsedCheckoutRequest;
@@ -392,6 +389,32 @@ export default class SignTransactionLedger extends Vue {
             return;
         }
 
+        // Staking flows (SIGN_STAKING requests, and SIGN_TRANSACTION requests with a staking layout) are displayed
+        // based on their validator info, see stakingValidatorInfo. Only the info to be displayed is extracted here,
+        // not the info to create the transactions, which are built from the requests' transactions directly in the
+        // transactions getter.
+        const stakingValidatorInfo = this.stakingValidatorInfo;
+        if (stakingValidatorInfo) {
+            const finalTransaction = transactions![transactions!.length - 1];
+            this.senderDetails.address = finalTransaction.sender.toUserFriendlyAddress(); // might be not the user
+            this.recipientDetails = {
+                address: finalTransaction.recipient.toUserFriendlyAddress(),
+                label: (this.request as ParsedSignStakingRequest | ParsedSignTransactionRequest).recipientLabel,
+            };
+
+            // Render the staking contract as the validator that is being staked with.
+            const stakingContractDetails = finalTransaction.senderType === Nimiq.AccountType.Staking
+                ? this.senderDetails
+                : this.recipientDetails;
+            stakingContractDetails.address = stakingValidatorInfo.validatorAddress || stakingContractDetails.address;
+            stakingContractDetails.image = stakingValidatorInfo.validatorImageUrl;
+
+            // For update-staker, render the sender as the old validator instead of as the user's address (the actual
+            // sender), see stakingValidatorInfo.
+            this.senderDetails.address = stakingValidatorInfo.fromValidatorAddress || this.senderDetails.address;
+            this.senderDetails.image = stakingValidatorInfo.fromValidatorImageUrl || this.senderDetails.image;
+        }
+
         this.senderDetails.address = this.senderDetails.address || sender.toUserFriendlyAddress();
 
         // Find signer key and refine labels based on signer info.
@@ -412,14 +435,17 @@ export default class SignTransactionLedger extends Vue {
         } else {
             let userAddress: Nimiq.Address; // might be a regular address or a contract address
             if (this.request.kind === RequestType.SIGN_STAKING) {
-                // For staking, the sender or recipient address might be the user's address.
-                const { transactions } = this.request as ParsedSignStakingRequest;
-                const finalTransaction = transactions[transactions.length - 1];
-                userAddress = Nimiq.Address.fromString(
-                    finalTransaction.senderType === 'basic' ? finalTransaction.sender : finalTransaction.recipient,
-                );
+                // For staking, the sender or recipient address might be the user's address, and there is no request-
+                // level sender that the parser already parses this information to.
+                const finalTransaction = transactions![transactions!.length - 1];
+                userAddress = finalTransaction.senderType === Nimiq.AccountType.Basic
+                    ? finalTransaction.sender
+                    : finalTransaction.recipient;
                 // No need to set senderType, as we're not using it for SIGN_STAKING requests.
             } else {
+                // For SIGN_TRANSACTION the request-level sender is the user's address for all layouts, as the request
+                // parsing binds basic and contract senders to it, and outgoing staking transactions, e.g. remove-stake
+                // of the multi-tx unstaking layout, to pay out to it, see parseSignTransactionRequest.
                 userAddress = sender;
             }
 
@@ -458,11 +484,7 @@ export default class SignTransactionLedger extends Vue {
             recipientType?: Nimiq.AccountType,
             validityStartHeight?: number,
         }> = [];
-        if (this.request.kind === RequestType.SIGN_TRANSACTION || this.request.kind === RequestType.SIGN_STAKING) {
-            const transactions = this.request.kind === RequestType.SIGN_TRANSACTION
-                ? (this.request as ParsedSignTransactionRequest).transactions
-                : (this.request as ParsedSignStakingRequest).transactions
-                    .map((plainTransaction) => Nimiq.Transaction.fromPlain(plainTransaction));
+        if (transactions) { // SIGN_TRANSACTION or SIGN_STAKING request
             const propertiesToCopy = [
                 'sender',
                 'senderType',
@@ -604,6 +626,71 @@ export default class SignTransactionLedger extends Vue {
         ) as ParsedNimiqDirectPaymentOptions;
     }
 
+    /**
+     * The request's transactions to sign and display, for SIGN_TRANSACTION and SIGN_STAKING requests. Null for other
+     * request types.
+     */
+    private get transactions(): Nimiq.Transaction[] | null {
+        switch (this.request.kind) {
+            case RequestType.SIGN_TRANSACTION:
+                return (this.request as ParsedSignTransactionRequest).transactions;
+            case RequestType.SIGN_STAKING:
+                return (this.request as ParsedSignStakingRequest).transactions
+                    .map((plainTransaction) => Nimiq.Transaction.fromPlain(plainTransaction));
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * Validator info of staking flows, which are displayed based on their final transaction and this info: SIGN_STAKING
+     * requests, and SIGN_TRANSACTION requests with a staking layout (switch-validator, unstaking). Null for other
+     * requests. The from-validator info is only included for update-staker transactions, see StakingValidatorInfo.
+     */
+    private get stakingValidatorInfo(): StakingValidatorInfo | null {
+        let validatorInfo: StakingValidatorInfo | null = null;
+        if (this.request.kind === RequestType.SIGN_STAKING) {
+            const {
+                validatorAddress,
+                validatorImageUrl,
+                fromValidatorAddress,
+                fromValidatorImageUrl,
+            } = this.request as ParsedSignStakingRequest;
+            validatorInfo = { validatorAddress, validatorImageUrl, fromValidatorAddress, fromValidatorImageUrl };
+        } else if (this.request.kind === RequestType.SIGN_TRANSACTION) {
+            const signTransactionRequest = this.request as ParsedSignTransactionRequest;
+            if (signTransactionRequest.layout === SignTransactionRequestLayout.SWITCH_VALIDATOR
+                || signTransactionRequest.layout === SignTransactionRequestLayout.UNSTAKING) {
+                const {
+                    validatorAddress,
+                    validatorImageUrl,
+                    fromValidatorAddress,
+                    fromValidatorImageUrl,
+                } = signTransactionRequest;
+                validatorInfo = {
+                    validatorAddress: validatorAddress ? validatorAddress.toUserFriendlyAddress() : undefined,
+                    validatorImageUrl: validatorImageUrl ? validatorImageUrl.toString() : undefined,
+                    fromValidatorAddress: fromValidatorAddress
+                        ? fromValidatorAddress.toUserFriendlyAddress()
+                        : undefined,
+                    fromValidatorImageUrl: fromValidatorImageUrl ? fromValidatorImageUrl.toString() : undefined,
+                };
+            }
+        }
+        if (!validatorInfo) return null;
+
+        // Only for update-staker, the sender is rendered as the old validator instead of as the user's address (the
+        // actual sender). Don't provide the from-validator info for other transactions, regardless of the request's
+        // info, which is not thoroughly validated against the transactions for SIGN_STAKING requests.
+        const transactions = this.transactions!;
+        const finalTransaction = transactions[transactions.length - 1];
+        if (finalTransaction.toPlain().data.type !== 'update-staker') {
+            validatorInfo.fromValidatorAddress = undefined;
+            validatorInfo.fromValidatorImageUrl = undefined;
+        }
+        return validatorInfo;
+    }
+
     private get amountAndFee() {
         let amount: number;
         let fee: number;
@@ -611,15 +698,13 @@ export default class SignTransactionLedger extends Vue {
             ({ amount, fee } = this.checkoutPaymentOptions);
         } else if (this.cashlink) {
             ({ value: amount, fee } = this.cashlink);
-        } else if (this.request.kind === RequestType.SIGN_TRANSACTION) {
-            const { transactions } = this.request as ParsedSignTransactionRequest;
-            amount = Number(transactions[0].value);
-            fee = Number(transactions[0].fee);
-        } else { // SIGN_STAKING request
-            const { transactions } = this.request as ParsedSignStakingRequest;
+        } else { // SIGN_TRANSACTION or SIGN_STAKING request
+            // Display the value of the final transaction, and the fees of all transactions. For a standard layout
+            // SIGN_TRANSACTION request, this is the single transaction's value and fee.
+            const transactions = this.transactions!;
             const finalTransaction = transactions[transactions.length - 1];
-            amount = finalTransaction.value;
-            fee = transactions.reduce((sum, transaction) => sum + transaction.fee, 0);
+            amount = Number(finalTransaction.value);
+            fee = transactions.reduce((sum, transaction) => sum + Number(transaction.fee), 0);
         }
         return { amount, fee };
     }
@@ -629,18 +714,22 @@ export default class SignTransactionLedger extends Vue {
             return this.cashlink ? this.cashlink.message : null;
         }
 
-        if (this.request.kind === RequestType.SIGN_STAKING) {
-            return this.stakingInfo;
-        }
+        // Staking transactions of SIGN_STAKING requests and SIGN_TRANSACTION requests.
+        const stakingData = this.stakingData;
+        if (stakingData) return stakingData;
 
         let data;
         let flags;
         if (this.request.kind === RequestType.SIGN_TRANSACTION) {
+            // Standard layout with a single, non-staking transaction. Multiple transactions are rejected in mounted(),
+            // and staking transactions, including the staking layouts, are handled via stakingData above.
             const [transaction] = (this.request as ParsedSignTransactionRequest).transactions;
             data = transaction.data;
             flags = transaction.flags;
-        } else { // Checkout
+        } else if (this.request.kind === RequestType.CHECKOUT) {
             ({ extraData: data, flags } = this.checkoutPaymentOptions!.protocolSpecific);
+        } else { // SIGN_STAKING request without staking info; not expected to happen
+            return null;
         }
 
         if (!data || data.length === 0) {
@@ -658,16 +747,21 @@ export default class SignTransactionLedger extends Vue {
             : Nimiq.BufferUtils.toHex(data);
     }
 
-    private get stakingInfo() {
-        if (this.request.kind !== RequestType.SIGN_STAKING) return null;
-
-        const { transactions } = this.request as ParsedSignStakingRequest;
+    private get stakingData() {
+        // Staking data for SIGN_STAKING and SIGN_TRANSACTION requests whose final transaction is a staking transaction,
+        // e.g. of the switch-validator or unstaking layouts, or a single staking transaction on the standard layout.
+        const transactions = this.transactions;
+        if (!transactions) return null;
         // Display data based on final transaction.
         const finalTransaction = transactions[transactions.length - 1];
-        const { sender, senderData, recipientType, data: recipientData } = finalTransaction;
+        const isIncomingStakingTransaction = finalTransaction.recipientType === Nimiq.AccountType.Staking;
+        const isOutgoingStakingTransaction = finalTransaction.senderType === Nimiq.AccountType.Staking;
+        if (!isIncomingStakingTransaction && !isOutgoingStakingTransaction) return null;
+        // Decode the staking data, which is the recipient data for incoming and the sender data for outgoing staking
+        // transactions, into its plain form.
+        const { sender, senderData, data: recipientData } = finalTransaction.toPlain();
 
-        // That either the recipient or the sender is a staking account type is validated in RequestParser
-        if (recipientType === 'staking') {
+        if (isIncomingStakingTransaction) {
             switch (recipientData.type) {
                 case 'create-staker': {
                     let text = 'Start staking';
@@ -751,7 +845,7 @@ export default class SignTransactionLedger extends Vue {
                     return `Unrecognized incoming staking data: ${recipientData.type} - ${recipientData.raw}`;
                 }
             }
-        } else { // recipientType === Nimiq.AccountType.Staking
+        } else { // outgoing staking transaction
             // @ts-ignore Missmatch with Nimiq.PlainTransactionDetails from fastspot-api
             switch (senderData.type) {
                 case 'remove-stake': {
