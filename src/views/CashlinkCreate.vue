@@ -435,7 +435,6 @@ class CashlinkCreate extends Vue {
                     senderLabel: this.accountOrContractInfo!.label,
                     recipient: fundingDetails.recipient.serialize(),
                     recipientType: Nimiq.AccountType.Basic as any, // TODO: Update with new Keyguard Client
-                    fee: this.fee,
                     validityStartHeight,
                 });
                 staticStore.keyguardRequest = request;

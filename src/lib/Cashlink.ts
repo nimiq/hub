@@ -414,7 +414,9 @@ class Cashlink {
             layout: 'cashlink',
             recipient: this.address,
             value: this.value,
-            fee: 0, // cashlink.fee is meant for claiming transactions
+            // While the fee is also applied to the claiming transaction, see claim, it is also the fee the user chose
+            // for funding the Cashlink in CashlinkCreate.
+            fee: this.fee,
             recipientData: CashlinkExtraData.FUNDING,
             cashlinkMessage: this.message,
         };
