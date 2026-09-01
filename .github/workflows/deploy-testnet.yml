@@ -1,0 +1,241 @@
+name: Deploy Testnet
+
+# Deploys the testnet Hub to an S3-backed CloudFront distribution. This is the same artifact
+# `deploy.sh --testnet` ships to testnet-web1 over SSH, and it is meant to become the path that
+# serves hub.nimiq-testnet.com once DNS for that host points at the distribution this publishes to
+# (vars.DEPLOY_URL) rather than at the nginx origin on testnet-web1.
+#
+# The Hub holds no keys -- the Keyguard does -- but it is the origin the Keyguard trusts: the
+# Keyguard's `/request/iframe*` and `/request/swap-iframe*` policies name hub.nimiq-testnet.com as
+# a permitted embedder, and src/iframe.ts hands out account data to anything in
+# Config.privilegedOrigins. Shipping a bad Hub is therefore a way into the Keyguard, so this
+# workflow keeps the Keyguard's gates rather than a looser set:
+#   - only a published pre-release deploys; a pushed tag on its own never does, and there is no
+#     manual trigger, so none of the gates below can be waived for a run
+#   - the deploy waits on a required reviewer (GitHub Environment protection rule)
+#   - the release tag's signature must verify (deploy.sh creates signed tags with `git tag -a -s`)
+#   - the commit must have passed `Complete Check`, which is where the tests actually run
+#   - the smoke test asserts the SPA fallback, the per-path frame-ancestors and every SRI hash
+#     against what the CDN serves, and fails the deploy if the CloudFront configuration drifts
+#     from what it specifies
+#
+# What this workflow expects to already exist, none of which lives in this repository:
+#
+#   Environment `testnet`, with a required reviewer, holding
+#     vars.AWS_REGION, vars.S3_BUCKET, vars.CLOUDFRONT_DISTRIBUTION_ID, vars.DEPLOY_URL
+#     vars.ALLOWED_TAGGERS  optional, comma-separated tagger allowlist
+#     secrets.AWS_DEPLOY_ROLE_ARN  a role whose trust policy is scoped to the OIDC subject
+#       `repo:nimiq@33815469/hub@140697254:environment:testnet`, so no other workflow can assume
+#       it. The numeric owner and repository ids ride along in the claim alongside the names, so a
+#       renamed org or repo breaks this deploy rather than handing the old name's new owner a token
+#       the role accepts.
+#
+#   A bucket used by nothing but this site. The sync prunes with `--delete` at the bucket root, so
+#   anything else stored there -- logs, a second site, hand-uploaded files -- is deleted.
+#
+#   An SPA fallback at the edge, which is the one requirement the Keyguard does not have and the
+#   Hub cannot work without. src/router.ts runs in `history` mode, so `/checkout`, `/signup` and
+#   every other request type is a real navigation to a path dist/ has no file for; the nginx config
+#   in .gitlab-ci.yml answers those with `try_files $uri $uri/ /index.html`. The shared
+#   viewer-request function in nimiq/IaC rewrites an extensionless path to `<path>/index.html`
+#   instead, which S3 answers with a 403 -- so the `hub` entry needs a rewrite that keeps
+#   `/cashlink/` resolving to `/cashlink/index.html` while sending everything else extensionless to
+#   `/index.html`. `/cashlink/create` and `/cashlink/manage` are where the two rules meet: they are
+#   Hub routes living under the standalone Cashlink app's directory, and resolving them like
+#   `/cashlink/` serves the wrong page with a 200. The smoke test covers all of it, but only after
+#   a full sync and invalidation have run.
+#
+#   Response-headers policies. The default is `frame-ancestors 'none'`; `/iframe.html` is the one
+#   embeddable path and must allow exactly the origins src/config/config.testnet.ts lists in
+#   `privilegedOrigins`, since those are the origins src/iframe.ts answers RPC from. They live in
+#   nimiq/IaC (lib/config.ts, `staticSites`), which has no `hub` entry yet; the `keyguard` entry is
+#   the model. tools/deploymentValidator.js is the specification they have to satisfy.
+
+on:
+  # Cutting a tag and publishing a release are separate acts, and only the second one is a
+  # decision to ship: deploy.sh pushes two tags per run and also tags mainnet deployments, so a
+  # tag trigger would deploy several times over, and for the wrong network. Pre-releases are the
+  # testnet channel; the mainnet workflow will subscribe to `types: [released]` instead.
+  release:
+    types: [published]
+
+# Never run two deploys against the same bucket, and never cancel one mid-flight:
+# an aborted sync leaves HTML pointing at bundles that were never uploaded.
+concurrency:
+  group: deploy-testnet
+  cancel-in-progress: false
+
+permissions: {}
+
+jobs:
+  deploy:
+    name: Build and deploy to S3 + CloudFront
+    runs-on: ubuntu-latest
+
+    # `published` fires for full releases too, and those are the mainnet channel.
+    if: ${{ github.event.release.prerelease }}
+
+    # Binds the OIDC subject to `repo:nimiq@33815469/hub@140697254:environment:testnet`, exposes
+    # the environment's vars/secrets, and applies its protection rules (required reviewers).
+    environment:
+      name: testnet
+      url: ${{ vars.DEPLOY_URL }}
+
+    permissions:
+      contents: read   # actions/checkout, and the GitHub API read in verify-tag.js
+      checks: read     # the commit's check runs, in verify-checks.js
+      id-token: write  # OIDC token for sts:AssumeRoleWithWebIdentity
+
+    env:
+      BUILD_CONFIG: testnet
+      AWS_REGION: ${{ vars.AWS_REGION }}
+      S3_BUCKET: ${{ vars.S3_BUCKET }}
+      CLOUDFRONT_DISTRIBUTION_ID: ${{ vars.CLOUDFRONT_DISTRIBUTION_ID }}
+      DEPLOY_URL: ${{ vars.DEPLOY_URL }}
+      RELEASE_URL: ${{ github.event.release.html_url }}
+
+    steps:
+      # Every deploy target comes from the environment's vars, and a missing one must stop the run
+      # before it builds anything. An unset DEPLOY_URL used to skip the smoke test silently, which
+      # made forgetting a variable indistinguishable from a verified deploy. It is also a build
+      # input here, not just a probe target, so a trailing slash would be baked into every
+      # `<link rel="icon">` the pages carry.
+      - name: Check deployment configuration
+        run: |
+          set -euo pipefail
+          missing=()
+          for name in AWS_REGION S3_BUCKET CLOUDFRONT_DISTRIBUTION_ID DEPLOY_URL; do
+            [ -n "${!name:-}" ] || missing+=("$name")
+          done
+          if [ "${#missing[@]}" -gt 0 ]; then
+            echo "::error::unset environment variable(s): ${missing[*]}"
+            exit 1
+          fi
+          # Strip any trailing slash before the build consumes it: vue.config.js concatenates
+          # DEPLOY_URL straight into `<link rel="icon" href="...">` and `<meta name="url">`.
+          echo "DEPLOY_URL=$(printf '%s' "$DEPLOY_URL" | sed 's:/*$::')" >> "$GITHUB_ENV"
+
+      # A release event checks out the commit the release was cut from. That commit is the one the
+      # release's tag names, so the signature verify-tag.js checks on that tag is a signature over
+      # what is built here, and it is the commit verify-checks.js judges: both gates below are
+      # about this checkout.
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      # Runs on the runner's preinstalled Node, before setup-node and before any dependency is
+      # installed, so nothing from the ref has been executed at the point its signature is checked.
+      - name: Verify tag signature
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          TAG_NAME: ${{ github.event.release.tag_name }}
+          ALLOWED_TAGGERS: ${{ vars.ALLOWED_TAGGERS }}
+        run: node .github/scripts/verify-tag.js
+
+      # This workflow only builds -- nothing in it runs a test. A release can be published from any
+      # commit, so the evidence that this one holds up is Complete Check's verdict on it.
+      - name: Verify CI passed for this commit
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node .github/scripts/verify-checks.js
+
+      - uses: actions/setup-node@v7
+        with:
+          # Pinned rather than left to the runner's default, so a runner image bump cannot change
+          # what gets built. Complete Check runs on the default, so raising this is worth doing in
+          # both places at once.
+          node-version: '24'
+          # The yarn download cache, not node_modules: yarn re-extracts and validates against
+          # yarn.lock's integrity hashes instead of restoring unverified code.
+          cache: yarn
+          cache-dependency-path: |
+            yarn.lock
+            client/yarn.lock
+
+      # With install scripts, unlike the Keyguard's deploy: this package's postinstall is
+      # `patch-package && cd client && yarn`, and every patch under patches/ applies to something
+      # this build compiles in -- @nimiq/core, @nimiq/ledger-api and the two @ledgerhq packages it
+      # pulls in, plus webpack itself. An --ignore-scripts install would silently produce a
+      # different bundle from the one Complete Check judged. --frozen-lockfile because
+      # package.json pins with caret ranges and three dependencies resolve to git branches.
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile --ignore-engines
+
+      # vue.config.js takes the deployment's own origin from VUE_APP_HUB_URL for a testnet build
+      # and substitutes it into the pages, so the build has to know where it is being deployed.
+      # tools/distValidator.js checks what came out.
+      - name: Build (${{ env.BUILD_CONFIG }} config)
+        env:
+          build: ${{ env.BUILD_CONFIG }}
+          VUE_APP_HUB_URL: ${{ env.DEPLOY_URL }}
+        run: yarn build
+
+      # Asserts that dist/ is complete, that the pages were rewritten for this origin, that the
+      # bundles carry this network's config and no other, and that every file in it is covered by
+      # one of s3-sync.sh's typed upload passes. Also runs on every PR via `yarn pr`, so these
+      # assertions are exercised long before a deploy depends on them.
+      - name: Verify build output
+        run: yarn checkdist "$BUILD_CONFIG"
+
+      - name: Write build-info.json
+        run: |
+          set -euo pipefail
+          jq -n \
+            --arg ref "$GITHUB_REF_NAME" \
+            --arg sha "$GITHUB_SHA" \
+            --arg config "$BUILD_CONFIG" \
+            --arg run "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}" \
+            --arg deployedAt "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            '{$ref, $sha, $config, $run, $deployedAt}' > dist/build-info.json
+
+      # Credentials are requested only after the build, and only for 15 minutes.
+      - name: Configure AWS credentials (GitHub OIDC)
+        uses: aws-actions/configure-aws-credentials@v6.2.3
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          role-session-name: hub-testnet-${{ github.run_id }}
+          aws-region: ${{ env.AWS_REGION }}
+          role-duration-seconds: 900
+
+      - name: Preflight AWS access
+        run: |
+          set -euo pipefail
+          aws sts get-caller-identity
+          aws s3api head-bucket --bucket "$S3_BUCKET"
+
+      - name: Upload to S3 and prune stale objects
+        run: .github/scripts/s3-sync.sh
+
+      - name: Invalidate CloudFront
+        run: |
+          set -euo pipefail
+          # "/*" MUST be quoted -- unquoted, bash globs it into /bin /boot /dev ...
+          id=$(aws cloudfront create-invalidation \
+                 --distribution-id "$CLOUDFRONT_DISTRIBUTION_ID" --paths "/*" \
+                 --query 'Invalidation.Id' --output text)
+          echo "invalidation $id created"
+          aws cloudfront wait invalidation-completed \
+            --distribution-id "$CLOUDFRONT_DISTRIBUTION_ID" --id "$id"
+          echo "invalidation $id completed"
+
+      # Asserts the SPA fallback, the security headers and the per-path frame-ancestors, and
+      # re-derives every SRI hash from what the CDN serves. The expectations live in the script,
+      # the CloudFront configuration in nimiq/IaC; update them together.
+      - name: Smoke test the deployment
+        run: yarn checkdeployment "$DEPLOY_URL" "$BUILD_CONFIG"
+
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "### Hub testnet deploy"
+            echo
+            echo "| | |"
+            echo "|---|---|"
+            echo "| release | ${RELEASE_URL} |"
+            echo "| ref | \`${GITHUB_REF_NAME}\` |"
+            echo "| commit | \`${GITHUB_SHA}\` |"
+            echo "| config | \`${BUILD_CONFIG}\` |"
+            echo "| bucket | \`${S3_BUCKET}\` |"
+            echo "| url | ${DEPLOY_URL:-n/a} |"
+          } >> "$GITHUB_STEP_SUMMARY"
