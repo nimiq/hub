@@ -2,10 +2,30 @@
     <div class="ledger-ui" :class="{
         small,
         'has-connect-button': showConnectButton,
+        'has-signing-step': showSigningStep,
         'is-wrong-app-connected': wrongAppConnected,
     }">
-        <StatusScreen :state="'loading'" :title="instructionsTitle" :status="instructionsText" :small="small">
+        <StatusScreen :state="'loading'" :title="instructionsTitle" :status="statusScreenStatus" :small="small">
             <template slot="loading">
+                <transition name="transition-fade">
+                    <div v-if="showSigningStep" class="signing-step">
+                        <template v-if="signingStep.totalSteps <= constructor.MAX_RENDERED_SIGNING_STEPS">
+                            <CheckmarkSmallIcon v-for="step in signingStep.step - 1" class="step"
+                                :key="`completed-step-${step}`" />
+                            <div class="step current-step">{{ signingStep.step }}</div>
+                            <div class="instructions">{{ signingStep.instructions }}</div>
+                            <div class="step" v-for="step in signingStep.totalSteps - signingStep.step"
+                                :key="`pending-step-${step}`">{{ step + signingStep.step }}</div>
+                        </template>
+                        <template v-else>
+                            <!-- An indicator per step would not fit; show a compact counter instead. -->
+                            <div class="step current-step compact-step">
+                                {{ signingStep.step }}/{{ signingStep.totalSteps }}
+                            </div>
+                            <div class="instructions">{{ signingStep.instructions }}</div>
+                        </template>
+                    </div>
+                </transition>
                 <transition name="transition-fade">
                     <LoadingSpinner v-if="illustration === constructor.Illustrations.LOADING"/>
                     <div v-else class="ledger-device-container"
@@ -46,7 +66,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
-import { LoadingSpinner } from '@nimiq/vue-components';
+import { CheckmarkSmallIcon, LoadingSpinner } from '@nimiq/vue-components';
 import LedgerApi, {
     Coin,
     ErrorState,
@@ -62,13 +82,18 @@ import LedgerApi, {
 import Config from 'config';
 import StatusScreen from '../components/StatusScreen.vue';
 
-@Component({ components: { StatusScreen, LoadingSpinner } })
+@Component({ components: { StatusScreen, LoadingSpinner, CheckmarkSmallIcon } })
 class LedgerUi extends Vue {
     private static CONNECT_ANIMATION_STEP_DURATION = 9000 / 3;
+    private static MAX_RENDERED_SIGNING_STEPS = 8;
 
     @Prop(Boolean) public small?: boolean;
+    // Progress info for requests that consist of multiple consecutive Ledger interactions to be displayed as a step
+    // indicator at the top of the ui.
+    @Prop(Object) public signingStep?: LedgerUi.SigningStep;
 
     private state: State = LedgerApi.currentState;
+    private isIdleBetweenSigningSteps: boolean = false;
     private instructionsTitle: string = '';
     private instructionsText: string = '';
     private showConnectButton: boolean = false;
@@ -99,6 +124,19 @@ class LedgerUi extends Vue {
         } else {
             LedgerApi.connect(currentRequest.coin, currentRequest.network);
         }
+    }
+
+    private get showSigningStep(): boolean {
+        // Only display the step indicator while the Ledger is actually handling a request, or in between the
+        // consecutive requests of a multi request flow.
+        return !!this.signingStep
+            && (this.state.type === StateType.REQUEST_PROCESSING || this.isIdleBetweenSigningSteps);
+    }
+
+    private get statusScreenStatus(): string {
+        // While the signing step indicator is displayed, it replaces the regular instructions text on the small
+        // layout, on which the two would crowd the ui. The big layout has enough space for both.
+        return this.showSigningStep && this.small ? '' : this.instructionsText;
     }
 
     private get illustration() {
@@ -171,15 +209,25 @@ class LedgerUi extends Vue {
             this.connectTimer = window.setTimeout(() => {
                 if (LedgerApi.currentState.type !== StateType.CONNECTING) return;
                 this.state = LedgerApi.currentState;
+                this.isIdleBetweenSigningSteps = false;
             }, delay);
             return;
         }
         clearTimeout(this.connectTimer);
 
+        // Note that this.state still holds the previous state here, and that the state is only idle in between the
+        // consecutive requests of a multi request flow if the previous request just finished processing.
+        this.isIdleBetweenSigningSteps = !!this.signingStep
+            && this.state.type === StateType.REQUEST_PROCESSING // old state
+            && state.type === StateType.IDLE; // new state
         this.state = state;
         switch (state.type) {
             case StateType.IDLE:
-                this._showInstructions(null);
+                // Keep the instructions displayed in between the consecutive requests of a multi request flow, and
+                // also after its last one, for which the signing step indicator is kept displayed too. This avoids
+                // the ui blanking out between the steps, and again right before the view covers it on completion.
+                // They are cleared once the flow ends, see _onSigningStepChange.
+                if (!this.isIdleBetweenSigningSteps) this._showInstructions(null);
                 break;
             case StateType.LOADING:
                 this._onStateLoading();
@@ -236,7 +284,9 @@ class LedgerUi extends Vue {
             case RequestTypeNimiq.SIGN_TRANSACTION:
             case RequestTypeBitcoin.SIGN_TRANSACTION:
                 this._showInstructions(
-                    this.$t('Confirm Transaction') as string,
+                    this.signingStep
+                        ? this.$t('Confirm {count} Transactions', { count: this.signingStep.totalSteps }) as string
+                        : this.$t('Confirm Transaction') as string,
                     this.$t('Confirm using your Ledger') as string,
                 );
                 break;
@@ -322,6 +372,18 @@ class LedgerUi extends Vue {
         this.connectAnimationStep = (this.wrongAppConnected ? 2 : 0) + instructionIndex + 1;
     }
 
+    @Watch('signingStep')
+    private _onSigningStepChange(signingStep?: LedgerUi.SigningStep, previousSigningStep?: LedgerUi.SigningStep) {
+        if (!!signingStep === !!previousSigningStep) return;
+        // A flow started or ended, such that the api is not idle in between a flow's requests anymore.
+        this.isIdleBetweenSigningSteps = false;
+        if (!signingStep && this.state.type === StateType.IDLE) {
+            // The flow ended while the api is idle, i.e. the instructions of its last request, which were kept
+            // displayed as long as the flow was ongoing, are to be cleared now, see _onStateChange.
+            this._showInstructions(null);
+        }
+    }
+
     @Watch('illustration', { immediate: true })
     private _onIllustrationChange(illustration: string) {
         if (illustration === LedgerUi.Illustrations.CONNECTING) {
@@ -350,6 +412,12 @@ class LedgerUi extends Vue {
 }
 
 namespace LedgerUi {
+    export interface SigningStep {
+        step: number; // 1-based
+        totalSteps: number;
+        instructions: string;
+    }
+
     export const enum Events {
         NO_INFORMATION_SHOWN = 'no-information-shown',
         INFORMATION_SHOWN = 'information-shown',
@@ -394,6 +462,10 @@ export default LedgerUi;
         --ledger-y-offset: -3.5rem;
     }
 
+    .ledger-ui.has-signing-step {
+        --ledger-y-offset: 2.5rem;
+    }
+
     .status-screen {
         overflow: hidden;
     }
@@ -409,6 +481,60 @@ export default LedgerUi;
 
     .ledger-ui.has-connect-button.small .status-screen >>> .status-row {
         margin-bottom: 5.5rem;
+    }
+
+    /* Render signing steps in a similar visual style as we already had in SetupSwapLedger */
+    .signing-step {
+        position: absolute;
+        top: 11rem; /* Below the title, which is only rendered on the big layout, see _showInstructions. */
+        left: 0;
+        right: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0 1.5rem;
+        transition: opacity .4s;
+    }
+
+    .ledger-ui.small .signing-step {
+        top: 2.25rem;
+    }
+
+    .signing-step .step {
+        display: flex;
+        flex-shrink: 0;
+        width: 2.5rem;
+        height: 2.5rem;
+        margin: 0 .375rem;
+        border-radius: 1.25rem;
+        justify-content: center;
+        align-items: center;
+        font-size: 1.5rem;
+        font-weight: bold;
+        line-height: 1;
+        color: rgba(255, 255, 255, .5);
+        background: rgba(255, 255, 255, .1);
+    }
+
+    .signing-step .step.nq-icon {
+        margin: 0 .375rem;
+        padding: .75rem;
+    }
+
+    .signing-step .current-step {
+        color: white;
+    }
+
+    .signing-step .compact-step {
+        width: auto;
+        padding: 0 .875rem;
+    }
+
+    .signing-step .instructions {
+        font-size: 1.75rem;
+        font-weight: 600;
+        line-height: 1.2;
+        margin: 0 1rem 0 .625rem;
     }
 
     .connect-button {

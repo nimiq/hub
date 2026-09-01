@@ -355,6 +355,10 @@ msgstr ""
 msgid "Collecting payment details"
 msgstr ""
 
+#: src/components/LedgerUi.vue:288
+msgid "Confirm {count} Transactions"
+msgstr ""
+
 #: src/views/SetupSwapLedger.vue:1006
 msgid "Confirm {outgoingOrIncoming} transaction on Ledger"
 msgstr ""
