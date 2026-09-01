@@ -1,5 +1,5 @@
 <template>
-    <div v-if="request.kind === 'create-cashlink' ? !!cashlink : true" class="container">
+    <div v-if="transactions.length" class="container">
         <SmallPage :class="{ 'account-details-shown': !!shownAccountDetails }">
             <PaymentInfoLine
                 v-if="request.kind === 'checkout'"
@@ -148,7 +148,6 @@ import { Currency, RequestType, SignedTransaction } from '../../client/PublicReq
 import { patchLegacyRequestSenderType } from '../lib/SignTransactionRequestParsing';
 import { WalletInfo } from '../lib/WalletInfo';
 import {
-    CASHLINK_FUNDING_DATA,
     ERROR_CANCELED,
     ERROR_REQUEST_TIMED_OUT,
     TX_VALIDITY_WINDOW,
@@ -161,6 +160,11 @@ import Cashlink from '../lib/Cashlink';
 import { CashlinkStore } from '../lib/CashlinkStore';
 import CheckoutServerApi from '../lib/CheckoutServerApi';
 
+// Placeholder validity start height for the transactions the Hub creates itself, i.e. for checkout and cashlink
+// requests, the actual height of which is only fetched from the network when the transactions are to be signed, see
+// mounted().
+const PLACEHOLDER_VALIDITY_START_HEIGHT = 0;
+
 interface AccountDetailsData {
     address: string;
     label?: string;
@@ -168,6 +172,18 @@ interface AccountDetailsData {
     walletLabel?: string;
     balance?: number;
     isCashlink?: boolean;
+}
+
+interface UserAccountInfo {
+    // Key to sign the request's transactions with.
+    keyId: string;
+    keyPath: string;
+    // Type of the user's address, i.e. basic, or a contract type for contracts.
+    accountType: Nimiq.AccountType;
+    // Data to display for the user's address, where it is rendered.
+    label?: string;
+    walletLabel?: string;
+    balance?: number;
 }
 
 interface StakingValidatorInfo {
@@ -216,16 +232,76 @@ export default class SignTransactionLedger extends Vue {
     private recipientDetails: AccountDetailsData = { address: '' };
     private shownAccountDetails: AccountDetailsData | null = null;
     private isDestroyed: boolean = false;
+    // Counter to be incremented after in-place changes to the request, which is not reactive itself, to re-evaluate
+    // the getters that are based on it, see transactions getter.
+    private requestRevision: number = 0;
+    // An error that prevented the request from being set up, see created().
+    private _setupError: Error | null = null;
     private _checkoutExpiryTimeout: number = -1;
 
+    private created() {
+        if (this.request.kind !== RequestType.SIGN_TRANSACTION) return;
+        try {
+            // The legacy single-transaction request format does not support specifying the senderType, in which case it
+            // is determined from the WalletStore. As the request's transaction is patched in place, this has to happen
+            // before the transactions getter is evaluated for the first time, which the initial render does.
+            patchLegacyRequestSenderType(
+                this.request as ParsedSignTransactionRequest,
+                this.userAccountInfo.accountType,
+            );
+        } catch (e) {
+            // Vue swallows exceptions thrown in lifecycle hooks, which would leave the senderType unpatched while the
+            // view renders as usual. Fail the request instead, see the transactions getter.
+            this._setupError = e;
+        }
+    }
+
     private async mounted() {
-        if (this.request.kind === RequestType.SIGN_TRANSACTION) {
+        const requestKind = this.request.kind;
+        // For checkout and cashlink requests, the transactions are created by the Hub itself, instead of being provided
+        // by the caller or request parser, and are also sent to the network by the Hub, instead of being returned.
+        const isSentByHub = requestKind === RequestType.CHECKOUT || requestKind === RequestType.CREATE_CASHLINK;
+
+        // A checkout's recipient may be omitted from the request and only be provided by the shop's callback, see
+        // RequestParser. CheckoutCard fills it into the payment options in place, but it is lost on a reload, on which
+        // the request is re-parsed from its original raw form. Defer the check for these requests until after the
+        // payment options have been updated below.
+        const canRecoverCheckoutRecipient = requestKind === RequestType.CHECKOUT
+            && !!(this.request as ParsedCheckoutRequest).callbackUrl
+            && !!(this.request as ParsedCheckoutRequest).csrf;
+
+        const transactionsError = this.transactionsError;
+        if (transactionsError && !canRecoverCheckoutRecipient) {
+            // The request can not be handled. Note that nothing is rendered in this case, see the template's root.
+            const isSupportedRequestKind = requestKind === RequestType.SIGN_TRANSACTION
+                || requestKind === RequestType.SIGN_STAKING
+                || requestKind === RequestType.CHECKOUT
+                || requestKind === RequestType.CREATE_CASHLINK;
+            if (!isSupportedRequestKind && history.length >= 3) {
+                // First history entry is root, the second an original request handler invoking the transaction signing
+                // and the third is this one. If there was an original request handler calling us but the intermediate
+                // transaction signing request was lost on reload and instead the original request recovered from the
+                // RPC state, navigate back to the original request handler.
+                // TODO implementing a proper request call stack instead of the originalRouteName hack would avoid this
+                history.back();
+            } else {
+                this.$rpc.reject(transactionsError);
+            }
+            return;
+        }
+
+        if (requestKind === RequestType.SIGN_TRANSACTION) {
             const signTransactionRequest = this.request as ParsedSignTransactionRequest;
-            if (signTransactionRequest.layout === SignTransactionRequestLayout.STANDARD
+            const { layout } = signTransactionRequest;
+            if (layout !== SignTransactionRequestLayout.STANDARD
+                && layout !== SignTransactionRequestLayout.SWITCH_VALIDATOR
+                && layout !== SignTransactionRequestLayout.UNSTAKING) {
+                this.$rpc.reject(new Error(`Sign-transaction requests with the ${layout} layout are not yet supported `
+                    + 'for Ledger accounts'));
+                return;
+            }
+            if (layout === SignTransactionRequestLayout.STANDARD
                 && signTransactionRequest.transactions.length > 1) {
-                // Multi-transaction requests with the standard layout are not supported for Ledger accounts yet. The
-                // staking layouts (switch-validator, unstaking), whose transaction counts are fixed by the request
-                // parsing, are supported and rendered like SIGN_STAKING requests, see stakingValidatorInfo.
                 this.$rpc.reject(new Error('Multi-transaction sign-transaction requests with the standard layout are '
                     + 'not yet supported for Ledger accounts'));
                 return;
@@ -233,7 +309,7 @@ export default class SignTransactionLedger extends Vue {
         }
 
         const network = this.$refs.network as Network;
-        if (this.request.kind === RequestType.CHECKOUT || this.request.kind === RequestType.CREATE_CASHLINK) {
+        if (isSentByHub) {
             // Pre-connect to network when we know we'll need it. Does not need to be awaited, as the methods on network
             // that actually need to be connected, themselves ensure to be connected.
             network.getNetworkClient().catch(() => {}); // tslint:disable-line no-empty
@@ -242,69 +318,13 @@ export default class SignTransactionLedger extends Vue {
         // If user left this view in the meantime, don't continue
         if (this.isDestroyed) return;
 
-        this.senderDetails = {
-            address: '',
-            label: 'senderLabel' in this.request ? this.request.senderLabel : undefined,
-        };
-
-        // The request's transactions to sign and display, for SIGN_TRANSACTION and SIGN_STAKING requests.
-        const transactions = this.transactions;
-
-        // Collect payment information
-        let sender: Nimiq.Address;
-        let recipient: Nimiq.Address;
-        let value: number;
-        let fee: number;
+        // Collect the request specific display information and side effects, and the validity start height for the
+        // transactions the Hub creates itself. The transactions themselves are built in the transactions getter.
         let validityStartHeightPromise: Promise<number> | undefined;
-        let recipientData: Uint8Array | undefined;
-        let flags: number;
-        if (this.request.kind === RequestType.SIGN_TRANSACTION) {
-            // Direct sign transaction request invocation
-            const signTransactionRequest = this.request as ParsedSignTransactionRequest;
-            sender = signTransactionRequest.sender instanceof Nimiq.Address
-                ? signTransactionRequest.sender
-                : signTransactionRequest.sender.address;
-
-            // The legacy single-transaction request format does not support specifying the senderType, in which case
-            // it is determined from the WalletStore.
-            let storeSenderType = Nimiq.AccountType.Basic;
-            if (!(signTransactionRequest.sender instanceof Nimiq.Address)) {
-                storeSenderType = signTransactionRequest.sender.type || Nimiq.AccountType.Basic;
-            } else {
-                // existence checked in RpcApi
-                const senderContract = this.findWalletByAddress(sender.toUserFriendlyAddress(), true)!
-                    .findContractByAddress(sender);
-                if (senderContract) storeSenderType = senderContract.type;
-            }
-            patchLegacyRequestSenderType(signTransactionRequest, storeSenderType);
-
-            // Set other values only for correct type checking. They won't be used for request type SIGN_TRANSACTION.
-            recipient = sender;
-            value = fee = flags = Number.NaN;
-
-            if (signTransactionRequest.layout === SignTransactionRequestLayout.STANDARD) {
-                // Standard layout with a single transaction (multiple transactions are rejected above). The staking
-                // layouts are rendered based on their final transaction in the shared staking flow block below.
-                const [transaction] = signTransactionRequest.transactions;
-                this.senderDetails.address = transaction.sender.toUserFriendlyAddress(); // might be not the user
-                this.recipientDetails = {
-                    address: transaction.recipient.toUserFriendlyAddress(),
-                    label: signTransactionRequest.recipientLabel,
-                };
-            }
-        } else if (this.request.kind === RequestType.SIGN_STAKING) {
-            // Direct sign staking request invocation
-            // Display the transaction info based on the final transaction.
-            const finalTransaction = transactions![transactions!.length - 1];
-            sender = finalTransaction.sender;
-
-            // Set other values only for correct type checking. They won't be used for request type SIGN_STAKING as the
-            // transactions to sign are built from the request's transactions directly, see transactions.
-            recipient = sender;
-            value = fee = flags = Number.NaN;
-
-            // The account details are rendered in the shared staking flow block below.
-        } else if (this.request.kind === RequestType.CHECKOUT) {
+        let recipientLabel = 'recipientLabel' in this.request ? this.request.recipientLabel : undefined;
+        let recipientImage: string | undefined;
+        let isRecipientCashlink = false;
+        if (requestKind === RequestType.CHECKOUT) {
             // Coming from checkout
             const checkoutRequest = this.request as ParsedCheckoutRequest;
             const $subtitle = document.querySelector('.logo .logo-subtitle')!;
@@ -326,25 +346,22 @@ export default class SignTransactionLedger extends Vue {
                         checkoutRequest.csrf,
                     );
                     checkoutPaymentOptions.update(fetchedPaymentOptions);
+                    // The payment options were updated in place and are not reactive themselves, therefore trigger a
+                    // re-evaluation of the getters based on them, especially of the transaction to sign and display.
+                    this.requestRevision++;
                 } catch (e) {
                     this.$rpc.reject(e);
                     return;
                 }
             }
-            if (!checkoutPaymentOptions.protocolSpecific.recipient) {
-                this.$rpc.reject(new Error('Failed to fetch checkout recipient.'));
+            const transactionsErrorForNewRequestRevision = this.transactionsError;
+            if (transactionsErrorForNewRequestRevision) {
+                this.$rpc.reject(transactionsErrorForNewRequestRevision);
                 return;
             }
 
-            sender = Nimiq.Address.fromString(this.$store.state.activeUserFriendlyAddress);
-            ({ amount: value, fee } = checkoutPaymentOptions);
-            ({ recipient, flags, extraData: recipientData } = checkoutPaymentOptions.protocolSpecific);
-
-            this.recipientDetails = {
-                address: recipient.toUserFriendlyAddress(),
-                label: this.rpcState.origin.split('://')[1],
-                image: checkoutRequest.shopLogoUrl,
-            };
+            recipientLabel = this.rpcState.origin.split('://')[1];
+            recipientImage = checkoutRequest.shopLogoUrl;
 
             // Usually instant as synced in checkout. Only on reload we have to resync.
             validityStartHeightPromise = network.getBlockchainHeight().then((blockchainHeight) =>
@@ -357,37 +374,32 @@ export default class SignTransactionLedger extends Vue {
             if (checkoutPaymentOptions.expires) {
                 this._initializeCheckoutExpiryTimer().catch((e) => this.$rpc.reject(e));
             }
-        } else if (this.request.kind === RequestType.CREATE_CASHLINK) {
+        } else if (requestKind === RequestType.CREATE_CASHLINK) {
             // Coming from cashlink create
-            if (!this.cashlink) {
-                this.$rpc.reject( new Error('Ledger Cashlink Signing expects the Cashlink to sign to be in the '
-                    + 'static store.'));
-                return;
-            }
-            sender = Nimiq.Address.fromString(this.$store.state.activeUserFriendlyAddress);
-            ({ recipient, value, fee } = this.cashlink!.getFundingDetails());
+            recipientLabel = this.$t('New Cashlink') as string;
+            isRecipientCashlink = true;
             validityStartHeightPromise = network.getBlockchainHeight().then((blockchainHeight) => blockchainHeight + 1);
-            recipientData = CASHLINK_FUNDING_DATA;
-            flags = Nimiq.TransactionFlag.None;
-
-            this.recipientDetails = {
-                address: this.cashlink.address.toUserFriendlyAddress(),
-                label: this.$t('New Cashlink') as string,
-                isCashlink: true,
-            };
-        } else if (history.length >= 3) {
-            // First history entry is root, the second an original request handler invoking the transaction signing
-            // and the third is this one. If there was an original request handler calling us but the intermediate
-            // transaction signing request was lost on reload and instead the original request recovered from the
-            // RPC state, navigate back to the original request handler.
-            // TODO implementing a proper request call stack instead of the originalRouteName hack would avoid this
-            history.back();
-            return;
-        } else {
-            this.$rpc.reject(new Error('Legder Transaction Signing must be invoked via sign-transaction, sign-staking,'
-                + 'checkout or cashlink requests.'));
-            return;
         }
+
+        // Display the transaction info based on the final transaction, for all request types. Note that all optional
+        // properties are initialized, also those that are only assigned below, to make them reactive.
+        const transactions = this.transactions; // from here on the transactions should not change anymore
+        const finalTransaction = this.finalTransaction;
+        this.senderDetails = {
+            address: finalTransaction.sender.toUserFriendlyAddress(), // might be not the user
+            label: 'senderLabel' in this.request ? this.request.senderLabel : undefined,
+            image: undefined,
+            walletLabel: undefined,
+            balance: undefined,
+        };
+        this.recipientDetails = {
+            address: finalTransaction.recipient.toUserFriendlyAddress(), // might be the user
+            label: recipientLabel,
+            image: recipientImage,
+            walletLabel: undefined,
+            balance: undefined,
+            isCashlink: isRecipientCashlink,
+        };
 
         // Staking flows (SIGN_STAKING requests, and SIGN_TRANSACTION requests with a staking layout) are displayed
         // based on their validator info, see stakingValidatorInfo. Only the info to be displayed is extracted here,
@@ -395,144 +407,62 @@ export default class SignTransactionLedger extends Vue {
         // transactions getter.
         const stakingValidatorInfo = this.stakingValidatorInfo;
         if (stakingValidatorInfo) {
-            const finalTransaction = transactions![transactions!.length - 1];
-            this.senderDetails.address = finalTransaction.sender.toUserFriendlyAddress(); // might be not the user
-            this.recipientDetails = {
-                address: finalTransaction.recipient.toUserFriendlyAddress(),
-                label: (this.request as ParsedSignStakingRequest | ParsedSignTransactionRequest).recipientLabel,
-            };
-
             // Render the staking contract as the validator that is being staked with.
             const stakingContractDetails = finalTransaction.senderType === Nimiq.AccountType.Staking
                 ? this.senderDetails
                 : this.recipientDetails;
-            stakingContractDetails.address = stakingValidatorInfo.validatorAddress || stakingContractDetails.address;
-            stakingContractDetails.image = stakingValidatorInfo.validatorImageUrl;
+            // Only ever show a validator's image on a card that actually renders that validator's address.
+            if (stakingValidatorInfo.validatorAddress) {
+                stakingContractDetails.address = stakingValidatorInfo.validatorAddress;
+                stakingContractDetails.image = stakingValidatorInfo.validatorImageUrl;
+            }
 
             // For update-staker, render the sender as the old validator instead of as the user's address (the actual
             // sender), see stakingValidatorInfo.
-            this.senderDetails.address = stakingValidatorInfo.fromValidatorAddress || this.senderDetails.address;
-            this.senderDetails.image = stakingValidatorInfo.fromValidatorImageUrl || this.senderDetails.image;
-        }
-
-        this.senderDetails.address = this.senderDetails.address || sender.toUserFriendlyAddress();
-
-        // Find signer key and refine labels based on signer info.
-        let signerKeyId: string;
-        let signerKeyPath: string;
-        let senderType: Nimiq.AccountType | undefined;
-        if ('sender' in this.request && !(this.request.sender instanceof Nimiq.Address)) {
-            // It's a sign transaction request with sender info object.
-            // Note that the sender object is currently only for internal use in RefundSwapLedger.
-            ({
-                type: senderType,
-                signerKeyId,
-                signerKeyPath,
-            } = this.request.sender);
-
-            this.senderDetails.label = this.senderDetails.label || this.request.sender.label;
-            this.senderDetails.walletLabel = this.senderDetails.walletLabel || this.request.sender.walletLabel;
-        } else {
-            let userAddress: Nimiq.Address; // might be a regular address or a contract address
-            if (this.request.kind === RequestType.SIGN_STAKING) {
-                // For staking, the sender or recipient address might be the user's address, and there is no request-
-                // level sender that the parser already parses this information to.
-                const finalTransaction = transactions![transactions!.length - 1];
-                userAddress = finalTransaction.senderType === Nimiq.AccountType.Basic
-                    ? finalTransaction.sender
-                    : finalTransaction.recipient;
-                // No need to set senderType, as we're not using it for SIGN_STAKING requests.
-            } else {
-                // For SIGN_TRANSACTION the request-level sender is the user's address for all layouts, as the request
-                // parsing binds basic and contract senders to it, and outgoing staking transactions, e.g. remove-stake
-                // of the multi-tx unstaking layout, to pay out to it, see parseSignTransactionRequest.
-                userAddress = sender;
-            }
-
-            // We know that these exist as their existence was already checked in RpcApi.ts
-            const userAccount = this.findWalletByAddress(userAddress.toUserFriendlyAddress(), true)!;
-            const userAccountContract = userAccount.findContractByAddress(userAddress);
-            const userAccountSigner = userAccount.findSignerForAddress(userAddress)!;
-
-            signerKeyId = userAccount.keyId;
-            signerKeyPath = userAccountSigner.path;
-            senderType = sender.equals(userAddress) && userAccountContract
-                ? userAccountContract.type
-                : Nimiq.AccountType.Basic;
-
-            // In the UI, the user can represent the sender (typical case), recipient (for unstaking) or none of those
-            // (for update-staker / switch-validator). If one of those is rendered as the user details, enrich them with
-            // the wallet label and balance.
-            const userAddressDetails = [this.senderDetails, this.recipientDetails]
-                .find(({ address }) => address === userAddress.toUserFriendlyAddress());
-            if (userAddressDetails) {
-                // The label of the user's own address always comes from the user's account data, overwriting a
-                // requested label, which a caller must not be able to set for it.
-                userAddressDetails.label = (userAccountContract || userAccountSigner).label;
-                userAddressDetails.walletLabel = userAddressDetails.walletLabel || userAccount.label;
-                userAddressDetails.balance = userAddressDetails.balance
-                    || (userAccountContract || userAccountSigner).balance;
+            if (stakingValidatorInfo.fromValidatorAddress) {
+                this.senderDetails.address = stakingValidatorInfo.fromValidatorAddress;
+                this.senderDetails.image = stakingValidatorInfo.fromValidatorImageUrl;
             }
         }
 
-        // Collect transaction infos to pass to LedgerApi
-        const transactionInfos: Array<Omit<
-            LedgerApiTransactionInfoNimiq<typeof Config.ledgerApiNimiqVersion>,
-            'senderType' | 'recipientType' | 'validityStartHeight'
-        > & {
-            senderType?: Nimiq.AccountType,
-            recipientType?: Nimiq.AccountType,
-            validityStartHeight?: number,
-        }> = [];
-        if (transactions) { // SIGN_TRANSACTION or SIGN_STAKING request
-            const propertiesToCopy = [
-                'sender',
-                'senderType',
-                'senderData',
-                'recipient',
-                'recipientType',
-                'value',
-                'fee',
-                'validityStartHeight',
-                'flags',
-            ] as const;
-            for (const transaction of transactions) {
-                transactionInfos.push({
-                    ...(propertiesToCopy.reduce((transactionInfo, property) => ({
-                        ...transactionInfo,
-                        [property]: transaction[property],
-                    }), {} as Pick<Nimiq.Transaction, (typeof propertiesToCopy)[number]>)),
-                    recipientData: transaction.data,
-                    network: Config.network as LedgerApiNetwork, // enforce configured network
-                });
-            }
-        } else {
-            transactionInfos.push({
-                sender,
-                senderType,
-                recipient,
-                value: BigInt(value),
-                fee: BigInt(fee || 0),
-                network: Config.network as LedgerApiNetwork,
-                recipientData,
-                flags,
-            });
+        // Refine the display of the user's own address based on the signer info, see userAccountInfo. In the UI, the
+        // user can represent the sender (typical case), recipient (for unstaking) or none of those (for update-staker /
+        // switch-validator). If one of those is rendered as the user details, enrich them with the account's data.
+        const userAddress = this.userAddress;
+        const userAccountInfo = this.userAccountInfo;
+        const userAddressDetails = [this.senderDetails, this.recipientDetails]
+            .find(({ address }) => address === userAddress.toUserFriendlyAddress());
+        if (userAddressDetails) {
+            // The label of the user's own address from the user's account data always takes priority over requested
+            // labels, which a caller must not be able to set for it.
+            userAddressDetails.label = userAccountInfo.label;
+            userAddressDetails.walletLabel = userAccountInfo.walletLabel;
+            userAddressDetails.balance = userAccountInfo.balance;
         }
 
         // Sign transactions, and send to network, depending on the request type.
         const signedTransactions: SignedTransaction[] = [];
-        for (const transactionInfo of transactionInfos) {
+        for (const transaction of transactions) {
             // If user left this view in the meantime, don't continue signing / sending the transactions
             if (this.isDestroyed) return;
 
             // Check whether transaction was already signed but not successfully sent before user reloaded the page.
             let signedTransaction = network.getUnrelayedTransactions({
-                ...transactionInfo,
-                data: transactionInfo.recipientData,
+                sender: transaction.sender,
+                senderType: transaction.senderType,
+                recipient: transaction.recipient,
+                recipientType: transaction.recipientType,
+                value: transaction.value,
+                fee: transaction.fee,
+                flags: transaction.flags,
+                data: transaction.data,
+                // The transactions created by the Hub only get their actual validity start height when they are
+                // signed, so their placeholder height must not be matched, see PLACEHOLDER_VALIDITY_START_HEIGHT.
+                validityStartHeight: isSentByHub ? undefined : transaction.validityStartHeight,
             })[0];
             if (!signedTransaction) {
-                let validityStartHeight = transactionInfo.validityStartHeight;
-                if (validityStartHeight === undefined) {
+                let { validityStartHeight } = transaction;
+                if (isSentByHub) {
                     try {
                         if (!validityStartHeightPromise) throw new Error('Unexpected: no validityStartHeight');
                         validityStartHeight = await validityStartHeightPromise;
@@ -543,16 +473,25 @@ export default class SignTransactionLedger extends Vue {
                     }
                 }
 
+                const transactionInfo: LedgerApiTransactionInfoNimiq<typeof Config.ledgerApiNimiqVersion> = {
+                    sender: transaction.sender,
+                    senderType: transaction.senderType as unknown as LedgerApiAccountTypeNimiq,
+                    senderData: transaction.senderData,
+                    recipient: transaction.recipient,
+                    recipientType: transaction.recipientType as unknown as LedgerApiAccountTypeNimiq,
+                    recipientData: transaction.data,
+                    value: transaction.value,
+                    fee: transaction.fee,
+                    validityStartHeight, // the resolved height for Hub created transactions, never the placeholder
+                    flags: transaction.flags,
+                    network: Config.network as LedgerApiNetwork, // enforce configured network
+                };
+
                 try {
                     signedTransaction = await LedgerApi.Nimiq.signTransaction(
-                        {
-                            ...transactionInfo,
-                            senderType: transactionInfo.senderType as LedgerApiAccountTypeNimiq | undefined,
-                            recipientType: transactionInfo.recipientType as LedgerApiAccountTypeNimiq | undefined,
-                            validityStartHeight,
-                        },
-                        signerKeyPath,
-                        signerKeyId,
+                        transactionInfo,
+                        userAccountInfo.keyPath,
+                        userAccountInfo.keyId,
                         Config.ledgerApiNimiqVersion,
                     );
                 } catch (e) {
@@ -561,14 +500,14 @@ export default class SignTransactionLedger extends Vue {
                     // error message displayed.
                     if (this.state !== SignTransactionLedger.State.EXPIRED
                         && e.message.toLowerCase().indexOf('cancelled') !== -1) {
-                        const isCheckoutRequestWithManuallySelectedAddress = this.request.kind === RequestType.CHECKOUT
+                        const isCheckoutRequestWithManuallySelectedAddress = requestKind === RequestType.CHECKOUT
                             && (
                                 !this.checkoutPaymentOptions!.protocolSpecific.sender
-                                || !sender.equals(this.checkoutPaymentOptions!.protocolSpecific.sender)
+                                || !transaction.sender.equals(this.checkoutPaymentOptions!.protocolSpecific.sender)
                             );
 
                         if (isCheckoutRequestWithManuallySelectedAddress
-                            || this.request.kind === RequestType.CREATE_CASHLINK) {
+                            || requestKind === RequestType.CREATE_CASHLINK) {
                             // If user got here after selecting an account in the checkout flow (which was not
                             // automatically selected via the checkout request) he might want to switch to another one.
                             this._back();
@@ -586,7 +525,7 @@ export default class SignTransactionLedger extends Vue {
             if (this.isDestroyed) return;
 
             // Send transaction to network, depending on the request type, and finish
-            if (this.request.kind === RequestType.CHECKOUT || this.request.kind === RequestType.CREATE_CASHLINK) {
+            if (isSentByHub) {
                 this.state = SignTransactionLedger.State.SENDING_TRANSACTION;
                 if (this.cashlink) {
                     // Store cashlink in database first to be safe when browser crashes during sending
@@ -598,12 +537,12 @@ export default class SignTransactionLedger extends Vue {
             }
         }
 
-        if (this.request.kind !== RequestType.CREATE_CASHLINK) {
+        if (requestKind !== RequestType.CREATE_CASHLINK) {
             this.state = SignTransactionLedger.State.FINISHED;
             await new Promise((resolve) => setTimeout(resolve, StatusScreen.SUCCESS_REDIRECT_DELAY));
             // For SIGN_TRANSACTION, return a single result iff a single transaction was signed (same rule as in
             // the Keyguard); SIGN_STAKING always returns an array
-            const result = this.request.kind !== RequestType.SIGN_STAKING && signedTransactions.length === 1
+            const result = requestKind !== RequestType.SIGN_STAKING && signedTransactions.length === 1
                 ? signedTransactions[0]
                 : signedTransactions;
             this.$rpc.resolve(result);
@@ -619,6 +558,8 @@ export default class SignTransactionLedger extends Vue {
     }
 
     private get checkoutPaymentOptions() {
+        // tslint:disable-next-line no-unused-expression
+        this.requestRevision; // re-evaluate on changes to the request
         if (this.request.kind !== RequestType.CHECKOUT) return null;
         const checkoutRequest = this.request as ParsedCheckoutRequest;
         return checkoutRequest.paymentOptions.find(
@@ -626,20 +567,158 @@ export default class SignTransactionLedger extends Vue {
         ) as ParsedNimiqDirectPaymentOptions;
     }
 
+    private get transactions(): Nimiq.Transaction[] {
+        const transactionsOrError = this.transactionsOrError;
+        return transactionsOrError instanceof Error ? [] : transactionsOrError;
+    }
+
+    private get transactionsError(): Error | null {
+        const transactionsOrError = this.transactionsOrError;
+        return transactionsOrError instanceof Error ? transactionsOrError : null;
+    }
+
     /**
-     * The request's transactions to sign and display, for SIGN_TRANSACTION and SIGN_STAKING requests. Null for other
-     * request types.
+     * The request's transactions to sign and display, or the reason why they can not be built. In error case nothing is
+     * rendered, see the template's root element, and mounted() reports that reason or navigates back. As it's evaluated
+     * during rendering, it must never throw.
      */
-    private get transactions(): Nimiq.Transaction[] | null {
-        switch (this.request.kind) {
-            case RequestType.SIGN_TRANSACTION:
-                return (this.request as ParsedSignTransactionRequest).transactions;
-            case RequestType.SIGN_STAKING:
-                return (this.request as ParsedSignStakingRequest).transactions
-                    .map((plainTransaction) => Nimiq.Transaction.fromPlain(plainTransaction));
-            default:
-                return null;
+    private get transactionsOrError(): Nimiq.Transaction[] | Error {
+        // tslint:disable-next-line no-unused-expression
+        this.requestRevision; // re-evaluate on changes to the request
+        if (this._setupError) return this._setupError;
+        try {
+            let transactions: Nimiq.Transaction[];
+            switch (this.request.kind) {
+                case RequestType.SIGN_TRANSACTION:
+                    // Note that the transactions of legacy requests are patched already in created().
+                    transactions = (this.request as ParsedSignTransactionRequest).transactions;
+                    break;
+                case RequestType.SIGN_STAKING:
+                    transactions = (this.request as ParsedSignStakingRequest).transactions
+                        .map((plainTransaction) => Nimiq.Transaction.fromPlain(plainTransaction));
+                    break;
+                case RequestType.CHECKOUT:
+                case RequestType.CREATE_CASHLINK: {
+                    // The transactions the Hub creates itself, which are transfers from the user's address.
+                    let recipient: Nimiq.Address | undefined;
+                    let recipientType: Nimiq.AccountType | undefined;
+                    let recipientData: Uint8Array | undefined;
+                    let value: number;
+                    let fee: number;
+                    let flags: number | undefined;
+                    if (this.request.kind === RequestType.CHECKOUT) {
+                        const checkoutPaymentOptions = this.checkoutPaymentOptions!;
+                        const { protocolSpecific } = checkoutPaymentOptions;
+                        ({ amount: value, fee } = checkoutPaymentOptions);
+                        ({ recipient, recipientType, extraData: recipientData, flags } = protocolSpecific);
+                    } else {
+                        if (!this.cashlink) {
+                            return new Error('Ledger Cashlink Signing expects the Cashlink to sign to be in the '
+                                + 'static store.'); // see CashlinkCreate
+                        }
+                        ({ recipient, value, fee, recipientData } = this.cashlink.getFundingDetails());
+                    }
+                    // For checkout, the payment info might not include a recipient yet, see mounted.
+                    if (!recipient) return new Error('Failed to fetch checkout recipient.');
+                    transactions = [new Nimiq.Transaction(
+                        this.userAddress, this.userAccountInfo.accountType, /* senderData */ undefined,
+                        recipient, recipientType || Nimiq.AccountType.Basic, recipientData,
+                        BigInt(value), BigInt(fee),
+                        flags || Nimiq.TransactionFlag.None,
+                        PLACEHOLDER_VALIDITY_START_HEIGHT, // the actual validity start height is set when signing
+                        Config.nimiqNetworkId,
+                    )];
+                    break;
+                }
+                default:
+                    return new Error('Ledger Transaction Signing must be invoked via sign-transaction, sign-staking, '
+                        + 'checkout or cashlink requests.');
+            }
+            return transactions.length ? transactions : new Error('Unexpected: no transactions to sign.');
+        } catch (e) {
+            return e instanceof Error ? e : new Error(`Failed to build the transactions to sign: ${e}`);
         }
+    }
+
+    /**
+     * The transaction the request's display is currently based on. Must only be accessed for requests with
+     * transactions, which is the case wherever anything is rendered.
+     */
+    private get finalTransaction(): Nimiq.Transaction {
+        const transactions = this.transactions;
+        return transactions[transactions.length - 1];
+    }
+
+    /**
+     * The user's own address, which can be a regular address or a contract address, and for which the signing key is
+     * resolved, see userAccountInfo. Depending on the request type and the transactions, it can be rendered as the
+     * sender (typical case), as the recipient (for unstaking) or not at all (for update-staker / switch-validator).
+     */
+    private get userAddress(): Nimiq.Address {
+        switch (this.request.kind) {
+            case RequestType.SIGN_TRANSACTION: {
+                // The request-level sender is the user's address for all layouts, as the request parsing binds basic
+                // and contract senders to it, and outgoing staking transactions, e.g. remove-stake of the multi-tx
+                // unstaking layout, to pay out to it, see parseSignTransactionRequest.
+                const { sender } = this.request as ParsedSignTransactionRequest;
+                return sender instanceof Nimiq.Address ? sender : sender.address;
+            }
+            case RequestType.SIGN_STAKING: {
+                // For staking, the sender or recipient address might be the user's address, and there is no request-
+                // level sender that the parser already parses this information to.
+                const finalTransaction = this.finalTransaction;
+                return finalTransaction.senderType === Nimiq.AccountType.Basic
+                    ? finalTransaction.sender
+                    : finalTransaction.recipient;
+            }
+            case RequestType.CHECKOUT:
+            case RequestType.CREATE_CASHLINK:
+                // For checkout and cashlink requests, the user chose the address to pay from, see CheckoutCardNimiq
+                // and CashlinkCreate, which set it as the active address.
+                return Nimiq.Address.fromString(this.$store.state.activeUserFriendlyAddress);
+            default:
+                throw new Error(`Unsupported request type: ${(this.request as { kind: string }).kind}`);
+        }
+    }
+
+    /**
+     * The key to sign the request's transactions with, the type of the user's address, and the data to display for it.
+     * For SIGN_TRANSACTION requests with a sender info object, currently only for internal use in RefundSwapLedger,
+     * this info comes from that object; for all other requests it is resolved from the WalletStore.
+     */
+    private get userAccountInfo(): UserAccountInfo {
+        // Check the request kind explicitly. `'sender' in this.request` would be a structural check, which also
+        // passes for a sender property smuggled into a sign-staking request, the parsing of which passes unknown
+        // properties through, see RequestParser. A caller must not be able to provide the signer key or the labels
+        // for the user's own address.
+        const requestSender = this.request.kind === RequestType.SIGN_TRANSACTION
+            ? (this.request as ParsedSignTransactionRequest).sender
+            : undefined;
+        if (requestSender && !(requestSender instanceof Nimiq.Address)) {
+            // Internal sender information passed from RefundSwapLedger
+            const { type, label, walletLabel, signerKeyId, signerKeyPath } = requestSender;
+            return {
+                keyId: signerKeyId,
+                keyPath: signerKeyPath,
+                accountType: type || Nimiq.AccountType.Basic,
+                label,
+                walletLabel,
+            };
+        }
+
+        const userAddress = this.userAddress;
+        // We know that these exist as their existence was already checked in RpcApi.ts
+        const userAccount = this.findWalletByAddress(userAddress.toUserFriendlyAddress(), true)!;
+        const userAccountContract = userAccount.findContractByAddress(userAddress);
+        const userAccountSigner = userAccount.findSignerForAddress(userAddress)!;
+        return {
+            keyId: userAccount.keyId,
+            keyPath: userAccountSigner.path,
+            accountType: userAccountContract ? userAccountContract.type : Nimiq.AccountType.Basic,
+            label: (userAccountContract || userAccountSigner).label,
+            walletLabel: userAccount.label,
+            balance: (userAccountContract || userAccountSigner).balance,
+        };
     }
 
     /**
@@ -682,9 +761,7 @@ export default class SignTransactionLedger extends Vue {
         // Only for update-staker, the sender is rendered as the old validator instead of as the user's address (the
         // actual sender). Don't provide the from-validator info for other transactions, regardless of the request's
         // info, which is not thoroughly validated against the transactions for SIGN_STAKING requests.
-        const transactions = this.transactions!;
-        const finalTransaction = transactions[transactions.length - 1];
-        if (finalTransaction.toPlain().data.type !== 'update-staker') {
+        if (this.finalTransaction.toPlain().data.type !== 'update-staker') {
             validatorInfo.fromValidatorAddress = undefined;
             validatorInfo.fromValidatorImageUrl = undefined;
         }
@@ -692,21 +769,12 @@ export default class SignTransactionLedger extends Vue {
     }
 
     private get amountAndFee() {
-        let amount: number;
-        let fee: number;
-        if (this.checkoutPaymentOptions) {
-            ({ amount, fee } = this.checkoutPaymentOptions);
-        } else if (this.cashlink) {
-            ({ value: amount, fee } = this.cashlink);
-        } else { // SIGN_TRANSACTION or SIGN_STAKING request
-            // Display the value of the final transaction, and the fees of all transactions. For a standard layout
-            // SIGN_TRANSACTION request, this is the single transaction's value and fee.
-            const transactions = this.transactions!;
-            const finalTransaction = transactions[transactions.length - 1];
-            amount = Number(finalTransaction.value);
-            fee = transactions.reduce((sum, transaction) => sum + Number(transaction.fee), 0);
-        }
-        return { amount, fee };
+        // Display the value of the final transaction currently, and the fees of all transactions. For requests with a
+        // single transaction, this is that transaction's value and fee.
+        return {
+            amount: Number(this.finalTransaction.value),
+            fee: this.transactions.reduce((sum, transaction) => sum + Number(transaction.fee), 0),
+        };
     }
 
     private get transactionData() {
@@ -718,19 +786,9 @@ export default class SignTransactionLedger extends Vue {
         const stakingData = this.stakingData;
         if (stakingData) return stakingData;
 
-        let data;
-        let flags;
-        if (this.request.kind === RequestType.SIGN_TRANSACTION) {
-            // Standard layout with a single, non-staking transaction. Multiple transactions are rejected in mounted(),
-            // and staking transactions, including the staking layouts, are handled via stakingData above.
-            const [transaction] = (this.request as ParsedSignTransactionRequest).transactions;
-            data = transaction.data;
-            flags = transaction.flags;
-        } else if (this.request.kind === RequestType.CHECKOUT) {
-            ({ extraData: data, flags } = this.checkoutPaymentOptions!.protocolSpecific);
-        } else { // SIGN_STAKING request without staking info; not expected to happen
-            return null;
-        }
+        // Non-staking transactions. For SIGN_TRANSACTION requests, this is the single transaction of the standard
+        // layout; multiple transactions are rejected in mounted.
+        const { data, flags } = this.finalTransaction;
 
         if (!data || data.length === 0) {
             return null;
@@ -750,10 +808,8 @@ export default class SignTransactionLedger extends Vue {
     private get stakingData() {
         // Staking data for SIGN_STAKING and SIGN_TRANSACTION requests whose final transaction is a staking transaction,
         // e.g. of the switch-validator or unstaking layouts, or a single staking transaction on the standard layout.
-        const transactions = this.transactions;
-        if (!transactions) return null;
         // Display data based on final transaction.
-        const finalTransaction = transactions[transactions.length - 1];
+        const finalTransaction = this.finalTransaction;
         const isIncomingStakingTransaction = finalTransaction.recipientType === Nimiq.AccountType.Staking;
         const isOutgoingStakingTransaction = finalTransaction.senderType === Nimiq.AccountType.Staking;
         if (!isIncomingStakingTransaction && !isOutgoingStakingTransaction) return null;
