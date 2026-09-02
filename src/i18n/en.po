@@ -401,6 +401,10 @@ msgstr ""
 msgid "Confirm Transaction"
 msgstr ""
 
+#: src/views/SignTransactionLedger.vue:987
+msgid "Confirm Transactions"
+msgstr ""
+
 #: src/views/SignTransactionLedger.vue:912
 msgid "Confirm update of staking setup"
 msgstr ""
@@ -1214,6 +1218,14 @@ msgstr ""
 #: src/views/SignBtcTransactionLedger.vue:116
 #: src/views/SignTransactionLedger.vue:726
 msgid "Transaction Signed"
+msgstr ""
+
+#: src/views/SignTransactionLedger.vue:1019
+msgid "Transactions Sent"
+msgstr ""
+
+#: src/views/SignTransactionLedger.vue:1015
+msgid "Transactions Signed"
 msgstr ""
 
 #: src/views/Migrate.vue:93

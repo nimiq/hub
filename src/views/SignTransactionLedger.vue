@@ -1,82 +1,79 @@
 <template>
     <div v-if="transactions.length" class="container">
         <SmallPage :class="{ 'account-details-shown': !!shownAccountDetails }">
-            <PaymentInfoLine
-                v-if="request.kind === 'checkout'"
-                ref="info"
-                class="blur-target"
-                :cryptoAmount="{
-                    amount: checkoutPaymentOptions.amount,
-                    currency: checkoutPaymentOptions.currency,
-                    decimals: checkoutPaymentOptions.decimals,
-                }"
-                :fiatAmount="request.fiatAmount && request.fiatCurrency ? {
-                    amount: request.fiatAmount,
-                    currency: request.fiatCurrency,
-                } : null"
-                :fiatApiProvider="constructor.FIAT_API_PROVIDER"
-                :vendorMarkup="checkoutPaymentOptions.vendorMarkup"
-                :networkFee="checkoutPaymentOptions.fee"
-                :address="checkoutPaymentOptions.protocolSpecific.recipient
-                    ? checkoutPaymentOptions.protocolSpecific.recipient.toUserFriendlyAddress()
-                    : null"
-                :origin="rpcState.origin"
-                :shopLogoUrl="request.shopLogoUrl"
-                :startTime="request.time"
-                :endTime="checkoutPaymentOptions.expires"
-            />
-            <PageHeader :back-arrow="request.kind === 'checkout' || request.kind === 'create-cashlink'"
-                @back="_back" class="blur-target">
-                {{
-                    request.kind === 'checkout'
-                        ? $t('Verify Payment')
-                        : request.kind === 'create-cashlink'
-                            ? $t('Confirm Cashlink')
-                            : $t('Confirm Transaction')
-                }}
-            </PageHeader>
+            <template v-if="showsTransactionDetails">
+                <PaymentInfoLine
+                    v-if="request.kind === 'checkout'"
+                    ref="info"
+                    class="blur-target"
+                    :cryptoAmount="{
+                        amount: checkoutPaymentOptions.amount,
+                        currency: checkoutPaymentOptions.currency,
+                        decimals: checkoutPaymentOptions.decimals,
+                    }"
+                    :fiatAmount="request.fiatAmount && request.fiatCurrency ? {
+                        amount: request.fiatAmount,
+                        currency: request.fiatCurrency,
+                    } : null"
+                    :fiatApiProvider="constructor.FIAT_API_PROVIDER"
+                    :vendorMarkup="checkoutPaymentOptions.vendorMarkup"
+                    :networkFee="checkoutPaymentOptions.fee"
+                    :address="checkoutPaymentOptions.protocolSpecific.recipient
+                        ? checkoutPaymentOptions.protocolSpecific.recipient.toUserFriendlyAddress()
+                        : null"
+                    :origin="rpcState.origin"
+                    :shopLogoUrl="request.shopLogoUrl"
+                    :startTime="request.time"
+                    :endTime="checkoutPaymentOptions.expires"
+                />
+                <PageHeader :back-arrow="request.kind === 'checkout' || request.kind === 'create-cashlink'"
+                    @back="_back" class="blur-target">
+                    {{ pageHeaderTitle }}
+                </PageHeader>
 
-            <div class="accounts">
-                <Account layout="column"
-                    :address="senderDetails.address"
-                    :label="senderDetails.label || senderDetails.address"
-                    :image="senderDetails.image"
-                    @click.native="shownAccountDetails = senderDetails"
-                    class="blur-target">
-                </Account>
-                <ArrowRightIcon class="arrow-right blur-target"/>
-                <Account layout="column"
-                    :address="recipientDetails.address"
-                    :label="recipientDetails.label || recipientDetails.address"
-                    :image="recipientDetails.image"
-                    :displayAsCashlink="recipientDetails.isCashlink"
-                    @click.native="shownAccountDetails = recipientDetails.isCashlink ? null : recipientDetails"
-                    class="blur-target">
-                </Account>
-            </div>
+                <div class="accounts">
+                    <Account layout="column"
+                        :address="senderDetails.address"
+                        :label="senderDetails.label || senderDetails.address"
+                        :image="senderDetails.image"
+                        @click.native="shownAccountDetails = senderDetails"
+                        class="blur-target">
+                    </Account>
+                    <ArrowRightIcon class="arrow-right blur-target"/>
+                    <Account layout="column"
+                        :address="recipientDetails.address"
+                        :label="recipientDetails.label || recipientDetails.address"
+                        :image="recipientDetails.image"
+                        :displayAsCashlink="recipientDetails.isCashlink"
+                        @click.native="shownAccountDetails = recipientDetails.isCashlink ? null : recipientDetails"
+                        class="blur-target">
+                    </Account>
+                </div>
 
-            <hr class="blur-target">
+                <hr class="blur-target">
 
-            <Amount class="value nq-light-blue blur-target"
-                :amount="amountAndFee.amount"
-                :minDecimals="2"
-                :maxDecimals="5"
-            />
+                <Amount class="value nq-light-blue blur-target"
+                    :amount="amountAndFee.amount"
+                    :minDecimals="2"
+                    :maxDecimals="5"
+                />
 
-            <div v-if="amountAndFee.fee"
-                class="fee nq-text-s blur-target">
-                + <Amount
-                    :amount="amountAndFee.fee"
-                    :minDecimals="2" :maxDecimals="5"
-                /> {{ $t('fee') }}
-            </div>
+                <div v-if="amountAndFee.fee"
+                    class="fee nq-text-s blur-target">
+                    + <Amount
+                        :amount="amountAndFee.fee"
+                        :minDecimals="2" :maxDecimals="5"
+                    /> {{ $t('fee') }}
+                </div>
 
-            <div v-if="transactionData" class="data nq-text blur-target">
-                {{ transactionData }}
-            </div>
+                <div v-if="transactionData" class="data nq-text blur-target">
+                    {{ transactionData }}
+                </div>
+            </template>
 
-            <div class="bottom-container blur-target" :class="{ 'full-height': state !== constructor.State.OVERVIEW }">
-                <LedgerUi ref="ledger-ui" small :signingStep="signingStep"></LedgerUi>
+            <div class="bottom-container blur-target"
+                :class="{ 'full-height': !showsTransactionDetails || state !== constructor.State.OVERVIEW }">
+                <LedgerUi ref="ledger-ui" :small="showsTransactionDetails" :signingStep="signingStep"></LedgerUi>
                 <transition name="transition-fade">
                     <StatusScreen v-if="state !== constructor.State.OVERVIEW"
                         :state="statusScreenState"
@@ -259,9 +256,7 @@ export default class SignTransactionLedger extends Vue {
 
     private async mounted() {
         const requestKind = this.request.kind;
-        // For checkout and cashlink requests, the transactions are created by the Hub itself, instead of being provided
-        // by the caller or request parser, and are also sent to the network by the Hub, instead of being returned.
-        const isSentByHub = requestKind === RequestType.CHECKOUT || requestKind === RequestType.CREATE_CASHLINK;
+        const isSentByHub = this.isSentByHub;
 
         // A checkout's recipient may be omitted from the request and only be provided by the shop's callback, see
         // RequestParser. CheckoutCard fills it into the payment options in place, but it is lost on a reload, on which
@@ -292,19 +287,12 @@ export default class SignTransactionLedger extends Vue {
         }
 
         if (requestKind === RequestType.SIGN_TRANSACTION) {
-            const signTransactionRequest = this.request as ParsedSignTransactionRequest;
-            const { layout } = signTransactionRequest;
+            const { layout } = this.request as ParsedSignTransactionRequest;
             if (layout !== SignTransactionRequestLayout.STANDARD
                 && layout !== SignTransactionRequestLayout.SWITCH_VALIDATOR
                 && layout !== SignTransactionRequestLayout.UNSTAKING) {
                 this.$rpc.reject(new Error(`Sign-transaction requests with the ${layout} layout are not yet supported `
                     + 'for Ledger accounts'));
-                return;
-            }
-            if (layout === SignTransactionRequestLayout.STANDARD
-                && signTransactionRequest.transactions.length > 1) {
-                this.$rpc.reject(new Error('Multi-transaction sign-transaction requests with the standard layout are '
-                    + 'not yet supported for Ledger accounts'));
                 return;
             }
         }
@@ -564,6 +552,14 @@ export default class SignTransactionLedger extends Vue {
         this._cancelLedgerRequest();
     }
 
+    /**
+     * Whether the request's transactions are created by the Hub itself, instead of being provided by the caller or
+     * request parser, and are also sent to the network by the Hub, instead of being returned to the caller.
+     */
+    private get isSentByHub(): boolean {
+        return this.request.kind === RequestType.CHECKOUT || this.request.kind === RequestType.CREATE_CASHLINK;
+    }
+
     private get checkoutPaymentOptions() {
         // tslint:disable-next-line no-unused-expression
         this.requestRevision; // re-evaluate on changes to the request
@@ -648,8 +644,7 @@ export default class SignTransactionLedger extends Vue {
     }
 
     /**
-     * The transaction the request's display is currently based on. Must only be accessed for requests with
-     * transactions, which is the case wherever anything is rendered.
+     * The transaction the transaction details' display is currently based on for showsTransactionDetails.
      */
     private get finalTransaction(): Nimiq.Transaction {
         const transactions = this.transactions;
@@ -775,6 +770,16 @@ export default class SignTransactionLedger extends Vue {
         return validatorInfo;
     }
 
+    /**
+     * Whether the UI is reduced to only the LedgerUi, without any transaction details. This is the case for
+     * sign-transaction requests with multiple transactions on the standard layout, i.e. arbitrary transactions.
+     */
+    private get showsTransactionDetails(): boolean {
+        return this.request.kind !== RequestType.SIGN_TRANSACTION
+            || (this.request as ParsedSignTransactionRequest).layout !== SignTransactionRequestLayout.STANDARD
+            || this.transactions.length === 1;
+    }
+
     private get amountAndFee() {
         // Display the value of the final transaction currently, and the fees of all transactions. For requests with a
         // single transaction, this is that transaction's value and fee.
@@ -794,7 +799,7 @@ export default class SignTransactionLedger extends Vue {
         if (stakingData) return stakingData;
 
         // Non-staking transactions. For SIGN_TRANSACTION requests, this is the single transaction of the standard
-        // layout; multiple transactions are rejected in mounted.
+        // layout.
         const { data, flags } = this.finalTransaction;
 
         if (!data || data.length === 0) {
@@ -937,15 +942,21 @@ export default class SignTransactionLedger extends Vue {
         const index = Math.min(this.currentlySignedTransactionIndex, transactions.length - 1);
         const transaction = transactions[index];
 
-        const { data: recipientData, senderData } = transaction.toPlain();
+        // Note that toPlain can throw for invalid transactions, and that this getter is evaluated during rendering and
+        // must therefore never throw.
         let stakingDataType: string | undefined;
-        if (transaction.recipientType === Nimiq.AccountType.Staking) {
-            stakingDataType = recipientData.type;
-        } else if (transaction.senderType === Nimiq.AccountType.Staking && senderData) {
-            stakingDataType = senderData.type;
+        try {
+            const { data: recipientData, senderData } = transaction.toPlain();
+            if (transaction.recipientType === Nimiq.AccountType.Staking) {
+                stakingDataType = recipientData.type;
+            } else if (transaction.senderType === Nimiq.AccountType.Staking && senderData) {
+                stakingDataType = senderData.type;
+            }
+        } catch (e) {
+            stakingDataType = undefined; // fall back to the generic instructions
         }
 
-        // Provide instructions for the currently supported multi-transaction flows.
+        // Provide instructions for the known multi-transaction flows.
         let instructions: string;
         switch (stakingDataType) {
             case 'set-active-stake':
@@ -971,6 +982,19 @@ export default class SignTransactionLedger extends Vue {
         };
     }
 
+    private get pageHeaderTitle() {
+        switch (this.request.kind) {
+            case RequestType.CHECKOUT:
+                return this.$t('Verify Payment') as string;
+            case RequestType.CREATE_CASHLINK:
+                return this.$t('Confirm Cashlink') as string;
+            default:
+                return this.transactions.length === 1
+                    ? this.$t('Confirm Transaction') as string
+                    : this.$t('Confirm Transactions') as string;
+        }
+    }
+
     private get statusScreenState() {
         switch (this.state) {
             case SignTransactionLedger.State.FINISHED:
@@ -985,13 +1009,15 @@ export default class SignTransactionLedger extends Vue {
     private get statusScreenTitle() {
         switch (this.state) {
             case SignTransactionLedger.State.SENDING_TRANSACTION:
+                // Requests for which the Hub sends the transactions itself always consist of only a single transaction.
                 return this.request.kind === RequestType.CREATE_CASHLINK
                     ? this.$t('Creating your Cashlink') as string
                     : this.$t('Sending Transaction') as string;
             case SignTransactionLedger.State.FINISHED:
-                return this.request.kind === RequestType.SIGN_TRANSACTION
+                if (this.isSentByHub) return this.$t('Transaction Sent') as string; // always only one
+                return this.transactions.length === 1
                     ? this.$t('Transaction Signed') as string
-                    : this.$t('Transaction Sent') as string;
+                    : this.$t('Transactions Signed') as string;
             case SignTransactionLedger.State.EXPIRED:
                 return this.$t('The offer expired.') as string;
             default:
