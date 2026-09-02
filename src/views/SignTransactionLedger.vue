@@ -76,7 +76,7 @@
             </div>
 
             <div class="bottom-container blur-target" :class="{ 'full-height': state !== constructor.State.OVERVIEW }">
-                <LedgerUi ref="ledger-ui" small></LedgerUi>
+                <LedgerUi ref="ledger-ui" small :signingStep="signingStep"></LedgerUi>
                 <transition name="transition-fade">
                     <StatusScreen v-if="state !== constructor.State.OVERVIEW"
                         :state="statusScreenState"
@@ -232,6 +232,7 @@ export default class SignTransactionLedger extends Vue {
     private recipientDetails: AccountDetailsData = { address: '' };
     private shownAccountDetails: AccountDetailsData | null = null;
     private isDestroyed: boolean = false;
+    private currentlySignedTransactionIndex: number = 0;
     // Counter to be incremented after in-place changes to the request, which is not reactive itself, to re-evaluate
     // the getters that are based on it, see transactions getter.
     private requestRevision: number = 0;
@@ -442,7 +443,13 @@ export default class SignTransactionLedger extends Vue {
 
         // Sign transactions, and send to network, depending on the request type.
         const signedTransactions: SignedTransaction[] = [];
-        for (const transaction of transactions) {
+        for (
+            this.currentlySignedTransactionIndex = 0;
+            this.currentlySignedTransactionIndex < transactions.length;
+            this.currentlySignedTransactionIndex++
+        ) {
+            const transaction = transactions[this.currentlySignedTransactionIndex];
+
             // If user left this view in the meantime, don't continue signing / sending the transactions
             if (this.isDestroyed) return;
 
@@ -815,7 +822,10 @@ export default class SignTransactionLedger extends Vue {
         if (!isIncomingStakingTransaction && !isOutgoingStakingTransaction) return null;
         // Decode the staking data, which is the recipient data for incoming and the sender data for outgoing staking
         // transactions, into its plain form.
-        const { sender, senderData, data: recipientData } = finalTransaction.toPlain();
+        const plainTransaction = finalTransaction.toPlain();
+        const { sender, data: recipientData } = plainTransaction;
+        // The senderData is typed as optional, but is always set, also for non-staking senders, for which it's raw.
+        const senderData = plainTransaction.senderData!;
 
         if (isIncomingStakingTransaction) {
             switch (recipientData.type) {
@@ -902,7 +912,6 @@ export default class SignTransactionLedger extends Vue {
                 }
             }
         } else { // outgoing staking transaction
-            // @ts-ignore Missmatch with Nimiq.PlainTransactionDetails from fastspot-api
             switch (senderData.type) {
                 case 'remove-stake': {
                     return 'Unstake';
@@ -912,11 +921,54 @@ export default class SignTransactionLedger extends Vue {
                     return 'Delete validator';
                 }
                 default: {
-                    // @ts-ignore Missmatch with Nimiq.PlainTransactionDetails from fastspot-api
                     return `Unrecognized outgoing staking data: ${senderData.type} - ${senderData.raw}`;
                 }
             }
         }
+    }
+
+    /**
+     * Info about the transaction of a multi-transaction flow that is currently being signed, to be displayed as a step
+     * indicator in the LedgerUi.
+     */
+    private get signingStep(): LedgerUi.SigningStep | null {
+        const transactions = this.transactions;
+        if (transactions.length <= 1) return null; // not a multi-transaction flow
+        const index = Math.min(this.currentlySignedTransactionIndex, transactions.length - 1);
+        const transaction = transactions[index];
+
+        const { data: recipientData, senderData } = transaction.toPlain();
+        let stakingDataType: string | undefined;
+        if (transaction.recipientType === Nimiq.AccountType.Staking) {
+            stakingDataType = recipientData.type;
+        } else if (transaction.senderType === Nimiq.AccountType.Staking && senderData) {
+            stakingDataType = senderData.type;
+        }
+
+        // Provide instructions for the currently supported multi-transaction flows.
+        let instructions: string;
+        switch (stakingDataType) {
+            case 'set-active-stake':
+                instructions = this.$t('Confirm setting active stake amount') as string;
+                break;
+            case 'update-staker':
+                instructions = this.$t('Confirm update of staking setup') as string;
+                break;
+            case 'retire-stake':
+                instructions = this.$t('Confirm retiring staked NIM') as string;
+                break;
+            case 'remove-stake':
+                instructions = this.$t('Confirm withdrawal of retired NIM') as string;
+                break;
+            default:
+                instructions = this.$t('Confirm Transaction') as string;
+        }
+
+        return {
+            step: index + 1, // step is 1-based.
+            totalSteps: transactions.length,
+            instructions,
+        };
     }
 
     private get statusScreenState() {

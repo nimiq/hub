@@ -375,6 +375,14 @@ msgstr ""
 msgid "Confirm Message"
 msgstr ""
 
+#: src/views/SignTransactionLedger.vue:915
+msgid "Confirm retiring staked NIM"
+msgstr ""
+
+#: src/views/SignTransactionLedger.vue:909
+msgid "Confirm setting active stake amount"
+msgstr ""
+
 #: src/views/SetupSwapLedger.vue:5
 msgid "Confirm Swap"
 msgstr ""
@@ -393,9 +401,17 @@ msgstr ""
 msgid "Confirm Transaction"
 msgstr ""
 
+#: src/views/SignTransactionLedger.vue:912
+msgid "Confirm update of staking setup"
+msgstr ""
+
 #: src/components/LedgerUi.vue:240
 #: src/components/LedgerUi.vue:247
 msgid "Confirm using your Ledger"
+msgstr ""
+
+#: src/views/SignTransactionLedger.vue:961
+msgid "Confirm withdrawal of retired NIM"
 msgstr ""
 
 #: src/views/CashlinkReceive.vue:364
