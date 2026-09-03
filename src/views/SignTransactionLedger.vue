@@ -105,7 +105,6 @@
 
         <GlobalClose :buttonLabel="request.kind === 'checkout' ? $t('Cancel payment') : '' /* use default */"
             :onClose="_close" :hidden="state !== constructor.State.OVERVIEW" />
-        <Network ref="network" />
     </div>
 </template>
 
@@ -203,7 +202,6 @@ interface StakingValidatorInfo {
     StatusScreen,
     GlobalClose,
     AccountDetails,
-    Network,
     Amount,
     ArrowRightIcon,
     StopwatchIcon,
@@ -231,6 +229,10 @@ export default class SignTransactionLedger extends Vue {
     private shownAccountDetails: AccountDetailsData | null = null;
     private isDestroyed: boolean = false;
     private currentlySignedTransactionIndex: number = 0;
+    // The Network component does not render anything and is therefore instantiated manually, instead of being part of
+    // the template, where it would not be available while the transactions could not be built yet, for example for a
+    // checkout with a recipient that still has to be recovered after a reload, see transactionsOrError.
+    private network: Network = new Network();
     // Counter to be incremented after in-place changes to the request, which is not reactive itself, to re-evaluate
     // the getters that are based on it, see transactions getter.
     private requestRevision: number = 0;
@@ -298,7 +300,7 @@ export default class SignTransactionLedger extends Vue {
             }
         }
 
-        const network = this.$refs.network as Network;
+        const { network } = this;
         if (isSentByHub) {
             // Pre-connect to network when we know we'll need it. Does not need to be awaited, as the methods on network
             // that actually need to be connected, themselves ensure to be connected.
@@ -551,6 +553,7 @@ export default class SignTransactionLedger extends Vue {
         this.isDestroyed = true;
         clearTimeout(this._checkoutExpiryTimeout);
         this._cancelLedgerRequest();
+        this.network.$destroy(); // as it's not a rendered child component, it has to be destroyed manually
     }
 
     /**
