@@ -1926,10 +1926,10 @@
     "@opengsn/common" "^2.2.5"
     patch-package "^8.0.1"
 
-"@nimiq/ledger-api@^4.0.0":
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/@nimiq/ledger-api/-/ledger-api-4.0.0.tgz#de73e1a84a98cef1d89722e68fb5d990b79525d0"
-  integrity sha512-eWUa1jGq4M10b5HYltlqWGj8iFyck+uS+7B3JGrFdOSxt9qGq3RfmpxjkTTYxybklUFlOVwkJJhjfyVLF7IxZQ==
+"@nimiq/ledger-api@^4.0.1":
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/@nimiq/ledger-api/-/ledger-api-4.0.1.tgz#4e02c2c99035fb437f1415c413cd973acff8a026"
+  integrity sha512-qrYO0rZkvE7uDEhbTryLW31ECygQjdgZfA9Vxnxic3rlXqC+6ZSbRtCBFANPIesOC6Q7MpIdyxteqeLe6I6DVg==
   dependencies:
     "@ledgerhq/hw-app-btc" "^10.0.9"
     "@ledgerhq/hw-transport" "^6.29.0"
@@ -1945,8 +1945,6 @@
     "@types/w3c-web-usb" "^1.0.6"
     bip32 "^2.0.6"
     bitcoinjs-lib "^5.2.0"
-    patch-package "^8.0.1"
-    postinstall-postinstall "^2.1.0"
 
 "@nimiq/oasis-api@^1.1.1":
   version "1.1.1"
