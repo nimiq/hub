@@ -60,7 +60,7 @@ export declare enum AccountType {
     BIP39 = 2,
     LEDGER = 3
 }
-export {
+export { 
 /** @deprecated Use AccountType instead */
 AccountType as WalletType, };
 export interface BasicRequest {
@@ -135,7 +135,6 @@ export interface SignTransactionRequestSwitchValidator extends BasicRequest {
     transactions: Array<TransactionInfo | Uint8Array>;
     senderLabel?: string;
     recipientLabel?: string;
-    stakerLabel?: string;
     validatorImageUrl?: string;
     fromValidatorAddress: string;
     fromValidatorImageUrl?: string;
