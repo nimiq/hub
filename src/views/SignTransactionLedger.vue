@@ -52,7 +52,8 @@
 
                 <hr class="blur-target">
 
-                <Amount class="value nq-light-blue blur-target"
+                <Amount v-if="amountAndFee.amount !== null"
+                    class="value nq-light-blue blur-target"
                     :amount="amountAndFee.amount"
                     :minDecimals="2"
                     :maxDecimals="5"
@@ -780,11 +781,14 @@ export default class SignTransactionLedger extends Vue {
             || this.transactions.length === 1;
     }
 
-    private get amountAndFee() {
+    private get amountAndFee(): { amount: number | null, fee: number } {
         // Display the value of the final transaction currently, and the fees of all transactions. For requests with a
-        // single transaction, this is that transaction's value and fee.
+        // single transaction, this is that transaction's value and fee. Omit zero amounts of signaling transactions.
+        const finalTransaction = this.finalTransaction;
+        // tslint:disable-next-line no-bitwise
+        const isSignaling = !!(finalTransaction.flags & Nimiq.TransactionFlag.Signaling);
         return {
-            amount: Number(this.finalTransaction.value),
+            amount: isSignaling ? null : Number(finalTransaction.value),
             fee: this.transactions.reduce((sum, transaction) => sum + Number(transaction.fee), 0),
         };
     }
@@ -1139,7 +1143,7 @@ export default class SignTransactionLedger extends Vue {
     hr {
         width: 100%;
         height: 1px;
-        margin: 0;
+        margin: 0 0 2rem;
         border: none;
         background: #1F2348;
         opacity: .1;
@@ -1147,7 +1151,6 @@ export default class SignTransactionLedger extends Vue {
 
     .value {
         font-size: 5rem;
-        margin-top: 2rem;
     }
 
     .value >>> .nim {
