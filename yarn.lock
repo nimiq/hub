@@ -1889,10 +1889,19 @@
   resolved "https://registry.yarnpkg.com/@nimiq/core-web/-/core-web-1.6.4.tgz#2ab36ab6f7d4062c3d534e6da831c2ccaae959de"
   integrity sha512-D0jVukuL+zsUXicS4cCZEPlBzlzBe0D1sNWecEhaSjTR1iMa9f+fA9l08wlQtRVw96Z6yHRgQokWVnO1GcWI7Q==
 
-"@nimiq/core@^2.1.1", "@nimiq/core@^2.2.2", "@nimiq/core@^2.20.0":
+"@nimiq/core@^2.2.2", "@nimiq/core@^2.20.0":
   version "2.20.0"
   resolved "https://registry.yarnpkg.com/@nimiq/core/-/core-2.20.0.tgz#c923cfbfedc53d00d3be235e6c1b281e10c51323"
   integrity sha512-JJYQJRVoI61rulUbeMH83HPv3o+vfaivjk93t50YbYTo5QY4zx/yrpmX1Xsvjk3i2nszaC6iql22g7CPd4tUSQ==
+  dependencies:
+    comlink "^4.4.1"
+    vite-plugin-wasm "^3.5.0"
+    websocket "^1.0.34"
+
+"@nimiq/core@^2.21.0":
+  version "2.21.0"
+  resolved "https://registry.yarnpkg.com/@nimiq/core/-/core-2.21.0.tgz#99d257cb842658082fe39ed350e3521bca3036ae"
+  integrity sha512-CBWMQhnFSQ8tEqRc3FThq4XaUIf83+KSkoOYPfkzx9kR1dne3ihztUqqxJkZ6ff6onl2AG4S6atL0sFjms0cjQ==
   dependencies:
     comlink "^4.4.1"
     vite-plugin-wasm "^3.5.0"
@@ -1916,14 +1925,15 @@
   dependencies:
     dom-parser "^0.1.5"
 
-"@nimiq/keyguard-client@^1.10.0":
-  version "1.10.0"
-  resolved "https://registry.yarnpkg.com/@nimiq/keyguard-client/-/keyguard-client-1.10.0.tgz#7d2a8933cd574d8f2dbe4adde1e3402ec56666a9"
-  integrity sha512-yn9wL/Z0Zzwn5O8CvIkCfz6bEVRhzfZ/bY2hSNmdCFnIfNfCfVPE9D/ENtLWmngI59xJeugduVXnw9PAoy5nNA==
+"@nimiq/keyguard-client@^1.11.1":
+  version "1.11.1"
+  resolved "https://registry.yarnpkg.com/@nimiq/keyguard-client/-/keyguard-client-1.11.1.tgz#5c557fb5e15a656312fcbfe1731f6a45af867e18"
+  integrity sha512-LZXV5bd33xdGVz7RxRQDNSa0b/iBryxlKzNXI6NEpEe8cyn2LOkOrKsTuajQlrjOFbxuPX7GrUVcwxweK3McDw==
   dependencies:
-    "@nimiq/core" "^2.1.1"
+    "@nimiq/core" "^2.21.0"
     "@nimiq/rpc" "^0.3.0"
     "@opengsn/common" "^2.2.5"
+    patch-package "^8.0.1"
 
 "@nimiq/ledger-api@^4.0.0":
   version "4.0.0"
