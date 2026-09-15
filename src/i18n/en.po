@@ -741,7 +741,7 @@ msgstr ""
 msgid "Login successful"
 msgstr ""
 
-#: src/views/ChooseAddress.vue:67
+#: src/views/ChooseAddress.vue:73
 #: src/views/ConnectAccount.vue:40
 msgid "Login to another account"
 msgstr ""
@@ -1268,6 +1268,10 @@ msgstr ""
 
 #: src/views/ActivatePolygonSuccess.vue:117
 msgid "USDC/USDT activated"
+msgstr ""
+
+#: src/views/ChooseAddress.vue:40
+msgid "Use a new address"
 msgstr ""
 
 #: src/components/OnboardingMenu.vue:12
