@@ -35,6 +35,12 @@
                 @account-selected="accountSelected"
                 @login="() => goToOnboarding(false)"/>
 
+            <PageFooter v-if="addressCreationWallet">
+                <button class="nq-button-s" @click="addAddress">
+                    {{ $t('Use a new address') }}
+                </button>
+            </PageFooter>
+
             <template v-if="!preSelectedWallet && request.ui === 2">
                 <PageBody>
                     <div class="account-selector">
@@ -95,9 +101,10 @@ import Config from 'config';
 import BitcoinSyncBaseView from './BitcoinSyncBaseView.vue';
 import StatusScreen from '../components/StatusScreen.vue';
 import GlobalClose from '../components/GlobalClose.vue';
-import { ChooseAddressResult, RequestType } from '../../client/PublicRequestTypes';
+import { Address, ChooseAddressResult, RequestType, RpcResult } from '../../client/PublicRequestTypes';
 import { ParsedChooseAddressRequest } from '../lib/RequestTypes';
 import staticStore, { Static } from '../lib/StaticStore';
+import { WalletStore } from '../lib/WalletStore';
 import { WalletInfo } from '../lib/WalletInfo';
 import { AccountInfo } from '../lib/AccountInfo';
 import { ContractInfo } from '../lib/ContractInfo';
@@ -122,11 +129,13 @@ import LedgerIcon from '../components/icons/LedgerIcon.vue';
 }})
 export default class ChooseAddress extends BitcoinSyncBaseView {
     @Static private request!: ParsedChooseAddressRequest;
+    @Static private sideResult?: RpcResult | Error;
 
     @Getter private findWallet!: (id: string) => WalletInfo | undefined;
     @Getter private processedWallets!: WalletInfo[];
 
     @State private wallets!: WalletInfo[];
+    @State private activeWalletId!: string | null;
 
     private AccountType = AccountType;
     private preSelectedWallet: WalletInfo | null = null;
@@ -136,10 +145,60 @@ export default class ChooseAddress extends BitcoinSyncBaseView {
         userFriendlyAddress: string,
     }) => any;
 
+    @Mutation('addWallet') private $addWallet!: (walletInfo: WalletInfo) => any;
+
     public async created() {
+        // Coming back from the add-address flow started below. The new address is already
+        // stored, but our copy of the wallet in the Vuex store predates it, so re-read it
+        // before resolving with an address that would otherwise look unknown.
+        if (this.sideResult && !(this.sideResult instanceof Error) && 'address' in this.sideResult) {
+            const { address } = this.sideResult as Address;
+            delete staticStore.sideResult;
+
+            const wallet = this.activeWalletId
+                ? await WalletStore.Instance.get(this.activeWalletId)
+                : undefined;
+            if (wallet && wallet.accounts.has(address)) {
+                this.$addWallet(wallet);
+                this.accountSelected(wallet.id, address);
+                return;
+            }
+            // The address did not arrive where it was expected. Fall through to the picker
+            // rather than resolving with something we cannot describe.
+        }
+
         if (this.processedWallets.length === 0) {
             this.goToOnboarding(true);
         }
+    }
+
+    /**
+     * The account a new address would be added to, or null when that is not a single
+     * answer. Only offered for BIP39 accounts: a legacy account holds exactly one address
+     * and a Ledger needs its own flow, which `AddAccount` already refuses and routes.
+     */
+    private get addressCreationWallet(): WalletInfo | null {
+        if (this.preSelectedWallet) {
+            return this.preSelectedWallet.type === AccountType.BIP39 ? this.preSelectedWallet : null;
+        }
+        if (this.request.ui === 2) return null; // still choosing an account, not an address
+        const candidates = this.processedWallets.filter((wallet) => wallet.type === AccountType.BIP39);
+        return candidates.length === 1 ? candidates[0] : null;
+    }
+
+    private addAddress() {
+        const wallet = this.addressCreationWallet;
+        if (!wallet) return;
+
+        // `AddAccount` reads the wallet to derive from off the active account, because the
+        // request it inherits here is a ChooseAddress request and carries no walletId.
+        this.$setActiveAccount({
+            walletId: wallet.id,
+            userFriendlyAddress: wallet.accounts.keys().next().value,
+        });
+
+        staticStore.originalRouteName = RequestType.CHOOSE_ADDRESS;
+        this.$router.push({name: RequestType.ADD_ADDRESS});
     }
 
     private async accountSelected(walletId: string, address: string) {
