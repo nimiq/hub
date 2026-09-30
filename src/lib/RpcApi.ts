@@ -68,9 +68,9 @@ export default class RpcApi {
         RequestType.CREATE_CASHLINK,
         RequestType.MANAGE_CASHLINK,
         RequestType.CONNECT_ACCOUNT,
-        // Request for signing a gasless USDC or USDT0 transfer on Polygon, without the need for the user to hold POL.
-        // The Keyguard validates the transfer against its own pinned contract, relays and fee limit. See
-        // github.com/NimiqToolbox/gas-abstraction for the relay API to submit the signed transfer to.
+        // Request for sending a gas-abstracted USDC or USDT transaction on Polygon, without the need for the user to
+        // hold POL. See sendPolygonTransaction in hub.ts and lib/usdc/Gasless.ts in github.com/nimiq/wallet for how to
+        // build the request data for a gasless transfer.
         RequestType.SIGN_POLYGON_TRANSACTION,
         // While SIGN_TRANSACTION and SIGN_POLYGON_TRANSACTION are whitelisted, SIGN_BTC_TRANSACTION is not, as it
         // identifies the account via its internal accountId, not by sender. Additionally, SIGN_BTC_TRANSACTION is not

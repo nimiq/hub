@@ -20,6 +20,7 @@ import { SwapAsset } from '@nimiq/fastspot-api';
 // (But note that currently, the KeyguardClient is still always bundled in the RpcApi).
 type KeyguardSignNimTransactionRequest = import('@nimiq/keyguard-client').SignTransactionRequestStandard;
 type KeyguardSignBtcTransactionRequest = import('@nimiq/keyguard-client').SignBtcTransactionRequestStandard;
+type KeyguardSignPolygonTransactionRequest = import('@nimiq/keyguard-client').SignPolygonTransactionRequest;
 
 @Component({components: {StatusScreen, SmallPage, GlobalClose}}) // including components used in parent class
 export default class RefundSwap extends BitcoinSyncBaseView {
@@ -120,19 +121,52 @@ export default class RefundSwap extends BitcoinSyncBaseView {
 
             this._signTransaction(signRequest);
         }
+
+        if (
+            refundInfo.type === SwapAsset.USDC_MATIC
+            || refundInfo.type === SwapAsset.USDC
+            || refundInfo.type === SwapAsset.USDT_MATIC
+        ) {
+            const signer = account.polygonAddresses.find((ai) => ai.address === refundInfo.request.from);
+
+            if (!signer) {
+                this.$rpc.reject(new Error(`Unknown recipient ${refundInfo.request.from}`));
+                return;
+            }
+
+            const signRequest: KeyguardSignPolygonTransactionRequest = {
+                appName: request.appName,
+
+                ...refundInfo,
+
+                keyId: account.keyId,
+                keyLabel: account.labelForKeyguard!,
+                keyPath: signer.path,
+
+                senderLabel: 'Swap HTLC',
+                token: refundInfo.token,
+            };
+
+            this._signTransaction(signRequest);
+        }
     }
 
     protected _signTransaction(
-        request: KeyguardSignNimTransactionRequest | KeyguardSignBtcTransactionRequest,
+        request: KeyguardSignNimTransactionRequest
+            | KeyguardSignBtcTransactionRequest
+            | KeyguardSignPolygonTransactionRequest,
     ) {
         // Note that this method gets overwritten in RefundSwapLedger
         const client = this.$rpc.createKeyguardClient(true);
         if ('sender' in request) {
             // Nimiq request
             client.signTransaction(request);
-        } else {
+        } else if ('inputs' in request) {
             // Bitcoin request
             client.signBtcTransaction(request);
+        } else {
+            // Polygon request
+            client.signPolygonTransaction(request as KeyguardSignPolygonTransactionRequest);
         }
     }
 }

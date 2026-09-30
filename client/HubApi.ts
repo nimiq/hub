@@ -33,6 +33,8 @@ import {
     AddBtcAddressesRequest,
     AddBtcAddressesResult,
     SignPolygonTransactionRequest,
+    SignPolygonGaslessTransferRequest,
+    SignedPolygonGaslessTransfer,
     SignedPolygonTransaction,
     Cashlink,
     CashlinkState,
@@ -196,11 +198,17 @@ export default class HubApi<
         return this._request(requestBehavior, RequestType.SIGN_BTC_TRANSACTION, [request]);
     }
 
-    public signPolygonTransaction<B extends BehaviorType = DB>(
-        request: Promise<SignPolygonTransactionRequest> | SignPolygonTransactionRequest,
+    public signPolygonTransaction<
+        R extends SignPolygonTransactionRequest | SignPolygonGaslessTransferRequest,
+        B extends BehaviorType = DB,
+    >(
+        request: Promise<R> | R,
         requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
-    ): Promise<B extends BehaviorType.REDIRECT ? void : SignedPolygonTransaction> {
-        return this._request(requestBehavior, RequestType.SIGN_POLYGON_TRANSACTION, [request]);
+    ): Promise<B extends BehaviorType.REDIRECT
+        ? void
+        : R extends SignPolygonGaslessTransferRequest ? SignedPolygonGaslessTransfer : SignedPolygonTransaction> {
+        // The result type depends on the request variant, which the generic result mapping cannot express
+        return this._request(requestBehavior, RequestType.SIGN_POLYGON_TRANSACTION, [request]) as any;
     }
 
     public setupSwap<B extends BehaviorType = DB>(
@@ -213,7 +221,9 @@ export default class HubApi<
     public refundSwap<B extends BehaviorType = DB>(
         request: Promise<RefundSwapRequest> | RefundSwapRequest,
         requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
-    ): Promise<B extends BehaviorType.REDIRECT ? void : SignedTransaction | SignedBtcTransaction> {
+    ): Promise<B extends BehaviorType.REDIRECT
+        ? void
+        : SignedTransaction | SignedBtcTransaction | SignedPolygonTransaction> {
         return this._request(requestBehavior, RequestType.REFUND_SWAP, [request]);
     }
 

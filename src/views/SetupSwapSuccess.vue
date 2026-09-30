@@ -14,12 +14,13 @@ import {
     NimHtlcDetails,
     BtcHtlcDetails,
     Contract,
+    Erc20HtlcDetails,
 } from '@nimiq/fastspot-api';
 import { init as initOasisApi, exchangeAuthorizationToken } from '@nimiq/oasis-api';
 import StatusScreen from '../components/StatusScreen.vue';
 import GlobalClose from '../components/GlobalClose.vue';
 import Network from '../components/Network.vue';
-import { SetupSwapResult, SignedBtcTransaction } from '../../client/PublicRequestTypes';
+import { SetupSwapResult, SignedBtcTransaction, SignedPolygonTransaction } from '../../client/PublicRequestTypes';
 import { Static } from '../lib/StaticStore';
 import { ParsedSetupSwapRequest } from '../lib/RequestTypes';
 import Config from 'config';
@@ -81,6 +82,10 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
             case SwapAsset.BTC:
                 refundAddress = this.request.fund.refundAddress;
                 break;
+            case SwapAsset.USDC_MATIC:
+            case SwapAsset.USDT_MATIC:
+                refundAddress = this.request.fund.request.from;
+                break;
             default: break;
         }
 
@@ -91,6 +96,10 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
                 break;
             case SwapAsset.BTC:
                 redeemAddress = this.request.redeem.output.address;
+                break;
+            case SwapAsset.USDC_MATIC:
+            case SwapAsset.USDT_MATIC:
+                redeemAddress = this.request.redeem.request.from;
                 break;
             case SwapAsset.EUR:
                 // Assemble recipient object
@@ -223,6 +232,55 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
             }
         }
 
+        if (
+            confirmedSwap.from.asset === SwapAsset.USDC_MATIC
+            || confirmedSwap.to.asset === SwapAsset.USDC_MATIC
+            || confirmedSwap.from.asset === SwapAsset.USDT_MATIC
+            || confirmedSwap.to.asset === SwapAsset.USDT_MATIC
+        ) {
+            const contract =
+                (confirmedSwap.contracts[SwapAsset.USDC_MATIC] as Contract<SwapAsset.USDC_MATIC> | undefined)
+                || (confirmedSwap.contracts[SwapAsset.USDT_MATIC] as Contract<SwapAsset.USDT_MATIC>);
+            const htlc = contract.htlc as Erc20HtlcDetails;
+
+            const contractData = {
+                id: contract.htlc.address,
+                token: '',
+                amount: contract.amount,
+                refundAddress: contract.refundAddress,
+                recipientAddress: contract.redeemAddress,
+                hash: confirmedSwap.hash,
+                timeout: contract.timeout,
+                fee: 0,
+                chainTokenFee: 0,
+            };
+
+            if (htlc.data) {
+                // TODO: Load ethersJS and decode contract data
+            }
+
+            if (hashRoot && contractData.hash !== hashRoot) {
+                this.$rpc.reject(new Error('HTLC hash roots do not match'));
+                return;
+            }
+            hashRoot = contractData.hash;
+
+            if (
+                [SwapAsset.USDC_MATIC, SwapAsset.USDT_MATIC].includes(confirmedSwap.from.asset)
+                && refundAddress !== contractData.refundAddress
+            ) {
+                this.$rpc.reject(new Error('Unknown HTLC refund address'));
+                return;
+            }
+            if (
+                [SwapAsset.USDC_MATIC, SwapAsset.USDT_MATIC].includes(confirmedSwap.to.asset)
+                && redeemAddress !== contractData.recipientAddress
+            ) {
+                this.$rpc.reject(new Error('Unknown HTLC redeem address'));
+                return;
+            }
+        }
+
         if (confirmedSwap.from.asset === SwapAsset.EUR || confirmedSwap.to.asset === SwapAsset.EUR) {
             // TODO: Fetch contract from OASIS API and compare instead of trusting Fastspot
 
@@ -260,6 +318,20 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
             fundingHtlcInfo = {
                 type: SwapAsset.BTC,
                 htlcScript: Nimiq.BufferUtils.fromHex(btcHtlcData.script),
+            };
+        }
+
+        if (this.request.fund.type === SwapAsset.USDC_MATIC || this.request.fund.type === SwapAsset.USDT_MATIC) {
+            const htlcData = confirmedSwap.contracts[this.request.fund.type]!.htlc as Erc20HtlcDetails;
+
+            if (!htlcData.data) {
+                // TODO: Create data with ethersJS
+                throw new Error('Missing `data` field in confirmed ERC-20 contract');
+            }
+
+            fundingHtlcInfo = {
+                type: this.request.fund.type,
+                htlcData: htlcData.data,
             };
         }
 
@@ -354,6 +426,20 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
             }
         }
 
+        if (this.request.redeem.type === SwapAsset.USDC_MATIC || this.request.redeem.type === SwapAsset.USDT_MATIC) {
+            const contract = confirmedSwap.contracts[this.request.redeem.type] as Contract<
+                SwapAsset.USDC_MATIC | SwapAsset.USDT_MATIC
+            >;
+            const htlcData = contract.htlc as Erc20HtlcDetails;
+
+            redeemingHtlcInfo = {
+                type: this.request.redeem.type,
+                hash: confirmedSwap.hash,
+                timeout: contract.timeout,
+                htlcId: htlcData.address,
+            };
+        }
+
         if (this.request.redeem.type === SwapAsset.EUR) {
             const eurContract = confirmedSwap.contracts[SwapAsset.EUR] as Contract<SwapAsset.EUR>;
             const eurHtlcData = eurContract.htlc;
@@ -378,6 +464,8 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
         let nimiqTransaction: Nimiq.Transaction | undefined;
         let nimiqProxyTransaction: Nimiq.Transaction | undefined;
         let bitcoinTransaction: SignedBtcTransaction | undefined;
+        let polygonUsdcTransaction: SignedPolygonTransaction | undefined;
+        let polygonUsdtTransaction: SignedPolygonTransaction | undefined;
         let refundTransaction: string | undefined;
         let euroSettlement: string | undefined;
         try {
@@ -391,6 +479,8 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
                 nimProxy: nimiqProxyTransaction,
                 btc: bitcoinTransaction,
                 eur: euroSettlement,
+                usdc: polygonUsdcTransaction,
+                usdt: polygonUsdtTransaction,
                 refundTx: refundTransaction,
             } = signingResult);
         } catch (error) {
@@ -442,6 +532,8 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
                 ? this.nimiqNetwork.makeSignTransactionResult(nimiqProxyTransaction)
                 : undefined,
             btc: bitcoinTransaction,
+            usdc: polygonUsdcTransaction,
+            usdt: polygonUsdtTransaction,
             eur: euroSettlement,
             refundTx: refundTransaction,
         };
@@ -471,6 +563,8 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
         nim?: Nimiq.Transaction,
         nimProxy?: Nimiq.Transaction, // only in SetupSwapLedger
         btc?: SignedBtcTransaction,
+        usdc?: SignedPolygonTransaction,
+        usdt?: SignedPolygonTransaction,
         eur?: string,
         refundTx?: string,
     } | null> {
@@ -485,6 +579,8 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
         const {
             nim: nimiqSignatureResult,
             btc: bitcoinTransaction,
+            usdc: polygonUsdcTransaction,
+            usdt: polygonUsdtTransaction,
             eur: euroSettlement,
             refundTx,
         } = await client.signSwapTransactions(keyguardRequest);
@@ -519,6 +615,8 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
                 serializedTx: bitcoinTransaction.raw,
                 hash: bitcoinTransaction.transactionHash,
             } : undefined,
+            ...(polygonUsdcTransaction ? { usdc: polygonUsdcTransaction } : {}),
+            ...(polygonUsdtTransaction ? { usdt: polygonUsdtTransaction } : {}),
             eur: euroSettlement,
             refundTx,
         };

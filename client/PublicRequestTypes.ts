@@ -46,6 +46,28 @@ type HexString = string;
 type IntString = string;
 type PolygonAddress = string;
 
+export interface RelayRequest {
+    request: {
+        from: PolygonAddress;
+        to: PolygonAddress;
+        data: HexString;
+        value: IntString;
+        nonce: IntString;
+        gas: IntString;
+        validUntil: IntString;
+    };
+    relayData: {
+        gasPrice: IntString;
+        pctRelayFee: IntString;
+        baseRelayFee: IntString;
+        relayWorker: PolygonAddress;
+        paymaster: PolygonAddress;
+        paymasterData: HexString;
+        clientId: IntString;
+        forwarder: PolygonAddress;
+    };
+}
+
 export enum AccountType {
     LEGACY = 1,
     BIP39 = 2,
@@ -390,6 +412,25 @@ export interface BitcoinHtlcCreationInstructions {
     locktime?: number;
 }
 
+export interface PolygonHtlcCreationInstructions extends RelayRequest {
+    type: 'USDC_MATIC' | 'USDT_MATIC';
+    /**
+     * The sender's nonce in the token contract, required when calling the
+     * contract function `openWithPermit`.
+     */
+    permit?: {
+        tokenNonce: number,
+    };
+
+    /**
+     * The sender's nonce in the token contract, required when calling the
+     * contract function `openWithApproval`.
+     */
+    approval?: {
+        tokenNonce: number,
+    };
+}
+
 export interface EuroHtlcCreationInstructions {
     type: 'EUR';
     value: number; // Eurocents
@@ -418,6 +459,11 @@ export interface BitcoinHtlcSettlementInstructions {
         address: string, // My address, must be redeem address of HTLC
         value: number, // Sats
     };
+}
+
+export interface PolygonHtlcSettlementInstructions extends RelayRequest {
+    type: 'USDC_MATIC' | 'USDT_MATIC';
+    amount: number;
 }
 
 export interface EuroHtlcSettlementInstructions {
@@ -463,19 +509,31 @@ export interface BitcoinHtlcRefundInstructions {
     refundAddress: string; // My address, must be refund address of HTLC
 }
 
+export interface PolygonHtlcRefundInstructions extends RelayRequest {
+    type: 'USDC_MATIC' | 'USDC' | 'USDT_MATIC';
+    amount: number;
+    /**
+     * The token contract address. Required for calling the bridged HTLC contract.
+     */
+    token: string;
+}
+
 export type HtlcCreationInstructions =
     NimiqHtlcCreationInstructions
     | BitcoinHtlcCreationInstructions
+    | PolygonHtlcCreationInstructions
     | EuroHtlcCreationInstructions;
 
 export type HtlcSettlementInstructions =
     NimiqHtlcSettlementInstructions
     | BitcoinHtlcSettlementInstructions
+    | PolygonHtlcSettlementInstructions
     | EuroHtlcSettlementInstructions;
 
 export type HtlcRefundInstructions =
     NimiqHtlcRefundInstructions
-    | BitcoinHtlcRefundInstructions;
+    | BitcoinHtlcRefundInstructions
+    | PolygonHtlcRefundInstructions;
 
 export interface SetupSwapRequest extends SimpleRequest {
     swapId: string;
@@ -504,6 +562,11 @@ export interface SetupSwapRequest extends SimpleRequest {
     bitcoinAccount?: {
         balance: number, // Sats
     };
+    polygonAddresses?: Array<{
+        address: string,
+        usdcBalance: number, // In USDC's smallest unit
+        usdtBalance: number, // In USDT's smallest unit
+    }>;
 
     // Optional KYC info for swapping at higher limits
     kyc?: {
@@ -518,6 +581,8 @@ export interface SetupSwapResult {
     nim?: SignedTransaction;
     nimProxy?: SignedTransaction;
     btc?: SignedBtcTransaction;
+    usdc?: SignedPolygonTransaction;
+    usdt?: SignedPolygonTransaction;
     eur?: string; // When funding EUR: empty string, when redeeming EUR: JWS of the settlement instructions
     refundTx?: string;
 }
@@ -728,6 +793,48 @@ export interface AddBtcAddressesResult {
  */
 
 /**
+ * A transaction relayed via OpenGSN, used for swaps: HTLC redeem and refund, and the USDC.e to USDC conversion.
+ * Plain transfers use SignPolygonGaslessTransferRequest.
+ */
+export interface SignPolygonTransactionRequest extends BasicRequest, RelayRequest {
+    recipientLabel?: string;
+    /**
+     * The sender's nonce in the token contract, required when calling the
+     * contract function `swapWithApproval` for bridged USDC.e and `transferWithApproval` for bridged USDT.
+     */
+    approval?: {
+        tokenNonce: number,
+    };
+    /**
+     * The sender's nonce in the token contract, required when calling the
+     * contract function `transferWithPermit` for native USDC.
+     */
+    permit?: {
+        tokenNonce: number,
+    };
+
+    /**
+     * The amount of USDC/T to transfer. Required when calling the contract
+     * methods 'redeem' and 'redeemWithSecretInData' for HTLCs.
+     */
+    amount?: number;
+    /**
+     * The label of the sending address. Required when calling the contract
+     * methods 'redeem' and 'redeemWithSecretInData' for HTLCs.
+     */
+    senderLabel?: string;
+    /**
+     * The token contract address. Required for calling the bridged HTLC contract.
+     */
+    token?: string;
+}
+
+export interface SignedPolygonTransaction {
+    message: Record<string, any>;
+    signature: string; // HEX
+}
+
+/**
  * A gasless USDC or USDT0 transfer on Polygon through the GaslessTransfer contract and the Nimiq relay,
  * see https://github.com/NimiqToolbox/gas-abstraction. Amounts are in the token's smallest unit (6 decimals).
  */
@@ -749,7 +856,7 @@ export interface PolygonGaslessTransferRequest extends PolygonGaslessTransfer {
     deadline: IntString; // Unix seconds
 }
 
-export interface SignPolygonTransactionRequest extends BasicRequest {
+export interface SignPolygonGaslessTransferRequest extends BasicRequest {
     request: PolygonGaslessTransfer;
     /**
      * The sender's current permit nonce in the token contract (`nonces(from)`).
@@ -768,7 +875,7 @@ export interface SignPolygonTransactionRequest extends BasicRequest {
  * The signed transfer in the shape of the relay's POST /v1/transfer body. It contains a token permit, so do not
  * persist or log it.
  */
-export interface SignedPolygonTransaction {
+export interface SignedPolygonGaslessTransfer {
     request: PolygonGaslessTransferRequest;
     signature: HexString;
     authorization: {
@@ -795,6 +902,7 @@ export type RpcRequest = SignTransactionRequest
                        | SignBtcTransactionRequest
                        | AddBtcAddressesRequest
                        | SignPolygonTransactionRequest
+                       | SignPolygonGaslessTransferRequest
                        | SetupSwapRequest
                        | RefundSwapRequest
                        | ConnectAccountRequest;
@@ -814,6 +922,7 @@ export type RpcResult = SignedTransaction
                       | SignedBtcTransaction
                       | AddBtcAddressesResult
                       | SignedPolygonTransaction
+                      | SignedPolygonGaslessTransfer
                       | SetupSwapResult
                       | ConnectedAccount;
 
@@ -835,7 +944,7 @@ export type ResultByRequestType<T> =
     T extends RequestType.EXPORT ? ExportResult :
     T extends RequestType.CREATE_CASHLINK | RequestType.MANAGE_CASHLINK ? Cashlink :
     T extends RequestType.SIGN_BTC_TRANSACTION ? SignedBtcTransaction :
-    T extends RequestType.SIGN_POLYGON_TRANSACTION ? SignedPolygonTransaction :
+    T extends RequestType.SIGN_POLYGON_TRANSACTION ? SignedPolygonTransaction | SignedPolygonGaslessTransfer :
     T extends RequestType.ACTIVATE_BITCOIN ? Account :
     T extends RequestType.ACTIVATE_POLYGON ? Account :
     T extends RequestType.ADD_BTC_ADDRESSES ? AddBtcAddressesResult :

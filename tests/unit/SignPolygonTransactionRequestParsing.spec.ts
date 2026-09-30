@@ -1,10 +1,10 @@
 import { setup } from './_setup';
 import {
-    parseSignPolygonTransactionRequest,
-    rawSignPolygonTransactionRequest,
+    parseSignPolygonGaslessTransferRequest,
+    rawSignPolygonGaslessTransferRequest,
 } from '@/lib/SignPolygonTransactionRequestParsing';
 import { RequestType } from '../../client/PublicRequestTypes';
-import type { SignPolygonTransactionRequest } from '../../client/PublicRequestTypes';
+import type { SignPolygonGaslessTransferRequest } from '../../client/PublicRequestTypes';
 
 setup();
 
@@ -20,13 +20,13 @@ const TRANSFER = {
     relay: '0xBcd4042DE499D14e55001CcbB24a551F3b954096',
 };
 
-function parse(request: Partial<SignPolygonTransactionRequest> & Record<string, unknown>) {
-    return parseSignPolygonTransactionRequest(
-        { appName: 'Test App', request: TRANSFER, tokenNonce: 0, ...request } as SignPolygonTransactionRequest,
+function parse(request: Partial<SignPolygonGaslessTransferRequest> & Record<string, unknown>) {
+    return parseSignPolygonGaslessTransferRequest(
+        { appName: 'Test App', request: TRANSFER, tokenNonce: 0, ...request } as SignPolygonGaslessTransferRequest,
     );
 }
 
-describe('SIGN_POLYGON_TRANSACTION request parsing', () => {
+describe('SIGN_POLYGON_TRANSACTION gasless transfer request parsing', () => {
     it('keeps only the gasless transfer fields', () => {
         const parsed = parse({
             recipientLabel: 'Alice',
@@ -40,7 +40,7 @@ describe('SIGN_POLYGON_TRANSACTION request parsing', () => {
         expect(parsed.recipientLabel).toBe('Alice');
         expect('relayData' in parsed).toBe(false);
 
-        const raw = rawSignPolygonTransactionRequest(parsed);
+        const raw = rawSignPolygonGaslessTransferRequest(parsed);
         expect(parse(raw as any)).toEqual(parsed);
     });
 

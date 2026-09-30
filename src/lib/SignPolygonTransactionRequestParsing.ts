@@ -1,10 +1,10 @@
 import { RequestType } from '../../client/PublicRequestTypes';
-import type { PolygonGaslessTransfer, SignPolygonTransactionRequest } from '../../client/PublicRequestTypes';
-import type { ParsedSignPolygonTransactionRequest } from './RequestTypes';
+import type { PolygonGaslessTransfer, SignPolygonGaslessTransferRequest } from '../../client/PublicRequestTypes';
+import type { ParsedSignPolygonGaslessTransferRequest } from './RequestTypes';
 
 /**
- * Parsing of SIGN_POLYGON_TRANSACTION requests (gasless USDC/USDT0 transfers) and their inverse mapping for the history
- * state.
+ * Parsing of SIGN_POLYGON_TRANSACTION requests for gasless USDC/USDT0 transfers and their inverse mapping for the
+ * history state. Requests relayed via OpenGSN (swaps) are passed through by the RequestParser, as before.
  *
  * Only the shape is checked here. The Keyguard validates the transfer against its own pins (contract, relays, tokens)
  * and fee limit, and builds the typed data it signs itself. The Hub forwards only the known plain fields.
@@ -13,9 +13,9 @@ import type { ParsedSignPolygonTransactionRequest } from './RequestTypes';
  * import it standalone.
  */
 
-export function parseSignPolygonTransactionRequest(
-    request: SignPolygonTransactionRequest,
-): ParsedSignPolygonTransactionRequest {
+export function parseSignPolygonGaslessTransferRequest(
+    request: SignPolygonGaslessTransferRequest,
+): ParsedSignPolygonGaslessTransferRequest {
     const transfer = parsePolygonGaslessTransfer(request.request, 'request');
 
     const tokenNonce = request.tokenNonce;
@@ -23,7 +23,7 @@ export function parseSignPolygonTransactionRequest(
         throw new Error('tokenNonce must be a non-negative integer');
     }
 
-    let corrects: ParsedSignPolygonTransactionRequest['corrects'];
+    let corrects: ParsedSignPolygonGaslessTransferRequest['corrects'];
     if (request.corrects !== undefined) {
         const { nonce, deadline } = request.corrects;
         if (typeof nonce !== 'string' || !/^0x[0-9a-fA-F]{64}$/.test(nonce)) {
@@ -49,9 +49,9 @@ export function parseSignPolygonTransactionRequest(
     };
 }
 
-export function rawSignPolygonTransactionRequest(
-    request: ParsedSignPolygonTransactionRequest,
-): SignPolygonTransactionRequest {
+export function rawSignPolygonGaslessTransferRequest(
+    request: ParsedSignPolygonGaslessTransferRequest,
+): SignPolygonGaslessTransferRequest {
     return {
         appName: request.appName,
         request: request.request,

@@ -9,7 +9,7 @@ import KeyguardClient from '@nimiq/keyguard-client';
 import { SwapAsset } from '@nimiq/fastspot-api';
 import Network from '../components/Network.vue';
 import { ParsedRefundSwapRequest } from '../lib/RequestTypes';
-import { SignedBtcTransaction, SignedTransaction } from '../../client/PublicRequestTypes';
+import { SignedBtcTransaction, SignedPolygonTransaction, SignedTransaction } from '../../client/PublicRequestTypes';
 import { Static } from '../lib/StaticStore';
 import Config from 'config';
 
@@ -18,7 +18,8 @@ export default class SignBtcTransactionSuccess extends Vue {
     @Static private request!: ParsedRefundSwapRequest;
     @State private keyguardResult!:
         KeyguardClient.SignedBitcoinTransaction
-        | KeyguardClient.SignatureResult;
+        | KeyguardClient.SignatureResult
+        | KeyguardClient.SignedPolygonTransaction;
 
     private async mounted() {
         if ('publicKey' in this.keyguardResult && this.request.refund.type === SwapAsset.NIM) {
@@ -48,6 +49,19 @@ export default class SignBtcTransactionSuccess extends Vue {
             const result: SignedBtcTransaction = {
                 serializedTx: this.keyguardResult.raw,
                 hash: this.keyguardResult.transactionHash,
+            };
+
+            this.$rpc.resolve(result);
+            return;
+        }
+
+        if (
+            'message' in this.keyguardResult
+            && (this.request.refund.type === SwapAsset.USDC_MATIC || this.request.refund.type === SwapAsset.USDC)
+        ) {
+            const result: SignedPolygonTransaction = {
+                message: this.keyguardResult.message,
+                signature: this.keyguardResult.signature,
             };
 
             this.$rpc.resolve(result);

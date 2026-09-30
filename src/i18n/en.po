@@ -31,7 +31,7 @@ msgstr ""
 msgid "404 - Cash not found"
 msgstr ""
 
-#: src/views/SetupSwapSuccess.vue:136
+#: src/views/SetupSwapSuccess.vue:145
 msgid "503 Service unavailable - please try again later"
 msgstr ""
 
@@ -207,7 +207,7 @@ msgid "Bitcoin activated"
 msgstr ""
 
 #: src/views/SetupSwapLedger.vue:865
-#: src/views/SetupSwapSuccess.vue:541
+#: src/views/SetupSwapSuccess.vue:639
 msgid "Bitcoin HTLC invalid"
 msgstr ""
 
@@ -590,7 +590,7 @@ msgid "Fetching Addresses Failed"
 msgstr ""
 
 #: src/views/SetupSwapLedger.vue:877
-#: src/views/SetupSwapSuccess.vue:554
+#: src/views/SetupSwapSuccess.vue:652
 msgid "Fetching Bitcoin HTLC..."
 msgstr ""
 
@@ -598,11 +598,11 @@ msgstr ""
 msgid "Fetching contract information..."
 msgstr ""
 
-#: src/views/SetupSwapSuccess.vue:563
+#: src/views/SetupSwapSuccess.vue:661
 msgid "Fetching swap data failed: {error}"
 msgstr ""
 
-#: src/views/SetupSwapSuccess.vue:550
+#: src/views/SetupSwapSuccess.vue:648
 msgid "Fetching swap data..."
 msgstr ""
 
@@ -905,7 +905,7 @@ msgstr ""
 msgid "Prepare for update"
 msgstr ""
 
-#: src/views/SetupSwapSuccess.vue:543
+#: src/views/SetupSwapSuccess.vue:641
 msgid "Preparing Swap"
 msgstr ""
 
@@ -973,7 +973,7 @@ msgstr ""
 #: src/views/ActivatePolygonSuccess.vue:139
 #: src/views/BitcoinSyncBaseView.vue:72
 #: src/views/LoginSuccess.vue:134
-#: src/views/SetupSwapSuccess.vue:573
+#: src/views/SetupSwapSuccess.vue:671
 #: src/views/SignupLedger.vue:145
 msgid "Retry"
 msgstr ""
@@ -1017,7 +1017,7 @@ msgstr ""
 msgid "Signer"
 msgstr ""
 
-#: src/views/SetupSwapSuccess.vue:552
+#: src/views/SetupSwapSuccess.vue:650
 msgid "Signing transactions..."
 msgstr ""
 
@@ -1068,7 +1068,7 @@ msgid "Swap fee"
 msgstr ""
 
 #: src/views/SetupSwapLedger.vue:861
-#: src/views/SetupSwapSuccess.vue:537
+#: src/views/SetupSwapSuccess.vue:635
 msgid "Swap Setup Failed"
 msgstr ""
 
@@ -1086,7 +1086,7 @@ msgstr ""
 #: src/views/ActivatePolygonSuccess.vue:113
 #: src/views/BitcoinSyncBaseView.vue:50
 #: src/views/SetupSwapLedger.vue:863
-#: src/views/SetupSwapSuccess.vue:539
+#: src/views/SetupSwapSuccess.vue:637
 #: src/views/SignBtcTransactionLedger.vue:117
 msgid "Syncing Failed"
 msgstr ""
@@ -1281,7 +1281,7 @@ msgstr ""
 msgid "Used addresses without balance might have been missed."
 msgstr ""
 
-#: src/views/SetupSwapSuccess.vue:315
+#: src/views/SetupSwapSuccess.vue:387
 msgid "Value mismatch (expected {expected} sats, found {found} sats)"
 msgstr ""
 
