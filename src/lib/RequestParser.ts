@@ -56,6 +56,10 @@ import { ParsedBitcoinDirectPaymentOptions } from './paymentOptions/BitcoinPayme
 import { Utf8Tools } from '@nimiq/utils';
 import Config from 'config';
 import { parseSignTransactionRequest, rawSignTransactionRequest } from './SignTransactionRequestParsing';
+import {
+    parseSignPolygonTransactionRequest,
+    rawSignPolygonTransactionRequest,
+} from './SignPolygonTransactionRequestParsing';
 import { SwapAsset } from '@nimiq/fastspot-api';
 import RpcApi from './RpcApi';
 
@@ -540,12 +544,7 @@ export class RequestParser {
                 };
                 return parsedSignBtcTransactionRequest;
             case RequestType.SIGN_POLYGON_TRANSACTION:
-                const signPolygonTransactionRequest = request as SignPolygonTransactionRequest;
-
-                return {
-                    kind: RequestType.SIGN_POLYGON_TRANSACTION,
-                    ...signPolygonTransactionRequest,
-                } as ParsedSignPolygonTransactionRequest;
+                return parseSignPolygonTransactionRequest(request as SignPolygonTransactionRequest);
             case RequestType.SETUP_SWAP:
                 const setupSwapRequest = request as SetupSwapRequest;
 
@@ -553,23 +552,16 @@ export class RequestParser {
 
                 // Validate and parse only what we use in the Hub
 
-                if (!['NIM', 'BTC', 'USDC_MATIC', 'USDT_MATIC', 'EUR'].includes(setupSwapRequest.fund.type)) {
+                if (!['NIM', 'BTC', 'EUR'].includes(setupSwapRequest.fund.type)) {
                     throw new Error('Funding type is not supported');
                 }
 
-                if (!['NIM', 'BTC', 'USDC_MATIC', 'USDT_MATIC', 'EUR'].includes(setupSwapRequest.redeem.type)) {
+                if (!['NIM', 'BTC', 'EUR'].includes(setupSwapRequest.redeem.type)) {
                     throw new Error('Redeeming type is not supported');
                 }
 
                 if (setupSwapRequest.fund.type === setupSwapRequest.redeem.type) {
                     throw new Error('Cannot swap between the same types');
-                }
-
-                if (
-                    (setupSwapRequest.fund.type === 'USDC_MATIC' && setupSwapRequest.redeem.type === 'USDT_MATIC')
-                    || (setupSwapRequest.fund.type === 'USDT_MATIC' && setupSwapRequest.redeem.type === 'USDC_MATIC')
-                ) {
-                    throw new Error('Cannot swap between USDC and USDT');
                 }
 
                 if (setupSwapRequest.layout === 'slider') {
@@ -587,10 +579,6 @@ export class RequestParser {
                         throw new Error('When using the "slider" layout, `nimAddresses` must be an array');
                     }
 
-                    if (!Array.isArray(setupSwapRequest.polygonAddresses)) {
-                        throw new Error('When using the "slider" layout, `polygonAddresses` must be an array');
-                    }
-
                     if (!setupSwapRequest.bitcoinAccount) {
                         throw new Error('When using the "slider" layout, `bitcoinAccount` must be provided');
                     }
@@ -603,18 +591,6 @@ export class RequestParser {
                     if (nimiqAddress && !setupSwapRequest.nimiqAddresses.some(
                         ({ address }) => Nimiq.Address.fromAny(address).equals(nimiqAddress))) {
                         throw new Error('The address details of the NIM address doing the swap must be provided');
-                    }
-
-                    const polygonAddress = setupSwapRequest.fund.type === SwapAsset.USDC_MATIC
-                        || setupSwapRequest.fund.type === SwapAsset.USDT_MATIC
-                        ? setupSwapRequest.fund.request.from
-                        : setupSwapRequest.redeem.type === SwapAsset.USDC_MATIC
-                            || setupSwapRequest.redeem.type === SwapAsset.USDT_MATIC
-                            ? setupSwapRequest.redeem.request.from
-                            : undefined;
-                    if (polygonAddress && !setupSwapRequest.polygonAddresses.some(
-                        ({ address }) => address === polygonAddress)) {
-                        throw new Error('The address details of the Polgyon address doing the swap must be provided');
                     }
                 }
 
@@ -658,9 +634,6 @@ export class RequestParser {
                 } : setupSwapRequest.fund.type === 'BTC' ? {
                     ...setupSwapRequest.fund,
                     type: SwapAsset[setupSwapRequest.fund.type],
-                } : setupSwapRequest.fund.type === 'USDC_MATIC' || setupSwapRequest.fund.type === 'USDT_MATIC' ? {
-                    ...setupSwapRequest.fund,
-                    type: SwapAsset[setupSwapRequest.fund.type],
                 } : setupSwapRequest.fund.type === 'EUR' ? {
                     ...setupSwapRequest.fund,
                     type: SwapAsset[setupSwapRequest.fund.type],
@@ -678,9 +651,6 @@ export class RequestParser {
                         ? Nimiq.BufferUtils.fromAny(setupSwapRequest.redeem.extraData)
                         : setupSwapRequest.redeem.extraData,
                 } : setupSwapRequest.redeem.type === 'BTC' ? {
-                    ...setupSwapRequest.redeem,
-                    type: SwapAsset[setupSwapRequest.redeem.type],
-                } : setupSwapRequest.redeem.type === 'USDC_MATIC' || setupSwapRequest.redeem.type === 'USDT_MATIC' ? {
                     ...setupSwapRequest.redeem,
                     type: SwapAsset[setupSwapRequest.redeem.type],
                 } : setupSwapRequest.redeem.type === 'EUR' ? {
@@ -708,8 +678,8 @@ export class RequestParser {
                 // Only basic parsing and validation. Refund transaction specific data will be validated by the Keyguard
                 // or subsequent Ledger transaction signing requests.
 
-                if (!['NIM', 'BTC', 'USDC', 'USDC_MATIC', 'USDT_MATIC'].includes(refundSwapRequest.refund.type)) {
-                    throw new Error('Refunding object type must be "NIM", "BTC", "USDC", "USDC_MATIC" or "USDT_MATIC"');
+                if (!['NIM', 'BTC'].includes(refundSwapRequest.refund.type)) {
+                    throw new Error('Refunding object type must be "NIM" or "BTC"');
                 }
 
                 const parsedRefundSwapRequest: ParsedRefundSwapRequest = {
@@ -725,10 +695,7 @@ export class RequestParser {
                         extraData: typeof refundSwapRequest.refund.extraData === 'string'
                             ? Nimiq.BufferUtils.fromAny(refundSwapRequest.refund.extraData)
                             : refundSwapRequest.refund.extraData,
-                    } : refundSwapRequest.refund.type === 'BTC' ? {
-                        ...refundSwapRequest.refund,
-                        type: SwapAsset[refundSwapRequest.refund.type],
-                    } : { // USDC/T
+                    } : {
                         ...refundSwapRequest.refund,
                         type: SwapAsset[refundSwapRequest.refund.type],
                     },
@@ -984,10 +951,7 @@ export class RequestParser {
                     locktime: signBtcTransactionRequest.locktime,
                 } as SignBtcTransactionRequest;
             case RequestType.SIGN_POLYGON_TRANSACTION:
-                const signPolygonTransactionRequest = request as ParsedSignPolygonTransactionRequest;
-                return {
-                    ...signPolygonTransactionRequest,
-                } as SignPolygonTransactionRequest;
+                return rawSignPolygonTransactionRequest(request as ParsedSignPolygonTransactionRequest);
             case RequestType.SETUP_SWAP:
                 const setupSwapRequest = request as ParsedSetupSwapRequest;
                 return {
@@ -1057,4 +1021,5 @@ export class RequestParser {
                 return null;
         }
     }
+
 }
