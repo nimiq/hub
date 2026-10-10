@@ -2,7 +2,7 @@ import { setup } from './_setup';
 import { Store } from '@/lib/Store';
 import { CashlinkStore } from '@/lib/CashlinkStore';
 import Cashlink from '@/lib/Cashlink';
-import { CashlinkState } from '../../client/PublicRequestTypes';
+import { CashlinkCurrency } from '../../client/PublicRequestTypes';
 
 setup();
 
@@ -18,47 +18,36 @@ const DUMMY_DATA = {
     ],
     cashlinks: [
         new Cashlink(
+            CashlinkCurrency.NIM,
+            new Uint8Array([
+                70, 207, 252, 77, 192, 84, 237, 202, 3, 46, 88, 64, 101, 200, 131, 19, 212,
+                105, 128, 49, 54, 99, 159, 166, 103, 196, 208, 178, 26, 244, 184, 234,
+            ]),
             Nimiq.KeyPair.derive(new Nimiq.PrivateKey(new Uint8Array([
                 70, 207, 252, 77, 192, 84, 237, 202, 3, 46, 88, 64, 101, 200, 131, 19, 212,
                 105, 128, 49, 54, 99, 159, 166, 103, 196, 208, 178, 26, 244, 184, 234,
-            ]))),
-            Nimiq.KeyPair.derive(new Nimiq.PrivateKey(new Uint8Array([
-                70, 207, 252, 77, 192, 84, 237, 202, 3, 46, 88, 64, 101, 200, 131, 19, 212,
-                105, 128, 49, 54, 99, 159, 166, 103, 196, 208, 178, 26, 244, 184, 234,
-            ]))).publicKey.toAddress(),
+            ]))).publicKey.toAddress().toUserFriendlyAddress(),
             1234554321,
             171,
             'Ein Cashlink test Cashlink',
-            CashlinkState.UNCLAIMED,
         ),
         new Cashlink(
+            CashlinkCurrency.NIM,
+            new Uint8Array([
+                154, 176, 138, 78, 42, 184, 216, 152, 203, 236, 166, 111, 246, 63, 50, 14,
+                175, 84, 7, 65, 181, 2, 217, 44, 104, 255, 138, 63, 20, 196, 193, 125,
+            ]),
             Nimiq.KeyPair.derive(new Nimiq.PrivateKey(new Uint8Array([
                 154, 176, 138, 78, 42, 184, 216, 152, 203, 236, 166, 111, 246, 63, 50, 14,
                 175, 84, 7, 65, 181, 2, 217, 44, 104, 255, 138, 63, 20, 196, 193, 125,
-            ]))),
-            Nimiq.KeyPair.derive(new Nimiq.PrivateKey(new Uint8Array([
-                154, 176, 138, 78, 42, 184, 216, 152, 203, 236, 166, 111, 246, 63, 50, 14,
-                175, 84, 7, 65, 181, 2, 217, 44, 104, 255, 138, 63, 20, 196, 193, 125,
-            ]))).publicKey.toAddress(),
+            ]))).publicKey.toAddress().toUserFriendlyAddress(),
             5000000,
             undefined,
             'Ein Cashlink test Cashlink',
-            CashlinkState.CLAIMED,
             Cashlink.DEFAULT_THEME,
             Date.now(),
-            'Contact name',
         ),
-    ].map((cashlink) => {
-        // Anonymous functions cannot be compared by Jest, so we need to work around that
-        // (https://stackoverflow.com/a/48204295/4204380)
-        // @ts-ignore ignore private property access
-        cashlink._getNetwork = expect.any(Function);
-        // @ts-ignore ignore private property access
-        cashlink._networkClientResolver = expect.any(Function);
-        // @ts-ignore ignore private property access
-        cashlink._getUserAddresses = expect.any(Function);
-        return cashlink;
-    }),
+    ],
 };
 
 const beforeEachCallback = async () => {
@@ -80,13 +69,13 @@ const afterEachCallback = async () => {
     });
 };
 
-function expectEqualIgnoringFeeAndContactName(a: any, b: any) {
-    const filterIgnoredKeys = (key: string) => !/^(_?fee|contactName|_detectStateTimeout)$/.test(key);
+function expectEqualIgnoringOptionalProperties(a: any, b: any) {
+    const filterIgnoredKeys = (key: string) => !/^(_?fee|state|_detectStateTimeout)$/.test(key);
     const keysA = Object.keys(a).filter(filterIgnoredKeys);
     const keysB = Object.keys(b).filter(filterIgnoredKeys);
     expect(keysA).toEqual(keysB);
     for (const key of keysA) {
-        if (key === 'keyPair' || key === 'address') {
+        if (key === 'keyPair') {
             // These are pointers into Rust WASM memory and as such cannot be compared as objects,
             // so we compare their hex representation instead.
             expect(a[key].toHex()).toEqual(b[key].toHex());
@@ -108,7 +97,7 @@ describe('CashlinkStore', () => {
 
     it('can get a cashlink', async () => {
         const cl = await CashlinkStore.Instance.get(DUMMY_DATA.addresses[0]);
-        expectEqualIgnoringFeeAndContactName(cl, DUMMY_DATA.cashlinks[0]);
+        expectEqualIgnoringOptionalProperties(cl, DUMMY_DATA.cashlinks[0]);
     });
 
     it('can list cashlinks', async () => {
@@ -146,9 +135,7 @@ describe('CashlinkStore', () => {
 
         // Check that the cashlink has been stored correctly
         let cashlink = await CashlinkStore.Instance.get(DUMMY_DATA.addresses[0]);
-        expectEqualIgnoringFeeAndContactName(cashlink, DUMMY_DATA.cashlinks[0]);
-
-        cashlink!.state = CashlinkState.CLAIMED;
+        expectEqualIgnoringOptionalProperties(cashlink, DUMMY_DATA.cashlinks[0]);
 
         // Update the cashlink
         await CashlinkStore.Instance.put(cashlink!);
@@ -156,6 +143,5 @@ describe('CashlinkStore', () => {
         // Check that the cashlink has been updated correctly
         cashlink = await CashlinkStore.Instance.get(DUMMY_DATA.addresses[0]);
         expect(cashlink).toBeDefined();
-        expect(cashlink!.state).toBe(CashlinkState.CLAIMED);
     });
 });

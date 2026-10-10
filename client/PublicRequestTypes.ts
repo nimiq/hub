@@ -670,15 +670,6 @@ export interface RenameRequest extends SimpleRequest {
     address?: string; // Userfriendly address
 }
 
-export enum CashlinkState {
-    UNKNOWN = -1,
-    UNCHARGED = 0,
-    CHARGING = 1,
-    UNCLAIMED = 2,
-    CLAIMING = 3,
-    CLAIMED = 4,
-}
-
 export enum CashlinkTheme {
     UNSPECIFIED, // Equivalent to theme being omitted
     STANDARD,
@@ -690,11 +681,19 @@ export enum CashlinkTheme {
     // Temporary themes that might be retracted in the future should be listed counting down from 255
 }
 
+export enum CashlinkCurrency {
+    NIM = 0,
+    // not supported yet
+    // BTC = 1,
+    // USDC = 2, // on Polygon network
+    // USDT = 3, // on Polygon network
+}
+
 export interface Cashlink {
-    address: string; // Userfriendly address
+    currency: CashlinkCurrency;
+    address: string; // normalized address
     message: string;
     value: number;
-    status: CashlinkState;
     theme: CashlinkTheme;
     link?: string;
 }
