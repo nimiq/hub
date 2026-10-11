@@ -63,10 +63,25 @@ class CashlinkInteractive<C extends CashlinkCurrency = CashlinkCurrency> extends
 
     private static _setLastClaimedMultiCashlink(address: string) {
         // restrict to last 5 entries to save storage space
-        window.localStorage[this.LAST_CLAIMED_MULTI_CASHLINKS_STORAGE_KEY] = JSON.stringify([
+        this._storeLastClaimedMultiCashlinks([
             address,
             ...this._getLastClaimedMultiCashlinks(),
         ].slice(0, 5));
+    }
+
+    private static _removeLastClaimedMultiCashlink(address: string) {
+        const remainingLastClaimedMultiCashlinks = this._getLastClaimedMultiCashlinks()
+            .filter((claimedAddress) => claimedAddress !== address);
+        this._storeLastClaimedMultiCashlinks(remainingLastClaimedMultiCashlinks);
+    }
+
+    private static _storeLastClaimedMultiCashlinks(addresses: string[]) {
+        try {
+            window.localStorage[this.LAST_CLAIMED_MULTI_CASHLINKS_STORAGE_KEY] = JSON.stringify(addresses);
+        } catch (e) {
+            // The record can't be stored, for example because localStorage is blocked or full. Claiming works without
+            // it, but a repeat claim can then only be detected via the addresses the user is logged in with.
+        }
     }
 
     /**
@@ -77,6 +92,7 @@ class CashlinkInteractive<C extends CashlinkCurrency = CashlinkCurrency> extends
 
     private _currencyHandler: CashlinkCurrencyHandlerForCurrency<C>;
     private _getUserAddresses: () => Set<string>;
+    private _isClaiming: boolean = false; // whether a claim by us is currently in progress, see claim
     private _confirmedTransactions: CashlinkTransaction[] = []; // transactions already included on chain
     private _detectStateTimeout: number = -1;
     private readonly _eventListeners: {[type: string]: Array<(data: any) => void>} = {};
@@ -178,19 +194,19 @@ class CashlinkInteractive<C extends CashlinkCurrency = CashlinkCurrency> extends
         const userAddresses = this._getUserAddresses();
         let balance = await this.awaitBalance();
         let pendingTransactions: CashlinkTransaction[];
-        let pendingFundingTx: CashlinkTransaction | undefined;
-        let ourPendingClaimingTx: CashlinkTransaction | undefined;
-        [pendingTransactions, pendingFundingTx, ourPendingClaimingTx] = await this._getPendingTransactions();
-        let ourChainClaimingTx = this._confirmedTransactions.find( // for now based on previously known transactions
+        let hasPendingFundingTx: boolean;
+        let hasOurPendingClaimingTx: boolean;
+        [pendingTransactions, hasPendingFundingTx, hasOurPendingClaimingTx] = await this._getPendingTransactions();
+        let hasOurChainClaimingTx = this._confirmedTransactions.some( // for now based on previously known transactions
             (tx) => tx.sender === this.address && userAddresses.has(tx.recipient));
 
-        if (ourPendingClaimingTx) {
+        if (hasOurPendingClaimingTx) {
             // Can exit early as if the user is currently claiming the cashlink, it can't be in CLAIMED state yet, as
             // the transaction is still pending and we don't allow claiming if the cashlink was last in CLAIMED state
             this._updateState(CashlinkState.CLAIMING);
             return;
         }
-        if (this.state === CashlinkState.CLAIMED && (ourChainClaimingTx || (!balance && !pendingFundingTx))) {
+        if (this.state === CashlinkState.CLAIMED && (hasOurChainClaimingTx || (!balance && !hasPendingFundingTx))) {
             // Can exit early as either the user already claimed the cashlink and is not allowed to claim again or it is
             // empty and not refilled and already reached CLAIMED state, i.e. is not just empty because it is UNCHARGED.
             return;
@@ -198,44 +214,44 @@ class CashlinkInteractive<C extends CashlinkCurrency = CashlinkCurrency> extends
 
         this._confirmedTransactions = await this._currencyHandler.getConfirmedTransactions();
 
-        const chainFundingTx = this._confirmedTransactions.find(
+        const hasChainFundingTx = this._confirmedTransactions.some(
             (tx) => tx.recipient === this.address);
-        ourChainClaimingTx = ourChainClaimingTx || this._confirmedTransactions.find( // update with new transactions
+        hasOurChainClaimingTx = hasOurChainClaimingTx || this._confirmedTransactions.some( // update with new txs
             (tx) => tx.sender === this.address && userAddresses.has(tx.recipient));
-        const anyChainClaimingTx = ourChainClaimingTx || this._confirmedTransactions.find(
+        const hasAnyChainClaimingTx = hasOurChainClaimingTx || this._confirmedTransactions.some(
             (tx) => tx.sender === this.address);
 
         // Update balance and pending transactions after fetching transaction history as they might have changed in the
         // meantime. This update is cheap and quick.
-        [balance, [pendingTransactions, pendingFundingTx, ourPendingClaimingTx]] = await Promise.all([
+        [balance, [pendingTransactions, hasPendingFundingTx, hasOurPendingClaimingTx]] = await Promise.all([
             this.awaitBalance(),
             this._getPendingTransactions(),
         ]);
-        const anyPendingClaimingTx = ourPendingClaimingTx || pendingTransactions.find(
+        const hasAnyPendingClaimingTx = hasOurPendingClaimingTx || pendingTransactions.some(
             (tx) => tx.sender === this.address);
 
         // Detect new state by a sequence of checks from UNCHARGED, CHARGING, UNCLAIMED, CLAIMING to CLAIMED states.
         // Note that cashlinks that already reached a later state in a previous detectState, can also go back to earlier
         // states again, e.g. by pending funding/claiming txs expiring, cashlink recharging or blockchain rebranching.
         let newState: CashlinkState = CashlinkState.UNCHARGED;
-        if (pendingFundingTx) {
+        if (hasPendingFundingTx) {
             newState = CashlinkState.CHARGING;
         }
         if (balance) {
             newState = CashlinkState.UNCLAIMED;
         }
-        if (ourPendingClaimingTx) {
-            // Re-check with updated ourPendingClaimingTx.
+        if (hasOurPendingClaimingTx) {
+            // Re-check with updated hasOurPendingClaimingTx.
             newState = CashlinkState.CLAIMING;
         }
-        if (ourChainClaimingTx
-            || (chainFundingTx && (anyPendingClaimingTx || anyChainClaimingTx)
-                && !balance && !pendingFundingTx && !ourPendingClaimingTx)
+        if (hasOurChainClaimingTx
+            || (hasChainFundingTx && (hasAnyPendingClaimingTx || hasAnyChainClaimingTx)
+                && !balance && !hasPendingFundingTx && !hasOurPendingClaimingTx)
         ) {
             // User already claimed the cashlink and is not allowed to claim again or it had been funded but no funds
             // are left and it's not being recharged or still being claimed. Also checking whether we know at least one
-            // claiming tx instead of relying on empty balance to avoid CLAIMED state after funding if chainFundingTx is
-            // already known but balance update was not triggered yet.
+            // claiming tx instead of relying on empty balance to avoid CLAIMED state after funding if the chain funding
+            // tx is already known but balance update was not triggered yet.
             newState = CashlinkState.CLAIMED;
         }
 
@@ -255,20 +271,34 @@ class CashlinkInteractive<C extends CashlinkCurrency = CashlinkCurrency> extends
             throw new Error('Cannot claim, Cashlink has already been claimed');
         }
 
-        const [balance, transaction] = await Promise.all([
-            this.awaitBalance(),
-            this._currencyHandler.claimCashlink(recipient),
-        ]);
+        // Change the state right away, and not only once the claiming transaction got relayed, such that the Cashlink
+        // can't be claimed a second time while the transaction is on its way. While the claim is in progress, it is
+        // treated as a pending claiming transaction in detectState, see _getPendingTransactions.
+        this._isClaiming = true;
+        this._updateState(CashlinkState.CLAIMING); // set directly, as detectState() includes a delay
+        let isMultiClaimable = false;
+        try {
+            const balance = await this.awaitBalance();
+            // Multi-claimable Cashlinks hold more than what a single claim pays out.
+            isMultiClaimable = balance > this.claimableAmount + this.fee;
+            if (isMultiClaimable) {
+                // Remember multi-claimable Cashlink as claimed. This is done before sending the transaction, such that
+                // the Cashlink is also known as claimed if the page gets reloaded or closed while it is on its way.
+                (this.constructor as typeof CashlinkInteractive)._setLastClaimedMultiCashlink(this.address);
+            }
 
-        if (balance > transaction.value + transaction.fee) {
-            // Remember multi-claimable Cashlink as claimed.
-            (this.constructor as typeof CashlinkInteractive)._setLastClaimedMultiCashlink(this.address);
+            return await this._currencyHandler.claimCashlink(recipient);
+        } catch (e) {
+            // The claiming transaction was not sent. Allow claiming again.
+            if (isMultiClaimable) {
+                (this.constructor as typeof CashlinkInteractive)._removeLastClaimedMultiCashlink(this.address);
+            }
+            throw e;
+        } finally {
+            this._isClaiming = false;
+            // Detect the state anew, now that the claim is not in progress anymore.
+            this.detectState().catch(() => { /* the state gets detected again on the next update */ });
         }
-        if (this.state < CashlinkState.CLAIMING) {
-            this._updateState(CashlinkState.CLAIMING);
-        }
-
-        return transaction;
     }
 
     public on(type: CashlinkInteractive.Events, callback: (data: any) => void): void {
@@ -298,18 +328,20 @@ class CashlinkInteractive<C extends CashlinkCurrency = CashlinkCurrency> extends
 
     private async _getPendingTransactions(): Promise<[
         /* pending transactions */ CashlinkTransaction[],
-        /* a pending funding tx */ CashlinkTransaction | undefined,
-        /* a pending claiming tx to us */ CashlinkTransaction | undefined,
+        /* whether there is a pending funding tx */ boolean,
+        /* whether there is a pending claiming tx to us */ boolean,
     ]> {
         const userAddresses = this._getUserAddresses();
         const pendingTransactions = await this._currencyHandler.getPendingTransactions();
 
-        const pendingFundingTx = pendingTransactions.find(
+        const hasPendingFundingTx = pendingTransactions.some(
             (tx) => tx.recipient === this.address);
-        const ourPendingClaimingTx = pendingTransactions.find(
+        // A claim by us which is currently in progress counts as a pending claiming transaction to us, too, as its
+        // transaction is on its way, even if it is not among the pending transactions (yet).
+        const hasOurPendingClaimingTx = this._isClaiming || pendingTransactions.some(
             (tx) => tx.sender === this.address && userAddresses.has(tx.recipient!));
 
-        return [pendingTransactions, pendingFundingTx, ourPendingClaimingTx];
+        return [pendingTransactions, hasPendingFundingTx, hasOurPendingClaimingTx];
     }
 
     private async _onTransactionChanged(transaction: CashlinkTransaction): Promise<void> {
