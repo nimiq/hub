@@ -8,7 +8,14 @@
         >
         <SmallPage v-if="cashlink || statusState">
             <transition name="transition-fade">
-                <StatusScreen v-if="statusState"
+                <StatusScreen v-if="isUpdateErrorShown"
+                    state="error"
+                    :title="$t('Something went wrong')"
+                    :message="$t('Syncing with the network failed: {error}', { error: cashlink.updateError.message })"
+                    :mainAction="$t('Retry')"
+                    @main-action="reload"
+                />
+                <StatusScreen v-else-if="statusState"
                     :state="statusState"
                     :title="statusTitle"
                     :status="statusStatus"
@@ -297,6 +304,18 @@ class CashlinkReceive extends Vue {
 
     private redirectToWallet() {
         window.location.href = Config.redirectTarget;
+    }
+
+    private reload() {
+        window.location.reload();
+    }
+
+    private get isUpdateErrorShown(): boolean {
+        // If the Cashlink could not be updated, its state might be outdated. Show the error instead of the Cashlink
+        // then, and also instead of the warning for a claimed Cashlink, which is based on the state. But prioritize
+        // displaying the progress or result of a claim by the user.
+        return !!this.cashlink && this.hasWallets && !!this.cashlink.updateError
+            && (!this.statusState || this.statusState === StatusScreen.State.WARNING);
     }
 
     private get canCashlinkBeClaimed(): boolean {

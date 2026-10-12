@@ -45,6 +45,10 @@ class CashlinkInteractive<C extends CashlinkCurrency = CashlinkCurrency> extends
         return super.isImmutable || this.state !== CashlinkState.UNCHARGED;
     }
 
+    get updateError(): Error | null {
+        return this._transactionListenerError || this._balanceError || this._stateError;
+    }
+
     public static clearLastClaimedMultiCashlinks() {
         window.localStorage.removeItem(this.LAST_CLAIMED_MULTI_CASHLINKS_STORAGE_KEY);
     }
@@ -95,6 +99,10 @@ class CashlinkInteractive<C extends CashlinkCurrency = CashlinkCurrency> extends
     private _isClaiming: boolean = false; // whether a claim by us is currently in progress, see claim
     private _confirmedTransactions: CashlinkTransaction[] = []; // transactions already included on chain
     private _detectStateTimeout: number = -1;
+    // Errors of the latest attempts to register the transaction listener, update the balance and detect the state.
+    private _transactionListenerError: Error | null = null;
+    private _balanceError: Error | null = null;
+    private _stateError: Error | null = null;
     private readonly _eventListeners: {[type: string]: Array<(data: any) => void>} = {};
 
     constructor(
@@ -139,14 +147,12 @@ class CashlinkInteractive<C extends CashlinkCurrency = CashlinkCurrency> extends
         this._currencyHandler = createCurrencyHandlerForCashlink(this);
         this._getUserAddresses = () => new Set(); // dummy; actual method will be set via setUserWallets
 
-        // Start network updates in background.
-        this._currencyHandler.awaitConsensus().then(() => Promise.all([
+        // Start network updates and run the initial state detection (which awaits consensus and balance) in background.
+        Promise.all([
+            this._registerTransactionListener(),
             this._updateBalance(),
-            this._currencyHandler.registerTransactionListener(this._onTransactionChanged.bind(this)),
-        ]));
-
-        // Run initial state detection (awaits consensus and balance in detectState())
-        this.detectState();
+            this.detectState(),
+        ]).catch(() => { /* Errors are tracked by the methods themselves. */ });
     }
 
     public setUserWallets(
@@ -178,6 +184,100 @@ class CashlinkInteractive<C extends CashlinkCurrency = CashlinkCurrency> extends
     }
 
     public async detectState() {
+        this._stateError = null;
+        try {
+            await this._detectState();
+        } catch (error) {
+            this._stateError = error;
+            throw error;
+        }
+    }
+
+    /**
+     * Update balance and state. This also happens on new transactions of the Cashlink. If an update fails, the error is
+     * available as updateError, until the update gets tried again, for example by calling this method.
+     */
+    public async update(): Promise<void> {
+        const shouldRegisterTransactionListener = !!this._transactionListenerError;
+        // Reset the errors of the previous update right away, and not only once the respective steps start.
+        this._transactionListenerError = this._balanceError = this._stateError = null;
+
+        if (shouldRegisterTransactionListener) {
+            await this._registerTransactionListener();
+        }
+        await this._updateBalance();
+        await this.detectState(); // run with updated balances
+    }
+
+    public async getFundingDetails()
+        : Promise<ReturnType<CashlinkCurrencyHandlerForCurrency<C>['getCashlinkFundingDetails']>> {
+        return this._currencyHandler.getCashlinkFundingDetails() as any;
+    }
+
+    public async claim(recipient: string): Promise<CashlinkTransaction> {
+        if (this.state === CashlinkState.UNKNOWN) {
+            await this.detectState();
+        }
+        if (this.state >= CashlinkState.CLAIMING) {
+            throw new Error('Cannot claim, Cashlink has already been claimed');
+        }
+
+        // Change the state right away, and not only once the claiming transaction got relayed, such that the Cashlink
+        // can't be claimed a second time while the transaction is on its way. While the claim is in progress, it is
+        // treated as a pending claiming transaction in detectState, see _getPendingTransactions.
+        this._isClaiming = true;
+        this._updateState(CashlinkState.CLAIMING); // set directly, as detectState() includes a delay
+        let isMultiClaimable = false;
+        try {
+            const balance = await this.awaitBalance();
+            // Multi-claimable Cashlinks hold more than what a single claim pays out.
+            isMultiClaimable = balance > this.claimableAmount + this.fee;
+            if (isMultiClaimable) {
+                // Remember multi-claimable Cashlink as claimed. This is done before sending the transaction, such that
+                // the Cashlink is also known as claimed if the page gets reloaded or closed while it is on its way.
+                (this.constructor as typeof CashlinkInteractive)._setLastClaimedMultiCashlink(this.address);
+            }
+
+            return await this._currencyHandler.claimCashlink(recipient);
+        } catch (e) {
+            // The claiming transaction was not sent. Allow claiming again.
+            if (isMultiClaimable) {
+                (this.constructor as typeof CashlinkInteractive)._removeLastClaimedMultiCashlink(this.address);
+            }
+            throw e;
+        } finally {
+            this._isClaiming = false;
+            // Detect the state anew, now that the claim is not in progress anymore.
+            this.detectState().catch(() => { /* the state gets detected again on the next update */ });
+        }
+    }
+
+    public on(type: CashlinkInteractive.Events, callback: (data: any) => void): void {
+        if (!(type in this._eventListeners)) {
+            this._eventListeners[type] = [];
+        }
+        this._eventListeners[type].push(callback);
+    }
+
+    public off(type: CashlinkInteractive.Events, callback: (data: any) => void): void {
+        if (!(type in this._eventListeners)) {
+            return;
+        }
+        const index = this._eventListeners[type].indexOf(callback);
+        if (index === -1) {
+            return;
+        }
+        this._eventListeners[type].splice(index, 1);
+    }
+
+    public fire(type: CashlinkInteractive.Events, arg: any): void {
+        if (!(type in this._eventListeners)) {
+            return;
+        }
+        this._eventListeners[type].forEach((callback) => callback(arg));
+    }
+
+    private async _detectState() {
         if ((this.constructor as typeof CashlinkInteractive)._getLastClaimedMultiCashlinks().includes(this.address)) {
             this._updateState(CashlinkState.CLAIMED);
             return;
@@ -258,74 +358,6 @@ class CashlinkInteractive<C extends CashlinkCurrency = CashlinkCurrency> extends
         this._updateState(newState);
     }
 
-    public async getFundingDetails()
-        : Promise<ReturnType<CashlinkCurrencyHandlerForCurrency<C>['getCashlinkFundingDetails']>> {
-        return this._currencyHandler.getCashlinkFundingDetails() as any;
-    }
-
-    public async claim(recipient: string): Promise<CashlinkTransaction> {
-        if (this.state === CashlinkState.UNKNOWN) {
-            await this.detectState();
-        }
-        if (this.state >= CashlinkState.CLAIMING) {
-            throw new Error('Cannot claim, Cashlink has already been claimed');
-        }
-
-        // Change the state right away, and not only once the claiming transaction got relayed, such that the Cashlink
-        // can't be claimed a second time while the transaction is on its way. While the claim is in progress, it is
-        // treated as a pending claiming transaction in detectState, see _getPendingTransactions.
-        this._isClaiming = true;
-        this._updateState(CashlinkState.CLAIMING); // set directly, as detectState() includes a delay
-        let isMultiClaimable = false;
-        try {
-            const balance = await this.awaitBalance();
-            // Multi-claimable Cashlinks hold more than what a single claim pays out.
-            isMultiClaimable = balance > this.claimableAmount + this.fee;
-            if (isMultiClaimable) {
-                // Remember multi-claimable Cashlink as claimed. This is done before sending the transaction, such that
-                // the Cashlink is also known as claimed if the page gets reloaded or closed while it is on its way.
-                (this.constructor as typeof CashlinkInteractive)._setLastClaimedMultiCashlink(this.address);
-            }
-
-            return await this._currencyHandler.claimCashlink(recipient);
-        } catch (e) {
-            // The claiming transaction was not sent. Allow claiming again.
-            if (isMultiClaimable) {
-                (this.constructor as typeof CashlinkInteractive)._removeLastClaimedMultiCashlink(this.address);
-            }
-            throw e;
-        } finally {
-            this._isClaiming = false;
-            // Detect the state anew, now that the claim is not in progress anymore.
-            this.detectState().catch(() => { /* the state gets detected again on the next update */ });
-        }
-    }
-
-    public on(type: CashlinkInteractive.Events, callback: (data: any) => void): void {
-        if (!(type in this._eventListeners)) {
-            this._eventListeners[type] = [];
-        }
-        this._eventListeners[type].push(callback);
-    }
-
-    public off(type: CashlinkInteractive.Events, callback: (data: any) => void): void {
-        if (!(type in this._eventListeners)) {
-            return;
-        }
-        const index = this._eventListeners[type].indexOf(callback);
-        if (index === -1) {
-            return;
-        }
-        this._eventListeners[type].splice(index, 1);
-    }
-
-    public fire(type: CashlinkInteractive.Events, arg: any): void {
-        if (!(type in this._eventListeners)) {
-            return;
-        }
-        this._eventListeners[type].forEach((callback) => callback(arg));
-    }
-
     private async _getPendingTransactions(): Promise<[
         /* pending transactions */ CashlinkTransaction[],
         /* whether there is a pending funding tx */ boolean,
@@ -344,17 +376,33 @@ class CashlinkInteractive<C extends CashlinkCurrency = CashlinkCurrency> extends
         return [pendingTransactions, hasPendingFundingTx, hasOurPendingClaimingTx];
     }
 
-    private async _onTransactionChanged(transaction: CashlinkTransaction): Promise<void> {
-        if (transaction.state === 'confirmed'
-            && !this._confirmedTransactions.some((tx) => tx.transactionHash === transaction.transactionHash)) {
-            this._confirmedTransactions.push(transaction);
+    private async _registerTransactionListener() {
+        this._transactionListenerError = null;
+        try {
+            await this._currencyHandler.awaitConsensus();
+            await this._currencyHandler.registerTransactionListener((transaction: CashlinkTransaction) => {
+                if (transaction.state === 'confirmed'
+                    && !this._confirmedTransactions.some((tx) => tx.transactionHash === transaction.transactionHash)) {
+                    this._confirmedTransactions.push(transaction);
+                }
+                this.update().catch(() => { /* see updateError */ });
+            });
+        } catch (error) {
+            this._transactionListenerError = error;
+            throw error;
         }
-        await this._updateBalance();
-        await this.detectState();
     }
 
     private async _updateBalance() {
-        const balance = await this._currencyHandler.getBalance();
+        this._balanceError = null;
+        let balance: number;
+        try {
+            await this._currencyHandler.awaitConsensus();
+            balance = await this._currencyHandler.getBalance();
+        } catch (error) {
+            this._balanceError = error;
+            throw error;
+        }
         if (balance === undefined || balance === this.balance) return;
 
         this.balance = balance;
