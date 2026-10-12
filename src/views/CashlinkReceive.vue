@@ -14,7 +14,7 @@
                     :status="statusStatus"
                     :message="statusMessage"
                     :mainAction="$t('Got it')"
-                    @main-action="redirectToWallet"
+                    @main-action="onStatusScreenMainAction"
                 />
             </transition>
             <div v-if="cashlink && hasWallets" class="card-content has-account" :class="{ 'account-selector-shown': !!isAccountSelectorOpened }">
@@ -141,7 +141,6 @@ import { BasicRequest, CashlinkTheme } from '../../client/PublicRequestTypes';
 import { AccountInfo } from '../lib/AccountInfo';
 import { Getter, Mutation, State } from 'vuex-class';
 import Config from 'config';
-import { NetworkClient } from '../lib/NetworkClient';
 import { WalletInfo } from '../lib/WalletInfo';
 import { CashlinkStore } from '../lib/CashlinkStore';
 import HubApi from '../../client/HubApi';
@@ -236,15 +235,22 @@ class CashlinkReceive extends Vue {
         this.statusTitle = this.$t('Claiming Cashlink') as string;
         this.statusStatus = this.$t('Connecting to Nimiq...') as string;
 
-        this.cashlink!.claim(this.activeAccount!.userFriendlyAddress);
-
-        // Set up transaction inclusion listener, so we know when the tx has been sent
-        const innerNetworkClient = await NetworkClient.Instance.innerClient;
-        await new Promise<void>((resolve) => {
-            innerNetworkClient.addTransactionListener((tx) => {
-                if (tx.sender === this.cashlink!.address) resolve();
-            }, [this.cashlink!.address]);
-        });
+        try {
+            const claimingTransaction = await this.cashlink!.claim(this.activeAccount!.userFriendlyAddress);
+            if (claimingTransaction.state !== 'confirmed') {
+                // The claiming transaction was sent, but did not get confirmed yet, and might not get confirmed at all,
+                // for example if the Cashlink got claimed by somebody else in the meantime. Don't report the Cashlink
+                // as claimed then, but return to the Cashlink, which shows its current state.
+                this.statusState = false;
+                return;
+            }
+        } catch (error) {
+            // The claiming transaction could not be sent.
+            this.statusState = StatusScreen.State.ERROR;
+            this.statusTitle = this.$t('Something went wrong') as string;
+            this.statusMessage = error.message;
+            return;
+        }
 
         try {
             await CashlinkStore.Instance.put(this.cashlink!);
@@ -276,6 +282,16 @@ class CashlinkReceive extends Vue {
             case 'signup': hubApi.signup(request); break;
             case 'login': hubApi.login(request); break;
             case 'onboard': hubApi.onboard(request); break;
+        }
+    }
+
+    private onStatusScreenMainAction() {
+        if (this.statusState === StatusScreen.State.ERROR) {
+            // Claiming failed. Return to the Cashlink, which shows its current state, and can be claimed again if
+            // that is still possible.
+            this.statusState = false;
+        } else {
+            this.redirectToWallet();
         }
     }
 

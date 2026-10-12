@@ -143,24 +143,19 @@ export class CashlinkCurrencyHandlerNimiq implements ICashlinkCurrencyHandler<Ca
         const proof = Nimiq.SignatureProof.singleSig(publicKey, signature);
 
         // Send transaction
-        const basicTransactionInfo = {
+        const transactionDetails = await networkClient.relayTransaction({
             sender: transaction.sender.toUserFriendlyAddress(),
             recipient: transaction.recipient.toUserFriendlyAddress(),
             value: Number(transaction.value),
             fee: Number(transaction.fee),
-        };
-        await networkClient.relayTransaction({
-            ...basicTransactionInfo,
-            senderPubKey: proof.publicKey.serialize(),
             validityStartHeight: transaction.validityStartHeight,
-            signature: proof.signature.serialize(),
             extraData: transaction.data,
+            senderPubKey: proof.publicKey.serialize(),
+            signature: proof.signature.serialize(),
         });
-        return {
-            ...basicTransactionInfo,
-            state: 'pending',
-            transactionHash: transaction.hash(),
-        };
+        // Return the transaction in the state reported by the network client, which waits some time for the transaction
+        // to get included in the chain, and reports it as not included yet otherwise.
+        return this._nimiqTransactionToSimplifiedCashlinkTransaction(transactionDetails);
     }
 
     private async _getNetworkClient(): Promise<NetworkClient> {
