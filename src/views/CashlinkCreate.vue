@@ -90,7 +90,7 @@
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import { Getter, Mutation, State } from 'vuex-class';
 import Cashlink from '../lib/Cashlink';
-import CashlinkInteractive from '../lib/CashlinkInteractive';
+import { createCurrencyHandlerForCashlink } from '../lib/CashlinkCurrencyHandler';
 import staticStore, { Static } from '../lib/StaticStore';
 import StatusScreen from '../components/StatusScreen.vue';
 import GlobalClose from '../components/GlobalClose.vue';
@@ -404,9 +404,8 @@ class CashlinkCreate extends Vue {
             return;
         }
 
-        const cashlink = new CashlinkInteractive(Cashlink.create());
+        const cashlink = Cashlink.create();
         staticStore.cashlink = cashlink;
-        cashlink.setUserWallets(this.wallets);
         cashlink.value = this.liveAmountAndFee.amount;
         cashlink.fee = this.fee;
         cashlink.message = this.message;
@@ -422,7 +421,7 @@ class CashlinkCreate extends Vue {
                 return;
             case WalletType.LEGACY:
             case WalletType.BIP39:
-                const fundingDetails = await cashlink.getFundingDetails();
+                const fundingDetails = createCurrencyHandlerForCashlink(cashlink).getCashlinkFundingDetails();
                 const validityStartHeight = await NetworkClient.Instance.getHeight() + 1;
 
                 const request: KeyguardClient.SignTransactionRequest = Object.assign({}, fundingDetails, {

@@ -238,7 +238,7 @@ class CashlinkInteractive<C extends CashlinkCurrency = CashlinkCurrency> extends
                 (this.constructor as typeof CashlinkInteractive)._setLastClaimedMultiCashlink(this.address);
             }
 
-            return await this._currencyHandler.claimCashlink(recipient);
+            return await this._currencyHandler.claimCashlink(recipient, balance, this.claimableAmount);
         } catch (e) {
             // The claiming transaction was not sent. Allow claiming again.
             if (isMultiClaimable) {

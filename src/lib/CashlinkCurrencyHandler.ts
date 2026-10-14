@@ -1,12 +1,12 @@
 import { CashlinkCurrency } from '../../client/PublicRequestTypes';
-import CashlinkInteractive from './CashlinkInteractive';
+import type Cashlink from './Cashlink';
 import { CashlinkCurrencyHandlerNimiq } from './CashlinkCurrencyHandlerNimiq';
 
 export type CashlinkCurrencyHandlerForCurrency<C extends CashlinkCurrency> = {
     [CashlinkCurrency.NIM]: CashlinkCurrencyHandlerNimiq,
 }[C];
 
-export function createCurrencyHandlerForCashlink<C extends CashlinkCurrency>(cashlink: CashlinkInteractive<C>)
+export function createCurrencyHandlerForCashlink<C extends CashlinkCurrency>(cashlink: Cashlink<C>)
     : CashlinkCurrencyHandlerForCurrency<C> {
     const currency: CashlinkCurrency = cashlink.currency;
     switch (currency) {
@@ -32,16 +32,16 @@ export interface CashlinkTransaction {
 
 export interface ICashlinkCurrencyHandler<C extends CashlinkCurrency> {
     readonly currency: C;
-    readonly cashlink: CashlinkInteractive<C>;
+    readonly cashlink: Cashlink<C>;
 
     awaitConsensus(): Promise<void>;
     getBlockchainHeight(): Promise<number>;
     getBalance(): Promise<number>;
-    getFees(): Promise<number>;
+    getFeeSuggestion(): Promise<number>;
     getConfirmedTransactions(): Promise<CashlinkTransaction[]>;
     getPendingTransactions(): Promise<CashlinkTransaction[]>;
     registerTransactionListener(onTransactionAddedOrUpdated: (transaction: CashlinkTransaction) => void)
         : Promise</* unregister */ () => void>;
-    getCashlinkFundingDetails(): Promise<unknown>; // return type is specific to the currency
-    claimCashlink(recipient: string): Promise<CashlinkTransaction>;
+    getCashlinkFundingDetails(): unknown; // return type is specific to the currency
+    claimCashlink(recipient: string, balance: number, claimAmount: number): Promise<CashlinkTransaction>;
 }

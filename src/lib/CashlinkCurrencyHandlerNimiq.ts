@@ -1,9 +1,9 @@
 import { CashlinkCurrency } from '../../client/PublicRequestTypes';
 import { ICashlinkCurrencyHandler, CashlinkTransaction } from './CashlinkCurrencyHandler';
-import CashlinkInteractive from './CashlinkInteractive';
+import type Cashlink from './Cashlink';
 import type { NetworkClient } from './NetworkClient';
 
-export const CashlinkExtraDataNimiq = {
+const CashlinkExtraDataNimiq = {
     FUNDING:  new Uint8Array([0, 130, 128, 146, 135]), // 'CASH'.split('').map(c => c.charCodeAt(0) + 63)
     CLAIMING: new Uint8Array([0, 139, 136, 141, 138]), // 'LINK'.split('').map(c => c.charCodeAt(0) + 63)
 };
@@ -12,7 +12,7 @@ export class CashlinkCurrencyHandlerNimiq implements ICashlinkCurrencyHandler<Ca
     public readonly currency = CashlinkCurrency.NIM;
     private _chainTransactions: Nimiq.PlainTransactionDetails[] = []; // transactions already included on chain
 
-    public constructor(public readonly cashlink: CashlinkInteractive<CashlinkCurrency.NIM>) {}
+    public constructor(public readonly cashlink: Cashlink<CashlinkCurrency.NIM>) {}
 
     public async awaitConsensus(): Promise<void> {
         const networkClient = await this._getNetworkClient();
@@ -31,8 +31,8 @@ export class CashlinkCurrencyHandlerNimiq implements ICashlinkCurrencyHandler<Ca
         return balances.get(this.cashlink.address) || 0;
     }
 
-    public async getFees(): Promise<number> {
-        return this.cashlink.fee;
+    public async getFeeSuggestion(): Promise<number> {
+        return 0; // usually no fees necessary on Nimiq.
     }
 
     public async getConfirmedTransactions(): Promise<CashlinkTransaction[]> {
@@ -88,14 +88,14 @@ export class CashlinkCurrencyHandlerNimiq implements ICashlinkCurrencyHandler<Ca
         return () => innerClient.removeListener(listenerId);
     }
 
-    public async getCashlinkFundingDetails(): Promise<{
+    public getCashlinkFundingDetails(): {
         layout: 'cashlink',
         recipient: Nimiq.Address,
         value: number,
         fee: number,
         recipientData: Uint8Array,
         cashlinkMessage: string,
-    }> {
+    } {
         return {
             layout: 'cashlink',
             recipient: Nimiq.Address.fromUserFriendlyAddress(this.cashlink.address),
@@ -108,16 +108,14 @@ export class CashlinkCurrencyHandlerNimiq implements ICashlinkCurrencyHandler<Ca
         };
     }
 
-    public async claimCashlink(recipient: string): Promise<CashlinkTransaction> {
+    public async claimCashlink(recipient: string, balance: number, claimAmount: number): Promise<CashlinkTransaction> {
         await this.awaitConsensus();
-        // Get latest balance and claimAmount, and get blockchain height and network id
-        const [balance, blockchainHeight, networkClient, networkId] = await Promise.all([
-            this.cashlink.awaitBalance(),
+        // Get blockchain height and network id
+        const [blockchainHeight, networkClient, networkId] = await Promise.all([
             this.getBlockchainHeight(),
             this._getNetworkClient(),
             this._getNetworkClient().then((client) => client.getNetworkId()),
         ]);
-        const claimAmount = this.cashlink.claimableAmount;
         let fee = this.cashlink.fee;
         if (balance < claimAmount + fee) {
             if (balance >= claimAmount) {
