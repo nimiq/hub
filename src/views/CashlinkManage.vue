@@ -94,14 +94,12 @@ import {
 import StatusScreen from '../components/StatusScreen.vue';
 import Network from '../components/Network.vue';
 import Cashlink from '../lib/Cashlink';
-import CashlinkInteractive from '../lib/CashlinkInteractive';
 import { CashlinkStore } from '../lib/CashlinkStore';
 import { State } from 'vuex-class';
 import KeyguardClient from '@nimiq/keyguard-client';
 import { Clipboard } from '@nimiq/utils';
 import { i18n } from '../i18n/i18n-setup';
 import { ERROR_CANCELED } from '../lib/Constants';
-import { WalletInfo } from '../lib/WalletInfo';
 
 @Component({components: {
     Account,
@@ -129,14 +127,13 @@ export default class CashlinkManage extends Vue {
     @Static private cashlink?: Cashlink;
     @Static private keyguardRequest?: KeyguardClient.SignTransactionRequest;
     @State private keyguardResult?: KeyguardClient.SignTransactionResult;
-    @State private wallets!: WalletInfo[];
 
     private isTxSent: boolean = false;
     private isManagementRequest: boolean = false;
     private status: string = i18n.t('Connecting to network...') as string;
     private state: StatusScreen.State = StatusScreen.State.LOADING;
     private message: string = '';
-    private retrievedCashlink: CashlinkInteractive | null = null;
+    private retrievedCashlink: Cashlink | null = null;
     private copied: boolean = false;
     private qrOverlayOpen = false;
 
@@ -171,11 +168,11 @@ export default class CashlinkManage extends Vue {
                 value: BigInt(storedCashlink.value),
             })[0];
             this.isTxSent = !transactionToSend;
-            this.retrievedCashlink = new CashlinkInteractive(storedCashlink);
+            this.retrievedCashlink = storedCashlink;
         } else {
             // Cashlink can not have been sent yet because whenever it gets sent, it was also added to the store.
             this.isTxSent = false;
-            this.retrievedCashlink = new CashlinkInteractive(this.cashlink!);
+            this.retrievedCashlink = this.cashlink!;
         }
 
         if (!this.isTxSent) {
@@ -193,7 +190,6 @@ export default class CashlinkManage extends Vue {
                 () => this.status = this.$t('Sending transaction...') as string);
             network.$on(Network.Events.TRANSACTION_PENDING,
                 () => this.status = this.$t('Awaiting receipt confirmation...') as string);
-            this.retrievedCashlink.setUserWallets(this.wallets);
 
             // Store cashlink in database first to be safe when browser crashes during sending
             await CashlinkStore.Instance.put(this.retrievedCashlink);
