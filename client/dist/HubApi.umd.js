@@ -357,11 +357,11 @@
     })(CashlinkTheme || (CashlinkTheme = {}));
     var CashlinkCurrency;
     (function (CashlinkCurrency) {
-        CashlinkCurrency[CashlinkCurrency["NIM"] = 0] = "NIM";
+        CashlinkCurrency["NIM"] = "nim";
         // not supported yet
-        // BTC = 1,
-        // USDC = 2, // on Polygon network
-        // USDT = 3, // on Polygon network
+        // BTC = 'btc',
+        // USDC = 'usdc', // on Polygon network
+        // USDT = 'usdt', // on Polygon network
     })(CashlinkCurrency || (CashlinkCurrency = {}));
 
     class HubApi {

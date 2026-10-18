@@ -18,6 +18,14 @@ export type CashlinkEntry = {
     secret: Uint8Array;
 });
 
+const CashlinkCurrencyEncoding: Record<CashlinkCurrency, number> = {
+    [CashlinkCurrency.NIM]: 0,
+    // not supported yet
+    // [CashlinkCurrency.BTC]: 1,
+    // [CashlinkCurrency.USDC]: 2, // on Polygon network
+    // [CashlinkCurrency.USDT]: 3, // on Polygon network
+};
+
 class Cashlink<C extends CashlinkCurrency = CashlinkCurrency> {
     get value() {
         return this._value || 0;
@@ -106,10 +114,13 @@ class Cashlink<C extends CashlinkCurrency = CashlinkCurrency> {
             }
             let currency: CashlinkCurrency = CashlinkCurrency.NIM;
             if (buf.readPos < buf.byteLength) {
-                currency = buf.readUint8();
-                if (!CashlinkCurrency[currency]) {
-                    throw new Error(`Unsupported Cashlink currency ${currency}`);
+                const currencyByte = buf.readUint8();
+                const encodedCurrency = Object.values(CashlinkCurrency).find(
+                    (supportedCurrency) => CashlinkCurrencyEncoding[supportedCurrency] === currencyByte);
+                if (encodedCurrency === undefined) {
+                    throw new Error(`Unsupported Cashlink currency ${currencyByte}`);
                 }
+                currency = encodedCurrency;
             }
 
             return new Cashlink(
@@ -241,7 +252,7 @@ class Cashlink<C extends CashlinkCurrency = CashlinkCurrency> {
             buf.writeUint8(this._theme);
         }
         if (hasToEncodeCurrency) {
-            buf.writeUint8(this.currency);
+            buf.writeUint8(CashlinkCurrencyEncoding[this.currency]);
         }
 
         let result = Nimiq.BufferUtils.toBase64Url(buf);

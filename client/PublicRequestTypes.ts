@@ -682,11 +682,11 @@ export enum CashlinkTheme {
 }
 
 export enum CashlinkCurrency {
-    NIM = 0,
+    NIM = 'nim',
     // not supported yet
-    // BTC = 1,
-    // USDC = 2, // on Polygon network
-    // USDT = 3, // on Polygon network
+    // BTC = 'btc',
+    // USDC = 'usdc', // on Polygon network
+    // USDT = 'usdt', // on Polygon network
 }
 
 export interface Cashlink {

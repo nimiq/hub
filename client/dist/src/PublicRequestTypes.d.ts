@@ -556,7 +556,7 @@ export declare enum CashlinkTheme {
     BIRTHDAY = 6
 }
 export declare enum CashlinkCurrency {
-    NIM = 0
+    NIM = "nim"
 }
 export interface Cashlink {
     currency: CashlinkCurrency;
