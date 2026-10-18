@@ -332,7 +332,9 @@ class CashlinkInteractive<C extends CashlinkCurrency = CashlinkCurrency> extends
 
         // Detect new state by a sequence of checks from UNCHARGED, CHARGING, UNCLAIMED, CLAIMING to CLAIMED states.
         // Note that cashlinks that already reached a later state in a previous detectState, can also go back to earlier
-        // states again, e.g. by pending funding/claiming txs expiring, cashlink recharging or blockchain rebranching.
+        // states again, e.g. by pending funding/claiming txs expiring or cashlink recharging. Blockchain rebranching is
+        // however not handled, as transactions stay known once they were reported on chain, even if a rebranch forks
+        // them away later.
         let newState: CashlinkState = CashlinkState.UNCHARGED;
         if (hasPendingFundingTx) {
             newState = CashlinkState.CHARGING;

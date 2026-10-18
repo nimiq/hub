@@ -39,20 +39,28 @@ export class CashlinkCurrencyHandlerNimiq implements ICashlinkCurrencyHandler<Ca
         const networkClient = await this._getNetworkClient();
         const transactionHistory = await networkClient.getTransactionsByAddress(
             this.cashlink.address,
-            // Pass our known chain transactions, such that they don't have to be fetched again (and won't be returned
-            // again) if they are still included in the chain, or get their latest state if they are not on the chain
-            // anymore due to rebranching (returning them for example as new/pending/expired; not entirely sure though).
+            // Pass our known chain transactions. Those which are confirmed, i.e. finalized by a macro block, are not
+            // fetched and returned again, if the network client finds them among the transaction receipts. Those which
+            // are only included so far are returned again with their latest state, as long as they are still on the
+            // chain. If they were forked away by a rebranch, the network client does not report that. It just omits
+            // them from the result.
             this._chainTransactions,
         );
         // Add new transactions and update previously known transactions, avoiding duplicates.
+        // Blockchain rebranching is not handled: known transactions which were forked away, and are thus missing in the
+        // result, are not evicted here. That is rare, as only micro blocks after the last macro block can be forked
+        // away, for example a late block that lost against a skip block, and their transactions usually get included
+        // again. If not, for example because a competing claim took the funds, a reload corrects the state.
         this._chainTransactions = [...new Map([
             ...this._chainTransactions,
             ...transactionHistory,
         ].map((transaction) => [transaction.transactionHash, transaction])).values()]
-            // Filter out transactions that are not included in the chain yet / anymore. Pending transactions will be
-            // added later via transaction listener once included in the chain. This also handles previously included
-            // transactions, which might not be included anymore due to rebranching.
-            .filter((transaction) => transaction.state === 'included' || transaction.state === 'confirmed');
+            // Filter out transactions that are not included in the chain yet. Pending transactions will be added later
+            // via transaction listener once included in the chain.
+            .filter((transaction) => transaction.state === 'included' || transaction.state === 'confirmed')
+            // Also filter out failed transactions, which only paid their fee. Not actually needed, as Cashlinks are
+            // only funded and claimed with plain transfers to basic addresses, which don't fail.
+            .filter((transaction) => transaction.executionResult !== false);
         // Convert to simplified CashlinkTransactions
         return this._chainTransactions.map((tx) => this._nimiqTransactionToSimplifiedCashlinkTransaction(tx));
     }
@@ -78,6 +86,7 @@ export class CashlinkCurrencyHandlerNimiq implements ICashlinkCurrencyHandler<Ca
                     return;
                 }
                 if ((transaction.state === 'included' || transaction.state === 'confirmed')
+                    && transaction.executionResult !== false // not failed, see getConfirmedTransactions
                     && !this._chainTransactions.some((tx) => tx.transactionHash === transaction.transactionHash)) {
                     this._chainTransactions.push(transaction);
                 }
@@ -172,7 +181,9 @@ export class CashlinkCurrencyHandlerNimiq implements ICashlinkCurrencyHandler<Ca
             recipient: transaction.recipient,
             value: transaction.value,
             fee: transaction.fee,
-            state: ({
+            // A failed transaction only paid its fee and transferred no funds, see getConfirmedTransactions. This
+            // shouldn't really happen. We'll just treat that error case as expired.
+            state: transaction.executionResult === false ? 'expired' : ({
                 new: 'pending',
                 pending: 'pending',
                 included: 'confirmed',
