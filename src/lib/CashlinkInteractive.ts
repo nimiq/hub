@@ -274,7 +274,9 @@ class CashlinkInteractive<C extends CashlinkCurrency = CashlinkCurrency> extends
         if (!(type in this._eventListeners)) {
             return;
         }
-        this._eventListeners[type].forEach((callback) => callback(arg));
+        // Iterate over a copy, as listeners can remove themselves while being called, see awaitBalance, which would
+        // skip the listener following them otherwise.
+        [...this._eventListeners[type]].forEach((callback) => callback(arg));
     }
 
     private async _detectState() {
