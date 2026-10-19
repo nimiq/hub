@@ -122,6 +122,9 @@ class Cashlink<C extends CashlinkCurrency = CashlinkCurrency> {
                 }
                 currency = encodedCurrency;
             }
+            if (buf.readPos < buf.byteLength) {
+                throw new Error('Unexpected excess data in Cashlink');
+            }
 
             return new Cashlink(
                 currency,
