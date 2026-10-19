@@ -70,18 +70,12 @@ const afterEachCallback = async () => {
 };
 
 function expectEqualIgnoringOptionalProperties(a: any, b: any) {
-    const filterIgnoredKeys = (key: string) => !/^(_?fee|state|_detectStateTimeout)$/.test(key);
+    const filterIgnoredKeys = (key: string) => key !== '_fee';
     const keysA = Object.keys(a).filter(filterIgnoredKeys);
     const keysB = Object.keys(b).filter(filterIgnoredKeys);
     expect(keysA).toEqual(keysB);
     for (const key of keysA) {
-        if (key === 'keyPair') {
-            // These are pointers into Rust WASM memory and as such cannot be compared as objects,
-            // so we compare their hex representation instead.
-            expect(a[key].toHex()).toEqual(b[key].toHex());
-        } else {
-            expect(a[key]).toEqual(b[key]);
-        }
+        expect(a[key]).toEqual(b[key]);
     }
 }
 
@@ -138,10 +132,14 @@ describe('CashlinkStore', () => {
         expectEqualIgnoringOptionalProperties(cashlink, DUMMY_DATA.cashlinks[0]);
 
         // Update the cashlink
+        const updatedTimestamp = cashlink!.timestamp + 1000;
+        cashlink!.timestamp = updatedTimestamp;
         await CashlinkStore.Instance.put(cashlink!);
 
         // Check that the cashlink has been updated correctly
         cashlink = await CashlinkStore.Instance.get(DUMMY_DATA.addresses[0]);
-        expect(cashlink).toBeDefined();
+        expect(cashlink!.timestamp).toBe(updatedTimestamp);
+        currentCashlinks = await CashlinkStore.Instance.list();
+        expect(currentCashlinks.length).toBe(1);
     });
 });
