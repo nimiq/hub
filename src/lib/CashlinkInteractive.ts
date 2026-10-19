@@ -4,6 +4,11 @@ import {
     CashlinkCurrencyHandlerForCurrency,
     CashlinkTransaction,
 } from './CashlinkCurrencyHandler';
+import {
+    getLastClaimedMultiCashlinks,
+    setLastClaimedMultiCashlink,
+    removeLastClaimedMultiCashlink,
+} from './CashlinkMultiClaimUtils';
 import { WalletInfo } from './WalletInfo';
 import { CashlinkCurrency, CashlinkTheme } from '../../client/PublicRequestTypes';
 
@@ -47,45 +52,6 @@ class CashlinkInteractive<C extends CashlinkCurrency = CashlinkCurrency> extends
 
     get updateError(): Error | null {
         return this._transactionListenerError || this._balanceError || this._stateError;
-    }
-
-    public static clearLastClaimedMultiCashlinks() {
-        window.localStorage.removeItem(this.LAST_CLAIMED_MULTI_CASHLINKS_STORAGE_KEY);
-    }
-
-    private static readonly LAST_CLAIMED_MULTI_CASHLINKS_STORAGE_KEY = 'cashlink-last-claimed-multi-cashlinks';
-
-    private static _getLastClaimedMultiCashlinks(): /* cashlink addresses */ string[] {
-        try {
-            const storedLastClaimedMultiCashlinks = localStorage[this.LAST_CLAIMED_MULTI_CASHLINKS_STORAGE_KEY];
-            if (!storedLastClaimedMultiCashlinks) return [];
-            return JSON.parse(storedLastClaimedMultiCashlinks);
-        } catch (e) {
-            return [];
-        }
-    }
-
-    private static _setLastClaimedMultiCashlink(address: string) {
-        // restrict to last 5 entries to save storage space
-        this._storeLastClaimedMultiCashlinks([
-            address,
-            ...this._getLastClaimedMultiCashlinks(),
-        ].slice(0, 5));
-    }
-
-    private static _removeLastClaimedMultiCashlink(address: string) {
-        const remainingLastClaimedMultiCashlinks = this._getLastClaimedMultiCashlinks()
-            .filter((claimedAddress) => claimedAddress !== address);
-        this._storeLastClaimedMultiCashlinks(remainingLastClaimedMultiCashlinks);
-    }
-
-    private static _storeLastClaimedMultiCashlinks(addresses: string[]) {
-        try {
-            window.localStorage[this.LAST_CLAIMED_MULTI_CASHLINKS_STORAGE_KEY] = JSON.stringify(addresses);
-        } catch (e) {
-            // The record can't be stored, for example because localStorage is blocked or full. Claiming works without
-            // it, but a repeat claim can then only be detected via the addresses the user is logged in with.
-        }
     }
 
     /**
@@ -235,14 +201,14 @@ class CashlinkInteractive<C extends CashlinkCurrency = CashlinkCurrency> extends
             if (isMultiClaimable) {
                 // Remember multi-claimable Cashlink as claimed. This is done before sending the transaction, such that
                 // the Cashlink is also known as claimed if the page gets reloaded or closed while it is on its way.
-                (this.constructor as typeof CashlinkInteractive)._setLastClaimedMultiCashlink(this.address);
+                setLastClaimedMultiCashlink(this.address);
             }
 
             return await this._currencyHandler.claimCashlink(recipient, balance, this.claimableAmount);
         } catch (e) {
             // The claiming transaction was not sent. Allow claiming again.
             if (isMultiClaimable) {
-                (this.constructor as typeof CashlinkInteractive)._removeLastClaimedMultiCashlink(this.address);
+                removeLastClaimedMultiCashlink(this.address);
             }
             throw e;
         } finally {
@@ -280,7 +246,7 @@ class CashlinkInteractive<C extends CashlinkCurrency = CashlinkCurrency> extends
     }
 
     private async _detectState() {
-        if ((this.constructor as typeof CashlinkInteractive)._getLastClaimedMultiCashlinks().includes(this.address)) {
+        if (getLastClaimedMultiCashlinks().includes(this.address)) {
             this._updateState(CashlinkState.CLAIMED);
             return;
         }
