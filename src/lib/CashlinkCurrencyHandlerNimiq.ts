@@ -2,6 +2,7 @@ import { CashlinkCurrency } from '../../client/PublicRequestTypes';
 import { ICashlinkCurrencyHandler, CashlinkTransaction } from './CashlinkCurrencyHandler';
 import type Cashlink from './Cashlink';
 import type { NetworkClient } from './NetworkClient';
+import type { WalletInfo } from './WalletInfo';
 
 const CashlinkExtraDataNimiq = {
     FUNDING:  new Uint8Array([0, 130, 128, 146, 135]), // 'CASH'.split('').map(c => c.charCodeAt(0) + 63)
@@ -95,6 +96,11 @@ export class CashlinkCurrencyHandlerNimiq implements ICashlinkCurrencyHandler<Ca
             [this.cashlink.address],
         );
         return () => innerClient.removeListener(listenerId);
+    }
+
+    public getUserAddresses(wallets: WalletInfo[]): Set<string> {
+        const accounts = wallets.flatMap((wallet) => [...wallet.accounts.values(), ...wallet.contracts]);
+        return new Set(accounts.map((account) => account.address.toUserFriendlyAddress()));
     }
 
     public getCashlinkFundingDetails(): {

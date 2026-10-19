@@ -1,6 +1,7 @@
 import { CashlinkCurrency } from '../../client/PublicRequestTypes';
 import type Cashlink from './Cashlink';
 import { CashlinkCurrencyHandlerNimiq } from './CashlinkCurrencyHandlerNimiq';
+import type { WalletInfo } from './WalletInfo';
 
 export type CashlinkCurrencyHandlerForCurrency<C extends CashlinkCurrency> = {
     [CashlinkCurrency.NIM]: CashlinkCurrencyHandlerNimiq,
@@ -42,6 +43,7 @@ export interface ICashlinkCurrencyHandler<C extends CashlinkCurrency> {
     getPendingTransactions(): Promise<CashlinkTransaction[]>;
     registerTransactionListener(onTransactionAddedOrUpdated: (transaction: CashlinkTransaction) => void)
         : Promise</* unregister */ () => void>;
+    getUserAddresses(wallets: WalletInfo[]): Set<string>;
     getCashlinkFundingDetails(): unknown; // return type is specific to the currency
     claimCashlink(recipient: string, balance: number, claimAmount: number): Promise<CashlinkTransaction>;
 }

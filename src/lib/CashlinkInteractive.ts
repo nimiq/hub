@@ -126,15 +126,7 @@ class CashlinkInteractive<C extends CashlinkCurrency = CashlinkCurrency> extends
     ) {
         this._getUserAddresses = () => {
             const wallets = typeof userWallets === 'function' ? userWallets() : userWallets; // get latest wallets
-            const currency: CashlinkCurrency = this.currency;
-            switch (currency) {
-                case CashlinkCurrency.NIM:
-                    const accounts = wallets.flatMap((wallet) => [...wallet.accounts.values(), ...wallet.contracts]);
-                    return new Set(accounts.map((account) => account.address.toUserFriendlyAddress()));
-                default:
-                    const _exhaustiveCheck: never = currency; // Check to notice unsupported currency at compile time
-                    return _exhaustiveCheck;
-            }
+            return this._currencyHandler.getUserAddresses(wallets);
         };
     }
 
