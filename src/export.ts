@@ -1,7 +1,6 @@
 import Cashlink from './lib/Cashlink';
 import { CashlinkStore } from './lib/CashlinkStore';
 import { clearOutdatedTestnetData } from './lib/TestnetUtils';
-import { CashlinkState } from '../client/PublicRequestTypes';
 
 async function main() {
     [window.Nimiq] = await Promise.all([

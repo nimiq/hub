@@ -13,11 +13,11 @@
                     :title="statusTitle"
                     :status="statusStatus"
                     :message="statusMessage"
-                    :mainAction="$t('Got it')"
-                    @main-action="redirectToWallet"
+                    :mainAction="statusMainAction"
+                    @main-action="onStatusScreenMainAction"
                 />
             </transition>
-            <div v-if="cashlink && hasWallets" class="card-content has-account" :class="{ 'account-selector-shown': !!isAccountSelectorOpened }">
+            <div v-if="interactiveCashlink" class="card-content has-account" :class="{ 'account-selector-shown': !!isAccountSelectorOpened }">
                 <PageHeader class="blur-target">{{ $t('You received a Cashlink!') }}</PageHeader>
                 <PageBody>
                     <div class="accounts" :class="{'single-address': addressCount === 1}">
@@ -40,13 +40,13 @@
 
                     <div>
                         <Amount class="value nq-light-blue blur-target"
-                            :amount="cashlink.claimableAmount"
+                            :amount="interactiveCashlink.claimableAmount"
                             :minDecimals="0"
                             :maxDecimals="5"
                         />
 
-                        <div v-if="cashlink.message" class="data nq-text blur-target">
-                            {{ cashlink.message }}
+                        <div v-if="interactiveCashlink.message" class="data nq-text blur-target">
+                            {{ interactiveCashlink.message }}
                         </div>
                     </div>
                     <div><!-- bottom flex spacer --></div>
@@ -72,14 +72,14 @@
                     </div>
                 </transition>
             </div>
-            <div v-if="cashlink && !hasWallets" class="card-content no-account">
+            <div v-else-if="cashlink" class="card-content no-account">
                 <div class="top-spacer"><!-- top flex spacer --></div>
 
                 <CashlinkSparkle/>
 
                 <div>
                     <Amount class="value nq-light-blue"
-                        :amount="cashlink.claimableAmount"
+                        :amount="cashlink.value"
                         :minDecimals="0"
                         :maxDecimals="5"
                     />
@@ -136,11 +136,11 @@ import StatusScreen from '../components/StatusScreen.vue';
 import CashlinkSparkle from '../components/CashlinkSparkle.vue';
 import CircleSpinner from '../components/CircleSpinner.vue';
 import Cashlink from '../lib/Cashlink';
-import { CashlinkState, BasicRequest, CashlinkTheme } from '../../client/PublicRequestTypes';
+import CashlinkInteractive, { CashlinkState } from '../lib/CashlinkInteractive';
+import { BasicRequest, CashlinkTheme } from '../../client/PublicRequestTypes';
 import { AccountInfo } from '../lib/AccountInfo';
 import { Getter, Mutation, State } from 'vuex-class';
 import Config from 'config';
-import { NetworkClient } from '../lib/NetworkClient';
 import { WalletInfo } from '../lib/WalletInfo';
 import { CashlinkStore } from '../lib/CashlinkStore';
 import HubApi from '../../client/HubApi';
@@ -174,14 +174,12 @@ class CashlinkReceive extends Vue {
         (payload: {walletId: string, userFriendlyAddress: string}) => any;
 
     private cashlink: Cashlink | null = null;
+    private interactiveCashlink: CashlinkInteractive | null = null; // only for users with wallets, see mounted
+    private status: CashlinkReceive.Status = CashlinkReceive.Status.IDLE;
+    private claimError: Error | null = null;
     private selectedAddress: AccountInfo | null = null;
     private isAccountSelectorOpened: boolean = false;
     private isMobile: boolean = false;
-
-    private statusState: StatusScreen.State | false = false;
-    private statusTitle = '';
-    private statusStatus = '';
-    private statusMessage = '';
 
     public created() {
         const handler = (result: any, storedData: {url: string}) => {
@@ -207,9 +205,7 @@ class CashlinkReceive extends Vue {
 
         // Fail if no Cashlink was found
         if (!this.cashlink) {
-            this.statusState = StatusScreen.State.WARNING;
-            this.statusTitle = this.$t('404 - Cash not found') as string;
-            this.statusMessage = this.$t('This is not a valid Cashlink, sorry.') as string;
+            this.status = CashlinkReceive.Status.INVALID_CASHLINK;
             return;
         }
 
@@ -217,14 +213,10 @@ class CashlinkReceive extends Vue {
             this.$emit(CashlinkReceive.Events.THEME_CHANGED, this.cashlink.theme, this.isDarkTheme);
         }
 
-        // When user has no wallets, skip Cashlink init because user needs to signup/login first
-        // which requires this page to be reloaded anyway.
-        if (!this.hasWallets) return;
+        if (!this.hasWallets) return; // skip creating interactive Cashlink and connecting to network
 
-        // Start network to check Cashlink status
-        await NetworkClient.Instance.init();
-
-        this.cashlink.setDependencies(NetworkClient.Instance, this.wallets);
+        this.interactiveCashlink = new CashlinkInteractive(this.cashlink);
+        this.interactiveCashlink.setUserWallets(this.wallets);
     }
 
     public destroyed() {
@@ -233,19 +225,23 @@ class CashlinkReceive extends Vue {
 
     private async claim() {
         // Start loading screen
-        this.statusState = StatusScreen.State.LOADING;
-        this.statusTitle = this.$t('Claiming Cashlink') as string;
-        this.statusStatus = this.$t('Connecting to Nimiq...') as string;
+        this.status = CashlinkReceive.Status.CLAIMING;
 
-        this.cashlink!.claim(this.activeAccount!.userFriendlyAddress);
-
-        // Set up transaction inclusion listener, so we know when the tx has been sent
-        const innerNetworkClient = await NetworkClient.Instance.innerClient;
-        await new Promise<void>((resolve) => {
-            innerNetworkClient.addTransactionListener((tx) => {
-                if (tx.sender === this.cashlink!.address.toUserFriendlyAddress()) resolve();
-            }, [this.cashlink!.address]);
-        });
+        try {
+            const claimingTransaction = await this.interactiveCashlink!.claim(this.activeAccount!.userFriendlyAddress);
+            if (claimingTransaction.state !== 'confirmed') {
+                // The claiming transaction was sent, but did not get confirmed yet, and might not get confirmed at all,
+                // for example if the Cashlink got claimed by somebody else in the meantime. Don't report the Cashlink
+                // as claimed then, but return to the Cashlink, which shows its current state.
+                this.status = CashlinkReceive.Status.IDLE;
+                return;
+            }
+        } catch (error) {
+            // The claiming transaction could not be sent.
+            this.claimError = error;
+            this.status = CashlinkReceive.Status.IDLE;
+            return;
+        }
 
         try {
             await CashlinkStore.Instance.put(this.cashlink!);
@@ -253,9 +249,8 @@ class CashlinkReceive extends Vue {
             // Ignore, because Cashlink has been claimed successfully and will show up in the Wallet
         }
 
-        // Show success screen and redirect to Safe
-        this.statusState = StatusScreen.State.SUCCESS;
-        this.statusTitle = this.$t('Cashlink claimed!') as string;
+        // Show success screen and redirect to Wallet.
+        this.status = CashlinkReceive.Status.SUCCESS;
 
         window.setTimeout(() => this.redirectToWallet(), StatusScreen.SUCCESS_REDIRECT_DELAY);
     }
@@ -280,20 +275,102 @@ class CashlinkReceive extends Vue {
         }
     }
 
+    private onStatusScreenMainAction() {
+        if (this.claimError) {
+            // Claiming failed. Return to the Cashlink, which shows its current state, and can be claimed again if
+            // that is still possible.
+            this.claimError = null;
+        } else if (this.updateError) {
+            // Updating the Cashlink failed. Try again, which clears the error, unless the update fails again.
+            this.interactiveCashlink!.update().catch(() => { /* see interactiveCashlink.updateError */ });
+        } else {
+            this.redirectToWallet();
+        }
+    }
+
     private redirectToWallet() {
         window.location.href = Config.redirectTarget;
     }
 
+    private get updateError(): Error | null {
+        // The error of a failed update of the Cashlink, in which case its state might be outdated.
+        return this.interactiveCashlink ? this.interactiveCashlink.updateError : null;
+    }
+
+    private get error(): Error | null {
+        return this.claimError || this.updateError;
+    }
+
+    private get statusState(): StatusScreen.State | false {
+        switch (this.status) {
+            case CashlinkReceive.Status.INVALID_CASHLINK: return StatusScreen.State.WARNING;
+            case CashlinkReceive.Status.CLAIMING: return StatusScreen.State.LOADING;
+            case CashlinkReceive.Status.SUCCESS: return StatusScreen.State.SUCCESS;
+            default:
+                if (this.error) return StatusScreen.State.ERROR;
+                // Warn if the Cashlink has already been claimed, until it possibly gets funded again.
+                return this.interactiveCashlink && this.interactiveCashlink.state === CashlinkState.CLAIMED
+                    ? StatusScreen.State.WARNING
+                    : false;
+        }
+    }
+
+    private get statusTitle(): string {
+        switch (this.statusState) {
+            case StatusScreen.State.LOADING: return this.$t('Claiming Cashlink') as string;
+            case StatusScreen.State.SUCCESS: return this.$t('Cashlink claimed!') as string;
+            case StatusScreen.State.ERROR: return this.$t('Something went wrong') as string;
+            case StatusScreen.State.WARNING:
+                if (this.status === CashlinkReceive.Status.INVALID_CASHLINK) {
+                    return this.$t('404 - Cash not found') as string;
+                }
+                if (this.interactiveCashlink && this.interactiveCashlink.state === CashlinkState.CLAIMED) {
+                    return this.$t('Cashlink is empty') as string;
+                }
+                // fall through
+            default: return '';
+        }
+    }
+
+    private get statusStatus(): string {
+        return this.status === CashlinkReceive.Status.CLAIMING ? this.$t('Connecting to Nimiq...') as string : '';
+    }
+
+    private get statusMessage(): string {
+        switch (this.statusState) {
+            case StatusScreen.State.ERROR:
+                if (this.claimError) return this.claimError.message;
+                if (this.updateError) {
+                    return this.$t(
+                        'Syncing with the network failed: {error}',
+                        { error: this.updateError.message },
+                    ) as string;
+                }
+                return '';
+            case StatusScreen.State.WARNING:
+                if (this.status === CashlinkReceive.Status.INVALID_CASHLINK) {
+                    return this.$t('This is not a valid Cashlink, sorry.') as string;
+                }
+                if (this.interactiveCashlink && this.interactiveCashlink.state === CashlinkState.CLAIMED) {
+                    return this.$t('This Cashlink has already been claimed.') as string;
+                }
+                // fall through
+            default: return '';
+        }
+    }
+
+    private get statusMainAction(): string {
+        return this.statusState === StatusScreen.State.ERROR && !this.claimError && this.updateError
+            ? this.$t('Retry') as string
+            : this.$t('Got it') as string;
+    }
+
     private get canCashlinkBeClaimed(): boolean {
-        return this.cashlink!.state === CashlinkState.UNCLAIMED;
+        return this.interactiveCashlink!.state === CashlinkState.UNCLAIMED;
     }
 
     private get buttonText(): string {
-        if (this.cashlink!.state !== CashlinkState.CLAIMED && this.statusState === StatusScreen.State.WARNING) {
-            // Reset warning screen if cashlink state reverted from CLAIMED state, e.g. by being refunded.
-            this.statusState = false;
-        }
-        switch (this.cashlink!.state) {
+        switch (this.interactiveCashlink!.state) {
             case CashlinkState.UNKNOWN: return this.$t('Checking status') as string;
             case CashlinkState.UNCHARGED: return this.$t('Cashlink not funded') as string;
             case CashlinkState.CHARGING: return this.$t('Cashlink funding') as string;
@@ -306,15 +383,13 @@ class CashlinkReceive extends Vue {
                     // keep previous message in background
                     return this.$t('Claiming Cashlink') as string;
                 }
-                this.statusState = StatusScreen.State.WARNING;
-                this.statusTitle = this.$t('Cashlink is empty') as string;
-                this.statusMessage = this.$t('This Cashlink has already been claimed.') as string;
                 return this.$t('Cashlink empty :(') as string;
         }
     }
 
     private get isButtonLoading(): boolean {
-        return this.cashlink!.state === CashlinkState.UNKNOWN || this.cashlink!.state === CashlinkState.CHARGING;
+        return this.interactiveCashlink!.state === CashlinkState.UNKNOWN
+            || this.interactiveCashlink!.state === CashlinkState.CHARGING;
     }
 
     private get themeBackground(): string | null {
@@ -373,6 +448,13 @@ class CashlinkReceive extends Vue {
 namespace CashlinkReceive {
     export enum Events {
         THEME_CHANGED = 'theme-change',
+    }
+
+    export enum Status {
+        IDLE,
+        CLAIMING,
+        SUCCESS,
+        INVALID_CASHLINK,
     }
 }
 

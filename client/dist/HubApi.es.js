@@ -341,15 +341,6 @@ var PaymentState;
     PaymentState["UNDERPAID"] = "UNDERPAID";
     PaymentState["OVERPAID"] = "OVERPAID";
 })(PaymentState || (PaymentState = {}));
-var CashlinkState;
-(function (CashlinkState) {
-    CashlinkState[CashlinkState["UNKNOWN"] = -1] = "UNKNOWN";
-    CashlinkState[CashlinkState["UNCHARGED"] = 0] = "UNCHARGED";
-    CashlinkState[CashlinkState["CHARGING"] = 1] = "CHARGING";
-    CashlinkState[CashlinkState["UNCLAIMED"] = 2] = "UNCLAIMED";
-    CashlinkState[CashlinkState["CLAIMING"] = 3] = "CLAIMING";
-    CashlinkState[CashlinkState["CLAIMED"] = 4] = "CLAIMED";
-})(CashlinkState || (CashlinkState = {}));
 var CashlinkTheme;
 (function (CashlinkTheme) {
     CashlinkTheme[CashlinkTheme["UNSPECIFIED"] = 0] = "UNSPECIFIED";
@@ -361,6 +352,14 @@ var CashlinkTheme;
     CashlinkTheme[CashlinkTheme["BIRTHDAY"] = 6] = "BIRTHDAY";
     // Temporary themes that might be retracted in the future should be listed counting down from 255
 })(CashlinkTheme || (CashlinkTheme = {}));
+var CashlinkCurrency;
+(function (CashlinkCurrency) {
+    CashlinkCurrency["NIM"] = "nim";
+    // not supported yet
+    // BTC = 'btc',
+    // USDC = 'usdc', // on Polygon network
+    // USDT = 'usdt', // on Polygon network
+})(CashlinkCurrency || (CashlinkCurrency = {}));
 
 class HubApi {
     /** @deprecated */
@@ -514,7 +513,7 @@ HubApi.RequestType = RequestType;
 HubApi.RedirectRequestBehavior = RedirectRequestBehavior;
 HubApi.PopupRequestBehavior = PopupRequestBehavior;
 HubApi.AccountType = AccountType;
-HubApi.CashlinkState = CashlinkState;
+HubApi.CashlinkCurrency = CashlinkCurrency;
 HubApi.CashlinkTheme = CashlinkTheme;
 HubApi.Currency = Currency;
 HubApi.PaymentType = PaymentType;

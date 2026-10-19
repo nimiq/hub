@@ -100,7 +100,6 @@ import KeyguardClient from '@nimiq/keyguard-client';
 import { Clipboard } from '@nimiq/utils';
 import { i18n } from '../i18n/i18n-setup';
 import { ERROR_CANCELED } from '../lib/Constants';
-import { WalletInfo } from '../lib/WalletInfo';
 
 @Component({components: {
     Account,
@@ -128,7 +127,6 @@ export default class CashlinkManage extends Vue {
     @Static private cashlink?: Cashlink;
     @Static private keyguardRequest?: KeyguardClient.SignTransactionRequest;
     @State private keyguardResult?: KeyguardClient.SignTransactionResult;
-    @State private wallets!: WalletInfo[];
 
     private isTxSent: boolean = false;
     private isManagementRequest: boolean = false;
@@ -154,7 +152,7 @@ export default class CashlinkManage extends Vue {
                 return;
             }
         } else if (this.cashlink) {
-            storedCashlink = await CashlinkStore.Instance.get(this.cashlink.address.toUserFriendlyAddress());
+            storedCashlink = await CashlinkStore.Instance.get(this.cashlink.address);
         } else {
             this.$rpc.reject(new Error('CashlinkManage expects the cashlink to display to be specified either via '
                 + 'request.cashlinkAddress or the cashlink in the static store.'));
@@ -166,7 +164,7 @@ export default class CashlinkManage extends Vue {
             // Cashlink is typically already sent as the sending happens right after storing the Cashlink. However, it
             // might be that the sending failed and the user reloaded the page, in which case we try sending again.
             transactionToSend = network.getUnrelayedTransactions({
-                recipient: storedCashlink.address,
+                recipient: Nimiq.Address.fromUserFriendlyAddress(storedCashlink.address),
                 value: BigInt(storedCashlink.value),
             })[0];
             this.isTxSent = !transactionToSend;
@@ -192,7 +190,6 @@ export default class CashlinkManage extends Vue {
                 () => this.status = this.$t('Sending transaction...') as string);
             network.$on(Network.Events.TRANSACTION_PENDING,
                 () => this.status = this.$t('Awaiting receipt confirmation...') as string);
-            this.retrievedCashlink.setDependencies(await network.getNetworkClient(), this.wallets);
 
             // Store cashlink in database first to be safe when browser crashes during sending
             await CashlinkStore.Instance.put(this.retrievedCashlink);
@@ -242,10 +239,10 @@ export default class CashlinkManage extends Vue {
 
     private close() {
         const result: PublicCashlink = {
-            address: this.retrievedCashlink!.address.toUserFriendlyAddress(),
+            currency: this.retrievedCashlink!.currency,
+            address: this.retrievedCashlink!.address,
             message: this.retrievedCashlink!.message,
             value: this.retrievedCashlink!.value,
-            status: this.retrievedCashlink!.state,
             theme: this.retrievedCashlink!.theme,
         };
         if ('returnLink' in this.request && this.request.returnLink) {

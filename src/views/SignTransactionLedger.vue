@@ -155,6 +155,7 @@ import { Utf8Tools } from '@nimiq/utils';
 import Config from 'config';
 import Cashlink from '../lib/Cashlink';
 import { CashlinkStore } from '../lib/CashlinkStore';
+import { createCurrencyHandlerForCashlink } from '../lib/CashlinkCurrencyHandler';
 import CheckoutServerApi from '../lib/CheckoutServerApi';
 
 // Placeholder validity start height for the transactions the Hub creates itself, i.e. for checkout and cashlink
@@ -623,7 +624,8 @@ export default class SignTransactionLedger extends Vue {
                             return new Error('Ledger Cashlink Signing expects the Cashlink to sign to be in the '
                                 + 'static store.'); // see CashlinkCreate
                         }
-                        ({ recipient, value, fee, recipientData } = this.cashlink.getFundingDetails());
+                        ({ recipient, recipientData, value, fee } = createCurrencyHandlerForCashlink(this.cashlink)
+                            .getCashlinkFundingDetails());
                     }
                     // For checkout, the payment info might not include a recipient yet, see mounted.
                     if (!recipient) return new Error('Failed to fetch checkout recipient.');
