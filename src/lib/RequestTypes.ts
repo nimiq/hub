@@ -1,4 +1,12 @@
-import type { Currency, PaymentType, RequestType, CashlinkTheme, RelayRequest } from '../../client/PublicRequestTypes';
+import type {
+    Currency,
+    PaymentType,
+    RequestType,
+    CashlinkTheme,
+    RelayRequest,
+    PolygonGaslessTransfer,
+    PolygonGaslessTransferRequest,
+} from '../../client/PublicRequestTypes';
 import type { ParsedPaymentOptions } from './paymentOptions/ParsedPaymentOptions';
 import type { ParsedNimiqSpecifics, ParsedNimiqDirectPaymentOptions } from './paymentOptions/NimiqPaymentOptions';
 import type { ParsedEtherSpecifics, ParsedEtherDirectPaymentOptions } from './paymentOptions/EtherPaymentOptions';
@@ -223,7 +231,19 @@ export interface ParsedAddBtcAddressesRequest extends ParsedSimpleRequest {
  * Polygon
  */
 
-export interface ParsedSignPolygonTransactionRequest extends ParsedBasicRequest, RelayRequest {
+export interface ParsedSignPolygonGaslessTransferRequest extends ParsedBasicRequest {
+    request: PolygonGaslessTransfer;
+    tokenNonce: number;
+    corrects?: PolygonGaslessTransferRequest;
+    recipientLabel?: string;
+}
+
+export type ParsedSignPolygonTransactionRequest =
+    ParsedSignPolygonOpenGsnTransactionRequest
+    | ParsedSignPolygonGaslessTransferRequest;
+
+/** Swap related transactions (HTLC redeem and refund, USDC.e conversion), relayed via OpenGSN. */
+export interface ParsedSignPolygonOpenGsnTransactionRequest extends ParsedBasicRequest, RelayRequest {
     recipientLabel?: string;
     approval?: {
         tokenNonce: number,

@@ -25,6 +25,7 @@ import type {
     MultiCurrencyCheckoutRequest,
     SignBtcTransactionRequest,
     SignPolygonTransactionRequest,
+    SignPolygonGaslessTransferRequest,
     SetupSwapRequest,
     RefundSwapRequest,
     SignMultisigTransactionRequest,
@@ -56,6 +57,10 @@ import { ParsedBitcoinDirectPaymentOptions } from './paymentOptions/BitcoinPayme
 import { Utf8Tools } from '@nimiq/utils';
 import Config from 'config';
 import { parseSignTransactionRequest, rawSignTransactionRequest } from './SignTransactionRequestParsing';
+import {
+    parseSignPolygonGaslessTransferRequest,
+    rawSignPolygonGaslessTransferRequest,
+} from './SignPolygonTransactionRequestParsing';
 import { SwapAsset } from '@nimiq/fastspot-api';
 import RpcApi from './RpcApi';
 
@@ -540,8 +545,14 @@ export class RequestParser {
                 };
                 return parsedSignBtcTransactionRequest;
             case RequestType.SIGN_POLYGON_TRANSACTION:
-                const signPolygonTransactionRequest = request as SignPolygonTransactionRequest;
+                const signPolygonTransactionRequest = request as
+                    SignPolygonTransactionRequest | SignPolygonGaslessTransferRequest;
 
+                if (!('relayData' in signPolygonTransactionRequest)) {
+                    return parseSignPolygonGaslessTransferRequest(signPolygonTransactionRequest);
+                }
+
+                // Swap related transactions relayed via OpenGSN, validated by the Keyguard
                 return {
                     kind: RequestType.SIGN_POLYGON_TRANSACTION,
                     ...signPolygonTransactionRequest,
@@ -985,6 +996,9 @@ export class RequestParser {
                 } as SignBtcTransactionRequest;
             case RequestType.SIGN_POLYGON_TRANSACTION:
                 const signPolygonTransactionRequest = request as ParsedSignPolygonTransactionRequest;
+                if (!('relayData' in signPolygonTransactionRequest)) {
+                    return rawSignPolygonGaslessTransferRequest(signPolygonTransactionRequest);
+                }
                 return {
                     ...signPolygonTransactionRequest,
                 } as SignPolygonTransactionRequest;
