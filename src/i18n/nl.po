@@ -37,7 +37,7 @@ msgstr "+ {currency} netwerk toeslag"
 msgid "30 seconds, no email, no download."
 msgstr "30 seconden, geen emails, geen downloads."
 
-#: src/views/CashlinkReceive.vue:211
+#: src/views/CashlinkReceive.vue:325
 msgid "404 - Cash not found"
 msgstr "404 - Geld niet gevonden"
 
@@ -120,11 +120,11 @@ msgstr "Bedrag"
 msgid "Amount/Step:"
 msgstr "Bedrag/Stap:"
 
-#: src/lib/paymentOptions/EtherPaymentOptions.ts:72
+#: src/lib/paymentOptions/EtherPaymentOptions.ts:77
 msgid "Apply a gas price of at least {fee} gwei."
 msgstr "Hanteer een gasprijs van minimaal {fee} gwei."
 
-#: src/lib/paymentOptions/BitcoinPaymentOptions.ts:80
+#: src/lib/paymentOptions/BitcoinPaymentOptions.ts:87
 msgid "Apply a network fee of at least {fee} sat/byte."
 msgstr "Pas een netwerktarief toe van minimaal {fee} sat/byte."
 
@@ -132,7 +132,7 @@ msgstr "Pas een netwerktarief toe van minimaal {fee} sat/byte."
 msgid "Atomic swaps require two BTC transactions."
 msgstr "Atomic swaps vereisen twee BTC-transacties."
 
-#: src/views/CashlinkManage.vue:194
+#: src/views/CashlinkManage.vue:192
 msgid "Awaiting receipt confirmation..."
 msgstr "In afwachting van de ontvangstbevestiging..."
 
@@ -254,7 +254,7 @@ msgstr "Annuleer"
 msgid "Cancel payment"
 msgstr "Annuleer betaling"
 
-#: src/views/CashlinkReceive.vue:258
+#: src/views/CashlinkReceive.vue:321
 msgid "Cashlink claimed!"
 msgstr "Cashlink geclaimd!"
 
@@ -262,23 +262,23 @@ msgstr "Cashlink geclaimd!"
 msgid "Cashlink created"
 msgstr "Cachlink aangemaakt"
 
-#: src/views/CashlinkManage.vue:233
+#: src/views/CashlinkManage.vue:230
 msgid "Cashlink created."
 msgstr "Cashlink aangemaakt."
 
-#: src/views/CashlinkReceive.vue:312
+#: src/views/CashlinkReceive.vue:386
 msgid "Cashlink empty :("
 msgstr "De Cashlink is leeg :("
 
-#: src/views/CashlinkReceive.vue:299
+#: src/views/CashlinkReceive.vue:376
 msgid "Cashlink funding"
 msgstr "Cashlink financieren"
 
-#: src/views/CashlinkReceive.vue:310
+#: src/views/CashlinkReceive.vue:328
 msgid "Cashlink is empty"
 msgstr "De Cashlink is leeg "
 
-#: src/views/CashlinkReceive.vue:298
+#: src/views/CashlinkReceive.vue:375
 msgid "Cashlink not funded"
 msgstr "De Cashlink is niet gefinancierd "
 
@@ -290,7 +290,7 @@ msgstr "Aanpassen"
 msgid "Check your Backup | Check your Backups"
 msgstr "Controleer je back-up | Controleer je back-ups"
 
-#: src/views/CashlinkReceive.vue:297
+#: src/views/CashlinkReceive.vue:374
 msgid "Checking status"
 msgstr "Status controleren"
 
@@ -331,16 +331,16 @@ msgstr "Kies verzender"
 msgid "Choose which Nimiq address to use."
 msgstr "Kies welk Nimiq adres je wilt gebruiken."
 
-#: src/views/CashlinkReceive.vue:300
+#: src/views/CashlinkReceive.vue:377
 msgid "Claim Cashlink"
 msgstr "Claim Cashlink"
 
-#: src/views/CashlinkReceive.vue:353
+#: src/views/CashlinkReceive.vue:428
 msgid "Claim your Cash"
 msgstr "Claim je geld"
 
-#: src/views/CashlinkReceive.vue:237 src/views/CashlinkReceive.vue:301
-#: src/views/CashlinkReceive.vue:307
+#: src/views/CashlinkReceive.vue:320 src/views/CashlinkReceive.vue:378
+#: src/views/CashlinkReceive.vue:384
 msgid "Claiming Cashlink"
 msgstr "Cashlink aan het claimen"
 
@@ -372,7 +372,7 @@ msgstr "Bevestig {outgoingOrIncoming} transactie op Ledger"
 msgid "Confirm Address"
 msgstr "Bevestig adres"
 
-#: src/views/SignTransactionLedger.vue:997
+#: src/views/SignTransactionLedger.vue:999
 msgid "Confirm Cashlink"
 msgstr "Bevestig Cashlink"
 
@@ -380,11 +380,11 @@ msgstr "Bevestig Cashlink"
 msgid "Confirm Message"
 msgstr "Bevestig bericht"
 
-#: src/views/SignTransactionLedger.vue:976
+#: src/views/SignTransactionLedger.vue:978
 msgid "Confirm retiring staked NIM"
 msgstr ""
 
-#: src/views/SignTransactionLedger.vue:970
+#: src/views/SignTransactionLedger.vue:972
 msgid "Confirm setting active stake amount"
 msgstr ""
 
@@ -402,16 +402,16 @@ msgid "Confirm the address on your Ledger"
 msgstr "Bevestig het adres op je Ledger"
 
 #: src/components/LedgerUi.vue:289 src/views/SignBtcTransactionLedger.vue:4
-#: src/views/SignTransactionLedger.vue:1000
-#: src/views/SignTransactionLedger.vue:982
+#: src/views/SignTransactionLedger.vue:1002
+#: src/views/SignTransactionLedger.vue:984
 msgid "Confirm Transaction"
 msgstr "Bevestig transactie"
 
-#: src/views/SignTransactionLedger.vue:1001
+#: src/views/SignTransactionLedger.vue:1003
 msgid "Confirm Transactions"
 msgstr ""
 
-#: src/views/SignTransactionLedger.vue:973
+#: src/views/SignTransactionLedger.vue:975
 msgid "Confirm update of staking setup"
 msgstr ""
 
@@ -419,19 +419,19 @@ msgstr ""
 msgid "Confirm using your Ledger"
 msgstr "Bevestig via je Ledger"
 
-#: src/views/SignTransactionLedger.vue:979
+#: src/views/SignTransactionLedger.vue:981
 msgid "Confirm withdrawal of retired NIM"
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:364
+#: src/views/CashlinkReceive.vue:439
 msgid "Congrats, somebody gifted you a Nimiq Cashlink."
 msgstr "Gefeliciteerd, iemand heeft je een Nimiq Cashlink gegeven! "
 
-#: src/views/CashlinkReceive.vue:363
+#: src/views/CashlinkReceive.vue:438
 msgid "Congrats, you just opened a Nimiq Cashlink."
 msgstr "Gefeliciteerd, je hebt zojuist een Nimiq Cashlink geopend."
 
-#: src/views/CashlinkReceive.vue:359
+#: src/views/CashlinkReceive.vue:434
 msgid "Congrats, you received a Nimiq Gift Card."
 msgstr "Gefeliciteerd, je hebt een Nimiq cadeau kaart ontvangen."
 
@@ -455,11 +455,11 @@ msgstr "Verbind je Ledger hardware wallet."
 msgid "Connecting to Keyguard..."
 msgstr "Verbinden met Keyguard..."
 
-#: src/views/CashlinkManage.vue:135 src/views/CheckoutTransmission.vue:40
+#: src/views/CashlinkManage.vue:133 src/views/CheckoutTransmission.vue:40
 msgid "Connecting to network..."
 msgstr "Verbinden met netwerk..."
 
-#: src/views/CashlinkReceive.vue:238
+#: src/views/CashlinkReceive.vue:336
 msgid "Connecting to Nimiq..."
 msgstr "Verbinden met Nimiq..."
 
@@ -468,7 +468,7 @@ msgid "Connecting..."
 msgstr "Verbinden..."
 
 #: src/components/CheckoutCardNimiq.vue:284
-#: src/components/CheckoutCardNimiq.vue:289 src/views/CashlinkManage.vue:188
+#: src/components/CheckoutCardNimiq.vue:289 src/views/CashlinkManage.vue:186
 #: src/views/CheckoutTransmission.vue:116
 msgid "Contacting seed nodes..."
 msgstr " Seed nodes contacteren..."
@@ -519,7 +519,7 @@ msgstr "Maak een Cashlink"
 msgid "Creating your Account"
 msgstr "Account aan het maken "
 
-#: src/views/CashlinkManage.vue:235 src/views/SignTransactionLedger.vue:1021
+#: src/views/CashlinkManage.vue:232 src/views/SignTransactionLedger.vue:1023
 msgid "Creating your Cashlink"
 msgstr "Cashlink aan het maken"
 
@@ -560,7 +560,7 @@ msgstr "Voer het adres van een vestingcontract in."
 msgid "Enter your PIN"
 msgstr "Voer pincode in"
 
-#: src/views/CashlinkCreate.vue:166
+#: src/views/CashlinkCreate.vue:167
 msgid "express"
 msgstr "express"
 
@@ -612,7 +612,7 @@ msgstr "Je adressen ophalen"
 msgid "Finish"
 msgstr "Afronden"
 
-#: src/views/CashlinkCreate.vue:156
+#: src/views/CashlinkCreate.vue:157
 msgid "free"
 msgstr "gratis"
 
@@ -632,7 +632,7 @@ msgstr "Verkrijg NIM"
 msgid "Go back"
 msgstr "Ga terug"
 
-#: src/views/CashlinkReceive.vue:16
+#: src/views/CashlinkReceive.vue:365
 msgid "Got it"
 msgstr "Begrepen"
 
@@ -644,15 +644,15 @@ msgstr "Groen Account"
 msgid "Green Address"
 msgstr "Groen Adres"
 
-#: src/views/CashlinkReceive.vue:352
+#: src/views/CashlinkReceive.vue:427
 msgid "Happy birthday!"
 msgstr "Fijne verjaardag!"
 
-#: src/views/CashlinkReceive.vue:350
+#: src/views/CashlinkReceive.vue:425
 msgid "Happy Easter!"
 msgstr "Vrolijk Pasen!"
 
-#: src/views/CashlinkManage.vue:120
+#: src/views/CashlinkManage.vue:119
 msgid "Here is your Nimiq Cashlink!"
 msgstr "Hier is je Nimiq Cashlink!"
 
@@ -782,7 +782,7 @@ msgstr "Mijn back-ups zijn veilig."
 msgid "New Address added to your Account."
 msgstr "Nieuw adres is toegevoegd aan je account."
 
-#: src/views/CashlinkCreate.vue:55 src/views/SignTransactionLedger.vue:371
+#: src/views/CashlinkCreate.vue:55 src/views/SignTransactionLedger.vue:372
 msgid "New Cashlink"
 msgstr "Nieuwe Cashlink"
 
@@ -983,8 +983,9 @@ msgid "Retrieving your old accounts..."
 msgstr "Oude accounts ophalen..."
 
 #: src/views/ActivatePolygonSuccess.vue:139
-#: src/views/BitcoinSyncBaseView.vue:72 src/views/LoginSuccess.vue:134
-#: src/views/SetupSwapSuccess.vue:671 src/views/SignupLedger.vue:145
+#: src/views/BitcoinSyncBaseView.vue:72 src/views/CashlinkReceive.vue:364
+#: src/views/LoginSuccess.vue:134 src/views/SetupSwapSuccess.vue:671
+#: src/views/SignupLedger.vue:145
 msgid "Retry"
 msgstr "Probeer opnieuw"
 
@@ -997,11 +998,11 @@ msgstr "Opslaan"
 msgid "Send your transaction"
 msgstr "Verstuur je transactie"
 
-#: src/views/SignTransactionLedger.vue:1022
+#: src/views/SignTransactionLedger.vue:1024
 msgid "Sending Transaction"
 msgstr "Transactie versturen"
 
-#: src/views/CashlinkManage.vue:192 src/views/CheckoutTransmission.vue:118
+#: src/views/CashlinkManage.vue:190 src/views/CheckoutTransmission.vue:118
 msgid "Sending transaction..."
 msgstr "Transactie versturen..."
 
@@ -1033,7 +1034,8 @@ msgstr "Transacties ondertekenen..."
 msgid "Single Accounts"
 msgstr "Enkele accounts"
 
-#: src/views/CashlinkManage.vue:234 src/views/CheckoutTransmission.vue:125
+#: src/views/CashlinkManage.vue:231 src/views/CashlinkReceive.vue:322
+#: src/views/CheckoutTransmission.vue:125
 msgid "Something went wrong"
 msgstr "Er is iets verkeerd gegaan"
 
@@ -1054,7 +1056,7 @@ msgstr "Versnel je transactie"
 msgid "Staking Contract"
 msgstr "Staking Contract"
 
-#: src/views/CashlinkCreate.vue:161
+#: src/views/CashlinkCreate.vue:162
 msgid "standard"
 msgstr "Standaard "
 
@@ -1083,7 +1085,7 @@ msgid "Syncing"
 msgstr "Synchroniseren"
 
 #: src/components/CheckoutCardNimiq.vue:291
-#: src/views/AddVestingContract.vue:11 src/views/CashlinkManage.vue:190
+#: src/views/AddVestingContract.vue:11 src/views/CashlinkManage.vue:188
 #: src/views/CheckoutTransmission.vue:117
 msgid "Syncing consensus..."
 msgstr "Consensus synchroniseren..."
@@ -1123,7 +1125,8 @@ msgstr "Synchroniseren met Polygon-netwerk mislukt: {error}"
 msgid "Syncing with Polygon network..."
 msgstr "Synchroniseren met Polygon-netwerk..."
 
-#: src/views/LoginSuccess.vue:133 src/views/SignupLedger.vue:134
+#: src/views/CashlinkReceive.vue:344 src/views/LoginSuccess.vue:133
+#: src/views/SignupLedger.vue:134
 msgid "Syncing with the network failed: {error}"
 msgstr "Synchroniseren met het netwerk is mislukt: {error}"
 
@@ -1150,7 +1153,7 @@ msgstr ""
 "({oldLang} naar {newLang})"
 
 #: src/components/CheckoutCard.vue:171
-#: src/views/SignTransactionLedger.vue:1029
+#: src/views/SignTransactionLedger.vue:1031
 msgid "The offer expired."
 msgstr "Het aanbod is verlopen."
 
@@ -1166,11 +1169,11 @@ msgstr ""
 msgid "There's much more. Read the full article"
 msgstr "Er is nog veel meer. Lees het volledige artikel"
 
-#: src/views/CashlinkReceive.vue:311
+#: src/views/CashlinkReceive.vue:355
 msgid "This Cashlink has already been claimed."
 msgstr "Deze Cashlink is al geclaimd."
 
-#: src/views/CashlinkReceive.vue:212
+#: src/views/CashlinkReceive.vue:352
 msgid "This is not a valid Cashlink, sorry."
 msgstr "Sorry. Deze Cashlink is niet geldig."
 
@@ -1225,24 +1228,24 @@ msgstr "Totale kosten"
 msgid "Transaction approved"
 msgstr "Transactie goedgekeurd"
 
-#: src/views/CashlinkManage.vue:217 src/views/CheckoutTransmission.vue:107
+#: src/views/CashlinkManage.vue:214 src/views/CheckoutTransmission.vue:107
 msgid "Transaction could not be relayed"
 msgstr "Transactie kon niet worden doorgestuurd"
 
-#: src/views/CashlinkManage.vue:215 src/views/CheckoutTransmission.vue:105
+#: src/views/CashlinkManage.vue:212 src/views/CheckoutTransmission.vue:105
 msgid "Transaction is expired"
 msgstr "Transactie is verlopen"
 
-#: src/views/SignTransactionLedger.vue:1024
+#: src/views/SignTransactionLedger.vue:1026
 msgid "Transaction Sent"
 msgstr "Transactie verstuurd "
 
 #: src/views/SignBtcTransactionLedger.vue:116
-#: src/views/SignTransactionLedger.vue:1026
+#: src/views/SignTransactionLedger.vue:1028
 msgid "Transaction Signed"
 msgstr "Transactie ondertekend"
 
-#: src/views/SignTransactionLedger.vue:1027
+#: src/views/SignTransactionLedger.vue:1029
 msgid "Transactions Signed"
 msgstr ""
 
@@ -1316,7 +1319,7 @@ msgid "Value mismatch (expected {expected} sats, found {found} sats)"
 msgstr ""
 "Waarde komt niet overeen (verwachtte {expected} sats, gevonden {found} sats)"
 
-#: src/views/SignTransactionLedger.vue:995
+#: src/views/SignTransactionLedger.vue:997
 msgid "Verify Payment"
 msgstr "Controleer de betaling"
 
@@ -1360,7 +1363,7 @@ msgstr "Geel Adres"
 msgid "You are logged out."
 msgstr "Je bent uitgelogd."
 
-#: src/views/CashlinkReceive.vue:348
+#: src/views/CashlinkReceive.vue:423
 msgid "You are loved"
 msgstr "Je bent geliefd"
 
