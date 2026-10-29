@@ -9,7 +9,7 @@ import KeyguardClient from '@nimiq/keyguard-client';
 import { SwapAsset } from '@nimiq/fastspot-api';
 import Network from '../components/Network.vue';
 import { ParsedRefundSwapRequest } from '../lib/RequestTypes';
-import { SignedBtcTransaction, SignedPolygonTransaction, SignedTransaction } from '../../client/PublicRequestTypes';
+import { SignedBtcTransaction, SignedPolygonHtlcSettlement, SignedTransaction } from '../../client/PublicRequestTypes';
 import { Static } from '../lib/StaticStore';
 import Config from 'config';
 
@@ -56,11 +56,11 @@ export default class SignBtcTransactionSuccess extends Vue {
         }
 
         if (
-            'message' in this.keyguardResult
-            && (this.request.refund.type === SwapAsset.USDC_MATIC || this.request.refund.type === SwapAsset.USDC)
+            'request' in this.keyguardResult && !('authorization' in this.keyguardResult)
+            && (this.request.refund.type === SwapAsset.USDC_MATIC || this.request.refund.type === SwapAsset.USDT_MATIC)
         ) {
-            const result: SignedPolygonTransaction = {
-                message: this.keyguardResult.message,
+            const result: SignedPolygonHtlcSettlement = {
+                request: this.keyguardResult.request,
                 signature: this.keyguardResult.signature,
             };
 

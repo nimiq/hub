@@ -35,7 +35,7 @@ import {
     SignPolygonTransactionRequest,
     SignPolygonGaslessTransferRequest,
     SignedPolygonGaslessTransfer,
-    SignedPolygonTransaction,
+    SignedPolygonHtlcSettlement,
     Cashlink,
     CashlinkCurrency,
     CashlinkTheme,
@@ -198,15 +198,12 @@ export default class HubApi<
         return this._request(requestBehavior, RequestType.SIGN_BTC_TRANSACTION, [request]);
     }
 
-    public signPolygonTransaction<
-        R extends SignPolygonTransactionRequest | SignPolygonGaslessTransferRequest,
-        B extends BehaviorType = DB,
-    >(
+    public signPolygonTransaction<R extends SignPolygonTransactionRequest, B extends BehaviorType = DB>(
         request: Promise<R> | R,
         requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
     ): Promise<B extends BehaviorType.REDIRECT
         ? void
-        : R extends SignPolygonGaslessTransferRequest ? SignedPolygonGaslessTransfer : SignedPolygonTransaction> {
+        : R extends SignPolygonGaslessTransferRequest ? SignedPolygonGaslessTransfer : SignedPolygonHtlcSettlement> {
         // The result type depends on the request variant, which the generic result mapping cannot express
         return this._request(requestBehavior, RequestType.SIGN_POLYGON_TRANSACTION, [request]) as any;
     }
@@ -223,7 +220,7 @@ export default class HubApi<
         requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
     ): Promise<B extends BehaviorType.REDIRECT
         ? void
-        : SignedTransaction | SignedBtcTransaction | SignedPolygonTransaction> {
+        : SignedTransaction | SignedBtcTransaction | SignedPolygonHtlcSettlement> {
         return this._request(requestBehavior, RequestType.REFUND_SWAP, [request]);
     }
 
