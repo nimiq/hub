@@ -23,7 +23,8 @@ export default class SignPolygonTransaction extends Vue {
         if (typeof this.request.request.from === 'string') {
             // existence checked in RpcApi
             const senderAccount = this.findWalletByPolygonAddress(this.request.request.from)!;
-            const signer = senderAccount.polygonAddresses.find((ai) => ai.address === this.request.request.from)!;
+            const from = this.request.request.from.toLowerCase();
+            const signer = senderAccount.polygonAddresses.find((ai) => ai.address.toLowerCase() === from)!;
 
             keyId = senderAccount.keyId;
             keyPath = signer.path;
@@ -36,11 +37,26 @@ export default class SignPolygonTransaction extends Vue {
             } = this.request.request.from);
         }
 
-        const request: KeyguardClient.SignPolygonTransactionRequest = {
-            ...this.request,
+        // Forward only the known fields
+        const request: KeyguardClient.SignPolygonTransactionRequest = this.request.operation === 'transfer' ? {
+            appName: this.request.appName,
             keyId,
             keyPath,
             keyLabel,
+            request: this.request.request,
+            tokenNonce: this.request.tokenNonce,
+            corrects: this.request.corrects,
+            recipientLabel: this.request.recipientLabel,
+        } : {
+            appName: this.request.appName,
+            keyId,
+            keyPath,
+            keyLabel,
+            operation: this.request.operation,
+            request: this.request.request,
+            token: this.request.token,
+            amount: this.request.amount,
+            senderLabel: this.request.senderLabel,
         };
 
         staticStore.keyguardRequest = request;

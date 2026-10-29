@@ -11,8 +11,12 @@ export default class SignPolygonTransactionSuccess extends Vue {
     @State private keyguardResult!: KeyguardClient.SignedPolygonTransaction;
 
     private async mounted() {
-        const result: SignedPolygonTransaction = {
-            message: this.keyguardResult.message,
+        const result: SignedPolygonTransaction = 'authorization' in this.keyguardResult ? {
+            request: this.keyguardResult.request,
+            signature: this.keyguardResult.signature,
+            authorization: this.keyguardResult.authorization,
+        } : {
+            request: this.keyguardResult.request,
             signature: this.keyguardResult.signature,
         };
 

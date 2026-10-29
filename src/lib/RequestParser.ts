@@ -56,6 +56,10 @@ import { ParsedBitcoinDirectPaymentOptions } from './paymentOptions/BitcoinPayme
 import { Utf8Tools } from '@nimiq/utils';
 import Config from 'config';
 import { parseSignTransactionRequest, rawSignTransactionRequest } from './SignTransactionRequestParsing';
+import {
+    parseSignPolygonTransactionRequest,
+    rawSignPolygonTransactionRequest,
+} from './SignPolygonTransactionRequestParsing';
 import { SwapAsset } from '@nimiq/fastspot-api';
 import RpcApi from './RpcApi';
 
@@ -540,12 +544,7 @@ export class RequestParser {
                 };
                 return parsedSignBtcTransactionRequest;
             case RequestType.SIGN_POLYGON_TRANSACTION:
-                const signPolygonTransactionRequest = request as SignPolygonTransactionRequest;
-
-                return {
-                    kind: RequestType.SIGN_POLYGON_TRANSACTION,
-                    ...signPolygonTransactionRequest,
-                } as ParsedSignPolygonTransactionRequest;
+                return parseSignPolygonTransactionRequest(request as SignPolygonTransactionRequest);
             case RequestType.SETUP_SWAP:
                 const setupSwapRequest = request as SetupSwapRequest;
 
@@ -708,8 +707,8 @@ export class RequestParser {
                 // Only basic parsing and validation. Refund transaction specific data will be validated by the Keyguard
                 // or subsequent Ledger transaction signing requests.
 
-                if (!['NIM', 'BTC', 'USDC', 'USDC_MATIC', 'USDT_MATIC'].includes(refundSwapRequest.refund.type)) {
-                    throw new Error('Refunding object type must be "NIM", "BTC", "USDC", "USDC_MATIC" or "USDT_MATIC"');
+                if (!['NIM', 'BTC', 'USDC_MATIC', 'USDT_MATIC'].includes(refundSwapRequest.refund.type)) {
+                    throw new Error('Refunding object type must be "NIM", "BTC", "USDC_MATIC" or "USDT_MATIC"');
                 }
 
                 const parsedRefundSwapRequest: ParsedRefundSwapRequest = {
@@ -984,10 +983,7 @@ export class RequestParser {
                     locktime: signBtcTransactionRequest.locktime,
                 } as SignBtcTransactionRequest;
             case RequestType.SIGN_POLYGON_TRANSACTION:
-                const signPolygonTransactionRequest = request as ParsedSignPolygonTransactionRequest;
-                return {
-                    ...signPolygonTransactionRequest,
-                } as SignPolygonTransactionRequest;
+                return rawSignPolygonTransactionRequest(request as ParsedSignPolygonTransactionRequest);
             case RequestType.SETUP_SWAP:
                 const setupSwapRequest = request as ParsedSetupSwapRequest;
                 return {
