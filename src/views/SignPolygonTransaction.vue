@@ -23,7 +23,8 @@ export default class SignPolygonTransaction extends Vue {
         if (typeof this.request.request.from === 'string') {
             // existence checked in RpcApi
             const senderAccount = this.findWalletByPolygonAddress(this.request.request.from)!;
-            const signer = senderAccount.polygonAddresses.find((ai) => ai.address === this.request.request.from)!;
+            const from = this.request.request.from.toLowerCase();
+            const signer = senderAccount.polygonAddresses.find((ai) => ai.address.toLowerCase() === from)!;
 
             keyId = senderAccount.keyId;
             keyPath = signer.path;
