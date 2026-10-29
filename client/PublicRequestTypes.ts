@@ -791,6 +791,10 @@ export interface AddBtcAddressesResult {
  * Polygon
  */
 
+/**
+ * A transaction relayed via OpenGSN, used for swaps: HTLC redeem and refund, and the USDC.e to USDC conversion.
+ * Plain transfers use SignPolygonGaslessTransferRequest.
+ */
 export interface SignPolygonTransactionRequest extends BasicRequest, RelayRequest {
     recipientLabel?: string;
     /**
@@ -829,6 +833,63 @@ export interface SignedPolygonTransaction {
     signature: string; // HEX
 }
 
+/**
+ * A gasless USDC or USDT0 transfer on Polygon through the GaslessTransfer contract and the Nimiq relay,
+ * see https://github.com/NimiqToolbox/gas-abstraction. Amounts are in the token's smallest unit (6 decimals).
+ */
+export interface PolygonGaslessTransfer {
+    token: PolygonAddress;
+    from: PolygonAddress;
+    to: PolygonAddress;
+    amount: IntString;
+    fee: IntString; // The relay's fee quote
+    relay: PolygonAddress; // The relay address of the fee quote
+    /**
+     * The intent nonce. It identifies the payment: every version of a payment keeps it, so that at most one version
+     * can execute. For a new payment, it is the sender's current `nonces(from)` in the GaslessTransfer contract, read
+     * on-chain right before, and only once the sender's previous payment is decided. For a new version of a payment,
+     * it is the nonce of `corrects`.
+     */
+    nonce: IntString;
+}
+
+/**
+ * A signed transfer intent.
+ */
+export interface PolygonGaslessTransferRequest extends PolygonGaslessTransfer {
+    deadline: IntString; // Unix seconds
+}
+
+export interface SignPolygonGaslessTransferRequest extends BasicRequest {
+    request: PolygonGaslessTransfer;
+    /**
+     * The sender's current permit nonce in the token contract (`nonces(from)`).
+     */
+    tokenNonce: number;
+    /**
+     * The payment's latest signed version, when signing a new version of an existing payment, for example with a
+     * higher fee. The new version keeps the payment's nonce, token and recipient. Only request this after checking
+     * on-chain that the payment's nonce is still unused (`nonces(from)` is not above it).
+     */
+    corrects?: PolygonGaslessTransferRequest;
+    recipientLabel?: string;
+}
+
+/**
+ * The signed transfer in the shape of the relay's POST /v1/transfer body. It contains a token permit, so do not
+ * persist or log it.
+ */
+export interface SignedPolygonGaslessTransfer {
+    request: PolygonGaslessTransferRequest;
+    signature: HexString; // Over the GaslessTransfer typed data, which includes the authorization
+    authorization: { // The signed permit, v is 27 or 28
+        mode: 'permit',
+        v: number,
+        r: HexString,
+        s: HexString,
+    };
+}
+
 export type RpcRequest = SignTransactionRequest
                        | SignMultisigTransactionRequest
                        | SignStakingRequest
@@ -845,6 +906,7 @@ export type RpcRequest = SignTransactionRequest
                        | SignBtcTransactionRequest
                        | AddBtcAddressesRequest
                        | SignPolygonTransactionRequest
+                       | SignPolygonGaslessTransferRequest
                        | SetupSwapRequest
                        | RefundSwapRequest
                        | ConnectAccountRequest;
@@ -864,6 +926,7 @@ export type RpcResult = SignedTransaction
                       | SignedBtcTransaction
                       | AddBtcAddressesResult
                       | SignedPolygonTransaction
+                      | SignedPolygonGaslessTransfer
                       | SetupSwapResult
                       | ConnectedAccount;
 
@@ -885,7 +948,7 @@ export type ResultByRequestType<T> =
     T extends RequestType.EXPORT ? ExportResult :
     T extends RequestType.CREATE_CASHLINK | RequestType.MANAGE_CASHLINK ? Cashlink :
     T extends RequestType.SIGN_BTC_TRANSACTION ? SignedBtcTransaction :
-    T extends RequestType.SIGN_POLYGON_TRANSACTION ? SignedPolygonTransaction :
+    T extends RequestType.SIGN_POLYGON_TRANSACTION ? SignedPolygonTransaction | SignedPolygonGaslessTransfer :
     T extends RequestType.ACTIVATE_BITCOIN ? Account :
     T extends RequestType.ACTIVATE_POLYGON ? Account :
     T extends RequestType.ADD_BTC_ADDRESSES ? AddBtcAddressesResult :
