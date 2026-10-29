@@ -37,11 +37,22 @@ export default class SignPolygonTransaction extends Vue {
             } = this.request.request.from);
         }
 
-        const request: KeyguardClient.SignPolygonTransactionRequest = {
+        const request: KeyguardClient.SignPolygonTransactionRequest | KeyguardClient.SignPolygonGaslessTransferRequest
+            = 'relayData' in this.request ? {
             ...this.request,
             keyId,
             keyPath,
             keyLabel,
+        } : {
+            // Gasless transfer: forward only the known fields
+            appName: this.request.appName,
+            keyId,
+            keyPath,
+            keyLabel,
+            request: this.request.request,
+            tokenNonce: this.request.tokenNonce,
+            corrects: this.request.corrects,
+            recipientLabel: this.request.recipientLabel,
         };
 
         staticStore.keyguardRequest = request;
