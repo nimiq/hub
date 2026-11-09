@@ -5,7 +5,6 @@ import type {
     CashlinkTheme,
     RelayRequest,
     PolygonGaslessTransfer,
-    PolygonGaslessTransferRequest,
 } from '../../client/PublicRequestTypes';
 import type { ParsedPaymentOptions } from './paymentOptions/ParsedPaymentOptions';
 import type { ParsedNimiqSpecifics, ParsedNimiqDirectPaymentOptions } from './paymentOptions/NimiqPaymentOptions';
@@ -234,7 +233,6 @@ export interface ParsedAddBtcAddressesRequest extends ParsedSimpleRequest {
 export interface ParsedSignPolygonGaslessTransferRequest extends ParsedBasicRequest {
     request: PolygonGaslessTransfer;
     tokenNonce: number;
-    corrects?: PolygonGaslessTransferRequest;
     recipientLabel?: string;
 }
 

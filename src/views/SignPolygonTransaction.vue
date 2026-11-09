@@ -51,7 +51,6 @@ export default class SignPolygonTransaction extends Vue {
             keyLabel,
             request: this.request.request,
             tokenNonce: this.request.tokenNonce,
-            corrects: this.request.corrects,
             recipientLabel: this.request.recipientLabel,
         };
 

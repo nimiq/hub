@@ -646,6 +646,10 @@ export interface AddBtcAddressesResult {
 /**
  * Polygon
  */
+/**
+ * A transaction relayed via OpenGSN, used for swaps: HTLC redeem and refund, and the USDC.e to USDC conversion.
+ * Plain transfers use SignPolygonGaslessTransferRequest.
+ */
 export interface SignPolygonTransactionRequest extends BasicRequest, RelayRequest {
     recipientLabel?: string;
     /**
@@ -681,6 +685,56 @@ export interface SignedPolygonTransaction {
     message: Record<string, any>;
     signature: string;
 }
-export type RpcRequest = SignTransactionRequest | SignMultisigTransactionRequest | SignStakingRequest | CreateCashlinkRequest | ManageCashlinkRequest | CheckoutRequest | BasicRequest | SimpleRequest | ChooseAddressRequest | OnboardRequest | RenameRequest | SignMessageRequest | ExportRequest | SignBtcTransactionRequest | AddBtcAddressesRequest | SignPolygonTransactionRequest | SetupSwapRequest | RefundSwapRequest | ConnectAccountRequest;
-export type RpcResult = SignedTransaction | SignedTransaction[] | PartialSignature | Account | Account[] | SimpleResult | ChooseAddressResult | Address | Cashlink | Cashlink[] | SignedMessage | ExportResult | SignedBtcTransaction | AddBtcAddressesResult | SignedPolygonTransaction | SetupSwapResult | ConnectedAccount;
-export type ResultByRequestType<T> = T extends RequestType.RENAME ? Account : T extends RequestType.ONBOARD | RequestType.SIGNUP | RequestType.LOGIN | RequestType.MIGRATE | RequestType.LIST ? Account[] : T extends RequestType.LIST_CASHLINKS ? Cashlink[] : T extends RequestType.CHOOSE_ADDRESS ? ChooseAddressResult : T extends RequestType.ADD_ADDRESS ? Address : T extends RequestType.SIGN_TRANSACTION ? SignedTransaction | SignedTransaction[] : T extends RequestType.SIGN_MULTISIG_TRANSACTION ? PartialSignature : T extends RequestType.SIGN_STAKING ? SignedTransaction[] : T extends RequestType.CHECKOUT ? SignedTransaction | SimpleResult : T extends RequestType.SIGN_MESSAGE ? SignedMessage : T extends RequestType.LOGOUT | RequestType.CHANGE_PASSWORD ? SimpleResult : T extends RequestType.EXPORT ? ExportResult : T extends RequestType.CREATE_CASHLINK | RequestType.MANAGE_CASHLINK ? Cashlink : T extends RequestType.SIGN_BTC_TRANSACTION ? SignedBtcTransaction : T extends RequestType.SIGN_POLYGON_TRANSACTION ? SignedPolygonTransaction : T extends RequestType.ACTIVATE_BITCOIN ? Account : T extends RequestType.ACTIVATE_POLYGON ? Account : T extends RequestType.ADD_BTC_ADDRESSES ? AddBtcAddressesResult : T extends RequestType.SETUP_SWAP ? SetupSwapResult : T extends RequestType.CONNECT_ACCOUNT ? ConnectedAccount : never;
+/**
+ * A gasless USDC or USDT0 transfer on Polygon through the GaslessTransfer contract and the Nimiq relay,
+ * see https://github.com/NimiqToolbox/gas-abstraction. Amounts are in the token's smallest unit (6 decimals).
+ */
+export interface PolygonGaslessTransfer {
+    token: PolygonAddress;
+    from: PolygonAddress;
+    to: PolygonAddress;
+    amount: IntString;
+    fee: IntString;
+    relay: PolygonAddress;
+    /**
+     * The intent nonce. It identifies the payment: every version of a payment keeps it, so that at most one version
+     * can execute. For a new payment, it is the sender's current `nonces(from)` in the GaslessTransfer contract, read
+     * on-chain right before, and only once the sender's previous payment is decided. The Hub and the Keyguard do not
+     * know about earlier versions of a payment. To sign a new version, keep its `nonce`, `token` and `to`, request it
+     * only after checking on-chain that the nonce is still unused (`nonces(from)` is not above it), and before using
+     * the result check that its deadline is not earlier than the previous version's, for example with
+     * `checkCorrection` of `@nimiq/gasless-sdk`.
+     */
+    nonce: IntString;
+}
+/**
+ * A signed transfer intent.
+ */
+export interface PolygonGaslessTransferRequest extends PolygonGaslessTransfer {
+    deadline: IntString;
+}
+export interface SignPolygonGaslessTransferRequest extends BasicRequest {
+    request: PolygonGaslessTransfer;
+    /**
+     * The sender's current permit nonce in the token contract (`nonces(from)`).
+     */
+    tokenNonce: number;
+    recipientLabel?: string;
+}
+/**
+ * The signed transfer in the shape of the relay's POST /v1/transfer body. It contains a token permit, so do not
+ * persist or log it.
+ */
+export interface SignedPolygonGaslessTransfer {
+    request: PolygonGaslessTransferRequest;
+    signature: HexString;
+    authorization: {
+        mode: 'permit';
+        v: number;
+        r: HexString;
+        s: HexString;
+    };
+}
+export type RpcRequest = SignTransactionRequest | SignMultisigTransactionRequest | SignStakingRequest | CreateCashlinkRequest | ManageCashlinkRequest | CheckoutRequest | BasicRequest | SimpleRequest | ChooseAddressRequest | OnboardRequest | RenameRequest | SignMessageRequest | ExportRequest | SignBtcTransactionRequest | AddBtcAddressesRequest | SignPolygonTransactionRequest | SignPolygonGaslessTransferRequest | SetupSwapRequest | RefundSwapRequest | ConnectAccountRequest;
+export type RpcResult = SignedTransaction | SignedTransaction[] | PartialSignature | Account | Account[] | SimpleResult | ChooseAddressResult | Address | Cashlink | Cashlink[] | SignedMessage | ExportResult | SignedBtcTransaction | AddBtcAddressesResult | SignedPolygonTransaction | SignedPolygonGaslessTransfer | SetupSwapResult | ConnectedAccount;
+export type ResultByRequestType<T> = T extends RequestType.RENAME ? Account : T extends RequestType.ONBOARD | RequestType.SIGNUP | RequestType.LOGIN | RequestType.MIGRATE | RequestType.LIST ? Account[] : T extends RequestType.LIST_CASHLINKS ? Cashlink[] : T extends RequestType.CHOOSE_ADDRESS ? ChooseAddressResult : T extends RequestType.ADD_ADDRESS ? Address : T extends RequestType.SIGN_TRANSACTION ? SignedTransaction | SignedTransaction[] : T extends RequestType.SIGN_MULTISIG_TRANSACTION ? PartialSignature : T extends RequestType.SIGN_STAKING ? SignedTransaction[] : T extends RequestType.CHECKOUT ? SignedTransaction | SimpleResult : T extends RequestType.SIGN_MESSAGE ? SignedMessage : T extends RequestType.LOGOUT | RequestType.CHANGE_PASSWORD ? SimpleResult : T extends RequestType.EXPORT ? ExportResult : T extends RequestType.CREATE_CASHLINK | RequestType.MANAGE_CASHLINK ? Cashlink : T extends RequestType.SIGN_BTC_TRANSACTION ? SignedBtcTransaction : T extends RequestType.SIGN_POLYGON_TRANSACTION ? SignedPolygonTransaction | SignedPolygonGaslessTransfer : T extends RequestType.ACTIVATE_BITCOIN ? Account : T extends RequestType.ACTIVATE_POLYGON ? Account : T extends RequestType.ADD_BTC_ADDRESSES ? AddBtcAddressesResult : T extends RequestType.SETUP_SWAP ? SetupSwapResult : T extends RequestType.CONNECT_ACCOUNT ? ConnectedAccount : never;

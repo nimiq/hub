@@ -37,7 +37,6 @@ describe('SIGN_POLYGON_TRANSACTION gasless transfer request parsing', () => {
         expect(parsed.kind).toBe(RequestType.SIGN_POLYGON_TRANSACTION);
         expect(parsed.request).toEqual(TRANSFER);
         expect(parsed.tokenNonce).toBe(0);
-        expect(parsed.corrects).toBeUndefined();
         expect(parsed.recipientLabel).toBe('Alice');
         expect('relayData' in parsed).toBe(false);
 
@@ -45,15 +44,12 @@ describe('SIGN_POLYGON_TRANSACTION gasless transfer request parsing', () => {
         expect(parse(raw as any)).toEqual(parsed);
     });
 
-    it('parses a correction of an earlier version', () => {
-        const corrects = {
-            ...TRANSFER,
-            fee: '5000',
-            deadline: '1790000600',
-        };
-        expect(parse({ corrects }).corrects).toEqual(corrects);
-        expect(() => parse({ corrects: { ...corrects, nonce: `0x${'ab'.repeat(32)}` } })).toThrow();
-        expect(() => parse({ corrects: { ...corrects, deadline: 1790000600 as any } })).toThrow();
+    it('ignores corrects, which the Keyguard no longer takes', () => {
+        const corrects = { ...TRANSFER, fee: '5000', deadline: '1790000600' };
+        const parsed = parse({ corrects } as any);
+        expect('corrects' in parsed).toBe(false);
+        expect('corrects' in rawSignPolygonGaslessTransferRequest(parsed)).toBe(false);
+        expect(parsed).toEqual(parse({}));
     });
 
     it('rejects malformed transfers', () => {
