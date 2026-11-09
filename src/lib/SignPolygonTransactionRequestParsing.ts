@@ -62,25 +62,12 @@ export function parseSignPolygonGaslessTransferRequest(
         throw new Error('tokenNonce must be a non-negative integer');
     }
 
-    let corrects: ParsedSignPolygonGaslessTransferRequest['corrects'];
-    if (request.corrects !== undefined) {
-        const { deadline } = request.corrects;
-        if (typeof deadline !== 'string' || !/^\d+$/.test(deadline)) {
-            throw new Error('corrects.deadline must be a decimal string');
-        }
-        corrects = {
-            ...parsePolygonGaslessTransfer(request.corrects, 'corrects'),
-            deadline,
-        };
-    }
-
     return {
         kind: RequestType.SIGN_POLYGON_TRANSACTION,
         appName: request.appName,
         operation: 'transfer',
         request: transfer,
         tokenNonce,
-        corrects,
         recipientLabel: request.recipientLabel,
     };
 }
@@ -92,7 +79,6 @@ function rawSignPolygonGaslessTransferRequest(
         appName: request.appName,
         request: request.request,
         tokenNonce: request.tokenNonce,
-        corrects: request.corrects,
         recipientLabel: request.recipientLabel,
     };
 }

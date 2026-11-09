@@ -4,7 +4,6 @@ import type {
     RequestType,
     CashlinkTheme,
     PolygonGaslessTransfer,
-    PolygonGaslessTransferRequest,
     PolygonHtlcOpenRequest,
     PolygonHtlcSettlement,
 } from '../../client/PublicRequestTypes';
@@ -236,7 +235,6 @@ export interface ParsedSignPolygonGaslessTransferRequest extends ParsedBasicRequ
     operation: 'transfer';
     request: PolygonGaslessTransfer;
     tokenNonce: number;
-    corrects?: PolygonGaslessTransferRequest;
     recipientLabel?: string;
 }
 
