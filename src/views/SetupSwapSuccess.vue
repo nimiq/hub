@@ -20,7 +20,12 @@ import { init as initOasisApi, exchangeAuthorizationToken } from '@nimiq/oasis-a
 import StatusScreen from '../components/StatusScreen.vue';
 import GlobalClose from '../components/GlobalClose.vue';
 import Network from '../components/Network.vue';
-import { SetupSwapResult, SignedBtcTransaction, SignedPolygonTransaction } from '../../client/PublicRequestTypes';
+import {
+    SetupSwapResult,
+    SignedBtcTransaction,
+    SignedPolygonHtlcOpen,
+    SignedPolygonHtlcSettlement,
+} from '../../client/PublicRequestTypes';
 import { Static } from '../lib/StaticStore';
 import { ParsedSetupSwapRequest } from '../lib/RequestTypes';
 import Config from 'config';
@@ -464,8 +469,8 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
         let nimiqTransaction: Nimiq.Transaction | undefined;
         let nimiqProxyTransaction: Nimiq.Transaction | undefined;
         let bitcoinTransaction: SignedBtcTransaction | undefined;
-        let polygonUsdcTransaction: SignedPolygonTransaction | undefined;
-        let polygonUsdtTransaction: SignedPolygonTransaction | undefined;
+        let polygonUsdcTransaction: SignedPolygonHtlcOpen | SignedPolygonHtlcSettlement | undefined;
+        let polygonUsdtTransaction: SignedPolygonHtlcOpen | SignedPolygonHtlcSettlement | undefined;
         let refundTransaction: string | undefined;
         let euroSettlement: string | undefined;
         try {
@@ -563,8 +568,8 @@ export default class SetupSwapSuccess extends BitcoinSyncBaseView {
         nim?: Nimiq.Transaction,
         nimProxy?: Nimiq.Transaction, // only in SetupSwapLedger
         btc?: SignedBtcTransaction,
-        usdc?: SignedPolygonTransaction,
-        usdt?: SignedPolygonTransaction,
+        usdc?: SignedPolygonHtlcOpen | SignedPolygonHtlcSettlement,
+        usdt?: SignedPolygonHtlcOpen | SignedPolygonHtlcSettlement,
         eur?: string,
         refundTx?: string,
     } | null> {

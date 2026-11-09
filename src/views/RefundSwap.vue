@@ -122,12 +122,9 @@ export default class RefundSwap extends BitcoinSyncBaseView {
             this._signTransaction(signRequest);
         }
 
-        if (
-            refundInfo.type === SwapAsset.USDC_MATIC
-            || refundInfo.type === SwapAsset.USDC
-            || refundInfo.type === SwapAsset.USDT_MATIC
-        ) {
-            const signer = account.polygonAddresses.find((ai) => ai.address === refundInfo.request.from);
+        if (refundInfo.type === SwapAsset.USDC_MATIC || refundInfo.type === SwapAsset.USDT_MATIC) {
+            const from = refundInfo.request.from.toLowerCase();
+            const signer = account.polygonAddresses.find((ai) => ai.address.toLowerCase() === from);
 
             if (!signer) {
                 this.$rpc.reject(new Error(`Unknown recipient ${refundInfo.request.from}`));
@@ -137,14 +134,15 @@ export default class RefundSwap extends BitcoinSyncBaseView {
             const signRequest: KeyguardSignPolygonTransactionRequest = {
                 appName: request.appName,
 
-                ...refundInfo,
-
                 keyId: account.keyId,
                 keyLabel: account.labelForKeyguard!,
                 keyPath: signer.path,
 
-                senderLabel: 'Swap HTLC',
+                operation: 'refund',
+                request: refundInfo.request,
                 token: refundInfo.token,
+                amount: refundInfo.amount.toString(),
+                senderLabel: 'Swap HTLC',
             };
 
             this._signTransaction(signRequest);

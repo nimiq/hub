@@ -435,6 +435,7 @@
             return this._request(requestBehavior, RequestType.SIGN_BTC_TRANSACTION, [request]);
         }
         signPolygonTransaction(request, requestBehavior = this._defaultBehavior) {
+            // The result type depends on the request variant, which the generic result mapping cannot express
             return this._request(requestBehavior, RequestType.SIGN_POLYGON_TRANSACTION, [request]);
         }
         setupSwap(request, requestBehavior = this._defaultBehavior) {
