@@ -629,7 +629,8 @@ export interface AddBtcAddressesResult {
  */
 /**
  * A gasless USDC or USDT0 transfer on Polygon through the GaslessTransfer contract and the Nimiq relay,
- * see https://github.com/NimiqToolbox/gas-abstraction. Amounts are in the token's smallest unit (6 decimals).
+ * see https://github.com/NimiqToolbox/gas-abstraction. Amounts are in the token's smallest unit (6 decimals). Amounts
+ * and fees must not be above `Number.MAX_SAFE_INTEGER`.
  */
 export interface PolygonGaslessTransfer {
     token: PolygonAddress;
@@ -656,7 +657,8 @@ export interface PolygonGaslessTransferRequest extends PolygonGaslessTransfer {
     deadline: IntString;
 }
 /**
- * The redeem or refund of a USDC or USDT0 HTLC through the GaslessHTLC contract. PROVISIONAL: the GaslessHTLC contract
+ * The redeem or refund of a USDC or USDT0 HTLC through the GaslessHTLC contract. Amounts are in the token's smallest
+ * unit (6 decimals) and, as fees, must not be above `Number.MAX_SAFE_INTEGER`. PROVISIONAL: the GaslessHTLC contract
  * does not exist yet, its interface might still change.
  */
 export interface PolygonHtlcSettlement {
@@ -674,6 +676,7 @@ export interface PolygonHtlcSettlementRequest extends PolygonHtlcSettlement {
 }
 /**
  * A signed HTLC opening. `from` is the HTLC's refund address and pays `amount` into the HTLC and `fee` to the relay.
+ * Both must not be above `Number.MAX_SAFE_INTEGER`.
  */
 export interface PolygonHtlcOpenRequest {
     token: PolygonAddress;
