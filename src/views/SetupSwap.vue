@@ -194,6 +194,7 @@ export default class SetupSwap extends BitcoinSyncBaseView {
                 type: this.request.fund.type,
                 keyPath: signer.path,
                 request: this.request.fund.request,
+                tokenNonce: this.request.fund.tokenNonce,
             };
         }
 
