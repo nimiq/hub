@@ -33,8 +33,6 @@ import {
     AddBtcAddressesRequest,
     AddBtcAddressesResult,
     SignPolygonTransactionRequest,
-    SignPolygonGaslessTransferRequest,
-    SignedPolygonGaslessTransfer,
     SignedPolygonTransaction,
     Cashlink,
     CashlinkCurrency,
@@ -198,17 +196,11 @@ export default class HubApi<
         return this._request(requestBehavior, RequestType.SIGN_BTC_TRANSACTION, [request]);
     }
 
-    public signPolygonTransaction<
-        R extends SignPolygonTransactionRequest | SignPolygonGaslessTransferRequest,
-        B extends BehaviorType = DB,
-    >(
-        request: Promise<R> | R,
+    public signPolygonTransaction<B extends BehaviorType = DB>(
+        request: Promise<SignPolygonTransactionRequest> | SignPolygonTransactionRequest,
         requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
-    ): Promise<B extends BehaviorType.REDIRECT
-        ? void
-        : R extends SignPolygonGaslessTransferRequest ? SignedPolygonGaslessTransfer : SignedPolygonTransaction> {
-        // The result type depends on the request variant, which the generic result mapping cannot express
-        return this._request(requestBehavior, RequestType.SIGN_POLYGON_TRANSACTION, [request]) as any;
+    ): Promise<B extends BehaviorType.REDIRECT ? void : SignedPolygonTransaction> {
+        return this._request(requestBehavior, RequestType.SIGN_POLYGON_TRANSACTION, [request]);
     }
 
     public setupSwap<B extends BehaviorType = DB>(
@@ -223,7 +215,7 @@ export default class HubApi<
         requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
     ): Promise<B extends BehaviorType.REDIRECT
         ? void
-        : SignedTransaction | SignedBtcTransaction | SignedPolygonTransaction> {
+        : SignedTransaction | SignedBtcTransaction> {
         return this._request(requestBehavior, RequestType.REFUND_SWAP, [request]);
     }
 

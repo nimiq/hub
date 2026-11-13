@@ -3,7 +3,6 @@ import type {
     PaymentType,
     RequestType,
     CashlinkTheme,
-    RelayRequest,
     PolygonGaslessTransfer,
 } from '../../client/PublicRequestTypes';
 import type { ParsedPaymentOptions } from './paymentOptions/ParsedPaymentOptions';
@@ -236,23 +235,7 @@ export interface ParsedSignPolygonGaslessTransferRequest extends ParsedBasicRequ
     recipientLabel?: string;
 }
 
-export type ParsedSignPolygonTransactionRequest =
-    ParsedSignPolygonOpenGsnTransactionRequest
-    | ParsedSignPolygonGaslessTransferRequest;
-
-/** Swap related transactions (HTLC redeem and refund, USDC.e conversion), relayed via OpenGSN. */
-export interface ParsedSignPolygonOpenGsnTransactionRequest extends ParsedBasicRequest, RelayRequest {
-    recipientLabel?: string;
-    approval?: {
-        tokenNonce: number,
-    };
-    permit?: {
-        tokenNonce: number,
-    };
-    amount?: number;
-    senderLabel?: string;
-    token?: string;
-}
+export type ParsedSignPolygonTransactionRequest = ParsedSignPolygonGaslessTransferRequest;
 
 /**
  * Swap
@@ -289,15 +272,14 @@ export interface ParsedSetupSwapRequest extends ParsedSimpleRequest {
         locktime?: number,
         // htlcScript: Uint8Array,
         refundAddress: string,
-    } | ({
+    } | {
         type: SwapAsset.USDC_MATIC | SwapAsset.USDT_MATIC,
-        permit?: {
-            tokenNonce: number,
+        request: {
+            from: string,
+            amount: string,
+            fee: string,
         },
-        approval?: {
-            tokenNonce: number,
-        },
-    } & RelayRequest) | {
+    } | {
         type: SwapAsset.EUR,
         value: number, // Eurocents
         fee: number, // Eurocents
@@ -326,10 +308,14 @@ export interface ParsedSetupSwapRequest extends ParsedSimpleRequest {
             address: string, // My address, must be redeem address of HTLC
             value: number, // Sats
         };
-    } | ({
+    } | {
         type: SwapAsset.USDC_MATIC | SwapAsset.USDT_MATIC,
-        amount: number,
-    } & RelayRequest) | {
+        request: {
+            from: string,
+            fee: string,
+        },
+        amount: number, // The amount I receive: the HTLC amount minus the fee
+    } | {
         type: SwapAsset.EUR,
         value: number; // Eurocents
         fee: number; // Eurocents
@@ -406,11 +392,7 @@ export interface ParsedRefundSwapRequest extends ParsedSimpleRequest {
             value: number, // Sats
         };
         refundAddress: string; // My address, must be refund address of HTLC
-    } | ({
-        type: SwapAsset.USDC_MATIC | SwapAsset.USDC | SwapAsset.USDT_MATIC,
-        amount: number,
-        token: string,
-    } & RelayRequest);
+    };
 }
 
 export interface ParsedConnectAccountRequest extends ParsedBasicRequest {

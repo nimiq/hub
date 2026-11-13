@@ -62,4 +62,9 @@ describe('SIGN_POLYGON_TRANSACTION gasless transfer request parsing', () => {
         expect(() => parse({ tokenNonce: -1 })).toThrow();
         expect(() => parse({ tokenNonce: '0' as any })).toThrow();
     });
+
+    it('accepts only the transfer operation', () => {
+        expect(parse({ operation: 'transfer' })).toEqual(parse({}));
+        expect(() => parse({ operation: 'refund' } as any)).toThrow('Invalid operation');
+    });
 });

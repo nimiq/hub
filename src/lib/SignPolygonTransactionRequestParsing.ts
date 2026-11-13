@@ -4,7 +4,7 @@ import type { ParsedSignPolygonGaslessTransferRequest } from './RequestTypes';
 
 /**
  * Parsing of SIGN_POLYGON_TRANSACTION requests for gasless USDC/USDT0 transfers and their inverse mapping for the
- * history state. Requests relayed via OpenGSN (swaps) are passed through by the RequestParser, as before.
+ * history state.
  *
  * Only the shape is checked here. The Keyguard validates the transfer against its own pins (contract, relays, tokens)
  * and fee limit, and builds the typed data it signs itself. The Hub forwards only the known plain fields.
@@ -16,6 +16,8 @@ import type { ParsedSignPolygonGaslessTransferRequest } from './RequestTypes';
 export function parseSignPolygonGaslessTransferRequest(
     request: SignPolygonGaslessTransferRequest,
 ): ParsedSignPolygonGaslessTransferRequest {
+    if (request.operation !== undefined && request.operation !== 'transfer') throw new Error('Invalid operation');
+
     const transfer = parsePolygonGaslessTransfer(request.request, 'request');
 
     const tokenNonce = request.tokenNonce;
