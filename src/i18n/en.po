@@ -120,6 +120,10 @@ msgstr ""
 msgid "Apply a network fee of at least {fee} sat/byte."
 msgstr ""
 
+#: src/views/CreateMultisigCommitmentsSuccess.vue:4
+msgid "Approval started"
+msgstr ""
+
 #: src/views/SetupSwapLedger.vue:47
 msgid "Atomic swaps require two BTC transactions."
 msgstr ""

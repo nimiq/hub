@@ -16,10 +16,11 @@ import {
     CashlinkTheme,
     RequestType,
     SetupSwapRequest,
+    CreateMultisigCommitmentsRequest,
+    MultisigCommitments,
     SignMultisigTransactionRequest,
     ConnectAccountRequest,
     ConnectedAccount,
-    RsaKeyParams,
 } from '../client/PublicRequestTypes';
 import { RedirectRequestBehavior, PopupRequestBehavior } from '../client/RequestBehavior';
 import { Utf8Tools } from '@nimiq/utils';
@@ -32,6 +33,28 @@ declare global {
     interface Window {
         loadAlbatross(): Promise<typeof import('@nimiq/core')>;
     }
+}
+
+// The multisig signing session of the demo, stored in the sessionStorage to survive redirects between the two rounds.
+// The other signers and their commitments are made up, as the demo only covers our own signature.
+type MultisigSession = {
+    transaction: Omit<SignMultisigTransactionRequest, 'appName' | 'multisigConfig'>,
+    publicKeys: string[],
+    numberOfSigners: number,
+    userName: string,
+    otherSigners: Array<{ publicKey: string, commitments: string[] }>,
+    myCommitments?: string[],
+    state?: string,
+};
+
+const MULTISIG_SESSION_KEY = 'hub-demo-multisig-session';
+
+function getMultisigSession(): MultisigSession | null {
+    return JSON.parse(sessionStorage.getItem(MULTISIG_SESSION_KEY) || 'null');
+}
+
+function setMultisigSession(session: MultisigSession) {
+    sessionStorage.setItem(MULTISIG_SESSION_KEY, JSON.stringify(session));
 }
 
 class Demo {
@@ -54,6 +77,9 @@ class Demo {
                 );
                 if (requestType === RequestType.CONNECT_ACCOUNT) {
                     setConnectResult(result as ConnectedAccount);
+                }
+                if (requestType === RequestType.CREATE_MULTISIG_COMMITMENTS) {
+                    setMultisigCommitments(result as MultisigCommitments);
                 }
             }, (error: Error, state: State) => {
                 console.error('Hub error', error);
@@ -912,7 +938,18 @@ class Demo {
             );
         }
 
-        document.querySelector('button#sign-multisig-transaction')!.addEventListener('click', async () => {
+        function setMultisigCommitments(result: MultisigCommitments) {
+            const session = getMultisigSession();
+            if (!session) throw new Error('No multisig session');
+            setMultisigSession({
+                ...session,
+                myCommitments: result.commitments.map((commitment) => toHex(commitment)),
+                state: toHex(result.state),
+            });
+        }
+
+        // Round 1
+        document.querySelector('button#create-multisig-commitments')!.addEventListener('click', async () => {
             // TODO until the primitives required for multisigs are available in the regular @nimiq/core package, we use
             //  a temporary build. This should be removed when the required primitives are available in @nimiq/core. As
             //  an alternative, the commitments and public key aggregation from legacy core-js should be compatible, or
@@ -926,7 +963,6 @@ class Demo {
                 PublicKey,
                 Address,
                 CommitmentPair,
-                BufferUtils,
             } = await import(/* webpackIgnore: true */ 'https://cdn.jsdelivr.net/gh/nimiq/core-rs-albatross@06999e1626b3312a906a0a490339d7feb781811b'
                 + '/web-client/dist/web/index.js');
             await initWasm();
@@ -937,28 +973,6 @@ class Demo {
                 throw new Error('Invalid public key');
             }
 
-            const encryptionKeyJson = (document.querySelector('#connected-encryption-key') as HTMLInputElement).value;
-            const encryptCommitmentSecrets = (document.querySelector('#multisig-checkbox-encrypt') as HTMLInputElement).checked;
-            if (encryptCommitmentSecrets && !encryptionKeyJson) {
-                alert('Encryption key must be set, if encryption is enabled.');
-                throw new Error('Encryption key missing');
-            }
-            let encryptionKey: { key: CryptoKey, keyParams: RsaKeyParams } | null = null;
-            if (encryptCommitmentSecrets) {
-                const encryptionKeyInfo = JSON.parse(
-                    encryptionKeyJson,
-                    (key, value) => key === 'keyData' ? BufferUtils.fromHex(value) : value,
-                ) as ConnectedAccount['encryptionKey'];
-                const key = await window.crypto.subtle.importKey(
-                    encryptionKeyInfo.format,
-                    encryptionKeyInfo.keyData,
-                    encryptionKeyInfo.algorithm,
-                    true, // public key is fine to be extractable
-                    encryptionKeyInfo.keyUsages,
-                );
-                encryptionKey = { key, keyParams: encryptionKeyInfo.keyParams };
-            }
-
             const transactionValue = parseInt((document.querySelector('#multisig-value') as HTMLInputElement).value)
                 * 1e5;
             const transactionData = (document.querySelector('#multisig-data') as HTMLInputElement).value;
@@ -966,76 +980,89 @@ class Demo {
             const numberOfKeys = parseInt((document.querySelector('#multisig-participants') as HTMLInputElement).value);
             const userName = (document.querySelector('#multisig-username') as HTMLInputElement).value;
 
-            // One key difference between the multisig implementation in Nimiq PoW's core-js and Musig2 in Nimiq PoS's
-            // core-rs-albatross is that Musig2 uses multiple commitments per signer, specified via MUSIG2_PARAMETER_V.
-            // Other details like the aggregation of public keys and the calculation of Multisig addresses are identical
-            // between core-js and core-rs-albatross. In fact, multisigs created with core-js can be used with Musig2 by
-            // simply creating multiple commitments.
-            const MUSIG2_PARAMETER_V = 2;
-            const generateCommitmentPairs = () => Array.from<unknown, InstanceType<typeof CommitmentPair>>(
-                { length: MUSIG2_PARAMETER_V },
-                () => CommitmentPair.generate(),
-            );
-
             // Collect owner public keys of potential signers of the multisig.
             const myPublicKey = PublicKey.fromHex(myPublicKeyHex);
             const publicKeys = [myPublicKey]; // my pubkey first, so it's included in the signer subset
             for (let i = 1; i < numberOfKeys; i++) {
-                const privateKey = PrivateKey.generate();
-                const publicKey = PublicKey.derive(privateKey);
-                publicKeys.push(publicKey);
+                publicKeys.push(PublicKey.derive(PrivateKey.generate()));
             }
             // Calculate the multisig address from the public keys.
             const multiSigAddress = Address.fromPublicKeys(publicKeys, numberOfSigners);
 
-            // Collect commitments for the subset of publicKeys that sign the transaction
-            const myCommitmentPairs = generateCommitmentPairs();
-            const signers = [{
-                publicKey: myPublicKey,
-                commitments: myCommitmentPairs.map(({ commitment }) => commitment),
-            }];
-            for (let i = 1; i < numberOfSigners; i++) {
-                const publicKey = publicKeys[i];
-                const commitments = generateCommitmentPairs().map(({ commitment }) => commitment);
-                signers.push({ publicKey, commitments });
+            // Made up commitments of the other signers of the transaction. Musig2 in Nimiq PoS uses two commitments per
+            // signer (MUSIG2_PARAMETER_V).
+            const MUSIG2_PARAMETER_V = 2;
+            const otherSigners = publicKeys.slice(1, numberOfSigners).map((publicKey) => ({
+                publicKey: publicKey.toHex(),
+                commitments: Array.from({ length: MUSIG2_PARAMETER_V }, () => CommitmentPair.generate().commitment.toHex()),
+            }));
+
+            const session: MultisigSession = {
+                // Must be identical in both rounds.
+                transaction: {
+                    signer: myPublicKey.toAddress().toUserFriendlyAddress(),
+                    sender: multiSigAddress.toUserFriendlyAddress(),
+                    senderLabel: 'Our Multisig Wallet',
+                    recipient: 'NQ82 HP54 C9D4 2FAG 69QD 6Q71 LURR 5187 0V3X',
+                    recipientLabel: 'Best Friend',
+                    value: transactionValue,
+                    // fee: 0,
+                    extraData: transactionData,
+                    // flags: 0,
+                    validityStartHeight: 1,
+                },
+                publicKeys: publicKeys.map((publicKey) => publicKey.toHex()),
+                numberOfSigners,
+                userName,
+                otherSigners,
+            };
+            setMultisigSession(session);
+
+            const request: CreateMultisigCommitmentsRequest = {
+                appName: 'Hub Demos',
+                ...session.transaction,
+                multisigConfig: {
+                    publicKeys: session.publicKeys,
+                    numberOfSigners,
+                    userName,
+                },
+            };
+
+            try {
+                const result = await demo.client.createMultisigCommitments(request, demo._defaultBehavior);
+                if (demo.isRedirectResult(result)) return;
+                console.log('Result', result);
+                setMultisigCommitments(result);
+                document.querySelector('#result')!.textContent = 'Commitments created: '
+                    + result.commitments.map((commitment) => toHex(commitment)).join(', ');
+            } catch (e) {
+                console.error(e);
+                document.querySelector('#result')!.textContent = `Error: ${e.message || e}`;
             }
-            const myCommitmentSecrets = encryptionKey
-                ? {
-                    encrypted: (await Promise.all(myCommitmentPairs.map(({ secret }) => window.crypto.subtle.encrypt(
-                        encryptionKey.key.algorithm,
-                        encryptionKey.key,
-                        secret.serialize(),
-                    )))).map((encryptedSecret) => toHex(encryptedSecret)),
-                    keyParams: encryptionKey.keyParams,
-                }
-                : myCommitmentPairs.map(({ secret }) => secret.toHex());
+        });
+
+        // Round 2
+        document.querySelector('button#sign-multisig-transaction')!.addEventListener('click', async () => {
+            const session = getMultisigSession();
+            if (!session || !session.myCommitments || !session.state) {
+                alert('Create the commitments first.');
+                throw new Error('Commitments missing');
+            }
 
             // Partially sign the transaction with our key.
             // This demo does not cover creating partial signatures for the other signers and aggregating the final
             // transaction signature.
             const request: SignMultisigTransactionRequest = {
                 appName: 'Hub Demos',
-
-                signer: myPublicKey.toAddress().toUserFriendlyAddress(),
-
-                sender: multiSigAddress.toUserFriendlyAddress(),
-                senderLabel: 'Our Multisig Wallet',
-                recipient: 'NQ82 HP54 C9D4 2FAG 69QD 6Q71 LURR 5187 0V3X',
-                recipientLabel: 'Best Friend',
-                value: transactionValue,
-                // fee: 0,
-                extraData: transactionData,
-                // flags: 0,
-                validityStartHeight: 1,
-
+                ...session.transaction,
                 multisigConfig: {
-                    publicKeys: publicKeys.map((publicKey) => publicKey.toHex()),
-                    signers: signers.map(({ publicKey, commitments }) => ({
-                        publicKey: publicKey.toHex(),
-                        commitments: commitments.map((commitment) => commitment.toHex()),
-                    })),
-                    secrets: myCommitmentSecrets,
-                    userName,
+                    publicKeys: session.publicKeys,
+                    signers: [{
+                        publicKey: session.publicKeys[0],
+                        commitments: session.myCommitments,
+                    }, ...session.otherSigners],
+                    state: session.state,
+                    userName: session.userName,
                 },
             };
 

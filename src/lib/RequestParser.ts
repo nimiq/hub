@@ -27,6 +27,7 @@ import type {
     SignPolygonTransactionRequest,
     SetupSwapRequest,
     RefundSwapRequest,
+    CreateMultisigCommitmentsRequest,
     SignMultisigTransactionRequest,
 } from '../../client/PublicRequestTypes';
 import type {
@@ -47,6 +48,7 @@ import type {
     ParsedSignPolygonTransactionRequest,
     ParsedSetupSwapRequest,
     ParsedRefundSwapRequest,
+    ParsedCreateMultisigCommitmentsRequest,
     ParsedSignMultisigTransactionRequest,
     ParsedConnectAccountRequest,
 } from './RequestTypes';
@@ -60,6 +62,12 @@ import {
     parseSignPolygonGaslessTransferRequest,
     rawSignPolygonGaslessTransferRequest,
 } from './SignPolygonTransactionRequestParsing';
+import {
+    parseCreateMultisigCommitmentsRequest,
+    rawCreateMultisigCommitmentsRequest,
+    parseSignMultisigTransactionRequest,
+    rawSignMultisigTransactionRequest,
+} from './MultisigRequestParsing';
 import { SwapAsset } from '@nimiq/fastspot-api';
 import RpcApi from './RpcApi';
 
@@ -738,81 +746,10 @@ export class RequestParser {
                     },
                 };
                 return parsedRefundSwapRequest;
+            case RequestType.CREATE_MULTISIG_COMMITMENTS:
+                return parseCreateMultisigCommitmentsRequest(request as CreateMultisigCommitmentsRequest);
             case RequestType.SIGN_MULTISIG_TRANSACTION:
-                const signMultisigTxRequest = request as SignMultisigTransactionRequest;
-
-                // Most fields are validated by Keyguard, we mustly need to do type conversions if necessary
-
-                // TODO: Validate object and array fields, to not throw "tried to access <field> of undefined" errors
-
-                // if (
-                //     !signMultisigTxRequest.multisigConfig ||
-                //     typeof signMultisigTxRequest.multisigConfig !== 'object'
-                // ) {
-                //     throw new Error('multisigConfig must be an object');
-                // }
-
-                // if (
-                //     !signMultisigTxRequest.multisigConfig.secret
-                //     || typeof signMultisigTxRequest.multisigConfig.secret !== 'object'
-                // ) {
-                //     throw new Error('multisigConfig.secret must be an object');
-                // }
-
-                function parseMessage(msg?: Uint8Array | string) {
-                    if (!msg) return undefined;
-                    if (msg instanceof Uint8Array) return msg;
-                    if (typeof msg === 'string') return Utf8Tools.stringToUtf8ByteArray(msg);
-                    throw new Error('extraData must be a string or an Uint8Array');
-                }
-
-                function parseBytes(bytes?: Uint8Array | string) {
-                    if (!bytes || !bytes.length) {
-                        throw new Error('bytes cannot be empty');
-                    }
-                    if (bytes instanceof Uint8Array) return bytes;
-                    if (typeof bytes === 'string') return Nimiq.BufferUtils.fromAny(bytes);
-                    throw new Error('bytes must be a string or an Uint8Array');
-                }
-
-                const parsedSignMultisigTxRequest: ParsedSignMultisigTransactionRequest = {
-                    kind: RequestType.SIGN_MULTISIG_TRANSACTION,
-                    appName: signMultisigTxRequest.appName,
-
-                    signer: Nimiq.Address.fromAny(signMultisigTxRequest.signer),
-
-                    sender: Nimiq.Address.fromString(signMultisigTxRequest.sender),
-                    senderType: signMultisigTxRequest.senderType || Nimiq.AccountType.Basic,
-                    senderLabel: signMultisigTxRequest.senderLabel,
-                    senderData: parseMessage(signMultisigTxRequest.senderData),
-                    recipient: Nimiq.Address.fromString(signMultisigTxRequest.recipient),
-                    recipientType: signMultisigTxRequest.recipientType || Nimiq.AccountType.Basic,
-                    recipientLabel: signMultisigTxRequest.recipientLabel,
-                    value: signMultisigTxRequest.value,
-                    fee: signMultisigTxRequest.fee || 0,
-                    data: parseMessage(signMultisigTxRequest.extraData) || new Uint8Array(0),
-                    flags: signMultisigTxRequest.flags || Nimiq.TransactionFlag.None,
-                    validityStartHeight: signMultisigTxRequest.validityStartHeight,
-
-                    multisigConfig: {
-                        publicKeys: signMultisigTxRequest.multisigConfig.publicKeys.map((bytes) => parseBytes(bytes)),
-                        signers: signMultisigTxRequest.multisigConfig.signers.map((signer) => ({
-                            publicKey: parseBytes(signer.publicKey),
-                            commitments: signer.commitments.map((bytes) => parseBytes(bytes)),
-                        })),
-                        secrets: Array.isArray(signMultisigTxRequest.multisigConfig.secrets)
-                            ? signMultisigTxRequest.multisigConfig.secrets.map((bytes) => parseBytes(bytes))
-                            : {
-                                encrypted: signMultisigTxRequest.multisigConfig.secrets.encrypted.map(
-                                    (bytes) => parseBytes(bytes),
-                                ),
-                                keyParams: signMultisigTxRequest.multisigConfig.secrets.keyParams,
-                            },
-                        userName: signMultisigTxRequest.multisigConfig.userName,
-                    },
-                };
-
-                return parsedSignMultisigTxRequest;
+                return parseSignMultisigTransactionRequest(request as SignMultisigTransactionRequest);
             case RequestType.CONNECT_ACCOUNT:
                 const connectAccountRequest = request as ConnectAccountRequest;
                 if (typeof connectAccountRequest.challenge !== 'string') {
@@ -1020,29 +957,10 @@ export class RequestParser {
                         recipient: refundSwapRequest.refund.recipient.toUserFriendlyAddress(),
                     } : refundSwapRequest.refund,
                 } as RefundSwapRequest;
+            case RequestType.CREATE_MULTISIG_COMMITMENTS:
+                return rawCreateMultisigCommitmentsRequest(request as ParsedCreateMultisigCommitmentsRequest);
             case RequestType.SIGN_MULTISIG_TRANSACTION:
-                const signMultisigTxRequest = request as ParsedSignMultisigTransactionRequest;
-                const rawSignMultisigTxRequest: SignMultisigTransactionRequest = {
-                    appName: signMultisigTxRequest.appName,
-
-                    signer: signMultisigTxRequest.signer.toUserFriendlyAddress(),
-
-                    sender: signMultisigTxRequest.sender.toUserFriendlyAddress(),
-                    senderType: signMultisigTxRequest.senderType,
-                    senderLabel: signMultisigTxRequest.senderLabel,
-                    senderData: signMultisigTxRequest.senderData,
-                    recipient: signMultisigTxRequest.recipient.toUserFriendlyAddress(),
-                    recipientType: signMultisigTxRequest.recipientType,
-                    recipientLabel: signMultisigTxRequest.recipientLabel,
-                    value: signMultisigTxRequest.value,
-                    fee: signMultisigTxRequest.fee,
-                    extraData: signMultisigTxRequest.data,
-                    flags: signMultisigTxRequest.flags,
-                    validityStartHeight: signMultisigTxRequest.validityStartHeight,
-
-                    multisigConfig: signMultisigTxRequest.multisigConfig,
-                };
-                return rawSignMultisigTxRequest;
+                return rawSignMultisigTransactionRequest(request as ParsedSignMultisigTransactionRequest);
             case RequestType.CONNECT_ACCOUNT:
                 const connectAccountRequest = request as ParsedConnectAccountRequest;
 
