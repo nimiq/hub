@@ -462,7 +462,7 @@ echo -e "${BLUE}Running pre-deployment tasks...${NC}"
 # without --frozen-lockfile, as yarn doesn't pass the flag on.
 echo -e "${CYAN}Installing dependencies...${NC}"
 run_command "yarn --cwd client install --frozen-lockfile" "Failed to install client dependencies"
-run_command "yarn install --frozen-lockfile" "Failed to install dependencies"
+run_command "yarn install --ignore-engines --frozen-lockfile" "Failed to install dependencies"
 
 if [ "$SYNC_TRANSLATIONS" = "true" ]; then
     echo -e "${CYAN}Syncing translations...${NC}"
