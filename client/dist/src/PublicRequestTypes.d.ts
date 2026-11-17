@@ -255,11 +255,6 @@ export interface SignedTransaction {
         proof: Uint8Array;
     };
 }
-export interface RsaKeyParams {
-    kdf: string;
-    iterations: number;
-    keySize: number;
-}
 export interface MultisigTransactionInfo {
     sender: string;
     senderType?: Nimiq.AccountType;
@@ -594,16 +589,6 @@ export interface ConnectAccountRequest extends BasicRequest {
 }
 export interface ConnectedAccount {
     signatures: SignedMessage[];
-    encryptionKey: {
-        format: 'spki';
-        keyData: Uint8Array;
-        algorithm: {
-            name: string;
-            hash: string;
-        };
-        keyUsages: ['encrypt'];
-        keyParams: RsaKeyParams;
-    };
     account: {
         label: string;
         type: string;

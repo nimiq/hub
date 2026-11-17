@@ -932,10 +932,6 @@ class Demo {
         function setConnectResult(result: ConnectedAccount) {
             (document.querySelector('#connected-publickey') as HTMLInputElement).value =
                 toHex(result.signatures[0].signerPublicKey);
-            (document.querySelector('#connected-encryption-key') as HTMLInputElement).value = JSON.stringify(
-                result.encryptionKey,
-                (key, value) => key === 'keyData' ? toHex(value) : value,
-            );
         }
 
         function setMultisigCommitments(result: MultisigCommitments) {
