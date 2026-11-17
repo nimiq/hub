@@ -194,9 +194,6 @@ export default class SetupSwap extends BitcoinSyncBaseView {
                 type: this.request.fund.type,
                 keyPath: signer.path,
                 request: this.request.fund.request,
-                relayData: this.request.fund.relayData,
-                permit: this.request.fund.permit,
-                approval: this.request.fund.approval,
             };
         }
 
@@ -267,7 +264,6 @@ export default class SetupSwap extends BitcoinSyncBaseView {
                 type: this.request.redeem.type,
                 keyPath: signer.path,
                 request: this.request.redeem.request,
-                relayData: this.request.redeem.relayData,
                 amount: this.request.redeem.amount,
             };
         }

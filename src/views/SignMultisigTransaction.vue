@@ -57,6 +57,9 @@ export default class SignMultisigTransaction extends Vue {
             recipientData: this.request.data,
             flags: this.request.flags,
 
+            // TODO: follow the multisig changes of @nimiq/keyguard-client 1.12.0 (nimiq/keyguard#579), which replaced
+            // the commitment secrets by the signing state of the new create-multisig-commitments request.
+            // @ts-ignore Property 'state' is missing in type 'ParsedMultisigInfo'
             multisigConfig: this.request.multisigConfig,
         };
 

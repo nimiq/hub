@@ -69,8 +69,8 @@ export default class RpcApi {
         RequestType.MANAGE_CASHLINK,
         RequestType.CONNECT_ACCOUNT,
         // Request for sending a gas-abstracted USDC or USDT transaction on Polygon, without the need for the user to
-        // hold Polygon. See sendPolygonTransaction in hub.ts in github.com/nimiq/wallet for how to build the request
-        // data.
+        // hold POL. See sendPolygonTransaction in hub.ts and lib/usdc/Gasless.ts in github.com/nimiq/wallet for how to
+        // build the request data for a gasless transfer.
         RequestType.SIGN_POLYGON_TRANSACTION,
         // While SIGN_TRANSACTION and SIGN_POLYGON_TRANSACTION are whitelisted, SIGN_BTC_TRANSACTION is not, as it
         // identifies the account via its internal accountId, not by sender. Additionally, SIGN_BTC_TRANSACTION is not

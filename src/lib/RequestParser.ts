@@ -56,6 +56,10 @@ import { ParsedBitcoinDirectPaymentOptions } from './paymentOptions/BitcoinPayme
 import { Utf8Tools } from '@nimiq/utils';
 import Config from 'config';
 import { parseSignTransactionRequest, rawSignTransactionRequest } from './SignTransactionRequestParsing';
+import {
+    parseSignPolygonGaslessTransferRequest,
+    rawSignPolygonGaslessTransferRequest,
+} from './SignPolygonTransactionRequestParsing';
 import { SwapAsset } from '@nimiq/fastspot-api';
 import RpcApi from './RpcApi';
 
@@ -540,12 +544,7 @@ export class RequestParser {
                 };
                 return parsedSignBtcTransactionRequest;
             case RequestType.SIGN_POLYGON_TRANSACTION:
-                const signPolygonTransactionRequest = request as SignPolygonTransactionRequest;
-
-                return {
-                    kind: RequestType.SIGN_POLYGON_TRANSACTION,
-                    ...signPolygonTransactionRequest,
-                } as ParsedSignPolygonTransactionRequest;
+                return parseSignPolygonGaslessTransferRequest(request as SignPolygonTransactionRequest);
             case RequestType.SETUP_SWAP:
                 const setupSwapRequest = request as SetupSwapRequest;
 
@@ -563,6 +562,14 @@ export class RequestParser {
 
                 if (setupSwapRequest.fund.type === setupSwapRequest.redeem.type) {
                     throw new Error('Cannot swap between the same types');
+                }
+
+                // USDC and USDT swaps need gasless HTLCs, which the Keyguard does not sign yet
+                if (
+                    ['USDC_MATIC', 'USDT_MATIC'].includes(setupSwapRequest.fund.type)
+                    || ['USDC_MATIC', 'USDT_MATIC'].includes(setupSwapRequest.redeem.type)
+                ) {
+                    throw new Error('Swaps of USDC and USDT are not supported yet');
                 }
 
                 if (
@@ -708,8 +715,8 @@ export class RequestParser {
                 // Only basic parsing and validation. Refund transaction specific data will be validated by the Keyguard
                 // or subsequent Ledger transaction signing requests.
 
-                if (!['NIM', 'BTC', 'USDC', 'USDC_MATIC', 'USDT_MATIC'].includes(refundSwapRequest.refund.type)) {
-                    throw new Error('Refunding object type must be "NIM", "BTC", "USDC", "USDC_MATIC" or "USDT_MATIC"');
+                if (!['NIM', 'BTC'].includes(refundSwapRequest.refund.type)) {
+                    throw new Error('Refunding object type must be "NIM" or "BTC"');
                 }
 
                 const parsedRefundSwapRequest: ParsedRefundSwapRequest = {
@@ -725,10 +732,7 @@ export class RequestParser {
                         extraData: typeof refundSwapRequest.refund.extraData === 'string'
                             ? Nimiq.BufferUtils.fromAny(refundSwapRequest.refund.extraData)
                             : refundSwapRequest.refund.extraData,
-                    } : refundSwapRequest.refund.type === 'BTC' ? {
-                        ...refundSwapRequest.refund,
-                        type: SwapAsset[refundSwapRequest.refund.type],
-                    } : { // USDC/T
+                    } : {
                         ...refundSwapRequest.refund,
                         type: SwapAsset[refundSwapRequest.refund.type],
                     },
@@ -984,10 +988,7 @@ export class RequestParser {
                     locktime: signBtcTransactionRequest.locktime,
                 } as SignBtcTransactionRequest;
             case RequestType.SIGN_POLYGON_TRANSACTION:
-                const signPolygonTransactionRequest = request as ParsedSignPolygonTransactionRequest;
-                return {
-                    ...signPolygonTransactionRequest,
-                } as SignPolygonTransactionRequest;
+                return rawSignPolygonGaslessTransferRequest(request as ParsedSignPolygonTransactionRequest);
             case RequestType.SETUP_SWAP:
                 const setupSwapRequest = request as ParsedSetupSwapRequest;
                 return {

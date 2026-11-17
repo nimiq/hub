@@ -38,7 +38,7 @@ export default class HubApi<DB extends BehaviorType = BehaviorType.POPUP, IB ext
     signBtcTransaction<B extends BehaviorType = DB>(request: Promise<SignBtcTransactionRequest> | SignBtcTransactionRequest, requestBehavior?: RequestBehavior<B>): Promise<B extends BehaviorType.REDIRECT ? void : SignedBtcTransaction>;
     signPolygonTransaction<B extends BehaviorType = DB>(request: Promise<SignPolygonTransactionRequest> | SignPolygonTransactionRequest, requestBehavior?: RequestBehavior<B>): Promise<B extends BehaviorType.REDIRECT ? void : SignedPolygonTransaction>;
     setupSwap<B extends BehaviorType = DB>(request: Promise<SetupSwapRequest> | SetupSwapRequest, requestBehavior?: RequestBehavior<B>): Promise<B extends BehaviorType.REDIRECT ? void : SetupSwapResult>;
-    refundSwap<B extends BehaviorType = DB>(request: Promise<RefundSwapRequest> | RefundSwapRequest, requestBehavior?: RequestBehavior<B>): Promise<B extends BehaviorType.REDIRECT ? void : SignedTransaction | SignedBtcTransaction | SignedPolygonTransaction>;
+    refundSwap<B extends BehaviorType = DB>(request: Promise<RefundSwapRequest> | RefundSwapRequest, requestBehavior?: RequestBehavior<B>): Promise<B extends BehaviorType.REDIRECT ? void : SignedTransaction | SignedBtcTransaction>;
     signMultisigTransaction<B extends BehaviorType = DB>(request: Promise<SignMultisigTransactionRequest> | SignMultisigTransactionRequest, requestBehavior?: RequestBehavior<B>): Promise<B extends BehaviorType.REDIRECT ? void : PartialSignature>;
     connectAccount<B extends BehaviorType = DB>(request: Promise<ConnectAccountRequest> | ConnectAccountRequest, requestBehavior?: RequestBehavior<B>): Promise<B extends BehaviorType.REDIRECT ? void : ConnectedAccount>;
     /**

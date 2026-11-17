@@ -46,28 +46,6 @@ type HexString = string;
 type IntString = string;
 type PolygonAddress = string;
 
-export interface RelayRequest {
-    request: {
-        from: PolygonAddress;
-        to: PolygonAddress;
-        data: HexString;
-        value: IntString;
-        nonce: IntString;
-        gas: IntString;
-        validUntil: IntString;
-    };
-    relayData: {
-        gasPrice: IntString;
-        pctRelayFee: IntString;
-        baseRelayFee: IntString;
-        relayWorker: PolygonAddress;
-        paymaster: PolygonAddress;
-        paymasterData: HexString;
-        clientId: IntString;
-        forwarder: PolygonAddress;
-    };
-}
-
 export enum AccountType {
     LEGACY = 1,
     BIP39 = 2,
@@ -412,22 +390,15 @@ export interface BitcoinHtlcCreationInstructions {
     locktime?: number;
 }
 
-export interface PolygonHtlcCreationInstructions extends RelayRequest {
+/**
+ * NOT SUPPORTED YET: swaps of USDC and USDT are rejected until they are signed as gasless HTLCs.
+ */
+export interface PolygonHtlcCreationInstructions {
     type: 'USDC_MATIC' | 'USDT_MATIC';
-    /**
-     * The sender's nonce in the token contract, required when calling the
-     * contract function `openWithPermit`.
-     */
-    permit?: {
-        tokenNonce: number,
-    };
-
-    /**
-     * The sender's nonce in the token contract, required when calling the
-     * contract function `openWithApproval`.
-     */
-    approval?: {
-        tokenNonce: number,
+    request: {
+        from: PolygonAddress; // My address
+        amount: IntString;
+        fee: IntString;
     };
 }
 
@@ -461,9 +432,16 @@ export interface BitcoinHtlcSettlementInstructions {
     };
 }
 
-export interface PolygonHtlcSettlementInstructions extends RelayRequest {
+/**
+ * NOT SUPPORTED YET: swaps of USDC and USDT are rejected until they are signed as gasless HTLCs.
+ */
+export interface PolygonHtlcSettlementInstructions {
     type: 'USDC_MATIC' | 'USDT_MATIC';
-    amount: number;
+    request: {
+        from: PolygonAddress; // My address
+        fee: IntString;
+    };
+    amount: number; // The amount I receive: the HTLC amount minus the fee
 }
 
 export interface EuroHtlcSettlementInstructions {
@@ -509,15 +487,6 @@ export interface BitcoinHtlcRefundInstructions {
     refundAddress: string; // My address, must be refund address of HTLC
 }
 
-export interface PolygonHtlcRefundInstructions extends RelayRequest {
-    type: 'USDC_MATIC' | 'USDC' | 'USDT_MATIC';
-    amount: number;
-    /**
-     * The token contract address. Required for calling the bridged HTLC contract.
-     */
-    token: string;
-}
-
 export type HtlcCreationInstructions =
     NimiqHtlcCreationInstructions
     | BitcoinHtlcCreationInstructions
@@ -532,8 +501,7 @@ export type HtlcSettlementInstructions =
 
 export type HtlcRefundInstructions =
     NimiqHtlcRefundInstructions
-    | BitcoinHtlcRefundInstructions
-    | PolygonHtlcRefundInstructions;
+    | BitcoinHtlcRefundInstructions;
 
 export interface SetupSwapRequest extends SimpleRequest {
     swapId: string;
@@ -791,43 +759,66 @@ export interface AddBtcAddressesResult {
  * Polygon
  */
 
-export interface SignPolygonTransactionRequest extends BasicRequest, RelayRequest {
+/**
+ * A gasless USDC or USDT0 transfer on Polygon through the GaslessTransfer contract and the Nimiq relay,
+ * see https://github.com/NimiqToolbox/gas-abstraction. Amounts are in the token's smallest unit (6 decimals). Amounts
+ * and fees must not be above `Number.MAX_SAFE_INTEGER`.
+ */
+export interface PolygonGaslessTransfer {
+    token: PolygonAddress;
+    from: PolygonAddress;
+    to: PolygonAddress;
+    amount: IntString;
+    fee: IntString; // The relay's fee quote
+    relay: PolygonAddress; // The relay address of the fee quote
+    /**
+     * The intent nonce. It identifies the payment: every version of a payment keeps it, so that at most one version
+     * can execute. For a new payment, it is the sender's current `nonces(from)` in the GaslessTransfer contract, read
+     * on-chain right before, and only once the sender's previous payment is decided. The Hub and the Keyguard do not
+     * know about earlier versions of a payment. To sign a new version, keep its `nonce`, `token` and `to`, request it
+     * only after checking on-chain that the nonce is still unused (`nonces(from)` is not above it), and before using
+     * the result check that its deadline is not earlier than the previous version's, for example with
+     * `checkCorrection` of `@nimiq/gasless-sdk`.
+     */
+    nonce: IntString;
+}
+
+/**
+ * A signed transfer intent.
+ */
+export interface PolygonGaslessTransferRequest extends PolygonGaslessTransfer {
+    deadline: IntString; // Unix seconds
+}
+
+export interface PolygonTokenPermit { // A signed permit, v is 27 or 28
+    mode: 'permit';
+    v: number;
+    r: HexString;
+    s: HexString;
+}
+
+export interface SignPolygonGaslessTransferRequest extends BasicRequest {
+    operation?: 'transfer';
+    request: PolygonGaslessTransfer;
+    /**
+     * The sender's current permit nonce in the token contract (`nonces(from)`).
+     */
+    tokenNonce: number;
     recipientLabel?: string;
-    /**
-     * The sender's nonce in the token contract, required when calling the
-     * contract function `swapWithApproval` for bridged USDC.e and `transferWithApproval` for bridged USDT.
-     */
-    approval?: {
-        tokenNonce: number,
-    };
-    /**
-     * The sender's nonce in the token contract, required when calling the
-     * contract function `transferWithPermit` for native USDC.
-     */
-    permit?: {
-        tokenNonce: number,
-    };
-
-    /**
-     * The amount of USDC/T to transfer. Required when calling the contract
-     * methods 'redeem' and 'redeemWithSecretInData' for HTLCs.
-     */
-    amount?: number;
-    /**
-     * The label of the sending address. Required when calling the contract
-     * methods 'redeem' and 'redeemWithSecretInData' for HTLCs.
-     */
-    senderLabel?: string;
-    /**
-     * The token contract address. Required for calling the bridged HTLC contract.
-     */
-    token?: string;
 }
 
-export interface SignedPolygonTransaction {
-    message: Record<string, any>;
-    signature: string; // HEX
+/**
+ * The signed transfer in the shape of the relay's POST /v1/transfer body. It contains a token permit, so do not
+ * persist or log it.
+ */
+export interface SignedPolygonGaslessTransfer {
+    request: PolygonGaslessTransferRequest;
+    signature: HexString; // Over the GaslessTransfer typed data, which includes the authorization
+    authorization: PolygonTokenPermit;
 }
+
+export type SignPolygonTransactionRequest = SignPolygonGaslessTransferRequest;
+export type SignedPolygonTransaction = SignedPolygonGaslessTransfer;
 
 export type RpcRequest = SignTransactionRequest
                        | SignMultisigTransactionRequest

@@ -51,6 +51,9 @@ export default class ConnectAccountSuccess extends Vue {
                 signerPublicKey: publicKey,
                 signature,
             })),
+            // TODO: follow the multisig changes of @nimiq/keyguard-client 1.12.0 (nimiq/keyguard#579), which removed
+            // the encryption key from the ConnectResult.
+            // @ts-ignore Property 'encryptionKey' does not exist on type 'ConnectResult'.
             encryptionKey: this.keyguardResult.encryptionKey,
             account: {
                 label: wallet.labelForKeyguard || wallet.accounts.values().next().value.label,
