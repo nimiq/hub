@@ -130,6 +130,10 @@ msgstr "Appliquer un prix de gaz d'au moins {fee} gwei."
 msgid "Apply a network fee of at least {fee} sat/byte."
 msgstr "Appliquer des frais de réseau d'au moins {fee} sat/octet."
 
+#: src/views/CreateMultisigCommitmentsSuccess.vue:4
+msgid "Approval started"
+msgstr ""
+
 #: src/views/SetupSwapLedger.vue:47
 msgid "Atomic swaps require two BTC transactions."
 msgstr "Les swaps atomique nécessitent 2 transactions BTC."

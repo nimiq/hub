@@ -128,6 +128,10 @@ msgstr "Hanteer een gasprijs van minimaal {fee} gwei."
 msgid "Apply a network fee of at least {fee} sat/byte."
 msgstr "Pas een netwerktarief toe van minimaal {fee} sat/byte."
 
+#: src/views/CreateMultisigCommitmentsSuccess.vue:4
+msgid "Approval started"
+msgstr ""
+
 #: src/views/SetupSwapLedger.vue:47
 msgid "Atomic swaps require two BTC transactions."
 msgstr "Atomic swaps vereisen twee BTC-transacties."

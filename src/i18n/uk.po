@@ -129,6 +129,10 @@ msgstr "Встановіть мінімальну ціну на газу в {fee
 msgid "Apply a network fee of at least {fee} sat/byte."
 msgstr "Встановіть мінімальну комісію мережі в {fee} sat/byte."
 
+#: src/views/CreateMultisigCommitmentsSuccess.vue:4
+msgid "Approval started"
+msgstr ""
+
 #: src/views/SetupSwapLedger.vue:47
 msgid "Atomic swaps require two BTC transactions."
 msgstr "Атомні обміни вимагають дві BTC транзакцій."
