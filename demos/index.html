@@ -183,10 +183,6 @@
         <input id="connected-publickey" value="" disabled placeholder="Connect Account to set">
     </div>
     <div class="row">
-        <label>Connected Encryption Key</label>
-        <input id="connected-encryption-key" value="" disabled placeholder="Connect Account to set">
-    </div>
-    <div class="row">
         <label>Amount (NIM)</label>
         <input id="multisig-value" type="number" value="2000">
     </div>
@@ -203,13 +199,10 @@
         <label>Username</label>
         <input id="multisig-username" value="Antoine">
     </div>
-    <label class="row">
-        <input id="multisig-checkbox-encrypt" type="checkbox" checked>
-        Encrypt my commitment secrets
-    </label>
 
     <br><small>(Uses connected account)</small>
-    <br><button id="sign-multisig-transaction" disabled>Sign Multisig Transaction</button>
+    <br><button id="create-multisig-commitments" disabled>1. Create Commitments</button>
+    <button id="sign-multisig-transaction" disabled>2. Sign Multisig Transaction</button>
 </div>
 
 <div class="request">

@@ -82,38 +82,44 @@ export interface ParsedSignTransactionRequest extends ParsedBasicRequest {
     fromValidatorImageUrl?: URL;
 }
 
+export interface ParsedMultisigTransactionInfo {
+    signer: Nimiq.Address;
+
+    sender: Nimiq.Address;
+    senderType: Nimiq.AccountType;
+    senderData?: Uint8Array;
+    recipient: Nimiq.Address;
+    recipientType: Nimiq.AccountType;
+    recipientLabel?: string;
+    value: number;
+    fee: number;
+    data: Uint8Array;
+    flags: number;
+    validityStartHeight: number; // FIXME To be made optional when hub has its own network
+}
+
+export interface ParsedCreateMultisigCommitmentsRequest extends ParsedBasicRequest, ParsedMultisigTransactionInfo {
+    senderLabel?: string;
+
+    multisigConfig: {
+        publicKeys: Uint8Array[];
+        numberOfSigners: number;
+        userName?: string;
+    };
+}
+
 export interface ParsedMultisigInfo {
     publicKeys: Uint8Array[];
     signers: Array<{
         publicKey: Uint8Array;
         commitments: Uint8Array[];
     }>;
-    secrets: Uint8Array[] | {
-        encrypted: Uint8Array[];
-        keyParams: {
-            kdf: string;
-            iterations: number;
-            keySize: number;
-        };
-    };
+    state: Uint8Array;
     userName?: string;
 }
 
-export interface ParsedSignMultisigTransactionRequest extends ParsedBasicRequest {
-    signer: Nimiq.Address;
-
-    sender: Nimiq.Address;
-    senderType: Nimiq.AccountType;
+export interface ParsedSignMultisigTransactionRequest extends ParsedBasicRequest, ParsedMultisigTransactionInfo {
     senderLabel: string;
-    senderData?: Uint8Array;
-    recipient: Nimiq.Address;
-    recipientType: Nimiq.AccountType;
-    recipientLabel?: string;
-    value: number;
-    fee?: number;
-    data?: Uint8Array;
-    flags?: number;
-    validityStartHeight: number; // FIXME To be made optional when hub has its own network
 
     multisigConfig: ParsedMultisigInfo;
 }
@@ -404,6 +410,7 @@ export interface ParsedConnectAccountRequest extends ParsedBasicRequest {
 
 // Discriminated Unions
 export type ParsedRpcRequest = ParsedSignTransactionRequest
+                             | ParsedCreateMultisigCommitmentsRequest
                              | ParsedSignMultisigTransactionRequest
                              | ParsedSignStakingRequest
                              | ParsedCreateCashlinkRequest

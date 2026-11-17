@@ -7,6 +7,7 @@ export declare enum RequestType {
     CHECKOUT = "checkout",
     SIGN_MESSAGE = "sign-message",
     SIGN_TRANSACTION = "sign-transaction",
+    CREATE_MULTISIG_COMMITMENTS = "create-multisig-commitments",
     SIGN_MULTISIG_TRANSACTION = "sign-multisig-transaction",
     SIGN_STAKING = "sign-staking",
     ONBOARD = "onboard",
@@ -254,28 +255,9 @@ export interface SignedTransaction {
         proof: Uint8Array;
     };
 }
-export interface RsaKeyParams {
-    kdf: string;
-    iterations: number;
-    keySize: number;
-}
-export interface MultisigInfo {
-    publicKeys: Bytes[];
-    signers: Array<{
-        publicKey: Bytes;
-        commitments: Bytes[];
-    }>;
-    secrets: Bytes[] | {
-        encrypted: Bytes[];
-        keyParams: RsaKeyParams;
-    };
-    userName?: string;
-}
-export interface SignMultisigTransactionRequest extends BasicRequest {
-    signer: string;
+export interface MultisigTransactionInfo {
     sender: string;
     senderType?: Nimiq.AccountType;
-    senderLabel: string;
     senderData?: Bytes;
     recipient: string;
     recipientType?: Nimiq.AccountType;
@@ -285,6 +267,48 @@ export interface SignMultisigTransactionRequest extends BasicRequest {
     extraData?: Bytes;
     flags?: number;
     validityStartHeight: number;
+}
+/**
+ * Round 1 of signing a multisig transaction: creates the signer's commitments for the given transaction, see
+ * HubApi.createMultisigCommitments. The transaction and the multisig's publicKeys and numberOfSigners must be identical
+ * in round 2, which is the SignMultisigTransactionRequest.
+ */
+export interface CreateMultisigCommitmentsRequest extends BasicRequest, MultisigTransactionInfo {
+    signer: string;
+    senderLabel?: string;
+    multisigConfig: {
+        publicKeys: Bytes[];
+        numberOfSigners: number;
+        userName?: string;
+    };
+}
+export interface MultisigCommitments {
+    signer: string;
+    signerPublicKey: Uint8Array;
+    commitments: Uint8Array[];
+    /**
+     * Opaque, non-secret state to pass back in the SignMultisigTransactionRequest's multisigConfig. It expires after 7
+     * days and can only be used to sign once. Repeating the identical SignMultisigTransactionRequest returns the same
+     * signature, while a request with different inputs is rejected. In that case, or if the state expired, start over
+     * with new commitments.
+     */
+    state: Uint8Array;
+}
+export interface MultisigInfo {
+    publicKeys: Bytes[];
+    signers: Array<{
+        publicKey: Bytes;
+        commitments: Bytes[];
+    }>;
+    state: Bytes;
+    userName?: string;
+}
+/**
+ * Round 2 of signing a multisig transaction, with the commitments of all signers, see HubApi.signMultisigTransaction.
+ */
+export interface SignMultisigTransactionRequest extends BasicRequest, MultisigTransactionInfo {
+    signer: string;
+    senderLabel: string;
     multisigConfig: MultisigInfo;
 }
 export interface NimiqHtlcCreationInstructions {
@@ -565,16 +589,6 @@ export interface ConnectAccountRequest extends BasicRequest {
 }
 export interface ConnectedAccount {
     signatures: SignedMessage[];
-    encryptionKey: {
-        format: 'spki';
-        keyData: Uint8Array;
-        algorithm: {
-            name: string;
-            hash: string;
-        };
-        keyUsages: ['encrypt'];
-        keyParams: RsaKeyParams;
-    };
     account: {
         label: string;
         type: string;
@@ -673,6 +687,6 @@ export interface SignedPolygonGaslessTransfer {
 }
 export type SignPolygonTransactionRequest = SignPolygonGaslessTransferRequest;
 export type SignedPolygonTransaction = SignedPolygonGaslessTransfer;
-export type RpcRequest = SignTransactionRequest | SignMultisigTransactionRequest | SignStakingRequest | CreateCashlinkRequest | ManageCashlinkRequest | CheckoutRequest | BasicRequest | SimpleRequest | ChooseAddressRequest | OnboardRequest | RenameRequest | SignMessageRequest | ExportRequest | SignBtcTransactionRequest | AddBtcAddressesRequest | SignPolygonTransactionRequest | SetupSwapRequest | RefundSwapRequest | ConnectAccountRequest;
-export type RpcResult = SignedTransaction | SignedTransaction[] | PartialSignature | Account | Account[] | SimpleResult | ChooseAddressResult | Address | Cashlink | Cashlink[] | SignedMessage | ExportResult | SignedBtcTransaction | AddBtcAddressesResult | SignedPolygonTransaction | SetupSwapResult | ConnectedAccount;
-export type ResultByRequestType<T> = T extends RequestType.RENAME ? Account : T extends RequestType.ONBOARD | RequestType.SIGNUP | RequestType.LOGIN | RequestType.MIGRATE | RequestType.LIST ? Account[] : T extends RequestType.LIST_CASHLINKS ? Cashlink[] : T extends RequestType.CHOOSE_ADDRESS ? ChooseAddressResult : T extends RequestType.ADD_ADDRESS ? Address : T extends RequestType.SIGN_TRANSACTION ? SignedTransaction | SignedTransaction[] : T extends RequestType.SIGN_MULTISIG_TRANSACTION ? PartialSignature : T extends RequestType.SIGN_STAKING ? SignedTransaction[] : T extends RequestType.CHECKOUT ? SignedTransaction | SimpleResult : T extends RequestType.SIGN_MESSAGE ? SignedMessage : T extends RequestType.LOGOUT | RequestType.CHANGE_PASSWORD ? SimpleResult : T extends RequestType.EXPORT ? ExportResult : T extends RequestType.CREATE_CASHLINK | RequestType.MANAGE_CASHLINK ? Cashlink : T extends RequestType.SIGN_BTC_TRANSACTION ? SignedBtcTransaction : T extends RequestType.SIGN_POLYGON_TRANSACTION ? SignedPolygonTransaction : T extends RequestType.ACTIVATE_BITCOIN ? Account : T extends RequestType.ACTIVATE_POLYGON ? Account : T extends RequestType.ADD_BTC_ADDRESSES ? AddBtcAddressesResult : T extends RequestType.SETUP_SWAP ? SetupSwapResult : T extends RequestType.CONNECT_ACCOUNT ? ConnectedAccount : never;
+export type RpcRequest = SignTransactionRequest | CreateMultisigCommitmentsRequest | SignMultisigTransactionRequest | SignStakingRequest | CreateCashlinkRequest | ManageCashlinkRequest | CheckoutRequest | BasicRequest | SimpleRequest | ChooseAddressRequest | OnboardRequest | RenameRequest | SignMessageRequest | ExportRequest | SignBtcTransactionRequest | AddBtcAddressesRequest | SignPolygonTransactionRequest | SetupSwapRequest | RefundSwapRequest | ConnectAccountRequest;
+export type RpcResult = SignedTransaction | SignedTransaction[] | MultisigCommitments | PartialSignature | Account | Account[] | SimpleResult | ChooseAddressResult | Address | Cashlink | Cashlink[] | SignedMessage | ExportResult | SignedBtcTransaction | AddBtcAddressesResult | SignedPolygonTransaction | SetupSwapResult | ConnectedAccount;
+export type ResultByRequestType<T> = T extends RequestType.RENAME ? Account : T extends RequestType.ONBOARD | RequestType.SIGNUP | RequestType.LOGIN | RequestType.MIGRATE | RequestType.LIST ? Account[] : T extends RequestType.LIST_CASHLINKS ? Cashlink[] : T extends RequestType.CHOOSE_ADDRESS ? ChooseAddressResult : T extends RequestType.ADD_ADDRESS ? Address : T extends RequestType.SIGN_TRANSACTION ? SignedTransaction | SignedTransaction[] : T extends RequestType.CREATE_MULTISIG_COMMITMENTS ? MultisigCommitments : T extends RequestType.SIGN_MULTISIG_TRANSACTION ? PartialSignature : T extends RequestType.SIGN_STAKING ? SignedTransaction[] : T extends RequestType.CHECKOUT ? SignedTransaction | SimpleResult : T extends RequestType.SIGN_MESSAGE ? SignedMessage : T extends RequestType.LOGOUT | RequestType.CHANGE_PASSWORD ? SimpleResult : T extends RequestType.EXPORT ? ExportResult : T extends RequestType.CREATE_CASHLINK | RequestType.MANAGE_CASHLINK ? Cashlink : T extends RequestType.SIGN_BTC_TRANSACTION ? SignedBtcTransaction : T extends RequestType.SIGN_POLYGON_TRANSACTION ? SignedPolygonTransaction : T extends RequestType.ACTIVATE_BITCOIN ? Account : T extends RequestType.ACTIVATE_POLYGON ? Account : T extends RequestType.ADD_BTC_ADDRESSES ? AddBtcAddressesResult : T extends RequestType.SETUP_SWAP ? SetupSwapResult : T extends RequestType.CONNECT_ACCOUNT ? ConnectedAccount : never;

@@ -98,6 +98,10 @@ const SetupSwapLedger         = () => import(/*webpackChunkName: "swap-ledger"*/
 
 const RefundSwapLedger        = () => import(/*webpackChunkName: "refund-swap-ledger"*/ './views/RefundSwapLedger.vue');
 
+const CreateMultisigCommitments         = () => import(/*webpackChunkName: "sign-multisig-transaction"*/
+    './views/CreateMultisigCommitments.vue');
+const CreateMultisigCommitmentsSuccess  = () => import(/*webpackChunkName: "sign-multisig-transaction"*/
+    './views/CreateMultisigCommitmentsSuccess.vue');
 const SignMultisigTransaction         = () => import(/*webpackChunkName: "sign-multisig-transaction"*/
     './views/SignMultisigTransaction.vue');
 const SignMultisigTransactionSuccess  = () => import(/*webpackChunkName: "sign-multisig-transaction"*/
@@ -128,6 +132,8 @@ export function keyguardResponseRouter(
                 ? RequestType.MANAGE_CASHLINK
                 : `${originalRequestType}-success`;
             break;
+        case KeyguardCommand.CREATE_MULTISIG_COMMITMENTS:
+            resolve = `${RequestType.CREATE_MULTISIG_COMMITMENTS}-success`; break;
         case KeyguardCommand.SIGN_MULTISIG_TRANSACTION:
             resolve = `${RequestType.SIGN_MULTISIG_TRANSACTION}-success`; break;
         case KeyguardCommand.SIGN_STAKING:
@@ -438,6 +444,16 @@ export default new Router({
             path: `/${RequestType.REFUND_SWAP}/ledger`,
             component: RefundSwapLedger,
             name: `${RequestType.REFUND_SWAP}-ledger`,
+        },
+        {
+            path: `/${RequestType.CREATE_MULTISIG_COMMITMENTS}`,
+            component: CreateMultisigCommitments,
+            name: RequestType.CREATE_MULTISIG_COMMITMENTS,
+        },
+        {
+            path: `/${RequestType.CREATE_MULTISIG_COMMITMENTS}/success`,
+            component: CreateMultisigCommitmentsSuccess,
+            name: `${RequestType.CREATE_MULTISIG_COMMITMENTS}-success`,
         },
         {
             path: `/${RequestType.SIGN_MULTISIG_TRANSACTION}`,

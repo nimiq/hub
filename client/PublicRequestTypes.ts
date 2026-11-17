@@ -16,6 +16,7 @@ export enum RequestType {
     CHECKOUT = 'checkout',
     SIGN_MESSAGE = 'sign-message',
     SIGN_TRANSACTION = 'sign-transaction',
+    CREATE_MULTISIG_COMMITMENTS = 'create-multisig-commitments',
     SIGN_MULTISIG_TRANSACTION = 'sign-multisig-transaction',
     SIGN_STAKING = 'sign-staking',
     ONBOARD = 'onboard',
@@ -323,31 +324,9 @@ export interface SignedTransaction {
     };
 }
 
-export interface RsaKeyParams {
-    kdf: string;
-    iterations: number;
-    keySize: number;
-}
-
-export interface MultisigInfo {
-    publicKeys: Bytes[];
-    signers: Array<{
-        publicKey: Bytes;
-        commitments: Bytes[];
-    }>;
-    secrets: Bytes[] | {
-        encrypted: Bytes[];
-        keyParams: RsaKeyParams;
-    };
-    userName?: string;
-}
-
-export interface SignMultisigTransactionRequest extends BasicRequest {
-    signer: string; // Address
-
-    sender: string;
+export interface MultisigTransactionInfo {
+    sender: string; // The multisig address
     senderType?: Nimiq.AccountType;
-    senderLabel: string;
     senderData?: Bytes;
     recipient: string;
     recipientType?: Nimiq.AccountType;
@@ -357,6 +336,54 @@ export interface SignMultisigTransactionRequest extends BasicRequest {
     extraData?: Bytes;
     flags?: number;
     validityStartHeight: number; // FIXME To be made optional when hub has its own network
+}
+
+/**
+ * Round 1 of signing a multisig transaction: creates the signer's commitments for the given transaction, see
+ * HubApi.createMultisigCommitments. The transaction and the multisig's publicKeys and numberOfSigners must be identical
+ * in round 2, which is the SignMultisigTransactionRequest.
+ */
+export interface CreateMultisigCommitmentsRequest extends BasicRequest, MultisigTransactionInfo {
+    signer: string; // Address of the user's key which is one of the multisig's public keys
+    senderLabel?: string;
+
+    multisigConfig: {
+        publicKeys: Bytes[]; // The public keys of all n potential signers of the k of n multisig
+        numberOfSigners: number; // k
+        userName?: string;
+    };
+}
+
+export interface MultisigCommitments {
+    signer: string; // Userfriendly address
+    signerPublicKey: Uint8Array;
+    commitments: Uint8Array[]; // To share with the co-signers
+    /**
+     * Opaque, non-secret state to pass back in the SignMultisigTransactionRequest's multisigConfig. It expires after 7
+     * days and can only be used to sign once. Repeating the identical SignMultisigTransactionRequest returns the same
+     * signature, while a request with different inputs is rejected. In that case, or if the state expired, start over
+     * with new commitments.
+     */
+    state: Uint8Array;
+}
+
+export interface MultisigInfo {
+    publicKeys: Bytes[];
+    signers: Array<{
+        publicKey: Bytes;
+        commitments: Bytes[];
+    }>;
+    state: Bytes; // The state returned for the signer by createMultisigCommitments
+    userName?: string;
+}
+
+/**
+ * Round 2 of signing a multisig transaction, with the commitments of all signers, see HubApi.signMultisigTransaction.
+ */
+export interface SignMultisigTransactionRequest extends BasicRequest, MultisigTransactionInfo {
+    signer: string; // Address
+
+    senderLabel: string;
 
     multisigConfig: MultisigInfo;
 }
@@ -701,13 +728,6 @@ export interface ConnectAccountRequest extends BasicRequest {
 
 export interface ConnectedAccount {
     signatures: SignedMessage[];
-    encryptionKey: {
-        format: 'spki',
-        keyData: Uint8Array,
-        algorithm: { name: string, hash: string },
-        keyUsages: ['encrypt'],
-        keyParams: RsaKeyParams,
-    };
     account: {
         label: string;
         type: string;
@@ -821,6 +841,7 @@ export type SignPolygonTransactionRequest = SignPolygonGaslessTransferRequest;
 export type SignedPolygonTransaction = SignedPolygonGaslessTransfer;
 
 export type RpcRequest = SignTransactionRequest
+                       | CreateMultisigCommitmentsRequest
                        | SignMultisigTransactionRequest
                        | SignStakingRequest
                        | CreateCashlinkRequest
@@ -842,6 +863,7 @@ export type RpcRequest = SignTransactionRequest
 
 export type RpcResult = SignedTransaction
                       | SignedTransaction[] // Can be returned by SIGN_TRANSACTION (multi-tx) or SIGN_STAKING
+                      | MultisigCommitments
                       | PartialSignature
                       | Account
                       | Account[]
@@ -868,6 +890,7 @@ export type ResultByRequestType<T> =
     // SIGN_TRANSACTION returns a single SignedTransaction iff a single transaction was signed (also for a
     // one-element transactions array), and an array for multiple transactions.
     T extends RequestType.SIGN_TRANSACTION ? SignedTransaction | SignedTransaction[] :
+    T extends RequestType.CREATE_MULTISIG_COMMITMENTS ? MultisigCommitments :
     T extends RequestType.SIGN_MULTISIG_TRANSACTION ? PartialSignature :
     T extends RequestType.SIGN_STAKING ? SignedTransaction[] :
     T extends RequestType.CHECKOUT ? SignedTransaction | SimpleResult :

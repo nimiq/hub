@@ -10,6 +10,7 @@ import {
     ParsedSignMessageRequest,
     ParsedSignTransactionRequest,
     ParsedSignPolygonTransactionRequest,
+    ParsedCreateMultisigCommitmentsRequest,
     ParsedSignMultisigTransactionRequest,
     ParsedSignStakingRequest,
 } from './RequestTypes';
@@ -36,12 +37,24 @@ import { setHistoryStorage, getHistoryStorage } from '@/lib/Helpers';
 import { WalletInfo } from './WalletInfo';
 
 export default class RpcApi {
+    /**
+     * The permissions which can be granted via CONNECT_ACCOUNT.
+     */
     public static PERMISSIONED_REQUESTS: RequestType[] = [
         RequestType.SIGN_MULTISIG_TRANSACTION,
         // When adding new permissioned request types here,
         // the ConnectAccount UI must be updated to be able
         // to display these permissions to the user.
     ];
+
+    /**
+     * Request types which require a permission, mapped to that permission. Both rounds of signing a multisig
+     * transaction are covered by the SIGN_MULTISIG_TRANSACTION permission.
+     */
+    public static REQUIRED_PERMISSIONS: Partial<Record<RequestType, RequestType>> = {
+        [RequestType.CREATE_MULTISIG_COMMITMENTS]: RequestType.SIGN_MULTISIG_TRANSACTION,
+        [RequestType.SIGN_MULTISIG_TRANSACTION]: RequestType.SIGN_MULTISIG_TRANSACTION,
+    };
 
     private static get HISTORY_KEY_RPC_STATE() {
         return 'rpc-api-exported-state';
@@ -102,6 +115,7 @@ export default class RpcApi {
 
         this._registerHubApis([
             RequestType.SIGN_TRANSACTION,
+            RequestType.CREATE_MULTISIG_COMMITMENTS,
             RequestType.SIGN_MULTISIG_TRANSACTION,
             RequestType.SIGN_STAKING,
             RequestType.CREATE_CASHLINK,
@@ -129,6 +143,7 @@ export default class RpcApi {
         ]);
         this._registerKeyguardApis([
             KeyguardCommand.SIGN_TRANSACTION,
+            KeyguardCommand.CREATE_MULTISIG_COMMITMENTS,
             KeyguardCommand.SIGN_MULTISIG_TRANSACTION,
             KeyguardCommand.SIGN_STAKING,
             KeyguardCommand.CREATE,
@@ -311,7 +326,7 @@ export default class RpcApi {
         if ( // Check that a non-whitelisted request comes from a privileged origin or is permissioned
             !this._3rdPartyRequestWhitelist.includes(requestType)
             && !includesOrigin(Config.privilegedOrigins, state.origin)
-            && !RpcApi.PERMISSIONED_REQUESTS.includes(requestType) // Permissioned requests are handled below
+            && !RpcApi.REQUIRED_PERMISSIONS[requestType] // Permissioned requests are handled below
         ) {
             state.reply(ResponseStatus.ERROR, new Error(`${state.origin} is unauthorized to call ${requestType}`));
             return;
@@ -401,11 +416,14 @@ export default class RpcApi {
                 const parsedSignPolygonTransactionRequest = request as ParsedSignPolygonTransactionRequest;
                 const address = parsedSignPolygonTransactionRequest.request.from;
                 account = this._store.getters.findWalletByPolygonAddress(address);
-            } else if (RpcApi.PERMISSIONED_REQUESTS.includes(requestType)) {
+            } else if (RpcApi.REQUIRED_PERMISSIONS[requestType]) {
                 accountRequired = true;
+                const permission = RpcApi.REQUIRED_PERMISSIONS[requestType]!;
 
-                if (requestType === RequestType.SIGN_MULTISIG_TRANSACTION) {
-                    const address = (request as ParsedSignMultisigTransactionRequest).signer;
+                if (requestType === RequestType.CREATE_MULTISIG_COMMITMENTS
+                    || requestType === RequestType.SIGN_MULTISIG_TRANSACTION) {
+                    const address = (request as ParsedCreateMultisigCommitmentsRequest
+                        | ParsedSignMultisigTransactionRequest).signer;
                     if (address) {
                         account = this._store.getters.findWalletByAddress(address.toUserFriendlyAddress(), false);
                     }
@@ -413,7 +431,7 @@ export default class RpcApi {
 
                 if (account && !(
                     account.permissions[state.origin]
-                    && account.permissions[state.origin].includes(requestType)
+                    && account.permissions[state.origin].includes(permission)
                 )) {
                     this.reject(new Error('Method not allowed - requires permission'));
                     return;

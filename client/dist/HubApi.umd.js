@@ -297,6 +297,7 @@
         RequestType["CHECKOUT"] = "checkout";
         RequestType["SIGN_MESSAGE"] = "sign-message";
         RequestType["SIGN_TRANSACTION"] = "sign-transaction";
+        RequestType["CREATE_MULTISIG_COMMITMENTS"] = "create-multisig-commitments";
         RequestType["SIGN_MULTISIG_TRANSACTION"] = "sign-multisig-transaction";
         RequestType["SIGN_STAKING"] = "sign-staking";
         RequestType["ONBOARD"] = "onboard";
@@ -443,6 +444,20 @@
         refundSwap(request, requestBehavior = this._defaultBehavior) {
             return this._request(requestBehavior, RequestType.REFUND_SWAP, [request]);
         }
+        /**
+         * Round 1 of signing a multisig transaction: creates the signer's commitments for the transaction. Share the
+         * commitments with the co-signers, and pass the returned state to signMultisigTransaction (round 2), with the
+         * identical transaction, publicKeys and numberOfSigners. Requires the permission for
+         * RequestType.SIGN_MULTISIG_TRANSACTION, see connectAccount.
+         */
+        createMultisigCommitments(request, requestBehavior = this._defaultBehavior) {
+            return this._request(requestBehavior, RequestType.CREATE_MULTISIG_COMMITMENTS, [request]);
+        }
+        /**
+         * Round 2 of signing a multisig transaction: creates the signer's partial signature, from the commitments of all
+         * signers and the state returned by createMultisigCommitments. Requires the permission for
+         * RequestType.SIGN_MULTISIG_TRANSACTION, see connectAccount.
+         */
         signMultisigTransaction(request, requestBehavior = this._defaultBehavior) {
             return this._request(requestBehavior, RequestType.SIGN_MULTISIG_TRANSACTION, [request]);
         }

@@ -43,6 +43,8 @@ import {
     SetupSwapRequest,
     SetupSwapResult,
     RefundSwapRequest,
+    CreateMultisigCommitmentsRequest,
+    MultisigCommitments,
     SignMultisigTransactionRequest,
     PartialSignature,
     SignStakingRequest,
@@ -219,6 +221,24 @@ export default class HubApi<
         return this._request(requestBehavior, RequestType.REFUND_SWAP, [request]);
     }
 
+    /**
+     * Round 1 of signing a multisig transaction: creates the signer's commitments for the transaction. Share the
+     * commitments with the co-signers, and pass the returned state to signMultisigTransaction (round 2), with the
+     * identical transaction, publicKeys and numberOfSigners. Requires the permission for
+     * RequestType.SIGN_MULTISIG_TRANSACTION, see connectAccount.
+     */
+    public createMultisigCommitments<B extends BehaviorType = DB>(
+        request: Promise<CreateMultisigCommitmentsRequest> | CreateMultisigCommitmentsRequest,
+        requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
+    ): Promise<B extends BehaviorType.REDIRECT ? void : MultisigCommitments> {
+        return this._request(requestBehavior, RequestType.CREATE_MULTISIG_COMMITMENTS, [request]);
+    }
+
+    /**
+     * Round 2 of signing a multisig transaction: creates the signer's partial signature, from the commitments of all
+     * signers and the state returned by createMultisigCommitments. Requires the permission for
+     * RequestType.SIGN_MULTISIG_TRANSACTION, see connectAccount.
+     */
     public signMultisigTransaction<B extends BehaviorType = DB>(
         request: Promise<SignMultisigTransactionRequest> | SignMultisigTransactionRequest,
         requestBehavior: RequestBehavior<B> = this._defaultBehavior as any,
