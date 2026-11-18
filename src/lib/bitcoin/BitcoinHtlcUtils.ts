@@ -49,7 +49,8 @@ export async function decodeBtcScript(script: string) {
     // Bitcoin HTLC timeouts are backdated 1 hour, to account for Bitcoin's
     // minimum age for valid transaction locktimes (6 blocks).
     const timeoutTimestamp = scriptDecodeNumber(Buffer.from(asm[++i], 'hex')) + (60 * 60);
-    if (asm[++i] !== 'OP_CHECKLOCKTIMEVERIFY' || asm[++i] !== 'OP_DROP') throw error;
+    // Opcode 0xb1, which bitcoinjs-lib 7 renders as OP_NOP2, its name before BIP65.
+    if (!['OP_CHECKLOCKTIMEVERIFY', 'OP_NOP2'].includes(asm[++i]) || asm[++i] !== 'OP_DROP') throw error;
 
     // Check refund address
     if (asm[++i] !== 'OP_DUP' || asm[++i] !== 'OP_HASH160') throw error;

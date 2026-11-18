@@ -1,5 +1,6 @@
 import Config from 'config';
-import type { Network as BitcoinJsNetwork, BIP32Interface as BitcoinJsBip32Interface } from 'bitcoinjs-lib';
+import type { Network as BitcoinJsNetwork } from 'bitcoinjs-lib';
+import type { BIP32Interface as BitcoinJsBip32Interface } from 'bip32';
 import {
     BTC_NETWORK_MAIN,
     BTC_NETWORK_TEST,
@@ -47,7 +48,7 @@ export async function publicKeyToPayment(publicKey: Buffer, addressType = Config
         { p2sh, p2wpkh },
         network,
     ] = await Promise.all([
-        import('bitcoinjs-lib/src/payments'),
+        import('bitcoinjs-lib/src/payments/index'),
         getBtcNetwork(),
     ] as const);
     switch (addressType) {

@@ -42,7 +42,8 @@ export async function prepareBitcoinTransactionForLedgerSigning(
     }
 
     const inputs: LedgerBitcoinTransactionInfo['inputs'] = transactionInfo.inputs.map((input, i) => ({
-        transaction: inputTransactions[i],
+        // Pass the transaction serialized, as the Ledger api uses bitcoinjs-lib 5, whose Transaction is not compatible.
+        transaction: inputTransactions[i].toHex(),
         index: input.outputIndex,
         keyPath: input.keyPath,
         customScript: input.witnessScript,
@@ -57,14 +58,16 @@ export async function prepareBitcoinTransactionForLedgerSigning(
     const network = Config.bitcoinNetwork === BTC_NETWORK_TEST ? networks.testnet : networks.bitcoin;
     const outputs: LedgerBitcoinTransactionInfo['outputs']  = [{
         amount: transactionInfo.recipientOutput.value,
-        outputScript: addressToOutputScript(transactionInfo.recipientOutput.address, network).toString('hex'),
+        outputScript: Nimiq.BufferUtils.toHex(
+            addressToOutputScript(transactionInfo.recipientOutput.address, network)),
     }];
     let changePath: string | undefined;
     if (transactionInfo.changeOutput) {
         changePath = transactionInfo.changeOutput.keyPath;
         outputs.push({
             amount: transactionInfo.changeOutput.value,
-            outputScript: addressToOutputScript(transactionInfo.changeOutput.address, network).toString('hex'),
+            outputScript: Nimiq.BufferUtils.toHex(
+                addressToOutputScript(transactionInfo.changeOutput.address, network)),
         });
     }
 

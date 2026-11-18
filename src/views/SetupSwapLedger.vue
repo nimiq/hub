@@ -456,7 +456,7 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
                 : []),
             // preload bitcoinjs-lib/src/networks, bitcoinjs-lib/src/payments and Buffer used in BTC funding
             ...(fund.type === SwapAsset.BTC
-                ? [import('bitcoinjs-lib/src/networks'), import('bitcoinjs-lib/src/payments'), import('buffer')]
+                ? [import('bitcoinjs-lib/src/networks'), import('bitcoinjs-lib/src/payments/index'), import('buffer')]
                 : []),
             // preload bitcoinjs-lib/src/script used in BTC redeeming
             redeem.type === SwapAsset.BTC ? import('bitcoinjs-lib/src/script') : null,
@@ -666,7 +666,7 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
                 { Buffer },
             ] = await Promise.all([
                 import('bitcoinjs-lib/src/networks'),
-                import('bitcoinjs-lib/src/payments'),
+                import('bitcoinjs-lib/src/payments/index'),
                 import('buffer'),
             ] as const);
             const bitcoinNetwork = Config.bitcoinNetwork === BTC_NETWORK_TEST ? networks.testnet : networks.bitcoin;
@@ -822,8 +822,8 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
             const [inputSignature, signerPubKey] = htlcInput.witness;
 
             const witnessBytes = scriptFromAsm([
-                inputSignature.toString('hex'),
-                signerPubKey.toString('hex'),
+                Nimiq.BufferUtils.toHex(inputSignature),
+                Nimiq.BufferUtils.toHex(signerPubKey),
                 // Use zero-bytes as a dummy secret which are replaced in the wallet once the swap secret is known
                 '0000000000000000000000000000000000000000000000000000000000000000',
                 'OP_1', // OP_1 (true) activates the redeem branch in the HTLC script

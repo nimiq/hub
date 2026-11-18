@@ -196,8 +196,8 @@ export default class RefundSwapLedger extends RefundSwap {
             const [inputSignature, signerPubKey] = htlcInput.witness;
 
             const witnessBytes = scriptFromAsm([
-                inputSignature.toString('hex'),
-                signerPubKey.toString('hex'),
+                Nimiq.BufferUtils.toHex(inputSignature),
+                Nimiq.BufferUtils.toHex(signerPubKey),
                 'OP_0', // OP_0 (false) activates the refund branch in the HTLC script
                 (this.request as ParsedSignBtcTransactionRequest).inputs[0].witnessScript,
             ].join(' '));
