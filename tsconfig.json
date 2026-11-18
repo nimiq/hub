@@ -7,7 +7,7 @@
     "useUnknownInCatchVariables": false,
     "jsx": "preserve",
     "importHelpers": true,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "experimentalDecorators": true,
     "esModuleInterop": true,
@@ -24,6 +24,10 @@
       ],
       "config": [
         "src/config/config.local.ts"
+      ],
+      // The exports map of vuex 3 does not point to its types, which TypeScript needs with bundler module resolution.
+      "vuex": [
+        "node_modules/vuex/types/index.d.ts"
       ]
     }
   },

@@ -174,7 +174,7 @@ class CookieJar {
         const bytes: number[] = [];
 
         // The check<Account|Wallet>DefaultLabel functions omit the label when it's the default label
-        const firstAccount = wallet.accounts.values().next().value;
+        const firstAccount = wallet.accounts.values().next().value!;
         const label = wallet.type === WalletType.LEGACY
             ? this.checkAccountDefaultLabel(
                 firstAccount.address,
@@ -216,7 +216,7 @@ class CookieJar {
 
         // Legacy account information
         if (wallet.type === WalletType.LEGACY) {
-            const account = wallet.accounts.values().next().value;
+            const account = wallet.accounts.values().next().value!;
 
             // Account address
             bytes.push.apply(bytes, Array.from(account.address));

@@ -420,7 +420,6 @@ type SigningInfo = {
     LedgerUi,
 }})
 export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess) {
-    // @ts-expect-error: Mixins types the getters of the mixins as properties, which accessors can't override
     protected get State() {
         return {
             // super.State doesn't work
@@ -855,7 +854,6 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
 
     // Getters for displaying information
 
-    // @ts-expect-error: Mixins types the getters of the mixins as properties, which accessors can't override
     protected get statusScreenTitle() {
         if (this.statusScreenState !== StatusScreen.State.ERROR) return ''; // don't display a title in small ui state
         switch (this.state) {
@@ -870,7 +868,6 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
         }
     }
 
-    // @ts-expect-error: Mixins types the getters of the mixins as properties, which accessors can't override
     protected get statusScreenStatus() {
         if (this.statusScreenState !== StatusScreen.State.LOADING) return ''; // the status is only relevant for LOADING
         switch (this.state) {

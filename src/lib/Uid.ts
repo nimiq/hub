@@ -13,7 +13,7 @@ export async function makeUid(keyId: string, firstAddress: string): Promise<stri
  * This method uses only browser-native APIs to avoid loading the Nimiq or Bitcoin library, as this
  * method is also used in the iframe.
  */
-async function sha256(buffer: Uint8Array): Promise<Uint8Array> {
+async function sha256(buffer: Uint8Array<ArrayBuffer>): Promise<Uint8Array> {
     try {
         return new Uint8Array(await window.crypto.subtle.digest('SHA-256', buffer));
     } catch (error) {
@@ -29,7 +29,7 @@ async function sha256(buffer: Uint8Array): Promise<Uint8Array> {
  * Conversion functions taken from Nimiq.BufferUtils.
  */
 
-function fromAscii(ascii: string): Uint8Array {
+function fromAscii(ascii: string): Uint8Array<ArrayBuffer> {
     const buf = new Uint8Array(ascii.length);
     for (let i = 0; i < ascii.length; ++i) { // tslint:disable-line:prefer-for-of
         buf[i] = ascii.charCodeAt(i);

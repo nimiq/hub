@@ -114,7 +114,7 @@ export class CookieDecoder {
 
         const polygonAddresses = hasPolygon ? this.decodePolygonAddresses(bytes) : [];
 
-        const firstAccount = accounts.values().next().value;
+        const firstAccount = accounts.values().next().value!;
         const walletLabel = walletLabelBytes.length > 0
             ? Utf8Tools.utf8ByteArrayToString(new Uint8Array(walletLabelBytes))
             : type === WalletType.LEDGER

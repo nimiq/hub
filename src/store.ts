@@ -110,7 +110,7 @@ const store: StoreOptions<RootState> = {
             commit('addWallet', walletInfo);
             commit('setActiveAccount', {
                 walletId: walletInfo.id,
-                userFriendlyAddress: walletInfo.accounts.values().next().value.userFriendlyAddress,
+                userFriendlyAddress: walletInfo.accounts.values().next().value!.userFriendlyAddress,
             });
         },
     },
