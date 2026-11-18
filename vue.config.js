@@ -61,7 +61,7 @@ const configureWebpack = {
         new PoLoaderOptimizer(),
         new ProvidePlugin({
             // Polyfill node's global Buffer by automatically importing/requiring it from module 'buffer'. The global
-            // Buffer is for example used by bitcoinjs-lib > tiny-secp256k1.
+            // Buffer is for example used by the Ledger libraries.
             Buffer: ['buffer', 'Buffer'],
             // Polyfill node's global process object, which webpack 5 does not do automatically anymore. It is for
             // example used by bitcoinjs-lib > create-hash > hash-base > readable-stream.

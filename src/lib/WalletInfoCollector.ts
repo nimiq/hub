@@ -25,7 +25,7 @@ import {
     NESTED_SEGWIT,
     NATIVE_SEGWIT,
 } from './bitcoin/BitcoinConstants';
-import { deriveAddressesFromXPub, getBtcNetwork, publicKeyToPayment } from './bitcoin/BitcoinUtils';
+import { deriveAddressesFromXPub, parseXPub, publicKeyToPayment } from './bitcoin/BitcoinUtils';
 
 export type BasicAccountInfo = {
     address: string,
@@ -146,18 +146,14 @@ export default class WalletInfoCollector {
         const xPubType = ['ypub', 'upub'].includes(xpub.substr(0, 4)) ? NESTED_SEGWIT : NATIVE_SEGWIT;
 
         const [
-            { fromBase58: bip32FromBase58 },
+            extendedKey,
             electrum,
-            network,
         ] = await Promise.all([
-            import('bip32'),
+            parseXPub(xpub, xPubType),
             getElectrumClient(),
-            getBtcNetwork(xPubType),
         ] as const);
 
-        const extendedKey = bip32FromBase58(xpub, network);
-
-        const baseKey = extendedKey.derive(chain);
+        const baseKey = extendedKey.deriveChild(chain);
         const basePath = `${BTC_ACCOUNT_KEY_PATH[xPubType][Config.bitcoinNetwork]}/${chain}`;
 
         const addressInfosToSkipByPath = new Map(addressInfosToSkip.map((info) => [info.path, info] as const));
@@ -175,7 +171,7 @@ export default class WalletInfoCollector {
             if (addressInfoToSkip) {
                 used = addressInfoToSkip.used;
             } else {
-                const pubKey = baseKey.derive(i).publicKey;
+                const pubKey = baseKey.deriveChild(i).publicKey!;
 
                 const address = (await publicKeyToPayment(pubKey, xPubType)).address;
                 if (!address) throw new Error(`Cannot create address for ${xpub} chain ${chain} index ${i}`);
