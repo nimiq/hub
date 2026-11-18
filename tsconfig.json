@@ -3,6 +3,8 @@
     "target": "es2019", // Highest version supported by Webpack 4
     "module": "esnext",
     "strict": true,
+    // Keep catch clause variables typed as any, as before TypeScript 4.4, instead of unknown.
+    "useUnknownInCatchVariables": false,
     "jsx": "preserve",
     "importHelpers": true,
     "moduleResolution": "node",
