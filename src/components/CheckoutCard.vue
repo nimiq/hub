@@ -119,8 +119,6 @@ export default class CheckoutCard<
     }
 
     protected async fetchPaymentOption(): Promise<void> {
-        let fetchedData: any;
-
         this.statusScreenState = StatusScreen.State.LOADING;
         this.statusScreenTitle = this.$t('Collecting payment details') as string;
         this.statusScreenStatus = '';
@@ -129,7 +127,7 @@ export default class CheckoutCard<
         if (!this.request.callbackUrl || !this.request.csrf) {
             throw new Error('Can\'t fetch payment details without callbackUrl and csrf token');
         }
-        fetchedData = await CheckoutServerApi.fetchPaymentOption(
+        const fetchedData: any = await CheckoutServerApi.fetchPaymentOption(
             this.request.callbackUrl,
             this.paymentOptions.currency,
             this.paymentOptions.type,

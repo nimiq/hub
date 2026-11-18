@@ -8,7 +8,7 @@ import { VestingContractInfo, HashedTimeLockedContractInfo } from '@/lib/Contrac
 
 setup();
 
-const indexedDB: IDBFactory = require('fake-indexeddb'); // tslint:disable-line:no-var-requires
+const indexedDB: IDBFactory = require('fake-indexeddb'); // eslint-disable-line @typescript-eslint/no-require-imports
 
 // @ts-ignore private field access
 Store.INDEXEDDB_IMPLEMENTATION = indexedDB;

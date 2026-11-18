@@ -47,7 +47,7 @@ export default class WalletInfoCollector {
     public static async collectBip39WalletInfo(
         keyId: string,
         initialAccounts: BasicAccountInfo[],
-        // tslint:disable-next-line:no-empty
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
         onUpdate: (walletInfo: WalletInfo, currentlyCheckedAccounts: BasicAccountInfo[]) => void = () => {},
         skipActivityCheck = false,
         bitcoinXPub?: string,
@@ -60,7 +60,7 @@ export default class WalletInfoCollector {
 
     public static async collectLedgerWalletInfo(
         initialAccounts: BasicAccountInfo[],
-        // tslint:disable-next-line:no-empty
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
         onUpdate: (walletInfo: WalletInfo, currentlyCheckedAccounts: BasicAccountInfo[]) => void = () => {},
         skipActivityCheck = false,
     ): Promise<WalletCollectionResultLedger> {
@@ -71,7 +71,7 @@ export default class WalletInfoCollector {
     public static async collectLegacyWalletInfo(
         keyId: string,
         singleAccount: BasicAccountInfo,
-        // tslint:disable-next-line:no-empty
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
         onUpdate: (walletInfo: WalletInfo, currentlyCheckedAccounts: BasicAccountInfo[]) => void = () => {},
         skipActivityCheck = false,
     ): Promise<WalletCollectionResultKeyguard> {
@@ -215,7 +215,7 @@ export default class WalletInfoCollector {
     private static async _collectLedgerOrBip39WalletInfo(
         walletType: WalletType,
         initialAccounts: BasicAccountInfo[] = [],
-        // tslint:disable-next-line:no-empty
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
         onUpdate: (walletInfo: WalletInfo, currentlyCheckedAccounts: BasicAccountInfo[]) => void,
         skipActivityCheck: boolean,
         keyId?: string,

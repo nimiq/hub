@@ -1,6 +1,7 @@
 // const SriPlugin = require('webpack-subresource-integrity');
 const ProvidePlugin = require('webpack').ProvidePlugin;
 const DefinePlugin = require('webpack').DefinePlugin;
+const ESLintPlugin = require('eslint-webpack-plugin');
 const path = require('path');
 const fs = require('fs');
 const createHash = require('crypto').createHash;
@@ -189,6 +190,19 @@ module.exports = {
         config.plugins.delete('preload-demos');
         config.plugins.delete('prefetch-callback');
         config.plugins.delete('preload-callback');
+
+        // Lint during builds, as Vue CLI 4 did with TSLint. Errors fail the build, warnings are only reported.
+        config
+            .plugin('eslint')
+            .use(ESLintPlugin, [{
+                extensions: ['ts', 'tsx', 'vue'],
+                files: ['src'],
+                cache: true,
+                cacheLocation: path.join(__dirname, 'node_modules/.cache/eslint/'),
+                failOnError: true,
+                failOnWarning: false,
+                formatter: 'stylish',
+            }]);
 
         // Add our files to the copy plugin that vue-cli uses for the public folder
         config

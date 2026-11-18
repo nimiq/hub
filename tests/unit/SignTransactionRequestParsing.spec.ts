@@ -461,7 +461,7 @@ describe('SignTransactionRequestParsing', () => {
             // checks above as a substitute for the plain contract creation flag.
             const contractCreationFlags = Nimiq.TransactionFlag.ContractCreation;
             for (const flags of [
-                contractCreationFlags | Nimiq.TransactionFlag.Signaling, // tslint:disable-line no-bitwise
+                contractCreationFlags | Nimiq.TransactionFlag.Signaling, // eslint-disable-line no-bitwise
                 1.5, // truncated to ContractCreation
                 257, // truncated to ContractCreation
             ]) {

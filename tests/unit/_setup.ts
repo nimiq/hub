@@ -1,4 +1,5 @@
-const Nimiq = require('@nimiq/core'); // tslint:disable-line:no-var-requires variable-name
+// eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/naming-convention
+const Nimiq = require('@nimiq/core');
 
 export const setup = () => {
     // @ts-ignore
@@ -6,6 +7,6 @@ export const setup = () => {
 
     // Mock WasmHelper as node clients don't provide the WasmHelper
     Nimiq.WasmHelper = {
-        doImport: () => {}, // tslint:disable-line:no-empty
+        doImport: () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
     };
 };

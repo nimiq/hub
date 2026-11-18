@@ -48,7 +48,7 @@ export default class LoginSuccess extends Vue {
     private receiptsError: Error | null = null;
     private result: Account[] | null = null;
 
-    private resolve = (...args: any[]) => {}; // tslint:disable-line:no-empty
+    private resolve = (...args: any[]) => {}; // eslint-disable-line @typescript-eslint/no-empty-function
 
     private async mounted() {
         const collectionResults: WalletCollectionResultKeyguard[] = [];

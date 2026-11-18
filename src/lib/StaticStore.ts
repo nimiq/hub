@@ -25,7 +25,7 @@ export class StaticStore {
 }
 
 // Decorator is capitalized to be consistent with vuex decorators
-// tslint:disable-next-line variable-name
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export const Static = <V extends Vue>(target: V, keyName: string) => {
     return createDecorator((componentOptions, key: string) => {
         if (!componentOptions.computed) {

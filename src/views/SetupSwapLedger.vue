@@ -783,7 +783,7 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
                 this.ledgerApiStateType = LedgerApiStateType.IDLE;
                 this.currentlySignedTransaction = bitcoinTransactionInfo;
 
-                // tslint:disable-next-line no-shadowed-variable
+                // eslint-disable-next-line @typescript-eslint/no-shadow
                 const { Transaction: BitcoinJsTransaction } = await import('bitcoinjs-lib/src/transaction');
                 signedBitcoinTransaction = BitcoinJsTransaction.fromHex(
                     await LedgerApi.Bitcoin.signTransaction(preparedBitcoinTransactionInfo));

@@ -166,7 +166,7 @@ export default class Migrate extends Vue {
                 exportedAccount.isBackedUp = true;
                 this.storeAccountsCache();
             }
-        } catch (e) {} // tslint:disable-line:no-empty
+        } catch (e) {} // eslint-disable-line no-empty
 
         if (!this.legacyAccounts.length) {
             const legacyKeys = await this.$rpc.keyguardClient.listLegacyAccounts();

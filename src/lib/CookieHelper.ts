@@ -1,4 +1,4 @@
-// tslint:disable no-bitwise no-shadowed-variable
+/* eslint-disable no-bitwise, @typescript-eslint/no-shadow */
 
 import { WalletInfoEntry } from './WalletInfo';
 import { WalletType } from './Constants';

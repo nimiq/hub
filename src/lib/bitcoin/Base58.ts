@@ -1,4 +1,4 @@
-/* tslint:disable:no-bitwise */
+/* eslint-disable no-bitwise */
 
 // Adapted from https://github.com/45678/Base58
 

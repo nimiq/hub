@@ -172,7 +172,7 @@ export class CashlinkCurrencyHandlerNimiq implements ICashlinkCurrencyHandler<Ca
     }
 
     private async _getNetworkClient(): Promise<NetworkClient> {
-        // tslint:disable-next-line:no-shadowed-variable
+        // eslint-disable-next-line @typescript-eslint/no-shadow
         const { NetworkClient } = await import('./NetworkClient');
         const networkClient = NetworkClient.Instance;
         await networkClient.init();

@@ -1,4 +1,4 @@
-// tslint:disable no-bitwise
+/* eslint-disable no-bitwise */
 
 export default class AddressUtils {
     // The following methods are taken from @nimiq/core source,
@@ -6,7 +6,7 @@ export default class AddressUtils {
 
     public static toUserFriendlyAddress(serializedAddress: Uint8Array, withSpaces = true): string {
         const base32 = this._toBase32(serializedAddress);
-        // tslint:disable-next-line prefer-template
+        // eslint-disable-next-line prefer-template
         const check = ('00' + (98 - this._ibanCheck(base32 + this.CCODE + '00'))).slice(-2);
         let res = this.CCODE + check + base32;
         if (withSpaces) res = res.replace(/.{4}/g, '$& ').trim();
