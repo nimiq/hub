@@ -62,7 +62,7 @@
         "eslint": "^10.15.0",
         "eslint-plugin-vue": "^10.12.1",
         "eslint-webpack-plugin": "^6.0.0",
-        "fake-indexeddb": "^2.0.5",
+        "fake-indexeddb": "^3.1.8",
         "globals": "^17.0.0",
         "jest": "^27.1.0",
         "patch-package": "^6.5.1",
