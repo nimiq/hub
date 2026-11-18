@@ -161,7 +161,7 @@ export default class RpcApi {
             KeyguardCommand.CONNECT_ACCOUNT,
         ]);
 
-        this._router.beforeEach((to: Route, from: Route, next: (arg?: string | false | Route) => void) => {
+        this._router.beforeEach((to, from, next) => {
             // There is an initial redirect from '/' to '/' which does not need to be handled at all.
             if (to.name === REQUEST_ERROR || (to.path === '/' && from.path === '/')) {
                 next();
@@ -184,6 +184,7 @@ export default class RpcApi {
 
             next({
                 ...to,
+                name: to.name || undefined, // vue-router types Route.name as nullable but Location.name as optional
                 query: {
                     ...to.query,
                     rpcId,

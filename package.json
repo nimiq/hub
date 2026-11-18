@@ -34,10 +34,10 @@
         "@sentry/vue": "^8.55.0",
         "big-integer": "^1.6.52",
         "ethers": "^5.8.0",
-        "vue": "^2.6.11",
+        "vue": "^2.7.16",
         "vue-i18n": "^8.28.2",
         "vue-property-decorator": "^8.5.1",
-        "vue-router": "^3.0.2",
+        "vue-router": "^3.6.5",
         "vuex": "^3.6.2",
         "vuex-class": "^0.3.2"
     },
@@ -63,7 +63,7 @@
         "script-ext-html-webpack-plugin": "^2.1.5",
         "ts-jest": "^27.0.0",
         "typescript": "~3.8.0",
-        "vue-template-compiler": "^2.6.11",
+        "vue-template-compiler": "^2.7.16",
         "webpack-i18n-tools": "https://github.com/nimiq/webpack-i18n-tools#master",
         "webpack-subresource-integrity": "^1.5.2",
         "write-file-webpack-plugin": "^4.5.1"
