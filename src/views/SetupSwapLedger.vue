@@ -454,9 +454,9 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
             ...(fund.type === SwapAsset.BTC || redeem.type === SwapAsset.BTC
                 ? [import('bitcoinjs-lib/src/transaction'), getElectrumClient()]
                 : []),
-            // preload bitcoinjs-lib/src/networks, bitcoinjs-lib/src/payments and Buffer used in BTC funding
+            // preload bitcoinjs-lib/src/networks and bitcoinjs-lib/src/payments used in BTC funding
             ...(fund.type === SwapAsset.BTC
-                ? [import('bitcoinjs-lib/src/networks'), import('bitcoinjs-lib/src/payments/index'), import('buffer')]
+                ? [import('bitcoinjs-lib/src/networks'), import('bitcoinjs-lib/src/payments/index')]
                 : []),
             // preload bitcoinjs-lib/src/script used in BTC redeeming
             redeem.type === SwapAsset.BTC ? import('bitcoinjs-lib/src/script') : null,
@@ -663,15 +663,13 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
             const [
                 networks,
                 { p2wsh },
-                { Buffer },
             ] = await Promise.all([
                 import('bitcoinjs-lib/src/networks'),
                 import('bitcoinjs-lib/src/payments/index'),
-                import('buffer'),
             ] as const);
             const bitcoinNetwork = Config.bitcoinNetwork === BTC_NETWORK_TEST ? networks.testnet : networks.bitcoin;
             const htlcAddress = p2wsh({
-                witness: [Buffer.from(htlcInfo.fund.htlcScript)],
+                witness: [htlcInfo.fund.htlcScript],
                 network: bitcoinNetwork,
             }).address;
 
