@@ -1,5 +1,6 @@
 import Config from 'config';
-import type { Network as BitcoinJsNetwork, BIP32Interface as BitcoinJsBip32Interface } from 'bitcoinjs-lib';
+import type { Network as BitcoinJsNetwork } from 'bitcoinjs-lib';
+import type { HDKey } from '@scure/bip32';
 import {
     BTC_NETWORK_MAIN,
     BTC_NETWORK_TEST,
@@ -42,12 +43,23 @@ export async function getBtcNetwork(addressType = Config.bitcoinAddressType) {
     };
 }
 
-export async function publicKeyToPayment(publicKey: Buffer, addressType = Config.bitcoinAddressType) {
+/**
+ * Lazily load @scure/bip32 and parse an extended public key with the version bytes of the given address type.
+ */
+export async function parseXPub(xpub: string, addressType = Config.bitcoinAddressType): Promise<HDKey> {
+    const [{ HDKey: HDKeyClass }, network] = await Promise.all([
+        import('@scure/bip32'),
+        getBtcNetwork(addressType),
+    ] as const);
+    return HDKeyClass.fromExtendedKey(xpub, network.bip32);
+}
+
+export async function publicKeyToPayment(publicKey: Uint8Array, addressType = Config.bitcoinAddressType) {
     const [
         { p2sh, p2wpkh },
         network,
     ] = await Promise.all([
-        import('bitcoinjs-lib/src/payments'),
+        import('bitcoinjs-lib/src/payments/index'),
         getBtcNetwork(),
     ] as const);
     switch (addressType) {
@@ -73,29 +85,17 @@ export function satoshisToCoins(satoshis: number) {
 }
 
 export async function deriveAddressesFromXPub(
-    xpub: BitcoinJsBip32Interface | string,
+    xpub: HDKey | string,
     derivationPath: number[],
     startIndex = 0,
     count = BTC_ACCOUNT_MAX_ALLOWED_ADDRESS_GAP,
     addressType = Config.bitcoinAddressType,
 ): Promise<BtcAddressInfo[]> {
-    let extendedKey: BitcoinJsBip32Interface;
-    if (typeof xpub === 'string') {
-        const [
-            { fromBase58: bip32FromBase58 },
-            network,
-        ] = await Promise.all([
-            import('bip32'),
-            getBtcNetwork(addressType),
-        ] as const);
-        extendedKey = bip32FromBase58(xpub, network);
-    } else {
-        extendedKey = xpub;
-    }
+    const extendedKey = typeof xpub === 'string' ? await parseXPub(xpub, addressType) : xpub;
 
     let baseKey = extendedKey;
     for (const index of derivationPath) {
-        baseKey = baseKey.derive(index);
+        baseKey = baseKey.deriveChild(index);
     }
 
     const path = BTC_ACCOUNT_KEY_PATH[addressType][Config.bitcoinNetwork]
@@ -105,10 +105,12 @@ export async function deriveAddressesFromXPub(
     const addressPromises: Array<Promise<BtcAddressInfo>> = [];
 
     for (let i = startIndex; i < startIndex + count; i++) {
-        const pubKey = baseKey.derive(i).publicKey;
+        const pubKey = baseKey.deriveChild(i).publicKey!;
 
         const addressPromise = publicKeyToPayment(pubKey, addressType).then(({ address }) => {
-            if (!address) throw new Error(`Cannot create external address for ${extendedKey.toBase58()} index ${i}`);
+            if (!address) {
+                throw new Error(`Cannot create external address for ${extendedKey.publicExtendedKey} index ${i}`);
+            }
             return new BtcAddressInfo(
                 `${path}/${i}`,
                 address,

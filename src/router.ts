@@ -113,6 +113,21 @@ const ConnectAccountSuccess  = () => import(/*webpackChunkName: "connect-account
 
 Vue.use(Router);
 
+// Since vue-router 3.1, push and replace return a promise if called without callbacks, which rejects on navigation
+// failures, for example when the rpcId navigation guard of RpcApi redirects a navigation, as it does for most of them.
+// Ignore navigation failures, as vue-router did before, instead of causing unhandled promise rejections. Other errors
+// still reject the promise.
+for (const method of ['push', 'replace'] as const) {
+    const originalMethod = Router.prototype[method] as (this: Router, ...args: any[]) => Promise<unknown> | void;
+    (Router.prototype as any)[method] = function navigateIgnoringFailures(this: Router, ...args: any[]) {
+        if (args.length > 1) return originalMethod.apply(this, args); // called with callbacks
+        return (originalMethod.apply(this, args) as Promise<unknown>).catch((error) => {
+            if (Router.isNavigationFailure(error)) return error;
+            throw error;
+        });
+    };
+}
+
 export function keyguardResponseRouter(
     command: KeyguardCommand,
     originalRequestType: RequestType,

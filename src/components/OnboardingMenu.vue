@@ -41,15 +41,15 @@ export default class AccountList extends Vue {
     }
 
     @Emit()
-    // tslint:disable-next-line:no-empty
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     private signup() {}
 
     @Emit()
-    // tslint:disable-next-line:no-empty
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     private login() {}
 
     @Emit()
-    // tslint:disable-next-line:no-empty
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     private ledger() {}
 }
 </script>

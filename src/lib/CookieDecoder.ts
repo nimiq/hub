@@ -1,4 +1,4 @@
-// tslint:disable no-bitwise no-shadowed-variable
+/* eslint-disable no-bitwise, @typescript-eslint/no-shadow */
 
 import { WalletInfoEntry } from './WalletInfo';
 import { Utf8Tools } from '@nimiq/utils';
@@ -114,7 +114,7 @@ export class CookieDecoder {
 
         const polygonAddresses = hasPolygon ? this.decodePolygonAddresses(bytes) : [];
 
-        const firstAccount = accounts.values().next().value;
+        const firstAccount = accounts.values().next().value!;
         const walletLabel = walletLabelBytes.length > 0
             ? Utf8Tools.utf8ByteArrayToString(new Uint8Array(walletLabelBytes))
             : type === WalletType.LEDGER

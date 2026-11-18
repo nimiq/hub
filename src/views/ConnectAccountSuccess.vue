@@ -52,7 +52,7 @@ export default class ConnectAccountSuccess extends Vue {
                 signature,
             })),
             account: {
-                label: wallet.labelForKeyguard || wallet.accounts.values().next().value.label,
+                label: wallet.labelForKeyguard || wallet.accounts.values().next().value!.label,
                 type: walletTypeName[wallet.type],
                 // permissions: [], // TODO
             },

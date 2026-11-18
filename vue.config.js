@@ -1,9 +1,7 @@
-const CopyWebpackPlugin = require('copy-webpack-plugin');
 // const SriPlugin = require('webpack-subresource-integrity');
-const WriteFileWebpackPlugin = require('write-file-webpack-plugin');
 const ProvidePlugin = require('webpack').ProvidePlugin;
 const DefinePlugin = require('webpack').DefinePlugin;
-const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
+const ESLintPlugin = require('eslint-webpack-plugin');
 const path = require('path');
 const fs = require('fs');
 const createHash = require('crypto').createHash;
@@ -39,42 +37,35 @@ const browserWarningIntegrityHash = `sha256-${createHash('sha256')
 
 console.log('Building for:', buildName);
 
+/**
+ * vue-loader 15 imports the default export of each style block, but its proxy modules re-export the style blocks via
+ * `export *`, which does not include a default export, unless they are CSS modules. As the default export is only used
+ * for CSS modules, the warnings that webpack emits about it for all other style blocks can be ignored. This is done in a
+ * plugin instead of via webpack's ignoreWarnings, because Vue CLI's build output reads the unfiltered warnings.
+ */
+class IgnoreVueStyleDefaultImportWarnings {
+    apply(compiler) {
+        const warningRegex = /export 'default' \(imported as 'style\d+'\) was not found in '.+\.vue\?vue&type=style/;
+        compiler.hooks.afterCompile.tap('IgnoreVueStyleDefaultImportWarnings', (compilation) => {
+            compilation.warnings = compilation.warnings.filter((warning) => !warningRegex.test(warning.message));
+        });
+    }
+}
+
 const configureWebpack = {
     plugins: [
         // ...(process.env.NODE_ENV === 'production' ? [new SriPlugin({
         //     hashFuncNames: ['sha256'],
         // })] : []),
-        new CopyWebpackPlugin({ patterns: [
-            {
-                from: 'node_modules/@nimiq/browser-warning/dist/browser-warning.js*',
-                to: './',
-                flatten: true,
-            },
-            {
-                from: 'node_modules/@nimiq/vue-components/dist/iqons.min.*.svg',
-                to: './img/',
-                flatten: true,
-            },
-            {
-                from: 'node_modules/@nimiq/vue-components/dist/NimiqVueComponents.umd.min.lang-*.js',
-                to: './js/',
-                flatten: true,
-                transformPath(path) {
-                    // The bundled NimiqVueComponents.umd.js tries to load the the non-minified files
-                    return path.replace('.min', '');
-                },
-            },
-            {
-                from: 'node_modules/@nimiq/core',
-                to: `./nimiq/`,
-            },
-        ]}),
-        new WriteFileWebpackPlugin(),
+        new IgnoreVueStyleDefaultImportWarnings(),
         new PoLoaderOptimizer(),
         new ProvidePlugin({
             // Polyfill node's global Buffer by automatically importing/requiring it from module 'buffer'. The global
-            // Buffer is for example used by bitcoinjs-lib > tiny-secp256k1.
-            Buffer: ['buffer', 'Buffer']
+            // Buffer is for example used by the Ledger libraries.
+            Buffer: ['buffer', 'Buffer'],
+            // Polyfill node's global process object, which webpack 5 does not do automatically anymore. It is for
+            // example used by bitcoinjs-lib > create-hash > hash-base > readable-stream.
+            process: 'process/browser',
         }),
         new DefinePlugin({
             // Polyfill node's global object by replacing it with globalThis. It is for example used by bitcoinjs-lib >
@@ -203,6 +194,53 @@ module.exports = {
         config.plugins.delete('prefetch-callback');
         config.plugins.delete('preload-callback');
 
+        // Lint during builds, as Vue CLI 4 did with TSLint. Errors fail the build, warnings are only reported.
+        config
+            .plugin('eslint')
+            .use(ESLintPlugin, [{
+                extensions: ['ts', 'tsx', 'vue'],
+                files: ['src'],
+                cache: true,
+                cacheLocation: path.join(__dirname, 'node_modules/.cache/eslint/'),
+                failOnError: true,
+                failOnWarning: false,
+                formatter: 'stylish',
+            }]);
+
+        // Add our files to the copy plugin that vue-cli uses for the public folder
+        config
+            .plugin('copy')
+            .tap(([options]) => [{
+                ...options,
+                patterns: [
+                    ...options.patterns,
+                    {
+                        from: 'node_modules/@nimiq/browser-warning/dist/browser-warning.js*',
+                        to: './[name][ext]',
+                    },
+                    {
+                        from: 'node_modules/@nimiq/vue-components/dist/iqons.min.*.svg',
+                        to: './img/[name][ext]',
+                    },
+                    {
+                        from: 'node_modules/@nimiq/vue-components/dist/NimiqVueComponents.umd.min.lang-*.js',
+                        to({ absoluteFilename }) {
+                            // The bundled NimiqVueComponents.umd.js tries to load the the non-minified files
+                            return `./js/${path.basename(absoluteFilename).replace('.min', '')}`;
+                        },
+                    },
+                    {
+                        from: 'node_modules/@nimiq/core',
+                        to: './nimiq/',
+                    },
+                ].map((pattern) => ({
+                    ...pattern,
+                    // Copy the files as they are. Otherwise, webpack 5 minifies copied js files, which for example
+                    // breaks the integrity hash of browser-warning.js that is inserted into the html.
+                    info: { minimized: true },
+                })),
+            }]);
+
         config.module
             .rule('ts')
             .use('ts-loader')
@@ -219,12 +257,6 @@ module.exports = {
                 .loader('webpack-i18n-tools')
                 .end()
             .end();
-
-        config
-            .plugin('script-ext-html-webpack-plugin')
-            .use(ScriptExtHtmlWebpackPlugin, [{
-                defaultAttribute: 'defer',
-            }]);
     },
 
     // Add dependencies here which should be transpiled by babel-loader via @vue/cli-plugin-babel. This is needed as our
@@ -232,22 +264,37 @@ module.exports = {
     // When changing to Webpack 5, some or all can probably be removed.
     transpileDependencies: ['@nimiq/utils', '@nimiq/ledger-api'],
 
-    ...((process.env['https-key'] && process.env['https-cert'])
-        // For iOS debugging in BrowserStack, BrowserStack's localhost tunnel bs-local.com needs to be used, see
-        // https://www.browserstack.com/docs/live/local-testing/ios-troubleshooting-guide. However, on bs-local.com
-        // features only available on https like crypto.subtle or service workers don't work unless served as https.
-        // The Wallet also needs to be served with this option and the Keyguard has to be served over https as well.
-        // Safari has problems to open the https page with invalid certificate, but Chrome iOS works and also uses
-        // the Safari engine. To be able to use the dev tools with Chrome iOS on BrowserStack, launch BrowserStack
-        // with Safari first, then switch to Chrome.
-        || process.env['browserstack-ios-testing'] ? {
-        devServer: {
-            https: true,
-            disableHostCheck: true, // allow to serve locally on wallet.nimiq.com via custom cert, or on bs-local.com
-            ...(process.env['https-key'] && process.env['https-cert'] ? {
+    css: {
+        loaderOptions: {
+            css: {
+                // Keep root-relative urls like /swap-change-background.svg, which refer to files in the public folder,
+                // as they are, like css-loader did before v4, instead of trying to resolve them as modules.
+                url: {
+                    filter: (url) => !url.startsWith('/'),
+                },
+            },
+        },
+    },
+
+    devServer: {
+        // Write the files to dist also during development, like the previously used write-file-webpack-plugin did
+        devMiddleware: {
+            writeToDisk: true,
+        },
+        ...((process.env['https-key'] && process.env['https-cert'])
+            // For iOS debugging in BrowserStack, BrowserStack's localhost tunnel bs-local.com needs to be used, see
+            // https://www.browserstack.com/docs/live/local-testing/ios-troubleshooting-guide. However, on bs-local.com
+            // features only available on https like crypto.subtle or service workers don't work unless served as https.
+            // The Wallet also needs to be served with this option and the Keyguard has to be served over https as well.
+            // Safari has problems to open the https page with invalid certificate, but Chrome iOS works and also uses
+            // the Safari engine. To be able to use the dev tools with Chrome iOS on BrowserStack, launch BrowserStack
+            // with Safari first, then switch to Chrome.
+            || process.env['browserstack-ios-testing'] ? {
+            https: process.env['https-key'] && process.env['https-cert'] ? {
                 key: fs.readFileSync(process.env['https-key']),
                 cert: fs.readFileSync(process.env['https-cert']),
-            } : null),
-        },
-    } : null),
+            } : true,
+            allowedHosts: 'all', // allow to serve locally on wallet.nimiq.com via custom cert, or on bs-local.com
+        } : null),
+    },
 };

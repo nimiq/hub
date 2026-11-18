@@ -1,4 +1,4 @@
-// tslint:disable no-bitwise no-shadowed-variable
+/* eslint-disable no-bitwise, @typescript-eslint/no-shadow */
 
 import { WalletInfoEntry } from './WalletInfo';
 import { LABEL_MAX_LENGTH, WalletType } from '../lib/Constants';
@@ -110,7 +110,7 @@ class CookieJar {
                 fileExported: false,
                 wordsExported: false,
                 backupCodesExported: false,
-                // tslint:disable-next-line:max-line-length
+                // eslint-disable-next-line @stylistic/max-len
                 btcXPub: 'xpub6H1LXWLaKsWFhvm6RVpEL9P4KfRZSW7abD2ttkWP3SSQvnyA8FSVqNTEcYFgJS2UaFcxupHiYkro49S8yGasTvXEYBVPamhGW6cFJodrTHy',
                 btcAddresses: { internal: [], external: [] },
                 polygonAddresses: [{
@@ -174,7 +174,7 @@ class CookieJar {
         const bytes: number[] = [];
 
         // The check<Account|Wallet>DefaultLabel functions omit the label when it's the default label
-        const firstAccount = wallet.accounts.values().next().value;
+        const firstAccount = wallet.accounts.values().next().value!;
         const label = wallet.type === WalletType.LEGACY
             ? this.checkAccountDefaultLabel(
                 firstAccount.address,
@@ -216,7 +216,7 @@ class CookieJar {
 
         // Legacy account information
         if (wallet.type === WalletType.LEGACY) {
-            const account = wallet.accounts.values().next().value;
+            const account = wallet.accounts.values().next().value!;
 
             // Account address
             bytes.push.apply(bytes, Array.from(account.address));

@@ -17,9 +17,6 @@ export default class SignStaking extends Vue {
         // Determine signer by last transaction and forward user to Keyguard
 
         let senderLabel = this.request.senderLabel;
-        let keyId: string;
-        let keyPath: string;
-        let keyLabel: string | undefined;
         let recipientLabel = this.request.recipientLabel;
 
         const finalTransaction = this.request.transactions[this.request.transactions.length - 1];
@@ -31,9 +28,9 @@ export default class SignStaking extends Vue {
         const account = this.findWalletByAddress(signerAddress, false)!;
         const signer = account.findSignerForAddress(Nimiq.Address.fromUserFriendlyAddress(signerAddress))!;
 
-        keyId = account.keyId;
-        keyPath = signer.path;
-        keyLabel = account.labelForKeyguard;
+        const keyId = account.keyId;
+        const keyPath = signer.path;
+        const keyLabel = account.labelForKeyguard;
         if (signerSide === 'recipient') {
             senderLabel = this.request.senderLabel || this.$t('Staking Contract') as string;
             recipientLabel = signer.label;

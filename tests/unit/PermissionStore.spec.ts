@@ -4,7 +4,7 @@ import Config from 'config';
 
 setup();
 
-const indexedDB: IDBFactory = require('fake-indexeddb'); // tslint:disable-line:no-var-requires
+const indexedDB: IDBFactory = require('fake-indexeddb'); // eslint-disable-line @typescript-eslint/no-require-imports
 
 const DUMMY: { permissions: Permission[], privilegedOriginCount: number } = {
     permissions: [
@@ -108,7 +108,7 @@ describe('PermissionStore', () => {
         currentPermissions = await PermissionStore.Instance.list();
         expect(currentPermissions.length).toBe(DUMMY.privilegedOriginCount + 1);
 
-        await PermissionStore.Instance.allow(DUMMY.permissions[1].origin, true),
+        await PermissionStore.Instance.allow(DUMMY.permissions[1].origin, true);
         currentPermissions = await PermissionStore.Instance.list();
         expect(currentPermissions.length).toBe(DUMMY.privilegedOriginCount + 2);
 

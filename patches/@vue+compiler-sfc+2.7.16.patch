@@ -1,0 +1,21 @@
+diff --git a/node_modules/@vue/compiler-sfc/dist/compiler-sfc.js b/node_modules/@vue/compiler-sfc/dist/compiler-sfc.js
+index 91da3e0..f983ee6 100644
+--- a/node_modules/@vue/compiler-sfc/dist/compiler-sfc.js
++++ b/node_modules/@vue/compiler-sfc/dist/compiler-sfc.js
+@@ -9445,7 +9445,15 @@ function analyzeScriptBindings(ast) {
+             return analyzeBindingsFromOptions(node.declaration);
+         }
+     }
+-    return {};
++    // Patched: also mark other normal scripts like class components as non-script-setup. Otherwise, their templates
++    // get compiled as script setup templates, which crashes on identifiers that are Object.prototype properties, for
++    // example `constructor.SOME_CONSTANT`.
++    const bindings = {};
++    Object.defineProperty(bindings, '__isScriptSetup', {
++        enumerable: false,
++        value: false
++    });
++    return bindings;
+ }
+ function analyzeBindingsFromOptions(node) {
+     const bindings = {};

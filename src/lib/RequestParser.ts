@@ -458,7 +458,7 @@ export class RequestParser {
                 const inputs = signBtcTransactionRequest.inputs.map((input) => {
                     if (!input || typeof input !== 'object') throw new Error('input must be an object');
 
-                    // tslint:disable-next-line:no-shadowed-variable
+                    // eslint-disable-next-line @typescript-eslint/no-shadow
                     const { address, transactionHash, outputIndex, value, sequence } = input;
                     let { outputScript, witnessScript } = input;
 

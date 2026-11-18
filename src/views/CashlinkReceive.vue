@@ -111,7 +111,9 @@
                 <p class="nq-text">
                     {{ welcomeText }}
                     {{ $t('Create an account and claim your money.') }}
-                    <span class="secondary-text">{{ $t('30\u00a0seconds, no\u00a0email, no\u00a0download.') }}</span>
+                    <!-- Non-breaking spaces as literal characters, as Babel transpiles \u00a0 escapes for legacy browsers
+                    to \xA0, which webpack-i18n-tools then fails to match with the language files. -->
+                    <span class="secondary-text">{{ $t('30 seconds, no email, no download.') }}</span>
                 </p>
             </div>
         </div>

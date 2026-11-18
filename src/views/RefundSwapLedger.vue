@@ -196,8 +196,8 @@ export default class RefundSwapLedger extends RefundSwap {
             const [inputSignature, signerPubKey] = htlcInput.witness;
 
             const witnessBytes = scriptFromAsm([
-                inputSignature.toString('hex'),
-                signerPubKey.toString('hex'),
+                Nimiq.BufferUtils.toHex(inputSignature),
+                Nimiq.BufferUtils.toHex(signerPubKey),
                 'OP_0', // OP_0 (false) activates the refund branch in the HTLC script
                 (this.request as ParsedSignBtcTransactionRequest).inputs[0].witnessScript,
             ].join(' '));
@@ -262,11 +262,9 @@ export default class RefundSwapLedger extends RefundSwap {
             const [
                 { fromOutputScript: addressFromOutputScript },
                 networks,
-                { Buffer },
             ] = await Promise.all([
                 import('bitcoinjs-lib/src/address'),
                 import('bitcoinjs-lib/src/networks'),
-                import('buffer'),
             ] as const);
 
             const { walletId: accountId } = this.request as ParsedRefundSwapRequest;
@@ -281,7 +279,7 @@ export default class RefundSwapLedger extends RefundSwap {
             this.state = this.State.SYNCING;
             const bitcoinNetwork = Config.bitcoinNetwork === BTC_NETWORK_TEST ? networks.testnet : networks.bitcoin;
             const htlcAddress = addressFromOutputScript(
-                Buffer.from(Nimiq.BufferUtils.fromAny(htlcInput.outputScript)),
+                Nimiq.BufferUtils.fromAny(htlcInput.outputScript),
                 bitcoinNetwork,
             );
 

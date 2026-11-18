@@ -677,7 +677,7 @@ class Demo {
                     address: senderAddress,
                     transactionHash: 'ef4aaf6087d0cc48ff09355d715c257078467ca4d9dd75a20824e70a78fb43cc',
                     outputIndex: 0,
-                    outputScript: addressToOutputScript(senderAddress, testnet).toString('hex'),
+                    outputScript: toHex(addressToOutputScript(senderAddress, testnet)),
                     value: Math.round(0.010 * 1e8),
                 }],
                 output: {
@@ -823,7 +823,7 @@ class Demo {
                         address: refundAddress,
                         transactionHash: 'ef4aaf6087d0cc48ff09355d715c257078467ca4d9dd75a20824e70a78fb43cc',
                         outputIndex: 0,
-                        outputScript: addressToOutputScript(refundAddress, testnet).toString('hex'),
+                        outputScript: toHex(addressToOutputScript(refundAddress, testnet)),
                         value: 0.00076136 * 1e8,
                     }],
                     output: {

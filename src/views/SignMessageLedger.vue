@@ -101,7 +101,7 @@ export default class SignMessageLedger extends Vue {
             // If the Ledger is already busy with a previous request, cancel that previous request.
             if (LedgerApi.currentRequest) {
                 this._cancelLedgerRequest();
-                await new Promise((resolve) => {
+                await new Promise<void>((resolve) => {
                     const checkState = (state: LedgerApiState) => {
                         if (state.type === LedgerApiStateType.REQUEST_PROCESSING
                             || state.type === LedgerApiStateType.REQUEST_CANCELLING) return;

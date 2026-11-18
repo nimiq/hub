@@ -23,11 +23,11 @@ msgstr ""
 msgid "+ {currency} network fee"
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:114
+#: src/views/CashlinkReceive.vue:116
 msgid "30 seconds, no email, no download."
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:325
+#: src/views/CashlinkReceive.vue:327
 msgid "404 - Cash not found"
 msgstr ""
 
@@ -210,7 +210,7 @@ msgstr ""
 msgid "Bitcoin activated"
 msgstr ""
 
-#: src/views/SetupSwapLedger.vue:865
+#: src/views/SetupSwapLedger.vue:863
 #: src/views/SetupSwapSuccess.vue:639
 msgid "Bitcoin HTLC invalid"
 msgstr ""
@@ -250,7 +250,7 @@ msgstr ""
 msgid "Cancel payment"
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:321
+#: src/views/CashlinkReceive.vue:323
 msgid "Cashlink claimed!"
 msgstr ""
 
@@ -262,19 +262,19 @@ msgstr ""
 msgid "Cashlink created."
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:386
+#: src/views/CashlinkReceive.vue:388
 msgid "Cashlink empty :("
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:376
+#: src/views/CashlinkReceive.vue:378
 msgid "Cashlink funding"
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:328
+#: src/views/CashlinkReceive.vue:330
 msgid "Cashlink is empty"
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:375
+#: src/views/CashlinkReceive.vue:377
 msgid "Cashlink not funded"
 msgstr ""
 
@@ -286,7 +286,7 @@ msgstr ""
 msgid "Check your Backup | Check your Backups"
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:374
+#: src/views/CashlinkReceive.vue:376
 msgid "Checking status"
 msgstr ""
 
@@ -329,17 +329,17 @@ msgstr ""
 msgid "Choose which Nimiq address to use."
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:377
+#: src/views/CashlinkReceive.vue:379
 msgid "Claim Cashlink"
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:428
+#: src/views/CashlinkReceive.vue:430
 msgid "Claim your Cash"
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:320
-#: src/views/CashlinkReceive.vue:378
-#: src/views/CashlinkReceive.vue:384
+#: src/views/CashlinkReceive.vue:322
+#: src/views/CashlinkReceive.vue:380
+#: src/views/CashlinkReceive.vue:386
 msgid "Claiming Cashlink"
 msgstr ""
 
@@ -355,7 +355,7 @@ msgstr ""
 msgid "Close"
 msgstr ""
 
-#: src/components/CheckoutCard.vue:125
+#: src/components/CheckoutCard.vue:123
 msgid "Collecting payment details"
 msgstr ""
 
@@ -363,7 +363,7 @@ msgstr ""
 msgid "Confirm {count} Transactions"
 msgstr ""
 
-#: src/views/SetupSwapLedger.vue:1006
+#: src/views/SetupSwapLedger.vue:1004
 msgid "Confirm {outgoingOrIncoming} transaction on Ledger"
 msgstr ""
 
@@ -423,15 +423,15 @@ msgstr ""
 msgid "Confirm withdrawal of retired NIM"
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:439
+#: src/views/CashlinkReceive.vue:441
 msgid "Congrats, somebody gifted you a Nimiq Cashlink."
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:438
+#: src/views/CashlinkReceive.vue:440
 msgid "Congrats, you just opened a Nimiq Cashlink."
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:434
+#: src/views/CashlinkReceive.vue:436
 msgid "Congrats, you received a Nimiq Gift Card."
 msgstr ""
 
@@ -462,7 +462,7 @@ msgstr ""
 msgid "Connecting to network..."
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:336
+#: src/views/CashlinkReceive.vue:338
 msgid "Connecting to Nimiq..."
 msgstr ""
 
@@ -593,7 +593,7 @@ msgstr ""
 msgid "Fetching Addresses Failed"
 msgstr ""
 
-#: src/views/SetupSwapLedger.vue:877
+#: src/views/SetupSwapLedger.vue:875
 #: src/views/SetupSwapSuccess.vue:652
 msgid "Fetching Bitcoin HTLC..."
 msgstr ""
@@ -640,12 +640,12 @@ msgstr ""
 msgid "Get NIM"
 msgstr ""
 
-#: src/components/CheckoutCard.vue:174
+#: src/components/CheckoutCard.vue:172
 #: src/views/RequestError.vue:31
 msgid "Go back"
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:365
+#: src/views/CashlinkReceive.vue:367
 msgid "Got it"
 msgstr ""
 
@@ -657,11 +657,11 @@ msgstr ""
 msgid "Green Address"
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:427
+#: src/views/CashlinkReceive.vue:429
 msgid "Happy birthday!"
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:425
+#: src/views/CashlinkReceive.vue:427
 msgid "Happy Easter!"
 msgstr ""
 
@@ -680,11 +680,11 @@ msgstr ""
 msgid "Imported {count} address so far... | Imported {count} addresses so far..."
 msgstr ""
 
-#: src/views/SetupSwapLedger.vue:1009
+#: src/views/SetupSwapLedger.vue:1007
 msgid "incoming"
 msgstr ""
 
-#: src/components/CheckoutCard.vue:193
+#: src/components/CheckoutCard.vue:191
 msgid "Incomplete payment"
 msgstr ""
 
@@ -820,7 +820,7 @@ msgid "OASIS service fee"
 msgstr ""
 
 #: src/views/ErrorHandlerUnsupportedLedger.vue:4
-#: src/views/RefundSwapLedger.vue:361
+#: src/views/RefundSwapLedger.vue:359
 msgid "Ok"
 msgstr ""
 
@@ -849,7 +849,7 @@ msgstr ""
 msgid "Other wallets"
 msgstr ""
 
-#: src/views/SetupSwapLedger.vue:1008
+#: src/views/SetupSwapLedger.vue:1006
 msgid "outgoing"
 msgstr ""
 
@@ -869,7 +869,7 @@ msgstr ""
 msgid "Payment Reference"
 msgstr ""
 
-#: src/components/CheckoutCard.vue:185
+#: src/components/CheckoutCard.vue:183
 msgid "Payment successful"
 msgstr ""
 
@@ -893,7 +893,7 @@ msgstr ""
 msgid "Please cancel the request on your Ledger"
 msgstr ""
 
-#: src/components/CheckoutCard.vue:172
+#: src/components/CheckoutCard.vue:170
 msgid "Please go back and restart the process."
 msgstr ""
 
@@ -937,11 +937,11 @@ msgstr ""
 msgid "Red Address"
 msgstr ""
 
-#: src/views/RefundSwapLedger.vue:331
+#: src/views/RefundSwapLedger.vue:329
 msgid "Refund Failed"
 msgstr ""
 
-#: src/views/RefundSwapLedger.vue:350
+#: src/views/RefundSwapLedger.vue:348
 msgid "Refunding this Swap is currently not supported on this device or browser. Please use the device and browser you originally created the Swap with. Otherwise please try again in the future."
 msgstr ""
 
@@ -966,7 +966,7 @@ msgstr ""
 msgid "Requesting balances..."
 msgstr ""
 
-#: src/components/CheckoutCard.vue:197
+#: src/components/CheckoutCard.vue:195
 msgid "Restart Payment"
 msgstr ""
 
@@ -976,7 +976,7 @@ msgstr ""
 
 #: src/views/ActivatePolygonSuccess.vue:139
 #: src/views/BitcoinSyncBaseView.vue:72
-#: src/views/CashlinkReceive.vue:364
+#: src/views/CashlinkReceive.vue:366
 #: src/views/LoginSuccess.vue:134
 #: src/views/SetupSwapSuccess.vue:671
 #: src/views/SignupLedger.vue:145
@@ -1031,7 +1031,7 @@ msgid "Single Accounts"
 msgstr ""
 
 #: src/views/CashlinkManage.vue:231
-#: src/views/CashlinkReceive.vue:322
+#: src/views/CashlinkReceive.vue:324
 #: src/views/CheckoutTransmission.vue:125
 msgid "Something went wrong"
 msgstr ""
@@ -1048,8 +1048,8 @@ msgstr ""
 msgid "Speed up your transaction"
 msgstr ""
 
-#: src/views/SignStaking.vue:38
-#: src/views/SignStaking.vue:48
+#: src/views/SignStaking.vue:35
+#: src/views/SignStaking.vue:45
 msgid "Staking Contract"
 msgstr ""
 
@@ -1073,12 +1073,12 @@ msgstr ""
 msgid "Swap fee"
 msgstr ""
 
-#: src/views/SetupSwapLedger.vue:861
+#: src/views/SetupSwapLedger.vue:859
 #: src/views/SetupSwapSuccess.vue:635
 msgid "Swap Setup Failed"
 msgstr ""
 
-#: src/views/RefundSwapLedger.vue:329
+#: src/views/RefundSwapLedger.vue:327
 msgid "Syncing"
 msgstr ""
 
@@ -1091,7 +1091,7 @@ msgstr ""
 
 #: src/views/ActivatePolygonSuccess.vue:113
 #: src/views/BitcoinSyncBaseView.vue:50
-#: src/views/SetupSwapLedger.vue:863
+#: src/views/SetupSwapLedger.vue:861
 #: src/views/SetupSwapSuccess.vue:637
 #: src/views/SignBtcTransactionLedger.vue:117
 msgid "Syncing Failed"
@@ -1101,11 +1101,11 @@ msgstr ""
 msgid "Syncing to network..."
 msgstr ""
 
-#: src/views/RefundSwapLedger.vue:345
+#: src/views/RefundSwapLedger.vue:343
 msgid "Syncing with {currency} network failed: {error}"
 msgstr ""
 
-#: src/views/RefundSwapLedger.vue:339
+#: src/views/RefundSwapLedger.vue:337
 msgid "Syncing with {currency} network..."
 msgstr ""
 
@@ -1114,7 +1114,7 @@ msgid "Syncing with Bitcoin network failed: {error}"
 msgstr ""
 
 #: src/views/BitcoinSyncBaseView.vue:58
-#: src/views/SetupSwapLedger.vue:875
+#: src/views/SetupSwapLedger.vue:873
 msgid "Syncing with Bitcoin network..."
 msgstr ""
 
@@ -1126,7 +1126,7 @@ msgstr ""
 msgid "Syncing with Polygon network..."
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:344
+#: src/views/CashlinkReceive.vue:346
 #: src/views/LoginSuccess.vue:133
 #: src/views/SignupLedger.vue:134
 msgid "Syncing with the network failed: {error}"
@@ -1148,7 +1148,7 @@ msgstr ""
 msgid "The display language changed. Do you want to reload the page to update all translations? Otherwise, some translations might not be updated automatically. ({oldLang} to {newLang})"
 msgstr ""
 
-#: src/components/CheckoutCard.vue:171
+#: src/components/CheckoutCard.vue:169
 #: src/views/SignTransactionLedger.vue:1031
 msgid "The offer expired."
 msgstr ""
@@ -1161,11 +1161,11 @@ msgstr ""
 msgid "There's much more. Read the full article"
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:355
+#: src/views/CashlinkReceive.vue:357
 msgid "This Cashlink has already been claimed."
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:352
+#: src/views/CashlinkReceive.vue:354
 msgid "This is not a valid Cashlink, sorry."
 msgstr ""
 
@@ -1236,7 +1236,7 @@ msgstr ""
 msgid "Try again"
 msgstr ""
 
-#: src/views/SetupSwapLedger.vue:867
+#: src/views/SetupSwapLedger.vue:865
 msgid "Unexpected error"
 msgstr ""
 
@@ -1337,7 +1337,7 @@ msgstr ""
 msgid "You are logged out."
 msgstr ""
 
-#: src/views/CashlinkReceive.vue:423
+#: src/views/CashlinkReceive.vue:425
 msgid "You are loved"
 msgstr ""
 
@@ -1345,7 +1345,7 @@ msgstr ""
 msgid "You received a Cashlink!"
 msgstr ""
 
-#: src/components/CheckoutCard.vue:194
+#: src/components/CheckoutCard.vue:192
 msgid "You transferred an insufficient amount. Please contact the merchant for a refund. Restart to pay for your order."
 msgstr ""
 

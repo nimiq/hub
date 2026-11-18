@@ -101,7 +101,7 @@ export class WalletInfo {
     ) {}
 
     public get defaultLabel(): string {
-        return labelKeyguardAccount(this.accounts.keys().next().value);
+        return labelKeyguardAccount(this.accounts.keys().next().value!);
     }
 
     public get labelForKeyguard(): string | undefined {

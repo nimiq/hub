@@ -227,7 +227,7 @@ export default class ChooseAddress extends BitcoinSyncBaseView {
 
     private async setWallet(wallet: WalletInfo, userSelected = true) {
         if (wallet.accounts.size === 1) {
-            this.accountSelected(wallet.id, wallet.accounts.keys().next().value);
+            this.accountSelected(wallet.id, wallet.accounts.keys().next().value!);
         } else {
             this.preSelectedWallet = wallet;
         }

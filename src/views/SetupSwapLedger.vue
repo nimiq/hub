@@ -454,9 +454,9 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
             ...(fund.type === SwapAsset.BTC || redeem.type === SwapAsset.BTC
                 ? [import('bitcoinjs-lib/src/transaction'), getElectrumClient()]
                 : []),
-            // preload bitcoinjs-lib/src/networks, bitcoinjs-lib/src/payments and Buffer used in BTC funding
+            // preload bitcoinjs-lib/src/networks and bitcoinjs-lib/src/payments used in BTC funding
             ...(fund.type === SwapAsset.BTC
-                ? [import('bitcoinjs-lib/src/networks'), import('bitcoinjs-lib/src/payments'), import('buffer')]
+                ? [import('bitcoinjs-lib/src/networks'), import('bitcoinjs-lib/src/payments/index')]
                 : []),
             // preload bitcoinjs-lib/src/script used in BTC redeeming
             redeem.type === SwapAsset.BTC ? import('bitcoinjs-lib/src/script') : null,
@@ -663,15 +663,13 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
             const [
                 networks,
                 { p2wsh },
-                { Buffer },
             ] = await Promise.all([
                 import('bitcoinjs-lib/src/networks'),
-                import('bitcoinjs-lib/src/payments'),
-                import('buffer'),
+                import('bitcoinjs-lib/src/payments/index'),
             ] as const);
             const bitcoinNetwork = Config.bitcoinNetwork === BTC_NETWORK_TEST ? networks.testnet : networks.bitcoin;
             const htlcAddress = p2wsh({
-                witness: [Buffer.from(htlcInfo.fund.htlcScript)],
+                witness: [htlcInfo.fund.htlcScript],
                 network: bitcoinNetwork,
             }).address;
 
@@ -783,7 +781,7 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
                 this.ledgerApiStateType = LedgerApiStateType.IDLE;
                 this.currentlySignedTransaction = bitcoinTransactionInfo;
 
-                // tslint:disable-next-line no-shadowed-variable
+                // eslint-disable-next-line @typescript-eslint/no-shadow
                 const { Transaction: BitcoinJsTransaction } = await import('bitcoinjs-lib/src/transaction');
                 signedBitcoinTransaction = BitcoinJsTransaction.fromHex(
                     await LedgerApi.Bitcoin.signTransaction(preparedBitcoinTransactionInfo));
@@ -822,8 +820,8 @@ export default class SetupSwapLedger extends Mixins(SetupSwap, SetupSwapSuccess)
             const [inputSignature, signerPubKey] = htlcInput.witness;
 
             const witnessBytes = scriptFromAsm([
-                inputSignature.toString('hex'),
-                signerPubKey.toString('hex'),
+                Nimiq.BufferUtils.toHex(inputSignature),
+                Nimiq.BufferUtils.toHex(signerPubKey),
                 // Use zero-bytes as a dummy secret which are replaced in the wallet once the swap secret is known
                 '0000000000000000000000000000000000000000000000000000000000000000',
                 'OP_1', // OP_1 (true) activates the redeem branch in the HTLC script

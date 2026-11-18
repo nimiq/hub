@@ -6,7 +6,7 @@ import { CashlinkCurrency } from '../../client/PublicRequestTypes';
 
 setup();
 
-const indexedDB: IDBFactory = require('fake-indexeddb'); // tslint:disable-line:no-var-requires
+const indexedDB: IDBFactory = require('fake-indexeddb'); // eslint-disable-line @typescript-eslint/no-require-imports
 
 // @ts-ignore private property access
 Store.INDEXEDDB_IMPLEMENTATION = indexedDB;

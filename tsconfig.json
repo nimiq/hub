@@ -3,9 +3,11 @@
     "target": "es2019", // Highest version supported by Webpack 4
     "module": "esnext",
     "strict": true,
+    // Keep catch clause variables typed as any, as before TypeScript 4.4, instead of unknown.
+    "useUnknownInCatchVariables": false,
     "jsx": "preserve",
     "importHelpers": true,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "experimentalDecorators": true,
     "esModuleInterop": true,
@@ -22,12 +24,15 @@
       ],
       "config": [
         "src/config/config.local.ts"
+      ],
+      // The exports map of vuex 3 does not point to its types, which TypeScript needs with bundler module resolution.
+      "vuex": [
+        "node_modules/vuex/types/index.d.ts"
       ]
     }
   },
   "include": [
     "types/Nimiq.d.ts",
-    "types/bitcoinjs-lib.d.ts",
     "src/**/*.ts",
     "src/**/*.tsx",
     "src/**/*.vue",

@@ -305,7 +305,7 @@ export default class SignTransactionLedger extends Vue {
         if (isSentByHub) {
             // Pre-connect to network when we know we'll need it. Does not need to be awaited, as the methods on network
             // that actually need to be connected, themselves ensure to be connected.
-            network.getNetworkClient().catch(() => {}); // tslint:disable-line no-empty
+            network.getNetworkClient().catch(() => {}); // eslint-disable-line @typescript-eslint/no-empty-function
         }
 
         // If user left this view in the meantime, don't continue
@@ -566,7 +566,7 @@ export default class SignTransactionLedger extends Vue {
     }
 
     private get checkoutPaymentOptions() {
-        // tslint:disable-next-line no-unused-expression
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         this.requestRevision; // re-evaluate on changes to the request
         if (this.request.kind !== RequestType.CHECKOUT) return null;
         const checkoutRequest = this.request as ParsedCheckoutRequest;
@@ -591,7 +591,7 @@ export default class SignTransactionLedger extends Vue {
      * during rendering, it must never throw.
      */
     private get transactionsOrError(): Nimiq.Transaction[] | Error {
-        // tslint:disable-next-line no-unused-expression
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         this.requestRevision; // re-evaluate on changes to the request
         if (this._setupError) return this._setupError;
         try {
@@ -790,7 +790,7 @@ export default class SignTransactionLedger extends Vue {
         // Display the value of the final transaction currently, and the fees of all transactions. For requests with a
         // single transaction, this is that transaction's value and fee. Omit zero amounts of signaling transactions.
         const finalTransaction = this.finalTransaction;
-        // tslint:disable-next-line no-bitwise
+        // eslint-disable-next-line no-bitwise
         const isSignaling = !!(finalTransaction.flags & Nimiq.TransactionFlag.Signaling);
         return {
             amount: isSignaling ? null : Number(finalTransaction.value),
@@ -815,7 +815,7 @@ export default class SignTransactionLedger extends Vue {
             return null;
         }
 
-        // tslint:disable-next-line no-bitwise
+        // eslint-disable-next-line no-bitwise
         if ((flags & Nimiq.TransactionFlag.ContractCreation) > 0) {
             // TODO: Decode contract creation transactions
             // return ...

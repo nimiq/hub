@@ -81,7 +81,7 @@ export abstract class Store<Info, Entry> {
                 request.onsuccess = () => resolve(request.result);
                 request.onerror = () => reject(request.error);
             }),
-            new Promise((resolve, reject) => {
+            new Promise<void>((resolve, reject) => {
                 transaction.oncomplete = () => resolve();
                 transaction.onabort = () => reject(transaction.error);
                 transaction.onerror = () => reject(transaction.error);

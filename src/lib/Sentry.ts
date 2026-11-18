@@ -33,7 +33,6 @@ export function startSentry() {
         environment: Config.network,
         attachProps: true,
         enabled: Config.reportToSentry,
-        logErrors: true,
         sampleRate: Config.network === NETWORK_MAIN ? 0.2 : 1,
         beforeSend: stripUrlFragments,
     });
